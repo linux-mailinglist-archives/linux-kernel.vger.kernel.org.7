@@ -1,145 +1,223 @@
-Return-Path: <linux-kernel+bounces-840899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C77BB5ADD
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:32:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEA3FBB5AE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:41:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A023D19E784E
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:32:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2F0504E62E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6E573451;
-	Fri,  3 Oct 2025 00:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E9213E41A;
+	Fri,  3 Oct 2025 00:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dcORrS37"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g8xHhWC8"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD9A18B12
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 00:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC62175BF
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 00:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759451546; cv=none; b=kxECR+1Ng8RwpE7MResCqrxL7/B5YGrbY35a9RHVTedO3CYAwwDkJPsyLipeDgKfSAbcj/B6yVq9+M8y0hQbnv8oTElENXZUiIiQ0pcvGQQTiqSVSav+XpoKuvUOiKq+kYl1Xnq9KiO7AQ+gMlOAs/UayMFXWyIqJPYxDJUqua0=
+	t=1759452083; cv=none; b=izXIMwk8F3zhSNzpOy+PRC5aJIrCgqQ2eA+emYXZDmZrlDuTDV50DYVs6TjWxkxkST8ICvMjPQ4pt6iVHWMut5EaE5RBuRfg2I46WuogHI2LGqu5jKGHhTv6R0hpEAvZT5wuIPWntq41+VG2E7HlGWLT2ICQ2/Zco28t5XMYBoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759451546; c=relaxed/simple;
-	bh=ETlEf66hdPCHHJn1GuWHBeROSwycNJMpRgfr1/FpZG8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hfFGLSP/KNtVmU40fzcEjQVYPhnBYxvmJ7dTKkevsp8CAt1/O7oBq5HEnA+W4kIeigTRVFUjMp2GNzKWTMGGotcIRvNGQezse6No9S7vuHz7PeMQc82moLe6KSInvEkOt9PGYFm9Lj8P6yFgTts7Oo3JU+QBE2DX72hFkVKPPTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dcORrS37; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759451539;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xaf5RNoemnbQ5bhVRXfDXLq6XKqiACwC+kjxc5U7K8E=;
-	b=dcORrS37leWVm4KdpJNUOSvAc4CYYTK3jpbJjqb5xAt4wtttB+ZEjt4PUbwRl6w9jFWqgF
-	AG/GoC6OqpioSg+v7OgFwageCiUd4qxkM82cdSc64kIHfigBepNACLamvdOm7xQONHV7sx
-	TmkJdof4u0UAJwF8XinDsOYp9spWaXw=
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
- [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-151-HszvnMsDMfmeXXpi0Ae79A-1; Thu, 02 Oct 2025 20:32:18 -0400
-X-MC-Unique: HszvnMsDMfmeXXpi0Ae79A-1
-X-Mimecast-MFC-AGG-ID: HszvnMsDMfmeXXpi0Ae79A_1759451538
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-77f2466eeb5so1715676b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 17:32:18 -0700 (PDT)
+	s=arc-20240116; t=1759452083; c=relaxed/simple;
+	bh=3mDe7fpgcruxbDrX0bc5+oJ9/rO2+0AXTXV6A3h/n+k=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=Kgz5AogWtyYGqjhUQmfeHQU/JhYoFf7naamagTeeLe4I7bIazpyB5PiSdktYipupl2HXy6K7DUmT8++rK8JPuSUzpWqxD+e5yA8jKJoyfTx1yJMyasqyaR/11dWFZHOhyHBjLLk3NRwgJ/PG8ZtqStobQv0rm37WwmExf4AJYyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g8xHhWC8; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-780f914b5a4so1601070b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 17:41:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759452077; x=1760056877; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XlVgG+qUcqt1ti4IWrjfI9WXkl1dtzgX2VnAjDGGGKQ=;
+        b=g8xHhWC8cEKyL4LnDYPCCu+BiMTD120cbHvrH3KqLnx40F67t01wY7YMbaHBtixl4o
+         WcQj4jCD2JzBzoHzJtO+Y6xoUry3k61ywbyF5kj6Hv+Qv2z23YZvsq6C4s4Ziwn76qXj
+         CpXUrY7WfLnejabVpOu/+174tTQGw+F1mcrs3vmS/7EGDZid+CSqJ+ry5nRPbcD/Jf0q
+         FXh7ewHk23Y435/ya11+9TpK2KmhG0A4tdhLdDD/IDGrA5iB29KJduEkUCJ8X7LvCugH
+         SlOhxQTcZDkncUChqo5adRhmtmx2pwcUFdhgulvcMU0KKMYF/WeXU9slt3m0UOAsJSi7
+         b1Fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759451537; x=1760056337;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xaf5RNoemnbQ5bhVRXfDXLq6XKqiACwC+kjxc5U7K8E=;
-        b=d9aq7I6gpZ5PI+OvRbl9mnZMTJV0kciFgnbbbM2+d/YUwmGW5DdPZe5z1cJM10yh5E
-         ercxKlbETgSpbMyXSDQXuVQDNNmziYpc36C/l/nL3ZTpzz8xKaY50qVpsWz4nBgXFAH4
-         A7SgrpbBWF2udH8hJeArgJ3ZcwBOCsRqVuehi7pvY1Xd5WG7AApvaiWQQfgf9wIPguz2
-         CeXgP/TZA3j0d4yaH4zTCpmBk94AKb7M3wflj1qwjVenEUh2eTfuuKrv2/4QMQWMuSCt
-         eq7WprR95ohBZq6617ARYlm68uapq2eRxMKEU/TEJste8HwWvy0q2Zyd+9QbIlBgYCZK
-         9dsw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4hjPqCQc8Z7ONvVOYtrpc7Xf/+9qa/XTsUL9AyUTUTKrkHNAxiy6P/dOgXpRVNeDKfdc3D6xm1qE5lhk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfwyhWdaBWjQyRjEVuyaOuGf8zPJgUiGl6zen78MF91g3Q4jGa
-	ZoGk7/S1QtKqFgqgSIUSyHcEO5KMLf+ShnhdQ2jZmfMlWASESN5raacw5DtuGnrAOR398P6Og5w
-	lEmc0XquiRuHd/CRt0MKKsza8B0XixghdwbRco+bZspkloClzvHVEvrveNWySuvRdjQ==
-X-Gm-Gg: ASbGncu7Sn5Ymm4bSyS8TdJ8/WP0ZJ64LuPNc1PUeiw6ybOIy5l5UZWhCAeVQKKAgcV
-	WfFjWOeLDsKq7TPS1u2UGqYxxXHnmXnvO87yL7JM7QGrjdsIjAY9NPhwBNv4x5Kc9NDeNdbFzFt
-	Vu8zHIvLdXHOsTqAhr7CWDn8/ULy2MafzOieg7xixa6/ZWvw62friX8MfsjCqbg3D0OZYFNVMfs
-	JdyY4DuFJi7aACr9MUAVJe5ZzAIV9q8e3/VUJptKPpDYGmAXixg/AQixxO3gB31WpDIk+V7NRDW
-	vxBq5j4UNKOZtaFpTgBz53WigIf1zJMeDYWLZpYbGIRutctX5kKNtfnVw+zOcdWvOKyb2eL0oMx
-	47zc09ntE6Q==
-X-Received: by 2002:a05:6a00:39a3:b0:781:1a9f:aeeb with SMTP id d2e1a72fcca58-78c98d2e6aemr1700837b3a.1.1759451537523;
-        Thu, 02 Oct 2025 17:32:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEWEEgYNq3YMaGCew9+gs61ruTR+Mw3AELcBoDCygoa6FdJ8RVNCdO/U7t0LGX7nViXA3ZUSQ==
-X-Received: by 2002:a05:6a00:39a3:b0:781:1a9f:aeeb with SMTP id d2e1a72fcca58-78c98d2e6aemr1700792b3a.1.1759451537135;
-        Thu, 02 Oct 2025 17:32:17 -0700 (PDT)
-Received: from [192.168.68.51] (n175-34-62-5.mrk21.qld.optusnet.com.au. [175.34.62.5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b02074654sm3236692b3a.75.2025.10.02.17.32.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Oct 2025 17:32:16 -0700 (PDT)
-Message-ID: <ef45ce3a-7a78-45c8-8196-75923af7c6ab@redhat.com>
-Date: Fri, 3 Oct 2025 10:32:04 +1000
+        d=1e100.net; s=20230601; t=1759452077; x=1760056877;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XlVgG+qUcqt1ti4IWrjfI9WXkl1dtzgX2VnAjDGGGKQ=;
+        b=RwG0NQEn0xUgEzw/VzE2M2Qih7W/5xNqkdy0sMHQBKbYmTcBvG4Bne2wpA3D3m7JRr
+         Y9BkTBV+HEcgTUKFD9RuSkSAbTqvj7rGOQKmw4SzNjUSFYcAx5PrUu00a0fdJhabDOyf
+         omOtOcUPsH6MR8QSym/cYH7vKSwKUVs/BvfyCSsunNzvFeoQc9LjB9652kKDKtOT06nN
+         7ek31ylt94a7y4aXQrJE6ZcBrorr8EAFayag5+WVkv+v4yAwpDU08SF3vKpBK2BCHx8A
+         LbnfOshnhXJW4hafpJrhktDV7u/mvaUVRHQTmUl1Af3XDRBT4ZMgC5Q8QK9uS0Icsi8d
+         vszg==
+X-Forwarded-Encrypted: i=1; AJvYcCVn3Sykya8xwYsTjJZv5yM1P9DdCrJHgd6erSIvVO4arq7UYahRNIECn3lVzk56+2WWW0NEg3m+GpceM20=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOCfJ4cabCirhwkR2OYTDSrtCtY7sUvV1/QlVq+2A5Be//33NN
+	jVbf4hTxSjBdTzbrd/9ya4epPJz14UQu6NxZtb0vcHMqtZgKjJNvRD5bDMtUzC8kSOhrIAjz0tf
+	GcYYfh8opIA==
+X-Google-Smtp-Source: AGHT+IGP0IJMW4X14mDo3SaF2DPNVjoOEPADwz8Mfq/a+u3M5w2WZyZ+g37te5WSjbUe5DeFJ/v/n2gwtua5
+X-Received: from pgct8.prod.google.com ([2002:a05:6a02:5288:b0:b55:117c:84a3])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:2450:b0:2e2:3e68:6e45
+ with SMTP id adf61e73a8af0-32b6211891dmr1662801637.51.1759452077454; Thu, 02
+ Oct 2025 17:41:17 -0700 (PDT)
+Date: Thu,  2 Oct 2025 17:41:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/29] arm64: kconfig: Add Kconfig entry for MPAM
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
-Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- fenghuay@nvidia.com, baisheng.gao@unisoc.com,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
- <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250910204309.20751-1-james.morse@arm.com>
- <20250910204309.20751-6-james.morse@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20250910204309.20751-6-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
+Message-ID: <20251003004102.2369463-1-irogers@google.com>
+Subject: [PATCH v1 1/2] perf namespaces: Avoid get_current_dir_name dependency
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/11/25 6:42 AM, James Morse wrote:
-> The bulk of the MPAM driver lives outside the arch code because it
-> largely manages MMIO devices that generate interrupts. The driver
-> needs a Kconfig symbol to enable it. As MPAM is only found on arm64
-> platforms, the arm64 tree is the most natural home for the Kconfig
-> option.
-> 
-> This Kconfig option will later be used by the arch code to enable
-> or disable the MPAM context-switch code, and to register properties
-> of CPUs with the MPAM driver.
-> 
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> CC: Dave Martin <dave.martin@arm.com>
-> ---
-> Changes since v1:
->   * Help text rewritten by Dave.
-> ---
->   arch/arm64/Kconfig | 23 +++++++++++++++++++++++
->   1 file changed, 23 insertions(+)
-> 
+get_current_dir_name is a GNU extension not supported on, for example,
+Android. There is only one use of it so let's just switch to getcwd to
+avoid build and other complexity.
 
-Reviewed-by: Gavin Shan <gshan@redhat.com>
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/Makefile.config             |  4 ----
+ tools/perf/util/Build                  |  1 -
+ tools/perf/util/get_current_dir_name.c | 18 ------------------
+ tools/perf/util/get_current_dir_name.h |  8 --------
+ tools/perf/util/namespaces.c           | 14 +++++---------
+ 5 files changed, 5 insertions(+), 40 deletions(-)
+ delete mode 100644 tools/perf/util/get_current_dir_name.c
+ delete mode 100644 tools/perf/util/get_current_dir_name.h
 
-
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index 0f4b297fbacc..6cdb96576cb8 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -417,10 +417,6 @@ ifeq ($(feature-eventfd), 1)
+   CFLAGS += -DHAVE_EVENTFD_SUPPORT
+ endif
+ 
+-ifeq ($(feature-get_current_dir_name), 1)
+-  CFLAGS += -DHAVE_GET_CURRENT_DIR_NAME
+-endif
+-
+ ifeq ($(feature-gettid), 1)
+   CFLAGS += -DHAVE_GETTID
+ endif
+diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+index 5ead46dc98e7..9464eceb764b 100644
+--- a/tools/perf/util/Build
++++ b/tools/perf/util/Build
+@@ -23,7 +23,6 @@ perf-util-y += evsel_fprintf.o
+ perf-util-y += perf_event_attr_fprintf.o
+ perf-util-y += evswitch.o
+ perf-util-y += find_bit.o
+-perf-util-y += get_current_dir_name.o
+ perf-util-y += levenshtein.o
+ perf-util-y += mmap.o
+ perf-util-y += memswap.o
+diff --git a/tools/perf/util/get_current_dir_name.c b/tools/perf/util/get_current_dir_name.c
+deleted file mode 100644
+index e68935e9ac8c..000000000000
+--- a/tools/perf/util/get_current_dir_name.c
++++ /dev/null
+@@ -1,18 +0,0 @@
+-// SPDX-License-Identifier: LGPL-2.1
+-// Copyright (C) 2018, 2019 Red Hat Inc, Arnaldo Carvalho de Melo <acme@redhat.com>
+-//
+-#ifndef HAVE_GET_CURRENT_DIR_NAME
+-#include "get_current_dir_name.h"
+-#include <limits.h>
+-#include <string.h>
+-#include <unistd.h>
+-
+-/* Android's 'bionic' library, for one, doesn't have this */
+-
+-char *get_current_dir_name(void)
+-{
+-	char pwd[PATH_MAX];
+-
+-	return getcwd(pwd, sizeof(pwd)) == NULL ? NULL : strdup(pwd);
+-}
+-#endif // HAVE_GET_CURRENT_DIR_NAME
+diff --git a/tools/perf/util/get_current_dir_name.h b/tools/perf/util/get_current_dir_name.h
+deleted file mode 100644
+index 69f7d5537d32..000000000000
+--- a/tools/perf/util/get_current_dir_name.h
++++ /dev/null
+@@ -1,8 +0,0 @@
+-// SPDX-License-Identifier: LGPL-2.1
+-// Copyright (C) 2018, 2019 Red Hat Inc, Arnaldo Carvalho de Melo <acme@redhat.com>
+-//
+-#ifndef __PERF_GET_CURRENT_DIR_NAME_H
+-#ifndef HAVE_GET_CURRENT_DIR_NAME
+-char *get_current_dir_name(void);
+-#endif // HAVE_GET_CURRENT_DIR_NAME
+-#endif // __PERF_GET_CURRENT_DIR_NAME_H
+diff --git a/tools/perf/util/namespaces.c b/tools/perf/util/namespaces.c
+index 68f5de2d79c7..d1475b79a4a7 100644
+--- a/tools/perf/util/namespaces.c
++++ b/tools/perf/util/namespaces.c
+@@ -6,7 +6,6 @@
+ 
+ #include "namespaces.h"
+ #include "event.h"
+-#include "get_current_dir_name.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
+@@ -279,10 +278,9 @@ void nsinfo__set_in_pidns(struct nsinfo *nsi)
+ void nsinfo__mountns_enter(struct nsinfo *nsi,
+ 				  struct nscookie *nc)
+ {
+-	char curpath[PATH_MAX];
++	char oldcwd[PATH_MAX];
+ 	int oldns = -1;
+ 	int newns = -1;
+-	char *oldcwd = NULL;
+ 
+ 	if (nc == NULL)
+ 		return;
+@@ -293,14 +291,14 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
+ 	if (!nsi || !nsinfo__need_setns(nsi))
+ 		return;
+ 
+-	if (snprintf(curpath, PATH_MAX, "/proc/self/ns/mnt") >= PATH_MAX)
++	if (!getcwd(oldcwd, sizeof(oldcwd)))
+ 		return;
+ 
+-	oldcwd = get_current_dir_name();
+-	if (!oldcwd)
++	nc->oldcwd = strdup(oldcwd);
++	if (!nc->oldcwd)
+ 		return;
+ 
+-	oldns = open(curpath, O_RDONLY);
++	oldns = open("/proc/self/ns/mnt", O_RDONLY);
+ 	if (oldns < 0)
+ 		goto errout;
+ 
+@@ -311,13 +309,11 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
+ 	if (setns(newns, CLONE_NEWNS) < 0)
+ 		goto errout;
+ 
+-	nc->oldcwd = oldcwd;
+ 	nc->oldns = oldns;
+ 	nc->newns = newns;
+ 	return;
+ 
+ errout:
+-	free(oldcwd);
+ 	if (oldns > -1)
+ 		close(oldns);
+ 	if (newns > -1)
+-- 
+2.51.0.618.g983fd99d29-goog
 
 
