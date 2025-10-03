@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-841481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B31F7BB77C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:09:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17F67BB77D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:10:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 601EA423FE0
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:07:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2B80423EFD
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB5E2BD5B2;
-	Fri,  3 Oct 2025 16:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B912BD001;
+	Fri,  3 Oct 2025 16:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zie57fIt"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="U8uQ+Jcj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB9735962;
-	Fri,  3 Oct 2025 16:07:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ACE735962;
+	Fri,  3 Oct 2025 16:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759507639; cv=none; b=skw2tzJo0TBYX7IBHSYzywxvtgkTj9BPcf9FKOCL/t8zFpSqP1XsfVEWS+C6oAWHP4lZE7RLGv+/KPqdRxK4Q0MNZ4sr4FnNG2ytWtmUbNRPT2EWdOKBkt/MFNqsCfOkpbj+gnTzwqFA3gUpOc4ikPMQsNk9MN9x37QqeRxnSr4=
+	t=1759507690; cv=none; b=UOujGrv7t+Ka0XG99HEWJhMdQ2dIpNkxOuvfrAUx/h3mG1NujleO94m+UXGVuv4NndkwcbzfyiSo/Cr+AR+1A87y6QAlF8vgXKcry+LHIRF3G/NFV4CdgcHkyxFEDSBFylyAFE1doOzVjejrYk4KrLZDtOb0wmAeVjSFyIwoOIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759507639; c=relaxed/simple;
-	bh=J3MGq/FaN7XOOtlg9H9SfFKM1jle0JiNqsdBNb1rD38=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YN71tjsKPH1fTK+3DYKkzESd18YRoP+STTejKtSsVvFlYZO0f+DuzmTyA3d2n6KDjI4NXCKANU23OS2Olw93j2CEM4sX5ySxAfLXfQKxnoWIzP3fvvQoaazrvreVkBLEWAB46vDnU3Z6TcnqNEJ8KBlYSBrZNfou6eAQdYRhbOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zie57fIt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F7BFC4CEF5;
-	Fri,  3 Oct 2025 16:07:19 +0000 (UTC)
+	s=arc-20240116; t=1759507690; c=relaxed/simple;
+	bh=g9HdtT1YHAF709ivx3fyBaFNtM+e7YfvgP3SwcUeKG4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aFL+DVLajNTRQPUzeyiF3UsjuPmth17yarHGw3YbkdrzekAx4wKTtGKcjMJsyW7WGjZecob5KoS2owRCMbihFNqM3p7AkUCQdkcRzR2Wn9NpGfFjUQ7GP3/ZAOcRi7+qkIvhqITRCwUu6eRR5Q/LxeT0jbSlXjnfhz+dvYHniFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=U8uQ+Jcj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EBDEC4CEF5;
+	Fri,  3 Oct 2025 16:08:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759507639;
-	bh=J3MGq/FaN7XOOtlg9H9SfFKM1jle0JiNqsdBNb1rD38=;
+	s=korg; t=1759507690;
+	bh=g9HdtT1YHAF709ivx3fyBaFNtM+e7YfvgP3SwcUeKG4=;
 	h=From:To:Cc:Subject:Date:From;
-	b=zie57fItF4cnbTxjdwfmdB80iQUgVccy1u99DSUPbc9D8CE9KXb3yLsNSdPKPW5Sk
-	 4sexRsH5o7Pu9oFE7YMFGJI7jFhtCf+SUG747aXRpGn5r+bQhfCpv3y+Fh+UBC0crx
-	 FSInsanC5tS0XWxeP27mG5mg9/gACjqY4aB0K68A=
+	b=U8uQ+JcjIgUFrN3gCcinBaQvuI5QvTcjYjXPYuLsk2PbqSpIxo7oVEAkMQ+tnOuHK
+	 poIfWecNCDLYJsZ+CtVNjs14joUhJ+3wyZY6Gn3atau+8eqx/88Ji9XE3XVRKUAE+F
+	 7knBIVFS0OXhP2iZ1haF6jbKwZXBfT96R9oGY92s=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -56,9 +56,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	hargar@microsoft.com,
 	broonie@kernel.org,
 	achill@achill.org
-Subject: [PATCH 6.17 00/15] 6.17.1-rc1 review
-Date: Fri,  3 Oct 2025 18:05:24 +0200
-Message-ID: <20251003160359.831046052@linuxfoundation.org>
+Subject: [PATCH 6.16 00/14] 6.16.11-rc1 review
+Date: Fri,  3 Oct 2025 18:05:34 +0200
+Message-ID: <20251003160352.713189598@linuxfoundation.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -69,16 +69,16 @@ MIME-Version: 1.0
 User-Agent: quilt/0.69
 X-stable: review
 X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.17.1-rc1.gz
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.11-rc1.gz
 X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-6.17.y
+X-KernelTest-Branch: linux-6.16.y
 X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 6.17.1-rc1
-X-KernelTest-Deadline: 2025-10-05T16:04+00:00
+X-KernelTest-Version: 6.16.11-rc1
+X-KernelTest-Deadline: 2025-10-05T16:03+00:00
 Content-Transfer-Encoding: 8bit
 
-This is the start of the stable review cycle for the 6.17.1 release.
-There are 15 patches in this series, all will be posted as a response
+This is the start of the stable review cycle for the 6.16.11 release.
+There are 14 patches in this series, all will be posted as a response
 to this one.  If anyone has any issues with these being applied, please
 let me know.
 
@@ -86,9 +86,9 @@ Responses should be made by Sun, 05 Oct 2025 16:02:25 +0000.
 Anything received after that time might be too late.
 
 The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.17.1-rc1.gz
+	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.11-rc1.gz
 or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.17.y
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
 and the diffstat can be found below.
 
 thanks,
@@ -99,7 +99,7 @@ greg k-h
 Pseudo-Shortlog of commits:
 
 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 6.17.1-rc1
+    Linux 6.16.11-rc1
 
 Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
     ASoC: qcom: audioreach: fix potential null pointer dereference
@@ -131,9 +131,6 @@ Duoming Zhou <duoming@zju.edu.cn>
 Duoming Zhou <duoming@zju.edu.cn>
     media: b2c2: Fix use-after-free causing by irq_check_work in flexcop_pci_remove
 
-Fedor Pchelkin <pchelkin@ispras.ru>
-    wifi: rtw89: fix use-after-free in rtw89_core_tx_kick_off_and_wait()
-
 Jeongjun Park <aha310510@gmail.com>
     ALSA: usb-audio: fix race condition to UAF in snd_usbmidi_free
 
@@ -162,16 +159,12 @@ Diffstat:
  drivers/media/usb/uvc/uvc_driver.c             | 73 ++++++++++++++++----------
  drivers/media/usb/uvc/uvcvideo.h               |  2 +
  drivers/net/wireless/ath/ath11k/qmi.c          |  2 +-
- drivers/net/wireless/realtek/rtw89/core.c      | 30 ++++++++---
- drivers/net/wireless/realtek/rtw89/core.h      | 35 +++++++++++-
- drivers/net/wireless/realtek/rtw89/pci.c       |  3 +-
- drivers/net/wireless/realtek/rtw89/ser.c       |  2 +
  drivers/target/target_core_configfs.c          |  2 +-
  mm/swapfile.c                                  |  3 ++
  scripts/gcc-plugins/gcc-common.h               |  7 +++
  sound/soc/qcom/qdsp6/topology.c                |  4 +-
  sound/usb/midi.c                               |  9 ++--
- 20 files changed, 166 insertions(+), 60 deletions(-)
+ 16 files changed, 105 insertions(+), 51 deletions(-)
 
 
 
