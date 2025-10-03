@@ -1,561 +1,283 @@
-Return-Path: <linux-kernel+bounces-841418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96706BB7425
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:58:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE36ABB742E
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:59:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EADEC4ECCF5
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:58:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7914A4ECDB4
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6022628153C;
-	Fri,  3 Oct 2025 14:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DQTUqpBq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3EC2820BF;
+	Fri,  3 Oct 2025 14:58:57 +0000 (UTC)
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023092.outbound.protection.outlook.com [40.107.44.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50139347DD;
-	Fri,  3 Oct 2025 14:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759503494; cv=none; b=YyQv9wqP//cHJnLgluiRifNsTc9LGZafp85wi6QHcQni0nv/QnzvJArnCISPV1ybI6VSvFPZNcOTarip5YKZuGrEcbf3TXJvLsvj4l2+MS73x3ebSlAahtPD+uBnHgNCzr46TT0CIC+sPCnUyxXW27kwpFXsCVzm/dHduGaBAm8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759503494; c=relaxed/simple;
-	bh=5fVvBRDk4TBtjS9SrOWQvOXCcxJhpNnH28SREh2GezI=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=m3XRiZADJZkY7jfy+Jhr4jzdDeX8C+y5tkelV21HqY/tAel5V/hyCGrF73ckGW26PYDaHGuLZ5hFfA3TNfYPiMcuy8jIotCvFQyH/Hfi6dGm0ZdAwnGEKDCiO8w5UJQqBz0EKPInnrCbF3I/s0bdr0q1Qsdf+tBz5QYzxedurw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DQTUqpBq; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759503492; x=1791039492;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=5fVvBRDk4TBtjS9SrOWQvOXCcxJhpNnH28SREh2GezI=;
-  b=DQTUqpBqTYi+v0pHmjGSYCl/0iV5ZPrK+sdf9Ns2Y5u3Lb6IVwEP50E7
-   xUQQi0uZLtC7xQM05JaOQg+tZN7jhw06xJJM93ALZ3BcW61DgFIilqY4o
-   236/bnaXuO4UUJc+70EGxmf8mtuvn0g2M1EM+ukX9cfC4UtHnH1mmmLi8
-   u54MheXyenMrAq3ktlb0ojvIWlUk3WJRHi01SRxiBHtwOl7D73lwC8ETj
-   yKHxko0TichcTGEaTNopphRXHvIxt+Hv2MQconu+wDYigeNYbZucNn6vt
-   JjsY2N0zDcHIVuG647kGu3c+fTKiWjiRKp+CIUVMqbyHRWrzFpWcOWaF3
-   Q==;
-X-CSE-ConnectionGUID: F+Ngqao4QX6+XL7Waq98RA==
-X-CSE-MsgGUID: BG3maz9AShifJ5KFcrI2vw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11571"; a="73138800"
-X-IronPort-AV: E=Sophos;i="6.18,312,1751266800"; 
-   d="scan'208";a="73138800"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 07:58:10 -0700
-X-CSE-ConnectionGUID: nTEa55piTD6m1jeSNVav/w==
-X-CSE-MsgGUID: csZop6ioRW+Ipyy5isHgtQ==
-X-ExtLoop1: 1
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.66])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 07:58:06 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 3 Oct 2025 17:58:03 +0300 (EEST)
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    Lucas De Marchi <lucas.demarchi@intel.com>, 
-    Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 2/2] PCI: Resources outside their window must set
- IORESOURCE_UNSET
-In-Reply-To: <CAMuHMdVgCHU80mRm1Vwo6GFgNAtQcf50yHBz_oAk4TrtjcMpYg@mail.gmail.com>
-Message-ID: <8b46093f-82bc-1c25-5607-ee40923b51af@linux.intel.com>
-References: <20250924134228.1663-1-ilpo.jarvinen@linux.intel.com> <20250924134228.1663-3-ilpo.jarvinen@linux.intel.com> <CAMuHMdVtVzcL3AX0uetNhKr-gLij37Ww+fcWXxnYpO3xRAOthA@mail.gmail.com> <4c28cd58-fd0d-1dff-ad31-df3c488c464f@linux.intel.com>
- <CAMuHMdUbaQDXsowZETimLJ-=gLCofeP+LnJp_txetuBQ0hmcPQ@mail.gmail.com> <c17c5ec1-132d-3588-2a4d-a0e6639cf748@linux.intel.com> <CAMuHMdVbyKdzbptA10F82Oj=6ktxnGAk4fz7dBLVdxALb8-WWg@mail.gmail.com> <2d5e9b78-8a90-3035-ff42-e881d61f4b7c@linux.intel.com>
- <CAMuHMdU_tPmQd=9dCzNs+dEt3fHNsYpYPFnT6QZk546o-J-y9g@mail.gmail.com> <7640a03e-dfea-db9c-80f5-d80fa2c505b7@linux.intel.com> <CAMuHMdVgCHU80mRm1Vwo6GFgNAtQcf50yHBz_oAk4TrtjcMpYg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041F8347DD;
+	Fri,  3 Oct 2025 14:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.92
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759503536; cv=fail; b=B+2x79n2bqZsMmTXC0tu03Q/0xoz78o5pDMs/bx5lB2LXyknMtoLgHJO2I8ZC0rKV/ifY+MPah517bxBuW8+XGBWt1ikdjr2wXW6b8hbm7NCvXcwu42dHt/XAbO77TtxjTVp3WlJ+D+I6xEyYNv+wN5TWuyJ4Ema23nQlBzeRl8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759503536; c=relaxed/simple;
+	bh=X+LmB7Dm8sSM0ZXs3hIsOa31/tXiUcXI6jhtMQ7MP8o=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Nv7DPdj9z+2bvkMHxFxsY4n6K/oWda1HI8UvvwfdG37+upcl4aweNgkUUWIqFfPbtsPkCTnfFk1qvjH6OwHI7ED2aFSF1gf/OvssMhWria+JyYlwd5WESbLC/059WfCgs56MID0j0w+ClZb0SPWGsqNB4wBbBVj3zYpJoZUESwU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.44.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vacnGvYGdpUvomTwiEl/FIyN1trWS34cfwpyAbaZ/qAkpmY0nGi979YxQZBsoEKgsRLa4dJpjlxHxvkMArSSH5TD4z1Z87HQrzC2bll4SGGgSuQ7ZACVgOSCZBpmqFftCrSpsYQn7n+R5U8zBVqsXx1Pbt0FFBBqli9N0KjZPUICcBneJReoMfxf2MkV+LQtJilTwX8xSQC1MiNVRdIG1Y+v1CllU/ER3ABni0hNsrsQ9/yfIoGSiBmkdBIDvmoOqMgfMbsJBXXj6Dn6rEr8zB11D2pwUNDPreTGCicwgv4HnU7AzAKonYgbmkWufZY4DR14Nru5CBEyI7fepm6+vQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=X+LmB7Dm8sSM0ZXs3hIsOa31/tXiUcXI6jhtMQ7MP8o=;
+ b=AQBRbsLQYqt3LM5/xEqzm8ZNCmjJdyPcHovb2ddOXYVjt/iJEZaTFdEpUimEScs6bEYGFWOrAv1poEh9FtMsktq4ggj10KeCUAIF+T2+A7joXGEexE1wjIOYSulfdUAOgAJeuTXM+Gk9+E7n+9xd/oRdDCv3B5OXTA0wle5sAhLFcDMC+hyFx4Kd6+o1WCzAYDpIKc9ZW44ebbfc/12jWUzXaucyczB5C+7KrcZKs7hvieCHuF9bBSRHLlAUEm8Ret8aae+3vYvcrCfO6tppxb8KtSP4ydANLQu6Iqjk+cSEpnA/rexcGDLr/OqAyXeQKITdrzL+/sL20mQPyMEB/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cixtech.com; dmarc=pass action=none header.from=cixtech.com;
+ dkim=pass header.d=cixtech.com; arc=none
+Received: from SI6PR06MB7104.apcprd06.prod.outlook.com (2603:1096:4:247::10)
+ by OSQPR06MB7973.apcprd06.prod.outlook.com (2603:1096:604:429::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Fri, 3 Oct
+ 2025 14:58:45 +0000
+Received: from SI6PR06MB7104.apcprd06.prod.outlook.com
+ ([fe80::dd63:8fb9:b9d8:2887]) by SI6PR06MB7104.apcprd06.prod.outlook.com
+ ([fe80::dd63:8fb9:b9d8:2887%7]) with mapi id 15.20.9160.017; Fri, 3 Oct 2025
+ 14:58:45 +0000
+From: Jun Guo <Jun.Guo@cixtech.com>
+To: Conor Dooley <conor@kernel.org>
+CC: Peter Chen <peter.chen@cixtech.com>, Fugang Duan
+	<fugang.duan@cixtech.com>, "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "broonie@kernel.org" <broonie@kernel.org>,
+	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+	"michal.simek@amd.com" <michal.simek@amd.com>, cix-kernel-upstream
+	<cix-kernel-upstream@cixtech.com>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject:
+ =?gb2312?B?u9i4tDogu9i4tDogW1BBVENIIDEvM10gZHQtYmluZGluZ3M6IHNwaTogc3Bp?=
+ =?gb2312?B?LWNhZGVuY2U6IGRvY3VtZW50IG9wdGlvbmFsIGZpZm8td2lkdGggRFQgcHJv?=
+ =?gb2312?Q?perty?=
+Thread-Topic:
+ =?gb2312?B?u9i4tDogW1BBVENIIDEvM10gZHQtYmluZGluZ3M6IHNwaTogc3BpLWNhZGVu?=
+ =?gb2312?Q?ce:_document_optional_fifo-width_DT_property?=
+Thread-Index: AQHcMd/HxJ4R705/TUewPHUL+nQ7pLSsEtIAgAE3OfqAABL1X4AAOtuAgALsUDo=
+Date: Fri, 3 Oct 2025 14:58:45 +0000
+Message-ID:
+ <SI6PR06MB710489F8394133B846744D4BFFE4A@SI6PR06MB7104.apcprd06.prod.outlook.com>
+References: <20250930075644.1665970-1-jun.guo@cixtech.com>
+ <20250930075644.1665970-2-jun.guo@cixtech.com>
+ <20250930-vocally-closable-136829bc9fed@spud>
+ <SI6PR06MB7104F6012ADAFDBC7D553F9AFFE6A@SI6PR06MB7104.apcprd06.prod.outlook.com>
+ <SI6PR06MB7104AE0345763471E67CD3C0FFE6A@SI6PR06MB7104.apcprd06.prod.outlook.com>
+ <20251001-simple-conclude-d9cd153cee3c@spud>
+In-Reply-To: <20251001-simple-conclude-d9cd153cee3c@spud>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cixtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SI6PR06MB7104:EE_|OSQPR06MB7973:EE_
+x-ms-office365-filtering-correlation-id: 258d8218-f0ec-43f4-8baa-08de028d59b3
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700021;
+x-microsoft-antispam-message-info:
+ =?gb2312?B?c0luVmVFVHRMZkdRbGV2Rm1weDRvcENxOVZRSDRjaWZaZ2xwTGFnSEdxSnRK?=
+ =?gb2312?B?UlMrbDQ1Y1Erai9hUCs5MFBOdStZNVA2c2RsQjRkVU5CYldBWXJnN01XVWR0?=
+ =?gb2312?B?N2haQ3FBcW5KUjJMbmFzOFFocVQxRTFXMHJPcW5GYzA4QXZqUXFOeDlXeDVk?=
+ =?gb2312?B?aTA3cml1SEkxeDM5S1NnWVJ0V0UzNUhMQm5LMHEvWklZV1NIMmdFc3FNeFMw?=
+ =?gb2312?B?c3VJdkQ0Y0phTEVZV2FlMm1USW56Y0NRQ3IvV0NBVWVSaFcrc0VucHBGSmVO?=
+ =?gb2312?B?amM5V1ZSRUNjVWMwbXJobUl3UWxlbjdtZzhJRUl5STJrRjBzTlhscjUvandi?=
+ =?gb2312?B?Tk5PMng4eVM0WVJ5NjZrbWVtMGRiajdwTTdEaXhOTng5UFVOTDFzRW93UDZ3?=
+ =?gb2312?B?U3hjQ2NiUVpDQkJSQmxodSs2UGE1NVVmekJrNEJiU3N4MUN3OCtndk5keUJx?=
+ =?gb2312?B?MVZNSUUxOVpmQ3k1ZXRpTER3c1BVK0xHK1JYYzAzeVluNFMxTndLQXZWalIx?=
+ =?gb2312?B?QXc1U2MwcFFoRVhNbWhOOTBsSUJLQjNJRDloMjIvcGw4Z2p6dk5rWjdWZDU2?=
+ =?gb2312?B?Y2lyN2ErZDU3ckNrK2VkS0NaODh3QUFzeVloellEeVZZQ3hjR1JzME1Vam4x?=
+ =?gb2312?B?OGVSeTFmS1R1VFJiQ0pwcVFaeUdGdDhtcFo4S01zT0hYYkJwMlpIQlJ3YTRz?=
+ =?gb2312?B?UDd4U0lwUkpBSVp1bTFjSm1xYXFMSjZmenRoalkraXpMd0w0empYVE8wazF6?=
+ =?gb2312?B?SWpkb0ZFUHBvbTJPcS93QWpyOFJuTlJaalVtVmJxd2lCbzJvS2Zpbms0ZXdJ?=
+ =?gb2312?B?L1Q2a21ocWpmdndQcHgrcVE2TXJ3VUxGenJScFlvcW8vUGltcXhxd0lFWWFj?=
+ =?gb2312?B?UDdGM0pNaDlVZlZjVkdvNkVYSFhJVWtSVjN6RzNScDNjVjBqVktqTldub2kr?=
+ =?gb2312?B?NDFnL0NiTi9QUzZzMGYxVjl2dSt3ZjlnZjNqcTZBUjZMcy9WK1hJTnlVOWtx?=
+ =?gb2312?B?ZjQyZTBUcGtJMUxzdS9mcXpxL0FqcUxCcHgzSTdXM0VudnpGV2JZRFQzaG9T?=
+ =?gb2312?B?SE5neDhuay9EZ1A2STlaOGJIUkl2NDRNbVUxb0pDbFA1Qlh2dC9DV3JFT3Np?=
+ =?gb2312?B?OS94enova1ZKV3F3UExyalduTHZ1a21rUXgrcDRzZmpXb250WWg0ZE9UZFhB?=
+ =?gb2312?B?aUxVTkVHZjBCWjFRdzhRc3hYZEJ2WXp3WnNkQ2JRTkJPV1F6WC9IUmhyQU1n?=
+ =?gb2312?B?ekJDRVdld0czWENEcXpESnNqQVFybFhuZ1F1Mytyb2x5ZjFqK005MXNEaUFI?=
+ =?gb2312?B?eHdMRFhLOEExZEVJM0VSSEltUm83TThFK3VYbWZTUW5RRFgrVlI1b21KUEJ4?=
+ =?gb2312?B?WGZFUHBmU1pPY2VQT3JMNU53SVJRdWRNTU5oRDZkbWxOVjFMNUdPZHJJVTE1?=
+ =?gb2312?B?Z3VhWDVOOGs1SS9zYXNXSTk0WDBUUFoxNXVDN0pudUlPWDBQME5pR2FDc1lB?=
+ =?gb2312?B?N0oyKzQ1ZmtmVmVkSTFBb3BIclpWRENoOE1HOXRMeHlBM1EvY2xzcTJnRU1W?=
+ =?gb2312?B?OEpuT2dpdnRkZ3hmNW5RTTBOSXhMNWppSEt6QWRoNW5pQTZKTU4zTDNCS3lQ?=
+ =?gb2312?B?MmpTRnRwRjVzN0VnU25qY3RRa3FEZEhQZ1BIQmlocTUvb20xTFJNOXpuNXlo?=
+ =?gb2312?B?VmhkZ1dHMkZFcFEvVlJSeHNMNXRWNzJpTTcwUDg0dUZPbDZFYlk2VkdPdzdQ?=
+ =?gb2312?B?Q0grRWU4SkUvMnNiRTVyd1lsWlNyWTM2UVFYcXlMcHRyWk1LU05FdTB0MjBY?=
+ =?gb2312?B?ZXVLako0Q0FzcFkxRUI3Njd3SnQ0ZGZPS0l5VDAzQXNvWlgrWmt1NmFveFRL?=
+ =?gb2312?B?NEd3SE4ydStOSHFpdWd4TGJ5aFgyeWJ3ODViUXFqQlpTcnlDUWhzS2dMeHBr?=
+ =?gb2312?B?WGk0S3NweGo4L05ZL1JIZXEycHBXVDdnRDlsMldHQlluT2dMQit2NUw1aS9I?=
+ =?gb2312?B?Tk03VWp6MHZlQ1V4eFVPWlRpbDZWVG9qazhSME10N3RKT3NqYVZRenNwUEh3?=
+ =?gb2312?Q?lbO5X8?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI6PR06MB7104.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700021);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?gb2312?B?RHNFcFpGK1pFamU3Vit3b1RrdTVzU3R2WkJtNWFtUlFNSEtCZ01JY0J1aGtp?=
+ =?gb2312?B?LzVrU2hyaG1jakI5cXQ5QVc5TzBjRTB3a2hsZlFXSkhuRlJhM1NjNmpQTzlY?=
+ =?gb2312?B?ZE83bnpPSDJXZ3k0ZXJVWW01OGlRaXRvVVlQb2pGMFoza1M3QkltWnBEUWxk?=
+ =?gb2312?B?NzdDKys3UEEzN29SMUtMQUpxa2ZuYlFnd0hXbXM1YS95UkhuQmZuNFFCZVlB?=
+ =?gb2312?B?MFFGcmo5L0QvRjdwK0hCY25mWnlqM0x6eFFWYW0xdU1MT25rcUVTdFFockdM?=
+ =?gb2312?B?bjlXMjV0YWZUZGpJQUxHT1J5ZG5vK3l3QldqSFQwVDlyakYyaWRvQlFtdlR0?=
+ =?gb2312?B?ZHhDN2FlOVdKWll3V2pqUkpCZmNOZmJHaFRjeEVxcVNhLzI3UnM1MmUxZVhZ?=
+ =?gb2312?B?K0g3RFRWWGpibCszcWF0blFidlR2dkJnV1BHTVJlTzFwN1liQ2FBMzVZNjlv?=
+ =?gb2312?B?WHFSMGxOemo2T3ptT0tRM3JDaW8xNkwvUUg5L3NRbUVZNWVKQ2oyOTBqRXF3?=
+ =?gb2312?B?dndSc1E0L1RGcjlHNDZJY1lsUkYrcXlNaUFvaVEyWTNMTWNWYXNxeEZIUnEw?=
+ =?gb2312?B?SFBKbjVFWGhMUnNKSmM2bWdLQm1JSTJhakJsZkVJNG5VS0s0UGt5VTB2bjRD?=
+ =?gb2312?B?VGRTWXVOQisxbkRYZ2hQczR0b09mRXpvT1Z0UzhBbzgvVGU4Rm85eUdTNFZW?=
+ =?gb2312?B?cW5hMlUyV3EzSkorenNQL0hGV2Y4NlVoYTJ5YkFDeFVYckg3aHlEeHpGeUVG?=
+ =?gb2312?B?RG5vdUMydGVHOG15UXFUNktMYTdNTEd6ZjJjZGgxb1c5aFJhbEEyWjBPSGpy?=
+ =?gb2312?B?K2l4SW5LWEVrbWpLNVVkdXhvaTJMbWkyamlvTzhWRHZUYUY2alNRRWdkcUUx?=
+ =?gb2312?B?MHVYMWpRQkN0ckxwd2h0NUNlYkpPeFdsOFFSYlJpYUd4MElDMk0vVlloQVRm?=
+ =?gb2312?B?amViS0NwN1NLVnFWWUhNNStESDg1aHd3UzJYZjRLODdTTzl5dFVnNXBRMDJM?=
+ =?gb2312?B?azZwS25ERHd5VmdvSlZwMXpWUDFJY0VmbmZ2Q1I4K081VDEvTkluakZjaE5q?=
+ =?gb2312?B?bCt5K1p3QzJYZkl2N1NGbEsycU1jTDVia1E2djJjYmlCc0s4enBPNmRSbmRI?=
+ =?gb2312?B?UjBSd0ZjRmRWc0ExMzRONXQxbm5aN1I3emRZUmV3ZWwxYnpyN2hDdmorbkJH?=
+ =?gb2312?B?bWtpb3Rnd3A0bEtZL1ltN0NmRXhiVDhHQ005UFlxWXd2QktwL2JJcC9ob0p3?=
+ =?gb2312?B?dDhkRSt6V2h6S3NPNFRZM2x2Z2NRTHBQODljNlhuOXpaN1FsMlZiWWMrelZX?=
+ =?gb2312?B?dG1RS29vRCtuQS9ybnErTUNVaWpEODdUaWRUWDVENlhnVk84dzA3RlZHZzNZ?=
+ =?gb2312?B?cVk0ZFdQWFZKZExkVWN3bXJvZTZwNXlNWTloQVM0NnN6ODNuOXFTYmtiMU8z?=
+ =?gb2312?B?V0tlT3RoWGw3bUpXOUxSTW11NWlBZ2dGMnYrSlkzcVMxemxEL0NqL1o0Qytp?=
+ =?gb2312?B?Q2JybHE3L2lyc2tuT0lnNE9LaFcvU2dWS3hMWnM4Q3pDUTFBYW0zbnpDWWxk?=
+ =?gb2312?B?bElMNW1zb21tbGF4WWU0aDllZGc2T3NOTnFXQ1FzMnVKRE1VM28vSzhZaGUr?=
+ =?gb2312?B?ZTBtNk5IV201OXhRa3NDc3A2Vm9oMjh4MmpFVkcxbm9LZnAycnlyU2xBOHNP?=
+ =?gb2312?B?c2FmWFJ6K1RwdHJ2aUdrRHVkc2M4ZjliK1FiQXpKN2o1d3dsRG9TeUwxM2hP?=
+ =?gb2312?B?dUozY3V6UlZPYzc2bDZsQXVpUEFYRlJmSVMrdTI5RjIraHUyUC9ValRNcGxx?=
+ =?gb2312?B?d3YyQ3RZUUhscGNvTGNJdWNRZ21vam4vY3hDVFY4K3Jwbno2eUYxeWRpVmlN?=
+ =?gb2312?B?ZjFGTnRjNHl0S3NxT3ZrVkU0dUEvQjRLY3ZVMjhwdUF3Y3hSTUE3US9FMmJn?=
+ =?gb2312?B?amRSQVRLMkZTYkFqb1JoVWZDclBuNnBnRWZiNWFUQUZoYmUwTDFSck40Qm5P?=
+ =?gb2312?B?djlYbWFwZjNKYUFpbjRKTXlUYVlwRmxEWE53WklHMEhjc29pVDNPUHgzWUtt?=
+ =?gb2312?B?WFdzbUJFU1lVSmxsUmRpNUg0SC9CMXBpVEFzQ1Y3d0JLRDhJY0YzSmtYUkp5?=
+ =?gb2312?Q?bMEo=3D?=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-1568081130-1759500539=:1157"
-Content-ID: <a96fb8b5-e381-7d73-709c-0b4dfb3465ab@linux.intel.com>
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SI6PR06MB7104.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 258d8218-f0ec-43f4-8baa-08de028d59b3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Oct 2025 14:58:45.1643
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: gFuZK6HZvK5Nc8v6fR1xBvV+GIncyLuZDsU1IUYX7IyTIMgPSAGNtuM3ehgxzdnHBxlGwJKsSIIZQrrs4sUgFw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSQPR06MB7973
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323328-1568081130-1759500539=:1157
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <0df305d0-231d-8299-92bc-2a046364760c@linux.intel.com>
-
-On Fri, 3 Oct 2025, Geert Uytterhoeven wrote:
-> On Thu, 2 Oct 2025 at 18:59, Ilpo J=E4rvinen
-> <ilpo.jarvinen@linux.intel.com> wrote:
-> > On Thu, 2 Oct 2025, Geert Uytterhoeven wrote:
-> > > On Thu, 2 Oct 2025 at 16:54, Ilpo J=E4rvinen
-> > > <ilpo.jarvinen@linux.intel.com> wrote:
-> > > > On Wed, 1 Oct 2025, Geert Uytterhoeven wrote:
-> > > > > On Wed, 1 Oct 2025 at 15:06, Ilpo J=E4rvinen
-> > > > > <ilpo.jarvinen@linux.intel.com> wrote:
-> > > > > > On Wed, 1 Oct 2025, Geert Uytterhoeven wrote:
-> > > > > > > On Tue, 30 Sept 2025 at 18:32, Ilpo J=E4rvinen
-> > > > > > > <ilpo.jarvinen@linux.intel.com> wrote:
-> > > > > > > > On Tue, 30 Sep 2025, Geert Uytterhoeven wrote:
-> > > > > > > > > On Fri, 26 Sept 2025 at 04:40, Ilpo J=E4rvinen
-> > > > > > > > > <ilpo.jarvinen@linux.intel.com> wrote:
-> > > > > > > > > > PNP resources are checked for conflicts with the other =
-resource in the
-> > > > > > > > > > system by quirk_system_pci_resources() that walks throu=
-gh all PCI
-> > > > > > > > > > resources. quirk_system_pci_resources() correctly filte=
-rs out resource
-> > > > > > > > > > with IORESOURCE_UNSET.
-> > > > > > > > > >
-> > > > > > > > > > Resources that do not reside within their bridge window=
-, however, are
-> > > > > > > > > > not properly initialized with IORESOURCE_UNSET resultin=
-g in bogus
-> > > > > > > > > > conflicts detected in quirk_system_pci_resources():
-> > > > > > > > > >
-> > > > > > > > > > pci 0000:00:02.0: VF BAR 2 [mem 0x00000000-0x1fffffff 6=
-4bit pref]
-> > > > > > > > > > pci 0000:00:02.0: VF BAR 2 [mem 0x00000000-0xdfffffff 6=
-4bit pref]: contains BAR 2 for 7 VFs
-> > > > > > > > > > ...
-> > > > > > > > > > pci 0000:03:00.0: VF BAR 2 [mem 0x00000000-0x1ffffffff =
-64bit pref]
-> > > > > > > > > > pci 0000:03:00.0: VF BAR 2 [mem 0x00000000-0x3dffffffff=
- 64bit pref]: contains BAR 2 for 31 VFs
-> > > > > > > > > > ...
-> > > > > > > > > > pnp 00:04: disabling [mem 0xfc000000-0xfc00ffff] becaus=
-e it overlaps 0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > > > > > > > > pnp 00:05: disabling [mem 0xc0000000-0xcfffffff] becaus=
-e it overlaps 0000:00:02.0 BAR 9 [mem 0x00000000-0xdfffffff 64bit pref]
-> > > > > > > > > > pnp 00:05: disabling [mem 0xfedc0000-0xfedc7fff] becaus=
-e it overlaps 0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > > > > > > > > pnp 00:05: disabling [mem 0xfeda0000-0xfeda0fff] becaus=
-e it overlaps 0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > > > > > > > > pnp 00:05: disabling [mem 0xfeda1000-0xfeda1fff] becaus=
-e it overlaps 0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > > > > > > > > pnp 00:05: disabling [mem 0xc0000000-0xcfffffff disable=
-d] because it overlaps 0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bi=
-t pref]
-> > > > > > > > > > pnp 00:05: disabling [mem 0xfed20000-0xfed7ffff] becaus=
-e it overlaps 0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > > > > > > > > pnp 00:05: disabling [mem 0xfed90000-0xfed93fff] becaus=
-e it overlaps 0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > > > > > > > > pnp 00:05: disabling [mem 0xfed45000-0xfed8ffff] becaus=
-e it overlaps 0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > > > > > > > > pnp 00:05: disabling [mem 0xfee00000-0xfeefffff] becaus=
-e it overlaps 0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > > > > > > > >
-> > > > > > > > > > Mark resources that are not contained within their brid=
-ge window with
-> > > > > > > > > > IORESOURCE_UNSET in __pci_read_base() which resolves th=
-e false
-> > > > > > > > > > positives for the overlap check in quirk_system_pci_res=
-ources().
-> > > > > > > > > >
-> > > > > > > > > > Fixes: f7834c092c42 ("PNP: Don't check for overlaps wit=
-h unassigned PCI BARs")
-> > > > > > > > > > Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.int=
-el.com>
-> > > > > > > > >
-> > > > > > > > > Thanks for your patch, which is now commit 06b77d5647a4d6=
-a7 ("PCI:
-> > > > > > > > > Mark resources IORESOURCE_UNSET when outside bridge windo=
-ws") in
-> > > > > > > > > linux-next/master next-20250929 pci/next
-> > > > > > >
-> > > > > > > > > This replaces the actual resources by their sizes in the =
-boot log on
-> > > > > > > > > e.g. on R-Car M2-W:
-> > > > > > > > >
-> > > > > > > > >      pci-rcar-gen2 ee090000.pci: host bridge /soc/pci@ee0=
-90000 ranges:
-> > > > > > > > >      pci-rcar-gen2 ee090000.pci:      MEM 0x00ee080000..0=
-x00ee08ffff -> 0x00ee080000
-> > > > > > > > >      pci-rcar-gen2 ee090000.pci: PCI: revision 11
-> > > > > > > > >      pci-rcar-gen2 ee090000.pci: PCI host bridge to bus 0=
-000:00
-> > > > > > > > >      pci_bus 0000:00: root bus resource [bus 00]
-> > > > > > > > >      pci_bus 0000:00: root bus resource [mem 0xee080000-0=
-xee08ffff]
-> > > > > > > > >      pci 0000:00:00.0: [1033:0000] type 00 class 0x060000=
- conventional PCI endpoint
-> > > > > > > > >     -pci 0000:00:00.0: BAR 0 [mem 0xee090800-0xee090bff]
-> > > > > > > > >     -pci 0000:00:00.0: BAR 1 [mem 0x40000000-0x7fffffff p=
-ref]
-> > > > > > > >
-> > > > > > > > What is going to be the parent of these resources? They don=
-'t seem to fall
-> > > > > > > > under the root bus resource above in which case the output =
-change is
-> > > > > > > > intentional so they don't appear as if address range would =
-be "okay".
-> > > > > > >
-> > > > > > > >From /proc/iomem:
-> > > > > > >
-> > > > > > >     ee080000-ee08ffff : pci@ee090000
-> > > > > > >       ee080000-ee080fff : 0000:00:01.0
-> > > > > > >         ee080000-ee080fff : ohci_hcd
-> > > > > > >       ee081000-ee0810ff : 0000:00:02.0
-> > > > > > >         ee081000-ee0810ff : ehci_hcd
-> > > > > > >     ee090000-ee090bff : ee090000.pci pci@ee090000
-> > > > > >
-> > > > > > Okay, so this seem to appear in the resource tree but not among=
- the root
-> > > > > > bus resources.
-> > > > > >
-> > > > > > >     ee0c0000-ee0cffff : pci@ee0d0000
-> > > > > > >       ee0c0000-ee0c0fff : 0001:01:01.0
-> > > > > > >         ee0c0000-ee0c0fff : ohci_hcd
-> > > > > > >       ee0c1000-ee0c10ff : 0001:01:02.0
-> > > > > > >         ee0c1000-ee0c10ff : ehci_hcd
-> > > > > > >
-> > > > > > > > When IORESOURCE_UNSET is set in a resource, %pR does not pr=
-int the start
-> > > > > > > > and end addresses.
-> > > > > > >
-> > > > > > > Yeah, that's how I found this commit, without bisecting ;-)
-> > > > > > >
-> > > > > > > > >     +pci 0000:00:00.0: BAR 0 [mem size 0x00000400]
-> > > > > > > > >     +pci 0000:00:00.0: BAR 1 [mem size 0x40000000 pref]
-> > > > > > > > >      pci 0000:00:01.0: [1033:0035] type 00 class 0x0c0310=
- conventional PCI endpoint
-> > > > > > > > >     -pci 0000:00:01.0: BAR 0 [mem 0x00000000-0x00000fff]
-> > > > > > > > >     +pci 0000:00:01.0: BAR 0 [mem size 0x00001000]
-> > > > > > > >
-> > > > > > > > For this resource, it's very much intentional. It's a zero-=
-based BAR which
-> > > > > > > > was left without IORESOURCE_UNSET prior to my patch leading=
- to others part
-> > > > > > > > of the kernel to think that resource range valid and in use=
- (in your
-> > > > > > > > case it's so small it wouldn't collide with anything but it=
- wasn't
-> > > > > > > > properly set up resource, nonetheless).
-> > > > > > > >
-> > > > > > > > >      pci 0000:00:01.0: supports D1 D2
-> > > > > > > > >      pci 0000:00:01.0: PME# supported from D0 D1 D2 D3hot
-> > > > > > > > >      pci 0000:00:02.0: [1033:00e0] type 00 class 0x0c0320=
- conventional PCI endpoint
-> > > > > > > > >     -pci 0000:00:02.0: BAR 0 [mem 0x00000000-0x000000ff]
-> > > > > > > > >     +pci 0000:00:02.0: BAR 0 [mem size 0x00000100]
-> > > > > > > >
-> > > > > > > > And this as well is very much intentional.
-> > > > > > > >
-> > > > > > > > >      pci 0000:00:02.0: supports D1 D2
-> > > > > > > > >      pci 0000:00:02.0: PME# supported from D0 D1 D2 D3hot
-> > > > > > > > >      PCI: bus0: Fast back to back transfers disabled
-> > > > > > > > >      pci 0000:00:01.0: BAR 0 [mem 0xee080000-0xee080fff]:=
- assigned
-> > > > > > > > >      pci 0000:00:02.0: BAR 0 [mem 0xee081000-0xee0810ff]:=
- assigned
-> > > > > > > > >      pci_bus 0000:00: resource 4 [mem 0xee080000-0xee08ff=
-ff]
-> > > > > > > > >
-> > > > > > > > > Is that intentional?
-> > > > > > > >
-> > > > > > > > There's also that pci_dbg() in the patch which would show t=
-he original
-> > > > > > > > addresses (print the resource before setting IORESOURCE_UNS=
-ET) but to see
-> > > > > > > > it one would need to enable it with dyndbg=3D... Bjorn was =
-thinking of
-> > > > > > > > making that pci_info() though so it would appear always.
-> > > > > > > >
-> > > > > > > > Was this the entire PCI related diff? I don't see those 000=
-0:00:00.0 BARs
-> > > > > > > > getting assigned anywhere.
-> > > > > > >
-> > > > > > > The above log is almost complete (lacked enabling the device =
-afterwards).
-> > > > > > >
-> > > > > > > AFAIU, the BARs come from the reg and ranges properties in th=
-e
-> > > > > > > PCI controller nodes;
-> > > > > > > https://elixir.bootlin.com/linux/v6.17/source/arch/arm/boot/d=
-ts/renesas/r8a7791.dtsi#L1562
-> > > > > >
-> > > > > > Thanks, although I had already found this line by grep. I was j=
-ust
-> > > > > > expecting the address appear among root bus resources too.
-> > > > > >
-> > > > > > Curiously enough, pci_register_host_bridge() seems to try to ad=
-d some
-> > > > > > resource from that list into bus and it's what prints those "ro=
-ot bus
-> > > > > > resource" lines and ee090000 is not among the printed lines des=
-pite
-> > > > > > appearing in /proc/iomem. As is, the resource tree and PCI bus =
-view on the
-> > > > > > resources seems to be in disagreement and I'm not sure what to =
-make of it.
-> > > > > >
-> > > > > > But before considering going into that direction or figuring ou=
-t why this
-> > > > > > ee090000 resource does not appear among root bus resources, cou=
-ld you
-> > > > > > check if the attached patch changes behavior for the resource w=
-hich are
-> > > > > > non-zero based?
-> > > > >
-> > > > > This patch has no impact on dmesg, lspci output, or /proc/iomem
-> > > > > for pci-rcar-gen2.
-> > > >
-> > > > It would have been too easy... :-(
-> > > >
-> > > > I'm sorry I don't really know these platform well and I'm currently=
- trying
-> > > > to understand what adds that ee090000 resource into the resource tr=
-ee
-> > > > and so far I've not been very successful.
-> > > >
-> > > > Perhaps it would be easiest to print a stacktrace when the resource=
- is
-> > > > added but there are many possible functions. I think all of them
-> > > > converge in __request_resource() so I suggest adding:
-> > > >
-> > > > WARN_ON(new->start =3D=3D 0xee090000);
-> > > >
-> > > > before __request_resource() does anything.
-> > >
-> > >     Call trace:
-> > >      unwind_backtrace from show_stack+0x10/0x14
-> > >      show_stack from dump_stack_lvl+0x7c/0xb0
-> > >      dump_stack_lvl from __warn+0x80/0x198
-> > >      __warn from warn_slowpath_fmt+0xc0/0x124
-> > >      warn_slowpath_fmt from __request_resource+0x38/0xc8
-> > >      __request_resource from __request_region+0xc4/0x1e8
-> > >      __request_region from __devm_request_region+0x80/0xac
-> > >      __devm_request_region from __devm_ioremap_resource+0xcc/0x160
-> > >      __devm_ioremap_resource from rcar_pci_probe+0x58/0x350
-> > >      rcar_pci_probe from platform_probe+0x58/0x90
-> > >
-> > > I.e. the call to devm_platform_get_and_ioremap_resource() in
-> > > drivers/pci/controller/pci-rcar-gen2.c:rcar_pci_probe().
-> >
-> > Thanks, the patch below might help BAR0 (but I'm not sure if it's the
-> > correct solution due to being so unfamiliar with these kind of platform=
-s
-> > and how they're initialized).
->=20
-> Thanks, that has the following impact on dmesg:
->=20
->      pci-rcar-gen2 ee090000.pci: PCI: revision 11
->      pci-rcar-gen2 ee090000.pci: PCI host bridge to bus 0000:00
->      pci_bus 0000:00: root bus resource [bus 00]
->     -pci_bus 0000:00: root bus resource [mem 0xee080000-0xee08ffff]
->     +pci_bus 0000:00: root bus resource [mem 0xee080000-0xee090bff]
->      pci 0000:00:00.0: [1033:0000] type 00 class 0x060000 conventional
-> PCI endpoint
->     -pci 0000:00:00.0: BAR 0 [mem 0xee090800-0xee090bff]: no initial
-> claim (no window)
->     -pci 0000:00:00.0: BAR 0 [mem size 0x00000400]
->     -pci 0000:00:00.0: BAR 1 [mem 0x40000000-0x7fffffff pref]: no
-> initial claim (no window)
->     +pci 0000:00:00.0: BAR 0 [mem 0xee090800-0xee090bff]
->      pci 0000:00:00.0: BAR 1 [mem size 0x40000000 pref]
->      pci 0000:00:01.0: [1033:0035] type 00 class 0x0c0310 conventional
-> PCI endpoint
->     -pci 0000:00:01.0: BAR 0 [mem 0x00000000-0x00000fff]: no initial
-> claim (no window)
->      pci 0000:00:01.0: BAR 0 [mem size 0x00001000]
->      pci 0000:00:01.0: supports D1 D2
->      pci 0000:00:01.0: PME# supported from D0 D1 D2 D3hot
->      pci 0000:00:02.0: [1033:00e0] type 00 class 0x0c0320 conventional
-> PCI endpoint
->     -pci 0000:00:02.0: BAR 0 [mem 0x00000000-0x000000ff]: no initial
-> claim (no window)
-
-Did you e.g. forget to change pci_dbg() to pci_info() as these all went=20
-away, I cannot see why it should disappear because of my patch?
-
-(No need to apologize if that was the case, just confirming if that=20
-explains it is enough. :-))
-
->      pci 0000:00:02.0: BAR 0 [mem size 0x00000100]
->      pci 0000:00:02.0: supports D1 D2
->      pci 0000:00:02.0: PME# supported from D0 D1 D2 D3hot
->      PCI: bus0: Fast back to back transfers disabled
->      pci 0000:00:01.0: BAR 0 [mem 0xee080000-0xee080fff]: assigned
->      pci 0000:00:02.0: BAR 0 [mem 0xee081000-0xee0810ff]: assigned
-
-Perhaps print here what's the parent resource of these resource.
-
->     -pci_bus 0000:00: resource 4 [mem 0xee080000-0xee08ffff]
->     +pci_bus 0000:00: resource 4 [mem 0xee080000-0xee090bff]
->      pci-rcar-gen2 ee0d0000.pci: adding to PM domain always-on
->      PM: genpd_add_device: Add ee0d0000.pci to always-on
->      pci-rcar-gen2 ee0d0000.pci: host bridge /soc/pci@ee0d0000 ranges:
->     @@ -414,26 +416,22 @@ PM: =3D=3D=3D=3D always-on/ee0d0000.pci: start
->      pci-rcar-gen2 ee0d0000.pci: PCI: revision 11
->      pci-rcar-gen2 ee0d0000.pci: PCI host bridge to bus 0001:01
->      pci_bus 0001:01: root bus resource [bus 01]
->     -pci_bus 0001:01: root bus resource [mem 0xee0c0000-0xee0cffff]
->     +pci_bus 0001:01: root bus resource [mem 0xee0c0000-0xee0d0bff]
->      pci 0001:01:00.0: [1033:0000] type 00 class 0x060000 conventional
-> PCI endpoint
->     -pci 0001:01:00.0: BAR 0 [mem 0xee0d0800-0xee0d0bff]: no initial
-> claim (no window)
->     -pci 0001:01:00.0: BAR 0 [mem size 0x00000400]
->     -pci 0001:01:00.0: BAR 1 [mem 0x40000000-0x7fffffff pref]: no
-> initial claim (no window)
->     +pci 0001:01:00.0: BAR 0 [mem 0xee0d0800-0xee0d0bff]
->      pci 0001:01:00.0: BAR 1 [mem size 0x40000000 pref]
->      pci 0001:01:01.0: [1033:0035] type 00 class 0x0c0310 conventional
-> PCI endpoint
->     -pci 0001:01:01.0: BAR 0 [mem 0x00000000-0x00000fff]: no initial
-> claim (no window)
->      pci 0001:01:01.0: BAR 0 [mem size 0x00001000]
->      pci 0001:01:01.0: supports D1 D2
->      pci 0001:01:01.0: PME# supported from D0 D1 D2 D3hot
->      pci 0001:01:02.0: [1033:00e0] type 00 class 0x0c0320 conventional
-> PCI endpoint
->     -pci 0001:01:02.0: BAR 0 [mem 0x00000000-0x000000ff]: no initial
-> claim (no window)
->      pci 0001:01:02.0: BAR 0 [mem size 0x00000100]
->      pci 0001:01:02.0: supports D1 D2
->      pci 0001:01:02.0: PME# supported from D0 D1 D2 D3hot
->      PCI: bus1: Fast back to back transfers disabled
->      pci 0001:01:01.0: BAR 0 [mem 0xee0c0000-0xee0c0fff]: assigned
->      pci 0001:01:02.0: BAR 0 [mem 0xee0c1000-0xee0c10ff]: assigned
->     -pci_bus 0001:01: resource 4 [mem 0xee0c0000-0xee0cffff]
->     +pci_bus 0001:01: resource 4 [mem 0xee0c0000-0xee0d0bff]
->      rcar-pcie fe000000.pcie: adding to PM domain always-on
->      PM: genpd_add_device: Add fe000000.pcie to always-on
->      rcar-pcie fe000000.pcie: host bridge /soc/pcie@fe000000 ranges:
->=20
-> and on /proc/iomem (I used "diff -w" to reduce clutter):
->=20
->      ec700000-ec70ffff : ec700000.dma-controller dma-controller@ec700000
->      ec720000-ec72ffff : ec720000.dma-controller dma-controller@ec720000
->      ec740000-ec7401ff : ec500000.sound audmapp
->     -ee080000-ee08ffff : pci@ee090000
-
-So what did add this previous? (Maybe use the same WARN_ON() trick as=20
-previously to find out.)
-
-It might have gotten broken because the coalesed resource=20
-ee080000-ee090bff overlaps with that other resource in the resource tree.=
-=20
-But I don't see anything to that effect in the log so it's either silent=20
-failure or there's much filtered from the log.
-
->     -  ee080000-ee080fff : 0000:00:01.0
->          ee080000-ee080fff : ohci_hcd
->     -  ee081000-ee0810ff : 0000:00:02.0
->          ee081000-ee0810ff : ehci_hcd
->      ee090000-ee090bff : ee090000.pci pci@ee090000
->     -ee0c0000-ee0cffff : pci@ee0d0000
->     -  ee0c0000-ee0c0fff : 0001:01:01.0
->          ee0c0000-ee0c0fff : ohci_hcd
->     -  ee0c1000-ee0c10ff : 0001:01:02.0
->          ee0c1000-ee0c10ff : ehci_hcd
->      ee0d0000-ee0d0bff : ee0d0000.pci pci@ee0d0000
->      ee100000-ee100327 : ee100000.mmc mmc@ee100000
->=20
-> Removing the pci@ee0x0000 and 000x:0x:0x.0 entries doesn't look
-> right to me? Or am I missing something?
-
-I cannot understand this output, these resources seem to have been now=20
-left without a parent and due to -w I don't know what's their real=20
-indentation level.
-
-> > If this works, we'll also have to decide what to do with the BAR1 (it
-> > didn't appear in your (partial?) /proc/iomem quote so I'm left unsure h=
-ow
-> > to approach it).
->=20
-> That is indeed not visible in /proc/iomem.
-
-I meant before the commit 06b77d5647a4d6a7 ("PCI Mark resources=20
-IORESOURCE_UNSET when outside bridge windows"), was it present?
-
-> I tried the following (whitespace-damaged):
->=20
-> --- a/drivers/pci/controller/pci-rcar-gen2.c
-> +++ b/drivers/pci/controller/pci-rcar-gen2.c
-> @@ -179,6 +179,7 @@ static void rcar_pci_setup(struct rcar_pci *priv)
->         unsigned long window_size;
->         unsigned long window_addr;
->         unsigned long window_pci;
-> +       struct resource res;
->         u32 val;
->=20
->         entry =3D resource_list_first_type(&bridge->dma_ranges, IORESOURC=
-E_MEM);
-> @@ -191,6 +192,8 @@ static void rcar_pci_setup(struct rcar_pci *priv)
->                 window_pci =3D entry->res->start - entry->offset;
->                 window_size =3D resource_size(entry->res);
->         }
-> +       resource_set_range(&res, window_addr, window_size);
-
-You need to set flags properly too as this now tried to insert BUS, not=20
-MEM resource (DEFINE_RES() might be the more appropriate in that case=20
-anyway).=20
-
-However, if there's not &bridge->dma_ranges ranges entry, rcar_pci_setup()=
-=20
-seems to initialize the resource to 0x40000000-0x7fffffff and I'm not sure=
-=20
-how it's supposed to work if there's more than one of these devices as per=
-=20
-the log above.
-
-> +       pci_add_resource(&bridge->windows, &res);
-
-What would be the backing resource in the resource tree for this? I'm not=
-=20
-sure if pci_add_resource() is going to result in adding one into the=20
-resource tree.
-
->         pm_runtime_enable(dev);
->         pm_runtime_get_sync(dev);
->=20
-> and only got:
->=20
->      pci-rcar-gen2 ee090000.pci: PCI host bridge to bus 0000:00
->      pci_bus 0000:00: root bus resource [bus 00]
->      pci_bus 0000:00: root bus resource [mem 0xee080000-0xee090bff]
->     +pci_bus 0000:00: busn_res: can not insert [bus 00-7fffffff] under
-> domain [bus 00-ff] (conflicts with (null) [bus 00-ff])
->     +pci_bus 0000:00: root bus resource [mem size 0x40000000 64bit
-> pref window disabled]
->      pci 0000:00:00.0: [1033:0000] type 00 class 0x060000 conventional
-> PCI endpoint
->      pci 0000:00:00.0: BAR 0 [mem 0xee090800-0xee090bff]
->      pci 0000:00:00.0: BAR 1 [mem size 0x40000000 pref]
->     @@ -417,6 +419,8 @@ pci-rcar-gen2 ee0d0000.pci: PCI: revisio
->      pci-rcar-gen2 ee0d0000.pci: PCI host bridge to bus 0001:01
->      pci_bus 0001:01: root bus resource [bus 01]
->      pci_bus 0001:01: root bus resource [mem 0xee0c0000-0xee0d0bff]
->     +pci_bus 0001:01: busn_res: can not insert [bus 01-7fffffff] under
-> domain [bus 00-ff] (conflicts with (null) [bus 00-ff])
->     +pci_bus 0001:01: root bus resource [mem size 0x40000000 64bit
-> pref window disabled]
->      pci 0001:01:00.0: [1033:0000] type 00 class 0x060000 conventional
-> PCI endpoint
->      pci 0001:01:00.0: BAR 0 [mem 0xee0d0800-0xee0d0bff]
->      pci 0001:01:00.0: BAR 1 [mem size 0x40000000 pref]
->=20
-> but no impact on /proc/iomem.
->=20
-> > I also noticed that || COMPILE_TEST is made ineffective for this driver=
- by
-> > the depends on ARM on the other line but it built just fine on x86 afte=
-r
-> > changing the depends on to:
-> >
-> > depends on (ARCH_RENESAS && ARM) || COMPILE_TEST
->=20
-> Thanks, that is a relic from the past, when the driver failed to build
-> on other architectures. I have submitted a fix.
-
-Thanks.
-
---=20
- i.
---8323328-1568081130-1759500539=:1157--
+T24gVHVlLCBPY3QgMDIsIDIwMjUgYXQgMDI6MDQ6MDBBTSArMDAwMCwgQ29ub3IgRG9vbGV5IHdy
+b3RlOg0KPiBPbiBXZWQsIE9jdCAwMSwgMjAyNSBhdCAwMjozNjo0NFBNICswMDAwLCBKdW4gR3Vv
+IHdyb3RlOg0KPiA+IE9uIFR1ZSwgT2N0IDAxLCAyMDI1IGF0IDAyOjUyOjAwQU0gKzA4MDAsIENv
+bm9yIERvb2xleSB3cm90ZToNCj4gPiA+IE9uIFR1ZSwgU2VwIDMwLCAyMDI1IGF0IDAzOjU2OjQy
+UE0gKzA4MDAsIEp1biBHdW8gd3JvdGU6DQo+ID4gPiA+IEFkZCBkb2N1bWVudGF0aW9uIGZvciB0
+aGUgb3B0aW9uYWwgJ2ZpZm8td2lkdGgnIGRldmljZSB0cmVlIHByb3BlcnR5DQo+ID4gPiA+IGZv
+ciB0aGUgQ2FkZW5jZSBTUEkgY29udHJvbGxlci4NCj4gPiA+ID4NCj4gPiA+ID4gU2lnbmVkLW9m
+Zi1ieTogSnVuIEd1byA8anVuLmd1b0BjaXh0ZWNoLmNvbT4NCj4gPiA+ID4gLS0tDQo+ID4gPiA+
+ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9zcGkvc3BpLWNhZGVuY2UueWFtbCAgICAgICAgICB8
+IDExICsrKysrKysrKysrDQo+ID4gPiA+ICAxIGZpbGUgY2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygr
+KQ0KPiA+ID4gPg0KPiA+ID4gPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
+L2JpbmRpbmdzL3NwaS9zcGktY2FkZW5jZS55YW1sIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
+L2JpbmRpbmdzL3NwaS9zcGktY2FkZW5jZS55YW1sDQo+ID4gPiA+IGluZGV4IDhkZTk2YWJlOWRh
+MS4uYjJlM2YyMTc0NzNiIDEwMDY0NA0KPiA+ID4gPiAtLS0gYS9Eb2N1bWVudGF0aW9uL2Rldmlj
+ZXRyZWUvYmluZGluZ3Mvc3BpL3NwaS1jYWRlbmNlLnlhbWwNCj4gPiA+ID4gKysrIGIvRG9jdW1l
+bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3NwaS9zcGktY2FkZW5jZS55YW1sDQo+ID4gPiA+
+IEBAIC02Miw2ICs2MiwxNyBAQCBwcm9wZXJ0aWVzOg0KPiA+ID4gPiAgICAgIGl0ZW1zOg0KPiA+
+ID4gPiAgICAgICAgLSBjb25zdDogc3BpDQo+ID4gPiA+DQo+ID4gPiA+ICsgIGZpZm8td2lkdGg6
+DQo+ID4gPiA+ICsgICAgZGVzY3JpcHRpb246IHwNCj4gPiA+ID4gKyAgICAgIFRoaXMgcHJvcGVy
+dHkgc3BlY2lmaWVzIHRoZSBGSUZPIGRhdGEgd2lkdGggKGluIGJpdHMpIG9mIHRoZSBoYXJkd2Fy
+ZS4NCj4gPiA+ID4gKyAgICAgIEl0IG11c3QgYmUgY29uZmlndXJlZCBhY2NvcmRpbmcgdG8gdGhl
+IGFjdHVhbCBGSUZPIHdpZHRoIHNldCBkdXJpbmcNCj4gPiA+ID4gKyAgICAgIHRoZSBJUCBkZXNp
+Z24uIEZvciBpbnN0YW5jZSwgaWYgdGhlIGhhcmR3YXJlIEZJRk8gaXMgMzIgYml0cyB3aWRlLA0K
+PiA+ID4gPiArICAgICAgdGhpcyBwcm9wZXJ0eSBzaG91bGQgYmUgc2V0IHRvIDMyLg0KPiA+ID4g
+PiArICAgICRyZWY6IC9zY2hlbWFzL3R5cGVzLnlhbWwjL2RlZmluaXRpb25zL3VpbnQzMg0KPiA+
+ID4gPiArICAgIG1pbmltdW06IDgNCj4gPiA+ID4gKyAgICBtYXhpbXVtOiAzMg0KPiA+ID4gPiAr
+ICAgIGRlZmF1bHQ6IDgNCj4gPiA+DQo+ID4gPiBJIGFzc3VtZSB0aGlzIGRpZmZlcnMgZnJvbSBm
+aWZvLWRlcHRoIGJlY2F1c2UgdGhpcyBpcyB0aGUgYWN0dWFsIHdpZHRoDQo+ID4gPiBvZiB0aGUg
+cmVnaXN0ZXJzIHJhdGhlciB0aGFuIHRoZSBudW1iZXIgb2YgZWxlbWVudHMgb2YgdGhhdCB3aWR0
+aCB0aGUNCj4gPiA+IEZJRk8gY2FuIGNvbnRhaW4/DQo+ID4NCj4gPiBUaGFuayB5b3UgZm9yIHlv
+dXIgcmV2aWV3LiBZb3UgYXJlIGFic29sdXRlbHkgY29ycmVjdC4gVGhlIGBmaWZvLXdpZHRoYA0K
+PiA+IGluZGVlZCByZWZlcnMgdG8gdGhlIHBoeXNpY2FsIHdpZHRoIG9mIHRoZSBGSUZPIGRhdGEg
+cmVnaXN0ZXJzIChlLmcuLCA4LA0KPiA+IDE2LCBvciAzMiBiaXRzKSwgd2hlcmVhcyBgZmlmby1k
+ZXB0aGAgZGVzY3JpYmVzIGhvdyBtYW55IGVsZW1lbnRzIG9mDQo+ID4gIHRoYXQgd2lkdGggdGhl
+IEZJRk8gY2FuIHN0b3JlLg0KPiA+DQo+ID4gPiBIb3dldmVyLCB0aGlzIGlzbid0IHNvbWV0aGlu
+ZyBkZWZpbmVkIGFzIGNvbW1vbiBpbiBzcGktY29udHJvbGxlci55YW1sDQo+ID4gPiBzbyB5b3Un
+bGwgbmVlZCBhIHZlbmRvciBwcmVmaXggZm9yIHRoZSBwcm9wZXJ0eSBpZiB0aGUgcHJvcGVydHkg
+c3RheXMuDQo+ID4gPiBUaGlzIGRvZXMsIGhvd2V2ZXIsIHNlZW0gbGlrZSBzb21ldGhpbmcgdGhh
+dCBjYW4ganVzdCBiZSBkZXRlcm1pbmVkIGJ5DQo+ID4gPiB0aGUgY29tcGF0aWJsZSBhbmQgdGhh
+dCB5b3VyIG9taXNzaW9uIG9mIGEgc29jLXNwZWNpZmljIG9uZSBpcyB3aGF0J3MNCj4gPiA+IGxl
+YWQgeW91IHRvIGludHJvZHVjZSB0aGlzIHByb3BlcnR5LiBXaHkgbm90IGp1c3QgdXNlIGEgc2t5
+MS1zcGVjaWZpYw0KPiA+ID4gY29tcGF0aWJsZSBoZXJlPw0KPiA+DQo+ID4gWW91IHJhaXNlIGFu
+IGV4Y2VsbGVudCBwb2ludCwgYW5kIEkgaW5pdGlhbGx5IGhhZCB0aGUgc2FtZSB0aG91Z2h0LiBI
+b3dldmVyLA0KPiA+IGFmdGVyIGZ1cnRoZXIgY29uc2lkZXJhdGlvbiwgSSByZWFsaXplZCB0aGF0
+IHRoZSBJUCBvZiBDYWRlbmNlIFNQSSBhY3R1YWxseQ0KPiA+IHN1cHBvcnRzIGNvbmZpZ3VyYWJs
+ZSBGSUZPIHdpZHRoIGFzIGEgZmVhdHVyZS4gVGhlIGNob2ljZSBvZiB1c2luZyA4LWJpdCwNCj4g
+PiAxNi1iaXQsIG9yIDMyLWJpdCBGSUZPIHdpZHRoIGNhbiBiZSBtYWRlIGJ5IHRoZSBTb0MgaW50
+ZWdyYXRvciBiYXNlZCBvbg0KPiA+IHRoZWlyIHNwZWNpZmljIHJlcXVpcmVtZW50cy4gVGhpcyBp
+cyB0aGVyZWZvcmUgYSBmZWF0dXJlIG9mIHRoZSBDYWRlbmNlIElQDQo+ID4gaXRzZWxmLCByYXRo
+ZXIgdGhhbiBhIGNoaXAgdmVuZG9yLXNwZWNpZmljIGRlc2lnbiBjb25zdHJhaW50Lg0KPiA+DQo+
+ID4gRm9yIHRoaXMgcmVhc29uLCBJIGJlbGlldmUgZGVmaW5pbmcgYSBjb21tb24gYGZpZm8td2lk
+dGhgIHByb3BlcnR5IGZvcg0KPiA+IENhZGVuY2UgU1BJIGNvbnRyb2xsZXJzIGlzIG1vcmUgYXBw
+cm9wcmlhdGUsIGFzIGl0IGFsbG93cyBhbnkgU29DIHVzaW5nDQo+ID4gdGhpcyBJUCB3aXRoIGRp
+ZmZlcmVudCBGSUZPIHdpZHRoIGNvbmZpZ3VyYXRpb25zIHRvIHV0aWxpemUgdGhpcyBwcm9wZXJ0
+eSwNCj4gPiB3aXRob3V0IG5lZWRpbmcgdG8gY3JlYXRlIGEgc3BlY2lmaWMgY29tcGF0aWJsZSBz
+dHJpbmcgZm9yIGVhY2ggU29DIHZhcmlhbnQuDQoNCj4gRXhjZXB0LCB5b3UgZG8gbmVlZCB0byBj
+cmVhdGUgYSBzb2Mtc3BlY2lmaWMgY29tcGF0aWJsZSBzdHJpbmcgZm9yIGV2ZXJ5DQo+IGRldmlj
+ZSwgdGhlIGZhY3QgdGhhdCB5b3UgZGlkbid0IGFkZCBvbmUgZm9yIHlvdXIgc2t5MSBTb0Mgd2Fz
+IGEgbWlzdGFrZQ0KPiB0aGF0IHlvdSBzaG91bGQgZml4LiBTb0Mtc3BlY2lmaWMgY29tcGF0aWJs
+ZXMgYXJlIGEgcmVxdWlyZW1lbnQuDQo+IFRoZSAiY25kcyxzcGktcjFwNiIgY29tcGF0aWJsZSBz
+ZWVtcyB0byBiZSB1c2VkIG9uIFhpbGlueCBwbGF0Zm9ybXMsDQo+IGluY2x1ZGluZyBhIHp5bnEg
+cGxhdGZvcm0gdGhhdCBzaG91bGQgcHJvYmFibHkgYmUgdXNpbmcgdGhlIHp5bnENCj4gc29jLXNw
+ZWNpZmljIGNvbXBhdGlibGUuIHIxcDYgc291bmRzIGxpa2Ugc29tZSBzb3J0IG9mIHZlcnNpb24g
+aW5mbywgaXMNCj4gdGhhdCB0aGUgdmVyc2lvbiB5b3UgYXJlIGV2ZW4gdXNpbmc/DQoNCj4gT25j
+ZSB5b3UgaGF2ZSBhZGRlZCBhIGNvbXBhdGlibGUgZm9yIHRoZSBza3kxLCB0aGlzIHByb3BlcnR5
+IGlzIG5vdA0KPiBuZWVkZWQsIHNpbmNlIHRoZSBkZXB0aCBjYW4gYmUgZGV0ZXJtaW5lZCBmcm9t
+IHRoYXQuIEFueSBvdGhlciB1c2VyIHRoYXQNCj4gd2FudHMgdG8gdXNlIG5vbi1kZWZhdWx0IGRl
+cHRocyBjYW4gYWxzbyB1c2UgdGhlaXIgc29jLXNwZWNpZmljDQo+IGNvbXBhdGlibGVzIGZvciB0
+aGF0IHB1cnBvc2UuDQoNCkFmdGVyIGZ1cnRoZXIgY29uc2lkZXJhdGlvbiBhbmQgcmV2aWV3aW5n
+IGhvdyBzaW1pbGFyIGNhc2VzIHdlcmUgcmVzb2x2ZWQNCmZvciBvdGhlciBJUHMsIEkgbm93IGJl
+bGlldmUgeW91ciBhcHByb2FjaCBpcyBjb3JyZWN0LCBXZSBzaG91bGQgaW5kZWVkIGFkZA0KYSBj
+aXgsc2t5MS14eHggY29tcGF0aWJsZSBzdHJpbmcgdG8gdGhpcyBZQU1MIGZpbGUgdG8gaW5kaWNh
+dGUgdGhhdCBvdXIgU29DDQpzdXBwb3J0cyB0aGlzIElQLiBIb3dldmVyLCB0aGUgImZpZm8td2lk
+dGgiIGlzIGluZGVlZCBhIGNvbmZpZ3VyYWJsZSBwcm9wZXJ0eQ0Kb2YgdGhlIElQIGl0c2VsZi4g
+QnkgdXNpbmcgdGhlIERUU0kgYW5kIHRoZSBiaW5kaW5nIGRvY3VtZW50LCBvbmUgY2FuIHVuZGVy
+c3RhbmQNCndoaWNoICJmaWZvLXdpZHRoIiB0aGUgU29DIHBsYXRmb3JtIHN1cHBvcnRzIHdpdGhv
+dXQgbmVlZGluZyB0byBkZWx2ZSBpbnRvIHRoZQ0KY29kZS4gVGhpcyBpbXBsZW1lbnRhdGlvbiBp
+cyBzaW1pbGFyIHRvIGV4aXN0aW5nIGJpbmRpbmcgZG9jdW1lbnRhdGlvbiBleGFtcGxlcw0KbGlr
+ZSByZWctaW8td2lkdGgNCihEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mvc2VyaWFs
+L3BsMDExLnlhbWwpDQphbmQNCnNucHMsaW5jci1idXJzdC10eXBlLWFkanVzdG1lbnQNCihEb2N1
+bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdXNiL3NucHMsZHdjMy1jb21tb24ueWFtbCku
+DQoNCj4gPg0KPiA+IFRoYW5rIHlvdSBmb3IgeW91ciB2YWx1YWJsZSB0aW1lIGFuZCBpbnNpZ2h0
+ZnVsIHN1Z2dlc3Rpb25zLiBJIGxvb2sgZm9yd2FyZCB0bw0KPiA+IHlvdXIgZnVydGhlciBmZWVk
+YmFjayBvbiB0aGlzIGFwcHJvYWNoLg0KDQpCZXN0IHdpc2hlcywNCkp1biBHdW8NCg0KDQoNCl9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCreivP7IyzogQ29ub3IgRG9v
+bGV5IDxjb25vckBrZXJuZWwub3JnPg0Kt6LLzcqxvOQ6IDIwMjXE6jEw1MIyyNUgMjowNA0KytW8
+/sjLOiBKdW4gR3VvDQqzrcvNOiBQZXRlciBDaGVuOyBGdWdhbmcgRHVhbjsgcm9iaEBrZXJuZWwu
+b3JnOyBrcnprK2R0QGtlcm5lbC5vcmc7IGNvbm9yK2R0QGtlcm5lbC5vcmc7IGJyb29uaWVAa2Vy
+bmVsLm9yZzsgbGludXgtc3BpQHZnZXIua2VybmVsLm9yZzsgbWljaGFsLnNpbWVrQGFtZC5jb207
+IGNpeC1rZXJuZWwtdXBzdHJlYW07IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9y
+ZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5v
+cmcNCtb3zOI6IFJlOiC72Li0OiBbUEFUQ0ggMS8zXSBkdC1iaW5kaW5nczogc3BpOiBzcGktY2Fk
+ZW5jZTogZG9jdW1lbnQgb3B0aW9uYWwgZmlmby13aWR0aCBEVCBwcm9wZXJ0eQ0KDQpFWFRFUk5B
+TCBFTUFJTA0K
 
