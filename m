@@ -1,119 +1,145 @@
-Return-Path: <linux-kernel+bounces-841028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0446BB5FCC
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 08:39:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 056ABBB5FDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 08:44:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9D6884E3BEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 06:39:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AEF83C6161
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 06:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640A521773F;
-	Fri,  3 Oct 2025 06:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919EF214A9B;
+	Fri,  3 Oct 2025 06:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jur5vE1F"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vea80jMh"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A702139CE;
-	Fri,  3 Oct 2025 06:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D6621254D
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 06:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759473581; cv=none; b=KIjgBuSh6wNLWPuLr484jjNRZs6Fhq+FHKRTwvLKWgyvcTJw9OKdp+m3oJFYJ2OOdn4xiFZfcz0qCyH70jvShyg+pG0VnYbjSw9zlygM61WcVTynshQqCMJlv8dUi/rP4/OEs8PB4qe0DTrct/3qRmTA/1amzNrO11DDBhRX6YE=
+	t=1759473849; cv=none; b=YajZRbvyDZy4NuUKyLHR8VSHNZBLxxcagOs2b6LX4x23ydQ6OPqlffPlcGhnZiJ7uhBT5CtCpY+9PiEJd1cX1nvia0bwPwtQFq97s9IXF/QpD7hukcjOJJWkr1hqT0zgYaR+NRb8Cr2tK0CgEmeqpgfyA1OqHfXTQ9G5HOP0rUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759473581; c=relaxed/simple;
-	bh=1udu7BCVdf/1HJxKb7sLZXkalgIJcCkVINf8u8yM/dI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mYve4ZQ2ErPMQVATJqPOxJywOgrtrlhZom+cvWJZJRgXSSmMpU4oj6DnChb4mlFUqWCSzmi0nolIbNAdmM7y9X9ZbFM7r0yTmJ08SWnkbke8R5ZHzTOO7iJtuSdPfCsA2vOXonGTAkqAy/xB/Qh+EOcY5VwCQzd5e+EPO1+iWis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jur5vE1F; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759473580; x=1791009580;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1udu7BCVdf/1HJxKb7sLZXkalgIJcCkVINf8u8yM/dI=;
-  b=Jur5vE1FggTkN6aJGJQNUR3Lcl4i4wx+CJ1luApLqFPZrZ7SG6oCtL7v
-   Jd4rpgV1rzUaVJIuCgb7JkFZDCGjl1G2huNKk0la4aDLitCqJwXf4AV8b
-   LsUcS0kLINi9A+Vt8sW8cmudxznSiWZW16SCgVr/Cb4nJ0EmBQL0PiVX4
-   LBAlNpq38KSw0Z2Uj2+oq/ZKSyPpi3h/vWxUSNn07Y1xQYDMtQRbvNmEX
-   yezVHke++xxhT0j//Vf8HLSIq3XiPv9+X05id/e+DPAUT7bLIfVoVyMFn
-   kjlCwDN6AW9FfH2D9mlbDWPM08Gcz4RETRqkfBQnpmrKWG6WyZ6nQ4Z4U
-   A==;
-X-CSE-ConnectionGUID: KCCLFGMUSP+VgOG02C+CNA==
-X-CSE-MsgGUID: o+zkqvasSuqYawhDjepDGg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="72860285"
-X-IronPort-AV: E=Sophos;i="6.18,311,1751266800"; 
-   d="scan'208";a="72860285"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 23:39:39 -0700
-X-CSE-ConnectionGUID: gZ4GhqDhS+aj3/CLaF9nhQ==
-X-CSE-MsgGUID: FI2EvZm+S42jGXxwG/Rx9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,311,1751266800"; 
-   d="scan'208";a="179167487"
-Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 02 Oct 2025 23:39:36 -0700
-Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v4ZS1-0004NP-13;
-	Fri, 03 Oct 2025 06:39:33 +0000
-Date: Fri, 3 Oct 2025 14:38:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-mediatek@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev, lee@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com, lgirdwood@gmail.com,
-	broonie@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel@collabora.com, wenst@chromium.org,
-	igor.belwon@mentallysanemainliners.org
-Subject: Re: [PATCH v7 4/9] regulator: Add support for MediaTek MT6363 SPMI
- PMIC Regulators
-Message-ID: <202510031435.HCIv3oqu-lkp@intel.com>
-References: <20251002090028.1796462-5-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1759473849; c=relaxed/simple;
+	bh=eguH9qH82jQam+LusgD1a2RBGg96J5X715GsFtIhrUk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CDsNRiqWmluA5DeirAD8bpOUTVvtLRQqrBI7jI/8D7Wg1MYcDjfNZRD6SFRpIiRKFTt/Makl1El0PQFN3qerFMRfUAz5wIgqNIEaop1ugh3LfiDiVCZi0i7fEjsoC104LRoasoZBr1sqWCSrMdjLlKQCLivm2z0hnEY8qXkABKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vea80jMh; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b5515eaefceso1696798a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 23:44:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759473847; x=1760078647; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5lxoZhcm+45awcJ5tS0EZt/FOKikJk2GmhaWWoUmXFQ=;
+        b=Vea80jMhV3lZj0WeyQxXiBMR6VGAj8ONzNqxs7lMeqipbeD4eduD2cYKpp3iJM6Qny
+         PDASaDnwy3A+9MVkyqryjDgeVgxxj0fvpsQV2jnyEsJKLhu88GvPtz2mQ6/uXh8uZ3po
+         JKy+hodpqT8Zc7olPTp/W2/d0NGBZ1BOfFQlSZdEZBIPUjmsbLVndIS7jN4fr6inutac
+         +cCrfzKslsXPAWE2kFl6q8OFs/MT1MjBs5Uj2cbfZyGqdFVtQ8Vkxir01Jw5qS6ItR3d
+         J5reoSzPBS+xbJS7VN0M2Dj6HW9OLE3O9+Tf1Ovsc5jeR5aj+9Ij345+QZ/xpYUmD6kt
+         Me9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759473847; x=1760078647;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5lxoZhcm+45awcJ5tS0EZt/FOKikJk2GmhaWWoUmXFQ=;
+        b=QBJFPJu4pe8ayWsQ2lsbEE/dl7xP0P1a+tHFlboIMg93soCPbM5GI0iaczAbpkEGew
+         XRzaltXf3dvnDUGGG7TuVMtpakLszx4u0JRhtzOOW7rXF8IQg2z9G/isj0cO79fseJcM
+         Y3lrjDZdX7FqK9ysOdsbzBH9OM+ffufbi2bv4LKWoxsAmJI//7scs5S1vsx4qbkldhAZ
+         6coPGmSaXPaHIDdTRO28u7zEJymIXD0RHUwMAoJjMHWxvswgjg2iXpSFUZ4C+TkLDy6z
+         vzkbRTSpQK3xieW7buQYnlS5OvRlY0TwLBL6HWOTngH0oL6wz+h5svUqJcZDZJFYnF9B
+         OUzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVEdietWjc72cpXiTl1Bp45GKVRJZOCvis7YBo6hw2+zhDjrcXCcs1oYuq4YeP5MJ4pegPpE6+Imvwin80=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdW4+XHzzedjcsMYdRQOlKBXMFY2IxjhN/INU/hyE8633cGfrj
+	N1JzpiUvSvGGiArQVRqnGKtKCADks5xXmxnKd3rSwPcqGPtzB8h0ybEw4n2CwRWa9EXA9CeQCO8
+	N/nJWFhFzdjhkulai7hEjY+dHtRmAlSU=
+X-Gm-Gg: ASbGnctdHVRTCgSsveYtyZ4EqDDaVg97r8P9a0QegFzKY9yE3Ohyrn9rD1zzNM9seG9
+	vBb+fw9p9WZZVKbEXJfvfm8m6/IKeonazuEVCn2H65VMJ8owjH7hBfcdMxBW8yjawwo0S5TfjGD
+	VTaMk0UsmQ+4lw7UlJJk2KGbpaV0sVvO0CQU27KkNMp6AGU9PzmxkKtWiByxoKTTTJ4OkIj3IhI
+	hB63m+ixyh5qL6KvrTusE4rKJJl1GGQ8ntz/yT43meiLsvxvJXIl7W95hsgQEML+kOXebQ06NA5
+	La+qNJnbkmdBYUoB
+X-Google-Smtp-Source: AGHT+IH7EjoN/pYt2rJ3ou+7MhyHKCK0+9xq28i/uCdlwnAan+AYidcbSeE3JkgMW3BnaAZi4vYMBUXR9jk2WUk4WIg=
+X-Received: by 2002:a17:903:38d0:b0:269:8f2e:e38 with SMTP id
+ d9443c01a7336-28e9a565f18mr23717585ad.6.1759473846705; Thu, 02 Oct 2025
+ 23:44:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251002090028.1796462-5-angelogioacchino.delregno@collabora.com>
+References: <20251002180541.1375151-1-kriish.sharma2006@gmail.com> <m3o6qotrxi.fsf@t19.piap.pl>
+In-Reply-To: <m3o6qotrxi.fsf@t19.piap.pl>
+From: Kriish Sharma <kriish.sharma2006@gmail.com>
+Date: Fri, 3 Oct 2025 12:13:55 +0530
+X-Gm-Features: AS18NWALVmSDyc-JP5tcvAszj5MCQYRzNJOCS8DFUVpSMuiDdleIE5xAhDioBp8
+Message-ID: <CAL4kbROGfCnLhYLCptND6Ni2PGJfgZzM+2kjtBhVcvy3jLHtfQ@mail.gmail.com>
+Subject: Re: [PATCH] drivers/net/wan/hdlc_ppp: fix potential null pointer in
+ ppp_cp_event logging
+To: =?UTF-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>
+Cc: khc@pm.waw.pl, andrew+netdev@lunn.ch, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi AngeloGioacchino,
+Hi,
 
-kernel test robot noticed the following build errors:
+Thanks for the clarification.
+I can update proto_name() to return "LCP" by default instead of NULL,
+which should silence the compiler without changing behavior.
+I can send another patch for this if you'd like.
 
-[auto build test ERROR on broonie-regulator/for-next]
-[also build test ERROR on lee-mfd/for-mfd-next jic23-iio/togreg lee-leds/for-leds-next lee-mfd/for-mfd-fixes linus/master v6.17 next-20251002]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Best regards,
+Kriish
 
-url:    https://github.com/intel-lab-lkp/linux/commits/AngeloGioacchino-Del-Regno/dt-bindings-regulator-Document-MediaTek-MT6316-PMIC-Regulators/20251002-170532
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-patch link:    https://lore.kernel.org/r/20251002090028.1796462-5-angelogioacchino.delregno%40collabora.com
-patch subject: [PATCH v7 4/9] regulator: Add support for MediaTek MT6363 SPMI PMIC Regulators
-config: x86_64-randconfig-001-20251003 (https://download.01.org/0day-ci/archive/20251003/202510031435.HCIv3oqu-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251003/202510031435.HCIv3oqu-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510031435.HCIv3oqu-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: "__devm_regmap_init_spmi_ext" [drivers/regulator/mt6363-regulator.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On Fri, Oct 3, 2025 at 12:04=E2=80=AFPM Krzysztof Ha=C5=82asa <khalasa@piap=
+.pl> wrote:
+>
+> Hi Kriish,
+>
+> Kriish Sharma <kriish.sharma2006@gmail.com> writes:
+>
+> > Fixes warnings observed during compilation with -Wformat-overflow:
+> >
+> > drivers/net/wan/hdlc_ppp.c: In function =E2=80=98ppp_cp_event=E2=80=99:
+> > drivers/net/wan/hdlc_ppp.c:353:17: warning: =E2=80=98%s=E2=80=99 direct=
+ive argument is null [-Wformat-overflow=3D]
+> >   353 |                 netdev_info(dev, "%s down\n", proto_name(pid));
+> >       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > drivers/net/wan/hdlc_ppp.c:342:17: warning: =E2=80=98%s=E2=80=99 direct=
+ive argument is null [-Wformat-overflow=3D]
+> >   342 |                 netdev_info(dev, "%s up\n", proto_name(pid));
+> >       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>
+> It appears proto_name(pid) never returns NULL there. Despite actually
+> saying "return NULL", that's right :-)
+>
+> Perhaps you should change it to return "LCP" by default instead, and
+> not only on PID_LCP? It should silence the compiler.
+>
+> This ppp_cp_event() is called in a few places:
+> - ppp_cp_parse_cr()
+> - ppp_rx()
+> - ppp_timer() (with a known protocol, though)
+> - and others, with PID_LCP.
+>
+> Now, before printing proto_name(pid), ppp_cp_event() does
+> proto =3D get_proto(pid), and dereferences it :-)
+>
+> The pid seems to always come from ppp_rx(). Fortunately it's checked
+> at start, and it case of an unknown proto it goes straight to rx_error.
+> --
+> Krzysztof "Chris" Ha=C5=82asa
+>
+> Sie=C4=87 Badawcza =C5=81ukasiewicz
+> Przemys=C5=82owy Instytut Automatyki i Pomiar=C3=B3w PIAP
+> Al. Jerozolimskie 202, 02-486 Warszawa
 
