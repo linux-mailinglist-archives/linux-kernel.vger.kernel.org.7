@@ -1,131 +1,133 @@
-Return-Path: <linux-kernel+bounces-841523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98D71BB7947
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:39:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 547C7BB794A
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 452AB3471AA
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:39:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 01D143471FA
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEBE42C15B7;
-	Fri,  3 Oct 2025 16:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56092C17B3;
+	Fri,  3 Oct 2025 16:39:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TNSYP1xM"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QwV36q7n"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47078F7D
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E16EBA3D
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759509556; cv=none; b=BKEY5LpVUA9bkSjk99VgEk4kC+4027DwzTUshisIhVwBek/Hy/+QN11272OFER+apEzWBio0kZQjzlmyccAbhQKXI/ShTbO/8yLoiMQwYvIAjWVocLgeCLkizfXyQN0ZnjtTWsTqnY5bxvTeWgMoiWnkVmuwJp50kTktm/3d/0Q=
+	t=1759509590; cv=none; b=qLc7cB9r/9bWp/Dc754K2hnpr3g+3TUz1XnT4oWnSPitEsJHD5mODh7/pNyb5k9aPoI4qNRaRhqO9NHBOTL3VgfDWj3v4rUY34XhiMBnnTWCqoS1iBfcuqPJAOvaxR3N6DXfhXB6fFOytiB4kTaO1H9GUDQsp68PpTrUz0JvhKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759509556; c=relaxed/simple;
-	bh=flWy0wy52AJtdu3sH/w7VS3n46/g3z25QbyuAkeY5/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AH3DEU3gYU8ocXKz9QJzlqCk+nhS7+KM74JLRFS9T8guQ/cWAyJA74URNqZNqbPwq5BhEQMimnPvKIgWuA2u+mKk4mlzdFpMZRqj08rlnfsJCDRhbmZYg3ynNoT1U3VBUOY71/NEQaeh/YUvgccnADZlFtc2URvNeM0kMRmg4/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TNSYP1xM; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 3FC411A10EA;
-	Fri,  3 Oct 2025 16:39:13 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id EBD5F60683;
-	Fri,  3 Oct 2025 16:39:12 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1D51D102F17C4;
-	Fri,  3 Oct 2025 18:39:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759509552; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=1F9JLF84oqNjZaJLCmTP67ExLJITt2P8O0NR+62/ztU=;
-	b=TNSYP1xM90AAba6RGlmBaA4a/flXLVC+rAElTVHL+LLaqMp9pBoRSjpak5bd2YjgvbSpfi
-	M9PIJzp5HGeCrV0qNLNqCG5SNOBLevtvr5RGFGTbu1YJSSrU5x4OloH48JG97qLJ79FhAV
-	O6QycYHCUXsrug7u2cR3wD9hceGqtqofBiJfdu7zz6IUQoG8vZZ3ovnoXXvHJpvvgHOLAD
-	LpYAUO5WWjfNGAZccgxD4WEnxbgbefIKXn/RiJ78a7X6e1CFT4+beqLTLFHBGPFApJy66U
-	b8SRwG+dsKtARauP3cPF2jRzctO/PaImFtl742GTLOQO8LCn8GAcw2ubRx4lkw==
-Date: Fri, 3 Oct 2025 18:39:04 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Hui Pu
- <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/7] drm/bridge: lock the encoder chain in scoped
- for_each loops
-Message-ID: <20251003183904.15c800ac@booty>
-In-Reply-To: <20251003-dexterous-loose-guppy-45e1b3@houat>
-References: <20251003-drm-bridge-alloc-encoder-chain-mutex-v2-0-78bf61580a06@bootlin.com>
-	<20251003-drm-bridge-alloc-encoder-chain-mutex-v2-4-78bf61580a06@bootlin.com>
-	<20251003-dexterous-loose-guppy-45e1b3@houat>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1759509590; c=relaxed/simple;
+	bh=XimERl0WTKsgsOP98bsK7OKrgcJSsKYFvtW8JgIIQG8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U2B2zW5Q5L5A5pzMeqU8Hd7A4nXY30Kka73F3RzRaQHHwH6YRP4HVUG9pSOFYvCyDGPqFwCYwNbmHtPzaSUOBUn/G23xuFSJ1KrgAco2lBO+aq1V8BFGze/VVy2Av+6zFeXIA1GRIIxXEeBHRjNlk6MgDqhVyJkmnS/br8fhyxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QwV36q7n; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b550a522a49so2153337a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 09:39:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1759509587; x=1760114387; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NJMtllFi1zVk+JAOiwqLtgaBseyeNZFxDAwdyexpj7I=;
+        b=QwV36q7nOMuG6sG9838PNysBqi2RwKP424WI+V+Ug9VaYYHUkiG9FlvoeydvnGKgzT
+         E8CbzoeS2bXLZLrlcHfeCr8DDGSxf4dTChP3Rz/VBEdZ30Vj++oYfW+gQPRPIbgARN1D
+         L4YtIKd9w6MFTmwnoiPo+UqNGAqQsknhOVmRA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759509587; x=1760114387;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NJMtllFi1zVk+JAOiwqLtgaBseyeNZFxDAwdyexpj7I=;
+        b=BP1cMngu8vZDlLatM9fDV/MR4UjEw1pbvQT3k1tBa0xNiDQaBt/B7HijggwiEzcyw7
+         OsX4X8ZquFegEZ8s+X6U9S6qW1MrJ7vj/lWGRSAne+9HFBS0OhrO8sSK+Cp0B5R/79uh
+         UX9Fh8limzU6HfUcGQlP5MgyHWoENx0yufbgAN9UlIHERIfo/Ly5ZJjSRNePJ/ENlmJn
+         ukbtvYHsAPD5NPUDld6bBb3MSOT1/Hmtoqgu5Wn86EMJf1M4735JfIIZ/6Rw2T6lX7nV
+         vS9h8a6YA+GIdmcnPwKFlESWwwrJ8c4CW0X81QDWsnklsPKIACHx8qrOW+l+XcM3C8CE
+         +1Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCVVz26OwKpSjVqIWj2vPbXKjvnKETd4+nDmA4x5n81NfisrlEx5hsKfZk3eArGwODMvmw7pClQ+VGOOVPQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7KEfRsKET9aVDw2O3ObI2bbsClT/b+N87cfNEXr5XiLz3Wx8d
+	o1sUhYDjn+8TlLOPwND4+YSZnqhb6JxO1q6fdceTjmNyk2p3tnc+ppBXg/+/9c8QEqMYCw30UaI
+	A9GQ=
+X-Gm-Gg: ASbGnctO4QuVca1cT5YDHyBfdF5AfGSn8a6X6Afb1WiE4POF9+e/3HZx9BRZ8S9p7rr
+	Io7kM8mOSTRQUiWI2SIJxPGaTutS0YVTaiSE6DVJLqZDsYUWGxZpsHQQiwey2rhVahTiTOdh5e2
+	7YRx8ELwUXL69T3X03i1BNTzu06fTibY661qouNYYeVxqZxdNK92PPWV3YMDG5qwR+3yEyiHPSR
+	V3VFdBOWk4jORyUxCeJH7GB9x87ESQMESLcMy3tTeojEoGA/PpvL1KD2edVuhFhj3KQhcirAjSO
+	0aX2vZ8KhVpB5GJftPfoXoxX1LJUhfY/7fjO+DGY6dI3ffpCFLpO2lWlgpqIiKS73P8uMmDote6
+	yen9P8r8wbAs6OCGcBaoxQt2JtHezjlvmMuM6Ksmx8fgork6d6ORFpvtTic6hexRiSxPskRInZL
+	4Kz8/Ec/wgCqDynw==
+X-Google-Smtp-Source: AGHT+IGY8jlA1VpvlCHzuPvcV8T7InEZOrCfXrjkQvCVRr1ySO4P2WkXLd39xt+V7NTqeGoVDlDNSg==
+X-Received: by 2002:a17:902:db05:b0:267:9e3d:9b6e with SMTP id d9443c01a7336-28e9a6740ffmr38971725ad.51.1759509586844;
+        Fri, 03 Oct 2025 09:39:46 -0700 (PDT)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com. [209.85.214.172])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1b9e4fsm54796185ad.73.2025.10.03.09.39.45
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Oct 2025 09:39:46 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-27c369f898fso27579635ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 09:39:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUYjWblVfnJEniPAK5zE/ZGeiZQ735HW79H182eBAoQr2OSjk5KfQW2vmUcoaclig1uvltpAbrw6ygESm0=@vger.kernel.org
+X-Received: by 2002:a17:902:f64f:b0:274:aab9:4ed4 with SMTP id
+ d9443c01a7336-28e9a693ae9mr39060205ad.57.1759509585162; Fri, 03 Oct 2025
+ 09:39:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20251003151220.1580-1-matvey.kovalev@ispras.ru>
+In-Reply-To: <20251003151220.1580-1-matvey.kovalev@ispras.ru>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 3 Oct 2025 09:39:33 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=V4hRA8WnvxYNgXsULrzOTCdXZ9JMHgZ=XxqpVZz5DNOQ@mail.gmail.com>
+X-Gm-Features: AS18NWAd1qH6YrlVAYnGRB92B_bLv9XoV7lowG4JApAcaOoF75jMCDzEP5Jztnc
+Message-ID: <CAD=FV=V4hRA8WnvxYNgXsULrzOTCdXZ9JMHgZ=XxqpVZz5DNOQ@mail.gmail.com>
+Subject: Re: [PATCH] kdb: delete unexecuted if-block in kdb_get_kbd_char()
+To: Matvey Kovalev <matvey.kovalev@ispras.ru>
+Cc: Jason Wessel <jason.wessel@windriver.com>, Daniel Thompson <danielt@kernel.org>, 
+	kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	lvc-project@linuxtesting.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Maxime,
+Hi,
 
-On Fri, 3 Oct 2025 16:04:50 +0200
-Maxime Ripard <mripard@kernel.org> wrote:
+On Fri, Oct 3, 2025 at 8:13=E2=80=AFAM Matvey Kovalev <matvey.kovalev@ispra=
+s.ru> wrote:
+>
+> Bits of scancode are dropped except 7 low-order ones.
+> So, scancode can't be equal 0xe0.
+>
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>
+> Signed-off-by: Matvey Kovalev <matvey.kovalev@ispras.ru>
+> ---
+>  kernel/debug/kdb/kdb_keyboard.c | 3 ---
+>  1 file changed, 3 deletions(-)
+>
+> diff --git a/kernel/debug/kdb/kdb_keyboard.c b/kernel/debug/kdb/kdb_keybo=
+ard.c
+> index 3a74604fdb8a7..386d30e530b78 100644
+> --- a/kernel/debug/kdb/kdb_keyboard.c
+> +++ b/kernel/debug/kdb/kdb_keyboard.c
+> @@ -145,9 +145,6 @@ int kdb_get_kbd_char(void)
+>                 return CTRL('F');
+>         }
+>
+> -       if (scancode =3D=3D 0xe0)
+> -               return -1;
+> -
 
-> On Fri, Oct 03, 2025 at 12:39:26PM +0200, Luca Ceresoli wrote:
-> > drm_for_each_bridge_in_chain_scoped() and
-> > drm_for_each_bridge_in_chain_from() currently get/put the bridge at each
-> > iteration. But they don't protect the encoder chain, so it could change
-> > (bridges added/removed) while some code is iterating over the list
-> > itself. To make iterations safe, change the logic of these for_each macros
-> > to lock the encoder chain mutex at the beginning and unlock it at the end
-> > of the loop (be it at the end of the list, or earlier due to a 'break' or
-> > 'return' statement).
-> > 
-> > Also remove the get/put on the current bridge because it is not needed
-> > anymore. In fact all bridges in the encoder chain are refcounted already
-> > thanks to the drm_bridge_get() in drm_bridge_attach() and the
-> > drm_bridge_put() in drm_bridge_detach(). So while iterating with the mutex
-> > held the list cannot change _and_ the refcount of all bridges in the list
-> > cannot drop to zero.  
-> 
-> This second paragraph *really* needs to be its own patch. And I'm not
-> really sure playing games when it comes to refcounting is a good idea.
-> 
-> A strict, simple, rule is way easier to follow than trying to figure out
-> two years from now why this loop skips the refcounting.
-> 
-> Unless you have a performance issue that is, in which case you should
-> add a comment (and we will need a meaningful benchmark to back that
-> claim).
+The same patch has already been sent and was landed:
 
-Just to give some background, I have realized we need to lock the
-encoder chain after drm_for_each_bridge_in_chain_scoped() was added.
-Should I had realized it before, I would have sent it in the form you
-can see in this patch, without the get/put because it is not necessary.
-Not sure whether that would have changed the reception.
-
-But I'm not aware of any performance issue, and the impact of
-refcounting should not be small, soI'll try re-adding an explicit
-get/put on top of the current version. It will likely make the macro
-more complicated but should be reasonably doable. So, expect a v3 with
-that change to we can all see how it looks.
-
-Best regards,
-Luca
-
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+https://lore.kernel.org/all/20250507104337.201695-1-colin.i.king@gmail.com/
 
