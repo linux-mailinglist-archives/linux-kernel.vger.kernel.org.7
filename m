@@ -1,194 +1,316 @@
-Return-Path: <linux-kernel+bounces-841494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4003BB7858
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:18:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CC57BB7866
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:19:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ED1E1B2090D
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:19:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EC101B20AEF
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A1D2BD5B2;
-	Fri,  3 Oct 2025 16:18:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C4D24A06B;
+	Fri,  3 Oct 2025 16:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bVpgAKEr"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011054.outbound.protection.outlook.com [52.101.52.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DyC4cZ5y"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A2E130A73;
-	Fri,  3 Oct 2025 16:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759508316; cv=fail; b=Wrl0B+hlbBxtnTiQPaN+9/yPI8OZtYCPO/vkln6d5rBAkVLrm/jgApuzVjFbcf/zkkel6wRXKc+YPk/fMSqE2FFyU4EKECQKifUtY2JXoE7DD6Nuw+In6EYa2FDnyfvH+LbHnNoZ/iwzLqORbq72LGZYhU+dbIS1qfh0IMagx90=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759508316; c=relaxed/simple;
-	bh=MudxTZir2HOiiy7VWFZKsChXYY8N2VIp/969A/LOafY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=nWGOR/lXYVfvvcLESHc6OzG/ch2VT6yFdrsYdDMJrC3lyxPHwIWE4v98J9PdLreneP35s9E/VhvZ3tHPVPxKDFiJOTLGxQwflF0xBWD2p6vSB0JAuzsLWVTwP0wCgY4KXSawjpwtDSTMacFLKdtV1NpmsLuNnpQSVqN6JRb4pao=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bVpgAKEr; arc=fail smtp.client-ip=52.101.52.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yZAxt1ZCmoaBU2MVKHMAe+JANSRjsCrK09Di8IeXmFwNw5uorYn4if2b1ZCp1Wz6RjM99z3oGAxsOl2LkfAOyffBAglZS+P1Fqy56vvNj+if7XtxiCc+vGjnJPt1RI8vPBQYpEX5LqifpRmjPhi3tD1npIVu43pLqpgB3OHwpw+YM6WtEi2Kk2p5yuPnN1pmkN5AaytJML/8B3H0c9DiFBTWCbZFi9/Y59LIEE9n1LFI1fR1SQf9FxLS1GN+P944EOrrcJEXdBHifMmLMWK9/gFB290akGNreF0C1IZzemRLGOhx3oNxzixC6N//2PtO57bRWajj644Q3URc1eji3A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9V49pYcr+0eeDSdeFjgDw9UEyVFhz0t2sXRuoEevw2I=;
- b=JxIJAcUeQdOvByLsMQyUn5Ta0P4YaSGR0JJhrUUG6EGM4MasGYtqHP8xhcCEyQLj6cFAb/C8rUtO/B6pGc3GcdApIzv8Vvc7L/lUg7oR2s2QFL3NKL0Uownqd6IlqAn9tN09AAIjc/IVflbBNe2fhetVZM3JSVnZAsxpFemeVezF0QjnL7u3cNWHTBnPbzk9RDyuXEkLIqtVhlcYzzhTD2qxnoZSn/oj8lDFoSodhO/G4Zl/kS+aTEKmFrV44SUSB7Az3Xyp3yNqUtXcoiAqqmxKqFGqjcJDZt0WE86GA3pvk1GlsmypJxdq4ZAgi3ToqtZniS+otW1wcN+Um6KwyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9V49pYcr+0eeDSdeFjgDw9UEyVFhz0t2sXRuoEevw2I=;
- b=bVpgAKErgW/ekPafD5ASNIo3c89Y1EQZD4JBqzZvDzqItk4olyp+kAmvSJA1cMN6nN3lw+S891iLx73ENunLZxiK4hV6uRuExfgwEdwWw2crXpltjyaiT0Jv19RZI0Q4oeZJmOOHdZ0S3UP+jO0lbZOuGolvh/XQ8Qm8usPWC79Xk6VDnZyov423g+UTfixdd8M7dgLJxioAy3SlqCA271a2OqpQVBVJxuj8Y2G377YV9UGlIueqEXpxVQredGDl8hMk9Spg50IMEHG1IMjh28uBjTslJPjXui5plGwMtPmE24RzVAlOtTfPK+WGUb/SpAY3Sj8sGY1lfTnjZYhKMQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
- by CYXPR12MB9280.namprd12.prod.outlook.com (2603:10b6:930:e4::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Fri, 3 Oct
- 2025 16:18:28 +0000
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9182.015; Fri, 3 Oct 2025
- 16:18:28 +0000
-Date: Fri, 3 Oct 2025 13:18:25 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Leon Romanovsky <leonro@nvidia.com>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Geoff Levand <geoff@infradead.org>, Helge Deller <deller@gmx.de>,
-	Ingo Molnar <mingo@redhat.com>, iommu@lists.linux.dev,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Jason Wang <jasowang@redhat.com>, Juergen Gross <jgross@suse.com>,
-	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Matt Turner <mattst88@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	sparclinux@vger.kernel.org,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	virtualization@lists.linux.dev, x86@kernel.org,
-	xen-devel@lists.xenproject.org, Magnus Lindholm <linmag7@gmail.com>
-Subject: Re: [PATCH v1 9/9] dma-mapping: remove unused map_page callback
-Message-ID: <20251003161825.GH3360665@nvidia.com>
-References: <cover.1759071169.git.leon@kernel.org>
- <27727b8ef9b3ad55a3a28f9622a62561c9988335.1759071169.git.leon@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <27727b8ef9b3ad55a3a28f9622a62561c9988335.1759071169.git.leon@kernel.org>
-X-ClientProxiedBy: BL1PR13CA0148.namprd13.prod.outlook.com
- (2603:10b6:208:2bb::33) To PH7PR12MB5757.namprd12.prod.outlook.com
- (2603:10b6:510:1d0::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5214A23
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759508369; cv=none; b=e+KqzdxzXPO1cDqvSXRF0XiSiRf4FiJIR5hJ1phE1iPTFeAZG5uMVh2bI+ynI03rCpnqk8VMyXQc/1Kp4BzNWpB0XOaRMkjW2J8Gj7QwnYeXhmNRoNsIzIr2ml+78dhUVHEK4X/GHMB67cgkg+6f+FbgW8azO3V6lnbmYXGqHzM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759508369; c=relaxed/simple;
+	bh=uM5ulUl7hyKtJMLBK7vIlU8DupL5OoxllQKMX9JZPkc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HCi2Y0ov754NlHmydcteJb2Z5R8uzFyumA8bFbm61UfDCFiKq8BziwIo8HWeA5e1O0gIBsNX1oHV+UrQKSmgRX7Wr2XtipFyvlrjpaxtcjfbxwLJIjV3+xs1OWly+//PH7qFPgyWvH1Momy6pGtV9LeOUHvTdVjPl9iIm69/45Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DyC4cZ5y; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3f2ae6fadb4so2187426f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 09:19:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1759508365; x=1760113165; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0ANl4yX/rzyRJQfAcTKUc2DIObrnzBMi0w3geyhQO80=;
+        b=DyC4cZ5y6002gz/bzle8o9DMPkuDt3Uwbq3Drc+26zkg1hyeUk/6vq1XNFreY3OTnV
+         8DVsG1alCLNEABO00GO7OFMMum7G/vRhwgroVVPDv5q0fxl84Wk5ijWQPnEJP3jBD6K0
+         Zk/JnMAgjYuxDHkxvmdyilT6P6n5CMpF/I0w7NEYEk/iT+jfVYaBZQY53MnVCw4c2OtJ
+         mAO4ZJmkGjNpAHMYR7wmKm0wfk/x7LErb+07Tlo/NHk8fvez+C+KyLyCIdTaQZeiDdxR
+         pVdS76ewO3m2UiNr4x0LrzaaPHWhd1UKERtpzK3Ya76+cqOh64rDoNhJPdcxxZdAR0V9
+         wLEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759508365; x=1760113165;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0ANl4yX/rzyRJQfAcTKUc2DIObrnzBMi0w3geyhQO80=;
+        b=BJKBYEAymFIGfU/LolVAU7ZbjU6ypz3DJ3j9kaZr0naeHKCFXE4mpykU5DIVAMSKwc
+         kY5b7FMVLa+gCLue1r1JwaE4RTvQPsQ6QiitkbJaLhj+LMaNatQBgCkP6aMB+k4982w6
+         GlEy7L7+/CMWIJ86tS32tcrc9O96mahUFWuRkHsxKacu+aYtCQrlY5Mof8m++J34Md3o
+         ftah+xgHlBS9CoaerI298vcGGGaXT6kg8eM4VtBiuR37xODaMtGe8UeDa0bP0T35jfto
+         b3CYzeBdNxIQSCOqRag6lHmpNiVNl9JwZv1XNsiySv4K73c/WKnB0TEbmpzu6xLkh6BM
+         ScxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVwgwaKoD1OvsvGtllXNemxaBz6dT+y8HJcow5kKP8bCsBNAdG4W9PUEhu+GihI59XvmpUui6AK2K6PRb4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfJg84pyJ7Qhoo8dt2PZRFEOfX1lTIXuXR462BoxMa3fs8omIo
+	InBmJKocGmM5qBB4tj165TMgVAcVar9R6VlX/jIXSRL6tEl0fFVF4n8QeKVC0eeyORs=
+X-Gm-Gg: ASbGncsh8K4/r9FdvJtW0bSNG/Idr2jsg2GyDml7deu8hcMxMpFuL5l0iLHWK3w/g8z
+	FIxu0BCgOtHThp3CQmFJDQOAdVzzftKnHGvzKCFWanGtJ6MEaaiB8aRya3HXN8amXI3rp6LSlLa
+	hYyc2nY+8TyY82BsHKQWnuFb63+A48s5jG9JZVK3Ni5YogX/ZlUwKuWun8yNjf7rr/h5S1H0Gxp
+	kqYQfYlGhIeDsupJRO4UkoAI5EJd2jhi3ngFwB+7wpn1pSV4VT6rY3bMqF+wospb2bqSI1aDuK4
+	tBGA7iKBnlyM+8YKqJCEFid69HSQRMHw2yXzff6A/ZmWeoOHbFkmqvKH86pNgUY1q7RTHxreRs8
+	GjJOwKMohRQulryvhPhg72NrVWqTe+qRw3mSRrnIYuQ5zJz92Dg==
+X-Google-Smtp-Source: AGHT+IGii9OZMsSG3ZRa2GiF1Pd8XwKeeEDHWsz2q9+XLsz6amt1hhNccm22PcL6tasagLbeS6B57w==
+X-Received: by 2002:a05:6000:2504:b0:3ec:df5a:90d with SMTP id ffacd0b85a97d-425671c5331mr2366715f8f.60.1759508364935;
+        Fri, 03 Oct 2025 09:19:24 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8e96e0sm8543221f8f.33.2025.10.03.09.19.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Oct 2025 09:19:24 -0700 (PDT)
+Date: Fri, 3 Oct 2025 18:19:21 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Andrew Murray <amurray@thegoodpenguin.co.uk>
+Cc: John Ogness <john.ogness@linutronix.de>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] printk: console_flush_one_record() code cleanup
+Message-ID: <aN_3id2CF7ivC42R@pathway.suse.cz>
+References: <20250927-printk_legacy_thread_console_lock-v2-0-cff9f063071a@thegoodpenguin.co.uk>
+ <20250927-printk_legacy_thread_console_lock-v2-2-cff9f063071a@thegoodpenguin.co.uk>
+ <84o6qsjduw.fsf@jogness.linutronix.de>
+ <CALqELGwd1CiRAYNBVWsrgb5T3eJ9ugP+0wG2WKZGvSfowqgaaQ@mail.gmail.com>
+ <84seg3gd89.fsf@jogness.linutronix.de>
+ <CALqELGw8wtbbihLsOcNgnV2vGoSR7kD8_tHmt7ESY4d3buwrLQ@mail.gmail.com>
+ <aN5Pp2cFf_pedhxe@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|CYXPR12MB9280:EE_
-X-MS-Office365-Filtering-Correlation-Id: 55fe7add-e739-4cd4-94fa-08de02987c81
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?8HAa5uboeD1h6ARLZdwtCq9KRch2abHjXiw5asWTL4fhWGYHAm4C0BTqRq/O?=
- =?us-ascii?Q?dmtk0tB2KyqGE2l63Bf1irS8tAvd7JAONGy3x8jKh+XpIoIHTlNMTOMJpJTf?=
- =?us-ascii?Q?P18cschd/k74/bQqLgkfSsR/uqmhgxokX72ei7mbaj7ImypIqf0wvzYGT1Q6?=
- =?us-ascii?Q?fne8iZi9nWUUf2z7W+ecp6T/Llx3rWsGuwWX4ggTCpCuem1FqMAo4eWE4Moj?=
- =?us-ascii?Q?VddJzYxOz+oXc1VwCjrdjPIH01n90hxRhozWwYuR23i5TbtGCbX30FaumXCB?=
- =?us-ascii?Q?DYna2zeW98EgdY7uMK6CI1vxhzuO9f3PMWdqe2MvbYR4/5Vn8f3ldsBBFoxS?=
- =?us-ascii?Q?aAhDSiY6X1+H0j+Q8TlQM6KNfgeYBbeJB4Y09C7VQ5chRUlDPA3zlLVybnF3?=
- =?us-ascii?Q?CLjmr4spZSEuiQKDDzQbqDOOIAgVoh6f0yuKf5b3q475zkN1IAYnmBLWzhCg?=
- =?us-ascii?Q?WjnBwaqHqztih+129m4uifvk4daAhcbvDoUmQuKUN3tp83tSxWWA3Rs03pSv?=
- =?us-ascii?Q?WdDuEdtiB7LwZguIBr2tMHbPOQ94hkC6P5pbrn8RsHcXsX64VscByYt3i9Le?=
- =?us-ascii?Q?qEMjGuOxcKChDO4jeRwHJbJhetiVh1TWJeq03p5UdzXyXfDBeSRULFz4/Qp9?=
- =?us-ascii?Q?841h+wmQVejd5gNnSL/EYGc0UelHLTgHsFtvBakldWIQgjLh//bUfzW7c97W?=
- =?us-ascii?Q?UideQODf4OJv52ZBEne8IJgY4EhY8oPAOLma13QkczLzPKdUU8CUNZIqP/ov?=
- =?us-ascii?Q?JhWIAHkisSnr3pAm+Hp2/8ku10ueekdPlqZXxRdCiAMLDEFUU6+3PLE0xQcd?=
- =?us-ascii?Q?OWkMy2X8CLJ0O3xkKGmai7AOleY1LXHw/ObSc5dlf3koyBRkWDPSVFt1f3zC?=
- =?us-ascii?Q?z5UIjd84XikhBpavxdQexAO2sPD8otYE/LNJCqRpClURAoU2cPAHYLnYxroM?=
- =?us-ascii?Q?2l0pKWGFYmmF4RiE0v21zyh2evvtCIJGe9Dg5XZi/jWf3RGOH8Z/+tFJJYi2?=
- =?us-ascii?Q?w7J2+EJw+krm+1KLWqtYzUquw4gsHeA7vMG6QKg94zTlUN1EqbcSkd2ykYa4?=
- =?us-ascii?Q?NaS90dymt7sLrGFi9hnyMAxRt96LrBU/Sm6MGyJH1QKXBITIA2kFwc3cabd1?=
- =?us-ascii?Q?AC8XFT2IBmnJ4ufPvCoMdi77iiKMmqO8VUeIV1FY+jkbQPkJhuHIM2DjM9WJ?=
- =?us-ascii?Q?vPaPTfX0cAFMieY2mY1+VGKXK2J39+HTd8fcET/wkyrfkmQdzaMLNqjHkOjU?=
- =?us-ascii?Q?nIWi+ioLMKsiASDeFnLquC9qPwiZvnUtimGYuoRhbQY3Dv/IOP8QX3f6Tu+w?=
- =?us-ascii?Q?gN8IGXlG+V2qT9LCHEwIHdpQ0Qkr3NDo71/LG4J3hiJQhDVHtfsatxXJrvYj?=
- =?us-ascii?Q?/eyJj2z7+h0z5om6lwDXeG6Z2ETBco+YTBrvEiHq2qtFALgwnD+wKUaaQYql?=
- =?us-ascii?Q?Mv6JxRFw3K0l+Ck/M1ZYFF6mISsuAky3?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?tJqu5HQWfVC576vdptBhQXSrPx14A7GicND2ojHAr9VkoWgx6aO9YKPabKXu?=
- =?us-ascii?Q?1XBQo8J7HGUPKPahD55FQQZG1JeiLZ6Vfwn/akyM8KF2DP1I+ho/EDYflZaz?=
- =?us-ascii?Q?GTng2DrKMn83xenHUnKDfS6LGzYqDwATpnblcigs1DEFk+dr4zbCgH5C+4Yl?=
- =?us-ascii?Q?iIWCBbtaDiQV7aO07dJiLEMLABl59SZFZlch56dq/9YNYZuCuGX2uJYyygf9?=
- =?us-ascii?Q?ikJg4lIgWvpeO/g9N9shdoD8XRql7fX85Uc3h0RsA1iNsPvvXIH9SqICuQu2?=
- =?us-ascii?Q?kcShlpCHhSDNQg5SWMb/PMKiAp6tbzO/skw+mveU6L8CIHbkYSEEH3c9TrNT?=
- =?us-ascii?Q?MWwShe332HFl00f1tK90tNUCl1vEGGBjXMVzE3VdJS7VHLYUSCEZNg+eVZ3O?=
- =?us-ascii?Q?pyVcqWnXxJG0cjGIdBRgkTO/p4DT7bFCf0obVQ5BbScSDs170C+TQY8aTAQC?=
- =?us-ascii?Q?xKm4UXedGymG8XOD1W1HdWa1Wsp+gL++/DdBT6yvR7L/N1BLmsXcpcZcOOwM?=
- =?us-ascii?Q?A82Zt+yMu/Up4GDw3eQ0vzhY/rqRkCvlYmoO616eGAQ7AE8CR7wBzClI4Rda?=
- =?us-ascii?Q?G+SnBcB+4DT6uujPboWDt3p+d1r7APKQxzWeKhJnhOhsiHRaG1Z6Hv63N1Wy?=
- =?us-ascii?Q?QOVqA8GvvQu/uxlm6Lz3NFFAGYr2j8LSw/b3j/I5PM8vXIhBDODKQDBUanaL?=
- =?us-ascii?Q?jic+jOUwcC4yAG6VfnKuLxRACpony5gMh7nTWm0xNkcn8BYMRiFxbGZI1+B+?=
- =?us-ascii?Q?+epFdz9h666xRcYSlhyOhYJb8ANg8AsNkbGiK//r/EaVnsPsKoQo0DwPF1ET?=
- =?us-ascii?Q?gUskWv/BtGlh92sp2hmq6JKoyCPp80iwvtAgFYcYld3zUvKEaDpgjw9ulEbg?=
- =?us-ascii?Q?s7BsdB/vkNhTHC+4sTWJaTroR01Ayh+IBtKZ3gAD1mpH664k6+3vq/eXPL1J?=
- =?us-ascii?Q?0qQxxKLLaksBSNyj970aVMqJ3Op4iPbf0sfxeeY0aN9KS1VwdiVTw555M4gB?=
- =?us-ascii?Q?KUUwxc/RZIe/5Gs7xnkHcY26PkCsIndKKCS+OFrFzqXPA7W60E/a8bQduBUw?=
- =?us-ascii?Q?DGMXPFMUkH90OvPo3tqHlFhIwl+lJhwYTnx/uaN8U2WGzkk7fxfohA4sD+Jq?=
- =?us-ascii?Q?5lhWH39Fou9Cd7Hsb3gMDgBnR8Co3n6U8WxD6cGRxjBnGgCMqNXR7Fk6An8C?=
- =?us-ascii?Q?FLuuLY6nz84JG8UoHLC++BM//3Ssz6Q1wAshNVXvx57XfzqEV1yG6TvHD2Hx?=
- =?us-ascii?Q?7KzTLpe+nlZ4wxYKhfBUaaiKs95yUYwQfLU5u4qeiAbTdrpCXwQfGcXn25JD?=
- =?us-ascii?Q?OZZtRrpgx8r4smqSBVcAZXaCUFE0CfUDWe7+2cEh0unZzcggQHvYklnLJiMF?=
- =?us-ascii?Q?/reTOfEjSYOT1KfqwDQwLkCAsNi7CyfJ0fRRMVLNbieVijVmJ25YGTniHvho?=
- =?us-ascii?Q?Qsn+tPFr7dW1aAUYMM8CpeZh+hnsYA2zqdo8snWiobGyvFefrU+yNBDsqXsf?=
- =?us-ascii?Q?+aaXM9JoVHxDYJ1ZBC8ZRmLsEEVedEmbP5vaLqGMN6rF0JDiVMFPJM5dr0lZ?=
- =?us-ascii?Q?dH24wRIoU7PkZZjJZoI=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 55fe7add-e739-4cd4-94fa-08de02987c81
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2025 16:18:28.2119
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6JtzAxDmQJNnADOiQAKtwe+/YqCcJjOti1yS0z8wf0TWQHhO0Uypjly9OUjPMTlr
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9280
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aN5Pp2cFf_pedhxe@pathway.suse.cz>
 
-On Sun, Sep 28, 2025 at 06:02:29PM +0300, Leon Romanovsky wrote:
-> From: Leon Romanovsky <leonro@nvidia.com>
+On Thu 2025-10-02 12:10:50, Petr Mladek wrote:
+> On Wed 2025-10-01 17:26:27, Andrew Murray wrote:
+> > On Wed, 1 Oct 2025 at 10:53, John Ogness <john.ogness@linutronix.de> wrote:
+> > >
+> > > On 2025-09-30, Andrew Murray <amurray@thegoodpenguin.co.uk> wrote:
+> > > > Alternatively, it may be possible for console_flush_one_record to
+> > > > return any_usable, thus dropping it as an argument and removing the
+> > > > return of any_progress. Instead the caller could keep calling
+> > > > console_flush_one_record until it returns false or until next_seq
+> > > > stops increasing?
 > 
-> After conversion of arch code to use physical address mapping,
-> there are no users of .map_page() and .unmap_page() callbacks,
-> so let's remove them.
+> No, this won't work. @next_seq shows the highest value from all
+> consoles. It is no longer increased when at least one console
+> flushed all pending messages. But other consoles might be
+> behind, still having pending messages, and still making progress.
 > 
-> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> ---
->  include/linux/dma-map-ops.h |  7 -------
->  kernel/dma/mapping.c        | 12 ------------
->  kernel/dma/ops_helpers.c    |  8 +-------
->  3 files changed, 1 insertion(+), 26 deletions(-)
+> Honestly, I do not know how to make it better. We need to pass
+> both information: @next_seq and if some console flushed something.
+> 
+> Note that @next_seq is valid only when all consoles are flushed
+> and returning the same @next_seq. But it does not help to remove
+> the @any_progress parameter.
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+I thought more about how to improve the semantic and came up with
+the following patch. It is supposed to replace this one.
 
-Jason
+Note: I created this patch on top of Linus' tree as of today.
+      It already includes the patchset (-mm tree) which consolidated
+      the panic state API.
+
+      Namely, this patchset is affected by the commit d4a36db5639db03
+      ("panic/printk: replace other_cpu_in_panic() with
+      panic_on_other_cpu()").
+
+      It is enough to do:
+
+	  s/other_cpu_in_panic/panic_on_other_cpu/
+
+      I am sorry for any inconvenience.
+
+
+Here is the new proposal:
+
+From 30f5302b11962f8ec961ca85419ed097a5b76502 Mon Sep 17 00:00:00 2001
+From: Petr Mladek <pmladek@suse.com>
+Date: Sat, 27 Sep 2025 23:05:36 +0100
+Subject: [PATCH 2/3] printk: console_flush_one_record() code cleanup
+
+console_flush_one_record() and console_flush_all() duplicate several
+checks. They both want to tell the caller that consoles are not
+longer usable in this context because it has lost the lock or
+the lock has to be reserved for the panic CPU.
+
+Remove the duplication by changing the semantic of the function
+console_flush_one_record() return value and parameters.
+
+The function will return true when it is able to do the job. It means
+that there is at least one usable console. And the flushing was
+not interrupted by a takeover or panic_on_other_cpu().
+
+Also replace the @any_usable parameter with @try_again. The @try_again
+parameter will be set to true when the function could do the job
+and at least one console made a progress.
+
+Motivation:
+
+The callers need to know when
+
+  + they should continue flushing => @try_again
+  + when the console is flushed => can_do_the_job(return) && !@try_again
+  + when @next_seq is valid => same as flushed
+  + when lost console_lock => @takeover
+
+The proposed change makes it clear when the function can do
+the job. It simplifies the answer for the other questions.
+
+Also the return value from console_flush_one_record() can
+be used as return value from console_flush_all().
+
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+---
+ kernel/printk/printk.c | 58 ++++++++++++++++++++++--------------------
+ 1 file changed, 30 insertions(+), 28 deletions(-)
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index fa9bd511a1fb..6c846d2d37d9 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -3142,31 +3142,32 @@ static inline void printk_kthreads_check_locked(void) { }
+  * context.
+  *
+  * @next_seq is set to the sequence number after the last available record.
+- * The value is valid only when this function returns true.
++ * The value is valid only when all usable consoles were flushed. It is
++ * when the function returns true (can do the job) and @try_again parameter
++ * is set to false, see below.
+  *
+  * @handover will be set to true if a printk waiter has taken over the
+  * console_lock, in which case the caller is no longer holding the
+  * console_lock. Otherwise it is set to false.
+  *
+- * @any_usable will be set to true if there are any usable consoles.
++ * @try_again will be set to true when it still makes sense to call this
++ * function again. The function could do the job, see the return value.
++ * And some consoles still make progress.
+  *
+- * Returns true when there was at least one usable console and a record was
+- * flushed. A returned false indicates there were no records to flush for any
+- * of the consoles. It may also indicate that there were no usable consoles,
+- * the context has been lost or there is a panic suitation. Regardless the
+- * reason, the caller should assume it is not useful to immediately try again.
++ * Returns true when the function could do the job. Some consoles are usable,
++ * and there was no takeover and no panic_on_other_cpu().
+  *
+  * Requires the console_lock.
+  */
+ static bool console_flush_one_record(bool do_cond_resched, u64 *next_seq, bool *handover,
+-				     bool *any_usable)
++				     bool *try_again)
+ {
+ 	struct console_flush_type ft;
++	int any_usable = false;
+ 	struct console *con;
+-	bool any_progress;
+ 	int cookie;
+ 
+-	any_progress = false;
++	*try_again = false;
+ 
+ 	printk_get_console_flush_type(&ft);
+ 
+@@ -3186,7 +3187,7 @@ static bool console_flush_one_record(bool do_cond_resched, u64 *next_seq, bool *
+ 
+ 		if (!console_is_usable(con, flags, !do_cond_resched))
+ 			continue;
+-		*any_usable = true;
++		any_usable = true;
+ 
+ 		if (flags & CON_NBCON) {
+ 			progress = nbcon_legacy_emit_next_record(con, handover, cookie,
+@@ -3202,7 +3203,7 @@ static bool console_flush_one_record(bool do_cond_resched, u64 *next_seq, bool *
+ 		 * is already released.
+ 		 */
+ 		if (*handover)
+-			return false;
++			goto fail;
+ 
+ 		/* Track the next of the highest seq flushed. */
+ 		if (printk_seq > *next_seq)
+@@ -3210,21 +3211,28 @@ static bool console_flush_one_record(bool do_cond_resched, u64 *next_seq, bool *
+ 
+ 		if (!progress)
+ 			continue;
+-		any_progress = true;
++
++		/*
++		 * An usable console made a progress. There might still be
++		 * pending messages.
++		 */
++		*try_again = true;
+ 
+ 		/* Allow panic_cpu to take over the consoles safely. */
+ 		if (panic_on_other_cpu())
+-			goto abandon;
++			goto fail_srcu;
+ 
+ 		if (do_cond_resched)
+ 			cond_resched();
+ 	}
+ 	console_srcu_read_unlock(cookie);
+ 
+-	return any_progress;
++	return any_usable;
+ 
+-abandon:
++fail_srcu:
+ 	console_srcu_read_unlock(cookie);
++fail:
++	*try_again = false;
+ 	return false;
+ }
+ 
+@@ -3253,24 +3261,18 @@ static bool console_flush_one_record(bool do_cond_resched, u64 *next_seq, bool *
+  */
+ static bool console_flush_all(bool do_cond_resched, u64 *next_seq, bool *handover)
+ {
+-	bool any_usable = false;
+-	bool any_progress;
++	bool try_again;
++	bool ret;
+ 
+ 	*next_seq = 0;
+ 	*handover = false;
+ 
+ 	do {
+-		any_progress = console_flush_one_record(do_cond_resched, next_seq, handover,
+-							&any_usable);
++		ret = console_flush_one_record(do_cond_resched, next_seq,
++					       handover, &try_again);
++	} while (try_again);
+ 
+-		if (*handover)
+-			return false;
+-
+-		if (panic_on_other_cpu())
+-			return false;
+-	} while (any_progress);
+-
+-	return any_usable;
++	return ret;
+ }
+ 
+ static void __console_flush_and_unlock(void)
+-- 
+2.51.0
+
 
