@@ -1,171 +1,691 @@
-Return-Path: <linux-kernel+bounces-840909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01D00BB5B17
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:58:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9D5DBB5B1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:59:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A29A2342B01
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:58:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F7E41AE16EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:59:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB211D8E01;
-	Fri,  3 Oct 2025 00:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D881B1D7E42;
+	Fri,  3 Oct 2025 00:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aBZc1qsh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bEqfIyFK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA773BBF2;
-	Fri,  3 Oct 2025 00:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43B86F305
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 00:58:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759453080; cv=none; b=aWo2YfZOjDOLLLkZkr/wpW5rEdw/0+pwRCFbq/VaF3m//E65a5Oei16zvUkZNYf0MYL5JKLROPVyo8kIAKdrsSnMfgQiBMlJ2Da4+zQ69MHrlFOtzFuJCuw1ovQRoQgZ1Vw8MxjfIsTfPePE96802kwLZC2GBVlkd+tTwWoluLY=
+	t=1759453143; cv=none; b=IcyyDY2k8hahej841gipia2yoSf1Mw6RdLfWcs6HcbI211nbOxNv43qCWkJAG8p/pRsLfJY0cg5kmCygaRqikcS2QktfrdqxxxC2JoyUBsqoLZrisPhSwQH3fbzlirem+GPNW1SwIIghZ/UCTa9N4Vm0C3u7poNqc1m9ZqPdxlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759453080; c=relaxed/simple;
-	bh=gGh/Qei7nmlKhJsFz5d/aOUzsnnKuTRbbLHu6gETIL8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=useYmpGTj7UmYDyn9IpKI48HrxuaAShQRHkC9bUWyLXBu9JoY0bCT8jsCkB28/Tuh9s+5PDjrV3y+pF/eyHtvpjkzPz4uhwKfO9yfxHPnEuXlS7E5VI4Qxeuwi5voVrUsvwbaE0xTLGzBfv9TVVI5SKOm7QrhpaMAYv7ZH4k8xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aBZc1qsh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30AC0C4CEF4;
-	Fri,  3 Oct 2025 00:57:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759453080;
-	bh=gGh/Qei7nmlKhJsFz5d/aOUzsnnKuTRbbLHu6gETIL8=;
-	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
-	b=aBZc1qshQFME0il50O32b479A0SKwLY3NxmXgsaQ6+wEJYnrPpN/hLGQELMJlI8Hw
-	 rKCU8sUyvUMDGkrbbu5rU8cydiXTeLFMOFdjRMjFocVNuBeXFd0zOMUKhoMca/w+w9
-	 jJLkq7SNWwFZBHpolw3xw28U48UPunczKExPaY7bXolnWVvim8byQYL8XMItUiVhAi
-	 EeJ8hlUV8GP45FbHce0LNH4oDkyWDRzLZKX2aVDQM6GIu4rLbbZN2nZlJkauXAjlsG
-	 S8gIr38HKrTx+dmzMj5B6ZauV+jqNs8polvqTtPk+f8ocyGKuNt4v9MQabV/vLCDm3
-	 SKHNJ6OhRXYCQ==
+	s=arc-20240116; t=1759453143; c=relaxed/simple;
+	bh=M4Z2whpCy7ejVYdr43N3DBsACwFJCUfvRnnM7EMipEk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fTeGIKL6calM2GtuPPaZBWO/zx0sI+MLqvI7JJ4tV4JO5MaBX9SeB6XM+6ETHVOSVjb8naKo8Zlcuh+tDsQcU5EPDz9VYEoEeWfSuxNPGBuPoYCsDQ2TEj+/YfWsyXy3N+ucp+1L8WCLVKZCOHljOkDLTTaFRDWHCUBJ64Tc2Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bEqfIyFK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759453136;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AIluKvUIeE/qbH8NmvnsgQ/Z6TBiua3Vl8s1i99/pgU=;
+	b=bEqfIyFKl2v990Aw75j7FGHxyjM1yXs334ndKzrYk7EIO+NpLZFm8kBgbpDoqUAtFswzMx
+	s0PXd2BQpX4yhyoL+cgQRbqh/3g8RPc3SCIpSUO5+sYRrmoFQOjnjU3RgepkGfbOdiaMrP
+	3t3qr98UpZYR56TzSBrF9bJ5dWGQa3A=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-674-u2964vnWMK-xPJkHuvAQRA-1; Thu, 02 Oct 2025 20:58:55 -0400
+X-MC-Unique: u2964vnWMK-xPJkHuvAQRA-1
+X-Mimecast-MFC-AGG-ID: u2964vnWMK-xPJkHuvAQRA_1759453134
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-272b7bdf41fso21873335ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 17:58:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759453134; x=1760057934;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AIluKvUIeE/qbH8NmvnsgQ/Z6TBiua3Vl8s1i99/pgU=;
+        b=Mu1gwLhoqAtPA57s+k3hJ3E6XD2oE8ba+gcRxIOpHYNs2aVMdqPR0zFDom1Alct0ze
+         mgUNDENgIpxp+DtHyWEA+A4ZMu1HkvmfomqQfWGZ7HOEguG7n3nvUQO/oDv5b82naUJN
+         IrWJtu2DZ0PzqoYrItxpYT/rLNloo3RS16ksOvLwCAtp/pGKgg3wlQSnk9CVhNOUrIx+
+         R8R4FCcsg95ztGvafUw6TQXQGztzxNDGr/rmhVrHTST8QSNM1B+Dj+Qx/aCpRmrz+tW/
+         tvG5A6Acke7A4/e9Qhtkt/NWdOo498QsmuvZizsJQRtMWDDwJ7SswOROUn6I+kCEPjlF
+         mY5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWAv16aijsIpfmWHYKT9d7duzCEz4KPhwnnjGLcnxqVLgSinatREBe3NU/m6lsCOXmBKfQhmVWiXqbOv4g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg3kN0BoWKSuGw5KYxysDNo5C/IB8BNomUo5irXOGJabpLvx86
+	CKptRUCQd7FiASWOBUPq80KhBUNSNRY9xuIq8zxL6lUfDJxyuMpCluEQdzCpAum9FTjZ6+1mW04
+	cd/BiN347Z/IcNt71d2/hVGUX5qMXJB4mbUYHfK0AM9rLiaDB0GUThJ8AXuNT/y05Hw==
+X-Gm-Gg: ASbGncvRraAKBKbzyK69ThPqQEgBpmjVOnW9+DV0U6+0Vm08bkk0pnNSmJXO3XelbFX
+	VS/oYXgyDMpULdLvUQSJJkoQw7tI/kqeHdVJQ11z7nQZHJKeNEXAHf3W0EKhgKPsoHnYalnLTaW
+	Ih70e4HJGLeGj9pLXvEd5CVL+mqQumVcOBOCRzeZWa33/oZeus5sK6LeZ9qEQ7yfOO5gMFHLAtw
+	EvFok2V7nm09caUu4DdB/ylE7MLOgAkUmQI3AAPjE6jDZbbNXNY/l4Kx3bzln5BJklOrklCfn4I
+	Ijehk6ZAoeMQyS5sfPYEtseavBbgR2/DDCwo8qi2ZudX+0TJKmzTE5iL+ptFv/aTS0AdXcxGrKv
+	pagciD+Gcxw==
+X-Received: by 2002:a17:903:230a:b0:282:ee0e:5991 with SMTP id d9443c01a7336-28e9a5f7222mr12697195ad.30.1759453134232;
+        Thu, 02 Oct 2025 17:58:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEaTEg5vD3QN8t3LUlZUTp2tkCic8On/odh9gyv30BwyKNn3A3xfpDioQ3VMbjbnGLOYln37A==
+X-Received: by 2002:a17:903:230a:b0:282:ee0e:5991 with SMTP id d9443c01a7336-28e9a5f7222mr12696725ad.30.1759453133677;
+        Thu, 02 Oct 2025 17:58:53 -0700 (PDT)
+Received: from [192.168.68.51] (n175-34-62-5.mrk21.qld.optusnet.com.au. [175.34.62.5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1b845bsm32909455ad.79.2025.10.02.17.58.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Oct 2025 17:58:53 -0700 (PDT)
+Message-ID: <64105db5-01e3-44ba-bfb0-6524de471ccb@redhat.com>
+Date: Fri, 3 Oct 2025 10:58:40 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 03 Oct 2025 02:57:53 +0200
-Message-Id: <DD8A27ESH61G.306ZAIGZCMJ97@kernel.org>
-To: "Jason Gunthorpe" <jgg@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v2 1/2] rust: pci: skip probing VFs if driver doesn't
- support VFs
-Cc: "John Hubbard" <jhubbard@nvidia.com>, "Alexandre Courbot"
- <acourbot@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
- Tabi" <ttabi@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Zhi
- Wang" <zhiw@nvidia.com>, "Surath Mitra" <smitra@nvidia.com>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Alex Williamson"
- <alex.williamson@redhat.com>, "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- <nouveau@lists.freedesktop.org>, <linux-pci@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>
-References: <af4b7ce4-eb13-4f8d-a208-3a527476d470@nvidia.com>
- <20251002180525.GC3299207@nvidia.com>
- <3ab338fb-3336-4294-bd21-abd26bc18392@kernel.org>
- <20251002183114.GD3299207@nvidia.com>
- <56daf2fe-5554-4d52-94b3-feec4834c5be@kernel.org>
- <20251002185616.GG3299207@nvidia.com>
- <DD837Z9VQY0H.1NGRRI2ZRLG4F@kernel.org>
- <20251002210433.GH3299207@nvidia.com>
- <bba17237-2401-4e9b-912b-29d31af748e1@kernel.org>
- <DD85P4NV5B5Y.367RGWFHBR0RF@kernel.org>
- <20251002234010.GI3299207@nvidia.com>
-In-Reply-To: <20251002234010.GI3299207@nvidia.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/29] ACPI / MPAM: Parse the MPAM table
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
+Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ fenghuay@nvidia.com, baisheng.gao@unisoc.com,
+ Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
+ <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250910204309.20751-1-james.morse@arm.com>
+ <20250910204309.20751-7-james.morse@arm.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20250910204309.20751-7-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri Oct 3, 2025 at 1:40 AM CEST, Jason Gunthorpe wrote:
-> On Thu, Oct 02, 2025 at 11:32:44PM +0200, Danilo Krummrich wrote:
->
->> So, when we call pdev.physfn().drvdata_borrow::<NovaCore>() the checks a=
-re
->> included already.
->
-> I'm not keen on hiding this reasoning inside an physfn() accessor like
-> this. ie one that returns a Device<Bound>. The reasoning for this is
-> tricky and special. We have enough cases where physfn won't be a bound
-> driver. I think it is big stretch just to declare that unconditionally
-> safe.
+On 9/11/25 6:42 AM, James Morse wrote:
+> Add code to parse the arm64 specific MPAM table, looking up the cache
+> level from the PPTT and feeding the end result into the MPAM driver.
+> 
+> For now the MPAM hook mpam_ris_create() is stubbed out, but will update
+> the MPAM driver with optional discovered data.
+> 
+> CC: Carl Worth <carl@os.amperecomputing.com>
+> Link: https://developer.arm.com/documentation/den0065/3-0bet/?lang=en
+> Signed-off-by: James Morse <james.morse@arm.com>
+> 
+> ---
+> Changes since v1:
+>   * Whitespace.
+>   * Gave GLOBAL_AFFINITY a pre-processor'd name.
+>   * Fixed assumption that there are zero functional dependencies.
+>   * Bounds check walking of the MSC RIS.
+>   * More bounds checking in the main table walk.
+>   * Check for nonsense numbers of function dependencies.
+>   * Smattering of pr_debug() to help folk feeding line-noise to the parser.
+>   * Changed the comment flavour on the SPDX string.
+>   * Removed additional table check.
+>   * More comment wrangling.
+> 
+> Changes since RFC:
+>   * Used DEFINE_RES_IRQ_NAMED() and friends macros.
+>   * Additional error handling.
+>   * Check for zero sized MSC.
+>   * Allow table revisions greater than 1. (no spec for revision 0!)
+>   * Use cleanup helpers to retrive ACPI tables, which allows some functions
+>     to be folded together.
+> ---
+>   arch/arm64/Kconfig          |   1 +
+>   drivers/acpi/arm64/Kconfig  |   3 +
+>   drivers/acpi/arm64/Makefile |   1 +
+>   drivers/acpi/arm64/mpam.c   | 361 ++++++++++++++++++++++++++++++++++++
+>   drivers/acpi/tables.c       |   2 +-
+>   include/linux/acpi.h        |  12 ++
+>   include/linux/arm_mpam.h    |  48 +++++
+>   7 files changed, 427 insertions(+), 1 deletion(-)
+>   create mode 100644 drivers/acpi/arm64/mpam.c
+>   create mode 100644 include/linux/arm_mpam.h
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 4be8a13505bf..6487c511bdc6 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -2062,6 +2062,7 @@ config ARM64_TLB_RANGE
+>   
+>   config ARM64_MPAM
+>   	bool "Enable support for MPAM"
+> +	select ACPI_MPAM if ACPI
+>   	help
+>   	  Memory System Resource Partitioning and Monitoring (MPAM) is an
+>   	  optional extension to the Arm architecture that allows each
+> diff --git a/drivers/acpi/arm64/Kconfig b/drivers/acpi/arm64/Kconfig
+> index b3ed6212244c..f2fd79f22e7d 100644
+> --- a/drivers/acpi/arm64/Kconfig
+> +++ b/drivers/acpi/arm64/Kconfig
+> @@ -21,3 +21,6 @@ config ACPI_AGDI
+>   
+>   config ACPI_APMT
+>   	bool
+> +
+> +config ACPI_MPAM
+> +	bool
+> diff --git a/drivers/acpi/arm64/Makefile b/drivers/acpi/arm64/Makefile
+> index 05ecde9eaabe..9390b57cb564 100644
+> --- a/drivers/acpi/arm64/Makefile
+> +++ b/drivers/acpi/arm64/Makefile
+> @@ -4,6 +4,7 @@ obj-$(CONFIG_ACPI_APMT) 	+= apmt.o
+>   obj-$(CONFIG_ACPI_FFH)		+= ffh.o
+>   obj-$(CONFIG_ACPI_GTDT) 	+= gtdt.o
+>   obj-$(CONFIG_ACPI_IORT) 	+= iort.o
+> +obj-$(CONFIG_ACPI_MPAM) 	+= mpam.o
+>   obj-$(CONFIG_ACPI_PROCESSOR_IDLE) += cpuidle.o
+>   obj-$(CONFIG_ARM_AMBA)		+= amba.o
+>   obj-y				+= dma.o init.o
+> diff --git a/drivers/acpi/arm64/mpam.c b/drivers/acpi/arm64/mpam.c
+> new file mode 100644
+> index 000000000000..fd9cfa143676
+> --- /dev/null
+> +++ b/drivers/acpi/arm64/mpam.c
+> @@ -0,0 +1,361 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2025 Arm Ltd.
+> +
+> +/* Parse the MPAM ACPI table feeding the discovered nodes into the driver */
+> +
+> +#define pr_fmt(fmt) "ACPI MPAM: " fmt
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/arm_mpam.h>
+> +#include <linux/bits.h>
+> +#include <linux/cpu.h>
+> +#include <linux/cpumask.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include <acpi/processor.h>
+> +
+> +/*
+> + * Flags for acpi_table_mpam_msc.*_interrupt_flags.
+> + * See 2.1.1 Interrupt Flags, Table 5, of DEN0065B_MPAM_ACPI_3.0-bet.
+> + */
+> +#define ACPI_MPAM_MSC_IRQ_MODE_MASK                    BIT(0)
+> +#define ACPI_MPAM_MSC_IRQ_TYPE_MASK                    GENMASK(2, 1)
+> +#define ACPI_MPAM_MSC_IRQ_TYPE_WIRED                   0
+> +#define ACPI_MPAM_MSC_IRQ_AFFINITY_PROCESSOR_CONTAINER BIT(3)
+> +#define ACPI_MPAM_MSC_IRQ_AFFINITY_VALID               BIT(4)
+> +
+> +static bool acpi_mpam_register_irq(struct platform_device *pdev, int intid,
+> +				   u32 flags, int *irq,
+> +				   u32 processor_container_uid)
+> +{
+> +	int sense;
+> +
+> +	if (!intid)
+> +		return false;
+> +
+> +	if (FIELD_GET(ACPI_MPAM_MSC_IRQ_TYPE_MASK, flags) !=
+> +	    ACPI_MPAM_MSC_IRQ_TYPE_WIRED)
+> +		return false;
+> +
+> +	sense = FIELD_GET(ACPI_MPAM_MSC_IRQ_MODE_MASK, flags);
+> +
+> +	if (16 <= intid && intid < 32 && processor_container_uid != GLOBAL_AFFINITY) {
+> +		pr_err_once("Partitioned interrupts not supported\n");
+> +		return false;
+> +	}
+> +
+> +	*irq = acpi_register_gsi(&pdev->dev, intid, sense, ACPI_ACTIVE_HIGH);
+> +	if (*irq <= 0) {
+> +		pr_err_once("Failed to register interrupt 0x%x with ACPI\n",
+> +			    intid);
+> +		return false;
+> +	}
+> +
+> +	return true;
+> +}
 
-In this example physfn() would return a &pci::Device<Bound>.
+0 is allowed by acpi_register_gsi().
 
-This is what I mentioned previously; I want the subsystem to guarantee (at =
-least
-under certain circumstances) that if the VF device is bound that the PF dev=
-ice
-must be bound as well.
+	if (*irq < 0) {
+		pr_err_once(...);
+		return false;
+	}
 
-> There is a reason pci_iov_get_pf_drvdata() has such a big comment..
->
-> So I'd rather see you follow the C design and have an explicit helper
-> function to convert a VF bound device to a PF bound device
+> +
+> +static void acpi_mpam_parse_irqs(struct platform_device *pdev,
+> +				 struct acpi_mpam_msc_node *tbl_msc,
+> +				 struct resource *res, int *res_idx)
+> +{
+> +	u32 flags, aff;
+> +	int irq;
+> +
+> +	flags = tbl_msc->overflow_interrupt_flags;
+> +	if (flags & ACPI_MPAM_MSC_IRQ_AFFINITY_VALID &&
+> +	    flags & ACPI_MPAM_MSC_IRQ_AFFINITY_PROCESSOR_CONTAINER)
+> +		aff = tbl_msc->overflow_interrupt_affinity;
+> +	else
+> +		aff = GLOBAL_AFFINITY;
+> +	if (acpi_mpam_register_irq(pdev, tbl_msc->overflow_interrupt, flags, &irq, aff))
+> +		res[(*res_idx)++] = DEFINE_RES_IRQ_NAMED(irq, "overflow");
+> +
+> +	flags = tbl_msc->error_interrupt_flags;
+> +	if (flags & ACPI_MPAM_MSC_IRQ_AFFINITY_VALID &&
+> +	    flags & ACPI_MPAM_MSC_IRQ_AFFINITY_PROCESSOR_CONTAINER)
+> +		aff = tbl_msc->error_interrupt_affinity;
+> +	else
+> +		aff = GLOBAL_AFFINITY;
+> +	if (acpi_mpam_register_irq(pdev, tbl_msc->error_interrupt, flags, &irq, aff))
+> +		res[(*res_idx)++] = DEFINE_RES_IRQ_NAMED(irq, "error");
+> +}
+> +
+> +static int acpi_mpam_parse_resource(struct mpam_msc *msc,
+> +				    struct acpi_mpam_resource_node *res)
+> +{
+> +	int level, nid;
+> +	u32 cache_id;
+> +
+> +	switch (res->locator_type) {
+> +	case ACPI_MPAM_LOCATION_TYPE_PROCESSOR_CACHE:
+> +		cache_id = res->locator.cache_locator.cache_reference;
+> +		level = find_acpi_cache_level_from_id(cache_id);
+> +		if (level <= 0) {
+> +			pr_err_once("Bad level (%u) for cache with id %u\n", level, cache_id);
+> +			return -EINVAL;
+> +		}
+> +		return mpam_ris_create(msc, res->ris_index, MPAM_CLASS_CACHE,
+> +				       level, cache_id);
+> +	case ACPI_MPAM_LOCATION_TYPE_MEMORY:
+> +		nid = pxm_to_node(res->locator.memory_locator.proximity_domain);
+> +		if (nid == NUMA_NO_NODE)
+> +			nid = 0;
+> +		return mpam_ris_create(msc, res->ris_index, MPAM_CLASS_MEMORY,
+> +				       255, nid);
 
-Well, this is exactly what physfn() does (with the precondition that we can=
- get
-the guarantee from the subsystem).
+It's perhaps worthy a warning message when @nid is explicitly set to zero due to
+the bad proximity domain, something like below.
 
-> and check
-> the owner, basically split up pci_iov_get_pf_drvdata() into a part to
-> get the struct device and an inline to get the drvdata. Rust still has an
-> ops pointer it can pass in so it can be consistent with the C code
+		if (nid == NUMA_NO_NODE) {
+			nid = 0;
+			if (num_possible_nodes() > 1) {
+				pr_warn("Bad proximity domain %d, mapped to node 0\n",
+					res->locator.memory_locator.proximity_domain);
+			}
+		}
+		
 
-Which ops pointer are you referring to? Do you mean the struct pci_driver
-pointer? If so, no we can't access this one. We could make it accessible, b=
-ut it
-would result into horrible code, wouldn't make it possible to implement the
-check generically for any device (which we need anyways) and would have som=
-e
-other bad implications.
+> +	default:
+> +		/* These get discovered later and treated as unknown */
+> +		return 0;
+> +	}
+> +}
+> +
+> +int acpi_mpam_parse_resources(struct mpam_msc *msc,
+> +			      struct acpi_mpam_msc_node *tbl_msc)
+> +{
+> +	int i, err;
+> +	char *ptr, *table_end;
+> +	struct acpi_mpam_resource_node *resource;
+> +
+> +	ptr = (char *)(tbl_msc + 1);
+> +	table_end = ptr + tbl_msc->length;
+> +	for (i = 0; i < tbl_msc->num_resource_nodes; i++) {
+> +		u64 max_deps, remaining_table;
+> +
+> +		if (ptr + sizeof(*resource) > table_end)
+> +			return -EINVAL;
+> +
+> +		resource = (struct acpi_mpam_resource_node *)ptr;
+> +
+> +		remaining_table = table_end - ptr;
+> +		max_deps = remaining_table / sizeof(struct acpi_mpam_func_deps);
+> +		if (resource->num_functional_deps > max_deps) {
+> +			pr_debug("MSC has impossible number of functional dependencies\n");
+> +			return -EINVAL;
+> +		}
+> +
+> +		err = acpi_mpam_parse_resource(msc, resource);
+> +		if (err)
+> +			return err;
+> +
+> +		ptr += sizeof(*resource);
+> +		ptr += resource->num_functional_deps * sizeof(struct acpi_mpam_func_deps);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static bool __init parse_msc_pm_link(struct acpi_mpam_msc_node *tbl_msc,
+> +				     struct platform_device *pdev,
+> +				     u32 *acpi_id)
+> +{
+> +	char hid[sizeof(tbl_msc->hardware_id_linked_device) + 1];
+> +	bool acpi_id_valid = false;
+> +	struct acpi_device *buddy;
+> +	char uid[11];
+> +	int err;
+> +
+> +	memset(&hid, 0, sizeof(hid));
+> +	memcpy(hid, &tbl_msc->hardware_id_linked_device,
+> +	       sizeof(tbl_msc->hardware_id_linked_device));
+> +
+> +	if (!strcmp(hid, ACPI_PROCESSOR_CONTAINER_HID)) {
+> +		*acpi_id = tbl_msc->instance_id_linked_device;
+> +		acpi_id_valid = true;
+> +	}
+> +
+> +	err = snprintf(uid, sizeof(uid), "%u",
+> +		       tbl_msc->instance_id_linked_device);
+> +	if (err >= sizeof(uid)) {
+> +		pr_debug("Failed to convert uid of device for power management.");
+> +		return acpi_id_valid;
+> +	}
+> +
+> +	buddy = acpi_dev_get_first_match_dev(hid, uid, -1);
+> +	if (buddy)
+> +		device_link_add(&pdev->dev, &buddy->dev, DL_FLAG_STATELESS);
+> +
+> +	return acpi_id_valid;
+> +}
+> +
+> +static int decode_interface_type(struct acpi_mpam_msc_node *tbl_msc,
+> +				 enum mpam_msc_iface *iface)
+> +{
+> +	switch (tbl_msc->interface_type) {
+> +	case 0:
+> +		*iface = MPAM_IFACE_MMIO;
+> +		return 0;
+> +	case 0xa:
+> +		*iface = MPAM_IFACE_PCC;
+> +		return 0;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static int __init acpi_mpam_parse(void)
+> +{
+> +	struct acpi_table_header *table __free(acpi_table) = acpi_get_table_ret(ACPI_SIG_MPAM, 0);
+> +	char *table_end, *table_offset = (char *)(table + 1);
+> +	struct property_entry props[4]; /* needs a sentinel */
+> +	struct acpi_mpam_msc_node *tbl_msc;
+> +	int next_res, next_prop, err = 0;
+> +	struct acpi_device *companion;
+> +	struct platform_device *pdev;
+> +	enum mpam_msc_iface iface;
+> +	struct resource res[3];
+> +	char uid[16];
+> +	u32 acpi_id;
+> +
+> +	if (acpi_disabled || !system_supports_mpam() || IS_ERR(table))
+> +		return 0;
+> +
+> +	if (table->revision < 1)
+> +		return 0;
+> +
+> +	table_end = (char *)table + table->length;
+> +
+> +	while (table_offset < table_end) {
+> +		tbl_msc = (struct acpi_mpam_msc_node *)table_offset;
+> +		table_offset += tbl_msc->length;
+> +
+> +		if (table_offset > table_end) {
+> +			pr_debug("MSC entry overlaps end of ACPI table\n");
+> +			break;
+> +		}
+> +
+> +		/*
+> +		 * If any of the reserved fields are set, make no attempt to
+> +		 * parse the MSC structure. This MSC will still be counted,
+> +		 * meaning the MPAM driver can't probe against all MSC, and
+> +		 * will never be enabled. There is no way to enable it safely,
+> +		 * because we cannot determine safe system-wide partid and pmg
+> +		 * ranges in this situation.
+> +		 */
+> +		if (tbl_msc->reserved || tbl_msc->reserved1 || tbl_msc->reserved2) {
+> +			pr_err_once("Unrecognised MSC, MPAM not usable\n");
+> +			pr_debug("MSC.%u: reserved field set\n", tbl_msc->identifier);
+> +			continue;
+> +		}
+> +
+> +		if (!tbl_msc->mmio_size) {
+> +			pr_debug("MSC.%u: marked as disabled\n", tbl_msc->identifier);
+> +			continue;
+> +		}
+> +
+> +		if (decode_interface_type(tbl_msc, &iface)) {
+> +			pr_debug("MSC.%u: unknown interface type\n", tbl_msc->identifier);
+> +			continue;
+> +		}
+> +
+> +		next_res = 0;
+> +		next_prop = 0;
+> +		memset(res, 0, sizeof(res));
+> +		memset(props, 0, sizeof(props));
+> +
+> +		pdev = platform_device_alloc("mpam_msc", tbl_msc->identifier);
+> +		if (!pdev) {
+> +			err = -ENOMEM;
+> +			break;
+> +		}
+> +
+> +		if (tbl_msc->length < sizeof(*tbl_msc)) {
+> +			err = -EINVAL;
+> +			break;
+> +		}
+> +
+> +		/* Some power management is described in the namespace: */
+> +		err = snprintf(uid, sizeof(uid), "%u", tbl_msc->identifier);
+> +		if (err > 0 && err < sizeof(uid)) {
+> +			companion = acpi_dev_get_first_match_dev("ARMHAA5C", uid, -1);
+> +			if (companion)
+> +				ACPI_COMPANION_SET(&pdev->dev, companion);
+> +			else
+> +				pr_debug("MSC.%u: missing namespace entry\n", tbl_msc->identifier);
+> +		}
+> +
+> +		if (iface == MPAM_IFACE_MMIO) {
+> +			res[next_res++] = DEFINE_RES_MEM_NAMED(tbl_msc->base_address,
+> +							       tbl_msc->mmio_size,
+> +							       "MPAM:MSC");
+> +		} else if (iface == MPAM_IFACE_PCC) {
+> +			props[next_prop++] = PROPERTY_ENTRY_U32("pcc-channel",
+> +								tbl_msc->base_address);
+> +			next_prop++;
+> +		}
+> +
+> +		acpi_mpam_parse_irqs(pdev, tbl_msc, res, &next_res);
+> +		err = platform_device_add_resources(pdev, res, next_res);
+> +		if (err)
+> +			break;
+> +
+> +		props[next_prop++] = PROPERTY_ENTRY_U32("arm,not-ready-us",
+> +							tbl_msc->max_nrdy_usec);
+> +
+> +		/*
+> +		 * The MSC's CPU affinity is described via its linked power
+> +		 * management device, but only if it points at a Processor or
+> +		 * Processor Container.
+> +		 */
+> +		if (parse_msc_pm_link(tbl_msc, pdev, &acpi_id)) {
+> +			props[next_prop++] = PROPERTY_ENTRY_U32("cpu_affinity",
+> +								acpi_id);
+> +		}
+> +
+> +		err = device_create_managed_software_node(&pdev->dev, props,
+> +							  NULL);
+> +		if (err)
+> +			break;
+> +
+> +		/* Come back later if you want the RIS too */
+> +		err = platform_device_add_data(pdev, tbl_msc, tbl_msc->length);
+> +		if (err)
+> +			break;
+> +
+> +		err = platform_device_add(pdev);
+> +		if (err)
+> +			break;
+> +	}
+> +
+> +	if (err)
+> +		platform_device_put(pdev);
+> +
+> +	return err;
+> +}
+> +
+> +int acpi_mpam_count_msc(void)
+> +{
+> +	struct acpi_table_header *table __free(acpi_table) = acpi_get_table_ret(ACPI_SIG_MPAM, 0);
+> +	char *table_end, *table_offset = (char *)(table + 1);
+> +	struct acpi_mpam_msc_node *tbl_msc;
+> +	int count = 0;
+> +
+> +	if (IS_ERR(table))
+> +		return 0;
+> +
+> +	if (table->revision < 1)
+> +		return 0;
+> +
+> +	table_end = (char *)table + table->length;
+> +
+> +	while (table_offset < table_end) {
+> +		tbl_msc = (struct acpi_mpam_msc_node *)table_offset;
+> +		if (!tbl_msc->mmio_size)
+> +			continue;
+> +
+> +		if (tbl_msc->length < sizeof(*tbl_msc))
+> +			return -EINVAL;
+> +		if (tbl_msc->length > table_end - table_offset)
+> +			return -EINVAL;
+> +		table_offset += tbl_msc->length;
+> +
+> +		count++;
+> +	}
+> +
+> +	return count;
+> +}
+> +
 
-I try to be as consistent as possible with C code, but sometimes it just do=
-esn't
-fit at all and would even hurt. This is one of those cases.
+acpi_mpam_count_msc() iterates the existing MSC node, which is part of acpi_mpam_parse().
+So the question is why we can't drop acpi_mpam_count_msc() and maintain a variable to
+count the existing MSC nodes in acpi_mpam_parse() ?
 
-To give at least some background: A driver structure (like struct pci_drive=
-r) is
-embedded in a module structure, which is a global static and intentionally =
-not
-directly accessible for drivers.
+> +/*
+> + * Call after ACPI devices have been created, which happens behind acpi_scan_init()
+> + * called from subsys_initcall(). PCC requires the mailbox driver, which is
+> + * initialised from postcore_initcall().
+> + */
+> +subsys_initcall_sync(acpi_mpam_parse);
+> diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
+> index fa9bb8c8ce95..835e3795ede3 100644
+> --- a/drivers/acpi/tables.c
+> +++ b/drivers/acpi/tables.c
+> @@ -408,7 +408,7 @@ static const char table_sigs[][ACPI_NAMESEG_SIZE] __nonstring_array __initconst
+>   	ACPI_SIG_PSDT, ACPI_SIG_RSDT, ACPI_SIG_XSDT, ACPI_SIG_SSDT,
+>   	ACPI_SIG_IORT, ACPI_SIG_NFIT, ACPI_SIG_HMAT, ACPI_SIG_PPTT,
+>   	ACPI_SIG_NHLT, ACPI_SIG_AEST, ACPI_SIG_CEDT, ACPI_SIG_AGDI,
+> -	ACPI_SIG_NBFT };
+> +	ACPI_SIG_NBFT, ACPI_SIG_MPAM };
+>   
+>   #define ACPI_HEADER_SIZE sizeof(struct acpi_table_header)
+>   
+> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> index c5fd92cda487..af449964426b 100644
+> --- a/include/linux/acpi.h
+> +++ b/include/linux/acpi.h
+> @@ -8,6 +8,7 @@
+>   #ifndef _LINUX_ACPI_H
+>   #define _LINUX_ACPI_H
+>   
+> +#include <linux/cleanup.h>
+>   #include <linux/errno.h>
+>   #include <linux/ioport.h>	/* for struct resource */
+>   #include <linux/resource_ext.h>
+> @@ -221,6 +222,17 @@ void acpi_reserve_initial_tables (void);
+>   void acpi_table_init_complete (void);
+>   int acpi_table_init (void);
+>   
+> +static inline struct acpi_table_header *acpi_get_table_ret(char *signature, u32 instance)
+> +{
+> +	struct acpi_table_header *table;
+> +	int status = acpi_get_table(signature, instance, &table);
+> +
+> +	if (ACPI_FAILURE(status))
+> +		return ERR_PTR(-ENOENT);
+> +	return table;
+> +}
+> +DEFINE_FREE(acpi_table, struct acpi_table_header *, if (!IS_ERR(_T)) acpi_put_table(_T))
+> +
+>   int acpi_table_parse(char *id, acpi_tbl_table_handler handler);
+>   int __init_or_acpilib acpi_table_parse_entries(char *id,
+>   		unsigned long table_size, int entry_id,
+> diff --git a/include/linux/arm_mpam.h b/include/linux/arm_mpam.h
+> new file mode 100644
+> index 000000000000..3d6c39c667c3
+> --- /dev/null
+> +++ b/include/linux/arm_mpam.h
+> @@ -0,0 +1,48 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/* Copyright (C) 2025 Arm Ltd. */
+> +
+> +#ifndef __LINUX_ARM_MPAM_H
+> +#define __LINUX_ARM_MPAM_H
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/types.h>
+> +
+> +#define GLOBAL_AFFINITY		~0
+> +
+> +struct mpam_msc;
+> +
+> +enum mpam_msc_iface {
+> +	MPAM_IFACE_MMIO,	/* a real MPAM MSC */
+> +	MPAM_IFACE_PCC,		/* a fake MPAM MSC */
+> +};
+> +
+> +enum mpam_class_types {
+> +	MPAM_CLASS_CACHE,       /* Well known caches, e.g. L2 */
+> +	MPAM_CLASS_MEMORY,      /* Main memory */
+> +	MPAM_CLASS_UNKNOWN,     /* Everything else, e.g. SMMU */
+> +};
+> +
+> +#ifdef CONFIG_ACPI_MPAM
+> +/* Parse the ACPI description of resources entries for this MSC. */
+> +int acpi_mpam_parse_resources(struct mpam_msc *msc,
+> +			      struct acpi_mpam_msc_node *tbl_msc);
+> +
+> +int acpi_mpam_count_msc(void);
+> +#else
+> +static inline int acpi_mpam_parse_resources(struct mpam_msc *msc,
+> +					    struct acpi_mpam_msc_node *tbl_msc)
+> +{
+> +	return -EINVAL;
+> +}
+> +
+> +static inline int acpi_mpam_count_msc(void) { return -EINVAL; }
+> +#endif
+> +
+> +static inline int mpam_ris_create(struct mpam_msc *msc, u8 ris_idx,
+> +				  enum mpam_class_types type, u8 class_id,
+> +				  int component_id)
+> +{
+> +	return -EINVAL;
+> +}
+> +
+> +#endif /* __LINUX_ARM_MPAM_H */
 
-Even if we'd make it accessible, the driver field within a module structure
-depends on the exact implementation, i.e. it depends on whether a module is
-declared "by hand", or whether it is generated by a module_driver!() macro =
-(e.g.
-module_pci_driver!().
+Thanks,
+Gavin
 
-It probably also helps to have a look at samples/rust/rust_driver_auxiliary=
-.rs,
-which open codes driver registrations, since it registers two drivers in th=
-e
-same module for the purpose of illustrating an auxiliary connection, i.e. i=
-t
-doesn't use a module_driver!() macro.
-
-The struct struct auxiliary_driver resides within the
-driver::Registration<auxiliary::Adapter<T>>, where driver::Registration is =
-a
-generic type for registering drivers, auxiliary::Adapter defines the auxili=
-ary
-specific bits for this registration and T is the driver specific type that
-implements the auxiliary::Driver trait, containing the bus callbacks etc.
-
-> even if it does another check inside its drvdata_borrow.
-
-It's the exact same check; just a better fitting implementation.
-
-I.e. instead of checking a pointer which is hard to access, we check if the=
- type
-ID we gave to the device matches the driver specific type (the T in
-driver::Registration<auxiliary::Adapter<T>>).
-
-Semantically, there is no difference, but it results in less cumbersome and=
- more
-flexible code.
 
