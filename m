@@ -1,124 +1,174 @@
-Return-Path: <linux-kernel+bounces-841364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F135EBB71A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:01:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ACA4BB71A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:01:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2937F4EC6EA
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:01:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAB173BD683
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB092134BD;
-	Fri,  3 Oct 2025 14:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Jqn+Dkpm"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A951F3FF8;
+	Fri,  3 Oct 2025 14:01:11 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146C71B6D06;
-	Fri,  3 Oct 2025 14:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B656134BD;
+	Fri,  3 Oct 2025 14:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759500089; cv=none; b=o0PaI12hORDnqzCM6uUW8IBAaKt7KD+GelpjHQ2VqfLp2l+l0uxLN3E6tPwhtAk2DTBOz4rBXAlW59Raszr5IWdBozIwkvjRXMgfvV2LCLzdOVRJhWoCywf7UXKoX8tj9TH0lO3oTkD2mF5IeRBZNn0vef/Ed/nmpKEIXDyzgeU=
+	t=1759500070; cv=none; b=oU83JaZrgCbTMoo4ojOe58I9EMUjdOGbzLG/ipRlP/7rj07RrN/sEjRLY7knJ7NuWEfYb1N+R4NDJc7L0VtuWLQL8T4dqiBDRbAuACY38dmpAibf6miohezbZNdVk3r/jXs/oPQ1YMFNJmyvFOiqlihrVlavDja98itH5012VWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759500089; c=relaxed/simple;
-	bh=cPM9JXOFF7ibYCync3LVv1ejPvu2H2nbyMWY+uEM8fU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=AkUk279336O5weKDeEERtSGygG4eWU5dMGUZyK3GkRbhzCPD/I+EqpA6goJGzJkCkKNm0Ao2Ds5NwNNJ3wptTSDRvllE+BcDuHzaW9iDGYt6aPTTnl8YXHULG9piURnILZ8n17D+Nis87BAl7+QmrpRRE5A67W8OlitnXR+AGY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Jqn+Dkpm; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759500085;
-	bh=cPM9JXOFF7ibYCync3LVv1ejPvu2H2nbyMWY+uEM8fU=;
-	h=From:Date:Subject:To:Cc:From;
-	b=Jqn+Dkpm/6ZZ4hoK26JhVgFO+BgPcu2yKhvOdOLJ9s4p64cRHMjPyg067uVA4p2xP
-	 YC216rYbMMlz2URqwyzEmfm2aSBkto2O8EuwaxFa2xjJDul5gkc9ABYFguXOMPdaNE
-	 bMMsu4RWd+HpC99KBXa1+w6oEBaaP4YlC9suVWD6C1swgsFKU4EW9rfyHBRs4Ts0tB
-	 Nb0afsfdenqo6Ld2bNsVWB4QIMZouhkcgOLtKa2Ve8mGrH7hemRcCEz2xVfbv0ikVz
-	 U9U2TcbUayoEgpSQDKZ1Zdex9BrgoZqiCQLpwU3zSFdxsMZ/SRwINS2ekvj8l0IMxl
-	 1y83eqj3Rb17Q==
-Received: from yukiji.home (lfbn-idf1-1-2269-27.w92-151.abo.wanadoo.fr [92.151.67.27])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laeyraud)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9A6AF17E00AC;
-	Fri,  3 Oct 2025 16:01:24 +0200 (CEST)
-From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Date: Fri, 03 Oct 2025 16:00:28 +0200
-Subject: [PATCH] pinctrl: mediatek: mt8196: align register base names to
- dt-bindings ones
+	s=arc-20240116; t=1759500070; c=relaxed/simple;
+	bh=RNm8+bIzCty7wKMJsfmMxSNvFNgStXeHIk3/eWA2BCo=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X9yMfphFH8pOdvHk5PDBvtZPvZ/+AU2n3p3IcnXWVB+zMlvWjmyULhKx4D2On/KB972aNkzyo0fzfrIMIS3CNWAXE+mdqgWuZ3gLD+vFpTZ3SLHCUyBLw2j4bcNntiku2rAzgU19ZeGqr+Ww6gUc8evVcmMagYeHcRN0mR+dU7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cdVgF2bRxz6L4tn;
+	Fri,  3 Oct 2025 22:00:41 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1AF2114044F;
+	Fri,  3 Oct 2025 22:01:05 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 3 Oct
+ 2025 15:01:03 +0100
+Date: Fri, 3 Oct 2025 15:01:02 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Eddie James <eajames@linux.ibm.com>
+CC: <linux-hwmon@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-aspeed@lists.ozlabs.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <andrew@codeconstruct.com.au>, <joel@jms.id.au>,
+	<linux@roeck-us.net>, <chanh@os.amperecomputing.com>, <jic23@kernel.org>,
+	<dlechner@baylibre.com>, <nuno.sa@analog.com>, <andy@kernel.org>
+Subject: Re: [PATCH v7 RESEND 3/7] dt-bindings: iio: Add Infineon DPS310
+ sensor documentation
+Message-ID: <20251003150102.00007dae@huawei.com>
+In-Reply-To: <20251001144441.310950-4-eajames@linux.ibm.com>
+References: <20251001144441.310950-1-eajames@linux.ibm.com>
+	<20251001144441.310950-4-eajames@linux.ibm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251003-fix-mt8196-pinctrl-regnames-v1-1-4d22031140f0@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAPvW32gC/zWNywrCMBBFfyXM2oE8sNb+inQR07EOmLROUimU/
- rvB4vJcLudskEmYMnRqA6EPZ55SBXNSEJ4+jYQ8VAar7dlo7fDBK8bSmmuDM6dQ5IVCY/KRMjZ
- 6cLq9uOCtg2qYher9Z7/1Bwu9lxopxwh3nwnDFCOXTiVaC/5D0O/7F5BslyeeAAAA
-X-Change-ID: 20251003-fix-mt8196-pinctrl-regnames-60d30873ca23
-To: Sean Wang <sean.wang@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Cathy Xu <ot_cathy.xu@mediatek.com>, Guodong Liu <guodong.liu@mediatek.com>
-Cc: kernel@collabora.com, linux-mediatek@lists.infradead.org, 
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759500084; l=1688;
- i=louisalexis.eyraud@collabora.com; s=20250113; h=from:subject:message-id;
- bh=cPM9JXOFF7ibYCync3LVv1ejPvu2H2nbyMWY+uEM8fU=;
- b=JXCauQA7P83lu0MWupp+csOkf8/00iSvFsB4NG3QcNCOYDGebAwMM4pGIw8azXZaBdIdsbgz4
- 6zaoOSPcvTtATRzWZCKGcIjBG96I2R03fKa4898kgQb6oyAQafqHvD7
-X-Developer-Key: i=louisalexis.eyraud@collabora.com; a=ed25519;
- pk=CHFBDB2Kqh4EHc6JIqFn69GhxJJAzc0Zr4e8QxtumuM=
+X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-The mt8196-pinctrl driver requires to probe that a device tree uses
-in the device node the same names than mt8196_pinctrl_register_base_names
-array. But they are not matching the required ones in the
-"mediatek,mt8196-pinctrl" dt-bindings, leading to possible dtbs check
-issues.
-So, align all mt8196_pinctrl_register_base_names entries on dt-bindings
-ones.
+On Wed,  1 Oct 2025 09:44:37 -0500
+Eddie James <eajames@linux.ibm.com> wrote:
 
-Fixes: f7a29377c253 ("pinctrl: mediatek: Add pinctrl driver on mt8196")
-Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
----
- drivers/pinctrl/mediatek/pinctrl-mt8196.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+> The DPS310 is a barometric pressure and temperature sensor with
+> an I2C interface. Remove it from trivial-devices.yaml and add its
+> own documentation.
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8196.c b/drivers/pinctrl/mediatek/pinctrl-mt8196.c
-index 82a73929c7a0fc0fb841b5fe313d905c8478044a..dec957c1724b014522a70ed38057e162fe9e25af 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt8196.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt8196.c
-@@ -1801,10 +1801,8 @@ static const struct mtk_pin_reg_calc mt8196_reg_cals[PINCTRL_PIN_REG_MAX] = {
- };
- 
- static const char * const mt8196_pinctrl_register_base_names[] = {
--	"iocfg0", "iocfg_rt", "iocfg_rm1", "iocfg_rm2",
--	"iocfg_rb", "iocfg_bm1", "iocfg_bm2", "iocfg_bm3",
--	"iocfg_lt", "iocfg_lm1", "iocfg_lm2", "iocfg_lb1",
--	"iocfg_lb2", "iocfg_tm1", "iocfg_tm2", "iocfg_tm3",
-+	"base", "rt", "rm1", "rm2", "rb", "bm1", "bm2", "bm3",
-+	"lt", "lm1", "lm2", "lb1", "lb2", "tm1", "tm2", "tm3",
- };
- 
- static const struct mtk_eint_hw mt8196_eint_hw = {
+Hi Eddie,
 
----
-base-commit: 4a7bcf9e0158d9976525370ff84401a1e955bbee
-change-id: 20251003-fix-mt8196-pinctrl-regnames-60d30873ca23
+Why?  I guess you need the #io-channel-cells which trivial devices
+doesn't allow because you have a consumer driver?
 
-Best regards,
--- 
-Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+Obviously the binding patch shouldn't mention that, but it could call
+out that there can be such consumers.
+
+I'd also expect to see some supplies even if the driver doesn't yet
+explicitly handle them.
+
+Jonathan
+
+> 
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../iio/pressure/infineon,dps310.yaml         | 44 +++++++++++++++++++
+>  .../devicetree/bindings/trivial-devices.yaml  |  2 -
+>  MAINTAINERS                                   |  1 +
+>  3 files changed, 45 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml b/Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml
+> new file mode 100644
+> index 0000000000000..7c0782e2a821b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml
+> @@ -0,0 +1,44 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/pressure/infineon,dps310.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Infineon DPS310 barometric pressure and temperature sensor
+> +
+> +maintainers:
+> +  - Eddie James <eajames@linux.ibm.com>
+> +
+> +description:
+> +  The DPS310 is a barometric pressure and temperature sensor with an I2C
+> +  interface.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - infineon,dps310
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#io-channel-cells":
+> +    const: 0
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        pressure-sensor@76 {
+> +          compatible = "infineon,dps310";
+> +          reg = <0x76>;
+> +          #io-channel-cells = <0>;
+> +        };
+> +    };
+> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+> index 7609acaa752d5..a72b7fabc7034 100644
+> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
+> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+> @@ -127,8 +127,6 @@ properties:
+>            - ibm,cffps2
+>              # IBM On-Chip Controller hwmon device
+>            - ibm,p8-occ-hwmon
+> -            # Infineon barometric pressure and temperature sensor
+> -          - infineon,dps310
+>              # Infineon IR36021 digital POL buck controller
+>            - infineon,ir36021
+>              # Infineon IRPS5401 Voltage Regulator (PMIC)
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 0c8281ea4cc64..92b9854a0e07d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12191,6 +12191,7 @@ INFINEON DPS310 Driver
+>  M:	Eddie James <eajames@linux.ibm.com>
+>  L:	linux-iio@vger.kernel.org
+>  S:	Maintained
+> +F:	Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml
+>  F:	drivers/iio/pressure/dps310.c
+>  
+>  INFINEON PEB2466 ASoC CODEC
 
 
