@@ -1,133 +1,106 @@
-Return-Path: <linux-kernel+bounces-841317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8BB2BB7045
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 15:31:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C054BB705A
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 15:33:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DBB3F4E232E
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 13:31:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED7783C0558
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 13:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2E917C21B;
-	Fri,  3 Oct 2025 13:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB7B1DC994;
+	Fri,  3 Oct 2025 13:33:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LKbMNVBc"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hgTfYbBj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC461C01
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 13:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB2A1C6B4
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 13:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759498267; cv=none; b=WcngTmaQ9YMKqp1gmvYXQdCrIBgqoVtKpzAyWu6We2DIoS6IuSeQC+wrmr0HXa60iohPg66SIVvSMF0Q5V4Y22/b0sF6N9k/R9C0dnVlJs30/Xw2ccLjvt1pX7lwBA+2A0EpKjZySpnIij07PDVDzyc0FmY/VS02M/0wmzLHpGY=
+	t=1759498390; cv=none; b=BD2PV0OLXWXY0rli7wH/N5MPliS0Ajxx/xFJZpuD7V04vIoTNyC7Z3nzTFvtPSTju43WG/9w+PG6viUrZepWiF9rYMs8x9S6OvZejAUzILUDgdZfxx3t8Z0BROfbbGdmnyGB1CnVB0j9WogvgljFzt+wBEzpUW+TKmEhhhc3hWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759498267; c=relaxed/simple;
-	bh=M/PYD8FqgY/wvD6rOzHZxSYgVw00CojRui7/mt/ISlM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ASHq7HFLUAwns0u/qHY/vfixL+Pm5GK2X5cNrWw+FvhlYsTcH6MBkwki9cZX9+8zESXwyhfXDem0s/GX2z3SscsIuEU/weL0Yqp92FisVzkHtuV3fTsx5TnOVBzliNGg0YKzHFvuM+jQbo0JDDYwoAEKhL3OvUYI66U8jM6ZVQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LKbMNVBc; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-78127433a32so1748366b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 06:31:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759498264; x=1760103064; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SGZud21unrH50dFl0sIlMV///6phEw6y8UIVkHJrd1M=;
-        b=LKbMNVBc6GR5/eTcNRHNJ9Byv/TAJn8R5kVaofc7GN4DU0C3VE0aVbbCEjXIuL/y4V
-         stww0Ee0oaT7J4UK9JMA4k02By8rfA5gD1K0hcZHRtYqsufgMLQ/x3l/CLTWQ7VcVZeG
-         3zp0EI6IJ1TQGKiwRx31zc6pak/ZyvYKk3bVExB6Yjz/ngtExwpsETZSX+g/Pthv936w
-         qtBD7SVFgqZKoZJ+cydW0cBv+3g7oT0236/oIIXyrCbBGHGUvcXCGF4ziIG5lJG5INd/
-         LrbEVOV0c+GKUP2av07zy63GyuOifdeZeIRaxEP0R5ThHWdmbuYZQxlHxBVGJiptPVB+
-         SG/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759498264; x=1760103064;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SGZud21unrH50dFl0sIlMV///6phEw6y8UIVkHJrd1M=;
-        b=kJzTfstL9gzZKCLrEiI3uIyMaeg3jhjEq2ATpnOY0ZzHq1NTA8VW+TZGj7Z8e/BxIk
-         FhqaK0Ec1BpDkJBPFO0J0V+2mpmi/FSbCmhnmwpokEFQRa125qVDDYnDz+0S2QtsTHdl
-         HCJ24tF9MSKm0lCEYfDys5pjjbbPUEkUvUqU+pETHrJgVX7y404mjTKWGhGWUYV1PbMq
-         HlVFKJ1+qvz5W7jLWlFqZDS56nuQZkTGvQjUFJCqCw4a/apVNScOOeKlD4IlwJ5EtfQu
-         KwJOViG6XvJu8To1a6AYplVMKf6Ug0wWtGlVLS2OLv+ebzJhkmsbbbWmFdT5O9WEfwhU
-         4IxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVt+ew8CA7GdgBoAhjBHgzBq28ybN4rjRQBwdOqH/pi3fQ3SZiWvQrS3BPJmWaD/qlbrUMSjXFbEwVtLcc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcX6QiMLQjkJCzeaJRCkROSMFvlvDuufJOewrv6J7p2wzfZjfy
-	oI0NUFujknszX/CIzR9RscjEzfMk3DN+UCZqJpaDh/H7hSImdfNipK48
-X-Gm-Gg: ASbGncsnejg4159mFqb0HBb84q9KyCLV/YZ0iSL6jAZCpVVUBSKbCDKz2PXU3xkWSzj
-	AXDAmcPGdB72HSZWOnDdHI2ZUNCdAqrlAm+ky2BieSV2cLYuMSkfuBmwv2PlnDjMN1Qa7on7UR9
-	MoiBQbOOOvLU8w7VKzTK0a4E/GAn+Pl9hE2BCTGX/Ja7Ppa24PTw2pXVyclULkbQiwfLKfWbqgJ
-	u0aPzAPs6CNzvs259W4dR+/YqMkyuLW0BUXgI1zlhaqB8K852QrzJ311x8M5m5Tkx+nGzP0P143
-	zE2GWPpaAykBaBlo/OXjcPbAAizIN0272fPnYuMPISP6QqLxRAFPeQA6FkAfkE4kwGRQnR2Dh+M
-	Og8NS+2GtcNQ0V2MnhPGTggRMyMXWA1oDgOj2bKIz2Hu5dFeIO0gCbptS40RvDMyj7IEiMv0dwh
-	E=
-X-Google-Smtp-Source: AGHT+IHUNFg2+6wlpsRB1KLXor895ZHBGEuyK2qlm9lTRa0xoty9J21fzUwTVsMeDCocct+adtHtjw==
-X-Received: by 2002:a05:6a20:a11b:b0:2ea:12b9:2dfa with SMTP id adf61e73a8af0-32b620d927amr4632018637.40.1759498264283;
-        Fri, 03 Oct 2025 06:31:04 -0700 (PDT)
-Received: from fedora ([45.116.149.225])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6099f72c54sm4627884a12.45.2025.10.03.06.31.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 06:31:03 -0700 (PDT)
-From: rtapadia730@gmail.com
-To: dsterba@suse.com,
-	clm@fb.com,
-	fdmanana@kernel.org
-Cc: linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	khalid@kernel.org,
-	david.hunter.linux@gmail.com,
-	Rajeev Tapadia <rtapadia730@gmail.com>
-Subject: [PATCH v2] btrfs: fix comment in alloc_bitmap() and drop stale TODO
-Date: Fri,  3 Oct 2025 19:00:02 +0530
-Message-ID: <20251003133001.45052-2-rtapadia730@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759498390; c=relaxed/simple;
+	bh=C0IfBPyV7UBF2PDQ6o0zMb4JYo7b3LeT2lZxvzwA1zo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LIq7tFACFGc8zKyQHK0c94+FM87rBJkQqdU7lesrdumy8Il/BP75KfvxJzFvs4nEkCeNAu4XcUMUJYqS0fx+7ElMt5IC3KMBcKMF/UZ7LR812Ti0K/6PQACW7RAba8vDNeI2YXHmNnkoujb0YFrdgaJJrGBSBXEaZGelvVtEtsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hgTfYbBj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 509E5C113D0
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 13:33:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759498390;
+	bh=C0IfBPyV7UBF2PDQ6o0zMb4JYo7b3LeT2lZxvzwA1zo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=hgTfYbBj1Bf8IDVz126EWVCUWqOjd7ddVb6RNVV6y/wXj98nXkZlaTK970C+QRa5D
+	 aAsD17JkeksYxzGVhfK9RR6lJXqWU9AN2LXnU3eLYryX4pzKoU2QTTi5qDYjrcSe30
+	 ykOGkdZnP5JnoZAw/g2wMFIl1JfHgakD3d73aP0dgfLv5On1Erpq1CI8bwCH7T65ST
+	 Mdl9kZyQuBXz1kBs7mZ2QmjxRHUJs7N9DS445xMBCQrRZ/gXekLCKjoW5053LCU6oE
+	 dIwOk1NB72snQee0rSpRpBAt7FFJceP85+7R7Ize9rJISNfLYSiNi9H8mEn8n8Siq1
+	 OlCnotycrfmNA==
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b48d8deafaeso423568666b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 06:33:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVHYuyUF4jhw2oDhq/cc2AI1s+PQWbyoyI1ukxX3XQFAiu8T2OjG4Mf31p9Lw6BUG0zPeOd5zsToZ2Z2nE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxmj9esF1luFdpUr0nA+Hnje+1WAjOHk+B7n6by572Kl/FsYZZE
+	CS1DB8SgpGNV/A0CUqDbmATuzwDttgpNZXkOBP620yPwOCEYpag6DLznFx1cm7hf8VstygelDN9
+	Z3Vy6Av/T/FyBNMz8fH9w4k1iH79W8Q==
+X-Google-Smtp-Source: AGHT+IGaUVVXIqhC9lovJbOg6iFmKgFvDhzHqwsGL+BfWqtS/NinqS+uML7tkmyQ2x8FtOpCPjCiO9PBD+v4XaQbRRE=
+X-Received: by 2002:a17:906:c146:b0:b04:5e64:d7cd with SMTP id
+ a640c23a62f3a-b49c4cde217mr381764366b.46.1759498388819; Fri, 03 Oct 2025
+ 06:33:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1759485668.git.geert+renesas@glider.be> <98e13934d06116d5c116bd2b2187842ec3a8c11a.1759485668.git.geert+renesas@glider.be>
+In-Reply-To: <98e13934d06116d5c116bd2b2187842ec3a8c11a.1759485668.git.geert+renesas@glider.be>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 3 Oct 2025 08:32:57 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJACXgfgLBn4bpz9uG2zEsoH+FX+8wHmTSj2rLVV59=hg@mail.gmail.com>
+X-Gm-Features: AS18NWCJ1lihSi5v5QI8_-KXwh5QzGMdW1l0dkB9L36RcYjtaMnOS5EVXEekAWI
+Message-ID: <CAL_JsqJACXgfgLBn4bpz9uG2zEsoH+FX+8wHmTSj2rLVV59=hg@mail.gmail.com>
+Subject: Re: [PATCH/RFC 1/2] of/irq: Ignore interrupt parent for nodes without interrupts
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Samuel Holland <samuel@sholland.org>, Marc Zyngier <maz@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Rajeev Tapadia <rtapadia730@gmail.com>
+On Fri, Oct 3, 2025 at 5:08=E2=80=AFAM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+> The Devicetree Specification states:
+>
+>     The root of the interrupt tree is determined when traversal of the
+>     interrupt tree reaches an interrupt controller node without an
+>     interrupts property and thus no explicit interrupt parent.
+>
+> However, of_irq_init() gratuitously assumes that a node without
+> interrupts has an actual interrupt parent if it finds an
+> interrupt-parent property higher up in the device tree.  Hence when such
+> a property is present (e.g. in the root node), the root interrupt
+> controller may not be detected as such, causing a panic:
+>
+>     OF: of_irq_init: children remain, but no parents
+>     Kernel panic - not syncing: No interrupt controller found.
+>
+> Commit e91033621d56e055 ("of/irq: Use interrupts-extended to find
+> parent") already fixed a first part, by checking for the presence of an
+> interrupts-extended property.  Fix the second part by only calling
+> of_irq_find_parent() when an interrupts property is present.
 
-All callers of alloc_bitmap() hold a transaction handle, so GFP_NOFS is
-needed to avoid deadlocks on recursion. Update the comment and drop the
-stale TODO.
+Seems reasonable. Why the RFC tag?
 
-Signed-off-by: Rajeev Tapadia <rtapadia730@gmail.com>
----
-Change log:
-As per previous review the change is not required. So just removing the
-stale TODO.
+Normally I'd worry about some ancient PPC or Sparc system, but they
+don't use of_irq_init().
 
- fs/btrfs/free-space-tree.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
-
-diff --git a/fs/btrfs/free-space-tree.c b/fs/btrfs/free-space-tree.c
-index dad0b492a663..bb8ca7b679be 100644
---- a/fs/btrfs/free-space-tree.c
-+++ b/fs/btrfs/free-space-tree.c
-@@ -165,11 +165,9 @@ static unsigned long *alloc_bitmap(u32 bitmap_size)
- 
- 	/*
- 	 * GFP_NOFS doesn't work with kvmalloc(), but we really can't recurse
--	 * into the filesystem as the free space bitmap can be modified in the
--	 * critical section of a transaction commit.
--	 *
--	 * TODO: push the memalloc_nofs_{save,restore}() to the caller where we
--	 * know that recursion is unsafe.
-+	 * into the filesystem here. All callers hold a transaction handle
-+	 * open, so if a GFP_KERNEL allocation recurses into the filesystem
-+	 * and triggers a transaction commit, we would deadlock.
- 	 */
- 	nofs_flag = memalloc_nofs_save();
- 	ret = kvzalloc(bitmap_rounded_size, GFP_KERNEL);
--- 
-2.51.0
-
+Rob
 
