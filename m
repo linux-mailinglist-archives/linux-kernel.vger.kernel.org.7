@@ -1,125 +1,347 @@
-Return-Path: <linux-kernel+bounces-841310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6509FBB7015
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 15:25:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A064CBB7021
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 15:26:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 176EF3BDF12
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 13:21:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91DC13BFADC
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 13:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8561DED77;
-	Fri,  3 Oct 2025 13:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3223A27EC99;
+	Fri,  3 Oct 2025 13:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iUgfzswG"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m1VoQoyZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF7C522F
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 13:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26EBC2EB872;
+	Fri,  3 Oct 2025 13:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759497684; cv=none; b=Gng/M2x6bmPXGG8H6TA+Eceyvr8MmGcd70qEKXeS6QFbumX5vTYOfxyTKkVNaE2BvoUcCylWhP2yLC/ZSnwybMQFLsJW2cYXQT/0KKMgDAbx9ZIeB5PEEswF3fRKfX5El1SiFM+B0axC3IaxWLTiFqWpcsjAp5DFl98NA+D/Row=
+	t=1759497746; cv=none; b=s8xlMUoAxb+CUsPLQd9phGtnIO5+MiTtsyLhbZxGcvMtGXeI0XrNVoG2Ac6cAHYVQUJNMe67AR8A6No9ZSZJbc7+Or7vg2AzVBhhxB3HyA0CJdjAeKVpp+6Sfs+Ue1PH5tY9MWAFpvvt4ZCT1VI99sGqzWZg+9jP8EDKYF0jBA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759497684; c=relaxed/simple;
-	bh=0xuYuVRnvoi3h2VJMy+VwCbPVEUcLMz6AZlmenXKJYs=;
+	s=arc-20240116; t=1759497746; c=relaxed/simple;
+	bh=A2hluD0l8IO1DxEiF9nEW3SijizW71b1ccI60ZVifUE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WCv8Z7WHisms+SCDly3GBe6EiTV83Gtxy2gCxQPMzk3PWkH3uYGw2Y30AvBqgv9/1uGAc1ZCW93Ig7lyzzhHc+HppC/VIT6uPeDiCeEJewHuPgQbcwZ+m4KbZHOVrG74v9lE49Qi2nR8skvQJmQ20z9/i24FeUFITvgbdqW2yOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iUgfzswG; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b3d80891c6cso530524366b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 06:21:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759497680; x=1760102480; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pEydH1jo5Se5kyBydip8SdPrTJcyroKtL59YbuJLJJ8=;
-        b=iUgfzswGkdI5QvECn/7lZHMb/F9CYbqhgttf8G0vddRSGg7YX21cIw0XpQJZpcfchq
-         O7+HSeFOxjkyQWCk23MUEGk9vEpPrujrHxP32EFniS25ex29eGb8md51kSbD0b2gEbVJ
-         4BaiXwpCBkB+2Y8jEfsrbS69corMRYw8drnWK+o8Gq6wvF9ixSj2xHmg2VzBP1O+nJgf
-         pNfGeiATv7QCROwexqjoax5TxnJMMa3hhZUTyn5uRJ5atI7f9J+zXtXN5kcK9yXnTvvx
-         1HpCBV/eefaq96o264NsyOmQ/2LODUZHFsJ3qSvv+yvO9Ui5QRwVpIvrII0lZPB4+P+w
-         DleA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759497680; x=1760102480;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=pEydH1jo5Se5kyBydip8SdPrTJcyroKtL59YbuJLJJ8=;
-        b=bNgizfKQz9Wvvf4YZz5TNf6NxuN4tkQX3ZuvZ3gERVY3jQ+Uz5S82RvcZQQjB9LXt0
-         awKdMgKzLquKg30K0F/4FTR3bIcHM4XHEAbf1ETjWAgvw21zWvGasUOnjrMsTUxRqQ4A
-         5uWiIIIJ1HGUS9/8iD96bDXbNj7+4nabG6rCnNte7gRFPYRz6+h4rKT6v9ozM5BvHT3F
-         fAhBTss8tcfzwWhGv5+mpuLQDhzAYFiNOfkE7s2hvu3u22QMRVqGECyem9WtxmbUT7Cb
-         MBqP1P+V8ByRBFpPtWKA867LUA2WItBiLx7WeDUvrBSlw6gQnM/ilkkeexN4kgm6E9jK
-         qHpg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBDRqYZKCtdBnWsJnegu34A5RvNOAAZ25OqOb0IOqGAM553JfhwsbQKSNhBrvE5dBIU2/1xpGCvk4p7dA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0ysLamLkM2GCAiVIfPSuHhLshLk9VXYV5fl2x8uDiOgNxEuTG
-	AvyUnbKHbEUjJBYnXlmMAlfqRhAFyrBlbYv1uWmJ+UtL+e/4RaUtQ+ui
-X-Gm-Gg: ASbGncsephBXlfGCg3DIXW8LyIG0xdXY2/neNVlpAy0rvSmtQRfbu7o90KP/FPqDbcO
-	9lVxwTtNcoOl7hDdq2mmuluRntpVCWGDpoa3c/+qPclIPMjZJMMnjDTSvn0VA36xWO3FNspL+cp
-	eHaoldatTgdt7JFU/Th7YYPMHNbZPULBvBE6XsYhM01Jl8kGOrei65wJLadcicbBIkPtJnHZYu4
-	MjYCVNZaJg54UqO05Kl8dlvvLVYSk4jiYUF6Hyg2wVjRuh/Qm/w1dxxWWboI8Gkeb3yR2vusEp0
-	oyWvX4r0+/dgaimgHOf4hjRfN9uNl5GFNrxW28mqcAZSSjYrFmqP8oNcq0Ii3ox9I1gWWoPiYz1
-	8pNJrt6gfiXqKRTpMsyineQHn8g23RttIuxfdgABhYmp5BS6UCVOMCn9bONJZtiK4ANCfD8E=
-X-Google-Smtp-Source: AGHT+IGa64G0qwV9Bk1JMsFpkYvw0NEXZMFhhOg5F9dy+OS5qHXCxq08mh6HOFbiqmNQxCE//fb+4Q==
-X-Received: by 2002:a17:907:1c85:b0:b40:c49b:709 with SMTP id a640c23a62f3a-b4859c7a718mr816247166b.8.1759497679749;
-        Fri, 03 Oct 2025 06:21:19 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b4869b4d9f5sm447012366b.66.2025.10.03.06.21.19
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 03 Oct 2025 06:21:19 -0700 (PDT)
-Date: Fri, 3 Oct 2025 13:21:18 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Lance Yang <lance.yang@linux.dev>
-Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
-	ziy@nvidia.com, baolin.wang@linux.alibaba.com,
-	Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
-	dev.jain@arm.com, baohua@kernel.org, ioworker0@gmail.com,
-	richard.weiyang@gmail.com, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH mm-new 1/2] mm/khugepaged: optimize PTE scanning with
- if-else-if-else-if chain
-Message-ID: <20251003132118.qe2wipbrzwkbaatq@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20251002073255.14867-1-lance.yang@linux.dev>
- <20251002073255.14867-2-lance.yang@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ds06on7YjB3FJXaiptHiN20EwyqFBzTDfNDbrxmDgWbBuSGFZYuMt02xtYR+vV5VW5XfA+AURJKKR4dTM/0spPjSAyCf6z6JbwOTuGZbLyzTuFuh/R2GxSzyxBIi4EndFzCl0uEDk8V5iby+n/d+HixNUPxMzPG8jVnHA2hmidA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m1VoQoyZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71FC1C4CEF5;
+	Fri,  3 Oct 2025 13:22:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759497746;
+	bh=A2hluD0l8IO1DxEiF9nEW3SijizW71b1ccI60ZVifUE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m1VoQoyZK+0q8O3HvyAtIGUuFnCbPyZhX1ioKmnkL3JAloHKE/f9yDYHV6zLFevmp
+	 xc05F6I9ufNwo20ENoPxDODObtxc3ePYLGeU8vWXoR/sq2wxJ36pc/j2q8tqW0L1nE
+	 C5kyoEcs5+6jD5rehK4U8rW2PXT4gNsLFbKHKPAOrp+Tgxzn0XL8VcDa10gYaWwuzL
+	 SmP+VPZBOK/p9PIZdQebasidslquTK2Zj7vHryqCeUV+xDH4c6l1351xGFwdkZKGpd
+	 beDZpivcGmRZr0qas8V9KKGrVKRX4iT2mV8JwdCoVric1qQfSB8GuVqlwBPJlJ4Pjv
+	 5v/wEfmefXb1w==
+Date: Fri, 3 Oct 2025 15:22:23 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Daniel Stone <daniel@fooishbar.org>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
+	Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Samuel Holland <samuel@sholland.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+	Liu Ying <victor.liu@nxp.com>, Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
+Subject: Re: [PATCH v3 00/11] drm/connector: hdmi: limit infoframes per
+ driver capabilities
+Message-ID: <20251003-uptight-echidna-of-stamina-815305@houat>
+References: <20250901-voracious-classy-hedgehog-ee28ef@houat>
+ <voknqdv3zte2jzue5yxmysdiixxkogvpblvrccp5gu55x5ycca@srrcscly4ch4>
+ <st6wob5hden6ypxt2emzokfhl3ezpbuypv2kdtf5zdrdhlyjfw@l2neflb4uupo>
+ <pe6g2fanw65p67kfy5blbtiytngxmr6nkbazymojs4a66yvpl3@7j4ccnsvc6az>
+ <20250910-didactic-honored-chachalaca-f233b2@houat>
+ <x562ueky2z5deqqmhl222moyrbylfwi35u4hb34dpl3z52ra4c@dyw4iayrewnz>
+ <20250925-fervent-merry-beagle-2baba3@penduick>
+ <qx5ashx62pufott6hnsfna3qntnoyvxwxze4rihhuxcsdxi37s@bbdvc3sfsgne>
+ <20250929-gregarious-worm-of-memory-c5354d@houat>
+ <itgffxygopi7etkt7xhvmyuvyl5ad3k43nsxvjzw3ubtwiikn7@ocugfdaigtu7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="xp6eesrwl3hc4z5s"
 Content-Disposition: inline
-In-Reply-To: <20251002073255.14867-2-lance.yang@linux.dev>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <itgffxygopi7etkt7xhvmyuvyl5ad3k43nsxvjzw3ubtwiikn7@ocugfdaigtu7>
 
-On Thu, Oct 02, 2025 at 03:32:54PM +0800, Lance Yang wrote:
->From: Lance Yang <lance.yang@linux.dev>
->
->As pointed out by Dev, the PTE checks for disjoint conditions in the
->scanning loops can be optimized. is_swap_pte, (pte_none && is_zero_pfn),
->and pte_uffd_wp are mutually exclusive.
->
->This patch refactors the loops in both __collapse_huge_page_isolate() and
->hpage_collapse_scan_pmd() to use a continuous if-else-if-else-if chain
->instead of separate if blocks.
->
->Also, this is a preparatory step to make it easier to merge the
->almost-duplicated scanning logic in these two functions, as suggested
->by David.
->
->Suggested-by: Dev Jain <dev.jain@arm.com>
->Suggested-by: David Hildenbrand <david@redhat.com>
->Signed-off-by: Lance Yang <lance.yang@linux.dev>
 
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+--xp6eesrwl3hc4z5s
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 00/11] drm/connector: hdmi: limit infoframes per
+ driver capabilities
+MIME-Version: 1.0
 
--- 
-Wei Yang
-Help you, Help me
+On Tue, Sep 30, 2025 at 10:02:28AM +0300, Dmitry Baryshkov wrote:
+> On Mon, Sep 29, 2025 at 03:00:04PM +0200, Maxime Ripard wrote:
+> > On Thu, Sep 25, 2025 at 05:16:07PM +0300, Dmitry Baryshkov wrote:
+> > > On Thu, Sep 25, 2025 at 03:13:47PM +0200, Maxime Ripard wrote:
+> > > > On Wed, Sep 10, 2025 at 06:26:56PM +0300, Dmitry Baryshkov wrote:
+> > > > > On Wed, Sep 10, 2025 at 09:30:19AM +0200, Maxime Ripard wrote:
+> > > > > > On Wed, Sep 03, 2025 at 03:03:43AM +0300, Dmitry Baryshkov wrot=
+e:
+> > > > > > > On Tue, Sep 02, 2025 at 08:06:54PM +0200, Maxime Ripard wrote:
+> > > > > > > > On Tue, Sep 02, 2025 at 06:45:44AM +0300, Dmitry Baryshkov =
+wrote:
+> > > > > > > > > On Mon, Sep 01, 2025 at 09:07:02AM +0200, Maxime Ripard w=
+rote:
+> > > > > > > > > > On Sun, Aug 31, 2025 at 01:29:13AM +0300, Dmitry Barysh=
+kov wrote:
+> > > > > > > > > > > On Sat, Aug 30, 2025 at 09:30:01AM +0200, Daniel Ston=
+e wrote:
+> > > > > > > > > > > > Hi Dmitry,
+> > > > > > > > > > > >=20
+> > > > > > > > > > > > On Sat, 30 Aug 2025 at 02:23, Dmitry Baryshkov
+> > > > > > > > > > > > <dmitry.baryshkov@oss.qualcomm.com> wrote:
+> > > > > > > > > > > > > It's not uncommon for the particular device to su=
+pport only a subset of
+> > > > > > > > > > > > > HDMI InfoFrames. It's not a big problem for the k=
+ernel, since we adopted
+> > > > > > > > > > > > > a model of ignoring the unsupported Infoframes, b=
+ut it's a bigger
+> > > > > > > > > > > > > problem for the userspace: we end up having files=
+ in debugfs which do
+> > > > > > > > > > > > > mot match what is being sent on the wire.
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > Sort that out, making sure that all interfaces ar=
+e consistent.
+> > > > > > > > > > > >=20
+> > > > > > > > > > > > Thanks for the series, it's a really good cleanup.
+> > > > > > > > > > > >=20
+> > > > > > > > > > > > I know that dw-hdmi-qp can support _any_ infoframe,=
+ by manually
+> > > > > > > > > > > > packing it into the two GHDMI banks. So the support=
+ed set there is
+> > > > > > > > > > > > 'all of the currently well-known ones, plus any two=
+ others, but only
+> > > > > > > > > > > > two and not more'. I wonder if that has any effect =
+on the interface
+> > > > > > > > > > > > you were thinking about for userspace?
+> > > > > > > > > > >=20
+> > > > > > > > > > > I was mostly concerned with the existing debugfs inte=
+rface (as it is
+> > > > > > > > > > > also used e.g. for edid-decode, etc).
+> > > > > > > > > > >=20
+> > > > > > > > > > > It seems "everything + 2 spare" is more or less commo=
+n (ADV7511, MSM
+> > > > > > > > > > > HDMI also have those. I don't have at hand the proper=
+ datasheet for
+> > > > > > > > > > > LT9611 (non-UXC one), but I think its InfoFrames are =
+also more or less
+> > > > > > > > > > > generic).  Maybe we should change debugfs integration=
+ to register the
+> > > > > > > > > > > file when the frame is being enabled and removing it =
+when it gets unset.
+> > > > > > > > > >=20
+> > > > > > > > > > But, like, for what benefit?
+> > > > > > > > > >=20
+> > > > > > > > > > It's a debugfs interface for userspace to consume. The =
+current setup
+> > > > > > > > > > works fine with edid-decode already. Why should we comp=
+licate the design
+> > > > > > > > > > that much and create fun races like "I'm running edid-d=
+ecode in parallel
+> > > > > > > > > > to a modeset that would remove the file I just opened, =
+what is the file
+> > > > > > > > > > now?".
+> > > > > > > > >=20
+> > > > > > > > > Aren't we trading that with the 'I'm running edid-decode =
+in paralle with
+> > > > > > > > > to a modeset and the file suddenly becomes empty'?
+> > > > > > > >=20
+> > > > > > > > In that case, you know what the file is going to be: empty.=
+ And you went
+> > > > > > > > from a racy, straightforward, design to a racy, complicated=
+, design.
+> > > > > > > >=20
+> > > > > > > > It was my question before, but I still don't really see wha=
+t benefits it
+> > > > > > > > would have, and why we need to care about it in the core, w=
+hen it could
+> > > > > > > > be dealt with in the drivers just fine on a case by case ba=
+sis.
+> > > > > > >=20
+> > > > > > > Actually it can not: debugfs files are registered from the co=
+re, not
+> > > > > > > from the drivers. That's why I needed all the supported_infof=
+rames
+> > > > > > > (which later became software_infoframes).
+> > > > > >=20
+> > > > > > That's one thing we can change then.
+> > > > > >=20
+> > > > > > > Anyway, I'm fine with having empty files there.
+> > > > > > >=20
+> > > > > > > > > > > Then in the long run we can add 'slots' and allocate =
+some of the frames
+> > > > > > > > > > > to the slots. E.g. ADV7511 would get 'software AVI', =
+'software SPD',
+> > > > > > > > > > > 'auto AUDIO' + 2 generic slots (and MPEG InfoFrame wh=
+ich can probably be
+> > > > > > > > > > > salvaged as another generic one)). MSM HDMI would get=
+ 'software AVI',
+> > > > > > > > > > > 'software AUDIO' + 2 generic slots (+MPEG + obsucre H=
+DMI which I don't
+> > > > > > > > > > > want to use). Then the framework might be able to pri=
+oritize whether to
+> > > > > > > > > > > use generic slots for important data (as DRM HDR, HDM=
+I) or less important
+> > > > > > > > > > > (SPD).
+> > > > > > > > > >=20
+> > > > > > > > > > Why is it something for the framework to deal with? If =
+you want to have
+> > > > > > > > > > extra infoframes in there, just go ahead and create add=
+itional debugfs
+> > > > > > > > > > files in your driver.
+> > > > > > > > > >=20
+> > > > > > > > > > If you want to have the slot mechanism, check in your a=
+tomic_check that
+> > > > > > > > > > only $NUM_SLOT at most infoframes are set.
+> > > > > > > > >=20
+> > > > > > > > > The driver can only decide that 'we have VSI, SPD and DRM=
+ InfoFrames
+> > > > > > > > > which is -ETOOMUCH for 2 generic slots'. The framework sh=
+ould be able to
+> > > > > > > > > decide 'the device has 2 generic slots, we have HDR data,=
+ use VSI and
+> > > > > > > > > DRM InfoFrames and disable SPD for now'.
+> > > > > > > >=20
+> > > > > > > > I mean... the spec does? The spec says when a particular fe=
+ature
+> > > > > > > > requires to send a particular infoframe. If your device can=
+not support
+> > > > > > > > to have more than two "features" enabled at the same time, =
+so be it. It
+> > > > > > > > something that should be checked in that driver atomic_chec=
+k.
+> > > > > > >=20
+> > > > > > > Sounds good to me. Let's have those checks in the drivers unt=
+il we
+> > > > > > > actually have seveal drivers performing generic frame allocat=
+ion.
+> > > > > > >=20
+> > > > > > > > Or just don't register the SPD debugfs file, ignore it, put=
+ a comment
+> > > > > > > > there, and we're done too.
+> > > > > > >=20
+> > > > > > > It's generic code.
+> > > > > > >=20
+> > > > > > > > > But... We are not there yet and I don't have clear usecas=
+e (we support
+> > > > > > > > > HDR neither on ADV7511 nor on MSM HDMI, after carefully r=
+eading the
+> > > > > > > > > guide I realised that ADV7511 has normal audio infoframes=
+). Maybe I
+> > > > > > > > > should drop all the 'auto' features, simplifying this ser=
+ies and land
+> > > > > > > > > [1] for LT9611UXC as I wanted origianlly.
+> > > > > > > > >=20
+> > > > > > > > > [1] https://lore.kernel.org/dri-devel/20250803-lt9611uxc-=
+hdmi-v1-2-cb9ce1793acf@oss.qualcomm.com/
+> > > > > > > >=20
+> > > > > > > > Looking back at that series, I think it still has value to =
+rely on the
+> > > > > > > > HDMI infrastructure at the very least for the atomic_check =
+sanitization.
+> > > > > > > >=20
+> > > > > > > > But since you wouldn't use the generated infoframes, just s=
+kip the
+> > > > > > > > debugfs files registration. You're not lying to userspace a=
+nymore, and
+> > > > > > > > you get the benefits of the HDMI framework.
+> > > > > > >=20
+> > > > > > > We create all infoframe files for all HDMI connectors.
+> > > > > >=20
+> > > > > > Then we can provide a debugfs_init helper to register all of th=
+em, or
+> > > > > > only some of them, and let the drivers figure it out.
+> > > > > >=20
+> > > > > > Worst case scenario, debugfs files will not get created, which =
+is a much
+> > > > > > better outcome than having to put boilerplate in every driver t=
+hat will
+> > > > > > get inconsistent over time.
+> > > > >=20
+> > > > > debugfs_init() for each infoframe or taking some kind of bitmask?
+> > > >=20
+> > > > I meant turning hdmi_debugfs_add and create_hdmi_*_infoframe_file i=
+nto
+> > > > public helpers. That way, drivers that don't care can use the (rena=
+med)
+> > > > hdmi_debugfs_add, and drivers with different constraints can regist=
+er
+> > > > the relevant infoframes directly.
+> > >=20
+> > > Doesn't that mean more boilerplate?
+> >=20
+> > I don't think it would? In the general case, it wouldn't change
+> > anything, and in special cases, then it's probably going to be different
+> > from one driver to the next so there's not much we can do.
+> >=20
+> > > In the end, LT9611UXC is a special case, for which I'm totally fine
+> > > not to use HDMI helpers at this point: we don't control infoframes
+> > > (hopefully that can change), we don't care about the TMDS clock, no
+> > > CEC, etc.
+> >=20
+> > Not using the helpers sound pretty reasonable here too.
+> >=20
+> > > For all other usecases I'm fine with having atomic_check() unset all
+> > > unsupported infoframes and having empty files in debugfs. Then we can
+> > > evolve over the time, once we see a pattern. We had several drivers
+> > > which had very limited infoframes support, but I think this now gets
+> > > sorted over the time.
+> >=20
+> > I never talked about atomic_check()? You were initially concerned that
+> > the framework would expose data in debugfs that it's not using. Not
+> > registering anything in debugfs solves that, but I'm not sure we need to
+> > special case atomic_check.
+>=20
+> Well... I ended up with [1], handling infoframes in the atomic_check()
+> rather than registering fewer infoframe debugfs files. This way device
+> state is consistent, we don't have enabled instances, etc. However it
+> results in repetetive code in atomic_check().
+>=20
+> [1] https://lore.kernel.org/dri-devel/20250928-limit-infoframes-2-v2-0-6f=
+8f5fd04214@oss.qualcomm.com/
+
+I guess we can continue the discussion there, but I'm not sure we want
+to have more boilerplate in drivers, and especially in the atomic_check
+part. If drivers are inconsistent or wrong in the debugfs path, there's
+no major issue. If they are wrong in the atomic_check path, it will lead
+to regressions, possibly in paths that are pretty hard to test.
+
+Maxime
+
+--xp6eesrwl3hc4z5s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaN/ODwAKCRAnX84Zoj2+
+diGqAYCVf6AMoXhcU3VIb8z9xIngvdSuylZqphD9JtE/rS3QR8jtXs1A5G3e9kDf
+b9g7FbABf0JcEMqoNM9n9pzN92QZ1DiCn8U+tdtLbXL6iPX0Iagrzdcxx1bfDwJN
+nZSidYIWcw==
+=Qw5/
+-----END PGP SIGNATURE-----
+
+--xp6eesrwl3hc4z5s--
 
