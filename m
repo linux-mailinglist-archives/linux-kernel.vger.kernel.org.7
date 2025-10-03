@@ -1,306 +1,229 @@
-Return-Path: <linux-kernel+bounces-841402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81086BB7362
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:38:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CF75BB7374
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:41:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64A8A3B6BE4
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:38:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 229EF4ED242
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E083E264638;
-	Fri,  3 Oct 2025 14:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3424A26E71D;
+	Fri,  3 Oct 2025 14:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="PWiJ2V3K"
-Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="M1XjMzwa"
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011055.outbound.protection.outlook.com [40.107.130.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D992628D
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 14:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759502312; cv=none; b=SJjKPY6cEsj493Xp9Mb824Y7KYCdiRsLjJ9lXF/pYMqOPxpQWcvffv8ID1FWjH/Zi/v9UvSDUTpdTFAHfk130tkRPEnSJz3SA1sTpWF5R4tAJ/vrfg8+ORQ8LLsiUfn4+5UD5b2wBasn+RbXkcZxoVUe4FB0C5lhQKqrTsrf5L8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759502312; c=relaxed/simple;
-	bh=s+pFCHQtx2iwLi48JMaz7+9l7AXAYiVMugLfEc3I2Y4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pAmAkFg7DVbbk1/+c4CBdDFyUUeYb0PNBuuUUBHrCOX6/o5l00BdB+em1VQlNoVJsfnhK/F9ggRn38LvabxDKt4rkJYDhpYCPeZ7AjOV55kL4YuMqGcUVtLooWZ/tWkVfJ04mvn38QwwWb5ovRQ8bwkjUYheebXqvHRZK0BUTBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=PWiJ2V3K; arc=none smtp.client-ip=72.215.153.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
-Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id AGOfN8KXQ4guGKKg; Fri, 03 Oct 2025 10:38:21 -0400 (EDT)
-X-Barracuda-Envelope-From: tonyb@cybernetics.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
-X-ASG-Whitelist: Client
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
-	bh=5bX+6YMLnqgfErhyM2kFyZ3qB51WB8BBylxMxAN4ZlY=;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
-	Content-Language:Subject:MIME-Version:Date:Message-ID; b=PWiJ2V3KWkJErkoC80ov
-	pMz57Wx3vAute+RVMhdzaDAbpvztkc9xPJxYHXe+hmCCo2sOEShM7jsvpeukHhpnoRJQ3cxyRG/qE
-	ypYWJOwrZogsgeR6nSe5v5hbgAgXHOkbkKHycpPmNsMlpRkhbf9MD2qAdxbOc9n/xNtOdErnv4=
-Received: from [10.157.2.224] (HELO [192.168.200.1])
-  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
-  with ESMTPS id 14223278; Fri, 03 Oct 2025 10:38:21 -0400
-Message-ID: <2c536668-7dae-470c-a559-e278c9091b92@cybernetics.com>
-X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
-Date: Fri, 3 Oct 2025 10:38:21 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0331F9F73;
+	Fri,  3 Oct 2025 14:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759502478; cv=fail; b=EE+NiUHQM4TJSaWK+gk5Fj1ova5bvUH9hzWyYsOmRT3/ssrWiH551WBGNghzqTfy1CQOdXc3Pibbk2sXURcLZRAcWv0aBIpSF1vbpZkoiwbAIXZdcOcdOGfAdu9Sw+LLqgO7xXNzsF/8FHiCg3Y6rfSXSWqzuJRm5NJM8bNQlcg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759502478; c=relaxed/simple;
+	bh=pzWEp0rtZjnOuutFIwKeIoeQrA+TfkOEQ2MAGl88pt8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=h9fb3z+C9awwzvMGojRt4IfrFFNjDC2dEiOKHhmrRdCFhS9hL8x8YbICq11okLoDfOQMADgx3QKmwcpP1Fs2THSb8y65Hlwgq6JIEKYGMyPbfZRNkbH3doo5hONDXVCHKZK3uLB5VJNmY/q9+ZH+4G1o+QPO23F30X3ts4hXkjk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=M1XjMzwa; arc=fail smtp.client-ip=40.107.130.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DMVz/yUD+CLqehMYlk/3yAbb8C4JUGyUWG2EKwKlYasrjNKwoemCMRN7qp5z2G/X8oWmEzbaZnNRWlI9bVAF6154aVIMIQFcCpgDnFgt+RUOl1wp8QoG0s66pLk6D/MnWLVEFg36ZhZOnTO6EG4Re2Fi9l4c+NfQU6PIeFUuU5OC6AM8DBEoHw1a4I/YoFy9MfPyLyAK425V3Frfs9iSLCELzBtiR2MQ4835Ovcwyh2ZVhW+s8tYWNwEKgUwjVCOljEaZbwd+wU7PSeXf2o5IVb24gUEoua0iT/N+PbtV83yWIW9vXh6OIevOZa6n6MS6WiM4yokd337rrGG9kqRSA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JnVXQkCB1YDddDLQB8QZ2R3Z7CKnuL72YThbX4dI5dk=;
+ b=Q71El0IOB8vghUTfue/+P7E+mENLpFq0FkhDaNGNuAazwHiuo1tqXPcK+hNrk3mfOHnATC+0IILK7FH+e4opB33FkNy9EWOPImIiuQ23tO4GNAEOWNNscd6o2m4DMCoGkPzkOMsiRUQEtCou+7n6Ti2ofX6DJJqfQBkvCTHKy+X3dp0Wq31PXdAKoT+Mb/Ygp20XWrxP8JzPuvHfzj1OyRhC55LkeIW5JXQrrI7VmKCDbJtLUHsnHFA7calCFV2fHsKVb+5KPRO4/jiAhVfVEQaf28L4SHQQFElKNTX36T383jcp1elHcSUU+exR2RZdhhXyRddUZsjEjZ3r0oZlFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JnVXQkCB1YDddDLQB8QZ2R3Z7CKnuL72YThbX4dI5dk=;
+ b=M1XjMzwaFnotG1BubKnuyWgcqcRnnDUvo6icSuJXCBB8+0g7qVHP+KDXo8+HEtHA2cy8edcY3CF2LqQPn/KPf4K8OqePG0aNuGjrY/zAM6kyxcLXvzd5MrpzhEUMpxpk6jWe5Nsg0+rn/Tv41XOUxaPSPdaytkQtES1WA5ncKwxekocxlrR/K5Pz67+wshv+OFXC0X9VECyxVBY7zaWTLbGD/dW4SmmzgOyBUcCeWCRQv97TPNZ9v8Dq4czOa51Zm7mfSudwnbjlQCtOvB7VYaONXPuLSMUjUpIm3LD+reDkOHW/9hZJizJC7M5tRBpC5oJiaV604ncJMLAWf7fOaQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by PA1PR04MB10368.eurprd04.prod.outlook.com (2603:10a6:102:445::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.16; Fri, 3 Oct
+ 2025 14:41:09 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9182.013; Fri, 3 Oct 2025
+ 14:41:09 +0000
+Date: Fri, 3 Oct 2025 10:41:01 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Sherry Sun <sherry.sun@nxp.com>
+Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	shenwei.wang@nxp.com, peng.fan@nxp.com,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev
+Subject: Re: [PATCH V4 2/2] tty: serial: imx: Add missing wakeup event
+ reporting
+Message-ID: <aN/gfXqw0LVqH1dv@lizhi-Precision-Tower-5810>
+References: <20251002045259.2725461-1-sherry.sun@nxp.com>
+ <20251002045259.2725461-3-sherry.sun@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251002045259.2725461-3-sherry.sun@nxp.com>
+X-ClientProxiedBy: PH8PR21CA0019.namprd21.prod.outlook.com
+ (2603:10b6:510:2ce::9) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 11/16] scsi: qla2xxx: fix TMR failure handling
-Content-Language: en-US
-X-ASG-Orig-Subj: Re: [PATCH v3 11/16] scsi: qla2xxx: fix TMR failure handling
-To: Dan Carpenter <dan.carpenter@linaro.org>, oe-kbuild@lists.linux.dev,
- Nilesh Javali <njavali@marvell.com>, GR-QLogic-Storage-Upstream@marvell.com,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
- linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
- scst-devel@lists.sourceforge.net,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Dmitry Bogdanov <d.bogdanov@yadro.com>,
- Xose Vazquez Perez <xose.vazquez@gmail.com>
-References: <202510031227.18psESZQ-lkp@intel.com>
-From: Tony Battersby <tonyb@cybernetics.com>
-In-Reply-To: <202510031227.18psESZQ-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Barracuda-Connect: UNKNOWN[10.10.4.126]
-X-Barracuda-Start-Time: 1759502301
-X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at cybernetics.com
-X-Barracuda-Scan-Msg-Size: 8225
-X-Barracuda-BRTS-Status: 1
-X-ASG-Debug-ID: 1759502301-1cf43947df3e3e40002-xx1T2L
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|PA1PR04MB10368:EE_
+X-MS-Office365-Filtering-Correlation-Id: f5261470-3837-492a-a55f-08de028ae424
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|19092799006|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?quNr1FK+sw5WHsrSpsDr1g5GdFYa1xUKdnGAxBVmGp5j5PhIRlosSqHEBX6/?=
+ =?us-ascii?Q?FpW8jl3z2Rj3a3UWA+vCi9gnbG9lDcvBkH21h5nOE/gH/mnQ1Eoq43Emn7zp?=
+ =?us-ascii?Q?pDsg6CUcsp7EK2fNTrKdcrE8aguniITo0s2uPF+RbwsLNbrxLxrngOcTI3RQ?=
+ =?us-ascii?Q?yphKVa6Np3vOwRt4ohgxEvbQoVViHZmLV9buVkYyJb6l662Z8Uw3kIbGpfIv?=
+ =?us-ascii?Q?v9aX+wrWyc5CGgDINyWq2zjNQhO9DLh+8UDWoeWoUhLIT7lTs4aE5zHtFlSq?=
+ =?us-ascii?Q?lDOEuVF8EekWN47W2bv1wIzLh+GO8AEBNlmPRP0Ya/XPbcSAyK6nYGeKLrIM?=
+ =?us-ascii?Q?WWMF3lBPZ0LSWZzCHTmmFZJ7iORPcLAM3vGjApm5tNZOKzTGWeA8PFZ19RTm?=
+ =?us-ascii?Q?TTk2Y3f5NARujtcjeH64gER9bNFJo5MAWfFM9qWMnbeuysbkjP5oNwf+pKe6?=
+ =?us-ascii?Q?ktamb8sNbVWUj0Ae+4rGKdZq72mSEoF/f6Ps53PlXNiX9NHw36msC9NsJ+wU?=
+ =?us-ascii?Q?qNNGcoSJacCZd1J2ojJtFpfJKuXdQcFM2Zwsz7f3vNCcndcgOvIWP5MoHCGq?=
+ =?us-ascii?Q?LM0S5G/veSMkUi+R2Vi9mdqgrWXy8Vp8qh/4tkDmLZDFL8ITQkTr2pu7v5mb?=
+ =?us-ascii?Q?tba9r4SgcCf3yBY7huBMolcUNLnDViVDKt7SYKeyPAg60wJj8muNaT3BBS57?=
+ =?us-ascii?Q?ExuVk+iAWO6T2bYCaLaOY6eMstC4rh9uI/tshseYuyORLerxKvaodw6Z+ZyM?=
+ =?us-ascii?Q?KrD2WmK1OlHbVmlnmEP5q0YsGu2pEnqGo0F0p8h+ZZwBTZ9/LjupTOmcce0k?=
+ =?us-ascii?Q?cV+WWRM1aNP6e6c9gW5zoDfEEDKccH3ABBQ4/A2HWjgCLVy6ADdIW60t4Vp0?=
+ =?us-ascii?Q?/is6zv6SNqJBUStTjM7Z5fF2cBxSWHjVb6DNG18LuWxHeKXuxuMyeS9mofxG?=
+ =?us-ascii?Q?7NqqhdqT6GDZ0CEdw4qV80Rm5EKGGqC2U8N2/tPs0c1/orPkobSqhu4en740?=
+ =?us-ascii?Q?3SxHYf5Veb+GaXHBtF517aEL1J3wS7jrQRS35mWDTadn8qCHS9R8xSFYKikY?=
+ =?us-ascii?Q?Xh19ECYQPhvR+BxTe2/OTpdW6/Vgnj40ZA+ZsyLAFrdYw5X8KRY2vfGTIS2h?=
+ =?us-ascii?Q?7vuOZfFGf//KR+H7jLyFULHSSRj0Zp28DUdy4x7UI+bfx2uB5tiKOBj7gg9w?=
+ =?us-ascii?Q?vGCyldcakKfMBU12+3rAmD8yPNdb8H3Wss9Ca7wvFFVqrwpvOLxX4IufL+qE?=
+ =?us-ascii?Q?ES/bRLP2eMppBk6h806VK8UBr8+IrYtUQtj4kxGtII9mVtCj6buEm9w4iPJW?=
+ =?us-ascii?Q?YpNURf49kpuffLhbqHJXEveHz/FoW0v/SXNw/yshg8kMON9a0xUd+akKP8W5?=
+ =?us-ascii?Q?IRXnTXJ3bY8McOtXYeN7KnlOY5dkRn+rdCajbWy5EqfyeDjFJm6h941rvp7L?=
+ =?us-ascii?Q?CEEEqxekX9QIK0r0ppRJ7U4a0qJMcFfjqpnah8Fhv365yQ3jzii3Yma+qklM?=
+ =?us-ascii?Q?hcB1Jxc2Up4hI+ZcAgTfcNHU+P8vqA2kT4/S?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(19092799006)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?JD0wPpnFOaEYmJbknP6ZrWD72o4scxBakAcY/gxmw+pXz0kOdnrDfsM4euBe?=
+ =?us-ascii?Q?rpyLwK8pYRBPq2JrOVGToPhbgHAonGCCjXmEom4yDAI15Z/5yjJh/+LvAeW5?=
+ =?us-ascii?Q?V4fOLDYRQoSe/QnvWCpoXFASbMm0MYMx7oCMuzigrc3Yj3+CIJpACbgqMsns?=
+ =?us-ascii?Q?M+5yUhvgKywQ5HQSZQlbpRt8xtIQg1qvUpo9gbJh7OXFl3gzq4mZotzCgJTQ?=
+ =?us-ascii?Q?4hps83GSzupuF775EH3deNMsplhwpTHcFa8HrSemKNEDEH2GSfEdUw3KqZ30?=
+ =?us-ascii?Q?xAUHG3WMh5zIxgo9TUPhDu+Ff5nqJsa/fAsBiP6yWze/bzb1knC5TruUntNY?=
+ =?us-ascii?Q?K548524M++MwOyoinjsT6vexXGxar7mLBV4jE4JA9uJTgJEv0+Z5G8uHT/Eg?=
+ =?us-ascii?Q?YtprQ/HkpbWH7sJYbWbI5nDXl0sl1rbYil15cD1zHFtZhIiXDAcbtifO3Fff?=
+ =?us-ascii?Q?MT1RxJurJbeo6TYE2pS2mczXt48P+XUWe01hGdL2+MKZU+KwVfvQ0rlxqRc/?=
+ =?us-ascii?Q?A4hfBBtyLIqdxqHE7f6h2lWrvu28PIfpHp51k8d96gf5w3IAyE2V3w+L9kBq?=
+ =?us-ascii?Q?8beHjtvCZWWYV6oPYqOSqUM87mWiS8C+TvP8rQkiArfN3rL0xPDXfHQJJS+N?=
+ =?us-ascii?Q?a/DgA3XEAt9IwtfUvAGq9q5cC9Lc91izyHRLiIg//xFrnVULFlq3x4dTW6Rk?=
+ =?us-ascii?Q?6lB1sYVchKoWaM4oeggxqXfklhtlBv9sHL4lOUo8ywMpZYNP8Q0tivRdHlVh?=
+ =?us-ascii?Q?75xGCEUC7OhNgGGUp+M7+jCj/ua6qYwU4216Nrd1a4JQrYgCeg4KqtvnczqS?=
+ =?us-ascii?Q?6F2QcarI2AKFuveYuqjB3v9Eg9i9P33NauBmguRb3qDDPtLnTIUp5NMKLV7Q?=
+ =?us-ascii?Q?/LVY+k6hi4iD6oYcerjEvK7dirqR1mMDnkIFSaloEEr0kweXtiaecy6qmS74?=
+ =?us-ascii?Q?bMFsootFQFJjF/hKcQlWPlXA/LvWPIg4inR8Axmpt/F+mM4VXM+tT2pxR7GZ?=
+ =?us-ascii?Q?sO3WlnHlVDfl2MnBodQpHAYQZGThvp6pv9AM7nhcN7HPgeO+nsaIP/4ITVJ1?=
+ =?us-ascii?Q?T1ZtZwe1ayqsebpj8UCSb0rGVY1J2Weky9ztbDAQuSf+iXBHTbpACHLcZ9RP?=
+ =?us-ascii?Q?PGTP+YUpPdK5Yv2sedDgzo8vYCMzlyEvJy5g2drA1TKKDMT06B2CYas5yt81?=
+ =?us-ascii?Q?QfnhoU9gxe6FDBeYzYxPqJJTQVZeL31DCHn24TRWFA+5VC0qHmLxOeXvN7Xe?=
+ =?us-ascii?Q?JtIcJkvWUs1VeZLFEnpELQLB9Tafhav+kjjNnfm1PYCDP1XrRGSf/5w0PJp2?=
+ =?us-ascii?Q?h+zljB5UijVvDZbomg9h2o7bPeX3sK09VIAfTLWv8TX8gzx7yNjPe/ZwaiH3?=
+ =?us-ascii?Q?f8Oh+gNquWznF0Gs2dF4GxXJ/mAMu5L4MzBQQtKxfsu9MoiRiI3E4tD8uPgL?=
+ =?us-ascii?Q?gtugqR7KLEG79JEudHpBmhxNxyB4kukYWAMgt9HqNZYayDTZW90AIzH6H2Ue?=
+ =?us-ascii?Q?EJSx+S/JyYTmTrSRiC40aQeDOkKRxOq1CQjRu5Zv3uUa4jqvpSO4b+luA/sw?=
+ =?us-ascii?Q?zTFXHSBi+wu811Ar4Uw=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f5261470-3837-492a-a55f-08de028ae424
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2025 14:41:09.1502
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8hSd03/PhNxDec+IGi0ni/ZVN4g7HOmVI+qE+tu1F7ZZ4xaSyK7nkewzCIIVFknDZUtwQDTbOpa8gR5thhNgZw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10368
 
-On 10/3/25 04:40, Dan Carpenter wrote:
-> Hi Tony,
+On Thu, Oct 02, 2025 at 12:52:59PM +0800, Sherry Sun wrote:
+> Current imx uart wakeup event would not report itself as wakeup source
+> through sysfs. Add pm_wakeup_event() to support it.
 >
-> kernel test robot noticed the following build warnings:
+> Signed-off-by: Sherry Sun <sherry.sun@nxp.com>
+> ---
+
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+
+>  drivers/tty/serial/imx.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
 >
-> url:    https://github.com/intel-lab-lkp/linux/commits/Tony-Battersby/Revert-scsi-qla2xxx-Perform-lockless-command-completion-in-abort-path/20250930-024814
-> base:   e5f0a698b34ed76002dc5cff3804a61c80233a7a
-> patch link:    https://lore.kernel.org/r/f52cda16-4952-4b28-bbf7-d44f4e054490%40cybernetics.com
-> patch subject: [PATCH v2 11/16] scsi: qla2xxx: fix TMR failure handling
-> config: i386-randconfig-141-20251002 (https://download.01.org/0day-ci/archive/20251003/202510031227.18psESZQ-lkp@intel.com/config)
-> compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+> diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+> index 90e2ea1e8afe..c488e5d372ff 100644
+> --- a/drivers/tty/serial/imx.c
+> +++ b/drivers/tty/serial/imx.c
+> @@ -30,7 +30,7 @@
+>  #include <linux/iopoll.h>
+>  #include <linux/dma-mapping.h>
 >
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Closes: https://lore.kernel.org/r/202510031227.18psESZQ-lkp@intel.com/
+> -#include <asm/irq.h>
+> +#include <linux/irq.h>
+>  #include <linux/dma/imx-dma.h>
 >
-> New smatch warnings:
-> drivers/scsi/qla2xxx/qla_target.c:5735 qlt_handle_abts_completion() error: we previously assumed 'mcmd' could be null (see line 5723)
+>  #include "serial_mctrl_gpio.h"
+> @@ -2699,8 +2699,8 @@ static void imx_uart_enable_wakeup(struct imx_port *sport, bool on)
+>  {
+>  	struct tty_port *port = &sport->port.state->port;
+>  	struct device *tty_dev;
+> -	bool may_wake = false;
+> -	u32 ucr3;
+> +	bool may_wake = false, wake_active = false;
+> +	u32 ucr3, usr1;
 >
-v3 patch below, which should fix this issue.
-
-From: Tony Battersby <tonyb@cybernetics.com>
-Date: Fri, 3 Oct 2025 10:03:08 -0400
-Subject: [PATCH v3 11/16] scsi: qla2xxx: fix TMR failure handling
-
-(target mode)
-
-If handle_tmr() fails:
-
-- The code for QLA_TGT_ABTS results in memory-use-after-free and
-  double-free:
-	qlt_do_tmr_work()
-		qlt_build_abts_resp_iocb()
-			qpair->req->outstanding_cmds[h] = (srb_t *)mcmd;
-		mempool_free(mcmd, qla_tgt_mgmt_cmd_mempool); FIRST FREE
-	qlt_handle_abts_completion()
-		mcmd = qlt_ctio_to_cmd()
-			cmd = req->outstanding_cmds[h];
-			return cmd;
-		vha  = mcmd->vha; USE-AFTER-FREE
-		ha->tgt.tgt_ops->free_mcmd(mcmd); SECOND FREE
-
-- qlt_send_busy() makes no sense because it sends a SCSI command
-  response instead of a TMR response.
-
-Instead just call qlt_xmit_tm_rsp() to send a TMR failed response,
-since that code is well-tested and handles a number of corner cases.
-But it would be incorrect to call ha->tgt.tgt_ops->free_mcmd() after
-handle_tmr() failed, so add a flag to mcmd indicating the proper way to
-free the mcmd so that qlt_xmit_tm_rsp() can be used for both cases.
-
-Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
----
-
-v2 -> v3:
-- Check for mcmd == NULL in qlt_free_ul_mcmd().
-
-v1 -> v2:
-- Change FCP_TMF_REJECTED to FCP_TMF_FAILED.
-- Add QLA24XX_MGMT_LLD_OWNED and qlt_free_ul_mcmd().
-- Improve patch description.
-
- drivers/scsi/qla2xxx/qla_os.c     |  2 +-
- drivers/scsi/qla2xxx/qla_target.c | 56 +++++++++++++------------------
- drivers/scsi/qla2xxx/qla_target.h |  2 ++
- 3 files changed, 27 insertions(+), 33 deletions(-)
-
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index 2a3eb1dacf86..64387224f28a 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -1893,7 +1893,7 @@ __qla2x00_abort_all_cmds(struct qla_qpair *qp, int res)
- 				 * Currently, only ABTS response gets on the
- 				 * outstanding_cmds[]
- 				 */
--				ha->tgt.tgt_ops->free_mcmd(
-+				qlt_free_ul_mcmd(ha,
- 					(struct qla_tgt_mgmt_cmd *) sp);
- 				break;
- 			default:
-diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
-index 849ab256807b..009b9ca5c2b9 100644
---- a/drivers/scsi/qla2xxx/qla_target.c
-+++ b/drivers/scsi/qla2xxx/qla_target.c
-@@ -2005,7 +2005,6 @@ static void qlt_do_tmr_work(struct work_struct *work)
- 	struct qla_hw_data *ha = mcmd->vha->hw;
- 	int rc;
- 	uint32_t tag;
--	unsigned long flags;
- 
- 	switch (mcmd->tmr_func) {
- 	case QLA_TGT_ABTS:
-@@ -2020,34 +2019,12 @@ static void qlt_do_tmr_work(struct work_struct *work)
- 	    mcmd->tmr_func, tag);
- 
- 	if (rc != 0) {
--		spin_lock_irqsave(mcmd->qpair->qp_lock_ptr, flags);
--		switch (mcmd->tmr_func) {
--		case QLA_TGT_ABTS:
--			mcmd->fc_tm_rsp = FCP_TMF_REJECTED;
--			qlt_build_abts_resp_iocb(mcmd);
--			break;
--		case QLA_TGT_LUN_RESET:
--		case QLA_TGT_CLEAR_TS:
--		case QLA_TGT_ABORT_TS:
--		case QLA_TGT_CLEAR_ACA:
--		case QLA_TGT_TARGET_RESET:
--			qlt_send_busy(mcmd->qpair, &mcmd->orig_iocb.atio,
--			    qla_sam_status);
--			break;
--
--		case QLA_TGT_ABORT_ALL:
--		case QLA_TGT_NEXUS_LOSS_SESS:
--		case QLA_TGT_NEXUS_LOSS:
--			qlt_send_notify_ack(mcmd->qpair,
--			    &mcmd->orig_iocb.imm_ntfy, 0, 0, 0, 0, 0, 0);
--			break;
--		}
--		spin_unlock_irqrestore(mcmd->qpair->qp_lock_ptr, flags);
--
- 		ql_dbg(ql_dbg_tgt_mgt, mcmd->vha, 0xf052,
- 		    "qla_target(%d):  tgt_ops->handle_tmr() failed: %d\n",
- 		    mcmd->vha->vp_idx, rc);
--		mempool_free(mcmd, qla_tgt_mgmt_cmd_mempool);
-+		mcmd->flags |= QLA24XX_MGMT_LLD_OWNED;
-+		mcmd->fc_tm_rsp = FCP_TMF_FAILED;
-+		qlt_xmit_tm_rsp(mcmd);
- 	}
- }
- 
-@@ -2234,6 +2211,21 @@ void qlt_free_mcmd(struct qla_tgt_mgmt_cmd *mcmd)
- }
- EXPORT_SYMBOL(qlt_free_mcmd);
- 
-+/*
-+ * If the upper layer knows about this mgmt cmd, then call its ->free_cmd()
-+ * callback, which will eventually call qlt_free_mcmd().  Otherwise, call
-+ * qlt_free_mcmd() directly.
-+ */
-+void qlt_free_ul_mcmd(struct qla_hw_data *ha, struct qla_tgt_mgmt_cmd *mcmd)
-+{
-+	if (!mcmd)
-+		return;
-+	if (mcmd->flags & QLA24XX_MGMT_LLD_OWNED)
-+		qlt_free_mcmd(mcmd);
-+	else
-+		ha->tgt.tgt_ops->free_mcmd(mcmd);
-+}
-+
- /*
-  * ha->hardware_lock supposed to be held on entry. Might drop it, then
-  * reacquire
-@@ -2326,12 +2318,12 @@ void qlt_xmit_tm_rsp(struct qla_tgt_mgmt_cmd *mcmd)
- 			"RESET-TMR online/active/old-count/new-count = %d/%d/%d/%d.\n",
- 			vha->flags.online, qla2x00_reset_active(vha),
- 			mcmd->reset_count, qpair->chip_reset);
--		ha->tgt.tgt_ops->free_mcmd(mcmd);
-+		qlt_free_ul_mcmd(ha, mcmd);
- 		spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
- 		return;
- 	}
- 
--	if (mcmd->flags == QLA24XX_MGMT_SEND_NACK) {
-+	if (mcmd->flags & QLA24XX_MGMT_SEND_NACK) {
- 		switch (mcmd->orig_iocb.imm_ntfy.u.isp24.status_subcode) {
- 		case ELS_LOGO:
- 		case ELS_PRLO:
-@@ -2364,7 +2356,7 @@ void qlt_xmit_tm_rsp(struct qla_tgt_mgmt_cmd *mcmd)
- 	 * qlt_xmit_tm_rsp() returns here..
- 	 */
- 	if (free_mcmd)
--		ha->tgt.tgt_ops->free_mcmd(mcmd);
-+		qlt_free_ul_mcmd(ha, mcmd);
- 
- 	spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
- }
-@@ -5742,7 +5734,7 @@ static void qlt_handle_abts_completion(struct scsi_qla_host *vha,
- 		if (le32_to_cpu(entry->error_subcode1) == 0x1E &&
- 		    le32_to_cpu(entry->error_subcode2) == 0) {
- 			if (qlt_chk_unresolv_exchg(vha, rsp->qpair, entry)) {
--				ha->tgt.tgt_ops->free_mcmd(mcmd);
-+				qlt_free_ul_mcmd(ha, mcmd);
- 				return;
- 			}
- 			qlt_24xx_retry_term_exchange(vha, rsp->qpair,
-@@ -5753,10 +5745,10 @@ static void qlt_handle_abts_completion(struct scsi_qla_host *vha,
- 			    vha->vp_idx, entry->compl_status,
- 			    entry->error_subcode1,
- 			    entry->error_subcode2);
--			ha->tgt.tgt_ops->free_mcmd(mcmd);
-+			qlt_free_ul_mcmd(ha, mcmd);
- 		}
- 	} else if (mcmd) {
--		ha->tgt.tgt_ops->free_mcmd(mcmd);
-+		qlt_free_ul_mcmd(ha, mcmd);
- 	}
- }
- 
-diff --git a/drivers/scsi/qla2xxx/qla_target.h b/drivers/scsi/qla2xxx/qla_target.h
-index eb15d8e9f79e..223c40bc9498 100644
---- a/drivers/scsi/qla2xxx/qla_target.h
-+++ b/drivers/scsi/qla2xxx/qla_target.h
-@@ -966,6 +966,7 @@ struct qla_tgt_mgmt_cmd {
- 	unsigned int flags;
- #define QLA24XX_MGMT_SEND_NACK	BIT_0
- #define QLA24XX_MGMT_ABORT_IO_ATTR_VALID BIT_1
-+#define QLA24XX_MGMT_LLD_OWNED	BIT_2
- 	uint32_t reset_count;
- 	struct work_struct work;
- 	uint64_t unpacked_lun;
-@@ -1059,6 +1060,7 @@ extern int qlt_abort_cmd(struct qla_tgt_cmd *);
- void qlt_send_term_exchange(struct qla_qpair *qpair,
- 	struct qla_tgt_cmd *cmd, struct atio_from_isp *atio, int ha_locked);
- extern void qlt_xmit_tm_rsp(struct qla_tgt_mgmt_cmd *);
-+void qlt_free_ul_mcmd(struct qla_hw_data *ha, struct qla_tgt_mgmt_cmd *mcmd);
- extern void qlt_free_mcmd(struct qla_tgt_mgmt_cmd *);
- extern void qlt_free_cmd(struct qla_tgt_cmd *cmd);
- extern void qlt_unmap_sg(struct scsi_qla_host *vha, struct qla_tgt_cmd *cmd);
--- 
-2.43.0
-
-
+>  	scoped_guard(tty_port_tty, port) {
+>  		struct tty_struct *tty = scoped_tty();
+> @@ -2715,12 +2715,14 @@ static void imx_uart_enable_wakeup(struct imx_port *sport, bool on)
+>
+>  	uart_port_lock_irq(&sport->port);
+>
+> +	usr1 = imx_uart_readl(sport, USR1);
+>  	ucr3 = imx_uart_readl(sport, UCR3);
+>  	if (on) {
+>  		imx_uart_writel(sport, USR1_AWAKE, USR1);
+>  		ucr3 |= UCR3_AWAKEN;
+>  	} else {
+>  		ucr3 &= ~UCR3_AWAKEN;
+> +		wake_active = usr1 & USR1_AWAKE;
+>  	}
+>  	imx_uart_writel(sport, ucr3, UCR3);
+>
+> @@ -2731,10 +2733,14 @@ static void imx_uart_enable_wakeup(struct imx_port *sport, bool on)
+>  			ucr1 |= UCR1_RTSDEN;
+>  		} else {
+>  			ucr1 &= ~UCR1_RTSDEN;
+> +			wake_active = wake_active || (usr1 & USR1_RTSD);
+>  		}
+>  		imx_uart_writel(sport, ucr1, UCR1);
+>  	}
+>
+> +	if (wake_active && irqd_is_wakeup_set(irq_get_irq_data(sport->port.irq)))
+> +		pm_wakeup_event(tty_port_tty_get(port)->dev, 0);
+> +
+>  	uart_port_unlock_irq(&sport->port);
+>  }
+>
+> --
+> 2.34.1
+>
 
