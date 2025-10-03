@@ -1,126 +1,146 @@
-Return-Path: <linux-kernel+bounces-841756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83CE6BB825F
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 22:51:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3A0DBB8286
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 22:59:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3C6774EEFF7
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 20:51:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 546914E9BCD
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 20:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44B52561AE;
-	Fri,  3 Oct 2025 20:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A48C257AFB;
+	Fri,  3 Oct 2025 20:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ciq.com header.i=@ciq.com header.b="k2M/ReJg"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SyWx08qS"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE410254B18
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 20:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3908B221264
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 20:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759524691; cv=none; b=n7E3/aibtuc1suc8DYXJazBKlldKLP27uMUuik/WX/vfPlZ9SbHYhadTa58f8fnI/nMvWLr2DiE5BaNirBhPPkXQ4pcTB0Jsd1GyPAZ2ePxbJCO53VSQzU2Hnlen68B43YDxpdpjuzU1vGme4ISuZouRbuPNGv2n5kuUPmYH3Co=
+	t=1759525162; cv=none; b=H74kcKXySJ9Id09ktayPxBpZyEJ+e57L/C9F/jyTpEbKJ91yzBcQ8mztqfUtFZhUoobZnFae7b6Ccd7CBgy0l9AfBQ2cDDZfUiHj+lqFKY3FyhDA4C4RdxLGCwlyugmsI9CXDRbbAsTTdxrIgXUCd4W9alUVrAkf38zTPbLgsRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759524691; c=relaxed/simple;
-	bh=bGf/fVMq7D81Q5YNB5Z+ahF/or+jbs9kwSx5EKrooY4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ta9t58kUe4Mj/8m2wV5B3SiVLjbiVJQPylZ6hl99SuSg/I7JVit2lOOd6gpJpdHN7jkmYvpDJtRjNlPSXImM0GU75ImuGklZ1HhWWZYs5ESVnV/Fw4RZ8NyVlu4S8OX3WKCoZqY4sHSEOqOZ3wYwEHIFxYjHbOf72sNYMl+yrGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ciq.com; spf=pass smtp.mailfrom=ciq.com; dkim=pass (2048-bit key) header.d=ciq.com header.i=@ciq.com header.b=k2M/ReJg; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ciq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ciq.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4da37f6e64cso27479501cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 13:51:28 -0700 (PDT)
+	s=arc-20240116; t=1759525162; c=relaxed/simple;
+	bh=3iS0NPyXkoJCsxxmYHv7FSsoUUYgEBq2uJwzGDpCMzM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AQe4QFm6Et5L6CdTCNGBFAo9L+94JyBADxTA43Fit0XnPybf82vPPbShw7doXcLik5F2GMyzxp8LCtFYzGdp1Vy9h6ZL9RE+Hp8/qX7P+hCYnagiN00pfmpl9Z46IqKpjW/hJB7zWJAcNCr5ZSeNALgrw31rOkTlEld+LAlQnis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SyWx08qS; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-8572d7b2457so305263485a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 13:59:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ciq.com; s=s1; t=1759524687; x=1760129487; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7Z9OJHsg9AnDgBWFYYVznso9JgY1ikRBT350Nr1kqdA=;
-        b=k2M/ReJgV/PIPf4/m4x1RqbifFPwBk5bqmg8At//lqk6DpVBhDAm6KT4/g2mVY1DEA
-         2X0Ac4C23kFdj2Mos7g7JXG9+pZHCBLeYaaw+h/iGbMT+0fHaviuoapGj038Ccl8Zat2
-         eRzWm1Q3dwSHgL0go0/W5FG09tfDkyG4uULYxOF+puBvARO9pvQTt32yEAMg92oXnql9
-         IUErb7yQeBzFm6BnuB6SeVU4K3fiM+g50n9rCflqYg7cQhXK70ta5OxRHeXHv+rAb6Ox
-         b/dlWauTsRnEdQV09tGwWa6Q1NspN4PMi0eCIyQakckYXOZZcoK8vtk84LT9Yh9l2Cm2
-         tFPg==
+        d=gmail.com; s=20230601; t=1759525160; x=1760129960; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KT4nMlGTNRa2oLGSJ7qmFMgvXCrjlBGOzo/18l5VvRs=;
+        b=SyWx08qSUUlzAzNYA7Ei+s2WPLuRHioRrLddHhtG4HxDVApCO3s/DdRjlpSJ+JdiKO
+         eWTZfnoRxdZq/oiqR4bNLZpS6g7PvNjqK93R4ZrSaE5gIbzy+t7FE8SWW6TSY98VErp6
+         Bao06ISlPFZC8R1+BQsbBW5GI2HgQTgsefvuqWtXylxY9WiCTkDFl/TY13ahQ4IvHmQs
+         Lp/7TjjsO36rv2JAxXUipJGcZeqJNs0Jz7V1jsVemjt0a5FT15zfMhf49na2SlrPC9r8
+         TyGO0UDML86KsFe1N1V2+eL6IvxmOuOX8XfUNYoQM7WQiEHT6WwSgOu4keFmBJOeHm5m
+         ogxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759524687; x=1760129487;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7Z9OJHsg9AnDgBWFYYVznso9JgY1ikRBT350Nr1kqdA=;
-        b=spRbYVuvCfxvreXTnNdrtk2XyeUqUliqph5PozciTARGm13tWu1yoBK0sunkc5gNQ3
-         lCwTxo8tZzhvx7J8R4P+KlJzLNI/9BfvHkOvg6YJWhwONWJP4cg6QhU/ktDD4cABAd6y
-         QmJkO/ilr7cg30sjohIchWv2YZ7JbhA+Zxy35hxiur5VnCyX+SyiHxC0JTcOSYQPRVeo
-         GH9E8GX9/B1k2IwhgpJjkelGafgF/NfQdFmoAelIkrjAxY+mWc1qSySD67SBZGnfMRAq
-         fNvJtOI/+/mpY9X8PQXrk2OmBkA/Z2XdjGhWwxlL5wRXY2qxfC1+Xt7k2V4x+tCZfB1k
-         L2ng==
-X-Forwarded-Encrypted: i=1; AJvYcCVC9hCaUnC0Qm3E2f7SDhhoS8MoM2A/4s6T0K79UYOUWc1N/Utq9kaBQnrnnoolHztd2iZynepohxDZSpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjDrO429wJPE15Gwn8TodWZPpVm6ZCZxAzg9UOFzUAnQDGo/wC
-	naYdEtXyqnHqkOBfpV4RNEE6bewZ6W9UpNCpmd4jjw1RHD4d/q7metKi+A5U6tFW1CodzZxbrXq
-	Px5koYVnU4qPi/jpEfzsohUIsUOrza1skXxQW6oy4Cp75kry1BfBot0FQ/Q==
-X-Gm-Gg: ASbGnct5ZSd6PMciLUvxcj3+mKVNrC3tj8vYer6tEY5Yc9WVQ5yNkhr5OotT0sT5zRf
-	L3aNaVVYiP8wkzf7IAIgyxowq+QNq3UzZBoYzzTqyusA3244wdjoceeht4tY07L8vCQFXdPA3/z
-	JhONcfFajuzmrWUN9Beox+/DEqsFcyuNdRk4jWhraVv1iwZeJy5PYmn+wt3+ijvKBbVRYyWRk+C
-	wZk9VubmGcLLCvoIaPUTDHyqHTwZotEDvbZOatPgr0=
-X-Google-Smtp-Source: AGHT+IGOFuK5QKXUa0EoyQNwTfrrar3OCp+dKAGP3fEaEJ9VnSeYg1Yk+ezWQ9N6bxp2R87Mtx6d9Bh25m/9JjggpuQ=
-X-Received: by 2002:a05:622a:303:b0:4b7:9add:76cd with SMTP id
- d75a77b69052e-4e576ae6ba4mr64596521cf.42.1759524687516; Fri, 03 Oct 2025
- 13:51:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759525160; x=1760129960;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KT4nMlGTNRa2oLGSJ7qmFMgvXCrjlBGOzo/18l5VvRs=;
+        b=MHJGqnSTmCoWoRiwXzHHM6q5ZdVHrohxx00Vr4WfCdw1yfoRI67B9LcZ/dDdQXs3r4
+         nw3XbEvT5x5167ECgFgEg2RLP1CWP/JBgKGT7CY4XkOGhG8D5oFPq7IVjPewZU//iqk6
+         Cbr1r4VS5sGv1CmQVJHv2KDNyDO5nLKw2xfTGNBX2oNRudV88hqVhX1hFyUUzajyWN7t
+         jJyj+pNg8LTQACgFE8iv91XtfA/XRS4ySWEE0K/V4HbGQA7Ui5Efd3cEdT2vC+k7iFvV
+         U/ZzkuL9/CuMfWUkl9ITykZXxmVY5fkLj6QgVyRPEt9R/198m9jPTuCMS4C2+x0d0YuS
+         lYeA==
+X-Forwarded-Encrypted: i=1; AJvYcCVS53KcIeH09RXEgMcKjZz+CJkLusLGNkEY2YiD/kmSVArOxRIMzPohHiTplj6PatAv0zK7oZjgDj4rUfM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJukrg6umrYNwegMPjCl8qwThSXceytJeabWuyOTjZgRm8i1ka
+	t6XrWtMvxDvnYfvu7My8vPwaMXdA4AORz+Yr1dvE5dG9y5CYX2VRPDRCCAj9G6fR
+X-Gm-Gg: ASbGncus06mrNPhpEsMwkyoDLs3T5wCaW8zM3W7uJUeWS49OISEewSkW70FzWs0f40a
+	DShuXIA4PQ/N/hk84Xw+WsFl7rMHya0l05W2fIKUXHwnkQftUMnrLdYUul+ajOol3du5KL8k1WD
+	KFkgwmGtJAUovX3EDDtwZ7btGBuCpCPYw81EjOTxcCWIe87bVfy/1D60SOkgqie8glV6DR1icsM
+	XMn5PsdP+9F6/rYRnqLYq6sKfHu2jhoWwErkf+gF0X6jbPG/I74fhbS5HF9czgCjDA5eIaosMYc
+	e8X6PZPlRJIMbxbP44bfsC7c3OdZJ7SUEgsDrIXCDWQip7F+P4l+CBmsY9W9AIWSbuAitsAWJen
+	O4ADV9nwwo6xKrxwFMUTfPf2omKIjP2JXuzWsq2293fZ5wCjgkAI=
+X-Google-Smtp-Source: AGHT+IG52HETqCWP88p+h8ZNfHvJ7DJyecVGzPgXEf1tHWE6Q+vyJHKSUErRHgLmxu46A08JBLL+cw==
+X-Received: by 2002:a05:620a:4002:b0:828:4c12:9a67 with SMTP id af79cd13be357-87a3376d80bmr657803985a.17.1759525160083;
+        Fri, 03 Oct 2025 13:59:20 -0700 (PDT)
+Received: from etsgit14.hitronhub.home ([2607:fa49:173b:2900::2ca])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8777a7e0295sm514898085a.59.2025.10.03.13.59.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Oct 2025 13:59:19 -0700 (PDT)
+From: Pascal Giard <evilynux@gmail.com>
+X-Google-Original-From: Pascal Giard <pascal.giard@etsmtl.ca>
+To: marcel@holtmann.org,
+	luiz.dentz@gmail.com
+Cc: linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pascal Giard <pascal.giard@etsmtl.ca>
+Subject: [PATCH] Bluetooth: Add filter for Qualcomm debug packets
+Date: Fri,  3 Oct 2025 16:58:37 -0400
+Message-ID: <20251003205837.10748-1-pascal.giard@etsmtl.ca>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251003160338.463688162@linuxfoundation.org>
-In-Reply-To: <20251003160338.463688162@linuxfoundation.org>
-From: Brett Mastbergen <bmastbergen@ciq.com>
-Date: Fri, 3 Oct 2025 16:51:16 -0400
-X-Gm-Features: AS18NWCwKeFKfMLlMvvr2cSuujlh1BUpd9drr1fldSku7mQZdxTUWOKjj9ta5Is
-Message-ID: <CAOBMUvjBZLErkgx=VK06QHFBJZ3rLiJ+NdXitrT7PUnd452Jmg@mail.gmail.com>
-Subject: Re: [PATCH 6.12 00/10] 6.12.51-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
-	achill@achill.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 3, 2025 at 12:08=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.12.51 release.
-> There are 10 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 05 Oct 2025 16:02:25 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.12.51-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.12.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+Some Qualcomm Bluetooth controllers, e.g., QCNFA765 send debug packets
+as ACL frames with header 0x2EDC. The kernel misinterprets these as
+malformed ACL packets, causing repeated errors:
 
-Builds successfully.  Boots and works on qemu and Dell XPS 15 9520 w/
-Intel Core i7-12600H
+  Bluetooth: hci0: ACL packet for unknown connection handle 3804
 
-Tested-by: Brett Mastbergen <bmastbergen@ciq.com>
+This can occur hundreds of times per minute, greatly cluttering logs.
+On my computer, I am observing approximately 7 messages per second
+when streaming audio to a speaker.
 
-Thanks,
-Brett
+For Qualcomm controllers exchanging over UART, hci_qca.c already
+filters out these debug packets. This patch is for controllers
+not going through UART, but USB.
+
+This patch filters these packets in btusb_recv_acl() before they reach
+the HCI layer, redirecting them to hci_recv_diag().
+
+Tested on: Thinkpad T14 gen2 (AMD) with QCNFA765, kernel 6.16.9
+
+Signed-off-by: Pascal Giard <pascal.giard@etsmtl.ca>
+---
+ drivers/bluetooth/btusb.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 5e9ebf0c5312..900400646315 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -68,6 +68,9 @@ static struct usb_driver btusb_driver;
+ #define BTUSB_ACTIONS_SEMI		BIT(27)
+ #define BTUSB_BARROT			BIT(28)
+ 
++/* Qualcomm firmware debug packets header */
++#define QCA_DEBUG_HEADER	0x2EDC
++
+ static const struct usb_device_id btusb_table[] = {
+ 	/* Generic Bluetooth USB device */
+ 	{ USB_DEVICE_INFO(0xe0, 0x01, 0x01) },
+@@ -1229,6 +1232,12 @@ static int btusb_recv_intr(struct btusb_data *data, void *buffer, int count)
+ 
+ static int btusb_recv_acl(struct btusb_data *data, struct sk_buff *skb)
+ {
++	/* Drop QCA firmware debug packets sent as ACL frames */
++	if (skb->len >= 2) {
++		if (get_unaligned_le16(skb->data) == QCA_DEBUG_HEADER)
++			return hci_recv_diag(data->hdev, skb);
++	}
++
+ 	/* Only queue ACL packet if intr_interval is set as it means
+ 	 * force_poll_sync has been enabled.
+ 	 */
+-- 
+2.51.0
+
 
