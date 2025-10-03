@@ -1,426 +1,156 @@
-Return-Path: <linux-kernel+bounces-841646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 686A7BB7E61
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 20:41:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 121D3BB7E79
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 20:44:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D3704A6061
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 18:41:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 02BE54EE9C7
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 18:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8CA2DE71D;
-	Fri,  3 Oct 2025 18:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212192DE715;
+	Fri,  3 Oct 2025 18:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="D21Aw3b5"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011060.outbound.protection.outlook.com [52.101.70.60])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="A0yJ/qWN"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3321F8BA6;
-	Fri,  3 Oct 2025 18:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759516907; cv=fail; b=Q4QRuc8wcwzHpqBao9gUN8uPUa53eQrGiWGioKpio3u6TO/7BLMaXU/r8vOj8ZEVlMkjGUcihT95Q7DyqPOSsud3AoteB05I6hthdZQpZGdj+F9M8vzvt8hzVaTo4NxcyMIVn+nt/qGP/7MdoAlMtwMkhmktJG6H+tbsfrB+Wuo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759516907; c=relaxed/simple;
-	bh=Z6JfD4qVbP7aEoxtXYDUAoYha+jLS+SIw2+CafgWNLc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=SYE/4AN6nRBQ7wVdBN2IpafbHY1KfIkvXCcElQMqvFpe2MOfCQAekVCp2bpKxS/0ZkwVH6m58+9iPNcamOV71P2eQJUNePgkMmHuAPknKR8VBmyIGS4F0BfWYHqD18Elb6RBOzzQjc24yxRGmoQUcC+YUiZafddM0O2vvM576WY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=D21Aw3b5; arc=fail smtp.client-ip=52.101.70.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fWmeOxtYr0JAEWHOUjixQOYHOPUe09DnR4EPxXHDW9ZQX9ijJrBxRXvCOUhDKL8IwbiiAILwFAkb9WaBgGXusVzVMTxfAn6DbUrqM2A5xFwLJcksb0wwdnfSbCdkMDB1fD4c9zYZK12MwUUPMIVU82mHxO61czzlKAiuxSE+Yct1qVd+3NmCy8+uLbeNqfpQewW5TNlu759XSdgzcaH6Dv7/Ja+OYTgcQ5TXiNMJbiRkFwAl1Vwc4T8un+8DEK2yPv2b0un7gqD022SWXUTW0Fp3dkNBUcmnvVKvFZ+TRk8G6bwTVjTjPZSeZ+OMAwj9f4wLF5sZ1CdOlwPS0D7Kog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FDsFgHX4qNibaWTYXFDZL/lMnF1+Tl/y9oHt9IaLkv0=;
- b=XGVBhmXwNaDMV1uiC62x0E3YCAMMAZJ6cx5cI8TihX8VHc4dchVPGSGDLTLa/eNmTx9M4WnfK7Y+pb/uVsSba1cbD0k5u2WRBbzOOV3BYo4dah1QTUbCOa+NYvf4ItFVEm08HJE9MJgp6i4epShS3lik+tiBe8eS4tEUmFHqAzsU74CRBQH842/XkNqOxM3L8o93QoqSQW33l6ILoYY3AMKAr/tlImMznPl9bGUfhIDehbrRku3qke/uU8t6v0FLaMWWxND5ymdoV1qTYuNhTIwAcrY9EuoEVwlkEI/SHiQyb0RzQgWd9ZBcAAB7763CSjwpYlCcENlJ0VxrAFHoYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FDsFgHX4qNibaWTYXFDZL/lMnF1+Tl/y9oHt9IaLkv0=;
- b=D21Aw3b5Y5X5y9ynEQpKVd487qNoPTGTXVXykbGpR+hPfmW8G+LmyJYjHp8BrNVNqbvm21Evg8193kGKNibWX4x3tNpy1+6apAdeTLBvdZVX3srBIls/mH7hdCX66fccLM2Nn9vHS258V7TNXfgDWmwaJYQDZmtW8TSCc7/z5+893gfbEZUIiYRxTksnDeDwY4Di8ZlQ7d6o8vHt4gTLsW6UzI9OjI1luBnBIuOXkqmRpmh+N4fIb5L+32Gn3FR0EGblk7E57dMk6xybteR1P7Oa+uc9WQBwjX8TjB4InD1T63OsRW0s4QDUuNqfnqwJ/58ZSr2M0kzOV+Vqgmikig==
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
- by AMDPR04MB11701.eurprd04.prod.outlook.com (2603:10a6:20b:71a::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.14; Fri, 3 Oct
- 2025 18:41:41 +0000
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::21bf:975e:f24d:1612]) by PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::21bf:975e:f24d:1612%4]) with mapi id 15.20.9182.015; Fri, 3 Oct 2025
- 18:41:41 +0000
-From: Shenwei Wang <shenwei.wang@nxp.com>
-To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>, Bjorn Andersson
-	<andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
-	<s.hauer@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Bartosz
- Golaszewski <brgl@bgdev.pl>
-CC: Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
-	<festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>,
-	"openamp-rp@lists.openampproject.org" <openamp-rp@lists.openampproject.org>
-Subject: Re: [PATCH v2 3/4] gpio: imx-rpmsg: add imx-rpmsg GPIO driver
-Thread-Topic: [PATCH v2 3/4] gpio: imx-rpmsg: add imx-rpmsg GPIO driver
-Thread-Index: AQHcNJVbNnigz0O5AUywNKZI2ZREew==
-Date: Fri, 3 Oct 2025 18:41:41 +0000
-Message-ID:
- <PAXPR04MB9185924ED129E87C77F34DCC89E4A@PAXPR04MB9185.eurprd04.prod.outlook.com>
-References: <20250922200413.309707-1-shenwei.wang@nxp.com>
- <20250922200413.309707-4-shenwei.wang@nxp.com>
- <86bf1252-9b2b-4001-830d-2746403539e6@foss.st.com>
-In-Reply-To: <86bf1252-9b2b-4001-830d-2746403539e6@foss.st.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB9185:EE_|AMDPR04MB11701:EE_
-x-ms-office365-filtering-correlation-id: 2eb877b8-a7fc-42fc-0de1-08de02ac7e99
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|19092799006|921020|13003099007|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?rfAFUSMPOTKr8rLu+mDUPGZjW2Aqca8aAYEI98srd5adPstsmmXBV5kVLmXR?=
- =?us-ascii?Q?PmLi7QlLG+Ncg+96X+9pmsl0nALc+6w+QwxvEn7s1qRk9R2YpTaQXnvC7QaK?=
- =?us-ascii?Q?65bb121mg79+6YvHP1nM8JvsaiaIAc5CfScbEyUxofeOm5sEoUxXg01/4T7m?=
- =?us-ascii?Q?nmkRJyQTckMscCir12cd/uQquNyh8vCvljSPRTk0pjhmFFxy2rhPIp0Lx31F?=
- =?us-ascii?Q?ZqT+1YndC9hs2hgUOsxlhD+BPPns5UbNuoJrJ4b/sHbSxcjov893dZoUzDEs?=
- =?us-ascii?Q?IX0mM+KzUZ6JTc5s8jT+ETvc/t6Zjyccb7tFMulqRIJwb9ZxmFO3qk4vRCz0?=
- =?us-ascii?Q?mN6VN4fsgrDTH26ASJ3fzdA5m300QEMptOgYBaSW9JBAQPEhoig28iXwW6VC?=
- =?us-ascii?Q?6EWvjelxpTrcfTQJIEzTZdwdueF3DGUcIxUUIml9F71x0/y9n8Kyn5SLXXaR?=
- =?us-ascii?Q?icrrOJcnC8alPxi2a/Ysc+cOODSSZWszHlqBzAssduBHADmIlh2tAuzE96Ka?=
- =?us-ascii?Q?z5haBqWxxc2Ysd2kF4gBMIbRzKRk4e0/6JTgHQsQEyn2oGo4PYe84QxotR/D?=
- =?us-ascii?Q?t60cgTmrmq9YJpyR7m1VIGmM4fl+m+2kdmnVgsIiF+YCF7eyOco5oYdEEta6?=
- =?us-ascii?Q?L952wQS9nHu0NPn3HLX7BmzSnS2RoPI2Lo20maFXB8MTTb1hd5bGltSHujVG?=
- =?us-ascii?Q?CqjlYBfmm7Er/bxEpuAmsjjbZCU0eQ5pXJSR0sgkjyah7slppHXJsU+0GTn5?=
- =?us-ascii?Q?0mVs+MpDfy+3axKMVSaIxjyFBBPlv6ZLR4uJcgyM14N1ILd3RFDa6dbYwDfl?=
- =?us-ascii?Q?C3ijvAuOR5ZKAFp8+KJbOLONb3RzfOviXdneMBYqXe3TXCf4hCAJhzBmqDpq?=
- =?us-ascii?Q?u/LRCa/0K+69GqMaoE1GkKmVNS0OPg35B05HWWsaD+b62U0GaXEhKB35QGQP?=
- =?us-ascii?Q?6iAeBI1uth5cGMIegHcvsAm+tSu4s4EKa7TiWwnUustuFSbWr2dsZCQ1a4DM?=
- =?us-ascii?Q?l/nL8oeNbjwcvNVoz7R+2L/vg6VaNa7+nz6bnCjNz/KOjjE+gTs/WUa60u85?=
- =?us-ascii?Q?1q/G6iKZFuY8GLLdYvQFN4To5Z2Ap9m5hrghGFuw4V9QhAnfnsSRem9205eh?=
- =?us-ascii?Q?rE5t+RgSfwcghljwujTnNM8nv+k71Pe/eOJqCAuXFQoDhUpS+FHF0az+7YVv?=
- =?us-ascii?Q?I+ZLkkMduQsmoCTBdrslGmlXs6YOuvLAOhmDnv5me+tHTnHZyhbGWiFHokfh?=
- =?us-ascii?Q?awYhmrqNC8EFUk5OHqNUJEguwc4TnNDH3R0vf8lsPDI41f5HCEWgPiYigG/G?=
- =?us-ascii?Q?bM8zdm/Kyzib+RGoKgwRJJ5lswZP5f0Pt7U59jyV9Fqsgih/upUGvao9PwSO?=
- =?us-ascii?Q?crwZbFcBiYJ1cehGs9hYRh/RBaRSMVJamb1dZ5R6gemxopQLRz83IgI1KaJA?=
- =?us-ascii?Q?CCTObgd0lrFbDnzK9ZuV09b8KjqSBXCTxzoTymopbq+RNSQZG68S9g=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(19092799006)(921020)(13003099007)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?3vMTAc59BVHig4t6DXyEqpIqxsVzRwelyXO+LQ+Cbhtyp9nHAPxGLNDOSwnQ?=
- =?us-ascii?Q?SAmM3y2zidVeUztz5H5Fj3Vt1GG1BRF4zAdunmW/N6LqQ/NsmAQHQ0O2kbGi?=
- =?us-ascii?Q?gXyKlmqmCa/YRxLfQBWpMdYyQraZ8kPZ/a+i1I4d7zw1srl8T7fVIT5zCz7r?=
- =?us-ascii?Q?2vIThg9Odiwme0IkcwTLc1MMFF+Y4BgJa/ZaCAKe1veRfNGvsKJoMu/Azs9r?=
- =?us-ascii?Q?3ksp3608xQ0VUmijDb8D+wqcg3q0P15rOV6b99PLsHoBlTNaO5rzs0OCluCA?=
- =?us-ascii?Q?Eagb2sRhfxx374jGOJcemHmYlC3b89MoExbbbqgIiZqJkB8siBrx/qXf+s/b?=
- =?us-ascii?Q?BhKB9xvMA8NX51p0lJ/CV0HQtG62oHWxJQ7SmKsufMyd89TQwLnzWyNb70rI?=
- =?us-ascii?Q?MAhx5GtViUdxS28+bwbrnBO9Yxlo1Gc6znUjfSubuiCPh5CJa6KjB39IZ1vi?=
- =?us-ascii?Q?e7/wVTgWPg6ubLG2QqOyiw4Q1ei3Yxu/8ydYyPNI5oS26b4/Nv8WBxGDkIRF?=
- =?us-ascii?Q?0kryjWt+nqt4zaTMzneeBjqEVYbRG/3YCqFy4/94JLNjK71XxkJYAh8I2g0D?=
- =?us-ascii?Q?IcashvVkgMB0fK/zbq2/gh+CpPtFJtIBHQ9Ofnz47t0rJz6NdAk2KrtqFaQ0?=
- =?us-ascii?Q?+VvHHt295jh/UPeV9UGI83MdhYXyJrrgSXU0ItN3Dm11LdN9AvVxwDIbv7Z6?=
- =?us-ascii?Q?KGy7SMvHK+4fZurx+wlAtqX0suAitkISBge6id2Csw8DCaZZEJzUipmz8Gs8?=
- =?us-ascii?Q?bLYKYGgS2663GiuSRR9Kjwp+S7ISijcUusnzemy21zNO5cFPGf/2g3rKvOzO?=
- =?us-ascii?Q?iSdTxnwYQByWoX3xbftGFeLnuHGC33Bh10hb7+8nhcNWgFkcvGNsjW1pRxYd?=
- =?us-ascii?Q?was1BvAZXCaipe41+szPGU9DYvCUaELx5jFoxaUqSv5WLnOtGnH+JY2cchW0?=
- =?us-ascii?Q?hqgX5W0y4N0ZVJ5pzlGplH75blo2cKCz7g6YslwOWGy/yb1Sez4r6mpokxnw?=
- =?us-ascii?Q?V6oWQp2YtRlhte9FEHJmmkAgX00UEnMNA35BPCOrgu5uiY/XvELas8PLRk2g?=
- =?us-ascii?Q?ktDk+P1eLDr+Nq2Pwn6zd4hLyg0y1Hi8TnElQTwM5SzOgZTokLxXhCCERZ/F?=
- =?us-ascii?Q?60mxOrIYjs9x22nQvHnNEqsgu/ow30SOVk8/VsC4cGAva2vIM3zPlBikjPx8?=
- =?us-ascii?Q?t3M25jTLfdqM8vShpSoOpWAiE5B45UxTHcFl6CxH4zyLYyl6qZwaqPmYIeOX?=
- =?us-ascii?Q?p18f80/xNBPMDHnM94v4q6Ky5mXQF7C4waInjJRLDyBQ5s7KyAapVc+tRFh+?=
- =?us-ascii?Q?/f/O1iFMNv4yrgBLLTLLck1b8Uz8E4EjlCyer/7DDy5hxkQdeA3YnRF2UC1x?=
- =?us-ascii?Q?PmKIxN4HBQmnx5xYAVEnwYmA4V+jQccHVpuzVEvaULPSyYWEbtrTG3M/DJi0?=
- =?us-ascii?Q?4C1hxfJsQ30j54cUmBUqgfOMZIa3CNtuU7T4E83VoVJaIFYSo7AIj1Roe2UY?=
- =?us-ascii?Q?QG2HBknDeALXmBebaRuWN7e/2VxrOvOsG7oS37swAts/qGBFM24FfG29jvbn?=
- =?us-ascii?Q?iY38EDHmrsEUeJEPZww=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0B62DAFB4
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 18:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759517035; cv=none; b=KVFYQyYqHU9IWEfUH/TziOQyLcsjzvAcZjTBfdDviF0B9r7h04BEKULZnDPIxnlpAIqBaYdoZdXCTNEFE0UA/xAwwDdCBgW58OvQI+OR3rUCoNIrpfDp1YE/eq964sVu0w/aOtUjyFVcQf88wSPkyONUr2LQ5gsw5PL4Ou1xNTE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759517035; c=relaxed/simple;
+	bh=KuJJ7wPVxagNcyryDtFWOnS+fG9VHmibRREcQW+NV/U=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UQxBkX9ITsGT6A4esRWZJ997/oghzA38vrZWTrQeq0c7OY+Upxzo+lWgWcu8COad30uqLAgDqEfbxnQt/nX6X4lg6uwV/VqKkJE3WLfBtI2b53EASb3E1fYkLw3etgZ1VhaPrNwsXFDyRolwgmmJWah0T8p3Ld6BXGabZEqxoa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=A0yJ/qWN; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4e4a24228c4so20333041cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 11:43:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1759517032; x=1760121832; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
+         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=KuJJ7wPVxagNcyryDtFWOnS+fG9VHmibRREcQW+NV/U=;
+        b=A0yJ/qWNbcr7ubEqchnEVLY21gcL9dd7x36XzsQQiWSgFSKBwlflB+mCISesMDLDtI
+         ZmB83kmsd3gnF2fOIoABa90Uaa2ysGqlG1xlsF0VWFidow9F2dJwg3RXRmAfQlcLs5pC
+         GLUPp400xjkD13uyfPJ3SieF7pFiVXvU9EIUiFhSvZ3RCcOkP5m6a9E5UuCbE9hbOYQ0
+         5dvohojuBJQSIMox5cgC7t7PhBoASgS8k29RJFUee6NeT2/Ik49/J68QSwkmvKAKvtR+
+         iDgz4iJ36BXUrSqxBMBKxHX2c6nTMYOW+TeXc8TN5nbGSN3Aqgc2sf4PDcV75Vjxu530
+         JW0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759517032; x=1760121832;
+        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
+         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KuJJ7wPVxagNcyryDtFWOnS+fG9VHmibRREcQW+NV/U=;
+        b=J5RBAC8ugdttZyqDeMtlaA6TSEhkWgX4oLf2U77fGLovmqkYFb+TFXQHnR5wrKiX6R
+         sovjn0FX0sGs6vCf0NRvtRpby3qS+MoJNIb97GlXlu2+d+DQDMmfaHGb1l8vi1THRSCl
+         hDw3A8zt17JbLiLsS4e0EytHHxdFW6ji8EysdMS8unXRX0GXUB2gfcR/P9jU18qTLvwK
+         w28KNweJ1NRojzAL52OgDuAjszTA3eVpd5N8uu0iIPOEUSfW9JToLeZRHJOkL+YHFHGv
+         nOm3x7v/SHrHVpOcDC4+BBbS5hGtF1a8OVIzxw6MljY2CMxmcakDx5Ukg8N69SpplWDq
+         ExXw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbs0Syp98OdV8VFqmfp/hwkuuKp2YgoAUOo+PijZK6XanBjP525cnkJleixETWn/3TeoDTJMxceyQ3lXU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgfA9pyBhpNCUs160arvhLBWRJi5SZE3eDnqnQwaT3s+0fJYYN
+	zpmQwVe2S9VX4j3W+bMJuk+wzF8EWZoCHq3wS+PzQEj+NOupKmYEJkeH1vJWNE1CjdUBtQhsDZG
+	tEyY0
+X-Gm-Gg: ASbGncuG8XdWz4Jzje1w+yEuwegQjr3X9E1nPrWIezZtU2BJDwFW50YgnwYUMN+Gr14
+	lbdRVuOwiii6dl/MZWec7qeBFQig2Ft7ecqDmvLCC2UdhMfCAA/qR3ld6y9xuRPKug6bfadoWur
+	XHEVzSvaJC41stX8dyDi0N7FOD5dNBW5mY93B5mQzYJJr9GYjCxMDq5tfzucAZMl3MnVfuarHc/
+	WeJ5eQORMgw6rz4JT/aeUdzuLILsX+vggVKcUkJarezb2hhEUssDlDDoCANLrU2HnpEqAiBif51
+	56vUQGsZ8FTuFlQ5rreyZM+yxMQec2tOB2MpAf4LTHFNqgiJEnNZEJeltbLLutfFYjrCUmA7Ny+
+	AeGpfLhLnPvb0FZ6Pr+SX9rFMoJoBBcCpKThSfMpu+Xsgv7dingIKDBJ9cfzmnbz8kCT+sjYUiK
+	715Q==
+X-Google-Smtp-Source: AGHT+IEDlpFweYYZYgSWaGoyFOuU/0LvqNP2116tlq90/2vF46MndprjZ3cScKJFz7EmEJI0QMDqjA==
+X-Received: by 2002:a05:622a:5144:b0:4ce:f3ce:e9da with SMTP id d75a77b69052e-4e576a29decmr64079041cf.16.1759517032239;
+        Fri, 03 Oct 2025 11:43:52 -0700 (PDT)
+Received: from [192.168.42.140] (mtl.collabora.ca. [66.171.169.34])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e55c9e79ffsm50039171cf.29.2025.10.03.11.43.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Oct 2025 11:43:51 -0700 (PDT)
+Message-ID: <cfaa1ceabae30fa18b5b4136e1eb58aec4fcf045.camel@ndufresne.ca>
+Subject: Re: [PATCH 0/3] media: allegro: fixes and improvements
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Matthias Fend <matthias.fend@emfend.at>, Michael Tretter	
+ <m.tretter@pengutronix.de>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>,  Mauro Carvalho Chehab	 <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 03 Oct 2025 14:43:49 -0400
+In-Reply-To: <20250901-allegro-dvt-fixes-v1-0-4e4d493836ef@emfend.at>
+References: <20250901-allegro-dvt-fixes-v1-0-4e4d493836ef@emfend.at>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-7CZOag6us981g1lPWt9e"
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2eb877b8-a7fc-42fc-0de1-08de02ac7e99
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Oct 2025 18:41:41.4235
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: N6pEOui2BblHTzeP3R2Kb2C4rM1WCtBRMGvqygpoRM7c7EqTDn6uZk7YCalLc034RyHu7jfGZ0NdWGbv+o0CGQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AMDPR04MB11701
 
-Hi Arnaud,
 
-> -----Original Message-----
-> From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-> Sent: Friday, October 3, 2025 2:40 AM
-> To: Shenwei Wang <shenwei.wang@nxp.com>; Bjorn Andersson
-> <andersson@kernel.org>; Mathieu Poirier <mathieu.poirier@linaro.org>; Rob
-> Herring <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Cono=
-r
-> Dooley <conor+dt@kernel.org>; Shawn Guo <shawnguo@kernel.org>; Sascha
-> Hauer <s.hauer@pengutronix.de>; Linus Walleij <linus.walleij@linaro.org>;
-> Bartosz Golaszewski <brgl@bgdev.pl>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>; Fabio Estevam
-> <festevam@gmail.com>; Peng Fan <peng.fan@nxp.com>; linux-
-> remoteproc@vger.kernel.org; devicetree@vger.kernel.org; imx@lists.linux.d=
-ev;
-> > These processors communicate via the RPMSG protocol.
-> > The driver implements the standard GPIO interface, allowing the Linux
-> > side to control GPIO controllers which reside in the remote processor
-> > via RPMSG protocol.
->
-> What about my request in previous version to make this driver generic?
->
+--=-7CZOag6us981g1lPWt9e
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The only platform-dependent part of this driver is the layout of the messag=
-e packet, which defines the
-communication protocol between the host and the remote processor. It would =
-be challenging to require
-other vendors to follow our protocol and conform to the expected behavior.
+Hi Mathias,
 
-> In ST we have similar driver in downstream, we would be interested in reu=
-sing it if
-> generic. Indeed we need some rpmsg mechanism for gpio-interrupt. Today we
-> have a downstream rpmsg driver [1][2] that could migrate on a generic rpm=
-sg-
-> gpio driver.
->
-> > +
-> > +#include <linux/err.h>
-> > +#include <linux/gpio/driver.h>
-> > +#include <linux/rpmsg/imx_rpmsg.h>
-> > +#include <linux/init.h>
-> > +#include <linux/irqdomain.h>
-> > +#include <linux/of.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/rpmsg.h>
-> > +
-> > +#define IMX_RPMSG_GPIO_PER_PORT      32
-> > +#define RPMSG_TIMEOUT        1000
-> > +
-> > +enum gpio_input_trigger_type {
-> > +     GPIO_RPMSG_TRI_IGNORE,
-> > +     GPIO_RPMSG_TRI_RISING,
-> > +     GPIO_RPMSG_TRI_FALLING,
-> > +     GPIO_RPMSG_TRI_BOTH_EDGE,
-> > +     GPIO_RPMSG_TRI_LOW_LEVEL,
-> > +     GPIO_RPMSG_TRI_HIGH_LEVEL,
-> > +};
-> What about taking inspiration from the|IRQ_TYPE|bitfield defined in|irq.h=
-|?
-> For instance:
-> GPIO_RPMSG_TRI_BOTH_EDGE =3D GPIO_RPMSG_TRI_FALLING |
-> GPIO_RPMSG_TRI_RISING,
+Le lundi 01 septembre 2025 =C3=A0 17:13 +0200, Matthias Fend a =C3=A9crit=
+=C2=A0:
+> Several fixes and improvements for the Allegro DVT video IP encoder.
+> These relate to race conditions that occur when multiple streams are used
+> simultaneously.
+> The problems could be reproduced on a ZCU-104 eval board with VCU firmwar=
+e
+> version 2019.2 on various kernel versions (6.4, 6.12 and 6.16).
+> It is highly likely that these problems can also occur with other firmwar=
+e
+> versions.
+>=20
+> Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
+> ---
+> Matthias Fend (3):
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: allegro: print warning if channel c=
+reation timeout occurs
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: allegro: process all pending status=
+ mbox messages
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: allegro: fix race conditions in cha=
+nnel handling
+>=20
+> =C2=A0drivers/media/platform/allegro-dvt/allegro-core.c | 114 +++++++++++=
+++++++----
+> -
+> =C2=A01 file changed, 91 insertions(+), 23 deletions(-)
+> ---
+> base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
 
-Yes, the suggestion is better.
+For future submission, base your code on current media-commiters/next not o=
+n
+current Linus RC (this one is rc-4 I believe).
 
-> > +
-> > +enum gpio_rpmsg_header_type {
-> > +     GPIO_RPMSG_SETUP,
-> > +     GPIO_RPMSG_REPLY,
-> > +     GPIO_RPMSG_NOTIFY,
-> > +};
-> > +
-> > +enum gpio_rpmsg_header_cmd {
-> > +     GPIO_RPMSG_INPUT_INIT,
-> > +     GPIO_RPMSG_OUTPUT_INIT,
-> > +     GPIO_RPMSG_INPUT_GET,
-> > +};
-> > +
-> > +struct gpio_rpmsg_data {
-> > +     struct imx_rpmsg_head header;
-> > +     u8 pin_idx;
-> > +     u8 port_idx;
-> > +     union {
-> > +             u8 event;
-> > +             u8 retcode;
-> > +             u8 value;
-> > +     } out;
-> > +     union {
-> > +             u8 wakeup;
-> > +             u8 value;
-> nitpicking put "value" field out of union as common
+regards,
+Nicolas
 
-I'm afraid we can't make it common, as the two 'value' fields serve differe=
-nt purposes-one is used for outgoing messages and
-the other for incoming messages-and they are located in different parts of =
-the packet.
+> change-id: 20250901-allegro-dvt-fixes-932f2c97063e
+>=20
+> Best regards,
 
-> > +     } in;
-> > +} __packed __aligned(8);
->
-> Any reason to pack it an align it?
-> This structure will be copied in the RPMSg payload, right?
->
+--=-7CZOag6us981g1lPWt9e
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
-Yes. The message will then be transmitted via the MU hardware to the remote=
- processor, so proper alignment is required.
+-----BEGIN PGP SIGNATURE-----
 
-> I also wonder if that definition should not be in a header file with doub=
-le licensing
-> that the DT. Indeed this need to be common with the remote side
-> implementation  that can be non GPL implementation.
->
-> > +
-> > +struct imx_rpmsg_gpio_pin {
-> > +     u8 irq_shutdown;
-> > +     u8 irq_unmask;
-> > +     u8 irq_mask;
-> > +     u32 irq_wake_enable;
-> > +     u32 irq_type;
-> > +     struct gpio_rpmsg_data msg;
-> > +};
-> > +
-> > +struct imx_gpio_rpmsg_info {
-> > +     struct rpmsg_device *rpdev;
-> > +     struct gpio_rpmsg_data *notify_msg;
-> > +     struct gpio_rpmsg_data *reply_msg;
-> > +     struct completion cmd_complete;
-> > +     struct mutex lock;
-> > +     msg->pin_idx =3D gpio;
-> > +     msg->port_idx =3D port->idx;
-> > +
-> > +     ret =3D gpio_send_message(port, msg, true);
-> > +     if (!ret)
-> > +             ret =3D !!port->gpio_pins[gpio].msg.in.value;
-> Does this code is save?  !! return a boolean right?
-> why not force to 1 if  greater that 1?
->
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaOAZZQAKCRDZQZRRKWBy
+9EacAQCm0ei0RG1X/oXU/A+sx+JDaat1yQ0RhRBh5z5a5nJUDgEA37Yvc+InVtUH
+UdhAsnH2C0eb9azkaZvFGRMlW/+o/ws=
+=cFmb
+-----END PGP SIGNATURE-----
 
-This approach is intended to simplify the implementation. Forcing  to 1 wou=
-ld introduce an additional condition check.
-I'm open to changing it if that's considered standard practice.
-
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +static int imx_rpmsg_gpio_direction_input(struct gpio_chip *gc,
-> > +                                       unsigned int gpio) {
-> > +     struct imx_rpmsg_gpio_port *port =3D gpiochip_get_data(gc);
-> > +     struct gpio_rpmsg_data *msg =3D NULL;
-> > +
-> > +     guard(mutex)(&port->info.lock);
-> > +
-> > +     msg =3D gpio_get_pin_msg(port, gpio);
-> > +     msg->header.cate =3D IMX_RPMSG_GPIO;
-> Do you use a single rpmsg channel for several feature?
-> Any reason to not use one rpmsg channel per feature category?
->
-
-The current implementation on the remote side uses a single channel to hand=
-le all GPIO controllers.
-However, this driver itself does not have that limitation.
-
-> > +     msg->header.major =3D IMX_RMPSG_MAJOR;
-> > +     msg->header.minor =3D IMX_RMPSG_MINOR;
-> > +     msg->header.type =3D GPIO_RPMSG_SETUP;
-> > +     msg->header.cmd =3D GPIO_RPMSG_INPUT_INIT;
-> > +     msg->pin_idx =3D gpio;
-> > +     msg->port_idx =3D port->idx;
-> > +
-> > +     msg->out.event =3D GPIO_RPMSG_TRI_IGNORE;
-> > +     msg->in.wakeup =3D 0;
-> > +
-> > +     return gpio_send_message(port, msg, true); }
-> > +
-> > +static inline void imx_rpmsg_gpio_direction_output_init(struct gpio_ch=
-ip *gc,
-> > +             unsigned int gpio, int val, struct gpio_rpmsg_data *msg)
-> > +
-> > +static struct platform_driver imx_rpmsg_gpio_driver =3D {
-> > +     .driver =3D {
-> > +             .name =3D "gpio-imx-rpmsg",
-> > +             .of_match_table =3D imx_rpmsg_gpio_dt_ids,
-> > +     },
-> > +     .probe =3D imx_rpmsg_gpio_probe,
-> > +};
-> > +
-> > +module_platform_driver(imx_rpmsg_gpio_driver);
-> This implementation seems strange to me.
-> You have a platform driver, but your RPMsg driver appears split between t=
-his
-> driver and the remoteproc driver, especially regarding the
-> imx_rpmsg_endpoint_probe() function.
->
-
-See my reply below.
-
->  From my point of view, this driver should declare both a platform_driver=
- and an
-> rpmsg_driver structures.
->
-> Your imx_rpmsg_gpio_driver platform driver should be probed by your
-> remoteproc platform.
-> This platform driver would be responsible for:
-> - Parsing the device tree node
-> - Registering the RPMsg driver
->
-> Then, the RPMsg device should be probed either by the remote processor us=
-ing
-> the name service announcement mechanism or if not possible by your
-> remoteproc driver.
->
-
-The idea is to probe the GPIO driver successfully only after the remote pro=
-cessor is online and has sent the name service announcement.
-Until then, the GPIO driver will remain in a deferred state, ensuring that =
-all consumers of the associated GPIOs are also deferred.
-The implementation you provided below does not guarantee that the related c=
-onsumers will be properly deferred. This is the most
-important behavior for a GPIO/I2C controllers.
-
-Thanks,
-Shenwei
-
-> To better understand my proposal you can have a look to [1]and [2].
-> Here is another example for an rpmsg_i2c( ST downstream implementation):
-> https://github.co/
-> m%2FSTMicroelectronics%2Flinux%2Fblob%2Fv6.6-
-> stm32mp%2Fdrivers%2Fi2c%2Fbusses%2Fi2c-
-> rpmsg.c&data=3D05%7C02%7Cshenwei.wang%40nxp.com%7C22a9c88be60b474e
-> 391008de02502ec7%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C63
-> 8950740622597592%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRyd
-> WUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%
-> 3D%7C0%7C%7C%7C&sdata=3D6lCk20Qhb%2F0MTw0NFtto7tj7EFYwZ%2BlOR1F3
-> Qk7kQn8%3D&reserved=3D0
-> https://github.co/
-> m%2FSTMicroelectronics%2Flinux%2Fblob%2Fv6.6-
-> stm32mp%2FDocumentation%2Fdevicetree%2Fbindings%2Fi2c%2Fi2c-
-> rpmsg.yaml&data=3D05%7C02%7Cshenwei.wang%40nxp.com%7C22a9c88be60b4
-> 74e391008de02502ec7%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7
-> C638950740622612512%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnR
-> ydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D
-> %3D%7C0%7C%7C%7C&sdata=3D4Gva%2FpqP2u8T57XDxSDaoHhvDeJ%2Fo5HtAB
-> L9TY5gbDI%3D&reserved=3D0
->
-> Thanks and Regards,
-> Arnaud
->
-> > +
-> > +MODULE_AUTHOR("NXP Semiconductor");
-> > +MODULE_DESCRIPTION("NXP i.MX SoC rpmsg gpio driver");
-> > +MODULE_LICENSE("GPL");
-
+--=-7CZOag6us981g1lPWt9e--
 
