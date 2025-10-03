@@ -1,128 +1,146 @@
-Return-Path: <linux-kernel+bounces-841610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 363C0BB7D0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:58:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCA17BB7D11
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 20:00:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 20EDE4EBF3A
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:58:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B85919E5D80
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 18:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1877B2DC773;
-	Fri,  3 Oct 2025 17:58:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B555A2DCBF4;
+	Fri,  3 Oct 2025 18:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2Bu8Ed3Q"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wid78YSd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236572DAFA3
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 17:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBD62DC77F;
+	Fri,  3 Oct 2025 18:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759514330; cv=none; b=SnM4FWZ5xtoBC+NwxE6n5ImpTO8kT2+Kk3EuBjMgiixe3YPCrNXjsgUOzLmfse+1UFvgTnpFM4QYbmgfmag/QMKVXFazzwmuEPzL2jg6L9ZK98YsiLYvEAnpPjVnn29u64KKvtbwZ5DqbdWvKiW0PT1Lw752aFrxLAsfGxenlXw=
+	t=1759514408; cv=none; b=gAaDmhj7E4DJIcyqBuwePIm4xzXMQZrdxJELfK+bAtWNbG2UDDnl5oh/uDRuTcPJ2O1Bw8g9Y6/MFdqYZYcHvZ7UTsD1BWcxOgjFiRTlj6SBkLnLmC6UAUPjzaUt460Dmr+HqI6zbVsxnnMwJ7lRuvEip1Xi4BeG+enPeOz+yQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759514330; c=relaxed/simple;
-	bh=wt1TJp1oWNcsWsdk26sG7pJIbwrONFNB6RBEylZMk+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mZ13DEQ8pEerC++vKI38ICp3VdysAVNWHqrUfr++Ateqx9bIe3BO0U9A6dV3HubdB1urNKLzSbRHwy4yZMHDjFU2huuXT5/2yClr8w5S3ok5av80cORMXWpkuDSJgCa9ppfImv6xTvM9njbwsTozEMF4qgkQZEf3+laGUL7Ol9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2Bu8Ed3Q; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-27d67abd215so23445ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 10:58:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759514328; x=1760119128; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UaDYKs66LP34CduEkv1EiCiVmEjNuJqNpCfLGQVzrcg=;
-        b=2Bu8Ed3Q2U/qdQojH5e47rbOKM3oBQxCcSjYjGJowPTl9eIW3B6ESRH9hUVyq6quK7
-         ovMbMYndL+g9SKICQNOH/6YEdUURdqz+6rg48rd3R51yuJPrfGXeE6bI/fn50Qxcuu4c
-         K4aJ8mzHOhJK4oPN3nxAl9+RJy/8uWaO+8DpEOuAM3Ummpvf38bUYVFmmJFSVais1KXB
-         tkClT3GaK8RfY3XoICIqxb+SvZu3IgT8zio0YQpu3IbVkCWKt9eeK7/B3VcukabmKT6A
-         yBgdByB6iKsZC6L2qlrKSqFKJ8TLJt/XtXnpADpenxrGbAWJ6pSyDGSVTNRbhsEgcb15
-         OUBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759514328; x=1760119128;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UaDYKs66LP34CduEkv1EiCiVmEjNuJqNpCfLGQVzrcg=;
-        b=AzezA44RICsij06Jy6xZ15ubUSZykzB4FwBMkww8bl9feaqmJtTHW3KuRWJoWfAwOJ
-         lsJyESmxZBr/BXh1ANihTuuVXl9ld5lOhkHKKiq8l8jWYJi35s3AC3D+l4wKIAtgZ6o+
-         eKZDDx1dFzuKEkaKwEoOLeuPp1U74lVybR/jojorLXy0AUY+VBPl4o9a2ZmUYNXhYagO
-         IMKqPHLtLv4KlVVz/6gcX73WvwxHo7gt+WiWBT47mNqZNN0DmMzOQ3QA6vDgb2TyX+Yy
-         sNodNthqAOz194RlySId7K5Ho6x61yaSJ+JAmi2fSIff99+12GMuYwusbztYfO0vPBQT
-         JW8w==
-X-Forwarded-Encrypted: i=1; AJvYcCX7o91MBCzdyMY4dm9cuydxIiFlWxWDESlm3GraYyEOXZl4NeMKV7fv69xQSbV14no38+Bb/FWHe9wsaks=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4tzzKrqPl9gPw57S3xHgSvwdqrh/941NwJFHvlT8uSDH6ymo3
-	yTNaUBAQLmoZyxFoHHGH4Zm8zK1hfjsFx6n7Dsv8Lkue5lgZOIGUHVI2r0F3rPXLdQ==
-X-Gm-Gg: ASbGnct70Up1Ir77yyXwSsqOjSTIHIIdUgGFSj+OJp0l+x0/WEhuqsXsnBaLbHD6f9X
-	KlW+Z+VD04LvM0lLGbI6H2OBQMO9lQArtdp8CwvIm4O11w39ZbNScn5yibQXFv/lVvqx1mJmfaX
-	fqQI3kKp1KXe9mPpq0e+XD2Stuw2ApmqSOWkyv9+1l5gHGJmqlGrgWSIc3zz7tORUC/C3oaIX9A
-	oM5rakWFi5rtSxulpOEI7hWhs7Q8evw71woANu1Y+vLHOXQ494/UK+kquOnRlRE/EQ2qyXtphxD
-	IOtT6AU+coDBTM+jkQLQLjSRb68UD5u/S/k9U5QJFu/4x/H7N2IfggjGPiypFYDMFDaUlLxem47
-	ALzbcpug8WK7l4VA4nzDjo6ZFOaMpTk6ym4ua+3NHbU77Gmq0Vf5Hjq7PpEvL8kb57hzqDAQpBM
-	hDL3eyNvvaaD0t/NkhQHOen76YUBtouzv6bdeLDKqJWck/FGj6140wRPmS6wpyUo9mJpn9VoYl6
-	g==
-X-Google-Smtp-Source: AGHT+IEkysZQevkBeX/w0QWXf8n+7czeDxOHR/GVkR68sXNL8qA+v98FUl5T5iaeaufxd31jHmkE8w==
-X-Received: by 2002:a17:902:d2c2:b0:24b:131c:48b4 with SMTP id d9443c01a7336-28ea80c1031mr246835ad.5.1759514327897;
-        Fri, 03 Oct 2025 10:58:47 -0700 (PDT)
-Received: from google.com (235.215.125.34.bc.googleusercontent.com. [34.125.215.235])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339a6ebdac1sm8814355a91.9.2025.10.03.10.58.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 10:58:47 -0700 (PDT)
-Date: Fri, 3 Oct 2025 17:58:42 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH] rust_binder: remove warning about orphan mappings
-Message-ID: <aOAO0kQtjovUUXQ-@google.com>
-References: <20251002-binder-orphan-v1-1-cdc4cffff992@google.com>
+	s=arc-20240116; t=1759514408; c=relaxed/simple;
+	bh=I/qWDMKQv5qKzeMlqK751O9Q0IyCyXsvYmApunFN05k=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=VYgWQOwg1+9TU7XvhwaBCcMP7752PTYUDbqyDp0hmojahoUtVc/dQ93VuQLrn2U5cPR+KD98MnOpw6jBSSMOca9vaTaamAXLpAY7v8QZK5/iejsNj8pWsLTM6PWsDnxCxvsw8vxO39uy8SBUXCBs5Veqg0vc7NqqRtM5Neusyjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wid78YSd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFB1DC4CEF5;
+	Fri,  3 Oct 2025 18:00:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759514406;
+	bh=I/qWDMKQv5qKzeMlqK751O9Q0IyCyXsvYmApunFN05k=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=Wid78YSdBNA2CatxdLycAAbOphm7XEZslawm5fH4LIcQ9Y5wuvC1tWARj1iZ74ZTb
+	 lxuTv20ujrbyvMnZ4WAUUVxxW+Z8JeFmPiUqqj6ra2InZMI9Eu/JI0Pmj/HyywN/Fj
+	 yrh24wr0xbb+HWsMjUBznlus80UmGWPmix4KPmdBVv3hp4MxCta8vjhhPGinVHgKg3
+	 9p8GItUsDDrJDUrLuffAXf+IYA2FisGjbs4ptSPi+XerKmrs+KtQc+kdOjNlAGi8JO
+	 JOs6yg8i74hieXqEjbc20ojq7tYJ1hOBMwuS0yl6IKU2ULGrcdWjLaq7+aJZ6o9VG9
+	 J7Va0OTAjeQLg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251002-binder-orphan-v1-1-cdc4cffff992@google.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 03 Oct 2025 19:59:59 +0200
+Message-Id: <DD8VSSFRFC46.X5BFWEV3JAH2@kernel.org>
+Subject: Re: [PATCH v3 08/13] gpu: nova-core: Add bindings and accessors for
+ GspSystemInfo
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Janne Grunau" <j@jannau.net>
+Cc: "Alexandre Courbot" <acourbot@nvidia.com>, "Alistair Popple"
+ <apopple@nvidia.com>, <rust-for-linux@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <dakr@kernel.org>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
+ Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <nouveau@lists.freedesktop.org>
+X-Mailer: aerc 0.21.0
+References: <20250930131648.411720-1-apopple@nvidia.com>
+ <20250930131648.411720-9-apopple@nvidia.com>
+ <DD7VU4239GS2.2MKVFPBFEY1R4@nvidia.com>
+ <DD8TZ3TU57L3.2958OTC9UP4VF@kernel.org>
+ <20251003172517.GA1574227@robin.jannau.net>
+In-Reply-To: <20251003172517.GA1574227@robin.jannau.net>
 
-On Thu, Oct 02, 2025 at 09:25:29AM +0000, Alice Ryhl wrote:
-> This condition occurs if a thread dies while processing a transaction.
-> We should not print anything in this scenario.
-> 
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  drivers/android/binder/process.rs | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/drivers/android/binder/process.rs b/drivers/android/binder/process.rs
-> index f13a747e784c84a0fb09cbf47442712106eba07c..d8c3c1ae740e0eb3bcc8aa5e7faf4291f1cb69c9 100644
-> --- a/drivers/android/binder/process.rs
-> +++ b/drivers/android/binder/process.rs
-> @@ -1346,10 +1346,6 @@ fn deferred_release(self: Arc<Self>) {
->                  .alloc
->                  .take_for_each(|offset, size, debug_id, odata| {
->                      let ptr = offset + address;
-> -                    pr_warn!(
-> -                        "{}: removing orphan mapping {offset}:{size}\n",
-> -                        self.pid_in_current_ns()
-> -                    );
->                      let mut alloc =
->                          Allocation::new(self.clone(), debug_id, offset, size, ptr, false);
->                      if let Some(data) = odata {
-> 
+On Fri Oct 3, 2025 at 7:25 PM CEST, Janne Grunau wrote:
+> On Fri, Oct 03, 2025 at 06:34:12PM +0200, Benno Lossin wrote:
+>> On Thu Oct 2, 2025 at 3:49 PM CEST, Alexandre Courbot wrote:
+>> > Hi Alistair, (+Benno as this concerns the `init!` macros)
+>> >
+>> > On Tue Sep 30, 2025 at 10:16 PM JST, Alistair Popple wrote:
+>> >> Adds bindings and an in-place initialiser for the GspSystemInfo struc=
+t.
+>> >>
+>> >> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+>> >>
+>> >> ---
+>> >>
+>> >> It would be good to move to using the `init!` macros at some point, b=
+ut
+>> >> I couldn't figure out how to make that work to initialise an enum rat=
+her
+>> >> than a struct as is required for the transparent representation.
 
-LGTM!
+Oh by the way, enums are not supported due to a language limitation,
+see:
 
-Acked-by: Carlos Llamas <cmllamas@google.com>
+    https://github.com/Rust-for-Linux/pin-init/issues/59
+
+>> > Indeed we have to jump through a few (minor) hoops.
+>> >
+>> > First the `init!` macros do not seem to support tuple structs. They
+>> > match a `{` after the type name, which is not present in
+>> > `GspSystemInfo`. By turning it into a regular struct with a single
+>> > field, we can overcome this, and it doesn't affect the layout the
+>> > `#[repr(transparent)]` can still be used.
+>>=20
+>> Yeah that's the correct workaround at the moment. I'm tracking support
+>> for tuple structs in [1]. Essentially the problem is that it requires
+>> lots of effort to parse tuple structs using declarative macros. We will
+>> get `syn` this cycle, which will enable me to support several things,
+>> including tuple structs.
+>>=20
+>> [1]: https://github.com/Rust-for-Linux/pin-init/issues/85
+>>=20
+>> > Then, due to a limitation with declarative macros, `init!` interprets
+>> > `::` as a separator for generic arguments, so `bindings::GspSystemInfo=
+`
+>> > also doesn't parse. Here the trick is to use a local type alias.
+>>=20
+>> This one will also be solved when we switch to syn.
+>
+> I was planning to submit
+> https://github.com/AsahiLinux/linux/commit/2d95fd3b6c359634a0976f27f7a3c6=
+67826256da
+> https://github.com/AsahiLinux/linux/commit/515638cb47cf0ebdac378686fcbbdc=
+6a8364096a
+> from the asahi downstream tree after 6.18-rc1. Does that still make
+> sense timing wise?
+
+Probably not, since I'll depend on the syn patches this cycle which will
+mean that pin-init supports tuples in 6.19.
+
+> Types with type paths are used extensively in the asahi driver but I can
+> initially work around that.
+
+Yeah they should be supported simply by moving to syn, hope it doesn't
+introduce too much pain in the next cycle.
+
+---
+Cheers,
+Benno
 
