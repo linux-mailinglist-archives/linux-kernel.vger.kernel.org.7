@@ -1,253 +1,189 @@
-Return-Path: <linux-kernel+bounces-841012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 796C7BB5F6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 07:54:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9B7ABB5F61
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 07:45:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8BEF24E57A3
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 05:54:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1EE684E4400
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 05:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688D41A38F9;
-	Fri,  3 Oct 2025 05:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E615C1F8ADD;
+	Fri,  3 Oct 2025 05:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hek4vz9t"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qhNIOAvP"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AABFB18C03F;
-	Fri,  3 Oct 2025 05:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B9720296C
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 05:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759470877; cv=none; b=W0f7X2SK6A2fs4Fcq2E/yUG+T85q+HjCcT8sjwvtVXFujI1Yae7scyPynmNYoTaakSzAQUjPlRJbHBmirjXE7OiRPjynkbSqm7PX76FwbTQqIXFRFUOsr51NKAC2PNznPXtZZUi4S1mh9ozK5zUnAPSBer0wGCm0d+bJi5eOEOc=
+	t=1759470309; cv=none; b=iQ4xcLfXrBpzuxrBIr9/wpALp1oeo9R0S3BmrvkCwrPNxvpy/XDnDsYVYdXGpLEyhwJzDd5azYlJi3JHnDwFtC5rDT3kr0GA/ginwyUyTxTPU6/p41JY1tNxNKksIfEjEr1KSyMAlaoP07blgVUAbbfnBBRHHwdlGCUYNb6/mX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759470877; c=relaxed/simple;
-	bh=W6iO9lJnnjV/rWAkF/wZ/jo2+g391sRpMTFBGSDuJLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mSDx0Zk22rgZ4qc2fbcD6tKxlE5snZ3/rniFIJ5S0kFLk5ksM0oBU7vAGL5gE9EZmLpxK3pAo0n6bzwmLVLRGqZq2Y3gciCMhRVQiL81696YefCBHnaoR3iMOLsXhUczXZ3vjtXSRdYOl81Mi/zL+GVFRrby+jgyKQg7EIttdXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hek4vz9t; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759470876; x=1791006876;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=W6iO9lJnnjV/rWAkF/wZ/jo2+g391sRpMTFBGSDuJLw=;
-  b=Hek4vz9tyEeMPfxK2EC69MiUHTj7hmWeODFS8GagINPyNTNxzrdEmPdL
-   dYomL0+wTdFtaOmJMUKXWlxhI+Ef7mQjljb5P6FNizxFgCsP206imxrPA
-   3EgzezN7PBdPyPVSj1kYdqdX70gXuL8BarqAcmMznhxm7MznziDFaXCjh
-   rE55qMBIkHFQshr3bZ8zXNLixZyyyWXFB+R1MgjMavw/vgPihN8wDeIst
-   SZTD3nH8b/amNYyi8vI3BsJwi7wIVFIlrT1rwF9Qp5wgZ2lsDzNdZQ+B2
-   hUcrQYHLqLXSL7Wu00W+62JcF1VyGZofmv6hBD9Wv6gKu8dO7rdHNmAQr
-   A==;
-X-CSE-ConnectionGUID: mcTpOvUPTJe89UZZ5l3lnA==
-X-CSE-MsgGUID: k1boPsrWQFGyJnJpnAOKIQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61672045"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="61672045"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 22:54:35 -0700
-X-CSE-ConnectionGUID: iU7WCRYtTsOKKl7sm7Rw7w==
-X-CSE-MsgGUID: jx2g9bsZSPmRMPvE9rvgPQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,311,1751266800"; 
-   d="scan'208";a="180004760"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa010.fm.intel.com with ESMTP; 02 Oct 2025 22:54:32 -0700
-Date: Fri, 3 Oct 2025 13:42:02 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: dan.j.williams@intel.com
-Cc: linux-coco@lists.linux.dev, linux-pci@vger.kernel.org,
-	yilun.xu@intel.com, baolu.lu@linux.intel.com,
-	zhenzhong.duan@intel.com, aneesh.kumar@kernel.org,
-	bhelgaas@google.com, aik@amd.com, linux-kernel@vger.kernel.org,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Subject: Re: [PATCH 2/3] PCI/IDE: Add Address Association Register setup for
- RP
-Message-ID: <aN9iKtxzv83Y/qvy@yilunxu-OptiPlex-7050>
-References: <20250928062756.2188329-1-yilun.xu@linux.intel.com>
- <20250928062756.2188329-3-yilun.xu@linux.intel.com>
- <68dd8d20aafb4_1fa2100f0@dwillia2-mobl4.notmuch>
+	s=arc-20240116; t=1759470309; c=relaxed/simple;
+	bh=z6SlgDCFOBi9h8Zr7L2vlVB4Qa0jU3GPw7jT23nrerc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=X9VWZXPgkX+2YbP8TelyDxHgckzIhUfvxK6bNj9kD1cwCl0k07Tum2ISnl6rcDIZ62B/TFCB+tzPEKVxZ9C3ehT5TSacxF1z+HjJPXKt16nml4xZCwedoqrgob0KlRh/fVnRPUH0dmg+YtVV9ac+Qz2sCt/MP3nRq4T4B//CDyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=qhNIOAvP; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20251003054503epoutp016e64cec16ea3835158e408c4a4fc9232~q5OtYlDSH1924519245epoutp01i
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 05:45:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20251003054503epoutp016e64cec16ea3835158e408c4a4fc9232~q5OtYlDSH1924519245epoutp01i
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1759470303;
+	bh=z6SlgDCFOBi9h8Zr7L2vlVB4Qa0jU3GPw7jT23nrerc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=qhNIOAvPx6uoDmXmCwXxj95uNjHaogCl3At7rjuiK+JWfgK9h8VrxSVOiU3sbyb0L
+	 Q+exqebSpMvX+0OGrQ9/YD0NbLP9zB56J6LiXykWijBTKN3Q5CcqJe1Ec7KTNy08+5
+	 gvewGiE7y978nIop2sKmDL6fB/ScDQ9s48tWpY/Q=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20251003054502epcas5p147f4ac05e859f93ced29739c9dd6db1b~q5OsU5Zyx2599925999epcas5p1B;
+	Fri,  3 Oct 2025 05:45:02 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.91]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4cdHgK5jwVz6B9m7; Fri,  3 Oct
+	2025 05:45:01 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20251003054501epcas5p17ec2255ee66f0ea533b8dc9a058e33e9~q5Oq8U0mF2736927369epcas5p12;
+	Fri,  3 Oct 2025 05:45:01 +0000 (GMT)
+Received: from FDSFTE411 (unknown [107.122.81.184]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20251003054456epsmtip1431a24308d04a35b90a24f8eb7b752a2~q5Omvl53I2540725407epsmtip16;
+	Fri,  3 Oct 2025 05:44:56 +0000 (GMT)
+From: "Ravi Patel" <ravi.patel@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>
+Cc: <jesper.nilsson@axis.com>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
+	<alim.akhtar@samsung.com>, <linus.walleij@linaro.org>,
+	<tomasz.figa@gmail.com>, <catalin.marinas@arm.com>, <will@kernel.org>,
+	<arnd@arndb.de>, <ksk4725@coasia.com>, <kenkim@coasia.com>,
+	<pjsin865@coasia.com>, <gwk1013@coasia.com>, <hgkim05@coasia.com>,
+	<mingyoungbo@coasia.com>, <smn1196@coasia.com>, <shradha.t@samsung.com>,
+	<inbaraj.e@samsung.com>, <swathi.ks@samsung.com>,
+	<hrishikesh.d@samsung.com>, <dj76.yang@samsung.com>,
+	<hypmean.kim@samsung.com>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-arm-kernel@axis.com>, <devicetree@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>
+In-Reply-To: <CAJKOXPe7Hn0qwg8jDMg4KoF-n4kziLQnvAx9vbNKEcS_KjzEdw@mail.gmail.com>
+Subject: RE: [PATCH v4 0/6] Add support for the Axis ARTPEC-8 SoC
+Date: Fri, 3 Oct 2025 11:14:55 +0530
+Message-ID: <000001dc3428$dc2990c0$947cb240$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68dd8d20aafb4_1fa2100f0@dwillia2-mobl4.notmuch>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQKKMINb5ygeSmhM7iNuat0EV5IHsAIgbsJhATIDr/2zOVZ1wA==
+Content-Language: en-in
+X-CMS-MailID: 20251003054501epcas5p17ec2255ee66f0ea533b8dc9a058e33e9
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250901054234epcas5p1e4b34b6ccb304b0306b1fe616edda9e2
+References: <CGME20250901054234epcas5p1e4b34b6ccb304b0306b1fe616edda9e2@epcas5p1.samsung.com>
+	<20250901051926.59970-1-ravi.patel@samsung.com>
+	<CAJKOXPe7Hn0qwg8jDMg4KoF-n4kziLQnvAx9vbNKEcS_KjzEdw@mail.gmail.com>
 
-> Per-above, just drop the 64-bit policy and assumption. It will naturally
-> fail if the required number of address associations is insufficient.
-> I.e. either we are in the AMD situation and no amount of address
-> association is required, or we are in the ARM / Intel situation where it
-> assigns memory then prefetch-memory (if both are present). If both of
+Hi Krzysztof,
 
-Intel can't assign both memory now.
+The dt-bindings patch was merged earlier in v3 series (https://lore.kernel.=
+org/linux-samsung-soc/175664688891.195158.13270877080433356384.b4-ty=40lina=
+ro.org/ on 31st August)
+into respective maintainer repo.=20
+Then I have been asked to drop the applied v3 patches and send rebased v4 s=
+eries (https://lore.kernel.org/linux-samsung-soc/15508cb4-843c-42d1-8854-5e=
+abd79ca0df=40kernel.org/)
 
-In my patch, the new policy only applies to pci_ide_stream_setup(rp)
-which TDX won't use. pci_ide_stream_alloc() just listed the 2 memory
-ranges regardless the actuall number of address association blocks.
-That's why I said TDX is not the user of the new policy.
+Since the 4 patches from v3 series has been already merged, I have not the =
+mentioned dependency while sending remaining v4 patches considering
+It is going to same maintainer repo and it will be applied in sequence.
 
-> those are required and the hardware only supports 1 address association
-> then that hardware vendor is responsible for figuring out a quirk.
+For future patches (like artpec-9), I will mention the dependency even it i=
+s merged in same repo.
 
-But if we want the address association register setting all controlled by
-PCI IDE core, TDX is the practical problem and needs a quirk. I see there
-is only 1 address association block for RP in my test ENV, and the test
-device requires perf memory to be IDE protected and later private
-assigned.
+Thanks,
+Ravi
 
-> Otherwise Linux expects that any hardware that requires address
-> association always produces at least 2 address association blocks at the
-> root port, or otherwise arranges for only one memory window type to be
-> active.
-> 
-> >  	/*
-> >  	 * Setup control register early for devices that expect
-> >  	 * stream_id is set during key programming.
-> > @@ -445,7 +500,7 @@ EXPORT_SYMBOL_GPL(pci_ide_stream_setup);
-> >  void pci_ide_stream_teardown(struct pci_dev *pdev, struct pci_ide *ide)
-> >  {
-> >  	struct pci_ide_partner *settings = pci_ide_to_settings(pdev, ide);
-> > -	int pos;
-> > +	int pos, i;
-> >  
-> >  	if (!settings)
-> >  		return;
-> > @@ -453,6 +508,13 @@ void pci_ide_stream_teardown(struct pci_dev *pdev, struct pci_ide *ide)
-> >  	pos = sel_ide_offset(pdev, settings);
-> >  
-> >  	pci_write_config_dword(pdev, pos + PCI_IDE_SEL_CTL, 0);
-> > +
-> > +	for (i = 0; i < pdev->nr_ide_mem; i++) {
-> > +		pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_1(i), 0);
-> > +		pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_2(i), 0);
-> > +		pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_3(i), 0);
-> > +	}
-> 
-> Hmm, if we are going to clear all on stop then probably should also
-> clear all unused on setup just to be consistent.
-> 
-> > +
-> >  	pci_write_config_dword(pdev, pos + PCI_IDE_SEL_RID_2, 0);
-> >  	pci_write_config_dword(pdev, pos + PCI_IDE_SEL_RID_1, 0);
-> >  	settings->setup = 0;
-> > -- 
-> > 2.25.1
-> > 
-> 
-> Here are the proposed incremental changes addressing the above. The new
-> pci_ide_stream_to_regs() helper can later be exported to TSM drivers
-> that need a formatted copy of the register settings. I prefer that to
-> exporting the internals (the PREP_() macros for register setup and the
-> pci_ide_domain()).
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: 02 October 2025 12:10
+> To: Ravi Patel <ravi.patel=40samsung.com>
+> Cc: jesper.nilsson=40axis.com; mturquette=40baylibre.com; sboyd=40kernel.=
+org; robh=40kernel.org; krzk+dt=40kernel.org;
+> conor+dt=40kernel.org; s.nawrocki=40samsung.com; cw00.choi=40samsung.com;=
+ alim.akhtar=40samsung.com; linus.walleij=40linaro.org;
+> tomasz.figa=40gmail.com; catalin.marinas=40arm.com; will=40kernel.org; ar=
+nd=40arndb.de; ksk4725=40coasia.com; kenkim=40coasia.com;
+> pjsin865=40coasia.com; gwk1013=40coasia.com; hgkim05=40coasia.com; mingyo=
+ungbo=40coasia.com; smn1196=40coasia.com;
+> shradha.t=40samsung.com; inbaraj.e=40samsung.com; swathi.ks=40samsung.com=
+; hrishikesh.d=40samsung.com;
+> dj76.yang=40samsung.com; hypmean.kim=40samsung.com; linux-kernel=40vger.k=
+ernel.org; linux-arm-kernel=40lists.infradead.org; linux-
+> samsung-soc=40vger.kernel.org; linux-arm-kernel=40axis.com; devicetree=40=
+vger.kernel.org; linux-gpio=40vger.kernel.org
+> Subject: Re: =5BPATCH v4 0/6=5D Add support for the Axis ARTPEC-8 SoC
+>=20
+> On Mon, 1 Sept 2025 at 14:42, Ravi Patel <ravi.patel=40samsung.com> wrote=
+:
+> >
+> > Add basic support for the Axis ARTPEC-8 SoC which contains
+> > quad-core Cortex-A53 CPU and other several IPs. This SoC is an
+> > Axis-designed chipset used in surveillance camera products such as
+> > the AXIS Q1656-LE and AXIS Q3538-LVE.
+> >
+> > This ARTPEC-8 SoC has a variety of Samsung-specific IP blocks and
+> > Axis-specific IP blocks and SoC is manufactured by Samsung Foundry.
+> >
+> > List of Samsung-provided IPs:
+> > - UART
+> > - Ethernet (Vendor: Synopsys)
+> > - SDIO
+> > - SPI
+> > - HSI2C
+> > - I2S
+> > - CMU (Clock Management Unit)
+> > - Pinctrl (GPIO)
+> > - PCIe (Vendor: Synopsys)
+> > - USB (Vendor: Synopsys)
+> >
+> > List of Axis-provided IPs:
+> > - VIP (Image Sensor Processing IP)
+> > - VPP (Video Post Processing)
+> > - GPU
+> > - CDC (Video Encoder)
+> >
+> > This patch series includes below changes:
+> > - CMU (Clock Management Unit) driver and its bindings
+> > - GPIO pinctrl configuration and its bindings
+> > - Basic Device Tree for ARTPEC-8 SoC and boards
+> >
+>=20
+> Pretty useless cover letter since it doesn't say the damn most
+> important thing : dependency=21
+>=20
+> So this went unnoticed and now mainline (Linus tree) is affected. See
+> Linus rant on soc pull request
+>=20
+> I'm very disappointed, actually mostly on me that I picked this up.
+> Your future patches, need to improve quality and probably you need to
+> go back to how Git works and how maintainer trees are organized. Read
+> carefully, really carefully please maintainer profile .
+>=20
+> I'll be putting artpec 9 on hold, till you confirm what was wrong here
+> and how are you going to fix it in the future.
 
-I get the answer to my question in Patch #1.
-
-[...]
-
-> @@ -157,13 +157,13 @@ struct pci_ide *pci_ide_stream_alloc(struct pci_dev *pdev)
->  {
->  	/* EP, RP, + HB Stream allocation */
->  	struct stream_index __stream[PCI_IDE_HB + 1];
-> +	struct pci_bus_region pref_assoc = { 0, -1 };
-> +	struct pci_bus_region mem_assoc = { 0, -1 };
-> +	struct resource *res, *mem, *pref;
->  	struct pci_host_bridge *hb;
-> +	int num_vf, rid_end;
->  	struct pci_dev *rp;
->  	struct pci_dev *br;
-> -	int num_vf, rid_end;
-> -	struct range mem32 = {}, mem64 = {};
-> -	struct pci_bus_region region;
-> -	struct resource *res;
->  
->  	if (!pci_is_pcie(pdev))
->  		return NULL;
-> @@ -214,18 +214,20 @@ struct pci_ide *pci_ide_stream_alloc(struct pci_dev *pdev)
->  	if (!br)
->  		return NULL;
->  
-> -	res = &br->resource[PCI_BRIDGE_MEM_WINDOW];
-> -	if (res->flags & IORESOURCE_MEM) {
-> -		pcibios_resource_to_bus(br->bus, &region, res);
-> -		mem32.start = region.start;
-> -		mem32.end = region.end;
-> -	}
-> -
-> -	res = &br->resource[PCI_BRIDGE_PREF_MEM_WINDOW];
-> -	if (res->flags & IORESOURCE_PREFETCH) {
-> -		pcibios_resource_to_bus(br->bus, &region, res);
-> -		mem64.start = region.start;
-> -		mem64.end = region.end;
-> +	/*
-> +	 * Check if the device consumes memory and/or prefetch-memory. Setup
-> +	 * downstream address association ranges for each.
-> +	 */
-> +	mem = pci_resource_n(br, PCI_BRIDGE_MEM_WINDOW);
-> +	pref = pci_resource_n(br, PCI_BRIDGE_PREF_MEM_WINDOW);
-> +	pci_dev_for_each_resource(pdev, res) {
-> +		if (resource_assigned(mem) && resource_contains(mem, res) &&
-
-We still need to cover all sub-functions of the dsm device, only
-check the need of the dsm device is not enough. But if we check all
-functions, we don't have to check then.
-
-[...]
-
-> +/**
-> + * pci_ide_stream_to_regs() - convert IDE settings to association register values
-> + * @pdev: PCIe device object for either a Root Port or Endpoint Partner Port
-> + * @ide: registered IDE settings descriptor
-> + * @regs: output register values
-> + */
-> +static void pci_ide_stream_to_regs(struct pci_dev *pdev, struct pci_ide *ide,
-> +				   struct pci_ide_regs *regs)
-> +{
-> +	struct pci_ide_partner *settings = pci_ide_to_settings(pdev, ide);
-> +	int pos, assoc_idx = 0;
-> +
-> +	memset(regs, 0, sizeof(*regs));
-> +
-> +	if (!settings)
-> +		return;
->  
-> -	val = PREP_PCI_IDE_SEL_ADDR1(mem->start, mem->end);
-> -	pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_1(assoc_idx), val);
-> +	pos = sel_ide_offset(pdev, settings);
-> +
-> +	regs->rid_1 = FIELD_PREP(PCI_IDE_SEL_RID_1_LIMIT, settings->rid_end);
-> +
-> +	regs->rid_2 = FIELD_PREP(PCI_IDE_SEL_RID_2_VALID, 1) |
-> +		      FIELD_PREP(PCI_IDE_SEL_RID_2_BASE, settings->rid_start) |
-> +		      FIELD_PREP(PCI_IDE_SEL_RID_2_SEG, pci_ide_domain(pdev));
-> +
-> +	if (pdev->nr_ide_mem && pci_bus_region_size(&settings->mem_assoc)) {
-
-I image the quirk for TDX is, reset the RP side settings->mem_assoc back
-to {0, -1} before calling this function.
- 
-
-> +		mem_assoc_to_regs(&settings->mem_assoc, regs, assoc_idx);
-> +		assoc_idx++;
-> +	}
->  
-> -	val = FIELD_GET(SEL_ADDR_UPPER, mem->end);
-> -	pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_2(assoc_idx), val);
-> +	if (pdev->nr_ide_mem > assoc_idx &&
-> +	    pci_bus_region_size(&settings->pref_assoc)) {
-> +		mem_assoc_to_regs(&settings->pref_assoc, regs, assoc_idx);
-> +		assoc_idx++;
-> +	}
->  
-> -	val = FIELD_GET(SEL_ADDR_UPPER, mem->start);
-> -	pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_3(assoc_idx), val);
-> +	regs->nr_addr = assoc_idx;
->  }
 
