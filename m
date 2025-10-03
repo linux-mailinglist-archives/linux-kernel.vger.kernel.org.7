@@ -1,231 +1,201 @@
-Return-Path: <linux-kernel+bounces-841649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E18CDBB7E8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 20:45:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BAA1BB7EB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 20:48:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C19734EAD46
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 18:45:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EC253B1AF4
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 18:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18512DEA9B;
-	Fri,  3 Oct 2025 18:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14452DEA8E;
+	Fri,  3 Oct 2025 18:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="j7nzqRmj"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PkOVoTJn"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D93C83A14;
-	Fri,  3 Oct 2025 18:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB96D231858
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 18:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759517121; cv=none; b=r2hgEpSmOqax4HPpcarW1qSBX2ktO5wJANuUjuJyX3Y4sKq//yDS5T44ZUlLiX/BaILhXUaz+dA3TiAir48AJw+55zg35eIVPMCJ11+oguyIyN8co1MUWUMy6YgUEa4IlEyG5h7dKpi97didnh8SWvjsZQkkWBZazp9MypIk+aI=
+	t=1759517316; cv=none; b=qBaeApcoXntUP1dTewQ+SozbwmKSVDFJhnJbG/odKto6wODECNdWZpojEofsPsORqg2CVzTnL5ZFgC9wQpTbS/uHuVNyYGPHnRCw40rRGh/4m91LbkwmzLGhr7KmDXLyyK7GDIHJBys8TEpRnO3WkFsURBzghflTHQD9tNbaYZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759517121; c=relaxed/simple;
-	bh=FYmeS6Gb06MOWqRNPJ1CjYqlrGWteugAGxXeLks2CRM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=MS8vNaTCwyTfNuyO8CfMHIhhRg038C9AVVpwvWqgZa5nQNqedz1jFT/ms4cXNum19YMskWO7LRzOiyf64Jscjcfe2MXCLQ71hTLc7fQ4qBsMxfrKruIoXf+LpenLRyLD1y5K2KbBu5uYkRFEcieGSdeYOsbRFlp7cc4mb/LRzNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=j7nzqRmj; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1759517115; x=1760121915; i=markus.elfring@web.de;
-	bh=Mbhe1VnBZaWGgVctyWB6G3RbwRICHnCJjdyE3pzuemU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=j7nzqRmjwDhbKAD0ZTWMMGrXYPgDDkWR6sWxOh/Y4iB+SdCu8oWRkg7+R2qtDeGJ
-	 WQqFVnxluTXqV2M8bL9xVoRAeiT2wNVelPv9sFifP50025esQIfGSGdY0pVEWRlVo
-	 OczpOdf4vnlgfkFR1VVhn9ozA4k4juBc1D6kpRR/6HdBD8nwFiW+aNNRqp9psZE1t
-	 AcC0vdOkSBiWus/BT92BU4BFKDRmElcefQhCaljxswOzKhfcu6Y+C+f1OtvrgYops
-	 hwW8DrwcDjEFlBRWHeNw0+uk9+uiY5WlYl/kxrI11/MBjv8+HStQA1aXixqwJowHN
-	 2Io7KTPIhnrymfN+FA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.196]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MoeY7-1uTm7O0vO5-00dIaZ; Fri, 03
- Oct 2025 20:45:15 +0200
-Message-ID: <6d759211-79e7-4d86-b22e-2ae46d209622@web.de>
-Date: Fri, 3 Oct 2025 20:45:13 +0200
+	s=arc-20240116; t=1759517316; c=relaxed/simple;
+	bh=en/x0H93MhCx6F52aBadN06D95FkYCaa6742Kw7U+ao=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oGmDzEz10uzZJsd2fY3pf2b74z8p6+3xzgyml/W2t9DsWYgaWJ+O5fif3Uzkn1708x6CcUTpd9hqyaiJ7pGlfCvOr5IAZ8ZXA04Lq+k3+fENFXvM1zBwImwTjY3Va98qmVAHGavUV8tYH5IgJ27AvXKXPfYVS5cKo3TjGqaOmDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PkOVoTJn; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-73b4e3d0756so29807187b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 11:48:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759517314; x=1760122114; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r1A8SX/tE1r5hPNOb+fWr0swxWmTbVgPZeSebbUiLxY=;
+        b=PkOVoTJn6x4QaGNXAOO4EVtZY57y3Z8SYxWs1PpzGsaj+4xG0fTej1hgLcrWm1N8EX
+         AvELjmpeOLn9IOyb0E1v/fBV8LuJjJS9oBdrhdYCLgdzPxDqjy1HzOHAq/rhV8m4/7Ql
+         xNVQnju5CrsXYNxS6/0j6R8cnQvCBuhhw95pVUGqNwFpZKm6zEpuXVm8YO1+u8upaBYs
+         sYFzKd0nYEbkwdVKOIinPps/fO1MAUvzCUzPu5TC6AvUESOBF5cfbc7bXhH/eY6sDLVU
+         YlsjpaNhgm7ZqXqnUw1grNLLr3pfkLypc5QfZ7X0Zq9E+SeiTUuorVZEh2A+F7KZqLg4
+         KFzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759517314; x=1760122114;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r1A8SX/tE1r5hPNOb+fWr0swxWmTbVgPZeSebbUiLxY=;
+        b=k1bvXU7lXwU53tZMslWcXtEXvtCEqcRzVMP01rPSjIFyoIglWg9l5/AogRa3o4yWAs
+         iaXbRedHqU3vlkqPXPVRDer/jsNJFUR1J65DFfKoxzsb6L4DthS1fXLNnCakNb+mXDeR
+         2oROfjgvxm1/4IuFUnosbCnmGTrKDcmZJ0Gbb1l3iEVx9Vw3mcEa+ELMIB773XYLQvGF
+         jvD6ZT0YQ6KR8sq4Gfl/0JXH7zGQLgEPPrrVB82KOwtv3PDXPCropyrL14NQPhjOQKWG
+         ffGfEWwmdtCW+rn5LPxvj2bpdzdaXlTXFp5kxGjc1hsSyy9PS8mKm2K3QMCDTJdMCgMf
+         Qi2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWGlh1Hi17h+gBp9hN/hWCCH7g8oS/CpZ9KSFf0xa7GeBdQ6CUk8G6MSfpUqkvEXlLj4+URvHVeCRzwteo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgE29nRPG2lg4+IBNU3FvIG49Jp8KVha33JBQYwegzKD83/2tS
+	Rfv5MWeXaRkttihTWbxszAO2jbynU8w11gDOCd+gqgZd8oDia3JYt6j/PFjs63DRrEQ/wzeW5ri
+	cd247r8THOU/1VQWtGvo/ukbw9M3KprtQPw1L+fwMYQ==
+X-Gm-Gg: ASbGncvUcAEgK3PojpLks9I2A20ljrNVktsCZD57JcylSVtT3mVW63geNfBUz2dQdhM
+	OC0x70jsVF2uvx9KMbc7Q+j9TnZs0dnKA5+98kYkcxv1d7bKI4gn1RViNWgOZG4mlYge2SP+pjF
+	XeMUkNxaH7z1/vs2dJq+R7rspQvZ3gBI0XEYjezZ6cbXqDhdm8PcISJJUfmRmlhC8AI9TS9LHjs
+	MJGWjaD0IA3mTyjwIOSJitbgjUlLu6Vow==
+X-Google-Smtp-Source: AGHT+IHndtFUg6vXwBUXgsob9n+JNYGBEcQY4DfmP4ImNmaJTWf+jg8hVFn/sXD5+Db7beDD2tVpe3hNGAAC1fVvjKI=
+X-Received: by 2002:a05:690e:159a:20b0:629:e2b6:1302 with SMTP id
+ 956f58d0204a3-63b9a07171emr3538166d50.17.1759517313818; Fri, 03 Oct 2025
+ 11:48:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB, de-DE
-To: linux-cifs@vger.kernel.org, Namjae Jeon <linkinjeon@kernel.org>,
- Neil Brown <neil@brown.name>, Sergey Senozhatsky <senozhatsky@chromium.org>,
- Steve French <smfrench@gmail.com>, Tom Talpey <tom@talpey.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Stefan Metzmacher <metze@samba.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] ksmbd: Use common error handling code in
- ksmbd_vfs_path_lookup()
-Content-Type: text/plain; charset=UTF-8
+References: <20251001-samsung-clk-pll-simplification-v1-1-d12def9e74b2@linaro.org>
+In-Reply-To: <20251001-samsung-clk-pll-simplification-v1-1-d12def9e74b2@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Fri, 3 Oct 2025 13:48:22 -0500
+X-Gm-Features: AS18NWDI1BVNzUqPI3mtS3fLkYdD_e2NR51_7PRPjz7yrCpIAz-K6sw_QYnhZ94
+Message-ID: <CAPLW+4nqSntq=vEY4JL1=YZ+3Hb5EAeOB0aob+B6WGs97Zh3rw@mail.gmail.com>
+Subject: Re: [PATCH] clk: samsung: clk-pll: simplify samsung_pll_lock_wait()
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:OceQ7Jz5m7TG/IeHF4OrUJjhM/WokL7NxM8UBYVGRuj1YHVkhPA
- Y2/jyvnPKrQzEpQaYkR8HPmXp1UybrwLe/pHdymZPxaIfaB1DCEpWn+Piy0Vcy4QrwutYNS
- rrvnWOR/pcFrlb5knrIUg+vJ1Wm0fWxy4CUTavHQ6zRJOGQNtOHgHXepMwWyTwehsak1T7a
- qBqRRsUeIYO8ZXZTJWibg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:I4v2PP+XK9w=;z7Ggip63sEm15WVoeJwIafJ9fS4
- 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
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 3 Oct 2025 20:26:56 +0200
+On Wed, Oct 1, 2025 at 10:13=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik@l=
+inaro.org> wrote:
+>
+> readl_relaxed_poll_timeout_atomic() has been updated in 2023 in
+> commit 7349a69cf312 ("iopoll: Do not use timekeeping in
+> read_poll_timeout_atomic()") to avoid usage of timekeeping APIs. It
+> also never used udelay() when no delay was given.
+>
+> With the implementation avoiding timekeeping APIs, and with a caller
+> not passing a delay, the timeout argument simply becomes a loop
+> counter.
+>
+> Therefore the code here can be simplified to unconditionally use
+> readl_relaxed_poll_timeout_atomic(). The difference being the last
+> argument, the timeout (loop counter). Simply adjust it to pass the
+> more generous counter in all cases.
+>
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> ---
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function implementation.
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- fs/smb/server/vfs.c | 32 ++++++++++++++------------------
- 1 file changed, 14 insertions(+), 18 deletions(-)
-
-diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
-index 891ed2dc2b73..3535655b4d86 100644
-=2D-- a/fs/smb/server/vfs.c
-+++ b/fs/smb/server/vfs.c
-@@ -94,17 +94,13 @@ static int ksmbd_vfs_path_lookup(struct ksmbd_share_co=
-nfig *share_conf,
- 	if (err)
- 		return err;
-=20
--	if (unlikely(type !=3D LAST_NORM)) {
--		path_put(path);
--		return -ENOENT;
--	}
-+	if (unlikely(type !=3D LAST_NORM))
-+		goto put_path;
-=20
- 	if (do_lock) {
- 		err =3D mnt_want_write(path->mnt);
--		if (err) {
--			path_put(path);
--			return -ENOENT;
--		}
-+		if (err)
-+			goto put_path;
-=20
- 		inode_lock_nested(path->dentry->d_inode, I_MUTEX_PARENT);
- 		d =3D lookup_one_qstr_excl(&last, path->dentry, 0);
-@@ -116,8 +112,7 @@ static int ksmbd_vfs_path_lookup(struct ksmbd_share_co=
-nfig *share_conf,
- 		}
- 		inode_unlock(path->dentry->d_inode);
- 		mnt_drop_write(path->mnt);
--		path_put(path);
--		return -ENOENT;
-+		goto put_path;
- 	}
-=20
- 	d =3D lookup_noperm_unlocked(&last, path->dentry);
-@@ -125,21 +120,22 @@ static int ksmbd_vfs_path_lookup(struct ksmbd_share_=
-config *share_conf,
- 		dput(d);
- 		d =3D ERR_PTR(-ENOENT);
- 	}
--	if (IS_ERR(d)) {
--		path_put(path);
--		return -ENOENT;
--	}
-+	if (IS_ERR(d))
-+		goto put_path;
-+
- 	dput(path->dentry);
- 	path->dentry =3D d;
-=20
- 	if (test_share_config_flag(share_conf, KSMBD_SHARE_FLAG_CROSSMNT)) {
- 		err =3D follow_down(path, 0);
--		if (err < 0) {
--			path_put(path);
--			return -ENOENT;
--		}
-+		if (err < 0)
-+			goto put_path;
- 	}
- 	return 0;
-+
-+put_path:
-+	path_put(path);
-+	return -ENOENT;
- }
-=20
- void ksmbd_vfs_query_maximal_access(struct mnt_idmap *idmap,
-=2D-=20
-2.51.0
-
+>  drivers/clk/samsung/clk-pll.c | 31 ++++++++++---------------------
+>  1 file changed, 10 insertions(+), 21 deletions(-)
+>
+> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.=
+c
+> index 7bea7be1d7e45c32f0b303ffa55ce9cde4a4f71d..a7e693f6983ec073bedd633ed=
+8da7efafc1a20bb 100644
+> --- a/drivers/clk/samsung/clk-pll.c
+> +++ b/drivers/clk/samsung/clk-pll.c
+> @@ -17,8 +17,7 @@
+>  #include "clk.h"
+>  #include "clk-pll.h"
+>
+> -#define PLL_TIMEOUT_US         20000U
+> -#define PLL_TIMEOUT_LOOPS      1000000U
+> +#define PLL_TIMEOUT_LOOPS      20000U
+>
+>  struct samsung_clk_pll {
+>         struct clk_hw           hw;
+> @@ -84,7 +83,7 @@ arch_initcall(samsung_pll_disable_early_timeout);
+>  static int samsung_pll_lock_wait(struct samsung_clk_pll *pll,
+>                                  unsigned int reg_mask)
+>  {
+> -       int i, ret;
+> +       int ret;
+>         u32 val;
+>
+>         /*
+> @@ -93,25 +92,15 @@ static int samsung_pll_lock_wait(struct samsung_clk_p=
+ll *pll,
+>          * initialized, another when the timekeeping is suspended. udelay=
+() also
+>          * cannot be used when the clocksource is not running on arm64, s=
+ince
+>          * the current timer is used as cycle counter. So a simple busy l=
+oop
+> -        * is used here in that special cases. The limit of iterations ha=
+s been
+> -        * derived from experimental measurements of various PLLs on mult=
+iple
+> -        * Exynos SoC variants. Single register read time was usually in =
+range
+> -        * 0.4...1.5 us, never less than 0.4 us.
+> +        * is used here.
+> +        * The limit of iterations has been derived from experimental
+> +        * measurements of various PLLs on multiple Exynos SoC variants. =
+Single
+> +        * register read time was usually in range 0.4...1.5 us, never le=
+ss than
+> +        * 0.4 us.
+>          */
+> -       if (pll_early_timeout || timekeeping_suspended) {
+> -               i =3D PLL_TIMEOUT_LOOPS;
+> -               while (i-- > 0) {
+> -                       if (readl_relaxed(pll->con_reg) & reg_mask)
+> -                               return 0;
+> -
+> -                       cpu_relax();
+> -               }
+> -               ret =3D -ETIMEDOUT;
+> -       } else {
+> -               ret =3D readl_relaxed_poll_timeout_atomic(pll->con_reg, v=
+al,
+> -                                       val & reg_mask, 0, PLL_TIMEOUT_US=
+);
+> -       }
+> -
+> +       ret =3D readl_relaxed_poll_timeout_atomic(pll->con_reg, val,
+> +                                               val & reg_mask, 0,
+> +                                               PLL_TIMEOUT_LOOPS);
+>         if (ret < 0)
+>                 pr_err("Could not lock PLL %s\n", clk_hw_get_name(&pll->h=
+w));
+>
+>
+> ---
+> base-commit: 3b9b1f8df454caa453c7fb07689064edb2eda90a
+> change-id: 20251001-samsung-clk-pll-simplification-3e02f8912122
+>
+> Best regards,
+> --
+> Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+>
+>
 
