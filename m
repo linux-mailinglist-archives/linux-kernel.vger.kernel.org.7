@@ -1,136 +1,134 @@
-Return-Path: <linux-kernel+bounces-841007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66243BB5F48
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 07:36:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E95AABB5F51
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 07:37:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DCB944E472B
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 05:36:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB85A4A0BFF
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 05:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C6B2080C1;
-	Fri,  3 Oct 2025 05:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB27213E9F;
+	Fri,  3 Oct 2025 05:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="DJJvW5PE"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oJnIkWLU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED95E1A5BA2;
-	Fri,  3 Oct 2025 05:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40F320FA9C;
+	Fri,  3 Oct 2025 05:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759469793; cv=none; b=rtNKLmSypczk0h9djJUz7lt3Qra6ECXkQk+nw2WXqUaLPBP0AUVnhy5IRD2E3gNXdjF6LkfkdTT+xQ+5UDqWkKvPPIbOw50ZQhU0hq2gcB5OFWSaLY28xZ+jwdcZhJs3dWNQvhe3n/oHeOhyKc9LgghuomyYty/6Ib3/fruuqNU=
+	t=1759469794; cv=none; b=MZ4g8d+esqxMzsOs9YtsrLj2q/4hE2bc+8zSZIOucizdhG2Z5gnB0Vg6ym7zsn/pt3Ycnl29PDPS6uu1dk1kNnBNi3LExk3Xn3fYLO/jLK3FnBgrm8nsSTvvN+poJPeFfBPbP6Wal/ki//PhrCoG37jhe+h4jmOf1/94aIl+0r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759469793; c=relaxed/simple;
-	bh=a8KKfmO7Q1+fCiH5/Q5b5jERee1SMGRdbVJvu3pT/CM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LizQXEAxEkp1Ul2PtZiiPzjdMfp0Pssni7P7o/Cuw95NH8ZfDlderSdWQQ/l7/D/vUqQRzyvfDUKA7Oz4KwhuwyjRPWGE4KfHLPE46f+BR0weyfy0DucIha8mEbcyb21Jl/EpHSSqhS3WRBLjuWqLQN2mn9esiBzesbl7UbPCqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=DJJvW5PE; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 8220940B15
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1759469781; bh=JviM4x86VTg42/9SFICWditZ8FIZ0/vFiF+DDrtEZ08=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=DJJvW5PEMB1qs5Mtek/16g/JnmPt9CmJjE7Uu3yDxuMEd8dQGsOFFsNLXsMYe/EdC
-	 iqEOpfl74zoy2btKntuyskCwXHqb1QziA6gqsLHxEos6514SBiNUgTVTh6gAssbIFt
-	 mX0BfVGqYx99AlSQq50SEso4ByHi4Wl2mDMA1817AOvP7lbGnzuly4lQeWJfoyqsoJ
-	 fHAPdXQvq24AdjQRv5e/AHScCdcLFYjnzQVUHebL1fqlqYQpg1LU1Hw/wr1mqYSMiH
-	 4CDJUKP9Sf0cYHlz89pRZA5pRuDslmiTfDPZXkFMif3dyV2LD6r3xNxo4MP4lnuwWu
-	 2OkTVnFdIVO3g==
-Received: from localhost (mdns.lwn.net [45.79.72.68])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 8220940B15;
-	Fri,  3 Oct 2025 05:36:19 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Byungchul Park <byungchul@sk.com>, linux-kernel@vger.kernel.org
-Cc: kernel_team@skhynix.com, torvalds@linux-foundation.org,
- damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
- adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, mingo@redhat.com,
- peterz@infradead.org, will@kernel.org, tglx@linutronix.de,
- rostedt@goodmis.org, joel@joelfernandes.org, sashal@kernel.org,
- daniel.vetter@ffwll.ch, duyuyang@gmail.com, johannes.berg@intel.com,
- tj@kernel.org, tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
- amir73il@gmail.com, gregkh@linuxfoundation.org, kernel-team@lge.com,
- linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
- minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
- sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
- penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
- ngupta@vflare.org, linux-block@vger.kernel.org, josef@toxicpanda.com,
- linux-fsdevel@vger.kernel.org, jack@suse.cz, jlayton@kernel.org,
- dan.j.williams@intel.com, hch@infradead.org, djwong@kernel.org,
- dri-devel@lists.freedesktop.org, rodrigosiqueiramelo@gmail.com,
- melissa.srw@gmail.com, hamohammed.sa@gmail.com, harry.yoo@oracle.com,
- chris.p.wilson@intel.com, gwan-gyeong.mun@intel.com,
- max.byungchul.park@gmail.com, boqun.feng@gmail.com, longman@redhat.com,
- yunseong.kim@ericsson.com, ysk@kzalloc.com, yeoreum.yun@arm.com,
- netdev@vger.kernel.org, matthew.brost@intel.com, her0gyugyu@gmail.com,
- catalin.marinas@arm.com, bp@alien8.de, dave.hansen@linux.intel.com,
- x86@kernel.org, hpa@zytor.com, luto@kernel.org, sumit.semwal@linaro.org,
- gustavo@padovan.org, christian.koenig@amd.com, andi.shyti@kernel.org,
- arnd@arndb.de, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- rppt@kernel.org, surenb@google.com, mcgrof@kernel.org,
- petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
- paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
- joelagnelf@nvidia.com, josh@joshtriplett.org, urezki@gmail.com,
- mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
- qiang.zhang@linux.dev, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
- vschneid@redhat.com, chuck.lever@oracle.com, neil@brown.name,
- okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com,
- trondmy@kernel.org, anna@kernel.org, kees@kernel.org,
- bigeasy@linutronix.de, clrkwllms@kernel.org, mark.rutland@arm.com,
- ada.coupriediaz@arm.com, kristina.martsenko@arm.com,
- wangkefeng.wang@huawei.com, broonie@kernel.org, kevin.brodsky@arm.com,
- dwmw@amazon.co.uk, shakeel.butt@linux.dev, ast@kernel.org, ziy@nvidia.com,
- yuzhao@google.com, baolin.wang@linux.alibaba.com, usamaarif642@gmail.com,
- joel.granados@kernel.org, richard.weiyang@gmail.com,
- geert+renesas@glider.be, tim.c.chen@linux.intel.com, linux@treblig.org,
- alexander.shishkin@linux.intel.com, lillian@star-ark.net,
- chenhuacai@kernel.org, francesco@valla.it, guoweikang.kernel@gmail.com,
- link@vivo.com, jpoimboe@kernel.org, masahiroy@kernel.org,
- brauner@kernel.org, thomas.weissschuh@linutronix.de, oleg@redhat.com,
- mjguzik@gmail.com, andrii@kernel.org, wangfushuai@baidu.com,
- linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
- linux-i2c@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-modules@vger.kernel.org, rcu@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH v17 28/47] dept: add documentation for dept
-In-Reply-To: <20251002081247.51255-29-byungchul@sk.com>
-References: <20251002081247.51255-1-byungchul@sk.com>
- <20251002081247.51255-29-byungchul@sk.com>
-Date: Thu, 02 Oct 2025 23:36:16 -0600
-Message-ID: <87ldlssg1b.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1759469794; c=relaxed/simple;
+	bh=EyZ5vXjvmRKU+2UuZvMYYm9KC9IQFeACmA9qFW+Oo10=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HBh/aYj9Fj9QbCm7C1sS3XwhUAZbXy+8RrQkEzke+3EJoYS/PnoR21/hjKafc+yp9m+F0J72Hn2o3G94gJFUfLPRGieTXY6Idih66LFNMUgqfwBUEFatuilrkbm6wRpR5/s7a2i/yxL8jc2kDl/BIbXJOidbMrvZzQ3IxQvB/n0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oJnIkWLU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1A22C4CEF7;
+	Fri,  3 Oct 2025 05:36:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759469793;
+	bh=EyZ5vXjvmRKU+2UuZvMYYm9KC9IQFeACmA9qFW+Oo10=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oJnIkWLUnzg8lcp2XhswaOdVtuhAwRuV1CCPSUIa5GaLlw1ahTkWcIB8oNCNGS4NO
+	 PCE0zFsDb2Oz1FmY+B9GFumuWU9xhxywhUsMAwrS2jSXyO8dDQ/m93ml11OBnrrGxo
+	 y/zGb/RgQeug2+yQd4SxeJD93zXZqJLbknWLMV2TU8OUisqvjerWOgkcQOIKEfNr22
+	 15mdmE4jMmMfRue0JmkXYaogQ+RXBCUYAf9moYndEEUCPife5L/U0iGrGWy7vQa7Gp
+	 QnZQBc4vg43LLYZCGSgbVScsuJcPGBrzOgZ93b0riW/tYbB4bz2MXCSydSlj8VMoZ+
+	 En1OvSmj2Qqnw==
+Date: Fri, 3 Oct 2025 14:36:25 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: Zecheng Li <zecheng@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 01/10] perf annotate: Skip annotating data types to
+ lea instructions
+Message-ID: <aN9g2YfwZzBjyiOr@google.com>
+References: <20250917195808.2514277-1-zecheng@google.com>
+ <20250917195808.2514277-2-zecheng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250917195808.2514277-2-zecheng@google.com>
 
-Byungchul Park <byungchul@sk.com> writes:
+Hello,
 
-> This document describes the concept and APIs of dept.
->
-> Signed-off-by: Byungchul Park <byungchul@sk.com>
+On Wed, Sep 17, 2025 at 07:57:59PM +0000, Zecheng Li wrote:
+> Introduce a helper function is_address_gen_insn() to check
+> arch-dependent address generation instructions like lea in x86. Remove
+> type annotation on these instructions since they are not accessing
+> memory. It should be counted as `no_mem_ops`.
+> 
+> Signed-off-by: Zecheng Li <zecheng@google.com>
 > ---
->  Documentation/dependency/dept.txt     | 735 ++++++++++++++++++++++++++
->  Documentation/dependency/dept_api.txt | 117 ++++
->  2 files changed, 852 insertions(+)
->  create mode 100644 Documentation/dependency/dept.txt
->  create mode 100644 Documentation/dependency/dept_api.txt
+>  tools/perf/util/annotate.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> index c9b220d9f924..e2370b7fd599 100644
+> --- a/tools/perf/util/annotate.c
+> +++ b/tools/perf/util/annotate.c
+> @@ -2699,6 +2699,19 @@ static bool is_stack_canary(struct arch *arch, struct annotated_op_loc *loc)
+>  	return false;
+>  }
+>  
+> +/**
+> + * Returns true if the instruction has a memory operand without
+> + * performing a load/store
+> + */
+> +static bool is_address_gen_insn(struct arch *arch, struct disasm_line *dl)
+> +{
+> +	if (arch__is(arch, "x86"))
 
-As already suggested, this should be in RST; you're already 95% of the
-way there.  Also, please put it under Documentation/dev-tools; we don't
-need another top-level directory for this.
+Please put parentheses if the inner statement is placed on multiple
+lines even if it's a single statement.
+
+Otherwise, looks good to me.
 
 Thanks,
+Namhyung
 
-jon
+
+> +		if (!strncmp(dl->ins.name, "lea", 3))
+> +			return true;
+> +
+> +	return false;
+> +}
+> +
+>  static struct disasm_line *
+>  annotation__prev_asm_line(struct annotation *notes, struct disasm_line *curr)
+>  {
+> @@ -2807,6 +2820,12 @@ __hist_entry__get_data_type(struct hist_entry *he, struct arch *arch,
+>  		return &stackop_type;
+>  	}
+>  
+> +	if (is_address_gen_insn(arch, dl)) {
+> +		istat->bad++;
+> +		ann_data_stat.no_mem_ops++;
+> +		return NO_TYPE;
+> +	}
+> +
+>  	for_each_insn_op_loc(&loc, i, op_loc) {
+>  		struct data_loc_info dloc = {
+>  			.arch = arch,
+> -- 
+> 2.51.0.384.g4c02a37b29-goog
+> 
 
