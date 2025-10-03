@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-841823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB240BB852A
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 00:32:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DAE9BB8527
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 00:32:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B91AA1B21E86
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 22:32:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 231694EFA82
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 22:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15B72F0C42;
-	Fri,  3 Oct 2025 22:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B262F0C79;
+	Fri,  3 Oct 2025 22:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i9UubbHC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XYDj+wTO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2640E284896;
-	Fri,  3 Oct 2025 22:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F89B284896;
+	Fri,  3 Oct 2025 22:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759530478; cv=none; b=bVFwrt9FkLOzwmdzZnvyYjIEEMzRQf40XhbWoF0Du99olfvcaxI2pvkZTUd4l7FAhIu5P41Gb8ZTWU/qEE6fOHngPXvxofLG3G/HZwbNf/ouheqpbTNolWu6MPk9NEo0aZML13+lbtDE46qF0S/WfLdS+aYkRcsyci34hIYyp48=
+	t=1759530481; cv=none; b=XCWEnAxisKJjMpzopWX7G/9WXkC8BTNGzlnLQ/wW0BwkI4Ify9YaglZSHeN++qFsGb8HiJ1bvRj4uwLsWrUW486fY1nBUWJmSTkRUMvNlwwKvhjMYV7zQoWdDe2W7PnlSVoyEWqRV1jPcoKqcqmfhYBXc3Q0O/CMVz+YfIEPLS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759530478; c=relaxed/simple;
-	bh=VNb5eDcF8RARULTBHZCZEkai56X5jDRHIAV+rCYZit4=;
+	s=arc-20240116; t=1759530481; c=relaxed/simple;
+	bh=Pa3T2gqcpn0BfO0PymfzEhzrhpkSorm3T1eSWoUkyH0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ajs8qyJv9DIetbw9wOLGdw4aSuHEoi1uzHc4Cun/+bHt69iYmqLbXkJWJbhqEZTWOVDNLeGmlpqyEUqIdZDPlj0UpzwEoG5E+abd5+up5RbuJ5C+MPsBIlCcKhCx+iahtSGWuUCA3sADWL8+1bjPRkU/cW7ni7iqj6eFfBI0cEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i9UubbHC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB81FC4CEFB;
-	Fri,  3 Oct 2025 22:27:54 +0000 (UTC)
+	 MIME-Version; b=Zmmvs1ANAB1+FO2B/1ve4NksFMXnQTvKudXsmzVpV2qWU1Hx2j8Hj8U+UYnO1yElxCLaDc2+O1VfP1IS2NQZpV4AApTEEnghMLT1ZASRE28H3tmUtfGmp44dRm2jr/UfDAqj96Y/sWdZdF+fBbTjq1l56qXjlzQcxCqoYRpHYy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XYDj+wTO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B039C4CEF5;
+	Fri,  3 Oct 2025 22:27:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759530477;
-	bh=VNb5eDcF8RARULTBHZCZEkai56X5jDRHIAV+rCYZit4=;
+	s=k20201202; t=1759530481;
+	bh=Pa3T2gqcpn0BfO0PymfzEhzrhpkSorm3T1eSWoUkyH0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=i9UubbHCOsGYzO0fLDPWQtj83RCwmONyYz7iokKv7Rkf6R3fPhqc09DSqvfULIKnr
-	 ztT7uferkG+oyNlY8mzjALssn4vgUhTDRMaaiNnjx8AmMLSNutw/ZrRleHC44NGygq
-	 k7RQPH6OEoGQFJ2YO6TIGGMuk8fhFkyJKnDDqMAR3g1VtZ7hP30lylXV2t/r4gdDRV
-	 Dzoqn4unSXs7Nz2fL3yGCsziL/wctTdjc+EnibyjxZSK3Sp1Mzs71KrY4icBRQ9UE6
-	 t4ZVkSn6d+WnMuGTNgvGLvQwh9E8lRm1oAV5k4mAZrN5ejLcMhk1q3LMYG+db+G0u6
-	 fMpqslOX2Inig==
+	b=XYDj+wTODqHxaHbquId7LGMtxNt3goBHrAQ9vkcFhKnFu86t98L9ASjTBy+temGYe
+	 LGlRrqKOWIEUyZzoCe58MRv8+kHH17UDU/NeqS+aAyrsSL1krOzcO838w5jf0i1Rxq
+	 skBqyqClUr69XUO06ONTokhbuou8XbD4foQA/ZBALQT9psjGZvDOPiarmr31jJwKKD
+	 hcA9+ojKhOsGS5+K/w2Fgho0yu5ULXRATqow1Cr/clMPSMb+En2DX/EU3qz5s+8ysY
+	 ugKMVRk+BnsJbzOv+osFlzdwgLpjCTWbvrmYeWy73XRT9/FEmZDsRSJppusmCuqjP8
+	 AIzvt+WLonTNg==
 From: Danilo Krummrich <dakr@kernel.org>
 To: gregkh@linuxfoundation.org,
 	rafael@kernel.org,
@@ -56,9 +56,9 @@ To: gregkh@linuxfoundation.org,
 Cc: rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH 5/7] samples: rust: debugfs: add example for blobs
-Date: Sat,  4 Oct 2025 00:26:42 +0200
-Message-ID: <20251003222729.322059-6-dakr@kernel.org>
+Subject: [PATCH 6/7] rust: debugfs: support binary large objects for ScopedDir
+Date: Sat,  4 Oct 2025 00:26:43 +0200
+Message-ID: <20251003222729.322059-7-dakr@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251003222729.322059-1-dakr@kernel.org>
 References: <20251003222729.322059-1-dakr@kernel.org>
@@ -70,53 +70,86 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Extend the Rust debugfs sample to demonstrate usage of binary file
-support. The example now shows how to expose both fixed-size arrays
-and dynamically sized vectors as binary blobs in debugfs.
+Add support for creating binary debugfs files via ScopedDir. This
+mirrors the existing functionality for Dir, but without producing an
+owning handle -- files are automatically removed when the associated
+Scope is dropped.
 
 Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 ---
- samples/rust/rust_debugfs.rs | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ rust/kernel/debugfs.rs | 45 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-diff --git a/samples/rust/rust_debugfs.rs b/samples/rust/rust_debugfs.rs
-index 82b61a15a34b..75ceb95276fa 100644
---- a/samples/rust/rust_debugfs.rs
-+++ b/samples/rust/rust_debugfs.rs
-@@ -38,6 +38,7 @@
- use kernel::debugfs::{Dir, File};
- use kernel::new_mutex;
- use kernel::prelude::*;
-+use kernel::sizes::*;
- use kernel::sync::Mutex;
+diff --git a/rust/kernel/debugfs.rs b/rust/kernel/debugfs.rs
+index 3c3bbcc126ef..0eb1719e4953 100644
+--- a/rust/kernel/debugfs.rs
++++ b/rust/kernel/debugfs.rs
+@@ -531,6 +531,20 @@ pub fn read_only_file<T: Writer + Send + Sync + 'static>(&self, name: &CStr, dat
+         self.create_file(name, data, &T::FILE_OPS)
+     }
  
- use kernel::{acpi, device::Core, of, platform, str::CString, types::ARef};
-@@ -62,6 +63,10 @@ struct RustDebugFs {
-     counter: File<AtomicUsize>,
-     #[pin]
-     inner: File<Mutex<Inner>>,
-+    #[pin]
-+    array_blob: File<Mutex<[u8; 4]>>,
-+    #[pin]
-+    vector_blob: File<Mutex<KVec<u8>>>,
- }
++    /// Creates a read-only binary file in this directory.
++    ///
++    /// The file's contents are produced by invoking [`BinaryWriter::write_to_slice`].
++    ///
++    /// This function does not produce an owning handle to the file. The created file is removed
++    /// when the [`Scope`] that this directory belongs to is dropped.
++    pub fn read_binary_file<T: BinaryWriter + Send + Sync + 'static>(
++        &self,
++        name: &CStr,
++        data: &'data T,
++    ) {
++        self.create_file(name, data, &T::FILE_OPS)
++    }
++
+     /// Creates a read-only file in this directory, with contents from a callback.
+     ///
+     /// The file contents are generated by calling `f` with `data`.
+@@ -568,6 +582,22 @@ pub fn read_write_file<T: Writer + Reader + Send + Sync + 'static>(
+         self.create_file(name, data, vtable)
+     }
  
- #[derive(Debug)]
-@@ -143,6 +148,14 @@ fn new(pdev: &platform::Device<Core>) -> impl PinInit<Self, Error> + '_ {
-                 ),
-                 counter <- Self::build_counter(&debugfs),
-                 inner <- Self::build_inner(&debugfs),
-+                array_blob <- debugfs.read_write_binary_file(
-+                    c_str!("array_blob"),
-+                    new_mutex!([0x62, 0x6c, 0x6f, 0x62]),
-+                ),
-+                vector_blob <- debugfs.read_write_binary_file(
-+                    c_str!("vector_blob"),
-+                    new_mutex!(kernel::kvec!(0x42; SZ_4K)?),
-+                ),
-                 _debugfs: debugfs,
-                 pdev: pdev.into(),
-             }
++    /// Creates a read-write binary file in this directory.
++    ///
++    /// Reading the file uses the [`BinaryWriter`] implementation on `data`. Writing to the file
++    /// uses the [`BinaryReader`] implementation on `data`.
++    ///
++    /// This function does not produce an owning handle to the file. The created file is removed
++    /// when the [`Scope`] that this directory belongs to is dropped.
++    pub fn read_write_binary_file<T: BinaryWriter + BinaryReader + Send + Sync + 'static>(
++        &self,
++        name: &CStr,
++        data: &'data T,
++    ) {
++        let vtable = &<T as BinaryReadWriteFile<_>>::FILE_OPS;
++        self.create_file(name, data, vtable)
++    }
++
+     /// Creates a read-write file in this directory, with logic from callbacks.
+     ///
+     /// Reading from the file is handled by `f`. Writing to the file is handled by `w`.
+@@ -607,6 +637,21 @@ pub fn write_only_file<T: Reader + Send + Sync + 'static>(&self, name: &CStr, da
+         self.create_file(name, data, vtable)
+     }
+ 
++    /// Creates a write-only binary file in this directory.
++    ///
++    /// Writing to the file uses the [`BinaryReader`] implementation on `data`.
++    ///
++    /// This function does not produce an owning handle to the file. The created file is removed
++    /// when the [`Scope`] that this directory belongs to is dropped.
++    pub fn write_binary_file<T: BinaryReader + Send + Sync + 'static>(
++        &self,
++        name: &CStr,
++        data: &'data T,
++    ) {
++        let vtable = &<T as BinaryWriteFile<_>>::FILE_OPS;
++        self.create_file(name, data, vtable)
++    }
++
+     /// Creates a write-only file in this directory, with write logic from a callback.
+     ///
+     /// Writing to the file is handled by `w`.
 -- 
 2.51.0
 
