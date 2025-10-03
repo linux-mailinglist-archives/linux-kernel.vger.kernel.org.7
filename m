@@ -1,90 +1,164 @@
-Return-Path: <linux-kernel+bounces-841430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEC63BB74B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 17:13:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 019A8BB74B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 17:15:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAC7319E0F12
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 15:13:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D752C4E48BA
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 15:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA31A27B4FA;
-	Fri,  3 Oct 2025 15:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C612857CF;
+	Fri,  3 Oct 2025 15:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="azGIcTlq"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="q/h8+DAC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dfyptc0M";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="q/h8+DAC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dfyptc0M"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B8A1E9B1C
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 15:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C6A2848B2
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 15:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759504407; cv=none; b=nL6rgKdbb2zyjxgDF9yQ4z6Phc5Te+gvLNBA/opeyLcyRbx+Qof/QEiKbaW0yDI9Qqs9m/prkdFws9FW8N4PHXKcFGyfw8GwsO/ZVSV7XYPmjMhatGvhJPpFFfzLo8NliZ1nuXVDZ/PAvGrmpzUwxR8CLNlAgTQXskso1FiXzTA=
+	t=1759504515; cv=none; b=Ja/+tzqSVEpgPRKqyi/TFyXQfWEIfrQVxMS05FZqx/TyLIMrUyejoNYfm0N7kq1tUF5VRW2iHq76iLJL9dpoitqqU8pgjHKJLDo9bWd8a3WS+XDkMPhO93ODYEIowbiJvJ/00FEBfS3I2cQPapbN83piye4pTJ+7xWulg86iQpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759504407; c=relaxed/simple;
-	bh=vB6BD3+74H6PBZk5qiiyqgX55cMRHdfH4PdyGZzuCGk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iEuHbETCiFHgwdbjdnb0B+7Yw+LM4sSKcHPXcfnnUUnxSwgzzuzaaGzxTV1MTCeRMhnxmtyEM1sNJXYFWbTIkw6xVdC7LiZ7UITIemsOJIHuNUipk7Gibhf0MWVMAOu+ZpMM8YbnS8crE5GLatbufeksQBTM+712ucpBgjwUaxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=azGIcTlq; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from localhost.localdomain (unknown [77.106.22.74])
-	by mail.ispras.ru (Postfix) with ESMTPSA id A68114076196;
-	Fri,  3 Oct 2025 15:13:19 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru A68114076196
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1759504400;
-	bh=HDByeUCiDwlLYQ/3uCoLDW7qZT2XQme1mO6pbvFE+JE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=azGIcTlqn1iwvjg8G1ry3BBWr+L1KoaPvPvOZS5QD9A6KjhMgl6/s6ynTYOv8Hm0b
-	 Nn6WL6b0/rpkoBdb7oW+V4l4cd2RfqmVdSWYHQtMDya/DKqlsH8XPJGjDeyP5yqSfv
-	 oUSj4lSvT5n03yG/oJBf+F76cHZNP0uFQLVbaJ34=
-From: Matvey Kovalev <matvey.kovalev@ispras.ru>
-To: Jason Wessel <jason.wessel@windriver.com>
-Cc: Matvey Kovalev <matvey.kovalev@ispras.ru>,
-	Daniel Thompson <danielt@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	kgdb-bugreport@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH] kdb: delete unexecuted if-block in kdb_get_kbd_char()
-Date: Fri,  3 Oct 2025 18:12:02 +0300
-Message-ID: <20251003151220.1580-1-matvey.kovalev@ispras.ru>
-X-Mailer: git-send-email 2.43.0.windows.1
+	s=arc-20240116; t=1759504515; c=relaxed/simple;
+	bh=C7CfKgcHYLApAV6Hfjkaw2zl7XixfTDgEWSfeNSz2IA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qm328KBV3SXq4EEBQqEeeF51MkYdecEuSeZ/Auht/lShe+IhuKnSYyNujvXk7OXy6sTGlUoTFdBpEML2/v0jtlS1HPkou0/z5a0j+5Ye+jWiD+nQFsjp4AF45c3ugK3/DKxto0iHDQQ4cFU1xd/xcq6qOIX3r+82khQoNkQLVR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=q/h8+DAC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dfyptc0M; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=q/h8+DAC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dfyptc0M; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id AF8C31F391;
+	Fri,  3 Oct 2025 15:15:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759504510;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BSuUcYJ4MTFp6S1moFWEPmO11ItH6Z/9twvYE6qnuZY=;
+	b=q/h8+DAC9X52znJDx0snQfaKI02FhnRQnmU2JkCN+8OMqYedLyZ+Not33KIqxXrSKwlUno
+	d5jkz5Sj78gl63kRKKxeTlMCYT9HyMIx2AgJAw0XYvhhV8Aug80Yg5cNh8CZc8ugjTfrKV
+	3bJ3/3t1ecGoBVChMYqThOib+Rcv/Ow=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759504510;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BSuUcYJ4MTFp6S1moFWEPmO11ItH6Z/9twvYE6qnuZY=;
+	b=dfyptc0MPtNOIG2tL+VRqFpFMoIZvr2mnuO38D6ozakWZ/LtyKH4fT1IrRd9XyplMbLVKj
+	Dw21BLvsvruvh3CA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759504510;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BSuUcYJ4MTFp6S1moFWEPmO11ItH6Z/9twvYE6qnuZY=;
+	b=q/h8+DAC9X52znJDx0snQfaKI02FhnRQnmU2JkCN+8OMqYedLyZ+Not33KIqxXrSKwlUno
+	d5jkz5Sj78gl63kRKKxeTlMCYT9HyMIx2AgJAw0XYvhhV8Aug80Yg5cNh8CZc8ugjTfrKV
+	3bJ3/3t1ecGoBVChMYqThOib+Rcv/Ow=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759504510;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BSuUcYJ4MTFp6S1moFWEPmO11ItH6Z/9twvYE6qnuZY=;
+	b=dfyptc0MPtNOIG2tL+VRqFpFMoIZvr2mnuO38D6ozakWZ/LtyKH4fT1IrRd9XyplMbLVKj
+	Dw21BLvsvruvh3CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 95DA213990;
+	Fri,  3 Oct 2025 15:15:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id JFpmJH7o32gQYgAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Fri, 03 Oct 2025 15:15:10 +0000
+Date: Fri, 3 Oct 2025 17:15:09 +0200
+From: David Sterba <dsterba@suse.cz>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>, Chris Mason <clm@fb.com>,
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] btrfs: Avoid -Wflex-array-member-not-at-end warning
+Message-ID: <20251003151509.GK4052@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <aN_Zeo7JH9nogwwq@kspp>
+ <20251003143502.GJ4052@suse.cz>
+ <b59ed01f-d9d5-4de8-8a12-1e506962b2d9@embeddedor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b59ed01f-d9d5-4de8-8a12-1e506962b2d9@embeddedor.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:mid,imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
 
-Bits of scancode are dropped except 7 low-order ones.
-So, scancode can't be equal 0xe0.
+On Fri, Oct 03, 2025 at 03:51:24PM +0100, Gustavo A. R. Silva wrote:
+> >>
+> >> diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
+> >> index 9230e5066fc6..2b7cf49a35bb 100644
+> >> --- a/fs/btrfs/send.c
+> >> +++ b/fs/btrfs/send.c
+> >> @@ -178,7 +178,6 @@ struct send_ctx {
+> >>   	u64 cur_inode_rdev;
+> >>   	u64 cur_inode_last_extent;
+> >>   	u64 cur_inode_next_write_offset;
+> >> -	struct fs_path cur_inode_path;
+> >>   	bool cur_inode_new;
+> >>   	bool cur_inode_new_gen;
+> >>   	bool cur_inode_deleted;
+> >> @@ -305,6 +304,9 @@ struct send_ctx {
+> >>   
+> >>   	struct btrfs_lru_cache dir_created_cache;
+> >>   	struct btrfs_lru_cache dir_utimes_cache;
+> >> +
+> >> +	/* Must be last --ends in a flexible-array member. */
+> >                          ^^
+> > 
+> > Is this an en dash?
+> 
+> Not sure what you mean.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Signed-off-by: Matvey Kovalev <matvey.kovalev@ispras.ru>
----
- kernel/debug/kdb/kdb_keyboard.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/kernel/debug/kdb/kdb_keyboard.c b/kernel/debug/kdb/kdb_keyboard.c
-index 3a74604fdb8a7..386d30e530b78 100644
---- a/kernel/debug/kdb/kdb_keyboard.c
-+++ b/kernel/debug/kdb/kdb_keyboard.c
-@@ -145,9 +145,6 @@ int kdb_get_kbd_char(void)
- 		return CTRL('F');
- 	}
- 
--	if (scancode == 0xe0)
--		return -1;
--
- 	/*
- 	 * For Japanese 86/106 keyboards
- 	 * 	See comment in drivers/char/pc_keyb.c.
--- 
-2.43.0.windows.1
-
+En dash is a punctuation mark not typically used in comments, nowadays
+found in AI generated code/text. I was just curious.
 
