@@ -1,206 +1,154 @@
-Return-Path: <linux-kernel+bounces-841536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78FAEBB79D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:54:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FA86BB79C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A4F34EE42B
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:53:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 657A24ECB3A
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7425F2D4B77;
-	Fri,  3 Oct 2025 16:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JlLqXfzA"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4522C2D3EF1;
+	Fri,  3 Oct 2025 16:53:32 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CE22D1F69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A21B2F2D
 	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759510412; cv=none; b=Zwx3PpeibSPq9UImIkGgUhyCPmebN9n+GvTHJudo6lXMOeRPGGJDgS/T+xBV7LnqjSdTpJlpocETQsBLg9UoLYmw/lysh+IMUU1l1S/qXQRmUUMWuH2dzwpGT2xzum+fF+oiMO6LRJGFPLnS8A4R7d7XYDai0YFt2eH0QCkyTSU=
+	t=1759510411; cv=none; b=cT1GSIwGx2mh3BJP/tHU+LpyV1KHlbMIR2SdtRpTqlCX5mzvcxVj55UxKVNsBxrz3U1YPusWHCyQRlooQ0NdbrTHs7fuoleiKrNUhQxyIhiGjorQDBs/vJAwYI0LqCODRj+AWAlUKWKL1XbLBAnp6QZJEZz0tCBigDF37U4mDnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759510412; c=relaxed/simple;
-	bh=O6iTRtCHWa1pvTeaZbaPlBhhtaQYociVnx8+jdF7glw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jFru3dnRQQj/5aT20bpGX1jQs2/VKn0C/fNbADDQpfI+lWNLLEj2i5XxA0grHwpkPsMI7xT76FCsy+Q2UNLL4uciKHJperndu6CZVuIW5Vd9zYm55dOB3W5AiAQ0++nSde6sdeelPwA53VUUf3KI9/sD2vp8px2XU+ucl6atJWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JlLqXfzA; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-27ee41e062cso29055905ad.1
+	s=arc-20240116; t=1759510411; c=relaxed/simple;
+	bh=mRYirQtw3MyImmsDuhjY99bgdQ0XAhgTiyO/SCMpQc8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=L8i8edkGJwWOkg7Hmzp8icS/yC5+ygdslKRVC4lwVKFaMqbNC+O47l3pJNa0OBYJEJvUOjY5qxSiN04s4Aq3QDG935NxDvND5RAA+tbqVwmPOYZetR1tediDnCMhq/oWDo42k5usUdRXuNB+pI5cs4TgxtmEraq5/OS7oR9mE08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-42d85031919so34430775ab.1
         for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 09:53:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759510410; x=1760115210; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=POxElydVI0BOx7r8DQaDF+v2DBnqT3dmlQuZlhTe5JY=;
-        b=JlLqXfzARNP3rWtRBYXZoeQVSgcJTmUP2IdCmaIBCS7FTmY+duyDYs4vHTGPMouX7A
-         W04VPMRg/5jE1hpB3cEzUQHQcYDMYKJiSvhChgN5mD2jJnKOC//wOWmc9qVUOKUJclpw
-         lz1zUgL2BgyClerauQO3XTJdrhR4DNlZf9BGMydU6CpZhBpXsTt/M1yzgrbIpAU6EqUv
-         FNxT8SRmmk/Ul7jL6bQZpjYllmBeNZgGHSjHKqgSQO7/UNst6Qo/1+bFbYlLGjZrlu3H
-         lyZ2iqrMk/AYkChMOtIjG9AlreijdgZcCNF9pwZMMN5VZtcXJBun1lN2d23T68HmdroI
-         pBjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759510410; x=1760115210;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=POxElydVI0BOx7r8DQaDF+v2DBnqT3dmlQuZlhTe5JY=;
-        b=WHkCwqrNxeehPFA+YEJGiP1F1WQ1pOOufwF1vour7/bJZt6fsRbSWf1mfphvTDySAT
-         f1PPS9y1vkRPS0/QNiQ0KcWmVFe7SvljOcb2YP+UZsQQbgeYwwitLcZjmLRv8apzByh5
-         dUf1gPU+Rv5lQt0skH/hGfkGmC/DojnLYwOaeNId/xgpJAFbKdFeUrNUFjtVZ8xF79PN
-         8oBVedBEqNOCvWZ/cyWAT1eOzzvaUtucNP9WT2z28pneRhhLaDCBDjdW2AEQaP5sgUlm
-         29G2q4PU2wWCfPuZKo2ywg2EYTdzVwNsoZgIhssTNAoIr74ptfnCXFLsmFXTtTZZ8kS/
-         M2lw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8XILTB7Mc2Rcxx6TU+ouiOYv4z7+C1SM+5P1AAt376un/tremzaC2k2k/4Xj/JeUsKkLasvhmFInGgBI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYdb3u4NVZMaR3Ln4bFsv+8PAN8+MlCmG0pONqfSrZCdyf6j77
-	6YNafxE2gYHAqJyWBKA9fn6SoIxYaBFKdhGJC/nKWu0isF5TXlmw4esFA4ctfN+zxZTHlajGZoS
-	HqBDXYA==
-X-Google-Smtp-Source: AGHT+IGJmYTs5YOjCOYNdr7vzDkZcbFbNXzxJPl12PvUCdaYwJfPVY9C6I0Va+eERizS2P2TzJ5KMzCvIF8=
-X-Received: from pgag24.prod.google.com ([2002:a05:6a02:2f18:b0:b56:3de0:d767])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:298d:b0:264:70e9:dcb8
- with SMTP id d9443c01a7336-28e9a6fd918mr42863915ad.55.1759510410399; Fri, 03
- Oct 2025 09:53:30 -0700 (PDT)
-Date: Fri, 3 Oct 2025 09:53:28 -0700
-In-Reply-To: <aN/VaVklfXO5rId4@yzhao56-desk.sh.intel.com>
+        d=1e100.net; s=20230601; t=1759510409; x=1760115209;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h98gklf+DoNEeI80Onk4YnlRuMg8M923I2rCscH72jQ=;
+        b=Zgq1n9ALkkN0ckqVXsQLIJ/1gT2aSlTEzHzIMg49+t1IQodM5M8bGNljp2whqDP8Qi
+         xUK152+LclMbD4JVAM3cgIPRgfbODYZSX6lGZAqYxkyAbSonm9rjlML0dLKFHTpxDY9n
+         nljx8dktdgrO48uD4LKj+XmB8ZpUVrTeDQpfDIFd/CrAvBC9Sc6wciOBs9aHn6c9zJq5
+         ApveQ97buaR7CRSicD3qQii1fGgvTNvyvx+MRB/gdJXCqlR1Egyvss5SAnmf25w6nIOB
+         3dsN3OCIM8I5B2RZQcrVWICIEg8XpWw8YI3d3xdIwH2D2yaHdSZ/JW9M2kmycgcLY63R
+         8PUA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1ItISF6EKKGaZLB7Hu7eEvJR2GCSesgN2vgystcR+VAVLiU4l9XNA4MDKR+kD8lFqoRtuTIBm5g868ag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEvbWT1M5Zq03xbwSfBIBMge8ota5Snoj5b6ycc6gZDGOgOCaL
+	XeLtghC8d44TPpqGlkaJLpNN1ix3cv6yqYXwbEb03TetLsx734iVSqXMux6MNCHteBLbPzat292
+	EqxDu5uBlgw2tEi+0oAvcPcu6MUJvAF+Oji55GH4xZdSEM5J12IzEQLd6ElI=
+X-Google-Smtp-Source: AGHT+IEhuw75pmpCsyZ0HKaEpYfv5plJnYtNDIfGXhbweUNBGOq7s+U+nmni+xgpvxRMSuffWIjNdSW99WuUPtPikQQtNR0qF3nu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250919214259.1584273-1-seanjc@google.com> <aNvLkRZCZ1ckPhFa@yzhao56-desk.sh.intel.com>
- <aNvT8s01Q5Cr3wAq@yzhao56-desk.sh.intel.com> <aNwFTLM3yt6AGAzd@google.com> <aN/VaVklfXO5rId4@yzhao56-desk.sh.intel.com>
-Message-ID: <aN__iPxo5P1bFCNk@google.com>
-Subject: Re: [PATCH] KVM: x86: Drop "cache" from user return MSR setter that
- skips WRMSR
-From: Sean Christopherson <seanjc@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Xiaoyao Li <xiaoyao.li@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:168f:b0:42d:86fb:d871 with SMTP id
+ e9e14a558f8ab-42e7ad961f1mr46652975ab.21.1759510409360; Fri, 03 Oct 2025
+ 09:53:29 -0700 (PDT)
+Date: Fri, 03 Oct 2025 09:53:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68dfff89.050a0220.2c17c1.0026.GAE@google.com>
+Subject: [syzbot] [bluetooth?] WARNING in hci_conn_drop (3)
+From: syzbot <syzbot+bf427d0e03a779974eee@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Oct 03, 2025, Yan Zhao wrote:
-> Sorry for the slow response due to the PRC holiday.
-> 
-> On Tue, Sep 30, 2025 at 09:29:00AM -0700, Sean Christopherson wrote:
-> > On Tue, Sep 30, 2025, Yan Zhao wrote:
-> > > On Tue, Sep 30, 2025 at 08:22:41PM +0800, Yan Zhao wrote:
-> > > > On Fri, Sep 19, 2025 at 02:42:59PM -0700, Sean Christopherson wrote:
-> > > > > Rename kvm_user_return_msr_update_cache() to __kvm_set_user_return_msr()
-> > > > > and use the helper kvm_set_user_return_msr() to make it obvious that the
-> > > > > double-underscores version is doing a subset of the work of the "full"
-> > > > > setter.
-> > > > > 
-> > > > > While the function does indeed update a cache, the nomenclature becomes
-> > > > > slightly misleading when adding a getter[1], as the current value isn't
-> > > > > _just_ the cached value, it's also the value that's currently loaded in
-> > > > > hardware.
-> > > > Nit:
-> > > > 
-> > > > For TDX, "it's also the value that's currently loaded in hardware" is not true.
-> > > since tdx module invokes wrmsr()s before each exit to VMM, while KVM only
-> > > invokes __kvm_set_user_return_msr() in tdx_vcpu_put().
-> > 
-> > No?  kvm_user_return_msr_update_cache() is passed the value that's currently
-> > loaded in hardware, by way of the TDX-Module zeroing some MSRs on TD-Exit.
-> > 
-> > Ah, I suspect you're calling out that the cache can be stale.  Maybe this?
-> Right. But not just that the cache can be stale. My previous reply was quite
-> misleading.
-> 
-> As with below tables, where
-> CURR: msrs->values[slot].curr.
-> REAL: value that's currently loaded in hardware
-> 
-> For TDs,
->                             CURR          REAL
->    -----------------------------------------------------------------------
-> 1. enable virtualization    host value    host value
-> 
-> 2. TDH.VP.ENTER             host value    guest value (updated by tdx module)
-> 3. TDH.VP.ENTER return      host value    defval (updated by tdx module)
-> 4. tdx_vcpu_put             defval        defval
-> 5. exit to user mode        host value    host value
-> 
-> 
-> For normal VMs,
->                             CURR                 REAL
->    -----------------------------------------------------------------------
-> 1. enable virtualization    host value           host value
-> 2. before vcpu_run          shadow guest value   shadow guest value
-> 3. after vcpu_run           shadow guest value   shadow guest value
-> 4. exit to user mode        host value           host value
-> 
-> 
-> Unlike normal VMs, where msrs->values[slot].curr always matches the the value
-> that's currently loaded in hardware. 
+Hello,
 
-That isn't actually true, see the bottom.
+syzbot found the following issue on:
 
-> For TDs, msrs->values[slot].curr does not contain the value that's currently
-> loaded in hardware in stages 2-3.
-> 
-> >   While the function does indeed update a cache, the nomenclature becomes
-> >   slightly misleading when adding a getter[1], as the current value isn't
-> >   _just_ the cached value, it's also the value that's currently loaded in
-> >   hardware (ignoring that the cache holds stale data until the vCPU is put,
-> So, "stale data" is not accurate.
-> It just can't hold the current hardware loaded value when guest is running in
-> TD.
+HEAD commit:    2213e57a69f0 Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=12e2ff12580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=714d45b6135c308e
+dashboard link: https://syzkaller.appspot.com/bug?extid=bf427d0e03a779974eee
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+userspace arch: arm64
 
-Eh, that's still "stale data" as far as KVM is concerned.  Though I'm splitting
-hairs, I totally agree that as written the changelog is misleading.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> it's also the value that's currently loaded in hardware.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/bf4625d47a8f/disk-2213e57a.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/270abffcbf3c/vmlinux-2213e57a.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1f0f6eb3e385/Image-2213e57a.gz.xz
 
-I just need to append "when KVM is actively running" (or probably something more
-verbose).
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+bf427d0e03a779974eee@syzkaller.appspotmail.com
 
-> >   i.e. until KVM prepares to switch back to the host).
-> > 
-> > Actually, that's a bug waiting to happen when the getter comes along.  Rather
-> > than document the potential pitfall, what about adding a prep patch to mimize
-> > the window?  Then _this_ patch shouldn't need the caveat about the cache being
-> > stale.
-> With below patch,
-> 
-> For TDs,
->                             CURR          REAL
->    -----------------------------------------------------------------------
-> 1. enable virtualization    host value    host value
-> 2. before TDH.VP.ENTER      defval        host value or defval
-> 3. TDH.VP.ENTER             defval        guest value (updated by tdx module)
-> 4. TDH.VP.ENTER return      defval        defval (updated by tdx module)
-> 5. exit to user mode        host value    host value
-> 
-> msrs->values[slot].curr is still not the current value loaded in hardware.
+------------[ cut here ]------------
+workqueue: cannot queue hci_conn_timeout on wq hci4
+WARNING: CPU: 1 PID: 6638 at kernel/workqueue.c:2256 __queue_work+0xe10/0x1210 kernel/workqueue.c:2254
+Modules linked in:
+CPU: 1 UID: 0 PID: 6638 Comm: kworker/1:6 Not tainted syzkaller #0 PREEMPT 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
+Workqueue: events l2cap_chan_timeout
+pstate: 634000c5 (nZCv daIF +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+pc : __queue_work+0xe10/0x1210 kernel/workqueue.c:2254
+lr : __queue_work+0xe10/0x1210 kernel/workqueue.c:2254
+sp : ffff80009d4e77e0
+x29: ffff80009d4e7830 x28: 1fffe0001b418c00 x27: ffff0000d493dac0
+x26: 0000000000000008 x25: dfff800000000000 x24: ffff0000c9ffa800
+x23: ffff0000c9ffa9c0 x22: 0000000004208060 x21: 1fffe000193ff538
+x20: ffff800092e27000 x19: ffff0000d9fe0960 x18: 00000000ffffffff
+x17: ffff80009353a000 x16: ffff80008b021030 x15: 0000000000000001
+x14: 1fffe000337938f2 x13: 0000000000000000 x12: 0000000000000000
+x11: ffff6000337938f3 x10: 0000000000ff0100 x9 : 1a6f38d4427b3b00
+x8 : 1a6f38d4427b3b00 x7 : ffff800080565b6c x6 : 0000000000000000
+x5 : 0000000000000001 x4 : 0000000000000000 x3 : ffff8000807e0688
+x2 : 0000000000000001 x1 : 0000000100000000 x0 : 0000000000000000
+Call trace:
+ __queue_work+0xe10/0x1210 kernel/workqueue.c:2254 (P)
+ __queue_delayed_work+0xfc/0x2c8 kernel/workqueue.c:2507
+ queue_delayed_work_on+0xe4/0x194 kernel/workqueue.c:2559
+ queue_delayed_work include/linux/workqueue.h:684 [inline]
+ hci_conn_drop+0x174/0x280 include/net/bluetooth/hci_core.h:1675
+ l2cap_chan_del+0x228/0x470 net/bluetooth/l2cap_core.c:671
+ l2cap_chan_close+0x424/0x684 net/bluetooth/l2cap_core.c:-1
+ l2cap_chan_timeout+0x120/0x280 net/bluetooth/l2cap_core.c:431
+ process_one_work+0x7e8/0x155c kernel/workqueue.c:3236
+ process_scheduled_works kernel/workqueue.c:3319 [inline]
+ worker_thread+0x958/0xed8 kernel/workqueue.c:3400
+ kthread+0x5fc/0x75c kernel/kthread.c:463
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
+irq event stamp: 105130
+hardirqs last  enabled at (105129): [<ffff800080429388>] __cancel_work+0x158/0x218 kernel/workqueue.c:4344
+hardirqs last disabled at (105130): [<ffff8000804249b8>] queue_delayed_work_on+0x54/0x194 kernel/workqueue.c:2555
+softirqs last  enabled at (105122): [<ffff8000803da960>] softirq_handle_end kernel/softirq.c:425 [inline]
+softirqs last  enabled at (105122): [<ffff8000803da960>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:607
+softirqs last disabled at (104025): [<ffff800080022028>] __do_softirq+0x14/0x20 kernel/softirq.c:613
+---[ end trace 0000000000000000 ]---
 
-Right, this where it becomes stale from my perspective.
 
-> > diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> > index ff41d3d00380..326fa81cb35f 100644
-> > --- a/arch/x86/kvm/vmx/tdx.c
-> > +++ b/arch/x86/kvm/vmx/tdx.c
-> > @@ -789,6 +789,14 @@ void tdx_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
-> >                 vt->msr_host_kernel_gs_base = read_msr(MSR_KERNEL_GS_BASE);
-> >  
-> >         vt->guest_state_loaded = true;
-> > +
-> > +       /*
-> > +        * Several of KVM's user-return MSRs are clobbered by the TDX-Module if
-> Hmm, my previous mail didn't mention that besides saving guest value + clobber
-> hardware value before exit to VMM, the TDX module also loads saved guest value
-> to hardware on TDH.VP.ENTER.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-That's not actually unique to TDX.  EFER is setup as a user return MSR, but is
-context switched on VM-Enter/VM-Exit except when running on ancient hardware
-without VM_{ENTRY,EXIT}_LOAD_IA32_EFER (and even then, only when KVM doesn't
-need to atomically switch to avoid toggling EFER.NX while in the host).
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-I.e. msrs->values[<EFER slot>].curr won't match hardware either while running
-the guest.  But because EFER is atomically loaded on VM-Exit in those cases, the
-curr value can't be stale while KVM is running.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
