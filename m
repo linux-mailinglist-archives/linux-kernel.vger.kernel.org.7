@@ -1,141 +1,168 @@
-Return-Path: <linux-kernel+bounces-840931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47A18BB5C0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 03:41:04 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AD79BB5C10
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 03:41:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F1B8B4E76D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 01:41:01 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 20ADB343A63
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 01:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92800281530;
-	Fri,  3 Oct 2025 01:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jXwuQV4C"
-Received: from mail-wr1-f67.google.com (mail-wr1-f67.google.com [209.85.221.67])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766C928466F;
+	Fri,  3 Oct 2025 01:41:03 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9062127B336
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 01:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4EB1273D9F
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 01:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759455659; cv=none; b=T0jUo8aElhI7s8jD9UvEYgwf9iTqVxojQeC9gGghUeIJB13o5L+AyuFl8sIvxsWMyXzITZOgyGh6uRlxc+aoMD9vADekjR0p/uGo73HJ9J1b5A03Gtxu+Dwk8qAVA43Dy/e2JPT3rTzCFbvNIHzQCx7eVAUwyWZ5vDoa98xW6Gw=
+	t=1759455663; cv=none; b=SGuRhJjN9g2T1cO4gd3kUktM3NUr0zkBk7m6VAI0xl0ayJLv4KU9boNu15YlG0T+Y+AC5+6L5a/p8oC/j7vCfqtM0kLV59BrFNva2LmEVrje6HT79dzIydkBR3Ni3+KaOjVeIFxWnBuf/L3LmA4iJFewgzUMN5nftSql5wAO4gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759455659; c=relaxed/simple;
-	bh=xUaGR4WoabITYgK3+xJFRn+e0Uq1vlAyOWZJhB35IMI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mW8fnYI5yzxJgMfDNuVvXuOVq7RGCaeCdh9a0xGRbda9g3gMKtjz/i51t9dU1elDPrA6c+D84pPL1mbSCqIU+Lo3Zmox8G80xeHW1IEVUXdssxuqEjniIQucqj12iu4xe1NJYAYsVaNUJxvekS049R1kgDzHb0Vbp1tXJwk8J9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jXwuQV4C; arc=none smtp.client-ip=209.85.221.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f67.google.com with SMTP id ffacd0b85a97d-3ecdf2b1751so1109488f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 18:40:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759455652; x=1760060452; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gWoIa0y9v6+gweKWrBOLXJwKYjleY3G/Bq8+yOF4xdI=;
-        b=jXwuQV4CL1Urar4uRKNYG1mJ1rv2LTtpcS9LhSOYVGy5CPfclH83MYVkvCDoBnomej
-         i5m9T6LBUyDlQWbtvuCAOH+o99qXJN3yRijGm6YrGHqiXy8Pw9/a6ZB6SlBZ2RD72vZa
-         y9fno7b9/JkFL9F2km9BxI+F6YlIwGy7y4/TeuLG+yG/DYZh3XAAeI9Prl43f1n6BZEm
-         30g2aQOhT4J4QJFEMsXf0sGx0ysdJGJYPvgzUdUO9g+c/yVaPfZ50eo2/IaEywhHdMxh
-         dE5MxErC8boUAGk6Qdi04WH9BzSXrWz7XDQzEu2H/yE8aJKjlNr1FhiFng2GhZll3bTW
-         dCBg==
+	s=arc-20240116; t=1759455663; c=relaxed/simple;
+	bh=DY2LpIw+buD76/TQi8/+FFrw7iGIpPfinV+MQ53jhno=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=j6LiN1R893rsPPYzFzMvaLQI+SxaXKGbCpzJS/SzIG5+YdbgDOwFYKGTm0qYb2ztIJwXjgK8o1bTeZfJo8d43dDzOG28P0LlmnRzilEDHpbhwmDqdjCKYrAsbUuZnV451iACV7d1c2ZjUPgKTRvxogMziVsp/SW5oSMBy5gW5p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42a076e4f9eso24038625ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 18:40:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759455652; x=1760060452;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gWoIa0y9v6+gweKWrBOLXJwKYjleY3G/Bq8+yOF4xdI=;
-        b=ZW/Gep5MZUUvy4ZUVyR89+viosvYLsUBiXXo+VpHHcebEbuF2NHuIxbBfq4yBE2967
-         Pw8ntgb4Q0XZvP5aLNCZ0eL7Wl+bdEeRBVKwCy3XM8eQTdoooF0TWPfC9ME/LgIBHEb2
-         p+dhRu9scrcbEiw7wYf89In68DMVqd/9TSOZUH3ABTROYLrOH75EDqdD1ery7+y/1GhX
-         tMghdEeTcIuBsOeJWRD8fEd6cr7sPYZVrGtulbWZfKeXYmeBsgkidKEVLZDw1ZeFcoIp
-         iYKNwK29uW2NG6/FKZu+7GMqcmt7LV13n7n9cQb03qHQb/UKA7RPEVTfnIu5euBaccn9
-         znxA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7MKHGRF4GzVO4eeszmCiT6AVEqhGKx2azZPo9DtYolhwiOVbZuzrUpwMEifFixlaQKCE8/SGfUqNwABY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMnqbT2zGnz1rsIrWpeSFlA7nGYd91u6WMmLgbWYOuJs3mPrz9
-	9LlrdyW8ylGxUlrcha/l6ek2CzCyjYTw+L43e5p8amDWreTxgPQ9eYIv
-X-Gm-Gg: ASbGnct/dSerZ3vLlytVIxg/uw8vl8Oo+BwEUIA4/fay891YCMdSS6M1hydqA3r8lyN
-	MIkIPn+noIzf4Zl19pm/4NbI5IRPY0AdNdDQkufp7GL/LDzc/suQjM0Z/Xow/kc/2ZLUfyHRzcE
-	WVAsL1DqGLwJm+muE/wcGlwA3SBW1MJJ8ntFn99ZEiumN3PHYFh4aM3PXTX68RnvZ7qgBIRMhbR
-	XjPlopB8/10s1iCglyovZsVtRHDbTSEy9U7kd7FCrVDlpzC5vAdtB/idDW9JrsxPdtAo9Y9HqbJ
-	ZwjfJNLDj0dVqhMsvsuFBVJf/ZzLciEfmHSpoksJgAx3btWTV92d+v5GsQIgdL19vKFLLDuZAQb
-	w9F1fLEyCZgMBBqmDoZMZp9lRAYoAecDG2W4gq+teXQ==
-X-Google-Smtp-Source: AGHT+IH5P4hHd3rDkULQwta1dCV/KcbG1IBpN7aEKqZ8F0Lkd/eZ3lu+K7BMNcGxH958CEVhBsYo1A==
-X-Received: by 2002:a05:6000:288d:b0:3e5:190b:b04e with SMTP id ffacd0b85a97d-425671763d6mr545186f8f.37.1759455651622;
-        Thu, 02 Oct 2025 18:40:51 -0700 (PDT)
-Received: from desktop ([2a01:e0a:3fd:be60:6c8e:6cca:78e:dc8e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f0392sm5814715f8f.42.2025.10.02.18.40.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 18:40:51 -0700 (PDT)
-From: lespink <lespinks9@gmail.com>
-To: marcel@holtmann.org
-Cc: luiz.dentz@gmail.com,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lespink <lespinks9@gmail.com>
-Subject: [PATCH] Signed-off-by: lespink <lespinks9@gmail.com> Bluetooth: btusb: Add support for Mercusys MA530 (2c4e:0115)
-Date: Fri,  3 Oct 2025 03:40:49 +0200
-Message-ID: <20251003014049.3055848-1-lespinks9@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1759455657; x=1760060457;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V5vs9n9028GGJFsoBbT/p4gNDi1uzSRnj3Xc4sJwfKs=;
+        b=h5WLLP/wcqsf7coJNKsGQKhu4uhrwsuDKrpGjzbYUL7vqadoXuSZp8mqZVJEdUzmZ6
+         FmeqGck6AKMU+Ry7sEPM7yXzEfmj9jF9jtTmdj2qQL/0b/BKY+9/47PfrAGov18v/uS9
+         XgEpysQxKUiIcVB6siPmoccKaM+VA7ldUINbwogfKR5Tq8/lXrqLwUybozK9V0jUKalI
+         DlVDWhObs1ifkcfxaZb3OCFx8HHuTO0tvENg8nQ//cH05UNwjE3QYXaqlPh++d3/SWxb
+         9PWgWCYCVzvnHIEOo55+fecDZg4I3oyl5emagnqfbKnl6ynoKTqDh/4a50s/2qwJYNNO
+         2otQ==
+X-Gm-Message-State: AOJu0YziOgHRJYrN7v3V8ozro5hmMzYA58BJN4huHaAsw7acNbwSqOJ7
+	plPxxo20rMNNhZ2NOVoo05Kpz0SISVq8n1BgT04Ar4Gz0c7Ezb7O/gGTNzpRTQMzRydbafEWsJZ
+	P8JJDCliy6FBt14qCvZYDFafksTGajh/KvBCP/Tp41lfoKupCfyABTiF6Kjw=
+X-Google-Smtp-Source: AGHT+IFhg8ouvwwKbXnMfGJYbD4tTYSrnKy8OTRu1TtLPf/mj7kCVJ9KQK5KMPsqokgWU9IOjk0S7cN5mPM1g8gmrMFYwe6doCI/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:12e4:b0:42e:61ec:329a with SMTP id
+ e9e14a558f8ab-42e7ad02162mr19786595ab.13.1759455656978; Thu, 02 Oct 2025
+ 18:40:56 -0700 (PDT)
+Date: Thu, 02 Oct 2025 18:40:56 -0700
+In-Reply-To: <68ddc2f9.a00a0220.102ee.006d.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68df29a8.050a0220.1696c6.0038.GAE@google.com>
+Subject: Forwarded: [PATCH] ext4: reject inline data flag when i_extra_isize
+ is zero
+From: syzbot <syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add support for the Realtek-based Mercusys MA530 Bluetooth 5.3 USB dongle
-which was previously unrecognized by the kernel and thus non-functional.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-The device is identified as USB ID 2c4e:0115 and shows up with no
-manufacturer string and product "Mercusys MA530 Adapter".
+***
 
-The following is the relevant output from /sys/kernel/debug/usb/devices:
+Subject: [PATCH] ext4: reject inline data flag when i_extra_isize is zero
+Author: kartikey406@gmail.com
 
-T:  Bus=01 Lev=01 Prnt=01 Port=08 Cnt=05 Dev#= 10 Spd=12   MxCh= 0
-D:  Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=2c4e ProdID=0115 Rev= 2.00
-S:  Manufacturer=
-S:  Product=Mercusys MA530 Adapter
-S:  SerialNumber=30169DA2555D
-C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-...
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
-The kernel dmesg log shows the firmware loading sequence works fine:
 
-[  +0.002087] Bluetooth: hci0: RTL: examining hci_ver=0a hci_rev=000b
-[  +0.001000] Bluetooth: hci0: RTL: rom_version status=0 version=1
-[  +0.000009] Bluetooth: hci0: RTL: loading rtl_bt/rtl8761bu_fw.bin
-[  +0.002938] Bluetooth: hci0: RTL: loading rtl_bt/rtl8761bu_config.bin
-[  +0.000242] Bluetooth: hci0: RTL: cfg_sz 6, total sz 30210
-[  +0.148802] Bluetooth: hci0: RTL: fw version 0xdfc6d922
+Prevent use-after-free in ext4_search_dir by rejecting inodes that
+claim to have inline data but have no extra inode space allocated.
+ext4 inline data is stored in the extra inode space beyond the
+standard 128-byte inode structure. This requires i_extra_isize to be
+non-zero to provide space for the system.data xattr that stores the
+inline directory entries or file data.
+However, a corrupted filesystem can craft an inode with both:
+- i_extra_isize == 0 (no extra space)
+- EXT4_INODE_INLINE_DATA flag set (claims to use extra space)
+This creates a fundamental inconsistency. When i_extra_isize is zero,
+ext4_iget() skips calling ext4_iget_extra_inode(), which means the
+inline xattr validation in check_xattrs() never runs. Later, when
+ext4_find_inline_entry() attempts to access the inline data, it reads
+unvalidated and potentially corrupt xattr structures, leading to
+out-of-bounds memory access and use-after-free.
+Fix this by validating in ext4_iget() that if an inode has the
+EXT4_INODE_INLINE_DATA flag set, i_extra_isize must be non-zero.
+This catches the corruption at inode load time before any inline
+data operations are attempted.
 
-Signed-off-by: lespink <lespinks9@gmail.com>
+Reported-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=3ee481e21fd75e14c397
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
 ---
- drivers/bluetooth/btusb.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/ext4/inode.c | 13 ++++++++++++-
+ fs/ext4/xattr.c |  2 +-
+ 2 files changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 5e9ebf0c5312..2c6dace7f0b1 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -605,6 +605,10 @@ static const struct usb_device_id quirks_table[] = {
- 	  .driver_info = BTUSB_MEDIATEK |
- 			 BTUSB_WIDEBAND_SPEECH },
- 
-+    /* Mercusys MA530 Adapter */
-+    { USB_DEVICE(0x2c4e, 0x0115), .driver_info = BTUSB_REALTEK |
-+                             BTUSB_WIDEBAND_SPEECH },
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 5b7a15db4953..257e9b1c6416 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -5099,7 +5099,8 @@ static inline int ext4_iget_extra_inode(struct inode *inode,
+ 	if (EXT4_INODE_HAS_XATTR_SPACE(inode)  &&
+ 	    *magic == cpu_to_le32(EXT4_XATTR_MAGIC)) {
+ 		int err;
+-
++		ext4_error_inode(inode, "ext4_iget_extra_inode", 5102, 0,
++				 "wow this inode has extra space");
+ 		err = xattr_check_inode(inode, IHDR(inode, raw_inode),
+ 					ITAIL(inode, raw_inode));
+ 		if (err)
+@@ -5112,6 +5113,7 @@ static inline int ext4_iget_extra_inode(struct inode *inode,
+ 		return err;
+ 	} else
+ 		EXT4_I(inode)->i_inline_off = 0;
 +
- 	/* Additional MediaTek MT7615E Bluetooth devices */
- 	{ USB_DEVICE(0x13d3, 0x3560), .driver_info = BTUSB_MEDIATEK},
+ 	return 0;
+ }
  
+@@ -5414,6 +5416,13 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+ 		ei->i_sync_tid = tid;
+ 		ei->i_datasync_tid = tid;
+ 	}
++	if (EXT4_INODE_SIZE(inode->i_sb) < EXT4_GOOD_OLD_INODE_SIZE) {
++		ext4_error_inode(inode, function, line, 0,
++				 "wow! this inode has less data");
++		if (ext4_test_inode_flag(inode, EXT4_INODE_INLINE_DATA)) {
++			ext4_error_inode(inode, function, line, 0, "wow! this inode is line");
++		}
++	}
+ 
+ 	if (EXT4_INODE_SIZE(inode->i_sb) > EXT4_GOOD_OLD_INODE_SIZE) {
+ 		if (ei->i_extra_isize == 0) {
+@@ -5422,6 +5431,8 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+ 			ei->i_extra_isize = sizeof(struct ext4_inode) -
+ 					    EXT4_GOOD_OLD_INODE_SIZE;
+ 		} else {
++			ext4_error_inode(inode, function, line, 0,
++					"wow! this inode has reached ext4 iget");
+ 			ret = ext4_iget_extra_inode(inode, raw_inode, ei);
+ 			if (ret)
+ 				goto bad_inode;
+diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+index 5a6fe1513fd2..9b4a6978b313 100644
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -195,7 +195,7 @@ check_xattrs(struct inode *inode, struct buffer_head *bh,
+ 	struct ext4_xattr_entry *e = entry;
+ 	int err = -EFSCORRUPTED;
+ 	char *err_str;
+-
++	ext4_error_inode(inode, "check_xattrs", 198, 0, "wow! we are in check_xattrs");
+ 	if (bh) {
+ 		if (BHDR(bh)->h_magic != cpu_to_le32(EXT4_XATTR_MAGIC) ||
+ 		    BHDR(bh)->h_blocks != cpu_to_le32(1)) {
 -- 
-2.51.0
+2.43.0
 
 
