@@ -1,230 +1,160 @@
-Return-Path: <linux-kernel+bounces-841765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8999BB82FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 23:29:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B17DBB8303
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 23:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C37434E8991
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 21:29:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7865188F6C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 21:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC1AE265298;
-	Fri,  3 Oct 2025 21:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E63264A8D;
+	Fri,  3 Oct 2025 21:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2aorZwbA"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BQvBvPjc"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB022571BA
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 21:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351F02472AA
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 21:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759526963; cv=none; b=EZj7PmYFPtDhDW7+jU6GylNJ+HvBvNAmzh7YwaYnygwJOYSfQF/5hWIaN5i2b4qgc+9TcKjHTY+1tgjnrQuLXPRMkJxC10P/H4hUXRq2jd5gYjlkvUhyaW0cSNhbL6std+6XZOPMb+rj+uC2EVT9pmb+Xtluoo+zfmcip7/QRio=
+	t=1759527063; cv=none; b=uFDLeRRTbMK2F+EwbrTt2mEqqL1yXmBcdG5YdLhfAhoP7drey8Ck8coGhUjM6OPVb/fMA8O6Xje8StvI9pjzg3veRK5ntlgzb3WAoem0n1FuklaW6exlPPGktrOdQ+lvBqdhW1sDEzvxnhnNSaImy/D2+vJGkFSdiBtdPUhG9gU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759526963; c=relaxed/simple;
-	bh=sgCLR2ngapQNLouWMOBzkBY/LCsMsAk0k5g8Ou9XOII=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jXOhGueGNFw282gWJ8h1MdKsd+UML18d0h2yrvlrOTXTJUC83PjWqftboSpYk2Sw3rpo49s7XRSpVN9/iV1Cm2DMFx4NZvRoHqolwajFF7I1cFcUvnwtEjx8ygOdphmc+gnzvSXL/NVIqgAWD2kl7OoDWINvOAbB22Bdc0lvCTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2aorZwbA; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2681645b7b6so22085ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 14:29:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759526961; x=1760131761; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C9VRi3EH24xBcxIT9mshnPJiIjgju22iBD0ykQ5/sxM=;
-        b=2aorZwbAXX68+MXVgPmvCfhv4jEkNdI8P2SEUuAFRkKtw32p+yGosSsrAXRrQUk4XP
-         jQxW2slUmMzmOAxwFTUou5iqmN/moFDfe0DhB5vHkbUZc7HZxI4OdVsfrzR4VF2dQrn/
-         em1xYW6dMWvZfpzGhXnTaL2o5NI1lGTGFd3zHechaiDYiMNsUmP21oAVqBUpfcR0/6Zo
-         0yyJ4u8+XwrkROX9C7gvje+LVKe5NrmOboM8ftRBA/EG2y7212bJx/lEOp8vHb18hMTb
-         JZjAFn28RwzbxMpNOAQ4ibXAL99MXKuv2nMc1gtmBiUVxhRuyhgh8s/2UOblddLLLmsj
-         tQDg==
+	s=arc-20240116; t=1759527063; c=relaxed/simple;
+	bh=fq/fY6JqxN6dNqCJ5P8kQFzhneXSbn5maPTRGVNN67o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b2Ws7biZuxVdXE+Vy3fYHW2HdTNQCoM+1TowLyFD76xqEtN562mZwqBPDwwfIsoyL7rGNg2PJj9NjOgVcztGt7mPTg3n5TkSC+LjFMmFVJVdR3dq9LbWDMcO9JcWym1Fis+ZDhN/9wqeAexqBRgp0HqZiJ1/QNaASWvF/h93YWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BQvBvPjc; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 593D0LNe017999
+	for <linux-kernel@vger.kernel.org>; Fri, 3 Oct 2025 21:31:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=53GD0wKdX2v1xIpZL/WLa0QS
+	fyyHKKezHxL8P/DVLl0=; b=BQvBvPjcO2pKigMd5bMO6BPzrdB4vVM4zW7/pVs4
+	eEOVd45pngf6L5dByrIbvmnYYDqXDHHbob1Ea2lfz4gjF08X+bgd+xDEpc8aQxvW
+	G5iKWvR8BrUOqPeEoj3hF4OT1Ep9DIhAaIcOx3lPBtwg8t0QsYm2X0yWlwgDEAel
+	uHCHq8Nn5SdQupzYVcbwm8RT0JGepSPj4W0VD/Vu2jJ2C+bSpAfchbcPTiSlTTds
+	GztC5pmQ1N3A7ZEHI2NjHNse4/5NiAqZ1tCH6q4FtOb0ugjplakhftzV12GjhNne
+	McRK0vfLoS3l9i4yG6CPH9/IHNPL6hmv4PPWIE5+3Jc4VA==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49fyrfdhb7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 21:31:01 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4dd6887656cso14284921cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 14:31:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759526961; x=1760131761;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C9VRi3EH24xBcxIT9mshnPJiIjgju22iBD0ykQ5/sxM=;
-        b=ryZKaB2CgZXnpRIpjPLS3rhpre4HseSO1J7MhT+hB7clZ5ABYy+RdDufStkfbRSd26
-         aE50cx1aY3DlcRk3V0B8b37nArn8ADly9vzjUDfSNtQTYHR6uD+TZZLNRxqmIdCoFLcp
-         xwxICp0m95WIem99gT3MtuivtEyvLmzvxsTCKX/TCKcuBBwoDtRrH9hzm5nif2SbIejs
-         lvK5Uy1syzlDzEY5W+Dmh6+h0jLf2LJ0YpNpUl/EVd7XnnrWiDp+oa52CAB5Z6LUGpcW
-         5+V1zJ4VU2dTlqVQDcUqMOSdzjHB2Xv+VFc/ES/XEpa45Y3vnxjWM7ta6kStzg9GfdXz
-         o1zg==
-X-Forwarded-Encrypted: i=1; AJvYcCW6gX4r+hkE8L81WLPh19wmLR+D5tQ1TCHjFkZyyKX1Objdf9xPLQuEhzI5RrCfy640aDofohMtaVQ8m4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCru0pWuCDymkq5qOmVHlNMaFc5QgdJPXzlFzXt9GW3wzfsylG
-	L8kGDEcyCApzwIQlwbzhceh3pJQTvP6HspBzmiMb0jopcVw5OqZFEWvSO1O+ha9nWqZTJ8UWHuG
-	pbzIWCc0/GQcpA6ePgOlozNGo6HkZ1AaWnjAbJeKE
-X-Gm-Gg: ASbGnctVv5t0fNMfNEbOpQfZKsOL4xkfNGVuaXrXjkP60TjhXeEwekzhaJNHLGSq9lb
-	IcpG+NQCywTT1ZQzykDSQGd1pmztJsBQr+vUDGtNUNmk6+8IqZ02UPKsTAiFPIjNhYqNM2UvV0o
-	n0rO7gIihPo2BQoDqkgkPzx2MxLj5+YgAVyBRA559wYUFjj7GutBQ9m+z/gQXlf8xD+LBgiOTQr
-	QoJ2lrPTIzJwsPmfshadZoT147HUXQ9d7zRnzU=
-X-Google-Smtp-Source: AGHT+IHUleMTSV8OFBZDxUEi0C1/AcmU8XAZJZPNf2qZ0+XgxlY77yPW07NAORzho2z6VXpzlcFrk1fhQ/DDZCDalIA=
-X-Received: by 2002:a17:903:3c70:b0:268:cc5:5e3c with SMTP id
- d9443c01a7336-28ea7f48339mr1229385ad.10.1759526960554; Fri, 03 Oct 2025
- 14:29:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759527060; x=1760131860;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=53GD0wKdX2v1xIpZL/WLa0QSfyyHKKezHxL8P/DVLl0=;
+        b=h4H7u051jGGFJHF7ZMvt6K5ZWVKfqmhfy65FPgdgjRDpZmOELNLR2pi6cfikmI2oMM
+         ut4vRnmUshQ/K1uBmwscGrvi8Xl1ukQkY/ehckwzqndQu2d5VRK9dZf1QJ/PRuWTOzxW
+         8nmn7vCvXd3h6WFLTFaMAyjvaKEiVdJ5pT8V5YiEHJlw+Q1cOUYU7C9NmD+tEGT0xwA1
+         kDEtVBjeGQM4NHQ0sKcZjsJ0NvP1UvueMNW/ikw/nGaFKJ0PwEQxlmHTVhlJWxopyiz2
+         DjGB3cmL1rATvgIrWQAWdVP2te0paJlRpO2J8NFm2A6NOZfedPJfoK+yU+V5UVa5/YLf
+         9yPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWsqSKGNmf6UbJ+dcE4CLDSGsp79fFIyKnb7NWRKeHd46pnf+mhhRkfZg7/LHN3MU5S1qH2W0uC60T6Dk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo7UV0SvMIuLRIR3LlsNo+dXFghpILFispqulAlNrOPLJuUswH
+	5G+z9uKLV8vXAK4LUT2teBX46VEX6usXBweN4pUkALAcMOLturJXF4Sad35NlPun3im4UCfn+TF
+	uKiadmHM41vKuiQIMAyIL0/KuNHR8VTzNXtV+SOwvHmDBO2f5u0FD4GYu6SlptwVimFw=
+X-Gm-Gg: ASbGncuAbbo6cyIMY1oGNayqVYD5I1BQgMC/uK/UPLZLepvSYm0/i+hAgE2JsAM4tNT
+	xD7Mmzr5tXlDVX3ZTT5JFQShurYeLnqFLDAJkUbG2fziFEUFmt982npX33TZzIz8f6Bnlv0BQ8i
+	Mc92cgost6Dl3oJekeSBVUaNlXIaozoZNyIWPSTaA8BnQTRO2Nk8ZWvG7vAdK2EGxTZirOqJ/W3
+	2p68weoSR47oMfqeQWBxDFOLMOEkVu7Jnzavp2Z9V2VWbQA5ftzddqkBKzczZfrUP4hEYVx4aae
+	56otTlJNVHGp+qRBZTB5752yE0f8Yj6rcmPPk0QH+q1eIjd/wvw4UvaMv6CdWC4EeMvGBmp7/Pz
+	45dw4CG+WBX9P0NFo3PjparsDIG584vOsJciNBr35G4qnl5hWH1NUqnSBkQ==
+X-Received: by 2002:a05:622a:5c99:b0:4b7:9ce0:43c4 with SMTP id d75a77b69052e-4e576a453eemr60116061cf.5.1759527060045;
+        Fri, 03 Oct 2025 14:31:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEbWgg1m6ArZd6deTxtHGQP9AEmpq7RXsHx30Vj5OcL3B8xyMb602ba9wWnqn1h9OZ2s/kPsw==
+X-Received: by 2002:a05:622a:5c99:b0:4b7:9ce0:43c4 with SMTP id d75a77b69052e-4e576a453eemr60115521cf.5.1759527059351;
+        Fri, 03 Oct 2025 14:30:59 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b0118d6e6sm2175292e87.78.2025.10.03.14.30.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Oct 2025 14:30:56 -0700 (PDT)
+Date: Sat, 4 Oct 2025 00:30:52 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Paul Sajna <sajattack@postmarketos.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+        Amir Dahan <system64fumo@protonmail.com>,
+        Christopher Brown <crispybrown@gmail.com>
+Subject: Re: [PATCH v3 02/11] arm64: dts: qcom: sdm845-lg-common: Add uarts
+ and Bluetooth
+Message-ID: <qg4rlyl3gqlkih7sssixi6sfvdrkreoaz247ckmbja4zkybxt5@vkfvvhmce4kj>
+References: <20250928-judyln-dts-v3-0-b14cf9e9a928@postmarketos.org>
+ <20250928-judyln-dts-v3-2-b14cf9e9a928@postmarketos.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251003175613.2512296-1-irogers@google.com> <20251003175613.2512296-2-irogers@google.com>
- <aOAoc0-Oy99l3iQG@x1>
-In-Reply-To: <aOAoc0-Oy99l3iQG@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 3 Oct 2025 14:29:09 -0700
-X-Gm-Features: AS18NWCd15Gjm1sQjDY-vazJTUi06ucepjQjCnk20HrbpaC4TLu776xKUu3Fsmw
-Message-ID: <CAP-5=fXVVg5BC-q85i4s8Phdp86UYEKTaKHcb75W76LdSa+_7g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] tools build: Remove get_current_dir_name
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Namhyung Kim <namhyung@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250928-judyln-dts-v3-2-b14cf9e9a928@postmarketos.org>
+X-Proofpoint-ORIG-GUID: 5iVB9E_O-jTfSOZCXAfstnE99olzuKQD
+X-Proofpoint-GUID: 5iVB9E_O-jTfSOZCXAfstnE99olzuKQD
+X-Authority-Analysis: v=2.4 cv=etzSD4pX c=1 sm=1 tr=0 ts=68e04095 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=Mq719mGqAAAA:8 a=Gbw9aFdXAAAA:8 a=EUspDBNiAAAA:8
+ a=8yVOI8cEZPrke_ejmRoA:9 a=CjuIK1q_8ugA:10 a=uxP6HrT_eTzRwkO_Te1X:22
+ a=gOTWM5O2Sh7P_NUuVqe5:22 a=9vIz8raoGPyDa4jBFAYH:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI5MDE3NSBTYWx0ZWRfX2L1Y39YM6Q8s
+ 0csLFGy+L/apwtkRNAMbIqaF7pGN/ja0cfDMqr5fHw4vL7iB2DJNR5g/TEGtmA6KNgR/WDyx+aP
+ 7PvZks4TfYLc+nuyzi87q6cjoRqNDDDV0H3WhFoZOgnxJfnN/Ghzic1e9aeuxZHvGWeT0q3/0qF
+ EFXfBQYz4LXAUFKkZgcr+7YUo7xpstdQNg0p3CRVNitp7BM6N2YjwcrWAGlaHqyZE5vFndjTet7
+ /W5Sa+I41MsprCIFznsrMl2YgHfsIe75gRTwvlQHN4nZKXcXoQX+9Mb4x+Q7XGqB5bUNLp1PdWQ
+ fXSfVcKTeZq/u0RoER1nSj3DfXGkywiOxpfcMJMsh3VzYT9866l9ObQRcenbDxT7hUl2/N4QLK2
+ lV6CWpfrcy1V0FiKvnGwoWfWpTlZgg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-03_07,2025-10-02_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 malwarescore=0
+ priorityscore=1501 spamscore=0 impostorscore=0 adultscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509290175
 
-On Fri, Oct 3, 2025 at 12:48=E2=80=AFPM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Fri, Oct 03, 2025 at 10:56:13AM -0700, Ian Rogers wrote:
-> > As perf no longer tests for this feature, and it was the only user,
-> > remove the feature test.
->
-> You forgot to remove this:
->
-> =E2=AC=A2 [acme@toolbx perf-tools-next]$ git diff
-> diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-al=
-l.c
-> index 71ba7001dc25c6bb..8a354b81417c6fcc 100644
-> --- a/tools/build/feature/test-all.c
-> +++ b/tools/build/feature/test-all.c
-> @@ -151,7 +151,6 @@ int main(int argc, char *argv[])
->         main_test_libpython();
->         main_test_hello();
->         main_test_libelf();
-> -       main_test_get_current_dir_name();
->         main_test_gettid();
->         main_test_glibc();
->         main_test_libdw();
-> =E2=AC=A2 [acme@toolbx perf-tools-next]$
->
-> That results, when building with this alias:
->
-> alias m=3D'rm -rf ~/libexec/perf-core/ ; make CORESIGHT=3D1 -k O=3D/tmp/b=
-uild/$(basename $PWD)/ -C tools/perf install-bin && perf test python && cat=
- /tmp/build/$(basename $PWD)/feature/test-all.make.output'
->
-> that needs to be on the makefiles somewhere, shows that test-all.bin is
-> failing to build:
->
-> make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
->  88: 'import perf' in python                                         : FA=
-ILED!
-> test-all.c: In function =E2=80=98main=E2=80=99:
-> test-all.c:154:9: error: implicit declaration of function =E2=80=98main_t=
-est_get_current_dir_name=E2=80=99; did you mean =E2=80=98get_current_dir_na=
-me=E2=80=99? [-Wimplicit-function-declaration]
->   154 |         main_test_get_current_dir_name();
->       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->       |         get_current_dir_name
-> =E2=AC=A2 [acme@toolbx perf-tools-next]$
->
-> I fixed this up already,
+On Sun, Sep 28, 2025 at 10:05:25PM -0700, Paul Sajna wrote:
+> uart9 is debug serial on USB SBU1/2
+> 
+> UART RX is SBU1 and UART TX is SBU2 of the USB-C port).
+> 1.8V Logic Level
+> Tested using pololu usb07a https://www.pololu.com/product/2585
+> and CH340 USB-UART
+> 
+> uart6 is bluetooth
+> 
+> Add bluetooth firmware path
+> 
+> Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
 
-Sorry for that. Thanks for fixing it up!
-Ian
+If the series get resent, could you please add the boot messages from
+the bluetooth (hci0)?
 
-> Thanks,
->
-> - Arnaldo
->
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  tools/build/Makefile.feature                    |  1 -
-> >  tools/build/feature/Makefile                    |  4 ----
-> >  tools/build/feature/test-all.c                  |  4 ----
-> >  tools/build/feature/test-get_current_dir_name.c | 11 -----------
-> >  4 files changed, 20 deletions(-)
-> >  delete mode 100644 tools/build/feature/test-get_current_dir_name.c
-> >
-> > diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.featur=
-e
-> > index 9c1a69d26f51..9399f591bd69 100644
-> > --- a/tools/build/Makefile.feature
-> > +++ b/tools/build/Makefile.feature
-> > @@ -68,7 +68,6 @@ FEATURE_TESTS_BASIC :=3D                  \
-> >          libdw                           \
-> >          eventfd                         \
-> >          fortify-source                  \
-> > -        get_current_dir_name            \
-> >          gettid                               \
-> >          glibc                           \
-> >          libbfd                          \
-> > diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefil=
-e
-> > index b41a42818d8a..d13d2a1f44fe 100644
-> > --- a/tools/build/feature/Makefile
-> > +++ b/tools/build/feature/Makefile
-> > @@ -8,7 +8,6 @@ FILES=3D                                          \
-> >           test-libdw.bin                         \
-> >           test-eventfd.bin                       \
-> >           test-fortify-source.bin                \
-> > -         test-get_current_dir_name.bin          \
-> >           test-glibc.bin                         \
-> >           test-gtk2.bin                          \
-> >           test-gtk2-infobar.bin                  \
-> > @@ -147,9 +146,6 @@ $(OUTPUT)test-libelf.bin:
-> >  $(OUTPUT)test-eventfd.bin:
-> >       $(BUILD)
-> >
-> > -$(OUTPUT)test-get_current_dir_name.bin:
-> > -     $(BUILD)
-> > -
-> >  $(OUTPUT)test-glibc.bin:
-> >       $(BUILD)
-> >
-> > diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-=
-all.c
-> > index e1847db6f8e6..778883a32afb 100644
-> > --- a/tools/build/feature/test-all.c
-> > +++ b/tools/build/feature/test-all.c
-> > @@ -22,10 +22,6 @@
-> >  # include "test-libelf.c"
-> >  #undef main
-> >
-> > -#define main main_test_get_current_dir_name
-> > -# include "test-get_current_dir_name.c"
-> > -#undef main
-> > -
-> >  #define main main_test_gettid
-> >  # include "test-gettid.c"
-> >  #undef main
-> > diff --git a/tools/build/feature/test-get_current_dir_name.c b/tools/bu=
-ild/feature/test-get_current_dir_name.c
-> > deleted file mode 100644
-> > index c3c201691b4f..000000000000
-> > --- a/tools/build/feature/test-get_current_dir_name.c
-> > +++ /dev/null
-> > @@ -1,11 +0,0 @@
-> > -// SPDX-License-Identifier: GPL-2.0
-> > -#define _GNU_SOURCE
-> > -#include <unistd.h>
-> > -#include <stdlib.h>
-> > -
-> > -int main(void)
-> > -{
-> > -     free(get_current_dir_name());
-> > -     return 0;
-> > -}
-> > -#undef _GNU_SOURCE
-> > --
-> > 2.51.0.618.g983fd99d29-goog
+The patch itself:
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
+
+> ---
+>  arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi | 45 ++++++++++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts  |  8 +++++
+>  2 files changed, 53 insertions(+)
+> 
+-- 
+With best wishes
+Dmitry
 
