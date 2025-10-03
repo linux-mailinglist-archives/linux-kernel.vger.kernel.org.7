@@ -1,154 +1,149 @@
-Return-Path: <linux-kernel+bounces-841535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FA86BB79C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:53:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 748CABB79E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:54:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 657A24ECB3A
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:53:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0829319E6B9F
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4522C2D3EF1;
-	Fri,  3 Oct 2025 16:53:32 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153052D5C92;
+	Fri,  3 Oct 2025 16:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="VrCAewWI";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HJbP2dU1"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A21B2F2D
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5AC2D595F;
+	Fri,  3 Oct 2025 16:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759510411; cv=none; b=cT1GSIwGx2mh3BJP/tHU+LpyV1KHlbMIR2SdtRpTqlCX5mzvcxVj55UxKVNsBxrz3U1YPusWHCyQRlooQ0NdbrTHs7fuoleiKrNUhQxyIhiGjorQDBs/vJAwYI0LqCODRj+AWAlUKWKL1XbLBAnp6QZJEZz0tCBigDF37U4mDnU=
+	t=1759510450; cv=none; b=qW4Hq4vpiWC3cuaE9o0DIKku8SZX2y2CcvuN2BFyJkFeLemNYK0s9KPxFXFkqvQikjatN7KY2dU7KoqKIfwGosBtDqCiRt5aUXJ3/Ric5aNboBlpp1r2j2EsQiP/9HinScnKXeciLJp4G8HxKsn2QaSDDmHivwT6MBi97jWToL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759510411; c=relaxed/simple;
-	bh=mRYirQtw3MyImmsDuhjY99bgdQ0XAhgTiyO/SCMpQc8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=L8i8edkGJwWOkg7Hmzp8icS/yC5+ygdslKRVC4lwVKFaMqbNC+O47l3pJNa0OBYJEJvUOjY5qxSiN04s4Aq3QDG935NxDvND5RAA+tbqVwmPOYZetR1tediDnCMhq/oWDo42k5usUdRXuNB+pI5cs4TgxtmEraq5/OS7oR9mE08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-42d85031919so34430775ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 09:53:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759510409; x=1760115209;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=h98gklf+DoNEeI80Onk4YnlRuMg8M923I2rCscH72jQ=;
-        b=Zgq1n9ALkkN0ckqVXsQLIJ/1gT2aSlTEzHzIMg49+t1IQodM5M8bGNljp2whqDP8Qi
-         xUK152+LclMbD4JVAM3cgIPRgfbODYZSX6lGZAqYxkyAbSonm9rjlML0dLKFHTpxDY9n
-         nljx8dktdgrO48uD4LKj+XmB8ZpUVrTeDQpfDIFd/CrAvBC9Sc6wciOBs9aHn6c9zJq5
-         ApveQ97buaR7CRSicD3qQii1fGgvTNvyvx+MRB/gdJXCqlR1Egyvss5SAnmf25w6nIOB
-         3dsN3OCIM8I5B2RZQcrVWICIEg8XpWw8YI3d3xdIwH2D2yaHdSZ/JW9M2kmycgcLY63R
-         8PUA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1ItISF6EKKGaZLB7Hu7eEvJR2GCSesgN2vgystcR+VAVLiU4l9XNA4MDKR+kD8lFqoRtuTIBm5g868ag=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEvbWT1M5Zq03xbwSfBIBMge8ota5Snoj5b6ycc6gZDGOgOCaL
-	XeLtghC8d44TPpqGlkaJLpNN1ix3cv6yqYXwbEb03TetLsx734iVSqXMux6MNCHteBLbPzat292
-	EqxDu5uBlgw2tEi+0oAvcPcu6MUJvAF+Oji55GH4xZdSEM5J12IzEQLd6ElI=
-X-Google-Smtp-Source: AGHT+IEhuw75pmpCsyZ0HKaEpYfv5plJnYtNDIfGXhbweUNBGOq7s+U+nmni+xgpvxRMSuffWIjNdSW99WuUPtPikQQtNR0qF3nu
+	s=arc-20240116; t=1759510450; c=relaxed/simple;
+	bh=35W1zDtcABYboWRTHG7RpMOvL/GDkuxlmUL/WfSWIgQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RSQAkIH3ug2lR5bd0WT44QD/dJWa4+mtMNtHTo6BQz+tOsMKC8ozTeIyaET77qaXoAI+JqLbe9sIvttHItdnH/J4cCZI6WxG5LV1f3tKbh4LikOEGuDRq9edzwrPjNdunAdkZgz8zhijFLNajICpnvwKNnZ/dtxNlExm4CXuAG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=VrCAewWI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HJbP2dU1; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 12A22EC0278;
+	Fri,  3 Oct 2025 12:54:07 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Fri, 03 Oct 2025 12:54:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1759510447; x=
+	1759596847; bh=UB3IKnHmzh/QmKgOFKGx8BLdmDHf57NxnecnD+p+sRM=; b=V
+	rCAewWI7sbJvCIV/zpcnz6A0CPYZVWfFX0Dtm6UVGY6RT/28Zy15ntNNBSsAtIPl
+	4AeS0Pk+Ho+rYuDaaB5Hw8Klh46ivi7sHEvbAweBb3JCb/miDh0XneQcuqst6+iP
+	DHK0uh+ii8tWQ/XnmCSykrps7XG21DgZeTLz9ukgJ1iOPBrHGnVuXlbxVeSYLsbZ
+	cL13AnQ6Yg47zxCMlkQh0NMH4W2OUmvwFnwM0klqG7+4HdB4gezArrTeuYAxGz7V
+	ME2GJ/yA/ViRO3iBOMsBiX8P2RbCtCRrrX2Qx4yOchMwc9QS9uxG0tWIxDzVxn0Q
+	O8zpttlCxiJljP2WsmAzQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1759510447; x=1759596847; bh=UB3IKnHmzh/QmKgOFKGx8BLdmDHf57Nxnec
+	nD+p+sRM=; b=HJbP2dU1gXqvJr5xZP81JrdPktlFylwZz2QyJKBRAemfB/Na89d
+	4uMVsS2+JGsNIkxPYS3qPWpObEW7BZQXNk4si7jgrgb9bykcr+01O03QRuqBfSJk
+	CKQ8zCWLG+5Y2L+/ZLXa7Le/UG2trAbGxDTUfJWUGjohNBewZmIkyf2BCHIxtdXh
+	0ANiyZFPCCOwowLLBasMsHF8QE2PFo2kMVAU56I/zlJiufJMFrFy6TFIrjofQ7Ut
+	6RU6mi1hsO08c8503/6rxQumSpu9sifWbOGYmYQkn1ixDCM91gcAXS8PGP13xoNz
+	BqTB4K8OU8Q1vL3G52i84bNpPZ/X7E70A7Q==
+X-ME-Sender: <xms:rv_faFkZNxLNHovlWnH8scAJa2PWTnxJ1De0JAA0q7L9aLqcfUCvYA>
+    <xme:rv_faAtAKu-en65NOEO7BkuNQHdBMf6MQBzHZGG0KjclxEQVQMuT6VcOpAm_QwXFg
+    Zx2rLQp6oXp7ScDUrxq6SM9lzxfjSCyn_CiVZDFn9KYh_0ZTmDuQPY>
+X-ME-Received: <xmr:rv_faI8tg7UcRWHdUwZK2xxEpbyuHG-Aoi_-i5wT2AV8GfwOMyOIoUzLIigZ6g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdekleegfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
+    hhhuthhsvghmrghuuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtf
+    frrghtthgvrhhnpeegfeehleevvdetffeluefftdffledvgfetheegieevtefgfefhieej
+    heevkeeigeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhho
+    vhdrnhgrmhgvpdhnsggprhgtphhtthhopedviedpmhhouggvpehsmhhtphhouhhtpdhrtg
+    hpthhtoheprhihrghnrdhrohgsvghrthhssegrrhhmrdgtohhmpdhrtghpthhtoheprghk
+    phhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopegurghvih
+    gusehrvgguhhgrthdrtghomhdprhgtphhtthhopehlohhrvghniihordhsthhorghkvghs
+    sehorhgrtghlvgdrtghomhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesohhrrg
+    gtlhgvrdgtohhmpdhrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgiipdhrtghpthht
+    oheprhhpphhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsuhhrvghnsgesghhooh
+    hglhgvrdgtohhmpdhrtghpthhtohepmhhhohgtkhhosehsuhhsvgdrtghomh
+X-ME-Proxy: <xmx:rv_faByXTQ1ZqOnit033VWk75CST6ABfR9loiaIoWbPuFpuXKuy8cA>
+    <xmx:rv_faA9UJCxiG9y9w1PnGVOf5eT3OU6WtAlopeGsVXDnqtRL7jpSag>
+    <xmx:rv_faGKKq0HBVamEfVeUQIwJnZ-ReAXqkZuIfxAYkacd9LeUusHHww>
+    <xmx:rv_faF-zBsHiJgoOLgY1OhO2oG1y8aGMOmT1NLku6yIyYrzyoB4Qsw>
+    <xmx:r__faD9bJJNmCWQHGcetociynY8R-hhTryjqnWWVIeTPovy_N6OmJ88c>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 3 Oct 2025 12:54:05 -0400 (EDT)
+Date: Fri, 3 Oct 2025 17:54:03 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Amir Goldstein <amir73il@gmail.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v1] fsnotify: Pass correct offset to fsnotify_mmap_perm()
+Message-ID: <uqijoyhj6m33aslecgbovhujpjgql2zllw4ahfpm5jfqkcsjut@yemuevv2pjrm>
+References: <20251003155238.2147410-1-ryan.roberts@arm.com>
+ <nf7khbu44jzcmyx7wz3ala6ukc2iimf4vej7ffgnezpiosvxal@celav5yumfgw>
+ <76cd6212-c85f-4337-99cf-67824c3abee7@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:168f:b0:42d:86fb:d871 with SMTP id
- e9e14a558f8ab-42e7ad961f1mr46652975ab.21.1759510409360; Fri, 03 Oct 2025
- 09:53:29 -0700 (PDT)
-Date: Fri, 03 Oct 2025 09:53:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68dfff89.050a0220.2c17c1.0026.GAE@google.com>
-Subject: [syzbot] [bluetooth?] WARNING in hci_conn_drop (3)
-From: syzbot <syzbot+bf427d0e03a779974eee@syzkaller.appspotmail.com>
-To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <76cd6212-c85f-4337-99cf-67824c3abee7@arm.com>
 
-Hello,
+On Fri, Oct 03, 2025 at 05:36:23PM +0100, Ryan Roberts wrote:
+> On 03/10/2025 17:00, Kiryl Shutsemau wrote:
+> > On Fri, Oct 03, 2025 at 04:52:36PM +0100, Ryan Roberts wrote:
+> >> fsnotify_mmap_perm() requires a byte offset for the file about to be
+> >> mmap'ed. But it is called from vm_mmap_pgoff(), which has a page offset.
+> >> Previously the conversion was done incorrectly so let's fix it, being
+> >> careful not to overflow on 32-bit platforms.
+> >>
+> >> Discovered during code review.
+> > 
+> > Heh. Just submitted fix for the same issue:
+> > 
+> > https://lore.kernel.org/all/20251003155804.1571242-1-kirill@shutemov.name/T/#u
+> > 
+> 
+> Ha... great minds...
+> 
+> I notice that for your version you're just doing "pgoff << PAGE_SHIFT" without
+> casting pgoff.
+> 
+> I'm not sure if that is safe?
+> 
+> pgoff is unsigned long (so 32 bits on 32 bit systems). loff_t is unsigned long
+> long (so always 64 bits). So is it possible that you shift off the end of 32
+> bits and lose those bits without a cast to loff_t first?
+> 
+> TBH my knowledge of the exact rules is shaky...
 
-syzbot found the following issue on:
+I think you are right. Missing cast in my patch might be problematic on
+32-bit machines.
 
-HEAD commit:    2213e57a69f0 Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=12e2ff12580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=714d45b6135c308e
-dashboard link: https://syzkaller.appspot.com/bug?extid=bf427d0e03a779974eee
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-userspace arch: arm64
+Reviewed-by: Kiryl Shutsemau <kas@kernel.org>
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/bf4625d47a8f/disk-2213e57a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/270abffcbf3c/vmlinux-2213e57a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1f0f6eb3e385/Image-2213e57a.gz.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+bf427d0e03a779974eee@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-workqueue: cannot queue hci_conn_timeout on wq hci4
-WARNING: CPU: 1 PID: 6638 at kernel/workqueue.c:2256 __queue_work+0xe10/0x1210 kernel/workqueue.c:2254
-Modules linked in:
-CPU: 1 UID: 0 PID: 6638 Comm: kworker/1:6 Not tainted syzkaller #0 PREEMPT 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
-Workqueue: events l2cap_chan_timeout
-pstate: 634000c5 (nZCv daIF +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-pc : __queue_work+0xe10/0x1210 kernel/workqueue.c:2254
-lr : __queue_work+0xe10/0x1210 kernel/workqueue.c:2254
-sp : ffff80009d4e77e0
-x29: ffff80009d4e7830 x28: 1fffe0001b418c00 x27: ffff0000d493dac0
-x26: 0000000000000008 x25: dfff800000000000 x24: ffff0000c9ffa800
-x23: ffff0000c9ffa9c0 x22: 0000000004208060 x21: 1fffe000193ff538
-x20: ffff800092e27000 x19: ffff0000d9fe0960 x18: 00000000ffffffff
-x17: ffff80009353a000 x16: ffff80008b021030 x15: 0000000000000001
-x14: 1fffe000337938f2 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff6000337938f3 x10: 0000000000ff0100 x9 : 1a6f38d4427b3b00
-x8 : 1a6f38d4427b3b00 x7 : ffff800080565b6c x6 : 0000000000000000
-x5 : 0000000000000001 x4 : 0000000000000000 x3 : ffff8000807e0688
-x2 : 0000000000000001 x1 : 0000000100000000 x0 : 0000000000000000
-Call trace:
- __queue_work+0xe10/0x1210 kernel/workqueue.c:2254 (P)
- __queue_delayed_work+0xfc/0x2c8 kernel/workqueue.c:2507
- queue_delayed_work_on+0xe4/0x194 kernel/workqueue.c:2559
- queue_delayed_work include/linux/workqueue.h:684 [inline]
- hci_conn_drop+0x174/0x280 include/net/bluetooth/hci_core.h:1675
- l2cap_chan_del+0x228/0x470 net/bluetooth/l2cap_core.c:671
- l2cap_chan_close+0x424/0x684 net/bluetooth/l2cap_core.c:-1
- l2cap_chan_timeout+0x120/0x280 net/bluetooth/l2cap_core.c:431
- process_one_work+0x7e8/0x155c kernel/workqueue.c:3236
- process_scheduled_works kernel/workqueue.c:3319 [inline]
- worker_thread+0x958/0xed8 kernel/workqueue.c:3400
- kthread+0x5fc/0x75c kernel/kthread.c:463
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
-irq event stamp: 105130
-hardirqs last  enabled at (105129): [<ffff800080429388>] __cancel_work+0x158/0x218 kernel/workqueue.c:4344
-hardirqs last disabled at (105130): [<ffff8000804249b8>] queue_delayed_work_on+0x54/0x194 kernel/workqueue.c:2555
-softirqs last  enabled at (105122): [<ffff8000803da960>] softirq_handle_end kernel/softirq.c:425 [inline]
-softirqs last  enabled at (105122): [<ffff8000803da960>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:607
-softirqs last disabled at (104025): [<ffff800080022028>] __do_softirq+0x14/0x20 kernel/softirq.c:613
----[ end trace 0000000000000000 ]---
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
