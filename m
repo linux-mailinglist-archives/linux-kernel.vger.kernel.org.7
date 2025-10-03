@@ -1,161 +1,109 @@
-Return-Path: <linux-kernel+bounces-841566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28679BB7AA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:11:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5201DBB7AB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:11:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 077104ED639
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:11:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B145C3A9C8F
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8547A2D879E;
-	Fri,  3 Oct 2025 17:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5882D879B;
+	Fri,  3 Oct 2025 17:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="eBvNuTzh"
-Received: from mail-il1-f226.google.com (mail-il1-f226.google.com [209.85.166.226])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KuhPVNGE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBA82D8783
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 17:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA0A2D8785
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 17:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759511460; cv=none; b=MuY5Yuple2ygDHJfrfMZ3FPSIATfmm3Y6J5XxTVJxbthGw6tWpBC8oPlFSGlYJy7TpgPPqSM4yYoQoGQbnE29ZJ3c2egPxUbXnMD65yI3WiETdXXfKGqZCDFMU3BdYI6HD10XGaGtWs4sAO5me2FtgdlosuUVp4TUTtPDb+Z+Jg=
+	t=1759511485; cv=none; b=nJSYlNRpk9YpjmdzgmFKTHYtFBAhfZjbKWP6xaarNR5M+d9wtGa9PbQwZKkUCz5asryf4O27Iz9Ue2FG9trhlO3Y532iVSqb6ynjJHabn4PdqUyMYgEqhR+N//Y40QmQqCN/OO4IoiX72kNV4v4TSUcMx4J6vI0YeIoseHjr+xQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759511460; c=relaxed/simple;
-	bh=0Q5R+tGH6D7U8akAyRuu8yHM8SEXa/50GdWiqwiumDc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A6BQF29rcVQwGJky5Kqc5FyOlDNJjNwVKwTu+kwmf4VaJ7JGl/RHa3WgrfjeNIjILh3VkhBCKEyB3KVXzgnYfBXhyrXQArqwmoi6/ruE4Meu0NqAldfK0ePET3Jbwd4R1qyzDZ7WYQ7JwzbCkqwNqOt3AT09q/kQVIryzVUqUoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=eBvNuTzh; arc=none smtp.client-ip=209.85.166.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-il1-f226.google.com with SMTP id e9e14a558f8ab-4256f0fac67so27193455ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 10:10:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759511458; x=1760116258;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2BRqPBk1106V9u0XllX+MkRivNo9y7LXj3s6j5aNCv8=;
-        b=o/Y0p3aSWMBLqmiYcL+csZHGHriWrqolSYHurBXssXmcSoYSxVnBMZJegu/edHfC+x
-         okJLQGJ8F8pz6nr8yCdGQrWOdrUAHXDuRBDPRrHY1SnFv80xN4AwQRs0DJG8qyKQCnuZ
-         q15wUBFM6p6h0zRa70XFNnBjvoAivo1QLmF5PGgUtI5uw3ad+lrQlYdBVTKHM2KZfqPA
-         ay7eC3a3tFV+vxBxsMFu3Ck2nRc9itVP4i/IHpu+H6WbwbtX50d1uIbwGHs/04kXaCUi
-         O3eAxNCugVxUhyRjMdLfhaJLH6/WYEVzeBB/mubnTj6E0676euTtvhqBzqhqffnlxddW
-         8NHw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+og2FKrEa8coEdR1cxmuc6NtASJtEUFrgVVbQEmNWMbBKjgh1DJ9oyyzLvrqtKk5zoKT3CnYAAV20qGI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdVgaUIjvT9C7uQKI/pU6NRMCUODCKjw0dRo2DzBjblpRlBHRH
-	bbXkrQDP2/gyJlaKe/LKjX9bzKKqrEqei5Xz2SDwYB3LJvFWauleqTn2mmvig3FCRVf/CBHq4Xi
-	81RDcsRf2xcSvtzHZGnlAa7Rg1DGPPOTu7T1xpLIFFfEw+TREpAiICyZHS37d7aSyoOiWBCkVui
-	sszK0/HONdDLNhEEPs16OjtboGT3kllYvbEf5yusFDU3mwr3i1oMaQgJffvzIKSIji5hkmt7GkE
-	NKsxQtBTwchj/JJTajAtGBR
-X-Gm-Gg: ASbGncuEke2LKw2CtEIBJNVtviwImR7+1vQ0yGAM45hj5aDCxcc6fj0ZyYTf9/WzhXT
-	k4RbuZok5sY9Mq1v4MnOBoIKf6ei+nS1n4l0w7IF04U1FIFWMozfL65mJ1p1+Ju3eQJsvuTFFlC
-	sMvv10zFvd9BqkNcGA5badDVTOJgE03oGnl4i8ee+dOvEJ4K1tR6FtU0tHc7GZo+FMmT+78DiFJ
-	rUP96Au/9nVtO7E5azI6ihg/lQyGa9/NPBc2gfgKaH6JLJo80NNawC0bfoZ50fGcrUVpAA5FWiR
-	A5LO7Ibv224CbaauMqOl2cdfOe6/200DkwiVfmoLTuzC6AFR7J3qKqv0+btFqBZGhQNxyPpyCo+
-	rGR4NbgfkX8gAbwo4NtMldYA6+FKuLwJgn90Si8Eb/6t72OTXXqsJEnoeIewqwEqmsNvm2Q9bUI
-	7O1T3eTx26qstU
-X-Google-Smtp-Source: AGHT+IFe/Z5gWYf0TDZgCWPL8TttX6HUAV1mRJWN1Q1pzd1nHDTHzL4H95s0Ygt9AmV/yJccNmcTNBc8Yrnv
-X-Received: by 2002:a05:6e02:174a:b0:427:5e1d:4200 with SMTP id e9e14a558f8ab-42e7ad995a0mr51422285ab.29.1759511454744;
-        Fri, 03 Oct 2025 10:10:54 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-100.dlp.protect.broadcom.com. [144.49.247.100])
-        by smtp-relay.gmail.com with ESMTPS id 8926c6da1cb9f-57b5eaa3fe5sm403619173.4.2025.10.03.10.10.54
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 03 Oct 2025 10:10:54 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-286a252bfbfso51168985ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 10:10:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1759511453; x=1760116253; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=2BRqPBk1106V9u0XllX+MkRivNo9y7LXj3s6j5aNCv8=;
-        b=eBvNuTzhneWHhjqPx3Nner4SJmW9r2Qi4vq2tmu2q/IVOc1+LQAr4jBvhYH+bd8RbM
-         5ylAUTJ/XW8U8yP98BhEBLjcfxerfP4vcwF+A6+u6qfLkeV+HF8ZeTDBlVynKqZmu8yl
-         R/Aiz//rL6tJi+4TEa40BtJisMHRHSVw9oiyQ=
-X-Forwarded-Encrypted: i=1; AJvYcCW5xinz1d9k16okJt7bPC34hMrxPxaWQCn0WWo/08LJWpG6pr5gu79CbA3Bf9jRJAp6LZrSsi7HxHHRo5c=@vger.kernel.org
-X-Received: by 2002:a17:903:1b24:b0:24c:7bc6:7ac7 with SMTP id d9443c01a7336-28e9a58b709mr42967645ad.18.1759511453106;
-        Fri, 03 Oct 2025 10:10:53 -0700 (PDT)
-X-Received: by 2002:a17:903:1b24:b0:24c:7bc6:7ac7 with SMTP id d9443c01a7336-28e9a58b709mr42967435ad.18.1759511452713;
-        Fri, 03 Oct 2025 10:10:52 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1b87dcsm55356295ad.90.2025.10.03.10.10.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Oct 2025 10:10:51 -0700 (PDT)
-Message-ID: <a0c3a056-0d5d-4201-ac97-4becc5c61d47@broadcom.com>
-Date: Fri, 3 Oct 2025 10:10:49 -0700
+	s=arc-20240116; t=1759511485; c=relaxed/simple;
+	bh=Eqopze8mLHmie+XpAFzVELpXFnRbtvL2IIe3/C0KdJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=spa9mJV2zxp6in5aRHjxQzNWFkc5yH0XvVQl1SS9nBSZcXabr0D78Yd96iof6/uze98x/rqpzjONH5a3mthcTTm3Iv+McvjPNi/pXV8O5VLpHlkxUQnnb5QQDW8NU5mfepE9Zd1yBry8kHPH3nANpN56x6gY4HH+MbEwnUw01to=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KuhPVNGE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759511480;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YPYNDkWkWnXcllRo0K9Cv4VDN4dwzK9qLlf5CsLGwPI=;
+	b=KuhPVNGEL9sEHYk1d8gLPuuq50rlncD5SYZ3BcwXwbWxhFHMIUuha/AhmzhZvdeImCiFWL
+	IUVI536Kxy1sASVcDKZso0ZbIZ2/pt4lysL3MMDVUphSh2lKYZg0XXL3uUnW+SezzX7djo
+	x9KeTyvFC0u7PypP8E2FWGJCRpOw/LA=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-614-FKJkg4IyM-q4rWL8zmac8g-1; Fri,
+ 03 Oct 2025 13:11:16 -0400
+X-MC-Unique: FKJkg4IyM-q4rWL8zmac8g-1
+X-Mimecast-MFC-AGG-ID: FKJkg4IyM-q4rWL8zmac8g_1759511475
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3ABA618004D8;
+	Fri,  3 Oct 2025 17:11:14 +0000 (UTC)
+Received: from localhost (unknown [10.22.90.35])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9A5661800577;
+	Fri,  3 Oct 2025 17:11:12 +0000 (UTC)
+Date: Fri, 3 Oct 2025 14:11:11 -0300
+From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Andrea Righi <righi.andrea@gmail.com>,
+	Julia Lawall <Julia.Lawall@inria.fr>,
+	Joseph Salisbury <joseph.salisbury@oracle.com>
+Subject: Re: [PATCH] sched: cgroup: Move task_can_attach() to cpuset.c
+Message-ID: <aOADr3PABpCs142e@uudg.org>
+References: <20251003121421.0cf4372d@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] mmc: sdhci-brcmstb: clear CFG_OP_DLY when using HS200
-To: Kamal Dasu <kamal.dasu@broadcom.com>, andersson@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- ulf.hansson@linaro.org, adrian.hunter@intel.com
-Cc: bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org
-References: <20251002210426.2490368-1-kamal.dasu@broadcom.com>
- <20251002210426.2490368-3-kamal.dasu@broadcom.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20251002210426.2490368-3-kamal.dasu@broadcom.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251003121421.0cf4372d@gandalf.local.home>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-
-
-On 10/2/2025 2:04 PM, Kamal Dasu wrote:
-> Clear SDIO_1_CFG_OP_DLY register when using HS200 mode to be
-> compliant with timing spec.  We only need this for on BCM72116
-> SoCs.
+On Fri, Oct 03, 2025 at 12:14:21PM -0400, Steven Rostedt wrote:
+> From: Steven Rostedt <rostedt@goodmis.org>
 > 
-> Signed-off-by: Kamal Dasu <kamal.dasu@broadcom.com>
+> At our monthly stable meeting, we were talking about documenting non
+> static functions and randomly picked a function to look at. That was
+> task_can_attach(). It was then noticed that it's only used by
+> cgroup/cpuset.c and nothing else. It's a simple function that doesn't
+> reference anything unique to sched/core.c, hence there's no reason that
+> function should be there.
+> 
+> Move it to cgroup/cpuset.c as that's the only place it is used. Also make
+> it a static inline as it is so small.
+> 
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>  include/linux/sched.h  |  1 -
+>  kernel/cgroup/cpuset.c | 19 +++++++++++++++++++
+>  kernel/sched/core.c    | 19 -------------------
+>  3 files changed, 19 insertions(+), 20 deletions(-)
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+That was a fun exercise. :)
+
+Tested-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
 
 
