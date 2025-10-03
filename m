@@ -1,205 +1,137 @@
-Return-Path: <linux-kernel+bounces-841370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFCBCBB71E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:05:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F01DEBB71E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3F5C04ED53A
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:05:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 103073B116F
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48FFB1FDE39;
-	Fri,  3 Oct 2025 14:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85B01FECD4;
+	Fri,  3 Oct 2025 14:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Lfl21iMe";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XA88JfIT";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Lfl21iMe";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XA88JfIT"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TBcDl0nm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F39C20A5EB
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 14:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C514619D8BC;
+	Fri,  3 Oct 2025 14:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759500308; cv=none; b=CBQ8dOlu61BXc5+dkgbJ562yCBM0pVw/EdXz5Crjsi0EdPGQOlCGVn4NWJvGtyRQtP2/DwzI/DVKieQ6OG6MtWyak9EEZE12EKe7jmgvCHvubZGoLBJ4m+7QGejcTs3+vlI/nwmJKFnQotixCzX0lYP++5Rp8JTi5YyjZhq7zWI=
+	t=1759500365; cv=none; b=ZNTSWhTSnH80N3LJG0ZW/yKLaRvLXARZ/a30MQKgUq0Eih9PVPqeBWL9JvbQhSRw+yV2iKU0r9KAvHoMWvEaovXRyeFbW8Ksx7Qc7SWGIJbrlpiwunw3QQUcY0dX8TdUkvv7qhx2bd7FmYF7nliYeODpHmkE8rjZAgGZZxxXMHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759500308; c=relaxed/simple;
-	bh=eqLSZhYieTaSO98Y+ewn2PsjonmLLH63gdJmrOfK8Cw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YGGxjlkzpfdZMUx84fj3iTUvCzhTYkK15NS5HmfTrZu8C8FWulHeTAiqdLTUpin/ZgMswIipoGgHboAXzONLmS7YvQwBYt5D6l3sNjUDJX5F7108a8tlNjYgBwS3wg7vPK7Ec2zx8+GueKqJ+io7vT3a/9Qi2wXvwhChd2O4Q3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Lfl21iMe; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XA88JfIT; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Lfl21iMe; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XA88JfIT; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4B48F3369C;
-	Fri,  3 Oct 2025 14:04:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1759500297; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3YpYYO0WBQtFMfWk/eRAGiKMSyw4qTIIMBy/MJIROsA=;
-	b=Lfl21iMeOXn9an/HNoczt8yAM7N6QlUDuUmND2LaXT4q44WYxSnEOPNOriKBMF9OTY45VD
-	swOKCcEvBwOSXbI7J8ANiK0KNAGQYz7bF+bfruMp8b5zQ5Reh9RFwkI616rKveeE0VT86x
-	9NPib4BxxiitGJFUH4jnHQn5c1Q+dYI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1759500297;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3YpYYO0WBQtFMfWk/eRAGiKMSyw4qTIIMBy/MJIROsA=;
-	b=XA88JfIT6APbj4/v46502XbSA4Hl+UJMJrnkQ9gDNvHARPrj9sfvoCqrVzXqZ6RBTKsF9z
-	O180MpyW5JA2xBCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Lfl21iMe;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=XA88JfIT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1759500297; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3YpYYO0WBQtFMfWk/eRAGiKMSyw4qTIIMBy/MJIROsA=;
-	b=Lfl21iMeOXn9an/HNoczt8yAM7N6QlUDuUmND2LaXT4q44WYxSnEOPNOriKBMF9OTY45VD
-	swOKCcEvBwOSXbI7J8ANiK0KNAGQYz7bF+bfruMp8b5zQ5Reh9RFwkI616rKveeE0VT86x
-	9NPib4BxxiitGJFUH4jnHQn5c1Q+dYI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1759500297;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3YpYYO0WBQtFMfWk/eRAGiKMSyw4qTIIMBy/MJIROsA=;
-	b=XA88JfIT6APbj4/v46502XbSA4Hl+UJMJrnkQ9gDNvHARPrj9sfvoCqrVzXqZ6RBTKsF9z
-	O180MpyW5JA2xBCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DB30513AAD;
-	Fri,  3 Oct 2025 14:04:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Yo1oMgfY32jrTgAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Fri, 03 Oct 2025 14:04:55 +0000
-Date: Fri, 3 Oct 2025 15:04:50 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: Byungchul Park <byungchul@sk.com>, akpm@linux-foundation.org, 
-	ziy@nvidia.com, matthew.brost@intel.com, joshua.hahnjy@gmail.com, 
-	rakie.kim@sk.com, gourry@gourry.net, ying.huang@linux.alibaba.com, 
-	apopple@nvidia.com, clameter@sgi.com, kravetz@us.ibm.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, max.byungchul.park@gmail.com, kernel_team@skhynix.com, 
-	harry.yoo@oracle.com, gwan-gyeong.mun@intel.com, yeoreum.yun@arm.com, 
-	syzkaller@googlegroups.com, ysk@kzalloc.com, Matthew Wilcox <willy@infradead.org>, 
-	linux-ext4@vger.kernel.org
-Subject: Re: [RFC] mm/migrate: make sure folio_unlock() before
- folio_wait_writeback()
-Message-ID: <dglxbwe2i5ubofefdxwo5jvyhdfjov37z5jzc5guedhe4dl6ia@pmkjkec3isb4>
-References: <20251002081612.53281-1-byungchul@sk.com>
- <9a586b5b-c47f-45eb-83c8-1e86431fc83d@redhat.com>
+	s=arc-20240116; t=1759500365; c=relaxed/simple;
+	bh=/Z5YZcK/sD5o1HxJGH4fIIT8NMTZAj0OXiwxSdFUfZM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CRWVWNgSUjnc4Zc5uovoJw2CUqj8ewSsMWDGjvX+vmFe93RzUnuLvZDjP9NvD3yzvtFpyXYU3/jF/ng3K0QIKhWCBqN69YC9VE9MDBomAHZt0i7k0RIiq/J6DFMo9VrMKeQKPBXwijChY4E3hxGJHEpj9wjc6LghK/vjxyoZFUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TBcDl0nm; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759500363; x=1791036363;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=/Z5YZcK/sD5o1HxJGH4fIIT8NMTZAj0OXiwxSdFUfZM=;
+  b=TBcDl0nmv/+vu7E6jSaPuN6D9PSTEJOi7hpQbno8v10DGMbw4RrWeZZl
+   SuRgKaSweR5sXJSmiV0ZdNvSqfgHflxPZdGs9+re2xyj56xw9GQHBscyf
+   BsHWdh4VCwrDYDuZe1FJdqC2EweZaHBCZAsSIJPWo7OjMgOUVtoJ8qMNe
+   C3bnIhRZ/HBhopSkdrePZzHCzvwCXCCUPah6wsQYxEck9C8903G2TGRQ8
+   waUw07TliArq8bXu5o774MBd4Fr5rTTexPE5ITnuW7ev/CkaZWVeoqqSt
+   QLtFu9oKn8qYywxiWWhv3a17McKuQrK7cOnhauJH+5xliz5ElFFAPUJXu
+   w==;
+X-CSE-ConnectionGUID: AkBaDJ/vTMS/Bza4sZFwHQ==
+X-CSE-MsgGUID: tj2B70SzTeurXYOG9Jj2lQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11571"; a="61945777"
+X-IronPort-AV: E=Sophos;i="6.18,312,1751266800"; 
+   d="scan'208";a="61945777"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 07:06:01 -0700
+X-CSE-ConnectionGUID: iyr9v8ScRF6VMn0W021OoQ==
+X-CSE-MsgGUID: TunxaQ1nSGW03S6ZqHAy/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,312,1751266800"; 
+   d="scan'208";a="180092175"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.110.34]) ([10.125.110.34])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 07:06:00 -0700
+Message-ID: <0fe2d3d0-7d0f-4903-b7f9-57adb84c60f8@intel.com>
+Date: Fri, 3 Oct 2025 07:05:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9a586b5b-c47f-45eb-83c8-1e86431fc83d@redhat.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 4B48F3369C
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[23];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[sk.com,linux-foundation.org,nvidia.com,intel.com,gmail.com,gourry.net,linux.alibaba.com,sgi.com,us.ibm.com,kvack.org,vger.kernel.org,skhynix.com,oracle.com,arm.com,googlegroups.com,kzalloc.com,infradead.org];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim]
-X-Spam-Score: -2.51
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 0/7] TDX host: kexec/kdump support
+To: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+Cc: bp@alien8.de, tglx@linutronix.de, peterz@infradead.org, mingo@redhat.com,
+ hpa@zytor.com, thomas.lendacky@amd.com, x86@kernel.org, kas@kernel.org,
+ rick.p.edgecombe@intel.com, dwmw@amazon.co.uk, kai.huang@intel.com,
+ seanjc@google.com, reinette.chatre@intel.com, isaku.yamahata@intel.com,
+ dan.j.williams@intel.com, ashish.kalra@amd.com, nik.borisov@suse.com,
+ chao.gao@intel.com, sagis@google.com, farrah.chen@intel.com
+References: <20250901160930.1785244-1-pbonzini@redhat.com>
+ <CABgObfb0Qc3hdXTmZvOykxuR+7RZ4vRUBpm8M84UmHgjwx7BCA@mail.gmail.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <CABgObfb0Qc3hdXTmZvOykxuR+7RZ4vRUBpm8M84UmHgjwx7BCA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-(Adding ext4 list to CC)
+On 10/3/25 06:09, Paolo Bonzini wrote:
+> any reason why this series was not pulled into 6.18? I was a bit
+> surprised not to see it...
 
-On Thu, Oct 02, 2025 at 01:38:59PM +0200, David Hildenbrand wrote:
-> > To simplify the scenario:
-> > 
-> 
-> Just curious, where is the __folio_start_writeback() to complete the
-> picture?
-> 
-> >     context X (wq worker)	context Y (process context)
-> > 
-> > 				migrate_pages_batch()
-> >     ext4_end_io_end()		  ...
-> >       ...			  migrate_folio_unmap()
-> >       ext4_get_inode_loc()	    ...
-> >         ...			    folio_lock() // hold the folio lock
-> >         bdev_getblk()		    ...
-> >           ...			    folio_wait_writeback() // wait forever
-> >           __find_get_block_slow()
-> >             ...			    ...
-> >             folio_lock() // wait forever
-> >             folio_unlock()	  migrate_folio_undo_src()
-> > 				    ...
-> >       ...			    folio_unlock() // never reachable
-> >       ext4_finish_bio()
-> > 	...
-> > 	folio_end_writeback() // never reachable
-> > 
-> 
-> But aren't you implying that it should from this point on be disallowed to
-> call folio_wait_writeback() with the folio lock held? That sounds ... a bit
-> wrong.
-> 
-> Note that it is currently explicitly allowed: folio_wait_writeback()
-> documents "If the folio is not locked, writeback may start again after
-> writeback has finished.". So there is no way to prevent writeback from
-> immediately starting again.
-> 
-> In particular, wouldn't we have to fixup other callsites to make this
-> consistent and then VM_WARN_ON_ONCE() assert that in folio_wait_writeback()?
-> 
-> Of course, as we've never seen this deadlock before in practice, I do wonder
-> if something else prevents it?
+The usual reasons. It fell through the cracks when it got posted and
+nobody mentioned it until now.
 
-As far as I can tell, the folio under writeback and the folio that
-__find_get_block() finds will _never_ be the same. ext4_end_io_end() is
-called for pages in an inode's address_space, and bdev_getblk() is called for
-metadata blocks in block cache. Having an actual deadlock here would mean
-that the folio is somehow both in an inode's address_space, and in the block
-cache, I think? Also, AFAIK there is no way a folio can be removed from the
-page cache while under writeback.
-
-In any case, I added linux-ext4 so they can tell me how right/wrong I am.
-
--- 
-Pedro
+I'll stick it on my list for after the merge window closes.
 
