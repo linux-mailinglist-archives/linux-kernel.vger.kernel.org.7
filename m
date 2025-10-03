@@ -1,103 +1,105 @@
-Return-Path: <linux-kernel+bounces-841369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B9D8BB71D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:05:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFCBCBB71E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:05:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4D891889F39
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:05:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3F5C04ED53A
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B7C1FCFEF;
-	Fri,  3 Oct 2025 14:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48FFB1FDE39;
+	Fri,  3 Oct 2025 14:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="e7f+Yh/4"
-Received: from mail-yx1-f43.google.com (mail-yx1-f43.google.com [74.125.224.43])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Lfl21iMe";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XA88JfIT";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Lfl21iMe";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XA88JfIT"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148EC7081C
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 14:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F39C20A5EB
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 14:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759500303; cv=none; b=uK5LrbR8lYHWexLJi23TgiQzYZ42MHVzdm2uACvkCgeWorOqkMcDJzONgz5Wf6A33E4Zu/SruhuIdHh6jD4IPUCF8fDvz3SrDkQFO8xZFpLH2Rb61X8bklX7kgRmNLouhPGlcgHmeWUIVIhhGCYgmaGCaYhDSXuIuGZ0HFjQF/g=
+	t=1759500308; cv=none; b=CBQ8dOlu61BXc5+dkgbJ562yCBM0pVw/EdXz5Crjsi0EdPGQOlCGVn4NWJvGtyRQtP2/DwzI/DVKieQ6OG6MtWyak9EEZE12EKe7jmgvCHvubZGoLBJ4m+7QGejcTs3+vlI/nwmJKFnQotixCzX0lYP++5Rp8JTi5YyjZhq7zWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759500303; c=relaxed/simple;
-	bh=PDOlaahyagViedfiSN8R/K37eGiBows/WNphK5zmxmA=;
+	s=arc-20240116; t=1759500308; c=relaxed/simple;
+	bh=eqLSZhYieTaSO98Y+ewn2PsjonmLLH63gdJmrOfK8Cw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qcmVu8jbpwgMrbuWk3iEorVochjG12MOKBQnbaz/PO9MlnQfijz4oAWluUaWlzENTX7Wfxa79/JhvzDq1xzU6FPudJI082WBnEtg4nKVNh45IAsU7OFBxCF1orotifk32+zYTfiv9vzQCZ44rIRbPqmzWaOTtfhiRyTuHIfB+Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=e7f+Yh/4; arc=none smtp.client-ip=74.125.224.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-yx1-f43.google.com with SMTP id 956f58d0204a3-6354af028c6so2209859d50.3
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 07:05:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1759500300; x=1760105100; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PDOlaahyagViedfiSN8R/K37eGiBows/WNphK5zmxmA=;
-        b=e7f+Yh/4xI08TH+ZaCFnzp0ODA8+QoY5uzzxWJ2DR03ctir5oPxfKL94XcXPLep951
-         r9MFGcUUY/AYii/LrxcA24Jkmtc1xPgSzf9OPNOxpP+hAiZ8QSvLpzt/ZqzkHlUjjhOc
-         9H+Nau8YvLK3pXjIyGVWG4kW9rHCb6UrmW4xotnIAW+pqoXv5ik+CmpGbHdlO1grMyap
-         wDofKCXhs8vatpU0YqW/iy94DXDODFZrOMzH5jGwcFZ/iHkVeboCihgXe+LR7wfCtYzS
-         f7jvr6/2rAIcV8AfEnGR2eYpvr71plCXdrdKR9a+dgA3i7M6K5g+yPdYl9h6N/uxsfN6
-         HXPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759500300; x=1760105100;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PDOlaahyagViedfiSN8R/K37eGiBows/WNphK5zmxmA=;
-        b=ejYYS4ZvXr+Hr5dlRJVOsnsB7418W+uOmv1yCCXvhWcA8E4LTCxGkkSM4KFi/SOcj7
-         uKdpZSKgQU+8G/owPOw5DoZFcQvDNywh0YRqu3/0+dlGTTm3kWbhf494xiPuHb1PywdX
-         f0gY4dkv5VhfLfkbauNVpuoRCz2I048cHs0rRt+mTEX9Oaj84AeGWtzIgcfBUVgOw82g
-         3rvqS1NkkGX0Gf/Yo2ZtJ8+bSejCC3D3gTxzA8ykcvB+xnb7oYsJ+MakgdA5XRjuAqx2
-         MY9GP7NPM8yuk25GoCM3GSkXBQ6QWNukklVwY7qJK62SBWiEazfsx87029evBpOLB4Wk
-         gBOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsQNXwiaOK/dr2YdO2vWVpJL9dtuQeL37nEQdN7Y5B+vdWFwq61eXng/b6U5t9qKV+qfeBJ08Vi7gZQT8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDVXPp+5ViTeGY4kM/iFxJndgivbnqPCpd0I9k/kCw/K1Wk3Qx
-	K1w77ugC/W1K6QK/JEbs7oo7cah13dIRzn+ArquPjPbtK6bwGXlaagZneuIQJVtyXC0=
-X-Gm-Gg: ASbGncv3tMKgf+I5dG320czt+Dl+F+lTU28cBNqzvUmukC55e3ul79+dwLViPuX8oRr
-	7G0jg8nzlwbQbN3R5miugo4/AeWD8rtDxEmEFDPDrG9uR2Ljreqs1NNCE7F3hBRiaiarSltRVVY
-	Wh6ddZblGjMF6aZi8pTot8m2pwj2ssgzblOXaNKpvPtz0lTGmYwCJLcEVBYjIpQExQWRnaQDugC
-	wNhIRO0w2h8xLzKqfDEWpcrOs263RPDLJKc60kLgJvXt3MLZ7SMOKvO/bBFK6nN2/yURx+haJDX
-	K+YWDmTBfRWvMHiM3lkscMSUhzh/geWb6RkC4auHxtgSKn2quKAY47+R/ghkKQmEPUR7M4Cit4l
-	JaGZWYlteA4DpVAdfRZl+G8hKIlM+TYoLJXIJ3MDgJYKjY9lSOYibgeMTjFTfc1ggulkiJfTPFZ
-	aqM8Wfq0/t8or4HHTkxoXS5oTz72s=
-X-Google-Smtp-Source: AGHT+IH54YOvJZyYdYQGXmSE3qP2IlgeXBlXhYdTBxgZJrUQNZBBNqv/BfQI4aqzb9AsdFrQGB3Mxw==
-X-Received: by 2002:a53:ba42:0:b0:611:ecfe:3655 with SMTP id 956f58d0204a3-63b9a0f0194mr2116314d50.30.1759500300024;
-        Fri, 03 Oct 2025 07:05:00 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-877786508c0sm437278485a.43.2025.10.03.07.04.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 07:04:58 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1v4gP3-0000000E5yT-3Q5L;
-	Fri, 03 Oct 2025 11:04:57 -0300
-Date: Fri, 3 Oct 2025 11:04:57 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Chris Li <chrisl@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-acpi@vger.kernel.org, David Matlack <dmatlack@google.com>,
-	Pasha Tatashin <tatashin@google.com>,
-	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Adithya Jayachandran <ajayachandra@nvidia.com>,
-	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>,
-	Mike Rapoport <rppt@kernel.org>, Leon Romanovsky <leon@kernel.org>
-Subject: Re: [PATCH v2 02/10] PCI/LUO: Create requested liveupdate device list
-Message-ID: <20251003140457.GO3195829@ziepe.ca>
-References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
- <20250916-luo-pci-v2-2-c494053c3c08@kernel.org>
- <20250929174627.GI2695987@ziepe.ca>
- <CACePvbVHy_6VmkyEcAwViqGP7tixJOeZBH45LYQFJDzT_atB1Q@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YGGxjlkzpfdZMUx84fj3iTUvCzhTYkK15NS5HmfTrZu8C8FWulHeTAiqdLTUpin/ZgMswIipoGgHboAXzONLmS7YvQwBYt5D6l3sNjUDJX5F7108a8tlNjYgBwS3wg7vPK7Ec2zx8+GueKqJ+io7vT3a/9Qi2wXvwhChd2O4Q3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Lfl21iMe; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XA88JfIT; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Lfl21iMe; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XA88JfIT; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4B48F3369C;
+	Fri,  3 Oct 2025 14:04:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759500297; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3YpYYO0WBQtFMfWk/eRAGiKMSyw4qTIIMBy/MJIROsA=;
+	b=Lfl21iMeOXn9an/HNoczt8yAM7N6QlUDuUmND2LaXT4q44WYxSnEOPNOriKBMF9OTY45VD
+	swOKCcEvBwOSXbI7J8ANiK0KNAGQYz7bF+bfruMp8b5zQ5Reh9RFwkI616rKveeE0VT86x
+	9NPib4BxxiitGJFUH4jnHQn5c1Q+dYI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759500297;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3YpYYO0WBQtFMfWk/eRAGiKMSyw4qTIIMBy/MJIROsA=;
+	b=XA88JfIT6APbj4/v46502XbSA4Hl+UJMJrnkQ9gDNvHARPrj9sfvoCqrVzXqZ6RBTKsF9z
+	O180MpyW5JA2xBCQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Lfl21iMe;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=XA88JfIT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759500297; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3YpYYO0WBQtFMfWk/eRAGiKMSyw4qTIIMBy/MJIROsA=;
+	b=Lfl21iMeOXn9an/HNoczt8yAM7N6QlUDuUmND2LaXT4q44WYxSnEOPNOriKBMF9OTY45VD
+	swOKCcEvBwOSXbI7J8ANiK0KNAGQYz7bF+bfruMp8b5zQ5Reh9RFwkI616rKveeE0VT86x
+	9NPib4BxxiitGJFUH4jnHQn5c1Q+dYI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759500297;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3YpYYO0WBQtFMfWk/eRAGiKMSyw4qTIIMBy/MJIROsA=;
+	b=XA88JfIT6APbj4/v46502XbSA4Hl+UJMJrnkQ9gDNvHARPrj9sfvoCqrVzXqZ6RBTKsF9z
+	O180MpyW5JA2xBCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DB30513AAD;
+	Fri,  3 Oct 2025 14:04:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Yo1oMgfY32jrTgAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Fri, 03 Oct 2025 14:04:55 +0000
+Date: Fri, 3 Oct 2025 15:04:50 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: David Hildenbrand <david@redhat.com>
+Cc: Byungchul Park <byungchul@sk.com>, akpm@linux-foundation.org, 
+	ziy@nvidia.com, matthew.brost@intel.com, joshua.hahnjy@gmail.com, 
+	rakie.kim@sk.com, gourry@gourry.net, ying.huang@linux.alibaba.com, 
+	apopple@nvidia.com, clameter@sgi.com, kravetz@us.ibm.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, max.byungchul.park@gmail.com, kernel_team@skhynix.com, 
+	harry.yoo@oracle.com, gwan-gyeong.mun@intel.com, yeoreum.yun@arm.com, 
+	syzkaller@googlegroups.com, ysk@kzalloc.com, Matthew Wilcox <willy@infradead.org>, 
+	linux-ext4@vger.kernel.org
+Subject: Re: [RFC] mm/migrate: make sure folio_unlock() before
+ folio_wait_writeback()
+Message-ID: <dglxbwe2i5ubofefdxwo5jvyhdfjov37z5jzc5guedhe4dl6ia@pmkjkec3isb4>
+References: <20251002081612.53281-1-byungchul@sk.com>
+ <9a586b5b-c47f-45eb-83c8-1e86431fc83d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,19 +108,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACePvbVHy_6VmkyEcAwViqGP7tixJOeZBH45LYQFJDzT_atB1Q@mail.gmail.com>
+In-Reply-To: <9a586b5b-c47f-45eb-83c8-1e86431fc83d@redhat.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 4B48F3369C
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[23];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[sk.com,linux-foundation.org,nvidia.com,intel.com,gmail.com,gourry.net,linux.alibaba.com,sgi.com,us.ibm.com,kvack.org,vger.kernel.org,skhynix.com,oracle.com,arm.com,googlegroups.com,kzalloc.com,infradead.org];
+	RCVD_TLS_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim]
+X-Spam-Score: -2.51
 
-On Thu, Oct 02, 2025 at 10:33:20PM -0700, Chris Li wrote:
-> The consideration is that some non vfio device like IDPF is preserved
-> as well. Does the iommufd encapsulate all the PCI device hierarchy? I
-> was thinking the PCI layer knows about the PCI device hierarchy,
-> therefore using pci_dev->dev.lu.flags to indicate the participation of
-> the PCI liveupdate. Not sure how to drive that from iommufd. Can you
-> explain a bit more?
+(Adding ext4 list to CC)
 
-I think you need to start from here and explain what is minimally
-needed and identify what gets put in the luo session and what has to
-be luo global.
+On Thu, Oct 02, 2025 at 01:38:59PM +0200, David Hildenbrand wrote:
+> > To simplify the scenario:
+> > 
+> 
+> Just curious, where is the __folio_start_writeback() to complete the
+> picture?
+> 
+> >     context X (wq worker)	context Y (process context)
+> > 
+> > 				migrate_pages_batch()
+> >     ext4_end_io_end()		  ...
+> >       ...			  migrate_folio_unmap()
+> >       ext4_get_inode_loc()	    ...
+> >         ...			    folio_lock() // hold the folio lock
+> >         bdev_getblk()		    ...
+> >           ...			    folio_wait_writeback() // wait forever
+> >           __find_get_block_slow()
+> >             ...			    ...
+> >             folio_lock() // wait forever
+> >             folio_unlock()	  migrate_folio_undo_src()
+> > 				    ...
+> >       ...			    folio_unlock() // never reachable
+> >       ext4_finish_bio()
+> > 	...
+> > 	folio_end_writeback() // never reachable
+> > 
+> 
+> But aren't you implying that it should from this point on be disallowed to
+> call folio_wait_writeback() with the folio lock held? That sounds ... a bit
+> wrong.
+> 
+> Note that it is currently explicitly allowed: folio_wait_writeback()
+> documents "If the folio is not locked, writeback may start again after
+> writeback has finished.". So there is no way to prevent writeback from
+> immediately starting again.
+> 
+> In particular, wouldn't we have to fixup other callsites to make this
+> consistent and then VM_WARN_ON_ONCE() assert that in folio_wait_writeback()?
+> 
+> Of course, as we've never seen this deadlock before in practice, I do wonder
+> if something else prevents it?
 
-Jason
+As far as I can tell, the folio under writeback and the folio that
+__find_get_block() finds will _never_ be the same. ext4_end_io_end() is
+called for pages in an inode's address_space, and bdev_getblk() is called for
+metadata blocks in block cache. Having an actual deadlock here would mean
+that the folio is somehow both in an inode's address_space, and in the block
+cache, I think? Also, AFAIK there is no way a folio can be removed from the
+page cache while under writeback.
+
+In any case, I added linux-ext4 so they can tell me how right/wrong I am.
+
+-- 
+Pedro
 
