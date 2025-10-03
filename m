@@ -1,147 +1,87 @@
-Return-Path: <linux-kernel+bounces-841532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F015BB79B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:48:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD9ACBB79BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:52:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9FBBC347245
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:48:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63E5A4864BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D872D1F69;
-	Fri,  3 Oct 2025 16:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TOnIl0/l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9632D2387;
+	Fri,  3 Oct 2025 16:52:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C822F2D;
-	Fri,  3 Oct 2025 16:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5292BDC33
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759510118; cv=none; b=dACG4yr3cIKIyl8FVOTJqP++/kwXYyGITb4eNANCZ/jXArFRWP6ntUMqz2zH+8O9OsucR9w6TUcaDhWrHkTjGUIq9UCSzlo9buZjieX0kdKFXcB3ArLlqHnsNBL9fKFkmB9ALCwcuBGw2OPMjsuJ23cu6NAdH872JJjWXtPEDho=
+	t=1759510325; cv=none; b=JNX1GTes7EYUGTpucDtRAmAjjbenyYDO0lhXVIJSswx86hpb0ipmYtoN8ieGGlsGVUKCaObZ0Qw2pESmqcSHTe63hnLx4afOs5mb5khQp8hRev398I7qqzo0x8IZ7XShi0enVJuZAY2ix2GodWGqgwORPN9JEMzI9i2iB+QBLLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759510118; c=relaxed/simple;
-	bh=GzkAbzTVOzOhByob1QiGdkYmNyK/bd9JnxzPtnpywjI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ooDsNY/uyp4jL25Lb1zuG8GjfQvlfAxPXYWIn3hlcWvReTcQCWRDSTk5JjLH7R4mz0MsdsHmDYk9m79f5/yWDCrv2Qc9RyUZTglQ+nm86qbNzpEmgXgO0iP/bC7FzdiUO+FRiRe3AdlbY2diSoQvoa7bht6QG7lrR7jmyr7z/T8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TOnIl0/l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1BA9C4CEF5;
-	Fri,  3 Oct 2025 16:48:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759510117;
-	bh=GzkAbzTVOzOhByob1QiGdkYmNyK/bd9JnxzPtnpywjI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TOnIl0/lNPQNNunLn84iM1jHyKKnJJNx031w8gglGWfO/YdaJLkYKhs+FeOyHbiIR
-	 IhBAsk5ooCXr3Y2hHJTplkKD4JIPlQieMHMNx3Rsg513mwd+gcSTvORf3393MJFcDf
-	 WqouIp+vklehRqDV2gRzjTiwpm9l2tkv0W84bJSFGYIhWlbrDTLJlhLZnD0l5k7Wz1
-	 His0lEPkHJjTAtH2WxlSWY8AoQ6boEwmoRKaTdl5QzRXzEhVR5ITKKBRkNRZuM1jCO
-	 3v55Nj5y9/v/xaH10vhTPWYH9u0XjHfTUuGFNiSWotK0o2gML5gPmGc3EKGWGiMHPd
-	 QdjCxKVqjKKsQ==
-Date: Fri, 3 Oct 2025 17:48:28 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Antoni Pokusinski <apokusinski01@gmail.com>
-Cc: dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-iio@vger.kernel.org, linux@roeck-us.net, rodrigo.gobbi.7@gmail.com,
- naresh.solanki@9elements.com, michal.simek@amd.com,
- grantpeltier93@gmail.com, farouk.bouabid@cherry.de,
- marcelo.schmitt1@gmail.com
-Subject: Re: [PATCH v4 0/5] iio: mpl3115: add support for DRDY interrupt
-Message-ID: <20251003174828.6feb3070@jic23-huawei>
-In-Reply-To: <20251002200206.59824-1-apokusinski01@gmail.com>
-References: <20251002200206.59824-1-apokusinski01@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759510325; c=relaxed/simple;
+	bh=JTaA8zjQAbMQ+/VFUovnfJxIi02YH2pRK1a/Jzh+wRg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=NYnygIxzQqW+T0rX1csRNig8q7DiVWaF0iuiVy0DF9cmcr/37tcMQJWWvlXUDbBQ3PVxqEsZK4/ERzesECYdO7JDq7Z0OQ/twY5lh07GPH8WzZSgsH2IVXT1F30uOkp+93nwhSkhkwnTkQls3TFwdMEqloZCH4EVRUHqz5+I0dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-42d85031919so34400925ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 09:52:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759510323; x=1760115123;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AKNPnLewPI4iofJmzNCWaRuSIl2pCIXr8sLsxWgGvvg=;
+        b=VRkvxuGFG27wupHxV4lJ0nxuF4EGTX8ugQRESWXApK6IkM/sisMH3rMAnp9zzZEhAe
+         OIGDWmg7a/Gqr0cktXA6fHIrn0Bn6Tjh3RbnP8+bpfqnJI7W+1PwkpxwnjfgCLFQ/v0x
+         a4ibhQ0yieldc0EVwR5qlivPNIx/tGKLXJq1dRU31GkUJuF6bwLQaW6u8pvX+gic8HCp
+         abgJybg5N9/Arp0A1lmp7gfwgy2Ound4DGM/9qGSLfxvQypKegXKtCt/RQzKh/HdG/Rs
+         pjDKlhYrMB31XFsgLdvauU5HZM5tVppT4sNJOVrmqUBNGPMubvgsczFDoY/c0kOtDrHW
+         pX0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVARUj+iFaVGUU7RD6QXUEGmeoUOq2Ba1vJS8AiWU8lyUVfctxxJot6qHU26zNatA/WXbOKlXXsg7sDU7c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywntnzz+sn6x/Wxl+VcR4HUBedkQy4ijqNMgcdI7iwhzn4PbBbX
+	7J6jM02oSfH8i6j5nt85vSJbhUdSPpmXViyNK04A+LykA2/CDKoSbLYmjIO0lU01ZDfpklkQirp
+	22WWTkThFEUaAFHIhqGC8OYEiSGqhjyJdgEJXphUDytEDUk9mZktECfzTBMk=
+X-Google-Smtp-Source: AGHT+IGyMt3kN5JcEi9YY4nqLAsT/n9PYISoq6h+V8MeG/SfU1V8Cix+jyrva6LJ5/WN/CygxsDCwi5O41t6twqA8t26AKb7bHu3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:b24:b0:42d:878b:6e40 with SMTP id
+ e9e14a558f8ab-42e7ad336d6mr52290985ab.13.1759510322880; Fri, 03 Oct 2025
+ 09:52:02 -0700 (PDT)
+Date: Fri, 03 Oct 2025 09:52:02 -0700
+In-Reply-To: <20251003161140.2960355-1-kartikey406@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68dfff32.050a0220.2c17c1.0025.GAE@google.com>
+Subject: Re: [syzbot] [mm?] WARNING in hugetlb_vma_assert_locked
+From: syzbot <syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com>
+To: broonie@kernel.org, kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu,  2 Oct 2025 22:02:01 +0200
-Antoni Pokusinski <apokusinski01@gmail.com> wrote:
+Hello,
 
-> Hello,
-> This set of patches adds support for the DRDY interrupt in the MPL3115
-> pressure sensor. The device has 2 interrupt lines, hence the new
-> binding. I also added support for the sampling frequency which
-> determines the time interval between subsequent measurements (in the
-> continuous measurements mode) so it's obiously tied to the DRDY
-> interrupt feature.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Hi Antoni,
+Reported-by: syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com
+Tested-by: syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com
 
-LGTM. Applied to the testing branch of iio.git. I'll rebase that on rc1 once
-available and then push it out as the togreg branch which linux-next
-picks up.
+Tested on:
 
-thanks,
+commit:         47a8d4b8 Add linux-next specific files for 20251003
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=16b765cd980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5cc2d3410fac6d84
+dashboard link: https://syzkaller.appspot.com/bug?extid=f26d7c75c26ec19790e7
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10cb9334580000
 
-Jonathan
-
-> 
-> Kind regards,
-> Antoni Pokusinski
-> 
-> ---
-> Changes since v3:
-> * P2: created mpl3115_fill_trig_buffer
-> * P2: trigger_handler: replaced scoped_guard with mutex_lock
-> * P2: includes: removed linux/cleanup.h
-> 
-> * P3: new patch: renamed MPL3115_CTRL_* macros to MPL3115_CTRL1_*
-> 
-> * P4: extracted the MPL3115_CTRL_* renames into a separate patch (P3 now)
-> * P4: trigger_probe: placed devm_request_threaded_irq() call before
->                      devm_iio_trigger_register()
-> * P4: trigger_probe: removed switch(irq_cfg_flags) together with the
->                      enum mpl3115_irq_type and added 2 separate
->                      variables to handle interrupt setup logic 
-> * P4: set_trigger_state: factored out the CTRL_REG1 and CTRL_REG4 writes 
->                          into a separate function mpl3115_config_interrupt
-> 
-> * P5: samp_freq_table: added spaces before "},"
-> 
-> Changes since v2:
-> * P4: included linux/bitfield.h
-> 
-> Changes since v1:
-> * P1: add `vdd-supply` and `vddio-supply`
-> 
-> * P2: new patch: use guards from cleanup.h   
-> 
-> * P3: change macros of control register bits to convention
->       MPL3115_CTRLX_NAME
-> * P3: MPL3115_PT_DATA_EVENT_ALL: use GENMASK
-> * P3: trigger_probe: do not fail if dev_fwnode() returns NULL
-> * P3: trigger_probe: use devm_iio_trigger_register()
-> * P3: trigger_probe: introduced enum mpl3115_irq_type and 
->       changed IRQ setup logic accordingly
-> 
-> * P4: MPL3115_CTRL2_ST: use GENMASK
-> * P4: read_raw: samp_freq: use FIELD_GET
-> * P4: write_raw: samp_freq: use FIELD_PREP
-> ---
-> 
-> Antoni Pokusinski (5):
->   dt-bindings: iio: pressure: add binding for mpl3115
->   iio: mpl3115: add separate function for triggered buffer data
->     collection
->   iio: mpl3115: rename CTRL_REG1 field macros
->   iio: mpl3115: add support for DRDY interrupt
->   iio: mpl3115: add support for sampling frequency
-> 
->  .../bindings/iio/pressure/fsl,mpl3115.yaml    |  71 ++++
->  .../devicetree/bindings/trivial-devices.yaml  |   2 -
->  drivers/iio/pressure/mpl3115.c                | 331 ++++++++++++++++--
->  3 files changed, 364 insertions(+), 40 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/iio/pressure/fsl,mpl3115.yaml
-> 
-
+Note: testing is done by a robot and is best-effort only.
 
