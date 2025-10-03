@@ -1,173 +1,144 @@
-Return-Path: <linux-kernel+bounces-840954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9F7DBB5CD8
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 04:27:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 613F1BB5CE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 04:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 44E364E9447
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 02:27:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1035A19C383B
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 02:32:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5548C2D29CF;
-	Fri,  3 Oct 2025 02:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VmFYRqT1"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4C51459FA
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 02:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830FA2D47E2;
+	Fri,  3 Oct 2025 02:31:34 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D50B2D3A9D
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 02:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759458460; cv=none; b=JIDhTR2LEkJLjiAmq86+78L7iq1eXmqGJDSypbUW0vxFAI1j6pjEexXfYcbkaeatcyGSpfLCEocGpztvePYe5ZxU1LLI8f9PhDGWBKOLpcHPlI62W3jcZ1EqxW5+ICi55qCe47AwRMukteLLJ1kT0hg+XlSVebM8lvfb/nO+iYs=
+	t=1759458694; cv=none; b=g+8Ik5CvLM4M7JxF0r4p2pndowIpRlZy0FENt3sGaj78VWtPh25xwVkcMcz3nyUTfzEPqFR18uEIwbrgrntodjTSXW2pIErwj+iVUvllkA6gpEg/DrSZjVxA/qGsRlUGuDkNxU2w+SsBdGv5LGV/zpXzTlt8tN4vr9SVfTh39jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759458460; c=relaxed/simple;
-	bh=l0seT57zzbeG0N1AJB+4YPl2iTrg/uYD6evzWSRRzkk=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=Z9g9fqxam4/IfhIEM6MTHlgHwb0qrJ5hEASRhfTKPeNxyF+D2AiGqqI1PePgl8D0UXHo948PZ7XJV4vai19lFBnyRwalMn/M579vKOSNALmetFZwEzIo/h/Sre99smNz/WMLA91jC4MPwb30LjDKtduoAVo5unu6oessIa4guFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VmFYRqT1; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-272b7bdf41fso22825995ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 19:27:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759458458; x=1760063258; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=zo682XdUrmGdyaEa4pDcJZ6agvru+K1WJLCt4vpvids=;
-        b=VmFYRqT1M00VqcPdUX0ILing+medaadAdgygbp/py/uLCbQsknR+z9PsBXQPJeJog+
-         fhfw0OxGy9PVFMl3MGC4tm8ikJoQJ557gwW5jhs2jYu0E8+4BEN6C3APaRjlwG2CPrTN
-         5hp7dgYThTF/rvl+pi1g0oBABtHZ8UebumBFw7ic2oJkAK5LYM5C+rNI3jmrh/XF7JLt
-         TQ7N0Vb2QNfEm330FzO/L6i+U9ITZlhLZuj7kMFgpwGKaN3amO/Yp5dFqwPp9NmN5QG6
-         qpTr70iM4NACvpZ7lXlucgxrPEdF/3VC7ARBnSDKLSZQTUmx1vWyWTlehVJdUXhD0nWU
-         V2GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759458458; x=1760063258;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zo682XdUrmGdyaEa4pDcJZ6agvru+K1WJLCt4vpvids=;
-        b=YXgANRNenymNOPqtFhZBN4Obcm2hLgwnbIqPg2pKnZL6I/xn3WiTBe+rwlsmDgb9Ox
-         0c0Hx/ljvL6NFCXOVFzZzESGPMLs1IqwV6zBwvr7byZ9sa84SL00okRSQYslBpHtMfqp
-         lB16wqGV944jzZ0EXIX2WLhB1A32LzZT0E4l7Lu2tnGBwxT0HltyexVtvaqS5Bs2Hds8
-         Hmaf0iNBhC15FiUnIvwmGnilFgDhCbh+5jdX8on+IBL7Ck1tEbxw5MBQGWxNcmrP5yh/
-         KwLeXxP2RVj7O8KaaPjP+mSFoxUn90mZ54e0Nw0f3J6ywmjl0owCpGSxTtyUt7+rMfp+
-         7txQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWc3TUK38MSc0Wy9n06dlJBCtrKZACfg0rlJYsOXMJs0iRvLSqW+Vx8GEIsGU9nZsnckOwrqJsLXowDOEQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymkilsCIT61kVJF0j1FMrH2jOg7H6h8aLT8b22d9APXYlFRAE/
-	9iHR9iE7T6lGhQAyG6FnU9GCnT8GioFooVYAmF84+vVC1xkqDCChsY4bS1v5LUgMo/etfh98iva
-	90WgT1wyRqw==
-X-Google-Smtp-Source: AGHT+IGGcWPCrf38L8r3eeDdZpIfUA7Dns+Go6eicYuhv3iZLJ13mowXvTlMLbWa1lct0uGmC2IhHHRopaP1
-X-Received: from plwp6.prod.google.com ([2002:a17:903:2486:b0:269:607f:f138])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:388d:b0:267:e3af:ae67
- with SMTP id d9443c01a7336-28e9a546354mr16385165ad.14.1759458458578; Thu, 02
- Oct 2025 19:27:38 -0700 (PDT)
-Date: Thu,  2 Oct 2025 19:27:33 -0700
+	s=arc-20240116; t=1759458694; c=relaxed/simple;
+	bh=9MqdsOYnzNI6LbgpUVMyBmakykkewjahkpVUC9MdEj8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sTFDMFpS7HrexVPNJcha8BRB5qmtETj19EPxZw9biqNNfkQ5t8Erw6HCUKcJ4H2NU6y8q9sHoprxgcEVCkMZq9WPtg6rZybegsIuglP/koQLZgQnoP7IVhTDvN3IZxjn6nP10QTcZVnUe0In5sc2AON16a66KBx886/7nYbwRCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-c2dff70000001609-f1-68df3579b3c0
+Date: Fri, 3 Oct 2025 11:31:16 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, ziy@nvidia.com, matthew.brost@intel.com,
+	joshua.hahnjy@gmail.com, rakie.kim@sk.com, gourry@gourry.net,
+	ying.huang@linux.alibaba.com, apopple@nvidia.com, clameter@sgi.com,
+	kravetz@us.ibm.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, max.byungchul.park@gmail.com,
+	kernel_team@skhynix.com, harry.yoo@oracle.com,
+	gwan-gyeong.mun@intel.com, yeoreum.yun@arm.com,
+	syzkaller@googlegroups.com, ysk@kzalloc.com,
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [RFC] mm/migrate: make sure folio_unlock() before
+ folio_wait_writeback()
+Message-ID: <20251003023116.GB29748@system.software.com>
+References: <20251002081612.53281-1-byungchul@sk.com>
+ <9a586b5b-c47f-45eb-83c8-1e86431fc83d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
-Message-ID: <20251003022733.2417810-1-irogers@google.com>
-Subject: [PATCH v1] tools build: Remove feature-libslang-include-subdir
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9a586b5b-c47f-45eb-83c8-1e86431fc83d@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCIsWRmVeSWpSXmKPExsXC9ZZnoW6l6f0Mg1OLLCzmrF/DZrHrRojF
+	+sZ17BZf1/9itvh59zi7xcXXf5gs7i97xmJxfOs8dovra48yWVzeNYfN4t6a/6wW3/qkLS5M
+	7GW1OPKmm9ni9w+g+Nwvhhar12RYfFm9is1i9tF77A7CHmvmrWH02DnrLrvHnokn2Ty62y6z
+	e2xeoeWxeM9LJo9Nnyaxeyz8/YLZ48SM3yweOx9aevQ2v2Pz+Pj0FovH+31X2TzuXgcqO3et
+	j9nj8ya5AIEoLpuU1JzMstQifbsEroyDb1+zFNwVrDjycRlTA2MvTxcjJ4eEgInEydVtzDD2
+	mYdnWEBsFgEViftt+xhBbDYBdYkbN36C1YgIaEhsatsAZHNxMAu8Y5Y4umIVWIOwQLjE9PZz
+	YDavgIVE+9Q/YLaQQKbE6Y4ZTBBxQYmTM5+AxZkFtCRu/HsJFOcAsqUllv/jAAlzCthJTP/0
+	FWyXqICyxIFtx5lAdkkInGKXON48mxXiUEmJgytusExgFJiFZOwsJGNnIYxdwMi8ilEoM68s
+	NzEzx0QvozIvs0IvOT93EyMwbpfV/onewfjpQvAhRgEORiUeXo+CexlCrIllxZW5hxglOJiV
+	RHgTVtzJEOJNSaysSi3Kjy8qzUktPsQozcGiJM5r9K08RUggPbEkNTs1tSC1CCbLxMEp1cBo
+	t5XpVJTr48tRjoLbam90xLE0M28937Rq/9bMFm9zHd9+9mvlWx6KV7D/2Jmg+MdsSpCCpl7c
+	WXfR/4t1+38ZmfxZLrzFdkLMZdmACqFbNSf9PlxYKPHM2a2S6aNzT4+UduGN/+nc6dPWJr4P
+	yVkkoXNDz1+yw9O+obHbd5Ghy67ZTzTuZSuxFGckGmoxFxUnAgD+MoZN1wIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNIsWRmVeSWpSXmKPExsXC5WfdrFtpej/D4GanpsWc9WvYLHbdCLFY
+	37iO3eLr+l/MFj/vHme3uPj6D5PF/WXPWCyOb53HbnF47klWi+trjzJZXN41h83i3pr/rBbf
+	+qQtLkzsZbU4dO05q8WRN93MFr9/ACXnfjG0WL0mw+LL6lVsFrOP3mN3EPVYM28No8fOWXfZ
+	PfZMPMnm0d12md1j8wotj8V7XjJ5bPo0id1j4e8XzB4nZvxm8dj50NKjt/kdm8fHp7dYPN7v
+	u8rmcfc6UNm32x4ei198YAoQiuKySUnNySxLLdK3S+DKOPj2NUvBXcGKIx+XMTUw9vJ0MXJy
+	SAiYSJx5eIYFxGYRUJG437aPEcRmE1CXuHHjJzOILSKgIbGpbQOQzcXBLPCOWeLoilVgDcIC
+	4RLT28+B2bwCFhLtU/+A2UICmRKnO2YwQcQFJU7OfAIWZxbQkrjx7yVQnAPIlpZY/o8DJMwp
+	YCcx/dNXsF2iAsoSB7YdZ5rAyDsLSfcsJN2zELoXMDKvYhTJzCvLTczMMdUrzs6ozMus0EvO
+	z93ECIzCZbV/Ju5g/HLZ/RCjAAejEg+vR8G9DCHWxLLiytxDjBIczEoivAkr7mQI8aYkVlal
+	FuXHF5XmpBYfYpTmYFES5/UKT00QEkhPLEnNTk0tSC2CyTJxcEo1MLZsuqQfb2GRoHvSu23p
+	vy8RV+dpv3Zdc7JzXbGbsIHYwsDU1C9Pm5j36MeUhXtVHv24/fa2rQfuy/TvNWKfpf981rZH
+	DR2b9KtU3q6R6LK+oymidfpYX779gvDw3I4p3q/7zVfHvGux/ekhePrThOnHn4ZviOhfXlXA
+	e/PfHbnZsTFStyt/n1JiKc5INNRiLipOBAAgnFyIvgIAAA==
+X-CFilter-Loop: Reflected
 
-Added in commit cbefd24f0aee ("tools build: Add test to check if
-slang.h is in /usr/include/slang/") this feature was to fix build
-support on now unsupported versions of RHEL 5 and 6. As 6 years has
-passed let's remove the workaround.
+On Thu, Oct 02, 2025 at 01:38:59PM +0200, David Hildenbrand wrote:
+> > To simplify the scenario:
+> > 
+> 
+> Just curious, where is the __folio_start_writeback() to complete the
+> picture?
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/build/feature/Makefile                       | 4 ----
- tools/build/feature/test-libslang-include-subdir.c | 7 -------
- tools/perf/Makefile.config                         | 9 ++-------
- tools/perf/ui/libslang.h                           | 4 ----
- 4 files changed, 2 insertions(+), 22 deletions(-)
- delete mode 100644 tools/build/feature/test-libslang-include-subdir.c
+ext4_end_io_end() was running as a wq worker after the io completion.
 
-diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
-index fd304dc2aafd..a4b1e11c5807 100644
---- a/tools/build/feature/Makefile
-+++ b/tools/build/feature/Makefile
-@@ -33,7 +33,6 @@ FILES=                                          \
-          test-libperl.bin                       \
-          test-libpython.bin                     \
-          test-libslang.bin                      \
--         test-libslang-include-subdir.bin       \
-          test-libtraceevent.bin                 \
-          test-libcpupower.bin                   \
-          test-libtracefs.bin                    \
-@@ -229,9 +228,6 @@ $(OUTPUT)test-libunwind-debug-frame-aarch64.bin:
- $(OUTPUT)test-libslang.bin:
- 	$(BUILD) -lslang
- 
--$(OUTPUT)test-libslang-include-subdir.bin:
--	$(BUILD) -lslang
--
- $(OUTPUT)test-libtraceevent.bin:
- 	$(BUILD) -ltraceevent
- 
-diff --git a/tools/build/feature/test-libslang-include-subdir.c b/tools/build/feature/test-libslang-include-subdir.c
-deleted file mode 100644
-index 3ea47ec7590e..000000000000
---- a/tools/build/feature/test-libslang-include-subdir.c
-+++ /dev/null
-@@ -1,7 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--#include <slang/slang.h>
--
--int main(void)
--{
--	return SLsmg_init_smg();
--}
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index b0e15721c5a5..6e7c057b8ecf 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -773,15 +773,10 @@ endif
- 
- ifndef NO_SLANG
-   ifneq ($(feature-libslang), 1)
--    ifneq ($(feature-libslang-include-subdir), 1)
--      $(warning slang not found, disables TUI support. Please install slang-devel, libslang-dev or libslang2-dev)
--      NO_SLANG := 1
--    else
--      CFLAGS += -DHAVE_SLANG_INCLUDE_SUBDIR
--    endif
-+    $(warning slang not found, disables TUI support. Please install slang-devel, libslang-dev or libslang2-dev)
-+    NO_SLANG := 1
-   endif
-   ifndef NO_SLANG
--    # Fedora has /usr/include/slang/slang.h, but ubuntu /usr/include/slang.h
-     CFLAGS += -DHAVE_SLANG_SUPPORT
-     EXTLIBS += -lslang
-     $(call detected,CONFIG_SLANG)
-diff --git a/tools/perf/ui/libslang.h b/tools/perf/ui/libslang.h
-index 1dff3020e9d5..6722561e0458 100644
---- a/tools/perf/ui/libslang.h
-+++ b/tools/perf/ui/libslang.h
-@@ -15,11 +15,7 @@
- #define ENABLE_SLFUTURE_CONST 1
- #define ENABLE_SLFUTURE_VOID 1
- 
--#ifdef HAVE_SLANG_INCLUDE_SUBDIR
--#include <slang/slang.h>
--#else
- #include <slang.h>
--#endif
- 
- #define SL_KEY_UNTAB 0x1000
- 
--- 
-2.51.0.618.g983fd99d29-goog
+DEPT report can tell that the following scenario happened with
+__folio_start_writeback() called far earlier, at least, before
+folio_test_writeback() was seen as true, but unfortunately DEPT doesn't
+capture the exact location of __folio_start_writeback().
 
+	Byungchul
+
+> >     context X (wq worker)     context Y (process context)
+> > 
+> >                               migrate_pages_batch()
+> >     ext4_end_io_end()           ...
+> >       ...                       migrate_folio_unmap()
+> >       ext4_get_inode_loc()        ...
+> >         ...                       folio_lock() // hold the folio lock
+> >         bdev_getblk()             ...
+> >           ...                     folio_wait_writeback() // wait forever
+> >           __find_get_block_slow()
+> >             ...                           ...
+> >             folio_lock() // wait forever
+> >             folio_unlock()      migrate_folio_undo_src()
+> >                                   ...
+> >       ...                         folio_unlock() // never reachable
+> >       ext4_finish_bio()
+> >       ...
+> >       folio_end_writeback() // never reachable
+> > 
+> 
+> But aren't you implying that it should from this point on be disallowed
+> to call folio_wait_writeback() with the folio lock held? That sounds ...
+> a bit wrong.
+> 
+> Note that it is currently explicitly allowed: folio_wait_writeback()
+> documents "If the folio is not locked, writeback may start again after
+> writeback has finished.". So there is no way to prevent writeback from
+> immediately starting again.
+> 
+> In particular, wouldn't we have to fixup other callsites to make this
+> consistent and then VM_WARN_ON_ONCE() assert that in folio_wait_writeback()?
+> 
+> Of course, as we've never seen this deadlock before in practice, I do
+> wonder if something else prevents it?
+> 
+> If it's a real issue, I wonder if a trylock on the writeback path could
+> be an option.
+> 
+> --
+> Cheers
+> 
+> David / dhildenb
+> 
 
