@@ -1,511 +1,140 @@
-Return-Path: <linux-kernel+bounces-841236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9678BB6951
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 14:03:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8B34BB6960
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 14:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9F57E4EA62A
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 12:03:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 703424EBE2E
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 12:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB2D2ECD1D;
-	Fri,  3 Oct 2025 12:03:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F602ECD1D;
+	Fri,  3 Oct 2025 12:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kRMU8Afg"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="i2AX0r50"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E2228504B
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 12:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874E72ECD01
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 12:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759493011; cv=none; b=XtPurWI1gf2oF5mapWrj2hZpChBxVFtitKk4qwJU4eMuvHqeUvpOlVKBYnt+oY9Dn/uMFG9V/Si6qFvOWRRyOzCNSvdHULfNo5zp16jjS+L7XV7S94OKLKAojwPyYAwm+q26RB1xhmYG0Blc/SUlw2Vq1Pv3QgaD2nbzZ/owCn0=
+	t=1759493044; cv=none; b=tgVQC0fDiJO8T/B2NWLuEEtshJFopi+N8qNcziGzyfxe/VsvU0nTV1IcSt9nyIQW6FK8+Dx5Lwsl2Qm9FS7By05KUJ29NIGKFexVaFKd6KIzcG2rdz+FX1FUn/qdjZcuT9vx8y3ZzlhEcUnPpzh2iHA7WaqBB9D83xubm1Od1hA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759493011; c=relaxed/simple;
-	bh=yv+S/jnE7az3NpTH9ALrZjC5rcuBgoQb8XWCpPhTDX4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=Vu1ozlecPJXPoGumZj1s+SJIdeRMEJKQIeG3VBFIgEc6PUfZ2cIJpkQyEydBxlZJx1HQhY8jAxV6lnIj2h28Eq/tABIRmtxTcl768AKSppyCfye652wbJsmPmQx19GCz2XnozlmH7QrbRwTuIcUOtVtRTFNZtmOAOAN3aGB+UOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kRMU8Afg; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e33b260b9so21196885e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 05:03:29 -0700 (PDT)
+	s=arc-20240116; t=1759493044; c=relaxed/simple;
+	bh=yCCP5s9lTzTlxvPaMrvl2U2nWczarzv5lVR64JUY0XQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aZ5Rj3yb2HcJW+uWQXBS97HvGGqwLdIxZDNna5ENyUFD1R2CeJiUqErXgYHBJoQosSDkP0ZR0JkgasqJrKRxAeuSY9rR3mEOsW8FVh3BM+8H/M6bKdUb+Kb4C8QGV/FgdEU1Wi1dNmSbbEj/wMADUzHHUDbyhycXLUe92q0UYbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=i2AX0r50; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-85c66a8a462so306050585a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 05:04:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759493008; x=1760097808; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=g/yPmNq+D49WFMiq3UChUnkB5ipVol1o/yzWT8SNKXA=;
-        b=kRMU8AfgRRK87vuHOX7G+UB5Ylrl213q5v+XEh4opBsf2sV9nSRM7cDcrFj68UrOfW
-         OhFa9uywsFhFGn2WySOwHQ9WSqwiuw2YhQdMjNwstzS1Za2xVKu3ki4QRF606BVZPBJe
-         IbSgC1ZU3I5jvruBmJ7YQKbHsC3kt7V3+UfzAK05Et4zBcdyIhAIQeG1bKiqhbNUAX+D
-         K7d4BkqV6HoO2N22t9/4zgUROftgfmqhUxZxQ4ipQo37Bl6UhO0vEHcD/2x5HzYydVnn
-         troPh00PfQD2qtqYWgK5q0rE/JoGyLk1ZOVO3g5A6kYuG0Ei2GADbKFYVRWXztiXw70b
-         8eCg==
+        d=ziepe.ca; s=google; t=1759493041; x=1760097841; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vyK6EDMdZhWcTtV/wan5DW3m1OGhyAdsB4+u9LiW5EY=;
+        b=i2AX0r50q/9oVJ8tX94qI3pxl3kAvtWezIgySUen8HnwtgwH2n8nNzHoF70arI3bjK
+         QOFS7UAE4JjG3DId8KUUv+VY0n1bcVufOr1TD/bIsykp59nDi3avWz6fVJyTMM8YCr1v
+         PbVSrlu5VCZNp4sNea3ngiykrROoc2HUhNVNWTS8AiHG+HcPsoUuswI0JBOL2IhaZnxd
+         5ZAmCaBQecYpJyHS7LSFD6IZMdX/aiyebqFacWlV8FsyswOP2ICCrPxZgsfBJFIA2mKE
+         QY5Yy8jKo0NZUjzsFfmJs3yNIrMDticvDxS6Q2xz6s+EDYwQ2esBw+cohQCip7xUg82a
+         fb9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759493008; x=1760097808;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1759493041; x=1760097841;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g/yPmNq+D49WFMiq3UChUnkB5ipVol1o/yzWT8SNKXA=;
-        b=Ll1yDeZU4FOV916WQ+uNJkQRxIvm+5IBHX2g1Dc4URFm/JexMAuMrOG//b6RTiHnpF
-         NRcXDpB3iT1faAgE0iW9zVvdyvLH6r+9w4HBXLQrsyXwnwNPVZsc1o0fAsThiRXtSw0T
-         KTkufeLq0aHxtuxGMtax80zGPgoMSHbN7UPu+l+/Cj7ZpwJgsRF44umdLmes/Jx7ZkO2
-         /1MJDpEHoX9jy8cLKKs6RYnGEGMTIS9/zDK6ORGtRvgpTjIovcUevPQ6QzN8dKQo6i5D
-         SD38TVwZY9a+tYs45LpTeu5nwqliGFFShP9qD+EjY5ZKTuHICEYzTouWxodzU9DwYQbD
-         M5DA==
-X-Forwarded-Encrypted: i=1; AJvYcCVxXoxKfVwHo0SK15baTlk5nUEUTLxwrS7u507tFL6gqY8xUE/W+AeRlVg00ULBs3ebUsmRxsnm7Ck/yLQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVPJMUakjBZE61Lw6tnLBK4TnhiV40lslXOICvFmcDbPOZxi0o
-	l9MD8mYUKDNSHXEfg2XCHO64efknk+qjOTHSSkBcHijyGZFfKbSgvlJcAMZs8UgpfXc=
-X-Gm-Gg: ASbGnct4xycuSVDPKRttsSkDa0QM3q8gZcWN+ORuUf8EXAdJ+ExSYD+44CTz5B1Xw3C
-	n8msV2y5xyZxdo79SICqEOm+MRdDDLPu2NHSEHh7s9QOMsdmhD2RC5Mucob7XvWEKUILoYkr1XQ
-	6Qsmx3WUl8iL/8jFthWp2HQt1gTwBiyhY71vob+A83oenTMsDmylt63BSwnTlw2N47P4/udR3rf
-	kLyG98y4Uv2PiJcn64CIUnPhn9j3hOBNH1NvFB6JNkHU20MSuOdfTF41S9dcswmlz8eLaSj813Z
-	Lt3vSu8QFBqiEM8XalKRsLiunA+cwhUIvF770GawUHovdF7U6pzsNUj89i/kT8P/26CcEoJHnnD
-	71680mJ+UFnn+D3wH5IlnRgyLtR63OiZIneOPtqZc3Kt7P/YDiMrvMe3r
-X-Google-Smtp-Source: AGHT+IGiDvKHZeSwoGJi2fPM5QafQx+012inaI/gsWAWOkcZnCRwqejgLweqHyQP6YdFfaxSjF9h8g==
-X-Received: by 2002:a05:600c:4e01:b0:450:cabd:b4a9 with SMTP id 5b1f17b1804b1-46e711465d9mr19121825e9.29.1759493007359;
-        Fri, 03 Oct 2025 05:03:27 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e5c4afd27sm74467365e9.7.2025.10.03.05.03.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Oct 2025 05:03:26 -0700 (PDT)
-Message-ID: <4a49c58a-4b07-456c-a2e6-67d04b905944@linaro.org>
-Date: Fri, 3 Oct 2025 13:03:25 +0100
+        bh=vyK6EDMdZhWcTtV/wan5DW3m1OGhyAdsB4+u9LiW5EY=;
+        b=eCP+myrfJkk5RKU29397CpdcdjFGbPzxkIdVqa0CvQxzFQXzd4RTlUTLnKThq5UlLG
+         TtO7aQqtp25/JNe2/BgNrlY8imaduRlAMACHmvQ1/6najHuhxjX3WLKR7XDTdMoeAf5l
+         Lc+fzQJqqICc8X446Idn3gfyIDhIH35+HoNLSPVqevZkhmqvXZM/bsnutUos6B7027Gj
+         ZVi9K80XnYAvmojyS3Onmjfxx3XApzinrbFLtNQX1QasLtBRAXlxySX7SDmoEf0Z/1vS
+         BV4GQYXHwpITzNhC4ZS4jgwvdxBSUQyPCXp21vXtC3n89V9iW4FWewnlDwQ4nKyWuVKU
+         T6uA==
+X-Forwarded-Encrypted: i=1; AJvYcCWXdZYwgFz4gaxlk16bV+AUMPtNAEd0UPxWdut/McM5/qThHLLYXepKPMSp74ZmwmWpjOI4Tq6G4UekD0E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyilo7sh4E7ELPdIpdl7b2TtXIx776Mn8WRwZHUUOXKEctuguI/
+	VhE+K9/d/LdmrJhgDv4BHXRBMXNc733zmAVGF7zK/p3vXz28vKrQznnykwqahCavh0o=
+X-Gm-Gg: ASbGnct1xiDSQcCyjJtKN1dJT+CgrNGGuEyCsvy2xd5EflA5biYbD0FgGpiCkbJ921G
+	vC8hhozqPFi99XXJaj0zlFlFN2/kOuXAs33/iVB4G5KReenvtPWcggEqjibLPmG0or1MF8lzhD1
+	ANBBADywNMDlyDFi8f50RBBfU2MkkJC4twCHbQmqWg4XTbtkFuqFTA9N4kK/vMH6NgQUyRjWaOi
+	iE4YEWLPmo55HBQCeQ4+Anx+yiOxMfruvN/Er1LC6FpkZQoXgl981meGSXe9R+CnD3RigJ0k6k3
+	YggxJU45Dj+27rErlzefdLvDi/quHSIkxEqjKdjoVdXyljJifkRQkvw7tV6aUPSyD9tvIMnn4AG
+	4rNxXsu3m3FKRX6Bz1b2uirbnOCOH5HDwRILVloqJk3Ii6V7qxaM6Ymb0nHDmG3LUXkSp2g51AF
+	jtGomhBT/z4sk4MaVp
+X-Google-Smtp-Source: AGHT+IG9u6J/XxiDHAEh0uQ+ECKUfFxeEFaK0PE7MiU6DsChuKmxi8Y6PiMSOlaUnZoft+5pp0GGAA==
+X-Received: by 2002:a05:620a:4101:b0:870:6891:9c1c with SMTP id af79cd13be357-87a37ea1664mr359649085a.35.1759493041309;
+        Fri, 03 Oct 2025 05:04:01 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e55cadcecdsm39906701cf.23.2025.10.03.05.03.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Oct 2025 05:03:59 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1v4eVy-0000000E4mn-3rSP;
+	Fri, 03 Oct 2025 09:03:58 -0300
+Date: Fri, 3 Oct 2025 09:03:58 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: David Matlack <dmatlack@google.com>
+Cc: Chris Li <chrisl@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-acpi@vger.kernel.org, Pasha Tatashin <tatashin@google.com>,
+	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Adithya Jayachandran <ajayachandra@nvidia.com>,
+	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>,
+	Mike Rapoport <rppt@kernel.org>, Leon Romanovsky <leon@kernel.org>
+Subject: Re: [PATCH v2 03/10] PCI/LUO: Forward prepare()/freeze()/cancel()
+ callbacks to driver
+Message-ID: <20251003120358.GL3195829@ziepe.ca>
+References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
+ <20250916-luo-pci-v2-3-c494053c3c08@kernel.org>
+ <20250929174831.GJ2695987@ziepe.ca>
+ <CAF8kJuNZPYxf2LYTPYVzho_NM-Rtp8i+pP3bFTwkM_h3v=LwbQ@mail.gmail.com>
+ <20250930163837.GQ2695987@ziepe.ca>
+ <aN7KUNGoHrFHzagu@google.com>
+ <CACePvbX6GfThDnwLdOUsdQ_54eqF3Ff=4hrGhDJ0Ba00-Q1qBw@mail.gmail.com>
+ <CALzav=cKoG4QLp6YtqMLc9S_qP6v9SpEt5XVOmJN8WVYLxRmRw@mail.gmail.com>
+ <20251002232153.GK3195829@ziepe.ca>
+ <CALzav=cYBmn_t1w2jHicSbnX57whJYD9Cu84KJekL0n2gZxfmw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] perf stat: Refactor retry/skip/fatal error
- handling
-To: Ian Rogers <irogers@google.com>
-References: <20251002220727.1889799-1-irogers@google.com>
- <20251002220727.1889799-2-irogers@google.com>
-Content-Language: en-US
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Howard Chu <howardchu95@gmail.com>,
- Thomas Falcon <thomas.falcon@intel.com>, Chun-Tse Shao <ctshao@google.com>,
- Dapeng Mi <dapeng1.mi@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20251002220727.1889799-2-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALzav=cYBmn_t1w2jHicSbnX57whJYD9Cu84KJekL0n2gZxfmw@mail.gmail.com>
 
+On Thu, Oct 02, 2025 at 04:42:17PM -0700, David Matlack wrote:
+> On Thu, Oct 2, 2025 at 4:21 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> > On Thu, Oct 02, 2025 at 02:31:08PM -0700, David Matlack wrote:
+> > > And we don't care about PF drivers until we get to
+> > > supporting SR-IOV. So the driver callbacks all seem unnecessary at
+> > > this point.
+> >
+> > I guess we will see, but I'm hoping we can get quite far using
+> > vfio-pci as the SRIOV PF driver and don't need to try to get a big PF
+> > in-kernel driver entangled in this.
+> 
+> So far we have had to support vfio-pci, pci-pf-stub, and idpf as PF
+> drivers, and nvme looks like it's coming soon :(
 
+How much effort did you put into moving them to vfio though? Hack Hack
+in the kernel is easy, but upstreaming may be very hard :\
 
-On 02/10/2025 11:07 pm, Ian Rogers wrote:
-> For the sake of Intel topdown events commit 9eac5612da1c ("perf stat:
-> Don't skip failing group events") changed perf stat error handling
-> making it so that more errors were fatal and didn't report "<not
-> supported>" events. The change outside of topdown events was
-> unintentional.
-> 
-> The notion of "fatal" error handling was introduced in commit
-> e0e6a6ca3ac2 ("perf stat: Factor out open error handling") and refined
-> in commits like commit cb5ef60067c1 ("perf stat: Error out unsupported
-> group leader immediately) to be an approach for avoiding later
-> assertion failures in the code base. This change fixes those issues
-> and removes the notion of a fatal error on an event. If all events
-> fail to open then a fatal error occurs with the previous fatal error
-> message. This seems to best match the notion of supported events and
-> allowing some errors not to stop perf stat, while allowing the truly
-> fatal no event case to terminate the tool early.
-> 
-> The evsel->errored flag is only used in the stat code but always just
-> meaning !evsel->supported although there is a comment about it being
-> sticky. Force all evsels to be supported in evsel__init and then clear
-> this when evsel__open fails. When an event is tried the supported is
-> set to true again. This simplifies the notion of whether an evsel is
-> broken.
-> 
-> In the get_group_fd code, fail to get a group fd when the evsel isn't
-> supported. If the leader isn't supported then it is also expected that
-> there is no group_fd as the leader will have been skipped. Therefore
-> change the BUG_ON test to be on supported rather than skippable. This
-> corrects the assertion errors that were the reason for the previous
-> fatal error handling.
-> 
-> Fixes: 9eac5612da1c ("perf stat: Don't skip failing group events")
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
-> v2: Missed setting supported for weak groups. When no supported
->      events, report the error on the first event in the evlist.
-> 
-> An earlier version of this fix exists in:
-> https://lore.kernel.org/lkml/20250923223312.238185-2-irogers@google.com/
-> This version is more thorough and tries to make the overall code base
-> more consistent.
-> ---
+Shutting down enough of the PF kernel driver to safely kexec is almost
+the same as unbinding it completely.
 
-Reviewed-by: James Clark <james.clark@linaro.org>
-
->   tools/perf/builtin-record.c |   2 -
->   tools/perf/builtin-stat.c   | 123 +++++++++++++++---------------------
->   tools/perf/util/evsel.c     |  40 +++++++-----
->   tools/perf/util/evsel.h     |   1 -
->   4 files changed, 76 insertions(+), 90 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> index 7ea3a11aca70..d76f01956e33 100644
-> --- a/tools/perf/builtin-record.c
-> +++ b/tools/perf/builtin-record.c
-> @@ -1408,8 +1408,6 @@ static int record__open(struct record *rec)
->   			ui__error("%s\n", msg);
->   			goto out;
->   		}
-> -
-> -		pos->supported = true;
->   	}
->   
->   	if (symbol_conf.kptr_restrict && !evlist__exclude_kernel(evlist)) {
-> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> index 75b9979c6c05..7006f848f87a 100644
-> --- a/tools/perf/builtin-stat.c
-> +++ b/tools/perf/builtin-stat.c
-> @@ -610,22 +610,13 @@ static int dispatch_events(bool forks, int timeout, int interval, int *times)
->   enum counter_recovery {
->   	COUNTER_SKIP,
->   	COUNTER_RETRY,
-> -	COUNTER_FATAL,
->   };
->   
->   static enum counter_recovery stat_handle_error(struct evsel *counter, int err)
->   {
->   	char msg[BUFSIZ];
->   
-> -	if (counter->skippable) {
-> -		if (verbose > 0) {
-> -			ui__warning("skipping event %s that kernel failed to open .\n",
-> -				    evsel__name(counter));
-> -		}
-> -		counter->supported = false;
-> -		counter->errored = true;
-> -		return COUNTER_SKIP;
-> -	}
-> +	assert(!counter->supported);
->   
->   	/*
->   	 * PPC returns ENXIO for HW counters until 2.6.37
-> @@ -636,19 +627,16 @@ static enum counter_recovery stat_handle_error(struct evsel *counter, int err)
->   			ui__warning("%s event is not supported by the kernel.\n",
->   				    evsel__name(counter));
->   		}
-> -		counter->supported = false;
-> -		/*
-> -		 * errored is a sticky flag that means one of the counter's
-> -		 * cpu event had a problem and needs to be reexamined.
-> -		 */
-> -		counter->errored = true;
-> -	} else if (evsel__fallback(counter, &target, err, msg, sizeof(msg))) {
-> +		return COUNTER_SKIP;
-> +	}
-> +	if (evsel__fallback(counter, &target, err, msg, sizeof(msg))) {
->   		if (verbose > 0)
->   			ui__warning("%s\n", msg);
-> +		counter->supported = true;
->   		return COUNTER_RETRY;
-> -	} else if (target__has_per_thread(&target) && err != EOPNOTSUPP &&
-> -		   evsel_list->core.threads &&
-> -		   evsel_list->core.threads->err_thread != -1) {
-> +	}
-> +	if (target__has_per_thread(&target) && err != EOPNOTSUPP &&
-> +	    evsel_list->core.threads && evsel_list->core.threads->err_thread != -1) {
->   		/*
->   		 * For global --per-thread case, skip current
->   		 * error thread.
-> @@ -656,24 +644,17 @@ static enum counter_recovery stat_handle_error(struct evsel *counter, int err)
->   		if (!thread_map__remove(evsel_list->core.threads,
->   					evsel_list->core.threads->err_thread)) {
->   			evsel_list->core.threads->err_thread = -1;
-> +			counter->supported = true;
->   			return COUNTER_RETRY;
->   		}
-> -	} else if (err == EOPNOTSUPP) {
-> -		if (verbose > 0) {
-> -			ui__warning("%s event is not supported by the kernel.\n",
-> -				    evsel__name(counter));
-> -		}
-> -		counter->supported = false;
-> -		counter->errored = true;
->   	}
-> -
-> -	evsel__open_strerror(counter, &target, err, msg, sizeof(msg));
-> -	ui__error("%s\n", msg);
-> -
-> -	if (child_pid != -1)
-> -		kill(child_pid, SIGTERM);
-> -
-> -	return COUNTER_FATAL;
-> +	if (verbose > 0) {
-> +		ui__warning(err == EOPNOTSUPP
-> +			? "%s event is not supported by the kernel.\n"
-> +			: "skipping event %s that kernel failed to open.\n",
-> +			evsel__name(counter));
-> +	}
-> +	return COUNTER_SKIP;
->   }
->   
->   static int create_perf_stat_counter(struct evsel *evsel,
-> @@ -746,8 +727,8 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
->   	bool is_pipe = STAT_RECORD ? perf_stat.data.is_pipe : false;
->   	struct evlist_cpu_iterator evlist_cpu_itr;
->   	struct affinity saved_affinity, *affinity = NULL;
-> -	int err;
-> -	bool second_pass = false;
-> +	int err, open_err = 0;
-> +	bool second_pass = false, has_supported_counters;
->   
->   	if (forks) {
->   		if (evlist__prepare_workload(evsel_list, &target, argv, is_pipe, workload_exec_failed_signal) < 0) {
-> @@ -787,14 +768,17 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
->   		if (target.use_bpf)
->   			break;
->   
-> -		if (counter->reset_group || counter->errored)
-> +		if (counter->reset_group || !counter->supported)
->   			continue;
->   		if (evsel__is_bperf(counter))
->   			continue;
-> -try_again:
-> -		if (create_perf_stat_counter(counter, &stat_config,
-> -					     evlist_cpu_itr.cpu_map_idx) < 0) {
->   
-> +		while (true) {
-> +			if (create_perf_stat_counter(counter, &stat_config,
-> +						     evlist_cpu_itr.cpu_map_idx) == 0)
-> +				break;
-> +
-> +			open_err = errno;
->   			/*
->   			 * Weak group failed. We cannot just undo this here
->   			 * because earlier CPUs might be in group mode, and the kernel
-> @@ -802,29 +786,19 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
->   			 * it to later.
->   			 * Don't close here because we're in the wrong affinity.
->   			 */
-> -			if ((errno == EINVAL || errno == EBADF) &&
-> +			if ((open_err == EINVAL || open_err == EBADF) &&
->   				evsel__leader(counter) != counter &&
->   				counter->weak_group) {
->   				evlist__reset_weak_group(evsel_list, counter, false);
->   				assert(counter->reset_group);
-> +				counter->supported = true;
->   				second_pass = true;
-> -				continue;
-> -			}
-> -
-> -			switch (stat_handle_error(counter, errno)) {
-> -			case COUNTER_FATAL:
-> -				err = -1;
-> -				goto err_out;
-> -			case COUNTER_RETRY:
-> -				goto try_again;
-> -			case COUNTER_SKIP:
-> -				continue;
-> -			default:
->   				break;
->   			}
->   
-> +			if (stat_handle_error(counter, open_err) != COUNTER_RETRY)
-> +				break;
->   		}
-> -		counter->supported = true;
->   	}
->   
->   	if (second_pass) {
-> @@ -837,7 +811,7 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
->   		evlist__for_each_cpu(evlist_cpu_itr, evsel_list, affinity) {
->   			counter = evlist_cpu_itr.evsel;
->   
-> -			if (!counter->reset_group && !counter->errored)
-> +			if (!counter->reset_group && counter->supported)
->   				continue;
->   
->   			perf_evsel__close_cpu(&counter->core, evlist_cpu_itr.cpu_map_idx);
-> @@ -848,34 +822,29 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
->   
->   			if (!counter->reset_group)
->   				continue;
-> -try_again_reset:
-> -			pr_debug2("reopening weak %s\n", evsel__name(counter));
-> -			if (create_perf_stat_counter(counter, &stat_config,
-> -						     evlist_cpu_itr.cpu_map_idx) < 0) {
-> -
-> -				switch (stat_handle_error(counter, errno)) {
-> -				case COUNTER_FATAL:
-> -					err = -1;
-> -					goto err_out;
-> -				case COUNTER_RETRY:
-> -					goto try_again_reset;
-> -				case COUNTER_SKIP:
-> -					continue;
-> -				default:
-> +
-> +			while (true) {
-> +				pr_debug2("reopening weak %s\n", evsel__name(counter));
-> +				if (create_perf_stat_counter(counter, &stat_config,
-> +							     evlist_cpu_itr.cpu_map_idx) == 0)
-> +					break;
-> +
-> +				open_err = errno;
-> +				if (stat_handle_error(counter, open_err) != COUNTER_RETRY)
->   					break;
-> -				}
->   			}
-> -			counter->supported = true;
->   		}
->   	}
->   	affinity__cleanup(affinity);
->   	affinity = NULL;
->   
-> +	has_supported_counters = false;
->   	evlist__for_each_entry(evsel_list, counter) {
->   		if (!counter->supported) {
->   			perf_evsel__free_fd(&counter->core);
->   			continue;
->   		}
-> +		has_supported_counters = true;
->   
->   		l = strlen(counter->unit);
->   		if (l > stat_config.unit_width)
-> @@ -887,6 +856,16 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
->   			goto err_out;
->   		}
->   	}
-> +	if (!has_supported_counters) {
-> +		evsel__open_strerror(evlist__first(evsel_list), &target, open_err,
-> +				     msg, sizeof(msg));
-> +		ui__error("No supported events found.\n%s\n", msg);
-> +
-> +		if (child_pid != -1)
-> +			kill(child_pid, SIGTERM);
-> +		err = -1;
-> +		goto err_out;
-> +	}
->   
->   	if (evlist__apply_filters(evsel_list, &counter, &target)) {
->   		pr_err("failed to set filter \"%s\" on event %s with %d (%s)\n",
-> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> index 1a29d4f47bbf..fe93f11cf3d1 100644
-> --- a/tools/perf/util/evsel.c
-> +++ b/tools/perf/util/evsel.c
-> @@ -407,6 +407,7 @@ void evsel__init(struct evsel *evsel,
->   	evsel->collect_stat  = false;
->   	evsel->group_pmu_name = NULL;
->   	evsel->skippable     = false;
-> +	evsel->supported     = true;
->   	evsel->alternate_hw_config = PERF_COUNT_HW_MAX;
->   	evsel->script_output_type = -1; // FIXME: OUTPUT_TYPE_UNSET, see builtin-script.c
->   }
-> @@ -1941,7 +1942,7 @@ static int get_group_fd(struct evsel *evsel, int cpu_map_idx, int thread)
->   	struct evsel *leader = evsel__leader(evsel);
->   	int fd;
->   
-> -	if (evsel__is_group_leader(evsel))
-> +	if (!evsel->supported || evsel__is_group_leader(evsel))
->   		return -1;
->   
->   	/*
-> @@ -1955,7 +1956,7 @@ static int get_group_fd(struct evsel *evsel, int cpu_map_idx, int thread)
->   		return -1;
->   
->   	fd = FD(leader, cpu_map_idx, thread);
-> -	BUG_ON(fd == -1 && !leader->skippable);
-> +	BUG_ON(fd == -1 && leader->supported);
->   
->   	/*
->   	 * When the leader has been skipped, return -2 to distinguish from no
-> @@ -2573,12 +2574,14 @@ static int evsel__open_cpu(struct evsel *evsel, struct perf_cpu_map *cpus,
->   	enum rlimit_action set_rlimit = NO_CHANGE;
->   	struct perf_cpu cpu;
->   
-> -	if (evsel__is_retire_lat(evsel))
-> -		return evsel__tpebs_open(evsel);
-> +	if (evsel__is_retire_lat(evsel)) {
-> +		err = evsel__tpebs_open(evsel);
-> +		goto out;
-> +	}
->   
->   	err = __evsel__prepare_open(evsel, cpus, threads);
->   	if (err)
-> -		return err;
-> +		goto out;
->   
->   	if (cpus == NULL)
->   		cpus = empty_cpu_map;
-> @@ -2598,19 +2601,22 @@ static int evsel__open_cpu(struct evsel *evsel, struct perf_cpu_map *cpus,
->   	display_attr(&evsel->core.attr);
->   
->   	if (evsel__is_tool(evsel)) {
-> -		return evsel__tool_pmu_open(evsel, threads,
-> -					    start_cpu_map_idx,
-> -					    end_cpu_map_idx);
-> +		err = evsel__tool_pmu_open(evsel, threads,
-> +					   start_cpu_map_idx,
-> +					   end_cpu_map_idx);
-> +		goto out;
->   	}
->   	if (evsel__is_hwmon(evsel)) {
-> -		return evsel__hwmon_pmu_open(evsel, threads,
-> -					     start_cpu_map_idx,
-> -					     end_cpu_map_idx);
-> +		err = evsel__hwmon_pmu_open(evsel, threads,
-> +					    start_cpu_map_idx,
-> +					    end_cpu_map_idx);
-> +		goto out;
->   	}
->   	if (evsel__is_drm(evsel)) {
-> -		return evsel__drm_pmu_open(evsel, threads,
-> -					   start_cpu_map_idx,
-> -					   end_cpu_map_idx);
-> +		err = evsel__drm_pmu_open(evsel, threads,
-> +					  start_cpu_map_idx,
-> +					  end_cpu_map_idx);
-> +		goto out;
->   	}
->   
->   	for (idx = start_cpu_map_idx; idx < end_cpu_map_idx; idx++) {
-> @@ -2689,7 +2695,8 @@ static int evsel__open_cpu(struct evsel *evsel, struct perf_cpu_map *cpus,
->   		}
->   	}
->   
-> -	return 0;
-> +	err = 0;
-> +	goto out;
->   
->   try_fallback:
->   	if (evsel__ignore_missing_thread(evsel, perf_cpu_map__nr(cpus),
-> @@ -2728,6 +2735,9 @@ static int evsel__open_cpu(struct evsel *evsel, struct perf_cpu_map *cpus,
->   		thread = nthreads;
->   	} while (--idx >= 0);
->   	errno = old_errno;
-> +out:
-> +	if (err)
-> +		evsel->supported = false;
->   	return err;
->   }
->   
-> diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-> index 03f9f22e3a0c..1ad0b3fcd559 100644
-> --- a/tools/perf/util/evsel.h
-> +++ b/tools/perf/util/evsel.h
-> @@ -121,7 +121,6 @@ struct evsel {
->   	bool			forced_leader;
->   	bool			cmdline_group_boundary;
->   	bool			reset_group;
-> -	bool			errored;
->   	bool			needs_auxtrace_mmap;
->   	bool			default_metricgroup; /* A member of the Default metricgroup */
->   	bool			needs_uniquify;
-
+Jason
 
