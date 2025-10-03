@@ -1,269 +1,156 @@
-Return-Path: <linux-kernel+bounces-840893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DAB9BB5ABC
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:21:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFD4ABB5AC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 031B93C554A
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:21:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA7E43BCDC2
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C83C1684B4;
-	Fri,  3 Oct 2025 00:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC6D72612;
+	Fri,  3 Oct 2025 00:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MmGW/2GY"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DylSLvJ0"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3911A3BB5A
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 00:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3597261D
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 00:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759450856; cv=none; b=kUnhJdvvWqEXeqGGAiYTHOmZ+/j1xzjww1WcuMUXvYquj9kH6cPkECmK0+AzMnpUFXxw3927EiCtDz7rwqrjJesJFSAL6z8xMpZ19qei3I7yKV6x08FnQmqcD4aj4l1duI5Q0IkKMCa/t9+WZQ5GBDwSPxiOXZqvwh9q9ZIi9YA=
+	t=1759451003; cv=none; b=R+mQ7jQJGSMa56zr+bbhPiMJ2YhKNHdDhPPvKn2hbvfQbyRp5RkjbMF+xmYPKeRvFeQDAEPOW7zPayCUYg+5xJtdSIcjzNSUDHIRaygQ7bBtHcPo1jsz8GFY7ig39au5Dz1Y7W6+IEXWTKR9bXEXy6dNW4D6G+ZnaPXjBmh8u20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759450856; c=relaxed/simple;
-	bh=3cyjRiL4lcUmndU7o/wfFQ0HYsbwM9Aydw3J2N8yu/s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AGb6S/crCiA015MvfacNZLrNdOJMXrK9GsvbdSVV0kyYwvXUNRHeJNSHI0aac4EiKSD/Web1AOTGgTVjlrjmdhG2j2+R5kAeXmMpc0pHQlgybC4lxPFhOXIZ2PlWDj8c8C/LbCoZxAReMd7jLLKajFIhyodc1alu6GsqixX3VUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MmGW/2GY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 592M0470022972
-	for <linux-kernel@vger.kernel.org>; Fri, 3 Oct 2025 00:20:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=QoLaMgeORBf
-	SIAcGQOIMWfUaR1zLHwTW+Dns9so/XPY=; b=MmGW/2GYt1ar2ymIaZ88SxhBtKj
-	t+TdL5Pi3Z/GbZ6ddoObgL0PS8XbaiFtKUhh/NhZLv/PTPzhESJOvPQgzdKtziqK
-	oAwhPxBVPBbYYXdv2j/rM2KRHycLSFwrp9qhWQispPqggImVg7w4yIN3yP8OhePT
-	mwWED7WKUulLnnUE4oCvBQLbX0PPXfmc2qdICVq+E78PpnbewaTwPwbDU5ik4cdb
-	jhAskZavb6Eup1OGUXRhdlzGtMS4keTFN6SZlW4gbLsZpKORB1AcUEeZ1EETaSI8
-	7o/W3ZM9VWS2KJNWihGBKv/bBDFpO8+qByfXGXkxN3CsXDu0JMTE8acuIng==
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e59n9r1s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 00:20:50 +0000 (GMT)
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b5a013bc46dso1181637a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 17:20:49 -0700 (PDT)
+	s=arc-20240116; t=1759451003; c=relaxed/simple;
+	bh=r37B0Tr7c28GNhgMVubxeVdQbc6QoeOEoXXZOXq+bH0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a2jjw/sn8pbFS6veeF6FlvQR0gTJ2p/y5ttXPKesnnESHMx0WzrQmkIX9m0S2+KMgJr4KdCmUfLccqbAwHNL5DHDELRQC3Jy6ldTj6NkdsF6/T6Y4AuzUCnVyGEY3Lc+nEeGKPJZtNsiMhGCsKLtu3JVSTC4ntxN4d0GA9xQYGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DylSLvJ0; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-71d71bcab6fso17990867b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 17:23:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759450997; x=1760055797; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UogbRmh8ZZFm/yaTOGh0nQGpaUOSHHMMlYpMQ7rZnx8=;
+        b=DylSLvJ0l/EK+R6/SbYWbuQPjqNrbwZus4TwCwHV4vFmOohbnyXzL37Tpw9pMJE0J9
+         bzzm4kBZqb1RFt4MXgBwEIBQzYYJ0sRhJi2qPe4IvE31R5krOEu1RG4VUcsqsJGFFJfY
+         9ak7i9CWcDEq4m8ilc1EX1KQafKtFqoIkwD8IFtUJUe1k/HE6ySoQGD5huRcGfLtaJwW
+         F7/Wf1Nw+Zo3fQfJQA+3WkwF7WU0OvEOFjoII47+DQbmUHtznu0gPuzq4Q3/wiJCVm7o
+         9+CRfZu+nG32m8XdAyCYJe4B/WPpkB4ZlMsMTkR7M4YhVuHd84lCZ015jUEorvxmZqXQ
+         GnTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759450849; x=1760055649;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1759450997; x=1760055797;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QoLaMgeORBfSIAcGQOIMWfUaR1zLHwTW+Dns9so/XPY=;
-        b=F1vy2t2Lyq04lUpjsN1OU2Y0C/i+3pZnLVfXW8b4FS0vm03ej9TWNcGWRjoGqtxAJC
-         6GtU5v+DMYrxxKs5EObC8aPPWhmj3ErErkaExPoB9g7OG0UAhS7gGTL0EONG+BVJGBNL
-         qghZdwzy/DL1hFZb18HRpkbq0X4sQqKGXIss5SDkOECyIhAWGIAOLbnoOcGR7ZFNiqoz
-         n9sydsz4vYLUD92854vnrvVOK5hgA5B1ZR6pqzt8qnF5tBoVsz0MIFd4jA8elExXJdqP
-         5nnEw+3RemUKdBxnxmHI+ZtsVIIOiI3iqEvYjTZ14Hazt+FcqUr3v+4RH/3jpt8ID90e
-         XkMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVt1sHJhWguKwOWhS3oyxhw5dCS6m3ghzQhAuWrO6EpVV961EnU9tS0w3cdTmHT4Zu8bYbSDcjTcBgTroA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLRxO16xpnUNA4Cc6YxPAu9Zx69KhRFmQybCKl2Xlnd0fxrou3
-	MHqddIjawMliC6HpHihTzn2c19WuYsjL45rLU0eJw4Pd1gH/bQU1q+fiFBqt48iggQZk8zZPG1z
-	XWm4VM55aEQDFO7Hh5uJiUk89rtMnH+Jk9r08uxDQLW1WLs+N9LbIH3PXs+OwO2Olu1c=
-X-Gm-Gg: ASbGnctVvVgcs568Zyo5g1ivcAsnZmc+hQ8y+V4tmmh0cyvIyskjNWdDNXIEhr0ko6z
-	JTHvPOHVpyKS2ckxNwRlFlCjVlgwr3bCBRZHWDyKnkZ1UzyhxwVgiatGlWUFwXu4LV2dsMxFEoH
-	zDF3CRLyvbVrjVmJ7XjWnIDIGfttZqAuYVH7xtv2Tr+t03UIDxYMyq5q8gaS+a+zd9FzR0QF1O4
-	jrPxIGXadiHtRo8CtrcJ7bt6lGg750qxcJsslipnyl18db6PVXMFak5xum0238zRgyIPBYgNk3o
-	hJ3T6vtc/i+3EycxVouDBzoNp96w4R+5zbQ79aUpt8XaCKsd8MOBfh7PIYyqlPXWMI0r8dVX18S
-	B3uU8KtcPme2jluugIEVLnvziBqrjFvAh
-X-Received: by 2002:a05:6a20:7d9c:b0:2c5:f4a:8839 with SMTP id adf61e73a8af0-32b6213ef51mr1369051637.60.1759450848693;
-        Thu, 02 Oct 2025 17:20:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHhVZuqJXzaWO1w4N5q8KAOpGa6PrhujnxtMK9xFie0UJw2QokcxvzbXUoAjFLCXAyjh9SGVA==
-X-Received: by 2002:a05:6a20:7d9c:b0:2c5:f4a:8839 with SMTP id adf61e73a8af0-32b6213ef51mr1369025637.60.1759450848202;
-        Thu, 02 Oct 2025 17:20:48 -0700 (PDT)
-Received: from hu-amelende-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b01f9a3f1sm3128632b3a.12.2025.10.02.17.20.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 17:20:47 -0700 (PDT)
-From: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
-To: heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org
-Cc: lumag@kernel.org, neil.armstrong@linaro.org, johan+linaro@kernel.org,
-        quic_bjorande@quicinc.com, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: [PATCH v5 2/2] usb: typec: ucsi_glink: Increase buffer size to support UCSI v2
-Date: Thu,  2 Oct 2025 17:20:44 -0700
-Message-Id: <20251003002044.2944497-3-anjelique.melendez@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251003002044.2944497-1-anjelique.melendez@oss.qualcomm.com>
-References: <20251003002044.2944497-1-anjelique.melendez@oss.qualcomm.com>
+        bh=UogbRmh8ZZFm/yaTOGh0nQGpaUOSHHMMlYpMQ7rZnx8=;
+        b=OVKAl5EBQac5JgkKuvocl9a+qoJrubTC0L0IJUpRf2kyUczbMAxgkSxxHqCLhGKpks
+         Ltye3+HTgFz8EeJoja3i7cZoQSemebDiiOoNj5/CVWuHk0iQIu4e1u7+LYggSoMyHOX2
+         bC9644l8Wni98rQEsLkjWjTrFZBJeo3bFlMoxmjEQ4ZHR2unQq2+2Ou7gMwdC/k8KJqK
+         +XpNfz+o3nRYK1i9e+XFq4gjmhiRfcOhBIHGBH2aRx9KKAqhSY3ygTwDOncke/BDr+b1
+         o9YDik7TGc3tUbW1fLBj2uPU9y2gL/lE+9nxeW9DabcnWThh8oUz9hUZN8uFK6J0BRwz
+         O+Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCWRcOhO667andanwqBGvLSfAPmNH2ezUF5Oqs771X0jEG2CG8HVVUMxZ3arJk/7r6/5/V+A0BfAbyDDV4M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm+aFACPl9fRcERL4hVm2H+Cb/5GrViPYL4k9Qfz+KVFEi1Ygj
+	gCLjXx7LlY8S2nV1N/ZsWeNKi3dWb1+92C/1f9A7GHio/tEMlkOMzp8VOVA8ww5QUfXvALnO+J9
+	HEXmPJcGrRLvM1a1BFPDpOnhR8FqB2/0=
+X-Gm-Gg: ASbGncu3vAPJq0Rz0tzqrrZembfSf/TsLteb3g74E1FAWGJRZ/lQelSd3nVTD7cmdUV
+	2sAcr19ek3NDtEjjelGQm5rXZKzl6fnQg7Rw+m+AFGd9qYfzTKhlNSAJVvVA7eAWkdbO7RXKe5q
+	TChpqZ7KOlFkWcGN+yYl34gsWr1hGvywWC6iz2Bu8CESIMDHjOzEJa9wJ77fcVBLCKPt/X0wE7x
+	1B6/gyzfvANpugE57EeHr0aZbZI9dMsKgEBl+99DXicGeW5AVmPBcVGT09uxVnKTQHZgSah8loP
+	m/brW5f2S5J9UtFGeTHg
+X-Google-Smtp-Source: AGHT+IHOLdaIHo5P2VOGhm5KkYSe5owt52O+0aQI4TZI+V6q/b0CuBZtjoShHyYCEalYDt7A3qdiiKgFGQuVvZwB5NE=
+X-Received: by 2002:a05:690e:2404:b0:627:86de:ac9f with SMTP id
+ 956f58d0204a3-63b9a074c43mr1120484d50.12.1759450996803; Thu, 02 Oct 2025
+ 17:23:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: xoy-sICoeCQN_0Ult3XN4ikEJqnttzNm
-X-Authority-Analysis: v=2.4 cv=O4g0fR9W c=1 sm=1 tr=0 ts=68df16e2 cx=c_pps
- a=rz3CxIlbcmazkYymdCej/Q==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=bL7WY3GH-9A0ZCLeatoA:9
- a=bFCP_H2QrGi7Okbo017w:22
-X-Proofpoint-ORIG-GUID: xoy-sICoeCQN_0Ult3XN4ikEJqnttzNm
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAwMSBTYWx0ZWRfX69zCAWSn1sqk
- w/6XkJD2LXSONKtcBh42iKI9ueHMgwYQTpQ05yWxTmuRgKhW44ia4BR++x7W20HtsdrtsIar9pP
- /+GFSCzN/d3X4WJqrWg+7tlXdQATVmBqT0Nm3VFXo8IR3Ilhxl97kAb/iEUaxXaK67fClw1l1y7
- zQUlpkKM/emW4oaCQ5yOxa2HrEeg+Kj68Z4OLMMBW16v8ybldhh82lraTWdTBnjV6oPn5FEwdjp
- fsB+c3WaRN9liYU4aTWBQbea9amNPvp6wSsxo5axhX1dELh8q8YcMYe3c7kcE2esjFkABBWvH1P
- ZXMkI7rasVB630OHvz1h44px5zcCnse5Dtik50vgmWCrun4ct4FfozQ69X2Mac63MdwssrrXvUC
- M7Cu47LqZdiu2DMRA4TxnYYC9zSpow==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-02_09,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 phishscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
- spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270001
+References: <20250916210823.4033529-1-olvaffe@gmail.com> <20250916210823.4033529-8-olvaffe@gmail.com>
+ <74e2f1a8-0410-4a5e-bbf3-29d5d5d55308@arm.com>
+In-Reply-To: <74e2f1a8-0410-4a5e-bbf3-29d5d5d55308@arm.com>
+From: Chia-I Wu <olvaffe@gmail.com>
+Date: Thu, 2 Oct 2025 17:23:06 -0700
+X-Gm-Features: AS18NWDsN3mYbrQ17ccUwcQtLGbvJ-VcpQvebBOZyQ8AFN9Ko-OXrdSad4I9OrI
+Message-ID: <CAPaKu7QEAbR8a_+qmyU=obyf2N-UZemfw23U_Dw2DZLqPd7tGQ@mail.gmail.com>
+Subject: Re: [PATCH 07/10] drm/panthor: remove unnecessary mmu_hw_wait_ready calls
+To: Steven Price <steven.price@arm.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Grant Likely <grant.likely@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-UCSI v2 specification has increased the MSG_IN and MSG_OUT size from
-16 bytes to 256 bytes each for the message exchange between OPM and PPM
-This makes the total buffer size increase from 48 bytes to 528 bytes.
-Update the buffer size to support this increase.
+On Thu, Oct 2, 2025 at 3:41=E2=80=AFAM Steven Price <steven.price@arm.com> =
+wrote:
+>
+> On 16/09/2025 22:08, Chia-I Wu wrote:
+> > No need to call mmu_hw_wait_ready after panthor_gpu_flush_caches or
+> > before returning from mmu_hw_flush_caches.
+>
+> Why is there no need? If we attempt to send a command when the hardware
+> is busy then the command will be dropped (so the cache flush won't
+> happen), and if we don't wait for the unlock command to complete then
+> then we don't know that the flush is complete.
+We have this sequence of calls
 
-Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
----
- drivers/usb/typec/ucsi/ucsi_glink.c | 76 +++++++++++++++++++++++++----
- 1 file changed, 66 insertions(+), 10 deletions(-)
+  mmu_hw_wait_ready
+  panthor_gpu_flush_caches
+  mmu_hw_wait_ready
+  mmu_hw_cmd_unlock
+  mmu_hw_wait_ready
 
-diff --git a/drivers/usb/typec/ucsi/ucsi_glink.c b/drivers/usb/typec/ucsi/ucsi_glink.c
-index 1f9f0d942c1a..a324fadb4e11 100644
---- a/drivers/usb/typec/ucsi/ucsi_glink.c
-+++ b/drivers/usb/typec/ucsi/ucsi_glink.c
-@@ -16,10 +16,10 @@
- 
- #define PMIC_GLINK_MAX_PORTS		3
- 
--#define UCSI_BUF_SIZE                   48
-+#define UCSI_BUF_V1_SIZE		(UCSI_MESSAGE_OUT + (UCSI_MESSAGE_OUT - UCSI_MESSAGE_IN))
-+#define UCSI_BUF_V2_SIZE		(UCSIv2_MESSAGE_OUT + (UCSIv2_MESSAGE_OUT - UCSI_MESSAGE_IN))
- 
- #define MSG_TYPE_REQ_RESP               1
--#define UCSI_BUF_SIZE                   48
- 
- #define UC_NOTIFY_RECEIVER_UCSI         0x0
- #define UC_UCSI_READ_BUF_REQ            0x11
-@@ -32,13 +32,19 @@ struct ucsi_read_buf_req_msg {
- 
- struct __packed ucsi_read_buf_resp_msg {
- 	struct pmic_glink_hdr   hdr;
--	u8                      buf[UCSI_BUF_SIZE];
-+	union {
-+		u8 v2_buf[UCSI_BUF_V2_SIZE];
-+		u8 v1_buf[UCSI_BUF_V1_SIZE];
-+	} buf;
- 	u32                     ret_code;
- };
- 
- struct __packed ucsi_write_buf_req_msg {
- 	struct pmic_glink_hdr   hdr;
--	u8                      buf[UCSI_BUF_SIZE];
-+	union {
-+		u8 v2_buf[UCSI_BUF_V2_SIZE];
-+		u8 v1_buf[UCSI_BUF_V1_SIZE];
-+	} buf;
- 	u32                     reserved;
- };
- 
-@@ -72,7 +78,7 @@ struct pmic_glink_ucsi {
- 	bool ucsi_registered;
- 	bool pd_running;
- 
--	u8 read_buf[UCSI_BUF_SIZE];
-+	u8 read_buf[UCSI_BUF_V2_SIZE];
- };
- 
- static int pmic_glink_ucsi_read(struct ucsi *__ucsi, unsigned int offset,
-@@ -132,17 +138,35 @@ static int pmic_glink_ucsi_locked_write(struct pmic_glink_ucsi *ucsi, unsigned i
- 					const void *val, size_t val_len)
- {
- 	struct ucsi_write_buf_req_msg req = {};
-+	size_t req_len, buf_len;
- 	unsigned long left;
- 	int ret;
-+	u8 *buf;
- 
- 	req.hdr.owner = PMIC_GLINK_OWNER_USBC;
- 	req.hdr.type = MSG_TYPE_REQ_RESP;
- 	req.hdr.opcode = UC_UCSI_WRITE_BUF_REQ;
--	memcpy(&req.buf[offset], val, val_len);
-+
-+	if (ucsi->ucsi->version >= UCSI_VERSION_2_0) {
-+		buf_len = UCSI_BUF_V2_SIZE;
-+		buf = req.buf.v2_buf;
-+	} else if (ucsi->ucsi->version) {
-+		buf_len = UCSI_BUF_V1_SIZE;
-+		buf = req.buf.v1_buf;
-+	} else {
-+		dev_err(ucsi->dev, "UCSI version unknown\n");
-+		return -EINVAL;
-+	}
-+	req_len = sizeof(struct pmic_glink_hdr) + buf_len + sizeof(u32);
-+
-+	if (offset + val_len > buf_len)
-+		return -EINVAL;
-+
-+	memcpy(&buf[offset], val, val_len);
- 
- 	reinit_completion(&ucsi->write_ack);
- 
--	ret = pmic_glink_send(ucsi->client, &req, sizeof(req));
-+	ret = pmic_glink_send(ucsi->client, &req, req_len);
- 	if (ret < 0) {
- 		dev_err(ucsi->dev, "failed to send UCSI write request: %d\n", ret);
- 		return ret;
-@@ -216,12 +240,44 @@ static const struct ucsi_operations pmic_glink_ucsi_ops = {
- 
- static void pmic_glink_ucsi_read_ack(struct pmic_glink_ucsi *ucsi, const void *data, int len)
- {
--	const struct ucsi_read_buf_resp_msg *resp = data;
-+	u32 ret_code, resp_len, buf_len = 0;
-+	u8 *buf;
-+
-+	if (ucsi->ucsi->version) {
-+		if (ucsi->ucsi->version >= UCSI_VERSION_2_0) {
-+			buf = ((struct ucsi_read_buf_resp_msg *)data)->buf.v2_buf;
-+			buf_len = UCSI_BUF_V2_SIZE;
-+		} else {
-+			buf = ((struct ucsi_read_buf_resp_msg *)data)->buf.v1_buf;
-+			buf_len = UCSI_BUF_V1_SIZE;
-+		}
-+	} else if (!ucsi->ucsi_registered) {
-+		/*
-+		 * If UCSI version is not known yet because device is not registered, choose buffer
-+		 * size which best fits incoming data
-+		 */
-+		if (len > sizeof(struct pmic_glink_hdr) + UCSI_BUF_V2_SIZE) {
-+			buf = ((struct ucsi_read_buf_resp_msg *)data)->buf.v2_buf;
-+			buf_len = UCSI_BUF_V2_SIZE;
-+		} else {
-+			buf = ((struct ucsi_read_buf_resp_msg *)data)->buf.v1_buf;
-+			buf_len = UCSI_BUF_V1_SIZE;
-+		}
-+	}
-+	resp_len = sizeof(struct pmic_glink_hdr) + buf_len + sizeof(u32);
- 
--	if (resp->ret_code)
-+	if (len > resp_len)
-+		return;
-+
-+	/* Ensure that buffer_len leaves space for ret_code to be read back from memory */
-+	if (buf_len > len - sizeof(struct pmic_glink_hdr) - sizeof(u32))
-+		buf_len = len - sizeof(struct pmic_glink_hdr) - sizeof(u32);
-+
-+	memcpy(&ret_code, buf + buf_len, sizeof(u32));
-+	if (ret_code)
- 		return;
- 
--	memcpy(ucsi->read_buf, resp->buf, UCSI_BUF_SIZE);
-+	memcpy(ucsi->read_buf, buf, buf_len);
- 	complete(&ucsi->read_ack);
- }
- 
--- 
-2.34.1
+I could be utterly wrong, but my assumption was that
+panthor_gpu_flush_caches does not cause AS_STATUS_AS_ACTIVE, at least
+by the time it returns. That's why I removed the second wait.
 
+We also always wait before issuing a cmd. Removing the last wait here
+avoids double waits for panthor_mmu_as_{enable,disable}. It does leave
+the cmd in flight when panthor_vm_flush_range returns, but whoever
+issues a new cmd will wait on the flush.
+
+
+
+>
+> Thanks,
+> Steve
+>
+> > Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
+> > ---
+> >  drivers/gpu/drm/panthor/panthor_mmu.c | 7 ++-----
+> >  1 file changed, 2 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/pa=
+nthor/panthor_mmu.c
+> > index 373871aeea9f4..c223e3fadf92e 100644
+> > --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> > +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> > @@ -669,12 +669,9 @@ static int mmu_hw_flush_caches(struct panthor_devi=
+ce *ptdev, int as_nr, u64 iova
+> >        * at the end of the GPU_CONTROL cache flush command, unlike
+> >        * AS_COMMAND_FLUSH_MEM or AS_COMMAND_FLUSH_PT.
+> >        */
+> > -     ret =3D mmu_hw_wait_ready(ptdev, as_nr);
+> > -     if (!ret)
+> > -             mmu_hw_cmd_unlock(ptdev, as_nr);
+> > +     mmu_hw_cmd_unlock(ptdev, as_nr);
+> >
+> > -     /* Wait for the unlock command to complete */
+> > -     return mmu_hw_wait_ready(ptdev, as_nr);
+> > +     return 0;
+> >  }
+> >
+> >  static int mmu_hw_do_operation(struct panthor_vm *vm,
+>
 
