@@ -1,128 +1,111 @@
-Return-Path: <linux-kernel+bounces-841263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9825BB6AAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 14:33:39 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D64BB6AA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 14:33:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CA8134EB9A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 12:33:00 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 04BBF34552A
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 12:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8A52EDD58;
-	Fri,  3 Oct 2025 12:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OpkUxpn/"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36EF2EDD64;
+	Fri,  3 Oct 2025 12:33:02 +0000 (UTC)
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3B82E8DE3
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 12:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1D52EE27C
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 12:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759494776; cv=none; b=kicyRDdYdrTTWddmJhQQRr1MRsnesvUEDLseBnVrEfkQ2f/hy065OjA/MI/Yf+lJXX8QHbdbZFutl6tJx3qLUj2KNq6mBfw3AUNkp1CVIPIQsYNy1d19VeQE3e4m2lE71cYfGUwBIhO5B19q8aNxv9hInfikGOkW3DicYjA5VRg=
+	t=1759494782; cv=none; b=cCp3D+MEbSDJgER37eWb0ukrW7lnSiUYZusRjHDO+Xy9psXrSSIyoAGmoUJ85Njtn6FGiCnOagVwx70rnnvsy1FvsKrVZO8LlduxDUpe02pR7wN/sDKsT16DUqEA3m2Aawz8VK5qT4dfKhlOUDJE4Xdd7s5eMFRrYybpHediadM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759494776; c=relaxed/simple;
-	bh=NIwuK7WSwOp7xXgXvN6lArOB3a1rRAMQT3rIRTG4LWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=i8k4pyLrVSaOUBpxQIWBSVYcZu22Qb6G0tjvI6VkeRerSwgjk4r7lQCZ58cGQHWBChhpwZZ29qOh7djA98fnTKg7QheYtQuzNecB+/vJW73Db0YDk33cM88VIqrcEd288g8zo9rU0omHKMW5A86mTvvp6UEOUcBdovERbca3x0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OpkUxpn/; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-631787faf35so4346094a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 05:32:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759494772; x=1760099572; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=17gCoEjvIQcUQufFQtAKqNf5Qc0ovnSmzCsZHusGb9k=;
-        b=OpkUxpn/XtwoPak9QI9RcoeXsyEmLzlvp3rcClaYgBlWWoGJV/yqhjQqr8+e4xRGwT
-         4cDHtforjWTRdd3eNMJo8O/hMyVdJcrqflxlqU5gpS91AyYhtGWaf0JZzHr6eyyzMN0U
-         0jZfDCbTpwl158IWbFqZfLwoUGbWtPeqMgoFEqZP+niQhcRDlVnMIgFiY8R6IcMrI/BS
-         mHWmpRdXPE8z3AfBHcDI3wMAx7hNJDFimflxFXVbpNCYjZ2w4F89znmyIHAWcMX/rmyN
-         Hl1PdlUPHwkPzEo4FfCTsaGKru+z10eeWHJalahiGg0VO52XGjXPhJ3luR2jKwXStHjx
-         VaMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759494772; x=1760099572;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=17gCoEjvIQcUQufFQtAKqNf5Qc0ovnSmzCsZHusGb9k=;
-        b=T3d+CCpWWPJlrOO6XxaNt4+mQdfu+qZFzRr2V/FgdZi4wdThMyI7ZowLOSrCGjr2sE
-         uBBEyb4DBZ82s+XDrOfF9pdczpLdui5Yt92QFqcfIk2uo/sfc1FWlAq5xLEXLvGDYUz/
-         mPx+4EmZzJvgKutWQe9QaV4IhJ9uiW3JrmRGZh/HmAlPSs0uGPQtC+K1g8wwzM9kIp0Z
-         OStXmtOyo3x1b3DGDY29jNVBsd7NpWuiGqMMf0TBYjyN4nm5GxSeu1cQbPoeTgTW2k4p
-         w2RQdE/6fQ4SCXzt7bYCvGIo9GnBDrdiJ9cwI34yGQYbfMlunNkahY8C7Vp4ehAEZCEW
-         Pf0g==
-X-Gm-Message-State: AOJu0YzRb5IMAB18bH036VBD/RxX06FuZS7MuERgkUzKA6mbIE+k5HMK
-	t5O/D1fLb+OXQoNU5PSYDtymUDccdf3ZSuBIC/BVO9h2elBmIATtjVf+oJB4vGnmi7s=
-X-Gm-Gg: ASbGncspJeV6Cb2x23X+laDD4mEM/iRXAOWZXatf0phM1ZymuVvOUIrMjru1g0XTnL7
-	FYMR3zDdHnHDZf/LLOvSfGNDEFZx9goZ9kiatfapB8uYEMr8BgfSz/5WPBi04vaG8SauLPlAVZJ
-	rEQV/0inGXw/6HV3/Bw1ntwq5YzwuIHiTcovsAIhSilYmkxj8ZuKpjMR08l3xb5Wk3U3iKAV0Xp
-	XEi5e7OXsoPu3dWSFi4duY4mInnN1DEaJTWjame+pqBHJpU/4sqrUu0h70W8OBrY/MFbbS0tTMR
-	Y9nwsxQdNU3aPXlIBOumSw4JoOoXTv5kT3bAY+pxLhfuv81l9WYLtRzpLqTiU5HnGoUzHO2P9wa
-	PU3y4IQ5bh8MTxrux+v86cpVdpCsxQYApYmyWl8ChGDN0y0fa5eFNVjgfjy5yZofCN7+j1HCJyV
-	La3N5S9xLDiHJ3JmCM6hbngiGvQas=
-X-Google-Smtp-Source: AGHT+IEoFFTeRxLCKlCPFN/zmcwyyLcUjEt0wTRNto+jUB9IZ+gep75jgaZbEeIo6QfYakU8Sdy8iw==
-X-Received: by 2002:a17:907:961e:b0:b48:730:dbaf with SMTP id a640c23a62f3a-b49c25514acmr373047366b.25.1759494772108;
-        Fri, 03 Oct 2025 05:32:52 -0700 (PDT)
-Received: from rayden (h-37-123-177-177.A175.priv.bahnhof.se. [37.123.177.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652aa62csm427437866b.19.2025.10.03.05.32.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 05:32:51 -0700 (PDT)
-Date: Fri, 3 Oct 2025 14:32:49 +0200
-From: Jens Wiklander <jens.wiklander@linaro.org>
-To: arm@kernel.org, soc@kernel.org
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	op-tee@lists.trustedfirmware.org
-Subject: [GIT PULL] TEE QTEE fixes for v6.18
-Message-ID: <20251003123249.GA1063437@rayden>
+	s=arc-20240116; t=1759494782; c=relaxed/simple;
+	bh=Pj+a+ReEToqtYcpBwWNSy7UhdrI5ZzjkBVlESP7uTvg=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type; b=AkeqXMm8v1Tr6c51NfkLWx6z6UUHcNaRhcMLHt1pO6qm2PTtn2+KJkaVeIFz2S7SvwuxrCU1YpGlg68QHOC8S5xVqwiygmgqD3GKj6ByBW6YvzLs9m/RPGuksy0exQaK2dNDXVjVuqx7WGuIoYQ9G1DVh3EBX/FTNbb4sVoV5Qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=anselmschueler.com; spf=pass smtp.mailfrom=anselmschueler.com; arc=none smtp.client-ip=212.227.17.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=anselmschueler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=anselmschueler.com
+Received: from [192.168.178.32] ([94.139.31.111]) by mrelayeu.kundenserver.de
+ (mreue107 [213.165.67.113]) with ESMTPSA (Nemesis) id
+ 1MHWvH-1v8px23amP-000XCu for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025
+ 14:32:57 +0200
+Message-ID: <7ca05672-dc20-413f-a923-f77ce0a9d307@anselmschueler.com>
+Date: Fri, 3 Oct 2025 14:32:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+From: =?UTF-8?Q?Anselm_Sch=C3=BCler?= <mail@anselmschueler.com>
+Subject: Issue in Kernel docs / Admin Guide / SysRq
+To: linux-kernel@vger.kernel.org
+Content-Language: de-DE, en-GB
+Autocrypt: addr=mail@anselmschueler.com; keydata=
+ xjMEZMK/6hYJKwYBBAHaRw8BAQdANvIiy7BrQ5bJ2txC1J4PpfkLnOrEhmG9DzItTcFrd2XN
+ KUFuc2VsbSBTY2jDvGxlciA8bWFpbEBhbnNlbG1zY2h1ZWxlci5jb20+wo4EExYKADYWIQTN
+ v+yoNv7jQBzrWP+6NO4aujoJVQUCZMK/6gIbAwQLCQgHBBUKCQgFFgIDAQACHgUCF4AACgkQ
+ ujTuGro6CVWjHwEAugikc3PIHCDCaZPrdSiXqV3mSabICGPMje+Kp73oxkoBAJYeHUdoZcyw
+ BkmGIh1mWY738FN+SPHwSWIS9jtJ2+4CzjgEZMK/6hIKKwYBBAGXVQEFAQEHQE6vKA4qvkMc
+ 6kslzFWzHQ+h9Qk89ggfrexKhse5F6NjAwEIB8J4BBgWCgAgFiEEzb/sqDb+40Ac61j/ujTu
+ Gro6CVUFAmTCv+oCGwwACgkQujTuGro6CVUKawD/SDvfSz7vUSUkNiJJsK59U+D7rBkdRHoq
+ sNsLc3EVYiEA/3kNw77KZvEG2Jb3ktvv5qoWKnW+xrEHh0FZLFzb50sM
+Disposition-Notification-To: =?UTF-8?Q?Anselm_Sch=C3=BCler?=
+ <mail@anselmschueler.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:he5RGe28pcGxFSRgc5rFHSwLCFiG/+T1ZLoHCl7XGRh78zOUeaP
+ bEFLTR0ECewShDDOLwjQ8jrs7X8BtqdlGY9FZA6r3SqLaYUDMYOHnqWB1EVIHhtp5UsNJPl
+ W00heRffRIf8J28aPoqKX0X93/eXXBL9CZXzDH6Z5RH731landTfL9Fv8p5Lox73xra2C2B
+ RmzjBBO21gfYlBtigMt3A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:kkEM7p52eKg=;BkoSGgGLt3eFDVqDTy0W6g0uENS
+ MvfBcl933GhO61j5UeijSVnY5+DuTMARLNDUK5WkySYXPsqwtBUTFQj4IYhzA3QQ6t+AUKroB
+ 4D2UrvUr2Ibbt6qdLKpkmZwyUcl4LaNGDw/p/jcMFxm65owe6L0/oh4gG3AtQWL1uN5AbH5si
+ y+6XyLAXm90lqRvL6ZU3sItfLB4gA4K07XT+HxG3uejUn/1eBT3N2mZofWas+kiipVCwJ9cOe
+ a8N1rDcqyszMHTLSMAokNq+CkRNMVQ6l6unVY6dkIv4ygx8f1EQKydfZDFCWMBY/hYeH53X3i
+ 1WccgrdPHgHTUxD5Ehk0jnPIMy2j7rrrHfhIlyumZcRvme/PBgy1Cpv2ZYxYEdr3SsLROaM6o
+ i+6JptrXCFUNJvhYsIxxO1nNCayD2wXNpA+ajaCaGUlmcwDdxdF4IiDsoqohB9QzaU6fnJQWL
+ u1vg2LuUZgzGFAQLNm4RhKxI8HltJip1J0bojutKbiIemi11qWrYBLkZpmMXT2DNrK+9JiO3W
+ qWPDI9KQE+nEKL3k65OLogFulP4JTQEVQOxP+xLo2K+Ub0X2nwIoH14w1QDKEcX/IhQMDeOBK
+ njpxvhgro0iZo6kO8PcHLqIBBRJeIuNW3Z775p0Kgiwx1f/HLYf3VV8dhmpuNQhfBoXa82/vN
+ 1cWYZ6uxNCupcUPv0JsnQs7Gy5pDkqzTD2mO/+ln2+1smdvsPdALmR9alVWuZEDIYWWYXkoDy
+ SAjAbDtXdA3Sen+OQNX9u3d1GctvCEUxySRKDk25Myf6m605LQPP9EWXjeXGhYgyNPTXEdlbl
+ g0a319O0xDnZ8bhkpLLpth//PWWhOYhhA62RiyX8xU/lxTgfx6GJai3qeaKwBh8+UOo27J4mi
+ 5QmIWzHU3L4RkET/aXoH9sWzp4R++4z3XMvh6YV6Std4Q1jemu6z46RVP4vUWpKIjqeL6C/HP
+ c5myhzPAdrNhelYZU9z7+M5KSZ3lPzoahL/mATphu6UXggerIwG7kTRQQyDEjQ6qqxrenLGVT
+ xMrH+R4p7N3hsXeJnEu+HYj2r29zJ34n1A+MlfWLN2YyBKKzh7PAarkqeayj3O4EmPsVmwL5G
+ Vad8claL8LOhbPKJhuM1pZbpJkY8CGKGTC0kLBr89bZ0tgnljjQOatqbSwhmzCQaDRk3PQtX4
+ ib45y0OpSgYguLut46PwgIhnzSM/JMgHzBZ8wyb4aLedn4SX45jLKjnEZxHmyF5QZizNyMdIf
+ i0G/d5aHItsMvu8lOUzYpWRWuG+1WAAOPkUknmw+pM4a4a9zGWHanW3RVW9tGN75DPTbhqLUu
+ eTpXK5wLD4zLiokGXTMc+LA0t8R51xyafA9DhVzuiQmq8NFGDBFBMbOutZGOcdf6UFOGyxKqE
+ t3YtLl1aoSONNLN8CfcjvgfjJq1rfyK9ndL8fqvdR07P088tv/6e2wKrz3KU5aPVblKgNkIgJ
+ 5igTJ8Z74KYy9Vkk86Y8Vn2+jo0n3fqH3a3xPLBBUVsIjCs5hAi4ez5xkdJL91fZD/UTRlvIi
+ avZXKRs9/QL4HM5/B+oYGL5gy4bEr5qr9T/K7OrMtdpsGFGsP2SbdrOhRDU6szFhiyDQvy6GX
+ Xkhr8SOCOEU6G6CGEspnFV8Q0jrI2mdcYDIQB3U6RuNuq/S7yFta1iy6qpxOECs3dbBI3tsnf
+ l8xpsCCAAKiHUxnDdnu7Xz
 
-Hello arm-soc maintainers,
+I’m writing here because I don’t know where to find Kernel docs 
+(https://docs.kernel.org/) sources and submit patches.
 
-Please pull these small fixes for the TEE QTEE driver introduced in v6.18
-merge window.
+The page “Linux Magic System Request Key Hacks” 
+(https://docs.kernel.org/admin-guide/sysrq.html) says this:
 
-Thanks,
-Jens
+“Write a single character to /proc/sysrq-trigger. Only the first 
+character is processed, the rest of the string is ignored. However, it 
+is not recommended to write any extra characters as the behavior is 
+undefined and might change in the future versions. E.g.:
+     echo t > /proc/sysrq-trigger”
 
-The following changes since commit dcc7a571a3665a16581b5b18ca6b113f60a9a41a:
+I interpret the command as a suggestion of how to properly use 
+/proc/sysrq-trigger, and not as an example of what not to do, and I 
+believe many will share this interpretation. The command as listed will 
+write TWO characters to /proc/sysrq-trigger.
 
-  Documentation: tee: Add Qualcomm TEE driver (2025-09-15 17:34:06 +0200)
+Either the behaviour of ignoring \n should be codified and explicitly 
+supported or this section should be changed.
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jenswi/linux-tee.git tags/tee-qcomtee-fixes-for-v6.18
-
-for you to fetch changes up to 3b63efa21bc6acc1a0fadd1dd0f0e1988a4c0177:
-
-  tee: QCOMTEE should depend on ARCH_QCOM (2025-10-02 08:31:10 +0200)
-
-----------------------------------------------------------------
-TEE QTEE fixes for v6.18
-
-- Adds ARCH_QCOM dependency for the QTEE driver
-- Fixing return values for copy_from_user() failures
-- Guarding against potential off by one read
-
-----------------------------------------------------------------
-Dan Carpenter (2):
-      tee: qcom: prevent potential off by one read
-      tee: qcom: return -EFAULT instead of -EINVAL if copy_from_user() fails
-
-Geert Uytterhoeven (1):
-      tee: QCOMTEE should depend on ARCH_QCOM
-
- drivers/tee/qcomtee/Kconfig | 1 +
- drivers/tee/qcomtee/call.c  | 2 +-
- drivers/tee/qcomtee/core.c  | 2 +-
- 3 files changed, 3 insertions(+), 2 deletions(-)
 
