@@ -1,118 +1,137 @@
-Return-Path: <linux-kernel+bounces-841449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B569BB7564
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 17:39:02 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07841BB756A
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 17:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8955C4E4307
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 15:39:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 621B54ED18C
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 15:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DEA42820BF;
-	Fri,  3 Oct 2025 15:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B6028507C;
+	Fri,  3 Oct 2025 15:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="1H3/wkmE"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B1/Pji0/"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4212D4501A
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 15:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26791E515
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 15:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759505937; cv=none; b=HosWjNM9f2TCC9h5fZNit6+KjsOfFYg95sSHZyRZZnRXGs6Afx95kSlxLc5A7T9qV+Zt4UJlMMCA0UEaPtQP1MaU/sJAiM5+eSvMsLXCXrKJuUjc+YC3w3FN3EcTW+/ygGkfkqA/EImn7Q9avneu5JBaoAFZYqg3l1intRoCbGE=
+	t=1759506053; cv=none; b=LvWMrTfXWObXDfTjnSk8F5uHkhupYf27701YNfIqYJAE/CXIr5a9+SLLrcAUDzJmZd6fNpgTzfsQ+yvVNfiSmXepFX/FVspsgxmoRORhkH/Pk4T59SveQUc1EmAqtoEqini2jv7ywmmNb9zQYAnYjV2md4QZK1fiBEYbiYN2CYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759505937; c=relaxed/simple;
-	bh=jElmrcAr4oyF18ok2YTyfN6HMn3LKMWha9ikcRLOezA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rq0NBkgGUMdc/iunLDUbCtG26eW1mZXnPCFhIvkBcRSbb7qm+dofEWx0BMp7AM2qOBm7ofOMqmE0cLg1OYmFEt46cLOxYHH4IMSmIrNlIKVVLN088KWelg3tZvxAHwOZafHgayi+PGJf/EisCL8I8FZOLDWpp0slAkcNs94tGYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=1H3/wkmE; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-3729f8eaa10so642476fac.3
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 08:38:55 -0700 (PDT)
+	s=arc-20240116; t=1759506053; c=relaxed/simple;
+	bh=LOg4T94ipRq8J347hgnTWV0pMK8tjjOpCc0XTauE/Uo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XdodFKI3ZKj1LFRwkPStchihlXhJnNX8ZN5sG34UG5Ijz2U0ZyXKDJ0G4EYm2//eKPTFdSTXXwaB71jf13l1uyUw1w7qkhq2b7XVkSpr3dgZfwb0eVAGqHCelO4tEU+W5DjQzZ3eSzcJMOOtYVmM3a2ZgO/aPcLVFosXFufyf9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B1/Pji0/; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-78115430134so1684794b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 08:40:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1759505934; x=1760110734; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I3NqBU312xiWkxtkoNh25eWrcrpT/Ku8WJxrKUtTl5c=;
-        b=1H3/wkmEUKnMDq9CcQNmLemphflXSjcM4FDYhu+odjopvEjnwMLLLIVoHV0RFGFuRw
-         M3WL4vQ9GJKthy1kd7Wisrv5pyDkd+ULofCHL52v/CR9vHMXt1rOuO8U0sxLoLi9I1mL
-         FAviq9dQPb/Uv66YZwaJNRzxNUtwF22AH1QC/oryLuefABWt7Kdkca87WEm0cU64M4pb
-         Au7Oz/cMq1ZL9MVikBs7eXohQkfIO5RGqVits4mJkFiRpvVhl8VYRacu6lPihsyRk46Z
-         arBmSlvUuEGn84mscjgYha6+2wTlGoJZp6FK/jcX1GPVI6lwfLrXJGoMsTyynN+c71M2
-         QIhQ==
+        d=gmail.com; s=20230601; t=1759506051; x=1760110851; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=K7r9cq9P/21nnwhqpNX1hAPkeXOwTrBQce9AVDcYHDc=;
+        b=B1/Pji0/0S0VJWjlPLU9erjJEDO3+A6QsHEhEByJizRUQ0asUe1GDWZ3zYbIHZFvxa
+         BbaK6nqsqMlPFXi4RV1WysOVEx68/XgEha6r93A54nwRIy+KSrXYKetkN4Q2ZsBYim6k
+         f+W/ufTS/jLHSAzbqH2CWpoyHbc0MdpuV59AvOAwB67TW6QbOXpvTpNibdqTVK3Q5smm
+         ztREQjyWYa6H35gKWwHE61OYxnHFiDif0OFdvXF7nRA5Hm2sFfXdgTMz98nFyymzF0C0
+         1mTEU+4fvN9NMKa4iLBzDvDiqn+W2xqcaA6djK0hypi8EXT4dzJKt4gIEBlDoiolilOd
+         8ylQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759505934; x=1760110734;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I3NqBU312xiWkxtkoNh25eWrcrpT/Ku8WJxrKUtTl5c=;
-        b=am2o9NwQxgTE5V4Pf9VLP47+/ahsrLaV2lrAb6Lm4c+DyZiKdbIF4XfidkzCk8/00w
-         +gpxQxuKrKgUF9kKltGzruAz4g0UJY9OKZnIVdf0o7+/JfqI1cKElAa95k8mFiya+yZ7
-         0+dPCrNmybE3gyJ7eVQrrSYdp/oKDy481a5cKannUdlofBeMyOnwfLzXQgAejMVyKUDG
-         QvXegfYVgxEhNSKrNG/BfZbUGTMSiPzf00MQTyAfwQYMl5Foq2TDkwT9VNXzKlL2wPpB
-         VLo3TyPvl77u3Q3PaQmmMfGUl/COJ71cJr7yiLe1e4gqemXlgH5n+98R2mKsoOjKeA+6
-         a+7A==
-X-Forwarded-Encrypted: i=1; AJvYcCXtzlHmpDOQedhPjnD1VBBfoy/bTSu0qOjFjyAGXprKzDNFdzaI4GMj6TBuTTbnNEp8OQI8DZTB9x9+eU4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvvgZ6cHj0sdbwmpqf1UFV3gKKA+x0+kiVg2o+9nX66VMQ6Ze2
-	055D6jUqpv18/iB3RuPRyg4axuV7bzQvq6/01jfQfHHIbnXypiND7Jw2CamNxvu6jUQ=
-X-Gm-Gg: ASbGncu0Jzp1H7CsO17ztLsmNgVQ1FZq/lvEY+06zDCD6O1FrptTOW86FxjC0rg475U
-	d+bHxb0QXV1AZRQ4xxu1Cy8kqzrUa/4h6mikDSWrMq9h649UA1rt45mWtWpklh6MzZ8PnwGr+DR
-	fRJ/WGmbnn7sEBAzu5TWtMOGgcw4hzlr4WF5lAL4CEzUIHXQ3jVPO5Ze5dedYpFJckC4zifyeW1
-	0e3k8QaBgHwaX60DjH6cpI9FR3jiBsaCHlUbvDkS/VK38nd51gYtg7nWXjUJhWU4BVqYOunR1YG
-	Psm/IWsU3WBBnHjpSlvQyizu0BJ2CsnPU+CZuC7GuX0CLwHSVE+n9QNxgmlmJUTzmHo78oivUXB
-	Ik5zyRwJKVDMTLjBb4FJsAcHxnWdzOXMzuDa5ys+GMA+b564loP1HkgWdPP8B
-X-Google-Smtp-Source: AGHT+IE8EDl0B9W2Gv8lTp/9cSWxCfsU8sLmJQH7LwxIzbTfkytfxbHwVFOC2Zf0EEScMGV2CCVJAA==
-X-Received: by 2002:a05:6871:8411:b0:3b1:8e5d:d450 with SMTP id 586e51a60fabf-3b18e5ddaeamr1563916fac.46.1759505934239;
-        Fri, 03 Oct 2025 08:38:54 -0700 (PDT)
-Received: from mail.minyard.net ([2001:470:b8f6:1b:d469:1917:5c33:260b])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3ab94d983adsm1627897fac.27.2025.10.03.08.38.53
+        d=1e100.net; s=20230601; t=1759506051; x=1760110851;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K7r9cq9P/21nnwhqpNX1hAPkeXOwTrBQce9AVDcYHDc=;
+        b=dvtk/y6SgzalHPdc0a4A7oEng/VCxwKJQ/LQDhUNAhA3cfdaDrRdogaN71VyiUDg7O
+         WCov5J8+SglIN3IXIjcrWJJafA8gIVvRkv4Osgwu7y5HLoX8SfmU5WYZSXfixdpWDgUS
+         +M27NXhvZ7ix7/B+vCtNSr8ryn28VQqpTmMoMIHHoC3ayA4s4NZ0iLLmurwJtDkje7cs
+         8InjWr2F+1Qe2HaqrJEXPAyt8pq1WHxVQRGpicWcUS7ZZFi5Ay2BLQMlNKBRs7RWoS9q
+         4d44yewpHLkZQHMjSdiTyDark4qMw3OwayXe9JUgL1dQz2ULJrvgwbOjcudJ78KFEWW9
+         eCMA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQz5fyPgdbyU3QaaboUR84B+jWi4rJeEf3sZs2z3s4b0DOf+U3qtY51RXdF29Tjlytke4htZmthY6cpuE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvvGu2xTy5STDS4SI3VOVmDEXaedlxF1lZp5u7KzKotSryHQ4T
+	dEcp1UTjOYcQdheuC7ORiVMyyTzVzf9NixISipfe7ypwbxMSZpUrcgWC
+X-Gm-Gg: ASbGncudJrmUj4d8HmsdoTSPRRY99G7RLHpqBi07m+rtPDbqDogbqxjTPgWRETrbmAp
+	R02q7YsUtn+aQCc/qpdQJK0JOnv98ighY4bV5rSh8aXYXN0eRHLKv1uEQUJAx0KsqWeA+M3uyuf
+	q8nbsNPYROT8sJ7UEDCA/5WCGVGVg7hlRjmwFngk9XnA0YgPHXIs73uMdtiV+E0ZAwM9CSFXYw3
+	85vCrhhx65WSSig/kbxKTJgHzQbCWa4XCHJHolTRMTYwbc+hhk/emeD4b4B1dPFX050vg6pI0sr
+	Y0jS+K/dOrZosyK/c+WK78j+tOCxW2L/CV80aMDnkmxVYxmLri8ApnWc/3+aTKjLMIUuwOvlK2j
+	zaUerrjofroOKmI5B9gqKZpbCSVXe+Cq3RcceGuY8wULynX6noAVh91Vjgk9WKDyw7FUdM6m9kr
+	/tvMK8IjihYA==
+X-Google-Smtp-Source: AGHT+IHSOuHphbmG3g6A0WPDYkpmRmaUeSt/uHAeUHBHPqJHLyn8M8hem8ooNEv/cPxzBc6Dfir51w==
+X-Received: by 2002:a05:6a21:9989:b0:2ec:65c:c25 with SMTP id adf61e73a8af0-32b61dfb914mr4385705637.8.1759506051178;
+        Fri, 03 Oct 2025 08:40:51 -0700 (PDT)
+Received: from weg-ThinkPad-P16v-Gen-2.. ([2804:30c:166c:ce00:17a8:586a:f651:fcd5])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6099f7ab4fsm4946496a12.44.2025.10.03.08.40.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 08:38:53 -0700 (PDT)
-Date: Fri, 3 Oct 2025 10:38:48 -0500
-From: Corey Minyard <corey@minyard.net>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Binbin Zhou <zhoubinbin@loongson.cn>,
-	Chong Qiao <qiaochong@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>, Lee Jones <lee@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] mfd: ls2kbmc: Fix a couple Smatch warnings
-Message-ID: <aN_uCPqymUbVN34c@mail.minyard.net>
-Reply-To: corey@minyard.net
-References: <cover.1759478975.git.dan.carpenter@linaro.org>
+        Fri, 03 Oct 2025 08:40:50 -0700 (PDT)
+From: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc: ntfs3@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Pedro Demarchi Gomes <pedrodemargomes@gmail.com>,
+	syzbot+f4f84b57a01d6b8364ad@syzkaller.appspotmail.com
+Subject: [PATCH] ntfs: set dummy blocksize to read boot_block when mounting
+Date: Fri,  3 Oct 2025 12:38:50 -0300
+Message-ID: <20251003153850.55643-1-pedrodemargomes@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1759478975.git.dan.carpenter@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 03, 2025 at 12:28:58PM +0300, Dan Carpenter wrote:
-> These are two issues which were detected by Smatch.  They're not really
-> going to happen in real life.  Small kmalloc()s can't fail.
-> The devm_mfd_add_devices() function isn't going to fail either...
-> 
-> But still, they're worth fixing just for correctness sake.
-> 
-> Dan Carpenter (2):
->   mfd: ls2kbmc: Fix an IS_ERR() vs NULL check in probe()
->   mfd: ls2kbmc: check for devm_mfd_add_devices() failure
+When mounting, sb->s_blocksize is used to read the boot_block without
+being defined or validated. Set a dummy blocksize before attempting to
+read the boot_block.
 
-Got them, thank you.  I'll get this in for 6.18.
+The issue can be triggered with the following syz reproducer:
 
--corey
+  mkdirat(0xffffffffffffff9c, &(0x7f0000000080)='./file1\x00', 0x0)
+  r4 = openat$nullb(0xffffffffffffff9c, &(0x7f0000000040), 0x121403, 0x0)
+  ioctl$FS_IOC_SETFLAGS(r4, 0x40081271, &(0x7f0000000980)=0x4000)
+  mount(&(0x7f0000000140)=@nullb, &(0x7f0000000040)='./cgroup\x00',
+        &(0x7f0000000000)='ntfs3\x00', 0x2208004, 0x0)
+  syz_clone(0x88200200, 0x0, 0x0, 0x0, 0x0, 0x0)
 
-> 
->  drivers/mfd/ls2k-bmc-core.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> -- 
-> 2.51.0
-> 
+Here, the ioctl sets the bdev block size to 16384. During mount,
+get_tree_bdev_flags() calls sb_set_blocksize(sb, block_size(bdev)),
+but since block_size(bdev) > PAGE_SIZE, sb_set_blocksize() leaves
+sb->s_blocksize at zero.
+
+Later, ntfs_init_from_boot() attempts to read the boot_block while
+sb->s_blocksize is still zero, which triggers the bug.
+
+Reported-by: syzbot+f4f84b57a01d6b8364ad@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=f4f84b57a01d6b8364ad
+Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+---
+ fs/ntfs3/super.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+index ddff94c091b8..7648663d70c9 100644
+--- a/fs/ntfs3/super.c
++++ b/fs/ntfs3/super.c
+@@ -933,6 +933,9 @@ static int ntfs_init_from_boot(struct super_block *sb, u32 sector_size,
+ 
+ 	sbi->volume.blocks = dev_size >> PAGE_SHIFT;
+ 
++	// Set dummy blocksize to read boot_block
++	sb_min_blocksize(sb, PAGE_SIZE);
++
+ read_boot:
+ 	bh = ntfs_bread(sb, boot_block);
+ 	if (!bh)
+-- 
+2.43.0
+
 
