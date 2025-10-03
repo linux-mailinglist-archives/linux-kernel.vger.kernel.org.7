@@ -1,201 +1,179 @@
-Return-Path: <linux-kernel+bounces-840933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E1DFBB5C1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 03:45:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC898BB5C3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 03:47:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F01BF4E90DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 01:45:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82FE64803A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 01:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693633770B;
-	Fri,  3 Oct 2025 01:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MKnYZO0L"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521C728469F
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 01:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20AE286409;
+	Fri,  3 Oct 2025 01:46:57 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E75B182B7;
+	Fri,  3 Oct 2025 01:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759455909; cv=none; b=BM2d83FRFaRdQrPwsv2QiKREf/E4oxy0AivR9BhhJDJYYYpXzOyEbqTMHlEHzIKk7tEkJYBgImJnFjM8xftSPccq9qfkI/TfRiaTVJ4iUwedQDtEJekmgVxPPPc+w+HBwuXK+bZKVrr6sD7gsWEK+Oo4MMIQDB4O+8z6lJLMUgs=
+	t=1759456017; cv=none; b=MR3J673XbVAQkNZJtDZHGx6Ohh9gxjtpoBSMnlD+to7ZASY1Lsn4lLgK4kRl5AzDdFaDU4GscO4PGvMF/MuqF1pZmZSh7U+oASAZupYInYOnpFOZ6txDyalXQ7Yrm0JQ5rNg6hEnMLZWGHxhlnSUuGRegiAK7s92HO6gRI6Xj5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759455909; c=relaxed/simple;
-	bh=Wb/D+E4kiUBjIfwCZkZzNqX0bf8SbHMD9aJHVSnKMVc=;
+	s=arc-20240116; t=1759456017; c=relaxed/simple;
+	bh=qSeKLacpwTszi2nIGhZR51FDuj9AbbAKRr2JI/VVMs8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V7CulyV7LrRMGUnNW8+OQXhMSzBEdlW6xL5XdhXcZq5Px45F6nCL8T6X7GTw3JSqvTvyFnP7GTvmK58fToN2m98Rllf9VIvwtkvMzS5UGF6AtRCKabYDGOWYGAXieU7czOcbW5OzRY1XGQ6y7g6obXoYgGRyQ1lrzxy90lWg1+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MKnYZO0L; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4d7b4b3c06dso11619181cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 18:45:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759455903; x=1760060703; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=dbZX0YDGEzlIF8RIsG89+OMY5rd2Shf5AWwsJNOua3s=;
-        b=MKnYZO0LxTmKEwCk+g/zVw1RGSUSpqcWK62OhLgs4JuEFGwLsKVPo7BdB0yBXmSEpm
-         VPmTBsskmolaorw3L9qNn6rF1l1WC6fjgIY70gfzaSSUmb3P6sCTTdvjVxaR45NcbpMO
-         LVi6GKynaT9ra4aQLMCpvsnx8BVv08KSjxicA1F4PgZl4nL/FZ2uGRmyWJ9owxNh2RNg
-         N8pRiE0RogRO01Jig0+xxl1SAhwie0JZLAaTzkAPPWxri8e9qlL/jwEGJDA5II0mTlZv
-         MjmQO+vT9BhMZrPchtY+Xy/U1G1Qrw/lKRAWXqvLw/Eu4MAMOmXuHBDUTInVN/UxwdXw
-         dFjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759455903; x=1760060703;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dbZX0YDGEzlIF8RIsG89+OMY5rd2Shf5AWwsJNOua3s=;
-        b=LMSafFuMsSscwJndHt4cDOMOysHEOTLtqMq/rPYbAoZ6eAidSDjpCKrbZARf+4d3Lw
-         V4E89nbTB3heidUeWqU8X9sWtlWnJ4afquzuq9ALDmoOQzIcXrBSbUQ3NcinZYeJNGBW
-         o16q3mi1zpiLwn8V+z11PLCZaUM20lgt84fFRyKET0wgrZXHqjSmVwXSwCKeUdrhrG5U
-         h6k7x8beyKiCg/87EmwhuBCobqun1s9Fw9cUHGgeWjIH/IBnby2gvoz/huIanWljH8B7
-         zjotuu7k/G4AtWj/pTeCPrTTeha2qaotZFk24nSgrvA+M/6uU+LfifDIRbFwUqdNVZ6/
-         6C+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUsUNYF9ULxwkVWWrmpcUzP/j/IfKZMqTAPRk/zrWjIR6Zn3XmRfdqVNP42zMJTL0WMHaq2sy45tus47Cs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDfjz68w6+mJYOAm/qFQJfWywUW8BbFrlodFo8LtiKxINGQXg6
-	eqh/Pe5eghM55rszAROrHHEs8dUV7TJxobGU1CKj4D3P2k/X2ZAVKEjL
-X-Gm-Gg: ASbGnctN3O+sYUmm5NYsfD4ZqsW11HSh/D1tlrswdTuz/LJvhX+5QapFF8mC2kF3Gh+
-	Du3Hdo3Xhxe/CNBTzLW8A9F80u9aGA81TDIy6WEfVmIwl8+xYTuTzPHuHDeP3oPN61Gy6GV7IAR
-	vqoP62gKVfGuD9LnkyVoZPSmZ9tfvqtrby8qagbHj9I2w3ujUTEY7hjSdUOxQPm6b106Sl80wvf
-	ud5dOHhpGPQ8FvWkiHqgnmYq6mKwa38m0BJmmttcXvLyEnhf8U0W3T2n2nunoOZOruZly3vnEDX
-	U/hR/NOxw1sHhnp6XFijLhjBhAQZb87A36t5hxYktfkQ/SEW/c7+lRuqMrIaQnMRBX0s2Ti2/gK
-	eP720VtVJKkADDNILsU4YenBR0KCqif3AA3H/852icSB9D4/faTqM/Q==
-X-Google-Smtp-Source: AGHT+IGC0q3AbzHcjA6VvVLioJ3pS8dU7d4NDAjw+ySW6Kf0eeIpzDpoeH8ZNTFGtaSizi9pWO9g4Q==
-X-Received: by 2002:a05:622a:1989:b0:4df:8368:4adf with SMTP id d75a77b69052e-4e576a7ec79mr18266781cf.31.1759455903053;
-        Thu, 02 Oct 2025 18:45:03 -0700 (PDT)
-Received: from localhost ([12.22.141.131])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8777a7e02e7sm309707585a.62.2025.10.02.18.45.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 18:45:02 -0700 (PDT)
-Date: Thu, 2 Oct 2025 21:45:01 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Ben Dooks <ben.dooks@codethink.co.uk>,
-	Paul Walmsley <pjw@kernel.org>, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] RISC-V updates for v6.18-rc1
-Message-ID: <aN8qnSfzFjdovsjn@yury>
-References: <2c804359-3d43-0fba-7173-a87f9aec4bd2@kernel.org>
- <066d70c7-b0a7-45e5-9337-17901bc95664@codethink.co.uk>
- <CAHk-=wgfpswvq0TypePyjv3dofO5YaUC_fSd_MjzY7jogCUnCg@mail.gmail.com>
- <CAHk-=wgYcOiFvsJzFb+HfB4n6Wj6zM5H5EghUMfpXSCzyQVSfA@mail.gmail.com>
- <20251001183321.GA2760@quark>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XK0nKxHtP2+nS+dv0AOFpkRCimLKyvUu8zk4VlDBnvhmKxP18P+wSDVNmngbMvc14PS5YznjrDb1NsnB/GhXR01IFvVdoLBQnAvha61+jebOjnvSdc3MWfW3jaKRxJXEmWk9AvgZ0V8Z0nVz71Q6irgXZx5JRaWDVBORGeWUOKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-c2dff70000001609-83-68df2b06f003
+Date: Fri, 3 Oct 2025 10:46:41 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+	torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
+	linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
+	will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+	joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+	duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
+	tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
+	amir73il@gmail.com, gregkh@linuxfoundation.org, kernel-team@lge.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+	minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+	sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+	penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+	ngupta@vflare.org, linux-block@vger.kernel.org,
+	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+	jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
+	djwong@kernel.org, dri-devel@lists.freedesktop.org,
+	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+	hamohammed.sa@gmail.com, harry.yoo@oracle.com,
+	chris.p.wilson@intel.com, gwan-gyeong.mun@intel.com,
+	max.byungchul.park@gmail.com, boqun.feng@gmail.com,
+	longman@redhat.com, yunseong.kim@ericsson.com, ysk@kzalloc.com,
+	yeoreum.yun@arm.com, netdev@vger.kernel.org,
+	matthew.brost@intel.com, her0gyugyu@gmail.com, corbet@lwn.net,
+	catalin.marinas@arm.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, luto@kernel.org,
+	sumit.semwal@linaro.org, gustavo@padovan.org,
+	christian.koenig@amd.com, andi.shyti@kernel.org, arnd@arndb.de,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+	rppt@kernel.org, surenb@google.com, mcgrof@kernel.org,
+	petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
+	paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
+	joelagnelf@nvidia.com, josh@joshtriplett.org, urezki@gmail.com,
+	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+	qiang.zhang@linux.dev, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+	chuck.lever@oracle.com, neil@brown.name, okorniev@redhat.com,
+	Dai.Ngo@oracle.com, tom@talpey.com, trondmy@kernel.org,
+	anna@kernel.org, kees@kernel.org, bigeasy@linutronix.de,
+	clrkwllms@kernel.org, mark.rutland@arm.com, ada.coupriediaz@arm.com,
+	kristina.martsenko@arm.com, wangkefeng.wang@huawei.com,
+	kevin.brodsky@arm.com, dwmw@amazon.co.uk, shakeel.butt@linux.dev,
+	ast@kernel.org, ziy@nvidia.com, yuzhao@google.com,
+	baolin.wang@linux.alibaba.com, usamaarif642@gmail.com,
+	joel.granados@kernel.org, richard.weiyang@gmail.com,
+	geert+renesas@glider.be, tim.c.chen@linux.intel.com,
+	linux@treblig.org, alexander.shishkin@linux.intel.com,
+	lillian@star-ark.net, chenhuacai@kernel.org, francesco@valla.it,
+	guoweikang.kernel@gmail.com, link@vivo.com, jpoimboe@kernel.org,
+	masahiroy@kernel.org, brauner@kernel.org,
+	thomas.weissschuh@linutronix.de, oleg@redhat.com, mjguzik@gmail.com,
+	andrii@kernel.org, wangfushuai@baidu.com, linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org, linux-i2c@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
+	rcu@vger.kernel.org, linux-nfs@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v17 09/47] arm64, dept: add support
+ CONFIG_ARCH_HAS_DEPT_SUPPORT to arm64
+Message-ID: <20251003014641.GF75385@system.software.com>
+References: <20251002081247.51255-1-byungchul@sk.com>
+ <20251002081247.51255-10-byungchul@sk.com>
+ <a7f41101-d80a-4cee-ada5-9c591321b1d7@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251001183321.GA2760@quark>
+In-Reply-To: <a7f41101-d80a-4cee-ada5-9c591321b1d7@sirena.org.uk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0yTZxTH97zv817orHlXJbxqlrjiosHJ5qLJMXFkt4QnWVyW+EXdB63w
+	Zm3klhZBNpd1CFjdjTQrhorKRWrlqjQyqYLIpNp0pEUE6iytmKIQ6EiwxSCFriUz89vvec4/
+	v3Nycnha0cCu5zV5hZI2T5WjZGVYFlpVv43bGlB/MP9QgJEfezFEwgYMNe0tLBg6qhnwtDUj
+	CEQMCMq7YhiWjA4OwguPOIh1OxBUDRppeH5lmYXpP+cQmMaDLEz1Z0IocIOB2NgzCkbnZxBY
+	gssUBHtPIrhQb2NhccBNwxmTB0G3tZSFicprNAwFV8ODyCwLocEaCk40tLPQ9djOweB0lAJf
+	lZGCgOUpBldlPQVVV1Pg7JlJCkytNyhYsDRxYNG/C2cHhhh4YjVzEB3fDrHafBj7zYShLeRm
+	wOkfYWD6qZGFwN0KBv7QP+ag42E/AoM9gqGu4iKG6vM+Fm52OzEYlsIIhuw1LPx85RoD/pZY
+	fA+9LgbuN3swtD/zUuBy3MPgNF/G4La3Mh9nkxflv2LSZOukSPn9JZa0nG9BZPGlEZFw4wma
+	lFfGn2W2YtLommFJl3mMI2U9f3OktuMoKbsTYojNmkYabk5RpG4uwny19YBsd7aUoymStO9n
+	HJKpB0sXuYK/ZMc8pllKj/7hTqMkXhR2iFOdF/Ar9lkn2QRjYZNom3CtMCtsFr3eBTrBa4VU
+	cfhFdzwv42mhboN4KdTOJAprhINi9PID6jTiebkAYvi6JpFRCNVI7Pm9b6WBXHhLdFYHV5gW
+	0kTv8tRKnhbinmU+8Z0kfCL6f/JRCU6O9+rtvEslPKLgTxJne279N+g68bbViyuRYH5Na35N
+	a/5fW4voJqTQ5BXlqjQ5O9LVJXmaY+lZ+bkdKH66lu+jX19Hc569fUjgkXKVnBT41QpGVaQr
+	ye1DIk8r18oPWX1qhTxbVfKtpM0/qD2aI+n60AYeK1PkH84XZyuEb1SF0hFJKpC0r6oUn7Re
+	j3Y23J4s+GzXGxdF99XCbaltEuKUpZG3R79w7M0cneh/s3n/e+mNWePpu6oOM1mtHL9xZM+X
+	Qf/xT4ePfOfO/Gj/mmKdfUtyVtE9b/QH5Ray+tG+VM+5U0OgfL5Yu2dGMezM3DT5zpOBDDxH
+	bfyl4pRt5M5s8uexc4zjVnNPaUaKvkSJdWrV9jRaq1P9C2cgzuy2AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTZxTH8zz3lWZ3u1aIN+CyrZOYQVCILjm+ZNmyZNwsmWHJ1MQPkwav
+	trwU0moHJou82NigbrWjEFp1FWNF6KADIVRTJKgQRIQKKpFCwVSEyMsyCwRLYS2JmV9Ofuf5
+	///nOR8OS8jDVDyr1hyXtBplroKWkbJ9e8pS6GS/KrXFmAhPSzpIWAgaSbjY6KTB2FRNwUBD
+	PQL/ghHBUshGgMG9RkLY3MVAcHmEgTVPF4JKr5kA580SDG9cqzS8vvsvAstEgIaq6RIS5h3n
+	EFgnbQxM30+HWf9tCtZGX2F4tjiDwBFYxRDoOIMgXJkDf9Y00xDq6yegyjKA4MrEKAFTroh4
+	s2sMgae2lIaXphYCBgMfwtDCPA09lrM0zHovYphz0WAv9VBwyWZGUHa1kYbKS00kuMdvMeB9
+	vYLBV2nGUN/0A/gdkyT0mmpwZL+I6+9NYKsqw5EyhcHy120My446Bh5e9ZHgKE4EW98gBS9q
+	rQysTKTBmj0fuupfMTD6u4WEhtl+6msLEpcMv5FiXXMrFg2Pw7TovOxEYuitGYnBa2WEaDBF
+	2rsz84R4uvkX8VrvDC2+XXhCi55FOyk+qBHEC30pots6yoin258zGbsPyfYekXLVekm7/atM
+	mcpbGmIKHsoKByzzuBjNMeUohhX4nYKvdoqOMslvEZpf9q4zzW8VhoeXiSjH8p8LT5Y8ZDmS
+	sQR/JUG4PttIRYWN/GFh5cYQLkcsy/EgBNvUUY+cr0ZCe0UnGfVw/AahpzqwzgSfJAyvTq/7
+	CT4yZ5WNPsfw3whjZ304ynGRvzpau7EJcdb30tb30tb/03ZE1KFYtUafp1TnfrlNl6Mq0qgL
+	t2Xl5zWhyFE6fl250IaCg+mdiGeR4gNOLBhTySmlXleU14kEllDEcpm1PpWcO6IsOilp8w9r
+	T+RKuk6UwJKKTdz3B6VMOX9MeVzKkaQCSftOxWxMfDFqeZBR6jB+tHmLr15+NEt/p8HlDtt/
+	SjgkFQZZf9a32VW70j499dgg9CyW/xg+9kf+uYz9Ns62nNJgfBTXbmoVXPFtk4/G732h43I8
+	3rRPKkq2nk8t1uMDId+I0zxEfZcdY01N/vmf4ObCz3xSardbM3C+JVG93ZQxt+tj247LhILU
+	qZRpSYRWp/wPOciOgZADAAA=
+X-CFilter-Loop: Reflected
 
-On Wed, Oct 01, 2025 at 11:33:21AM -0700, Eric Biggers wrote:
-> On Tue, Sep 30, 2025 at 04:53:24PM -0700, Linus Torvalds wrote:
-> > On Tue, 30 Sept 2025 at 09:04, Linus Torvalds
-> > <torvalds@linux-foundation.org> wrote:
-> > >
-> > > Oh Christ. Is somebody seriously working on BE support in 2025?
+On Thu, Oct 02, 2025 at 12:39:31PM +0100, Mark Brown wrote:
+> On Thu, Oct 02, 2025 at 05:12:09PM +0900, Byungchul Park wrote:
+> > dept needs to notice every entrance from user to kernel mode to treat
+> > every kernel context independently when tracking wait-event dependencies.
+> > Roughly, system call and user oriented fault are the cases.
 > > 
-> > Ok, I just googled this, and I am putting my foot down:
-> > 
-> >  WE ARE NOT PREEMPTIVELY SUPPORTING BIG-ENDIAN ON RISC-V
-> > 
-> > The documented "reasoning" for that craziness is too stupid for words,
-> > but since riscv.org did put it in words, I'll just quote those words
-> > here:
-> > 
-> >  "There are still applications where the way data is stored matters,
-> > such as the protocols that move data across the Internet, which are
-> > defined as big-endian. So when a little-endian system needs to inspect
-> > or modify a network packet, it has to swap the big-endian values to
-> > little-endian and back, a process that can take as many as 10-20
-> > instructions on a RISC-V target which doesn’t implement the Zbb
-> > extension"
-> > 
-> > In other words, it is suggesting that RISC-V add a big-endian mode due to
-> > 
-> >  (a) internet protocols - where byte swapping is not an issue
-> > 
-> >  (b) using "some RISC-V implementations don't do the existing Zbb
-> > extension" as an excuse
-> > 
-> > This is plain insanity. First off, even if byte swapping was a real
-> > cost for networking - it's not, the real costs tend to be all in
-> > memory subsystems - just implement the damn Zbb extension.
-> > 
-> > Don't go "we're too incompetent to implement Zbb, so we're now asking
-> > that EVERYBODY ELSE feel the pain of a much *worse* extension and
-> > fragmenting RISC-V further".
-> > 
-> > I'm hoping this is some April fools joke, but that page is dated
-> > "March 10, 2025". Close, but not close enough.
-> > 
-> > This is the kind of silly stuff that just makes RISC-V look bad.
-> > 
-> > Ben - I'm afraid that that page has "further reading" pointing to codethink.
-> > 
-> > I see some CONFIG_CPU_BIG_ENDIAN has already made it in, but this
-> > needs to stop.
-> > 
-> > The mainline kernel is for mainline development. Not for random
-> > experiments that make the world a worse place.
-> > 
-> > And yes, we're open source, and that very much means that anybody is
-> > more than welcome to try to prove me wrong.
-> > 
-> > If it turns out that BE RISC-V becomes a real thing that is relevant
-> > and actually finds a place in the RISC-V ecosystem, then _of_course_
-> > we should support it at that point in the mainline kernel.
-> > 
-> > But I really do think that it actually makes RISC-V only worse, and
-> > that we should *not* actively help the fragmentation.
+> > Make dept aware of the entrances of arm64 and add support
+> > CONFIG_ARCH_HAS_DEPT_SUPPORT to arm64.
 > 
-> +1.  Please, let's not do big endian RISC-V kernels :(
-> 
-> This mistake was made for arm64, it's finally getting fixed.
-> See https://lore.kernel.org/r/20250919184025.15416-1-will@kernel.org/
-> Let's not make the same mistake again.
-> 
-> And as someone who works on optimized crypto and CRC code, the arm64 big
-> endian kernel support has always been really problematic.  It's rarely
-> tested, and code that produces incorrect outputs on arm64 big endian
-> regularly gets committed and released.  It sometimes gets fixed, but not
-> always; currently the arm64 SM3 and SM4 code produces incorrect outputs
-> on big endian in mainline.  (I don't really care enough to fix it, TBH.)
-> 
-> I recently added arm64 big endian to my own testing matrix.  But I look
-> forward to dropping that, as well as *not* having to start testing on
-> RISC-V big endian too...
-> 
-> Of course, that's just one example from my own experience.  There's a
-> lot more that CONFIG_CPU_BIG_ENDIAN creates problems for.
+> The description of what needs to be tracked probably needs some
+> tightening up here, it's not clear to me for example why exceptions for
+> mops or the vector extensions aren't included here, or what the
+> distinction is with error faults like BTI or GCS not being tracked?
 
-+2. I maintain bitops, and I routinely have to take endianess into
-account.
+Thanks for the feedback but I'm afraid I don't get you.  Can you explain
+in more detail with example?
 
-I just realized that I didn't run BE kernels for at least 3 years, and
-didn't ask my contributors to do it for even more. The last BE-related
-fix for bitops I can recall is dated back to 2020:
+JFYI, pairs of wait and its event need to be tracked to see if each
+event can be prevented from being reachable by other waits like:
 
-81c4f4d924d5d009 ("lib: fix bitmap_parse() on 64-bit big endian archs").
+   context X				context Y
 
-Nobody ever reported BE bugs for the new code.
+   lock L
+   ...
+   initiate event A context		start toward event A
+   ...					...
+   wait A // wait for event A and	lock L // wait for unlock L and
+          // prevent unlock L		       // prevent event A
+   ...					...
+   unlock L				unlock L
+					...
+					event A
 
-Maintenance burden is not just a word. Things are getting really tricky
-when you have to keep BE compatibility in mind. And it's a special
-torture to run an old arm or sparc VM in BE-32 against modern kernels.
+I meant things like this need to be tracked.
 
-But what really important is that dropping BE support will make codebase
-overall cleaner and better.
-
-Thanks,
-Yury
+	Byungchul
 
