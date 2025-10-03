@@ -1,64 +1,59 @@
-Return-Path: <linux-kernel+bounces-841746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44D40BB81DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 22:39:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32455BB81DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 22:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 48C584E4627
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 20:39:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E79CE19E1E74
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 20:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02CEA24BCF5;
-	Fri,  3 Oct 2025 20:38:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1802E2561A2;
+	Fri,  3 Oct 2025 20:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S4L3F+p0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J5WhN/8/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598DE2459C6;
-	Fri,  3 Oct 2025 20:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EEE324EAB1
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 20:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759523936; cv=none; b=dFPEqdPnSyg3t4EwBR0buX3hb3x5qQAmaoQwB2U9/WJHuunlJ7yPyH42UCFPnxkUwmE0/6GWzDtmGqdvZFhHq4K7Zq9gJuKBqFVZ6UPZeCD7RGTfPr54SZc/dY9/dSRjyDykAp38/FhpuLrXuOdEWZMnAiLs9qdNYW5orxhVOfA=
+	t=1759523937; cv=none; b=OJxSOdd3YrguzzPht7XqefN0rKuVGkEKlOu4Ah7F7BR1STbtGv8oP5La89udXIFlP7QdAPCSVbMYvueD7f78lBE60FzB0QDH50U3PpuLBGzYuki5nxiKk2419T2HRfQlm1U6HJhgyCZWoUQ3U2xGvgbp7M8Sbyxjgt5xlsmrzoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759523936; c=relaxed/simple;
-	bh=AeleWDuyUJnZpkc4cw1hO6AX2XUTuOPcOCcE8L+UJic=;
+	s=arc-20240116; t=1759523937; c=relaxed/simple;
+	bh=NgT9HuawGnR8STlvRUNA5Z4q86GZ1SZe6LmbwqF2RCQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qZkShCx66SprrDrm7JO3zC6Dnqg/IbRmR+K/kZxCtJEgCeZAL1C6yWHYAtYCua7PSlYSVf8dVtibUvajHb68vKwSerKJxGYr0tkCStS6gbd0+lHER87Q0OQMvnms6sY/F9ixCeXIRU5V/zK0poV6n/TXMBmWWdJPgQfI8ykmGJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S4L3F+p0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 150B2C4CEF5;
-	Fri,  3 Oct 2025 20:38:56 +0000 (UTC)
+	 MIME-Version; b=jqXO0x2zVsP8v4qL4SFbX8MQXG4wdweg5pxPbK0O1y2PYUZGsxG0905yDfwZvvnm54+NFtVgW7JfJJ5xa7XpqZonRWRsuOjovxvtrUQMG0GWAUtskgg1/S23jrFAYDOJbG1E45VcCcNYYqMqUXp0n1C2KAiF9K7hfb2sWGVfZBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J5WhN/8/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29012C4CEFA;
+	Fri,  3 Oct 2025 20:38:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759523936;
-	bh=AeleWDuyUJnZpkc4cw1hO6AX2XUTuOPcOCcE8L+UJic=;
+	s=k20201202; t=1759523937;
+	bh=NgT9HuawGnR8STlvRUNA5Z4q86GZ1SZe6LmbwqF2RCQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=S4L3F+p0Ttkg83PfSG5zfqt7CI7+pPYaDjiPpSuK35EUoIoIVcuv6V3Srzu1o/oKT
-	 9k5MNgcTUyTGP/6F/niObr5CU6kwDh1uTRUkFuXkatr32bordchdMQnkRl0y094nju
-	 eTi74st4JX/ZgYbTKIZ1GzKKL6KGtwE5YbGha4Hdwmh549xHD5PF9gkls4rkvCnAvD
-	 /4S6BzjJ4j7n+OEb1uZ6TWMF/GML3AsDTMWqhK9ESVCCjPXLQssq9I/yNoc0wl8jxO
-	 MjAoh0wHLzU652q6+EVeUyv5+wU4eC/gUVoPHunRMdBcZm25AoUQu1TZMn3rqkYwU0
-	 JlYwX08bTtpVg==
+	b=J5WhN/8/0/J9r/s9eimc704yu7UUGyVuANQo1hLuh6QEm1xUCf3itmIaTm9dMmk/x
+	 K4DCJnrUJ/SPeFUe1tRkOJ3zKRJe7Zs9XJwduKRZPGyFM6p2ae3syfmcP5VZxJiaj+
+	 VzCVZlk3QUZVyskHaD1GEzX6V+juOdDk5WQoi5rZ328Zd/firom/7VV0tB42+wmzpo
+	 2qUVzVWfUuSo7JorfDCq4TQjXBeTJM9YUQBDAHGGm6e8BNgwbxzzIvqoxxTNC/uMcB
+	 BEzykhLqaJl4+qFaSsuDrn8J+EiR8WuKD6ti2MiR+qPP5qeye0NwL71X1aY+GnvdMd
+	 7BxpTAm2uqQzw==
 From: SeongJae Park <sj@kernel.org>
 To: 
 Cc: SeongJae Park <sj@kernel.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Chengming Zhou <chengming.zhou@linux.dev>,
 	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>,
 	Nhat Pham <nphamcs@gmail.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
 	Yosry Ahmed <yosry.ahmed@linux.dev>,
-	cgroups@vger.kernel.org,
 	kernel-team@meta.com,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [PATCH 2/4] mm/zswap: fix typos: s/zwap/zswap/
-Date: Fri,  3 Oct 2025 13:38:49 -0700
-Message-Id: <20251003203851.43128-3-sj@kernel.org>
+Subject: [PATCH 3/4] mm/zswap: s/red-black tree/xarray/
+Date: Fri,  3 Oct 2025 13:38:50 -0700
+Message-Id: <20251003203851.43128-4-sj@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20251003203851.43128-1-sj@kernel.org>
 References: <20251003203851.43128-1-sj@kernel.org>
@@ -70,49 +65,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-As the subject says.
+Changes made by commit 796c2c23e14e ("zswap: replace RB tree with
+xarray") is not reflected on a comment.  Update the comment.
 
 Signed-off-by: SeongJae Park <sj@kernel.org>
 ---
- mm/memcontrol.c | 2 +-
- mm/zswap.c      | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ mm/zswap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 69c970554e85..74b1bc2252b6 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -5421,7 +5421,7 @@ bool obj_cgroup_may_zswap(struct obj_cgroup *objcg)
-  * @size: size of compressed object
-  *
-  * This forces the charge after obj_cgroup_may_zswap() allowed
-- * compression and storage in zwap for this cgroup to go ahead.
-+ * compression and storage in zswap for this cgroup to go ahead.
-  */
- void obj_cgroup_charge_zswap(struct obj_cgroup *objcg, size_t size)
- {
 diff --git a/mm/zswap.c b/mm/zswap.c
-index 80619c8589a7..f6b1c8832a4f 100644
+index f6b1c8832a4f..5d0f8b13a958 100644
 --- a/mm/zswap.c
 +++ b/mm/zswap.c
-@@ -879,7 +879,7 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
- 	 * acomp instance, then get those requests done simultaneously. but in this
- 	 * case, zswap actually does store and load page by page, there is no
- 	 * existing method to send the second page before the first page is done
--	 * in one thread doing zwap.
-+	 * in one thread doing zswap.
- 	 * but in different threads running on different cpu, we have different
- 	 * acomp instance, so multiple threads can do (de)compression in parallel.
- 	 */
-@@ -1128,7 +1128,7 @@ static enum lru_status shrink_memcg_cb(struct list_head *item, struct list_lru_o
- 	 *
- 	 * 1. We extract the swp_entry_t to the stack, allowing
- 	 *    zswap_writeback_entry() to pin the swap entry and
--	 *    then validate the zwap entry against that swap entry's
-+	 *    then validate the zswap entry against that swap entry's
- 	 *    tree using pointer value comparison. Only when that
- 	 *    is successful can the entry be dereferenced.
- 	 *
+@@ -175,7 +175,7 @@ static struct shrinker *zswap_shrinker;
+  * This structure contains the metadata for tracking a single compressed
+  * page within zswap.
+  *
+- * swpentry - associated swap entry, the offset indexes into the red-black tree
++ * swpentry - associated swap entry, the offset indexes into the xarray
+  * length - the length in bytes of the compressed page data.  Needed during
+  *          decompression.
+  * referenced - true if the entry recently entered the zswap pool. Unset by the
 -- 
 2.39.5
 
