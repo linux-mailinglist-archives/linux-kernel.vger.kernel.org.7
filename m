@@ -1,123 +1,124 @@
-Return-Path: <linux-kernel+bounces-841052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8468BB6235
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 09:07:49 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71A6BBB623E
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 09:09:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D850D4E1D1E
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 07:07:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1DF213447B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 07:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A0E22D9F7;
-	Fri,  3 Oct 2025 07:07:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC61D22DA1C;
+	Fri,  3 Oct 2025 07:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pt0rT/KK"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jw1vqdPY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E8122A4DB
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 07:07:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEDB2135B9
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 07:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759475263; cv=none; b=RF/9IWYWBmi647wpuZ5VeYJjtvhP64meHYEfOIDveY8TcUVEvNwbExMc5OENLLwB0eu5ZaO7k2+FgEdqPfZjgiYoV96gVtJZlFtj1sR5WTJM/qlfcq5H7+XK11EwxQYXYLucptNGwJF7XUML8Ys7wS9qUnPRrm+i12TE2KK0MUk=
+	t=1759475367; cv=none; b=JqKgkNC0UloxXWLLdMcekKDydobtQR8P9cMPghPg/d3ikg4jmtd1ppKljHDWgEIyvV1jWZhtw55YDp3SfpMwaLQWbSEJH3YxZs+C+K2bnXNxU6xdnbz3FYWiIhT+LgsV34114dsVAc4RPxDE7mZr7OQe+NRwcm02oVHopMnjuBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759475263; c=relaxed/simple;
-	bh=VfnrwV00n1OTVgQ7ak+8WGMC6Lhvu/i4uIuO4QQf7B0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f6eNE5bQI5eepeZ3mmnJi4X/gYrGn43NFS04frM4zKOcK47mOEveiGsajhfKFydZP3/Rf5FDEwlUJngDf/w71Esa7roPjM1goDxLbXYZ+1GLaaVQuq5lWijcq0qefmX8iA+MtdwxjyM74pqKFiKGufC1ENEm87Nr5LinWPpyaZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Pt0rT/KK; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-42557c5cedcso1039489f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 00:07:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759475260; x=1760080060; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+dLYg+KUenxi+tGWfH6hX1Q42Ol8JhSulu76BtWPmL4=;
-        b=Pt0rT/KKCsnSTktZVPcoGGmRXgamgaDWaS5hPp1VuMkq+j6o55J0B7C22vPcEgkbrR
-         nQeOnqnexflHRHMIQkWNo4pT6FpGvqCkKNyRu959fz82CoezuU52QQ+B6tMZ8DyQL3Nu
-         wFfbdBL3fSCjAo99cPhymT4G7Hp54WyVq9zh5R8iUI5WyPm+JRk5usYqVTz7eXcyM01i
-         jNHJuSl5jaUkUQjUKr3MOqGbqeMCvMoikO2624TnexwEMr2Aqa14zuIm/FL+nq7Jokwt
-         uU9YKf/hP1Qlek8IZICiZIdM2w32O8Fu9UnKVX7ofU1sMvygLnpgVwzfebpbddxmH9AR
-         Dpcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759475260; x=1760080060;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+dLYg+KUenxi+tGWfH6hX1Q42Ol8JhSulu76BtWPmL4=;
-        b=BEBQheh9rwx594rpRf3o2jZ+m9yKPu9Mm6tL2g1KV3BJQEnIl0P44iLrpQVWU88SRB
-         TJ4n9Q2grprZcfQghw1i1ffld3H74GEwlreBaAzr67zjEKhY5PE2Ya+QZAX+4tCPAe68
-         gU7Uyqq6+5yM574Hw/FMoStGLM0EL8om8ZJSU4XikjZRKQ/nmmYEUpJ0xtpJmXFoxKbC
-         p4gTpCHXR/t9M/wQ4K59nxUfnIWXoMu32vs2zish+s5cmmJXMf+fT2WiEvHFCnwdal1J
-         /7RLCXLMEN/ERvkHwbwKFr9fpoXYIkRXwXwf2w67cfzYMouoNAtz+ffXY7jKQ/DP8vhO
-         GB3g==
-X-Forwarded-Encrypted: i=1; AJvYcCWeiDdDhqHSC3lEyRcZnCw7gWkCXtkA53XkUh9M0T212VFLA682GUp/2HzjWonWK2+g4xOMkLKIRI/KYyo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSiOpEBwnzciCpxpKfG4slN7Hv2wqVWBiIeP1UJdBwbD+OS1ow
-	KefgLeWu7o3m6Nl8EoAXMOEz+lvtY4tBFE5L4bPnU4b3drLt8o+2vFfTTiz2sxpV9ms=
-X-Gm-Gg: ASbGncs3oyX4EynQNTeRcel5Dvre3pvU8uMWyLd7WlatMWQZRukUEaRB08/088zeB9o
-	eFowkhDo8PGHnMMQZkwQbGlPJD75k5MAFNsHf/m+34nAwODX+gf8djxNiTrtUrRLA2TqpOycb82
-	9tMEM4BmQV9RzSVmddmoFcsUwfNLWzk+893X3Q3r9WcP+Zga+9GwCuwjljkhQBQUbktxo/jlekY
-	HK5urxAfZtyfVgGoK65chK3GrM6WZEnXV225EI4XnH/3rclycGO/1gwzDq5sTv0hson/NqD31ik
-	e5xc/QTMpTgqapAjjnNXF2LFEi4tiT5PjHaKtQMCIwOagC7r2XdOIXCmKo8AHZXl24petEKarnF
-	oA6MFcE6rvea/h1w+zpahSN8oEKB/5IiTVkWQ3f9vQwMBoxSYLexZxFBR
-X-Google-Smtp-Source: AGHT+IH6eMzb4VOW5KfpbZYuUFHDgM4wKDGHErJCIyTzM3ybhw/asDsLkBOmij7ls7Gu/mDzsM8qHg==
-X-Received: by 2002:a05:6000:4285:b0:3ea:c360:ff88 with SMTP id ffacd0b85a97d-4256719ebdcmr1056224f8f.31.1759475259872;
-        Fri, 03 Oct 2025 00:07:39 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4255d8f01absm6582677f8f.44.2025.10.03.00.07.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 00:07:39 -0700 (PDT)
-Date: Fri, 3 Oct 2025 10:07:36 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 09/16] staging: rtl8723bs: fix excessive indentation
- in nested if statement
-Message-ID: <aN92OChccPlzs0KR@stanley.mountain>
-References: <20251002172304.1083601-1-vivek.balachandhar@gmail.com>
- <20251002172304.1083601-10-vivek.balachandhar@gmail.com>
+	s=arc-20240116; t=1759475367; c=relaxed/simple;
+	bh=zx2owurHFfkAoHhzYNDDvjYONBg7XXGf7hyYmx9Idvk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WnWptGQXzGqreGetESxmmKJosA89IV5jM3U1EI31URtipJhCcv87CuLSWXkmkjy9gwFsDZh5h0ph1lf9PT2pMGgu3tPmJmB+GABf56xTUcNhQ1ifz3XqQQhq0E9qvI5I080uAoEsR7j2KoQp38o0un0OQBx+If0WwLzI4UkUtbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jw1vqdPY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DACF3C116C6
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 07:09:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759475366;
+	bh=zx2owurHFfkAoHhzYNDDvjYONBg7XXGf7hyYmx9Idvk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=jw1vqdPYfbBqcJ3OLjd2j5FrI96x4fjWKWTLMeQ2vgkCxWs662iR8TIFDDMeR35SL
+	 Rbtf0HfETOJRyS5V1zRObhawAFuSvb0owXUV+l/BzvAK3l7wd04qPcjR5iyKDvgUb9
+	 yJPUIGAjQXcGI1MIBCwKJxA4PlXbVk18KcqgP/bDb+Tx69GnVS2dYwCaOZURHi8+C/
+	 fyCoze5UemfnzlscU4NxIaS4tZDsnVJXV7AMvQpUEU+T3CTZA78doodM4COOfY/FvQ
+	 P6yzUf8ui8+skIZCfgXcxG0u4XrDlEMTCiOF2LIvqO+fMd5/qbcE+ybZPLXIOjf5Dz
+	 oxSO2S/wEqbJA==
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-71d60110772so20132397b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 00:09:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWivcn2SQTfCLs6H0iVgssZv2Ce3/Qnnd6BZI+D6p70THxUiK1ZR+9p+h28rDhoCmt86hY44JhKWrvojkg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRizR7yEW/8QBlkfT1dgf73T+5ispqqtKXAXeyu+qP/wnx4lFf
+	DSkQKymVDJ+26/eHOwHHbsYLNTMEkYGPURKpkkX+sNsvLp65bw6TLaZY4neg/aMISC13SPfU1IE
+	8XNaUwdaGyFRscoTBB1BmcdtLcLwlQjumKlUm56FF1Q==
+X-Google-Smtp-Source: AGHT+IFEA0NhirwPGgcphjG0fmApdQNf9P4ICBae69kfL2JodwSZCLWlp251XiujpsESiyOGRzhhBlkoU1i9wi0ONVg=
+X-Received: by 2002:a05:690e:2513:20b0:632:3cc7:c8cd with SMTP id
+ 956f58d0204a3-63b9a073829mr1721525d50.23.1759475366088; Fri, 03 Oct 2025
+ 00:09:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251002172304.1083601-10-vivek.balachandhar@gmail.com>
+References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
+ <20250916-luo-pci-v2-2-c494053c3c08@kernel.org> <20250929174627.GI2695987@ziepe.ca>
+ <CAF8kJuN2-Y7YZkY5PrerK=AdTUfsaX0140-yJJSTnNORucYfqQ@mail.gmail.com> <20250930164705.GR2695987@ziepe.ca>
+In-Reply-To: <20250930164705.GR2695987@ziepe.ca>
+From: Chris Li <chrisl@kernel.org>
+Date: Fri, 3 Oct 2025 00:09:15 -0700
+X-Gmail-Original-Message-ID: <CACePvbXSc=k-ivLE-ukuXaKO73mDm=tZBA82c6W+6-i3NnJriw@mail.gmail.com>
+X-Gm-Features: AS18NWAqOUXihtz1zjCgVeWOSSOOP1uiZ1AkbQp8d_YOzMx9hgHpSXuyfXEL7Bo
+Message-ID: <CACePvbXSc=k-ivLE-ukuXaKO73mDm=tZBA82c6W+6-i3NnJriw@mail.gmail.com>
+Subject: Re: [PATCH v2 02/10] PCI/LUO: Create requested liveupdate device list
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	David Matlack <dmatlack@google.com>, Pasha Tatashin <tatashin@google.com>, 
+	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>, 
+	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
+	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
+	Leon Romanovsky <leon@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 02, 2025 at 05:22:57PM +0000, Vivek BalachandharTN wrote:
-> Adjust indentation in a nested if-statement to match kernel coding
-> style and improve readability.
-> 
-> No functional changes.
-> 
-> Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
-> ---
->  drivers/staging/rtl8723bs/core/rtw_mlme.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-> index 5d31684c7cf3..34fdef878b51 100644
-> --- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
-> +++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-> @@ -1254,8 +1254,8 @@ void rtw_joinbss_event_prehandle(struct adapter *adapter, u8 *pbuf)
->  
->  					ptarget_wlan = rtw_find_network(&pmlmepriv->scanned_queue, pnetwork->network.mac_address);
->  					if (check_fwstate(pmlmepriv, WIFI_STATION_STATE) == true) {
-> -						if (ptarget_wlan)
-> -							ptarget_wlan->fixed = true;
-> +					    if (ptarget_wlan)
-> +						ptarget_wlan->fixed = true;
+On Tue, Sep 30, 2025 at 9:47=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca> wrot=
+e:
+>
+> On Mon, Sep 29, 2025 at 07:13:51PM -0700, Chris Li wrote:
+> > Can you elaborate? This is not preserving everything, for repserveding
+> > bus master, only the device and the parent PCI bridge are added to the
+> > requested_devies list. That is done in the
+> > build_liveupdate_devices(), the device is added to the listhead pass
+> > into the function. So it matches the "their related hierarchy" part.
+> > Can you explain what unnecessary device was preserved in this?
+>
+> I expected an exported function to request a pci device be preserved
+> and to populate a tracking list linked to a luo session when that
+> function is called.
 
-Wut?
+The current PCI subsystem is designed outside of memfd.
 
-regards,
-dan carpenter
+As for the request PCI device function and that function populated a
+liveupdate device list. It has been considered and the current
+approach is simpler.  The reason is that, if you want to populate the
+device list, you will have to know about all device dependent rules,
+devices depend on parent bridge, the VF depends on PF. Because the
+request can be canceled as well before reaching the live update
+prepare(). Those derived dependent flags need to be tracked and
+reference counted. Even worse, it needs to be reference counted by
+each liveupdate feature. e.g. LU_BUSMASTER vs LU_SRIOV vs LU_DMA each
+need to have a reference counter, so it can remove that dependent flag
+when its refcount drops to zero.
 
+> This flags and then search over all the buses seems, IDK, strange and
+> should probably be justified.
+
+The current approach is much simpler when request and unrequest a PCI
+device. Don't need a recursive walk parent or the PF relationship.
+In prepare() it only walks the PCI root bus tree top down one pass.
+That is the only place to deal with dependent relationships. It is
+simpler and doesn't need to maintain per live update dependent feature
+refcount.
+
+That is my justification.
+
+Chris
 
