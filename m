@@ -1,182 +1,108 @@
-Return-Path: <linux-kernel+bounces-841255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5F18BB6A48
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 14:27:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D1CBB6A39
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 14:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 329734EC1E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 12:26:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9A3B19C0954
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 12:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408A12F39C7;
-	Fri,  3 Oct 2025 12:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47F12EFDAB;
+	Fri,  3 Oct 2025 12:17:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="BBnCEa2r"
-Received: from fra-out-003.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-003.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.72.182.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BoBYS/LH"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E662F3625;
-	Fri,  3 Oct 2025 12:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.72.182.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E690D2EF646
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 12:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759493906; cv=none; b=udAQhk91BXNw5lP9K2ZN3DHNJPM46HHImJw6mPykrSdX+P9dcUnVR2m1+Xk/kL4mcAROnPNZ7knfSWrwU6gLqLuPAZBJZ6jyQMS8qghFCXZ0o0sjLV7HcyYo8nK4OxN8HDv58QEhRInYTUGS3GK1sT/4Kf3wKyNLtBeMVCOmy7o=
+	t=1759493879; cv=none; b=So6iZJ2McpF4dGorhckFOMmjvxhWuXtbTuvwX1zbqxGrcKNXWDrSiLIP+KZcxCFT7k/pALZRy1U4Hj85swVbMxr56AHTo/4sl5FsvSOxuieE9O79vyolysWwIUID46alk9CkmCcTiTA49qBmDnWHR8Zq6JWxw4+IM7RK0Bsajr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759493906; c=relaxed/simple;
-	bh=V2L3IilwofpV6SrsfVTvut5ipDXkokIOm+dTBT4i7eQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iFFNnyj7W60lMOr3MkTLJpfULJgeWigEtqDbJOyMg+ciHMOgzy8cOPJUXmQ6bjot0+Kh25w59QH3X3PARxtHNCpWlkjzgchrcDGmfGQ7YHIrLVlbWu5bESaJ+IRxVhBU70yN4aAgkXCofCo9oW9021MwLHfHVKvhD6+UjNnxIdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=BBnCEa2r; arc=none smtp.client-ip=3.72.182.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1759493879; c=relaxed/simple;
+	bh=+Snt76doWFSgZXIi2iokf3aOziww8Z3E/0aceKrfcao=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K3maOAGsaI35AG9mcxhrItV5QoHUKlkCyCGrjnJsPMt2eLFqNvHsx2myw4Z2Pxdnz1NPCjtWB8sb1SC2sS42T94dStG1kw8fNlnXHX3WkcCvQulou8iG0UezcX2Ygzj8xbjHJArJt9b7KbgQXsQ5l9Pg9fenceJLVJL79aELOPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BoBYS/LH; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b5ca0345de8so63083a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 05:17:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1759493904; x=1791029904;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=k0dUe76w+6n5/NfsPbyefGVCom+xh3GGcFcV3Olhmks=;
-  b=BBnCEa2rgWxHW5JvqvxuMGIrGHtEGqInEO0wEdi3CYaexPyFR6RF9KYk
-   WqYpTk90HLwusgrLlvsUnykacDYIRLFxhC1jo7sRv/LWBzKtj+27V8lyV
-   iod6dbbM4iuFlKwZ5XHbnNWphNTYKjU/lphh41bSuvLfKkJSvsC/gX4AT
-   PLgHm22dLYOgkHorQNINtfz0+HGchiuD+bT5Y7jwtlrYFvk9MXUUya67W
-   nmRKX4rTi6PfyQ9j8saK+mrAfCqmkzZm3MXg8laudnN/9DmczFf98WOiG
-   ymoQbm7rcgxlzsit92jHFASQRvP5vPXBYeF/G6Ju6iLdy4EJjjkdh6Jgz
-   g==;
-X-CSE-ConnectionGUID: iHjhxUPQRHe2B4gOSiKoaw==
-X-CSE-MsgGUID: DWm3LlXiQW+twGunnV0KdA==
-X-IronPort-AV: E=Sophos;i="6.18,312,1751241600"; 
-   d="scan'208";a="3061377"
-Received: from ip-10-6-11-83.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.11.83])
-  by internal-fra-out-003.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 12:18:13 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [54.240.197.224:28099]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.19.222:2525] with esmtp (Farcaster)
- id 30f3960f-1ebe-474e-89a0-a1458ac740d9; Fri, 3 Oct 2025 12:18:13 +0000 (UTC)
-X-Farcaster-Flow-ID: 30f3960f-1ebe-474e-89a0-a1458ac740d9
-Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Fri, 3 Oct 2025 12:18:13 +0000
-Received: from dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com
- (172.19.116.181) by EX19D018EUA004.ant.amazon.com (10.252.50.85) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Fri, 3 Oct 2025
- 12:18:01 +0000
-From: Eliav Farber <farbere@amazon.com>
-To: <gregkh@linuxfoundation.org>, <kenneth.feng@amd.com>,
-	<alexander.deucher@amd.com>, <christian.koenig@amd.com>, <airlied@gmail.com>,
-	<simona@ffwll.ch>, <linus.walleij@linaro.org>, <dmitry.torokhov@gmail.com>,
-	<tglx@linutronix.de>, <wens@csie.org>, <jernej.skrabec@gmail.com>,
-	<samuel@sholland.org>, <agk@redhat.com>, <snitzer@kernel.org>,
-	<mpatocka@redhat.com>, <clm@fb.com>, <dsterba@suse.com>,
-	<luc.vanoostenryck@gmail.com>, <pmladek@suse.com>, <rostedt@goodmis.org>,
-	<andriy.shevchenko@linux.intel.com>, <linux@rasmusvillemoes.dk>,
-	<senozhatsky@chromium.org>, <akpm@linux-foundation.org>,
-	<lijo.lazar@amd.com>, <asad.kamal@amd.com>, <kevinyang.wang@amd.com>,
-	<David.Laight@ACULAB.COM>, <amd-gfx@lists.freedesktop.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<linux-input@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-sunxi@lists.linux.dev>, <dm-devel@lists.linux.dev>,
-	<linux-btrfs@vger.kernel.org>, <linux-sparse@vger.kernel.org>,
-	<stable@vger.kernel.org>, <farbere@amazon.com>
-CC: Arnd Bergmann <arnd@kernel.org>, Christoph Hellwig <hch@infradead.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>, "Jason A. Donenfeld"
-	<Jason@zx2c4.com>, Jens Axboe <axboe@kernel.dk>, Lorenzo Stoakes
-	<lorenzo.stoakes@oracle.com>, Mateusz Guzik <mjguzik@gmail.com>, "Matthew
- Wilcox" <willy@infradead.org>, Pedro Falcato <pedro.falcato@gmail.com>
-Subject: [PATCH v4 11/11 6.1.y] minmax.h: remove some #defines that are only expanded once
-Date: Fri, 3 Oct 2025 12:15:20 +0000
-Message-ID: <20251003121520.8176-12-farbere@amazon.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251003121520.8176-1-farbere@amazon.com>
-References: <20251003121520.8176-1-farbere@amazon.com>
+        d=gmail.com; s=20230601; t=1759493877; x=1760098677; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+Snt76doWFSgZXIi2iokf3aOziww8Z3E/0aceKrfcao=;
+        b=BoBYS/LHxye7V1HaD2qV4F/+tS7pIRnf/0Yqxz5s++vT0KiLzi7sv/jMa24V2+Mutw
+         t3vQkDVmQR5NRYKbUGkfJjAJThCJm07yHi7ZQofF8+le0Y8k/d3yQClnYVeuSIyx9suU
+         liB6bHdQx1Y4qVDxj1VeJngeFlEAi50DraOIXlXsKkxvgNY7DGOG1I8NZCDceb13xYsj
+         thtdDObu9a4CmajJRbSb1t9zFWN9o8yJ34zCVwN7fnBU5ScMva3s0IxdknFi9rASQGwo
+         +C4j3mC9YwiFJlL1W7O/fAAn4LsCUNstZtqHstXUEHlBHJ6/6n1SfcvlIp7W1gvOtyqZ
+         G+Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759493877; x=1760098677;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+Snt76doWFSgZXIi2iokf3aOziww8Z3E/0aceKrfcao=;
+        b=wKx9lhwUrKP1tq/AsYsWsjPCdKkMEKYWyKvjfIzg5LwBv7aZPjBGIaoJYveEbTyZGu
+         iFTQte9tILQGrITsqNSLfqxt7O3OKY9mijim6N7PvPzqKlnO0GVTRsPNFupcM9A8k6dm
+         dw4wvbBrxQeQH5U7fX5Q6avXxOWloMJoQ62sITi3zlFOfUXCx5QN2eBo72/Jb5YatY2J
+         HfA6oultmJpdhamS39r/NZyTQwMBZJ4KpdthECwM6srdd5tOaSnBT2HRPDoleq4XOI7a
+         crBkugO6J/86fJ7hRbZ2a49KHTRWftCpmefcALc+c7jIu+OgGJFjucZsgO6Y2suNNnKQ
+         8UlA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9ZvyM4qSErPaN42CKXI8dPZfevBY83DjC6g3zJRlM15q7JDS45wPbG9gmNOQNQta6ArO/9jigGRjLmLM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx81wnRidJ9ZrUFBxvlTBuirRgCSXK2Erj3riMxEKKxEs1ImVFp
+	smdRr0M8ffm4hovX27lQtFpyL6UP14iHMRu/voqE35qlvYFARi9uOsgn7rSVwLY7gfzgB2ObECC
+	/bpj5PZDrN1BKgQEA4qKBUj+ApJT9u5Q=
+X-Gm-Gg: ASbGnctBLRqS+LFbji2cy207OSYVxtnIm/B6SdG3Frl8U9KecHFD/gbu9pff8ePnik0
+	tR+uoyl0uT3y0jcPUi/yWlYvvf4DVPWszgTKkew2U1ibdgFCrmUGEFmplxFz+bQyQ8Jn4UgrRhQ
+	WifzrHlznyXuVFYtw1V5TRkMWmiNITYYzVpMXqFq051n5BDO+TvAeB+Wiq7RcDjCftyefz4kAXb
+	BwzqzG06Zg20SUmljgD3C6b1Amz/Gab4R+8sKyVl/tLVXVfi6oiYjAKMqeCSApz40sZ9oSBnIDz
+	JkIHrfK3pS+7X72YuKCChKfPdACZjjR9it5toY4vqbI0fdjJgdaDK/KqCESTlDX/b7etyjE=
+X-Google-Smtp-Source: AGHT+IGk9cSxGm0BGzdwFCCO/DKuyQBht69QJq0J1pfK+OI+/sNOGnF/SLBrETGQ930FwNDtwBkptP9IjGNbEMhvX+M=
+X-Received: by 2002:a17:902:ea06:b0:261:500a:5742 with SMTP id
+ d9443c01a7336-28e9a6d2779mr20951685ad.10.1759493877006; Fri, 03 Oct 2025
+ 05:17:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D035UWB003.ant.amazon.com (10.13.138.85) To
- EX19D018EUA004.ant.amazon.com (10.252.50.85)
+References: <aN-0kfb7trsHUoVS@sirena.org.uk>
+In-Reply-To: <aN-0kfb7trsHUoVS@sirena.org.uk>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 3 Oct 2025 14:17:43 +0200
+X-Gm-Features: AS18NWDe2FuMclk-0TqZZ2NCKh26uw--IOmdBKdvjXlNAi6DqPTeDQ0Ce1wQxNw
+Message-ID: <CANiq72keJ54v_qTm7TxoBhM8X=1xzN1nopkfG27G6ZQC=1C3-g@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the char-misc tree with the
+ mm-hotfixes tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Alice Ryhl <aliceryhl@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Matt Gilbride <mattgilbride@google.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: David Laight <David.Laight@ACULAB.COM>
+On Fri, Oct 3, 2025 at 1:33=E2=80=AFPM Mark Brown <broonie@kernel.org> wrot=
+e:
+>
+> [Sorry, forgot to grab the diff - was a trivial add/add conflict]
 
-[ Upstream commit 2b97aaf74ed534fb838d09867d09a3ca5d795208 ]
+Yeah, accepting both sides is of course good -- I see it in
+07586604e097 ("Merge branch 'char-misc-next' of
+https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git").
 
-The bodies of __signed_type_use() and __unsigned_type_use() are much the
-same size as their names - so put the bodies in the only line that expands
-them.
+Thanks!
 
-Similarly __signed_type() is defined separately for 64bit and then used
-exactly once just below.
-
-Change the test for __signed_type from CONFIG_64BIT to one based on gcc
-defined macros so that the code is valid if it gets used outside of a
-kernel build.
-
-Link: https://lkml.kernel.org/r/9386d1ebb8974fbabbed2635160c3975@AcuMS.aculab.com
-Signed-off-by: David Laight <david.laight@aculab.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Arnd Bergmann <arnd@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Jason A. Donenfeld <Jason@zx2c4.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Pedro Falcato <pedro.falcato@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Eliav Farber <farbere@amazon.com>
----
- include/linux/minmax.h | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
-
-diff --git a/include/linux/minmax.h b/include/linux/minmax.h
-index 2bbdd5b5e07e..eaaf5c008e4d 100644
---- a/include/linux/minmax.h
-+++ b/include/linux/minmax.h
-@@ -46,10 +46,8 @@
-  * comparison, and these expressions only need to be careful to not cause
-  * warnings for pointer use.
-  */
--#define __signed_type_use(ux) (2 + __is_nonneg(ux))
--#define __unsigned_type_use(ux) (1 + 2 * (sizeof(ux) < 4))
- #define __sign_use(ux) (is_signed_type(typeof(ux)) ? \
--	__signed_type_use(ux) : __unsigned_type_use(ux))
-+	(2 + __is_nonneg(ux)) : (1 + 2 * (sizeof(ux) < 4)))
- 
- /*
-  * Check whether a signed value is always non-negative.
-@@ -57,7 +55,7 @@
-  * A cast is needed to avoid any warnings from values that aren't signed
-  * integer types (in which case the result doesn't matter).
-  *
-- * On 64-bit any integer or pointer type can safely be cast to 'long'.
-+ * On 64-bit any integer or pointer type can safely be cast to 'long long'.
-  * But on 32-bit we need to avoid warnings about casting pointers to integers
-  * of different sizes without truncating 64-bit values so 'long' or 'long long'
-  * must be used depending on the size of the value.
-@@ -66,12 +64,12 @@
-  * them, but we do not use s128 types in the kernel (we do use 'u128',
-  * but they are handled by the !is_signed_type() case).
-  */
--#ifdef CONFIG_64BIT
--  #define __signed_type(ux) long
-+#if __SIZEOF_POINTER__ == __SIZEOF_LONG_LONG__
-+#define __is_nonneg(ux) statically_true((long long)(ux) >= 0)
- #else
--  #define __signed_type(ux) typeof(__builtin_choose_expr(sizeof(ux) > 4, 1LL, 1L))
-+#define __is_nonneg(ux) statically_true( \
-+	(typeof(__builtin_choose_expr(sizeof(ux) > 4, 1LL, 1L)))(ux) >= 0)
- #endif
--#define __is_nonneg(ux) statically_true((__signed_type(ux))(ux) >= 0)
- 
- #define __types_ok(ux, uy) \
- 	(__sign_use(ux) & __sign_use(uy))
--- 
-2.47.3
-
+Cheers,
+Miguel
 
