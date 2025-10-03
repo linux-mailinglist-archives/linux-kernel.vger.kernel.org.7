@@ -1,196 +1,223 @@
-Return-Path: <linux-kernel+bounces-841437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FCEABB7507
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 17:24:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA5D0BB750D
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 17:26:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD9B0480D93
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 15:24:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 863D74E950B
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 15:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F027C285CB6;
-	Fri,  3 Oct 2025 15:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4B1285C8E;
+	Fri,  3 Oct 2025 15:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uScpE9gw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="njI+ks5g"
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010051.outbound.protection.outlook.com [52.101.56.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C5928507C;
-	Fri,  3 Oct 2025 15:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759505068; cv=none; b=BqHGfwULOcobtX1m1GkWM+Lr5hLZ80yFpnIqrAb23xnXyTkWw33p+oBFJh3eXjKXOgSmG9bXtFtIJfWtVTayFwX1PMEp/fpBb2oohgNkeKUThc99AbWw+loK6X2qAmp62VKu/TDb7d+lVKLM1K+XAC1PMzcvKi6tXt/nRThDJTs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759505068; c=relaxed/simple;
-	bh=DQbc540c3F4b2scI1GiUAhd/lmG2n6h9j6Q7f/kL6PA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PF/aSVtIx95bm4U8p8jeB0LRXFJXaM3Bze7fgs4+JX+DOecaUUPnYlDx/tCfryYEWXM1RhmJEllVcDQ2Aj7TABPD4U/xIJKTGAmnJKZo2V+HyTWHYLIaDKNmXsXlydgZpiPR+ZGaLSYoJjyQIt/qH/AkRIkVekaDNckMHQ01l+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uScpE9gw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08774C4CEF5;
-	Fri,  3 Oct 2025 15:24:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759505067;
-	bh=DQbc540c3F4b2scI1GiUAhd/lmG2n6h9j6Q7f/kL6PA=;
-	h=From:Date:Subject:To:Cc:From;
-	b=uScpE9gwKBXzfsOqJsm8nsTLuyY8dsZmu4CVbMgtH7C3okBfq1cziyx+eSwvIfGU0
-	 DjYjQF8St5imJ7he/JHa1lANjODwgVgnyiimp9BC9HfVZ+99bD8xLq+CaxXYhHSnI/
-	 e7AJg0YNd1EDn8rwhRLpyPRHYWwnup4Sg8sXdBIKMBbACWlz+lb1XtHdIwmf+UamFE
-	 7Nk6XFlkxVGXcbL/km/QdRNVGiRQz9RxUGqprrTede8gGP6x5iw1d5ZpPmb1D4QzCV
-	 uuZ2wrLr6fazv7XN8GUph1QAHMc0YfGxBBjqa8GwmYt54C/yaXOOFQa05igBKZLEti
-	 2ISx/BcmVFI/Q==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Fri, 03 Oct 2025 17:24:17 +0200
-Subject: [PATCH bpf] selftests/bpf: fix implicit-function-declaration
- errors
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4003594F;
+	Fri,  3 Oct 2025 15:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759505200; cv=fail; b=oBzn8pqFGWMI1OQP6qEbi+54eBbUqM5UsHP2QEUPbPtevGwZfI9T1J2wWerrMiN3lJDjPGPscxdJ1UsaHzlZ74lCHR4M3lMSAUrlmVI2boLQtenaMXRDFAFCDvryVfHBdEUIno+F4JoZwWTTROMe87Naykz9e4TtOYtHtsFWIOo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759505200; c=relaxed/simple;
+	bh=DJx2U/juEoi69wPQFWnFfkMp2CM1baIv+QfN3m7JD6A=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FdsGdNYIhK82kqBi5gt5tqGX+SYGI0xIQj3mwqDKgHlgZdYG7B10H3KEjCU6/iemn/6T5DUfMm11cIKrM5AGf8Lk2jKZ0U3pIqfKyS7baPkXg2Ae2M1TQALDD3Pgwl2Dv5l9aFiee+u0dXQRRlB8MPVJOYkdltI9Fp6KcntxKP8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=njI+ks5g; arc=fail smtp.client-ip=52.101.56.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PbXBbH0kTKizMgo5VPQBycHn9pfWl7kwHkvCR40tfkxU4fc4CHa69b4M2Zwuvir5GNS4YjKnEhtqgi2B52vaWFYi+Fbqvs/nY8kbl7GMADHPIY06h4N4reBiw4Jc7BpHDmIHVQMc1EDG4irjm7/EPJVCGZUJAnyCVpAEFsz8HQy3MI+qudYCZxQlvLlwPWlmBmGbenj5A24JSQQBxSArh4XD0asCBh4ncKS8A9MKTBgn+ZuZqolMmGudpOPsNLZjNIIme78hwajw6XmoRsUjZYpeXGBXMcMseBplcM4QHGM/HKFjKJTl13KYxZjevc6pZyHVkBLITj8b3P1EEINZ0Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aqBNmR3gXDKJWzC0izE3dXrdiNpgf5zQQuca6jTJ82w=;
+ b=vLDYON2508PpERoSGHl+/CCoBM2E77u0sRGm5vTlN8HkM0eO0kTy8fv4W348ocb01G6KCjqUOXX5tEIKonPYkq8ewFG2ufPhvEEKtn+y1DvxsqkppOGutnD+zlRUc580qidN07gaSMfU+huv3V+bZSVvtxPDdVIIP2gf+CLYIJ8nNrINsUOKI4nCTTj2SlvQGY5fAK96IQFtiuvvlvV5DUdN3f2f20lEjGH+oWrv/gxOCUDgooH5HgO+rE7QMR9plrFVfIIpfuw/9+pNVUuADWOPVmC2njCltrH4/OFVYnXvy1f0qDZ+2fe3ZnaWx6acFgDJkLZX6a/bmNYxtppeqQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aqBNmR3gXDKJWzC0izE3dXrdiNpgf5zQQuca6jTJ82w=;
+ b=njI+ks5g1J0OIZ1CTOUcZphg0GU1OmmKvbsWOQpOcVoMf5vL4eS5Mt+Nm3ZDxh9jkhR4OFgWihXYGahWcw9VgF2TERakm3paUSLst8boIEWWRaQc3uyi82wLn5b5OuC850WQqTEO4VU3nxnO+1zjuCbQ5wSY96ovy9JZMvK/ZFjc0nk/lGC6N5v48oIoL7aj+aMxTk4/i2hcIl8I3pkPvNFURpsWPJKtttXy4Be+mznmYvTdrVWrdGhhzPossLHfnPVg54W5Qy0hBTn527g0n/aMurc2ZDm3FQfGU9nlBBw/Dse7TeCtT+0ZhD124m6+U3Mup/s0JVPus3kokiCUCA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by DS2PR12MB9751.namprd12.prod.outlook.com (2603:10b6:8:2ad::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Fri, 3 Oct
+ 2025 15:26:32 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9160.017; Fri, 3 Oct 2025
+ 15:26:32 +0000
+Message-ID: <4f6ac8e8-3dee-46c3-b3a6-992bdb0225f8@nvidia.com>
+Date: Fri, 3 Oct 2025 11:26:30 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/9] Introduce bitfield and move register macro to
+ rust/kernel/
+To: Alexandre Courbot <acourbot@nvidia.com>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ dakr@kernel.org
+Cc: Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
+ Yury Norov <yury.norov@gmail.com>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Andrea Righi <arighi@nvidia.com>, nouveau@lists.freedesktop.org
+References: <20250930144537.3559207-1-joelagnelf@nvidia.com>
+ <DD7G0ERRKG3K.1AFE4FSLNBZCX@nvidia.com>
+ <DD7G18DF6PJ2.2E1N4DXGT83KL@nvidia.com>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <DD7G18DF6PJ2.2E1N4DXGT83KL@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BN9PR03CA0283.namprd03.prod.outlook.com
+ (2603:10b6:408:f5::18) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251003-bpf-sft-fix-build-err-6-18-v1-1-2a71170861ef@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAKDq32gC/x2MwQqDQAwFf0Vy7oPsahfpr5QeVs3WgFjJtqUg/
- nuDx4GZ2amKqVS6NTuZfLXqa3UIl4bGOa9PgU7OFDleA3OLYSuo5Y2iPwwfXSaIGRJCj5S7kdt
- YUs+ZfLCZuHXO7+QdPY7jD0VWMm9xAAAA
-X-Change-ID: 20251003-bpf-sft-fix-build-err-6-18-6a4c032f680a
-To: Andrii Nakryiko <andrii@kernel.org>, 
- Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, 
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6355; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=DQbc540c3F4b2scI1GiUAhd/lmG2n6h9j6Q7f/kL6PA=;
- b=owGbwMvMwCVWo/Th0Gd3rumMp9WSGDLuv1oe9TQgbcvhc1tWTA27r1zjXS04JeVS00qtaYw2O
- 30ZPNXaO0pZGMS4GGTFFFmk2yLzZz6v4i3x8rOAmcPKBDKEgYtTACayP5rhv9Pj04ERzaufnPq+
- xW/FnIyQ1U41sRqdAnVvfyxlivh4lY2RYbFWa0DUrrCz/70U1vnunjk3sm2BUU32XUUGv5XvPgS
- XswMA
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|DS2PR12MB9751:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8cb8a44b-43a6-42f5-73d8-08de02913b5c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dXBGeE5Ld0RVdlQyMDZVVjByMUpCVDhMTHV2cnJLS1dNblZtTy80UGNCTTd0?=
+ =?utf-8?B?Z1RieFI2UkdKd0REWXhvWjdJSUgrdk55VVM3MElaNEhWR0oxdXlEQy8yS0lU?=
+ =?utf-8?B?dVRmYXIxcFlYOGxMc1N3SkhSc0xucW5sQXpUQ1M1SVhQYzNMS0poWHUxNGdB?=
+ =?utf-8?B?ZnJ5aERWakxaT3Z3ZzY1U2g3bWVtcUlGazBlV0M4V0NFZlVZaUZ5R3JHQkhy?=
+ =?utf-8?B?cnZBL3ZEWmplcWVyNkJxbWY4Ui8wK2ZzaHdoajNQeG8wYzIrdVNYK21hUTBX?=
+ =?utf-8?B?T1VzSHNJRjd1RGI4Qmp5Z2N4NDJkT1VUQkFBNk9qNnViNjhvN3pNa0t6eEVY?=
+ =?utf-8?B?T1QyWm1sc2JpYXZ5T0xzN0tmTnJ6V2ZDYXgvWEhKaGNBS01hNExkTEtLZXow?=
+ =?utf-8?B?MFlEbjVCRXdQZmsyVDA0NjZBSlFKMnBZZ0hpczR5VFpVVERMcWxvR2J0SHUx?=
+ =?utf-8?B?V3FmZ0NsMW4rNG91cy9iVjl4VTFGZ3pFNHNycXU2S3AyRXlKSktROUUrd3M5?=
+ =?utf-8?B?ZjF0blQ5UnFYalVKYkVlcG5xbjI2YlpIOTU0ZWhkdmZGeDFURjVaZ1dCNGlZ?=
+ =?utf-8?B?TysvYzhZNE1BcHJqMFVOSk5jOTNMNVdlSEpPYmhmNDRWZXBISFVKT0ZmeTdw?=
+ =?utf-8?B?V2EwektvTFFFK1RJWmEyK3B2eXdYdS90RVhKL3lSZGY5SFVYYTVzQU5oZHgz?=
+ =?utf-8?B?K3B6Mkx5dW5pYWZGOHpJbjBLaW4rUWNsZjVpWm9tcUFpempZL2tqVm1xT1hT?=
+ =?utf-8?B?Z285TjdMdkRkK1l2RGtMRjRPb1p1MXVjOWdmQkY3Y0xjdUZhdDVjL2JMTTEv?=
+ =?utf-8?B?aHRvU2phMUczVGdQT0g4U0lGUWh3ZnNzM1hocEQ4UlBHelIyeFp4bk9OTzNm?=
+ =?utf-8?B?MSsrUHVjMTVmUHpEUGZEN1RhbFE4cFRrcDUxejBkNnB5TEFXakxyVjNhM2xS?=
+ =?utf-8?B?dDdwc051VXFWcjFsY09QTmsraVozWnR5QmduUXFxWVE2d0U0ZFBhTXRWSGZO?=
+ =?utf-8?B?MlVnZjJ6bmF0blBoU2JiU2tBRFFpdkZjOUdJallFWEFxSk9CRnRlb3Bzc0hE?=
+ =?utf-8?B?VEp0c2k2djd3WC9SVzdsREE2SFdSenZ5djdWY1NaTStEWU4zeFpXV0xHUFF3?=
+ =?utf-8?B?U3FBOUNBZkYwbTRvdHl0em5MRmczMkFlMUNpc1NFeUxJVDk0OHlGeVhub0x4?=
+ =?utf-8?B?M1BLK2dNemwzcGRrU2c4OWQveFhvNFI1TGM5WWRHQVNNWU44TUVOdHE1OEQr?=
+ =?utf-8?B?cUd5LzFWbm1OdzB5NTF4Z1VkQ09HbytWNWlBaHJvTnlNOHZEUUlnbWUwTXBn?=
+ =?utf-8?B?YjZSeFpoZG1qbzJJQmM0OUNWalhpaTMwdmhMZXJHeWd2MEhUQythVGU2dW45?=
+ =?utf-8?B?T2tCR0JKNXpZbjVEazNzSEQxT0MvRHZFeWVMSDJyK1NJdEttM0VWcm1Rblo1?=
+ =?utf-8?B?eHBueXBXMzFNa2d4WGlxRlRUYldDamlrTGRVNlM4VkN6anMyTk1SdEt3bTBH?=
+ =?utf-8?B?WjBmQzByc29RRk1PQlJ4S0ozVUZkQnp2MytVVk95Q09JSkJnNlY2dUZSVmh3?=
+ =?utf-8?B?TEdUVjJnMEszUUFVdDNpR1E0VXpkcHhJelJ5ZzVodVBObCtOS0lQUzRDeG9v?=
+ =?utf-8?B?Ly94bVNZbVFFdkloMnlqZFE0ejhJWjZzTjJOdFpUNnVZUXFJdm9zeWVBTk16?=
+ =?utf-8?B?bjVFZ0FhUDB2TC92VStVUGJWbXEyRnRiMUtieXozVEFPRmVOTVptVEY4OUZQ?=
+ =?utf-8?B?cjZGeHFMSjFxM085elpBWjRPZ2NKYTFQNjdQcGJxNDBlTnlQMGgxR1ZSeFdh?=
+ =?utf-8?B?L1dGaE9VRjU0NFFsQlY4b1Z0bWFsQ0F6QUJxYU15WlNtZlRTcjRZYWtYaktz?=
+ =?utf-8?B?Y2xyekpCM1ZQdzMrVVJUUlVza0k4OGcyV1IzVmVOcUo1dVl2RmRHWGJ1S2JY?=
+ =?utf-8?Q?Yw3yKDVL4VmIHitT6ceuKGZLdY7ZWbV4?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WTlYdlRvUVNRSE91ZlNIVnQ2Q05TWExIaVdCYU9HeWN3aCtLbHlHQkdlUzRk?=
+ =?utf-8?B?eEJkZmMxTlBWYW5Wckd0a0U4S1BPTUVJYVV2RzBjWFg2MWJkWmc3dkxFWkNM?=
+ =?utf-8?B?Z2lNTklHTko2ekpmVXZjbi82R2RkWkdGNjZJa1V2S0hSd0VTRVU4VDEyNlRP?=
+ =?utf-8?B?KzMwWFFZZWtlQWN3bUcwOVExZDQ4ZkR6d0gyNFlLWmpNR3NERmdZMDQxNzVp?=
+ =?utf-8?B?ZkJKM21hSk96RnUrc0pSYlY2WXArMW1nS2R3UTRQem1ZeWgwaHkyc3A4NTll?=
+ =?utf-8?B?S1dycEw4a21aS1d1K3RSc0lRSjBMV2JUWTBnaUFsb252dys3M2UvbHNLK1BP?=
+ =?utf-8?B?TjlabkNpdG5MSU0yV1prMEZKU0xRVkVZRFVmVGg5ZlY0c3RiYnN4LzBQeDg4?=
+ =?utf-8?B?bzBLSGhORTFlb0IvUm13SzcxUTlaRytaSG9icGdBbWJ2aUVnVm1QRVBEZUpl?=
+ =?utf-8?B?cVgwQU00VW9vY211QkZYQ29yYXNIT2lmajRCWVNOZllhNkNUMUxaN1lHN1F0?=
+ =?utf-8?B?YlF6SWdnTEZWc3ZjNlM2dHBlbDUwanU2d3dBRWVQUVBDYUE1b01Fa25qZkF2?=
+ =?utf-8?B?d0NQeldOSHRDbW9YUWFyaG9XNE9NSTVLL3ZUZy9Nbk9ycFAzN1h1cTNIVHl5?=
+ =?utf-8?B?RDNCTDBQMTdmWkRuNU1kcVdYd3ZoVHkzeWVXMkNoS2JOZ0I4cXNqdFJtZ3lj?=
+ =?utf-8?B?blNRZXNQV1FTd1lYd09QQW5TODJMRHpCTHMyTzRLQVArUmxyVEdxLytBMHRG?=
+ =?utf-8?B?d1FMRm9SSnEwUG16WmYrR0puOE1GMTBoYUVoLzVLWDA3bFFSY2NpNjQ3SE1S?=
+ =?utf-8?B?UEJzSnhpUG9VNEh3U2pqOS9aUGREZVFjUmN5TElBUnRwZGo3dmtCTmx2TGh3?=
+ =?utf-8?B?YVg0QXFZRHRIMExrK0dCc0tjalh4ZEVxTW0waytwNnZrd0NLc3liMmVIRjdv?=
+ =?utf-8?B?WEQyUm9xM1BGa0VFUSs0YlVIKzAwb1pVUTQvdTFGWCtIcUVzTE5RS3MyUGJG?=
+ =?utf-8?B?THg5WGZrVm9oTW1xZzNWV2xnMTZCQVQ3UDR1WFpxeVdUYkxqTnlWZks5dHBG?=
+ =?utf-8?B?NXBtSlNqem12NDJ0WU1qVkNwUjNtYUhRdmVZRC9TK1BJeVovZW4xVG1WeW9x?=
+ =?utf-8?B?TlZ6aEE4bGZrM0tUNWwvcG5mdXJBMGhtYmlYcXFLd2ZqTFZkczJhZ2Y3QlNl?=
+ =?utf-8?B?WkJlWXI1RUhUTkRQQzlKK0p1Q2FkaHJ2d2pYdVh0eHVkZmJMdVFMdGR5OU5s?=
+ =?utf-8?B?T2hhS3Z6dFNZSDNqenY5eENjTHp5TlhUaWJ1bURSN25Va243aXpUODFVUGxF?=
+ =?utf-8?B?eW1NelpEVUNzRFc4Nm9neHAxSTNxbDJCSi9LMmFwQzVMR1RaNng4NEZlZk90?=
+ =?utf-8?B?VmpRQmZXZmxSL3JiSzVmdGhoK1dycDVsVW54TUNESEsraW1uR0ZhdS9YWDhI?=
+ =?utf-8?B?TG9Ebkloc3NlREY1Risrdkk1akx3TytKeG43WTFiYVc0bjRyYnR2UmdNTEhL?=
+ =?utf-8?B?Q0VEMi9PdnNUZWJYNEQrN09QTC9pYlJtZVRxSWhiTEZMQUtMNlo1RU1IME4z?=
+ =?utf-8?B?UEtoaWJxYlFFdVNQK2RTeUpGbVJZWHpHOE1seTJxLzhLWlFiTDl6Q0JYNFhi?=
+ =?utf-8?B?dE9wNlpJTUREV1VnVmU1OVliR3pOcitPbVl3L2tOOVQ4WE9oSGY1MFVrb1pL?=
+ =?utf-8?B?VTJsVXNIWURzeTBkaE1SN2dFdWZNbWJWWUJUdjhRbVY5TU04ZmRPYkJtQTVE?=
+ =?utf-8?B?N3lnZk95cXhPZ0V4YTk3a0hxRzM5bFJvdzlnNTIyS0NDeXF4SXQ4K3NRVGZu?=
+ =?utf-8?B?QU1YNTcwZmhwYjJpamVwbjg3ZGRmdjNYa0VXOW1Td3pHcE5iYzloem1EWFZ4?=
+ =?utf-8?B?cVduR0doVU5kRThuWjBDUEJTd1k0bUdHcC9jd3hkaUdRVDhUWDk3dTd6YWE4?=
+ =?utf-8?B?ZlRKMHJBeGc4bHhaT0o1ZkxaRVlPQmh3MEZ2aU1zWnV6M0djSDlEeE9KaDhV?=
+ =?utf-8?B?K0VNMzJSSmxvT0J2eGZvS0JhbTV6ZDU5ZVVnYnVMOFpKUE9ua2ptOUFZK2pi?=
+ =?utf-8?B?aFhpRURNcFJZSFpvTi9XMk1oSU1NV1BHVm9yWWV0dnA3TnZuNyt0cG5XejZI?=
+ =?utf-8?Q?grAAiKhos7F+bvxm06zA8fajv?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8cb8a44b-43a6-42f5-73d8-08de02913b5c
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2025 15:26:32.4691
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2QIvFmN926Kpf44pDUePWY/FH/gg1olp02Z0mrF4zItd8e8T5tQ+E23EGt0Vro/GkPqwe0JhCgKf+DSLQJyZKg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9751
 
-When trying to build the latest BPF selftests, with a debug kernel
-config, Pahole 1.30 and CLang 20.1.8 (and GCC 15.2), I got these errors:
+On 10/1/2025 9:26 PM, Alexandre Courbot wrote:
+> On Thu Oct 2, 2025 at 10:24 AM JST, Alexandre Courbot wrote:
+>> On Tue Sep 30, 2025 at 11:45 PM JST, Joel Fernandes wrote:
+>>> Hello!
+>>>
+>>> These patches extract and enhance the bitfield support in the register macro in
+>>> nova to define Rust structures with bitfields. It then moves out the bitfield
+>>> support into the kenrel crate and further enhances it. This is extremely useful
+>>> as it allows clean Rust structure definitions without requiring explicit masks
+>>> and shifts.
+>>
+>> The extraction and move in themselves (patches 1-4 and maybe the KUNIT
+>> one) look good to me. For the remainder, it will depend on whether the
+>> BoundedInt idea sticks or not as it changes the design in a way that
+>> makes most of these patches unneeded. In any case I think this can be
+>> worked on after the split and extraction.
 
-  progs/dynptr_success.c:579:9: error: call to undeclared function 'bpf_dynptr_slice'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    579 |         data = bpf_dynptr_slice(&ptr, 0, NULL, 1);
-        |                ^
-  progs/dynptr_success.c:579:9: note: did you mean 'bpf_dynptr_size'?
-  .virtme/build-debug-btf//tools/include/vmlinux.h:120280:14: note: 'bpf_dynptr_size' declared here
-   120280 | extern __u32 bpf_dynptr_size(const struct bpf_dynptr *p) __weak __ksym;
-          |              ^
-  progs/dynptr_success.c:579:7: error: incompatible integer to pointer conversion assigning to '__u64 *' (aka 'unsigned long long *') from 'int' [-Wint-conversion]
-    579 |         data = bpf_dynptr_slice(&ptr, 0, NULL, 1);
-        |              ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  progs/dynptr_success.c:596:9: error: call to undeclared function 'bpf_dynptr_slice'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    596 |         data = bpf_dynptr_slice(&ptr, 0, NULL, 10);
-        |                ^
-  progs/dynptr_success.c:596:7: error: incompatible integer to pointer conversion assigning to 'char *' from 'int' [-Wint-conversion]
-    596 |         data = bpf_dynptr_slice(&ptr, 0, NULL, 10);
-        |              ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sure.
 
-I don't have these errors without the debug kernel config from
-kernel/configs/debug.config. With the debug kernel, bpf_dynptr_slice()
-is not declared in vmlinux.h. It is declared there without debug.config.
+>>
+>> Patch 5 should probably be dropped as it has the potential to clear
+>> register fields that are useful to the hardware but have no entry in the
+>> `register!` definition, making read-update-write updates of registers
+>> unpredictable.
+> 
+> Ah, I forgot: please base the next revision on top of drm-rust-next as
+> we are likely to apply it there.
 
-The fix is similar to what is done in dynptr_fail.c which is also using
-bpf_dynptr_slice(): bpf_kfuncs.h is now included.
+Done, I rebased on top of drm-rust-next, commit: 299eb32863e5 ("gpu: nova-core:
+Add base files for r570.144 firmware bindings")
 
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
-Notes:
- - This patch looks wrong, I guess bpf_dynptr_slice() should be in
-   vmlinux.h even with a "debug" kernel, but it is not:
-   $ grep -cw bpf_dynptr_slice .virtme/build-debug-btf/tools/include/vmlinux.h
-   0
-   $ grep -w bpf_dynptr_slice .virtme/build-btf/tools/include/vmlinux.h
-   extern void *bpf_dynptr_slice(...) __weak __ksym;
- - This is on top of bpf/master: commit 63d2247e2e37, tag bpf-fixes.
- - I only see this error when using kernel/configs/debug.config.
- - Because this has not been spot by the BPF CI, I wonder if I'm
-   building the BPF selftests properly... Here is what I did:
-   $ virtme-configkernel --arch x86_64 --defconfig \
-     --custom tools/testing/selftests/net/mptcp/config \
-     --custom kernel/configs/debug.config \
-     --custom tools/testing/selftests/bpf/config \
-     O=${PWD}/.virtme/build-debug-btf
-   $ ./scripts/config --file ${PWD}/.virtme/build-debug-btf/.config \
-     -e NET_NS_REFCNT_TRACKER -d SLUB_DEBUG_ON \
-     -d DEBUG_KMEMLEAK_AUTO_SCAN -e PANIC_ON_OOPS \
-     -e SOFTLOCKUP_DETECTOR -e BOOTPARAM_SOFTLOCKUP_PANIC \
-     -e HARDLOCKUP_DETECTOR -e BOOTPARAM_HUNG_TASK_PANIC \
-     -e DETECT_HUNG_TASK -e BOOTPARAM_HUNG_TASK_PANIC -e DEBUG_INFO \
-     -e DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT -e GDB_SCRIPTS \
-     -e DEBUG_INFO_DWARF4 -e DEBUG_INFO_COMPRESSED \
-     -e DEBUG_INFO_COMPRESSED_ZLIB -e DEBUG_INFO_BTF_MODULES \
-     -e MODULE_ALLOW_BTF_MISMATCH -d IA32_EMULATION -e DYNAMIC_DEBUG \
-     --set-val CONSOLE_LOGLEVEL_DEFAULT 8 -e FTRACE -e FUNCTION_TRACER \
-     -e DYNAMIC_FTRACE -e FTRACE_SYSCALLS -e HIST_TRIGGERS -e DEBUG_NET \
-     -m KUNIT -e KUNIT_DEBUGFS -d KUNIT_ALL_TESTS -m MPTCP_KUNIT_TEST \
-     -e BPF_JIT -e BPF_SYSCALL -e TUN -e CRYPTO_USER_API_HASH \
-     -e CRYPTO_SHA1 -e NET_SCH_TBF -e BRIDGE -d RETPOLINE -d PCCARD \
-     -d MACINTOSH_DRIVERS -d SOUND -d USB_SUPPORT -d NEW_LEDS -d SCSI \
-     -d SURFACE_PLATFORMS -d DRM -d FB -d ATA -d MISC_FILESYSTEMS
-     # sorry, long list used by the MPTCP CI to accelerate builds, etc.
-   $ make O=${PWD}/.virtme/build-debug-btf olddefconfig
-   $ make O=${PWD}/.virtme/build-debug-btf -j$(nproc) -l$(nproc)
-   $ make O=${PWD}/.virtme/build-debug-btf headers_install \
-     INSTALL_HDR_PATH=${PWD}/.virtme/headers
-   $ make O=${PWD}/.virtme/build-debug-btf \
-     KHDR_INCLUDES=-I${PWD}/.virtme/headers/includes \
-     -C tools/testing/selftests/bpf
- - The errors I got should be reproducible using:
-   $ docker run -v "${PWD}:${PWD}:rw" -w "${PWD}" --privileged --rm -it \
-     -e INPUT_EXTRA_ENV=INPUT_RUN_TESTS_ONLY=bpftest_all \
-     --pull always mptcp/mptcp-upstream-virtme-docker:latest \
-     auto-btf-debug
- - These issues were originally spot by our MPTCP CI:
-   https://github.com/multipath-tcp/mptcp_net-next/actions/runs/18222911614/job/51886811332
- - No errors without kernel/configs/debug.config on the CI and on my side
- - This CI got different issues, and I had to declare more kfuncs there:
-   https://github.com/multipath-tcp/mptcp_net-next/commit/4435d4da9f4f
-   but this CI is currently on top of 'net', with Jiri's patches from
-   https://lore.kernel.org/20251001122223.170830-1-jolsa@kernel.org
- - The builds have been done from a clean build directory each time.
- - Do you think the issue is on my side? Dependences? How the selftests
-   are built? I didn't change the way the BPF selftests are built for a
-   while. I had other issues with pahole 1.29, but fixed with 1.30.
- - Feel free to discard this patch for a better solution (if any).
- - I don't know which Fixes tag adding, but I doubt this patch is valid.
----
- tools/testing/selftests/bpf/progs/dynptr_success.c | 1 +
- 1 file changed, 1 insertion(+)
+I will send the v6 out shortly with just the patches to be included.
 
-diff --git a/tools/testing/selftests/bpf/progs/dynptr_success.c b/tools/testing/selftests/bpf/progs/dynptr_success.c
-index 127dea342e5a67dda33e0a39e84d135206d2f3f1..60daf5ce8eb283d8c8bf2d7853eda6313df4fa87 100644
---- a/tools/testing/selftests/bpf/progs/dynptr_success.c
-+++ b/tools/testing/selftests/bpf/progs/dynptr_success.c
-@@ -6,6 +6,7 @@
- #include <stdbool.h>
- #include <bpf/bpf_helpers.h>
- #include <bpf/bpf_tracing.h>
-+#include "bpf_kfuncs.h"
- #include "bpf_misc.h"
- #include "errno.h"
- 
-
----
-base-commit: 63d2247e2e37d9c589a0a26aa4e684f736a45e29
-change-id: 20251003-bpf-sft-fix-build-err-6-18-6a4c032f680a
-
-Best regards,
--- 
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
-
+Thanks.
 
