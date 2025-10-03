@@ -1,125 +1,95 @@
-Return-Path: <linux-kernel+bounces-841054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F5AEBB624D
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 09:10:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8A04BB6256
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 09:11:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1812019E835F
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 07:11:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77E471AE055A
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 07:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B0622D9EB;
-	Fri,  3 Oct 2025 07:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1179622DFB5;
+	Fri,  3 Oct 2025 07:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UXJ3HpqY"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pFMvjqIT"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814601A3165
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 07:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B8B1A3165
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 07:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759475436; cv=none; b=vB+a8fcsbktRgNI6ZirWVPDs+HQSZ/jYaDEY3cW9dB/D3H9XwytQpvHHnP+hzuetqnOcVIqVv7OECxHO+acO+elKnEwmqAt4ccBc7STH0RAYu0mjfTBHT5Enuc7WRA783kVN8iwwaIriM7uFHSPuIAqhA+OsyLAdbvn8n6O6H2c=
+	t=1759475486; cv=none; b=OdsoZBLc6IPJRRUc11b8ZE2PvkXzJFbXop3C6LLP7EJYdxETyKNb+7nGpIlN15AWjccTH3wthnppDHikZAVHUZGbD9uf9i6qiycEmuVgDRc+RZ3yiW3s0FVBsoALAIRKmYpp71zZb8HnN9D8Icatg3W+fsOLU2hefe71fEaUtl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759475436; c=relaxed/simple;
-	bh=tsd6LCwVXoBWfeuPShaVDWTPYeYbCB/+fp3ZoHm+AEs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MyhYwVIcV+LqjuW1bersN123Oe/qQRYVZC8+ag0zEzINlnS8CVX3Rr8iB/sZMqbzbRHJfDGruuP5Ox4LPdXWG4VyhJuLYFVR34GdNQERBvzAT8P9QUfquaOs7bdvuNrrixfAY9cLwm5Ao/d62rPlJM1QY3CA00+2/GD56+9xn8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UXJ3HpqY; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e37d10f3eso12640055e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 00:10:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759475433; x=1760080233; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4KPy/MaUI1T6LJVDJjF2ILhSPnvDqNZYew/YLG6etAQ=;
-        b=UXJ3HpqYajwt7jM0a6x0XhX4f3dRrmJb1bGx057y2jEzBbRrLH6x7GedcdQKBbVKSu
-         TlCUAYHCKUufaBYkxAj9OntbPUh+THoHc9s03bowR94p77lL+yOIqLmGWGZ6zZuGu5zT
-         H3UCYDdMyKCbyHgwebMjsiCeU4t7OIQUsxIaLmo9jve5vfDLyKAFaKV8dOiJ9g1tE5WU
-         qNHCyQMvViTZdMUuMRkC1LaN0d2DcgnXbCVtaAQZTAbrRL1kQw/Pqi2fFP949yLHX9VV
-         HDmEpyVde3oHyMHwfOR7NmDjGQ2y48CTT8aLidHZtTpIbD4qYCjpifKqr3fERssu1Hnq
-         Vgmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759475433; x=1760080233;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4KPy/MaUI1T6LJVDJjF2ILhSPnvDqNZYew/YLG6etAQ=;
-        b=pbx//n5L/ihB2ZTwtqFY9ASrYJT64hnL/XTH+xHb/LvP23nepFwd872UMugTgha8ic
-         +O5lVnH1IL8O1nRVXqJqydRgMi8HIQtHFdhH+/XRK7KyIJPrYSYS0bdP75BKq5fc92OY
-         PuPRFsE2Y70vVV/uyC/fQPDgUU+0aFm28P4ztB8MPKTK/fjPHKZNamQeudJPKGcV94T+
-         Af44YrnhiCCgCt1MpVWP/mj0op+cHiJAnShCLr7P2gkAnVaVlWfc2Ky6fZoyVgwQF7Lk
-         or92kaEZgIuSVDE6ysOV/Rw3aHrGPyskqCUVzLO1meAvcDsQJ6Qipkh8hjYuqk45XF7z
-         G98g==
-X-Forwarded-Encrypted: i=1; AJvYcCV3twZlMxLtVNKujNfdQptblhj/8YPdixDWZoyOFtYctEll+WlKeHVBh5yqiORH2qfyMe3kxd0vhvA/eSk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSnozfd9ML+6MLo2OndIUKn+MdkbBAEYWpYOmYltH5Z9ELeq00
-	Jj07u/8LsQmZsmbWJ05ruVMb2obKPwh24Xg3bG665FKqGYLToB+Ts2hHTiitN77aVNg=
-X-Gm-Gg: ASbGncsB4mta42puci6rKnsoYfhoOqEAYGilZZOR1Aa2/WHIAvTshK5+So6dZwIMXHe
-	Z/QGdccDb1fflxWpd2XO/dnO+u0GE5Y01aAtBGWTedPAFom5RPhbWyyKO0A6Y+/66d3m2cY3kTa
-	IrypbeNOluWa1y31uVPhDZvdmX/gGEghAoNVY4btZEjMLnrkIC8ti3CgXj28bwnE96fVbXg3Uj7
-	YjUvFcFJH0HQYlCILdeZ/P3DbXymbj1henPM+O+vHKSIJZ+05WsN0Sjt8aPydll6iMcP9OUw8iC
-	AFpnmVRaq3rJC8v+sGhTdavvfaVH5n/JPvD9MGK/dmF8AyzsrgSLr+lzP8jVoy3GtYzFPsPLmK2
-	2fs6Jiu6ql+SCUiYASIgtArl4qK2uKv4Q/9rbGRHk8lQYIcg1IYo0gCsiaP8RkQgojGE=
-X-Google-Smtp-Source: AGHT+IGrprpeaPN2zsG3GLeeDlcPWzpaZct4FH883LRsib2xD+eagd//CjbhareJG/Mp7u+BFhq4lA==
-X-Received: by 2002:a05:600c:354e:b0:46d:996b:826a with SMTP id 5b1f17b1804b1-46e7115d49dmr13480395e9.36.1759475432701;
-        Fri, 03 Oct 2025 00:10:32 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4255d8ab8b0sm6653233f8f.18.2025.10.03.00.10.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 00:10:31 -0700 (PDT)
-Date: Fri, 3 Oct 2025 10:10:27 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 15/16] staging: rtl8723bs: merge nested if conditions
- for clarity and tab problems
-Message-ID: <aN924wqH--MgGEak@stanley.mountain>
-References: <20251002172304.1083601-1-vivek.balachandhar@gmail.com>
- <20251002172304.1083601-16-vivek.balachandhar@gmail.com>
+	s=arc-20240116; t=1759475486; c=relaxed/simple;
+	bh=I9yaqZSz6I7o0ASsdM5s2cRjfXDEebFgA2FnWWUXjWU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=qZ7SvxPDUTIfhdCAd3qNVDDkw65853UGopBCG+/qYVwDMBQUR9EVRZJdidSaeUAmIZZbhht051G2kMlYeUZHF1IiwvKFQxC+0sApJ4Zz6t1riPt75ygZ7gS/u9P4yN3X7VgFWJNXnLg2axvVwqnr25WJZu5DpDv1CMi0vASBOlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pFMvjqIT; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id EF3A71A10A2;
+	Fri,  3 Oct 2025 07:11:19 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id C30EA606EB;
+	Fri,  3 Oct 2025 07:11:19 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CB78C102F1C04;
+	Fri,  3 Oct 2025 09:11:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1759475478; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=GBWWiR//EQGy7wU3r/D2KO4EkutCKxZsEaDltcQpM4g=;
+	b=pFMvjqITUMPW427SBAfWge/eWzYs7aqJJgZBofTJyUd5r+r4JYbTvYNlq05gcaK+2Jktby
+	UwAf27c5upeCs+eyQi8Oz8jEionMsV+tAQNpj321jvP7YcZqW403A5NF9uQ3eE6xTTwQy0
+	AXSfCTQm97VRW9QJsDGjU0VbunCTHG/lajEZ4kFq7yAH6luhIoKpwpTWdwPGPn3+zWHv4h
+	nDra7NgnJu3LEg9rQQMuDOqy4K271eKw+anm/rvKJpDCNX7I0EHUZacsiW41dPbBEMkYJy
+	YvKIqHNd5OReDg2mmEWQM5cn9weV/sHmM568shRdg4ixDLlRAzlUHOJJGZD/Lg==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250924-b4-drm-bridge-alloc-getput-drm_atomic_bridge_chain_select_bus_fmts-v1-1-f8c2efdb783f@bootlin.com>
+References: <20250924-b4-drm-bridge-alloc-getput-drm_atomic_bridge_chain_select_bus_fmts-v1-1-f8c2efdb783f@bootlin.com>
+Subject: Re: [PATCH] drm/bridge: refcount last_bridge in
+ drm_atomic_bridge_chain_select_bus_fmts()
+Message-Id: <175947547459.489455.4866603213884120000.b4-ty@bootlin.com>
+Date: Fri, 03 Oct 2025 09:11:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251002172304.1083601-16-vivek.balachandhar@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, Oct 02, 2025 at 05:23:03PM +0000, Vivek BalachandharTN wrote:
-> Combine nested if conditions for clarity and fix tab indentation in one
-> place to match kernel coding style.
-> 
-> No functional changes.
-> 
-> Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
-> ---
->  drivers/staging/rtl8723bs/core/rtw_mlme.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-> index aa842905a467..f17b16fe8819 100644
-> --- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
-> +++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-> @@ -1254,8 +1254,8 @@ void rtw_joinbss_event_prehandle(struct adapter *adapter, u8 *pbuf)
->  						rtw_free_stainfo(adapter,  pcur_sta);
->  
->  					ptarget_wlan = rtw_find_network(&pmlmepriv->scanned_queue, pnetwork->network.mac_address);
-> -					if (check_fwstate(pmlmepriv, WIFI_STATION_STATE) == true) {
-> -					    if (ptarget_wlan)
-> +					if (check_fwstate(pmlmepriv, WIFI_STATION_STATE) == true &&
-> +					    ptarget_wlan) {
->  						ptarget_wlan->fixed = true;
->  					}
 
-Delete the curly braces as well.
+On Wed, 24 Sep 2025 17:11:01 +0200, Luca Ceresoli wrote:
+> Get a reference for the last_bridge when it is obtained and release it
+> using a cleanup action.
+> 
+> 
 
-regards,
-dan carpenter
+Applied, thanks!
+
+[1/1] drm/bridge: refcount last_bridge in drm_atomic_bridge_chain_select_bus_fmts()
+      commit: 0f2efbe6d8305b91c9b2c92ebaf8c24a614bc305
+
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
 
 
