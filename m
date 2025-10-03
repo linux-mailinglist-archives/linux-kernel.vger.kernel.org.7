@@ -1,159 +1,141 @@
-Return-Path: <linux-kernel+bounces-841487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0024BB77F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:13:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E3AABB780B
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:14:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7D50E4ED99D
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:12:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ACD0189A3A0
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D0529E11A;
-	Fri,  3 Oct 2025 16:12:48 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B14B2BD00C;
+	Fri,  3 Oct 2025 16:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m0Rq4wS/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8514514A8B
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764E926E6FA;
+	Fri,  3 Oct 2025 16:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759507967; cv=none; b=lu0gX85UxriK9P+HioLJ81p7pIgwnv3fM9Njz5fe5opn4o1HyT8hVNXj4L4uvkleQFFVHArHwmepg4z3t9UY8AobTHYehJ22Ip/wgzjH+ijK1i8MFpyk9MKmCaNMU4Vd7fWb2mo8oehbF6jf69dkHfJOSGKUMfldo9airUpgEE4=
+	t=1759508075; cv=none; b=LFZaz04Z2C1AmthpZB7As22KEbB0oyXhGsvq4R5ejBvBLN8RrmFhCEDzfxu7RYj8p+aBcK7prT3ZrhJus0t5SA2i5jJTg4+99IlfHMJ6sxBUN6BHhqjiccPtAqOQ5y15a+wUxEMORTalQkiV2YS4LvIIpRbnA2GgJLkjqiSknKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759507967; c=relaxed/simple;
-	bh=q9ExXmkuFaHhZqkZkGv2wZ/F5DBUYLBWd1H70gVQuWQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=QPbum6zvTMdY8RkvHw7L5xoe9vOFy6xqQIpo0KbNVvwv6JBRaEFq0mXAIf78OzTi9Jr4lpX/uPZfDM94jdMSrDOT+3D2AF2JPt6DxmzyykbIWUohWfERWsoyaewBr9OSaxkEvve68U8VZ5gE2AdVMaavyleesIA6g3kfpiQ6i8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id 24DAF11AF30;
-	Fri,  3 Oct 2025 16:12:42 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 8E4F220013;
-	Fri,  3 Oct 2025 16:12:39 +0000 (UTC)
-Date: Fri, 3 Oct 2025 12:14:21 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
- Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Waiman Long <longman@redhat.com>, Tejun Heo
- <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, "Michal
- =?UTF-8?B?S291dG7DvQ==?=" <mkoutny@suse.com>, Andrea Righi
- <righi.andrea@gmail.com>, Julia Lawall <Julia.Lawall@inria.fr>, "Luis
- Claudio R. Goncalves" <lgoncalv@redhat.com>, Joseph Salisbury
- <joseph.salisbury@oracle.com>
-Subject: [PATCH] sched: cgroup: Move task_can_attach() to cpuset.c
-Message-ID: <20251003121421.0cf4372d@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759508075; c=relaxed/simple;
+	bh=dQk/Wx+OgHdP1VW5xgsNaKcBpPnk3gpbOYRqWi4IHb8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ioEAkIFLOnYCRS+xqJpod28uVe+z7ozjkUR+35429K9g1OG/sODQ6d6+LAt69x5FWKZc5J6O1/cS8rFTJKABWu4RDdGG75edrkYHJ0hR/FlUifzeFEepI6PWnxGBLim02JGeslyMspYuauBOHBfOH2vOguFF6NVOzqQ+gwYMpE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m0Rq4wS/; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759508073; x=1791044073;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=dQk/Wx+OgHdP1VW5xgsNaKcBpPnk3gpbOYRqWi4IHb8=;
+  b=m0Rq4wS/Qc6xIjfURLnaGqRYVsAkcV9IpTTcnn9sGUwbB4iRTSb/wPH2
+   s6WuMa/W/IgFgbmNeP71v5J7Bt/AATa1El8sNAbAqxWr22dgZftq1M2tr
+   7Ik57XGJ8z7ZpXq1LPoUq/bVM6PUFSz52QKsBVIQuirQkgjgIdTBuClo5
+   UqHoQXSmNVHLWN5r1/Sq4y2NxgUEdNj2CBZGA/QqM3wKWObWydI0WeTHf
+   3PoRN8fpdtIW9+miId+2fMQaSdErjzUu2AxnC5a38BisW06YFWqCjlHjY
+   MW8qA0t3LgaS+ypqVmsoEm71GmlHOvmCiwlsK6CKsIZsGBJD8DxU22iXF
+   w==;
+X-CSE-ConnectionGUID: eQAtFzUAT5OXzz57Ex22Fw==
+X-CSE-MsgGUID: 4Dt3/cYYSOODt5ETpQpG2Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11571"; a="72040002"
+X-IronPort-AV: E=Sophos;i="6.18,313,1751266800"; 
+   d="scan'208";a="72040002"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 09:14:32 -0700
+X-CSE-ConnectionGUID: ZMZQXFJRRB+0QS9GM/gmDA==
+X-CSE-MsgGUID: 54SLd7gFQtqWOk0XMIhkDg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,313,1751266800"; 
+   d="scan'208";a="179250311"
+Received: from rchatre-mobl4.amr.corp.intel.com (HELO [10.125.110.49]) ([10.125.110.49])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 09:14:30 -0700
+Message-ID: <43ca6827-2bcc-41d3-8a7b-3aec24f2b0e1@intel.com>
+Date: Fri, 3 Oct 2025 09:14:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cxl/hdm: allow zero sized committed decoders
+To: Vishal Aslot <vaslot@nvidia.com>, Gregory Price <gourry@gourry.net>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, Li Ming <ming.li@zohomail.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Zijun Hu <zijun.hu@oss.qualcomm.com>,
+ "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <SN7PR12MB81316C958DF0F4B10369B928BBE6A@SN7PR12MB8131.namprd12.prod.outlook.com>
+ <aN4SSEmaCaxbeiwJ@gourry-fedora-PF4VCD3F>
+ <02a4b5f1-ad29-4825-9040-ff96e328f674@intel.com>
+ <SN7PR12MB8131EE31375531673BCF0C62BBE4A@SN7PR12MB8131.namprd12.prod.outlook.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <SN7PR12MB8131EE31375531673BCF0C62BBE4A@SN7PR12MB8131.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 1gqkuc8oibgawwgbyqbnybxoqddp3oyk
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: 8E4F220013
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/znqxXtSnlvTkyKAZ74lLfh53Xu+u9HME=
-X-HE-Tag: 1759507959-517395
-X-HE-Meta: U2FsdGVkX18BS2BcHVmqQuYwMn/VkFiumXonfGyDwWLmhMIm7KUc0XDJUa5F2ZKRSzfW9543djMMXKvSF9d7Wr9esq3B+Qm8ShErZAvbdjKiNlcGsQ5cyHpz8gX5+FlWdsW4RGzKJd4bD97NNBPdkE/s2syZXxNH8QTtvR6V6HjEyd7yGTPCKWQ/gkRWv807rCqlV5Yw2cjIdktVZ5EVRxUcpIS95TFZS4wouBAKj+fj9uxmNBm9uUDjWr10kmmNpQzclKVAVELQd/LAdOIFH8ESAxEaXuWuqw3r5/T9NjuTgTkRe0M0eUw8RjpNSuJYax6fFkVdjmX1gAHNrK6gAEWwOKrB3AQb2QACDxAxOgUyo8svBQBe1IWkkbjC9v2H
 
-From: Steven Rostedt <rostedt@goodmis.org>
 
-At our monthly stable meeting, we were talking about documenting non
-static functions and randomly picked a function to look at. That was
-task_can_attach(). It was then noticed that it's only used by
-cgroup/cpuset.c and nothing else. It's a simple function that doesn't
-reference anything unique to sched/core.c, hence there's no reason that
-function should be there.
 
-Move it to cgroup/cpuset.c as that's the only place it is used. Also make
-it a static inline as it is so small.
+On 10/2/25 6:03 PM, Vishal Aslot wrote:
+>> ________________________________________
+>> From: Dave Jiang <dave.jiang@intel.com>
+>> Sent: Thursday, October 2, 2025 10:32 AM
+>> To: Gregory Price; Vishal Aslot
+>> Cc: Davidlohr Bueso; Jonathan Cameron; Alison Schofield; Vishal Verma; Ira Weiny; Dan Williams; Li Ming; Peter Zijlstra; Dan Carpenter; Zijun Hu; linux-cxl@vger.kernel.org; linux-kernel@vger.kernel.org
+>> Subject: Re: [PATCH] cxl/hdm: allow zero sized committed decoders
+>>
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> On 10/1/25 10:48 PM, Gregory Price wrote:
+>>> On Wed, Oct 01, 2025 at 08:37:26PM +0000, Vishal Aslot wrote:
+>>>> @@ -1210,6 +1210,11 @@ int devm_cxl_enumerate_decoders(struct cxl_hdm *cxlhdm,
+>>>>                 rc = init_hdm_decoder(port, cxld, target_map, hdm, i,
+>>>>                                       &dpa_base, info);
+>>>>                 if (rc) {
+>>>> +                       if (rc == -ENOSPC) {
+>>>> +                               put_device(&cxld->dev);
+>>>> +                               rc = 0;
+>>>> +                               continue;
+>>>> +                       }
+>>>
+>>> How do you suggest actually testing this? I briefly poked at this in
+>>> QEMU trying to commit decoders, but i found myself incapable of
+>>> exercising this path.
+> 
+> I tested it locally with our BIOS (UEFI) where we commit and lock all decoders and
+> all except decoder 0 are zero-sized.
+> 
+>>
+>> It may be worthwhile adding a cxl_test test case for this.
+> 
+> Yeah, sure. Would cxl mock tests be the right place to explore this?
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- include/linux/sched.h  |  1 -
- kernel/cgroup/cpuset.c | 19 +++++++++++++++++++
- kernel/sched/core.c    | 19 -------------------
- 3 files changed, 19 insertions(+), 20 deletions(-)
+Yes. Under tools/testing/cxl. Let me know if you need help with that.
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index e4ce0a76831e..4ee4fa973eda 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1849,7 +1849,6 @@ current_restore_flags(unsigned long orig_flags, unsigned long flags)
- }
- 
- extern int cpuset_cpumask_can_shrink(const struct cpumask *cur, const struct cpumask *trial);
--extern int task_can_attach(struct task_struct *p);
- extern int dl_bw_alloc(int cpu, u64 dl_bw);
- extern void dl_bw_free(int cpu, u64 dl_bw);
- 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 27adb04df675..21fe872803e8 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -3009,6 +3009,25 @@ static void reset_migrate_dl_data(struct cpuset *cs)
- 	cs->sum_migrate_dl_bw = 0;
- }
- 
-+static inline int task_can_attach(struct task_struct *p)
-+{
-+	int ret = 0;
-+
-+	/*
-+	 * Kthreads which disallow setaffinity shouldn't be moved
-+	 * to a new cpuset; we don't want to change their CPU
-+	 * affinity and isolating such threads by their set of
-+	 * allowed nodes is unnecessary.  Thus, cpusets are not
-+	 * applicable for such threads.  This prevents checking for
-+	 * success of set_cpus_allowed_ptr() on all attached tasks
-+	 * before cpus_mask may be changed.
-+	 */
-+	if (p->flags & PF_NO_SETAFFINITY)
-+		ret = -EINVAL;
-+
-+	return ret;
-+}
-+
- /* Called by cgroups to determine if a cpuset is usable; cpuset_mutex held */
- static int cpuset_can_attach(struct cgroup_taskset *tset)
- {
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index ccba6fc3c3fe..a195c4b25475 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -8070,25 +8070,6 @@ int cpuset_cpumask_can_shrink(const struct cpumask *cur,
- 	return ret;
- }
- 
--int task_can_attach(struct task_struct *p)
--{
--	int ret = 0;
--
--	/*
--	 * Kthreads which disallow setaffinity shouldn't be moved
--	 * to a new cpuset; we don't want to change their CPU
--	 * affinity and isolating such threads by their set of
--	 * allowed nodes is unnecessary.  Thus, cpusets are not
--	 * applicable for such threads.  This prevents checking for
--	 * success of set_cpus_allowed_ptr() on all attached tasks
--	 * before cpus_mask may be changed.
--	 */
--	if (p->flags & PF_NO_SETAFFINITY)
--		ret = -EINVAL;
--
--	return ret;
--}
--
- bool sched_smp_initialized __read_mostly;
- 
- #ifdef CONFIG_NUMA_BALANCING
--- 
-2.50.1
+DJ
+
+> 
+>>>
+>>>>                         dev_warn(&port->dev,
+>>>>                                  "Failed to initialize decoder%d.%d\n",
+>>>>                                  port->id, i);
+>>>> --
+>>>> 2.34.1
+> 
 
 
