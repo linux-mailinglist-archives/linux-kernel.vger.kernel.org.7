@@ -1,78 +1,92 @@
-Return-Path: <linux-kernel+bounces-841435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18CE6BB74F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 17:18:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D588ABB74FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 17:24:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B67E73AF821
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 15:18:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C210E48093F
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 15:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA519284890;
-	Fri,  3 Oct 2025 15:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E282857DF;
+	Fri,  3 Oct 2025 15:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AHMHrdSK"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011018.outbound.protection.outlook.com [52.101.52.18])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qd8oJ0Rg"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010007.outbound.protection.outlook.com [52.101.85.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3890A1EB195
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 15:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39611FCFEF;
+	Fri,  3 Oct 2025 15:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.7
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759504724; cv=fail; b=TUALLJpyrhkCA2PLC0KORGKbh1RFw2+zaBiUo4Vj/31S92LKgGErSJyou5/4EA91W/QuGBPA+TYOOUhiIcdPHqVA4QGDriw+cB0+7heQVcNAwi82VI5g+EUB+3fLVtTF0/nL+sPTBs65/14D+Q9ZVK6EWywLnCrKzAi5TI3lrYo=
+	t=1759505036; cv=fail; b=KmPeiBxRtz2cYAT/xnljpWd+zAnK6Riw+hClJbb4eYkxRfcBEdkqJMUzy/uD+SWGOSJqHUVenpwasroCUaYfZyDh1T/g+hWKagjs01mzaYITL3pZ5Wj5wCWEfMmiq8OVrPAM9nNSbuFPU9B+xgwJWx5rZLFYICSOSHccGpjRqoI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759504724; c=relaxed/simple;
-	bh=a9rME1tRbyVJAMGUOZJfJIzJPenREKI06XmJLJB7j+M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uoweSQp/LD0Elb2YG7+iNfKQ9jXQajGM5sPv8dAFlUaOmD3zfX+aMWRqX73XGrgQQ0vSVuGRNiXgx1dFNUMqC4Vigqbig47H71/ymt3io/MwEuQYA4rdwvoLcZdL3Ki/8Rv3ufvEsp6ax5u6SWvxhuY9XidzMvN9Ja+eoILAO44=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AHMHrdSK; arc=fail smtp.client-ip=52.101.52.18
+	s=arc-20240116; t=1759505036; c=relaxed/simple;
+	bh=747+QaHhcgYHF28ehSROcoGyGY7p5GWpEZGzZ2tfGtE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=H46lxDQ7o9vzKyVpfbpLZrLl+GyH1HIkHx4Snl9mZ7S75LJb2aKF7F2bRwA+Gp970rLHpW5JIhp+smSZZ2EpioL7KBaGcZKWaCljWodxVAlBwsxm18YYEx0Hrx4C/30a1wHRB4g5pV4ExD3KeEiAqMIgrcnmBS5eVAIEijliamg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qd8oJ0Rg; arc=fail smtp.client-ip=52.101.85.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Vdb8r3ScDtehLxX6iGgFpKCfFnvjhvHfGtpHU3wKoz+Oqg4ZrkZROpymJhSml8BP3ru5Me+NJBMBDIdvIwxqE6BC8xR3HUzicZx6wBlDGMrIPPkvlfTK6AHpXkzbUgj6rsfRY2gkqAlvjOVNU4cDJRHf5jCcOL3zZQeFyy9cb/ZHLUVutwuWip2Y2HqzlJusbugyVy6JDhlXxzRSFS7EP0zR/YV6e/1X4pS/FnhONJZyIltw5ki1WkE48SSMoVC45PTuq2tDS5/TWM+2ELsY2r8ISx6xXF/nh8irDB3WoDFSEb/+K3fK+SQAkPRS/d4xAfgOShBU9BI5ZNUohU2Fsw==
+ b=bng/Stg3ZijDN7NOMwqT0M7vaiS9t3n0UKmSP32on23OJOYPHgKARlRuYod596oGVHxnpVsrelCThBEQNWsl/kaJlC6nNmJE/QLONAIZpug/eMYugbbVU06fcsVbkKHYVPFD64litqr2+nUmDOLN4g5fTi1QwKVsvjLO9dQdPpmaimPnV4OU/sE0HSdfmvxFUkk1ndvMs9p3AxTFrVpCO8jVva7+9ApQlr+xM/93PT5BAqAw9vJsdm+x1NUa5CzVXJ5eY9gwt5q0VBLojqtJ6Ax9uHL1L0qbgicWlO4HHKrVhdmvDH5irhYpHVJbMp9jfCGuO9t/itJmIeKoSlpxEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=utLGra6FqBGAm1mX/cUcnfo0FFk+7hwqAkel0Ub6KO4=;
- b=ue3a5tfdn2Fungx1Arfl7q+4iMm7vSTwQEV+ulqYa5utI1/ckjtqwqiFvM7SX0HST2lAIM5vPuxEfXk0B2rWNn1YpomjxcjENuAY++LOpvHDNT5aBztNG5oG2wvfs0Wn9zP27n6BYbMeTX79TIleIWkJNH0XBOvevSI4dij/4fIf9T9tanDRa7DPtWteT4ZjyabxV+HIXspqCpTR08PyNCBQN+xmPGRdqv9KoI3pv28z7TFZ55Be9YAtEzjLr1V9ZU90lpD6h+0csb8XcHwNEwqmNZucYxdF2p/xsawdfqGpRRc0ebSM5FFJ7mMzrkNS7oA4h+WHa/fvVO+wBnpWZA==
+ bh=jtc5WMSxVlVNzPst3RpH9eKfrwJFRtvWi3FALTkEYoc=;
+ b=cyPE9toTEj/YTOuvaHyAxOY54KZ3us7Lst99t4Q5crvjzJezNJu/ake+a3+V5JyWWNVggpRooEhx9TLtfuAQedCmES+NjMhfhVeOs82MHrjnnI6jFtDBDLbBDxUyfwCSOBAFZfQe+vQnZW57FSKBaptJlQ4fX2PGdRlAm3/7dQ22WEthEOOGD1KPJX3qNK5Xy/O02041Z9mnTNMv2TRWjr18VVB0o8sDvVHrW7Qe17sC2MxtlpbTgHZb3XvBGAXuLrLjR4UnUUYRbtoP2twMhBLCBYKweK2yu7Va2tpT+YYrDviu85T63f6j389jpJ38K9f0iWrWOKQwJjeoBLJD5w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=utLGra6FqBGAm1mX/cUcnfo0FFk+7hwqAkel0Ub6KO4=;
- b=AHMHrdSKIvBYVe/ap9FuoRFsQ7W4XJttT+L7p93k7rXzVfYiZBQPbrwXoyi0rpMmBqdhuqdpTtIRdHsNGmq1UOFeLtgPKlhjGjlpRnh6B4LVjEsYKy7BaryiWsfTXtVQXKTO9C32yk2kOjVjKFXQAFqmNCOTvLgYWJ1wRNJZ73s1as7kdcb5RJ5J03bXLKACI+3Cyd88E+j4mv8y3NG8+I8yXb0yF/gOpFYUjqBkv4KbL+G+Pso9xGidlpK1HivvQA1vMNCkH1wuhf03JIWwmrT8TEQCM3VdRaKVwlWgPz8XjHfnz4Ypht/18Cd0wDjdIpT5uqcHX5KfpHlgbL6S0A==
+ bh=jtc5WMSxVlVNzPst3RpH9eKfrwJFRtvWi3FALTkEYoc=;
+ b=qd8oJ0Rgr9/x8vlNqcS9XQBIcL5fBSSU8cpjRDnZnAtvBNZg2wsdedWP6+28DkgHbxKDaL5WjSbMVquoDUvXDujKXuK8Hy0czWud4tN1LsZniaW/eoZKRSi6XExuV4QFLzQ//COWiGxRp89W4mgwcGOnf0fKdjfrgzjnqzmkJgf7D9O8/O7d+pki8zkSX79scVCa3fhtb9tQ67kLEnMtpDpIv+c2qkehfDu0jFJTrvZF//TcWDGnhFx9pg+MnwCB85ewLeRNtZ9ccvgBo6XyYFwGq9T7xU901dgVILAprKCiqkqlYnLr8jd20LWJtHU/eJ3GlRFBh0iQDLE4sZQ5Jg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- CY1PR12MB9651.namprd12.prod.outlook.com (2603:10b6:930:104::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9160.18; Fri, 3 Oct 2025 15:18:35 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.9160.017; Fri, 3 Oct 2025
- 15:18:35 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: jinji zhong <jinji.z.zhong@gmail.com>
-Cc: akpm@linux-foundation.org, feng.han@honor.com, hannes@cmpxchg.org,
- jackmanb@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- liulu.liu@honor.com, mhocko@suse.com, surenb@google.com, vbabka@suse.cz,
- zhongjinji@honor.com
-Subject: Re: [PATCH v0] mm/page_alloc: Cleanup for __del_page_from_free_list()
-Date: Fri, 03 Oct 2025 11:18:32 -0400
-X-Mailer: MailMate (2.0r6283)
-Message-ID: <7B0DF4ED-FBB8-48E5-95B7-4C32B645F4A6@nvidia.com>
-In-Reply-To: <20251001043809.11019-1-jinji.z.zhong@gmail.com>
-References: <F1AB428D-73B3-4E40-939C-2A7BAEA1E73A@nvidia.com>
- <20251001043809.11019-1-jinji.z.zhong@gmail.com>
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by SN7PR12MB8603.namprd12.prod.outlook.com (2603:10b6:806:260::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Fri, 3 Oct
+ 2025 15:23:45 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9160.017; Fri, 3 Oct 2025
+ 15:23:45 +0000
+Message-ID: <81490b32-6ea2-400f-a97e-ad2e33e6daab@nvidia.com>
+Date: Fri, 3 Oct 2025 11:23:43 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 6/9] rust: bitfield: Add KUNIT tests for bitfield
+To: Alexandre Courbot <acourbot@nvidia.com>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ dakr@kernel.org
+Cc: Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
+ Yury Norov <yury.norov@gmail.com>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Andrea Righi <arighi@nvidia.com>, nouveau@lists.freedesktop.org
+References: <20250930144537.3559207-1-joelagnelf@nvidia.com>
+ <20250930144537.3559207-7-joelagnelf@nvidia.com>
+ <DD7GCYCZU3P3.1KK174S7MQ5BW@nvidia.com>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <DD7GCYCZU3P3.1KK174S7MQ5BW@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: BN0PR04CA0014.namprd04.prod.outlook.com
- (2603:10b6:408:ee::19) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BN0PR04CA0039.namprd04.prod.outlook.com
+ (2603:10b6:408:e8::14) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,200 +94,290 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|CY1PR12MB9651:EE_
-X-MS-Office365-Filtering-Correlation-Id: c9177935-57a8-4c45-3abb-08de02901ec3
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|SN7PR12MB8603:EE_
+X-MS-Office365-Filtering-Correlation-Id: 69dde9f3-e127-42f0-8416-08de0290d7f4
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Vnl0eDFjdm50Q2pTOVg4L2dOUUgrcGJCdTFRZER1dXBIcGF2Z2h6ZHAyRHBT?=
- =?utf-8?B?SHpPUzcwL1FCTC9XWHg5bkFsR2NRb21qOGpmL2xqZis0bng0WWt3RUpTaFhH?=
- =?utf-8?B?Ynd4UWhIWTJXa0U0emJzMDQxTGpaY04xVldzUjh5S3k3Mkozc2pZOEZveDla?=
- =?utf-8?B?VnErQW5LbUkrUmQ0UWpVN3AvdFRYb1VlWXJ5ckJncjRuRVdSWWNHVkxtOGZz?=
- =?utf-8?B?N2RodEExNExMWWlsRVFrM0tWbU5WcytWcXJlYTJ4bXFGSElWQUtjbTZFL0FI?=
- =?utf-8?B?UXFPV2pxdE5DK3I5OHowNDQ4dDNlNDAxbDFSOCtSTHgyNklEeUJKOFl1Yjhj?=
- =?utf-8?B?TFV2QmZUMTNWbVEyZEowR2hTUEs0dFNUdHB2bDRrWUw4UDRMSU5jRGFBQmYy?=
- =?utf-8?B?eWZXcWdqSi9iZFJEL2xRWUkzTDI5SlU1dHV2SGJHVlVBbFB1bCtLWFRrVnVa?=
- =?utf-8?B?Z1Z2REtUZFF4NmZNVkR5dWsrenVFNTVSUDM3T2txbzdmMFBjU0xQbUVUMElM?=
- =?utf-8?B?aG4vTG9RVE0vdFY2bXc3bU5RaUlOeHlSTFhLNmNtbTVyaU1SbDZaQThYbnFa?=
- =?utf-8?B?cnJhWTBGRkk5QzNXWkpnQmtKMW54S2hCOVRrRVZrT1J3bjNuRUNjcmkxd2RH?=
- =?utf-8?B?dVFBL3BueUoxN29KYlZtMDN1Uk9zTWdWdUc3YU1IWEtPV05OazlwQ1I5ejB5?=
- =?utf-8?B?cmdUNEhoU3RrR0hPUmxRVmJoa1U3V1dDamVRUEtpSlpoY2dvWVdWSk9qSTNJ?=
- =?utf-8?B?TkphaW9KdEIxVXNldnF5S0FDcWhMRVZjWmNNWmxNQTlnUnExRFI5M2o5emsv?=
- =?utf-8?B?dHlURW9YVFlLb01kb2Zubk9la0poWUMyZ3hBUUo0ZXpOcnNoV28vbzdRQm5O?=
- =?utf-8?B?WlNReDJQUktONWRzNE03S0JHZnZlZWxtSHpyWFYrdzJNZmYyN1JpRkNuZ3FE?=
- =?utf-8?B?Wk1EeWR4UHh5L0xMR1ZnRTdZY3hDYzVkZ3RhditqYzRHWDJ2a091YWRaVHRv?=
- =?utf-8?B?Rk9PUERGcGFFY1RodTYwV3o2TUUzQk1rbHI4VkVtS0FyUWhSSWdVeUVZbm1H?=
- =?utf-8?B?cDlqWGl3TklNQm9DTjdBMFFsODR0UWl3dCtMaTBYYXVZU0ZoMVFyNWNCcWdh?=
- =?utf-8?B?NmV4TmRpdEVvL3BKUTNVaXUxZ1JJMHE4NkJweG5vcFNDa2pzRjdRMkpTL3E0?=
- =?utf-8?B?KytRVVUwR3RRdlZvVEtjTTJDWmlKRjhzVzJZVFpsL3hEMzJIYU1SU0pCZmdV?=
- =?utf-8?B?Mjd0RmpmR3Z6Mk94QUhHSktoSEZpMHo4a0hEUlJJWnpjS25rMFJxOEN6djNw?=
- =?utf-8?B?MzdldWpZanpOa2NLeVdYMFlBRCtDTW5neUJJS3ZZNFpYZTFkckc0dXpCbEcy?=
- =?utf-8?B?bysyQldGUWF5SE1vTzg3cHh5dDg3MUY5d1haTTJuRC85aXduMWhoQ3BtRVJa?=
- =?utf-8?B?RS9SdnJ4M1kvdkdOdG9JbGxCaHFIQUNEODZJWU9TODF5ZDduNWtlcW8rMW94?=
- =?utf-8?B?UGJjdGREeHJqbDJRN0xRaW13bFdTL0RLdTZBQXJzK254YWlNek5zWUhRVzQr?=
- =?utf-8?B?anR5b09EbjRQQnFZVHhkTUg2QUhCRXVRTUhsWkRpWFViaGZoVHl6bGJmRTdR?=
- =?utf-8?B?SDRHaG84Q3NxMHBXMFp2WTNwSzdYRkxLTGFiUE1vNVcxK2ZEbThBaUtJR1pY?=
- =?utf-8?B?WjEyVFVnOFFYR2trRUo2NE15dkl2ejFHWVdMdTZ3bmZUSjBqZ0NlbzNhY1cr?=
- =?utf-8?B?aUNwdndweGFRekxEeXlUK21LcnlRcS80ZW9TY3dQZHVGQWx5elFmOUVWMlpG?=
- =?utf-8?B?SUtpRjlRQ3loOS9VdjFPNmNOOHhHMHJsRkliQ0x2aUhFQ0VocHdWYml4TnYr?=
- =?utf-8?B?RW1OL0Fxc0tEZDFiL1IrZ0x5RDVCSC9GUkttZGNsN3VLRC85U0NxMHRwRnVq?=
- =?utf-8?B?WDhNcEhsNC9qMnh5czBUTEdWMUpsRzV4TUZXOUhZZUJWWHJjOVFtUEZWWkRp?=
- =?utf-8?B?amMyMVdZNWRnPT0=?=
+	=?utf-8?B?LzA3MUk1QWJlVEh2K3pzbkt1UzZGSW11ZDBZWEI2dDg3OUVKN0FYemVJSjBU?=
+ =?utf-8?B?TFNld2liOGdpTmNwUVZINGR2c0VSRHlhY1ZrYXAzTjVLMTdmMW1pZXN6cTBn?=
+ =?utf-8?B?eEY2VDNFd3M5eEZCajVzbFU0MXJnUUdpRm1JREk4UDlhRmlBS0xhb2FMdEpC?=
+ =?utf-8?B?Z1cra2JTb2xQRWgzRjBlM2hRWDV3YUpCOWh6dTJlQUc2Sit6bXNpd2pyeHk2?=
+ =?utf-8?B?dUM4bzNNRjBsVDMrZ1lwSEpGYVZxbWllSkphU1ZPd2NCNFB5L0tPSkVmNklH?=
+ =?utf-8?B?NjBaRWpWSTB3em5IUlRScmlFL2k5ZUtZb2RzYzhOVHZMYXVCRFAwOWVyUnBm?=
+ =?utf-8?B?SnQ0V2IrZ213eTZnNHVsUEpYaWJCWjBTckRJeFh0K2hiazUzdFFaTHVRR1Q0?=
+ =?utf-8?B?blprbUV5UG1zMjZkdERGN2IzSWNoSjZ3akpVQ2o5d2lGc3MxQ2lYbXArV1Za?=
+ =?utf-8?B?dk5Lc3phS2FVcGdFcmxlTGtHbjlPZW9PbGdpVW96NGVQZWxqUnNLOXVtMHMv?=
+ =?utf-8?B?K004T2lmUzlVT0VqV1ZqWHRTU3hNNEVhR2RNNFVlNjNXWlFLOVFHYUpPbzMr?=
+ =?utf-8?B?TnUzWUNseldSMk13UGd5OU8vRXdtNjNkQVhodVpGQjVOcGlUcVNPbi91YVlx?=
+ =?utf-8?B?bmRVL3pVcHlvYzVQVkhWUjFDTUx3REd6bU5taHhabnJTaVR2bE1HKysyeDlW?=
+ =?utf-8?B?dDBGZk0yT295YmFLUWJqNDFKMkM1WjVCaCswN1VNOEkrWXFrTDhNQkVJNXFl?=
+ =?utf-8?B?MFh1WGhnTXk0NVdWVHMvckxhRm1UKytodCthTmZiOS9VeHdOMEdOVFBHUTZs?=
+ =?utf-8?B?aGRLdlRrOHhiVjh6djhETnRoRGd4bVFRMU9WQ0NwNDBZdVFlTEJQWUVldVE5?=
+ =?utf-8?B?c09hNzZQRzhnTHZoVER0NGRVSlhwOERoLzlmTVRoRXFJUzV5N2dXTG5VR2dW?=
+ =?utf-8?B?QVFyeFZVdjIzN1o4V1FrY25kVUhRQzBaYlQ0SWxSUEk2YU9lQ2FIdWp6Q24z?=
+ =?utf-8?B?a283T2Nxa0x4ZWZnallFbFFyaHM1N2tWYksyN05rVWxDOFJmZmZ4M1VTeFo2?=
+ =?utf-8?B?TmFxRlc3a0QzMVNBT0RTb2toQmIvc2JyL1JabnhYRU93L0dHRUxkTVFmZXZJ?=
+ =?utf-8?B?UGNLb1k4dlBROGY5cnorclUyUFl6M1RYUGZVYjBPVCtjdS9ZZ1ZKNGk3Nkd5?=
+ =?utf-8?B?UWxaU055aXFjSEowUXYrUVh6ejMzOE1ERVhLNDBHaTU1R2RBNGJaL3p0cWJZ?=
+ =?utf-8?B?YmhFVGo2ZVMydkZaK2VIUlZTbFVQbzVHNjkyTWR1YU1OSkVRNXVBaHc0Mzlk?=
+ =?utf-8?B?bGU4WGNEM0toUHdPQWNVQzc5QXVZT1F1eWF5K1VrN0V6TjJhSTlkL0F4bUht?=
+ =?utf-8?B?dXpheUZNY1U4TkNzOXBIZWl1RGRkMVprYm91MkoxM1crVDZzSFdRUE5XNHhB?=
+ =?utf-8?B?OUs0Y2dVM09XMXU5RHVITXpvSEpPZ012SWJ3UXkxejhFWDJ2cjZzaUN4clFm?=
+ =?utf-8?B?SWFZOVlMWTI0aUxTUnlMQ1BYcVY0WjBCUU8weUtiZTJzOGt6dUlFNHJONnQ3?=
+ =?utf-8?B?V2x1Mm9VN0hoQ2t6MFUwa0ErQzJZc3Byd3dsR3RZMXh4MlV3a0F0VW9mbmtQ?=
+ =?utf-8?B?QmJXYUFRaVZkK25aNURzZlQxNmNNM2V1N2k4OUhEMnh6ZWs4dVlLSXNWRlRW?=
+ =?utf-8?B?NEpMdzNwK3RMM2dnS3U4czVjWWdJUTVtZWxuYnF0UU1FVFBSV2FMVGpZTmxO?=
+ =?utf-8?B?VUxhb3Y0SzA2UUovZ3RzTlFoSWZoeHMxMTBmekZacVJ4UlpFL0V2ZitMUmJx?=
+ =?utf-8?B?d3ovWmRtZkhaa1lyWGxIcHpOZzc3c3dCS3R0QWxURHFyNkUvTFlrS0JyL0Zx?=
+ =?utf-8?B?SVhpZWtmNDl5RTlGdEFlYXRMbGpxc0tSQTQ4NWFDbmFtU3g4ejRVS3ZNZy9C?=
+ =?utf-8?Q?plnYXazVUsdhPA5dP4+ilbIgU0QWsThN?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YWtqNmN6aTBscGhTZXVUSkJpTVd4TUpWU2h4Y2hSVkVvSjYyNlY4eHYwaVNM?=
- =?utf-8?B?c0piSThkY3ZDbjBNbzJJbzVvRXZyalpSUkErUXNXZnYyaXBqa2o4L2QvY0oz?=
- =?utf-8?B?enRKamUzVHRuQmJEKzB3V0s2UlNkK2dCVkxIOUw0enora0J4WnFMVldiNlFP?=
- =?utf-8?B?L2dQL2JjWVAxQUlRM3VSWHRqNXpzbXhRUGhtcXIyN0t0NnZ3a21IeWJwZlZX?=
- =?utf-8?B?NjVId1daSW1WMmdqeEQzZG9CK29TUGxTZDNzUE5KMVgwbDBpMTcrR0lmOXlo?=
- =?utf-8?B?UlIvbXZSOU1uL3BCUnFybFQwVy9neXREOUh2eTUycGp1djVxNk1xSG1Kby96?=
- =?utf-8?B?U01tYXo0MFlPbVZWcjh3cSticXJTbitGWjhxSVBpNlNPNEJQVnQvdXJ6ZGRw?=
- =?utf-8?B?c3BVWEE1Sk1mdjZqN1JvNS9vU0FYdFI1cENOcS96M01Sd1NNREttL0NyN3lS?=
- =?utf-8?B?dW1oVmdhUEtBMjhvQU9pTkw3cXJCVElMbmwyc3RzUTRFaHRYU1hMWVFjY0o2?=
- =?utf-8?B?MWJ5aFdrQ1RCanFPY012RXViRGt0WXhJMWF1dUhlbmloTEJjcjlZSzVRYkpJ?=
- =?utf-8?B?c1AwYUN3NVR1Tk51UXNyWStqQWUxeHNLRFpTNkJ5K1dzT2tEbUIvNjN6UExs?=
- =?utf-8?B?WHQySFVYQjhoN0kycm0wNGhCdDFpVU4vL2VZZnllbkFxaGJEOWtndjRxWFRo?=
- =?utf-8?B?SnVrTzBvSjVrRUMvQStGSzlrcHJ6M0pWRWUranQwWDd3NjY2TEZSOUM1QS9L?=
- =?utf-8?B?Z1VXbnpHM0lQa2dMd2VmRmR4NW5sWWg0T2JtR2tBR0tnMjhBTDNPWitVcnA3?=
- =?utf-8?B?aEwxRk4vdFVqNSs1Ym91cm9ISWhpeGFBa0sxVmU3OWlsYTBsL3F5Uk5wR21L?=
- =?utf-8?B?ZzEvUTl5dzY0OXprNzl1UENhbEhVci9uL1A4dXk4RENVaGpScFdOaDBBV1lP?=
- =?utf-8?B?SmhsT2g5NjVnYnpHNlpwNGdrRzJEYUMzdk1VNytuSFRMeGZBcmRSUkMyR3dz?=
- =?utf-8?B?ZUlDSURPbW1MZnRvVXEwRDA3eDQ0L05lcWJrbkxYWXZvSmhVeW44L2lNL0FW?=
- =?utf-8?B?V2ZEWENKdERPYlRwbktaQklKZHJZNkI2cDdWczhzVUEvL0U1dS8yMjhIOGRU?=
- =?utf-8?B?YWNuVCtFdDJWTFNyNXNUU1hQVDVjSC9UbnpORFdTM25hZE9NbWpvTWlldzJC?=
- =?utf-8?B?WU1DaHJaQ0tBTGZRZlQ5bm1YS24ralB0cUh6TzRsNHdqbkNSYW16ZU9GTFFj?=
- =?utf-8?B?NU9nZzM2aHNPZEh2UFlpNnJlbU5qSFIvVHFHUTRRb2ZMQTBBR0FmbG1MdEVo?=
- =?utf-8?B?SFFDUndSN0dHSDFPNk55ZENlRGE3M3NIcHBkTUo3M1huUEpPNkdNcEllSjVj?=
- =?utf-8?B?QS9xTEZyRysyQ2ZkY3B0eGF6SjljSXN3Y04xd090bkhBUTBIQ0J1SytudThx?=
- =?utf-8?B?cEZZWVBFTTRFOXVMc3BJMHhQUStyY3hTTDhWV3lRVldzc0pLR3paZEpKY3hI?=
- =?utf-8?B?SjltQXJjdGtHckFPeis1a2M3MDR3QytOMkgzV1MwVGpBbk1rVDJXaGJiZm13?=
- =?utf-8?B?NlZjUHpMYk1QZnlJN2pBWk5XTEJXOU5xMDc4aUpDdzBiN21iSUd1Wk92UFlU?=
- =?utf-8?B?YktRV0VaMmViYkg0eldPTGxsYi9Xd2F4N245OTlVTmRkS1dHTTZIQ28vTlFM?=
- =?utf-8?B?YkR2TTJlN3NvWUhLY0xoK2ZCc2ZkTzNldW9sMTdaQUFmY1Evck1LemVjeXZR?=
- =?utf-8?B?MW01bkZEV3VqZ2tDUFd3a05tSVZ0N3pKbmxPdlBCT0FQNGhneVBIdTB4d1li?=
- =?utf-8?B?VXViRXVTY0NCQkJOWDA0WnExU0NLcG9mdHZQS0NLazROaDNYK0QrVG9PSDVK?=
- =?utf-8?B?eUViSTRHRVJvV1NzaklpTi95Ulc1dnE1ZVpYNi9hcEJtdC9FMzlkWWM5d29h?=
- =?utf-8?B?Ulpwcldueml6UHcxZElmSjFyNm1GcjhyeVlPVENhRGgyZnZZbUltYTUvSnNR?=
- =?utf-8?B?T3o4RElyRlJjVmh5SGpOb2dWNVM5NzFaMGYraFNUZEV0YjhBOHA4c01FQXB0?=
- =?utf-8?B?cmVJdVMvdXR3Y3RiWGNHWWJ1VlhHcG55UmhuclJuaitxVExGd2hTdzdwUFpp?=
- =?utf-8?Q?lANNHYu6YafR7li4dgRyFZ+it?=
+	=?utf-8?B?ZkJRZTJRMEUybTc4azF6UTdGak5uL1JVNDZzNDRENkExQ0hYTlViNHR5blVx?=
+ =?utf-8?B?UDdoSHh6U0I1dUpFYkw1RzFTZDBGajN6aXprYW9tRk1IWE5aMUFSeFZWRkJp?=
+ =?utf-8?B?YVkxV0pud3lHMi9vb095V2dXclAwUmV4ZHdDVkY0M2RDeFVVeW1hcU5sZTJv?=
+ =?utf-8?B?S2RQUnh1TGtOV0ZmWVZmMTBPUnZmZmFTUGh0R3NqT0c2dGZNS085U1ZSckZY?=
+ =?utf-8?B?bGVoQXh3elVNL1Y2NElwS1BZWlA0SGQ2eHVza3JJcm1wdUNweEQ0UWthaTA4?=
+ =?utf-8?B?WmJsejUwRmdWaHhpZVhZNkVaQitPazdLdTZhMnk2ODh4T1EzSUcvWHhvNUFF?=
+ =?utf-8?B?b096SmdFeG9wd0tNaEJjTUhWSWR3cThoK3NnbGhpNUJwd0N2Y1hLK2FZZHF3?=
+ =?utf-8?B?ZU1wRUcrbFQ0S1RjbjRDUHV1SllZTzRCOUh4SHoxTHlldTdyaHJUcU5ZL2dG?=
+ =?utf-8?B?YWh0MkY2TUpCeTdrN0s0clUrVGNXTFlXOGJOdEpvb0E1RU16MTRkRW9DZUFk?=
+ =?utf-8?B?Y0F6WmNlbHpQTFFSYWhOemhvdkVyd3VLSnM1dDJINjVLbStBQ0F1eUVKdW1R?=
+ =?utf-8?B?L1hQODVYazhNVzBNK0hmcG5yL2FBR1NQVmZ3R0NOM1UxZ1pMaWd6eEloNHUr?=
+ =?utf-8?B?NWV6KzlRNFBQVWw3ZVkvcElZWXdiMmkrUWpVQ3RPQWdoUFljWTZNbEh2ZjFN?=
+ =?utf-8?B?RGJ2TlNLNWZkMHVyQW9EUURHWTNidjdLUjFZQytvayt1eFA3WE5WZ1g5SjBR?=
+ =?utf-8?B?V2ZvVTNkQ3dPNGZCVG1PZDFFQUZTOWNLN25MTVp3VlR0cWJyL2NrU3RIWXBI?=
+ =?utf-8?B?UHZILzlyRGNKelZ0NmRyWWxLTkV4dnJsRE1rTmcxSDRrWjVmRnJUcWFlZ3hF?=
+ =?utf-8?B?RXVwKzF6YzVscG5ibnVrZjBnY1gzWEZOeVJJL0tURDVvTWZWNk5oRktMdlFs?=
+ =?utf-8?B?VHVwdFQxSHZQRXpxK005NjlmNW8vcW11TU0xQkN2b2lUWnRFbGJIUXlPK1hX?=
+ =?utf-8?B?THhPb0Z1cUZDTklzaEFCL0hCWVYzL0t0WGVWNDgrdTJta3NkVUJrOGpkb3dU?=
+ =?utf-8?B?RUlpN0RvaUZVKzFGWHdhWFFNQzVTbGVEcUszN2pMdTE4Sys3VXgwbFRtVFJE?=
+ =?utf-8?B?amlDYmZIZ2VBSEJDbjNwSnVleFZVU1BZTTBQcWNSMEJUZW9EQklTdXlPbVc2?=
+ =?utf-8?B?UVgvRHh5OVlTajNZMkd3MDh0Vm1LQVEyaWNFK25lVmVGNXpmNkpxZkdvcUg4?=
+ =?utf-8?B?M2Y5OGs0VS92THNzUGEwb1hNNVN4WTNaRzk0aTVTdTZ4RkRHQnZ1akF2aTc1?=
+ =?utf-8?B?ZTcrb3B4b0lVeFBjK3I4cGt3ZDlSWERtZzhzTUhOV09TUVhyZXpHcktGb05Y?=
+ =?utf-8?B?N1o2OTV4UmpiOXZHTUtmNUt6anRrZzdCblRURndGaE9hK1lEVUc2Tkx1TVlV?=
+ =?utf-8?B?cUVubFo4L3pnQm01M2FhenJrZ1c1TmJESmJBZmJBd2F6Ty82dUpGSEtRTjZh?=
+ =?utf-8?B?REU4ZmtJM0lEV3pjTmUxdGFIazVDVEJydnQrbkdBOEFKRTdZVlFGZjkwVUQr?=
+ =?utf-8?B?c1Z1anVVaFhXWENKZCtwU1d0N3FZb0xtcmp3WDhkTElQYlF6Z1VHbEJGVUlz?=
+ =?utf-8?B?bi9RUTZwWG0zTVRLNHJJbG9ZSWZGdTZoSXl2c3U0bi82aHdiaENnSS96Y1NE?=
+ =?utf-8?B?UVNyT3dxWjZ5TWxyZ015V3VzWGJZL3ZaZHBCT01pTjRnZWVDK3FtanlNdTBV?=
+ =?utf-8?B?V0lsd21UTS9FWVZrNUxocCtXZ2tlcm1NWkxFNWpMYUovMWVBVXljQVVvVlNt?=
+ =?utf-8?B?VU02SGlTMWsvTU5jQVVZdWRxSjI2RHRhM2dZYUU1YXUwemNhSzRVdTZoaDJw?=
+ =?utf-8?B?bm5wTE11WjA1clBkUFFWL0M1aHNTbEh3VmdEaXlQQ2l2dzVaa1IrR1c1YU53?=
+ =?utf-8?B?MDFGTUVPQzU2K3BHZWJTeXp1T1c4RGNnUW4wNWd3UlFDOVdiTXNqL1M3OGNn?=
+ =?utf-8?B?am9weVFlZHoyOW94UWFocERiU1doZVZWaysrdHZPdUFpdGd5WDFzaWlhVjVa?=
+ =?utf-8?B?VVNSREFRQ3NmWnZubFJNeVc2TmhQc3o3RjRIc1E4Q3VNMkxPWVE4emZaSVpP?=
+ =?utf-8?Q?Btu3M6hAsdJsVam+HUrZwZVhu?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c9177935-57a8-4c45-3abb-08de02901ec3
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 69dde9f3-e127-42f0-8416-08de0290d7f4
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2025 15:18:34.9768
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2025 15:23:45.7202
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: de91a8MtbxHTFgGMhScacCf++wjS9HfOo9Ante9EBMNm7wWFSXPHby+jAdDcVoyf
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB9651
-
-On 1 Oct 2025, at 0:38, jinji zhong wrote:
-
->> On 30 Sep 2025, at 9:55, Vlastimil Babka wrote:
->
->>> On 9/25/25 10:50, zhongjinji wrote:
->>>> It is unnecessary to set page->private in __del_page_from_free_list().
->>>>
->>>> If the page is about to be allocated, page->private will be cleared by
->>>> post_alloc_hook() before the page is handed out. If the page is expand=
-ed
->>>> or merged, page->private will be reset by set_buddy_order, and no one
->>>> will retrieve the page's buddy_order without the PageBuddy flag being =
-set.
->>>> If the page is isolated, it will also reset page->private when it
->>>> succeeds.
->>>
->>> Seems correct.
->
->> This means high order free pages will have head[2N].private set to a non=
--zero
->> value, where head[N*2].private is 1, head[N*(2^2)].private is 2, ...
->> head[N*(2^M)].private is M and head[0].private is the actual free page o=
-rder.
->> If such a high order free page is used as high order folio, it should be=
- fine.
->> But if user allocates a non-compound high order page and uses split_page=
-()
->> to get a list of order-0 pages from this high order page, some pages wil=
-l
->> have non zero private. I wonder if these users are prepared for that.
->
-> Having non-empty page->private in tail pages of non-compound high-order
-> pages is not an issue, as pages from the pcp lists never guarantee their
-> initial state. If ensuring empty page->private for tail pages is required=
-,
-
-Sure. But is it because all page allocation users return used pages with
-->private set back to 0? And can all page allocation users handle non-zero
-->private? Otherwise, it can cause subtle bugs.
-
-> we should handle this in prep_new_page(), similar to the approach taken i=
-n
-> prep_compound_page().
->
->> For example, kernel/events/ring_buffer.c does it. In its comment, it say=
-s
->> =E2=80=9Cset its first page's private to this order; !PagePrivate(page) =
-means it's
->> just a normal page.=E2=80=9D
->> (see https://elixir.bootlin.com/linux/v6.17/source/kernel/events/ring_bu=
-ffer.c#L634)
->
-> PagePrivate is a flag in page->flags that indicates page->private is
-> already in use. While PageBuddy serves a similar purpose, it additionally
-> signifies that the page is part of the buddy system.
-
-OK. You mean ->private will never be used if PagePrivate is not set
-in ring buffer code?
-
-If you are confident about it is OK to make some pages=E2=80=99 ->private n=
-ot being
-zero at allocation, I am not going to block the patch.
-
->
->> I wonder if non zero page->private would cause any issue there.
->
->> Maybe split_page() should set all page->private to 0.
->
->> Let me know if I get anything wrong.
->
->>>
->>>> Since __del_page_from_free_list() is a hot path in the kernel, it woul=
-d be
->>>> better to remove the unnecessary set_page_private().
->>>>
->>>> Signed-off-by: zhongjinji <zhongjinji@honor.com>
->>>
->>> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
->>>
->>>> ---
->>>>  mm/page_alloc.c | 1 -
->>>>  1 file changed, 1 deletion(-)
->>>>
->>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->>>> index d1d037f97c5f..1999eb7e7c14 100644
->>>> --- a/mm/page_alloc.c
->>>> +++ b/mm/page_alloc.c
->>>> @@ -868,7 +868,6 @@ static inline void __del_page_from_free_list(struc=
-t page *page, struct zone *zon
->>>>
->>>>  	list_del(&page->buddy_list);
->>>>  	__ClearPageBuddy(page);
->>>> -	set_page_private(page, 0);
->>>>  	zone->free_area[order].nr_free--;
->>>>
->>>>  	if (order >=3D pageblock_order && !is_migrate_isolate(migratetype))
->
->
->> Best Regards,
->> Yan, Zi
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ws9J6R9G4PTBjz+3pmZKTglvxuQuoDVGdig2nftLR9f/X79thWqu99DgiOmJhG4oCYgGdWvOfp/nm2OQLO7oeA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8603
 
 
-Best Regards,
-Yan, Zi
+
+On 10/1/2025 9:41 PM, Alexandre Courbot wrote:
+> On Tue Sep 30, 2025 at 11:45 PM JST, Joel Fernandes wrote:
+>> Add KUNIT tests to make sure the macro is working correctly.
+>>
+>> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+>> ---
+>>  rust/kernel/bitfield.rs | 321 ++++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 321 insertions(+)
+>>
+>> diff --git a/rust/kernel/bitfield.rs b/rust/kernel/bitfield.rs
+>> index fed19918c3b9..9a20bcd2eb60 100644
+>> --- a/rust/kernel/bitfield.rs
+>> +++ b/rust/kernel/bitfield.rs
+>> @@ -402,3 +402,324 @@ fn default() -> Self {
+>>          }
+>>      };
+>>  }
+>> +
+>> +#[::kernel::macros::kunit_tests(kernel_bitfield)]
+>> +mod tests {
+>> +    use core::convert::TryFrom;
+>> +
+>> +    // Enum types for testing => and ?=> conversions
+>> +    #[derive(Debug, Clone, Copy, PartialEq)]
+>> +    enum MemoryType {
+>> +        Unmapped = 0,
+>> +        Normal = 1,
+>> +        Device = 2,
+>> +        Reserved = 3,
+>> +    }
+>> +
+>> +    impl Default for MemoryType {
+>> +        fn default() -> Self {
+>> +            MemoryType::Unmapped
+>> +        }
+>> +    }
+> 
+> Tip: you can add `Default` to the `#[derive]` marker of `MemoryType` and
+> mark the variant you want as default with `#[default]` instead of
+> providing a full impl block:
+> 
+>     #[derive(Debug, Default, Clone, Copy, PartialEq)]
+>     enum MemoryType {
+>         #[default]
+>         Unmapped = 0,
+>         Normal = 1,
+>         Device = 2,
+>         Reserved = 3,
+>     }
+> 
+
+Good point, changed to this.
+
+>> +
+>> +    impl TryFrom<u8> for MemoryType {
+>> +        type Error = u8;
+>> +        fn try_from(value: u8) -> Result<Self, Self::Error> {
+>> +            match value {
+>> +                0 => Ok(MemoryType::Unmapped),
+>> +                1 => Ok(MemoryType::Normal),
+>> +                2 => Ok(MemoryType::Device),
+>> +                3 => Ok(MemoryType::Reserved),
+>> +                _ => Err(value),
+>> +            }
+>> +        }
+>> +    }
+>> +
+>> +    impl From<MemoryType> for u64 {
+>> +        fn from(mt: MemoryType) -> u64 {
+>> +            mt as u64
+>> +        }
+>> +    }
+>> +
+>> +    #[derive(Debug, Clone, Copy, PartialEq)]
+>> +    enum Priority {
+>> +        Low = 0,
+>> +        Medium = 1,
+>> +        High = 2,
+>> +        Critical = 3,
+>> +    }
+>> +
+>> +    impl Default for Priority {
+>> +        fn default() -> Self {
+>> +            Priority::Low
+>> +        }
+>> +    }
+>> +
+>> +    impl From<u8> for Priority {
+>> +        fn from(value: u8) -> Self {
+>> +            match value & 0x3 {
+>> +                0 => Priority::Low,
+>> +                1 => Priority::Medium,
+>> +                2 => Priority::High,
+>> +                _ => Priority::Critical,
+>> +            }
+>> +        }
+>> +    }
+>> +
+>> +    impl From<Priority> for u16 {
+>> +        fn from(p: Priority) -> u16 {
+>> +            p as u16
+>> +        }
+>> +    }
+>> +
+>> +    bitfield! {
+>> +        struct TestPageTableEntry(u64) {
+>> +            0:0       present     as bool;
+>> +            1:1       writable    as bool;
+>> +            11:9      available   as u8;
+>> +            13:12     mem_type    as u8 ?=> MemoryType;
+>> +            17:14     extended_type as u8 ?=> MemoryType;  // For testing failures
+>> +            51:12     pfn         as u64;
+>> +            51:12     pfn_overlap as u64;
+>> +            61:52     available2  as u16;
+>> +        }
+>> +    }
+>> +
+>> +    bitfield! {
+>> +        struct TestControlRegister(u16) {
+>> +            0:0       enable      as bool;
+>> +            3:1       mode        as u8;
+>> +            5:4       priority    as u8 => Priority;
+>> +            7:4       priority_nibble as u8;
+>> +            15:8      channel     as u8;
+>> +        }
+>> +    }
+>> +
+>> +    bitfield! {
+>> +        struct TestStatusRegister(u8) {
+>> +            0:0       ready       as bool;
+>> +            1:1       error       as bool;
+>> +            3:2       state       as u8;
+>> +            7:4       reserved    as u8;
+>> +            7:0       full_byte   as u8;  // For entire register
+>> +        }
+>> +    }
+>> +
+>> +    #[test]
+>> +    fn test_single_bits() {
+>> +        let mut pte = TestPageTableEntry::default();
+>> +
+>> +        assert!(!pte.present());
+>> +        assert!(!pte.writable());
+>> +
+>> +        pte = pte.set_present(true);
+>> +        assert!(pte.present());
+>> +
+>> +        pte = pte.set_writable(true);
+>> +        assert!(pte.writable());
+>> +
+>> +        pte = pte.set_writable(false);
+>> +        assert!(!pte.writable());
+>> +
+>> +        assert_eq!(pte.available(), 0);
+>> +        pte = pte.set_available(0x5);
+>> +        assert_eq!(pte.available(), 0x5);
+> 
+> I'd suggest testing the actual raw value of the register on top of
+> invoking the getter. That way you also test that:
+
+Sure, I am actually doing a raw check in a few other tests, but I could do so in
+this one as well.
+
+> 
+> - The right field is actually written (i.e. if the offset is off by one,
+>   the getter will return the expected result even though the bitfield
+>   has the wrong value),
+> - No other field has been affected.
+> 
+> So something like:
+> 
+>     pte = pte.set_present(true);
+>     assert!(pte.present());
+>     assert(pte.into(), 0x1u64);
+> 
+>     pte = pte.set_writable(true);
+>     assert!(pte.writable());
+>     assert(pte.into(), 0x3u64);
+> 
+> It might look a bit gross, but it is ok since these are not doctests
+> that users are going to take as a reference, so we case improve test
+> coverage at the detriment of readability.
+> 
+
+Ack. I will add these.
+
+Thanks for the review! (I am assuming with these changes you're Ok with me
+carrying your Reviewed-by tag on this patch as well, but please let me know if
+there is a concern.)
+
+ - Joel
+
+
 
