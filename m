@@ -1,150 +1,153 @@
-Return-Path: <linux-kernel+bounces-841111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABFBEBB6490
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 11:02:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FF2EBB64AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 11:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 27B4C344B21
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 09:02:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 704E04877D1
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 09:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C52227B33E;
-	Fri,  3 Oct 2025 09:02:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B8A280CCE;
+	Fri,  3 Oct 2025 09:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oPajp2fj"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fcNAhzBY"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD5D261B77
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 09:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30774274B55
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 09:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759482121; cv=none; b=MPvx4cErd7ZLM5ZVRMlqkWvphEeaSF061Ssd0HiYVPWNrwrwIjERg7shhR5OFqpswxxQ8TSkerf+Zl4gnXQErAAOYIby/0jkB8PZJKbO6XhbhuzmQBmB4IOVjwXg4SD/2TGwI63rIn1nk20VpXiJ0UWOoK7PP93OMf3bag3yb5M=
+	t=1759482135; cv=none; b=VjVf/zoIe+brCmNEKxj9NyOGkjO9jMRJkqW+Lvd0LnmHK5GhE0lXlwQP4lY/T4NvOaS4H6O6wlf+KmUBMkySs0y8cuiflOKWZa5lzRvdGarIDXqoaewbLEVJe7HVD2hFlJyFDDs1TBH/SdD5VwZmWNukHjNCQj5VM8yl3MEDfLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759482121; c=relaxed/simple;
-	bh=2ld2W7PXE3Fjnk8Fmg4gzRneXSYKkf8M/z6fC8H7ieM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ZnMjQAYX+Ho+mhUQBfFmf0WJiqaNt2pxW+HP2R0DImW8N2cMnHjHad2CbDYyJCGWVvpL72rPCdNIoSQ70A8PaEUfJgsknrOiOA8Y8vhtvYXsBcmE45VQdUQSaeR5G6uEASxC1EQLoeAYncHbB9OGOjmeAV568Z+3VBnpS3y1D+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oPajp2fj; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46e2e363118so17923105e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 02:01:59 -0700 (PDT)
+	s=arc-20240116; t=1759482135; c=relaxed/simple;
+	bh=AoJlu/aMSVaAZ99yWts3jw8DSv4BPd3kziHUYPKMSy8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=buzBcd+QjWcp4t4UN4XOXPSRCsVsVG1aR43Ds0C7lJL1AVOZT3CT8edHdZ/cXfKHFitAZ5q/YMW5supvRCf+8tR6T7owRWWogSdFOzlLWMo9jO6UUw2+WHXBJmO4XJNU4vcECpRps7yPRwrMGnBBtJb/g+xE4GW8pUOUPfLIgt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fcNAhzBY; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b55197907d1so1335980a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 02:02:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759482118; x=1760086918; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8htaH5UmD3BZCsFSEXxOl4TBkWtC5hWepzt68CD6TCQ=;
-        b=oPajp2fj4+QyliATVaBcLOcSavorcZVkucJQh1SVNoyPXBdDQTBBg0ozJUtPhGWGrY
-         ZgB1CC2i/7OqHK/8EdfggGHuLOdRl4K9iFLmZu/wG3j/TcGwTT237TYZXfEv74eb35Q7
-         59xoMxkCEHemEkyBdsRjEnkajrH1Te3vV5DjEJdNB0AMWnTdjs3b9tQYgxc+Jl5MnoWR
-         gmxoNTApOCtEOBtS+2hMjBZK+ezxwZ5LnVwMbNMBf5Gw7BEZ9Hut2lSFWql2Y0ttk8nE
-         uaNwCeBwHYwK3zt/myzJxQ9mZHV0zh19Syoc4c+NvufhzuXFXyobW4ECoIqMSlyyqNPs
-         Y+MA==
+        d=gmail.com; s=20230601; t=1759482133; x=1760086933; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uxqa+yDgpnoAEXzNRro9y4z3jhhmxVoLzlhoWTC4v1g=;
+        b=fcNAhzBYGprF+w7OrvPgpI6+3AHoVTOujVRnua+vOHxFya+cMqyXUN9VYEjzpEYGND
+         a3uv6hKTg01ezVLPbE0IluL45Xs+BhWRdIXGMN+ThBRsEtT8smHcMJ9T7E7WXs+aDBeI
+         u5hND0PTPGyCoOEByaenbmQQlIhfVqcMKAeC3h2QeAuspyqQytAmkWWtX3RH9wKLR9+O
+         ji8l5zRI3I+aurRLPTg+9NLEEy3CRDxP+AFisfRPRS7Y6xg6uk4qQmpNYUtL11XVWvmr
+         axUH4OSxnIHkjULZrLNQUKFkgGWEg2BbIkD+NIAmnMYu4r2m+H4u8U7JSzfvYul9z8Or
+         oZfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759482118; x=1760086918;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8htaH5UmD3BZCsFSEXxOl4TBkWtC5hWepzt68CD6TCQ=;
-        b=JIK8wfjXH9yPvv8KP/DAIH/b7GNybg6EyuqaIq5Mm9LoYEK+dswNdnRhtyrYh2XsPC
-         RsTnDaFpc7OoSh6qm7wwKkfx6PnirqXLmknwPHYdFv9m73Azs4vAf45BRDYtr9PdEBML
-         as8nevprMDPgXTuaYI5iDsUJjb0GHxP0jH+mCJPxr6W0Obwyae/Yk8Xot/9HXGrzz9ym
-         J83Pjj5jCt/9Accqj/euS+ldIC09qQrMsnCEmTxCdHm9nNbO2ELh4WquqSgVg2zUdz1x
-         cJ2zz/Lt/ugnY+GASUIi+GfNTqWf9r6gjkT2h5mj+6DmePhw7FPBVL7SeSZ7dGF3chv1
-         e9mA==
-X-Forwarded-Encrypted: i=1; AJvYcCXkVIn03GTSgXpsEzlofEnpCCuS3j47ULfhsP7ehazkLMgCgZ1PvkmA0LgcUgaWlZjezJkbZqcSYRWV7e4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGAtvD9NxfNCeboorz1PYB9YfMqeHQmpt39IIzk49fJ4njP21e
-	zp2YsAarNGjSgxc4A4IE7FkdhaCQIO94quMhEETZX5XNjzRY4d7OzgtxhA8jhM0bYSc=
-X-Gm-Gg: ASbGncs4Vqmdl4jOnWafhzXKw7aQ5ocaCb1Kq8OiXQit8TVFURDgIv1KrA9fUGzz6ud
-	g0LYtnJ6KTAtAYfeETaTnRFt9ea/z58tkbUDXpIokOKwbrBUJlPZPdqcLqsjYKvpRJrNzCCT1Xl
-	5InafADDv/t9/2ae8wBgNYqHVgzTa/NEg2Km7gswklEKJXRx3QN9LditWSCjRq03tT6l9ff9nxw
-	BaGS336ZJtoUOHeuIfn1oFCG4y74Q6HFGOecP2LAbtZivf4EOGqdRhI+VZEPCduuz/ncvnYS2TI
-	U+acWP2IemYm4aPwRyW4KUW74o67/na4TNjA8lxzUyVR5JV9scm6wE7XrSZB+S4IFp7xsf1tEBD
-	+MTDmEk2av2Bbka5hHhN5n4ouyPVsieznJd8yK9i2MeKSep0cPVO0hDF6gGKDM+kDDDCL9Vjq9z
-	6LdSPuxSHxEts+M15KHbDLJd35IXo=
-X-Google-Smtp-Source: AGHT+IFXXFYBejNEk62TTVbsZCkjTfoWLoHDUC8jbliGeXsvvT//1ANw01aVm2hkqA2pgnjHgXrrcw==
-X-Received: by 2002:a05:600c:1f8f:b0:46e:4922:6855 with SMTP id 5b1f17b1804b1-46e71111c0cmr13814655e9.3.1759482117724;
-        Fri, 03 Oct 2025 02:01:57 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:1516:b5be:def8:9a0b? ([2a01:e0a:3d9:2080:1516:b5be:def8:9a0b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e72362344sm21796015e9.15.2025.10.03.02.01.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Oct 2025 02:01:57 -0700 (PDT)
-Message-ID: <e42176e9-cac0-4142-b463-9eaf86906c46@linaro.org>
-Date: Fri, 3 Oct 2025 11:01:56 +0200
+        d=1e100.net; s=20230601; t=1759482133; x=1760086933;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uxqa+yDgpnoAEXzNRro9y4z3jhhmxVoLzlhoWTC4v1g=;
+        b=KLDxeaN94icZqa8i4D9IRKnXSCeUkrpf7i2eTL0XBTgoIQjwgo4ijb5i7j2764rPJu
+         krZV90TbUqNsKFLIjHEjcHWtkFQHD//KvzHxBdJ3Hs/bi/HvO6OUKrDKk62UN/dLYMgV
+         rkV/gqWegwU5PFPBZV8K6tCvqj5J5oBO6o33zvd425ZG7W91aou6SD0w7YhhgGKTbKCo
+         lRgZLG3R4GinlgaByrhZPH3fd7aZ7OJhg0KDnRu47tng2H5eFZDnq20EEDi9xVENjWlZ
+         0Uohe4pw94++YlBFkQcFV8oWw/yChihYaxlCZHl5cQymcbfCr3UWbnDCWpBzRHe5IbnI
+         ku7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX3Qw1zXXMd/oCfHLJlBOrG8kunwn6SMEiPhBM0LXnX3RXT7JX+c8ljp+Dh+9cKajgVlYYJ19Mt2Eqs69w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcfMkZCYf/5p3F7JyHJFIrmhOFzq+Exc3m9MC5m+B7qtu66Oxc
+	gt2wH2I1gDSC48nGvToZPU0KvUKb9q7R1evjj3H0uJE9nAxWAWy/uck86IzaPGUr07BXZi1cR/i
+	duE2zc/j3IsDtE87X+Me3p4bZKNAU7TU=
+X-Gm-Gg: ASbGncvkIFs+cBiN98lIlhlk288u7MpiQOBTc2N4C+STEsq9n5p75eCy9UdTPYnt/g1
+	VydgvcXISxL6Z6+fGACmmACezWFc2q9WgVGh5pc6R/tJGCMu9SYaUemie3W4btWg+MoCErmDe9O
+	x8sqtVbl9bnPeLJrDmiu89Ypizse5AdI6uL3RZEyegJAe2fWO57idp5tUmE0B4BwmYy3JanpHza
+	3o9wgrgHI9hO2CnA78Tlj/aEWIsPV36Wqc/csRGSQf8jMIpCRecSkfu1Oqs27Voi9GdSl6eYLGg
+	thkDfH+1d88BlOle
+X-Google-Smtp-Source: AGHT+IF+VuyebhfbDmuKwaQz9VO+LNpTaCKzPPtkSI3ZEy/4ghCU+AOuEMJ/tznlAQcxgIL+aISACabvQO9QzaBnXr4=
+X-Received: by 2002:a17:903:1ad0:b0:25e:78db:4a0d with SMTP id
+ d9443c01a7336-28e9a5ff449mr32573585ad.36.1759482133330; Fri, 03 Oct 2025
+ 02:02:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH] MAINTAINERS: Update Jessica Zhang's email address
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-Cc: Dmitry Baryshkov <lumag@kernel.org>,
- Rob Clark <robin.clark@oss.qualcomm.com>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org
-References: <20251002-quit-qcom-v1-1-0898a63ffddd@oss.qualcomm.com>
- <35jqgias5o4ruhkc72oacepcq4skfzpe4gyivg2pz7bnpy5luj@d5saa7y7rcus>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <35jqgias5o4ruhkc72oacepcq4skfzpe4gyivg2pz7bnpy5luj@d5saa7y7rcus>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251002180541.1375151-1-kriish.sharma2006@gmail.com> <20251003083312.GC2878334@horms.kernel.org>
+In-Reply-To: <20251003083312.GC2878334@horms.kernel.org>
+From: Kriish Sharma <kriish.sharma2006@gmail.com>
+Date: Fri, 3 Oct 2025 14:32:02 +0530
+X-Gm-Features: AS18NWDDuPPIIeehTgoFw-nQ8yC7s8iWiZZdHg0YLrQUfA3dlujVeUboCKThj8Q
+Message-ID: <CAL4kbRN=ktZc8fkcjo90GM2EBgCVt_xVmSGVQuM8gE2qV3ZJKw@mail.gmail.com>
+Subject: Re: [PATCH] drivers/net/wan/hdlc_ppp: fix potential null pointer in
+ ppp_cp_event logging
+To: Simon Horman <horms@kernel.org>
+Cc: khc@pm.waw.pl, andrew+netdev@lunn.ch, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/3/25 03:17, Dmitry Baryshkov wrote:
-> On Thu, Oct 02, 2025 at 04:57:35PM -0700, Jessica Zhang wrote:
->> My current email will stop working soon. Update my email address to
->> jesszhan0024@gmail.com
->>
->> Signed-off-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
->> ---
->>   MAINTAINERS | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> 
-> 
+Hi Simon,
 
-So dim complains you didn't review with the right address...
+Thanks for the review and guidance.
+I=E2=80=99ll prepare a v2 targeting the net tree, updating the patch subjec=
+t
+and incorporating the suggested changes.
 
-dim: ERROR: 261785a47e0b ("MAINTAINERS: Update Jessica Zhang's email address"): Mandatory Maintainer Acked-by missing., aborting
-
-I guess it expects Dmitry Baryshkov <lumag@kernel.org>
-
-Neil
+On Fri, Oct 3, 2025 at 2:03=E2=80=AFPM Simon Horman <horms@kernel.org> wrot=
+e:
+>
+> On Thu, Oct 02, 2025 at 06:05:41PM +0000, Kriish Sharma wrote:
+> > Fixes warnings observed during compilation with -Wformat-overflow:
+> >
+> > drivers/net/wan/hdlc_ppp.c: In function =E2=80=98ppp_cp_event=E2=80=99:
+> > drivers/net/wan/hdlc_ppp.c:353:17: warning: =E2=80=98%s=E2=80=99 direct=
+ive argument is null [-Wformat-overflow=3D]
+> >   353 |                 netdev_info(dev, "%s down\n", proto_name(pid));
+> >       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > drivers/net/wan/hdlc_ppp.c:342:17: warning: =E2=80=98%s=E2=80=99 direct=
+ive argument is null [-Wformat-overflow=3D]
+> >   342 |                 netdev_info(dev, "%s up\n", proto_name(pid));
+> >       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >
+> > Introduce local variable `pname` and fallback to "unknown" if proto_nam=
+e(pid)
+> > returns NULL.
+> >
+> > Fixes: 262858079afd ("Add linux-next specific files for 20250926")
+> > Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
+>
+> Hi Kriish,
+>
+> As it looks like there will be another revision of this patch,
+> I have a few minor points on process for your consideration.
+>
+> As a fix for Networking code present in the net tree this should probably
+> be targeted at the net tree. That means it should apply cleanly to that
+> tree (I assume it does). And the target tree should be denoted in the
+> subject.  Like this:
+>
+> Subject: [PATCh net] ...
+>
+> This is as opposed to non-fix patches which, generally, are targeted
+> at the net-nex tree.
+>
+> Specifying the target tree helps land patches in the right place
+> for CI. And helps the maintainers too.
+>
+> Also, git history isn't consistent here, but I would suggest
+> that a more succinct prefix is appropriate for this patch.
+> Perhaps 'hdlc_ppp:'
+>
+> I.e.: Subject: [PATCH net] hdlc_ppp: ...
+>
+> For more in process for networking patches please see:
+> https://docs.kernel.org/process/maintainer-netdev.html
+>
+> Thanks!
+>
+> ...
 
