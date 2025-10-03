@@ -1,150 +1,124 @@
-Return-Path: <linux-kernel+bounces-841362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36B21BB7193
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:00:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F135EBB71A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E74104ECC18
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:00:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2937F4EC6EA
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25AB21F0E26;
-	Fri,  3 Oct 2025 14:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB092134BD;
+	Fri,  3 Oct 2025 14:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JqEbhZga"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Jqn+Dkpm"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4637E156F20
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 14:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146C71B6D06;
+	Fri,  3 Oct 2025 14:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759500029; cv=none; b=oeMo7qPZqheoB/5BB7btTdDBsvaPRfaXHaEkr9xoqCmets9XAKG59bJ4QqpeosSbXDn+YWU5zsnddWzErvw9UW0LT15EHZE5q6BkXDaVpQyePF3B9BjoV8pu7T4Z637H9akrDgf9fXWHFrHTzTot7qLfSCvMaO7bea9/pcy4MV0=
+	t=1759500089; cv=none; b=o0PaI12hORDnqzCM6uUW8IBAaKt7KD+GelpjHQ2VqfLp2l+l0uxLN3E6tPwhtAk2DTBOz4rBXAlW59Raszr5IWdBozIwkvjRXMgfvV2LCLzdOVRJhWoCywf7UXKoX8tj9TH0lO3oTkD2mF5IeRBZNn0vef/Ed/nmpKEIXDyzgeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759500029; c=relaxed/simple;
-	bh=LE11OXTwtyH7n2SYHTG2RJk02Tg+uqHJe5QPkn3biIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VS8Hp2cR8T+E2fLoVMO4/am2f7faa97h98SfIVxzJgLHZIaGhEg0PHDrBMJJL3I/EtUMgQ1J871Wn539awUhiBxdRRslGQmnpowoTA5OF4UkORi1+2DFofPySwePJwo10xY8JSnF1BuII/D877DOqZVVEP/85YSLammao1QirIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JqEbhZga; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3f42b54d1b9so2024203f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 07:00:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759500025; x=1760104825; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=U1I+/2p2JdPvoE9EVgO8OhJv/XxdkIcGTKg91hG0OSE=;
-        b=JqEbhZgaQdygIuNVhqlUubpuMSsycDexi+Avoe3jInfl6GTCwHircYlpTOIcnJHrAI
-         XjM3HVXiVc5zgVkKA/wrGBCTUXQ5kEMYgP4eYBHoyQAEvrNTCJxlBkpA5T8Zk4gzGq4p
-         CXGqIAdTGQm4d0IwR7DTPqqp7Ar5CH5KiXLNsoE5TsOoCfSr8hXOQlInK13VblH+y652
-         R500OY4/9oXu5LRyHwPvtJ1XAD2qZAEAi2NkO4TrbiW03ghSiXwGdY+quZuNml/ztfXY
-         WJwZvGq/tx0VuzB6NTiol2pbTbitGb53B3KfUg4HvIx+gFbhd5+nBjbwQZV1TVPFmUA+
-         iakg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759500025; x=1760104825;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U1I+/2p2JdPvoE9EVgO8OhJv/XxdkIcGTKg91hG0OSE=;
-        b=OCJirsBaJ8c07S3snIBuS9n7kSFHgLltmNhpIcna3pfnLu5Pv+8x1RDmhgKd2IF9I+
-         I8KP0xIDgrv+jzfLFbMjQWIj9dm3wTmWMkFVT5s/ErWV+mJZUHH6YY6ki14jSoUxtT7y
-         FbMQSLq8NbTWTM9jSYUwT9RVlszNlCAAVGPdjxKxVQvcthaHS8+pHrPs9jXE+lk+k2d5
-         dum5tzQqxojFMJDNS6Ji1WLrd6borlBkytGuQSSa0RyZ342N3U7a7iV6fOisezPKmlQb
-         5PWQG8grFujWgCjeFUdUCZaOWn5RnGxtEbxa/soogyIQSRohKaG58nWdpq3GYNcqp1SN
-         WRqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSg3C3Ea0oqHI1iVwJqs7KDGkHO2YcUg78x58rqz17pDYT6L/E1hni7869QxeuxP2rr03QD03B5A9zH0c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIuXsL9GNtap9OeL+O4dUranxEpwzj40J5rl6qQbMzFMoA8GEH
-	y9VDDArL4k/S1YPOIN9s2Is1H1qHiqLcWrRAwBXqCo+4EMYoPklkSa++Jw6rXjS8xpY=
-X-Gm-Gg: ASbGncu8EyWaDG+cWhJdZHCbHIxjuWKjQ/fDGdw/G3gxVBojmNP5i61eCYa2L4xgQTU
-	vw/pZyT2+G3nUzJWirQC0P76aigdC6W2jJEDe/8A4O9e6sfQXAeEeHsPpgmN8Dtx6z2eQqKOXI8
-	WNWhtGhGR4nEcFHYOPpjm9QT2frmDA1w0Dg5blltb4y+9/3flqMzvEkMHooinX8I81n0DDD5UwC
-	oRofHddOeq7lexcTVGh/n7VN+3xdRDt4buMM/4lNTdtu7XOCWaVAWN0w2gCUAI+wY/+nTg4QEl7
-	UBXlT637JwkaLk2SobRC7WX4/f3d7QKKNHZFfb2WEP1kHXhDwuAT5vpOdyqvbTIZ+g69SsLe4kf
-	mSgNkER8j90WaTr5LyNnbdDZN2zP96nrX1h8G9fg35w5mzLP/F0FTK7xYCY+K1ggvOpo=
-X-Google-Smtp-Source: AGHT+IGxLyC2md5Jx51m9HM2p3j5fCUCQApXbhQWufGaXIfDffbKLaJKFwko+zfFqgwUdARWXwlQ8Q==
-X-Received: by 2002:a05:6000:25c6:b0:3f5:d7c0:8e20 with SMTP id ffacd0b85a97d-425671c53f0mr2152207f8f.59.1759500025479;
-        Fri, 03 Oct 2025 07:00:25 -0700 (PDT)
-Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e723431f5sm31917445e9.2.2025.10.03.07.00.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 07:00:24 -0700 (PDT)
-Date: Fri, 3 Oct 2025 16:00:22 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Nirbhay Sharma <nirbhay.lkd@gmail.com>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Tiffany Yang <ynaffit@google.com>, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
-	syzbot+27a2519eb4dad86d0156@syzkaller.appspotmail.com, skhan@linuxfoundation.org, david.hunter.linux@gmail.com, 
-	linux-kernel-mentees@lists.linuxfoundation.org, Kuniyuki Iwashima <kuniyu@google.com>
-Subject: Re: [PATCH] cgroup: Fix seqcount lockdep assertion in cgroup freezer
-Message-ID: <nbtofen2pwqmp7r5odbyc4en6vv54rpznyaanxlb6tbx5yyg25@jx2re5hdmt5e>
-References: <20251003114555.413804-1-nirbhay.lkd@gmail.com>
+	s=arc-20240116; t=1759500089; c=relaxed/simple;
+	bh=cPM9JXOFF7ibYCync3LVv1ejPvu2H2nbyMWY+uEM8fU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=AkUk279336O5weKDeEERtSGygG4eWU5dMGUZyK3GkRbhzCPD/I+EqpA6goJGzJkCkKNm0Ao2Ds5NwNNJ3wptTSDRvllE+BcDuHzaW9iDGYt6aPTTnl8YXHULG9piURnILZ8n17D+Nis87BAl7+QmrpRRE5A67W8OlitnXR+AGY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Jqn+Dkpm; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759500085;
+	bh=cPM9JXOFF7ibYCync3LVv1ejPvu2H2nbyMWY+uEM8fU=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Jqn+Dkpm/6ZZ4hoK26JhVgFO+BgPcu2yKhvOdOLJ9s4p64cRHMjPyg067uVA4p2xP
+	 YC216rYbMMlz2URqwyzEmfm2aSBkto2O8EuwaxFa2xjJDul5gkc9ABYFguXOMPdaNE
+	 bMMsu4RWd+HpC99KBXa1+w6oEBaaP4YlC9suVWD6C1swgsFKU4EW9rfyHBRs4Ts0tB
+	 Nb0afsfdenqo6Ld2bNsVWB4QIMZouhkcgOLtKa2Ve8mGrH7hemRcCEz2xVfbv0ikVz
+	 U9U2TcbUayoEgpSQDKZ1Zdex9BrgoZqiCQLpwU3zSFdxsMZ/SRwINS2ekvj8l0IMxl
+	 1y83eqj3Rb17Q==
+Received: from yukiji.home (lfbn-idf1-1-2269-27.w92-151.abo.wanadoo.fr [92.151.67.27])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laeyraud)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9A6AF17E00AC;
+	Fri,  3 Oct 2025 16:01:24 +0200 (CEST)
+From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+Date: Fri, 03 Oct 2025 16:00:28 +0200
+Subject: [PATCH] pinctrl: mediatek: mt8196: align register base names to
+ dt-bindings ones
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="twwjz6pyzgqr4kbn"
-Content-Disposition: inline
-In-Reply-To: <20251003114555.413804-1-nirbhay.lkd@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251003-fix-mt8196-pinctrl-regnames-v1-1-4d22031140f0@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAPvW32gC/zWNywrCMBBFfyXM2oE8sNb+inQR07EOmLROUimU/
+ rvB4vJcLudskEmYMnRqA6EPZ55SBXNSEJ4+jYQ8VAar7dlo7fDBK8bSmmuDM6dQ5IVCY/KRMjZ
+ 6cLq9uOCtg2qYher9Z7/1Bwu9lxopxwh3nwnDFCOXTiVaC/5D0O/7F5BslyeeAAAA
+X-Change-ID: 20251003-fix-mt8196-pinctrl-regnames-60d30873ca23
+To: Sean Wang <sean.wang@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Cathy Xu <ot_cathy.xu@mediatek.com>, Guodong Liu <guodong.liu@mediatek.com>
+Cc: kernel@collabora.com, linux-mediatek@lists.infradead.org, 
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759500084; l=1688;
+ i=louisalexis.eyraud@collabora.com; s=20250113; h=from:subject:message-id;
+ bh=cPM9JXOFF7ibYCync3LVv1ejPvu2H2nbyMWY+uEM8fU=;
+ b=JXCauQA7P83lu0MWupp+csOkf8/00iSvFsB4NG3QcNCOYDGebAwMM4pGIw8azXZaBdIdsbgz4
+ 6zaoOSPcvTtATRzWZCKGcIjBG96I2R03fKa4898kgQb6oyAQafqHvD7
+X-Developer-Key: i=louisalexis.eyraud@collabora.com; a=ed25519;
+ pk=CHFBDB2Kqh4EHc6JIqFn69GhxJJAzc0Zr4e8QxtumuM=
 
+The mt8196-pinctrl driver requires to probe that a device tree uses
+in the device node the same names than mt8196_pinctrl_register_base_names
+array. But they are not matching the required ones in the
+"mediatek,mt8196-pinctrl" dt-bindings, leading to possible dtbs check
+issues.
+So, align all mt8196_pinctrl_register_base_names entries on dt-bindings
+ones.
 
---twwjz6pyzgqr4kbn
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] cgroup: Fix seqcount lockdep assertion in cgroup freezer
-MIME-Version: 1.0
+Fixes: f7a29377c253 ("pinctrl: mediatek: Add pinctrl driver on mt8196")
+Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+---
+ drivers/pinctrl/mediatek/pinctrl-mt8196.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-On Fri, Oct 03, 2025 at 05:15:55PM +0530, Nirbhay Sharma <nirbhay.lkd@gmail=
-=2Ecom> wrote:
-> The commit afa3701c0e45 ("cgroup: cgroup.stat.local time accounting")
-> introduced a seqcount to track freeze timing but initialized it as a
-> plain seqcount_t using seqcount_init().
->=20
-> However, the write-side critical section in cgroup_do_freeze() holds
-> the css_set_lock spinlock while calling write_seqcount_begin(). On
-> PREEMPT_RT kernels, spinlocks do not disable preemption, causing the
-> lockdep assertion for a plain seqcount_t, which checks for preemption
-> being disabled, to fail.
->=20
-> This triggers the following warning:
->   WARNING: CPU: 0 PID: 9692 at include/linux/seqlock.h:221
->=20
-> Fix this by changing the type to seqcount_spinlock_t and initializing
-> it with seqcount_spinlock_init() to associate css_set_lock with the
-> seqcount. This allows lockdep to correctly validate that the spinlock
-> is held during write operations, resolving the assertion failure on all
-> kernel configurations.
->=20
-> Reported-by: syzbot+27a2519eb4dad86d0156@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3D27a2519eb4dad86d0156
-> Fixes: afa3701c0e45 ("cgroup: cgroup.stat.local time accounting")
-> Signed-off-by: Nirbhay Sharma <nirbhay.lkd@gmail.com>
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8196.c b/drivers/pinctrl/mediatek/pinctrl-mt8196.c
+index 82a73929c7a0fc0fb841b5fe313d905c8478044a..dec957c1724b014522a70ed38057e162fe9e25af 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mt8196.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mt8196.c
+@@ -1801,10 +1801,8 @@ static const struct mtk_pin_reg_calc mt8196_reg_cals[PINCTRL_PIN_REG_MAX] = {
+ };
+ 
+ static const char * const mt8196_pinctrl_register_base_names[] = {
+-	"iocfg0", "iocfg_rt", "iocfg_rm1", "iocfg_rm2",
+-	"iocfg_rb", "iocfg_bm1", "iocfg_bm2", "iocfg_bm3",
+-	"iocfg_lt", "iocfg_lm1", "iocfg_lm2", "iocfg_lb1",
+-	"iocfg_lb2", "iocfg_tm1", "iocfg_tm2", "iocfg_tm3",
++	"base", "rt", "rm1", "rm2", "rb", "bm1", "bm2", "bm3",
++	"lt", "lm1", "lm2", "lb1", "lb2", "tm1", "tm2", "tm3",
+ };
+ 
+ static const struct mtk_eint_hw mt8196_eint_hw = {
 
-Link: https://lore.kernel.org/r/20251002165510.KtY3IT--@linutronix.de/
+---
+base-commit: 4a7bcf9e0158d9976525370ff84401a1e955bbee
+change-id: 20251003-fix-mt8196-pinctrl-regnames-60d30873ca23
 
-Yes, this is what was discussed yesterday. Thanks.
+Best regards,
+-- 
+Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 
-Acked-by: Michal Koutn=FD <mkoutny@suse.com>
-
---twwjz6pyzgqr4kbn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaN/W9BsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQfj0C55Tb+AgskQD/VZYTSgJV8TksM06o+G+A
-UVtyHkxTmx7U6OUOjRKT7lEA/i5BQk7/GJc2WflFnRYc7WUQqlTYbotjwBZ2vWgK
-dSMB
-=4Bm5
------END PGP SIGNATURE-----
-
---twwjz6pyzgqr4kbn--
 
