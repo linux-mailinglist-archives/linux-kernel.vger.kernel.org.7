@@ -1,87 +1,111 @@
-Return-Path: <linux-kernel+bounces-841087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98092BB63B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 10:20:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6826FBB63CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 10:33:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4344634498F
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 08:20:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67565484BA2
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 08:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B491126560A;
-	Fri,  3 Oct 2025 08:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC532267B12;
+	Fri,  3 Oct 2025 08:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="O9dz+Yxq"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SQ1PXroa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E6023D7E2;
-	Fri,  3 Oct 2025 08:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ECAC2BD03;
+	Fri,  3 Oct 2025 08:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759479607; cv=none; b=NAeGKp3FKC2y/k2ZDJNxQsinubAgyMd1BdURf8jGzIBnMCW8KKp46DN92UCaO7ZLy75xK6EUV1s0sgWzn3n3Hl6+iQ3lVm1Gxw4pP/jd0hFgPKA4ePMG0uH9chlOe02RAaDOrHDrbOZ91SXYwe1orpEzQ3hImTZv+VnFbIn76i8=
+	t=1759480397; cv=none; b=EP8ZAbFiMNeHeMgFRRFwqfB1+uhHxCM2ZbI/xEBvxCcN87VeTM/sr/iZmdviy/7uVPVWRii0/ebkVYO5OncDuYKTpxz/YyXed2E8jubGW0iwI6E9ZXFhH0rGzUWkldeCJMdTloFoOXH/u+qWulRAWzYN8dTh0K66ri+hE0hRmkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759479607; c=relaxed/simple;
-	bh=ITjlkM0aGbos1XSt8ueuI2NEXdJ0dWrdlYRm6k9TIrk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bq+wnKeR3ooLjnu3mTp3nFTm62f12/rqugs4jktA3/07LER9JC5akY0LIVwZ+Z8j5smdTx4RjopNijEkLUkeYFnF/AS9fZGMJoIXo9vJ+mxCvimWwfgzIcToWMCeHWJJ7Y0pBiZkjt1wQ+6091iI5vVLU8LFzlVftqxV9hsQgg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=O9dz+Yxq; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759479603;
-	bh=ITjlkM0aGbos1XSt8ueuI2NEXdJ0dWrdlYRm6k9TIrk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=O9dz+Yxq50GBeUPj/rHINpU4WkHjjZFDuyxvTgrx3OVsWKoiEnfxmAR0+VIOIzxAP
-	 rLVYoNKtfhFJWcSoAxaq5kAuUjxHt5SebW5fxERuO73qn0yF2ko84OIBIFdV7idXyx
-	 23ncQAwcVx6CXmV8k7qy6hodmoDpBKGw75yvdhV4z8jlExPfcc8g+dykS08bZiXtVg
-	 4hKHTicInZfc6yYalFDczTANuxVmPOs0Rt3Io/ZJqmPe1riuA3/pnjY7JCoXJqt5by
-	 s/VIXnI9c2Bk2G9ZfHHUcbKv2iHZ78FDl9QWT+rf/x8GVLe6kpgi9JvhwzSy08YoDN
-	 h2ZQqrQgka7/w==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id AE23D17E129E;
-	Fri,  3 Oct 2025 10:20:02 +0200 (CEST)
-Message-ID: <6ad27d61-5907-437b-afda-6e1453a19f88@collabora.com>
-Date: Fri, 3 Oct 2025 10:20:02 +0200
+	s=arc-20240116; t=1759480397; c=relaxed/simple;
+	bh=cORH82os7Z9vzzZCaQBVNa1x9LozJi7fooVgSs75mTQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CScLOQF/uqiiTl1JQdR62Y22pgEISWfcncVX8KeQeoF70a8F3Hm+Fkby4OjcoJTgVcRSuk1/pAvwa2RwA9tR8gnCsC8EQwigEsTFA+HIXIQ7TRWRtkmjPcWpjmdbB5Bh91qvLXJMS2P34WZz0yu5E/rGulz9xI6hRL8Dql5lHrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SQ1PXroa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1FC3C4CEF9;
+	Fri,  3 Oct 2025 08:33:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759480396;
+	bh=cORH82os7Z9vzzZCaQBVNa1x9LozJi7fooVgSs75mTQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SQ1PXroaGgADmdHPvR6Bx0A+QiAGMragM1LfMaNVbMMkSFgjhxqTrZuHo54PcvGvI
+	 lE63uBHlij11MK0Cmq+WhJ44EO8gVd4ztJogz4uy+jO+SH6mkAgaiL5g4Ft1OVZK51
+	 I6qNHYVurwj1KEiAkKqtAJ9VUC77rLq0AVkO5t59DAhhOuli5hcFV53FgcbRZxzm7i
+	 eTVVeSD7wYnJtYhTGB5LaQpNV++Ke7s+oGl1yRWUqHdOIhClz1DYo9SXu0ZKegBPlW
+	 8phXvT6tdyFbUR/wSHlZkjRDlgh4JyK2O9psj2mSMYkt7UTHDnP4TT0O5DCK1Vwv86
+	 DC2USA1jVuYwQ==
+Date: Fri, 3 Oct 2025 09:33:12 +0100
+From: Simon Horman <horms@kernel.org>
+To: Kriish Sharma <kriish.sharma2006@gmail.com>
+Cc: khc@pm.waw.pl, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers/net/wan/hdlc_ppp: fix potential null pointer in
+ ppp_cp_event logging
+Message-ID: <20251003083312.GC2878334@horms.kernel.org>
+References: <20251002180541.1375151-1-kriish.sharma2006@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/mediatek: Fix refcounting in mtk_drm_get_all_drm_priv
-To: Sjoerd Simons <sjoerd@collabora.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>,
- CK Hu <ck.hu@mediatek.com>, Johan Hovold <johan@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- kernel@collabora.com, stable@vger.kernel.org
-References: <20251003-mtk-drm-refcount-v1-1-3b3f2813b0db@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20251003-mtk-drm-refcount-v1-1-3b3f2813b0db@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251002180541.1375151-1-kriish.sharma2006@gmail.com>
 
-Il 03/10/25 10:08, Sjoerd Simons ha scritto:
-> dev_get_drvdata simply returns the driver data part of drm_dev, which
-> has its lifetime bound to the drm_dev. So only drop the reference in the
-> error paths, on success they will get dropped later.
+On Thu, Oct 02, 2025 at 06:05:41PM +0000, Kriish Sharma wrote:
+> Fixes warnings observed during compilation with -Wformat-overflow:
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: 9ba2556cef1df ("drm/mediatek: clean up driver data initialisation")
-> Signed-off-by: Sjoerd Simons <sjoerd@collabora.com>
+> drivers/net/wan/hdlc_ppp.c: In function ‘ppp_cp_event’:
+> drivers/net/wan/hdlc_ppp.c:353:17: warning: ‘%s’ directive argument is null [-Wformat-overflow=]
+>   353 |                 netdev_info(dev, "%s down\n", proto_name(pid));
+>       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/net/wan/hdlc_ppp.c:342:17: warning: ‘%s’ directive argument is null [-Wformat-overflow=]
+>   342 |                 netdev_info(dev, "%s up\n", proto_name(pid));
+>       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> Introduce local variable `pname` and fallback to "unknown" if proto_name(pid)
+> returns NULL.
+> 
+> Fixes: 262858079afd ("Add linux-next specific files for 20250926")
+> Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Hi Kriish,
 
+As it looks like there will be another revision of this patch,
+I have a few minor points on process for your consideration.
 
+As a fix for Networking code present in the net tree this should probably
+be targeted at the net tree. That means it should apply cleanly to that
+tree (I assume it does). And the target tree should be denoted in the
+subject.  Like this:
+
+Subject: [PATCh net] ...
+
+This is as opposed to non-fix patches which, generally, are targeted
+at the net-nex tree.
+
+Specifying the target tree helps land patches in the right place
+for CI. And helps the maintainers too.
+
+Also, git history isn't consistent here, but I would suggest
+that a more succinct prefix is appropriate for this patch.
+Perhaps 'hdlc_ppp:'
+
+I.e.: Subject: [PATCH net] hdlc_ppp: ...
+
+For more in process for networking patches please see:
+https://docs.kernel.org/process/maintainer-netdev.html
+
+Thanks!
+
+...
 
