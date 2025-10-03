@@ -1,183 +1,233 @@
-Return-Path: <linux-kernel+bounces-841366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49F30BB71B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:02:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6FB2BB71BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:03:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 01FB44ECD2A
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:02:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99E531889958
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5013D1F1306;
-	Fri,  3 Oct 2025 14:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E842B9B9;
+	Fri,  3 Oct 2025 14:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d990GyQ9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="Str79VsD"
+Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258DC134BD
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 14:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25DA61F8ACA;
+	Fri,  3 Oct 2025 14:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759500142; cv=none; b=eOckxxyo3QOhn+wtXR7YgBrwkEDLPWQoGZH7dx6PH57eFd9OmTUR6ZyjJa+AizTk7cTenM/+GjTn8HeYISRd4IUf4HxnTJgXgnq18b5grrha8BRavD5xA5FwgMZq02gL3x0vkhrKIlEs/Ro9Sy15TnIYUi/YVEMmKrythx6W/3w=
+	t=1759500195; cv=none; b=AuQA2s7/uChwBFXvHID9x6dq6TRxnogwDfRcmLPwFX7fJCosLDXkv3FZB4+ZRQ9syeGkujdon9jo1adY4lZn1QqoRVbL8+3SRt7J+EFub3okDA8P5DtfJOIiFmv5EDXy8qqzylhyqtcQHDjZiMwWo7gtyYjhpAPwTAK6nOWpYNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759500142; c=relaxed/simple;
-	bh=859GHIjZ0IVwATJeHr2R6KKk/lpoEHaK7W5BvgTfhFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EBG4aOY+5e+p+hgn/Rg13QIT4ftzzlrXBZ6vdUOaxwxeYqQLhPVhIXb08y14I5swtBfLbWWhKocAMMlVKQQZvJNMan8kg/peIN49XPjwh6s7y3AdlOOktbD2Kb0InBbXdQr6sFw8VCjEYhNrOPAseKe/1f8gqWOyO9HJV3lJr/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d990GyQ9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759500140;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FfdNLsJo1+niCnnKhS//GeejM6UpWhfStrR/oS1d2Yo=;
-	b=d990GyQ9kwrT196VFyJ+XEA74648HTMfoeZj/tuoBD7guZzbd67KQYmDT8YO5+Dy2dc8x9
-	/PQwxzwXa1K1JAyUsgrB/rH47pwWn0CWHrtH7JWg6GbI855cJ+CVRhKQFcA6Z7mQ/0C5Uw
-	dBZk2gr9+lg6+6aPnXyjdRHQAHnZy6U=
-Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com
- [209.85.167.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-595-PPOdlXwWO2i9LnVimAqdqg-1; Fri, 03 Oct 2025 10:02:18 -0400
-X-MC-Unique: PPOdlXwWO2i9LnVimAqdqg-1
-X-Mimecast-MFC-AGG-ID: PPOdlXwWO2i9LnVimAqdqg_1759500137
-Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-43f7bca4787so674972b6e.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 07:02:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759500137; x=1760104937;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FfdNLsJo1+niCnnKhS//GeejM6UpWhfStrR/oS1d2Yo=;
-        b=QDUDPCo74KPDGkgKicfsUWsh5LdhiKHV3Nt8LVHcPcZfipWldcjW0BcZfQu4cZ/v2t
-         xfAeobtwJyaIhUrwiqbLm5zJu88CJZWwxgIK9zLIg1lLReJHI+H3PY9kl7VysOqzYRZY
-         iqU4aVd1QAq36xiUsKyfqN6S7dlqSi3l8VDPfcegDzgKWKL4wvjy1NSyl3fTd/1inqVW
-         RQjN/6p8BWFcUUgd65nuSpQRE/DX4QRWHw+dkK2EFj7GxppfJnjBmIi9rR7FA0bvn4fL
-         TVo518nXvpYbmNV26OlESCkPh2NcyS+/rZzhOynVfSGbVGXgEJWotPHtSh8bjCIvB3Ye
-         MWjg==
-X-Forwarded-Encrypted: i=1; AJvYcCW1Hf6UwotQuFMEhp5S8wsB6CDhNjeDG/GjlEqtU+Iw+vUwePsttAHc6uUzHnBTaVlbxTLUHXO/cQo1JDA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza6uub38M+DnpIyskOR4XaQzKN4qzLtmYoE6DyzZRlkmS0Tgbk
-	YiAZeru28Sj2DeoX3gbdKhSqtTqwSr57D6ph8FAO8e6JKRKI1ZbW6mnf3w6DOf1w8MnrhrWaiB9
-	bWZIffXlQLan/0q0J7GaCJbC54+Yx0qb3603bjeyCjcc6QyuCUL6/IJu6SCIg8jcofg==
-X-Gm-Gg: ASbGncvoaX3Edwnv0cWTcQZc+i/wn/kbcyZNd98/kq29MLf8ljzUv33UTPAznDgkYe2
-	/u4YJcVgS341Dj6iTvU9Woawaf5ocaEowXjROFlfIANtXuSv10mCHFS4lCeQs/+ZysrJOy9Ufx7
-	hzi7gSy4eYlZtFjcWIaYeWgJucMbNlgY5stNNb+DTuma9kbW9VIU8UzPjZ23cNx+16YvhE61Lkc
-	28q/PwwFgJEhQKKBYmaPcniF8E949kAXX5thjO/ilGg/pBLv97MrA9JhOXEPZ7Le2SX8MbAPugu
-	bpkg6JGldmjPMPIcv5blOmqhl7szY20G9CGw7A==
-X-Received: by 2002:a05:6808:1784:b0:439:ae49:9159 with SMTP id 5614622812f47-43fc1828ba0mr1175497b6e.36.1759500136878;
-        Fri, 03 Oct 2025 07:02:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEisDW2mGnc04qMiO0ty7y+ZeCROu3lxEpJKjD24LI/W2t/5ZFdYU4iCFfZ9dw1K+GrywtPBw==
-X-Received: by 2002:a05:6808:1784:b0:439:ae49:9159 with SMTP id 5614622812f47-43fc1828ba0mr1175402b6e.36.1759500136107;
-        Fri, 03 Oct 2025 07:02:16 -0700 (PDT)
-Received: from x1.local ([142.188.210.50])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878bd785963sm38628446d6.35.2025.10.03.07.02.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 07:02:15 -0700 (PDT)
-Date: Fri, 3 Oct 2025 10:02:13 -0400
-From: Peter Xu <peterx@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	James Houghton <jthoughton@google.com>,
-	Nikita Kalyazin <kalyazin@amazon.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Ujwal Kundur <ujwal.kundur@gmail.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andrea Arcangeli <aarcange@redhat.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>, Hugh Dickins <hughd@google.com>,
-	Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v3 1/4] mm: Introduce vm_uffd_ops API
-Message-ID: <aN_XZbQjuYx-OnFr@x1.local>
-References: <20250926211650.525109-1-peterx@redhat.com>
- <20250926211650.525109-2-peterx@redhat.com>
- <f1da3505-f17f-4829-80c1-696b1d99057d@redhat.com>
- <aNwmE11LirPtEuGW@x1.local>
- <f409cbe7-7865-45ab-af9a-6d5108bc5ad4@redhat.com>
- <aNw_GrZsql_M04T0@x1.local>
- <43d78ba7-8829-4a19-bdf3-d192a62cdac4@redhat.com>
- <aN08NxRLz7Wx0Qh4@x1.local>
- <ad124fb6-a712-4cf5-8a7e-2abacbc2e4be@redhat.com>
+	s=arc-20240116; t=1759500195; c=relaxed/simple;
+	bh=zxGtDrrScMfp8eoAumbrdn2qE7q+mhfvAqBgp60/kUY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=qaNdLBr02BgfTcnN7BIFPAf56TMMqO4lCNsOrOSLN5t2Ihx0p0UnHWt4JniNm3N3Dm0YCdKzbmzlYqkwZMlmtvGre5PMFSwdXbcdjGG3tPF5MBTmaaVK7yMIp75ec/HB9sHiWMDToXINFaTx5XeJ03boqO9y4qmaY0arEIWkhcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=fail (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=Str79VsD reason="key not found in DNS"; arc=none smtp.client-ip=94.231.106.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.simply.com (Simply.com) with ESMTP id 4cdVjy010Jz1FZPw;
+	Fri,  3 Oct 2025 16:03:02 +0200 (CEST)
+Received: from [10.10.15.15] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by smtp.simply.com (Simply.com) with ESMTPSA id 4cdVjx5H6qz1FZPS;
+	Fri,  3 Oct 2025 16:03:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
+	s=simplycom2; t=1759500181;
+	bh=lDzruDbgMefzIZKlD2uVhCYwI1hpYf0rZ6qKYmidsGA=;
+	h=Date:To:Cc:From:Subject;
+	b=Str79VsDv32V3dbI/d9nvQYXVuip2VYXXoz9KDpkbWQdEwWAcO+bS7CxUQcNydPrS
+	 HYi+csurfkYcOGdgEKJxj3CyHBsqkJWjeUvCF9qfOukMB/Dv+tWe0RlJWeEpIqMwgH
+	 hdgI/uQ8mQCq88BtfgP+pMtI+MZbTcb50pyr4/2O40szIJIKyVEBHnRrkIS5hTVMc6
+	 gZ74ANg31xNc4ChC9s5wYmsFAELiRXRG3FpuvPBvXoh1tF7OsFgFQpQaK0J8OTQLyJ
+	 4hu2+k9oFhCFVZe69+lQSxvO3qyYtP9txoa5UqaGH37aUnjvJtvO8HXhEEk/okg7Ub
+	 jVxY4qTDejU/A==
+Message-ID: <165c7a48-a7b5-4a79-98d6-4ffd520a3772@gaisler.com>
+Date: Fri, 3 Oct 2025 16:03:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ad124fb6-a712-4cf5-8a7e-2abacbc2e4be@redhat.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Miller <davem@davemloft.net>, sparclinux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: Andreas Larsson <andreas@gaisler.com>
+Subject: [GIT PULL] sparc updates for v6.18
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 01, 2025 at 04:39:50PM +0200, David Hildenbrand wrote:
-> On 01.10.25 16:35, Peter Xu wrote:
-> > On Wed, Oct 01, 2025 at 03:58:14PM +0200, David Hildenbrand wrote:
-> > > > > > > I briefly wondered whether we could use actual UFFD_FEATURE_* here, but they
-> > > > > > > are rather unsuited for this case here (e.g., different feature flags for
-> > > > > > > hugetlb support/shmem support etc).
-> > > > > > > 
-> > > > > > > But reading "uffd_ioctls" below, can't we derive the suitable vma flags from
-> > > > > > > the supported ioctls?
-> > > > > > > 
-> > > > > > > _UFFDIO_COPY | _UFDIO_ZEROPAGE -> VM_UFFD_MISSING
-> > > > > > > _UFFDIO_WRITEPROTECT -> VM_UFFD_WP
-> > > > > > > _UFFDIO_CONTINUE -> VM_UFFD_MINOR
-> > > > > > 
-> > > > > > Yes we can deduce that, but it'll be unclear then when one stares at a
-> > > > > > bunch of ioctls and cannot easily digest the modes the memory type
-> > > > > > supports.  Here, the modes should be the most straightforward way to
-> > > > > > describe the capability of a memory type.
-> > > > > 
-> > > > > I rather dislike the current split approach between vm-flags and ioctls.
-> > > > > 
-> > > > > I briefly thought about abstracting it for internal purposes further and
-> > > > > just have some internal backend ("memory type") flags.
-> > > > > 
-> > > > > UFFD_BACKEND_FEAT_MISSING -> _UFFDIO_COPY and VM_UFFD_MISSING
-> > > > > UFFD_BACKEND_FEAT_ZEROPAGE -> _UFDIO_ZEROPAGE
-> > > > > UFFD_BACKEND_FEAT_WP -> _UFFDIO_WRITEPROTECT and VM_UFFD_WP
-> > > > > UFFD_BACKEND_FEAT_MINOR -> _UFFDIO_CONTINUE and VM_UFFD_MINOR
-> > > > > UFFD_BACKEND_FEAT_POISON -> _UFFDIO_POISON
-> > > > 
-> > > > This layer of mapping can be helpful to some, but maybe confusing to
-> > > > others.. who is familiar with existing userfaultfd definitions.
-> > > > 
-> > > 
-> > > Just wondering, is this confusing to you, and if so, which part?
-> > > 
-> > > To me it makes perfect sense and cleans up this API and not have to sets of
-> > > flags that are somehow interlinked.
-> > 
-> > It adds the extra layer of mapping that will only be used in vm_uffd_ops
-> > and the helper that will consume it.
-> 
-> Agreed, while making the API cleaner. I don't easily see what's confusing
-> about that, though.
+Hi Linus,
 
-It will introduce another set of userfaultfd features, making it hard to
-say what is the difference between the new set and UFFD_FEATURE_*.
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-> 
-> I think it can be done with a handful of LOC and avoid having to use VM_
-> flags in this API.
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-I waited for a few days, unfortunately we didn't get a second opinion.
+are available in the Git repository at:
 
-David, do you feel OK I repost with the rest comments (almost renames), and
-if we want yet another new set of features for userfaultfd, we work it on
-top?  It'll be a trivial one patch to do the mappings if we want.  The
-current patch is also the minimum changeset we need to unblock guest-memfd
-minor fault.
+  git://git.kernel.org/pub/scm/linux/kernel/git/alarsson/linux-sparc.git tags/sparc-for-6.18-tag1
+
+for you to fetch changes up to fe0126702a40b2f3d315bc943ef10dc2f707e29d:
+
+  sparc: Replace deprecated strcpy() with strscpy() in handle_nextprop_quirks() (2025-09-26 17:27:35 +0200)
+
+----------------------------------------------------------------
+This includes the following changes related to sparc for v6.18:
+
+- Add relocation handling for R_SPARC_UA64 for sparc64 that is generated
+  by llvm and clarify printout on missing relocation handler
+
+- Fix missing hugetlb tte initialization for sun4u
+
+- Code cleanup for redundant use of __GPF_NOWARN for sparc64
+
+- Fix prototypes of reads[bwl]() for sparc64 by adding missing const and
+  volatile pointer qualifiers
+
+- Fix bugs in accurate exception reporting in multiple machine specific
+  sparc64 variants of copy_{from,to}_user() for sparc64
+
+- Fix memory leak in error handling for sparc32
+
+- Drop -ansi from asflags and replace __ASSEMBLY__ with __ASSEMBLER__ in
+  headers for all arch/sparc
+
+- Replace strcpy() with strscpy() for all arch/sparc
+
+----------------------------------------------------------------
+Al Viro (1):
+      sparc64: fix prototypes of reads[bwl]()
+
+Anthony Yznaga (1):
+      sparc64: fix hugetlb for sun4u
+
+Koakuma (2):
+      sparc/module: Add R_SPARC_UA64 relocation handling
+      sparc/module: Make it clear that relocation numbers are shown in hex
+
+Ma Ke (1):
+      sparc: fix error handling in scan_one_device()
+
+Michael Karcher (5):
+      sparc: fix accurate exception reporting in copy_{from_to}_user for UltraSPARC
+      sparc: fix accurate exception reporting in copy_{from_to}_user for UltraSPARC III
+      sparc: fix accurate exception reporting in copy_{from_to}_user for Niagara
+      sparc: fix accurate exception reporting in copy_to_user for Niagara 4
+      sparc: fix accurate exception reporting in copy_{from,to}_user for M7
+
+Qianfeng Rong (1):
+      sparc64: Remove redundant __GFP_NOWARN
+
+Thomas Huth (3):
+      sparc: Drop the "-ansi" from the asflags
+      sparc: Replace __ASSEMBLY__ with __ASSEMBLER__ in uapi headers
+      sparc: Replace __ASSEMBLY__ with __ASSEMBLER__ in non-uapi headers
+
+Thorsten Blum (8):
+      sparc: PCI: Replace deprecated strcpy() with strscpy()
+      sparc: parport: Replace deprecated strcpy() with strscpy() in ecpp_probe()
+      sparc: floppy: Replace deprecated strcpy() with strscpy() in sun_floppy_init()
+      sparc64: Replace deprecated strcpy() with strscpy() in prom_nextprop()
+      sparc: Replace deprecated strcpy() with strscpy() in domain services driver
+      sparc: Replace deprecated strcpy() with strscpy() in prom_32.c
+      sparc64: Replace deprecated strcpy() with strscpy() in build_path_component()
+      sparc: Replace deprecated strcpy() with strscpy() in handle_nextprop_quirks()
+
+ arch/sparc/include/asm/adi_64.h         |  4 +-
+ arch/sparc/include/asm/auxio.h          |  4 +-
+ arch/sparc/include/asm/auxio_32.h       |  4 +-
+ arch/sparc/include/asm/auxio_64.h       |  4 +-
+ arch/sparc/include/asm/cacheflush_64.h  |  4 +-
+ arch/sparc/include/asm/cpudata.h        |  4 +-
+ arch/sparc/include/asm/cpudata_64.h     |  4 +-
+ arch/sparc/include/asm/delay_64.h       |  4 +-
+ arch/sparc/include/asm/elf_64.h         |  1 +
+ arch/sparc/include/asm/floppy_64.h      |  3 +-
+ arch/sparc/include/asm/ftrace.h         |  2 +-
+ arch/sparc/include/asm/hvtramp.h        |  2 +-
+ arch/sparc/include/asm/hypervisor.h     | 92 ++++++++++++++++-----------------
+ arch/sparc/include/asm/io_64.h          |  6 +--
+ arch/sparc/include/asm/irqflags_32.h    |  4 +-
+ arch/sparc/include/asm/irqflags_64.h    |  4 +-
+ arch/sparc/include/asm/jump_label.h     |  4 +-
+ arch/sparc/include/asm/kdebug_32.h      |  4 +-
+ arch/sparc/include/asm/leon.h           |  8 +--
+ arch/sparc/include/asm/leon_amba.h      |  6 +--
+ arch/sparc/include/asm/mman.h           |  4 +-
+ arch/sparc/include/asm/mmu_64.h         |  4 +-
+ arch/sparc/include/asm/mmu_context_32.h |  4 +-
+ arch/sparc/include/asm/mmu_context_64.h |  4 +-
+ arch/sparc/include/asm/mxcc.h           |  4 +-
+ arch/sparc/include/asm/obio.h           |  4 +-
+ arch/sparc/include/asm/openprom.h       |  4 +-
+ arch/sparc/include/asm/page_32.h        |  8 +--
+ arch/sparc/include/asm/page_64.h        |  8 +--
+ arch/sparc/include/asm/parport_64.h     |  3 +-
+ arch/sparc/include/asm/pcic.h           |  2 +-
+ arch/sparc/include/asm/pgtable_32.h     |  4 +-
+ arch/sparc/include/asm/pgtable_64.h     |  8 +--
+ arch/sparc/include/asm/pgtsrmmu.h       |  6 +--
+ arch/sparc/include/asm/processor_64.h   | 10 ++--
+ arch/sparc/include/asm/psr.h            |  4 +-
+ arch/sparc/include/asm/ptrace.h         | 12 ++---
+ arch/sparc/include/asm/ross.h           |  4 +-
+ arch/sparc/include/asm/sbi.h            |  4 +-
+ arch/sparc/include/asm/sigcontext.h     |  4 +-
+ arch/sparc/include/asm/signal.h         |  6 +--
+ arch/sparc/include/asm/smp_32.h         |  8 +--
+ arch/sparc/include/asm/smp_64.h         |  8 +--
+ arch/sparc/include/asm/spinlock_32.h    |  4 +-
+ arch/sparc/include/asm/spinlock_64.h    |  4 +-
+ arch/sparc/include/asm/spitfire.h       |  4 +-
+ arch/sparc/include/asm/starfire.h       |  2 +-
+ arch/sparc/include/asm/thread_info_32.h |  4 +-
+ arch/sparc/include/asm/thread_info_64.h | 12 ++---
+ arch/sparc/include/asm/trap_block.h     |  4 +-
+ arch/sparc/include/asm/traps.h          |  4 +-
+ arch/sparc/include/asm/tsb.h            |  2 +-
+ arch/sparc/include/asm/ttable.h         |  2 +-
+ arch/sparc/include/asm/turbosparc.h     |  4 +-
+ arch/sparc/include/asm/upa.h            |  4 +-
+ arch/sparc/include/asm/vaddrs.h         |  2 +-
+ arch/sparc/include/asm/viking.h         |  4 +-
+ arch/sparc/include/asm/visasm.h         |  2 +-
+ arch/sparc/include/uapi/asm/ptrace.h    | 24 ++++-----
+ arch/sparc/include/uapi/asm/signal.h    |  4 +-
+ arch/sparc/include/uapi/asm/traps.h     |  4 +-
+ arch/sparc/include/uapi/asm/utrap.h     |  4 +-
+ arch/sparc/kernel/Makefile              |  2 -
+ arch/sparc/kernel/adi_64.c              |  4 +-
+ arch/sparc/kernel/ds.c                  | 27 +++++-----
+ arch/sparc/kernel/module.c              |  3 +-
+ arch/sparc/kernel/of_device_32.c        |  1 +
+ arch/sparc/kernel/of_device_64.c        |  1 +
+ arch/sparc/kernel/pcic.c                |  7 +--
+ arch/sparc/kernel/prom_32.c             | 13 +++--
+ arch/sparc/kernel/prom_64.c             |  8 +--
+ arch/sparc/kernel/prom_common.c         |  7 ++-
+ arch/sparc/lib/M7memcpy.S               | 20 +++----
+ arch/sparc/lib/Makefile                 |  2 +-
+ arch/sparc/lib/Memcpy_utils.S           |  9 ++++
+ arch/sparc/lib/NG4memcpy.S              |  2 +-
+ arch/sparc/lib/NGmemcpy.S               | 29 +++++++----
+ arch/sparc/lib/U1memcpy.S               | 19 +++----
+ arch/sparc/lib/U3memcpy.S               |  2 +-
+ arch/sparc/mm/Makefile                  |  2 -
+ arch/sparc/mm/hugetlbpage.c             | 20 +++++++
+ arch/sparc/prom/Makefile                |  1 -
+ arch/sparc/prom/tree_64.c               |  2 +-
+ drivers/char/hw_random/n2rng.h          |  4 +-
+ 84 files changed, 312 insertions(+), 262 deletions(-)
 
 Thanks,
-
--- 
-Peter Xu
-
+Andreas
 
