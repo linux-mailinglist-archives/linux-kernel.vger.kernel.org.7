@@ -1,126 +1,90 @@
-Return-Path: <linux-kernel+bounces-841429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01080BB74A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 17:11:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEC63BB74B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 17:13:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84BFA4858FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 15:11:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAC7319E0F12
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 15:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1834B2820A0;
-	Fri,  3 Oct 2025 15:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA31A27B4FA;
+	Fri,  3 Oct 2025 15:13:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DYII0nTM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="azGIcTlq"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F9B1E9B1C
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 15:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B8A1E9B1C
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 15:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759504307; cv=none; b=Fz8QiknkjpS4IWmGPnK/X5i/l2+l4pidHHS24qFWmeDHiRQiX9Q17qPIFvnbCEMPxbmdc5EK/y/6T2vdzGrlJR3Aim0qpRvb8cTCY/mhtDc8Qfws32g0O9iwaUVb1qa4E1qcZTRT4ocKZZWz393OWJU671tBhUoUrxXhul54pVA=
+	t=1759504407; cv=none; b=nL6rgKdbb2zyjxgDF9yQ4z6Phc5Te+gvLNBA/opeyLcyRbx+Qof/QEiKbaW0yDI9Qqs9m/prkdFws9FW8N4PHXKcFGyfw8GwsO/ZVSV7XYPmjMhatGvhJPpFFfzLo8NliZ1nuXVDZ/PAvGrmpzUwxR8CLNlAgTQXskso1FiXzTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759504307; c=relaxed/simple;
-	bh=LY3PvXBP3zGIEn1YgDbcXBjB77bFCBNqz29jcmUiBd8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k9vb9eIr03a52JgBX2UDT19nDmcr3ob6xh7eLf6kunur9jPQUZxHS1y/OMgR7qJ9naL9Uqy3IYsXM/zcT4CYX0rAGZIZAz1KbFwpggKzMjnXO4ot5NZSDCHNa9M2jihtaU/1+TuCVkZxhIjwKKg9wpZG9Mftw7tqFVHdgoVlxQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DYII0nTM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 181FDC4CEFD
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 15:11:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759504307;
-	bh=LY3PvXBP3zGIEn1YgDbcXBjB77bFCBNqz29jcmUiBd8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DYII0nTM/CPcXmbLt9i5iXQDBCcTXcDiMz0vsrFxae4ZxfKzppNu7Fzhi4E9bC4F5
-	 s8tNYMP7Y1pZv9BnPih08uCHg2fDgzKsA0FZanpjdAWkmekNZxKmgzzf/Xkj/3aaV/
-	 vD1tuDcLgZenwxn//N8ZyvChM7owZnIU4K2/4fDGK8zPs4QjrKW3ommAEkV32vsHMH
-	 P7bxT4izgcaQPNyITvdi2vzIViTDvvdqLHkj/mnY7bvwRMERcNKLOj/8nFfitE2Moz
-	 6EumFMqtopmhqOmTYE41blFSGHI/fzt0A96v8sF6X5NvgPhQ3vu83M/cx7IXwl287y
-	 f0cYgUG8QliBw==
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-61feb87fe26so3575195a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 08:11:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVhOAzur8LwanjHLU+6jzoB1uurbpqE4PIehMiNvvHUI83hJpkkciFWM8SuAgqV64hmNg3TPNi9f6pindU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0tCjcv2qpWucsvPRUNbURAGQE9RXKumBsiEXInMzesEglrgYo
-	aPHQnOBPZ5i2XIeNsxyli9bgEzJIi9L3Rsuye59j1WtoShW9AQsm5E+npwdXV6wTHGl30uVmk6h
-	pOJtDaU8oiZ3DA2FSpYeRdL4YZtyyZQ0=
-X-Google-Smtp-Source: AGHT+IETuMWMxTDVJzk9wfD2XJioIGxW7pV9rF33Arl5/N+2t9VGcvR+bzQqzrf9RiZ+XQ3eJBquUFxQCCOno5F7Tjc=
-X-Received: by 2002:a17:907:7f8a:b0:b45:27e0:7f35 with SMTP id
- a640c23a62f3a-b49c43930a2mr474332866b.46.1759504305581; Fri, 03 Oct 2025
- 08:11:45 -0700 (PDT)
+	s=arc-20240116; t=1759504407; c=relaxed/simple;
+	bh=vB6BD3+74H6PBZk5qiiyqgX55cMRHdfH4PdyGZzuCGk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iEuHbETCiFHgwdbjdnb0B+7Yw+LM4sSKcHPXcfnnUUnxSwgzzuzaaGzxTV1MTCeRMhnxmtyEM1sNJXYFWbTIkw6xVdC7LiZ7UITIemsOJIHuNUipk7Gibhf0MWVMAOu+ZpMM8YbnS8crE5GLatbufeksQBTM+712ucpBgjwUaxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=azGIcTlq; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from localhost.localdomain (unknown [77.106.22.74])
+	by mail.ispras.ru (Postfix) with ESMTPSA id A68114076196;
+	Fri,  3 Oct 2025 15:13:19 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru A68114076196
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1759504400;
+	bh=HDByeUCiDwlLYQ/3uCoLDW7qZT2XQme1mO6pbvFE+JE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=azGIcTlqn1iwvjg8G1ry3BBWr+L1KoaPvPvOZS5QD9A6KjhMgl6/s6ynTYOv8Hm0b
+	 Nn6WL6b0/rpkoBdb7oW+V4l4cd2RfqmVdSWYHQtMDya/DKqlsH8XPJGjDeyP5yqSfv
+	 oUSj4lSvT5n03yG/oJBf+F76cHZNP0uFQLVbaJ34=
+From: Matvey Kovalev <matvey.kovalev@ispras.ru>
+To: Jason Wessel <jason.wessel@windriver.com>
+Cc: Matvey Kovalev <matvey.kovalev@ispras.ru>,
+	Daniel Thompson <danielt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	kgdb-bugreport@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH] kdb: delete unexecuted if-block in kdb_get_kbd_char()
+Date: Fri,  3 Oct 2025 18:12:02 +0300
+Message-ID: <20251003151220.1580-1-matvey.kovalev@ispras.ru>
+X-Mailer: git-send-email 2.43.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251003133001.45052-2-rtapadia730@gmail.com>
-In-Reply-To: <20251003133001.45052-2-rtapadia730@gmail.com>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Fri, 3 Oct 2025 16:11:08 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H7kLUGtqnc7bBSrTZ70Gx1z-ijeWQfPx=TiN+2PCoe_ug@mail.gmail.com>
-X-Gm-Features: AS18NWD3WZ4EBVCxvGU7fRzOjZoeBfxCqIReN2M8TD26-OSBtf4BA2ypHjjUZ70
-Message-ID: <CAL3q7H7kLUGtqnc7bBSrTZ70Gx1z-ijeWQfPx=TiN+2PCoe_ug@mail.gmail.com>
-Subject: Re: [PATCH v2] btrfs: fix comment in alloc_bitmap() and drop stale TODO
-To: rtapadia730@gmail.com
-Cc: dsterba@suse.com, clm@fb.com, linux-btrfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, khalid@kernel.org, 
-	david.hunter.linux@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 3, 2025 at 2:31=E2=80=AFPM <rtapadia730@gmail.com> wrote:
->
-> From: Rajeev Tapadia <rtapadia730@gmail.com>
->
-> All callers of alloc_bitmap() hold a transaction handle, so GFP_NOFS is
-> needed to avoid deadlocks on recursion. Update the comment and drop the
-> stale TODO.
->
-> Signed-off-by: Rajeev Tapadia <rtapadia730@gmail.com>
+Bits of scancode are dropped except 7 low-order ones.
+So, scancode can't be equal 0xe0.
 
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Thanks.
-I pushed it to the for-next branch:
+Signed-off-by: Matvey Kovalev <matvey.kovalev@ispras.ru>
+---
+ kernel/debug/kdb/kdb_keyboard.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-https://github.com/btrfs/linux/commits/for-next/
+diff --git a/kernel/debug/kdb/kdb_keyboard.c b/kernel/debug/kdb/kdb_keyboard.c
+index 3a74604fdb8a7..386d30e530b78 100644
+--- a/kernel/debug/kdb/kdb_keyboard.c
++++ b/kernel/debug/kdb/kdb_keyboard.c
+@@ -145,9 +145,6 @@ int kdb_get_kbd_char(void)
+ 		return CTRL('F');
+ 	}
+ 
+-	if (scancode == 0xe0)
+-		return -1;
+-
+ 	/*
+ 	 * For Japanese 86/106 keyboards
+ 	 * 	See comment in drivers/char/pc_keyb.c.
+-- 
+2.43.0.windows.1
 
-> ---
-> Change log:
-> As per previous review the change is not required. So just removing the
-> stale TODO.
->
->  fs/btrfs/free-space-tree.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
->
-> diff --git a/fs/btrfs/free-space-tree.c b/fs/btrfs/free-space-tree.c
-> index dad0b492a663..bb8ca7b679be 100644
-> --- a/fs/btrfs/free-space-tree.c
-> +++ b/fs/btrfs/free-space-tree.c
-> @@ -165,11 +165,9 @@ static unsigned long *alloc_bitmap(u32 bitmap_size)
->
->         /*
->          * GFP_NOFS doesn't work with kvmalloc(), but we really can't rec=
-urse
-> -        * into the filesystem as the free space bitmap can be modified i=
-n the
-> -        * critical section of a transaction commit.
-> -        *
-> -        * TODO: push the memalloc_nofs_{save,restore}() to the caller wh=
-ere we
-> -        * know that recursion is unsafe.
-> +        * into the filesystem here. All callers hold a transaction handl=
-e
-> +        * open, so if a GFP_KERNEL allocation recurses into the filesyst=
-em
-> +        * and triggers a transaction commit, we would deadlock.
->          */
->         nofs_flag =3D memalloc_nofs_save();
->         ret =3D kvzalloc(bitmap_rounded_size, GFP_KERNEL);
-> --
-> 2.51.0
->
 
