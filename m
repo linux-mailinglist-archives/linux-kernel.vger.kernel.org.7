@@ -1,208 +1,111 @@
-Return-Path: <linux-kernel+bounces-841742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DD9DBB81B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 22:30:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7508BB81C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 22:31:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A18D23A4000
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 20:30:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B21594EF1A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 20:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F5523BCF8;
-	Fri,  3 Oct 2025 20:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC23226CF7;
+	Fri,  3 Oct 2025 20:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PtvW/RSp"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Axb0aDr6"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906B8219A89
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 20:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702A0156F20
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 20:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759523418; cv=none; b=GgsyP7/wZyNpVKSCK7Tq0LlRuoY0tfAnUKgGcQyf/QFZNoXEyekksYcmHr0dll25HFnBM8PI+mW5IfFtZLIdYvse2opoqWxzjn3sMrSzhjScSL4/KLci0y8WJHm58lhrZYGAQhS3uta6Ofs1w5J4PlraKQ16OmVV9YSII4tQ58U=
+	t=1759523464; cv=none; b=OPl29eAr25+2SA3Hs4wkjDqKxT4uLsV4Wjrqa3IZSuSTVh5aKsSH53rCv73L5stp3dQ6JAWLjrO9+FwI7WDNKVbOI5jeDLywIp5sf1FvmglHkhN+H2gsH9gk6FCFLxD/Yg8uuUa14ks2qx3VvMA6K2J0HsjaR2vZSEdq/J28I9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759523418; c=relaxed/simple;
-	bh=8c912eY1UEEgVwBhK9alWqGDDsyKRZobEz+Fu9lJIhg=;
+	s=arc-20240116; t=1759523464; c=relaxed/simple;
+	bh=9U5eS3tpDOTjwSiD4mB9OJpQE2C2hcsY67cViEkUtNs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LJL6pCH1Awrvo+6nyeKhDdr6Y0s5qeFP++W/1HEneGPgPJIxXETSDxSuLThRxRWn9DG5+gOQDOuJqoryFtjqm1sFuceulpVoMi4Y9G1BiLC5D4Y1wTkZ8VoxityDxpoqRLLmK5WlznpAZZkapxJjCtiWaoWoA+gIf2sl48pkgBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PtvW/RSp; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2681645b7b6so11495ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 13:30:16 -0700 (PDT)
+	 To:Cc:Content-Type; b=u76DrtqDPZvglcc88FVA+UiCiKtDRlgFMf+HZr0xzzpbyz3AyrHGnqba40VWNSOwW1iHexLMBggYax8Jf7FxziERMaEIUzU4lGxqUw3vkvkImyHeOz5LFNBSJ5sMrWPgdaodOzxFRov0g6ccMHQsRXTVHeVekySyawSFkJw2VFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Axb0aDr6; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b3dbf11fa9eso501617966b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 13:31:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759523416; x=1760128216; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r/0L3YZsGlZPOGFIT/xNUCPnxRniP3fT1sUMkDCiDzQ=;
-        b=PtvW/RSp7Ja8otztNd4E91+3BmxwGZFf+KCSje90C0EunVUJrX5DNG1SQSOTbKU1S8
-         e79CZHTVE0FZEPeIQyFN7RzRG2pjw59AwnWycjYZuDILFaBx2QqRDuRATPOw/7+IChss
-         G96B+bAg0UErBg2KSdm+WH5DL27er3Sdo5FnlJRvV8g/bn1IfWBLAYKFv8IS4gEqEaWI
-         5F2aJxigzClJXKRPh0RscOpIpn7zOh/cWk5Sj2iOr2lo9DRHExFhG7f/VNeiyRuaimt/
-         oKnfjpdPzZOhZqaE7pq8cV9XZHeQKSllKOCsbCFEYQbrxgbx2CucVXzSGLFUzNshvhI1
-         Rd6g==
+        d=linux-foundation.org; s=google; t=1759523459; x=1760128259; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5sV0LwkDjXxD47FzgjFP5G/bZQe88QSp2aEYpPv4PQc=;
+        b=Axb0aDr6F2/yUHRlMGRT24wfQr1gYYo5flnGmUEhb51Nl9X6QIHj5Xmaqfs0fZHqPj
+         WcENU+Juz47/Vnd1jFw3O0Dvz2WXR6N1OwO4XNHsatIot+INC9ayePCIJO7pm4v/RJWO
+         EyhuHUCE0w2YyB7gaOYTZdY9wbeBbYsJ1dQ+o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759523416; x=1760128216;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r/0L3YZsGlZPOGFIT/xNUCPnxRniP3fT1sUMkDCiDzQ=;
-        b=KEDt/porBDFiiExo+JdHtw0TFAvxa4KRaEeGvg0f2v6vf9N/gpe6g3SBt/EiMT3yse
-         roI+YBPiY2M2I1pRRTimh1U7jJkTA4q2YSvejBGu6r6165LjJ3jnRKbc1B0z/GnUr01r
-         1mkezPG6VZRCil0YBHE6dcSHqEE4cBQHKM6SFzmCtnlAguTslpgLLlcb7w5vtzQkv9/N
-         W1UQ7zwUkxph+PC7cJ948VNT28jqC5l77vFNSum6rNaxJNWbcf4MWsy3JLf/Dl4FOQKj
-         Di4jJN7BxhJplrit//f28fAkHYHkudBKd1kQppugmq1H2ECrLK8164neVh4IuSwlw5tx
-         AVEg==
-X-Forwarded-Encrypted: i=1; AJvYcCVnhtYkmS6F8vTNsCoDBp/cHdbhwtWF3ABUsBTUMWHnI8Zzqa7EMJdpITIyMZpClQWvVDEuRmtJ1LOZTDA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMWfkMZO36capFvFcFUX9jCz4FRaqO8C2pLinqzqtpCfJhrxoN
-	WKdbZeNcBV4iFo9EJBaf6yZYYScp46XZ+2QAPFgvfU272zufrwA8WdR3CcHJcsdCUjuRYO2aA3j
-	LkYi4sb0ofucCXXgQj4RRmIK7cL3BUaHKCm2Y0EKh
-X-Gm-Gg: ASbGnctjdUFNk0isYawpn645sCkni1rOM9J75NW609ogWC/ItKrRTS47QsLNSH1aoD1
-	M69hK+QgLb79gnn8sk+9oCNArnX0CRgrVxwyRp5RXYT2MjEaCN8HxiiNTWkC7ntrx7Uc4WPcY3O
-	P5jJG/8mKOeU4Igy0G8g/8wJvIoMUWtf9caBLuJigBfxZv1UrxcHFb+Zi3hczOjEhbiGSK4FlDZ
-	F39QA5l7KnUd96VXEcTGR7TIqVJVKHYDy0aGvqwCHYFV9OE/dSls+LmKoz88r0/J5fY
-X-Google-Smtp-Source: AGHT+IHyUpiBlEGtx1ZWxN1upFN31zq9jqARbqfv4Hz2Xb4ggiQ+FOCdH3M199iB+zFMTMni4io379S7xpZOgTQnrMU=
-X-Received: by 2002:a17:903:2383:b0:240:6076:20cd with SMTP id
- d9443c01a7336-28ea80c8c6bmr924255ad.15.1759523415313; Fri, 03 Oct 2025
- 13:30:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759523459; x=1760128259;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5sV0LwkDjXxD47FzgjFP5G/bZQe88QSp2aEYpPv4PQc=;
+        b=sKbjzMqdmSwX0Gx+UMY0uwR6si1vL0/dVLsCHeorkd9qKMDR7MqPCYUx9lyCbv+KmL
+         LW7hftfOQzuosotv6pacSJ1DjeqM61nnXVsZKiidTU40XVpTQDDYcxoIzTMl//FX3u/u
+         Q6wXYEXeQ3/Y+AN6TD5vDIITrK04JEeTKOw1Q6Gl+zS1nF1BQSKd46zonkz6rFzpFvl8
+         SN9fMgqiXUylGyu8nQD9Z5EwxIf/mMS/QPFRepv0ZCHyaRouvF7J0R8xQmJBVg05WtfP
+         anlZH6EgBLjSM2BsQ2Xlrq3hocrIeaCW7DJvpayYcLItuQ1in5Fmfnc9+oMb8F/qI5ck
+         mtyA==
+X-Forwarded-Encrypted: i=1; AJvYcCXOXdd51kSYPkM6NLTN6mxm+4QrdYHCr/y/EkP0vcCxMM3P5I2jPz4mJBSeOEAW5Sr4YWZNKc2rTP57Xts=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxROyb4aMDzuP9piDrsrlJiB/M2TnAzc/zDYTjgoK3warG7B9D4
+	Vdg1PblDFAA3NZntusPEnmudjgMIPq95qNO44WehsOEmm0SY9vH9d1PiHdrmga2MraciD0lvLI7
+	QVKcV9t4=
+X-Gm-Gg: ASbGncvCsVwl+0UCQcyHxWFrV5PpwObCgfgq7DKlCFdlDx2uqPH9UODOMoaOFuBMyQQ
+	jVD6lzfGtL9mb2gsOkwvy/FoM6jdoeSMJI0Cbpgmdwq2EwFmPz8nl47ZQZmejfwEzhiXT+6WI7j
+	H3iVzwBBBaZ685p4Eh3jcPjB6eiUWi+z3tuEJ1DyEVrd6qpoEsKfgEayGtAEyVEzyV77S4jxqbe
+	IU+RrfuEdgSnkLuqNAYknYEGyhfILjIBU0LWiNG8EA5cnJC0gR3JqMY8WpV0DDXeGtdCcgx62MZ
+	wuL4otJRIUriqp793q4RmqwdbQTwH36OCfwtbOVZ3cN28qhRdll8uOdfa2b08w1e1ZfYXHsrY+K
+	do/LONKJjdLCVB+1py9tKync1akvGagTYKmN0kgnpeGod6hZ0x/HHY7cp/L3RSo/QeKX0JyKQCe
+	IJoHN5SDcsOtFJAT42RsO2
+X-Google-Smtp-Source: AGHT+IG9GHCA5QzzR6JtPelTtM6ocAUqg9OkIXC1occfEVt4SkvGmITDyqN+CaiUn+ydFBihtADqVQ==
+X-Received: by 2002:a17:907:6ea7:b0:b3f:e1e9:22c1 with SMTP id a640c23a62f3a-b49c3e6e2e0mr505452066b.53.1759523459412;
+        Fri, 03 Oct 2025 13:30:59 -0700 (PDT)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652aa035sm503955966b.15.2025.10.03.13.30.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Oct 2025 13:30:58 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b472842981fso380263566b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 13:30:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXClbKV2UopATtkXuhFpihAWEgexG/CDDalOmk7+SiFyRhaP6m/nhFuDHEyBIRPzZ1BWTE7qUtVaaU+QPs=@vger.kernel.org
+X-Received: by 2002:a17:906:9f85:b0:b49:3ee4:d4a6 with SMTP id
+ a640c23a62f3a-b49c19769e3mr582057366b.18.1759523458139; Fri, 03 Oct 2025
+ 13:30:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aNshILzpjAS-bUL5@google.com> <CAGtprH_JgWfr2wPGpJg_mY5Sxf6E0dp5r-_4aVLi96To2pugXA@mail.gmail.com>
- <aN1TgRpde5hq_FPn@google.com> <CAGtprH-0B+cDARbK-xPGfx4sva+F1akbkX1gXts2VHaqyDWdzA@mail.gmail.com>
- <aN1h4XTfRsJ8dhVJ@google.com> <CAGtprH-5NWVVyEM63ou4XjG4JmF2VYNakoFkwFwNR1AnJmiDpA@mail.gmail.com>
- <aN3BhKZkCC4-iphM@google.com> <CAGtprH_evo=nyk1B6ZRdKJXX2s7g1W8dhwJhEPJkG=o2ORU48g@mail.gmail.com>
- <aN8U2c8KMXTy6h9Q@google.com> <CAGtprH9N=974HZiqfdaO9DK9nycDD9NeiPeHC49P-DkgTaWtTw@mail.gmail.com>
- <aN_2JaorgERIkpW4@google.com>
-In-Reply-To: <aN_2JaorgERIkpW4@google.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Fri, 3 Oct 2025 13:30:02 -0700
-X-Gm-Features: AS18NWCcLkRWY4ao1VCj7qy0k_ytrZZdsE8Fa7TimWaUhu8L01CyT8ya4dms5AE
-Message-ID: <CAGtprH-CUMpGqN_68Q_+voJzMpsWnfKKBPmgBGgMgoeTt0E-aw@mail.gmail.com>
-Subject: Re: [PATCH 1/6] KVM: guest_memfd: Add DEFAULT_SHARED flag, reject
- user page faults if not set
-To: Sean Christopherson <seanjc@google.com>
-Cc: Ackerley Tng <ackerleytng@google.com>, David Hildenbrand <david@redhat.com>, 
-	Patrick Roy <patrick.roy@linux.dev>, Fuad Tabba <tabba@google.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
-	kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Nikita Kalyazin <kalyazin@amazon.co.uk>, Shivank Garg <shivankg@amd.com>
+References: <CAPM=9tzYUBfz+YmifRDgdBsuTL=FpBxQVfxu23it48kGRzJNPQ@mail.gmail.com>
+ <CAHk-=wgO7S_FZUSBbngG5vtejWOpzDfTTBkVvP3_yjJmFddbzA@mail.gmail.com>
+ <CAPM=9txjNo==nMA7XcjzLWLO155+1bk2THwPs_BmTLu_5kU_bQ@mail.gmail.com>
+ <CAHk-=wgR61VxiHyOKXBJv_HinoFVA2av1EuSHg5NcRGC1fNq3w@mail.gmail.com> <CAHk-=wgX-2+hH5fM344_wKYNZS5CSf4ispS4X+s5xkma_Mdu_Q@mail.gmail.com>
+In-Reply-To: <CAHk-=wgX-2+hH5fM344_wKYNZS5CSf4ispS4X+s5xkma_Mdu_Q@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 3 Oct 2025 13:30:41 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjWpOvU_cX7srXCHJZCxYhRJgMGQvWzR9q_Ly_4LZ83QA@mail.gmail.com>
+X-Gm-Features: AS18NWCcD8PEzt_WikzxTevpQNiKIibOqs2Awv0nw_OSAyxfhplw1BskHQrD0yo
+Message-ID: <CAHk-=wjWpOvU_cX7srXCHJZCxYhRJgMGQvWzR9q_Ly_4LZ83QA@mail.gmail.com>
+Subject: Re: [git pull] drm for 6.18-rc1
+To: Dave Airlie <airlied@gmail.com>, Sasha Levin <sashal@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Sima Vetter <sima@ffwll.ch>, 
+	dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 3, 2025 at 9:13=E2=80=AFAM Sean Christopherson <seanjc@google.c=
-om> wrote:
+On Fri, 3 Oct 2025 at 13:02, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> On Thu, Oct 02, 2025, Vishal Annapurve wrote:
-> > On Thu, Oct 2, 2025, 5:12=E2=80=AFPM Sean Christopherson <seanjc@google=
-.com> wrote:
-> > >
-> > > > >
-> > > > > If the _only_ user-visible asset that is added is a KVM_CREATE_GU=
-EST_MEMFD flag,
-> > > > > a CAP is gross overkill.  Even if there are other assets that acc=
-ompany the new
-> > > > > flag, there's no reason we couldn't say "this feature exist if XY=
-Z flag is
-> > > > > supported".
-> > > > >
-> > > > > E.g. it's functionally no different than KVM_CAP_VM_TYPES reporti=
-ng support for
-> > > > > KVM_X86_TDX_VM also effectively reporting support for a _huge_ nu=
-mber of things
-> > > > > far beyond being able to create a VM of type KVM_X86_TDX_VM.
-> > > > >
-> > > >
-> > > > What's your opinion about having KVM_CAP_GUEST_MEMFD_MMAP part of
-> > > > KVM_CAP_GUEST_MEMFD_CAPS i.e. having a KVM cap covering all feature=
-s
-> > > > of guest_memfd?
-> > >
-> > > I'd much prefer to have both.  Describing flags for an ioctl via a bi=
-tmask that
-> > > doesn't *exactly* match the flags is asking for problems.  At best, i=
-t will be
-> > > confusing.  E.g. we'll probably end up with code like this:
-> > >
-> > >         gmem_caps =3D kvm_check_cap(KVM_CAP_GUEST_MEMFD_CAPS);
-> > >
-> > >         if (gmem_caps & KVM_CAP_GUEST_MEMFD_MMAP)
-> > >                 gmem_flags |=3D GUEST_MEMFD_FLAG_MMAP;
-> > >         if (gmem_caps & KVM_CAP_GUEST_MEMFD_INIT_SHARED)
-> > >                 gmem_flags |=3D KVM_CAP_GUEST_MEMFD_INIT_SHARED;
-> > >
-> >
-> > No, I actually meant the userspace can just rely on the cap to assume
-> > right flags to be available (not necessarily the same flags as cap
-> > bits).
-> >
-> > i.e. Userspace will do something like:
-> > gmem_caps =3D kvm_check_cap(KVM_CAP_GUEST_MEMFD_CAPS);
-> >
-> > if (gmem_caps & KVM_CAP_GUEST_MEMFD_MMAP)
-> >         gmem_flags |=3D GUEST_MEMFD_FLAG_MMAP;
-> > if (gmem_caps & KVM_CAP_GUEST_MEMFD_HUGETLB)
-> >         gmem_flags |=3D GUEST_MEMFD_FLAG_HUGETLB | GUEST_MEMFD_FLAG_HUG=
-ETLB_2MB;
->
-> Yes, that's exactly what I said.  But I goofed when copy+pasted and faile=
-d to
-> do s/KVM_CAP_GUEST_MEMFD_INIT_SHARED/GUEST_MEMFD_FLAG_INIT_SHARED, which =
-is the
-> type of bug that ideally just can't happen.
->
-> Side topic, I'm not at all convinced that this is what we want for KVM's =
-uAPI:
->
->         if (gmem_caps & KVM_CAP_GUEST_MEMFD_HUGETLB)
->                 gmem_flags |=3D GUEST_MEMFD_FLAG_HUGETLB | GUEST_MEMFD_FL=
-AG_HUGETLB_2MB;
->
-> See https://lore.kernel.org/all/aN_fJEZXo6wkcHOh@google.com.
+> Adding Sasha to the participants, since he's been doing the AUTOSEL summaries.
 
-Ack, that makes sense to me.
+Bah. Let's use the right email rather than some ancient five+ year old
+one that was randomly picked from my email history.
 
->
-> > Userspace has to anyways assume flag values, userspace just needs to
-> > know if a particular feature is available.
->
-> I don't understand what you mean by "assume flag values".
-
-Ok, I think you covered the explanation of why you would prefer to
-have KVM_CAP_GUEST_MEMFD_FLAGS around and I misinterpreted some of it.
-
-One more example with KVM_CAP_GUEST_MEMFD_FLAGS around:
-
-gmem_caps =3D kvm_check_cap(KVM_CAP_GUEST_MEMFD_CAPS);
-valid_flags =3D kvm_check_cap(KVM_CAP_GUEST_MEMFD_FLAGS);
-
-if (gmem_caps & KVM_CAP_GUEST_MEMFD_CONVERSION) {
-               // Use single memory backing paths for 4K backing
-              if (valid_flags & GUEST_MEMFD_FLAG_MMAP)
-                          gmem_flags |=3D GUEST_MEMFD_FLAG_MMAP;
-              else
-                        // error out;
-}
-if (gmem_caps & KVM_CAP_GUEST_MEMFD_HUGETLB_CONVERSION) {
-               // Use single memory backing paths for hugetlb memory backin=
-g
-               if (valid_flags & GUEST_MEMFD_FLAG_HUGETLB) {
-                          gmem_flags |=3D GUEST_MEMFD_FLAG_HUGETLB;
-                          kvm_create_guest_memfd.huge_page_size_log2 =3D ..=
-.;
-               } else
-                        // error out;
-}
-
-Userspace will have to rely on a combination of flags and caps to
-decide it's control flow instead of just caps. Thinking more about
-this, I don't have a strong preference between two scenarios i.e. with
-or without KVM_CAP_GUEST_MEMFD_FLAGS.
+                Linus
 
