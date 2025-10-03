@@ -1,175 +1,135 @@
-Return-Path: <linux-kernel+bounces-841047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C433BB6205
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 09:04:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D59DBB621D
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 09:05:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2EAD3ADEA7
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 07:04:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDEF619C679D
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 07:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A6FF22A4DA;
-	Fri,  3 Oct 2025 07:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA6E2222B4;
+	Fri,  3 Oct 2025 07:05:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MPlYBMjM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sYKwgotD"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECF5158DAC;
-	Fri,  3 Oct 2025 07:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9993221ABA4
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 07:05:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759475064; cv=none; b=CHfBh9sP80vFzZud/bLViqdWl7/ExP0ToOccWifXv71UiVTf0OFDr/WEFAy4K+cRQt8GVJTv71YBkfLc93vVf89oOHi3jqpwBJMLLb5/rb5NzwXPtRmw2xdnFaAeBiKutnoEor3E5fEa4t9KRniMw8px9EhyfVfpVdlNoBExzj0=
+	t=1759475118; cv=none; b=sYRCVNDtsHc7rJiCuhh/prDUe67NrYguKf4Oqkr6+mDazi8KbQM92be7iZpf0zegccCDeBk7Zx0m+TVlyncfPVRdruAYyUr5kIC1dGn2DV+qo2AS0dG4E27i5Swkrkq1d7zolIZJBZOCDaVuzwoQ3VmtOzsiCFOr9g/U4W8vbRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759475064; c=relaxed/simple;
-	bh=LKhj0OA+zjMDWjybsyr4HohQ8bxE77BsEL62Ioho1Uo=;
+	s=arc-20240116; t=1759475118; c=relaxed/simple;
+	bh=V4nXwYJCm0qAgWBhMSc7xLQVPqXoKoYttkP89beAoNs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k4+ojap+iH7B0dafLhfKkB+jIUFZK2S+HJzAXa0oFFzEZpgIZIHCsY5TGdQQ0RmIXnshMT4cNX7JBMRip64uk2JBHIoKz3Op+VmY26ytsKjBEbT8RM2cm3Z5dtCoLvpMMVKckuG7WugMKaHG5X45EnajM18uKIai52BAMW+QfHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MPlYBMjM; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759475063; x=1791011063;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LKhj0OA+zjMDWjybsyr4HohQ8bxE77BsEL62Ioho1Uo=;
-  b=MPlYBMjMwRBpjgraoPTxF/BaPF2t8OMU8D+1/wjlAI458UO5LzZubbR0
-   CuPlpaKl7path8i32qpSXjR9IrNEeUD7moI5yaUfW+TOe6gdE3s5KSILc
-   vxs11HEvWrz++hFOCAQko2/7uzVu+cUeOwO15Cpn7D6qpbF3bLTJ3D1Um
-   m9xEu85OCgxShNS+YwCZt5MYSEQtE7aoz/WIeEUFPndjKvtOGxj4DG+1Q
-   fxLgHv1GQCO2h3Czt1olv2NNpITWQQMbvgSOp9KrjIQCOve7n3ybBrqbv
-   Eh2OI7PlWHF1+qb516Tba59KCUGUKB/okxdJWBt/YpsvRCVag43SuJGgs
-   Q==;
-X-CSE-ConnectionGUID: Syxi96T2QVa1LhRzFGJbnw==
-X-CSE-MsgGUID: ykL87sHtQ8eHca6jsvtxYA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="72861908"
-X-IronPort-AV: E=Sophos;i="6.18,311,1751266800"; 
-   d="scan'208";a="72861908"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 00:04:21 -0700
-X-CSE-ConnectionGUID: 2th5oiOfQK268i7sh60v4g==
-X-CSE-MsgGUID: Z4V95aTfT7+ICcxDtYd6mQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,311,1751266800"; 
-   d="scan'208";a="179170648"
-Received: from abityuts-desk.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.72])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 00:04:18 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 3EECE121186;
-	Fri, 03 Oct 2025 10:04:15 +0300 (EEST)
-Date: Fri, 3 Oct 2025 10:04:15 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Griffin Kroah-Hartman <griffin.kroah@fairphone.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Daniel Scally <djrscally@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 2/4] media: i2c: dw9719: Add DW9800K support
-Message-ID: <aN91bwetQGrpj6of@kekkonen.localdomain>
-References: <20251002-dw9800-driver-v1-0-c305328e44f0@fairphone.com>
- <20251002-dw9800-driver-v1-2-c305328e44f0@fairphone.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=D1iNWHxpr27nnHtbmmKIhQ0DOxZPtSDCV0zsf1peAu2QWoNss3Uu2dHyBeGVmDdrMMJ0sdWOjbtJQY4w38GpVUKixxkf7Ja9BODkADd5kL+GcXSXU6WwBH9pZ7DNi78+jfRHgDtZBIN6vSKp46/BNbRAnT51kLvFuyHC0vcgQfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sYKwgotD; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-46e6ba26c50so9593265e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 00:05:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759475115; x=1760079915; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WYt7I8mRkr3Ey2EwDvEAd59xCd1pgQeHenRaMjT/0TQ=;
+        b=sYKwgotD7CgXw9ZxgY3uwEmRCPi8ATgNWzz52NKU4TPFuw4X6k1Swg5DqW6HhP61R2
+         z2v0v/MkQ5+xh6sXCmegmI6/lp8OcBKcLcVwnpo5lg/8pkj4pDmHa2oKT4ZCdicfchvL
+         J+8AlLXwjQYTi5PzQTuipbWGxbAPqhk+IamR/u4h3cfjxjdMLc6xs47x0BHGJzQu/sHt
+         socjSeS3CoebE13mdhAAWJvHTy+K3nXKtJGONRLBTptsYEymaEabsFsVi36xfXGmN4Fm
+         lpE0qto+nlxiIIaQDg/rcSjcpfkFGCEuwVDBNMhHo84zZ6HGAzEwDMvK1QVRQk8NKHoi
+         5Ssg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759475115; x=1760079915;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WYt7I8mRkr3Ey2EwDvEAd59xCd1pgQeHenRaMjT/0TQ=;
+        b=eCY+p6Xu8JVXaQRKdaKW9Mww65fDlSMBsTVr25KyGYQ4hgphhDkXz67QP6gGH7GTnV
+         cigYk5m7O1bQcKNGNcOvpjxwzVQSOvWIY/LZvikLZ4j0bLKtkNvvaG796KBvWMTXlZu8
+         3Bx5R5QkpdK524NmrlC6AdN8rbymPS84D1OJPYJLlXmCpcLUab4UqEwLEuea31p0ckiF
+         /oCvyJhVxnKMFb9G6lTiUbIRoVtXXT3/5ZLseSZCiX7kVyo9u8SmjEVCEHv+NBC0DCyv
+         FzQ8zKPRE1y5CxhSL2Q3Ho09InDcd1GAISQ1QzWi5pJqsqLNXUp3l60+fF1j3yy+yFH8
+         a2iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxkcgEHajbqDYVZ/m9QdXZfeu0RFK6G9q5/ngC1UoJl2gqMchQstuQSKBe7abPGUJD00Simx/gQ6C0Y+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxy/0vXOJZQj33PnrHfZbN5p+odUmU1QMZbDwXUQtuEc0MY7nXt
+	Enfu/7dMToXJn40dSEuZRIe7VMCtmgQC89SNlzcnf1kjGABCk60pwXQSzOrzk276irg=
+X-Gm-Gg: ASbGncth3x1k8hpjBh9gu0s0LW2/H0azGytrtTngQxCnDadsdT3iQ3t4KEGP6HD3g5D
+	KPAEAP/qbr6l4PeG1d+MH+IS+g3o04rP8F3qnl6ccKpCKu+HbUlR8R/DVqGi9tAr8Bgzi3uRd3H
+	O0Wb9r4YoIgD9o4LQHX0EfHu7L57u0Ilul1Y6oiAWUhLaXkPUYQEV6damauZBn3hSXRE1PKG2ZS
+	OYJVdi94IeUqknoc8pr9Qa6vfgsR37ZqhFvVgeaD1VKq5Ij9eeqAJnssF88j5nl+fXMhG61iqpl
+	Iwyh1sp5kYT4JJSJoTuM4ThGYSSKqBnyQpo65TP4wjrydbwhlV9fSc5Z+jHYQVlPwOMNG1gkCEq
+	cxQFNh3Y3lKPsLart+9vTxuV6wxmUHZ0b5USEt9eYQVqWlJ0rJJpdVj7m
+X-Google-Smtp-Source: AGHT+IEKWMNU5OX3+ORzmomh1gz2zjLM87JREtHvmvNpMc/EuUWnJ8BWX8gvQHfL5j0uFQFyRdFpwA==
+X-Received: by 2002:a05:6000:25c8:b0:425:57dd:58bb with SMTP id ffacd0b85a97d-4256714cd43mr1162661f8f.22.1759475114640;
+        Fri, 03 Oct 2025 00:05:14 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e7234f69bsm18356975e9.8.2025.10.03.00.05.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Oct 2025 00:05:14 -0700 (PDT)
+Date: Fri, 3 Oct 2025 10:05:11 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Tree for Oct 2
+Message-ID: <aN91pwLmB_2TwK77@stanley.mountain>
+References: <aN6qWFc6hIcbRU1o@sirena.org.uk>
+ <aN7cRUOxq-zwCoZN@stanley.mountain>
+ <CANiq72mDsU3W5Qfyf=sKhbad4tAHJYF8WnY+4VPz2J0paA2gTw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251002-dw9800-driver-v1-2-c305328e44f0@fairphone.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72mDsU3W5Qfyf=sKhbad4tAHJYF8WnY+4VPz2J0paA2gTw@mail.gmail.com>
 
-Hi Griffin,
-
-Thank you for the set.
-
-On Thu, Oct 02, 2025 at 12:15:34PM +0200, Griffin Kroah-Hartman wrote:
-> The DW9800K is a similar part to the DW9719. The method for operation is
-> the same as the DW9719, but the register set is different. Add support
-> for this part to the existing dw9719 driver.
+On Thu, Oct 02, 2025 at 11:35:10PM +0200, Miguel Ojeda wrote:
+> On Thu, Oct 2, 2025 at 10:10 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> >
+> >   RUSTC L rust/core.o
+> > error: cannot find a built-in macro with name `define_opaque`
+> >     --> /usr/lib/rustlib/src/rust/library/core/src/macros/mod.rs:1757:5
+> >      |
+> > 1757 | /     pub macro define_opaque($($tt:tt)*) {
+> > 1758 | |         /* compiler built-in */
+> > 1759 | |     }
+> >      | |_____^
+> >
 > 
-> Tested on the Fairphone 5 smartphone.
+> Thanks Dan.
 > 
-> Signed-off-by: Griffin Kroah-Hartman <griffin.kroah@fairphone.com>
-> ---
->  drivers/media/i2c/dw9719.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
+> Hmm... Strange, it is the `core` library, which comes with the
+> compiler and thus should always work.
 > 
-> diff --git a/drivers/media/i2c/dw9719.c b/drivers/media/i2c/dw9719.c
-> index 3627e78b8b6668933c4ecd92231465ce4105ff0c..172479f2c9f63f6b2a1f6eccf8184142edb383b9 100644
-> --- a/drivers/media/i2c/dw9719.c
-> +++ b/drivers/media/i2c/dw9719.c
-> @@ -68,6 +68,9 @@
->  #define DW9761_VCM_PRELOAD		CCI_REG8(8)
->  #define DW9761_DEFAULT_VCM_PRELOAD	0x73
->  
-> +#define DW9800K_DEFAULT_SAC		1
-> +#define DW9800K_MODE_SAC_SHIFT		6
-> +#define DW9800K_DEFAULT_VCM_FREQ		0x10
->  
->  #define to_dw9719_device(x) container_of(x, struct dw9719_device, sd)
->  
-> @@ -75,6 +78,7 @@ enum dw9719_model {
->  	DW9718S,
->  	DW9719,
->  	DW9761,
-> +	DW9800K,
->  };
->  
->  struct dw9719_device {
-> @@ -137,6 +141,12 @@ static int dw9719_power_up(struct dw9719_device *dw9719, bool detect)
->  			goto props;
->  		}
->  
-> +		if (dw9719->model == DW9800K) {
-> +			dw9719->sac_mode = DW9800K_DEFAULT_SAC;
-> +			dw9719->vcm_freq = DW9800K_DEFAULT_VCM_FREQ;
-> +			goto props;
-> +		}
-
-How about using switch() instead?
-
-> +
->  		ret = cci_read(dw9719->regmap, DW9719_INFO, &val, NULL);
->  		if (ret < 0)
->  			return ret;
-> @@ -177,6 +187,12 @@ static int dw9719_power_up(struct dw9719_device *dw9719, bool detect)
->  	}
->  
->  	switch (dw9719->model) {
-> +	case DW9800K:
-> +		cci_write(dw9719->regmap, DW9719_CONTROL, DW9719_ENABLE_RINGING, &ret);
-> +		cci_write(dw9719->regmap, DW9719_MODE,
-> +				  dw9719->sac_mode << DW9800K_MODE_SAC_SHIFT, &ret);
-
-Indentation.
-
-> +		cci_write(dw9719->regmap, DW9719_VCM_FREQ, dw9719->vcm_freq, &ret);
-> +		break;
->  	case DW9718S:
->  		/* Datasheet says [OCP/UVLO] should be disabled below 2.5V */
->  		dw9719->sac_mode &= DW9718S_CONTROL_SAC_MASK;
-> @@ -426,6 +442,7 @@ static const struct of_device_id dw9719_of_table[] = {
->  	{ .compatible = "dongwoon,dw9718s", .data = (const void *)DW9718S },
->  	{ .compatible = "dongwoon,dw9719", .data = (const void *)DW9719 },
->  	{ .compatible = "dongwoon,dw9761", .data = (const void *)DW9761 },
-> +	{ .compatible = "dongwoon,dw9800k", .data = (const void *)DW9800K },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(of, dw9719_of_table);
+> So it sounds like a mismatch between the binary used and the sources
+> of the standard library (or perhaps other kind of mismatch, like the
+> wrong edition being passed, but from a quick look it doesn't seem like
+> it).
 > 
+> I will try to reproduce it. Did you happen to recently upgrade the
+> toolchain(s) or something like that, by chance? Are you using the
+> Debian packages?
 
--- 
-Regards,
+Yes.  I am using the debian packages.  To be honest, I don't know it I
+broke it with an update.  It's possible.  I am all the way updated with
+`apt dist-upgrade`.
 
-Sakari Ailus
+I'm on rustc version 1.87.0+dfsg1-1.
+
+regards.
+dan carpenter
+
 
