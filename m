@@ -1,174 +1,91 @@
-Return-Path: <linux-kernel+bounces-841363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ACA4BB71A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:01:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A23CCBB71AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:02:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAB173BD683
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:01:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A1BA481A31
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A951F3FF8;
-	Fri,  3 Oct 2025 14:01:11 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0714C85;
+	Fri,  3 Oct 2025 14:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XdYDkQgn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B656134BD;
-	Fri,  3 Oct 2025 14:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE631DC988;
+	Fri,  3 Oct 2025 14:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759500070; cv=none; b=oU83JaZrgCbTMoo4ojOe58I9EMUjdOGbzLG/ipRlP/7rj07RrN/sEjRLY7knJ7NuWEfYb1N+R4NDJc7L0VtuWLQL8T4dqiBDRbAuACY38dmpAibf6miohezbZNdVk3r/jXs/oPQ1YMFNJmyvFOiqlihrVlavDja98itH5012VWQ=
+	t=1759500118; cv=none; b=rt5+VirbigOdxzfm+ttHZbe1jBPL99wHVA/kiOHoSay5QM0wpHGCFrOSrR2+c68VdlGybLBP9wL/mbhrTBMaNAoBqeasWa8so2HqxTJoI9yn0rfQmMNKuu2Ex1zGioi7VUZe2SvsSnlOBqWJuJwo8lURKdOX0g3HggV9fTuUZ0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759500070; c=relaxed/simple;
-	bh=RNm8+bIzCty7wKMJsfmMxSNvFNgStXeHIk3/eWA2BCo=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X9yMfphFH8pOdvHk5PDBvtZPvZ/+AU2n3p3IcnXWVB+zMlvWjmyULhKx4D2On/KB972aNkzyo0fzfrIMIS3CNWAXE+mdqgWuZ3gLD+vFpTZ3SLHCUyBLw2j4bcNntiku2rAzgU19ZeGqr+Ww6gUc8evVcmMagYeHcRN0mR+dU7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cdVgF2bRxz6L4tn;
-	Fri,  3 Oct 2025 22:00:41 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1AF2114044F;
-	Fri,  3 Oct 2025 22:01:05 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 3 Oct
- 2025 15:01:03 +0100
-Date: Fri, 3 Oct 2025 15:01:02 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Eddie James <eajames@linux.ibm.com>
-CC: <linux-hwmon@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-aspeed@lists.ozlabs.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <andrew@codeconstruct.com.au>, <joel@jms.id.au>,
-	<linux@roeck-us.net>, <chanh@os.amperecomputing.com>, <jic23@kernel.org>,
-	<dlechner@baylibre.com>, <nuno.sa@analog.com>, <andy@kernel.org>
-Subject: Re: [PATCH v7 RESEND 3/7] dt-bindings: iio: Add Infineon DPS310
- sensor documentation
-Message-ID: <20251003150102.00007dae@huawei.com>
-In-Reply-To: <20251001144441.310950-4-eajames@linux.ibm.com>
-References: <20251001144441.310950-1-eajames@linux.ibm.com>
-	<20251001144441.310950-4-eajames@linux.ibm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1759500118; c=relaxed/simple;
+	bh=cWEmbIZlt4zceWe9IpAVFrtljidit0i/by13ttV2RY8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TQsGuHl1xAbaOTtHFS+5Ul0RtffWzCcaMH4qzo2Hn6yOGW6r3l2rIqkovkAB7RH+mon7ID+p58duMP1FRj0Qz2aSAUB4j3RguPjEjneE7xXimPQy6FrBJQakX8lpnwHkN//TPM2qAUeLfB725Mx9iOW9YHJ6ZxBv6eJC2BiQduQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XdYDkQgn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC531C4CEF5;
+	Fri,  3 Oct 2025 14:01:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759500118;
+	bh=cWEmbIZlt4zceWe9IpAVFrtljidit0i/by13ttV2RY8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XdYDkQgnbItFNp2ucWSHoY0O/1IcxKths88LRAvP0uwMLtfwOuuAudSgjKlg3nWeG
+	 DDqpzNCqwwqN0ChKY9FNheqisf2r3eaZaDFIDSWzGUq8LttV7ex9aNTp8pMxs+IMV4
+	 dWiSMA14UvJC7JTHthDJRXHQAnDf8pPR26actgpQ5zLJ09tNkmizIGm9REzKiS5OUX
+	 iZSB0tHeWWe5JZPvYI75nFj+WnDvdKlJsb2MSeNl0CSP3P0dbNcaVAzZhkPglwkNiG
+	 fPlSNcTgnudo78Sd1lI+ZZsZBgb+Mhj9qhtSgOvYOHFkyly8JXoX5JAZv6i+Adsz/d
+	 JN0b8T7PfcVdg==
+Message-ID: <f44898fc-e745-477d-aa8c-b8df20c1db5a@kernel.org>
+Date: Fri, 3 Oct 2025 16:01:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: New co-maintainer for ASUS driver
+To: Armin Wolf <W_Armin@gmx.de>, Denis Benato <benato.denis96@gmail.com>,
+ linux-kernel@vger.kernel.org
+Cc: platform-driver-x86@vger.kernel.org, "Luke D . Jones" <luke@ljones.dev>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+References: <8128cd6b-50e3-464c-90c2-781f61c3963e@gmail.com>
+ <6c0dca8e-cdd3-407b-8dc7-cf5414b37220@gmx.de>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <6c0dca8e-cdd3-407b-8dc7-cf5414b37220@gmx.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
- dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Wed,  1 Oct 2025 09:44:37 -0500
-Eddie James <eajames@linux.ibm.com> wrote:
+Hi,
 
-> The DPS310 is a barometric pressure and temperature sensor with
-> an I2C interface. Remove it from trivial-devices.yaml and add its
-> own documentation.
-
-Hi Eddie,
-
-Why?  I guess you need the #io-channel-cells which trivial devices
-doesn't allow because you have a consumer driver?
-
-Obviously the binding patch shouldn't mention that, but it could call
-out that there can be such consumers.
-
-I'd also expect to see some supplies even if the driver doesn't yet
-explicitly handle them.
-
-Jonathan
-
+On 2-Oct-25 9:09 PM, Armin Wolf wrote:
+> Am 30.09.25 um 23:23 schrieb Denis Benato:
 > 
-> Signed-off-by: Eddie James <eajames@linux.ibm.com>
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../iio/pressure/infineon,dps310.yaml         | 44 +++++++++++++++++++
->  .../devicetree/bindings/trivial-devices.yaml  |  2 -
->  MAINTAINERS                                   |  1 +
->  3 files changed, 45 insertions(+), 2 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml
+>> Hello,
+>>
+>> I am Denis Benato and I have been asked by my friend and person I estimate Luke to help him in his asus support effort and I gladly accepted.
+>>
+>> As a first step I have refined his asus-armoury as requested and resent it upsteam [1].
+>>
+>> With quite a few more work on the horizon for me, like the hid-ally driver, adding more models to the asus-armoury driver and working on the xg mobile interface I want to ask what's the best thing for me (and everybody) going forward?
+>> Should I be added as a driver maintainer? Please, advice me on what to do next.
 > 
-> diff --git a/Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml b/Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml
-> new file mode 100644
-> index 0000000000000..7c0782e2a821b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml
-> @@ -0,0 +1,44 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/pressure/infineon,dps310.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Infineon DPS310 barometric pressure and temperature sensor
-> +
-> +maintainers:
-> +  - Eddie James <eajames@linux.ibm.com>
-> +
-> +description:
-> +  The DPS310 is a barometric pressure and temperature sensor with an I2C
-> +  interface.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - infineon,dps310
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#io-channel-cells":
-> +    const: 0
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        pressure-sensor@76 {
-> +          compatible = "infineon,dps310";
-> +          reg = <0x76>;
-> +          #io-channel-cells = <0>;
-> +        };
-> +    };
-> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
-> index 7609acaa752d5..a72b7fabc7034 100644
-> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
-> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-> @@ -127,8 +127,6 @@ properties:
->            - ibm,cffps2
->              # IBM On-Chip Controller hwmon device
->            - ibm,p8-occ-hwmon
-> -            # Infineon barometric pressure and temperature sensor
-> -          - infineon,dps310
->              # Infineon IR36021 digital POL buck controller
->            - infineon,ir36021
->              # Infineon IRPS5401 Voltage Regulator (PMIC)
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 0c8281ea4cc64..92b9854a0e07d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -12191,6 +12191,7 @@ INFINEON DPS310 Driver
->  M:	Eddie James <eajames@linux.ibm.com>
->  L:	linux-iio@vger.kernel.org
->  S:	Maintained
-> +F:	Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml
->  F:	drivers/iio/pressure/dps310.c
->  
->  INFINEON PEB2466 ASoC CODEC
+> I suggest that when sending your next patch series regarding the asus-wmi driver, you include
+> a patch adding yourself to the MAINTAINERS entry of the asus-wmi driver. This way contributors
+> can automatically CC you on patches touching said driver.
+
++1 to this suggestion. I think that adding You (Denis) as
+maintainer makes sense and this is the best way to do it.
+
+Regards,
+
+Hans
+
 
 
