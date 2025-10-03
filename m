@@ -1,188 +1,213 @@
-Return-Path: <linux-kernel+bounces-841454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26966BB75B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 17:44:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59783BB75C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 17:45:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 531384EC821
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 15:44:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D97D219C5E55
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 15:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F2928640B;
-	Fri,  3 Oct 2025 15:44:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD182868B2;
+	Fri,  3 Oct 2025 15:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RQhTjBBW"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="TSsxDRvA"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB1094501A
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 15:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3924501A
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 15:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759506241; cv=none; b=VHvLLobmV4uwqhunutm5J+1GVFgb13GtAEZEcKWWFkt1iKAafy52sq2UL9G4H3OZ84TzAv1KozfRMa8U5KaYPDH0a35VB2dHG8I4IuqtccxRFeYzEsmgmSTDezCB35NnG3Od45NFJfLMXhhsQT+DHcXsOeb293sKh4vWp/8kj/Q=
+	t=1759506293; cv=none; b=M/P1/cJzubNUVHTHIgcPYxojUK552BUbtqN8D/jxaIp51uhdEcqnhr0j2fqLfALb/rShxnEofOGHlAU0Uo2gT8ibBOGkjjRQbPBAMHUNhZSE+viq8nrKXQrIPKF4EqGHrlly5p16ZAyOLLy+4zQ5eFL5BSiat4rZVa+Z+BqLAso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759506241; c=relaxed/simple;
-	bh=EwuCDLp3UGb2sm7TMDHWreL8JOXB1q9zlPAciIf0E6I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J1zRVwS570c7NPkoDQRyCfgKdnCq+VPiFZRFpQBlbXctSchTW7Xe7rX5n31TtIEcwOQYFJIKU0yukD6XU7MP07Wuy3gX0VMxwmcSge+fV3RueVWOWi+T+4cy6RkHJgFau5z4kow6BGOBGQZ3qO/MO1EWFdcfNekTYVcMRVdWm+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RQhTjBBW; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 593B3R6M005598
-	for <linux-kernel@vger.kernel.org>; Fri, 3 Oct 2025 15:43:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=VpmyCQSwVSHUoaXADoES/PS2
-	Nt6wPPE5Oo+SQuYPBFo=; b=RQhTjBBWXy492ZQ5oitl0/ncU2RqsCJsP2iZnU4/
-	cUN5xZlWLiZKAgzdI/upQ6hgeHC5hN5lGTsXhIlE2XfbVI9TZY1UHCZD3Gd4muff
-	1QUMrbTLtwCnTRi3vQnqUGdb67iiCXim4OwNQdi88K+iJcl0u8bzP3erzkLJVgwJ
-	GrOSD4NOcyLp8g74JHe84L71gnkVAYo91PfzFUgQnlj1AH6bPIBy9I6Vt3glm0xv
-	uYB6B4ifRgZASNHtWgSGItx8azVoLR2LfRA+ZMnmIX9q/dzd8yUUqIi54P34USpd
-	oGdgu/BFubo9pMFvi9GBOx7ztXIYy6oosMUypb4nOTitvQ==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e851u8t8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 15:43:58 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4d602229d20so44617561cf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 08:43:58 -0700 (PDT)
+	s=arc-20240116; t=1759506293; c=relaxed/simple;
+	bh=Zb7fyuiXcHrGNivhEDyxDjANeqiLLU7pVIdpqSK1jd0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hGF5AY1yzgi33bvFzubYo9w8rqpm8qSfJkJivv5E9GN3qSEp+7jYebWb18vEXEd872avTg2EDEyc25F7Fr/vzYCxWIReBnWfH6l/lKNmUryXkWVldG75kSOv5e5fFfm8tdFjQfCT8V1tNME+plwJ0s1fQ9dkWm1uh2joOlybwAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=TSsxDRvA; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4dfb1f481ecso30068051cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 08:44:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1759506289; x=1760111089; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
+         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=CcjsGAtJBDRTbKSc6ZGZGbuEJNUcV2kb0nQ6sHCx+Sk=;
+        b=TSsxDRvAuFSugPPdWQiHQaOCyxapN1gxma2art4K8NNb0r5gI0PLUKeeBmNEC/g29X
+         P+qL7o+/23b6lFo90qqvTgrvZI2ynRhn4sl5kRW289vD14gXXCa+MO+tLzdfLALabkFq
+         JE4eRsY5LTMnzLTBNDy136JyrfsVl4k3K2kNSDiYwVYyUXwJfi5wE8rtNW/E1tuptsWm
+         nZzDfDha+02v1UaUfcI65QGkFLc+QQQ4/sgatX4OoMXDmgCDQENc+LRPZfaMBMvMqn6W
+         FzO7KyE1n/tPeMwA6TE+3bBpIcbE5UOcV1Epgxc4dmPgsDYMwXHUVBum+C2sWYwC8TEv
+         J+jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759506237; x=1760111037;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1759506289; x=1760111089;
+        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
+         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VpmyCQSwVSHUoaXADoES/PS2Nt6wPPE5Oo+SQuYPBFo=;
-        b=iimDVVSOKOzo7SxCs96WkwyDOQ98wB7CVCule6y4Xk7lGK5a2NrcSSedlqpwVgVIeA
-         3GIjDJXtEb1GWItc2O70+CueO3HOJcxSNrtNPE8cjhwwW2ddH+W2tXnm7APwROOkt0g0
-         pCbP2Fe3PFOEFovjvududJD3HeGIJEVpC5XR7cZw3xVoQiTXcIMAxOz4RF+myEogDZNq
-         CUdXWi7FlXo9pLK4UHyGzfr1K3YkwXj3oItygvS7Ose/B6AMpdWqOlM+JcdvjcDav5Ue
-         2xGXygjHhcgsE9eBjnUXOWzAPpbJzBYB6x9KcYarlFeIn8gMsctxgiK8ky0FcWxt8Jaq
-         VT8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWFKeoi5ptwOVQFkV2sqQLfilba9OERghUIS4YUNFGsq4sxQEaZwPNvZc3wsoIljLpDj0BlyU3pAym9OTY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuTVYBMpdMHgCDqCQYy5sAQUf9plAc4bz6FBoLZsGv/b+BZ5Ut
-	wB7RafKTtntrSB3cnH10UP9GqNxTX87jAFmtHJvhzXYCIZuA+xydrLLnuTlTw7+2KAlpkecSUXd
-	zpEotdY+R2YLHA2now5Vm/IgdQ8X2RnsBaclvId3rDlJvONkk/50OhXPLGz4DwPc/c0Q=
-X-Gm-Gg: ASbGncsRV+Qq/TByr537yFEIXujyo6JA/qIeSdf6LzWqdee4VqUXv3bQWiDUSeieh0D
-	k8GpPutt4Fpl3W3zLEa5AgA5GjAoZQbn7mMhkNDjxqZwkXYb+fBCjKMsIsulILzx1wioFOA2lSR
-	Rq1ae7QSqTSQy5I0MVkYy9PR/BM6oHpsqzqj7bfg3T3nmVrP4snjTuCrd1RcRkDGQVG7E0oMfhz
-	eMASUGese6DFx4kocEcSRgRSYUyqefLUqTqXVXXJVKOmgymL8s+PUSDT/NAcq34/qNrfztDpU/0
-	NHdvLInDp6QMPGm2+CW32gYFj4tfWrQYrkNFWHvXbmGBMsMZCXDfFZB2/LravlIg/CvXBy3lIra
-	1d7Q3rwP9mTPsI0BdatHYOMEkzB7vmmZuRsL8vh6z5ro/JX4IjFHvv9Kd+Q==
-X-Received: by 2002:a05:622a:4c18:b0:4b7:92f1:d641 with SMTP id d75a77b69052e-4e576a3c983mr44723811cf.22.1759506237340;
-        Fri, 03 Oct 2025 08:43:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEk8KP0+qQBfiT0cQx5+NTnJD4fSS7hPt/F8OokeMKesiR9A8s7Hs/Ap+66bRDgWCPAER6T+w==
-X-Received: by 2002:a05:622a:4c18:b0:4b7:92f1:d641 with SMTP id d75a77b69052e-4e576a3c983mr44723321cf.22.1759506236780;
-        Fri, 03 Oct 2025 08:43:56 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b0118e04asm1929404e87.64.2025.10.03.08.43.55
+        bh=CcjsGAtJBDRTbKSc6ZGZGbuEJNUcV2kb0nQ6sHCx+Sk=;
+        b=uJkx7CMHgbgATlL7Vc8v6IL1M2mHAlM6vAjBW53tQ50qi57oSqq26eXaj/z52hsqjs
+         5ru9w9YyGUMgN+lldZYoc+oqEPFZ7aGLUPwElBmMjj6DrX/V9K79Wim6aAFEKFQy6J3O
+         18MknhEVZqmGmJ7/YluvxFjg7mBkNhgSlbNM2inktgBIvI9Eer7plhDPJOG7CJF6E/P4
+         Ds9b8N0V93QoGgyFMfpN+6XPyR7T/uu5XiDPYFLshAaA8k+7r9ZTFHncseQUilQvYRNr
+         uTyMKSPkyhz34hDtgFhG1O2oHOVIB1JV1v+DoeIezbZJj5gfJV9eYJJa1+dCwnfhkhvO
+         gsWA==
+X-Forwarded-Encrypted: i=1; AJvYcCVv13dtvLQbRtLnFKjLVJjutJmYWphEdU9ML6XM2nujI06IUhfJUJNlsYOftadJYGM8nwU3noxcdgadOjs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyf3i1jHGkhhYzJ0DTLnVab3jLaGrU5Dc7TlQc4/dnfZtUADsm8
+	Os8kQ6M24ZKiPQ/qwnVZpb3V+zpNuR1NpG+8LBAmoOHDlQ6Bz3XhKC/slOjdXcucdr8=
+X-Gm-Gg: ASbGncu01/cOYswc6dioxPMUj1CYMpEeEU7KkTYZ2O/RKwW9Tv9nuzUZi0qZ4l2pu5E
+	OTvA74JCZ7Pn65N1MgHqjxR9jNp4x97xRNTLW9FMeSu2hVxJv/zzxJJMy7iR50v0a4VjWr3K0JW
+	IlJUhAps/jhgE1x18ItGpCUyRmQQIvbIw3rI4aAO2t6cbrhiuqSgnOP7+DvtDvRcMlTTKHSxgaI
+	Zp5I/O8jMoOMnw2Qgvrx5NMpJfN+UWYj1FfB8kAkAwMRux36p6pWrM3Fn2z/gGk1qr0U4o/KUka
+	EMPTPEXjn3u5rrFbzmQ+HXrBr7XJJ1FwrASYVc+/cAIQCFnKVsbW4yrdIYg1Zu7JaHmdbMEf1qf
+	GcCebV3el1wZfOUv4Zo6dTLv5nvnEQlGMRe2UwUA6lF9vP7dKHj/Mnrq1d2F+avJ/Q7l2kkeLfR
+	cgVw==
+X-Google-Smtp-Source: AGHT+IG3nggyzp6rBeV7O8SFngJ0q7vh9MKYuGI8B+E0xgcql9QjTelcIZpNtFB3s282izeII55ing==
+X-Received: by 2002:a05:622a:343:b0:4b5:e9e3:3c90 with SMTP id d75a77b69052e-4e576a5d586mr46819141cf.9.1759506287912;
+        Fri, 03 Oct 2025 08:44:47 -0700 (PDT)
+Received: from [192.168.42.140] (mtl.collabora.ca. [66.171.169.34])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e55aa44901sm41212601cf.18.2025.10.03.08.44.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 08:43:55 -0700 (PDT)
-Date: Fri, 3 Oct 2025 18:43:54 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Hermes Wu <Hermes.wu@ite.com.tw>, Dmitry Baryshkov <lumag@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
-Subject: Re: [PATCH v7] drm/msm/dp: reuse generic HDMI codec implementation
-Message-ID: <eyr6ipmk7jh5itr662fjvguduwecu54s7meqye6ga5odwelzgy@dgngrukrbogi>
-References: <20250423-dp-hdmi-audio-v7-1-8407a23e55b2@oss.qualcomm.com>
- <DD8PK8AI24P7.YK0OGVYC0QFM@fairphone.com>
- <DD8RMPT8EHGF.17VY8M0ECB09R@fairphone.com>
+        Fri, 03 Oct 2025 08:44:47 -0700 (PDT)
+Message-ID: <e22a74d0298d7318c59841f706f6f731c77241db.camel@ndufresne.ca>
+Subject: Re: [PATCH v2] media: mtk-mdp: Fix some issues in mtk_mdp_core.c
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Haoxiang Li <haoxiang_li2024@163.com>, minghsiu.tsai@mediatek.com, 
+	houlong.wei@mediatek.com, andrew-ct.chen@mediatek.com, mchehab@kernel.org, 
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
+	hans.verkuil@cisco.com
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	stable@vger.kernel.org
+Date: Fri, 03 Oct 2025 11:44:45 -0400
+In-Reply-To: <20250917094045.28789-1-haoxiang_li2024@163.com>
+References: <20250917094045.28789-1-haoxiang_li2024@163.com>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-jvh4cueVjwyOExiJXg2C"
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DD8RMPT8EHGF.17VY8M0ECB09R@fairphone.com>
-X-Authority-Analysis: v=2.4 cv=OJoqHCaB c=1 sm=1 tr=0 ts=68dfef3e cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=47WAYy97XgIT4h3jqLYA:9
- a=CjuIK1q_8ugA:10 a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAzMiBTYWx0ZWRfXwOiqGc0QkC6E
- I6Dsd+F1e6HaGaPAOjMB8drSDK8ucYmobB+Miy2hahAamGAYGoOmSLqOzvKuQ/hS1u51W5M2OGD
- 7e+l4yGM/bbPUmIXwbIV4hVw+H0MWUOlmH9UR7iXIPLTVBFr3wlywZcO1S3cYAlpWHZBi8F/tFf
- bqHiNrXz6SNS6vvTnuj5Eak9MEG5G4ja1gDzV+VeXQMxvQQBovCu3JkNwRrA1pNhoqFOJGYgrL9
- tgZtjKv9rSOYqJa6mRslXg3o7KJPs6DysI/UItGIyyyzMcNttwOObXQgq60lnim/2V7slmQ6Pwe
- OKiEnJTt0UdGjjTKZgUPIhsKSBiJ/UHqx1ssnF+ZtxPe/stF0TFKeboI7dQkizOfzHyyUPC6CVv
- 3p8a0hMMvzOgBwyZ5ilAy3x41icNXw==
-X-Proofpoint-ORIG-GUID: jqtyLK3k0EMMgaASztiBQDqvNiFfaYDd
-X-Proofpoint-GUID: jqtyLK3k0EMMgaASztiBQDqvNiFfaYDd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-03_04,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 priorityscore=1501 bulkscore=0 impostorscore=0
- suspectscore=0 lowpriorityscore=0 phishscore=0 malwarescore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270032
 
-On Fri, Oct 03, 2025 at 04:43:59PM +0200, Luca Weiss wrote:
-> On Fri Oct 3, 2025 at 3:06 PM CEST, Luca Weiss wrote:
-> > Hi Dmitry,
-> >
-> > On Wed Apr 23, 2025 at 7:52 PM CEST, Dmitry Baryshkov wrote:
-> >> From: Dmitry Baryshkov <lumag@kernel.org>
-> >>
-> >> The MSM DisplayPort driver implements several HDMI codec functions
-> >> in the driver, e.g. it manually manages HDMI codec device registration,
-> >> returning ELD and plugged_cb support. In order to reduce code
-> >> duplication reuse drm_hdmi_audio_* helpers and drm_bridge_connector
-> >> integration.
-> >
-> > A bit late, but it appears that since 6.16 kernel (incl. 6.17) DP audio
-> > is broken on qcm6490-fairphone-fp5 (which is using the Elite audio
-> > architecture, not Audioreach).
-> >
-> > Git bisect is pointing to this patch:
-> >
-> >   98a8920e7b07641eb1996b3c39b9ce27fc05dbb9 is the first bad commit
-> >   commit 98a8920e7b07641eb1996b3c39b9ce27fc05dbb9
-> >   Author: Dmitry Baryshkov <lumag@kernel.org>
-> >   Date:   Fri May 2 01:41:42 2025 +0300
-> >
-> >       drm/msm/dp: reuse generic HDMI codec implementation
-> >
-> > It's specifically failing with these errors:
-> >
-> > [  177.380809] qcom-q6afe aprsvc:service:4:4: AFE enable for port 0x6020 failed -110
-> > [  177.380851] q6afe-dai 3700000.remoteproc:glink-edge:apr:service@4:dais: fail to start AFE port 68
-> > [  177.380865] q6afe-dai 3700000.remoteproc:glink-edge:apr:service@4:dais: ASoC error (-110): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
-> > [  177.437004] qcom-q6afe aprsvc:service:4:4: cmd = 0x100e5 returned error = 0x9
-> > [  177.437294] qcom-q6afe aprsvc:service:4:4: DSP returned error[9]
-> > [  177.437312] qcom-q6afe aprsvc:service:4:4: AFE enable for port 0x6020 failed -22
-> > [  177.437332] q6afe-dai 3700000.remoteproc:glink-edge:apr:service@4:dais: fail to start AFE port 68
-> > [  177.437343] q6afe-dai 3700000.remoteproc:glink-edge:apr:service@4:dais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
-> >
-> > Do you have an idea?
-> 
-> Dmitry pointed me to this patch on IRC which does fix the problem
-> described above.
-> 
-> https://lore.kernel.org/linux-arm-msm/20250925040530.20731-1-liujianfeng1994@gmail.com/
 
-I have been waiting for Srini to respond to the quetions that I have
-asked in response to those emails. If he doesn't respond in a sensible
-timeframe, I think, we should pick that patch.
+--=-jvh4cueVjwyOExiJXg2C
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
--- 
-With best wishes
-Dmitry
+Hi,
+
+
+Le mercredi 17 septembre 2025 =C3=A0 17:40 +0800, Haoxiang Li a =C3=A9crit=
+=C2=A0:
+> Add check for the return value of vpu_get_plat_device() to prevent null
+> pointer dereference. And vpu_get_plat_device() increases the reference
+> count of the returned platform device. Add platform_device_put() to
+> prevent reference leak. Also add platform_device_put() in mtk_mdp_remove(=
+).
+
+I think we should improve the subject a little. What about ?
+
+  media: mtk-mdp: Fix error handling in probe function
+
+
+Nicolas
+
+>=20
+> Add mtk_mdp_unregister_m2m_device() on the error handling path.
+>=20
+> Fixes: c8eb2d7e8202 ("[media] media: Add Mediatek MDP Driver")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+> ---
+> Changes in v2:
+> - Add check for vpu_get_plat_device()
+> - Add platform_device_put() in mtk_mdp_remove()
+> - Add mtk_mdp_unregister_m2m_device() on the error handling path.
+> - Modify the patch title and description. I think you are right.
+> =C2=A0 Thanks, CJ!
+> ---
+> =C2=A0.../media/platform/mediatek/mdp/mtk_mdp_core.c=C2=A0 | 17 +++++++++=
+++++++--
+> =C2=A01 file changed, 15 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/mediatek/mdp/mtk_mdp_core.c
+> b/drivers/media/platform/mediatek/mdp/mtk_mdp_core.c
+> index 80fdc6ff57e0..8432833814f3 100644
+> --- a/drivers/media/platform/mediatek/mdp/mtk_mdp_core.c
+> +++ b/drivers/media/platform/mediatek/mdp/mtk_mdp_core.c
+> @@ -194,11 +194,17 @@ static int mtk_mdp_probe(struct platform_device *pd=
+ev)
+> =C2=A0	}
+> =C2=A0
+> =C2=A0	mdp->vpu_dev =3D vpu_get_plat_device(pdev);
+> +	if (!mdp->vpu_dev) {
+> +		dev_err(&pdev->dev, "Failed to get vpu device\n");
+> +		ret =3D -ENODEV;
+> +		goto err_vpu_get_dev;
+> +	}
+> +
+> =C2=A0	ret =3D vpu_wdt_reg_handler(mdp->vpu_dev, mtk_mdp_reset_handler, m=
+dp,
+> =C2=A0				=C2=A0 VPU_RST_MDP);
+> =C2=A0	if (ret) {
+> =C2=A0		dev_err(&pdev->dev, "Failed to register reset handler\n");
+> -		goto err_m2m_register;
+> +		goto err_reg_handler;
+> =C2=A0	}
+> =C2=A0
+> =C2=A0	platform_set_drvdata(pdev, mdp);
+> @@ -206,7 +212,7 @@ static int mtk_mdp_probe(struct platform_device *pdev=
+)
+> =C2=A0	ret =3D vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(3=
+2));
+> =C2=A0	if (ret) {
+> =C2=A0		dev_err(&pdev->dev, "Failed to set vb2 dma mag seg size\n");
+> -		goto err_m2m_register;
+> +		goto err_reg_handler;
+> =C2=A0	}
+> =C2=A0
+> =C2=A0	pm_runtime_enable(dev);
+> @@ -214,6 +220,12 @@ static int mtk_mdp_probe(struct platform_device *pde=
+v)
+> =C2=A0
+> =C2=A0	return 0;
+> =C2=A0
+> +err_reg_handler:
+> +	platform_device_put(mdp->vpu_dev);
+> +
+> +err_vpu_get_dev:
+> +	mtk_mdp_unregister_m2m_device(mdp);
+> +
+> =C2=A0err_m2m_register:
+> =C2=A0	v4l2_device_unregister(&mdp->v4l2_dev);
+> =C2=A0
+> @@ -242,6 +254,7 @@ static void mtk_mdp_remove(struct platform_device *pd=
+ev)
+> =C2=A0
+> =C2=A0	pm_runtime_disable(&pdev->dev);
+> =C2=A0	vb2_dma_contig_clear_max_seg_size(&pdev->dev);
+> +	platform_device_put(mdp->vpu_dev);
+> =C2=A0	mtk_mdp_unregister_m2m_device(mdp);
+> =C2=A0	v4l2_device_unregister(&mdp->v4l2_dev);
+> =C2=A0
+
+--=-jvh4cueVjwyOExiJXg2C
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaN/vbQAKCRDZQZRRKWBy
+9KWiAP0QJQMSss66nBhuvWdyP3z+yb6Q5jk6MMuOVBfPG9I+XgEAlm/xzfuJ8BPA
+DxlLGE1JMwN8N8zLQzYhKhp61WB8XwQ=
+=RvA4
+-----END PGP SIGNATURE-----
+
+--=-jvh4cueVjwyOExiJXg2C--
 
