@@ -1,142 +1,149 @@
-Return-Path: <linux-kernel+bounces-841583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AAA9BB7BF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:32:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C3BFBB7722
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E88619C5BFE
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:32:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AD6B19C56F6
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D7C2DAFA3;
-	Fri,  3 Oct 2025 17:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3D929E11A;
+	Fri,  3 Oct 2025 16:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="mWU/sOY7"
-Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q2dw5hh6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DAA19D880;
-	Fri,  3 Oct 2025 17:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1F48634F
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759512736; cv=none; b=TwKmjlPoLSEFT18aX5X1QQ9NROcHVB0vYj6ZUR7xei8XUv8gkq7MtMiCCwvbqjEtOqJqmjcrmip5wpw9nPR6sGr0dh1qyJwS8wTd1JKex1dLn8I9PbmMUMUI4gbZGuNX158rqpyxFrFq5tW0B2CKFCC4t0q0HT5ogNCa7XTKToE=
+	t=1759507523; cv=none; b=qqNi1k/cBStmzVUJaaSjcj7Ea9SOcaAAXTacPTfZ3z5HIII5SuzKwhwrq1utkGbk6riyIGhh3bRlRygXqZrWTwbN9soosO7Y+beuJpFvfn84ZDdkiyTsWausinNF4EWnTeeloS9m5olrne46X4eZIOxM+9g+KN4lKXBUZTpH7eM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759512736; c=relaxed/simple;
-	bh=KUXQDUaLpGTyUaeCV6NkTrwXChz9uX7wllKFZMxDMEs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Za4Jk5vUnWFrfQsvTWju7MqKlB1JokJXKvz5rsnuiIceFIEb9x1kMxWc23WJBfI+F6pugpayUdxaQgKY9dZgOICsM5DV8vpbrvVI4K13v4RBFaqgUEXTcpwbjhSrP7QaV+s6lQSlWhh/ENMdtJm9fo0AwNLHmG00DgPjQgNsN44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=mWU/sOY7; arc=none smtp.client-ip=44.202.169.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5001b.ext.cloudfilter.net ([10.0.29.181])
-	by cmsmtp with ESMTPS
-	id 4fOFvaOCGKXDJ4jdWvALPd; Fri, 03 Oct 2025 17:32:06 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id 4jdVvl6csrMH54jdWvfJQX; Fri, 03 Oct 2025 17:32:06 +0000
-X-Authority-Analysis: v=2.4 cv=eaE9f6EH c=1 sm=1 tr=0 ts=68e00896
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=4oHATN8Nx7vVUZJYxp75bA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7T7KSl7uo7wA:10
- a=UzAz_WlB0G74hqp-NeEA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Wk/lJ0/YkwWz5LRniSBr0fOTkRttbOb5TobwP/F87mM=; b=mWU/sOY7n7kfeq+tXJdqvl4Vpb
-	QS6ivMrZU8yEKS+TsZAaKzMukht/960Bn9p3Kepari0pCP+L053Qfmz8j4spATH0ZGjYQWamLcER9
-	DrOaWnTJbxDBgaK+30+6xPtvKVOK/VJGRPwND7MEOaifd867NRTqTaWvplCA+OB/tpOECuy6nlC89
-	VGcJQjvNNzR+5IwbK+JB3vYC0sXYAi3QUcHKU4jkUmJfz2CkuJ6Vu2a/aXqcpbR975uV7MhyUVU6o
-	OP3+JRrTP/lZubY9tXCJUJHIlA76Qb4vRP9gMdlCGz7r+/KYWyI1HOD8ca5Nq/J0/WuWxYaRnlenr
-	5AZWa0og==;
-Received: from [185.134.146.81] (port=52182 helo=[10.21.53.44])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1v4hb3-00000002K6A-0MN0;
-	Fri, 03 Oct 2025 10:21:25 -0500
-Message-ID: <10762d3f-361a-48b7-8e46-5e5b8a9887fb@embeddedor.com>
-Date: Fri, 3 Oct 2025 16:21:17 +0100
+	s=arc-20240116; t=1759507523; c=relaxed/simple;
+	bh=jtupfp2W3ZW5DUNFQWpOwE3JhmuEzZnG/5d/lWKCbhA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XUnYewid1SanJKoikGYHqcq6RC6VlyP2ct7AcQMRIEgRmSFK1W4xKw9hxqrIVLz3NbN1O+tFh2jNfS1igTC4nc7RSEKsCsU21jw4f2/4tu77jkGDOfM6aw5CGHt0wLr84yV3Fkx1Y5d5SAVPKf36fCGepEgE+BtoL79V3weWsXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q2dw5hh6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759507520;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=u91ZKQE68Be0swDMaJzbkLnRizpHM6eTbx4qcG+71Js=;
+	b=Q2dw5hh66sXHo35whPUEFq1aAaJeIpCBON32CdzMYTuIvZJUOf1NVXD60IRd4HfzvMUwD+
+	+Z+3zSesw+P0LWjOn01CP0SI3ExsIFBjSU0yM2p2iBnnCC77oq8WpdqiWmY+qx+xnn9oGK
+	d8jz+ckYHGlykeBlpKKBxdw4mU8kJCg=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-245-_cJUHfh7PpS-uNP1oZvc1w-1; Fri,
+ 03 Oct 2025 12:05:18 -0400
+X-MC-Unique: _cJUHfh7PpS-uNP1oZvc1w-1
+X-Mimecast-MFC-AGG-ID: _cJUHfh7PpS-uNP1oZvc1w_1759507517
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 07505180057F;
+	Fri,  3 Oct 2025 16:05:17 +0000 (UTC)
+Received: from thinkpad-p1.localdomain.com (unknown [10.22.65.162])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7754719560BA;
+	Fri,  3 Oct 2025 16:05:14 +0000 (UTC)
+From: Radu Rendec <rrendec@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Manivannan Sadhasivam <mani@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Rob Herring <robh@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Brian Masney <bmasney@redhat.com>,
+	Eric Chanudet <echanude@redhat.com>,
+	Alessandro Carminati <acarmina@redhat.com>,
+	Jared Kangas <jkangas@redhat.com>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] Enable MSI affinity support for dwc PCI
+Date: Fri,  3 Oct 2025 12:04:18 -0400
+Message-ID: <20251003160421.951448-1-rrendec@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] btrfs: Avoid -Wflex-array-member-not-at-end warning
-To: dsterba@suse.cz
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>, Chris Mason <clm@fb.com>,
- David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <aN_Zeo7JH9nogwwq@kspp> <20251003143502.GJ4052@suse.cz>
- <b59ed01f-d9d5-4de8-8a12-1e506962b2d9@embeddedor.com>
- <20251003151509.GK4052@suse.cz>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20251003151509.GK4052@suse.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 185.134.146.81
-X-Source-L: No
-X-Exim-ID: 1v4hb3-00000002K6A-0MN0
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([10.21.53.44]) [185.134.146.81]:52182
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 0
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfK4M9m0pbIowg9FlJnFFGQEUZ1OtocPOx4fqCdf1MmuES91rpOTIJ/lcXIfg7GnHA1Or97wRORieh8rn6mdA1F09CNT4mFeRy0WRKPHx7xviRLVhO7Ki
- azRIugbcBHctVzgjUD33JZUZR+hSii8mY/TfMQ6X1WqPKIBoZR2+EuAIp3ZqfrnmsxE6rTTk0UdGS153o5ZuT5Az737DGcYGVr9oOjDWYwrDLNl72tlL8fBi
- uJZIqdnp1U6IxrRAbrQjq4n4LCmgG/yf1vmQyzPWT2v5TzO60GYfXcX7xXxOut+gNNqK+7Wf1axs4JhsDV3J3Q==
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
+Various attempts have been made so far to support CPU affinity control
+for (de)multiplexed interrupts. Some examples are [1] and [2]. That work
+was centered around the idea to control the parent interrupt's CPU
+affinity, since the child interrupt handler runs in the context of the
+parent interrupt handler, on whatever CPU it was triggered.
 
+This is a new attempt based on a different approach. Instead of touching
+the parent interrupt's CPU affinity, the child interrupt is allowed to
+freely change its affinity setting, independently of the parent. If the
+interrupt handler happens to be triggered on an "incompatible" CPU (a
+CPU that's not part of the child interrupt's affinity mask), the handler
+is redirected and runs in IRQ work context on a "compatible" CPU. This
+is a direct follow up to the (unsubmitted) patches that Thomas Gleixner
+proposed in [3].
 
-On 10/3/25 16:15, David Sterba wrote:
-> On Fri, Oct 03, 2025 at 03:51:24PM +0100, Gustavo A. R. Silva wrote:
->>>>
->>>> diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
->>>> index 9230e5066fc6..2b7cf49a35bb 100644
->>>> --- a/fs/btrfs/send.c
->>>> +++ b/fs/btrfs/send.c
->>>> @@ -178,7 +178,6 @@ struct send_ctx {
->>>>    	u64 cur_inode_rdev;
->>>>    	u64 cur_inode_last_extent;
->>>>    	u64 cur_inode_next_write_offset;
->>>> -	struct fs_path cur_inode_path;
->>>>    	bool cur_inode_new;
->>>>    	bool cur_inode_new_gen;
->>>>    	bool cur_inode_deleted;
->>>> @@ -305,6 +304,9 @@ struct send_ctx {
->>>>    
->>>>    	struct btrfs_lru_cache dir_created_cache;
->>>>    	struct btrfs_lru_cache dir_utimes_cache;
->>>> +
->>>> +	/* Must be last --ends in a flexible-array member. */
->>>                           ^^
->>>
->>> Is this an en dash?
->>
->> Not sure what you mean.
-> 
-> En dash is a punctuation mark not typically used in comments, nowadays
-> found in AI generated code/text. I was just curious.
+The first patch adds support for interrupt redirection to the IRQ core,
+without making any functional change to irqchip drivers. The other two
+patches modify the dwc PCI core driver to enable interrupt redirection
+using the new infrastructure added in the first patch.
 
-Ah yes, I've been using this punctuation mark for this sorts of comments,
-but this is not AI generated code/text.
+Thomas, however, I made a small design change to your original patches.
+Instead of keeping track of the parent interrupt's affinity setting (or
+rather the first CPU in its affinity mask) and attempting to pick the
+same CPU for the child (as the target CPU) if possible, I just check if
+the child handler fires on a CPU that's part of its affinity mask (which
+is already stored anyway). As an optimization for the case when the
+current CPU is *not* part of the mask and the handler needs to be
+redirected, I pre-calculate and store the first CPU in the mask, at the
+time when the child affinity is set. In my opinion, this is simpler and
+cleaner, at the expense of a cpumask_test_cpu() call on the fast path,
+because:
+- It no longer needs to keep track of the parent interrupt's affinity
+  setting.
+- If the parent interrupt can run on more than one CPU, the child can
+  also run on any of those CPUs without being redirected (in case the
+  child's affinity mask is the same as the parent's or a superset).
 
--Gustavo
+Last but not least, since most of the code in these patches is your
+code, I took the liberty to add your From and Signed-off-by tags to
+properly attribute authorship. I hope that's all right, and if for any
+reason you don't want that, then please accept my apologies and I will
+remove them in a future version. Of course, you can always remove them
+yourself if you want (assuming the patches are merged at some point),
+since you are the maintainer :)
+
+[1] https://lore.kernel.org/all/20220502102137.764606ee@thinkpad/
+[2] https://lore.kernel.org/all/20230530214550.864894-1-rrendec@redhat.com/
+[3] https://lore.kernel.org/linux-pci/878qpg4o4t.ffs@tglx/
+
+Radu Rendec (3):
+  genirq: Add interrupt redirection infrastructure
+  PCI: dwc: Code cleanup
+  PCI: dwc: Enable MSI affinity support
+
+ .../pci/controller/dwc/pcie-designware-host.c | 123 ++++++++----------
+ drivers/pci/controller/dwc/pcie-designware.h  |   7 +-
+ include/linux/irq.h                           |   6 +
+ include/linux/irqdesc.h                       |  11 +-
+ kernel/irq/chip.c                             |  20 +++
+ kernel/irq/irqdesc.c                          |  51 +++++++-
+ kernel/irq/manage.c                           |  16 ++-
+ 7 files changed, 154 insertions(+), 80 deletions(-)
+
+-- 
+2.51.0
 
 
