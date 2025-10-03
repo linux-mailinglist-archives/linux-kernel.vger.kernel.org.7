@@ -1,152 +1,781 @@
-Return-Path: <linux-kernel+bounces-841576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68AC8BB7B60
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:23:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22928BB7B21
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01B4E1B209AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:24:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FC384A351C
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CB72DA76C;
-	Fri,  3 Oct 2025 17:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA9E2D9EE2;
+	Fri,  3 Oct 2025 17:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bell.net header.i=@bell.net header.b="STH7xa2d"
-Received: from cmx-mtlrgo002.bell.net (mta-mtl-006.bell.net [209.71.208.28])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZPyibytD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8885723AB8B;
-	Fri,  3 Oct 2025 17:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.71.208.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6826D2D9EE8
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 17:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759512211; cv=none; b=KRrVSQ5niMyPZiZgdbvLTVKsi2q/BIi3YJUOE5TRV/yN6DgLenjq4CdfKJkzbFbWOqKaIL0QwMm6Zfg5v0nXv2QfRGBWQ4HG+EpKQhuePDtGIq0H8+vVc/Opkye7OriDvP8bKFc4+9iGj8k3BLA1i8F4EGNSotiyCeNtdorHwpk=
+	t=1759511986; cv=none; b=eWpOhZB3ncP30C2Bk5aqXJc1CFcYEAPyyjO2+BRXlSH/IdiAEM/HAZiSIXSQ8/5Oi5MK4UkYN98D3G6TYECcWFGDUA/kSwRQHvaerowa/I7ZxvmvqxG08V0b9Ugg6f2q7WCMvc3+NQU9L6c3b7KT8FwCyPh/6jJU0N05QdfQu5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759512211; c=relaxed/simple;
-	bh=Di4WMImwmV6KHePb6cCCkczkHfQ+nxD1+liCaEC8/NM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t2P4PYl+XgIT7wGYDlN2ZUEpyqYCZkrBJ0hM1aUyOJSDNkbfdzX8tJ8JFnBA1vR6lK2zUSlBkB3L/Xdebkumvft5q+PbvTEZwtXAK0Yx9TM9j9EQcbO/pZt4fZSwiqdPKvsJFL73uVI06uy/PbZOwvgdc5YCbLztqe8z0xpWHvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bell.net; spf=pass smtp.mailfrom=bell.net; dkim=pass (2048-bit key) header.d=bell.net header.i=@bell.net header.b=STH7xa2d; arc=none smtp.client-ip=209.71.208.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bell.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bell.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bell.net; s=selector1; t=1759512209; 
-        bh=Zng9vbugJ96jo23SWsSK+sYWjXU4T6lDUgmXQbXs8jQ=;
-        h=Message-ID:Date:MIME-Version:Subject:To:References:From:In-Reply-To:Content-Type;
-        b=STH7xa2dn/qPmG92jIcX/GRtDkY0RNMiWnaUX5nw4Z/94xFcZXc3uJksIGEjcy+vM8yrxb27s1Lk8snvVVHgaMQbkjzCZNKE3nbg+KtIVyDN4KsoYPof2Atingxuln/n03japvC+xNiLOlEtSJtyGmtnQUGfNPTraDKPtHf6YNklzHvlwd9iK8TXMtJwjxQXrdccJ8vPzzVLXKrV4pyz01fTUXQk87j7gvz/6R55jp8AvnIUUElARVMUsqK7UbjZ/tPWcKj340Wvf9pk/6ausvqT2/bEEC1xRZLlW/zTejBCGHL6POoP6FGPT9dP7GmyqcpIXCwML+3eoUgkas19yw==
-X-RG-SOPHOS: Clean
-X-RG-VADE-SC: 0
-X-RG-VADE: Clean
-X-RG-Env-Sender: dave.anglin@bell.net
-X-RG-Rigid: 687D2719085236A8
-X-RazorGate-Vade: dmFkZTEz5RsOfS/EjyC9+Ub2YxMQTERFV1WLvzAUX6YmdSOutxh9nRbLS04S3w48higa1O8ySU0qm+pqSRX3wt8t7qkudb+hf38O2cDVBt0Kodl0paa0HIkabXXcLE04OYO2sfJDqHB/jS8wt+02VySn6T7scpRa2/Wb/W0TedGsH+DNn2gMwBQkWLPoywlRU31ryXtBiYmXlotzDw/m9sHi6Ve2Oe4ZbS7rGoU0eMfVxQ1vdpTbvuVoBHAzbOn/HOzN2sm3iazxmdQXB2zliRM2lqfuZ84PwaM8At8uXBomYirF3V7eWOpaQHd67GeKnlALIR04/2bSPWgtsioImHLtEYMUYILOLrqzu60KxaDoJfi0jS84+pz1YHvEjCAHio3FYqB5B70FUgeLOG5tpRvdjUaDoceW5vxb8rUVFiNlIZEORiP8Ryt2DdKF/msyF/ll7HjQWR/Z37leTmRcz68buYNSLzuuzJKUIPl92lqv8sTwABSZMs3YepgBjMuPskBbPEHdnWoUKJbVe1qcVlI3GQOAXS5mf3ynF6weGnFTuZ4HZbi4HX3L30T7A7X8Qv1rTZ3rpm5EpmFtAmqDAuNKPjQAa7kjbsf/J8ObDge/LHWP85rEf+OYzINc2XvkMdaAGSz6QlO/27zkjU+6gaSl175fxf9Mjs880jgHp7z6R/5qNA
-X-RazorGate-Vade-Verdict: clean 0
-X-RazorGate-Vade-Classification: clean
-Received: from [192.168.2.49] (142.126.189.246) by cmx-mtlrgo002.bell.net (authenticated as dave.anglin@bell.net)
-        id 687D2719085236A8; Fri, 3 Oct 2025 13:18:32 -0400
-Message-ID: <610b10bc-1aa2-4fad-a40b-be5fcfa04430@bell.net>
-Date: Fri, 3 Oct 2025 13:18:32 -0400
+	s=arc-20240116; t=1759511986; c=relaxed/simple;
+	bh=ZlDdnaJLI0DghoLSqANwhmQOy2tH7FlR0vrRN+UESrA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sReHSB2Wk2duSHA8GD/+D7oU1M9W2LGi/7i3/wG8M0PYkDI4V1NI1gOEcRFO3j51UPXZQzcQDsS+3d2FH0U2CDfj7TCQCy8+S+GqPMKNXzi2r8ohhG0R3eP05+nfZj4I6awi0tasXFrN9z1GAUc7EiF2HFoLagS8Kxlb54z9TcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZPyibytD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759511982;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7Xdb0k4tjJddU78KLOt0p9ISsslcVjmrtfJva6RJu5E=;
+	b=ZPyibytDwyr3vfUNKH19l7UkqR6xX2teI4rlWpsOUfiR8ojAVmciSq3pjqjofn+2ytx1cT
+	fmTAuj/bCD0emICcVB87bDNI6rm2h5UieSrAWH4CLUH0iN1Jez/O8xdzcdvVB5QWMF4V35
+	Sq5CWE0Q73MWaP77KykZBiyACsDnHVY=
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
+ [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-358-9xnLn_lfP26QhdSP4W5RgQ-1; Fri, 03 Oct 2025 13:19:40 -0400
+X-MC-Unique: 9xnLn_lfP26QhdSP4W5RgQ-1
+X-Mimecast-MFC-AGG-ID: 9xnLn_lfP26QhdSP4W5RgQ_1759511980
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b55251a4309so1927788a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 10:19:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759511980; x=1760116780;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7Xdb0k4tjJddU78KLOt0p9ISsslcVjmrtfJva6RJu5E=;
+        b=UGbq/OvpU7xjeMAhksbkwzHgQsfvVacI/cOWJEH+lo69MaZEonvWchWAIugxT6/nfd
+         vac9tPgGHxqSCI5mQuWlKGDs6rHZbCw4QFI76w3x5QxTJg7tPVchr1B0LB0gq+YSBzfp
+         Q0yIl0y2UGfA6Ice2c20gPGtcxD276ognOL2Q2Rnc3HawNqmh9ctV6Zi6R2vE5yd4MtW
+         V7K4/As+D6a7+IaboPdurs4rmSofNSonT6UBlJT0YXq/Ik1QyBzAPFTj/vEWwmjljOZg
+         Src2wJ6a0tHJJ1XvocBOHPdmhTDzog1lVc9VkgnoR0VazUfixm7/j+t5eFBfFFUBvVgB
+         j8Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ2qsyIWI3G/H754+33xKQj012nWQb8/prE7RC3K2ez3be1wmhg6ytTn/V+yI19tMWT2q+sd5gsIYLr+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIdTG3SrjpSYQ8MCq30a7DPOuyWs1qmCUI3NLWBkqMuNQQ+YRc
+	MMpCIZZG9OmLyMJ4PRydwvI0B+k2E/CQqw4GypZi8y2rZGIZjQYFDVo7novnG+oHMwQwUtdtpNR
+	AZWre3V4XO4CB0NOrpZSJlzyut2TQ+JoDcvqMUZ/GYQECCIHIfQrjj1o4cJyt3VvT0A==
+X-Gm-Gg: ASbGnct667a0Mxd0TcjuMqplWi4jzAw/MaMj4c+35p1NCYtJ4Q4B7BAnL1oBaesU2Kg
+	RJeRYMvenKbFFXujThiuIx82XxNgYfK665jY40qkeYtq8+qV0W1pilW/1QE8/z4x84cuaZSO8at
+	EI612XTdVpvRX9AUUpEe9fxSJ2IuB0PiA4qakkse19HB9mAKG7e46XtbfAqkBsttTyBnN9W1nRv
+	cKWTRGzPSi/ab3yIAe5B0/mt9o49NTVumC2LMcXmww9F1tlaMjE/9i8KphZSpGAEw4J4rR80zKz
+	lWzGGaGTe9Wx0odUiI96cdqPcNnQvUlfO57HjumSQZ060ppel8DtYUAtMvp/A0lSmTSxYt0A2CS
+	V8lS70ZkcDg==
+X-Received: by 2002:a17:902:c94f:b0:267:b6f9:2ce with SMTP id d9443c01a7336-28e9a6dc5cbmr38766665ad.41.1759511979236;
+        Fri, 03 Oct 2025 10:19:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFIQTruVjpbnJZ1ZdZmYWDolGWdJgYiS/Jdec83Xw518wtBXVYujfvVLgFctuBJpUsOT8ZIeg==
+X-Received: by 2002:a17:902:c94f:b0:267:b6f9:2ce with SMTP id d9443c01a7336-28e9a6dc5cbmr38766225ad.41.1759511978516;
+        Fri, 03 Oct 2025 10:19:38 -0700 (PDT)
+Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339a4e211bbsm5135133a91.0.2025.10.03.10.19.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Oct 2025 10:19:38 -0700 (PDT)
+Date: Sat, 4 Oct 2025 01:19:32 +0800
+From: Zorro Lang <zlang@redhat.com>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: fstests@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+	djwong@kernel.org, john.g.garry@oracle.com, tytso@mit.edu,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v7 04/12] ltp/fsx.c: Add atomic writes support to fsx
+Message-ID: <20251003171932.pxzaotlafhwqsg5v@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+References: <cover.1758264169.git.ojaswin@linux.ibm.com>
+ <c3a040b249485b02b569b9269b649d02d721d995.1758264169.git.ojaswin@linux.ibm.com>
+ <20250928131924.b472fjxwir7vphsr@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <aN683ZHUzA5qPVaJ@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/9] parisc: Convert DMA map_page to map_phys interface
-To: Jason Gunthorpe <jgg@nvidia.com>, Leon Romanovsky <leon@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Leon Romanovsky <leonro@nvidia.com>, Andreas Larsson <andreas@gaisler.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, Geoff Levand <geoff@infradead.org>,
- Helge Deller <deller@gmx.de>, Ingo Molnar <mingo@redhat.com>,
- iommu@lists.linux.dev,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- Jason Wang <jasowang@redhat.com>, Juergen Gross <jgross@suse.com>,
- linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, Madhavan Srinivasan <maddy@linux.ibm.com>,
- Matt Turner <mattst88@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>,
- "Michael S. Tsirkin" <mst@redhat.com>,
- Richard Henderson <richard.henderson@linaro.org>,
- sparclinux@vger.kernel.org, Stefano Stabellini <sstabellini@kernel.org>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Thomas Gleixner <tglx@linutronix.de>, virtualization@lists.linux.dev,
- x86@kernel.org, xen-devel@lists.xenproject.org,
- Magnus Lindholm <linmag7@gmail.com>
-References: <cover.1759071169.git.leon@kernel.org>
- <333ec4dabec16d3d913a93780bc6e7ddb5240fcf.1759071169.git.leon@kernel.org>
- <20251003150144.GC3360665@nvidia.com>
-From: John David Anglin <dave.anglin@bell.net>
-Content-Language: en-US
-Autocrypt: addr=dave.anglin@bell.net; keydata=
- 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
- T70V9SSrl2hiw38vRzsl
-In-Reply-To: <20251003150144.GC3360665@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aN683ZHUzA5qPVaJ@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 
-On 2025-10-03 11:01 a.m., Jason Gunthorpe wrote:
-> This doesn't actually use the virt at all:
+On Thu, Oct 02, 2025 at 11:26:45PM +0530, Ojaswin Mujoo wrote:
+> On Sun, Sep 28, 2025 at 09:19:24PM +0800, Zorro Lang wrote:
+> > On Fri, Sep 19, 2025 at 12:17:57PM +0530, Ojaswin Mujoo wrote:
+> > > Implement atomic write support to help fuzz atomic writes
+> > > with fsx.
+> > > 
+> > > Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> > > Reviewed-by: John Garry <john.g.garry@oracle.com>
+> > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > > ---
+> > 
+> > Hmm... this patch causes more regular fsx test cases fail on old kernel,
+> > (e.g. g/760, g/617, g/263 ...) except set "FSX_AVOID=-a". Is there a way
+> > to disable "atomic write" automatically if it's not supported by current
+> > system?
 > 
-> 	offset = ((unsigned long) addr) & ~IOVP_MASK;
-> 	if((size % L1_CACHE_BYTES) || ((unsigned long)addr % L1_CACHE_BYTES))
-> 		ccio_io_pdir_entry(pdir_start, KERNEL_SPACE, (unsigned long)addr, hint);
+> Hi Zorro, 
+> Sorry for being late, I've been on vacation this week.
 > 
-> And ccio_io_pdir_entry():
-> 	pa = lpa(vba);
+> Yes so by design we should be automatically disabling atomic writes when
+> they are not supported by the stack but seems like the issue is that
+> when we do disable it we print some extra messages to stdout/err which
+> show up in the xfstests output causing failure.
 > 
-> Is a special instruction that uses virt but AI tells me that special
-> LPA instruction is returning phys. Not sure if that is a different
-> value than virt_to_phys()..
+> I can think of 2 ways around this:
+> 
+> 1. Don't print anything and just silently drop atomic writes if stack
+> doesn't support them.
+> 
+> 2. Make atomic writes as a default off instead of default on feature but
+> his loses a bit of coverage as existing tests wont get atomic write
+> testing free of cost any more.
 
-ccio_io_pdir_entry currently only supports KERNEL_SPACE.  For KERNEL_SPACE, lpa() and
-virt_to_phys() are equivalent if page is mapped.  lpa() returns 0 if a non-access data
-TLB fault occurs (i.e., page isn't mapped).  Not sure if that matters.
-> IDK, I'm not feeling brave enough to drop the LPA but maybe include
-> this note in the commit message.
+Hi Ojaswin,
+
+Please have a nice vacation :)
+
+It's not the "extra messages" cause failure, those "quiet" failures can be fixed
+by:
+
+diff --git a/ltp/fsx.c b/ltp/fsx.c
+index bdb87ca90..0a035b37b 100644
+--- a/ltp/fsx.c
++++ b/ltp/fsx.c
+@@ -1847,8 +1847,9 @@ int test_atomic_writes(void) {
+        struct statx stx;
+ 
+        if (o_direct != O_DIRECT) {
+-               fprintf(stderr, "main: atomic writes need O_DIRECT (-Z), "
+-                               "disabling!\n");
++               if (!quiet)
++                       fprintf(stderr, "main: atomic writes need O_DIRECT (-Z), "
++                                       "disabling!\n");
+                return 0;
+        }
+ 
+@@ -1867,8 +1868,9 @@ int test_atomic_writes(void) {
+                return 1;
+        }
+ 
+-       fprintf(stderr, "main: IO Stack does not support "
+-                       "atomic writes, disabling!\n");
++       if (!quiet)
++               fprintf(stderr, "main: IO Stack does not support "
++                               "atomic writes, disabling!\n");
+        return 0;
+ }
+
+But I hit more read or write failures e.g. [1], this failure can't be
+reproduced with FSX_AVOID=-a. Is it a atomic write bug or an unexpected
+test failure?
+
+Thanks,
+Zorro
+
+[1]
+--- /dev/fd/63	2025-09-26 19:20:35.426617312 -0400
++++ generic/263.out.bad	2025-09-26 19:20:35.116617862 -0400
+@@ -1,3 +1,337 @@
+ QA output created by 263
+ fsx -N 10000 -o 8192 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z
+-fsx -N 10000 -o 128000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z
++Seed set to 1
++main: filesystem does not support exchange range, disabling!
++skipping zero length punch hole
++truncating to largest ever: 0x50e00
++fallocating to largest ever: 0x74d54
++fallocating to largest ever: 0x759e7
++zero_range to largest ever: 0x78242
++READ BAD DATA: offset = 0x1c000, size = 0x1803, fname = /mnt/xfstests/test/junk
++OFFSET      GOOD    BAD     RANGE
++0x1c000     0x0000  0xcdcd  0x0
++operation# (mod 256) for the bad data may be 205
++0x1c001     0x0000  0xcdcd  0x1
++operation# (mod 256) for the bad data may be 205
++0x1c002     0x0000  0xcdcd  0x2
++operation# (mod 256) for the bad data may be 205
++0x1c003     0x0000  0xcdcd  0x3
++operation# (mod 256) for the bad data may be 205
++0x1c004     0x0000  0xcdcd  0x4
++operation# (mod 256) for the bad data may be 205
++0x1c005     0x0000  0xcdcd  0x5
++operation# (mod 256) for the bad data may be 205
++0x1c006     0x0000  0xcdcd  0x6
++operation# (mod 256) for the bad data may be 205
++0x1c007     0x0000  0xcdcd  0x7
++operation# (mod 256) for the bad data may be 205
++0x1c008     0x0000  0xcdcd  0x8
++operation# (mod 256) for the bad data may be 205
++0x1c009     0x0000  0xcdcd  0x9
++operation# (mod 256) for the bad data may be 205
++0x1c00a     0x0000  0xcdcd  0xa
++operation# (mod 256) for the bad data may be 205
++0x1c00b     0x0000  0xcdcd  0xb
++operation# (mod 256) for the bad data may be 205
++0x1c00c     0x0000  0xcdcd  0xc
++operation# (mod 256) for the bad data may be 205
++0x1c00d     0x0000  0xcdcd  0xd
++operation# (mod 256) for the bad data may be 205
++0x1c00e     0x0000  0xcdcd  0xe
++operation# (mod 256) for the bad data may be 205
++0x1c00f     0x0000  0xcdcd  0xf
++operation# (mod 256) for the bad data may be 205
++LOG DUMP (290 total operations):
++1(  1 mod 256): SKIPPED (no operation)
++2(  2 mod 256): WRITE    0x20400 thru 0x209ff	(0x600 bytes) HOLE	***WWWW
++3(  3 mod 256): MAPWRITE 0x69200 thru 0x6968f	(0x490 bytes)
++4(  4 mod 256): SKIPPED (no operation)
++5(  5 mod 256): SKIPPED (no operation)
++6(  6 mod 256): WRITE    0x57000 thru 0x57fff	(0x1000 bytes)
++7(  7 mod 256): TRUNCATE DOWN	from 0x69690 to 0x50e00
++8(  8 mod 256): WRITE    0x3ac00 thru 0x3b5ff	(0xa00 bytes)
++9(  9 mod 256): SKIPPED (no operation)
++10( 10 mod 256): SKIPPED (no operation)
++11( 11 mod 256): FALLOC   0x13346 thru 0x13898	(0x552 bytes) INTERIOR
++12( 12 mod 256): SKIPPED (no operation)
++13( 13 mod 256): TRUNCATE DOWN	from 0x50e00 to 0x21600
++14( 14 mod 256): SKIPPED (no operation)
++15( 15 mod 256): WRITE    0x4de00 thru 0x4edff	(0x1000 bytes) HOLE
++16( 16 mod 256): MAPREAD  0x34000 thru 0x35b18	(0x1b19 bytes)
++17( 17 mod 256): INSERT 0x18000 thru 0x18fff	(0x1000 bytes)
++18( 18 mod 256): SKIPPED (no operation)
++19( 19 mod 256): ZERO     0x423c thru 0x4d76	(0xb3b bytes)
++20( 20 mod 256): SKIPPED (no operation)
++21( 21 mod 256): SKIPPED (no operation)
++22( 22 mod 256): MAPWRITE 0x15c00 thru 0x16fcc	(0x13cd bytes)
++23( 23 mod 256): COLLAPSE 0x39000 thru 0x39fff	(0x1000 bytes)
++24( 24 mod 256): SKIPPED (no operation)
++25( 25 mod 256): FALLOC   0xc95d thru 0xd6bc	(0xd5f bytes) INTERIOR
++26( 26 mod 256): SKIPPED (no operation)
++27( 27 mod 256): DEDUPE 0x4c000 thru 0x4cfff	(0x1000 bytes) to 0x0 thru 0xfff
++28( 28 mod 256): SKIPPED (no operation)
++29( 29 mod 256): SKIPPED (no operation)
++30( 30 mod 256): WRITE    0x66000 thru 0x66fff	(0x1000 bytes) HOLE
++31( 31 mod 256): SKIPPED (no operation)
++32( 32 mod 256): WRITE    0x66600 thru 0x679ff	(0x1400 bytes) EXTEND
++33( 33 mod 256): FALLOC   0x1eb35 thru 0x1fd32	(0x11fd bytes) INTERIOR
++34( 34 mod 256): PUNCH    0x51265 thru 0x525e0	(0x137c bytes)
++35( 35 mod 256): MAPWRITE 0x63400 thru 0x63c56	(0x857 bytes)
++36( 36 mod 256): SKIPPED (no operation)
++37( 37 mod 256): SKIPPED (no operation)
++38( 38 mod 256): MAPREAD  0x4d000 thru 0x4e8b1	(0x18b2 bytes)
++39( 39 mod 256): ZERO     0x2b418 thru 0x2b96c	(0x555 bytes)
++40( 40 mod 256): READ     0x39000 thru 0x39fff	(0x1000 bytes)
++41( 41 mod 256): READ     0x2b000 thru 0x2bfff	(0x1000 bytes)
++42( 42 mod 256): WRITE    0x29000 thru 0x299ff	(0xa00 bytes)
++43( 43 mod 256): SKIPPED (no operation)
++44( 44 mod 256): SKIPPED (no operation)
++45( 45 mod 256): WRITE    0x17000 thru 0x17fff	(0x1000 bytes)
++46( 46 mod 256): WRITE    0x2f800 thru 0x313ff	(0x1c00 bytes)
++47( 47 mod 256): SKIPPED (no operation)
++48( 48 mod 256): PUNCH    0x4d698 thru 0x4f5b1	(0x1f1a bytes)
++49( 49 mod 256): SKIPPED (no operation)
++50( 50 mod 256): ZERO     0x4e2de thru 0x4fd40	(0x1a63 bytes)
++51( 51 mod 256): WRITE    0x7000 thru 0x7fff	(0x1000 bytes)
++52( 52 mod 256): ZERO     0x20849 thru 0x22574	(0x1d2c bytes)
++53( 53 mod 256): MAPREAD  0x18000 thru 0x180f5	(0xf6 bytes)
++54( 54 mod 256): WRITE    0x3d200 thru 0x3e7ff	(0x1600 bytes)
++55( 55 mod 256): SKIPPED (no operation)
++56( 56 mod 256): READ     0x4a000 thru 0x4afff	(0x1000 bytes)
++57( 57 mod 256): WRITE    0xc000 thru 0xcfff	(0x1000 bytes)
++58( 58 mod 256): WRITE    0x3dc00 thru 0x3f7ff	(0x1c00 bytes)
++59( 59 mod 256): TRUNCATE DOWN	from 0x67a00 to 0x50800
++60( 60 mod 256): TRUNCATE DOWN	from 0x50800 to 0x16a00	******WWWW
++61( 61 mod 256): WRITE    0x2aa00 thru 0x2c7ff	(0x1e00 bytes) HOLE	***WWWW
++62( 62 mod 256): WRITE    0x18000 thru 0x18fff	(0x1000 bytes)
++63( 63 mod 256): PUNCH    0x21b7f thru 0x223db	(0x85d bytes)
++64( 64 mod 256): SKIPPED (no operation)
++65( 65 mod 256): SKIPPED (no operation)
++66( 66 mod 256): ZERO     0x1a7f4 thru 0x1b577	(0xd84 bytes)
++67( 67 mod 256): PUNCH    0x2b961 thru 0x2bc67	(0x307 bytes)
++68( 68 mod 256): READ     0x18000 thru 0x18fff	(0x1000 bytes)
++69( 69 mod 256): WRITE    0x21200 thru 0x229ff	(0x1800 bytes)
++70( 70 mod 256): MAPWRITE 0x22400 thru 0x22b7a	(0x77b bytes)
++71( 71 mod 256): MAPWRITE 0x38e00 thru 0x3a8a6	(0x1aa7 bytes)
++72( 72 mod 256): FALLOC   0x74270 thru 0x74d54	(0xae4 bytes) EXTENDING
++73( 73 mod 256): WRITE    0x12000 thru 0x12fff	(0x1000 bytes)
++74( 74 mod 256): TRUNCATE DOWN	from 0x74d54 to 0x4e000
++75( 75 mod 256): SKIPPED (no operation)
++76( 76 mod 256): TRUNCATE UP	from 0x4e000 to 0x70e00
++77( 77 mod 256): COPY 0x3c000 thru 0x3cfff	(0x1000 bytes) to 0x43600 thru 0x445ff
++78( 78 mod 256): ZERO     0x6323d thru 0x64af5	(0x18b9 bytes)
++79( 79 mod 256): MAPREAD  0x51000 thru 0x5119f	(0x1a0 bytes)
++80( 80 mod 256): MAPREAD  0x6d000 thru 0x6e285	(0x1286 bytes)
++81( 81 mod 256): WRITE    0x9000 thru 0x9fff	(0x1000 bytes)
++82( 82 mod 256): FALLOC   0x19973 thru 0x1a711	(0xd9e bytes) INTERIOR
++83( 83 mod 256): COPY 0x20000 thru 0x20fff	(0x1000 bytes) to 0xe00 thru 0x1dff
++84( 84 mod 256): SKIPPED (no operation)
++85( 85 mod 256): SKIPPED (no operation)
++86( 86 mod 256): COPY 0xc000 thru 0xcfff	(0x1000 bytes) to 0x36e00 thru 0x37dff
++87( 87 mod 256): WRITE    0x18000 thru 0x18fff	(0x1000 bytes)
++88( 88 mod 256): FALLOC   0x57797 thru 0x5818a	(0x9f3 bytes) INTERIOR
++89( 89 mod 256): WRITE    0x70200 thru 0x71bff	(0x1a00 bytes) EXTEND
++90( 90 mod 256): PUNCH    0x22525 thru 0x2408f	(0x1b6b bytes)
++91( 91 mod 256): ZERO     0x710bf thru 0x729b6	(0x18f8 bytes)
++92( 92 mod 256): DEDUPE 0x14000 thru 0x14fff	(0x1000 bytes) to 0x8000 thru 0x8fff
++93( 93 mod 256): WRITE    0x6b800 thru 0x6bbff	(0x400 bytes)
++94( 94 mod 256): ZERO     0x5caa5 thru 0x5e066	(0x15c2 bytes)
++95( 95 mod 256): MAPWRITE 0x3d000 thru 0x3d7ef	(0x7f0 bytes)
++96( 96 mod 256): READ     0x30000 thru 0x30fff	(0x1000 bytes)
++97( 97 mod 256): PUNCH    0x1e513 thru 0x204d1	(0x1fbf bytes)
++98( 98 mod 256): FALLOC   0x67904 thru 0x690c7	(0x17c3 bytes) INTERIOR
++99( 99 mod 256): MAPREAD  0x44000 thru 0x44e08	(0xe09 bytes)
++100(100 mod 256): WRITE    0x1200 thru 0x1dff	(0xc00 bytes)
++101(101 mod 256): ZERO     0x6e649 thru 0x70552	(0x1f0a bytes)
++102(102 mod 256): SKIPPED (no operation)
++103(103 mod 256): SKIPPED (no operation)
++104(104 mod 256): WRITE    0x2b800 thru 0x2bfff	(0x800 bytes)
++105(105 mod 256): READ     0x64000 thru 0x64fff	(0x1000 bytes)
++106(106 mod 256): SKIPPED (no operation)
++107(107 mod 256): SKIPPED (no operation)
++108(108 mod 256): SKIPPED (no operation)
++109(109 mod 256): WRITE    0x6e400 thru 0x6ebff	(0x800 bytes)
++110(110 mod 256): PUNCH    0x504ed thru 0x51d71	(0x1885 bytes)
++111(111 mod 256): MAPWRITE 0x19800 thru 0x1ac57	(0x1458 bytes)
++112(112 mod 256): WRITE    0x51800 thru 0x521ff	(0xa00 bytes)
++113(113 mod 256): ZERO     0x205b9 thru 0x20d56	(0x79e bytes)
++114(114 mod 256): SKIPPED (no operation)
++115(115 mod 256): SKIPPED (no operation)
++116(116 mod 256): COLLAPSE 0x39000 thru 0x39fff	(0x1000 bytes)
++117(117 mod 256): SKIPPED (no operation)
++118(118 mod 256): MAPWRITE 0x74000 thru 0x75217	(0x1218 bytes)
++119(119 mod 256): COPY 0x6000 thru 0x6fff	(0x1000 bytes) to 0x29000 thru 0x29fff
++120(120 mod 256): SKIPPED (no operation)
++121(121 mod 256): COLLAPSE 0x1a000 thru 0x1afff	(0x1000 bytes)
++122(122 mod 256): SKIPPED (no operation)
++123(123 mod 256): WRITE    0x1b600 thru 0x1bfff	(0xa00 bytes)
++124(124 mod 256): INSERT 0x70000 thru 0x70fff	(0x1000 bytes)
++125(125 mod 256): FALLOC   0x21210 thru 0x2293d	(0x172d bytes) INTERIOR
++126(126 mod 256): COPY 0x21000 thru 0x21fff	(0x1000 bytes) to 0x23000 thru 0x23fff
++127(127 mod 256): MAPWRITE 0x33200 thru 0x342a3	(0x10a4 bytes)
++128(128 mod 256): TRUNCATE DOWN	from 0x75218 to 0x49c00
++129(129 mod 256): WRITE    0x11200 thru 0x12bff	(0x1a00 bytes)
++130(130 mod 256): TRUNCATE DOWN	from 0x49c00 to 0x32800
++131(131 mod 256): DEDUPE 0xa000 thru 0xafff	(0x1000 bytes) to 0x2b000 thru 0x2bfff
++132(132 mod 256): SKIPPED (no operation)
++133(133 mod 256): FALLOC   0x56e33 thru 0x57d67	(0xf34 bytes) PAST_EOF
++134(134 mod 256): MAPREAD  0xc000 thru 0xdedd	(0x1ede bytes)
++135(135 mod 256): READ     0x21000 thru 0x21fff	(0x1000 bytes)
++136(136 mod 256): FALLOC   0x34071 thru 0x34b27	(0xab6 bytes) EXTENDING
++137(137 mod 256): ZERO     0x4db33 thru 0x4f0da	(0x15a8 bytes)
++138(138 mod 256): FALLOC   0xf70b thru 0x10eda	(0x17cf bytes) INTERIOR
++139(139 mod 256): PUNCH    0xdba7 thru 0xf1c7	(0x1621 bytes)
++140(140 mod 256): SKIPPED (no operation)
++141(141 mod 256): MAPWRITE 0x25800 thru 0x27422	(0x1c23 bytes)
++142(142 mod 256): READ     0x1f000 thru 0x1ffff	(0x1000 bytes)
++143(143 mod 256): TRUNCATE UP	from 0x34b27 to 0x45e00
++144(144 mod 256): PUNCH    0x3ba91 thru 0x3ccf2	(0x1262 bytes)
++145(145 mod 256): COLLAPSE 0x16000 thru 0x16fff	(0x1000 bytes)
++146(146 mod 256): COLLAPSE 0x17000 thru 0x17fff	(0x1000 bytes)
++147(147 mod 256): WRITE    0x2b200 thru 0x2c7ff	(0x1600 bytes)
++148(148 mod 256): ZERO     0x285f2 thru 0x292fa	(0xd09 bytes)
++149(149 mod 256): CLONE 0x9000 thru 0x9fff	(0x1000 bytes) to 0x2000 thru 0x2fff
++150(150 mod 256): ZERO     0x7030e thru 0x71879	(0x156c bytes)
++151(151 mod 256): SKIPPED (no operation)
++152(152 mod 256): WRITE    0x6000 thru 0x6fff	(0x1000 bytes)
++153(153 mod 256): SKIPPED (no operation)
++154(154 mod 256): FALLOC   0x5669 thru 0x6fcb	(0x1962 bytes) INTERIOR
++155(155 mod 256): WRITE    0x76600 thru 0x76bff	(0x600 bytes) HOLE
++156(156 mod 256): ZERO     0x4c77 thru 0x5f94	(0x131e bytes)
++157(157 mod 256): MAPREAD  0x50000 thru 0x512c3	(0x12c4 bytes)
++158(158 mod 256): DEDUPE 0x5000 thru 0x5fff	(0x1000 bytes) to 0x62000 thru 0x62fff
++159(159 mod 256): COLLAPSE 0x4c000 thru 0x4cfff	(0x1000 bytes)
++160(160 mod 256): FALLOC   0x6dbe1 thru 0x6f58f	(0x19ae bytes) INTERIOR
++161(161 mod 256): TRUNCATE DOWN	from 0x75c00 to 0x4a00	******WWWW
++162(162 mod 256): SKIPPED (no operation)
++163(163 mod 256): ZERO     0x2034f thru 0x21e10	(0x1ac2 bytes)
++164(164 mod 256): MAPREAD  0x1a000 thru 0x1bd44	(0x1d45 bytes)
++165(165 mod 256): PUNCH    0x104d9 thru 0x10d5c	(0x884 bytes)
++166(166 mod 256): TRUNCATE UP	from 0x21e11 to 0x4e200
++167(167 mod 256): WRITE    0x75800 thru 0x759ff	(0x200 bytes) HOLE
++168(168 mod 256): MAPWRITE 0x36c00 thru 0x389ee	(0x1def bytes)
++169(169 mod 256): WRITE    0x6da00 thru 0x6edff	(0x1400 bytes)
++170(170 mod 256): ZERO     0x592e2 thru 0x5a0af	(0xdce bytes)
++171(171 mod 256): SKIPPED (no operation)
++172(172 mod 256): SKIPPED (no operation)
++173(173 mod 256): SKIPPED (no operation)
++174(174 mod 256): WRITE    0x30000 thru 0x30fff	(0x1000 bytes)
++175(175 mod 256): SKIPPED (no operation)
++176(176 mod 256): ZERO     0x41a29 thru 0x42580	(0xb58 bytes)
++177(177 mod 256): SKIPPED (no operation)
++178(178 mod 256): SKIPPED (no operation)
++179(179 mod 256): MAPWRITE 0x47600 thru 0x4901a	(0x1a1b bytes)
++180(180 mod 256): ZERO     0x6acd0 thru 0x6b5f3	(0x924 bytes)
++181(181 mod 256): WRITE    0x43000 thru 0x43fff	(0x1000 bytes)
++182(182 mod 256): SKIPPED (no operation)
++183(183 mod 256): SKIPPED (no operation)
++184(184 mod 256): MAPREAD  0x38000 thru 0x3854c	(0x54d bytes)
++185(185 mod 256): READ     0x7000 thru 0x7fff	(0x1000 bytes)
++186(186 mod 256): SKIPPED (no operation)
++187(187 mod 256): SKIPPED (no operation)
++188(188 mod 256): MAPREAD  0x18000 thru 0x1805b	(0x5c bytes)
++189(189 mod 256): TRUNCATE DOWN	from 0x75a00 to 0x49800
++190(190 mod 256): ZERO     0x51bfe thru 0x5369f	(0x1aa2 bytes)
++191(191 mod 256): FALLOC   0x74f96 thru 0x759e7	(0xa51 bytes) EXTENDING
++192(192 mod 256): WRITE    0x35000 thru 0x35fff	(0x1000 bytes)
++193(193 mod 256): WRITE    0x45000 thru 0x451ff	(0x200 bytes)
++194(194 mod 256): SKIPPED (no operation)
++195(195 mod 256): MAPREAD  0x57000 thru 0x58600	(0x1601 bytes)
++196(196 mod 256): SKIPPED (no operation)
++197(197 mod 256): FALLOC   0x50aa4 thru 0x5181a	(0xd76 bytes) INTERIOR
++198(198 mod 256): WRITE    0x2ec00 thru 0x307ff	(0x1c00 bytes)
++199(199 mod 256): TRUNCATE DOWN	from 0x759e7 to 0x32600
++200(200 mod 256): DEDUPE 0x1b000 thru 0x1bfff	(0x1000 bytes) to 0x18000 thru 0x18fff
++201(201 mod 256): WRITE    0x38200 thru 0x389ff	(0x800 bytes) HOLE
++202(202 mod 256): READ     0x30000 thru 0x30fff	(0x1000 bytes)
++203(203 mod 256): WRITE    0x3dc00 thru 0x3f5ff	(0x1a00 bytes) HOLE
++204(204 mod 256): SKIPPED (no operation)
++205(205 mod 256): ZERO     0x6dbe6 thru 0x6e6aa	(0xac5 bytes)
++206(206 mod 256): WRITE    0x46800 thru 0x475ff	(0xe00 bytes) HOLE
++207(207 mod 256): SKIPPED (no operation)
++208(208 mod 256): MAPREAD  0x1000 thru 0x1658	(0x659 bytes)
++209(209 mod 256): SKIPPED (no operation)
++210(210 mod 256): SKIPPED (no operation)
++211(211 mod 256): TRUNCATE DOWN	from 0x47600 to 0x22200
++212(212 mod 256): SKIPPED (no operation)
++213(213 mod 256): FALLOC   0x69700 thru 0x6b675	(0x1f75 bytes) EXTENDING
++214(214 mod 256): TRUNCATE DOWN	from 0x6b675 to 0x3f400
++215(215 mod 256): READ     0x24000 thru 0x24fff	(0x1000 bytes)
++216(216 mod 256): WRITE    0xea00 thru 0x105ff	(0x1c00 bytes)
++217(217 mod 256): FALLOC   0xc67b thru 0xde4b	(0x17d0 bytes) INTERIOR
++218(218 mod 256): SKIPPED (no operation)
++219(219 mod 256): MAPWRITE 0x3e200 thru 0x3f9fe	(0x17ff bytes)
++220(220 mod 256): TRUNCATE DOWN	from 0x3f9ff to 0xe200	******WWWW
++221(221 mod 256): PUNCH    0x7e84 thru 0x92c8	(0x1445 bytes)
++222(222 mod 256): FALLOC   0x1e61b thru 0x1e747	(0x12c bytes) EXTENDING
++223(223 mod 256): INSERT 0xd000 thru 0xdfff	(0x1000 bytes)
++224(224 mod 256): TRUNCATE DOWN	from 0x1f747 to 0xe000	******WWWW
++225(225 mod 256): CLONE 0xa000 thru 0xafff	(0x1000 bytes) to 0x2f000 thru 0x2ffff
++226(226 mod 256): CLONE 0x26000 thru 0x26fff	(0x1000 bytes) to 0x1b000 thru 0x1bfff
++227(227 mod 256): SKIPPED (no operation)
++228(228 mod 256): ZERO     0x2c6f7 thru 0x2e4be	(0x1dc8 bytes)
++229(229 mod 256): WRITE    0x6d400 thru 0x6ddff	(0xa00 bytes) HOLE
++230(230 mod 256): ZERO     0x1873 thru 0x1c7a	(0x408 bytes)
++231(231 mod 256): MAPWRITE 0x44400 thru 0x447d5	(0x3d6 bytes)
++232(232 mod 256): WRITE    0x4b000 thru 0x4bfff	(0x1000 bytes)
++233(233 mod 256): ZERO     0x6ed0 thru 0x82c8	(0x13f9 bytes)
++234(234 mod 256): SKIPPED (no operation)
++235(235 mod 256): TRUNCATE DOWN	from 0x6de00 to 0x4c600
++236(236 mod 256): WRITE    0x19a00 thru 0x1a3ff	(0xa00 bytes)
++237(237 mod 256): READ     0x38000 thru 0x38fff	(0x1000 bytes)
++238(238 mod 256): TRUNCATE UP	from 0x4c600 to 0x52a00
++239(239 mod 256): WRITE    0x77a00 thru 0x78dff	(0x1400 bytes) HOLE
++240(240 mod 256): TRUNCATE DOWN	from 0x78e00 to 0x5f600
++241(241 mod 256): PUNCH    0x30dcd thru 0x32305	(0x1539 bytes)
++242(242 mod 256): SKIPPED (no operation)
++243(243 mod 256): ZERO     0x76374 thru 0x78241	(0x1ece bytes)
++244(244 mod 256): SKIPPED (no operation)
++245(245 mod 256): FALLOC   0x695c5 thru 0x6a2e6	(0xd21 bytes) INTERIOR
++246(246 mod 256): MAPWRITE 0x5ac00 thru 0x5b185	(0x586 bytes)
++247(247 mod 256): WRITE    0x31200 thru 0x313ff	(0x200 bytes)
++248(248 mod 256): SKIPPED (no operation)
++249(249 mod 256): TRUNCATE DOWN	from 0x78242 to 0xf200	******WWWW
++250(250 mod 256): FALLOC   0x65000 thru 0x66f26	(0x1f26 bytes) PAST_EOF
++251(251 mod 256): WRITE    0x45400 thru 0x467ff	(0x1400 bytes) HOLE	***WWWW
++252(252 mod 256): SKIPPED (no operation)
++253(253 mod 256): SKIPPED (no operation)
++254(254 mod 256): MAPWRITE 0x4be00 thru 0x4daee	(0x1cef bytes)
++255(255 mod 256): MAPREAD  0xc000 thru 0xcae9	(0xaea bytes)
++256(  0 mod 256): READ     0x3e000 thru 0x3efff	(0x1000 bytes)
++257(  1 mod 256): SKIPPED (no operation)
++258(  2 mod 256): INSERT 0x45000 thru 0x45fff	(0x1000 bytes)
++259(  3 mod 256): ZERO     0x1d7d5 thru 0x1f399	(0x1bc5 bytes)	******ZZZZ
++260(  4 mod 256): TRUNCATE DOWN	from 0x4eaef to 0x11200	******WWWW
++261(  5 mod 256): WRITE    0x43000 thru 0x43fff	(0x1000 bytes) HOLE	***WWWW
++262(  6 mod 256): WRITE    0x2200 thru 0x31ff	(0x1000 bytes)
++263(  7 mod 256): WRITE    0x15000 thru 0x15fff	(0x1000 bytes)
++264(  8 mod 256): WRITE    0x2e400 thru 0x2e7ff	(0x400 bytes)
++265(  9 mod 256): COPY 0xd000 thru 0xdfff	(0x1000 bytes) to 0x1d800 thru 0x1e7ff	******EEEE
++266( 10 mod 256): CLONE 0x2a000 thru 0x2afff	(0x1000 bytes) to 0x21000 thru 0x21fff
++267( 11 mod 256): MAPREAD  0x31000 thru 0x31d0a	(0xd0b bytes)
++268( 12 mod 256): SKIPPED (no operation)
++269( 13 mod 256): WRITE    0x25000 thru 0x25fff	(0x1000 bytes)
++270( 14 mod 256): SKIPPED (no operation)
++271( 15 mod 256): MAPREAD  0x30000 thru 0x30577	(0x578 bytes)
++272( 16 mod 256): PUNCH    0x1a267 thru 0x1c093	(0x1e2d bytes)
++273( 17 mod 256): MAPREAD  0x1f000 thru 0x1f9c9	(0x9ca bytes)
++274( 18 mod 256): WRITE    0x40800 thru 0x40dff	(0x600 bytes)
++275( 19 mod 256): SKIPPED (no operation)
++276( 20 mod 256): MAPWRITE 0x20600 thru 0x22115	(0x1b16 bytes)
++277( 21 mod 256): MAPWRITE 0x3d000 thru 0x3ee5a	(0x1e5b bytes)
++278( 22 mod 256): WRITE    0x2ee00 thru 0x2efff	(0x200 bytes)
++279( 23 mod 256): WRITE    0x76200 thru 0x769ff	(0x800 bytes) HOLE
++280( 24 mod 256): SKIPPED (no operation)
++281( 25 mod 256): SKIPPED (no operation)
++282( 26 mod 256): MAPREAD  0xa000 thru 0xa5e7	(0x5e8 bytes)
++283( 27 mod 256): SKIPPED (no operation)
++284( 28 mod 256): SKIPPED (no operation)
++285( 29 mod 256): SKIPPED (no operation)
++286( 30 mod 256): SKIPPED (no operation)
++287( 31 mod 256): COLLAPSE 0x11000 thru 0x11fff	(0x1000 bytes)
++288( 32 mod 256): COPY 0x5d000 thru 0x5dfff	(0x1000 bytes) to 0x4ca00 thru 0x4d9ff
++289( 33 mod 256): TRUNCATE DOWN	from 0x75a00 to 0x1e400
++290( 34 mod 256): MAPREAD  0x1c000 thru 0x1d802	(0x1803 bytes)	***RRRR***
++Log of operations saved to "/mnt/xfstests/test/junk.fsxops"; replay with --replay-ops
++Correct content saved for comparison
++(maybe hexdump "/mnt/xfstests/test/junk" vs "/mnt/xfstests/test/junk.fsxgood")
+
+Thanks,
+Zorro
+
+> 
+> Regards,
+> ojaswin
+> 
+> > Thanks,
+> > Zorro
+> > 
+> > >  ltp/fsx.c | 115 +++++++++++++++++++++++++++++++++++++++++++++++++++---
+> > >  1 file changed, 110 insertions(+), 5 deletions(-)
+> > > 
+> > > diff --git a/ltp/fsx.c b/ltp/fsx.c
+> > > index 163b9453..bdb87ca9 100644
+> > > --- a/ltp/fsx.c
+> > > +++ b/ltp/fsx.c
+> > > @@ -40,6 +40,7 @@
+> > >  #include <liburing.h>
+> > >  #endif
+> > >  #include <sys/syscall.h>
+> > > +#include "statx.h"
+> > >  
+> > >  #ifndef MAP_FILE
+> > >  # define MAP_FILE 0
+> > > @@ -49,6 +50,10 @@
+> > >  #define RWF_DONTCACHE	0x80
+> > >  #endif
+> > >  
+> > > +#ifndef RWF_ATOMIC
+> > > +#define RWF_ATOMIC	0x40
+> > > +#endif
+> > > +
+> > >  #define NUMPRINTCOLUMNS 32	/* # columns of data to print on each line */
+> > >  
+> > >  /* Operation flags (bitmask) */
+> > > @@ -110,6 +115,7 @@ enum {
+> > >  	OP_READ_DONTCACHE,
+> > >  	OP_WRITE,
+> > >  	OP_WRITE_DONTCACHE,
+> > > +	OP_WRITE_ATOMIC,
+> > >  	OP_MAPREAD,
+> > >  	OP_MAPWRITE,
+> > >  	OP_MAX_LITE,
+> > > @@ -200,6 +206,11 @@ int	uring = 0;
+> > >  int	mark_nr = 0;
+> > >  int	dontcache_io = 1;
+> > >  int	hugepages = 0;                  /* -h flag */
+> > > +int	do_atomic_writes = 1;		/* -a flag disables */
+> > > +
+> > > +/* User for atomic writes */
+> > > +int awu_min = 0;
+> > > +int awu_max = 0;
+> > >  
+> > >  /* Stores info needed to periodically collapse hugepages */
+> > >  struct hugepages_collapse_info {
+> > > @@ -288,6 +299,7 @@ static const char *op_names[] = {
+> > >  	[OP_READ_DONTCACHE] = "read_dontcache",
+> > >  	[OP_WRITE] = "write",
+> > >  	[OP_WRITE_DONTCACHE] = "write_dontcache",
+> > > +	[OP_WRITE_ATOMIC] = "write_atomic",
+> > >  	[OP_MAPREAD] = "mapread",
+> > >  	[OP_MAPWRITE] = "mapwrite",
+> > >  	[OP_TRUNCATE] = "truncate",
+> > > @@ -422,6 +434,7 @@ logdump(void)
+> > >  				prt("\t***RRRR***");
+> > >  			break;
+> > >  		case OP_WRITE_DONTCACHE:
+> > > +		case OP_WRITE_ATOMIC:
+> > >  		case OP_WRITE:
+> > >  			prt("WRITE    0x%x thru 0x%x\t(0x%x bytes)",
+> > >  			    lp->args[0], lp->args[0] + lp->args[1] - 1,
+> > > @@ -1073,6 +1086,25 @@ update_file_size(unsigned offset, unsigned size)
+> > >  	file_size = offset + size;
+> > >  }
+> > >  
+> > > +static int is_power_of_2(unsigned n) {
+> > > +	return ((n & (n - 1)) == 0);
+> > > +}
+> > > +
+> > > +/*
+> > > + * Round down n to nearest power of 2.
+> > > + * If n is already a power of 2, return n;
+> > > + */
+> > > +static int rounddown_pow_of_2(int n) {
+> > > +	int i = 0;
+> > > +
+> > > +	if (is_power_of_2(n))
+> > > +		return n;
+> > > +
+> > > +	for (; (1 << i) < n; i++);
+> > > +
+> > > +	return 1 << (i - 1);
+> > > +}
+> > > +
+> > >  void
+> > >  dowrite(unsigned offset, unsigned size, int flags)
+> > >  {
+> > > @@ -1081,6 +1113,27 @@ dowrite(unsigned offset, unsigned size, int flags)
+> > >  	offset -= offset % writebdy;
+> > >  	if (o_direct)
+> > >  		size -= size % writebdy;
+> > > +	if (flags & RWF_ATOMIC) {
+> > > +		/* atomic write len must be between awu_min and awu_max */
+> > > +		if (size < awu_min)
+> > > +			size = awu_min;
+> > > +		if (size > awu_max)
+> > > +			size = awu_max;
+> > > +
+> > > +		/* atomic writes need power-of-2 sizes */
+> > > +		size = rounddown_pow_of_2(size);
+> > > +
+> > > +		/* atomic writes need naturally aligned offsets */
+> > > +		offset -= offset % size;
+> > > +
+> > > +		/* Skip the write if we are crossing max filesize */
+> > > +		if ((offset + size) > maxfilelen) {
+> > > +			if (!quiet && testcalls > simulatedopcount)
+> > > +				prt("skipping atomic write past maxfilelen\n");
+> > > +			log4(OP_WRITE_ATOMIC, offset, size, FL_SKIPPED);
+> > > +			return;
+> > > +		}
+> > > +	}
+> > >  	if (size == 0) {
+> > >  		if (!quiet && testcalls > simulatedopcount && !o_direct)
+> > >  			prt("skipping zero size write\n");
+> > > @@ -1088,7 +1141,10 @@ dowrite(unsigned offset, unsigned size, int flags)
+> > >  		return;
+> > >  	}
+> > >  
+> > > -	log4(OP_WRITE, offset, size, FL_NONE);
+> > > +	if (flags & RWF_ATOMIC)
+> > > +		log4(OP_WRITE_ATOMIC, offset, size, FL_NONE);
+> > > +	else
+> > > +		log4(OP_WRITE, offset, size, FL_NONE);
+> > >  
+> > >  	gendata(original_buf, good_buf, offset, size);
+> > >  	if (offset + size > file_size) {
+> > > @@ -1108,8 +1164,9 @@ dowrite(unsigned offset, unsigned size, int flags)
+> > >  		       (monitorstart == -1 ||
+> > >  			(offset + size > monitorstart &&
+> > >  			(monitorend == -1 || offset <= monitorend))))))
+> > > -		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\tdontcache=%d\n", testcalls,
+> > > -		    offset, offset + size - 1, size, (flags & RWF_DONTCACHE) != 0);
+> > > +		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\tdontcache=%d atomic_wr=%d\n", testcalls,
+> > > +		    offset, offset + size - 1, size, (flags & RWF_DONTCACHE) != 0,
+> > > +		    (flags & RWF_ATOMIC) != 0);
+> > >  	iret = fsxwrite(fd, good_buf + offset, size, offset, flags);
+> > >  	if (iret != size) {
+> > >  		if (iret == -1)
+> > > @@ -1785,6 +1842,36 @@ do_dedupe_range(unsigned offset, unsigned length, unsigned dest)
+> > >  }
+> > >  #endif
+> > >  
+> > > +int test_atomic_writes(void) {
+> > > +	int ret;
+> > > +	struct statx stx;
+> > > +
+> > > +	if (o_direct != O_DIRECT) {
+> > > +		fprintf(stderr, "main: atomic writes need O_DIRECT (-Z), "
+> > > +				"disabling!\n");
+> > > +		return 0;
+> > > +	}
+> > > +
+> > > +	ret = xfstests_statx(AT_FDCWD, fname, 0, STATX_WRITE_ATOMIC, &stx);
+> > > +	if (ret < 0) {
+> > > +		fprintf(stderr, "main: Statx failed with %d."
+> > > +			" Failed to determine atomic write limits, "
+> > > +			" disabling!\n", ret);
+> > > +		return 0;
+> > > +	}
+> > > +
+> > > +	if (stx.stx_attributes & STATX_ATTR_WRITE_ATOMIC &&
+> > > +	    stx.stx_atomic_write_unit_min > 0) {
+> > > +		awu_min = stx.stx_atomic_write_unit_min;
+> > > +		awu_max = stx.stx_atomic_write_unit_max;
+> > > +		return 1;
+> > > +	}
+> > > +
+> > > +	fprintf(stderr, "main: IO Stack does not support "
+> > > +			"atomic writes, disabling!\n");
+> > > +	return 0;
+> > > +}
+> > > +
+> > >  #ifdef HAVE_COPY_FILE_RANGE
+> > >  int
+> > >  test_copy_range(void)
+> > > @@ -2356,6 +2443,12 @@ have_op:
+> > >  			goto out;
+> > >  		}
+> > >  		break;
+> > > +	case OP_WRITE_ATOMIC:
+> > > +		if (!do_atomic_writes) {
+> > > +			log4(OP_WRITE_ATOMIC, offset, size, FL_SKIPPED);
+> > > +			goto out;
+> > > +		}
+> > > +		break;
+> > >  	}
+> > >  
+> > >  	switch (op) {
+> > > @@ -2385,6 +2478,11 @@ have_op:
+> > >  			dowrite(offset, size, 0);
+> > >  		break;
+> > >  
+> > > +	case OP_WRITE_ATOMIC:
+> > > +		TRIM_OFF_LEN(offset, size, maxfilelen);
+> > > +		dowrite(offset, size, RWF_ATOMIC);
+> > > +		break;
+> > > +
+> > >  	case OP_MAPREAD:
+> > >  		TRIM_OFF_LEN(offset, size, file_size);
+> > >  		domapread(offset, size);
+> > > @@ -2511,13 +2609,14 @@ void
+> > >  usage(void)
+> > >  {
+> > >  	fprintf(stdout, "usage: %s",
+> > > -		"fsx [-dfhknqxyzBEFHIJKLORWXZ0]\n\
+> > > +		"fsx [-adfhknqxyzBEFHIJKLORWXZ0]\n\
+> > >  	   [-b opnum] [-c Prob] [-g filldata] [-i logdev] [-j logid]\n\
+> > >  	   [-l flen] [-m start:end] [-o oplen] [-p progressinterval]\n\
+> > >  	   [-r readbdy] [-s style] [-t truncbdy] [-w writebdy]\n\
+> > >  	   [-A|-U] [-D startingop] [-N numops] [-P dirpath] [-S seed]\n\
+> > >  	   [--replay-ops=opsfile] [--record-ops[=opsfile]] [--duration=seconds]\n\
+> > >  	   ... fname\n\
+> > > +	-a: disable atomic writes\n\
+> > >  	-b opnum: beginning operation number (default 1)\n\
+> > >  	-c P: 1 in P chance of file close+open at each op (default infinity)\n\
+> > >  	-d: debug output for all operations\n\
+> > > @@ -3059,9 +3158,13 @@ main(int argc, char **argv)
+> > >  	setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
+> > >  
+> > >  	while ((ch = getopt_long(argc, argv,
+> > > -				 "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
+> > > +				 "0ab:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
+> > >  				 longopts, NULL)) != EOF)
+> > >  		switch (ch) {
+> > > +		case 'a':
+> > > +			prt("main(): Atomic writes disabled\n");
+> > > +			do_atomic_writes = 0;
+> > > +			break;
+> > >  		case 'b':
+> > >  			simulatedopcount = getnum(optarg, &endp);
+> > >  			if (!quiet)
+> > > @@ -3475,6 +3578,8 @@ main(int argc, char **argv)
+> > >  		exchange_range_calls = test_exchange_range();
+> > >  	if (dontcache_io)
+> > >  		dontcache_io = test_dontcache_io();
+> > > +	if (do_atomic_writes)
+> > > +		do_atomic_writes = test_atomic_writes();
+> > >  
+> > >  	while (keep_running())
+> > >  		if (!test())
+> > > -- 
+> > > 2.49.0
+> > > 
+> > 
 > 
 
--- 
-John David Anglin  dave.anglin@bell.net
 
