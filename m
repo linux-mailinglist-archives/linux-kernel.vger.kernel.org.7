@@ -1,119 +1,131 @@
-Return-Path: <linux-kernel+bounces-841322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64624BB708D
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 15:38:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9FC5BB712C
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 15:48:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 653634E3B41
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 13:38:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D07B18936D5
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 13:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992422B9B9;
-	Fri,  3 Oct 2025 13:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07CFF1EB5D6;
+	Fri,  3 Oct 2025 13:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kkgF/PRP"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fSH9A58r"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1122115E8B
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 13:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36B51D7E42
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 13:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759498722; cv=none; b=LO1L7j+PGstiBryNgf4G5AJtghLDOrBbWHnb65NYQZgV3HmhgexjVMxUErm3EHBTEyT+q+zBVjFNoW1npuvP0VYDuAUIYUPhrE5vonwYYRrDE9P9KpiUQPzcL4r8RLU/m5LHOraBH1q8ygVOrE4xEOmGlkSZSnSR0XvTqbet/Ps=
+	t=1759499135; cv=none; b=DMB7WD5qUgAzD+7r8N/Xvy07bjSbgdlWXFr7BHS1LZXvH1w4wa+idDP3vfrh202fqtjjWE6i/IXE8+dM/u3l3yVboQ4w/r///Z+WgIu3LhWghg/HKLL8zIDqKvVEL3bpQq790hzG1jT9OevzZXXbNiv0vmTDXZWxBk0cw4R7WLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759498722; c=relaxed/simple;
-	bh=HchU8f4EgzCIclHzMtEp4ytQk6iEU1OkJuge3NDZgkw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qK+RHz3olVeADc/B4vPr74BePgUOdRkVL4UJBjk2pr9qbsI4FJCLdTc17aIOoeFdZ4Gtjvzl0t7nLjzJ1d787pqzjNjnJ5j2umGZRUPWhQ/v76+OxaenwytYQLsDrCQCeVdtFwf4mYRhka2Jh5pJu60NpZd8kbZdwsNzej4SqkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kkgF/PRP; arc=none smtp.client-ip=209.85.128.42
+	s=arc-20240116; t=1759499135; c=relaxed/simple;
+	bh=PkmJKqkQkGOb3jQUSVUD7zxkaqJkiT/jxK84E6KIlF4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GXBdSG73aXQ5TlNB0fDyCDxc2uDCJQvoASkT1GDyphgAZXSph2a33dDnPNFqGmQlnMe3jcrQ1M/J20ocZdT/1VhUqHy7DT36shh6jDLcKBPeMnpepZa8hXOTaPjff/j/XOb2hyx/m/jOKbGhQN6rZaU6J/1G76QQp2Bc9RaV/0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fSH9A58r; arc=none smtp.client-ip=209.85.215.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e34bd8eb2so25625665e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 06:38:40 -0700 (PDT)
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b57bf560703so1668600a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 06:45:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759498719; x=1760103519; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zjd42OOVf+WajS57RrAMPmwuVCYgfRwVOtOJ5YCKMLU=;
-        b=kkgF/PRP3WSisCuM7qr1b+G/qaDJIg1Il7bNMY1zINAfSZN+gbRXJMcVir5ZJDXrog
-         4t77zDxR0oH5L9z/5Iw5rOn3w4U5qziu3u9FHr1kt1mOtviEOIr8PRUUA6hc6oDRLqNu
-         gp+xEDLycpzqD2ELyb1wGekV7PM3b/20mhL7m4wXFvEGUWXcMsJqLd0cEM/O0r6Hhin2
-         HrCRwpm0GX9MlTYiFYFfj5z7BsVA7ofJZdlkXZ2F/JuEnuPT7OIhuPzx+ucYmxvoc576
-         OlGrsYRPVaWjW2cit/sK8IYaaue3Zc2L5xzqXLe11LIM3JSpL0CXeAnXCYN3+0lKqAR2
-         E6hQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759498719; x=1760103519;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1759499133; x=1760103933; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zjd42OOVf+WajS57RrAMPmwuVCYgfRwVOtOJ5YCKMLU=;
-        b=kPh2sbcNvWSS7rCGbXyjJ3MnqltrkNcT+J9qnWVZ3issC6v2JVrI+YLVUwAkEjc1VN
-         km6VKxGAtKPi13syQrcsI41D4xmeVFd2LBFp3t0TencYDZjmLNyW3bWIzDHkXKK+52eW
-         A7SgFOpauhcyHrgfCn0s3H+UGJT/5Kpi/H54kxaBGcCO80O31asRBb2D1NjCO+TGyNek
-         f+DJkI9CF6/6AfN9rUVgAlOiXeed/Rm1uanyTU8URZV8P6snygtkkK/2/hTgxU8M6474
-         /a3lZwoH9xliwWRRSaht0CKtUytyUGqNhgapvVlLRSGiMV9em7kSp2uGw3WxJgievqgw
-         8IRg==
-X-Forwarded-Encrypted: i=1; AJvYcCXuRPR8xWIkJeW4e90+3s7JG3MtUDi3elzCY+EdO6jRbeYgO+VN87/OKQIIM2J85CCag2iUeVRGrCcQh/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOyJoqlC0eFe0DfGYM3eqJP6o/tw0Ukad3kl91zuteU5rPnTYY
-	wnClErgp8l0LMufj1+zRZMHYPu9UR6Yj5m4biNFFBUvpwUHuZWCPJLVuzpMufw==
-X-Gm-Gg: ASbGncvjJNr+3L4/oVXU5NuH5QBte9rzfgGF3/t2i29bFBU8LDJhtGNYuv51aDw25FC
-	HI5lHoWAsXU+lWsGeKIcBhorYBq4/2dtNzNDHB7MFU9TmPtec4xyPi3LTc++pvSqY9O7SoDNEyS
-	RaeyMa5qKckk15KHfoLb5ses0dq+DSxuxJVo7VDOYL1lNBV/d2azDhG8K21Gf+iKfsrDKvcBIIH
-	bywg1YuE3rD9MTe1cIXsK/c6t9Gov9X2CKyaa8GVsNpwQ/5nGewWpfADUwJ1WfNGuzdO7Ojy45m
-	7sOvZQz1Ng36pu1xwsjH07K74ao6acImdHvvapCNYaZORbSK+Fnq6R4FgTPHpnwb+pRQ9jrIghI
-	BNpkSLkGLcwvDWCfmE7h+FjmMlB2m3+8C92dN795iXkDJ0uCeEILFtSLe1pa7u5vMDYdQ7FJJvX
-	hVLo5NZby2OrxSZWdC
-X-Google-Smtp-Source: AGHT+IE2d2+VTZ/oWXOczMKDIO72TpVL76DePnGYNZ6TZ9XC7xNSiQbSXq1QW7v89ZQFfAk81Twbfw==
-X-Received: by 2002:a05:600c:1f8d:b0:46e:436c:2191 with SMTP id 5b1f17b1804b1-46e71145d77mr24764275e9.25.1759498719134;
-        Fri, 03 Oct 2025 06:38:39 -0700 (PDT)
-Received: from f (cst-prg-21-74.cust.vodafone.cz. [46.135.21.74])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e61a020a3sm130655105e9.10.2025.10.03.06.38.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 06:38:38 -0700 (PDT)
-Date: Fri, 3 Oct 2025 15:38:28 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: kernel test robot <oliver.sang@intel.com>, 
-	Dave Chinner <dchinner@redhat.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
-	linux-kernel@vger.kernel.org, Carlos Maiolino <cem@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-xfs@vger.kernel.org
-Subject: Re: [linus:master] [xfs]  c91d38b57f:  stress-ng.chown.ops_per_sec
- 70.2% improvement
-Message-ID: <nfqwkcdbd5xawykrtb5nrhvmpfimtry6qyuig5p7qmlehc7itl@utic4l437gwn>
-References: <202510020917.2ead7cfe-lkp@intel.com>
- <20251003075615.GA13238@lst.de>
+        bh=FiOYjFxFKpa8IlRViT6SZkeq4v71XXTA2E/7Ti28NDY=;
+        b=fSH9A58rWNe8YE3Hg2FUOuGuFWVBlM66WexTx7vIWI1/lK3NXhqs4yLGJWEbsNk/HW
+         Qkx0ZvVGe3eujC7zTdKVf5pHb2EtZ8uYDKtqAhCbW9Pa842LtWi77cfia4+jqzusU/Nf
+         z/C/auNLJ2chAi9But3GKu4e8ObNPfnq0o2plsTuHQi7BE0IFtO7gkY8GTLZImu3rdJ1
+         BTX+lK/eMOyuctdX0wEDYZYFuSOP8OYEFPET9moZ5hJtkThXMqkKATFZlPYh1OnuxbMk
+         a/7vfqf/vr1rAUtKzpI8DUVB/ODv0dWOqJwOHNHsQrvR46nwZsd7HDSIW2BiILsMjcoK
+         UlNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759499133; x=1760103933;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FiOYjFxFKpa8IlRViT6SZkeq4v71XXTA2E/7Ti28NDY=;
+        b=q2a3a//CZeZMsTCsBPNFqusZW4QgjQd4O9tuRql8CCIE9dNNyg6N5YNXBXW/+aBjlh
+         w9wJGIYKTluHp7IpD8t+A2TuHuPnlzpsReUHkj+sbuWSzzH6h5akukJOtqlwVVlpyCQl
+         anB7fw11jq825ePl7iOEG6/cfOwOoXbw8EBbLUDQYLf15s6ZiKY4LPJoM3WqMIS2UMS/
+         miWXtiyoofgwxjN/QGLku08HAhZi5JpWSqRLL1gg1o30C+GuFHGeousS/KIDLO5KSWdl
+         gAjeNCKUTffR5SNegfwunbQb3cgrLd591CtYDegv5ad1/UPVU7P0L+ivS3wnb9ds2i2P
+         49OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW4VH6qyHqnynugoxfT4C6tGX0tPxJSOd83H2fpEMS8HHzthbWrhjELJP+iJSma2GSmechXPszodbgxepM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTL6NCfso5/EVqLNdRBxtpN0o+bVcgxenudSeqGiFo+/Pglz2I
+	+9aL7aZ7XTcojtR3ottvQ8nOH9Uo97S73fyGzQdc97t0WDGjatzRgfUNclZz4JItV2OjeRI/+KT
+	ApxVoT3sWs8m1YJaly7s+3SpJYDQ1n8s=
+X-Gm-Gg: ASbGnctZ6zLhh738/A+Myt/+ZDpfYTmep4g72FX4Pqcmn73FOLgP0F+KCyMCIeBSZkI
+	hdjCTEtqf6+/Uhhg4Lg1Zp1Bg35vrsViCCVBV1RUagH5C0+l+lL7ojgVzOmlIklxGxxrrK6MK37
+	fwPcVbCqs045TCeUxPzA0M9ZVMyM/wr8d1EKBEcsTC7QjeeX8hqhd5WUkyORxxinBMzcc9NFpDD
+	pEainnBBS5v8gj9Mhom1CLKZ9yV5bXDrnyUZ6DqHy6g0GqqEgtxGkMNXYdLp8z4idmuwRpxH+8Z
+	LMVGna2fKKpqw8QH
+X-Google-Smtp-Source: AGHT+IHETMYTZGwaOT5HkOBz6H5CjSMvk8GuC4m+jz+fcW2yGghbz6Irh3mN7bj0/pYYjdO3LxBjLjRVEb0ewO9NQXs=
+X-Received: by 2002:a17:902:cf4a:b0:279:a5bb:54e2 with SMTP id
+ d9443c01a7336-28e9a544147mr30506615ad.20.1759499133237; Fri, 03 Oct 2025
+ 06:45:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251003075615.GA13238@lst.de>
+References: <20251003092918.1428164-1-kriish.sharma2006@gmail.com> <m3frc0tb9u.fsf@t19.piap.pl>
+In-Reply-To: <m3frc0tb9u.fsf@t19.piap.pl>
+From: Kriish Sharma <kriish.sharma2006@gmail.com>
+Date: Fri, 3 Oct 2025 19:15:22 +0530
+X-Gm-Features: AS18NWCfNBtNowVp2KUDOPdKLjAaw-tCzZcGsn4VlfgQBrJ4BvkILLgpz8o-n2k
+Message-ID: <CAL4kbRPS0g4yOz69h3ctOYOBwSU--od-RbfdAfcrRs=ighst_Q@mail.gmail.com>
+Subject: Re: [PATCH net v2] hdlc_ppp: fix potential null pointer in
+ ppp_cp_event logging
+To: =?UTF-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>
+Cc: khc@pm.waw.pl, andrew+netdev@lunn.ch, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 03, 2025 at 09:56:15AM +0200, Christoph Hellwig wrote:
-> On Thu, Oct 02, 2025 at 04:11:29PM +0800, kernel test robot wrote:
-> > 
-> > 
-> > Hello,
-> > 
-> > kernel test robot noticed a 70.2% improvement of stress-ng.chown.ops_per_sec on:
-> 
-> I wonder what stress-ng shown is doing, because unless it is mixing fsync
-> and ilock-heavy operations on the same node this would be highly
-> unexpected.
-> 
+Hi Chris,
 
-According to my strace there is no fsync, instead all of the worker
-threads are issuing chown, lchown and fchown on the same inode.
+Thanks for the suggestion. That makes sense I=E2=80=99ll drop the PID_LCP c=
+ase
+as well in v3 to simplify the code.
+I=E2=80=99ll resend the patch targeting net-next once the merge window reop=
+ens.
 
-As far as *benchmarking* goes this is useless.
+Best regards,
+Kriish
 
-Note stress-ng does not claim to be a benchmarking suite, but a stress
-test suite which can also report ops/s for whatever it did.
-
-This bit does not look particularly useful for stress testing either tbh.
+On Fri, Oct 3, 2025 at 6:03=E2=80=AFPM Krzysztof Ha=C5=82asa <khalasa@piap.=
+pl> wrote:
+>
+> Hi Kriish,
+>
+> Kriish Sharma <kriish.sharma2006@gmail.com> writes:
+>
+> > --- a/drivers/net/wan/hdlc_ppp.c
+> > +++ b/drivers/net/wan/hdlc_ppp.c
+> > @@ -133,7 +133,7 @@ static inline const char *proto_name(u16 pid)
+> >         case PID_IPV6CP:
+> >                 return "IPV6CP";
+> >         default:
+> > -               return NULL;
+> > +               return "LCP";
+> >         }
+> >  }
+>
+> I'd also remove the "PID_LCP" case as well (just those 2 lines
+> above IPCP case), the code will probably be simpler to understand
+> (the compiler won't care I guess).
+> --
+> Krzysztof "Chris" Ha=C5=82asa
+>
+> Sie=C4=87 Badawcza =C5=81ukasiewicz
+> Przemys=C5=82owy Instytut Automatyki i Pomiar=C3=B3w PIAP
+> Al. Jerozolimskie 202, 02-486 Warszawa
 
