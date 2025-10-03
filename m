@@ -1,95 +1,158 @@
-Return-Path: <linux-kernel+bounces-841181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF393BB66D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 12:08:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E662BB66E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 12:09:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FCB019C1040
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 10:08:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A05C24E12D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 10:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A1C2E8E0D;
-	Fri,  3 Oct 2025 10:08:20 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092A32E8B62;
+	Fri,  3 Oct 2025 10:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hK4jxQvb"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36872E8B9A;
-	Fri,  3 Oct 2025 10:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9F32773D9
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 10:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759486099; cv=none; b=qbjJ6KcRqBjz8HJvk0/prC2+/IVY/xOG0PQ/mr7yyFyx1eruBXTIK+9TgvEIlpFedqsB1PIuqr/ZBU0719q8vbKmb/VxlXIxbV99KkkiL+7P7obmQcp+Q7RdF+WKQN4PYXwH6hp634qU+qROPB4sXu7CDEbGXEzxfIysxXocy/4=
+	t=1759486154; cv=none; b=npeyQSXq+SG1B7ircmCTo7xxsR/YhcbkXn+VtnWYrAPC0lGJNuiHk2BtLAas5jxLRt10CvSUAI6jXLHL3B0QWbzWUuXLaDw/3hGxh7JQyNAjeYysaYU2seTptjOed2ZWUdO0IZVUDxH+P9kH582P/JHhoRgtIzEk/UdhKpMBQho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759486099; c=relaxed/simple;
-	bh=kIDAaVBm4hCKZdHyLuxZHTfdOtMs0twtoGrJpSIf6DY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hhfHSIOxt/4VazeydcP2XPXPj5gYodWCixgJZHq9m9znxpoivuqwAZmqLhVhx5A25usB+acr2TlExrXyS9QH4o6CIVzgF2SQQM0Id4AK37gSX14domDMJK1GDCixxUBWyXH+FBlPP/mDOR3WwfizQwQxv84LRAkde/7LkUE1XIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F85FC4CEF5;
-	Fri,  3 Oct 2025 10:08:15 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Samuel Holland <samuel@sholland.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 2/2] riscv: dts: renesas: r9a07g043f: Move interrupt-parent to top node
-Date: Fri,  3 Oct 2025 12:07:49 +0200
-Message-ID: <8e7c7881800827467f1687432751addb822bb85b.1759485668.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1759485668.git.geert+renesas@glider.be>
-References: <cover.1759485668.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1759486154; c=relaxed/simple;
+	bh=zyN5kJjGWts9pnV3esQfqyOjly0NsOO5iE9InxBUDQk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KmNsfXAiB2UPneCR7pJqWK4MjThqIT/rUaNAfeWVNsqUXijQTasQNUH0Zkpb3+aMsqsD4pzNTzh97raVojVNjXFoiDVB3sgV7mw8/iK4Wvs1ZxlbcQiusOqZ3U1PXXVaz9injUO1HtKaiE7TYWwzcA3Uy36cNU5wY6dEIJyi+uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hK4jxQvb; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-28e8c5d64d8so19554795ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 03:09:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759486152; x=1760090952; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H789t2HmzhmbljtGAHdhtwsEfghCwEDwSOBBlGMKrck=;
+        b=hK4jxQvbLl5ZtjCVDzrCgyV+QbIJd0YfD5f5ATeCnhLhyStoFB+szSshtFthHAMZ7z
+         gfPOm7Kei4I8uzU53HIV5CFOzO+pTPqOB/YCBZ7vC9w+Dndh3BRWWK9b6hVeH0slwl2m
+         7+ZV3Yh2lVE3vstxKstJ595GlpTbQesOewMoPGTE2tkOzgV0oLyDorVX8LBupIJmU90e
+         +9SLM5BE9HbKH+A6DgOdsDJiDSuT4RtKj/DM8eXC8UGjAJIFfbzDmxxPn0QpAI3rdnKV
+         HGb8nWr5Pkx8o3rwrDiZA/YbIOwT3GM2zRZi/jbmm81R90dGNPcMh9Xu5Z9K+Yk0Id20
+         71lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759486152; x=1760090952;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H789t2HmzhmbljtGAHdhtwsEfghCwEDwSOBBlGMKrck=;
+        b=p+esdfPlIVu83WuZ7JQIc3vSnji+N4PEB3GvPH4P6qgePFZ1vPAPo0e3Qt/uhqdfcY
+         lVQmvF0ZnGOBHtvzVX5L7pDLZ6rzxLo6eVzBDsrKjPJOP9cn+0Auk/+S0Ytsou31et87
+         22zeZIrwu4vCdQmxoVzyOmu1Goq5ilhhZNvzeMPSm8JRaTm1xxshYdqs7mpfQmhG23BB
+         KKCRiM53MAxHhPduUd2hgDt2BFaBx7FQHhFKHFm/ThsApXLoRnQA+y2SrDf0bPB5saXP
+         U05dNllVtP2XpRrpmV9hbLR3Y2LlAO2yuMUBaNF6U4Izp8drXA68mplw3qW92VoSsySR
+         wkaA==
+X-Forwarded-Encrypted: i=1; AJvYcCVybL3V9EOQCBGCTrAHAjFIFllIchUKlYfqxts0msparwy16oVra2cxbPSKe/wN6URFFugVrMKLKhxm5/w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxvv1jR200f6kCxwTMZEGgHY7zSZ7wEMdBvcZkOG8ObcZhPBBvA
+	hl+NwZUO1rR9QK5pwzMAOLJQvkf8ZtGitwmca2GjRLJb48RI9nRz9IjSzEyF/rvjlXPPBHNDCB7
+	Nr3S+B9qAcyWLSC9Rixc5zcI74tRoRrg=
+X-Gm-Gg: ASbGncsDBlW4VgBOoPdmLoWQZI4CPXNJaGjSTEVMcP+aujZTg6M9UHxpL8W+ZVza3YM
+	6dxfV7KrmuPiX1Y07W0K7nUvvk8CVVnhwnPGtsi4pf6bfbiCSFQW7vG/X/pw5Rkk4WlXolbs4Nz
+	8xoP34XKMFly6ATFPAqDifomvayph1s5bRJzMD41LW3dNFzpCGVXa6ePNHESV4pwfwZ5uiihw15
+	qO+M9RnMKhdPLuhvCZzKW8vZt5Mdpw5Lbp8GemE/cU6TnvM3CR5w9Rv1WUk5+cKxTWJmxgT91sk
+	849YJwTpZgPwv2UL
+X-Google-Smtp-Source: AGHT+IF0+4q/k+zcJ3YTSndyNDr287UygKKDh0bpp2Ii6zW2yIPj7g8FEXDvGEP+fNpAXN2VPsFiO3yvV4ckDIx6k2A=
+X-Received: by 2002:a17:902:f642:b0:277:9193:f2da with SMTP id
+ d9443c01a7336-28e9a51332emr30166305ad.5.1759486152149; Fri, 03 Oct 2025
+ 03:09:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251003092918.1428164-1-kriish.sharma2006@gmail.com> <20251003100309.GH2878334@horms.kernel.org>
+In-Reply-To: <20251003100309.GH2878334@horms.kernel.org>
+From: Kriish Sharma <kriish.sharma2006@gmail.com>
+Date: Fri, 3 Oct 2025 15:39:01 +0530
+X-Gm-Features: AS18NWC_eW-Dv_FT_W7Xy2UkifYVy8aGoVOn2CYcFPK0N5SlyvAcZV_zO15r_4s
+Message-ID: <CAL4kbRPQrXxktcWH4Dm3JhcFTsJf8ZYiyQwq+=bt7pzzn7wqBQ@mail.gmail.com>
+Subject: Re: [PATCH net v2] hdlc_ppp: fix potential null pointer in
+ ppp_cp_event logging
+To: Simon Horman <horms@kernel.org>
+Cc: khalasa@piap.pl, khc@pm.waw.pl, andrew+netdev@lunn.ch, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Move the "interrupt-parent = <&plic>" property from the soc node to the
-top node, for consistency with
-arch/arm64/boot/dts/renesas/r9a07g043u.dtsi.
+Hi Simon,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/riscv/boot/dts/renesas/r9a07g043f.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thanks again for the clarification. I understand this is more of a
+clean-up rather than a bug fix.
+I=E2=80=99ll prepare a v3 targeting net-next once the merge window reopens,
+removing the Fixes tag.
 
-diff --git a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-index a8bcb26f42700644..571de3cafa8214e4 100644
---- a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-+++ b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-@@ -12,6 +12,8 @@
- #include <arm64/renesas/r9a07g043.dtsi>
- 
- / {
-+	interrupt-parent = <&plic>;
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -52,7 +54,6 @@ &pinctrl {
- 
- &soc {
- 	dma-noncoherent;
--	interrupt-parent = <&plic>;
- 
- 	irqc: interrupt-controller@110a0000 {
- 		compatible = "renesas,r9a07g043f-irqc";
--- 
-2.43.0
+Best regards,
+Kriish
 
+On Fri, Oct 3, 2025 at 3:33=E2=80=AFPM Simon Horman <horms@kernel.org> wrot=
+e:
+>
+> On Fri, Oct 03, 2025 at 09:29:18AM +0000, Kriish Sharma wrote:
+> > Fixes warnings observed during compilation with -Wformat-overflow:
+> >
+> > drivers/net/wan/hdlc_ppp.c: In function =E2=80=98ppp_cp_event=E2=80=99:
+> > drivers/net/wan/hdlc_ppp.c:353:17: warning: =E2=80=98%s=E2=80=99 direct=
+ive argument is null [-Wformat-overflow=3D]
+> >   353 |                 netdev_info(dev, "%s down\n", proto_name(pid));
+> >       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > drivers/net/wan/hdlc_ppp.c:342:17: warning: =E2=80=98%s=E2=80=99 direct=
+ive argument is null [-Wformat-overflow=3D]
+> >   342 |                 netdev_info(dev, "%s up\n", proto_name(pid));
+> >       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >
+> > Update proto_name() to return "LCP" by default instead of NULL.
+> > This change silences the compiler without changing existing behavior
+> > and removes the need for the local 'pname' variable in ppp_cp_event.
+> >
+> > Suggested-by: Krzysztof Ha=C5=82asa <khalasa@piap.pl>
+> > Fixes: 262858079afd ("Add linux-next specific files for 20250926")
+>
+> Perhaps this should be:
+>
+> Fixes: e022c2f07ae5 ("WAN: new synchronous PPP implementation for generic=
+ HDLC.")
+> But more importantly, and sorry for not noticing this in my review of v1,
+> I'm not sure this is a bug fix. In his review of v1 Chris explains that
+> this case cannot be hit. And that the patch is about silencing the
+> compiler.
+>
+> If so, I'd suggest this is a clean-up and thus you should consider:
+> 1) Removing the fixes tag
+> 2) Retargeting the patch at net-next
+>
+> Please also note that net-next is currently closed for the merge window.
+> So any patches for it should be sent after it reopens, which will
+> be after v6.18-rc1 is released, most likely on or after 13th October.
+>
+> See: https://docs.kernel.org/process/maintainer-netdev.html
+>
+> The code change itself looks good to me.
+>
+> > Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
+> > ---
+> > v2:
+> >   - Target the net tree with proper subject prefix "[PATCH net]"
+> >   - Update proto_name() to return "LCP" by default instead of NULL
+> >   - Remove local 'pname' variable in ppp_cp_event
+> >   - Add Suggested-by tag for Krzysztof Ha=C5=82asa
+> >
+> > v1: https://lore.kernel.org/all/20251002180541.1375151-1-kriish.sharma2=
+006@gmail.com/
+> >
 
