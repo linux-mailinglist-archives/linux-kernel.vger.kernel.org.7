@@ -1,128 +1,189 @@
-Return-Path: <linux-kernel+bounces-841644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9376ABB7E2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 20:28:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22BBEBB7E37
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 20:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 64F1E4EE942
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 18:28:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 761413B5B8C
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 18:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F63E192B84;
-	Fri,  3 Oct 2025 18:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00782DE6F3;
+	Fri,  3 Oct 2025 18:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gYGbtgdO"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/PEpngk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C006779EA
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 18:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5B279EA;
+	Fri,  3 Oct 2025 18:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759516100; cv=none; b=aSRW3Yc1OO3JSXNSrB0p/zLo4zXjKj6buUMoJdGyAuCqOA+hLo3uCgVaJZChIb48CkbiuNuQU9BkiO4czDPMOSX3PTFru0KCyiVq37a9+3mHWt4CkYF/SqCFtvymvQ2MhSwZW20NKXbKXVp7iqKV9MgPitbx1ANeKjBbFM02JJw=
+	t=1759516199; cv=none; b=I2c518lsjRYiP4gboXyFuch6ibAJ2TW1RCYuIPFqftPrWWJaLfiIU3w3MxGnJFY44vQKNGuj0JgrSLRoGJHCoTCTlzreD6PYR871QDI/X/UoSE3SCbyKvp4MuMl0sQ9G231zvlvbjwIoiJn+7Z689hLc+OlaPH94GslqT4IslaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759516100; c=relaxed/simple;
-	bh=wnwCmayrbuMzsNdbdzK787r5mtfWIdvorjhY+0+9AHk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K+GKckJjAxhvK/PPooH56XwNvuaBlaK8TGFsmxJAa4emRgVkRad/PXUluh6x2wqy5nAp7SSq4e1RGc+lbb95sAxleKc80u0nCx5/ox9EgAUx8c2EVBBupaMdXj/8fEsJSYyTJxScgrTRtp1ztTQRPnpbEViat/Gkf0GakqEzJio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gYGbtgdO; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3637d6e9923so22851361fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 11:28:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759516097; x=1760120897; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wnwCmayrbuMzsNdbdzK787r5mtfWIdvorjhY+0+9AHk=;
-        b=gYGbtgdOliI0jLep4Hb1UN7b+BL47pyUTnIByarJ2N3YxKdi0CcoWPl+00PwLS1Um6
-         SB0qCr2NcC8zkigCLSztQ24z2POxVGgHER3Xn+NGYS9wKG7UqctY7/QPjZhWuo4lJLuH
-         1y2Y47g/+aTI8LQlXsl1xw/U2kHlSS23nyhk3gpqrTwyk0QzK7mvHXBdjC7epTdzX3wq
-         0sJzlCVnbAqGo+yyrXu0FhHgyjRyKZrv6Tpwj1Qm3Vz6WRpE85n+TUMUQfBu4H7bb6IU
-         WN8DdTRNPUj+y9V6rJrNyrwTilo7XfBKrtFQCIDlgqBA9PMRdciqAiBmtd5KUQCBrHUX
-         AQ6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759516097; x=1760120897;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wnwCmayrbuMzsNdbdzK787r5mtfWIdvorjhY+0+9AHk=;
-        b=jX5mJ35clrgVYJheT3ixISXmydG/Di4eFTBdokFq/Y+8IU60EXQsf8z/Mkd1+W7y9w
-         Y9LpEeW2yVaYoZ+A1eoviBGlLl77RmpymnvWIE8ihe2WT2yY+dnj6jQ/qZDXSBGCZET7
-         HQeb2VE5h8moMmIxhfaHWuXMK/LDKG5eIncLQu9v/skOzAWMOBx92DiOplkscneR5dOc
-         5t9Y4sr//TMPSyG8+oodEUDZJuFBXuRo01jk5Z/6Dxdc2boSobPqhGl7ivrzkOPVTv6I
-         IjkqfbgqhWtlNfbDlI4lUU0zFQ2hIlFiRXAxtOthqUDXgnBsi8yyB/nK57ZfRAuQEX2C
-         KEBA==
-X-Forwarded-Encrypted: i=1; AJvYcCWaOSefsgFkINDxNuNEktkP0e54r5Eo1z7yMpdSh+lSjR8JyLalomY7adRNkEpGUk2oQqcxQ/oszaXZrQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6sBVTeJ87VZsQDk1nPOINmAjHAUC9YqBLxp3fq162iqAV+UWO
-	ZHeMtu0XjZgmyJLlUPIf65L+dZN4aYdYR0Df497GaSZnzp4OY91t/YlZ2vNpqbDub3NYt1U+Sxo
-	EMe1yJQaOFd4CpFiHuJufgR5H3sCUHuefHUdY701s
-X-Gm-Gg: ASbGncuMNP7PrvYKA7OMbwlbI8ZfiECnPC9KslChpXefwnKM680MRv4IZtr9mihHExw
-	2tjNY7apy5VduMseJmLWx4UHMRZsXgCTx6IDjgh+yHHDYzf1DnGAfcTfcssx+/arHWvk62byy8Y
-	dY1QvfSEUxeWoIUMgSKymAskPIio6kCOMGY0U5KsqrYTo+eNNJmRhrVBV2ie871Z/cKVl6DYHRT
-	uZn0VsqSIwoQ2x1aiDWEcMBUMv8tAIljUbl3iRn6r+XnTsE
-X-Google-Smtp-Source: AGHT+IGroolGta644QVXsh1xa+w2xupl+/hpahHuoQAgZeCtUBKLQ/4tZ1bVzl+o9pzNo0LzYHlwZfombCeZ9ICqGlw=
-X-Received: by 2002:a05:651c:1509:b0:36c:c5d0:715 with SMTP id
- 38308e7fff4ca-374c38450bamr11715751fa.29.1759516096518; Fri, 03 Oct 2025
- 11:28:16 -0700 (PDT)
+	s=arc-20240116; t=1759516199; c=relaxed/simple;
+	bh=onOJ5ys1KMYAk9JvWnFYI0TO51mifrfPMJRG3aNQEKI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PMbuaK/e+sda8Kt4LQ2WFlC8SbZ0I3fVnSdbS6y0NYv+9VzVIDMyuXOM29Ipz5RKv9bXGYzFsoJp9uiiEPjB00vOFHhSB+merHDXQf4hK/ph+mHX5f2T657WxtHImy8RTwcgTtlqYK3oOGRgSAzubo7IqQAtIK1ybp3ezJQBnKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W/PEpngk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45D02C4CEF5;
+	Fri,  3 Oct 2025 18:29:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759516198;
+	bh=onOJ5ys1KMYAk9JvWnFYI0TO51mifrfPMJRG3aNQEKI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W/PEpngkRBBl01CGcdTVJ43gL4uDAYrZ3Wc2tC6JufHV64OL32g/eF1W+phKhQUFU
+	 LjWLU9/rRg3nMMrL66gIHvtcX2sxW0SeFv5bOB2AR5NQuUvgIfqvf6IH4WTfkZGrUY
+	 H/96kbmv3zNIFI2Ny7f2ah291O81WRsTo5zpHvXi0uFEbLN3F1vE8CGydkXcCbH38O
+	 +Khs9gqZM+zIc6VyWaSw2KpcEt7S4C5SA6CETzVjFskEEVYd1/n9jVx/0oaaf1nwN2
+	 WQkjb1oyXZmhY62uvd24R1cSW7Q9CDF79qCNereth7zY8weKvkT9SpUH5p8hAJnFgj
+	 1/CoLAltkgfkg==
+Date: Fri, 3 Oct 2025 15:29:55 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] perf namespaces: Avoid get_current_dir_name
+ dependency
+Message-ID: <aOAWI85KsassikIS@x1>
+References: <20251003175613.2512296-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
- <20250916-luo-pci-v2-3-c494053c3c08@kernel.org> <2025093044-icky-treat-e1c3@gregkh>
- <CACePvbUr42mj0kbcaw4cgKnd7v1f8z8Jhq4+_QN7Z5Nvicd1cw@mail.gmail.com>
- <2025100323-sneer-perennial-55e1@gregkh> <CAF8kJuNPFbSJezynwXWpMx0ihV32YvAgdfygj7bx1nhxtmB8-w@mail.gmail.com>
- <2025100317-backroom-upside-c788@gregkh> <CACePvbW031fW8dqswwXp=Z6H3jv2BiBSJFyGiXCKzZUSKRnxqQ@mail.gmail.com>
-In-Reply-To: <CACePvbW031fW8dqswwXp=Z6H3jv2BiBSJFyGiXCKzZUSKRnxqQ@mail.gmail.com>
-From: David Matlack <dmatlack@google.com>
-Date: Fri, 3 Oct 2025 11:27:44 -0700
-X-Gm-Features: AS18NWB6obQVy6GItlQp9C5kT9T7IKSBb_ab1Dq-pe9ihGV-Q4Ff1PkgyH6kMWc
-Message-ID: <CALzav=edEDvz98KKtmMLWcW33PgE4aTy6K7YLSK0_jx1PdRqBw@mail.gmail.com>
-Subject: Re: [PATCH v2 03/10] PCI/LUO: Forward prepare()/freeze()/cancel()
- callbacks to driver
-To: Chris Li <chrisl@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	Pasha Tatashin <tatashin@google.com>, Jason Miu <jasonmiu@google.com>, 
-	Vipin Sharma <vipinsh@google.com>, Saeed Mahameed <saeedm@nvidia.com>, 
-	Adithya Jayachandran <ajayachandra@nvidia.com>, Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, 
-	Mike Rapoport <rppt@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251003175613.2512296-1-irogers@google.com>
 
-On Fri, Oct 3, 2025 at 10:49=E2=80=AFAM Chris Li <chrisl@kernel.org> wrote:
->
-> On Fri, Oct 3, 2025 at 5:26=E2=80=AFAM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Fri, Oct 03, 2025 at 12:26:01AM -0700, Chris Li wrote:
-> >
-> > > It is more than just one driver, we have vfio-pci, idpf, pci-pf-stub
-> > > and possible nvme driver.
-> >
-> > Why is nvme considered a "GPU" that needs context saved?
->
-> NVME is not a GPU. The internal reason to have NVME participate in the
-> liveupdate is because the NVME shutdown of the IO queue is very slow,
-> it contributes the largest chunk of delay in the black out window for
-> liveupdate. The NVME participation is just an optimization to avoid
-> resetting the NVME queue. Consider it as (optional ) speed
-> optimization.
+On Fri, Oct 03, 2025 at 10:56:12AM -0700, Ian Rogers wrote:
+> get_current_dir_name is a GNU extension not supported on, for example,
+> Android. There is only one use of it so let's just switch to getcwd to
+> avoid build and other complexity.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+> v2: Fix free of oldcwd on errout.
 
-This is not true. We haven't made any changes to the nvme driver
-within Google for Live Update.
+Simple enough, applied both patches to perf-tools-next.
 
-The reason I mentioned nvme in another email chain is because Google
-has some hosts where we want to preserve VFs bound to vfio-pci across
-Live Update where the PF is bound to nvme. But Jason is suggesting we
-seriously explore switching the PF driver to vfio-pci before trying to
-upstream nvme support for Live Update, which I think is fair.
+I'll now have to try and pick as few patches as possible so as to have
+what is in perf-tools-next sit over the weekend on linux-next to then
+send a pull req for 6.18.
+
+- Arnaldo
+> ---
+>  tools/perf/Makefile.config             |  4 ----
+>  tools/perf/util/Build                  |  1 -
+>  tools/perf/util/get_current_dir_name.c | 18 ------------------
+>  tools/perf/util/get_current_dir_name.h |  8 --------
+>  tools/perf/util/namespaces.c           |  7 +++----
+>  5 files changed, 3 insertions(+), 35 deletions(-)
+>  delete mode 100644 tools/perf/util/get_current_dir_name.c
+>  delete mode 100644 tools/perf/util/get_current_dir_name.h
+> 
+> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+> index 0f4b297fbacc..6cdb96576cb8 100644
+> --- a/tools/perf/Makefile.config
+> +++ b/tools/perf/Makefile.config
+> @@ -417,10 +417,6 @@ ifeq ($(feature-eventfd), 1)
+>    CFLAGS += -DHAVE_EVENTFD_SUPPORT
+>  endif
+>  
+> -ifeq ($(feature-get_current_dir_name), 1)
+> -  CFLAGS += -DHAVE_GET_CURRENT_DIR_NAME
+> -endif
+> -
+>  ifeq ($(feature-gettid), 1)
+>    CFLAGS += -DHAVE_GETTID
+>  endif
+> diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+> index 5ead46dc98e7..9464eceb764b 100644
+> --- a/tools/perf/util/Build
+> +++ b/tools/perf/util/Build
+> @@ -23,7 +23,6 @@ perf-util-y += evsel_fprintf.o
+>  perf-util-y += perf_event_attr_fprintf.o
+>  perf-util-y += evswitch.o
+>  perf-util-y += find_bit.o
+> -perf-util-y += get_current_dir_name.o
+>  perf-util-y += levenshtein.o
+>  perf-util-y += mmap.o
+>  perf-util-y += memswap.o
+> diff --git a/tools/perf/util/get_current_dir_name.c b/tools/perf/util/get_current_dir_name.c
+> deleted file mode 100644
+> index e68935e9ac8c..000000000000
+> --- a/tools/perf/util/get_current_dir_name.c
+> +++ /dev/null
+> @@ -1,18 +0,0 @@
+> -// SPDX-License-Identifier: LGPL-2.1
+> -// Copyright (C) 2018, 2019 Red Hat Inc, Arnaldo Carvalho de Melo <acme@redhat.com>
+> -//
+> -#ifndef HAVE_GET_CURRENT_DIR_NAME
+> -#include "get_current_dir_name.h"
+> -#include <limits.h>
+> -#include <string.h>
+> -#include <unistd.h>
+> -
+> -/* Android's 'bionic' library, for one, doesn't have this */
+> -
+> -char *get_current_dir_name(void)
+> -{
+> -	char pwd[PATH_MAX];
+> -
+> -	return getcwd(pwd, sizeof(pwd)) == NULL ? NULL : strdup(pwd);
+> -}
+> -#endif // HAVE_GET_CURRENT_DIR_NAME
+> diff --git a/tools/perf/util/get_current_dir_name.h b/tools/perf/util/get_current_dir_name.h
+> deleted file mode 100644
+> index 69f7d5537d32..000000000000
+> --- a/tools/perf/util/get_current_dir_name.h
+> +++ /dev/null
+> @@ -1,8 +0,0 @@
+> -// SPDX-License-Identifier: LGPL-2.1
+> -// Copyright (C) 2018, 2019 Red Hat Inc, Arnaldo Carvalho de Melo <acme@redhat.com>
+> -//
+> -#ifndef __PERF_GET_CURRENT_DIR_NAME_H
+> -#ifndef HAVE_GET_CURRENT_DIR_NAME
+> -char *get_current_dir_name(void);
+> -#endif // HAVE_GET_CURRENT_DIR_NAME
+> -#endif // __PERF_GET_CURRENT_DIR_NAME_H
+> diff --git a/tools/perf/util/namespaces.c b/tools/perf/util/namespaces.c
+> index 68f5de2d79c7..01502570b32d 100644
+> --- a/tools/perf/util/namespaces.c
+> +++ b/tools/perf/util/namespaces.c
+> @@ -6,7 +6,6 @@
+>  
+>  #include "namespaces.h"
+>  #include "event.h"
+> -#include "get_current_dir_name.h"
+>  #include <sys/types.h>
+>  #include <sys/stat.h>
+>  #include <fcntl.h>
+> @@ -293,14 +292,14 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
+>  	if (!nsi || !nsinfo__need_setns(nsi))
+>  		return;
+>  
+> -	if (snprintf(curpath, PATH_MAX, "/proc/self/ns/mnt") >= PATH_MAX)
+> +	if (!getcwd(curpath, sizeof(curpath)))
+>  		return;
+>  
+> -	oldcwd = get_current_dir_name();
+> +	oldcwd = strdup(curpath);
+>  	if (!oldcwd)
+>  		return;
+>  
+> -	oldns = open(curpath, O_RDONLY);
+> +	oldns = open("/proc/self/ns/mnt", O_RDONLY);
+>  	if (oldns < 0)
+>  		goto errout;
+>  
+> -- 
+> 2.51.0.618.g983fd99d29-goog
 
