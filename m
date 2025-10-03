@@ -1,60 +1,84 @@
-Return-Path: <linux-kernel+bounces-841739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0C08BB8197
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 22:28:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0F32BB81B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 22:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 484E83C1FA5
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 20:28:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F3054EF419
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 20:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058F122DFB8;
-	Fri,  3 Oct 2025 20:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090C9228CBC;
+	Fri,  3 Oct 2025 20:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qYX27rqc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YG0Tytop"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59EC417A2E1;
-	Fri,  3 Oct 2025 20:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7164E22D780
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 20:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759523332; cv=none; b=Kicf/sxfEouiJUEdxlKcpwhrrr9jR1G61p+sJD982JOMmuCMesBRDD93TbLJRnb6JLrxNvYo2ZNhOlr5TafSCThjpEzDw9ePuzX1+IvzlPY203N0CRhNJFYzu8nnyX7K1AQ41OZuHtYdXO032+/XZemqtkdurTIVgf5yUfRvGO8=
+	t=1759523377; cv=none; b=OX1aVXBNFJNU09f/+YIRho9vB+HjREV+Av+7jQFAFh8Qye0uPzPO7vONhLQ7QzmRlfWeHmGF5O0khJx+9WCSNSU3fDowTQ2zSChdjfYeBC38dCYS7YqET5iNzRoSDh+cEnzFDC6SU/6sqmIyIT46a7xbMZO+KMcKVjsKtvqaQ1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759523332; c=relaxed/simple;
-	bh=7TtwZs3DmPv30Yl96eKnE5YiLSOUEgOMMAjocXogTbY=;
+	s=arc-20240116; t=1759523377; c=relaxed/simple;
+	bh=SuOGf6ig6UThy/Cts9AqHIbtylVDtns8fl8RhAUSMZo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g8kmOPwTOvO5n7Ynq6b9GQiIhnjwMOrymlqQ5Kaa9i5O2vZj9oI0a2Xp4AC8/21kl7VLFxSKBkT5GascyZ5uKTNtLRNZn3pU7tP/YcFSzeJVH67l07498W86Q8+NthtvdTLNzed1SH87wp44z4wVv/Psy/wGdTAwUhVTZZyMs18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qYX27rqc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B7BDC4CEF5;
-	Fri,  3 Oct 2025 20:28:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759523331;
-	bh=7TtwZs3DmPv30Yl96eKnE5YiLSOUEgOMMAjocXogTbY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qYX27rqcewLkT6w2pLiIvL0EQzeFeY/384GYHpgexiBTUOZFYHb09BJpvY3jncXuv
-	 96vD/f8crQ5hRQJRG7GDd9m5SVBEqMmecn0GWI8gU6Bu06Jr9Qj9Et7Q4DVBHupWLR
-	 GFQzSKbc50bm7YwGqZdK7pTrzzOBy1ue78pCDcGpKHlOn9uK39AS40cMIlDnZv/V/O
-	 miHZbq2WyJJACCOjQLaTD82hpqmDxcRrD4qzasI1o71o6Lli4ST6W8rH2IQ5sUEgWv
-	 3+/2C10wgEJlU77l3M8s6iNuhfAcrqaoaORmTJSkqECviX5xe4LqjitXtbc94ZMoja
-	 +eFvQwPW4sjMA==
-Date: Fri, 3 Oct 2025 13:28:49 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, herbert@gondor.apana.org.au,
-	linux@armlinux.org.uk, Ard Biesheuvel <ardb@kernel.org>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kees Cook <keescook@chromium.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 00/20] arm64: Move kernel mode FPSIMD buffer to the
- stack
-Message-ID: <20251003202849.GB24598@quark>
-References: <20251001210201.838686-22-ardb+git@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SOBBdA2CSXny/+JuARuaDD0CkECnTxAAaDBC9R2JGuxK49YG+kig8pyiOCSMfSbpdccAN8NLIix/lB2N4h2GwHi45R2PAr5/VLyu0RNtLBHk3HESUBCHf/R6VRhqmEDUHvBPao/LUBG+lN8OFLvadX23yZVM3oqH1nQRA2jCpdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YG0Tytop; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-421851bca51so1738205f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 13:29:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759523374; x=1760128174; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8BGUE0v7XRga+qkgvLP86a6O/SLAuOYc4ngsK7oGTUk=;
+        b=YG0TytopFtukvAc6AOCqkN3jFCZjSQbVbonbkUdFZoSdPfPsu2jM7D/2gWDcsdqMHZ
+         nX85yigXidryzzuJG6j3KTheUMo/SFYQJ8sQdIvlrVexaQzcPAMQxPJiOHao+O4eQJMj
+         V1sHz7egbxAZ+8rfcNLNuy+A6j3aDgPaX4ohfkI8+7pIAOQVmgVpAApaC/iU+wOQkpFF
+         UWOlQVE2L8mN0BmeqTPao9HQ5BfbYbZmYoCKCjpUI8irZyMPPtmOwLlN7Vpqubzvto6F
+         qVEo/L9Qe+Rks8M8ev/aEPEpB0XIJD216xqncq8iJgUpzzKe6fsf6EYgOX/PlUd20zJR
+         Qx5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759523374; x=1760128174;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8BGUE0v7XRga+qkgvLP86a6O/SLAuOYc4ngsK7oGTUk=;
+        b=t1wh5cA/bSc0mON5js5ID0yfgPQnF6M3cvKG7TYl3M8Mky7AZqg+ruUAorr2dmhr+u
+         0AJa30HElM+FVZFuFf8q/SC44XJhLy1LIlJgFRpk17jfMYOialyZsAUWtCfTPKIacZNh
+         rXoFPmwMCvQgpkpkDr0zezOCLOYTVz1cIJNQ/jfF2ZqgQIjEPydzbV0EjFSCSlpaMo2h
+         ZMdvHGGNNdMGvJeJumWi9nPwUlsFkRz8n/vdtM4KBNjiaKnqJBan8K6lT2F0sxNbFUe/
+         njxa2DVj17Om+1AA6irZUJIeokwVTJYqfCjylzACh4m25iOOfh7JZiEvj+RLusZ1g2JS
+         J9Bw==
+X-Gm-Message-State: AOJu0Yx6SjxngIuSRG7qYSips+Q1M3OWXMzhiToL4ITgD/AqIi/a26ig
+	JiWMd3dwSpKBtUzouLnfdnq72kWV6SP8fIuDqYDCippG61utQAEllBazFJ2Pg+qAZ8E=
+X-Gm-Gg: ASbGncuuHtaImKuilcint/o10gwulrFLKU3WadNP1q4VxlU+6rJz0+k3Dk7samfP/c4
+	Yu+3WeWfZIr/7M6hH7h4GqvrYJUVw4rS0wONEK/DVv5ugewF7oLOCuxwuaq2Ne2EB1HMD1UwXpC
+	SDwchoEZDj1In3RFwEBKnJx7aZpd69iqh9IW/GWQTbmFV5bhSdl2ldvsWY5jY/Dl3gwULHCtCBV
+	A84WoWcMXPIZ2XubmxlGm7ZOHXtq3AbOQs/hBy4dKHxL9jgD+5uve2E6z5qWCJBsAXlOlKnCzFh
+	b8Z1iImf340MZfqG5yjdPYNAPWKRTvO/TLw86ZY1E7IkhJcl6APJpMmqhsEmOHJhM+NYAB/cz2s
+	UDy4gtYkohA4rEbZmLracHKG56fy6cQxmCl8PKr2+WL0TN5E+G5atSV4WKiN6tdzgJXE=
+X-Google-Smtp-Source: AGHT+IH/bgx1fSGeKfmK7NrfWKs/RA99sx3ypoK059B/EoGdkmTKRCEZWYZj6hui2YkbxqO7xxGCRw==
+X-Received: by 2002:a5d:588e:0:b0:3cf:74e0:55b9 with SMTP id ffacd0b85a97d-425671c71bbmr2893944f8f.63.1759523373488;
+        Fri, 03 Oct 2025 13:29:33 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4255d8e9890sm9409932f8f.32.2025.10.03.13.29.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Oct 2025 13:29:32 -0700 (PDT)
+Date: Fri, 3 Oct 2025 23:29:28 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Mary Strodl <mstrodl@csh.rit.edu>
+Cc: linux-kernel@vger.kernel.org, tzungbi@kernel.org,
+	linus.walleij@linaro.org, brgl@bgdev.pl, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v4 3/4] gpio: mpsse: add quirk support
+Message-ID: <aOAyKI7hv36oLJkD@stanley.mountain>
+References: <20251003195036.3935245-1-mstrodl@csh.rit.edu>
+ <20251003195036.3935245-4-mstrodl@csh.rit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,60 +87,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251001210201.838686-22-ardb+git@google.com>
+In-Reply-To: <20251003195036.3935245-4-mstrodl@csh.rit.edu>
 
-On Wed, Oct 01, 2025 at 11:02:02PM +0200, Ard Biesheuvel wrote:
-> From: Ard Biesheuvel <ardb@kernel.org>
+On Fri, Oct 03, 2025 at 03:50:35PM -0400, Mary Strodl wrote:
+> Builds out a facility for specifying compatible lines directions and
+> labels for MPSSE-based devices.
 > 
-> Move the buffer for preserving/restoring the kernel mode FPSIMD state on a
-> context switch out of struct thread_struct, and onto the stack, so that
-> the memory cost is not imposed needlessly on all tasks in the system.
+> * dir_in/out are bitmask of lines that can go in/out. 1 means
+>   compatible, 0 means incompatible.
+> * names is an array of line names which will be exposed to userspace.
 > 
-> Changes since v1:
-> - Add a patch reverting the arm64 support for the generic
->   kernel_fpu_begin()/end() API, which is problematic on arm64.
+> Also changes the chip label format to include some more useful
+> information about the device to help identify it from userspace.
 > 
-> - Introduce a new 'ksimd' scoped guard that encapsulates the calls the
->   kernel_neon_begin() and kernel_neon_end() at a higher level of
->   abstraction. This makes it straight-forward to plumb in the stack
->   buffer without complicating the callers.
-> 
-> - Move all kernel mode NEON users on arm64 (and some on ARM) over to the
->   new API.
-> 
-> - Add Mark's ack to patches #6 - #8
-> 
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Eric Biggers <ebiggers@kernel.org>
-> 
-> Ard Biesheuvel (20):
->   arm64: Revert support for generic kernel mode FPU
->   arm64/simd: Add scoped guard API for kernel mode SIMD
->   ARM/simd: Add scoped guard API for kernel mode SIMD
->   crypto: aegis128-neon - Move to more abstract 'ksimd' guard API
->   raid6: Move to more abstract 'ksimd' guard API
->   crypto/arm64: aes-ce-ccm - Avoid pointless yield of the NEON unit
->   crypto/arm64: sm4-ce-ccm - Avoid pointless yield of the NEON unit
->   crypto/arm64: sm4-ce-gcm - Avoid pointless yield of the NEON unit
->   lib/crc: Switch ARM and arm64 to 'ksimd' scoped guard API
->   lib/crypto: Switch ARM and arm64 to 'ksimd' scoped guard API
->   crypto/arm64: aes-ccm - Switch to 'ksimd' scoped guard API
->   crypto/arm64: aes-blk - Switch to 'ksimd' scoped guard API
->   crypto/arm64: aes-gcm - Switch to 'ksimd' scoped guard API
->   crypto/arm64: nhpoly1305 - Switch to 'ksimd' scoped guard API
->   crypto/arm64: polyval - Switch to 'ksimd' scoped guard API
->   crypto/arm64: sha3 - Switch to 'ksimd' scoped guard API
->   crypto/arm64: sm3 - Switch to 'ksimd' scoped guard API
->   crypto/arm64: sm4 - Switch to 'ksimd' scoped guard API
->   arm64/xorblocks:  Switch to 'ksimd' scoped guard API
->   arm64/fpsimd: Allocate kernel mode FP/SIMD buffers on the stack
+> Signed-off-by: Mary Strodl <mstrodl@csh.rit.edu>
+> ---
 
-Reviewed-by: Eric Biggers <ebiggers@kernel.org>
+Thanks!
 
-- Eric
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+regards,
+dan carpenter
+
 
