@@ -1,138 +1,268 @@
-Return-Path: <linux-kernel+bounces-841254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B842BBB6A69
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 14:28:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B732BB6A6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 14:28:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC0D7428DDF
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 12:27:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EA5F4289BC
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 12:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B722F2917;
-	Fri,  3 Oct 2025 12:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G94u3Hyv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A11B2F5339;
+	Fri,  3 Oct 2025 12:19:35 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99A12F2900
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 12:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD582F5315
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 12:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759493899; cv=none; b=sMRRWbzSksodrtFRgURo3bNIq8nAvpiqZ8srOsmA0OSJylmaO53XnWhb9LAdDvcz5z1NvG2dmKLLACTA9rDczvkHBwIRWnZYD7D7rqRPeHDAZqY+eJ2aAI50xAbuPCepEzJKRzdnfEbw7wONIO5siW+m+JaY2r1AOtUQSkw14CA=
+	t=1759493975; cv=none; b=cevRDzHlS5hkwn+ee9gMyf0c824M0RaqsdHOrID3nX3mCRob3ogvoy4Z0DMexSQBLRS+Lxllfnn5P0bibmTlT+HkSjpvIk+iIOiu9nWS0/5iq6lMPjaxJQdLl14ikqVBe+Cao9OpAHpGQeg+T288tf5xjyJB/Ht+7byeysCZBjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759493899; c=relaxed/simple;
-	bh=JariEKaBeuZ/Bps99dmisJJHJiELXmbvZdYr8sU/UZg=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=GyFzDSJNvBP6n4cIwgbKOI19nkSNkBsZFs/6dnzWs9y77yE8rpgtlrhly/orn9ofCrPr1f18hN6yy3zmn+CQ5yyN59rvOKd8qgbktbnL8UeuPOAr/Qo5CWwgqbw7BKT4Z3acPyaURuUIpBbiizeEnb5g0/j6PEV4PmS+MjRXgwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G94u3Hyv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59098C4CEFC
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 12:18:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759493898;
-	bh=JariEKaBeuZ/Bps99dmisJJHJiELXmbvZdYr8sU/UZg=;
-	h=From:Date:Subject:To:Cc:From;
-	b=G94u3HyviVJKe8+Zmw9gKOFvz41336SmP+HLQLhqc+7SMmBO0r0PYO2b8TqqzXsfx
-	 VABoHY09WP8I6U3Oor3EUx0ooAwICHR51vjPPPHGpdhAfc+C/GYKjBmVu83n0mZ3gM
-	 vGaFrarAXAIN9tDFSXA9Sh7S/wmEYOB48Zr7mJ2QLAYkhmWIEyKX3NXxzVN+ZmNOAO
-	 txO3rt5RYUzUcWKsdaoUyEcQ06//ph0T4A3oD8slDYFfack+0x9zByVNRfHScwfrSw
-	 wD5ImETqcBTKsb5XChmGDm0XqSXWz+OFTUUnrHn9BSO9S6nBX/wHUZ6DYOLf0NomWP
-	 85EQasBvUzYVw==
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b3e44f22f15so310623966b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 05:18:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV3uYzclalsimN2ikAoH+d+5FfUSKjOoq325e1C2ikHc+6TE3DaOXbelkRBwg945lSaOwcuFdsGFzjZcmE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1c/ACyt2NBzWV64i/b64DYJLA5BK39Yob3cNq0sweJBTR/Y3O
-	ydAzclMfFjV5TPxSfa0ZM4uw9tolgs8M4UAJnC94sskjdFO5qmYfwVsJYS9SxlWbg1dc7iBf/Ii
-	ykhWwsOlapX43bMDra5wuf44+XVXd44I=
-X-Google-Smtp-Source: AGHT+IGSxUzOIbfbm3FsfzrHMaN29naRCSxhKPN6+v8/0Aak1YHg5gyjiAw3l4QpwCMftYz/oZ85EKFCrUIs8NsVgE4=
-X-Received: by 2002:a17:907:7fa7:b0:b3e:5f20:889f with SMTP id
- a640c23a62f3a-b49c1f54854mr334620466b.26.1759493896777; Fri, 03 Oct 2025
- 05:18:16 -0700 (PDT)
+	s=arc-20240116; t=1759493975; c=relaxed/simple;
+	bh=0A9xfTRi9hgkqNMR2Zi8PjhviZEdCv7P77TE3GzvpsQ=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XUAwK6sBf+63Go/aO1MqNd5ym7/vAa76xc7SS9Nkp2rU6Npgfzj3tgtpArfwQXk8W+LO4C9Czecod7AP/aTT7rBT7PC5Y1SVFmTcmeDzfLaP7OtVMV6JbNeOzBL61IbHQzZnIzGRoozFlo9gAgX9a1w/jb7563r0j8GBTBaMMBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cdSLp26Jcz6K8tQ;
+	Fri,  3 Oct 2025 20:16:18 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9A5E7140278;
+	Fri,  3 Oct 2025 20:19:29 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 3 Oct
+ 2025 13:19:28 +0100
+Date: Fri, 3 Oct 2025 13:19:26 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Bharata B Rao <bharata@amd.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<dave.hansen@intel.com>, <gourry@gourry.net>, <hannes@cmpxchg.org>,
+	<mgorman@techsingularity.net>, <mingo@redhat.com>, <peterz@infradead.org>,
+	<raghavendra.kt@amd.com>, <riel@surriel.com>, <rientjes@google.com>,
+	<sj@kernel.org>, <weixugc@google.com>, <willy@infradead.org>,
+	<ying.huang@linux.alibaba.com>, <ziy@nvidia.com>, <dave@stgolabs.net>,
+	<nifan.cxl@gmail.com>, <xuezhengchu@huawei.com>, <yiannis@zptcorp.com>,
+	<akpm@linux-foundation.org>, <david@redhat.com>, <byungchul@sk.com>,
+	<kinseyho@google.com>, <joshua.hahnjy@gmail.com>, <yuanchu@google.com>,
+	<balbirs@nvidia.com>, <alok.rathore@samsung.com>
+Subject: Re: [RFC PATCH v2 4/8] x86: ibs: In-kernel IBS driver for memory
+ access profiling
+Message-ID: <20251003131926.0000363f@huawei.com>
+In-Reply-To: <20250910144653.212066-5-bharata@amd.com>
+References: <20250910144653.212066-1-bharata@amd.com>
+	<20250910144653.212066-5-bharata@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Fri, 3 Oct 2025 21:18:04 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8XfKPTdDMbHKkyQN1FTGLmgKkMTkUiSOuHE=FjB=G==w@mail.gmail.com>
-X-Gm-Features: AS18NWDj85efeCrnhmR_6GlearyaVWhbXdxiwoIn6txK-daRoSjTXko9mdOfVKg
-Message-ID: <CAKYAXd8XfKPTdDMbHKkyQN1FTGLmgKkMTkUiSOuHE=FjB=G==w@mail.gmail.com>
-Subject: [GIT PULL] exfat update for 6.18-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Sungjong Seo <sj1557.seo@samsung.com>, "Yuezhang.Mo" <Yuezhang.Mo@sony.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-Hi Linus,
+On Wed, 10 Sep 2025 20:16:49 +0530
+Bharata B Rao <bharata@amd.com> wrote:
 
-This is exfat update pull request for v6.18-rc1. I add a description of
-this pull request below. Please pull exfat with following ones.
+> Use IBS (Instruction Based Sampling) feature present
+> in AMD processors for memory access tracking. The access
+> information obtained from IBS via NMI is fed to kpromoted
+> daemon for futher action.
+> 
+> In addition to many other information related to the memory
+> access, IBS provides physical (and virtual) address of the access
+> and indicates if the access came from slower tier. Only memory
+> accesses originating from slower tiers are further acted upon
+> by this driver.
+> 
+> The samples are initially accumulated in percpu buffers which
+> are flushed to pghot hot page tracking mechanism using irq_work.
+> 
+> TODO: Many counters are added to vmstat just as debugging aid
+> for now.
+> 
+> About IBS
+> ---------
+> IBS can be programmed to provide data about instruction
+> execution periodically. This is done by programming a desired
+> sample count (number of ops) in a control register. When the
+> programmed number of ops are dispatched, a micro-op gets tagged,
+> various information about the tagged micro-op's execution is
+> populated in IBS execution MSRs and an interrupt is raised.
+> While IBS provides a lot of data for each sample, for the
+> purpose of  memory access profiling, we are interested in
+> linear and physical address of the memory access that reached
+> DRAM. Recent AMD processors provide further filtering where
+> it is possible to limit the sampling to those ops that had
+> an L3 miss which greately reduces the non-useful samples.
+> 
+> While IBS provides capability to sample instruction fetch
+> and execution, only IBS execution sampling is used here
+> to collect data about memory accesses that occur during
+> the instruction execution.
+> 
+> More information about IBS is available in Sec 13.3 of
+> AMD64 Architecture Programmer's Manual, Volume 2:System
+> Programming which is present at:
+> https://bugzilla.kernel.org/attachment.cgi?id=288923
+> 
+> Information about MSRs used for programming IBS can be
+> found in Sec 2.1.14.4 of PPR Vol 1 for AMD Family 19h
+> Model 11h B1 which is currently present at:
+> https://www.amd.com/system/files/TechDocs/55901_0.25.zip
+> 
+> Signed-off-by: Bharata B Rao <bharata@amd.com>
+> ---
+>  arch/x86/events/amd/ibs.c        |  11 ++
+>  arch/x86/include/asm/ibs.h       |   7 +
+>  arch/x86/include/asm/msr-index.h |  16 ++
+>  arch/x86/mm/Makefile             |   3 +-
+>  arch/x86/mm/ibs.c                | 311 +++++++++++++++++++++++++++++++
+>  include/linux/vm_event_item.h    |  17 ++
+>  mm/vmstat.c                      |  17 ++
+>  7 files changed, 381 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/x86/include/asm/ibs.h
+>  create mode 100644 arch/x86/mm/ibs.c
+> 
+> diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
+> index 112f43b23ebf..1498dc9caeb2 100644
+> --- a/arch/x86/events/amd/ibs.c
+> +++ b/arch/x86/events/amd/ibs.c
+> @@ -13,9 +13,11 @@
+>  #include <linux/ptrace.h>
+>  #include <linux/syscore_ops.h>
+>  #include <linux/sched/clock.h>
+> +#include <linux/pghot.h>
+>  
+>  #include <asm/apic.h>
+>  #include <asm/msr.h>
+> +#include <asm/ibs.h>
+>  
+>  #include "../perf_event.h"
+>  
+> @@ -1756,6 +1758,15 @@ static __init int amd_ibs_init(void)
+>  {
+>  	u32 caps;
+>  
+> +	/*
+> +	 * TODO: Find a clean way to disable perf IBS so that IBS
+> +	 * can be used for memory access profiling.
 
-Thanks!
+Agreed on this being a key thing.  This applies to quite a few
+other sources of data so finding a generally acceptable solution to this
+would be great.  Davidlohr mentioned on the CXL sync that he has
+something tackling this for the CHMU driver around this.
 
-The following changes since commit 30d4efb2f5a515a60fe6b0ca85362cbebea21e2f:
 
-  Merge tag 'for-linus-6.18-rc1-tag' of
-git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip (2025-09-29
-19:42:03 -0700)
+> +	 */
+> +	if (arch_hw_access_profiling) {
+> +		pr_info("IBS isn't available for perf use\n");
+> +		return 0;
+> +	}
+> +
+>  	caps = __get_ibs_caps();
+>  	if (!caps)
+>  		return -ENODEV;	/* ibs not supported by the cpu */
 
-are available in the Git repository at:
+> diff --git a/arch/x86/mm/ibs.c b/arch/x86/mm/ibs.c
+> new file mode 100644
+> index 000000000000..6669710dd35b
+> --- /dev/null
+> +++ b/arch/x86/mm/ibs.c
+> @@ -0,0 +1,311 @@
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linkinjeon/exfat.git
-tags/exfat-for-6.18-rc1
+...
 
-for you to fetch changes up to d01579d590f72d2d91405b708e96f6169f24775a:
+> +
+> +static int ibs_pop_sample(struct ibs_sample *s)
+> +{
+> +	struct ibs_sample_pcpu *ibs_pcpu = raw_cpu_ptr(ibs_s);
+> +
+> +	int next = ibs_pcpu->tail + 1;
+> +
+> +	if (ibs_pcpu->head == ibs_pcpu->tail)
+> +		return 0;
+> +
+> +	if (next >= IBS_NR_SAMPLES)
 
-  exfat: Add support for FS_IOC_{GET,SET}FSLABEL (2025-09-30 13:49:31 +0900)
+== seems more appropriate to me.  If it's > then something went wrong
+and we lost data.
 
-----------------------------------------------------------------
-Description for this pull request:
- - Add support for FS_IOC_{GET,SET}FSLABEL ioctl.
- - Two small clean-up patches.
- - Optimizes allocation bitmap loading time on large partitions
-   with small cluster sizes.
- - Allow changes for discard, zero_size_dir, and errors options
-   via remount.
- - Validate that the clusters used for the allocation bitmap are
-   correctly marked as in-use during mount, preventing potential
-   data corruption from reallocating the bitmap's own space.
- - Uses ratelimit to avoid too many error prints on I/O error path.
+> +		next = 0;
+> +
+> +	*s = ibs_pcpu->samples[ibs_pcpu->tail];
+> +	ibs_pcpu->tail = next;
+> +	return 1;
+> +}
 
-----------------------------------------------------------------
-Chi Zhiling (1):
-      exfat: limit log print for IO error
 
-Ethan Ferguson (1):
-      exfat: Add support for FS_IOC_{GET,SET}FSLABEL
+> +static void setup_APIC_ibs(void)
+> +{
+> +	int offset;
+> +
+> +	offset = get_ibs_lvt_offset();
+> +	if (offset < 0)
+> +		goto failed;
+> +
+> +	if (!setup_APIC_eilvt(offset, 0, APIC_EILVT_MSG_NMI, 0))
+> +		return;
+> +failed:
+> +	pr_warn("IBS APIC setup failed on cpu #%d\n",
+> +		smp_processor_id());
 
-Liao Yuanhong (1):
-      exfat: Remove unnecessary parentheses
+Unless this is going to get more complex, move that up to the if () block
+above and return directly there.
 
-Namjae Jeon (2):
-      exfat: validate cluster allocation bits of the allocation bitmap
-      exfat: optimize allocation bitmap loading time
+> +}
 
-Sang-Heon Jeon (1):
-      exfat: combine iocharset and utf8 option setup
+> +static int __init ibs_access_profiling_init(void)
+> +{
+> +	if (!boot_cpu_has(X86_FEATURE_IBS)) {
+> +		pr_info("IBS capability is unavailable for access profiling\n");
+> +		return 0;
+> +	}
+> +
+> +	ibs_s = alloc_percpu_gfp(struct ibs_sample_pcpu, GFP_KERNEL | __GFP_ZERO);
 
-Xichao Zhao (1):
-      exfat: drop redundant conversion to bool
+sizeof(*ibs_s).
+Same as in other cases. It's nice to avoid having to check types when reviewing code.
 
-Yuezhang Mo (1):
-      exfat: support modifying mount options via remount
+> +	if (!ibs_s)
+> +		return 0;
+> +
+> +	INIT_WORK(&ibs_work, ibs_work_handler);
+> +	init_irq_work(&ibs_irq_work, ibs_irq_handler);
+> +
+> +	/* Uses IBS Op sampling */
+> +	ibs_config = IBS_OP_CNT_CTL | IBS_OP_ENABLE;
+> +	ibs_caps = cpuid_eax(IBS_CPUID_FEATURES);
+> +	if (ibs_caps & IBS_CAPS_ZEN4)
+> +		ibs_config |= IBS_OP_L3MISSONLY;
+ibs_config seems to only be used locally so the global seems unnecessary.
+You'll need to pass it in to the one user in the next patch though.
 
- fs/exfat/balloc.c    |  85 +++++++++++++++++++++++----
- fs/exfat/dir.c       | 160 +++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/exfat/exfat_fs.h  |   7 +++
- fs/exfat/exfat_raw.h |   6 ++
- fs/exfat/fatent.c    |  11 ++--
- fs/exfat/file.c      |  52 +++++++++++++++++
- fs/exfat/inode.c     |   2 +-
- fs/exfat/namei.c     |   2 +-
- fs/exfat/nls.c       |   2 +-
- fs/exfat/super.c     |  68 +++++++++++++++++-----
- 10 files changed, 360 insertions(+), 35 deletions(-)
+
+> +
+> +	register_nmi_handler(NMI_LOCAL, ibs_overflow_handler, 0, "ibs");
+> +
+> +	cpuhp_setup_state(CPUHP_AP_PERF_X86_AMD_IBS_STARTING,
+> +			  "x86/amd/ibs_access_profile:starting",
+> +			  x86_amd_ibs_access_profile_startup,
+> +			  x86_amd_ibs_access_profile_teardown);
+> +
+> +	pr_info("IBS setup for memory access profiling\n");
+> +	return 0;
+> +}
+> +
+> +arch_initcall(ibs_access_profiling_init);
+
+
 
