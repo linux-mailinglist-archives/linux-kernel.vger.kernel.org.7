@@ -1,154 +1,190 @@
-Return-Path: <linux-kernel+bounces-841384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CED7BB72C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:23:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 258A9BB72BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 549DC4A0241
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:23:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F9303AD340
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAEB23C4E3;
-	Fri,  3 Oct 2025 14:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F5F8238C23;
+	Fri,  3 Oct 2025 14:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="t21BLodu"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lotxKWgY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB48A224234
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 14:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C17C230BFD;
+	Fri,  3 Oct 2025 14:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759501398; cv=none; b=QQO+yg9BCeafYAgnYvfNvbv2b9UwIQthQuF37umMZWHiL6ygpUlR2CFQhkh6qFmoA9P3p/B6DcrrYFebdtryv7HBMXViFgYx31d0J9ol20YU9FD+uHNiZoPcSMlQPAvhXX36dsW2R49OuSB0TUorPnMiBk5AlkaqF4Mslbguk4g=
+	t=1759501397; cv=none; b=C/YmJvx+Jg+92OY5deGpB9bynymX1j/bsgSO41/E3nEm6V4aJURw5WcLkYEKlQ3m7uqwAe4KeR0kC3S1aVFv8mQ8LA0Rwgq+f0P8FpFqQMW2AoW1UYUOTj3Ne3Ddgkyc/W0V3z2DNnM9ZZdWrHf5/9alStspL+/X2xbqu6IcBvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759501398; c=relaxed/simple;
-	bh=ZNLnSKgncLVUeolihAdlLxpg3H+yQFxMlDR0Lih5oq8=;
+	s=arc-20240116; t=1759501397; c=relaxed/simple;
+	bh=NTBZAxjqSpzLuG1zGiZTH3WkfjeQ/nsmqUdkHlpqyFA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MVC4/tloJBLzsZ6OeFNWMZWxxcCyCKxT5wiPk73S0EcV5/28Adpte/3HXTMQ5N/7aULahOY0oZMVYz8L60tFRDA+5u0uZDZ/vVK/N3aTDrk8qLpgZxL/qUJyekmFIA8RYPxQ5qPKlIfkmvDYWK17ny9a7SeAnPwuEpQ/qxThplI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=t21BLodu; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-85a4ceb4c3dso229803485a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 07:23:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1759501394; x=1760106194; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TjshectPsoU5xexsh0W+Ld8Cl13e7LDyb1Q/bzYB9s8=;
-        b=t21BLoduIcBkV6cwRIewUUSB/FR0EiQHy4rQgIBtmcdDTuzOSCJ3SHj8lBurq/rbnZ
-         eSbTbMkLU8gcJFhBiLnJ9TamDAIC/nskd70L9Abrbztd/npm3Lq0B3Aj9Xt8fkE7rlE8
-         cxag7qRKvhs/zXYp95CkoK+CE24K9+YpuUO3Szyctw4pE6HjE4E0sNH/CvRTruV83gM/
-         FsFGWtjZ+2mwL/y/ONt4dih5kT1Fm745hyt1IK01tHK5lPrmViVWkaPw78+oEP5QPFDf
-         PLu7O6S2IJjFeArAy5Eq9tYTPjwFMGSC4SYlzqTwjVhIidnmgMgsKLeQvYu65waPM1Rb
-         Z07Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759501394; x=1760106194;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TjshectPsoU5xexsh0W+Ld8Cl13e7LDyb1Q/bzYB9s8=;
-        b=piBwUypecUMiboW/Dajn46DYRnZqSLbHUibQxtVaP2Iqg8c1g3nAau18qJ9EVoP7fm
-         JQexxklkldFw0l0YvZlnNeOsOYIokDosHTSTpkgP9AELUP7f6k5yXREza3MhHaID/+Qv
-         RUHYIKnUXe6faLbSafS/y0N7+r/3+DwMSvpcMNY4G5MInGT0vtbpq13xGkZEARCS48+i
-         aIoQuZa+b3cK/s6hypHpviIX4wTJz6AyP2PrIQFct1dy7Dj/Rrp042c3E0s6PIvH5OQp
-         QWHLNsRYozSNsYqHDiPtasxI80B0JkwW9HVhy/hQGMmmkk1FZbUS2igiyFGS/BEC8NUQ
-         Q4og==
-X-Forwarded-Encrypted: i=1; AJvYcCXrWSFBphgcNE5lxLxX8X1ZbhUmNu1ic/a/JBJYhtTyqZXo3dcY7zGOQmBufASKpvM8LHN+3MEKFz4rBxw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJrHhdNco/VX4wjmrYY5OZB22jEftPUKkewfC7E1yrgWQqVwIj
-	bGd21j8XX5Hhxv9chxaWI+ZGo1PtYS9wHWg8UxINtZ0nfxI7zUiqhDk7yP0njuNoyGA=
-X-Gm-Gg: ASbGncuWaWO0NlHmil75QtGD10GOGRyimLw7j+v23em2Q2tHd/vBfxh3sMojeMK6kje
-	tCQ4id/nz5lnHBhIHgkWMOTvuYPMvPhnQKnT6hoEk8dAur+DhgsfSjHkwABT/Zh/96kPI2cabfw
-	hoDjFKGqGFJQHToQupUSqmfKPsyYWzSBIcbLvS6rancOF129HokjAWdqkZwXVIhKMHePtF8HoVJ
-	LTZt2bCUcsulp5guhOXKPnnnI7QTWL9GcJ8HwYffo7l+FVoDhEEl982MAj4ri9K7qEydqKf3W0o
-	Hd3NWixWq/YnnXti6jZo4bSwSEoXUuQp0Yv+leodJeiN6KbUusyYBbRDIaOHneWPlBHQNHZp1HS
-	3U0hzN2vMPodyle/c4fX6+vJnJSQE+54KEF9563JNZv2nc0qa1A8eLCUZrZfdsYomDnBKpSoUlD
-	zQI2b0MroA3UU+lVMFcZWlsoc0VpKShN8x7Tvi8fWP
-X-Google-Smtp-Source: AGHT+IEGOuseBzlPlNuROJrG6WSd4huQymSIrENqcNpGScmGjW7j99oTy4VgsNRVtRatqijlGlv6iQ==
-X-Received: by 2002:a05:620a:1a8f:b0:818:dd40:405 with SMTP id af79cd13be357-87a38377379mr466910185a.64.1759501394537;
-        Fri, 03 Oct 2025 07:23:14 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-87771129f41sm427021885a.3.2025.10.03.07.23.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 07:23:14 -0700 (PDT)
-Date: Fri, 3 Oct 2025 10:23:12 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Vishal Aslot <vaslot@nvidia.com>
-Cc: Dave Jiang <dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Li Ming <ming.li@zohomail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Zijun Hu <zijun.hu@oss.qualcomm.com>,
-	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] cxl/hdm: allow zero sized committed decoders
-Message-ID: <aN_cUPzzwUy-s36n@gourry-fedora-PF4VCD3F>
-References: <SN7PR12MB81316C958DF0F4B10369B928BBE6A@SN7PR12MB8131.namprd12.prod.outlook.com>
- <aN4SSEmaCaxbeiwJ@gourry-fedora-PF4VCD3F>
- <02a4b5f1-ad29-4825-9040-ff96e328f674@intel.com>
- <SN7PR12MB8131EE31375531673BCF0C62BBE4A@SN7PR12MB8131.namprd12.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ey2q1E1z998EqWMvMtJj/gbLTXvq00L5qLWqGVaqX4F13W3n1rGCLUMQQhOfXDGxP8b37y+ONe+Hq+hPdyYfDLmmvqU2thfXamxdJky2WZ3jN6McVty5ZqUuJMuc+APgF5YhNT8oi4AsBAG0uAvZ4Ng/PSQXP86uIt8zBHVLrGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lotxKWgY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56D16C4CEF5;
+	Fri,  3 Oct 2025 14:23:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759501396;
+	bh=NTBZAxjqSpzLuG1zGiZTH3WkfjeQ/nsmqUdkHlpqyFA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lotxKWgY+nAfg0Bz/Vct5iFAdwEuXX/DFjaJOBqc9lv3nSDTg8zneCk9H0vxJGrbW
+	 E52huxGlaW/CCY8YVgKZLz0wtmM6C75fwjspxr7EoP9Z80p9ndf+UhnoygFBVkccey
+	 22o8GW5ooXjZHLEuJXTJ4qy8YlVK1iG8UdNcXJJzQWrRFlCNBAhUXezahWZ/FA1uXh
+	 gRw4gC4VHeSEuHL9wHJwMJ49BBMDtPI38LWs3l+Gy+LG7D2tq8pmkSmU6DE3mWIN8R
+	 Q62B4V0mj9VexBWWRMAnnPYQFBEMOgNnRbN5nQYHPg1+kAHsuyfwisrdIrxPwkFanQ
+	 vsLJda5lDMRJw==
+Date: Fri, 3 Oct 2025 16:23:14 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Sandy Huang <hjc@rock-chips.com>, 
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Samuel Holland <samuel@sholland.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+	Liu Ying <victor.liu@nxp.com>, Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
+	Daniel Stone <daniels@collabora.com>
+Subject: Re: [PATCH v4 01/10] drm/connector: let drivers declare infoframes
+ as unsupported
+Message-ID: <20251003-primitive-sepia-griffin-cfca55@houat>
+References: <20250909-drm-limit-infoframes-v4-0-53fd0a65a4a2@oss.qualcomm.com>
+ <20250909-drm-limit-infoframes-v4-1-53fd0a65a4a2@oss.qualcomm.com>
+ <20250910-furry-singing-axolotl-9aceac@houat>
+ <z333ysst5ifakomo35jtbpydj44epqwwn4da76rcnsq4are62m@32gsmgx2pcdi>
+ <20250925-didactic-spiked-lobster-fefabe@penduick>
+ <jfxtcvh4l5kzyv74llmzz3bbt6m4mhzhhwl6lh5kfeqgqhkrhi@jzfvtxpedmyf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="52tkbt2twc25uy2v"
 Content-Disposition: inline
-In-Reply-To: <SN7PR12MB8131EE31375531673BCF0C62BBE4A@SN7PR12MB8131.namprd12.prod.outlook.com>
+In-Reply-To: <jfxtcvh4l5kzyv74llmzz3bbt6m4mhzhhwl6lh5kfeqgqhkrhi@jzfvtxpedmyf>
 
-On Fri, Oct 03, 2025 at 01:03:16AM +0000, Vishal Aslot wrote:
-> > ________________________________________
-> > From: Dave Jiang <dave.jiang@intel.com>
-> > Sent: Thursday, October 2, 2025 10:32 AM
-> > To: Gregory Price; Vishal Aslot
-> > Cc: Davidlohr Bueso; Jonathan Cameron; Alison Schofield; Vishal Verma; Ira Weiny; Dan Williams; Li Ming; Peter Zijlstra; Dan Carpenter; Zijun Hu; linux-cxl@vger.kernel.org; linux-kernel@vger.kernel.org
-> > Subject: Re: [PATCH] cxl/hdm: allow zero sized committed decoders
-> > 
-> > External email: Use caution opening links or attachments
-> > 
-> > 
-> > On 10/1/25 10:48 PM, Gregory Price wrote:
-> >> On Wed, Oct 01, 2025 at 08:37:26PM +0000, Vishal Aslot wrote:
-> >>> @@ -1210,6 +1210,11 @@ int devm_cxl_enumerate_decoders(struct cxl_hdm *cxlhdm,
-> >>>                 rc = init_hdm_decoder(port, cxld, target_map, hdm, i,
-> >>>                                       &dpa_base, info);
-> >>>                 if (rc) {
-> >>> +                       if (rc == -ENOSPC) {
-> >>> +                               put_device(&cxld->dev);
-> >>> +                               rc = 0;
-> >>> +                               continue;
-> >>> +                       }
-> >>
-> >> How do you suggest actually testing this? I briefly poked at this in
-> >> QEMU trying to commit decoders, but i found myself incapable of
-> >> exercising this path.
-> 
-> I tested it locally with our BIOS (UEFI) where we commit and lock all decoders and
-> all except decoder 0 are zero-sized.
-> 
 
-Ahhh, so are you saying that you will only ever observe the following
-(as an example)
+--52tkbt2twc25uy2v
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 01/10] drm/connector: let drivers declare infoframes
+ as unsupported
+MIME-Version: 1.0
 
-endpoint decoders...
-decoder2.0   ->  available and can be programmed
-decoder2.1   ->  size=0, locked
-...
-decoder2.N   ->  size=0, locked
+On Thu, Sep 25, 2025 at 05:55:06PM +0300, Dmitry Baryshkov wrote:
+> > > As we will be getting more and more features, some of the InfoFrames
+> > > or data packets will be 'good to have, but not required'.
+> >=20
+> > And drivers would be free to ignore those.
+> >=20
+> > > > So, no, sorry. That's still a no for me. Please stop sending that p=
+atch
+> > >=20
+> > > Oops :-)
+> > >=20
+> > > > unless we have a discussion about it and you convince me that it's
+> > > > actually something that we'd need.
+> > >=20
+> > > My main concern is that the drivers should not opt-out of the feature=
+s.
+> > > E.g. if we start supporting ISRC packets or MPEG or NTSC VBI InfoFram=
+es
+> > > (yes, stupid examples), it should not be required to go through all t=
+he
+> > > drivers, making sure that they disable those. Instead the DRM framewo=
+rk
+> > > should be able to make decisions like:
+> > >=20
+> > > - The driver supports SPD and the VSDB defines SPD, enable this
+> > >   InfoFrame (BTW, this needs to be done anyway, we should not be send=
+ing
+> > >   SPD if it's not defined in VSDB, if I read it correctly).
+> > >=20
+> > > - The driver hints that the pixel data has only 10 meaninful bits of
+> > >   data per component (e.g. out of 12 for DeepColor 36), the Sink has
+> > >   HF-VSDB, send HF-VSIF.
+> > >=20
+> > > - The driver has enabled 3D stereo mode, but it doesn't declare suppo=
+rt
+> > >   for HF-VSIF. Send only H14b-VSIF.
+> > >=20
+> > > Similarly (no, I don't have these on my TODO list, these are just
+> > > examples):
+> > > - The driver defines support for NTSC VBI, register a VBI device.
+> > >=20
+> > > - The driver defines support for ISRC packets, register ISRC-related
+> > >   properties.
+> > >=20
+> > > - The driver defines support for MPEG Source InfoFrame, provide a way
+> > >   for media players to report frame type and bit rate.
+> > >=20
+> > > - The driver provides limited support for Extended HDR DM InfoFrames,
+> > >   select the correct frame type according to driver capabilities.
+> > >=20
+> > > Without the 'supported' information we should change atomic_check()
+> > > functions to set infoframe->set to false for all unsupported InfoFram=
+es
+> > > _and_ go through all the drivers again each time we add support for a
+> > > feature (e.g. after adding HF-VSIF support).
+> >=20
+> > From what you described here, I think we share a similar goal and have
+> > somewhat similar concerns (thanks, btw, it wasn't obvious to me before),
+> > we just disagree on the trade-offs and ideal solution :)
+> >=20
+> > I agree that we need to sanity check the drivers, and I don't want to go
+> > back to the situation we had before where drivers could just ignore
+> > infoframes and take the easy way out.
+> >=20
+> > It should be hard, and easy to catch during review.
+> >=20
+> > I don't think bitflag are a solution because, to me, it kind of fails
+> > both.
+> >=20
+> > What if, just like the debugfs discussion, we split write_infoframe into
+> > write_avi_infoframe (mandatory), write_spd_infoframe (optional),
+> > write_audio_infoframe (checked by drm_connector_hdmi_audio_init?) and
+> > write_hdr_infoframe (checked in drmm_connector_hdmi_init if max_bpc > 8)
+> >=20
+> > How does that sound?
+>=20
+> I'd say, I really like the single function to be called for writing the
+> infoframes. It makes it much harder for drivers to misbehave or to skip
+> something.
 
-or are you suggesting the following is valid:
+=46rom a driver PoV, I believe we should still have that single function
+indeed. It would be drm_atomic_helper_connector_hdmi_update_infoframes's
+job to fan out and call the multiple callbacks, not the drivers.
 
-decoder2.0   ->  size=0, locked
-decoder2.1   ->  available and can be programmed
-...
-decoder2.N   ->  available and can be programmed
+Maxime
 
-~Gregory
+--52tkbt2twc25uy2v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaN/cUQAKCRAnX84Zoj2+
+doqJAX90zNyWmsUip91wTNJtbf8t9T8oHpuaxLd97OtefR1KrjHS2zNm3j3QKJO2
+DILT8+EBfi951vLWkKKYswrmqe4tCE/x2PvHNyVn0RvWHOXmTytjmwkrcFHfX9Z+
+tXdDckATGw==
+=lhWy
+-----END PGP SIGNATURE-----
+
+--52tkbt2twc25uy2v--
 
