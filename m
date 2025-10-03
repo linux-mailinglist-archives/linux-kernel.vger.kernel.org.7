@@ -1,194 +1,197 @@
-Return-Path: <linux-kernel+bounces-841519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4994BBB792F
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:36:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C5EEBB7935
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:37:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C42C13470F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:36:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BE7FD4EDE5C
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:37:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7F6F2C21F9;
-	Fri,  3 Oct 2025 16:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB3E2C15B7;
+	Fri,  3 Oct 2025 16:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JGG2VnIR"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N72LcAeQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6DE28136B
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD9F3B186
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759509396; cv=none; b=A/3RxpEpRY19Vb/B4GH+dTlkDlkxLY9ND4DOaHDBA2mWuyQ+/Pw+ka3mOrRaM9DZBe6RGV4LOSsbd4W7SF6tiWl0V/GBZ/BlOPTwXqKBbNxjsv2oU6oFqSX660zmpZrGc3d/EpznrWnoqBYzDl27tE7vXSwCS65iQSl55KZAihQ=
+	t=1759509466; cv=none; b=E2umdtPFWRRkirJQsxV0QDbfplGmdTO72NXR68aKN8rWcYcyApkq8RaqP2D3jrYZFLUON2tBWLUwPOCCYElDs1IyOcyG6HTZQ4MsQaLZOkMQQ7hcI4l37SQI3TAX52jMF558NElI8WBfVvBodGVB8cGNy9yNnf/Wby28lJpyezw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759509396; c=relaxed/simple;
-	bh=ZaijyCJq8RhriFIQ2yguFRQneneiApnJF7GrOU1k4fY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NRLypA2phK/L7PezJOCDrkfb1eu/IFOq9h8kcouMHrBNZ1gUk5p84wjmFnvMjSI7DNdc+Br/lZT0HJ5o13l5WnNhBgUclB+H6cKjJpxJ4AnWF7bbz5SSAD552K39KNY2i0J2D2Dp8Iz8n5E+Ll6LX1/26JMY2Jxfm077X1LFDLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JGG2VnIR; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 593AjGQL012709
-	for <linux-kernel@vger.kernel.org>; Fri, 3 Oct 2025 16:36:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	QFFx9CZBotui5rMyhpbxkDYfHjf5bD25BY8RnVU5vWA=; b=JGG2VnIR7XTqtlVl
-	4IxPMVHIK/X4dPjT47V+B7JtLBInGEUtyQcjwj5PNnwx2Jy3bkfd0UQ6ie7IGu6n
-	8NS/Dx2JuD+xZSj+2Wy/vFUsxm9yo2+YnVDsyTE4XmpNN9ipYdcr96Ru9hlDc8wR
-	4Mt0q09y1x/4HpJKa8CliFQ1rBTXDPdx2r2WV2Z+8JZtyFbQZumBDRr/bI52wWgj
-	Xbi9FsaW4lIZN71RaGgidMcAFXNa3UhDeG7s12PbIkkiK2/QRIgSvvFmz47s5BM7
-	Uxw/AW5rAW1fwqsMWeNe6Tt7kwWtm+luOvCQbNPFStewoXpPhpULJiUjuhKVqgJB
-	RqqvFA==
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e80u3huf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 16:36:33 +0000 (GMT)
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b60992e3b27so2194135a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 09:36:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759509393; x=1760114193;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QFFx9CZBotui5rMyhpbxkDYfHjf5bD25BY8RnVU5vWA=;
-        b=ua0odpxQRY38s0gVZRVIMs7RbHyR8C8kx6S96NkeqwHfF3ja9qvlRfocFOUBVPVlzG
-         F9rMJQRXLm9dwNRfmVW43NGiGDnHXj7DmwqvvKppz6FBAAXOvkPR3AVG+6Jl/uT24z51
-         fTP+YmJulenl8uheboeHUSiUUDZthDzu01bTYdSKiTCHs8Aq9hkKPu2Tefpy7XjnzAnj
-         Q1edDn7rQUw/wI1PxEPyizKEudoBUEEwpLfn/HgrVox8FXOBN2KHvWrFA85iMuJ3GN78
-         N4Kl3lmeFNwN5M0B6EYTpymG3XzMpgKzAJPWE0x51h19cubOGuYAbwVhz+b1bRzkRnW6
-         u8zw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtRQVP9cPaUWGuZx/hy8NoU5vKs+F25KFR16hdT+4Ed7u2t92l/GFi0W3Jl27p/y2kYce3iIQWz0/PmTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwY12ah1dX87cWU/QgYq0pH6m3jN961VAg4Q8/DnOjkw0USOTsV
-	+O31s63Bxt3fvUsSiJYFXmStZvqHOEz/+XGLkh4cR+oHwGL81VS/w/0DeJWZYKNLFcBEkqOruiC
-	WKCAQqxR7UXyCvs6mhxw0qTPf2keIj0huPE4dBqvFYdMqY+BliSYt1ntGcxRIy4AKJns=
-X-Gm-Gg: ASbGnctlkUYwsKfOa6YmmVn+dBI0kOnSmv7EhIKgLYNaXtMDRbBzDy5x3g0tlZ+LRrd
-	Y1njM6mR6ZAxGpE1AI0Sf+OyJLhHsrHBHUn1/BZSHgIGjzCmGJFVz2SZaIiBq+2V7OtkDycpu3z
-	VBFltaUjah4G4WY9jp1Ip17mT+CYjExQMxX/Jdep/dNkKg75wZsYCwTXm3bqL8Ex6lz7VT2JQAC
-	3NpQ1YD89aFwO53NG2P8kSTMO49mXu3t4/6x4IFW+VrwdhwdIx+DaEfvOQJbMHs3L98QP1WwfrY
-	QfYuT1RcMUZ6CWjpgtfC0skvMzApjF39AC0ccF4V6+L+lTHuseldOTgZ11P7QOSWD4gZvf+0T9H
-	k2I4=
-X-Received: by 2002:a17:903:1ae8:b0:27d:69bd:cc65 with SMTP id d9443c01a7336-28e9a64897cmr46059355ad.45.1759509392652;
-        Fri, 03 Oct 2025 09:36:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHJKibX9WYsF7u8gjX03v+K3SueAafEPiiU1G1b/DGIlI/MZLepk+3L3tyJUhRRTfutSX8MKQ==
-X-Received: by 2002:a17:903:1ae8:b0:27d:69bd:cc65 with SMTP id d9443c01a7336-28e9a64897cmr46058975ad.45.1759509392120;
-        Fri, 03 Oct 2025 09:36:32 -0700 (PDT)
-Received: from [192.168.1.3] ([223.230.61.38])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1b878bsm54868735ad.81.2025.10.03.09.36.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Oct 2025 09:36:31 -0700 (PDT)
-Message-ID: <b1698759-ef46-43c2-9e86-4bfe3736f731@oss.qualcomm.com>
-Date: Fri, 3 Oct 2025 22:06:24 +0530
+	s=arc-20240116; t=1759509466; c=relaxed/simple;
+	bh=InD8WtbYkgU0kiUNWwNRVZek562u2vSXopzwXRbkJQ4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eKfrAqVTIZq6e6khU6k0m33QY1vO/iXAH6SVa797fT00etn5aexGf6Eot8AAeFeWDKb+rqEIQZhJcUguND3af1JLv4ZU1V+uVTEOXkFo5YVEXDFpG6kXm+IeZ3vj/1A7SNbWysnxHf7S9M2mV2vi/JBiNxvLs/lfLj7u70tF7Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N72LcAeQ; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759509464; x=1791045464;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=InD8WtbYkgU0kiUNWwNRVZek562u2vSXopzwXRbkJQ4=;
+  b=N72LcAeQX6G+CarBG3PLNoChFmxeqC07r8RRJCSo6BLWXxaCzxgzC3Ea
+   1OXsVxKU1LLcP+CK1WLs99C7ZIO7kntJH+aGhQ0a0KB7YTFjtYyFAHar9
+   CXJrdkmVDLwsPxcVjwdmKdqweJusl+jKjRCf1zYwv12ZFAroYmSSnzDBa
+   qHmxMkMWqPDL4ilPQSrr1SbdllafHwps4vTZ/tlQfD5QZMUX3OUadDjK6
+   LgZy/m9nodBT78Ly2ripyE0zdosmKcbjyRSHjm5KhMBu03GFUN4Qvao3x
+   WwsFMpvzLSGkcF3R7y6OpGJ0ayTXP/l1ggUK74qfBJdYzauiS5cZyp2Sf
+   w==;
+X-CSE-ConnectionGUID: 9ADGpN+FQAOLQ5VpG4JVYg==
+X-CSE-MsgGUID: wgULU/yTQ/KDz1zUK10Ijg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11571"; a="73147847"
+X-IronPort-AV: E=Sophos;i="6.18,313,1751266800"; 
+   d="scan'208";a="73147847"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 09:37:43 -0700
+X-CSE-ConnectionGUID: MzTqZt5jSySTlLC/sLwt0Q==
+X-CSE-MsgGUID: 2uOtgFLXS1uCs1A09TkO4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,313,1751266800"; 
+   d="scan'208";a="183349190"
+Received: from vverma7-desk1.amr.corp.intel.com (HELO [10.125.110.60]) ([10.125.110.60])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 09:37:43 -0700
+Message-ID: <16f4c4312978bc1093df4cdba2f352fee33f8927.camel@linux.intel.com>
+Subject: Re: [RESEND PATCH] sched/fair: Skip sched_balance_running cmpxchg
+ when balance is not due
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>, Peter Zijlstra
+	 <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Chen Yu <yu.c.chen@intel.com>, Doug
+ Nelson	 <doug.nelson@intel.com>, Mohini Narkhede
+ <mohini.narkhede@intel.com>, 	linux-kernel@vger.kernel.org, Vincent Guittot
+ <vincent.guittot@linaro.org>, K Prateek Nayak <kprateek.nayak@amd.com>
+Date: Fri, 03 Oct 2025 09:37:42 -0700
+In-Reply-To: <204e1921-f3e3-41cf-bae7-36884f50503b@linux.ibm.com>
+References: 
+	<e27d5dcb724fe46acc24ff44670bc4bb5be21d98.1759445926.git.tim.c.chen@linux.intel.com>
+	 <204e1921-f3e3-41cf-bae7-36884f50503b@linux.ibm.com>
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
+ keydata=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
+ uQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: lemans-evk: Add OTG support for primary
- USB controller
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-References: <20251002172946.589061-1-krishna.kurapati@oss.qualcomm.com>
- <ee0adfa3-f042-4d2a-adf0-2c5d84d79cd8@oss.qualcomm.com>
-Content-Language: en-US
-From: Krishna Kurapati PSSNV <krishna.kurapati@oss.qualcomm.com>
-In-Reply-To: <ee0adfa3-f042-4d2a-adf0-2c5d84d79cd8@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyOSBTYWx0ZWRfX3BEeoBI/6/Jw
- KvGHlAvGIHgflI6pfmnHPeJWm7cSCvCoETdilGbbU9MYVS9VWSn6xOyYd7f1o16jgauf4qSyFR5
- 6nJLniqqTRf9D5M6qQupa/5EF7gIjmiA52kxnL7BCidGNP1x6t96PxooHKdSSp2aoRFvHE14p2P
- I5ujb/lZRZe4ddoHa5TPElKt41aO3+MrLLFQFRAIRoVEYiwrreF4+jr1vgIQF6DSbddJyp7Akiq
- SEFmmMpDQwCvsb3id5o+rYVCd0asl6jyCbag/Zcqvs6xA/4lr7JJpUeLBbV3L/eG3IW8CP6PHWK
- +Oa3yWXU2fDlDpRO3PCqTYSxO3mo9LLiWpmr6MereggdVSb/cRMLv18x8eod/MCf3axZImhn6xS
- YNrSLajaVuUiJEQ0FEYLBImuwxGuug==
-X-Proofpoint-GUID: AZJCWNv5mCagUP18q-Dr1VSauAKZwvUS
-X-Authority-Analysis: v=2.4 cv=OMkqHCaB c=1 sm=1 tr=0 ts=68dffb91 cx=c_pps
- a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=QA6PZsKgKftjOHn1obVSzQ==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=Hw8d4qyt-kRrifida1AA:9 a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
-X-Proofpoint-ORIG-GUID: AZJCWNv5mCagUP18q-Dr1VSauAKZwvUS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-03_05,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 bulkscore=0 phishscore=0 adultscore=0
- priorityscore=1501 lowpriorityscore=0 clxscore=1015 spamscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2509270029
+
+On Fri, 2025-10-03 at 10:53 +0530, Shrikanth Hegde wrote:
+>=20
+> On 10/3/25 4:30 AM, Tim Chen wrote:
+> > Repost comments:
+> >=20
+> > There have been past discussions about avoiding serialization in load
+> > balancing, but no objections were raised to this patch itself during
+> > its last posting:
+> > https://lore.kernel.org/lkml/20250416035823.1846307-1-tim.c.chen@linux.=
+intel.com/
+> >=20
+> > Vincent and Chen Yu have already provided their Reviewed-by tags.
+> >=20
+> > We recently encountered this issue again on a 2-socket, 240-core
+> > Clearwater Forest server running SPECjbb. In this case, 14% of CPU
+> > cycles were wasted on unnecessary acquisitions of
+> > sched_balance_running. This reinforces the need for the change, and we
+> > hope it can be merged.
+> >=20
+> > Tim
+> >=20
+> > ---
+> >=20
+> > During load balancing, balancing at the LLC level and above must be
+> > serialized. The scheduler currently checks the atomic
+> > `sched_balance_running` flag before verifying whether a balance is
+> > actually due. This causes high contention, as multiple CPUs may attempt
+> > to acquire the flag concurrently.
+> >=20
+> > On a 2-socket Granite Rapids system with sub-NUMA clustering enabled
+> > and running OLTP workloads, 7.6% of CPU cycles were spent on cmpxchg
+> > operations for `sched_balance_running`. In most cases, the attempt
+> > aborts immediately after acquisition because the load balance time is
+> > not yet due.
+> >=20
+> > Fix this by checking whether a balance is due *before* trying to
+> > acquire `sched_balance_running`. This avoids many wasted acquisitions
+> > and reduces the cmpxchg overhead in `sched_balance_domain()` from 7.6%
+> > to 0.05%. As a result, OLTP throughput improves by 11%.
+> >=20
+> > Reviewed-by: Chen Yu <yu.c.chen@intel.com>
+> > Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+> > ---
+>=20
+> Hi Tim.
+>=20
+> Fine by me. unnecessary atomic operations do hurt on large systems.
+> The further optimization that i pointed out can come in later i guess.
+> That would help only further. this should be good to begin with.
+
+Thanks for your review and your past comments. We'll look into further
+optimization if we find that this became a hot path again.
+For now this change seemed to be good enough.
 
 
+Tim
 
-On 10/3/2025 6:57 PM, Konrad Dybcio wrote:
-> On 10/2/25 7:29 PM, Krishna Kurapati wrote:
->> Enable OTG support for primary USB controller on EVK Platform. Add
->> HD3SS3220 Type-C port controller present between Type-C port and SoC
->> that provides role switch notifications to controller.
->>
->> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
->> ---
->> Link to driver and binding changes:
->> https://lore.kernel.org/all/20251002172539.586538-1-krishna.kurapati@oss.qualcomm.com/
->>
->>   arch/arm64/boot/dts/qcom/lemans-evk.dts | 122 +++++++++++++++++++++++-
->>   1 file changed, 121 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/lemans-evk.dts b/arch/arm64/boot/dts/qcom/lemans-evk.dts
->> index c7dc9b8f4457..0b6d8d2d19d6 100644
->> --- a/arch/arm64/boot/dts/qcom/lemans-evk.dts
->> +++ b/arch/arm64/boot/dts/qcom/lemans-evk.dts
->> @@ -37,6 +37,32 @@ chosen {
->>   		stdout-path = "serial0:115200n8";
->>   	};
->>   
->> +	connector0 {
->> +		compatible = "usb-c-connector";
->> +		label = "USB0-Type-C";
-> 
-> Are there other, non-type-C ports labeled USB0 onboard?
-> 
-
-There is another Type-C port connected to secondary controller.
-There is one Micro USB Port connected to tertiary controller.
-
->> +		data-role = "dual";
-> 
-> power-role = "xxx"
-> 
-
-ACK. Will add it.
-
-> [...]
-> 
->> +	vbus_supply_regulator_0: vbus-supply-regulator-0 {
-> 
-> the suffix suggests there are going to be more - is that the case?
-> 
-
-The second Typec port would have another connector added. So another 
-vbus node would be added.
-
-> [...]
-> 
->>   &usb_0 {
->> -	dr_mode = "peripheral";
->> +	dr_mode = "otg";
-> 
-> otg is default, you can probably drop it
-> 
-
-ACK.
-
-Regards,
-Krishna,
+>=20
+> With that.
+> Reviewed-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+>=20
 
