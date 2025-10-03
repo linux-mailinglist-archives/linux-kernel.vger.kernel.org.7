@@ -1,190 +1,152 @@
-Return-Path: <linux-kernel+bounces-841383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 258A9BB72BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:23:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86416BB72C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F9303AD340
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:23:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1379119C6D47
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F5F8238C23;
-	Fri,  3 Oct 2025 14:23:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F31C238C23;
+	Fri,  3 Oct 2025 14:23:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lotxKWgY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WGrL+k3F"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C17C230BFD;
-	Fri,  3 Oct 2025 14:23:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F8A224234
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 14:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759501397; cv=none; b=C/YmJvx+Jg+92OY5deGpB9bynymX1j/bsgSO41/E3nEm6V4aJURw5WcLkYEKlQ3m7uqwAe4KeR0kC3S1aVFv8mQ8LA0Rwgq+f0P8FpFqQMW2AoW1UYUOTj3Ne3Ddgkyc/W0V3z2DNnM9ZZdWrHf5/9alStspL+/X2xbqu6IcBvM=
+	t=1759501413; cv=none; b=hxs92kATWl3ccvdfskXHfmJYWOa57zNqQuXd6Jp9a1ThYlfUaMOfKgv8P6D9FMAh17QG4+85WCLvzRb3SHn1hVHW+VpMw+aNpTcr9iUHMCcMHllUIgyO8x9Lkzp48wTV8tI8uV/F23gobTnNkLkBQCTeyo7LMrbODaI4Er7W+tQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759501397; c=relaxed/simple;
-	bh=NTBZAxjqSpzLuG1zGiZTH3WkfjeQ/nsmqUdkHlpqyFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ey2q1E1z998EqWMvMtJj/gbLTXvq00L5qLWqGVaqX4F13W3n1rGCLUMQQhOfXDGxP8b37y+ONe+Hq+hPdyYfDLmmvqU2thfXamxdJky2WZ3jN6McVty5ZqUuJMuc+APgF5YhNT8oi4AsBAG0uAvZ4Ng/PSQXP86uIt8zBHVLrGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lotxKWgY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56D16C4CEF5;
-	Fri,  3 Oct 2025 14:23:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759501396;
-	bh=NTBZAxjqSpzLuG1zGiZTH3WkfjeQ/nsmqUdkHlpqyFA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lotxKWgY+nAfg0Bz/Vct5iFAdwEuXX/DFjaJOBqc9lv3nSDTg8zneCk9H0vxJGrbW
-	 E52huxGlaW/CCY8YVgKZLz0wtmM6C75fwjspxr7EoP9Z80p9ndf+UhnoygFBVkccey
-	 22o8GW5ooXjZHLEuJXTJ4qy8YlVK1iG8UdNcXJJzQWrRFlCNBAhUXezahWZ/FA1uXh
-	 gRw4gC4VHeSEuHL9wHJwMJ49BBMDtPI38LWs3l+Gy+LG7D2tq8pmkSmU6DE3mWIN8R
-	 Q62B4V0mj9VexBWWRMAnnPYQFBEMOgNnRbN5nQYHPg1+kAHsuyfwisrdIrxPwkFanQ
-	 vsLJda5lDMRJw==
-Date: Fri, 3 Oct 2025 16:23:14 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Samuel Holland <samuel@sholland.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Liu Ying <victor.liu@nxp.com>, Rob Clark <robin.clark@oss.qualcomm.com>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
-	Daniel Stone <daniels@collabora.com>
-Subject: Re: [PATCH v4 01/10] drm/connector: let drivers declare infoframes
- as unsupported
-Message-ID: <20251003-primitive-sepia-griffin-cfca55@houat>
-References: <20250909-drm-limit-infoframes-v4-0-53fd0a65a4a2@oss.qualcomm.com>
- <20250909-drm-limit-infoframes-v4-1-53fd0a65a4a2@oss.qualcomm.com>
- <20250910-furry-singing-axolotl-9aceac@houat>
- <z333ysst5ifakomo35jtbpydj44epqwwn4da76rcnsq4are62m@32gsmgx2pcdi>
- <20250925-didactic-spiked-lobster-fefabe@penduick>
- <jfxtcvh4l5kzyv74llmzz3bbt6m4mhzhhwl6lh5kfeqgqhkrhi@jzfvtxpedmyf>
+	s=arc-20240116; t=1759501413; c=relaxed/simple;
+	bh=L6AZPSu7PL9w770aj4OpkCLzKed0TTIBd5csy7OERWs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GRG4nxTjSDOI6aeKlnsElO6xml8Pk2fneskxGh0PcEntaFFLBZ/gk27zOXIKZKiAucxdac6GLWxfq1F9URCP0WO7SmN8rbQduKrhaeYLMNWXprD2LEg6Vv8myuY2Q08nznPbl6be0eBbwF0dRrvzjQnYKAMJ/eJlhI3JmOg0PPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WGrL+k3F; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759501412; x=1791037412;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=L6AZPSu7PL9w770aj4OpkCLzKed0TTIBd5csy7OERWs=;
+  b=WGrL+k3FadEp/UV0B57szUQkRjxOvA2m7GXslxVmh9PxPMBqCVmhLNyc
+   LhoBA35QW+jzLJlOAT7qteRCQlFoRd6VWqR0QF8m6/aXmz7AWL6sFnzAk
+   yTYmQSkpq2P5boxRoN3mmEygfL47Xe3zfzAp/p/1TyaWqCziFfv8Gm5hx
+   KArGYynfFgi68c7pJ2I642YjGC9A3c9Bwk9wyt5SKqfMn9LBhgV190XSA
+   k7Pp0l9N5G4QFQn4xeK9cS1udgs8DD2fRaknC//I89jMb+0JS28vmzUUu
+   rQRm//HqbGcjgZ6nZJPXsfV87hRS577sWv4VmBuIlwcwS68wpE5FZVxer
+   Q==;
+X-CSE-ConnectionGUID: f1YT6iB/Q/ioSvCYKosaSg==
+X-CSE-MsgGUID: oPI4/uLDQe2at8Y8GMbqaQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11571"; a="87240236"
+X-IronPort-AV: E=Sophos;i="6.18,312,1751266800"; 
+   d="scan'208";a="87240236"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 07:23:31 -0700
+X-CSE-ConnectionGUID: F40sYTK/RAyYy9pK/uKOKg==
+X-CSE-MsgGUID: iFEgYZvzS9uxIm+qUSMcIg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,312,1751266800"; 
+   d="scan'208";a="203044547"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.110.34]) ([10.125.110.34])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 07:23:30 -0700
+Message-ID: <4c4cce9f-3219-48f0-8606-6573339b8794@intel.com>
+Date: Fri, 3 Oct 2025 07:23:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="52tkbt2twc25uy2v"
-Content-Disposition: inline
-In-Reply-To: <jfxtcvh4l5kzyv74llmzz3bbt6m4mhzhhwl6lh5kfeqgqhkrhi@jzfvtxpedmyf>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 09/12] x86/msr: Use the alternatives mechanism for
+ WRMSR
+To: Peter Zijlstra <peterz@infradead.org>, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?=
+ <jgross@suse.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, llvm@lists.linux.dev,
+ xin@zytor.com, "H. Peter Anvin" <hpa@zytor.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+References: <20250930070356.30695-1-jgross@suse.com>
+ <20250930070356.30695-10-jgross@suse.com>
+ <20250930083137.GH3245006@noisy.programming.kicks-ass.net>
+ <2df26cc0-53bc-499c-8c78-bc24fd8bf882@suse.com>
+ <20250930085044.GK3245006@noisy.programming.kicks-ass.net>
+ <20250930125156.GK1386988@noisy.programming.kicks-ass.net>
+ <2ad137cb-ed38-42f6-ac0a-a81569051779@suse.com>
+ <20251001064339.GL4067720@noisy.programming.kicks-ass.net>
+ <20251001072340.GM3245006@noisy.programming.kicks-ass.net>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20251001072340.GM3245006@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 10/1/25 00:23, Peter Zijlstra wrote:
+> On Wed, Oct 01, 2025 at 08:43:39AM +0200, Peter Zijlstra wrote:
+>> Let me see how terrible it all ends up when using as macros
+> Argh, as macros are differently painful. I hate computers :/
 
---52tkbt2twc25uy2v
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 01/10] drm/connector: let drivers declare infoframes
- as unsupported
-MIME-Version: 1.0
+ALTERNATIVES are fun and all, but is there a good reason we're pulling
+out our hair to use them here?
 
-On Thu, Sep 25, 2025 at 05:55:06PM +0300, Dmitry Baryshkov wrote:
-> > > As we will be getting more and more features, some of the InfoFrames
-> > > or data packets will be 'good to have, but not required'.
-> >=20
-> > And drivers would be free to ignore those.
-> >=20
-> > > > So, no, sorry. That's still a no for me. Please stop sending that p=
-atch
-> > >=20
-> > > Oops :-)
-> > >=20
-> > > > unless we have a discussion about it and you convince me that it's
-> > > > actually something that we'd need.
-> > >=20
-> > > My main concern is that the drivers should not opt-out of the feature=
-s.
-> > > E.g. if we start supporting ISRC packets or MPEG or NTSC VBI InfoFram=
-es
-> > > (yes, stupid examples), it should not be required to go through all t=
-he
-> > > drivers, making sure that they disable those. Instead the DRM framewo=
-rk
-> > > should be able to make decisions like:
-> > >=20
-> > > - The driver supports SPD and the VSDB defines SPD, enable this
-> > >   InfoFrame (BTW, this needs to be done anyway, we should not be send=
-ing
-> > >   SPD if it's not defined in VSDB, if I read it correctly).
-> > >=20
-> > > - The driver hints that the pixel data has only 10 meaninful bits of
-> > >   data per component (e.g. out of 12 for DeepColor 36), the Sink has
-> > >   HF-VSDB, send HF-VSIF.
-> > >=20
-> > > - The driver has enabled 3D stereo mode, but it doesn't declare suppo=
-rt
-> > >   for HF-VSIF. Send only H14b-VSIF.
-> > >=20
-> > > Similarly (no, I don't have these on my TODO list, these are just
-> > > examples):
-> > > - The driver defines support for NTSC VBI, register a VBI device.
-> > >=20
-> > > - The driver defines support for ISRC packets, register ISRC-related
-> > >   properties.
-> > >=20
-> > > - The driver defines support for MPEG Source InfoFrame, provide a way
-> > >   for media players to report frame type and bit rate.
-> > >=20
-> > > - The driver provides limited support for Extended HDR DM InfoFrames,
-> > >   select the correct frame type according to driver capabilities.
-> > >=20
-> > > Without the 'supported' information we should change atomic_check()
-> > > functions to set infoframe->set to false for all unsupported InfoFram=
-es
-> > > _and_ go through all the drivers again each time we add support for a
-> > > feature (e.g. after adding HF-VSIF support).
-> >=20
-> > From what you described here, I think we share a similar goal and have
-> > somewhat similar concerns (thanks, btw, it wasn't obvious to me before),
-> > we just disagree on the trade-offs and ideal solution :)
-> >=20
-> > I agree that we need to sanity check the drivers, and I don't want to go
-> > back to the situation we had before where drivers could just ignore
-> > infoframes and take the easy way out.
-> >=20
-> > It should be hard, and easy to catch during review.
-> >=20
-> > I don't think bitflag are a solution because, to me, it kind of fails
-> > both.
-> >=20
-> > What if, just like the debugfs discussion, we split write_infoframe into
-> > write_avi_infoframe (mandatory), write_spd_infoframe (optional),
-> > write_audio_infoframe (checked by drm_connector_hdmi_audio_init?) and
-> > write_hdr_infoframe (checked in drmm_connector_hdmi_init if max_bpc > 8)
-> >=20
-> > How does that sound?
->=20
-> I'd say, I really like the single function to be called for writing the
-> infoframes. It makes it much harder for drivers to misbehave or to skip
-> something.
+Normal WRMSR is slooooooooooow. The ones that aren't slow don't need
+WRMSRNS in the first place.
 
-=46rom a driver PoV, I believe we should still have that single function
-indeed. It would be drm_atomic_helper_connector_hdmi_update_infoframes's
-job to fan out and call the multiple callbacks, not the drivers.
-
-Maxime
-
---52tkbt2twc25uy2v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaN/cUQAKCRAnX84Zoj2+
-doqJAX90zNyWmsUip91wTNJtbf8t9T8oHpuaxLd97OtefR1KrjHS2zNm3j3QKJO2
-DILT8+EBfi951vLWkKKYswrmqe4tCE/x2PvHNyVn0RvWHOXmTytjmwkrcFHfX9Z+
-tXdDckATGw==
-=lhWy
------END PGP SIGNATURE-----
-
---52tkbt2twc25uy2v--
+Would an out-of-line wrmsr() with an if() in it be so bad? Or a
+static_call()? Having WRMSR be inlined in a laudable goal, but I'm
+really asking if it's worth it.
 
