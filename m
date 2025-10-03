@@ -1,165 +1,159 @@
-Return-Path: <linux-kernel+bounces-841488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B60A7BB7808
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:14:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0024BB77F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE04E3A964E
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:13:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7D50E4ED99D
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:12:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063472BDC0C;
-	Fri,  3 Oct 2025 16:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eSVl+qmC"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D0529E11A;
+	Fri,  3 Oct 2025 16:12:48 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4179288537
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8514514A8B
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759508009; cv=none; b=CnOfhfBM6rDEeivqQW24saivKrC+EfnqEJ6KD8iHNS2oibgyhJYOujaEY58FmsITu2vgKbX709PPlx0DPdyvtxsihV9hFRfEDtWbGDMA32tghEeRbEv+awQuPWWzsbXl2l1UJMJbngCYZti2EEQE69Za9qUHJfYqqeQ7Q+1jJzE=
+	t=1759507967; cv=none; b=lu0gX85UxriK9P+HioLJ81p7pIgwnv3fM9Njz5fe5opn4o1HyT8hVNXj4L4uvkleQFFVHArHwmepg4z3t9UY8AobTHYehJ22Ip/wgzjH+ijK1i8MFpyk9MKmCaNMU4Vd7fWb2mo8oehbF6jf69dkHfJOSGKUMfldo9airUpgEE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759508009; c=relaxed/simple;
-	bh=YST8ZF3CcYfjTEJjqYRKNJnCudGeZXmyFr2oVhiwg2c=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=RDZg1oiASlApon5WwM/M+c9xu+skDlPVa4vAhKVk0bEEWb+kfBsV5cW/wl7zrHAkDl71NNzTokTxSBJI++DjwKnQ2cZwx+yu9z3OTrmcn5u/0IZvjoonsZN26MReZ8Ff+RN0ra5LRkal0vQbPnCdasZzt+XW/QGY2a2I6us0Ytg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eSVl+qmC; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-77e7808cf4bso1985339b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 09:13:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759508007; x=1760112807; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tmfo6BfSj1vijjHYWbexLj1tiKT+0K4lqvnwt2mSWyo=;
-        b=eSVl+qmCuoJOZllp0tfhLGnX8cM47fY35j8urvgCGfPROS3mpPVzCO8FzAvv4Tkpvl
-         umi9kjk8RJT6qyZZyiWSQqzntUwBaNukU74V+Ft6qdlN6M69Fb5UzJQslowojasgExgl
-         yJCu9x3v6h6BYOTV1KQo5YpHmlOQCpmU3BNqwp2qptuLnyS+1I6DDOsDPctTBI9ajNZ9
-         ajdeiXauDREizMn2e0m6XGKu1mz2tq5Ym7MHykcXpwfuvqX0b/c5wBIs8FKUkHF74sgD
-         sGxr7nnky5t9lb078mFj+ME3u6kvX3LoIZBPtZantwMJDfM4JXUD81XncIl5hNgph1b1
-         UgQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759508007; x=1760112807;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=tmfo6BfSj1vijjHYWbexLj1tiKT+0K4lqvnwt2mSWyo=;
-        b=I6B+ne1bJZUe60vITQF4Ckm8ZwIpYuUKwdS0WqGwdKF5a8ywPv6AdkXoslnFG5E0TJ
-         kPppTpPDdd2XMEAAfjTLkg7JFSUepaBn4yJ4nRxc1uBBDzr+c0PJ6QDA3HfeQtR7yzpL
-         hMDxbq4RDVJXADjjD44Um5nWv5ZvHQm2SFYRRLb02ENDQ8TzYzenMTIFsoSbRiwduvrf
-         xIuCOwHNGO0qOrntaQxHp0eJu0OgpyZewZ79yPDnPmzH3f2R2oXSnLxY95rGGN8jUR34
-         4XnsQgPurDT5xUfAQ1KRp+TJZKQBIWaJ1jv8z5InCw7f8UxFefaEEKqKlp9vj+l/x86D
-         N+8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWG9BGpvNEbck3x2Gh90R0K5+uF0UWQLqzqHif+EWXZP7rPI0NWf2+z4aUdgi9cvvzvPqrXIyZ8MEjIjT8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz1qQIcwVqXXXJ3Ol/GPMI0DuA7KEWo3EGbWnpRS2wD+ZLLqHI
-	syQWKP5zoV1cv2P10wg7JRlvra6vbJBJDrPteZWoptaXfe4E2+tmcqOig2bVbad0sfv/l/ryQJ+
-	Dlb8lbQ==
-X-Google-Smtp-Source: AGHT+IGckT+FYIKyF0u496NCKfZhFFbReLIlmMVt60Vecws/DHOYXpXuGQnDznnvpoOwwtW65OfuIzp1Y8U=
-X-Received: from pgbcv13.prod.google.com ([2002:a05:6a02:420d:b0:b62:de94:990d])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:6a10:b0:2cd:a43f:78fb
- with SMTP id adf61e73a8af0-32b620db8b0mr4716222637.48.1759508007117; Fri, 03
- Oct 2025 09:13:27 -0700 (PDT)
-Date: Fri, 3 Oct 2025 09:13:25 -0700
-In-Reply-To: <CAGtprH9N=974HZiqfdaO9DK9nycDD9NeiPeHC49P-DkgTaWtTw@mail.gmail.com>
+	s=arc-20240116; t=1759507967; c=relaxed/simple;
+	bh=q9ExXmkuFaHhZqkZkGv2wZ/F5DBUYLBWd1H70gVQuWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=QPbum6zvTMdY8RkvHw7L5xoe9vOFy6xqQIpo0KbNVvwv6JBRaEFq0mXAIf78OzTi9Jr4lpX/uPZfDM94jdMSrDOT+3D2AF2JPt6DxmzyykbIWUohWfERWsoyaewBr9OSaxkEvve68U8VZ5gE2AdVMaavyleesIA6g3kfpiQ6i8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id 24DAF11AF30;
+	Fri,  3 Oct 2025 16:12:42 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 8E4F220013;
+	Fri,  3 Oct 2025 16:12:39 +0000 (UTC)
+Date: Fri, 3 Oct 2025 12:14:21 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+ Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Waiman Long <longman@redhat.com>, Tejun Heo
+ <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, "Michal
+ =?UTF-8?B?S291dG7DvQ==?=" <mkoutny@suse.com>, Andrea Righi
+ <righi.andrea@gmail.com>, Julia Lawall <Julia.Lawall@inria.fr>, "Luis
+ Claudio R. Goncalves" <lgoncalv@redhat.com>, Joseph Salisbury
+ <joseph.salisbury@oracle.com>
+Subject: [PATCH] sched: cgroup: Move task_can_attach() to cpuset.c
+Message-ID: <20251003121421.0cf4372d@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <aNshILzpjAS-bUL5@google.com> <CAGtprH_JgWfr2wPGpJg_mY5Sxf6E0dp5r-_4aVLi96To2pugXA@mail.gmail.com>
- <aN1TgRpde5hq_FPn@google.com> <CAGtprH-0B+cDARbK-xPGfx4sva+F1akbkX1gXts2VHaqyDWdzA@mail.gmail.com>
- <aN1h4XTfRsJ8dhVJ@google.com> <CAGtprH-5NWVVyEM63ou4XjG4JmF2VYNakoFkwFwNR1AnJmiDpA@mail.gmail.com>
- <aN3BhKZkCC4-iphM@google.com> <CAGtprH_evo=nyk1B6ZRdKJXX2s7g1W8dhwJhEPJkG=o2ORU48g@mail.gmail.com>
- <aN8U2c8KMXTy6h9Q@google.com> <CAGtprH9N=974HZiqfdaO9DK9nycDD9NeiPeHC49P-DkgTaWtTw@mail.gmail.com>
-Message-ID: <aN_2JaorgERIkpW4@google.com>
-Subject: Re: [PATCH 1/6] KVM: guest_memfd: Add DEFAULT_SHARED flag, reject
- user page faults if not set
-From: Sean Christopherson <seanjc@google.com>
-To: Vishal Annapurve <vannapurve@google.com>
-Cc: Ackerley Tng <ackerleytng@google.com>, David Hildenbrand <david@redhat.com>, 
-	Patrick Roy <patrick.roy@linux.dev>, Fuad Tabba <tabba@google.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
-	kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Nikita Kalyazin <kalyazin@amazon.co.uk>, Shivank Garg <shivankg@amd.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 1gqkuc8oibgawwgbyqbnybxoqddp3oyk
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: 8E4F220013
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/znqxXtSnlvTkyKAZ74lLfh53Xu+u9HME=
+X-HE-Tag: 1759507959-517395
+X-HE-Meta: U2FsdGVkX18BS2BcHVmqQuYwMn/VkFiumXonfGyDwWLmhMIm7KUc0XDJUa5F2ZKRSzfW9543djMMXKvSF9d7Wr9esq3B+Qm8ShErZAvbdjKiNlcGsQ5cyHpz8gX5+FlWdsW4RGzKJd4bD97NNBPdkE/s2syZXxNH8QTtvR6V6HjEyd7yGTPCKWQ/gkRWv807rCqlV5Yw2cjIdktVZ5EVRxUcpIS95TFZS4wouBAKj+fj9uxmNBm9uUDjWr10kmmNpQzclKVAVELQd/LAdOIFH8ESAxEaXuWuqw3r5/T9NjuTgTkRe0M0eUw8RjpNSuJYax6fFkVdjmX1gAHNrK6gAEWwOKrB3AQb2QACDxAxOgUyo8svBQBe1IWkkbjC9v2H
 
-On Thu, Oct 02, 2025, Vishal Annapurve wrote:
-> On Thu, Oct 2, 2025, 5:12=E2=80=AFPM Sean Christopherson <seanjc@google.c=
-om> wrote:
-> >
-> > > >
-> > > > If the _only_ user-visible asset that is added is a KVM_CREATE_GUES=
-T_MEMFD flag,
-> > > > a CAP is gross overkill.  Even if there are other assets that accom=
-pany the new
-> > > > flag, there's no reason we couldn't say "this feature exist if XYZ =
-flag is
-> > > > supported".
-> > > >
-> > > > E.g. it's functionally no different than KVM_CAP_VM_TYPES reporting=
- support for
-> > > > KVM_X86_TDX_VM also effectively reporting support for a _huge_ numb=
-er of things
-> > > > far beyond being able to create a VM of type KVM_X86_TDX_VM.
-> > > >
-> > >
-> > > What's your opinion about having KVM_CAP_GUEST_MEMFD_MMAP part of
-> > > KVM_CAP_GUEST_MEMFD_CAPS i.e. having a KVM cap covering all features
-> > > of guest_memfd?
-> >
-> > I'd much prefer to have both.  Describing flags for an ioctl via a bitm=
-ask that
-> > doesn't *exactly* match the flags is asking for problems.  At best, it =
-will be
-> > confusing.  E.g. we'll probably end up with code like this:
-> >
-> >         gmem_caps =3D kvm_check_cap(KVM_CAP_GUEST_MEMFD_CAPS);
-> >
-> >         if (gmem_caps & KVM_CAP_GUEST_MEMFD_MMAP)
-> >                 gmem_flags |=3D GUEST_MEMFD_FLAG_MMAP;
-> >         if (gmem_caps & KVM_CAP_GUEST_MEMFD_INIT_SHARED)
-> >                 gmem_flags |=3D KVM_CAP_GUEST_MEMFD_INIT_SHARED;
-> >
->=20
-> No, I actually meant the userspace can just rely on the cap to assume
-> right flags to be available (not necessarily the same flags as cap
-> bits).
->=20
-> i.e. Userspace will do something like:
-> gmem_caps =3D kvm_check_cap(KVM_CAP_GUEST_MEMFD_CAPS);
->=20
-> if (gmem_caps & KVM_CAP_GUEST_MEMFD_MMAP)
->         gmem_flags |=3D GUEST_MEMFD_FLAG_MMAP;
-> if (gmem_caps & KVM_CAP_GUEST_MEMFD_HUGETLB)
->         gmem_flags |=3D GUEST_MEMFD_FLAG_HUGETLB | GUEST_MEMFD_FLAG_HUGET=
-LB_2MB;
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Yes, that's exactly what I said.  But I goofed when copy+pasted and failed =
-to
-do s/KVM_CAP_GUEST_MEMFD_INIT_SHARED/GUEST_MEMFD_FLAG_INIT_SHARED, which is=
- the
-type of bug that ideally just can't happen.
+At our monthly stable meeting, we were talking about documenting non
+static functions and randomly picked a function to look at. That was
+task_can_attach(). It was then noticed that it's only used by
+cgroup/cpuset.c and nothing else. It's a simple function that doesn't
+reference anything unique to sched/core.c, hence there's no reason that
+function should be there.
 
-Side topic, I'm not at all convinced that this is what we want for KVM's uA=
-PI:
+Move it to cgroup/cpuset.c as that's the only place it is used. Also make
+it a static inline as it is so small.
 
-	if (gmem_caps & KVM_CAP_GUEST_MEMFD_HUGETLB)                              =
-   =20
-		gmem_flags |=3D GUEST_MEMFD_FLAG_HUGETLB | GUEST_MEMFD_FLAG_HUGETLB_2MB;
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ include/linux/sched.h  |  1 -
+ kernel/cgroup/cpuset.c | 19 +++++++++++++++++++
+ kernel/sched/core.c    | 19 -------------------
+ 3 files changed, 19 insertions(+), 20 deletions(-)
 
-See https://lore.kernel.org/all/aN_fJEZXo6wkcHOh@google.com.
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index e4ce0a76831e..4ee4fa973eda 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1849,7 +1849,6 @@ current_restore_flags(unsigned long orig_flags, unsigned long flags)
+ }
+ 
+ extern int cpuset_cpumask_can_shrink(const struct cpumask *cur, const struct cpumask *trial);
+-extern int task_can_attach(struct task_struct *p);
+ extern int dl_bw_alloc(int cpu, u64 dl_bw);
+ extern void dl_bw_free(int cpu, u64 dl_bw);
+ 
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 27adb04df675..21fe872803e8 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -3009,6 +3009,25 @@ static void reset_migrate_dl_data(struct cpuset *cs)
+ 	cs->sum_migrate_dl_bw = 0;
+ }
+ 
++static inline int task_can_attach(struct task_struct *p)
++{
++	int ret = 0;
++
++	/*
++	 * Kthreads which disallow setaffinity shouldn't be moved
++	 * to a new cpuset; we don't want to change their CPU
++	 * affinity and isolating such threads by their set of
++	 * allowed nodes is unnecessary.  Thus, cpusets are not
++	 * applicable for such threads.  This prevents checking for
++	 * success of set_cpus_allowed_ptr() on all attached tasks
++	 * before cpus_mask may be changed.
++	 */
++	if (p->flags & PF_NO_SETAFFINITY)
++		ret = -EINVAL;
++
++	return ret;
++}
++
+ /* Called by cgroups to determine if a cpuset is usable; cpuset_mutex held */
+ static int cpuset_can_attach(struct cgroup_taskset *tset)
+ {
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index ccba6fc3c3fe..a195c4b25475 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -8070,25 +8070,6 @@ int cpuset_cpumask_can_shrink(const struct cpumask *cur,
+ 	return ret;
+ }
+ 
+-int task_can_attach(struct task_struct *p)
+-{
+-	int ret = 0;
+-
+-	/*
+-	 * Kthreads which disallow setaffinity shouldn't be moved
+-	 * to a new cpuset; we don't want to change their CPU
+-	 * affinity and isolating such threads by their set of
+-	 * allowed nodes is unnecessary.  Thus, cpusets are not
+-	 * applicable for such threads.  This prevents checking for
+-	 * success of set_cpus_allowed_ptr() on all attached tasks
+-	 * before cpus_mask may be changed.
+-	 */
+-	if (p->flags & PF_NO_SETAFFINITY)
+-		ret = -EINVAL;
+-
+-	return ret;
+-}
+-
+ bool sched_smp_initialized __read_mostly;
+ 
+ #ifdef CONFIG_NUMA_BALANCING
+-- 
+2.50.1
 
-> Userspace has to anyways assume flag values, userspace just needs to
-> know if a particular feature is available.
-
-I don't understand what you mean by "assume flag values".
 
