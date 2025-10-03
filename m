@@ -1,117 +1,136 @@
-Return-Path: <linux-kernel+bounces-841240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB3B7BB6975
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 14:08:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8555BB6978
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 14:09:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C55CA4EBB8A
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 12:08:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B80BB4E92B8
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 12:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4682ECD39;
-	Fri,  3 Oct 2025 12:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8C62ECE89;
+	Fri,  3 Oct 2025 12:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OS6oI4aM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="cQMnkVjz"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A256D2ECE83;
-	Fri,  3 Oct 2025 12:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D181DE4E5
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 12:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759493292; cv=none; b=fS1D/t8i+bXiM+fqDrXuanaf5ZXzhycPi9BaeBxw6fHCu++8DT2eZ9ED4KLXVO2jUufRcWvKUuDKHg/ydxj7s2GB9KOpF3DFN82tGUgpWeksb4fQ2ZQnzTB5IqRkZLy2JK59E21Rz9hs4kOBYpvey62kJ6LTfuX3H8ZcoQ938L0=
+	t=1759493381; cv=none; b=iBoIOZU+x+mpKGsfnmwernnMbxenkoJh+VmEYnBbdFucspKdfY1qq+156CFkHh8fyCTD8PlizjKu3pCebhjQhXanUCs5ZZs03t29jypz93d80V2CGsibLixncuMojfCYIsqkIr15Rczx1aL6xpzB/xuZXRxjMbVSaLROpcV2hEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759493292; c=relaxed/simple;
-	bh=dJQkGYflY+j9UuLVfzN/vcOYOX7F6X9gPrL7iQ3Lza0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=G/dLIyl0pgF3xwdDgIyBLJz7cZ8xulHaMuljxOZDj+Y+rCsAxNwKd4HYNuia/J32RcIh67glweIuRUoEbN54x8KyEJ3FeSo3Q9qeN7X0sESnwYoun/JSaDDzz429CvXWymGhfp3FMo3gV5wG/wTI6LrBSCQYLRTH2zahGuiU4w0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OS6oI4aM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DBA9C4CEF5;
-	Fri,  3 Oct 2025 12:08:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759493292;
-	bh=dJQkGYflY+j9UuLVfzN/vcOYOX7F6X9gPrL7iQ3Lza0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=OS6oI4aM4xydCqXtVAdr/hHfgC6j9Q0AZnsmxhCDsnxrsm4PSu+Sjezsv1cJWuX7l
-	 W9XccRtGfbyY2dv+ok1q2OfofxiC5SOQcQvzCcSjVNwnxozce5tdTJksjuLXzx7zak
-	 y2oJEMq3MOIcfZHOPzmp0hTQpASst92XGo8ZGjSUQt40yEKRsUH21uX7ufDQ5O6gHQ
-	 yCyNXo/vjhzLmAGPiSQ7Y5gu6sMT699lmewDUEMAaIcGfyjeGulQe/YN4axtIsDoB7
-	 NhkrDKcRhrSLDik87rTIRk/VAaBBq19Jz7LVRvgHm2Ri+UCbzJPYa8Lwi+3CatTF0z
-	 ++hW1m7KEBNNw==
-Date: Fri, 3 Oct 2025 13:08:07 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Oct 3
-Message-ID: <aN-8p5aHWG4m29Kd@sirena.org.uk>
+	s=arc-20240116; t=1759493381; c=relaxed/simple;
+	bh=IGPBqNUyobL1TuTPpcRMGIWaY8QqCGlZoxv7ahbDfro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IKXo52zuGf0jJt0A8tU7y3hZ3+aJhJKR4yG3C2JueHFvXyDeGLIe9iL9TSjCGSvtaUP0wpMnYiZLQ6vGJe9mWHqquPDQ30E5aU0IEADYlhOiDj5XUAuOzW/zeReAz2xHX6kYaW/eedF8nBZqDfgN1q8r4XEMsGnA+hIZOIKhZrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=cQMnkVjz; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4d9bcc2368eso26204711cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 05:09:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1759493378; x=1760098178; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zhGKQmLihhqwED1FmckHDQNVWwmhyauTuFXOfWk0260=;
+        b=cQMnkVjz8CVl+/otKOua+sbtSPvAO4SN5JyepytGIN4AjhiFjmBopJFRmQJm1BXpxP
+         8sduTY0rzNdGoKozrjChicUbOVsJNp+LEaOFCx9IrNA/VslXkgJdy9tJKRMbwpLVQM+a
+         /UjDhcUSuYOqcBzp+UziR1GzUoR96UqtTRf5Q4BgznvWo8ZT708+ZKU3dL8FIHcc7DRd
+         RS67hBkKpLB1FuHd/vR0+hb2ZTrLPisMCzw1cKB4yv00MS1RniTe8b/Xt2fNlTPOgL7r
+         7A/jqReWB+rwqHxjop7U5Dm+OLYm7pEyWTA2a1pTvOWKpp/trVjo2Tm3oob6B1pb3HDO
+         ElcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759493378; x=1760098178;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zhGKQmLihhqwED1FmckHDQNVWwmhyauTuFXOfWk0260=;
+        b=oWcP6dl/TDuFwU1P7e8EOo4GpVsl4OAWBCECMzBoykuYgQot1opLHNFo+PTqXZItzg
+         0aQEGpCgqPFaWxoeVqW5PAqmxS4T1QA2gOxfTjwNzZN3RGlNZDYfTOFHdX6qMSDtBhan
+         gBattan5L2eyCPiAt783O6xK10MBMQITFXRXEDXFQnAn/rqxwxs5rndOrTAe3V7/AKFg
+         EPlMlQsztMkTN5TtrUfS0RZoo+UZpFbz/B5jTUOYPB72yyJtrdV9xuzX7nA2IX0IT2uG
+         Wlx1AQFkOion0Vbx0QiuydOLdOHg+9ikWrXFFME4QTwl/m9ssdSpr6vF1v0HTfz0nD4t
+         rwPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtGzFdy6GGCziFVepV1+DvjYtq0Wne3vpom6tnu9u9upQCY6FYKjc8k1UORd6m/oh1wN255Mi5VCrPluE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx70R49hdfDJoWsr6Jhf2DeIOP/4ktmVmxyHH2MhCfTpKSRjkT4
+	5TGL6yhUxzv0rRdPgGnBIva9yaDc6c31WisZVHOZA4ZZyxhAhFI3fgmWoCqcSU9hq8U=
+X-Gm-Gg: ASbGncsNb6GuMUnHAA5lCl8CWROgSJQIPATgsNGkH1QHW4OB2l8FEuSt3qBnKOYOPcn
+	Yf2MgAxrulQYNuaDBn/4c/CVO2hf+R1X7Wq62OCW0GJaFwGGuBnhCWv69Knqe7qSMd/CtnkVMai
+	uT+EDbZT4s6BQTXcf69z7uikK8AePC8Xp3117kHD4D7DrnuA7NDsolrLZTJdwjdYAL+PduL7+/4
+	47GLtWWuuIHTMyR98dvHS/TzgVsuEvcT9IXaSBJf0dGBhNS7/XjEJMkuzlZZoGIdi4fmpLnhAor
+	4ejfeX+lMtjCtKbBdRcBV8KVi6yUjJKRGRck+VY9GWu+gq129s1B9qKUu1+3//ZiQhECdkdNHvP
+	aa+zgbI5PVSmQX5DBLRJtG+q5angquCp6mXmWoPyLy0yrliUkq2yEZyyosdlZ5zb7mj77FuRiIW
+	+/cSuHw9PU00J/1aY9
+X-Google-Smtp-Source: AGHT+IFLcg1ywpHVdK051SrZ5/A9Wb7YpArYuwRz7ad7HjSe533gqbs0gQO57Kylg3jXc3KFtz9WxQ==
+X-Received: by 2002:ac8:6f14:0:b0:4dc:82dd:5611 with SMTP id d75a77b69052e-4e576ab8ec9mr34330421cf.48.1759493378126;
+        Fri, 03 Oct 2025 05:09:38 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-87771129f4csm410395085a.12.2025.10.03.05.09.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Oct 2025 05:09:37 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1v4ebQ-0000000E4oz-18oI;
+	Fri, 03 Oct 2025 09:09:36 -0300
+Date: Fri, 3 Oct 2025 09:09:36 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Samiullah Khawaja <skhawaja@google.com>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, iommu@lists.linux.dev,
+	YiFei Zhu <zhuyifei@google.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Adithya Jayachandran <ajayachandra@nvidia.com>,
+	Parav Pandit <parav@nvidia.com>,
+	Leon Romanovsky <leonro@nvidia.com>, William Tu <witu@nvidia.com>,
+	Vipin Sharma <vipinsh@google.com>, dmatlack@google.com,
+	Chris Li <chrisl@kernel.org>, praan@google.com
+Subject: Re: [RFC PATCH 13/15] iommufd: Persist iommu domains for live update
+Message-ID: <20251003120936.GN3195829@ziepe.ca>
+References: <20251001114742.GV2695987@ziepe.ca>
+ <CA+CK2bAvnTTz+vPg7v38_1dajRZQHyPQ8iDmziiW8GFUqy6=Ag@mail.gmail.com>
+ <20251002115712.GA3195829@ziepe.ca>
+ <CA+CK2bAudSHq2t5NZPBKDC2wfzsF6SSxTF7aZ2kxueOTzWYcfg@mail.gmail.com>
+ <20251002151012.GF3195829@ziepe.ca>
+ <CAAywjhQGQx2_2X8r0rf3AgMDbJj-9C=9_1a3xgiLwuzKLAvXCQ@mail.gmail.com>
+ <20251002211217.GI3195829@ziepe.ca>
+ <CA+CK2bBJ_RoRuCxiHuraDH4Gya-ZON3S6PE9PgPfsxObvBRY4w@mail.gmail.com>
+ <20251002225834.GJ3195829@ziepe.ca>
+ <CAAywjhS77-Kw7GVgksimZ8-Oy+kSvCPpL8xQfJt0eQHwf=WH_g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2YATftu5aMWzjusl"
-Content-Disposition: inline
-
-
---2YATftu5aMWzjusl
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAAywjhS77-Kw7GVgksimZ8-Oy+kSvCPpL8xQfJt0eQHwf=WH_g@mail.gmail.com>
 
-Hi all,
+On Thu, Oct 02, 2025 at 04:56:57PM -0700, Samiullah Khawaja wrote:
+> > So if you have a notion that finish is disallowed and when it is
+> > actually finished maybe the order doesn't matter?
+> 
+> I think FINISH for FDs in a SESSION is not atomic. If a dependency
+> memfd gets its FINISH call first, it might make itself mutable before
+> the iommufd FINISH callback fails because old HWPT is not replaced
+> yet. By then, it would be too late; the memfd has already become
+> mutable. That is why order would be needed.
 
-Changes since 20251002:
+I'm thinking of having an counter in the session and the iommu_domain
+holds it elevated until it is destroyed. Finish can't even start until
+the counter is 0.
 
-The char-misc tree gained a conflcit with the mm-hotfixes tree.
+If the counter is 0 then it is fine to unfreeze all the remaning
+objects in any order.
 
-Non-merge commits (relative to Linus' tree): 3547
- 3724 files changed, 172502 insertions(+), 54966 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with an arm64
-defconfig, an allmodconfig for x86_64, a multi_v7_defconfig for arm and
-a native build of tools/perf.=20
-
-Below is a summary of the state of the merge.
-
-I am currently merging 407 trees (counting Linus' and 406 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-Gortmaker for triage and bug fixes.
-
---2YATftu5aMWzjusl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjfvKcACgkQJNaLcl1U
-h9AP3wf/YX5ZWsAMcIGBkgpw7mn8fFUWuFERNA4H2s1A1e24jxy4fI3Hjq6FZDvl
-6foINPOHDjd+5NGIZ+JPP7tP+qp9cpn+Q1le7UhsbZnblZAx8OTDs1U+6vZ+ed6l
-tgPM6UQ2HA2Vslj2mZD6mB5r3W3Xi9MTrry0QLe/A0wHPltItkCfG4cCqP5uDYtt
-h/XtLb3nthyn8INR0gQeJnlU3fnVjNelx3ZBIMzb4isIUIWcHYXyMdlFOwYuOvXO
-dyoq76o+q4TlWiWG5WUaKanXiYU0NOX1NVNVznRF/7nuRsYbjoV7a0XcHDFxsYDq
-+6HtT+j37xxumRzO+zT8RslDS/iYzg==
-=Ht5y
------END PGP SIGNATURE-----
-
---2YATftu5aMWzjusl--
+Jason
 
