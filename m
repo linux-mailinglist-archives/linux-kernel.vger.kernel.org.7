@@ -1,167 +1,204 @@
-Return-Path: <linux-kernel+bounces-841607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11760BB7CFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:56:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 922A1BB7CFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:56:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AAE5B4E7B3C
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:56:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6CB504E5585
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959612DCC13;
-	Fri,  3 Oct 2025 17:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC102DC761;
+	Fri,  3 Oct 2025 17:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s0IMBpAK"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pC0WLvIV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA672DA76B
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 17:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D002DC339
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 17:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759514181; cv=none; b=cJHnG9kuW63cg8D8bvWPw6NkHKT2lKsxzlolv8y6disPDiw9dD7cDmjNt3e8UMjorcgxwyN8I8trNwoMH2x4BzgUaw/72eqk8aaA38gtABfYWLTR1ZjUEKMLoeGoxkjFxu5UKIYrHSZ5BYmTzmZ7OUpFr4M+u0IZrgO8u2adQk4=
+	t=1759514189; cv=none; b=rSWWNZO0W1a5H5CAIJnMED3d1xulWUKdjUQaMA4LvJiAZg4gt1Fiew+5Pc+1k7RvIuQJKdGQ5whFazHmvmcBzAi5jgSh77HsBUMcUDH/NHXFu9M4IWGdXCJ9kTKpPq+EAsJbjj6/pl/iwsdQSR1nAdMSsRSzEAw7dxrQx05L1BA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759514181; c=relaxed/simple;
-	bh=OpUdHXUA0W+Q6HfIdjC5/Eo2qQS6nQyXRDaLDwwWGXE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=mY70Mpb0vNkPkYMEgBvUzKcc4yx4elIS3z1I5c1Bij506kzB/k3yjblGNs9y1sIETcTf2tpVzqBCVIIw5koi2X1Fue/ytCa1bEKsT7bS8Qj4yWTiC++BMyqAexKhRAJblMIe5hu1VV0X9R4r4i5gz/WOVRaUJXobl8tsxBBhIw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s0IMBpAK; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-28e8d1d9b13so28146515ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 10:56:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759514179; x=1760118979; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CCzKIcxSwtwSrniu1/P7nPNHr6oMGAp8BGuB6qmiLI4=;
-        b=s0IMBpAKz/JVPm1vKae+sOXUR0QBPH9XFsxcSLKJ3ujbJi45AJs84rV8LHNE9YrIO/
-         xPM0zCwgqkPty/8XYPgJwy5OK4KWI65Ii4rcrZquLT3PiTQIuNkCY+SRjVoA3koyl4sR
-         Pk8hH1EsycPXWwZajy6QMI/HOmpiANd37h77dQvK5+0OtfaKHZargv3Yt3CvrpKH0BZw
-         32xYH6x3sqGcSP7Mw3/wIaRD4xMxeKX/pyusTGn9UltXdR8o5TPJKuWSSHw0hw+1XWOJ
-         MVGdWWgVGVgrycy1kNNeHPB5OMhUHox0Pcm96nUQtOzlaCy9U9ybZoy1BAG3z35kdn/c
-         OOKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759514179; x=1760118979;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CCzKIcxSwtwSrniu1/P7nPNHr6oMGAp8BGuB6qmiLI4=;
-        b=uGd+EHpYm32g/F2of28rtSDXonHwq92KpwchC8Gl3I8ncVZ/oFXkO78JVz5oOF8s2s
-         o8A8R7oDOr0HH8ag0WqPygIPr400S4gY/CYn5du3Z9MndHWQd8vYeO/IZT74HwKQ7jDA
-         2zA64U05e6RnK3XIqHBCXf+sMPZuzjPFA4FbO+roJUM90GOBDiQ5kaJoYD714jvXEm9u
-         2lFTniaVS8c9BK/1Rx+J7+KNmhFOvu8typbVEsn2/Wp0Mez5Ihnvt6RuWhlclQ3TE0Nl
-         sYD2pSKz9DbdxGuEOI3Op9qtfadtpozML+cD/pUfYLCaAW7TccR+OIekIwyVXcjo5aQq
-         DIYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWN+aCSsQXoGJ8DFg/ZelI4MOTo+jPOnmvk/jQ/vYvTz3k5M4pjyJUiGnX2x24IlQJLQRX9SrH3+lJ2TR0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCUUFdeDnBTka8e1vozQOOfww4XWMU7setTlGbLOmyLTWz9up7
-	ZmbJyhgGXF8pc84jPRrJEhYxPnAy12wfITcRXesWNnl+ZqyVvdPfzULhzD3xqdGGeJbgS/tAVvK
-	4ZmrBT+FMDg==
-X-Google-Smtp-Source: AGHT+IHKDcdAUZyq92R8ZR4IijMnwzdyQA5mSI8EW4fYoNjLYVkiyYERcuKa/NQHiAhzl51yVbn5SUEahEmU
-X-Received: from plsm6.prod.google.com ([2002:a17:902:bb86:b0:267:dbc3:f98d])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2c7:b0:269:96ee:17d3
- with SMTP id d9443c01a7336-28e9a6fd7c4mr42004505ad.51.1759514178808; Fri, 03
- Oct 2025 10:56:18 -0700 (PDT)
-Date: Fri,  3 Oct 2025 10:56:13 -0700
-In-Reply-To: <20251003175613.2512296-1-irogers@google.com>
+	s=arc-20240116; t=1759514189; c=relaxed/simple;
+	bh=9KCW7Uhqm+iyr1CXL3CkWO3+4qhqMUAqI/DIsF6l3nI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UpxF4Dpm4CRyinKMOewkg2x4sFLzf2ke6vuqM//rmUMTdd5xQWcG6OEctJd+nN46viwtG04bUwipB5sfXp1GaK7eKsi8hp2klR2DOaQX+4xSlcHWFLbNs3LvM4RdsKWv1UCtMxQC413So+Z52OCMqUb25qB5tS+kkSvjULGyoRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pC0WLvIV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE387C4CEF9;
+	Fri,  3 Oct 2025 17:56:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759514189;
+	bh=9KCW7Uhqm+iyr1CXL3CkWO3+4qhqMUAqI/DIsF6l3nI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=pC0WLvIVXeOkIrbvsKc/+0RtR2M/bGdoIt1liZCWpCZkGiIS+bU7hBMImTmNsEqTv
+	 gKbuw/s/ph+E7xdh19KhNgLuNopdn6MsYG82LMMUzkvUm19OCLXp6l4VvItUI39BSt
+	 DUlXYS6uZqN3YK9my2ppDQ+EcAUmYTBh03PadSjo33DrN9Dkyuelk31fJ2uMX23pVq
+	 hKbkMm68czq756FG8ZVOS+OGIONp4nRNOtBeMYM+Mw5wgefOev+SspXnVtIr1Gx6+n
+	 dVOZ4+B5UOWE9YFNGoDu4ueQ2tmkPDFA9SlnY4R2OKe49Lt8pT6LplqZsVEzWv+GZX
+	 PCZmQfAPxuCyw==
+Date: Fri, 3 Oct 2025 17:56:27 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] f2fs for 6.18-rc1
+Message-ID: <aOAOS864BmSwjfGm@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251003175613.2512296-1-irogers@google.com>
-X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
-Message-ID: <20251003175613.2512296-2-irogers@google.com>
-Subject: [PATCH v2 2/2] tools build: Remove get_current_dir_name
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-As perf no longer tests for this feature, and it was the only user,
-remove the feature test.
+Hi Linus,
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/build/Makefile.feature                    |  1 -
- tools/build/feature/Makefile                    |  4 ----
- tools/build/feature/test-all.c                  |  4 ----
- tools/build/feature/test-get_current_dir_name.c | 11 -----------
- 4 files changed, 20 deletions(-)
- delete mode 100644 tools/build/feature/test-get_current_dir_name.c
+Could you please consider this pull request?
 
-diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
-index 9c1a69d26f51..9399f591bd69 100644
---- a/tools/build/Makefile.feature
-+++ b/tools/build/Makefile.feature
-@@ -68,7 +68,6 @@ FEATURE_TESTS_BASIC :=                  \
-         libdw                           \
-         eventfd                         \
-         fortify-source                  \
--        get_current_dir_name            \
-         gettid				\
-         glibc                           \
-         libbfd                          \
-diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
-index b41a42818d8a..d13d2a1f44fe 100644
---- a/tools/build/feature/Makefile
-+++ b/tools/build/feature/Makefile
-@@ -8,7 +8,6 @@ FILES=                                          \
-          test-libdw.bin                         \
-          test-eventfd.bin                       \
-          test-fortify-source.bin                \
--         test-get_current_dir_name.bin          \
-          test-glibc.bin                         \
-          test-gtk2.bin                          \
-          test-gtk2-infobar.bin                  \
-@@ -147,9 +146,6 @@ $(OUTPUT)test-libelf.bin:
- $(OUTPUT)test-eventfd.bin:
- 	$(BUILD)
- 
--$(OUTPUT)test-get_current_dir_name.bin:
--	$(BUILD)
--
- $(OUTPUT)test-glibc.bin:
- 	$(BUILD)
- 
-diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-all.c
-index e1847db6f8e6..778883a32afb 100644
---- a/tools/build/feature/test-all.c
-+++ b/tools/build/feature/test-all.c
-@@ -22,10 +22,6 @@
- # include "test-libelf.c"
- #undef main
- 
--#define main main_test_get_current_dir_name
--# include "test-get_current_dir_name.c"
--#undef main
--
- #define main main_test_gettid
- # include "test-gettid.c"
- #undef main
-diff --git a/tools/build/feature/test-get_current_dir_name.c b/tools/build/feature/test-get_current_dir_name.c
-deleted file mode 100644
-index c3c201691b4f..000000000000
---- a/tools/build/feature/test-get_current_dir_name.c
-+++ /dev/null
-@@ -1,11 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--#define _GNU_SOURCE
--#include <unistd.h>
--#include <stdlib.h>
--
--int main(void)
--{
--	free(get_current_dir_name());
--	return 0;
--}
--#undef _GNU_SOURCE
--- 
-2.51.0.618.g983fd99d29-goog
+Thanks,
 
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-6.18-rc1
+
+for you to fetch changes up to 4e715744bf7b4e5521cc3b77f310060f862cb719:
+
+  f2fs: add missing dput() when printing the donation list (2025-10-03 03:16:10 +0000)
+
+----------------------------------------------------------------
+f2fs-for-6.18-rc1
+
+This release focuses on two primary updates for Android devices. First, it sets
+hash-based file name lookup as the default method to improve performance, while
+retaining an option to fall back to a linear lookup. Second, it resolves a
+persistent issue with the checkpoint=enable feature. The update further boosts
+performance by prefetching node blocks, merging FUA writes more efficiently, and
+optimizing block allocation policies.
+
+The release is rounded out by a comprehensive set of bug fixes that address
+memory safety, data integrity, and potential system hangs, along with minor
+documentation and code clean-ups.
+
+Enhancement:
+ - add mount option and sysfs entry to tune the lookup mode
+ - dump more information and add a timeout when enabling/disabling checkpoints
+ - readahead node blocks in F2FS_GET_BLOCK_PRECACHE mode
+ - merge FUA command with the existing writes
+ - allocate HOT_DATA for IPU writes
+ - Use allocate_section_policy to control write priority in multi-devices setups
+ - add reserved nodes for privileged users
+ - Add bggc_io_aware to adjust the priority of BG_GC when issuing IO
+ - show the list of donation files
+
+Bug fix:
+ - add missing dput() when printing the donation list
+ - fix UAF issue in f2fs_merge_page_bio()
+ - add sanity check on ei.len in __update_extent_tree_range()
+ - fix infinite loop in __insert_extent_tree()
+ - fix zero-sized extent for precache extents
+ - fix to mitigate overhead of f2fs_zero_post_eof_page()
+ - fix to avoid migrating empty section
+ - fix to truncate first page in error path of f2fs_truncate()
+ - fix to update map->m_next_extent correctly in f2fs_map_blocks()
+ - fix wrong layout information on 16KB page
+ - fix to do sanity check on node footer for non inode dnode
+ - fix to avoid NULL pointer dereference in f2fs_check_quota_consistency()
+ - fix to detect potential corrupted nid in free_nid_list
+ - fix to clear unusable_cap for checkpoint=enable
+ - fix to zero data after EOF for compressed file correctly
+ - fix to avoid overflow while left shift operation
+ - fix condition in __allow_reserved_blocks()
+
+----------------------------------------------------------------
+Bagas Sanjaya (6):
+      Documentation: f2fs: Separate errors mode subtable
+      Documentation: f2fs: Format compression level subtable
+      Documentation: f2fs: Span write hint table section rows
+      Documentation: f2fs: Wrap snippets in literal code blocks
+      Documentation: f2fs: Indent compression_mode option list
+      Documentation: f2fs: Reword title
+
+Chao Yu (22):
+      f2fs: dump more information when checkpoint was blocked for long time
+      f2fs: add time stats of checkpoint for debug
+      f2fs: fix condition in __allow_reserved_blocks()
+      f2fs: fix to avoid overflow while left shift operation
+      f2fs: fix to zero data after EOF for compressed file correctly
+      f2fs: clean up f2fs_truncate_partial_cluster()
+      f2fs: fix to clear unusable_cap for checkpoint=enable
+      f2fs: fix to detect potential corrupted nid in free_nid_list
+      f2fs: add timeout in f2fs_enable_checkpoint()
+      f2fs: dump more information for f2fs_{enable,disable}_checkpoint()
+      f2fs: clean up w/ get_left_section_blocks()
+      f2fs: fix to avoid NULL pointer dereference in f2fs_check_quota_consistency()
+      f2fs: fix to allow removing qf_name
+      f2fs: fix to do sanity check on node footer for non inode dnode
+      f2fs: avoid unnecessary folio_clear_uptodate() for cleanup
+      f2fs: clean up error handing of f2fs_submit_page_read()
+      f2fs: fix to update map->m_next_extent correctly in f2fs_map_blocks()
+      f2fs: fix to truncate first page in error path of f2fs_truncate()
+      f2fs: fix to avoid migrating empty section
+      f2fs: fix to mitigate overhead of f2fs_zero_post_eof_page()
+      f2fs: add sanity check on ei.len in __update_extent_tree_range()
+      f2fs: fix UAF issue in f2fs_merge_page_bio()
+
+Chunhai Guo (1):
+      f2fs: add reserved nodes for privileged users
+
+Daniel Lee (2):
+      f2fs: add lookup_mode mount option
+      f2fs: add sysfs entry for effective lookup mode
+
+Jaegeuk Kim (5):
+      f2fs: show the list of donation files
+      f2fs: allocate HOT_DATA for IPU writes
+      f2fs: merge FUA command with the existing writes
+      f2fs: fix wrong layout information on 16KB page
+      f2fs: add missing dput() when printing the donation list
+
+Liao Yuanhong (2):
+      f2fs: Add bggc_io_aware to adjust the priority of BG_GC when issuing IO
+      f2fs: Use allocate_section_policy to control write priority in multi-devices setups
+
+Soham Metha (1):
+      docs: f2fs: fixed spelling mistakes in documentation
+
+Yunji Kang (1):
+      f2fs: readahead node blocks in F2FS_GET_BLOCK_PRECACHE mode
+
+mason.zhang (1):
+      f2fs: add error checking in do_write_page()
+
+wangzijie (2):
+      f2fs: fix zero-sized extent for precache extents
+      f2fs: fix infinite loop in __insert_extent_tree()
+
+ Documentation/ABI/testing/sysfs-fs-f2fs |  56 ++++++++++++++-
+ Documentation/filesystems/f2fs.rst      | 122 ++++++++++++++++++++------------
+ fs/f2fs/checkpoint.c                    |  53 ++++++++++++++
+ fs/f2fs/compress.c                      |  43 ++++++-----
+ fs/f2fs/data.c                          |  59 ++++++---------
+ fs/f2fs/dir.c                           |  17 ++++-
+ fs/f2fs/extent_cache.c                  |  15 ++++
+ fs/f2fs/f2fs.h                          |  88 ++++++++++++++++++-----
+ fs/f2fs/file.c                          |  49 +++++++------
+ fs/f2fs/gc.c                            |  25 ++++++-
+ fs/f2fs/node.c                          |  77 ++++++++++++++------
+ fs/f2fs/node.h                          |   1 +
+ fs/f2fs/recovery.c                      |   2 +-
+ fs/f2fs/segment.c                       |  30 +++++++-
+ fs/f2fs/segment.h                       |  28 ++++----
+ fs/f2fs/super.c                         | 121 +++++++++++++++++++++++++++----
+ fs/f2fs/sysfs.c                         | 119 ++++++++++++++++++++++++++++++-
+ include/linux/f2fs_fs.h                 |   1 +
+ 18 files changed, 702 insertions(+), 204 deletions(-)
 
