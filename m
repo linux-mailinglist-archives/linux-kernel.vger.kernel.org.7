@@ -1,100 +1,95 @@
-Return-Path: <linux-kernel+bounces-840918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 736CCBB5B86
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 03:13:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F71EBB5BAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 03:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFB4119E6AD1
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 01:13:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BDF014E5FD0
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 01:17:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18F22147F9;
-	Fri,  3 Oct 2025 01:13:12 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C5A202961;
-	Fri,  3 Oct 2025 01:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D7B25C6FF;
+	Fri,  3 Oct 2025 01:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="adZtzzby"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141641DFCE
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 01:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759453992; cv=none; b=tfhuVwgPfAz/C6G3IiKdvQeZ7sj5vBwNFpWn+O6HNY/1zF2zr0HdZp33vjw1zZFfwfM16jeBWOxXOtMVbQWp3DwjQR4rZ9FlSTF1K1Xy8VV3lA6qmGb8lTVbtUEPCngYrn1WZ/CVpgqmCYP/WXr8szOqOf2miie80WTDnRi8OlM=
+	t=1759454235; cv=none; b=LDqCXgXOLT9du6U87JAYtdYEHuSofgXxswXRNAFckAVatm5acLeiK8TUFsXMg4Ju5i7UQrorvo6OyHtTm0GtDm4hbZ00h3HXym6Q/hRhExxhrzrWL547YQ1VjlzgZRymYML5vA0QvYNY4wKCWWIh5d/C573CsI8O252qEPK3KAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759453992; c=relaxed/simple;
-	bh=hk7Rlsd9UPPMJ2Q0igAIU2AnRfE/DegFn6VbdMtkOoo=;
+	s=arc-20240116; t=1759454235; c=relaxed/simple;
+	bh=wkhLQL4KhS4ElM81BbFH38DckUlg241GVOJ8Gk+Ooo8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ct7UXUFSMGSuTUEcHZeDQVlltqeg4R0r90aABGTKam51OCtl2lwZ0NZvuM33Rh/l9wRKsW8P59TQQkqTPBDmAVt7NJ1FSNibEozHDbH4hGMkjixjnUU29ct12IWoBrbJg1ejR37ZPQ+d5STI8NsP61Bzod/Xb/0umnb90QVOQ9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-c45ff70000001609-0c-68df2323f589
-Date: Fri, 3 Oct 2025 10:13:02 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
-	torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
-	linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
-	will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
-	joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
-	duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
-	tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
-	amir73il@gmail.com, gregkh@linuxfoundation.org, kernel-team@lge.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
-	minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
-	sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
-	penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
-	ngupta@vflare.org, linux-block@vger.kernel.org,
-	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org,
-	jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
-	djwong@kernel.org, dri-devel@lists.freedesktop.org,
-	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
-	hamohammed.sa@gmail.com, harry.yoo@oracle.com,
-	chris.p.wilson@intel.com, gwan-gyeong.mun@intel.com,
-	max.byungchul.park@gmail.com, boqun.feng@gmail.com,
-	longman@redhat.com, yunseong.kim@ericsson.com, ysk@kzalloc.com,
-	yeoreum.yun@arm.com, netdev@vger.kernel.org,
-	matthew.brost@intel.com, her0gyugyu@gmail.com, corbet@lwn.net,
-	catalin.marinas@arm.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, luto@kernel.org,
-	sumit.semwal@linaro.org, gustavo@padovan.org,
-	christian.koenig@amd.com, andi.shyti@kernel.org, arnd@arndb.de,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
-	rppt@kernel.org, surenb@google.com, mcgrof@kernel.org,
-	petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
-	paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
-	joelagnelf@nvidia.com, josh@joshtriplett.org, urezki@gmail.com,
-	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-	qiang.zhang@linux.dev, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
-	chuck.lever@oracle.com, neil@brown.name, okorniev@redhat.com,
-	Dai.Ngo@oracle.com, tom@talpey.com, trondmy@kernel.org,
-	anna@kernel.org, kees@kernel.org, bigeasy@linutronix.de,
-	clrkwllms@kernel.org, mark.rutland@arm.com, ada.coupriediaz@arm.com,
-	kristina.martsenko@arm.com, wangkefeng.wang@huawei.com,
-	broonie@kernel.org, kevin.brodsky@arm.com, dwmw@amazon.co.uk,
-	shakeel.butt@linux.dev, ast@kernel.org, ziy@nvidia.com,
-	yuzhao@google.com, baolin.wang@linux.alibaba.com,
-	usamaarif642@gmail.com, joel.granados@kernel.org,
-	richard.weiyang@gmail.com, geert+renesas@glider.be,
-	tim.c.chen@linux.intel.com, linux@treblig.org,
-	alexander.shishkin@linux.intel.com, lillian@star-ark.net,
-	chenhuacai@kernel.org, francesco@valla.it,
-	guoweikang.kernel@gmail.com, link@vivo.com, jpoimboe@kernel.org,
-	masahiroy@kernel.org, brauner@kernel.org,
-	thomas.weissschuh@linutronix.de, oleg@redhat.com, mjguzik@gmail.com,
-	andrii@kernel.org, wangfushuai@baidu.com, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org, linux-i2c@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
-	rcu@vger.kernel.org, linux-nfs@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH v17 30/47] fs/jbd2: use a weaker annotation in journal
- handling
-Message-ID: <20251003011302.GE75385@system.software.com>
-References: <20251002081247.51255-1-byungchul@sk.com>
- <20251002081247.51255-31-byungchul@sk.com>
- <bmthlv2tsd76mgzaoy5gspzdkved6le5xv23xjsc3yafkhrsgh@vvmjdwygm7gn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BvAPTIKvog1m638h+/cug8QlEI9Acu9llq9P1J5GYM6iBAafv57luqtXQWRGqc3gbD3aFqRh4AeMiJ9V4czvoIvOmKAQw7S/v19uRVPuIULIWoIxYpG6Ss0bH3ka3daWBQH7/L9hKgOwRzVbQ7/aAHIOU9ENolZGtFLoA8oQeSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=adZtzzby; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 592MVmhk023581
+	for <linux-kernel@vger.kernel.org>; Fri, 3 Oct 2025 01:17:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=NszYJNXUum61Ftvgh9BoHIbg
+	Xs/NhaLC23ASv+k9yTY=; b=adZtzzbyNJG4Qibg2lpRct8Xd0WYI9m+fpgiIP8j
+	RUWhvSXufHfFkNhTt/Qd4g6Y8vxXkw43zAYs/r0yTk0bpYNl7JdldY73vSVYXhRa
+	EnaS+KHtE5qBhBiMhyp0Bk/sto0n/QH/NS3Wk9wXxMzB9YugqdwOAXgkkO3K9qyV
+	NeJEycjjHKmqwWbxKdLJcYd3Y/WvhzxU7UK7Yci9U6f/MHThFUhY9d0TPaQTumCt
+	GCLTj7XkejVhZjM0N78nBT91y4S7v3S5RTSEjGvKzxckNfErhPQMmzSC8H6xwU3Z
+	eYIHRp/S6Z8B6iHyLgdkY09AQrNaM/d5OqeRbg2etQ5xew==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e8a69f7k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 01:17:08 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4d905ce4749so32831691cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 18:17:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759454228; x=1760059028;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NszYJNXUum61Ftvgh9BoHIbgXs/NhaLC23ASv+k9yTY=;
+        b=je+hugfq1rskh2J7cIfSBCiWXsALrilgqT1QlfFtRM9Ge16jmPgwMnSoxOgKr+rr3Y
+         zlpmvuQ+SH/rnW6UISGMY7eiBgWxJetXtiKqP27JkqbVxRrw3adSMCHG0blsCj213ouK
+         Smtc0VnvBDSQcrbedVRuUffm/Ntvl5GSCpgVsC03njY9NUaTBsBZHaY9yAK5TmO2ZnXE
+         Z41HI9Ma5B3qknSNEcWQYrnWrAfvhwhGJOZXe0dgKJ6wD0PiEVa+0J+Hk2mjdFuq22JG
+         SkByY8qcZhbnlPaf9qVAuNimsDlGnA4NMQuSyfJxb+JT2mtZ5dfpi/s8qM6znuVOrBEk
+         g+Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ4iGdQQ14idEzkX6WwdEXrHolImFfwtacFYtcUaAm2id/DuBpMIXzSZdSnAIHJw8xxkYOCHhiDN2WYGA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyeki+twDKdzJwIxL3VjAjwNsxOgDpirSzEKY+ZlgE+MQSqXdOG
+	VOqLZ0db82lQXfaobKZOU5VeJMzm20tshkax5t8EZj2HgpL1JEokt3mU7u7fImHIRAZBDkGeLgo
+	sWtMTrrAqa+7SQneLh89EG169+P63FSyETXwJxWdhCRDCyNHe/CaeuBRude0tot925gE=
+X-Gm-Gg: ASbGncsOG8s6YrnyBcBQKay80p85/oiIFIzNDWGCa9L3iPldVd2EX8VMXjnSGd2pWiZ
+	xTRsxvKVP6cC2cj8Yva1/v35MiZRBDbyNPyIyqQ6/Q7A3nysu4l7t1NFaNB+t+TWduyP46idTxG
+	LlUoUW/O3CwPmnrAkwzA+pzKk9orpzBFZWGXDAn6q7kTQ+3bhAwu2LgcKRnmJyhQ7YhYZvlPl9f
+	4Ps933BSjfH0GdjbRNI717VRAWcV3whsj0xBXz92pi20tD6woXNaiuL89OX1yFy8tCtSX5x1Iqh
+	cN0jg4mYSQAMz0+tjdpiwTJPisweyF+oZB7uSGgWjNXxrp2gr+bF5ITmCw2VGj0C0ggwkP9pEee
+	b7Zyo523IzmLaUliiVwipOjgifhgTXR4lSk1azy4wU+a/U0NlWTXll7W9Gg==
+X-Received: by 2002:a05:622a:394:b0:4ce:dcd9:20ea with SMTP id d75a77b69052e-4e576b13f4fmr21738131cf.57.1759454228036;
+        Thu, 02 Oct 2025 18:17:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF7wGlhN9Q1fx9OZHmwE/WJqZbiUdV2GSH/vjmHZyoClwDnnRtTJTDDldA0C+AO+Zy05bZYKw==
+X-Received: by 2002:a05:622a:394:b0:4ce:dcd9:20ea with SMTP id d75a77b69052e-4e576b13f4fmr21737781cf.57.1759454227579;
+        Thu, 02 Oct 2025 18:17:07 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b0113f3ddsm1316191e87.52.2025.10.02.18.17.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Oct 2025 18:17:05 -0700 (PDT)
+Date: Fri, 3 Oct 2025 04:17:02 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Rob Clark <robin.clark@oss.qualcomm.com>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org
+Subject: Re: [PATCH] MAINTAINERS: Update Jessica Zhang's email address
+Message-ID: <35jqgias5o4ruhkc72oacepcq4skfzpe4gyivg2pz7bnpy5luj@d5saa7y7rcus>
+References: <20251002-quit-qcom-v1-1-0898a63ffddd@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,97 +98,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bmthlv2tsd76mgzaoy5gspzdkved6le5xv23xjsc3yafkhrsgh@vvmjdwygm7gn>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHe8/lPWfDwWkZvbVA27qA0UWLeIguEkSnD0UQfagoG3lwo23a
-	VqZFYeZyFYZpJc4us4t5I9fMULtNS2Nd16Sy0HWhLJl28TIrTduMqG8//v+H3/N8eHha2cJO
-	4vWmHZLZpDWosZyRd0cUz5qqea2baxvAYK0bYaDXOYyh+/V1Ft67sxEMPnpCQ8EJL4Lit+00
-	XG32I/iQW0ND99NTFNS9qefgaWCIgraTeRRUuFZBQSeGk1cmwMPzbQyUZEyDokctLIw4kqG5
-	4iMHgY48DK6XTQhs9f0MFJ5pw9BSfwqDv3KEBa/7AQu+Ci8DHnsZA8GjKvAey2GhpP8LBz63
-	g4LSbwUsdDw7SIEzy85BzW0rguxP1zHk+xwYnuedxXBiyIbBdjdIQ03TAAfOb5cw9FWUY/ic
-	28dCUZOfi58rDliPMmJ59TVKtPp+YbHyTCUS+y4eoEVrbojudH2hxZtBByPeP0fEOns7Jzpc
-	O8XzNzopsbinnxVfBRaLrvJDWHT15HFrojbIFyVKBn2qZJ6zZItc96S9kk7JFtIuFFoy0OmI
-	w0jGE2E++dgxgP6yr+g4FWZGmErqegJMmLEwg7S2/qDDHCmoiL25LJTLeVooU5HqF5mjxThh
-	HbH25+MwKwQgV4+00+EhpVCCyGDVY/SnGEs8he9HrbQQQ1qHO0Pb+BCryKVhPhzLhNXk3I+v
-	oyPjBQ1xX7tHhT1EeCcjDVW3uD+XTiQNpa1MLhLs/2nt/2nt/7QORJcjpd6UatTqDfNn69JN
-	+rTZW5ONLhR6tZK9QxtrUY93bSMSeKSOUIgpfp2S1aZa0o2NiPC0OlKxpbRNp1QkatN3S+bk
-	BPNOg2RpRCqeUU9QxAV3JSqFJO0OaZskpUjmvy3FyyZloPwj0VFDacZ5NQvcSyVmbdY6Tdnk
-	OfUrV/C/cqIOrDHEOcdkaafEG2Mu54CmN0F+IdCSqNi8nInes8jGLJy5u2P6ehT51Zb0+GWX
-	4Vjs9rHssviuKaYFDd81F321nQmBWsU+5NlQHUx+99Mz6HkYvQlJ9/b7nbKFw7LM3tgHcUlq
-	xqLTxsbQZov2N8+HMXdmAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0xTVxzHPffc3nvp7HLXMbmjiVlacYsRH/ORn84sMyZ6s2TqH1tYjGY0
-	4842PNMqik8eNhBcZq0rSAtaKHYInSAPFbELwVjjEHlUBYUKmKIgIMZRFArtblkW/efkc76P
-	3+/8cRgsn5NEM9qUfYIuRZ2kpKSkdPtXObEqVb9mVa53MTzMaibBP5lHQnG1k4K82iIJdFyq
-	QtDvz0PwJmDFYGgMkTBnctMwOd1LQ8jlRlDQacLgrM8i4J+aIAWjN18jMA/6KCgcySJhwvEr
-	AsszKw0jt7bBeH+TBELe5wR0T40hcPiCBPiacxHMFSTC+bI6CgJt7RgKzR0ISge9GIZrRLPe
-	/QSBqyKbgiFjAwaP70O475+g4I75JAXjncUEvKyhwJbtkkCJ1YQgx15NQUFJLQmNA9dp6Byd
-	JaCvwERAVe130O94RkKrsYwQ3yemLkeBtTCHEI9hAsx/NhEw7aik4a69jwRHZgxY2zwSeFph
-	oWF2cDWEbKngrnpOg/eUmYRL4+2Sb8yIf2P4jeQr664QvKFrjuKd55yID8yYED95IQfzBqN4
-	vTk2gfkTdQf4C61jFD/jf0Dxrikbyf9dxvGn22L5RouX5k/89ZjeuXGXdFOCkKRNF3Qrv46X
-	atq9TpyWyx4sL9JnopKF+SiC4di1XJf1dyLMJLuEa3w9SoaZYj/nenqmcZgjWQVncV8UdSmD
-	2YsKrq47e974mP2BM/jPUGGWscDVn/TicEjOOhAXqL6H/jM+4u4U+eanYnYZ1xMcEbcxIiu4
-	P4JMWI5gt3Nl06/mI5+wKq75ym3CiGSW99qW99qWd20bwpUoUpuSnqzWJq1boU/UZKRoD674
-	OTW5Fomf0nF09vQ1NOnZ1oJYBikXyvi0Jxq5RJ2uz0huQRyDlZGy+Io+jVyWoM44JOhSf9Lt
-	TxL0LUjBkMoo2bdxQryc3aveJyQKQpqg+98lmIjoTKRYs2dg3ZYt3RVXF5d+IexuHWo2NsQ8
-	+mzRTntwY6ln96nymSW3zPn+tru9U9mukqb9Q3uG7arh6PU7YvLX62/vONb76dsGO2FQJRxZ
-	vnXgcHmUrTUucKZvweUfAx1pNzaHvjx7fO8vH4yUnl0wkeCZenl0A3yvlGnjugaWxt7Y2oBf
-	rFSSeo169TKs06v/BVxfeWGQAwAA
-X-CFilter-Loop: Reflected
+In-Reply-To: <20251002-quit-qcom-v1-1-0898a63ffddd@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=RZKdyltv c=1 sm=1 tr=0 ts=68df2414 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8 a=snQqrI5GwQTDGbkEZYgA:9
+ a=CjuIK1q_8ugA:10 a=2MHBSq50hwYA:10 a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-GUID: ptArN9eZ3GI-oQKONuS0ZXwX6N30AcbP
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAzMyBTYWx0ZWRfXwyilI6X95Twi
+ ZJF9XPNNNPE0xJYKOg+jwsk9P+6t/YGrGQHaGcySmg59tDAC5OwhSsF09G70rCtS75RDT00fhWK
+ IzjZrNkBjyvzQ3unkqfOxmxrNS9efYTc2HM5w0A7+FN02RNUEiRDi8vf4uAaPD76e0m9nbT+xKK
+ Tspj0mRX9e5B6qAnkLu6EwvsiLbRuBO9uCEP1gHDirMQWGVVl++1mOKKU+SXwZVAuJFgzyisRDy
+ Yu0zwD1u0g7Pd/XTe9qRW+iWPvjgwq8okK6AIeQ/2cF+E4a5pl12JuqBrFQySXtI2T9brFdPDP1
+ YLLolQxcp4HmRPy0PqWDl30IaZn7/52X7yY79fhw9SW09HkLQocQamwnddWYgdrBYgsutMq0Eca
+ DqeV3/Kf4mCpDAXd5tjGLXYcND3daQ==
+X-Proofpoint-ORIG-GUID: ptArN9eZ3GI-oQKONuS0ZXwX6N30AcbP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-02_09,2025-10-02_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 malwarescore=0 priorityscore=1501 adultscore=0 phishscore=0
+ impostorscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270033
 
-On Thu, Oct 02, 2025 at 10:40:56AM +0200, Jan Kara wrote:
-> On Thu 02-10-25 17:12:30, Byungchul Park wrote:
-> > jbd2 journal handling code doesn't want jbd2_might_wait_for_commit()
-> > to be placed between start_this_handle() and stop_this_handle().  So it
-> > marks the region with rwsem_acquire_read() and rwsem_release().
-> >
-> > However, the annotation is too strong for that purpose.  We don't have
-> > to use more than try lock annotation for that.
-> >
-> > rwsem_acquire_read() implies:
-> >
-> >    1. might be a waiter on contention of the lock.
-> >    2. enter to the critical section of the lock.
-> >
-> > All we need in here is to act 2, not 1.  So trylock version of
-> > annotation is sufficient for that purpose.  Now that dept partially
-> > relies on lockdep annotaions, dept interpets rwsem_acquire_read() as a
-> > potential wait and might report a deadlock by the wait.
-> >
-> > Replace it with trylock version of annotation.
-> >
-> > Signed-off-by: Byungchul Park <byungchul@sk.com>
+On Thu, Oct 02, 2025 at 04:57:35PM -0700, Jessica Zhang wrote:
+> My current email will stop working soon. Update my email address to
+> jesszhan0024@gmail.com
 > 
-> Indeed. Feel free to add:
+> Signed-off-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+> ---
+>  MAINTAINERS | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Reviewed-by: Jan Kara <jack@suse.cz>
 
-Thank you, Jan.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-	Byungchul
 
->                                                                 Honza
-> 
-> > ---
-> >  fs/jbd2/transaction.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
-> > index c7867139af69..b4e65f51bf5e 100644
-> > --- a/fs/jbd2/transaction.c
-> > +++ b/fs/jbd2/transaction.c
-> > @@ -441,7 +441,7 @@ static int start_this_handle(journal_t *journal, handle_t *handle,
-> >       read_unlock(&journal->j_state_lock);
-> >       current->journal_info = handle;
-> >
-> > -     rwsem_acquire_read(&journal->j_trans_commit_map, 0, 0, _THIS_IP_);
-> > +     rwsem_acquire_read(&journal->j_trans_commit_map, 0, 1, _THIS_IP_);
-> >       jbd2_journal_free_transaction(new_transaction);
-> >       /*
-> >        * Ensure that no allocations done while the transaction is open are
-> > --
-> > 2.17.1
-> >
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+-- 
+With best wishes
+Dmitry
 
