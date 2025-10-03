@@ -1,116 +1,287 @@
-Return-Path: <linux-kernel+bounces-841108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5154BB646D
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 11:01:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 944C3BB648A
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 11:02:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 28D20344AA0
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 09:01:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26468421C4C
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 09:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E122BEC28;
-	Fri,  3 Oct 2025 09:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69BE9284884;
+	Fri,  3 Oct 2025 09:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ObAWEyCX"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="j+217xCy"
+Received: from pdx-out-006.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-006.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.26.1.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4D3288C89
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 09:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC6C283C9D;
+	Fri,  3 Oct 2025 09:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.26.1.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759482057; cv=none; b=uCp5hsey9OdxT9EPSigw6qun1liVKq9UpW8xvLAhJveQUcxwAqe6M3JqGbtdl5Culf6E86f/PXVRNCxARXHgckfetpNzZ6PjIMKt5OVX664fVH7gYT5cLhRrlKT+gR8/U4SbYp3Ve1BZp5Dlg9GIz1vT1Hw1rj20pYxt65maZ6c=
+	t=1759482068; cv=none; b=NT7auz/kxUhhdZVc2ENfQL6Nx/b8BH+LhL8D4OuIt9ucxAmSbDeYKsDWKUUcHAQwmSopKPlK5AOW+11Ul3iORBzye5eMTji2sM29tgw3eUgNAsPCpoC7ulP5KZs0RP0Awu46YzHvdRs0R6Y1MIGmeGhio+AeDQCZSpLaksM/qDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759482057; c=relaxed/simple;
-	bh=ebnwyZ92XBfrC87y4vHvaA6sN1g21WrKrf/tOG+0dn4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SRVJ0zRyQ2hXbdyzrDSwmYE9J+tJ0fJBS+XlHEegswPKLqk85+tNAg0+N94PHB0YCXeVgXa5/qrcXLob2zl0+5l10IK0QiWer2R3Q8icnSp4gdR46AVrqtJc1sZOICqHS7b++woUqh4sKk6iqbldR2vS1pCFeIHJ29Y0u3gI9vM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ObAWEyCX; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id BF4EDC00D93;
-	Fri,  3 Oct 2025 09:00:35 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id BD8D360683;
-	Fri,  3 Oct 2025 09:00:53 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7A1E7102F1C33;
-	Fri,  3 Oct 2025 11:00:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759482052; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=ieiQe/8Bss9tI8naQDPEum9VPw8wY17XSTnksOOgxkg=;
-	b=ObAWEyCXotcBuCrFfYanIqOZ7uT7LApr0EjRpVNSK5CUNW6ggTBk9Yl3BbZWM3DuUD13LZ
-	jWeIkrqq4IpYYV6KTfVIQM5959FyeBrEGVqyThZhqR5CwD1MaeOrN932XYZkHMBk0+wHP6
-	plfObkAez1laKJRhtEulLvrzS3Zw2K67Adqriv3buL3G3P57AAqOUrQRcrVnACby3+vMwY
-	UO31I0EaC5SkCeVfXNOG8QV2m8R1aMr0CY6BDVI1ctMyi7Ce1lbKesWRUU+rSXxmsgdixV
-	iKiPtyfE3Ta1SCo4khbqn/T2cdpz4gvk7SkTdVcCAFHShBU9mxhHsKptpziGWg==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Fri, 03 Oct 2025 10:59:58 +0200
-Subject: [PATCH 4/4] drm/bridge: add warning for bridges attached without
- being added
+	s=arc-20240116; t=1759482068; c=relaxed/simple;
+	bh=MyYERWpVStffVq0oa/etdt4HUy2hJFWJ60PV2TbZiLI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EuU2fCg09kF8CRfV/QdyYJKjkQyQFwq9EK6XHt0A6LrSYzN8I2A5/yS/z4nAy0m81C7sQ2y4uF9ti6pvWL88WMrQ4ROjsDcW4cnzPcoPrBkDyMsVWDQks9s3AX5fm60h+gGOG3ffzykodZkln/eneHTlGELGuVcx4c9L2dM7pTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=j+217xCy; arc=none smtp.client-ip=52.26.1.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
+  t=1759482065; x=1791018065;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=rKCZJGm4chvAfoVwGg85MKvPY+Y2zQKu0hy0YfJfqjY=;
+  b=j+217xCyV40vpG06sNPaUuFz1AzLry3Syxb8tsHcYhYz23lOQ3d1xWOD
+   FEaEcD6TpsaXsrjexfwvH8KQZjxLfzaq1gNmdlro/BzsMPuLmFcL1uwki
+   9p9HxGh2857yA+4Tn+Ol7jAtRJ3/wNnTKccnvbTINduqDz0Jg0Df2yeLo
+   GUrkZbdvd1/s1EhnSSqK34SGEVB1d8TM7qWNFJb+gK6Xep/F42+YDmSaX
+   mjWcP35pcrJBWlk/m4cdgHre/OJNDbhbJPSGW+frg6cqO4keZBfoGgHrm
+   0+rGjMPmbPe7XtkEgDQ9pEdsYiWBl4cRXWfZTbiwQVCjZ127nnId2RKlF
+   A==;
+X-CSE-ConnectionGUID: eZUzfFDGToGgBO91CdHeWA==
+X-CSE-MsgGUID: qIhngR33Tha2Yu4dAuIdNA==
+X-IronPort-AV: E=Sophos;i="6.18,281,1751241600"; 
+   d="scan'208";a="4212612"
+Received: from ip-10-5-0-115.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.0.115])
+  by internal-pdx-out-006.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 09:01:03 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.38.20:42694]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.13.233:2525] with esmtp (Farcaster)
+ id ecc21aef-8cb2-445a-9885-2f13a6415b54; Fri, 3 Oct 2025 09:01:03 +0000 (UTC)
+X-Farcaster-Flow-ID: ecc21aef-8cb2-445a-9885-2f13a6415b54
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Fri, 3 Oct 2025 09:01:02 +0000
+Received: from dev-dsk-epetron-1c-1d4d9719.eu-west-1.amazon.com
+ (10.253.109.105) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Fri, 3 Oct 2025
+ 09:01:00 +0000
+From: Evangelos Petrongonas <epetron@amazon.de>
+To: Bjorn Helgaas <bhelgaas@google.com>, Alex Williamson
+	<alex.williamson@redhat.com>, "Rafael J . Wysocki" <rafael@kernel.org>, "Len
+ Brown" <lenb@kernel.org>
+CC: Evangelos Petrongonas <epetron@amazon.de>, Pasha Tatashin
+	<pasha.tatashin@soleen.com>, David Matlack <dmatlack@google.com>, "Vipin
+ Sharma" <vipinsh@google.com>, Chris Li <chrisl@kernel.org>, Jason Miu
+	<jasonmiu@google.com>, Pratyush Yadav <pratyush@kernel.org>, "Stanislav
+ Spassov" <stanspas@amazon.de>, <linux-pci@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<nh-open-source@amazon.com>
+Subject: [RFC PATCH 00/13] Introduce PCI Configuration Space Cache (PCSC)
+Date: Fri, 3 Oct 2025 09:00:36 +0000
+Message-ID: <cover.1759312886.git.epetron@amazon.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: EX19D031UWC001.ant.amazon.com (10.13.139.241) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251003-b4-drm-bridge-alloc-add-before-attach-v1-4-92fb40d27704@bootlin.com>
-References: <20251003-b4-drm-bridge-alloc-add-before-attach-v1-0-92fb40d27704@bootlin.com>
-In-Reply-To: <20251003-b4-drm-bridge-alloc-add-before-attach-v1-0-92fb40d27704@bootlin.com>
-To: Alain Volmat <alain.volmat@foss.st.com>, 
- Raphael Gallais-Pou <rgallaispou@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
 
-DRM bridges must be added before they are attached. Add a warning to catch
-violations.
+Modern virtualization environments, particularly those leveraging SR-IOV
+with hundreds or thousands of Virtual Functions, expose a significant
+performance bottleneck in PCI configuration space accesses. During VM
+initialization, the repeated enumeration and configuration of assigned
+VFs creates substantial delays that scale linearly with deployment
+density. Each configuration space read triggers a hardware transaction,
+leading to bus contention and measurable impact on system startup times.
 
-The warning is based on the bridge not being part of any list, so it will
-trigger if the bridge is being attached without ever having been added.
+The fundamental issue stems from the PCI subsystem's approach of
+treating every configuration space access as a direct hardware
+operation, even when reading registers that contain static,
+rarely-changing values. Capability registers, device/vendor IDs, and
+many control registers remain constant throughout a device's lifetime,
+yet are repeatedly accessed during driver initialization, device
+enumeration, and system management operations.
 
-It won't catch cases of bridges attached after having been added and then
-removed, because in that case the bridge will be in
-bridge_lingering_list. However such a case is both more demanding to detect
-and less likely to happen, so it can be left unchecked, at least for now.
+This patch series introduces the PCI Configuration Space Cache (PCSC), a
+transparent caching layer that intercepts configuration space operations
+and maintains cached copies of register values. The implementation
+philosophy centers on complete transparency; existing drivers,
+applications, and system management tools continue functioning unchanged
+while benefiting from reduced hardware access overhead. Currently, only
+endpoint devices are cached. Bridges and Root Complexes utilize a
+passthrough approach.
 
-Link: https://lore.kernel.org/all/20250709-sophisticated-loon-of-rain-6ccdd8@houat/
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
----
- drivers/gpu/drm/drm_bridge.c | 3 +++
- 1 file changed, 3 insertions(+)
+The architecture employs a write-invalidate caching policy. By
+invalidating cache entries on writes and allowing subsequent reads to
+repopulate the cache with fresh values, the system accommodates complex
+initialization sequences like BAR sizing. This design choice
+maximizes the number of cacheable registers while maintaining strict
+coherency guarantees, ensuring that any software-visible state changes
+are immediately reflected.
 
-diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-index 1246a52f8767b52c5f10139aa897824b3c2f28da..6dba601a056bb3cff8b8dd5b1ec46299235b2d85 100644
---- a/drivers/gpu/drm/drm_bridge.c
-+++ b/drivers/gpu/drm/drm_bridge.c
-@@ -441,6 +441,9 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
- 	if (!encoder || !bridge)
- 		return -EINVAL;
- 
-+	if (list_empty(&bridge->list))
-+		DRM_WARN("Missing drm_bridge_add() before attach\n");
-+
- 	drm_bridge_get(bridge);
- 
- 	if (previous && (!previous->dev || previous->encoder != encoder)) {
+The implementation attaches per-device cache nodes to `struct pci_dev`,
+each containing a cached copy of the configuration space alongside
+bitmasks tracking which registers are cacheable and currently valid. The
+system dynamically injects custom PCI operations into the bus hierarchy
+at multiple integration points - during host bridge registration, child
+bus allocation, and dynamic operation changes.
+
+The cacheability of the configuration space registers is deduced by
+dynamically traversing device's capability chains during initialization.
+The implementation analyses both PCI capabilities and PCIe extended
+capabilities, identifying safe-to-cache registers based on the PCI and
+PCIe specifications. Capabilities like Power Management, MSI/MSI-X, EA,
+VPD, AF and vendor-specific regions are parsed to determine which
+fields represent static configuration versus dynamic status information.
+The extended capability support covers AER, ACS, ARI, SR-IOV, PRI, DPC,
+PASID and PTM.
+
+Device reset handling ensures cache coherency across all reset scenarios
+where configuration space values may change. The implementation hooks
+into Function Level Resets, Advanced Features FLR, power management
+resets (D3hot->D0 transitions), device-specific resets, D3cold power
+state transitions, ACPI-based resets, and both bus and slot restore
+operations. Secondary bus resets receive special handling - the cache is
+recursively invalidated for all devices on the secondary bus and its
+subordinate buses, ensuring consistency across the entire hierarchy.
+Additionally, the patch addresses cache consistency when bus operations
+are dynamically changed via `pci_bus_set_ops()`, as different ops
+implementations may return different values for the same registers.
+The invalidation mechanism clears the `cached_bitmask` while preserving
+the cacheable_bitmask, allowing the cache to repopulate with fresh
+values on subsequent accesses.
+Paths that do need to access the real Config Space like,
+`pci_dev_wait()` are configured to bypass the cache entirely to read
+hardware state directly.
+
+Beyond basic caching, the series implements persistence across kexec
+operations using the Kernel HandOver (KHO) subsystem. This feature
+allows cached PCI configuration data to survive kexec eliminating
+redundant configuration space probing in the new kernel. During kexec
+preparation, the implementation creates Flattened Device Tree structures
+containing device information and physical addresses of preserved cache
+data. The new kernel discovers and restores this data during PCI
+initialization, achieving up to 50% vm start time improvements on systems
+with numerous PCI devices.
+
+The persistence mechanism includes  versioning support to handle
+evolving cacheability rules. When the incoming kernel detects a version
+mismatch with saved data, it re-infers cacheability while preserving
+cached values, ensuring compatibility across kernel updates. A
+hashtable-based lookup optimization reduces restoration complexity from
+O(n^2) to O(n) by building an index during initialization rather than
+searching the FDT for each device. In the next iteration of this
+patchset, the Live Update Orchestrator (LUO) subsystem will be used
+instead.
+
+Performance characteristics demonstrate significant improvements, with
+cache hit rates reaching 49% in typical virtualization scenarios without
+persistence, and up to 81% when combined with kexec persistence. These
+metrics translate to substantial reductions in configuration space
+access latency, particularly during bulk VM operations where thousands
+of configuration space accesses would otherwise create significant bus
+traffic spikes.
+
+Testing has covered diverse hardware configurations including
+high-density SR-IOV deployments. The implementation demonstrates
+particular effectiveness in cloud environments where rapid VM deployment
+and high device density create substantial configuration space access
+pressure.
+
+The entire implementation strives to maintain compatibility with the
+existing PCI subsystem behaviour. No driver modifications should be
+required, and the caching layer can be completely disabled without
+functional impact.
+
+Current Limitations
+-------------------
+
+- map_bus is not properly handled. This does not cause any issues in
+the current upstream linux, as the only users are either bridges that are
+not currently being cached, or the
+`pci_generic_config_{read,write}{,32}` which is already handled.
+
+- In PowerPC secondary bus resets the architecture-specific
+`pcibios_reset_secondary_bus()` can bypass the generic
+`pci_reset_secondary_bus()` where our cache invalidation occurs.
+
+- The current Implementation is based on KHO. In the next RFC version
+it will be changed to use the Live Update Orchestrator (LUO)
+https://lore.kernel.org/lkml/20250807014442.3829950-1-pasha.tatashin@soleen.com/
+
+A branch can be found in:
+https://git.infradead.org/?p=users/vpetrog/linux.git;a=shortlog;h=refs/heads/pcsc-rfc-v1
+
+Example Output of `sys/bus/pci/pcsc/stats`
+```
+Cache Hits: 21063
+Cache Misses: 510
+Uncachable Reads: 4398
+Writes: 1049
+Cache Invalidations: 584
+Device Resets: 0
+Total Reads: 25971
+Hardware Reads: 4908
+Hit Rate: 81%
+Total Cache Access Time: 30952 us
+Cache Access Time (without HW reads due to Misses): 16126 us
+HW Access Time due to misses: 14826 us
+Total Hardware Access Time: 101819 us
+KHO Restore Statistics:
+  Restored Devices: 2819
+  Total Restore Time: 1362 us
+  Hashtable Initial Entries: 2819
+  Hashtable Build Time: 1000 us
+```
+
+Evangelos Petrongonas (13):
+  pci: pcsc: Add plumbing for the PCI Configuration Space Cache (PCSC)
+  pci: pcsc: implement basic functionality
+  pci: pcsc: infer cacheability of PCI capabilities
+  pci: pcsc: infer PCIe extended capabilities
+  pci: pcsc: control the cache via sysfs and kernel params
+  pci: pcsc: handle device resets
+  pci: pcsc: introduce statistic gathering tools
+  pci: Save only spec-defined configuration space
+  vfio: pci: Fill only spec-defined configuration space regions
+  pci: pcsc: Use contiguous pages for the cache data
+  pci: pcsc: Add kexec persistence support via KHO
+  pci: pcsc: introduce persistence versioning
+  pci: pcsc: introduce hashtable lookup to speed up restoration
+
+ Documentation/ABI/testing/sysfs-bus-pci-pcsc  |   29 +
+ .../admin-guide/kernel-parameters.txt         |    7 +
+ drivers/pci/Kconfig                           |   27 +
+ drivers/pci/Makefile                          |    1 +
+ drivers/pci/access.c                          |   86 +-
+ drivers/pci/pci-acpi.c                        |    4 +
+ drivers/pci/pci-driver.c                      |    5 +
+ drivers/pci/pci.c                             |  121 +-
+ drivers/pci/pcie/Kconfig                      |    9 +
+ drivers/pci/pcsc.c                            | 1766 +++++++++++++++++
+ drivers/pci/probe.c                           |   33 +-
+ drivers/pci/quirks.c                          |    7 +-
+ drivers/vfio/pci/vfio_pci_config.c            |   13 +-
+ include/linux/pci.h                           |    8 +
+ include/linux/pcsc.h                          |  163 ++
+ 15 files changed, 2268 insertions(+), 11 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-pci-pcsc
+ create mode 100644 drivers/pci/pcsc.c
+ create mode 100644 include/linux/pcsc.h
 
 -- 
-2.51.0
+2.47.3
+
+
+
+
+Amazon Web Services Development Center Germany GmbH
+Tamara-Danz-Str. 13
+10243 Berlin
+Geschaeftsfuehrung: Christian Schlaeger
+Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+Sitz: Berlin
+Ust-ID: DE 365 538 597
 
 
