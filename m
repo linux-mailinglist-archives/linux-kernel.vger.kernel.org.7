@@ -1,87 +1,168 @@
-Return-Path: <linux-kernel+bounces-840942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 448EBBB5C92
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 04:02:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C827BB5C95
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 04:02:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F152619E042F
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 02:02:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CCDC427A39
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 02:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE33D2C0262;
-	Fri,  3 Oct 2025 02:02:09 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53322C0F72;
+	Fri,  3 Oct 2025 02:02:37 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CDF2C027A
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 02:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6F22C08A1
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 02:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759456929; cv=none; b=kSRQM2sd+vgmr0qfRT4hKQ6ryZ8zrHtQns7F30SofRETMlxvsxzWA0T/PLpg9Zz6+CT+7hoKgY6gskqaTY6ukoVFSZZSK5oV8TtlhlSTQ7kFAZuseKiThajDfCC28TD/JqfTkCP/MYeB/aYyefhOg/RszHbVzvNfMZCvxTaodYg=
+	t=1759456957; cv=none; b=VNmZnHP5AY7+zhjlPrsDbNqq9SzS7uClobaPCD7ygk8BeFb7AatQG3nAY75j1zFKgSq0WC1kq7rShMiEPUqFAHxATX7U3fF/l2w2yVNBYHpAgHoE2JTunYdGW5LEsmKUXl6g6NF8awERBBM5s7cVlNIKOKyfxAT5NVP6VhXGGBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759456929; c=relaxed/simple;
-	bh=9vZ07ROU1rEOt7Wf3Gv3iV+TBegZiBlA1p/e9d3bl0A=;
+	s=arc-20240116; t=1759456957; c=relaxed/simple;
+	bh=DY2LpIw+buD76/TQi8/+FFrw7iGIpPfinV+MQ53jhno=;
 	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=WBLeFvjvQziNW5ScWV7IZBiZSszduh/mWbl7zKa3qcBbEL79B3nWXGWi+PrWW8MXESrt+L22fG8xQrKQUXOTV5uvg6mRUaHWITnCY4Iy87wYNoMP/emKzzAN+03AK/XPuoCK9x36ja9+7MoZa7SyNvmcMu14UVR1JEDpIaO5yxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+	 Content-Type; b=N/tVp5T4WzBtyNakBz3Eqi7+OmjWYzm9X/N7trvU/cxDoR93D8NlSvZ6+3MzV2l0KSb48xOVWKNLFR7aWJIpcvmnUa9K3BoRGIhb1qMBcXycJPYHJ+/joBbZbUsHMvaag7OqqvkltzqbZD20v7JcePxfv4dDFejFnOrRZGZvOKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42e6e5c1d04so32508945ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 19:02:03 -0700 (PDT)
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42e74499445so10985015ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 19:02:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759456922; x=1760061722;
+        d=1e100.net; s=20230601; t=1759456951; x=1760061751;
         h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mi3LfTD/I8ILkkzvNqfq0VxTYgMIPyJeYMPlTy6qrlk=;
-        b=BPqkgsfDqSWZRhFhSA1Y4+YuqaA+QhBrl6Z7eqwvSRbqZ060ehYMMcGw1Zv+3K3qne
-         yGlcPphoB6afbiIU1sZwYg1vDcLdjZJtrtg22g52gLARiO8iugicEx5pG6ztR+m2zMKo
-         tI+aFLz0xQKNyRSdkBZDS2excwJ6V0/iT9b02D2lP4UhbulegBQrv/U6ZQupHpFlUnwF
-         rEyF038q5YWwp5Tdhb5HaZ4o3JkvlZmpenR2iw5W0gA9Mj3rEqTDVtL8ABWyQHfJRnB5
-         a5ygPL9Inu4zvIvVtG1BPmdFd8J1ekowK0IKLifayW2HcMQRRiY3Nea1KrYD69Oy6ypK
-         hIkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXMCXa6EBhtCxIjN86yn9+MNHJJpuYPytxXFst3suzmY4vpA0JK9khggscGBC9NHKqNu2JBQPsT53Bsm+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZq5SFxx20V4szkfkKx50lzJbvKLrRCf68uDGEjF4Q4M/3GNu2
-	Iuqbp4+5Rlocx+BgNEN5lkJ3M7GTYigIKbOE6XWd/uXDOj0uYL49uRYJXo5FSsePI8Hd2WBpoyu
-	XsgyM8B2TTtfNkwa79UAkx/sxIWzmj1DlmQCkcRIdrKwgB8rR4gsTw+ip2tU=
-X-Google-Smtp-Source: AGHT+IEYiQijjNOqjOY5kc0rZL95Ch1bFopzeGum1WtpHuHbkFf4XtVx/cf86Uq8nquM/hIJR2SpE/Xr2l5Vey/vllMsAc9a6UQW
+        bh=V5vs9n9028GGJFsoBbT/p4gNDi1uzSRnj3Xc4sJwfKs=;
+        b=ca7tliBD738SnDRZ0QBlfkSFtRXCm/C38kAoiHvvGVwSpkqwHkU4AWT5e0TRr14r1r
+         0N3qG4xpQAkxCKJbpza/rM2TxGdL2m/RslKst9nVbSwkD7kbdisn01i8NZ+p52DY0+H6
+         BEfOo4jTPhd299GYLQbWaCGU5ubhTRwABsCQHNHGy2pITWQtt+ymcbh/3dte2wGZQjQy
+         CXPBKNUgZn3w2BY1inGoNwVnoahz3hPbAXFc7A/GOgYDb0EUD8UIcrsa5wbpn31rkMKs
+         4rAG6jjDwKTWNKVtZzMKBg91KH/HNKGP+a9mti4ukwEiuRi+ZndpAJN8mWYRLaRXTrIM
+         VW8g==
+X-Gm-Message-State: AOJu0Yz36zA3pqcGTgLtTXT00Jth2zSoDdQCfgBaA+eZSnCtixcZrlq6
+	GVBwcFGUDSQI01DYuVSYuv1becMW585HYw2bE7DSpb9+Yjnejhh4cwGotDWy17fqFqzweptAZKk
+	hzPkQuUbV8EoueUyObHcXu7PO3gpxIk0Tpv/Zwft8scczrVouw8cYXF9hwXM=
+X-Google-Smtp-Source: AGHT+IEnhN5ZXhen6/XFABzvH6fT2pQLHNer7jCTQfJVOMd3tkue7NR0WhYNIXLvJDa0ZrWzkWMqr3lbt+tt+/LGuZcWjJ7YYGx0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:214f:b0:425:8c47:13fb with SMTP id
- e9e14a558f8ab-42e7ad6eba7mr15942655ab.17.1759456922404; Thu, 02 Oct 2025
- 19:02:02 -0700 (PDT)
-Date: Thu, 02 Oct 2025 19:02:02 -0700
-In-Reply-To: <20251003014049.2407777-1-kartikey406@gmail.com>
+X-Received: by 2002:a05:6e02:12e8:b0:42d:bb9d:5358 with SMTP id
+ e9e14a558f8ab-42e7ada8fbcmr16029115ab.27.1759456951210; Thu, 02 Oct 2025
+ 19:02:31 -0700 (PDT)
+Date: Thu, 02 Oct 2025 19:02:31 -0700
+In-Reply-To: <68ddc2f9.a00a0220.102ee.006d.GAE@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68df2e9a.050a0220.1696c6.003b.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] KASAN: slab-out-of-bounds Read in ext4_search_dir
+Message-ID: <68df2eb7.050a0220.2c17c1.0010.GAE@google.com>
+Subject: Forwarded: [PATCH] ext4: reject inline data flag when i_extra_isize
+ is zero
 From: syzbot <syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com>
-To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+***
+
+Subject: [PATCH] ext4: reject inline data flag when i_extra_isize is zero
+Author: kartikey406@gmail.com
+
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+
+
+Prevent use-after-free in ext4_search_dir by rejecting inodes that
+claim to have inline data but have no extra inode space allocated.
+ext4 inline data is stored in the extra inode space beyond the
+standard 128-byte inode structure. This requires i_extra_isize to be
+non-zero to provide space for the system.data xattr that stores the
+inline directory entries or file data.
+However, a corrupted filesystem can craft an inode with both:
+- i_extra_isize == 0 (no extra space)
+- EXT4_INODE_INLINE_DATA flag set (claims to use extra space)
+This creates a fundamental inconsistency. When i_extra_isize is zero,
+ext4_iget() skips calling ext4_iget_extra_inode(), which means the
+inline xattr validation in check_xattrs() never runs. Later, when
+ext4_find_inline_entry() attempts to access the inline data, it reads
+unvalidated and potentially corrupt xattr structures, leading to
+out-of-bounds memory access and use-after-free.
+Fix this by validating in ext4_iget() that if an inode has the
+EXT4_INODE_INLINE_DATA flag set, i_extra_isize must be non-zero.
+This catches the corruption at inode load time before any inline
+data operations are attempted.
 
 Reported-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
-Tested-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=3ee481e21fd75e14c397
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+ fs/ext4/inode.c | 13 ++++++++++++-
+ fs/ext4/xattr.c |  2 +-
+ 2 files changed, 13 insertions(+), 2 deletions(-)
 
-Tested on:
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 5b7a15db4953..257e9b1c6416 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -5099,7 +5099,8 @@ static inline int ext4_iget_extra_inode(struct inode *inode,
+ 	if (EXT4_INODE_HAS_XATTR_SPACE(inode)  &&
+ 	    *magic == cpu_to_le32(EXT4_XATTR_MAGIC)) {
+ 		int err;
+-
++		ext4_error_inode(inode, "ext4_iget_extra_inode", 5102, 0,
++				 "wow this inode has extra space");
+ 		err = xattr_check_inode(inode, IHDR(inode, raw_inode),
+ 					ITAIL(inode, raw_inode));
+ 		if (err)
+@@ -5112,6 +5113,7 @@ static inline int ext4_iget_extra_inode(struct inode *inode,
+ 		return err;
+ 	} else
+ 		EXT4_I(inode)->i_inline_off = 0;
++
+ 	return 0;
+ }
+ 
+@@ -5414,6 +5416,13 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+ 		ei->i_sync_tid = tid;
+ 		ei->i_datasync_tid = tid;
+ 	}
++	if (EXT4_INODE_SIZE(inode->i_sb) < EXT4_GOOD_OLD_INODE_SIZE) {
++		ext4_error_inode(inode, function, line, 0,
++				 "wow! this inode has less data");
++		if (ext4_test_inode_flag(inode, EXT4_INODE_INLINE_DATA)) {
++			ext4_error_inode(inode, function, line, 0, "wow! this inode is line");
++		}
++	}
+ 
+ 	if (EXT4_INODE_SIZE(inode->i_sb) > EXT4_GOOD_OLD_INODE_SIZE) {
+ 		if (ei->i_extra_isize == 0) {
+@@ -5422,6 +5431,8 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+ 			ei->i_extra_isize = sizeof(struct ext4_inode) -
+ 					    EXT4_GOOD_OLD_INODE_SIZE;
+ 		} else {
++			ext4_error_inode(inode, function, line, 0,
++					"wow! this inode has reached ext4 iget");
+ 			ret = ext4_iget_extra_inode(inode, raw_inode, ei);
+ 			if (ret)
+ 				goto bad_inode;
+diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+index 5a6fe1513fd2..9b4a6978b313 100644
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -195,7 +195,7 @@ check_xattrs(struct inode *inode, struct buffer_head *bh,
+ 	struct ext4_xattr_entry *e = entry;
+ 	int err = -EFSCORRUPTED;
+ 	char *err_str;
+-
++	ext4_error_inode(inode, "check_xattrs", 198, 0, "wow! we are in check_xattrs");
+ 	if (bh) {
+ 		if (BHDR(bh)->h_magic != cpu_to_le32(EXT4_XATTR_MAGIC) ||
+ 		    BHDR(bh)->h_blocks != cpu_to_le32(1)) {
+-- 
+2.43.0
 
-commit:         24d9e8b3 Merge tag 'slab-for-6.18' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10b1c92f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2bc5f6d89013f5e0
-dashboard link: https://syzkaller.appspot.com/bug?extid=3ee481e21fd75e14c397
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11a49334580000
-
-Note: testing is done by a robot and is best-effort only.
 
