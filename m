@@ -1,153 +1,187 @@
-Return-Path: <linux-kernel+bounces-841686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 840EFBB7FF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 21:46:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FB78BB7FF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 21:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 18E8E4E8550
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 19:46:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B98624EEE6A
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 19:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A691FF1C7;
-	Fri,  3 Oct 2025 19:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015711FA15E;
+	Fri,  3 Oct 2025 19:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pwxz+051"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M1qSKVeW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9293529405;
-	Fri,  3 Oct 2025 19:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C80C29405;
+	Fri,  3 Oct 2025 19:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759520768; cv=none; b=fGK2Ac8tS2nZQWY7fmydGkrlrxOj2XMgLZSsHkDyg4C6jmT/OuJqcwc1IjSpizXZ3EiFEXN5EDyEGnf357x/rU9r6rheSuJH7Yq1DdaBmMXpyKhPcFQgpWkCERkUHfOMH69v9ssHNWeo6SN16hk5n/l39UKniKsngeafSAu6Jg8=
+	t=1759520887; cv=none; b=RrusUVl5DTW6SpyhIS2J9Sol8h1FdWuDpRWweEcB3mWKutLB+5l2cmsmw6UnBF7GJkiWx/3zgypSCk3FbgC3E+AqxUq53a4fz8+GdnHIpQq7Stvr9Zr2q8miuLA7G5r+4CKEGm4p7nakZlwQ1wzEFuLi6LYWawuMQNs3Fb90Hq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759520768; c=relaxed/simple;
-	bh=FYgI+8DVFLoz3Mo1QSKIyBySU789fjJWTtKhpJbrAiw=;
-	h=Message-ID:Subject:From:To:Cc:Content-Type:Date:MIME-Version; b=ttJg8hm5CA/TLBoGfblwov64F+CW2fcDePjNTspxP3j9pMbv6oJz9hKGT96FxIRKrn+TMUr6T2u2DMMd1jzPDBDQy6nE+lKRomiz/bk2nYE9ClSaNTXnhUkCYxB4BeZHexlWLf17VuoSwoP3Am17b6hCXGsF/2pDUqp5h3zDY6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pwxz+051; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 593ClxMp020716;
-	Fri, 3 Oct 2025 19:45:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=liEcdOeoAzkXJhIOic7285aRp08Y
-	b3xqhFYfk9SqN8k=; b=pwxz+051cjZhOSDvrkYMkyBn9EvcHIWngxiMaaB0F/Hv
-	qIUIo0b7zeol+9MK/EksCnu9Uoi6xEbRmcafDuVhmGC6lh6d0H0xnbB8m3EPO5E6
-	34/9djbtniGmKsYA+7Vktl/Xe+HFe2xgEF6l2S5LnyeHJBdsjylzhb/qkQOA7+ZF
-	Zh38qCawPOIVYNQaX6atyU9SdCblhd44QXT/+h4kOj/aYklR/JcIwL51FhNGdkPl
-	+kqupV19+9xRh0BFicY3lJwLTem224xXaJ03mOCi6F1vc3E4epnCoYd8Uq9tvj0H
-	cO6zM8eC3n8M3blNjLyZkuPM8biMVA49swW4NFIowg==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7jx3ty4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 03 Oct 2025 19:45:58 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 593HalWL026818;
-	Fri, 3 Oct 2025 19:45:57 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49eu8ncmj5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 03 Oct 2025 19:45:57 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 593Jjv8n32047846
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 3 Oct 2025 19:45:57 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7B95D58055;
-	Fri,  3 Oct 2025 19:45:57 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F2AE35803F;
-	Fri,  3 Oct 2025 19:45:56 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.86.89])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  3 Oct 2025 19:45:56 +0000 (GMT)
-Message-ID: <235aaef81ca206c9ac1f69ece17dd9a15f826d85.camel@linux.ibm.com>
-Subject: [GIT PULL] integrity: subsystem fixes for v6.18
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-kernel	
- <linux-kernel@vger.kernel.org>,
-        Roberto Sassu
- <roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 03 Oct 2025 15:45:56 -0400
+	s=arc-20240116; t=1759520887; c=relaxed/simple;
+	bh=XespbJmbr9h/tE+EY6P0TWlgNfeNfgvN51LKlVZ+UHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VavTEnK4k2DDh7U2RpqrnAchxJAzDtIpzdAhVtmzi6HyUXzDdu0q+ubsweZH1RnwgCc1/+ioKDZPjZjFeOeoX+dL2/v0U24JP0BUxmq3LGb5iouetwJAif7XNif/qby15bmoi4gaL3Lne1293YrD/yohQoH1WLZ+O356XNIElgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M1qSKVeW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73E97C4CEF5;
+	Fri,  3 Oct 2025 19:48:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759520887;
+	bh=XespbJmbr9h/tE+EY6P0TWlgNfeNfgvN51LKlVZ+UHM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M1qSKVeWOCu5oqjFB5lakDhnVjXNQV8JyTdSrY/E25Qc139EpD8Szp8V00L2mUl7M
+	 q6CEW7XeD0y/JNLqLs087dy5XzHsDMnYUmXKtm37I9hS7vw/TMPdgRXaclJvB3SGhm
+	 iXQzj/jDF9F6vJRsFXdJHUfGzoEXZkj453VHLHgrryQjitRQB5vN/FUdySmoKtM1Zv
+	 Xqpqz2YkI2PyKEe26gZe5yRb4V7r1aE4PTcff3uH3IArVy4DKC87Uzmaf1ElAD/PBY
+	 /SxpjJc/EfwOhSbQBOvn/+ORfRCiyh6BKUyTJ1E+nYBGJ3x6gCB2RS5XNfAr0Ts6Uv
+	 lWvnx9+1rwenw==
+Date: Fri, 3 Oct 2025 16:48:03 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] tools build: Remove get_current_dir_name
+Message-ID: <aOAoc0-Oy99l3iQG@x1>
+References: <20251003175613.2512296-1-irogers@google.com>
+ <20251003175613.2512296-2-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyNSBTYWx0ZWRfXwqrmRvKgid7L
- DvWkTJXLmVpDQpV58DP0Bf/eW2iFfHzauiCNzAQYiLoGqC14/QlHedGXgeW7OxiCcU82EFaDE2p
- K2qCZYtQ1x4fMurQ6R6JqfpAVsiHaJj/TtbCmooQgMHSZ7G4/CVM06572wdufU6yuaEIPBpC9Yv
- CxY7A0ghJ9I4jpHMWE2nohQytzf0zXU3MF9Kz+kmgsKmqeX8+qZplzEyaAb7ouVFGghHN9mJXAq
- UARyVe0/Nh+WPEyWC9GfyGLWUHEk7acA/UrTHzRD17BPm4e2KXBOQvdvgvURc4Hu9n0jdgWRZXQ
- 6ZQ7JtkD3vO4nV8zRlJEuSQicb7+1cMWcaRSZaN5eucxaHq3t+hWeQNNVxNcI8PLzBoIDaRCEr4
- rxocmnBRJMf8uUd8o1d73kXj7Dc3Aw==
-X-Proofpoint-ORIG-GUID: fzWM3UfK3XtN6iH8mKx-rPM6Mlnwmev5
-X-Proofpoint-GUID: fzWM3UfK3XtN6iH8mKx-rPM6Mlnwmev5
-X-Authority-Analysis: v=2.4 cv=GdUaXAXL c=1 sm=1 tr=0 ts=68e027f6 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=YP3ZxmzE6RWCoqP63XUA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-03_06,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 phishscore=0 adultscore=0 priorityscore=1501
- malwarescore=0 spamscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270025
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251003175613.2512296-2-irogers@google.com>
 
-Hi Linus,
+On Fri, Oct 03, 2025 at 10:56:13AM -0700, Ian Rogers wrote:
+> As perf no longer tests for this feature, and it was the only user,
+> remove the feature test.
 
-There's just a couple of changes: 2 crypto code cleanup and 1 IMA xattr bug=
- fix.
+You forgot to remove this:
 
-thanks,
+⬢ [acme@toolbx perf-tools-next]$ git diff
+diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-all.c
+index 71ba7001dc25c6bb..8a354b81417c6fcc 100644
+--- a/tools/build/feature/test-all.c
++++ b/tools/build/feature/test-all.c
+@@ -151,7 +151,6 @@ int main(int argc, char *argv[])
+        main_test_libpython();
+        main_test_hello();
+        main_test_libelf();
+-       main_test_get_current_dir_name();
+        main_test_gettid();
+        main_test_glibc();
+        main_test_libdw();
+⬢ [acme@toolbx perf-tools-next]$ 
 
-Mimi
+That results, when building with this alias:
 
-The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9=
-:
+alias m='rm -rf ~/libexec/perf-core/ ; make CORESIGHT=1 -k O=/tmp/build/$(basename $PWD)/ -C tools/perf install-bin && perf test python && cat /tmp/build/$(basename $PWD)/feature/test-all.make.output'
 
-  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
+that needs to be on the makefiles somewhere, shows that test-all.bin is
+failing to build:
 
-are available in the Git repository at:
+make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
+ 88: 'import perf' in python                                         : FAILED!
+test-all.c: In function ‘main’:
+test-all.c:154:9: error: implicit declaration of function ‘main_test_get_current_dir_name’; did you mean ‘get_current_dir_name’? [-Wimplicit-function-declaration]
+  154 |         main_test_get_current_dir_name();
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |         get_current_dir_name
+⬢ [acme@toolbx perf-tools-next]$ 
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git=
-/ tags/integrity-v6.18
+I fixed this up already,
 
-for you to fetch changes up to 88b4cbcf6b041ae0f2fc8a34554a5b6a83a2b7cd:
+Thanks,
 
-  ima: don't clear IMA_DIGSIG flag when setting or removing non-IMA xattr (=
-2025-10-03 07:50:56 -0400)
-
-----------------------------------------------------------------
-integrity-v6.18
-
-----------------------------------------------------------------
-Coiby Xu (1):
-      ima: don't clear IMA_DIGSIG flag when setting or removing non-IMA xat=
-tr
-
-Eric Biggers (2):
-      integrity: Select CRYPTO from INTEGRITY_ASYMMETRIC_KEYS
-      lib/digsig: Use SHA-1 library instead of crypto_shash
-
- lib/Kconfig                           |  3 +--
- lib/digsig.c                          | 46 +++++--------------------------=
-----
- security/integrity/Kconfig            |  1 +
- security/integrity/ima/ima_appraise.c | 23 ++++++++++++++----
- 4 files changed, 26 insertions(+), 47 deletions(-)
-
+- Arnaldo
+ 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/build/Makefile.feature                    |  1 -
+>  tools/build/feature/Makefile                    |  4 ----
+>  tools/build/feature/test-all.c                  |  4 ----
+>  tools/build/feature/test-get_current_dir_name.c | 11 -----------
+>  4 files changed, 20 deletions(-)
+>  delete mode 100644 tools/build/feature/test-get_current_dir_name.c
+> 
+> diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
+> index 9c1a69d26f51..9399f591bd69 100644
+> --- a/tools/build/Makefile.feature
+> +++ b/tools/build/Makefile.feature
+> @@ -68,7 +68,6 @@ FEATURE_TESTS_BASIC :=                  \
+>          libdw                           \
+>          eventfd                         \
+>          fortify-source                  \
+> -        get_current_dir_name            \
+>          gettid				\
+>          glibc                           \
+>          libbfd                          \
+> diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
+> index b41a42818d8a..d13d2a1f44fe 100644
+> --- a/tools/build/feature/Makefile
+> +++ b/tools/build/feature/Makefile
+> @@ -8,7 +8,6 @@ FILES=                                          \
+>           test-libdw.bin                         \
+>           test-eventfd.bin                       \
+>           test-fortify-source.bin                \
+> -         test-get_current_dir_name.bin          \
+>           test-glibc.bin                         \
+>           test-gtk2.bin                          \
+>           test-gtk2-infobar.bin                  \
+> @@ -147,9 +146,6 @@ $(OUTPUT)test-libelf.bin:
+>  $(OUTPUT)test-eventfd.bin:
+>  	$(BUILD)
+>  
+> -$(OUTPUT)test-get_current_dir_name.bin:
+> -	$(BUILD)
+> -
+>  $(OUTPUT)test-glibc.bin:
+>  	$(BUILD)
+>  
+> diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-all.c
+> index e1847db6f8e6..778883a32afb 100644
+> --- a/tools/build/feature/test-all.c
+> +++ b/tools/build/feature/test-all.c
+> @@ -22,10 +22,6 @@
+>  # include "test-libelf.c"
+>  #undef main
+>  
+> -#define main main_test_get_current_dir_name
+> -# include "test-get_current_dir_name.c"
+> -#undef main
+> -
+>  #define main main_test_gettid
+>  # include "test-gettid.c"
+>  #undef main
+> diff --git a/tools/build/feature/test-get_current_dir_name.c b/tools/build/feature/test-get_current_dir_name.c
+> deleted file mode 100644
+> index c3c201691b4f..000000000000
+> --- a/tools/build/feature/test-get_current_dir_name.c
+> +++ /dev/null
+> @@ -1,11 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0
+> -#define _GNU_SOURCE
+> -#include <unistd.h>
+> -#include <stdlib.h>
+> -
+> -int main(void)
+> -{
+> -	free(get_current_dir_name());
+> -	return 0;
+> -}
+> -#undef _GNU_SOURCE
+> -- 
+> 2.51.0.618.g983fd99d29-goog
 
