@@ -1,128 +1,173 @@
-Return-Path: <linux-kernel+bounces-841578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBB2CBB7B81
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:25:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92DCFBB7B88
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:25:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93E214A3673
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:25:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB9553AF2A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA6DF2DA76B;
-	Fri,  3 Oct 2025 17:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121952DA76C;
+	Fri,  3 Oct 2025 17:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iinc0ouK"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="JwFBJbaa";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nE9vk/bI"
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6272D9797
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 17:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276B723AB8B;
+	Fri,  3 Oct 2025 17:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759512300; cv=none; b=RGY9pi6EVIVbEJKMHBg01ex4GwjkX4kL+mCMLpDOn5c39N6Lc8DN1HyOrpZ+uHcsXku9RB+q3Nqd2sOiRSrgU+SSNhpJdzyepSt67e9BCM/cqAmgH+CpXUaZkbhetogFovDUhKFxq+mgCM06iD6piE+Tji1+VUt2FwFbSk/msX0=
+	t=1759512329; cv=none; b=g4z6KC9DaJ4eERrc87nYyUpmpQ4+cbvd/eKfieJaU28Mnp7GRfMsDSmWhoeJH4RurCMxfeMZ4NVHHrkELclfrX+QUNfOXIkUP1eFHzgWodyp27DEzhr3/7S02rL8eff9ieo6e2OUzk0anjYwMlHfusC4R4amHdgHNNntq21tFY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759512300; c=relaxed/simple;
-	bh=iXwlO5Byr5+3tTepzQQtGjhw1VcFYQ4q42yDdyS+KS0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MV3KZ/02ltCQMAMzama02oYugjAs1bcNXraY//HF2K8qblKarV54HJUqiW0DokZ/c33pGiyfn1lj0SbKqj77BrVV3p3lK/KXIFM44+ZJi+BZGgwuVDlj9cscDi7vuTNfe4epnoMvh48UXECydMkO83XI1ip//pImhegPegNZPQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iinc0ouK; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b6271ea3a6fso1113822a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 10:24:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759512298; x=1760117098; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wf2RDIzbc1/UWl5V5JoHRJgluyXqCVUIWccG9q/hEz4=;
-        b=iinc0ouKmwqWNVpXoFrlETFXiDT1WSGDhApQ4EW3A76LiRLA4B47bC+sXCKpfx5v30
-         XBdTlVEWAk8OvK2rMzjS+TtHfo3W8ty9acd/H5FlxEzf3EYvmwnZe6TnHNCf6ELL8sN4
-         bSbYTOxM11NjuBLofwZU1olO1QF3DvQeMqLTWRAPpUVZT/mDN24a+QvPfdvASCAgKxEU
-         YxEh2nYFNgXRLSzIOkAPMvsCcWd+a62uGEDyzNk1DnOS11h016cRGdTmsxkEKFXr4Mw0
-         bfK2YIIYlV5wqp4LEdrdTdTb8uoFaSZUgaC27JZZXGOfjKvYlb+ljpLlFBFsFWMOxXGY
-         iyIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759512298; x=1760117098;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wf2RDIzbc1/UWl5V5JoHRJgluyXqCVUIWccG9q/hEz4=;
-        b=AgrVeJqBoRUxPwybxt6izPU57AKroHQXD9T5Dr778zuVmK2t524wfEhrRUTFTMhSvH
-         1AlICthLdWroYr945Uk+FbhFj5Bd68DW1ZSJc+mVsbCMhfrqeccPkTOv7ByAjB4nrJ5j
-         3vUNGH3YWPc7kkNCLcF7CWukPG0V2RzIOHwQj63K1jZ13vNkh7eaXT0l5zYQZ6lATkxm
-         fg7BDCSkrTPzQz8n8Pa8Fx7U8kU3LBd3rspeBHtTgro4ZBVa0OkZ5mzsIR+VdNoTJRr/
-         tEzLR+34dWSHMoGs1xyZUcvEMY4gbnRPtydoIefjm9GVu6ESZQSNyRhy6CGcrLYw3/jm
-         ZvcA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKAMOwRilK2V3fFrM027WbIUJ7O0HyCjArQFwO+i4C35syM7/Wa11oEgt9uQpRr9K432DaG9cUj2d8oHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2RHNGa+Z6LAfjEJOuBzMSgXn54ha7SmtI5Gnkwpf4uuV3g2PY
-	ifMg/sw4yiTnKqxufOnsWDshV4h8nuAoIOCwYXOH9uGzdoIGqIwDVK33
-X-Gm-Gg: ASbGncurefr7qbmp4SWBst8bqi7DTrwPPIRfsPSnr8lCdFOAsC9knxS4wtIW6qjsJQD
-	e0QSf65IUFoM6Iph81IMwE6/GEQqSoLjPx2KR0Fw/EQPrLk85pKEXTnYKQNXSuF/+ciF92y2fuA
-	VCfbl97fdvUPzibr9Ah7N5GMLCVNxCDJLhDDyTCh90wGBQA2WbkU+bW/i4DaPgMB7jnOkd8C/nT
-	GOrOi6Eg8oZqBhnKs982AUZHNFueXT7lCBNOKSVurforvUK11xcg2DS/xQV/mwEJ83V1lrGqiLG
-	VbJx/wCKGiNWp2mQxmroUzCg9ylwF6an/pbn0gcodqU/odO1acAnFTxwTu7H8AwBYRjsqrMPEEu
-	iXjczteAlS3Ufqpb26mZbtuqbu5Vcr0HrUoJh7N7A/MQPfmzI+CEsmqm74ItpNoiFfmmDtfZbeX
-	iUUMZJewSjXRNw
-X-Google-Smtp-Source: AGHT+IGu6R6uprgvErpatUKHGJI87mCfkt2tz7OgEQQ/oXHjPJDBYboLI8mkRgU9mYx/YaDsb8dkcw==
-X-Received: by 2002:a17:902:f78a:b0:263:7b6e:8da0 with SMTP id d9443c01a7336-28e9a56660emr46576815ad.15.1759512298071;
-        Fri, 03 Oct 2025 10:24:58 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339a6e9d00csm8751892a91.6.2025.10.03.10.24.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Oct 2025 10:24:57 -0700 (PDT)
-Message-ID: <cce588f0-e358-4786-bcdb-a39904d1ab3f@gmail.com>
-Date: Fri, 3 Oct 2025 10:24:54 -0700
+	s=arc-20240116; t=1759512329; c=relaxed/simple;
+	bh=luVpW4oXVdkB/u0eckceGH7vLqc4ooLhC+TbY9fR/ag=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SGf/yJLV96hVfkusg4ew+JBdAbSVTiWGz+SaTVfZk+zf5IDNVfVobomVVT7qOaCZFXbDr0aomc5t90hi88GJoy35eTuX9XIE3XabDhca07qg+AATozs48QDgEUxwU2rCRl3blbGOUc3lWeQ/Ll3006LrnqmoWyKuROFML7QLTHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=JwFBJbaa; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nE9vk/bI; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id 4AEA3EC0213;
+	Fri,  3 Oct 2025 13:25:26 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Fri, 03 Oct 2025 13:25:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1759512326; x=1759598726; bh=80zTLlNJzL
+	69CstAw641a6XukyfcEwp1lxsA+QkUUPA=; b=JwFBJbaaRt/nqg+vVt7bZic0JU
+	1GG0iknvBOLM6mMBiNUTG+6a/3VwxL13MFucddigVSTFQ+js7H5k6qPjDDmDQFhn
+	IRdBwg6gl9vWgBuYAL/a2w6XUNueG0AvPZNmvZza7DLsNXjEAu76gvpSJBSoTAqd
+	7c7HZBx5DYxp+kY9ZYZTX6xenM1io/A3QZaI7k4gq4QN6UlzDmAw5Fl22TwXiLbP
+	KxLxGIvDoShk0KeLFOvO2AdEhFpanCyKt0IHr37w+K/r7VMYJ9Zo3QPKIAxa4ofc
+	Bl9TwdFP2OB05TfyraSog0OO7C+apf+TNVwYlZPMnW2/5qpOvkg4PAQc178A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1759512326; x=1759598726; bh=80zTLlNJzL69CstAw641a6XukyfcEwp1lxs
+	A+QkUUPA=; b=nE9vk/bI9WxRJaqgCcF4FUfBATlqE/SIujNFseORpqgb9oGu0TU
+	7a/FRpUlAU4Y3iMQeH9vUPIn/HdMCK+1DY+QWpa9231HXKe8ZijAnippqPiSLoYe
+	J9XN6Zlp3YgM6Mg1fhy5Tmxf/TTdxFo/2qeiCqiX3ncWjiMsJsNWq8ioWyRvGIWL
+	Z8f1BzjMAzcdrwX+KC1AKfCcuSXSwQ7PXaBITzSsDzxQaJeck9TUuZhDLukbd3Ja
+	hmln0h3uQ2uYpdABdtfXE6H5y5tdvjhfq/ToVeSivSq4xqhq8+K1otHA5Q5SUGcS
+	jIN9Gl6zdsLjh9cgiBvK71Mng34MOJmitZg==
+X-ME-Sender: <xms:BQfgaK0s9bz71HRzDdcCzkofTBDXwamsY1LAuEdRlWPU4MGxnJUMGg>
+    <xme:BQfgaIGE32EnaFYFnc000ieZYcqTNJqZvPQBJn4XLQOgSZTezVgqX985L-GZ7fwev
+    uaxIt0F9qFXVFWy-NYsPoahcXBxuqFZV5tVb15bSvWilSHHP9JpgpU>
+X-ME-Received: <xmr:BQfgaJij61ATHgaTelHGIeImqKgTwJ4QoAjywWu2tsiizeFXg_2QBA7kMLoA6WjWACrcVP26Qp4WamvThvbCYqU3N8gSJHu3Yp_kgu8W3sw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdekleeglecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecuhfhrohhmpeflrghnnhgvucfi
+    rhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqnecuggftrfgrthhtvghrnhepudefhf
+    ehudetjeeutdfhvefhtdeltdfgheefkeefleegveevtedtveelfffhiedtnecuffhomhgr
+    ihhnpehgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpehjsehjrghnnhgruhdrnhgvthdpnhgspghrtghpthhtohepvdeg
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlohhsshhinheskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtoheprggtohhurhgsohhtsehnvhhiughirgdrtghomhdprhgtphht
+    thhopegrphhophhplhgvsehnvhhiughirgdrtghomhdprhgtphhtthhopehruhhsthdqfh
+    horhdqlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurhhi
+    qdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoh
+    epuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpd
+    hrtghpthhtohepsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:BQfgaJdJuMiVM0mL5HUBuq92XcG0QHrRS6GLnSYY3bYcYfHiOOZ3_w>
+    <xmx:BQfgaHwluiGRTue-YMovY9T9fTXhYYlyVDEZ7fA755zyfd8IPPIJeA>
+    <xmx:BQfgaLaM4QgaUrIyiMc1a29mHZOq0oE1UWLcA7-ulbneamevMW4XxA>
+    <xmx:BQfgaNK5hiDFUgAVrD-Ur6gAIlLUM_H9kkt3CdiR1VKl3xJLt1L2nQ>
+    <xmx:BgfgaN_4owHecfQcS1nCMS0N6jNHBsF8eTLZL_QWqc7hrKrSnGFO3fcw>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 3 Oct 2025 13:25:24 -0400 (EDT)
+Date: Fri, 3 Oct 2025 19:25:17 +0200
+From: Janne Grunau <j@jannau.net>
+To: Benno Lossin <lossin@kernel.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	dakr@kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org,
+	nouveau@lists.freedesktop.org
+Subject: Re: [PATCH v3 08/13] gpu: nova-core: Add bindings and accessors for
+ GspSystemInfo
+Message-ID: <20251003172517.GA1574227@robin.jannau.net>
+References: <20250930131648.411720-1-apopple@nvidia.com>
+ <20250930131648.411720-9-apopple@nvidia.com>
+ <DD7VU4239GS2.2MKVFPBFEY1R4@nvidia.com>
+ <DD8TZ3TU57L3.2958OTC9UP4VF@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.12 00/10] 6.12.51-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
- hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20251003160338.463688162@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20251003160338.463688162@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <DD8TZ3TU57L3.2958OTC9UP4VF@kernel.org>
 
-
-
-On 10/3/2025 9:05 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.12.51 release.
-> There are 10 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Fri, Oct 03, 2025 at 06:34:12PM +0200, Benno Lossin wrote:
+> On Thu Oct 2, 2025 at 3:49 PM CEST, Alexandre Courbot wrote:
+> > Hi Alistair, (+Benno as this concerns the `init!` macros)
+> >
+> > On Tue Sep 30, 2025 at 10:16 PM JST, Alistair Popple wrote:
+> >> Adds bindings and an in-place initialiser for the GspSystemInfo struct.
+> >>
+> >> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+> >>
+> >> ---
+> >>
+> >> It would be good to move to using the `init!` macros at some point, but
+> >> I couldn't figure out how to make that work to initialise an enum rather
+> >> than a struct as is required for the transparent representation.
+> >
+> > Indeed we have to jump through a few (minor) hoops.
+> >
+> > First the `init!` macros do not seem to support tuple structs. They
+> > match a `{` after the type name, which is not present in
+> > `GspSystemInfo`. By turning it into a regular struct with a single
+> > field, we can overcome this, and it doesn't affect the layout the
+> > `#[repr(transparent)]` can still be used.
 > 
-> Responses should be made by Sun, 05 Oct 2025 16:02:25 +0000.
-> Anything received after that time might be too late.
+> Yeah that's the correct workaround at the moment. I'm tracking support
+> for tuple structs in [1]. Essentially the problem is that it requires
+> lots of effort to parse tuple structs using declarative macros. We will
+> get `syn` this cycle, which will enable me to support several things,
+> including tuple structs.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.51-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> and the diffstat can be found below.
+> [1]: https://github.com/Rust-for-Linux/pin-init/issues/85
 > 
-> thanks,
+> > Then, due to a limitation with declarative macros, `init!` interprets
+> > `::` as a separator for generic arguments, so `bindings::GspSystemInfo`
+> > also doesn't parse. Here the trick is to use a local type alias.
 > 
-> greg k-h
+> This one will also be solved when we switch to syn.
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+I was planning to submit
+https://github.com/AsahiLinux/linux/commit/2d95fd3b6c359634a0976f27f7a3c667826256da
+https://github.com/AsahiLinux/linux/commit/515638cb47cf0ebdac378686fcbbdc6a8364096a
+from the asahi downstream tree after 6.18-rc1. Does that still make
+sense timing wise?
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+Types with type paths are used extensively in the asahi driver but I can
+initially work around that.
 
+Janne
 
