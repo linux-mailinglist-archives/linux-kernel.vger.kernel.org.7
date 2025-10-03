@@ -1,144 +1,127 @@
-Return-Path: <linux-kernel+bounces-841199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC5E7BB6786
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 12:41:31 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A43BCBB6780
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 12:41:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84A1F3C0194
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 10:40:50 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2762C3451EA
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 10:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6EA2ECD0E;
-	Fri,  3 Oct 2025 10:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39AE82EA756;
+	Fri,  3 Oct 2025 10:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="wtYD1khi"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dvjsH6za"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDFA2EC0BF
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 10:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDDB82EA740
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 10:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759487998; cv=none; b=Dg0yatAlyBVotGXP25Nh6JdpiLtcLR9FWkdjAwStE8tadURT7Le68rtM5oAxd3UNeItR9FQWum4Mu60LBN0xU0S8CqjXGfXxKPk6IwJ2JZWS+5ryhtX3Dj2Z3QYzRv5AqvnsHkeVYPzSY7uteVYfMIruveFoRP6chEaTesfslq0=
+	t=1759488011; cv=none; b=Bn+3nbwZbZjMKQ0ROZmoL56KDszfbYs+3SeIImgGPFfu9HpZdGjvdQ9Ewv8XlDsboyahc6Yn/x1QeXkbZwCwk91CcVTJZToP+TPgf3ekIyCAea3aa8Jttsw2L72qQDcKne9CvMWg0kEOf6PQNFwC5GkUqeQYPrt0KAfWpM7E3Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759487998; c=relaxed/simple;
-	bh=VOr5eBoNc9FnNHnP9I1a7YeygagW6If0Sow2UvyqWHU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CiK78NoWz3bVCRVlUq1ltt2p3rbgt5LJBqjGOJdqKp9c9hy4QJzaZhASDU3h4onn+m2WTcniVlPC1qHbm0pKT1mRVDDV4blYn/UTMKr8oIJCbS+AJMPm8hP0gB6qPFtNNycoTHPNCiLq/A4IOSJ5t5EEnMQq/CgfSb8YPpibsSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=wtYD1khi; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 808D9C00D98;
-	Fri,  3 Oct 2025 10:39:37 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 8103560683;
-	Fri,  3 Oct 2025 10:39:55 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E1134102F1C6C;
-	Fri,  3 Oct 2025 12:39:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759487994; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=tbt/7EiW1spKYTs5CQJj03xNV0I741bKU71RrfYpRZA=;
-	b=wtYD1khie8pKkgE+AJBUeKyUOUNq8cQJOHgD94ksjKwHFbBS2F6nPLkC1LSz2dvNsFWhd3
-	QFHGsvUL5GYWCJnDlmRok6dqb53ovlMujxwrl/D0C5dAtDNqNRDWxdEVGtFQ2UgM6dBNct
-	NnUet2rzjjqbF+TcJCtTafPA0wWkWM3qJMm7WBRtfNXrYXkp9EVU0mNSFS1egijheh1pfa
-	9ivubEtXhh3DxPhU/mea4OxAYFKE/+xhmStjUPP7XBEBTYAfrUkeVG69eaNw4rHs9rCmfH
-	//qxhniDxsWvLoA1kwBfW9bicTeClWf+0SlpsqbVuf+VOC7/rBwWrK/nTMORVg==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Fri, 03 Oct 2025 12:39:29 +0200
-Subject: [PATCH v2 7/7] drm/bridge: prevent encoder chain changes in
- pre_enable/post_disable
+	s=arc-20240116; t=1759488011; c=relaxed/simple;
+	bh=uixQ6kyH22/C96wbs0ukOXrsC4/qnZ7ssmSzbpApo70=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L2M4ManZO9bNawB2cTp4KrniwukayUgSW25kvCSiA3wiERwZoNC4IF8sqewioLIoVVtHnTFQEqRjAyjON4UYTGefsiAAj11I7f53wHV5a5/tEM1vsR+w3CCQdIDQaL7UMhCZte8vt+E+43JCPhbtPbqCEcROvTaiFfG2iFmYo4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dvjsH6za; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3fd2dee5c00so75009f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 03:40:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759488007; x=1760092807; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3ZzWimyXaZpxT4HA9s/MOFmVrRgLJpUiUIoVWOcDDp0=;
+        b=dvjsH6zaGEZEyk8hTMUf80P+bHiazsAsPlyimwuYg1i0yGVMjF9cqFdp5PqC/zuEbK
+         zhSWR+sfwcOVJEZHyYP3gxsVJoyRnbX2soDpqTNvB+jRSO2pdUXa220OcEuQru5bDWc1
+         NIl+INqg98f3ha7JxSwagRHi3Qo0hUxzwD5sO5/cOs+LBkKPJsfFWZg9IeD+cE+TFPDd
+         z1aM047F2/XgxTPB/R4H0Q1ugaeg7FXrnsQ/35YsjVEnN/pfN7J3EJ19FYG3VKUVN5cq
+         TOcIkPZsiXiUo/dBzT+nN2IYX/hd+/OYHF56shf3at0yqcIEHeJQBIJV7VUzoEU7ifLr
+         sSyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759488007; x=1760092807;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3ZzWimyXaZpxT4HA9s/MOFmVrRgLJpUiUIoVWOcDDp0=;
+        b=CXjXEWJT/8JsELnHDRToR+jCE5GAwddTyB0QQiS2o6/a71o/2Q66UQTl3Nj3WE5/+j
+         jlBGcGLcbThrDPJQargZuWeYv0OUvRghoq79pZXOVgLua13wI5wZh9h5NMyv2NhYpAOc
+         GYsOX08s9Dp0qgBcU3tpVnLFtsL2T8PYXPLzt3dLq1n6+QupuBerMCcvHuzc51OHKm6s
+         OpqR3QgwA+OyK658HJNV91+04tsmPH9+tuNRjm1RosSmm6i0LevA/Fv8RIOfip6omh5O
+         i2OE5v4iABbLIIgBsdXt6PoyLE1m+wsPE6z/6L5pntjQ0W+ZmAn44li4uFAJxsWV5uBM
+         qWBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbBTt5ToyIun6nlXEO5aoNvzx330KRPLziuhUB5JzTBktFkKzdYKQ63mt8KPQ8ETajcyCexi9VbQiaQYs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMI9IZrmLxOeTmM5ZK5mgaSc9975GGlOAjE/rrBrvsoZUVqPnF
+	hVi9cD5hhDJa/cCX2MxFbTmAB2Xh958qD4pvcqmOBusx8ya/ljU1dOjs
+X-Gm-Gg: ASbGncsKDCCAUr64vtyXt3RvTPywSh55+D/AdrvFZtd05lnlN0w/rsE6Ei0BcmjsarN
+	c0cwrYHXNa5ygs9DaOzClwl4/0Q3lcNcbmyyRjnKtZ3BH+cHLYZK7egOkr/F2D3j1cW5zt/+ikN
+	X1PQy5IJbaCCyFHVBHXx5o22RJBTTHpLMUPB4ycQDnFpEj4x5mLxAe6Yp4jS654KmWC+Py9JLLh
+	HIs9KqUr8CvgVgSuv3pZkPBznKPWY4Q9++ERczd8GKBhwsSU68dcY49OhLgjgAKgqKrE5cF1fUO
+	rS/13gmVtBrKAGdmprSGTZGSXRp4kr3gq/vyw/h6FgIRP66Az/ExWyJ3z477Jf4rWlnxFfGbNkm
+	kbFeiIxb50Fk4dqvATKG2zfleer9nwfGZTxszO1LacTFu2VP/3gWDShavTI2WmbmXYDepiXI=
+X-Google-Smtp-Source: AGHT+IFUSvvSSGhE/OmU6U3tpy7UKk+VR5GvbEDJyFIQIUGJpgNu1HB76w5/4UMrESS3rJMjujyoOQ==
+X-Received: by 2002:a05:6000:3105:b0:407:4a78:fff0 with SMTP id ffacd0b85a97d-4256715ac7fmr802161f8f.4.1759488007012;
+        Fri, 03 Oct 2025 03:40:07 -0700 (PDT)
+Received: from [192.168.100.179] ([102.171.6.65])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f0170sm7468725f8f.49.2025.10.03.03.40.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Oct 2025 03:40:06 -0700 (PDT)
+Message-ID: <b0388977-413c-46d0-b0e1-fc8d26ef9323@gmail.com>
+Date: Fri, 3 Oct 2025 11:40:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] init: Use kcalloc() instead of kzalloc()
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+ david.hunter.linux@gmail.com, linux-kernel-mentees@lists.linuxfoundation.org
+References: <20250930083542.18915-1-mehdi.benhadjkhelifa@gmail.com>
+ <20251002023657.GF39973@ZenIV>
+Content-Language: en-US
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+In-Reply-To: <20251002023657.GF39973@ZenIV>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251003-drm-bridge-alloc-encoder-chain-mutex-v2-7-78bf61580a06@bootlin.com>
-References: <20251003-drm-bridge-alloc-encoder-chain-mutex-v2-0-78bf61580a06@bootlin.com>
-In-Reply-To: <20251003-drm-bridge-alloc-encoder-chain-mutex-v2-0-78bf61580a06@bootlin.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
 
-Take the encoder chain mutex while iterating over the encoder chain in
-drm_atomic_bridge_chain_pre_enable() and
-drm_atomic_bridge_chain_post_disable() to ensure the lists won't change
-while being inspected.
+On 10/2/25 3:36 AM, Al Viro wrote:
+> On Tue, Sep 30, 2025 at 09:35:37AM +0100, Mehdi Ben Hadj Khelifa wrote:
+>> Replace kzalloc() with kcalloc() in init/initramfs_test.c since the
+>> calculation inside kzalloc is dynamic and could overflow.
+> 
+> Really?  Could you explain how
+> 	a) ARRAY_SIZE(local variable) * (CPIO_HDRLEN + PATH_MAX + 3)
+> could possibly be dynamic and
+I missed that c is in local scope.It's already of size 3 and since 
+CPIO_HDRLEN is 110 and PATH_MAX is 4096 + 3, it's far from the limit and 
+it is calculated at compile time since all values are deducible.> 	b) 
+just how large would that array have to be for it to "overflow"?
+If c could be of any size, it would have to be of size 1,020,310 for 
+32-bit kernels and a lot for 64-bit kernels around 4.4 quadrillion 
+elements. Which is unrealistic.
 
-These functions have nested list_for_each_*() loops, which makes them
-complicated. list_for_each_entry_from() loops could be replaced by
-drm_for_each_bridge_in_chain_from(), but it would not work in a nested way
-in its current implementation. Besides, there is no "_reverse" variant of
-drm_for_each_bridge_in_chain_from().
+> Incidentally, here the use of kcalloc would be unidiomatic - it's _not_
+> allocating an array of that many fixed-sized elements.  CPIO_HDRLEN +
+> PATH_MAX + 3 is not an element size - it's an upper bound on the amount
+> of space we might need for a single element.  Chunks of data generated
+> from array elements are placed into that buffer without any gaps -
+> it's really an array of bytes, large enough to fit all of them.
+Yes I get it now. But Even if the CPIO_HDRLEN + PATH_MAX + 3 is the 
+upper bound on the amount of space and in use it doesn't have any gaps 
+in memory, Shouldn't we change kzalloc() to kcalloc() since kzalloc() is 
+deprecated[1]?
+Regards,
+Mehdi Ben Hadj Khelifa
 
-Keep code simple and readable by explicitly locking around the outer
-loop. Thankfully there are no return points inside the loops, so the change
-is trivial and readable.
-
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-
----
-
-Changes in v2:
-- Improved commit message
----
- drivers/gpu/drm/drm_bridge.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-index 2a55ac5697e0b4faa21f01728bbe287a95cd99a6..840ea4ef4bb27ea035cda784f8ec39cd768ed704 100644
---- a/drivers/gpu/drm/drm_bridge.c
-+++ b/drivers/gpu/drm/drm_bridge.c
-@@ -760,6 +760,7 @@ void drm_atomic_bridge_chain_post_disable(struct drm_bridge *bridge,
- 
- 	encoder = bridge->encoder;
- 
-+	drm_encoder_chain_lock(encoder);
- 	list_for_each_entry_from(bridge, &encoder->bridge_chain, chain_node) {
- 		limit = NULL;
- 
-@@ -808,6 +809,7 @@ void drm_atomic_bridge_chain_post_disable(struct drm_bridge *bridge,
- 			/* Jump all bridges that we have already post_disabled */
- 			bridge = limit;
- 	}
-+	drm_encoder_chain_unlock(encoder);
- }
- EXPORT_SYMBOL(drm_atomic_bridge_chain_post_disable);
- 
-@@ -854,6 +856,7 @@ void drm_atomic_bridge_chain_pre_enable(struct drm_bridge *bridge,
- 
- 	encoder = bridge->encoder;
- 
-+	drm_encoder_chain_lock(encoder);
- 	list_for_each_entry_reverse(iter, &encoder->bridge_chain, chain_node) {
- 		if (iter->pre_enable_prev_first) {
- 			next = iter;
-@@ -896,6 +899,7 @@ void drm_atomic_bridge_chain_pre_enable(struct drm_bridge *bridge,
- 		if (iter == bridge)
- 			break;
- 	}
-+	drm_encoder_chain_unlock(encoder);
- }
- EXPORT_SYMBOL(drm_atomic_bridge_chain_pre_enable);
- 
-
--- 
-2.51.0
-
+[1]:https://docs.kernel.org/process/deprecated.html
 
