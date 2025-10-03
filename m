@@ -1,196 +1,223 @@
-Return-Path: <linux-kernel+bounces-841456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 578A7BB75DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 17:47:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E01A4BB75EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 17:48:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 289193404AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 15:47:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B7C619C5F75
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 15:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8B028643D;
-	Fri,  3 Oct 2025 15:47:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8DF2857C6;
+	Fri,  3 Oct 2025 15:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="qlYiUHkF"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44AB1C6B4;
-	Fri,  3 Oct 2025 15:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759506446; cv=none; b=W87+3zHm9TEdmq2uXo4+GudTHGp+cswJZQInLEVMYCGrclfUOcuxwjzFyE3WAHsOnY1QynR3FQRYQCPlkqq+KmBSnNBK1abGj82rubuerEkpy6MsxMA1v0lgYaT8QLiU3zBTbOFf9eqPhVXxpp0kqzJBBQ/WlotsqXtw6KXBqN8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759506446; c=relaxed/simple;
-	bh=QeOdkk/HPd8F+lWj3osQlyj0903mD8z9jFN3xWQIL0E=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AHWrUFac4qmjwypit5su/bpU2DwvBUoGgcDkeHldsqwIfWMvgNc0onaW5wIXC3wQei1wLJ2RBWDAP/H2V1Pw1yUF+zkIBIp3vXeJNXuz6ZXkVYKK/ArIwbGI2tu/5bZTQb8Q+NWt+dd/KaLigW2Go/7JH4yDYtKZ2pi3oXaBUUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=qlYiUHkF; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1231)
-	id 474EB211C261; Fri,  3 Oct 2025 08:47:24 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 474EB211C261
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1759506444;
-	bh=pXrCFoiP29LJ+ofNopBlzkuBSlGEqfHo1NT4ymmIUKA=;
-	h=Date:From:To:Subject:From;
-	b=qlYiUHkFqtHJubOJCMK9OZoof82SUso7n1G2o6BzLuNsUoh4LxrK3sJlRHhNNxZiq
-	 hAJbqFA//t+eVjeE2c9F3Wh6qE+zdJYbSx/dxYPPZgpLWCUmcLfdjmhjZFem+jK/KO
-	 hnej7hLI1LKUWaQOTHaSrr8TeoUByWwaAmJ2FlzI=
-Date: Fri, 3 Oct 2025 08:47:24 -0700
-From: Aditya Garg <gargaditya@linux.microsoft.com>
-To: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	longli@microsoft.com, kotaranov@microsoft.com, horms@kernel.org,
-	shradhagupta@linux.microsoft.com, ernis@linux.microsoft.com,
-	dipayanroy@linux.microsoft.com, shirazsaleem@microsoft.com,
-	linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	gargaditya@microsoft.com, gargaditya@linux.microsoft.com,
-	ssengar@linux.microsoft.com
-Subject: [PATCH net-next] net: mana: Linearize SKB if TX SGEs exceeds
- hardware limit
-Message-ID: <20251003154724.GA15670@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fwh3vvQy"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012050.outbound.protection.outlook.com [52.101.43.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE6413635C;
+	Fri,  3 Oct 2025 15:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759506483; cv=fail; b=aIo7FJefciartBA6mKuSghIPoDe7VumghuKtSWR4Xh2Jfb0DSuklmNKRW/TMreQpVC9sbsao3kVJYPvxYeldFC1x27ZZWHj4fn5teZy8W2/IGo/dB2WFhHXosX6IBa6fHXZKhSrmioMHgbM54OC2VeSSajde6zr5EmwdQEAfaeE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759506483; c=relaxed/simple;
+	bh=D2Zs+aQ+tyXF0s8r0z2q/7YYqloqA21C6eBfmt4XK6U=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=nuu6KsevEeYZAZdNobtg+xZViOMQfKPlQNB7lT3Uqa8XPcPDu/gQ0ZIcK1QROS60gRz27GWlE7bsuGxAXksy4ji2h/CDi2IB5Un/w3YU88xlRT7d7B3Aqsf9iTegfS6Lm+X1wL+yIEPzhzpojS0N75sspvbFEGIB+wmYJP3CVyw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fwh3vvQy; arc=fail smtp.client-ip=52.101.43.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ljHhzbKQOZiySuBz4XCdNyfrAlmv/Api8hn9TdLqe87r7JG5y4brUHoZkB0AD1XpqQvOVYy7lSQ/wOdnmtMnumSvaOT5k93GWu5W9TwpOprdge6F9tXB5zLjMw5iRqCtS005iGk1l9zPxy4dLClXXaEOJZsdAM6dVgrIVTo99cMGWOmD0XSnlqw31jrWAFLH8fs3FSQFZODlCueCbrJEj6wTAJq1VoXSyQ8Pd6Le7KWvjMz3cIuxZFr2S2Po9pJsP6RObOUiKAY+V6An1VMdf3YQdJ/WMrseSSTiKytyRcBDSoLFoeGGNxcaujK5vTgA5FTcjcZs/sLD09i9+FtNgQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dfPeTsJorz2Kyk1AUcC74jgCvotfWHhzxUQiiCODM54=;
+ b=Pix7T7foKFCArGJu9Hh1eis/L3murcIiWXveAeG8AppDcbGSliPlenr2T2yPmXOwvNwm6DfDpV+AR84pxlM/PM2UXsZtVhuhVr5/sr+0G9YNaToK9Wzq+n5XjeUqZx7SnciIWvPaumHNF5fZY0z5X+niQ5Q3yo8fjDwZ/+GUhdsGOAulhl78yBeBRJHoKjfB3l5tRnztjEFMBfZw+qaJWvellLZ8eL/OvnnYECnBmP/fq0bTXTBfyg3RYfF/qkeo6Opq32TfbLk1Dec+tr2+iQzFJ3KKH17gXEP7W0WfDlhIjl5HSImn2evW0jstIKGVCA6OSqACSyKYXpA9sNUvog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dfPeTsJorz2Kyk1AUcC74jgCvotfWHhzxUQiiCODM54=;
+ b=fwh3vvQyYpwt7hNRo4aGblSVs7H9bhefPxnuGXxzh6Ijxkl7QDxPk9WAdGfQmBESPu6LZPxSLdn/HDnFno2HMx+mpn7XzARcl+hDouSShgJw+7RzmFJD02kmVTcDKrv+f65kIHA3YkwJATdRBINP7je20RymnL7bQmCYNFyrxS2snKJHK5/pfKA4FUaDI8b7hadXQJE7e3ojBCbVPenUlq+YiKH1gOMog5mSBMW0QrsB0+VBLmMEMjqH/707nRe7hvpRaS1H/xXIXl0SbXdG02f5JPqugbOUHEEBPvZJuVQLJc4c9hjRRXjuIq8JyTKwepJVdOFdXeGe9Q+wCK4tNg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by PH0PR12MB8152.namprd12.prod.outlook.com (2603:10b6:510:292::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.16; Fri, 3 Oct
+ 2025 15:47:53 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9160.017; Fri, 3 Oct 2025
+ 15:47:53 +0000
+From: Joel Fernandes <joelagnelf@nvidia.com>
+To: linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	dakr@kernel.org,
+	acourbot@nvidia.com
+Cc: Alistair Popple <apopple@nvidia.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	bjorn3_gh@protonmail.com,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Timur Tabi <ttabi@nvidia.com>,
+	joel@joelfernandes.org,
+	Elle Rhumsaa <elle@weathered-steel.dev>,
+	Yury Norov <yury.norov@gmail.com>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Andrea Righi <arighi@nvidia.com>,
+	nouveau@lists.freedesktop.org
+Subject: [PATCH v6 0/5] Introduce bitfield and move register macro to rust/kernel/
+Date: Fri,  3 Oct 2025 11:47:43 -0400
+Message-Id: <20251003154748.1687160-1-joelagnelf@nvidia.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BN0PR04CA0024.namprd04.prod.outlook.com
+ (2603:10b6:408:ee::29) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|PH0PR12MB8152:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6a85ef50-36cd-4a67-6289-08de0294369c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?i0SUVV5d3zO3Oo+0vOCkh4i4BdioHVbm1mTN1mVicVaxzWq1zcbYcy4LaYs3?=
+ =?us-ascii?Q?tOMratMUb1My+cFV+Er6BD50EyzipLF8aa8N4/lM9JvbvnnTgQw2UgfZWTb2?=
+ =?us-ascii?Q?Z5Sb40fN6Ae3Pzla8Z5J2EkvpMV5vlf4jzHVesAxCfkzBTjCVWv9if6dHghD?=
+ =?us-ascii?Q?fPEJelezIBJvHtRzLIFWI6YDv0Q9UcFHLPD1c8kPtD8fPrMQHwL0wBrpB0lX?=
+ =?us-ascii?Q?GCgcEvbwLTngWNhjdWqFUxiZQoNwIpfwzfSWF9fOd+XP/FuktQav8jMqxogo?=
+ =?us-ascii?Q?13YDrkj7Mfi1PmlMUC5tg8wqykkzQz6vaG/0ay+R0FdQLUpe86VxO9dR7dJC?=
+ =?us-ascii?Q?MN/Ax+O+UTw3K2hx6wFE0EH4uGzzlTzjnh8gmta3yDQx4AjJmuCv1dRnTK3V?=
+ =?us-ascii?Q?5cCJRX+UippVZ5VreqF1iy05ePdRyuYrsWCwrMRImRpQuMWM77gjEctV8uRn?=
+ =?us-ascii?Q?XmPuB7tY/TEjpH/dDiH+YR2dgTOmwFZr7h3e3PzXufb2DaCc82x5GMKZn5Uw?=
+ =?us-ascii?Q?nHkq61CCh4cNj6w1ZMQmetGHAdaqTFjCNKaHXIB9rjnbxXYtR7dAUkxjMRWe?=
+ =?us-ascii?Q?tfRmlIevLpZVvC8zvXK5iShBRYNTOLKFYDp6ZkAgntBSc55quinKEAFZhaQE?=
+ =?us-ascii?Q?+I9nhnkf1n1Nje1ytzGdIEhJMqmJi7ggaN9w8ULvn/V96S0SKXT1aqU375CD?=
+ =?us-ascii?Q?sBkNyAYNs8kDfVqU++/D1brSgImJ6h2vlVUbpKo5tP1/a7igsRA1LYKK5BM5?=
+ =?us-ascii?Q?3rb6TP9GSzSGZRA669UENW31D/Wx0UR13e5wNzlRtMjdtu64dGwAjr6GfZ2d?=
+ =?us-ascii?Q?eZiRaJVWB+5CdDNTPEma892MBc4iiWgi0bwaTvst79/wUg1U6Sxl8dOT7nzm?=
+ =?us-ascii?Q?OEliPKLoYc2mA2qmJrvhYtObfHSbhCzb/5NDSysRR82rnJRj+eyBfOsMJC5g?=
+ =?us-ascii?Q?rutwH/hztLmprIi8mrEt0KhoC6kYr/r/vmO+rMKRcO2T/IL0xoPzpJi10FDP?=
+ =?us-ascii?Q?4Fo+ud5bCViHZV4Kno6weq3p/20AUq3e9x+GiKBTj+LJWublB2tHhRrbl0wW?=
+ =?us-ascii?Q?Ctm9cyIqrPjgjnnbMtKiOBgg1lcKbGokH6Z1A/EVUMr7Pq6Gch6tpzyEK4Di?=
+ =?us-ascii?Q?e+Ov29Ul/6Zddmu7vOgrzxc3sVlY7KWSEUYj/q/atLVUxj6e0538urS1/6F3?=
+ =?us-ascii?Q?HqgBXof8/mWR1nPfeuQtESwDaMyerYrcfweJbA3nnp4KbbkRaxTKe0ba9ArG?=
+ =?us-ascii?Q?ruT0177aulH1QO9FVLo5cqEBi64zKVncF64Vrkx+xxHbSyoe9eYoSkq3TmC9?=
+ =?us-ascii?Q?k7wNH9tCkuNY5lhXT0rcYnZD1Jnf789E3VrCtDn53IOEE17Y16RWE9tbpiU6?=
+ =?us-ascii?Q?UkeHbvPwcekCyD1liOr07XQgnHUCHLF10tdb0BKG+SyvSmmljqy6ZLi9lbEj?=
+ =?us-ascii?Q?Caq90fiKTlmxhfjpVknmmgXHDni5i7Vh4QBQBRgT/FmL9rPTItIEiQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?AXR1YUgE87CJYMERB+E12EgmBAehTWwhkSRCVmnJN1vMyzmpYzWmmMUB78nf?=
+ =?us-ascii?Q?AIUYq0UUc2TEH/rk34gWGzKyDn62MKGLTtPbv6jvuJoWj6CZoFkgqPptCcAW?=
+ =?us-ascii?Q?UiyD/jM0QMG+WTbVHWeN6uvbS5ePfh2rcXeMuaAl04l/xFNnZ41nKKRlq7sm?=
+ =?us-ascii?Q?GhsjWvWqsZ8VhLMdcAJWlrBGNNd2Ujm5su7LDX2cza4lEUvgfWhlFRNfcYo9?=
+ =?us-ascii?Q?iJOoDou0zgtivedk6FHePyBWQ/f2EdgFgO7jjbonowWZX1dXDldNapy+T+wZ?=
+ =?us-ascii?Q?dJoqfkhpNfZ9d+YG4IfkJAvzos37cVH3L652xa53pEm0vk8bfREKDKE1BOK1?=
+ =?us-ascii?Q?cIHMHlK3b0RzahBdxEXqotSLHC2JWtO1w16l+GiDBqZNImhH+4illQHZUC/6?=
+ =?us-ascii?Q?qcha64GMeXLCkHFuyiEWIQlekJpJBfWCl8iX60u/8+VE3jczs0OhsmimoSyu?=
+ =?us-ascii?Q?VWejuRGT2VIaiGAjKAMQznTP7oAxr++xkweP2UmxA5/8igKB+uiKOYfKdVbA?=
+ =?us-ascii?Q?Bb5AEWl63CYMXuNzdDdu+OfvonVEGvIbpyv7IK7KC4VsSydif7a/760aoMSx?=
+ =?us-ascii?Q?XnhTwWLPfDSI6fQ/8ZH1p8rfBvAppsmdn9g7XomXXfJYJaMZn1gtlnXpKJfD?=
+ =?us-ascii?Q?V11Yr2Ha6jDNRuVjr9iP+drnraCXAih6TUjgQIWBIlclZpU9nr4lySJtOkT3?=
+ =?us-ascii?Q?apPeBvdTG50RBilv/KAAGSlwBdi87sj9m51hIdwYLq0y2HoNB4tnML4EVUQY?=
+ =?us-ascii?Q?hQEycVg1nfkmOqZ8UqNDULn2ZSR+Y7ReYZ2tdswfC3seKjQ978pdQE86kFgV?=
+ =?us-ascii?Q?ymsnLMt4zrWLu1WGANiG9BUx2N70Lf9KoPkftW9oSXmRnKZieLa7vt9rnksY?=
+ =?us-ascii?Q?7suNxDJpa4oP18DYoQtG1tvFOI/pIUTMvVeYyF2hUDJF0X9V+uKulNPXr47G?=
+ =?us-ascii?Q?biH+bdk+E8W2GhfcTlOtgXpsoJYCHHaFj6RG+pPfpZX8TFSyhRiskbkbcBRn?=
+ =?us-ascii?Q?Ws8DN0U7uEE7emqPGjZld3qgUqyQ7o8SwYUwErXmcErD8pRGR7apa5XHp8eX?=
+ =?us-ascii?Q?bcoPSg6O6F/FJSJKzIvhI1MHSPOA4FNEZVEoivbLyVDldU11+/BnTvX82ZAU?=
+ =?us-ascii?Q?gUx0j7k6G7C+9ROq6Z3gPNQXtqUBpz3TVePj6iHvLoPF6D7rQNGBCJbcJgNB?=
+ =?us-ascii?Q?dfUV/6AZgNt9+RffhVT3uVGnNqxYRApfV8JrcqCbHcxQ83dF/1iDVeTYTvNJ?=
+ =?us-ascii?Q?ea+k3f6HtNTl0yppz8KVBxTRzkehHQy/oL405cmWD4bz+dtX1l/8pjvIZjVA?=
+ =?us-ascii?Q?llzIxuxaVrPCv2ZmoAHddnN/vNHlhsvlhPjJBpe0gPSTVhYcLuXBqImHSf2I?=
+ =?us-ascii?Q?MgAJblzMJFlBWeyaGGYeMhdVH/h4qTy+VfFZRFwHG3Tbcyl4gyHEULF0b62l?=
+ =?us-ascii?Q?DwADyHpuawluvFii5UtIVgS19KgpAlfwCacCS0OHjziYjDY1j6yhCjNKtuCS?=
+ =?us-ascii?Q?0bLUCS3Is2Ys6gj8yIFCBNz35GQ6QQ60cW6co51C7N0mns5dLI1UTzkEXFM1?=
+ =?us-ascii?Q?PxuTgNuaku5aYirwKod78NMts1wmdZEVFJPYQrst?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a85ef50-36cd-4a67-6289-08de0294369c
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2025 15:47:52.9315
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rzF+phfyXeYd94UUTbegpsTOC7DqF2T7G1FkG9NA37mvIRQe9clrhKQ8RcyRub57pU3IFPIPGYsOSwIGB/bdWg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8152
 
-The MANA hardware supports a maximum of 30 scatter-gather entries (SGEs)
-per TX WQE. In rare configurations where MAX_SKB_FRAGS + 2 exceeds this
-limit, the driver drops the skb. Add a check in mana_start_xmit() to
-detect such cases and linearize the SKB before transmission.
+Hello!
 
-Return NETDEV_TX_BUSY only for -ENOSPC from mana_gd_post_work_request(),
-send other errors to free_sgl_ptr to free resources and record the tx
-drop.
+These patches extract and enhance the bitfield support in the register macro in
+nova to define Rust structures with bitfields. It then moves out the bitfield
+support into the kenrel crate.
 
-Signed-off-by: Aditya Garg <gargaditya@linux.microsoft.com>
-Reviewed-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
----
- drivers/net/ethernet/microsoft/mana/mana_en.c | 26 +++++++++++++++----
- include/net/mana/gdma.h                       |  8 +++++-
- include/net/mana/mana.h                       |  1 +
- 3 files changed, 29 insertions(+), 6 deletions(-)
+Since v5, I dropped several patches and only kept the simple ones that do code
+movement, added a few features and added a KUNIT test. After Alex's bounded
+integer [1] support is in, we can rewrite the dropped patches.
 
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-index f4fc86f20213..22605753ca84 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-@@ -20,6 +20,7 @@
- 
- #include <net/mana/mana.h>
- #include <net/mana/mana_auxiliary.h>
-+#include <linux/skbuff.h>
- 
- static DEFINE_IDA(mana_adev_ida);
- 
-@@ -289,6 +290,19 @@ netdev_tx_t mana_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 	cq = &apc->tx_qp[txq_idx].tx_cq;
- 	tx_stats = &txq->stats;
- 
-+	BUILD_BUG_ON(MAX_TX_WQE_SGL_ENTRIES != MANA_MAX_TX_WQE_SGL_ENTRIES);
-+	#if (MAX_SKB_FRAGS + 2 > MANA_MAX_TX_WQE_SGL_ENTRIES)
-+		if (skb_shinfo(skb)->nr_frags + 2 > MANA_MAX_TX_WQE_SGL_ENTRIES) {
-+			netdev_info_once(ndev,
-+					 "nr_frags %d exceeds max supported sge limit. Attempting skb_linearize\n",
-+					 skb_shinfo(skb)->nr_frags);
-+			if (skb_linearize(skb)) {
-+				netdev_warn_once(ndev, "Failed to linearize skb\n");
-+				goto tx_drop_count;
-+			}
-+		}
-+	#endif
-+
- 	pkg.tx_oob.s_oob.vcq_num = cq->gdma_id;
- 	pkg.tx_oob.s_oob.vsq_frame = txq->vsq_frame;
- 
-@@ -402,8 +416,6 @@ netdev_tx_t mana_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 		}
- 	}
- 
--	WARN_ON_ONCE(pkg.wqe_req.num_sge > MAX_TX_WQE_SGL_ENTRIES);
--
- 	if (pkg.wqe_req.num_sge <= ARRAY_SIZE(pkg.sgl_array)) {
- 		pkg.wqe_req.sgl = pkg.sgl_array;
- 	} else {
-@@ -438,9 +450,13 @@ netdev_tx_t mana_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 
- 	if (err) {
- 		(void)skb_dequeue_tail(&txq->pending_skbs);
-+		mana_unmap_skb(skb, apc);
- 		netdev_warn(ndev, "Failed to post TX OOB: %d\n", err);
--		err = NETDEV_TX_BUSY;
--		goto tx_busy;
-+		if (err == -ENOSPC) {
-+			err = NETDEV_TX_BUSY;
-+			goto tx_busy;
-+		}
-+		goto free_sgl_ptr;
- 	}
- 
- 	err = NETDEV_TX_OK;
-@@ -1606,7 +1622,7 @@ static int mana_move_wq_tail(struct gdma_queue *wq, u32 num_units)
- 	return 0;
- }
- 
--static void mana_unmap_skb(struct sk_buff *skb, struct mana_port_context *apc)
-+void mana_unmap_skb(struct sk_buff *skb, struct mana_port_context *apc)
- {
- 	struct mana_skb_head *ash = (struct mana_skb_head *)skb->head;
- 	struct gdma_context *gc = apc->ac->gdma_dev->gdma_context;
-diff --git a/include/net/mana/gdma.h b/include/net/mana/gdma.h
-index 57df78cfbf82..67fab1a5f382 100644
---- a/include/net/mana/gdma.h
-+++ b/include/net/mana/gdma.h
-@@ -489,6 +489,8 @@ struct gdma_wqe {
- #define MAX_TX_WQE_SIZE 512
- #define MAX_RX_WQE_SIZE 256
- 
-+#define MANA_MAX_TX_WQE_SGL_ENTRIES 30
-+
- #define MAX_TX_WQE_SGL_ENTRIES	((GDMA_MAX_SQE_SIZE -			   \
- 			sizeof(struct gdma_sge) - INLINE_OOB_SMALL_SIZE) / \
- 			sizeof(struct gdma_sge))
-@@ -591,6 +593,9 @@ enum {
- /* Driver can self reset on FPGA Reconfig EQE notification */
- #define GDMA_DRV_CAP_FLAG_1_HANDLE_RECONFIG_EQE BIT(17)
- 
-+/* Driver supports linearizing the skb when num_sge exceeds hardware limit */
-+#define GDMA_DRV_CAP_FLAG_1_SKB_LINEARIZE BIT(20)
-+
- #define GDMA_DRV_CAP_FLAGS1 \
- 	(GDMA_DRV_CAP_FLAG_1_EQ_SHARING_MULTI_VPORT | \
- 	 GDMA_DRV_CAP_FLAG_1_NAPI_WKDONE_FIX | \
-@@ -599,7 +604,8 @@ enum {
- 	 GDMA_DRV_CAP_FLAG_1_DEV_LIST_HOLES_SUP | \
- 	 GDMA_DRV_CAP_FLAG_1_DYNAMIC_IRQ_ALLOC_SUPPORT | \
- 	 GDMA_DRV_CAP_FLAG_1_SELF_RESET_ON_EQE | \
--	 GDMA_DRV_CAP_FLAG_1_HANDLE_RECONFIG_EQE)
-+	 GDMA_DRV_CAP_FLAG_1_HANDLE_RECONFIG_EQE | \
-+	 GDMA_DRV_CAP_FLAG_1_SKB_LINEARIZE)
- 
- #define GDMA_DRV_CAP_FLAGS2 0
- 
-diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
-index 0921485565c0..330e1bb088bb 100644
---- a/include/net/mana/mana.h
-+++ b/include/net/mana/mana.h
-@@ -580,6 +580,7 @@ int mana_set_bw_clamp(struct mana_port_context *apc, u32 speed,
- void mana_query_phy_stats(struct mana_port_context *apc);
- int mana_pre_alloc_rxbufs(struct mana_port_context *apc, int mtu, int num_queues);
- void mana_pre_dealloc_rxbufs(struct mana_port_context *apc);
-+void mana_unmap_skb(struct sk_buff *skb, struct mana_port_context *apc);
- 
- extern const struct ethtool_ops mana_ethtool_ops;
- extern struct dentry *mana_debugfs_root;
+I also dropped the MAINTAINER entry for now, pending more clarity around that.
+I am happy to maintain it, but I need more input on who all will co-maintain,
+now that the last 4 patches were dropped. Perhaps we can maintain it was a part
+of the core rust-for-linux? I suggest let us create the maintainer entry once
+Alex's bounded integer support is integrated but I am open to suggestions.
+
+Here are the v5 patches [2].
+
+[1] https://lore.kernel.org/all/20251002-bounded_ints-v1-0-dd60f5804ea4@nvidia.com/
+[2] https://lore.kernel.org/all/20250930144537.3559207-1-joelagnelf@nvidia.com/
+
+Joel Fernandes (5):
+  nova-core: bitfield: Move bitfield-specific code from register! into
+    new macro
+  nova-core: bitfield: Add support for different storage widths
+  nova-core: bitfield: Add support for custom visiblity
+  rust: Move register and bitfield macros out of Nova
+  rust: bitfield: Add KUNIT tests for bitfield
+
+ drivers/gpu/nova-core/falcon.rs               |   2 +-
+ drivers/gpu/nova-core/falcon/gsp.rs           |   4 +-
+ drivers/gpu/nova-core/falcon/sec2.rs          |   2 +-
+ drivers/gpu/nova-core/regs.rs                 |   6 +-
+ rust/kernel/bitfield.rs                       | 654 ++++++++++++++++++
+ rust/kernel/io.rs                             |   1 +
+ .../macros.rs => rust/kernel/io/register.rs   | 301 +-------
+ rust/kernel/lib.rs                            |   1 +
+ 8 files changed, 696 insertions(+), 275 deletions(-)
+ create mode 100644 rust/kernel/bitfield.rs
+ rename drivers/gpu/nova-core/regs/macros.rs => rust/kernel/io/register.rs (73%)
+
+
+base-commit: 299eb32863e584cfff7c6b667c3e92ae7d4d2bf9
 -- 
 2.34.1
 
