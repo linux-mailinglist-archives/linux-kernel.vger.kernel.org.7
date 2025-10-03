@@ -1,194 +1,153 @@
-Return-Path: <linux-kernel+bounces-841091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA768BB63DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 10:35:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B447ABB63E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 10:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3568419E212C
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 08:36:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A370F18877D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 08:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF1626CE05;
-	Fri,  3 Oct 2025 08:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3993D26E711;
+	Fri,  3 Oct 2025 08:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LDSFop/T";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="W4Z6NyaZ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LDSFop/T";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="W4Z6NyaZ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mSj+X3hk"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89FE22259F
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 08:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D543226C3A8
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 08:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759480550; cv=none; b=ojE8YxOqAZa8w1SDXt/Ro7awdfks+ybzBv+bJuzKkgTdBaglNtlNlS2lBIF4P7qB6wE7GbmpDbWUuuwg58+AJvXM2kv3qPCloXIOm2q0YsK53cJV6QywmB7otgUFEe8B4kwy4H6fstbjskVkxbniR2I1F2ddKYi1VQX1dt4kuEY=
+	t=1759480572; cv=none; b=V6FvNhszAxgd5ALN48haS1IlDSgYfShcZprRAdwK/m7xkSqIs9kLS3C+kaY6sv04jC1nfAgPi57XYnB5KxDRoimzpwVIn91WtM2QcKNJ5+5mgfS60owIjnzuxYS4o9YFvURPSQ0A5mlPHW2e4mQf7IRICbds+Xqkk8vLJU+BnX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759480550; c=relaxed/simple;
-	bh=qogdZ1D3k4wKKtBr0C98EA6glsjMmWlojCQFB9UIUaE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HDshEnQ+XxH5ZLD5W48rCyc/heJ7K9FnwMjXPLpvmd2FSpwPQ3PLu4askcGaFe8/kowtilmlOE2W6acv/caYELUnJ2XpxxGHZ8z753McTcG8BqHqxeZML1K0rSAADgE3lI/6zWwuc5M0yKOun2IUOhyosQ6FyEMHD92h7XUASt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LDSFop/T; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=W4Z6NyaZ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LDSFop/T; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=W4Z6NyaZ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 98E0E1F388;
-	Fri,  3 Oct 2025 08:35:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759480546; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oKhGqKWYXB0Whi2FFFvg79+OnJq6OL+eV6niiEbIzNY=;
-	b=LDSFop/ThKXqPoH/QB/KoM7KcPKAWzHsfQw0YMqySe/G6hma5O759ouoSZEpd/ZdvzsPhQ
-	ztvzFErbzg5jdtKegWt4F24xxg8TsECp5Iwb8WzL/CqLoamhZSb8Ceqxs//egXcEolujap
-	XaJg47rPCv4cDmoeQs/kiGQ8joqbL5Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759480546;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oKhGqKWYXB0Whi2FFFvg79+OnJq6OL+eV6niiEbIzNY=;
-	b=W4Z6NyaZQX364XOSjJoKQDHMnvB0rhPlY2A1q9IbodVBxL8GuxRNWbQlcM2VgEBsG1GPXQ
-	XxqtGiZfqNIxY4CQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759480546; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oKhGqKWYXB0Whi2FFFvg79+OnJq6OL+eV6niiEbIzNY=;
-	b=LDSFop/ThKXqPoH/QB/KoM7KcPKAWzHsfQw0YMqySe/G6hma5O759ouoSZEpd/ZdvzsPhQ
-	ztvzFErbzg5jdtKegWt4F24xxg8TsECp5Iwb8WzL/CqLoamhZSb8Ceqxs//egXcEolujap
-	XaJg47rPCv4cDmoeQs/kiGQ8joqbL5Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759480546;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oKhGqKWYXB0Whi2FFFvg79+OnJq6OL+eV6niiEbIzNY=;
-	b=W4Z6NyaZQX364XOSjJoKQDHMnvB0rhPlY2A1q9IbodVBxL8GuxRNWbQlcM2VgEBsG1GPXQ
-	XxqtGiZfqNIxY4CQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 764E513AAD;
-	Fri,  3 Oct 2025 08:35:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xeiGHOKK32gNcgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 03 Oct 2025 08:35:46 +0000
-Message-ID: <db51bcc5-aaf6-4cb4-ab62-fed9d40d6caa@suse.cz>
-Date: Fri, 3 Oct 2025 10:35:46 +0200
+	s=arc-20240116; t=1759480572; c=relaxed/simple;
+	bh=PKc37E4toOI+coMwxopVyqNk25skEmj4ksL4V0/afI0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=PcqE6Z1z5mA/0SHwB1yHJR8WWa+7ZRIKnDFYbAbO1hqFFjKjCbS617FoqMQZ463NyvfVMXUstQKkpisP/XyFa5GWEQ4GjHGTlAlcfnYvqX7dQG4MspwcnLpQT8ZL8dnKF9YYEj8EetpVxJ9cIeotAlQ3U4jID99k0OuAe9YyXQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mSj+X3hk; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-46e2e6a708fso12805505e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 01:36:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759480568; x=1760085368; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bSviWDocZr7eRFQ1iMDzT5Qi5FWE3ORY1UYGHnObtBk=;
+        b=mSj+X3hkHQqL9nxLy8hobaLpuddY4uGLoWu2Z8d8cma35a5a79B39Z32JcJHXx61cH
+         mpYyPa21aCT2/MA3qtyUr4Q+0wM5YZ9+OEDd26OXzN2UlIJe5uEmiT16kiQOLjS0w4Qh
+         XcT8mO6RGQI/m6Ibca9EnCwAnMGrkVZurjQNU0LMiGtj7VO21E/QbCdWoRX95LPPYpTR
+         w2rAIdPEsAl6GqSYkC0FC913LoWXpSKqJ2522ZJx8GnhDBQB5J/ZhQBBQXkmPyTkQbJx
+         HiLFpKjQBqHG5hVSLEoIvdUHYpLuKWE92Vy3yRS5q8DiED35vumgcGnR/EyYU+hveFzk
+         T2jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759480568; x=1760085368;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bSviWDocZr7eRFQ1iMDzT5Qi5FWE3ORY1UYGHnObtBk=;
+        b=MNy2+yoEy7QJXaneEuY0bOjwXNkxAjCNWKOEhJRxMm/w4QiI6FMIC+hTtIyRC310IK
+         5KpHkJN9Vb457XOZGDM37pin2JOkJFQTWQmHCNeJDEDRxRYiZDNoolyoXxhZ+xapG9yB
+         3rkdeeRZEAyJh4yJUk0KIn1+NE2eUkyxn7R4+LmJ3cK0LeyRUon+PtJ6olvUB0vPy7ZZ
+         1vv3CGXiqAmXkcE+iblWj2cAPnlBEK0RY68sRs+gOyvPuEkqzPxOAVWHKJyjWhozDKNU
+         k+XASEgd3y8sM8oq4NoDVnOrBM7ON/8GZrzS9raj6wi9sXDgNBqLC8CBeLRasLTBUWZV
+         Ej3A==
+X-Forwarded-Encrypted: i=1; AJvYcCU0HEStfdVCk++8pmFp/0W/89PytipPjt915lKLSgFaGAoyh/b+KCq0KffNkPYXxwqMDhwCxblR/MQin9I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYOP1rW1kTRWVlwzD20oiZ4C5vvdZE3Ggnf4ndIT+yy5o1WImw
+	pwX5bvbgviBS33gCTEENnMrzBNS54uYs4cf0E56/EWl4NNZLhVy2G7XH38xZfIbXTKk=
+X-Gm-Gg: ASbGncsm4qobGbezOApTCqlV7029BfSl+IZy7Ub1z3PufaoR2w69dxnjjOaTXxf9jt4
+	fCuUDw4dBKriwOZSLJ5IC7EaFj8Iq7V/yFq45ZRuC/LgXUP2AJ2w/d76YEwa/2ozs2x4yNgcKgS
+	SXmj5klLHPdvdM+liXUWmUipjuRemzzNK60i2A/eZ18HkupiLi2gEtcxITrzKYk/8xlx8pn7xkf
+	6rYYbKwk/hi8ZVA8tQofRTY4IKjfJb/TO6ErAuMrBiTELGdP4QlqvUQ4gEx7lDTbfVx5Ii6L6b1
+	3+D5x2iqq1ddhg9s7ei/wGDvEt0YprHRqUYAqIP93zwPKbv9/PQUJ6oLBn4IqfkRaNVCypSQM4V
+	hhFSEUKtg48SoCFscZZxwkgRB1twLuXr0AsC3yP5fqwf77Jfl2WxAYPpP
+X-Google-Smtp-Source: AGHT+IE76AssVOnYZ6flrpm/T7LxOGT/eMAoKYwNOlcK4L0ObcJKZqXObYnm2Ncd1mks7lx/eY9Deg==
+X-Received: by 2002:a05:6000:2887:b0:3ee:126a:7aab with SMTP id ffacd0b85a97d-425671c3abemr1117681f8f.57.1759480567855;
+        Fri, 03 Oct 2025 01:36:07 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4255d8abf0bsm6826213f8f.17.2025.10.03.01.36.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Oct 2025 01:36:07 -0700 (PDT)
+Date: Fri, 3 Oct 2025 11:36:03 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-mediatek@lists.infradead.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, lee@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+	lgirdwood@gmail.com, broonie@kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@collabora.com, wenst@chromium.org,
+	igor.belwon@mentallysanemainliners.org
+Subject: Re: [PATCH v7 6/9] regulator: Add support for MediaTek MT6373 SPMI
+ PMIC Regulators
+Message-ID: <202510030902.aQS5rL8n-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] mm/page_alloc: Perform appropriate batching in
- drain_pages_zone
-Content-Language: en-US
-To: Hillf Danton <hdanton@sina.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, kernel-team@meta.com, Chris Mason <clm@fb.com>,
- Kiryl Shutsemau <kirill@shutemov.name>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Brendan Jackman <jackmanb@google.com>, David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Michal Hocko
- <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>,
- Zi Yan <ziy@nvidia.com>, Hillf Danton <hdanton@sina.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel-team@meta.com
-References: <20251001234814.7896-1-hdanton@sina.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20251001234814.7896-1-hdanton@sina.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,sina.com];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[22];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,cmpxchg.org,vger.kernel.org,kvack.org,meta.com,fb.com,shutemov.name,oracle.com,google.com,redhat.com,suse.com,kernel.org,suse.cz,nvidia.com,sina.com];
-	FREEMAIL_TO(0.00)[sina.com,gmail.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -2.80
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251002090028.1796462-7-angelogioacchino.delregno@collabora.com>
 
-On 10/2/25 01:48, Hillf Danton wrote:
-> On Wed,  1 Oct 2025 08:37:16 -0700 Joshua Hahn wrote:
->> 
->> While I definitely agree that spreading out 1TB across multiple NUMA nodes
->> is an option that should be considered, I am unsure if it makes sense to
->> dismiss this issue as simply a misconfiguration problem.
->> 
->> The reality is that these machines do exist, and we see zone lock contention
->> on these machines. You can also see that I ran performance evaluation tests
->> on relatively smaller machines (250G) and saw some performance gains.
->> 
-> If NUMA node could not be an option, there is still much room in the zone types
-> for adding new zones on top of the current pcp and zone mechanism to mitigate
-> zone lock contention, see diff below. Then the issue falls in the config category.
-> 
->> The other point that I wanted to mention is that simply adding more NUMA
->> nodes is not always strictly beneficial; it changes how the scheduler
->> has to work, workloads would require more numa-aware tuning, etc.
-> 
-> Feel safe to sit back with Netflix on as PeterZ is taking care of NUMA nodes
-> and eevdf, haha.
+Hi AngeloGioacchino,
 
-Feel free to stop making such weird "jokes"?
+kernel test robot noticed the following build warnings:
 
-Also you should really stop dropping CC's on your replies, especially for
-maintainers of given code. I've only learned in the v3 changelog from "as
-suggested by Hillf Danton" that there was this subthread. This is not
-acceptable. When the feedback is wrong and uncorrected by others, it can
-mislead the patch author to do wrong changes in the next version.
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-If this Cc reduction is due to a problem with your e-mail provider, get a
-different one?
+url:    https://github.com/intel-lab-lkp/linux/commits/AngeloGioacchino-Del-Regno/dt-bindings-regulator-Document-MediaTek-MT6316-PMIC-Regulators/20251002-170532
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+patch link:    https://lore.kernel.org/r/20251002090028.1796462-7-angelogioacchino.delregno%40collabora.com
+patch subject: [PATCH v7 6/9] regulator: Add support for MediaTek MT6373 SPMI PMIC Regulators
+config: arm-randconfig-r071-20251003 (https://download.01.org/0day-ci/archive/20251003/202510030902.aQS5rL8n-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 8.5.0
 
-> --- x/include/linux/mmzone.h
-> +++ y/include/linux/mmzone.h
-> @@ -779,6 +779,9 @@ enum zone_type {
->  #ifdef CONFIG_ZONE_DMA32
->  	ZONE_DMA32,
->  #endif
-> +#ifdef CONFIG_ZONE_EXP
-> +	ZONE_EXP0, ZONE_EXP1, ZONE_EXP2, /* experiment */
-> +#endif
->  	/*
->  	 * Normal addressable memory is in ZONE_NORMAL. DMA operations can be
->  	 * performed on pages in ZONE_NORMAL if the DMA devices support
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202510030902.aQS5rL8n-lkp@intel.com/
+
+smatch warnings:
+drivers/regulator/mt6373-regulator.c:664 mt6373_regulator_probe() warn: passing zero to 'PTR_ERR'
+
+vim +/PTR_ERR +664 drivers/regulator/mt6373-regulator.c
+
+910ce1c7c9122a AngeloGioacchino Del Regno 2025-10-02  645  static int mt6373_regulator_probe(struct platform_device *pdev)
+910ce1c7c9122a AngeloGioacchino Del Regno 2025-10-02  646  {
+910ce1c7c9122a AngeloGioacchino Del Regno 2025-10-02  647  	struct irq_fwspec fwspec = {
+910ce1c7c9122a AngeloGioacchino Del Regno 2025-10-02  648  		.param_count = 2,
+910ce1c7c9122a AngeloGioacchino Del Regno 2025-10-02  649  		.param = { 0, IRQ_TYPE_LEVEL_HIGH },
+910ce1c7c9122a AngeloGioacchino Del Regno 2025-10-02  650  	};
+910ce1c7c9122a AngeloGioacchino Del Regno 2025-10-02  651  	struct device_node *interrupt_parent;
+910ce1c7c9122a AngeloGioacchino Del Regno 2025-10-02  652  	struct regulator_config config = {};
+910ce1c7c9122a AngeloGioacchino Del Regno 2025-10-02  653  	struct mt6373_regulator_info *info;
+910ce1c7c9122a AngeloGioacchino Del Regno 2025-10-02  654  	struct device *dev = &pdev->dev;
+910ce1c7c9122a AngeloGioacchino Del Regno 2025-10-02  655  	struct regulator_dev *rdev;
+910ce1c7c9122a AngeloGioacchino Del Regno 2025-10-02  656  	struct irq_domain *domain;
+910ce1c7c9122a AngeloGioacchino Del Regno 2025-10-02  657  	bool is_vbuck4_hw_ctrl;
+910ce1c7c9122a AngeloGioacchino Del Regno 2025-10-02  658  	bool is_cw_variant;
+910ce1c7c9122a AngeloGioacchino Del Regno 2025-10-02  659  	int i, ret;
+910ce1c7c9122a AngeloGioacchino Del Regno 2025-10-02  660  	u32 val;
+910ce1c7c9122a AngeloGioacchino Del Regno 2025-10-02  661  
+910ce1c7c9122a AngeloGioacchino Del Regno 2025-10-02  662  	config.regmap = mt6373_spmi_register_regmap(dev);
+910ce1c7c9122a AngeloGioacchino Del Regno 2025-10-02  663  	if (!config.regmap)
+
+This should be if (IS_ERR(config.regmap)) ...
+
+910ce1c7c9122a AngeloGioacchino Del Regno 2025-10-02 @664  		return dev_err_probe(dev, PTR_ERR(config.regmap)i,
+910ce1c7c9122a AngeloGioacchino Del Regno 2025-10-02  665  				     "Cannot get regmap\n");
+910ce1c7c9122a AngeloGioacchino Del Regno 2025-10-02  666  	config.dev = dev;
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
