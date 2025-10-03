@@ -1,88 +1,72 @@
-Return-Path: <linux-kernel+bounces-840922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0958BB5BC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 03:27:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B8BCBB5BC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 03:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8335E1AE4C89
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF94C3C5D4B
 	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 01:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40D12773F1;
-	Fri,  3 Oct 2025 01:27:08 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71807278165;
+	Fri,  3 Oct 2025 01:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZwkrTOKw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399303D544
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 01:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9DA72773D1
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 01:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759454828; cv=none; b=lCNYxNFvd3NyfE/IMtAhYbBM86JUN+XDis101ZTb68W774nTi3lqBlC+lC/XK7RFav5Lqj495CfWpxYKT5dBrrU9YzuCKFvXdayoz3cXZNFIXklg+0pLgCJKWs5Tb6njHN/ANwCdkwDTLtaBjKkwIXs5qv0BJ8D9DQINrXlWWu0=
+	t=1759454854; cv=none; b=bNtz4CmkTYf8qnjYlA9I7Yo2U6oJRWJviw6y1LaXl10XRm0HBSekGLksklEz8YeN1SuX1Z3rODHYAUbN+IlSuPvDZ+gVMfzAfsUzt+hW/EA62Wstjb85JkYDlG10dh86fu1UbJnFYedw0fP1zSzspAvZI+g9WhUHMu4NCq16vrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759454828; c=relaxed/simple;
-	bh=hrTxAQcFdcHbVaYRj6QxqxRE/BKl8Vu8PQW3pqXxYfI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=LOQ3dnOvgam8b1T20Fvb1fO2NJWZno9oCU2obTfv2RZLTqcUpEiiYgNI1suM7ImtmRb1xinJOeNltVyv24Gy2un4I48QC5WEOkUcUC8G7j6DFoTDHowuuQ4oR0JR0qUOFonRCucXXWqYEm+wNMtxz2C9Fy5314JFVHEM8xunoyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-90e469a7f6bso211549039f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 18:27:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759454822; x=1760059622;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sSmZV/hnldfFeMcUqOY+TsvaP/ZBZaX083DD+cWyDfA=;
-        b=AQqrH3/TeKe82G/LplNVnEaV6KUMvnPdKdhpQ433gzgW5+Yjb7tPXrBedUgZNknRPp
-         EzS6gEzXno27VmAa9/1AU4YvmCZJqBqzzPpP9atNFpshLPq3nUqrokegxcS9ZLCACE7H
-         xrV/2EFvLOVovKtgsgCXc1LNyxHDZvbnAsKng4gcKeFF1VREoAV+/whuKFbSBoKJMEMf
-         nwLPbgURaujGTR9xo0nIdYAX2BcYsPSCgy8YqHiC4B+lgnptJMnkCyJXSwn0vTwipgxK
-         1iA+dbp/jCoCUexaOtFSm3F0L7pfan72wgXHDHY/A6quEb7Tmn7wjDbwC0Wc3DRBTLWx
-         1G9g==
-X-Forwarded-Encrypted: i=1; AJvYcCXs95mvoUTiHW55IHUpvhrhbgp/R0wfWCS8CmPorycEUz4k52dMqRu1fxlvLhzXAWF04yCrxlpCRbrGrjk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwPQkBbLV5qLCv7wk7aYhpKevILI6occ20wmjDFC3kGvVdg4eX
-	RQ7Fr27ouBvH5iMdr+2UTtfuKZalfl5zujHi2P3v98faCbAMQeqGga9l6IhYyoTfGdAm9Qg6AjY
-	WIMlghtg3q6ZFPdaDikjvmDXvU91MvmUNRNEVllSGooo4UO/g0nVOx7lECxo=
-X-Google-Smtp-Source: AGHT+IHudRpISqfi3wse3S1sGdDNxOvlRpJc9pmcPMngFY/X8JmxFkMvTRl5MdyIONhw5pDjJDjATx98ShZMq7O/Au7KLeczynwS
+	s=arc-20240116; t=1759454854; c=relaxed/simple;
+	bh=7VsGLTYzGHWM+abr1cFG7wV/s7mUQcTViJnAxj7363c=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=inpAwngzJv6z3a3RqQM8GRUz+7R4Kniid8HsuX7ZfRK9/evp/pLqhTua1SjPDjUgzEco7bYEUyccyJT7p2ts4yqzi80CxofIBgA4LbPtd8gFPxdkfCMs/F3lOZAYINIwiqYL79pWPIKgsSIDOhUzGrrZg3IiZXjEsfzhOo4PnJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZwkrTOKw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40B4FC4CEF4;
+	Fri,  3 Oct 2025 01:27:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759454854;
+	bh=7VsGLTYzGHWM+abr1cFG7wV/s7mUQcTViJnAxj7363c=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=ZwkrTOKw55Oiv0Pct7iJyoxUY+J+zrCh2ofOK23EiZP9OB4VM+9OkmTh3sFodue1k
+	 rU2XIXgX+P8W6GDYh6FN/QRBgyAO9AzrBZ6QlQp0+Q78LiejQ5tdJRdhvyn7LFZU5h
+	 NbQ2Xs6w9VttAhLQPlo/OuY9B7QThsqIVQMROWqgoii5YibKNsnC/N67JcBuyfk37s
+	 Sy5L0O9sdBexVz5aYIUeZrmhmjEAWmoVIrKyPYFXO9zBwW9iPtlVpwxx66HdruSiBY
+	 u6ddSMMJ7EVoQOa1a3qsWDO/0JziSWru6tw8pAEmiklQphxoHrCEQnbxAlnuvo7UzM
+	 Ut4nkQ+PJxQ9A==
+Message-ID: <cca96baf-6e97-473b-b77a-9ddc28060f4a@kernel.org>
+Date: Fri, 3 Oct 2025 09:27:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3fc9:b0:91e:c3a4:537c with SMTP id
- ca18e2360f4ac-93b96a952f9mr147480539f.14.1759454822474; Thu, 02 Oct 2025
- 18:27:02 -0700 (PDT)
-Date: Thu, 02 Oct 2025 18:27:02 -0700
-In-Reply-To: <aN8g1OkBMndiyKyd@Bertha>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68df2666.050a0220.2c17c1.000e.GAE@google.com>
-Subject: Re: [syzbot] [hfs?] kernel BUG in hfs_write_inode
-From: syzbot <syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com>
-To: contact@gvernon.com, damien.lemoal@opensource.wdc.com, jlayton@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org
+Subject: Re: [f2fs-dev] [PATCH] f2fs: add missing dput() when printing the
+ donation list
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+References: <20251002015645.3588322-1-jaegeuk@kernel.org>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20251002015645.3588322-1-jaegeuk@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 2025/10/2 09:56, Jaegeuk Kim via Linux-f2fs-devel wrote:
+> We missed to call dput() on the grabbed dentry.
+> 
+> Fixes: f1a49c1b112b ("f2fs: show the list of donation files")
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-
-Reported-by: syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com
-Tested-by: syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         24d9e8b3 Merge tag 'slab-for-6.18' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1472aa7c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e9442f6915cec8b7
-dashboard link: https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13c8d942580000
-
-Note: testing is done by a robot and is best-effort only.
+Thanks,
 
