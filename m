@@ -1,136 +1,106 @@
-Return-Path: <linux-kernel+bounces-841617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC2D6BB7D44
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 20:03:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA8A9BB7D4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 20:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6E68F347C4A
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 18:03:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5DA319E3307
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 18:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39292DA76C;
-	Fri,  3 Oct 2025 18:03:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC256381BA;
-	Fri,  3 Oct 2025 18:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8D02DC774;
+	Fri,  3 Oct 2025 18:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="g7cgyxyU"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7F22D46A1;
+	Fri,  3 Oct 2025 18:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759514601; cv=none; b=Mea+WDKVC/fCYvQ0oNi4fL/Me1qhmcdsCPpq2MROaWTawtCAU3xuQ5VlazvowkmgmrZQ2Zjji4juCJGu2amJPttH3BBsQ93iXXw2yY+3EDCo7Vl8eFJcDDHOE4BvyPxWicQ+nOsEvAwD3XnNfnhpEGouOIBp6/QRy1RIs4BSroE=
+	t=1759514611; cv=none; b=QyjtN6Xi2wuQtmOSxoZB3sZ+M5WFr+2/oOFm5Y435KMOpd4PRn/EBsjapjav10pA/EWMBScdVWGC08z5wSz5N0MtqyUisaAdjQUpxKizoA4YYS2Aaim+KOi+a9OHJJOOqB/ipjVchNMOG3MMAai277QymxXTOTqOqlnIJ3BTI6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759514601; c=relaxed/simple;
-	bh=gfgh+rMDTBoily0sJrLGPj3ihI4LmKMhJ3/h56zR/zE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WHii7qP8SbT89gp2IObcB+8x+G+LkRftXkwI40HXXWH93GLKIEvA2D0pSkoXyviptAhVWhCclg3t7v5p1MU5ApNwRxcMwm0kjgzCHwsklosjYWBeWaj+wijFZKK2Ugshif80gMaIZq56rCYEOdUVQmYUFyQoj9/Iei+lsBtnjbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 057321596;
-	Fri,  3 Oct 2025 11:03:11 -0700 (PDT)
-Received: from [10.1.197.69] (eglon.cambridge.arm.com [10.1.197.69])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 15F0B3F5A1;
-	Fri,  3 Oct 2025 11:03:13 -0700 (PDT)
-Message-ID: <b1e1c98b-d6ca-4d47-b33a-e3af8457c4fd@arm.com>
-Date: Fri, 3 Oct 2025 19:03:12 +0100
+	s=arc-20240116; t=1759514611; c=relaxed/simple;
+	bh=pnR0deZzWsEX4dCLYIe3EJzFB+OZ4qgPE9dBJko8/QM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FXQGPCaK+3zR8pCnIZsDLuj6EIT2YgS5qWThyDd6KUfbWm4VNnKgtVHQzZmBXTI2OXfz0kKwBieyKPFUT0F1doAOfv2PXvmm1zntFdPIMavP9byPO6i34fV8tKRQBFD++RNSImqGk0VWQQUWKSsTquoUEXRk9W54Z921vxsKrwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=g7cgyxyU; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759514607;
+	bh=pnR0deZzWsEX4dCLYIe3EJzFB+OZ4qgPE9dBJko8/QM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=g7cgyxyUegNCY+jcBis5fcLEo3cAxGP+UPrg6YNrhKdGf/yV7oRAzxKuuVNHeBqWL
+	 N2e9rckxpOkdG34q0yc6u5zp7x3IfW6mDhAjs97uYpO6eoHtFhWGVn/2vkGkbM0Fwe
+	 qQFcLle2MdU5RxGFtiMOplwZ5LMRgPPvzDvVIyi/wP1zAwxmwoDPKvZI/CTg+zYQjO
+	 yuPbAJL6iHsWAIwqhElpM2SgJVhADrkwEXP7ZOQrS1EF6q0IV6R7zcrvVAB335sDMi
+	 RmOlEgxj+fq+E3c3BtwBaZ+xmw3Cu+mwuWH1EqPdg05T+d6Vy9+X+qeo6xduLQuIxF
+	 IVXyWOIt2yvUg==
+Received: from localhost (unknown [82.79.138.145])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 7E67C17E12F3;
+	Fri,  3 Oct 2025 20:03:27 +0200 (CEST)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject: [PATCH 0/5] ASoC: nau8821: Fix IRQ handling and improve jack
+ detection on Steam Deck
+Date: Fri, 03 Oct 2025 21:03:22 +0300
+Message-Id: <20251003-nau8821-jdet-fixes-v1-0-f7b0e2543f09@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 18/29] arm_mpam: Register and enable IRQs
-To: Fenghua Yu <fenghuay@nvidia.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
-Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Xin Hao <xhao@linux.alibaba.com>,
- peternewman@google.com, dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250910204309.20751-1-james.morse@arm.com>
- <20250910204309.20751-19-james.morse@arm.com>
- <83ec74cb-02c3-4be4-a182-c2c69619abaf@nvidia.com>
-Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <83ec74cb-02c3-4be4-a182-c2c69619abaf@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOoP4GgC/x3LTQqAIBBA4avIrBtQ+7OuEi0kx5oWFloRRHdPW
+ n483gOJIlOCXjwQ6eLEW8hQhYBpsWEmZJcNWupaSVlisKcxWuHq6EDPNyX0rS0bX01WdgbyuEf
+ 6Q/6G8X0/zf3UjWQAAAA=
+X-Change-ID: 20251003-nau8821-jdet-fixes-f7a36f4ca098
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Seven Lee <wtli@nuvoton.com>
+Cc: kernel@collabora.com, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-Hi Fenghua,
+This patch series addresses a set of issues in the Nuvoton NAU88L21
+audio codec driver related to interrupt handling and jack hotplug
+detection reliability.
 
-On 25/09/2025 07:33, Fenghua Yu wrote:
-> On 9/10/25 13:42, James Morse wrote:
->> Register and enable error IRQs. All the MPAM error interrupts indicate a
->> software bug, e.g. out of range partid. If the error interrupt is ever
->> signalled, attempt to disable MPAM.
->>
->> Only the irq handler accesses the ESR register, so no locking is needed.
->> The work to disable MPAM after an error needs to happen at process
->> context as it takes mutex. It also unregisters the interrupts, meaning
->> it can't be done from the threaded part of a threaded interrupt.
->> Instead, mpam_disable() gets scheduled.
->>
->> Enabling the IRQs in the MSC may involve cross calling to a CPU that
->> can access the MSC.
->>
->> Once the IRQ is requested, the mpam_disable() path can be called
->> asynchronously, which will walk structures sized by max_partid. Ensure
->> this size is fixed before the interrupt is requested.
+The changes focus on:
 
->> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
->> index a9d3c4b09976..e7e4afc1ea95 100644
->> --- a/drivers/resctrl/mpam_devices.c
->> +++ b/drivers/resctrl/mpam_devices.c
->> @@ -1318,11 +1405,172 @@ static void mpam_enable_merge_features(struct list_head
+* Eliminating race conditions between jack insertion and ejection events
+* Ensuring interrupts are consistently and correctly cleared before
+  unmasking
+* Introducing a DMI-based quirk to bypass the jack debounce circuit on
+  Valve Steam Deck, improving detection accuracy under stress
+* Improving robustness of the IRQ handler by avoiding unnecessary
+  blocking operations
 
->> +static void mpam_unregister_irqs(void)
->> +{
->> +    int irq, idx;
->> +    struct mpam_msc *msc;
->> +
->> +    cpus_read_lock();
->> +    /* take the lock as free_irq() can sleep */
->> +    idx = srcu_read_lock(&mpam_srcu);
+The series has been tested on affected hardware to verify correct
+behavior during repeated and rapid jack hotplug cycles.
 
-> guard(srcu)(&mpam_srcu);
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+Cristian Ciocaltea (5):
+      ASoC: nau8821: Cancel jdet_work before handling jack ejection
+      ASoC: nau8821: Generalize helper to clear IRQ status
+      ASoC: nau8821: Consistently clear interrupts before unmasking
+      ASoC: nau8821: Add DMI quirk to bypass jack debounce circuit
+      ASoC: nau8821: Avoid unnecessary blocking in IRQ handler
 
-Yes - Jonathan already suggested this.
+ sound/soc/codecs/nau8821.c | 129 ++++++++++++++++++++++++++++-----------------
+ sound/soc/codecs/nau8821.h |   2 +-
+ 2 files changed, 81 insertions(+), 50 deletions(-)
+---
+base-commit: 47a8d4b89844f5974f634b4189a39d5ccbacd81c
+change-id: 20251003-nau8821-jdet-fixes-f7a36f4ca098
 
-
->> +    list_for_each_entry_srcu(msc, &mpam_all_msc, all_msc_list,
->> +                 srcu_read_lock_held(&mpam_srcu)) {
->> +        irq = platform_get_irq_byname_optional(msc->pdev, "error");
->> +        if (irq <= 0)
->> +            continue;
->> +
->> +        if (test_and_clear_bit(MPAM_ERROR_IRQ_HW_ENABLED, &msc->error_irq_flags))
->> +            mpam_touch_msc(msc, mpam_disable_msc_ecr, msc);
->> +
->> +        if (test_and_clear_bit(MPAM_ERROR_IRQ_REQUESTED, &msc->error_irq_flags)) {
->> +            if (irq_is_percpu(irq)) {
->> +                msc->reenable_error_ppi = 0;
->> +                free_percpu_irq(irq, msc->error_dev_id);
->> +            } else {
->> +                devm_free_irq(&msc->pdev->dev, irq, msc);
->> +            }
->> +        }
->> +    }
->> +    srcu_read_unlock(&mpam_srcu, idx);
->> +    cpus_read_unlock();
->> +}
-
-
-James
 
