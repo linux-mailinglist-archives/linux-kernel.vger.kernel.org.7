@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-841658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFC85BB7EF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 20:56:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 806C9BB7EFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 20:56:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE8294A48C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 18:56:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A78819E289F
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 18:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179242DFF12;
-	Fri,  3 Oct 2025 18:55:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDBA82E0408;
+	Fri,  3 Oct 2025 18:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SkujKlcZ"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UmWUgllH"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB092DF15E
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 18:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C39B2DF716
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 18:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759517742; cv=none; b=EXI+q2qjlMu2eJDR3Q9G4zYHa1NLnfg2PyXadv4IPz6k6Hm3Nb7e/2J4KaFru4th3tEUE+TSj7rvj6DJCcC0Sycioj947ZTUe0qvcvSPNvZ19z0GXqXgZipmGXv0sO05hV+FwKbdMav8KqQjU0vdBQzxRXcZVgDlgJNafthKuZ0=
+	t=1759517744; cv=none; b=bKRQZAJDoz8Y3yxI8eD6zyftex5rnbZ9rHvCkgSnFMTDv9MACZ144+gVo+8I+Hd3THGWv3zkYbn7nv9ytN0FLYTcbRiz6WPP3jEbn1auTi8fLeXC4v0XITZbpuviy4sZ24rTQzi8u1gRxCkRixUBnBbMtWmm6ReKhsXqLmCRfe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759517742; c=relaxed/simple;
-	bh=JCk7VqzZDm0N9em80Jlh9Edcp6PBHzBN9/7plUWcVDc=;
+	s=arc-20240116; t=1759517744; c=relaxed/simple;
+	bh=NE6dT61ylSvnM9qPLMfeti7JwQ+rMQw4u8ab3aOzzSQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bt7ukUGMvHtvEr1w5AvbW+Ef107CE9jr3/uxWprsq2jBMFLqT5UnEbZa20q7HPpvXAY0P4/4l/DxF5t4q32DkSef71dON0o8CYSJ/iKFqmBVQ4hNMGmPAU9PDHR3uVxNx33ybSrzTodO8cf8TvK+lPv9a2Ng8Z5uIIu7czHUjGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SkujKlcZ; arc=none smtp.client-ip=209.85.128.43
+	 MIME-Version; b=PzDl6NHEkpmEAHUi42NR4CmNq0vIgJB+lsq+PocudQYUaLGRIXcQDyC284cxKw2tQQhQBkXvEpWRSrCwQnbDrSHm+Dn5cyb/vwByp/xxzuCoM0yXzD2yonppNqk+T4pLgaQla7i6nFKoL5RHGAueFXfexWeoyMHp8O73KB4kmb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UmWUgllH; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-46e542196c7so21151575e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 11:55:40 -0700 (PDT)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3f0308469a4so1408655f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 11:55:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759517739; x=1760122539; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759517740; x=1760122540; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5Fxy/cL1NOLAJha530jz1vfM7F1ZmkTYxBgTPvWr6HI=;
-        b=SkujKlcZ444nCHDWiczLu+rKBNh6z4rs7hRKkRt79Zoa0WRb7BhE+QZbWAxS/BS5hi
-         B9P6vV0p/DDmfAUyadcRMQLqp0qKXMppKHr6T09MuE17ERB3OawVNJdqnhsX4yeiTAbM
-         Xk1sq6AHqKFKeEBy7G6Cv3JWhgkwKuXnXcua3tPilZc0fEgqE21ponmyUxTTQvm7asOy
-         ePbT53KNzGrO8kZlXk4wVYJTbV2tkiEthfVgVstDk4TSdZsTdW+NR4cXWm7Q0upttlap
-         s+uuqmdqftjrBmifIIIZwWhC28ntlZH6rRDxugGfxp0PqU9LMHx5chNQ4eDXHkJUktep
-         b8QQ==
+        bh=6Np10dU8vOqQAvntlvXJuwlLB6JmfodovFMH4459OEU=;
+        b=UmWUgllHqEB1uVMnkIu4bT0IHZwjCf1Hd4EAubjUN/ZpKlA/9kczujdELPOsafewuu
+         fMFYheUv5XU9WtRy0yQrX8VWyjkkUQ/jjvnnMfCG1vJ75pbTS/KzN4rJ9QHYbqnv7wif
+         zNyJItzzcfDIOUFLMexJr47sfVYJJhWLT6KNy0xBimK15iCJCeK0DIYBfYRl2P2Vplux
+         57c0O+WjJITl7+3irhMH/Fb1lAKCzOoSmLy2Tnmj+4ct1lAQFqGDrUhKCqk7ei5hJH/W
+         m8blfzy7prskXqJqGbKJq9t/ZZ6cPzfVxdQHxM9th/oF7JyffSvsM0cCKYzBAMiO/Rid
+         Eajg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759517739; x=1760122539;
+        d=1e100.net; s=20230601; t=1759517740; x=1760122540;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5Fxy/cL1NOLAJha530jz1vfM7F1ZmkTYxBgTPvWr6HI=;
-        b=lHktytZHlfjoDVxMtkcw1up4e6UO4iqQCjzNi7fNz04jp0j1ap8qq5vYehQfkatboY
-         V9bjcZlJihZ0VLrnzeq3nJR+8VRy9+HuzTgnQovepv8xzEfzYHV5R+q9SAtNIguRBN90
-         4LcJCvWHCVDA0wAvS4ARAK1BsUxZ7rCjfetyPNn5dC1BbjlrWgSYrWvx/ouFjO9hOg01
-         yLznv1/p26hWq/2MEz7CEz8gyZh96DLsm061B0hxV2JMKO0VNdz2iyZ2m9QfvLLHZ4Ih
-         aJQ0w3JN6jD9uzQ/to50tXvB4nixWpHWYHcS3PqVpztW0b5iNd/qUETWiYsftlXaHI+q
-         mCNw==
-X-Gm-Message-State: AOJu0YywN6/AFn7vOBF63ZvDiDxX+eiTZ+911IEqOZXF3LAjnZB+DlZT
-	1clz30YLhPO/FysA4n5Esh5J6ScemIxgCNj/h39ap8LwUzljtOzT1V1vNjkOTpO0
-X-Gm-Gg: ASbGncss0WeNTeCvgOMerZkOkqF/xMgYW/x3hZrYeki42YsMuQnDirWQhYJkzEpYwJf
-	pmA8WLv3I3RkkifKO8jX2foAbGAx/X4KNPlYe/S32+9NbrDwFuzr/kBotKQlQOzwPNNnwjl5L95
-	a1WxItO4p+Q3l2+DMBvBMFmtKg+8in8ZOFq4lvZTzNEvRR85WoFq0FLSw4HbS1SZ2P3MCSyHgdh
-	4cycaYXtSxjYaYk104UUj0JMFlc4obw3p5fvKHAYov3zMSviBLDmySKt4cVbEZ2k9Q55MVOioAk
-	e10OVTZpdirIAU3B7A+gneadKPNrh5Ja4L4HJmFFG0ZlArhNvNZqXEVzjrG/+SX/51wyE1wmYKm
-	27/FqMq8Iy/PYYy4DbaA/uQHNqJk/7opI+ukOF28ifhBKmK8TaUNee2qKr9YfmTP8P7aXN0X0
-X-Google-Smtp-Source: AGHT+IFYFP078sRLCamY+MbXneSKWbxK4prNXYDUkjO0MDBhgDCDp2ldzZac5f7foMrbwM68kfavYw==
-X-Received: by 2002:a05:6000:4023:b0:3b9:14f2:7edf with SMTP id ffacd0b85a97d-4255d294cdfmr4898051f8f.1.1759517738878;
-        Fri, 03 Oct 2025 11:55:38 -0700 (PDT)
+        bh=6Np10dU8vOqQAvntlvXJuwlLB6JmfodovFMH4459OEU=;
+        b=qzDgixsZmc7zym7/bfZsVMMX98egd4kQr4diRNS7+sGXC0cG9NJJZIfXpgBncLS+tr
+         56LVX1DUgtBuuOFp94aE6Iej+zUjcSW+6k2EEQbHTJ/BBhkqpJQecrIo0G17qCRoaeDe
+         eNbMFskhFnHz2nZ3vexxNTatTH3/ZRum4oRJ9azjIwdVRizUOQolcmWaZ7Qc6IFxi952
+         v9QS3IOGurKWrBc7xw49JOhiYCf08eldDuh2+raRlyK1oEDxWP0jWZUSLnoXHZ5z6rp0
+         ImGF9BhQdyXbNfirEraGQQ1FJXP/hSg5/fyUmYSCZyt4EepuRf4jiUAh0ebSx1THkULu
+         g7RA==
+X-Gm-Message-State: AOJu0Yxqjzq+8b8rQMkfmnvVHBy+jeOYiaYsPVrhrVVPSaEOB9X53Ckb
+	DyWyc7nduB3kIJZOPx8fHFD2Kl3Sa8rnXrCqvEoKUl07DY0pp/qAZ2hs4/4VpHM4
+X-Gm-Gg: ASbGncvEW9rqgzAMEXbudpdxBKTWUruCS6/Ts9PYDuCf4timce5g3gacelF3mQVEa4S
+	7VUomgB7QhESC4W8Yn1dyMto5en+eEMIGsBymZaJv17BVbnzZ2lYDcCsV8q+W3Ijgz8I6yDJOBR
+	4050AIt19r86om8UzcsMl+CKFbTEuFyrqBnL/8oZBLYQeGHPixSvFXc7LdxLbprHgCp7bN0VwVd
+	Jxf62ZfTDHEdDlzcVBT9Nff2KJ7nrYxe/B1PqKyJO0cUKmxHvESaybF2bMdfuqWCSaYMZePlI8o
+	4rjJwemoS8AEGrYZn0ODC/oHNWrlq0bX5KSc4imE4VL4yiX0JziS6Dy9qYhvzgk8PKDqZQoT6xa
+	FleDv6BI94TKh87iADMeG6Ak/jcrH7ny++7TaknX5qGmaL+Gsz7qpAFW8cpliHQ==
+X-Google-Smtp-Source: AGHT+IGoah8TR//hQ35XXudBKdit7fS+mk64g95LZw6GSEiuN4dqWUvsfPltMt5apu0EySv28h1k3Q==
+X-Received: by 2002:a05:6000:2089:b0:3ea:2ed6:9e37 with SMTP id ffacd0b85a97d-4256716d8cemr2507350f8f.24.1759517740252;
+        Fri, 03 Oct 2025 11:55:40 -0700 (PDT)
 Received: from denis-pc ([176.206.100.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8e9762sm8946927f8f.38.2025.10.03.11.55.37
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8e9762sm8946927f8f.38.2025.10.03.11.55.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 11:55:38 -0700 (PDT)
+        Fri, 03 Oct 2025 11:55:39 -0700 (PDT)
 From: Denis Benato <benato.denis96@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: platform-driver-x86@vger.kernel.org,
@@ -81,9 +81,9 @@ Cc: platform-driver-x86@vger.kernel.org,
 	"Alok Tiwari" <alok.a.tiwari@oracle.com>,
 	"Derek John Clark" <derekjohn.clark@gmail.com>,
 	"Denis Benato" <benato.denis96@gmail.com>
-Subject: [PATCH v12 3/8] platform/x86: asus-armoury: add panel_hd_mode attribute
-Date: Fri,  3 Oct 2025 20:55:15 +0200
-Message-ID: <20251003185520.1083875-4-benato.denis96@gmail.com>
+Subject: [PATCH v12 4/8] platform/x86: asus-armoury: add apu-mem control support
+Date: Fri,  3 Oct 2025 20:55:16 +0200
+Message-ID: <20251003185520.1083875-5-benato.denis96@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251003185520.1083875-1-benato.denis96@gmail.com>
 References: <20251003185520.1083875-1-benato.denis96@gmail.com>
@@ -93,65 +93,135 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 From: "Luke D. Jones" <luke@ljones.dev>
 
-Add panel_hd_mode to toggle the panel mode between single and high
-definition modes.
+Implement the APU memory size control under the asus-armoury module using
+the fw_attributes class.
+
+This allows the APU allocated memory size to be adjusted depending on
+the users priority. A reboot is required after change.
 
 Signed-off-by: Luke D. Jones <luke@ljones.dev>
-Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
-Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+Signed-off-by: Denis Benato <benato.denis96@gmail.com>
 ---
- drivers/platform/x86/asus-armoury.c        | 6 +++++-
- include/linux/platform_data/x86/asus-wmi.h | 1 +
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ drivers/platform/x86/asus-armoury.c        | 81 ++++++++++++++++++++++
+ include/linux/platform_data/x86/asus-wmi.h |  2 +
+ 2 files changed, 83 insertions(+)
 
 diff --git a/drivers/platform/x86/asus-armoury.c b/drivers/platform/x86/asus-armoury.c
-index 57ed9449ec5f..68ce2c159ae1 100644
+index 68ce2c159ae1..e458d23d020d 100644
 --- a/drivers/platform/x86/asus-armoury.c
 +++ b/drivers/platform/x86/asus-armoury.c
-@@ -92,7 +92,8 @@ static struct kobj_attribute pending_reboot = __ATTR_RO(pending_reboot);
+@@ -394,6 +394,86 @@ static ssize_t egpu_enable_current_value_store(struct kobject *kobj, struct kobj
+ WMI_SHOW_INT(egpu_enable_current_value, "%d\n", ASUS_WMI_DEVID_EGPU);
+ ATTR_GROUP_BOOL_CUSTOM(egpu_enable, "egpu_enable", "Enable the eGPU (also disables dGPU)");
  
- static bool asus_bios_requires_reboot(struct kobj_attribute *attr)
- {
--	return !strcmp(attr->attr.name, "gpu_mux_mode");
-+	return !strcmp(attr->attr.name, "gpu_mux_mode") ||
-+	       !strcmp(attr->attr.name, "panel_hd_mode");
- }
++/* Device memory available to APU */
++
++/* Values map for APU memory: some looks out of order but are actually correct */
++static u32 apu_mem_map[] = {
++	[0] = 0x000, /* called "AUTO" on the BIOS, is the minimum available */
++	[1] = 0x102,
++	[2] = 0x103,
++	[3] = 0x104,
++	[4] = 0x105,
++	[5] = 0x107,
++	[6] = 0x108,
++	[7] = 0x109,
++	[8] = 0x106,
++};
++
++static ssize_t apu_mem_current_value_show(struct kobject *kobj, struct kobj_attribute *attr,
++					  char *buf)
++{
++	int err;
++	u32 mem;
++
++	err = asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_APU_MEM, &mem);
++	if (err)
++		return err;
++
++	if ((mem & ASUS_WMI_DSTS_PRESENCE_BIT) == 0)
++		return -ENODEV;
++
++	mem &= ~ASUS_WMI_DSTS_PRESENCE_BIT;
++
++	/* After 0x000 is set, a read will return 0x100 */
++	if (mem == 0x100)
++		return sysfs_emit(buf, "0\n");
++
++	for (unsigned int i = 0; i < ARRAY_SIZE(apu_mem_map); i++) {
++		if (apu_mem_map[i] == mem)
++			return sysfs_emit(buf, "%u\n", i);
++	}
++
++	pr_warn("Unrecognised value for APU mem 0x%08x\n", mem);
++	return sysfs_emit(buf, "%u\n", mem);
++}
++
++static ssize_t apu_mem_current_value_store(struct kobject *kobj, struct kobj_attribute *attr,
++					   const char *buf, size_t count)
++{
++	int result, err;
++	u32 requested, mem;
++
++	result = kstrtou32(buf, 10, &requested);
++	if (result)
++		return result;
++
++	if (requested > ARRAY_SIZE(apu_mem_map))
++		return -EINVAL;
++
++	mem = apu_mem_map[requested];
++
++	err = asus_wmi_set_devstate(ASUS_WMI_DEVID_APU_MEM, mem, &result);
++	if (err) {
++		pr_warn("Failed to set apu_mem: %d\n", err);
++		return err;
++	}
++
++	pr_info("APU memory changed to %uGB, reboot required\n", requested+1);
++	sysfs_notify(kobj, NULL, attr->attr.name);
++
++	asus_set_reboot_and_signal_event();
++
++	return count;
++}
++
++static ssize_t apu_mem_possible_values_show(struct kobject *kobj, struct kobj_attribute *attr,
++					    char *buf)
++{
++	BUILD_BUG_ON(ARRAY_SIZE(apu_mem_map) != 9);
++	return sysfs_emit(buf, "0;1;2;3;4;5;6;7;8\n");
++}
++ATTR_GROUP_ENUM_CUSTOM(apu_mem, "apu_mem", "Set available system RAM (in GB) for the APU to use");
++
+ /* Simple attribute creation */
+ ATTR_GROUP_ENUM_INT_RO(charge_mode, "charge_mode", ASUS_WMI_DEVID_CHARGE_MODE, "0;1;2",
+ 		       "Show the current mode of charging");
+@@ -414,6 +494,7 @@ static const struct asus_attr_group armoury_attr_groups[] = {
+ 	{ &egpu_connected_attr_group, ASUS_WMI_DEVID_EGPU_CONNECTED },
+ 	{ &egpu_enable_attr_group, ASUS_WMI_DEVID_EGPU },
+ 	{ &dgpu_disable_attr_group, ASUS_WMI_DEVID_DGPU },
++	{ &apu_mem_attr_group, ASUS_WMI_DEVID_APU_MEM },
  
- static int armoury_wmi_set_devstate(struct kobj_attribute *attr, u32 value, u32 wmi_dev)
-@@ -403,6 +404,8 @@ ATTR_GROUP_BOOL_RW(mcu_powersave, "mcu_powersave", ASUS_WMI_DEVID_MCU_POWERSAVE,
- 		   "Set MCU powersaving mode");
- ATTR_GROUP_BOOL_RW(panel_od, "panel_overdrive", ASUS_WMI_DEVID_PANEL_OD,
- 		   "Set the panel refresh overdrive");
-+ATTR_GROUP_BOOL_RW(panel_hd_mode, "panel_hd_mode", ASUS_WMI_DEVID_PANEL_HD,
-+		   "Set the panel HD mode to UHD<0> or FHD<1>");
- ATTR_GROUP_BOOL_RO(egpu_connected, "egpu_connected", ASUS_WMI_DEVID_EGPU_CONNECTED,
- 		   "Show the eGPU connection status");
- 
-@@ -416,6 +419,7 @@ static const struct asus_attr_group armoury_attr_groups[] = {
+ 	{ &charge_mode_attr_group, ASUS_WMI_DEVID_CHARGE_MODE },
  	{ &boot_sound_attr_group, ASUS_WMI_DEVID_BOOT_SOUND },
- 	{ &mcu_powersave_attr_group, ASUS_WMI_DEVID_MCU_POWERSAVE },
- 	{ &panel_od_attr_group, ASUS_WMI_DEVID_PANEL_OD },
-+	{ &panel_hd_mode_attr_group, ASUS_WMI_DEVID_PANEL_HD },
- };
- 
- static int asus_fw_attr_add(void)
 diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
-index 71c68425b3b9..10acd5d52e38 100644
+index 10acd5d52e38..a4f6bab93a6f 100644
 --- a/include/linux/platform_data/x86/asus-wmi.h
 +++ b/include/linux/platform_data/x86/asus-wmi.h
-@@ -76,6 +76,7 @@
- #define ASUS_WMI_DEVID_THROTTLE_THERMAL_POLICY_VIVO 0x00110019
+@@ -137,6 +137,8 @@
+ /* dgpu on/off */
+ #define ASUS_WMI_DEVID_DGPU		0x00090020
  
- /* Misc */
-+#define ASUS_WMI_DEVID_PANEL_HD		0x0005001C
- #define ASUS_WMI_DEVID_PANEL_OD		0x00050019
- #define ASUS_WMI_DEVID_CAMERA		0x00060013
- #define ASUS_WMI_DEVID_LID_FLIP		0x00060062
++#define ASUS_WMI_DEVID_APU_MEM		0x000600C1
++
+ /* gpu mux switch, 0 = dGPU, 1 = Optimus */
+ #define ASUS_WMI_DEVID_GPU_MUX		0x00090016
+ #define ASUS_WMI_DEVID_GPU_MUX_VIVO	0x00090026
 -- 
 2.51.0
 
