@@ -1,150 +1,125 @@
-Return-Path: <linux-kernel+bounces-841079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2E30BB636C
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 10:09:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DA70BB6396
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 10:12:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9EFEF4E200E
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 08:09:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46CE23ACE4E
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 08:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B4D2417FB;
-	Fri,  3 Oct 2025 08:09:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oICQE8tX"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B957265630;
+	Fri,  3 Oct 2025 08:12:38 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0937422DA0B;
-	Fri,  3 Oct 2025 08:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45CFA34BA50;
+	Fri,  3 Oct 2025 08:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759478950; cv=none; b=Jv1Rt5a8h4qsMoS7pIixHsFog0lTXkNWp5FWETYDLlkPS3Lk4SOb6C7VaQcGXsD4dhYIJFVuAvtbPvG94jp1cWQILb3l/+pQSweCrMXdHdeP1rFRsU7ISwvdLnDRkoEY/3Dh1EK0lw3pyZRet2juMfpt/qiIr28fxac+8zTi1/Y=
+	t=1759479158; cv=none; b=S0jIKipipP74T5iGgRN8NasoKGNcDRWxxuFMj9K1Ek/KT4cHVf2PiXR62q1iHTcceI/XYMMbl7NCGu/lfxVtqcMH7X+twH3A1Rh9vnM4uvEeM7Trz00ye3yq5Pxjt8czeijwDcGn2D9YK8IZQimNaS/nJzlPBl/8ukjJ8u6Zsck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759478950; c=relaxed/simple;
-	bh=6GfjdzBYXtQXVVzw5qbP/vPa3zyw2hMXgRM8SkcABNI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ql9uLr4UcR+o2AGYJ0VI+HDg0BLmkpQIWk1WtlqYxtzTKRG2lfhwihKZkP43NwSMX6eSvYxygTyULjPxvanZEAUvy2biPxQUFZt9OzkWbD9hd8qSSgaXNs+A0X0wme3RGs9xpaTNOOhDNd3yZUr+tmjONkjamqYr4CsW3/oJiAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oICQE8tX; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759478946;
-	bh=6GfjdzBYXtQXVVzw5qbP/vPa3zyw2hMXgRM8SkcABNI=;
-	h=From:Date:Subject:To:Cc:From;
-	b=oICQE8tX3CqBblaW09lSMpOQUtAuCbJs6wfJzLVVSjgEoD5wfa3oC0Y3vuRsI/QF6
-	 u7LhLgWr8FZagjzt0PsH7JZTfW1DeRT/UTVddR0NQsNqAJble8hLgJe9WcvIFQUJpv
-	 Is0imdaLS5RurRtKUncJ18OwjumZeJovPone6Dr9Hffw5Sbs0CgwftDbRsRZBLh9Je
-	 QH2wfHhMtP9FljxC6F2TJTIUS4M2fP5jgwh0TCx+9EnvflmmDNQtTKJ53E88j5651g
-	 Jrf94DhxRhHMdp2X0Lf7mKc3JmfRSonCO7T4jIhhd++kA8ZmMCperfbVFnnTvBqTEj
-	 ivk8FpbpqM4dg==
-Received: from beast.luon.net (simons.connected.by.freedominter.net [45.83.240.172])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	s=arc-20240116; t=1759479158; c=relaxed/simple;
+	bh=qqEqYyj01vPEy6rlnSUg16aepbrB2abnhZWAKu69scI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wxa8SfYZO53lkbTLbKImcn/JubhAj1AHhQaQbIRga+ZIPLxfa4URValAShyqyZflzvxfRPzUHFKlu3d9CVFFxt1tUfnYPCZ5gNzJ43+NUikMHeTIHM0Ld3HccDzOIwjpJwNXIa/m3CKz1dB54d7Qsl2izcwZ6QpcQ+0vg0ZFWvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.2.212] (p5dc550fa.dip0.t-ipconnect.de [93.197.80.250])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: sjoerd)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0043917E0B83;
-	Fri,  3 Oct 2025 10:09:05 +0200 (CEST)
-Received: by beast.luon.net (Postfix, from userid 1000)
-	id 902001066940D; Fri, 03 Oct 2025 10:09:05 +0200 (CEST)
-From: Sjoerd Simons <sjoerd@collabora.com>
-Date: Fri, 03 Oct 2025 10:08:28 +0200
-Subject: [PATCH] drm/mediatek: Fix refcounting in mtk_drm_get_all_drm_priv
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 6D97D60213C84;
+	Fri, 03 Oct 2025 10:11:54 +0200 (CEST)
+Message-ID: <1e8173de-8a48-4707-b276-2e1d6cfff96d@molgen.mpg.de>
+Date: Fri, 3 Oct 2025 10:11:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] Bluetooth: btmtksdio: Add pmctrl handling for BT
+ closed state during reset
+To: Chris Lu <chris.lu@mediatek.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+ Johan Hedberg <johan.hedberg@gmail.com>,
+ Luiz Von Dentz <luiz.dentz@gmail.com>, Sean Wang <sean.wang@mediatek.com>,
+ Will Lee <will-cy.Lee@mediatek.com>, SS Wu <ss.wu@mediatek.com>,
+ Steve Lee <steve.lee@mediatek.com>, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+References: <20250930053933.1685847-1-chris.lu@mediatek.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20250930053933.1685847-1-chris.lu@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251003-mtk-drm-refcount-v1-1-3b3f2813b0db@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAHuE32gC/x2MWwqAIBAArxL73YLau6tEH5FrLZGFWgTS3ZM+h
- 2EmgifH5KHPIji62fNhE8g8g3md7ELIOjEooSophMI9bKjdjo7MfFw2IAnTyFZ3RV1OkLIzGX7
- +5TC+7wfuibDKYgAAAA==
-X-Change-ID: 20251002-mtk-drm-refcount-e0f718d9364a
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- CK Hu <ck.hu@mediatek.com>, Johan Hovold <johan@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- kernel@collabora.com, stable@vger.kernel.org, 
- Sjoerd Simons <sjoerd@collabora.com>
-X-Mailer: b4 0.14.2
 
-dev_get_drvdata simply returns the driver data part of drm_dev, which
-has its lifetime bound to the drm_dev. So only drop the reference in the
-error paths, on success they will get dropped later.
+Dear Chris,
 
-Cc: stable@vger.kernel.org
-Fixes: 9ba2556cef1df ("drm/mediatek: clean up driver data initialisation")
-Signed-off-by: Sjoerd Simons <sjoerd@collabora.com>
----
- drivers/gpu/drm/mediatek/mtk_drm_drv.c | 22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-index 7841f59c52ee772dba3de416f410604f5f13eef2..c85fbecce9d6f0ade700e047e067ee7f9250f037 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -373,7 +373,7 @@ static int mtk_drm_match(struct device *dev, const void *data)
- static bool mtk_drm_get_all_drm_priv(struct device *dev)
- {
- 	struct mtk_drm_private *drm_priv = dev_get_drvdata(dev);
--	struct mtk_drm_private *all_drm_priv[MAX_CRTC];
-+	struct mtk_drm_private *all_drm_priv[MAX_CRTC] = { NULL, };
- 	struct mtk_drm_private *temp_drm_priv;
- 	struct device_node *phandle = dev->parent->of_node;
- 	const struct of_device_id *of_id;
-@@ -399,16 +399,22 @@ static bool mtk_drm_get_all_drm_priv(struct device *dev)
- 			continue;
- 
- 		temp_drm_priv = dev_get_drvdata(drm_dev);
--		put_device(drm_dev);
--		if (!temp_drm_priv)
-+		if (!temp_drm_priv) {
-+			put_device(drm_dev);
- 			continue;
-+		}
- 
--		if (temp_drm_priv->data->main_len)
-+		if (temp_drm_priv->data->main_len) {
- 			all_drm_priv[CRTC_MAIN] = temp_drm_priv;
--		else if (temp_drm_priv->data->ext_len)
-+		} else if (temp_drm_priv->data->ext_len) {
- 			all_drm_priv[CRTC_EXT] = temp_drm_priv;
--		else if (temp_drm_priv->data->third_len)
-+		} else if (temp_drm_priv->data->third_len) {
- 			all_drm_priv[CRTC_THIRD] = temp_drm_priv;
-+		} else {
-+			dev_warn(drm_dev, "Could not determine crtc type");
-+			put_device(drm_dev);
-+			continue;
-+		}
- 
- 		if (temp_drm_priv->mtk_drm_bound)
- 			cnt++;
-@@ -427,6 +433,10 @@ static bool mtk_drm_get_all_drm_priv(struct device *dev)
- 		return true;
- 	}
- 
-+	for (i = 0; i < MAX_CRTC; i++)
-+		if (all_drm_priv[i])
-+			put_device(all_drm_priv[i]->dev);
-+
- 	return false;
- }
- 
+Thank you for your patch.
 
----
-base-commit: 22b5e8cde1db67c64b83fc0e4e1ab166cacff246
-change-id: 20251002-mtk-drm-refcount-e0f718d9364a
 
-Best regards,
--- 
-Sjoerd Simons <sjoerd@collabora.com>
+Am 30.09.25 um 07:39 schrieb Chris Lu:
+> This patch adds logic to handle power management control when the
+> Bluetooth function is closed during the SDIO reset sequence.
+> 
+> Specifically, if BT is closed before reset, the driver enables the
+> SDIO function and sets driver pmctrl. After reset, if BT remains
+> closed, the driver sets firmware pmctrl and disables the SDIO function.
+> 
+> These changes ensure proper power management and device state consistency
+> across the reset flow.
+
+How can your patch be verified on a running system?
+
+
+Kind regards,
+
+Paul
+
+
+> Fixes: 8fafe702253d ("Bluetooth: mt7921s: support bluetooth reset mechanism")
+> Signed-off-by: Chris Lu <chris.lu@mediatek.com>
+> ---
+>   drivers/bluetooth/btmtksdio.c | 12 ++++++++++++
+>   1 file changed, 12 insertions(+)
+> 
+> diff --git a/drivers/bluetooth/btmtksdio.c b/drivers/bluetooth/btmtksdio.c
+> index 50abefba6d04..62db31bd6592 100644
+> --- a/drivers/bluetooth/btmtksdio.c
+> +++ b/drivers/bluetooth/btmtksdio.c
+> @@ -1270,6 +1270,12 @@ static void btmtksdio_reset(struct hci_dev *hdev)
+>   
+>   	sdio_claim_host(bdev->func);
+>   
+> +	/* set drv_pmctrl if BT is closed before doing reset */
+> +	if (!test_bit(BTMTKSDIO_FUNC_ENABLED, &bdev->tx_state)) {
+> +		sdio_enable_func(bdev->func);
+> +		btmtksdio_drv_pmctrl(bdev);
+> +	}
+> +
+>   	sdio_writel(bdev->func, C_INT_EN_CLR, MTK_REG_CHLPCR, NULL);
+>   	skb_queue_purge(&bdev->txq);
+>   	cancel_work_sync(&bdev->txrx_work);
+> @@ -1285,6 +1291,12 @@ static void btmtksdio_reset(struct hci_dev *hdev)
+>   		goto err;
+>   	}
+>   
+> +	/* set fw_pmctrl back if BT is closed after doing reset */
+> +	if (!test_bit(BTMTKSDIO_FUNC_ENABLED, &bdev->tx_state)) {
+> +		btmtksdio_fw_pmctrl(bdev);
+> +		sdio_disable_func(bdev->func);
+> +	}
+> +
+>   	clear_bit(BTMTKSDIO_PATCH_ENABLED, &bdev->tx_state);
+>   err:
+>   	sdio_release_host(bdev->func);
 
 
