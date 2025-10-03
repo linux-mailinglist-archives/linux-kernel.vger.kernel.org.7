@@ -1,285 +1,191 @@
-Return-Path: <linux-kernel+bounces-841221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D81BB6887
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 13:31:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8B78BB68B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 13:34:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C66719C4499
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 11:31:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D537484613
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 11:34:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E37127EC99;
-	Fri,  3 Oct 2025 11:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6194F2EC566;
+	Fri,  3 Oct 2025 11:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KKFd9BLK"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lFzKRkRA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA1F2E9EC3
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 11:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F32527EC99;
+	Fri,  3 Oct 2025 11:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759491076; cv=none; b=UdaDWD9Fw2yqh5f4WTrXqHeGvgcwTN7MHGxChmg1ZrWbtE1Qf4asKsvxQ9QgL0fKxD5QhVLpg5fCeN+/XoNDfXQRj+SL3+kOs9ymAZ4dquRutOlQ/pOSe2iGGGBGJY8ysHYvsAdDKs0xHWGSCH1k1caf83x+wCDBxHBxIqylnWY=
+	t=1759491220; cv=none; b=PCztNRJGzLy2NUIwoOLg01XTAv1rbIGtDCFvul92yK6tjt/e/7ISwWFbyIuZ3Hm2wbhaLHb4iw/iUSAM6+dpiBgDy4/XAtwTu8xB/TlXnVZBpBKAwnt1Kdqvyfom2wYNdRZVmJjtYGLM+T/nqwiCbvLWc9L2FDYE5CZ4QcU8ZWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759491076; c=relaxed/simple;
-	bh=PIkT1+0gw+lXsm9sS5Wzvn/5CTdfZq6wWYlHqXPd8eo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=hoZtxsPDnzVhARWGFdFR3aUpBm+ZXKEte+ZCOs5eil67S65POnvhhrgPq/Onj0p9WvGaga8He/HVcPqfAYrp9TWe4J/y6wLq6U20HR7SdBmBb8a62ICCHTx68u1p2GIYKDzgxmlN5dvVeakQW8PMGbk/sDM1KcZPKzWFSLbCj5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KKFd9BLK; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee15b5435bso1344566f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 04:31:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759491073; x=1760095873; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ibN5rbc8ghQl0pJHE5O9fPExmoZbJHmxkhtyV7wHyf0=;
-        b=KKFd9BLKI830t1400/+UlbeoejmruXkswx2DR9repOqitlMXHJDsAtzqD7xcaQ8tcJ
-         Iqu+Fg5w8LjybhA04Ub8PBcfXxlKdiWyqsFqpxWLWBgjw0UiXYDF8MLOR57Eur5kGShV
-         qPdgmkA4U89wAlhYXFv+INCksdQO65b9qp4kOOtXDT9EAo+eLKWehe3kc0GoOUxJZ1ll
-         vhJkzpdDo8yBBkHHrpjgRFnPg3+qheL+q52AB4pMOyKMZNoU5rsV1QcX1HGk0lHOpfBs
-         V5q2VvbOpC1BvgtCQkziewE0bAcVW97uvkXeWNnbeD9fUyctOp7jJHjgV7FF/Rsso7Ll
-         s00g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759491073; x=1760095873;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ibN5rbc8ghQl0pJHE5O9fPExmoZbJHmxkhtyV7wHyf0=;
-        b=Qk18w5jFOmi+y5jBdHpxCDTxvNaTKNfcCvYWva0dx+Wn+/98Fokli6HyMgq+riNNXg
-         CXJNiOoWU8fGhNlMraUU/9c8DZs3KEdpN2aaFCxJZ0ZZXZkr19DwsgR+v1s1bSkUstu6
-         lO45NB7xzBjJNP07iAst9lrCHsUN5h8RPZCx7synqlOSX6Av/jAkmuJKxoEKu3vHdeGQ
-         0Bos2Zbfl+vsGFVC/SNT2P6+RlkGNwp3mEbAuRPDYxV9K9zHvpd4fJxdHCpkoArbA11v
-         LRXuizALciGdp/eLvGjrIkTd0qMboMhRGWXbQpUVsRspOuV+HOum2i9WC4hFKJ+LCF2/
-         2xFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUuO6csF4sO2QGyL/nGRyL7N1QxRg1E7TaRbjN9nROuHHKYFDrQ0hCCE7TvsiOdmHZ7T8z0NzgjTbeMkiQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAj3hzv8D5VhlckAHMehsyI1GMOOiP2trXPk07gKGWLAQkZWgF
-	HfDxWDsG80n/cHkFms5iEyMAIj073bVXV9diKAMSThBpkvM3zzyfYPAx/Ufq8MJ3FQM=
-X-Gm-Gg: ASbGncuCizgWtEvk/eeNlPO0osSr2HTYzB1FdZCCasQY6yTD4ignL4BP+WlHYtEQ/TO
-	z7yMAKp8obL8XMwKQO5sLeGJbpXDjJ1xTd5S24+f8kCLZnflLeimNMXC7zydarw6BaXELTztPJW
-	6ARuJdwiVzNshmUTHw1B/hsoEM0SZIwZ/nHW1HEIHyTtoKGhGwjC1B0N/4GQxsoAcqEyP8ATO0p
-	2dBj47Cx07LSeQaHq9wWHiQdv3VWsT3fuQjn4Vgbg2uSWIPOCmHNEt2Ak1G1ZVIbXWGXOiwbjUh
-	3ow7idf6pOIX2KFCz+o22M6NdTPMCKlfV7j9cEzwgIjy4ge7MgFMUp34nvy1miusMNuzRYb/08j
-	UtSglfS3dFDSd7dRNPcauWTnVPEmoWPMkYQV2hkl6TvEdIDgyRvkoXmah
-X-Google-Smtp-Source: AGHT+IHO5l0fSYL4lKyVqheYc51Yp0SHNdYSpIW0cATJRdXWA33ZbEKx2wK2487Gs5sKnFqQcspjKw==
-X-Received: by 2002:a05:6000:2c0c:b0:400:ac58:b35f with SMTP id ffacd0b85a97d-4256714cc0dmr1579028f8f.21.1759491072634;
-        Fri, 03 Oct 2025 04:31:12 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f4cc3sm7599429f8f.55.2025.10.03.04.31.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Oct 2025 04:31:12 -0700 (PDT)
-Message-ID: <640baace-99c7-435e-a754-a46a49c32deb@linaro.org>
-Date: Fri, 3 Oct 2025 12:31:11 +0100
+	s=arc-20240116; t=1759491220; c=relaxed/simple;
+	bh=8JvzZz+MrzjUmB/qmn12k1T1z8wI8NEqkWeYCArS4nA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RnZaFvAfyHdSfOhsi4zZO7HXEiqZ2z5JEhvwYIXKpeLTEPPEEXgkjdhswYZbOoRbbG0vI7lh5oUb3Wn3ol2puwzP7WwkfmmBQ7/Z9owv59PQsYgiqxh96PhXpd/qfsP+fv5K7qaVIPp8zPLV9dnq3BdpJfG1p+aibtaQLoNdFwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lFzKRkRA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23B48C4CEF5;
+	Fri,  3 Oct 2025 11:33:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759491219;
+	bh=8JvzZz+MrzjUmB/qmn12k1T1z8wI8NEqkWeYCArS4nA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lFzKRkRAagp0TVhUdTwIsW0EPgf7xwe5vUnZsgItAsbqWLbYcv7v2Q3oCdo6pdbpH
+	 TxK4cHFxGzDDbQDQTmmTAALXtRce7awXslf/w51ZRllOlHQfykkv/S85tSAEJm9jFJ
+	 GYwvA6uugwAlC/eFWM7ehADw13/t37TYV5luOUQD7lDrfqGG54YTKnaTyEWvTdRb0c
+	 orc+Nn8y24EKqDs+XjojdkthXLkOB/CpwUkMKq+3hkvcz1Knd27dZO22vw3HIZH/oz
+	 KeJJqGDMye/t+diEqfyZzsugo6eKkklnr+1Zd5LuUfHG/pa69kR/h1070kPLMeXwGn
+	 kaCdIbmTIMmYw==
+Date: Fri, 3 Oct 2025 12:33:03 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Byungchul Park <byungchul@sk.com>
+Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+	torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
+	linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
+	will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+	joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+	duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
+	tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
+	amir73il@gmail.com, gregkh@linuxfoundation.org, kernel-team@lge.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+	minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+	sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+	penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+	ngupta@vflare.org, linux-block@vger.kernel.org,
+	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+	jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
+	djwong@kernel.org, dri-devel@lists.freedesktop.org,
+	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+	hamohammed.sa@gmail.com, harry.yoo@oracle.com,
+	chris.p.wilson@intel.com, gwan-gyeong.mun@intel.com,
+	max.byungchul.park@gmail.com, boqun.feng@gmail.com,
+	longman@redhat.com, yunseong.kim@ericsson.com, ysk@kzalloc.com,
+	yeoreum.yun@arm.com, netdev@vger.kernel.org,
+	matthew.brost@intel.com, her0gyugyu@gmail.com, corbet@lwn.net,
+	catalin.marinas@arm.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, luto@kernel.org,
+	sumit.semwal@linaro.org, gustavo@padovan.org,
+	christian.koenig@amd.com, andi.shyti@kernel.org, arnd@arndb.de,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+	rppt@kernel.org, surenb@google.com, mcgrof@kernel.org,
+	petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
+	paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
+	joelagnelf@nvidia.com, josh@joshtriplett.org, urezki@gmail.com,
+	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+	qiang.zhang@linux.dev, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+	chuck.lever@oracle.com, neil@brown.name, okorniev@redhat.com,
+	Dai.Ngo@oracle.com, tom@talpey.com, trondmy@kernel.org,
+	anna@kernel.org, kees@kernel.org, bigeasy@linutronix.de,
+	clrkwllms@kernel.org, mark.rutland@arm.com, ada.coupriediaz@arm.com,
+	kristina.martsenko@arm.com, wangkefeng.wang@huawei.com,
+	kevin.brodsky@arm.com, dwmw@amazon.co.uk, shakeel.butt@linux.dev,
+	ast@kernel.org, ziy@nvidia.com, yuzhao@google.com,
+	baolin.wang@linux.alibaba.com, usamaarif642@gmail.com,
+	joel.granados@kernel.org, richard.weiyang@gmail.com,
+	geert+renesas@glider.be, tim.c.chen@linux.intel.com,
+	linux@treblig.org, alexander.shishkin@linux.intel.com,
+	lillian@star-ark.net, chenhuacai@kernel.org, francesco@valla.it,
+	guoweikang.kernel@gmail.com, link@vivo.com, jpoimboe@kernel.org,
+	masahiroy@kernel.org, brauner@kernel.org,
+	thomas.weissschuh@linutronix.de, oleg@redhat.com, mjguzik@gmail.com,
+	andrii@kernel.org, wangfushuai@baidu.com, linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org, linux-i2c@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
+	rcu@vger.kernel.org, linux-nfs@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v17 09/47] arm64, dept: add support
+ CONFIG_ARCH_HAS_DEPT_SUPPORT to arm64
+Message-ID: <b69ab7d0-ba5e-4d22-88ef-53e0ebf07869@sirena.org.uk>
+References: <20251002081247.51255-1-byungchul@sk.com>
+ <20251002081247.51255-10-byungchul@sk.com>
+ <a7f41101-d80a-4cee-ada5-9c591321b1d7@sirena.org.uk>
+ <20251003014641.GF75385@system.software.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] perf stat: Move create_perf_stat_counter to
- builtin-stat
-To: Ian Rogers <irogers@google.com>
-References: <20251002220727.1889799-1-irogers@google.com>
-Content-Language: en-US
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Howard Chu <howardchu95@gmail.com>,
- Thomas Falcon <thomas.falcon@intel.com>, Chun-Tse Shao <ctshao@google.com>,
- Dapeng Mi <dapeng1.mi@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20251002220727.1889799-1-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="CPEOfhRT6FsWLRqF"
+Content-Disposition: inline
+In-Reply-To: <20251003014641.GF75385@system.software.com>
+X-Cookie: hangover, n.:
 
 
+--CPEOfhRT6FsWLRqF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 02/10/2025 11:07 pm, Ian Rogers wrote:
-> The function create_perf_stat_counter is only used in builtin-stat.c
-> and contains logic about retrying events specific to
-> builtin-stat.c. Move the code to builtin-stat to tidy this up.
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
+On Fri, Oct 03, 2025 at 10:46:41AM +0900, Byungchul Park wrote:
+> On Thu, Oct 02, 2025 at 12:39:31PM +0100, Mark Brown wrote:
+> > On Thu, Oct 02, 2025 at 05:12:09PM +0900, Byungchul Park wrote:
+> > > dept needs to notice every entrance from user to kernel mode to treat
+> > > every kernel context independently when tracking wait-event dependenc=
+ies.
+> > > Roughly, system call and user oriented fault are the cases.
 
-Reviewed-by: James Clark <james.clark@linaro.org>
+> > > Make dept aware of the entrances of arm64 and add support
+> > > CONFIG_ARCH_HAS_DEPT_SUPPORT to arm64.
 
-> ---
->   tools/perf/builtin-stat.c | 60 +++++++++++++++++++++++++++++++++++++--
->   tools/perf/util/stat.c    | 56 ------------------------------------
->   tools/perf/util/stat.h    |  4 ---
->   3 files changed, 58 insertions(+), 62 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> index ab567919b89a..75b9979c6c05 100644
-> --- a/tools/perf/builtin-stat.c
-> +++ b/tools/perf/builtin-stat.c
-> @@ -676,6 +676,62 @@ static enum counter_recovery stat_handle_error(struct evsel *counter, int err)
->   	return COUNTER_FATAL;
->   }
->   
-> +static int create_perf_stat_counter(struct evsel *evsel,
-> +				    struct perf_stat_config *config,
-> +				    int cpu_map_idx)
-> +{
-> +	struct perf_event_attr *attr = &evsel->core.attr;
-> +	struct evsel *leader = evsel__leader(evsel);
-> +
-> +	/* Reset supported flag as creating a stat counter is retried. */
-> +	attr->read_format = PERF_FORMAT_TOTAL_TIME_ENABLED |
-> +			    PERF_FORMAT_TOTAL_TIME_RUNNING;
-> +
-> +	/*
-> +	 * The event is part of non trivial group, let's enable
-> +	 * the group read (for leader) and ID retrieval for all
-> +	 * members.
-> +	 */
-> +	if (leader->core.nr_members > 1)
-> +		attr->read_format |= PERF_FORMAT_ID|PERF_FORMAT_GROUP;
-> +
-> +	attr->inherit = !config->no_inherit && list_empty(&evsel->bpf_counter_list);
-> +
-> +	/*
-> +	 * Some events get initialized with sample_(period/type) set,
-> +	 * like tracepoints. Clear it up for counting.
-> +	 */
-> +	attr->sample_period = 0;
-> +
-> +	if (config->identifier)
-> +		attr->sample_type = PERF_SAMPLE_IDENTIFIER;
-> +
-> +	if (config->all_user) {
-> +		attr->exclude_kernel = 1;
-> +		attr->exclude_user   = 0;
-> +	}
-> +
-> +	if (config->all_kernel) {
-> +		attr->exclude_kernel = 0;
-> +		attr->exclude_user   = 1;
-> +	}
-> +
-> +	/*
-> +	 * Disabling all counters initially, they will be enabled
-> +	 * either manually by us or by kernel via enable_on_exec
-> +	 * set later.
-> +	 */
-> +	if (evsel__is_group_leader(evsel)) {
-> +		attr->disabled = 1;
-> +
-> +		if (target__enable_on_exec(&target))
-> +			attr->enable_on_exec = 1;
-> +	}
-> +
-> +	return evsel__open_per_cpu_and_thread(evsel, evsel__cpus(evsel), cpu_map_idx,
-> +					      evsel->core.threads);
-> +}
-> +
->   static int __run_perf_stat(int argc, const char **argv, int run_idx)
->   {
->   	int interval = stat_config.interval;
-> @@ -736,7 +792,7 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
->   		if (evsel__is_bperf(counter))
->   			continue;
->   try_again:
-> -		if (create_perf_stat_counter(counter, &stat_config, &target,
-> +		if (create_perf_stat_counter(counter, &stat_config,
->   					     evlist_cpu_itr.cpu_map_idx) < 0) {
->   
->   			/*
-> @@ -794,7 +850,7 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
->   				continue;
->   try_again_reset:
->   			pr_debug2("reopening weak %s\n", evsel__name(counter));
-> -			if (create_perf_stat_counter(counter, &stat_config, &target,
-> +			if (create_perf_stat_counter(counter, &stat_config,
->   						     evlist_cpu_itr.cpu_map_idx) < 0) {
->   
->   				switch (stat_handle_error(counter, errno)) {
-> diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
-> index 50b1a92d16df..101ed6c497bc 100644
-> --- a/tools/perf/util/stat.c
-> +++ b/tools/perf/util/stat.c
-> @@ -716,59 +716,3 @@ size_t perf_event__fprintf_stat_config(union perf_event *event, FILE *fp)
->   
->   	return ret;
->   }
-> -
-> -int create_perf_stat_counter(struct evsel *evsel,
-> -			     struct perf_stat_config *config,
-> -			     struct target *target,
-> -			     int cpu_map_idx)
-> -{
-> -	struct perf_event_attr *attr = &evsel->core.attr;
-> -	struct evsel *leader = evsel__leader(evsel);
-> -
-> -	attr->read_format = PERF_FORMAT_TOTAL_TIME_ENABLED |
-> -			    PERF_FORMAT_TOTAL_TIME_RUNNING;
-> -
-> -	/*
-> -	 * The event is part of non trivial group, let's enable
-> -	 * the group read (for leader) and ID retrieval for all
-> -	 * members.
-> -	 */
-> -	if (leader->core.nr_members > 1)
-> -		attr->read_format |= PERF_FORMAT_ID|PERF_FORMAT_GROUP;
-> -
-> -	attr->inherit = !config->no_inherit && list_empty(&evsel->bpf_counter_list);
-> -
-> -	/*
-> -	 * Some events get initialized with sample_(period/type) set,
-> -	 * like tracepoints. Clear it up for counting.
-> -	 */
-> -	attr->sample_period = 0;
-> -
-> -	if (config->identifier)
-> -		attr->sample_type = PERF_SAMPLE_IDENTIFIER;
-> -
-> -	if (config->all_user) {
-> -		attr->exclude_kernel = 1;
-> -		attr->exclude_user   = 0;
-> -	}
-> -
-> -	if (config->all_kernel) {
-> -		attr->exclude_kernel = 0;
-> -		attr->exclude_user   = 1;
-> -	}
-> -
-> -	/*
-> -	 * Disabling all counters initially, they will be enabled
-> -	 * either manually by us or by kernel via enable_on_exec
-> -	 * set later.
-> -	 */
-> -	if (evsel__is_group_leader(evsel)) {
-> -		attr->disabled = 1;
-> -
-> -		if (target__enable_on_exec(target))
-> -			attr->enable_on_exec = 1;
-> -	}
-> -
-> -	return evsel__open_per_cpu_and_thread(evsel, evsel__cpus(evsel), cpu_map_idx,
-> -					      evsel->core.threads);
-> -}
-> diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
-> index 4b0f14ae4e5f..34f30a295f89 100644
-> --- a/tools/perf/util/stat.h
-> +++ b/tools/perf/util/stat.h
-> @@ -223,10 +223,6 @@ size_t perf_event__fprintf_stat(union perf_event *event, FILE *fp);
->   size_t perf_event__fprintf_stat_round(union perf_event *event, FILE *fp);
->   size_t perf_event__fprintf_stat_config(union perf_event *event, FILE *fp);
->   
-> -int create_perf_stat_counter(struct evsel *evsel,
-> -			     struct perf_stat_config *config,
-> -			     struct target *target,
-> -			     int cpu_map_idx);
->   void evlist__print_counters(struct evlist *evlist, struct perf_stat_config *config,
->   			    struct target *_target, struct timespec *ts, int argc, const char **argv);
->   
+> > The description of what needs to be tracked probably needs some
+> > tightening up here, it's not clear to me for example why exceptions for
+> > mops or the vector extensions aren't included here, or what the
+> > distinction is with error faults like BTI or GCS not being tracked?
 
+> Thanks for the feedback but I'm afraid I don't get you.  Can you explain
+> in more detail with example?
+
+Your commit log says we need to track every entrance from user mode to
+kernel mode but the code only adds tracking to syscalls and some memory
+faults.  The exception types listed above (and some others) also result
+in entries to the kernel from userspace.
+
+> JFYI, pairs of wait and its event need to be tracked to see if each
+> event can be prevented from being reachable by other waits like:
+
+>    context X				context Y
+>=20
+>    lock L
+>    ...
+>    initiate event A context		start toward event A
+>    ...					...
+>    wait A // wait for event A and	lock L // wait for unlock L and
+>           // prevent unlock L		       // prevent event A
+>    ...					...
+>    unlock L				unlock L
+> 					...
+> 					event A
+
+> I meant things like this need to be tracked.
+
+I don't think that's at all clear from the above context, and the
+handling for some of the above exception types (eg, the vector
+extensions) includes taking locks.
+
+--CPEOfhRT6FsWLRqF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjftG4ACgkQJNaLcl1U
+h9AJAwf9GUZ8nquWa7D1no47c5NWSm5cMwwvmTjDaPtYC52seNgxT47rqiAa032b
+rbQuOcdIvbMOoRrk3oOjch4rbo2VSgw1bzxKncoUyWrQ1rw9rhdfmdQpZZSbT1XQ
+ZE3VcLNDV3bfjO2GU8cTjiUDwM29qIeTSzCIn9ubfHcuEvoaYes1/BrQYAwB6ghQ
+7LjwZANFGJdatftOLPlVL8kKM/B5H6eSUlr8bUS9hlZE2g39/1LLb9UexVvnMj8u
+6gPRXHiHF5Vzad2FqVmWKt4F1F39CJ4g1c624zJiIGAWP9iBONB8dIyQPlTmK4U7
+mnXQy7USXtlxU+Xw5RCO9fy5x0Ahxw==
+=LMdg
+-----END PGP SIGNATURE-----
+
+--CPEOfhRT6FsWLRqF--
 
