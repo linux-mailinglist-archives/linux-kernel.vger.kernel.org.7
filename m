@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-841551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62549BB7A1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:58:01 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7894BB7A1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:58:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 55AED347312
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:57:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0502A4E534B
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8FC2D73BB;
-	Fri,  3 Oct 2025 16:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8EF2D7DE1;
+	Fri,  3 Oct 2025 16:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YtvZxk//"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RWf8JYRA"
+Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86762D6603
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8C42D7386
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759510641; cv=none; b=lz+YGoA+LdAqpUsIDGya9A+AVUZjJDprfv93+iEkwmGBcDP7LGnOlnrT+kMY4ogq6GdvSkwro2I7u3dKyzbYK0Hk0v8hyV0m2tDmTjtv1jTbEH65YwpqYIAI5C8nmDMaIu9qx+nQnbuAW0360oGShBk4DrD36I/iE8EgFz6ufHQ=
+	t=1759510643; cv=none; b=A1Vm4QmpeKgU1sHE0CD+Qr4897y9lc+YbAuxduFcoQaH4Gj4ZaQgbFC9zsDf04kdmYdfIMD7R77HgOeKQ3CRoOReKkm/glAkgi34kQRKRGGShcFPoV4qq0YdAGKCXNq3sB1QrFCX+I1SoVUgkIjLg1H6UAgHpkWu7R/Ih1HXh9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759510641; c=relaxed/simple;
-	bh=FBnZUWrao4xDk2sny2hB2i0YpqUaYxXcjVD9MKtr7DU=;
+	s=arc-20240116; t=1759510643; c=relaxed/simple;
+	bh=iwF20Q3n5gWfKvZw+yxcidb9rw0+Vy6cxDpSQ1KXsdM=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=f0JPyvUwXnBq1LX5uIUQ7IBhlzmyl7h2N1AbvFjP8kuNF81xxWzPBRHZ7LjjHQRLRrgAsVZeHuCqXmp3RB3V7aG8WXJSau/izCJNCxNL7fmOoGqOYrSk+lkGcNBk7vjtD5RyJ0sUHW9YxWs1JEZtTez2ncZUEqE38R3dH/DRXQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YtvZxk//; arc=none smtp.client-ip=209.85.128.74
+	 To:Cc:Content-Type; b=cVcClniS4kjjXvVOYp3AdLofprrvmz7cOoBae08qLwdZnhpDviQ/WLDt1IVH2z6dsLBh8ckmuIqL0TnlixLl9xlP7ahscYa1MRqkBRey93zyHGinsZrJEYUbdX7ONjVMjVjUBTGcZkybJSzM51TMwDuLDRaiCds1q0dASY96D4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RWf8JYRA; arc=none smtp.client-ip=209.85.218.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-46e4d34ff05so11648325e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 09:57:19 -0700 (PDT)
+Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-b3d6645acd3so264733466b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 09:57:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759510638; x=1760115438; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1759510640; x=1760115440; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gC0UUs1MxRL/9leGnqOkfqW8jxMDETHu7dBcMx0PZdA=;
-        b=YtvZxk//bJde/QtdIN5LcvlshjSI2c3n8XEcjfbmxSdqSJkGO8UP+vdULbUQcD14Zr
-         rHP7b3B5bktE5ifE0LEDzepIfVXW5Kf2M+LZEieR+j7mL/sXvywlnP+9weewaBw23R9V
-         EeQmDhQU3MBu+8nZBprra8Zpdbe2Q/CYykYmo9GDXv/D1PEiSST7GBobr63/XhSlFiDb
-         gbNHSqYBhTLu6jkr0ViCbXkpOucYQdCL5oeKuN8Cg8DYLqTaGwJdeHGJpurIA6Sq7aGQ
-         w+xL1CgmTQvDT9/7PNHRSZVXFhpBHGJDcVycK6wG1SAtcDCS72jM3dA9zVgBJkYU+E1+
-         U0Lw==
+        bh=uY9OoKCgL0HKzC+Mz4yXU5nEOOMNzqgQrUAEjtqlCW4=;
+        b=RWf8JYRANqEnwIhkSimEW4u4jC0MqBOGWjfoQTH/BYQdBA3hkwvT3fcsVMLcaSwxa3
+         vmTQMgZSOxr7DzXq2rIrhk7cAicP+BCMYnCLvMA+MgN39asLPqvjpmeaOfI4p26zW3Xi
+         9mar4H9GmF+EODmzl2yaQvXIm4OM5ffY0Gs6vsxC+b1o8ydEvdxVvub/4WqrONHr7/3D
+         SNi1C1iHHOTlwi/qyV10EMZZ5Bf5BNCYvyRPX8/XjAF3EH32jASFAMV1BBwvXc29wZcI
+         X4VRcd7pddFq3FHGzThM6c6NnOfokNRecPDfs9G2yeYzPkwh3UXoqgip0jR6Mp/2l4Yk
+         pgkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759510638; x=1760115438;
+        d=1e100.net; s=20230601; t=1759510640; x=1760115440;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gC0UUs1MxRL/9leGnqOkfqW8jxMDETHu7dBcMx0PZdA=;
-        b=wsmk1hCDzu1MfdI8nSKA61OGoo0Qy0Z2YOZ5c9LlXhLXW3su6OD9dMfu6YHT8VOYdG
-         VDfZEmuF50PgxXzQ7nCpj0YrrXNdAIuhyZoGlVODmtPRZ9/F56fEnzcO/Dw4b01L5QPy
-         fIb37D7w1yi9lGOZ5w5o4abctmUt0fWkPoleiJ7SLoUQSGLvor2N8TTksVVJo6YZQ+vP
-         x1KBt+4HKpRQ7CJmIiusf38A0QIIay6YNkUY27Dd8yT8l43tQxbqEhzyNUUuztwKqCFu
-         dbhRlUGiX+fuDGrTwF2zhAGW7wln7K6lPf9h92cFn/bOdAXbuOwRw+G/1LuMxf54kUzV
-         gUoQ==
-X-Gm-Message-State: AOJu0YyPtkL7/MOk2U67IC0z0b4h6NNvswt6fvEhMX8mwNzaPrKLahoO
-	lVdXkObKFgDzipb6hwGopRoLmq7FUuVmqbLYhHli4qgUBynYe7vVuO6B1buFKLNKLLzOOIhOte6
-	Qoo2d2tw4LUDT/g==
-X-Google-Smtp-Source: AGHT+IHJcKF7j2WFIL/M4GDc4qk5ekOcxGa0ZgJnCW3cH6qhK6l1U+DS6ClzIoQlXQSY+22gJpavrC7EgKJ3FQ==
-X-Received: from wmaw22.prod.google.com ([2002:a05:600c:6d56:b0:45d:e232:8a3d])
+        bh=uY9OoKCgL0HKzC+Mz4yXU5nEOOMNzqgQrUAEjtqlCW4=;
+        b=tMkRXFd7tRX4X5N9bkhnwHkt7zriLutZ7lBtcrGwhXHEo4QT8Bazr9M+94rYDrYeO9
+         d1xI3htj8BejPeYQ+zAYO3zZisA+L/m47psMK/zvS5OdNC4jUzy0eEtSks5EzfQVQR2e
+         ROW6IMj17hPWom+1HEBb2xnI801kRByNkaxWkOWf/cpeqkBH4TC0MGQ8y4Ecd2ktVeTS
+         nWVBDQrAPmjFK+bf3NkrA0KN6G/YZFboUvrtej3c/bgvluBX73GWWAx8yocKH3sMrvrC
+         GzOHeUmpDpf0Wwa7zUMGAy7Ksd5hcYgu7lu2YYiX4B15PIow0iB46w3FmTlAr7Bdz2eP
+         qUKA==
+X-Gm-Message-State: AOJu0YxXQEzqV5FPF2a4LzRUmSJp7KWzBsGfWMAXl2b53UoiXdpA6aCi
+	3X2g8HY5zB38mW3Pb12En30w0dIR8MhXoAclMVndpSckqFbo0QyJOMhnYoX9O4hSTMENcuGB8ea
+	lclUy+HZtF1ljRw==
+X-Google-Smtp-Source: AGHT+IF6gfrsvSosFMZycjEWJHffey2Umhtr/SVmyNL/o+NI6aEx1UuKGHUlS4COg8E+nOyjoDlRKa48QSWYSw==
+X-Received: from ejxa6.prod.google.com ([2002:a17:906:80c6:b0:b3e:c30f:fe0d])
  (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4e52:b0:46e:36f2:2a62 with SMTP id 5b1f17b1804b1-46e71151798mr24309465e9.27.1759510638117;
- Fri, 03 Oct 2025 09:57:18 -0700 (PDT)
-Date: Fri, 03 Oct 2025 16:56:42 +0000
+ 2002:a17:906:f597:b0:b40:51c0:b2d2 with SMTP id a640c23a62f3a-b49c4393c4emr487983666b.63.1759510639323;
+ Fri, 03 Oct 2025 09:57:19 -0700 (PDT)
+Date: Fri, 03 Oct 2025 16:56:43 +0000
 In-Reply-To: <20251003-x86-init-cleanup-v1-0-f2b7994c2ad6@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,8 +72,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251003-x86-init-cleanup-v1-0-f2b7994c2ad6@google.com>
 X-Mailer: b4 0.14.2
-Message-ID: <20251003-x86-init-cleanup-v1-2-f2b7994c2ad6@google.com>
-Subject: [PATCH 2/4] x86/mm: harmonize return value of phys_pte_init()
+Message-ID: <20251003-x86-init-cleanup-v1-3-f2b7994c2ad6@google.com>
+Subject: [PATCH 3/4] x86/mm: drop unused return from pgtable setup functions
 From: Brendan Jackman <jackmanb@google.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
 	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
@@ -81,43 +81,106 @@ To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borisl
 Cc: linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-In the case that they encounter pre-existing mappings, all the other
-phys_*_init()s include those pre-mapped PFNs in the returned value.
-Excluding those PFNs only when they are mapped at 4K seems like an
-error. So make it consistent.
-
-The other functions only include the existing mappings if the
-page_size_mask would have allowed creating those mappings.
-4K pages can't be disabled by page_size_mask so that condition is not
-needed here; paddr_last can be assigned unconditionally before checking
-for existing mappings.
+These functions return the last physical address that they mapped, but
+none of their callers look at this value. Drop it.
 
 Signed-off-by: Brendan Jackman <jackmanb@google.com>
 ---
- arch/x86/mm/init_64.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/pgtable.h |  3 +--
+ arch/x86/mm/init.c             | 16 +++++++---------
+ arch/x86/mm/init_64.c          |  7 +++----
+ arch/x86/mm/mm_internal.h      |  5 ++---
+ 4 files changed, 13 insertions(+), 18 deletions(-)
 
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index e33df3da698043aaa275f3f875bbf97ea8db5703..6fd789831b40dd7881a038589f5f898629b8c239 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -1177,8 +1177,7 @@ extern int direct_gbpages;
+ void init_mem_mapping(void);
+ void early_alloc_pgt_buf(void);
+ void __init poking_init(void);
+-unsigned long init_memory_mapping(unsigned long start,
+-				  unsigned long end, pgprot_t prot);
++void init_memory_mapping(unsigned long start, unsigned long end, pgprot_t prot);
+ 
+ #ifdef CONFIG_X86_64
+ extern pgd_t trampoline_pgd_entry;
+diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
+index bb57e93b4caf16e4ceb4797bb6d5ecd2b38de7e6..d97e8407989c536078ee4419bbb94c21bc6abf4c 100644
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -531,11 +531,11 @@ bool pfn_range_is_mapped(unsigned long start_pfn, unsigned long end_pfn)
+  * This runs before bootmem is initialized and gets pages directly from
+  * the physical memory. To access them they are temporarily mapped.
+  */
+-unsigned long __ref init_memory_mapping(unsigned long start,
+-					unsigned long end, pgprot_t prot)
++void __ref init_memory_mapping(unsigned long start,
++			       unsigned long end, pgprot_t prot)
+ {
+ 	struct map_range mr[NR_RANGE_MR];
+-	unsigned long ret = 0;
++	unsigned long paddr_last = 0;
+ 	int nr_range, i;
+ 
+ 	pr_debug("init_memory_mapping: [mem %#010lx-%#010lx]\n",
+@@ -545,13 +545,11 @@ unsigned long __ref init_memory_mapping(unsigned long start,
+ 	nr_range = split_mem_range(mr, 0, start, end);
+ 
+ 	for (i = 0; i < nr_range; i++)
+-		ret = kernel_physical_mapping_init(mr[i].start, mr[i].end,
+-						   mr[i].page_size_mask,
+-						   prot);
++		paddr_last = kernel_physical_mapping_init(mr[i].start, mr[i].end,
++							  mr[i].page_size_mask,
++							  prot);
+ 
+-	add_pfn_range_mapped(start >> PAGE_SHIFT, ret >> PAGE_SHIFT);
+-
+-	return ret >> PAGE_SHIFT;
++	add_pfn_range_mapped(start >> PAGE_SHIFT, paddr_last >> PAGE_SHIFT);
+ }
+ 
+ /*
 diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index 9e45b371a6234b41bd7177b81b5d432341ae7214..968a5092dbd7ee3e7007fa0c769eff7d7ecb0ba3 100644
+index 968a5092dbd7ee3e7007fa0c769eff7d7ecb0ba3..7462f813052ccd45f0199b98bd0ad6499a164f6f 100644
 --- a/arch/x86/mm/init_64.c
 +++ b/arch/x86/mm/init_64.c
-@@ -492,6 +492,8 @@ phys_pte_init(pte_t *pte_page, unsigned long paddr, unsigned long paddr_end,
- 			continue;
- 		}
+@@ -810,14 +810,13 @@ kernel_physical_mapping_init(unsigned long paddr_start,
+  * when updating the mapping. The caller is responsible to flush the TLBs after
+  * the function returns.
+  */
+-unsigned long __meminit
++void __meminit
+ kernel_physical_mapping_change(unsigned long paddr_start,
+ 			       unsigned long paddr_end,
+ 			       unsigned long page_size_mask)
+ {
+-	return __kernel_physical_mapping_init(paddr_start, paddr_end,
+-					      page_size_mask, PAGE_KERNEL,
+-					      false);
++	__kernel_physical_mapping_init(paddr_start, paddr_end,
++				       page_size_mask, PAGE_KERNEL, false);
+ }
  
-+		paddr_last = paddr_next;
-+
- 		/*
- 		 * We will re-use the existing mapping.
- 		 * Xen for example has some special requirements, like mapping
-@@ -506,7 +508,6 @@ phys_pte_init(pte_t *pte_page, unsigned long paddr, unsigned long paddr_end,
+ #ifndef CONFIG_NUMA
+diff --git a/arch/x86/mm/mm_internal.h b/arch/x86/mm/mm_internal.h
+index 097aadc250f7442986cde998b17bab5bada85e3e..436396936dfbe5d48b46872628d25de317ae6ced 100644
+--- a/arch/x86/mm/mm_internal.h
++++ b/arch/x86/mm/mm_internal.h
+@@ -14,9 +14,8 @@ unsigned long kernel_physical_mapping_init(unsigned long start,
+ 					     unsigned long end,
+ 					     unsigned long page_size_mask,
+ 					     pgprot_t prot);
+-unsigned long kernel_physical_mapping_change(unsigned long start,
+-					     unsigned long end,
+-					     unsigned long page_size_mask);
++void kernel_physical_mapping_change(unsigned long start, unsigned long end,
++				    unsigned long page_size_mask);
+ void zone_sizes_init(void);
  
- 		pages++;
- 		set_pte_init(pte, pfn_pte(paddr >> PAGE_SHIFT, prot), init);
--		paddr_last = (paddr & PAGE_MASK) + PAGE_SIZE;
- 	}
- 
- 	update_page_count(PG_LEVEL_4K, pages);
+ extern int after_bootmem;
 
 -- 
 2.50.1
