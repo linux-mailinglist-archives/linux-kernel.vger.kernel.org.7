@@ -1,281 +1,385 @@
-Return-Path: <linux-kernel+bounces-841837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B196BB85E8
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 00:59:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2150BBB85F1
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 01:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E5963AF63F
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 22:59:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7931F19E3872
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 23:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B07E2765CF;
-	Fri,  3 Oct 2025 22:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC70C277013;
+	Fri,  3 Oct 2025 23:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZAhS5kmX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="esbGjvY5"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0A1203710
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 22:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759532386; cv=fail; b=YtmWkPeoHL2NSTYcQTsQsk76S5sMGCHcjQeDJf9958IGgVsHaurM57JRlJ0QgynGaAIRftS+hlkq1VqOhFuGSYLi73hP1cMqaqFFe7vMpHfcmzG/oGZqdQyGeWMcDAphPrvw886PjKsBZVPvUbhvg1ugJXktV5BMSAGEp7Nl5ik=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759532386; c=relaxed/simple;
-	bh=9Mb6O1OELeSwk1YY7kOXbSc8UF9grNLdxhZyBsqF00A=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=K86kQX5VRZ122cjgu62by2IYA7btiw90mDnl7dCoGC8FPuGVDZF/BPNnEHRH9kqwWyYU2kvGUfbBGx3BRkHs1eL7HzCEGfaVU/wTaZJ8/WuNEGruvE5nLlo0XM5T0rulRlzjAqqordiKUD5GgVZyVVu/sUkq8avSyTF3nElhO/0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZAhS5kmX; arc=fail smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759532385; x=1791068385;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=9Mb6O1OELeSwk1YY7kOXbSc8UF9grNLdxhZyBsqF00A=;
-  b=ZAhS5kmXeckJUNevYFsY5fFLIw17Minfdgo5aRwDQk7XLG3PPMrECUSl
-   3WrR4TE0u3hdKaYn7LB58V3ijTzJyfbaPmtx/7ToJDeAf8iBx6NA8ftfZ
-   3x1HldQoue3tmET9Tg83SuDYpnSqpPAoSWkqHMqYgPOojyp9DBFEHSbHY
-   FtZDl7K+w8AdoG+TvVqpNA70T4u6kd2DjLrT9qFtvBNvJVN+BUGYv6smo
-   Higka8vdqgnZMBDLOUduL0KfpqHWc/4zx3IwnSCuLhzr4tDB2EssO2KZt
-   fP8uwMf76Uf0Pg5Rr2v9El4eIZ3xz/KaVOBQ5cLBsiVFF7TL8rd4fg4eN
-   A==;
-X-CSE-ConnectionGUID: yKeubWX5QZWdBwnwxZP1vQ==
-X-CSE-MsgGUID: VGr/zpD2SJGD1zBy5w1XFw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11571"; a="61920281"
-X-IronPort-AV: E=Sophos;i="6.18,313,1751266800"; 
-   d="scan'208";a="61920281"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 15:59:44 -0700
-X-CSE-ConnectionGUID: iwpTTWd3QMC/hPwNrajdoA==
-X-CSE-MsgGUID: ngOQCEY6T+yXBv6jrvl84A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,313,1751266800"; 
-   d="scan'208";a="216499041"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 15:59:44 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Fri, 3 Oct 2025 15:59:43 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Fri, 3 Oct 2025 15:59:43 -0700
-Received: from PH0PR06CU001.outbound.protection.outlook.com (40.107.208.22) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Fri, 3 Oct 2025 15:59:42 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZQfnPucog+QXyS9fZOvJEEb2PwdBkLkSoO28lepUTte33gz6xkx7RESXLPV7QMeRyr9cxu2APBo+i6Ype13zl0fK17Sf/3iSpVx8MEw/IAOjLXul6PAWARaUK1U7oj6NgOKp0w5/d+IDTegpC3W2X/yyjlMP3d4o5yM54CzeoH46JRb/Fh3TLGWYmnLvY+I9ypOdLzkEfH64YhXnOBjOm5fRWTeEtQuzfMN3AWCYkFpjq9cd8gU81z/NlPnw2CRggab1AUAizKqnuVL45lZsYf3Kfgk9tYm7CrdQr4iRW2LQk5JFcag5L3cj3cPXSE0u+wQCGueXTyMUmoph/7tYaw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AerpN9HSzyKvt/0IVP60+3JqBNdeLGEX/Dpf9hwt+D4=;
- b=dHc3K5Lbyg7yi/gUSa5SqS5GAG1PYw7sKApEW2mL6tqY9Pto8tlpePV4RpjtwssdP0v8qauwb6e+4HL/e91+xf3BoxaTKC1V7DvlSeRA24QebBmQbMZhWixYsZ5dWiDwrZiiWW8xQrSHokrHKZLykQQCW5D81nXYpqg2ARqED+Dt2COK3co7wmiy/FZiaXk76MPx9p+tF7vyQsI2yi5zYyI+4Wva3UxMK/Y1UvnpUk41jenny+nJ58P2pXlIBX/YyF88EG+B6Ek0h/YFAkfTAs/YaQSJnWTvtjbrYzlsFqIMSl+p0+WcBxCQs1+Q0+w9Tl+jCzIttu/Nq/BT69hR5g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
- by IA1PR11MB7821.namprd11.prod.outlook.com (2603:10b6:208:3f0::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.17; Fri, 3 Oct
- 2025 22:59:32 +0000
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361%7]) with mapi id 15.20.9160.017; Fri, 3 Oct 2025
- 22:59:31 +0000
-Date: Fri, 3 Oct 2025 15:59:30 -0700
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-CC: Fenghua Yu <fenghuay@nvidia.com>, Maciej Wieczor-Retman
-	<maciej.wieczor-retman@intel.com>, Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, "Drew
- Fustini" <dfustini@baylibre.com>, Dave Martin <Dave.Martin@arm.com>, Chen Yu
-	<yu.c.chen@intel.com>, <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<patches@lists.linux.dev>
-Subject: Re: [PATCH v11 06/31] x86,fs/resctrl: Use struct rdt_domain_hdr when
- reading counters
-Message-ID: <aOBVUvy5p3915dKA@agluck-desk3>
-References: <20250925200328.64155-1-tony.luck@intel.com>
- <20250925200328.64155-7-tony.luck@intel.com>
- <f5a80f3a-1aaa-4831-a9f1-7f3eca748dfe@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <f5a80f3a-1aaa-4831-a9f1-7f3eca748dfe@intel.com>
-X-ClientProxiedBy: SJ0PR03CA0121.namprd03.prod.outlook.com
- (2603:10b6:a03:33c::6) To SJ1PR11MB6083.namprd11.prod.outlook.com
- (2603:10b6:a03:48a::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBC5269CF1
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 23:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759533146; cv=none; b=tASiwQBVMWY2RWLzGdnX/7oM3JkSUj19LG6e5XW3yH9GxJ7KO6vfoxL/AJD8fvEKgYO0jyS38x7o2mXjLUZ8MvjC1w6/6rshSp8Q5s5FnnPG8Rw9wsgk1UK6Wv4+imRMaiG0hu7yOfdH9zW+fbbivG12LUhMlDjJgAzcp+oM4us=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759533146; c=relaxed/simple;
+	bh=wjDCmsK+fq06af1fCrbfRqcQ4am7/P0vgnzPCJDRAQU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hgd6i3abGZGWU2fIKycJwtDdBfH8wWy8N96GbsUVVoPCob268DI4vv4MofifRsPd9wq1iNRL1Vllx5OpQT6V8m15r8q/tZnmn13e8Oo3GLA5gfOCzlYRTJAy3X8PiUPs7kBJZxMzHS4xRxAvh5EGFEjhhXCVbr4jiRqwVGB9Ixw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=esbGjvY5; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-62faa04afd9so2299a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 16:12:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759533143; x=1760137943; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sa7+UjUUhItNXpyy4gGeXX7e9AExegepugcBUZf1voo=;
+        b=esbGjvY5RSM6LwXAykNioBrhA+9WyefdvLyzAym3qit/xOAS6RaSc8wfYnbjSW6F9n
+         pd8fy3nMKVMF+DjyXQXSd0kZScVFZ4wGkt0WsWEzUIOIcr7lFNzPekgQtv6396NnxcP/
+         yxA+vBdky30LhjtCxfjGpSXxvXqI5JEDHCZQMrjfon57V8XGTecZgCyFh3D2/Boy3soI
+         4HobT09TlzdKloB7WDldNQB0Ajz6yDpXROwVuR4eddYjFErl6ypb2QeKGqOG6Ft1XkbI
+         vPzgKCDSVyGKUXGG+m/4rLT1fB+EwZ+69dMHfS3OZbOibH2S/etQGTJaJNDirT10eoQR
+         KXIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759533143; x=1760137943;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sa7+UjUUhItNXpyy4gGeXX7e9AExegepugcBUZf1voo=;
+        b=rSPajXd7vVKTUJ6eYZYoDg6AHRtiVN3BFVq22L8t8aknxqeuTWL/uekJBt97tDTdxg
+         3uJwQU/Pwvg5tNNPfSxMPejSrWBqnDJh1M4qI7QrOxZ9zAbXj8DlaFfPlXGtrB8DIskX
+         BG+rHKbUyTnLSp5nQHFrBNmcR+Hi/5f3mhj/QXysBOKlRMClSVsaV+VyvKq16WkNiC36
+         RbjrAXTDMIbdGod5QdIFThzN0OI9iT5nu5Pwq12qXovNWBACzU/Na/bUl6KletD5FaA4
+         qQ4ux4oQGIqC6lD0gFdYuCrpEI2XwvTd2AY+JaAbrKCNJr0s363MXt9bWkgU1mo5SJCJ
+         3BBg==
+X-Forwarded-Encrypted: i=1; AJvYcCX9IMfRoNFS3MEo2TR84EI+MvOLCy7YJ9aCpQIyHfIVMhgjiTMUOLYhHTqnP11X6XFyMzCHmDnENPHatQA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQSD7ord1cNelSWwLSFlX4EFDyWQCGkfg7UPtNmOvzEaGx+WqK
+	C4iif+Su98ZMdZLEyRUpb0WXjTBmKtOZF9eFMZuue062uynas5am00B+CITiGcjz5KfvQ3hQov3
+	5Jv1nP00ug5usChZv2za+9l0XraiW7wFWDd+cKsnv
+X-Gm-Gg: ASbGncvWr5w2ijLBDx4X2ezIjl113MF/WMK4v/d5dLrA+uy3vwRW9dwce1mXiBM46w5
+	o8S2D4enWDOvT3Q2tSdjjrGoTjM1VH4G3OzIYghIAVIRNhv4hWRCNpHGtA2NOezhMSpiWnq/X6i
+	Csveejwp7qNULeLPynPT1tPlw1jW6/Ky8iJm6+VCnhms4KPPaNoNbNkHzSAFZZzhyy+NUrOVLa+
+	vG5uPHEmeTbvQq67VFMox+dejRnkT1qZ0eWcz1oTFu7n3GamI0nGgfeMW+B7IBJ7hQ=
+X-Google-Smtp-Source: AGHT+IHJFMzYqwJxQONYYwooqAWeKipZbOKejzmyeCNLGSSzGla7A5YFNjA8AAZFnIqGzwo22FCg8xDa3nyGSwBnYAU=
+X-Received: by 2002:a05:6402:52c2:b0:633:10ba:136f with SMTP id
+ 4fb4d7f45d1cf-63962f97267mr42207a12.1.1759533142870; Fri, 03 Oct 2025
+ 16:12:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PR11MB6083:EE_|IA1PR11MB7821:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5bc36922-6fe8-48ff-7c65-08de02d08368
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?mKtlrcTjJPnt4hX6N+Sgh6k8d5b6QycczP/AO8hPVfRd57mS7tGD4j5d0kRb?=
- =?us-ascii?Q?G275XYfAcnUwmsu8reTk5IOXjhRTvxwFR1x7f/hgraCONxaFowyv+1CtDjGl?=
- =?us-ascii?Q?4mlBFoKdYedwlVvm3Rst+mwIJF+NapcI7QVmq96/IpcWsVMuFf198eFuyk8B?=
- =?us-ascii?Q?BGY48RIw6AYpEws+MJ4cB2fD1jb3pWhCwvKlQNVBT8CkT+KlZa78ptOseTR8?=
- =?us-ascii?Q?IinG2GCAf+Lz2OBgrgl2xGHnhfqftypsv/Ycm3q75XaOirT32HYUT7oAQS+E?=
- =?us-ascii?Q?mGWilxO0rOHK3nhgS1VlKpKbCtGRICuKXrWTZqGw3wPEaruYNmgbAvVoSaKs?=
- =?us-ascii?Q?K4Tj0M7ocA0Gk7q7/S312VdjeniUEsoYMOWV+YnttGDDc9uVJPJU9t2DMuSa?=
- =?us-ascii?Q?fdjHukcgnyDYKk4GefHIZCImriqSLm8NhBUWps6bMEwnoeeB2K1FbLuzQm8a?=
- =?us-ascii?Q?wPL3OpFY70Vs8J5xMWzHKjE7U9eD1GKXr+EVjG5W8r+0DibA7Egry6SuNa49?=
- =?us-ascii?Q?e8Z96aZBLfGpHKny2vfKaarPnpNgyl9Jbhjb+OqlRFqB7UEJ8D7gk5bSgH3O?=
- =?us-ascii?Q?f2iCU+8s1Qykq9qigi82usa3HsL4dBUf0CXziyraEajI2aueU00XE/CwNHa3?=
- =?us-ascii?Q?dLt/ZBsWx0FsYIm9xzsxySMHujrQT6hL7Ae8DDZSvcxY1u44fdVxAecv937G?=
- =?us-ascii?Q?uHzg/y90L2aZ+oRU9M1QEWxBpjgrhNc9Hgc9g+FQ23UOcjFolL7hvu/sIgif?=
- =?us-ascii?Q?q/YGnUBxd5k8MiY7MyGnF4prX9zOEZViokh867AHL2QjvUSAry/BznNULmaD?=
- =?us-ascii?Q?a2sUyg5+/vPw7EodhFYDl8cVsNmtajI+egdFhgoyPnk6PAd2EAxEmxc/VjLv?=
- =?us-ascii?Q?0VdQ3khakoGrlu/PX0+A5Bl0MuX082mO7Nmfyf0ShoVEZXbmNgW64Ng+jNfk?=
- =?us-ascii?Q?J0EpbQ6QHzShT6spI/wyZhdMHjDnZLOM88jnRVGxMuq6VRi9dXaWTVUn73Nc?=
- =?us-ascii?Q?B4H2bQ5WX5fywaLIyZANasLXI8Q+mU8UqInhmUqWpnq/ek08oCmALglo8ndZ?=
- =?us-ascii?Q?vDLwWxRzywfdclwR+mtpFHF1FZp9KVa2kcXt2otStNScI3EW5Z5TFsuoB6Gz?=
- =?us-ascii?Q?xpFU1WL7/2+lAt8/gTesYp5KNbQgUYlawkgC4YnDIIeKarPwvZ14M5cTjFhc?=
- =?us-ascii?Q?5uFD0ftARxcbUahPJ/wKq39DKAX7scK9ACrLHhLEaxjBTu67Lb8B5JwvUCvl?=
- =?us-ascii?Q?9Oyx42u6SqVDHRJ62rjkdwSpEM79GJBd/jpNOULQJ1LtcnV1AXpR/MisioGT?=
- =?us-ascii?Q?Ggkut75tsoOeK6aeryqt8O1nqblH2RZkyHWh+2W/fhSu7JGJpRIKzVDPtRFk?=
- =?us-ascii?Q?v9sFCYJruk9Ckn05R8fsyBfvaKHxSZTDXvJE0sKZR5XjVz2zSvdWLZYQCzKF?=
- =?us-ascii?Q?87wTed2ILti9Dyo2inRFZ9zwvFWndll2?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?1sJOBZjRIqkYehC/3r2hHS8j/y4eX9h+W4H5rRFp2ruQZLUMi3C0BxZ6hOlD?=
- =?us-ascii?Q?5f0XGRPZbIiLflE2eOutlSoZ+lyBl+maifbuO1HS7IB+ADHh70TMqeZn8eYT?=
- =?us-ascii?Q?DHz1FsDZLbkZsDi6eTrCSxAezdlXMwNnteKPpwu4HQXGroYEFseGclx5z/id?=
- =?us-ascii?Q?Rew5MGZn9CuoofdS7wBc9pjHgfXiwuQQMZysLzGQll/h1vIcwclYmdJOBtMa?=
- =?us-ascii?Q?PuQOQKGQptBqCyoYLfzDVNqlzYCMePCk3x6wSnhDCyMUYc6w1n8v093dbzhC?=
- =?us-ascii?Q?xbq6hY7B7RCq772BbbKJ/WXhc7UT/akiFuyGW5MEO2VA7oAn+fo00unKoWop?=
- =?us-ascii?Q?VxGeZX/GkHB9s2ggBuqAwzKkMNrIzuMbS70wcV/2Gif1k8tb5BLyK7npWrS2?=
- =?us-ascii?Q?vDtUOeaOLQrGQuEIOe7tCOoXrAwyNfHqL7tOOu/JaBlGA7PKdGMvQDMWkZF2?=
- =?us-ascii?Q?Ym1IdBOYyOpKxogrSE++a/FHn+rKwOfo1rQE9+L9xUSBAma4Ce0u4ohk8n7e?=
- =?us-ascii?Q?YYoXnZuJu0X9cy+y+3IDGgVn97Vacz6xV5Ug+NEij/m+PYujIQDEVKIA7l4l?=
- =?us-ascii?Q?XBOaXzMYgT87lHR4htRYuUY64dtDuhMaZtrDY/MnrVs+kFczmw5vK0bLjjUh?=
- =?us-ascii?Q?PXNsDq0hot21qXdzMXZPfAQhROudt/vYKEj5V2TtbMSG/VRhRcn6b70bIJmj?=
- =?us-ascii?Q?BEfYgjEgueD64jRaDl5WxFtHoVArscs/sSMvz+r7nfHTjx72EBXrnhkC8pdy?=
- =?us-ascii?Q?wcSUKtPVpPXSeq5lVUPBO0tehP89AsUiy141BTDBj/Gb8bU849B4aLTBcXcD?=
- =?us-ascii?Q?BgMr1L2xHDHFabf6VTpYwS8cld7jlYGXWUv+avHm+4yuGG+3x/1KUBgQLVY4?=
- =?us-ascii?Q?Q7IMg14AgFr7Z/nFOEpvZLneR7DzYnze0rQfzJY6eCshPIfYm1QqLU4NmnpL?=
- =?us-ascii?Q?7EIjEr3prp2hqfr6NrfnQMD9jeVWKsh/yoQrO/DfhVzgjnMUc0YYGOSPju8X?=
- =?us-ascii?Q?/9gF3J6Uisn1/3rxzgi9jaad790KGfNxidmC4tTWgkOUYAqvUxAwD3EoxEfr?=
- =?us-ascii?Q?UYMMlXWXsBJwt781Y3QSnPFXkzOpA8Wgl02zI9OVC16xB5cOUNqwGag/oLfw?=
- =?us-ascii?Q?byfjMFfTNpXjc6aCCuR8jrX9yqbnk+Ms4COkOlnBRKPBJZ0XmuaV92G9I39u?=
- =?us-ascii?Q?4iLBP4pGQvZdTY21shanNaAyi57T9LHrVByObImYhbwJG4vZ1dKiWxZDMMV9?=
- =?us-ascii?Q?V/jijJMUI/Jb5VSFef5khxF53PWS41pnOsBFKc4yNBhepVsCtyseKt/z+6c8?=
- =?us-ascii?Q?XgZO6bdMGCjwUVo0cxv8vpfXwf+RQs6SNv0ACN/FvqzsZ7w+uFm86tc1hkW1?=
- =?us-ascii?Q?BE402AOTu6fMUsRUPR98rZbLW9Y5kQYw6ANB6DNGcBobwLqjtk9KOtjO90ib?=
- =?us-ascii?Q?Swbw7mOkhKrM5S1cWGg+mkkuX6vNfp7xChsafQGeRVgoC6eRtZpL5lUu+57L?=
- =?us-ascii?Q?0GvSfjEdyppE+RjDUlJ6p3iEKK2GbAYYCgSHUDlwRXTwtP5EEoGLoDfZG7gt?=
- =?us-ascii?Q?kk3+k2foVz73aqN08kbJI8ZSnIjXJnBhkqVx8mZt?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5bc36922-6fe8-48ff-7c65-08de02d08368
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2025 22:59:31.7697
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Rja3tVrICZfbJrZ4/4rP9/3P1ZeunC74DZCGvermRG6BOxMdsuqvgtHpcLW15OcEzyfpGhpCx+yjEHNfuHn3xA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7821
-X-OriginatorOrg: intel.com
+References: <20251003222729.322059-1-dakr@kernel.org> <20251003222729.322059-5-dakr@kernel.org>
+In-Reply-To: <20251003222729.322059-5-dakr@kernel.org>
+From: Matthew Maurer <mmaurer@google.com>
+Date: Fri, 3 Oct 2025 16:12:11 -0700
+X-Gm-Features: AS18NWAXfvQn1-lxPHHLqval_szOjB8rSFdCIrZzr-AwGwThR93QkQIBJdyXdUE
+Message-ID: <CAGSQo02ASwf3Wn21jgB804LMLi3qivhtZuo7SmmD9O4m5O_Qfw@mail.gmail.com>
+Subject: Re: [PATCH 4/7] rust: debugfs: support blobs from smart pointers
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	aliceryhl@google.com, tmgross@umich.edu, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 03, 2025 at 08:34:01AM -0700, Reinette Chatre wrote:
-> Hi Tony,
-> 
-> On 9/25/25 1:03 PM, Tony Luck wrote:
-> > Use a generic struct rdt_domain_hdr representing a generic domain
-> > header in struct rmid_read in order to support other telemetry events'
-> > domains besides an L3 one. Adjust the code interacting with it to the
-> > new struct layout.
-> 
-> I'd propose a small amend to be more specific and not assume reader knows
-> what rmid_read is used for:
-> 
-> 	struct rmid_read contains data passed around to read event counts. Use the
-> 	generic domain header struct rdt_domain_hdr in struct rmid_read in order to
-> 	support other telemetry events' domains besides an L3 one. Adjust the code
-> 	interacting with it to the new struct layout.
+On Fri, Oct 3, 2025 at 3:27=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> w=
+rote:
+>
+> Extend Rust debugfs binary support to allow exposing data stored in
+> common smart pointers and heap-allocated collections.
+>
+> - Implement BinaryWriter for Box<T>, Pin<Box<T>>, Arc<T>, and Vec<T>.
+> - Introduce BinaryReaderMut for mutable binary access with outer locks.
+> - Implement BinaryReaderMut for Box<T>, Vec<T>, and base types.
+> - Update BinaryReader to delegate to BinaryReaderMut for Mutex<T>,
+>   Box<T>, Pin<Box<T>> and Arc<T>.
+>
+> This enables debugfs files to directly expose or update data stored
+> inside heap-allocated, reference-counted, or lock-protected containers
+> without manual dereferencing or locking.
+>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+>  rust/kernel/debugfs.rs        |   2 +-
+>  rust/kernel/debugfs/traits.rs | 145 +++++++++++++++++++++++++++++++++-
+>  2 files changed, 144 insertions(+), 3 deletions(-)
+>
+> diff --git a/rust/kernel/debugfs.rs b/rust/kernel/debugfs.rs
+> index b1a3adca7fd4..3c3bbcc126ef 100644
+> --- a/rust/kernel/debugfs.rs
+> +++ b/rust/kernel/debugfs.rs
+> @@ -21,7 +21,7 @@
+>  use core::ops::Deref;
+>
+>  mod traits;
+> -pub use traits::{BinaryReader, BinaryWriter, Reader, Writer};
+> +pub use traits::{BinaryReader, BinaryReaderMut, BinaryWriter, Reader, Wr=
+iter};
+>
+>  mod callback_adapters;
+>  use callback_adapters::{FormatAdapter, NoWriter, WritableAdapter};
+> diff --git a/rust/kernel/debugfs/traits.rs b/rust/kernel/debugfs/traits.r=
+s
+> index 60a6ee6c6b58..bcd0a9db3cc9 100644
+> --- a/rust/kernel/debugfs/traits.rs
+> +++ b/rust/kernel/debugfs/traits.rs
+> @@ -3,11 +3,14 @@
+>
+>  //! Traits for rendering or updating values exported to DebugFS.
+>
+> +use crate::alloc::Allocator;
+>  use crate::prelude::*;
+> +use crate::sync::Arc;
+>  use crate::sync::Mutex;
+>  use crate::transmute::{AsBytes, FromBytes};
+>  use crate::uaccess::{UserSliceReader, UserSliceWriter};
+>  use core::fmt::{self, Debug, Formatter};
+> +use core::ops::{Deref, DerefMut};
+>  use core::str::FromStr;
+>  use core::sync::atomic::{
+>      AtomicI16, AtomicI32, AtomicI64, AtomicI8, AtomicIsize, AtomicU16, A=
+tomicU32, AtomicU64,
+> @@ -50,12 +53,14 @@ pub trait BinaryWriter {
+>      fn write_to_slice(&self, writer: &mut UserSliceWriter, offset: usize=
+) -> Result<usize>;
+>  }
+>
+> +// Base implementation for any `T: AsBytes`.
+>  impl<T: AsBytes> BinaryWriter for T {
+>      fn write_to_slice(&self, writer: &mut UserSliceWriter, offset: usize=
+) -> Result<usize> {
+>          writer.write_slice_partial(self.as_bytes(), offset)
+>      }
+>  }
+>
+> +// Delegate for `Mutex<T>`: Support a `T` with an outer mutex.
+>  impl<T: BinaryWriter> BinaryWriter for Mutex<T> {
+>      fn write_to_slice(&self, writer: &mut UserSliceWriter, offset: usize=
+) -> Result<usize> {
+>          let guard =3D self.lock();
+> @@ -64,6 +69,56 @@ fn write_to_slice(&self, writer: &mut UserSliceWriter,=
+ offset: usize) -> Result<
+>      }
+>  }
+>
+> +// Delegate for `Box<T, A>`: Support a `Box<T, A>` with no lock or an in=
+ner lock.
+> +impl<T, A> BinaryWriter for Box<T, A>
+> +where
+> +    T: BinaryWriter,
+> +    A: Allocator,
+> +{
+> +    fn write_to_slice(&self, writer: &mut UserSliceWriter, offset: usize=
+) -> Result<usize> {
+> +        self.deref().write_to_slice(writer, offset)
+> +    }
+> +}
+> +
+> +// Delegate for `Pin<Box<T, A>>`: Support a `Pin<Box<T, A>>` with no loc=
+k or an inner lock.
+> +impl<T, A> BinaryWriter for Pin<Box<T, A>>
+> +where
+> +    T: BinaryWriter,
+> +    A: Allocator,
+> +{
+> +    fn write_to_slice(&self, writer: &mut UserSliceWriter, offset: usize=
+) -> Result<usize> {
+> +        self.deref().write_to_slice(writer, offset)
+> +    }
+> +}
+> +
+> +// Delegate for `Arc<T>`: Support a `Arc<T>` with no lock or an inner lo=
+ck.
+> +impl<T> BinaryWriter for Arc<T>
+> +where
+> +    T: BinaryWriter,
+> +{
+> +    fn write_to_slice(&self, writer: &mut UserSliceWriter, offset: usize=
+) -> Result<usize> {
+> +        self.deref().write_to_slice(writer, offset)
+> +    }
+> +}
 
-Looks good. Thanks.
+For `Box`, `Pin<Box<`, and `Arc`, where the only operation being
+performed is to deref, is there a reason that we couldn't have the
+`File` object be *inside* the object, thus avoiding any need for
+these? I can't see them causing trouble, but
 
-> 
-> 
-> > diff --git a/fs/resctrl/ctrlmondata.c b/fs/resctrl/ctrlmondata.c
-> > index 3ceef35208be..7b9fc5d3bdc8 100644
-> > --- a/fs/resctrl/ctrlmondata.c
-> > +++ b/fs/resctrl/ctrlmondata.c
-> > @@ -550,13 +550,8 @@ void mon_event_read(struct rmid_read *rr, struct rdt_resource *r,
-> >  		    struct rdt_domain_hdr *hdr, struct rdtgroup *rdtgrp,
-> >  		    cpumask_t *cpumask, int evtid, int first)
-> >  {
-> > -	struct rdt_mon_domain *d;
-> >  	int cpu;
-> >  
-> > -	if (!domain_header_is_valid(hdr, RESCTRL_MON_DOMAIN, RDT_RESOURCE_L3))
-> > -		return;
-> > -	d = container_of(hdr, struct rdt_mon_domain, hdr);
-> > -
-> 
-> Problematic snippet removed here ...
-> 
-Yup.
+```
+Box<File<T>>
+Pin<Box<File<T>>>
+Arc<File<T>>
+```
 
-> >  	/* When picking a CPU from cpu_mask, ensure it can't race with cpuhp */
-> >  	lockdep_assert_cpus_held();
-> >  
-> > @@ -566,7 +561,7 @@ void mon_event_read(struct rmid_read *rr, struct rdt_resource *r,
-> >  	rr->rgrp = rdtgrp;
-> >  	rr->evtid = evtid;
-> >  	rr->r = r;
-> > -	rr->d = d;
-> > +	rr->hdr = hdr;
-> >  	rr->first = first;
-> >  	if (resctrl_arch_mbm_cntr_assign_enabled(r) &&
-> >  	    resctrl_is_mbm_event(evtid)) {
-> > diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
-> > index 4076336fbba6..32116361a5f6 100644
-> > --- a/fs/resctrl/monitor.c
-> > +++ b/fs/resctrl/monitor.c
-> > @@ -159,7 +159,7 @@ void __check_limbo(struct rdt_mon_domain *d, bool force_free)
-> >  			break;
-> >  
-> >  		entry = __rmid_entry(idx);
-> > -		if (resctrl_arch_rmid_read(r, d, entry->closid, entry->rmid,
-> > +		if (resctrl_arch_rmid_read(r, &d->hdr, entry->closid, entry->rmid,
-> >  					   QOS_L3_OCCUP_EVENT_ID, &val,
-> >  					   arch_mon_ctx)) {
-> >  			rmid_dirty = true;
-> > @@ -424,8 +424,12 @@ static int __mon_event_count(struct rdtgroup *rdtgrp, struct rmid_read *rr)
-> >  	int err, ret;
-> >  	u64 tval = 0;
-> >  
-> > +	if (!domain_header_is_valid(rr->hdr, RESCTRL_MON_DOMAIN, RDT_RESOURCE_L3))
-> > +		return -EINVAL;
-> > +	d = container_of(rr->hdr, struct rdt_mon_domain, hdr);
-> > +
-> 
-> ... but now the problem is moved to __mon_event_count() where rr->hdr can be NULL and the
-> domain_header_is_valid() check is referencing NULL pointer when SNC is enabled?
-> Am I missing something here? Does this work on SNC?
+seem like they'd usually be fine. The one caveat I can think of is
+that if you had other functions that wanted to take an `&Arc<T>` for
+operations on the Arc, then having an `Arc<File<T>>` would be
+suboptimal. Am I missing something?
 
-You are right. This likely breaks SNC.  I'll add a check for "!hdr" and
-move this inside the "if (rr->is_mbm_cntr)" with a duplicate inside the
-"if (rr->first)".  This duplication will be cleaned up with a later
-patch to refactor __mon_event_count().
-> 
-> Reinette
-> 
+Depending on the use case I'm missing, would a blanket implementation
+for `T: Deref` in this case and `DerefMut` later on make more sense?
+That should contract these into a single definition and generalize to
+e.g. `ListArc` without further code.
 
--Tony
-> 
+> +
+> +// Delegate for `Vec<T, A>`.
+> +impl<T, A> BinaryWriter for Vec<T, A>
+> +where
+> +    T: AsBytes,
+> +    A: Allocator,
+> +{
+> +    fn write_to_slice(&self, writer: &mut UserSliceWriter, offset: usize=
+) -> Result<usize> {
+> +        let slice =3D self.as_slice();
+> +
+> +        // SAFETY: `T: AsBytes` allows us to treat `&[T]` as `&[u8]`.
+> +        let buffer =3D unsafe {
+> +            core::slice::from_raw_parts(slice.as_ptr().cast(), core::mem=
+::size_of_val(slice))
+> +        };
+> +
+> +        writer.write_slice_partial(buffer, offset)
+> +    }
+> +}
+> +
+>  /// A trait for types that can be updated from a user slice.
+>  ///
+>  /// This works similarly to `FromStr`, but operates on a `UserSliceReade=
+r` rather than a &str.
+> @@ -92,6 +147,70 @@ fn read_from_slice(&self, reader: &mut UserSliceReade=
+r) -> Result {
+>  }
+>
+>  /// Trait for types that can be constructed from a binary representation=
+.
+> +///
+> +/// See also [`BinaryReader`] for interior mutability.
+> +pub trait BinaryReaderMut {
+> +    /// Reads the binary form of `self` from `reader`.
+> +    ///
+> +    /// Same as [`BinaryReader::read_from_slice`], but takes a mutable r=
+eference.
+> +    ///
+> +    /// `offset` is the requested offset into the binary representation =
+of `self`.
+> +    ///
+> +    /// On success, returns the number of bytes read from `reader`.
+> +    fn read_from_slice_mut(&mut self, reader: &mut UserSliceReader, offs=
+et: usize)
+> +        -> Result<usize>;
+> +}
+> +
+> +// Base implementation for any `T: AsBytes + FromBytes`.
+> +impl<T: AsBytes + FromBytes> BinaryReaderMut for T {
+> +    fn read_from_slice_mut(
+> +        &mut self,
+> +        reader: &mut UserSliceReader,
+> +        offset: usize,
+> +    ) -> Result<usize> {
+> +        reader.read_slice_partial(self.as_bytes_mut(), offset)
+> +    }
+> +}
+> +
+> +// Delegate for `Box<T, A>`: Support a `Box<T, A>` with an outer lock.
+> +impl<T: ?Sized + BinaryReaderMut, A: Allocator> BinaryReaderMut for Box<=
+T, A> {
+> +    fn read_from_slice_mut(
+> +        &mut self,
+> +        reader: &mut UserSliceReader,
+> +        offset: usize,
+> +    ) -> Result<usize> {
+> +        self.deref_mut().read_from_slice_mut(reader, offset)
+> +    }
+> +}
+> +
+> +// Delegate for `Vec<T, A>`: Support a `Vec<T, A>` with an outer lock.
+> +impl<T, A> BinaryReaderMut for Vec<T, A>
+> +where
+> +    T: AsBytes + FromBytes,
+> +    A: Allocator,
+> +{
+> +    fn read_from_slice_mut(
+> +        &mut self,
+> +        reader: &mut UserSliceReader,
+> +        offset: usize,
+> +    ) -> Result<usize> {
+> +        let slice =3D self.as_mut_slice();
+> +
+
+Nit: This is safe, but it also requires `FromBytes`, and is &mut, &mut
+
+> +        // SAFETY: `T: AsBytes` allows us to treat `&[T]` as `&[u8]`.
+> +        let buffer =3D unsafe {
+> +            core::slice::from_raw_parts_mut(
+> +                slice.as_mut_ptr().cast(),
+> +                core::mem::size_of_val(slice),
+> +            )
+> +        };
+> +
+> +        reader.read_slice_partial(buffer, offset)
+> +    }
+> +}
+> +
+> +/// Trait for types that can be constructed from a binary representation=
+.
+> +///
+> +/// See also [`BinaryReaderMut`] for the mutable version.
+>  pub trait BinaryReader {
+>      /// Reads the binary form of `self` from `reader`.
+>      ///
+> @@ -101,11 +220,33 @@ pub trait BinaryReader {
+>      fn read_from_slice(&self, reader: &mut UserSliceReader, offset: usiz=
+e) -> Result<usize>;
+>  }
+>
+> -impl<T: AsBytes + FromBytes> BinaryReader for Mutex<T> {
+> +// Delegate for `Mutex<T>`: Support a `T` with an outer `Mutex`.
+> +impl<T: BinaryReaderMut> BinaryReader for Mutex<T> {
+>      fn read_from_slice(&self, reader: &mut UserSliceReader, offset: usiz=
+e) -> Result<usize> {
+>          let mut this =3D self.lock();
+>
+> -        reader.read_slice_partial(this.as_bytes_mut(), offset)
+> +        this.read_from_slice_mut(reader, offset)
+> +    }
+> +}
+> +
+> +// Delegate for `Box<T, A>`: Support a `Box<T, A>` with an inner lock.
+> +impl<T: ?Sized + BinaryReader, A: Allocator> BinaryReader for Box<T, A> =
+{
+> +    fn read_from_slice(&self, reader: &mut UserSliceReader, offset: usiz=
+e) -> Result<usize> {
+> +        self.deref().read_from_slice(reader, offset)
+> +    }
+> +}
+> +
+> +// Delegate for `Pin<Box<T, A>>`: Support a `Pin<Box<T, A>>` with an inn=
+er lock.
+> +impl<T: ?Sized + BinaryReader, A: Allocator> BinaryReader for Pin<Box<T,=
+ A>> {
+> +    fn read_from_slice(&self, reader: &mut UserSliceReader, offset: usiz=
+e) -> Result<usize> {
+> +        self.deref().read_from_slice(reader, offset)
+> +    }
+> +}
+> +
+> +// Delegate for `Arc<T>`: Support an `Arc<T>` with an inner lock.
+> +impl<T: ?Sized + BinaryReader> BinaryReader for Arc<T> {
+> +    fn read_from_slice(&self, reader: &mut UserSliceReader, offset: usiz=
+e) -> Result<usize> {
+> +        self.deref().read_from_slice(reader, offset)
+>      }
+>  }
+>
+> --
+> 2.51.0
+>
 
