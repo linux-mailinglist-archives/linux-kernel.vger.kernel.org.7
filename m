@@ -1,87 +1,119 @@
-Return-Path: <linux-kernel+bounces-841027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16ED1BB5FC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 08:38:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0446BB5FCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 08:39:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB26B4868E5
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 06:38:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9D6884E3BEF
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 06:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F7B1F63FF;
-	Fri,  3 Oct 2025 06:38:07 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640A521773F;
+	Fri,  3 Oct 2025 06:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jur5vE1F"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE3718D636
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 06:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A702139CE;
+	Fri,  3 Oct 2025 06:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759473487; cv=none; b=dt127tHl99cxppsmFq2ci5VSwgDIxlR9Qj+YVBUUoY4zE/dcGsulf7BOz4Iz2REXcBhqtq6JyMx82kqpWMXjUpUj1sxqiD9w98XWrPh93MmabEYEDc77fwn+fSfZ6M1stZSmNYAOLXsbaq4sJCnNylRZa5vpcp3xdByB3Jkz5mw=
+	t=1759473581; cv=none; b=KIjgBuSh6wNLWPuLr484jjNRZs6Fhq+FHKRTwvLKWgyvcTJw9OKdp+m3oJFYJ2OOdn4xiFZfcz0qCyH70jvShyg+pG0VnYbjSw9zlygM61WcVTynshQqCMJlv8dUi/rP4/OEs8PB4qe0DTrct/3qRmTA/1amzNrO11DDBhRX6YE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759473487; c=relaxed/simple;
-	bh=zgSVt6ZnmXirRAVFaMA5rvOiYj33xiLFBPtpGsGBF2M=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=XaBjLJzh37T13ft/14OVgjACE/LFd96ggZdbggs2gh/8C2Eli94oBq3y2E3R/xkxtGiOZ7FVXR5HvJIOu+f8Jm1ak6S2cO8y+0mhJTD67wRuwhaG2/pyitcaQ49Gn/iB6zmzag+qeD8Sb4C9WAzQkjSStZaIXx8aBOQPOvPKHkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-426d38c1e8fso20011885ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 23:38:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759473483; x=1760078283;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OpPWCf4j8jL7TIJS4QPQMyVj4tLUl/7qVDJ4qbHDamc=;
-        b=I4b57dqgvfjgh/PzXcZuQdf60Lx2VS/4j/6MqfoP5ABUJVTSuUNae1L4EbO5iUAj+H
-         0TCEW1VSDNmPzraPZ7oXncDkn8Gv6HL7HnDSmjFg8CKGUb8GbKYYwnvNYZfoECPwCtdi
-         Jux3F1k1HKinVvE+K7107j3PYlZ1qJM+BbciYLMBMtDV5lSBT+owr3tOO6AvCcLwsloK
-         E/PvOR1lHtTQEN7LH8NhHSzGWImoov5CdoSEFFtY1k9/AGBVDrS6BefCsiWyWUSkwxJ0
-         u/44V9qA+0kfErvZTA5X9KgkGBrHDhYeM1Z4w/SBcjHZZ6/JhbRG8sxunupgqBM8BfTo
-         LYOA==
-X-Forwarded-Encrypted: i=1; AJvYcCXsS5OAzxYh276tpqfDf/5YwhEkd7nrB3mOsQxTkFR2y0i7d0BnqIgloAAyKfFtQnz/kgundXxQE5hzA+Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGpSWmx0OTRABv0G26RzqAsKZhjh8okihLBXMueFVVhaS7KtA2
-	tecxQFQR2X7nAHzvTwyRmOjax2itajCmfUcC5XTs37mytkIpk3sACdobJJnWnG3O+lwO1AKnuJz
-	V7YwFs5v4cfrroo4uZbO2nU0KxWVA8CLDx56IZ7yS6AmI4XzjYxF9SRl2TXY=
-X-Google-Smtp-Source: AGHT+IHyqaVprIuYZE4qqauJjROKeg4e9b3+GgCYol5iZu2OagJx3foqLTUX/bwOComvZvS1DB25sIY2qCWurdgAYeCF4j7QfGxW
+	s=arc-20240116; t=1759473581; c=relaxed/simple;
+	bh=1udu7BCVdf/1HJxKb7sLZXkalgIJcCkVINf8u8yM/dI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mYve4ZQ2ErPMQVATJqPOxJywOgrtrlhZom+cvWJZJRgXSSmMpU4oj6DnChb4mlFUqWCSzmi0nolIbNAdmM7y9X9ZbFM7r0yTmJ08SWnkbke8R5ZHzTOO7iJtuSdPfCsA2vOXonGTAkqAy/xB/Qh+EOcY5VwCQzd5e+EPO1+iWis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jur5vE1F; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759473580; x=1791009580;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1udu7BCVdf/1HJxKb7sLZXkalgIJcCkVINf8u8yM/dI=;
+  b=Jur5vE1FggTkN6aJGJQNUR3Lcl4i4wx+CJ1luApLqFPZrZ7SG6oCtL7v
+   Jd4rpgV1rzUaVJIuCgb7JkFZDCGjl1G2huNKk0la4aDLitCqJwXf4AV8b
+   LsUcS0kLINi9A+Vt8sW8cmudxznSiWZW16SCgVr/Cb4nJ0EmBQL0PiVX4
+   LBAlNpq38KSw0Z2Uj2+oq/ZKSyPpi3h/vWxUSNn07Y1xQYDMtQRbvNmEX
+   yezVHke++xxhT0j//Vf8HLSIq3XiPv9+X05id/e+DPAUT7bLIfVoVyMFn
+   kjlCwDN6AW9FfH2D9mlbDWPM08Gcz4RETRqkfBQnpmrKWG6WyZ6nQ4Z4U
+   A==;
+X-CSE-ConnectionGUID: KCCLFGMUSP+VgOG02C+CNA==
+X-CSE-MsgGUID: o+zkqvasSuqYawhDjepDGg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="72860285"
+X-IronPort-AV: E=Sophos;i="6.18,311,1751266800"; 
+   d="scan'208";a="72860285"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 23:39:39 -0700
+X-CSE-ConnectionGUID: gZ4GhqDhS+aj3/CLaF9nhQ==
+X-CSE-MsgGUID: FI2EvZm+S42jGXxwG/Rx9A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,311,1751266800"; 
+   d="scan'208";a="179167487"
+Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 02 Oct 2025 23:39:36 -0700
+Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v4ZS1-0004NP-13;
+	Fri, 03 Oct 2025 06:39:33 +0000
+Date: Fri, 3 Oct 2025 14:38:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-mediatek@lists.infradead.org
+Cc: oe-kbuild-all@lists.linux.dev, lee@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com, lgirdwood@gmail.com,
+	broonie@kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@collabora.com, wenst@chromium.org,
+	igor.belwon@mentallysanemainliners.org
+Subject: Re: [PATCH v7 4/9] regulator: Add support for MediaTek MT6363 SPMI
+ PMIC Regulators
+Message-ID: <202510031435.HCIv3oqu-lkp@intel.com>
+References: <20251002090028.1796462-5-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:178b:b0:42d:8a3f:ec8b with SMTP id
- e9e14a558f8ab-42e7ad01f91mr24528435ab.3.1759473482760; Thu, 02 Oct 2025
- 23:38:02 -0700 (PDT)
-Date: Thu, 02 Oct 2025 23:38:02 -0700
-In-Reply-To: <20251003061658.2515919-1-kartikey406@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68df6f4a.a00a0220.102ee.010f.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] KASAN: slab-out-of-bounds Read in ext4_search_dir
-From: syzbot <syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com>
-To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251002090028.1796462-5-angelogioacchino.delregno@collabora.com>
 
-Hello,
+Hi AngeloGioacchino,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+kernel test robot noticed the following build errors:
 
-Reported-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
-Tested-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
+[auto build test ERROR on broonie-regulator/for-next]
+[also build test ERROR on lee-mfd/for-mfd-next jic23-iio/togreg lee-leds/for-leds-next lee-mfd/for-mfd-fixes linus/master v6.17 next-20251002]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Tested on:
+url:    https://github.com/intel-lab-lkp/linux/commits/AngeloGioacchino-Del-Regno/dt-bindings-regulator-Document-MediaTek-MT6316-PMIC-Regulators/20251002-170532
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+patch link:    https://lore.kernel.org/r/20251002090028.1796462-5-angelogioacchino.delregno%40collabora.com
+patch subject: [PATCH v7 4/9] regulator: Add support for MediaTek MT6363 SPMI PMIC Regulators
+config: x86_64-randconfig-001-20251003 (https://download.01.org/0day-ci/archive/20251003/202510031435.HCIv3oqu-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251003/202510031435.HCIv3oqu-lkp@intel.com/reproduce)
 
-commit:         e406d57b Merge tag 'mm-nonmm-stable-2025-10-02-15-29' ..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=134ad942580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=84e81c4d0c0e900a
-dashboard link: https://syzkaller.appspot.com/bug?extid=3ee481e21fd75e14c397
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=100165cd980000
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510031435.HCIv3oqu-lkp@intel.com/
 
-Note: testing is done by a robot and is best-effort only.
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: "__devm_regmap_init_spmi_ext" [drivers/regulator/mt6363-regulator.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
