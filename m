@@ -1,89 +1,103 @@
-Return-Path: <linux-kernel+bounces-840904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB06EBB5AF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:48:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 828FABB5AF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:51:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 350CD4266C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:48:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44DA73C0454
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDE112F5A5;
-	Fri,  3 Oct 2025 00:48:42 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8BE2D7BF
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 00:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295781B4F09;
+	Fri,  3 Oct 2025 00:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mqLZeOSW"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8351EDF72
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 00:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759452522; cv=none; b=stlwn57mG5b5DWp21AaMzPOHjc22ZGpCKk45avXih8giolD5oGe82SAOfp00w2MeFjShfM88GVFC9rUhi0nyTEnnoZoZSSj7/CEs9222wAnGKYc9GeykpkltJCczN/qYQEGOPDZfEa8K1FqUO+XdEpLZtsHVoAn2jFnJqx7zZGE=
+	t=1759452674; cv=none; b=K+lPjZwSswuS2lCFxRq15gN611QB6yra28NsLAxkFMvWgasxZJBRMhwX6EiMKC/b0FGK/l6JTnxXxZUD02wdUEKVwrGDD6+YEAaQnRt8oO7tX8F7syv3iA/en0+rUNrfe1gAQDJkTtiryNuyil+v+9temHMNXwR2VpGTq7buFYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759452522; c=relaxed/simple;
-	bh=jWQ2fPuURNEgla6LWOsgm7M2rXbQeY5AnWmOH9ypBVk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b7stFDbXDSVsqLjyl4w+TH3YjNaE/qK/pQ30G4jQfqYFfzowG6eESQV4mpTQ6oJFQkBTzrtPEjyhBknwh71eEB+n2gX0/iI19gd3Hylpf28wZOe7OcZqdl29oRchSBdRlt67EUr0dcI9JbEfOyHubXI5PWhdKktv34oL2P3q5H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-c2dff70000001609-cb-68df1d61727e
-Date: Fri, 3 Oct 2025 09:48:28 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Hillf Danton <hdanton@sina.com>
-Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	kernel_team@skhynix.com
-Subject: Re: [RFC] mm/migrate: make sure folio_unlock() before
- folio_wait_writeback()
-Message-ID: <20251003004828.GA75385@system.software.com>
-References: <20251002081612.53281-1-byungchul@sk.com>
- <20251002220211.8009-1-hdanton@sina.com>
+	s=arc-20240116; t=1759452674; c=relaxed/simple;
+	bh=X5kSDsxxb+XD9CPJBYVIOtNwcZLhvc6wqQVQXU6X/oU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kMjWMXPM6Ln0LV2DoRxfgRNWaIGw4M1XjSFRd70Klu0HPdddOhnB5Qf+AT5YgsE8lJf4TyIPVeuzeMGz8xS3lfqKQD6kkr3SCs+ytgiOo8QXOPH3rkjuFNG5cfXUO/i+mHk3wDRPh4m3gsFIKmCpzSAz0TYAjee45U45aiLfGXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mqLZeOSW; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-77f67ba775aso2399925b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 17:51:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759452669; x=1760057469; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=T6bHVlibpYYb4K/JC7+xFZW8SMHjF8M/EaQn4o+DfFI=;
+        b=mqLZeOSWe/r8sA2Y3IxX5SsGblBscay8wiM5sTHlk3B7yOi+C2HO7Hhr+EPGWkqGoQ
+         6qpSCiLwQ7IMsk8Kg2AOQEkrksvkrsUtqHCi2VqYW/w15foG+zBQK1AFTvqGW6DmIKp1
+         yg7OkkaYCHAisSPM9kz3sF9QdXd0jEtz26JCCbHgAdH/pMPtw2FqIER7VC9pQjeQZfA5
+         IhbelqRMtArPj1qRvKn0GjEVMaQP1JneeOmbVLVY2t+9un+A9/toxr0aVHRWMBA8CsYM
+         d+Ru2e0TcsorQKR2xXh7vBFnugypSOE5okQ2oUaPsrBFEfhSM4IP1gzy2+nfKujv97uQ
+         1yTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759452669; x=1760057469;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T6bHVlibpYYb4K/JC7+xFZW8SMHjF8M/EaQn4o+DfFI=;
+        b=NkmJ6sdwvgnIG8vS9pMYCN3WJLFFel5GnnJzbli/ZO2eL8nmDSzEhWc9BM6IQFuWMv
+         Lw1iGAz8GV1arPJP/yrV1KQuLnRq3UUMDJUlL7aaAIuLk0U+w6SHsZgYRX8Jq3+fAPYf
+         T4bx+99+u+TASuokrGShz21YEu2TXXbD9LHehzAZvHxCw8y5IanWRnDzoCDJa7oH54wv
+         LMZjYqQFiFR8Fk3o37sUfTU6KWFiiTJtLFXDs/ok58QgZuy3MPcPuYTaJbDajFqGgwdn
+         hH1OBlEBUwff0eUSvBJWsVCvBpkBPOYsyJXaNapWhR4JaYZANAS7BrevC/JfyJIaCAWK
+         sUtA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3y+pChvxDmAQy1FmF0ZgKDzgmvYCxgSZNclhjbrlwRzlLQ+09LHDl1Ffb/abQ2v1tgt0lS/BzWFe+sco=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoQpzFNnnF9PY4HXu9RqL6L3/Dm5TDiCvsNrkpAz7wJJZQ2IFA
+	JMtsCaBOSKcJUPUmT9StFI5uVz6XtPemmXiDZyeFw16SdazfyGMZgDCO
+X-Gm-Gg: ASbGncu/IFFEWHx+tVd9OtZ5NjuogWEucZnkGfwdCYJZnaE65Wd6e89wwTp4/YDmm9I
+	Itl5Qa4oIMyRgGOcTRkmvQjvHFS/IOTGpjWimKhDErOYjFFN1aadoLVCWLBeVjII0nbn4LaqNPu
+	GmqwJwTj3OQaWdGThdM51dZLt3z5C15bSPVB1RHboEwvtrRj0M6i+MQ26VS3Ld0nhEh9rQ4nbk1
+	m3XHVwBtokIMi7VFZjq6bNSCDAc7EQ/k/TNiusbyBzwyyxI8wc8nQDkF6Ag53dtKk/t3U5XW/nC
+	KioU1VBc+mDX2r6hNqshvrzGgR41/+S7NKQ8a9oiKKmKDWYdkB1OCbXs1g6yh4hbzRkhAnv0BiF
+	KoDxYzfhAgD2PZ9Vgtg3V2BfP0ZnCt9r0L3BxogmANXC8L9hvRPh4R9BQ7Obw3gxsEem7WYetC+
+	8YwmCmD7db+Vy9uQGi/8EXXSGVY8XObuMelxHv
+X-Google-Smtp-Source: AGHT+IEwpomN/IBM+LnVDO+n8UtyRhkgfYEiaynqtsEYJ7oxGVacvwjycgRmKHI0Uzq7yJYetl1FYQ==
+X-Received: by 2002:a05:6a00:188e:b0:781:2558:6a3e with SMTP id d2e1a72fcca58-78c98d61decmr1842426b3a.14.1759452668771;
+        Thu, 02 Oct 2025 17:51:08 -0700 (PDT)
+Received: from deepanshu-kernel-hacker.. ([2405:201:682f:389d:38c3:a5e9:d69a:7a4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b01fb28adsm3271827b3a.35.2025.10.02.17.51.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Oct 2025 17:51:08 -0700 (PDT)
+From: Deepanshu Kartikey <kartikey406@gmail.com>
+To: tytso@mit.edu
+Cc: adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ext4: reject inline data flag when i_extra_isize is zero
+Date: Fri,  3 Oct 2025 06:21:03 +0530
+Message-ID: <20251003005103.2399934-1-kartikey406@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251002220211.8009-1-hdanton@sina.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBLMWRmVeSWpSXmKPExsXC9ZZnkW6i7P0Mg+59KhZz1q9hs/i6/hez
-	xYGfz1ksLu+aw2Zxb81/VgdWj02fJrF7nJjxm8Xj/b6rbB6TXrh7fN4kF8AaxWWTkpqTWZZa
-	pG+XwJUxaXUHc8EUlor2h5PZGhgXM3cxcnBICJhIvHpfAGM+m+rYxcjJwSKgInHm01dWEJtN
-	QF3ixo2fzCC2iICyROeFWWBxZoFJjBI71xeC2MIC4RLT28+xgNi8AhYSB65dArOFBBIkHq95
-	wwYRF5Q4OfMJC0SvlsSNfy+ZQNYyC0hLLP/HARLmFDCVmN8xiRHEFgVadWDbcSYQW0JgBpvE
-	zrX+ELakxMEVN1gmMArMQjJ1FpKpsxCmLmBkXsUolJlXlpuYmWOil1GZl1mhl5yfu4kRGL7L
-	av9E72D8dCH4EKMAB6MSD69Hwb0MIdbEsuLK3EOMEhzMSiK8CSvuZAjxpiRWVqUW5ccXleak
-	Fh9ilOZgURLnNfpWniIkkJ5YkpqdmlqQWgSTZeLglGpg5DUV5z99zYZ5wTO9Z99q1P33veYr
-	8brOW2+/9trfjBT7lxfMCrvsPh76WZpwuqNTWO/9e4e3DBURj30dW2yVfwmfjpgd8eV+kuLt
-	WSZpV42iyi3X16/s2dXc+imxsMJ3p6jGnOBlPC/3uuWtyzlkfJl/86ypH17dt+oIvdz5NnL+
-	9um3k6o6lViKMxINtZiLihMB7B5lSVsCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrILMWRmVeSWpSXmKPExsXC5WfdrJsoez/DoOuDqMWc9WvYLL6u/8Vs
-	ceDncxaLw3NPslpc3jWHzeLemv+sDmwemz5NYvc4MeM3i8f7fVfZPCa9cPdY/OIDk8fnTXIB
-	bFFcNimpOZllqUX6dglcGZNWdzAXTGGpaH84ma2BcTFzFyMHh4SAicSzqY5djJwcLAIqEmc+
-	fWUFsdkE1CVu3PjJDGKLCChLdF6YBRZnFpjEKLFzfSGILSwQLjG9/RwLiM0rYCFx4NolMFtI
-	IEHi8Zo3bBBxQYmTM5+wQPRqSdz495IJZC2zgLTE8n8cIGFOAVOJ+R2TGEFsUaBVB7YdZ5rA
-	yDsLSfcsJN2zELoXMDKvYhTJzCvLTczMMdUrzs6ozMus0EvOz93ECAzIZbV/Ju5g/HLZ/RCj
-	AAejEg+vR8G9DCHWxLLiytxDjBIczEoivAkr7mQI8aYkVlalFuXHF5XmpBYfYpTmYFES5/UK
-	T00QEkhPLEnNTk0tSC2CyTJxcEo1MPq4X9//tWpOy7usH+fbgkN2LlqbXbAgX/+0s+a6icIp
-	gnU3Z7JcCv/NnSZ55lWrwCXH3DArXVu+/8xh867s2D3Jmsd7XS+H52KmyJ55+YvLp1nL8yRa
-	hR/K6VxQ2Hgw3vqr9Z7/QRxLt7sssZ4292NMtbZ5/pSOt3pmf+cruvZscrXZ/GStshJLcUai
-	oRZzUXEiAO6chMlEAgAA
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 03, 2025 at 06:02:10AM +0800, Hillf Danton wrote:
-> On Thu, 2 Oct 2025 13:38:59 +0200 David Hildenbrand wrote:
-> >
-> > If it's a real issue, I wonder if a trylock on the writeback path could
-> > be an option.
-> >
-> Given Thanks to Yunseong for reporting the issue, testing, and confirming if
-> this patch can resolve the issue, could you share your reproducer with
-> reviewers Byungchul?
 
-Sure.  Yunseong told me it's 100% reproducable.  Yunseong, can you help
-him reproduce the issue, please?
+Looking at the syzbot logs more carefully, I see the initial 'acceptance' was 
+because the filesystem failed to mount ('VFS: Can't find ext4 filesystem'), 
+so the bug couldn't be triggered at all. My patches were never actually tested 
+against the real bug.
 
-	Byungchul
+I apologize for the confusion. I still cannot test locally to determine what 
+the actual corruption scenario is. Today I have re-tested my same patch in 
+syzbot and it is failing.
+
+Best regards,
+Deepanshu
 
