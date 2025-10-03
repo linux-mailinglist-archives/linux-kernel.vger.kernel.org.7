@@ -1,87 +1,149 @@
-Return-Path: <linux-kernel+bounces-841103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33344BB6451
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 10:57:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30C74BB6460
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 11:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDCC319C2E22
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 08:57:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5BAB3AE2E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 09:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2832765CF;
-	Fri,  3 Oct 2025 08:57:07 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F6427B340;
+	Fri,  3 Oct 2025 09:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YymIYJaE"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9F41A38F9
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 08:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5628033F6
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 09:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759481827; cv=none; b=lt8RrktNZL5GvpMBIjHKRaYBuXYyTu7F9ZjcYABUi5hreJ5WVqZFOmlStrUaESojTcT6iGoHxcpNJp+oNrnFs6MfwKbvkLqFDyMm2xaMEGtCUqNHoDQ53TzcqKhBM8Vkaxboo821Y9mMO8cawnmunEdm1Fim6EcT8VYsX8tAay8=
+	t=1759482047; cv=none; b=mBkmCaarMETmXVsMLF2vB0vO3727D9ZRpctLvDWkFpUhX5g3l9nQ/0tgAbCUZ+NZS7g4Jrbt3yc7oWMvFhWtUQUJOZHGycEWSO+s+4ZFYzUwoy6po3VfCVb5HL0ZnjxcUV2n8EvDJ1PAu0bZRKkhGg5z/TDz35Yi3yLCDR9+cc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759481827; c=relaxed/simple;
-	bh=FyoCpqNirqUhA3FAFwGYHQ7EB/a6vGQtWV6CnR3JkQk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=VjUWTdLtRImZNnA/0i/ba3F2lT4ZzxDzTBB12XDQ5+xrFgbtRP/PzQHdRnmMIJLvvcw2IjDk0s6gwLf6AR84Wo0iXZL/J/QmYlgJG+QJvl/TYPK2PFonTdlKo/IgLX8iuSfTNX0pV3zVsnLZZPJFxPfVTxDcWZhDycq/c+3ONR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-91e1d4d0976so525266339f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 01:57:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759481824; x=1760086624;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pTFryVpRekqtf/vbsQjg3j4K9niH8Uf5RtoMB5MIwg0=;
-        b=ost3P6mBdmBQqrqYcSbW7wMRv/c4ySrO7aVK05C5jBWohWjqEuqhdVKA6xJoHdg7SG
-         d9u7ETR3fMah6qihqvu84y3u4Q7Px4836lSRvkRlfCLCxYk8B3msjMqJfIdtOS6WdzmB
-         y3hrUImvHjAYod/u0JlPAkhSUluYee8u6lpiOCqTx7TueY5RWQtfEeiqSj1ooQ1jmL15
-         nIywkNF0FkScuFdW9MOxBufDby1ALqNoCowEVVrvqFxCSMyqDvKNN0SEnrlvZw1RSnhv
-         qCQm23I4FczUycqx80A/NobC7B8fwcWEVb46oEQftsJkjHKbRMmJHBXRQgFgnHQgwIgw
-         ZRsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSR+xR2ILTfzkmsGKTzBAOG/0AvCNIwp2AxcCJjBe0cvn1eQEAdZ/EKhtqMbjwfz3kuqm5jw6mM/vA84Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUyZl25ZUWi0lG5Tr+rTeDFtuCN/1BZ22BBHCaQqPgTENnTNg4
-	4kSZFPUgTGYVYCiCLdp6/Ai/vsbp6FlPSdbixrSBmQItD6wLwOHo3gHxvNOBTJ22xMQYEkL2cHG
-	9kgEKj4WdOon1LDTPRMMwqnCMwe0va2yyo8f5QbqiSd1mU5BSeRdvaGoy1WY=
-X-Google-Smtp-Source: AGHT+IE8rpyJ5Kc59KlPU1Epp+otWJ5wqtwPJvIMK8oOS6DvKWiypLjiGmteAyuLOtZUBq4SscVabQjtQkcx0ftb68BwoagdgiUk
+	s=arc-20240116; t=1759482047; c=relaxed/simple;
+	bh=NbAaPYZrppMAs8ZuMrfKU+8LcY5bRMhyujbIEj5X4wI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bh8noGbK726Ol7zEN6+LKUT0sscsOm4lBmKwQNkuSzGlbrYk0sEs3IVZ+UcL74PBGGYRgLMophlDP/klIXzpqY7uMhQOiRhx3tfge0jIWotq7C/rPI9PzqM6kgiN375E0Zh4TUp+fFnJy0ElIierJrOSMFsGApNc+zCe/Nf/+s4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YymIYJaE; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 629CFC00D93;
+	Fri,  3 Oct 2025 09:00:24 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 4F7BF60683;
+	Fri,  3 Oct 2025 09:00:42 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A57F7102F1C39;
+	Fri,  3 Oct 2025 11:00:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1759482041; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=ydVaQXOs3El6RgjJFLU2RI0S1jr8ahmEJkfZ2n2xcVw=;
+	b=YymIYJaE0nPg/qfX9fcdUI9vphYazKAB1w6MwQzABk9gmm9+zRKAFB/6ki2ohQ91P/XnCa
+	uxkQclcOdFk2ojxQVeskT7HZsFXa8nLtWBXbRk7oQKYmJdfzKwiNYjkV3fRXo+xogE1Ty9
+	ZYEQHJLMrntPCm5i5O+bKp4Xvb7IW2MgwV1jKI9J+9QCQlbeT3JHkaYNxyOgi6KwRtSisc
+	LaE5XVKIJkRIRGuIpLsCl64Hmd3Td4ZLwK1aA9ushm+ubyTXT5YNIKMdVDr306b6JSZUEj
+	RIqUgPY2ucRrkgH21/vWb3wCxKk+CrSBvBwRBT1AhxjAAEzUHRSrvWbjDrIaEQ==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH 0/4] drm/bridge: enforce drm_bridge_add() before
+ drm_bridge_attach()
+Date: Fri, 03 Oct 2025 10:59:54 +0200
+Message-Id: <20251003-b4-drm-bridge-alloc-add-before-attach-v1-0-92fb40d27704@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6011:b0:87c:34e3:1790 with SMTP id
- ca18e2360f4ac-93b9695da22mr267477839f.1.1759481824032; Fri, 03 Oct 2025
- 01:57:04 -0700 (PDT)
-Date: Fri, 03 Oct 2025 01:57:04 -0700
-In-Reply-To: <20251003083604.2556017-1-kartikey406@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68df8fe0.050a0220.2c17c1.001f.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] KASAN: slab-out-of-bounds Read in ext4_search_dir
-From: syzbot <syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com>
-To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAIqQ32gC/x2N0QrCMAxFf2Xk2UDbKQx/RXxok9QF5irpGMLYv
+ xt8PPfAPQd0MZUO9+EAk127ttUhXgagOa8vQWVnSCHdYggjliuyvbGYssu8LI0wM2OR2syHbcs
+ 0o9QxJgplyhOBf31Mqn7/ncfzPH8kF4pndwAAAA==
+X-Change-ID: 20251003-b4-drm-bridge-alloc-add-before-attach-ef312c0b8a8c
+To: Alain Volmat <alain.volmat@foss.st.com>, 
+ Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hello,
+This small series enforces that DRM bridges must be added before they are
+attached as discussed in [1].
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+This is part of the work towards removal of bridges from a still existing
+DRM pipeline without use-after-free. The grand plan was discussed in [0].
+Here's the work breakdown (➜ marks the current series):
 
-Reported-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
-Tested-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
+ 1. ➜ add refcounting to DRM bridges (struct drm_bridge)
+    (based on devm_drm_bridge_alloc() [0])
+    A. ✔ add new alloc API and refcounting (v6.16)
+    B. ✔ convert all bridge drivers to new API (v6.17)
+    C. ✔ kunit tests (v6.17)
+    D. ✔ add get/put to drm_bridge_add/remove() + attach/detach()
+         and warn on old allocation pattern (v6.17)
+    E. ➜ add get/put on drm_bridge accessors
+       1. ✔ drm_bridge_chain_get_first_bridge() + add a cleanup action
+            (drm-misc-next)
+       2. ✔ drm_bridge_get_prev_bridge() (drm-misc-next)
+       3. ✔ drm_bridge_get_next_bridge() (drm-misc-next)
+       4. ✔ drm_for_each_bridge_in_chain() (drm-misc-next)
+       5. ✔ drm_bridge_connector_init (drm-misc-next)
+       6. … protect encoder bridge chain with a mutex
+       7. of_drm_find_bridge
+       8. drm_of_find_panel_or_bridge, *_of_get_bridge
+       9. ➜ enforce drm_bridge_add before drm_bridge_attach
+    F. ✔ debugfs improvements
+       1. ✔ add top-level 'bridges' file (v6.16)
+       2. ✔ show refcount and list removed bridges (drm-misc-next)
+ 2. … handle gracefully atomic updates during bridge removal
+ 3. … DSI host-device driver interaction
+ 4. ✔ removing the need for the "always-disconnected" connector
+ 5. finish the hotplug bridge work, moving code to the core and potentially
+    removing the hotplug-bridge itself (this needs to be clarified as
+    points 1-3 are developed)
 
-Tested on:
+Series layout:
+ - patches 1-2: add missing drm_bridge_add() to the 2 drivers known for not
+                calling it
+ - patch 3: document that drm_bridge_add() is required before attach
+ - patch 4: add a warning in drm_bridge_attach() is drm_bridge_add() was
+            not called
 
-commit:         e406d57b Merge tag 'mm-nonmm-stable-2025-10-02-15-29' ..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1047c92f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=84e81c4d0c0e900a
-dashboard link: https://syzkaller.appspot.com/bug?extid=3ee481e21fd75e14c397
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=139576e2580000
+The added warning might reveal more non-compliant drivers, in that case
+they will be fixed as they are found.
 
-Note: testing is done by a robot and is best-effort only.
+[0] https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com/#t
+[1] https://lore.kernel.org/all/20250709-sophisticated-loon-of-rain-6ccdd8@houat/
+
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+Luca Ceresoli (4):
+      drm/sti: hda: add bridge before attaching
+      drm/sti: hdmi: add bridge before attaching
+      drm/bridge: document that adding a bridge is mandatory before attach
+      drm/bridge: add warning for bridges attached without being added
+
+ drivers/gpu/drm/drm_bridge.c   | 6 ++++++
+ drivers/gpu/drm/sti/sti_hda.c  | 5 +++++
+ drivers/gpu/drm/sti/sti_hdmi.c | 2 ++
+ 3 files changed, 13 insertions(+)
+---
+base-commit: 0f2efbe6d8305b91c9b2c92ebaf8c24a614bc305
+change-id: 20251003-b4-drm-bridge-alloc-add-before-attach-ef312c0b8a8c
+
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
+
 
