@@ -1,84 +1,87 @@
-Return-Path: <linux-kernel+bounces-841085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49B62BB63A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 10:17:41 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98092BB63B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 10:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BC0AD4E67E4
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 08:17:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4344634498F
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 08:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190E22641F9;
-	Fri,  3 Oct 2025 08:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B491126560A;
+	Fri,  3 Oct 2025 08:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sjJpwBHQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="O9dz+Yxq"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F39A8C1F;
-	Fri,  3 Oct 2025 08:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E6023D7E2;
+	Fri,  3 Oct 2025 08:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759479453; cv=none; b=QhUcP8sW6balveo3fXoo3o7TVyqv+iDR/aBF8yKPko1io7eev5FT+sqQ7YZlsBjcjzEOmBu+0j6DPyTQkX7yNjDLoOIiDijoFvHrATZ8GryEgbirWJ28jEybbUImsD5wWKJ/0x0FvPgyrOuVTHgntSu0qelHPwzAY+wUSNqiPmw=
+	t=1759479607; cv=none; b=NAeGKp3FKC2y/k2ZDJNxQsinubAgyMd1BdURf8jGzIBnMCW8KKp46DN92UCaO7ZLy75xK6EUV1s0sgWzn3n3Hl6+iQ3lVm1Gxw4pP/jd0hFgPKA4ePMG0uH9chlOe02RAaDOrHDrbOZ91SXYwe1orpEzQ3hImTZv+VnFbIn76i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759479453; c=relaxed/simple;
-	bh=iBCFNMMyNV4Rxo6BSgm5yEWsJ3CMCwo7Q9j7QSQ9aHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cpr6dXlgEMvequMaLvUtZyf1dBuStvNmEfO8z+sOH2PgHh+i0DrTj4nhaoEQcznF9imhPvEOR+WtjxHW1j0+JoIEg+nZZFp14XMDBTlVaLu6slWvgz7Y0x7oC6dNuWAjSVBdCjmNf9QjzJVAj1Lk4dwYA6HuLbvP8MBONWmbxNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sjJpwBHQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68662C4CEF5;
-	Fri,  3 Oct 2025 08:17:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759479453;
-	bh=iBCFNMMyNV4Rxo6BSgm5yEWsJ3CMCwo7Q9j7QSQ9aHw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sjJpwBHQ2PPJDhnVMXsFpEk2IHhuK+r5fTD8vKh6QR1RhdBOfL2Q2/42gmOsba/Zy
-	 lenOkNHG6kMtSVQPCAy0gDup9tND6pSEHPjtYEZ73HT7l1AycJOf8VPheedh1giDME
-	 aL4mac2PVFAl4hfwv8gnuRDMvN6BQ9VLjsITFFUtx3a7X6OdTHd5S3/WFxzCrrBKGZ
-	 hsXjyfRuGFFRc6EgQjaCxWMX64aJ3+QM+6Kun3X0D60gAmzDdInXj7o8Iof6veLt+t
-	 KzD7axWIYvdQkrdIXKyh1xBXgUUk69KW3Rw6217LatiI9TA/ge/mPYwSSoZRI+JVw+
-	 Jm9Hki9aebF1w==
-Date: Fri, 3 Oct 2025 09:17:29 +0100
-From: Simon Horman <horms@kernel.org>
-To: Yeounsu Moon <yyyynoom@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: dlink: use dev_kfree_skb_any instead of
- dev_kfree_skb
-Message-ID: <20251003081729.GB2878334@horms.kernel.org>
-References: <20251003022300.1105-1-yyyynoom@gmail.com>
+	s=arc-20240116; t=1759479607; c=relaxed/simple;
+	bh=ITjlkM0aGbos1XSt8ueuI2NEXdJ0dWrdlYRm6k9TIrk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bq+wnKeR3ooLjnu3mTp3nFTm62f12/rqugs4jktA3/07LER9JC5akY0LIVwZ+Z8j5smdTx4RjopNijEkLUkeYFnF/AS9fZGMJoIXo9vJ+mxCvimWwfgzIcToWMCeHWJJ7Y0pBiZkjt1wQ+6091iI5vVLU8LFzlVftqxV9hsQgg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=O9dz+Yxq; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759479603;
+	bh=ITjlkM0aGbos1XSt8ueuI2NEXdJ0dWrdlYRm6k9TIrk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=O9dz+Yxq50GBeUPj/rHINpU4WkHjjZFDuyxvTgrx3OVsWKoiEnfxmAR0+VIOIzxAP
+	 rLVYoNKtfhFJWcSoAxaq5kAuUjxHt5SebW5fxERuO73qn0yF2ko84OIBIFdV7idXyx
+	 23ncQAwcVx6CXmV8k7qy6hodmoDpBKGw75yvdhV4z8jlExPfcc8g+dykS08bZiXtVg
+	 4hKHTicInZfc6yYalFDczTANuxVmPOs0Rt3Io/ZJqmPe1riuA3/pnjY7JCoXJqt5by
+	 s/VIXnI9c2Bk2G9ZfHHUcbKv2iHZ78FDl9QWT+rf/x8GVLe6kpgi9JvhwzSy08YoDN
+	 h2ZQqrQgka7/w==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id AE23D17E129E;
+	Fri,  3 Oct 2025 10:20:02 +0200 (CEST)
+Message-ID: <6ad27d61-5907-437b-afda-6e1453a19f88@collabora.com>
+Date: Fri, 3 Oct 2025 10:20:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251003022300.1105-1-yyyynoom@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/mediatek: Fix refcounting in mtk_drm_get_all_drm_priv
+To: Sjoerd Simons <sjoerd@collabora.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>,
+ CK Hu <ck.hu@mediatek.com>, Johan Hovold <johan@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kernel@collabora.com, stable@vger.kernel.org
+References: <20251003-mtk-drm-refcount-v1-1-3b3f2813b0db@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20251003-mtk-drm-refcount-v1-1-3b3f2813b0db@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 03, 2025 at 11:23:00AM +0900, Yeounsu Moon wrote:
-> Replace `dev_kfree_skb()` with `dev_kfree_skb_any()` in `start_xmit()`
-> which can be called from hard irq context (netpoll) and from other
-> contexts.
+Il 03/10/25 10:08, Sjoerd Simons ha scritto:
+> dev_get_drvdata simply returns the driver data part of drm_dev, which
+> has its lifetime bound to the drm_dev. So only drop the reference in the
+> error paths, on success they will get dropped later.
 > 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Signed-off-by: Yeounsu Moon <yyyynoom@gmail.com>
-> Tested-on: D-Link DGE-550T Rev-A3
+> Cc: stable@vger.kernel.org
+> Fixes: 9ba2556cef1df ("drm/mediatek: clean up driver data initialisation")
+> Signed-off-by: Sjoerd Simons <sjoerd@collabora.com>
 
-Hi,
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-I am curious to know why this problem has come up now.
-Or more to the point, why it has not come up since the cited commit
-was made, 20 years ago.
 
-I am also curious to know how the problem was found.
-By inspection? Through testing? Other?
-
-...
 
