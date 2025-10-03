@@ -1,140 +1,198 @@
-Return-Path: <linux-kernel+bounces-841528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E58CBB7968
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:42:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21348BB795C
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:41:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E684434028F
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:42:40 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 912BF3472E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F10A1DF25C;
-	Fri,  3 Oct 2025 16:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s1K9103b"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E3E2C1786;
+	Fri,  3 Oct 2025 16:41:25 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27B3BA3D
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE6DBA3D
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759509751; cv=none; b=p4mFx7hMyaguZffwHVCm6PhYGPeL7Rpoo2RiQ9J27NXrj2qmKo2ZJgndw5e54pm62pfb/qAtxkzpj2Zs5RUParIznbBmqgvzD0+EKP3iW0mFESBeU5toHdEyzoNovKcL8bzx1np131Q8uC7/5ejrlMrVSCIRDWU/ah3OkTJH8/s=
+	t=1759509685; cv=none; b=JUmMS/UGwAJbX72WxcYDlFv6sSn2Qc5MVzwPEce+hsBcfP1YReBGMEXMPTcWH6w7F86B+jO1fkvMQjpAufYkcmQxfk/pJ1QA0G8uslAAvX2zk980ZDTQIAAxKw3orek5ClVF8sDFPkWAaumb/gOz/IjIC6+XmFFpBVEn9PzS6OM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759509751; c=relaxed/simple;
-	bh=tT4rIjRvSYCPH1NNHSlV3mpq6XJdV6RRM306+mUs0Lw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tAgakHQD8OW0KZWPIqEFBx77iKdSNvd9xY6SK87rEUDzRSxlp+RQDglP4eQXI0usRPd3AwuUpQtvFekiRelVUgpdIMa+RaI4BWgMLVZupUIKg/cJHjVMhbYJVSl2nEEf0RoIWodjf/ub1EFvXhLLr8ndw8+LXGPi8LMLPFVVZ4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s1K9103b; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-58877f30cd4so8634e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 09:42:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759509748; x=1760114548; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tT4rIjRvSYCPH1NNHSlV3mpq6XJdV6RRM306+mUs0Lw=;
-        b=s1K9103bTXwFzGA5D4M2+gkP8jFXCU7oqI4NO0/LgobXbnvZHs7G6voEgOQ12nn7Ws
-         qfb3M7VV9ZM+64yJkJatLOzNnMnliTlWC6iwyGpjqrVHeMhTxa+wJEk0zJlgE05j2URB
-         qsKVdXALewru0BAuuGcNe4VCFCMHpNxVpnWgtxw+IvJP0KUacnDQR4L1iei0R9Uq0x9P
-         DYVaGJsmFvlFVt1i6oqttQPjF/OPxR5uWOa8NxB0coZ3eDODd+nEIyoUST8IZwU29rwB
-         7hkt3U3/u79xLHhTIfgskU0BdHVu7jUmpKGqWeLsZ2pIwsP/JrewtDfJjwLw4VnbpA7g
-         bhCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759509748; x=1760114548;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tT4rIjRvSYCPH1NNHSlV3mpq6XJdV6RRM306+mUs0Lw=;
-        b=YPTbdtpoIf7fvEcqoiHNtecCFX7xjIN+XkqLLGya4XU8hdEsG9UAb4rFuZqjNC0+Ok
-         u/PiecUhojpiD23GlH5lykgzTTqo70pdL/fhWjfg3XKboNU0gpBP4P5oz0RaqPPifAVo
-         wVqC3lc+Ai4P1WpXFYUR0yf+aU3uFQ+Th45JlPlTgzdPsEW7o+hzYfEmBiwwN9kFzOOF
-         DDE9AuHrZdty8fBdS7L/g3BrVqRir3rKScg611p9nvT/boMEkzQannnvBV4rYLmlZ7pI
-         QIFit/9TaMrrbxwI1SbxDve81lwvcMo2gd6D06HPlnNkvAKWIv2Kr2Pv74gkW/JjNmyD
-         XziA==
-X-Forwarded-Encrypted: i=1; AJvYcCWU+Cuz+gOlqPCDGGYceZegUppsp/Fz3SuTIt1hsuDzewiqm4CGslHGPk5jcKCy6dktUxfuYPe7VbGzSVQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyomtdZtFt3WuRXSbSVRMDeIONqoSQGx7xCGJ4XjAMkPenPqlcz
-	ziK5DFp2FIlmsj9HhTAv0kCVD4/7mH9veQl5qr4j+Nd06qOZ9Fcr1GGNDgPtjh3bQXBPWB+5rWX
-	ctWxaAHXnH+R4+hNI2zV/Il6fA/PfbUNIa+yC3Dnr
-X-Gm-Gg: ASbGncsaompzTzU7nWkw8tIu3ty030kq8FKKeaA8CJWcnfAToPUB5LsvYRfuN4QjMQ2
-	ABPusxTkRahSoD0PVwIoz3tBlG4vg/ctu9smYAhnTz03xxUrb9uajX0YJHq5dULxpmg0urQnKQI
-	VacL2SIDrX+FJ1NTbp0zmjIxryuNaPWBgyJyWgRBbsEVpP3hzoi67ukXFjXhLOQOFtzWpK2YVJM
-	mNDy1zJIbvvjECTIY+K9aFCwtR3jVrCh3zxOw==
-X-Google-Smtp-Source: AGHT+IFqcHHNLXDZwKQTjsXX4M2eYXbNbIBvJRQGHDGc0LD+gyEovYNCEF4ZnQT0KPGBrO6LNIQACl17PxjlNaBzO0E=
-X-Received: by 2002:ac2:4191:0:b0:579:78f4:9c37 with SMTP id
- 2adb3069b0e04-58cd9097003mr243088e87.7.1759509747606; Fri, 03 Oct 2025
- 09:42:27 -0700 (PDT)
+	s=arc-20240116; t=1759509685; c=relaxed/simple;
+	bh=1JZJBIO5HCqVtfCWw2up3YHgDZGrTy8K5fbpoE/sBLg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Tr4v+uu3UNZWVqslhAOZmoMfk78zWqztqX9CD2+dN0etkKQBvIF2G0rRqx3GUi1sDYFTN8LxrB7W6RbuBqFKWvDp9YYjlRgQDZ7SVGuHs/zjv4UmrEqwQpNC8oPw/lyrQKAAvfdE4NzJPTqW7DEXzKIYpgSU8waTRTIUXHvgP3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay01.hostedemail.com (Postfix) with ESMTP id CB316452A8;
+	Fri,  3 Oct 2025 16:41:20 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id 1175D2D;
+	Fri,  3 Oct 2025 16:41:17 +0000 (UTC)
+Date: Fri, 3 Oct 2025 12:43:00 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Juri Lelli
+ <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
+ Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>, Johannes
+ Weiner <hannes@cmpxchg.org>, Michal =?UTF-8?B?S291dG7DvQ==?=
+ <mkoutny@suse.com>, Julia Lawall <Julia.Lawall@inria.fr>, "Luis Claudio R.
+ Goncalves" <lgoncalv@redhat.com>, Joseph Salisbury
+ <joseph.salisbury@oracle.com>
+Subject: Re: [PATCH] sched: cgroup: Move task_can_attach() to cpuset.c
+Message-ID: <20251003124300.4698dd18@gandalf.local.home>
+In-Reply-To: <aN_7iDbWQq3HXvd3@gpd4>
+References: <20251003121421.0cf4372d@gandalf.local.home>
+	<aN_7iDbWQq3HXvd3@gpd4>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
- <20250916-luo-pci-v2-3-c494053c3c08@kernel.org> <20250929174831.GJ2695987@ziepe.ca>
- <CAF8kJuNZPYxf2LYTPYVzho_NM-Rtp8i+pP3bFTwkM_h3v=LwbQ@mail.gmail.com>
- <20250930163837.GQ2695987@ziepe.ca> <aN7KUNGoHrFHzagu@google.com>
- <CACePvbX6GfThDnwLdOUsdQ_54eqF3Ff=4hrGhDJ0Ba00-Q1qBw@mail.gmail.com>
- <CALzav=cKoG4QLp6YtqMLc9S_qP6v9SpEt5XVOmJN8WVYLxRmRw@mail.gmail.com>
- <20251002232153.GK3195829@ziepe.ca> <CACePvbXdzx5rfS1qKkFYtL-yizQiht_evge-jWo0F2ruobgkZA@mail.gmail.com>
- <20251003120638.GM3195829@ziepe.ca> <CALzav=eGXp3uHxRytfsKQdrtAV8xg8teoAs9n_sggqdAp_Hznw@mail.gmail.com>
-In-Reply-To: <CALzav=eGXp3uHxRytfsKQdrtAV8xg8teoAs9n_sggqdAp_Hznw@mail.gmail.com>
-From: Vipin Sharma <vipinsh@google.com>
-Date: Fri, 3 Oct 2025 09:41:49 -0700
-X-Gm-Features: AS18NWAMnBsWWTpg4HgFgRyPlVOWpaiA-3tsEKIhlCcWxe4qMo14DNvQzaeShVI
-Message-ID: <CAHVum0caxqVdKfoXNLa92NFEBLwTbLCRgbH6y6kvnsWQPgcbwA@mail.gmail.com>
-Subject: Re: [PATCH v2 03/10] PCI/LUO: Forward prepare()/freeze()/cancel()
- callbacks to driver
-To: David Matlack <dmatlack@google.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Chris Li <chrisl@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	Pasha Tatashin <tatashin@google.com>, Jason Miu <jasonmiu@google.com>, 
-	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
-	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
-	Leon Romanovsky <leon@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: dsesnafynggxwgjhuacgjtgfxp8zxykt
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 1175D2D
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/EAGUAe87D4c7HJge1NenN/yxPd+B0h+g=
+X-HE-Tag: 1759509677-445104
+X-HE-Meta: U2FsdGVkX18G2bG6mmaWzU+itgMX70y+zIqNiJesZjqdcc6IewPT6/KIPIO7oehB7jhmoPkQeWXf8z+DQEnP+M6LDJeS1T5Qd6lAeM/XrNWC7SoZZj+OhsLHDGNKhItMc4CLu7QSqgvHsp0M23O0FfVbLod2bR0M8qw25Ar9fZ/m6fe8ihiZw07sZhmdDddz411/fOs915Xv90UkvuweYiRn4iW+L94ZW2a5RDD42cv/GQq3IvOiDHoIPL9aCW+Gs9MU7NxXgfX3cw5mUDc2bTpiAEPd1g6bFd60MI6Nvl2Q4sOUtYiG+mCgA13/EUFxy8aMXxSpNFC+fP+NaNnDwCWu4WF1cLdI4GDKNZgcgmErg2a2SM5pXjlkKf2mVVSw/TPyHUgK8llbkzKoXFcgFQ==
 
-On Fri, Oct 3, 2025 at 9:27=E2=80=AFAM David Matlack <dmatlack@google.com> =
-wrote:
->
-> On Fri, Oct 3, 2025 at 5:06=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca> wro=
-te:
-> >
-> > On Thu, Oct 02, 2025 at 10:24:59PM -0700, Chris Li wrote:
-> >
-> > > As David pointed out in the other email, the PCI also supports other
-> > > non vfio PCI devices which do not have the FD and FD related sessions=
-.
-> > > That is the original intent for the LUO PCI subsystem.
-> >
-> > This doesn't make sense. We don't know how to solve this problem yet,
-> > but I'm pretty confident we will need to inject a FD and session into
-> > these drivers too.
->
-> Google's LUO PCI subsystem (i.e. this series) predated a lot of the
-> discussion about FD preservation and needed to support the legacy vfio
-> container/group model. Outside of vfio-pci, the only other drivers
-> that participate are the PF drivers (pci-pf-stub and idpf), but they
-> just register empty callbacks.
->
-> So from an upstream perspective we don't really have a usecase for
-> callbacks. Chris ,I saw in your other email that you agree with
-> dropping them in the next version, so it sounds like we are aligned
-> then.
->
-> Vipin Sharma is working on the vfio-pci MVP series. Vipin, if you
-> anticipate VFIO is going to need driver callbacks on top of the LUO FD
-> callbacks, please chime in here.
+On Fri, 3 Oct 2025 18:36:24 +0200
+Andrea Righi <arighi@nvidia.com> wrote:
 
-Currently, LUO FD callbacks are the only ones I need. I think we are
-fine for now without PCI callbacks. I will have better clarity next
-week but for now I am only using LUO FD callbacks.
+> Hi Steven,
+> 
+> On Fri, Oct 03, 2025 at 12:14:21PM -0400, Steven Rostedt wrote:
+> > From: Steven Rostedt <rostedt@goodmis.org>
+> > 
+> > At our monthly stable meeting, we were talking about documenting non
+> > static functions and randomly picked a function to look at. That was
+> > task_can_attach(). It was then noticed that it's only used by
+> > cgroup/cpuset.c and nothing else. It's a simple function that doesn't
+> > reference anything unique to sched/core.c, hence there's no reason that
+> > function should be there.
+> > 
+> > Move it to cgroup/cpuset.c as that's the only place it is used. Also make
+> > it a static inline as it is so small.
+> > 
+> > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>  
+> 
+> Nice cleanup. :)
+
+Thanks, since you also were the first to notice it is only used in one spot.
+
+> 
+> Apparently it became that small with commit 2ef269ef1ac00 ("cgroup/cpuset:
+> Free DL BW in case can_attach() fails"), maybe we can mention that in the
+> commit message?
+
+Sure.
+
+> 
+> > ---
+> >  include/linux/sched.h  |  1 -
+> >  kernel/cgroup/cpuset.c | 19 +++++++++++++++++++
+> >  kernel/sched/core.c    | 19 -------------------
+> >  3 files changed, 19 insertions(+), 20 deletions(-)
+> > 
+> > diff --git a/include/linux/sched.h b/include/linux/sched.h
+> > index e4ce0a76831e..4ee4fa973eda 100644
+> > --- a/include/linux/sched.h
+> > +++ b/include/linux/sched.h
+> > @@ -1849,7 +1849,6 @@ current_restore_flags(unsigned long orig_flags, unsigned long flags)
+> >  }
+> >  
+> >  extern int cpuset_cpumask_can_shrink(const struct cpumask *cur, const struct cpumask *trial);
+> > -extern int task_can_attach(struct task_struct *p);
+> >  extern int dl_bw_alloc(int cpu, u64 dl_bw);
+> >  extern void dl_bw_free(int cpu, u64 dl_bw);
+> >  
+> > diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> > index 27adb04df675..21fe872803e8 100644
+> > --- a/kernel/cgroup/cpuset.c
+> > +++ b/kernel/cgroup/cpuset.c
+> > @@ -3009,6 +3009,25 @@ static void reset_migrate_dl_data(struct cpuset *cs)
+> >  	cs->sum_migrate_dl_bw = 0;
+> >  }
+> >  
+> > +static inline int task_can_attach(struct task_struct *p)
+> > +{
+> > +	int ret = 0;
+> > +
+> > +	/*
+> > +	 * Kthreads which disallow setaffinity shouldn't be moved
+> > +	 * to a new cpuset; we don't want to change their CPU
+> > +	 * affinity and isolating such threads by their set of
+> > +	 * allowed nodes is unnecessary.  Thus, cpusets are not
+> > +	 * applicable for such threads.  This prevents checking for
+> > +	 * success of set_cpus_allowed_ptr() on all attached tasks
+> > +	 * before cpus_mask may be changed.
+> > +	 */
+> > +	if (p->flags & PF_NO_SETAFFINITY)
+> > +		ret = -EINVAL;
+> > +
+> > +	return ret;  
+> 
+> As we're cleaning up, we could just return -EINVAL and 0 directly and get
+> rid of that ret variable.
+
+That should be a separate patch. Moves should really not do much else. I
+even wondered about making it a static inline too, but figured that wasn't
+touching the logic, and the function was going to become static anyway.
+
+-- Steve
+
+
+> 
+> > +}
+> > +
+> >  /* Called by cgroups to determine if a cpuset is usable; cpuset_mutex held */
+> >  static int cpuset_can_attach(struct cgroup_taskset *tset)
+> >  {
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index ccba6fc3c3fe..a195c4b25475 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -8070,25 +8070,6 @@ int cpuset_cpumask_can_shrink(const struct cpumask *cur,
+> >  	return ret;
+> >  }
+> >  
+> > -int task_can_attach(struct task_struct *p)
+> > -{
+> > -	int ret = 0;
+> > -
+> > -	/*
+> > -	 * Kthreads which disallow setaffinity shouldn't be moved
+> > -	 * to a new cpuset; we don't want to change their CPU
+> > -	 * affinity and isolating such threads by their set of
+> > -	 * allowed nodes is unnecessary.  Thus, cpusets are not
+> > -	 * applicable for such threads.  This prevents checking for
+> > -	 * success of set_cpus_allowed_ptr() on all attached tasks
+> > -	 * before cpus_mask may be changed.
+> > -	 */
+> > -	if (p->flags & PF_NO_SETAFFINITY)
+> > -		ret = -EINVAL;
+> > -
+> > -	return ret;
+> > -}
+> > -
+> >  bool sched_smp_initialized __read_mostly;
+> >  
+> >  #ifdef CONFIG_NUMA_BALANCING
+> > -- 
+> > 2.50.1
+> >   
+> 
+> Thanks,
+> -Andrea
+
 
