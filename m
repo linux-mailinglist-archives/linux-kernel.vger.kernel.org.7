@@ -1,102 +1,98 @@
-Return-Path: <linux-kernel+bounces-841464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69C9BBB7651
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 17:52:00 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 427C8BB766C
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 17:52:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC6E93B47C2
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 15:51:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 300884ED66F
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 15:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41908286409;
-	Fri,  3 Oct 2025 15:51:55 +0000 (UTC)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E81E28853A;
+	Fri,  3 Oct 2025 15:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qYnpt0QV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA5D13AD05
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 15:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27C813AD05;
+	Fri,  3 Oct 2025 15:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759506714; cv=none; b=UKkpvF3pXa+4ZT5FnYzhEEoUksyoC4Opc3mrkDE5BsKNIrQoTI4X8uGFq/F6phI5hRnXiEJdxpZY8kagwmVTK5S1rxKS56jFl2AMb61wFRXDdLr6rQpIMZKQ6A2aqYEZ2pq13vIUhsqLorKUaBYs+z/FDnahK3nMPc49SLGp744=
+	t=1759506729; cv=none; b=M9cNa80t9J0/vE+V7M+HXgR0yeiRP0dA9ZNRYdCctNgb3tVIMba2+86FCGEGzaKjR3EIeoOxQm09dq/A+M5iiuNWP37GEcg1M6X5aGwUDwlD1M8zBr33bPcCazTrWT7kibX+jKM+gmHctLwBZ1hx/EFuFH8TUOkR6zryaTybLLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759506714; c=relaxed/simple;
-	bh=dxjhxSBanEjcS6nFKordX0fU2ntdIOAb/pU9S6rprtc=;
+	s=arc-20240116; t=1759506729; c=relaxed/simple;
+	bh=3W/B7yr0TP3RVj4O6JgUMcihRtNr2fM0e+nfFmSLnXk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DGQdGWlVcxaTCDPUBL+CKnsnzoj5uyVSdpMBpfk87mYxnakNt1USEeZiJSb15X/CXI2cyj32p7STDgELwRFMx8y7Y+kz5pql5ld1SyyejDFA3MuWj3ruVV/55JjJLlu7QRfWn7dwMTBsKEoAgGHTZtFgtWATIQiklvA4sb6ZKYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so442442066b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 08:51:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759506711; x=1760111511;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dxjhxSBanEjcS6nFKordX0fU2ntdIOAb/pU9S6rprtc=;
-        b=oe+eJvRV9g7iVKkNxtgK+IeDs1YEBNP9jlMGkvhHf9+j84IlnLrVu56LUwbRn2OuwX
-         m0nrzoR5LB01bTo1CZJH7NLNL1B9EMzfgEPCIYcuFRSnhy76hRJgz2TTJB0qRSFL9p4b
-         8+AVuDXLmpqptLeJMGC+qe2CVPlnRvpqrJRh37Mni4KQvLE5h4fDTPzqM9Rpk7TzNmkB
-         F1fzpEWIWG4Knp3DOthFJ89CII/+cD+POsQOvtFQDUYT1nNUH0+FFOQChFbVUJ5YeOdb
-         zRmz7oFoh9VLtAbyN2tcLN73P2NRWCarwgx7FDz0qS//7z5WzLrgUMnLijooxerYIfin
-         +IgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbjFA/q2DXmalKGef1q08fFfqOjf/YQksAqQ9JBpoDn1mN0mcgzQKAO+Ym+X1+p02kJgRKPMtnHE64/ek=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw337zZuSPX05tSQQl4CBF6DWGUpg+ltt2hRWQ1iE1kTXfXS/HA
-	yTLd8rvtGaeFUZsOWUV+HJushZNdGiIxIu0FIIpreOfhumYxh9xl9M/g
-X-Gm-Gg: ASbGncs2H94YQ17P3Mr7Z5D86HG2pNacEPw/nFxBCcteXpLZyWLujizwOuUYRpJg8zW
-	UmmSSsa4fLUsovmNNBorpThypDpj5Ccq9akKQNYX0t4tRbXhb5T5dW2jesJgLca/pPy6XW2OuMi
-	FhzmNZBTAVZXA5SCnWPECWoQ7k2KTGeoqLhSMYm3fqXghejLHFZ+CzFsH+K7k9cTTdEZa2L8p82
-	bV3VDBLQ0VMDcYE2MT54sya7q13oGJDCveY1k03h/HNXLrz2rSabjnHhpfdYZbRWEuPQoyahlop
-	RFKrpOp89bPGK4Q9ZZwvrCSBf1iHpDFHpMk5OinJ9ca7HQGM4nIHqwed1T3DxFeg/eGfDKdNv1c
-	TWVHoSO3k78Yd3qHxFQLv3dNKFAS5pPvL8EWyZBUM1H1Fwos=
-X-Google-Smtp-Source: AGHT+IEAAFtAVWxH3Q7eTKnhQH5+J3Vh/LAGNAUrm/EAT4l6g5ZdiMiOqAiVz2iXzCYcbw7ulviPKQ==
-X-Received: by 2002:a17:907:cd0e:b0:b30:ea06:af06 with SMTP id a640c23a62f3a-b49c1f53946mr378075566b.24.1759506711073;
-        Fri, 03 Oct 2025 08:51:51 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:5::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652a9f50sm461408666b.9.2025.10.03.08.51.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 08:51:50 -0700 (PDT)
-Date: Fri, 3 Oct 2025 08:51:47 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Jiri Bohac <jbohac@suse.cz>
-Cc: riel@surriel.com, vbabka@suse.cz, nphamcs@gmail.com, 
-	Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>, 
-	kexec@lists.infradead.org, akpm@linux-foundation.org, Philipp Rudo <prudo@redhat.com>, 
-	Donald Dutile <ddutile@redhat.com>, Pingfan Liu <piliu@redhat.com>, Tao Liu <ltao@redhat.com>, 
-	linux-kernel@vger.kernel.org, David Hildenbrand <dhildenb@redhat.com>, 
-	Michal Hocko <mhocko@suse.cz>
-Subject: Re: [PATCH v5 0/5] kdump: crashkernel reservation from CMA
-Message-ID: <vojlxf5pelxlr6omsfsccd4e4cdzn5qyxpgiqajorkgmgd7ruh@e5wwhkmvntpb>
-References: <aEqnxxfLZMllMC8I@dwarf.suse.cz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YQZ35FqAc0f+SHqEL9xr7Fm1NGWcLyX+7LfK1y0yWEdKLbEedbEOVFy/HVRVHzC7BIToh05e5FqkRtXvurFfQ1qm/4TP2qyXiVPk1TvpJ0RJbe98spifZFiCRyF9DOUxjpajdeKZ53aopqKL0jjzG4LEgZ1N2ibFmpYz1uMVJMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qYnpt0QV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46554C4CEF5;
+	Fri,  3 Oct 2025 15:52:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759506729;
+	bh=3W/B7yr0TP3RVj4O6JgUMcihRtNr2fM0e+nfFmSLnXk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qYnpt0QV5dqgLdyy9PKpBnNSjoro13pjU+CPLy07ZjCKa3R8O/jTQRHcaIiYBSBVH
+	 jD+vAmjrrSJHDPvCJbhWx+XG4yS83yJBkdsdTFgei9gjhk5LRo+UlOp8CumBhxqaWC
+	 uQUugl61rwN9rRZewNfSfpTan81MgLGlTVlEUN1g3rgPVm+8zIY2ApNOvm9xkmdyql
+	 /UPcVqcoaG6Vs1GKV5rzz0fCMiXyi076gtR6C72ocwe+PnQ802jREblO1zvHFWcQLg
+	 oIN9jxxGqCNZv0wecr9ZkqvcYVDuKY7QbVzRHl+ZHpOq4Xl5T57PQYCLkMP4kRnVbf
+	 o820Zofzfigtg==
+Date: Fri, 3 Oct 2025 17:52:01 +0200
+From: Carlos Maiolino <cem@kernel.org>
+To: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, 
+	Jonathan Corbet <corbet@lwn.net>, David Howells <dhowells@redhat.com>, 
+	Paulo Alcantara <pc@manguebit.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-bcachefs@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org, david.hunter.linux@gmail.com
+Subject: Re: [PATCH] fs: doc: Fix typos
+Message-ID: <6t4scagcatuba7hjy4aib5hqfgyhc4wofegr2jrl34wwa7fsyq@5uwpzmpixm7o>
+References: <DrG_H24-pk-ha8vkOEHoZYVXyMFA60c_g4l7cZX4Z7lnKQIM4FjdI_qS-UIpFxa-t7T_JDAOSqKjew7M0wmYYw==@protonmail.internalid>
+ <20251001083931.44528-1-bhanuseshukumar@gmail.com>
+ <kp4tzf7hvtorldoktxelrvway6w4v4idmu5q3egeaacs7eg2tz@dovkk323ir3b>
+ <yms8llJZQiWYVxnbeWEQJ0B_S6JRxR0LQKB1FwVe0Tw66ezuA-H1qZVCyuCUDtsw7s7h4jHTwTh98XivLW3vvw==@protonmail.internalid>
+ <425ef7bd-011c-4b05-99fe-2b0e3313c3ce@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aEqnxxfLZMllMC8I@dwarf.suse.cz>
+In-Reply-To: <425ef7bd-011c-4b05-99fe-2b0e3313c3ce@gmail.com>
 
-Hello Jiri,
+On Wed, Oct 01, 2025 at 07:19:13PM +0530, Bhanu Seshu Kumar Valluri wrote:
+> On 01/10/25 17:32, Carlos Maiolino wrote:
+> > On Wed, Oct 01, 2025 at 02:09:31PM +0530, Bhanu Seshu Kumar Valluri wrote:
+> >> Fix typos in doc comments
+> >>
+> >> Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+> >
+> > Perhaps would be better to split this into subsystem-specific patches?
+> >
+> > This probably needs to be re-sent anyway as bcachefs was removed from
+> > mainline.
+> >
+> I just did a google search and understood about frozen state of bcachefs
+> in linux kernel since 6.17 release onward. It is going to be maintained
+> externally.
+> 
+> Thanks for your comment. I will resend the patch excluding bcachefs.
 
-On Thu, Jun 12, 2025 at 12:11:19PM +0200, Jiri Bohac wrote:
+It's not only bcachefs. But most of subsystems and documents you touch
+have different maintainers, so beyond removing bcachefs bits, I'd
+suggest looking at MAINTAINERS file and send specific patches targeting
+each subsystem. It makes maintainer's lives easier, at least for me.
 
-> Currently this is only the case for memory ballooning and zswap. Such movable
-> memory will be missing from the vmcore. User data is typically not dumped by
-> makedumpfile.
 
-For zswap and zsmalloc pages, I'm wondering whether these pages will be missing
-from the vmcore, or if there's a possibility they might be present but
-corrupted—especially since they could reside in the CMA region, which may be
-overwritten by the kdump environment.
-
-My main question is: Do we need to explicitly teach makedumpfile to ignore the
-CMA area in the vmcore, since it is already being overwritten and thus
-unreliable? Or does makedumpfile already have mechanisms in place to
-automatically ignore these special zswap/zsmalloc pages that may have been
-overwritten if they were located in the CMA region?
+> 
+> Thanks.
+> 
+> 
 
