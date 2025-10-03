@@ -1,133 +1,228 @@
-Return-Path: <linux-kernel+bounces-840907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74B6ABB5B05
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:53:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6513BBB5B0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:56:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E16A3BF952
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:53:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCCDB1AE10E4
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E7D1C4A0A;
-	Fri,  3 Oct 2025 00:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F8D1D618A;
+	Fri,  3 Oct 2025 00:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dtGD5UUJ"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="icg/2HPv"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012056.outbound.protection.outlook.com [52.101.43.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B941B4F09
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 00:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759452831; cv=none; b=tSCi1ZIZnuRTBsl0UKurlx9N2tBgtgTFvmQ834u82tBhElcxUJEnsvMDmR5HFQHp9rkQpIWKA7BODpbTdBxy3lls6xuPrOjPMcWEXx23ejZJdZSt2AtJiFNaCBou/qAP8Qu7oQ7TCQYPEr+3CpDWnXsUvkuidAElUWkbVfz9yKo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759452831; c=relaxed/simple;
-	bh=qZpdUj16BCejTHKsOOW/dPiTbIkZGYldC2/13Q6Sxvw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k+K8a5SGfe7FOHax65KQFlOAEvY4aqy6GH19HI3ty2N28tlyRwVFkMB3nnWCrYlLjH4LZfImXPnw+tYLEANgIwcPeSG00DOxd4NBCRVBpra45grALy7vZ0Xfy7P4mZPOIHghfTyKY0XF6Xe8kWLteSYK/OJkIXe4grIHQcqwTF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dtGD5UUJ; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-71d603a269cso18494527b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 17:53:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759452825; x=1760057625; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TIjyu4CrKVxFW8+yt9bV88mlzHIu8EXyBfp0u4n9wkI=;
-        b=dtGD5UUJUIySDvgIySMlxZTjL07mWjDvn+jnQ5u2tJBIKxeJnWooYa7+vu/VZBLDBU
-         hUdPiHnyu7zBCrnaopiOwFvfwB4m8gzDjpDZfU5GgKGuXW1IaS4NhEpZjKEi6SIkBdXv
-         fvJ+iEyQ6V6S369cppZDaV0FO7Zpq64hH+shI8hUkUOPpBj7qMyBVOek9O+yMFJkxmR8
-         C3ZO09x6YgtOOysN7/a2GRUbAAOhQwBV9DlFirqql+qoF/Aa1au/eoOJH0V57FVliBXt
-         bDMtOZhemyXnI2Y5VsC6dvNGsRY+JdgE32FkLRsnIofOjghgzdUSZNPPOqZdNSCTzHTS
-         +ITw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759452825; x=1760057625;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TIjyu4CrKVxFW8+yt9bV88mlzHIu8EXyBfp0u4n9wkI=;
-        b=KROZ2Vdl/xT+3EVjZ9ffPcfQJHh/8Rt8pYEgqDSTEI4uKku1Ig6K5T+DyYGGK0SHZX
-         oQvA5vtC0NFrWg1TC2svUItrE8/f7urZdmMKE4kZmhT9ud3uviobRPmEog/iFBwOUhO+
-         /1rxSbEIYDfFWxiYRdICQExaQj5YUXHmPZOZe1AcdR/tydwowPDdjR9dryp+U0cI9UH/
-         rSjnUsZdApU5XLHjjmB/b+3CoddpTjcejWC2fNtcuAhcJ9XuOeBZPZpU3xVgtxIpI3pL
-         8fsqouq/lt3xY7YkH4XJctT48Bj6iOVAXwcLoIxNBaIcEJ3WG1eEz1Wd6S5pA0s2ki0r
-         mE1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWpfZh6nVZZdmNng+TDC3TUvLJjo6BYrNxbNpC2B41aFEyJO2MHU8Cj0B0ZCzFfhsnSttXRC0LGZMygj9k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziPrzj4nDhUtqi+PIticDNaxbifXsOJnc94HusBErA8LSE14nL
-	1e52+uz0jxpKBNH+c0TyhuKJ4VPLVq6gKu4EnCidLbmCgwjwNoICSufOBoQctPqm/8oLAlKnahN
-	N4uqjE7W9V2nAO15u851PvCuZvjnPOYc=
-X-Gm-Gg: ASbGncvkLYGaU9eQWbmj2C6xqlwShFfNaMuPOjWMENixF09Fae6nULqSFbQVm7xkIK2
-	OsZnVvC7hz3tTF/BK0LCIr3eRiMe4fDPUGuWWu4DTKEyX3cXcn+ABoxmw7IRGOewrhpVw3grcab
-	zIZb3o/ciVzgiPjuisS/XEmi0GH22j8CNgoYTQ/LGRMxE9j6PERQPa/DU3nuatfCOmSUfmDuYSC
-	hSKHn1bQUgVtHddIPrLjqk+/I9Oc8TBmzD0Ii8IUi2BT83cIPgolyjhZHTwdEul1fOlNDNLotpZ
-	WDRaZVdVCmawl+V/D4T1
-X-Google-Smtp-Source: AGHT+IHdqvyiXZIG2OFdfIS5se4cN2dqc9rVIfSmO3bgaMv9f7oUgu2QkiOcy9N9WlxLlxEKZMv7ZFtncLqKJpUd6es=
-X-Received: by 2002:a53:d151:0:b0:636:d3c3:67e2 with SMTP id
- 956f58d0204a3-63b9a07cb33mr1112628d50.21.1759452825478; Thu, 02 Oct 2025
- 17:53:45 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FFD01A38F9;
+	Fri,  3 Oct 2025 00:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759452992; cv=fail; b=uARViiyDjRb89wxMfUFbX3308OyPlR8drLi64bUyr1T4Xf87igxnfMg8VSeYp2tYl6lOULDN17/0zA0J8F/ll522fmTq9MdNI10vzs+A86hitD0kddD9xHPGE44ESOVt8dMOIhIAqKe/A7+ukf/r2C55ZGhbCaJyn8FQtdx6Nh0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759452992; c=relaxed/simple;
+	bh=03NiR0d6vwVM0P/HaeDCPsIr7kcbTdykSB5805eIheA=;
+	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:References:
+	 In-Reply-To:MIME-Version; b=YZ2kNCtz3kpZczl6n/o752/D78ZYKznEkFlWCf0We6/QwOhWc48s68LNj3rcsIdfDyRuBOQ2erh9oGxFSMdUIJUSyZNBmVo78OXHGuJjHun7b1GQQ+f+MwN/dt7P8NfKaPVprbKTvMWSV+tu+fy6vmIa3knvjdJepww+Y36YOjk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=icg/2HPv; arc=fail smtp.client-ip=52.101.43.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gJkJn9zYJJxYNWaEP0sC0EGH4OJqMZCdCU8uW0w2HXK8Ns7G3k07q91s9Pncw39IWntGwmz+AvVoE8NL+anQ2eRSh5JPhChqlHhRx3OkRAXsrWDwHo+tdUQslRi8X+jxP/jCI3UuKcuc9nDxVk21kNCOXUV3iWUrGQiCKvVNszNq6PsBuVak2AhlsS8/8xAnyB/aafcHePGxNz+Ze4umcxJBGvpHp5ge5YxxquDBGSqL+D+CA0YNWmUwXAzdpUp1shD4frUzk+DsMPEfHS3xsMWXo13349R+uJa13E6HmO90PWYjix7ySqrLFjpMoqKVU6EvcUkPJJvFCM3ZIuZw8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=03NiR0d6vwVM0P/HaeDCPsIr7kcbTdykSB5805eIheA=;
+ b=FYNtDUqmhPJn5GIcHOtbs0jJxnGjOUzBAMT3L2xcfjBUoQQGnfOHZXRvm8MiRHWbgwTfN9TcGNJWbLBodd7jhzULW/djoTkV6KYB3amnw4OPrE4Y2Zqma0Kh+hlXwfGh7Yq8WXhIr5KPm/Rzsu7m0FTDe2UqCAxlSwRei6f9N7P6G8JsYHr1m7KXSqOqq6MDadkWWUNnc/3vaiab4JQbhTLI24c86oibvcwcpOLTHRxGcz50v8D5rckGjXZxL7hes6zS3hFuYlIKu+UM77GP/eiiIdjefSilNy1T+8N+epODGEBqJqEEjj5EcXBF9yxWrf2mzHNMdvecZpw6rVdcZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=03NiR0d6vwVM0P/HaeDCPsIr7kcbTdykSB5805eIheA=;
+ b=icg/2HPvQAMQ+4KIMD/1RBH8lQC1gMaYeso5EexWlGMjKocTBdUZKq6QjUCfWJCdFV1nM5egH6HL2xd0g2UpxnDb48BgbzbKOxBPS+o5+vEhtdg0c1Udq1qJzKzgfuVnJOfNmiUwbX6zB2k3/I8fKDmiBUXd6o1io7An9VxngjmAeqVy/RqjUUrkbzYJUGy/214lP249iAHw6HaSeLQK35G/SJgX5oShBvsewDt1d6/UFVKHHW8UU/iUsIC5YEpmY6lvA/4zzAfoFeTM+7/MSQsq+EKdM1t8L/q0nbu79TtsVra0kbETsx0T1qSRuMIzmNV5qy4pFqEqpQf/zIGdzw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by DS0PR12MB7654.namprd12.prod.outlook.com (2603:10b6:8:11d::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Fri, 3 Oct
+ 2025 00:56:28 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9160.017; Fri, 3 Oct 2025
+ 00:56:27 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 03 Oct 2025 09:56:22 +0900
+Message-Id: <DD8A11VBDFPO.3AP88V5D63JR5@nvidia.com>
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Alistair Popple" <apopple@nvidia.com>, "Alexandre Courbot"
+ <acourbot@nvidia.com>
+Cc: "Benno Lossin" <lossin@kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <dakr@kernel.org>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
+ Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <nouveau@lists.freedesktop.org>
+Subject: Re: [PATCH v3 08/13] gpu: nova-core: Add bindings and accessors for
+ GspSystemInfo
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20250930131648.411720-1-apopple@nvidia.com>
+ <20250930131648.411720-9-apopple@nvidia.com>
+ <DD7VU4239GS2.2MKVFPBFEY1R4@nvidia.com>
+ <pv7bhr5tsbszgql2zoisz4bwanzs75y4wu4lorc3bzgwahhbzk@f22lcgcnqbdj>
+In-Reply-To: <pv7bhr5tsbszgql2zoisz4bwanzs75y4wu4lorc3bzgwahhbzk@f22lcgcnqbdj>
+X-ClientProxiedBy: TYCP286CA0283.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c9::11) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916200751.3999354-1-olvaffe@gmail.com> <cf530254-b5f2-44b6-b49e-9144898d75a7@arm.com>
-In-Reply-To: <cf530254-b5f2-44b6-b49e-9144898d75a7@arm.com>
-From: Chia-I Wu <olvaffe@gmail.com>
-Date: Thu, 2 Oct 2025 17:53:34 -0700
-X-Gm-Features: AS18NWAMUQsGVX85ALNwXjhcZfVyXxJqw58XEv-fAwlcGZnD9yFUHyWgXLbTPQA
-Message-ID: <CAPaKu7RK2dW4LYbCj7ksbNJVst+Yn5aetKhJG0N=EyTY8BhYfw@mail.gmail.com>
-Subject: Re: [PATCH] drm/panthor: add query for calibrated timstamp info
-To: Lukas Zapolskas <lukas.zapolskas@arm.com>
-Cc: nd@arm.com, Boris Brezillon <boris.brezillon@collabora.com>, 
-	Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Grant Likely <grant.likely@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	marcin.slusarz@arm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DS0PR12MB7654:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0052cf3d-325e-4054-3850-08de0217aeb0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TU81VFE3ZEpSMm5oTVp2bnVkTUZnZytSWFFvdmZFN0JjbmFuakU3TnNzN2hO?=
+ =?utf-8?B?ZzJQY0Y4YkUzcHR3bWpuaUxsa2NreFQyQU9KQk1HdTdlMmN2c1VjbkFsckll?=
+ =?utf-8?B?M1o2SGZQRHJpUE1qV0I2ZTc0b21vZmwvWkExeUkybklxTVNYeXlreERjQ1J3?=
+ =?utf-8?B?b2tObnpLazAwWW15R3pHVWZLNTh1VFVaRllkUVd4Q2FWU2FxSCtvRCtqK09K?=
+ =?utf-8?B?V2JOYmlzaXVtcTNZOFlkc1lPaSs5UkVyMTc1bVllOWMzRlI5M0EyNG8rbWhH?=
+ =?utf-8?B?QlhpaWdQTU5WUnlGTHEzMHNCMXZSN0pwdWUyUTlFNWF1Qm5wVHo2YlNLazA3?=
+ =?utf-8?B?M21BWGhWTElJWFBwTHIrMjEwYUJKMW5wWXpTUkFkbGVDTVVxZFdhMTJaOWtM?=
+ =?utf-8?B?RGp0UjB3cFhqVnFBYzlhQzQrV3BWWEF2TVJ1eUY5ZlhEWmE0VHY3Q1dnTVFF?=
+ =?utf-8?B?UUVPbEgySkM1eXVLVXBiQVY3cVJwcytwcDZRcTJHZTFNc0RBZWNvWkVSenpF?=
+ =?utf-8?B?WkdWeWVIaVVlWEVPd2xtNDErU0tJR2RmeVJ1Qkp5TVdjYzBuV2g5dkd4Vk5Q?=
+ =?utf-8?B?Uis3MytybUQxUThJQUFPeVRYd2R0aDkvY1pxZlpaYW9UVjVFZGhYcWdwQzdr?=
+ =?utf-8?B?TXJzK3NDRUMvdU1rRkpob0czQW1NRm9JUE1wSVlYTzAxK3FPVEZmMEE4MXFS?=
+ =?utf-8?B?eXp3ZVh0MHFqOTFObU04R21jQTRRM0JjZ00va0VONHF1TzdZQnJhdEtHSkhk?=
+ =?utf-8?B?SVBlOWtrMGh3Qy9yb3MzSTJqTEJodENCaDh4dWhKS0tmUGkzcWgreEpOSkZE?=
+ =?utf-8?B?czhCVmc3L1F0dHdwREY1b1BzN3oxTGZaM3I5STVJQS9wTkJELy9Ja3hkNHNv?=
+ =?utf-8?B?L2w5WVZpSHFGQkczV3pJNTE2UUg1T0RiSlUyc2VmL01mcGViQ1hOK2x6SGlw?=
+ =?utf-8?B?ZE5MenlUZGFkWitYaFNOQVZMK1UyUWhQNVBIL2lkSVlMUjl6L0JVeS9WMjR4?=
+ =?utf-8?B?WE1VRUd1b2FZUUxjS2U4S1llYmhEUEVuVDBsdEFZTG95MWZKWWFvMEQxVldr?=
+ =?utf-8?B?aTA2eDN1NFh4NXZkeEtRMW5qT3pYU1kxbzg3d2pnNjNyTVorM25LTW5kdTh3?=
+ =?utf-8?B?Tk5uN0QySjVtWC9UL2VmdW5XY01VcFVJQlVrSHlpSTJFK3AxWjBvUmdTSElu?=
+ =?utf-8?B?S0xKT1dTSWx0Nm51aTJQUnJIVHlOS1poL2hsMUx4ejkwZVhKcDdqdklqSDF3?=
+ =?utf-8?B?NnljR1ZMVzUrNWxDcWx6OUp5TWwxUUYvdFU2amJyR3BNVTlwUmZ4dlJuSnJk?=
+ =?utf-8?B?OG81VFBEWTBSYTQzaHNuR3B5WDEzRHJUMGNrRG1OSTFER2dlcm4zNFdFUm5w?=
+ =?utf-8?B?Yy9OV2ZTOHB5Z2pUR0RUWWZCVHB4YlJYMGNKU3NwSldxdXhkUWhMTDVwYXBE?=
+ =?utf-8?B?cUF4b2dCVmVFWkRqei9wSDZ2anFiMzdlcGpEMzhBTXArL3AvcnBKZU9ldnFV?=
+ =?utf-8?B?UGoxUnVOMmN1Qi9kcld4cHZZVEJEaG1mVGlSTmVnTVZIa3Y2S3lvY2piV3k5?=
+ =?utf-8?B?OXdYNmtPam4rb1pHOWZoWWNGQzJ5T1ZIeFBoSHQ0MzQxYzFXMnFueVo5Q0lr?=
+ =?utf-8?B?SWdZclMxL3FCdVN1VDFOSE01YUdzZnZtTExVdWdRTWo2SWZXQzdSK3hZazN6?=
+ =?utf-8?B?Z0taTW9nTnZpaStQMFR1dkN6c2JBcnRGek5YUWdqS3pOQ1JFNXlMRmhNekt3?=
+ =?utf-8?B?b09WRUNsTjN2ZDdiY1VKUGZFSnNWb0NCMkkvTXJrZ1lleEsrWW4xVnlBZks5?=
+ =?utf-8?B?M3NVRXNRWk1JN0M1MmM5THVUVFhibDBMQzdXZHE2Sm8rYllmVmZIVlh3Z0hw?=
+ =?utf-8?B?Y0krdjQraks2anpINXBZc3R4UVNoVFR2RmNiV2kwbXVhTkJlUk5kZ3NyQ0Fz?=
+ =?utf-8?Q?dWmLCE37pZDgbTNpBnBjNKShy3sSTDg2?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aGd3dGpRSWZKNFdwUzdHNElVWkthTW13WXJCZDNleXhUVy9LajFOSGFXNVVn?=
+ =?utf-8?B?SGJkcDZhbDRGTTF1NGV1UmZXbVJ1VjJJditkeWxabjUwZ3FESERKa2NZZ0lH?=
+ =?utf-8?B?MndrRzJUaEMzekl5d1ZjNlowWFp3anlHSXJGOHVoelBVc3JhWmFHRjIzbzJj?=
+ =?utf-8?B?UCtEcjdMMkRncmJ2WjF4RTRiQjdJc3JwR2R0M0hFZDV5SlUzbHp1c0hPS2ZL?=
+ =?utf-8?B?Z2hZbjZyd09yYmdSTUpaai9halRNSmo5ZTg3SWJoTktUMnU5eWZvTjJLWlF2?=
+ =?utf-8?B?ejlBcURlZWw3NUlBYTU0dUxJRUlzSWcwMzFQcmt5RnZvNGxobEMyN0NRMk56?=
+ =?utf-8?B?alR1VlhvaTFkL3FCYUN6MkxRaEFHSHRacUF4aDBrUjVBL2Y2RnRWMjFtM1Zi?=
+ =?utf-8?B?TTNkVXA1S3BqUEQ3dVExYjU4RWwxVFk0YmdPcUFjOWM3UGt1MnIrM29MRlIz?=
+ =?utf-8?B?Qk05YWcxdmFVY0o5WWtUaHdpbXFMeVhMYXpvdnd1ZXdhVDRoSEF3ZWk0UXZQ?=
+ =?utf-8?B?Z1pRa2ZiU2hQVWFzSWZkZmFnSzh3a3Vab3FuR216dHM1eGRFeUF1WVluSkd4?=
+ =?utf-8?B?alhUNGswZ2dOT0E5cThrWHhCbWFmU3hlQ0tSSWVMcFNjU0k1eUl4T054ODVS?=
+ =?utf-8?B?L1VremU3NG5RTnVoRFRZNyswNEV2OFlLUklNKzBSN2xsN1k5MHV1dVE4Kzk2?=
+ =?utf-8?B?eDRlTTNacFRBT2ZrWlZObG5XYWdzUkxwSW5OTmw1NnlYRm44bDdaN2xCQ0hL?=
+ =?utf-8?B?dWw2UDJab0I3UHAyaFZDdzJBcDlMUERUS0piaFNHcFRTUm1mclVTbmo2SDNr?=
+ =?utf-8?B?Zy9ZQ2kzKzNmcFgzVnZkaVVrcHVpb21tRHhudHNiTW04NkNNTnJaSFVKSUNF?=
+ =?utf-8?B?Um5WNHRqSkJzaDlUa0RnSVk3SGJ0czZqRzhEbXVRaXBpZVZMZ0lKWU1uWEw0?=
+ =?utf-8?B?MWlaamNESmNNZnNOb092WFZ3NjZPeTh6em9nTG13cnBnQUx2Z2tYT2E5MVA0?=
+ =?utf-8?B?ZUJaOFNvN2JuS2l4dXluQ3padTJhS3dtcERrUlZkWUl5QzVBTUhSMnM4MHlp?=
+ =?utf-8?B?eGh5ZFgrdVdDN1RNcTlnaEFPV1U1SEZCd2w0M0hZRGxaTlZ5UVRCbzdHRXNx?=
+ =?utf-8?B?R2VBcWY3RG53bTRXOTViSkdXcGpkdCswRklaVHo0YlJncE5pM1p0a2MzZG1C?=
+ =?utf-8?B?TllnRXh3c2ROLytLd0FmSCtWT25OVzZYcDJEem5RWUtUbEVZeXZuVk83ampO?=
+ =?utf-8?B?bjlrYTFuVFJUTWl0M253UTNmTHVQazBGdTQ3RXI3alBFN05oSHpkbGdad3Vv?=
+ =?utf-8?B?bzJpdmpad056MkNIczFjOVk3VW1rYUJaTHF5M0VQcTBWSmsrQjFDYVlmRng5?=
+ =?utf-8?B?VzNoQUpxZTFKWHBnTDZRMUJoQitOd0d4MHVHdU1mV2o2eW1mQWRnSi9UNXlI?=
+ =?utf-8?B?NU92NWxNbTV5WE8zUVJXbjl4WDhlUVpjSTRwRHM1UC9scGFvSGFET2svaGpo?=
+ =?utf-8?B?T3Rud2l5aTUwL1hoM1Iyc2pvK0lkbTJxNzBGY1NPeDc0Y3l6Q1RyVTY4TUho?=
+ =?utf-8?B?NjNGZXFEUHZCczhDZ1hBRzBGaGsvZ3BkbGxSL2dqZUMvZlRuZEhqTit6T2Y4?=
+ =?utf-8?B?M21sTDZNTFlSMG5PTjR2ZHMzamFoYUJiQjlSTEEySlZCMlNVZGp2ejhoTWdH?=
+ =?utf-8?B?Y2hBbXhYaVUrTStDWUs3cnVIU1pXdkVnWnRmRjFvajZmV3BTWTVwUjVPQ2xF?=
+ =?utf-8?B?dzUxcE5wdWJPZGNOa2xsVmxLOTJtek1zODV0aG1sam04YTVRbkNUeG1FYndC?=
+ =?utf-8?B?dnZvaHQ5UHNVQzJhVElQbllRTUFVSjFYem1lUEx6WUxWWVA1bkI2TXZ1Rytw?=
+ =?utf-8?B?Z3M1bkpaSWdqRVg0VjZESzdFcmwzTUtETE1VdTVUeWlVK0ZtOHZNY1VzeU1J?=
+ =?utf-8?B?NXRuUVRvRjQ4SGFHa2ZsNnVJdjFWZFZXWkE4SWQyNVUxdklsSnV3MzNFcnZG?=
+ =?utf-8?B?Q0NSSnA0c2RCWEVnN3JHV0xGaEFaTVV1Sldrcy9qeHNyNkJvandvNFJiVmdz?=
+ =?utf-8?B?d002RGJJZHM2ZzFFRStOQW91eVhjZmN0RTN4OTBhQnR1UjdwNytOcEtwZzhy?=
+ =?utf-8?B?TExkQ2NOdGdOaHdDYzhOZmFxNEhCODk1MVZJS0NDQXdiOXkrQVNXbnlsY3Fk?=
+ =?utf-8?Q?jQGtDA2VKB8PkVA7q57tpY7NTCP/J8uzpvZBkKUIm7TE?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0052cf3d-325e-4054-3850-08de0217aeb0
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2025 00:56:27.7651
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /eOcc5KATr6aFKrSnyv9GIRXEQ1HEtT9ue2cXvd9EEv9T6+TmoCl61vbSayiDDcPEXPM2eq2iMHVvb9ayG/ItA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7654
 
-On Fri, Sep 26, 2025 at 3:41=E2=80=AFAM Lukas Zapolskas <lukas.zapolskas@ar=
-m.com> wrote:
+On Fri Oct 3, 2025 at 8:38 AM JST, Alistair Popple wrote:
+> On 2025-10-02 at 23:49 +1000, Alexandre Courbot <acourbot@nvidia.com> wro=
+te...
+>> Hi Alistair, (+Benno as this concerns the `init!` macros)
+>>=20
+>> On Tue Sep 30, 2025 at 10:16 PM JST, Alistair Popple wrote:
+>> > Adds bindings and an in-place initialiser for the GspSystemInfo struct=
+.
+>> >
+>> > Signed-off-by: Alistair Popple <apopple@nvidia.com>
+>> >
+>> > ---
+>> >
+>> > It would be good to move to using the `init!` macros at some point, bu=
+t
+>> > I couldn't figure out how to make that work to initialise an enum rath=
+er
+>> > than a struct as is required for the transparent representation.
+>>=20
+>> Indeed we have to jump through a few (minor) hoops.
+>>=20
+>> First the `init!` macros do not seem to support tuple structs. They
+>> match a `{` after the type name, which is not present in
+>> `GspSystemInfo`. By turning it into a regular struct with a single
+>> field, we can overcome this, and it doesn't affect the layout the
+>> `#[repr(transparent)]` can still be used.
 >
-> Hello Chia-I,
->
-[...]
-> > +     switch (out->cpu_clockid) {
-> > +     case CLOCK_MONOTONIC:
-> > +             cpu_timestamp =3D ktime_get_ns;
-> > +             break;
-> > +     case CLOCK_MONOTONIC_RAW:
-> > +             cpu_timestamp =3D ktime_get_raw_ns;
-> > +             break;
-> > +     case CLOCK_REALTIME:
-> > +             cpu_timestamp =3D ktime_get_real_ns;
-> > +             break;
-> > +     case CLOCK_BOOTTIME:
-> > +             cpu_timestamp =3D ktime_get_boottime_ns;
-> > +             break;
-> > +     case CLOCK_TAI:
-> > +             cpu_timestamp =3D ktime_get_clocktai_ns;
-> > +             break;
->
-> Out of interest, what is the use-case for the REALTIME, BOOTTIME and TAI =
-clocks? Looking at
-> VK_KHR_calibrated_timestamps, it seems that only MONOTONIC and MONOTONIC_=
-RAW are exposed directly.
-> I worry that providing the other clocks may make it easier for accidental=
-ly querying timestamps that
-> can't be correlated with driver state. A recent Mesa change aligned PanVK=
- Perfetto instrumentation on
-> MONOTONIC_RAW [1], and the performance counter patches I've proposed also=
- use MONOTONIC_RAW
-> as the only clock source.
-I followed drm_xe_query_engine_cycles without giving much thought. As
-long as we leave room for future extension, we can certainly only
-allow those required by vulkan.
+> I was thinking we should fix the `init!` macro to support tuple structs. =
+Is
+> there some fundamental reason `init!` couldn't be modified to support tup=
+le
+> structs? It seems like it would be nicer to fix that limitation rather th=
+an work
+> around it here.
+
+I took a look at it and quickly got lost in the macros's internals. :)
+Let's see what Benno has to say about this. In the meantime, using a
+single member is just as valid a constructs as a tuple struct for us.
 
