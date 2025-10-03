@@ -1,176 +1,141 @@
-Return-Path: <linux-kernel+bounces-841581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A5BFBB7BE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:29:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3685BB7BE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0B5C14E20D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:29:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9499A19C51E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510292DA77E;
-	Fri,  3 Oct 2025 17:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A442D8DAF;
+	Fri,  3 Oct 2025 17:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hu7KTEEJ"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b8VJeqEq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5F823AB8B
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 17:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D25F19D880;
+	Fri,  3 Oct 2025 17:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759512574; cv=none; b=iwxIPNpcZ/xsj/B7dC9ZOfDZVyBf3FJru54mnlmbo/camnBfGmPiOmM0sM0vF+H0bU05CBmcarK6z1SxlKqe3OC0cUR7dKM62Y+OgfKbpYdw3VwWtKIaOiNxTFgTYTGfig6fQgplR7kN83WtlowdyNMKNzDUo0bVP+9U8OLHN7w=
+	t=1759512627; cv=none; b=F/doD1TK/aWtPfTkd2tOkOz6pucfpF6soRXMlzkGNlrX9goboADmEktyZIAAUVeTEsfjxDeaIUT04mJ3PgEt3VoF1Czw0PUbbF6SvCcMbJPdQsWA4Hyy/Dc8bZ5uh/lv/ZHpaI4JS4pucuuufwQnwlEsViSYCosoZA4AEIYcjlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759512574; c=relaxed/simple;
-	bh=RhQt3A0QZViGN2CSqHdumq6jNfjv4pKYcChZLqTW3r8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kQC+Q1pFBK2iM7jf7OQ1Wt5WE0EXQcMlom+MaHzIQjX2IdGEwMqzYrPoCr2ISoa27EkmhszbzlZo8KHdSBT5kR8Hf2XwPD3oEhYO4hfYAOVBHnNGC3D1oMcgEYMaq+9fwfRbXLvsCrBJTcziHYWWN/ev9gtsvT4O29fAscC9Gz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hu7KTEEJ; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b4755f37c3eso2168681a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 10:29:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759512571; x=1760117371; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9rOkph1D+DZvjutjfQEMOzwydkjaUX0rRXkOVVOEXEU=;
-        b=hu7KTEEJPCXAh/DZ3zexB8KeEmoC0FT9dcWpDqpJk5/5QoIFi5ZQY0+xYLj4oyTQm4
-         j9ymynrr2Ooahj2PUHMwevox0Ui8lWEIQoIPum1pZoh2VBKmac6UxREvSLRp8yrUFB0D
-         C49alKIiQn9DJ3vD48spKU91zEhjUHKt1gkjG6wC0POUxWt4l+g44B1v8cDKBhqLBkya
-         S9no3YhMQiL72Fka1BDvuQgVv/jKOJE5SNfMKe4o0nbCFM2CKK1bSrkKFZwBMwkMMujq
-         OxKoQc/zVA6P7Fw7wecEGDnO6yYPtEIWiQQyPeouuLCHBO9bCxWStndzpMRq7n1BRdTm
-         PNMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759512571; x=1760117371;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9rOkph1D+DZvjutjfQEMOzwydkjaUX0rRXkOVVOEXEU=;
-        b=Q+jHETK5GPhLZgvfdD5dfJe0LReNAo5dSggNO6IMW5uloBo9X3IwQ7ZhVQwn6uIKZX
-         8jV5ned+IoGdaZyvBCC6ujCmAenzdzl4YVGCUMhWZeRkJ2n/CbpKMW81nLj/g8vflOYB
-         bRzvH/I0/sB1sY7ThhNi/fupW0r+NNyMUElK00sDsWY/V8pa8EWqi5D8hhRjmaoyRLBA
-         K8GwvY0mIvMKcIwi0n88Q4oQCHbdzaF0h86qGwSLKxSoPm8xNv6WGMcdv4GZr/vUXedH
-         blYW3l7VzxOEiBUcHsVDErBFQ+92fnw0I3rRTPw/dGLfPawO75rWZgEcSkgFaIznKtd7
-         QtoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWRoxc1YA2pxY8meCfp5qfV5djb55wux46+grJ2px5BSMxi+vmxp7j9VZJ7NUiC11ZK8AR2od5MV4dETj4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOOp2UhXwRIocSoyHskqk272HNGPPLp/1hl0s10TYto4tSO2fB
-	0h3UArLh//oA5NbdnTp41UAqZMMl5pF8IYfB9jOCj1gz54HJB/FOd5reRnWbqitZNtioBNGzzay
-	CQRhwv6MxhXREtLbwMOtS/ctJtJZcuSY=
-X-Gm-Gg: ASbGncvXmbROZclE1SgBXv6DXuQzoCzTfhW9hB3kbxLSemeXH3Yz3riNaO9EVsAFudq
-	H9Tsud+5cGdPWrMJlOOSEoPMpD7NtU2eHjXadXSKFFfZleF8QfoEiaxXaO+e72hMviOOvksXapY
-	ggEhNz4kElbq63LYOtiyOcTn3sJZu4blVCCW7aOUoFqWJ2DxQsz07b08C1t248eNHerApdb88ir
-	klVKZZ4OCPJnFE6IItA2B1Pyro3qMabALvR2icoGhT+ylgj61qOih8D/XfeVk4+fV6iGBp0PSW8
-	8fJIg9H4wyJFhExtJusT69cnLkI=
-X-Google-Smtp-Source: AGHT+IEAlrhwJ6J4219dJbcSthOxyufaJhPx4SqaXlVUBk+MFOifd2vG6y0efRRgy5bhHizk3MDd3IYrgH99gFXvydM=
-X-Received: by 2002:a17:902:fc87:b0:26e:49e3:55f1 with SMTP id
- d9443c01a7336-28e9a5ec5d3mr46365295ad.18.1759512571263; Fri, 03 Oct 2025
- 10:29:31 -0700 (PDT)
+	s=arc-20240116; t=1759512627; c=relaxed/simple;
+	bh=bKcFHluIfrETRlHficKsjNssD6yv+m3BNXXEAZK5oWg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V4c6kU0Re0ThV1VNyAXIdzt9um/KOmMtkYEdG7nSdsiDUEJ2XzWl5xKVE7bCxanHZ2fIv52qhZcMgIalRon9Q5dfJFkW8DLXRghoQ7CjNAWnmLaGyn4Jv6HqGhilSo1oieCX+7crhOAXdWtc3MCdFoqmW47h4O7S5JXNge2YrAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b8VJeqEq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CECD7C4CEFB;
+	Fri,  3 Oct 2025 17:30:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759512627;
+	bh=bKcFHluIfrETRlHficKsjNssD6yv+m3BNXXEAZK5oWg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b8VJeqEqJRiQImLzV8sXGLQCh9HRup33B8JbRgUXQprFKzjo/JGjhFemxIWGFx0WY
+	 n/arZulzWai21cCRYSBti7yjQre8olHYzBiQ3GaPIWpDDMJNbpWMWJiWNJDxuj13hA
+	 6MGc6+s60vcQTSdABQr+P6LnAI/Tfxn+Ypnch9mlOnWNqdifeAMsdEL8x9tGVefljT
+	 Nmnd2HMCIHkkgS/MTj+Q8IpmlYMzWqdyXUPPt//++e7v5AdcP9DHjfCzydXmuQY6MK
+	 E/BbT6XMQUZv5uvFkOgSzdyDFr/gQ7IOyXrJTK/Plh8uE2Yrny8d50Ip0EV+fKNdcl
+	 BmVpRQX1I5lXQ==
+Date: Fri, 3 Oct 2025 17:30:25 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+Cc: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	prapal@linux.microsoft.com, easwar.hariharan@linux.microsoft.com,
+	tiala@microsoft.com, anirudh@anirudhrb.com,
+	paekkaladevi@linux.microsoft.com, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com
+Subject: Re: [PATCH v4 0/5] mshv: Fixes for stats and vp state page mappings
+Message-ID: <20251003173025.GA1161403@liuwe-devbox-debian-v2.local>
+References: <1758903795-18636-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <aNcd60fpoI1b6LUT@skinsburskii.localdomain>
+ <96009fb8-0ad6-4e5b-8656-af78874a5605@linux.microsoft.com>
+ <aN_6bST3WmeTG3lv@skinsburskii.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925025517.815391-1-kriish.sharma2006@gmail.com> <aOAAWZ5DsnbqPxIA@google.com>
-In-Reply-To: <aOAAWZ5DsnbqPxIA@google.com>
-From: Kriish Sharma <kriish.sharma2006@gmail.com>
-Date: Fri, 3 Oct 2025 22:59:19 +0530
-X-Gm-Features: AS18NWBRo5YkNeJ9RdrCx1X8TiiALnzON9LpGEj22HRHO0Hv05MU0aVlcZjlY1s
-Message-ID: <CAL4kbRMhqy1AHZC78kSZ7owi4qqAZXqMzredacLLjYdMGdVDRA@mail.gmail.com>
-Subject: Re: [PATCH] docs: android: Fix missing kernel-doc entries in binder.c
-To: Carlos Llamas <cmllamas@google.com>
-Cc: gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com, 
-	maco@android.com, joelagnelf@nvidia.com, brauner@kernel.org, 
-	surenb@google.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aN_6bST3WmeTG3lv@skinsburskii.localdomain>
 
-Hi Carlos,
+On Fri, Oct 03, 2025 at 09:31:41AM -0700, Stanislav Kinsburskii wrote:
+> On Mon, Sep 29, 2025 at 11:19:51AM -0700, Nuno Das Neves wrote:
+> > On 9/26/2025 4:12 PM, Stanislav Kinsburskii wrote:
+> > > On Fri, Sep 26, 2025 at 09:23:10AM -0700, Nuno Das Neves wrote:
+> > >> There are some differences in how L1VH partitions must map stats and vp
+> > >> state pages, some of which are due to differences across hypervisor
+> > >> versions. Detect and handle these cases.
+> > >>
+> > > 
+> > > I'm not sure that support for older and actully broken versions on
+> > > hypervisor need to be usptreamed, as these versions will go away sooner
+> > > or later and this support will become dead weight.
+> > > 
+> > As far as I know, these changes are relevant for shipped versions of the
+> > hypervisor - they are not 'broken' except in some very specific cases
+> > (live migration on L1VH, I think?)
+> > 
+> 
+> I'm not sure I understand what "shipped version" of hypervisor actually
+> is.
+> As of today, the hypervisor is close source and the only product where
+> it's used is Azure. In Azure, the older versions of hypervisor are
+> replaced with newer on regular basis.
+> 
+> > The hypervisor team added a feature bit for these changes so that both old
+> > and new versions of these APIs can be supported.
+> > 
+> > > I think we should upstrem only the changes needed for the new versiong
+> > > of hypervisors instead and carry legacy support out of tree until it
+> > > becomes obsoleted.
+> > > 
+> > Which version do you suggest to be the cutoff?
+> > 
+> > I'd prefer to support as many versions of the hypervisor as we can, as
+> > long as they are at all relevant. We can remove the support later.
+> > Removing prematurely just creates friction. Inevitably some users will
+> > find themselves running on an older hypervisor and then it just fails
+> > with a cryptic error. This includes myself, since I test L1VH on Azure
+> > which typically has older hypervisor versions.
+> > 
+> 
+> Given that these changes are expected to land to a newly released
+> kernel, it will take time until this kernel gets to production. At that
+> moment it's highly likley that the older versions of hypervisor you are
+> trying to support here will be gone for good.
 
-Thanks for the feedback. I=E2=80=99ll update the patch with the correct
-subject, align @thread, and reorder it after @proc. Will post v2 soon.
+No. This is not 100% certain. The schedule is outside of our control.
+Who knows if there is a specialized Azure cluster that is not updated
+for some reason.
 
-Best,
-Kriish
+Interested parties have already started experimenting with this new
+setup. I just point them to the upstream tree whenever I can.
 
-On Fri, Oct 3, 2025 at 10:27=E2=80=AFPM Carlos Llamas <cmllamas@google.com>=
- wrote:
->
-> On Thu, Sep 25, 2025 at 02:55:17AM +0000, Kriish Sharma wrote:
-> > Fix several kernel-doc warnings in `drivers/android/binder.c` caused by
-> > undocumented struct members and function parameters.
-> >
-> > In particular, add missing documentation for the `@thread` parameter in
-> > binder_free_buf_locked().
-> >
-> > Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
-> > ---
-> >  drivers/android/binder.c | 17 +++++++++--------
-> >  1 file changed, 9 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-> > index 312b462e349d..d30d27bfc634 100644
-> > --- a/drivers/android/binder.c
-> > +++ b/drivers/android/binder.c
-> > @@ -2417,10 +2417,10 @@ static int binder_translate_fd(u32 fd, binder_s=
-ize_t fd_offset,
-> >
-> >  /**
-> >   * struct binder_ptr_fixup - data to be fixed-up in target buffer
-> > - * @offset   offset in target buffer to fixup
-> > - * @skip_size        bytes to skip in copy (fixup will be written late=
-r)
-> > - * @fixup_data       data to write at fixup offset
-> > - * @node     list node
-> > + * @offset:  offset in target buffer to fixup
-> > + * @skip_size:       bytes to skip in copy (fixup will be written late=
-r)
-> > + * @fixup_data:      data to write at fixup offset
-> > + * @node:    list node
-> >   *
-> >   * This is used for the pointer fixup list (pf) which is created and c=
-onsumed
-> >   * during binder_transaction() and is only accessed locally. No
-> > @@ -2437,10 +2437,10 @@ struct binder_ptr_fixup {
-> >
-> >  /**
-> >   * struct binder_sg_copy - scatter-gather data to be copied
-> > - * @offset           offset in target buffer
-> > - * @sender_uaddr     user address in source buffer
-> > - * @length           bytes to copy
-> > - * @node             list node
-> > + * @offset:          offset in target buffer
-> > + * @sender_uaddr:    user address in source buffer
-> > + * @length:          bytes to copy
-> > + * @node:            list node
-> >   *
-> >   * This is used for the sg copy list (sgc) which is created and consum=
-ed
-> >   * during binder_transaction() and is only accessed locally. No
-> > @@ -3997,6 +3997,7 @@ binder_freeze_notification_done(struct binder_pro=
-c *proc,
-> >   * @proc:    binder proc that owns buffer
-> >   * @buffer:  buffer to be freed
-> >   * @is_failure:      failed to send transaction
-> > + * @thread: binder thread performing the buffer release
->
-> This is missing the alignment that other members have. Also, please keep
-> the same order of the arguments, so @thread should go after @proc.
->
-> >   *
-> >   * If buffer for an async transaction, enqueue the next async
-> >   * transaction from the node.
-> > --
-> > 2.34.1
-> >
->
-> BTW, your subject is "docs: android:" which makes me think this is part
-> of Documentation/. Please just use "binder:" instead.
->
+> Even if they won't be gone, they will be obsoleted and intended to be
+> replaced which effecitively makes this support of older versions a
+> dead weight, which - if needed to be caried - is cleaner to keep in house
+> and drop when apporiate than keeping in the upstream code base.
+> 
+
+While the maintenance burden argument generally applies, the burden in
+this case is not big. It is totally fine to have the code.
+
+Wei
+
 > Thanks,
-> Carlos Llamas
+> Stas
+> 
+> > Nuno
+> > 
+> > > Thanks,
+> > > Stanislav
+> > > 
+> > > 
 
