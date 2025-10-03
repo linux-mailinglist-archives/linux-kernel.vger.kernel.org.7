@@ -1,155 +1,198 @@
-Return-Path: <linux-kernel+bounces-841393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8572CBB7302
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:33:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 218E7BB7311
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D30819E7E92
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:33:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B90F419E4792
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD7423AB8D;
-	Fri,  3 Oct 2025 14:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6D9205E26;
+	Fri,  3 Oct 2025 14:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fgtkU7tp"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mwBoM6R9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3YM1fHvm";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mwBoM6R9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3YM1fHvm"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021B44C6C
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 14:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13567139E
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 14:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759501983; cv=none; b=nw7zlPqIOmIVnct+VYY5KVomksX8XRjc5OtRt7PBnGA29Bx4TLNXaQpIkfp5VvZkkOh9ZtrhynPK2gNSfV1Lk+Vh45q5P3Fl/Uv5Nctdr+0uPSfWPDTFEoh0z1x+6U/6Ic1uEBVef95UGtKzp3at7C4MMVrXV4e4RPJuzgIoqc0=
+	t=1759502110; cv=none; b=gXB9Chd6I26QOg0/n8lvjg/0NstS+1VnBZ+VEmmZBNNE9vt3d19XRR22UW9zY1LU4L+HsZwNWYSa+/EIkWJQ6nqQswMvsGAsUcAVr/OBeZYH8SJKRK636Sg7m13VWoOcqonRvly74r476LveYhEgHfVyOGxDlJmf51pj5WJVY+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759501983; c=relaxed/simple;
-	bh=ArI0GMic8uk/1kAkM79WN6gznjdosKe4PSqQZ8k9PK0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=euwQ71+j9iknTCmaFmEJqlIoa/vrvktSZiOGy506K8kQHyTpB7WGDkRdnewqiGLEeAbiFDHI3WyJ21+2J+LHsL/Bo474aV7Csiow8AeRLzxlmRTYrEo5UYNP1HTjb0lpf3GphIASvznQ7TXq9kwu72BArM5Rk5HWtRd3csoNYFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fgtkU7tp; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-3737d09d123so25397571fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 07:32:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759501978; x=1760106778; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1mxBl+91XREs3rrt+Mm+HGe169ZpfgbUuMF9IKmnb3I=;
-        b=fgtkU7tp8t9FJx+n6MdmpSaI96wKnMB946Ia6juEpMapqFaiDzBKU6Myu/l99TPONl
-         X5NzYAznh9OzpsvyXuK+O8vHNGlTTUQ1WjUPFWSSi1o3O4pVptvRrU7M0ADp7xg313qo
-         Go50Y9Q+75bf4JbHAzc72ujOQu5a5jJUpSrzrR3PA09KstyJbTEkjzZNOvf5fBxYqROX
-         5v8IYWSutFofAk1ESXC42mRAIHRn3kXhGopqySi46gJwiXHBTy6/rvHRwNdFwxLx1PN+
-         M4zyU0ka9hzeLELILZOgUcgvH3jnrvBJJn/8HxfwzfpX0Iloz7Z9St9zi8x8iRLHF+7d
-         r6Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759501978; x=1760106778;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1mxBl+91XREs3rrt+Mm+HGe169ZpfgbUuMF9IKmnb3I=;
-        b=cjZGhWlPYJwPk2jtz5Q2R1j1mRBaxqIzBHolPUuV1U4fcVu+qxu+g4qC2VAD5dc81e
-         mQbIHHlUovo/Z5/0prDI4XWDTT+y3MF75B81OmFDW+pcz/uMp6kddAkmici8IotXbSaE
-         KJTC+A3HqtwlnOHb30MHozGFUgBDRfVR1wRYNc6nZeRumokzAeHnNVACBSCbi6sJ+0KU
-         lGuomoRNw/qCXZxt9bsZ0SbFSTjjcBa060MP+sgq7KnfFZAEzhUeihIbEzxkoYdlaBSn
-         KaGbp7BTFtKHWUxmgtdQpcKu4X41kb9Zl3flOG7GJAcbaM0GND2WUAU2QGBLUxTBXk9P
-         u48Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXA/9xufcl7qE6P4OA0SwsyseUpsMyXseGB9I2d6Z8RwcFv1T3GPrePEibpbGl1NGV9T5wdmKc2rF25JQ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywuqn4yVLcT6acH4e6oYUm2i86iN2+tRhDaia79mRY/7rp+uTAz
-	f3lR67JZcLPD/+MMsSaDjsjxVE5aWtiXN19HqGWQQVsjLpGnx8mgofY2w9pV7Qe0LN0pR9EwVeF
-	h/tC3TwtPqxFnCd+f4aanRKUGHsc3jEc=
-X-Gm-Gg: ASbGnctQ/wJ3fKIZX8beW3OaKz8WfcLhCvFWJwVIEeq6UVDFR4X4wYtdnVUhwm23a3T
-	uPidrwvdNt/iD5BbFg0813gQ1eOWspzELK5EfY1Qazg3RSmp8T9a36BBm0fvty9RpvCp9VY6vAZ
-	zdQzsO+1KvoZO/M1W+Hi+CckNlgssqo//dy0DGncviVO7GTcWCDFRaZhbXtXYKudrvb3odZggk6
-	YR9Ll0M+bupmenb5hcL2kzKBa/tcJGtlCfINlIP
-X-Google-Smtp-Source: AGHT+IHMEYf9LUvT+7M4GPywBvEmEbLwMBFLFIBedNHzqtzmaPYWYwMrkMOiqneX0J3Yyd6PeW5sBlD7r5kNWSSHALo=
-X-Received: by 2002:a05:651c:a07:b0:372:950f:2aff with SMTP id
- 38308e7fff4ca-374c37eb5d7mr10596021fa.27.1759501977328; Fri, 03 Oct 2025
- 07:32:57 -0700 (PDT)
+	s=arc-20240116; t=1759502110; c=relaxed/simple;
+	bh=JwCjEy9JFwSUs/AKLizBo5+UkrmNp+OQevdl0+GmqKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RrnwQDI732zRZlCPdo8Ea090x8Bs7oqMAPJ40tovFQVeiwB+A7Mz/TUaGk4lVeLkXnK30fwZkHbWDbSm0Tc3aDVxYXoR0TwxR8C5C46kmvLiWnqb9saS3skkqWY5uTu1tmW5yShLpz+eMaJXRFP7eH7ccyXUUCeNjAkgifFNXso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mwBoM6R9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3YM1fHvm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mwBoM6R9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3YM1fHvm; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4187E3376C;
+	Fri,  3 Oct 2025 14:35:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759502104;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wJjJnTWacdwBQsFFJOl7NLJxzUidxNMCN27q3O8Qa7U=;
+	b=mwBoM6R9lTGtk7VMu8kayIyLRpWEIkcmoBREmQszgT1pgPW5qoaGv4dIzduaZ8NMYkSSao
+	C+viFm50cAqYfkNKnlaessitUvh963P42Dlqx42lyIEJCI2QbzFlrESWtZcS061EpGHTW5
+	q96qF2e+6cvBKsSKoYzgxdhn+CGvMjI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759502104;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wJjJnTWacdwBQsFFJOl7NLJxzUidxNMCN27q3O8Qa7U=;
+	b=3YM1fHvmtUCgYliapARZ4As4S1HlMaTQAzcXfXqqf/GDoNYxjLOmKl5vy6RAUlR+KJlKtn
+	0Z7vU70xtlnOTsBQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=mwBoM6R9;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=3YM1fHvm
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759502104;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wJjJnTWacdwBQsFFJOl7NLJxzUidxNMCN27q3O8Qa7U=;
+	b=mwBoM6R9lTGtk7VMu8kayIyLRpWEIkcmoBREmQszgT1pgPW5qoaGv4dIzduaZ8NMYkSSao
+	C+viFm50cAqYfkNKnlaessitUvh963P42Dlqx42lyIEJCI2QbzFlrESWtZcS061EpGHTW5
+	q96qF2e+6cvBKsSKoYzgxdhn+CGvMjI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759502104;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wJjJnTWacdwBQsFFJOl7NLJxzUidxNMCN27q3O8Qa7U=;
+	b=3YM1fHvmtUCgYliapARZ4As4S1HlMaTQAzcXfXqqf/GDoNYxjLOmKl5vy6RAUlR+KJlKtn
+	0Z7vU70xtlnOTsBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2AAB313AAD;
+	Fri,  3 Oct 2025 14:35:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Xv0uChjf32gsVwAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Fri, 03 Oct 2025 14:35:04 +0000
+Date: Fri, 3 Oct 2025 16:35:02 +0200
+From: David Sterba <dsterba@suse.cz>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] btrfs: Avoid -Wflex-array-member-not-at-end warning
+Message-ID: <20251003143502.GJ4052@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <aN_Zeo7JH9nogwwq@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001183320.83221-1-ariel.dalessandro@collabora.com>
- <175943240204.235529.17735630695826458855.robh@kernel.org>
- <CABBYNZKSFCes1ag0oiEptKpifb=gqLt1LQ+mdvF8tYRj8uDDuQ@mail.gmail.com> <CAL_Jsq+Y6uuyiRo+UV-nz+TyjQzxx4H12auHHy6RdsLtThefhA@mail.gmail.com>
-In-Reply-To: <CAL_Jsq+Y6uuyiRo+UV-nz+TyjQzxx4H12auHHy6RdsLtThefhA@mail.gmail.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Fri, 3 Oct 2025 10:32:44 -0400
-X-Gm-Features: AS18NWAxN1IhfgHRDQEAVNRk-gv2qRra_zfz_DZsOprYcJI8wwK8KzxwPe_vG4Y
-Message-ID: <CABBYNZKxGNXS2m7_VAf1d_Ci3uW4xG2NamXZ0UVaHvKvHi07Jg@mail.gmail.com>
-Subject: Re: [PATCH v3] dt-bindings: net: Convert Marvell 8897/8997 bindings
- to DT schema
-To: Rob Herring <robh@kernel.org>
-Cc: "Ariel D'Alessandro" <ariel.dalessandro@collabora.com>, andrew+netdev@lunn.ch, 
-	conor+dt@kernel.org, kernel@collabora.com, krzk+dt@kernel.org, 
-	angelogioacchino.delregno@collabora.com, kuba@kernel.org, 
-	devicetree@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
-	davem@davemloft.net, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, edumazet@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aN_Zeo7JH9nogwwq@kspp>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:mid,suse.cz:dkim,suse.cz:replyto]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 4187E3376C
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.21
 
-Hi Rob,
+On Fri, Oct 03, 2025 at 03:11:06PM +0100, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
+> 
+> Move the conflicting declaration to the end of the corresponding
+> structure. Notice that `struct fs_path` is a flexible structure,
+> this is a structure that contains a flexible-array member (`char
+> inline_buf[];` in this case).
 
-On Fri, Oct 3, 2025 at 9:38=E2=80=AFAM Rob Herring <robh@kernel.org> wrote:
->
-> On Thu, Oct 2, 2025 at 2:18=E2=80=AFPM Luiz Augusto von Dentz
-> <luiz.dentz@gmail.com> wrote:
-> >
-> > Hi,
-> >
-> > On Thu, Oct 2, 2025 at 3:14=E2=80=AFPM Rob Herring (Arm) <robh@kernel.o=
-rg> wrote:
-> > >
-> > >
-> > > On Wed, 01 Oct 2025 15:33:20 -0300, Ariel D'Alessandro wrote:
-> > > > Convert the existing text-based DT bindings for Marvell 8897/8997
-> > > > (sd8897/sd8997) bluetooth devices controller to a DT schema.
-> > > >
-> > > > While here, bindings for "usb1286,204e" (USB interface) are dropped=
- from
-> > > > the DT   schema definition as these are currently documented in fil=
-e [0].
-> > > >
-> > > > [0] Documentation/devicetree/bindings/net/btusb.txt
-> > > >
-> > > > Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-> > > > ---
-> > > >  .../net/bluetooth/marvell,sd8897-bt.yaml      | 79 +++++++++++++++=
-+++
-> > > >  .../devicetree/bindings/net/btusb.txt         |  2 +-
-> > > >  .../bindings/net/marvell-bt-8xxx.txt          | 83 ---------------=
-----
-> > > >  3 files changed, 80 insertions(+), 84 deletions(-)
-> > > >  create mode 100644 Documentation/devicetree/bindings/net/bluetooth=
-/marvell,sd8897-bt.yaml
-> > > >  delete mode 100644 Documentation/devicetree/bindings/net/marvell-b=
-t-8xxx.txt
-> > > >
-> > >
-> > > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> > >
-> > > You'll probably have to resend this after rc1.
-> >
-> > In that case I'd like to have a Fixes tag so I can remember to send it
-> > as rc1 is tagged.
->
-> A Fixes tag is not appropriate for a conversion to DT schema.
+It contains a flexible member but also a padding array and a limit
+calculated for the usable space of inline_buf (FS_PATH_INLINE_SIZE),
+it's not the pattern where flexible array is in the middle of a
+structure and could potentially overwrite other members.
 
-Ok, but then how do you justify merging it for an RC? Or I'm
-misunderstanding and that should just be merged to bluetooth-next and
-wait for the next merge window? In that case I can just merge it right
-away.
+> Fix the following warning:
+> 
+> fs/btrfs/send.c:181:24: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
 
-> Rob
+Otheriwse OK to fix the warning.
 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+>  fs/btrfs/send.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
+> index 9230e5066fc6..2b7cf49a35bb 100644
+> --- a/fs/btrfs/send.c
+> +++ b/fs/btrfs/send.c
+> @@ -178,7 +178,6 @@ struct send_ctx {
+>  	u64 cur_inode_rdev;
+>  	u64 cur_inode_last_extent;
+>  	u64 cur_inode_next_write_offset;
+> -	struct fs_path cur_inode_path;
+>  	bool cur_inode_new;
+>  	bool cur_inode_new_gen;
+>  	bool cur_inode_deleted;
+> @@ -305,6 +304,9 @@ struct send_ctx {
+>  
+>  	struct btrfs_lru_cache dir_created_cache;
+>  	struct btrfs_lru_cache dir_utimes_cache;
+> +
+> +	/* Must be last --ends in a flexible-array member. */
+                        ^^
 
+Is this an en dash?
 
---=20
-Luiz Augusto von Dentz
+> +	struct fs_path cur_inode_path;
+>  };
+>  
+>  struct pending_dir_move {
+> -- 
+> 2.43.0
+> 
 
