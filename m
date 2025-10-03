@@ -1,146 +1,98 @@
-Return-Path: <linux-kernel+bounces-841611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCA17BB7D11
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 20:00:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBA2DBB7D1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 20:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B85919E5D80
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 18:00:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4B4224EE4DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 18:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B555A2DCBF4;
-	Fri,  3 Oct 2025 18:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA89F2DC33B;
+	Fri,  3 Oct 2025 18:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wid78YSd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gRcj65ab"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBD62DC77F;
-	Fri,  3 Oct 2025 18:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF2A192B84;
+	Fri,  3 Oct 2025 18:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759514408; cv=none; b=gAaDmhj7E4DJIcyqBuwePIm4xzXMQZrdxJELfK+bAtWNbG2UDDnl5oh/uDRuTcPJ2O1Bw8g9Y6/MFdqYZYcHvZ7UTsD1BWcxOgjFiRTlj6SBkLnLmC6UAUPjzaUt460Dmr+HqI6zbVsxnnMwJ7lRuvEip1Xi4BeG+enPeOz+yQ4=
+	t=1759514419; cv=none; b=D+SNa15c13S6vU3iOtC2EFO/8x7osApZbIyKB/uF9oIESrjYI22w6xERDC8F7w573HFuwnEt8glMUmb8fHffx7A6l58SXsY/MUnrfusRNxCpYtq2E6lZPqxOkb2Nq/p5u9636E8qKsU7/gURHjJgkInhrtNRLpdIKv8E/QvxtTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759514408; c=relaxed/simple;
-	bh=I/qWDMKQv5qKzeMlqK751O9Q0IyCyXsvYmApunFN05k=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=VYgWQOwg1+9TU7XvhwaBCcMP7752PTYUDbqyDp0hmojahoUtVc/dQ93VuQLrn2U5cPR+KD98MnOpw6jBSSMOca9vaTaamAXLpAY7v8QZK5/iejsNj8pWsLTM6PWsDnxCxvsw8vxO39uy8SBUXCBs5Veqg0vc7NqqRtM5Neusyjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wid78YSd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFB1DC4CEF5;
-	Fri,  3 Oct 2025 18:00:01 +0000 (UTC)
+	s=arc-20240116; t=1759514419; c=relaxed/simple;
+	bh=nzY2+PAPfllyPn/2g4mYZ53n8QLyqBkvL7jZgfo6Np0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=mCwDssiUjzq4rcLdunPXsd+6ZPVoZjmiSh29Pe/e6X0801MEo2zQg1wE8G4zxxWxH5yS4C9f23EEHFfAXQWiDfWSn7M+NcDnEggGi0R6Pg37fyob/MVYkfG6RO9pavUUArYcL7p1VuhbJHJylm17MDdAkZiTdZRla7h+RXW5az0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gRcj65ab; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 254E0C4CEF5;
+	Fri,  3 Oct 2025 18:00:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759514406;
-	bh=I/qWDMKQv5qKzeMlqK751O9Q0IyCyXsvYmApunFN05k=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=Wid78YSdBNA2CatxdLycAAbOphm7XEZslawm5fH4LIcQ9Y5wuvC1tWARj1iZ74ZTb
-	 lxuTv20ujrbyvMnZ4WAUUVxxW+Z8JeFmPiUqqj6ra2InZMI9Eu/JI0Pmj/HyywN/Fj
-	 yrh24wr0xbb+HWsMjUBznlus80UmGWPmix4KPmdBVv3hp4MxCta8vjhhPGinVHgKg3
-	 9p8GItUsDDrJDUrLuffAXf+IYA2FisGjbs4ptSPi+XerKmrs+KtQc+kdOjNlAGi8JO
-	 JOs6yg8i74hieXqEjbc20ojq7tYJ1hOBMwuS0yl6IKU2ULGrcdWjLaq7+aJZ6o9VG9
-	 J7Va0OTAjeQLg==
+	s=k20201202; t=1759514419;
+	bh=nzY2+PAPfllyPn/2g4mYZ53n8QLyqBkvL7jZgfo6Np0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=gRcj65ablshkQRrhg+q47RZpe5dLi/kUKgAKKdokUzZ/LGnky+FFOrUVZqSaGfasL
+	 H30Rv7Ul1Fr4zHQJhAGBa2STc7Im80a7WUTjWF+W+sQV1An57UpKzn5Xv4jOsod/Wy
+	 2OafP++6vVbjGiBJuf8zbiktTapwOeVxHis4u+6Uz4s0kSrfbc2tOFMzyIp/faNLnx
+	 N2ZIEBQdi6x6SMi8fU67N7QthjEI/qy850tZBDU/u0t6VTdQ2xPkQYulgdbOPtJAIB
+	 ekpn8pgsdxrltxsiXTatmC8BYldnDnS0gLdHG2q9WPJThInnmNQd0EOsw35GrMx/Ii
+	 SmGVgODXskC3g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADF7839D0C1A;
+	Fri,  3 Oct 2025 18:00:11 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 03 Oct 2025 19:59:59 +0200
-Message-Id: <DD8VSSFRFC46.X5BFWEV3JAH2@kernel.org>
-Subject: Re: [PATCH v3 08/13] gpu: nova-core: Add bindings and accessors for
- GspSystemInfo
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Janne Grunau" <j@jannau.net>
-Cc: "Alexandre Courbot" <acourbot@nvidia.com>, "Alistair Popple"
- <apopple@nvidia.com>, <rust-for-linux@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, <dakr@kernel.org>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
- <jhubbard@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
- Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>
-X-Mailer: aerc 0.21.0
-References: <20250930131648.411720-1-apopple@nvidia.com>
- <20250930131648.411720-9-apopple@nvidia.com>
- <DD7VU4239GS2.2MKVFPBFEY1R4@nvidia.com>
- <DD8TZ3TU57L3.2958OTC9UP4VF@kernel.org>
- <20251003172517.GA1574227@robin.jannau.net>
-In-Reply-To: <20251003172517.GA1574227@robin.jannau.net>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2] net: doc: Fix typos in docs
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175951441044.20895.3680536240360248719.git-patchwork-notify@kernel.org>
+Date: Fri, 03 Oct 2025 18:00:10 +0000
+References: <20251001105715.50462-1-bhanuseshukumar@gmail.com>
+In-Reply-To: <20251001105715.50462-1-bhanuseshukumar@gmail.com>
+To: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+ jmaloy@redhat.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
+ linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org,
+ david.hunter.linux@gmail.com
 
-On Fri Oct 3, 2025 at 7:25 PM CEST, Janne Grunau wrote:
-> On Fri, Oct 03, 2025 at 06:34:12PM +0200, Benno Lossin wrote:
->> On Thu Oct 2, 2025 at 3:49 PM CEST, Alexandre Courbot wrote:
->> > Hi Alistair, (+Benno as this concerns the `init!` macros)
->> >
->> > On Tue Sep 30, 2025 at 10:16 PM JST, Alistair Popple wrote:
->> >> Adds bindings and an in-place initialiser for the GspSystemInfo struc=
-t.
->> >>
->> >> Signed-off-by: Alistair Popple <apopple@nvidia.com>
->> >>
->> >> ---
->> >>
->> >> It would be good to move to using the `init!` macros at some point, b=
-ut
->> >> I couldn't figure out how to make that work to initialise an enum rat=
-her
->> >> than a struct as is required for the transparent representation.
+Hello:
 
-Oh by the way, enums are not supported due to a language limitation,
-see:
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-    https://github.com/Rust-for-Linux/pin-init/issues/59
+On Wed,  1 Oct 2025 16:27:15 +0530 you wrote:
+> Fix typos in doc comments.
+> 
+> Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+> ---
+>  Note: No functionality change intended.
+> 
+>  Change log:
+>  v1->v2 changes:
+>   fixed pertaing to pertaining.
+>   Link to v1: https://lore.kernel.org/all/20251001064102.42296-1-bhanuseshukumar@gmail.com/
+> 
+> [...]
 
->> > Indeed we have to jump through a few (minor) hoops.
->> >
->> > First the `init!` macros do not seem to support tuple structs. They
->> > match a `{` after the type name, which is not present in
->> > `GspSystemInfo`. By turning it into a regular struct with a single
->> > field, we can overcome this, and it doesn't affect the layout the
->> > `#[repr(transparent)]` can still be used.
->>=20
->> Yeah that's the correct workaround at the moment. I'm tracking support
->> for tuple structs in [1]. Essentially the problem is that it requires
->> lots of effort to parse tuple structs using declarative macros. We will
->> get `syn` this cycle, which will enable me to support several things,
->> including tuple structs.
->>=20
->> [1]: https://github.com/Rust-for-Linux/pin-init/issues/85
->>=20
->> > Then, due to a limitation with declarative macros, `init!` interprets
->> > `::` as a separator for generic arguments, so `bindings::GspSystemInfo=
-`
->> > also doesn't parse. Here the trick is to use a local type alias.
->>=20
->> This one will also be solved when we switch to syn.
->
-> I was planning to submit
-> https://github.com/AsahiLinux/linux/commit/2d95fd3b6c359634a0976f27f7a3c6=
-67826256da
-> https://github.com/AsahiLinux/linux/commit/515638cb47cf0ebdac378686fcbbdc=
-6a8364096a
-> from the asahi downstream tree after 6.18-rc1. Does that still make
-> sense timing wise?
+Here is the summary with links:
+  - [v2] net: doc: Fix typos in docs
+    https://git.kernel.org/netdev/net/c/1b54b0756f05
 
-Probably not, since I'll depend on the syn patches this cycle which will
-mean that pin-init supports tuples in 6.19.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-> Types with type paths are used extensively in the asahi driver but I can
-> initially work around that.
 
-Yeah they should be supported simply by moving to syn, hope it doesn't
-introduce too much pain in the next cycle.
-
----
-Cheers,
-Benno
 
