@@ -1,151 +1,124 @@
-Return-Path: <linux-kernel+bounces-841602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5BE3BB7CD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:48:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E13B6BB7CE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:50:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6ADF04EE67A
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:48:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 223334EE225
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6955A2C3276;
-	Fri,  3 Oct 2025 17:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66C92D061A;
+	Fri,  3 Oct 2025 17:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="pKbC+TZR"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eXyIU7SA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA0E3594F
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 17:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D72D2D0619
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 17:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759513676; cv=none; b=u7VClMvgIbvli57gBzkIRrIsmp+LazxlPkxF8zRjNerEyTfFAFQWTInu/Vm7qq53i4acLt6T+9Pt5XnENYGxATBqFrktad0lVWEvqPkWWnEZ8z1HVwVL1DzTqx06K9jmBw/LJLw4OgHCCtwz63l8U7fclmoWl/uK40O/wVkoFiY=
+	t=1759513796; cv=none; b=BKU6Zx03YTwg9/tQaxcDrnkCRNMTqLTcVwIO8nN9rDp/sRyGtOP4LadLZyBTzJPbEXasQew1UBuCTQlQTsGl2Jm5cA9iBZOf/ub9WJ7xAUrMpGHnbbO5pN2hNkCZNRwJ+ro4fgUDyt1w+IMEW58PfkOybGNM7GBJ7aaQaCcZMcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759513676; c=relaxed/simple;
-	bh=7cFf07vJ1ZOqj5vQcNrlXFY4kxuMmo4vQffhv/UYB/8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dgh+D5Pe1tF20OstMm7PDyu64IeQUUcD4NzAMdZmwAoaCMiAq2HIVRj12n3jmgn5OvmpfPPLt8J0m7RcDb2/6p3C8XbP/IqndwJuuXm9pxhKDHjYTCFCCv1nxYP1A/bUP9/yNdpa3nuLNu4b0Xat358jnjjT5N2SbpVFrRDI4qU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=pKbC+TZR; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-78eba712e89so22013026d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 10:47:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1759513674; x=1760118474; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
-         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=7cFf07vJ1ZOqj5vQcNrlXFY4kxuMmo4vQffhv/UYB/8=;
-        b=pKbC+TZRYV3ueuOEkLd5qaPOKDKkXxg65og1WClfBJX75eCtbvsGxka8pMaJXwnG1f
-         6V3Ma3CyR03/w1FHdCPeoLXbBM+nTtiMAVSmOV4kqs6p5myQIzI4Q5ABIVTWeQ6NLmzU
-         ICdlJeJ8XMQktzM0gb3Qz++5WX5Y5y7BeyKjzpHydbmqzWKFem9oqfXffESweSOY/VLh
-         pqCxeXV5TnnrwntjQHSqdYhsSuCfZF0LvnJk3DHPoVfCbNWFe1hcjZQMrVUMQv2MewIL
-         /BdLpJL/Ilg/tJ00fuZjRdYZKtho/ZJpFeiFooucdhTSkhtWZ4Qnhr/0UUZ26De4h+Vv
-         2/uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759513674; x=1760118474;
-        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
-         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7cFf07vJ1ZOqj5vQcNrlXFY4kxuMmo4vQffhv/UYB/8=;
-        b=iZMlo1rcI2p+j2aQLOTIaqe+3GmxWBiLkT2wHJnvtbwIJdDOr54BYt+qL2kL+dJ5b3
-         mmkSVdjo9unI7QOTl8kgPAPPOzINk4bC42zwjcLMnEdsjKA8kqK4CSiFgRwayIsfL2Br
-         WNUSaEBPkjuCIr2bTALddx9WM59bvMFy7diUy/GKhTv0sAORmjyJKQlx1UIG8yf6I058
-         70zdvtC0Fvv01yn4s3i1ZW7uFVhghpwIl5+kHVvDVmlyJklXgAjRTcqL/udd2CZlon5J
-         F8+Hz/+LkEbLz1LP6PvqL7YIZRqZHEg2cHry+nPicQ+nhAetbd/0Om8J/tCJVoVBv+3E
-         WgGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUIGpOvtF8paUorSKHHQ4GoQ/XlCwDtZTdL4MpuPs99PlGw8AIL+4MXlDeyQQzDHsoL0qyJTw8vZfqsfIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOY5bfrb3p7BjoLhQ4hpyfZ4/I8R7nCuDbdU0jKhyDt3wLWhuJ
-	oV4SGJAmWSWcdKxDnLtwrBSnz8rLBXzR29ktWuk51p9thYO7CHJRQeZsaP5N6rbd7uc=
-X-Gm-Gg: ASbGncs1DBYF0ISBnQ34IxDuK6PoAUi1fcuuYVTK+ysQKDDsgxUEgC8hCTDLIthrlG+
-	yb+P6+mQprYKQV4IElCSuaA7S1/lIySCd6Om/J65sv9CZ7su1a53wbXYpTqTP8mJ0zBxCokL+du
-	QPx8o4c1DEHmYiQDLF+2aF0z9UwZKNyEXpzjwPIQZLNDU5LWvFDHf58pwnbsJFAlnxjpMc7IvUu
-	2Q4F/Qp29RqYal702ewa1B2Z4xXu/nCFDEchpNkNBicF/tokzzvVXB4o2wl2HihgfTNT+8GAMyL
-	GjQiblANwEDzJ7O+octkj4V+qvISL+NEQdZFcbzFv57tX0wPwlSO2bI7QRe3LSA0dA4z7boK9Ha
-	WbDgiZ4NpKeHLxJESZlLOZzlSgIoi1PWrA6Y/p5ScT4I4fsY7EYVFoMVfBTlVIz/5XGQ=
-X-Google-Smtp-Source: AGHT+IGfK2A6d1ozVmZSTT9hVr6KDhJblEwd+eZzjf0av9TH9BojLf29+Qfku/s/1SVJeyJgOncyoQ==
-X-Received: by 2002:a05:6214:5188:b0:793:dce5:4540 with SMTP id 6a1803df08f44-879dc77a6d2mr50596496d6.2.1759513673750;
-        Fri, 03 Oct 2025 10:47:53 -0700 (PDT)
-Received: from [192.168.42.140] (mtl.collabora.ca. [66.171.169.34])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878bae60df0sm44377316d6.3.2025.10.03.10.47.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 10:47:52 -0700 (PDT)
-Message-ID: <d505550ed828d7f7e7202780bb14e53f68194323.camel@ndufresne.ca>
-Subject: Re: [PATCH 0/3] media: allegro: fixes and improvements
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Matthias Fend <matthias.fend@emfend.at>, Michael Tretter	
- <m.tretter@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>,  Mauro Carvalho Chehab	 <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 03 Oct 2025 13:47:51 -0400
-In-Reply-To: <20250901-allegro-dvt-fixes-v1-0-4e4d493836ef@emfend.at>
-References: <20250901-allegro-dvt-fixes-v1-0-4e4d493836ef@emfend.at>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-mYE1c3375T4iIhW/yV7c"
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1759513796; c=relaxed/simple;
+	bh=cacXrZ5z9YbNTWqER/goLpuZZfmv00rsI9pNCHiO7z0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eIGAqQb1iYl/U0Nhr/DEuNQIrZu+edq6jo44aKSbzxjQxdAoDaTdiWhMVcMSp9ANaq5AIyA8eT5L6RlvS2GqsKiPOlmljCFbeRYHE5ZnphpdY0hEftI7Dn04owCCjU2nUkr6dcVOC6XIUb6ZoxYiOnacjB9DNdp/9X6bKhKkFcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eXyIU7SA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97899C4CEFF
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 17:49:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759513795;
+	bh=cacXrZ5z9YbNTWqER/goLpuZZfmv00rsI9pNCHiO7z0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=eXyIU7SAAdPbD54C3zQP4MRoj1dJrflHZZevuymDUukvUXdLyYC0cJKl6EBvcvKtK
+	 Mbz7FgEM8PEEp9ZQUW/wqar3R8u3pNuNBQPnz6FavXlgwlYAwuEzypSkfHF/UAUXxv
+	 F5dozC27PZw8BCvLrAt9MKfEs4uc2Jr/A93Ex+umNwNIIHhTg8eCIlqLVYZnMnAqfv
+	 QM2rqkH/gcv9av6PwX33UutxKiy6ZYT5S70sFO8s6l0ox+E7L57YgjssoQ7xIQ85Rb
+	 /OtNkcd65h5PQdsnfuMzBdSBiX1/8KKSTARVsWjcTWhWpColMiEVzCL6+ExKIHwwxo
+	 VeBFBW7gFzQFw==
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-72e565bf2f0so28581497b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 10:49:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWuTPXeLTmY/+vJgOnKZd7TFoGCa+ji+63lOvn1v3042JcLoM5Wx9cDDfdsyR9u8U049rTm/0kLj24fVQw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySdedfKOSWwWEZuTGK26AJCANe2uMYAbhFvmSCZdGjp6EoVZHG
+	9nBOINwZFVGANszz3DFlxRQJe16xUdqa7Yj4gIFlw/GVHmA7icWxQtrtvJpaaLzC88kN0WAfKyC
+	2aDBZ3EeU83q8bnEcmQNbxN476Ogdy+L0urZNj4DnFg==
+X-Google-Smtp-Source: AGHT+IF4CFMGmbb3qC9SaSuNe7zN0UD4dguyiAJTIYQ00mlB0WS0aVkoOC8ZShpucLIxiyUO/5gC5rrl5YqX+8edHd0=
+X-Received: by 2002:a53:8641:0:b0:62a:b339:20d4 with SMTP id
+ 956f58d0204a3-63b9a0728c1mr3157725d50.21.1759513794903; Fri, 03 Oct 2025
+ 10:49:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-
---=-mYE1c3375T4iIhW/yV7c
+References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
+ <20250916-luo-pci-v2-3-c494053c3c08@kernel.org> <2025093044-icky-treat-e1c3@gregkh>
+ <CACePvbUr42mj0kbcaw4cgKnd7v1f8z8Jhq4+_QN7Z5Nvicd1cw@mail.gmail.com>
+ <2025100323-sneer-perennial-55e1@gregkh> <CAF8kJuNPFbSJezynwXWpMx0ihV32YvAgdfygj7bx1nhxtmB8-w@mail.gmail.com>
+ <2025100317-backroom-upside-c788@gregkh>
+In-Reply-To: <2025100317-backroom-upside-c788@gregkh>
+From: Chris Li <chrisl@kernel.org>
+Date: Fri, 3 Oct 2025 10:49:43 -0700
+X-Gmail-Original-Message-ID: <CACePvbW031fW8dqswwXp=Z6H3jv2BiBSJFyGiXCKzZUSKRnxqQ@mail.gmail.com>
+X-Gm-Features: AS18NWBU4Jzt2fUR_8gMq-y1kDOK32INOSA1BzTNS8pwMMdpaUZ32L7UxC5W6wM
+Message-ID: <CACePvbW031fW8dqswwXp=Z6H3jv2BiBSJFyGiXCKzZUSKRnxqQ@mail.gmail.com>
+Subject: Re: [PATCH v2 03/10] PCI/LUO: Forward prepare()/freeze()/cancel()
+ callbacks to driver
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	David Matlack <dmatlack@google.com>, Pasha Tatashin <tatashin@google.com>, 
+	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>, 
+	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
+	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Fri, Oct 3, 2025 at 5:26=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Fri, Oct 03, 2025 at 12:26:01AM -0700, Chris Li wrote:
+>
+> > It is more than just one driver, we have vfio-pci, idpf, pci-pf-stub
+> > and possible nvme driver.
+>
+> Why is nvme considered a "GPU" that needs context saved?
 
-Le lundi 01 septembre 2025 =C3=A0 17:13 +0200, Matthias Fend a =C3=A9crit=
-=C2=A0:
-> Several fixes and improvements for the Allegro DVT video IP encoder.
-> These relate to race conditions that occur when multiple streams are used
-> simultaneously.
-> The problems could be reproduced on a ZCU-104 eval board with VCU firmwar=
-e
-> version 2019.2 on various kernel versions (6.4, 6.12 and 6.16).
-> It is highly likely that these problems can also occur with other firmwar=
-e
-> versions.
->=20
-> Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
-> ---
-> Matthias Fend (3):
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: allegro: print warning if channel c=
-reation timeout occurs
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: allegro: process all pending status=
- mbox messages
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: allegro: fix race conditions in cha=
-nnel handling
+NVME is not a GPU. The internal reason to have NVME participate in the
+liveupdate is because the NVME shutdown of the IO queue is very slow,
+it contributes the largest chunk of delay in the black out window for
+liveupdate. The NVME participation is just an optimization to avoid
+resetting the NVME queue. Consider it as (optional ) speed
+optimization.
 
+> > The change needs to happen in the PCI enumeration and probing as well,
+> > that is outside of the driver code.
+>
+> So all just PCI drivers?  Then keep this in PCI-only please, and don't
+> touch the driver core.
 
-For the series:
+Ack. Will do.
 
-Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+>
+> > > was that you were claiming it was a PCI change, yet it was actually o=
+nly
+> > > touching the driver core which means that all devices in the systems =
+for
+> >
+> > In theory all the devices can be liveupdate preserved. But now we only
+> > support PCI.
+>
+> Then for now, only focus on PCI.
 
-> =C2=A0drivers/media/platform/allegro-dvt/allegro-core.c | 114 +++++++++++=
-++++++----
-> -
-> =C2=A01 file changed, 91 insertions(+), 23 deletions(-)
-> ---
-> base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
-> change-id: 20250901-allegro-dvt-fixes-932f2c97063e
->=20
-> Best regards,
+Agree, thanks for the alignment.
 
---=-mYE1c3375T4iIhW/yV7c
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaOAMRwAKCRDZQZRRKWBy
-9P7LAQC5y40ZttoAmKexN7ZrquivosLvab5jXw0HU11z5DeI3AD/XWIzzYQ6lWG0
-lpS0Ynf05sSuZY2UREqCQxT4sZKZbgQ=
-=cCCp
------END PGP SIGNATURE-----
-
---=-mYE1c3375T4iIhW/yV7c--
+Chris
 
