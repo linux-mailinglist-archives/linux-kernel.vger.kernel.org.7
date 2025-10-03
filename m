@@ -1,252 +1,278 @@
-Return-Path: <linux-kernel+bounces-840885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A32A4BB5A85
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:12:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE4DEBB5A8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E70C1AE4C71
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:12:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5FA514E64D5
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A91BBE49;
-	Fri,  3 Oct 2025 00:12:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A8C2AE77;
+	Fri,  3 Oct 2025 00:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KQC8WLHB"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HFKXl0t4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339D815C0
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 00:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5EA522F
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 00:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759450337; cv=none; b=n1y3W6nS8PMIfD+XZJSs5/QtnfhwMv/g6SQvUGNKKlC8l3xdt4H/8MJuXk/zH2GhyA8iUjLx2812PXEE65aTsa7MhxUSYSgcEC+BRauWOZI24Q1VUjfB5UYhp5Rqqy6fjiTlAYvJmLqALJrtBXwU93cMWrZipCrlLtm3Wxpa51w=
+	t=1759450528; cv=none; b=i9Lp29URJIDgSG9AcQ1DxGjOt5GOmJ0YDHBQqwgYtlVqBGONpPLkIOFziQHIIQxaKeIduIJbDIrtixbZwpek6kdId3+7BYLXlMCfdL6SaR9mLkc5+Tit5+9uRj/LQ8uBTpxzhB8DXruRj7wQyolIzWc5BGd0kYmy/5u1xHGIzn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759450337; c=relaxed/simple;
-	bh=N/zkZP+0LZtLP17Xs3vMEpCfEyZZ1ItxxmOimzq44Q0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=sK2kT+EfezE4tcOL6TFbjIPsIv/uFgL7bCSp6sDrR+bFq7iVdR3HVDvePoeSGbODsNTEP+KOlUNs5xrT7RoPg8xCFik539hAHTAbZHHw3rsHMGXHvzHmnZNjWcS0Gt86xd2qauDmZlwM1rzO6RmmpcO8BnJHbz9KO5L5RZDVmCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KQC8WLHB; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-269af520712so15710595ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 17:12:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759450331; x=1760055131; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WPdEjt/xHjJ0lWLh6C12W1rdGBrApuW7akOrulxizXQ=;
-        b=KQC8WLHBEK40b5d5u/Ur26hBCZVJZ5/rllQyLVKhq+IcJ6P3DybInZxAIDDDjSYKQM
-         QxfG+FFpAPppUkkdNRXIQmzCLw1IoKeFZIL9LqtVNnaSa1jn6Tx733Nm9YrAwwJ48oAb
-         b6EX+zqUQkHaiNzKpaOVJK7Lz4sWQzzA/wcOssHJ9Xa8M6dc4450inS1YqkviItA4k81
-         06+QEezxrISLVITQUmSjds97SbwBu5JRj9evAlFMVimP7eGX7B/Q23NgTIeD4fhNfCAi
-         tXY2jydpoZ1T2rJlFAD5otweXyyeDV9ZQVFDkKHlB0cJJgUEmKMDX7YhIDgwoapuc+L+
-         jY3Q==
+	s=arc-20240116; t=1759450528; c=relaxed/simple;
+	bh=k7DXWVilqzn4Gw7VQmfBRIWQr3TA4Ok/nE/ndBfJL/s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NitoBdpnFTVG12dKW+feKrhAuLuDlvhSqoL0y73MNEH61je2ytHJGpmQ5apSxtHE2XTEJuvovWMx/t+vDnIyA7Uqj0e33CxR/MbtxUw+xc7eTTHrT3MiESeTI8JM6pzalE6s+3xzdb7xSjG6S6NhOULmbHW1D1k1TlpUK0qD67s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HFKXl0t4; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759450522;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XbG34W5wLU8kMo+w26HTYJSkVYz8ACAbrUj0TVdxCOs=;
+	b=HFKXl0t4HD0iIiG8WaA0+dQjsLP9sq20+UGYgiaSL6rrPzpxbDLScOX1b+kFMAWKN0fEs5
+	FnDa30KUl9mYwWbdFmCz0H/oCwxbhoa+oWdSyPT9Cmd5wn7j9Svl2FTKV8m6XvN9QE7Baa
+	He6qq0854NCqwvhPYtePslNnOT/D+5Y=
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
+ [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-527-DBrXNzFBP3GIXM1NWwX0Eg-1; Thu, 02 Oct 2025 20:15:21 -0400
+X-MC-Unique: DBrXNzFBP3GIXM1NWwX0Eg-1
+X-Mimecast-MFC-AGG-ID: DBrXNzFBP3GIXM1NWwX0Eg_1759450520
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b5529da7771so1075985a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 17:15:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759450331; x=1760055131;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WPdEjt/xHjJ0lWLh6C12W1rdGBrApuW7akOrulxizXQ=;
-        b=e+Cn0BEEWLi83y/EZWcNnMZ56H7uzs4IFS7ybf3C/pKuIwKPC++mRzLfEkfhBpLM6Q
-         TMbbpm1hNpsHSwi5buOCW5sRoJZ+ZniopFfDbf1hrj7t54DTNFqdj6TdZIFqkm14b3Ra
-         nJ6hySnGOuGWuEtjkasKvlxmRwiFKgfa61xveSQe/kxCxMKO9psip+wb3sc2tiKps8Kz
-         6ZwFfyrKhW1Tit7iof1rp0avhV0qZNCo9b33BOokaWLEMMkdy4rSYdh8KcYpQKn0094j
-         TDnFS4qLiSR8IBb8ruaiMnsWty9xN9DpsM9dER6W1W7HqJ5wSivmNMqrZMxIBX/GfE8w
-         LMCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzgZROp7s3k3IIOy0hAqn+IlaRVOhJgMbrP4G3b9mENzHGf5lMX8L2xTzZmpI3lg+q02GcL/rjjsOiOGE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBphwUDySsJdZvBX936UKd8OaXcKw/1ykf9wRcsxyr3mK80eND
-	Mk+qD5PfpbCmjSzGkjVcrO0S+8xopUeRlDYL0Axjg3zKmf0kFGQFOaEFgXYSU8o0S1fGF0H9BpM
-	VTSIUDQ==
-X-Google-Smtp-Source: AGHT+IHoyklPfuWfmJXHPs/SfTKlY2scG3kvCp1ofGl7GvfzX+eJGKVR6q69Si5yRV1Gn0G/XXpq74H1nZc=
-X-Received: from plw21.prod.google.com ([2002:a17:903:45d5:b0:27e:dc53:d244])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2f0d:b0:267:87be:505e
- with SMTP id d9443c01a7336-28e9a596df5mr11683975ad.23.1759450331443; Thu, 02
- Oct 2025 17:12:11 -0700 (PDT)
-Date: Thu, 2 Oct 2025 17:12:09 -0700
-In-Reply-To: <CAGtprH_evo=nyk1B6ZRdKJXX2s7g1W8dhwJhEPJkG=o2ORU48g@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1759450520; x=1760055320;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XbG34W5wLU8kMo+w26HTYJSkVYz8ACAbrUj0TVdxCOs=;
+        b=RpD0LIQCFCTrwEvobazS7w+/OyfAXoFVq6vNCIZ+3wYAdvmwxHUxIJyCeoIwg/9+On
+         kQhvYC9MP6dQCPtMCS4qvvGKGmPUMnLqEAG6FhYOgzY1NZrx4W/5AdRZ0iQeSHvI2m4R
+         8KEAdu75IsAZYvFoLjT2BOR9ONJzO6pnX7L7myQ07Wf+io5nvkT80Rr+5SujRHInIvy5
+         iPIY9jsVOR7imjUw7n58m3pDELYbsC+ciC2qFfK7x7Gazm4HQGULJtXSmf8XRVC1nYwA
+         wc+eTRJHLC3QOt67Z+j3PVpiV5yhqnjLSpJucIkE3ghfUnvv3PsHNkandZX+TBRsiXk4
+         zZrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSZq9CDAVhVetYf1EE9xu9HqqUt20y8YODtapaXuiJJMAM4hn2BaLksQ+xIbJqFZxo7km2T1T+zuuUUDg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMp21pVyOYfwf3oBiOHVcN7NUWZQoT/PQHKG4b0Zt/NP1tammu
+	vpIiNZk7ULybi3OW2slF4YOpnva0aiJlSWUzQk3WhXz94eilt6Lx6CX94HBEtLL/di0SvuETjyE
+	C4L6OYGNppg1Kku3roBTGetm9YV4vVbhbQ6dJPXelRfQake/P/yX1zNUkfTSW0V+Qlg==
+X-Gm-Gg: ASbGncu5XwJ0ZZRIXT9MOpmBP4aiMRqnRTJpl3YpeFDc4+yofWbAttEshuoHlREoj9Q
+	p0bhinEQl83jARZe5XEH+52b+s5pZLkemFjoiQOysm8oVqizrZV0SmoYTLEDAyi7o6tP3/JjuzM
+	gZZuZhFYPKY9YG6GhOEVvwAGN2nk4vQCyoXUqZ7YzXTumhzD3MnUcP6T8spm3gvq5a9SmQDTZ5J
+	2N0hQxFXJDmWwt6QwdNNcEualA/6s+2F/WK91RW9QZMBHpE1DJsmxDw8Ckz2DtAw9u3Dk2ILtQ0
+	IHQPmHjzTDRzWers3insoJ0C/UhLosVQLBUJN20lTAjupctXMnT5gSbTLd/MoUdODehk6Eoeb1u
+	GufN7lvY8zQ==
+X-Received: by 2002:a05:6a20:7291:b0:251:a106:d96c with SMTP id adf61e73a8af0-32b61dff63fmr1543824637.10.1759450519867;
+        Thu, 02 Oct 2025 17:15:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE0md3EjClymeLVNxoCZz4Jj91+vv+JPhX5FV8arUGQC8pDP1Ea2wN2DR0g85Dqyra6o57e1w==
+X-Received: by 2002:a05:6a20:7291:b0:251:a106:d96c with SMTP id adf61e73a8af0-32b61dff63fmr1543784637.10.1759450519408;
+        Thu, 02 Oct 2025 17:15:19 -0700 (PDT)
+Received: from [192.168.68.51] (n175-34-62-5.mrk21.qld.optusnet.com.au. [175.34.62.5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b01f9daccsm3112663b3a.16.2025.10.02.17.15.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Oct 2025 17:15:18 -0700 (PDT)
+Message-ID: <3a2f6807-9a49-4976-a4d7-7577756c3c26@redhat.com>
+Date: Fri, 3 Oct 2025 10:15:04 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <diqz4isl351g.fsf@google.com> <aNq6Hz8U0BtjlgQn@google.com>
- <aNshILzpjAS-bUL5@google.com> <CAGtprH_JgWfr2wPGpJg_mY5Sxf6E0dp5r-_4aVLi96To2pugXA@mail.gmail.com>
- <aN1TgRpde5hq_FPn@google.com> <CAGtprH-0B+cDARbK-xPGfx4sva+F1akbkX1gXts2VHaqyDWdzA@mail.gmail.com>
- <aN1h4XTfRsJ8dhVJ@google.com> <CAGtprH-5NWVVyEM63ou4XjG4JmF2VYNakoFkwFwNR1AnJmiDpA@mail.gmail.com>
- <aN3BhKZkCC4-iphM@google.com> <CAGtprH_evo=nyk1B6ZRdKJXX2s7g1W8dhwJhEPJkG=o2ORU48g@mail.gmail.com>
-Message-ID: <aN8U2c8KMXTy6h9Q@google.com>
-Subject: Re: [PATCH 1/6] KVM: guest_memfd: Add DEFAULT_SHARED flag, reject
- user page faults if not set
-From: Sean Christopherson <seanjc@google.com>
-To: Vishal Annapurve <vannapurve@google.com>
-Cc: Ackerley Tng <ackerleytng@google.com>, David Hildenbrand <david@redhat.com>, 
-	Patrick Roy <patrick.roy@linux.dev>, Fuad Tabba <tabba@google.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Nikita Kalyazin <kalyazin@amazon.co.uk>, shivankg@amd.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/29] ACPI / PPTT: Add a helper to fill a cpumask from
+ a processor container
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
+Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ fenghuay@nvidia.com, baisheng.gao@unisoc.com,
+ Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
+ <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250910204309.20751-1-james.morse@arm.com>
+ <20250910204309.20751-2-james.morse@arm.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20250910204309.20751-2-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 02, 2025, Vishal Annapurve wrote:
-> On Wed, Oct 1, 2025 at 5:04=E2=80=AFPM Sean Christopherson <seanjc@google=
-.com> wrote:
-> >
-> > On Wed, Oct 01, 2025, Vishal Annapurve wrote:
-> > > On Wed, Oct 1, 2025 at 10:16=E2=80=AFAM Sean Christopherson <seanjc@g=
-oogle.com> wrote:
-> > > >
-> > > > On Wed, Oct 01, 2025, Vishal Annapurve wrote:
-> > > > > On Wed, Oct 1, 2025 at 9:15=E2=80=AFAM Sean Christopherson <seanj=
-c@google.com> wrote:
-> > > > > >
-> > > > > > On Wed, Oct 01, 2025, Vishal Annapurve wrote:
-> > > > > > > On Mon, Sep 29, 2025 at 5:15=E2=80=AFPM Sean Christopherson <=
-seanjc@google.com> wrote:
-> > > > > > > >
-> > > > > > > > Oh!  This got me looking at kvm_arch_supports_gmem_mmap() a=
-nd thus
-> > > > > > > > KVM_CAP_GUEST_MEMFD_MMAP.  Two things:
-> > > > > > > >
-> > > > > > > >  1. We should change KVM_CAP_GUEST_MEMFD_MMAP into KVM_CAP_=
-GUEST_MEMFD_FLAGS so
-> > > > > > > >     that we don't need to add a capability every time a new=
- flag comes along,
-> > > > > > > >     and so that userspace can gather all flags in a single =
-ioctl.  If gmem ever
-> > > > > > > >     supports more than 32 flags, we'll need KVM_CAP_GUEST_M=
-EMFD_FLAGS2, but
-> > > > > > > >     that's a non-issue relatively speaking.
-> > > > > > > >
-> > > > > > >
-> > > > > > > Guest_memfd capabilities don't necessarily translate into fla=
-gs, so ideally:
-> > > > > > > 1) There should be two caps, KVM_CAP_GUEST_MEMFD_FLAGS and
-> > > > > > > KVM_CAP_GUEST_MEMFD_CAPS.
-> > > > > >
-> > > > > > I'm not saying we can't have another GUEST_MEMFD capability or =
-three, all I'm
-> > > > > > saying is that for enumerating what flags can be passed to KVM_=
-CREATE_GUEST_MEMFD,
-> > > > > > KVM_CAP_GUEST_MEMFD_FLAGS is a better fit than a one-off KVM_CA=
-P_GUEST_MEMFD_MMAP.
-> > > > >
-> > > > > Ah, ok. Then do you envision the guest_memfd caps to still be sep=
-arate
-> > > > > KVM caps per guest_memfd feature?
-> > > >
-> > > > Yes?  No?  It depends on the feature and the actual implementation.=
-  E.g.
-> > > > KVM_CAP_IRQCHIP enumerates support for a whole pile of ioctls.
-> > >
-> > > I think I am confused. Is the proposal here as follows?
-> > > * Use KVM_CAP_GUEST_MEMFD_FLAGS for features that map to guest_memfd
-> > > creation flags.
-> >
-> > No, the proposal is to use KVM_CAP_GUEST_MEMFD_FLAGS to enumerate the s=
-et of
-> > supported KVM_CREATE_GUEST_MEMFD flags.  Whether or not there is an ass=
-ociated
-> > "feature" is irrelevant.  I.e. it's a very literal "these are the suppo=
-rted
-> > flags".
-> >
-> > > * Use KVM caps for guest_memfd features that don't map to any flags.
-> > >
-> > > I think in general it would be better to have a KVM cap for each
-> > > feature irrespective of the flags as the feature may also need
-> >                                                    ^^^
-> > > additional UAPIs like IOCTLs.
-> >
-> > If the _only_ user-visible asset that is added is a KVM_CREATE_GUEST_ME=
-MFD flag,
-> > a CAP is gross overkill.  Even if there are other assets that accompany=
- the new
-> > flag, there's no reason we couldn't say "this feature exist if XYZ flag=
- is
-> > supported".
-> >
-> > E.g. it's functionally no different than KVM_CAP_VM_TYPES reporting sup=
-port for
-> > KVM_X86_TDX_VM also effectively reporting support for a _huge_ number o=
-f things
-> > far beyond being able to create a VM of type KVM_X86_TDX_VM.
-> >
->=20
-> What's your opinion about having KVM_CAP_GUEST_MEMFD_MMAP part of
-> KVM_CAP_GUEST_MEMFD_CAPS i.e. having a KVM cap covering all features
-> of guest_memfd?
+On 9/11/25 6:42 AM, James Morse wrote:
+> The ACPI MPAM table uses the UID of a processor container specified in
+> the PPTT to indicate the subset of CPUs and cache topology that can
+> access each MPAM System Component (MSC).
+> 
+> This information is not directly useful to the kernel. The equivalent
+> cpumask is needed instead.
+> 
+> Add a helper to find the processor container by its id, then walk
+> the possible CPUs to fill a cpumask with the CPUs that have this
+> processor container as a parent.
+> 
+> CC: Dave Martin <dave.martin@arm.com>
+> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> ---
+> Changes since v1:
+>   * Replaced commit message with wording from Dave.
+>   * Fixed a stray plural.
+>   * Moved further down in the file to make use of get_pptt() helper.
+>   * Added a break to exit the loop early.
+> 
+> Changes since RFC:
+>   * Removed leaf_flag local variable from acpi_pptt_get_cpus_from_container()
+> 
+> Changes since RFC:
+>   * Dropped has_leaf_flag dodging of acpi_pptt_leaf_node()
+>   * Added missing : in kernel-doc
+>   * Made helper return void as this never actually returns an error.
+> ---
+>   drivers/acpi/pptt.c  | 83 ++++++++++++++++++++++++++++++++++++++++++++
+>   include/linux/acpi.h |  3 ++
+>   2 files changed, 86 insertions(+)
+> 
 
-I'd much prefer to have both.  Describing flags for an ioctl via a bitmask =
-that
-doesn't *exactly* match the flags is asking for problems.  At best, it will=
- be
-confusing.  E.g. we'll probably end up with code like this:
+With the description for the return value of acpi_pptt_get_cpus_from_container()
+is dropped since that function doesn't have a return value, as mentioned by
+Stanimir Varbanov.
 
-	gmem_caps =3D kvm_check_cap(KVM_CAP_GUEST_MEMFD_CAPS);
+Reviewed-by: Gavin Shan <gshan@redhat.com>
 
-	if (gmem_caps & KVM_CAP_GUEST_MEMFD_MMAP)
-		gmem_flags |=3D GUEST_MEMFD_FLAG_MMAP;
-	if (gmem_caps & KVM_CAP_GUEST_MEMFD_INIT_SHARED)
-		gmem_flags |=3D KVM_CAP_GUEST_MEMFD_INIT_SHARED;
+Thanks,
+Gavin
 
-Those types of patterns often lead to typos causing problems (LOL, case in =
-point,
-there's a typo above; I'm leaving it to illustrate my point).  That can be =
-largely
-solved by userspace via macro shenanigans, but userspace really shouldn't h=
-ave to
-jump through hoops for such a simple thing.
 
-An ever worse outcome is if userspace does something like:
+> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
+> index 54676e3d82dd..1728545d90b2 100644
+> --- a/drivers/acpi/pptt.c
+> +++ b/drivers/acpi/pptt.c
+> @@ -817,3 +817,86 @@ int find_acpi_cpu_topology_hetero_id(unsigned int cpu)
+>   	return find_acpi_cpu_topology_tag(cpu, PPTT_ABORT_PACKAGE,
+>   					  ACPI_PPTT_ACPI_IDENTICAL);
+>   }
+> +
+> +/**
+> + * acpi_pptt_get_child_cpus() - Find all the CPUs below a PPTT processor node
+> + * @table_hdr:		A reference to the PPTT table.
+> + * @parent_node:	A pointer to the processor node in the @table_hdr.
+> + * @cpus:		A cpumask to fill with the CPUs below @parent_node.
+> + *
+> + * Walks up the PPTT from every possible CPU to find if the provided
+> + * @parent_node is a parent of this CPU.
+> + */
+> +static void acpi_pptt_get_child_cpus(struct acpi_table_header *table_hdr,
+> +				     struct acpi_pptt_processor *parent_node,
+> +				     cpumask_t *cpus)
+> +{
+> +	struct acpi_pptt_processor *cpu_node;
+> +	u32 acpi_id;
+> +	int cpu;
+> +
+> +	cpumask_clear(cpus);
+> +
+> +	for_each_possible_cpu(cpu) {
+> +		acpi_id = get_acpi_id_for_cpu(cpu);
+> +		cpu_node = acpi_find_processor_node(table_hdr, acpi_id);
+> +
+> +		while (cpu_node) {
+> +			if (cpu_node == parent_node) {
+> +				cpumask_set_cpu(cpu, cpus);
+> +				break;
+> +			}
+> +			cpu_node = fetch_pptt_node(table_hdr, cpu_node->parent);
+> +		}
+> +	}
+> +}
+> +
+> +/**
+> + * acpi_pptt_get_cpus_from_container() - Populate a cpumask with all CPUs in a
+> + *                                       processor container
+> + * @acpi_cpu_id:	The UID of the processor container.
+> + * @cpus:		The resulting CPU mask.
+> + *
+> + * Find the specified Processor Container, and fill @cpus with all the cpus
+> + * below it.
+> + *
+> + * Not all 'Processor' entries in the PPTT are either a CPU or a Processor
+> + * Container, they may exist purely to describe a Private resource. CPUs
+> + * have to be leaves, so a Processor Container is a non-leaf that has the
+> + * 'ACPI Processor ID valid' flag set.
+> + *
+> + * Return: 0 for a complete walk, or an error if the mask is incomplete.
+> + */
+> +void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus)
+> +{
+> +	struct acpi_pptt_processor *cpu_node;
+> +	struct acpi_table_header *table_hdr;
+> +	struct acpi_subtable_header *entry;
+> +	unsigned long table_end;
+> +	u32 proc_sz;
+> +
+> +	cpumask_clear(cpus);
+> +
+> +	table_hdr = acpi_get_pptt();
+> +	if (!table_hdr)
+> +		return;
+> +
+> +	table_end = (unsigned long)table_hdr + table_hdr->length;
+> +	entry = ACPI_ADD_PTR(struct acpi_subtable_header, table_hdr,
+> +			     sizeof(struct acpi_table_pptt));
+> +	proc_sz = sizeof(struct acpi_pptt_processor);
+> +	while ((unsigned long)entry + proc_sz <= table_end) {
+> +		cpu_node = (struct acpi_pptt_processor *)entry;
+> +		if (entry->type == ACPI_PPTT_TYPE_PROCESSOR &&
+> +		    cpu_node->flags & ACPI_PPTT_ACPI_PROCESSOR_ID_VALID) {
+> +			if (!acpi_pptt_leaf_node(table_hdr, cpu_node)) {
+> +				if (cpu_node->acpi_processor_id == acpi_cpu_id) {
+> +					acpi_pptt_get_child_cpus(table_hdr, cpu_node, cpus);
+> +					break;
+> +				}
+> +			}
+> +		}
+> +		entry = ACPI_ADD_PTR(struct acpi_subtable_header, entry,
+> +				     entry->length);
+> +	}
+> +}
+> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> index 1c5bb1e887cd..f97a9ff678cc 100644
+> --- a/include/linux/acpi.h
+> +++ b/include/linux/acpi.h
+> @@ -1541,6 +1541,7 @@ int find_acpi_cpu_topology(unsigned int cpu, int level);
+>   int find_acpi_cpu_topology_cluster(unsigned int cpu);
+>   int find_acpi_cpu_topology_package(unsigned int cpu);
+>   int find_acpi_cpu_topology_hetero_id(unsigned int cpu);
+> +void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus);
+>   #else
+>   static inline int acpi_pptt_cpu_is_thread(unsigned int cpu)
+>   {
+> @@ -1562,6 +1563,8 @@ static inline int find_acpi_cpu_topology_hetero_id(unsigned int cpu)
+>   {
+>   	return -EINVAL;
+>   }
+> +static inline void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id,
+> +						     cpumask_t *cpus) { }
+>   #endif
+>   
+>   void acpi_arch_init(void);
 
-	gmem_flags =3D kvm_check_cap(KVM_CAP_GUEST_MEMFD_CAPS);
-
-Which might actually work initially, e.g. if KVM_CAP_GUEST_MEMFD_MMAP and
-GUEST_MEMFD_FLAG_MMAP have the same value.  But eventually userspace will b=
-e sad.
-
-Another issue is that, while unlikely, we could run out of KVM_CAP_GUEST_ME=
-MFD_CAPS
-bits before we run out of flags.
-
-And if we use memory attributes, we're also guaranteed to have at least one=
- gmem
-capability that returns a bitmask separately from a dedicated one-size-fits=
--all
-cap, e.g.
-
-	case KVM_CAP_GUEST_MEMFD_MEMORY_ATTRIBUTES:
-		if (vm_memory_attributes)
-			return 0;
-
-		return kvm_supported_mem_attributes(kvm);
-
-Side topic, looking at this, I don't think we need KVM_CAP_GUEST_MEMFD_CAPS=
-, I'm
-pretty sure we can simply extend KVM_CAP_GUEST_MEMFD.  E.g.=20
-
-#define KVM_GUEST_MEMFD_FEAT_BASIC		(1ULL << 0)
-#define KVM_GUEST_MEMFD_FEAT_FANCY		(1ULL << 1)
-
-	case KVM_CAP_GUEST_MEMFD:
-		return KVM_GUEST_MEMFD_FEAT_BASIC |
-		       KVM_GUEST_MEMFD_FEAT_FANCY;
-
-> That seems more consistent to me in order for userspace to deduce the
-> supported features and assume flags/ioctls/...  associated with the featu=
-re
-> as a group.
-
-If we add a feature that comes with a flag, we could always add both, i.e. =
-a
-feature flag for KVM_CAP_GUEST_MEMFD along with the natural enumeration for
-KVM_CAP_GUEST_MEMFD_FLAGS.  That certainly wouldn't be my first choice, but=
- it's
-a possibility, e.g. if it really is the most intuitive solution.  But that'=
-s
-getting quite hypothetical.
 
