@@ -1,174 +1,174 @@
-Return-Path: <linux-kernel+bounces-841353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B648BB7108
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 15:46:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AA34BB7123
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 15:47:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D515834622F
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 13:46:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E5FA3A93A2
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 13:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7AB1E230E;
-	Fri,  3 Oct 2025 13:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA6719DF66;
+	Fri,  3 Oct 2025 13:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Lhs/1BtH"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H/RJpGBQ"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3E81D7E42
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 13:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E1C34BA50
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 13:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759499157; cv=none; b=f18+IiPc1v90CzKHmeUiONW9+5amDcTtdsdx5rd7sKDpKbrSdHGyD8wNetIVt2CXAqLicAQqi06R8iclTKGP2f6/FYPYT0zjHeH4WWKEHj8J9YTrkHXqa+TyNp504mOBQkXu7B+yI2mXSw+Pri9YbrwTzg3maPYmy5DKRg5tnkk=
+	t=1759499263; cv=none; b=A2jhYw4ebeNKYRhlsiS2vUfeGsKHGV53yAGbR4QQk0W59qfowAhPbi1yAbqOkRWLKY8WZX0CptHyvpajRQ2nXxC6rQTGUMHSiMpK+SDruOozPJO4BvDDCeaiFirnQbhpx3ipfEoKQS2DNH7J18WbijBZ5iNR5V4bA8hOApDpZ28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759499157; c=relaxed/simple;
-	bh=lAOM2D3q+yPPPrqg95DoD4MK+sOaAd20YYEUkxw5gc0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MxU4hxSpxXbP3Nq7oscgNusylaneVlLQn7U4Fxz7N6H9EEd5rdn7N0brAUm+IBh0H7RxI3TQxFxHl4TuV7HacFkno5kx4nT8fYsLIqrd8aMeAXcjsJJC4fA0IV9EBNX9mvf0lyRwximOXTrPA0oX/47zniYT4NBTxJooCzi7cx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Lhs/1BtH; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3ed20bdfdffso2126154f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 06:45:55 -0700 (PDT)
+	s=arc-20240116; t=1759499263; c=relaxed/simple;
+	bh=B83U5Fb924a+CtxXo1Lus3OG+QNUvJeFsmwJTwagFxc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pp0OxLy9dDYQE5huJ47wqD0xVvmuLIbfg8WOvxq4X4d8o76U3dCUGMIC9vyhKPep8KgYCOmt84Scf+rzz0Wnk6uqQlioh2XQpoCcK6Q7dPRrJr0QJt73oXUIgNBpbnhYLpEKhgfa2SLXM0BqWwhaAAScuGL8h+qbZJyPThiM2s0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H/RJpGBQ; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6395172532fso1095193a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 06:47:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759499154; x=1760103954; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=a7NnV3eqraDFqVYDcKFCeKin09qktano3eAT2xMof4Q=;
-        b=Lhs/1BtH4CYX7sisGZhr1bUv9mrOs2oeBRZX2RXJG9ry7XNzmmuEUwhToBE0kiKyjg
-         7IQ8G7gydYL8aPgOFbJnWDNPAgZdRBqDHMDQRbBkX1CXKd0/bfEwlJxjhs1KL3iParCf
-         jcH53qPH/KKqkkrXBwbf+Eytzcsf+/6PD2FQVjRHppwJkOUO7GmbJg9f/ndjIDuMSanI
-         P0hf/u/6sZdurPNOIYGjDdTC6VgcBDNT2M+Z3TJ9RUwVbB1718lIoVhUj+wiBlZ0pimU
-         jb/qE4OJM0C6C9yPu9qW8HAJAqR60A3YU19jLAZjqBJfHlqP0AKmHAIi3Xsi5XO/rpTv
-         NVPA==
+        d=gmail.com; s=20230601; t=1759499260; x=1760104060; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SXz1taGyCnsjIOklnSCeHrVpWlskjbKzfy7PmtERQsU=;
+        b=H/RJpGBQ+GTn9k5Ndb9CPVnrqCrl+15pjPrP/k0BKMVasZUgpkC7MJJy/hCWT17N/Q
+         f1RncssUSFWY1t7dAxhdGiBAbtMhmQeEugDgq4xMfZ27OeKUPBNTnKKi9/3ZcGkXoAR8
+         VyrMKwQUJ+byCtLchxmbDDLar8/6tF3cSDzg18SP+A8a0C2AP8MRKYTUnCNAA9POFFOw
+         pldaC8LBrlep9xitEVU0F6CCc1uN9TZOjtj2Gf4TIL0ULr1FwhBmdNid0wAqzSHTcGJk
+         gg3/BKsVubCykFOgEuHo732+dsEI87zB05QCbpA8FBr7gotsGN/Ir98QLfyETonUkk6j
+         weWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759499154; x=1760103954;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a7NnV3eqraDFqVYDcKFCeKin09qktano3eAT2xMof4Q=;
-        b=pTCEccL/3+jlrYoxyi9o/rIWVsndjFU+gvnTc94Ax5dHDbPlOpiY6da4ymjmU5Mla7
-         XxxxVZNorDmSPbIow55BVMmuXRYHxDCFFqtRdA8FX5SEzK8Xt7T4DCCpBaPa0Q+0LVC5
-         ftd16rj3tVcl0v9ySbvFwQWgT5wKXNxovHYgIDvBdDRie9s6hUXFqN3j15FX9vv/wvQ2
-         9Cn8ETUU9AxYPeuq4rXIhGvudrkJxKEx8cFoazEPtciqL125Ogvn9DaaZpDSD7tGExxu
-         jjIfmbvhScMPomIt5SNvD1nrB2shvGuaQGQQmR+LJNVNYA8IL0W9FtMOZROA2aUU4O4Q
-         3P/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU+E9m+lbq58wJGEGXgLiVJcvGXpg2N0IdUN7pxceqI4oWDEav0PSTwc1c0BTgeFhEmzlSq/jtZPP/FZV0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzru/wKVE2mmU8kLW9CC0U9UQJO5ilzGwwAOxVMHCwr18byh5N8
-	x+JiEWdSwAodaJmwns1ByO6YtBHqpKBYbeGNs0q2A2yM57/06NnQKlWRvVN+TwaloQ==
-X-Gm-Gg: ASbGncsLx7KxwGHZrEw4k9o73HI4x1P6vpNb800DPltePNWacYpt+2xzWc59oErtb3l
-	hAciDa1TNTb7wneKwCNq9+JcG8TsXiYtVWDFcQiGJoqB5qxgppOmdzNZQoyjt7DGJYqbx2NMPh8
-	wqZdvZPhKUBwkzTuMNSGUNAcHktkgZiDIpcsQoUZ5IPJIjT9Aaxna9T02Aqv3XcMiaEBVG2AoRK
-	z37UE3xN/d4UAQkKZVSfGSUqgMogVyN+FepsG8TTpVnAlMLSxq1+9o6Oc8/5Ikcvf0oLowz/yp5
-	j83h7RlJyDxToYXwZHE10HMuSZgwpzVCXYiLnjmf3ZSITfvPKbqpQBxf09aoFRZk4VestF0RKZ+
-	izMY0vn6dM6soPLo+6jX44+3iOV24W8fTxZd1hQU39GPwlgMAKcZ3qPBVQw626f1iZGtmGx11xI
-	nS0kEsLSMegCmsh9Q9YUwXXkA02BpH8Ejz1Xdx7sG2Vg==
-X-Google-Smtp-Source: AGHT+IEavx1XQVkYuSWqBefYKiu6P3uDkj7db45yOXEIBwP67t8LkAcoTa6xCOF8nZoREgj6u0pW7g==
-X-Received: by 2002:a05:6000:616:b0:3ea:bccc:2a2c with SMTP id ffacd0b85a97d-4256713edf9mr2335026f8f.11.1759499154166;
-        Fri, 03 Oct 2025 06:45:54 -0700 (PDT)
-Received: from google.com (135.91.155.104.bc.googleusercontent.com. [104.155.91.135])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f01a0sm8064916f8f.48.2025.10.03.06.45.53
+        d=1e100.net; s=20230601; t=1759499260; x=1760104060;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SXz1taGyCnsjIOklnSCeHrVpWlskjbKzfy7PmtERQsU=;
+        b=I14YVPSjE5tDR08O6Ca8I6lqAdgQM0m8BD5/nuAkbZo6Drq6uC1kEf7nMS0taCRLEs
+         a/xEOF+4CS3ZOtB40gZYuY68cr8IKUou7VMb17LN1RonElwUlMBsQ3nasO20uQKr3Bgd
+         qDiIn4jgwb4c9cHsUb7rpbb6MOf65ci00c/V8Th8gfkwGvyW6m80hVGKodhN52y+T0OS
+         z6lGodChKweGUQGSc5uRscTgOipdhLLzoBqZanWwGHVkMrVaVL5si1rXuQBK1OcxDdJV
+         W7p3idcxP/5HdmJMYi+mmq01yNQsOLCoXvndrLGKzqFdcHOoRcM+haW4yzYgqV/uWcOF
+         xyoA==
+X-Gm-Message-State: AOJu0Yzq+z2zrDoCAl254RDjJjFg3uuSzZWKtttq+b3a0uSEwp9dN0Pt
+	oDQMF25FUz92snQZkqJC3bDkk21FGqx8yOeSjcVwgTJw+WhL7NecUm/a8bQnEA==
+X-Gm-Gg: ASbGnct2pxzKiZuDKMcOB++mdIRvlSdGHDQYkCJyH/UX3F6ujCa6+9D4PansakQM66b
+	RZySIg3nO4NTE9BfmBY8W8uI82xOLNHcftxmyOD1l+v8WNTz7KFXxE7t8PfSuH/P67VmXfPp0gq
+	wgwJWL3t/nVI+/AOTEtnq/pZkBIA3Mov+75A7ELlMcJX9M9EO8xctpjEHv9HS+gMWBOUfMwV5q3
+	OzISSGe+RDu8Ukbm0jXGzSYlwon8pUGP+osswAoDHRrBWHBINlaUbXtDwuabT8I0NoHWE9BU8LC
+	kEFyEB6dJBZoVMgu/m8sRzyTnF/emrxd3Dpvdw+0BJW9+Iqwj21IvEB9kxN6gNfNZSFpyQiBqE9
+	JEAE8ErAbXaWyHH/Cq9UoNXlnZAypJA8LWIL87+jTWzo0B923TDDLBb8l22Y7nQQYazSkjd3uZA
+	zSmfw/oERonZOUiw==
+X-Google-Smtp-Source: AGHT+IGT22rMOS7zpkVXCQktJ+CXsz5d60nlco16amfiTaRrE8PNlBBx+BmcaTn1+GNMGJdxBxc5Uw==
+X-Received: by 2002:a05:6402:5250:b0:62f:2afa:60e6 with SMTP id 4fb4d7f45d1cf-639346c8b7dmr3139059a12.7.1759499259990;
+        Fri, 03 Oct 2025 06:47:39 -0700 (PDT)
+Received: from localhost.localdomain ([46.10.223.24])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-637881011e9sm4009560a12.25.2025.10.03.06.47.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 06:45:53 -0700 (PDT)
-Date: Fri, 3 Oct 2025 14:45:50 +0100
-From: Vincent Donnefort <vdonnefort@google.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org, qperret@google.com,
-	sebastianene@google.com, keirf@google.com,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v2] KVM: arm64: Check range args for pKVM mem transitions
-Message-ID: <aN_TjloudttqBUtf@google.com>
-References: <20250919155056.2648137-1-vdonnefort@google.com>
- <87plbkxcvv.wl-maz@kernel.org>
- <aNG417MneSKBxyn8@google.com>
- <aNHcxAJXHeS2T7TH@linux.dev>
- <aNJmA-1ZlikW2Knw@google.com>
- <86plb7ync9.wl-maz@kernel.org>
+        Fri, 03 Oct 2025 06:47:39 -0700 (PDT)
+From: "Nikola Z. Ivanov" <zlatistiv@gmail.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	khalid@kernel.org,
+	"Nikola Z. Ivanov" <zlatistiv@gmail.com>,
+	syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
+Subject: [PATCH] f2fs: Perform sanity check before unlinking directory inode
+Date: Fri,  3 Oct 2025 16:47:31 +0300
+Message-ID: <20251003134731.470392-1-zlatistiv@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86plb7ync9.wl-maz@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-[...]
+Current i_nlink corruption check does not take into account
+directory inodes which have one additional i_nlink for their "." entry.
 
-> > > > > > +static bool check_range_args(u64 start, u64 nr_pages, u64 *size)
-> > > > > > +{
-> > > > > > +	if (check_mul_overflow(nr_pages, PAGE_SIZE, size))
-> > > > > > +		return false;
-> > > > > > +
-> > > > > > +	return start < (start + *size);
-> > > > > 
-> > > > > I will echo Oliver's concern on v1: you probably want to convert the
-> > > > > boundary check to be inclusive of the end of the range. Otherwise, a
-> > > > > range that ends at the top of the 64bit range will be represented as
-> > > > > 0, and fail the  check despite being perfectly valid.
-> > > > 
-> > > > Do you mean allowing something like start == 0xfffffffffffff000 and size ==
-> > > > 4096?
-> > > 
-> > > Yes, this is what I was alluding to on v1.
-> > > 
-> > > > But I guess that would still put all the following checks using "addr + size" at
-> > > > risk. Also, I believe even the code in pgtable.c wouldn't support a such range
-> > > > as it is also using a u64 end boundary.
-> > > 
-> > > I'm not sure I follow. Ranges are pretty commonly expressed as a range
-> > > terminated by an exclusive value. This just hasn't been an issue yet as
-> > > the page table code is only ever dealing with TTBR0 or VTTBR
-> > > translations.
-> > 
-> > If I do exclude the end boundary, evading checks would be as simple as making
-> > sure we overflow the end boundary?
-> > 
-> > e.g. __pkvm_host_share_guest(phys = 0xfffffffffffff000, size = 4096) 
-> > 
-> >         check_range_allowed_memory(phys, phys + size) /* nop */
-> > 	....
-> > 	for_each_hyp_page(page, phys, size) {  /* nop */
-> >                ...
-> > 	} 
-> > 	...
-> > 	/* Install a valid mapping to phys */
-> > 	kvm_pgtable_stage2_map(&vm->pgt, ipa, size, phys, ...) 
-> 
-> Why shouldn't this be as simple as this:
-> 
-> static bool check_range_args(u64 start, u64 nr_pages, u64 *size)
-> {
-> 	if (check_mul_overflow(nr_pages, PAGE_SIZE, size))
-> 		return false;
-> 
-> 	return start < (start + *size - 1);
-> }
-> 
-> which correctly deals with the boundary issue?
+Add additional check and a common corruption path.
 
-I am concerned about allowing ranges that will still overflow "phys + size".
+Reported-by: syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=c07d47c7bc68f47b9083
+Fixes: 81edb983b3f5 ("f2fs: add check for deleted inode")
+Signed-off-by: Nikola Z. Ivanov <zlatistiv@gmail.com>
+---
+ fs/f2fs/namei.c | 28 ++++++++++++++++++++--------
+ 1 file changed, 20 insertions(+), 8 deletions(-)
 
-e.g. phys=0xfffffffffffff000 and size=4096 would pass check_range_args().
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index b882771e4699..68b33e8089b0 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -502,12 +502,14 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
+ 		goto out;
+ 	}
+ 
+-	if (inode->i_nlink == 0) {
++	if (unlikely(inode->i_nlink == 0)) {
+ 		f2fs_warn(F2FS_I_SB(inode), "%s: inode (ino=%lx) has zero i_nlink",
+ 			  __func__, inode->i_ino);
+-		err = -EFSCORRUPTED;
+-		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
+-		goto out_iput;
++		goto corrupted;
++	} else if (unlikely(S_ISDIR(inode->i_mode) && inode->i_nlink == 1)) {
++		f2fs_warn(F2FS_I_SB(inode), "%s: directory inode (ino=%lx) has a single i_nlink",
++			  __func__, inode->i_ino);
++		goto corrupted;
+ 	}
+ 
+ 	if (IS_ENCRYPTED(dir) &&
+@@ -533,6 +535,9 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
+ 	trace_f2fs_lookup_end(dir, !IS_ERR_OR_NULL(new) ? new : dentry,
+ 				ino, IS_ERR(new) ? PTR_ERR(new) : err);
+ 	return new;
++corrupted:
++	err = -EFSCORRUPTED;
++	set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
+ out_iput:
+ 	iput(inode);
+ out:
+@@ -572,10 +577,11 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+ 	if (unlikely(inode->i_nlink == 0)) {
+ 		f2fs_warn(F2FS_I_SB(inode), "%s: inode (ino=%lx) has zero i_nlink",
+ 			  __func__, inode->i_ino);
+-		err = -EFSCORRUPTED;
+-		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
+-		f2fs_folio_put(folio, false);
+-		goto fail;
++		goto corrupted;
++	} else if (unlikely(S_ISDIR(inode->i_mode) && inode->i_nlink == 1)) {
++		f2fs_warn(F2FS_I_SB(inode), "%s: directory inode (ino=%lx) has a single i_nlink",
++			  __func__, inode->i_ino);
++		goto corrupted;
+ 	}
+ 
+ 	f2fs_balance_fs(sbi, true);
+@@ -601,6 +607,12 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+ 
+ 	if (IS_DIRSYNC(dir))
+ 		f2fs_sync_fs(sbi->sb, 1);
++
++	goto fail;
++corrupted:
++	err = -EFSCORRUPTED;
++	set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
++	f2fs_folio_put(folio, false);
+ fail:
+ 	trace_f2fs_unlink_exit(inode, err);
+ 	return err;
+-- 
+2.51.0
 
-But in __pkvm_host_share_guest() that would mean:
-
-  bypassing check_range_allowed_memory()
-  bypassing for_each_hyp_page()
-
-  but installing a valid mapping to phys with:
-   kvm_pgtable_stage2_map(&vm->pgt, ipa, size, phys, ...) 
-
-
-> 
-> 	M.
-> 
-> -- 
-> Without deviation from the norm, progress is not possible.
 
