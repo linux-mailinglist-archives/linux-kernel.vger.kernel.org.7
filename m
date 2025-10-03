@@ -1,158 +1,194 @@
-Return-Path: <linux-kernel+bounces-841182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E662BB66E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 12:09:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FB92BB66E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 12:10:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A05C24E12D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 10:09:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38D384E41F9
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 10:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092A32E8B62;
-	Fri,  3 Oct 2025 10:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hK4jxQvb"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672FB2E7BD9;
+	Fri,  3 Oct 2025 10:10:42 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9F32773D9
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 10:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DC21E9B1C
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 10:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759486154; cv=none; b=npeyQSXq+SG1B7ircmCTo7xxsR/YhcbkXn+VtnWYrAPC0lGJNuiHk2BtLAas5jxLRt10CvSUAI6jXLHL3B0QWbzWUuXLaDw/3hGxh7JQyNAjeYysaYU2seTptjOed2ZWUdO0IZVUDxH+P9kH582P/JHhoRgtIzEk/UdhKpMBQho=
+	t=1759486242; cv=none; b=jJft5jf2udgn5qGUtn8qdyIUITdMO1zjpt3P1hU5MZOojGQeEHRm2nhnDhMqvE1QGZbIQmhc+fVyfg8GCC9SIlzYS9HNvFCNcq6tzM9RYj7wXFxu9GDrNyylfbV4hIkCxw3i/hdu7dX6Y6hGBuvZFgMkllhXxhYk7Fwi9nomybk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759486154; c=relaxed/simple;
-	bh=zyN5kJjGWts9pnV3esQfqyOjly0NsOO5iE9InxBUDQk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KmNsfXAiB2UPneCR7pJqWK4MjThqIT/rUaNAfeWVNsqUXijQTasQNUH0Zkpb3+aMsqsD4pzNTzh97raVojVNjXFoiDVB3sgV7mw8/iK4Wvs1ZxlbcQiusOqZ3U1PXXVaz9injUO1HtKaiE7TYWwzcA3Uy36cNU5wY6dEIJyi+uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hK4jxQvb; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-28e8c5d64d8so19554795ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 03:09:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759486152; x=1760090952; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H789t2HmzhmbljtGAHdhtwsEfghCwEDwSOBBlGMKrck=;
-        b=hK4jxQvbLl5ZtjCVDzrCgyV+QbIJd0YfD5f5ATeCnhLhyStoFB+szSshtFthHAMZ7z
-         gfPOm7Kei4I8uzU53HIV5CFOzO+pTPqOB/YCBZ7vC9w+Dndh3BRWWK9b6hVeH0slwl2m
-         7+ZV3Yh2lVE3vstxKstJ595GlpTbQesOewMoPGTE2tkOzgV0oLyDorVX8LBupIJmU90e
-         +9SLM5BE9HbKH+A6DgOdsDJiDSuT4RtKj/DM8eXC8UGjAJIFfbzDmxxPn0QpAI3rdnKV
-         HGb8nWr5Pkx8o3rwrDiZA/YbIOwT3GM2zRZi/jbmm81R90dGNPcMh9Xu5Z9K+Yk0Id20
-         71lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759486152; x=1760090952;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H789t2HmzhmbljtGAHdhtwsEfghCwEDwSOBBlGMKrck=;
-        b=p+esdfPlIVu83WuZ7JQIc3vSnji+N4PEB3GvPH4P6qgePFZ1vPAPo0e3Qt/uhqdfcY
-         lVQmvF0ZnGOBHtvzVX5L7pDLZ6rzxLo6eVzBDsrKjPJOP9cn+0Auk/+S0Ytsou31et87
-         22zeZIrwu4vCdQmxoVzyOmu1Goq5ilhhZNvzeMPSm8JRaTm1xxshYdqs7mpfQmhG23BB
-         KKCRiM53MAxHhPduUd2hgDt2BFaBx7FQHhFKHFm/ThsApXLoRnQA+y2SrDf0bPB5saXP
-         U05dNllVtP2XpRrpmV9hbLR3Y2LlAO2yuMUBaNF6U4Izp8drXA68mplw3qW92VoSsySR
-         wkaA==
-X-Forwarded-Encrypted: i=1; AJvYcCVybL3V9EOQCBGCTrAHAjFIFllIchUKlYfqxts0msparwy16oVra2cxbPSKe/wN6URFFugVrMKLKhxm5/w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxvv1jR200f6kCxwTMZEGgHY7zSZ7wEMdBvcZkOG8ObcZhPBBvA
-	hl+NwZUO1rR9QK5pwzMAOLJQvkf8ZtGitwmca2GjRLJb48RI9nRz9IjSzEyF/rvjlXPPBHNDCB7
-	Nr3S+B9qAcyWLSC9Rixc5zcI74tRoRrg=
-X-Gm-Gg: ASbGncsDBlW4VgBOoPdmLoWQZI4CPXNJaGjSTEVMcP+aujZTg6M9UHxpL8W+ZVza3YM
-	6dxfV7KrmuPiX1Y07W0K7nUvvk8CVVnhwnPGtsi4pf6bfbiCSFQW7vG/X/pw5Rkk4WlXolbs4Nz
-	8xoP34XKMFly6ATFPAqDifomvayph1s5bRJzMD41LW3dNFzpCGVXa6ePNHESV4pwfwZ5uiihw15
-	qO+M9RnMKhdPLuhvCZzKW8vZt5Mdpw5Lbp8GemE/cU6TnvM3CR5w9Rv1WUk5+cKxTWJmxgT91sk
-	849YJwTpZgPwv2UL
-X-Google-Smtp-Source: AGHT+IF0+4q/k+zcJ3YTSndyNDr287UygKKDh0bpp2Ii6zW2yIPj7g8FEXDvGEP+fNpAXN2VPsFiO3yvV4ckDIx6k2A=
-X-Received: by 2002:a17:902:f642:b0:277:9193:f2da with SMTP id
- d9443c01a7336-28e9a51332emr30166305ad.5.1759486152149; Fri, 03 Oct 2025
- 03:09:12 -0700 (PDT)
+	s=arc-20240116; t=1759486242; c=relaxed/simple;
+	bh=3rkZMlqYnBFQ29rqy6sq9aT2bYuyz+AuiOovvYU1zWU=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BORZG3FXsCFH9IYMjttvATqQ0PIYvhmOpa0otS7fLPTfzNCsQw0/S7xOB7u7p6oKNjiT/MwZdAYLBouLuhkruUWZQUovq6v3KiqoebMQ9xWdEXXQWFLRmAgg4AD5dqmpBsVPWiFrhPZMCmk74T5UpxUQWNMruP0RY9ZXxNSO7I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cdPYK6YGHz67bVD;
+	Fri,  3 Oct 2025 18:10:13 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 256911400D9;
+	Fri,  3 Oct 2025 18:10:37 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 3 Oct
+ 2025 11:10:34 +0100
+Date: Fri, 3 Oct 2025 11:10:32 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Raghavendra K T <raghavendra.kt@amd.com>
+CC: <AneeshKumar.KizhakeVeetil@arm.com>, <Michael.Day@amd.com>,
+	<akpm@linux-foundation.org>, <bharata@amd.com>, <dave.hansen@intel.com>,
+	<david@redhat.com>, <dongjoo.linux.dev@gmail.com>, <feng.tang@intel.com>,
+	<gourry@gourry.net>, <hannes@cmpxchg.org>, <honggyu.kim@sk.com>,
+	<hughd@google.com>, <jhubbard@nvidia.com>, <jon.grimm@amd.com>,
+	<k.shutemov@gmail.com>, <kbusch@meta.com>, <kmanaouil.dev@gmail.com>,
+	<leesuyeon0506@gmail.com>, <leillc@google.com>, <liam.howlett@oracle.com>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<mgorman@techsingularity.net>, <mingo@redhat.com>, <nadav.amit@gmail.com>,
+	<nphamcs@gmail.com>, <peterz@infradead.org>, <riel@surriel.com>,
+	<rientjes@google.com>, <rppt@kernel.org>, <santosh.shukla@amd.com>,
+	<shivankg@amd.com>, <shy828301@gmail.com>, <sj@kernel.org>, <vbabka@suse.cz>,
+	<weixugc@google.com>, <willy@infradead.org>, <ying.huang@linux.alibaba.com>,
+	<ziy@nvidia.com>, <dave@stgolabs.net>, <yuanchu@google.com>,
+	<kinseyho@google.com>, <hdanton@sina.com>, <harry.yoo@oracle.com>
+Subject: Re: [RFC PATCH V3 11/17] mm/kscand: Implement migration failure
+ feedback
+Message-ID: <20251003111032.00004688@huawei.com>
+In-Reply-To: <20250814153307.1553061-12-raghavendra.kt@amd.com>
+References: <20250814153307.1553061-1-raghavendra.kt@amd.com>
+	<20250814153307.1553061-12-raghavendra.kt@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251003092918.1428164-1-kriish.sharma2006@gmail.com> <20251003100309.GH2878334@horms.kernel.org>
-In-Reply-To: <20251003100309.GH2878334@horms.kernel.org>
-From: Kriish Sharma <kriish.sharma2006@gmail.com>
-Date: Fri, 3 Oct 2025 15:39:01 +0530
-X-Gm-Features: AS18NWC_eW-Dv_FT_W7Xy2UkifYVy8aGoVOn2CYcFPK0N5SlyvAcZV_zO15r_4s
-Message-ID: <CAL4kbRPQrXxktcWH4Dm3JhcFTsJf8ZYiyQwq+=bt7pzzn7wqBQ@mail.gmail.com>
-Subject: Re: [PATCH net v2] hdlc_ppp: fix potential null pointer in
- ppp_cp_event logging
-To: Simon Horman <horms@kernel.org>
-Cc: khalasa@piap.pl, khc@pm.waw.pl, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-Hi Simon,
+On Thu, 14 Aug 2025 15:33:01 +0000
+Raghavendra K T <raghavendra.kt@amd.com> wrote:
 
-Thanks again for the clarification. I understand this is more of a
-clean-up rather than a bug fix.
-I=E2=80=99ll prepare a v3 targeting net-next once the merge window reopens,
-removing the Fixes tag.
+>  Before this, scanning kthread continues to scan even after
+> migration fails. To control migration, scanning is slowed down
+> based on the failure/success ratio obtained from migration
+> thread.
+> 
+>  Decaying failure ratio is maintained for 1024 migration window.
+> The ratio further contributes to approximately 10% scaling of
+> scan_period.
+Perhaps it's worth adding a cover letter section describing all the
+heuristics briefly so we have a central place to understand what
+needs tuning against workloads before this merges?
 
-Best regards,
-Kriish
+J
 
-On Fri, Oct 3, 2025 at 3:33=E2=80=AFPM Simon Horman <horms@kernel.org> wrot=
-e:
->
-> On Fri, Oct 03, 2025 at 09:29:18AM +0000, Kriish Sharma wrote:
-> > Fixes warnings observed during compilation with -Wformat-overflow:
-> >
-> > drivers/net/wan/hdlc_ppp.c: In function =E2=80=98ppp_cp_event=E2=80=99:
-> > drivers/net/wan/hdlc_ppp.c:353:17: warning: =E2=80=98%s=E2=80=99 direct=
-ive argument is null [-Wformat-overflow=3D]
-> >   353 |                 netdev_info(dev, "%s down\n", proto_name(pid));
-> >       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > drivers/net/wan/hdlc_ppp.c:342:17: warning: =E2=80=98%s=E2=80=99 direct=
-ive argument is null [-Wformat-overflow=3D]
-> >   342 |                 netdev_info(dev, "%s up\n", proto_name(pid));
-> >       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >
-> > Update proto_name() to return "LCP" by default instead of NULL.
-> > This change silences the compiler without changing existing behavior
-> > and removes the need for the local 'pname' variable in ppp_cp_event.
-> >
-> > Suggested-by: Krzysztof Ha=C5=82asa <khalasa@piap.pl>
-> > Fixes: 262858079afd ("Add linux-next specific files for 20250926")
->
-> Perhaps this should be:
->
-> Fixes: e022c2f07ae5 ("WAN: new synchronous PPP implementation for generic=
- HDLC.")
-> But more importantly, and sorry for not noticing this in my review of v1,
-> I'm not sure this is a bug fix. In his review of v1 Chris explains that
-> this case cannot be hit. And that the patch is about silencing the
-> compiler.
->
-> If so, I'd suggest this is a clean-up and thus you should consider:
-> 1) Removing the fixes tag
-> 2) Retargeting the patch at net-next
->
-> Please also note that net-next is currently closed for the merge window.
-> So any patches for it should be sent after it reopens, which will
-> be after v6.18-rc1 is released, most likely on or after 13th October.
->
-> See: https://docs.kernel.org/process/maintainer-netdev.html
->
-> The code change itself looks good to me.
->
-> > Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
-> > ---
-> > v2:
-> >   - Target the net tree with proper subject prefix "[PATCH net]"
-> >   - Update proto_name() to return "LCP" by default instead of NULL
-> >   - Remove local 'pname' variable in ppp_cp_event
-> >   - Add Suggested-by tag for Krzysztof Ha=C5=82asa
-> >
-> > v1: https://lore.kernel.org/all/20251002180541.1375151-1-kriish.sharma2=
-006@gmail.com/
-> >
+> 
+> Signed-off-by: Raghavendra K T <raghavendra.kt@amd.com>
+> ---
+>  mm/kscand.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+> 
+> diff --git a/mm/kscand.c b/mm/kscand.c
+> index bf975e82357d..41321d373be7 100644
+> --- a/mm/kscand.c
+> +++ b/mm/kscand.c
+> @@ -146,6 +146,8 @@ struct kmigrated_mm_slot {
+>  	spinlock_t migrate_lock;
+>  	/* Head of per mm migration list */
+>  	struct list_head migrate_head;
+> +	/* Indicates weighted success, failure */
+> +	int msuccess, mfailed, fratio;
+>  };
+>  
+>  /* System wide list of mms that maintain migration list */
+> @@ -812,13 +814,45 @@ static void kscand_collect_mm_slot(struct kscand_mm_slot *mm_slot)
+>  	}
+>  }
+>  
+> +static int kmigrated_get_mstat_fratio(struct mm_struct *mm)
+> +{
+> +	int fratio = 0;
+> +	struct kmigrated_mm_slot *mm_slot = NULL;
+> +	struct mm_slot *slot;
+> +
+> +	guard(spinlock)(&kscand_migrate_lock);
+> +
+> +	slot = mm_slot_lookup(kmigrated_slots_hash, mm);
+> +	mm_slot = mm_slot_entry(slot, struct kmigrated_mm_slot, mm_slot);
+> +
+> +	if (mm_slot)
+> +		fratio =  mm_slot->fratio;
+
+Extra space after =
+
+> +
+> +	return fratio;
+> +}
+> +
+> +static void update_mstat_ratio(struct kmigrated_mm_slot *mm_slot,
+> +				int msuccess, int mfailed)
+> +{
+> +	mm_slot->msuccess = (mm_slot->msuccess >> 2) + msuccess;
+> +	mm_slot->mfailed = (mm_slot->mfailed >> 2) + mfailed;
+> +	mm_slot->fratio = mm_slot->mfailed * 100;
+> +	mm_slot->fratio /=  (mm_slot->msuccess + mm_slot->mfailed);
+
+extra space after =
+
+> +}
+> +
+> +#define MSTAT_UPDATE_FREQ	1024
+> +
+>  static void kmigrated_migrate_mm(struct kmigrated_mm_slot *mm_slot)
+>  {
+> +	int mfailed = 0;
+> +	int msuccess = 0;
+> +	int mstat_counter;
+>  	int ret = 0, dest = -1;
+>  	struct mm_slot *slot;
+>  	struct mm_struct *mm;
+>  	struct kscand_migrate_info *info, *tmp;
+>  
+> +	mstat_counter = MSTAT_UPDATE_FREQ;
+
+Might as well set at declaration above.
+
+>  	spin_lock(&mm_slot->migrate_lock);
+>  
+>  	slot = &mm_slot->mm_slot;
+> @@ -842,11 +876,23 @@ static void kmigrated_migrate_mm(struct kmigrated_mm_slot *mm_slot)
+>  			}
+>  
+>  			ret = kmigrated_promote_folio(info, mm, dest);
+> +			mstat_counter--;
+> +
+> +			/* TBD: encode migrated count here, currently assume folio_nr_pages */
+> +			if (!ret)
+> +				msuccess++;
+> +			else
+> +				mfailed++;
+>  
+>  			kfree(info);
+>  
+>  			cond_resched();
+>  			spin_lock(&mm_slot->migrate_lock);
+> +			if (!mstat_counter) {
+> +				update_mstat_ratio(mm_slot, msuccess, mfailed);
+> +				msuccess  = mfailed = 0;
+
+extra space before =
+
+> +				mstat_counter = MSTAT_UPDATE_FREQ;
+> +			}
+>  		}
+>  	}
 
