@@ -1,95 +1,117 @@
-Return-Path: <linux-kernel+bounces-841599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F359BB7CB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:43:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E40EBB7CBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9C311B21C3E
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:44:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 147591B21BFE
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED9B2DBF5B;
-	Fri,  3 Oct 2025 17:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447582C2359;
+	Fri,  3 Oct 2025 17:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZS/BoVm9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R1nywXRb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D921EA7C6;
-	Fri,  3 Oct 2025 17:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F99583A14
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 17:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759513415; cv=none; b=RQIJvv1gM+8Kr742cMj+p0HTwzbMVXbXX0I1wgVaoZrpvca4aV8rLpfxioeW5vycYydfEDD0qtrDdDCGLCIfrhTB3PFExlgKU/0KZYs4kyMHRnNy2SrrPWLr4MMfXmsTUTZUK71HWyR2wxn3Rzr8CXbGVMvlpAexdUU7o30l9Ws=
+	t=1759513476; cv=none; b=ClPutBaVG6In2tsRH8kotQ6TsX2Jj1U7N72KLO4NweFiVKVCtc0n8Vi2f13mXEHkvhmJBwSuTrRd4FDAn/qookcbj8qeSY9VrH7tCnMurSi3JJbK1FXmcYFhrdjSM8d94yrqcATzdjdM2JO8Pk6SKAu4YIuwubufEfc35lyMQII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759513415; c=relaxed/simple;
-	bh=MCMm3tLWyqHJADr5NCwVHmqYGQ1hSj7LvI3SVxqxMOc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M6jlyrZVC3VfX4pTbQnhlE7gC3iU8OefWQtaDsSGbyEcJ+9SLRQP1zZgRj4g268jF4A7pg8nyXETTYvP/JiLrSE0Xz17BMAkBmvbxhn9zRK4LKdeFG/puTmCfaga+yZLNAQlvIZ9in/WfPVj0fIETbpiHxu8R3wTicy2lFGzZAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZS/BoVm9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 941A7C4CEF5;
-	Fri,  3 Oct 2025 17:43:33 +0000 (UTC)
+	s=arc-20240116; t=1759513476; c=relaxed/simple;
+	bh=6sxY/rZsZ7Qu89LIgBN6DMePnfP3Sntfb2VTt9cz1z8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SxJ82t7Fx9z3lI+zHJ7YVDJd9amvEhVkUSSbXaQo4ycQtOJSyOsGyDFosdOc683kv3mGUjid3VE2h9g1AE+8tPQEJlgbfSW3ImTuu+s/0aacJ99nE3gTV4TJ8J/Qqo0/9oDNIWCNm8Deq6vuYuiv9IgS7itCe+vaKi386zUSluc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R1nywXRb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24D8DC4CEF9
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 17:44:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759513414;
-	bh=MCMm3tLWyqHJADr5NCwVHmqYGQ1hSj7LvI3SVxqxMOc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZS/BoVm9DliPZXweZ4XEQ3POm5X2bUHdxHVyYNz4TqA7ZTiAxp664J5f+pudPRYKp
-	 LoF81u0f1We+KE+7S/wZP+NxcJcE+DmU3VEJShpXpDeC0D78o2Rs1UJD0Ndhw0WolT
-	 iXJnfCUXRJGnnIFCUONgkbFcFG9jgtiQoySQSZfsbJ97enQNVi7RYiZRwO9DSJ7k0V
-	 BOgwJz/dBPi2KlimhkKVWEaQOk0V2j1X3mutG8KKVaFVDbK0fUhDkv5p1hw1uSDEz0
-	 oXV4PlJp1UEXh0ftb+eEoVBpzmm9vWg14zY0sg+jbD6maBcR0UUWea86UvXe3ZDiAh
-	 EXItANEzA5Edw==
-Date: Fri, 3 Oct 2025 10:43:32 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jacob Keller <jacob.e.keller@intel.com>
-Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Emil
- Tantilov <emil.s.tantilov@intel.com>, Pavan Kumar Linga
- <pavan.kumar.linga@intel.com>, Alexander Lobakin
- <aleksander.lobakin@intel.com>, Willem de Bruijn <willemb@google.com>,
- Sridhar Samudrala <sridhar.samudrala@intel.com>, Phani Burra
- <phani.r.burra@intel.com>, Piotr Kwapulinski <piotr.kwapulinski@intel.com>,
- Simon Horman <horms@kernel.org>, Radoslaw Tyl <radoslawx.tyl@intel.com>,
- Jedrzej Jagielski <jedrzej.jagielski@intel.com>, Mateusz Polchlopek
- <mateusz.polchlopek@intel.com>, Anton Nadezhdin
- <anton.nadezhdin@intel.com>, Konstantin Ilichev
- <konstantin.ilichev@intel.com>, Milena Olech <milena.olech@intel.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Joshua Hay
- <joshua.a.hay@intel.com>, Aleksandr Loktionov
- <aleksandr.loktionov@intel.com>, Chittim Madhu <madhu.chittim@intel.com>,
- Samuel Salin <Samuel.salin@intel.com>
-Subject: Re: [PATCH net 3/8] idpf: fix possible race in idpf_vport_stop()
-Message-ID: <20251003104332.40581946@kernel.org>
-In-Reply-To: <20251001-jk-iwl-net-2025-10-01-v1-3-49fa99e86600@intel.com>
-References: <20251001-jk-iwl-net-2025-10-01-v1-0-49fa99e86600@intel.com>
-	<20251001-jk-iwl-net-2025-10-01-v1-3-49fa99e86600@intel.com>
+	s=k20201202; t=1759513476;
+	bh=6sxY/rZsZ7Qu89LIgBN6DMePnfP3Sntfb2VTt9cz1z8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=R1nywXRbJLXY+eaAnlHp6piIrqwQT6W3Pe/efTG96cBz89njnZJgliAc0vR0BPbAg
+	 7yLxXaP7KpSV/Ig7YjiTgBlb9S8bgzhw8PAWHmBCHSRRwZVBczaBFqSixFHBJHAAiD
+	 rfXPyZvIIGEQ0mdtTawWjOVPTudjfYk3MGw/zoL0etzsjegKkTecbESTY9JQcrCRIP
+	 C/dpsvyyumLmxH8BDNVNWssahEZe+9nXh83X/HedKOJeRVZ+2GlPck2HQyraE1AV5d
+	 oJ1wW68OirTQXeW0a8tymXVz9NogySFWSE12gnA875cFwPjTIukRQZcXn1QsyoRPQi
+	 k67T4lNdOLlRA==
+Received: by mail-yx1-f52.google.com with SMTP id 956f58d0204a3-636d5cefab2so3642655d50.2
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 10:44:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUeZdPKt7lq296p8XhpxhcMdnL0L3T5nrWuE31U9ayFBQ8PqU0ebDOMUEP0AcLPExp5W5TDiwJjvJcdxXQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxImkTEqqesTGmjmLiROK4IaIxNG7CY5FTX6TWrXtOSbeW08xlX
+	F+W7B4cGnu07zXPdZwBzr06mWV6SYEfH6jMQQruXQRmUq8rPLe4LYKfmqy6de8H5z1XAqd2GnjC
+	7PMSHwTU7qVpTVrK0bXqc0iuGlAk8jjHYZP/VH6DgBA==
+X-Google-Smtp-Source: AGHT+IFxRP56NfC2WcMLN5sCwHxKUfha0BnQuoy8ZsNgI90MO2Hyj5hjzF4/g+/ZDjEj7M59tZiXBloXgJWrg87HKBs=
+X-Received: by 2002:a05:690e:2513:20b0:62e:968:d591 with SMTP id
+ 956f58d0204a3-63b9a0b064amr3394296d50.23.1759513475416; Fri, 03 Oct 2025
+ 10:44:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
+ <20250916-luo-pci-v2-3-c494053c3c08@kernel.org> <20250929174831.GJ2695987@ziepe.ca>
+ <CAF8kJuNZPYxf2LYTPYVzho_NM-Rtp8i+pP3bFTwkM_h3v=LwbQ@mail.gmail.com>
+ <20250930163837.GQ2695987@ziepe.ca> <aN7KUNGoHrFHzagu@google.com>
+ <CACePvbX6GfThDnwLdOUsdQ_54eqF3Ff=4hrGhDJ0Ba00-Q1qBw@mail.gmail.com>
+ <CALzav=cKoG4QLp6YtqMLc9S_qP6v9SpEt5XVOmJN8WVYLxRmRw@mail.gmail.com>
+ <20251002232153.GK3195829@ziepe.ca> <CACePvbXdzx5rfS1qKkFYtL-yizQiht_evge-jWo0F2ruobgkZA@mail.gmail.com>
+ <20251003120638.GM3195829@ziepe.ca>
+In-Reply-To: <20251003120638.GM3195829@ziepe.ca>
+From: Chris Li <chrisl@kernel.org>
+Date: Fri, 3 Oct 2025 10:44:24 -0700
+X-Gmail-Original-Message-ID: <CACePvbXGq8Aau_sQiZx0pOQEB82GjoL2=ed4DCPU=N1XZRJ-5Q@mail.gmail.com>
+X-Gm-Features: AS18NWCEh6uxABLreGYasSQQynjMqxwHcxO8NOjjAyzkNARIucDgtG1ReUZmsWE
+Message-ID: <CACePvbXGq8Aau_sQiZx0pOQEB82GjoL2=ed4DCPU=N1XZRJ-5Q@mail.gmail.com>
+Subject: Re: [PATCH v2 03/10] PCI/LUO: Forward prepare()/freeze()/cancel()
+ callbacks to driver
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: David Matlack <dmatlack@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	Pasha Tatashin <tatashin@google.com>, Jason Miu <jasonmiu@google.com>, 
+	Vipin Sharma <vipinsh@google.com>, Saeed Mahameed <saeedm@nvidia.com>, 
+	Adithya Jayachandran <ajayachandra@nvidia.com>, Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, 
+	Mike Rapoport <rppt@kernel.org>, Leon Romanovsky <leon@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 01 Oct 2025 17:14:13 -0700 Jacob Keller wrote:
-> From: Emil Tantilov <emil.s.tantilov@intel.com>
-> 
-> Make sure to clear the IDPF_VPORT_UP bit on entry. The idpf_vport_stop()
-> function is void and once called, the vport teardown is guaranteed to
-> happen. Previously the bit was cleared at the end of the function, which
-> opened it up to possible races with all instances in the driver where
-> operations were conditional on this bit being set. For example, on rmmod
-> callbacks in the middle of idpf_vport_stop() end up attempting to remove
-> MAC address filter already removed by the function:
-> idpf 0000:83:00.0: Received invalid MAC filter payload (op 536) (len 0)
+On Fri, Oct 3, 2025 at 5:06=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca> wrote=
+:
+>
+> On Thu, Oct 02, 2025 at 10:24:59PM -0700, Chris Li wrote:
+>
+> > As David pointed out in the other email, the PCI also supports other
+> > non vfio PCI devices which do not have the FD and FD related sessions.
+> > That is the original intent for the LUO PCI subsystem.
+>
+> This doesn't make sense. We don't know how to solve this problem yet,
+> but I'm pretty confident we will need to inject a FD and session into
+> these drivers too.
 
-Argh, please stop using the flag based state machines. They CANNOT
-replace locking. If there was proper locking in place it wouldn't
-have mattered when we clear the flag.
+Ack. I can start hacking on hook up the PCI layer to the vfio FD and
+sessions. Not sure how to do that at this point yet, I will give it a
+stab and report back.
 
-I'm guessing false negatives are okay in how you use the UP flag? 
-The commit message doesn't really explain why.
+>
+> > away once we have the vfio-pci as the real user. Actually getting the
+> > pci-pf-stub driver working would be a smaller and reasonable step to
+> > justify the PF support in LUO PCI.
+>
+> In this contex pci-pf-stub is useless, just use vfio-pci as the SRIOV
+> stub. I wouldn't invest in it. Especially since it creates more
+> complexity because we don't have an obvious way to get the session FD.
+
+Ack. I will not do pci-pf-stub then.
+
+Chris
 
