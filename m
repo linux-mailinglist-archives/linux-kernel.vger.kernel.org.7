@@ -1,168 +1,201 @@
-Return-Path: <linux-kernel+bounces-840932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AD79BB5C10
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 03:41:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E1DFBB5C1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 03:45:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 20ADB343A63
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 01:41:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F01BF4E90DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 01:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766C928466F;
-	Fri,  3 Oct 2025 01:41:03 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693633770B;
+	Fri,  3 Oct 2025 01:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MKnYZO0L"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4EB1273D9F
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 01:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521C728469F
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 01:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759455663; cv=none; b=SGuRhJjN9g2T1cO4gd3kUktM3NUr0zkBk7m6VAI0xl0ayJLv4KU9boNu15YlG0T+Y+AC5+6L5a/p8oC/j7vCfqtM0kLV59BrFNva2LmEVrje6HT79dzIydkBR3Ni3+KaOjVeIFxWnBuf/L3LmA4iJFewgzUMN5nftSql5wAO4gg=
+	t=1759455909; cv=none; b=BM2d83FRFaRdQrPwsv2QiKREf/E4oxy0AivR9BhhJDJYYYpXzOyEbqTMHlEHzIKk7tEkJYBgImJnFjM8xftSPccq9qfkI/TfRiaTVJ4iUwedQDtEJekmgVxPPPc+w+HBwuXK+bZKVrr6sD7gsWEK+Oo4MMIQDB4O+8z6lJLMUgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759455663; c=relaxed/simple;
-	bh=DY2LpIw+buD76/TQi8/+FFrw7iGIpPfinV+MQ53jhno=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=j6LiN1R893rsPPYzFzMvaLQI+SxaXKGbCpzJS/SzIG5+YdbgDOwFYKGTm0qYb2ztIJwXjgK8o1bTeZfJo8d43dDzOG28P0LlmnRzilEDHpbhwmDqdjCKYrAsbUuZnV451iACV7d1c2ZjUPgKTRvxogMziVsp/SW5oSMBy5gW5p4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42a076e4f9eso24038625ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 18:40:57 -0700 (PDT)
+	s=arc-20240116; t=1759455909; c=relaxed/simple;
+	bh=Wb/D+E4kiUBjIfwCZkZzNqX0bf8SbHMD9aJHVSnKMVc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V7CulyV7LrRMGUnNW8+OQXhMSzBEdlW6xL5XdhXcZq5Px45F6nCL8T6X7GTw3JSqvTvyFnP7GTvmK58fToN2m98Rllf9VIvwtkvMzS5UGF6AtRCKabYDGOWYGAXieU7czOcbW5OzRY1XGQ6y7g6obXoYgGRyQ1lrzxy90lWg1+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MKnYZO0L; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4d7b4b3c06dso11619181cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 18:45:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759455903; x=1760060703; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=dbZX0YDGEzlIF8RIsG89+OMY5rd2Shf5AWwsJNOua3s=;
+        b=MKnYZO0LxTmKEwCk+g/zVw1RGSUSpqcWK62OhLgs4JuEFGwLsKVPo7BdB0yBXmSEpm
+         VPmTBsskmolaorw3L9qNn6rF1l1WC6fjgIY70gfzaSSUmb3P6sCTTdvjVxaR45NcbpMO
+         LVi6GKynaT9ra4aQLMCpvsnx8BVv08KSjxicA1F4PgZl4nL/FZ2uGRmyWJ9owxNh2RNg
+         N8pRiE0RogRO01Jig0+xxl1SAhwie0JZLAaTzkAPPWxri8e9qlL/jwEGJDA5II0mTlZv
+         MjmQO+vT9BhMZrPchtY+Xy/U1G1Qrw/lKRAWXqvLw/Eu4MAMOmXuHBDUTInVN/UxwdXw
+         dFjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759455657; x=1760060457;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1759455903; x=1760060703;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V5vs9n9028GGJFsoBbT/p4gNDi1uzSRnj3Xc4sJwfKs=;
-        b=h5WLLP/wcqsf7coJNKsGQKhu4uhrwsuDKrpGjzbYUL7vqadoXuSZp8mqZVJEdUzmZ6
-         FmeqGck6AKMU+Ry7sEPM7yXzEfmj9jF9jtTmdj2qQL/0b/BKY+9/47PfrAGov18v/uS9
-         XgEpysQxKUiIcVB6siPmoccKaM+VA7ldUINbwogfKR5Tq8/lXrqLwUybozK9V0jUKalI
-         DlVDWhObs1ifkcfxaZb3OCFx8HHuTO0tvENg8nQ//cH05UNwjE3QYXaqlPh++d3/SWxb
-         9PWgWCYCVzvnHIEOo55+fecDZg4I3oyl5emagnqfbKnl6ynoKTqDh/4a50s/2qwJYNNO
-         2otQ==
-X-Gm-Message-State: AOJu0YziOgHRJYrN7v3V8ozro5hmMzYA58BJN4huHaAsw7acNbwSqOJ7
-	plPxxo20rMNNhZ2NOVoo05Kpz0SISVq8n1BgT04Ar4Gz0c7Ezb7O/gGTNzpRTQMzRydbafEWsJZ
-	P8JJDCliy6FBt14qCvZYDFafksTGajh/KvBCP/Tp41lfoKupCfyABTiF6Kjw=
-X-Google-Smtp-Source: AGHT+IFhg8ouvwwKbXnMfGJYbD4tTYSrnKy8OTRu1TtLPf/mj7kCVJ9KQK5KMPsqokgWU9IOjk0S7cN5mPM1g8gmrMFYwe6doCI/
+        bh=dbZX0YDGEzlIF8RIsG89+OMY5rd2Shf5AWwsJNOua3s=;
+        b=LMSafFuMsSscwJndHt4cDOMOysHEOTLtqMq/rPYbAoZ6eAidSDjpCKrbZARf+4d3Lw
+         V4E89nbTB3heidUeWqU8X9sWtlWnJ4afquzuq9ALDmoOQzIcXrBSbUQ3NcinZYeJNGBW
+         o16q3mi1zpiLwn8V+z11PLCZaUM20lgt84fFRyKET0wgrZXHqjSmVwXSwCKeUdrhrG5U
+         h6k7x8beyKiCg/87EmwhuBCobqun1s9Fw9cUHGgeWjIH/IBnby2gvoz/huIanWljH8B7
+         zjotuu7k/G4AtWj/pTeCPrTTeha2qaotZFk24nSgrvA+M/6uU+LfifDIRbFwUqdNVZ6/
+         6C+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUsUNYF9ULxwkVWWrmpcUzP/j/IfKZMqTAPRk/zrWjIR6Zn3XmRfdqVNP42zMJTL0WMHaq2sy45tus47Cs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDfjz68w6+mJYOAm/qFQJfWywUW8BbFrlodFo8LtiKxINGQXg6
+	eqh/Pe5eghM55rszAROrHHEs8dUV7TJxobGU1CKj4D3P2k/X2ZAVKEjL
+X-Gm-Gg: ASbGnctN3O+sYUmm5NYsfD4ZqsW11HSh/D1tlrswdTuz/LJvhX+5QapFF8mC2kF3Gh+
+	Du3Hdo3Xhxe/CNBTzLW8A9F80u9aGA81TDIy6WEfVmIwl8+xYTuTzPHuHDeP3oPN61Gy6GV7IAR
+	vqoP62gKVfGuD9LnkyVoZPSmZ9tfvqtrby8qagbHj9I2w3ujUTEY7hjSdUOxQPm6b106Sl80wvf
+	ud5dOHhpGPQ8FvWkiHqgnmYq6mKwa38m0BJmmttcXvLyEnhf8U0W3T2n2nunoOZOruZly3vnEDX
+	U/hR/NOxw1sHhnp6XFijLhjBhAQZb87A36t5hxYktfkQ/SEW/c7+lRuqMrIaQnMRBX0s2Ti2/gK
+	eP720VtVJKkADDNILsU4YenBR0KCqif3AA3H/852icSB9D4/faTqM/Q==
+X-Google-Smtp-Source: AGHT+IGC0q3AbzHcjA6VvVLioJ3pS8dU7d4NDAjw+ySW6Kf0eeIpzDpoeH8ZNTFGtaSizi9pWO9g4Q==
+X-Received: by 2002:a05:622a:1989:b0:4df:8368:4adf with SMTP id d75a77b69052e-4e576a7ec79mr18266781cf.31.1759455903053;
+        Thu, 02 Oct 2025 18:45:03 -0700 (PDT)
+Received: from localhost ([12.22.141.131])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8777a7e02e7sm309707585a.62.2025.10.02.18.45.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Oct 2025 18:45:02 -0700 (PDT)
+Date: Thu, 2 Oct 2025 21:45:01 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Ben Dooks <ben.dooks@codethink.co.uk>,
+	Paul Walmsley <pjw@kernel.org>, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] RISC-V updates for v6.18-rc1
+Message-ID: <aN8qnSfzFjdovsjn@yury>
+References: <2c804359-3d43-0fba-7173-a87f9aec4bd2@kernel.org>
+ <066d70c7-b0a7-45e5-9337-17901bc95664@codethink.co.uk>
+ <CAHk-=wgfpswvq0TypePyjv3dofO5YaUC_fSd_MjzY7jogCUnCg@mail.gmail.com>
+ <CAHk-=wgYcOiFvsJzFb+HfB4n6Wj6zM5H5EghUMfpXSCzyQVSfA@mail.gmail.com>
+ <20251001183321.GA2760@quark>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12e4:b0:42e:61ec:329a with SMTP id
- e9e14a558f8ab-42e7ad02162mr19786595ab.13.1759455656978; Thu, 02 Oct 2025
- 18:40:56 -0700 (PDT)
-Date: Thu, 02 Oct 2025 18:40:56 -0700
-In-Reply-To: <68ddc2f9.a00a0220.102ee.006d.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68df29a8.050a0220.1696c6.0038.GAE@google.com>
-Subject: Forwarded: [PATCH] ext4: reject inline data flag when i_extra_isize
- is zero
-From: syzbot <syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251001183321.GA2760@quark>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Wed, Oct 01, 2025 at 11:33:21AM -0700, Eric Biggers wrote:
+> On Tue, Sep 30, 2025 at 04:53:24PM -0700, Linus Torvalds wrote:
+> > On Tue, 30 Sept 2025 at 09:04, Linus Torvalds
+> > <torvalds@linux-foundation.org> wrote:
+> > >
+> > > Oh Christ. Is somebody seriously working on BE support in 2025?
+> > 
+> > Ok, I just googled this, and I am putting my foot down:
+> > 
+> >  WE ARE NOT PREEMPTIVELY SUPPORTING BIG-ENDIAN ON RISC-V
+> > 
+> > The documented "reasoning" for that craziness is too stupid for words,
+> > but since riscv.org did put it in words, I'll just quote those words
+> > here:
+> > 
+> >  "There are still applications where the way data is stored matters,
+> > such as the protocols that move data across the Internet, which are
+> > defined as big-endian. So when a little-endian system needs to inspect
+> > or modify a network packet, it has to swap the big-endian values to
+> > little-endian and back, a process that can take as many as 10-20
+> > instructions on a RISC-V target which doesn’t implement the Zbb
+> > extension"
+> > 
+> > In other words, it is suggesting that RISC-V add a big-endian mode due to
+> > 
+> >  (a) internet protocols - where byte swapping is not an issue
+> > 
+> >  (b) using "some RISC-V implementations don't do the existing Zbb
+> > extension" as an excuse
+> > 
+> > This is plain insanity. First off, even if byte swapping was a real
+> > cost for networking - it's not, the real costs tend to be all in
+> > memory subsystems - just implement the damn Zbb extension.
+> > 
+> > Don't go "we're too incompetent to implement Zbb, so we're now asking
+> > that EVERYBODY ELSE feel the pain of a much *worse* extension and
+> > fragmenting RISC-V further".
+> > 
+> > I'm hoping this is some April fools joke, but that page is dated
+> > "March 10, 2025". Close, but not close enough.
+> > 
+> > This is the kind of silly stuff that just makes RISC-V look bad.
+> > 
+> > Ben - I'm afraid that that page has "further reading" pointing to codethink.
+> > 
+> > I see some CONFIG_CPU_BIG_ENDIAN has already made it in, but this
+> > needs to stop.
+> > 
+> > The mainline kernel is for mainline development. Not for random
+> > experiments that make the world a worse place.
+> > 
+> > And yes, we're open source, and that very much means that anybody is
+> > more than welcome to try to prove me wrong.
+> > 
+> > If it turns out that BE RISC-V becomes a real thing that is relevant
+> > and actually finds a place in the RISC-V ecosystem, then _of_course_
+> > we should support it at that point in the mainline kernel.
+> > 
+> > But I really do think that it actually makes RISC-V only worse, and
+> > that we should *not* actively help the fragmentation.
+> 
+> +1.  Please, let's not do big endian RISC-V kernels :(
+> 
+> This mistake was made for arm64, it's finally getting fixed.
+> See https://lore.kernel.org/r/20250919184025.15416-1-will@kernel.org/
+> Let's not make the same mistake again.
+> 
+> And as someone who works on optimized crypto and CRC code, the arm64 big
+> endian kernel support has always been really problematic.  It's rarely
+> tested, and code that produces incorrect outputs on arm64 big endian
+> regularly gets committed and released.  It sometimes gets fixed, but not
+> always; currently the arm64 SM3 and SM4 code produces incorrect outputs
+> on big endian in mainline.  (I don't really care enough to fix it, TBH.)
+> 
+> I recently added arm64 big endian to my own testing matrix.  But I look
+> forward to dropping that, as well as *not* having to start testing on
+> RISC-V big endian too...
+> 
+> Of course, that's just one example from my own experience.  There's a
+> lot more that CONFIG_CPU_BIG_ENDIAN creates problems for.
 
-***
++2. I maintain bitops, and I routinely have to take endianess into
+account.
 
-Subject: [PATCH] ext4: reject inline data flag when i_extra_isize is zero
-Author: kartikey406@gmail.com
+I just realized that I didn't run BE kernels for at least 3 years, and
+didn't ask my contributors to do it for even more. The last BE-related
+fix for bitops I can recall is dated back to 2020:
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+81c4f4d924d5d009 ("lib: fix bitmap_parse() on 64-bit big endian archs").
 
+Nobody ever reported BE bugs for the new code.
 
-Prevent use-after-free in ext4_search_dir by rejecting inodes that
-claim to have inline data but have no extra inode space allocated.
-ext4 inline data is stored in the extra inode space beyond the
-standard 128-byte inode structure. This requires i_extra_isize to be
-non-zero to provide space for the system.data xattr that stores the
-inline directory entries or file data.
-However, a corrupted filesystem can craft an inode with both:
-- i_extra_isize == 0 (no extra space)
-- EXT4_INODE_INLINE_DATA flag set (claims to use extra space)
-This creates a fundamental inconsistency. When i_extra_isize is zero,
-ext4_iget() skips calling ext4_iget_extra_inode(), which means the
-inline xattr validation in check_xattrs() never runs. Later, when
-ext4_find_inline_entry() attempts to access the inline data, it reads
-unvalidated and potentially corrupt xattr structures, leading to
-out-of-bounds memory access and use-after-free.
-Fix this by validating in ext4_iget() that if an inode has the
-EXT4_INODE_INLINE_DATA flag set, i_extra_isize must be non-zero.
-This catches the corruption at inode load time before any inline
-data operations are attempted.
+Maintenance burden is not just a word. Things are getting really tricky
+when you have to keep BE compatibility in mind. And it's a special
+torture to run an old arm or sparc VM in BE-32 against modern kernels.
 
-Reported-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=3ee481e21fd75e14c397
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
- fs/ext4/inode.c | 13 ++++++++++++-
- fs/ext4/xattr.c |  2 +-
- 2 files changed, 13 insertions(+), 2 deletions(-)
+But what really important is that dropping BE support will make codebase
+overall cleaner and better.
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 5b7a15db4953..257e9b1c6416 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5099,7 +5099,8 @@ static inline int ext4_iget_extra_inode(struct inode *inode,
- 	if (EXT4_INODE_HAS_XATTR_SPACE(inode)  &&
- 	    *magic == cpu_to_le32(EXT4_XATTR_MAGIC)) {
- 		int err;
--
-+		ext4_error_inode(inode, "ext4_iget_extra_inode", 5102, 0,
-+				 "wow this inode has extra space");
- 		err = xattr_check_inode(inode, IHDR(inode, raw_inode),
- 					ITAIL(inode, raw_inode));
- 		if (err)
-@@ -5112,6 +5113,7 @@ static inline int ext4_iget_extra_inode(struct inode *inode,
- 		return err;
- 	} else
- 		EXT4_I(inode)->i_inline_off = 0;
-+
- 	return 0;
- }
- 
-@@ -5414,6 +5416,13 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
- 		ei->i_sync_tid = tid;
- 		ei->i_datasync_tid = tid;
- 	}
-+	if (EXT4_INODE_SIZE(inode->i_sb) < EXT4_GOOD_OLD_INODE_SIZE) {
-+		ext4_error_inode(inode, function, line, 0,
-+				 "wow! this inode has less data");
-+		if (ext4_test_inode_flag(inode, EXT4_INODE_INLINE_DATA)) {
-+			ext4_error_inode(inode, function, line, 0, "wow! this inode is line");
-+		}
-+	}
- 
- 	if (EXT4_INODE_SIZE(inode->i_sb) > EXT4_GOOD_OLD_INODE_SIZE) {
- 		if (ei->i_extra_isize == 0) {
-@@ -5422,6 +5431,8 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
- 			ei->i_extra_isize = sizeof(struct ext4_inode) -
- 					    EXT4_GOOD_OLD_INODE_SIZE;
- 		} else {
-+			ext4_error_inode(inode, function, line, 0,
-+					"wow! this inode has reached ext4 iget");
- 			ret = ext4_iget_extra_inode(inode, raw_inode, ei);
- 			if (ret)
- 				goto bad_inode;
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index 5a6fe1513fd2..9b4a6978b313 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -195,7 +195,7 @@ check_xattrs(struct inode *inode, struct buffer_head *bh,
- 	struct ext4_xattr_entry *e = entry;
- 	int err = -EFSCORRUPTED;
- 	char *err_str;
--
-+	ext4_error_inode(inode, "check_xattrs", 198, 0, "wow! we are in check_xattrs");
- 	if (bh) {
- 		if (BHDR(bh)->h_magic != cpu_to_le32(EXT4_XATTR_MAGIC) ||
- 		    BHDR(bh)->h_blocks != cpu_to_le32(1)) {
--- 
-2.43.0
-
+Thanks,
+Yury
 
