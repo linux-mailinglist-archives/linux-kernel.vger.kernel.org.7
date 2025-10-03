@@ -1,133 +1,140 @@
-Return-Path: <linux-kernel+bounces-841526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8520BB7956
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:40:54 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E58CBB7968
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:42:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EBD31B2155D
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:41:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E684434028F
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6CB2C21D0;
-	Fri,  3 Oct 2025 16:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F10A1DF25C;
+	Fri,  3 Oct 2025 16:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T/FClGFd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s1K9103b"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18CE8F7D;
-	Fri,  3 Oct 2025 16:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27B3BA3D
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759509645; cv=none; b=bSCSLtyk82S1GmWy8qcjzrgUcoUkAdj0Hgdr/fPUWoR45t6pQRef4Ix8EufNi71OxfGkTYXS1uVWwSEwy5NVXrKZKCERAKlVP9++cjVfchs2jFSFneaRrlsoK/sINnlKoHfs/U80/jfoVO3pdEJNKbAVav6JErc7pnP0SUpOIcg=
+	t=1759509751; cv=none; b=p4mFx7hMyaguZffwHVCm6PhYGPeL7Rpoo2RiQ9J27NXrj2qmKo2ZJgndw5e54pm62pfb/qAtxkzpj2Zs5RUParIznbBmqgvzD0+EKP3iW0mFESBeU5toHdEyzoNovKcL8bzx1np131Q8uC7/5ejrlMrVSCIRDWU/ah3OkTJH8/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759509645; c=relaxed/simple;
-	bh=a2RJsRNvoQXmDM1APniRUrNGrMrUzVW1Yh2uxqK1iqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N8hvX6LiSg9uF8MJEYtwSsIv68++KI9S+uSBCSa4XQrQzp+y4gEhXFHoI90ZW3CFEeiXwzt4GR38xjaJj9Zs+sDyMfYPwmnore3G0JHUV9xsCNb2OkbyM5f6EMIfim5+e4hPtqL8d53zWxoWUgW7D9rGfWiHBritgjelH8W3/nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T/FClGFd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6691DC4CEF5;
-	Fri,  3 Oct 2025 16:40:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759509644;
-	bh=a2RJsRNvoQXmDM1APniRUrNGrMrUzVW1Yh2uxqK1iqU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T/FClGFdRG4WSjCh24oKaZiusXreRaQ6j1IEdcuwsl1Am9oCBnI6YLMy0+AJ3ZdJE
-	 Cc/pZVPkjNPodXezWEiswiKU0VMeUhQHsIe+y7aPZmFes3bzJwsLLe8UH3b5X0vJl2
-	 xotRPf86HJZXWubM25ofineJjJzIOv4qU9dahlLOonlEMo20qqqYJlmIk/NTUaREhH
-	 suU73NiHHmjAq2DRDoI/NTgAFNDaaQNLRmgzSTvw32860UkLyN6Dsr+ls7LHFtR+Mj
-	 5mdvyuhJgMKyiIzrP+mkTEx3QRlPlBbxIJXEFM7+RBpBlRHCAuinXkOyWuYT6rnmdX
-	 zRjIeXso57s0w==
-Date: Fri, 3 Oct 2025 22:10:28 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Abhinaba Rakshit <abhinaba.rakshit@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-scsi@vger.kernel.org
-Subject: Re: [PATCH 1/2] soc: qcom: ice: enable ICE clock scaling API
-Message-ID: <izxqjidbslfigzf2jiwavtyousmurrwi6c3i5rxsb3npzyaoxz@3prtbcludlqp>
-References: <20251001-enable-ufs-ice-clock-scaling-v1-0-ec956160b696@oss.qualcomm.com>
- <20251001-enable-ufs-ice-clock-scaling-v1-1-ec956160b696@oss.qualcomm.com>
+	s=arc-20240116; t=1759509751; c=relaxed/simple;
+	bh=tT4rIjRvSYCPH1NNHSlV3mpq6XJdV6RRM306+mUs0Lw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tAgakHQD8OW0KZWPIqEFBx77iKdSNvd9xY6SK87rEUDzRSxlp+RQDglP4eQXI0usRPd3AwuUpQtvFekiRelVUgpdIMa+RaI4BWgMLVZupUIKg/cJHjVMhbYJVSl2nEEf0RoIWodjf/ub1EFvXhLLr8ndw8+LXGPi8LMLPFVVZ4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s1K9103b; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-58877f30cd4so8634e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 09:42:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759509748; x=1760114548; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tT4rIjRvSYCPH1NNHSlV3mpq6XJdV6RRM306+mUs0Lw=;
+        b=s1K9103bTXwFzGA5D4M2+gkP8jFXCU7oqI4NO0/LgobXbnvZHs7G6voEgOQ12nn7Ws
+         qfb3M7VV9ZM+64yJkJatLOzNnMnliTlWC6iwyGpjqrVHeMhTxa+wJEk0zJlgE05j2URB
+         qsKVdXALewru0BAuuGcNe4VCFCMHpNxVpnWgtxw+IvJP0KUacnDQR4L1iei0R9Uq0x9P
+         DYVaGJsmFvlFVt1i6oqttQPjF/OPxR5uWOa8NxB0coZ3eDODd+nEIyoUST8IZwU29rwB
+         7hkt3U3/u79xLHhTIfgskU0BdHVu7jUmpKGqWeLsZ2pIwsP/JrewtDfJjwLw4VnbpA7g
+         bhCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759509748; x=1760114548;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tT4rIjRvSYCPH1NNHSlV3mpq6XJdV6RRM306+mUs0Lw=;
+        b=YPTbdtpoIf7fvEcqoiHNtecCFX7xjIN+XkqLLGya4XU8hdEsG9UAb4rFuZqjNC0+Ok
+         u/PiecUhojpiD23GlH5lykgzTTqo70pdL/fhWjfg3XKboNU0gpBP4P5oz0RaqPPifAVo
+         wVqC3lc+Ai4P1WpXFYUR0yf+aU3uFQ+Th45JlPlTgzdPsEW7o+hzYfEmBiwwN9kFzOOF
+         DDE9AuHrZdty8fBdS7L/g3BrVqRir3rKScg611p9nvT/boMEkzQannnvBV4rYLmlZ7pI
+         QIFit/9TaMrrbxwI1SbxDve81lwvcMo2gd6D06HPlnNkvAKWIv2Kr2Pv74gkW/JjNmyD
+         XziA==
+X-Forwarded-Encrypted: i=1; AJvYcCWU+Cuz+gOlqPCDGGYceZegUppsp/Fz3SuTIt1hsuDzewiqm4CGslHGPk5jcKCy6dktUxfuYPe7VbGzSVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyomtdZtFt3WuRXSbSVRMDeIONqoSQGx7xCGJ4XjAMkPenPqlcz
+	ziK5DFp2FIlmsj9HhTAv0kCVD4/7mH9veQl5qr4j+Nd06qOZ9Fcr1GGNDgPtjh3bQXBPWB+5rWX
+	ctWxaAHXnH+R4+hNI2zV/Il6fA/PfbUNIa+yC3Dnr
+X-Gm-Gg: ASbGncsaompzTzU7nWkw8tIu3ty030kq8FKKeaA8CJWcnfAToPUB5LsvYRfuN4QjMQ2
+	ABPusxTkRahSoD0PVwIoz3tBlG4vg/ctu9smYAhnTz03xxUrb9uajX0YJHq5dULxpmg0urQnKQI
+	VacL2SIDrX+FJ1NTbp0zmjIxryuNaPWBgyJyWgRBbsEVpP3hzoi67ukXFjXhLOQOFtzWpK2YVJM
+	mNDy1zJIbvvjECTIY+K9aFCwtR3jVrCh3zxOw==
+X-Google-Smtp-Source: AGHT+IFqcHHNLXDZwKQTjsXX4M2eYXbNbIBvJRQGHDGc0LD+gyEovYNCEF4ZnQT0KPGBrO6LNIQACl17PxjlNaBzO0E=
+X-Received: by 2002:ac2:4191:0:b0:579:78f4:9c37 with SMTP id
+ 2adb3069b0e04-58cd9097003mr243088e87.7.1759509747606; Fri, 03 Oct 2025
+ 09:42:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251001-enable-ufs-ice-clock-scaling-v1-1-ec956160b696@oss.qualcomm.com>
+References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
+ <20250916-luo-pci-v2-3-c494053c3c08@kernel.org> <20250929174831.GJ2695987@ziepe.ca>
+ <CAF8kJuNZPYxf2LYTPYVzho_NM-Rtp8i+pP3bFTwkM_h3v=LwbQ@mail.gmail.com>
+ <20250930163837.GQ2695987@ziepe.ca> <aN7KUNGoHrFHzagu@google.com>
+ <CACePvbX6GfThDnwLdOUsdQ_54eqF3Ff=4hrGhDJ0Ba00-Q1qBw@mail.gmail.com>
+ <CALzav=cKoG4QLp6YtqMLc9S_qP6v9SpEt5XVOmJN8WVYLxRmRw@mail.gmail.com>
+ <20251002232153.GK3195829@ziepe.ca> <CACePvbXdzx5rfS1qKkFYtL-yizQiht_evge-jWo0F2ruobgkZA@mail.gmail.com>
+ <20251003120638.GM3195829@ziepe.ca> <CALzav=eGXp3uHxRytfsKQdrtAV8xg8teoAs9n_sggqdAp_Hznw@mail.gmail.com>
+In-Reply-To: <CALzav=eGXp3uHxRytfsKQdrtAV8xg8teoAs9n_sggqdAp_Hznw@mail.gmail.com>
+From: Vipin Sharma <vipinsh@google.com>
+Date: Fri, 3 Oct 2025 09:41:49 -0700
+X-Gm-Features: AS18NWAMnBsWWTpg4HgFgRyPlVOWpaiA-3tsEKIhlCcWxe4qMo14DNvQzaeShVI
+Message-ID: <CAHVum0caxqVdKfoXNLa92NFEBLwTbLCRgbH6y6kvnsWQPgcbwA@mail.gmail.com>
+Subject: Re: [PATCH v2 03/10] PCI/LUO: Forward prepare()/freeze()/cancel()
+ callbacks to driver
+To: David Matlack <dmatlack@google.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Chris Li <chrisl@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	Pasha Tatashin <tatashin@google.com>, Jason Miu <jasonmiu@google.com>, 
+	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
+	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
+	Leon Romanovsky <leon@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 01, 2025 at 05:08:19PM +0530, Abhinaba Rakshit wrote:
-> Add ICE clock scaling API based on the parsed clk supported
-> frequencies from dt entry.
-> 
+On Fri, Oct 3, 2025 at 9:27=E2=80=AFAM David Matlack <dmatlack@google.com> =
+wrote:
+>
+> On Fri, Oct 3, 2025 at 5:06=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca> wro=
+te:
+> >
+> > On Thu, Oct 02, 2025 at 10:24:59PM -0700, Chris Li wrote:
+> >
+> > > As David pointed out in the other email, the PCI also supports other
+> > > non vfio PCI devices which do not have the FD and FD related sessions=
+.
+> > > That is the original intent for the LUO PCI subsystem.
+> >
+> > This doesn't make sense. We don't know how to solve this problem yet,
+> > but I'm pretty confident we will need to inject a FD and session into
+> > these drivers too.
+>
+> Google's LUO PCI subsystem (i.e. this series) predated a lot of the
+> discussion about FD preservation and needed to support the legacy vfio
+> container/group model. Outside of vfio-pci, the only other drivers
+> that participate are the PF drivers (pci-pf-stub and idpf), but they
+> just register empty callbacks.
+>
+> So from an upstream perspective we don't really have a usecase for
+> callbacks. Chris ,I saw in your other email that you agree with
+> dropping them in the next version, so it sounds like we are aligned
+> then.
+>
+> Vipin Sharma is working on the vfio-pci MVP series. Vipin, if you
+> anticipate VFIO is going to need driver callbacks on top of the LUO FD
+> callbacks, please chime in here.
 
-Explain the purpose.
-
-> Signed-off-by: Abhinaba Rakshit <abhinaba.rakshit@oss.qualcomm.com>
-> ---
->  drivers/soc/qcom/ice.c | 25 +++++++++++++++++++++++++
->  include/soc/qcom/ice.h |  1 +
->  2 files changed, 26 insertions(+)
-> 
-> diff --git a/drivers/soc/qcom/ice.c b/drivers/soc/qcom/ice.c
-> index c467b55b41744ebec0680f5112cc4bb1ba00c513..ec8d6bb9f426deee1038616282176bfc8e5b9ec1 100644
-> --- a/drivers/soc/qcom/ice.c
-> +++ b/drivers/soc/qcom/ice.c
-> @@ -97,6 +97,8 @@ struct qcom_ice {
->  	struct clk *core_clk;
->  	bool use_hwkm;
->  	bool hwkm_init_complete;
-> +	u32 max_freq;
-> +	u32 min_freq;
->  };
->  
->  static bool qcom_ice_check_supported(struct qcom_ice *ice)
-> @@ -514,10 +516,25 @@ int qcom_ice_import_key(struct qcom_ice *ice,
->  }
->  EXPORT_SYMBOL_GPL(qcom_ice_import_key);
->  
-> +int qcom_ice_scale_clk(struct qcom_ice *ice, bool scale_up)
-> +{
-> +	int ret = 0;
-> +
-> +	if (scale_up && ice->max_freq)
-> +		ret = clk_set_rate(ice->core_clk, ice->max_freq);
-> +	else if (!scale_up && ice->min_freq)
-> +		ret = clk_set_rate(ice->core_clk, ice->min_freq);
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(qcom_ice_scale_clk);
-> +
->  static struct qcom_ice *qcom_ice_create(struct device *dev,
->  					void __iomem *base)
->  {
->  	struct qcom_ice *engine;
-> +	const __be32 *prop;
-> +	int len;
->  
->  	if (!qcom_scm_is_available())
->  		return ERR_PTR(-EPROBE_DEFER);
-> @@ -549,6 +566,14 @@ static struct qcom_ice *qcom_ice_create(struct device *dev,
->  	if (IS_ERR(engine->core_clk))
->  		return ERR_CAST(engine->core_clk);
->  
-> +	prop = of_get_property(dev->of_node, "freq-table-hz", &len);
-> +	if (!prop || len < 2 * sizeof(uint32_t)) {
-> +		dev_err(dev, "Freq-hz property not found or invalid length\n");
-
-We have deprecated the 'freq-table-hz' property in favor of
-'operating-points-v2'. So you should not be using it in new code. Also, throwing
-error in the absence of this property is a no-go.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Currently, LUO FD callbacks are the only ones I need. I think we are
+fine for now without PCI callbacks. I will have better clarity next
+week but for now I am only using LUO FD callbacks.
 
