@@ -1,355 +1,223 @@
-Return-Path: <linux-kernel+bounces-841817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25BD8BB8521
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 00:31:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C508BB853F
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 00:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F8454A4BE2
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 22:30:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C87151B21A1A
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 22:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E492E3B08;
-	Fri,  3 Oct 2025 22:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05184208994;
+	Fri,  3 Oct 2025 22:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="rHOSACPW"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A862C21F3;
-	Fri,  3 Oct 2025 22:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="aIT3lOSs";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ki0oJkGb"
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6EF218AAD;
+	Fri,  3 Oct 2025 22:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759530447; cv=none; b=KXX8iIxHst9aHfhifwgQ/+giFKt8p1ABLWqR4s/tR6y6CSuadyDj08BDKGKTCjBE2Tm0SPeNe9srShOjlAmptBJJQLJ6UvALHKaeOX3i7Py1gMpjjYNqswgrVzAvqJ4CcfKTBXy0YeTqle6wvX2/B20Ca3z5u0KkqbR83HLBcjQ=
+	t=1759530661; cv=none; b=WLhxldNlj48is80aU5b/upAv3kbnAJD4zs74fTol4j7SpL0v+bYSh5XBapn/WMYkb4uVlrT+XaLkHQ+UpBvEoVNW76p49lBrGxE52A/3zcwuorTKqquptJyg64l3FFmLpl7uAti8bvpGidB1aG1f6iv9Uvx9CBCQkEWspIkHWZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759530447; c=relaxed/simple;
-	bh=vi21MmW6hNpvJW+ahdrYgZwj9la5FUVN0ykIg2JgtSY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iR3fYyqpccnQwdimFskVYrDfgcXoGnJFR3tJJ7xuTpuyfvyzyxRlPH/eq+lmcioz0nz7MLQy4DTJaw7O5kPz1udvvb9WhBKXvYgfuZrwb8ii0zdDDfCHm1AEDg4dfW+TVbrnDUnDXjSbjkVZGVKVpenqRnEq+4FCEy9Lhf5PM3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=rHOSACPW; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from romank-3650.corp.microsoft.com (unknown [131.107.1.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id E4013211C285;
-	Fri,  3 Oct 2025 15:27:24 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E4013211C285
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1759530445;
-	bh=sMrXYp/LXKrQSONphfvQVUtB/mFfprwjOJ4nPGwda+I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rHOSACPWoU5HMCRxiFxTRJPRUu6eECNFo1783nVQtWxkT5YsZPE5MXAb12ZMTj9uv
-	 8fgUoak9EpOnC3+FHZAo+LNNE/zTFS46Si/Mah4GN7iR7mU4yHHDLOJYsWIjBVX4qS
-	 FcvXiBeKopipNwNzCDBc6moJyDvrMXGCrIfXxDYc=
-From: Roman Kisel <romank@linux.microsoft.com>
-To: arnd@arndb.de,
-	bp@alien8.de,
-	corbet@lwn.net,
-	dave.hansen@linux.intel.com,
-	decui@microsoft.com,
-	haiyangz@microsoft.com,
-	hpa@zytor.com,
-	kys@microsoft.com,
-	mikelley@microsoft.com,
-	mingo@redhat.com,
-	tglx@linutronix.de,
-	Tianyu.Lan@microsoft.com,
-	wei.liu@kernel.org,
-	x86@kernel.org,
-	linux-hyperv@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org
-Cc: benhill@microsoft.com,
-	bperkins@microsoft.com,
-	sunilmut@microsoft.com,
-	romank@linux.microsoft.com
-Subject: [PATCH hyperv-next v6 17/17] Drivers: hv: Support establishing the confidential VMBus connection
-Date: Fri,  3 Oct 2025 15:27:10 -0700
-Message-ID: <20251003222710.6257-18-romank@linux.microsoft.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251003222710.6257-1-romank@linux.microsoft.com>
-References: <20251003222710.6257-1-romank@linux.microsoft.com>
+	s=arc-20240116; t=1759530661; c=relaxed/simple;
+	bh=Ga65cQuMN6v2JBd0z0s5Gfk4vp6QmhfHtou9in1ENNk=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=Mvq+e35oXUKOCJVyRBwMomE0z8IzOFh12Nsu6NMsVcpejYksFY7KQxICrN9hH/uzWpB9TqnHbXKIV5xx+bxYa8bpagksOkMf11mvn3TfIj/uqzMpKFiiZbyGR9/nKkjzzllKcCI1/h/nWZWrcd6H9F+6mNsytIIgjGF5C1erll0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=aIT3lOSs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ki0oJkGb; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfout.phl.internal (Postfix) with ESMTP id 4AEB6EC0696;
+	Fri,  3 Oct 2025 18:30:57 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Fri, 03 Oct 2025 18:30:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
+	1759530657; x=1759617057; bh=di2ncAb64xtFyI0H9TnTutKfL8cfkb1esKp
+	tKpUfeWk=; b=aIT3lOSsHGzGY5+egmvjNs1jfbQNbu9Kb++35Up5/00pyiL8vu6
+	npB5ln9vfki76Bf5fXlOfHhc8miS9nTloyMETHq8//MsXPwpagLVn96onlDe2OPX
+	SBGYvFZfamcdBWW2U1VYxZH4lFb7EMlIBhwwnu45Eh+ftJh9ulqbmpZ6rAuDCEHp
+	MIa0YGSX8sw+Q5rB8r4n/ZcKKQlV1M2PQx/LAOzGI332Xm+zf3hWTB+xrropZvfS
+	PGsTFHiW/DqlOLUL4qa7aMROdz7kjVm7Dy8a9cIEBuOChzuma2b47mkjFa5XY9Gr
+	9p9eMOOYvRojJQ0zAjQXn37bxncLIaKmxYQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759530657; x=
+	1759617057; bh=di2ncAb64xtFyI0H9TnTutKfL8cfkb1esKptKpUfeWk=; b=k
+	i0oJkGbbtluYelUqV2PzPon1mBGNHLjhJEHAqmFZeawmsssWDeos4i3E/T0UOQ86
+	hC8m1wDwwGKfSFEJbmm8VbBZPD9phOXo9dLGdFkyb39fjrDpQGx5lgs2aCGtC4wc
+	3XXe46znhqF3UJuCjGBKYN6xVt7OdIPwd4sCUredQNx1gQog3ojactAwA6XQDyAr
+	EXzIGtfS86ZJwF+ZcnNlz/gNKGfcPuh6D8Rt8m44speFo3WK/Qn7KVzZrBu/+JWp
+	zVgyz976Euyj1fTZkMp0cssLoWhGsu+ohWHmJ8DHfs89TAb+yTBdw4Q8I4eGb2uD
+	V1CNrSDliHBnMyALK/aMg==
+X-ME-Sender: <xms:oE7gaDxWQTYLZCkpyPi6S7IGswbP2bSdp4XNQkhBEN4rzXwpdsqStQ>
+    <xme:oE7gaLtVPWZGhwbIQybxLOgRSdGsUCDWCMCs3TAclmQHJzdQu4ea4RFxT3gJmJI8j
+    oVHcppQm7ll6XlQpduXTH2hdxlFQhQxZMPoP73qHAcnlzCN4w>
+X-ME-Received: <xmr:oE7gaOB-jp7nzj1sFefYoDo7i-BJltig9UYNi1EMKiRHANmFYadd-hsUicz8yNL0Y7HKkUY-tm8fDEmFg1y6xhbTzqOTnyJAxIvxEaqDhOBd>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeltddutdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpegtgfgghffvvefujghffffkrhesthhqredttddtjeenucfhrhhomheppfgvihhluehr
+    ohifnhcuoehnvghilhgssehofihnmhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    eljedtfeegueekieetudevheduveefffevudetgfetudfhgedvgfdtieeguedujeenucev
+    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgsse
+    hofihnmhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopehmrghrkhhushdrvghlfhhrihhnghesfigvsgdruggvpdhrtghpth
+    htoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheplhhinhhugidqtghifhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
+    htohepkhgvrhhnvghlqdhjrghnihhtohhrshesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopehtohhmsehtrghlphgvhidrtghomhdprhgtphhtthhopehmvghtiigvse
+    hsrghmsggrrdhorhhgpdhrtghpthhtoheplhhinhhkihhnjhgvohhnsehkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehsmhhfrhgvnhgthhesghhmrghilhdrtghomhdprhgtphhtth
+    hopehsvghnohiihhgrthhskhihsegthhhrohhmihhumhdrohhrgh
+X-ME-Proxy: <xmx:oE7gaFEs9TZiKXg4VevMAoBe03qVROSfsBVW7Y_CgTsD3cUODSKMHw>
+    <xmx:oU7gaGDdhjjSxbWj0zKdplZm2VOuZxsV1XYiFlZtSeGQbJZnvt1FjA>
+    <xmx:oU7gaDmDRcGgVIegfuTeluIld7MNiBpzlgCjLhl8ko2Cw9IKBSFgVQ>
+    <xmx:oU7gaEPtJ4GIO5rjiZeye1RDbgzlf2RCwYD0dWcz9Z7iMj5CWc1sZg>
+    <xmx:oU7gaC8juepaD63j511jZkPLE9jXly_rXeAQslz0NbP0uQfna35MHeCG>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 3 Oct 2025 18:30:54 -0400 (EDT)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: NeilBrown <neilb@ownmail.net>
+To: "Markus Elfring" <Markus.Elfring@web.de>
+Cc: linux-cifs@vger.kernel.org, "Namjae Jeon" <linkinjeon@kernel.org>,
+ "Sergey Senozhatsky" <senozhatsky@chromium.org>,
+ "Steve French" <smfrench@gmail.com>, "Tom Talpey" <tom@talpey.com>,
+ "LKML" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ "Stefan Metzmacher" <metze@samba.org>
+Subject:
+ Re: [PATCH] ksmbd: Use common error handling code in ksmbd_vfs_path_lookup()
+In-reply-to: <6d759211-79e7-4d86-b22e-2ae46d209622@web.de>
+References: <6d759211-79e7-4d86-b22e-2ae46d209622@web.de>
+Date: Sat, 04 Oct 2025 08:30:46 +1000
+Message-id: <175953064635.1793333.2429881029964457140@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-To establish the confidential VMBus connection the CoCo VM, the guest
-first checks on the confidential VMBus availability, and then proceeds
-to initializing the communication stack.
+On Sat, 04 Oct 2025, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 3 Oct 2025 20:26:56 +0200
+>=20
+> Add a jump target so that a bit of exception handling can be better reused
+> at the end of this function implementation.
 
-Implement that in the VMBus driver initialization.
+I think this is a good cleanup - thanks.  But I think it could be even
+better.
 
-Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-Reviewed-by: Michael Kelley <mhklinux@outlook.com>
----
- drivers/hv/vmbus_drv.c | 168 ++++++++++++++++++++++++++---------------
- 1 file changed, 106 insertions(+), 62 deletions(-)
+- rename the "path" parameter to "return_path" or similar.
+- declare  struct path path __free(path_-put) =3D {};
+- change all "path->" instances to "path."
+- remove all those path_put() calls, but leave the "return xxx"
+- at the point of successful return, use
 
-diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-index 2b5bf672c467..0dc4692b411a 100644
---- a/drivers/hv/vmbus_drv.c
-+++ b/drivers/hv/vmbus_drv.c
-@@ -1057,12 +1057,9 @@ static void vmbus_onmessage_work(struct work_struct *work)
- 	kfree(ctx);
- }
- 
--void vmbus_on_msg_dpc(unsigned long data)
-+static void __vmbus_on_msg_dpc(void *message_page_addr)
- {
--	struct hv_per_cpu_context *hv_cpu = (void *)data;
--	void *page_addr = hv_cpu->hyp_synic_message_page;
--	struct hv_message msg_copy, *msg = (struct hv_message *)page_addr +
--				  VMBUS_MESSAGE_SINT;
-+	struct hv_message msg_copy, *msg;
- 	struct vmbus_channel_message_header *hdr;
- 	enum vmbus_channel_message_type msgtype;
- 	const struct vmbus_channel_message_table_entry *entry;
-@@ -1070,6 +1067,10 @@ void vmbus_on_msg_dpc(unsigned long data)
- 	__u8 payload_size;
- 	u32 message_type;
- 
-+	if (!message_page_addr)
-+		return;
-+	msg = (struct hv_message *)message_page_addr + VMBUS_MESSAGE_SINT;
-+
- 	/*
- 	 * 'enum vmbus_channel_message_type' is supposed to always be 'u32' as
- 	 * it is being used in 'struct vmbus_channel_message_header' definition
-@@ -1195,6 +1196,14 @@ void vmbus_on_msg_dpc(unsigned long data)
- 	vmbus_signal_eom(msg, message_type);
- }
- 
-+void vmbus_on_msg_dpc(unsigned long data)
-+{
-+	struct hv_per_cpu_context *hv_cpu = (void *)data;
-+
-+	__vmbus_on_msg_dpc(hv_cpu->hyp_synic_message_page);
-+	__vmbus_on_msg_dpc(hv_cpu->para_synic_message_page);
-+}
-+
- #ifdef CONFIG_PM_SLEEP
- /*
-  * Fake RESCIND_CHANNEL messages to clean up hv_sock channels by force for
-@@ -1233,21 +1242,19 @@ static void vmbus_force_channel_rescinded(struct vmbus_channel *channel)
- #endif /* CONFIG_PM_SLEEP */
- 
- /*
-- * Schedule all channels with events pending
-+ * Schedule all channels with events pending.
-+ * The event page can be directly checked to get the id of
-+ * the channel that has the interrupt pending.
-  */
--static void vmbus_chan_sched(struct hv_per_cpu_context *hv_cpu)
-+static void vmbus_chan_sched(void *event_page_addr)
- {
- 	unsigned long *recv_int_page;
- 	u32 maxbits, relid;
-+	union hv_synic_event_flags *event;
- 
--	/*
--	 * The event page can be directly checked to get the id of
--	 * the channel that has the interrupt pending.
--	 */
--	void *page_addr = hv_cpu->hyp_synic_event_page;
--	union hv_synic_event_flags *event
--		= (union hv_synic_event_flags *)page_addr +
--					 VMBUS_MESSAGE_SINT;
-+	if (!event_page_addr)
-+		return;
-+	event = (union hv_synic_event_flags *)event_page_addr + VMBUS_MESSAGE_SINT;
- 
- 	maxbits = HV_EVENT_FLAGS_COUNT;
- 	recv_int_page = event->flags;
-@@ -1255,6 +1262,11 @@ static void vmbus_chan_sched(struct hv_per_cpu_context *hv_cpu)
- 	if (unlikely(!recv_int_page))
- 		return;
- 
-+	/*
-+	 * Suggested-by: Michael Kelley <mhklinux@outlook.com>
-+	 * One possible optimization would be to keep track of the largest relID that's in use,
-+	 * and only scan up to that relID.
-+	 */
- 	for_each_set_bit(relid, recv_int_page, maxbits) {
- 		void (*callback_fn)(void *context);
- 		struct vmbus_channel *channel;
-@@ -1318,26 +1330,35 @@ static void vmbus_chan_sched(struct hv_per_cpu_context *hv_cpu)
- 	}
- }
- 
--static void vmbus_isr(void)
-+static void vmbus_message_sched(struct hv_per_cpu_context *hv_cpu, void *message_page_addr)
- {
--	struct hv_per_cpu_context *hv_cpu
--		= this_cpu_ptr(hv_context.cpu_context);
--	void *page_addr;
- 	struct hv_message *msg;
- 
--	vmbus_chan_sched(hv_cpu);
--
--	page_addr = hv_cpu->hyp_synic_message_page;
--	msg = (struct hv_message *)page_addr + VMBUS_MESSAGE_SINT;
-+	if (!message_page_addr)
-+		return;
-+	msg = (struct hv_message *)message_page_addr + VMBUS_MESSAGE_SINT;
- 
- 	/* Check if there are actual msgs to be processed */
- 	if (msg->header.message_type != HVMSG_NONE) {
- 		if (msg->header.message_type == HVMSG_TIMER_EXPIRED) {
- 			hv_stimer0_isr();
- 			vmbus_signal_eom(msg, HVMSG_TIMER_EXPIRED);
--		} else
-+		} else {
- 			tasklet_schedule(&hv_cpu->msg_dpc);
-+		}
- 	}
-+}
-+
-+static void vmbus_isr(void)
-+{
-+	struct hv_per_cpu_context *hv_cpu
-+		= this_cpu_ptr(hv_context.cpu_context);
-+
-+	vmbus_chan_sched(hv_cpu->hyp_synic_event_page);
-+	vmbus_chan_sched(hv_cpu->para_synic_event_page);
-+
-+	vmbus_message_sched(hv_cpu, hv_cpu->hyp_synic_message_page);
-+	vmbus_message_sched(hv_cpu, hv_cpu->para_synic_message_page);
- 
- 	add_interrupt_randomness(vmbus_interrupt);
- }
-@@ -1355,6 +1376,59 @@ static void vmbus_percpu_work(struct work_struct *work)
- 	hv_synic_init(cpu);
- }
- 
-+static int vmbus_alloc_synic_and_connect(void)
-+{
-+	int ret, cpu;
-+	struct work_struct __percpu *works;
-+	int hyperv_cpuhp_online;
-+
-+	ret = hv_synic_alloc();
-+	if (ret < 0)
-+		goto err_alloc;
-+
-+	works = alloc_percpu(struct work_struct);
-+	if (!works) {
-+		ret = -ENOMEM;
-+		goto err_alloc;
-+	}
-+
-+	/*
-+	 * Initialize the per-cpu interrupt state and stimer state.
-+	 * Then connect to the host.
-+	 */
-+	cpus_read_lock();
-+	for_each_online_cpu(cpu) {
-+		struct work_struct *work = per_cpu_ptr(works, cpu);
-+
-+		INIT_WORK(work, vmbus_percpu_work);
-+		schedule_work_on(cpu, work);
-+	}
-+
-+	for_each_online_cpu(cpu)
-+		flush_work(per_cpu_ptr(works, cpu));
-+
-+	/* Register the callbacks for possible CPU online/offline'ing */
-+	ret = cpuhp_setup_state_nocalls_cpuslocked(CPUHP_AP_ONLINE_DYN, "hyperv/vmbus:online",
-+						   hv_synic_init, hv_synic_cleanup);
-+	cpus_read_unlock();
-+	free_percpu(works);
-+	if (ret < 0)
-+		goto err_alloc;
-+	hyperv_cpuhp_online = ret;
-+
-+	ret = vmbus_connect();
-+	if (ret)
-+		goto err_connect;
-+	return 0;
-+
-+err_connect:
-+	cpuhp_remove_state(hyperv_cpuhp_online);
-+	return -ENODEV;
-+err_alloc:
-+	hv_synic_free();
-+	return -ENOMEM;
-+}
-+
- /*
-  * vmbus_bus_init -Main vmbus driver initialization routine.
-  *
-@@ -1365,8 +1439,7 @@ static void vmbus_percpu_work(struct work_struct *work)
-  */
- static int vmbus_bus_init(void)
- {
--	int ret, cpu;
--	struct work_struct __percpu *works;
-+	int ret;
- 
- 	ret = hv_init();
- 	if (ret != 0) {
-@@ -1401,41 +1474,15 @@ static int vmbus_bus_init(void)
- 		}
- 	}
- 
--	ret = hv_synic_alloc();
--	if (ret)
--		goto err_alloc;
--
--	works = alloc_percpu(struct work_struct);
--	if (!works) {
--		ret = -ENOMEM;
--		goto err_alloc;
--	}
--
- 	/*
--	 * Initialize the per-cpu interrupt state and stimer state.
--	 * Then connect to the host.
-+	 * Cache the value as getting it involves a VM exit on x86(_64), and
-+	 * doing that on each VP while initializing SynIC's wastes time.
- 	 */
--	cpus_read_lock();
--	for_each_online_cpu(cpu) {
--		struct work_struct *work = per_cpu_ptr(works, cpu);
--
--		INIT_WORK(work, vmbus_percpu_work);
--		schedule_work_on(cpu, work);
--	}
--
--	for_each_online_cpu(cpu)
--		flush_work(per_cpu_ptr(works, cpu));
--
--	/* Register the callbacks for possible CPU online/offline'ing */
--	ret = cpuhp_setup_state_nocalls_cpuslocked(CPUHP_AP_ONLINE_DYN, "hyperv/vmbus:online",
--						   hv_synic_init, hv_synic_cleanup);
--	cpus_read_unlock();
--	free_percpu(works);
--	if (ret < 0)
--		goto err_alloc;
--	hyperv_cpuhp_online = ret;
--
--	ret = vmbus_connect();
-+	is_confidential = ms_hyperv.confidential_vmbus_available;
-+	if (is_confidential)
-+		pr_info("Establishing connection to the confidential VMBus\n");
-+	hv_para_set_sint_proxy(!is_confidential);
-+	ret = vmbus_alloc_synic_and_connect();
- 	if (ret)
- 		goto err_connect;
- 
-@@ -1451,9 +1498,6 @@ static int vmbus_bus_init(void)
- 	return 0;
- 
- err_connect:
--	cpuhp_remove_state(hyperv_cpuhp_online);
--err_alloc:
--	hv_synic_free();
- 	if (vmbus_irq == -1) {
- 		hv_remove_vmbus_handler();
- 	} else {
--- 
-2.43.0
+   return_path->dentry =3D no_free_ptr(path.dentry);
+   return_path->mnt =3D no_free_ptr(path.mnt);
+   return 0;
+
+This is based on the pattern in kern_path_parent() and
+__start_removing_path().
+
+Thanks,
+NeilBrown
+
+
+>=20
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  fs/smb/server/vfs.c | 32 ++++++++++++++------------------
+>  1 file changed, 14 insertions(+), 18 deletions(-)
+>=20
+> diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
+> index 891ed2dc2b73..3535655b4d86 100644
+> --- a/fs/smb/server/vfs.c
+> +++ b/fs/smb/server/vfs.c
+> @@ -94,17 +94,13 @@ static int ksmbd_vfs_path_lookup(struct ksmbd_share_con=
+fig *share_conf,
+>  	if (err)
+>  		return err;
+> =20
+> -	if (unlikely(type !=3D LAST_NORM)) {
+> -		path_put(path);
+> -		return -ENOENT;
+> -	}
+> +	if (unlikely(type !=3D LAST_NORM))
+> +		goto put_path;
+> =20
+>  	if (do_lock) {
+>  		err =3D mnt_want_write(path->mnt);
+> -		if (err) {
+> -			path_put(path);
+> -			return -ENOENT;
+> -		}
+> +		if (err)
+> +			goto put_path;
+> =20
+>  		inode_lock_nested(path->dentry->d_inode, I_MUTEX_PARENT);
+>  		d =3D lookup_one_qstr_excl(&last, path->dentry, 0);
+> @@ -116,8 +112,7 @@ static int ksmbd_vfs_path_lookup(struct ksmbd_share_con=
+fig *share_conf,
+>  		}
+>  		inode_unlock(path->dentry->d_inode);
+>  		mnt_drop_write(path->mnt);
+> -		path_put(path);
+> -		return -ENOENT;
+> +		goto put_path;
+>  	}
+> =20
+>  	d =3D lookup_noperm_unlocked(&last, path->dentry);
+> @@ -125,21 +120,22 @@ static int ksmbd_vfs_path_lookup(struct ksmbd_share_c=
+onfig *share_conf,
+>  		dput(d);
+>  		d =3D ERR_PTR(-ENOENT);
+>  	}
+> -	if (IS_ERR(d)) {
+> -		path_put(path);
+> -		return -ENOENT;
+> -	}
+> +	if (IS_ERR(d))
+> +		goto put_path;
+> +
+>  	dput(path->dentry);
+>  	path->dentry =3D d;
+> =20
+>  	if (test_share_config_flag(share_conf, KSMBD_SHARE_FLAG_CROSSMNT)) {
+>  		err =3D follow_down(path, 0);
+> -		if (err < 0) {
+> -			path_put(path);
+> -			return -ENOENT;
+> -		}
+> +		if (err < 0)
+> +			goto put_path;
+>  	}
+>  	return 0;
+> +
+> +put_path:
+> +	path_put(path);
+> +	return -ENOENT;
+>  }
+> =20
+>  void ksmbd_vfs_query_maximal_access(struct mnt_idmap *idmap,
+> --=20
+> 2.51.0
+>=20
+>=20
+>=20
 
 
