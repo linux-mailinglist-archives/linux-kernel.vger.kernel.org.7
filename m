@@ -1,189 +1,251 @@
-Return-Path: <linux-kernel+bounces-841010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9B7ABB5F61
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 07:45:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E72BB5F67
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 07:52:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1EE684E4400
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 05:45:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD49419C6572
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 05:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E615C1F8ADD;
-	Fri,  3 Oct 2025 05:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9D71EB9FA;
+	Fri,  3 Oct 2025 05:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qhNIOAvP"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mVs72cRd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B9720296C
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 05:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8A134BA50;
+	Fri,  3 Oct 2025 05:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759470309; cv=none; b=iQ4xcLfXrBpzuxrBIr9/wpALp1oeo9R0S3BmrvkCwrPNxvpy/XDnDsYVYdXGpLEyhwJzDd5azYlJi3JHnDwFtC5rDT3kr0GA/ginwyUyTxTPU6/p41JY1tNxNKksIfEjEr1KSyMAlaoP07blgVUAbbfnBBRHHwdlGCUYNb6/mX0=
+	t=1759470742; cv=none; b=BT+djmYcaXBHqwokd59TSaACt3gIxVLy5pQqhnjFNyAXUysHCRfEYVatv8po7pDyGXBkuclelkAJgWtbtL2R/E/coLK7gU4i6qa1tbcf0QXfwpt3HIJhaZagVkF7SCNjbcKSuapp1gZPCwZayCpGeJi+wpe1TCXRNv+YWFnkSx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759470309; c=relaxed/simple;
-	bh=z6SlgDCFOBi9h8Zr7L2vlVB4Qa0jU3GPw7jT23nrerc=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=X9VWZXPgkX+2YbP8TelyDxHgckzIhUfvxK6bNj9kD1cwCl0k07Tum2ISnl6rcDIZ62B/TFCB+tzPEKVxZ9C3ehT5TSacxF1z+HjJPXKt16nml4xZCwedoqrgob0KlRh/fVnRPUH0dmg+YtVV9ac+Qz2sCt/MP3nRq4T4B//CDyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=qhNIOAvP; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20251003054503epoutp016e64cec16ea3835158e408c4a4fc9232~q5OtYlDSH1924519245epoutp01i
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 05:45:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20251003054503epoutp016e64cec16ea3835158e408c4a4fc9232~q5OtYlDSH1924519245epoutp01i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1759470303;
-	bh=z6SlgDCFOBi9h8Zr7L2vlVB4Qa0jU3GPw7jT23nrerc=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=qhNIOAvPx6uoDmXmCwXxj95uNjHaogCl3At7rjuiK+JWfgK9h8VrxSVOiU3sbyb0L
-	 Q+exqebSpMvX+0OGrQ9/YD0NbLP9zB56J6LiXykWijBTKN3Q5CcqJe1Ec7KTNy08+5
-	 gvewGiE7y978nIop2sKmDL6fB/ScDQ9s48tWpY/Q=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20251003054502epcas5p147f4ac05e859f93ced29739c9dd6db1b~q5OsU5Zyx2599925999epcas5p1B;
-	Fri,  3 Oct 2025 05:45:02 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.91]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cdHgK5jwVz6B9m7; Fri,  3 Oct
-	2025 05:45:01 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20251003054501epcas5p17ec2255ee66f0ea533b8dc9a058e33e9~q5Oq8U0mF2736927369epcas5p12;
-	Fri,  3 Oct 2025 05:45:01 +0000 (GMT)
-Received: from FDSFTE411 (unknown [107.122.81.184]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20251003054456epsmtip1431a24308d04a35b90a24f8eb7b752a2~q5Omvl53I2540725407epsmtip16;
-	Fri,  3 Oct 2025 05:44:56 +0000 (GMT)
-From: "Ravi Patel" <ravi.patel@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>
-Cc: <jesper.nilsson@axis.com>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
-	<alim.akhtar@samsung.com>, <linus.walleij@linaro.org>,
-	<tomasz.figa@gmail.com>, <catalin.marinas@arm.com>, <will@kernel.org>,
-	<arnd@arndb.de>, <ksk4725@coasia.com>, <kenkim@coasia.com>,
-	<pjsin865@coasia.com>, <gwk1013@coasia.com>, <hgkim05@coasia.com>,
-	<mingyoungbo@coasia.com>, <smn1196@coasia.com>, <shradha.t@samsung.com>,
-	<inbaraj.e@samsung.com>, <swathi.ks@samsung.com>,
-	<hrishikesh.d@samsung.com>, <dj76.yang@samsung.com>,
-	<hypmean.kim@samsung.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-arm-kernel@axis.com>, <devicetree@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>
-In-Reply-To: <CAJKOXPe7Hn0qwg8jDMg4KoF-n4kziLQnvAx9vbNKEcS_KjzEdw@mail.gmail.com>
-Subject: RE: [PATCH v4 0/6] Add support for the Axis ARTPEC-8 SoC
-Date: Fri, 3 Oct 2025 11:14:55 +0530
-Message-ID: <000001dc3428$dc2990c0$947cb240$@samsung.com>
+	s=arc-20240116; t=1759470742; c=relaxed/simple;
+	bh=m8QTSeBYc+9dw9PyAe4KBzJKyia/JpiSrRnm+m8PQs4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T9oTUUhas4LKUUQI8dKaHmgq8PRiDT4iXaxOtNPIS5IHTfiebV0GNjUv+2yLU9eNKs1q0KINU8ab2YsqdCf5qWz4II7k6cAY8LKdhdpUbLc80waJNuwpErCjbKx2mk8fWUPI9FYQT0EZnByCYcvkMaquiIGsJQBmpDMDfLYElBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mVs72cRd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1D10C4CEF5;
+	Fri,  3 Oct 2025 05:52:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759470742;
+	bh=m8QTSeBYc+9dw9PyAe4KBzJKyia/JpiSrRnm+m8PQs4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mVs72cRdC6opnIh/wtYkpdHvXaP0/DuIz25R/eClezmdN0G6+mvtgiV9NICKMqsEx
+	 DalwV+5MIu/RaxEVlHiAOKmEpUV5c1+tV2gzqBYFhiWMNxIP+FroSa7kvT4ZJd+Ygi
+	 X6vok8zceSdxzcL6owHtFummbN4JwtW28Apy1wkn6IWzwx7jWKs+rxTvbiI+vqWQY2
+	 5wS+OCkSmdBgnzu2hQBCLqq0HvVnlUmWj6xX5/KITBPTPJ0k09dyWdof71rZKHKWqv
+	 2zgUbL0JKBEbQETP7djYuImdbarxlHkZh/3d+nP7FB5JGxuNBzN0ZmwgwlopqS2yng
+	 oddBJrhJyYnnQ==
+Date: Fri, 3 Oct 2025 14:52:14 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: Zecheng Li <zecheng@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 03/10] perf annotate: Track address registers via
+ TSR_KIND_POINTER
+Message-ID: <aN9kjm4cLV6mp8Ep@google.com>
+References: <20250917195808.2514277-1-zecheng@google.com>
+ <20250917195808.2514277-4-zecheng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKKMINb5ygeSmhM7iNuat0EV5IHsAIgbsJhATIDr/2zOVZ1wA==
-Content-Language: en-in
-X-CMS-MailID: 20251003054501epcas5p17ec2255ee66f0ea533b8dc9a058e33e9
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250901054234epcas5p1e4b34b6ccb304b0306b1fe616edda9e2
-References: <CGME20250901054234epcas5p1e4b34b6ccb304b0306b1fe616edda9e2@epcas5p1.samsung.com>
-	<20250901051926.59970-1-ravi.patel@samsung.com>
-	<CAJKOXPe7Hn0qwg8jDMg4KoF-n4kziLQnvAx9vbNKEcS_KjzEdw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250917195808.2514277-4-zecheng@google.com>
 
-Hi Krzysztof,
+On Wed, Sep 17, 2025 at 07:58:01PM +0000, Zecheng Li wrote:
+> Introduce TSR_KIND_POINTER to improve the data type profiler's ability
+> to track pointer-based memory accesses and address register variables.
+> 
+> TSR_KIND_POINTER represents a register that holds the address of the
+> type in the `type_state_reg`. The semantics match the `breg` registers
+> that describe a memory location.
+> 
+> This change implements handling for this new kind in mov instructions
+> and in the check_matching_type() function. When a TSR_KIND_POINTER is
+> moved to the stack, the stack state size is set to the architecture's
+> pointer size.
+> 
+> Signed-off-by: Zecheng Li <zecheng@google.com>
+> ---
+>  tools/perf/arch/x86/annotate/instructions.c | 19 +++++++-
+>  tools/perf/util/annotate-data.c             | 52 +++++++++++++++++++--
+>  tools/perf/util/annotate-data.h             |  1 +
+>  3 files changed, 66 insertions(+), 6 deletions(-)
+> 
+> diff --git a/tools/perf/arch/x86/annotate/instructions.c b/tools/perf/arch/x86/annotate/instructions.c
+> index da98a4e3c52c..698cbb299c6d 100644
+> --- a/tools/perf/arch/x86/annotate/instructions.c
+> +++ b/tools/perf/arch/x86/annotate/instructions.c
+> @@ -391,7 +391,7 @@ static void update_insn_state_x86(struct type_state *state,
+>  		tsr->ok = true;
+>  
+>  		/* To copy back the variable type later (hopefully) */
+> -		if (tsr->kind == TSR_KIND_TYPE)
+> +		if (tsr->kind == TSR_KIND_TYPE || tsr->kind == TSR_KIND_POINTER)
+>  			tsr->copied_from = src->reg1;
+>  
+>  		pr_debug_dtp("mov [%x] reg%d -> reg%d",
+> @@ -418,6 +418,10 @@ static void update_insn_state_x86(struct type_state *state,
+>  			if (stack == NULL) {
+>  				tsr->ok = false;
+>  				return;
+> +			} else if (stack->kind == TSR_KIND_POINTER) {
+> +				tsr->type = stack->type;
+> +				tsr->kind = stack->kind;
+> +				tsr->ok = true;
+>  			} else if (!stack->compound) {
 
-The dt-bindings patch was merged earlier in v3 series (https://lore.kernel.=
-org/linux-samsung-soc/175664688891.195158.13270877080433356384.b4-ty=40lina=
-ro.org/ on 31st August)
-into respective maintainer repo.=20
-Then I have been asked to drop the applied v3 patches and send rebased v4 s=
-eries (https://lore.kernel.org/linux-samsung-soc/15508cb4-843c-42d1-8854-5e=
-abd79ca0df=40kernel.org/)
+Looks like you can reues the !stack->compound block below.  But you need
+to update set_stack_state() not to set it for POINTER types.
 
-Since the 4 patches from v3 series has been already merged, I have not the =
-mentioned dependency while sending remaining v4 patches considering
-It is going to same maintainer repo and it will be applied in sequence.
 
-For future patches (like artpec-9), I will mention the dependency even it i=
-s merged in same repo.
+>  				tsr->type = stack->type;
+>  				tsr->kind = stack->kind;
+> @@ -455,6 +459,19 @@ static void update_insn_state_x86(struct type_state *state,
+>  				     insn_offset, src->offset, sreg, dst->reg1);
+>  			pr_debug_type_name(&tsr->type, tsr->kind);
+>  		}
+> +		/* Handle dereference of TSR_KIND_POINTER registers */
+> +		else if (has_reg_type(state, sreg) && state->regs[sreg].ok &&
+> +			 state->regs[sreg].kind == TSR_KIND_POINTER &&
+> +			 die_get_member_type(&state->regs[sreg].type,
+> +					     src->offset, &type_die)) {
+> +			tsr->type = state->regs[sreg].type;
+> +			tsr->kind = TSR_KIND_TYPE;
+> +			tsr->ok = true;
+> +
+> +			pr_debug_dtp("mov [%x] addr %#x(reg%d) -> reg%d",
+> +				     insn_offset, src->offset, sreg, dst->reg1);
+> +			pr_debug_type_name(&tsr->type, tsr->kind);
+> +		}
+>  		/* Or check if it's a global variable */
+>  		else if (sreg == DWARF_REG_PC) {
+>  			struct map_symbol *ms = dloc->ms;
+> diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-data.c
+> index 903027a6fb7d..31b5896276f1 100644
+> --- a/tools/perf/util/annotate-data.c
+> +++ b/tools/perf/util/annotate-data.c
+> @@ -59,6 +59,10 @@ void pr_debug_type_name(Dwarf_Die *die, enum type_state_kind kind)
+>  		pr_info(" constant\n");
+>  		return;
+>  	case TSR_KIND_PERCPU_POINTER:
+> +		pr_info(" percpu pointer");
+> +		/* it also prints the type info */
+> +		break;
+> +	case TSR_KIND_POINTER:
+>  		pr_info(" pointer");
+>  		/* it also prints the type info */
+>  		break;
+> @@ -578,7 +582,9 @@ void set_stack_state(struct type_state_stack *stack, int offset, u8 kind,
+>  	int tag;
+>  	Dwarf_Word size;
+>  
+> -	if (dwarf_aggregate_size(type_die, &size) < 0)
+> +	if (kind == TSR_KIND_POINTER)
+> +		size = 8;
+
+Maybe better to use 'sizeof(void *)'.  Later, we may support different
+architectures with different pointer size, but that would need many more
+work, I guess. :)
 
 Thanks,
-Ravi
+Namhyung
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: 02 October 2025 12:10
-> To: Ravi Patel <ravi.patel=40samsung.com>
-> Cc: jesper.nilsson=40axis.com; mturquette=40baylibre.com; sboyd=40kernel.=
-org; robh=40kernel.org; krzk+dt=40kernel.org;
-> conor+dt=40kernel.org; s.nawrocki=40samsung.com; cw00.choi=40samsung.com;=
- alim.akhtar=40samsung.com; linus.walleij=40linaro.org;
-> tomasz.figa=40gmail.com; catalin.marinas=40arm.com; will=40kernel.org; ar=
-nd=40arndb.de; ksk4725=40coasia.com; kenkim=40coasia.com;
-> pjsin865=40coasia.com; gwk1013=40coasia.com; hgkim05=40coasia.com; mingyo=
-ungbo=40coasia.com; smn1196=40coasia.com;
-> shradha.t=40samsung.com; inbaraj.e=40samsung.com; swathi.ks=40samsung.com=
-; hrishikesh.d=40samsung.com;
-> dj76.yang=40samsung.com; hypmean.kim=40samsung.com; linux-kernel=40vger.k=
-ernel.org; linux-arm-kernel=40lists.infradead.org; linux-
-> samsung-soc=40vger.kernel.org; linux-arm-kernel=40axis.com; devicetree=40=
-vger.kernel.org; linux-gpio=40vger.kernel.org
-> Subject: Re: =5BPATCH v4 0/6=5D Add support for the Axis ARTPEC-8 SoC
->=20
-> On Mon, 1 Sept 2025 at 14:42, Ravi Patel <ravi.patel=40samsung.com> wrote=
-:
-> >
-> > Add basic support for the Axis ARTPEC-8 SoC which contains
-> > quad-core Cortex-A53 CPU and other several IPs. This SoC is an
-> > Axis-designed chipset used in surveillance camera products such as
-> > the AXIS Q1656-LE and AXIS Q3538-LVE.
-> >
-> > This ARTPEC-8 SoC has a variety of Samsung-specific IP blocks and
-> > Axis-specific IP blocks and SoC is manufactured by Samsung Foundry.
-> >
-> > List of Samsung-provided IPs:
-> > - UART
-> > - Ethernet (Vendor: Synopsys)
-> > - SDIO
-> > - SPI
-> > - HSI2C
-> > - I2S
-> > - CMU (Clock Management Unit)
-> > - Pinctrl (GPIO)
-> > - PCIe (Vendor: Synopsys)
-> > - USB (Vendor: Synopsys)
-> >
-> > List of Axis-provided IPs:
-> > - VIP (Image Sensor Processing IP)
-> > - VPP (Video Post Processing)
-> > - GPU
-> > - CDC (Video Encoder)
-> >
-> > This patch series includes below changes:
-> > - CMU (Clock Management Unit) driver and its bindings
-> > - GPIO pinctrl configuration and its bindings
-> > - Basic Device Tree for ARTPEC-8 SoC and boards
-> >
->=20
-> Pretty useless cover letter since it doesn't say the damn most
-> important thing : dependency=21
->=20
-> So this went unnoticed and now mainline (Linus tree) is affected. See
-> Linus rant on soc pull request
->=20
-> I'm very disappointed, actually mostly on me that I picked this up.
-> Your future patches, need to improve quality and probably you need to
-> go back to how Git works and how maintainer trees are organized. Read
-> carefully, really carefully please maintainer profile .
->=20
-> I'll be putting artpec 9 on hold, till you confirm what was wrong here
-> and how are you going to fix it in the future.
 
+> +	else if (dwarf_aggregate_size(type_die, &size) < 0)
+>  		size = 0;
+>  
+>  	tag = dwarf_tag(type_die);
+> @@ -898,13 +904,25 @@ static void update_var_state(struct type_state *state, struct data_loc_info *dlo
+>  
+>  			reg = &state->regs[var->reg];
+>  
+> -			/* For gp registers, skip the address registers for now */
+> -			if (var->is_reg_var_addr)
+> +			if (reg->ok && reg->kind == TSR_KIND_TYPE &&
+> +			   (!is_better_type(&reg->type, &mem_die) || var->is_reg_var_addr))
+>  				continue;
+>  
+> -			if (reg->ok && reg->kind == TSR_KIND_TYPE &&
+> -			    !is_better_type(&reg->type, &mem_die))
+> +			/* Handle address registers with TSR_KIND_POINTER */
+> +			if (var->is_reg_var_addr) {
+> +				if (reg->ok && reg->kind == TSR_KIND_POINTER &&
+> +				    !is_better_type(&reg->type, &mem_die))
+> +					continue;
+> +
+> +				reg->type = mem_die;
+> +				reg->kind = TSR_KIND_POINTER;
+> +				reg->ok = true;
+> +
+> +				pr_debug_dtp("var [%"PRIx64"] reg%d addr offset %x",
+> +					     insn_offset, var->reg, var->offset);
+> +				pr_debug_type_name(&mem_die, TSR_KIND_POINTER);
+>  				continue;
+> +			}
+>  
+>  			orig_type = reg->type;
+>  
+> @@ -1116,6 +1134,30 @@ static enum type_match_result check_matching_type(struct type_state *state,
+>  		return PERF_TMR_OK;
+>  	}
+>  
+> +	if (state->regs[reg].kind == TSR_KIND_POINTER) {
+> +		struct strbuf sb;
+> +
+> +		strbuf_init(&sb, 32);
+> +		die_get_typename_from_type(&state->regs[reg].type, &sb);
+> +		pr_debug_dtp("(ptr->%s)", sb.buf);
+> +		strbuf_release(&sb);
+> +
+> +		/*
+> +		 * Register holds a pointer (address) to the target variable.
+> +		 * The type is the type of the variable it points to.
+> +		 */
+> +		*type_die = state->regs[reg].type;
+> +
+> +		dloc->type_offset = dloc->op->offset;
+> +
+> +		/* Get the size of the actual type */
+> +		if (dwarf_aggregate_size(type_die, &size) < 0 ||
+> +		    (unsigned)dloc->type_offset >= size)
+> +			return PERF_TMR_BAD_OFFSET;
+> +
+> +		return PERF_TMR_OK;
+> +	}
+> +
+>  	if (state->regs[reg].kind == TSR_KIND_PERCPU_POINTER) {
+>  		pr_debug_dtp("percpu ptr");
+>  
+> diff --git a/tools/perf/util/annotate-data.h b/tools/perf/util/annotate-data.h
+> index dd3807b55208..fd0d1084bc4e 100644
+> --- a/tools/perf/util/annotate-data.h
+> +++ b/tools/perf/util/annotate-data.h
+> @@ -35,6 +35,7 @@ enum type_state_kind {
+>  	TSR_KIND_PERCPU_BASE,
+>  	TSR_KIND_CONST,
+>  	TSR_KIND_PERCPU_POINTER,
+> +	TSR_KIND_POINTER,
+>  	TSR_KIND_CANARY,
+>  };
+>  
+> -- 
+> 2.51.0.384.g4c02a37b29-goog
+> 
 
