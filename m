@@ -1,178 +1,177 @@
-Return-Path: <linux-kernel+bounces-841479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0370BB7759
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:07:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B31F7BB77C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:09:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84158422DB4
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:06:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 601EA423FE0
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71472BE632;
-	Fri,  3 Oct 2025 16:05:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB5E2BD5B2;
+	Fri,  3 Oct 2025 16:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gN8Ry56Y"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zie57fIt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6422BE62D
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB9735962;
+	Fri,  3 Oct 2025 16:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759507550; cv=none; b=e/46qhFgku+gbMvr/PN7CcbNffN4CyzfAKypWX4/tlMOmRn/9a73rylKcc5U+BlBZ5N4UUyWTTrSZlVTaX18MtyDq1QZsjc1uWLb9dRj3YyLLjFP0zGmZP4zSslPt2F+m5N2uFZZkTTbiM8N65mD8j/BqyBH6g+xobODJRn2YX8=
+	t=1759507639; cv=none; b=skw2tzJo0TBYX7IBHSYzywxvtgkTj9BPcf9FKOCL/t8zFpSqP1XsfVEWS+C6oAWHP4lZE7RLGv+/KPqdRxK4Q0MNZ4sr4FnNG2ytWtmUbNRPT2EWdOKBkt/MFNqsCfOkpbj+gnTzwqFA3gUpOc4ikPMQsNk9MN9x37QqeRxnSr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759507550; c=relaxed/simple;
-	bh=CkPAdLrlVh/ddleMtae0Bm+6tKcqVayNFDzb9Me1BGQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KVT6CpJf6NpByv+eTjInJLGXYJMs5OtQ1nbKtIMnAyWxKons5R21M02pL9oWNOJE3dQQHmqJOF7V+QSaT/lCLdrW6HJMCVXs43Bv9ak1IT/FAW9yGaGR7S+auUdFjKTi/bPS8eYtfyxDTRUA+pBeyzM0mJhqtZtTLCR9xxL8uOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gN8Ry56Y; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759507547;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ELkbprrf23tmXGdQAfZaq2jr7uQN2PDNYwdGVW1XlsQ=;
-	b=gN8Ry56YYrV2tLB75nsN7KhaLGbueaSshmOeBWQU+HFo/iB5Isyq7tpCWawc+SGqLcSeSN
-	WDqXk0gM1cB2MplY1q0yicRgdxme0VRxs86od4mzFo0vsBup8Vfjazmay+sK07miCbG3NI
-	Uy2hj3ZlTT3ihR83OrEfYoTktY8eeWk=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-467-jVL1QGJKO9mPod_L3kTvhA-1; Fri,
- 03 Oct 2025 12:05:44 -0400
-X-MC-Unique: jVL1QGJKO9mPod_L3kTvhA-1
-X-Mimecast-MFC-AGG-ID: jVL1QGJKO9mPod_L3kTvhA_1759507543
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 49B36180057B;
-	Fri,  3 Oct 2025 16:05:43 +0000 (UTC)
-Received: from thinkpad-p1.localdomain.com (unknown [10.22.65.162])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DFEF719560B1;
-	Fri,  3 Oct 2025 16:05:40 +0000 (UTC)
-From: Radu Rendec <rrendec@redhat.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Manivannan Sadhasivam <mani@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Rob Herring <robh@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Brian Masney <bmasney@redhat.com>,
-	Eric Chanudet <echanude@redhat.com>,
-	Alessandro Carminati <acarmina@redhat.com>,
-	Jared Kangas <jkangas@redhat.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] PCI: dwc: Enable MSI affinity support
-Date: Fri,  3 Oct 2025 12:04:21 -0400
-Message-ID: <20251003160421.951448-4-rrendec@redhat.com>
-In-Reply-To: <20251003160421.951448-1-rrendec@redhat.com>
-References: <20251003160421.951448-1-rrendec@redhat.com>
+	s=arc-20240116; t=1759507639; c=relaxed/simple;
+	bh=J3MGq/FaN7XOOtlg9H9SfFKM1jle0JiNqsdBNb1rD38=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YN71tjsKPH1fTK+3DYKkzESd18YRoP+STTejKtSsVvFlYZO0f+DuzmTyA3d2n6KDjI4NXCKANU23OS2Olw93j2CEM4sX5ySxAfLXfQKxnoWIzP3fvvQoaazrvreVkBLEWAB46vDnU3Z6TcnqNEJ8KBlYSBrZNfou6eAQdYRhbOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zie57fIt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F7BFC4CEF5;
+	Fri,  3 Oct 2025 16:07:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1759507639;
+	bh=J3MGq/FaN7XOOtlg9H9SfFKM1jle0JiNqsdBNb1rD38=;
+	h=From:To:Cc:Subject:Date:From;
+	b=zie57fItF4cnbTxjdwfmdB80iQUgVccy1u99DSUPbc9D8CE9KXb3yLsNSdPKPW5Sk
+	 4sexRsH5o7Pu9oFE7YMFGJI7jFhtCf+SUG747aXRpGn5r+bQhfCpv3y+Fh+UBC0crx
+	 FSInsanC5tS0XWxeP27mG5mg9/gACjqY4aB0K68A=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	hargar@microsoft.com,
+	broonie@kernel.org,
+	achill@achill.org
+Subject: [PATCH 6.17 00/15] 6.17.1-rc1 review
+Date: Fri,  3 Oct 2025 18:05:24 +0200
+Message-ID: <20251003160359.831046052@linuxfoundation.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: quilt/0.69
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.17.1-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-6.17.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 6.17.1-rc1
+X-KernelTest-Deadline: 2025-10-05T16:04+00:00
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-From: Thomas Gleixner <tglx@linutronix.de>
+This is the start of the stable review cycle for the 6.17.1 release.
+There are 15 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-Leverage the interrupt redirection infrastructure to enable CPU affinity
-support for MSI interrupts. Since the parent interrupt affinity cannot
-be changed, affinity control for the child interrupt (MSI) is achieved
-by redirecting the handler to run in IRQ work context on the target CPU.
+Responses should be made by Sun, 05 Oct 2025 16:02:25 +0000.
+Anything received after that time might be too late.
 
-This patch was originally prepared by Thomas Gleixner (see Link tag
-below) in a patch series that was never submitted as is, and only
-parts of that series have made it upstream so far.
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.17.1-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.17.y
+and the diffstat can be found below.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/linux-pci/878qpg4o4t.ffs@tglx/
-Co-developed-by: Radu Rendec <rrendec@redhat.com>
-Signed-off-by: Radu Rendec <rrendec@redhat.com>
----
- .../pci/controller/dwc/pcie-designware-host.c | 27 +++++++++++++++----
- 1 file changed, 22 insertions(+), 5 deletions(-)
+thanks,
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index 3ee6a464726ec..a3d4b423a2ab9 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -24,9 +24,21 @@
- static struct pci_ops dw_pcie_ops;
- static struct pci_ops dw_child_pcie_ops;
- 
-+static void dw_pcie_msi_ack(struct irq_data *d) { }
-+
-+static bool dw_pcie_init_dev_msi_info(struct device *dev, struct irq_domain *domain,
-+				      struct irq_domain *real_parent, struct msi_domain_info *info)
-+{
-+	if (!msi_lib_init_dev_msi_info(dev, domain, real_parent, info))
-+		return false;
-+
-+	info->chip->irq_ack = dw_pcie_msi_ack;
-+	info->chip->irq_pre_redirect = irq_chip_pre_redirect_parent;
-+	return true;
-+}
-+
- #define DW_PCIE_MSI_FLAGS_REQUIRED (MSI_FLAG_USE_DEF_DOM_OPS		| \
- 				    MSI_FLAG_USE_DEF_CHIP_OPS		| \
--				    MSI_FLAG_NO_AFFINITY		| \
- 				    MSI_FLAG_PCI_MSI_MASK_PARENT)
- #define DW_PCIE_MSI_FLAGS_SUPPORTED (MSI_FLAG_MULTI_PCI_MSI		| \
- 				     MSI_FLAG_PCI_MSIX			| \
-@@ -36,9 +48,8 @@ static const struct msi_parent_ops dw_pcie_msi_parent_ops = {
- 	.required_flags		= DW_PCIE_MSI_FLAGS_REQUIRED,
- 	.supported_flags	= DW_PCIE_MSI_FLAGS_SUPPORTED,
- 	.bus_select_token	= DOMAIN_BUS_PCI_MSI,
--	.chip_flags		= MSI_CHIP_FLAG_SET_ACK,
- 	.prefix			= "DW-",
--	.init_dev_msi_info	= msi_lib_init_dev_msi_info,
-+	.init_dev_msi_info	= dw_pcie_init_dev_msi_info,
- };
- 
- /* MSI int handler */
-@@ -59,7 +70,7 @@ void dw_handle_msi_irq(struct dw_pcie_rp *pp)
- 			continue;
- 
- 		for_each_set_bit(pos, &status, MAX_MSI_IRQS_PER_CTRL)
--			generic_handle_domain_irq(pp->irq_domain, irq_off + pos);
-+			generic_handle_demux_domain_irq(pp->irq_domain, irq_off + pos);
- 	}
- }
- 
-@@ -121,7 +132,9 @@ static void dw_pci_bottom_unmask(struct irq_data *d)
- 	dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_MASK + res, pp->irq_mask[ctrl]);
- }
- 
--static void dw_pci_bottom_ack(struct irq_data *d)
-+static void dw_pci_bottom_ack(struct irq_data *d) { }
-+
-+static void dw_pci_pre_redirect(struct irq_data *d)
- {
- 	struct dw_pcie_rp *pp  = irq_data_get_irq_chip_data(d);
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-@@ -140,6 +153,10 @@ static struct irq_chip dw_pci_msi_bottom_irq_chip = {
- 	.irq_compose_msi_msg	= dw_pci_setup_msi_msg,
- 	.irq_mask		= dw_pci_bottom_mask,
- 	.irq_unmask		= dw_pci_bottom_unmask,
-+#ifdef CONFIG_SMP
-+	.irq_pre_redirect	= dw_pci_pre_redirect,
-+	.irq_set_affinity	= irq_chip_redirect_set_affinity,
-+#endif
- };
- 
- static int dw_pcie_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
--- 
-2.51.0
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 6.17.1-rc1
+
+Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+    ASoC: qcom: audioreach: fix potential null pointer dereference
+
+Chandra Mohan Sundar <chandramohan.explore@gmail.com>
+    media: stm32-csi: Fix dereference before NULL check
+
+Dikshita Agarwal <quic_dikshita@quicinc.com>
+    media: iris: Fix memory leak by freeing untracked persist buffer
+
+Matvey Kovalev <matvey.kovalev@ispras.ru>
+    wifi: ath11k: fix NULL dereference in ath11k_qmi_m3_load()
+
+Charan Teja Kalla <charan.kalla@oss.qualcomm.com>
+    mm: swap: check for stable address space before operating on the VMA
+
+Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+    media: uvcvideo: Mark invalid entities with id UVC_INVALID_ENTITY_ID
+
+Larshin Sergey <Sergey.Larshin@kaspersky.com>
+    media: rc: fix races with imon_disconnect()
+
+Duoming Zhou <duoming@zju.edu.cn>
+    media: tuner: xc5000: Fix use-after-free in xc5000_release
+
+Duoming Zhou <duoming@zju.edu.cn>
+    media: i2c: tc358743: Fix use-after-free bugs caused by orphan timer in probe
+
+Duoming Zhou <duoming@zju.edu.cn>
+    media: b2c2: Fix use-after-free causing by irq_check_work in flexcop_pci_remove
+
+Fedor Pchelkin <pchelkin@ispras.ru>
+    wifi: rtw89: fix use-after-free in rtw89_core_tx_kick_off_and_wait()
+
+Jeongjun Park <aha310510@gmail.com>
+    ALSA: usb-audio: fix race condition to UAF in snd_usbmidi_free
+
+Wang Haoran <haoranwangsec@gmail.com>
+    scsi: target: target_core_configfs: Add length check to avoid buffer overflow
+
+Kees Cook <kees@kernel.org>
+    gcc-plugins: Remove TODO_verify_il for GCC >= 16
+
+Yu Kuai <yukuai3@huawei.com>
+    blk-mq: fix blk_mq_tags double free while nr_requests grown
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                       |  4 +-
+ block/blk-mq-tag.c                             |  1 +
+ drivers/media/i2c/tc358743.c                   |  4 +-
+ drivers/media/pci/b2c2/flexcop-pci.c           |  2 +-
+ drivers/media/platform/qcom/iris/iris_buffer.c | 10 ++++
+ drivers/media/platform/st/stm32/stm32-csi.c    |  4 +-
+ drivers/media/rc/imon.c                        | 27 +++++++---
+ drivers/media/tuners/xc5000.c                  |  2 +-
+ drivers/media/usb/uvc/uvc_driver.c             | 73 ++++++++++++++++----------
+ drivers/media/usb/uvc/uvcvideo.h               |  2 +
+ drivers/net/wireless/ath/ath11k/qmi.c          |  2 +-
+ drivers/net/wireless/realtek/rtw89/core.c      | 30 ++++++++---
+ drivers/net/wireless/realtek/rtw89/core.h      | 35 +++++++++++-
+ drivers/net/wireless/realtek/rtw89/pci.c       |  3 +-
+ drivers/net/wireless/realtek/rtw89/ser.c       |  2 +
+ drivers/target/target_core_configfs.c          |  2 +-
+ mm/swapfile.c                                  |  3 ++
+ scripts/gcc-plugins/gcc-common.h               |  7 +++
+ sound/soc/qcom/qdsp6/topology.c                |  4 +-
+ sound/usb/midi.c                               |  9 ++--
+ 20 files changed, 166 insertions(+), 60 deletions(-)
+
 
 
