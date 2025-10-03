@@ -1,296 +1,223 @@
-Return-Path: <linux-kernel+bounces-841779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FF70BB8368
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 23:34:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB8DFBB8371
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 23:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6B061B2181B
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 21:35:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B4AE94EF941
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 21:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49AA267B12;
-	Fri,  3 Oct 2025 21:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DAC226FA70;
+	Fri,  3 Oct 2025 21:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="P2nurJAm"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4it4l2f+"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5A81F63FF
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 21:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3245526CE36
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 21:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759527251; cv=none; b=lkts9ndfAkkrx5U1uW7fNZcB2+zI3esLslZcaTL/1dzGdI75RcnqFeIf2LtNmHvjS0Abb087cBACioRnipHlLgR8Iy9uo2sn1VNK6olTajJdInJKlHjffcJHVlEm0g7H9xrVYvBE5akmVqHmKxjrbNTlHRKdZ/os/EYN6jC60qU=
+	t=1759527279; cv=none; b=XioL3ED4hNcvKnUffy7eEEyhUhNhPhJC9stw16VhENzw7kekhqM8NXdTBOHEGvASzLYCohOC0aaMQ2plrPRSZeUyyLKu1tyMUfp6Oaoqo+5EZaPKi7FH7VueECUtrXW1lXnFUKbc68Lk/ctwYmw1G90S6O5Tb8WzSPSG69Ybh7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759527251; c=relaxed/simple;
-	bh=G6/+Z79zN1BitB1rxd5ycgiHbexAelcV3x5+AN2kjw4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uGjbuBEwhbp8/144hIFG2b+SAvYv3PcdFp4ATiJId20TT3HhJZ7OkmVHbjbgA+e/Ht1vJJD3Wk0UXwIpd5TB/diJcUj/uzLE3WdPOr3lV1Ym1kO7kP+glt11cnK1EJU+zDdfaEz1QyPDkVbaDd9pBgp51oFIn1qYS1C7gJwoJnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=P2nurJAm; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 593AFOm6019969
-	for <linux-kernel@vger.kernel.org>; Fri, 3 Oct 2025 21:34:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=W4YL1OpJRPmnZFVokp2U0UEb
-	pH44QU2Lfe7m8vc6kdk=; b=P2nurJAmibskIF8qj+aRbLX/H6mcVCplWCQHlKra
-	x3zl+iGbxMoSaDMLJVtiRwhEsZI3u5+PBB+q5GYC5B6ud1hGOdiKuF6THo49xGWd
-	fQDhSC/0kwpSAZb/pEUI0YviEDYucvbO2vW0v5y6OxoQ1CCV/+WOvlWDDl5hAJcc
-	kAjYfTPGOceAjuyQg6ZwwuuMMtPdV1xPrjBURjgaQa6XupMVl3IsT1BmfIWdVZ56
-	Iiyg/KH5J8cv1so8+Z5syJLWU4h7vaMSWcVqlPzlNrrt6lN74ZLwmJL/vViJYw2k
-	wMNKh13qDVOMGxVqHSTlaKfzjWITZue1ia/tXEk87zi0/g==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49gyu1gb51-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 21:34:09 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4dd6887656cso14330311cf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 14:34:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759527246; x=1760132046;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1759527279; c=relaxed/simple;
+	bh=i2NrTqq/SkzZHBEgQ7eO1+wlsUWMi9F4A/jiIevvQwI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U6d/fwFqQblFYq4STnqdggh4RTtDMeO4zNe2fJGx5a3R2vn/0GAGyJjUAxx8lsNcEb9cpLvXzflobUZXWq4R1lzlNYFXs3pjutdstaDHAFP7mRxXQCTtW5S1XSsCqjRPJXJInyX730/X9MaWlow5yAgGouhYKAHwI+bcktULBD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4it4l2f+; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-46e3bcf272aso19155e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 14:34:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759527275; x=1760132075; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=W4YL1OpJRPmnZFVokp2U0UEbpH44QU2Lfe7m8vc6kdk=;
-        b=NwSILemrsIpwsbklj03XAGjTS4dZvwTkcE9FrXRAD619gt2R/z0vHUT+E9nq6luegb
-         wnBGzULXEMw0Yv0zmTVQJx3Cmp56w1fWCXdauusJKGx7/lAnIm47hpWDTB7UOzayMNZi
-         ZX4SH4P/N9KKf17RA795S24uKnd86NHcBvn5QQ6tMjP6lmtoafMeVKH1HrF3p1GaI0Eq
-         Fwc5q5TbBbMbXmQkPt51l3t41TMbQRp5jUPVhUY2vPreqCTw0ZWeVRmfFrggG/Tj27Ne
-         i2MkcdP4shNw0wk6+RricKYCGtBJl7cQV+2QNgXu5jpZnm1puD+PTWrzBOrHJGBQ2iGA
-         XlTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWguBN0lXt2BCtWdOvSSN2hhxHUIWtoYSgPon7I95Kdy1ahIhtH/Qa2gr0aH3JHfZp2k8DIa2APueQuvGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6rwAcJ06xzrYHl/G85oIvR6Cut2U3Bx4GySaEyxkAbWJfFDFF
-	UD+9E+j2mBPqKCBWWduS7dO6JgJY56FkiFxj9OjYwP/wVyXOOQQ1nfb4Dzu7fdKKgeUQmsaLD7I
-	5cdo/3WWigHALsH8EoqOmrW9o/VUMFIkHJJ77pXkdw7TrHaG4livEUj2z3LjuD2OCp+k=
-X-Gm-Gg: ASbGnct9aXw0IhjZJUzB0dHem5jHq6ZsMUpF+bsKGlaZLmWcY4fzhVju1SBtmgmc46d
-	Bc2xEjn+Bjs519KyMcM38nCgQBJSxUIubVgpTiiOBA5onLmDIzbAXfDU0ZHp7BVjjTn6SYrAIdP
-	YQ6Lw/NU6PCNxzF8OOZSLR/gnpKFTIR8++l1TSwO+tj2ziNGCyTIARi1agR2kFD/+sxTNev6H2n
-	I3rPWJS3cX6Oy2HZvX1bsdi67viHtoWrGzKkjmzVR4IMyMvkmFwNGcCo/W/t85tJpe/622zSuFX
-	GHombrIqLIku53ZLqlQi/mn/GRpIcSYR67GvuQyCKBuTY2zncV+R/4ZoAS5dnFii9P/7uWLf1lp
-	R2JS6icPeuPSsitBpAYaVBcXxY1Ti7hl4J3plO3WA2GUp548drc/oxEe+rA==
-X-Received: by 2002:a05:622a:5912:b0:4b3:4c51:6436 with SMTP id d75a77b69052e-4e576a8bd08mr72164501cf.35.1759527245597;
-        Fri, 03 Oct 2025 14:34:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGy+3kSImpi2dnK1969anWSjGH79bvORhdDetuzMl1TdhAMHPPJiLDqxiNwnNn37xrRWCUSrQ==
-X-Received: by 2002:a05:622a:5912:b0:4b3:4c51:6436 with SMTP id d75a77b69052e-4e576a8bd08mr72164081cf.35.1759527245029;
-        Fri, 03 Oct 2025 14:34:05 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-373ba2f2e37sm18858961fa.24.2025.10.03.14.34.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 14:34:03 -0700 (PDT)
-Date: Sat, 4 Oct 2025 00:34:00 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Paul Sajna <sajattack@postmarketos.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
-        Amir Dahan <system64fumo@protonmail.com>,
-        Christopher Brown <crispybrown@gmail.com>
-Subject: Re: [PATCH v3 05/11] arm64: dts: qcom: sdm845-lg-judyln: Add display
- panel
-Message-ID: <r6rkoqffwbkk3b7zwxli57qcm4ianmgghzkscezhvn7nuo6lgo@gjsy267zm553>
-References: <20250928-judyln-dts-v3-0-b14cf9e9a928@postmarketos.org>
- <20250928-judyln-dts-v3-5-b14cf9e9a928@postmarketos.org>
+        bh=AolOsZu5isQ6acd/8wA384z0bhlwgTK8nhLOayCIhiU=;
+        b=4it4l2f+4qMmRp6nM0+0wbgkH1qyspj7CkB26kKzkuLPHWY4c2HB4DXztN9U1RvWr+
+         /1nq507aj8Uw1ZUb7vY1eAYWPgnNFKAA4Mk9uiKV4kpvBgvBYBZLKHJBd0T9plsuhxRp
+         T8Iv0zqmoTs7lmTb9IWaYailaq5iyLutUcgd587p1/RKjIy1vOBvUVBlLB8uFVQnh+8F
+         rFKSWP6iMrM2oRo+XruVkU1X3ntSQ32fqjh6kGy3kV3BFJzdMG9CdMwB2LyDqnV09nqW
+         b1Ar8ygyvt/eGrHYgr4q0xHFhpLsqCRv1jPk84RdcUN8OmIdRS5g5f2g0U6tHNlGyhbl
+         lBHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759527275; x=1760132075;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AolOsZu5isQ6acd/8wA384z0bhlwgTK8nhLOayCIhiU=;
+        b=RNtaITi6qBX5s3i1OW8Tdp9c3glMdmxPkMdT1onj1/orvVdq6PpN2qKLxrGiHosuzS
+         ju/0QM/9yKRARO/n1+0yBkK1ksVfUOVcWUH0k+Frlf00tTn3sIdBWGmDoKfD/HxpdVyk
+         QuukWiP+hETj8qm/9K2FvKjZyfzSaEFvkM+OATW6t36LYpW9MM8oOFzbI3QvwRggD2Cm
+         OsjTXr+1Pk9oqB9Q27MmTMJekV5MOgpQlMFgkIJqjjeFsoOrZ5JqMqIOjCQZvMLe+94Q
+         WBL58BR0WOfquEVfMpeFoFigSr4wfItsr453HgtB33+TQ9RpbLGwC5JfttwV5Ldsf7Ly
+         VgPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWDq642NtOwDiTvT734cYn3wjfKrUPu4tqN+7Vp6zUtlflw4f8SroAvTLfMLZg7WPem+inTjxAk/WAerg0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/zpB/BF0cADlQaGs7/V8Vw+F4kNhFTf39kNIVihtvy206zjNF
+	rpnDkk97Pd8yTc+jwQPGrnXitueEk6NIH7V1CRtWX7YmyQRdxwvGv6eiavdNdwnsOqKlY542Uik
+	O5jJlib9b8BCRzqvBB0NHTXn9OW2EEXIPlCEFh08D
+X-Gm-Gg: ASbGnctgz2/JlgvdL1AAt5pJ1GztMoL9fxZWl7DMFRThVaIUxoWfFTGBuRnCgJ/NOTZ
+	sK6lLubTeRPWTYzpCzd2SdnMEJqDZtFx4ICu7QqhURjLh+ORHiq7bDcqbtRO34Xo/6Qj/AmTsHV
+	bpmg43YzhOp1iVYT+Oh2RJVoha5Rhcn8jdYUZw6UwZda89dUm3HbmNCk+NxVMnzCqQ+5xx4jKb9
+	u2CNDb0VAHVKccl0Jufw+c4JxoDCElLOwEXWwnuUifoEROTlzoF0u74dB8RzJav07EjBpS7kOGD
+	+yg=
+X-Google-Smtp-Source: AGHT+IG+g888nHbRtas0R01E+jPK4UfBpLJ8GQnOWINQky6xv5HWVReEjuHHu18tH8G5o/mleUJVD+7aBJEJSt2Urkg=
+X-Received: by 2002:a05:600c:8582:b0:45f:2e6d:ca01 with SMTP id
+ 5b1f17b1804b1-46e789ad00amr340925e9.4.1759527275228; Fri, 03 Oct 2025
+ 14:34:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250928-judyln-dts-v3-5-b14cf9e9a928@postmarketos.org>
-X-Authority-Analysis: v=2.4 cv=RfGdyltv c=1 sm=1 tr=0 ts=68e04151 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=Gbw9aFdXAAAA:8 a=sfOm8-O8AAAA:8 a=nYbUX3P6sfHOS58npmgA:9
- a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22 a=9vIz8raoGPyDa4jBFAYH:22
- a=TvTJqdcANYtsRzA46cdi:22
-X-Proofpoint-ORIG-GUID: sfRXy7N_MHYwBQC2fnxpD9K5UIuMrkLg
-X-Proofpoint-GUID: sfRXy7N_MHYwBQC2fnxpD9K5UIuMrkLg
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDAxMDA1OCBTYWx0ZWRfX3o8uQiQvSEuX
- J2wp0VqpYD3O6ESC11l5pFPEaFiQLXbUZy2GcR3SmlsRkS0cuYF+vm8mteReoa488Xlqca3Mcbe
- Ekv70BZydM4OONIZKr4xSz9bZDsLfq2+vae11sqmNLfwpAGO+p7ho2Kq4uymPKNg8TKUvUehg0h
- 8nGOiWdb+SfszY/kkma09Yd3LNkMB9itenbkpGUO7yZN1b/W4a98X4n6Ei0A002jfnPwzJD+Va2
- qegA9HGAON0iJ7B9Lih2nChtkbReLs1CcdP+7msMMbAsOWsK1qokZcjqlth2EKFSsquADT2jrvm
- WF2EuaNgoAquBfIof3Z5NHR0SlLarjTbOhq35RhH+uq7dj0uHldbjn8ggEp3LZ5eXK0uYgGL5o+
- fCRvoUnbB961FoVYjrkMr173lG1q5Q==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-03_07,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 bulkscore=0 clxscore=1015
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2510010058
+References: <20250731205844.1346839-1-jiaqiyan@google.com>
+In-Reply-To: <20250731205844.1346839-1-jiaqiyan@google.com>
+From: Jiaqi Yan <jiaqiyan@google.com>
+Date: Fri, 3 Oct 2025 14:34:23 -0700
+X-Gm-Features: AS18NWC200qL2INhmKRcSigwRYSlRaKCFejFFI6CifV04SzXltQ6LUTRzublc7I
+Message-ID: <CACw3F51QG70YpSfWaj_gQjAwoPcZ6uFa5dfd+Ave5PxQYDt-Ew@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] VMM can handle guest SEA via KVM_EXIT_ARM_SEA
+To: maz@kernel.org, oliver.upton@linux.dev
+Cc: joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, 
+	catalin.marinas@arm.com, will@kernel.org, pbonzini@redhat.com, corbet@lwn.net, 
+	shuah@kernel.org, kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	duenwen@google.com, rananta@google.com, jthoughton@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 28, 2025 at 10:05:28PM -0700, Paul Sajna wrote:
-> Also include other supporting msm drm nodes, including backlight
-> 
-> Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
-> Co-developed-by: Amir Dahan <system64fumo@protonmail.com>
-> Signed-off-by: Amir Dahan <system64fumo@protonmail.com>
-> ---
->  arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi |  8 +--
->  arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts  | 82 ++++++++++++++++++++++----
->  2 files changed, 73 insertions(+), 17 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi b/arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi
-> index 2a612922ecf7ce3f8a0734cb1a31a8a81efdb4f2..aa338612433f9ac3b07363b79d8a3b8e0eedd98b 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi
-> @@ -461,10 +461,6 @@ &cdsp_pas {
->  	status = "okay";
->  };
->  
-> -&dispcc {
-> -	status = "disabled";
-> -};
-> -
->  &gcc {
->  	protected-clocks = <GCC_QSPI_CORE_CLK>,
->  			   <GCC_QSPI_CORE_CLK_SRC>,
-> @@ -532,6 +528,10 @@ led@5 {
->  	};
->  };
->  
-> +&pmi8998_wled {
-> +	status = "okay";
-> +};
-> +
->  &sdhc_2 {
->  	cd-gpios = <&tlmm 126 GPIO_ACTIVE_LOW>;
->  
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts b/arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts
-> index df65b0e32b195d2f668883542cfcabbb9bde8204..f45eb1dfe55c562142092a4239758609fa3f2e47 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts
-> @@ -13,19 +13,6 @@ / {
->  	model = "LG G7 ThinQ";
->  	compatible = "lg,judyln", "qcom,sdm845";
->  
-> -	chosen {
-> -		framebuffer@9d400000 {
-> -			compatible = "simple-framebuffer";
-> -			reg = <0x0 0x9d400000 0x0 (1440 * 3120 * 4)>;
-> -			width = <1440>;
-> -			height = <3120>;
-> -			stride = <(1440 * 4)>;
-> -			format = "a8r8g8b8";
-> -			lab-supply = <&lab>;
-> -			ibb-supply = <&ibb>;
-> -		};
-> -	};
+Hi Marc, Oliver, and other upstream friends, can you help review this
+patch series? I would really appreciate any comments and feedback.
 
-I think, you can keep simple-framebuffer. It will be used by the initial
-booting and then will be replaced with the MDSS.
+[sorry for resending, as previous msg was sent as HTML]
 
-> -
->  	/* Additional ThinQ key */
->  	gpio-keys {
->  		pinctrl-0 = <&vol_up_pin_a &thinq_key_default>;
-> @@ -61,6 +48,47 @@ zap-shader {
->  	};
->  };
->  
-> +&mdss {
-> +	status = "okay";
-> +};
-> +
-> +&mdss_dsi0 {
-> +	vdda-supply = <&vdda_mipi_dsi0_1p2>;
-> +
-> +	status = "okay";
-> +
-> +	display_panel: panel@0 {
 
-You don't need this label
 
-> +		reg = <0>;
-> +		compatible = "lg,sw49410";
-> +
-> +		backlight = <&pmi8998_wled>;
-> +		reset-gpios = <&tlmm 6 GPIO_ACTIVE_LOW>;
-> +		width-mm = <65>;
-> +		height-mm = <140>;
-> +
-> +		pinctrl-0 = <&sde_dsi_active &sde_te_active>;
-> +		pinctrl-1 = <&sde_dsi_sleep &sde_te_sleep>;
-> +		pinctrl-names = "default", "sleep";
-> +
-> +		port {
-> +			panel_in: endpoint {
-> +				remote-endpoint = <&mdss_dsi0_out>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&mdss_dsi0_phy {
-> +	vdds-supply = <&vdda_mipi_dsi0_pll>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&mdss_dsi0_out {
-
-'mdss_dsi0_out' < 'mdss_dsi0_phy'
-
-> +	remote-endpoint = <&panel_in>;
-> +	data-lanes = <0 1 2 3>;
-> +};
-> +
->  &mss_pil {
->  	firmware-name = "qcom/sdm845/judyln/mba.mbn", "qcom/sdm845/judyln/modem.mbn";
->  };
-> @@ -78,6 +106,34 @@ thinq_key_default: thinq-key-default-state {
->  		drive-strength = <2>;
->  		bias-pull-up;
->  	};
-> +
-> +	sde_dsi_active: sde-dsi-active-state {
-
-Please keep these entries sorted out.
-
-> +		pins = "gpio6";
-> +		function = "gpio";
-> +		drive-strength = <8>;
-> +		bias-disable;
-> +	};
-> +
-> +	sde_dsi_sleep: sde-dsi-sleep-state {
-> +		pins = "gpio6";
-> +		function = "gpio";
-> +		drive-strength = <2>;
-> +		bias-pull-down;
-> +	};
-> +
-> +	sde_te_active: sde-te-active-state {
-> +		pins = "gpio10";
-> +		function = "mdp_vsync";
-> +		drive-strength = <2>;
-> +		bias-disable;
-> +	};
-> +
-> +	sde_te_sleep: sde-te-sleep-state {
-> +		pins = "gpio10";
-> +		function = "mdp_vsync";
-> +		drive-strength = <2>;
-> +		bias-pull-down;
-> +	};
->  };
->  
->  &bluetooth {
-> 
-> -- 
-> 2.51.0
-> 
-
--- 
-With best wishes
-Dmitry
+On Thu, Jul 31, 2025 at 1:58=E2=80=AFPM Jiaqi Yan <jiaqiyan@google.com> wro=
+te:
+>
+> Problem
+> =3D=3D=3D=3D=3D=3D=3D
+>
+> When host APEI is unable to claim a synchronous external abort (SEA)
+> during guest abort, today KVM directly injects an asynchronous SError
+> into the VCPU then resumes it. The injected SError usually results in
+> unpleasant guest kernel panic.
+>
+> One of the major situation of guest SEA is when VCPU consumes recoverable
+> uncorrected memory error (UER), which is not uncommon at all in modern
+> datacenter servers with large amounts of physical memory. Although SError
+> and guest panic is sufficient to stop the propagation of corrupted memory=
+,
+> there is room to recover from an UER in a more graceful manner.
+>
+> Proposed Solution
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> The idea is, we can replay the SEA to the faulting VCPU. If the memory
+> error consumption or the fault that cause SEA is not from guest kernel,
+> the blast radius can be limited to the poison-consuming guest process,
+> while the VM can keep running.
+>
+> In addition, instead of doing under the hood without involving userspace,
+> there are benefits to redirect the SEA to VMM:
+>
+> - VM customers care about the disruptions caused by memory errors, and
+>   VMM usually has the responsibility to start the process of notifying
+>   the customers of memory error events in their VMs. For example some
+>   cloud provider emits a critical log in their observability UI [1], and
+>   provides a playbook for customers on how to mitigate disruptions to
+>   their workloads.
+>
+> - VMM can protect future memory error consumption by unmapping the poison=
+ed
+>   pages from stage-2 page table with KVM userfault [2], or by splitting t=
+he
+>   memslot that contains the poisoned pages.
+>
+> - VMM can keep track of SEA events in the VM. When VMM thinks the status
+>   on the host or the VM is bad enough, e.g. number of distinct SEAs
+>   exceeds a threshold, it can restart the VM on another healthy host.
+>
+> - Behavior parity with x86 architecture. When machine check exception
+>   (MCE) is caused by VCPU, kernel or KVM signals userspace SIGBUS to
+>   let VMM either recover from the MCE, or terminate itself with VM.
+>   The prior RFC proposes to implement SIGBUS on arm64 as well, but
+>   Marc preferred KVM exit over signal [3]. However, implementation
+>   aside, returning SEA to VMM is on par with returning MCE to VMM.
+>
+> Once SEA is redirected to VMM, among other actions, VMM is encouraged
+> to inject external aborts into the faulting VCPU.
+>
+> New UAPIs
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> This patchset introduces following userspace-visible changes to empower
+> VMM to control what happens for SEA on guest memory:
+>
+> - KVM_CAP_ARM_SEA_TO_USER. While taking SEA, if userspace has enabled
+>   this new capability at VM creation, and the SEA is not owned by kernel
+>   allocated memory, instead of injecting SError, return KVM_EXIT_ARM_SEA
+>   to userspace.
+>
+> - KVM_EXIT_ARM_SEA. This is the VM exit reason VMM gets. The details
+>   about the SEA is provided in arm_sea as much as possible, including
+>   sanitized ESR value at EL2, faulting guest virtual and physical
+>   addresses if available.
+>
+> * From v2 [4]:
+>   - Rebased on "[PATCH] KVM: arm64: nv: Handle SEAs due to VNCR redirecti=
+on" [5]
+>     and kvmarm/next commit 7b8346bd9fce ("KVM: arm64: Don't attempt vLPI
+>     mappings when vPE allocation is disabled")
+>   - Took the host_owns_sea implementation from Oliver [6, 7].
+>   - Excluded the guest SEA injection patches.
+>   - Updated selftest.
+>
+> * From v1 [8]:
+>   - Rebased on commit 4d62121ce9b5 ("KVM: arm64: vgic-debug: Avoid
+>     dereferencing NULL ITE pointer").
+>   - Sanitize ESR_EL2 before reporting it to userspace.
+>   - Do not do KVM_EXIT_ARM_SEA when SEA is caused by memory allocated to
+>     stage-2 translation table.
+>
+> [1] https://cloud.google.com/solutions/sap/docs/manage-host-errors
+> [2] https://lore.kernel.org/kvm/20250109204929.1106563-1-jthoughton@googl=
+e.com
+> [3] https://lore.kernel.org/kvm/86pljbqqh0.wl-maz@kernel.org
+> [4] https://lore.kernel.org/kvm/20250604050902.3944054-1-jiaqiyan@google.=
+com/
+> [5] https://lore.kernel.org/kvmarm/20250729182342.3281742-1-oliver.upton@=
+linux.dev/
+> [6] https://lore.kernel.org/kvm/aHFohmTb9qR_JG1E@linux.dev/#t
+> [7] https://lore.kernel.org/kvm/aHK-DPufhLy5Dtuk@linux.dev/
+> [8] https://lore.kernel.org/kvm/20250505161412.1926643-1-jiaqiyan@google.=
+com
+>
+> Jiaqi Yan (3):
+>   KVM: arm64: VM exit to userspace to handle SEA
+>   KVM: selftests: Test for KVM_EXIT_ARM_SEA
+>   Documentation: kvm: new UAPI for handling SEA
+>
+>  Documentation/virt/kvm/api.rst                |  61 ++++
+>  arch/arm64/include/asm/kvm_host.h             |   2 +
+>  arch/arm64/kvm/arm.c                          |   5 +
+>  arch/arm64/kvm/mmu.c                          |  68 +++-
+>  include/uapi/linux/kvm.h                      |  10 +
+>  tools/arch/arm64/include/asm/esr.h            |   2 +
+>  tools/testing/selftests/kvm/Makefile.kvm      |   1 +
+>  .../testing/selftests/kvm/arm64/sea_to_user.c | 327 ++++++++++++++++++
+>  tools/testing/selftests/kvm/lib/kvm_util.c    |   1 +
+>  9 files changed, 476 insertions(+), 1 deletion(-)
+>  create mode 100644 tools/testing/selftests/kvm/arm64/sea_to_user.c
+>
+> --
+> 2.50.1.565.gc32cd1483b-goog
+>
 
