@@ -1,180 +1,168 @@
-Return-Path: <linux-kernel+bounces-840967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DF92BB5D67
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 04:55:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 519C1BB5D6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 05:02:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 830FA4EAA7A
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 02:55:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9C143C7217
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 03:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16882DC797;
-	Fri,  3 Oct 2025 02:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A6zridJU"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9A92D3759;
+	Fri,  3 Oct 2025 03:02:14 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108F2285075
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 02:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9EFA12CD8B
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 03:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759460146; cv=none; b=aTFMk51vEmvXHO8nSA/133/UkJ+usU6cUSdMd0vxCxHb+MqXopvMjMshnMc45OCUAPbUSewTtZN8HZxbKT6+BmU3RBC2S1n0GSYe638olgrTbJeRGyouAfQ1Ns1d2UG1zBhBXx3ohhL4tS2DCyPFz2Ukor7xEkK6jdjJ8KWZ+DY=
+	t=1759460534; cv=none; b=GcsMRPxNvFydCkzl2Tjg2YSCdjbWoSZubkUCKzsk5QDAtxx91LCXlEpUZZ5hxNkfqGPq5943QP+kUJkFVsqCWu1pjLZuR7DZXuySxjFOr51X64RgejGfM5Nkdx391jWMJ6LiKVQ5PsxpAe51FUy4fSU8fiBUjo7iuOURRiiqQbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759460146; c=relaxed/simple;
-	bh=IbqIfwodQqiBv6KC6vQja57uOyoAxGxu3556N+ke0bM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=le1up1btkSEA2coSJGjFbZfNadpMN9yjwXyyI6zwKSjhGnSMgMn/wYtzHOaknCV1mwJO4gGvPZIC1+jUOUQka9LxHKrYN217SexPTqr2q6pXiQXNAGhX03NGiheJZycxnYybs+MhRMBqVM4wQy7+YXqCwDFCrmmxK/u6cmHaLlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A6zridJU; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3352018dfbcso1533718a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 19:55:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759460140; x=1760064940; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3XzN1IX0x1HKKD8cWvxUYr0p4ZQjvWytXA8ADa16YOw=;
-        b=A6zridJUpXEWHRKXQBQYefaJbIYMHtS4qcYF6r4rXrsxoXWNBvTTdylqs1CLy/dVux
-         65hjoBeJO/kUUV95Ot4I3az80UUBpqAxRnY7rKdW5Y+cFx75sQVZM0XisRZ0E0wtXgV3
-         fqXrL1kyP0LnsSE85LBJd55RXLhPABo69KQ7kvi8XUZxI3XV54XpiG2KGS9U+30WOk2D
-         D7Z1WDZulRvGmxCvw6qGnDzzY/bng86isvcpG4I8mbSGhcNs7BJfLYYzn4Vgt6JsyMrK
-         rCzVQ66/v4SCrTZXl8FAz/gbXKf82H6jpKjELrGg7iSSdIb0nTlaleOzgXnQYr3/SNjg
-         9RHg==
+	s=arc-20240116; t=1759460534; c=relaxed/simple;
+	bh=DY2LpIw+buD76/TQi8/+FFrw7iGIpPfinV+MQ53jhno=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Hl2I1scpykHDY3DccelsibCdrH/EkdJDLQ1qqVwk/nfjCAIlr9W+ilpqBUQ2u35aWO8NwviJ0XvoyStPflNurxDZscKsc/DYVNGb6CIaU9Q2UmYVdoknDBhFDcqZBNWt4q7m6Ri8wLY6B5jbC8KkmKeqdokh5c9sXkwmP5VKdiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-90e469a7f6bso218592239f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 20:02:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759460140; x=1760064940;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1759460532; x=1760065332;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3XzN1IX0x1HKKD8cWvxUYr0p4ZQjvWytXA8ADa16YOw=;
-        b=mAnmYmt/PzqPdh6la+8Ia4ViOZt7mSrwLs578NeeQbfafGZRJUUDSyOL0+CiA39omz
-         jAODvZxSpH/mNpXt3mtaFVa8s5svTmzb/7i+CCUapIyT7pvqLt/O9LQ2ig8CFFOmkrRY
-         4bACrsp4ZQxRVDg9VKPMmniW+jBLvozU7eMCmBByjbPmPDW0s1S8r+WgCWuTD5n9g4O7
-         zWRZDMhgxTVpwxJiUK96NFtU5TokviQv4Syk2AICc/LFaY5RQ9YWnKrl3FYwQAqjKgq2
-         zDCqt0Ye9ywUCQ7BjB+M87MOQJdyahWcLsUS4nDrqLKGNfzmJ9ZyNVTMITuW2hZTSdg4
-         EiSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVPd8fA1ooEomrlT1d6wrIfN47fMF0FrCauu40kifRJf4h/zsbAKTw8S7PaJ13ZyP/kv7FpTGVhGOxNMnM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBEe3tm1t3/DjltLTLHLHwinSKlq8P1WU9SLTEK7AjiQlvmlDq
-	s4Ktrbm1N8vOZ0cSmz4TSUkPuaBy0yoFP0KFJxXZE1kiueBrtuQLHgNl
-X-Gm-Gg: ASbGnctv4vpd2Ikz5EflOQ7qS80UhRfHgCDrDY7VmRBzAVePPiLKOSm+NXg4iZ4J9cT
-	Ib8urGf7hd8XnmVxHYpkRzNEmMqScGstg1LuJyMhv33JWwMHS9QU96uemz7rjvoaQ2QB7/hMcF4
-	iAkgOeKVKSr8fVKZWR+Cw6rKE8Qdv6j+Q32Wle0YzZAilO+kO8+QXrYC3wVKNp2xSOBlMhXJmue
-	tmsZan3Y06oEXgKnqdz1dCs0rxwMfvdXFuVtBqz6USEW/LcpULPnIjQWtxXKQQ2JE3usApuvGkN
-	ftphzc7QorJE09I2gC4VlFzaaLCnfODrp4dC31rrNBWn0sFQs1iWgnpPyQWQ//7YV77GoD3NrYw
-	/GI9i1nRB3AoZWccInafDcgaNhbUgrknLV1F9nnolh1qGCh6ehlcmUsSoI0568ESMp7az4PRhG5
-	57aE63GHgbLhdjArN7dTpDNU1zKGv8Kmk=
-X-Google-Smtp-Source: AGHT+IFP8YizIsbAVUU/5CgNa3JJSdLizH9cuCkzMxNk2L537QkrRDpx7uF1m2EXsw4kfsouEeK6vg==
-X-Received: by 2002:a17:90b:390f:b0:336:b60f:3935 with SMTP id 98e67ed59e1d1-339c27db5a8mr1874281a91.23.1759460140125;
-        Thu, 02 Oct 2025 19:55:40 -0700 (PDT)
-Received: from ?IPV6:2601:1c0:5780:9200:326a:8939:a05c:b9d5? ([2601:1c0:5780:9200:326a:8939:a05c:b9d5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339a701bf31sm6353140a91.19.2025.10.02.19.55.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Oct 2025 19:55:39 -0700 (PDT)
-Message-ID: <f76cee52-1230-4cd5-b6c2-9cf4f0823228@gmail.com>
-Date: Thu, 2 Oct 2025 19:55:39 -0700
+        bh=V5vs9n9028GGJFsoBbT/p4gNDi1uzSRnj3Xc4sJwfKs=;
+        b=IrlhnbpBa11FA1kNtLgRLGYKxVyG+x6kqS0JfKiKccMVa/8m7PgKnk5t19l/gcBIEk
+         UM5/QbvDUAPcbAqGd9omAXuQwaEcydM0S/cbxlYW0arnpHwEB37H5Jjiq7WsGjdJgVJ3
+         IC+0w4qoD2So/3+EgV8GgDIvWJevsjvou7TEeERkTV0pOoBAhH+72Z6XKLhyo7786O6K
+         VQqklNnt4fJePRAauaOybZOqXXeDe2b/FJT9AI5qVlJNdBscw71Vkn8VrNwySSPQEe1e
+         czyNaw/TdsW79XjFq7LW2PLknu8ScJMITCfFKutvejBaZliWo6UUyjFfIheKaXKcmgNI
+         RTAA==
+X-Gm-Message-State: AOJu0YyEb73h9CvDvSSu6pafTNtdHKvTlCTeMLmLTYse8Vwu9a5SQ/xY
+	9KI413lKim3CWZ/a7nKZNZr/+MREZTK7GTryuhZ5FE6qZNB4XReM8jTdYTRNJuXX4LqTtGHEokM
+	Oii5qan8V6NhROg+70zRl5nJ2wQGR059Om4fgm24bPjt4E4574LSdnR7q3Pw=
+X-Google-Smtp-Source: AGHT+IFooqksmvjO0V2F/d3Pv/9g1YYcv+Y+UlvasO3cLgjK9tGYjUzFABd7sUrej7TsH8lEA9pjajpjdTTaLHt/nfr6GfLuUjxD
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/vblank: downgrade vblank wait timeout from WARN to
- debug
-To: Thomas Zimmermann <tzimmermann@suse.de>,
- maarten.lankhorst@linux.intel.com, maxime.ripard@kernel.org,
- airlied@gmail.com, simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
-References: <20251002025723.9430-1-chintanlike@gmail.com>
- <840dfd6f-3417-4667-a808-70d3d3f331c0@suse.de>
-Content-Language: en-US
-From: Chintan Patel <chintanlike@gmail.com>
-In-Reply-To: <840dfd6f-3417-4667-a808-70d3d3f331c0@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:cda2:0:b0:429:4c65:e8f7 with SMTP id
+ e9e14a558f8ab-42e7ad7b4e1mr15492035ab.24.1759460531890; Thu, 02 Oct 2025
+ 20:02:11 -0700 (PDT)
+Date: Thu, 02 Oct 2025 20:02:11 -0700
+In-Reply-To: <68ddc2f9.a00a0220.102ee.006d.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68df3cb3.050a0220.2c17c1.0012.GAE@google.com>
+Subject: Forwarded: [PATCH] ext4: reject inline data flag when i_extra_isize
+ is zero
+From: syzbot <syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+
+***
+
+Subject: [PATCH] ext4: reject inline data flag when i_extra_isize is zero
+Author: kartikey406@gmail.com
+
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
 
+Prevent use-after-free in ext4_search_dir by rejecting inodes that
+claim to have inline data but have no extra inode space allocated.
+ext4 inline data is stored in the extra inode space beyond the
+standard 128-byte inode structure. This requires i_extra_isize to be
+non-zero to provide space for the system.data xattr that stores the
+inline directory entries or file data.
+However, a corrupted filesystem can craft an inode with both:
+- i_extra_isize == 0 (no extra space)
+- EXT4_INODE_INLINE_DATA flag set (claims to use extra space)
+This creates a fundamental inconsistency. When i_extra_isize is zero,
+ext4_iget() skips calling ext4_iget_extra_inode(), which means the
+inline xattr validation in check_xattrs() never runs. Later, when
+ext4_find_inline_entry() attempts to access the inline data, it reads
+unvalidated and potentially corrupt xattr structures, leading to
+out-of-bounds memory access and use-after-free.
+Fix this by validating in ext4_iget() that if an inode has the
+EXT4_INODE_INLINE_DATA flag set, i_extra_isize must be non-zero.
+This catches the corruption at inode load time before any inline
+data operations are attempted.
 
-On 10/1/25 23:34, Thomas Zimmermann wrote:
-> Hi
-> 
-> Am 02.10.25 um 04:57 schrieb Chintan Patel:
->> When wait_event_timeout() in drm_wait_one_vblank() times out, the
->> current WARN can cause unnecessary kernel panics in environments
->> with panic_on_warn set (e.g. CI, fuzzing). These timeouts can happen
->> under scheduler pressure or from invalid userspace calls, so they are
->> not always a kernel bug.
->>
->> Replace the WARN with drm_dbg_kms() messages that provide useful
->> context (last and current vblank counters) without crashing the
->> system. Developers can still enable drm.debug to diagnose genuine
->> problems.
->>
->> Reported-by: syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
->> Closes: https://syzkaller.appspot.com/bug?extid=147ba789658184f0ce04
->> Tested-by: syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
->>
->> Signed-off-by: Chintan Patel <chintanlike@gmail.com>
-> 
-> There should be no empty lines among those tags
-> 
->>
->> v2:
->>   - Drop unnecessary in-code comment (suggested by Thomas Zimmermann)
->>   - Remove else branch, only log timeout case
->> ---
->>   drivers/gpu/drm/drm_vblank.c | 9 +++++++--
->>   1 file changed, 7 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
->> index 46f59883183d..a94570668cba 100644
->> --- a/drivers/gpu/drm/drm_vblank.c
->> +++ b/drivers/gpu/drm/drm_vblank.c
->> @@ -1289,7 +1289,7 @@ void drm_wait_one_vblank(struct drm_device *dev, 
->> unsigned int pipe)
->>   {
->>       struct drm_vblank_crtc *vblank = drm_vblank_crtc(dev, pipe);
->>       int ret;
->> -    u64 last;
->> +    u64 last, curr;
->>       if (drm_WARN_ON(dev, pipe >= dev->num_crtcs))
->>           return;
->> @@ -1305,7 +1305,12 @@ void drm_wait_one_vblank(struct drm_device 
->> *dev, unsigned int pipe)
->>                    last != drm_vblank_count(dev, pipe),
->>                    msecs_to_jiffies(100));
->> -    drm_WARN(dev, ret == 0, "vblank wait timed out on crtc %i\n", pipe);
->> +    curr = drm_vblank_count(dev, pipe);
-> 
-> Please don't call drm_vblank_count() here. It's not necessary for 
-> regular operation. Simply keep the debug message as-is.
-> 
->> +
->> +    if (ret == 0) {
-> 
-> "if (!ret)" is the preferred style.
-> 
->> +        drm_dbg_kms(dev, "WAIT_VBLANK: timeout crtc=%d, last=%llu, 
->> curr=%llu\n",
->> +            pipe, last, curr);
-> 
-> Aligning the pipe argument with dev from the previous line is the 
-> preferred style.
-> 
+Reported-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=3ee481e21fd75e14c397
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+ fs/ext4/inode.c | 13 ++++++++++++-
+ fs/ext4/xattr.c |  2 +-
+ 2 files changed, 13 insertions(+), 2 deletions(-)
 
-Hi Thomas,
-
-Thank you for your review and helpful suggestions.
-I’ll drop the unnecessary comment and remove the else branch as you 
-recommended.
-
-I’ll send a v3 with these changes.
-
-Best regards,
-Chintan
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 5b7a15db4953..257e9b1c6416 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -5099,7 +5099,8 @@ static inline int ext4_iget_extra_inode(struct inode *inode,
+ 	if (EXT4_INODE_HAS_XATTR_SPACE(inode)  &&
+ 	    *magic == cpu_to_le32(EXT4_XATTR_MAGIC)) {
+ 		int err;
+-
++		ext4_error_inode(inode, "ext4_iget_extra_inode", 5102, 0,
++				 "wow this inode has extra space");
+ 		err = xattr_check_inode(inode, IHDR(inode, raw_inode),
+ 					ITAIL(inode, raw_inode));
+ 		if (err)
+@@ -5112,6 +5113,7 @@ static inline int ext4_iget_extra_inode(struct inode *inode,
+ 		return err;
+ 	} else
+ 		EXT4_I(inode)->i_inline_off = 0;
++
+ 	return 0;
+ }
+ 
+@@ -5414,6 +5416,13 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+ 		ei->i_sync_tid = tid;
+ 		ei->i_datasync_tid = tid;
+ 	}
++	if (EXT4_INODE_SIZE(inode->i_sb) < EXT4_GOOD_OLD_INODE_SIZE) {
++		ext4_error_inode(inode, function, line, 0,
++				 "wow! this inode has less data");
++		if (ext4_test_inode_flag(inode, EXT4_INODE_INLINE_DATA)) {
++			ext4_error_inode(inode, function, line, 0, "wow! this inode is line");
++		}
++	}
+ 
+ 	if (EXT4_INODE_SIZE(inode->i_sb) > EXT4_GOOD_OLD_INODE_SIZE) {
+ 		if (ei->i_extra_isize == 0) {
+@@ -5422,6 +5431,8 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+ 			ei->i_extra_isize = sizeof(struct ext4_inode) -
+ 					    EXT4_GOOD_OLD_INODE_SIZE;
+ 		} else {
++			ext4_error_inode(inode, function, line, 0,
++					"wow! this inode has reached ext4 iget");
+ 			ret = ext4_iget_extra_inode(inode, raw_inode, ei);
+ 			if (ret)
+ 				goto bad_inode;
+diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+index 5a6fe1513fd2..9b4a6978b313 100644
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -195,7 +195,7 @@ check_xattrs(struct inode *inode, struct buffer_head *bh,
+ 	struct ext4_xattr_entry *e = entry;
+ 	int err = -EFSCORRUPTED;
+ 	char *err_str;
+-
++	ext4_error_inode(inode, "check_xattrs", 198, 0, "wow! we are in check_xattrs");
+ 	if (bh) {
+ 		if (BHDR(bh)->h_magic != cpu_to_le32(EXT4_XATTR_MAGIC) ||
+ 		    BHDR(bh)->h_blocks != cpu_to_le32(1)) {
+-- 
+2.43.0
 
 
