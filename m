@@ -1,99 +1,181 @@
-Return-Path: <linux-kernel+bounces-841680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 265EEBB7FAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 21:28:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1AECBB7FB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 21:31:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BA643C3FFF
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 19:28:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF3513C1CEC
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 19:31:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0FB228CBC;
-	Fri,  3 Oct 2025 19:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95194221540;
+	Fri,  3 Oct 2025 19:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XNjj6Kis"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="Oves2xpp"
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A0D1A9F9B;
-	Fri,  3 Oct 2025 19:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3EF118DB26
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 19:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759519678; cv=none; b=PMX8ntYBhvGqz2m7pHjrE5/xwFMFABeo5zfdNrNaK3GEQJGkJxuPqWnUZNnT2d5Egb3b+Ao6bhMrq9PoC5VZg1YWlzYii/6ITbalr7Yz9I2JnVccFpgcOzlDe3VPXt5azvHFdNewoqgGnhc800Dm9kraXlQh+HLD00f/mo/t7NU=
+	t=1759519880; cv=none; b=H+3yEZN+UQ0ulQAtsqUSKIxSUY3Gx3mZhPntD4rXshSkMLxObj4jAv/7MgjUbO+7ACfiFt1bUYzowX2egr8WSPHphuTEt50IMcKRCqsmAURc9dx3athvh0T8LlMjDZEep7w9CRFCzmeDGFjbUbrVH9oU3M06SIGOzq3RVNGsywg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759519678; c=relaxed/simple;
-	bh=+3/SNgTkdPUgDjGUiVYWGQyYCU3vEkAv+rXQrlV99TU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tWmX5LU01os8e/To22hCwabb2BUxjKpOk4QD4zW0U6uSMApkQlR4C7m+1oe2a+V9NrpMpCHlOyDP1X9dD6Hb2b/D+yuV3bo8Kohp6bbuYkdPk3LZhTt5k2NT3WUhbJWJQowhFR78wbl2GmspCxkMf4SjUyZ+fDwDiRP0iGS8j0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XNjj6Kis; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12C12C4CEF5;
-	Fri,  3 Oct 2025 19:27:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759519678;
-	bh=+3/SNgTkdPUgDjGUiVYWGQyYCU3vEkAv+rXQrlV99TU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XNjj6KisEUlG1vevBXkFRZwxHBTDAf6+BT8+bIPLC5FAZpZWU/+RIfWetfw6hsIIE
-	 3g0TeQWhQ3rRPYUM1ycRh3qj4bApdhucgIpz5pEN6WYTZ5VOyKRfj9uR6E3nqStNyX
-	 uhHHGIAkWHlbTi+RTkZrJyCPpeyP2qJcftjTstqr4D2rt6b5t2POsYxTPst0kJbsUW
-	 Dl/C/qDa/kRgjLLWCUB/cVLl+KLJt9g8A54hOl9r1e/unHX5+Sw0y+rzDOtcLPCgFf
-	 P0WNR9h177Wm//ElDAxRmph3rlVdhJ1VrldGIIXPlCW5D/LbKmtViTamluyby2tzNt
-	 vELMsOVcGoUEA==
-Date: Fri, 3 Oct 2025 16:27:55 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: thomas.falcon@intel.com
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: Re: [Patch v3 0/2] perf record: ratio-to-prev event term for auto
- counter reload
-Message-ID: <aOAju-lDNHBFnYWx@x1>
-References: <20251002234308.64218-1-thomas.falcon@intel.com>
+	s=arc-20240116; t=1759519880; c=relaxed/simple;
+	bh=sKDI1lH9Is7r2lsq4CCEZCGYvTr7K4X9ByOogrz6Oe0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hWphUCj33lF/szmAT3XawvDtPhwJHrWVGIQ+aE8dQ8ibDIJswF0FZnb9jGtfKbMcFbM5ca+91E46i475hvfNEwHAzbk0Ac4DhTP6KgHwaeTEXmxqtWxwlPJg5Bj5iZytwWzWzAQc6Arkt52E/jHixKuVOs2OvGCgkHfejOdgy44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=Oves2xpp; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id 4D14D240029
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 21:31:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
+	t=1759519877; bh=sKDI1lH9Is7r2lsq4CCEZCGYvTr7K4X9ByOogrz6Oe0=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:
+	 Content-Transfer-Encoding:MIME-Version:Autocrypt:OpenPGP:From;
+	b=Oves2xpp7KAMMby3MO6f/idCtyV+8sT/LQ0zgp9vwzuqsJ3VKyXubncgfnIX0q06V
+	 efTo+lbLjoj2aoBJRD6avFRP6vVndYECpg7rY8ohyT+DGFCLRbyVQcQS8NgBk23sPe
+	 tgeunhMKNqygrCOJzbOCg1me5g+HmMmviGIn5wqCpP578T2YUrjgPA4zzmKnhKtJN/
+	 SToRi9bGA1E/CD3lW3HxAb8Kx1v99ixja1/NFY0I34PPcmnUrKcEf+DIjW8t4+xQyv
+	 X5rMxznO/p9gMQCNXBZmUUYA90gFstG3ZSoMNm3LcqJfK/uWNyftl/nkGS1KQOb0Pp
+	 vF9RtOSPDHrrA==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4cdf0g6wRyz6v1h;
+	Fri,  3 Oct 2025 21:31:15 +0200 (CEST)
+Message-ID: <61ac227e892e048a04c676a9d5b3ba38965fafb7.camel@posteo.de>
+Subject: Re: [PATCH] gpio: of: make it possible to reference gpios probed in
+ acpi in device tree
+From: Markus Probst <markus.probst@posteo.de>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+	 <brgl@bgdev.pl>, Mika Westerberg <westeri@kernel.org>, Andy Shevchenko
+	 <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, Markus Probst
+	 <markus.probst@posteo.de>
+Date: Fri, 03 Oct 2025 19:31:16 +0000
+In-Reply-To: <20251003090550.GC2912318@black.igk.intel.com>
+References: <20251002215759.1836706-1-markus.probst@posteo.de>
+	 <20251003045431.GA2912318@black.igk.intel.com>
+	 <940aad63e18a1415983a9b8f5e206f26a84c0299.camel@posteo.de>
+	 <20251003090550.GC2912318@black.igk.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251002234308.64218-1-thomas.falcon@intel.com>
+Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
+  keydata=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
+  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
+OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
 
-On Thu, Oct 02, 2025 at 06:43:04PM -0500, thomas.falcon@intel.com wrote:
-> The goal is to limit event sampling to cases when the branch miss rate
-> exceeds 20%. If the branch instructions sample period is exceeded
-> first, both events are reloaded.  If branch misses exceed their
-> threshold first, only the second counter is reloaded, and a sample is
-> taken.
- 
-> To simplify this, provide a new “ratio-to-prev” event term
-> that works alongside the period event option or -c option.
-> This would allow users to specify the desired relative rate
-> between events as a ratio, making configuration more intuitive.
- 
-> With this enhancement, the equivalent command would be:
-> 
-> perf record -e "{cpu_atom/branch-misses/ppu,\
-> cpu_atom/branch-instructions,period=1000000,ratio_to_prev=5/u}" \
-> -- ./mispredict
-> or
-> perf record -e "{cpu_atom/branch-misses/ppu,\
-> cpu_atom/branch-instructions,ratio-to-prev=5/u}" -c 1000000 \
-> -- ./mispredict
-> [1] https://lore.kernel.org/lkml/20250327195217.2683619-1-kan.liang@linux.intel.com/
-> v3: rebase to current perf-tools-next
+The SSDT Overlay approach did work, so I don't really have a usecase
+for this patch anymore.
 
-Thanks, applied to perf-tools-next,
+This patch *could* still be useful, but as I can't name an example,
+there is probably no reason to merge it anymore.
 
-- Arnaldo
- 
-> v2: (changes below suggested by Ian Rogers):
+- Markus Probst
+
+On Fri, 2025-10-03 at 11:05 +0200, Mika Westerberg wrote:
+> On Fri, Oct 03, 2025 at 08:44:12AM +0000, Markus Probst wrote:
+> > On Fri, 2025-10-03 at 06:54 +0200, Mika Westerberg wrote:
+> > > Hi,
+> > >=20
+> > > On Thu, Oct 02, 2025 at 09:58:05PM +0000, Markus Probst wrote:
+> > > > sometimes it is necessary to use both acpi and device tree to
+> > > > declare
+> > > > devices. Not every gpio device driver which has an
+> > > > acpi_match_table
+> > > > has
+> > > > an of_match table (e.g. amd-pinctrl). Furthermore gpio is an
+> > > > device
+> > > > which
+> > > > can't be easily disabled in acpi and then redeclared in device
+> > > > tree, as
+> > > > it often gets used by other devices declared in acpi (e.g. via
+> > > > GpioInt or
+> > > > GpioIo). Thus a disable of acpi and migration to device tree is
+> > > > not
+> > > > always
+> > > > possible or very time consuming, while acpi by itself is very
+> > > > limited and
+> > > > not always sufficient. This won't affect most configurations,
+> > > > as
+> > > > most of
+> > > > the time either CONFIG_ACPI or CONFIG_OF gets enabled, not
+> > > > both.
+> > >=20
+> > > Can you provide a real example where this kind of mixup can
+> > > happen?
+> > In my specific usecase for the Synology DS923+, there are gpios for
+> > powering the usb vbus on (powered down by default), also for
+> > powering
+> > on sata disks. (defining a fixed-regulator for the usb vbus for
+> > example)
+>=20
+> Okay regulators are Power Resources in ACPI.
+>=20
+> > > The
+> > > ACPI ID PRP0001 specifically was added to allow using DT bindings
+> > > in
+> > > ACPI
+> > > based systems.
+> > Hmm, would requiring patching of the acpi tables. Not sure if it
+> > would
+> > work with the fixed-regulator though, as it uses dev->of_node
+> > instead
+> > of dev->fwnode. I will try to see if I can make it work this way.
+>=20
+> I think you can do this by using SSDT overlays instead of patching
+> the
+> tables:
+>=20
+> https://docs.kernel.org/admin-guide/acpi/ssdt-overlays.html
+>=20
+> There is configfs interface too.
 
