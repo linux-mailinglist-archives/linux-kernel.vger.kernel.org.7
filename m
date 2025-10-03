@@ -1,385 +1,136 @@
-Return-Path: <linux-kernel+bounces-841838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2150BBB85F1
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 01:12:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02220BB85FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 01:17:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7931F19E3872
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 23:12:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2C0619C517A
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 23:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC70C277013;
-	Fri,  3 Oct 2025 23:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CA2275864;
+	Fri,  3 Oct 2025 23:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="esbGjvY5"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XetpY5Pj"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBC5269CF1
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 23:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946D411CA9
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 23:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759533146; cv=none; b=tASiwQBVMWY2RWLzGdnX/7oM3JkSUj19LG6e5XW3yH9GxJ7KO6vfoxL/AJD8fvEKgYO0jyS38x7o2mXjLUZ8MvjC1w6/6rshSp8Q5s5FnnPG8Rw9wsgk1UK6Wv4+imRMaiG0hu7yOfdH9zW+fbbivG12LUhMlDjJgAzcp+oM4us=
+	t=1759533440; cv=none; b=Zi9A9lOAGAZsD06RZ/jvpLi+Ay9YRnddb4OL/q7aQOxE6pXeypIDqGFXhdPQ9356Lmb2wcTeirCgwICTQj+pW1L4XtTMFIBKsjwfdrjeYsDFN5RvjMrw4bG745euWKF9dv23S+vqgnEFbtqT48dhEQbqkPcSqxa3an9UFdfiPtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759533146; c=relaxed/simple;
-	bh=wjDCmsK+fq06af1fCrbfRqcQ4am7/P0vgnzPCJDRAQU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hgd6i3abGZGWU2fIKycJwtDdBfH8wWy8N96GbsUVVoPCob268DI4vv4MofifRsPd9wq1iNRL1Vllx5OpQT6V8m15r8q/tZnmn13e8Oo3GLA5gfOCzlYRTJAy3X8PiUPs7kBJZxMzHS4xRxAvh5EGFEjhhXCVbr4jiRqwVGB9Ixw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=esbGjvY5; arc=none smtp.client-ip=209.85.208.48
+	s=arc-20240116; t=1759533440; c=relaxed/simple;
+	bh=BqNIw1YGmI341uZYGrCWK9ZhHORfzlcwYubDz9DWoW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ha5QnWNDXGxcVCFFueTwJLvPzL4DBFoMejTBz+RwfL8ULQGcuumDK3EFZv823yXe5iR8zC9ez9cOIJqoypJPfiUC6FcsCd1+bdH93LrC9rx4LCqPc1C2+fvF0qTgrQO6xsuvqH16OzR2ukshhcPC4nUM23NqkaHb4YSRv+S/H88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XetpY5Pj; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-62faa04afd9so2299a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 16:12:24 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2731ff54949so31215ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 16:17:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759533143; x=1760137943; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sa7+UjUUhItNXpyy4gGeXX7e9AExegepugcBUZf1voo=;
-        b=esbGjvY5RSM6LwXAykNioBrhA+9WyefdvLyzAym3qit/xOAS6RaSc8wfYnbjSW6F9n
-         pd8fy3nMKVMF+DjyXQXSd0kZScVFZ4wGkt0WsWEzUIOIcr7lFNzPekgQtv6396NnxcP/
-         yxA+vBdky30LhjtCxfjGpSXxvXqI5JEDHCZQMrjfon57V8XGTecZgCyFh3D2/Boy3soI
-         4HobT09TlzdKloB7WDldNQB0Ajz6yDpXROwVuR4eddYjFErl6ypb2QeKGqOG6Ft1XkbI
-         vPzgKCDSVyGKUXGG+m/4rLT1fB+EwZ+69dMHfS3OZbOibH2S/etQGTJaJNDirT10eoQR
-         KXIQ==
+        d=google.com; s=20230601; t=1759533438; x=1760138238; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BqNIw1YGmI341uZYGrCWK9ZhHORfzlcwYubDz9DWoW4=;
+        b=XetpY5PjAMWK0IOYd8nDy+TbjJdaLXTajVqcGgpmrobza4UXAfEs8clIz+0LzEhGwq
+         6yP+sUOS40Ce+2HfMF1nav03d5xZtI9sevUpmXbmsPG9Kz7KYH9jvi5NM28Wb635YpiU
+         A1z21d6hjlkPcfTp+PL19oRaA4wgCpvyngI6zQmsZAhGbL88KAXvNCZCGoQSHR1EB6fz
+         P7eT08ZIa2/dKA7CYXM0eL0t8d3vWA9BdmWQnjHhaEI0aajaI7AWc3EAGvyGprBJT6sK
+         IGMnG6b542ZNyA2DsNfEDvmtWIfShzS1VEtBwSzK3PB7+wfXPc+hJ9MJvKIj/sbcb9Xb
+         fzUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759533143; x=1760137943;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sa7+UjUUhItNXpyy4gGeXX7e9AExegepugcBUZf1voo=;
-        b=rSPajXd7vVKTUJ6eYZYoDg6AHRtiVN3BFVq22L8t8aknxqeuTWL/uekJBt97tDTdxg
-         3uJwQU/Pwvg5tNNPfSxMPejSrWBqnDJh1M4qI7QrOxZ9zAbXj8DlaFfPlXGtrB8DIskX
-         BG+rHKbUyTnLSp5nQHFrBNmcR+Hi/5f3mhj/QXysBOKlRMClSVsaV+VyvKq16WkNiC36
-         RbjrAXTDMIbdGod5QdIFThzN0OI9iT5nu5Pwq12qXovNWBACzU/Na/bUl6KletD5FaA4
-         qQ4ux4oQGIqC6lD0gFdYuCrpEI2XwvTd2AY+JaAbrKCNJr0s363MXt9bWkgU1mo5SJCJ
-         3BBg==
-X-Forwarded-Encrypted: i=1; AJvYcCX9IMfRoNFS3MEo2TR84EI+MvOLCy7YJ9aCpQIyHfIVMhgjiTMUOLYhHTqnP11X6XFyMzCHmDnENPHatQA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQSD7ord1cNelSWwLSFlX4EFDyWQCGkfg7UPtNmOvzEaGx+WqK
-	C4iif+Su98ZMdZLEyRUpb0WXjTBmKtOZF9eFMZuue062uynas5am00B+CITiGcjz5KfvQ3hQov3
-	5Jv1nP00ug5usChZv2za+9l0XraiW7wFWDd+cKsnv
-X-Gm-Gg: ASbGncvWr5w2ijLBDx4X2ezIjl113MF/WMK4v/d5dLrA+uy3vwRW9dwce1mXiBM46w5
-	o8S2D4enWDOvT3Q2tSdjjrGoTjM1VH4G3OzIYghIAVIRNhv4hWRCNpHGtA2NOezhMSpiWnq/X6i
-	Csveejwp7qNULeLPynPT1tPlw1jW6/Ky8iJm6+VCnhms4KPPaNoNbNkHzSAFZZzhyy+NUrOVLa+
-	vG5uPHEmeTbvQq67VFMox+dejRnkT1qZ0eWcz1oTFu7n3GamI0nGgfeMW+B7IBJ7hQ=
-X-Google-Smtp-Source: AGHT+IHJFMzYqwJxQONYYwooqAWeKipZbOKejzmyeCNLGSSzGla7A5YFNjA8AAZFnIqGzwo22FCg8xDa3nyGSwBnYAU=
-X-Received: by 2002:a05:6402:52c2:b0:633:10ba:136f with SMTP id
- 4fb4d7f45d1cf-63962f97267mr42207a12.1.1759533142870; Fri, 03 Oct 2025
- 16:12:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759533438; x=1760138238;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BqNIw1YGmI341uZYGrCWK9ZhHORfzlcwYubDz9DWoW4=;
+        b=ZdBFhOFLEVOAy7q/Fve8e0CQewFJ0UaXxBu0pPoFumtVr4Vn2FBrQPuckir326UxG1
+         Gyuuj6FMlxj3kmIe01Ycpnfm13yXHqbnG2rfCWrqHPxndXBPFI0k6D9qSk78ZgnipXIM
+         t5MENW0EfQ6dAcaptX4ARY/dSZE+kvNW3jLw1yWTqcxoQRTg3CKq4hesLIPiAFe7rFxJ
+         cUvCzoVbCyTGE8jDurtYioJq1SP1Medmpy+2+/P92MA+9n1ekR0p7A5dfgyz2x+vJVUO
+         FhT7J2JTPXcgnOqmgP65m3CvrDVsjQ2DvXCp76uZWIfaUQhbeiKsQJHx4HJgL351bm9O
+         UCHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUjcfiHBJbBRxXV+++DEjwDZJc1wCk1EH3ywlKT1d714ImP7pYYAjz3NjrGRJOnRvKvhlssfSZ49fa4f6Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxghjPIAQ+vkn2N4kyboha1xbmqveo6w7g/Ni/mhuWVoSJ/o51
+	KV3CNvhm9iuaIHFIrYhy89s1WSvzaIg9pY/8LK1BmBz6fo8xsL2/LMi1Sw5XYD6kjQ==
+X-Gm-Gg: ASbGnct68Ne1PnN35LZAV9IzLgTA59qKcTJ3PhYCcumCRUIDN79VsyLlRUaLSGXFadb
+	uv+YLwSnDU+gSgN0LAZxyyU29bFv82I7hmBx3duaL+LxCIiMKUygbUgmw+kXlA4zzYTb6ZgQ0Ye
+	Gh1QBVLrZzLa/GApbn15a3lzDgN4+BTwFIP5eDjNKsoNHHpH1kA7nJclMeVXlth3vEiH1eRd3HE
+	97W9vNDYRQu/ePQQ7MGZmSk5Zn8nakN58v1yMBbNAsmvAfRFyy2DLeIcnDCTRm2u7Xxdv7h4CF+
+	bLlpRb2yoaTSucBDKQQGMZOr7hzlB2htu7A4WQYA6LeOleECiNd5gQy48r+1HG4i0YxhzpYD8Eg
+	CcLoPzxwJd3CCTx4EG0jUwzEuRqQ8iR8fz1YGN7vNAqDGfPn39t6Wby0SoAOZN8HAnpZ9JAuu72
+	wQTV4qywpZk7s=
+X-Google-Smtp-Source: AGHT+IH2PZQKML2R5n+BBFPUW8xCHC5Y8Kow9Od4wnT5GRTXGwVXHZ46Mp0pjYj0WarzaHWz91nJyA==
+X-Received: by 2002:a17:902:f68b:b0:265:e66:6c10 with SMTP id d9443c01a7336-28ea7ebef98mr1733985ad.4.1759533437467;
+        Fri, 03 Oct 2025 16:17:17 -0700 (PDT)
+Received: from google.com (60.89.247.35.bc.googleusercontent.com. [35.247.89.60])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d110d91sm60950595ad.5.2025.10.03.16.17.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Oct 2025 16:17:16 -0700 (PDT)
+Date: Fri, 3 Oct 2025 16:17:12 -0700
+From: Vipin Sharma <vipinsh@google.com>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
+	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com,
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org,
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com,
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org,
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr,
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
+	vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+	linux@weissschuh.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+	brauner@kernel.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
+	skhawaja@google.com, chrisl@kernel.org, steven.sistare@oracle.com
+Subject: Re: [PATCH v4 18/30] selftests/liveupdate: add subsystem/state tests
+Message-ID: <20251003231712.GA2144931.vipinsh@google.com>
+References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
+ <20250929010321.3462457-19-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251003222729.322059-1-dakr@kernel.org> <20251003222729.322059-5-dakr@kernel.org>
-In-Reply-To: <20251003222729.322059-5-dakr@kernel.org>
-From: Matthew Maurer <mmaurer@google.com>
-Date: Fri, 3 Oct 2025 16:12:11 -0700
-X-Gm-Features: AS18NWAXfvQn1-lxPHHLqval_szOjB8rSFdCIrZzr-AwGwThR93QkQIBJdyXdUE
-Message-ID: <CAGSQo02ASwf3Wn21jgB804LMLi3qivhtZuo7SmmD9O4m5O_Qfw@mail.gmail.com>
-Subject: Re: [PATCH 4/7] rust: debugfs: support blobs from smart pointers
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	aliceryhl@google.com, tmgross@umich.edu, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250929010321.3462457-19-pasha.tatashin@soleen.com>
 
-On Fri, Oct 3, 2025 at 3:27=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> w=
-rote:
->
-> Extend Rust debugfs binary support to allow exposing data stored in
-> common smart pointers and heap-allocated collections.
->
-> - Implement BinaryWriter for Box<T>, Pin<Box<T>>, Arc<T>, and Vec<T>.
-> - Introduce BinaryReaderMut for mutable binary access with outer locks.
-> - Implement BinaryReaderMut for Box<T>, Vec<T>, and base types.
-> - Update BinaryReader to delegate to BinaryReaderMut for Mutex<T>,
->   Box<T>, Pin<Box<T>> and Arc<T>.
->
-> This enables debugfs files to directly expose or update data stored
-> inside heap-allocated, reference-counted, or lock-protected containers
-> without manual dereferencing or locking.
->
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/debugfs.rs        |   2 +-
->  rust/kernel/debugfs/traits.rs | 145 +++++++++++++++++++++++++++++++++-
->  2 files changed, 144 insertions(+), 3 deletions(-)
->
-> diff --git a/rust/kernel/debugfs.rs b/rust/kernel/debugfs.rs
-> index b1a3adca7fd4..3c3bbcc126ef 100644
-> --- a/rust/kernel/debugfs.rs
-> +++ b/rust/kernel/debugfs.rs
-> @@ -21,7 +21,7 @@
->  use core::ops::Deref;
->
->  mod traits;
-> -pub use traits::{BinaryReader, BinaryWriter, Reader, Writer};
-> +pub use traits::{BinaryReader, BinaryReaderMut, BinaryWriter, Reader, Wr=
-iter};
->
->  mod callback_adapters;
->  use callback_adapters::{FormatAdapter, NoWriter, WritableAdapter};
-> diff --git a/rust/kernel/debugfs/traits.rs b/rust/kernel/debugfs/traits.r=
-s
-> index 60a6ee6c6b58..bcd0a9db3cc9 100644
-> --- a/rust/kernel/debugfs/traits.rs
-> +++ b/rust/kernel/debugfs/traits.rs
-> @@ -3,11 +3,14 @@
->
->  //! Traits for rendering or updating values exported to DebugFS.
->
-> +use crate::alloc::Allocator;
->  use crate::prelude::*;
-> +use crate::sync::Arc;
->  use crate::sync::Mutex;
->  use crate::transmute::{AsBytes, FromBytes};
->  use crate::uaccess::{UserSliceReader, UserSliceWriter};
->  use core::fmt::{self, Debug, Formatter};
-> +use core::ops::{Deref, DerefMut};
->  use core::str::FromStr;
->  use core::sync::atomic::{
->      AtomicI16, AtomicI32, AtomicI64, AtomicI8, AtomicIsize, AtomicU16, A=
-tomicU32, AtomicU64,
-> @@ -50,12 +53,14 @@ pub trait BinaryWriter {
->      fn write_to_slice(&self, writer: &mut UserSliceWriter, offset: usize=
-) -> Result<usize>;
->  }
->
-> +// Base implementation for any `T: AsBytes`.
->  impl<T: AsBytes> BinaryWriter for T {
->      fn write_to_slice(&self, writer: &mut UserSliceWriter, offset: usize=
-) -> Result<usize> {
->          writer.write_slice_partial(self.as_bytes(), offset)
->      }
->  }
->
-> +// Delegate for `Mutex<T>`: Support a `T` with an outer mutex.
->  impl<T: BinaryWriter> BinaryWriter for Mutex<T> {
->      fn write_to_slice(&self, writer: &mut UserSliceWriter, offset: usize=
-) -> Result<usize> {
->          let guard =3D self.lock();
-> @@ -64,6 +69,56 @@ fn write_to_slice(&self, writer: &mut UserSliceWriter,=
- offset: usize) -> Result<
->      }
->  }
->
-> +// Delegate for `Box<T, A>`: Support a `Box<T, A>` with no lock or an in=
-ner lock.
-> +impl<T, A> BinaryWriter for Box<T, A>
-> +where
-> +    T: BinaryWriter,
-> +    A: Allocator,
-> +{
-> +    fn write_to_slice(&self, writer: &mut UserSliceWriter, offset: usize=
-) -> Result<usize> {
-> +        self.deref().write_to_slice(writer, offset)
-> +    }
-> +}
-> +
-> +// Delegate for `Pin<Box<T, A>>`: Support a `Pin<Box<T, A>>` with no loc=
-k or an inner lock.
-> +impl<T, A> BinaryWriter for Pin<Box<T, A>>
-> +where
-> +    T: BinaryWriter,
-> +    A: Allocator,
-> +{
-> +    fn write_to_slice(&self, writer: &mut UserSliceWriter, offset: usize=
-) -> Result<usize> {
-> +        self.deref().write_to_slice(writer, offset)
-> +    }
-> +}
-> +
-> +// Delegate for `Arc<T>`: Support a `Arc<T>` with no lock or an inner lo=
-ck.
-> +impl<T> BinaryWriter for Arc<T>
-> +where
-> +    T: BinaryWriter,
-> +{
-> +    fn write_to_slice(&self, writer: &mut UserSliceWriter, offset: usize=
-) -> Result<usize> {
-> +        self.deref().write_to_slice(writer, offset)
-> +    }
-> +}
+On 2025-09-29 01:03:09, Pasha Tatashin wrote:
+> diff --git a/tools/testing/selftests/liveupdate/config b/tools/testing/selftests/liveupdate/config
+> new file mode 100644
+> index 000000000000..382c85b89570
+> --- /dev/null
+> +++ b/tools/testing/selftests/liveupdate/config
+> @@ -0,0 +1,6 @@
+> +CONFIG_KEXEC_FILE=y
+> +CONFIG_KEXEC_HANDOVER=y
+> +CONFIG_KEXEC_HANDOVER_DEBUG=y
+> +CONFIG_LIVEUPDATE=y
+> +CONFIG_LIVEUPDATE_SYSFS_API=y
 
-For `Box`, `Pin<Box<`, and `Arc`, where the only operation being
-performed is to deref, is there a reason that we couldn't have the
-`File` object be *inside* the object, thus avoiding any need for
-these? I can't see them causing trouble, but
+Where is this one?
 
-```
-Box<File<T>>
-Pin<Box<File<T>>>
-Arc<File<T>>
-```
-
-seem like they'd usually be fine. The one caveat I can think of is
-that if you had other functions that wanted to take an `&Arc<T>` for
-operations on the Arc, then having an `Arc<File<T>>` would be
-suboptimal. Am I missing something?
-
-Depending on the use case I'm missing, would a blanket implementation
-for `T: Deref` in this case and `DerefMut` later on make more sense?
-That should contract these into a single definition and generalize to
-e.g. `ListArc` without further code.
-
-> +
-> +// Delegate for `Vec<T, A>`.
-> +impl<T, A> BinaryWriter for Vec<T, A>
-> +where
-> +    T: AsBytes,
-> +    A: Allocator,
-> +{
-> +    fn write_to_slice(&self, writer: &mut UserSliceWriter, offset: usize=
-) -> Result<usize> {
-> +        let slice =3D self.as_slice();
-> +
-> +        // SAFETY: `T: AsBytes` allows us to treat `&[T]` as `&[u8]`.
-> +        let buffer =3D unsafe {
-> +            core::slice::from_raw_parts(slice.as_ptr().cast(), core::mem=
-::size_of_val(slice))
-> +        };
-> +
-> +        writer.write_slice_partial(buffer, offset)
-> +    }
-> +}
-> +
->  /// A trait for types that can be updated from a user slice.
->  ///
->  /// This works similarly to `FromStr`, but operates on a `UserSliceReade=
-r` rather than a &str.
-> @@ -92,6 +147,70 @@ fn read_from_slice(&self, reader: &mut UserSliceReade=
-r) -> Result {
->  }
->
->  /// Trait for types that can be constructed from a binary representation=
-.
-> +///
-> +/// See also [`BinaryReader`] for interior mutability.
-> +pub trait BinaryReaderMut {
-> +    /// Reads the binary form of `self` from `reader`.
-> +    ///
-> +    /// Same as [`BinaryReader::read_from_slice`], but takes a mutable r=
-eference.
-> +    ///
-> +    /// `offset` is the requested offset into the binary representation =
-of `self`.
-> +    ///
-> +    /// On success, returns the number of bytes read from `reader`.
-> +    fn read_from_slice_mut(&mut self, reader: &mut UserSliceReader, offs=
-et: usize)
-> +        -> Result<usize>;
-> +}
-> +
-> +// Base implementation for any `T: AsBytes + FromBytes`.
-> +impl<T: AsBytes + FromBytes> BinaryReaderMut for T {
-> +    fn read_from_slice_mut(
-> +        &mut self,
-> +        reader: &mut UserSliceReader,
-> +        offset: usize,
-> +    ) -> Result<usize> {
-> +        reader.read_slice_partial(self.as_bytes_mut(), offset)
-> +    }
-> +}
-> +
-> +// Delegate for `Box<T, A>`: Support a `Box<T, A>` with an outer lock.
-> +impl<T: ?Sized + BinaryReaderMut, A: Allocator> BinaryReaderMut for Box<=
-T, A> {
-> +    fn read_from_slice_mut(
-> +        &mut self,
-> +        reader: &mut UserSliceReader,
-> +        offset: usize,
-> +    ) -> Result<usize> {
-> +        self.deref_mut().read_from_slice_mut(reader, offset)
-> +    }
-> +}
-> +
-> +// Delegate for `Vec<T, A>`: Support a `Vec<T, A>` with an outer lock.
-> +impl<T, A> BinaryReaderMut for Vec<T, A>
-> +where
-> +    T: AsBytes + FromBytes,
-> +    A: Allocator,
-> +{
-> +    fn read_from_slice_mut(
-> +        &mut self,
-> +        reader: &mut UserSliceReader,
-> +        offset: usize,
-> +    ) -> Result<usize> {
-> +        let slice =3D self.as_mut_slice();
-> +
-
-Nit: This is safe, but it also requires `FromBytes`, and is &mut, &mut
-
-> +        // SAFETY: `T: AsBytes` allows us to treat `&[T]` as `&[u8]`.
-> +        let buffer =3D unsafe {
-> +            core::slice::from_raw_parts_mut(
-> +                slice.as_mut_ptr().cast(),
-> +                core::mem::size_of_val(slice),
-> +            )
-> +        };
-> +
-> +        reader.read_slice_partial(buffer, offset)
-> +    }
-> +}
-> +
-> +/// Trait for types that can be constructed from a binary representation=
-.
-> +///
-> +/// See also [`BinaryReaderMut`] for the mutable version.
->  pub trait BinaryReader {
->      /// Reads the binary form of `self` from `reader`.
->      ///
-> @@ -101,11 +220,33 @@ pub trait BinaryReader {
->      fn read_from_slice(&self, reader: &mut UserSliceReader, offset: usiz=
-e) -> Result<usize>;
->  }
->
-> -impl<T: AsBytes + FromBytes> BinaryReader for Mutex<T> {
-> +// Delegate for `Mutex<T>`: Support a `T` with an outer `Mutex`.
-> +impl<T: BinaryReaderMut> BinaryReader for Mutex<T> {
->      fn read_from_slice(&self, reader: &mut UserSliceReader, offset: usiz=
-e) -> Result<usize> {
->          let mut this =3D self.lock();
->
-> -        reader.read_slice_partial(this.as_bytes_mut(), offset)
-> +        this.read_from_slice_mut(reader, offset)
-> +    }
-> +}
-> +
-> +// Delegate for `Box<T, A>`: Support a `Box<T, A>` with an inner lock.
-> +impl<T: ?Sized + BinaryReader, A: Allocator> BinaryReader for Box<T, A> =
-{
-> +    fn read_from_slice(&self, reader: &mut UserSliceReader, offset: usiz=
-e) -> Result<usize> {
-> +        self.deref().read_from_slice(reader, offset)
-> +    }
-> +}
-> +
-> +// Delegate for `Pin<Box<T, A>>`: Support a `Pin<Box<T, A>>` with an inn=
-er lock.
-> +impl<T: ?Sized + BinaryReader, A: Allocator> BinaryReader for Pin<Box<T,=
- A>> {
-> +    fn read_from_slice(&self, reader: &mut UserSliceReader, offset: usiz=
-e) -> Result<usize> {
-> +        self.deref().read_from_slice(reader, offset)
-> +    }
-> +}
-> +
-> +// Delegate for `Arc<T>`: Support an `Arc<T>` with an inner lock.
-> +impl<T: ?Sized + BinaryReader> BinaryReader for Arc<T> {
-> +    fn read_from_slice(&self, reader: &mut UserSliceReader, offset: usiz=
-e) -> Result<usize> {
-> +        self.deref().read_from_slice(reader, offset)
->      }
->  }
->
-> --
-> 2.51.0
->
 
