@@ -1,128 +1,152 @@
-Return-Path: <linux-kernel+bounces-840894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12AD0BB5AC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:23:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB9B4BB5ACB
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:23:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3052A4E9304
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:23:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80F0A3BEF4A
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E947261C;
-	Fri,  3 Oct 2025 00:23:18 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B153BB5A;
+	Fri,  3 Oct 2025 00:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b34bfuQq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CEB6EEA8
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 00:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3552C18A
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 00:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759450997; cv=none; b=roAvs7BEg26k+iIdB7y2UwTdUkLj22NQqeCoJ3BC0yZp3m9aNCHX/AQRJO3CmD9qmR2HByj7gUOaex7xYmbI0DQGHd+6UsErvoSY3uoWWJr7rDkKN0CzTTV9zoES2ZjgjGIMKv8m6djApPKyf0xou9UcXM+iixJ6doyW088eI1Q=
+	t=1759451028; cv=none; b=Di79P/0k4OuLNZqgUymPvl/5CmOt5oS3sB7kZ1MXyuURql2AbLaEPoX5NoRPoqmmW/KP4srMwnrbiVhgBVl8yOkk3w6RXXGlMkG01WiFPWIIT/+mhVbnqmk5ZdkCHBmzudSSgKqE+eZI+HNDERMXw7hpqKFYdp9bYYvEFz4e060=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759450997; c=relaxed/simple;
-	bh=llj3w0yP4Lyzycw+9bq5yWYauZYLLg92Fdq8utvyAUM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=fnaU5UP9fHzbkZEjKTCiGZlcdfBJO24R5Rx0ZcF++xnLptkQOCIi58NkzwTQ6u1DOUB6UJKRTiU6Cbfxa6CJQbeVRXCDCHfODaGtz5ys0qPZKJ/GUusMnnSoPxMqB/y7+531BJbZSV8PPbYChWAkbKLlQW5U+T5+fwkBX+/v8Rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42e6e5c1d04so30672515ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 17:23:12 -0700 (PDT)
+	s=arc-20240116; t=1759451028; c=relaxed/simple;
+	bh=zXZs1CtthDzGW2v/IfUMZJ7TaahHQ2FhRN4cM3MZucA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mtWY+s4TkzWOP8Ai7kRB6Bm0CMF2GCyd0lSu+cOYSnVIq30QfNRRa4X95yBu5xEyGhC8cLuiU6J6SEsERcPg8DcSA9UhSAod5zfNF90CRVgihVmNvybdmEpkXRDyAAXffxgCEj3SratDNiLvz+SWHel/UB76t8wanf5Ufl0ZLGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b34bfuQq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759451022;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JJ4GF21x3yH2fxgUvO+kT4SV03dtv6uBvlTIWHIhWNI=;
+	b=b34bfuQqMS5eB6X/+1fcjsKJkNbq18tyf2onXS7GAzBSBKM9Ykv+BVpRuz3bqYtrZrnAJV
+	2/zDrBYbeAOsbR8nvDuJ3VsmiLE5lrRY8L8Oiekm1GgqImn6uZRbxypvAe1LpKyb9jpocN
+	zW16elmyrb79b8I08HuNVdvaAdtHwgk=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-259-UPLiGzYINx6rehxZjyppbg-1; Thu, 02 Oct 2025 20:23:40 -0400
+X-MC-Unique: UPLiGzYINx6rehxZjyppbg-1
+X-Mimecast-MFC-AGG-ID: UPLiGzYINx6rehxZjyppbg_1759451020
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-27ee214108cso34559235ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 17:23:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759450991; x=1760055791;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1759451020; x=1760055820;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6JZ/jTj1i9IorVunA/dKv2Myby8qBvknrzFw9/4eu+A=;
-        b=Wdw1r4sJZv3XJN2WT7oZetItZ1VHKS4NqYPsn2bomeuaT5CkGu+gtfX7OTLGw42smb
-         PlO9aZB9U9VPaMn2iDycGxjsOsA+rn3IhqWyDoIVblPH0GCisChty7pzoWC+xPHKzpKo
-         4SncWn2tNJMMNCmIyN/EXWCICAPHmhYmZTFMlqIleU/pkFTHBa4vDOMyOhoQhISqDedE
-         VncgJ535jD/83i9GC71VhK/iGXddv/7u+G0AJmOHTMR5LoTXUQmkrEk+jyGZkXNM2Mxs
-         4v5ZqODy8gFflh09m+tKrNIU5gatxmwBZdkjU4tl05Sxf8ue49+o6TKHL7RSZjAEoxa1
-         nYew==
-X-Gm-Message-State: AOJu0YyKPtnE/jETi0WGD0gDXrPDy7X3hWPguzC8HL9FqNsWjP2IaAsH
-	uA14E9EHivQr0BmgWGWWF9OVs1OMiqPSrQ3ZtWO2rD429DvTKgP+Mzmj/qGB8lxpK3JWs1UghLU
-	We4cJ36JYq3C0PN7crGk4mJW5J/ys2WV5tgkTEpn3z6oWD/Vre8KdRPkUnBU=
-X-Google-Smtp-Source: AGHT+IFbPJMTvjplkeJiBXh7ty3tDcd1ZK6f4IHZNZvRRiCsZ0w08igIaR5HLj7kZodRkifmXdF7fhwCU9DV6LWvNFzd5QZPPgLU
+        bh=JJ4GF21x3yH2fxgUvO+kT4SV03dtv6uBvlTIWHIhWNI=;
+        b=rE4OU937I9vPtMLjTSk//9Lx0Fqm813qTAGkGUze47tvXRkWfWl1J0I90Q3qM4zXoH
+         gNDmWSgETW/5fZvZAx2MnHiQcX4DDlQSsLYTwwru/vtTI+jl2pfqaShQq49HlaTe752I
+         ph5uqY/uu7XPgR5t5efdRhMxzlytXIuuDjxbX5C6tEGhr5TAE2P+/xRDOnBvVncIUwGT
+         38UiG32sp0v3UY7HnVSku3cTs52Dpz0gywcNB3ObPCj6QU/s+ksq4L+7jps6/tiaj014
+         QHIDrgHzWaB0emKjGqOu1AbX8eySZp1cRQguHz3NsgoXMM5iroW1bey/so8hYqWJasJp
+         fihQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXbkxR4KVgFwfzmehY9rE217jYN0NS9HdwvrNcQ/CXWu3WEEFgANcLTQcj7KjsQXH5gQU7HvJbNm4mWLsY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyICmXlk2Sf8Z3Kz0ThjrS87+LAmUROd4UAOfBSfKE4ZA7ullI/
+	HTfB1Xeg8wk4zJAh/aV3LGyeDgwy3M/FFgYwehmXRmtDNdvkniInD/VuyavMKKe37IslD0pgUiN
+	pUfW5xUxQ6QcNJG2G2JiNuHKEjRr0TUIIkvixZTGrCVroSIhRK2vQJizhtLyRwc2BXQ==
+X-Gm-Gg: ASbGncsvUFDVviNd9gaBosSl407qqCyLLNU1+RNJ2E0GYKwpuUWT1s1GKpOtyNbzbp6
+	UyCnliGqo94dfzt9e646ZYVpR+tvhRlvsmByvW7xCQfBoZcZxsqdb+4xmbhYnJvC0trwGdePUQo
+	EtVWdsiN9hiUpLy+VAgspwdEaQjgjsGS4GjXGZO/I9VmaGTK7csnQb0IWqgWT00M0guxfEqWeim
+	L/shX0HMwKSbEE0q/vWgjjJqNyJG9sj2nMocRtj7lR+Y3GhZouG/tRYMwn5ShixU7aG1lDaTIJ+
+	GHZWWK3nHyBP70S4c4mrdDnuj6DWv6P9DKe6JVFUpcaWSKb9WDMgIH6MzXCZ83vFxKyyDrQUZ6U
+	655p7dmcFCw==
+X-Received: by 2002:a17:903:3d07:b0:268:500:5ec7 with SMTP id d9443c01a7336-28e9a5b9441mr12159385ad.2.1759451019781;
+        Thu, 02 Oct 2025 17:23:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH5T0f61djQ+l8nuJX+LHXogclh1AUcAAg1KdLhGp2cAXJedAcNcCLa6griCMec76R0JF2mkw==
+X-Received: by 2002:a17:903:3d07:b0:268:500:5ec7 with SMTP id d9443c01a7336-28e9a5b9441mr12158855ad.2.1759451019403;
+        Thu, 02 Oct 2025 17:23:39 -0700 (PDT)
+Received: from [192.168.68.51] (n175-34-62-5.mrk21.qld.optusnet.com.au. [175.34.62.5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1d5e36sm32448375ad.114.2025.10.02.17.23.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Oct 2025 17:23:38 -0700 (PDT)
+Message-ID: <81262452-d780-4e85-b153-b3b8d16eabae@redhat.com>
+Date: Fri, 3 Oct 2025 10:23:26 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c2a:b0:42d:8b1c:570f with SMTP id
- e9e14a558f8ab-42e7acd273fmr16476665ab.4.1759450991573; Thu, 02 Oct 2025
- 17:23:11 -0700 (PDT)
-Date: Thu, 02 Oct 2025 17:23:11 -0700
-In-Reply-To: <68ddc2f9.a00a0220.102ee.006d.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68df176f.050a0220.2c17c1.000b.GAE@google.com>
-Subject: Forwarded: [PATCH] ext4: fix use-after-free in ext4_search_dir via
- corrupted inline xattr
-From: syzbot <syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/29] ACPI / PPTT: Find cache level by cache-id
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
+Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ fenghuay@nvidia.com, baisheng.gao@unisoc.com,
+ Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
+ <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250910204309.20751-1-james.morse@arm.com>
+ <20250910204309.20751-4-james.morse@arm.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20250910204309.20751-4-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On 9/11/25 6:42 AM, James Morse wrote:
+> The MPAM table identifies caches by id. The MPAM driver also wants to know
+> the cache level to determine if the platform is of the shape that can be
+> managed via resctrl. Cacheinfo has this information, but only for CPUs that
+> are online.
+> 
+> Waiting for all CPUs to come online is a problem for platforms where
+> CPUs are brought online late by user-space.
+> 
+> Add a helper that walks every possible cache, until it finds the one
+> identified by cache-id, then return the level.
+> 
+> Signed-off-by: James Morse <james.morse@arm.com>
+> ---
+> Changes since v1:
+>   * Droppeed the cleanup based table freeing, use acpi_get_pptt() instead.
+>   * Removed a confusing comment.
+>   * Clarified the kernel doc.
+> 
+> Changes since RFC:
+>   * acpi_count_levels() now returns a value.
+>   * Converted the table-get stuff to use Jonathan's cleanup helper.
+>   * Dropped Sudeep's Review tag due to the cleanup change.
+> ---
+>   drivers/acpi/pptt.c  | 62 ++++++++++++++++++++++++++++++++++++++++++++
+>   include/linux/acpi.h |  5 ++++
+>   2 files changed, 67 insertions(+)
+> 
 
-***
+With existing comments addressed, especially those from Lorenzo Pieralisi:
 
-Subject: [PATCH] ext4: fix use-after-free in ext4_search_dir via corrupted inline xattr
-Author: kartikey406@gmail.com
-
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-
-Add bounds validation for inline directory xattr data to prevent
-use-after-free when accessing corrupted filesystems.
-
-ext4_find_inline_entry() performs two directory searches: first in
-the i_block area, then in the extended attribute (xattr) area of the
-inode. When calculating inline_start for the xattr area via
-ext4_get_inline_xattr_pos(), the function trusts the e_value_offs
-field from disk without validating the resulting pointer stays within
-the inode's boundaries.
-
-A corrupted filesystem can craft a malicious e_value_offs value that
-causes inline_start to point outside the inode's allocated space,
-potentially into freed memory. When ext4_search_dir() attempts to
-access this invalid pointer, it results in a KASAN use-after-free.
-
-Fix this by validating that inline_start and inline_start + inline_size
-remain within the inode's boundaries before calling ext4_search_dir().
-Return -EFSCORRUPTED if the bounds check fails.
-
-Reported-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=3ee481e21fd75e14c397
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
- fs/ext4/inline.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
-index 1b094a4f3866..28ac90a8d5a2 100644
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -1617,7 +1617,15 @@ struct buffer_head *ext4_find_inline_entry(struct inode *dir,
- 
- 	inline_start = ext4_get_inline_xattr_pos(dir, &is.iloc);
- 	inline_size = ext4_get_inline_size(dir) - EXT4_MIN_INLINE_DATA_SIZE;
--
-+	void *inode_start = ext4_raw_inode(&is.iloc);
-+	void *inode_end = inode_start + EXT4_INODE_SIZE(dir->i_sb);
-+
-+	if (inline_start < inode_start ||
-+	    inline_start >= inode_end ||
-+	    inline_start + inline_size > inode_end) {
-+		ret = -EFSCORRUPTED;
-+		goto out;
-+	}
- 	ret = ext4_search_dir(is.iloc.bh, inline_start, inline_size,
- 			      dir, fname, 0, res_dir);
- 	if (ret == 1)
--- 
-2.43.0
+Reviewed-by: Gavin Shan <gshan@redhat.com>
 
 
