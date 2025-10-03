@@ -1,431 +1,325 @@
-Return-Path: <linux-kernel+bounces-841320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A88D9BB707B
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 15:36:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE24FBB7042
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 15:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4977A189EFB6
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 13:37:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DFDA19E0F22
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 13:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4944B1DC994;
-	Fri,  3 Oct 2025 13:36:37 +0000 (UTC)
-Received: from lankhorst.se (lankhorst.se [141.105.120.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A762F0C51;
+	Fri,  3 Oct 2025 13:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AwT+QEwc"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED24B15E8B;
-	Fri,  3 Oct 2025 13:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.105.120.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1792A13C3F2
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 13:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759498596; cv=none; b=ALeCich//6taV3CQPtnecWX7fhZp8W3Pu3N+Bru2jsbASwdZFPLgRPu3Y+AOooJVgd8SofIAnN5D+LVta6cyTctcAPi7R89Y5AVrAp8n87LHlQWgfugoXrrKTLDIteZAqYCcny/8E3RQhF1mX5d+A4tRHHmAklZ8103N0qtpF/A=
+	t=1759498169; cv=none; b=EWn+Vt9tQYhs6EZjLFh+SOnneWCSTzxp2f5VyxqA7e8fXFgbfBYv8Rk+K+bstKEhK+wqrc9Kl4GT22BUTAUHzWx5PCsTVjVn0PWnSOsx/L1yVABTPWeX3j8HpwvLQ9muIh8noPVPNV6b0qqx+jOsRdVbMXvv8WvMu3P5Rx9Mhf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759498596; c=relaxed/simple;
-	bh=DZIayvB4sttGe6Rsea8XfTAkQV2J1p/HCN8C89WFSvA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kfk/xeDxp18Xa+gUfbjEaGWU/wDxOootbOGb4foMayCQ7Iss95Xca+Kk7Cd9tJf9vpn+mUgInXuXYnSvkS84HpnBCJgA6p0rSb1iVSXrE8J5GeCE2YgPquJlSrSSCrNDacAcxXtJWmq8p8E/EnQdovQlfy1Xtz1CNeakVVAc53k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lankhorst.se; spf=pass smtp.mailfrom=lankhorst.se; arc=none smtp.client-ip=141.105.120.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lankhorst.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lankhorst.se
-Message-ID: <799a4e7e-076d-4a9d-888d-69f4e2e89520@lankhorst.se>
+	s=arc-20240116; t=1759498169; c=relaxed/simple;
+	bh=hO+lF+z0wCAdW8DIfWkXfHTpkaC4gKcnrjNiOXqtJEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pehPMX9X7u2pyDnybh8fbu7pbrtZiKiMJKKCho1fEihqPCWlnY31GoCFEBspxppbFDt5vAl+UW8LVdf7oddr9MFA4jcP4l3otiaoRJkN/x/clhXf16YmIjqFIC4JH3k1EPYQ42w1t/OIisBqtQYZC+wrmuBsCtHJz/A8gzck5tM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AwT+QEwc; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-46e542196c7so19364195e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 06:29:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1759498165; x=1760102965; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aUOsU7riD2UPyFDZRuUQGcd9dAxze5Lk41FAacCHgs8=;
+        b=AwT+QEwcbyWyre/5JCZxqiqE/9WwXF8HbwLu4IKnXy7yo3dM7GQImYobTsdNWJ2hFj
+         EuMDHwhef+LYevyNQwvuCKpdDe6iWysyVfFfWWH7PTStNJNygtA2ei+btOHZML8o8hz5
+         nd9Mx0hESb13x7aS8LQKMjQ0wkztZ7+FmJmN279QCq48918kCogD1cUMmqsuv4REkKJJ
+         YHTWyymHLMzfELNqrr1+ePmcRBCbIvu7ZKy/7I8lMEbBzRC+VXY6YbQFv7eUc9zt4fMI
+         w/DDyvTlPhZZIalx6eSK+qld6zVYuEtwAiHevHT5w7wbg5w8KX1U4RTj6b/PLztk4BSo
+         M8iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759498165; x=1760102965;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aUOsU7riD2UPyFDZRuUQGcd9dAxze5Lk41FAacCHgs8=;
+        b=gLIOZ84G7ZXLsr7lxppmHy+fpfxVKRF2ycSI1weLovsVneebpCNPUHXSF2j/o6Tad3
+         4DQvBVDElHN/SMY6MIIK5ioMwJU7D1ZxWdtItHa0oDBsRAi/V2iuv4zTkBcMqM7PXLOV
+         n8ilkga5JWqY5xy+4a0WUqwaiTTMhQPkgc/dL1JUCUAGSIefl7LjeuV1CO5v8toDeM9t
+         2VgLNb1pLtaWTENP4J28wC8dKZ8lXZbMY73Lf/bglZTmPoXbZLQAzJ1e29XikYFvO0XO
+         +fHb0dBzaBlZj+7jkz+5sVPvgcHDasL5P1PrMNHetQGqEcfUS0X1Zdl/wACwzraX9i79
+         VLAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXvrqKTNxhYcOCduiHsyu/e9yIHGPpQIsDXiHnHNdaomAMfzQwDRSsWhnXUH1IlARBT4pob5M+ewUHJ7vk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLgu+JrIgTcShj/waJgyDZDa25rZCkxmKP8ZeZIV+41sDdKg02
+	OsHtA5f/LdmPhZBrdamU0MxRJH/B+LmBOJM4GCfUjJyJgYP7hgGHjRzNxDvUKQ2chIw=
+X-Gm-Gg: ASbGncse3Ir7Ab4zMPNv/B5QpvkRRHHZA/EiMKS7Qw/p0O2M8Hh2Kc2iCRtAoNV10Gl
+	vUOaNrBtGgEIatQntv1RephR91hs8zON1pSTI3eg+q40WDeU0b47MyrgQqrUHHInrt/ISjY40oS
+	N3FYOC4Io0q6eGY6mO2PN78zJXp2EFZmIs/eL/gDu7YxpvKYGNtUY/gh0DYecJEtg/ALD9ioP3y
+	w9jW5NOfnsQ8n3fJP9/X+ozJH5GhO1ATLTg5Lrf7+xP5W72luDKoTP+IFHH782TVoXdBv+ZCs7l
+	nPrVftqrT3qvVtHvaVgMtvQvlLrflLLFLEs+Yc9ltudWDoiKhXyPVXbajtjOIXftauc4Bd/03ny
+	MHomlTXYNuLuGKlEzwRq7gjvFz73BYSOQyjEsdqjn6sn7Btwoiw==
+X-Google-Smtp-Source: AGHT+IECOBikHXlXR8XG9U9c/DHlFBNlbBE0/Z//Bld/sE6zozDPhWyzN6Hz+1ZhHqcIvnwW1yBEcA==
+X-Received: by 2002:a05:600c:254:b0:45d:d86b:b386 with SMTP id 5b1f17b1804b1-46e68c006c2mr44158975e9.14.1759498165157;
+        Fri, 03 Oct 2025 06:29:25 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e723624b3sm30932895e9.17.2025.10.03.06.29.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Oct 2025 06:29:24 -0700 (PDT)
 Date: Fri, 3 Oct 2025 15:29:22 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Andrew Murray <amurray@thegoodpenguin.co.uk>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] printk: Introduce console_flush_one_record
+Message-ID: <aN_PsplsDMpiSHTQ@pathway.suse.cz>
+References: <20250927-printk_legacy_thread_console_lock-v2-0-cff9f063071a@thegoodpenguin.co.uk>
+ <20250927-printk_legacy_thread_console_lock-v2-1-cff9f063071a@thegoodpenguin.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] devcoredump: Fix circular locking dependency with
- devcd->mutex.
-To: linux-kernel@vger.kernel.org
-Cc: intel-xe@lists.freedesktop.org, Mukesh Ojha <quic_mojha@quicinc.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Johannes Berg <johannes@sipsolutions.net>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- stable@vger.kernel.org, Matthew Brost <matthew.brost@intel.com>
-References: <20250723142416.1020423-1-dev@lankhorst.se>
-Content-Language: en-US
-From: Maarten Lankhorst <dev@lankhorst.se>
-In-Reply-To: <20250723142416.1020423-1-dev@lankhorst.se>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250927-printk_legacy_thread_console_lock-v2-1-cff9f063071a@thegoodpenguin.co.uk>
 
-Ping?
-
-Den 2025-07-23 kl. 16:24, skrev Maarten Lankhorst:
-> The original code causes a circular locking dependency found by lockdep.
+On Sat 2025-09-27 23:05:35, Andrew Murray wrote:
+> console_flush_all prints all remaining records to all usable consoles
+> whilst its caller holds console_lock. This can result in large waiting
+> times for those waiting for console_lock especially where there is a
+> large volume of records or where the console is slow (e.g. serial).
 > 
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> 6.16.0-rc6-lgci-xe-xe-pw-151626v3+ #1 Tainted: G S   U
-> ------------------------------------------------------
-> xe_fault_inject/5091 is trying to acquire lock:
-> ffff888156815688 ((work_completion)(&(&devcd->del_wk)->work)){+.+.}-{0:0}, at: __flush_work+0x25d/0x660
+> Let's extract the parts of this function which print a single record
+> into a new function named console_flush_one_record. This can later
+> be used for functions that will release and reacquire console_lock
+> between records.
 > 
-> but task is already holding lock:
+> This commit should not change existing functionality.
 > 
-> ffff888156815620 (&devcd->mutex){+.+.}-{3:3}, at: dev_coredump_put+0x3f/0xa0
-> which lock already depends on the new lock.
-> the existing dependency chain (in reverse order) is:
-> -> #2 (&devcd->mutex){+.+.}-{3:3}:
->        mutex_lock_nested+0x4e/0xc0
->        devcd_data_write+0x27/0x90
->        sysfs_kf_bin_write+0x80/0xf0
->        kernfs_fop_write_iter+0x169/0x220
->        vfs_write+0x293/0x560
->        ksys_write+0x72/0xf0
->        __x64_sys_write+0x19/0x30
->        x64_sys_call+0x2bf/0x2660
->        do_syscall_64+0x93/0xb60
->        entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> -> #1 (kn->active#236){++++}-{0:0}:
->        kernfs_drain+0x1e2/0x200
->        __kernfs_remove+0xae/0x400
->        kernfs_remove_by_name_ns+0x5d/0xc0
->        remove_files+0x54/0x70
->        sysfs_remove_group+0x3d/0xa0
->        sysfs_remove_groups+0x2e/0x60
->        device_remove_attrs+0xc7/0x100
->        device_del+0x15d/0x3b0
->        devcd_del+0x19/0x30
->        process_one_work+0x22b/0x6f0
->        worker_thread+0x1e8/0x3d0
->        kthread+0x11c/0x250
->        ret_from_fork+0x26c/0x2e0
->        ret_from_fork_asm+0x1a/0x30
-> -> #0 ((work_completion)(&(&devcd->del_wk)->work)){+.+.}-{0:0}:
->        __lock_acquire+0x1661/0x2860
->        lock_acquire+0xc4/0x2f0
->        __flush_work+0x27a/0x660
->        flush_delayed_work+0x5d/0xa0
->        dev_coredump_put+0x63/0xa0
->        xe_driver_devcoredump_fini+0x12/0x20 [xe]
->        devm_action_release+0x12/0x30
->        release_nodes+0x3a/0x120
->        devres_release_all+0x8a/0xd0
->        device_unbind_cleanup+0x12/0x80
->        device_release_driver_internal+0x23a/0x280
->        device_driver_detach+0x14/0x20
->        unbind_store+0xaf/0xc0
->        drv_attr_store+0x21/0x50
->        sysfs_kf_write+0x4a/0x80
->        kernfs_fop_write_iter+0x169/0x220
->        vfs_write+0x293/0x560
->        ksys_write+0x72/0xf0
->        __x64_sys_write+0x19/0x30
->        x64_sys_call+0x2bf/0x2660
->        do_syscall_64+0x93/0xb60
->        entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> other info that might help us debug this:
-> Chain exists of: (work_completion)(&(&devcd->del_wk)->work) --> kn->active#236 --> &devcd->mutex
->  Possible unsafe locking scenario:
->        CPU0                    CPU1
->        ----                    ----
->   lock(&devcd->mutex);
->                                lock(kn->active#236);
->                                lock(&devcd->mutex);
->   lock((work_completion)(&(&devcd->del_wk)->work));
->  *** DEADLOCK ***
-> 5 locks held by xe_fault_inject/5091:
->  #0: ffff8881129f9488 (sb_writers#5){.+.+}-{0:0}, at: ksys_write+0x72/0xf0
->  #1: ffff88810c755078 (&of->mutex#2){+.+.}-{3:3}, at: kernfs_fop_write_iter+0x123/0x220
->  #2: ffff8881054811a0 (&dev->mutex){....}-{3:3}, at: device_release_driver_internal+0x55/0x280
->  #3: ffff888156815620 (&devcd->mutex){+.+.}-{3:3}, at: dev_coredump_put+0x3f/0xa0
->  #4: ffffffff8359e020 (rcu_read_lock){....}-{1:2}, at: __flush_work+0x72/0x660
-> stack backtrace:
-> CPU: 14 UID: 0 PID: 5091 Comm: xe_fault_inject Tainted: G S   U              6.16.0-rc6-lgci-xe-xe-pw-151626v3+ #1 PREEMPT_{RT,(lazy)}
-> Tainted: [S]=CPU_OUT_OF_SPEC, [U]=USER
-> Hardware name: Micro-Star International Co., Ltd. MS-7D25/PRO Z690-A DDR4(MS-7D25), BIOS 1.10 12/13/2021
-> Call Trace:
->  <TASK>
->  dump_stack_lvl+0x91/0xf0
->  dump_stack+0x10/0x20
->  print_circular_bug+0x285/0x360
->  check_noncircular+0x135/0x150
->  ? register_lock_class+0x48/0x4a0
->  __lock_acquire+0x1661/0x2860
->  lock_acquire+0xc4/0x2f0
->  ? __flush_work+0x25d/0x660
->  ? mark_held_locks+0x46/0x90
->  ? __flush_work+0x25d/0x660
->  __flush_work+0x27a/0x660
->  ? __flush_work+0x25d/0x660
->  ? trace_hardirqs_on+0x1e/0xd0
->  ? __pfx_wq_barrier_func+0x10/0x10
->  flush_delayed_work+0x5d/0xa0
->  dev_coredump_put+0x63/0xa0
->  xe_driver_devcoredump_fini+0x12/0x20 [xe]
->  devm_action_release+0x12/0x30
->  release_nodes+0x3a/0x120
->  devres_release_all+0x8a/0xd0
->  device_unbind_cleanup+0x12/0x80
->  device_release_driver_internal+0x23a/0x280
->  ? bus_find_device+0xa8/0xe0
->  device_driver_detach+0x14/0x20
->  unbind_store+0xaf/0xc0
->  drv_attr_store+0x21/0x50
->  sysfs_kf_write+0x4a/0x80
->  kernfs_fop_write_iter+0x169/0x220
->  vfs_write+0x293/0x560
->  ksys_write+0x72/0xf0
->  __x64_sys_write+0x19/0x30
->  x64_sys_call+0x2bf/0x2660
->  do_syscall_64+0x93/0xb60
->  ? __f_unlock_pos+0x15/0x20
->  ? __x64_sys_getdents64+0x9b/0x130
->  ? __pfx_filldir64+0x10/0x10
->  ? do_syscall_64+0x1a2/0xb60
->  ? clear_bhb_loop+0x30/0x80
->  ? clear_bhb_loop+0x30/0x80
->  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> RIP: 0033:0x76e292edd574
-> Code: c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 80 3d d5 ea 0e 00 00 74 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 55 48 89 e5 48 83 ec 20 48 89
-> RSP: 002b:00007fffe247a828 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000076e292edd574
-> RDX: 000000000000000c RSI: 00006267f6306063 RDI: 000000000000000b
-> RBP: 000000000000000c R08: 000076e292fc4b20 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000202 R12: 00006267f6306063
-> R13: 000000000000000b R14: 00006267e6859c00 R15: 000076e29322a000
->  </TASK>
-> xe 0000:03:00.0: [drm] Xe device coredump has been deleted.
-> 
-> Fixes: 01daccf74832 ("devcoredump : Serialize devcd_del work")
-> Cc: Mukesh Ojha <quic_mojha@quicinc.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Johannes Berg <johannes@sipsolutions.net>
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Cc: Danilo Krummrich <dakr@kernel.org>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: <stable@vger.kernel.org> # v6.1+
-> Signed-off-by: Maarten Lankhorst <dev@lankhorst.se>
-> Cc: Matthew Brost <matthew.brost@intel.com>
+> Reviewed-by: Petr Mladek <pmladek@suse.com>
+> Signed-off-by: Andrew Murray <amurray@thegoodpenguin.co.uk>
 > ---
->  drivers/base/devcoredump.c | 136 ++++++++++++++++++++++---------------
->  1 file changed, 83 insertions(+), 53 deletions(-)
+>  kernel/printk/printk.c | 159 +++++++++++++++++++++++++++++++------------------
+>  1 file changed, 100 insertions(+), 59 deletions(-)
 > 
-> diff --git a/drivers/base/devcoredump.c b/drivers/base/devcoredump.c
-> index 03a39c417dc41..ad4bddde12ccb 100644
-> --- a/drivers/base/devcoredump.c
-> +++ b/drivers/base/devcoredump.c
-> @@ -23,50 +23,46 @@ struct devcd_entry {
->  	void *data;
->  	size_t datalen;
->  	/*
-> -	 * Here, mutex is required to serialize the calls to del_wk work between
-> -	 * user/kernel space which happens when devcd is added with device_add()
-> -	 * and that sends uevent to user space. User space reads the uevents,
-> -	 * and calls to devcd_data_write() which try to modify the work which is
-> -	 * not even initialized/queued from devcoredump.
-> +	 * There are 2 races for which mutex is required.
->  	 *
-> +	 * The first race is between device creation and userspace writing to
-> +	 * schedule immediately destruction.
->  	 *
-> +	 * This race is handled by arming the timer before device creation, but
-> +	 * when device creation fails the timer still exists.
->  	 *
-> -	 *        cpu0(X)                                 cpu1(Y)
-> +	 * To solve this, hold the mutex during device_add(), and set
-> +	 * init_completed on success before releasing the mutex.
->  	 *
-> -	 *        dev_coredump() uevent sent to user space
-> -	 *        device_add()  ======================> user space process Y reads the
-> -	 *                                              uevents writes to devcd fd
-> -	 *                                              which results into writes to
-> +	 * That way the timer will never fire until device_add() is called,
-> +	 * it will do nothing if init_completed is not set. The timer is also
-> +	 * cancelled in that case.
->  	 *
-> -	 *                                             devcd_data_write()
-> -	 *                                               mod_delayed_work()
-> -	 *                                                 try_to_grab_pending()
-> -	 *                                                   timer_delete()
-> -	 *                                                     debug_assert_init()
-> -	 *       INIT_DELAYED_WORK()
-> -	 *       schedule_delayed_work()
-> -	 *
-> -	 *
-> -	 * Also, mutex alone would not be enough to avoid scheduling of
-> -	 * del_wk work after it get flush from a call to devcd_free()
-> -	 * mentioned as below.
-> -	 *
-> -	 *	disabled_store()
-> -	 *        devcd_free()
-> -	 *          mutex_lock()             devcd_data_write()
-> -	 *          flush_delayed_work()
-> -	 *          mutex_unlock()
-> -	 *                                   mutex_lock()
-> -	 *                                   mod_delayed_work()
-> -	 *                                   mutex_unlock()
-> -	 * So, delete_work flag is required.
-> +	 * The second race involves multiple parallel invocations of devcd_free(),
-> +	 * add a deleted flag so only 1 can call the destructor.
->  	 */
->  	struct mutex mutex;
-> -	bool delete_work;
-> +	bool init_completed, deleted;
->  	struct module *owner;
->  	ssize_t (*read)(char *buffer, loff_t offset, size_t count,
->  			void *data, size_t datalen);
->  	void (*free)(void *data);
-> +	/*
-> +	 * If nothing interferes and device_add() was returns success,
-> +	 * del_wk will destroy the device after the timer fires.
-> +	 *
-> +	 * Multiple userspace processes can interfere in the working of the timer:
-> +	 * - Writing to the coredump will reschedule the timer to run immediately,
-> +	 *   if still armed.
-> +	 *
-> +	 *   This is handled by using "if (cancel_delayed_work()) {
-> +	 *   schedule_delayed_work() }", to prevent re-arming after having
-> +	 *   been previously fired.
-> +	 * - Writing to /sys/class/devcoredump/disabled will destroy the
-> +	 *   coredump synchronously.
-> +	 *   This is handled by using disable_delayed_work_sync(), and then
-> +	 *   checking if deleted flag is set with &devcd->mutex held.
-> +	 */
->  	struct delayed_work del_wk;
->  	struct device *failing_dev;
->  };
-> @@ -95,14 +91,27 @@ static void devcd_dev_release(struct device *dev)
->  	kfree(devcd);
->  }
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index 0efbcdda9aaba9d8d877df5e4f1db002d3a596bc..060d4919de320fe21fd7aca73ba497e27c4ff334 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -3161,6 +3161,100 @@ static inline void printk_kthreads_check_locked(void) { }
 >  
-> +static void __devcd_del(struct devcd_entry *devcd)
+>  #endif /* CONFIG_PRINTK */
+>  
+> +
+> +/*
+> + * Print out one record for each console.
+> + *
+> + * @do_cond_resched is set by the caller. It can be true only in schedulable
+> + * context.
+> + *
+> + * @next_seq is set to the sequence number after the last available record.
+> + * The value is valid only when this function returns true.
+
+This actually is not true. This function tries to flush one record on all usable
+consoles. And @next_seq is set to the highest already emitted sequence
+number. But some consoles might be (far) behind.
+
+A more precise description would be something like:
+
+ * @next_seq is set to the sequence number after the last available record.
+ * The value is valid only when there is at least one usable console
+ * (@any_usable == true) and all usable consoles were flushed
+ * (function returns false && @handover == false &&
+ * other_cpu_in_panic() == false)
+
+Huh, it is complicated. This is why I suggested to change the semantic
+of @any_usable in the 2nd patch. It would be cleared when the emit
+was interrupted (handover or other_cpu_in_panic()).
+
+Best Regards,
+Petr
+
+> + * @handover will be set to true if a printk waiter has taken over the
+> + * console_lock, in which case the caller is no longer holding the
+> + * console_lock. Otherwise it is set to false.
+> + *
+> + * @any_usable will be set to true if there are any usable consoles.
+> + *
+> + * Returns true when there was at least one usable console and a record was
+> + * flushed. A returned false indicates there were no records to flush for any
+> + * of the consoles. It may also indicate that there were no usable consoles,
+> + * the context has been lost or there is a panic suitation. Regardless the
+> + * reason, the caller should assume it is not useful to immediately try again.
+> + *
+> + * Requires the console_lock.
+> + */
+> +static bool console_flush_one_record(bool do_cond_resched, u64 *next_seq, bool *handover,
+> +				     bool *any_usable)
 > +{
-> +	devcd->deleted = true;
-> +	device_del(&devcd->devcd_dev);
-> +	put_device(&devcd->devcd_dev);
+> +	struct console_flush_type ft;
+> +	struct console *con;
+> +	bool any_progress;
+> +	int cookie;
+> +
+> +	any_progress = false;
+> +
+> +	printk_get_console_flush_type(&ft);
+> +
+> +	cookie = console_srcu_read_lock();
+> +	for_each_console_srcu(con) {
+> +		short flags = console_srcu_read_flags(con);
+> +		u64 printk_seq;
+> +		bool progress;
+> +
+> +		/*
+> +		 * console_flush_one_record() is only responsible for
+> +		 * nbcon consoles when the nbcon consoles cannot print via
+> +		 * their atomic or threaded flushing.
+> +		 */
+> +		if ((flags & CON_NBCON) && (ft.nbcon_atomic || ft.nbcon_offload))
+> +			continue;
+> +
+> +		if (!console_is_usable(con, flags, !do_cond_resched))
+> +			continue;
+> +		*any_usable = true;
+> +
+> +		if (flags & CON_NBCON) {
+> +			progress = nbcon_legacy_emit_next_record(con, handover, cookie,
+> +								 !do_cond_resched);
+> +			printk_seq = nbcon_seq_read(con);
+> +		} else {
+> +			progress = console_emit_next_record(con, handover, cookie);
+> +			printk_seq = con->seq;
+> +		}
+> +
+> +		/*
+> +		 * If a handover has occurred, the SRCU read lock
+> +		 * is already released.
+> +		 */
+> +		if (*handover)
+> +			return false;
+> +
+> +		/* Track the next of the highest seq flushed. */
+> +		if (printk_seq > *next_seq)
+> +			*next_seq = printk_seq;
+> +
+> +		if (!progress)
+> +			continue;
+> +		any_progress = true;
+> +
+> +		/* Allow panic_cpu to take over the consoles safely. */
+> +		if (other_cpu_in_panic())
+> +			goto abandon;
+> +
+> +		if (do_cond_resched)
+> +			cond_resched();
+> +	}
+> +	console_srcu_read_unlock(cookie);
+> +
+> +	return any_progress;
+> +
+> +abandon:
+> +	console_srcu_read_unlock(cookie);
+> +	return false;
 > +}
 > +
->  static void devcd_del(struct work_struct *wk)
+>  /*
+>   * Print out all remaining records to all consoles.
+>   *
+> @@ -3186,77 +3280,24 @@ static inline void printk_kthreads_check_locked(void) { }
+>   */
+>  static bool console_flush_all(bool do_cond_resched, u64 *next_seq, bool *handover)
 >  {
->  	struct devcd_entry *devcd;
-> +	bool init_completed;
+> -	struct console_flush_type ft;
+>  	bool any_usable = false;
+> -	struct console *con;
+>  	bool any_progress;
+> -	int cookie;
 >  
->  	devcd = container_of(wk, struct devcd_entry, del_wk.work);
+>  	*next_seq = 0;
+>  	*handover = false;
 >  
-> -	device_del(&devcd->devcd_dev);
-> -	put_device(&devcd->devcd_dev);
-> +	/* devcd->mutex serializes against dev_coredumpm_timeout */
-> +	mutex_lock(&devcd->mutex);
-> +	init_completed = devcd->init_completed;
-> +	mutex_unlock(&devcd->mutex);
-> +
-> +	if (init_completed)
-> +		__devcd_del(devcd);
->  }
->  
->  static ssize_t devcd_data_read(struct file *filp, struct kobject *kobj,
-> @@ -122,12 +131,12 @@ static ssize_t devcd_data_write(struct file *filp, struct kobject *kobj,
->  	struct device *dev = kobj_to_dev(kobj);
->  	struct devcd_entry *devcd = dev_to_devcd(dev);
->  
-> -	mutex_lock(&devcd->mutex);
-> -	if (!devcd->delete_work) {
-> -		devcd->delete_work = true;
-> -		mod_delayed_work(system_wq, &devcd->del_wk, 0);
-> -	}
-> -	mutex_unlock(&devcd->mutex);
-> +	/*
-> +	 * Although it's tempting to use mod_delayed work here,
-> +	 * that will cause a reschedule if the timer already fired.
-> +	 */
-> +	if (cancel_delayed_work(&devcd->del_wk))
-> +		schedule_delayed_work(&devcd->del_wk, 0);
->  
->  	return count;
->  }
-> @@ -151,11 +160,21 @@ static int devcd_free(struct device *dev, void *data)
->  {
->  	struct devcd_entry *devcd = dev_to_devcd(dev);
->  
-> +	/*
-> +	 * To prevent a race with devcd_data_write(), disable work and
-> +	 * complete manually instead.
-> +	 *
-> +	 * We cannot rely on the return value of
-> +	 * disable_delayed_work_sync() here, because it might be in the
-> +	 * middle of a cancel_delayed_work + schedule_delayed_work pair.
-> +	 *
-> +	 * devcd->mutex here guards against multiple parallel invocations
-> +	 * of devcd_free().
-> +	 */
-> +	disable_delayed_work_sync(&devcd->del_wk);
->  	mutex_lock(&devcd->mutex);
-> -	if (!devcd->delete_work)
-> -		devcd->delete_work = true;
+>  	do {
+> -		any_progress = false;
 > -
-> -	flush_delayed_work(&devcd->del_wk);
-> +	if (!devcd->deleted)
-> +		__devcd_del(devcd);
->  	mutex_unlock(&devcd->mutex);
->  	return 0;
+> -		printk_get_console_flush_type(&ft);
+> -
+> -		cookie = console_srcu_read_lock();
+> -		for_each_console_srcu(con) {
+> -			short flags = console_srcu_read_flags(con);
+> -			u64 printk_seq;
+> -			bool progress;
+> +		any_progress = console_flush_one_record(do_cond_resched, next_seq, handover,
+> +							&any_usable);
+>  
+> -			/*
+> -			 * console_flush_all() is only responsible for nbcon
+> -			 * consoles when the nbcon consoles cannot print via
+> -			 * their atomic or threaded flushing.
+> -			 */
+> -			if ((flags & CON_NBCON) && (ft.nbcon_atomic || ft.nbcon_offload))
+> -				continue;
+> -
+> -			if (!console_is_usable(con, flags, !do_cond_resched))
+> -				continue;
+> -			any_usable = true;
+> -
+> -			if (flags & CON_NBCON) {
+> -				progress = nbcon_legacy_emit_next_record(con, handover, cookie,
+> -									 !do_cond_resched);
+> -				printk_seq = nbcon_seq_read(con);
+> -			} else {
+> -				progress = console_emit_next_record(con, handover, cookie);
+> -				printk_seq = con->seq;
+> -			}
+> -
+> -			/*
+> -			 * If a handover has occurred, the SRCU read lock
+> -			 * is already released.
+> -			 */
+> -			if (*handover)
+> -				return false;
+> -
+> -			/* Track the next of the highest seq flushed. */
+> -			if (printk_seq > *next_seq)
+> -				*next_seq = printk_seq;
+> -
+> -			if (!progress)
+> -				continue;
+> -			any_progress = true;
+> -
+> -			/* Allow panic_cpu to take over the consoles safely. */
+> -			if (other_cpu_in_panic())
+> -				goto abandon;
+> +		if (*handover)
+> +			return false;
+>  
+> -			if (do_cond_resched)
+> -				cond_resched();
+> -		}
+> -		console_srcu_read_unlock(cookie);
+> +		if (other_cpu_in_panic())
+> +			return false;
+>  	} while (any_progress);
+>  
+>  	return any_usable;
+> -
+> -abandon:
+> -	console_srcu_read_unlock(cookie);
+> -	return false;
 >  }
-> @@ -179,12 +198,10 @@ static ssize_t disabled_show(const struct class *class, const struct class_attri
->   *                                                                 put_device() <- last reference
->   *             error = fn(dev, data)                           devcd_dev_release()
->   *             devcd_free(dev, data)                           kfree(devcd)
-> - *             mutex_lock(&devcd->mutex);
->   *
->   *
->   * In the above diagram, it looks like disabled_store() would be racing with parallelly
-> - * running devcd_del() and result in memory abort while acquiring devcd->mutex which
-> - * is called after kfree of devcd memory after dropping its last reference with
-> + * running devcd_del() and result in memory abort after dropping its last reference with
->   * put_device(). However, this will not happens as fn(dev, data) runs
->   * with its own reference to device via klist_node so it is not its last reference.
->   * so, above situation would not occur.
-> @@ -374,7 +391,7 @@ void dev_coredumpm_timeout(struct device *dev, struct module *owner,
->  	devcd->read = read;
->  	devcd->free = free;
->  	devcd->failing_dev = get_device(dev);
-> -	devcd->delete_work = false;
-> +	devcd->deleted = false;
 >  
->  	mutex_init(&devcd->mutex);
->  	device_initialize(&devcd->devcd_dev);
-> @@ -383,8 +400,14 @@ void dev_coredumpm_timeout(struct device *dev, struct module *owner,
->  		     atomic_inc_return(&devcd_count));
->  	devcd->devcd_dev.class = &devcd_class;
->  
-> -	mutex_lock(&devcd->mutex);
->  	dev_set_uevent_suppress(&devcd->devcd_dev, true);
-> +
-> +	/* devcd->mutex prevents devcd_del() completing until init finishes */
-> +	mutex_lock(&devcd->mutex);
-> +	devcd->init_completed = false;
-> +	INIT_DELAYED_WORK(&devcd->del_wk, devcd_del);
-> +	schedule_delayed_work(&devcd->del_wk, timeout);
-> +
->  	if (device_add(&devcd->devcd_dev))
->  		goto put_device;
->  
-> @@ -401,13 +424,20 @@ void dev_coredumpm_timeout(struct device *dev, struct module *owner,
->  
->  	dev_set_uevent_suppress(&devcd->devcd_dev, false);
->  	kobject_uevent(&devcd->devcd_dev.kobj, KOBJ_ADD);
-> -	INIT_DELAYED_WORK(&devcd->del_wk, devcd_del);
-> -	schedule_delayed_work(&devcd->del_wk, timeout);
-> +
-> +	/*
-> +	 * Safe to run devcd_del() now that we are done with devcd_dev.
-> +	 * Alternatively we could have taken a ref on devcd_dev before
-> +	 * dropping the lock.
-> +	 */
-> +	devcd->init_completed = true;
->  	mutex_unlock(&devcd->mutex);
->  	return;
->   put_device:
-> -	put_device(&devcd->devcd_dev);
->  	mutex_unlock(&devcd->mutex);
-> +	cancel_delayed_work_sync(&devcd->del_wk);
-> +	put_device(&devcd->devcd_dev);
-> +
->   put_module:
->  	module_put(owner);
->   free:
-
+>  static void __console_flush_and_unlock(void)
+> 
+> -- 
+> 2.34.1
 
