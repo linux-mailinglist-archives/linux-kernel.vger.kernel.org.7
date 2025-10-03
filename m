@@ -1,105 +1,75 @@
-Return-Path: <linux-kernel+bounces-841040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0FBABB604C
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 08:58:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D91ABB6046
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 08:58:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CE983C89CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 06:58:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63B831AE0139
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 06:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE3522127B;
-	Fri,  3 Oct 2025 06:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A882B221282;
+	Fri,  3 Oct 2025 06:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Jld+0fzl"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MvvPvf1Q"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B14207A32;
-	Fri,  3 Oct 2025 06:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3440207A32;
+	Fri,  3 Oct 2025 06:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759474693; cv=none; b=ru6UMuwASA/ZyI4RjcOhnOGy0KcUh7tvJ7a7Le/jm5nkeM3bSqLeE1FiSyiu7Hp8fRHqU3iCJ5u+2k1PBlOiwVPEtATzbpPwlg8yYtoqVOtJOdE7Gzqv/hi4jbAWvuCxa74gUG0wchrC3JMSi6NEPhGfhF/VBa15bRJU+qm+bzg=
+	t=1759474710; cv=none; b=ZGfEHXZT7Sr2Z3C41JA/gJ1KFzwl90vhbvt2AEqWdVq5Z/0i9J50elLrK1FHGeJ5OPfHk/zPtCXFpH/oRsi4LTePT1d8Z6lXKxk8A5p+oUk03r25/GPVGQQb/GDjKKrMUnhe5P/UK8dw67ZDsiZmGF+j8wv3KZkpeufgaT1XZvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759474693; c=relaxed/simple;
-	bh=ygHJ1a2tSCkiw3IPvK5T3GMVSP/bOxGvIO78g0U2oqQ=;
+	s=arc-20240116; t=1759474710; c=relaxed/simple;
+	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JhyiZ6oscbg4y3EKa8dzD/nsQGLk+JxsPste0eclVLOBbbgBWmDfTurzQXSVnXOYvnRWaShbpWrwqgxFVDw1hrqaWImN2s0HmbF8rOhUf7wb6+J3Bb11IoJcuMAowgzIhAfRZJD2/fzZw+beaqeXjRveK7YGgx9LZqfjRVwLHhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Jld+0fzl; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 27C16101D1A39;
-	Fri,  3 Oct 2025 08:58:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1759474689; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=16mRRpkmibLTIgo5zX4xc23aofmm3S9PtXoTu0vtgi8=;
-	b=Jld+0fzlmK3NdbjIRDq8ZCZmJYWBzZUt+HpFdK4zchwzxtV6Mcw240R8h7ZhW8mN0LkJxe
-	9RzHqPewb+e0dAM0tIVsSsEV6xjzqdmFGysBohoIh/V2DuMAqnRIbZmhLh3/ee2xALTC1s
-	l8DSMaCRfzECDH0jGQz5H83You7IZLAsU14XG8SN+NJXXo5bzZF4O8iYeaN1W80tRbv3KR
-	bLvDgWsB3ZzYFHdyB6/Tq9+v/pGsWh22Iwm8eCK2fra+k6ZgwEWgzGMkq0rWO/17pm8uh2
-	Ysv6VZUvLxvDI35Fe2jjvG1S3Os17hH/mXHr7/p5ndVUdK01ZqlFnK4eS99Anw==
-Date: Fri, 3 Oct 2025 08:58:05 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-Subject: Re: [PATCH 5.10 000/122] 5.10.245-rc1 review
-Message-ID: <aN9z/eFB0pYhMPxU@duo.ucw.cz>
-References: <20250930143822.939301999@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iCaydqJV5mMW7Tt9U5FRQHF+ViPYl9ZJrUy9I0ROlPdBlJTduzEC9VmCe8RMxkKY3JKu4b6b8ksM8/Eit37PeVjOcNSXzPJtJ8tX7icI1vUrac6y2GNSnHBp8mvqsIuaLO3wSMv+OAz08zWED5mnSdntoDh7HQ+UimV8niClVXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MvvPvf1Q; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=MvvPvf1QCH9hE8kQvspHwoCpsW
+	OwEcCA2IKOxdN3Ei8Rg9Xpo6SzXh+xYeZqSaYnYplTT/u9wJFBfjWfW649PzMwSrhFgAvgpiuMU/q
+	wUjMdf4Lli9lwbqVBvDdNxkrPWTOPa5R7/QdG5UKuGCwY2sknzaI7w2/gVHSa2tvuAsH6eu3YpEFy
+	gZvr/w4+CwLhXm10i4ZNWr4FPr3V3DraSa07RXFcUk7U3gAlfwCvXI5eQR9/VDn51eAgQymtaLbYL
+	ardBONbPP6DGpITVBET0nSH9cKFaY7zD707aZnP2CCVug91ze1VlLtgZnLfYDzg/XpQV3CxY2Kmhp
+	gw6bh6ww==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v4ZkJ-0000000Bljm-1p0g;
+	Fri, 03 Oct 2025 06:58:27 +0000
+Date: Thu, 2 Oct 2025 23:58:27 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Sergey Bashirov <sergeybashirov@gmail.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	Christoph Hellwig <hch@infradead.org>, Dai Ngo <Dai.Ngo@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] NFSD/blocklayout: Support multiple extents per
+ LAYOUTGET
+Message-ID: <aN90E6VRSLb4mOZR@infradead.org>
+References: <20251002203121.182395-1-sergeybashirov@gmail.com>
+ <20251002203121.182395-5-sergeybashirov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UFmWpGlbQqNCRvmw"
-Content-Disposition: inline
-In-Reply-To: <20250930143822.939301999@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
-
-
---UFmWpGlbQqNCRvmw
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251002203121.182395-5-sergeybashirov@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi!
+Looks good:
 
-> This is the start of the stable review cycle for the 5.10.245 release.
-> There are 122 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-CIP testing did not find any problems here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-5.10.y
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
-Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---UFmWpGlbQqNCRvmw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaN9z/QAKCRAw5/Bqldv6
-8iu9AJ4sUsI001bzGUDTzwZLNN7ZTh72vQCfWWiiOA/gV9vVXYvCfYuoGcMmnBE=
-=zIcY
------END PGP SIGNATURE-----
-
---UFmWpGlbQqNCRvmw--
 
