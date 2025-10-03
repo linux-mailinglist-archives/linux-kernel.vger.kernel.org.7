@@ -1,181 +1,147 @@
-Return-Path: <linux-kernel+bounces-841534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A2ADBB79C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:52:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80993BB79E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4CF2B4EDAF3
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:52:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3F01A4EE548
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01F32D29CF;
-	Fri,  3 Oct 2025 16:52:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336322D4B68;
+	Fri,  3 Oct 2025 16:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="sUW4RWmm"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5962D2485;
-	Fri,  3 Oct 2025 16:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JFUg0FPr"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E552D29CE
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759510342; cv=none; b=aVrIVBh2TrAgmns8xduFsMnP2l9nDp2ZVz/r77q6Mk2qCfD0/m6npikskEJg4/UZibhThDzgrwrKB5405xB/3JlGkwJRkEdkqkAH4ut70S52z4xt0yqTyK5Y0h2dFGrV5DyiL2vybw7R8+nopqMOAab+1cNYqm6rg65sfEgYlXs=
+	t=1759510440; cv=none; b=CuPPWxLOwfOkqMFGrYVWLrkJKamICdqz0WiO1+Lr6T/k7oC3HylMXzJ8RJNAdqFxMOwJT8TAdjs8IVFCjHzvWtM2s+4evjhLja9SmbZ068/tNox2C4nvfOjKhuExJpWItf1iwEX+xP00F4jIqg2LLWEtBX7O3gHjw72xZLxP5rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759510342; c=relaxed/simple;
-	bh=XopMqeBEhXWvFMPQFEtogrEfzYADeZLpFbReGstZ9vM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZG83ExxNzudPYpvbjQu9jexSZJ1cXgDfQnJNCEyzP8ezCVK14tB+3zriYws7kV9ujH0UdxteV5c1aZYA//I+w3pQhu2OLXlnTT7ZFoaJ1KqIqUuHQj9FGIlEOHenPZfqIyLckccUqYWLFVpfAYzGIn5AfDAzhAuOmU2nVWU+W/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=sUW4RWmm; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from skinsburskii.localdomain (unknown [52.148.171.5])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 73B94211D8C8;
-	Fri,  3 Oct 2025 09:52:19 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 73B94211D8C8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1759510339;
-	bh=FD7HWPe0C/v7A3S/nQyeRDNE2l3vn3CGHv8EhytZTng=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sUW4RWmmBm7LEZN5/klHAbY/rFTlyD4az9XqYLPRhydkxVvYz2ALNt0G+nCfciyzN
-	 7j7YdZt+Dj0Ejf5cgj2daCxzyhiOjQZojzopWH8Wie6bMAbfDFICgjKjZJsK/Ayxbv
-	 8EBQtpUeh6lDPZemKG66Ex1/Zkfk/PIW/m4CEnB4=
-Date: Fri, 3 Oct 2025 09:52:17 -0700
-From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: "kys@microsoft.com" <kys@microsoft.com>,
-	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"decui@microsoft.com" <decui@microsoft.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 3/5] Drivers: hv: Batch GPA unmap operations to
- improve large region performance
-Message-ID: <aN__QWQZkXN8k1-V@skinsburskii.localdomain>
-References: <175942263069.128138.16103948906881178993.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
- <175942296162.128138.15731950243504649929.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
- <SN6PR02MB415777407333F3EC40CC05B7D4E4A@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1759510440; c=relaxed/simple;
+	bh=r9jXdPkNp4ZbYhSY8KjNLD3PMOnYC6udukSIbvtBc1I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hoC83+LZE11gc1yveDQ06uf9VPgQyPaFNn1WYNzBvpLdLC58fXM3SzCd7HemGdlAcayF7JtrkluT979kT+mnxVMMgSNGmLJDvqmfInrcF6uu/kZyqriEg84gNOB7GA53n1N88ZiTJlbiQceI+fvsMJj0AjUWEvBvJtfk2x7NWAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JFUg0FPr; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759510435;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=xRVhaW2/i9fEx7I+LuZkY7sYjvYyEufnTn/0UGKwdi0=;
+	b=JFUg0FPrMvBpqOsOnXFw1DQ5mKTUoNhv4ZasSvNFslafvWH0wPdUdFy4mTg40rMlU6RUKI
+	TqBCkuIDs60abnrrtDQxPvU0IALLTfKW0PvrsfomgVv2OVlM2tuRdY9jU2/T4e8kd56sPw
+	3WFwXu/A+bbqzgtSp/nWKS3EOza4gvM=
+From: Qi Zheng <qi.zheng@linux.dev>
+To: hannes@cmpxchg.org,
+	hughd@google.com,
+	mhocko@suse.com,
+	roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev,
+	muchun.song@linux.dev,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	ziy@nvidia.com,
+	harry.yoo@oracle.com,
+	baolin.wang@linux.alibaba.com,
+	Liam.Howlett@oracle.com,
+	npache@redhat.com,
+	ryan.roberts@arm.com,
+	dev.jain@arm.com,
+	baohua@kernel.org,
+	lance.yang@linux.dev,
+	akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	Qi Zheng <zhengqi.arch@bytedance.com>
+Subject: [PATCH v4 0/4] reparent the THP split queue
+Date: Sat,  4 Oct 2025 00:53:14 +0800
+Message-ID: <cover.1759510072.git.zhengqi.arch@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <SN6PR02MB415777407333F3EC40CC05B7D4E4A@SN6PR02MB4157.namprd02.prod.outlook.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Oct 03, 2025 at 12:27:13AM +0000, Michael Kelley wrote:
-> From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com> Sent: Thursday, October 2, 2025 9:36 AM
-> > 
-> > Reduce overhead when unmapping large memory regions by batching GPA unmap
-> > operations in 2MB-aligned chunks.
-> > 
-> > Use a dedicated constant for batch size to improve code clarity and
-> > maintainability.
-> > 
-> > Signed-off-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-> > ---
-> >  drivers/hv/mshv_root.h         |    2 ++
-> >  drivers/hv/mshv_root_hv_call.c |    2 +-
-> >  drivers/hv/mshv_root_main.c    |   15 ++++++++++++---
-> >  3 files changed, 15 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/hv/mshv_root.h b/drivers/hv/mshv_root.h
-> > index e3931b0f12693..97e64d5341b6e 100644
-> > --- a/drivers/hv/mshv_root.h
-> > +++ b/drivers/hv/mshv_root.h
-> > @@ -32,6 +32,8 @@ static_assert(HV_HYP_PAGE_SIZE == MSHV_HV_PAGE_SIZE);
-> > 
-> >  #define MSHV_PIN_PAGES_BATCH_SIZE	(0x10000000ULL / HV_HYP_PAGE_SIZE)
-> > 
-> > +#define MSHV_MAX_UNMAP_GPA_PAGES	512
-> > +
-> >  struct mshv_vp {
-> >  	u32 vp_index;
-> >  	struct mshv_partition *vp_partition;
-> > diff --git a/drivers/hv/mshv_root_hv_call.c b/drivers/hv/mshv_root_hv_call.c
-> > index c9c274f29c3c6..0696024ccfe31 100644
-> > --- a/drivers/hv/mshv_root_hv_call.c
-> > +++ b/drivers/hv/mshv_root_hv_call.c
-> > @@ -17,7 +17,7 @@
-> >  /* Determined empirically */
-> >  #define HV_INIT_PARTITION_DEPOSIT_PAGES 208
-> >  #define HV_MAP_GPA_DEPOSIT_PAGES	256
-> > -#define HV_UMAP_GPA_PAGES		512
-> > +#define HV_UMAP_GPA_PAGES		MSHV_MAX_UNMAP_GPA_PAGES
-> > 
-> >  #define HV_PAGE_COUNT_2M_ALIGNED(pg_count) (!((pg_count) & (0x200 - 1)))
-> > 
-> > diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
-> > index 7ef66c43e1515..8bf0b5af25802 100644
-> > --- a/drivers/hv/mshv_root_main.c
-> > +++ b/drivers/hv/mshv_root_main.c
-> > @@ -1378,6 +1378,7 @@ mshv_map_user_memory(struct mshv_partition *partition,
-> >  static void mshv_partition_destroy_region(struct mshv_mem_region *region)
-> >  {
-> >  	struct mshv_partition *partition = region->partition;
-> > +	u64 page_offset;
-> >  	u32 unmap_flags = 0;
-> >  	int ret;
-> > 
-> > @@ -1396,9 +1397,17 @@ static void mshv_partition_destroy_region(struct mshv_mem_region *region)
-> >  	if (region->flags.large_pages)
-> >  		unmap_flags |= HV_UNMAP_GPA_LARGE_PAGE;
-> > 
-> > -	/* ignore unmap failures and continue as process may be exiting */
-> > -	hv_call_unmap_gpa_pages(partition->pt_id, region->start_gfn,
-> > -				region->nr_pages, unmap_flags);
-> > +	for (page_offset = 0; page_offset < region->nr_pages; page_offset++) {
-> > +		if (!region->pages[page_offset])
-> > +			continue;
-> > +
-> > +		hv_call_unmap_gpa_pages(partition->pt_id,
-> > +					ALIGN(region->start_gfn + page_offset,
-> > +					      MSHV_MAX_UNMAP_GPA_PAGES),
-> 
-> Seems like this should be ALIGN_DOWN() instead of ALIGN().  ALIGN() rounds
-> up to get the requested alignment, which could skip over some non-zero
-> entries in region->pages[].
-> 
+From: Qi Zheng <zhengqi.arch@bytedance.com>
 
-Indeed, the goal is to unmap in 2MB chunks as it's the max payload that
-can be passed to hypervisor.
-I'll replace it with ALIGN_DOWN in the next revision.
+Changes in v4:
+ - add split_queue_lock*() and let folio_split_queue_lock*() to use them.
+   (I have kept everyone's Acked-bys and Reviewed-bys. If you need to discard
+    it, please let me know.)
+ - let deferred_split_scan() to use split_queue_lock_irqsave(), which will fix
+   the race problem in [PATCH v3 4/4].
+   (Muchun Song)
+ - collect Reviewed-bys
+ - rebase onto the next-20251002
 
-> And I'm assuming the unmap hypercall is idempotent in that if the specified
-> partition PFN range includes some pages that aren't mapped, the hypercall
-> just skips them and keeps going without returning an error.
-> 
+Changes in v3:
+ - use css_is_dying() in folio_split_queue_lock*() to check if memcg is dying
+   (David Hildenbrand, Shakeel Butt and Zi Yan)
+ - modify the commit message in [PATCH v2 4/4]
+   (Roman Gushchin)
+ - fix the build error in [PATCH v2 4/4]
+ - collect Acked-bys and Reviewed-bys
+ - rebase onto the next-20250926
 
-It might be the case, but it's not reliable.
-If the region size isn’t aligned to MSHV_MAX_UNMAP_GPA_PAGES (i.e., not
-aligned to 2M), the hypervisor can return an error for the trailing
-invalid (non-zero) PFNs.
-I’ll fix this in the next revision.
+Changes in v2:
+ - fix build errors in [PATCH 2/4] and [PATCH 4/4]
+ - some cleanups for [PATCH 3/4] (suggested by David Hildenbrand)
+ - collect Acked-bys and Reviewed-bys
+ - rebase onto the next-20250922
 
-> > +					MSHV_MAX_UNMAP_GPA_PAGES, unmap_flags);
-> > +
-> > +		page_offset += MSHV_MAX_UNMAP_GPA_PAGES - 1;
-> 
-> This update to the page_offset doesn't take into account the effect of the
-> ALIGN (or ALIGN_DOWN) call.  With a change to ALIGN_DOWN(), it may
-> increment too far and perhaps cause the "for" loop to be exited prematurely,
-> which would fail to unmap some of the pages.
-> 
+Hi all,
 
-I’m not sure I see the problem here.  If we align the offset by
-MSHV_MAX_UNMAP_GPA_PAGES and unmap the same number of pages, then we
-should increment the offset by that very same number, shouldn’t we?
+In the future, we will reparent LRU folios during memcg offline to eliminate
+dying memory cgroups, which requires reparenting the THP split queue to its
+parent memcg.
+
+Similar to list_lru, the split queue is relatively independent and does not need
+to be reparented along with objcg and LRU folios (holding objcg lock and lru
+lock). Therefore, we can apply the same mechanism as list_lru to reparent the
+split queue first when memcg is offine.
+
+The first three patches in this series are separated from the series
+"Eliminate Dying Memory Cgroup" [1], mainly to do some cleanup and preparatory
+work.
+
+The last patch reparents the THP split queue to its parent memcg during memcg
+offline.
+
+Comments and suggestions are welcome!
 
 Thanks,
-Stanislav
+Qi
 
-> > +	}
-> > 
-> >  	mshv_region_invalidate(region);
-> > 
-> > 
-> > 
-> 
+[1]. https://lore.kernel.org/all/20250415024532.26632-1-songmuchun@bytedance.com/
+
+Muchun Song (3):
+  mm: thp: replace folio_memcg() with folio_memcg_charged()
+  mm: thp: introduce folio_split_queue_lock and its variants
+  mm: thp: use folio_batch to handle THP splitting in
+    deferred_split_scan()
+
+Qi Zheng (1):
+  mm: thp: reparent the split queue during memcg offline
+
+ include/linux/huge_mm.h    |   4 +
+ include/linux/memcontrol.h |  10 ++
+ mm/huge_memory.c           | 258 +++++++++++++++++++++++++------------
+ mm/memcontrol.c            |   1 +
+ 4 files changed, 192 insertions(+), 81 deletions(-)
+
+-- 
+2.20.1
+
 
