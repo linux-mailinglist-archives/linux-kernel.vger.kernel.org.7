@@ -1,199 +1,159 @@
-Return-Path: <linux-kernel+bounces-841059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58B9CBB6281
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 09:21:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D1DEBB629C
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 09:26:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DFB3D4E7E49
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 07:21:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9E9F19E42AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 07:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124E323D7E2;
-	Fri,  3 Oct 2025 07:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC8D242925;
+	Fri,  3 Oct 2025 07:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bEgpKn8Y";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="28LT4I65";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hIVPvxtC";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="erQ5Zm9p"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S1zIUKHt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9DB23AE9B
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 07:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCD72045B5
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 07:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759476112; cv=none; b=YHzXubDC6vR8CnvwX3jH1Dhir99l9zsC2m3dvMuL+3dAObQSjt3NwX0ibkQ5b167nErXAyhUorqgO2tDfxvMeXMVtr0GXifRAZVcEdvDOBNk64ohZm6V2BfYO6/Ko3bLrd3g8L6zSuW1kAEq+V0kYURiWpCb5TPDYPzxwgLBJvA=
+	t=1759476375; cv=none; b=YEMJpdnVHTwJHAuNrmz/L544aiLKmQ8HaLyaIgTy4LpgTgGGZ/U9Jb5FXlV2DfuquWL8yBqYH7sZoC0okNj/gtWrwXNEOBedxM2r+N7bSaEP6BIyUM2a057Uey6XSIj2BY6bLdMmfDsjAjKSdqUlj1YskAod8SdshnpLyh/jK+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759476112; c=relaxed/simple;
-	bh=MF1ojK1e4qTMJpyC4kVXvIjqRe+VO3XJwjd/QevRJoA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OQnAXhWP2STS3Pozam2xULfGoL5PkIyrQqdejCn+5SwOhhKgqsFJXFzQHAGBhlyl0nkjYCzjDI03ozleqWQPG/t/1Mh7he0Hy6j+JD2DSQ6CMqBIldgseTCyBeJ0v9VAsawthlbCfyjpbnBMv8pwmOcsvimoRTVU56/cbJk1seM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bEgpKn8Y; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=28LT4I65; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hIVPvxtC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=erQ5Zm9p; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9132A33867;
-	Fri,  3 Oct 2025 07:21:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1759476098; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rvh/zyAvQe8sgpRHWRg4gdaK+6SZnI8zSJs6AZ9Y4ek=;
-	b=bEgpKn8YpLSM/tYGoMKlyb4H+dntsKVt9+39JEoI8AOg2194BxQSqO4XTDDGTK+ZZQBsCR
-	jCE2AKbjagTUsoQ8AuJSeB6nfhTDNr4lW1JWCDfA4+yM6Mp3p3NDGX3s0iUXlGteTINhgy
-	h728Cg/FoJfzzZm9yrljsRfXkqlGRtI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1759476098;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rvh/zyAvQe8sgpRHWRg4gdaK+6SZnI8zSJs6AZ9Y4ek=;
-	b=28LT4I65u+jCEfNlAo1sbNYBCNmowf3FR8UouoFQ3VC01A5s6dR8FKi7bSK1DydgfIWIez
-	b5xedf4t0axH07DA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1759476097; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rvh/zyAvQe8sgpRHWRg4gdaK+6SZnI8zSJs6AZ9Y4ek=;
-	b=hIVPvxtCG/If+Fwu9Ubyu8IgeMBQVsPY0+ouRZonojzpoAVVkG9n6XOCwqa35ww247NbRg
-	PWJLwfoqGYPiQplLbCI7JtksrqnQ72iuFup6/RBxUvQFqNlHEhGHTzVLE2HGro92le+Ae7
-	kweeBMbGJ+aS0VyDqf3otfGgdUDYZIs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1759476097;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rvh/zyAvQe8sgpRHWRg4gdaK+6SZnI8zSJs6AZ9Y4ek=;
-	b=erQ5Zm9pRiHHHekinY7lZjDUJMrLMiHsJfDfsg3ApUb3ZzN/4fOs00BlqeP16tDOP8zn8f
-	ewgIW+7hgF3QwuDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 502B913990;
-	Fri,  3 Oct 2025 07:21:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vrTzEYF532iyXQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 03 Oct 2025 07:21:37 +0000
-Date: Fri, 03 Oct 2025 09:21:36 +0200
-Message-ID: <87o6qoh2m7.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: hariconscious@gmail.com
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	khalid@kernel.org,
-	shuah@kernel.org,
-	david.hunter.linux@gmail.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sound/core/seq: Initialize structure pointer to NULL to prevent undefined behavior
-In-Reply-To: <20251002174301.15512-1-hariconscious@gmail.com>
-References: <20251002174301.15512-1-hariconscious@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1759476375; c=relaxed/simple;
+	bh=2UVfqZBLQy49KOitiBc8tAhkDTA0H0l42JBiq5frpVo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Kv0C5yKfzaSLBAtFyPQqcjNgPqxAtPgzke6OsHp404vsWZK3svsJ1f19haUQ609tfr5/swIxJfiFy8EYJudyAqOxre92NWSgxXu0Mh4kMXzmmYDSZ/KdjlH3ZRwbQwDRnSeQA9PBtH1f3pP2dA2flTzrvHByTGhuH5RQ/D3iqvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S1zIUKHt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79383C116C6
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 07:26:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759476375;
+	bh=2UVfqZBLQy49KOitiBc8tAhkDTA0H0l42JBiq5frpVo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=S1zIUKHt3LloFfNANikDd0XW0+ztTpcnpQv8+tIet/DpQC3R28J6N6vl9ur8ExAAY
+	 MfNhnWrPkswsYPPX0JCavDZBkMLw/bMlCD+dpYoZPcLmkaJM8gsQCItq+ByUeoFJPH
+	 Lm/kNOO5q3556sZIrtw1Xb/ncW1LNl7o3sqwYKfm9VCtdyRArCzeJQTorHUzp7Afnp
+	 FtvIlkjSGsgsLGX12VbFO+mvv+QJNpCgz6jmtPUm1ZPzJH+CJSZ5l5eIc0amwQ2FQo
+	 9JbEppH4xW1r4Qb14JvOBs+otrtI985gjsm8LQ44pNG7OHHO+zdBso4j9b/uqRsmPc
+	 T46T0yP84/OBA==
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e3bcf272aso46775e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 00:26:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWADoVO89yQ4z0myDf1i4sHp0heIJYqk0XbfB1UrsYHe+j3jLvlczwhypsasN5GZB4XEl2HKmRe43HAxXo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCBZVLIVNr6CK/un0pVEJMIA0P3EbWrUe01Kz7Qj7r+c0wyOFh
+	AWasFB/Qae/wZbbQUVodT3QuJg66KXLqg+VbMVC0twKwGAmZsPdpFdiljS0y3p0fhX/h45BokUS
+	DGbx78lZjySuC+eePZRRVGlRKi0zQRVX97cySngod
+X-Google-Smtp-Source: AGHT+IF0FiWT5gMQo98IhUp4cZtjFyILRjcK8Xaqt1wm42UeFLIWHBRBzQ/OBxCtkYm3PZwpQvfzMjvw6MuNndIW52U=
+X-Received: by 2002:a05:600c:a119:b0:46e:251:b1c2 with SMTP id
+ 5b1f17b1804b1-46e71bcd364mr726825e9.7.1759476373969; Fri, 03 Oct 2025
+ 00:26:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-7
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-1.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[perex.cz,suse.com,kernel.org,gmail.com,vger.kernel.org];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_NONE(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -1.80
+MIME-Version: 1.0
+References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
+ <20250916-luo-pci-v2-3-c494053c3c08@kernel.org> <2025093044-icky-treat-e1c3@gregkh>
+ <CACePvbUr42mj0kbcaw4cgKnd7v1f8z8Jhq4+_QN7Z5Nvicd1cw@mail.gmail.com> <2025100323-sneer-perennial-55e1@gregkh>
+In-Reply-To: <2025100323-sneer-perennial-55e1@gregkh>
+From: Chris Li <chrisl@kernel.org>
+Date: Fri, 3 Oct 2025 00:26:01 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuNPFbSJezynwXWpMx0ihV32YvAgdfygj7bx1nhxtmB8-w@mail.gmail.com>
+X-Gm-Features: AS18NWBHnR4jWer8Ic4JpU49F_9I1u94mBhx82LIn4FVdmymqdVYaus1UMIqdqA
+Message-ID: <CAF8kJuNPFbSJezynwXWpMx0ihV32YvAgdfygj7bx1nhxtmB8-w@mail.gmail.com>
+Subject: Re: [PATCH v2 03/10] PCI/LUO: Forward prepare()/freeze()/cancel()
+ callbacks to driver
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	David Matlack <dmatlack@google.com>, Pasha Tatashin <tatashin@google.com>, 
+	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>, 
+	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
+	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 02 Oct 2025 19:43:00 +0200,
-hariconscious@gmail.com wrote:
-> 
-> From: HariKrishna Sagala <hariconscious@gmail.com>
-> 
-> This change ensures the structure pointer is explicitly initialized to
-> NULL,preventing potential access to uninitialized memory. It improves
-> code safety and avoids undefined behavior during pointer dereferencing.
-> 
-> Signed-off-by: HariKrishna Sagala <hariconscious@gmail.com>
-> ---
-> 
-> Note:
-> Turned on the settings needed for sequencer MIDI and built a kernel
-> image with those settings. The system booted up fine with no errors.
-> However, couldn¢t get the sequencer emulation to start.
+On Thu, Oct 2, 2025 at 11:19=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Thu, Oct 02, 2025 at 01:38:56PM -0700, Chris Li wrote:
+> > On Tue, Sep 30, 2025 at 8:30=E2=80=AFAM Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > On Tue, Sep 16, 2025 at 12:45:11AM -0700, Chris Li wrote:
+> > > >  include/linux/dev_liveupdate.h |  23 +++++
+> > > >  include/linux/device/driver.h  |   6 ++
+> > >
+> > > Driver core changes under the guise of only PCI changes?  Please no.
+> >
+> > There is a reason why I use the device struct rather than the pci_dev
+> > struct even though liveupdate currently only works with PCI devices.
+> > It comes down to the fact that the pci_bus and pci_host_bridge are not
+> > pci_dev struct. We need something that is common across all those
+> > three types of PCI related struct I care about(pci_dev, pci_bus,
+> > pci_host_bridge). The device struct is just common around those. I can
+> > move the dev_liveupdate struct into pci_bus, pci_host_bridge and
+> > pci_dev independently. That will be more contained inside PCI, not
+> > touching the device struct. The patch would be bigger because the data
+> > structure is spread into different structs. Do you have a preference
+> > which way to go?
+>
+> If you only are caring about one single driver, don't mess with a
+> subsystem or the driver core, just change the driver.  My objection here
 
-Something really wrong in your test, I'm afraid.
-See your patch below more closely:
+It is more than just one driver, we have vfio-pci, idpf, pci-pf-stub
+and possible nvme driver.
+The change needs to happen in the PCI enumeration and probing as well,
+that is outside of the driver code.
 
-> 
->  sound/core/seq/seq_midi_emul.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/core/seq/seq_midi_emul.c b/sound/core/seq/seq_midi_emul.c
-> index 81d2ef5e5811..f24c5a475c41 100644
-> --- a/sound/core/seq/seq_midi_emul.c
-> +++ b/sound/core/seq/seq_midi_emul.c
-> @@ -647,7 +647,7 @@ static void snd_midi_channel_init(struct snd_midi_channel *p, int n)
->   */
->  static struct snd_midi_channel *snd_midi_channel_init_set(int n)
->  {
-> -	struct snd_midi_channel *chan;
-> +	struct snd_midi_channel *chan = NULL;
->  	int  i;
->  
->  	chan = kmalloc_array(n, sizeof(struct snd_midi_channel), GFP_KERNEL);
+> was that you were claiming it was a PCI change, yet it was actually only
+> touching the driver core which means that all devices in the systems for
 
-The variable chan is initialized at the very beginning.
-NULL initialization is utterly nonsense.
+In theory all the devices can be liveupdate preserved. But now we only
+support PCI.
+I can look into containing the change in PCI only and not touching the
+device struct if that is what you mean. I recall I tried that
+previously and failed because bus->bridge is a device struct rather
+than pci_dev or pci_host_bridge. I can try harder not to touch device
+structs. Patch will be bigger and more complex than this right now.
+But at least the damage is limited to PCI only if successful.
 
-> @@ -686,7 +686,7 @@ reset_all_channels(struct snd_midi_channel_set *chset)
->   */
->  struct snd_midi_channel_set *snd_midi_channel_alloc_set(int n)
->  {
-> -	struct snd_midi_channel_set *chset;
-> +	struct snd_midi_channel_set *chset = NULL;
->  
->  	chset = kmalloc(sizeof(*chset), GFP_KERNEL);
+> all Linux users will be affected.
 
-Here, too.
+I understand your concerns. I was wishing one day all devices could
+support liveupdate, but that is not the case right now.
 
-So all changes make really no sense.
+> > > Break this series out properly, get the driver core stuff working FIR=
+ST,
+> > > then show how multiple busses will work with them (i.e. you usually n=
+eed
+> > > 3 to know if you got it right).
+> >
+> > Multiple buses you mean different types of bus, e.g. USB, PCI and
+> > others or 3 pci_bus is good enough? Right now we have no intention to
+> > support bus types other than PCI devices. The liveupdate is about
+> > preserving the GPU context cross kernel upgrade. Suggestion welcome.
+>
+> So all of this is just for one single driver.  Ugh.  Just do it in the
+> single driver then, don't mess with the driver core, or even the PCI
 
+Not a single driver. It is the whole PCI core. Or in your book the
+whole PCI is just one single driver?
 
-thanks,
+> core.  Just make it specific to the driver and then none of us will even
+> notice the mess that this all creates :)
 
-Takashi
+OK. Let me try that PCI only approach again and try it harder. I will
+report back.
+
+Thanks for the feedback.
+
+Chris
 
