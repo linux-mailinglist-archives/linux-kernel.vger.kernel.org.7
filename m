@@ -1,124 +1,125 @@
-Return-Path: <linux-kernel+bounces-841053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A6BBB623E
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 09:09:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F5AEBB624D
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 09:10:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1DF213447B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 07:09:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1812019E835F
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 07:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC61D22DA1C;
-	Fri,  3 Oct 2025 07:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B0622D9EB;
+	Fri,  3 Oct 2025 07:10:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jw1vqdPY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UXJ3HpqY"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEDB2135B9
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 07:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814601A3165
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 07:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759475367; cv=none; b=JqKgkNC0UloxXWLLdMcekKDydobtQR8P9cMPghPg/d3ikg4jmtd1ppKljHDWgEIyvV1jWZhtw55YDp3SfpMwaLQWbSEJH3YxZs+C+K2bnXNxU6xdnbz3FYWiIhT+LgsV34114dsVAc4RPxDE7mZr7OQe+NRwcm02oVHopMnjuBY=
+	t=1759475436; cv=none; b=vB+a8fcsbktRgNI6ZirWVPDs+HQSZ/jYaDEY3cW9dB/D3H9XwytQpvHHnP+hzuetqnOcVIqVv7OECxHO+acO+elKnEwmqAt4ccBc7STH0RAYu0mjfTBHT5Enuc7WRA783kVN8iwwaIriM7uFHSPuIAqhA+OsyLAdbvn8n6O6H2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759475367; c=relaxed/simple;
-	bh=zx2owurHFfkAoHhzYNDDvjYONBg7XXGf7hyYmx9Idvk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WnWptGQXzGqreGetESxmmKJosA89IV5jM3U1EI31URtipJhCcv87CuLSWXkmkjy9gwFsDZh5h0ph1lf9PT2pMGgu3tPmJmB+GABf56xTUcNhQ1ifz3XqQQhq0E9qvI5I080uAoEsR7j2KoQp38o0un0OQBx+If0WwLzI4UkUtbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jw1vqdPY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DACF3C116C6
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 07:09:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759475366;
-	bh=zx2owurHFfkAoHhzYNDDvjYONBg7XXGf7hyYmx9Idvk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jw1vqdPYfbBqcJ3OLjd2j5FrI96x4fjWKWTLMeQ2vgkCxWs662iR8TIFDDMeR35SL
-	 Rbtf0HfETOJRyS5V1zRObhawAFuSvb0owXUV+l/BzvAK3l7wd04qPcjR5iyKDvgUb9
-	 yJPUIGAjQXcGI1MIBCwKJxA4PlXbVk18KcqgP/bDb+Tx69GnVS2dYwCaOZURHi8+C/
-	 fyCoze5UemfnzlscU4NxIaS4tZDsnVJXV7AMvQpUEU+T3CTZA78doodM4COOfY/FvQ
-	 P6yzUf8ui8+skIZCfgXcxG0u4XrDlEMTCiOF2LIvqO+fMd5/qbcE+ybZPLXIOjf5Dz
-	 oxSO2S/wEqbJA==
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-71d60110772so20132397b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 00:09:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWivcn2SQTfCLs6H0iVgssZv2Ce3/Qnnd6BZI+D6p70THxUiK1ZR+9p+h28rDhoCmt86hY44JhKWrvojkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRizR7yEW/8QBlkfT1dgf73T+5ispqqtKXAXeyu+qP/wnx4lFf
-	DSkQKymVDJ+26/eHOwHHbsYLNTMEkYGPURKpkkX+sNsvLp65bw6TLaZY4neg/aMISC13SPfU1IE
-	8XNaUwdaGyFRscoTBB1BmcdtLcLwlQjumKlUm56FF1Q==
-X-Google-Smtp-Source: AGHT+IFEA0NhirwPGgcphjG0fmApdQNf9P4ICBae69kfL2JodwSZCLWlp251XiujpsESiyOGRzhhBlkoU1i9wi0ONVg=
-X-Received: by 2002:a05:690e:2513:20b0:632:3cc7:c8cd with SMTP id
- 956f58d0204a3-63b9a073829mr1721525d50.23.1759475366088; Fri, 03 Oct 2025
- 00:09:26 -0700 (PDT)
+	s=arc-20240116; t=1759475436; c=relaxed/simple;
+	bh=tsd6LCwVXoBWfeuPShaVDWTPYeYbCB/+fp3ZoHm+AEs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MyhYwVIcV+LqjuW1bersN123Oe/qQRYVZC8+ag0zEzINlnS8CVX3Rr8iB/sZMqbzbRHJfDGruuP5Ox4LPdXWG4VyhJuLYFVR34GdNQERBvzAT8P9QUfquaOs7bdvuNrrixfAY9cLwm5Ao/d62rPlJM1QY3CA00+2/GD56+9xn8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UXJ3HpqY; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e37d10f3eso12640055e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 00:10:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759475433; x=1760080233; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4KPy/MaUI1T6LJVDJjF2ILhSPnvDqNZYew/YLG6etAQ=;
+        b=UXJ3HpqYajwt7jM0a6x0XhX4f3dRrmJb1bGx057y2jEzBbRrLH6x7GedcdQKBbVKSu
+         TlCUAYHCKUufaBYkxAj9OntbPUh+THoHc9s03bowR94p77lL+yOIqLmGWGZ6zZuGu5zT
+         H3UCYDdMyKCbyHgwebMjsiCeU4t7OIQUsxIaLmo9jve5vfDLyKAFaKV8dOiJ9g1tE5WU
+         qNHCyQMvViTZdMUuMRkC1LaN0d2DcgnXbCVtaAQZTAbrRL1kQw/Pqi2fFP949yLHX9VV
+         HDmEpyVde3oHyMHwfOR7NmDjGQ2y48CTT8aLidHZtTpIbD4qYCjpifKqr3fERssu1Hnq
+         Vgmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759475433; x=1760080233;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4KPy/MaUI1T6LJVDJjF2ILhSPnvDqNZYew/YLG6etAQ=;
+        b=pbx//n5L/ihB2ZTwtqFY9ASrYJT64hnL/XTH+xHb/LvP23nepFwd872UMugTgha8ic
+         +O5lVnH1IL8O1nRVXqJqydRgMi8HIQtHFdhH+/XRK7KyIJPrYSYS0bdP75BKq5fc92OY
+         PuPRFsE2Y70vVV/uyC/fQPDgUU+0aFm28P4ztB8MPKTK/fjPHKZNamQeudJPKGcV94T+
+         Af44YrnhiCCgCt1MpVWP/mj0op+cHiJAnShCLr7P2gkAnVaVlWfc2Ky6fZoyVgwQF7Lk
+         or92kaEZgIuSVDE6ysOV/Rw3aHrGPyskqCUVzLO1meAvcDsQJ6Qipkh8hjYuqk45XF7z
+         G98g==
+X-Forwarded-Encrypted: i=1; AJvYcCV3twZlMxLtVNKujNfdQptblhj/8YPdixDWZoyOFtYctEll+WlKeHVBh5yqiORH2qfyMe3kxd0vhvA/eSk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSnozfd9ML+6MLo2OndIUKn+MdkbBAEYWpYOmYltH5Z9ELeq00
+	Jj07u/8LsQmZsmbWJ05ruVMb2obKPwh24Xg3bG665FKqGYLToB+Ts2hHTiitN77aVNg=
+X-Gm-Gg: ASbGncsB4mta42puci6rKnsoYfhoOqEAYGilZZOR1Aa2/WHIAvTshK5+So6dZwIMXHe
+	Z/QGdccDb1fflxWpd2XO/dnO+u0GE5Y01aAtBGWTedPAFom5RPhbWyyKO0A6Y+/66d3m2cY3kTa
+	IrypbeNOluWa1y31uVPhDZvdmX/gGEghAoNVY4btZEjMLnrkIC8ti3CgXj28bwnE96fVbXg3Uj7
+	YjUvFcFJH0HQYlCILdeZ/P3DbXymbj1henPM+O+vHKSIJZ+05WsN0Sjt8aPydll6iMcP9OUw8iC
+	AFpnmVRaq3rJC8v+sGhTdavvfaVH5n/JPvD9MGK/dmF8AyzsrgSLr+lzP8jVoy3GtYzFPsPLmK2
+	2fs6Jiu6ql+SCUiYASIgtArl4qK2uKv4Q/9rbGRHk8lQYIcg1IYo0gCsiaP8RkQgojGE=
+X-Google-Smtp-Source: AGHT+IGrprpeaPN2zsG3GLeeDlcPWzpaZct4FH883LRsib2xD+eagd//CjbhareJG/Mp7u+BFhq4lA==
+X-Received: by 2002:a05:600c:354e:b0:46d:996b:826a with SMTP id 5b1f17b1804b1-46e7115d49dmr13480395e9.36.1759475432701;
+        Fri, 03 Oct 2025 00:10:32 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4255d8ab8b0sm6653233f8f.18.2025.10.03.00.10.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Oct 2025 00:10:31 -0700 (PDT)
+Date: Fri, 3 Oct 2025 10:10:27 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 15/16] staging: rtl8723bs: merge nested if conditions
+ for clarity and tab problems
+Message-ID: <aN924wqH--MgGEak@stanley.mountain>
+References: <20251002172304.1083601-1-vivek.balachandhar@gmail.com>
+ <20251002172304.1083601-16-vivek.balachandhar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
- <20250916-luo-pci-v2-2-c494053c3c08@kernel.org> <20250929174627.GI2695987@ziepe.ca>
- <CAF8kJuN2-Y7YZkY5PrerK=AdTUfsaX0140-yJJSTnNORucYfqQ@mail.gmail.com> <20250930164705.GR2695987@ziepe.ca>
-In-Reply-To: <20250930164705.GR2695987@ziepe.ca>
-From: Chris Li <chrisl@kernel.org>
-Date: Fri, 3 Oct 2025 00:09:15 -0700
-X-Gmail-Original-Message-ID: <CACePvbXSc=k-ivLE-ukuXaKO73mDm=tZBA82c6W+6-i3NnJriw@mail.gmail.com>
-X-Gm-Features: AS18NWAqOUXihtz1zjCgVeWOSSOOP1uiZ1AkbQp8d_YOzMx9hgHpSXuyfXEL7Bo
-Message-ID: <CACePvbXSc=k-ivLE-ukuXaKO73mDm=tZBA82c6W+6-i3NnJriw@mail.gmail.com>
-Subject: Re: [PATCH v2 02/10] PCI/LUO: Create requested liveupdate device list
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	David Matlack <dmatlack@google.com>, Pasha Tatashin <tatashin@google.com>, 
-	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>, 
-	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
-	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
-	Leon Romanovsky <leon@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251002172304.1083601-16-vivek.balachandhar@gmail.com>
 
-On Tue, Sep 30, 2025 at 9:47=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca> wrot=
-e:
->
-> On Mon, Sep 29, 2025 at 07:13:51PM -0700, Chris Li wrote:
-> > Can you elaborate? This is not preserving everything, for repserveding
-> > bus master, only the device and the parent PCI bridge are added to the
-> > requested_devies list. That is done in the
-> > build_liveupdate_devices(), the device is added to the listhead pass
-> > into the function. So it matches the "their related hierarchy" part.
-> > Can you explain what unnecessary device was preserved in this?
->
-> I expected an exported function to request a pci device be preserved
-> and to populate a tracking list linked to a luo session when that
-> function is called.
+On Thu, Oct 02, 2025 at 05:23:03PM +0000, Vivek BalachandharTN wrote:
+> Combine nested if conditions for clarity and fix tab indentation in one
+> place to match kernel coding style.
+> 
+> No functional changes.
+> 
+> Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+> ---
+>  drivers/staging/rtl8723bs/core/rtw_mlme.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+> index aa842905a467..f17b16fe8819 100644
+> --- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
+> +++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+> @@ -1254,8 +1254,8 @@ void rtw_joinbss_event_prehandle(struct adapter *adapter, u8 *pbuf)
+>  						rtw_free_stainfo(adapter,  pcur_sta);
+>  
+>  					ptarget_wlan = rtw_find_network(&pmlmepriv->scanned_queue, pnetwork->network.mac_address);
+> -					if (check_fwstate(pmlmepriv, WIFI_STATION_STATE) == true) {
+> -					    if (ptarget_wlan)
+> +					if (check_fwstate(pmlmepriv, WIFI_STATION_STATE) == true &&
+> +					    ptarget_wlan) {
+>  						ptarget_wlan->fixed = true;
+>  					}
 
-The current PCI subsystem is designed outside of memfd.
+Delete the curly braces as well.
 
-As for the request PCI device function and that function populated a
-liveupdate device list. It has been considered and the current
-approach is simpler.  The reason is that, if you want to populate the
-device list, you will have to know about all device dependent rules,
-devices depend on parent bridge, the VF depends on PF. Because the
-request can be canceled as well before reaching the live update
-prepare(). Those derived dependent flags need to be tracked and
-reference counted. Even worse, it needs to be reference counted by
-each liveupdate feature. e.g. LU_BUSMASTER vs LU_SRIOV vs LU_DMA each
-need to have a reference counter, so it can remove that dependent flag
-when its refcount drops to zero.
+regards,
+dan carpenter
 
-> This flags and then search over all the buses seems, IDK, strange and
-> should probably be justified.
-
-The current approach is much simpler when request and unrequest a PCI
-device. Don't need a recursive walk parent or the PF relationship.
-In prepare() it only walks the PCI root bus tree top down one pass.
-That is the only place to deal with dependent relationships. It is
-simpler and doesn't need to maintain per live update dependent feature
-refcount.
-
-That is my justification.
-
-Chris
 
