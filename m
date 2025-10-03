@@ -1,177 +1,165 @@
-Return-Path: <linux-kernel+bounces-841023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3502ABB5FB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 08:30:17 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C77EABB5FB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 08:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6DFB19E59D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 06:30:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 448163446B8
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 06:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506711FECAB;
-	Fri,  3 Oct 2025 06:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FC320298C;
+	Fri,  3 Oct 2025 06:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HwRd5rGG"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hMU7L1Ij"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF1B1E7C19
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 06:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7125F19006B
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 06:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759473011; cv=none; b=c+kbBET6Mby1J/4UEcRh5xhUBU+ow2N/6dDcx0STYxXMZ/zaL/vnD6yuNEgLJQowNz7SItcvC750sARp2uo4OZNJB+TGqDBWLEwYuytRk1wSjJ2wHbIPWLpyNadlPM8XT1iA91b18vx9PFB/IPyDF0GUbKwDp78fxTvg7pLHaNg=
+	t=1759473018; cv=none; b=k/iP5D+u0ZgQA43QieUIhuODkq4rnencb55cfqXHcyQBFZvYLAwQf/tkDjaSeZq9gd+mAjg9TwEe6XjrhJA8YgkMi6t4nyeNc/uoXovET35PpE6EJ/beUETOk/lsP8PB6aEJSs5RDfPUcexUZclpp9aQUCNgUA+7hlR0fk1ZETU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759473011; c=relaxed/simple;
-	bh=J5hyQtasdpeeYSX5uUTCjqcrxsgBRfn6Zur7d/+DBiw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IFdGYQOqa+vpT0DYQFnhBp8nD7J9VBgxJKrzX84KE55+aKReJ5lcPUcOW3YggTYs/0oi0Y4RogTltEs5Y+egCUyXTPnPN0Fs4W2KGrlAq+NE28AiK7egy+uq6FnleYFyzr2NDMpZkCaeiDwL1jhhb41R5dvZKPPmn9BOiubn6Qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HwRd5rGG; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-62ecd3c21d3so3350861a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 23:30:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759473007; x=1760077807; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XkLFiACyw+pxXQ9Sqz5bYmdEFhy/428iFAOlJwo0q5k=;
-        b=HwRd5rGGJ2tAhRGDqCHKI/U+jtu++m8Ylwbe9r5GuA+tVPFfPBsaD67N9JgTcfe5af
-         ED9z0ZCCpvVOIP/j1Oq73a8OiC81230kpBBdzbzzYhbuQYlft40UPdpzjRc8zAaNyvfd
-         A1g6Xv0RV0I+o2xjmRsebOjh6HFwr+l9VxPdAKp8FI+ZF0f4ePMr4oHdCeW4eqlMR6y+
-         3l3oait4JHEnzajuktlPH/QSr0qaBtjIWcWV2BRTs9HyvOCox/9DmGximo+NDUpjv39n
-         tX+MBMAWiTkwAJ1Ot9XQbqraeDlCkjf/fyCXsEBZ0d5cgVgru5JPtrgvxfGPOEKTaUCN
-         MHhA==
+	s=arc-20240116; t=1759473018; c=relaxed/simple;
+	bh=eMBSmpZnqrRnkDKn+p2xZ6jv4I9lQldCRuwyBBKDowg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uoZmQDELK/euE2sDuo+qId7k2i2jqAh+ayw8GPTLEVL7AWdbnHeuaR8a1KpZuJecQU2JXSVc37oFRFRCtmJv9hcRzl9CDB5Jpal5g8sP7Vi4mXh1EBqfp6brxGrBARGMwVXAh1qhh2TVbXCCK68wrBZN/AAAfeSl+Hc1QTSSrKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hMU7L1Ij; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759473015;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=eMBSmpZnqrRnkDKn+p2xZ6jv4I9lQldCRuwyBBKDowg=;
+	b=hMU7L1Ij6iJn9nFHKASLFtH0zmqdYO9nbjyNNw/ZpXec9q1QBFHw++zjXJNVh8oMBnXrh/
+	yYJBoGXZyhoJKPccqbX4Pv4cJndKYQBkCIgz5NqYxdUXL59RxZrxI/Q9CSGlQ19g+1POtw
+	FcLCCxobtAgLAiDy3CTattkQVa17778=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-22-igdXe1MPO4uMDXx3IE-SmQ-1; Fri, 03 Oct 2025 02:30:14 -0400
+X-MC-Unique: igdXe1MPO4uMDXx3IE-SmQ-1
+X-Mimecast-MFC-AGG-ID: igdXe1MPO4uMDXx3IE-SmQ_1759473013
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3ecdd80ea44so1448527f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 23:30:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759473007; x=1760077807;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XkLFiACyw+pxXQ9Sqz5bYmdEFhy/428iFAOlJwo0q5k=;
-        b=L3zg7ZlDHcZvzB4AtrO/DfImES0uLKQuD/aJDDd9ojAikktpaLyo4Kwc6J7h+NtihD
-         FqD8satsHXLqAMmUyve6thA/hw10HvDxWiBdqcQ3JWPM7LqKQ3muyIrzBG6MMuRAo0OC
-         DZREJRIhN2rLrte7vRyOYdavZ7CGqmVpV5BpCUUR3A/TcB1NB74lQDvghCE8zxeG+3pI
-         twQJ2kDEUxUdRXv9yT0UcA7rZ9adnHTnP9tfXR2lb64RJYbPFMhI7Ll2WX/ozl4p7/vt
-         uXMrZHDLbXKgHE7UEZOCFzlu8DtfKZ8d6p3E7Fk8PfBEfPgxi2dbQRCa2zVsydeNjFxq
-         5FMA==
-X-Forwarded-Encrypted: i=1; AJvYcCVEQAfS1DNWe0EvRff0itURk915/cOPYGkiO4crXSecK5I3/EsuochfUdEYmwyoht/dqzdLFxs14zpCpxE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNRWinsK+3wKxjZtBzQSD7IzB3BX6fN0RRo2KC/NPYWpCkxQrA
-	dkciyxBtcKvzcolzx0LVfxsiT2sF4LIba+7W52Duc8KN2uusOG7TeVT764ay14kf2ik=
-X-Gm-Gg: ASbGncvMIOvDtQYzMR0mpopZ9MSVEw+/o0hCiUFEHUwUdjYBGjoVBDPAfswRhnpKnaB
-	ZQanlZVt3dU4qIfAbK5Rwt93ynG5Ir+xY1lOYfj2x+uD/ZJxjb0IQcQM6eBucqPeF/Uc2lStEiv
-	qOUNsYu86Sda9G71+LdesQP7N7bF6mcnjNx8m9XCTHqCcYf8ZwSvVySlNn1UDZyz1Ao4dqeV6U0
-	cZv+2pOaTrEfV3z114lM3HlWva7QXOqlVgqPeTHG6KmNVeOMNWunkEM+jB82RVDLuCpT6aFNyTt
-	1tloqqCsQ9qFhItvrZyq0eGyGdUC24oBO9mgd6aJ6Z+q3TGtHpO6emt4iSW6pltF3+Pf9CMUBaj
-	FdHfLKvIJaCWVQl73PJwocG70lvmOCJjKG2Pj8iJm+GKAG8csGhG/sNPf5y/2
-X-Google-Smtp-Source: AGHT+IGXX832rzQ3SHMm9cxe/AbXuwPv3O0q1qi/7SX7y0yjjhFdzCNvPBXopZojYDFGU05IQJ2DLQ==
-X-Received: by 2002:a17:907:3e93:b0:b04:6fc2:ebb9 with SMTP id a640c23a62f3a-b49c393aa02mr220162166b.45.1759473007029;
-        Thu, 02 Oct 2025 23:30:07 -0700 (PDT)
-Received: from localhost (109-81-95-234.rct.o2.cz. [109.81.95.234])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b4869c4c1f6sm365114166b.78.2025.10.02.23.30.06
+        d=1e100.net; s=20230601; t=1759473013; x=1760077813;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eMBSmpZnqrRnkDKn+p2xZ6jv4I9lQldCRuwyBBKDowg=;
+        b=MsWdpg9l0Y9fOguABcSfRJ1tGGkjSBnSeRHU7zKvIx4FByCgPaWotIwR0Zp1awRPKW
+         d+qFgDfV2dTcA1JUmH0qvpac8WgyFilk02fFMDl5nuw2VjDutZ2AGbDPZ+vNv4q3JbI9
+         9dKfbKIa7yAjJepD4VP93sSd5oyjmUAD/oS3P2zQCvDYaxlasQNcHMs75nnxx0/CudQ6
+         WXmVFuYMYVcTMZndWzPghH0XTJEB+XJimalZsd8s1Wc1uQlNyjGYMkmnLJtucqJHOopf
+         TNRRTqFoxylMIA5x8CHpPav1HKAPTKrWIZArQeIvG9AuCCRBp1ljbNGqPDSCbxaiIY0H
+         mt0g==
+X-Forwarded-Encrypted: i=1; AJvYcCVr/Zg4V3yNemx0PCAwLv+0z6ZVBlTli7RJS0SYTVvIo+o0+o89e9TkwU1Kc7DIBnx+m8acps2Cyg0btZE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzefgymsQA6SNuljE6EbzVzFO03fNqb8q3oDB1o8J6KDxINE/eJ
+	KkOQ3egyvRyAxRLhZVrGo5GJz35KCEc4s6xaEEK5uPyVWAompgmHKM94zgcBztMs2rQz5hmO9wZ
+	YW5s6GdNuzo5vDkRBOUyzRJNICs9bzQ/CpXQPLChLqpsNscOHLyQH0T9j7QKQp+eZDEz1/R7uWn
+	AI
+X-Gm-Gg: ASbGncu/BM8uMUcOvVDptxxZr1uDM8HcYThYqjw2nvDSZ8QbM4pIOcKJWbZaECkbhPH
+	vSiVz585nKAGD1wWIUHZB1mHI1QJ4TN6Xg1fPaoChQERXeN6Afw+iac3swkYaA9E/XBZnhjzRyz
+	DhPFMHi/Gtwf6zOH8qcpEY9EDowShSOmnQHESsYmN1SJLZaFFCNltUVd10Ztd/HJMSCFMQnRdsu
+	UrpvYCx4AOKQKSr6f+kvv1nfhJ2wMa+O2n4Qs5OYNTM9nWxLQx+mlJTmP4FCGOE3Tgi9OzbLxKN
+	lnUopuz4dB7o0ng2qgbiN+4Sruciw/dgswosWuEg3hsTPDvwNvGFwZTmciwEYxarQOgp3G4=
+X-Received: by 2002:a05:6000:40dc:b0:3ec:dd27:dfa3 with SMTP id ffacd0b85a97d-42566c5354dmr1300945f8f.25.1759473012851;
+        Thu, 02 Oct 2025 23:30:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IELR1JYmclf4EKUfrFyht98SyMCf4qSX9xmzaypmk8A7lQqrolOq939RWKtbUXsUaroq0t3UA==
+X-Received: by 2002:a05:6000:40dc:b0:3ec:dd27:dfa3 with SMTP id ffacd0b85a97d-42566c5354dmr1300929f8f.25.1759473012477;
+        Thu, 02 Oct 2025 23:30:12 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.40])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8a6b40sm6443426f8f.2.2025.10.02.23.30.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 23:30:06 -0700 (PDT)
-Date: Fri, 3 Oct 2025 08:30:05 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 10/10] mm: kvmalloc: Add non-blocking support for
- vmalloc
-Message-ID: <aN9tbS3RkEqm2tzP@tiehlicka>
-References: <20251001192647.195204-1-urezki@gmail.com>
- <20251001192647.195204-11-urezki@gmail.com>
+        Thu, 02 Oct 2025 23:30:12 -0700 (PDT)
+Message-ID: <3c55441187b869b5bb07b74ef88c10bfd51f9fb1.camel@redhat.com>
+Subject: Re: [PATCH] rv: Add signal reactor
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Steven
+ Rostedt	 <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Date: Fri, 03 Oct 2025 08:30:10 +0200
+In-Reply-To: <87ikgxqrna.fsf@yellow.woof>
+References: <20250919-rv-reactor-signal-v1-1-fb0012034158@linutronix.de>
+	 <d0aaaf1f47f0d948b60b0575e179564e3c024188.camel@redhat.com>
+	 <20250922162900.eNwI7CS0@linutronix.de>
+	 <ced1cdde298d105ba2d789e4e4704caac8dec518.camel@redhat.com>
+	 <6a5fde33-b3e3-44e2-8ea5-5f4cf350cf35@linutronix.de>
+	 <87ikgxqrna.fsf@yellow.woof>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0BrZXJuZWwub3JnPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmjKX2MCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfIQuAD+JulczTN6l7oJjyroySU55Fbjdvo52xiYYlMjPG7dCTsBAMFI7dSL5zg98I+8
+ cXY1J7kyNsY6/dcipqBM4RMaxXsOtCRHYWJyaWVsZSBNb25hY28gPGdtb25hY29AcmVkaGF0LmNvb
+ T6InAQTFgoARAIbAwUJBaOagAULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBMrKEfgLgd0WcK
+ eo9u9KbElYeE3yBQJoymCyAhkBAAoJEO9KbElYeE3yjX4BAJ/ETNnlHn8OjZPT77xGmal9kbT1bC1
+ 7DfrYVISWV2Y1AP9HdAMhWNAvtCtN2S1beYjNybuK6IzWYcFfeOV+OBWRDQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251001192647.195204-11-urezki@gmail.com>
 
-On Wed 01-10-25 21:26:46, Uladzislau Rezki wrote:
-> Extend __kvmalloc_node_noprof() to handle non-blocking GFP flags
-> (GFP_NOWAIT and GFP_ATOMIC). Previously such flags were rejected,
-> returning NULL. With this change:
-> 
-> - kvmalloc() can fall back to vmalloc() if non-blocking contexts;
-> - for non-blocking allocations the VM_ALLOW_HUGE_VMAP option is
->   disabled, since the huge mapping path still contains might_sleep();
-> - documentation update to reflect that GFP_NOWAIT and GFP_ATOMIC
->   are now supported.
-> 
-> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+2025-10-02T14:56:23Z Nam Cao <namcao@linutronix.de>:
 
-Acked-by: Michal Hocko <mhocko@suse.com>
-Thanks!
+> Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de> writes:
+>> I am wondering if it would make sense to add a new tracepoint that
+>> fires in addition of the reactors. That would allow multiple
+>> simultaneous consumers and also bespoke handlers in userspace.
+>
+> We do have tracepoints for each monitor in: kernel/trace/rv/rv_trace.h
+>
+> And yeah, I think it is a nice idea for all the consumers to use these
+> tracepoints intead (that includes rtapp testing, and also the existing
+> reactors). It would simplify things, as the monitors do not have to
+> worry about the reactors, they only need to invoke tracepoints.
+>
+> But this also makes me think about the necessity of the existing
+> reactors. What do they offer that tracepoints do not? Myself I almost
+> never use the reactors, so I'm thinking about removing them. But maybe
+> @Gabriele has objections?
 
-> ---
->  mm/slub.c | 19 +++++++++++++------
->  1 file changed, 13 insertions(+), 6 deletions(-)
-> 
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 584a5ff1828b..3de0719e24e9 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -7018,7 +7018,7 @@ static gfp_t kmalloc_gfp_adjust(gfp_t flags, size_t size)
->   * Uses kmalloc to get the memory but if the allocation fails then falls back
->   * to the vmalloc allocator. Use kvfree for freeing the memory.
->   *
-> - * GFP_NOWAIT and GFP_ATOMIC are not supported, neither is the __GFP_NORETRY modifier.
-> + * GFP_NOWAIT and GFP_ATOMIC are supported, the __GFP_NORETRY modifier is not.
->   * __GFP_RETRY_MAYFAIL is supported, and it should be used only if kmalloc is
->   * preferable to the vmalloc fallback, due to visible performance drawbacks.
->   *
-> @@ -7027,6 +7027,7 @@ static gfp_t kmalloc_gfp_adjust(gfp_t flags, size_t size)
->  void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), unsigned long align,
->  			     gfp_t flags, int node)
->  {
-> +	bool allow_block;
->  	void *ret;
->  
->  	/*
-> @@ -7039,16 +7040,22 @@ void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), unsigned long align,
->  	if (ret || size <= PAGE_SIZE)
->  		return ret;
->  
-> -	/* non-sleeping allocations are not supported by vmalloc */
-> -	if (!gfpflags_allow_blocking(flags))
-> -		return NULL;
-> -
->  	/* Don't even allow crazy sizes */
->  	if (unlikely(size > INT_MAX)) {
->  		WARN_ON_ONCE(!(flags & __GFP_NOWARN));
->  		return NULL;
->  	}
->  
-> +	/*
-> +	 * For non-blocking the VM_ALLOW_HUGE_VMAP is not used
-> +	 * because the huge-mapping path in vmalloc contains at
-> +	 * least one might_sleep() call.
-> +	 *
-> +	 * TODO: Revise huge-mapping path to support non-blocking
-> +	 * flags.
-> +	 */
-> +	allow_block = gfpflags_allow_blocking(flags);
-> +
->  	/*
->  	 * kvmalloc() can always use VM_ALLOW_HUGE_VMAP,
->  	 * since the callers already cannot assume anything
-> @@ -7056,7 +7063,7 @@ void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), unsigned long align,
->  	 * protection games.
->  	 */
->  	return __vmalloc_node_range_noprof(size, align, VMALLOC_START, VMALLOC_END,
-> -			flags, PAGE_KERNEL, VM_ALLOW_HUGE_VMAP,
-> +			flags, PAGE_KERNEL, allow_block ? VM_ALLOW_HUGE_VMAP:0,
->  			node, __builtin_return_address(0));
->  }
->  EXPORT_SYMBOL(__kvmalloc_node_noprof);
-> -- 
-> 2.47.3
+Well, many use cases might be better off with tracepoints, but reactors do
+things tracepoints cannot really do.
+Printk is much faster (and perhaps more reliable) than the trace buffer for
+printing, panic can be used to gather a kernel dump.
+One may just attach to tracepoints via libtracefs/BPF and do most of the th=
+ings
+you'd want to do with a new reactor, but I see reactors much easier to use =
+from
+scripts, for instance.
 
--- 
-Michal Hocko
-SUSE Labs
+LTLs don't benefit as much as they don't print any additional information v=
+ia
+reactors, but DA/HA give hints on what's wrong.
+
+I wouldn't get rid of reactors until they become a huge maintenance burden,=
+ but
+probably we could think about it twice before extending or making them more
+complex.
+
+For instance, what's the exact use case of the signal reactor? Isn't it sim=
+pler
+to do everything in BPF? Is the signal needed at all or something else (e.g=
+.
+perf) would do the job?
+
+Thoughts?
+
+Gabriele
+
 
