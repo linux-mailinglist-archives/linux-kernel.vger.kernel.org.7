@@ -1,278 +1,136 @@
-Return-Path: <linux-kernel+bounces-840886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE4DEBB5A8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:15:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC2CEBB5A8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:15:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5FA514E64D5
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:15:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81AA93B47B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A8C2AE77;
-	Fri,  3 Oct 2025 00:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28AF2C18A;
+	Fri,  3 Oct 2025 00:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HFKXl0t4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bBnkyIAM"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5EA522F
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 00:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD5E2AF1B
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 00:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759450528; cv=none; b=i9Lp29URJIDgSG9AcQ1DxGjOt5GOmJ0YDHBQqwgYtlVqBGONpPLkIOFziQHIIQxaKeIduIJbDIrtixbZwpek6kdId3+7BYLXlMCfdL6SaR9mLkc5+Tit5+9uRj/LQ8uBTpxzhB8DXruRj7wQyolIzWc5BGd0kYmy/5u1xHGIzn0=
+	t=1759450535; cv=none; b=ZKnihQgkRZXHtrI2PAPpJbmjv6B4ZtOTucwWVScJTAb5WvTeGrpBEpmSro0XvuJFKrqgDA1AsdtYY67UfHDAJS0q2/w3TByLDdHnCDy2Jt3bu/jBYsrFsyuvxjBOLS4V0Bt5SNLcBDx0qKMbJA7GnOjZS1Hcuz+9tVuis5OXx+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759450528; c=relaxed/simple;
-	bh=k7DXWVilqzn4Gw7VQmfBRIWQr3TA4Ok/nE/ndBfJL/s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NitoBdpnFTVG12dKW+feKrhAuLuDlvhSqoL0y73MNEH61je2ytHJGpmQ5apSxtHE2XTEJuvovWMx/t+vDnIyA7Uqj0e33CxR/MbtxUw+xc7eTTHrT3MiESeTI8JM6pzalE6s+3xzdb7xSjG6S6NhOULmbHW1D1k1TlpUK0qD67s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HFKXl0t4; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759450522;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XbG34W5wLU8kMo+w26HTYJSkVYz8ACAbrUj0TVdxCOs=;
-	b=HFKXl0t4HD0iIiG8WaA0+dQjsLP9sq20+UGYgiaSL6rrPzpxbDLScOX1b+kFMAWKN0fEs5
-	FnDa30KUl9mYwWbdFmCz0H/oCwxbhoa+oWdSyPT9Cmd5wn7j9Svl2FTKV8m6XvN9QE7Baa
-	He6qq0854NCqwvhPYtePslNnOT/D+5Y=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-527-DBrXNzFBP3GIXM1NWwX0Eg-1; Thu, 02 Oct 2025 20:15:21 -0400
-X-MC-Unique: DBrXNzFBP3GIXM1NWwX0Eg-1
-X-Mimecast-MFC-AGG-ID: DBrXNzFBP3GIXM1NWwX0Eg_1759450520
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b5529da7771so1075985a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 17:15:20 -0700 (PDT)
+	s=arc-20240116; t=1759450535; c=relaxed/simple;
+	bh=IbVTq6DVtLnDtClIa2UsIoSHwO4Q78sJ2jUNJFJCgqo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=EiW4WOzblrxhqbbitwZW0Yb1oUL7qZC0Ey2tsCBoVh4ym10D7y2VL0x/+p4hP1RfqdTjzBAY2Cgp7xrCWDRXuluiuAiE2yZf6N7ll80MjXBM5kPNaqfJmJ8Dr9MeVULZ8V/TEqaCk5STWom8nEo0I2v5n8QqGjnDv9L8dpIcdJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bBnkyIAM; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-33428befd39so3332203a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 17:15:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759450529; x=1760055329; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OJUpzprtnJ3Qq4004mJgfAwQ4e348MX3F4zrqc0eQ2Q=;
+        b=bBnkyIAMRd/6AEllKx6lzoC4aBr/LH6+BWA6knSFwHxPHqUn6PJOn1cRAFA7vDzGED
+         2WPWBM59qFwW/kaEbECluxKvy3chMH+A3q4skzai6cLp4AhyZO9nBdU+huFulGgFP57r
+         w2NIft2R4sMTsu+w/h0i02O9w7qm5Zfplu+pL0pf1XTVgy8sexHKvBgD9HJSe/vPT5Rj
+         hsQlRdadDAq6raiNEDmuhnR3PuIphT4hjE5TiliJ2bySw8xUZjnm9AKivdRudPG453WP
+         lfrYzan6dn1TPIkZC2wl6iRL+KA1iqbHZtRSQU4RU+aZXX8ZNSKQUh6tMB54NnvRqpzV
+         wfxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759450520; x=1760055320;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XbG34W5wLU8kMo+w26HTYJSkVYz8ACAbrUj0TVdxCOs=;
-        b=RpD0LIQCFCTrwEvobazS7w+/OyfAXoFVq6vNCIZ+3wYAdvmwxHUxIJyCeoIwg/9+On
-         kQhvYC9MP6dQCPtMCS4qvvGKGmPUMnLqEAG6FhYOgzY1NZrx4W/5AdRZ0iQeSHvI2m4R
-         8KEAdu75IsAZYvFoLjT2BOR9ONJzO6pnX7L7myQ07Wf+io5nvkT80Rr+5SujRHInIvy5
-         iPIY9jsVOR7imjUw7n58m3pDELYbsC+ciC2qFfK7x7Gazm4HQGULJtXSmf8XRVC1nYwA
-         wc+eTRJHLC3QOt67Z+j3PVpiV5yhqnjLSpJucIkE3ghfUnvv3PsHNkandZX+TBRsiXk4
-         zZrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSZq9CDAVhVetYf1EE9xu9HqqUt20y8YODtapaXuiJJMAM4hn2BaLksQ+xIbJqFZxo7km2T1T+zuuUUDg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMp21pVyOYfwf3oBiOHVcN7NUWZQoT/PQHKG4b0Zt/NP1tammu
-	vpIiNZk7ULybi3OW2slF4YOpnva0aiJlSWUzQk3WhXz94eilt6Lx6CX94HBEtLL/di0SvuETjyE
-	C4L6OYGNppg1Kku3roBTGetm9YV4vVbhbQ6dJPXelRfQake/P/yX1zNUkfTSW0V+Qlg==
-X-Gm-Gg: ASbGncu5XwJ0ZZRIXT9MOpmBP4aiMRqnRTJpl3YpeFDc4+yofWbAttEshuoHlREoj9Q
-	p0bhinEQl83jARZe5XEH+52b+s5pZLkemFjoiQOysm8oVqizrZV0SmoYTLEDAyi7o6tP3/JjuzM
-	gZZuZhFYPKY9YG6GhOEVvwAGN2nk4vQCyoXUqZ7YzXTumhzD3MnUcP6T8spm3gvq5a9SmQDTZ5J
-	2N0hQxFXJDmWwt6QwdNNcEualA/6s+2F/WK91RW9QZMBHpE1DJsmxDw8Ckz2DtAw9u3Dk2ILtQ0
-	IHQPmHjzTDRzWers3insoJ0C/UhLosVQLBUJN20lTAjupctXMnT5gSbTLd/MoUdODehk6Eoeb1u
-	GufN7lvY8zQ==
-X-Received: by 2002:a05:6a20:7291:b0:251:a106:d96c with SMTP id adf61e73a8af0-32b61dff63fmr1543824637.10.1759450519867;
-        Thu, 02 Oct 2025 17:15:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE0md3EjClymeLVNxoCZz4Jj91+vv+JPhX5FV8arUGQC8pDP1Ea2wN2DR0g85Dqyra6o57e1w==
-X-Received: by 2002:a05:6a20:7291:b0:251:a106:d96c with SMTP id adf61e73a8af0-32b61dff63fmr1543784637.10.1759450519408;
-        Thu, 02 Oct 2025 17:15:19 -0700 (PDT)
-Received: from [192.168.68.51] (n175-34-62-5.mrk21.qld.optusnet.com.au. [175.34.62.5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b01f9daccsm3112663b3a.16.2025.10.02.17.15.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Oct 2025 17:15:18 -0700 (PDT)
-Message-ID: <3a2f6807-9a49-4976-a4d7-7577756c3c26@redhat.com>
-Date: Fri, 3 Oct 2025 10:15:04 +1000
+        d=1e100.net; s=20230601; t=1759450529; x=1760055329;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OJUpzprtnJ3Qq4004mJgfAwQ4e348MX3F4zrqc0eQ2Q=;
+        b=LMStbjPz5ZlSx6AZ+S50GL98TBQNb63KRU+Z3wAkbdWeHax/tHhrHIaTK86d7h4rjs
+         8tcc9y5bfEuoyV3PR3sWbKEfzufIqXUC0WzMc4eZF6Jc209rihKKABcaZhnEaNjVGQux
+         qC8GsgxbckeTQ1OBxN7QShxFW1p2ZDWq9JR6tntif4B0FgCr1B4vVtquu2bWHRSdpn9r
+         6ggyiljjXtOdQrZB54LpNCgApOzp/Nv5qTTGXGdAvvb4o5s+M/DPii2rYyXb8QfLPS1j
+         NRv5BL8OZl69u3DO7Bk4LSQ8e2eSi6Am/EUOlkcKj0OrCdkxF6WMWBGS59b0AuThYmEF
+         0K4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWDVPVT85kWtc2dltqC7P9NwtpiXdtjLAHTp41uEcRSR0scMJE4QXgPs9v8Um03Gq3LynOeDgaIwicjjrY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHpJidkAI0T1SwTrKqbq/MsFtlu2UfIPVA63yXpx3pAROA378Z
+	Cf8wXZkBOwJ3Z8AKLA7J18zbbRC6Y0DdS4F15qRn4DBzA0USARUyhZXTaZQ8BuEDnlHfOEc/kSp
+	kdaIgPQ==
+X-Google-Smtp-Source: AGHT+IFoNlT1kyXEnjCQ5Rd9imtmnIPgNiqF4WBj65hoI/jm+258z8Wqr//zh7Y7/q1Ccc9bt47eQUCrXCQ=
+X-Received: from pjbcv16.prod.google.com ([2002:a17:90a:fd10:b0:32d:df7e:66c2])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1e09:b0:32e:70f5:6988
+ with SMTP id 98e67ed59e1d1-339c27b3cb3mr1171811a91.32.1759450529204; Thu, 02
+ Oct 2025 17:15:29 -0700 (PDT)
+Date: Thu, 2 Oct 2025 17:15:27 -0700
+In-Reply-To: <68dee81d79199_296d74294b9@iweiny-mobl.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/29] ACPI / PPTT: Add a helper to fill a cpumask from
- a processor container
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
-Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- fenghuay@nvidia.com, baisheng.gao@unisoc.com,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
- <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250910204309.20751-1-james.morse@arm.com>
- <20250910204309.20751-2-james.morse@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20250910204309.20751-2-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <CAGtprH9kwV1RCu9j6LqToa5M97_aidGN2Lc2XveQdeR799SK6A@mail.gmail.com>
+ <aIdHdCzhrXtwVqAO@yzhao56-desk.sh.intel.com> <CAGtprH-xGHGfieOCV2xJen+GG66rVrpFw_s9jdWABuLQ2hos5A@mail.gmail.com>
+ <aIgl7pl5ZiEJKpwk@yzhao56-desk.sh.intel.com> <6888f7e4129b9_ec573294fa@iweiny-mobl.notmuch>
+ <aJFOt64k2EFjaufd@google.com> <CAGtprH9ELoYmwA+brSx-kWH5qSK==u8huW=4otEZ5evu_GTvtQ@mail.gmail.com>
+ <aJJimk8FnfnYaZ2j@google.com> <CAGtprH9JifhhmTdseXLi9ax_imnY5b=K_+_bhkTXKSaW8VMFRQ@mail.gmail.com>
+ <68dee81d79199_296d74294b9@iweiny-mobl.notmuch>
+Message-ID: <aN8Vn9iD7OMzspp5@google.com>
+Subject: Re: [RFC PATCH] KVM: TDX: Decouple TDX init mem region from kvm_gmem_populate()
+From: Sean Christopherson <seanjc@google.com>
+To: Ira Weiny <ira.weiny@intel.com>
+Cc: Vishal Annapurve <vannapurve@google.com>, Yan Zhao <yan.y.zhao@intel.com>, 
+	Michael Roth <michael.roth@amd.com>, pbonzini@redhat.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rick.p.edgecombe@intel.com, kai.huang@intel.com, 
+	adrian.hunter@intel.com, reinette.chatre@intel.com, xiaoyao.li@intel.com, 
+	tony.lindgren@intel.com, binbin.wu@linux.intel.com, dmatlack@google.com, 
+	isaku.yamahata@intel.com, david@redhat.com, ackerleytng@google.com, 
+	tabba@google.com, chao.p.peng@intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/11/25 6:42 AM, James Morse wrote:
-> The ACPI MPAM table uses the UID of a processor container specified in
-> the PPTT to indicate the subset of CPUs and cache topology that can
-> access each MPAM System Component (MSC).
-> 
-> This information is not directly useful to the kernel. The equivalent
-> cpumask is needed instead.
-> 
-> Add a helper to find the processor container by its id, then walk
-> the possible CPUs to fill a cpumask with the CPUs that have this
-> processor container as a parent.
-> 
-> CC: Dave Martin <dave.martin@arm.com>
-> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> ---
-> Changes since v1:
->   * Replaced commit message with wording from Dave.
->   * Fixed a stray plural.
->   * Moved further down in the file to make use of get_pptt() helper.
->   * Added a break to exit the loop early.
-> 
-> Changes since RFC:
->   * Removed leaf_flag local variable from acpi_pptt_get_cpus_from_container()
-> 
-> Changes since RFC:
->   * Dropped has_leaf_flag dodging of acpi_pptt_leaf_node()
->   * Added missing : in kernel-doc
->   * Made helper return void as this never actually returns an error.
-> ---
->   drivers/acpi/pptt.c  | 83 ++++++++++++++++++++++++++++++++++++++++++++
->   include/linux/acpi.h |  3 ++
->   2 files changed, 86 insertions(+)
-> 
+On Thu, Oct 02, 2025, Ira Weiny wrote:
+> Vishal Annapurve wrote:
+> > On Tue, Aug 5, 2025 at 12:59=E2=80=AFPM Sean Christopherson <seanjc@goo=
+gle.com> wrote:
+> > >
+> > > On Mon, Aug 04, 2025, Vishal Annapurve wrote:
+> > > > On Mon, Aug 4, 2025 at 5:22=E2=80=AFPM Sean Christopherson <seanjc@=
+google.com> wrote:
+> > > > > : 4) For SNP, if src !=3D null, make the target pfn to be shared,=
+ copy
+> > > > > : contents and then make the target pfn back to private.
+> > > > >
+> > > > > Copying from userspace under spinlock (rwlock) is illegal, as acc=
+essing userspace
+> > > > > memory might_fault() and thus might_sleep().
+> > > >
+> > > > I would think that a combination of get_user_pages() and
+> > > > kmap_local_pfn() will prevent this situation of might_fault().
+> > >
+> > > Yes, but if SNP is using get_user_pages(), then it looks an awful lot=
+ like the
+> > > TDX flow, at which point isn't that an argument for keeping populate(=
+)?
+> >=20
+> > Ack, I agree we can't ditch kvm_gmem_populate() for SNP VMs. I am ok
+> > with using it for TDX/CCA VMs with the fixes discussed in this RFC.
+>=20
+> Sean,
+>=20
+> Where did this thread land?  Was there a follow on series which came out
+> of this?  I thought you sent a patch with the suggestions in this thread
+> but I can't find it.
 
-With the description for the return value of acpi_pptt_get_cpus_from_container()
-is dropped since that function doesn't have a return value, as mentioned by
-Stanimir Varbanov.
+Are you referring to "KVM: x86/mmu: TDX post-populate cleanups"[*]?  If so,=
+ my
+goal is to send v3 next week.
 
-Reviewed-by: Gavin Shan <gshan@redhat.com>
+If you're talking about something else, then no idea :-)
 
-Thanks,
-Gavin
-
-
-> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
-> index 54676e3d82dd..1728545d90b2 100644
-> --- a/drivers/acpi/pptt.c
-> +++ b/drivers/acpi/pptt.c
-> @@ -817,3 +817,86 @@ int find_acpi_cpu_topology_hetero_id(unsigned int cpu)
->   	return find_acpi_cpu_topology_tag(cpu, PPTT_ABORT_PACKAGE,
->   					  ACPI_PPTT_ACPI_IDENTICAL);
->   }
-> +
-> +/**
-> + * acpi_pptt_get_child_cpus() - Find all the CPUs below a PPTT processor node
-> + * @table_hdr:		A reference to the PPTT table.
-> + * @parent_node:	A pointer to the processor node in the @table_hdr.
-> + * @cpus:		A cpumask to fill with the CPUs below @parent_node.
-> + *
-> + * Walks up the PPTT from every possible CPU to find if the provided
-> + * @parent_node is a parent of this CPU.
-> + */
-> +static void acpi_pptt_get_child_cpus(struct acpi_table_header *table_hdr,
-> +				     struct acpi_pptt_processor *parent_node,
-> +				     cpumask_t *cpus)
-> +{
-> +	struct acpi_pptt_processor *cpu_node;
-> +	u32 acpi_id;
-> +	int cpu;
-> +
-> +	cpumask_clear(cpus);
-> +
-> +	for_each_possible_cpu(cpu) {
-> +		acpi_id = get_acpi_id_for_cpu(cpu);
-> +		cpu_node = acpi_find_processor_node(table_hdr, acpi_id);
-> +
-> +		while (cpu_node) {
-> +			if (cpu_node == parent_node) {
-> +				cpumask_set_cpu(cpu, cpus);
-> +				break;
-> +			}
-> +			cpu_node = fetch_pptt_node(table_hdr, cpu_node->parent);
-> +		}
-> +	}
-> +}
-> +
-> +/**
-> + * acpi_pptt_get_cpus_from_container() - Populate a cpumask with all CPUs in a
-> + *                                       processor container
-> + * @acpi_cpu_id:	The UID of the processor container.
-> + * @cpus:		The resulting CPU mask.
-> + *
-> + * Find the specified Processor Container, and fill @cpus with all the cpus
-> + * below it.
-> + *
-> + * Not all 'Processor' entries in the PPTT are either a CPU or a Processor
-> + * Container, they may exist purely to describe a Private resource. CPUs
-> + * have to be leaves, so a Processor Container is a non-leaf that has the
-> + * 'ACPI Processor ID valid' flag set.
-> + *
-> + * Return: 0 for a complete walk, or an error if the mask is incomplete.
-> + */
-> +void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus)
-> +{
-> +	struct acpi_pptt_processor *cpu_node;
-> +	struct acpi_table_header *table_hdr;
-> +	struct acpi_subtable_header *entry;
-> +	unsigned long table_end;
-> +	u32 proc_sz;
-> +
-> +	cpumask_clear(cpus);
-> +
-> +	table_hdr = acpi_get_pptt();
-> +	if (!table_hdr)
-> +		return;
-> +
-> +	table_end = (unsigned long)table_hdr + table_hdr->length;
-> +	entry = ACPI_ADD_PTR(struct acpi_subtable_header, table_hdr,
-> +			     sizeof(struct acpi_table_pptt));
-> +	proc_sz = sizeof(struct acpi_pptt_processor);
-> +	while ((unsigned long)entry + proc_sz <= table_end) {
-> +		cpu_node = (struct acpi_pptt_processor *)entry;
-> +		if (entry->type == ACPI_PPTT_TYPE_PROCESSOR &&
-> +		    cpu_node->flags & ACPI_PPTT_ACPI_PROCESSOR_ID_VALID) {
-> +			if (!acpi_pptt_leaf_node(table_hdr, cpu_node)) {
-> +				if (cpu_node->acpi_processor_id == acpi_cpu_id) {
-> +					acpi_pptt_get_child_cpus(table_hdr, cpu_node, cpus);
-> +					break;
-> +				}
-> +			}
-> +		}
-> +		entry = ACPI_ADD_PTR(struct acpi_subtable_header, entry,
-> +				     entry->length);
-> +	}
-> +}
-> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> index 1c5bb1e887cd..f97a9ff678cc 100644
-> --- a/include/linux/acpi.h
-> +++ b/include/linux/acpi.h
-> @@ -1541,6 +1541,7 @@ int find_acpi_cpu_topology(unsigned int cpu, int level);
->   int find_acpi_cpu_topology_cluster(unsigned int cpu);
->   int find_acpi_cpu_topology_package(unsigned int cpu);
->   int find_acpi_cpu_topology_hetero_id(unsigned int cpu);
-> +void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus);
->   #else
->   static inline int acpi_pptt_cpu_is_thread(unsigned int cpu)
->   {
-> @@ -1562,6 +1563,8 @@ static inline int find_acpi_cpu_topology_hetero_id(unsigned int cpu)
->   {
->   	return -EINVAL;
->   }
-> +static inline void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id,
-> +						     cpumask_t *cpus) { }
->   #endif
->   
->   void acpi_arch_init(void);
-
+[*] https://lore.kernel.org/all/20250829000618.351013-1-seanjc@google.com
 
