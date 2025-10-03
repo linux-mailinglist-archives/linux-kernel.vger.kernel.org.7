@@ -1,198 +1,271 @@
-Return-Path: <linux-kernel+bounces-841395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 218E7BB7311
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:35:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5580DBB731D
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:35:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B90F419E4792
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:35:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 727D819E83A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6D9205E26;
-	Fri,  3 Oct 2025 14:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF34242D90;
+	Fri,  3 Oct 2025 14:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mwBoM6R9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3YM1fHvm";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mwBoM6R9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3YM1fHvm"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xhCX0EiJ"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13567139E
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 14:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB41139E
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 14:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759502110; cv=none; b=gXB9Chd6I26QOg0/n8lvjg/0NstS+1VnBZ+VEmmZBNNE9vt3d19XRR22UW9zY1LU4L+HsZwNWYSa+/EIkWJQ6nqQswMvsGAsUcAVr/OBeZYH8SJKRK636Sg7m13VWoOcqonRvly74r476LveYhEgHfVyOGxDlJmf51pj5WJVY+g=
+	t=1759502121; cv=none; b=DtveKgAJ6bmxD+zBS7E4B2UD7sTsk5sH0jQNODNX5vrBHzaEdxJ3BTmxPY7Itym7F1YifEXLWPuNSHoX7IFG8o4ZRNDcrfZ3NujHc4RRdGJ7sMs+8GbVVIZEijSzMzJS8GJKbnZnmsxrsF2TGcbym6MGLyUuWGIh7KWNa2f/obM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759502110; c=relaxed/simple;
-	bh=JwCjEy9JFwSUs/AKLizBo5+UkrmNp+OQevdl0+GmqKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RrnwQDI732zRZlCPdo8Ea090x8Bs7oqMAPJ40tovFQVeiwB+A7Mz/TUaGk4lVeLkXnK30fwZkHbWDbSm0Tc3aDVxYXoR0TwxR8C5C46kmvLiWnqb9saS3skkqWY5uTu1tmW5yShLpz+eMaJXRFP7eH7ccyXUUCeNjAkgifFNXso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mwBoM6R9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3YM1fHvm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mwBoM6R9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3YM1fHvm; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4187E3376C;
-	Fri,  3 Oct 2025 14:35:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759502104;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wJjJnTWacdwBQsFFJOl7NLJxzUidxNMCN27q3O8Qa7U=;
-	b=mwBoM6R9lTGtk7VMu8kayIyLRpWEIkcmoBREmQszgT1pgPW5qoaGv4dIzduaZ8NMYkSSao
-	C+viFm50cAqYfkNKnlaessitUvh963P42Dlqx42lyIEJCI2QbzFlrESWtZcS061EpGHTW5
-	q96qF2e+6cvBKsSKoYzgxdhn+CGvMjI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759502104;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wJjJnTWacdwBQsFFJOl7NLJxzUidxNMCN27q3O8Qa7U=;
-	b=3YM1fHvmtUCgYliapARZ4As4S1HlMaTQAzcXfXqqf/GDoNYxjLOmKl5vy6RAUlR+KJlKtn
-	0Z7vU70xtlnOTsBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=mwBoM6R9;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=3YM1fHvm
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759502104;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wJjJnTWacdwBQsFFJOl7NLJxzUidxNMCN27q3O8Qa7U=;
-	b=mwBoM6R9lTGtk7VMu8kayIyLRpWEIkcmoBREmQszgT1pgPW5qoaGv4dIzduaZ8NMYkSSao
-	C+viFm50cAqYfkNKnlaessitUvh963P42Dlqx42lyIEJCI2QbzFlrESWtZcS061EpGHTW5
-	q96qF2e+6cvBKsSKoYzgxdhn+CGvMjI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759502104;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wJjJnTWacdwBQsFFJOl7NLJxzUidxNMCN27q3O8Qa7U=;
-	b=3YM1fHvmtUCgYliapARZ4As4S1HlMaTQAzcXfXqqf/GDoNYxjLOmKl5vy6RAUlR+KJlKtn
-	0Z7vU70xtlnOTsBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2AAB313AAD;
-	Fri,  3 Oct 2025 14:35:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Xv0uChjf32gsVwAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Fri, 03 Oct 2025 14:35:04 +0000
-Date: Fri, 3 Oct 2025 16:35:02 +0200
-From: David Sterba <dsterba@suse.cz>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] btrfs: Avoid -Wflex-array-member-not-at-end warning
-Message-ID: <20251003143502.GJ4052@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <aN_Zeo7JH9nogwwq@kspp>
+	s=arc-20240116; t=1759502121; c=relaxed/simple;
+	bh=Q4wvhKK1SLC7lyGyvNT/vgYSM+5FbboY05jYhys6UEU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=c/NSw87Jv8Gwv4jPabhZ139Ar5OiG4R/C80rfeFuH+VFismqGDXiwstsHi3CkCSYjUx8QTeLbN0WXjHfB5orn3qwjbgeQosXmC6QPVRjWqHU5azyBrVpA4Jq2LWQGyS01iohOc0sAB2j4W1PVUAYZsXc0oMXGWHdaa9SM1JMstQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xhCX0EiJ; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32ee157b9c9so2088369a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 07:35:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759502119; x=1760106919; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Iz/kuorGnhS1JOjPWbMWU1uMXuAxZjX5KeqruEHo5gU=;
+        b=xhCX0EiJWFYwAOJ9Hx1CL2LrSi4BlAnCg5AMuvjvqS6xZuUsBwXwmKLxgXRgOTiF6r
+         W4OXOTn5Y9+HaEghznHKnFZPcaK+Bu65bV+IG6LiryzVzvgotPDM1KYNfRxM5qpYB1lz
+         k0FulPSDye9EQQuMwcXTSgHTEolLffJFBsaJn/WZ4JJX7B1tcYlZ8kC18TlP5LpEbWfr
+         MxkGAjcwDUXa8SgvxJJ3TUqrZEJyE5OvhMfp1frqyTH5FmvL0OGJyHeACEnEtPQ7FURI
+         wj9cbjhtyz8qQPSJk0bYQS9IA12E7q3wcsA1aDG1iKu4lCKkG3W7qRpVal/A1iZS2cB3
+         veJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759502119; x=1760106919;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Iz/kuorGnhS1JOjPWbMWU1uMXuAxZjX5KeqruEHo5gU=;
+        b=c96gE7esGgYTDKqV7SnH6k2gNzw350n+lmR4OZbV9dnXN/kz6ZhTjLxlSy/P6ODFIv
+         ODMfgtMpBX1GBBGsPwCdy38IvGMiUXm4jhYqPid3tT31VvB61fBmiSTGNLKxMdij3y+2
+         0rNtiyfUhFmrv4yrskjbazYan5L/LRn/xYcLPEqsSayeqt8pTZ1JTZ90p4rj5fgWklfh
+         VNL42v9z53x8AKK9E899tM2OYLRGmBMqzWSwm4KE9LlqtrGjvbwlx28VOUZHyjZ0QqTG
+         eLd40oWf7QRFsABcJBmJDhYY3Rm5z4i1ZmfbgVNXnA7b75ttrV4+/O/rR2cT6lyDTZ1u
+         1F2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVvWLc3evPf/NoIentBsOMzvA+YqOPgrvo0bZyf7XQs/SIP3Ou0qf5GCjurjpImMGwT27EhS+srTg4oOQI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9ZTlgLQ2rEeK1xpUw48YmvTvsQ/oWXzRbu3eGqAbijGaM5WjY
+	cy6tDHCuFI6i6uWC2bFJQ+GTyPogkr8Vg73rCoRQXQmvSHGjdXmJF+BlGNINgy1Y4naXjyKo5AM
+	9z7AgCw==
+X-Google-Smtp-Source: AGHT+IFUN7Oe4z6ZymRlBXqr3L4kG4PYp2PMFWWKwKk/eG/6YDVO+WPrjEYPY3MOxRYFU3HuhZBFs27G7uM=
+X-Received: from pjpy4.prod.google.com ([2002:a17:90a:a404:b0:32b:95bb:dbc])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4a11:b0:32e:e18a:3691
+ with SMTP id 98e67ed59e1d1-339c27b3cf0mr3856927a91.35.1759502118454; Fri, 03
+ Oct 2025 07:35:18 -0700 (PDT)
+Date: Fri, 3 Oct 2025 07:35:16 -0700
+In-Reply-To: <b3c2da681c5bf139e2eaf0ea82c7422f972f6288.1747264138.git.ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aN_Zeo7JH9nogwwq@kspp>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:mid,suse.cz:dkim,suse.cz:replyto]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 4187E3376C
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.21
+Mime-Version: 1.0
+References: <cover.1747264138.git.ackerleytng@google.com> <b3c2da681c5bf139e2eaf0ea82c7422f972f6288.1747264138.git.ackerleytng@google.com>
+Message-ID: <aN_fJEZXo6wkcHOh@google.com>
+Subject: Re: [RFC PATCH v2 29/51] mm: guestmem_hugetlb: Wrap HugeTLB as an
+ allocator for guest_memfd
+From: Sean Christopherson <seanjc@google.com>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
+	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
+	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
+	bfoster@redhat.com, binbin.wu@linux.intel.com, brauner@kernel.org, 
+	catalin.marinas@arm.com, chao.p.peng@intel.com, chenhuacai@kernel.org, 
+	dave.hansen@intel.com, david@redhat.com, dmatlack@google.com, 
+	dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
+	graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
+	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
+	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
+	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
+	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
+	kent.overstreet@linux.dev, kirill.shutemov@intel.com, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
+	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
+	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
+	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
+	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
+	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
+	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
+	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
+	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
+	rppt@kernel.org, shuah@kernel.org, steven.price@arm.com, 
+	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
+	thomas.lendacky@amd.com, usama.arif@bytedance.com, vannapurve@google.com, 
+	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
+	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, 
+	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
+	yuzenghui@huawei.com, zhiquan1.li@intel.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, Oct 03, 2025 at 03:11:06PM +0100, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
+On Wed, May 14, 2025, Ackerley Tng wrote:
+> guestmem_hugetlb is an allocator for guest_memfd. It wraps HugeTLB to
+> provide huge folios for guest_memfd.
 > 
-> Move the conflicting declaration to the end of the corresponding
-> structure. Notice that `struct fs_path` is a flexible structure,
-> this is a structure that contains a flexible-array member (`char
-> inline_buf[];` in this case).
-
-It contains a flexible member but also a padding array and a limit
-calculated for the usable space of inline_buf (FS_PATH_INLINE_SIZE),
-it's not the pattern where flexible array is in the middle of a
-structure and could potentially overwrite other members.
-
-> Fix the following warning:
+> This patch also introduces guestmem_allocator_operations as a set of
+> operations that allocators for guest_memfd can provide. In a later
+> patch, guest_memfd will use these operations to manage pages from an
+> allocator.
 > 
-> fs/btrfs/send.c:181:24: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> The allocator operations are memory-management specific and are placed
+> in mm/ so key mm-specific functions do not have to be exposed
+> unnecessarily.
 
-Otheriwse OK to fix the warning.
+This code doesn't have to be put in mm/, all of the #includes are to <linux/xxx.h>.
+Unless I'm missing something, what you actually want to avoid is _exporting_ mm/
+APIs, and for that all that is needed is ensure the code is built-in to the kernel
+binary, not to kvm.ko.
 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+diff --git a/virt/kvm/Makefile.kvm b/virt/kvm/Makefile.kvm
+index d047d4cf58c9..c18c77e8a638 100644
+--- a/virt/kvm/Makefile.kvm
++++ b/virt/kvm/Makefile.kvm
+@@ -13,3 +13,5 @@ kvm-$(CONFIG_HAVE_KVM_IRQ_ROUTING) += $(KVM)/irqchip.o
+ kvm-$(CONFIG_HAVE_KVM_DIRTY_RING) += $(KVM)/dirty_ring.o
+ kvm-$(CONFIG_HAVE_KVM_PFNCACHE) += $(KVM)/pfncache.o
+ kvm-$(CONFIG_KVM_GUEST_MEMFD) += $(KVM)/guest_memfd.o
++
++obj-$(subst m,y,$(CONFIG_KVM_GUEST_MEMFD)) += $(KVM)/guest_memfd_hugepages.o
+\ No newline at end of file
+
+People may want the code to live in mm/ for maintenance and ownership reasons
+(or not, I haven't followed the discussions on hugepage support), but that's a
+very different justification than what's described in the changelog.
+
+And if the _only_ user is guest_memfd, putting this in mm/ feels quite weird.
+And if we anticipate other users, the name guestmem_hugetlb is weird, because
+AFAICT there's nothing in here that is in any way guest specific, it's just a
+few APIs for allocating and accounting hugepages.
+
+Personally, I don't see much point in trying to make this a "generic" library,
+in quotes because the whole guestmem_xxx namespace makes it anything but generic.
+I don't see anything in mm/guestmem_hugetlb.c that makes me go "ooh, that's nasty,
+I'm glad this is handled by a library".  But if we want to go straight to a
+library, it should be something that is really truly generic, i.e. not "guest"
+specific in any way.
+
+> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> 
+> Change-Id: I3cafe111ea7b3c84755d7112ff8f8c541c11136d
 > ---
->  fs/btrfs/send.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
-> index 9230e5066fc6..2b7cf49a35bb 100644
-> --- a/fs/btrfs/send.c
-> +++ b/fs/btrfs/send.c
-> @@ -178,7 +178,6 @@ struct send_ctx {
->  	u64 cur_inode_rdev;
->  	u64 cur_inode_last_extent;
->  	u64 cur_inode_next_write_offset;
-> -	struct fs_path cur_inode_path;
->  	bool cur_inode_new;
->  	bool cur_inode_new_gen;
->  	bool cur_inode_deleted;
-> @@ -305,6 +304,9 @@ struct send_ctx {
->  
->  	struct btrfs_lru_cache dir_created_cache;
->  	struct btrfs_lru_cache dir_utimes_cache;
+>  include/linux/guestmem.h      |  20 +++++
+>  include/uapi/linux/guestmem.h |  29 +++++++
+>  mm/Kconfig                    |   5 +-
+>  mm/guestmem_hugetlb.c         | 159 ++++++++++++++++++++++++++++++++++
+>  4 files changed, 212 insertions(+), 1 deletion(-)
+>  create mode 100644 include/linux/guestmem.h
+>  create mode 100644 include/uapi/linux/guestmem.h
+
+
+..
+
+> diff --git a/include/uapi/linux/guestmem.h b/include/uapi/linux/guestmem.h
+> new file mode 100644
+> index 000000000000..2e518682edd5
+> --- /dev/null
+> +++ b/include/uapi/linux/guestmem.h
+
+With my KVM hat on, NAK to defining uAPI in a library like this.  This subtly
+defines uAPI for KVM, and effectively any other userspace-facing entity that
+utilizes the library/allocator.  KVM's uAPI needs to be defined by KVM, period.
+
+There's absolutely zero reason to have guestmem_hugetlb_setup() take in flags.
+Explicitly pass the page size, or if preferred, the page_size_log, and let the
+caller figure out how to communicate the size to the kernel.
+
+IMO, the whole MAP_HUGE_xxx approach is a (clever) hack to squeeze the desired
+size into mmap() flags.  I don't see any reason to carry that forward to guest_memfd.
+For once, we had the foresight to reserve some space in KVM's uAPI structure, so
+there's no need to squeeze things into flags.
+
+E.g. we could do something like this:
+
+diff --git include/uapi/linux/kvm.h include/uapi/linux/kvm.h
+index 42053036d38d..b79914472d27 100644
+--- include/uapi/linux/kvm.h
++++ include/uapi/linux/kvm.h
+@@ -1605,11 +1605,16 @@ struct kvm_memory_attributes {
+ #define KVM_CREATE_GUEST_MEMFD _IOWR(KVMIO,  0xd4, struct kvm_create_guest_memfd)
+ #define GUEST_MEMFD_FLAG_MMAP          (1ULL << 0)
+ #define GUEST_MEMFD_FLAG_INIT_SHARED   (1ULL << 1)
++#define GUEST_MEMFD_FLAG_HUGE_PAGES    (1ULL << 2)
+ 
+ struct kvm_create_guest_memfd {
+        __u64 size;
+        __u64 flags;
+-       __u64 reserved[6];
++       __u8 huge_page_size_log2;
++       __u8 reserve8;
++       __u16 reserve16;
++       __u32 reserve32;
++       __u64 reserved[5];
+ };
+ 
+ #define KVM_PRE_FAULT_MEMORY   _IOWR(KVMIO, 0xd5, struct kvm_pre_fault_memory)
+
+And not have to burn 6 bits of flags to encode the size in a weird location.
+
+But that's a detail for KVM to sort out, which is exactly my point; how this is
+presented to userspace for guest_memfd is question for KVM.
+
+> @@ -0,0 +1,29 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +#ifndef _UAPI_LINUX_GUESTMEM_H
+> +#define _UAPI_LINUX_GUESTMEM_H
 > +
-> +	/* Must be last --ends in a flexible-array member. */
-                        ^^
+> +/*
+> + * Huge page size must be explicitly defined when using the guestmem_hugetlb
+> + * allocator for guest_memfd.  It is the responsibility of the application to
+> + * know which sizes are supported on the running system.  See mmap(2) man page
+> + * for details.
+> + */
+> +
+> +#define GUESTMEM_HUGETLB_FLAG_SHIFT	58
+> +#define GUESTMEM_HUGETLB_FLAG_MASK	0x3fUL
+> +
+> +#define GUESTMEM_HUGETLB_FLAG_16KB	(14UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
+> +#define GUESTMEM_HUGETLB_FLAG_64KB	(16UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
+> +#define GUESTMEM_HUGETLB_FLAG_512KB	(19UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
+> +#define GUESTMEM_HUGETLB_FLAG_1MB	(20UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
+> +#define GUESTMEM_HUGETLB_FLAG_2MB	(21UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
+> +#define GUESTMEM_HUGETLB_FLAG_8MB	(23UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
+> +#define GUESTMEM_HUGETLB_FLAG_16MB	(24UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
+> +#define GUESTMEM_HUGETLB_FLAG_32MB	(25UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
+> +#define GUESTMEM_HUGETLB_FLAG_256MB	(28UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
+> +#define GUESTMEM_HUGETLB_FLAG_512MB	(29UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
+> +#define GUESTMEM_HUGETLB_FLAG_1GB	(30UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
+> +#define GUESTMEM_HUGETLB_FLAG_2GB	(31UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
+> +#define GUESTMEM_HUGETLB_FLAG_16GB	(34UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
+> +
+> +#endif /* _UAPI_LINUX_GUESTMEM_H */
 
-Is this an en dash?
+...
 
-> +	struct fs_path cur_inode_path;
->  };
->  
->  struct pending_dir_move {
-> -- 
-> 2.43.0
-> 
+> +const struct guestmem_allocator_operations guestmem_hugetlb_ops = {
+> +	.inode_setup = guestmem_hugetlb_setup,
+> +	.inode_teardown = guestmem_hugetlb_teardown,
+> +	.alloc_folio = guestmem_hugetlb_alloc_folio,
+> +	.nr_pages_in_folio = guestmem_hugetlb_nr_pages_in_folio,
+> +};
+> +EXPORT_SYMBOL_GPL(guestmem_hugetlb_ops);
+
+Why are these bundled into a structure?  AFAICT, that adds layers of indirection
+for absolutely no reason.  And especially on the KVM guest_memfd side, implementing
+a pile of infrastructure to support "custom" allocators is very premature.  Without
+a second "custom" allocator, it's impossible to determine if the indirection
+provided is actually a good design.  I.e. all of the kvm_gmem_has_custom_allocator()
+logic in guest_memfd.c is just HugeTLB logic buried behind a layer of unnecessary
+indirection.
 
