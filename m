@@ -1,413 +1,273 @@
-Return-Path: <linux-kernel+bounces-841784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D29ABB8392
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 23:41:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD586BB8398
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 23:42:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 191CD19C6B02
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 21:42:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8294A4C31D4
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 21:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E4A2571BD;
-	Fri,  3 Oct 2025 21:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D5C269AFB;
+	Fri,  3 Oct 2025 21:41:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T0E8DIlt"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="kD1GwwLq"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azolkn19010089.outbound.protection.outlook.com [52.103.10.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A10264A86
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 21:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759527690; cv=none; b=oLDaYuWx2+adpKrsfqXM7+OXNteufwmPSRHTJX1fK3Cj7bU5Ik4eKHPn94dNgT88Id+7NJVJy5wz3tARdaJusjBG6IB3rK1/oM/LsfdhRI6Wv4ra/up6aced5Hdf/PKsgPrA+hwXpRIDqCkFyZSlQZoy86tvBKSLwpWUdy7Wv6U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759527690; c=relaxed/simple;
-	bh=4PujLlPsvKlOpMJYFavOYjiTXGw+gkZUWLjSvWm1spw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a9KL82GClE/1Af9hfI03IMbB/Kr+ThMqhCVehUYtpNzhTOsgFF0AVMfPKTeV+F8xfvyB33y1fTfa5qPXA/OyXA2WuKf6Qn34M6P2Ax1xI3d+TSGo43xWmPkak+tFotmv7Z/VoCW4Y0Or3cjwJ0iDKXJgZhKyuYfAviZWIxkeZRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T0E8DIlt; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-71d71bcab69so29880497b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 14:41:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759527688; x=1760132488; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8UUYFCqYZ++M1SNLRvfnBEMc8eDA11OJCrWneq89QMU=;
-        b=T0E8DIltCtk7xgqEByDPhaks0rkTN2iyaTjb2liVTPyD1olnewXnzRo1WyNC6O+r+e
-         3Lmf3apeBBLZ6X7MiTDf8HpufXMDKm/mpN4eVgIuqfLxaGXIQmRKks3O3f+iuc4djcAK
-         zU0u/Nyd9Co77JL2BDsecTaBYTbSHMoU8MkMbwLkWYgVfOe99L5oz9LAKwZzxKg5IxDr
-         TbRQXew+AgXZl0WEGW2Wjc/IKupiwKS1Ii2xLOOouuH8NeGSWh7AuyEy7HQno5I5nxfp
-         QXBtEdRC20M46is1TlnfZEWM2ncfp/wjnQx1NEueL8F6VBUoOae++rBfqluMm/9Ri5AK
-         vgmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759527688; x=1760132488;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8UUYFCqYZ++M1SNLRvfnBEMc8eDA11OJCrWneq89QMU=;
-        b=ooJhD6cSbCKLeZV+ZgxBdgP1iR3DgTYqiX5byU3aXGeRMYXOwLCGmbqBhVqb1XXVHa
-         RODWewWDkH39xOx4BpYkEpSJ4nxoA44EA65C7JW7NkippJvtq+WxSS2nzRWK+AzLswu/
-         xtvjkcDBU2fC6UKfvaAPjckMviTAdecR7/tW1HVcnGGbmrGd/ehbpdykgF029Mqc0rwS
-         uAkezs9cHSb54/voc/ibv1Y1e7W+LEfzP/fbkB6/gjajf+Jke2xeEx1xy5Wkhwc1xf6O
-         Fz6nphd1ItHzHKeHJrbtozaB3n1mzFgsIyidZQDXA3YWsl6zCAtv/TvN7euWe0hwS26f
-         R8sw==
-X-Forwarded-Encrypted: i=1; AJvYcCVZxdD6RkvFl49CA/JY5ed35D/fFKSeEUgDXarmxhaDK7WM+uRcW8rzNzH1Nh+hhpKVVRKeBmIZFuPPWTc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlQhPUqGbp4g4cq4WP+dx6B7ydBVh7MLCJzCQCfliK4izogjXN
-	CD7L3uMu4h+Z7ZdM664IHki8L23K+3+8nKrXXuyAJJTkPeEqz2zs+AAkaAq9XRcwWyjZhmOmPy9
-	D0zC6b49PRcUwnaQNHCoJgqcf23heYLU=
-X-Gm-Gg: ASbGnctDZNOi9MkHXGKduFDMSep5s14boZDOdLJP/+qe979TeRDPVU0lDlKfiWhffId
-	aCNz43b75unCdgaofQ96qGa1ehT6aeR2PXX04S5gu0pI2PV856Dw2niTojHVq4GElC0BJgMIIYC
-	QXc0SsUcU6egAopft0f+MyIw6yoTIXdmNDdam7q8gKD0vjsx7wyRkSsKWocqbBCl7JMtXWlIeoi
-	IeNanleL/K8e2y713oGznXyEVCfABfOHBnM6dsyi2jzY4eIIrR6FWHxD5StKy0KTWVR+STP6PJW
-	QJzjFvbcwhIit9URPcGi+n2IY+7KXg9utV8q8nrK4mY=
-X-Google-Smtp-Source: AGHT+IFsEBPVzXvwHuM4QLRckQ1pwH09RM2qcZ+I8xh8RlXcjUu54Stm4Ca7trrl5nG3IQUJmBvrF+RgEH/+4vhA4Po=
-X-Received: by 2002:a53:ca11:0:b0:62c:70de:7cba with SMTP id
- 956f58d0204a3-63b9a0a7345mr3380422d50.22.1759527687648; Fri, 03 Oct 2025
- 14:41:27 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC23C2571BD;
+	Fri,  3 Oct 2025 21:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.10.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759527702; cv=fail; b=i/q+sHkFczZf7dtq0bjWLst2HfftqpUDdwyIm1Q62WOdwR/cpuPvkealN0RiLBEAXw69KB7y+WJ22iqzl9Si9avB3x9arIG/Sqqyp0xHW7zaZduB84FBRMTkOkxwDTeaRpTSDg/j4jyaB0HydszrGDcZdH+Nl+tDE7Z5JMD+gVQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759527702; c=relaxed/simple;
+	bh=58I+vtNPcx1uQgwCp2dbqgcGqW8ynoZ21q/zRjnnUvs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=FvMHPckYrRdvdeHxxrj1MaujuhX8HTCtAojA8L8pzarA6nH25s+Bsn3z03lbkreQpCG+7/Q5lAVmrYI8EX0Lu1qRgXepVb3rfE6OmctNg3RtMTXHoa3CJ+EbaqsnxqmVuzoIrEIdJCBgnLr5Kqv+wFGJ5jSS10yEzdKz9iI+dvY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=kD1GwwLq; arc=fail smtp.client-ip=52.103.10.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Kq9/IyufpxM8iKdflPBmzJqrXy8L0ciQ8OzEamG1HIlwjTmYe+twgj2BeCiM9Eg0/U1Yz2Ytf1juJg/DhTZuJ9lO3BstAuwTeps7oLfjP9Qn97AQXl9Cpz0nLZWwOxh1W0YUdzOaTJPxIiTLfyocjf1ffX82wFQcMWDLo9ZQzLXhMsL4JCv4QsJAlozOsEvuVrKuXov0vJ9DWfCKZrDcpyZw+IjH1948LgdYRrrAXEchVC4sRTSTRRKUnD34pdRz8Uv8VJasAm7DVPexcsHA5z09njL9TgJ9HJ3/GnxA7PqdV8JYpSxCJ8980fFEV5So7nBDTnoMqfteRo4R2ogueA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=58I+vtNPcx1uQgwCp2dbqgcGqW8ynoZ21q/zRjnnUvs=;
+ b=CX/Emb5NvEsWb82IBND2PFW9tujQQx8KVWIPXVJA1ya8ETyEMnF978XFGHSHTCt1ZMXvRvn14uY317uxPNbAcu6FWBFsHNtVBD5dyJX6WxsBKOKUXox6/9NDe4LmZ6DDUFRyZRjkrIrfrj2sb2DaV6SAGvQwz7L9vWPa8h1EhAb7B6GSeZPHs7pM+68+oSYC3goYcC7ObwXSoOif+4y75T0KLNtMjUlDyDOROdXbivBBjctuacFcpsEr3IhEW5eZeY5whxAZlr/cOXvxYDhhw2pOhguX4k9g9kNzSrVq0jtix6IFe2uMc3unaOJJRLfTWibaxkU6Bld4YwQyaNH2Dw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=58I+vtNPcx1uQgwCp2dbqgcGqW8ynoZ21q/zRjnnUvs=;
+ b=kD1GwwLqqsLmln2W6A+d1Z60SH9Ml6Pzd0xftwjjdfcBZLf+yco0Hf7ER03Kso5bsre9TrQ+5fyLHmE4RZEU+RH2j5C4ebHiiF1r30iaItA99Fi+ug3K/Q0vD+9cVdDxsftpu/dZ1mXfGErhZ+5kb2RgSkPggSD/NxYpfKzejtsa3Eybefwk7hqa8rVRGRp17lst9pA+DLC1XbN98oZeh1FX9xSfOyQWnpCg8JFqx8fc5tW/DoImLPg6SEA0wGFh+ugGRKKNj8kbyPduEbMQtnC/Z56F5/q8xDNLY9fHLbYr8GQYya+JAIu2h4PCcREiUayP9UqYEqkt1iXFrLtFRA==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by SA3PR02MB10974.namprd02.prod.outlook.com (2603:10b6:806:460::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Fri, 3 Oct
+ 2025 21:41:38 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.9160.017; Fri, 3 Oct 2025
+ 21:41:32 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+CC: "kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com"
+	<haiyangz@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>, "linux-hyperv@vger.kernel.org"
+	<linux-hyperv@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3 3/5] Drivers: hv: Batch GPA unmap operations to improve
+ large region performance
+Thread-Topic: [PATCH v3 3/5] Drivers: hv: Batch GPA unmap operations to
+ improve large region performance
+Thread-Index: AQHcM7q7gAyul66beU2lfOoL5uqdvLSvjriQgAEV+YCAAEjAEA==
+Date: Fri, 3 Oct 2025 21:41:32 +0000
+Message-ID:
+ <SN6PR02MB415777A957EF622587C54A35D4E4A@SN6PR02MB4157.namprd02.prod.outlook.com>
+References:
+ <175942263069.128138.16103948906881178993.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+ <175942296162.128138.15731950243504649929.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+ <SN6PR02MB415777407333F3EC40CC05B7D4E4A@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <aN__QWQZkXN8k1-V@skinsburskii.localdomain>
+In-Reply-To: <aN__QWQZkXN8k1-V@skinsburskii.localdomain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|SA3PR02MB10974:EE_
+x-ms-office365-filtering-correlation-id: d60efe96-3ba8-45e6-76dd-08de02c59ea1
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|13091999003|8060799015|8062599012|19110799012|12121999013|31061999003|41001999006|15080799012|40105399003|440099028|3412199025|102099032;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?cFZmbDk4YmpvWWNJenZReGc2VFppL3lGenZrVzFPeWdTOERRaE5BdDhWKzFN?=
+ =?utf-8?B?ckJtTXRnR1BiazNwTXJFRG5hSW5NbkNpdHl3NTZKb3hGWjdIOEJmU0VwcGg1?=
+ =?utf-8?B?aWNLMEpCa1JKZ29uZHAzTXh4ak5aVmpHandGQUw3Y1VJY2tMRTBOZ2cxaXZP?=
+ =?utf-8?B?elp4dXhLMUx6M1grRXpUMUNHM2U5dUwwVDFlSmtKTGhySUNpVWVuRDN6bDRZ?=
+ =?utf-8?B?SEFYV0lNZ0dEVWxrNS8wZGlHK01wUVA0NjFLbjRJTkV6S2VsWjVFd3pHQUpx?=
+ =?utf-8?B?Sm5iZE1vL0RVNC90QkNxUXV2LzJkZlN2L3Y4b3IyRDBVeitabnVjajFrYkRp?=
+ =?utf-8?B?Wkl4Vkg4cDdJcUJESk10aUU0eEkvbSt4dHo4SWlqb2RaQVRWQkY3Q0pvNHJt?=
+ =?utf-8?B?UVZDMDJ0ZGIxdFkxVHdmOHJXcVkxU2Z4QjhPbFdmRkdiR3lDcC91aGFLSzdP?=
+ =?utf-8?B?OVVEUlgyRFJiK3BrM3Z5ZXRFbjJJaXhQNXI5SnVyVUpseTAyTVNtcE9WR2NT?=
+ =?utf-8?B?NWkxWS9YWlI2S2NITU85ek5RV2JsNWpOTFB0VEYyN2QzNERISE5XNWxmWTVN?=
+ =?utf-8?B?bTdIWkZTQjlUWFhEbzhoSksrZjAydUt4NlJwcHkvZG9oT1lZRDY5MGRrRlpO?=
+ =?utf-8?B?WEZCb0NPSEMyVU5xZ05VVmxWaGI4a2RnQzR1WGxsaUZiR2FYYXl1RzZJdlU2?=
+ =?utf-8?B?OWFyUUxSelpSWUREcHJTdnIvWlBNdUthcXhhY0VQbGlCdGJyTFFRelR5ZTlm?=
+ =?utf-8?B?TjFxMW5ucG1IWjRpS3lwbVNJYlZNQ1VEc1FqeS9iSVNXUTFqVm1LM0VmRkZB?=
+ =?utf-8?B?U01zZlU5WFJXVkdZWnYwMWxEWDJhQmNScXRLbThwSytWZXVRUWtVNXZlV29N?=
+ =?utf-8?B?dkJWT1N3NjRpQyt3dlBHa3M3eHhWR2RFUHl3UzJ3NEVqZ0lOV2E0YWJIa091?=
+ =?utf-8?B?eFpYN2FYb0o0UzBXS3J0QUVKYldRYXE4QUZPMjlBbWtaOEpPS1VNbUxKbGlu?=
+ =?utf-8?B?bGN2TUordTFmRE9EckZWUk9GcHYzTGtrbk51amFYajFYaGhQMTZrcVU0ejhJ?=
+ =?utf-8?B?OGRyeUFtWjJnUWpxUVJySlptano0MUE4K3ZIKzV5azNEeG04Z3lZNUs1K3FJ?=
+ =?utf-8?B?S24xQWZBK2IycVJEWHNPN0I5UTlpYitwaWF2UmRyNjRBWTA0ZnNEOEtQb2Zq?=
+ =?utf-8?B?dDNkaVp2R2lWdE81NUVsdXpsNU1RRElSRUhPL3VRTXB4OTA0NU1jTVV3K29k?=
+ =?utf-8?B?Wjd4eSsvUDNLMFcranlSNGpZTTlPK3h0dC9JcThXc3VOM3BrL3JqeS9rOEI3?=
+ =?utf-8?B?SCtGVjlhM2sycXdvZDJ4emxzbnNwV2t6QUFUTkd3Sk45UEhpRjRzdHZlOWFX?=
+ =?utf-8?B?NXhUdnpsZlNWalpsVmduQkV2OUJJaCtrM3dKUzNlb20yYllKWTBrd1dYN3dj?=
+ =?utf-8?B?d3ovT1NxMzJFU3dFM1R2M21ZMmJMZGpKZXlYWSszc1h3bGJqN25MclZUZ1NF?=
+ =?utf-8?B?dmU5bFhOTzdxSXZiS2xhVmVENlFENVI2RGpTWXFndEsvN0c2Zk0yRVptV1U3?=
+ =?utf-8?B?elhuM2R4MG9na2VWaTVJMTQybUo3eThGWEtma3dza3lwNXhUclRqQm95M29K?=
+ =?utf-8?Q?Mw/A6g7GOr7QIxrZ2JyFRVqo9H+gAwBokuJOClBvQGe0=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?TmtyUG94ejB6QVJ4cU5Uakg5a0wrclAyaDNwR1E2Z2NxNFNTQmJsQm5zUGJv?=
+ =?utf-8?B?cFRaNUhiTHo0NDZYQTFlY3hLSE5zLzhVelVRMFdyZ3JoZmFwbnFPeVRVTTJG?=
+ =?utf-8?B?WHVrS3R0VjZXS1EwS3ZQdUNBV3dabGw4TDlzRXdMb2xOY3ZxeVlOR3JIcEhU?=
+ =?utf-8?B?eEc0Z21CQ3FoYzhrMmlnZzBScjlzSkxtL3VXOTUxVEhmRjZzdmlIclBDazVP?=
+ =?utf-8?B?S3RNclg4YlpQUkZkQ3VkZlk2d3htWG5YUGo3dzNubEVIMGF1QTJDNy9xelQy?=
+ =?utf-8?B?Mkdic3hZTStDcEpFb05hVDRvdjF4WGI2N2N2WDlSWWo4dyszK2hGWTNCeWxZ?=
+ =?utf-8?B?eVVLTy9kWFpiNGg1TE14eEs4OVNkZkFpOVZDYzkzYm93ZXhMd1pHd2l6Y1VS?=
+ =?utf-8?B?NlRwL0JxbUNmU1RzbTBZN3h5Z1IyQS9UTENwbExkdjNHd3hmSnkzMlBQMEg5?=
+ =?utf-8?B?aEZ2SzF6VmhsS0YyL2x6MzdkalJicDVOMkhuK0g1MDhjcVB6cklNdFU3NlZt?=
+ =?utf-8?B?dnU3SzdaazFUemNFRVZmUnZkMW8xcUlTZ2htWDBQK09SVzVBOGZjVXMzRTly?=
+ =?utf-8?B?aTJ0RzFkT042VmJYL0UyZUJQYzN1RVB4c1dsaEF4TFhFZEwzaERlTEtYWUtY?=
+ =?utf-8?B?MXFMbFZVVmRkT3lKRjRYaExtYkl0NVlzZS9jUU12b05Ia1ZVcmFZN0lFb3JG?=
+ =?utf-8?B?RzBDTXlmdTNpa09FcHdjdjRoZFFydXhYd2JUajMwOThvQllLQk9XekkzWXZ4?=
+ =?utf-8?B?ZFBGemo3bE1Ya3JSVWNtYnNjTjhwM0xEMFRscGpIdDNDd3phMHRNc2JrY0tq?=
+ =?utf-8?B?dXc4cWc0Zkt3RjBlUDVaMXIwMmJlVG9hdXBEVm8xUnZEZ3FPaGxSZWV6elVN?=
+ =?utf-8?B?S1RCc2I0WUw3RmZWbC91dkN1VVdxdjZsV3h5UkxTTHQ5Vkc0enE3a0Z1cEdk?=
+ =?utf-8?B?VTFWVkpaK1N6eUo3aXE3bzNLSjZ6Q2NyVnd2eitEbGhDMjF1YnFwQ295QnFD?=
+ =?utf-8?B?c1dFQ2sydkFLVFkxY2pocG9LU2dCN1daOVVLQnZmempVT1A5RDdtTmhpaU96?=
+ =?utf-8?B?c1hLTlFpSlB2ZEQxVmhyNnRQTGZoNkczTTRrTCt0SHZFS0FrWlMydDNBS2lC?=
+ =?utf-8?B?NWpkY3VJSU5WL0cwTzRVZVNxdTFKVmc0d1hqd3Z1ZGJTMHhFd0tLNTVJK0FL?=
+ =?utf-8?B?UFlRVHc3U2wrdWNmamlHUkt3a1ZyalY3T3hkSUJlQXFzQ3JjMUJUY0hvbHlw?=
+ =?utf-8?B?RFVDakxBYlc1WGFLQ0ZMZ2hDTnoxOXNMV2RGWlRvTHRKeS90YU1uNUNtNzIy?=
+ =?utf-8?B?MzVUcWZiT29LVWtFb24vaEZ4aTBhcVJRQ3pjZzBLNHhZNHV5b3Bvd1Z1Vmtu?=
+ =?utf-8?B?ZXBaMkdDV0NkaStUL25JOVFiNVlxNHNzRHV1dFJxU1RNeDUwSzBJdjQvRXlK?=
+ =?utf-8?B?S1VodDBQNGg5Ky9oTEdQbTFDUTRrSTVEalZnRkNuTHo5NzhlV3NuYkRWcS96?=
+ =?utf-8?B?MGpmR1RYVXVOU1d2WHd4NUh5YzVlRmc1Zkhvb0JyOEg4bkVBYlZFUzdZWC9H?=
+ =?utf-8?B?Y2t4aTVjaTlYTmI5Q0UzeEVSYnpOUEE1T1VUcmV6Q2dqbXpDckZrV3U0R3Jl?=
+ =?utf-8?Q?Zi1CmKfbDEGNiONcZOfltBUWZfUiiG56G0EKHPlT34ZI=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251003-mt8196-gpufreq-v6-0-76498ad61d9e@collabora.com> <20251003-mt8196-gpufreq-v6-7-76498ad61d9e@collabora.com>
-In-Reply-To: <20251003-mt8196-gpufreq-v6-7-76498ad61d9e@collabora.com>
-From: Chia-I Wu <olvaffe@gmail.com>
-Date: Fri, 3 Oct 2025 14:41:16 -0700
-X-Gm-Features: AS18NWBtZLeN2JMlM8B0j97iXzqvvw6RLai7sdHK1_VKcIavLpBYUP0KgralcMQ
-Message-ID: <CAPaKu7QWBShwr+YhFi+nUFo0kJ06k4PK3zggcCefWGjqUmTx5w@mail.gmail.com>
-Subject: Re: [PATCH v6 7/7] pmdomain: mediatek: Add support for MFlexGraphics
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Boris Brezillon <boris.brezillon@collabora.com>, Jassi Brar <jassisinghbrar@gmail.com>, 
-	Chen-Yu Tsai <wenst@chromium.org>, Steven Price <steven.price@arm.com>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, kernel@collabora.com, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-hardening@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: d60efe96-3ba8-45e6-76dd-08de02c59ea1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Oct 2025 21:41:32.6051
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR02MB10974
 
-On Fri, Oct 3, 2025 at 1:16=E2=80=AFPM Nicolas Frattaroli
-<nicolas.frattaroli@collabora.com> wrote:
->
-> Various MediaTek SoCs use GPU integration silicon named "MFlexGraphics"
-> by MediaTek. On the MT8196 and MT6991 SoCs, interacting with this
-> integration silicon is required to power on the GPU.
->
-> This glue silicon is in the form of an embedded microcontroller running
-> special-purpose firmware, which autonomously adjusts clocks and
-> regulators.
->
-> Implement a driver, modelled as a pmdomain driver with a
-> set_performance_state operation, to support these SoCs.
-I like this model a lot. Thanks!
-
-panthor might potentially need to interact with this driver beyond
-what pmdomain provides. I am thinking about querying
-GF_REG_SHADER_PRESENT. Not sure if we've heard back from the vendor.
-Have you considered moving this to drivers/soc/mediatek such that we
-can provide include/linux/mtk-mfg.h to panthor?
-
->
-> The driver also exposes the actual achieved clock rate, as read back
-> from the MCU, as common clock framework clocks, by acting as a clock
-> provider as well.
->
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> ---
->  drivers/pmdomain/mediatek/Kconfig            |   16 +
->  drivers/pmdomain/mediatek/Makefile           |    1 +
->  drivers/pmdomain/mediatek/mtk-mfg-pmdomain.c | 1027 ++++++++++++++++++++=
-++++++
->  3 files changed, 1044 insertions(+)
-[...]
-> +static int mtk_mfg_init_shared_mem(struct mtk_mfg *mfg)
-> +{
-> +       struct device *dev =3D &mfg->pdev->dev;
-> +       struct mtk_mfg_ipi_msg msg =3D {};
-> +       int ret;
-> +
-> +       dev_dbg(dev, "clearing GPUEB shared memory, 0x%X bytes\n", mfg->s=
-hared_mem_size);
-> +       memset_io(mfg->shared_mem, 0, mfg->shared_mem_size);
-> +
-> +       msg.cmd =3D CMD_INIT_SHARED_MEM;
-> +       msg.u.shared_mem.base =3D mfg->shared_mem_phys;
-> +       msg.u.shared_mem.size =3D mfg->shared_mem_size;
-> +
-> +       ret =3D mtk_mfg_send_ipi(mfg, &msg);
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (readl(mfg->shared_mem) !=3D GPUEB_MEM_MAGIC) {
-Add the offset GF_REG_MAGIC, even though it is 0.
-
-> +               dev_err(dev, "EB did not initialise shared memory correct=
-ly\n");
-> +               return -EIO;
-> +       }
-> +
-> +       return 0;
-> +}
-[...]
-> +static int mtk_mfg_mt8196_init(struct mtk_mfg *mfg)
-> +{
-> +       void __iomem *e2_base;
-> +
-> +       e2_base =3D devm_platform_ioremap_resource_byname(mfg->pdev, "hw-=
-revision");
-> +       if (IS_ERR(e2_base))
-> +               return dev_err_probe(&mfg->pdev->dev, PTR_ERR(e2_base),
-> +                                    "Couldn't get hw-revision register\n=
-");
-> +
-> +       if (readl(e2_base) =3D=3D MFG_MT8196_E2_ID)
-> +               mfg->ghpm_en_reg =3D RPC_DUMMY_REG_2;
-> +       else
-> +               mfg->ghpm_en_reg =3D RPC_GHPM_CFG0_CON;
-> +
-> +       return 0;
-> +};
-Extraneous semicolon.
-
-> +static int mtk_mfg_init_mbox(struct mtk_mfg *mfg)
-> +{
-> +       struct device *dev =3D &mfg->pdev->dev;
-> +       struct mtk_mfg_mbox *gf;
-> +       struct mtk_mfg_mbox *slp;
-> +
-> +       gf =3D devm_kzalloc(dev, sizeof(*gf), GFP_KERNEL);
-> +       if (!gf)
-> +               return -ENOMEM;
-> +
-> +       gf->rx_data =3D devm_kzalloc(dev, GPUEB_MBOX_MAX_RX_SIZE, GFP_KER=
-NEL);
-It looks like gfx->rx_data can simply be "struct mtk_mfg_ipi_msg rx_data;".
-
-> +       if (!gf->rx_data)
-> +               return -ENOMEM;
-> +
-> +       gf->mfg =3D mfg;
-> +       init_completion(&gf->rx_done);
-> +       gf->cl.dev =3D dev;
-> +       gf->cl.rx_callback =3D mtk_mfg_mbox_rx_callback;
-> +       gf->cl.tx_tout =3D GPUEB_TIMEOUT_US / USEC_PER_MSEC;
-> +       gf->ch =3D mbox_request_channel_byname(&gf->cl, "gpufreq");
-> +       if (IS_ERR(gf->ch))
-> +               return PTR_ERR(gf->ch);
-> +
-> +       mfg->gf_mbox =3D gf;
-> +
-> +       slp =3D devm_kzalloc(dev, sizeof(*slp), GFP_KERNEL);
-> +       if (!slp)
-> +               return -ENOMEM;
-> +
-> +       slp->mfg =3D mfg;
-> +       init_completion(&slp->rx_done);
-> +       slp->cl.dev =3D dev;
-> +       slp->cl.tx_tout =3D GPUEB_TIMEOUT_US / USEC_PER_MSEC;
-> +       slp->cl.tx_block =3D true;
-> +       slp->ch =3D mbox_request_channel_byname(&slp->cl, "sleep");
-> +       if (IS_ERR(slp->ch))
-> +               return PTR_ERR(slp->ch);
-Free gf->ch.
-> +
-> +       mfg->slp_mbox =3D slp;
-> +
-> +       return 0;
-> +}
-> +
-> +static int mtk_mfg_init_clk_provider(struct mtk_mfg *mfg)
-> +{
-> +       struct device *dev =3D &mfg->pdev->dev;
-> +       struct clk_hw_onecell_data *clk_data;
-> +       int ret;
-> +
-> +       clk_data =3D devm_kzalloc(dev, struct_size(clk_data, hws, 2), GFP=
-_KERNEL);
-> +       if (!clk_data)
-> +               return -ENOMEM;
-> +
-> +       clk_data->num =3D 2;
-> +
-> +       mfg->clk_core_hw.init =3D &mtk_mfg_clk_gpu_init;
-> +       mfg->clk_stack_hw.init =3D &mtk_mfg_clk_stack_init;
-> +
-> +       ret =3D devm_clk_hw_register(dev, &mfg->clk_core_hw);
-> +       if (ret)
-> +               return dev_err_probe(dev, ret, "Couldn't register GPU cor=
-e clock\n");
-> +
-> +       ret =3D devm_clk_hw_register(dev, &mfg->clk_stack_hw);
-> +       if (ret)
-> +               return dev_err_probe(dev, ret, "Couldn't register GPU sta=
-ck clock\n");
-> +
-> +       clk_data->hws[0] =3D &mfg->clk_core_hw;
-> +       clk_data->hws[1] =3D &mfg->clk_stack_hw;
-> +
-> +       ret =3D devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, c=
-lk_data);
-> +       if (ret)
-> +               return dev_err_probe(dev, ret, "Couldn't register clock p=
-rovider\n");
-> +
-> +       return 0;
-> +}
-> +
-> +static int mtk_mfg_probe(struct platform_device *pdev)
-> +{
-> +       struct device_node *shmem __free(device_node);
-> +       struct mtk_mfg *mfg;
-> +       struct device *dev =3D &pdev->dev;
-> +       const struct mtk_mfg_variant *data =3D of_device_get_match_data(d=
-ev);
-> +       struct resource res;
-> +       int ret, i;
-> +
-> +       mfg =3D devm_kzalloc(dev, sizeof(*mfg), GFP_KERNEL);
-> +       if (!mfg)
-> +               return -ENOMEM;
-> +
-> +       mfg->pdev =3D pdev;
-> +       mfg->variant =3D data;
-> +
-> +       dev_set_drvdata(dev, mfg);
-> +
-> +       mfg->gpr =3D devm_platform_ioremap_resource(pdev, 0);
-> +       if (IS_ERR(mfg->gpr))
-> +               return dev_err_probe(dev, PTR_ERR(mfg->gpr),
-> +                                    "Couldn't retrieve GPR MMIO register=
-s\n");
-> +
-> +       mfg->rpc =3D devm_platform_ioremap_resource(pdev, 1);
-> +       if (IS_ERR(mfg->rpc))
-> +               return dev_err_probe(dev, PTR_ERR(mfg->rpc),
-> +                                    "Couldn't retrieve RPC MMIO register=
-s\n");
-> +
-> +       mfg->clk_eb =3D devm_clk_get(dev, "eb");
-> +       if (IS_ERR(mfg->clk_eb))
-> +               return dev_err_probe(dev, PTR_ERR(mfg->clk_eb),
-> +                                    "Couldn't get 'eb' clock\n");
-> +
-> +       mfg->gpu_clks =3D devm_kcalloc(dev, data->num_clks, sizeof(*mfg->=
-gpu_clks),
-> +                                    GFP_KERNEL);
-> +       if (!mfg->gpu_clks)
-> +               return -ENOMEM;
-> +
-> +       for (i =3D 0; i < data->num_clks; i++)
-> +               mfg->gpu_clks[i].id =3D data->clk_names[i];
-> +
-> +       ret =3D devm_clk_bulk_get(dev, data->num_clks, mfg->gpu_clks);
-> +       if (ret)
-> +               return dev_err_probe(dev, ret, "Couldn't get GPU clocks\n=
-");
-> +
-> +       mfg->gpu_regs =3D devm_kcalloc(dev, data->num_regulators,
-> +                                    sizeof(*mfg->gpu_regs), GFP_KERNEL);
-> +       if (!mfg->gpu_regs)
-> +               return -ENOMEM;
-> +
-> +       for (i =3D 0; i < data->num_regulators; i++)
-> +               mfg->gpu_regs[i].supply =3D data->regulator_names[i];
-> +
-> +       ret =3D devm_regulator_bulk_get(dev, data->num_regulators, mfg->g=
-pu_regs);
-> +       if (ret)
-> +               return dev_err_probe(dev, ret, "Couldn't get GPU regulato=
-rs\n");
-> +
-> +       ret =3D of_reserved_mem_region_to_resource(dev->of_node, 0, &res)=
-;
-> +       if (ret)
-> +               return dev_err_probe(dev, ret, "Couldn't get GPUEB shared=
- memory\n");
-> +
-> +       mfg->shared_mem =3D devm_ioremap(dev, res.start, resource_size(&r=
-es));
-> +       if (!mfg->shared_mem)
-> +               return dev_err_probe(dev, -ENOMEM, "Can't ioremap GPUEB s=
-hared memory\n");
-> +       mfg->shared_mem_size =3D resource_size(&res);
-> +       mfg->shared_mem_phys =3D res.start;
-> +
-> +       if (data->init) {
-> +               ret =3D data->init(mfg);
-> +               if (ret)
-> +                       return dev_err_probe(dev, ret, "Variant init fail=
-ed\n");
-> +       }
-> +
-> +       mfg->pd.name =3D dev_name(dev);
-> +       mfg->pd.attach_dev =3D mtk_mfg_attach_dev;
-> +       mfg->pd.detach_dev =3D mtk_mfg_detach_dev;
-> +       mfg->pd.power_off =3D mtk_mfg_power_off;
-> +       mfg->pd.power_on =3D mtk_mfg_power_on;
-> +       mfg->pd.set_performance_state =3D mtk_mfg_set_performance;
-> +       mfg->pd.flags =3D GENPD_FLAG_OPP_TABLE_FW;
-> +
-> +       ret =3D pm_genpd_init(&mfg->pd, NULL, false);
-> +       if (ret)
-> +               return dev_err_probe(dev, ret, "Failed to initialise powe=
-r domain\n");
-We need to clean up mgf->md on errors from this point on. Maybe we can
-move this to a later point?
-
-> +
-> +       ret =3D mtk_mfg_init_mbox(mfg);
-> +       if (ret)
-> +               return dev_err_probe(dev, ret, "Couldn't initialise mailb=
-ox\n");
-We need to free the mboxes from this point on.
-
-> +       ret =3D mtk_mfg_power_on(&mfg->pd);
-> +       if (ret)
-> +               return dev_err_probe(dev, ret, "Failed to power on MFG\n"=
-);
-> +
-> +       ret =3D mtk_mfg_init_shared_mem(mfg);
-> +       if (ret) {
-> +               dev_err_probe(dev, ret, "Couldn't initialize EB shared me=
-mory\n");
-> +               goto out;
-> +       }
-> +
-> +       ret =3D mtk_mfg_read_opp_tables(mfg);
-> +       if (ret) {
-> +               dev_err_probe(dev, ret, "Error reading OPP tables from EB=
-\n");
-> +               goto out;
-> +       }
-> +
-> +       ret =3D mtk_mfg_init_clk_provider(mfg);
-> +       if (ret)
-> +               goto out;
-> +
-> +       ret =3D of_genpd_add_provider_simple(dev->of_node, &mfg->pd);
-> +       if (ret) {
-> +               dev_err_probe(dev, ret, "Failed to add pmdomain provider\=
-n");
-> +               goto out;
-> +       }
-> +
-> +       return 0;
-> +
-> +out:
-> +       mtk_mfg_power_off(&mfg->pd);
-> +       return ret;
-> +}
+RnJvbTogU3RhbmlzbGF2IEtpbnNidXJza2lpIDxza2luc2J1cnNraWlAbGludXgubWljcm9zb2Z0
+LmNvbT4gU2VudDogRnJpZGF5LCBPY3RvYmVyIDMsIDIwMjUgOTo1MiBBTQ0KDQo+IA0KPiBPbiBG
+cmksIE9jdCAwMywgMjAyNSBhdCAxMjoyNzoxM0FNICswMDAwLCBNaWNoYWVsIEtlbGxleSB3cm90
+ZToNCj4gPiBGcm9tOiBTdGFuaXNsYXYgS2luc2J1cnNraWkgPHNraW5zYnVyc2tpaUBsaW51eC5t
+aWNyb3NvZnQuY29tPiBTZW50OiBUaHVyc2RheSwgT2N0b2JlciAyLCAyMDI1IDk6MzYgQU0NCj4g
+PiA+DQo+ID4gPiBSZWR1Y2Ugb3ZlcmhlYWQgd2hlbiB1bm1hcHBpbmcgbGFyZ2UgbWVtb3J5IHJl
+Z2lvbnMgYnkgYmF0Y2hpbmcgR1BBIHVubWFwDQo+ID4gPiBvcGVyYXRpb25zIGluIDJNQi1hbGln
+bmVkIGNodW5rcy4NCj4gPiA+DQo+ID4gPiBVc2UgYSBkZWRpY2F0ZWQgY29uc3RhbnQgZm9yIGJh
+dGNoIHNpemUgdG8gaW1wcm92ZSBjb2RlIGNsYXJpdHkgYW5kDQo+ID4gPiBtYWludGFpbmFiaWxp
+dHkuDQo+ID4gPg0KPiA+ID4gU2lnbmVkLW9mZi1ieTogU3RhbmlzbGF2IEtpbnNidXJza2lpIDxz
+a2luc2J1cnNraWlAbGludXgubWljcm9zb2Z0LmNvbT4NCj4gPiA+IC0tLQ0KPiA+ID4gIGRyaXZl
+cnMvaHYvbXNodl9yb290LmggICAgICAgICB8ICAgIDIgKysNCj4gPiA+ICBkcml2ZXJzL2h2L21z
+aHZfcm9vdF9odl9jYWxsLmMgfCAgICAyICstDQo+ID4gPiAgZHJpdmVycy9odi9tc2h2X3Jvb3Rf
+bWFpbi5jICAgIHwgICAxNSArKysrKysrKysrKystLS0NCj4gPiA+ICAzIGZpbGVzIGNoYW5nZWQs
+IDE1IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pDQo+ID4gPg0KPiA+ID4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvaHYvbXNodl9yb290LmggYi9kcml2ZXJzL2h2L21zaHZfcm9vdC5oDQo+ID4g
+PiBpbmRleCBlMzkzMWIwZjEyNjkzLi45N2U2NGQ1MzQxYjZlIDEwMDY0NA0KPiA+ID4gLS0tIGEv
+ZHJpdmVycy9odi9tc2h2X3Jvb3QuaA0KPiA+ID4gKysrIGIvZHJpdmVycy9odi9tc2h2X3Jvb3Qu
+aA0KPiA+ID4gQEAgLTMyLDYgKzMyLDggQEAgc3RhdGljX2Fzc2VydChIVl9IWVBfUEFHRV9TSVpF
+ID09IE1TSFZfSFZfUEFHRV9TSVpFKTsNCj4gPiA+DQo+ID4gPiAgI2RlZmluZSBNU0hWX1BJTl9Q
+QUdFU19CQVRDSF9TSVpFCSgweDEwMDAwMDAwVUxMIC8gSFZfSFlQX1BBR0VfU0laRSkNCj4gPiA+
+DQo+ID4gPiArI2RlZmluZSBNU0hWX01BWF9VTk1BUF9HUEFfUEFHRVMJNTEyDQo+ID4gPiArDQo+
+ID4gPiAgc3RydWN0IG1zaHZfdnAgew0KPiA+ID4gIAl1MzIgdnBfaW5kZXg7DQo+ID4gPiAgCXN0
+cnVjdCBtc2h2X3BhcnRpdGlvbiAqdnBfcGFydGl0aW9uOw0KPiA+ID4gZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvaHYvbXNodl9yb290X2h2X2NhbGwuYyBiL2RyaXZlcnMvaHYvbXNodl9yb290X2h2X2Nh
+bGwuYw0KPiA+ID4gaW5kZXggYzljMjc0ZjI5YzNjNi4uMDY5NjAyNGNjZmUzMSAxMDA2NDQNCj4g
+PiA+IC0tLSBhL2RyaXZlcnMvaHYvbXNodl9yb290X2h2X2NhbGwuYw0KPiA+ID4gKysrIGIvZHJp
+dmVycy9odi9tc2h2X3Jvb3RfaHZfY2FsbC5jDQo+ID4gPiBAQCAtMTcsNyArMTcsNyBAQA0KPiA+
+ID4gIC8qIERldGVybWluZWQgZW1waXJpY2FsbHkgKi8NCj4gPiA+ICAjZGVmaW5lIEhWX0lOSVRf
+UEFSVElUSU9OX0RFUE9TSVRfUEFHRVMgMjA4DQo+ID4gPiAgI2RlZmluZSBIVl9NQVBfR1BBX0RF
+UE9TSVRfUEFHRVMJMjU2DQo+ID4gPiAtI2RlZmluZSBIVl9VTUFQX0dQQV9QQUdFUwkJNTEyDQo+
+ID4gPiArI2RlZmluZSBIVl9VTUFQX0dQQV9QQUdFUwkJTVNIVl9NQVhfVU5NQVBfR1BBX1BBR0VT
+DQo+ID4gPg0KPiA+ID4gICNkZWZpbmUgSFZfUEFHRV9DT1VOVF8yTV9BTElHTkVEKHBnX2NvdW50
+KSAoISgocGdfY291bnQpICYgKDB4MjAwIC0gMSkpKQ0KPiA+ID4NCj4gPiA+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL2h2L21zaHZfcm9vdF9tYWluLmMgYi9kcml2ZXJzL2h2L21zaHZfcm9vdF9tYWlu
+LmMNCj4gPiA+IGluZGV4IDdlZjY2YzQzZTE1MTUuLjhiZjBiNWFmMjU4MDIgMTAwNjQ0DQo+ID4g
+PiAtLS0gYS9kcml2ZXJzL2h2L21zaHZfcm9vdF9tYWluLmMNCj4gPiA+ICsrKyBiL2RyaXZlcnMv
+aHYvbXNodl9yb290X21haW4uYw0KPiA+ID4gQEAgLTEzNzgsNiArMTM3OCw3IEBAIG1zaHZfbWFw
+X3VzZXJfbWVtb3J5KHN0cnVjdCBtc2h2X3BhcnRpdGlvbiAqcGFydGl0aW9uLA0KPiA+ID4gIHN0
+YXRpYyB2b2lkIG1zaHZfcGFydGl0aW9uX2Rlc3Ryb3lfcmVnaW9uKHN0cnVjdCBtc2h2X21lbV9y
+ZWdpb24gKnJlZ2lvbikNCj4gPiA+ICB7DQo+ID4gPiAgCXN0cnVjdCBtc2h2X3BhcnRpdGlvbiAq
+cGFydGl0aW9uID0gcmVnaW9uLT5wYXJ0aXRpb247DQo+ID4gPiArCXU2NCBwYWdlX29mZnNldDsN
+Cj4gPiA+ICAJdTMyIHVubWFwX2ZsYWdzID0gMDsNCj4gPiA+ICAJaW50IHJldDsNCj4gPiA+DQo+
+ID4gPiBAQCAtMTM5Niw5ICsxMzk3LDE3IEBAIHN0YXRpYyB2b2lkIG1zaHZfcGFydGl0aW9uX2Rl
+c3Ryb3lfcmVnaW9uKHN0cnVjdCBtc2h2X21lbV9yZWdpb24gKnJlZ2lvbikNCj4gPiA+ICAJaWYg
+KHJlZ2lvbi0+ZmxhZ3MubGFyZ2VfcGFnZXMpDQo+ID4gPiAgCQl1bm1hcF9mbGFncyB8PSBIVl9V
+Tk1BUF9HUEFfTEFSR0VfUEFHRTsNCj4gPiA+DQo+ID4gPiAtCS8qIGlnbm9yZSB1bm1hcCBmYWls
+dXJlcyBhbmQgY29udGludWUgYXMgcHJvY2VzcyBtYXkgYmUgZXhpdGluZyAqLw0KPiA+ID4gLQlo
+dl9jYWxsX3VubWFwX2dwYV9wYWdlcyhwYXJ0aXRpb24tPnB0X2lkLCByZWdpb24tPnN0YXJ0X2dm
+biwNCj4gPiA+IC0JCQkJcmVnaW9uLT5ucl9wYWdlcywgdW5tYXBfZmxhZ3MpOw0KPiA+ID4gKwlm
+b3IgKHBhZ2Vfb2Zmc2V0ID0gMDsgcGFnZV9vZmZzZXQgPCByZWdpb24tPm5yX3BhZ2VzOyBwYWdl
+X29mZnNldCsrKSB7DQo+ID4gPiArCQlpZiAoIXJlZ2lvbi0+cGFnZXNbcGFnZV9vZmZzZXRdKQ0K
+PiA+ID4gKwkJCWNvbnRpbnVlOw0KPiA+ID4gKw0KPiA+ID4gKwkJaHZfY2FsbF91bm1hcF9ncGFf
+cGFnZXMocGFydGl0aW9uLT5wdF9pZCwNCj4gPiA+ICsJCQkJCUFMSUdOKHJlZ2lvbi0+c3RhcnRf
+Z2ZuICsgcGFnZV9vZmZzZXQsDQo+ID4gPiArCQkJCQkgICAgICBNU0hWX01BWF9VTk1BUF9HUEFf
+UEFHRVMpLA0KPiA+DQo+ID4gU2VlbXMgbGlrZSB0aGlzIHNob3VsZCBiZSBBTElHTl9ET1dOKCkg
+aW5zdGVhZCBvZiBBTElHTigpLiAgQUxJR04oKSByb3VuZHMNCj4gPiB1cCB0byBnZXQgdGhlIHJl
+cXVlc3RlZCBhbGlnbm1lbnQsIHdoaWNoIGNvdWxkIHNraXAgb3ZlciBzb21lIG5vbi16ZXJvDQo+
+ID4gZW50cmllcyBpbiByZWdpb24tPnBhZ2VzW10uDQo+ID4NCj4gDQo+IEluZGVlZCwgdGhlIGdv
+YWwgaXMgdG8gdW5tYXAgaW4gMk1CIGNodW5rcyBhcyBpdCdzIHRoZSBtYXggcGF5bG9hZCB0aGF0
+DQo+IGNhbiBiZSBwYXNzZWQgdG8gaHlwZXJ2aXNvci4NCj4gSSdsbCByZXBsYWNlIGl0IHdpdGgg
+QUxJR05fRE9XTiBpbiB0aGUgbmV4dCByZXZpc2lvbi4NCj4gDQo+ID4gQW5kIEknbSBhc3N1bWlu
+ZyB0aGUgdW5tYXAgaHlwZXJjYWxsIGlzIGlkZW1wb3RlbnQgaW4gdGhhdCBpZiB0aGUgc3BlY2lm
+aWVkDQo+ID4gcGFydGl0aW9uIFBGTiByYW5nZSBpbmNsdWRlcyBzb21lIHBhZ2VzIHRoYXQgYXJl
+bid0IG1hcHBlZCwgdGhlIGh5cGVyY2FsbA0KPiA+IGp1c3Qgc2tpcHMgdGhlbSBhbmQga2VlcHMg
+Z29pbmcgd2l0aG91dCByZXR1cm5pbmcgYW4gZXJyb3IuDQo+ID4NCj4gDQo+IEl0IG1pZ2h0IGJl
+IHRoZSBjYXNlLCBidXQgaXQncyBub3QgcmVsaWFibGUuDQo+IElmIHRoZSByZWdpb24gc2l6ZSBp
+c27igJl0IGFsaWduZWQgdG8gTVNIVl9NQVhfVU5NQVBfR1BBX1BBR0VTIChpLmUuLCBub3QNCj4g
+YWxpZ25lZCB0byAyTSksIHRoZSBoeXBlcnZpc29yIGNhbiByZXR1cm4gYW4gZXJyb3IgZm9yIHRo
+ZSB0cmFpbGluZw0KPiBpbnZhbGlkIChub24temVybykgUEZOcy4NCj4gSeKAmWxsIGZpeCB0aGlz
+IGluIHRoZSBuZXh0IHJldmlzaW9uLg0KPiANCj4gPiA+ICsJCQkJCU1TSFZfTUFYX1VOTUFQX0dQ
+QV9QQUdFUywgdW5tYXBfZmxhZ3MpOw0KPiA+ID4gKw0KPiA+ID4gKwkJcGFnZV9vZmZzZXQgKz0g
+TVNIVl9NQVhfVU5NQVBfR1BBX1BBR0VTIC0gMTsNCj4gPg0KPiA+IFRoaXMgdXBkYXRlIHRvIHRo
+ZSBwYWdlX29mZnNldCBkb2Vzbid0IHRha2UgaW50byBhY2NvdW50IHRoZSBlZmZlY3Qgb2YgdGhl
+DQo+ID4gQUxJR04gKG9yIEFMSUdOX0RPV04pIGNhbGwuICBXaXRoIGEgY2hhbmdlIHRvIEFMSUdO
+X0RPV04oKSwgaXQgbWF5DQo+ID4gaW5jcmVtZW50IHRvbyBmYXIgYW5kIHBlcmhhcHMgY2F1c2Ug
+dGhlICJmb3IiIGxvb3AgdG8gYmUgZXhpdGVkIHByZW1hdHVyZWx5LA0KPiA+IHdoaWNoIHdvdWxk
+IGZhaWwgdG8gdW5tYXAgc29tZSBvZiB0aGUgcGFnZXMuDQo+ID4NCj4gDQo+IEnigJltIG5vdCBz
+dXJlIEkgc2VlIHRoZSBwcm9ibGVtIGhlcmUuICBJZiB3ZSBhbGlnbiB0aGUgb2Zmc2V0IGJ5DQo+
+IE1TSFZfTUFYX1VOTUFQX0dQQV9QQUdFUyBhbmQgdW5tYXAgdGhlIHNhbWUgbnVtYmVyIG9mIHBh
+Z2VzLCB0aGVuIHdlDQo+IHNob3VsZCBpbmNyZW1lbnQgdGhlIG9mZnNldCBieSB0aGF0IHZlcnkg
+c2FtZSBudW1iZXIsIHNob3VsZG7igJl0IHdlPw0KDQpIZXJlJ3MgYW4gZXhhbXBsZSBzaG93aW5n
+IHRoZSBwcm9ibGVtIEkgc2VlIChhc3N1bWluZyBBTElHTl9ET1dODQppbnN0ZWFkIG9mIEFMSUdO
+KToNCg0KMSkgRm9yIHNpbXBsaWNpdHkgaW4gdGhlIGV4YW1wbGUsIGFzc3VtZSByZWdpb24tPnN0
+YXJ0X2dmbiBpcyB6ZXJvLg0KMikgRW50cmllcyAwIHRocnUgMyAoaS5lLiwgNCBlbnRyaWVzKSBp
+biByZWdpb24tPnBhZ2VzW10gYXJlIHplcm8uDQozKSBFbnRyaWVzIDQgdGhydSA1MTUgKHRoZSBu
+ZXh0IDUxMiBlbnRyaWVzKSBhcmUgbm9uLXplcm8uDQo0KSBFbnRyaWVzIDUxNiB0aHJ1IDEwMjMg
+KHRoZSBuZXh0IDUwOCBlbnRyaWVzKSBhcmUgemVyby4NCjUpIEVudHJpZXMgMTAyNCB0aHJ1IDE1
+MzUgKHRoZSBsYXN0IDUxMiBlbnRyaWVzKSBhcmUgbm9uLXplcm8uDQoNClVwb24gZW50ZXJpbmcg
+dGhlICJmb3IiIGxvb3AgZm9yIHRoZSBmaXJzdCB0aW1lLCBwYWdlX29mZnNldCBnZXRzDQppbmNy
+ZW1lbnRlZCB0byA0IGJlY2F1c2Ugb2Ygc2tpcHBpbmcgZW50cmllcyAwIHRocnUgMyB0aGF0IGFy
+ZSB6ZXJvLg0KT24gdGhlIG5leHQgaXRlcmF0aW9uIHdoZXJlIHBhZ2Vfb2Zmc2V0IGlzIDQsIHRo
+ZSBoeXBlcmNhbGwgaXMgbWFkZSwNCnBhc3NpbmcgMCBmb3IgdGhlIGdmbiAoYmVjYXVzZSBvZiBB
+TElHTl9ET1dOKSwgd2l0aCBhIGNvdW50IG9mDQo1MTIsIHNvIGVudHJpZXMgMCB0aHJ1IDUxMSBh
+cmUgdW5tYXBwZWQuIEVudHJpZXMgMCB0aHJ1IDMgYXJlIHZhbGlkDQplbnRyaWVzLCBhbmQgdGhl
+IGZhY3QgdGhhdCB0aGV5IGFyZW4ndCBtYXBwZWQgaXMgcHJlc3VtYWJseSBpZ25vcmVkDQpieSB0
+aGUgaHlwZXJjYWxsLCBzbyBldmVyeXRoaW5nIHdvcmtzLg0KDQpUaGVuIHBhZ2Vfb2Zmc2V0IGlz
+IGluY3JlbWVudGVkIGJ5IDUxMSwgc28gaXQgd2lsbCBiZSA1MTUuIENvbnRpbnVpbmcNCnRoZSAi
+Zm9yIiBsb29wIGluY3JlbWVudHMgcGFnZV9vZmZzZXQgdG8gNTE2LiBUaGUgemVybyBlbnRyaWVz
+IDUxNg0KdGhydSAxMDIzIGluY3JlbWVudCBwYWdlX29mZnNldCB0byAxMDI0LiBGaW5hbGx5IHRo
+ZSBoeXBlcmNhbGwgaXMgbWFkZQ0KYWdhaW4gY292ZXJpbmcgZW50cmllcyAxMDI0IHRocnUgMTUz
+NSwgbm9uZSBvZiB3aGljaCBhcmUgemVyby4NCg0KQnV0IG5vdGljZSB0aGF0IGVudHJpZXMgNTEy
+IHRocnUgNTE1ICh3aGljaCBhcmUgbm9uLXplcm8pIGdvdCBza2lwcGVkLg0KVGhhdCdzIGJlY2F1
+c2UgdGhlIGZpcnN0IGludm9jYXRpb24gb2YgdGhlIGh5cGVyY2FsbCBjb3ZlcmVkIG9ubHkgdGhy
+b3VnaA0KZW50cnkgNTExLCB3aGlsZSBwYWdlX29mZnNldCB3YXMgaW5jcmVtZW50ZWQgdG8gNTE1
+LiBwYWdlX29mZnNldA0Kc2hvdWxkIGhhdmUgYmVlbiBzZXQgdG8gNTExLCBzaW5jZSB0aGF0J3Mg
+dGhlIGxhc3QgZW50cnkgcHJvY2Vzc2VkIGJ5DQp0aGUgZmlyc3QgaW52b2NhdGlvbiBvZiB0aGUg
+aHlwZXJjYWxsLg0KDQpNaWNoYWVsDQo=
 
