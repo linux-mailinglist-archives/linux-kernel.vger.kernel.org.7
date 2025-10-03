@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-841272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BE65BB6AE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 14:51:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B60D3BB6AE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 14:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CB111896D0F
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 12:51:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 84D2D4E886B
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 12:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4962EFDB2;
-	Fri,  3 Oct 2025 12:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E502F0695;
+	Fri,  3 Oct 2025 12:51:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E12M+7GY"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FZi20jRQ"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E552EE5FC
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 12:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C6E2F066D
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 12:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759495864; cv=none; b=K5ai8660t/6qQrY6GEyaWVVZ+C/51qNLZiEjNowLqLUkGkEOJFKxXHQSuLbY7JwYmNNmdBLnn976GfSWdzN/ebz9uWS1vh7cuTFe+3hy2Edsex9LHynVhJVYWSiS7VTkTaJHrQ7g/aDnspBm4T6jiOKrberguVmC1F4mEb8uKOI=
+	t=1759495868; cv=none; b=phE2ERPrQstcuGqy5tz/8hQl2WSG6ubK6H7MayWZkZb2XXUUOV0DXCzm5o7BBKcnPK9oMQepBglCCCFq5F4+8KvvDjTys6/iasmLSQ7B4OKSMy+diD9jrJI2373xRMZMUZcVpWaxkdZXWdfMODsO1uNMZ2dSbzgJOb86hiVQakk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759495864; c=relaxed/simple;
-	bh=fPZ/cJSJkaF11EllnT7kgWt76oa1pY42U6aeyHqj7pg=;
+	s=arc-20240116; t=1759495868; c=relaxed/simple;
+	bh=eAUUl63uFcupRJTMuIWFtoPfkLEkUQYqZN3KWZyQ4lE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P5+sKR7qpLYGpjSlTlHYVVtY6NdmzssMFZ0j77p5B29TQSHKXbixEkSiVEuXPJW3jXCUcs5Id4otMzkpraeDwVo4fWFF5Y/dD9OgF2S6oynZsIFRMH4yZUUHDHTNUl8wCLFRxSpw8C+QEkfxwpXsKAueOe83rVG/VrcC1oI8vgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E12M+7GY; arc=none smtp.client-ip=209.85.128.54
+	 MIME-Version; b=kQjfK95YA02NOHYHZsioJkJvsM28CA0moMgzKeJaN7l1hYzRq/Xkkpz0Vm0TJrRgjW61gKUwleLvCutPZdlcpFuwyjgilRWpEmr18JBgrBnQkn4Bsv15V6dF0poSRnpD9ylJVMGeTGM/Vh/k9n3nS7qIpwspXuvqD46Z7PT8fFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FZi20jRQ; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46b303f755aso17885795e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 05:51:01 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e47cca387so23631005e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 05:51:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759495860; x=1760100660; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759495863; x=1760100663; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WaXfwSB/FRGqmKy0Vb2zzmiYO4dF/Wx+pD0HOeUkg6Y=;
-        b=E12M+7GYdz9yxn7MKWSMPlaIGG+69Y1f1EMSpigGSzcG2al79llkGku0b2Qokyt4U9
-         z5GyGZMZ9TtS+Jfk1h4iGxM3y/IQso1EN9y53Kl2tVRcCd6c6kaJCh37tXmf+vbyI5Mf
-         gwQE+KqQm71N2ialAVOqGghIvXx+FWj7ZfCN46OrIWDPVzdDy8EOLHmUu7NFC1IztFA2
-         yhJ9MsmYqBMVK7FsKuBq7PLrxW1aewdLoOEpHSJ4GiFnz7aqAP+4uNTpjZRWlg+5l3uF
-         NemA2/MLptp0ctpOGUbkIzHdvnjJKzxW4XNQW6x35uwyVesPBubTn1rlQOu36NnihCmM
-         aakA==
+        bh=2IZoiErPJ/Pg70gKqGC9T9EhwBHZBMlbbY6bGBGZt7o=;
+        b=FZi20jRQOVdX7AfDtyHLohSSTkWZzP9wraDweoALH9qtJUS+9ZIIHyQ5FnMT74WX3R
+         hzfEl9x5BzGGPtXo2yzbEraOd5WM5IL7hqHKt1Wl91e5rXEk0hYCjUtRlKweVrirC9Xe
+         cIwUtSWfIPBrqNIvfAOb44E7FAJSSRsXWguvm8lim+aketYt3LXr/zKS1OqSkXQX0goe
+         za3SrK//uHaJ7fgFH5HL1T+zqMiXHUrw+UdUWzRDl36tvzfkEnnvNhrdrq+NjYh4Fj2x
+         +LRM0a9Ey4UMbFdymIa5WvSBpqx6kD8zaOTvBTSNPzIHPrslSKr/HNk21k1JiUB3RbqL
+         AKlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759495860; x=1760100660;
+        d=1e100.net; s=20230601; t=1759495863; x=1760100663;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WaXfwSB/FRGqmKy0Vb2zzmiYO4dF/Wx+pD0HOeUkg6Y=;
-        b=tzPyXa4gvGzQbyXesjOpH8U72eSXO2hB1sxwFfnaWFdz9KxOKBvOj3/A+5e0rhC9lN
-         32W7hRxvZQROuvEtMjNbSpY5AKLs0DyyBOEpzBLnoVmWtVZVWrc2tbC92STD655IeUFu
-         eRwHuZv9MYQ6IB2mtyvOIVlqrzxXpAx8eowTH8yhlLFcs9MgQHt6Js87l6ujjisdywVe
-         hWPtDq+IgGmZ3pbfCrPBKT5on9W4gp/jZIgH5gDMGPB/BcH3HClpU7eIN/D5rY58HMHX
-         RTwfw3zEHtGrSgoZLz+X1Neu8XPogA9rm0kAW8zqKYNfwfasQmhCxmpyL5MZdvxV/+dV
-         x8iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXeLtzygxJ1s9YdoJoOI74Wy91sIXdYM1DZBR25Rn8FbIzLbMmjk7HkCNnQBfdJg3KM+yNLTnhoctkLTLQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXTBRZ/bAfsjpmM1COBjKPpMvq4SOk7VeVwTlvFLw9d72CjZfH
-	WdUMzzuTjsKYevKobeaw5LoQVWfR9r8yLQwJXktIqUJde+af2yB6bjqj
-X-Gm-Gg: ASbGnctVTwOZA4tVtxSNAoGjDbmK+jPQD1VrTcYlXhvf5DPMIXlKFWGo7gAgMOgFmpn
-	HWObBs8u6u8Sr5A2jtYxUIsUVQyG0TCrixJ6ex+OrdWyZehkYgz5pFNqfDGMB2J2QiPTRCV4wEy
-	pSTudlqIFssyTAZ8M9IBHZhG2tZrgWuE9vE14p0zr8OdX8ov6eHrB4VMWGC9tHZFqy7P+XOvSzq
-	fZGGMkMVkqyuhjCU/fo9YS1qkLA91PHz3myLNcmTgrR3gnFfmWfPK/n5P7eGXFQ4BeyThNKkXl0
-	xre7ebs85sOaFl01ko2PN0nNjzzTu4AoVUnc1791hdYpt9RpNn+lJpxTjlsXDsrnfngtMa44mYf
-	Az5ZRCPBZ729TJ7Jbwk0BFiaEMpRsJR0uGY+EbK+u+zQsuyQInl2Og8n2Nloo8LFQArJ69yAtoE
-	8JEooL
-X-Google-Smtp-Source: AGHT+IFK24Hmy9qDQXQFVbal729f+4HuhDIUzQDqGeKXa8THbxiFFtjcu/scKAzTeHzoz76wi6we2g==
-X-Received: by 2002:a05:600d:4392:b0:46e:74bb:6bc with SMTP id 5b1f17b1804b1-46e74bb07ecmr9696025e9.5.1759495860204;
-        Fri, 03 Oct 2025 05:51:00 -0700 (PDT)
+        bh=2IZoiErPJ/Pg70gKqGC9T9EhwBHZBMlbbY6bGBGZt7o=;
+        b=qI4rjSoQAWoviIaD4dMspWelC3BKhlRDCuXaInCM5Lms4KbEMVUFhXoUb8BBXmP82r
+         Q0NN1h52NqtxI32ReorHRvoqVAkKBN0q4I2wny9Np8QB88wNnJJsXOX81tysKFjle8Pp
+         lwymdPKRx08JHlUfrJoIxb/KvJbjt9pZYGumtviOjdHewgAUi0IMlEheKdd/ofqUpoLM
+         6mV4wXpqGWmeV9IUAtb4w5YJUiZideGwEr+2E7vJUtYjaHnKzhUIz9EIIeWamBoTBPBR
+         xpO1hT6PThNRStcmEgdSKs9FOOEp2AzF9dYkXZRtEq5081vD4fId/UqF4wEqREuuSmiH
+         r2zA==
+X-Forwarded-Encrypted: i=1; AJvYcCUjB0Vj2owtKnJgj//WJN3kkJmox3DpwTw6Vo9drp4Qio6eK5jTi1El/Wtr9IelQ1q34iNnYIFAkPi1XmI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoxsmVPAsk6e0gI12GR4iAGw2Lno0tToc95rHTE3GzyQX2+wIx
+	ZEPLOT+BtBNVPM6x2BWm1JR8BfgIoR7AJjKVnlPSpfDztDwheAfAIJ+w
+X-Gm-Gg: ASbGncuAZAyeyZTzdZIRE5uOH5JDltcAJ8mLMrDieoeJRtoh3OBks2obeUqNdgHEFr/
+	HmrzEw6mAFPjsKsw8Ry6Cz8bvp9Uho8t050PCQKOmnE/HUrClUJ0hgA6MCHF6+YXHYv1M/kWidw
+	L6J8UGHn7kPWIj3PgN4im8TVG0dM0Ks4Akm37uegxL63LRxN+G4y2B7PD//hc/uaXOwp+1sh5d2
+	sMbcxNBt4bg5AEJP6K9nwAQdvNlbozbNsKOhZVCFo2pD3dbBuo+82TeL76g8ZAMPqCsS+ezvrJf
+	/yWs24t5PT1dxEcMU8IRGeXAQlJGUZjRE23q6R9FLA9ZJ6b8PbQed9uJItLlTUf9DFbjRhk8m7h
+	oJqLeDPPnu5iToOLjZxAYdDVPxRnV5TF7u2mujDRZO892d405lSkyiUhugW00RGsVCUOUWw==
+X-Google-Smtp-Source: AGHT+IHs8dFUCY+WdReUoM1aWDsIS9GNN231DHH3c/6nXzIw+XZO5N/Hg3PQQ7yZp2JlTomt4pJKHg==
+X-Received: by 2002:a05:600c:4e94:b0:46e:1d01:11dd with SMTP id 5b1f17b1804b1-46e7110436bmr21072345e9.2.1759495862813;
+        Fri, 03 Oct 2025 05:51:02 -0700 (PDT)
 Received: from localhost.localdomain ([37.159.33.161])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e5c40983asm80598605e9.3.2025.10.03.05.50.58
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e5c40983asm80598605e9.3.2025.10.03.05.51.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 05:50:59 -0700 (PDT)
+        Fri, 03 Oct 2025 05:51:02 -0700 (PDT)
 From: Stefano Radaelli <stefano.radaelli21@gmail.com>
 To: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
@@ -84,9 +83,9 @@ Cc: Stefano Radaelli <stefano.radaelli21@gmail.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v1 1/3] arm64: dts: ti: var-som-am62p: Refactor IPC configuration into common dtsi
-Date: Fri,  3 Oct 2025 14:50:27 +0200
-Message-ID: <20251003125031.30539-2-stefano.radaelli21@gmail.com>
+Subject: [PATCH v1 2/3] arm64: dts: ti: var-som-am62p: Add support for WM8904 audio codec
+Date: Fri,  3 Oct 2025 14:50:28 +0200
+Message-ID: <20251003125031.30539-3-stefano.radaelli21@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251003125031.30539-1-stefano.radaelli21@gmail.com>
 References: <20251003125031.30539-1-stefano.radaelli21@gmail.com>
@@ -98,91 +97,122 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Update the VAR-SOM-AM62P dtsi to align with the refactor introduced by
-k3-am62p-ti-ipc-firmware.dtsi common file, allowing to remove the IPC
-nodes from the board file including the new common dtsi.
+The VAR-SOM-AM62P can integrate the WM8904, a high-performance
+ultra-low-power stereo codec optimized for portable audio applications.
 
-No functional changes intended.
+This patch adds the WM8904 device to the appropriate I2C bus, enables
+the McASP1 peripheral, and introduces the sound node to expose the
+sound card to the system.
 
 Signed-off-by: Stefano Radaelli <stefano.radaelli21@gmail.com>
 ---
- arch/arm64/boot/dts/ti/k3-am62p5-var-som.dtsi | 52 +------------------
- 1 file changed, 2 insertions(+), 50 deletions(-)
+ arch/arm64/boot/dts/ti/k3-am62p5-var-som.dtsi | 72 +++++++++++++++++++
+ 1 file changed, 72 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-var-som.dtsi b/arch/arm64/boot/dts/ti/k3-am62p5-var-som.dtsi
-index edaa4f99295d..b93372f22732 100644
+index b93372f22732..aba72d0b767c 100644
 --- a/arch/arm64/boot/dts/ti/k3-am62p5-var-som.dtsi
 +++ b/arch/arm64/boot/dts/ti/k3-am62p5-var-som.dtsi
-@@ -63,18 +63,6 @@ rtos_ipc_memory_region: rtos-ipc-memory@9b500000 {
- 			no-map;
- 		};
- 
--		mcu_r5fss0_core0_dma_memory_region: mcu-r5fss-dma-memory-region@9b800000 {
--			compatible = "shared-dma-pool";
--			reg = <0x00 0x9b800000 0x00 0x00100000>;
--			no-map;
--		};
--
--		mcu_r5fss0_core0_memory_region: mcu-r5fss-memory-region@9b900000 {
--			compatible = "shared-dma-pool";
--			reg = <0x00 0x9b900000 0x00 0x00f00000>;
--			no-map;
--		};
--
- 		wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@9c800000 {
- 			compatible = "shared-dma-pool";
- 			reg = <0x00 0x9c800000 0x00 0x00100000>;
-@@ -320,44 +308,6 @@ &usbss1 {
- 	ti,vbus-divider;
- };
- 
--&mailbox0_cluster0 {
--	status = "okay";
--
--	mbox_r5_0: mbox-r5-0 {
--		ti,mbox-rx = <0 0 0>;
--		ti,mbox-tx = <1 0 0>;
--	};
--};
--
--&mailbox0_cluster1 {
--	status = "okay";
--
--	mbox_mcu_r5_0: mbox-mcu-r5-0 {
--		ti,mbox-rx = <0 0 0>;
--		ti,mbox-tx = <1 0 0>;
--	};
--};
--
--&mcu_r5fss0 {
--	status = "okay";
--};
--
--&mcu_r5fss0_core0 {
--	mboxes = <&mailbox0_cluster1 &mbox_mcu_r5_0>;
--	memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
--			<&mcu_r5fss0_core0_memory_region>;
--};
--
--&wkup_r5fss0 {
--	status = "okay";
--};
--
--&wkup_r5fss0_core0 {
--	mboxes = <&mailbox0_cluster0 &mbox_r5_0>;
--	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
--			<&wkup_r5fss0_core0_memory_region>;
--};
--
- /* mcu_gpio0 and mcu_gpio_intr are reserved for mcu firmware usage */
- &mcu_gpio0 {
- 	status = "reserved";
-@@ -385,3 +335,5 @@ &main_uart1 {
- 	/* Main UART1 is used by TIFS firmware */
- 	status = "reserved";
- };
+@@ -112,6 +112,38 @@ reg_3v3_phy: regulator-3v3-phy {
+ 		enable-active-high;
+ 		regulator-always-on;
+ 	};
 +
-+#include "k3-am62p-ti-ipc-firmware.dtsi"
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,bitclock-master = <&codec_dai>;
++		simple-audio-card,format = "dsp_b";
++		simple-audio-card,frame-master = <&codec_dai>;
++		simple-audio-card,name = "wm8904-audio";
++		simple-audio-card,mclk-fs = <256>;
++		simple-audio-card,routing =
++			"Headphone Jack", "HPOUTL",
++			"Headphone Jack", "HPOUTR",
++			"IN2L", "Line In Jack",
++			"IN2R", "Line In Jack",
++			"IN1L", "Microphone Jack",
++			"IN1R", "Microphone Jack";
++		simple-audio-card,widgets =
++			"Microphone", "Microphone Jack",
++			"Headphone", "Headphone Jack",
++			"Line", "Line In Jack";
++
++		codec_dai: simple-audio-card,codec {
++			sound-dai = <&wm8904>;
++		};
++
++		simple-audio-card,cpu {
++			sound-dai = <&mcasp1>;
++		};
++	};
++};
++
++&audio_refclk1 {
++	assigned-clock-rates = <100000000>;
+ };
+ 
+ &cpsw3g {
+@@ -149,6 +181,19 @@ &main_i2c2 {
+ 	pinctrl-0 = <&pinctrl_i2c2>;
+ 	clock-frequency = <400000>;
+ 	status = "okay";
++
++	wm8904: audio-codec@1a {
++		compatible = "wlf,wm8904";
++		reg = <0x1a>;
++		#sound-dai-cells = <0>;
++		clocks = <&audio_refclk1>;
++		clock-names = "mclk";
++		AVDD-supply = <&reg_1v8>;
++		CPVDD-supply = <&reg_1v8>;
++		DBVDD-supply = <&reg_3v3>;
++		DCVDD-supply = <&reg_1v8>;
++		MICVDD-supply = <&reg_1v8>;
++	};
+ };
+ 
+ &main_i2c3 {
+@@ -179,6 +224,16 @@ AM62PX_IOPAD(0x01d4, PIN_INPUT_PULLUP, 2) /* (C22) UART0_RTSn.I2C3_SDA */
+ 		>;
+ 	};
+ 
++	pinctrl_mcasp1: main-mcasp1-default-pins {
++		pinctrl-single,pins = <
++			AM62PX_IOPAD(0x0090, PIN_INPUT, 2) /* (U24) GPMC0_BE0n_CLE.MCASP1_ACLKX */
++			AM62PX_IOPAD(0x0098, PIN_INPUT, 2) /* (AA24) GPMC0_WAIT0.MCASP1_AFSX */
++			AM62PX_IOPAD(0x008c, PIN_OUTPUT, 2) /* (T25) GPMC0_WEn.MCASP1_AXR0 */
++			AM62PX_IOPAD(0x0084, PIN_INPUT, 2) /* (R25) GPMC0_ADVn_ALE.MCASP1_AXR2 */
++			AM62PX_IOPAD(0x00a0, PIN_OUTPUT, 1) /* (P24) GPMC0_WPn.AUDIO_EXT_REFCLK1 */
++		>;
++	};
++
+ 	pinctrl_mdio1: main-mdio1-default-pins {
+ 		pinctrl-single,pins = <
+ 			AM62PX_IOPAD(0x0160, PIN_OUTPUT, 0) /* (F17) MDIO0_MDC */
+@@ -280,6 +335,23 @@ bluetooth {
+ 	};
+ };
+ 
++&mcasp1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_mcasp1>;
++	op-mode = <0>;  /* MCASP_IIS_MODE */
++	serial-dir = <  /* 0: INACTIVE, 1: TX, 2: RX */
++		1 0 2 0
++		0 0 0 0
++		0 0 0 0
++		0 0 0 0
++	>;
++	tdm-slots = <2>;
++	tx-num-evt = <0>;
++	rx-num-evt = <0>;
++	#sound-dai-cells = <0>;
++	status = "okay";
++};
++
+ &sdhci0 {
+ 	/* On-module eMMC */
+ 	ti,driver-strength-ohm = <50>;
 -- 
 2.47.3
 
