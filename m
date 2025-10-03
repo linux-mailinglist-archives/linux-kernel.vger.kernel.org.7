@@ -1,193 +1,128 @@
-Return-Path: <linux-kernel+bounces-841588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9261CBB7C26
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:33:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F19F7BB7C2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:33:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1C1E19C7354
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:33:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4F8719C7846
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272762DEA70;
-	Fri,  3 Oct 2025 17:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517CA2DF12C;
+	Fri,  3 Oct 2025 17:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y9xltinL"
-Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="be9g4sgw"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7605A2DC773
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 17:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6B4284B2E
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 17:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759512773; cv=none; b=HyqssA6vNgyiB/gAGGI+G0Asw4JfBz2M6b/KuJwa3j7LJpufb12DVj6HyDRIxXlwOiATsl8FSMyBvhBc4zksr7qLJ3lJSIq27SHL9MI6wQpHJft7CL/uI0L+ni2lh9IvsOQs0VPrJXySfiX+ByNS6Y/AXAwAJwPepkaZk2dNbTM=
+	t=1759512774; cv=none; b=eFl+8tuEq4AwE3+CsldnvKHdVHdcGAbKu5TrBZ8RQB4pZttB2cR1yhMHe3v3Ptu76MpU+0TdVNuFsVGMj9+25qmKG7q760r/CKI7x6pZfYore2JHMomUV6RlB6D+uh7kHq683inHO0zzMoyFE9Ry0fXArUuBQPv1S56r0EN0Luk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759512773; c=relaxed/simple;
-	bh=Ppoa9QsZOoSTV+IPfX4/odA4ZuwL+h+gqoPsnDxPufY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=AgVd6jnQ8jeS9OqkfCS+4DcFHbX4SSpdmxJssKcxfonrafAEjAXx/p8PPrDbn9nDtWEhY2IKh3LEfUBB7aDRhsYmgeKce7AeEKNTPhgKHxnWCFSLQEtNciDoOLkhwB8pzE6lZlW8Bawdo7iCHGDp54P1yX3dD4m9OWUEGAcDkP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y9xltinL; arc=none smtp.client-ip=209.85.208.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
-Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-6305c385adbso2706611a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 10:32:51 -0700 (PDT)
+	s=arc-20240116; t=1759512774; c=relaxed/simple;
+	bh=/zWwxR7jnhgT3e053y0mBHqlR28r1nG7om/4xdmHk2M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iHqHA7bxgNe6JE4TEnOdfALZNq+0q7PkNqY82IChffzctI9eO3K62YiOuvhL5xOUo3cTwuyE3R0MMii4XNeg/905o3CIy+05+dDFMEVE2Zs3NOQ7BIKDXBI3bDm/F5mvKNAw7IHe4XiHahOHm9UwVsZ7FVAC4L85AhDEFM1mfeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=be9g4sgw; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-27eec33b737so32514555ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 10:32:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759512770; x=1760117570; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rsO4Y9+CDsR/9B2sBMziOZN6BaFGbVnMznIuFrkfbBE=;
-        b=Y9xltinLofTfplfLEyXdU9qcihyxyb7ymbBTzK6/kMb4aiA/G08AvuEwhE6ICg2sTW
-         Ll84pC7Qgx0kfWzJEKfatH9O6TkDm/Y9N2YCQKAV7CLLpCFWG6oD7L7IF9gWnUrIdmPf
-         fj9ZyU64wtmdHK7X3DpPlPRpqpMYLfWXKCTVxA11M5KH9n0DQnWX6qhzlnaw/672W3ED
-         2jHNznATssRuYlEcBDRBFTnN74OPdIM/7jDMTbtxJpuvmqJBzmlmmN8nyX0fHZKESNq9
-         lctm3veeqx+xRrf9rNvPjeylCmJh9eViA4JnNA6CE5E9UZdzqGe11DxOknKWXfp2kAY1
-         3Ogw==
+        d=gmail.com; s=20230601; t=1759512772; x=1760117572; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=O3q3kNPw0ApKhnK7U/kRjsM4J9QuxzhyjRkD8O9PFXs=;
+        b=be9g4sgw3LwzALk+si0aeSPaAXK4PW9AbVh0TS/6VhjC5ckcPzOSIhxYlQXKLR4bdy
+         AbEukLjWa/LWxFE6JDcwYlDIeXDexr7gXaOyfR/eP3YukZPJbQuLnM/QxaGMTplghryc
+         JBZyFgOjz2QAqYDOFHwexHlKDJDQOzd0p2XENTC6XoW6GqswgW0iEfLwXMdx4SN9fZQT
+         zKX6l9sZtnGe5JEAqBzYg3VIzTjasdpELGZ2+x1O8M3kdofqWRxms7ndSdHNraI9j1KR
+         c3yJ7wyex6cNqNF/6MCdAL4GMwjKnVvisNOtHWbNteONOMREA7zDplCf/Q6SxM+7g9rq
+         1rLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759512770; x=1760117570;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rsO4Y9+CDsR/9B2sBMziOZN6BaFGbVnMznIuFrkfbBE=;
-        b=EABXCIRSl2pvRtI0A4ap/m3esyKN56Q9WAYYWlVaGNGrPACjrDirSXp2d4I5omQpTY
-         qjvd+rDQBNGbdqXhb4Gk4Q24GoDZ0SJreOfFCerm2vyTHwqX0z3LEbgnSWa9ZGwvXJ9u
-         TyYYcspuGa36se/NvN5X1bbWmgVexffb4Yl0yE/VWosPznFz02CdjPmhbCXbXyLzpHuw
-         tZW7zrbuoIyQdLw46WrzVRqrQvyfY4kHelvU/7bzWZZ0x9k7xq8TLcIiPAYFewzkiam4
-         nrLgS35dNFEVbBXeZ7QTASWAfd6hmv95q6F/KYArWZRzYlyPHXdOLrpOdJfCppkzXccs
-         978Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV3QQ3cKXPegW/SNl/R5hUVa+lXaEO+PJdakAMWmOmiEZsVG/kh44Klhq7Y/RFqs+SwJeppavsiiBjihlg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN47UZo6vxmZe13XAOP2yJAS1qOnkxucVCvkDpML+BLYdlkCeb
-	vw+KI7kEJGcBKfMTBPiM7cP1Rde5C01/TBGDOP1v26qGFHI8PTzWFk0PHF7zr/w90/eYp+VYKUg
-	OOtytrUe4681tvg==
-X-Google-Smtp-Source: AGHT+IEICQMptfCkkk6D3e73QyAc9gpdDen9PXr6jWCu1S1AfhHO09M/A91ku8VJ/Ju4zq0R9Vac76YEgDbAjg==
-X-Received: from edqm10.prod.google.com ([2002:aa7:c48a:0:b0:636:871c:c865])
- (user=smostafa job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6402:3508:b0:639:102b:b8db with SMTP id 4fb4d7f45d1cf-63939c20419mr3602021a12.24.1759512769531;
- Fri, 03 Oct 2025 10:32:49 -0700 (PDT)
-Date: Fri,  3 Oct 2025 17:32:29 +0000
-In-Reply-To: <20251003173229.1533640-1-smostafa@google.com>
+        d=1e100.net; s=20230601; t=1759512772; x=1760117572;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O3q3kNPw0ApKhnK7U/kRjsM4J9QuxzhyjRkD8O9PFXs=;
+        b=M2FcywVwGPFlmfR+lA+vgfQspMaS9Bn53tCCZxVzTYhVyrjSe6CVRdSah5a9JB8tuu
+         n6d+/CTU0eNSrzJ+076bZxjcqKvEx3pgb1TT3Tv06oZmTfZ2wDSfabBJv+6KxZ5jou1D
+         hSeKzCp0LpjR/mVy+rmitQOTlAziBykhukMIicAKBEFF8yIq9Px1r2XFLpQy5CbCj/sT
+         S9X/lt7W1RFDUukKlgrIk+v4V8qPY89iWXqUCRwTb4s9pLoEU4zAHoP36BPW3e9UvJ2+
+         4ufpg/4T3sYaYZ9tFxJ9VVmNrxwWAn12g6jz5WAcMjLVfbIPOaxptfvnlsXjgSquckUX
+         Y3Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcn8ycUIg/Lor0159wxLHH9CWIJLLRRj68DZT07IDdDueKEhdox2o4ev2PvBt1epsiWbK85YUPMYuSG14=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDFECzb+lLnfyi2VHTnalwekrayZRKXNRqs6sEK/vqJdMocQN+
+	dUhuuTLaCo/J+u2FAu3o11LJvDhnYUwdtJReabYRPAw9kPt/5wdUyyuc
+X-Gm-Gg: ASbGnctmDT0d1tD83o8xs9WjDUFWtf3ckmyjbAm7JQ5YGoZ0L7Vkn0jiaqR8YAtw/wU
+	Ton+R+0bw6TA3qHL9+lS4kadIqdiDyP4CPjI6iVCpWejHoOojE1E4kRIcDXLxwAP6aF9gIzs9PL
+	IXj/qKaEO/Cy8Y1EMCB4nivbgWOiyKDdBRJo60sUTQiVlHMoEK2MKYxhlcBaIXjisYtmG6S83qY
+	Tpf5tDPPEPU8ozlcpyIdBTivJh/y4JnLFbh9QirE34A/qjHq34oz89t8MR420lSfusx2HJd8UKI
+	NAvIV2z9t3P9Lp4tkbeqooNxD0tr52ieR5exMfM/EXPAzuzfLqLT3kDIef8KkeAjXRKG1FztnBu
+	azSisljNMeHW3HehK+e0lcPrMC1dwu3ArYj5B+63iK+mc6Mwo5v6Ojkno3Ab2+jLJgW5taZj7Qk
+	9HEAS+t0nGSvG2CwS8mAg5SCo=
+X-Google-Smtp-Source: AGHT+IEhIeNN62AWq5uTx46AyDu8Fa0z9Vfz2iBvkwTa/pyPi6SOUcGwfQS72vWfZG0oq9oJ2p0Edg==
+X-Received: by 2002:a17:903:120d:b0:27e:f201:ec90 with SMTP id d9443c01a7336-28e9a5ba9afmr46890745ad.25.1759512772366;
+        Fri, 03 Oct 2025 10:32:52 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339c4a34f40sm2756054a91.17.2025.10.03.10.32.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Oct 2025 10:32:51 -0700 (PDT)
+Message-ID: <08e96c76-f4ef-4504-b80a-9d474035b45d@gmail.com>
+Date: Fri, 3 Oct 2025 10:32:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251003173229.1533640-1-smostafa@google.com>
-X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
-Message-ID: <20251003173229.1533640-5-smostafa@google.com>
-Subject: [RFC PATCH 4/4] drivers/iommu-debug: Check state of mapped/unmapped
- kernel memory
-From: Mostafa Saleh <smostafa@google.com>
-To: linux-mm@kvack.org, iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org
-Cc: corbet@lwn.net, joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, 
-	akpm@linux-foundation.org, vbabka@suse.cz, surenb@google.com, mhocko@suse.com, 
-	jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com, david@redhat.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
-	Mostafa Saleh <smostafa@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.16 00/14] 6.16.11-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20251003160352.713189598@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20251003160352.713189598@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Now, as the page_ext holds count of IOMMU mappings, we can use it to
-assert that any page allocated/freed is indeed not in the IOMMU.
 
-The sanitizer doesn=E2=80=99t protect against mapping/unmapping during this
-period. However, that=E2=80=99s less harmful as the page is not used by the
-kernel.
 
-Signed-off-by: Mostafa Saleh <smostafa@google.com>
----
- drivers/iommu/iommu-debug.c | 22 ++++++++++++++++++++++
- include/linux/iommu-debug.h |  1 +
- include/linux/mm.h          |  7 +++++++
- 3 files changed, 30 insertions(+)
+On 10/3/2025 9:05 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.16.11 release.
+> There are 14 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun, 05 Oct 2025 16:02:25 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.11-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-diff --git a/drivers/iommu/iommu-debug.c b/drivers/iommu/iommu-debug.c
-index cec8f594c7fa..09157fef697e 100644
---- a/drivers/iommu/iommu-debug.c
-+++ b/drivers/iommu/iommu-debug.c
-@@ -71,6 +71,28 @@ static size_t iommu_debug_page_size(struct iommu_domain =
-*domain)
- 	return 1UL << __ffs(domain->pgsize_bitmap);
- }
-=20
-+static unsigned int iommu_debug_page_count(unsigned long phys)
-+{
-+	unsigned int ref;
-+	struct page_ext *page_ext =3D get_iommu_page_ext(phys);
-+	struct iommu_debug_metadate *d =3D get_iommu_data(page_ext);
-+
-+	ref =3D atomic_read(&d->ref);
-+	page_ext_put(page_ext);
-+	return ref;
-+}
-+
-+void iommu_debug_check_unmapped(const struct page *page, int numpages)
-+{
-+	if (!static_branch_likely(&iommu_debug_initialized))
-+		return;
-+
-+	while (numpages--) {
-+		WARN_ON(iommu_debug_page_count(page_to_phys(page)));
-+		page++;
-+	}
-+}
-+
- void iommu_debug_map(struct iommu_domain *domain, phys_addr_t phys, size_t=
- size)
- {
- 	size_t off;
-diff --git a/include/linux/iommu-debug.h b/include/linux/iommu-debug.h
-index 8d3ea661660f..aaf893cfafd0 100644
---- a/include/linux/iommu-debug.h
-+++ b/include/linux/iommu-debug.h
-@@ -17,6 +17,7 @@ void iommu_debug_map(struct iommu_domain *domain, phys_ad=
-dr_t phys, size_t size)
- void iommu_debug_unmap(struct iommu_domain *domain, unsigned long iova, si=
-ze_t size);
- void iommu_debug_remap(struct iommu_domain *domain, unsigned long iova, si=
-ze_t size);
- void iommu_debug_init(void);
-+void iommu_debug_check_unmapped(const struct page *page, int numpages);
-=20
- #endif /* CONFIG_IOMMU_DEBUG_PAGEALLOC */
-=20
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 06978b4dbeb8..00f5de44faa0 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -36,6 +36,7 @@
- #include <linux/rcuwait.h>
- #include <linux/bitmap.h>
- #include <linux/bitops.h>
-+#include <linux/iommu-debug.h>
-=20
- struct mempolicy;
- struct anon_vma;
-@@ -3806,12 +3807,18 @@ extern void __kernel_map_pages(struct page *page, i=
-nt numpages, int enable);
- #ifdef CONFIG_DEBUG_PAGEALLOC
- static inline void debug_pagealloc_map_pages(struct page *page, int numpag=
-es)
- {
-+#ifdef CONFIG_IOMMU_DEBUG_PAGEALLOC
-+	iommu_debug_check_unmapped(page, numpages);
-+#endif
- 	if (debug_pagealloc_enabled_static())
- 		__kernel_map_pages(page, numpages, 1);
- }
-=20
- static inline void debug_pagealloc_unmap_pages(struct page *page, int nump=
-ages)
- {
-+#ifdef CONFIG_IOMMU_DEBUG_PAGEALLOC
-+	iommu_debug_check_unmapped(page, numpages);
-+#endif
- 	if (debug_pagealloc_enabled_static())
- 		__kernel_map_pages(page, numpages, 0);
- }
---=20
-2.51.0.618.g983fd99d29-goog
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
+
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
 
