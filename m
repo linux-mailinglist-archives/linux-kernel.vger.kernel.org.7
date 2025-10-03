@@ -1,148 +1,252 @@
-Return-Path: <linux-kernel+bounces-840884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03E0CBB5A70
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:04:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A32A4BB5A85
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F9E81AE477B
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:04:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E70C1AE4C71
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EACD023CE;
-	Fri,  3 Oct 2025 00:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A91BBE49;
+	Fri,  3 Oct 2025 00:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qg4zTlvU"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KQC8WLHB"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B42A48
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 00:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339D815C0
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 00:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759449866; cv=none; b=qCEXwzQCcIJ4hYW/j9ruh/dAr0nLNtqsuNgmq0y33k+tXN6c2fJ3jCKQecDweq0CzQ+byX/9eTK7kxDXonLcAMSpYCffkbjPfP3NT69AP3ptPbWRV0BmU5yg8R1fkakIiBlPoMlT1vJ3RStAg+xLg11duA3clNKgUem5PWphm6A=
+	t=1759450337; cv=none; b=n1y3W6nS8PMIfD+XZJSs5/QtnfhwMv/g6SQvUGNKKlC8l3xdt4H/8MJuXk/zH2GhyA8iUjLx2812PXEE65aTsa7MhxUSYSgcEC+BRauWOZI24Q1VUjfB5UYhp5Rqqy6fjiTlAYvJmLqALJrtBXwU93cMWrZipCrlLtm3Wxpa51w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759449866; c=relaxed/simple;
-	bh=j2aNLIyCaCGd69AdirvOB2Gaoi0yVQ5cqrWrzaky7lM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VRm94trrolzjX74Ci0VhjW7ZNAr15IoNlRLgzOt93Pe08lFkcNicSpzVI6tJ+ntk1tCVsHoGZ9+2qW5zIRiS35jPzC/EATbf9thwkiaKWyzxQNakuymCpn/GyY3B32djbTKkrkDG85RAdYte4wOC1r0ZKOpu3vPwGSvy4odNhkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qg4zTlvU; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 2 Oct 2025 17:04:11 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759449861;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kkFgpezMQKS/gQLXn3AyZkGxBPfCkQ1RwNxBP22utPM=;
-	b=qg4zTlvUUnUwY8urfG2Q95TBycGvvpK1Cdx3XhQ7mPJesKFOtu62Az3Ad8+VzmqKFyYLNB
-	XSmjjuDXsUQAkoO6YZuHaXhLtGg23SF78swtq3aPOQv0uEqIAWFSLfGnucRINVvtS5aE6R
-	fGBZW4/o9mH5RNv2EUQSLOGGkSzefJg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Volodymyr Babchuk <Volodymyr_Babchuk@epam.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Marc Zyngier <maz@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Wei-Lin Chang <r09922117@csie.ntu.edu.tw>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Alok Tiwari <alok.a.tiwari@oracle.com>
-Subject: Re: [PATCH] KVM: arm64: nv: do not inject L2-bound IRQs to L1
- hypervisor
-Message-ID: <aN8S-8HJFLjq6i2M@linux.dev>
-References: <20251002205939.1219901-1-volodymyr_babchuk@epam.com>
+	s=arc-20240116; t=1759450337; c=relaxed/simple;
+	bh=N/zkZP+0LZtLP17Xs3vMEpCfEyZZ1ItxxmOimzq44Q0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=sK2kT+EfezE4tcOL6TFbjIPsIv/uFgL7bCSp6sDrR+bFq7iVdR3HVDvePoeSGbODsNTEP+KOlUNs5xrT7RoPg8xCFik539hAHTAbZHHw3rsHMGXHvzHmnZNjWcS0Gt86xd2qauDmZlwM1rzO6RmmpcO8BnJHbz9KO5L5RZDVmCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KQC8WLHB; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-269af520712so15710595ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 17:12:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759450331; x=1760055131; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WPdEjt/xHjJ0lWLh6C12W1rdGBrApuW7akOrulxizXQ=;
+        b=KQC8WLHBEK40b5d5u/Ur26hBCZVJZ5/rllQyLVKhq+IcJ6P3DybInZxAIDDDjSYKQM
+         QxfG+FFpAPppUkkdNRXIQmzCLw1IoKeFZIL9LqtVNnaSa1jn6Tx733Nm9YrAwwJ48oAb
+         b6EX+zqUQkHaiNzKpaOVJK7Lz4sWQzzA/wcOssHJ9Xa8M6dc4450inS1YqkviItA4k81
+         06+QEezxrISLVITQUmSjds97SbwBu5JRj9evAlFMVimP7eGX7B/Q23NgTIeD4fhNfCAi
+         tXY2jydpoZ1T2rJlFAD5otweXyyeDV9ZQVFDkKHlB0cJJgUEmKMDX7YhIDgwoapuc+L+
+         jY3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759450331; x=1760055131;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WPdEjt/xHjJ0lWLh6C12W1rdGBrApuW7akOrulxizXQ=;
+        b=e+Cn0BEEWLi83y/EZWcNnMZ56H7uzs4IFS7ybf3C/pKuIwKPC++mRzLfEkfhBpLM6Q
+         TMbbpm1hNpsHSwi5buOCW5sRoJZ+ZniopFfDbf1hrj7t54DTNFqdj6TdZIFqkm14b3Ra
+         nJ6hySnGOuGWuEtjkasKvlxmRwiFKgfa61xveSQe/kxCxMKO9psip+wb3sc2tiKps8Kz
+         6ZwFfyrKhW1Tit7iof1rp0avhV0qZNCo9b33BOokaWLEMMkdy4rSYdh8KcYpQKn0094j
+         TDnFS4qLiSR8IBb8ruaiMnsWty9xN9DpsM9dER6W1W7HqJ5wSivmNMqrZMxIBX/GfE8w
+         LMCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzgZROp7s3k3IIOy0hAqn+IlaRVOhJgMbrP4G3b9mENzHGf5lMX8L2xTzZmpI3lg+q02GcL/rjjsOiOGE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBphwUDySsJdZvBX936UKd8OaXcKw/1ykf9wRcsxyr3mK80eND
+	Mk+qD5PfpbCmjSzGkjVcrO0S+8xopUeRlDYL0Axjg3zKmf0kFGQFOaEFgXYSU8o0S1fGF0H9BpM
+	VTSIUDQ==
+X-Google-Smtp-Source: AGHT+IHoyklPfuWfmJXHPs/SfTKlY2scG3kvCp1ofGl7GvfzX+eJGKVR6q69Si5yRV1Gn0G/XXpq74H1nZc=
+X-Received: from plw21.prod.google.com ([2002:a17:903:45d5:b0:27e:dc53:d244])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2f0d:b0:267:87be:505e
+ with SMTP id d9443c01a7336-28e9a596df5mr11683975ad.23.1759450331443; Thu, 02
+ Oct 2025 17:12:11 -0700 (PDT)
+Date: Thu, 2 Oct 2025 17:12:09 -0700
+In-Reply-To: <CAGtprH_evo=nyk1B6ZRdKJXX2s7g1W8dhwJhEPJkG=o2ORU48g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251002205939.1219901-1-volodymyr_babchuk@epam.com>
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+References: <diqz4isl351g.fsf@google.com> <aNq6Hz8U0BtjlgQn@google.com>
+ <aNshILzpjAS-bUL5@google.com> <CAGtprH_JgWfr2wPGpJg_mY5Sxf6E0dp5r-_4aVLi96To2pugXA@mail.gmail.com>
+ <aN1TgRpde5hq_FPn@google.com> <CAGtprH-0B+cDARbK-xPGfx4sva+F1akbkX1gXts2VHaqyDWdzA@mail.gmail.com>
+ <aN1h4XTfRsJ8dhVJ@google.com> <CAGtprH-5NWVVyEM63ou4XjG4JmF2VYNakoFkwFwNR1AnJmiDpA@mail.gmail.com>
+ <aN3BhKZkCC4-iphM@google.com> <CAGtprH_evo=nyk1B6ZRdKJXX2s7g1W8dhwJhEPJkG=o2ORU48g@mail.gmail.com>
+Message-ID: <aN8U2c8KMXTy6h9Q@google.com>
+Subject: Re: [PATCH 1/6] KVM: guest_memfd: Add DEFAULT_SHARED flag, reject
+ user page faults if not set
+From: Sean Christopherson <seanjc@google.com>
+To: Vishal Annapurve <vannapurve@google.com>
+Cc: Ackerley Tng <ackerleytng@google.com>, David Hildenbrand <david@redhat.com>, 
+	Patrick Roy <patrick.roy@linux.dev>, Fuad Tabba <tabba@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Nikita Kalyazin <kalyazin@amazon.co.uk>, shivankg@amd.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Volodymyr,
+On Thu, Oct 02, 2025, Vishal Annapurve wrote:
+> On Wed, Oct 1, 2025 at 5:04=E2=80=AFPM Sean Christopherson <seanjc@google=
+.com> wrote:
+> >
+> > On Wed, Oct 01, 2025, Vishal Annapurve wrote:
+> > > On Wed, Oct 1, 2025 at 10:16=E2=80=AFAM Sean Christopherson <seanjc@g=
+oogle.com> wrote:
+> > > >
+> > > > On Wed, Oct 01, 2025, Vishal Annapurve wrote:
+> > > > > On Wed, Oct 1, 2025 at 9:15=E2=80=AFAM Sean Christopherson <seanj=
+c@google.com> wrote:
+> > > > > >
+> > > > > > On Wed, Oct 01, 2025, Vishal Annapurve wrote:
+> > > > > > > On Mon, Sep 29, 2025 at 5:15=E2=80=AFPM Sean Christopherson <=
+seanjc@google.com> wrote:
+> > > > > > > >
+> > > > > > > > Oh!  This got me looking at kvm_arch_supports_gmem_mmap() a=
+nd thus
+> > > > > > > > KVM_CAP_GUEST_MEMFD_MMAP.  Two things:
+> > > > > > > >
+> > > > > > > >  1. We should change KVM_CAP_GUEST_MEMFD_MMAP into KVM_CAP_=
+GUEST_MEMFD_FLAGS so
+> > > > > > > >     that we don't need to add a capability every time a new=
+ flag comes along,
+> > > > > > > >     and so that userspace can gather all flags in a single =
+ioctl.  If gmem ever
+> > > > > > > >     supports more than 32 flags, we'll need KVM_CAP_GUEST_M=
+EMFD_FLAGS2, but
+> > > > > > > >     that's a non-issue relatively speaking.
+> > > > > > > >
+> > > > > > >
+> > > > > > > Guest_memfd capabilities don't necessarily translate into fla=
+gs, so ideally:
+> > > > > > > 1) There should be two caps, KVM_CAP_GUEST_MEMFD_FLAGS and
+> > > > > > > KVM_CAP_GUEST_MEMFD_CAPS.
+> > > > > >
+> > > > > > I'm not saying we can't have another GUEST_MEMFD capability or =
+three, all I'm
+> > > > > > saying is that for enumerating what flags can be passed to KVM_=
+CREATE_GUEST_MEMFD,
+> > > > > > KVM_CAP_GUEST_MEMFD_FLAGS is a better fit than a one-off KVM_CA=
+P_GUEST_MEMFD_MMAP.
+> > > > >
+> > > > > Ah, ok. Then do you envision the guest_memfd caps to still be sep=
+arate
+> > > > > KVM caps per guest_memfd feature?
+> > > >
+> > > > Yes?  No?  It depends on the feature and the actual implementation.=
+  E.g.
+> > > > KVM_CAP_IRQCHIP enumerates support for a whole pile of ioctls.
+> > >
+> > > I think I am confused. Is the proposal here as follows?
+> > > * Use KVM_CAP_GUEST_MEMFD_FLAGS for features that map to guest_memfd
+> > > creation flags.
+> >
+> > No, the proposal is to use KVM_CAP_GUEST_MEMFD_FLAGS to enumerate the s=
+et of
+> > supported KVM_CREATE_GUEST_MEMFD flags.  Whether or not there is an ass=
+ociated
+> > "feature" is irrelevant.  I.e. it's a very literal "these are the suppo=
+rted
+> > flags".
+> >
+> > > * Use KVM caps for guest_memfd features that don't map to any flags.
+> > >
+> > > I think in general it would be better to have a KVM cap for each
+> > > feature irrespective of the flags as the feature may also need
+> >                                                    ^^^
+> > > additional UAPIs like IOCTLs.
+> >
+> > If the _only_ user-visible asset that is added is a KVM_CREATE_GUEST_ME=
+MFD flag,
+> > a CAP is gross overkill.  Even if there are other assets that accompany=
+ the new
+> > flag, there's no reason we couldn't say "this feature exist if XYZ flag=
+ is
+> > supported".
+> >
+> > E.g. it's functionally no different than KVM_CAP_VM_TYPES reporting sup=
+port for
+> > KVM_X86_TDX_VM also effectively reporting support for a _huge_ number o=
+f things
+> > far beyond being able to create a VM of type KVM_X86_TDX_VM.
+> >
+>=20
+> What's your opinion about having KVM_CAP_GUEST_MEMFD_MMAP part of
+> KVM_CAP_GUEST_MEMFD_CAPS i.e. having a KVM cap covering all features
+> of guest_memfd?
 
-On Thu, Oct 02, 2025 at 09:00:11PM +0000, Volodymyr Babchuk wrote:
-> Difference between nested virtualization and "baremetal" case is that
-> real GIC can track lots of active interrupts simultaneously, but vGIC
-> is limited only to 4..16 LRs.
+I'd much prefer to have both.  Describing flags for an ioctl via a bitmask =
+that
+doesn't *exactly* match the flags is asking for problems.  At best, it will=
+ be
+confusing.  E.g. we'll probably end up with code like this:
 
-There isn't an architectural limitation here. Nothing prevents a
-virtualized GIC from representing more active IRQs than there are LRs in
-hardware.
+	gmem_caps =3D kvm_check_cap(KVM_CAP_GUEST_MEMFD_CAPS);
 
-ICH_HCR_EL2.LRENPIE allows you to take a trap when an EOI is received
-for an IRQ that exists outside of teh list registers which would allow
-the deactivation of the SW view of that IRQ.
+	if (gmem_caps & KVM_CAP_GUEST_MEMFD_MMAP)
+		gmem_flags |=3D GUEST_MEMFD_FLAG_MMAP;
+	if (gmem_caps & KVM_CAP_GUEST_MEMFD_INIT_SHARED)
+		gmem_flags |=3D KVM_CAP_GUEST_MEMFD_INIT_SHARED;
 
-As Marc suggested, the correct thing to do is adjust the sorting of IRQs
-such that pending IRQs fill LRs before those in an active state.
+Those types of patterns often lead to typos causing problems (LOL, case in =
+point,
+there's a typo above; I'm leaving it to illustrate my point).  That can be =
+largely
+solved by userspace via macro shenanigans, but userspace really shouldn't h=
+ave to
+jump through hoops for such a simple thing.
 
-> diff --git a/arch/arm64/kvm/vgic/vgic-v3-nested.c b/arch/arm64/kvm/vgic/vgic-v3-nested.c
-> index 7f1259b49c505..bdd1fb78e3682 100644
-> --- a/arch/arm64/kvm/vgic/vgic-v3-nested.c
-> +++ b/arch/arm64/kvm/vgic/vgic-v3-nested.c
-> @@ -286,9 +286,13 @@ void vgic_v3_sync_nested(struct kvm_vcpu *vcpu)
->  		if (WARN_ON(!irq)) /* Shouldn't happen as we check on load */
->  			continue;
->  
-> +		irq->targets_l2 = true;
-> +
->  		lr = __gic_v3_get_lr(lr_map_idx_to_shadow_idx(shadow_if, i));
-> -		if (!(lr & ICH_LR_STATE))
-> +		if (!(lr & ICH_LR_STATE)) {
->  			irq->active = false;
-> +			irq->targets_l2 = false;
-> +		}
->  
->  		vgic_put_irq(vcpu->kvm, irq);
->  	}
-> diff --git a/arch/arm64/kvm/vgic/vgic.c b/arch/arm64/kvm/vgic/vgic.c
-> index 6dd5a10081e27..6f6759a74569a 100644
-> --- a/arch/arm64/kvm/vgic/vgic.c
-> +++ b/arch/arm64/kvm/vgic/vgic.c
-> @@ -858,6 +858,17 @@ static void vgic_flush_lr_state(struct kvm_vcpu *vcpu)
->  			break;
->  		}
->  
-> +		/*
-> +		 * If we are switching to L1 Hypervisor - populate LR with
-> +		 * IRQs that targeting it especially and are not targeting
-> +		 * its L2 guest
-> +		 */
-> +		if (vcpu_has_nv(vcpu) && !vgic_state_is_nested(vcpu) &&
-> +		    irq->targets_l2) {
-> +			raw_spin_unlock(&irq->irq_lock);
-> +			continue;
-> +		}
-> +
->  		if (likely(vgic_target_oracle(irq) == vcpu)) {
->  			vgic_populate_lr(vcpu, irq, count++);
+An ever worse outcome is if userspace does something like:
 
-This has some serious issues as it violates our architectural model of
-the GIC.
+	gmem_flags =3D kvm_check_cap(KVM_CAP_GUEST_MEMFD_CAPS);
 
-The existence of an LR associating a vIRQ to a pIRQ only has relevance
-when in a nested state, specifically when handling vIRQ deactivation.
-Besides that it is just a number...
+Which might actually work initially, e.g. if KVM_CAP_GUEST_MEMFD_MMAP and
+GUEST_MEMFD_FLAG_MMAP have the same value.  But eventually userspace will b=
+e sad.
 
-For example, imagine the guest hypervisor associated an EL1 timer IRQ
-with an LR and later tried to clear the active state and re-arm the
-timer. Seems like we would miss the IRQ entirely.
+Another issue is that, while unlikely, we could run out of KVM_CAP_GUEST_ME=
+MFD_CAPS
+bits before we run out of flags.
 
-I'd really like to see a solution similar to Marc's proposal which
-addresses the fundamental problem of active IRQs overflowing the list
-registers. 
+And if we use memory attributes, we're also guaranteed to have at least one=
+ gmem
+capability that returns a bitmask separately from a dedicated one-size-fits=
+-all
+cap, e.g.
 
-Thanks,
-Oliver
+	case KVM_CAP_GUEST_MEMFD_MEMORY_ATTRIBUTES:
+		if (vm_memory_attributes)
+			return 0;
+
+		return kvm_supported_mem_attributes(kvm);
+
+Side topic, looking at this, I don't think we need KVM_CAP_GUEST_MEMFD_CAPS=
+, I'm
+pretty sure we can simply extend KVM_CAP_GUEST_MEMFD.  E.g.=20
+
+#define KVM_GUEST_MEMFD_FEAT_BASIC		(1ULL << 0)
+#define KVM_GUEST_MEMFD_FEAT_FANCY		(1ULL << 1)
+
+	case KVM_CAP_GUEST_MEMFD:
+		return KVM_GUEST_MEMFD_FEAT_BASIC |
+		       KVM_GUEST_MEMFD_FEAT_FANCY;
+
+> That seems more consistent to me in order for userspace to deduce the
+> supported features and assume flags/ioctls/...  associated with the featu=
+re
+> as a group.
+
+If we add a feature that comes with a flag, we could always add both, i.e. =
+a
+feature flag for KVM_CAP_GUEST_MEMFD along with the natural enumeration for
+KVM_CAP_GUEST_MEMFD_FLAGS.  That certainly wouldn't be my first choice, but=
+ it's
+a possibility, e.g. if it really is the most intuitive solution.  But that'=
+s
+getting quite hypothetical.
 
