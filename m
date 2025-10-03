@@ -1,110 +1,128 @@
-Return-Path: <linux-kernel+bounces-841593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE6D9BB7C80
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:39:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A579ABB7C98
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C6B0423F1A
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:39:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DB9E3C0DE0
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88BD02DC329;
-	Fri,  3 Oct 2025 17:39:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819E32DA77F;
+	Fri,  3 Oct 2025 17:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N2XyMt33"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hkbxqKw+"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3AC24468D
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 17:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8879B26E71D
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 17:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759513186; cv=none; b=aZogpJW03Je8uNE0IHeXtXjtzjf8Cp8TaEi9jKu/tsZbnyh0k0xPzKzPvjKwhJxu/av1G/OB/799hnd3lgQ03UegTpFw1DgBbsAV9C4LYiWEl7iPSZwZ2YogryTq+//pfI47OYFEKukKx4FK+LaruxeatvvP8E1IlHJ5FoCuE7M=
+	t=1759513257; cv=none; b=de25AwZg4+CXkWJSkXtbRblZ0VDRGvfOMDXCnzGBbQxg62SX5YgNs5dxwA1Y7I6Rgp95mIH19T0zqa/ya5eL6noLbkU7CDtMhZprSzWaX0/m3rmrk1Tjix4NMWOflY/+WyiuKgWSuBj492tXspVwPCb+uc90HzNmisD3CkzKNPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759513186; c=relaxed/simple;
-	bh=rkmZOyEGwokVeWZxBu8CGNqvK5sClSggQ4njXh3MKtk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oq5xTNyZUtKCG6pGRb96sEklaiU5hldtYNanXTxfiuhX/l2wT+Ay4g6ar/MV57HDt+IS2AFdpzFFuE2fzV5UNwwgr0fEluH+2hOc5ETaV5e5/kIMxKdW+3a2v4NTb59IAtGSe5yDiOVwZEfoci2HzqJ0trJNiio2iedSevQ6Irs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N2XyMt33; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1759513257; c=relaxed/simple;
+	bh=7zGsOrHucK/F3TXGYVNST8Ic2yHVpPVoo2wGcmdWcrA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sjKbQ1rZpuHDx/L5dIcQVIffapt7/6PEMjw7gdHaj7KgYGY4XHAgmGNEdxK3OL+tJwdLLpHyoys4fyP21uHPCaJQwGzGz7orb3XkutMPsAnSwdTn+Q+JmpqTMjJPNu1twUiWpS6GWXAw5MR7YAt26sPGgLyQWrvbfqfTT12wSCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hkbxqKw+; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46e61ebddd6so23842375e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 10:39:45 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7835321bc98so2618129b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 10:40:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759513183; x=1760117983; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rkmZOyEGwokVeWZxBu8CGNqvK5sClSggQ4njXh3MKtk=;
-        b=N2XyMt33M46tWcY4JYRV1NuK7tDXDeg99poy+1sm/KwJTcVHT7hTddNFeH4eua8VAl
-         MnObc4x2EleFi8x//Pv2X12T0rYNebJj7OP3BTqt2IKlDmyio21kIJ/F/ee4SMt+aL31
-         SL+pwP6FcyG1kt3fYOnnuphQXrqy29y+L2SresV5YEzjslbg0GyV8XOAbKdWgUkl4e3z
-         Y0er0uWqOxz5P2cP8WT+zq4ghSqFB3SV6dXhjWd2IEpmFiZlah8VEb+PmZniD6RcUkaa
-         zgIGVWgGy7cM9sbG/EgAXK8+Qgm09nUIW4q1bNCEFRNEvhXp+Q5Qd1QRCfhPIqXxXNsj
-         pC1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759513183; x=1760117983;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=gmail.com; s=20230601; t=1759513256; x=1760118056; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=rkmZOyEGwokVeWZxBu8CGNqvK5sClSggQ4njXh3MKtk=;
-        b=Qi2TsoJtjWshSeIV4hXOY4mVX1OYddcfnGUpbcbd7tE+l95VONEzfKUK2mAZIadXXn
-         TZM8WKOllF6mA8VZoxacALcD3b+WWcaWvW6Qj/y6IhQLasVm3dHFrl8bOBeXRyeSFO9h
-         IZ20RBZ/CJ147cfdZVEYDObFTMVMBpm/X2u/B54vp2+7/whm7MxttcbfI/w9ZtQoenhe
-         XKiviCzJGEJmwo7ncjvJdnVb5AuktmRP4c8T7D9giRqySPUzGyOptatu4D0N8kMeYDTS
-         FlINy7ic68KY+HLNuoJGsxz1LuTML5rPmeZR3ZJnqs71nqvn0HBl19IlP2EK5IDKQ3Tg
-         V6Hw==
-X-Gm-Message-State: AOJu0YyxuKqgrVaU76D9SwrKKhILEnVKMHDtQJMaKjW40VmgqugR02xa
-	aKjccOuEucidXctReLu/bhoV0a620smUZq71KDHUt0gjJKHXOVGsRM3O
-X-Gm-Gg: ASbGncs0oCH0Se7dY5fDqhzSVcmuK+IcQ7dOrSWt1RPCRNtIFeUFFOSiE9Ef16PIFYu
-	nrmeygzvIKdn3q/PNgGXL15vAY6267dVgBvetO32ibe6ftoIUstbpncVZOq6KCCa7gzVFbiRaqy
-	XkXfaVWpqHim0MoKiDleA9uylC1ZF0OlGHtcvSgRKoqv+gav4x7AInOlHuMDOp7R7aFjD/mpuMT
-	Ci9ivlvNvDjoFfsVkISJyEpQ4qIuuLJpqzFQPmypUzYTl1eVaeUjIeE5cCgbJSjM/wXyYy2DWr7
-	tPze9oK94ip4sgzFnHiTA35aH76r0uZNhYABuL8ftNXVvjkiG1kpJ3TXS8HmphAS9VCgfapELml
-	7jvvXIOXJhW7A3gMLXxmDxzI5BdogmKCveWNMzMfxQtiBvipQcGNC8dlXCMazpyMJ5Ws=
-X-Google-Smtp-Source: AGHT+IEuSki/XoM4rCKcaotfXJjqysypOd52m6IgtN6NTBsDMyUc4KvPqkIPo5OYOt/kydDekftJNg==
-X-Received: by 2002:a5d:588a:0:b0:3f1:2d30:cb5c with SMTP id ffacd0b85a97d-42567154011mr2824129f8f.23.1759513183310;
-        Fri, 03 Oct 2025 10:39:43 -0700 (PDT)
-Received: from [192.168.100.3] ([105.163.1.136])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8e9890sm8871298f8f.32.2025.10.03.10.39.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 10:39:41 -0700 (PDT)
-Message-ID: <b109dcf89e3e1314224e5a29706154c2e612e079.camel@gmail.com>
-Subject: Re: [PATCH] net: fsl_pq_mdio: Fix device node reference leak in
- fsl_pq_mdio_probe
-From: Erick Karanja <karanja99erick@gmail.com>
-To: Markus Elfring <Markus.Elfring@web.de>, netdev@vger.kernel.org, 
-	linux-kernel-mentees@lists.linuxfoundation.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Andrew Lunn
- <andrew+netdev@lunn.ch>,  David Hunter <david.hunter.linux@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Shuah Khan <skhan@linuxfoundation.org>, Simon Horman
- <horms@kernel.org>
-Date: Fri, 03 Oct 2025 20:39:27 +0300
-In-Reply-To: <77f2a45b-1693-4106-8adb-304e0e818d82@web.de>
-References: <20251002174617.960521-1-karanja99erick@gmail.com>
-	 <77f2a45b-1693-4106-8adb-304e0e818d82@web.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+        bh=8DvF1xSe5T64RA3ceOh6pYqc2KwrLyGdOksJedmvMUU=;
+        b=hkbxqKw+DzXrAGrxqwX+lG9yp59iZVy6pdDuBC19kFtCCmW4sWNH1LejFm4KZ0AtNX
+         6sf3Hd4AwWQH5u06uUlcfAMhOsrX8sywP3Fliv2n2BbvMcSLttdNWALlbGLuG4bKNoo8
+         bnmci5vVJ5NILmWcPuZg2xf0x1qDuCM/cymCtDzsO/LBsQfEwDGF8vbfDoP5G/v0c/x9
+         haQ4nqh926n1pWorWxT072pCf0s7TRMICgIPOV/AYurJxgYAWCglSsfilZpOWImZHghE
+         ceTwfTpFU88x2953mi/DCh9dzc5Kknuw6rbN1s56qb3PLBoz70j8nrRh4LVioFCYjdM/
+         C8aA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759513256; x=1760118056;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8DvF1xSe5T64RA3ceOh6pYqc2KwrLyGdOksJedmvMUU=;
+        b=q2jbpl5j2kgd+frz9uCmq6yOfPQqoerGVLH2U1iXXyIk/2eoGJu2wh5Qun89qtg7nu
+         /tZj5bKZ950tmvWXLHDahAXR3UJ4X+nilfgsTLaoAFwXz2R4AIiqD0l3zu1YmnSd2f1l
+         f7rkn1DwivQkXI2jinTr+bsuaJrAD7/kWrT0c1qBGhK3pRvC05Z2pcHJwg0fmiVD/IgJ
+         OMx+jfdZnpz3yWyVaG4J6W1zzw+HYWPBQmTKrwoT0xz5XjGv8fHhpEkGGT2u8HHGlKUb
+         2CDrxePMI2boUIYnR853Vs00ir0HQOKQ/ODvGAq7GNGwHPeOcONSgrwLBBtxfWH+UT1o
+         ReCA==
+X-Forwarded-Encrypted: i=1; AJvYcCXP2K8DIn4+HNa6c0/NjTVi39ENUKe9iVFz2z5yWkY2/fyhgF0Q9f34dMyD8rQxg5vc/rkbs/mMczaYr9o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywh0M5V/7zqKnSZ/tC4+cSVh/iAgz5xng6F9tT16v3omUgXUzlG
+	AO+2qszOBPV5PtIdYLwI/+CWs+Ffiqd6c5InHaw0WhIVqCoYz/6KYYtZ
+X-Gm-Gg: ASbGnctcW1RWKGDH1780oGTAciigHlc9w5FyRvnRO4QsTmPbuHzvjQysQGmOyUr5gec
+	FJ/z7/ip5LSHC0NJr6FIpqqmLPrJ8Vnsz1pk8vlTghZbRK6YQwyJLFt54xz5LUFLoL2fYC3bga6
+	Xhn985PY6ntwX5/xKPT+l1RKLmRBxtNPqP9bH2+7S/PzHGyHsryCB8bkaqXA6uAfYky1wu9dgdv
+	r0gLGkJdJgAt8G15MFLvng7MWlOzDHbakConGQCYhHT3m5EuMpSHGdem1+e8ojgau09NLyjaArm
+	cLR3Vl3S1Bn5gaS6Tx63tQ0bJLMCbiqgoHPpzgAsYFMKCg7GErLjozu9TebRv8P9CLhztf4+DuI
+	zm7xsMC82b5rm88hftlGo5GXspOHt6cSpkrW+IE6BoJr+X4b+1t93gt88PPT3sHA9LIQtF4i/cN
+	8qaIfNqRZoD9F6De0MhieTX10=
+X-Google-Smtp-Source: AGHT+IF0CWD2qg+PTIx7YyLiOrkXXs3s6uMSmo5ndEoOaGo2dua6hr9Ax9ka74DU9LIpjixcoQgBjQ==
+X-Received: by 2002:a05:6a21:3283:b0:2e6:a01e:f218 with SMTP id adf61e73a8af0-32b61dfbdf5mr4344924637.11.1759513255860;
+        Fri, 03 Oct 2025 10:40:55 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b02053584sm5446155b3a.50.2025.10.03.10.40.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Oct 2025 10:40:55 -0700 (PDT)
+Message-ID: <cacabcda-c0c7-497b-8556-f6475639a341@gmail.com>
+Date: Fri, 3 Oct 2025 10:40:54 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.17 00/15] 6.17.1-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20251003160359.831046052@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20251003160359.831046052@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 2025-10-03 at 18:32 +0200, Markus Elfring wrote:
-> > Add missing of_node_put call to release device node tbi obtained
-> > via for_each_child_of_node.
->=20
-> Will it become helpful to append parentheses to function names?
-Yes, it is necessary.
->=20
-> Regards,
-> Markus
+
+
+On 10/3/2025 9:05 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.17.1 release.
+> There are 15 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun, 05 Oct 2025 16:02:25 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.17.1-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.17.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
+
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
 
