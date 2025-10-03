@@ -1,142 +1,129 @@
-Return-Path: <linux-kernel+bounces-841484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8048BB77C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:09:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FEBEBB77E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:11:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2CB01B20DBC
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:09:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E5CB44EDA85
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332EE2BD00C;
-	Fri,  3 Oct 2025 16:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96CE62BE04F;
+	Fri,  3 Oct 2025 16:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="K5zUXEYV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TJFydeTr"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672A414A8B;
-	Fri,  3 Oct 2025 16:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1FD288537
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759507752; cv=none; b=EOaGEzRJf85+HSjlYxpTC/wVqsCIS8kkwmTxTqQJ4kW00MRFT682PIlhnlmu1B6wUPttnGrSMBtDGgxubgc4wXHMeznYARJZK2AEhxZlCq4/q6Ofw9fKH+NJP79VOLTobh6fDY0s5W9xOXIkO9LmiSGyMWlhT8WpZp5jRv9/0HU=
+	t=1759507865; cv=none; b=PY8Hqo8iGZYD3UmHBJ4BeEfmDltto9rv6JARSTyPJYLVwhe157iiOjTulk0/IZdSC9yBC3bhefCbK1h4UrNaopFGW3ej8P+KeKeLU5w+aU2Pr2ZOM+56uW4d+8hTf/WLyaZPfC18y6yJ4rTG8WWCW8uWDxx3LGsYXQAdMjPHkvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759507752; c=relaxed/simple;
-	bh=S4YPweji9yCv6gFmP1x6JDNbUY/FdmbUMq2v2P3kYH4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TL3zX/RKXPzaB16diFn1BFz57GPkuHUnLsue7Tt/unqbPAgL1TiR9N4FU2wLxrebzddoBCKaj9wE/rXmZaYBs1GNAXT9gAlFxnZ1H2H0R+V50obO5BYOBjr0lS5yhbTtwkgrTAmTufH93Zobweld9PG6xUQZ5hNYsMlxiejKnjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=K5zUXEYV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BBF1C4CEF5;
-	Fri,  3 Oct 2025 16:09:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759507750;
-	bh=S4YPweji9yCv6gFmP1x6JDNbUY/FdmbUMq2v2P3kYH4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=K5zUXEYV1MHqdIMuAu+lIOu57RBsIsSYcj+lv1GHy/j5MNvu7JSldlHuENXBQM5Cw
-	 xEXEsS9rl3hkKXGMdSlXMe8FVoTQ6dXnGh3xx17WHeABr/wrZftQTYY7QWuk4p+9Vb
-	 QWmYlfkaIqVlIklnyL96RDOieLxVTG337ytu72ow=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hargar@microsoft.com,
-	broonie@kernel.org,
-	achill@achill.org
-Subject: [PATCH 6.6 0/7] 6.6.110-rc1 review
-Date: Fri,  3 Oct 2025 18:06:08 +0200
-Message-ID: <20251003160331.487313415@linuxfoundation.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759507865; c=relaxed/simple;
+	bh=PZQha7RBk24SP6qwyggJkFay7mNZRHmPQnH5kdOnMRw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=OTzA2G/kC8dXrbOwz4bkVnx51LOdseh1Z8nHLUsOQneKGjzGDpm9yir6QJJFeqL1PS58HFlExGmlrRBVFU2y0O7VnstMbHxe5Pd2sDkksWNOmMYyC2pm76TAzNvJZwhSEYbQz1s6jubASddkvvqMe69eO2dUKBQZlJIbt0rkkYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TJFydeTr; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2699ed6d43dso25079075ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 09:11:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759507863; x=1760112663; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lNh2mX9a3msgEQw2OsPB0rXj0BKWzfoqoJiUnuGpBLY=;
+        b=TJFydeTr+mFmSPqZErGU6IftQjd3w61WHvoph4LINqFGKN+RgOsmJcLkdLBwm6DXrQ
+         CicN7vqVJePkbThYz5ndDKqrhcWBQhgGJo4bDQ/ru2UDzrzF5Qca9QsTKvNHNN1fxuft
+         Aiw3zoIVX5AYszvM2skCACMa4uQYaBmW5G7bHNNBNzgYYJCSjpG5dABY8azpqLc63P8I
+         MRKWxxCUP9txgK5oLmtHuk1gkE9CKBsMgI4COK2m90h1HlKwJD2fYVR9EpIobydPy9Gf
+         5celyMoVpgTzKr8hgn6wss1J2cs2+OeJzg0TNqXzPCqWVKN0XPFDm4bPGHpHJk/DEMzz
+         0DHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759507863; x=1760112663;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lNh2mX9a3msgEQw2OsPB0rXj0BKWzfoqoJiUnuGpBLY=;
+        b=ENoATDr6UV/Vcjk7+hzn5v1E+k8Q0IcjG2/hvVuzKxe84Z65XAqrExs67/FA2E0FXc
+         B3n2ANBkqL4C9x72B3JlXAYPsPXDRhQhwspob5YAd37tIhy+38gM7hoKnuXTBa9NChlC
+         yavQtJnuRDSodpvHHiQL5LeZjT1AIl17sP19NxVxelcYuiyFstvqEW0DDtSIBmPP4ZLO
+         3GTCILDyFbTBGAeM0tlqAcwMn/FpwTA1LuYL64r9+qOTGsEqVzfxv9zk5elBMUw5xy0o
+         vgwXByomDNGxhE1bgT9w1QxhhTpQ3Lxh8zyPjnbpVSn1cXbhx8IzHn/nMZJjFe/y6UGG
+         XZXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWbZZ+zN/sADTXemr7ynW8N4XIoUYlkM58rlKt2CnGG1GmH/P++bvKhtHOsDDaup64brqT3lMZVgsy2/4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnkphDQ3iMHvxIgXzRm69d5T/RpHySSVJH8tNZ78G1fHpwMSjb
+	mUEBfJ5aryhVHfEsfiuMkKo9knz+7O8crXSbd453FyvMQjTex6NACxfYFCQFOxrwXlpV1k7NOaQ
+	hnrTV7g==
+X-Google-Smtp-Source: AGHT+IGqNOuAruJgEcEZ8T6X7B8VeXMzqceZ1ggBpiDOEhdpqVLI6EnOOFhpmeY8C5TVlMwWJfNoQPt99zY=
+X-Received: from plbjw19.prod.google.com ([2002:a17:903:2793:b0:273:c5f4:a8ca])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e786:b0:268:15f:8358
+ with SMTP id d9443c01a7336-28e9a656d8fmr47206475ad.42.1759507862519; Fri, 03
+ Oct 2025 09:11:02 -0700 (PDT)
+Date: Fri, 3 Oct 2025 09:11:01 -0700
+In-Reply-To: <2ae41e0d80339da2b57011622ac2288fed65cd01.1747264138.git.ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: quilt/0.69
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.110-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-6.6.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 6.6.110-rc1
-X-KernelTest-Deadline: 2025-10-05T16:03+00:00
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <cover.1747264138.git.ackerleytng@google.com> <2ae41e0d80339da2b57011622ac2288fed65cd01.1747264138.git.ackerleytng@google.com>
+Message-ID: <aN_1lSZJKBKvU9gV@google.com>
+Subject: Re: [RFC PATCH v2 35/51] mm: guestmem_hugetlb: Add support for
+ splitting and merging pages
+From: Sean Christopherson <seanjc@google.com>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
+	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
+	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
+	bfoster@redhat.com, binbin.wu@linux.intel.com, brauner@kernel.org, 
+	catalin.marinas@arm.com, chao.p.peng@intel.com, chenhuacai@kernel.org, 
+	dave.hansen@intel.com, david@redhat.com, dmatlack@google.com, 
+	dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
+	graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
+	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
+	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
+	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
+	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
+	kent.overstreet@linux.dev, kirill.shutemov@intel.com, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
+	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
+	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
+	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
+	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
+	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
+	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
+	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
+	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
+	rppt@kernel.org, shuah@kernel.org, steven.price@arm.com, 
+	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
+	thomas.lendacky@amd.com, usama.arif@bytedance.com, vannapurve@google.com, 
+	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
+	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, 
+	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
+	yuzenghui@huawei.com, zhiquan1.li@intel.com
+Content-Type: text/plain; charset="us-ascii"
 
-This is the start of the stable review cycle for the 6.6.110 release.
-There are 7 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+On Wed, May 14, 2025, Ackerley Tng wrote:
+>  const struct guestmem_allocator_operations guestmem_hugetlb_ops = {
+>  	.inode_setup = guestmem_hugetlb_setup,
+>  	.inode_teardown = guestmem_hugetlb_teardown,
+>  	.alloc_folio = guestmem_hugetlb_alloc_folio,
+> +	.split_folio = guestmem_hugetlb_split_folio,
+> +	.merge_folio = guestmem_hugetlb_merge_folio,
+> +	.free_folio = guestmem_hugetlb_free_folio,
+>  	.nr_pages_in_folio = guestmem_hugetlb_nr_pages_in_folio,
+>  };
+>  EXPORT_SYMBOL_GPL(guestmem_hugetlb_ops);
 
-Responses should be made by Sun, 05 Oct 2025 16:02:25 +0000.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.110-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 6.6.110-rc1
-
-Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-    ASoC: qcom: audioreach: fix potential null pointer dereference
-
-Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-    media: uvcvideo: Mark invalid entities with id UVC_INVALID_ENTITY_ID
-
-Larshin Sergey <Sergey.Larshin@kaspersky.com>
-    media: rc: fix races with imon_disconnect()
-
-Duoming Zhou <duoming@zju.edu.cn>
-    media: b2c2: Fix use-after-free causing by irq_check_work in flexcop_pci_remove
-
-Wang Haoran <haoranwangsec@gmail.com>
-    scsi: target: target_core_configfs: Add length check to avoid buffer overflow
-
-Kees Cook <kees@kernel.org>
-    gcc-plugins: Remove TODO_verify_il for GCC >= 16
-
-Breno Leitao <leitao@debian.org>
-    crypto: sha256 - fix crash at kexec
-
-
--------------
-
-Diffstat:
-
- Makefile                              |  4 +-
- drivers/media/pci/b2c2/flexcop-pci.c  |  2 +-
- drivers/media/rc/imon.c               | 27 +++++++++----
- drivers/media/usb/uvc/uvc_driver.c    | 73 ++++++++++++++++++++++-------------
- drivers/media/usb/uvc/uvcvideo.h      |  2 +
- drivers/target/target_core_configfs.c |  2 +-
- include/crypto/sha256_base.h          |  2 +-
- scripts/gcc-plugins/gcc-common.h      |  7 ++++
- sound/soc/qcom/qdsp6/topology.c       |  4 +-
- 9 files changed, 82 insertions(+), 41 deletions(-)
-
-
+Don't bury exports in an "ops" like this.  Be very explicit in what is exported.
+_If_ KVM needs a layer of indirection to support multiple, custom guest_memfd
+allocators, then KVM can wire up ops as above.  Indirectly exporting core mm/
+functionality via an ops structure like this is unnecessarily sneaky.
 
