@@ -1,224 +1,159 @@
-Return-Path: <linux-kernel+bounces-841463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0AE9BB763C
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 17:50:15 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B40DBB76B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 17:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 599A54A099A
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 15:50:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EBDAD346C02
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 15:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA0F286409;
-	Fri,  3 Oct 2025 15:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A36928D850;
+	Fri,  3 Oct 2025 15:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SiyIKWnk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="lTMLIBJN"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E8A13AD05
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 15:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B915C1F9F73
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 15:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759506609; cv=none; b=uLJCKiUo/l33SS9pMwbVAGIqAu5CZ0wkAUWXujR8Y1UmfL/SvAJ8bWMB6E1wKUmeLKrkKsVH7SAGRATPbBsHumzlQQ+hUzFMpo3IPf2pumI5WcFCnsKY3BENb8ONJZFmyFDyzhjCOX6CdgDrSnAdKy43dl4xeaGzJ9wA2R2iPYk=
+	t=1759506979; cv=none; b=qU+PgZJun0A6YuOdLqSOHjsmjAe8F9X7KXRBozBphvRAK4nbcbko/WW7vzIbSa4aRaKYY6ZT4QxEPx0/63Nt/7T/olNrmImnKS4URJrTiS10XNiUZ2dPR7Qfrq39m12YCvhLR+e/PTowN14xf8dm5pMbC3pIcfqd8Z6windHOYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759506609; c=relaxed/simple;
-	bh=cV4TfhjfXE8EZJJvSGDkC4PmL6N/Ry039fRuL7w1R3M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dEuEoxeGr/fogKk17V4a/poI98Eb6ApMSbGyWNwkK1kyfg79MPTQpReY5nuY2CnmJy9WCn3YpFJKsZZsyQI+EEkS+5fdkMxbDBBo5s+g3uoVfa/zQXIa3bdnUp+96i9kjouSzh3UVIuYNhBO+zhomPlUOzK71kHIzEm5jcBxBIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SiyIKWnk; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759506606;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DRL3Z5NJj2AWqt87ZoAsmf1WQMvEr1DYK6sJkkHR1qU=;
-	b=SiyIKWnkJ8qGmlmRU+cMJxG/1WwgFpaM1gMabrMGg2Hp9GdDyEeC1fzXbFKyugc9OPkxlC
-	doeALQIKn0au5OwN3U2l0zWhM2C8zLnDDjYiWOCiqfBoIdxMQzpprg6Uy6vu3tMXY9yF1c
-	suzWOekcGx0Wvytqn0Pi0rwmiFNjHQo=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-227-3gKdCqG7NriLVmfTek1Pbg-1; Fri, 03 Oct 2025 11:50:05 -0400
-X-MC-Unique: 3gKdCqG7NriLVmfTek1Pbg-1
-X-Mimecast-MFC-AGG-ID: 3gKdCqG7NriLVmfTek1Pbg_1759506604
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-6341958f08fso2294819a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 08:50:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759506604; x=1760111404;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DRL3Z5NJj2AWqt87ZoAsmf1WQMvEr1DYK6sJkkHR1qU=;
-        b=GVFFH3WiPnb3wfG+ojuV/2rhksArVGf15Fb0pPuScFO1mqLUz60AYMz92iwezo9BAl
-         8N4JCShIl/c38C9CatP9FdtbF2XZOTCcuN/8TBCissGu6DGoX7O7lNoQK6jLW2ngSO28
-         i9byI1FRNlcFTf0dikpkSkBjSjJjKfo07GG21S4T9AWIoijieMH4PG2nWH6CmYXcigVs
-         0aOf5Ai7PqAlC6x5GedQh06SRmJ475CzV/y0VRjXnyiRpWDyTGbM8mRLYELitHstA5JA
-         wxZek7PtnCMrtO74Ap1HfX1gknFt/n/cmy2+Ff2g0P/Irc6hm99BKKfFcbmWZHX/FSSu
-         mb/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWAQfJ3KHN3TlDNqlTOalWlTwsbR1TKjxrlZ1tMdPwrvmWR/yf0EmYnMq0/4zZJ3e400pzZCSsyxikUH0g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxicVvtENVy0IqiLfGwR5Dt7MI9+3+pLF6hmubz2c0+ootBIXYq
-	xhhJ/fNEHWNvdm5+LoNlSLGr2ACc7T3LGJ94cnW+cK7Sgw2kORS7qvbPQKmL+YoPmDNBy7J7M83
-	JXvJPITxOsEOSerDbPmA1+6JLR7+WAyFRl/4hdIAVvMvE1YVby3XSopNm/9Au2OyOb71vTaKZ/T
-	ZtRpk0r8VHLUYTahzc6qtt1ivmqz/TmovjM9t3vhGw
-X-Gm-Gg: ASbGncvkfXFOCBGNDcgUOephKOmfj8gU8j+mTr+0TzsA4aC6xeu76BP6VQHDcGXt15s
-	5rI/AHwlr0oOXfvEVAZMAHRS/UlYfH8x14R6Lj+9O150u9Q41Nj/wTFkowX0r3zeVeCrX/0+j42
-	xTYS8X4/QLwBcEwOL/zIhq1Ux6vA==
-X-Received: by 2002:a17:906:d54c:b0:b46:1db9:cb7c with SMTP id a640c23a62f3a-b49c3b38fc8mr436746066b.33.1759506604013;
-        Fri, 03 Oct 2025 08:50:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGhZyo4NySLQ8dZ1plBM7hOuO911cT7xWWqx2+yPoLtaUq12wc7irIpkBk7V80lok5R6XJSUNU7lQqWR2wYlF0=
-X-Received: by 2002:a17:906:d54c:b0:b46:1db9:cb7c with SMTP id
- a640c23a62f3a-b49c3b38fc8mr436744366b.33.1759506603604; Fri, 03 Oct 2025
- 08:50:03 -0700 (PDT)
+	s=arc-20240116; t=1759506979; c=relaxed/simple;
+	bh=IC+cPBrAXR51b3WY9/VmEG5wgSDTu5/PWCsWWe50Jrs=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=EoIlzy2vAmWdYaGZIBuhffM9RCF7ZE71NKhf0EiCFxKrK1U0wHT56sCsAL/GHdtfFDPDFZ1w/g/LE5nYOvIuAqe2yYbWvsJ2FCqvTbO8D54LyOvpCgW6sUvHfCRLPW8cmd447yFoWlAK2UqaDzug34s5ZYB3/uF/3KAq+kR+z9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=lTMLIBJN; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1759506972; x=1760111772; i=markus.elfring@web.de;
+	bh=IC+cPBrAXR51b3WY9/VmEG5wgSDTu5/PWCsWWe50Jrs=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=lTMLIBJNcsqu4poj1Ae/Sy7lnaD7Mzc0jJ3n8pgO3JQRrddUIwvWAW15Z5n4m+Zn
+	 pILFGW/A/JEpRdmgldSZ4jzohO31DCkjP8Ba46xjMoh2rffF56VpMZ+QVzAoHEY0x
+	 bEDkPtD1pFAu8+kFmkDpkPemXfbctNsefoN2Gge5qLLrfHwW9neDzSO5856VRLLcX
+	 l3bDyZ3ecXvOpXzGMV7aWGs8/Zxgnr8fnFVBVl5GrohplCeKklXaTuIuOy23FA89n
+	 ziRGEep+cjOC/3uBp6z+llkNGOaQQw/SNeqNkiile7IqVamUVghaFzV72tOoTW/QU
+	 f1SXroRBHEJWbdcEeg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.196]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MfKxV-1uNwZz10uJ-00kXFq; Fri, 03
+ Oct 2025 17:50:52 +0200
+Message-ID: <8f14db49-7523-433d-abf5-156200bcec0f@web.de>
+Date: Fri, 3 Oct 2025 17:50:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904165919.3362000-1-rrobaina@redhat.com>
-In-Reply-To: <20250904165919.3362000-1-rrobaina@redhat.com>
-From: Ricardo Robaina <rrobaina@redhat.com>
-Date: Fri, 3 Oct 2025 12:49:52 -0300
-X-Gm-Features: AS18NWBJitDTF82Vmv81vD7vu2njzwSCKkuzcARL_Hjf5Hwb5MQGIwiZeEOSg2U
-Message-ID: <CAABTaaB7SxWZUH+VxyOwZWBi6uPERg-qkMosFA=MTst5Rbc6kw@mail.gmail.com>
-Subject: Re: [PATCH v1] audit: merge loops in __audit_inode_child()
-To: audit@vger.kernel.org, linux-kernel@vger.kernel.org, paul@paul-moore.com
-Cc: eparis@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: Alexandr Sapozhnikov <alsp705@gmail.com>, nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, lvc-project@linuxtesting.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
+ Danilo Krummrich <dakr@redhat.com>, David Airlie <airlied@gmail.com>,
+ Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>
+References: <20251002083332.11-1-alsp705@gmail.com>
+Subject: Re: [PATCH] gpu/drm/nouveau/nvif: fix a null dereference in
+ nvif_client_ctor()
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20251002083332.11-1-alsp705@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:h+nX7oipmgkC9r3V1VNK4OLQcGh2GU6kjNYHb7s9A+xA+8nMqKA
+ AC0dXjdZpnLiuI7Tz82HHVTSN1jU+c32JxOfQ7u4cJ0RWKfVuM6Eg9FFVgtvWXOYtVzL06u
+ 6cPexMWrZQLI7D8mPCTCo2LC0XxqQt/cnAtC6Q0w2qwv5thru5Y+NQFPj2jtqm93dgMd9lM
+ nWu40WhZEaXY1Kx+NGbNg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:6LCPze4tjSk=;azOjhhbP7WuErMe9NSoUJ2JszFR
+ 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
 
-On Thu, Sep 4, 2025 at 1:59=E2=80=AFPM Ricardo Robaina <rrobaina@redhat.com=
-> wrote:
->
-> Whenever there's audit context, __audit_inode_child() gets called
-> numerous times, which can lead to high latency in scenarios that
-> create too many sysfs/debugfs entries at once, for instance, upon
-> device_add_disk() invocation.
->
->    # uname -r
->    6.17.0-rc3+
->
->    # auditctl -a always,exit -F path=3D/tmp -k foo
->    # time insmod loop max_loop=3D1000
->    real 0m42.753s
->    user 0m0.000s
->    sys  0m42.494s
->
->    # perf record -a insmod loop max_loop=3D1000
->    # perf report --stdio |grep __audit_inode_child
->    37.95%  insmod  [kernel.kallsyms]  [k] __audit_inode_child
->
-> __audit_inode_child() searches for both the parent and the child
-> in two different loops that iterate over the same list. This
-> process can be optimized by merging these into a single loop,
-> without changing the function behavior or affecting the code's
-> readability.
->
-> This patch merges the two loops that walk through the list
-> context->names_list into a single loop. This optimization resulted
-> in around 54% performance enhancement for the benchmark.
->
->    # uname -r
->    6.17.0-rc3+-enhanced
->
->    # auditctl -a always,exit -F path=3D/tmp -k foo
->    # time insmod loop max_loop=3D1000
->    real 0m19.388s
->    user 0m0.000s
->    sys  0m19.149s
->
-> Signed-off-by: Ricardo Robaina <rrobaina@redhat.com>
-> ---
->  kernel/auditsc.c | 40 ++++++++++++++++++----------------------
->  1 file changed, 18 insertions(+), 22 deletions(-)
->
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index eb98cd6fe91f..7abfb68687fb 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -2437,44 +2437,40 @@ void __audit_inode_child(struct inode *parent,
->         if (inode)
->                 handle_one(inode);
->
-> -       /* look for a parent entry first */
->         list_for_each_entry(n, &context->names_list, list) {
-> -               if (!n->name ||
-> -                   (n->type !=3D AUDIT_TYPE_PARENT &&
-> -                    n->type !=3D AUDIT_TYPE_UNKNOWN))
-> +               /* can only match entries that have a name */
-> +               if (!n->name)
->                         continue;
->
-> -               if (n->ino =3D=3D parent->i_ino && n->dev =3D=3D parent->=
-i_sb->s_dev &&
-> -                   !audit_compare_dname_path(dname,
-> -                                             n->name->name, n->name_len)=
-) {
-> +               /* look for a parent entry first */
-> +               if (!found_parent &&
-> +                   (n->type =3D=3D AUDIT_TYPE_PARENT || n->type =3D=3D A=
-UDIT_TYPE_UNKNOWN) &&
-> +                   (n->ino =3D=3D parent->i_ino && n->dev =3D=3D parent-=
->i_sb->s_dev &&
-> +                    !audit_compare_dname_path(dname, n->name->name, n->n=
-ame_len))) {
->                         if (n->type =3D=3D AUDIT_TYPE_UNKNOWN)
->                                 n->type =3D AUDIT_TYPE_PARENT;
->                         found_parent =3D n;
-> -                       break;
->                 }
-> -       }
->
-> -       cond_resched();
-> -
-> -       /* is there a matching child entry? */
-> -       list_for_each_entry(n, &context->names_list, list) {
-> -               /* can only match entries that have a name */
-> -               if (!n->name ||
-> -                   (n->type !=3D type && n->type !=3D AUDIT_TYPE_UNKNOWN=
-))
-> -                       continue;
-> -
-> -               if (!strcmp(dname->name, n->name->name) ||
-> -                   !audit_compare_dname_path(dname, n->name->name,
-> +               /* is there a matching child entry? */
-> +               if (!found_child &&
-> +                   (n->type =3D=3D type || n->type =3D=3D AUDIT_TYPE_UNK=
-NOWN) &&
-> +                   (!strcmp(dname->name, n->name->name) ||
-> +                    !audit_compare_dname_path(dname, n->name->name,
->                                                 found_parent ?
->                                                 found_parent->name_len :
-> -                                               AUDIT_NAME_FULL)) {
-> +                                               AUDIT_NAME_FULL))) {
->                         if (n->type =3D=3D AUDIT_TYPE_UNKNOWN)
->                                 n->type =3D type;
->                         found_child =3D n;
-> -                       break;
->                 }
-> +
-> +               if (found_parent && found_child)
-> +                       break;
->         }
->
-> +       cond_resched();
-> +
->         if (!found_parent) {
->                 /* create a new, "anonymous" parent record */
->                 n =3D audit_alloc_name(context, AUDIT_TYPE_PARENT);
-> --
-> 2.51.0
->
-Hi Paul,
+> If the name parameter can be NULL, then you should not do=20
+> strncpy before checking name for NULL.
 
-I=E2=80=99m curious if you have any thoughts on this one.
-Please disregard this email if it=E2=80=99s already in your to-do list. It=
-=E2=80=99s
-not my intention to rush you in any way.
+Would a corresponding imperative wording become helpful for an improved ch=
+ange description?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.17#n94
 
+Regards,
+Markus
 
