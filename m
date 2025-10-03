@@ -1,158 +1,137 @@
-Return-Path: <linux-kernel+bounces-841226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F22CBBB68E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 13:46:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE015BB68E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 13:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F08614E619E
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 11:46:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D94E189FA4B
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 11:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C47523D288;
-	Fri,  3 Oct 2025 11:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9567B23183F;
+	Fri,  3 Oct 2025 11:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SiOAqlmt"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="abSHRRWI"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E838C2848AF
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 11:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7F9192B66
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 11:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759491984; cv=none; b=UYYEjrXHkNaRNKKCtOzQqEC0AYbSuTnIXoqWLS6aOw6oxsvOrnDRGHC9uyclRvxQttZdbYlMuFeh2YI3SeLYykQrtHG0R9J14VUnDdPg8Ydz4cM+OpKitTwIMQ2JOlgJcfmm9nF50d8C0nHkEDGVxDUnrI1pfuiTDDWgQJT6rtc=
+	t=1759491980; cv=none; b=VSvaJbIeDb/lKalWHZWFomUNPHWzKZiEo2WazBtCTAMmGuHHht5VRL2Rhg47nt70o3H06wJHcVbSIHN+WFyilxNpi81a3zqk8YF42cqAtBgWYFeDSGs5oJINk9DidBuB4NthFKCYMNqHbwTRNBVtJClpiLc+/AAjO/ti1BSRDYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759491984; c=relaxed/simple;
-	bh=PqpCO1hZ5AzWg8lpqzlwYEmvVQBm7UKwvlNkj9beh4k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iC9j+xvkgRlk9QVk9eUd8/9npUjf+NEWUQvWOJVNVsY47rvR4w4qHB+BnWCnwsgE+hamIL9niLNN9JpVx9EFn3IiKFntTdLly9ToMbEkg54nG3DumTct00Ji9EOaYSsIJngMQWSGsErWILzvOwe0ajJCHTgBAfm9k5mS79Lu29g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SiOAqlmt; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-3369dcfef12so2655070a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 04:46:22 -0700 (PDT)
+	s=arc-20240116; t=1759491980; c=relaxed/simple;
+	bh=pyZ3TAOi0U4n2XzT9dIn2NH1hBOe2oL0LlEkuEzKqmw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GL2cMj3sWDICf8LahyzzL2rWw3I836sE0l6ZgwxXgkNnhl5p1S8vdZ3X3kwWO/s+9+ygzi+JwRimbkRs6KK6zF0bJZHS8NgqDS1YSZMv5UCEWwabi8hhq9LVAjla2ZwqfOlXhcGMEaTVYcyO1zEZzm3DFpOSHw1jMDAJ7KuBiRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=abSHRRWI; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46e42deffa8so22461485e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 04:46:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759491982; x=1760096782; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kr5m4Q2MhDO3zmxeDrZVa1hCLYfkmOsaOLffDymj6ak=;
-        b=SiOAqlmt27ePeqSJ7T9RG26dcd3D+41sWqvR9rcByKf0jjvhuH/XHHU4HuF8JWaY1x
-         R5zg3ZnEYeCn5NurdA5kkVKb9gHaeGpiwsQpnBdik5S1PhjSxI6nwJYLydfGX3So3Anv
-         2nA5M/b9c8IcQgGhTSXy74xJNTbBOS8a+fhpeeWae5FV4cX3bqyD4NDOQXUP1TB7DsPt
-         P6HbDPmYr34hVmbWazIOpeshhMnpR8QaH9yL3JRv/tzRsbd5HmgtQzrsVDkoMeX7Za0t
-         eglA/n3RekNe4qgACJ9ZBAKTqfBhjvpI6/aV1lf9AtlRPoCiUYEvB8MG4kn1ODUA5doa
-         +8Ug==
+        d=linaro.org; s=google; t=1759491976; x=1760096776; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MXPI8JPSlSxfXU3oIGiKhsz+rY4EG6yV9MAy6evg5c0=;
+        b=abSHRRWIjw99uqxDq9VAZ49WsCDXQAVamhm+MAc+8d514KSru2cX9L3ZSucNk5qRnM
+         gXu72uNawMrP2cKIr9bENS5d/Gdb5Pj5kWA9h2462N2d3XvFPDTZBMy+8ut0YWIQXzQl
+         i8Fy5awrBKH0g1sqi5TyJt7TFrZfGBD8ALOJg9yX3hV0ai1QVS1G4riRW2GeNu5oDETx
+         cWB/q3lRcHOC+4RbTaWrhK8/zk2MJiza8EkF7M+ZQVs7OodNOYqHbGfF5EjDxg/1/XUg
+         BqiLjoWbSfM2b5LgFtLEj+U7F7cZVStTQWjoGEEOwYezcIrSNGQNTIhbWNAV8uNsaCxv
+         e9hA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759491982; x=1760096782;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kr5m4Q2MhDO3zmxeDrZVa1hCLYfkmOsaOLffDymj6ak=;
-        b=e1So+lLX30JJQoh5wG9BGnoo7SpHYDI+wFt6dEV1n59HUW3ZeyjqxVp0IhMFwMSVM0
-         tQXH5S58eFXmmgUw6YLlhQxQzl/rdud/C/tDUs+bLgJNBLP+Ta/hZc8yQWAHpPeTLa96
-         +PQbN3G1j0KUg7mA2oNGFi5CmF5LGyxRy9TOB/OfBflWR/HXT4ALyaoVe1IEbeZPK/e/
-         y7mvy6/ob/71e976AwHoQNg6OfQ385AnwkxLBDe6Q9zn77vnW8TbrXcanpv6Qsoxa9S9
-         iRvTGtut8WD/D+fypW35i73hrkXzzrciatkgOwkUIjVOesbMpEwP+4WJv/6SmQTeeKmd
-         xujg==
-X-Forwarded-Encrypted: i=1; AJvYcCXyOS0kRD5vAGPpKI23l9dIWXwlqV5wAk9KypQDrCYNGgI3522OsEMPd+Fhr/GP5IJuu3vB1GZ0CwC5V6I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywkac9MdMQT9wMeRdLU/KYcvXWVwmjMhnMGd1jGNcUvPPb0er88
-	I28f360Cc61xznXQy0o0slJTyzWAFkaL1yLNyNrXaFBvhYP8FumD/JAi
-X-Gm-Gg: ASbGnctkny87ixClWY7Oc8xZULXJJdUCKhmJduq6tCCdBk7QI60AbX9rEopXw0x6Coo
-	bcMImZczWcLi8Y9Lk2Y6ivLk5OMwrG0/TtYJsdI3jcqtLCIJuY4umdsYnV4GIyULVYtAIfiz7lM
-	sXRKQWl6c2teqo0EAxBR8MafN8CSyqLOo0klZhks/tfzgdhD1xgapHjaBUUq9uRzK9jvGqvev6N
-	HAwXtROgpLcxq5gT3AY4clmb2Vkxbc+Tw68YC+9tD8uAPoouH7mdRQHjlJ5V8z+fKyBEdmV6nQP
-	3SHtiJgYUf71fa3JlA+X2lMpIO4NmF9Kw3eyh/qbfXVQ8cZeuGGTPQlUOAnGj8GuZ8QJ0SbtXZ9
-	blNH7oz2k+JgjpLvnb/Kh2nk1NfYCPami68hf5VNPcw==
-X-Google-Smtp-Source: AGHT+IE+B+A6PY10FHNa/K7kwAlpZK7Yj3hJ8GaSS7FT2H3r5Hjjq9oeSORJAi5t9tZGsLPWJ2J+ng==
-X-Received: by 2002:a17:90b:4a50:b0:32e:38b0:15f4 with SMTP id 98e67ed59e1d1-339c2724834mr2844413a91.7.1759491982024;
-        Fri, 03 Oct 2025 04:46:22 -0700 (PDT)
-Received: from fedora ([119.161.98.68])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339a701c457sm7825727a91.23.2025.10.03.04.46.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 04:46:20 -0700 (PDT)
-From: Nirbhay Sharma <nirbhay.lkd@gmail.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tiffany Yang <ynaffit@google.com>,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev,
-	syzbot+27a2519eb4dad86d0156@syzkaller.appspotmail.com,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	Nirbhay Sharma <nirbhay.lkd@gmail.com>
-Subject: [PATCH] cgroup: Fix seqcount lockdep assertion in cgroup freezer
-Date: Fri,  3 Oct 2025 17:15:55 +0530
-Message-ID: <20251003114555.413804-1-nirbhay.lkd@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1759491976; x=1760096776;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MXPI8JPSlSxfXU3oIGiKhsz+rY4EG6yV9MAy6evg5c0=;
+        b=Ee/guBBPMCZ3pM/tT8+Y8x1GoJ8NRCcGV+sIg7QdBWH5eNFpijcnQjADhzwpqNFAE0
+         83J2XEmfTJ4moy5LZB9ibmASy8sxeLKc3Fb6D+qZY73eGdKgdxqjkGF1vtyxbd3EdUP3
+         PGwWAxB/x4Car4tj3SspgMw+cI93mwtUYR5LjkBaeRDUMwy2WQV/6AdM8H0Cskt2FEIC
+         Seu6ekxKfuzPX/K8VkPzoIeedvOQSwTZ6y+HQUCPP+L9sJzBh5dWLqdRuz4OVynjko1B
+         u1O+d7B2lMtjvVlF9yIgEEbHEYyHj1r3NHShhXFinR3DzQK557isrWfoiYx3G0bsyQdt
+         shpA==
+X-Forwarded-Encrypted: i=1; AJvYcCVa/uK+a9CW9WDF+xMqHvvFhM3P9ZPuG+pc745cWKA38JDFfG9Ujj76Hh9D8DwozQ56FbsejQYF2s7hnVs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4PpmsUODfk9BreRHSt8b91eeOXSYzGs+vcSzuBl0S5uwbmH3e
+	L2Z0/cYy+EuDDwWoFpAhzufHYpoX4z9WKZscsDdKYSKwcjTGI9/Z1kmSVcGHFa+9itY=
+X-Gm-Gg: ASbGncs6PYNaeOQm/dbSvrT6ZmbSL+Lf/f/V0kIwPMfjog1tkNEnYqLCeKPuE4wQ2sq
+	1F5jImtWKZXSKSkNCfQv6rn4R8mu2BfqMNSHFrP8JtZYDn3CglHISYdnLyAi3K4rshLDFy4cQkf
+	/6nl1OFYGo+3OhoomHatGzUJfNavWw3Sj1wfAOhCaWpNduCr8secmhw7C6DHJpmGSfp1KmJWikl
+	mWedisoWmhsqrzm7QmxtA6G4dBWcmW4Auftxv45JXV+6ZuGmcB08tJFq7xN1M7vRWcHY66g9Htb
+	NhPBiyfvv0bI3cG9CpdLTWuoXjNnImBeKZ8qUzO9nEzOaiqAJEq4IKbF1HRc3J2VD0O1DSOsHlV
+	ZxXKR7QeGaTRFL8UFiBJ+9LuA8LyZTSF3HAQ65tuY04/4xCxa8mflblNhjg==
+X-Google-Smtp-Source: AGHT+IFbWMEm1USYX7Rq9NUIjPZY/j0rB2JHjRl6Tdj4Ye/pg2AbJ5imxLC5UbzbWi6GsAHZYHcJ9A==
+X-Received: by 2002:a05:600c:1f96:b0:45f:2ed1:d1c5 with SMTP id 5b1f17b1804b1-46e7115cba1mr21953415e9.36.1759491976464;
+        Fri, 03 Oct 2025 04:46:16 -0700 (PDT)
+Received: from [192.168.0.25] ([82.76.24.202])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e723593d8sm31826055e9.11.2025.10.03.04.46.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Oct 2025 04:46:15 -0700 (PDT)
+Message-ID: <385818b4-72bd-465d-89f8-774a76102506@linaro.org>
+Date: Fri, 3 Oct 2025 14:46:14 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: soc: qcom: add qcom,kaanapali-imem
+ compatible
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Robert Marko <robimarko@gmail.com>,
+ Das Srinagesh <quic_gurus@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+ tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+ yijie.yang@oss.qualcomm.com
+References: <20250924-knp-soc-binding-v1-0-93a072e174f9@oss.qualcomm.com>
+ <20250924-knp-soc-binding-v1-1-93a072e174f9@oss.qualcomm.com>
+From: Eugen Hristev <eugen.hristev@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250924-knp-soc-binding-v1-1-93a072e174f9@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The commit afa3701c0e45 ("cgroup: cgroup.stat.local time accounting")
-introduced a seqcount to track freeze timing but initialized it as a
-plain seqcount_t using seqcount_init().
 
-However, the write-side critical section in cgroup_do_freeze() holds
-the css_set_lock spinlock while calling write_seqcount_begin(). On
-PREEMPT_RT kernels, spinlocks do not disable preemption, causing the
-lockdep assertion for a plain seqcount_t, which checks for preemption
-being disabled, to fail.
 
-This triggers the following warning:
-  WARNING: CPU: 0 PID: 9692 at include/linux/seqlock.h:221
+On 9/25/25 02:31, Jingyi Wang wrote:
+> Document qcom,kaanapali-imem compatible. It has child node for debug
+> purpose.
 
-Fix this by changing the type to seqcount_spinlock_t and initializing
-it with seqcount_spinlock_init() to associate css_set_lock with the
-seqcount. This allows lockdep to correctly validate that the spinlock
-is held during write operations, resolving the assertion failure on all
-kernel configurations.
+Nitpick : subject should start with a capital letter,
+also, I do not think the sentence about the child node makes sense, as
+the binding already explains what it does.
 
-Reported-by: syzbot+27a2519eb4dad86d0156@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=27a2519eb4dad86d0156
-Fixes: afa3701c0e45 ("cgroup: cgroup.stat.local time accounting")
-Signed-off-by: Nirbhay Sharma <nirbhay.lkd@gmail.com>
----
- include/linux/cgroup-defs.h | 2 +-
- kernel/cgroup/cgroup.c      | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Otherwise,
 
-diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
-index 539c64eeef38..933c4487a846 100644
---- a/include/linux/cgroup-defs.h
-+++ b/include/linux/cgroup-defs.h
-@@ -435,7 +435,7 @@ struct cgroup_freezer_state {
- 	int nr_frozen_tasks;
- 
- 	/* Freeze time data consistency protection */
--	seqcount_t freeze_seq;
-+	seqcount_spinlock_t freeze_seq;
- 
- 	/*
- 	 * Most recent time the cgroup was requested to freeze.
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index ab096b884bbc..fe175326b155 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -5789,7 +5789,7 @@ static struct cgroup *cgroup_create(struct cgroup *parent, const char *name,
- 	 * if the parent has to be frozen, the child has too.
- 	 */
- 	cgrp->freezer.e_freeze = parent->freezer.e_freeze;
--	seqcount_init(&cgrp->freezer.freeze_seq);
-+	seqcount_spinlock_init(&cgrp->freezer.freeze_seq, &css_set_lock);
- 	if (cgrp->freezer.e_freeze) {
- 		/*
- 		 * Set the CGRP_FREEZE flag, so when a process will be
--- 
-2.51.0
+Reviewed-by: Eugen Hristev <eugen.hristev@linaro.org>
+
+> 
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/sram/qcom,imem.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/sram/qcom,imem.yaml b/Documentation/devicetree/bindings/sram/qcom,imem.yaml
+> index 6a627c57ae2f..1e29a8ff287f 100644
+> --- a/Documentation/devicetree/bindings/sram/qcom,imem.yaml
+> +++ b/Documentation/devicetree/bindings/sram/qcom,imem.yaml
+> @@ -19,6 +19,7 @@ properties:
+>        - enum:
+>            - qcom,apq8064-imem
+>            - qcom,ipq5424-imem
+> +          - qcom,kaanapali-imem
+>            - qcom,msm8226-imem
+>            - qcom,msm8974-imem
+>            - qcom,msm8976-imem
+> 
 
 
