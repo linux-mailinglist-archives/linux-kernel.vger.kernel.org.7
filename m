@@ -1,190 +1,87 @@
-Return-Path: <linux-kernel+bounces-841102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A354BB644E
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 10:51:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33344BB6451
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 10:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 855DA19E80C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 08:52:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDCC319C2E22
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 08:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6E72765E3;
-	Fri,  3 Oct 2025 08:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="m8AHGWe8"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2832765CF;
+	Fri,  3 Oct 2025 08:57:07 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F731804A
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 08:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9F41A38F9
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 08:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759481506; cv=none; b=SBGqgAbDNmokT9DON4v/HRflCUYpgE8F/287omoSFHWS5Zf/I3hnPrjZZ5E2F3QeFI0wFZaSH9ycW/jQ/dMeQ1pNqs9XhqoAn2ZvQ9FjF3aoJqPjkEB4zpYRSmYJlpngNTiIG8u1pLBa3X56gZnQhfR9NZrIK9C7EbUf0Fp2Cvo=
+	t=1759481827; cv=none; b=lt8RrktNZL5GvpMBIjHKRaYBuXYyTu7F9ZjcYABUi5hreJ5WVqZFOmlStrUaESojTcT6iGoHxcpNJp+oNrnFs6MfwKbvkLqFDyMm2xaMEGtCUqNHoDQ53TzcqKhBM8Vkaxboo821Y9mMO8cawnmunEdm1Fim6EcT8VYsX8tAay8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759481506; c=relaxed/simple;
-	bh=x2XT9zcVh7kzpD0X4tRTqt0/foxsWPu3XNzZKS/xTCM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MGUCsXeHORWH0qq1ldxY4ArW5jGdAMrpwFvkYw8vEBCjqq/4UX5UlGlIaXRrLPr/hu9Bn/QBP86Tm2HdqnHOzfE9fMjSYeceyHH7NgUkim99gguJjYRKg3ChVo4P5qxXbAjjyy/rQiD6V6eA+MvQS/0zv5QbpD7tqnr1uC2szVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=m8AHGWe8; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-367874aeeacso20643991fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 01:51:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1759481503; x=1760086303; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YmsmH87Q3nsWkYHojOW1pGLDSq47SZ4os0x3/+bAd08=;
-        b=m8AHGWe8HvKSi7+9lYUVf2aMm16iHSkGGiFtwoQNHZgfx+2da1ua5h4lsvrCEf3kgT
-         8aO9ZQO+vP/KFj1w5aOcM10ArD2WvZX57bmNXwMYsd4keYfskgHkwNlGPRVW69h6jZ4e
-         ddWQFbDOkoTUggQpqzHA436NhCQtWOtsbb6uYYqIP7gOij2WqKzM+NiCav1naoZQyYsk
-         QK1J4iKhXr/o9ClW4mdqRfuzhpIWaaLqpaMhXTDoAd+ZZ//dpSj70i5qxPzn2oDwZG9N
-         CIXyAMx8DeOJBEU1Mfs+FTo744x58MqMlX620xpIEyKPJwJY7YqCGxFkA8/IOyt7bOSi
-         oHRA==
+	s=arc-20240116; t=1759481827; c=relaxed/simple;
+	bh=FyoCpqNirqUhA3FAFwGYHQ7EB/a6vGQtWV6CnR3JkQk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=VjUWTdLtRImZNnA/0i/ba3F2lT4ZzxDzTBB12XDQ5+xrFgbtRP/PzQHdRnmMIJLvvcw2IjDk0s6gwLf6AR84Wo0iXZL/J/QmYlgJG+QJvl/TYPK2PFonTdlKo/IgLX8iuSfTNX0pV3zVsnLZZPJFxPfVTxDcWZhDycq/c+3ONR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-91e1d4d0976so525266339f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 01:57:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759481503; x=1760086303;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YmsmH87Q3nsWkYHojOW1pGLDSq47SZ4os0x3/+bAd08=;
-        b=QhS2Q1Pl7q3Vm9fIqf0YoHWgS0FfAV2IcfoJBP8xf5yB+oGG4WjDrKJIpJit6b42hg
-         nv7eIgsFeM7wtYN/Klmlf7QeIJnGeoibJBkSTo4+0+3ptB3kLnBN+K8HEseOgFHOie4z
-         85tQ2x0T8x2kKkeDylrZxZwIBp1DXV7NPdvWuqklQ9qSsZfFRzsb8lmuBZWMS30Rl3TZ
-         SMtje0TTvr848Kh8wOHbf+oCG/44RwfbCF0LIp3WEXRyVLTlYd8dyDwRi0q35ryVAbY0
-         ffozqu7B3PK9kd/52yKjgnzXfcLpRjODya6hJSOMeJWbzUmlU7MYUmY/cnsTFW/lhcK+
-         RMew==
-X-Forwarded-Encrypted: i=1; AJvYcCWGRfa66w+9PQwa6L6lgrnsOd4x+e0O7bKMOTcieizFXHURr+rSWYopd802I5VsAxJSNODMZ3u4HOhbmH4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAsp7bpBTXLrn+dHz3T2KX7t+KsLDNBHgIIy2GvkcMDOUIBSXh
-	tM3GKfqHYat7dYY2AZrL5q6TFXtAIp6Hph0F1H59AY3kmBp40LXOFIDQEBEZEuHXfdLT/XSO0Dt
-	mb/TZKfkrLlUfPejY9QQzQoRYS2S+WnoIBia5Qi4eDg==
-X-Gm-Gg: ASbGncvSuMfkhqigBKabw3RFUFW2TK7vbIeXoTi+iISElBPeVSgOi+YgWKM5/oVlYxF
-	o4Wlm/EWaULO8ldnjKvN5/x24W5Yfbl3+OLkGnPYFVTrrAMVMx3D4fMZEdl+mZ/u+mwCNsW5Dqe
-	CrDsDwQP+/SGZ/yfKcbk0OQOeQXbBFyDdoyXh+xib3cxDDgnTQKSLzVr3OUAJ27Hp47hwGX0Gz7
-	1a1jMY8vANsTEPdGHOkACUgfOacjvYBIqHg1UMHulyCU1rVUrju+JJZ9mvqwA==
-X-Google-Smtp-Source: AGHT+IGpVFhYHvvmq0k22AePxJXM3wxZnhvCRYnHq9Pngg2NH46casC/4XWUD4nLAbqyQDtuHaatgzMh2vzh8d67flE=
-X-Received: by 2002:a05:651c:12c1:b0:332:3562:9734 with SMTP id
- 38308e7fff4ca-374c36c07f2mr6231941fa.8.1759481503006; Fri, 03 Oct 2025
- 01:51:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759481824; x=1760086624;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pTFryVpRekqtf/vbsQjg3j4K9niH8Uf5RtoMB5MIwg0=;
+        b=ost3P6mBdmBQqrqYcSbW7wMRv/c4ySrO7aVK05C5jBWohWjqEuqhdVKA6xJoHdg7SG
+         d9u7ETR3fMah6qihqvu84y3u4Q7Px4836lSRvkRlfCLCxYk8B3msjMqJfIdtOS6WdzmB
+         y3hrUImvHjAYod/u0JlPAkhSUluYee8u6lpiOCqTx7TueY5RWQtfEeiqSj1ooQ1jmL15
+         nIywkNF0FkScuFdW9MOxBufDby1ALqNoCowEVVrvqFxCSMyqDvKNN0SEnrlvZw1RSnhv
+         qCQm23I4FczUycqx80A/NobC7B8fwcWEVb46oEQftsJkjHKbRMmJHBXRQgFgnHQgwIgw
+         ZRsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSR+xR2ILTfzkmsGKTzBAOG/0AvCNIwp2AxcCJjBe0cvn1eQEAdZ/EKhtqMbjwfz3kuqm5jw6mM/vA84Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUyZl25ZUWi0lG5Tr+rTeDFtuCN/1BZ22BBHCaQqPgTENnTNg4
+	4kSZFPUgTGYVYCiCLdp6/Ai/vsbp6FlPSdbixrSBmQItD6wLwOHo3gHxvNOBTJ22xMQYEkL2cHG
+	9kgEKj4WdOon1LDTPRMMwqnCMwe0va2yyo8f5QbqiSd1mU5BSeRdvaGoy1WY=
+X-Google-Smtp-Source: AGHT+IE8rpyJ5Kc59KlPU1Epp+otWJ5wqtwPJvIMK8oOS6DvKWiypLjiGmteAyuLOtZUBq4SscVabQjtQkcx0ftb68BwoagdgiUk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251002215759.1836706-1-markus.probst@posteo.de>
- <CAMRc=Me3VLbmRksbrHmOdw8NxN7sxXjeuNFb9=6DzE=uLn0oAA@mail.gmail.com> <7f4057f25594ac3b50993a739af76b7b1430ee6a.camel@posteo.de>
-In-Reply-To: <7f4057f25594ac3b50993a739af76b7b1430ee6a.camel@posteo.de>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 3 Oct 2025 10:51:31 +0200
-X-Gm-Features: AS18NWCIhQoF-dv9QcLF1nIcoukTH-eCETtxxDfQif9_jQZhzC3c7G8RkGTaXOE
-Message-ID: <CAMRc=McioBjF3WCBu0ezzuL+JJTiEpF2fz1YpbToRpijpHfAEg@mail.gmail.com>
-Subject: Re: [PATCH] gpio: of: make it possible to reference gpios probed in
- acpi in device tree
-To: Markus Probst <markus.probst@posteo.de>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <westeri@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6602:6011:b0:87c:34e3:1790 with SMTP id
+ ca18e2360f4ac-93b9695da22mr267477839f.1.1759481824032; Fri, 03 Oct 2025
+ 01:57:04 -0700 (PDT)
+Date: Fri, 03 Oct 2025 01:57:04 -0700
+In-Reply-To: <20251003083604.2556017-1-kartikey406@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68df8fe0.050a0220.2c17c1.001f.GAE@google.com>
+Subject: Re: [syzbot] [ext4?] KASAN: slab-out-of-bounds Read in ext4_search_dir
+From: syzbot <syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com>
+To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 3, 2025 at 10:40=E2=80=AFAM Markus Probst <markus.probst@posteo=
-.de> wrote:
->
-> On Fri, 2025-10-03 at 10:03 +0200, Bartosz Golaszewski wrote:
-> > On Thu, Oct 2, 2025 at 11:58=E2=80=AFPM Markus Probst
-> > <markus.probst@posteo.de> wrote:
-> > >
-> > > sometimes it is necessary to use both acpi and device tree to
-> > > declare
-> >
-> > This is a rather controversial change so "sometimes" is not
-> > convincing
-> > me. I would like to see a user of this added in upstream to consider
-> > it.
-> >
-> > > devices. Not every gpio device driver which has an acpi_match_table
-> > > has
-> > > an of_match table (e.g. amd-pinctrl). Furthermore gpio is an device
-> > > which
-> >
-> > What is the use-case here because I'm unable to wrap my head around
-> > it? Referencing devices described in ACPI from DT? How would the
-> > associated DT source look like?
-> In my specific usecase for the Synology DS923+, there are gpios for
-> powering the usb vbus on (powered down by default), also for powering
-> on sata disks. An example for a regulator defined in DT using a gpio in
-> ACPI (in this case controlling the power of on of the usb ports):
->
->         gpio: gpio-controller@fed81500 {
->                 acpi-path =3D "\\_SB_.GPIO";
->                 #gpio-cells =3D <2>;
->         };
->
->         vbus1_regulator: fixedregulator@0 {
->                 compatible =3D "regulator-fixed";
->                 regulator-name =3D "vbus1_regulator";
->                 regulator-min-microvolt =3D <5000000>;
->                 regulator-max-microvolt =3D <5000000>;
->                 gpio =3D <&gpio 0x2a 0x01>;
->         };
->
-> - Markus Probst
-> >
+Hello,
 
-Krzysztof: Could you please look at this and chime in? Does this make any s=
-ense?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> > Bart
-> >
-> > > can't be easily disabled in acpi and then redeclared in device
-> > > tree, as
-> > > it often gets used by other devices declared in acpi (e.g. via
-> > > GpioInt or
-> > > GpioIo). Thus a disable of acpi and migration to device tree is not
-> > > always
-> > > possible or very time consuming, while acpi by itself is very
-> > > limited and
-> > > not always sufficient. This won't affect most configurations, as
-> > > most of
-> > > the time either CONFIG_ACPI or CONFIG_OF gets enabled, not both.
-> > >
-> > > Signed-off-by: Markus Probst <markus.probst@posteo.de>
-> > > ---
-> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
- > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
-> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
- > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
-> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
- > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
-> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
- > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
-> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
- > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
-> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
- > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
-> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
- > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
-> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
- > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
-> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
- > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
-> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
- > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
-> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
- > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
-> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
- > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
-> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
- > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
-> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
- > > > > > > > > > >
+Reported-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
+Tested-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
 
-[snip]
+Tested on:
 
-What happened here with your mailer?
+commit:         e406d57b Merge tag 'mm-nonmm-stable-2025-10-02-15-29' ..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1047c92f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=84e81c4d0c0e900a
+dashboard link: https://syzkaller.appspot.com/bug?extid=3ee481e21fd75e14c397
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=139576e2580000
 
-Bart
+Note: testing is done by a robot and is best-effort only.
 
