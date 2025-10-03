@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-841758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CD1DBB82B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 23:06:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF1DABB82BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 23:10:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 556BF4E6A76
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 21:06:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 128943A3418
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 21:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D706321B1BC;
-	Fri,  3 Oct 2025 21:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE4E25DCE0;
+	Fri,  3 Oct 2025 21:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pBfKBp9r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lKkjCDp3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8D9259CB6
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 21:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79CC381BA
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 21:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759525598; cv=none; b=P47Bi3VWMfb2xOKEwsMuLbbOd/pIifm3TmtJlF80UbFCugVuMCqk7QIUkQpGzGrjWiesviYKeRD/kfrr1G+RZ9q1crer0sXsxlXgsly+2+l/WkUgs5UO5tG9H4ZrDpFws4a48l+dsBDGL1DgmSVm95hTWTdsoc+jzyyLUjhXYzY=
+	t=1759525813; cv=none; b=cEE8KzsUg+EAp17UWV/EwsujyvZYolNi93xAQg2HMPpTuXuN52AVg2uKW8s4oq5KEGNvMK1QiNDLf8xiELAzaotTHmdbBHfLSAQqWFo1Gr/pztadGgNsas26KDd8UV+VgmxHjfgdSxAAS5pSzfI2+g87JyLlO3FTiSFpvSmB+VE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759525598; c=relaxed/simple;
-	bh=smHvUO6y6+rxNgqQB01yRAJUFj9igvIQ+EulDbNNivE=;
+	s=arc-20240116; t=1759525813; c=relaxed/simple;
+	bh=dop2CffQ6z/331nTr4zwzO8M3dzvJ69PFQZ6dAIoGgk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xe1IstmL3KjM5AxIS+rOIsQc758Ne9nbyh/3FwYX3wmHdb77xo1jblsscvuNr2oMWj07DizX/MxMtfohKsc3qb/Ch3cYWuqxkk9nps0MY3y+4oqnl1TJzozN9bJO47AYPXnblH9RUjAg9zY+vcQx89UCRTWIkEezjzvyyKbaMKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pBfKBp9r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D38DEC16AAE
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 21:06:37 +0000 (UTC)
+	 To:Cc:Content-Type; b=HHuNqd7TYQnU80DKEmWZDPeSDwZI5B2y/vpdT0s4u/zvm5x95am0qDcH+ghtX4/shWY0fWNAHiWPwLMtWEkdxCUq7xlYZ6eafhq6Sy2UR8QWIXkgC/iDuNATtE1goJjLndsiNV7Sx/48/XFpSoWB6DhIsh49TN7naGEke+4P9Uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lKkjCDp3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BABBCC4CEF5
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 21:10:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759525597;
-	bh=smHvUO6y6+rxNgqQB01yRAJUFj9igvIQ+EulDbNNivE=;
+	s=k20201202; t=1759525812;
+	bh=dop2CffQ6z/331nTr4zwzO8M3dzvJ69PFQZ6dAIoGgk=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=pBfKBp9r4EBReETef1rwkhrDMbh3/3oZsjGE0Qv/cJ0qWUceuyvbuTpjazQT42Gsf
-	 7XLsaOm/CY3DDt7UIODMThUf/VR67GVwz+ujPODvpqkRXtf8jacfahVFKhbZCcVaJx
-	 AwuLT378x269/shlKaGps45u+9jZs6LEPOIpQjhhMZjXw6b5zF1jNpKOZNzQRu6/pO
-	 yGWAF0sf+egSI5GLUr6/YboOQhOT1uPjz+VJGAjTIMNlgu5EEmaZNzLdiHcQXSNfkF
-	 MZKTNnGeP3Hq2guWbW/+0No+4J3FloLBBXyCNntDmU+MhBKZtWZ7U+9++oh2k+QPNE
-	 hv9aC8yR01How==
-Received: by mail-yx1-f47.google.com with SMTP id 956f58d0204a3-60170e15cf6so3365766d50.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 14:06:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWAsBZjPZgkh5ZU0EZRTkrJIIE56zqoSIuuN2cmDaRnlQ3HNePLe0k1KDrhYf7agZsmHByE4TrY/Jhd7wo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhkihcbwRXYDTaaL10HLssxW7QYTikl/ritrCFmQhGmr2KZkSq
-	tr1VErhIoPPxw9pY2CL2WuPfdI8YKnZyAfG/DvTLprxqKKGkDwvxteVxPz8RETK9ZRko3BmJJXZ
-	0/MQH/P0x0LH3tGZ0Wkn5lOQYehDP/EVY+4TIbDUt2A==
-X-Google-Smtp-Source: AGHT+IEwSPJ/yX5ZIhTiBfwNm0ItirHXcGbfQ0YU34j4BhQbTqiFL8oSKiBFAybUN0p/s6f72fePqzhe2TQ94F/S9ZA=
-X-Received: by 2002:a05:690e:585:b0:636:18cc:fefb with SMTP id
- 956f58d0204a3-63b9a064375mr2849137d50.5.1759525597099; Fri, 03 Oct 2025
- 14:06:37 -0700 (PDT)
+	b=lKkjCDp3Nt7kSvz+JMeJe2S2z7EWk5lNLv/gkWtcCUpqUixSesTHV9p1SlenPu6SR
+	 clRBkoxqOAGk/N2K9JQo/Y6GvWW3DPCTLtFVV6zPihb1i/qQU4wRcm7PYCWbW7tVpA
+	 oZ1yaXvBu65oyJv+zadXVQbvwA1BetH13pCIigEDwZgo4QFEwnNQwmKVBiVusHE4+S
+	 I6UBmV7AA0d6Aic836riuZc0AXI/6Tn5w0IBM/2DdNJOBjFLF4zYD6JmFbW2KEdQ6G
+	 LrMSbmYO/6JJXMlJ++ELCPrmPJz72W2RwHM1MnI/iJ12r849onvaTbwNmKnP6L5HQQ
+	 ISSPDvuIlW2xw==
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-71d603b60cbso29099847b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 14:10:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVftODksgE9SEJfWYMk7iByXp5D0s6vBzSLupZf67Rm7fI6L4xkHM2xKOrqedfI4aAiLNGDeZ3jCbyjXbA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoEsRDOFO+EP8NaYNsHlwFqagmQZ/xefA7fN3cPVzoeLNPg6kH
+	PuD40a3v8zKht4oHN8x7sLo0yXqr1NmkHVh73DxDivyiQxvOlhkIH3yElftp5BfU7yREMT/sWR7
+	MUSbJI17QD1NgOxReifz6UtAvWjMmZeaa1DSuKLpKSQ==
+X-Google-Smtp-Source: AGHT+IFJr7BiUayheYtB01AyImhAOf9wqzzEYmC0SkKmmA6WyBELYscGL+EKGMFFmZXYioQm/V7KmDabskfxKC6Q5vA=
+X-Received: by 2002:a53:c053:0:20b0:631:d1f8:38b4 with SMTP id
+ 956f58d0204a3-63b9a05e073mr3596797d50.4.1759525812076; Fri, 03 Oct 2025
+ 14:10:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,51 +57,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
- <20250916-luo-pci-v2-2-c494053c3c08@kernel.org> <20250929174627.GI2695987@ziepe.ca>
- <CACePvbVHy_6VmkyEcAwViqGP7tixJOeZBH45LYQFJDzT_atB1Q@mail.gmail.com> <20251003140457.GO3195829@ziepe.ca>
-In-Reply-To: <20251003140457.GO3195829@ziepe.ca>
+ <20250916-luo-pci-v2-3-c494053c3c08@kernel.org> <2025093044-icky-treat-e1c3@gregkh>
+ <CACePvbUr42mj0kbcaw4cgKnd7v1f8z8Jhq4+_QN7Z5Nvicd1cw@mail.gmail.com>
+ <2025100323-sneer-perennial-55e1@gregkh> <CAF8kJuNPFbSJezynwXWpMx0ihV32YvAgdfygj7bx1nhxtmB8-w@mail.gmail.com>
+ <2025100317-backroom-upside-c788@gregkh> <CACePvbW031fW8dqswwXp=Z6H3jv2BiBSJFyGiXCKzZUSKRnxqQ@mail.gmail.com>
+ <CALzav=edEDvz98KKtmMLWcW33PgE4aTy6K7YLSK0_jx1PdRqBw@mail.gmail.com>
+In-Reply-To: <CALzav=edEDvz98KKtmMLWcW33PgE4aTy6K7YLSK0_jx1PdRqBw@mail.gmail.com>
 From: Chris Li <chrisl@kernel.org>
-Date: Fri, 3 Oct 2025 14:06:26 -0700
-X-Gmail-Original-Message-ID: <CACePvbVqSWnj_iBBNH6bZ+HJC_40coQhvCrFvKaHmYDspnRP5w@mail.gmail.com>
-X-Gm-Features: AS18NWBk8FZfS9kE7tc1gSuNGpUXJqvl96bjWvHjlLAXWT0QpjpjfPViNEQhQXA
-Message-ID: <CACePvbVqSWnj_iBBNH6bZ+HJC_40coQhvCrFvKaHmYDspnRP5w@mail.gmail.com>
-Subject: Re: [PATCH v2 02/10] PCI/LUO: Create requested liveupdate device list
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+Date: Fri, 3 Oct 2025 14:10:01 -0700
+X-Gmail-Original-Message-ID: <CACePvbWbW-YVHAL0rO-6Ao16LELnd8R70Gj0+QZHptVRk0C50A@mail.gmail.com>
+X-Gm-Features: AS18NWDm6P1reKqIX5KYR5IcC1q6_QkQpinihwQ1iy-jdQBkz0LnX3DWVnmxEi4
+Message-ID: <CACePvbWbW-YVHAL0rO-6Ao16LELnd8R70Gj0+QZHptVRk0C50A@mail.gmail.com>
+Subject: Re: [PATCH v2 03/10] PCI/LUO: Forward prepare()/freeze()/cancel()
+ callbacks to driver
+To: David Matlack <dmatlack@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bjorn Helgaas <bhelgaas@google.com>, 
 	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, 
 	Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org, 
 	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	David Matlack <dmatlack@google.com>, Pasha Tatashin <tatashin@google.com>, 
-	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>, 
-	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
-	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
-	Leon Romanovsky <leon@kernel.org>
+	Pasha Tatashin <tatashin@google.com>, Jason Miu <jasonmiu@google.com>, 
+	Vipin Sharma <vipinsh@google.com>, Saeed Mahameed <saeedm@nvidia.com>, 
+	Adithya Jayachandran <ajayachandra@nvidia.com>, Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, 
+	Mike Rapoport <rppt@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 3, 2025 at 7:05=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca> wrote=
-:
+On Fri, Oct 3, 2025 at 11:28=E2=80=AFAM David Matlack <dmatlack@google.com>=
+ wrote:
 >
-> On Thu, Oct 02, 2025 at 10:33:20PM -0700, Chris Li wrote:
-> > The consideration is that some non vfio device like IDPF is preserved
-> > as well. Does the iommufd encapsulate all the PCI device hierarchy? I
-> > was thinking the PCI layer knows about the PCI device hierarchy,
-> > therefore using pci_dev->dev.lu.flags to indicate the participation of
-> > the PCI liveupdate. Not sure how to drive that from iommufd. Can you
-> > explain a bit more?
+> On Fri, Oct 3, 2025 at 10:49=E2=80=AFAM Chris Li <chrisl@kernel.org> wrot=
+e:
+> >
+> > On Fri, Oct 3, 2025 at 5:26=E2=80=AFAM Greg Kroah-Hartman
+> > NVME is not a GPU. The internal reason to have NVME participate in the
+> > liveupdate is because the NVME shutdown of the IO queue is very slow,
+> > it contributes the largest chunk of delay in the black out window for
+> > liveupdate. The NVME participation is just an optimization to avoid
+> > resetting the NVME queue. Consider it as (optional ) speed
+> > optimization.
 >
-> I think you need to start from here and explain what is minimally
-> needed and identify what gets put in the luo session and what has to
-> be luo global.
+> This is not true. We haven't made any changes to the nvme driver
+> within Google for Live Update.
+>
+> The reason I mentioned nvme in another email chain is because Google
+> has some hosts where we want to preserve VFs bound to vfio-pci across
+> Live Update where the PF is bound to nvme. But Jason is suggesting we
+> seriously explore switching the PF driver to vfio-pci before trying to
+> upstream nvme support for Live Update, which I think is fair.
 
-That means it is a bigger conversion that PCI alone, this will need to
-change the LUO subsystem design. I can start from the vfio/iommufd
-point of view, if the liveupdate device is driven from the
-vfio/iommufd side, what is the PCI layer needed to do collaborate. It
-will likely end up changing the LUO subsystem and callback design. I
-will make that my starting point for the next step.
-
-Thank you.
+Ah, thanks for the clarification and sorry for my confusion. I think I
+was thinking of a different storage driver, not the NVME you have in
+mind.
 
 Chris
 
