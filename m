@@ -1,141 +1,156 @@
-Return-Path: <linux-kernel+bounces-841489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E3AABB780B
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:14:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E516BB7811
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ACD0189A3A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:15:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4057D189A564
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B14B2BD00C;
-	Fri,  3 Oct 2025 16:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FC92BD5B2;
+	Fri,  3 Oct 2025 16:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m0Rq4wS/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SfsOhdde"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764E926E6FA;
-	Fri,  3 Oct 2025 16:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BEF1D63F5
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759508075; cv=none; b=LFZaz04Z2C1AmthpZB7As22KEbB0oyXhGsvq4R5ejBvBLN8RrmFhCEDzfxu7RYj8p+aBcK7prT3ZrhJus0t5SA2i5jJTg4+99IlfHMJ6sxBUN6BHhqjiccPtAqOQ5y15a+wUxEMORTalQkiV2YS4LvIIpRbnA2GgJLkjqiSknKI=
+	t=1759508115; cv=none; b=XXtzCUYxmpxWwwwo/7AmKcEH2J8rtFR3yDwf6PwLXm7flr6H+qdbgynn8RMwzpeYcTyuqUEW/GCzzLNbky+zbEXjhMQsZMPfkfpHq5SJ7N0365GCKtOh2NoJk9mMjhuzbdz4jRpj8d8sCp8tm8uJO/XJuJihttRSdkn5S0V8AE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759508075; c=relaxed/simple;
-	bh=dQk/Wx+OgHdP1VW5xgsNaKcBpPnk3gpbOYRqWi4IHb8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ioEAkIFLOnYCRS+xqJpod28uVe+z7ozjkUR+35429K9g1OG/sODQ6d6+LAt69x5FWKZc5J6O1/cS8rFTJKABWu4RDdGG75edrkYHJ0hR/FlUifzeFEepI6PWnxGBLim02JGeslyMspYuauBOHBfOH2vOguFF6NVOzqQ+gwYMpE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m0Rq4wS/; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759508073; x=1791044073;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=dQk/Wx+OgHdP1VW5xgsNaKcBpPnk3gpbOYRqWi4IHb8=;
-  b=m0Rq4wS/Qc6xIjfURLnaGqRYVsAkcV9IpTTcnn9sGUwbB4iRTSb/wPH2
-   s6WuMa/W/IgFgbmNeP71v5J7Bt/AATa1El8sNAbAqxWr22dgZftq1M2tr
-   7Ik57XGJ8z7ZpXq1LPoUq/bVM6PUFSz52QKsBVIQuirQkgjgIdTBuClo5
-   UqHoQXSmNVHLWN5r1/Sq4y2NxgUEdNj2CBZGA/QqM3wKWObWydI0WeTHf
-   3PoRN8fpdtIW9+miId+2fMQaSdErjzUu2AxnC5a38BisW06YFWqCjlHjY
-   MW8qA0t3LgaS+ypqVmsoEm71GmlHOvmCiwlsK6CKsIZsGBJD8DxU22iXF
-   w==;
-X-CSE-ConnectionGUID: eQAtFzUAT5OXzz57Ex22Fw==
-X-CSE-MsgGUID: 4Dt3/cYYSOODt5ETpQpG2Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11571"; a="72040002"
-X-IronPort-AV: E=Sophos;i="6.18,313,1751266800"; 
-   d="scan'208";a="72040002"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 09:14:32 -0700
-X-CSE-ConnectionGUID: ZMZQXFJRRB+0QS9GM/gmDA==
-X-CSE-MsgGUID: 54SLd7gFQtqWOk0XMIhkDg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,313,1751266800"; 
-   d="scan'208";a="179250311"
-Received: from rchatre-mobl4.amr.corp.intel.com (HELO [10.125.110.49]) ([10.125.110.49])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 09:14:30 -0700
-Message-ID: <43ca6827-2bcc-41d3-8a7b-3aec24f2b0e1@intel.com>
-Date: Fri, 3 Oct 2025 09:14:28 -0700
+	s=arc-20240116; t=1759508115; c=relaxed/simple;
+	bh=7wuFMGs0dHFY4V1AjLX74sWwcF/NB+Jk1Zc5be1peEw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qvvATFnZrvw1Y1IP5J5GMms/VMYpTywg9hTPH2jb4BWD6SEIaQhEKlZerZrtMm19ptBIU1qbvwXtlrRlUzFjCNdZgWJEQZwUZGJJbGybOjOMzv7eDkWnIrODHKhlkA83JssmL4eqvUD+XWdikdyK+zeyhu3SnTUJ7apZkKGEmsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SfsOhdde; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4db7e5a653cso24167771cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 09:15:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759508112; x=1760112912; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mRT/iYpKxpou3nIU4G8aZA9jml41omx9hIjrGCgXioY=;
+        b=SfsOhdde7T+jjBRwgvdZO4pqAshekPhkCM4BYg+935xeBWdsFT70GSpgqlwuZS1YsH
+         sauWqezY5eXtwfpTEvFr9uvlc2YDYoPzqLXh97WsdwtzbtWi27D5+Ep8ARwmbghoFJ66
+         EiwmTTfh5CVGUZGc25ow25iNXk6bwxKJxSlBq4EY+0UT0Li8V61DhAt+EsnuUzhyx49I
+         Cbbzbvl6rZwUCr0eQWTp4NRe4n5Db6oo7X11J01B/Wh12jTyNg+c+GMtOZM0pn9t1Tzl
+         x3QtZsgXaN09yCNPUas8lxPyEHyAsOAnYuf2z2XswptlQvdIgJkkSWjCm95NVqTlQxS1
+         +gcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759508112; x=1760112912;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mRT/iYpKxpou3nIU4G8aZA9jml41omx9hIjrGCgXioY=;
+        b=ivnpO+1X4Rhk6147aHjLSGy2Wo9s5CfncONv/p1y5dD8HkYQ5DusN2/fwYCMQhiQp8
+         xQJGVU1vDXcm1wXE3naC/FwnjT/blqQiGeCsYty2egeS/2TcNV/qR5jfXN5ZVHdX6rKO
+         eRkxOvuwgSJFMIN4XjWsZCkSm7bFtRK+JX9hkvvEV2X57XOFp+C9wjwPw2/XHA7ulL+X
+         gC5TvTfejyQ7nH4fqaLBsajkxNXacSOaxwmp4HR3WLUilUyfjPYAQERXQdzWXn76TqG4
+         p4ZGUGFAogKlz0XR/Fs+UCQLpL/yqODyu49nedPNYy+xYbmd6C7uWKeiCpY5L0WfhrFT
+         erpg==
+X-Forwarded-Encrypted: i=1; AJvYcCWJmdisZgSnrngn8J8af55Qvys4sZMQ9R41bLLOxRP94DOi4H4kXc7DMEfZP1M4h/ZjB4UqbK91/BRnY4I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywmb/pzOb9fnC2q0hXEoYYcj1McifpipB3ZRpsRiCY/Be9vEpVY
+	FXb5z8AZUeEH/4Pr9Y6xvCmGyFiIVzOTXZCpkRXT/8fH4DIJIpj/9H5Dwqa7AAV03nhnPMLNZRc
+	90hKGkSeVhGG6I+LIZWyuT8sglyI+MFMI+G7De9Jf
+X-Gm-Gg: ASbGnctnbbB2D2fXflThVh3afN5gSj34Eg2xcQ/NZHIlGhtHlsxi4oVYf7DHlcvESw0
+	JBVn0aWuiFtszjW7bdarLPXm1eq8XKg7C/MCyvksEGsZ+AtQCDIkyoT3l149+/dX5q0NZjS6fi1
+	8BS1FLZtJcIZGSRXh6N+cfPSA1PJphwul7ClJ4SV3w/bAQ3qWEa9dfewot8bG95EtYIjlQZR9sv
+	g4b0LgacTsgudC/JgyxTz9hbcm17BXfb4wPylEQHMdF1lOCVCKXNg6AcH24oqDB4712jzoC
+X-Google-Smtp-Source: AGHT+IF7ePNKC/efflqXHwYHgjxSxDTK8C6+GyU9k0GrT7S6haFlI4McuaUxqH1svu1wQ3PG3W0WiRmSfLdQYtAxFzc=
+X-Received: by 2002:a05:622a:5813:b0:4b7:b1cb:5bd8 with SMTP id
+ d75a77b69052e-4e576ae6a76mr55687871cf.73.1759508111841; Fri, 03 Oct 2025
+ 09:15:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cxl/hdm: allow zero sized committed decoders
-To: Vishal Aslot <vaslot@nvidia.com>, Gregory Price <gourry@gourry.net>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, Li Ming <ming.li@zohomail.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- Zijun Hu <zijun.hu@oss.qualcomm.com>,
- "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <SN7PR12MB81316C958DF0F4B10369B928BBE6A@SN7PR12MB8131.namprd12.prod.outlook.com>
- <aN4SSEmaCaxbeiwJ@gourry-fedora-PF4VCD3F>
- <02a4b5f1-ad29-4825-9040-ff96e328f674@intel.com>
- <SN7PR12MB8131EE31375531673BCF0C62BBE4A@SN7PR12MB8131.namprd12.prod.outlook.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <SN7PR12MB8131EE31375531673BCF0C62BBE4A@SN7PR12MB8131.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251003154724.GA15670@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+In-Reply-To: <20251003154724.GA15670@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 3 Oct 2025 09:15:00 -0700
+X-Gm-Features: AS18NWBvRkA8XJUstYFSzhKHyU5fYwBegMPqLVfkMF5poIlBOyx5qh3MF6NBsnY
+Message-ID: <CANn89iJwkbxC5HvSKmk807K-3HY+YR1kt-LhcYwnoFLAaeVVow@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: mana: Linearize SKB if TX SGEs exceeds
+ hardware limit
+To: Aditya Garg <gargaditya@linux.microsoft.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org, 
+	decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
+	kuba@kernel.org, pabeni@redhat.com, longli@microsoft.com, 
+	kotaranov@microsoft.com, horms@kernel.org, shradhagupta@linux.microsoft.com, 
+	ernis@linux.microsoft.com, dipayanroy@linux.microsoft.com, 
+	shirazsaleem@microsoft.com, linux-hyperv@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, gargaditya@microsoft.com, 
+	ssengar@linux.microsoft.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Oct 3, 2025 at 8:47=E2=80=AFAM Aditya Garg
+<gargaditya@linux.microsoft.com> wrote:
+>
+> The MANA hardware supports a maximum of 30 scatter-gather entries (SGEs)
+> per TX WQE. In rare configurations where MAX_SKB_FRAGS + 2 exceeds this
+> limit, the driver drops the skb. Add a check in mana_start_xmit() to
+> detect such cases and linearize the SKB before transmission.
+>
+> Return NETDEV_TX_BUSY only for -ENOSPC from mana_gd_post_work_request(),
+> send other errors to free_sgl_ptr to free resources and record the tx
+> drop.
+>
+> Signed-off-by: Aditya Garg <gargaditya@linux.microsoft.com>
+> Reviewed-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
+> ---
+>  drivers/net/ethernet/microsoft/mana/mana_en.c | 26 +++++++++++++++----
+>  include/net/mana/gdma.h                       |  8 +++++-
+>  include/net/mana/mana.h                       |  1 +
+>  3 files changed, 29 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/=
+ethernet/microsoft/mana/mana_en.c
+> index f4fc86f20213..22605753ca84 100644
+> --- a/drivers/net/ethernet/microsoft/mana/mana_en.c
+> +++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
+> @@ -20,6 +20,7 @@
+>
+>  #include <net/mana/mana.h>
+>  #include <net/mana/mana_auxiliary.h>
+> +#include <linux/skbuff.h>
+>
+>  static DEFINE_IDA(mana_adev_ida);
+>
+> @@ -289,6 +290,19 @@ netdev_tx_t mana_start_xmit(struct sk_buff *skb, str=
+uct net_device *ndev)
+>         cq =3D &apc->tx_qp[txq_idx].tx_cq;
+>         tx_stats =3D &txq->stats;
+>
+> +       BUILD_BUG_ON(MAX_TX_WQE_SGL_ENTRIES !=3D MANA_MAX_TX_WQE_SGL_ENTR=
+IES);
+> +       #if (MAX_SKB_FRAGS + 2 > MANA_MAX_TX_WQE_SGL_ENTRIES)
+> +               if (skb_shinfo(skb)->nr_frags + 2 > MANA_MAX_TX_WQE_SGL_E=
+NTRIES) {
+> +                       netdev_info_once(ndev,
+> +                                        "nr_frags %d exceeds max support=
+ed sge limit. Attempting skb_linearize\n",
+> +                                        skb_shinfo(skb)->nr_frags);
+> +                       if (skb_linearize(skb)) {
 
+This will fail in many cases.
 
-On 10/2/25 6:03 PM, Vishal Aslot wrote:
->> ________________________________________
->> From: Dave Jiang <dave.jiang@intel.com>
->> Sent: Thursday, October 2, 2025 10:32 AM
->> To: Gregory Price; Vishal Aslot
->> Cc: Davidlohr Bueso; Jonathan Cameron; Alison Schofield; Vishal Verma; Ira Weiny; Dan Williams; Li Ming; Peter Zijlstra; Dan Carpenter; Zijun Hu; linux-cxl@vger.kernel.org; linux-kernel@vger.kernel.org
->> Subject: Re: [PATCH] cxl/hdm: allow zero sized committed decoders
->>
->> External email: Use caution opening links or attachments
->>
->>
->> On 10/1/25 10:48 PM, Gregory Price wrote:
->>> On Wed, Oct 01, 2025 at 08:37:26PM +0000, Vishal Aslot wrote:
->>>> @@ -1210,6 +1210,11 @@ int devm_cxl_enumerate_decoders(struct cxl_hdm *cxlhdm,
->>>>                 rc = init_hdm_decoder(port, cxld, target_map, hdm, i,
->>>>                                       &dpa_base, info);
->>>>                 if (rc) {
->>>> +                       if (rc == -ENOSPC) {
->>>> +                               put_device(&cxld->dev);
->>>> +                               rc = 0;
->>>> +                               continue;
->>>> +                       }
->>>
->>> How do you suggest actually testing this? I briefly poked at this in
->>> QEMU trying to commit decoders, but i found myself incapable of
->>> exercising this path.
-> 
-> I tested it locally with our BIOS (UEFI) where we commit and lock all decoders and
-> all except decoder 0 are zero-sized.
-> 
->>
->> It may be worthwhile adding a cxl_test test case for this.
-> 
-> Yeah, sure. Would cxl mock tests be the right place to explore this?
+This sort of check is better done in ndo_features_check()
 
-Yes. Under tools/testing/cxl. Let me know if you need help with that.
+Most probably this would occur for GSO packets, so can ask a software
+segmentation
+to avoid this big and risky kmalloc() by all means.
 
-DJ
-
-> 
->>>
->>>>                         dev_warn(&port->dev,
->>>>                                  "Failed to initialize decoder%d.%d\n",
->>>>                                  port->id, i);
->>>> --
->>>> 2.34.1
-> 
-
+Look at idpf_features_check()  which has something similar.
 
