@@ -1,156 +1,145 @@
-Return-Path: <linux-kernel+bounces-841647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 121D3BB7E79
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 20:44:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50A8EBB7E82
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 20:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 02BE54EE9C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 18:44:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0594C4A6146
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 18:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212192DE715;
-	Fri,  3 Oct 2025 18:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F742DC774;
+	Fri,  3 Oct 2025 18:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="A0yJ/qWN"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RbY9W+59"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0B62DAFB4
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 18:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EE82DC767
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 18:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759517035; cv=none; b=KVFYQyYqHU9IWEfUH/TziOQyLcsjzvAcZjTBfdDviF0B9r7h04BEKULZnDPIxnlpAIqBaYdoZdXCTNEFE0UA/xAwwDdCBgW58OvQI+OR3rUCoNIrpfDp1YE/eq964sVu0w/aOtUjyFVcQf88wSPkyONUr2LQ5gsw5PL4Ou1xNTE=
+	t=1759517055; cv=none; b=b+VZLc8CFmXSZZMIxUPCivswVrRjx1azz2knjEG4v6MSlZHWAO517kC+s7iYBIN3509752WzaR9MoRZZLfLFa+L24kJXY8d92B2aNlWgwQH9tWEPojE/JM1aOzGslb5x4gbmriLS5FwXEkcqyFR3vUsQWCrssRI38XhilQN/wg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759517035; c=relaxed/simple;
-	bh=KuJJ7wPVxagNcyryDtFWOnS+fG9VHmibRREcQW+NV/U=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UQxBkX9ITsGT6A4esRWZJ997/oghzA38vrZWTrQeq0c7OY+Upxzo+lWgWcu8COad30uqLAgDqEfbxnQt/nX6X4lg6uwV/VqKkJE3WLfBtI2b53EASb3E1fYkLw3etgZ1VhaPrNwsXFDyRolwgmmJWah0T8p3Ld6BXGabZEqxoa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=A0yJ/qWN; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4e4a24228c4so20333041cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 11:43:53 -0700 (PDT)
+	s=arc-20240116; t=1759517055; c=relaxed/simple;
+	bh=xyuE14DxlDz2HfrhfyleFTggC3yW/RUkLxL0tsrQ6XA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Noexfu/LHBa7I4xoYHeFdM8O37cNt9fiCaqkDmxWZ3+diJj/nRISyMii8sDYSN5D2/UIRmDDYDkivJcK2O8Th83GALpskBS+/zsmXgnuBaEP9CpZxj1oVe3viLLnepx0c11OaKH2FBz67c6Iy2rfjvlddzRndLtoZ2ElJD1Q9sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RbY9W+59; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5797c8612b4so3322158e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 11:44:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1759517032; x=1760121832; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
-         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=KuJJ7wPVxagNcyryDtFWOnS+fG9VHmibRREcQW+NV/U=;
-        b=A0yJ/qWNbcr7ubEqchnEVLY21gcL9dd7x36XzsQQiWSgFSKBwlflB+mCISesMDLDtI
-         ZmB83kmsd3gnF2fOIoABa90Uaa2ysGqlG1xlsF0VWFidow9F2dJwg3RXRmAfQlcLs5pC
-         GLUPp400xjkD13uyfPJ3SieF7pFiVXvU9EIUiFhSvZ3RCcOkP5m6a9E5UuCbE9hbOYQ0
-         5dvohojuBJQSIMox5cgC7t7PhBoASgS8k29RJFUee6NeT2/Ik49/J68QSwkmvKAKvtR+
-         iDgz4iJ36BXUrSqxBMBKxHX2c6nTMYOW+TeXc8TN5nbGSN3Aqgc2sf4PDcV75Vjxu530
-         JW0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759517032; x=1760121832;
-        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
-         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1759517052; x=1760121852; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KuJJ7wPVxagNcyryDtFWOnS+fG9VHmibRREcQW+NV/U=;
-        b=J5RBAC8ugdttZyqDeMtlaA6TSEhkWgX4oLf2U77fGLovmqkYFb+TFXQHnR5wrKiX6R
-         sovjn0FX0sGs6vCf0NRvtRpby3qS+MoJNIb97GlXlu2+d+DQDMmfaHGb1l8vi1THRSCl
-         hDw3A8zt17JbLiLsS4e0EytHHxdFW6ji8EysdMS8unXRX0GXUB2gfcR/P9jU18qTLvwK
-         w28KNweJ1NRojzAL52OgDuAjszTA3eVpd5N8uu0iIPOEUSfW9JToLeZRHJOkL+YHFHGv
-         nOm3x7v/SHrHVpOcDC4+BBbS5hGtF1a8OVIzxw6MljY2CMxmcakDx5Ukg8N69SpplWDq
-         ExXw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbs0Syp98OdV8VFqmfp/hwkuuKp2YgoAUOo+PijZK6XanBjP525cnkJleixETWn/3TeoDTJMxceyQ3lXU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgfA9pyBhpNCUs160arvhLBWRJi5SZE3eDnqnQwaT3s+0fJYYN
-	zpmQwVe2S9VX4j3W+bMJuk+wzF8EWZoCHq3wS+PzQEj+NOupKmYEJkeH1vJWNE1CjdUBtQhsDZG
-	tEyY0
-X-Gm-Gg: ASbGncuG8XdWz4Jzje1w+yEuwegQjr3X9E1nPrWIezZtU2BJDwFW50YgnwYUMN+Gr14
-	lbdRVuOwiii6dl/MZWec7qeBFQig2Ft7ecqDmvLCC2UdhMfCAA/qR3ld6y9xuRPKug6bfadoWur
-	XHEVzSvaJC41stX8dyDi0N7FOD5dNBW5mY93B5mQzYJJr9GYjCxMDq5tfzucAZMl3MnVfuarHc/
-	WeJ5eQORMgw6rz4JT/aeUdzuLILsX+vggVKcUkJarezb2hhEUssDlDDoCANLrU2HnpEqAiBif51
-	56vUQGsZ8FTuFlQ5rreyZM+yxMQec2tOB2MpAf4LTHFNqgiJEnNZEJeltbLLutfFYjrCUmA7Ny+
-	AeGpfLhLnPvb0FZ6Pr+SX9rFMoJoBBcCpKThSfMpu+Xsgv7dingIKDBJ9cfzmnbz8kCT+sjYUiK
-	715Q==
-X-Google-Smtp-Source: AGHT+IEDlpFweYYZYgSWaGoyFOuU/0LvqNP2116tlq90/2vF46MndprjZ3cScKJFz7EmEJI0QMDqjA==
-X-Received: by 2002:a05:622a:5144:b0:4ce:f3ce:e9da with SMTP id d75a77b69052e-4e576a29decmr64079041cf.16.1759517032239;
-        Fri, 03 Oct 2025 11:43:52 -0700 (PDT)
-Received: from [192.168.42.140] (mtl.collabora.ca. [66.171.169.34])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e55c9e79ffsm50039171cf.29.2025.10.03.11.43.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 11:43:51 -0700 (PDT)
-Message-ID: <cfaa1ceabae30fa18b5b4136e1eb58aec4fcf045.camel@ndufresne.ca>
-Subject: Re: [PATCH 0/3] media: allegro: fixes and improvements
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Matthias Fend <matthias.fend@emfend.at>, Michael Tretter	
- <m.tretter@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>,  Mauro Carvalho Chehab	 <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 03 Oct 2025 14:43:49 -0400
-In-Reply-To: <20250901-allegro-dvt-fixes-v1-0-4e4d493836ef@emfend.at>
-References: <20250901-allegro-dvt-fixes-v1-0-4e4d493836ef@emfend.at>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-7CZOag6us981g1lPWt9e"
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+        bh=xyuE14DxlDz2HfrhfyleFTggC3yW/RUkLxL0tsrQ6XA=;
+        b=RbY9W+59TNw6CKMmN5l9yFJj+avt1jloNcOz9pIWFZYQdGFhclDoQzaXoOha4UW8pH
+         oEylxrQwCESCyjYV9K81+Ml+UCEVSxhe4kxHSZzaMjVub+D2VmF4uHZ17m1Pn6+ML2vQ
+         b7neQi2oYaU5OZq6mgbHqlOc68yf0M5YJA1fkKxTTE6ud19Bf/If6Am4oDqAljS3jr6R
+         eGABWCV9TkKZqCz8O0YoTRsFuLOhJ1io76aMOhQ/HKwUhn1GTfs1hILb2hb1M9Sh4KYS
+         XMmEjvqeDbrvLQslzg7+MgYK0+q1zb5bhD8MxzxW9yt7Ga0ZV3ezDHJTzzj+H3KF+QFS
+         UQLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759517052; x=1760121852;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xyuE14DxlDz2HfrhfyleFTggC3yW/RUkLxL0tsrQ6XA=;
+        b=gnKdjowKzfCVBoLUY3wTCSQ51nR3P/WifPRO/US3MOvCAxcstPy15NrweFCI2Q6f4N
+         T1rBw1ETUZpul8tHSkcqCmCAywvdjpgESVUurnohd7UrtOb4lCgpud8FKopn+k3dASJa
+         6MUZ6B1h07UWr6oWr8qJlbYI9qs6iYEx3esjdLekgk/5BmIUp0L5JNzdAaVBOc0AuiMx
+         4408yMLUij5gpvE1d7Wl9hM+GCgpIZTZ7AVBnm2efb5jvKmXQlDOXIu747UG/fkURI8l
+         hScbwT2TgefcBqQOAO4dR7ldaR/LMp4GjZXF7DZZdzQnGGWa4zBmxQR2H4iVQ+IK6NiX
+         5eOA==
+X-Forwarded-Encrypted: i=1; AJvYcCViIaQm9LqM7+OFlQ4llpuosEEW9UkPs3xeOomHkrW9jvysoIEyl9qP5FJOvgyLs414Tg0Yz2F9wMuH5Zo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyr1S9aVDE/b0ogDtpFRBXjaKjQ4LJCOk2+jKbah20NfJxYuVEg
+	+n8aHrnpfzgj2iQLNmKfgq3xZC5wpO4SL2RzX430LeedT851nV2E+0t5fkIPndKbXfQtPLgjBWC
+	s23xsq45etkTFeTGedeXoW2KsdzVXF8s=
+X-Gm-Gg: ASbGnct+uXj9DxLPFLQESLLvPKPpMhmZXVJm09OLNKE8/te/24PY2Qz3MrbWKJYhAGU
+	nvg6oQf7DKOocpT5kya80QCmTtmpn0mCARCeQnmT8aT6TynorUi3o9wcAOEUAy6BrYA4EwdFi8v
+	O1S7x4447Ep9lQAyBzbcA5FJJtVhbnesywHRihFVay7CYu1GwhbTOOWEqPBNzmm1sryHn6SUlF/
+	xsGqOBNuN2aYfHfh+qsnlNdkicC4+vT8dw2GdHLtUmCPRZw0GgUctMGMEseTXuC6XwXt/og+gT6
+X-Google-Smtp-Source: AGHT+IFGjI23yu+zZGYIIYp5GAvADK1Td8K5f92lbt6d4punv+uO2Xi2qzgSwr+Eyr8h+dgbxKZKruLqIS6Oqk0H0Go=
+X-Received: by 2002:a05:6512:1245:b0:560:9993:f154 with SMTP id
+ 2adb3069b0e04-58cbbdd8224mr1238522e87.35.1759517051928; Fri, 03 Oct 2025
+ 11:44:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-
---=-7CZOag6us981g1lPWt9e
+References: <20250924175743.6790-1-hsukrut3@gmail.com> <202509272320.3K8kdDCw-lkp@intel.com>
+ <bb9d90ca-aa4d-4168-bdc5-543109c74493@gmail.com> <CAHCkknrZ-ieNKeg-aj3-NVqgGSk770jJpUpCvn_SuffkPu+ZrQ@mail.gmail.com>
+ <edccab86-321b-4e6e-998f-3ce320ee0193@gmx.de> <41ef536d-2399-43f8-8041-c6b0e642aba2@suse.de>
+In-Reply-To: <41ef536d-2399-43f8-8041-c6b0e642aba2@suse.de>
+From: sukrut heroorkar <hsukrut3@gmail.com>
+Date: Fri, 3 Oct 2025 20:43:59 +0200
+X-Gm-Features: AS18NWCgP_BX7ybrXY0sJ6ucNdQs1TMwDO0SWiLqnHgEzd_63diU8v-qea2nPRE
+Message-ID: <CAHCkknrAKGxzAYE-R3QX20W4faR9Wfjgn37peyHRJcZ6PRLENA@mail.gmail.com>
+Subject: Re: [PATCH] fbdev: udlfb: make CONFIG_FB_DEVICE optional
+To: Thomas Zimmermann <tzimmermann@suse.de>, Helge Deller <deller@gmx.de>
+Cc: David Hunter <david.hunter.linux@gmail.com>, kernel test robot <lkp@intel.com>, 
+	Bernie Thompson <bernie@plugable.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Randy Dunlap <rdunlap@infradead.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Zsolt Kajtar <soci@c64.rulez.org>, 
+	Gonzalo Silvalde Blanco <gonzalo.silvalde@gmail.com>, linux-fbdev@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, 
+	skhan@linuxfoundation.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mathias,
+Hi
 
-Le lundi 01 septembre 2025 =C3=A0 17:13 +0200, Matthias Fend a =C3=A9crit=
-=C2=A0:
-> Several fixes and improvements for the Allegro DVT video IP encoder.
-> These relate to race conditions that occur when multiple streams are used
-> simultaneously.
-> The problems could be reproduced on a ZCU-104 eval board with VCU firmwar=
-e
-> version 2019.2 on various kernel versions (6.4, 6.12 and 6.16).
-> It is highly likely that these problems can also occur with other firmwar=
-e
-> versions.
->=20
-> Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
-> ---
-> Matthias Fend (3):
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: allegro: print warning if channel c=
-reation timeout occurs
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: allegro: process all pending status=
- mbox messages
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: allegro: fix race conditions in cha=
-nnel handling
->=20
-> =C2=A0drivers/media/platform/allegro-dvt/allegro-core.c | 114 +++++++++++=
-++++++----
-> -
-> =C2=A01 file changed, 91 insertions(+), 23 deletions(-)
-> ---
-> base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
-
-For future submission, base your code on current media-commiters/next not o=
-n
-current Linus RC (this one is rc-4 I believe).
-
-regards,
-Nicolas
-
-> change-id: 20250901-allegro-dvt-fixes-932f2c97063e
->=20
-> Best regards,
-
---=-7CZOag6us981g1lPWt9e
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaOAZZQAKCRDZQZRRKWBy
-9EacAQCm0ei0RG1X/oXU/A+sx+JDaat1yQ0RhRBh5z5a5nJUDgEA37Yvc+InVtUH
-UdhAsnH2C0eb9azkaZvFGRMlW/+o/ws=
-=cFmb
------END PGP SIGNATURE-----
-
---=-7CZOag6us981g1lPWt9e--
+On Thu, Oct 2, 2025 at 8:52=E2=80=AFAM Thomas Zimmermann <tzimmermann@suse.=
+de> wrote:
+>
+> Hi
+>
+> Am 02.10.25 um 08:41 schrieb Helge Deller:
+> >>>> kernel test robot noticed the following build errors:
+> >>>
+> >>> Did you compile and test this code before submitting this patch?
+> >>
+> >> Yes, I had compiled & loaded the udlfb module with no errors. Please
+> >> let me know how to proceed in this case.
+> >
+> > Look at the reported build error, which seems to happen in dev_dbg().
+> > So, maybe in your testing you did not have debugging enabled?
+> > The report contains the .config file with which you can test.
+>
+> Can we rather make an effort to remove the udlfb driver entirely? A few
+> years back, there was one user who was still using it because of some
+> problems with the DRM udl driver. But I think we've addressed them. The
+> discussion is at [1].
+Should I send a patch series to completely remove udlfb, since [1] echoed t=
+hat
+DRM udl driver is good enough?
+>
+> [1]
+> https://lore.kernel.org/dri-devel/20201130125200.10416-1-tzimmermann@suse=
+.de/
+>
+> Best regards
+> Thomas
+>
+> >
+> > Helge
+>
+> --
+> --
+> Thomas Zimmermann
+> Graphics Driver Developer
+> SUSE Software Solutions Germany GmbH
+> Frankenstrasse 146, 90461 Nuernberg, Germany
+> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+> HRB 36809 (AG Nuernberg)
+>
+>
 
