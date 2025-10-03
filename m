@@ -1,113 +1,208 @@
-Return-Path: <linux-kernel+bounces-841741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0F32BB81B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 22:29:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DD9DBB81B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 22:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F3054EF419
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 20:29:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A18D23A4000
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 20:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090C9228CBC;
-	Fri,  3 Oct 2025 20:29:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F5523BCF8;
+	Fri,  3 Oct 2025 20:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YG0Tytop"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PtvW/RSp"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7164E22D780
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 20:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906B8219A89
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 20:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759523377; cv=none; b=OX1aVXBNFJNU09f/+YIRho9vB+HjREV+Av+7jQFAFh8Qye0uPzPO7vONhLQ7QzmRlfWeHmGF5O0khJx+9WCSNSU3fDowTQ2zSChdjfYeBC38dCYS7YqET5iNzRoSDh+cEnzFDC6SU/6sqmIyIT46a7xbMZO+KMcKVjsKtvqaQ1A=
+	t=1759523418; cv=none; b=GgsyP7/wZyNpVKSCK7Tq0LlRuoY0tfAnUKgGcQyf/QFZNoXEyekksYcmHr0dll25HFnBM8PI+mW5IfFtZLIdYvse2opoqWxzjn3sMrSzhjScSL4/KLci0y8WJHm58lhrZYGAQhS3uta6Ofs1w5J4PlraKQ16OmVV9YSII4tQ58U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759523377; c=relaxed/simple;
-	bh=SuOGf6ig6UThy/Cts9AqHIbtylVDtns8fl8RhAUSMZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SOBBdA2CSXny/+JuARuaDD0CkECnTxAAaDBC9R2JGuxK49YG+kig8pyiOCSMfSbpdccAN8NLIix/lB2N4h2GwHi45R2PAr5/VLyu0RNtLBHk3HESUBCHf/R6VRhqmEDUHvBPao/LUBG+lN8OFLvadX23yZVM3oqH1nQRA2jCpdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YG0Tytop; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-421851bca51so1738205f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 13:29:35 -0700 (PDT)
+	s=arc-20240116; t=1759523418; c=relaxed/simple;
+	bh=8c912eY1UEEgVwBhK9alWqGDDsyKRZobEz+Fu9lJIhg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LJL6pCH1Awrvo+6nyeKhDdr6Y0s5qeFP++W/1HEneGPgPJIxXETSDxSuLThRxRWn9DG5+gOQDOuJqoryFtjqm1sFuceulpVoMi4Y9G1BiLC5D4Y1wTkZ8VoxityDxpoqRLLmK5WlznpAZZkapxJjCtiWaoWoA+gIf2sl48pkgBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PtvW/RSp; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2681645b7b6so11495ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 13:30:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759523374; x=1760128174; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8BGUE0v7XRga+qkgvLP86a6O/SLAuOYc4ngsK7oGTUk=;
-        b=YG0TytopFtukvAc6AOCqkN3jFCZjSQbVbonbkUdFZoSdPfPsu2jM7D/2gWDcsdqMHZ
-         nX85yigXidryzzuJG6j3KTheUMo/SFYQJ8sQdIvlrVexaQzcPAMQxPJiOHao+O4eQJMj
-         V1sHz7egbxAZ+8rfcNLNuy+A6j3aDgPaX4ohfkI8+7pIAOQVmgVpAApaC/iU+wOQkpFF
-         UWOlQVE2L8mN0BmeqTPao9HQ5BfbYbZmYoCKCjpUI8irZyMPPtmOwLlN7Vpqubzvto6F
-         qVEo/L9Qe+Rks8M8ev/aEPEpB0XIJD216xqncq8iJgUpzzKe6fsf6EYgOX/PlUd20zJR
-         Qx5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759523374; x=1760128174;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1759523416; x=1760128216; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8BGUE0v7XRga+qkgvLP86a6O/SLAuOYc4ngsK7oGTUk=;
-        b=t1wh5cA/bSc0mON5js5ID0yfgPQnF6M3cvKG7TYl3M8Mky7AZqg+ruUAorr2dmhr+u
-         0AJa30HElM+FVZFuFf8q/SC44XJhLy1LIlJgFRpk17jfMYOialyZsAUWtCfTPKIacZNh
-         rXoFPmwMCvQgpkpkDr0zezOCLOYTVz1cIJNQ/jfF2ZqgQIjEPydzbV0EjFSCSlpaMo2h
-         ZMdvHGGNNdMGvJeJumWi9nPwUlsFkRz8n/vdtM4KBNjiaKnqJBan8K6lT2F0sxNbFUe/
-         njxa2DVj17Om+1AA6irZUJIeokwVTJYqfCjylzACh4m25iOOfh7JZiEvj+RLusZ1g2JS
-         J9Bw==
-X-Gm-Message-State: AOJu0Yx6SjxngIuSRG7qYSips+Q1M3OWXMzhiToL4ITgD/AqIi/a26ig
-	JiWMd3dwSpKBtUzouLnfdnq72kWV6SP8fIuDqYDCippG61utQAEllBazFJ2Pg+qAZ8E=
-X-Gm-Gg: ASbGncuuHtaImKuilcint/o10gwulrFLKU3WadNP1q4VxlU+6rJz0+k3Dk7samfP/c4
-	Yu+3WeWfZIr/7M6hH7h4GqvrYJUVw4rS0wONEK/DVv5ugewF7oLOCuxwuaq2Ne2EB1HMD1UwXpC
-	SDwchoEZDj1In3RFwEBKnJx7aZpd69iqh9IW/GWQTbmFV5bhSdl2ldvsWY5jY/Dl3gwULHCtCBV
-	A84WoWcMXPIZ2XubmxlGm7ZOHXtq3AbOQs/hBy4dKHxL9jgD+5uve2E6z5qWCJBsAXlOlKnCzFh
-	b8Z1iImf340MZfqG5yjdPYNAPWKRTvO/TLw86ZY1E7IkhJcl6APJpMmqhsEmOHJhM+NYAB/cz2s
-	UDy4gtYkohA4rEbZmLracHKG56fy6cQxmCl8PKr2+WL0TN5E+G5atSV4WKiN6tdzgJXE=
-X-Google-Smtp-Source: AGHT+IH/bgx1fSGeKfmK7NrfWKs/RA99sx3ypoK059B/EoGdkmTKRCEZWYZj6hui2YkbxqO7xxGCRw==
-X-Received: by 2002:a5d:588e:0:b0:3cf:74e0:55b9 with SMTP id ffacd0b85a97d-425671c71bbmr2893944f8f.63.1759523373488;
-        Fri, 03 Oct 2025 13:29:33 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4255d8e9890sm9409932f8f.32.2025.10.03.13.29.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 13:29:32 -0700 (PDT)
-Date: Fri, 3 Oct 2025 23:29:28 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Mary Strodl <mstrodl@csh.rit.edu>
-Cc: linux-kernel@vger.kernel.org, tzungbi@kernel.org,
-	linus.walleij@linaro.org, brgl@bgdev.pl, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v4 3/4] gpio: mpsse: add quirk support
-Message-ID: <aOAyKI7hv36oLJkD@stanley.mountain>
-References: <20251003195036.3935245-1-mstrodl@csh.rit.edu>
- <20251003195036.3935245-4-mstrodl@csh.rit.edu>
+        bh=r/0L3YZsGlZPOGFIT/xNUCPnxRniP3fT1sUMkDCiDzQ=;
+        b=PtvW/RSp7Ja8otztNd4E91+3BmxwGZFf+KCSje90C0EunVUJrX5DNG1SQSOTbKU1S8
+         e79CZHTVE0FZEPeIQyFN7RzRG2pjw59AwnWycjYZuDILFaBx2QqRDuRATPOw/7+IChss
+         G96B+bAg0UErBg2KSdm+WH5DL27er3Sdo5FnlJRvV8g/bn1IfWBLAYKFv8IS4gEqEaWI
+         5F2aJxigzClJXKRPh0RscOpIpn7zOh/cWk5Sj2iOr2lo9DRHExFhG7f/VNeiyRuaimt/
+         oKnfjpdPzZOhZqaE7pq8cV9XZHeQKSllKOCsbCFEYQbrxgbx2CucVXzSGLFUzNshvhI1
+         Rd6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759523416; x=1760128216;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r/0L3YZsGlZPOGFIT/xNUCPnxRniP3fT1sUMkDCiDzQ=;
+        b=KEDt/porBDFiiExo+JdHtw0TFAvxa4KRaEeGvg0f2v6vf9N/gpe6g3SBt/EiMT3yse
+         roI+YBPiY2M2I1pRRTimh1U7jJkTA4q2YSvejBGu6r6165LjJ3jnRKbc1B0z/GnUr01r
+         1mkezPG6VZRCil0YBHE6dcSHqEE4cBQHKM6SFzmCtnlAguTslpgLLlcb7w5vtzQkv9/N
+         W1UQ7zwUkxph+PC7cJ948VNT28jqC5l77vFNSum6rNaxJNWbcf4MWsy3JLf/Dl4FOQKj
+         Di4jJN7BxhJplrit//f28fAkHYHkudBKd1kQppugmq1H2ECrLK8164neVh4IuSwlw5tx
+         AVEg==
+X-Forwarded-Encrypted: i=1; AJvYcCVnhtYkmS6F8vTNsCoDBp/cHdbhwtWF3ABUsBTUMWHnI8Zzqa7EMJdpITIyMZpClQWvVDEuRmtJ1LOZTDA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMWfkMZO36capFvFcFUX9jCz4FRaqO8C2pLinqzqtpCfJhrxoN
+	WKdbZeNcBV4iFo9EJBaf6yZYYScp46XZ+2QAPFgvfU272zufrwA8WdR3CcHJcsdCUjuRYO2aA3j
+	LkYi4sb0ofucCXXgQj4RRmIK7cL3BUaHKCm2Y0EKh
+X-Gm-Gg: ASbGnctjdUFNk0isYawpn645sCkni1rOM9J75NW609ogWC/ItKrRTS47QsLNSH1aoD1
+	M69hK+QgLb79gnn8sk+9oCNArnX0CRgrVxwyRp5RXYT2MjEaCN8HxiiNTWkC7ntrx7Uc4WPcY3O
+	P5jJG/8mKOeU4Igy0G8g/8wJvIoMUWtf9caBLuJigBfxZv1UrxcHFb+Zi3hczOjEhbiGSK4FlDZ
+	F39QA5l7KnUd96VXEcTGR7TIqVJVKHYDy0aGvqwCHYFV9OE/dSls+LmKoz88r0/J5fY
+X-Google-Smtp-Source: AGHT+IHyUpiBlEGtx1ZWxN1upFN31zq9jqARbqfv4Hz2Xb4ggiQ+FOCdH3M199iB+zFMTMni4io379S7xpZOgTQnrMU=
+X-Received: by 2002:a17:903:2383:b0:240:6076:20cd with SMTP id
+ d9443c01a7336-28ea80c8c6bmr924255ad.15.1759523415313; Fri, 03 Oct 2025
+ 13:30:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251003195036.3935245-4-mstrodl@csh.rit.edu>
+References: <aNshILzpjAS-bUL5@google.com> <CAGtprH_JgWfr2wPGpJg_mY5Sxf6E0dp5r-_4aVLi96To2pugXA@mail.gmail.com>
+ <aN1TgRpde5hq_FPn@google.com> <CAGtprH-0B+cDARbK-xPGfx4sva+F1akbkX1gXts2VHaqyDWdzA@mail.gmail.com>
+ <aN1h4XTfRsJ8dhVJ@google.com> <CAGtprH-5NWVVyEM63ou4XjG4JmF2VYNakoFkwFwNR1AnJmiDpA@mail.gmail.com>
+ <aN3BhKZkCC4-iphM@google.com> <CAGtprH_evo=nyk1B6ZRdKJXX2s7g1W8dhwJhEPJkG=o2ORU48g@mail.gmail.com>
+ <aN8U2c8KMXTy6h9Q@google.com> <CAGtprH9N=974HZiqfdaO9DK9nycDD9NeiPeHC49P-DkgTaWtTw@mail.gmail.com>
+ <aN_2JaorgERIkpW4@google.com>
+In-Reply-To: <aN_2JaorgERIkpW4@google.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Fri, 3 Oct 2025 13:30:02 -0700
+X-Gm-Features: AS18NWCcLkRWY4ao1VCj7qy0k_ytrZZdsE8Fa7TimWaUhu8L01CyT8ya4dms5AE
+Message-ID: <CAGtprH-CUMpGqN_68Q_+voJzMpsWnfKKBPmgBGgMgoeTt0E-aw@mail.gmail.com>
+Subject: Re: [PATCH 1/6] KVM: guest_memfd: Add DEFAULT_SHARED flag, reject
+ user page faults if not set
+To: Sean Christopherson <seanjc@google.com>
+Cc: Ackerley Tng <ackerleytng@google.com>, David Hildenbrand <david@redhat.com>, 
+	Patrick Roy <patrick.roy@linux.dev>, Fuad Tabba <tabba@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
+	kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Nikita Kalyazin <kalyazin@amazon.co.uk>, Shivank Garg <shivankg@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 03, 2025 at 03:50:35PM -0400, Mary Strodl wrote:
-> Builds out a facility for specifying compatible lines directions and
-> labels for MPSSE-based devices.
-> 
-> * dir_in/out are bitmask of lines that can go in/out. 1 means
->   compatible, 0 means incompatible.
-> * names is an array of line names which will be exposed to userspace.
-> 
-> Also changes the chip label format to include some more useful
-> information about the device to help identify it from userspace.
-> 
-> Signed-off-by: Mary Strodl <mstrodl@csh.rit.edu>
-> ---
+On Fri, Oct 3, 2025 at 9:13=E2=80=AFAM Sean Christopherson <seanjc@google.c=
+om> wrote:
+>
+> On Thu, Oct 02, 2025, Vishal Annapurve wrote:
+> > On Thu, Oct 2, 2025, 5:12=E2=80=AFPM Sean Christopherson <seanjc@google=
+.com> wrote:
+> > >
+> > > > >
+> > > > > If the _only_ user-visible asset that is added is a KVM_CREATE_GU=
+EST_MEMFD flag,
+> > > > > a CAP is gross overkill.  Even if there are other assets that acc=
+ompany the new
+> > > > > flag, there's no reason we couldn't say "this feature exist if XY=
+Z flag is
+> > > > > supported".
+> > > > >
+> > > > > E.g. it's functionally no different than KVM_CAP_VM_TYPES reporti=
+ng support for
+> > > > > KVM_X86_TDX_VM also effectively reporting support for a _huge_ nu=
+mber of things
+> > > > > far beyond being able to create a VM of type KVM_X86_TDX_VM.
+> > > > >
+> > > >
+> > > > What's your opinion about having KVM_CAP_GUEST_MEMFD_MMAP part of
+> > > > KVM_CAP_GUEST_MEMFD_CAPS i.e. having a KVM cap covering all feature=
+s
+> > > > of guest_memfd?
+> > >
+> > > I'd much prefer to have both.  Describing flags for an ioctl via a bi=
+tmask that
+> > > doesn't *exactly* match the flags is asking for problems.  At best, i=
+t will be
+> > > confusing.  E.g. we'll probably end up with code like this:
+> > >
+> > >         gmem_caps =3D kvm_check_cap(KVM_CAP_GUEST_MEMFD_CAPS);
+> > >
+> > >         if (gmem_caps & KVM_CAP_GUEST_MEMFD_MMAP)
+> > >                 gmem_flags |=3D GUEST_MEMFD_FLAG_MMAP;
+> > >         if (gmem_caps & KVM_CAP_GUEST_MEMFD_INIT_SHARED)
+> > >                 gmem_flags |=3D KVM_CAP_GUEST_MEMFD_INIT_SHARED;
+> > >
+> >
+> > No, I actually meant the userspace can just rely on the cap to assume
+> > right flags to be available (not necessarily the same flags as cap
+> > bits).
+> >
+> > i.e. Userspace will do something like:
+> > gmem_caps =3D kvm_check_cap(KVM_CAP_GUEST_MEMFD_CAPS);
+> >
+> > if (gmem_caps & KVM_CAP_GUEST_MEMFD_MMAP)
+> >         gmem_flags |=3D GUEST_MEMFD_FLAG_MMAP;
+> > if (gmem_caps & KVM_CAP_GUEST_MEMFD_HUGETLB)
+> >         gmem_flags |=3D GUEST_MEMFD_FLAG_HUGETLB | GUEST_MEMFD_FLAG_HUG=
+ETLB_2MB;
+>
+> Yes, that's exactly what I said.  But I goofed when copy+pasted and faile=
+d to
+> do s/KVM_CAP_GUEST_MEMFD_INIT_SHARED/GUEST_MEMFD_FLAG_INIT_SHARED, which =
+is the
+> type of bug that ideally just can't happen.
+>
+> Side topic, I'm not at all convinced that this is what we want for KVM's =
+uAPI:
+>
+>         if (gmem_caps & KVM_CAP_GUEST_MEMFD_HUGETLB)
+>                 gmem_flags |=3D GUEST_MEMFD_FLAG_HUGETLB | GUEST_MEMFD_FL=
+AG_HUGETLB_2MB;
+>
+> See https://lore.kernel.org/all/aN_fJEZXo6wkcHOh@google.com.
 
-Thanks!
+Ack, that makes sense to me.
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+>
+> > Userspace has to anyways assume flag values, userspace just needs to
+> > know if a particular feature is available.
+>
+> I don't understand what you mean by "assume flag values".
 
-regards,
-dan carpenter
+Ok, I think you covered the explanation of why you would prefer to
+have KVM_CAP_GUEST_MEMFD_FLAGS around and I misinterpreted some of it.
 
+One more example with KVM_CAP_GUEST_MEMFD_FLAGS around:
+
+gmem_caps =3D kvm_check_cap(KVM_CAP_GUEST_MEMFD_CAPS);
+valid_flags =3D kvm_check_cap(KVM_CAP_GUEST_MEMFD_FLAGS);
+
+if (gmem_caps & KVM_CAP_GUEST_MEMFD_CONVERSION) {
+               // Use single memory backing paths for 4K backing
+              if (valid_flags & GUEST_MEMFD_FLAG_MMAP)
+                          gmem_flags |=3D GUEST_MEMFD_FLAG_MMAP;
+              else
+                        // error out;
+}
+if (gmem_caps & KVM_CAP_GUEST_MEMFD_HUGETLB_CONVERSION) {
+               // Use single memory backing paths for hugetlb memory backin=
+g
+               if (valid_flags & GUEST_MEMFD_FLAG_HUGETLB) {
+                          gmem_flags |=3D GUEST_MEMFD_FLAG_HUGETLB;
+                          kvm_create_guest_memfd.huge_page_size_log2 =3D ..=
+.;
+               } else
+                        // error out;
+}
+
+Userspace will have to rely on a combination of flags and caps to
+decide it's control flow instead of just caps. Thinking more about
+this, I don't have a strong preference between two scenarios i.e. with
+or without KVM_CAP_GUEST_MEMFD_FLAGS.
 
