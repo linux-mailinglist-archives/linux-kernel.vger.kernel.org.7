@@ -1,230 +1,95 @@
-Return-Path: <linux-kernel+bounces-841543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B981BB7A01
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:56:35 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32514BB79F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:55:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EA64D4EE6F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:55:09 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D25DD3473DA
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7302D47F5;
-	Fri,  3 Oct 2025 16:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03C02D6E42;
+	Fri,  3 Oct 2025 16:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="r0z0oIlk"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="BabNHPDS"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3FE2D63E8
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677492D63E8
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759510467; cv=none; b=sNmrtbbbdyqi2QQpisRBAcZ4B3eCorMGqY7NmRMlDUFY/vf116nQJenE6F7SMaweWuBQc39o0Q6w5msjmU+AexJ5STrLK3WLvP3KVTGHKM412onU4dR3mGpIAlumNb3HM9VA56UOcn0+MOCZoVRJJNQRIl4QPJ8WmsJDk3MZbJw=
+	t=1759510476; cv=none; b=knfvT3l13dOpTd1lr6rkNAoyyAeNBtLjlBeyZvCF1xZss39yY01TDXAcPVB8uHCwXZeefF81YOI7c9C2+ENyNpPOBaq5b3RpL4OAw8JnAWC9ieFyM33ENPOtxBEna37iIY7UnT7GMm3jvzV23fXM3WSK5C9/DnNIwNJzKeNz7rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759510467; c=relaxed/simple;
-	bh=gGObfY2cbQ9aZ/mSVqPAUZ/j599TeVs4OpA7s7nw2vw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bwEZQv2V++8P95hoMvMpfCQ7suetARirwpUUwDysjgIWu1NETN1oVmAdlHgnr6I3xvnRvHWog41THSH7AXE5Qo/EhnYOGT32iqeqIcxhyBmeg9740YtTKFHU1gdIptbfw1GN3xiqMdo/wm7xhbwfa6rxI3bj7R+sazGgU875niY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=r0z0oIlk; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759510462;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mdGXwz8RCfksNzwLXFncQFeyfM2HiWcY9u8nErU1OTQ=;
-	b=r0z0oIlk6NWImBasOPaB45bfsCP/wLTIrAznY5ImxqWU+ydf9O7stq0NWg5zUK/FRqv0IT
-	fuIPOjhoJYLpCcJNYEWJ73dEWb6jtcUkUNJkdLAATVEtCzcJU32ysHe7GQkZ+Hy2h7UzcZ
-	ND2kxJvX3NuIM9ClxdK4PhOYE/4+U6c=
-From: Qi Zheng <qi.zheng@linux.dev>
-To: hannes@cmpxchg.org,
-	hughd@google.com,
-	mhocko@suse.com,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	muchun.song@linux.dev,
-	david@redhat.com,
-	lorenzo.stoakes@oracle.com,
-	ziy@nvidia.com,
-	harry.yoo@oracle.com,
-	baolin.wang@linux.alibaba.com,
-	Liam.Howlett@oracle.com,
-	npache@redhat.com,
-	ryan.roberts@arm.com,
-	dev.jain@arm.com,
-	baohua@kernel.org,
-	lance.yang@linux.dev,
-	akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH v4 4/4] mm: thp: reparent the split queue during memcg offline
-Date: Sat,  4 Oct 2025 00:53:18 +0800
-Message-ID: <a01588414c9911f2bc912fa87f181aa5620d89d4.1759510072.git.zhengqi.arch@bytedance.com>
-In-Reply-To: <cover.1759510072.git.zhengqi.arch@bytedance.com>
-References: <cover.1759510072.git.zhengqi.arch@bytedance.com>
+	s=arc-20240116; t=1759510476; c=relaxed/simple;
+	bh=39MheYmLUlrL9wszDwc2Pd2eHARvVZ7Tha1c9C3VNyc=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=M5xgzLQLInUjsQffeElTBXngOgakvgPBGWObGwYOZKWOb0037yScJJbdc1oTpdIhhoDVFOOK1lcCDRZNZ/C4aNL6Ems/XKQYJgsHY1W8BIjt3677x469HM8J3dJRm+sMYkWu5Nkmkp4U25qKA7OJBsUtgrIieKdwoEgZGOzZwSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=BabNHPDS; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 593GrPXh1724782
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Fri, 3 Oct 2025 09:53:26 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 593GrPXh1724782
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025092201; t=1759510407;
+	bh=39MheYmLUlrL9wszDwc2Pd2eHARvVZ7Tha1c9C3VNyc=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=BabNHPDSCLA+dWiY0eVXAqN9kpmuO23fvNJ5MSgcG8eZYdiI7KDM7D0Ick5JABQ90
+	 6jECfEctX7k/fG03yTZsmzRWNBzZPT0r5Zt4YwVvsC8pd5BX3P8pHlqdAXXZpJjVSW
+	 ognRo3aJKrInR2ZhcZuq585HXGDDbAYVk1O9tbWPXZyYDZuBKsc5KXb+jKcY7JA6bX
+	 I1PsHjegQnIG6Y324BRgGEJtAsqLun/QcClickLiD6awbjJqqWI5lerrd4l0COGgu8
+	 8eWnSf1z+vhcgxx1Ii3lkAnv3VDAcPTFvUQ+9WegD0RNjzHHVDGAWWyJbbcl4IBKTM
+	 oVQuKbuwqmMEg==
+Date: Fri, 03 Oct 2025 09:53:24 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Dave Hansen <dave.hansen@intel.com>, Peter Zijlstra <peterz@infradead.org>,
+        =?ISO-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>
+CC: linux-kernel@vger.kernel.org, x86@kernel.org, llvm@lists.linux.dev,
+        xin@zytor.com, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+        Bill Wendling <morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2_09/12=5D_x86/msr=3A_Use_t?=
+ =?US-ASCII?Q?he_alternatives_mechanism_for_WRMSR?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <4c4cce9f-3219-48f0-8606-6573339b8794@intel.com>
+References: <20250930070356.30695-1-jgross@suse.com> <20250930070356.30695-10-jgross@suse.com> <20250930083137.GH3245006@noisy.programming.kicks-ass.net> <2df26cc0-53bc-499c-8c78-bc24fd8bf882@suse.com> <20250930085044.GK3245006@noisy.programming.kicks-ass.net> <20250930125156.GK1386988@noisy.programming.kicks-ass.net> <2ad137cb-ed38-42f6-ac0a-a81569051779@suse.com> <20251001064339.GL4067720@noisy.programming.kicks-ass.net> <20251001072340.GM3245006@noisy.programming.kicks-ass.net> <4c4cce9f-3219-48f0-8606-6573339b8794@intel.com>
+Message-ID: <C595599E-0BF9-462E-A79B-E7F6C9D5F587@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Qi Zheng <zhengqi.arch@bytedance.com>
+On October 3, 2025 7:23:29 AM PDT, Dave Hansen <dave=2Ehansen@intel=2Ecom> =
+wrote:
+>On 10/1/25 00:23, Peter Zijlstra wrote:
+>> On Wed, Oct 01, 2025 at 08:43:39AM +0200, Peter Zijlstra wrote:
+>>> Let me see how terrible it all ends up when using as macros
+>> Argh, as macros are differently painful=2E I hate computers :/
+>
+>ALTERNATIVES are fun and all, but is there a good reason we're pulling
+>out our hair to use them here?
+>
+>Normal WRMSR is slooooooooooow=2E The ones that aren't slow don't need
+>WRMSRNS in the first place=2E
+>
+>Would an out-of-line wrmsr() with an if() in it be so bad? Or a
+>static_call()? Having WRMSR be inlined in a laudable goal, but I'm
+>really asking if it's worth it=2E
 
-Similar to list_lru, the split queue is relatively independent and does
-not need to be reparented along with objcg and LRU folios (holding
-objcg lock and lru lock). So let's apply the similar mechanism as list_lru
-to reparent the split queue separately when memcg is offine.
-
-This is also a preparation for reparenting LRU folios.
-
-Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
----
- include/linux/huge_mm.h |  4 +++
- mm/huge_memory.c        | 54 +++++++++++++++++++++++++++++++++++++++++
- mm/memcontrol.c         |  1 +
- 3 files changed, 59 insertions(+)
-
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index f327d62fc9852..0c211dcbb0ec1 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -417,6 +417,9 @@ static inline int split_huge_page(struct page *page)
- 	return split_huge_page_to_list_to_order(page, NULL, ret);
- }
- void deferred_split_folio(struct folio *folio, bool partially_mapped);
-+#ifdef CONFIG_MEMCG
-+void reparent_deferred_split_queue(struct mem_cgroup *memcg);
-+#endif
- 
- void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
- 		unsigned long address, bool freeze);
-@@ -611,6 +614,7 @@ static inline int try_folio_split(struct folio *folio, struct page *page,
- }
- 
- static inline void deferred_split_folio(struct folio *folio, bool partially_mapped) {}
-+static inline void reparent_deferred_split_queue(struct mem_cgroup *memcg) {}
- #define split_huge_pmd(__vma, __pmd, __address)	\
- 	do { } while (0)
- 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 59ddebc9f3232..b5eea2091cdf6 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1099,6 +1099,11 @@ static struct deferred_split *memcg_split_queue(int nid, struct mem_cgroup *memc
- {
- 	return memcg ? &memcg->deferred_split_queue : split_queue_node(nid);
- }
-+
-+static bool memcg_is_dying(struct mem_cgroup *memcg)
-+{
-+	return memcg ? css_is_dying(&memcg->css) : false;
-+}
- #else
- static inline
- struct mem_cgroup *folio_split_queue_memcg(struct folio *folio,
-@@ -1111,14 +1116,30 @@ static struct deferred_split *memcg_split_queue(int nid, struct mem_cgroup *memc
- {
- 	return split_queue_node(nid);
- }
-+
-+static bool memcg_is_dying(struct mem_cgroup *memcg)
-+{
-+	return false;
-+}
- #endif
- 
- static struct deferred_split *split_queue_lock(int nid, struct mem_cgroup *memcg)
- {
- 	struct deferred_split *queue;
- 
-+retry:
- 	queue = memcg_split_queue(nid, memcg);
- 	spin_lock(&queue->split_queue_lock);
-+	/*
-+	 * There is a period between setting memcg to dying and reparenting
-+	 * deferred split queue, and during this period the THPs in the deferred
-+	 * split queue will be hidden from the shrinker side.
-+	 */
-+	if (unlikely(memcg_is_dying(memcg))) {
-+		spin_unlock(&queue->split_queue_lock);
-+		memcg = parent_mem_cgroup(memcg);
-+		goto retry;
-+	}
- 
- 	return queue;
- }
-@@ -1128,8 +1149,14 @@ split_queue_lock_irqsave(int nid, struct mem_cgroup *memcg, unsigned long *flags
- {
- 	struct deferred_split *queue;
- 
-+retry:
- 	queue = memcg_split_queue(nid, memcg);
- 	spin_lock_irqsave(&queue->split_queue_lock, *flags);
-+	if (unlikely(memcg_is_dying(memcg))) {
-+		spin_unlock_irqrestore(&queue->split_queue_lock, *flags);
-+		memcg = parent_mem_cgroup(memcg);
-+		goto retry;
-+	}
- 
- 	return queue;
- }
-@@ -4271,6 +4298,33 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
- 	return split;
- }
- 
-+#ifdef CONFIG_MEMCG
-+void reparent_deferred_split_queue(struct mem_cgroup *memcg)
-+{
-+	struct mem_cgroup *parent = parent_mem_cgroup(memcg);
-+	struct deferred_split *ds_queue = &memcg->deferred_split_queue;
-+	struct deferred_split *parent_ds_queue = &parent->deferred_split_queue;
-+	int nid;
-+
-+	spin_lock_irq(&ds_queue->split_queue_lock);
-+	spin_lock_nested(&parent_ds_queue->split_queue_lock, SINGLE_DEPTH_NESTING);
-+
-+	if (!ds_queue->split_queue_len)
-+		goto unlock;
-+
-+	list_splice_tail_init(&ds_queue->split_queue, &parent_ds_queue->split_queue);
-+	parent_ds_queue->split_queue_len += ds_queue->split_queue_len;
-+	ds_queue->split_queue_len = 0;
-+
-+	for_each_node(nid)
-+		set_shrinker_bit(parent, nid, shrinker_id(deferred_split_shrinker));
-+
-+unlock:
-+	spin_unlock(&parent_ds_queue->split_queue_lock);
-+	spin_unlock_irq(&ds_queue->split_queue_lock);
-+}
-+#endif
-+
- #ifdef CONFIG_DEBUG_FS
- static void split_huge_pages_all(void)
- {
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 4deda33625f41..2acb53fd7f71e 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -3888,6 +3888,7 @@ static void mem_cgroup_css_offline(struct cgroup_subsys_state *css)
- 	zswap_memcg_offline_cleanup(memcg);
- 
- 	memcg_offline_kmem(memcg);
-+	reparent_deferred_split_queue(memcg);
- 	reparent_shrinker_deferred(memcg);
- 	wb_memcg_offline(memcg);
- 	lru_gen_offline_memcg(memcg);
--- 
-2.20.1
-
+We need them to use wrmsrns immediate=2E
 
