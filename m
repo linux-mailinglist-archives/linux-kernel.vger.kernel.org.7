@@ -1,200 +1,119 @@
-Return-Path: <linux-kernel+bounces-841020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43AA8BB5FA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 08:19:56 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31829BB5FAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 08:29:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 239804E4BDD
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 06:19:55 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7B147344608
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 06:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9228B1DB54C;
-	Fri,  3 Oct 2025 06:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B041FECAB;
+	Fri,  3 Oct 2025 06:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YiHOr0ZX"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010059.outbound.protection.outlook.com [52.101.61.59])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N4M5dpAF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41146207A32;
-	Fri,  3 Oct 2025 06:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759472365; cv=fail; b=BwNyNDkHfdICByJIWLhR1SNWF33wQljSUYcKiqNxIAPq08S45s2aXig1qfW0Dj3DRvTGSngV17v1r4XYTDGmUNyq4cq9cNGyWuHwpcveaow3NR6b8FHaAthSYLiR5HrG21YeKwO0fQ0tkgEpSeSyGOB/J3vnb1q8EcfDldG69rY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759472365; c=relaxed/simple;
-	bh=lDELUuqd9jNC+OxweMLsIfYMxlQ+Nl0qIJKvozak2e0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XCNYQtq+5PDA0qE8xkJKy9MPovtM4iEwanWKl30LXZuwXpaG5mAPVx0bd5+gwc27nJ3G5puqmQg+rOVy5tbHqx2gJvz24tLPqnF/EcoSkMV7YPDwQQj0/Zgxe6SAoV3nvzZR50ZC0ynkfPbDEV8a/uMdHEeb9Y93cu3J564F1f0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YiHOr0ZX; arc=fail smtp.client-ip=52.101.61.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hlxE/dfwKbA8kTiimaxs+DCsxbBNZtT+mCdAoIY4uLmEXCQOIA6YecgeuJb2ZuZpfc1bPmiG6OdIuNCgHCEkN/v/00hBktXx9uQr3XPO2DzXSNkS1AFgLxJMNeuGcqhUVb0tJ3ozJmoigrAQML/YsyoRK9mDVJJmlAp/vnG2BT6GnBzTArzY49TTyEev6ob9tQDGXfL+YygI8uIxuSYLvKr3nvytliQb7cVsy7n5PWKjediBl+zQEpq87FlBLzIAL6wivs0ckpTGmmeorLu+qZAz2Y660O3iMdpjN4tTDkC6pGLL8fakCp3Y6ZzdZLpJeBR8EAqkSKnnmLvlUgTtCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=am+hsUgErgd200kjivB3NO7RzaMGrjBedtoBauAbvPQ=;
- b=MJ3EbVsBqYTGInWHnsYnKGKbEFqqKcpj1wQpZkv+7Hezgor/zYhLQCZE1T4pwsqwNJGsDoNmw2lB3yw9A9nkAU3JV8UUJB2MLx1IuPBQPb3dCw6wGbvOSgEEBRUXjrx+RZGvACmk0MEM7qWVaayF8PiWFUI9FQhVMs+jVsnhmMOuOy/zD6m6mjhgm1K/F+PC7TzmUmWIF8xb/YMpQt4Xv8kIRXVrXFZzztol7HPiLaxdqs/YDmWe3nO0KKEpitFrJGzuvtkwshZC/jh5h9gJGVASfpn/C3AoHE9+b9xV97co5yQVRysvy+tRMm2UFPQCP66oDERDm3EKeyL38xjrCg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=am+hsUgErgd200kjivB3NO7RzaMGrjBedtoBauAbvPQ=;
- b=YiHOr0ZXrdQU7YkJNFZzt8xkpxn+lLIkabsxT4a0lxNsJkIHrJ96rUsWDxPW88A2033wpzJKM48s0IgNY7KsvEvxIt2l1wWiayVuXIhgKa0ra7xym5GSPJKHqRKzg3OIGODufOESfUwPxcSZh3WyN/oB7WvvyKZd+gz0iOKrPMc=
-Received: from BN9PR03CA0599.namprd03.prod.outlook.com (2603:10b6:408:10d::34)
- by DM4PR12MB7599.namprd12.prod.outlook.com (2603:10b6:8:109::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.16; Fri, 3 Oct
- 2025 06:19:21 +0000
-Received: from BL02EPF00021F6E.namprd02.prod.outlook.com
- (2603:10b6:408:10d:cafe::92) by BN9PR03CA0599.outlook.office365.com
- (2603:10b6:408:10d::34) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.15 via Frontend Transport; Fri,
- 3 Oct 2025 06:19:20 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- BL02EPF00021F6E.mail.protection.outlook.com (10.167.249.10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9182.15 via Frontend Transport; Fri, 3 Oct 2025 06:19:20 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Thu, 2 Oct
- 2025 23:19:20 -0700
-Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 3 Oct
- 2025 01:19:19 -0500
-Received: from xhdsuragupt40.xilinx.com (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Thu, 2 Oct 2025 23:19:18 -0700
-From: Suraj Gupta <suraj.gupta2@amd.com>
-To: <vkoul@kernel.org>, <radhey.shyam.pandey@amd.com>, <michal.simek@amd.com>
-CC: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH V2 3/3] dmaengine: xilinx_dma: Optimize control register write and channel start logic for AXIDMA and MCDMA in corresponding start_transfer()
-Date: Fri, 3 Oct 2025 11:49:10 +0530
-Message-ID: <20251003061910.471575-4-suraj.gupta2@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20251003061910.471575-1-suraj.gupta2@amd.com>
-References: <20251003061910.471575-1-suraj.gupta2@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3991628FD;
+	Fri,  3 Oct 2025 06:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759472979; cv=none; b=RZ5yXiCk8Nz6P9WCMLuKFWrH6Gt/IDFdq8VorBP2O3b/keExegw4osPKG5dTn5qwX3Iy+761Ja1C/j51Hdo2AQZLTTmLYSFjNM+tRNfQkPqPGR+sHVBgTGYyrsWqi14nSoQaFsztYfy+IOR4ab6Ii+RJK7uL19FBzyv+ahlQdys=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759472979; c=relaxed/simple;
+	bh=38C6bj4uQk4Gyei3uzTSRu3fqNu3pxRhzppzFyacgU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LROwgfIRPfZFgjJ3Uk8vcte67MvgbeJk0M7jwsejvqtvOzEqyzzmt7cdniUyjWOJgn0zvmXLTV2adr+nCjeSqJhaC0eJP6XD5I8nMXGaCdMBnMdCBvPGKaVUIXBr7CQqd0oOkwNc4xvJv7WGr4woa2FAH8EfVUXHuvSo9eadHzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N4M5dpAF; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759472977; x=1791008977;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=38C6bj4uQk4Gyei3uzTSRu3fqNu3pxRhzppzFyacgU8=;
+  b=N4M5dpAFLYJJH5cq+MKYuJJzva5RQWSUt2Or28zWTLec+0hzBRn9s2Yu
+   tBHeLwOFf65HE/Fmy3EwIJkATkFNdW+6HPgxriweD6IKrxKLjTXLT8kj9
+   23SH1yTMSD61SCFRK8VRA7flImB3BZH4tcT2HPXbbasnFwAMKm7/B3Xsn
+   MRi4ORWxw2UcgjP+b6L/goLhqI7oH3LnnmwfiayY+ZH1kMc4muZE5AKoM
+   mRBw2lp6p96VEyqpzCiZMShn+P/gZQEOFeYT72g7Ra0c/1aVscfQl7gTI
+   TsPO2tZXLV2PkCN1DZAeB+Fn35Qvttg8E1oCZSxOP6WfvJrNkDaJABh0h
+   Q==;
+X-CSE-ConnectionGUID: H89W8fCOTTmrHIk4e4f16A==
+X-CSE-MsgGUID: 8MIz9kZeS3C+z+Q8I1DrGg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="61802320"
+X-IronPort-AV: E=Sophos;i="6.18,311,1751266800"; 
+   d="scan'208";a="61802320"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 23:29:36 -0700
+X-CSE-ConnectionGUID: wGF9LlBBTIia2PyQAtwDGw==
+X-CSE-MsgGUID: hyrvbglwRJW7LwB0/3oZsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,311,1751266800"; 
+   d="scan'208";a="179165404"
+Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 02 Oct 2025 23:29:35 -0700
+Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v4ZIK-0004NH-29;
+	Fri, 03 Oct 2025 06:29:32 +0000
+Date: Fri, 3 Oct 2025 14:28:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ketan Patil <ketanp@nvidia.com>, krzk@kernel.org,
+	thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, Ketan Patil <ketanp@nvidia.com>
+Subject: Re: [PATCH v2 3/4] memory: tegra: Add support for multiple irqs
+Message-ID: <202510031456.NUbQMKPs-lkp@intel.com>
+References: <20251002090054.1837481-4-ketanp@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB04.amd.com: suraj.gupta2@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF00021F6E:EE_|DM4PR12MB7599:EE_
-X-MS-Office365-Filtering-Correlation-Id: b2c50b7f-4f00-4f80-6f40-08de0244ca2e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/2s6BgnzxOE9VM7SlAe2pT/Ky19MFurVi9bJbARSHRM8Wmob6t5xBoLZ2Muv?=
- =?us-ascii?Q?Dns7RulRtqLYXbf0Jkn1HSLtPxVbiz3ZT8dpMzKD4r+vTcUgNwC19wuO1uIT?=
- =?us-ascii?Q?DO0BPPnZQusMkeibHNt1xoz/TzjbtPdX0J+d1Uo0HuQmTpfI6+H2FDLCEatd?=
- =?us-ascii?Q?pkWAqhMs+g72X3qVGzVxLg260+lE5kJdb4FFpkdkDWr/i7tH2PflypCKSlC2?=
- =?us-ascii?Q?Rr9QvhA88+nmAlno+7B6iwZsEb3ukSlXWI3nMKb3yNoZQH55ImyBxxCsqc62?=
- =?us-ascii?Q?R7mCC23NYl4kEx0bL7lJIQy8aydaNWWynSKzMgkjQI38KFJFUh8xz8+XJmvs?=
- =?us-ascii?Q?iNJmQDMIQQyQ89b5nRekhlTaDVsn7kQpx5emyHXD79/U5WNUD3SGB0jKdMl3?=
- =?us-ascii?Q?G5kMgEuSR1pLaXD3yVMeeYMyXM+NNTQEB3hFXXNtd5QhHQso5Bu9UlDRRiLS?=
- =?us-ascii?Q?qxM228RetmSF4PF1/xk4+gQi+rLcXa1i1DWOH4ZW8ONQfsqMGb3di18bURLa?=
- =?us-ascii?Q?zsTo/R2rKoBf2suqv/hXgKupNeUqGUTHJ76Rx0xRt62x/GqCwCMSTKGRQ3tG?=
- =?us-ascii?Q?NFVHLTCHb4tYoM1VeYmjW+MVBLSfbdfHFVAMf4KUoKq+xqnWgKyfgXYoLQIi?=
- =?us-ascii?Q?ZGYJmZHOEnVUL00glKc2F5SzbvXCvQIb4p/LbN8stGP8Qx7rYfpJNY6vFrE0?=
- =?us-ascii?Q?IP5pIQaLWcLh5nS2+m7HeqEUfKbBA/NO1fXMVjI1douWPwz93V9BqPmj7xF3?=
- =?us-ascii?Q?xbKzGUkHCWhlVBbrSN2P9rS0z7+WaMiTV6CWLOibJG1pTZwLNt7Q0tuCCTrZ?=
- =?us-ascii?Q?OhXj2CBnIPpazAnuHpH9uUWj0FDT8sZNdrQXPpV+H+pWTf767t/tIE0hwoRv?=
- =?us-ascii?Q?qpMczCKGl0/ja5VqMSyVmq+wc6EEMSf22Uez41diNuJ30Gp9ItA1OhxQ67I4?=
- =?us-ascii?Q?+EKHYXg3+pimC3ASucd0tUw/hZNzhB8PTBMrzjtS3Y0HuR2YeyUdKzaSkq0b?=
- =?us-ascii?Q?zFHm5tCCYvVANaex+aTx8EGtT3QVBpPHfVB8Ok2JS5SS/XRcIeGJtcZPPtwI?=
- =?us-ascii?Q?Ejo+v7nK/evO8LunJEWPGpFqPigD+imeQqYxlwPYvO05tmJFVcZFtvcA35AL?=
- =?us-ascii?Q?ybKbLy0Eq0nGP2c/YU8w1qsBqzSZBx7kIZYzKmXwuoiSARmPt+pZOcVPtQRU?=
- =?us-ascii?Q?kQXwA1SieiR0xJslBgzNum3qLFnt/4vZglw/wt49FLR6uOJ4TvnxBLKcFbn+?=
- =?us-ascii?Q?XVt9BBA8EKyBTX1d4uA8sJHfA0PAM6Cq/P58Z+lAzQ9U79RMio54Y+VNN9UE?=
- =?us-ascii?Q?6Fs6/JOKj+zvxwawgQmLEbhnKgOyzClwUY3pypDBWLWnLjva412YB4s59Fcv?=
- =?us-ascii?Q?ksXEcEP4o9l+POeXuD0y749psYMroeUihWQY7aemx0gFfqSl8M1y8bmmlVnG?=
- =?us-ascii?Q?OzKdoOJnhuNTt1Z6iTTEIalouCRh1SrVKfBPMQ5u+rtEW2joLSJjREFnw/en?=
- =?us-ascii?Q?r8/X1JbA9dfwY9yraevP2G96pgny4VVF+6W61U/35TsX3fzp7eGMo2mj7zod?=
- =?us-ascii?Q?1igU5cteVQ3EEPrP5oA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2025 06:19:20.5825
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b2c50b7f-4f00-4f80-6f40-08de0244ca2e
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF00021F6E.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7599
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251002090054.1837481-4-ketanp@nvidia.com>
 
-Optimize AXI DMA control register programming by consolidating
-coalesce count and delay configuration into a single register write.
-Previously, the coalesce count was written separately from the delay
-configuration, resulting in two register writes. Combine these into
-one write operation to reduce bus overhead.
-Additionally, avoid redundant channel starts in xilinx_dma_start_transfer()
-and xilinx_mcdma_start_transfer() by only calling xilinx_dma_start() when
-the channel is actually idle.
+Hi Ketan,
 
-Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
-Co-developed-by: Srinivas Neeli <srinivas.neeli@amd.com>
-Signed-off-by: Srinivas Neeli <srinivas.neeli@amd.com>
----
- drivers/dma/xilinx/xilinx_dma.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
-index aa6589e88c5c..a050b06e3b8d 100644
---- a/drivers/dma/xilinx/xilinx_dma.c
-+++ b/drivers/dma/xilinx/xilinx_dma.c
-@@ -1561,7 +1561,6 @@ static void xilinx_dma_start_transfer(struct xilinx_dma_chan *chan)
- 		reg &= ~XILINX_DMA_CR_COALESCE_MAX;
- 		reg |= chan->desc_pendingcount <<
- 				  XILINX_DMA_CR_COALESCE_SHIFT;
--		dma_ctrl_write(chan, XILINX_DMA_REG_DMACR, reg);
- 	}
- 
- 	if (chan->has_sg && list_empty(&chan->active_list))
-@@ -1571,7 +1570,8 @@ static void xilinx_dma_start_transfer(struct xilinx_dma_chan *chan)
- 	reg  |= chan->irq_delay << XILINX_DMA_CR_DELAY_SHIFT;
- 	dma_ctrl_write(chan, XILINX_DMA_REG_DMACR, reg);
- 
--	xilinx_dma_start(chan);
-+	if (chan->idle)
-+		xilinx_dma_start(chan);
- 
- 	if (chan->err)
- 		return;
-@@ -1660,7 +1660,8 @@ static void xilinx_mcdma_start_transfer(struct xilinx_dma_chan *chan)
- 	reg |= XILINX_MCDMA_CR_RUNSTOP_MASK;
- 	dma_ctrl_write(chan, XILINX_MCDMA_CHAN_CR_OFFSET(chan->tdest), reg);
- 
--	xilinx_dma_start(chan);
-+	if (chan->idle)
-+		xilinx_dma_start(chan);
- 
- 	if (chan->err)
- 		return;
+[auto build test ERROR on tegra/for-next]
+[also build test ERROR on linus/master v6.17 next-20251002]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ketan-Patil/memory-tegra-Group-mc-err-related-registers/20251002-171042
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
+patch link:    https://lore.kernel.org/r/20251002090054.1837481-4-ketanp%40nvidia.com
+patch subject: [PATCH v2 3/4] memory: tegra: Add support for multiple irqs
+config: arm64-randconfig-003-20251003 (https://download.01.org/0day-ci/archive/20251003/202510031456.NUbQMKPs-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 10.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251003/202510031456.NUbQMKPs-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510031456.NUbQMKPs-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   aarch64-linux-ld: Unexpected GOT/PLT entries detected!
+   aarch64-linux-ld: Unexpected run-time procedure linkages detected!
+   aarch64-linux-ld: arch/arm64/kernel/signal.o: in function `restore_sigframe':
+   signal.c:(.text+0x1a28): undefined reference to `restore_gcs_context'
+   aarch64-linux-ld: arch/arm64/kernel/signal.o: in function `setup_sigframe':
+   signal.c:(.text+0x2574): undefined reference to `preserve_gcs_context'
+>> aarch64-linux-ld: drivers/memory/tegra/tegra186.o:(.rodata+0xc8): undefined reference to `tegra30_mc_irq_handlers'
+
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
