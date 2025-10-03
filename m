@@ -1,99 +1,93 @@
-Return-Path: <linux-kernel+bounces-841653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BE17BB7ECA
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 20:50:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D2CABB7ED9
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 20:52:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C223619E71D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 18:50:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA73C3A2F70
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 18:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7881E2DF15A;
-	Fri,  3 Oct 2025 18:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B482DF124;
+	Fri,  3 Oct 2025 18:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qlA2EZ7D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b="YgO7rT7E"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBB52DECA3;
-	Fri,  3 Oct 2025 18:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE442D780C
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 18:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759517408; cv=none; b=mK+BD/oSwSjklFoA+pJtjmb7rShho+TpisqVEN2Sbib0ykDFLnL1C4F565eDzQs6XODXrt7uyIFqRo4IqBa6edXdSyTKQ6yVOaWVr7JnmGf5ClorCIc6tPNbs21/zYo+2T39G7VDl0dr7WjUIUVWi+i75ho8Sn+ixFxaHqNMdP0=
+	t=1759517530; cv=none; b=lLf6CdEU9MOADR3O0yqWk5tD9K/HT7DeN1fO9QEyhG10PLrc3+4yTuOHQjY2oJTIvAKtPBsmg/OrdLiS8euIH316lIAGssJNUThFoCPiWh4+73bd98NahcGPzdl3tl5AE/MjdCOVw+BdVQS2+nW+VBybv0pEbbgUYQ14nWBRUO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759517408; c=relaxed/simple;
-	bh=BzHCgdnh4u1K9vziVNYN9RLlQWl3aVaEvR81Dj9kN4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YRiyCYZN2Zu6VY06voetOfkBUAkXu9E/ABEN3kkIKwG83BP+DB2ZoutP2vlfQwar2brjT/bdwesmd3rL+v2Zg+ykH2suZ/0U0ALrnb7lujvpc3lFyQoOQMCogIXSwGNuVgLsaVThq1adgpsyE5lkwFGyljmTGT5BotSS8N5Gcxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qlA2EZ7D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA096C4CEF5;
-	Fri,  3 Oct 2025 18:50:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759517408;
-	bh=BzHCgdnh4u1K9vziVNYN9RLlQWl3aVaEvR81Dj9kN4I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qlA2EZ7DMRWKJIi06Yk5nf6ddrH6QhjXENHv7U00iBTVK9rNH9rCHJ14O7wdDLXwy
-	 fC0lR2l4nE2A0vLQEkcZpR23PHNRp8IYJ6PUev4Uvi0MPiRKnvuIIzFl9PxMjNHQRL
-	 vgpfGA1ig0UBreHE5je0IOklxdtySK7NVjyEkoZpEl8kbz+6bZSSso4B/pbLxMVCFy
-	 P/bRShd8eixVb+180h7ImOMmeNj8JbeP6OTpFjD1tlO+TEqPbU5YotHd+xVvqcbFdR
-	 wZIk7OsELSV3/ARIz7bY3mbKQupa7M52vWCtipjySjVrthGqAfwZfPcB2hAQwMUT18
-	 5wZhULFzanFRg==
-Date: Fri, 3 Oct 2025 20:50:04 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>, Viken Dadhaniya <quic_vdadhani@quicinc.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org, quic_vtanuku@quicinc.com
-Subject: Re: [PATCH v8 2/2] i2c: i2c-qcom-geni: Add Block event interrupt
- support
-Message-ID: <3lgris6k6ewqjdcfmmovygstqrqjx2jidtr3hb3v47gpgadkka@wlua7qpd7ahf>
-References: <20250925120035.2844283-1-jyothi.seerapu@oss.qualcomm.com>
- <20250925120035.2844283-3-jyothi.seerapu@oss.qualcomm.com>
+	s=arc-20240116; t=1759517530; c=relaxed/simple;
+	bh=B15vy4G8yT5+l7Cy5PIAiqSAyyBps0v1UUV+YoW1CDk=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=DIJrbRshUjwuzpHn1rzSdRhFjO0uq1hT6J4H+jYauTujWLrSSdo+6rvQHRwTZCl7KfaBIGqNw9BihvNUa/pNQbzXTE2zrflx6JXbkOttEGFmdndQuH0/1fyq2BGUBqJpLyBZ/zOHlyQWPSapPQBnNjlYnf5+uo6gb/hj5NUSY48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org; spf=pass smtp.mailfrom=postmarketos.org; dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b=YgO7rT7E; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=postmarketos.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250925120035.2844283-3-jyothi.seerapu@oss.qualcomm.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
+	s=key1; t=1759517525;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B15vy4G8yT5+l7Cy5PIAiqSAyyBps0v1UUV+YoW1CDk=;
+	b=YgO7rT7ErOyaf4CxR+vjsT+kvZMhD2sDhOn3Y3BG9FjIAtf4nq/SMF3G8LRRGFvQtcA0Ei
+	pgQY2IAQC/n6luIXBj4cTjrz35mNnh+7xXXr5EIbkxQ2CPbQbdgac7TWt16CA6b2qL2EeQ
+	WB1UaqKqr8n1Wv52ag0IFf9dmP2azkyjaK34Rj4U3LD3OJB6ZramBrv4vzxSZS1o2zAPaA
+	cLp9ckPDccsc5txzbT1/a2e4esAhzQNM9FhIHX/vO/Z1ov/WJ5V9Af0rUZ42wOVThxyuH0
+	EMDdFBo0xLbpof9HDqkRtUNbMh0G1UonHqZgd0dvh2c1VNpy0ejgFl/An1VCsA==
+Date: Fri, 03 Oct 2025 18:52:03 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Paul Sajna" <sajattack@postmarketos.org>
+Message-ID: <b9285a2e81ca992b9fc560c78ae03921000e388e@postmarketos.org>
+TLS-Required: No
+Subject: Re: [PATCH v3 07/11] arm64: dts: qcom: sdm845-lg-{common, judyln}:
+ Add wifi node
+To: "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>
+Cc: "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com>, "Bjorn Andersson"
+ <andersson@kernel.org>, "Konrad Dybcio" <konradybcio@kernel.org>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "David Heidelberg" <david@ixit.cz>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org, "Amir Dahan"
+ <system64fumo@protonmail.com>, "Christopher Brown"
+ <crispybrown@gmail.com>
+In-Reply-To: <gfbvgsen75w5h7afyo454pvdfslkeprqyuycuok6syinbza7vx@crapzdo33re7>
+References: <20250928-judyln-dts-v3-0-b14cf9e9a928@postmarketos.org>
+ <20250928-judyln-dts-v3-7-b14cf9e9a928@postmarketos.org>
+ <f58493a9-6def-4610-9c3e-d6a877dc23d3@oss.qualcomm.com>
+ <d38801bc77ad00442b1669ea252ae30a5c6af5b4@postmarketos.org>
+ <7661d9d9-eca3-4708-8162-960df0d7f6c7@oss.qualcomm.com>
+ <ad721948b83a54eaa34f367e12564fe6acc222a1@postmarketos.org>
+ <gfbvgsen75w5h7afyo454pvdfslkeprqyuycuok6syinbza7vx@crapzdo33re7>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Sep 25, 2025 at 05:30:35PM +0530, Jyothi Kumar Seerapu wrote:
-> From: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-> 
-> The I2C driver gets an interrupt upon transfer completion.
-> When handling multiple messages in a single transfer, this
-> results in N interrupts for N messages, leading to significant
-> software interrupt latency.
-> 
-> To mitigate this latency, utilize Block Event Interrupt (BEI)
-> mechanism. Enabling BEI instructs the hardware to prevent interrupt
-> generation and BEI is disabled when an interrupt is necessary.
-> 
-> Large I2C transfer can be divided into chunks of messages internally.
-> Interrupts are not expected for the messages for which BEI bit set,
-> only the last message triggers an interrupt, indicating the completion of
-> N messages. This BEI mechanism enhances overall transfer efficiency.
-> 
-> BEI optimizations are currently implemented for I2C write transfers only,
-> as there is no use case for multiple I2C read messages in a single transfer
-> at this time.
-> 
-> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+October 3, 2025 at 5:13 PM, "Dmitry Baryshkov" <dmitry.baryshkov@oss.qual=
+comm.com mailto:dmitry.baryshkov@oss.qualcomm.com?to=3D%22Dmitry%20Barysh=
+kov%22%20%3Cdmitry.baryshkov%40oss.qualcomm.com%3E > wrote:
 
-Because this series is touching multiple subsystems, I'm going to
-ack it:
 
-Acked-by: Andi Shyti <andi.shyti@kernel.org>
 
-We are waiting for someone from DMA to ack it (Vinod or Sinan).
+> Regarding the MDSS. Is it being solved by adding reset to the MDSS node=
+?
+> Or are there any other issues?
 
-Thanks,
-Andi
+Yes I'm referring to the reset / pmdomain issue. Joel Selvaraj is looking=
+ into it in the sdm845 tree. He said he tried doing what other SOCs did a=
+nd it just got stuck in a reboot loop. More investigation required. Curre=
+ntly he's reverted the pmdomain commits in our tree.
 
