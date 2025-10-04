@@ -1,267 +1,289 @@
-Return-Path: <linux-kernel+bounces-842080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 795E1BB8E85
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 16:10:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 155BABB8E8E
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 16:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 787EE3AA6E1
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 14:10:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6283D3BF58E
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 14:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDD91917F0;
-	Sat,  4 Oct 2025 14:10:35 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08C71D6DA9;
+	Sat,  4 Oct 2025 14:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lEPRuhaA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805CA6FC3
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 14:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B1B645;
+	Sat,  4 Oct 2025 14:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759587034; cv=none; b=Lq2h3uK5CzJLEE4a1QbN83cFihcE/raGMH6AihFLQJfL1mzN5TZODLNI8HqhbG4fMF8VZXSUnj7rXsyvxyHZw3F6Yba33NfXfdE3clDb18q+u3T9tOfWwk6sOAxQxq51/7hj7pD+e4XVDjXdLEoCEz4qwJtvPLZNxK4hHApQfgo=
+	t=1759587108; cv=none; b=rN1GbclBQdva99nquNaOXFhRDvnPNvwpuD6YdBU6GZrO3Q14aLr2g2jXpvz1wOp+fpuNSd6k1KuoYEJjg7TWzdbkwGeJgB1mUiSM1bbjRPiGb5DzhGcGULAL5k/4H2Q+h/0H2dm+G/DccmkFI/JOUSdeV6SqrT9zqCz3a2Jh9Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759587034; c=relaxed/simple;
-	bh=MOtGaOG23iYhOtlTH9y2RBp2QvnTKiicO+UsweqDGZ8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Y1uy/ezCN6GzZqAFRcvWQaXVYu2PDoPzqO4EQPL1OWCnf61IeyKjvX0YZvJB/xZ6MzswaL7K87jTDcoFFsfmmmXPJY/xvdMsg6j8Hg9pIGJ8otahPnunbySwzyZgJzLcxTmmhpqi3oPolHLALVLgMEh6N9mQMA/dBUG3cE7kslU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-91fbba9a0f7so357518639f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 07:10:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759587031; x=1760191831;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o7BJc/9uhy1iwb9MWEqPHFDcMigEwvdmj6x+whTMF3U=;
-        b=b8FGlt9ZGhgoLVCk9AkuiUCoDXagQ2WEi4Gsov19IgqDaDV8GISFtzEJADufjAvorA
-         psMyJ5m97tE8su1khjyELNT06NRw3IPoHiQY0lpgkSdbTKzoAEalaX40QOyaqTfcNRdu
-         OISxuT/BOA2hWZE1oaeZzATNt6Sylfrs28gPaZ+1XnVFUa2dLGu6Ig22cwn9vU/9wZ+3
-         S8kxRZ23e8NzwtnhriPz2LC6AZKqL5kriuiio3sQp3TD2BrtDXREecU0695eXo2p1M9d
-         fJ3KwwPsfxU47+LsjUyuUlU5wvTPmD3Hph8/t7NVJOx5MRR5oV0cbpmiK+iuNf9IbLu5
-         ZZVw==
-X-Forwarded-Encrypted: i=1; AJvYcCVVAD40orfYZobBuWYu5WY4yNe412cOsVDHARHs1oRIy+AubNgmkqlByZIXJG6aJjiPGDgkbzS4+gm7J74=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7pMJPf8mhmuOHLZqBXjkx1PjgdVnjfvWgw0de/ux+BzF7HHDh
-	rFf03KWSij+YRzsY2T0QPF7LGoA7Z93iCljYCLmilWlZhOqL7K3Ots/w46wZ747oGEExpSyxAyx
-	djuRBs23QbPFnDQ3WOmw2iWpHylRcDO7z3Avralo94PVJdWwyOkFTd4DFvEI=
-X-Google-Smtp-Source: AGHT+IG5Fu7UjjB55Isl3KKTmJJSG7eYQO3g9SknmWSz6JZJVyS05aFHTpcmVdGeDBdpYPeZOe9Yv6Fc0DzRnEWQQf/9KX6GrhQj
+	s=arc-20240116; t=1759587108; c=relaxed/simple;
+	bh=00MCZhA4HgwWV4hXETDlBi+ejx2zx7atpOxyjWIj2ns=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IG1xiL9MEj6xhbWB5dA77uxQJABiz0GF8ccNaP9UOfXrjSVPvbhMYGtxdNlYK+g38X00ZcO9AdQlIDZQ+s3R1SyhwLm57KhEAmfMGIgd1r/6M53o5Kqxo1IFePF2IMR01LnUGApXPsuqA8eYVkWaJ719GTkrkkjrBbvUqxK3aQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lEPRuhaA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 648C0C4CEF1;
+	Sat,  4 Oct 2025 14:11:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759587108;
+	bh=00MCZhA4HgwWV4hXETDlBi+ejx2zx7atpOxyjWIj2ns=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lEPRuhaAtENxLuQp+gCi8Ab/In4fMvh7xuxoh+I1mXe3f3qijWwM/WxLHkDluEiHw
+	 hHywPHfqOHqWe/d49yIYC/kcx4F1CqtAdZqJ9uMiyf1sCv59mMPS3/8I0Eo3tQg7lN
+	 R2JOGOCXTdjNPmI0RbqIttn3EqnjcHvpu9/6EFB/qm/5dta9tOaxcx/2kd85FpUiyO
+	 n4UPmGf22UiZTX23zoArVEW+758pWEHTWCt2oMl53hty5iXKYsZd85+r4LqpVNVXZq
+	 cngPPyHwqvNtyU5cjeek5wGAsN9JpPjy7IHJEpQzT3D5alDKhIjanX6DDO7WP29EA/
+	 JZeTmSZIm9y6A==
+Date: Sat, 4 Oct 2025 15:11:38 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: <victor.duicu@microchip.com>
+Cc: <dlechner@baylibre.com>, <nuno.sa@analog.com>, <andy@kernel.org>,
+ <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+ <marius.cristea@microchip.com>, <linux-iio@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jean Delvare
+ <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v6 0/2] add support for MCP998X
+Message-ID: <20251004151138.77886486@jic23-huawei>
+In-Reply-To: <20250930133131.13797-1-victor.duicu@microchip.com>
+References: <20250930133131.13797-1-victor.duicu@microchip.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:174b:b0:42a:dd1d:c3e4 with SMTP id
- e9e14a558f8ab-42e7ad846aamr90839255ab.15.1759587031579; Sat, 04 Oct 2025
- 07:10:31 -0700 (PDT)
-Date: Sat, 04 Oct 2025 07:10:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e12ad7.050a0220.bce5e.000e.GAE@google.com>
-Subject: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in
- l2cap_disconn_ind (2)
-From: syzbot <syzbot+97d2b6a9ca6a6e0f204c@syzkaller.appspotmail.com>
-To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Tue, 30 Sep 2025 16:31:29 +0300
+<victor.duicu@microchip.com> wrote:
 
-syzbot found the following issue on:
+> From: Victor Duicu <victor.duicu@microchip.com>
+> 
+> Add support for Microchip MCP998X/33 and MCP998XD/33D Multichannel
+> Automotive Temperature Monitor Family.
+> 
+> The chips in the family have different numbers of external channels,
+> ranging from 1 (MCP9982) to 4 channels (MCP9985). Reading diodes in
+> anti-parallel connection is supported by MCP9984/85/33 and
+> MCP9984D/85D/33D. Dedicated hardware shutdown circuitry is present
+> only in MCP998XD and MCP9933D.
+> 
+> This driver was submitted in the IIO subsystem because the chips could use
+> interrupts to handle threshold events.
 
-HEAD commit:    8d245acc1e88 Merge tag 'char-misc-6.17-rc3' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=146067bc580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=292f3bc9f654adeb
-dashboard link: https://syzkaller.appspot.com/bug?extid=97d2b6a9ca6a6e0f204c
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+This reasoning isn't particularly strong as hwmon has support for events etc.
+This device is also 'slow' so I'm not immediately seeing a strong reason why
+IIO is the right choice.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+After some recent feedback from Guenter I'm keen to get a clearer set
+of reasoning when I take a temperature monitoring chip into IIO.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/924cb94b3bad/disk-8d245acc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/df04a64e8404/vmlinux-8d245acc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/92335877cbf3/bzImage-8d245acc.xz
+Also asking that we +CC Guenter for his input on devices where the decision
+isn't clear cut.
+So +CC Guenter (and Jean as the other hwmon maintainer).
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+97d2b6a9ca6a6e0f204c@syzkaller.appspotmail.com
+Apologies if I didn't explicitly request Guenter be +CC on earlier versions.
 
-==================================================================
-BUG: KASAN: slab-use-after-free in l2cap_disconn_ind+0x79/0xc0 net/bluetooth/l2cap_core.c:7315
-Read of size 1 at addr ffff8880574a22b0 by task kworker/u9:2/5864
+Thanks,
 
-CPU: 0 UID: 0 PID: 5864 Comm: kworker/u9:2 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Workqueue: hci3 hci_conn_timeout
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xca/0x240 mm/kasan/report.c:482
- kasan_report+0x118/0x150 mm/kasan/report.c:595
- l2cap_disconn_ind+0x79/0xc0 net/bluetooth/l2cap_core.c:7315
- hci_proto_disconn_ind include/net/bluetooth/hci_core.h:2058 [inline]
- hci_conn_timeout+0xdd/0x290 net/bluetooth/hci_conn.c:581
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
- kthread+0x70e/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-Allocated by task 12107:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
- __kasan_kmalloc+0x93/0xb0 mm/kasan/common.c:405
- kasan_kmalloc include/linux/kasan.h:260 [inline]
- __kmalloc_cache_noprof+0x230/0x3d0 mm/slub.c:4396
- kmalloc_noprof include/linux/slab.h:905 [inline]
- kzalloc_noprof include/linux/slab.h:1039 [inline]
- l2cap_conn_add+0xaa/0x8d0 net/bluetooth/l2cap_core.c:6886
- l2cap_chan_connect+0x6c8/0xe30 net/bluetooth/l2cap_core.c:7077
- bt_6lowpan_connect net/bluetooth/6lowpan.c:900 [inline]
- lowpan_control_write+0x421/0x6c0 net/bluetooth/6lowpan.c:1135
- full_proxy_write+0x124/0x1f0 fs/debugfs/file.c:388
- vfs_write+0x27b/0xb30 fs/read_write.c:684
- ksys_write+0x145/0x250 fs/read_write.c:738
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 12409:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:243 [inline]
- __kasan_slab_free+0x5b/0x80 mm/kasan/common.c:275
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2417 [inline]
- slab_free mm/slub.c:4680 [inline]
- kfree+0x18e/0x440 mm/slub.c:4879
- l2cap_connect_cfm+0x11d/0x1040 net/bluetooth/l2cap_core.c:7259
- hci_connect_cfm include/net/bluetooth/hci_core.h:2082 [inline]
- hci_conn_failed+0x1cb/0x310 net/bluetooth/hci_conn.c:1289
- hci_abort_conn_sync+0x658/0xe30 net/bluetooth/hci_sync.c:5689
- hci_disconnect_all_sync+0x1b5/0x350 net/bluetooth/hci_sync.c:5712
- hci_suspend_sync+0x3fc/0xc60 net/bluetooth/hci_sync.c:6188
- hci_suspend_dev+0x28d/0x4d0 net/bluetooth/hci_core.c:2849
- hci_suspend_notifier+0xf2/0x290 net/bluetooth/hci_core.c:2420
- notifier_call_chain+0x1b3/0x3e0 kernel/notifier.c:85
- notifier_call_chain_robust kernel/notifier.c:120 [inline]
- blocking_notifier_call_chain_robust+0x85/0x100 kernel/notifier.c:345
- pm_notifier_call_chain_robust+0x2c/0x60 kernel/power/main.c:103
- snapshot_open+0x19c/0x280 kernel/power/user.c:77
- misc_open+0x2bc/0x330 drivers/char/misc.c:161
- chrdev_open+0x4c9/0x5e0 fs/char_dev.c:414
- do_dentry_open+0x950/0x13f0 fs/open.c:965
- vfs_open+0x3b/0x340 fs/open.c:1095
- do_open fs/namei.c:3887 [inline]
- path_openat+0x2ee5/0x3830 fs/namei.c:4046
- do_filp_open+0x1fa/0x410 fs/namei.c:4073
- do_sys_openat2+0x121/0x1c0 fs/open.c:1435
- do_sys_open fs/open.c:1450 [inline]
- __do_sys_openat fs/open.c:1466 [inline]
- __se_sys_openat fs/open.c:1461 [inline]
- __x64_sys_openat+0x138/0x170 fs/open.c:1461
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff8880574a2000
- which belongs to the cache kmalloc-1k of size 1024
-The buggy address is located 688 bytes inside of
- freed 1024-byte region [ffff8880574a2000, ffff8880574a2400)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x574a0
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-ksm flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000040 ffff88801a441dc0 ffffea0000a4d200 dead000000000003
-raw: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
-head: 00fff00000000040 ffff88801a441dc0 ffffea0000a4d200 dead000000000003
-head: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
-head: 00fff00000000003 ffffea00015d2801 00000000ffffffff 00000000ffffffff
-head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0x52820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 4890, tgid 4890 (kworker/u8:8), ts 90724194100, free_ts 25796139807
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1851
- prep_new_page mm/page_alloc.c:1859 [inline]
- get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3858
- __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5148
- alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2416
- alloc_slab_page mm/slub.c:2487 [inline]
- allocate_slab+0x8a/0x370 mm/slub.c:2655
- new_slab mm/slub.c:2709 [inline]
- ___slab_alloc+0xbeb/0x1410 mm/slub.c:3891
- __slab_alloc mm/slub.c:3981 [inline]
- __slab_alloc_node mm/slub.c:4056 [inline]
- slab_alloc_node mm/slub.c:4217 [inline]
- __do_kmalloc_node mm/slub.c:4364 [inline]
- __kmalloc_noprof+0x305/0x4f0 mm/slub.c:4377
- kmalloc_noprof include/linux/slab.h:909 [inline]
- kzalloc_noprof include/linux/slab.h:1039 [inline]
- neigh_alloc net/core/neighbour.c:522 [inline]
- ___neigh_create+0x6d5/0x2260 net/core/neighbour.c:656
- ip6_finish_output2+0xb4d/0x16a0 net/ipv6/ip6_output.c:132
- NF_HOOK include/linux/netfilter.h:318 [inline]
- ndisc_send_skb+0xb54/0x1440 net/ipv6/ndisc.c:512
- addrconf_dad_completed+0x7ae/0xd60 net/ipv6/addrconf.c:4360
- addrconf_dad_work+0xc36/0x14b0 net/ipv6/addrconf.c:-1
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
- kthread+0x70e/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
-page last free pid 1 tgid 1 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1395 [inline]
- __free_frozen_pages+0xbc4/0xd30 mm/page_alloc.c:2895
- __free_pages mm/page_alloc.c:5260 [inline]
- free_contig_range+0x1bd/0x4a0 mm/page_alloc.c:7091
- destroy_args+0x69/0x660 mm/debug_vm_pgtable.c:958
- debug_vm_pgtable+0x39f/0x3b0 mm/debug_vm_pgtable.c:1345
- do_one_initcall+0x233/0x820 init/main.c:1269
- do_initcall_level+0x104/0x190 init/main.c:1331
- do_initcalls+0x59/0xa0 init/main.c:1347
- kernel_init_freeable+0x334/0x4b0 init/main.c:1579
- kernel_init+0x1d/0x1d0 init/main.c:1469
- ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Memory state around the buggy address:
- ffff8880574a2180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8880574a2200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff8880574a2280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                     ^
- ffff8880574a2300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8880574a2380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+Jonathan
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> Each chip supports 3 user.
+> programmable limits per channel. The family is also capable of detecting
+> hottest diode and diode faults.
+> These features will be added in future patches.
+> 
+> Differences related to previous patch:
+> v6:
+> - in yaml first condition list part numbers instead
+>   of regular expression. Add ^ to regular expression.
+> - edit coding style and comments.
+> - use hex values in defines.
+> - remove MCP9982_TEMP_MEM_BLOCK_LOW and
+>   MCP9982_TEMP_MEM_BLOCK_HIGH.
+> - in MCP9982_CHAN() place macro parameters in ().
+> - move all variable definitions at the start of functions.
+> - in mcp9982_parse_fw_config() initialise iio_idx to 0.
+> - remove bit flags.
+> - in MCP9982_CHAN remove outer ().
+> - remove variable start in mcp9982_write_raw().
+> - replace constant in .max_register.
+> - use get_unaligned_be16 in mcp9982_read_raw().
+> 
+> v5:
+> - in yaml edit description of interrupts.
+> - add min and maxItems to reg.
+> - remove ideality parameter.
+> - use pattern recognition in conditionals.
+> - group conditions based on the chip.
+> - correct microchip,parasitic-res-on-channel3-4 to true.
+> - in driver include bitops.h.
+> - change name of some variables.
+> - rename mcp9982_parse_of_config() to mcp9982_parse_fw_config().
+> - implement bulk reading of temp registers.
+> - lock ideality parameter to default value.
+> - implement bit flags.
+> - add compound literal to MCP9982_CHAN.
+> - remove hysteresis parameter.
+> - edit comments.
+> - change values from int to bool in mcp9982_features.
+> - remove mcp9982_calc_all_3db_values() and hardcode values.
+>   When filter is OFF the 3db value is equal to frequency.
+> - add .max_register to regmap_config.
+> - remove devm_kcalloc().
+> - in mcp9982_read_avail() add an else branch to hw_thermal_shutdown
+>   check.
+> - in mcp9982_read_raw use USEC_PER_MSEC and set regmap_read_poll_timeout
+>   to never timeout.
+>   Replace switch with bitmap_weight.
+> - in mcp9982_read_label() remove unnecessary if.
+> - in mcp9982_write_raw() remove duplicated code.
+> - in mcp9982_init add error messages when APDD and RECD are incorrectly
+>   set.
+> - in mcp9982_parse_fw_config() add default for reg_nr.
+> 
+> v4:
+> - lock beta parameters to default value of beta-autodetect.
+>   Remove beta parameters and checks from devicetree.
+> - lock temperature range to extended.
+>   This change avoids the issue of the average filter using raw values
+>   with different scales when changing the range.
+> - change driver to wait an amount of time before reading a raw value
+>   to ensure it is valid.
+> - change driver to stop calculating the physical temp when reading
+>   in_tempx_raw. Reading from in_tempx_raw will return the raw value.
+>   The physical temp will be calculated with in_tempx_raw, scale and
+>   offset parameters.
+> - add scale parameter to channel definition.
+> - initialise chips with "D" to work in Run state and those without
+>   in Standby state.
+> - when activating the low pass filter for chips without "D",
+>   set the power state to RUN to ensure fresh values for the average.
+> - add minimum and maximum to microchip,beta1 and microchip,beta2 in yaml.
+> - rename microchip,resistance-comp-ch1-2-enable and
+>   microchip,resistance-comp-ch3-4-enable to
+>   microchip,parasitic-res-on-channel1-2
+>   and microchip,parasitic-res-on-channel3-4
+>   and edit description in yaml.
+> - add conditional logic to check if the chip supports APDD
+>   and force default values where necessary in yaml.
+> - edit comments and coding style.
+> - replace asm/div64.h with linux/math64.h.
+> - add delay.h to includes.
+> - redefine mcp9982_sampl_fr with new structure division.
+> - in mcp9982_priv remove dev_name,extended_temp_range and beta_values.
+>   Add run_state, wait_before_read, time_limit and pointer to chip
+>   structure to remove all instances of matching strings.
+>   Reorder parameters for memory optimization.
+> - in mcp9982_features add flags to know if the chip has thermal shutdown
+>   circuitry and supports APDD.
+> - in mcp9982_read_avail() rework verification of chip type in sampling
+>   frequency case.
+> - in mcp9982_read_raw() rework switch in low pass filter case.
+> - in mcp9982_parse_of_config() replace generic -EINVAL code
+>   with -E2BIG and -EOVERFLOW. 
+> 
+> v3:
+> - move beta parameters to devicetree.
+> - change the name of the interrupts and add
+>   check to match them to the device in yaml.
+> - remove label for device and remove "0x" from
+>   channel registers in example in yaml.
+> - edit comments in yaml and driver.
+> - add minItems to interrupts in yaml.
+> - rename microchip,recd12 and microchip,recd34 to
+>   microchip,resistance-comp-ch1-2-enable
+>   and microchip,resistance-comp-ch3-4-enable.
+> - rename microchip,apdd-state to microchip,enable-anti-parallel.
+> - add static to mcp9982_3db_values_map_tbl to fix
+>   kernel test robot warning.
+> - in mcp9982_init() add check to ensure that hardware
+>   shutdown feature can't be overridden.
+> - replace div_u64_rem with do_div and add
+>   asm/div64.h to includes.
+> - remove unused includes.
+> - add iio_chan_spec in the macro definition of MCP9982_CHAN.
+> - remove MCP9982_EXT_BETA_ENBL.
+> - in mcp9982_init() replace regmap_assign_bits
+>   with regmap_write when setting beta compensation.
+> - remove custom attribute enable_extended_temp_range and
+>   map it to IIO_CHAN_INFO_OFFSET.
+> - add unsigned to int variables that allow it.
+> - reorder parameters in mcp9982_priv, change some
+>   from int to bool, add const to labels and add dev_name.
+> - add check for chips with "D" in the name to not
+>   allow sampling frequencies lower than 1 to
+>   prevent overriding of hardware shutdown.
+> - remove mcp9982_attributes.
+> - move mcp9982_calc_all_3db_values() to before
+>   mcp9982_init().
+> - use MICRO instead of number constant.
+> - in mcp9982_write_raw replace ">=" with "==".
+> - rename index2 to idx in mcp9982_read_raw().
+> - remove i2c_set_clientdata() in mcp9982_probe().
+> - since there are no more custom ABI attributes
+>   the testing file was removed.
+> 
+> v2:
+> - move hysteresis, extended temperature range and beta parameters
+>   from devicetree into user space.
+> - edit comments in yaml and driver.
+> - remove "|" in descpriptions, remove "+" from PatternProperties in yaml.
+> - add default to microchip,ideality-factor, delete blank lines and wrap to
+>   80 chars in yaml.
+> - remove variables with upper case.
+> - add check for microchip,apdd-state and microchip,recd34 in yaml.
+> - improve coding style in driver code.
+> - add includes for all functions used.
+> - rename MCP9982_INT_HIGH_BYTE_ADDR to MCP9982_INT_VALUE_ADDR and
+>   MCP9982_INT_LOW_BYTE_ADDR to MCP9982_FRAC_VALUE_ADDR.
+> - remove custom attribute running_average_window and
+>   running_average_window_available and map them to a low pass filter.
+> - update sysfs-bus-iio-temperature-mcp9982 to reflect current
+>   driver attributes and point to next kernel version (6.17).
+> - use compound literal to define driver channels.
+> - replace device_property_read_string() with i2c_get_match_data() to read
+>   chip name from devicetree.
+> - remove MCP9982_DEV_ATTR and mcp9982_prep_custom_attributes().
+> - remove client, chip_name, iio_info from mcp9982_priv.
+> - replace sprintf() with sysfs_emit().
+> - remove error messages which are triggered by keyboard input.
+> - replace devm_kzalloc() with devm_kcalloc(), array mcp9982_chip_config[]
+>   with individual structures, device_property_present() with
+>   device_property_read_bool().
+> - reordered parameters in mcp9982_features and mcp9982_priv to optimize
+>   memory allocation.
+> - remove .endianness from channel properties.
+> - change name of some parameters in mcp9982_priv.
+> - add check for reg value 0 from devicetree (channel 0 is for internal
+>   temperature and can't be disabled).
+> 
+> v1:
+> - initial version.
+> 
+> Victor Duicu (2):
+>   dt-bindings: iio: temperature: add support for MCP998X
+>   iio: temperature: add support for MCP998X
+> 
+>  .../iio/temperature/microchip,mcp9982.yaml    | 190 ++++
+>  MAINTAINERS                                   |   7 +
+>  drivers/iio/temperature/Kconfig               |  10 +
+>  drivers/iio/temperature/Makefile              |   1 +
+>  drivers/iio/temperature/mcp9982.c             | 862 ++++++++++++++++++
+>  5 files changed, 1070 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/temperature/microchip,mcp9982.yaml
+>  create mode 100644 drivers/iio/temperature/mcp9982.c
+> 
+> 
+> base-commit: 561285d048053fec8a3d6d1e3ddc60df11c393a0
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
