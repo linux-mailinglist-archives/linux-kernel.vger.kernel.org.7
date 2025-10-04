@@ -1,99 +1,117 @@
-Return-Path: <linux-kernel+bounces-841988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E162BBB8B8C
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 11:19:53 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BD29BB8B95
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 11:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 214A24A57A4
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 09:19:52 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 47AE3347167
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 09:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522532580F2;
-	Sat,  4 Oct 2025 09:19:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F82D25C809;
+	Sat,  4 Oct 2025 09:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HL4174Ye"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XFIjcC4P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2FD34BA3F
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 09:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C796322A4DA;
+	Sat,  4 Oct 2025 09:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759569588; cv=none; b=BDDdVybXEzXbTfrc3AuSfAC7AFXbwgfahA3IS+mrJ9TGIbXQgOJ09FcXIILCTAKnN46x6wi3mHqpfkqmO+1d56YeQxo4oFU6Qd5p7rg/dkPcaIlr9QmpmJjmm0G7oeqgC71x3e80Rs8c1OEXp6XV8gI0CPgN41LMBHbKUyVy3EQ=
+	t=1759570116; cv=none; b=n4ohGTPnbXW7dzW4glAUmbQO/r6JZ8vWHMJ8auq2A57v7hcm8U8/fmtX+AkBL0oHLDVd3q5FDrnJ+1jRIiYzgP2SkCdBxLQ4KkfxqBSGx9XZrVFUM8NK8PSBvOu+1hSti5beHkZjVixBj/bz2Y1FVQLRw4oYOZT4Tbst+aWjWsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759569588; c=relaxed/simple;
-	bh=KY1sX8OSJOh9C1F2nogtM66uWvTnblV5Te6fP8LKJFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Gkg0eU98skcAlzS72qyBMGSlfKjPoxhOZmtABkNtiP36tQE2vxUPfLhft1rMV3J2uFC7p9WMQD+FtUNfznu6yswnrYlLfA5eVMBtODsY/P8hvNNUn9Yosy0FUVnW7HUNsB0+g5UjQEFS9Vsh7oatGH5lZ5W6AXNeUGs37QSy1gY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HL4174Ye; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ADC9C4CEF1;
-	Sat,  4 Oct 2025 09:19:46 +0000 (UTC)
+	s=arc-20240116; t=1759570116; c=relaxed/simple;
+	bh=tXSdGLKEgFkWWOgWzyr7SPiWmc6rtEPxhddbzExB3sY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BbPriHGPCRrHeCJzJnVD2/wVSFNHqJirKe9aSU2oiLE81W6CWJQqE5kVNAWrb5d8xRqtHefai43xFhwobL4Cw7G2NYq4v0HOLV4fD0IN7GK82S57cjdiAvrdL8NrbvelicZFvsvPZtT6MbsmYXZGM/1cYHgt3S64BIw5U8Cj04A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XFIjcC4P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D72F9C4CEF1;
+	Sat,  4 Oct 2025 09:28:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759569588;
-	bh=KY1sX8OSJOh9C1F2nogtM66uWvTnblV5Te6fP8LKJFo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=HL4174YeEnScY90+2h9VljzlObU0qFm2rUj+ciEnAEqj1Bpm6LTXugsyjjnWH4hUP
-	 ABdaSUkNiBn7I+XplDfuqNl9MHViaqzZQQeV17Uaxw9CBtGsVHvR/Q69DmMBKcKR0Y
-	 ZOCWt0C1yp1vmg0vFRaUkMS9BETe51wzpngZ+kjn02UuQe3J29J4ZVTjyitab7yo97
-	 CqatEoXMjJ49mSoGlNYjedIWgDviqNN4nwRkatvc6oHHUTleXx8k8kXrgTmXHHzL5P
-	 uRjivTQmhNNRSb2tgPcWHR1RtcVx5ZKhfJ/0eGpn/bbOItFE3EXwM8XhIzxDcq1tNY
-	 1DBtf8jNZ3+tg==
-Date: Sat, 4 Oct 2025 11:19:42 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [GIT PULL] mm/mm_init: simplify deferred initialization of struct
- pages
-Message-ID: <aODmrlNys5x2LVtl@kernel.org>
+	s=k20201202; t=1759570116;
+	bh=tXSdGLKEgFkWWOgWzyr7SPiWmc6rtEPxhddbzExB3sY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XFIjcC4P7wdEySIshhYn7XmL311iWKwUAsnj/Mz9zZdtsqr/i3sH3GyFL9X45qHOC
+	 lOdgnPGa7HbXDHS4DupvYZwO5xJtIWEZNdfqz7k0QZC6iAeZzJI3ISw7RWf2yjOdy/
+	 G3DP53ICpW+bw78oY5he2kKSPvI9uI07lCsHxWWG3VSXVfRF3rJisxBNLalt+4+SXj
+	 arJXP28gjH0gPsXa7YJP8vfaU8UZ7whwzaB1szMMyVB6qJxkn5ZVDQbxHC6g/eIC7i
+	 jEmBEQx9uB/K3DZ63Knt8sn/Nd6blSygL/VvGVR3CBJHNOXrAfjqKZ4XHSqp2a7xLF
+	 osOuCEFr25qXw==
+Date: Sat, 4 Oct 2025 10:28:31 +0100
+From: Simon Horman <horms@kernel.org>
+To: Daniel Machon <daniel.machon@microchip.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	UNGLinuxDriver@microchip.com,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	jacob.e.keller@intel.com, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: sparx5/lan969x: fix flooding configuration on
+ bridge join/leave
+Message-ID: <20251004092831.GA3060232@horms.kernel.org>
+References: <20251003-fix-flood-fwd-v1-1-48eb478b2904@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251003-fix-flood-fwd-v1-1-48eb478b2904@microchip.com>
 
-Hi Linus,
+On Fri, Oct 03, 2025 at 02:35:59PM +0200, Daniel Machon wrote:
+> The sparx5 driver programs UC/MC/BC flooding in sparx5_update_fwd() by
+> unconditionally applying bridge_fwd_mask to all flood PGIDs. Any bridge
+> topology change that triggers sparx5_update_fwd() (for example enslaving
+> another port) therefore reinstalls flooding in hardware for already
+> bridged ports, regardless of their per-port flood flags.
+> 
+> This results in clobbering of the flood masks, and desynchronization
+> between software and hardware: the bridge still reports “flood off” for
+> the port, but hardware has flooding enabled due to unconditional PGID
+> reprogramming.
+> 
+> Steps to reproduce:
+> 
+>     $ ip link add br0 type bridge
+>     $ ip link set br0 up
+>     $ ip link set eth0 master br0
+>     $ ip link set eth0 up
+>     $ bridge link set dev eth0 flood off
+>     $ ip link set eth1 master br0
+>     $ ip link set eth1 up
+> 
+> At this point, flooding is silently re-enabled for eth0. Software still
+> shows “flood off” for eth0, but hardware has flooding enabled.
+> 
+> To fix this, flooding is now set explicitly during bridge join/leave,
+> through sparx5_port_attr_bridge_flags():
+> 
+>     On bridge join, UC/MC/BC flooding is enabled by default.
+> 
+>     On bridge leave, UC/MC/BC flooding is disabled.
+> 
+>     sparx5_update_fwd() no longer touches the flood PGIDs, clobbering
+>     the flood masks, and desynchronizing software and hardware.
+> 
+>     Initialization of the flooding PGIDs have been moved to
+>     sparx5_start(). This is required as flooding PGIDs defaults to
+>     0x3fffffff in hardware and the initialization was previously handled
+>     in sparx5_update_fwd(), which was removed.
+> 
+> With this change, user-configured flooding flags persist across bridge
+> updates and are no longer overridden by sparx5_update_fwd().
+> 
+> Fixes: d6fce5141929 ("net: sparx5: add switching support")
+> Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
 
-The following changes since commit b320789d6883cc00ac78ce83bccbfe7ed58afcf0:
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-  Linux 6.17-rc4 (2025-08-31 15:33:07 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock tags/memblock-v6.18-rc1
-
-for you to fetch changes up to e68f150bc11d0a05cbe984a4e5c0f72a95cae07d:
-
-  memblock: drop for_each_free_mem_pfn_range_in_zone_from() (2025-09-14 08:49:03 +0300)
-
-----------------------------------------------------------------
-mm/mm_init: simplify deferred initialization of struct pages
-
-Refactor and simplify deferred initialization of the memory map.
-
-Beside the negative diffstat it gives 3ms (55ms vs 58ms) reduction in the
-initialization of deferred pages on single node system with 64GiB of RAM.
-
-----------------------------------------------------------------
-Mike Rapoport (Microsoft) (4):
-      mm/mm_init: use deferred_init_memmap_chunk() in deferred_grow_zone()
-      mm/mm_init: deferred_init_memmap: use a job per zone
-      mm/mm_init: drop deferred_init_maxorder()
-      memblock: drop for_each_free_mem_pfn_range_in_zone_from()
-
- .clang-format            |   1 -
- include/linux/memblock.h |  22 ------
- mm/memblock.c            |  64 ---------------
- mm/mm_init.c             | 197 ++++++++++++++++-------------------------------
- 4 files changed, 65 insertions(+), 219 deletions(-)
-
--- 
-Sincerely yours,
-Mike.
 
