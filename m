@@ -1,247 +1,117 @@
-Return-Path: <linux-kernel+bounces-841922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90804BB8897
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 04:42:54 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 201FDBB88C4
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 05:09:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CF3BC4F1770
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 02:42:15 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 944B63472F3
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 03:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31F4221F06;
-	Sat,  4 Oct 2025 02:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0631DE3DF;
+	Sat,  4 Oct 2025 03:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ft3a855I"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WwaNt6H2"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22FA72116F4
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 02:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4DC2A1AA
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 03:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759545723; cv=none; b=cWBtPl+HPeWGZ6Ayl5Tg5qZ4nwoh9Y1Mz0Fke9DVd+k9jzMv/pqKc17oXwv9rBbykLTQ2u79Vy29q1H9NQd2HXM0XG07ltDDzdsHDId6HJSv5obFKzpTSWHzBmQKNNQtcXm9gfQpeol9x/oxE/ixWgVpIoLB/NoxPDnqwgZPlaA=
+	t=1759547359; cv=none; b=SMsA2BcqlqqPqMuWR33QIqZmY83SKfxV1Hz9wck2qT4ebaUSF066dDTo0/wY8KY00yMBzo3I8Ze9G/VmlpcWxRoeGSRu1QcEu/uKa2DXKw0KsmWclq0hqQ0Yc4/zqxoHgA5TnOE9Kx9bvhrsr/MiuENTiRdTpzSEo4oDPmu530c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759545723; c=relaxed/simple;
-	bh=GrG+sZoFKRUNsfWBm/ynu78GdpzwzH9S+BPs1TW4kbo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OHUwqE9xh1pBQl+9Lj19SB3U+YEi6WY9sGTRi+Tun3VPRMV685gNGpfYTOD7yyq9XVlK7n7YPVNgYA9QE1DCitDAROF0yJZclR9rBmttlhmDumuWg89MaCrUrzBhTZSlHiGR/4BlH2k7HUjJbgu3rtg2Li72NVCBc+TvBi9txTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ft3a855I; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5942Q1tO023489
-	for <linux-kernel@vger.kernel.org>; Sat, 4 Oct 2025 02:42:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8LKTW72ANVRWqbBbs1orSLC8F5L2PbgtH5ZHTOYbBuc=; b=ft3a855IBg2OWRMS
-	nbEgEinUC+Q4mu3cLXd85jjLj7n8OO+Ucb94YSBzV9M5iSWwKetL3Jsq4a017sm3
-	cUwHRP5HjLnh0yHLysMi0QaZz40BiJsG+tY4MKyYaSkGLwsw1bDzdS/CGipJqsiY
-	7L2gTQb0941neWt3rAVYORT29ZMYfGyPGsjyNAQdgDcOkbEVECBxvw8eeUiRALnq
-	ei11ZUNXHGrhrTpevLeGySZ6xGBdvFGGSt/+RjFwqSjvI+U2NTgOodJBAHW9HoQe
-	hFrKTcGbHL+aukMz9E71YIsi5Bo7uj2gsJ6GVc9qFoi8h6MsRCr0B67/lsDkNLi1
-	WxBtvg==
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49js9dr4u1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 02:42:01 +0000 (GMT)
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-78117fbda6eso2706267b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 19:42:01 -0700 (PDT)
+	s=arc-20240116; t=1759547359; c=relaxed/simple;
+	bh=l6Ef44f9+AzpaixRgRAp8RGfj3Zk1wioLQw76MXl1So=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jtkgvLzbkhOmKt6Yi4I6J4Ahgayoo1U8j/pz8cNgjoBgay7qpl13euKm2QmQBYe5ZrlSdl9UeHQ2EI89spuzsJOjoEAeQJGzZ1klg441bcvbgrmxYnZX8sN+cdqJWFWfiSj0euPmre+sSKL8on5D/TpTl7yoEhMcNLOUM6xRLeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WwaNt6H2; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-781206cce18so2594099b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 20:09:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759547357; x=1760152157; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=llyEZQY0mloy3RaEkBiyvFLO4+4gWq62N7isj8QKbEw=;
+        b=WwaNt6H2/F/9Aj7vcBh6AQfceOq9RJHY3327eZRF2uYiI+lh5Jez95gMP2+/DIhWIV
+         j/OKQm7LnnUVH7TqMbLqrxjSSx22DFgVOtCO7KGToTGpdZrNUosIeFlzrwFKbJ1TxlGX
+         a3GdMLt6fHc541MAN1DfpqmGfH8heQIlwT6DDRE8xXNOH4YYMn4NCBMognErkrvwGoPP
+         Iz9te5yjvVKFjeeSF9/lVa708f50gbCqh9P/k3qeGFKsyiz8FWkcdX/V9MsW/bNORffu
+         fVYrjFhRhNEdBR9tcVxr7IMs9AzqLITcxFRcNIz/wYic134Pa3tFHsTkF0hbsR7z9JaC
+         FXBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759545720; x=1760150520;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8LKTW72ANVRWqbBbs1orSLC8F5L2PbgtH5ZHTOYbBuc=;
-        b=JWWLh+jGIGitwDBdBQLyQed0x1AFOY9NOWUvbjfbcRCbHS10W2EjftokLlhLlnFqPO
-         2wKPKvWzsAdCkHQh1lZefuYbMbQLu0LKANN0oR13gYGvRMLYCs0mbseiIrXOvXN//ZSJ
-         ySH7XT22mS+Mu69lUBPsVNptfHJGBp1c9dsmQc4T9CRXwBb1HdUif5E8OotHouiPvXuL
-         eUPIcPjLEaND5gyd9TLk5Cgv+Y3EHeollhqr+tWuTU6GSQEpcrEmpu4EFXlvmrFosvvf
-         EMhSELs38QWvf7J6YqRrOoQZ7umQfAAGGRBMR3+eNACYA1NdDiCxVgHmucRZOXB4GcJu
-         9NXw==
-X-Forwarded-Encrypted: i=1; AJvYcCVSj9bCk1c4A62/Hq1r1BFD9VNrxLropOoZIfOB8+ZPUGdHbNAuReKcnI33e1SaLLXT6+PuTWh+i01IIS4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygcFimFAPb2btRMKObIW74SfaXFCZgwxeho16C70oDqcdn7D2G
-	z/OOO17XXZRqmherOYQSx0FwdBxFitPMbEb0q/gKuJeczvkrRmJ6OHHo4oWVxky0My+5ADD64FS
-	ZnKsRfMI0CqHJZMoTpQw+AO95Flvs4WKw05SR957wDUQEo3n7Fb8UL3isfkTSciwPrpc=
-X-Gm-Gg: ASbGncu80jIOv59V4Zrwu3fKx9+g7y+hc+gvBmZdUgJB24vx4OMY8JPTC9dXeY4fSly
-	omkKmETLl/ci8XnYasXAUovp4nRlgQWx5PfUqEju1FwBjtehW02ElvDWQSUbSpAN99aTkeLjLNn
-	adc2dE1DlW+YfJ7C+XH/iYwJUS24kKB7EbC2jD9U28ohZGbmCp4kRXuVH5Xtxs8v7A9AMGnSlSR
-	Iei5MPO00CYGKBJpCLjQ3o2XsSKFAXtbZngQL6WoQOVVpSpkGV6q7f6sg/7pJhUtPnP7J9o7Rw4
-	ZaySXx3lv/ACUmkJYyIr6FJ/xibQuLsowTdibxitNo07gdyx53zTCSIMPWRa8fKOiJoSbHLHbZi
-	Nqg==
-X-Received: by 2002:a05:6a00:8c6:b0:781:2538:bfb4 with SMTP id d2e1a72fcca58-78c98d5cb4cmr5364065b3a.10.1759545720386;
-        Fri, 03 Oct 2025 19:42:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHoqhjBr0QjJZhFy4pINP5TXEFjwtPrvEKpTZgZJvp0XgVHp0FpeliOUWBrj6cq1uLbRLNrvA==
-X-Received: by 2002:a05:6a00:8c6:b0:781:2538:bfb4 with SMTP id d2e1a72fcca58-78c98d5cb4cmr5364023b3a.10.1759545719824;
-        Fri, 03 Oct 2025 19:41:59 -0700 (PDT)
-Received: from [10.216.33.177] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b01f9a2b9sm6189511b3a.19.2025.10.03.19.41.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Oct 2025 19:41:59 -0700 (PDT)
-Message-ID: <a3158843-dfac-4adc-838a-35bb4b0cbea4@oss.qualcomm.com>
-Date: Sat, 4 Oct 2025 08:11:48 +0530
+        d=1e100.net; s=20230601; t=1759547357; x=1760152157;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=llyEZQY0mloy3RaEkBiyvFLO4+4gWq62N7isj8QKbEw=;
+        b=J+0sEDiA2sbKEfmRKSgDOcrZdu8rEyfkGRSIO+3X0U4nSgZbhREjQHhwieg0gwuJdC
+         iNXzswESAjUcVAGHK1cw7lh39DsLAT/7tVXvh88lREL27yzx62Sr/jLXvRyPbSpYC9OE
+         dj1gZQO8NN/fxnJhldv43WI7eGcGD12FKufyObM9KdLqqtdXc9tYSD1flQbmIdOrAkgr
+         nZ68eV47qgqaP4k1CRJcRWLE5aLpUOV7qtyW51d480lXkyYzzx9AkpBDetI/G9w0brv9
+         r4Ri7u2E0QEqTeorHYvgqHUQdT57xxE0prGz66p+ZPozHV08qqVQOTy99niIuacJiEj7
+         vqTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWDfffY5BA0b5vUGAeNrM6CbhrQSdWEddScTirHb8SIpA4XbSENnoAqrkrQbFf46UdTl87PMlqMRu522Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBwWNDHQnKqDxqrs78O5MKSb6xsL71J3cBJJRQufPWKo9FodRE
+	I4TRgyGDZ6x4nRCgLiUuipBnPJ767PvlhB2661PxdeRi9Vecgnovu4Bo
+X-Gm-Gg: ASbGncsdrTU2Lo4Y5nz3x88TTg8EGbEU9VZIHiwwME2ssEzKHQtjH2V9+sSC6sICGpm
+	2AH8VADR9koEhaJ/gBdo9LZ2TnzsnzHhT8giKkn1KLAKZA5Y2TQl6bNJCB7w0CiUraWlery+JDl
+	BhZbl6qtl4xTeufs/E3o67yINBYewCZBe3hZ/im4Cq3b+uLXPIxffUIa8SFGfjVSr3P3mPML8c5
+	FzihecDNyTGT4zQPzdziN34rjb2vMlZgkjWSFzhlVzQZm1kXbx5ESxAgrFlNY6muU/l5RMJy74i
+	Gh8UvWEMl4wsrAkSqF6db9COzOYLocpT4iXGOmxD3nqmPMbs2aawNhNEe627RFaXQdqlTyLvYKg
+	V8wP/mZKva1fplGNQ6MX/Cq3Ompb/X2r4fEq2NZh+KRg32j4+PWRf/ysSQvti2w==
+X-Google-Smtp-Source: AGHT+IGn24rRAn3ohvoYNubWucjGX8u0BlqwWrNTlIP1SEBmyKD0H/UK+YAx711lmWxrLLSbDrTeYA==
+X-Received: by 2002:a05:6a00:4fd3:b0:77d:c625:f5d3 with SMTP id d2e1a72fcca58-78b021ebcd4mr11645062b3a.1.1759547356824;
+        Fri, 03 Oct 2025 20:09:16 -0700 (PDT)
+Received: from ryzoh.. ([2804:14c:5fc8:8033:c5aa:36f3:14cd:8995])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-78b0206e809sm6256279b3a.71.2025.10.03.20.09.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Oct 2025 20:09:16 -0700 (PDT)
+From: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+Subject: [PATCH] KVM: use folio_nr_pages() instead of shift operation
+Date: Sat,  4 Oct 2025 00:02:10 -0300
+Message-Id: <20251004030210.49080-1-pedrodemargomes@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V7 3/5] dt-bindings: iio: adc: Add support for QCOM PMIC5
- Gen3 ADC
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, agross@kernel.org,
-        andersson@kernel.org, lumag@kernel.org,
-        dmitry.baryshkov@oss.qualcomm.com, konradybcio@kernel.org,
-        daniel.lezcano@linaro.org, sboyd@kernel.org, amitk@kernel.org,
-        thara.gopinath@gmail.com, lee@kernel.org, rafael@kernel.org,
-        subbaraman.narayanamurthy@oss.qualcomm.com,
-        david.collins@oss.qualcomm.com, anjelique.melendez@oss.qualcomm.com,
-        kamal.wadhwa@oss.qualcomm.com, rui.zhang@intel.com,
-        lukasz.luba@arm.com, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        cros-qcom-dts-watchers@chromium.org, quic_kotarake@quicinc.com,
-        neil.armstrong@linaro.org, stephan.gerhold@linaro.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-References: <20250826083657.4005727-1-jishnu.prakash@oss.qualcomm.com>
- <20250826083657.4005727-4-jishnu.prakash@oss.qualcomm.com>
- <20250829-classic-dynamic-clam-addbd8@kuoka>
- <5d662148-408f-49e1-a769-2a5d61371cae@oss.qualcomm.com>
- <4e974e77-adfc-49e5-90c8-cf8996ded513@kernel.org>
- <a0e885be-e87d-411a-884e-3e38a0d761e5@oss.qualcomm.com>
- <8c90cc3f-115e-4362-9293-05d9bee24214@linaro.org>
- <5d4edecf-51f3-4d4a-861f-fce419e3a314@oss.qualcomm.com>
- <20250927144757.4d36d5c8@jic23-huawei>
-Content-Language: en-US
-From: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
-In-Reply-To: <20250927144757.4d36d5c8@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=Hrl72kTS c=1 sm=1 tr=0 ts=68e08979 cx=c_pps
- a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=u19HPSzwk6W4tZ9FH_gA:9
- a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22
-X-Proofpoint-GUID: 7_VsOoDANRpJV_wkL6iU0c9HRJOwmPWE
-X-Proofpoint-ORIG-GUID: 7_VsOoDANRpJV_wkL6iU0c9HRJOwmPWE
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAwNCBTYWx0ZWRfX+Am4AjdzyDBf
- uQWPbVMyaRlCBGOVy9QU0Y9dZp7EIUH+pubU4gJmzX/Wr7F9P9fUCau/fsUdt7bv3RV0BehWOBJ
- Yl2tU/Fm/rI9dj5pUabAeNVkpodGwl2dhXH14ndMFwyUSATOC864r7K5VLP/dbOg19zRj4mHQTr
- BeJrzLI4q7FMqQz/SrLtPwwzaZLq545BYtF7ZClI/yK/xIwrdTs7rM8rBJwTt5A93RDFrAGKhH9
- j71yyDmx7E9qgH168dEi3I5/2BRsnktogbtEdlHh/sjsfbIk/1L2Dv+6OvWk4B4U0NUQjrKkgYa
- T0ToJX2HLDR/gL5yb4o+DvwTZYjPrUJQzwFB7OzPyTl69KZ5cBieTfi33DYOX/myaFgljN+Jtcj
- F54G2TyrfQSxH4ayR0mAuNQO3DDaDA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-03_07,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 phishscore=0 spamscore=0 adultscore=0 lowpriorityscore=0
- bulkscore=0 priorityscore=1501 malwarescore=0 impostorscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040004
+Content-Transfer-Encoding: 8bit
 
-Hi Jonathan,
+folio_nr_pages() is a faster helper function to get the number of pages when
+NR_PAGES_IN_LARGE_FOLIO is enabled.
 
-On 9/27/2025 7:17 PM, Jonathan Cameron wrote:
-> On Fri, 19 Sep 2025 20:17:43 +0530
-> Jishnu Prakash <jishnu.prakash@oss.qualcomm.com> wrote:
-> 
->> Hi Krzysztof,
->>
->> On 9/18/2025 5:45 AM, Krzysztof Kozlowski wrote:
->>> On 18/09/2025 04:47, Jishnu Prakash wrote:  
->>>> Hi Krzysztof,
->>>>
->>>> On 9/17/2025 5:59 AM, Krzysztof Kozlowski wrote:  
->>>>> On 16/09/2025 16:28, Jishnu Prakash wrote:  
->>>>>>> You cannot have empty spaces in ID constants. These are abstract
->>>>>>> numbers.
->>>>>>>
->>>>>>> Otherwise please point me to driver using this constant.  
->>>>>>
->>>>>> These constants are for ADC channel numbers, which are fixed in HW.
->>>>>>
->>>>>> They are used in this driver: drivers/iio/adc/qcom-spmi-adc5-gen3.c,
->>>>>> which is added in patch 4 of this series.
->>>>>>
->>>>>> They can be found in the array named adc5_gen3_chans_pmic[].  
->>>>>
->>>>> Really? So point me to the line there using ADC5_GEN3_VREF_BAT_THERM.
->>>>>  
->>>>
->>>> We may not be using all of these channels right now - we can add them
->>>> later based on requirements coming up. For now, I'll remove the channels
->>>> not used in adc5_gen3_chans_pmic[].  
->>>
->>> You are not implementing the feedback then. Please read it carefully.
->>>   
->>
->> Sorry, I misunderstood - so you actually meant I should remove the
->> empty spaces in the definitions, like this?
->>
->> -#define ADC5_GEN3_VREF_BAT_THERM               0x15
->> +#define ADC5_GEN3_VREF_BAT_THERM 0x15
->>
->> I thought this at first, but I somehow doubted this later, as I saw some
->> other recently added files with empty spaces in #define lines, like:
->>
->> include/dt-bindings/iio/adc/mediatek,mt6373-auxadc.h
->> include/dt-bindings/regulator/st,stm32mp15-regulator.h
->>
->> I can make this change, if you prefer this. Please let me know
->> if I'm still missing something.
->>
->> Also please let me know if you want me to remove the unused
->> channels - I would prefer to keep them if there's no issue,
->> as we might need them later.
->>
-> He is referring to 0x14 and below not being defined values.  So what
-> do they mean if they turn up in the DT?
-> 
+Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+---
+ virt/kvm/guest_memfd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks for your clarification. To address your first point above, the macros
-added here only represent the ADC channel numbers which are supported for
-ADC5 Gen3 devices. If there are numbers missing in between (like 0x14),
-that is because there exist no valid ADC channels in HW matching those
-channel numbers.
-
-For your question above, if any of the undefined channels are used in the DT,
-they should ideally be treated as invalid when parsed in the driver probe and
-lead to an error. When I checked the code again, I saw we do not have such an
-explicit check right now, so I will add that in the next patch series.
-
-And to be clear on which channel numbers are supported, I think it may be
-best if, for now, we only add support for the channel numbers referenced in
-the array adc5_gen3_chans_pmic[] in drivers/iio/adc/qcom-spmi-adc5-gen3.c.
-
-There are only 18 channel numbers used in this array and I would remove
-all channels except for these from the binding files. During parsing, we
-would use this array to confirm if an ADC channel added in DT is supported.
-
-In case we need to add support for any more channels later, we could add
-their macros in the binding file and update the array correspondingly at
-that time.
-
-Does all this sound fine? Please let me know if you have any more concerns
-or queries.
-
-Thanks,
-Jishnu
-
-> Hence the request for context on how this define is being used so that
-> you can get some feedback on how it should be done.
-> 
-> J
->> Thanks,
->> Jishnu
->>
->>> Best regards,
->>> Krzysztof  
->>
-> 
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index 7d85cc33c0bb..5fc5475cf826 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -77,9 +77,9 @@ static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
+ 	 * The order will be passed when creating the guest_memfd, and
+ 	 * checked when creating memslots.
+ 	 */
+-	WARN_ON(!IS_ALIGNED(slot->gmem.pgoff, 1 << folio_order(folio)));
++	WARN_ON(!IS_ALIGNED(slot->gmem.pgoff, folio_nr_pages(folio)));
+ 	index = gfn - slot->base_gfn + slot->gmem.pgoff;
+-	index = ALIGN_DOWN(index, 1 << folio_order(folio));
++	index = ALIGN_DOWN(index, folio_nr_pages(folio));
+ 	r = __kvm_gmem_prepare_folio(kvm, slot, index, folio);
+ 	if (!r)
+ 		kvm_gmem_mark_prepared(folio);
+-- 
+2.39.5
 
 
