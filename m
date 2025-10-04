@@ -1,149 +1,117 @@
-Return-Path: <linux-kernel+bounces-842000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8352DBB8C01
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 11:32:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17CCEBB8C07
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 11:37:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2F9E5345CF6
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 09:32:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B50333C3D1C
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 09:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2E0283FD4;
-	Sat,  4 Oct 2025 09:31:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C422726B2AD;
+	Sat,  4 Oct 2025 09:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="AMlhrgUf"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EAUQw4+5"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016E22820A9
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 09:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24731DF271
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 09:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759570281; cv=none; b=KIRW35kSqp3TzXzvmutUwFKkdg3t3gJgRueyBwRerUXVRnLwH4Nynfigjv4SCHcwUBXEE4iyXN7WH6qCUkaRTY6QyMjIaIKyg0i80ZBO1x5IpZmhGzvYQrn3/1dmDMlVLIEQhZbJrUS1rzDFZ2l1FuvlzCIiI0Qvn5QHHUYGR1E=
+	t=1759570620; cv=none; b=iGzddeBAuGjJbqjz05j9Cd46f9HqNaE+9TcLZ/1c0doVPFFK25KshNGQgGecbXffvaJXbo2EyMcHFdcWOd/CIv5INV29fDs+8MfdxJulbjLeDTDjPB4i5aiMiizelVvXsOKAemEuS/i28XH7rMy/S6Wb/qMj70yAG5kIZF95Pxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759570281; c=relaxed/simple;
-	bh=D0Fu/ldQhntehM2Mq/IXQJTZKKJwzHie8we5EhgLjv8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gtP1DctedtEgGhIT7EX1MoEazmeQsnfU8/tHpDvWgRrZ9EHm9aBY2xrOuKBSUaSYYmlRVEzUyc44ZthizJNUVm+3fIM4uZjAvjbwfAs34w7WSWQR5Ssgsc6z+st/16VQbcII4O8Nru0YGMQNujZPMOxe6+GlVBrEDJ+bd+QF+54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=AMlhrgUf; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759570278;
-	bh=D0Fu/ldQhntehM2Mq/IXQJTZKKJwzHie8we5EhgLjv8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AMlhrgUfj67oXsQPTFjfkhXxPYErzu07l7zcQuFt1VeLOO4l1kddXtiTb2X/cetOS
-	 6XMF0S8g5Fu73Rg3lAVLMWykZe56IdRC60HwD9pv/MEZTOZ6Rsmkio0eJfbmu1nwCK
-	 d4IdxOltI8YwNAtsLWvnJxFMf/9AVfESz8Ub5ydUncWsPC7OnRkCO+XAq+H4dRQyS2
-	 llItYjnG94oPb9HEZHBOeRVHE+Lsuht91g6GWGJTZzTqRPBN3VlqNnsa57784xcp1/
-	 Of2brQuMsVBOznatNjK2ireFQDvmFsXBo6sqcHe+RO6GcwaxxUcglmxauY2WbuVjd7
-	 UuGUKAQRIUOaA==
-Received: from debian-rockchip-rock5b-rk3588.. (unknown [IPv6:2a01:e0a:5e3:6100:2e0:4cff:fe03:d8c])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: loicmolinari)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9C0FC17E13DA;
-	Sat,  4 Oct 2025 11:31:17 +0200 (CEST)
-From: =?UTF-8?q?Lo=C3=AFc=20Molinari?= <loic.molinari@collabora.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Melissa Wen <mwen@igalia.com>,
-	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
-	Hugh Dickins <hughd@google.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	=?UTF-8?q?Lo=C3=AFc=20Molinari?= <loic.molinari@collabora.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	=?UTF-8?q?Miko=C5=82aj=20Wasiak?= <mikolaj.wasiak@intel.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Nitin Gote <nitin.r.gote@intel.com>,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	Christopher Healy <healych@amazon.com>
-Cc: linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	linux-mm@kvack.org,
-	kernel@collabora.com
-Subject: [PATCH v3 10/10] Documentation/gpu/drm-mm: Add THP paragraph to GEM mapping section
-Date: Sat,  4 Oct 2025 11:30:53 +0200
-Message-ID: <20251004093054.21388-11-loic.molinari@collabora.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251004093054.21388-1-loic.molinari@collabora.com>
-References: <20251004093054.21388-1-loic.molinari@collabora.com>
+	s=arc-20240116; t=1759570620; c=relaxed/simple;
+	bh=feYeUBQ+zRG9kMk06d6rOS7HenSqT9mRm9UdGzyR9sk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fRVaM+ZVpj4iT6rpCNademDM0C6cR1YIL6nXVr0S+1CTjg693oNDO89Aw6KdHiBiqurlRtzpO23jKLwJhcgOm0occx6kP4kGAHibVZHgvBEgF5JZGrc8XUHBG87f17s53+YgNRVtkKXnEnllWAS8ZGsR8+6IOdAqutRbP1+499M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EAUQw4+5; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2697051902fso4640535ad.1
+        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 02:36:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759570618; x=1760175418; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=feYeUBQ+zRG9kMk06d6rOS7HenSqT9mRm9UdGzyR9sk=;
+        b=EAUQw4+5LYWQngugBjBLw0Xli5fkrp1Hb6Q/hBHURfvySLY+19E9q+Kk7yh8Po10mh
+         s80MGXT77UGkhKMVtpkU5ulu3FwKeFWdM97tp3NMyshBEtDFGkvoI2NkzUU94QTLhHZa
+         5QQeWnAxesG1TrcCSj0/ajG88FtkVdId7deoRrebAtdUVC1v9+g1x7cqCPtEAtn7K+Ue
+         cCms5cw093CGFnMOHrLq9oBNmgh3KTK1q8HUReZwJ55ei7AsP7f7jS2phzIJAFYosjMO
+         MKGDcetP2isEvuNBtVOV2IXKDLsa6Re/7tyhBOTsPTsmhWykaIKEMw7hlfDwD9G+12DE
+         Mcww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759570618; x=1760175418;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=feYeUBQ+zRG9kMk06d6rOS7HenSqT9mRm9UdGzyR9sk=;
+        b=XRoy5shSfJktBdWdVhWjE4GhLh6+MaiBBbve51v3v4fUVlCeRpHhgBtGuKkPUt6gRZ
+         MSAyvKtd1ICtgrkNv7ITT1NAgDl4g091k8LLkVMYgpMlHaeyu/b8KbdAdVqG6xLBYuZ3
+         KtxrVF+PqVz1AmeuCZKmMAsN/2jHdN04JjJo9rBKHQVcjjr4bUZL2HwBSQf1htmAkITn
+         NJpdzCHmRsbzdeshCl2Cnzn/FoYUBzwlK37lk15F45sNTHxaFnq4lc4C0k4vfiLcOFii
+         3iQoIjXlmc2553tE+4N/Wh21CZIW74fZHiPPbjNG6IjpkzKYVtI7ExPqvj8Nju6R4FVC
+         cp/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVnU+CXZWWviCQhniRz///Nu79RcWYIe6ML3DSWmPyRr/pGqikBFn2keKXELeWlrUaFo8YOXgzOAtdgTNw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4hQQROxL06EKCm1IuXZGXD2ImW/7FFiDC7gO2TOO7Ilx86G/i
+	LC7K6QDsLHXUB6WP2Rnk8AymIFWf8Qe44Stgywmcx2RZfaYq7AOUrlgB1Wns1yXwyF0yRjskWvQ
+	D9HXRvWZH6tXiwf5sH7a1br4CMkKH3XI=
+X-Gm-Gg: ASbGnctyV5O5Ez0n5Tg7n+hoty0+Yf3Oh+MqqAGXgntr4YW4mc8YbX8hYq8ClOyvM2d
+	5nWg7lI1YV2usIf3HyvEBU9f8N0FvSyJDp/uoa3etRTJhUksOG7qDm+xiUcbG5VF+eDn4KdcwUC
+	FE8fyk+q3KBIBAuVdMgOgNEWKydDQvyEGzjcafDtTmG2qBY0sQ1hzwekbCLXGkoUr7dfMFZ9OTJ
+	v0yyvW2WRhoq2wIewO8TCWtwtAbdeMFVjw76qH75G9VRxtDHdR1Q2ZCFiTKJQL5DBGUxJhNjpB+
+	jHpugI2so6mn8wwTJZ91wb1QR3zGzEH5HOBFNQOBT3XH+Q9t+w==
+X-Google-Smtp-Source: AGHT+IF77wTkNQM9OohiiK7sgjNFds3niKOBIfBEyFk8BZ16yvDihaUL7UtpNXy0XNC2sOVra2ov0jtp328+HUcOPDg=
+X-Received: by 2002:a17:902:d2ca:b0:288:8c30:f08c with SMTP id
+ d9443c01a7336-28e9a5d22c7mr40643515ad.2.1759570618049; Sat, 04 Oct 2025
+ 02:36:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CAPM=9tzYUBfz+YmifRDgdBsuTL=FpBxQVfxu23it48kGRzJNPQ@mail.gmail.com>
+ <CAHk-=wgO7S_FZUSBbngG5vtejWOpzDfTTBkVvP3_yjJmFddbzA@mail.gmail.com>
+ <CANiq72kq5YHovH=_a9c0JQgfrAx9gRsQvVo1VfHd-FaupOp7rQ@mail.gmail.com> <bd004ac5-9e51-4e90-a3a4-025d74941a38@nvidia.com>
+In-Reply-To: <bd004ac5-9e51-4e90-a3a4-025d74941a38@nvidia.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 4 Oct 2025 11:36:45 +0200
+X-Gm-Features: AS18NWBfyunA2-nfASh7Yj1hCcCcrL6FKNe1jx_SFPOW7HhxILbzUUVeFdW6VCI
+Message-ID: <CANiq72mRdQRM_uDPxB35zUDXrS99o6i=RaPjTghVTZSG53i2_Q@mail.gmail.com>
+Subject: Re: [git pull] drm for 6.18-rc1
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Dave Airlie <airlied@gmail.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Sima Vetter <sima@ffwll.ch>, 
+	dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add a paragraph to the GEM objects mapping section explaining how
-transparent huge pages are handled by GEM.
+On Sat, Oct 4, 2025 at 3:54=E2=80=AFAM John Hubbard <jhubbard@nvidia.com> w=
+rote:
+>
+> Very happy! Far more so than I expected. Being able to *not* fuss around
+> with minor formatting details (while editing, rebasing, and reviewing)
+> has been absolutely transformative.
 
-Signed-off-by: Loïc Molinari <loic.molinari@collabora.com>
----
- Documentation/gpu/drm-mm.rst | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+Thanks :)
 
-diff --git a/Documentation/gpu/drm-mm.rst b/Documentation/gpu/drm-mm.rst
-index d55751cad67c..0ce6e27f8463 100644
---- a/Documentation/gpu/drm-mm.rst
-+++ b/Documentation/gpu/drm-mm.rst
-@@ -283,6 +283,8 @@ made up of several fields, the more interesting ones being:
- 		void (*open)(struct vm_area_struct * area);
- 		void (*close)(struct vm_area_struct * area);
- 		vm_fault_t (*fault)(struct vm_fault *vmf);
-+		vm_fault_t (*huge_fault)(struct vm_fault *vmf,
-+					 unsigned int order);
- 	};
- 
- 
-@@ -290,7 +292,7 @@ The open and close operations must update the GEM object reference
- count. Drivers can use the drm_gem_vm_open() and drm_gem_vm_close() helper
- functions directly as open and close handlers.
- 
--The fault operation handler is responsible for mapping individual pages
-+The fault operation handlers are responsible for mapping individual pages
- to userspace when a page fault occurs. Depending on the memory
- allocation scheme, drivers can allocate pages at fault time, or can
- decide to allocate memory for the GEM object at the time the object is
-@@ -299,6 +301,19 @@ created.
- Drivers that want to map the GEM object upfront instead of handling page
- faults can implement their own mmap file operation handler.
- 
-+In order to reduce page table overhead, if the internal shmem mountpoint
-+"shm_mnt" is configured to use transparent huge pages (for builds with
-+CONFIG_TRANSPARENT_HUGEPAGE enabled) and if the shmem backing store
-+manages to allocate huge pages, faulty addresses within huge pages will
-+be mapped into the tables using the huge page fault handler. In such
-+cases, mmap() user address alignment for GEM objects is handled by
-+providing a custom get_unmapped_area properly forwarding to the shmem
-+backing store. For most drivers, which don't create a huge mountpoint by
-+default or through a module parameter, transparent huge pages can be
-+enabled by either setting the "transparent_hugepage_shmem" kernel
-+parameter or the "/sys/kernel/mm/transparent_hugepage/shmem_enabled"
-+sysfs knob.
-+
- For platforms without MMU the GEM core provides a helper method
- drm_gem_dma_get_unmapped_area(). The mmap() routines will call this to get a
- proposed address for the mapping.
--- 
-2.47.3
+> For example, on today's linux.git, I just now ran it, and you can guess
+> what happened: it changed its little mind about yet another use
+> statement! See below.
 
+Hmm... I am not sure what you mean by "another" -- this is the one
+that Linus left in the tree, i.e. the one that originated this thread.
+
+In other words, changes should not appear randomly -- the stability of
+`rustfmt`'s output has been perfect so far for us in these years and I
+hope they continue to maintain their stability guarantee. It is what
+enables this, after all.
+
+Cheers,
+Miguel
 
