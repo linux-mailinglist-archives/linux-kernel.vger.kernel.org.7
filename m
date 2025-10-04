@@ -1,89 +1,92 @@
-Return-Path: <linux-kernel+bounces-842140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F7B0BB9136
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 21:11:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7F72BB9148
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 21:12:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53A1F3C019F
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 19:11:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8F583C0376
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 19:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C6C284674;
-	Sat,  4 Oct 2025 19:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91330286D55;
+	Sat,  4 Oct 2025 19:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="aKpDzyVf"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013063.outbound.protection.outlook.com [40.107.201.63])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AYA4zxHP"
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012016.outbound.protection.outlook.com [40.107.209.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFF91411DE;
-	Sat,  4 Oct 2025 19:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.63
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C7C28642D;
+	Sat,  4 Oct 2025 19:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.16
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759605105; cv=fail; b=DqcfnV8nic+dImOb5V77Yz+8yFeCZg0Vv33PmzyS5fVFU2suzxv44sjqNzueIQbPvcYz9AuMMlZoZAC2ZENZ3rB9MKF7M2EtZPhT+n6j995+jHhlS2CiY7v6rAqV8jE6NhmkqHnBEik2FGe0agO0B1mQJxQmeS7V+qGOD4sRX5Q=
+	t=1759605113; cv=fail; b=RcSJ/ZyxUZL5XfxRYRMtNsf80VJVqFvovVVy5r6s7DAJ6GE4XE//03bNNJ+R9CDiFBsJ2SPMGjLsejRw7I2GA395T+J3uEeJJADurEkkAJyyagKCAKZMhuXt+vNcsi/42GQgFUyb107Sd+yrd84W0Z2tmrk8Q7ZT4cKOvdmel/Q=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759605105; c=relaxed/simple;
-	bh=Y72Y/No/r4xm+ComyKARcU36em/46xb4uCiOmT0f9T4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WyvMHwZR6YRmXPZNKxFBrcy7d65mIjEWB3Rm4H1vXdaiuv3PENCMaug6XvmBqJd4ELdH2VIWwog7sYshQ8W8FiRCrtRV8nzDXbxJ+9QEjK/o+qnwh0wtgdnMXDNZP3oeYpBfVpjJeA/SwASxGq5cSWye3uayU3tzyFt/4+Lz9jc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=aKpDzyVf; arc=fail smtp.client-ip=40.107.201.63
+	s=arc-20240116; t=1759605113; c=relaxed/simple;
+	bh=bz7NWnNxg8a1C9bghWnPPCdlTCBxYAfIgyAxZ0Ky2rY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sb9sLae6Gpwf8UJD6oM9rRNeNJpYS3T6YgsxHo9jU/9YQtSPjw3/Xzl7F3MlugBhFZJNxNvLZvKT7aKEusqTndY7jO8LiINZSDHp3hVZ0JFrSdTxShc2WeDTNeMRVtkTbOdCTLvk/zzHfN2X1ixYyHH3hNJWnO0ov5eK0EGYg4E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AYA4zxHP; arc=fail smtp.client-ip=40.107.209.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=g8c1H/svH85UEMf2iNfOL11oWZmp+p4o67TGsJcX8Q2EuXzEnmu9/6tCoXbRGlUNNpp6FGTV2KLkrkK2EtD2pKlBLj8Kz4KBejb0JIQ9kpeElCp3bGnV3mi4hSgjspDeiUtpVrmhxcO1yKkHznbXMlutcoZg5EeEA/fJ8hZWGmi5GV9XNzr2bhsyAQ8bvL7yU3l5fR8lzpqHTObOpn9BBJCiLEonyIlZ0v8h/a4765fo/4bsZ09wddNCU7mhjrkc/MLhK+muY5vuIC0ug6zEKht8qEvNYuRVjyzBetVyOcVh0fSTfVCLxM9IvEStwtukYtfh5wjICHI5q9UwTB9H7w==
+ b=tgiazYrInYS9xz1u12L974Iww/X0COackDlGI3GvVY5tp+xffpRVFO/FvmcIt9dTFcC+LzIamvUXrjYZqWuOeAajacx2JrJMFiMdozfRXwFQlOkxycQN1mdBbUXbAra2ZgwXOSkU4M9PVMK3daedv3cSXflC0kOkiVQ+s1bCkFcd99MSrFurxYC1nWGOUuxfUTLyKMXAD1/sLs/5QCTfYPoU7QOkfOv5CeLvb8T9qTqIOY/GBX5rSbbrdcuSak8B2rDbtCQVbNmtkplQa/uq9pdOZRg7L9vMZSAAfQORzfktbO+oCBbptUApwcL5dC6OOmOl8Mn3X6w79ygsiNF69w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qI3txMichN1mosqIdKfQkjurEMr4Qd1x0GkHvIfI+gA=;
- b=P8bH9eD7cLd1m70HeAsEbUkFtjIDYxQjjGxvwCBTDTwi17JG4SQ3ZlDRqo5JkUS5vIOYggW53fKpUoypbovr3vAtE8z87s+9kR+mPhXr9juiAp9dZCRMyKaT/75hgDIvlQs64Zxo4n3EFXN4ztcVRvzk1dg7mZVO2ToyAJjNAqY5Ad9FVFQXhV7TCo2xNp87OiORyjWjCs4jKorcsyLrGF2atmVQ6mmwWzP1o+B1JbEk9tmBaon3sEFQEHX0bABx20eYG5T+VFm2EPHZzEbYLZ+K34gvCb8IgTL6kagVT7RS1qYE8DeNJnSy77JIVaAGMwXO/qYgqtL8DWCp6JLoWQ==
+ bh=So07eoCYJimYHakkoZEfAOaM8uCU6o8iZ3+bNBpX2fA=;
+ b=L2RLU5JtdJfwnt0EpIV6ZN3yZViDHR14DE613MvAk7c+OSTmJtGiDGfIJotC5h2eBoq+uMAatVQHmAhSOvwzsvgTyeVT9xcmGQzdLawUy+DddmsK5W2oXs1jVLtLqiTnK/NVmRdXX2eqscq50vXJ9Cy7F17bXDsroVHSAhC6yCTAzS7r7ff8hrTcCv2vlzWYFffEzbwjyQ2Ts4TQwAAxfafcy5Uc1BYaMwiBcKM5tvn4Osm79wm7rLqRSyIJrSS7+lBU8SXFguDyaS8+NQLjFwGNzTmv1E5BKnJ+eaOb1ezsW8OKIaY8byg2LYpUEob9QTy6K6+5k3Obd+qDjzX78w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qI3txMichN1mosqIdKfQkjurEMr4Qd1x0GkHvIfI+gA=;
- b=aKpDzyVfPEdMSUnvwMfU2d31puXR1uHkv1ToThZwaCxB813U6Mdm6FS0LkRX1/IGU6yJ1J4OEA35Ab+QmU2LizALI5ZwseK5LLyQVn96bx+UbsZBBNK9F4qHk6WjkRh0l/faMJxyHJCvDvupHLlqGMf8EhtVHYy6CzYCCi0Wu3ZzIpZmai2+ld9te868czizH6W4twHuaEP+K1zEJvUcImgxZ+0SjtCzrY1zZo74Qa0aAk4WWm533NBb3M7sqw2mAEQeEjvs2PA0VAUa+CSDMnlYfZKoTt0AIZ0y9QNJc9TnR4LnnUsNfVPgWNmyK2YPsAirAYT8LGojFGUmg+p/GQ==
-Received: from BN9PR03CA0953.namprd03.prod.outlook.com (2603:10b6:408:108::28)
- by IA1PR12MB8312.namprd12.prod.outlook.com (2603:10b6:208:3fc::16) with
+ bh=So07eoCYJimYHakkoZEfAOaM8uCU6o8iZ3+bNBpX2fA=;
+ b=AYA4zxHPDipvDQgmzCIfV1qg4X1UaXHjFJBmJYKKhR+vLpB40zr1IzP5Ir9cZ72m+V/QUaj6Aiuj0WngEJeTofFWuy21005U6N+EzjcMvClbI7Cqqz23vP6yDH8yxv96j/r0bIPmph4ZJQrv8hcchLhaO5tM3TzI/mmWRWppuPazUVo/Qe4T3w/JHHW0CbXtHDEvMIYx/L+lhJbyN/dyAvxylINf8+m2KbTs+XoO89dmMDYIauX/W/kXWaq1SFtO7ijEuv6Hn8Xf8RTZMbuWZq+4VMH2W/ZY6aBY6qjmuEhdJqIlamQhZ116bCHolhMvXC7BNJDVAA2Sy9qhR7kH0g==
+Received: from MN0P222CA0022.NAMP222.PROD.OUTLOOK.COM (2603:10b6:208:531::29)
+ by CY3PR12MB9607.namprd12.prod.outlook.com (2603:10b6:930:103::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.19; Sat, 4 Oct
- 2025 19:11:36 +0000
-Received: from BL6PEPF0001AB4F.namprd04.prod.outlook.com
- (2603:10b6:408:108:cafe::d3) by BN9PR03CA0953.outlook.office365.com
- (2603:10b6:408:108::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9160.17 via Frontend Transport; Sat,
- 4 Oct 2025 19:11:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ 2025 19:11:40 +0000
+Received: from BL6PEPF00022575.namprd02.prod.outlook.com
+ (2603:10b6:208:531:cafe::5f) by MN0P222CA0022.outlook.office365.com
+ (2603:10b6:208:531::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.20 via Frontend Transport; Sat,
+ 4 Oct 2025 19:11:40 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- BL6PEPF0001AB4F.mail.protection.outlook.com (10.167.242.73) with Microsoft
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ BL6PEPF00022575.mail.protection.outlook.com (10.167.249.43) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9203.9 via Frontend Transport; Sat, 4 Oct 2025 19:11:36 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.9203.9 via Frontend Transport; Sat, 4 Oct 2025 19:11:40 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sat, 4 Oct
- 2025 12:11:32 -0700
+ 2025 12:11:34 -0700
 Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Sat, 4 Oct 2025 12:11:31 -0700
+ 15.2.2562.20; Sat, 4 Oct 2025 12:11:34 -0700
 Received: from build-ketanp-bionic-20250813.nvidia.com (10.127.8.10) by
  mail.nvidia.com (10.126.190.181) with Microsoft SMTP Server id 15.2.2562.20
- via Frontend Transport; Sat, 4 Oct 2025 12:11:31 -0700
+ via Frontend Transport; Sat, 4 Oct 2025 12:11:34 -0700
 From: Ketan Patil <ketanp@nvidia.com>
 To: <krzk@kernel.org>, <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
 CC: <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Ketan Patil
 	<ketanp@nvidia.com>
-Subject: [PATCH v3 0/4] memory: tegra: Add MC error logging support for Tegra264 SoC
-Date: Sat, 4 Oct 2025 19:11:19 +0000
-Message-ID: <20251004191123.2145307-1-ketanp@nvidia.com>
+Subject: [PATCH v3 1/4] memory: tegra: Group mc-err related registers
+Date: Sat, 4 Oct 2025 19:11:20 +0000
+Message-ID: <20251004191123.2145307-2-ketanp@nvidia.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20251004191123.2145307-1-ketanp@nvidia.com>
+References: <20251004191123.2145307-1-ketanp@nvidia.com>
 X-NVConfidentiality: public
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -95,91 +98,389 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB4F:EE_|IA1PR12MB8312:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4b5df9af-0b73-4be6-2661-08de0379d6cb
+X-MS-TrafficTypeDiagnostic: BL6PEPF00022575:EE_|CY3PR12MB9607:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6f207b82-ce1d-445c-eaee-08de0379d951
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?E0Q3meLej/i/MaFsjvuP4Tgl4d7BR9zMGL1YN8oeAmqdpXXhny+tgTlASilV?=
- =?us-ascii?Q?i7g0WfCi7kMU88r7Mh5ggX47ZwOEZ8KoTqG/9QVLGO4V8I6f+vly1Zksgziq?=
- =?us-ascii?Q?y7sYdzkzYWzDBqx4y5cSSNnDVAA41AyIREjKWk0pCWGTnoXnaorNKV7cjl6f?=
- =?us-ascii?Q?8XG84c/UlCMAPOA9HhoWR0/oLrhcDsyUT+3e2vCJNEUJwtzEeTBzBQoGBrVO?=
- =?us-ascii?Q?tbBLdYwj4KaK8DgJP8JMq8MyU9bVznfoWh0IXi+4UOrAHtBiXRJdjbHH+FRF?=
- =?us-ascii?Q?9jSTcr62BmOAB59DiXGui5rfCFL/ZTUMNHA/x36sTS2v4yN9hBT/HRA3cplf?=
- =?us-ascii?Q?8qdv341yfQyRjX8u94scIJff9ypU4KytbGEcxN3UKwNmRt1VnNN8E95ji7Hu?=
- =?us-ascii?Q?EbRfPjPKAmA055zGAh3tTWgpfBoszhzKfAgSaSDGPwAdnMwXlkTPjzeRb2ja?=
- =?us-ascii?Q?u8/jOIRRlu4wqgBKHNJSHO9rleCvEGByUMjeSfEjjyOxEojz4IQGiBX7UteR?=
- =?us-ascii?Q?q8ySkEcH/YtIjTRGgTVB5XQgCvDqF5ejkK0HRxA87Qh9H9USSWvweoh5QcF3?=
- =?us-ascii?Q?1PrHfa69UOzRRsvXXipTKEcdC+zLmVNn3IFWOO6y8uZt+e9nPfNAiijRO9le?=
- =?us-ascii?Q?POCMpYVp53SzYlUsomNn67befFKsXrTIaTYXzKl1/Hw9bfoOIIr+PF/0tO2Q?=
- =?us-ascii?Q?AdZ1w0bxsVUD4WReTazJ7E5s7HVCkyBzxoJisOCtpYvWqpm+pHKMR+VGoC3s?=
- =?us-ascii?Q?LQNkAzeiQ6P/qVPNLIpLmO/VcTtA5R76s26CJeTBHTHNKUavT/3msc4JQh/n?=
- =?us-ascii?Q?lyP8nrSyMgFcUXj/5KzoM9SJgoJyJLWfLXbD4m6U+FMItRt/EStfMqAoVNq1?=
- =?us-ascii?Q?dP5FfFCOHkspeiO+gqeFPfAdkbn3yklmthnqOfzZOJR1/0BAXCe4zqwOVGjR?=
- =?us-ascii?Q?8s41dr/lKiGluQlO/y9pxeqPZ1LXorN8ALjhsMhnqiQYWWztE7VWIYjPnWyt?=
- =?us-ascii?Q?OXS4bgj0ndSe7TPfieZ7N2DVibQ2g/msNg44ULwv/QE7ydmQeVtYwRmYe9GB?=
- =?us-ascii?Q?mgPFDmR7vZDzS35fQCM8GiCm3cFAIAFVvI89d5XGKOdem4pch3LsA5+ZWjaz?=
- =?us-ascii?Q?ZW41dmk/b2i+Vih6nnGwQ/GFXprpWusYsw7f06JlLvzAa8Bx4edEWTWAE66e?=
- =?us-ascii?Q?m361OZRp++Ud1mviUdct8+CZoit2XU7rp2Lovo+ynnyZ+IprME6OXSp/PgCq?=
- =?us-ascii?Q?DHrTcIKjtvrs7sVJ5hOkx+oWc9GkM5OPsC3KmZJ3uD4QCERipsw98JXZhgI3?=
- =?us-ascii?Q?saIfRkcbd22c+DhJ74V9SMM64pEqAUcInf7wog5Zj+zYTsd9TR/3Gb6bxNnL?=
- =?us-ascii?Q?GNjveKmyhFIFE+SQaWXfciI9soImHeLeuHWxg3bZsN1sBd0K6xgIPLnITaMZ?=
- =?us-ascii?Q?EjnU4sf/Uc0+wOKKopxnncsUIJzDch3ssQF/1scAcH+jO0nzMYPZZECJcLrr?=
- =?us-ascii?Q?s/8o4HUwgQM1qfqxGeeva2+/eaYIibGWS/XtUaBOWLcIgapiKPRg6dB9owop?=
- =?us-ascii?Q?IuATNxHsVMFNXSAm/58=3D?=
+	=?us-ascii?Q?wLze2pgZpCOdCLkF85HSzCgvUc0puykQWUSqgqtJ8SOPuw6OVGoAhTWc7AM3?=
+ =?us-ascii?Q?zauZPoZ8S6C99npgADsWGRBNwkRcNFyp2aPHgLa2/hqLfe3kNz4biGlYJ2Ge?=
+ =?us-ascii?Q?T/TxIEqpVcGOisMcii0oIOpAlLz9pIjoc9ZnGBhG2MAq4HreT4TR0YauxDV/?=
+ =?us-ascii?Q?j/H+aCxvIVx6AjIUKQ8gQbSCHYmFE939TnmodPNIEtfiDa+KCPWlkH8NizOQ?=
+ =?us-ascii?Q?PEHERkdmHFZzxjEUBNhi+giQf7hz9EmrsISqeMafiGkOp7y/fqloIBWNawcD?=
+ =?us-ascii?Q?94RJNjr4CE8HjxR+fLjwXkPBnwAJA5F9hEILz+grn9r7BJy1xEPuZT3oHE44?=
+ =?us-ascii?Q?gaJrxUEE9iPFaksHE+CRGQQBwPS2/rmjcNvLUQYF8xzOgmkKMh9RnvPLqerd?=
+ =?us-ascii?Q?yY1RJ3LAQsYgtmInOVvR6EIqHYGH8SllFNaE2oUaN6/b/pdVqIiS+wZ7PxtS?=
+ =?us-ascii?Q?TNzGm8d+YqImVErsTJ11CdlM5k16xTBo1TDuTdi1z8r9CyllaymGvlAtIT6O?=
+ =?us-ascii?Q?wLlR7DOjPSFaR0+s+e4dc15wytfsn0a6SYYaIWfe+5kwdzWTe4VW/cUHxz2B?=
+ =?us-ascii?Q?GPSPrZAOgtK/Mx+dvb56m99imHGCcjeVTp0LihrCbSn2kHdXpq/Jb/1jZvB1?=
+ =?us-ascii?Q?sJyEjeNcF1iV7eNcPG8ttA37uBQY7WN7aKq5ziMGegoAyRncOlkQxldOcXn+?=
+ =?us-ascii?Q?zwxR1Jz2tAHa8XxC3kH4g6w6jezu+WFnPk1VN2Vsa4f9u00gCkE6V4TRYQBj?=
+ =?us-ascii?Q?UCsnoFeNoqS/8nJEz507WB2498vf21XaKh9iwJYTvBOvvGayCrvSy6y4FNDq?=
+ =?us-ascii?Q?6AtfQRti/JuD/3ng/Ym4Py+TMcng80oWESZkSZvzM28vq2kxdynBP3BIV76n?=
+ =?us-ascii?Q?PLrEyoZja1scQJ20jv1qFwEZV4SSJuWpHeuSnz4V4tHite9ABnj6Y05Wts4S?=
+ =?us-ascii?Q?viLxvLL0ANFbxGsn5JiN1jbnS2UQmoGBPi3Q8q6U2pHWyrwkRwFVRpWKL48a?=
+ =?us-ascii?Q?7C6j2MmGE8XzTjFZXJqkDSCkeKoP/68gg8JcZnNIQtvHFr/qtiEoIJ7qwiLk?=
+ =?us-ascii?Q?vkM1VC3VXZ51+e+D2ULtNyjFyPy7THxR6C0SmJvlC2NQJaNtlpAvC2MJTg0t?=
+ =?us-ascii?Q?sJgt5/zezq4Chm+BNWNfld6jHA3RnSHmhN4o9vInp2nj9zuCswy78Hyp2doJ?=
+ =?us-ascii?Q?akZrpnd++0SJy081NasepAU7XgAVM4tyAKRRTfEnqMey1bTM6tV2NSHERIhz?=
+ =?us-ascii?Q?tUp31En1zqwLhQKEo4vdMDmyGO1Z2NizjkyLzY8YzlNonu+LQBOclSgxh7D7?=
+ =?us-ascii?Q?h3ncdC+N1NBLPZpzzv/7f1YB4BVfAfPOCRsrlh7t6aZrNM8rd1GTnuO7yatC?=
+ =?us-ascii?Q?j9pktbZotsyxDiTY18Osiv+0IFcGkjLYN9JUNBOLIEz+QVKZMZ2uN6jtp3vO?=
+ =?us-ascii?Q?hnwy8G6VPc1qYGfv0zKpMQtdhiNF9JinAx0rJj31gj3CSo4ukVQfPWpn+Sun?=
+ =?us-ascii?Q?uCbx0Gmnl3/N7fSQt6wWL+OSBE16e8iiv/7s5/pPgxKaCCeLuFNHxP2ZszSc?=
+ =?us-ascii?Q?O5nWNEiiV6eeNBrKIn4=3D?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2025 19:11:36.0464
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2025 19:11:40.3957
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b5df9af-0b73-4be6-2661-08de0379d6cb
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f207b82-ce1d-445c-eaee-08de0379d951
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB4F.namprd04.prod.outlook.com
+	BL6PEPF00022575.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8312
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY3PR12MB9607
 
-In Tegra264, different components from memory subsystems like Memory
-Controller Fabric (MCF), HUB, HUB Common (HUBC), Side Band Shim (SBS)
-and MC Channels have different interrupt lines for receiving memory
-controller error interrupts. This patch set includes changes to add
-support and enable Memory Controller error logging for Tegra264.
+Group MC error related registers into a struct as they could have soc
+specific values.
 
-Ketan Patil (4):
-  memory: tegra: Group mc-err related registers
-  memory: tegra: Group register and fields
-  memory: tegra: Add support for multiple irqs
-  memory: tegra: Add MC error logging support for Tegra264
-
+Signed-off-by: Ketan Patil <ketanp@nvidia.com>
 ---
-Changes in v3:
-- Fixed compilation error with W=1 build
+ drivers/memory/tegra/mc.c       | 45 +++++++++++++++++++++++----------
+ drivers/memory/tegra/mc.h       | 14 ----------
+ drivers/memory/tegra/tegra114.c |  3 ++-
+ drivers/memory/tegra/tegra124.c |  4 ++-
+ drivers/memory/tegra/tegra186.c |  1 +
+ drivers/memory/tegra/tegra194.c |  3 ++-
+ drivers/memory/tegra/tegra20.c  |  3 ++-
+ drivers/memory/tegra/tegra210.c |  3 ++-
+ drivers/memory/tegra/tegra234.c |  3 ++-
+ drivers/memory/tegra/tegra30.c  |  3 ++-
+ include/soc/tegra/mc.h          | 21 ++++++++++++++-
+ 11 files changed, 67 insertions(+), 36 deletions(-)
 
-Changes in v2:
-- Fixed warning due to use of uninitialized variable by returning back
-from the function
-- Removed unnecessary extern declaration of tegra264_mc_ops
-- Updated tegra20_mc_irq_handlers, tegra264_mc_irq_handlers and
-tegra264_mc_ops to static
-
- drivers/memory/tegra/mc.c       | 125 +++++++---
- drivers/memory/tegra/mc.h       | 140 +++++++----
- drivers/memory/tegra/tegra114.c |   3 +-
- drivers/memory/tegra/tegra124.c |   4 +-
- drivers/memory/tegra/tegra186.c |  14 +-
- drivers/memory/tegra/tegra194.c |   5 +-
- drivers/memory/tegra/tegra20.c  |  20 +-
- drivers/memory/tegra/tegra210.c |   3 +-
- drivers/memory/tegra/tegra234.c |   5 +-
- drivers/memory/tegra/tegra264.c | 407 +++++++++++++++++++++++++++++++-
- drivers/memory/tegra/tegra30.c  |   5 +-
- include/soc/tegra/mc.h          |  32 ++-
- 12 files changed, 662 insertions(+), 101 deletions(-)
-
+diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+index 6edb210287dc..6c1578b25a61 100644
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -56,6 +56,23 @@ static const struct of_device_id tegra_mc_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, tegra_mc_of_match);
+ 
++const struct tegra_mc_regs tegra20_mc_regs = {
++	.mc_cfg_channel_enable = 0xdf8,
++	.mc_err_status = 0x08,
++	.mc_err_add = 0x0c,
++	.mc_err_add_hi = 0x11fc,
++	.mc_err_vpr_status = 0x654,
++	.mc_err_vpr_add = 0x658,
++	.mc_err_sec_status = 0x67c,
++	.mc_err_sec_add = 0x680,
++	.mc_err_mts_status = 0x9b0,
++	.mc_err_mts_add = 0x9b4,
++	.mc_err_gen_co_status = 0xc00,
++	.mc_err_gen_co_add = 0xc04,
++	.mc_err_route_status = 0x9c0,
++	.mc_err_route_add = 0x9c4,
++};
++
+ static void tegra_mc_devm_action_put_device(void *data)
+ {
+ 	struct tegra_mc *mc = data;
+@@ -600,37 +617,37 @@ irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
+ 
+ 		switch (intmask) {
+ 		case MC_INT_DECERR_VPR:
+-			status_reg = MC_ERR_VPR_STATUS;
+-			addr_reg = MC_ERR_VPR_ADR;
++			status_reg = mc->soc->mc_regs->mc_err_vpr_status;
++			addr_reg = mc->soc->mc_regs->mc_err_vpr_add;
+ 			break;
+ 
+ 		case MC_INT_SECERR_SEC:
+-			status_reg = MC_ERR_SEC_STATUS;
+-			addr_reg = MC_ERR_SEC_ADR;
++			status_reg = mc->soc->mc_regs->mc_err_sec_status;
++			addr_reg = mc->soc->mc_regs->mc_err_sec_add;
+ 			break;
+ 
+ 		case MC_INT_DECERR_MTS:
+-			status_reg = MC_ERR_MTS_STATUS;
+-			addr_reg = MC_ERR_MTS_ADR;
++			status_reg = mc->soc->mc_regs->mc_err_mts_status;
++			addr_reg = mc->soc->mc_regs->mc_err_mts_add;
+ 			break;
+ 
+ 		case MC_INT_DECERR_GENERALIZED_CARVEOUT:
+-			status_reg = MC_ERR_GENERALIZED_CARVEOUT_STATUS;
+-			addr_reg = MC_ERR_GENERALIZED_CARVEOUT_ADR;
++			status_reg = mc->soc->mc_regs->mc_err_gen_co_status;
++			addr_reg = mc->soc->mc_regs->mc_err_gen_co_add;
+ 			break;
+ 
+ 		case MC_INT_DECERR_ROUTE_SANITY:
+-			status_reg = MC_ERR_ROUTE_SANITY_STATUS;
+-			addr_reg = MC_ERR_ROUTE_SANITY_ADR;
++			status_reg = mc->soc->mc_regs->mc_err_route_status;
++			addr_reg = mc->soc->mc_regs->mc_err_route_add;
+ 			break;
+ 
+ 		default:
+-			status_reg = MC_ERR_STATUS;
+-			addr_reg = MC_ERR_ADR;
++			status_reg = mc->soc->mc_regs->mc_err_status;
++			addr_reg = mc->soc->mc_regs->mc_err_add;
+ 
+ #ifdef CONFIG_PHYS_ADDR_T_64BIT
+ 			if (mc->soc->has_addr_hi_reg)
+-				addr_hi_reg = MC_ERR_ADR_HI;
++				addr_hi_reg = mc->soc->mc_regs->mc_err_add_hi;
+ #endif
+ 			break;
+ 		}
+@@ -883,7 +900,7 @@ static void tegra_mc_num_channel_enabled(struct tegra_mc *mc)
+ 	unsigned int i;
+ 	u32 value;
+ 
+-	value = mc_ch_readl(mc, 0, MC_EMEM_ADR_CFG_CHANNEL_ENABLE);
++	value = mc_ch_readl(mc, 0, mc->soc->mc_regs->mc_cfg_channel_enable);
+ 	if (value <= 0) {
+ 		mc->num_channels = mc->soc->num_channels;
+ 		return;
+diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
+index 1d97cf4d3a94..a7f20850741f 100644
+--- a/drivers/memory/tegra/mc.h
++++ b/drivers/memory/tegra/mc.h
+@@ -14,8 +14,6 @@
+ 
+ #define MC_INTSTATUS					0x00
+ #define MC_INTMASK					0x04
+-#define MC_ERR_STATUS					0x08
+-#define MC_ERR_ADR					0x0c
+ #define MC_GART_ERROR_REQ				0x30
+ #define MC_EMEM_ADR_CFG					0x54
+ #define MC_DECERR_EMEM_OTHERS_STATUS			0x58
+@@ -43,19 +41,7 @@
+ #define MC_EMEM_ARB_OVERRIDE				0xe8
+ #define MC_TIMING_CONTROL_DBG				0xf8
+ #define MC_TIMING_CONTROL				0xfc
+-#define MC_ERR_VPR_STATUS				0x654
+-#define MC_ERR_VPR_ADR					0x658
+-#define MC_ERR_SEC_STATUS				0x67c
+-#define MC_ERR_SEC_ADR					0x680
+-#define MC_ERR_MTS_STATUS				0x9b0
+-#define MC_ERR_MTS_ADR					0x9b4
+-#define MC_ERR_ROUTE_SANITY_STATUS			0x9c0
+-#define MC_ERR_ROUTE_SANITY_ADR				0x9c4
+-#define MC_ERR_GENERALIZED_CARVEOUT_STATUS		0xc00
+-#define MC_ERR_GENERALIZED_CARVEOUT_ADR			0xc04
+-#define MC_EMEM_ADR_CFG_CHANNEL_ENABLE			0xdf8
+ #define MC_GLOBAL_INTSTATUS				0xf24
+-#define MC_ERR_ADR_HI					0x11fc
+ 
+ #define MC_INT_DECERR_ROUTE_SANITY			BIT(20)
+ #define MC_INT_DECERR_GENERALIZED_CARVEOUT		BIT(17)
+diff --git a/drivers/memory/tegra/tegra114.c b/drivers/memory/tegra/tegra114.c
+index 41350570c815..cc66620da60b 100644
+--- a/drivers/memory/tegra/tegra114.c
++++ b/drivers/memory/tegra/tegra114.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * Copyright (C) 2014 NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (C) 2014-2025 NVIDIA CORPORATION.  All rights reserved.
+  */
+ 
+ #include <linux/of.h>
+@@ -1114,4 +1114,5 @@ const struct tegra_mc_soc tegra114_mc_soc = {
+ 	.resets = tegra114_mc_resets,
+ 	.num_resets = ARRAY_SIZE(tegra114_mc_resets),
+ 	.ops = &tegra30_mc_ops,
++	.mc_regs = &tegra20_mc_regs,
+ };
+diff --git a/drivers/memory/tegra/tegra124.c b/drivers/memory/tegra/tegra124.c
+index 9d7393e19f12..886dc68fea65 100644
+--- a/drivers/memory/tegra/tegra124.c
++++ b/drivers/memory/tegra/tegra124.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * Copyright (C) 2014 NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (C) 2014-2025 NVIDIA CORPORATION.  All rights reserved.
+  */
+ 
+ #include <linux/of.h>
+@@ -1275,6 +1275,7 @@ const struct tegra_mc_soc tegra124_mc_soc = {
+ 	.num_resets = ARRAY_SIZE(tegra124_mc_resets),
+ 	.icc_ops = &tegra124_mc_icc_ops,
+ 	.ops = &tegra30_mc_ops,
++	.mc_regs = &tegra20_mc_regs,
+ };
+ #endif /* CONFIG_ARCH_TEGRA_124_SOC */
+ 
+@@ -1307,5 +1308,6 @@ const struct tegra_mc_soc tegra132_mc_soc = {
+ 	.num_resets = ARRAY_SIZE(tegra124_mc_resets),
+ 	.icc_ops = &tegra124_mc_icc_ops,
+ 	.ops = &tegra30_mc_ops,
++	.mc_regs = &tegra20_mc_regs,
+ };
+ #endif /* CONFIG_ARCH_TEGRA_132_SOC */
+diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
+index aee11457bf8e..a30158d92412 100644
+--- a/drivers/memory/tegra/tegra186.c
++++ b/drivers/memory/tegra/tegra186.c
+@@ -914,5 +914,6 @@ const struct tegra_mc_soc tegra186_mc_soc = {
+ 	.ops = &tegra186_mc_ops,
+ 	.ch_intmask = 0x0000000f,
+ 	.global_intstatus_channel_shift = 0,
++	.mc_regs = &tegra20_mc_regs,
+ };
+ #endif
+diff --git a/drivers/memory/tegra/tegra194.c b/drivers/memory/tegra/tegra194.c
+index 26035ac3a1eb..fade258c0ea7 100644
+--- a/drivers/memory/tegra/tegra194.c
++++ b/drivers/memory/tegra/tegra194.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * Copyright (C) 2017-2021 NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (C) 2017-2025 NVIDIA CORPORATION.  All rights reserved.
+  */
+ 
+ #include <soc/tegra/mc.h>
+@@ -1358,4 +1358,5 @@ const struct tegra_mc_soc tegra194_mc_soc = {
+ 	.icc_ops = &tegra_mc_icc_ops,
+ 	.ch_intmask = 0x00000f00,
+ 	.global_intstatus_channel_shift = 8,
++	.mc_regs = &tegra20_mc_regs,
+ };
+diff --git a/drivers/memory/tegra/tegra20.c b/drivers/memory/tegra/tegra20.c
+index a3022e715dee..46e97bb10163 100644
+--- a/drivers/memory/tegra/tegra20.c
++++ b/drivers/memory/tegra/tegra20.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * Copyright (C) 2012 NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (C) 2012-2025 NVIDIA CORPORATION.  All rights reserved.
+  */
+ 
+ #include <linux/bitfield.h>
+@@ -778,4 +778,5 @@ const struct tegra_mc_soc tegra20_mc_soc = {
+ 	.num_resets = ARRAY_SIZE(tegra20_mc_resets),
+ 	.icc_ops = &tegra20_mc_icc_ops,
+ 	.ops = &tegra20_mc_ops,
++	.mc_regs = &tegra20_mc_regs,
+ };
+diff --git a/drivers/memory/tegra/tegra210.c b/drivers/memory/tegra/tegra210.c
+index cfa61dd88557..994b1e0e7f37 100644
+--- a/drivers/memory/tegra/tegra210.c
++++ b/drivers/memory/tegra/tegra210.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * Copyright (C) 2015 NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (C) 2015-2025 NVIDIA CORPORATION.  All rights reserved.
+  */
+ 
+ #include <dt-bindings/memory/tegra210-mc.h>
+@@ -1287,4 +1287,5 @@ const struct tegra_mc_soc tegra210_mc_soc = {
+ 	.resets = tegra210_mc_resets,
+ 	.num_resets = ARRAY_SIZE(tegra210_mc_resets),
+ 	.ops = &tegra30_mc_ops,
++	.mc_regs = &tegra20_mc_regs,
+ };
+diff --git a/drivers/memory/tegra/tegra234.c b/drivers/memory/tegra/tegra234.c
+index 5f57cea48b62..23276f622aab 100644
+--- a/drivers/memory/tegra/tegra234.c
++++ b/drivers/memory/tegra/tegra234.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * Copyright (C) 2022-2023, NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (C) 2022-2025, NVIDIA CORPORATION.  All rights reserved.
+  */
+ 
+ #include <soc/tegra/mc.h>
+@@ -1152,4 +1152,5 @@ const struct tegra_mc_soc tegra234_mc_soc = {
+ 	 * supported.
+ 	 */
+ 	.num_carveouts = 32,
++	.mc_regs = &tegra20_mc_regs,
+ };
+diff --git a/drivers/memory/tegra/tegra30.c b/drivers/memory/tegra/tegra30.c
+index d3e685c8431f..f22febcbee59 100644
+--- a/drivers/memory/tegra/tegra30.c
++++ b/drivers/memory/tegra/tegra30.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * Copyright (C) 2014 NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (C) 2014-2025 NVIDIA CORPORATION.  All rights reserved.
+  */
+ 
+ #include <linux/device.h>
+@@ -1400,4 +1400,5 @@ const struct tegra_mc_soc tegra30_mc_soc = {
+ 	.num_resets = ARRAY_SIZE(tegra30_mc_resets),
+ 	.icc_ops = &tegra30_mc_icc_ops,
+ 	.ops = &tegra30_mc_ops,
++	.mc_regs = &tegra20_mc_regs,
+ };
+diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
+index 6ee4c59db620..d11dfefbe551 100644
+--- a/include/soc/tegra/mc.h
++++ b/include/soc/tegra/mc.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0-only */
+ /*
+- * Copyright (C) 2014 NVIDIA Corporation
++ * Copyright (C) 2014-2025 NVIDIA Corporation
+  */
+ 
+ #ifndef __SOC_TEGRA_MC_H__
+@@ -168,6 +168,23 @@ struct tegra_mc_ops {
+ 	int (*probe_device)(struct tegra_mc *mc, struct device *dev);
+ };
+ 
++struct tegra_mc_regs {
++	unsigned int mc_cfg_channel_enable;
++	unsigned int mc_err_status;
++	unsigned int mc_err_add;
++	unsigned int mc_err_add_hi;
++	unsigned int mc_err_vpr_status;
++	unsigned int mc_err_vpr_add;
++	unsigned int mc_err_sec_status;
++	unsigned int mc_err_sec_add;
++	unsigned int mc_err_mts_status;
++	unsigned int mc_err_mts_add;
++	unsigned int mc_err_gen_co_status;
++	unsigned int mc_err_gen_co_add;
++	unsigned int mc_err_route_status;
++	unsigned int mc_err_route_add;
++};
++
+ struct tegra_mc_soc {
+ 	const struct tegra_mc_client *clients;
+ 	unsigned int num_clients;
+@@ -196,6 +213,7 @@ struct tegra_mc_soc {
+ 
+ 	const struct tegra_mc_icc_ops *icc_ops;
+ 	const struct tegra_mc_ops *ops;
++	const struct tegra_mc_regs *mc_regs;
+ };
+ 
+ struct tegra_mc {
+@@ -256,4 +274,5 @@ tegra_mc_get_carveout_info(struct tegra_mc *mc, unsigned int id,
+ }
+ #endif
+ 
++extern const struct tegra_mc_regs tegra20_mc_regs;
+ #endif /* __SOC_TEGRA_MC_H__ */
 -- 
 2.17.1
 
