@@ -1,135 +1,182 @@
-Return-Path: <linux-kernel+bounces-842004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F1E8BB8C22
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 11:42:28 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F207BB8C2E
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 11:47:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 007A54E4033
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 09:42:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C3BCC4E5A3E
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 09:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D4C26CE0A;
-	Sat,  4 Oct 2025 09:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC2F23D7E2;
+	Sat,  4 Oct 2025 09:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TyoyYHcY"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTYsfwb6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849FC1DF271
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 09:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CF2157A6B;
+	Sat,  4 Oct 2025 09:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759570943; cv=none; b=aQC+sC83JRprQPNsvFgYj0LRgRKwUo3X081L7S9OmEM6cPTr8seUG7VjDH/4s4qbuVBG2AckmN1dHTFJSpMJdX26G4TeBXCqQi1eh1ZEqINN9QIkfadhHZRrSHf4klEERixE67ngm5fGsJhfyNZsrLGZvKtj6+TR0GMseH5U+d0=
+	t=1759571233; cv=none; b=gY47rIbgSvWqgpZq32GAUze+sDCbsFw8UaP3hUIUErbP+Up6KjaXJbH1QxTjCTwASiYeX6qlwUyW8wsrB9IHOFJ1AckhCNDL152Ql/hmnXhEmlxjHnO4rLJ9BtX6VcNg0FDlWJovVOhvjw4BT1e65/aBnemGKH/omEiiiiCj8Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759570943; c=relaxed/simple;
-	bh=pKkpfakyL+A1ewDNEjGcrv7FwiqTyJwovBb1pw9Id2o=;
+	s=arc-20240116; t=1759571233; c=relaxed/simple;
+	bh=8Z58r/lUJzR4nNBETqyf17v4ZDZhpa1ENzKinXNi7qY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QXeh0UlzHxgRp4skQvoHvkV2elHypxl4GPIupT2/pOgX3NBte7Kws88fKHTUhmUXEXn9U7FLbIFjNbsgJCgmVorI82yynOOGpzn8pglrhykj5ndWiRcHrCqZUNTYGRsUeS2qw3IgR3+8glJ5L7zYrGlCwewDY6EE3yCGrckZOHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TyoyYHcY; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b3d196b7eeeso478916566b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 02:42:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759570939; x=1760175739; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GslXQjNzh/AIqv26b+mMupzmqLiHs7UYgH8GeJMNm98=;
-        b=TyoyYHcYspUzqpL+St2x5AzpJtbIEJDDv/p9n/lt+J+OEnP7PRYKYxWbTDvIJ5hr4G
-         UjeTfJ2UH2niKy9nE7XGxDnZ+B0gQyR73MtdGlSq52FoRmoY71cBrikijz7bXcv6DTEj
-         z91+oXw9xhMLZ0O2jGd6jwBxzgd1MdahCxDfIRu1BDLeobYGk3HjwwnofY35ZMSu4VcK
-         r9ZLYkzMDDxXALdWnBjN4Cxb9a7RWKjTaXSSzdAxLdiiPSCf6aofJzVrNiBu1G86veZ7
-         dhyi9w5yDVs3G069rkbAfPXMAXfllvIXjTt6CseCX3/4RE+G54jZ/hUry6Gwv4ZknzIg
-         nWZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759570939; x=1760175739;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=GslXQjNzh/AIqv26b+mMupzmqLiHs7UYgH8GeJMNm98=;
-        b=k+/ikC4HS77vTEJ4aRKCThSI2oZ9o/Kx+p3EZ/c5BGKqLd7vlLQmZGufl2DzdR2i64
-         4/cJjfglMlkyfojOpVKI7kfjeQ0M/3Ir/nik57neLPq9KeRLL0ih6Id8gbXSlAESrDYB
-         UFgr/TAbYsqSt0MLjm1mmfk9vVXX/ew0/NbslrJEvw7AQO+x8ZIb9oKKxfageKdF7d0L
-         OjHArBAqL9Ipy2oTcfxFN+1y9jNB9g2+YN3HFVU8Eo78au9ArM7dox+hDw9uyOkBguve
-         Wf9oCqz5ZUtxeqW34RSQQInqh5+boOT1/iQNgtl4LmTYiVBfeO9HrPesc/TGK361XZeC
-         ogFw==
-X-Forwarded-Encrypted: i=1; AJvYcCVlRg4N7bZgJUQ6TIFpK6nG/0gFsfNnK39YpTrPFsuRc2x2ZjGvZas85mMUa9jg9820oTO+CmgJlyJIfOc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNYpVPeWRUecNnbMFBKsTKNvZPViDGp4z5YOOeOg//6DNKtZR8
-	QGPSZAMGQZ3YJhs7+LQuT1agKPVyX2XKQXg4Xdsc6IuXDjtHhz1AUuCN
-X-Gm-Gg: ASbGncv5/AnU09khESf+Fe+5XpRZr2fVWlnW3bZ+NADTKpO1JP4EW3xJxky8m2lFbo6
-	7xQynvhpBM2duC//Ukf6sFvec7e8q4vbvkfMYTPZkxXvBAFfwj6+9AEWkSmaBoIf6aLU7+7pMFc
-	28NgtoSbmsxI71wTNYeLRloCzQKuipSo0xub8evXBNTxCYktsP/5A/3gIRsx209fOA8Z8YsFWxA
-	0cEssno7hYFzRQpXnBAxCv2EPJF9XhwgvO1/t7Untdo1+QJUjKXV8Wy3JNPlrjzZ0UxpYd/W7f7
-	yunV3wTwKfocAA3Hj4U1KFV8P6JUrF7boAHNfidwsMOIUMWzAISzH3Br02NAmlHcM3Ij7Nzol6T
-	IwPWXcKgbH9UHzvBXkZyFKtDPI84v0yaLXKv95nRX/oq3eSV/Iyxx39op
-X-Google-Smtp-Source: AGHT+IELMv2JCHsGDeiciQPnXFlCugQOB1G8gJd+aFMXhX5vxBQh2qDM8E/2p3liA1SXVMjKe+xQxg==
-X-Received: by 2002:a17:907:9728:b0:b40:448d:cdb0 with SMTP id a640c23a62f3a-b49c33501c3mr693267666b.41.1759570938685;
-        Sat, 04 Oct 2025 02:42:18 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b4865a83bd0sm654284866b.24.2025.10.04.02.42.18
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 04 Oct 2025 02:42:18 -0700 (PDT)
-Date: Sat, 4 Oct 2025 09:42:17 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Dev Jain <dev.jain@arm.com>
-Cc: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org,
-	david@redhat.com, lorenzo.stoakes@oracle.com, ziy@nvidia.com,
-	baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
-	npache@redhat.com, ryan.roberts@arm.com, baohua@kernel.org,
-	ioworker0@gmail.com, richard.weiyang@gmail.com,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH mm-new 2/2] mm/khugepaged: merge PTE scanning logic into
- a new helper
-Message-ID: <20251004094217.bah5q2zxczrqontm@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20251002073255.14867-1-lance.yang@linux.dev>
- <20251002073255.14867-3-lance.yang@linux.dev>
- <0d55d763-81ff-4b99-bb13-3dbb9af53cdc@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qtd6mP6MMjA3Xgt0kjj5NfFUX8kVnP6m7AFWScBbgY0SKgMwXqfpgSUZCk6Fjq2YiDFQ6/+Ty2aYdARm3YccsyxRmmjnLSxlR6B8UkpjDN3Yn7jxvrSoJGmpF5+Nugizv/zo7x/XHHAJAuHP0U2s6pPVUhCqsCuR9B+zEzPyrHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FTYsfwb6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE5BFC4CEF1;
+	Sat,  4 Oct 2025 09:47:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759571231;
+	bh=8Z58r/lUJzR4nNBETqyf17v4ZDZhpa1ENzKinXNi7qY=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=FTYsfwb6WZuYXqI1zLQPguxDOLQQ6mG7D9bZCgc99AHzD5BiR5KTwqoX/hsQn0UON
+	 5JMujNUfq5w+kWbUvGUUA21TmmB/t+m/3JZbwwYkIdQXBfc3ZeqNxw8QoOh5IbEHm5
+	 kht9558spz+O0vYPWYXrOw0EF1qk81YkE331ReqxqyLBB5Nb7nSGY0e3RQoNY332a3
+	 yzuKzZjCmz+yvaAtN/waOg5f1Z0Ws9MeUYC3CEM0cdoXr9wCZLLOn69Dgu4IF66nSN
+	 JP3cZ/Mq8J51HMkJ6Ft06fZANE/7IKGIRMot7oYbUS+SvfwkN2/lKgqkcCBIT1ZB/M
+	 xv+qb2UafWdzw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id B432ECE0CA6; Sat,  4 Oct 2025 02:47:08 -0700 (PDT)
+Date: Sat, 4 Oct 2025 02:47:08 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org, kernel test robot <oliver.sang@intel.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>, bpf@vger.kernel.org
+Subject: Re: [PATCH v2 02/21] rcu: Re-implement RCU Tasks Trace in terms of
+ SRCU-fast
+Message-ID: <d24f3987-48de-43e3-a841-2a116ac6d5c7@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <7fa58961-2dce-4e08-8174-1d1cc592210f@paulmck-laptop>
+ <20251001144832.631770-2-paulmck@kernel.org>
+ <aN6eQuTbdwAAhxIj@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <0d55d763-81ff-4b99-bb13-3dbb9af53cdc@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aN6eQuTbdwAAhxIj@localhost.localdomain>
 
-On Fri, Oct 03, 2025 at 10:35:12PM +0530, Dev Jain wrote:
->
->On 02/10/25 1:02 pm, Lance Yang wrote:
->> From: Lance Yang <lance.yang@linux.dev>
->> 
->> As David suggested, the PTE scanning logic in hpage_collapse_scan_pmd()
->> and __collapse_huge_page_isolate() was almost duplicated.
->> 
->> This patch cleans things up by moving all the common PTE checking logic
->> into a new shared helper, thp_collapse_check_pte().
->> 
->> Suggested-by: David Hildenbrand <david@redhat.com>
->> Signed-off-by: Lance Yang <lance.yang@linux.dev>
->> ---
->
->In hpage_collapse_scan_pmd(), we enter with mmap lock held, so for
+On Thu, Oct 02, 2025 at 05:46:10PM +0200, Frederic Weisbecker wrote:
+> Le Wed, Oct 01, 2025 at 07:48:13AM -0700, Paul E. McKenney a écrit :
+> > This commit saves more than 500 lines of RCU code by re-implementing
+> > RCU Tasks Trace in terms of SRCU-fast.  Follow-up work will remove
+> > more code that does not cause problems by its presence, but that is no
+> > longer required.
+> > 
+> > This variant places smp_mb() in rcu_read_{,un}lock_trace(), which will
+> > be removed on common-case architectures in a later commit.
+> 
+> The changelog doesn't mention what this is ordering :-)
 
-This is true for the first loop, but we will unlock/lock mmap and revalidate
-vma before isolation.
+"The ordering that dare not be named"?  ;-)
 
->an anonymous vma, is it even possible to hit if (!folio_test_anon(folio))?
->In which case we can replace this with VM_BUG_ON_FOLIO and abstract away
->till the folio_maybe_mapped_shared() block?
+How about like this for that second paragraph?
 
-But it looks still valid, since hugepage_vma_revalidate() will check the vma
-is still anonymous vma after grab the mmap lock again.
+	This variant places smp_mb() in rcu_read_{,un}lock_trace(),
+	which will be removed on common-case architectures in a
+	later commit.  In the meantime, it serves to enforce ordering
+	between the underlying srcu_read_{,un}lock_fast() markers and
+	the intervening critical section, even on architectures that
+	permit attaching tracepoints on regions of code not watched
+	by RCU.  Such architectures defeat SRCU-fast's use of implicit
+	single-instruction, interrupts-disabled, and atomic-operation
+	RCU read-side critical sections, which have no effect when RCU is
+	not watching.  The aforementioned later commit will insert these
+	smp_mb() calls only on architectures that have not used noinstr to
+	prevent attaching tracepoints to code where RCU is not watching.
 
-My concern is would VM_BUG_ON_FOLIO() be too heavy? How about warn on and
-return?
+> > [ paulmck: Apply kernel test robot, Boqun Feng, and Zqiang feedback. ]
+> > [ paulmck: Split out Tiny SRCU fixes per Andrii Nakryiko feedback. ]
+> > 
+> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > Tested-by: kernel test robot <oliver.sang@intel.com>
+> > Cc: Andrii Nakryiko <andrii@kernel.org>
+> > Cc: Alexei Starovoitov <ast@kernel.org>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: <bpf@vger.kernel.org>
+> > ---
+> [...]
+> > @@ -50,12 +50,14 @@ static inline void rcu_read_lock_trace(void)
+> >  {
+> >  	struct task_struct *t = current;
+> >  
+> > -	WRITE_ONCE(t->trc_reader_nesting, READ_ONCE(t->trc_reader_nesting) + 1);
+> > -	barrier();
+> > -	if (IS_ENABLED(CONFIG_TASKS_TRACE_RCU_READ_MB) &&
+> > -	    t->trc_reader_special.b.need_mb)
+> > -		smp_mb(); // Pairs with update-side barriers
+> > -	rcu_lock_acquire(&rcu_trace_lock_map);
+> > +	if (t->trc_reader_nesting++) {
+> > +		// In case we interrupted a Tasks Trace RCU reader.
+> > +		rcu_try_lock_acquire(&rcu_tasks_trace_srcu_struct.dep_map);
+> > +		return;
+> > +	}
+> > +	barrier();  // nesting before scp to protect against interrupt handler.
+> > +	t->trc_reader_scp = srcu_read_lock_fast(&rcu_tasks_trace_srcu_struct);
+> > +	smp_mb(); // Placeholder for more selective ordering
+> 
+> Mysterious :-)
 
--- 
-Wei Yang
-Help you, Help me
+Does the reworked commit-log paragraph help clear up this mystery?
+
+> >  }
+> >  
+> >  /**
+> > @@ -69,26 +71,75 @@ static inline void rcu_read_lock_trace(void)
+> >   */
+> >  static inline void rcu_read_unlock_trace(void)
+> >  {
+> > -	int nesting;
+> > +	struct srcu_ctr __percpu *scp;
+> >  	struct task_struct *t = current;
+> >  
+> > -	rcu_lock_release(&rcu_trace_lock_map);
+> > -	nesting = READ_ONCE(t->trc_reader_nesting) - 1;
+> > -	barrier(); // Critical section before disabling.
+> > -	// Disable IPI-based setting of .need_qs.
+> > -	WRITE_ONCE(t->trc_reader_nesting, INT_MIN + nesting);
+> > -	if (likely(!READ_ONCE(t->trc_reader_special.s)) || nesting) {
+> > -		WRITE_ONCE(t->trc_reader_nesting, nesting);
+> > -		return;  // We assume shallow reader nesting.
+> > -	}
+> > -	WARN_ON_ONCE(nesting != 0);
+> > -	rcu_read_unlock_trace_special(t);
+> > +	smp_mb(); // Placeholder for more selective ordering
+> 
+> Bizarre :-)
+
+And this bizarreness?  ;-)
+
+> > +	scp = t->trc_reader_scp;
+> > +	barrier();  // scp before nesting to protect against interrupt handler.
+> 
+> What is it protecting against interrupt?
+
+The incrementing of ->trc_reader_nesting vs the fetch of ->trc_reader_scp.
+
+							Thanx, Paul
+
+> > +	if (!--t->trc_reader_nesting)
+> > +		srcu_read_unlock_fast(&rcu_tasks_trace_srcu_struct, scp);
+> > +	else
+> > +		srcu_lock_release(&rcu_tasks_trace_srcu_struct.dep_map);
+> > +}
+> 
+> Thanks (very happy to see all the rest of the code going away!)
+> 
+> -- 
+> Frederic Weisbecker
+> SUSE Labs
 
