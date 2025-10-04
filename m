@@ -1,90 +1,119 @@
-Return-Path: <linux-kernel+bounces-842043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFBFDBB8D66
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 14:58:54 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28CC7BB8D6C
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 15:00:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 824501898FF2
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 12:59:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 764F23468F3
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 13:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385B3279794;
-	Sat,  4 Oct 2025 12:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22AE274646;
+	Sat,  4 Oct 2025 13:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X+o/f2Nc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c5PD8unk"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915212773D9;
-	Sat,  4 Oct 2025 12:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767261FF1C7
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 13:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759582720; cv=none; b=VBrf6zkccqiKwxSbJ88TAuLLooduMUTW73Y/0tkwyWBcFimdKdSyl5ZFBRjrdzvuNm4bxe/iINb8fD5vFwDv/rNONsV8yaBp78pEWVFxc6D66RurdCDrh+UTbHR5xZil8BD/zfk4QAUxqgMsumJSwDmRKe038XB/Omr1M8hL8eE=
+	t=1759582837; cv=none; b=rSzxqAdyDk7mnNNd2HmAWN343hVFOvQD87UV0Z7vYOAMkhxiPYwR6uxa6lcp7pu0s/CYsjnrj7uxV4L/r85A7tvBNt/j9B00QDrOW+8Tx33EBCkMJ/Donrdr971qds/5lNgWTmxoqgGq45zsu49N264U38NZKlosbQYc5IVolTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759582720; c=relaxed/simple;
-	bh=6w2vZiZSHfxzifnyr91bFeb7N267eeWvK1GvezAtz00=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JlYNPVIVAfy+mvfX7JcJE6oLzAIR1DvDa4rvZ7lwWnPOn0JmWBZH2XQRaOEWJf/EfsruLtdBynSomFtjkKQhaACoZ7B+PvvlvSu51rkGUegneVFYItUmYv5q5NDEFyExkM+D2J3qoGwog5izuRv1iaYxKFbpjYr1x0kg/dMfHv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X+o/f2Nc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4569C4CEFA;
-	Sat,  4 Oct 2025 12:58:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759582720;
-	bh=6w2vZiZSHfxzifnyr91bFeb7N267eeWvK1GvezAtz00=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X+o/f2NcJU638QXv8BcP+i5PhBk0sMqAQIa8/S9uH/Dpb8sz2OKfEf/2RkyJpYu3J
-	 vu3Dx7AZ5+/5B/nnKfGDXhBDEqAUw/9gC7W8giGl+SS5KjSPSjVtc/Th1RzuaJODnU
-	 WqLdhGk3auSr9rPY/iAdppTNob/obVw+TYubbzWsx0AYWkIVgfsHbjpbRKxBrPGqZ8
-	 yRFAkI4ZflcVojemmrzLCICSchdi86vHWj0g3kBj+a3EQcDm5g2YwXKFZFwTV/J3JS
-	 lLG99w8c+HwVpthpuvt9sInsMgxVtuo2ZSHqTXdgcdZ3Aa8kNj0GRWrA4/5HGgLBqm
-	 9Dg5enRETVhkQ==
-Date: Sat, 4 Oct 2025 09:58:36 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] perf parse-events: Fix parsing of >30kb event strings
-Message-ID: <aOEZ_HOcIMggsebi@x1>
-References: <20250905042643.1937122-1-irogers@google.com>
- <CAP-5=fUSuh+hKVg_1owmzPAZka3DGmhr6FzN__n_Cb2XUET3=A@mail.gmail.com>
- <CAP-5=fUOpiJypozewCSi6Avg2pQnjmvNcFMM5iUsbTR1P_47zQ@mail.gmail.com>
+	s=arc-20240116; t=1759582837; c=relaxed/simple;
+	bh=WOfQbqiLQi9ug8/YQkft29gfTq4eQoaDLobj1fyXQyg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C9XEi/zlIh+4dNQTYbge7UVFTBQx1zyK/cyM2UjvMVRFi8E64noR7hcpXZcm1ZEsjGaLYQfP4X812XeYp600ZLdcDAITFAYjIx66BeRLKzDE2rizB17Ay9WxZSuTbrILZk/AuqI6mgM07XmVPhphRytfY6YO/kog9xpvwuC+3HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c5PD8unk; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46e42deffa8so32869355e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 06:00:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759582834; x=1760187634; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AUSacOpwUkhYQJEzSIzuhZ2iBaIm5JbEgWtQG+WCBds=;
+        b=c5PD8unkBngKFa1tOK+bMdTHslO0k/9coSbFAbZioSrZSEFrUWs7FKsuk36yYluARe
+         WTDjVnYOXyNW1foqfVvhIWcOS0hxiex5ILgvjvhXN1B41Rw8Dhp7znkaLZI0Dov0eAhb
+         deXiKfZjzlHBviz374jemFmQB1VUP6ZPQkt5vQJePp9pgRYG5pTpOUzWacB43vpKxUBo
+         SRk5IdQj9uEmnv7Y/H5iqJr07y8qryWd3j7Tsp5+XoZv2okD22MSiPo9btoqNQeTL1E0
+         wEA6KxJf539UaJp+GrQg9jNXibSBDGlqQ/BlmAepwseBM73aMe+nuVgoePlo2Up2hOVp
+         9RKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759582834; x=1760187634;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AUSacOpwUkhYQJEzSIzuhZ2iBaIm5JbEgWtQG+WCBds=;
+        b=XNqEjAEofZSSq+GUBnXqsbBnl3OXMQrg4VWAXeY0Isd/D5HD8/WeAXyjCThbfrzXbc
+         UilOONcXABFihRNB6L7cB/2ftxZbEhrCgY6DG3Fkyr7uSY8GMz4g0HGYES/Goxcf0JkL
+         WTA9t38fpnyfb7GlDa0HHrjdYdpDUZ1wooMYtH8vl0/PkSxLyvLl9MBKoHHHeiEk4dsy
+         FmCcOy4Y75VM0Wt3rdvPq37TOhacW/+j5f+JWO5zf3oic9UsqU2GJugCaUFoWwk6Hdzn
+         oPebmDj4PNdZFi+BqorF+UeFfxKP0qLoHoIcGZ0D8JLslOM3iFzEfzKoRCqUMjxEqvvw
+         UJTg==
+X-Gm-Message-State: AOJu0YxGMsZ4CKqSFo6/6/IlmUn9vvGMcv5OVqy8Du9uKpjjcISoIMai
+	vbDX+M+Yo6qZEvdez7Wa4BGiTWuNXgTcpb+MEBD8EcOZbsVhWvi2mNh29uBfzB0lwTY=
+X-Gm-Gg: ASbGncvpZ/cQ0kzW0euVe4MblOXgfHjShjk3bExMSLmowYZ2T8mce6gRZB6hxIsu8xz
+	CuhGUTS2VITGHKg4ejAhTgBb7jTjBZ5lUdEV4n0nbBz/ujfVfI38AfntwUgKW4taSAYDViuMQnx
+	b/8ehk98/Zmc6y1S2QUZipPrhEDuh7GsEQ50ylg35+Gmo58um4SbeKPvx01nr0Z7YOGiQBELVgN
+	iUhc6mqreEal5/sfVCenjdfyEKdIRzcJirD+I3EDDlZulc3dM1wmFktz8oCfaH/Iip/RicFCJld
+	Ri+61WlgKXQXaGrdD/er2kjQlgRpQWnW5TYpMYS02Tluc4Kwm0ciMq8ZGRHW2yNsxdpYwZTRtDM
+	dMYyE16xyaAZUOhfpHp4nEuA65sFrA0Lsvo5+gMLpXbnM2JaRB+Q=
+X-Google-Smtp-Source: AGHT+IFZ/EV7PHa6pizueu5EVPvTjaqTLNqkpxUOwAYwb832MSFSJZcV+KGHkGs97t9Qc27EgHyU5Q==
+X-Received: by 2002:a05:600c:19ce:b0:45f:2919:5e6c with SMTP id 5b1f17b1804b1-46e7110c3d5mr55360575e9.16.1759582833527;
+        Sat, 04 Oct 2025 06:00:33 -0700 (PDT)
+Received: from denis-pc ([176.206.100.218])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e61a4161bsm181597935e9.16.2025.10.04.06.00.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 04 Oct 2025 06:00:33 -0700 (PDT)
+From: Denis Benato <benato.denis96@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: netdev@vger.kernel.org,
+	Denis Benato <benato.denis96@gmail.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>
+Subject: [PATCH] eth: fealnx: fix typo in comment
+Date: Sat,  4 Oct 2025 14:59:42 +0200
+Message-ID: <20251004125942.27095-1-benato.denis96@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fUOpiJypozewCSi6Avg2pQnjmvNcFMM5iUsbTR1P_47zQ@mail.gmail.com>
 
-On Fri, Oct 03, 2025 at 02:25:39PM -0700, Ian Rogers wrote:
-> On Wed, Sep 17, 2025 at 11:05 AM Ian Rogers <irogers@google.com> wrote:
-> > On Thu, Sep 4, 2025 at 9:26 PM Ian Rogers <irogers@google.com> wrote:
-> > > Whilst cleaning up "%option reject" make the header files accurately
-> > > reflect functions used in the code and tidy up not requiring yywrap.
+There is a typo in a comment containing "avilable":
+replace it with "available".
 
-> > > Measuring on the "PMU JSON event tests" a modest reduction of 0.41%
-> > > user time and 0.27% max resident size was observed. More importantly
-> > > this change fixes parsing large metrics and event strings.
+Signed-off-by: Denis Benato <benato.denis96@gmail.com>
+---
+ drivers/net/ethernet/fealnx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > Ping. I think this may have gotten lost in noise about things like
-> > hardware json and the python metrics. It is a small change, bug fix
-> > and performance win. It can land independently of anything else. PTAL.
- 
-> It'd be nice to land this for the v6.18 pull. I don't think it has any
-> visible implications and just makes stuff better.
+diff --git a/drivers/net/ethernet/fealnx.c b/drivers/net/ethernet/fealnx.c
+index 6ac8547ef9b8..bf72fe6ca187 100644
+--- a/drivers/net/ethernet/fealnx.c
++++ b/drivers/net/ethernet/fealnx.c
+@@ -196,7 +196,7 @@ enum intr_status_bits {
+ 	ERI = 0x00000080,	/* receive early int */
+ 	CNTOVF = 0x00000040,	/* counter overflow */
+ 	RBU = 0x00000020,	/* receive buffer unavailable */
+-	TBU = 0x00000010,	/* transmit buffer unavilable */
++	TBU = 0x00000010,	/* transmit buffer unavailable */
+ 	TI = 0x00000008,	/* transmit interrupt */
+ 	RI = 0x00000004,	/* receive interrupt */
+ 	RxErr = 0x00000002,	/* receive error */
+-- 
+2.51.0
 
-Applied and now testing on the container build set.
-
-- Arnaldo
 
