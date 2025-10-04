@@ -1,157 +1,140 @@
-Return-Path: <linux-kernel+bounces-841937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EE5CBB894B
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 06:07:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C003BB894E
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 06:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 99FCD4E623C
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 04:07:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C8E124E1E59
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 04:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21C521E0BB;
-	Sat,  4 Oct 2025 04:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B53215F42;
+	Sat,  4 Oct 2025 04:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H6HSXS53"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bvKvIDbK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6A3169AE6
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 04:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FF323CB
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 04:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759550857; cv=none; b=LWZoEhGJfk1AzGz6D7DD87WeAJoBhiUN1KrP9gGibDhCPpT/17D4V9gDGTB/rDGVA2ha5sW4Jl32p7m/xAMkGsQM/kTtxOqgF4hgqjw9PpoaiLFv4f7/rHqixmFfisLVXRw+osvSdhjk3rjsO2APStvfZL7MGiWROrWNv02Yxjs=
+	t=1759551130; cv=none; b=cK1l3Xgj76zXuPOczE0CUP+RK37pmN9t71EqriZ0kBJLqnA9luPZjAJ/n3g/Pgv7kwILoD23B/muweQ+Xz88zEMZ6spdG6cpT5TTKXFGiO3E4eI+3wR+U80qpBbkvW7MLecyEqixkIUimjAmhQjilVkUqpDJmxyLOhPY1KFW9FE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759550857; c=relaxed/simple;
-	bh=HYJNFwgeKdoDfqPB7ktfqmxusFy0EZVeLUF1A0YhbNM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ixfu54bu4xDpZHywjTFiP+/h2zo6zZfrphOQL9UObw19XzEG6gUTs0nQL3E+RDhvq6mhUagvvBxkU1X+gURKweRjAnrxfwX7jSr/3WllND0VlmHz0745ODRM2h2KQImfjUgUQoHBLnCsuWzIX9sW5gXlVYBx9aPTAf0rLL4Cric=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H6HSXS53; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b5a631b9c82so2004813a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 21:07:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759550855; x=1760155655; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Ab/aeZgm1Ct/wesU1VWgrWdl3a/KDYSwn/hRS2/Blo=;
-        b=H6HSXS53IoPzW8+shNBj13uSKueIpDhB1Kq34u9oTnTGAUb68dKT/dxzfinH7atwKo
-         YaKchYTCAUPHJR+I3/ZWj7taPiDW/dz6AIyGEV/nFBzXUXvmiqdTaMh4jCgoFiB+SMUg
-         oNfLY+9mPiYlOcVgsVnrRZJ9hQTFALFZQvrurc9Y2y/QpZQylxFwDilRN1B6UMt+54Bh
-         r8MSTJro0+9Vp1ME3GrZmYM2vDu+bxOH99/A8VuB8HfbkVH5O/3HTBfRz/1VgmaVtdRT
-         uR/c+JmXdbP6KgfvGjB72wmCrRId+u5vvPmBZDiufaw41zHgTQJkG+m4uSWz8sd20Vgx
-         Y1Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759550855; x=1760155655;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9Ab/aeZgm1Ct/wesU1VWgrWdl3a/KDYSwn/hRS2/Blo=;
-        b=fgxAOK3JjYZs3GDaictCHK3npMeZsuRXZ6+Fo86PJFE2KEEhDbVdrmqno/lnuyXVfD
-         BwDZp5SZPZ3fd/UAUi+Jaq7gsbB1mvnK4seSLJYZhl80Eww8ybh66jbAIA8hjbq+efV3
-         RpWbmtC42hc6iUvvv6PEYXRUkiG9ldrfGi5uvUwEhnJTTPsuHgmdInVMCJ/F0qjBdmS+
-         D6xBY2aqmiaUxDuyjMAljbnbx6g3ssnIIw+59NMwzwIZ7l+pTRP9UWWT3WGaU/GwR7wP
-         M6VC3Bgh1i8rBqxdSexrMKBfAGNYggqFsOqIUhWvN9r3f0OprA+d5435fW8Ud+Wu3HZm
-         ul3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXpYegytwesjUkhIuCkCk78vv2cmrbuXDRhJHw8fPCQxnjGr3+C8YEgUjeoUWOQ4j6hYy3VUoYOrvxPs3Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMZpPvokMzVBJ1RzEVgAoIpeB+Jdvbt4oWIraZN2FEw7PnYDXl
-	ydjouxbxlsU6VZzTHuKVWUbLqcQPemkx4uh1q2S7YGuajnth2nRKNLVS
-X-Gm-Gg: ASbGncuSsKxK+8Wf0aVyUwa1SqueYyaOohNeI9i5qBOWQimbAPeKhjguPUk28XW1RAw
-	h7XcafSfhyLY1TWjUc4XnSTvrKSmFEZ/2Wl0qYdF9zCCSCgRRJ/BqkQnn0UVrjjb+0GL2b2GEoN
-	ar38zcFbP9vS+aQDyX3rN74k+Xal6nkwPVoxChpQ3iA5S6VeDf3IeOkckaqX+kH8M8iLSEUyOHr
-	cQH4oyZiWhrr8jCHsEkFBf+2uKpK5AMjCVmm+U4rCSyy8OCeojMDduOGdZu8VoiSBeif/qp/zKU
-	6rD/hNa0K+MxZEiEu8E9SONnSYqLbE8WwjsUXANpwJjW+d77LuwcLQpMx+2zjTseJuJFg4y043b
-	kvqgbx7kx4FO0uToMR4YUqGsbFKFrQ/I5EJPYFhe4PbUnOTJetH6YQ2DECzmH1yhcHey5gy8dFm
-	c=
-X-Google-Smtp-Source: AGHT+IGTlstly6wpNIIUzXdJcqg26KC4+gE2hmAVdLheWI6xhK/cVtI6EOnrc7NPCTVjju8lAhEuEg==
-X-Received: by 2002:a17:903:acd:b0:27b:defc:802d with SMTP id d9443c01a7336-28e9a5f7158mr78158925ad.28.1759550854915;
-        Fri, 03 Oct 2025 21:07:34 -0700 (PDT)
-Received: from ti-am64x-sdk.. ([157.50.90.152])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339a4f15857sm5876142a91.1.2025.10.03.21.07.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 21:07:34 -0700 (PDT)
-From: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
-To: Thangaraj Samynathan <Thangaraj.S@microchip.com>,
-	Rengarajan Sundararajan <Rengarajan.S@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: khalid@kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	bhanuseshukumar@gmail.com,
-	netdev@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] net: usb: lan78xx: Fix lost EEPROM write timeout error(-ETIMEDOUT) in lan78xx_write_raw_eeprom
-Date: Sat,  4 Oct 2025 09:37:22 +0530
-Message-Id: <20251004040722.82882-1-bhanuseshukumar@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1759551130; c=relaxed/simple;
+	bh=Qo7TVx+zfj3Bg1+Sj3suyAIZEdpJ0+OU+sj2ev+/yiY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RljsZw55W2pfc60Lo9HOS1tOKFuzAA32vP215FsFnExkFoCIGRtKxpga23CqRLI21kfA2Umb9ssJX8Qvcb8v8RAb22VdmKJYc5uxOJ13DqfDPR6LPfAN2qXWtKWDq9+D6z5+STWPClg71Mm4jmeA83J5s7X3cQc39u3Ho/uandg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bvKvIDbK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759551127;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G1FMci1EMwWYl4LzKrGkXp3JLbCopyApeUNyqyTFkQU=;
+	b=bvKvIDbKVVI8drkeJ0KsPzamYTKGUXhxD+cHW0XWK9dlEL03Qf+YzJLztPf8deFRkUoatM
+	YHMNo5pG2icbAy4B9sygm/NOYm9Ngq08OW/0h2JQYi3ZuS/w7ciemhLaike17/lwyAg6YK
+	8o/97GY2zNXhA1PyRt35/woAjyVBScI=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-572-sb34xGJwPW-Pi7P9XxP_Qg-1; Sat,
+ 04 Oct 2025 00:12:04 -0400
+X-MC-Unique: sb34xGJwPW-Pi7P9XxP_Qg-1
+X-Mimecast-MFC-AGG-ID: sb34xGJwPW-Pi7P9XxP_Qg_1759551123
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D70E51800452;
+	Sat,  4 Oct 2025 04:12:02 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.27])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A818B300018D;
+	Sat,  4 Oct 2025 04:12:01 +0000 (UTC)
+Date: Sat, 4 Oct 2025 12:11:57 +0800
+From: Baoquan He <bhe@redhat.com>
+To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH v3 09/10] mm/vmalloc: Update __vmalloc_node_range()
+ documentation
+Message-ID: <aOCejd0aghFS8iSO@MiWiFi-R3L-srv>
+References: <20251001192647.195204-1-urezki@gmail.com>
+ <20251001192647.195204-10-urezki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251001192647.195204-10-urezki@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-The function lan78xx_write_raw_eeprom failed to properly propagate EEPROM
-write timeout errors (-ETIMEDOUT). In the timeout  fallthrough path, it first
-attempted to restore the pin configuration for LED outputs and then
-returned only the status of that restore operation, discarding the
-original timeout error saved in ret.
+On 10/01/25 at 09:26pm, Uladzislau Rezki (Sony) wrote:
+> __vmalloc() function now supports non-blocking flags such as
+> GFP_ATOMIC and GFP_NOWAIT. Update the documentation accordingly.
+> 
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> ---
+>  mm/vmalloc.c | 21 +++++++++++----------
+>  1 file changed, 11 insertions(+), 10 deletions(-)
+> 
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index d7e7049e01f8..2b45cd4ce119 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -3881,19 +3881,20 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+>   * @caller:		  caller's return address
+>   *
+>   * Allocate enough pages to cover @size from the page level
+> - * allocator with @gfp_mask flags. Please note that the full set of gfp
+> - * flags are not supported. GFP_KERNEL, GFP_NOFS and GFP_NOIO are all
+> - * supported.
+> - * Zone modifiers are not supported. From the reclaim modifiers
+> - * __GFP_DIRECT_RECLAIM is required (aka GFP_NOWAIT is not supported)
+> - * and only __GFP_NOFAIL is supported (i.e. __GFP_NORETRY and
+> - * __GFP_RETRY_MAYFAIL are not supported).
+> + * allocator with @gfp_mask flags and map them into contiguous
+> + * virtual range with protection @prot.
+>   *
+> - * __GFP_NOWARN can be used to suppress failures messages.
+> + * Supported GFP classes: %GFP_KERNEL, %GFP_ATOMIC, %GFP_NOWAIT,
+> + * %GFP_NOFS and %GFP_NOIO. Zone modifiers are not supported.
+> + * Please note %GFP_ATOMIC and %GFP_NOWAIT are supported only
+> + * by __vmalloc().
+> +
+> + * Retry modifiers: only %__GFP_NOFAIL is supported; %__GFP_NORETRY
+> + * and %__GFP_RETRY_MAYFAIL are not supported.
 
-As a result, callers could mistakenly treat EEPROM write operation as
-successful even though the EEPROM write had actually timed out with no
-or partial data write.
+Do we need to update the documentation of __vmalloc_node_noprof()
+accordingly? I see it has below description about "Retry modifiers"
+where gfp_mask is passed down to __vmalloc_node_range_noprof() directly
+but have different description. Not sure if I missed anything.
 
-To fix this, handle errors in restoring the LED pin configuration separately.
-If the restore succeeds, return any prior EEPROM write timeout error saved
-in ret to the caller.
+===
+ * Retry modifiers: only %__GFP_NOFAIL is supported; %__GFP_NORETRY
+ * and %__GFP_RETRY_MAYFAIL are not supported.
+===
 
-Suggested-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Fixes: 8b1b2ca83b20 ("net: usb: lan78xx: Improve error handling in EEPROM and OTP operations")
-Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
----
- Note:
- The patch is compiled and tested.
- The patch was suggested by Oleksij Rempel while reviewing a fix to a bug
- found by syzbot earlier.
- The review mail chain where this fix was suggested is given below.
- https://lore.kernel.org/all/aNzojoXK-m1Tn6Lc@pengutronix.de/
-
- drivers/net/usb/lan78xx.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index d75502ebbc0d..5ccbe6ae2ebe 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -1174,10 +1174,13 @@ static int lan78xx_write_raw_eeprom(struct lan78xx_net *dev, u32 offset,
- 	}
- 
- write_raw_eeprom_done:
--	if (dev->chipid == ID_REV_CHIP_ID_7800_)
--		return lan78xx_write_reg(dev, HW_CFG, saved);
--
--	return 0;
-+	if (dev->chipid == ID_REV_CHIP_ID_7800_) {
-+		int rc = lan78xx_write_reg(dev, HW_CFG, saved);
-+		/* If USB fails, there is nothing to do */
-+		if (rc < 0)
-+			return rc;
-+	}
-+	return ret;
- }
- 
- static int lan78xx_read_raw_otp(struct lan78xx_net *dev, u32 offset,
--- 
-2.34.1
+>   *
+> - * Map them into contiguous kernel virtual space, using a pagetable
+> - * protection of @prot.
+> + * %__GFP_NOWARN can be used to suppress failure messages.
+>   *
+> + * Can not be called from interrupt nor NMI contexts.
+>   * Return: the address of the area or %NULL on failure
+>   */
+>  void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
+> -- 
+> 2.47.3
+> 
 
 
