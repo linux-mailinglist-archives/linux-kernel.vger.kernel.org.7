@@ -1,187 +1,123 @@
-Return-Path: <linux-kernel+bounces-842180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57E6DBB92A1
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 01:20:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8B93BB92AA
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 01:35:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B7A163464D4
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 23:20:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84DC43AA973
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 23:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E206723D7E0;
-	Sat,  4 Oct 2025 23:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653C224728F;
+	Sat,  4 Oct 2025 23:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NSc49Rd/"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="aqo1KiFP"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06DE154BF5
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 23:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462023594B
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 23:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759620013; cv=none; b=JlWNKG4H8HQxyuwKfzu4KDQRaXIzKYS4IiGRr3Jxsn2dLWkTCOvbSSBXfRvyydeoLv6TazLyB7OhBcwXIORMwqt8vwxjKHxyIKmxYszL2bhnnNxe3dFZH5bo7VKN07vQkRijOz5JFWgEmCTI0cpadqV+6QyzsqbMaU6jFeS4/ag=
+	t=1759620927; cv=none; b=Y3C5MxqzPGAXjHNV4U77Y3TmBbfN13sPhzHA0zdZ5hD+JJQX1CotXRbSNkEcQlEHJeUogDafGrWcqY58Hk8jjOCwo71tXbrSW4MqBFPvtRAHtxsUS7ttNOJK4NIzwQCZdmhEV4TxysaAYjPMa7Bd33V5sB7SYOpYYZ6EaJpR09k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759620013; c=relaxed/simple;
-	bh=yYBgd/8yTSblLibzI7LfKoEFxZm1jOyEox14aJH0mWQ=;
+	s=arc-20240116; t=1759620927; c=relaxed/simple;
+	bh=I0RuDAZnK67fDIvuvo7+j5OVjOlB6bei3TOSvnVvfzc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DfxELZrlfQRIqVMOSNoZqv/UlOOO5GI10hRRv3YcgTMHAb7pO16tvbsP7J+ynKEjFr11m21ASCU8IpP1QSCEcWg2LsXlCUgKmqV7PSSq0kj46iZsoua3KuFfgOXd7mlQvufSi9EeBPsyrEm7PiCJBCY7NkYFnNu1l9DRdNpvgJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NSc49Rd/; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <80d42369-3e23-453e-86a1-2fdb57bb78c8@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759619994;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HZhZYOM6k6YwMKyP3ZgBP7v8xwpOn16mI6deBhZ294Y=;
-	b=NSc49Rd/VlBCA9Rj/0XS9TE2AGiGfgCH9tBFw+/tBNaHliO8QFzKp38RcHNOZfTdMbYnLw
-	vZySRWVPlRNdxdk5HFN9xlBFTdyrp59G0oxdPOXBn0fJy1oHjECXCLTZzTOSWS0gH+ojxM
-	UB0NhoPqSKKQMvRgVPr2JDYAPdis2Cw=
-Date: Sat, 4 Oct 2025 16:19:48 -0700
+	 In-Reply-To:Content-Type; b=n+29jA14YVVWvuPvP7v2eOqrUSBAGgp2aDLSUjhOPOWSAfEVbjtt+7clX/Sy5uN3SBaxxiGAqtgjU3sSh0CdcCrUgWDztqdz5LVhB8VXFU1WYz+HrIXCQ6akM4RPHhMkUTg4WvqHuCzulSq2wkEBmwBf4qhP7/nAKElsbHnVNzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=aqo1KiFP; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-46e3a50bc0fso28791945e9.3
+        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 16:35:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1759620925; x=1760225725; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DC/L4mdd1OngyUYeW9NdFnDzBjfqJNLL3d9hdta1f0E=;
+        b=aqo1KiFP+mtl1v6qmy0Pcv3Khkd7ksvrAL2vzQxamMe6iiWo4QBGt3LVB0ETrYzezw
+         uyLXvDBP+YFOVKV+ahqIvyB3pWES84/iV7kCcVV94rnz0qyubRSEBPoeOSe4g+1YycFv
+         pyXSnCtlosKyPoXtjxPYr1GdQryS6mNFPXx3S7RMORVeLyGcaigWnPk7NWkd5j7WDZN3
+         nv8VKBKmLBVu1PGLx9gIMUjk8fcpYj1Xm9CF4TUisH/dqFTFAg1j0b/+yyqINI4YrRrI
+         1vIxjDPN6YrA/z9oK+iaJFDPW1uUdF1ZDsDuT10XS37XsPt43+BoIFlA3b/q67LlF5Wr
+         tnEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759620925; x=1760225725;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DC/L4mdd1OngyUYeW9NdFnDzBjfqJNLL3d9hdta1f0E=;
+        b=CfzJB708qERSb+UgkzDfE/1Zg7wnfxplsXvHz+fQnrm/qDr1sxXgdhGpNNxk1zWh6W
+         xwRJHAhCzuh7gdZlNY273BL6V+X0lcWpW6kltSGAf++gqpcjFpe7Br6zkbqu/JGU3aye
+         wLSvM7pC8gopbWiz8rb5MCcaPyDFkROavkjs7AT6O7yub5xzAiRuEIUuWbS6Auz+LOOo
+         qBs8vhbdq+TCB/k+fZfVG67g79VO16ixl9ReV5hezy1VgceHyFDOrwwiIqvtzxULgq+1
+         AiUO0OWDs9JUWaYVTrhMaMEr+2P3NXON/4e7ipZSiPsgvx9gFyC5QP0xNrgeZalds+Gk
+         31rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXWzxWw7wiZXFTKgpxTLn669HYyecyKMRIkrby6OqcvFL6ybQNRT5hk85pneavq7RUtdu3wFnhGRPe3EAM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWS0JRZvrEXHfxsqKkxf7VWszosQkiEo6eGTaLyfdgfZq32SO6
+	IE65Bj/QAVC+ZefhPtODVv8Cln//4Xj6MRuNkd7F3wWVwTZ3p9wNo+I=
+X-Gm-Gg: ASbGnctmAm+gNgceIiRwZXZfynU81AQet33Rw4tqiCz4Uz4waolAlJppnh5nNmw9DCy
+	N5YFAry2BLIM8P2hXB6lvIuAvPq3QUAqbIdWfHf9uSUFjkBR70Drlq2GwBC0fYa9OSbKJ0T5OyM
+	M4mdM5TkF3zrWFyuMiVVg05kLnlBqOSLPp0cv6KfSr4yFRt/uOQ9jN01xfVpKkpi9AfE7U4S2Gy
+	iWDzVhDxg7096cIytW2R8oFDMZwP3A0sX4yOIlvjKqHt1xK7q23ZoDMN96HHzUmymdjKh+S6Fw+
+	C7MADEfisPjX4lnJrQ0jhzApKRLs15/rm85YgY3XUpJbHzfkV2B1PK6BIEYaR5ubjJ6R3OEQDL8
+	nJxXZu/MtnWOb6L+0a9TVOlL0zlbc/jgIbUljigGAlNr4/abrncYEffNWcKjmx6x0i5ln8bmTTU
+	kOg8Lal8ZaWvLbqlalZXGIs24uKmrIOmTy1A==
+X-Google-Smtp-Source: AGHT+IEO4DcW8huE1gnQomQOCKiIhr0rA1gJSe5KrVyDYKI02dHKwC1UD1xOFCCF7g3I/MKtVb+GRQ==
+X-Received: by 2002:a05:600d:438b:b0:46e:74bb:6f6 with SMTP id 5b1f17b1804b1-46e74bb091bmr25477395e9.22.1759620924472;
+        Sat, 04 Oct 2025 16:35:24 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2acd24.dip0.t-ipconnect.de. [91.42.205.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e61a029a0sm186407985e9.13.2025.10.04.16.35.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 04 Oct 2025 16:35:24 -0700 (PDT)
+Message-ID: <74e63350-4ec9-4396-9a00-4e257f987dd7@googlemail.com>
+Date: Sun, 5 Oct 2025 01:35:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] perf: use __builtin_preserve_field_info for GCC
- compatibility
-Content-Language: en-GB
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Andrew Pinski <quic_apinski@quicinc.com>,
- Namhyung Kim <namhyung@kernel.org>, Sam James <sam@gentoo.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "bpf@vger.kernel.org" <bpf@vger.kernel.org>
-References: <fea380fb0934d039d19821bba88130e632bbfe8d.1754438581.git.sam@gentoo.org>
- <aJPmX8xc5x0W_r0y@google.com>
- <CO1PR02MB8460C81562C4608B036F36A5B82DA@CO1PR02MB8460.namprd02.prod.outlook.com>
- <043721e8-a38e-419d-b9b9-2dad33e267a0@linux.dev> <aN629m1MlMXYh1te@x1>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <aN629m1MlMXYh1te@x1>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.17 00/15] 6.17.1-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20251003160359.831046052@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20251003160359.831046052@linuxfoundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+
+Am 03.10.2025 um 18:05 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.17.1 release.
+> There are 15 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
+
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
 
+Beste Grüße,
+Peter Schneider
 
-On 10/2/25 10:31 AM, Arnaldo Carvalho de Melo wrote:
-> On Wed, Aug 06, 2025 at 05:27:02PM -0700, Yonghong Song wrote:
->> On 8/6/25 4:57 PM, Andrew Pinski wrote:
->>>> -----Original Message-----
->>>> From: Namhyung Kim <namhyung@kernel.org>
->>>> Sent: Wednesday, August 6, 2025 4:34 PM
->>>> To: Sam James <sam@gentoo.org>
->>>> Cc: Peter Zijlstra <peterz@infradead.org>; Ingo Molnar
->>>> <mingo@redhat.com>; Arnaldo Carvalho de Melo
->>>> <acme@kernel.org>; Mark Rutland
->>>> <mark.rutland@arm.com>; Alexander Shishkin
->>>> <alexander.shishkin@linux.intel.com>; Jiri Olsa
->>>> <jolsa@kernel.org>; Ian Rogers <irogers@google.com>; Adrian
->>>> Hunter <adrian.hunter@intel.com>; Liang, Kan
->>>> <kan.liang@linux.intel.com>; Andrew Pinski
->>>> <quic_apinski@quicinc.com>; linux-perf-
->>>> users@vger.kernel.org; linux-kernel@vger.kernel.org;
->>>> bpf@vger.kernel.org
->>>> Subject: Re: [PATCH] perf: use __builtin_preserve_field_info
->>>> for GCC compatibility
->>>>
->>>> Hello,
->>>>
->>>> On Wed, Aug 06, 2025 at 01:03:01AM +0100, Sam James
->>>> wrote:
->>>>> When exploring building bpf_skel with GCC's BPF support,
->>>> there was a
->>>>> buid failure because of bpf_core_field_exists vs the
->>>> mem_hops bitfield:
->>>>> ```
->>>>>    In file included from util/bpf_skel/sample_filter.bpf.c:6:
->>>>> util/bpf_skel/sample_filter.bpf.c: In function
->>>> 'perf_get_sample':
->>>>> tools/perf/libbpf/include/bpf/bpf_core_read.h:169:42:
->>>> error: cannot take address of bit-field 'mem_hops'
->>>>>     169 | #define ___bpf_field_ref1(field)        (&(field))
->>>>>         |                                          ^
->>>>> tools/perf/libbpf/include/bpf/bpf_helpers.h:222:29: note: in
->>>> expansion of macro '___bpf_field_ref1'
->>>>>     222 | #define ___bpf_concat(a, b) a ## b
->>>>>         |                             ^
->>>>> tools/perf/libbpf/include/bpf/bpf_helpers.h:225:29: note: in
->>>> expansion of macro '___bpf_concat'
->>>>>     225 | #define ___bpf_apply(fn, n) ___bpf_concat(fn, n)
->>>>>         |                             ^~~~~~~~~~~~~
->>>>> tools/perf/libbpf/include/bpf/bpf_core_read.h:173:9: note:
->>>> in expansion of macro '___bpf_apply'
->>>>>     173 |         ___bpf_apply(___bpf_field_ref,
->>>> ___bpf_narg(args))(args)
->>>>>         |         ^~~~~~~~~~~~
->>>>> tools/perf/libbpf/include/bpf/bpf_core_read.h:188:39: note:
->>>> in expansion of macro '___bpf_field_ref'
->>>>>     188 |
->>>> __builtin_preserve_field_info(___bpf_field_ref(field),
->>>> BPF_FIELD_EXISTS)
->>>>>         |                                       ^~~~~~~~~~~~~~~~
->>>>> util/bpf_skel/sample_filter.bpf.c:167:29: note: in expansion
->>>> of macro 'bpf_core_field_exists'
->>>>>     167 |                         if (bpf_core_field_exists(data-
->>>>> mem_hops))
->>>>>         |                             ^~~~~~~~~~~~~~~~~~~~~
->>>>> cc1: error: argument is not a field access ```
->>>>>
->>>>> ___bpf_field_ref1 was adapted for GCC in
->>>>> 12bbcf8e840f40b82b02981e96e0a5fbb0703ea9
->>>>> but the trick added for compatibility in
->>>>> 3a8b8fc3174891c4c12f5766d82184a82d4b2e3e
->>>>> isn't compatible with that as an address is used as an
->>>> argument.
->>>>> Workaround this by calling __builtin_preserve_field_info
->>>> directly as
->>>>> the bpf_core_field_exists macro does, but without the
->>>> ___bpf_field_ref use.
->>>>
->>>> IIUC GCC doesn't support bpf_core_fields_exists() for bitfield
->>>> members, right?  Is it gonna change in the future?
->>> Let's discuss how __builtin_preserve_field_info is handled in the first place for BPF. Right now it seems it is passed some expression as the first argument is never evaluated.
->>> The problem is GCC's implementation of __builtin_preserve_field_info is all in the backend and the front end does not understand of the special rules here.
->>>
->>> GCC implements some "special" builtins in the front-end but not by the normal function call rules but parsing them separately; this is how __builtin_offsetof and a few others are implemented in both the C and C++ front-ends (and implemented separately). Now we could have add a hook to allow a backend to something similar and maybe that is the best way forward here.
->>> But it won't be __builtin_preserve_field_info but rather `__builtin_preserve_field_type_info(type,field,kind)` instead.
->>>
->>> __builtin_preserve_enum_type_value would also be added with the following:
->>> __builtin_preserve_enum_type_value(enum_type, enum_value, kind)
->>>
->>> And change all of the rest of the builtins to accept a true type argument rather than having to cast an null pointer to that type.
->>>
->>> Will clang implement a similar builtin?
->> The clang only has one builtin for some related relocations:
->>     __builtin_preserve_field_info(..., BPF_FIELD_EXISTS)
->>     __builtin_preserve_field_info(..., BPF_FIELD_BYTE_OFFSET)
->>     ...
->> They are all used in bpf_core_read.h.
->>
->>> Note this won't be done until at least GCC 16; maybe not until GCC 17 depending on if I or someone else gets time to implement the front-end parts which is acceptable to both the C and C++ front-ends.
-> So I'm taking the patch as-is, ok?
->
-> But first we need the Signed-off-by tag from Andrew Pinski as he is
-> listed in a Co-authored-by, that I replaced with Co-developed-by as its
-> the term used for this purpose in:
->
-> Yonghong, can I add an Acked-by: you since you participated in this
-> discussion agreeing with the original patch (If I'm not mistaken)?
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
-LGTM.
-
-Acked-by: Yonghong Song <yonghong.song@linux.dev>
-
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
