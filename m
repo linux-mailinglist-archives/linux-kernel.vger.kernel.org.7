@@ -1,156 +1,252 @@
-Return-Path: <linux-kernel+bounces-841873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 096E8BB8728
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 02:22:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18B76BB870D
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 02:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7F2219E344F
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 00:23:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F28119E63A4
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 00:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2570EA926;
-	Sat,  4 Oct 2025 00:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68ED2566;
+	Sat,  4 Oct 2025 00:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="X7STbMa/"
-Received: from buffalo.tulip.relay.mailchannels.net (buffalo.tulip.relay.mailchannels.net [23.83.218.24])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NUlDxc4P"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96CBF34BA3C;
-	Sat,  4 Oct 2025 00:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488411C27
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 00:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759537360; cv=pass; b=Fqyii+YNIZdRZScUSQcG/q4xEHST23v/R4B0/ss5Ok7KjGyJnTJA0iSOUdxWVOUqaHBRMge4/KSrEsDixAYahyko4JZWiMmY8KNEN2j1a3B9k/hRK7te7UXUcn5GVD/ChGwtnoeyBExBE/WmeFhnEJbxsi6EWaK8wdCY2wcBers=
+	t=1759536591; cv=fail; b=oEHxneO0d20Rz+UA4LcsPKrjLPOtW+JoWf0m9do9YNWd+nhVyuF2NyTK5rafstzerqA2PSp2+4rtZgIK27JX/Ft88UcSFGZk+a0SNk39xjDXNLYDx1hujIDviLeVBdOPq9+XB6AWCSfy7sWe/ewo1ZWpC4L/KwcWmSXsXS+/Spg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759537360; c=relaxed/simple;
-	bh=LRcgf3iMEM+qjHK9Z81mTEyoMcFrXF8kzKv7ohcJMuY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RQyHRREpyCJv+V6XO0lkab1cIHS/t9g9AaSK5UjPlMy5Rv4B+jwgvbPHYisQ1DV/azOnyiZzoHXQPPhzGxr85rz9VonJYGIcUqfN7LxcuNlDzZvyMhgD13rJZlRtvYy2FUeaMqOa9nTa8XPZaHIr9gwZHDvGZPMtI9eBFc2QiHQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=X7STbMa/; arc=pass smtp.client-ip=23.83.218.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id F20D66C203E;
-	Sat, 04 Oct 2025 00:06:35 +0000 (UTC)
-Received: from pdx1-sub0-mail-a275.dreamhost.com (trex-green-3.trex.outbound.svc.cluster.local [100.114.209.105])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 7B15C6C1FE5;
-	Sat, 04 Oct 2025 00:06:35 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1759536395; a=rsa-sha256;
-	cv=none;
-	b=Ycbg9AVr2E5HumI49jjjkYXOdhcUclfAQJP6eJ7M+Ac6SCqYTquwb6za4bFuNFoVcGa/sZ
-	YJq3yPihUyU7aTANZQw8ZzAo3+wvT5UUwdB7kL4rwIzrkh6cEPiMUYzdHJ7ZRCMOuUvK55
-	T1Fn1+2T3F6AMGNVdjSd2j2+w99+agiXgU2IDuA0I9hzkgxVCa0ONwIaF7kFhqkqaOttR0
-	usxJntlNICWf6xXdw3JhRmoOYp/lXEEXJwfETwlhjqtc11pckC4LVVbbauW/ADE7JGOWdj
-	v+Zw4ZEOtwIv6ynppV+7jZt06lxo9oZzdNp5llbo1tyZjQ0pUhAKvMy4XNTHkA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1759536395;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=LRcgf3iMEM+qjHK9Z81mTEyoMcFrXF8kzKv7ohcJMuY=;
-	b=aGvhjLoqmjZJTZBXdp9UbBSPcJL/oRBiebnT59Xu2ylgN0qVzaiY4yL6qrv9xAmzi4LDgR
-	Anv4VmRv4K8W+NuFijByLYozt04KocnJBLTA2mpBzikY2noMDLP25AnomzxA7K158FyeMp
-	PqMxqmI8cT3goOXR94VLk5z9ZVmLu+BDjmtDYJrxVKdAhsIBikej4q1ddn8l4+V893JRUx
-	wMIyDO43I/+kwNzr97NsW10nWcCF/WA94JwkagjrO9OGUIKTcNVfBTKwydbiBxhlHKltxW
-	fLJiEDs4LQ//aHIa+PdruD0SR5Q97DK1+witZWIjqgMpZWUraxe8YW9BF7iY5g==
-ARC-Authentication-Results: i=1;
-	rspamd-84f8cfc67-xc8ls;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Versed-Absorbed: 3f6264a7705c779f_1759536395825_1284957329
-X-MC-Loop-Signature: 1759536395825:610673563
-X-MC-Ingress-Time: 1759536395825
-Received: from pdx1-sub0-mail-a275.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.114.209.105 (trex/7.1.3);
-	Sat, 04 Oct 2025 00:06:35 +0000
-Received: from offworld (syn-076-167-199-067.res.spectrum.com [76.167.199.67])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a275.dreamhost.com (Postfix) with ESMTPSA id 4cdm6L4Q8Mz3J;
-	Fri,  3 Oct 2025 17:06:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1759536395;
-	bh=LRcgf3iMEM+qjHK9Z81mTEyoMcFrXF8kzKv7ohcJMuY=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=X7STbMa/CsLXoBJglhKm3fE5hAXExPGwpmE0cyFXJ3uxcqCHwSDsmGPwF6/ivGdm6
-	 jZJBq47RIInjvKetG+lSEaVuVW7j2KxtZkmL9jRVTmtO+RWaNWUmVRtGuy1+2ux/IY
-	 B1yhoHmz0CUfCYjwneOKqqCOt6InU0FT+fAvLZnoz0erCdcNu8l3BNo+WLaHadmj2+
-	 C5hpCtbzsyk/g4Lec6V905ndrbRzHcFRaYploh8+CVmpIPyTsuPsopF26JBhXfS9EH
-	 CSM5FEccG26YZhkK/nHHEl/ZdW/h84jScZNbQILFjxZP6l0XbLmgnPSjAOwz0OfgSC
-	 qINTtB8CV0lIA==
-Date: Fri, 3 Oct 2025 17:06:31 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Vishal Aslot <vaslot@nvidia.com>
-Cc: Dave Jiang <dave.jiang@intel.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Li Ming <ming.li@zohomail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Zijun Hu <zijun.hu@oss.qualcomm.com>,
-	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] cxl/hdm: allow zero sized committed decoders
-Message-ID: <20251004000631.h4vnnpxathjyoez7@offworld>
-References: <SN7PR12MB81316C958DF0F4B10369B928BBE6A@SN7PR12MB8131.namprd12.prod.outlook.com>
- <cb300580-1297-4d4b-9a3a-2cf7445b739b@intel.com>
- <SN7PR12MB8131FBDB82D2A3A539FA09D0BBE6A@SN7PR12MB8131.namprd12.prod.outlook.com>
- <70a2ea96-0a4b-4185-8f37-ea77ed757b64@intel.com>
- <SN7PR12MB81319CD146CC8B4CFD45E62FBBE7A@SN7PR12MB8131.namprd12.prod.outlook.com>
- <SN7PR12MB8131F796BAE8B6243E088879BBE7A@SN7PR12MB8131.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1759536591; c=relaxed/simple;
+	bh=IPK1EKXOhlPbKT8bYzKgEYlkIRTl4C2KSUntu62o+OA=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=hp9TQ3G5H04e++A5aRKimeerQYzVTh7z+XmYoNmaLFyminrAvpHfHB0xO9JKCCgwJlgOkzgoQY1uBhOCekKagvmLdOa3ERY9kKmAeRzXC92n540GnwPWaTtA2UlI5dVbdBrMUoo9wsNFkthNNlvwwz10oS4Esdw2Kz/VWfeKDic=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NUlDxc4P; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759536591; x=1791072591;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=IPK1EKXOhlPbKT8bYzKgEYlkIRTl4C2KSUntu62o+OA=;
+  b=NUlDxc4PPqUMWNufBiM9bCbSyUAQjnS/OxrCttuSkUG9BSgK+zKGv2wQ
+   h/TFAHZvjWMrYs6ENqh9QcgiFJyeQ7s95MhW0eJFyGsnyPPlyV1o4wvm3
+   ds5DP22C5fbMF0aoUMdzG2e6Jx/c4LuXjZPGbKFmQ+FnwOSPVEsfVnBxh
+   UcHm/EoQRbb/HJBCN9Yp4nrBMBcghXkNNey4YAWPmNbUTysYgjjHw43+V
+   2KvCRLXeErDMPSZH0PcWe4ENn+0cf7A0VVcpNGa1uJALe55i21yk1ciTV
+   qy3e//mP8KwKLiNuz5uxI/274ofWnJ/Mogfk13c97RZuiSqpmtrOjH5JM
+   A==;
+X-CSE-ConnectionGUID: 7asDmd8HT+SYSAGkjAgjbg==
+X-CSE-MsgGUID: b5WIac9kSHqtqu19X41Ejw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61737267"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="61737267"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 17:09:50 -0700
+X-CSE-ConnectionGUID: qFgKfXKWS6inlf0Q5O8sdA==
+X-CSE-MsgGUID: fsKUlQZXRr+H2hvsW0lpsw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,314,1751266800"; 
+   d="scan'208";a="183409210"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 17:09:49 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 3 Oct 2025 17:09:48 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Fri, 3 Oct 2025 17:09:48 -0700
+Received: from BN1PR04CU002.outbound.protection.outlook.com (52.101.56.41) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 3 Oct 2025 17:09:48 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EhNAuat9gHtRYpXTO7DTF7UhaM7ozjgPlOjFeBuqK+jQpr/kBEfeNI8zB0wy2FjdJo3yBF3Q/Lpp3KhsHuUr72FwcY0zhKy/02dR4M6TTCIuBYSiZC2sipijyIknEowfbk2ztG9QHz88+erGyxka2uHt89CZmW7gjMhUBIpOZeNR/g5NC1KT7vEIyYbJIe0Oaslr4Pcew7cymLlNN9wZShRaQ2f0dJI2ghKqjSbXII3PKveTVOs25g6EglhDiDk0IXvFxX8w8vVjFVOb1U8RKZjPnax9oh1kL4Tsy3vUX09WWOWBofuSlwAuGp/6qvKgoMivPqjVUXhYqnlVIiLVLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KyQywzziTv4ZXsJn44/OKVM3Nb0DAtvC8ut1v/7N1HM=;
+ b=ezyuUC9GNtgl9lE/kGa/qcwwtbSwcDMJdJI+GYkuGNdQLRaED3Xz7dB0o+1sDtTBJaaOtpygf6vgptUOEfQETr1gHR2AMEdvqSNs4UOLNRaqNbk+GAOzDl33f4ejmZL03JD4PMnALG+qMogZ3so0xt7wpDy3aK3LVXs2r8wa2EInVF1LFVziMkc0B3WjwUtT4+Kf8rVEw99qysiZz4Gxccn7rieI/4UagtODdBB6Inup1987308j6oyV8p/6o1ct2xy+UFqHxV9eJSFd+t69zxImTHytyd2FHAlPK1vmRelPnY8WDdM8rka6OrgW0B6Tkjy6HTPgY5QmuhBAcZ8t4g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by DM3PR11MB8715.namprd11.prod.outlook.com (2603:10b6:0:1e::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9160.18; Sat, 4 Oct 2025 00:09:42 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.9182.015; Sat, 4 Oct 2025
+ 00:09:42 +0000
+Message-ID: <24bb7dbe-45f3-48ff-a255-0b0259e81c2c@intel.com>
+Date: Fri, 3 Oct 2025 17:09:40 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 24/31] fs/resctrl: Move allocation/free of
+ closid_num_dirty_rmid[]
+To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghuay@nvidia.com>, "Maciej
+ Wieczor-Retman" <maciej.wieczor-retman@intel.com>, Peter Newman
+	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
+	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
+	<Dave.Martin@arm.com>, Chen Yu <yu.c.chen@intel.com>
+CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<patches@lists.linux.dev>
+References: <20250925200328.64155-1-tony.luck@intel.com>
+ <20250925200328.64155-25-tony.luck@intel.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <20250925200328.64155-25-tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR04CA0230.namprd04.prod.outlook.com
+ (2603:10b6:303:87::25) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <SN7PR12MB8131F796BAE8B6243E088879BBE7A@SN7PR12MB8131.namprd12.prod.outlook.com>
-User-Agent: NeoMutt/20220429
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|DM3PR11MB8715:EE_
+X-MS-Office365-Filtering-Correlation-Id: 30aa045a-9e59-4b79-def6-08de02da5148
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?bHNPS2FRcWNpZEsrUUVmK1FSM0RFYXo2Nlp2NFpyY2RWWStLQWZtRHhwZ3NI?=
+ =?utf-8?B?L1o4ZVVUZU5zQTgvUmlkZzBZbEhESkZhQ1pmRW5JZzdhNnIyeURvNXJMMXF4?=
+ =?utf-8?B?T21HN3p4eFBFdGkrYWRta1lGcXNZT2xGdC93dVNLaWlCclNrVnY3RTY2aDRS?=
+ =?utf-8?B?K3Y3VHo3SVhsVUlmTDlZMEJBRVRXUjFmRUY1enhiS0pSMUpFeTMvV1oxZnRN?=
+ =?utf-8?B?eGFTY1hGeEROeFlvTFYzR1p2bGpOWjY1cE15aVpiYTdMRG1qRUJ2OE16eDR2?=
+ =?utf-8?B?a1cyS0lJM3gxb2R6bGJyT0xZRFAzbU9HTk1VVDdMRjB4K1puZG5SekxPcFhl?=
+ =?utf-8?B?WUI1NURtWlJUN0tlZ2kwVXBkZ1cxa2dQUEZxeFBLZlpUQ2VWamtCOVB1czA4?=
+ =?utf-8?B?MFBjZ2drbDlCbzQyNVhFQkxuTWp6K0ZBNWkrM1N0YkREVGp5RTdmZ1RYbEZq?=
+ =?utf-8?B?eDFHbHdjUXdYamtHb1hsSUpTRzFnYkF3a3pnRmJFeG1ZOWpKS2ozZ1BZeGd0?=
+ =?utf-8?B?UnVLV3NOTWRnL2ViaE5aLzhiWEtnOE01MWFmWnNWT3dMbU9pbkxCbWtXdENC?=
+ =?utf-8?B?SGc3R1pGb3owZ0pkeEVCLytSZGM5c0tDaWpEaSs5bWU5NTBqd2RLZk9udHo1?=
+ =?utf-8?B?MlUxV3I4SUhNV01GNlFwcjMyNDdwcm9XZ2M1TGQyOEc4V2JoUGFyNGEvdC9F?=
+ =?utf-8?B?NDRVU1JFY01MWFVnWHcwaU9HMi85c3dlWHZQMlgwVW5HZ0ZkKzZ6UkdmY0hy?=
+ =?utf-8?B?Q2N6MXI3WjJxY1IrdHdjNEpsRkxDQ3ZTT1pVeHdkWnVjTmUxUTlvUVRCM3Q3?=
+ =?utf-8?B?R1RjOCs3V3k5aEZKdTFjM3JHVUtUZFRDa1A2K2xjQ2dsVHF4anl3R0F1SUN0?=
+ =?utf-8?B?YVBuZ2JPWEp3Q0ViTUV4amNUYlRZSGJ4K2l0NSsrUERsbTNsbzZ1Rm5uR3Ra?=
+ =?utf-8?B?T2J1cG9yaTIrMWlDcExibHZFdjZlemh3UjJUNUpHZVJ4YWJ0OFdCS3hXVFll?=
+ =?utf-8?B?MmtXOHBUeGF0aUppVk1WZXNYNThlZnN1cWFCa0hRSm0wTjdETVF5KzlHVTF2?=
+ =?utf-8?B?OHhUZ2llYThWNFkrczBNMzlzNUdmb0JMRlR1VGMvNDA2ZTVZTllLUXJIa29Q?=
+ =?utf-8?B?YVpEL2ZRblA0Z29qYlBiU09mSWVuRjFmTEFNTVUxNXF1M2pZUWh4YnRLUWhY?=
+ =?utf-8?B?NDJobTFmTmxPMDhiSTJOQTM1U250eEtIV2lBTUpqbE1QdWlFaXl6L3lFOUhm?=
+ =?utf-8?B?U0xBYmdGeUg0bnJTSmx0aGxFWmlxL0pncCtES2pXSW5KTWJWcWpkTDY3UWp6?=
+ =?utf-8?B?Z2xVU3JDRmZQclgxcXVJVml2RHRnZ0dTNUpBUndkY2tmM3NLNFpsMGcweFpR?=
+ =?utf-8?B?UFA5L1Uyc1RFcjNZOFlBaHlORnYzTWh3aGswTTNXMGxvRENaZUN0M25VTGxT?=
+ =?utf-8?B?NG5oY3RUM3BvNE5MU2tCOG9Mdm54cHB4eTJFT2tOQmZuYktSeTlWVDZmT0lF?=
+ =?utf-8?B?a3FaZmx4aW04SUlIQTdMUFNvMlNPQld1aVNwMXBnVnFBbWdHWHRXeGVyVmxG?=
+ =?utf-8?B?TVEzODhnM2hiZDEybHZRWitPclJKTmwraWVoZy9xVDRldTdDUXF2cGJ0UTVV?=
+ =?utf-8?B?Ukh0aEI5bXlGTlRLQm1mQzF2R292dzlPM2l0Rmo1NVI3SzJERi8xZysyVkVo?=
+ =?utf-8?B?SUZjTllpSTd1SVcrNUdMeEJJL3RXSFhSbjMvc05tWXNmaThKUHNqdW4waXo1?=
+ =?utf-8?B?MVdoOFJobTBhZTQ2RWhDR29aZC84QzJkand1NmZ5anJzYzU3ZjBLYVR4VFM0?=
+ =?utf-8?B?WG1qc1daL2pBb2dmS3hmeFU5a0dMUG1WdkZqVzY4aS93bldFczVTZTl0WmZT?=
+ =?utf-8?B?MjRZaC8zNzFzcm52a2hTTCtidVhUWFduKzZnVVB6TVNZMEZSamNGcWFJc2Iw?=
+ =?utf-8?Q?qxVJNbLlKiRykv7m19v+/taBrb1fpNPp?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WkZ1L2tIMU44dXMwV1ZSMUY2N1crRCtna2Z5K1NmRGZQcVBkT2w3aUM1cnNl?=
+ =?utf-8?B?U2k1TGpUQnFlTVlZTFZiSWtwTFlEV1FpcnJaVFd0UngxWjZTVERMV2RCR0Yv?=
+ =?utf-8?B?OER1VlNMdzNnY2tDWlVYemNBT2xWckZhbHRwTmZYUWJKYjZ5MmFpVGErOE1D?=
+ =?utf-8?B?TDJxQ3BZdEt4UllWS3FmaUFLOTlFOE9RVEtISUxxc2VCTmdva1hudVAyKzlv?=
+ =?utf-8?B?RTVEcXpNZG5wV1dlTHEwZzNIVHJ4V3VSQ3FrS09BT3JRRjhZQ2tmQWZia2dY?=
+ =?utf-8?B?UHplUWRlaW1XWnRoVWhqZTkzMzEyWVg1STRzc1FMWlZOa055clNzbC9QSjh3?=
+ =?utf-8?B?QlFzS1dIRUZhRFFZdEduUncrL2hCQWJIeEt2TE5lZ0t4TlVZUTNab3hoY0lB?=
+ =?utf-8?B?V0M3bEVDNXhrV3BKL2U5SzU5Mk9JSitqRElTMzI0ZE9XTjdwdlNJd0JIOTds?=
+ =?utf-8?B?R09tVjIxOHA1YXpmbmNQMlVsc3RMZGtHc05Zd25jcWlGQWkxT1lQVFJDSndk?=
+ =?utf-8?B?dVpxdzVBTWtlTjZhZHFuV0pmZFB0U3dKMDF4b1pscVcvRC82d0xUakNIVzB2?=
+ =?utf-8?B?cWpPOTRHMEJESGp6dEFxSWlKZ1NkSE0rTjVrZU50b3VwbXhFWWRGc2lXM1ZT?=
+ =?utf-8?B?aE8ya1BHVEk1aU9rNDR6SS9HaHU5aGdxYS9yelBJc2RrNVkxNnpEWWZWL0RF?=
+ =?utf-8?B?OEZZaGdCeFNMZHVpVUZ0eDBwOXUxbHV4bjRYa2Z0d2NndTFMM0prbWpTa1pt?=
+ =?utf-8?B?aDFVY0Q5eFcrdy8rb0ROS1lYUnBLa0VHck1LeFkxMlY1bXVHNGNyQmo2czVk?=
+ =?utf-8?B?cWZUbkJiL2Rla3FrVHpYUk94NWsxQXRiMjBZaTBqSGRSTHJyYWhqTnNwWG05?=
+ =?utf-8?B?YVpGTDF6V3V5SFA3RDVFTUNuaTJwTHVVWDU2TnBzamFvVStnd0F1cnBrZmxM?=
+ =?utf-8?B?Z293UDVOT2FtYklPdkpFQmw4Z1dDejlVV2VKekFUdG5oVXdxQWMyMm9USnZI?=
+ =?utf-8?B?Znp3STVMdlYwMkYzc2p5SWNiUE9nZU9UcHVnNDRvbHAwY1hVTC9ubXhPTHF0?=
+ =?utf-8?B?ZFFqbjlSU3p2R3JyazZYamp4bSt4MTA5UFJ0M1BjTVRGWnc1R3BSbWZCNm9h?=
+ =?utf-8?B?a293WEduazhpSWJ6S2NsdTd4YVZZQThZelRjNENhbjFzelRpeUt3L3p4Q3cx?=
+ =?utf-8?B?RXYzK3A3ZzAwL1puaW4rQm1TenlKQUpNaSt2a3NIS3FrRndLSW5zOUxXam5S?=
+ =?utf-8?B?Ry84OEZCZThXMGxZNjloQjBBL0VJa2lqa1ZSOG8vczlNUk00SGt4QVNCaUhz?=
+ =?utf-8?B?dW5XRVkvTGpUNE5tYTVEWW13bTVzUWo4SS8vT0dqeUhVbTdGQVpBQkRjRDJY?=
+ =?utf-8?B?ZCsrcHYzcG1zbkVoaXlDaWl2UmYxblNUVDlLVkN3Rmp4TG9UM3BZVi9JaWo5?=
+ =?utf-8?B?SlcwQU44NEJZRERGb0FtQXpDZ0VHYmFGV0NabHdNWXhVUVFFUC9aOHRUNEcy?=
+ =?utf-8?B?YTlLOGQxbVV0NjJnQm5hZkhMTlQrcUdQWTBsWjVpMmFKZ3hXSEowNGpxcHY5?=
+ =?utf-8?B?NWpKUEtIczM3a1gzSDd6YzBBZURHcmxiek5Rbnlwc1ZxNVhCMWt0U2c1R1F3?=
+ =?utf-8?B?bHpacXVXbG1yd2dmNGNjS2lMMUtpOFBaWmM1WlRXS29od2oydWVMZEZOWGQ4?=
+ =?utf-8?B?aVg5SVV1MlJsVTJpNjkyMnJWRDFRdHlWa0diMGl1RHZ4RjNmMnN3V0owelVi?=
+ =?utf-8?B?ZFFVbVRXOXJjWEFUaHVkTHlSUmdHc0V1SGxmTllOTW03MHE4M0xGWnNrS2NM?=
+ =?utf-8?B?cHRHRkdIaGRwbm9OVmx0a29TSlVLczBBaDlMckJjeE9yMEpjcEZVOXVianc2?=
+ =?utf-8?B?QXp1VnhJcjl4ZlFaMGIrajZ3RE5sK1ZReW00OVZGTUhQWVBPVFJoVkNVcVY2?=
+ =?utf-8?B?M2pJRm44RnhPS0ZJSTliV2p0UDBrVFk2WDNoZFVtUXI0dUhqa2hubXRzanRt?=
+ =?utf-8?B?LzhyU1NnVGcrM21GSU5acFFlRlZTWCtDSDJoM3dRcTlWMW9TUFRjTE1sMHA5?=
+ =?utf-8?B?TlA5YWdFVEd6MXZ1Tnk5WXg5eEM0YlRkZFhoU2JsRlVLL1hZWHptYzFadnNO?=
+ =?utf-8?B?ZVFKV2lxb1Q0Vk80cUtTN2Q5Nk1FSVV0QmRCTDk1NmtjdngzdXV3T25GR1Z2?=
+ =?utf-8?B?Q1E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30aa045a-9e59-4b79-def6-08de02da5148
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2025 00:09:42.4322
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TZut7RvjQ5MBzb15lL7iRnLOw3Tw/YjiKRBfji/zGUhLfsdZOEcmyQ5ct9QBB5k6j3T1xbGUrlq3WpFEvoIQU8B5wbs7DCTDkXN71HYWNkg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR11MB8715
+X-OriginatorOrg: intel.com
 
-On Fri, 03 Oct 2025, Vishal Aslot wrote:
+Hi Tony,
 
->init_hdm_decoder() fails with -ENXIO if a
->committed HDM decoder has zero size.
+On 9/25/25 1:03 PM, Tony Luck wrote:
+> closid_num_dirty_rmid[] is allocated in dom_data_init() during resctrl
+> initialization and freed by dom_data_exit() during resctrl exit giving
+> it the same life cycle as rmid_ptrs[].
+> 
+> Move closid_num_dirty_rmid[] allocaction/free out to
+> resctrl_l3_mon_resource_init() and resctrl_l3_mon_resource_exit() in
+> preparation for rmid_ptrs[] to be allocated on resctrl mount in support
+> of the new telemetry events.
+> 
+> Keep the rdtgroup_mutex protection around the allocation/free of
+> closid_num_dirty_rmid[] as ARM needs this to guarantee memory
+> ordering.
 
-This can be removed.
+I think this is heavy on describing the code that we were asked to avoid.
+I amended the changelog below in an attempt to address this, please feel
+free to improve:
 
->
->The CXL spec permits committing zero sized decoders.
+	closid_num_dirty_rmid[] and rmid_ptrs[] are allocated together
+	during resctrl initialization and freed together during resctrl exit.                          
+                                                                                
+	Telemetry events are enumerated on resctrl mount so only at resctrl
+	mount will the number of RMID supported by all monitoring resources
+	and needed as size for rmid_ptrs[] be known.                                               
+                                                                                
+	Separate closid_num_dirty_rmid[] and rmid_ptrs[] allocation and free
+	in preparation for rmid_ptrs[] to be allocated on resctrl mount.                   
+                                                                                
+	Keep the rdtgroup_mutex protection around the allocation and free of            
+	closid_num_dirty_rmid[] as ARM needs this to guarantee memory                   
+	ordering.                                      
 
-This is enough info, no need for the quote below.
-And then add "Linux currently considers them an error".
+> 
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> ---
 
->See "8.2.4.20.12 Committing Decoder Programming".
->It says,"It is legal for software to program Decoder
->Size to 0 and commit it. Such a decoder will not
->participate in HDM decode."
->
->This patch updates init_hdm_decoder() to return
->-ENOSPC if the decoder is commited with zero-size.
+Patch looks good to me.
 
-This is not needed in the changelog. Instead the reader
-could be enlightened for potential reasons and use
-cases of 0 sized decoders.
+Reinette
 
->The caller leaves the decoder allocated but does not
->add it. It simply continues to the next decoder.
-
-Thanks,
-Davidlohr
 
