@@ -1,86 +1,73 @@
-Return-Path: <linux-kernel+bounces-842122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2974CBB90BC
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 20:14:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BEC2BB90FC
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 20:27:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD78C3C1F96
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 18:14:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 15E434EA0F8
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 18:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7415128507B;
-	Sat,  4 Oct 2025 18:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5365D2820D7;
+	Sat,  4 Oct 2025 18:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="KJzBpELb"
-Received: from sonic306-20.consmr.mail.gq1.yahoo.com (sonic306-20.consmr.mail.gq1.yahoo.com [98.137.68.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wismer.xyz header.i=@wismer.xyz header.b="CHkfoke4"
+Received: from out8.tophost.ch (out8.tophost.ch [46.232.182.217])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BDB26A0D5
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 18:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.68.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F553594B;
+	Sat,  4 Oct 2025 18:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.232.182.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759601643; cv=none; b=MD6OL0cxjjr13ZKRU40XxaAFJxfe8BMu1cKOqoCBr2/aYSmgbnny0ZpxoxaMJxIRR+nybDC1FyEKiWDY2yNVypnxYI4thlkdYM8btMHFrldpRISWX2AF6wX+wiSvq6REuQKKbbN3Bw4ybuBsiCYlGSbnOT7NckxFt+F+2cidpsw=
+	t=1759602429; cv=none; b=jXbYgiG1jzh7GTStq8RRjczsMIKDJxSOW2FBHswrVGDn+By3IGBydsxWT5BybgqJfKMiv2EYUMnjHsQwXwC2RSU45sF37yWu9hu+sJRcwDSUS82BRT6I/vDv1/X5KHkb6P32OSK1/jUswS1qnThSGj289s8Z7bhzPNOXwbpu97o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759601643; c=relaxed/simple;
-	bh=pUTzcle5CBmvMOzyJwjQEkWaGXDd71hOY0/RaM04mtc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=lKR8zT1OBraYhqRiBs51yj2vV/Gl37+Ql75Es0n1OGw4sxxSQbQ7ciTibKWdn24q83xvxSff2Sbut1Epl/XF2HiBAc/f0MtpmCUpQvGgDcr26eJ7XyjDXrJsamgsFZKCqpm5snO53Md63RylVWLHWm/htarMFk+YsWtYKoa89MM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=KJzBpELb; arc=none smtp.client-ip=98.137.68.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1759601641; bh=lkyG98f4QiKx6NyUSEZmeM1WjKuHQ+VrmQ9aD/yxy9Y=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=KJzBpELbDqz9VV5f84HrasiOeXAjK2L9NocVsnZJNXVc/DFcW0ISjTDT7kT20dVTQ+qXRknZr0oHeJ0ZrlRgvaxTMSe7C8TCs5fR1gMeUOO0MAIc1hb54tmN6pyVPfRXPBjN2iY3IxIVoOXLoRGom2J6KdS/r+rHIg/UwIFdGM7QKZBiEZ+pORN9OLJK8KU5GMCZM9wSORU7XLqBv2iXzKruTuA4YiL4n/OuROcjWS4pn+EKKZn7fWXhXQPnCPTG5b4FQH2jySEozfMXCQRDcV0Q6t6TkfujmGXEOBLC2bkx7K7ELGDcmQM+9BssP4zYXBK0yG2OJ/al5a6QzBFLSg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1759601641; bh=2QNBeP80XdVvt3Ca03G+RmRCu/rrNQMmYw7yz1jsrJB=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=Z9h1KYCvXwZB8M20CyukAn9/x6dN933QKKF4QlQaMotIXjK95AiSDSWuld6J+r1BZztQAzoM3qNa0qUDLhpsOUE18imaxpJ7XWKq340oQUjEJCTzixeKlbCNPCLIFEsj49UcBRVKc1uRn6YYrCBUAxSWY+GaXLLXy+/9NXUSBebvOMGhyCbe8jWvV13rzYMgZJU85Fm955hyokGaSwb/SDg1On0Dbd+TaFc4nFB+wyfkrZiJ9V46KWSHY4JRc2GZWTBcfXJSbJtRDcAJ6e+ia4vCvLuxBacFrRotlHF7HFt+/tSJhB1Qb2rSGNZFVVg0QzSktYHKjivEN+Axag6zbw==
-X-YMail-OSG: c2PbrJgVM1npkwl3SfuC3WPRnl567mrpSrRZenAQRaqL6Ms63R5Sfsx26pUi3xO
- Wy8Re1Gr0Z8bdPiY30vXbbUltY0GhSK61Jqk10roxdDnhpeKt6Fa6nLS0.yCnuIyzSi2GvGK3hZm
- nT1Ldx2Mz3r_yPmBsCPdvGhr4Aev78H7TU_SBBzrEQQ0dZPMIIcP0D7JLe5pf2fYs0snw58A4_vJ
- L8yhTcGy62K_.zGhHIZ79bvxxZ5jupysbbY7OkOVjvyCzyfRtF7_1XulF2QHxCA5mSM0gtCnXrQJ
- xP9IdzZB0qvC6FgXFrE.F5yjsJxqzbbY2GjrPG_gWWHwetYU3UrCs_QCeF2a3uNt93GuaY4YUuA5
- zVhpBY41RKsQLZwVb0p2crWU04.Jdf4djt9n.YhDCYhroMeJfaekOvYxeM4oGvvipaUGijSSO0F9
- KX2oN53rU3MWThDh7Qp2PDkPjduRBhiAmruQUQXRMxVE9HmKD5e2zwJChLE7A5.hvV1FB0CpwEJc
- 3dO5XzRB88k0e9riQ6r.MACjqj0EBeo.oVsJKAmOsM3NjikI3EJSDG4fV1dtWUvTUBN.iR5mTFKB
- jo3070fbKT9UAkalKkItnvRm_B6kGzLilSysyYxxuDe2Sn4xZv5fsi_CIll1ZqPh1wlJlNWpEBxe
- iEP880dBA8VrH09yM5ERGyN3iwXQv59Jx4ryh9qgeVi5i0v05tbXFkixaswmEacMwMF3rd64Gycb
- M87iPfpRAmKG8lOW1ojQv2jj04Jy9N3VH3JZWay5ebT9.Iy44JpUZGSyQI.8H3PEGo4.bdSkbWaD
- lqsw2D.8BP7kEBe0PNn.PeM0oZ9caE0FOZWQoV_EOEx3sDqFdMhC2eP8Pl0TywW4sxV3LkKFPmKP
- SXjCRucO3yVCUG9N9.yE0yRojt02kmcZPinQj0HPlfBr460xqut8p2bdacP356ULdY5BhHkCe2dw
- ggeB9Psj7ZEUiKdHiqu7QQ0u38qk5gSfolcnHIVXl.SqAUd5Eg9jxzizkJOkzdv1DDFDDa1gJFpU
- IlDN_QzCK3tJc4vNdSdV3B92sh46QtFPhHwxAIOkTsxa8G3PNdkLyT6lDTM9U1ZZYOjeqMcmaQLd
- 8M_YJyqJoBti3vKgPhHTxidzA0GDHtgzNKtzIt0RaasUsow61PaZogsLkXqUHP8eoQ_DVro0NwPA
- GTrcvaq4piOuBqhEbgVSqFOUMc_3TV9jGQa.xodff49._FkEgl1FlZ1pFxUq_PUrkC9amJX0pZ7r
- LpqT3CVOGQFn9Mh86JgZlcxaLtZZ7ujTrzrz1AKfdBtdK3FQTUTE0pAgBcQs7yPZIt3tEjPjtrYa
- ttRxzc8shd2J.GKolYow_hOkARoadKyoWog6ho1N_NzKP6D9Y60bspaccDvDADILkTExGL7Xtv0.
- YpY7i5s.Qsytvzsjt4uDplvhRDyoh08AvdZ68jNLXkdTCgd7RgvK4oGUhR5hXaN3OJfqFc80eKEy
- T2etpdRp0pTW5YiCUrUxEHqIfdGm3AZCVP8XZyMwZGviBORZ3Tf9CTTS5lidVmXsDaKqr6J6ORH3
- xIWa9OObChn_XMjUG7Qfh9Vmsc2EnH2ab4UbEScFMNRNPIlaeg7wND_V3VOcUAKqOj0bJo0mvIx3
- 1DnjaMaFneaKyRH2fsv8QnFf0Jk6perSjz5woU1Fif09QUKFPOlPRe.Q9zkmaJUW_jxpfNVfcW3V
- PPeA6LgZdsl4Lvg16EpbvfIWKhByK5uy5MwR9K2W.hWYnXkopeRt.1AHNI0xdNSiKx9C5IIwL3hi
- Y6nWIggGzYMh7A74R2D.3Ld719frR_naOLdI5mwbMiX4bXqUExbiGGTsXsWTvU3X8.jEwpTaewio
- jjOXMHOerWzkDKjZGIipU9dKP8uL.uVrtYJcpN27yk.Tbu6ftSDoBFKA2r0DNFS.Jd9g9CyFbJ.n
- 7rR_Bj44MypA6hHBxD_bqhYHh5fa_XYm48iECn0HU1154Fk3N6dTgI3FJ9B0XSDkFtgWZUvI628q
- cPEmlHaye4I04peo8KOiwF6Qdzo3.5CL5.4Yb8W1j0xGvVkypQjfCsClX8TfMVg88hf0xpbfF1q0
- R1MK_G0JU.GvHTJvmGYi.LAYedAfsP3LyLodznjDSVGfvOrUjxE7UI.EPXFIKwk08OtD33PQrg7z
- FFscCPBiqVno8XNezOHPjoDT9r_xhI2ZThvp4Sbiktw.iQUa8EN9qdMhDnoKVe27HB0FMpBrQHRi
- iSAjPn1vgkVf26_YNKGO2KLL_y7OaL2KIRjyoKrMMPxYqLKJ4cvWJ6zW_W2w2O4vpA_8iATnLTQG
- w
-X-Sonic-MF: <rubenru09@aol.com>
-X-Sonic-ID: 14c02d5c-fdda-4d2c-8577-5699618924bc
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.gq1.yahoo.com with HTTP; Sat, 4 Oct 2025 18:14:01 +0000
-Received: by hermes--production-ir2-ccdb4f9c8-gvlwm (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 8bd04abe6e5a0119dbd6fc973ab909e4;
-          Sat, 04 Oct 2025 18:03:51 +0000 (UTC)
-From: Ruben Wauters <rubenru09@aol.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Ruben Wauters <rubenru09@aol.com>,
-	dri-devel@lists.freedesktop.org,
+	s=arc-20240116; t=1759602429; c=relaxed/simple;
+	bh=aaAL1ZjE8/RUjANNkQ756JVzAIKsnpo5g0LdUIMWjXI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=orUBvbTlr2cAcRWPRFqmvT1WiFBhk+Tuovq78xOt9h280E1Pxe4JWvo31vnU3PczPq39HxO9i3PGVYAFzePFu+IIhzyU2JZYiC+pFIH6pXaGQ5RrWC/6NV4G6syu/K8hViFxD7peeaHQ6ao0Z8traLTjSYS6BF1BguZ6i8OpoXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wismer.xyz; spf=pass smtp.mailfrom=wismer.xyz; dkim=pass (2048-bit key) header.d=wismer.xyz header.i=@wismer.xyz header.b=CHkfoke4; arc=none smtp.client-ip=46.232.182.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wismer.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wismer.xyz
+Received: from srv125.tophost.ch ([194.150.248.5])
+	by filter2.tophost.ch with esmtps  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <thomas@wismer.xyz>)
+	id 1v56cT-007JBN-Ua; Sat, 04 Oct 2025 20:04:36 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=wismer.xyz;
+	s=default; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=LlyG1IJXvba9MKr6Z3HkiagOcCNkkc+YhGxvzBHtazc=; b=CHkfoke4MqfPlxp1l/OQguJQuV
+	hLQrFP+/jyjK0PcR9cAkdCpzEbWvSWpYAPeI5bSGOxT7Ae72At9VG5kHUTgIySEtzhN2PXCFpnVAF
+	0EHRAQViY4QTKY3gmjnx9hGKKEBi6U0t4BYAxZ7pGfMZ74EBMwwhiMzJ9Wl/sTUchKhuH6QPQWI3e
+	xPLRyYhZ3WoFMFOP7KFyUMsTx9XDDO0YogHVnBr/Ztscs7znC7JT2qojnPypzLxem0PtiXjiQgeCL
+	1VRorXsKqvSnpuO+YOlkSAt4ZoEELVuIBCF4NIY/dIqgnbyjPqpJvCVRi1ZY7IqzBsOU8x1NNPXfF
+	nldKA5Ug==;
+Received: from 82-220-106-230.ftth.solnet.ch ([82.220.106.230]:60199 helo=pavilion.lan)
+	by srv125.tophost.ch with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <thomas@wismer.xyz>)
+	id 1v56cT-00000001wpX-2KK3;
+	Sat, 04 Oct 2025 20:04:31 +0200
+From: Thomas Wismer <thomas@wismer.xyz>
+To: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Thomas Wismer <thomas@wismer.xyz>,
+	Thomas Wismer <thomas.wismer@scs.ch>,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/gud: move plane init to gud_pipe.c
-Date: Sat,  4 Oct 2025 18:49:56 +0100
-Message-ID: <20251004175900.15235-2-rubenru09@aol.com>
-X-Mailer: git-send-email 2.49.1
+Subject: [PATCH 0/3] net: pse-pd: Add TPS23881B support
+Date: Sat,  4 Oct 2025 20:03:47 +0200
+Message-ID: <20251004180351.118779-2-thomas@wismer.xyz>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,213 +75,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-References: <20251004175900.15235-2-rubenru09.ref@aol.com>
+X-Get-Message-Sender-Via: srv125.tophost.ch: authenticated_id: thomas@wismer.xyz
+X-Authenticated-Sender: srv125.tophost.ch: thomas@wismer.xyz
+X-Spampanel-Domain: smtpout.tophost.ch
+X-Spampanel-Username: 194.150.248.5
+Authentication-Results: tophost.ch; auth=pass smtp.auth=194.150.248.5@smtpout.tophost.ch
+X-Spampanel-Outgoing-Class: unsure
+X-Spampanel-Outgoing-Evidence: Combined (0.50)
+X-Recommended-Action: accept
+X-Filter-ID: 9kzQTOBWQUFZTohSKvQbgI7ZDo5ubYELi59AwcWUnuV5syPzpWv16mXo6WqDDpKEChjzQ3JIZVFF
+ 8HV60IETFiu2SmbhJN1U9FKs8X3+Nt208ASTx3o2OZ4zYnDmkLm5Mv/tafLC72ko3Lqe/Da7zGRu
+ tVdZdUk4la24/lWb/vyrAP5R/Cae/ZemygD++WnmCtmoQhY2xrBb8C+tWUvqrqBKsSdhvd/J5sX5
+ daZjkYsG4jVZi5Tfop5qjCZejidXzthz0vNkOX8Em4cj6D/wdR983ISMXlZYfkTQnVvsLb89W7vD
+ 6C469DIPe8wH3iOJ3xyMg3et4b3PQUopDmbZCssYHNuxAmlPRpR5yzngsxCROUzReCS8EpKh0It9
+ L25JS816nuiE0t5pG6MLXGczoanVmeCF7bI0BP7dENKtPTBPq+vGO3Vx+SwwWschmkdvs376y2A4
+ OBi1/UyqO7jQnnICeA+KlS7G8xqewTcs6w6HLg3eq1lKkYVFbZT99AeINpdbOTIWFiLv1jhppNXa
+ xS6MN8xFxlxHZge6OlcoYA//qN5p5dmu6xjQN9nmCfj7VmpmZJyx9iy0UVkVD75IgLollI+8fg4q
+ Ktu8I/h2Z0dHZM6qE0STp2v0JiRE8jhamJNIkblvt3tmDvgtmN4H4BUM9bndab3XlnlqHqi4QKnn
+ k14/ADuPHCWFyNV2T+avjL9wVRCXwYDpBqMLHNY9B2Ak8LmqWByQuE4NgLCNvMovQedDpDK2Sljn
+ CNAO7NpcpxuVcnpyy186dygqpmiD9OtONQZ4S919qVAB9i6zlzTjcVXthHorhNpu23mgOZsC6pUL
+ aCdNIXkTykmnK/9/QX3JlnOAYOwvgs4sv7ykOBxKEjX2P24wm2Xm0Zxro1P7++DuIQUs/5JJj4C/
+ n4CILsmQ0SO9CeLTQh8bH8PiEW+tX7qDfij/psJ5Sv6V58b1kyiK9aRmotIe5mkuhQ50hdHxL8fL
+ MkT6TDHnwvPD+cRl6DbasrEImAe+fJfqFuhNsSc9CgHJcMu7KTfBvyswr4sEMysPur9wmiDBurOy
+ 6iQJ5124E1ny/UQRZHHLkqd13aH9Eyp21gmT7cyCAVA5VIwTo2sAmG9WZnbp9bHNxXxTu3T2QkkX
+ krzDq9owtXIcExAHlwca76VdLw2GWIYs+ljrnXdo8M1GW0TnoMpI3UJ+pvlHhV6a5QjptwQBGybQ
+ vv1ToHZWNpcnifjzWnmjtnV75K45oykd3VjIUdJS/eyxyfnoc8x6re2H7v/VN3foTPbrWOwDJFM1
+ LKpMibQ88o0ORb/rEGGznznyI8PFeRBLZ0Kc+vvfWass5t8K0zA0uhq/IGZ0cCvl49xdmzHJuw==
+X-Report-Abuse-To: spam@filter1.tophost.ch
+X-Complaints-To: abuse@filter1.tophost.ch
 
-gud_probe() currently is a quite large function that does a lot of
-different things, including USB detection, plane init, and several other
-things.
+This patch series aims at adding support for the TI TPS23881B PoE
+PSE controller.
 
-This patch moves the plane and crtc init into gud_plane_init() in
-gud_pipe.c, which is a more appropriate file for this. Associated
-variables and structs have also been moved to gud_pipe.c
-
-Signed-off-by: Ruben Wauters <rubenru09@aol.com>
 ---
-It was somewhat difficult to determine what exactly should be moved
-over, gud_probe() as a function quite a mess, so I need to figure out
-exactly how to split this one up.
+Thomas Wismer (3):
+  net: pse-pd: tps23881: Fix current measurement scaling
+  net: pse-pd: tps23881: Add support for TPS23881B
+  dt-bindings: pse-pd: ti,tps23881: Add TPS23881B
 
-As an aside, I noticed that the driver doesn't have a version macro in
-gud_drv.c, and therefore is shown as 1.0.0. I was thinking of
-introducing a version, but I wanted to know how others generally deal
-with driver versions. I'm not 100% sure if it's *necessary* for GUD but
-it might be a good idea.
----
- drivers/gpu/drm/gud/gud_drv.c      | 48 +-----------------------
- drivers/gpu/drm/gud/gud_internal.h |  1 +
- drivers/gpu/drm/gud/gud_pipe.c     | 60 ++++++++++++++++++++++++++++++
- 3 files changed, 62 insertions(+), 47 deletions(-)
+ .../bindings/net/pse-pd/ti,tps23881.yaml      |  1 +
+ drivers/net/pse-pd/tps23881.c                 | 67 ++++++++++++++-----
+ 2 files changed, 53 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/gpu/drm/gud/gud_drv.c b/drivers/gpu/drm/gud/gud_drv.c
-index b7345c8d823d..967c16479b5c 100644
---- a/drivers/gpu/drm/gud/gud_drv.c
-+++ b/drivers/gpu/drm/gud/gud_drv.c
-@@ -16,7 +16,6 @@
- #include <drm/clients/drm_client_setup.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_blend.h>
--#include <drm/drm_crtc_helper.h>
- #include <drm/drm_damage_helper.h>
- #include <drm/drm_debugfs.h>
- #include <drm/drm_drv.h>
-@@ -338,43 +337,12 @@ static int gud_stats_debugfs(struct seq_file *m, void *data)
- 	return 0;
- }
- 
--static const struct drm_crtc_helper_funcs gud_crtc_helper_funcs = {
--	.atomic_check = drm_crtc_helper_atomic_check
--};
--
--static const struct drm_crtc_funcs gud_crtc_funcs = {
--	.reset = drm_atomic_helper_crtc_reset,
--	.destroy = drm_crtc_cleanup,
--	.set_config = drm_atomic_helper_set_config,
--	.page_flip = drm_atomic_helper_page_flip,
--	.atomic_duplicate_state = drm_atomic_helper_crtc_duplicate_state,
--	.atomic_destroy_state = drm_atomic_helper_crtc_destroy_state,
--};
--
--static const struct drm_plane_helper_funcs gud_plane_helper_funcs = {
--	DRM_GEM_SHADOW_PLANE_HELPER_FUNCS,
--	.atomic_check = gud_plane_atomic_check,
--	.atomic_update = gud_plane_atomic_update,
--};
--
--static const struct drm_plane_funcs gud_plane_funcs = {
--	.update_plane = drm_atomic_helper_update_plane,
--	.disable_plane = drm_atomic_helper_disable_plane,
--	.destroy = drm_plane_cleanup,
--	DRM_GEM_SHADOW_PLANE_FUNCS,
--};
--
- static const struct drm_mode_config_funcs gud_mode_config_funcs = {
- 	.fb_create = drm_gem_fb_create_with_dirty,
- 	.atomic_check = drm_atomic_helper_check,
- 	.atomic_commit = drm_atomic_helper_commit,
- };
- 
--static const u64 gud_plane_modifiers[] = {
--	DRM_FORMAT_MOD_LINEAR,
--	DRM_FORMAT_MOD_INVALID
--};
--
- DEFINE_DRM_GEM_FOPS(gud_fops);
- 
- static const struct drm_driver gud_drm_driver = {
-@@ -587,17 +555,10 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 			return -ENOMEM;
- 	}
- 
--	ret = drm_universal_plane_init(drm, &gdrm->plane, 0,
--				       &gud_plane_funcs,
--				       formats, num_formats,
--				       gud_plane_modifiers,
--				       DRM_PLANE_TYPE_PRIMARY, NULL);
-+	ret = gud_plane_init(gdrm, formats, num_formats);
- 	if (ret)
- 		return ret;
- 
--	drm_plane_helper_add(&gdrm->plane, &gud_plane_helper_funcs);
--	drm_plane_enable_fb_damage_clips(&gdrm->plane);
--
- 	devm_kfree(dev, formats);
- 	devm_kfree(dev, formats_dev);
- 
-@@ -607,13 +568,6 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 		return ret;
- 	}
- 
--	ret = drm_crtc_init_with_planes(drm, &gdrm->crtc, &gdrm->plane, NULL,
--					&gud_crtc_funcs, NULL);
--	if (ret)
--		return ret;
--
--	drm_crtc_helper_add(&gdrm->crtc, &gud_crtc_helper_funcs);
--
- 	ret = gud_get_connectors(gdrm);
- 	if (ret) {
- 		dev_err(dev, "Failed to get connectors (error=%d)\n", ret);
-diff --git a/drivers/gpu/drm/gud/gud_internal.h b/drivers/gpu/drm/gud/gud_internal.h
-index d27c31648341..4a91aae61e50 100644
---- a/drivers/gpu/drm/gud/gud_internal.h
-+++ b/drivers/gpu/drm/gud/gud_internal.h
-@@ -69,6 +69,7 @@ void gud_plane_atomic_update(struct drm_plane *plane,
- int gud_connector_fill_properties(struct drm_connector_state *connector_state,
- 				  struct gud_property_req *properties);
- int gud_get_connectors(struct gud_device *gdrm);
-+int gud_plane_init(struct gud_device *gdrm, u32 *formats, unsigned int num_formats);
- 
- /* Driver internal fourcc transfer formats */
- #define GUD_DRM_FORMAT_R1		0x00000122
-diff --git a/drivers/gpu/drm/gud/gud_pipe.c b/drivers/gpu/drm/gud/gud_pipe.c
-index 3a208e956dff..1f7af86b28fd 100644
---- a/drivers/gpu/drm/gud/gud_pipe.c
-+++ b/drivers/gpu/drm/gud/gud_pipe.c
-@@ -10,6 +10,7 @@
- 
- #include <drm/drm_atomic.h>
- #include <drm/drm_connector.h>
-+#include <drm/drm_crtc_helper.h>
- #include <drm/drm_damage_helper.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_format_helper.h>
-@@ -450,6 +451,65 @@ static void gud_fb_handle_damage(struct gud_device *gdrm, struct drm_framebuffer
- 	gud_flush_damage(gdrm, fb, src, !fb->obj[0]->import_attach, damage);
- }
- 
-+static const struct drm_plane_funcs gud_plane_funcs = {
-+	.update_plane = drm_atomic_helper_update_plane,
-+	.disable_plane = drm_atomic_helper_disable_plane,
-+	.destroy = drm_plane_cleanup,
-+	DRM_GEM_SHADOW_PLANE_FUNCS,
-+};
-+
-+static const struct drm_plane_helper_funcs gud_plane_helper_funcs = {
-+	DRM_GEM_SHADOW_PLANE_HELPER_FUNCS,
-+	.atomic_check = gud_plane_atomic_check,
-+	.atomic_update = gud_plane_atomic_update,
-+};
-+
-+static const struct drm_crtc_helper_funcs gud_crtc_helper_funcs = {
-+	.atomic_check = drm_crtc_helper_atomic_check
-+};
-+
-+static const struct drm_crtc_funcs gud_crtc_funcs = {
-+	.reset = drm_atomic_helper_crtc_reset,
-+	.destroy = drm_crtc_cleanup,
-+	.set_config = drm_atomic_helper_set_config,
-+	.page_flip = drm_atomic_helper_page_flip,
-+	.atomic_duplicate_state = drm_atomic_helper_crtc_duplicate_state,
-+	.atomic_destroy_state = drm_atomic_helper_crtc_destroy_state,
-+};
-+
-+static const u64 gud_plane_modifiers[] = {
-+	DRM_FORMAT_MOD_LINEAR,
-+	DRM_FORMAT_MOD_INVALID
-+};
-+
-+int gud_plane_init(struct gud_device *gdrm, u32 *formats, unsigned int num_formats)
-+{
-+	struct drm_device *drm = &gdrm->drm;
-+	struct drm_plane *plane = &gdrm->plane;
-+	struct drm_crtc *crtc = &gdrm->crtc;
-+	int ret;
-+
-+	ret = drm_universal_plane_init(drm, plane, 0,
-+				       &gud_plane_funcs,
-+				       formats, num_formats,
-+				       gud_plane_modifiers,
-+				       DRM_PLANE_TYPE_PRIMARY, NULL);
-+	if (ret)
-+		return ret;
-+
-+	drm_plane_helper_add(plane, &gud_plane_helper_funcs);
-+	drm_plane_enable_fb_damage_clips(plane);
-+
-+	ret = drm_crtc_init_with_planes(drm, crtc, plane, NULL,
-+					&gud_crtc_funcs, NULL);
-+	if (ret)
-+		return ret;
-+
-+	drm_crtc_helper_add(crtc, &gud_crtc_helper_funcs);
-+
-+	return 0;
-+}
-+
- int gud_plane_atomic_check(struct drm_plane *plane,
- 			   struct drm_atomic_state *state)
- {
 -- 
-2.49.1
+2.43.0
 
 
