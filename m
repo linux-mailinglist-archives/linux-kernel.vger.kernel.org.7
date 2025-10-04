@@ -1,133 +1,105 @@
-Return-Path: <linux-kernel+bounces-842092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DFE5BB8EF2
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 16:39:09 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF9F5BB8EFE
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 16:46:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32F22189D46E
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 14:39:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C17E4E78DF
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 14:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1691220694;
-	Sat,  4 Oct 2025 14:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992E9231830;
+	Sat,  4 Oct 2025 14:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZkBXJq6q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="E3CbVV53"
+Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1964921CFE0
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 14:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397197260F;
+	Sat,  4 Oct 2025 14:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759588744; cv=none; b=Njr5SyWjKBEBlFD8KQhYCPjCNBCDLvAGVz3xszFJbgOEDPsL1zfpYNyBbz0tfKJc+P6YKdp9AzrIsVKjNZiOqIHlgfPCn1zdgPBXMEcgPikrZLlk2YZ3k1bNudY2bfLCPIjXnPlq24pIOVSPocHwGkf+VWAnphOlRWEj4Mtj44Q=
+	t=1759589157; cv=none; b=gPJXtgAPdqxYZHeI6Xz38LaE7QX8cQqymytgnV4vOU5NWr6lux3aQJCamkQMJ6usc3Pq7Nc/rp1cGk4ka0QW1DrU/KJLwOtwysj+3I5iruus8kyWvLjHi/Xgsae6ksI67VSEum6kGD2UARaatz3ashJVP1y+TaHF2vWi+Sc+3gM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759588744; c=relaxed/simple;
-	bh=CU4IyP59fvnnZfxva5otQfWg9Fb1lMlbNTZnIUrWsf0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eG8/TSB10Iuu8strkI7Bg1yi8/w9/lbjEVBdD7MaRTynhO5Dcxa6JfHdb8CShHXpKA9w5TqN9v7oYeviXlp1VtQjiDoYBg5sQZogDb8TpgkLt6+jIY/TJxg1MLp8Z51uryQZB4qfKcIxP4Y69eXMeHX8xcnqfTe6q3btAIUJ/ZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZkBXJq6q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63AFBC4CEF1;
-	Sat,  4 Oct 2025 14:39:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759588743;
-	bh=CU4IyP59fvnnZfxva5otQfWg9Fb1lMlbNTZnIUrWsf0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZkBXJq6qkbO7i6nf0aUd10sBTVDkCgTv3MM5KKGAFvMNe+LrTaZkZVUqcQwC9PYiF
-	 Wb3KBkVtzxQ7OVS52dpogzHlKwU5Y+f09n0kqG5h3wioBK4mzkgvbMAOD8uKBtakD5
-	 noKvQQzr9PDABPOFAC6snZmrYUpJpIZynIiivBCXGU7AlydsgEx3T4QVTS8J1V/M8H
-	 BRwBjlKjEn/Fn8rtq5S/5Fgyqrntx4VJ7Ye0Q1dWJrFT2/V8Kbo6Zzs7Cn32Cz8hV7
-	 oh5rliLhdCjU4hTqSTBvOjDxjty6V33MStSgNShrZgu/LcaYnLvLp/EGjsr8mpPhqg
-	 7MQpJXHhWpSDw==
-Date: Sat, 4 Oct 2025 10:39:01 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	konstantin@linuxfoundation.org
-Cc: Dave Airlie <airlied@gmail.com>,
-	Sasha Levin <Alexander.Levin@microsoft.com>,
-	Miguel Ojeda <ojeda@kernel.org>, Sima Vetter <sima@ffwll.ch>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [git pull] drm for 6.18-rc1
-Message-ID: <aOExhd-d1Eq-X_uw@laps>
-References: <CAPM=9tzYUBfz+YmifRDgdBsuTL=FpBxQVfxu23it48kGRzJNPQ@mail.gmail.com>
- <CAHk-=wgO7S_FZUSBbngG5vtejWOpzDfTTBkVvP3_yjJmFddbzA@mail.gmail.com>
- <CAPM=9txjNo==nMA7XcjzLWLO155+1bk2THwPs_BmTLu_5kU_bQ@mail.gmail.com>
- <CAHk-=wgR61VxiHyOKXBJv_HinoFVA2av1EuSHg5NcRGC1fNq3w@mail.gmail.com>
- <CAHk-=wgX-2+hH5fM344_wKYNZS5CSf4ispS4X+s5xkma_Mdu_Q@mail.gmail.com>
+	s=arc-20240116; t=1759589157; c=relaxed/simple;
+	bh=jZC1BOtd0LyldamzCt8vT7MOrYp+3AuVfEqGHLUN6AI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yqy7PwGuqCwGPtp1pA22mj3N5avNKgC+aWkQ2LJbP6ozcRNIlZhP+vGtxG2Zo0BncUk3s+mr4LaedCZdTstMowwpRnARENSlWcqaHy1627xn5c9owZAYz6dndj3cAg0ciUQSwxwo4u1JKmHLjHq1C1HWJcx/khThFXgk6uFOs/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=E3CbVV53; arc=none smtp.client-ip=162.62.57.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1759588846;
+	bh=aLcQxDEB2zHHil1vKTJsBzjH+TWu7SDHe03d6zrJ1F8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=E3CbVV531YZ2G/rLUJxAQJaH95CGuiiCz97SBEdDLTLUAT6A0TQW+w1FRmMsVPR2J
+	 1yyyimZq9BGSbk2PjCK7XzYkvn6RbeoJ85L+tA7u0+7368FOVAF2rDPFBW+gDni22H
+	 +pQ0BbGBXbpb15+ZcSuZ5CethyCB6vX+Wh4WCXd4=
+Received: from [192.168.2.102] ([183.198.135.10])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id A2B218DE; Sat, 04 Oct 2025 22:40:43 +0800
+X-QQ-mid: xmsmtpt1759588843tnh7o3u37
+Message-ID: <tencent_0838BCA28C3E230A19B4094167455E1AA90A@qq.com>
+X-QQ-XMAILINFO: NojR6Ao/DkEDkg3c0+Z9uQofb6JONCqOnZ55W0B3MJjiZ4nNrtT9ThwZw0G71z
+	 m3pRzXB5tg1bagag7YBsNUy/lKZVWEC5A0QAA4QImROoN8Z88Syy+huqIrIpF/Im65jhFFMJUsmA
+	 JRJntPA3RJnxHqV6WrV8iNNNzT1u6tU51v7+tJdq627teD7csWzu7OinSpb4+5N6B6P2KMTGM4ZZ
+	 GXJIIY8dnUbmyq7ZIyK5IiAJ4YUX4iy9tDsBjoeB/8UaylanvAYbe8w5O1+HRMuFlc0JTtjRf53h
+	 /G3Le0MdGSFE/NEFJS05+7AtCdHaFIwL83yacIuIMwsos+KBN/941DTg2QmVdg3/yKf2opgssJJx
+	 uNb/L57pHo07JTaNexLeoblDM+N09DYdl6tzn+X1o6cTM3AZq67IXSeobIc3FWKwA3ApxWvuWNK5
+	 xNsHJcC8GHICiwo1RwyYEnM//8G6LfjFfO4Ls4Ia0aEJdlxB7hw6xmhgNL2k5z3ur1/e6vvyqe19
+	 4g9dptopDuXk+YdYsA/50ORB/mJWb6ucSRfQ28/8EXbKYRJ9hUXuD3O16bYXLNtE/ZuohtZYqBeL
+	 m8tN1k9tK5rN5awAkwGvkTR7h+bEV4rQYYwaneU6olk5SZdsWaqptXiHTsfsjBVv1ss3BgGFl5fc
+	 jkUGOcDo3gLiZV/yk0yPCWp7Flan6WlVHOs6mBC+0lGKxvKJiHxPra0FrQv1yQ4cN/ssCS+6OWDp
+	 e4WocwxlU76QXJ0QaukrYHH6p1pM2QI5A20xpNLKMr0+eMfrLen2Msr6BjPs6hD8e1PM0AkUj9oj
+	 KmBfRX9THEfm/q+iDGmR8yZ5Z7EDOGTW2aIzwb1n64UaFMFDwvYLyM1/hsHA3LZB1u//aMS43wLx
+	 NUDOuqSOn49oklEyaesafGfDzQ9OGsNX+8xVClJeOgS428Pq+OS52SbpwOFz/VC7l74ZD9E3FFo8
+	 EYWct3KU8Bi298xrSEmeJXMPugUfTRVqfdmC816DEw09erscW9r6YT940goDfy6L+nrWqvOQNEi/
+	 9CWS/TLJM2Lm04eu1Y5a+FK6QdLvRKmndsRkZXt0ZYX59daI++dQc4TvgggftfUXUpfMzsQQ==
+X-QQ-XMRINFO: MFN5R+/RXzhDMAgaz0rNTGk=
+X-OQ-MSGID: <48872fbc-e896-4b9a-8a4f-3b7bdb558eb8@foxmail.com>
+Date: Sat, 4 Oct 2025 22:40:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next 1/2] bpf: add bpf_strcasestr,bpf_strncasestr
+ kfuncs
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Viktor Malik <vmalik@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
+ Rong Tao <rongtao@cestc.cn>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ "open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)"
+ <bpf@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+References: <cover.1759584052.git.rongtao@cestc.cn>
+ <tencent_8AF4D15B4475031E2185ACDE4B1495995707@qq.com>
+ <CAADnVQ+iERbZZ35CbPRamMqEu32ptEAXL0OQAhansfzBX+HDKQ@mail.gmail.com>
+Content-Language: en-US
+From: "rtoax@foxmail.com" <rtoax@foxmail.com>
+In-Reply-To: <CAADnVQ+iERbZZ35CbPRamMqEu32ptEAXL0OQAhansfzBX+HDKQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHk-=wgX-2+hH5fM344_wKYNZS5CSf4ispS4X+s5xkma_Mdu_Q@mail.gmail.com>
 
-On Fri, Oct 03, 2025 at 01:02:43PM -0700, Linus Torvalds wrote:
->On Fri, 3 Oct 2025 at 11:09, Linus Torvalds
-><torvalds@linux-foundation.org> wrote:
->>
->> If you get pull requests from the people you pull from that make it
->> harder for you to do a better job, please push back on them too.
+
+On 10/4/25 10:28 PM, Alexei Starovoitov wrote:
+> On Sat, Oct 4, 2025 at 6:37 AM Rong Tao <rtoax@foxmail.com> wrote:
+>> -__bpf_kfunc int bpf_strnstr(const char *s1__ign, const char *s2__ign, size_t len)
+>> +__bpf_kfunc int __bpf_strnstr(const char *s1, const char *s2, size_t len,
+>> +                                                         bool ignore_case)
+>>   {
+> Still __bpf_kfunc ?
+Sorry about that, i'll fix it right now.
 >
->Side note: this is actually an area where maybe it's worth looking
->into just having automation.
->
->I've actually been fairly impressed with some of the more recent
->AUTOSEL AI summaries, and I wonder if it might help maintainers to
->have some kind of "summarize this pull request" infrastructure. I'm
->not so convinced about the code-writing side, but summarizing
->changelogs sounds useful but also rather less scary.
->
->And I'm not suggesting that because I would use it to summarize other
->peoples pull requests, but as a way to make it easier for maintainers
->to write summaries of their own pull requests when they have lots of
->different things going on.
->
->Adding Sasha to the participants, since he's been doing the AUTOSEL summaries.
->
->(Some of them have been just garbage, but a lot of them have seemed
->quite reasonable. So as a starting point - rather than as the final
->case - I think maybe some of those LLM's might be useful for other
->things than making amusing fake videos)
+> pw-bot: cr
 
-Thanks for looping me in and for the prod on consistency. I agree that writing
-a clear commit message or pull request summary is often harder than the code
-change itself.
-
-With AUTOSEL we’ve seen that AI can help when it’s grounded: recent agentic RAG
-approaches let us draft summaries from the actual commits, tags, diffstats, and
-paths rather than free-form guesses. We still treat the result as a bot-edited
-draft, not an authority.
-
-Looping in Konstantin who looked at adding extensions such as these to b4 - we
-should definitely look at adding more AI tools to support maintainer workflows
-with good guardrails (including sourcing every claim from the input data,
-failing closed on low confidence, ...).
-
-Some more b4 ai ideas:
-
-- b4 ai summarize <range|branch>: Draft a maintainer editable summary
-   (headline, grouped highlights, notable fixes/reverts, stats), with links to
-   source commits.
-
-- b4 ai cover <series>: Generate a first-pass cover letter for a series or
-   topic branch, preserving style knobs (indentation, bullets, length).
-
-- b4 ai risks <range>: Surface cross-subsystem touches, large churn, and code
-   with prior regression history.
-
-- b4 ai validate <range>: Check that summary claims are supported by
-   commits/tags. Flag low-confidence sections.
-
-- b4 ai style --indent=2 --max-lines=...: Apply consistent formatting to the
-   generated text without changing content.
-
--- 
-Thanks,
-Sasha
 
