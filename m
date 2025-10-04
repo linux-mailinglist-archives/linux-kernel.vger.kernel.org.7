@@ -1,79 +1,264 @@
-Return-Path: <linux-kernel+bounces-842132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 608FFBB90ED
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 20:21:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A932BB90F6
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 20:25:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19A4719C04B9
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 18:21:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A971B1885212
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 18:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00CB2874F8;
-	Sat,  4 Oct 2025 18:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4595B27B33F;
+	Sat,  4 Oct 2025 18:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jNu/o3V/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="na/UNnPO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CE6286420
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 18:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2B63594B;
+	Sat,  4 Oct 2025 18:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759602019; cv=none; b=eucFUv+Z8DewSZyYxSZ7TiuBrlITjYZPUveb432KUbUffKW8JJ1Gj8SlexuTQdU7onHMafSa8Qq2vcc9ydcyOrK8QTREsDgeITLWph15YVcEMiv7Dzm3nCvtPT8fEveD6SApAdPVbezIXxlOSM8Y/EAfTmpFV7boGCECcHB4TZM=
+	t=1759602335; cv=none; b=PmEwbbTi2VeaEPZm2vSAiS3KIdJT/P+fgKNLjllVob0cziY19AUQ3ARf/TWTO0BJnSTw2g15g4U0y6qQsD88XsZRuoHn/Jn16zW/1HI329yGX9WLj/KBgVwxqNcZk7Pcs0qWYisTToDm5OEE3JdVtp5pOtSMRTvXhCiFy5gMXu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759602019; c=relaxed/simple;
-	bh=3Ao1DqyqkA1i/m8PKQMR3M/c5dL4R4NHTfcO1XN4SRw=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=eH6hxeSTCvSYBYTklJN+jGdymuDOnZFjCM6qSPLlu3CZehxAF57kPtCsgClEdwQiuyHDZfbtuHUmy3hR4uWOzgyB+T0zlRgwqsynEBeSgs3C7N+U1ToCdEIFLJzBF0NRKOIzc36O8e+p1mwnUtBkclkbw7DAqmLzlzri/IjzlHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jNu/o3V/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 008A4C4CEF1;
-	Sat,  4 Oct 2025 18:20:18 +0000 (UTC)
+	s=arc-20240116; t=1759602335; c=relaxed/simple;
+	bh=dvoX9+/2ZkKZ6bUEKpbpRMnripCzPtEITdrIX91WpRQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ABcG+qCHwq1fPXCEjSmYZGvY3uJn3Axi6QxneaKLNld7SWvjWFMgKpDtRt18AZkRIA27DirHUSGtNSfceUhZOJH8x0v5un9fUvENghoBBzsfqygTeIfXFXDCLeQB/DAoUGZ2Ktx0IN61/WM2NbupAAD3b88uZ8Bl0ig6yiIIHq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=na/UNnPO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3D28C4CEF1;
+	Sat,  4 Oct 2025 18:25:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759602019;
-	bh=3Ao1DqyqkA1i/m8PKQMR3M/c5dL4R4NHTfcO1XN4SRw=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=jNu/o3V/1RyXAV+QzUBoujOAK/I1pG7TK86i2pNpkmhGI3uxNgtByaPu/CeluxFX0
-	 kmnoJM5y6gXV29g3t6Z5Y7xheQJ/U36FWsqbDkdKoZducqVe9p1DCdXUCMn5StWpX6
-	 PXGhPbgXBuZ1D51iWPXWIRbKUOk1gJM7zzPrjTzIrOK3QTzO+ZPHF54Gl6fpM99xNN
-	 NrzRJQF77BtzGnkRxKfbMI5B9dPjPT0OnYnXEyuc/B2/S1fOiMFJXrnI9AEovdjjLG
-	 DcLQqULAcghYIStpaGd582X4gJneY1EgTbEJxKClmbM8DPwgj2N5EptpHDVXi7zedP
-	 oHeeIjqrxpkTQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD8A39D0C1A;
-	Sat,  4 Oct 2025 18:20:10 +0000 (UTC)
-Subject: Re: [GIT PULL] mm/mm_init: simplify deferred initialization of struct
- pages
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <aODmrlNys5x2LVtl@kernel.org>
-References: <aODmrlNys5x2LVtl@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <aODmrlNys5x2LVtl@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock tags/memblock-v6.18-rc1
-X-PR-Tracked-Commit-Id: e68f150bc11d0a05cbe984a4e5c0f72a95cae07d
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b41048485ee395edbbb69fc83491d314268f7bdb
-Message-Id: <175960200955.404121.9390868499394906575.pr-tracker-bot@kernel.org>
-Date: Sat, 04 Oct 2025 18:20:09 +0000
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+	s=k20201202; t=1759602335;
+	bh=dvoX9+/2ZkKZ6bUEKpbpRMnripCzPtEITdrIX91WpRQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=na/UNnPOaMdb4+MNBX4qFX/QhYMGkNkbkvd9PXulEzA/7N0I187bZfxz0iRHf+4Mr
+	 bD+EMn7Q6MY//0lnvu+jIC30xiA4j6cwO7OAQQnHWyRgqNEQDDfni09Cm1v6NWBhyR
+	 sl8U+TWAFZJO62OYR2rfuJ27dFjxzR9oBul26Xux0RK36mONeIZaJYOtM6EUquGNZ5
+	 xLrZ9JzclC2C8cIs3ZY6FdLzGbmgj1Sf42oOHbyNCYJFCFsRyBNJPMrn3yj/Lnoznj
+	 8FDeYob/m5eE/NxGCLj9zACLxb7ylIEeAfQqKZDbOvkWSb23/2MEfvTs6mYO2ab0YT
+	 PYvMljsu9lqgA==
+Message-ID: <a36555b9-b2b4-41a3-bbf1-58701b9f4b1a@kernel.org>
+Date: Sat, 4 Oct 2025 19:25:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] misc: fastrpc: Add support for new DSP IOVA
+ formatting
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+ Srinivas Kandagatla <srini@kernel.org>,
+ Amol Maheshwari <amahesh@qti.qualcomm.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+ trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org,
+ Kumari Pallavi <kumari.pallavi@oss.qualcomm.com>
+References: <20250924-knp-fastrpc-v1-0-4b40f8bfce1d@oss.qualcomm.com>
+ <20250924-knp-fastrpc-v1-1-4b40f8bfce1d@oss.qualcomm.com>
+Content-Language: en-US
+From: Srinivas Kandagatla <srini@kernel.org>
+In-Reply-To: <20250924-knp-fastrpc-v1-1-4b40f8bfce1d@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Sat, 4 Oct 2025 11:19:42 +0200:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock tags/memblock-v6.18-rc1
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b41048485ee395edbbb69fc83491d314268f7bdb
+On 9/25/25 12:46 AM, Jingyi Wang wrote:
+> From: Kumari Pallavi <kumari.pallavi@oss.qualcomm.com>
+> 
+> Implement the new IOVA formatting required by the DSP architecture change
+> on Kaanapali SoC. Place the SID for DSP DMA transactions at bit 56 in the
+> physical address. This placement is necessary for the DSPs to correctly
+> identify streams and operate as intended.
+> To address this, add an iova-format flag which determines the SID position
+> within the physical address. Set SID position to bit 56 when iova_format
+> is enabled; otherwise, default to legacy 32-bit placement.
+> Initialize the flag to 0 and update to 1 based on SoC-specific compatible
+> string from the root node.
+> This change ensures consistent SID placement across DSPs.
+> 
+> Signed-off-by: Kumari Pallavi <kumari.pallavi@oss.qualcomm.com>
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> ---
+>  drivers/misc/fastrpc.c | 76 ++++++++++++++++++++++++++++++++++++++++++++------
+>  1 file changed, 68 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+> index 8e1d97873423..db396241b8ce 100644
+> --- a/drivers/misc/fastrpc.c
+> +++ b/drivers/misc/fastrpc.c
+> @@ -33,7 +33,6 @@
+>  #define FASTRPC_ALIGN		128
+>  #define FASTRPC_MAX_FDLIST	16
+>  #define FASTRPC_MAX_CRCLIST	64
+> -#define FASTRPC_PHYS(p)	((p) & 0xffffffff)
+>  #define FASTRPC_CTX_MAX (256)
+>  #define FASTRPC_INIT_HANDLE	1
+>  #define FASTRPC_DSP_UTILITIES_HANDLE	2
+> @@ -105,6 +104,26 @@
+>  
+>  #define miscdev_to_fdevice(d) container_of(d, struct fastrpc_device, miscdev)
+>  
+> +/*
+> + * By default, the sid will be prepended adjacent to smmu pa before sending
+> + * to DSP. But if the compatible Soc found at root node specifies the new
+> + * addressing format to handle pa's of longer widths, then the sid will be
+> + * prepended at the position specified in this macro.
+> + */
+> +#define SID_POS_IN_IOVA 56
+> +
+> +/* Default width of pa bus from dsp */
+> +#define DSP_DEFAULT_BUS_WIDTH 32
+I dont see any point in defining these both here, this should be part of
+the fastrpc_soc_data and a fallback fastrpc_soc_data.
 
-Thank you!
+> +
+> +/* Extract smmu pa from consolidated iova */
+> +#define IOVA_TO_PHYS(iova, sid_pos) (iova & ((1ULL << sid_pos) - 1ULL))
+> +
+> +/*
+> + * Prepare the consolidated iova to send to dsp by prepending the sid
+> + * to smmu pa at the appropriate position
+> + */
+> +#define IOVA_FROM_SID_PA(sid, phys, sid_pos) (phys += sid << sid_pos)
+> +
+>  struct fastrpc_phy_page {
+>  	u64 addr;		/* physical address */
+>  	u64 size;		/* size of contiguous region */
+> @@ -255,6 +274,7 @@ struct fastrpc_session_ctx {
+>  	int sid;
+>  	bool used;
+>  	bool valid;
+> +	u32 sid_pos;
+Why is this in session context? are you expecting this to be different
+for each session? move it to channel_ctx.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+>  };
+>  
+>  struct fastrpc_channel_ctx {
+> @@ -278,6 +298,7 @@ struct fastrpc_channel_ctx {
+>  	bool secure;
+>  	bool unsigned_support;
+>  	u64 dma_mask;
+> +	u32 iova_format;
+Format is very much misleading, And this is totally redundant if you add
+sid_pos to soc_data.
+
+Please add soc_data struct here, so that we dont have to keep adding
+members to this and it also makes it clear what are soc specific bits in
+this.
+
+>  };
+>  
+>  struct fastrpc_device {
+> @@ -391,8 +412,11 @@ static int fastrpc_map_lookup(struct fastrpc_user *fl, int fd,
+>  
+>  static void fastrpc_buf_free(struct fastrpc_buf *buf)
+>  {
+> +	uint32_t sid_pos = (buf->fl->sctx ? buf->fl->sctx->sid_pos :
+> +					    DSP_DEFAULT_BUS_WIDTH);
+
+Why this new check added?
+> +
+
+>  	dma_free_coherent(buf->dev, buf->size, buf->virt,
+> -			  FASTRPC_PHYS(buf->phys));
+> +			  IOVA_TO_PHYS(buf->phys, sid_pos));
+>  	kfree(buf);
+>  }
+>  
+> @@ -442,7 +466,7 @@ static int fastrpc_buf_alloc(struct fastrpc_user *fl, struct device *dev,
+>  	buf = *obuf;
+>  
+>  	if (fl->sctx && fl->sctx->sid)
+> -		buf->phys += ((u64)fl->sctx->sid << 32);
+> +		IOVA_FROM_SID_PA((u64)fl->sctx->sid, buf->phys, fl->sctx->sid_pos);
+>  
+>  	return 0;
+>  }
+> @@ -687,7 +711,8 @@ static int fastrpc_dma_buf_attach(struct dma_buf *dmabuf,
+>  		return -ENOMEM;
+>  
+>  	ret = dma_get_sgtable(buffer->dev, &a->sgt, buffer->virt,
+> -			      FASTRPC_PHYS(buffer->phys), buffer->size);
+> +			      IOVA_TO_PHYS(buffer->phys, buffer->fl->sctx->sid_pos),
+> +			      buffer->size);
+>  	if (ret < 0) {
+>  		dev_err(buffer->dev, "failed to get scatterlist from DMA API\n");
+>  		kfree(a);
+> @@ -736,7 +761,7 @@ static int fastrpc_mmap(struct dma_buf *dmabuf,
+>  	dma_resv_assert_held(dmabuf->resv);
+>  
+>  	return dma_mmap_coherent(buf->dev, vma, buf->virt,
+> -				 FASTRPC_PHYS(buf->phys), size);
+> +				 IOVA_TO_PHYS(buf->phys, buf->fl->sctx->sid_pos), size);
+>  }
+>  
+>  static const struct dma_buf_ops fastrpc_dma_buf_ops = {
+> @@ -793,7 +818,8 @@ static int fastrpc_map_create(struct fastrpc_user *fl, int fd,
+>  		map->phys = sg_phys(map->table->sgl);
+>  	} else {
+>  		map->phys = sg_dma_address(map->table->sgl);
+> -		map->phys += ((u64)fl->sctx->sid << 32);
+> +		IOVA_FROM_SID_PA((u64)fl->sctx->sid, map->phys,
+> +				 fl->sctx->sid_pos);
+>  	}
+>  	map->size = len;
+>  	map->va = sg_virt(map->table->sgl);
+> @@ -2153,11 +2179,14 @@ static int fastrpc_cb_probe(struct platform_device *pdev)
+>  	sess->used = false;
+>  	sess->valid = true;
+>  	sess->dev = dev;
+> -	dev_set_drvdata(dev, sess);
+> +	/* Configure where sid will be prepended to pa */
+unnessary comment here.
+
+> +	sess->sid_pos =
+> +		(cctx->iova_format ? SID_POS_IN_IOVA : DSP_DEFAULT_BUS_WIDTH);
+
+as commented eariler, replace iova_format from soc_data with pos.
+>  
+>  	if (of_property_read_u32(dev->of_node, "reg", &sess->sid))
+>  		dev_info(dev, "FastRPC Session ID not specified in DT\n");
+>  
+> +	dev_set_drvdata(dev, sess);
+
+why this line moved in this patch?
+
+>  	if (sessions > 0) {
+>  		struct fastrpc_session_ctx *dup_sess;
+>  
+> @@ -2256,6 +2285,19 @@ static int fastrpc_get_domain_id(const char *domain)
+>  	return -EINVAL;
+>  }
+>  
+> +struct fastrpc_soc_data {
+> +	u32 dsp_iova_format;
+
+s/dsp_iova_format/sid_pos
+
+> +};
+> +
+> +static const struct fastrpc_soc_data kaanapali_soc_data = {
+> +	.dsp_iova_format = 1,
+	.sid_pos = 54,
+> +};
+> +
+> +static const struct of_device_id qcom_soc_match_table[] = {
+> +	{ .compatible = "qcom,kaanapali", .data = &kaanapali_soc_data },
+> +	{},
+> +};
+> +
+>  static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+>  {
+>  	struct device *rdev = &rpdev->dev;
+> @@ -2264,6 +2306,23 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+>  	const char *domain;
 
