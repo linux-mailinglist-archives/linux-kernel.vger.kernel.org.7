@@ -1,235 +1,121 @@
-Return-Path: <linux-kernel+bounces-841917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02B25BB886D
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 04:38:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F23BB8879
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 04:40:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADC1D4A7E07
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 02:37:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA76619E7C4A
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 02:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A1C20DD48;
-	Sat,  4 Oct 2025 02:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283BC20A5DD;
+	Sat,  4 Oct 2025 02:40:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="GyM7ZH9q"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b="EJwug4n7"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C391494C2
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 02:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C191F75A6
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 02:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759545470; cv=none; b=KfY/tJ/kwQEWpAeWEJwAfrq8Yi5wW2JPCa1yW5gFUrjfIN0VVA7oniez3vzmMPiTs63KZn3CE1uhZNsIskkG4yxqUODsov75Jj3rqVK4Rl9YVEYDrrs/ksCB6eGiqeEcJbAqtwjI0VZZ5q9JatPCwll3F2GbgfQabLyzXsDyTvc=
+	t=1759545627; cv=none; b=PyEpRbGlizhBR05r0UeBQYPYkYO00fV3ssHVxaQmVz22JD7t21JLSxoTRCDhAZFf4uRs8/7VwgXzNYYrISf2kFr62Ocj8YUnU+gdrR+N5dF535fW90muArrm/lxNJ6kY9uW3dmPJ9fsGHXqHzxZJy83WW+gbLCLc7fWXhaPJy/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759545470; c=relaxed/simple;
-	bh=z8FEWYioRZsia1D0UVZElrLnWOE6tccgR6dAs9tkFMo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AH3SI2pC0+0Nuqbz/FH9VS3MSFioB0t3raY3pwy++bvLVljtoakDi1oh9Hc6tT9PCYl2+eRo/EFpFNju+RUGH007OZ2vF6husePfI0iPtaGh7YviQEc7eo6uiyrGsgFA/Ogrt2GRds53ODNHyw7nAnwGqsrfCv+PiyoWiX1ZKhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=GyM7ZH9q; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-85d02580a07so337817685a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 19:37:48 -0700 (PDT)
+	s=arc-20240116; t=1759545627; c=relaxed/simple;
+	bh=WZHBqjpgenWM6lUWOGdfdtHCtjWENrrZy4ZRfETPkw8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dd1qjaNHU8Pi0XdZdZ7G69XWfpCoqenjqTJI3nAfryUsXJtn6r5FSE6xcxwO25QFuyxuO3hyrERxcyunQFAexmyxTbBhqHeSh2KHSMzF/sIC+iqQ/Ab3H/JCxV6Yc2bYu+iNDyGK5VoTVRTDJXARUTNBy7LgkhECuUiCfEqEPdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org; spf=pass smtp.mailfrom=linuxtx.org; dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b=EJwug4n7; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxtx.org
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-4259247208aso18434765ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 19:40:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1759545467; x=1760150267; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WX2AvTRjoMsNn7rSSXm6NpMJfKCTCSB0TADy4mhOSmg=;
-        b=GyM7ZH9qwtF2cHGRWxs17OA2fPZjLHFBhSh3a6J52ZHrLJYQncuHmqlhKTWNAUe3YN
-         DQNFHE4zxiiL7GXAu0utoiuL7orUv2aAYNCcQoF2k8sTlIXU2kwGSpW2R/y+/gu3TaAj
-         Kk2Kuj0IWw9Waz6GfsBxk5Dtl5JTYcmvdcqDrLAq8p/jaF+bLVxvoBtO9gB2kOWoIm2v
-         gI3Evie6M5MRI/mBzItMGa2/5srVpYDyDAYeU4k3/Ng8gEHKV/63WlBtRa4qXNJqL4dk
-         cVRn4dmTwTKgtPk6W7Rl9eQHIazyLY8qdwx1Bim0x+dqcl896qSZP5K7qL7k5h3RSvUF
-         OrJw==
+        d=linuxtx.org; s=google; t=1759545623; x=1760150423; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lfGV84g55Fp70doV+YS/Migev0C/SPjmIXXRQJSXnGs=;
+        b=EJwug4n74NhquNF9ckM1rGT08zH8v3vbJJ+jKghOm97IMOT3J1QWf/L/ROLg8sck/j
+         x3XI9RzHf4mjtjn+tDqi09F9S8b86maEe9drgLtYi5CN1sAqu1UhN1F4jShmyCbedgd9
+         4dnHAOs5CCbqPQQlQ/R8xm52pnFLrh+2ho+Kc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759545467; x=1760150267;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1759545623; x=1760150423;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WX2AvTRjoMsNn7rSSXm6NpMJfKCTCSB0TADy4mhOSmg=;
-        b=jTJ9/wbhSpojvt2CYVmw7u+A8YpssYuJ025BvG9rDaYsrQl2+BZ83DJUlCT8xrIHch
-         DxOYoyHdNgtM2m3n/FDQHPDm58BX1jWR+pe6dLlI6nTiFw2JPhUfELIyzj9s9qpLbdCQ
-         EEAHmTHceRbrFT8iFgtMYYnTz6vT/Vsut+BN5RSqCEP/Jpt3PfsNRfnXIWTwgCUIBXGa
-         snwOTzgSGOUfFeIjLZ8we62TVvdk8HHd+HxynZK/EWSX8rXUnjmaKc8P2D7PF6x8Twy5
-         jZlCNVLIk6t3raUDXZkgHcaBJXx3Y2G72nwFZZKmiJEnxHXpe6NyMIInXB/94MrLb3nb
-         0YTg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDXyFnqnY3nuT3KphP/Kv9U4WtDWlaZftC9gdtDI5LftcPTwTwIL7wtXcmJiddzYYFzOfrFrjN2J5tneY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzn8pGbEHnKpxouhKcrZW0hnMRk2MZUstXRF0S2hohHXLkV1Ohe
-	YApDypOtJKeejgicqVZzWwsrf1qIplu2P6PDhRAXNfaRzMJGhCjYYvzaOymKIBUEGGoM2+k3YkF
-	ieghMCpDvZD3hD+rYJK+fbPDWFv5ZMV2E5ReW2nqGaA==
-X-Gm-Gg: ASbGncvWl0dqZKW5mloGAvT3g7aPfcdro2mija0wCqsjZGZluIaDM1P8pIIZl66kPO7
-	f6dH5/ptIx6jwYcC91ZFunR2MDi2vCMZf3Ee44lFZGRwHH7ckM2at2a0KT1c+YtZLpd+YfQUOIJ
-	R3fwqvsZTE7Ro9qIU6RmSJaqbeueZ4BATFQIywKJrBnysViKXocfk4T10d518nDfr+iPeSca25Q
-	RoGY+fbI9TBa5o3BnZI6+eQnVmH
-X-Google-Smtp-Source: AGHT+IHpXmfwm/zD9D+zvb53ixNC14PQWRGIATDbgGewBobYXO/nEIYfu9ZMcBO3awLQMttSyQvIKLOwmKCMpwF49ms=
-X-Received: by 2002:a05:620a:1a0e:b0:828:804a:47f2 with SMTP id
- af79cd13be357-87a32af5f30mr715143885a.9.1759545467113; Fri, 03 Oct 2025
- 19:37:47 -0700 (PDT)
+        bh=lfGV84g55Fp70doV+YS/Migev0C/SPjmIXXRQJSXnGs=;
+        b=DGU6I+3d5cej+6P/pvUmtyUmMnv3fqJZLMPldxeYXRMwi/dQ5sOPptU+WQcTVatdUK
+         K3BK4wKlH2awGrpJMmXFUBkAwrXScACWMhLJBulGnO+mL0FekK3Nl+EUXs5nYJSeg14J
+         ZTDdTK7r3BF7sFTPlXRazHyppOfldM32sJsgnCPcyy6bPF2oRF5wzukBVtKScvGVQe5W
+         JgARQhD+7uHc0iQfGnFHBmi424impDC+OIWAPBbMR+vfJxk3uncE4j3+H1zRvZ7BC1PR
+         W+MxhAVVUJu1xcQoePlGsF3E2pfyESRnc2GVdHc17fCkK2tqBtbEWqiH2VvNf7dIIOGL
+         loFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWWjNz9ljYFgPvdT7qiNaOev1EJVBcFu89ZCvQxHRbPF5RpRtbE5gsLf0oFk+NLh30diRpk2gebLHf3u8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw8eLZFbTn8GuTMhFZT+Qf0Gr7tDAA5djIaRxqg28kDK/i9hwC
+	4UANiLsAWKJmTDWR75OVdU50dJaqgPPM/eq6omMQYowauryE4yZOrh8qdCa3sZW55kuBVFbp804
+	ZWnEvMQ==
+X-Gm-Gg: ASbGnctZhpmBsvN+lS7rwi1LEbYzL60uwhZ87kdsSv42LdXqTWAumFbrzeep4e9L5Bh
+	EoMgRT4rNPnJW11b+LwedUZakmpAuuJ/USkqsT0PjcWclTyCvvq7uZGREwo+h8qJaUww6/sAztP
+	TA4GNvazb+sx3LPCaAtlImRPQFHWdvydJ1hubmONPMjeSoyp9qgGBxpr/2pTuicRorjGKfwD16d
+	uA9vkcT0U4SNQAn+fnx1bl5WYtKrS2eAr79PMsXG/wWmzbeNviggWEYv7ZatEP7Te1EtLOtzRVR
+	rdie7G/eQGhMY82nOn6auL6E9imQpcqtdNF/76OL9HB83GZtrOOeOq0+9xd9BGwdkJEClm5+joq
+	Tiuiu8R8qt8p5GrSLaMnjlLri02F9IWbYuuqkkkvENX4bDJLOF1XPBvcnM10ILWRbwwuGvB6G6P
+	LpPuE=
+X-Google-Smtp-Source: AGHT+IEioTJIMNzacqCo/UZFC5W1RrKFxPYXMBDo5m8Vs8tnZCDhSKd87QqfaWpv2/P8gUHneV9Gkw==
+X-Received: by 2002:a05:6e02:3e91:b0:428:973:797d with SMTP id e9e14a558f8ab-42e7ad258f4mr72119735ab.9.1759545623294;
+        Fri, 03 Oct 2025 19:40:23 -0700 (PDT)
+Received: from fedora64.linuxtx.org ([216.147.126.122])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-57b5ec10511sm2458733173.63.2025.10.03.19.40.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Oct 2025 19:40:22 -0700 (PDT)
+Sender: Justin Forbes <jmforbes@linuxtx.org>
+Date: Fri, 3 Oct 2025 20:40:20 -0600
+From: Justin Forbes <jforbes@fedoraproject.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+Subject: Re: [PATCH 6.16 00/14] 6.16.11-rc1 review
+Message-ID: <aOCJFN5CttsqZJ31@fedora64.linuxtx.org>
+References: <20251003160352.713189598@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
- <20250929010321.3462457-27-pasha.tatashin@soleen.com> <20251003225120.GA2035091.vipinsh@google.com>
- <CA+CK2bBuO5YaL8MNqb5Xo_us600vTe2SF_yMNU-O9D2_RBoMag@mail.gmail.com>
-In-Reply-To: <CA+CK2bBuO5YaL8MNqb5Xo_us600vTe2SF_yMNU-O9D2_RBoMag@mail.gmail.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Fri, 3 Oct 2025 22:37:10 -0400
-X-Gm-Features: AS18NWAFqUB-LYy2SykxO160YAKxge0tVD8HRG9MgImFDuYaat9DVXaJFYTvN7M
-Message-ID: <CA+CK2bBSObHG=9Rj623mahyhE81DhhKbN09aHS96p==8y_mCGw@mail.gmail.com>
-Subject: Re: [PATCH v4 26/30] selftests/liveupdate: Add multi-kexec session
- lifecycle test
-To: Vipin Sharma <vipinsh@google.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
-	chrisl@kernel.org, steven.sistare@oracle.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251003160352.713189598@linuxfoundation.org>
 
-On Fri, Oct 3, 2025 at 10:07=E2=80=AFPM Pasha Tatashin
-<pasha.tatashin@soleen.com> wrote:
->
-> On Fri, Oct 3, 2025 at 6:51=E2=80=AFPM Vipin Sharma <vipinsh@google.com> =
-wrote:
-> >
-> > On 2025-09-29 01:03:17, Pasha Tatashin wrote:
-> > > diff --git a/tools/testing/selftests/liveupdate/.gitignore b/tools/te=
-sting/selftests/liveupdate/.gitignore
-> > > index af6e773cf98f..de7ca45d3892 100644
-> > > --- a/tools/testing/selftests/liveupdate/.gitignore
-> > > +++ b/tools/testing/selftests/liveupdate/.gitignore
-> > > @@ -1 +1,2 @@
-> > >  /liveupdate
-> > > +/luo_multi_kexec
-> >
-> > In next patches new tests are not added to gitignore.
->
-> Will fix it, thanks.
->
-> >
-> > > diff --git a/tools/testing/selftests/liveupdate/Makefile b/tools/test=
-ing/selftests/liveupdate/Makefile
-> > > index 2a573c36016e..1cbc816ed5c5 100644
-> > > --- a/tools/testing/selftests/liveupdate/Makefile
-> > > +++ b/tools/testing/selftests/liveupdate/Makefile
-> > > @@ -1,7 +1,38 @@
-> > >  # SPDX-License-Identifier: GPL-2.0-only
-> > > +
-> > > +KHDR_INCLUDES ?=3D -I../../../usr/include
-> >
-> > If make is run from the tools/testing/selftests/liveupdate directory, t=
-his
-> > will not work because it needs one more "..".
-> >
-> > If this is built using selftest Makefile from root directory
-> >
-> >   make -C tools/testing/selftests TARGETS=3Dliveupdate
-> >
-> > there will not be build errors because tools/testing/selftests/Makefile
-> > defines KHDR_INCLUDES, so above definition will never happen.
-> >
-> > >  CFLAGS +=3D -Wall -O2 -Wno-unused-function
-> > >  CFLAGS +=3D $(KHDR_INCLUDES)
-> > > +LDFLAGS +=3D -static
-> >
-> > Why static? Can't we let user pass extra flags if they prefer static
->
-> Because these tests are executed in a VM and not on the host, static
-> makes sense to be able to run in a different environment.
->
-> > > +
-> > > +# --- Test Configuration (Edit this section when adding new tests) -=
---
-> > > +LUO_SHARED_SRCS :=3D luo_test_utils.c
-> > > +LUO_SHARED_HDRS +=3D luo_test_utils.h
-> > > +
-> > > +LUO_MANUAL_TESTS +=3D luo_multi_kexec
-> > > +
-> > > +TEST_FILES +=3D do_kexec.sh
-> > >
-> > >  TEST_GEN_PROGS +=3D liveupdate
-> > >
-> > > +# --- Automatic Rule Generation (Do not edit below) ---
-> > > +
-> > > +TEST_GEN_PROGS_EXTENDED +=3D $(LUO_MANUAL_TESTS)
-> > > +
-> > > +# Define the full list of sources for each manual test.
-> > > +$(foreach test,$(LUO_MANUAL_TESTS), \
-> > > +     $(eval $(test)_SOURCES :=3D $(test).c $(LUO_SHARED_SRCS)))
-> > > +
-> > > +# This loop automatically generates an explicit build rule for each =
-manual test.
-> > > +# It includes dependencies on the shared headers and makes the outpu=
-t
-> > > +# executable.
-> > > +# Note the use of '$$' to escape automatic variables for the 'eval' =
-command.
-> > > +$(foreach test,$(LUO_MANUAL_TESTS), \
-> > > +     $(eval $(OUTPUT)/$(test): $($(test)_SOURCES) $(LUO_SHARED_HDRS)=
- \
-> > > +             $(call msg,LINK,,$$@) ; \
-> > > +             $(Q)$(LINK.c) $$^ $(LDLIBS) -o $$@ ; \
-> > > +             $(Q)chmod +x $$@ \
-> > > +     ) \
-> > > +)
-> > > +
-> > >  include ../lib.mk
-> >
-> > make is not building LUO_MANUAL_TESTS, it is only building liveupdate.
-> > How to build them?
->
-> I am building them out of tree:
-> make O=3Dx86_64 -s -C tools/testing/selftests TARGETS=3Dliveupdate instal=
-l
-> make O=3Dx86_64 -s -C tools/testing/selftests TARGETS=3Dkho install
+On Fri, Oct 03, 2025 at 06:05:34PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.16.11 release.
+> There are 14 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun, 05 Oct 2025 16:02:25 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.11-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Actually, I just tested in-tree and everything works for me, could you
-please verify:
+Tested rc1 against the Fedora build system (aarch64, ppc64le, s390x,
+x86_64), and boot tested x86_64. No regressions noted.
 
-make mrproper  # Clean the tree
-cat tools/testing/selftests/liveupdate/config > .config # Copy LUO depends.
-make olddefconfig  # make a def config with LUO
-make kvm_guest.config # Build minimal KVM guest with LUO
-make headers # Make uAPI headers
-make -C tools/testing/selftests TARGETS=3Dliveupdate install # make and
-install liveupdate selftests
-
-# Show that self tests are properly installed:
-ls -1 tools/testing/selftests/kselftest_install/liveupdate/
-config
-do_kexec.sh
-liveupdate
-luo_multi_file
-luo_multi_kexec
-luo_multi_session
-luo_unreclaimed
-
-Pasha
+Tested-by: Justin M. Forbes <jforbes@fedoraproject.org>
 
