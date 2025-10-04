@@ -1,131 +1,176 @@
-Return-Path: <linux-kernel+bounces-842120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1103BB9094
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 19:35:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB3E4BB909D
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 19:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2783A4E8501
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 17:35:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3CD318971D3
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 17:37:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12AF2857C2;
-	Sat,  4 Oct 2025 17:34:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964D628507B;
+	Sat,  4 Oct 2025 17:37:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eCjJKPd2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Whwg3XFr"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B71450FE;
-	Sat,  4 Oct 2025 17:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24DA83FC7
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 17:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759599299; cv=none; b=gdwODxE8t9ZXVic7YayrAflk1sT31OQqYjWnhl1PjJP2Flrs3MYOALMxyKbAmnr1/32nhmwkLdTEbfJztoYrw3pxmWzqeGe43xv/zcAsXzj7/0cG90nkrVkcaHVZIzfMT/FOTYJkW569MGNOrY3i6nVcPMWwJ27eNmgiFzmCP4o=
+	t=1759599444; cv=none; b=PM8YhM5VHfrtnM4akgnkBRcB5RFTAaN9R2b309i6HmlEMJ/VBmmDeOjp0x4B+zzob6nn52P26VJBWiiv3hQ3QEo7snKbLBe+wltlR1dd+ky5hQiFUBPkxOLveFZ6Ki6aojN0oz+IqGiAHbn4NTfRqYiqwB/O9bOgGOpB60RpL8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759599299; c=relaxed/simple;
-	bh=QrmbzFWdXVjrkXP1XKgkDdSN8NwVcE41VeySN7cDksE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T5O68sdoNZFgyP1dr00YTfDjhlbM45aFf4DQj3Ej/TYhbBigP9fl6OS5N288nfmm3A4BlDIu70GxAAbajibnVvq8nmxUraIIB8RPOMR9aRF6077lpzZXayMoWApyIYjlrlLXBWHWA/aeJK98sYnLt6N6AvM8xcrE+vuWAHqBvmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eCjJKPd2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02629C4CEF1;
-	Sat,  4 Oct 2025 17:34:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759599298;
-	bh=QrmbzFWdXVjrkXP1XKgkDdSN8NwVcE41VeySN7cDksE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eCjJKPd2kPpbJvaqPjAXAInrSnxBDV5nb0AMICsS9hQMMliN3fJvCdbrmwXy3fIUV
-	 ohrVoxpkW+be4EVH/w9nbxZM7Ak/E6/EDK9Lp0NCknVpI1GCETARXpO07wmg2ZpD/+
-	 DByXFfpXXyYeZlQkVVLtzRVnyK8TVARObjp8O7/bLifZSMLL3hFAVhw59jraHJGJSU
-	 jJr5Bwc/tv5Yfh1bMT1CVVujvmV4wENVMTyccM7ocR9rWZd+tiM8xB2zSxYZLMMv7w
-	 gkh7Ny1wYGPxEy8eZ5XMWwF7ZVqYYm7f++8qAjKK70TwSHcLWR4seTowQlJ4Il6NDN
-	 EngbGLHwMM0Sg==
-Date: Sat, 4 Oct 2025 23:04:35 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, 
-	manivannan.sadhasivam@oss.qualcomm.com, Bjorn Helgaas <bhelgaas@google.com>, 
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Joerg Roedel <jroedel@suse.de>, iommu@lists.linux.dev, Anders Roxell <anders.roxell@linaro.org>, 
-	Naresh Kamboju <naresh.kamboju@linaro.org>, Pavankumar Kondeti <quic_pkondeti@quicinc.com>, 
-	Xingang Wang <wangxingang5@huawei.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH 2/2] iommu/of: Call pci_request_acs() before enumerating
- the Root Port device
-Message-ID: <5f4uclyawwh57u5pdwlk5q36keeg3oyhk5hw42xgnryz6xs7ph@rrkulj4ex2xb>
-References: <20250924185750.GA2128243@bhelgaas>
- <b8a871d8-d84b-4c86-8f63-f4e1b2a5fccf@arm.com>
+	s=arc-20240116; t=1759599444; c=relaxed/simple;
+	bh=4sHIXCwpt1/Md361YU8/WSBJOvjA4z3TGv6XZXV64sk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=VcC4IqyqGe6QCNGOZeyEasW8sWBAfpPPu+i6LWOJo9JTSJKyxqVyD7YnA6OlRAE+UTny/IllrCFQtmvMQzgzFzwIKhlxdmAcWpb2FvpyWV8Rjt0fZDabtk+hvPSyiwrz0Jy/zwDRdWlox78/RmI2JAyDSBLNQFpM6JjjMYrKzQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Whwg3XFr; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-631787faf35so6526499a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 10:37:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759599441; x=1760204241; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3raRxwvGTM3ylvcN3K2wTHut+BkSdrAShA304pZSN3o=;
+        b=Whwg3XFry5BWqHsRw11aACBlPCsAAzFqN7ofsJEym0oN6pkv9OqvFlIvJCDi5TaSZS
+         hiLHCpJBGiHss8ELoRbu6RgNYNuedSs9IlYnkYnTvS9r1OI4WcA1yqfW5KsXQtqvJn93
+         JSi92BT+tSIuXUxzSk3C0dnv/5A4mKw+N5uO8QKuk/qS8TkKntx/3/2Z6wJr2laXRJQV
+         2Lvj2YEmFF8sLKWf9s323ONijRcI3HLVf9KbE6Rqr+wzmDZh1C37tREKR1pvtQHKbXp6
+         m9WhVnaeYP57SdTLoYDLix4BMOsYB1WyB4ELifFFO16mGWA8N4oJmkThQBf6ki9s4bpy
+         wy5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759599441; x=1760204241;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3raRxwvGTM3ylvcN3K2wTHut+BkSdrAShA304pZSN3o=;
+        b=Y8It9gbX7Eio6t/jzTiRasQEPw7fCIQB52CzirURhrh/ka9JiOi0RJNEtTaGDUI9kS
+         ueOsvNOJc/8NcHDgB4jm3RSEbJEcWzJA4fp0OV37NvCOCCE3OFzS7s9ww2Qju9NacCnF
+         SMyjGjWrZz/X5NSOVN0rG3CcJfzKSqjX9/YB7om4Q6x9UjY0GJi2KRT0C7dSAchLMkvJ
+         elrBlqmnXD2eXfyvyX1QiVbP2142FLHIAK1kBTpppBvINOVScDMHSYu69d6iqtZYwyS7
+         A2KnWvWr5195E1fzjLyYAOG8KfYTjRmWCDY8CaakG5jlKPGtBlJa4SEDDGVuQxV6XPw6
+         Ua+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXoFcJQVu1/NZ4MFIU4kuOZwVHBMOOjfXGTZx77VB+o0ptWZsgE7Ga/QHGP3vEiDRYz7uYCD2TUPRIzK0U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0p0j5pAU8p1He3ZAN+S19uoqYiGcCkIEtQd3tRrQe/zqRFacD
+	tjtt5C34tcYwPPqfPoB2JF2EaWoC36epb3deVyGBuGp5EJsuZVzg338XNU5TmA==
+X-Gm-Gg: ASbGnctOxveGX1LOJK/kpWq9nPsFPrIcCkXyrCmQfPnmStIX/IyeRYTs+zy6+xe9ZUp
+	N/kGa/SwLHav1RRfMdO6OnHjZvhqbuI3V3I9bC6MyL05AAg4bKugu5tmPMWFVbpv5IitLc7p8ji
+	REwmA+gqJQgpxACbYXN3gSUFC4dx5slZWLd2eo+DaZ6D8510uFsPmYH0phN6s111tXGzqNuNYZK
+	DsKmxuhSXg+uxudqKDMF6x8syAddKGG6iAc+W+uAmkY0ry57o+rfehubSQSOVnggCLSN5twZeon
+	AjLawJ7LwvSdfvbPOESrZPyQR2hZiWfpVJRpDzjIxc52OYRSl3ssCyDI2zSMvjx/oj/b8jMhvc3
+	4evj/eu5CllL2//DGLybnUx/dR4T0fiO5xOBVivsVCYGKxjNcM1W1ct22jEimHCCW
+X-Google-Smtp-Source: AGHT+IEJUQ7qq474w8rtB7J4HTS8KuFCrk9CcH9sq6v3sqURFw7Y+LQ4G+vVF87638UgYESWP939Kw==
+X-Received: by 2002:a17:906:9fcf:b0:b41:e675:95e3 with SMTP id a640c23a62f3a-b49c20531d6mr976793666b.16.1759599441077;
+        Sat, 04 Oct 2025 10:37:21 -0700 (PDT)
+Received: from [192.168.1.50] ([79.119.240.71])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652a9f11sm729145966b.4.2025.10.04.10.37.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 04 Oct 2025 10:37:20 -0700 (PDT)
+Message-ID: <88f30433-98fa-4f9a-bbe3-9d630b72c2e4@gmail.com>
+Date: Sat, 4 Oct 2025 20:37:17 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b8a871d8-d84b-4c86-8f63-f4e1b2a5fccf@arm.com>
+User-Agent: Mozilla Thunderbird
+From: Bitterblue Smith <rtl8821cerfe2@gmail.com>
+Subject: Re: [PATCH rtw-next v2 0/7] wifi: rtw89: improvements for USB part
+To: Fedor Pchelkin <pchelkin@ispras.ru>, Ping-Ke Shih <pkshih@realtek.com>
+Cc: Zong-Zhe Yang <kevin_yang@realtek.com>, Po-Hao Huang
+ <phhuang@realtek.com>, linux-wireless@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+References: <20251002200857.657747-1-pchelkin@ispras.ru>
+Content-Language: en-US
+In-Reply-To: <20251002200857.657747-1-pchelkin@ispras.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 24, 2025 at 08:49:26PM +0100, Robin Murphy wrote:
-
-[...]
-
-> > I don't doubt that the current code doesn't detect presence or use of
-> > IOMMU until later.  But that feels like an implementation defect
-> > because logically the IOMMU is upstream of any PCI device that uses
-> > it, so architecturally I would expect it to be *possible* to detect it
-> > before PCI enumeration.
-> > 
-> > More to the point, it's not at all obvious how to infer that
-> > 'iommu-map' in the devicetree means the IOMMU will be used.
+On 02/10/2025 23:08, Fedor Pchelkin wrote:
+> The first two patches concern memory leak issues found during testing.
 > 
-> Indeed, I would say the way to go down that route would be to echo what we
-> do for "iommus", and defer probing the entire host controller driver until
-> the targets of an "iommu-map" are either present or assumed to never be
-> appearing. (And of course an ACPI equivalent for that would be tricky...)
+> The third and the fourth one do some extra small changes.
+> 
+> The other ones implement TX completion functionality missing for the USB
+> part of rtw89 driver, suggested by Bitterblue Smith [1].  This will allow
+> handling TX wait skbs and the ones flagged with IEEE80211_TX_CTL_REQ_TX_STATUS
+> correctly.
+> 
+> rtw89 has several ways of handling TX status report events.  The first one
+> is based on RPP feature which is used by PCIe HCI.  The other one depends
+> on firmware sending a corresponding C2H message, quite similar to what
+> rtw88 has.  RTL8851BU vendor driver [2] was taken for reference.
+> 
+> [1]: https://lore.kernel.org/linux-wireless/0cb4d19b-94c7-450e-ac56-8b0d4a1d889f@gmail.com/
+> [2]: https://github.com/fofajardo/rtl8851bu.git
+> 
+> Series has been tested to work with RTL8851BU (USB) and RTL8852BE (PCIe)
+> devices.
+> 
+> 
+> Changelog.
+> 
+> v2: - add new 3/7 and 4/7 patches prepared due feedback to previous comments
+>       or developed in process
+>     - further changelog below --- in the patches
+> 
+> v1: https://lore.kernel.org/linux-wireless/20250920132614.277719-1-pchelkin@ispras.ru/
+> 
+> Fedor Pchelkin (7):
+>   wifi: rtw89: usb: use common error path for skbs in
+>     rtw89_usb_rx_handler()
+>   wifi: rtw89: usb: fix leak in rtw89_usb_write_port()
+>   wifi: rtw89: usb: use ieee80211_free_txskb() where appropriate
+>   wifi: rtw89: refine rtw89_core_tx_wait_complete()
+>   wifi: rtw89: implement C2H TX report handler
+>   wifi: rtw89: handle IEEE80211_TX_CTL_REQ_TX_STATUS frames for USB
+>   wifi: rtw89: process TX wait skbs for USB via C2H handler
+> 
+>  drivers/net/wireless/realtek/rtw89/core.c | 41 ++++++++++++---
+>  drivers/net/wireless/realtek/rtw89/core.h | 45 +++++++++++++----
+>  drivers/net/wireless/realtek/rtw89/fw.h   | 14 ++++++
+>  drivers/net/wireless/realtek/rtw89/mac.c  | 46 +++++++++++++++++
+>  drivers/net/wireless/realtek/rtw89/mac.h  | 61 +++++++++++++++++++++++
+>  drivers/net/wireless/realtek/rtw89/pci.c  |  2 +-
+>  drivers/net/wireless/realtek/rtw89/pci.h  |  4 --
+>  drivers/net/wireless/realtek/rtw89/txrx.h |  6 ++-
+>  drivers/net/wireless/realtek/rtw89/usb.c  | 41 +++++++++++----
+>  9 files changed, 228 insertions(+), 32 deletions(-)
 > 
 
-Maybe we should just call pci_enable_acs() only when the iommu is detected for
-the device? But ofc, this is not possible for non-OF platforms as they tend to
-call pci_request_acs() pretty early.
+I tested these patches with RTL8851BU, RTL8832AU, RTL8832BU, RTL8832CU, and
+RTL8912AU. They all work, with a few additions.
 
-> However, even that isn't necessarily the full solution, as just as it's not
-> really appropriate for PCI to force ACS without knowing whether an IOMMU is
-> actually present to make it meaningful, it's also not strictly appropriate
-> for an IOMMU driver to request ACS globally without knowing that it actually
-> serves any relevant PCIe devices. Even in the ideal scenario, I think the
-> point of actually knowing is still a bit too late for the current API
-> design:
-> 
->   pci_device_add
->     pci_init_capabilities
->       pci_acs_init
->         pci_enable_acs
->     device_add
->       iommu_bus_notifier
->         iommu_probe_device
->           //logically, request ACS for dev here
-> 
-> (at the moment, iommu_probe_device() will actually end up calling into the
-> same of_iommu_configure()->pci_request_acs() path, but the plan is still to
-> eventually shorten and streamline that.)
-> 
+Before these patches RTL8851BU and RTL8832AU would remain "connected" when
+I power off the router. That's because they don't have beacon filtering in
+the firmware and the null frames sent by mac80211 were always marked with
+IEEE80211_TX_STAT_ACK. With these patches they disconnect immediately when
+I power off the router. So that works nicely.
 
-What is worrying me is that of_iommu_configure() is called for each PCI device,
-as opposed to just one time on other platforms. But I think that's a good thing
-to have as the IOMMU driver can have a per-device ACS policy, instead of a
-global one.
+What doesn't work is TX reports for management frames. Currently rtw89
+doesn't configure the firmware to provide TX reports for the management
+queue. That can be enabled with SET_CMC_TBL_MGQ_RPT_EN for the wifi 6 chips
+and with CCTLINFO_G7_W0_MGQ_RPT_EN for RTL8922AU.
 
-> I guess we might want to separate the actual ACS enablement from the basic
-> capability init, or at least perhaps just call pci_enable_acs() again after
-> the IOMMU notifier may have changed the policy?
-> 
+The other thing that doesn't work is the TX reports are different for
+RTL8852CU and RTL8922AU. It's only a small difference for RTL8852CU:
 
-Is this applicable to other platforms as well? Not just OF?
+#define RTW89_C2H_MAC_TX_RPT_W5_DATA_TX_CNT_V1 GENMASK(15, 10)
 
-- Mani
+RTL8922AU is more strange. It needs something like this:
 
--- 
-மணிவண்ணன் சதாசிவம்
+#define RTW89_C2H_MAC_TX_RPT_W12_TX_STATE_V2 GENMASK(9, 8)
+#define RTW89_C2H_MAC_TX_RPT_W12_SW_DEFINE_V2 GENMASK(15, 12)
+#define RTW89_C2H_MAC_TX_RPT_W14_DATA_TX_CNT_V2 GENMASK(15, 10)
+
+The C2H is 80 bytes here (header included).
+
+I think that's everything.
 
