@@ -1,162 +1,97 @@
-Return-Path: <linux-kernel+bounces-842108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFA39BB8FC9
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 18:22:04 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4138BB8FCF
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 18:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 310DF189BBCD
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 16:22:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 761DC4E58D7
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 16:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94FB27EC73;
-	Sat,  4 Oct 2025 16:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F6027F16C;
+	Sat,  4 Oct 2025 16:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="w8Z/V12z"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="c3APQXzw"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA5D23C8AA
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 16:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E12C3596B
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 16:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759594918; cv=none; b=n9rXAXqQiP624HVZVT8Wf1sySV9eNY5AqXk4+cNZltvaUNqA03I0D+HITpRVEx2qbhBkIwPjgtlBOjBetKyJfev0/lQ7qeTNSH+rIz8uudOCIqKe8F8o3AmUjYkPy1V6LJrFTqQfQmxkVneD/2h1fD/2FmxNjz39xLiPV245zLc=
+	t=1759595441; cv=none; b=gcrI6HsrDlCd035QqUAJYPvbsVtuTZ8szaeSv83R/Z0E3oPAPZXo0gkq+9QiqSjEmWvOF+/Elm8BSlIYWjCTwAzub/xrMxcy42n5+B+GibEkr2w/tgyhX/KOsTxeH65LVYmZq1slNZ7XzuAOKsRQoCJKYgDWCk1zpLPiwHLUkhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759594918; c=relaxed/simple;
-	bh=uZurdSC0sqjRe3V/HgAi/JYCuQEpRNbx91JHlCTwTuE=;
+	s=arc-20240116; t=1759595441; c=relaxed/simple;
+	bh=+H1mbWGz5J6k8yaeXH+PkkNq6/kaZnFVaJOkdI/cFB4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GMn3XDZ//Efxc/IjIp4bK81ixM2wZAwS0MxnVu8v1E0DvPN96TKqR5AEXJJyhEzDqkwa9jIElwD4ymgfg127SrUWhYsHGs5Olu4hqyNUKI26U2cqGFfYk+A6DmngPC4GEO22/JYUBZGDduWX7m9+1Nl5tvX4KYE0b88HXArMY7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=w8Z/V12z; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 4 Oct 2025 12:21:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759594902;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=psoPj0yxyJUwCnm4KRKDccQVISxqX4KV4LLtuF1Uggc=;
-	b=w8Z/V12zsgJi9JjsPYWf0hTPpTixDhBXgbfyC1umqM40/Tm4rPxKja+T0KUtjJT1VBglAT
-	Ul3AU71vCUM5pDJWPbQpG9ffdlt5C4ZZXFCm6bfOc8eTS6ppu8mOhAh47nyFoNcyPEX8ug
-	jOCpqHVYCHtXW3hu4djk0YSIxDGhHW4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Nirbhay Sharma <nirbhay.lkd@gmail.com>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzbot+7f176adb30b21606c5fc@syzkaller.appspotmail.com, skhan@linuxfoundation.org, david.hunter.linux@gmail.com, 
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] bcachefs: fix use-after-free in bch2_dirent_to_text()
-Message-ID: <suouhqf3so43qperydsoykxiqglasg45boxjimbsarsz72jqr2@lf47oxtlcand>
-References: <20251002231033.23810-1-nirbhay.lkd@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XsvscI1oNAzOTxSE5MRypTBDUjqXk2FUwRV4Hooh8aunuPb//rYmj59ADR/nGW2h6IXKo92vMFUB7xcdyOJfESkLEXOBDmSZehNrjrKEFZaT1EZXHGBKMHPhT4fCQINl0eN+RI6UsLmmvEO9J5ROaBWFaK5b3E4JyWb7LIc05Ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=c3APQXzw; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=+H1m
+	bWGz5J6k8yaeXH+PkkNq6/kaZnFVaJOkdI/cFB4=; b=c3APQXzw20sxP5cuRth1
+	uTG8IdJsQg/jDyVo9hA8fmFfXuY4Ks8w8eYf/60bnN0aLJ/8+iwVdLhd69tNYEhk
+	1vKYaJp5YpljL6XxMybFNNhrZubcEWSADTFZzVVJ0+nRMpKT8BnPoWUG05cdcAlJ
+	sszq1/hWNsq9Y0RAMpIxnp93bk9bLLzuaTZ9lTERQvNIXNmUHQ+LSmvRBEAeRSFw
+	/rdL13ToV+PQZTPL+e12rmV8SteMyBTITzu5ub0Yac2DmhTnF7dSov5+gPD22ERY
+	YDvZs4VsU8srToWBB3tV8rSPEQmWOT+Q4ukdmi9zn3xusHyRY9ltcbSQT9wSGTAI
+	gw==
+Received: (qmail 1083198 invoked from network); 4 Oct 2025 18:30:23 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Oct 2025 18:30:23 +0200
+X-UD-Smtp-Session: l3s3148p1@kNQjvFdA4NKSRnW9
+Date: Sat, 4 Oct 2025 18:30:22 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] i2c-host for v6.18, part 2
+Message-ID: <aOFLnsD-_M0aQ8GV@shikoro>
+References: <gtymsa6dx67vlus2ostbsxxsixrubzwkqgr5ljqwjlufthlcqi@api2ouzwmmta>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="BSQI9M4BVqBPXWLF"
+Content-Disposition: inline
+In-Reply-To: <gtymsa6dx67vlus2ostbsxxsixrubzwkqgr5ljqwjlufthlcqi@api2ouzwmmta>
+
+
+--BSQI9M4BVqBPXWLF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251002231033.23810-1-nirbhay.lkd@gmail.com>
-X-Migadu-Flow: FLOW_OUT
 
-On Fri, Oct 03, 2025 at 04:40:33AM +0530, Nirbhay Sharma wrote:
-> Add bounds checking before calculating pointer offsets in dirent name
-> accessor functions to prevent out-of-bounds memory access when
-> processing corrupted filesytem metadata.
-> 
-> When d_name_len contains a corrupted value, the pointer calculation
-> &d.v->d_cf_name_block.d_names[name_len] results in an offset far
-> outside the dirent structure, triggering KASAN use-after-free erors.
 
-We validate d_name_len in bch2_dirent_validate(), so... this looks
-entirely bogus.
+> I wish you a great weekend,
 
-Did you test any of this?
+Thank you, same to you. Pulled!
 
-> 
-> While bch2_dirent_validate() detects such corruption,
-> bch2_dirent_to_text() may still be called for debug output, so the
-> accessor functions must handle invalid data gracefully.
-> 
-> Fixes: c21f41f6905be4fc5059a10a5bba94105ba87269 ("bcachefs: bch2_dirent_to_text() shows casefolded dirents")
-> Reported-by: syzbot+7f176adb30b21606c5fc@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=7f176adb30b21606c5fc
-> Signed-off-by: Nirbhay Sharma <nirbhay.lkd@gmail.com>
-> ---
->  fs/bcachefs/dirent.c | 39 ++++++++++++++++++++++++++++++---------
->  1 file changed, 30 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/bcachefs/dirent.c b/fs/bcachefs/dirent.c
-> index d198001838f3..8be31b41c32b 100644
-> --- a/fs/bcachefs/dirent.c
-> +++ b/fs/bcachefs/dirent.c
-> @@ -58,8 +58,16 @@ static unsigned bch2_dirent_name_bytes(struct bkey_s_c_dirent d)
->  
->  struct qstr bch2_dirent_get_name(struct bkey_s_c_dirent d)
->  {
-> +	unsigned int name_len, max_len;
-> +
->  	if (d.v->d_casefold) {
-> -		unsigned name_len = le16_to_cpu(d.v->d_cf_name_block.d_name_len);
-> +		name_len = le16_to_cpu(d.v->d_cf_name_block.d_name_len);
-> +		max_len = bkey_val_bytes(d.k) -
-> +			offsetof(struct bch_dirent, d_cf_name_block.d_names);
-> +
-> +		if (name_len > max_len)
-> +			return (struct qstr) QSTR_INIT(NULL, 0);
-> +
->  		return (struct qstr) QSTR_INIT(&d.v->d_cf_name_block.d_names[0], name_len);
->  	} else {
->  		return (struct qstr) QSTR_INIT(d.v->d_name, bch2_dirent_name_bytes(d));
-> @@ -68,13 +76,19 @@ struct qstr bch2_dirent_get_name(struct bkey_s_c_dirent d)
->  
->  static struct qstr bch2_dirent_get_casefold_name(struct bkey_s_c_dirent d)
->  {
-> -	if (d.v->d_casefold) {
-> -		unsigned name_len = le16_to_cpu(d.v->d_cf_name_block.d_name_len);
-> -		unsigned cf_name_len = le16_to_cpu(d.v->d_cf_name_block.d_cf_name_len);
-> -		return (struct qstr) QSTR_INIT(&d.v->d_cf_name_block.d_names[name_len], cf_name_len);
-> -	} else {
-> +	unsigned int name_len, cf_name_len, max_len;
-> +
-> +	if (!d.v->d_casefold)
->  		return (struct qstr) QSTR_INIT(NULL, 0);
-> -	}
-> +
-> +	name_len = le16_to_cpu(d.v->d_cf_name_block.d_name_len);
-> +	cf_name_len = le16_to_cpu(d.v->d_cf_name_block.d_cf_name_len);
-> +	max_len = bkey_val_bytes(d.k) - offsetof(struct bch_dirent, d_cf_name_block.d_names);
-> +
-> +	if (name_len > max_len || cf_name_len > max_len || name_len + cf_name_len > max_len)
-> +		return (struct qstr) QSTR_INIT(NULL, 0);
-> +
-> +	return (struct qstr) QSTR_INIT(&d.v->d_cf_name_block.d_names[name_len], cf_name_len);
->  }
->  
->  static inline struct qstr bch2_dirent_get_lookup_name(struct bkey_s_c_dirent d)
-> @@ -212,11 +226,18 @@ void bch2_dirent_to_text(struct printbuf *out, struct bch_fs *c, struct bkey_s_c
->  	struct bkey_s_c_dirent d = bkey_s_c_to_dirent(k);
->  	struct qstr d_name = bch2_dirent_get_name(d);
->  
-> +	if (!d_name.name || !d_name.len) {
-> +		prt_str(out, "(invalid)");
-> +		return;
-> +	}
-> +
->  	prt_printf(out, "%.*s", d_name.len, d_name.name);
->  
->  	if (d.v->d_casefold) {
-> -		struct qstr d_name = bch2_dirent_get_lookup_name(d);
-> -		prt_printf(out, " (casefold %.*s)", d_name.len, d_name.name);
-> +		struct qstr d_cf_name = bch2_dirent_get_lookup_name(d);
-> +
-> +		if (d_cf_name.name && d_cf_name.len)
-> +			prt_printf(out, " (casefold %.*s)", d_name.len, d_name.name);
->  	}
->  
->  	prt_str(out, " ->");
-> -- 
-> 2.51.0
-> 
+
+--BSQI9M4BVqBPXWLF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjhS5sACgkQFA3kzBSg
+KbahKg/9HPkS9tHa0/eu6cinOGV7Hd1DJoabvZKNmfEqv5WKE5s+oSl4CtudR8Xm
+hWHs/mP5QJMKUzi0uPy5ukTMGOEG6vzuELyf8ho/3pLYS6ivu8dp1OMOQ5SJP4q+
+ldNT9Uy3rihp2cf500Ck84ZVIgyjJP7zd++SH/nUha0cVGQhBl6tukWG9bBzai29
+X1LFAE6HXiv9Vww7KXCt+H8De5CRt/83bR8rO15t9DGeUBu40rF2Hd/oMGwwOf8k
+QofzOmznkhdibX9fRPHvJ3hxyacdIIzT/tSVLD5iLvEagKT/GTKUcTvGG1BDa1bs
+IaORaiiWLJiBZlRB1OGQZiSHcKEwcLXpCNQycikbAooVZBNF7/KoxUjby0xZXVaX
+22/8V7jpqGyqmhXVTbqyFajqrSilXaVXBMbapWfibKkwY9IArtJMbwb9XWL4yLph
+Kifllwn6h60ds+Hk1f4HJJzM+MDhYUO+sLugzak2AHIXYxhNeEV3WAPUsoxMwQkL
+sIPZeSi+7cNsrzAVnGPyOmarfDfjx39SKS/k2E6TQw4Pdxjhc/KiD9vd0yROpjye
+5mb82ydvqdAwCJBElqbDGh5/TonPJAMTmRGQPv5dx19gIH5/cABVGZ/6q67qW37a
+WRvYLtarV44JMtpZZ7JTHfGGCWw08EWf6uulD3LcQOj8T25Gs+0=
+=ZM1H
+-----END PGP SIGNATURE-----
+
+--BSQI9M4BVqBPXWLF--
 
