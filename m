@@ -1,210 +1,228 @@
-Return-Path: <linux-kernel+bounces-842067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B3E3BB8E2A
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 15:38:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDB5BBB8E12
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 15:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D626B346299
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 13:38:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8989D3BA0AD
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 13:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11CE226F467;
-	Sat,  4 Oct 2025 13:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DB42066F7;
+	Sat,  4 Oct 2025 13:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="aYoTb3Fw"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.53])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dyxn7etM"
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010068.outbound.protection.outlook.com [52.101.56.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA90218AD1;
-	Sat,  4 Oct 2025 13:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759585116; cv=none; b=HP9TDBGWpnqLo2Qu3pMzKtkdF/73TtrUL0LEfHZZTgV8UgKBFnQ1YcbkVLCB3H+QQsjRJS/tZdyyzDDrh+/YGaIqvPUBZ4z4oPgjF/xY9RDzQ0lVJS6IY87eaM55MRIU2dB1yfBpsPTouG8xELbwdG9/nIXdVKmb6DlcFlhsySE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759585116; c=relaxed/simple;
-	bh=6kn+nU+PafXFIduRZ0FaDYAgo202PRXthXbHPcJQS0I=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=m5iWtrWf3RXfe8eKW3c8mEP95uBJHn7Fzd9kwFASDx8W75PRDnFoQklrdqSSr8IbsrjU/jWoJ2BK6r1AepJZj7P9CsSx/yjRn/IJwJn2D9wZFXG/nMs+KVKxo6tFl+0IXjU03W1HNCJlzxBDM3LLyFbMFcGlnlU6NYGfG/h+/GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=aYoTb3Fw; arc=none smtp.client-ip=43.163.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1759584804;
-	bh=S5qgSqvdPGq8AAyNkeh4wjo7KE36ZX/xh7qPaL8eiaY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=aYoTb3Fwvf1IswMQ7udal0ukF+mGW7yMj46Z9hRoMR6we+cHKNUcJKlw85EmLuNq2
-	 3gh+RcO1IiDehnlMXbkM0O24/1XSCNE9RZvfXqFvpbv4IwMKJjJcsr4fsQ8zgnlEIs
-	 A/3gZGbmRCpaSILgTwtQt9xxdAVG7+o9ZcSzaalI=
-Received: from rtoax ([183.198.135.10])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id 8538E4A9; Sat, 04 Oct 2025 21:33:19 +0800
-X-QQ-mid: xmsmtpt1759584799tzm2egw6u
-Message-ID: <tencent_BE8344A180AC844B3F95CFD7CDD10BC47D07@qq.com>
-X-QQ-XMAILINFO: NyTsQ4JOu2J2rZOVE1GiSa2Ofw7ovUDvLjQk6UmpOJ+IFCfXq3skJljIY/H5dG
-	 /zOSn1ncOBSBYOmUh36UJoxLObnEb3gH+2G08gzloNlYVMQtGu955lB4FLUEoJIgPK72YwecsI5L
-	 qvuNYLvZbBVg9jwzHnBR/+4IBCtoVL/ssxMM3q+VHCDPemmbIZDaWznnmQ/4k+b/T1pBceFsp2mR
-	 4uPhqqQZ25Rfq+1juGkqPIOocKY9P8w/apPA4LTf+WpbkV/VfbvtmohasZpl+aGj27t2WneqNHTg
-	 haxspxgfBdjN648nW69EnqygOigdwleTx51vBttAeygsJj51m43AQVbPRncqRL0HVDP4N3saJnlZ
-	 LOsBnkJvThJUUDslGDVAw+JjEglYO29JaxxfERR4phqLeNhkOQA/ZvpNB3zgPYk5O4qGK5119Arl
-	 H04bfJ8iqKLro9siQ1djz3m8i6uTUfBHR9B/+dmr4nkPalJcZ4WPmPiMhfVOZ9VDvaXYN5iNR2F9
-	 xDTF6QS/8x3hrtG62bMpZB1ALZ3b4Xz0iYuNwZ8Rf+zeTcRW8ZeepeY0BPf+6TEfm3F/elG1iU0h
-	 SmVpG5PVPo2x6rUrrb+Vxd6nsN3xAPCdA5iWDXPqzERLnrNMW8EBuHbBWBSATZrX0qx2Ksnalydt
-	 uEvFrZpy4MtzBf/+0VYvYK1Gy1+Zu0pWCf/0sDByrfq3z2hTkNQWqJR7D7vPOCeYHN1zimF73MXQ
-	 oAaMO601tAvTH8vg9mmAzpyYO47HVNOprXnG5xNnw8yF/uYD8Q1EclY3vyUR8SLR7FDNvL289H/V
-	 1nM4udYQpFwsFz/a3AtSv2Kx1r10cJo5CltTlYbWbZ49l+CkbRnbdX0ICNAxmNWdFOX8B9Yn+o+y
-	 2j7cKMEPIsC+9WutJsJaSCwozJWKFsFTNR3iCCAYi3LSw2KeaNprbeKllMWr76t/pr33EWuAb8km
-	 my9nXBfEUL0gmQPTwuV6cWASNr4KWHkACEk8UmuIR9OQzUD+/9OBCM34xIPrmcg7DaRsfxf1trVZ
-	 GiE9/LAQ==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Rong Tao <rtoax@foxmail.com>
-To: vmalik@redhat.com,
-	ast@kernel.org
-Cc: Rong Tao <rongtao@cestc.cn>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
-	linux-kernel@vger.kernel.org (open list),
-	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
-Subject: [PATCH bpf-next 2/2] selftests/bpf: Test bpf_strcasestr,bpf_strncasestr kfuncs
-Date: Sat,  4 Oct 2025 21:32:10 +0800
-X-OQ-MSGID: <f29b1747e785004f43368f56d482bd23f1a4a3a1.1759584052.git.rongtao@cestc.cn>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1759584052.git.rongtao@cestc.cn>
-References: <cover.1759584052.git.rongtao@cestc.cn>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C824188A3A;
+	Sat,  4 Oct 2025 13:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759584895; cv=fail; b=JR0nD0RY172cDks1NQ1ssc1uR6PYcRQBulCYCFnbJsJwW136rrs826A5uNNcpTAppX8azKiM+1IsLOOoxsqVFqsoBajZWbj8fwhV8son1JDKpVtG7GHyeykaUvp7blX0G54bu13wYfkIiz5R7JNTy7X+1/vell4/SDq3fc1y31E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759584895; c=relaxed/simple;
+	bh=bG1otvyWb8uDPS/X5CoOp+sE7s6KYDK251qiyO8EoHk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=VzIA/Pyh6EjRC90jwj1TNsOL5DwJNYwLv/FBGYHciroEfG7q2HCDw2olqQzliOdyDyVsX/PIhhlKXX/Am3QFzaR/7Ae0S4ruOY7EZr3YKN0uXjAyR+3DKrbgMcZQFz0oGGTeR+alw8njQ2iMRAmLRQFQgPa72Z7vHB1db3nyRW8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dyxn7etM; arc=fail smtp.client-ip=52.101.56.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=le1eI3JGSmAAHF/0BhTaKw+b/ZHa6QEdYsCIuEWKoNbdnknyjTFqg6byD9W2vtGaTnGIpFu4JjkVQXOw+FN2LhiJIhz1iJvABKiXlfy9jLW59+kSaM0+fS2TW+hbsvEejZ91dC+x1KUCRAETDQ2FZpxMA5zXOgFOuU5FuplfvVl+vWTNIguCKxs++qLMY6Sook8pCpFQnFtzOoNmnwH7RfDUlRdNO3yA5WDtm6KlmEAcLg8fbw+NE0YLiVKEb3VX5sEFBO1SAqT34gcJMk77QTE3vQE+vmVdHQxC+BWTCQrSCfMJDYib+WFe+Tj6oBBCdeZ4LhGPH8hL8dcLB7OIsQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bG1otvyWb8uDPS/X5CoOp+sE7s6KYDK251qiyO8EoHk=;
+ b=qZfPKEBmRinLWswoKwBp2y6zcKLkdftcOTaMR7su5/WjGmVAT3hDHLX2QSXWIAU9sxu0cMcfDpEQZ7enA1s+CyNRrepXgR/GwTmiNJo/0kClXsGdkpVA3U08vFw1lkZR/emNsr77NRqRauCAtlEDx0E8rZHsISQoMkQBVTIk2UVq/wV9mP4lTiHStxP334QGNfVsOqjAP+PiFZkmqHqNdBnxdQhl7abqSbOjnvgMKdxqy6/tvAcWRR3a/f4JQB+mlNb/If7frOjO/XqEw6Y4/0g//nu0xBcvrFY5rdIKIc23PViugErOLJg7CvJBdaUaG0xJn2gaiC5xmi9FgfLx5w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bG1otvyWb8uDPS/X5CoOp+sE7s6KYDK251qiyO8EoHk=;
+ b=dyxn7etMZqSCXioiOXExkiEDkSs23GqKRoJttKucXVeO2kll3x22Z/FpB9E4MJgblAXD0KI9SVXM+REouegTEZ3MRu5NJ06BtcbLP3uV7pT+jAfAlKbPnA55W6dz0T7KFiTIXCjqN926mK1kkMjHn4+UbsOyvRGyBCxtV9s8KNGQh4H13MuMkQVvSpyaraW6aq5kdlR5IXwH7MGtEO1xBr2G8uZQVvWtUn+OX/XiHCqNN99wOVkUeLovzfiasVT5BODMo5HiqEX7C+ohWuFMH5fBAFp9sqWXL2x1mwCtUUSqZxgEvKQDHA4zjOX8EFFWBcScTjJ4BKYlh8SZp+vdDQ==
+Received: from SN7PR12MB8131.namprd12.prod.outlook.com (2603:10b6:806:32d::12)
+ by DM6PR12MB4234.namprd12.prod.outlook.com (2603:10b6:5:213::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.15; Sat, 4 Oct
+ 2025 13:34:46 +0000
+Received: from SN7PR12MB8131.namprd12.prod.outlook.com
+ ([fe80::ce21:6749:3d4e:2c61]) by SN7PR12MB8131.namprd12.prod.outlook.com
+ ([fe80::ce21:6749:3d4e:2c61%6]) with mapi id 15.20.9160.019; Sat, 4 Oct 2025
+ 13:34:46 +0000
+From: Vishal Aslot <vaslot@nvidia.com>
+To: Davidlohr Bueso <dave@stgolabs.net>
+CC: Dave Jiang <dave.jiang@intel.com>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan
+ Williams <dan.j.williams@intel.com>, Li Ming <ming.li@zohomail.com>, Peter
+ Zijlstra <peterz@infradead.org>, Dan Carpenter <dan.carpenter@linaro.org>,
+	Zijun Hu <zijun.hu@oss.qualcomm.com>, "linux-cxl@vger.kernel.org"
+	<linux-cxl@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] cxl/hdm: allow zero sized committed decoders
+Thread-Topic: [PATCH v2] cxl/hdm: allow zero sized committed decoders
+Thread-Index: AQHcNADr7CR1e/ei5UC/raGgi2gvQLSxHXeAgADg8Vs=
+Date: Sat, 4 Oct 2025 13:34:46 +0000
+Message-ID:
+ <SN7PR12MB81319DDBBDE50B372F99E9D1BBE5A@SN7PR12MB8131.namprd12.prod.outlook.com>
+References:
+ <SN7PR12MB81316C958DF0F4B10369B928BBE6A@SN7PR12MB8131.namprd12.prod.outlook.com>
+ <cb300580-1297-4d4b-9a3a-2cf7445b739b@intel.com>
+ <SN7PR12MB8131FBDB82D2A3A539FA09D0BBE6A@SN7PR12MB8131.namprd12.prod.outlook.com>
+ <70a2ea96-0a4b-4185-8f37-ea77ed757b64@intel.com>
+ <SN7PR12MB81319CD146CC8B4CFD45E62FBBE7A@SN7PR12MB8131.namprd12.prod.outlook.com>
+ <SN7PR12MB8131F796BAE8B6243E088879BBE7A@SN7PR12MB8131.namprd12.prod.outlook.com>
+ <20251004000631.h4vnnpxathjyoez7@offworld>
+In-Reply-To: <20251004000631.h4vnnpxathjyoez7@offworld>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN7PR12MB8131:EE_|DM6PR12MB4234:EE_
+x-ms-office365-filtering-correlation-id: fe833dde-88d8-4ae9-aab8-08de034ac8e8
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700021;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?RvDb5Dn5XsLyVB/J90duTLNeWfSm6UcPgmAF7KSO28GpmKgqqIpRkF52tV?=
+ =?iso-8859-1?Q?JYn7MV/6Z2zrs/eFFKfd7F1bW01iPgwgxU+B8oPO4t28grG7tOFGeZY1Wm?=
+ =?iso-8859-1?Q?Oe8Yj0fNAMwRKh6y+XAk+iovl5G+aux1JjKHhSEYf+XALsnJgdMjZeYHFK?=
+ =?iso-8859-1?Q?UM/uP0P2BTqprNdqj0FUnEheywaUghvSV2bXI9Y3qc6rzNeVJANwTJKtg4?=
+ =?iso-8859-1?Q?Dueme0MDdexTQr7+lnWHer8uzQSSt+jVuYrN3dsEif+br/zx7E2L6ZBVeA?=
+ =?iso-8859-1?Q?3VIbq7deQUeR8UrRO71pjfac6DwezCikI3ZIo9T7R91RagQrn/PrCCGOBP?=
+ =?iso-8859-1?Q?RJQ9kE7RhpoYbFCaboZ/o85b8XiyWOTo16CY5Bl1A3f7nnBLabmej/I0jH?=
+ =?iso-8859-1?Q?0sIXI7TAVJVy1vngKfUW3Nt8bswqMlJM2O+TBkj8gfxP+Vjhx18zIA7ehl?=
+ =?iso-8859-1?Q?vF2CK9Slkh2lUAB6yFjfCdPRM1nW1RoCpRrNL2d3lDhEqqn/uEutja1wfc?=
+ =?iso-8859-1?Q?NA0cnpUSU+/k9AbFCgYoPNdDlcPpGxnCS+sZ4zmqerDVcAq0YqjVoAqzv6?=
+ =?iso-8859-1?Q?Nj+67eVacxvY3RJVwqngyKzHSwzmImboEX9dzzb+ZzEQEYPNplQsxH86kG?=
+ =?iso-8859-1?Q?uFLHn/XDyjMvHzOyBHh1qZb0WjsBA3GGUjp9jspzkxeX8wfYq/PBRl6b8k?=
+ =?iso-8859-1?Q?cR1Jof+FYism4IMo7zHO5LIhT8FYQFToIbNlVpnWrGwy8nLtJf7AuGKYfK?=
+ =?iso-8859-1?Q?5btR+sJyV5jHCTkaym32PuxFO2jo5Cr6TUpayIjyJFiULeQpbR4umOisK0?=
+ =?iso-8859-1?Q?4bBEmzVFKQJheZlzzpiKeaJKnIF2QvMCtw5pOB8OIDN7xzLUN6tr0KTKge?=
+ =?iso-8859-1?Q?E83H67urLNU0xT9sOfIFyImWjSWCYImh3Y2pa2OxEYzCwjwJnlAE3x28Pq?=
+ =?iso-8859-1?Q?SRIXBQfAF/JQtFULSlIEL0/KCCUCdY9rWu2erD4j8/It+4nsHhQzV1Pnbh?=
+ =?iso-8859-1?Q?pFfF/9UmRte5QuxKf0L5eRbg6SDPLNeQcLBNT5/RqZmgFR12fAEuzJsdms?=
+ =?iso-8859-1?Q?p8owuqZJxIsc1c2lfbOznfIVarfSvt3pmcl49uHYMeMm5YVsOwVRbmeBTG?=
+ =?iso-8859-1?Q?+mZQYxLlaIo5StAXEBYRIwtADekF32sQ3boRtR6nxAEFTJpNudNk+y8GQH?=
+ =?iso-8859-1?Q?qIr658AQlmKhb3zkoiogXwDUd/qtUYbTH54CSZN09n/0dQ3kug3ewr+nB0?=
+ =?iso-8859-1?Q?fPPXlW4FsQzKU99ykwPaVVn49SOxVxhjtpN5ALZSz9ASNeqUTbikXPTZ6a?=
+ =?iso-8859-1?Q?nxIp+0ZZFDIWDmlBlRrKl+B+DrN3FcQbui31GzNYIrRTLjuKsvSUTDEsjF?=
+ =?iso-8859-1?Q?nCZS2e7s0s540HMHr9VpVfu0wTh7W6gI0mY1RHvIKarxqWEH/qyEaZ8YDo?=
+ =?iso-8859-1?Q?CH1wSr54/BZ0RFwCvtqQpxePx5A1YU+xnAAMXZBfTfhv/gwZandWGdxm3B?=
+ =?iso-8859-1?Q?+eFsXU7tGq7GJqKi14cMe1CZGXUMOq+pnWx9uD+eWyJNs34/CFAFbL8bA9?=
+ =?iso-8859-1?Q?xqJpGwdCNob2N1FY+ztsq+4VRGge?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8131.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?hVj7M/07jHsS9lSxRixItZ+1sLUnhTGaeUsAGfl6e7mFgBab2cO2hJ42pV?=
+ =?iso-8859-1?Q?CpjZMuIDGOm0yl20x6TJ+i9ekB0M7XIAq3W9fRsoO5pYD6W2fQjf6CnxHr?=
+ =?iso-8859-1?Q?nB61UzqOuZ0kdSvuQAfRcqQvCOf3HHsG9c1L7aHH+wA1Qhb9A2cNb+2EJS?=
+ =?iso-8859-1?Q?AiY68YWBlNxdFYRG/lZ8yZu0Yz2GrRt8F4VmGi+38decVXAtiQIwUlf08L?=
+ =?iso-8859-1?Q?s+LPIAigtKX8XJC1kuH8rkg+4gKK0oW6gt/OxVLt7p6dbVlwvKfGunyXo6?=
+ =?iso-8859-1?Q?OC6HjAhiiA3zjrWikl8RIhU4RIRLq4e7SPqvuPJ/6F5jTdYkxGEun/xZ4T?=
+ =?iso-8859-1?Q?R6qBbPPv3h0EjQi9UkVIU1L/vwlK35IAvsgD4IYKy0NZLv0ioVbm3a1YoE?=
+ =?iso-8859-1?Q?fRck/AeH2rvMWwt1z+BWx5MfzPXf+r97DnbdQp313wI0ujzZgRwNPKioKd?=
+ =?iso-8859-1?Q?398ZGvk8QZQThskvn4vqVxfv5fYL/1S3jGYYitlv6W+PmiVGxBigIUAO3u?=
+ =?iso-8859-1?Q?hmS2dHE3j4hwd5GRRoe+qfoFac4WZLCT4dMeqxnUpC22ixrU7KjVMPgBx2?=
+ =?iso-8859-1?Q?4hJr/GsI00Wr3KArrRcI4FQyMi5BdFjjCc2qXC52spjkKpWIlpyq+11vQp?=
+ =?iso-8859-1?Q?ut3kAm+JndntkFw0O5eLJBzT2OmrI9qbM+BTiqHd3zEfloaA+iGP+QP6VJ?=
+ =?iso-8859-1?Q?2vRMsV0Klw6UP2kUTqMQRwZWT/BKHcEEaqzh0TtuhfyA/WKJSQ87nJDN5G?=
+ =?iso-8859-1?Q?tVyeWamuoM1rA1ZxWjCYsy8gpV+Ps5ntrP3Q+CtvHOdCNCbksXokYxdUoH?=
+ =?iso-8859-1?Q?undNrb+/tEJ3HLZnYjCxdz6PCEjA9I1UTEf9kHydC5sj7n8DMiCE4CSgIM?=
+ =?iso-8859-1?Q?Ew6NFGzc481JCrR7BtkTC/hGQ+mLzL4Ug6WtvqmkfCvuJ807orPw4BGe+P?=
+ =?iso-8859-1?Q?LoADamh+8gi5J3D0yLWYDr/DblA5qjw9sthBg0fuX1wbEVEUaBmhrvc8Hs?=
+ =?iso-8859-1?Q?agunbjLJnBo+MS5iDedq1ib4vq5FHWAKXVw52eJJqWTWiG1imJo6YFgt8A?=
+ =?iso-8859-1?Q?aQ7gHNuEHXugMtLI3orjTSY4CP23UVsTMNFBzYkmjbV+D63yKyVbpebw4E?=
+ =?iso-8859-1?Q?cOMBZFy7YGytDvYC6qkxOUpvC5T4QG1a9Tg0DpE4iX1QNCBEHm5PDRqb+8?=
+ =?iso-8859-1?Q?98FSRmnvtUhG2AuN1vu9MIP+k5I74uNAdKA1Dkb4+JkXGzbt5quWbEMgnh?=
+ =?iso-8859-1?Q?Umk2yoReDWWy72cc5krkkvDE6HFb2FDKwI4ypI9ecRQnRycivMC4uod2QW?=
+ =?iso-8859-1?Q?wry+O+1jYkaSfzsv55uCSzTQxRPyGZAjO7Cowt+OEsZdanP+1+cgyljy3E?=
+ =?iso-8859-1?Q?f0rS0kHB5z89rdYm/k7xviBPQ8v+B29At9Oz90Tzc0H7LYo0Zt0LWy2FhU?=
+ =?iso-8859-1?Q?bpwrIa2+iAVKUiJzCP10LVpOIiAnUo+7Oc2DtbvWoT0wwvoh8sbL8GyWq3?=
+ =?iso-8859-1?Q?4YR0cjdFYgBuQsi6+glYu/mTkWWLV+QQcKmBQLmnhipJcOa5JNEUTkvpv6?=
+ =?iso-8859-1?Q?bbDaocxNCjsCayQCW2ruUismlrbJIUc0VU1BLzq11Fpm1LiTlo+ML3dEpc?=
+ =?iso-8859-1?Q?8rEueiX6EPi7I=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8131.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe833dde-88d8-4ae9-aab8-08de034ac8e8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Oct 2025 13:34:46.5860
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Y3nefiQKSKXWQel2QAt6kR1NDLQssijoNVfBXwIC/ReEtVBohJgto3fBS8rhU3Dm9OJH2fZS8wSuJPVINO8+Hw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4234
 
-From: Rong Tao <rongtao@cestc.cn>
-
-Add tests for new kfuncs bpf_strcasestr() and bpf_strncasestr().
-
-Signed-off-by: Rong Tao <rongtao@cestc.cn>
----
- .../selftests/bpf/prog_tests/string_kfuncs.c        |  2 ++
- .../selftests/bpf/progs/string_kfuncs_failure1.c    | 12 ++++++++++++
- .../selftests/bpf/progs/string_kfuncs_failure2.c    |  2 ++
- .../selftests/bpf/progs/string_kfuncs_success.c     | 13 +++++++++++++
- 4 files changed, 29 insertions(+)
-
-diff --git a/tools/testing/selftests/bpf/prog_tests/string_kfuncs.c b/tools/testing/selftests/bpf/prog_tests/string_kfuncs.c
-index 4d66fad3c8bd..0f3bf594e7a5 100644
---- a/tools/testing/selftests/bpf/prog_tests/string_kfuncs.c
-+++ b/tools/testing/selftests/bpf/prog_tests/string_kfuncs.c
-@@ -20,7 +20,9 @@ static const char * const test_cases[] = {
- 	"strcspn_str",
- 	"strcspn_reject",
- 	"strstr",
-+	"strcasestr",
- 	"strnstr",
-+	"strncasestr",
- };
- 
- void run_too_long_tests(void)
-diff --git a/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c b/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c
-index 99d72c68f76a..826e6b6aff7e 100644
---- a/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c
-+++ b/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c
-@@ -45,8 +45,12 @@ SEC("syscall")  __retval(USER_PTR_ERR)int test_strcspn_null1(void *ctx) { return
- SEC("syscall")  __retval(USER_PTR_ERR)int test_strcspn_null2(void *ctx) { return bpf_strcspn("hello", NULL); }
- SEC("syscall")  __retval(USER_PTR_ERR)int test_strstr_null1(void *ctx) { return bpf_strstr(NULL, "hello"); }
- SEC("syscall")  __retval(USER_PTR_ERR)int test_strstr_null2(void *ctx) { return bpf_strstr("hello", NULL); }
-+SEC("syscall")  __retval(USER_PTR_ERR)int test_strcasestr_null1(void *ctx) { return bpf_strcasestr(NULL, "hello"); }
-+SEC("syscall")  __retval(USER_PTR_ERR)int test_strcasestr_null2(void *ctx) { return bpf_strcasestr("hello", NULL); }
- SEC("syscall")  __retval(USER_PTR_ERR)int test_strnstr_null1(void *ctx) { return bpf_strnstr(NULL, "hello", 1); }
- SEC("syscall")  __retval(USER_PTR_ERR)int test_strnstr_null2(void *ctx) { return bpf_strnstr("hello", NULL, 1); }
-+SEC("syscall")  __retval(USER_PTR_ERR)int test_strncasestr_null1(void *ctx) { return bpf_strncasestr(NULL, "hello", 1); }
-+SEC("syscall")  __retval(USER_PTR_ERR)int test_strncasestr_null2(void *ctx) { return bpf_strncasestr("hello", NULL, 1); }
- 
- /* Passing userspace ptr to string kfuncs */
- SEC("syscall") __retval(USER_PTR_ERR) int test_strcmp_user_ptr1(void *ctx) { return bpf_strcmp(user_ptr, "hello"); }
-@@ -65,8 +69,12 @@ SEC("syscall") __retval(USER_PTR_ERR) int test_strcspn_user_ptr1(void *ctx) { re
- SEC("syscall") __retval(USER_PTR_ERR) int test_strcspn_user_ptr2(void *ctx) { return bpf_strcspn("hello", user_ptr); }
- SEC("syscall") __retval(USER_PTR_ERR) int test_strstr_user_ptr1(void *ctx) { return bpf_strstr(user_ptr, "hello"); }
- SEC("syscall") __retval(USER_PTR_ERR) int test_strstr_user_ptr2(void *ctx) { return bpf_strstr("hello", user_ptr); }
-+SEC("syscall") __retval(USER_PTR_ERR) int test_strcasestr_user_ptr1(void *ctx) { return bpf_strcasestr(user_ptr, "hello"); }
-+SEC("syscall") __retval(USER_PTR_ERR) int test_strcasestr_user_ptr2(void *ctx) { return bpf_strcasestr("hello", user_ptr); }
- SEC("syscall") __retval(USER_PTR_ERR) int test_strnstr_user_ptr1(void *ctx) { return bpf_strnstr(user_ptr, "hello", 1); }
- SEC("syscall") __retval(USER_PTR_ERR) int test_strnstr_user_ptr2(void *ctx) { return bpf_strnstr("hello", user_ptr, 1); }
-+SEC("syscall") __retval(USER_PTR_ERR) int test_strncasestr_user_ptr1(void *ctx) { return bpf_strncasestr(user_ptr, "hello", 1); }
-+SEC("syscall") __retval(USER_PTR_ERR) int test_strncasestr_user_ptr2(void *ctx) { return bpf_strncasestr("hello", user_ptr, 1); }
- 
- #endif /* __TARGET_ARCH_s390 */
- 
-@@ -87,7 +95,11 @@ SEC("syscall") __retval(-EFAULT) int test_strcspn_pagefault1(void *ctx) { return
- SEC("syscall") __retval(-EFAULT) int test_strcspn_pagefault2(void *ctx) { return bpf_strcspn("hello", invalid_kern_ptr); }
- SEC("syscall") __retval(-EFAULT) int test_strstr_pagefault1(void *ctx) { return bpf_strstr(invalid_kern_ptr, "hello"); }
- SEC("syscall") __retval(-EFAULT) int test_strstr_pagefault2(void *ctx) { return bpf_strstr("hello", invalid_kern_ptr); }
-+SEC("syscall") __retval(-EFAULT) int test_strcasestr_pagefault1(void *ctx) { return bpf_strcasestr(invalid_kern_ptr, "hello"); }
-+SEC("syscall") __retval(-EFAULT) int test_strcasestr_pagefault2(void *ctx) { return bpf_strcasestr("hello", invalid_kern_ptr); }
- SEC("syscall") __retval(-EFAULT) int test_strnstr_pagefault1(void *ctx) { return bpf_strnstr(invalid_kern_ptr, "hello", 1); }
- SEC("syscall") __retval(-EFAULT) int test_strnstr_pagefault2(void *ctx) { return bpf_strnstr("hello", invalid_kern_ptr, 1); }
-+SEC("syscall") __retval(-EFAULT) int test_strncasestr_pagefault1(void *ctx) { return bpf_strncasestr(invalid_kern_ptr, "hello", 1); }
-+SEC("syscall") __retval(-EFAULT) int test_strncasestr_pagefault2(void *ctx) { return bpf_strncasestr("hello", invalid_kern_ptr, 1); }
- 
- char _license[] SEC("license") = "GPL";
-diff --git a/tools/testing/selftests/bpf/progs/string_kfuncs_failure2.c b/tools/testing/selftests/bpf/progs/string_kfuncs_failure2.c
-index e41cc5601994..05e1da1f250f 100644
---- a/tools/testing/selftests/bpf/progs/string_kfuncs_failure2.c
-+++ b/tools/testing/selftests/bpf/progs/string_kfuncs_failure2.c
-@@ -19,6 +19,8 @@ SEC("syscall") int test_strspn_accept_too_long(void *ctx) { return bpf_strspn("b
- SEC("syscall") int test_strcspn_str_too_long(void *ctx) { return bpf_strcspn(long_str, "b"); }
- SEC("syscall") int test_strcspn_reject_too_long(void *ctx) { return bpf_strcspn("b", long_str); }
- SEC("syscall") int test_strstr_too_long(void *ctx) { return bpf_strstr(long_str, "hello"); }
-+SEC("syscall") int test_strcasestr_too_long(void *ctx) { return bpf_strcasestr(long_str, "hello"); }
- SEC("syscall") int test_strnstr_too_long(void *ctx) { return bpf_strnstr(long_str, "hello", sizeof(long_str)); }
-+SEC("syscall") int test_strncasestr_too_long(void *ctx) { return bpf_strncasestr(long_str, "hello", sizeof(long_str)); }
- 
- char _license[] SEC("license") = "GPL";
-diff --git a/tools/testing/selftests/bpf/progs/string_kfuncs_success.c b/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
-index 2e3498e37b9c..d21330b4cc3b 100644
---- a/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
-+++ b/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
-@@ -33,8 +33,12 @@ __test(11) int test_strnlen(void *ctx) { return bpf_strnlen(str, 12); }
- __test(5) int test_strspn(void *ctx) { return bpf_strspn(str, "ehlo"); }
- __test(2) int test_strcspn(void *ctx) { return bpf_strcspn(str, "lo"); }
- __test(6) int test_strstr_found(void *ctx) { return bpf_strstr(str, "world"); }
-+__test(6) int test_strcasestr_found1(void *ctx) { return bpf_strcasestr(str, "world"); }
-+__test(6) int test_strcasestr_found2(void *ctx) { return bpf_strcasestr(str, "WORLD"); }
- __test(-ENOENT) int test_strstr_notfound(void *ctx) { return bpf_strstr(str, "hi"); }
-+__test(-ENOENT) int test_strcasestr_notfound(void *ctx) { return bpf_strcasestr(str, "hi"); }
- __test(0) int test_strstr_empty(void *ctx) { return bpf_strstr(str, ""); }
-+__test(0) int test_strcasestr_empty(void *ctx) { return bpf_strcasestr(str, ""); }
- __test(0) int test_strnstr_found1(void *ctx) { return bpf_strnstr("", "", 0); }
- __test(0) int test_strnstr_found2(void *ctx) { return bpf_strnstr(str, "hello", 5); }
- __test(0) int test_strnstr_found3(void *ctx) { return bpf_strnstr(str, "hello", 6); }
-@@ -42,5 +46,14 @@ __test(-ENOENT) int test_strnstr_notfound1(void *ctx) { return bpf_strnstr(str,
- __test(-ENOENT) int test_strnstr_notfound2(void *ctx) { return bpf_strnstr(str, "hello", 4); }
- __test(-ENOENT) int test_strnstr_notfound3(void *ctx) { return bpf_strnstr("", "a", 0); }
- __test(0) int test_strnstr_empty(void *ctx) { return bpf_strnstr(str, "", 1); }
-+__test(0) int test_strncasestr_found1(void *ctx) { return bpf_strncasestr("", "", 0); }
-+__test(0) int test_strncasestr_found2(void *ctx) { return bpf_strncasestr(str, "hello", 5); }
-+__test(0) int test_strncasestr_found3(void *ctx) { return bpf_strncasestr(str, "hello", 6); }
-+__test(0) int test_strncasestr_found4(void *ctx) { return bpf_strncasestr(str, "HELLO", 5); }
-+__test(0) int test_strncasestr_found5(void *ctx) { return bpf_strncasestr(str, "HELLO", 6); }
-+__test(-ENOENT) int test_strncasestr_notfound1(void *ctx) { return bpf_strncasestr(str, "hi", 10); }
-+__test(-ENOENT) int test_strncasestr_notfound2(void *ctx) { return bpf_strncasestr(str, "hello", 4); }
-+__test(-ENOENT) int test_strncasestr_notfound3(void *ctx) { return bpf_strncasestr("", "a", 0); }
-+__test(0) int test_strncasestr_empty(void *ctx) { return bpf_strncasestr(str, "", 1); }
- 
- char _license[] SEC("license") = "GPL";
--- 
-2.51.0
-
+> ________________________________________=0A=
+> From: Davidlohr Bueso <dave@stgolabs.net>=0A=
+> Sent: Friday, October 3, 2025 7:06 PM=0A=
+> To: Vishal Aslot=0A=
+> Cc: Dave Jiang; Jonathan Cameron; Alison Schofield; Vishal Verma; Ira Wei=
+ny; Dan Williams; Li Ming; Peter Zijlstra; Dan Carpenter; Zijun Hu; linux-c=
+xl@vger.kernel.org; linux-kernel@vger.kernel.org=0A=
+> Subject: Re: [PATCH v2] cxl/hdm: allow zero sized committed decoders=0A=
+> =0A=
+> External email: Use caution opening links or attachments=0A=
+>=0A=
+>=0A=
+> On Fri, 03 Oct 2025, Vishal Aslot wrote:=0A=
+>=0A=
+>>init_hdm_decoder() fails with -ENXIO if a=0A=
+>>committed HDM decoder has zero size.=0A=
+>=0A=
+> This can be removed.=0A=
+=0A=
+Thank you, Davidlohr, for the review. Much appreciated!=0A=
+I will remove it in v3.=0A=
+=0A=
+>=0A=
+>>=0A=
+>>The CXL spec permits committing zero sized decoders.=0A=
+>=0A=
+> This is enough info, no need for the quote below.=0A=
+> And then add "Linux currently considers them an error".=0A=
+=0A=
+Yep, will fix it in v3.=0A=
+=0A=
+>=0A=
+>> See "8.2.4.20.12 Committing Decoder Programming".=0A=
+>> It says,"It is legal for software to program Decoder=0A=
+>> Size to 0 and commit it. Such a decoder will not=0A=
+>> participate in HDM decode."=0A=
+>>=0A=
+>> This patch updates init_hdm_decoder() to return=0A=
+>> -ENOSPC if the decoder is commited with zero-size.=0A=
+>=0A=
+> This is not needed in the changelog. Instead the reader=0A=
+> could be enlightened for potential reasons and use=0A=
+> cases of 0 sized decoders.=0A=
+=0A=
+Understood. Will update in v3.=0A=
+=0A=
+>=0A=
+>>The caller leaves the decoder allocated but does not=0A=
+>>add it. It simply continues to the next decoder.=0A=
+>=0A=
+> Thanks,=0A=
+> Davidlohr=0A=
 
