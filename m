@@ -1,142 +1,123 @@
-Return-Path: <linux-kernel+bounces-842110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E883BB8FD9
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 18:39:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB241BB904E
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 18:54:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 024EB4E4665
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 16:39:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A103E3C23D6
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 16:54:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5D927E05F;
-	Sat,  4 Oct 2025 16:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EF9281351;
+	Sat,  4 Oct 2025 16:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="PNedKPiX"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IYeF9Rzg"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FEA1917CD
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 16:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D0927EFE9
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 16:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759595988; cv=none; b=TzvZmRDI6n29np7FlZ3s3i1LLX2iApy/xdV2xcab+cCdGlCpMlEGSa2NJJH3CcGIKRsFl1Da/T/VVVGcb9Ntl6wWrz8J7+5O/GY3MT79a/4i4NxYE5H4fkeHrsyLkn4Fhu1jHOgZX0++iaeBh+D7CBDQvefLiP2+Dked5lYqrn8=
+	t=1759596873; cv=none; b=KDqBVnGs5SpFiV3qJr2DmkH7rOzf8JnnUDRSmzlOCK1G926PLYh3S+FPllAbuDTtd5PnVTEzZB7V0f+vuUf+3ffFoHephpmVVDIvlndFMVUU0gNkF15zlqZsSLaj8jZlEgtvq565Rc/3G0//6PkpDmG/K2cxRJcqFmv0Sws464w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759595988; c=relaxed/simple;
-	bh=RpD4KNUBmJSgm0bHWcZ0DvqxhqkKLHESkzxfIrCF35M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EtrH3QaSZSfxTnfKbNhuL5GzSYhDXNaRmkoisT45Q1oOVWnJ9m58TgNwqZ7pKJluntaeVkpumT/WAMAQnh4qMoHu/eK6SXRTW9TUcF+2ftGIjJy/e/u5eMLFTg5T3J6GJew40gt2sK37pJXJ3G7NG6cqxOf0aUg53LnrVk0NH1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=PNedKPiX; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=oYWX
-	AVcToZjL216N14wevIUTr5XEGs+BI72TKUQOPN8=; b=PNedKPiX4oCj4bpedhVz
-	E+/1zG4RS6etGvHx7daU2DUWMNccTF0z1BMx94C/uGTZ5muouJ1sCi+Rrrn+I0yb
-	QX0tCQTPUifcb+5NvLnilNYtzPuaMC9afpJzRPyfpW8YSMz2Kk2sAGveGofpt2/U
-	FgjEfDef1ztsgRt/i/fhnznfm7TM0Tf+A/tZDrAPd+4jSPssQfBLtqCfRE58HIfm
-	D8PcLW9fA6b0Ln4SDcQwSOwdrXhoroqBaJXPWi2lQd/dVTkvYzyJpOcaiTLwaahq
-	J+U+4x2W131yohhie5t+CaEw/7wpjC2Zja7YEDIcma8nk3Y5vfr5rBO/vRmlQllV
-	Rw==
-Received: (qmail 1087916 invoked from network); 4 Oct 2025 18:39:44 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Oct 2025 18:39:44 +0200
-X-UD-Smtp-Session: l3s3148p1@ZNCL3VdA3IqSRnW9
-Date: Sat, 4 Oct 2025 18:39:43 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Byungchul Park <byungchul@sk.com>
-Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
-	torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
-	linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
-	will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
-	joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
-	duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
-	tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
-	amir73il@gmail.com, gregkh@linuxfoundation.org, kernel-team@lge.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
-	minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
-	sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
-	penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
-	ngupta@vflare.org, linux-block@vger.kernel.org,
-	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-	jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
-	djwong@kernel.org, dri-devel@lists.freedesktop.org,
-	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
-	hamohammed.sa@gmail.com, harry.yoo@oracle.com,
-	chris.p.wilson@intel.com, gwan-gyeong.mun@intel.com,
-	max.byungchul.park@gmail.com, boqun.feng@gmail.com,
-	longman@redhat.com, yunseong.kim@ericsson.com, ysk@kzalloc.com,
-	yeoreum.yun@arm.com, netdev@vger.kernel.org,
-	matthew.brost@intel.com, her0gyugyu@gmail.com, corbet@lwn.net,
-	catalin.marinas@arm.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, luto@kernel.org,
-	sumit.semwal@linaro.org, gustavo@padovan.org,
-	christian.koenig@amd.com, andi.shyti@kernel.org, arnd@arndb.de,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
-	rppt@kernel.org, surenb@google.com, mcgrof@kernel.org,
-	petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
-	paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
-	joelagnelf@nvidia.com, josh@joshtriplett.org, urezki@gmail.com,
-	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-	qiang.zhang@linux.dev, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
-	chuck.lever@oracle.com, neil@brown.name, okorniev@redhat.com,
-	Dai.Ngo@oracle.com, tom@talpey.com, trondmy@kernel.org,
-	anna@kernel.org, kees@kernel.org, bigeasy@linutronix.de,
-	clrkwllms@kernel.org, mark.rutland@arm.com, ada.coupriediaz@arm.com,
-	kristina.martsenko@arm.com, wangkefeng.wang@huawei.com,
-	broonie@kernel.org, kevin.brodsky@arm.com, dwmw@amazon.co.uk,
-	shakeel.butt@linux.dev, ast@kernel.org, ziy@nvidia.com,
-	yuzhao@google.com, baolin.wang@linux.alibaba.com,
-	usamaarif642@gmail.com, joel.granados@kernel.org,
-	richard.weiyang@gmail.com, geert+renesas@glider.be,
-	tim.c.chen@linux.intel.com, linux@treblig.org,
-	alexander.shishkin@linux.intel.com, lillian@star-ark.net,
-	chenhuacai@kernel.org, francesco@valla.it,
-	guoweikang.kernel@gmail.com, link@vivo.com, jpoimboe@kernel.org,
-	masahiroy@kernel.org, brauner@kernel.org,
-	thomas.weissschuh@linutronix.de, oleg@redhat.com, mjguzik@gmail.com,
-	andrii@kernel.org, wangfushuai@baidu.com, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org, linux-i2c@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
-	rcu@vger.kernel.org, linux-nfs@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH v17 35/47] i2c: rename wait_for_completion callback to
- wait_for_completion_cb
-Message-ID: <aOFNz2mKXCXUImwO@shikoro>
-References: <20251002081247.51255-1-byungchul@sk.com>
- <20251002081247.51255-36-byungchul@sk.com>
+	s=arc-20240116; t=1759596873; c=relaxed/simple;
+	bh=7jwL6Vl5B43Ocy7VPpUCA/ZQ+E8vvJVNntNOaNWS/xs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mvswBVTuuVLzQ60zlrDGPHQT/l9Wr5NUnygHY9EKN91kdMzwtaj1r5VoxPS1AGbH7CDfCSXM+2OaF0bjbxgBEnGuurKE0HgtZgMFrbPJPmgNXB4aDjcuW6pC6EXUzy3Xt1kZobl5a+rlUEmeJcjPW+7QUaTfWDyzOcm7rEPZGc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IYeF9Rzg; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-930a6c601b3so292535839f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 09:54:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1759596871; x=1760201671; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KBHBG9tA41TCvQg7ZgtdnkfIFkrXuT8caUQqZNNWJoE=;
+        b=IYeF9RzgpWzk3DBwvFk3rhF3sOI1oJZcW0nVtEHUEdDC/fXuOEmg9foFmSC6wg7N2z
+         a9sWC/7nij6VX9NrwitjWxtvlhDWHleX5e96G77Oyu0pwNyDbsjeOzbQFyMWQfqO0/u2
+         lVLDEujEFdjWVmT7fcvl8P4da/SEkrqdM8+Ao=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759596871; x=1760201671;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KBHBG9tA41TCvQg7ZgtdnkfIFkrXuT8caUQqZNNWJoE=;
+        b=FDGsmSTZw6aAlUE8SVKMfxqll0lhsI5i0L5KkRNYhlBYTybahhfL/Y2QT6vHPjzcHK
+         dP0dIBcSC91hhHhZhX92q7XU6/yv03/gHC25twxehL5zixb9stDZ3Ed4JAipAqP8H/Da
+         h3GsTwJGSzoo3LguBSsIEN944sRGh1brA8lGfkoxCyf45PYpG6u5ESvQtHfsBF4DitWY
+         NE9GQior7OieINpZik7yLV/cVMvckjV9Gb4mAZI7BR+19s2GPfZxfuuAn0hXWtkumUJA
+         sWeYtXMCV23DMifIXXV/1cmV9gV2lB7l+tLG5r+k8d857uGgTjwRJW6kjL3Coy0TU4/j
+         MUHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUnNDEgDnPCa6EBSk1COEA2G9a5Do6IOygCaJd57G3wrpULmUWbGmb9kjZY7XBVeNWIehsXkLQhOryWIWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAWxp+YliKk29yyy28GorHUeGXM0HfqP0LLqDU8kRxu4EcFiKQ
+	/X29c+DQYsRWiggD4ElfUMn2ImH4neFeitWf4rbvWAziRcgtuK7nNZP/uEudD3tULgQ=
+X-Gm-Gg: ASbGncuIFUzLpFGuKhY4J9J8CmxTTxkUDNP8DbTOACrA25rwSAfju2MF0HoPl0KFNzp
+	kRYFOIOx5DnR5KpIzHtLe0m6whjSX55TiezOxKa12yV8NWqbJGVp90+x6rtF02bq9F/09xxyZAB
+	kdMUYyIQPvNeXtZBKmjXUezfF9+QwBV7wwHtKFlaBS773A8RtRvhPW9jiNJPGYeTna3zdRdHG+t
+	RgUp90JV5CR7fn7TTyOhH4re2oBhOfrPylhIeR3ltCvh4CXlKKud5I5z8pQVDp1aYtmZ2mBLhwP
+	dbH+9a+sJM5Ji3bIag2aKmusD2bGtqm0NtegqE3FU9OOZRv8/rMb38WzNB5hZs95BFAZ6EdFGLA
+	jtrimtZEzVyd9chBhXQDbyhREdofPcYArROn/sK3v4Ds4+PMGfXjxg+errFU//VmAXtgrrg==
+X-Google-Smtp-Source: AGHT+IFpIfH6lTTmG0N2imGQ5NqZw46VJZnySYfxkXs0eV2kmfblbxS3NNNdc8KyNLc1LeccYMthRw==
+X-Received: by 2002:a05:6602:3fc8:b0:8d3:6ac1:4dd3 with SMTP id ca18e2360f4ac-93b969aa445mr985467539f.6.1759596871101;
+        Sat, 04 Oct 2025 09:54:31 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.187.108])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-93a7d81c735sm291244939f.3.2025.10.04.09.54.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 04 Oct 2025 09:54:30 -0700 (PDT)
+Message-ID: <edd6a626-a7fb-41a0-9b98-2100f85ec2ee@linuxfoundation.org>
+Date: Sat, 4 Oct 2025 10:54:28 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251002081247.51255-36-byungchul@sk.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.17 00/15] 6.17.1-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20251003160359.831046052@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20251003160359.831046052@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 02, 2025 at 05:12:35PM +0900, Byungchul Park wrote:
-> Functionally no change.  This patch is a preparation for DEPT(DEPendency
-> Tracker) to track dependencies related to a scheduler API,
-> wait_for_completion().
+On 10/3/25 10:05, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.17.1 release.
+> There are 15 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Unfortunately, struct i2c_algo_pca_data has a callback member named
-> wait_for_completion, that is the same as the scheduler API, which makes
-> it hard to change the scheduler API to a macro form because of the
-> ambiguity.
+> Responses should be made by Sun, 05 Oct 2025 16:02:25 +0000.
+> Anything received after that time might be too late.
 > 
-> Add a postfix _cb to the callback member to remove the ambiguity.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.17.1-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.17.y
+> and the diffstat can be found below.
 > 
-> Signed-off-by: Byungchul Park <byungchul@sk.com>
+> thanks,
+> 
+> greg k-h
+> 
 
-This patch seems reasonable in any case. I'll pick it, so you have one
-dependency less. Good luck with the series!
+Compiled and booted on my test system. No dmesg regressions.
 
-Applied to for-next, thanks!
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
+thanks,
+-- Shuah
 
