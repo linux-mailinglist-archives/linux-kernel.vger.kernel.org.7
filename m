@@ -1,136 +1,129 @@
-Return-Path: <linux-kernel+bounces-842162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9459BB91EF
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 23:04:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A567ABB91F8
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 23:06:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54E143A9075
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 21:04:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A7E61896243
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 21:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A14728643F;
-	Sat,  4 Oct 2025 21:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9BA284B42;
+	Sat,  4 Oct 2025 21:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b="m9BIjvpn"
-Received: from mout-y-111.mailbox.org (mout-y-111.mailbox.org [91.198.250.236])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="QBb3S+KH"
+Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F222B19F111;
-	Sat,  4 Oct 2025 21:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538491C1F0C
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 21:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759611848; cv=none; b=M/tGceEj7rsbBtG0NSYSgDCehP+C5sFPBdCSJxPLrcGPrtD/YLNu37SxwiMceB9O8nGLuhW3ykgKdxOKHm8V1P2sG7FtJr1tMPH+xpA80gF8vwHnrJAT3vxXM2H99iUUAusAxYJrgrQBwKfkMqXGNQPmt5hkpEM+QaNIuxkb/Ds=
+	t=1759611968; cv=none; b=iLal0NgumcF88pt4EBrR5Y+jKpp0sNKbuEVIGqjHllb+mN5YxLhWbxsybLXv8J0JZI1YbXjBwo/hnL+5KvF4XFKOESdyPLrti4t9pvtrtUdYn3qCAOWn5HodQRo1PvKSg3eFSviNS4KE+LB0L7CO+NuCg61bqihAcDYMGPnra4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759611848; c=relaxed/simple;
-	bh=t4tVVnX1VsePxQnnaUUG3VOAS0org/M207j8oPGw82s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ox+nxeLKfxy4LL5vaqmgKt0Wb4yXStRrTH5WYHUuHcVVfXVapW2jZcQlP2BtnQkF2CZPdxhMIvEfrMwenOxMIYMqAHN0mh2J20WsLyLZCvGBCXtQenT4eXvkhfAJIzrNQydPMBzYfj4jIWMBgYKeKa299D6lp4CIz0NZ22QWkx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com; spf=fail smtp.mailfrom=mssola.com; dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b=m9BIjvpn; arc=none smtp.client-ip=91.198.250.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mssola.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-y-111.mailbox.org (Postfix) with ESMTPS id 4cfJ172GS1z9xxV;
-	Sat,  4 Oct 2025 23:03:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mssola.com; s=MBO0001;
-	t=1759611835;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=MA/PGkEMxhPtELfy9Wv5T+xAaQgydXmuFGhLXJxbTYM=;
-	b=m9BIjvpn0IEi8JQl8EuYREVSRLB62bnq27FhK+xRQqBAntfd3qwjM661O9IAnI9nIEaEkx
-	znIaSaYcZcTdmjS7Y6DXeSSdlNxiYGvU9jNNZEYywATDs80q0UamZVazcAJlabToT6KCBJ
-	xwMLtZvFN2WB7kjuhKMBVkAj3ijgo2O7TKC8+N9fSwCe3814n6blaAzSWnnwAdoFOTYXeA
-	tQdlL293x3UIjC9xx3sLVdz7nDcDLVzVrq7SZwOSB3K/h39noqCMPwsbV9SRwRrQ5iLD1l
-	7YZbF58Jeey8/PNtCX8/cQ/83oinX84wJG5XZx4iSp/oyzNSWQZL4Z/a5UskJw==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=softfail (outgoing_mbo_mout: 2001:67c:2050:b231:465::1 is neither permitted nor denied by domain of mssola@mssola.com) smtp.mailfrom=mssola@mssola.com
-From: =?UTF-8?q?Miquel=20Sabat=C3=A9=20Sol=C3=A0?= <mssola@mssola.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	linux-kernel@vger.kernel.org,
-	jack@suse.cz,
-	=?UTF-8?q?Miquel=20Sabat=C3=A9=20Sol=C3=A0?= <mssola@mssola.com>
-Subject: [PATCH] fs: Use a cleanup attribute in copy_fdtable()
-Date: Sat,  4 Oct 2025 23:03:40 +0200
-Message-ID: <20251004210340.193748-1-mssola@mssola.com>
+	s=arc-20240116; t=1759611968; c=relaxed/simple;
+	bh=Po/22EJqppzhG1Mk3xNl5M3uH6961WudLRFOeyPIs+Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gOr6bbG9ui3z8MXlW4OAMB6rkkbHVpTuwmSR3/b+52ryN3mZK6rAaCJpM+3w0zx6oafbZJ0rYf3YkXigheyhOTqfOSoR7E11rDnKvbzhcPXEhYPV7GXGpeZ/LOQavG8Zy96+VSBFiXn+Pnn3xdMXO2z846sNAoRSShFYjRdYyXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=QBb3S+KH; arc=none smtp.client-ip=44.202.169.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6004b.ext.cloudfilter.net ([10.0.30.210])
+	by cmsmtp with ESMTPS
+	id 58QFvwGtgv72459S0vbEf6; Sat, 04 Oct 2025 21:05:56 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id 59RzviDpb25G759Rzv9CkN; Sat, 04 Oct 2025 21:05:55 +0000
+X-Authority-Analysis: v=2.4 cv=LuqSymdc c=1 sm=1 tr=0 ts=68e18c33
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=d7CMpgkK/20obOLAVZ+ihHpO1jnM5/h9/gRcJ33ehtg=; b=QBb3S+KHDIr2UDqA6Lg/QOGhIu
+	M3J9XF/Y2d/MbOFNjlUzPIlZDe1cH3dUrzjQMum3FykxW/fVUTprj3oSu7IOZwyeXBIRv8Xys7vp3
+	zxofYemrcvvD3XbQ8H22bl6hmpAKyfjaMb7UbYQRgjw2uKBdGYgjW2ZjjY3Eand/pDm+OgpASv48v
+	YSgbORwe1t7GQz6N9SeE/TZqzh4tdlC88KCYvkQSVaKj/G2M+pW5GbY3WNFTSVGuOTfP6CviGXLxy
+	Z/ZTqk55TiWkVMWWH0w3YGo1sVIoIhjeayKL5t6FoW/+eaKTd2qOQvW7PrbZEJHb/4AHFTLxb+cmO
+	yQGOeZvA==;
+Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:48642 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1v59Ry-00000003k58-24LW;
+	Sat, 04 Oct 2025 15:05:54 -0600
+Message-ID: <47b7c020-6ad2-4f04-9ae0-e1f5a0532006@w6rz.net>
+Date: Sat, 4 Oct 2025 14:05:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4cfJ172GS1z9xxV
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.17 00/15] 6.17.1-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20251003160359.831046052@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20251003160359.831046052@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.92.56.26
+X-Source-L: No
+X-Exim-ID: 1v59Ry-00000003k58-24LW
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:48642
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 16
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfB4zAdqJqblj9B+qKxe866oVxgadNp9/VQaxW0pW/tSEMAft0Ub/GC2Jlx/P2u3dhisz8b404ttERNRWNsOhi1t6tj0098vF3Lm85vZQM0ZK35i5/ujJ
+ gYg5jAI6H6H2tt0ox3ZAaxsKsjoCUgVIvFiHmIncnu88ZKoYs8tbS8GTRhfPR4qfi7fxD70fZVMLewIJk3dBiSZ2o0d34SWUyow=
 
-This is a small cleanup in which by using the __free(kfree) cleanup
-attribute we can avoid three labels to go to, and the code turns to be
-more concise and easier to follow.
+On 10/3/25 09:05, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.17.1 release.
+> There are 15 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sun, 05 Oct 2025 16:02:25 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.17.1-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.17.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Signed-off-by: Miquel Sabaté Solà <mssola@mssola.com>
----
- fs/file.c | 19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-diff --git a/fs/file.c b/fs/file.c
-index 28743b742e3c..32b937a04003 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -161,7 +161,7 @@ static void copy_fdtable(struct fdtable *nfdt, struct fdtable *ofdt)
-  */
- static struct fdtable *alloc_fdtable(unsigned int slots_wanted)
- {
--	struct fdtable *fdt;
-+	struct fdtable *fdt __free(kfree) = NULL;
- 	unsigned int nr;
- 	void *data;
- 
-@@ -214,18 +214,20 @@ static struct fdtable *alloc_fdtable(unsigned int slots_wanted)
- 
- 	fdt = kmalloc(sizeof(struct fdtable), GFP_KERNEL_ACCOUNT);
- 	if (!fdt)
--		goto out;
-+		return ERR_PTR(-ENOMEM);
- 	fdt->max_fds = nr;
- 	data = kvmalloc_array(nr, sizeof(struct file *), GFP_KERNEL_ACCOUNT);
- 	if (!data)
--		goto out_fdt;
-+		return ERR_PTR(-ENOMEM);
- 	fdt->fd = data;
- 
- 	data = kvmalloc(max_t(size_t,
- 				 2 * nr / BITS_PER_BYTE + BITBIT_SIZE(nr), L1_CACHE_BYTES),
- 				 GFP_KERNEL_ACCOUNT);
--	if (!data)
--		goto out_arr;
-+	if (!data) {
-+		kvfree(fdt->fd);
-+		return ERR_PTR(-ENOMEM);
-+	}
- 	fdt->open_fds = data;
- 	data += nr / BITS_PER_BYTE;
- 	fdt->close_on_exec = data;
-@@ -233,13 +235,6 @@ static struct fdtable *alloc_fdtable(unsigned int slots_wanted)
- 	fdt->full_fds_bits = data;
- 
- 	return fdt;
--
--out_arr:
--	kvfree(fdt->fd);
--out_fdt:
--	kfree(fdt);
--out:
--	return ERR_PTR(-ENOMEM);
- }
- 
- /*
--- 
-2.51.0
+Tested-by: Ron Economos <re@w6rz.net>
 
 
