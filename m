@@ -1,117 +1,165 @@
-Return-Path: <linux-kernel+bounces-841989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BD29BB8B95
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 11:28:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BCABBB8BB6
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 11:31:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 47AE3347167
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 09:28:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C67CA189742B
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 09:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F82D25C809;
-	Sat,  4 Oct 2025 09:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8E526CE0A;
+	Sat,  4 Oct 2025 09:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XFIjcC4P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="B92Qmfz2"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C796322A4DA;
-	Sat,  4 Oct 2025 09:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BD3219A8E
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 09:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759570116; cv=none; b=n4ohGTPnbXW7dzW4glAUmbQO/r6JZ8vWHMJ8auq2A57v7hcm8U8/fmtX+AkBL0oHLDVd3q5FDrnJ+1jRIiYzgP2SkCdBxLQ4KkfxqBSGx9XZrVFUM8NK8PSBvOu+1hSti5beHkZjVixBj/bz2Y1FVQLRw4oYOZT4Tbst+aWjWsk=
+	t=1759570267; cv=none; b=c1cOf7boO8Hz2ngSO1lwe2WlRRvnwjBvdzE4aRQFMTnPO/E/7V0RsBKHtUCQdVX90uuyf2doe6YyhIfj1kVPsmKDgQOjhiabUcxbvRLfFSqbOcYCCXbgVxYcBs9GNSjMgAVHO7FmOPDDEu6W5/QPy+frJe9bV8PvLdd1Qygx4EQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759570116; c=relaxed/simple;
-	bh=tXSdGLKEgFkWWOgWzyr7SPiWmc6rtEPxhddbzExB3sY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BbPriHGPCRrHeCJzJnVD2/wVSFNHqJirKe9aSU2oiLE81W6CWJQqE5kVNAWrb5d8xRqtHefai43xFhwobL4Cw7G2NYq4v0HOLV4fD0IN7GK82S57cjdiAvrdL8NrbvelicZFvsvPZtT6MbsmYXZGM/1cYHgt3S64BIw5U8Cj04A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XFIjcC4P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D72F9C4CEF1;
-	Sat,  4 Oct 2025 09:28:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759570116;
-	bh=tXSdGLKEgFkWWOgWzyr7SPiWmc6rtEPxhddbzExB3sY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XFIjcC4P7wdEySIshhYn7XmL311iWKwUAsnj/Mz9zZdtsqr/i3sH3GyFL9X45qHOC
-	 lOdgnPGa7HbXDHS4DupvYZwO5xJtIWEZNdfqz7k0QZC6iAeZzJI3ISw7RWf2yjOdy/
-	 G3DP53ICpW+bw78oY5he2kKSPvI9uI07lCsHxWWG3VSXVfRF3rJisxBNLalt+4+SXj
-	 arJXP28gjH0gPsXa7YJP8vfaU8UZ7whwzaB1szMMyVB6qJxkn5ZVDQbxHC6g/eIC7i
-	 jEmBEQx9uB/K3DZ63Knt8sn/Nd6blSygL/VvGVR3CBJHNOXrAfjqKZ4XHSqp2a7xLF
-	 osOuCEFr25qXw==
-Date: Sat, 4 Oct 2025 10:28:31 +0100
-From: Simon Horman <horms@kernel.org>
-To: Daniel Machon <daniel.machon@microchip.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	UNGLinuxDriver@microchip.com,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	jacob.e.keller@intel.com, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: sparx5/lan969x: fix flooding configuration on
- bridge join/leave
-Message-ID: <20251004092831.GA3060232@horms.kernel.org>
-References: <20251003-fix-flood-fwd-v1-1-48eb478b2904@microchip.com>
+	s=arc-20240116; t=1759570267; c=relaxed/simple;
+	bh=Zyw08bkZU/RFYvECKvHpLAFO6ylayKQuE2OJk52VPYk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oXRhvpBph8kW9y61/rKvxbZpN8CFgxUiIAiEMrRjAlKpIyuTf6OPH0eftA0dIuIf5q/3+qHhbffd6EaYP0Hn0mqB9saLgz4fZmeuyy3LUc34J3kUt3A4Bfxhng1yvTXUCEJZeO1/gvwiS09B3q38D73IhR0sIx//fkxqYhKCWFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=B92Qmfz2; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759570259;
+	bh=Zyw08bkZU/RFYvECKvHpLAFO6ylayKQuE2OJk52VPYk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=B92Qmfz2VEGT/TPbfUoV4sbwP3GI/HZAc8B4wnjS04PfteyS3k6L7N6vVvHFFbo/y
+	 fkiZJnat2/pOTLzkItB8GsGhoU/pJvHPHuLLF8/YOKbec9EZUgTvbRuKI8/VvgeTZ/
+	 9BYFVDuBSCCcfLH1Mt6Iy0B/KiEHhXAXb9IA2WTCjFFHeGsZec/qn5HH8c1DVySQ9G
+	 dCZh+0BkMUakVbOTww4H6rFfXBTbGZ+vmHmMrvT1HlEHTxskKXGlitl6fOQOeVr9Y4
+	 2BmIATH6Z9FIHx0nJoX92FAMYp9/JHHic10icyUjk4yYnDG2CyUwcTw0nr0GKg87Fc
+	 BBuTp6pGe3y0A==
+Received: from debian-rockchip-rock5b-rk3588.. (unknown [IPv6:2a01:e0a:5e3:6100:2e0:4cff:fe03:d8c])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: loicmolinari)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id AB0AC17E07EE;
+	Sat,  4 Oct 2025 11:30:58 +0200 (CEST)
+From: =?UTF-8?q?Lo=C3=AFc=20Molinari?= <loic.molinari@collabora.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Rob Herring <robh@kernel.org>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Melissa Wen <mwen@igalia.com>,
+	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
+	Hugh Dickins <hughd@google.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	=?UTF-8?q?Lo=C3=AFc=20Molinari?= <loic.molinari@collabora.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	=?UTF-8?q?Miko=C5=82aj=20Wasiak?= <mikolaj.wasiak@intel.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Nitin Gote <nitin.r.gote@intel.com>,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	Christopher Healy <healych@amazon.com>
+Cc: linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org,
+	linux-mm@kvack.org,
+	kernel@collabora.com
+Subject: [PATCH v3 00/10] drm: Reduce page tables overhead with THP
+Date: Sat,  4 Oct 2025 11:30:43 +0200
+Message-ID: <20251004093054.21388-1-loic.molinari@collabora.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251003-fix-flood-fwd-v1-1-48eb478b2904@microchip.com>
 
-On Fri, Oct 03, 2025 at 02:35:59PM +0200, Daniel Machon wrote:
-> The sparx5 driver programs UC/MC/BC flooding in sparx5_update_fwd() by
-> unconditionally applying bridge_fwd_mask to all flood PGIDs. Any bridge
-> topology change that triggers sparx5_update_fwd() (for example enslaving
-> another port) therefore reinstalls flooding in hardware for already
-> bridged ports, regardless of their per-port flood flags.
-> 
-> This results in clobbering of the flood masks, and desynchronization
-> between software and hardware: the bridge still reports “flood off” for
-> the port, but hardware has flooding enabled due to unconditional PGID
-> reprogramming.
-> 
-> Steps to reproduce:
-> 
->     $ ip link add br0 type bridge
->     $ ip link set br0 up
->     $ ip link set eth0 master br0
->     $ ip link set eth0 up
->     $ bridge link set dev eth0 flood off
->     $ ip link set eth1 master br0
->     $ ip link set eth1 up
-> 
-> At this point, flooding is silently re-enabled for eth0. Software still
-> shows “flood off” for eth0, but hardware has flooding enabled.
-> 
-> To fix this, flooding is now set explicitly during bridge join/leave,
-> through sparx5_port_attr_bridge_flags():
-> 
->     On bridge join, UC/MC/BC flooding is enabled by default.
-> 
->     On bridge leave, UC/MC/BC flooding is disabled.
-> 
->     sparx5_update_fwd() no longer touches the flood PGIDs, clobbering
->     the flood masks, and desynchronizing software and hardware.
-> 
->     Initialization of the flooding PGIDs have been moved to
->     sparx5_start(). This is required as flooding PGIDs defaults to
->     0x3fffffff in hardware and the initialization was previously handled
->     in sparx5_update_fwd(), which was removed.
-> 
-> With this change, user-configured flooding flags persist across bridge
-> updates and are no longer overridden by sparx5_update_fwd().
-> 
-> Fixes: d6fce5141929 ("net: sparx5: add switching support")
-> Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
+This series aims to reduce the page tables overhead of DRM drivers for
+builds with CONFIG_TRANSPARENT_HUGEPAGE enabled and either the sysfs
+knob '/sys/kernel/mm/transparent_hugepage/shmem_enabled' appropriately
+set or drivers using a dedicated huge tmpfs mount point.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+It starts by adding a huge page fault handler for GEM objects to
+insert PMD or PUD mappings whenever the shmem backing store manages to
+create huge folios. It then introduces a dedicated get_unmapped_area
+file operation on the DRM file descriptor for GEM objects to get the
+best virtual address alignment for the underlying shmem buffers.
+
+The remaining commits propose shmem helpers to create and release huge
+tmpfs mount points and adapt the i915 and V3D drivers. The helpers are
+then used to optionally enable Transparent Hugepage for Panfrost and
+Panthor.
+
+For Panthor on a Rock 5B, this series makes the first memcpy() to an
+entire BO object mapped in userspace about twice as fast with
+Transparent Hugepage enabled.
+
+Loïc Molinari (10):
+  drm/shmem-helper: Add huge page fault handler
+  drm/gem: Introduce drm_gem_get_unmapped_area() fop
+  drm/gem: Add huge tmpfs mount point helper
+  drm/i915: Use huge tmpfs mount point helper
+  drm/v3d: Use huge tmpfs mount point helper
+  drm/gem: Get rid of *_with_mnt helpers
+  drm/panthor: Introduce huge tmpfs mount point option
+  drm/panthor: Improve IOMMU map/unmap debugging logs
+  drm/panfrost: Introduce huge tmpfs mount point option
+  Documentation/gpu/drm-mm: Add THP paragraph to GEM mapping section
+
+ Documentation/gpu/drm-mm.rst                  |  17 +-
+ drivers/gpu/drm/drm_gem.c                     | 208 ++++++++++++++----
+ drivers/gpu/drm/drm_gem_shmem_helper.c        |  94 +++++---
+ drivers/gpu/drm/i915/Makefile                 |   3 +-
+ drivers/gpu/drm/i915/gem/i915_gem_shmem.c     |  52 +++--
+ drivers/gpu/drm/i915/gem/i915_gemfs.c         |  74 -------
+ drivers/gpu/drm/i915/gem/i915_gemfs.h         |  14 --
+ .../gpu/drm/i915/gem/selftests/huge_pages.c   |  10 +-
+ drivers/gpu/drm/i915/i915_drv.h               |   5 -
+ drivers/gpu/drm/panfrost/panfrost_device.c    |   3 +
+ drivers/gpu/drm/panfrost/panfrost_drv.c       |   6 +
+ drivers/gpu/drm/panfrost/panfrost_drv.h       |  11 +
+ drivers/gpu/drm/panfrost/panfrost_gem.c       |  19 ++
+ drivers/gpu/drm/panfrost/panfrost_gem.h       |   2 +
+ drivers/gpu/drm/panthor/panthor_device.c      |   3 +
+ drivers/gpu/drm/panthor/panthor_drv.c         |   7 +
+ drivers/gpu/drm/panthor/panthor_drv.h         |  11 +
+ drivers/gpu/drm/panthor/panthor_gem.c         |  19 ++
+ drivers/gpu/drm/panthor/panthor_gem.h         |   2 +
+ drivers/gpu/drm/panthor/panthor_mmu.c         |  19 +-
+ drivers/gpu/drm/v3d/Makefile                  |   3 +-
+ drivers/gpu/drm/v3d/v3d_bo.c                  |   6 +-
+ drivers/gpu/drm/v3d/v3d_drv.c                 |   2 +-
+ drivers/gpu/drm/v3d/v3d_drv.h                 |  11 +-
+ drivers/gpu/drm/v3d/v3d_gem.c                 |  33 ++-
+ drivers/gpu/drm/v3d/v3d_gemfs.c               |  65 ------
+ include/drm/drm_device.h                      |  11 +
+ include/drm/drm_gem.h                         |   8 +-
+ include/drm/drm_gem_shmem_helper.h            |   3 -
+ mm/shmem.c                                    |   1 +
+ 30 files changed, 431 insertions(+), 291 deletions(-)
+ delete mode 100644 drivers/gpu/drm/i915/gem/i915_gemfs.c
+ delete mode 100644 drivers/gpu/drm/i915/gem/i915_gemfs.h
+ create mode 100644 drivers/gpu/drm/panfrost/panfrost_drv.h
+ create mode 100644 drivers/gpu/drm/panthor/panthor_drv.h
+ delete mode 100644 drivers/gpu/drm/v3d/v3d_gemfs.c
+
+-- 
+2.47.3
 
 
