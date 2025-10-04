@@ -1,121 +1,109 @@
-Return-Path: <linux-kernel+bounces-842060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 420FFBB8DEE
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 15:25:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E7B4BB8E1E
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 15:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 728F04E2446
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 13:25:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EB6B3BF496
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 13:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D22E275B05;
-	Sat,  4 Oct 2025 13:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16D126D4C2;
+	Sat,  4 Oct 2025 13:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="isrBaMWf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="b8QNMx2u"
+Received: from out203-205-221-205.mail.qq.com (out203-205-221-205.mail.qq.com [203.205.221.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10A729405;
-	Sat,  4 Oct 2025 13:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5AC227B94;
+	Sat,  4 Oct 2025 13:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759584327; cv=none; b=PNasrZSYvGP+N7oD8JBrr8wmZ+JnxI7XpJKkpAh8SXHtXgMWHteP5NsVcb/mjthQpTZCwcGadvj8+IVDoSWg72LZALQwfhWsMoa3d78dn10tbPEl2BVduqVDEBdmFEl/VUUnHqnkWjbG0r6tHrEHxRZFiFcHAtzsKPpxu6JFza0=
+	t=1759585053; cv=none; b=tQt9rzTD3kC8p1hwRCrsfEALGTVPskEKrFv5k6TZ1EwsDNu5H08k5eOt6lSL6cvhDv0NIz0jhLhg7tlXbfV/YYzrB8KapexxuoJxdSIhsNpVPc0s6tjZGr4gkd58OGAuR2vz53IK6GyE7u2wSti6UNkB4Skx0egcNUTEavFv9Sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759584327; c=relaxed/simple;
-	bh=bc5bP7EqrX/7tverHK4ahEMxMXdfuaRoCJxs+IXR4UI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aQ/y9gBmfuoslU5yOFcZUfjKwMxRce8d+Y33vMNUztqhI6WCVRJwBaOVsAAGUO6Mv7FQ2qJ9M2ZtFppIaHG/r6kAKDNWijU+RyZeBJBRf2JRlDCSpq3hrek8hWjSK1bxR0GjHCwOv/oa5Wq3limq39bh6T/bvQVziWgDrXl59lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=isrBaMWf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44C60C4CEF1;
-	Sat,  4 Oct 2025 13:25:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759584326;
-	bh=bc5bP7EqrX/7tverHK4ahEMxMXdfuaRoCJxs+IXR4UI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=isrBaMWfApwQ1NDz1qxYerr3ggmdcFTR9LgDdgHJYQ39uEppFCwRZbzDkDTYqIZO8
-	 BtOqmkcx73Hww6vj5nUDaAK5msqyyJqgg9lGfSngFsus5mReiwGCb4TIzeDMlSKyxM
-	 S39iQ9sSMoUSCQYj82BBrXcE/ZfosunC3Xuk2z9JEDJ+Zc5x3pQRwTCAMD/kRn6OUt
-	 tYN6hcLHKcPxTOrcjOTjWdzGTocQp/+z5/AlZlMcWZZcV9n08/CT2hsiF5iOM2/QfM
-	 mCEyOYo8cWREIDsLjD7+CLWL0tbQD1Qtt+a0o5WlqGonWbx4jZRB3ZbpLJ5Z6ht4/I
-	 IAWGofaVST+GQ==
-Date: Sat, 4 Oct 2025 14:25:17 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: Olivier Moysan <olivier.moysan@foss.st.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=	 <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, Maxime Coquelin	 <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: stm32-dfsdm: fix st,adc-alt-channel property
- handling
-Message-ID: <20251004142517.0cf3e7a2@jic23-huawei>
-In-Reply-To: <5243c2c5a8f3dd24f40e30a695e2a3d4f948f388.camel@gmail.com>
-References: <20251002112250.2270144-1-olivier.moysan@foss.st.com>
-	<5243c2c5a8f3dd24f40e30a695e2a3d4f948f388.camel@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759585053; c=relaxed/simple;
+	bh=EF/DaFNdmRdgTA/B9lDT+LF4lNVR8eezwp47iZbRseg=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=l765lS4TgT/UZ3tvN6QKDtFbR+lrjwaDBbHVKX/frtfqbQNtbQpYL7zi1PfPTs2Ik+O7jrK/Io9rTH7KXHiKMnsRnLoQms69LLYbKWgbFTkC7wzG7nR9KyF6pcqFSeluWmd4pOKXmW2qLcE0a0lSJUEvr/PEJMWjtjRl+ChCFs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=b8QNMx2u; arc=none smtp.client-ip=203.205.221.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1759585049;
+	bh=LLVTB245xm+9TYKWIPsVXRurkjaMOVzY6AI7hV7uyPU=;
+	h=From:To:Cc:Subject:Date;
+	b=b8QNMx2uLqzXZ6g+uFYNDDsnwxqeu5f+ch9HpCcV26U3Tze/YPYp1CucUUS9zzVnI
+	 gQu9Zfb04U19wPWgFV0SLqSqDvplhZt7CmBViVTv2Ctl4RbsQO/y7o/foymn9Flvlv
+	 sVNw3nR4PVRf3NQtmBSX+YYZl5YAKZkOMZyR9Ku0=
+Received: from rtoax ([183.198.135.10])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 6EF33CFD; Sat, 04 Oct 2025 21:27:47 +0800
+X-QQ-mid: xmsmtpt1759584467thk0j7w1v
+Message-ID: <tencent_351115D4D7B2D105C452833621C9ACBECB07@qq.com>
+X-QQ-XMAILINFO: MIAHdi1iQo+z6ZRnxGfX/JQyMeV5NdhDr1A4P5m3I67oqMbxkYJVpvm4wUImyr
+	 9G8rfDfU7yWscpEGZb++QK6WSCuZ/toVEsqOAqF636bKnttN3cIRXcm8hrTuGTCpO3k1P2XHVkI6
+	 1E4GXZJ//DGEcWZplardX3xNw8SJVH6tG4d3IFxPCmETTz+pzpTrif1fyFzfdcdC1tF4gl50+52r
+	 7GUugQmTPDWIHdZphtxmV3nqRaMvU3kM0WRsaaucotBSt1bfIUu/wnvv1+8Cn25uVaUfKEDITn1c
+	 iu8Ci8rUiYQLm5fR3bTfm4FTOeXx4n8iazLIAXGu5eca5kozyizFCDR0IXnun6XYPmF5roi2eAB+
+	 zHO45ALQgEyMMWAWYfxjbCFxjxo6bPAasnt/3szj4Jpi6GRCUisK/bHLluuvohCtAk/oQjlpMOdT
+	 mpUoQ0AEHOup5WQuOzi46B2BHjBorbZa54jvG4r5faMk5CpVzbtSGN69Uq0BbydRBKjODfSYLIAf
+	 m2LSABQQrUL/f5IgGHViLjtk6B6BHyfwd5e0j1qu20AbycB7R7ltwkp0Xck0Q9mJP8aBVN5BNB6u
+	 N5aMM2oLcFWSp+Y2r3XJrVApmNyFUb4SykvCAB55Fdu9uYw4jh35eDND3Mf7/AAizBczz7aIZAEb
+	 gGCW8oEc+GhaDO5yL5Yw1CSS9ku3/Zef9940DmQb4us181lwVlmimmVYy5DNh3k8KHiT80DHjIWP
+	 3xHQK10wW7RmvJfdPSmuqJj8BDvlw2k9+cK30FfHn9RKbZgjcRp+zYr6Nzl2C11Kw2yqmXE4ONGw
+	 vb0ApCBBhWZJ6WMV5K9lucBq+cJZwnEeS96H7oM5lpS2byKbrvBOuFvPSUKWVqcsJhfQuu+XmORK
+	 yUecyRb1Yz2L6hl+RYXy1PCfWSM9BbUBi6lFokxJiRvngs9O9kUxGN+UfbPQCmpQswcQ3kYKAAft
+	 fNmjCxLDeR6/KeFsPkDo2mPM324cdEcwpXyiz6d2jCxRTyhLZiUVeZe3GVf8Pj
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Rong Tao <rtoax@foxmail.com>
+To: vmalik@redhat.com,
+	ast@kernel.org
+Cc: Rong Tao <rongtao@cestc.cn>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
+	linux-kernel@vger.kernel.org (open list),
+	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
+Subject: [PATCH bpf-next 0/2] Add kfuncs bpf_strcasestr and bpf_strncasestr
+Date: Sat,  4 Oct 2025 21:27:18 +0800
+X-OQ-MSGID: <cover.1759584052.git.rongtao@cestc.cn>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, 03 Oct 2025 07:15:56 +0100
-Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+From: Rong Tao <rongtao@cestc.cn>
 
-> On Thu, 2025-10-02 at 13:22 +0200, Olivier Moysan wrote:
-> > Initially st,adc-alt-channel property was defined as an enum in the DFS=
-DM
-> > binding. The DFSDM binding has been changed to use the new IIO backend
-> > framework, along with the adoption of IIO generic channels.
-> > In this new binding st,adc-alt-channel is defined as a boolean property,
-> > but it is still handled has an enum in DFSDM driver.
-> > Fix st,adc-alt-channel property handling in DFSDM driver.
-> >=20
-> > Fixes: 3208fa0cd919 ("iio: adc: stm32-dfsdm: adopt generic channels bin=
-dings")
-> > Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
-> > --- =20
->=20
-> Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
-Applied to my temporary fixes branch that I'll rebase on rc1 once available.
-Also marked for stable.
+Add kfuncs bpf_strcasestr and bpf_strncasestr, which are extensions of
+bpf_strstr and bpf_strnstr, suitable for more scenarios.
 
-thanks,
+Rong Tao (2):
+  bpf: add bpf_strcasestr,bpf_strncasestr kfuncs
+  selftests/bpf: Test bpf_strcasestr,bpf_strncasestr kfuncs
 
-Jonathan
+ kernel/bpf/helpers.c                          | 96 +++++++++++++++----
+ .../selftests/bpf/prog_tests/string_kfuncs.c  |  2 +
+ .../bpf/progs/string_kfuncs_failure1.c        | 12 +++
+ .../bpf/progs/string_kfuncs_failure2.c        |  2 +
+ .../bpf/progs/string_kfuncs_success.c         | 13 +++
+ 5 files changed, 104 insertions(+), 21 deletions(-)
 
->=20
-> > =C2=A0drivers/iio/adc/stm32-dfsdm-adc.c | 5 ++---
-> > =C2=A01 file changed, 2 insertions(+), 3 deletions(-)
-> >=20
-> > diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-=
-dfsdm-adc.c
-> > index 74b1b4dc6e81..9664b9bd75d4 100644
-> > --- a/drivers/iio/adc/stm32-dfsdm-adc.c
-> > +++ b/drivers/iio/adc/stm32-dfsdm-adc.c
-> > @@ -725,9 +725,8 @@ static int stm32_dfsdm_generic_channel_parse_of(str=
-uct
-> > stm32_dfsdm *dfsdm,
-> > =C2=A0	}
-> > =C2=A0	df_ch->src =3D val;
-> > =C2=A0
-> > -	ret =3D fwnode_property_read_u32(node, "st,adc-alt-channel", &df_ch- =
-=20
-> > >alt_si); =20
-> > -	if (ret !=3D -EINVAL)
-> > -		df_ch->alt_si =3D 0;
-> > +	if (fwnode_property_present(node, "st,adc-alt-channel"))
-> > +		df_ch->alt_si =3D 1;
-> > =C2=A0
-> > =C2=A0	if (adc->dev_data->type =3D=3D DFSDM_IIO) {
-> > =C2=A0		backend =3D devm_iio_backend_fwnode_get(&indio_dev->dev, NULL,
-> > node); =20
+-- 
+2.51.0
 
 
