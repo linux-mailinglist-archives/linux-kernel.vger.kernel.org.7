@@ -1,135 +1,98 @@
-Return-Path: <linux-kernel+bounces-841986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF71BB8B7C
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 11:04:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 958F2BB8B89
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 11:17:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D9E619C2078
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 09:04:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4E6814E2DAD
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 09:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B5622758F;
-	Sat,  4 Oct 2025 09:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="TG4IBoSc"
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B45423BD13;
+	Sat,  4 Oct 2025 09:17:30 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7232F1BC5C
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 09:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820411C84BD
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 09:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759568667; cv=none; b=u80T97Aip3oYee23DTXKCFOo0V0Mx+vpzerx1Zs8sbCyYIlsGCULiVxquseBX6t1XDoG5NYdFeWmQIhP95z/nQoQsQULOcomk8nfX6LlupSCtq+JRH2PDhR7YCH3jZTZspJtfy1eiuY0aZISVpDYw/jDf56tNtKxe7QybqgYLNc=
+	t=1759569450; cv=none; b=A3s9vEA4P8s1X9h2r9io9/wtBOThB75j2TN67F7ktnj0DuZLmIizZGaviytyLt9wTDnw+Y3JIwPzMmJ60VsYHswIeorm3PsnTQDLs6YEwb/th/oWVh1qCskUS4dDoU2gagJFiI7a8dtL/IxaDTG5XI+hWSTYw8dLxpK+Ij3EA1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759568667; c=relaxed/simple;
-	bh=JUYFV/YPR3WrOHsq9M1VxyXMt3tnzJiffNEySy2Kvpg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T+8pdMNKnPvnNRDcgnVbWmshPNe6bOD3beBiVIFgCNr0uLxF6VVyL888sichHpbT0dDDm/fdjD9hmLazdgEzC3avKLdKv/Xpcmr6oFiFdGrO2G+j7ERa+R3FuK0gr/3SI+dNG3ckEQfigjy5pl1V46ptZbbIryOK127o7zp8Um4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=TG4IBoSc; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id CFB1B240028
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 11:04:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
-	t=1759568657; bh=JWVwdt67/VtIvFKQXq3esRk8HgOyYMQli13m3MQ1k2I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:From;
-	b=TG4IBoScPLkI2pE6RP/ERU6J67561ar0RS8kL3SOenYFIVOqxJB3pcgf0OFSh1DHk
-	 XG91ss2ta+c1ceCfaOTVjzjmcKA8/5aYu4PmuqUCCorNRU2QL86o48WpN+d7S42iPP
-	 YbK78o1CUGcm68Xd/Yig12GnFVFJtmODBOOIlBipPxBQaS7kP2TnP/zQXo+DRHx1Gp
-	 bClYSbV87G8FTWerTjR0eGYiCmV2YkNHcGqcqumGnJmx8/XHaRq7x2XWG2HSqz4a5o
-	 zOfne2jU3Reh1+lUdvu3grhtu+QB8FM/aNhW53ErK8BozHF8PjEL34BPNzkqxKj9xD
-	 KLXccWsKbQRXg==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4cf02n1GJ9z6tyW;
-	Sat,  4 Oct 2025 11:04:17 +0200 (CEST)
-From: Shahriyar Jalayeri <shahriyar@posteo.de>
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: shahriyar@posteo.de,
-	peterhuewe@gmx.de,
-	jarkko@kernel.org,
-	jgg@ziepe.ca,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] tpm: infineon: add bounds check in tpm_inf_recv
-Date: Sat, 04 Oct 2025 09:04:17 +0000
-Message-ID: <20251004090413.8885-1-shahriyar@posteo.de>
+	s=arc-20240116; t=1759569450; c=relaxed/simple;
+	bh=h55S7+UKs6SEE8xfVRiy/8Pruq0+NinfBkohqQ3QxEA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Z9WGDizE6yGeCKxrD0mhKPWOe0zAFYOTtZOHzx2OwEFYB+U6Lw6ua3PcwObmAOGeGXTbOkeDd3FCs6NUsN9Zps/5oK9I/XhXdn7WRSjk0y5kW/mg1VOe800TqdR/dtCgqSaHEh9ltodvSWHGd7TXZA9+Vye37TLeknvyNDV2MuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42d8b990b00so82062515ab.2
+        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 02:17:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759569447; x=1760174247;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BIG6oZNTDpYclLfV7No+nENFcYt4Th02KE4t59yzIOI=;
+        b=nFB6a+SI/qMZlNhM78idPmxSuAxdxFXvhidRfMNFCh13Ck5646nKUefVAUigekMBnE
+         tM9xwoaesuixCbIV/OnDguc3TmQYAzOlsFQMKbGk3QbajWTJxuZL1SdoHD26KwGDb91/
+         htUtCX5lL5wPMB9DaHUJnTwv9ai53qf8o9xp8zQSWBUboXFN9DhB4p4wHcrmFlg1Aks2
+         gaf+juvAyhLjlKKkd6s2pSAw58OnUZYvWxCtuX7hWn5bNW8NgG7f5FtvTFznME63iRNM
+         skVSLTr/ffllbmCm4pBNwqiTBz8nkLpWd/uEyZ2Iz9kCHlFjzRELzICCErHWhS7aY1r0
+         +38Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUk2L+tfy8cdIfVUpLQTM0nMc2/QJcRyQkrTl7bD5FF62oD8N91N3w+/P31b3TtgKSblEcieay95J2jDTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztNZDiuSDALVnJ+2VI7btvpS5l4S+7DCQyWrs9cobhfSJAtV1f
+	HNP746Wo7L7yf5enhlOMdCFk+reI71PPbEICBJPvZxHujKc3yG9/2wsMugL5YSXQAFIq3psFuHi
+	3QlSQGCcTAjXn0BQgldM3q9c9lOKsDf3RmXd41JoZR3bumAekI1bTzM233cQ=
+X-Google-Smtp-Source: AGHT+IG+svriUzw2DiMwSyLn1M5GTJ/87nULoyQvu6EYW2Pfe/unhigyNbS1LMDqpSUTCx7ZhfVPJhDz/E4xBvM+Rf/eBz5e+CSh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:3e04:b0:427:be36:2974 with SMTP id
+ e9e14a558f8ab-42e7acfca92mr74974265ab.5.1759569447693; Sat, 04 Oct 2025
+ 02:17:27 -0700 (PDT)
+Date: Sat, 04 Oct 2025 02:17:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e0e627.a00a0220.102ee.011c.GAE@google.com>
+Subject: [syzbot] Monthly nilfs report (Oct 2025)
+From: syzbot <syzbot+list7fdc58f8e19ec0678b0e@syzkaller.appspotmail.com>
+To: konishi.ryusuke@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-nilfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add two buffer size validations to prevent buffer
-overflows in tpm_inf_recv():
+Hello nilfs maintainers/developers,
 
-1. Validate that the provided buffer can hold at
-   least the 4-byte header before attempting to
-   read it.
-2. Validate that the buffer is large enough to
-   hold the data size reported by the TPM before
-   reading the payload.
+This is a 31-day syzbot report for the nilfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/nilfs
 
-Without these checks, a malicious or malfunctioning
-TPM could cause buffer overflows by reporting data
-sizes larger than the provided buffer, leading to
-memory corruption.
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 4 issues are still open and 63 have already been fixed.
 
-The error messages include both the expected and
-actual buffer sizes to indicate that the operation
-is aborted.
+Some of the still happening issues:
 
-Signed-off-by: Shahriyar Jalayeri <shahriyar@posteo.de>
+Ref Crashes Repro Title
+<1> 6       Yes   WARNING in nilfs_btree_assign (3)
+                  https://syzkaller.appspot.com/bug?extid=158be45e4d99232e1900
+<2> 3       No    WARNING in nilfs_rename (2)
+                  https://syzkaller.appspot.com/bug?extid=f6c7e1f1809f235eeb90
+<3> 2       Yes   INFO: task hung in mISDN_ioctl
+                  https://syzkaller.appspot.com/bug?extid=5d83cecd003a369a9965
+
 ---
- drivers/char/tpm/tpm_infineon.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/char/tpm/tpm_infineon.c b/drivers/char/tpm/tpm_infineon.c
-index 7638b65b8..385bac46a 100644
---- a/drivers/char/tpm/tpm_infineon.c
-+++ b/drivers/char/tpm/tpm_infineon.c
-@@ -247,11 +247,20 @@ static int tpm_inf_recv(struct tpm_chip *chip, u8 * buf, size_t count)
- 	int i;
- 	int ret;
- 	u32 size = 0;
-+	u32 header_size = 4;
- 	number_of_wtx = 0;
- 
- recv_begin:
-+	if (count < header_size) {
-+		dev_err(&chip->dev,
-+			"Buffer too small (count=%zd, header_size=%u), "
-+			"operation aborted\n",
-+			count, header_size);
-+		return -EIO;
-+	}
-+
- 	/* start receiving header */
--	for (i = 0; i < 4; i++) {
-+	for (i = 0; i < header_size; i++) {
- 		ret = wait(chip, STAT_RDA);
- 		if (ret)
- 			return -EIO;
-@@ -268,6 +277,14 @@ static int tpm_inf_recv(struct tpm_chip *chip, u8 * buf, size_t count)
- 		/* size of the data received */
- 		size = ((buf[2] << 8) | buf[3]);
- 
-+		if (size > count) {
-+			dev_err(&chip->dev,
-+				"Buffer too small for incoming data "
-+				"(count=%zd, size=%u), operation aborted\n",
-+				count, size);
-+			return -EIO;
-+		}
-+
- 		for (i = 0; i < size; i++) {
- 			wait(chip, STAT_RDA);
- 			buf[i] = tpm_data_in(RDFIFO);
--- 
-2.43.0
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
