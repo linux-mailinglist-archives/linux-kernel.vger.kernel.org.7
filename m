@@ -1,120 +1,116 @@
-Return-Path: <linux-kernel+bounces-841932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85500BB88E8
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 05:22:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3B54BB88F3
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 05:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B882F4C19B6
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 03:22:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52B8F3A9267
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 03:30:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA7B17A2EA;
-	Sat,  4 Oct 2025 03:22:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE85C1DE892;
+	Sat,  4 Oct 2025 03:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OWDKCQRE"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ByOhD/Od"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07BDB1A9F90
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 03:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B2C4C6C
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 03:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759548137; cv=none; b=km+FmFsRT37I4uIwzkLWZP4QIphaFk/m+6btF593eDQGM1hUCHcZfbkuB3Ds6XQH1Ew7MDXWsV/a7unMfgsN7Qh4poAHW07K9QnrsNxjcDOLJeaN1SzamSTNXnEDQVPs9T+MdVF688hlNDyDKX2y1yyIULjLkhoGEZSiGH1GlNg=
+	t=1759548643; cv=none; b=C2jQ3F7fP9AYZc0od21e3PkikMaxL3I4nvUvNaCMfv6rP6ZnnViBf81ZAoSPR1Do+9LHuvBHm2Umk6VS9JLtZb3tSURWfHFJid6AjW+4A/cawPM/yc+lBv18ZxsQykvw6vY/JTLOvOFTkXtRA2GU9Da3NxkpWeEGPYAgSq0pvks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759548137; c=relaxed/simple;
-	bh=ey/UirZuMoQH6VVDj0zZ1/9OEU+uMzZ+O8OKJwtAu/s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BxioZx9fNnpSqI7K7mFkyz1Nig/sxy0Q9h3xm2lMoA+vMuMlGokwsXLeMZ7is/e2D6ZoWQ3BwIZNKLZ/0u4i6cdUjBq7sT9adS4AJRH3T0FoEyFV+bhnqShMah/whQ66qZTC5Awln4BXoijEf7yPsuIhWpjOvyTlRBSueoQA/Tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OWDKCQRE; arc=none smtp.client-ip=209.85.215.169
+	s=arc-20240116; t=1759548643; c=relaxed/simple;
+	bh=0c9z4SuRFiGBPFcUXAMN7ywy26aeUTsJfjovJPLNtJc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ti7HBKzqh+YbvrkrjqN8N+iIT3MZI7gqgyN/UBN6X4T9Rbtiy/ofLZmf0GyfPvnjrdMGT4MBMiQOkiu3ZwYDF0lbEK0ddD4gt+uzqt/nwC2QHV5nztkq/8/uwv9bWPLKllt5aiTs8bPbeeyZcJKEMsQmfXR8FGpYB4ZHMwVchaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ByOhD/Od; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b4ee87cc81eso2674900a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 20:22:15 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-273a0aeed57so50701945ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 20:30:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759548135; x=1760152935; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vT/ORNW0pW5y5PIVl3vdZCajLNmtGvBDvw6fpaJcnVQ=;
-        b=OWDKCQRERpYz8eXQbDiX4hmRiCEC3XqA3Sc49LfxUJyPS35ZyTUdB+zWdCAVtTqSJ8
-         ZeA0tmBUoXc/9sFKH56O9ZHA0n9w0qwGQr6fIW4O96nvin5qEsH3rh0h6b9Y4pvx5HSo
-         SoEUMQZ55ZepDw2PpWs2sp69z0NEXZPARjTZj3Jf5l7Fpey1ws9beSUVQJ0RzBujgns3
-         V46SKM6owzLY8Ky0purH/MyAa0/+sIbFUdFKz1Nmr97qugj0ZcamwcJAUZ7bFPk321lx
-         bRb6sR5XwRr1IgwVOZMmmVgZbiDgtt5jbhvMX82KORtYEGkFUGhoi92pHotunkmUKh/s
-         VO8g==
+        d=gmail.com; s=20230601; t=1759548641; x=1760153441; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jiutd4RVK94JAmVmtepdZy4JLO6Phqgp3QTqvVC7OFc=;
+        b=ByOhD/OdNvO2IDmOK2JM9ze3QAesDPDEsoNZDSJgXoF3N3fQPyigE/dEhgt0/vsg0h
+         ze7SRirLDOXCglwi6ZvJGMttyCZrZNrNlmWr5/Y1tMfX8tZJQQCR6+MGOeRwuelmT+Bc
+         tLiNKWU1O5Yey4inNC0HtBYZ1gcRhqdZD6JvfcATJMK4sAODyNY9Wyl+CPwRKMjDk1aT
+         /uDVKdBl3oa5TwtyAHhLb/i0e63TEjEtVbfSDIkmiXsCJjrI4u08PjC777Y7VUooCwHO
+         fZsdnA/bWqLcjQetJvdQpfVENaPCx8cMcvTmfNrYqTY5tEXD2GZ2YMCSFydtx9o4QfUr
+         1IQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759548135; x=1760152935;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vT/ORNW0pW5y5PIVl3vdZCajLNmtGvBDvw6fpaJcnVQ=;
-        b=Qu+4H00MD4ALszACnXXrzMhz/cDwC7RiVIOqcKewtOlD9wO5b1nqJ3sDcpXEfWz7S1
-         LpVdtcEoKwenhmZB9XYFXhlp5uo6L6wkVmLlX4a8+Rocxce1bUqrEktK/1TrLyMDKP9Z
-         U9Ff92x7/SSAJPHLZFByWtkK6JMvrSkSMkh16rNpy6jdNdvmQXkUgEhNeKLXCfmn0SzV
-         NXNmtG8QF9a4DG41Q1ExgUS+Co8ATTrh8F0gn4mWs1mbZ9jp8fuBfHbFGI8TUaWprrbx
-         Kp1XhrYlvP6lT8w8sQEeTgEkUwpy2mcOMD217S5ItIDhNyYz65dFIa8OdgdiN/dz/SMZ
-         yP1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVbf+wf7X4uWY3IGJcaJQpGk1/o/kpTSDdxN+HTrrTB4jSgH4Hbt2ezUBn2nn4gWF+xdb5dnl9RpnklSRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZGqh9mS9S/ybqi48cetJHkEAeqdDIasKQ80yUR8poVMuBs6ii
-	rtYJsjhWIzKeDSK0xOZG7PK8lVPi9/cgftl4+jJzYSRObD6d3Wl6Axz/
-X-Gm-Gg: ASbGncsDjZb2VlxDtsdjMpTZ21A9jjNWQKebXJ4gOyMouLV2ql53cQ/MczIS0VdAr/N
-	nOSVq9vYYrJgHQjBHPBf1Ty4rq1Aw3nRkv74w1s7wqzTy1gRQ6+nLivXjwlPgy9pwP6G7ZAesjZ
-	SB0ij5PBSbZsAb8QVDg/x+8fy+e2rl4sIAC8oHwCm0gzY6qt8jSXDAhTi9ykMN5GoQTkt4xAXo5
-	3Kps47ZVDeXB0VTCjekUfNHiDjbS3rtSNkd9heIXn7zytscR+h8cqheqUjsX8exR3qtaAa3gTp6
-	LsNDu/8QCz1K+61Et1fP+0PBHAmBMpBATkMWO2mEbf8HzVYu77BRqUBLJhFgf35VjZy2gSg8V7g
-	qN3WE2R3X/VIjFzhzGEikU/pADRFXnt/EI0LwWxzohtN6kX9/FhTlJnOov+MGYvDaAePJmbM=
-X-Google-Smtp-Source: AGHT+IHEj0aXuUhMgTbCirX4CidHBDMcg5LPlI/yovtk5eB8b98mCogwEGyUGrgHax0e9En0MN3Xpg==
-X-Received: by 2002:a17:903:2f8e:b0:24c:d322:d587 with SMTP id d9443c01a7336-28e9a60b519mr64976925ad.26.1759548135023;
-        Fri, 03 Oct 2025 20:22:15 -0700 (PDT)
-Received: from [10.0.2.15] ([157.50.90.152])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1b8444sm64824745ad.86.2025.10.03.20.22.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Oct 2025 20:22:14 -0700 (PDT)
-Message-ID: <21b1dc10-acad-43b9-a9c6-24abb2886856@gmail.com>
-Date: Sat, 4 Oct 2025 08:52:08 +0530
+        d=1e100.net; s=20230601; t=1759548641; x=1760153441;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jiutd4RVK94JAmVmtepdZy4JLO6Phqgp3QTqvVC7OFc=;
+        b=a7S5qoCr+ytaj/yYbq7OazYj+X7hk4lHx6VVoutegUB7l/PE0Udu7OHIO1BwnPUC5F
+         xrFWoTViqwOk+TtF+sMv8KQpcFhUW6LZYUEOsxJe8vI/qlZDeelRMc+orwhbO2bU6ap5
+         fdhhrRMslLpi3wwmkCoXzoqLoULySSwHUhzwsqvd0p30sMq0myp684DGp82rmO1FtWbc
+         z7BAw8T2bzKmSo3AuFN/R4D4zmGX5E1UwrKiWpE70JJuyGrJIMkl6+iQ0Hs/q+/Zd7S6
+         5VXEe6cC7wmcjUBMezWLUaWETgXHp2nFVt21RZYUrBTdU2gtbu8RzHnWxJxDGdcjHKJi
+         hp5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUaoU/EpJ/OqsgBdqhbNWEaSlGO5h9J3/CegUylqhViZ0FxGsxKLwB9ruYnIJZ5HjS3PN07w8dlPxuYv0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQw98QA2t5fGSGwdZTvUMWO1pHVdaA5qZdtyeTFBpTwGUrA5iD
+	wv4z0i778UY3GCj8405nGqwzPP2mFg5eicHHuV9T3r1YlxFAngOULAWx
+X-Gm-Gg: ASbGncsswi08riOdZp/bALidy+s3+yko2oWQ2yql+039ryW30ADNQ2KfL06d4kbHE71
+	jf26SzW156Wr4ALkfXpvEuduxPuWZuSYVn1n9CoUW+4ua0Gh1NBaueEIs5w6YrNQwtoQlVDeV75
+	fY0vFTZSCCN89AXVcLKpig1+G3LLLfVvOOGT3ESDV3hLjsikfJyqoC8ifvcPEkVK3n5+oUoa+9f
+	mGk+DGS/toU8WHMNP4dWcXs9QoaavAD2GdozcPgkS6hKSN/lZEnKbTjJso9L46SZxOT4LQRqZjz
+	bqNicHZhikDrZoJxe8SdKv0q7KgCyTAMRKF6yTOlhHGlvdV4IudYBHVcVWdjOUCT4CFdd6RRS1K
+	oVtNpvorBfq9ASgjvwEvKjzfTyRps69Rgq1rtosxxxwDd0HZLy+t0l2hMsvrTGq4fKA5Otoil
+X-Google-Smtp-Source: AGHT+IGnSnK3Jadih+8ztxMGZHFLoCmey9SXzZ5BNJm+bZsYDVSdTmF5KauP0zWMC8R6eaI84W4ugQ==
+X-Received: by 2002:a17:903:1b25:b0:271:d1ab:17ce with SMTP id d9443c01a7336-28e8d0e8395mr100457975ad.26.1759548641069;
+        Fri, 03 Oct 2025 20:30:41 -0700 (PDT)
+Received: from ryzoh.. ([2804:14c:5fc8:8033:c5aa:36f3:14cd:8995])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-28e8d128041sm65070625ad.37.2025.10.03.20.30.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Oct 2025 20:30:40 -0700 (PDT)
+From: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>
+Cc: Robin Murphy <robin.murphy@arm.com>,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+Subject: [PATCH] iommu/pages: use folio_nr_pages() instead of shift operation
+Date: Sat,  4 Oct 2025 00:23:51 -0300
+Message-Id: <20251004032351.51150-1-pedrodemargomes@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: iio: max30100: Add pulse-width property
-To: Shrikant Raskar <raskar.shree97@gmail.com>, jic23@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
- matt@ranostay.sg, skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
-References: <20251004015623.7019-1-raskar.shree97@gmail.com>
- <20251004015623.7019-2-raskar.shree97@gmail.com>
-Content-Language: en-US
-From: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
-In-Reply-To: <20251004015623.7019-2-raskar.shree97@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 04/10/25 07:26, Shrikant Raskar wrote:
-> The MAX30100 sensor supports multiple LED pulse widths (200us, 400us,
-> 800us, 1600us). These settings affect measurement resolution and power
-> consumption. Until now, the driver always defaulted to 1600us.
-> 
-> Introduce a new device tree property `maxim,pulse-width` that allows
-> users to select the desired pulse width in microseconds from device
-> tree.
-> 
-> Valid values are: 200, 400, 800, 1600.
-> 
-> This prepares for driver changes that read this property and configure
-> the SPO2 register accordingly.
-> 
-> Signed-off-by: Shrikant Raskar <raskar.shree97@gmail.com>
+folio_nr_pages() is a faster helper function to get the number of pages when
+NR_PAGES_IN_LARGE_FOLIO is enabled.
 
-The subject prefix [PATCH 1/2] says it's a two part patch series. But I think
-you send all changes in a single patch. If single patch use [PATCH] instead
-of [PATCH 1/2].
+Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+---
+ drivers/iommu/iommu-pages.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/iommu/iommu-pages.c b/drivers/iommu/iommu-pages.c
+index 238c09e5166b..3cb8fcc39066 100644
+--- a/drivers/iommu/iommu-pages.c
++++ b/drivers/iommu/iommu-pages.c
+@@ -80,7 +80,7 @@ EXPORT_SYMBOL_GPL(iommu_alloc_pages_node_sz);
+ static void __iommu_free_desc(struct ioptdesc *iopt)
+ {
+ 	struct folio *folio = ioptdesc_folio(iopt);
+-	const unsigned long pgcnt = 1UL << folio_order(folio);
++	const unsigned long pgcnt = folio_nr_pages(folio);
+ 
+ 	mod_node_page_state(folio_pgdat(folio), NR_IOMMU_PAGES, -pgcnt);
+ 	lruvec_stat_mod_folio(folio, NR_SECONDARY_PAGETABLE, -pgcnt);
+-- 
+2.39.5
 
 
