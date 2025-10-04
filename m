@@ -1,80 +1,153 @@
-Return-Path: <linux-kernel+bounces-841980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D826CBB8B53
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 10:40:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C0D4BB8B3E
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 10:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C2A2188C8F2
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 08:41:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 240FD4A05E0
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 08:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7DC724E4A1;
-	Sat,  4 Oct 2025 08:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5263924DFF4;
+	Sat,  4 Oct 2025 08:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b="YaZxJuTK"
-Received: from mail.antaris-organics.com (mail.antaris-organics.com [91.227.220.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SksNSPVp"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1031F5851;
-	Sat,  4 Oct 2025 08:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.227.220.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DBB8322A
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 08:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759567245; cv=none; b=t2iSgR3izDggFwPYh3vRqCk3w1QSi0Hd3zwgVUrqQZkdfq9G/SibokF+xpN0aUNxM63RX+cSG8XQMB49kTJ+qED2dT0s2m5Kms2OLXsvOZ+qYywVSruK8o9YwL9RivoQVOSrMBGbd5md/tNbha63lkJWPcxwkMQBayTkxhQ3uwY=
+	t=1759566854; cv=none; b=quYhc3+IU/2BnQ3kK70HU5KgltekrfbdLmnZgqJc8Tff6bYVuIf9zEqckx7Sp25Y3T+XgPQCttefdwrtEWzx7RQtToYuuKIl2v3tEbm2J92seGdN+UHXS//JlvqMbVWiJ7WmBTfrw0nVqggTdwQDP+Numyde13qEkFJsCi/j5sM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759567245; c=relaxed/simple;
-	bh=zxbvHP+9YLMTvKq9WNEqCHLjpHhvEiTPvZG1TtH0/QA=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tmzc0WURTlcoSDndXTcKhSfIiKwnRVdm5oBTy+MLjAItJvK7LkO9/tfic2PmBbL5rIbK7KnDBzUjPp63dq37FcTVpWE3S4tgj6Hxjy5qUYZafu3313XNv5u+dTJTEZpLuwcZzqOwpgEyk3uyYwqlJ8EGiK+5t/rYu20Nfc46NIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com; spf=pass smtp.mailfrom=mareichelt.com; dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b=YaZxJuTK; arc=none smtp.client-ip=91.227.220.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mareichelt.com
-Date: Sat, 4 Oct 2025 10:31:11 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mareichelt.com;
-	s=202107; t=1759566672;
-	bh=zxbvHP+9YLMTvKq9WNEqCHLjpHhvEiTPvZG1TtH0/QA=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To:Cc:Cc:content-type:content-type:date:date:
-	 From:from:in-reply-to:in-reply-to:message-id:mime-version:
-	 mime-version:references:reply-to:Sender:Subject:Subject:To:To;
-	b=YaZxJuTK0FRsbivmHfUWNBVK7GfApz4JQGu/8wXCkvCb9QOvaZJmRHxQTBob5K9NH
-	 0M2ZNOI6A4N/7R62fPQh4p+19aYw75z7UGKt9u4MJl/SWxu89eTcfUdyq6K0FNkPiF
-	 SLfXajpxqDrLylqJyBZ5xsUpiAIBGXmV/JaQjx09OX6OdZ+ndUs1hZbiGaKX9raUQw
-	 FWMMBACu6pXYlAn57TTEGgnVg66EB/cZj3BH+citwHy807ITAb0yQOq3Cc7WsOyJpS
-	 RhPvDS5uHmaqSyEqpnDZuqHwoNqYuNA5DG/4DBBMiWtNkCrdYf6C4oOqXAaRAAvzrc
-	 +k4VQnx+xgndA==
-From: Markus Reichelt <lkt+2023@mareichelt.com>
-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6.16 00/14] 6.16.11-rc1 review
-Message-ID: <20251004083111.GA18723@pc21.mareichelt.com>
-Mail-Followup-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251003160352.713189598@linuxfoundation.org>
+	s=arc-20240116; t=1759566854; c=relaxed/simple;
+	bh=ewAScujQh6IO+nNyoKcQ1124xJn4eyXuYWjb3HxVNyI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=U7WnaBI1Ekls+E/XGTiaU8H8T95GV6D/cixn2rogD3Yqr+w+S8Ojcfn4FiSPVVqdHL1yPxtjusPML68oSwHGO93NWDf3RZRcwy150wHGPtirNNzpkjl3MzErv+W4H6966wDPuuiJ3MaolNIvRPoBtpQ98DDpf96zMaFVVk942PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SksNSPVp; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b55118e2d01so2109918a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 01:34:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759566852; x=1760171652; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:user-agent:references:mime-version
+         :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DNUXIAMIgyuQcbpSIlbWyb8Yr08Un31/NnbXWZYjsP0=;
+        b=SksNSPVp+5WQEnJ2UWC2Z0FOsEBGoOsImDoNqw+EFu0Gj5iRUnqnbjVuBYelmS2c0f
+         H23xqUExrHXDzJQn0sA/A1bhW4jpeTmpdKGeOyE6KtPwjcy2H3/2RB8mw6skA2e1zyzc
+         teU5EZ25mwovFgYjakFTRtswIpummiJR/Jdb/wT7YvOgJqMWuMgErdPe/sISlP54OEe9
+         VneXjiWpVkF0/GBByrm+NtgVM18cihpavTIkjVGYICYtYkQq6uSr9HXxi5H15beZvPHE
+         3IYs2DzAaECsSk6O97K39gQkBzxq9WpYLQ8QuWcGt+RDuCGV7IeKy8wTf/EGLC3Hxxtd
+         8dyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759566852; x=1760171652;
+        h=cc:to:from:subject:message-id:user-agent:references:mime-version
+         :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DNUXIAMIgyuQcbpSIlbWyb8Yr08Un31/NnbXWZYjsP0=;
+        b=ao2blQvXAl7Lo9nCY501IhH3N7GyIchrxkU83/wSbNYKcysCBsWvvCoE854XjraQ1e
+         1xuTWCTl8sD9E0UlL/gpn4peORTyIKx8hzEymwRB8q00AGgeBzYlKcWiiEC+WdAt5Tdn
+         9+snMGIb83cvL3AZJEqpMse1Ix271a0iEq0VxDkAK4KlcyeBgjZN+csSU2cjysbrcuKH
+         oXN2I2HUIHBgyI/wO2tMZceD5xwbhME0+304uvNEztqEz0DSaY8OVYfAMKMqWZI6diJv
+         +738e677pcx2UiaPHOIm+OqcFGW1HZmp0X+02mOZJHbmF64DLTA7xx4dpMm1s9id0aXN
+         zrMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXBWa2teslTCwdk0L1gPU8CN2d3Es5l9+RUi7iUY20+wzdQiARJwIiWE2zkIgXkc2GxfJ0DRZUGWaEq5J4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAudaipmkqWThDfdbeVdbEPnmVZ0xoljTDnaixk3o9cqZrny1r
+	KOz5JZrCeEHjl2Vy0/+hjiDoM3Y1nmIiLhBxUrxOcsqNvM1nhW/8evlVBMkfoW0K4Fflr0Lfpah
+	3eDw59KdLeQ==
+X-Google-Smtp-Source: AGHT+IG8WMGHaurimhri+gW5zRlp6uwHUCV2xHoW/prUeoq2RpfxaFVx0IibIcEVP1lg9S9cRSoC1Wbb2vOb
+X-Received: from pjzh5.prod.google.com ([2002:a17:90a:ea85:b0:32d:e264:a78e])
+ (user=ynaffit job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3ec6:b0:330:3fb8:3885
+ with SMTP id 98e67ed59e1d1-339c276e814mr6792475a91.18.1759566852200; Sat, 04
+ Oct 2025 01:34:12 -0700 (PDT)
+Date: Sat, 04 Oct 2025 01:34:10 -0700
+In-Reply-To: <20251003114555.413804-1-nirbhay.lkd@gmail.com> (Nirbhay Sharma's
+ message of "Fri, 3 Oct 2025 17:15:55 +0530")
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251003160352.713189598@linuxfoundation.org>
+Mime-Version: 1.0
+References: <20251003114555.413804-1-nirbhay.lkd@gmail.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Message-ID: <dbx87bxbvzel.fsf@ynaffit-andsys.c.googlers.com>
+Subject: Re: [PATCH] cgroup: Fix seqcount lockdep assertion in cgroup freezer
+From: Tiffany Yang <ynaffit@google.com>
+To: Nirbhay Sharma <nirbhay.lkd@gmail.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	"Michal =?utf-8?Q?Koutn=C3=BD?=" <mkoutny@suse.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
+	syzbot+27a2519eb4dad86d0156@syzkaller.appspotmail.com, 
+	skhan@linuxfoundation.org, david.hunter.linux@gmail.com, 
+	linux-kernel-mentees@lists.linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 
-* Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+Nirbhay Sharma <nirbhay.lkd@gmail.com> writes:
 
-> This is the start of the stable review cycle for the 6.16.11 release.
-> There are 14 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun, 05 Oct 2025 16:02:25 +0000.
-> Anything received after that time might be too late.
+> The commit afa3701c0e45 ("cgroup: cgroup.stat.local time accounting")
+> introduced a seqcount to track freeze timing but initialized it as a
+> plain seqcount_t using seqcount_init().
 
-Hi Greg
+> However, the write-side critical section in cgroup_do_freeze() holds
+> the css_set_lock spinlock while calling write_seqcount_begin(). On
+> PREEMPT_RT kernels, spinlocks do not disable preemption, causing the
+> lockdep assertion for a plain seqcount_t, which checks for preemption
+> being disabled, to fail.
 
-6.16.11-rc1 compiles on x86_64 (Xeon E5-1620 v2, Slackware64-15.0),
-and boots & runs on x86_64 (AMD Ryzen 5 7520U, Slackware64-current).
-No regressions observed.
+> This triggers the following warning:
+>    WARNING: CPU: 0 PID: 9692 at include/linux/seqlock.h:221
 
-Tested-by: Markus Reichelt <lkt+2023@mareichelt.com>
+> Fix this by changing the type to seqcount_spinlock_t and initializing
+> it with seqcount_spinlock_init() to associate css_set_lock with the
+> seqcount. This allows lockdep to correctly validate that the spinlock
+> is held during write operations, resolving the assertion failure on all
+> kernel configurations.
+
+> Reported-by: syzbot+27a2519eb4dad86d0156@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=27a2519eb4dad86d0156
+> Fixes: afa3701c0e45 ("cgroup: cgroup.stat.local time accounting")
+> Signed-off-by: Nirbhay Sharma <nirbhay.lkd@gmail.com>
+> ---
+>   include/linux/cgroup-defs.h | 2 +-
+>   kernel/cgroup/cgroup.c      | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+
+> diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+> index 539c64eeef38..933c4487a846 100644
+> --- a/include/linux/cgroup-defs.h
+> +++ b/include/linux/cgroup-defs.h
+> @@ -435,7 +435,7 @@ struct cgroup_freezer_state {
+>   	int nr_frozen_tasks;
+
+>   	/* Freeze time data consistency protection */
+> -	seqcount_t freeze_seq;
+> +	seqcount_spinlock_t freeze_seq;
+
+>   	/*
+>   	 * Most recent time the cgroup was requested to freeze.
+> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+> index ab096b884bbc..fe175326b155 100644
+> --- a/kernel/cgroup/cgroup.c
+> +++ b/kernel/cgroup/cgroup.c
+> @@ -5789,7 +5789,7 @@ static struct cgroup *cgroup_create(struct cgroup  
+> *parent, const char *name,
+>   	 * if the parent has to be frozen, the child has too.
+>   	 */
+>   	cgrp->freezer.e_freeze = parent->freezer.e_freeze;
+> -	seqcount_init(&cgrp->freezer.freeze_seq);
+> +	seqcount_spinlock_init(&cgrp->freezer.freeze_seq, &css_set_lock);
+>   	if (cgrp->freezer.e_freeze) {
+>   		/*
+>   		 * Set the CGRP_FREEZE flag, so when a process will be
+
+Thanks for this fix, Nirbhay!
+
+-- 
+Tiffany Y. Yang
 
