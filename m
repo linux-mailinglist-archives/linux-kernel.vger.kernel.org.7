@@ -1,165 +1,201 @@
-Return-Path: <linux-kernel+bounces-842048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34513BB8D87
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 15:08:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E22C4BB8D90
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 15:10:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 20FC54E470C
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 13:08:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C1DF19C072E
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 13:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569652741DA;
-	Sat,  4 Oct 2025 13:08:36 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE29127280E
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 13:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759583315; cv=none; b=J+J9yfMdPWkEFl+FxkyvYDDC1+871oIa1AdQpSMG/x6rFSFRMdmf5oQN4MS+Z294DUsluDo3DIBWUToco005ChunO9ZsJipeorU7V7UwlfySH/vkbfveql4xIlRRkQqNeURIo+o8I75w6uUjjj8SAg/T+9drIl+dWOr6T8FQyCM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759583315; c=relaxed/simple;
-	bh=wDOJwHwrpUmQAe63c8qTnUw5LSwKIclt3+G7slOaYLE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tAgN9BFORoQq72j8S4x9U2AQyq/unRaJGDSLLxJOk0J0Stfe/32t0Wbxq3IBs5I8vhrZ1MuNV3Lg7LtHgkQhhlyrJdUSCx8hU1116kdh4IMowzDmAW2qLev7s7cAHYcbkupB2RO2svTCpntCrXSkolFdJ5Ei2WxmSqU4UMVgo1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF89C153B;
-	Sat,  4 Oct 2025 06:08:23 -0700 (PDT)
-Received: from [10.163.66.97] (unknown [10.163.66.97])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 800663F66E;
-	Sat,  4 Oct 2025 06:08:29 -0700 (PDT)
-Message-ID: <766f5a8a-851f-4178-8931-5355472d5558@arm.com>
-Date: Sat, 4 Oct 2025 18:38:25 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA12276059;
+	Sat,  4 Oct 2025 13:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qA1Di1BS"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010059.outbound.protection.outlook.com [52.101.61.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959DA3207;
+	Sat,  4 Oct 2025 13:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759583396; cv=fail; b=IVTeNPWw5yjakwvBeGBESwQBVxr5zP9UK76dA46CUpo/1B+UQ1nWpK3nadTM0DPqZ9lAIV8j96un01hT1andiO4BYW1vEkIcG93iy8XOMIk8UrZmh8TPtXuZwmJBpWKZgEt4s2iwzLP9rTy/TnObwvxW84bL2OwBdciOZb/AQtw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759583396; c=relaxed/simple;
+	bh=hS9TTv/ThO7grY1UcHojDKcjWoTFrVVKaYzjlEYW7hA=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=UEI9e+2jKXJTMj2jpXiZV7RQjJUnKDqdPMjk6tbGQtPJyQoWZcnHT/WBbD+1aAa2cuaUvOIMXpHFYRHQLlQbZGzzcfFnaGzRwaY3BffquWLaungc3v92dlnHPMZOc4et7OHLyH68AWDSPI+DE2cxVJ2BrBOudtStLH5wQh5IslM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qA1Di1BS; arc=fail smtp.client-ip=52.101.61.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yICr6rXvgFQSJe0l6E1D+6FW4Qwg7Zn4mHKT4qOl4t4tRcZa4+GE7Sq/+ccfGTtrTE2ZVNFRgAw38W4xmohMRLxb7GzRmmjQ1PkP3poM5JhzrxeRTzT8GuJwYHf/X4uRPC8/dNRiJmssEIvDoqzGR1CHhTLs76GHF1rxFgvjDxpIA1W0+jBhfPCNCwujZHIX62ZZaL/d9lwLstIZJtmTimhAgmzG8bbGIITYKfGgLiY2UapIg+KNq/gZt50nzKztJY7VfNohHm8FjTy+YrIlMp5bcpM7Sp21RgdT3E1YPj/E1BMmSXDFHKm2DZJhM6J97rgq44A/Plks4l2YPdwVhg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oQCS4Uc9bh/xMpNDiopngMShjMlqK9Qk/r3G7vaxcJg=;
+ b=E8ToA4/p1ie7qAsFbA69mYWAu+8CPpg+j83aFqk27DXUA+cBHZyI51hYJx5QNEsVOKmCkIm6bpnZnrf9ZKD39s9owGGgNhQ4x4yxCUwbdGLi+eNR1sB/RmBIcEtQI4aLP2amkeN50xeUM9VP56HClu3u+YjneU9MxqCMjF8PSGwKfa/zNLTjGFkDDK2+fowQVYZqYDjxy+rU/8miHWYZ8shn1xhKF6gSRM1JoJYFQq7SiWkv63+4DlkOyCAvMVC2kw0FaHeScBcw92ZMEsHmu5t6ZtpslDFdesbepWcMGC2a+a+6uiK2x6ApGbpaLb6yOIMbqnJBZT66/RP7J+bMcg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oQCS4Uc9bh/xMpNDiopngMShjMlqK9Qk/r3G7vaxcJg=;
+ b=qA1Di1BSGe/9fZEcS1sejD+LlM2G0EjHXO3zwrdXPL/KNKnyCEhpkMGhpTTfgZ0r+v2yQ8nK3tMDt3k32ryiCTjVFQRsMNwKP2ZMysGQxsD4QDf1mNbf4WMpacQnQeqwfOV7q2zv+BrfbkpwOj4tFPGkCnlofGEgPjOmIrpTPSsQEGzngKLGkhJK6hFjIwFjMw9+BX0tk4LZfCqE9juIJAhDZeC2p7kPf+AC1K2vOIL6Rea3A5v0OhjEA2EfSwNox6TyPsfbF1u2+2mpwq9AOLCamNqiP/NA+QWDx+CboA2SV04g4VJif2rPCI29NGoFgGYGT4xoDSNdeP0iii5bYA==
+Received: from BN9PR03CA0187.namprd03.prod.outlook.com (2603:10b6:408:f9::12)
+ by IA1PR12MB6433.namprd12.prod.outlook.com (2603:10b6:208:3af::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Sat, 4 Oct
+ 2025 13:09:47 +0000
+Received: from BL6PEPF0001AB56.namprd02.prod.outlook.com
+ (2603:10b6:408:f9:cafe::f0) by BN9PR03CA0187.outlook.office365.com
+ (2603:10b6:408:f9::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.16 via Frontend Transport; Sat,
+ 4 Oct 2025 13:09:47 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BL6PEPF0001AB56.mail.protection.outlook.com (10.167.241.8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9182.15 via Frontend Transport; Sat, 4 Oct 2025 13:09:47 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sat, 4 Oct
+ 2025 06:09:44 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sat, 4 Oct
+ 2025 06:09:44 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Sat, 4 Oct 2025 06:09:43 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <rwarsow@gmx.de>,
+	<conor@kernel.org>, <hargar@microsoft.com>, <broonie@kernel.org>,
+	<achill@achill.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.17 00/15] 6.17.1-rc1 review
+In-Reply-To: <20251003160359.831046052@linuxfoundation.org>
+References: <20251003160359.831046052@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: readahead: make thp readahead conditional to
- mmap_miss logic
-To: Roman Gushchin <roman.gushchin@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>, Jan Kara <jack@suse.cz>,
- linux-mm@kvack.org
-References: <20250930054815.132075-1-roman.gushchin@linux.dev>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <20250930054815.132075-1-roman.gushchin@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Message-ID: <be0f2c58-3b18-4db5-9c1d-eaa1ec9955f4@rnnvmail205.nvidia.com>
+Date: Sat, 4 Oct 2025 06:09:43 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB56:EE_|IA1PR12MB6433:EE_
+X-MS-Office365-Filtering-Correlation-Id: 18824e32-8260-45bb-05a9-08de03474b62
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700013|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NDB4dHVFR1YvbDFvQm1qYWhxSWFST2VzWVhaMms2cDYyZEQ4M3pGUXJGY25I?=
+ =?utf-8?B?YzZkaDVocmx0SG1rREtDVGp0Vm40QkN2Ymg0NXlxdGNmcTlxb2ozV3pjckpw?=
+ =?utf-8?B?SG1RUERvMTg0a3VtOFh5OG85d0R0SDFyUmU4dzduSDVGY3k5VGRuN2dqNUFo?=
+ =?utf-8?B?MDJodTdFQmhCUkxvTWF6S0c1bzd1TytsZnJTMTNEQ3NEWm42cTRkclBFMWtX?=
+ =?utf-8?B?QSsrcFh3MW1VRENuOUp5SWlZMkN3SmZGajJHdTZJd1l6eVNERnFiZWZwWndl?=
+ =?utf-8?B?NVJmMGNpcGh0T2h5R2dXOFRmMmFjempvN2wwL1ZjNUNMOTZwTDVTaUFRcGVJ?=
+ =?utf-8?B?Ly9OWkdwQTdOWUZVZkZlOVduUkZDQnFVMkVQK05YYVZDNXROaC94WUgwUkk2?=
+ =?utf-8?B?cmZxdDQ0eVpLYWZlTHgxbUppaHBQVWEzQ0ZMQXo5aEpnRTB6ZVhpRGlUb2cw?=
+ =?utf-8?B?WmFDMTVXM1Nxb3oxY0pSVlZkMHhaZS9PM3lZYXJwc3FSZzBHQk5yNURKR2ta?=
+ =?utf-8?B?UFRPbFBadHR6ZUxyTHJCOVFIdktqb1JXaVlsNldBZmFhaDNEc0hFUWVVVkk3?=
+ =?utf-8?B?dUQ1V0d4SWIxWkY2eS9PRlc2b0cwWDVxRkFwVlM1dHlmbXBBc2lzWFoyWk1P?=
+ =?utf-8?B?K1NMSVlHSW9aRHpLNk51YTQ4V09sV1EyYjZ5S2pDYjIwV1BsWCtCUHQ5aTRz?=
+ =?utf-8?B?dGxVZVh4NjA4ZXl0RHJwRHF1WUwxL1d0QW0zM0VwdDM0SWRTMmdZTlovUG1r?=
+ =?utf-8?B?dmVGQUgxL1dDaVMvOXJqeVRISUh3K3hJZnY5YzJxK1YwNUxzYm9vMVNvQzV3?=
+ =?utf-8?B?TUxWcklRS3VORGQ2SzJ1OUhiRm9LUEFuME00L1UwQXpsWEVHVTdoR0RoMVRv?=
+ =?utf-8?B?RXVqT1p1NFp3UTJSeTI5QW5hR3dtcE14emxzQjVRSVc4SE1Dc0QwKzRDTVNz?=
+ =?utf-8?B?V0JLbzBWTjdxdkUySTZrU0lTTCtDTDg2WlFHZUpKTkdRTk5sd3g0azNGRGdq?=
+ =?utf-8?B?WVZWT3J2TlY0VHZ6SFFRYUZxcUVzZzVDM2tkV1hXKzd4WFF3ZzU2eWVGNkIy?=
+ =?utf-8?B?UDJFRjhQQzY4ZVpXK1Vhbk5xNTJKTGFCRjlJS0txTkZRZVFsbXhTb0oxZ2NB?=
+ =?utf-8?B?blF5alRvTTZ2cTlGU3BsdzE1YWtrMUtDdWxTVCt0Ymt2dFBGNU8zV1k4UDY4?=
+ =?utf-8?B?VEpET2w3bW1YeXFpVThaZ0JhSHNkL0tMNXFEU3R1aEcxQlZYUU45YWNES2VW?=
+ =?utf-8?B?Y0wwVUxOUFh5ckREV0JDbFozWHhPUmJNaU5CWGw3VVJGRjNxOE8yWHc1ZGM2?=
+ =?utf-8?B?WFAyYkJIdjhlY0FPVkRwRHJKUVhPZnJpWGlhc0FoUU5vWmpVN25Bdm9TV3RC?=
+ =?utf-8?B?OWVSSDVHajhGcTRnRCtKSDhWV09rSjI1T2hINk9JWnNkTXhHcTVSaTZlbnd3?=
+ =?utf-8?B?WlpoMjNoa09xZHR2UklpL1g0Z2xTelFYbjhoZGxIOVd5REFUaGVxeGd5N0xz?=
+ =?utf-8?B?YlVGVnEzVWpuQkhoWnRxVDRIRzJaRm5OdVJ5ZnFndS8vcFJ5c3BIMU9MQUkv?=
+ =?utf-8?B?dnJnTXIzR2U4ZVMxakpUTDdUeVMxRUprcEEvdVdscUtURFhjc280b3oxYmhJ?=
+ =?utf-8?B?dEZ4RHVVVnk4bWRlR0F1K2FPeUwrVDluYlNNWXJVSWpEazhXeGs4bVBNMWQ1?=
+ =?utf-8?B?Tkg5bHRnSWRMNEtYSVJNOXBVZE1RRDFwcGRKeTdUVTZOOHJRMzJKUjBweE9Y?=
+ =?utf-8?B?SUpGU29weW92S3FlYUdoVWVMdnNvL0ZqSWNtN2R2L1h3Z0QyZUpDbkZXcXhv?=
+ =?utf-8?B?MEFpYlNJRFpJL3FiSU1qVFZzS3pzVzRaOHBTZ1pwQVhrOWhQcW9BaXdMVTdQ?=
+ =?utf-8?B?czhhYkFEZWVoRlpOaEpSZVVtY09kaVF4WXFiemVVLzFwdHRYR3VUUm1MTXRx?=
+ =?utf-8?B?eFFOSDJzZjgyMlVWOStPaU9OaDVZS2MwTVIybmpjMkNkTWNyVmx4d2kxVHR5?=
+ =?utf-8?B?SGpaa0tDY2pBTHJPcVN1VXllMTlOY1NyNElBcWZTZW5RRXlNUGx3eU9qRHdi?=
+ =?utf-8?B?NWMyUnZ1bzU4NUxCMSs4RWtTaGR0MThnNEdzT3FYTlJmZCtKNUppWWdnNGF6?=
+ =?utf-8?Q?CC7c=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700013)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2025 13:09:47.3726
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 18824e32-8260-45bb-05a9-08de03474b62
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB56.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6433
 
+On Fri, 03 Oct 2025 18:05:24 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.17.1 release.
+> There are 15 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun, 05 Oct 2025 16:02:25 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.17.1-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.17.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-On 30/09/25 11:18 am, Roman Gushchin wrote:
-> Commit 4687fdbb805a ("mm/filemap: Support VM_HUGEPAGE for file mappings")
-> introduced a special handling for VM_HUGEPAGE mappings: even if the
-> readahead is disabled, 1 or 2 HPAGE_PMD_ORDER pages are
-> allocated.
->
-> This change causes a significant regression for containers with a
-> tight memory.max limit, if VM_HUGEPAGE is widely used. Prior to this
-> commit, mmap_miss logic would eventually lead to the readahead
-> disablement, effectively reducing the memory pressure in the
-> cgroup. With this change the kernel is trying to allocate 1-2 huge
-> pages for each fault, no matter if these pages are used or not
-> before being evicted, increasing the memory pressure multi-fold.
->
-> To fix the regression, let's make the new VM_HUGEPAGE conditional
-> to the mmap_miss check, but keep independent from the ra->ra_pages.
-> This way the main intention of commit 4687fdbb805a ("mm/filemap:
-> Support VM_HUGEPAGE for file mappings") stays intact, but the
-> regression is resolved.
->
-> The logic behind this changes is simple: even if a user explicitly
-> requests using huge pages to back the file mapping (using VM_HUGEPAGE
-> flag), under a very strong memory pressure it's better to fall back
-> to ordinary pages.
->
-> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
-> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: linux-mm@kvack.org
-> ---
->   mm/filemap.c | 40 +++++++++++++++++++++-------------------
->   1 file changed, 21 insertions(+), 19 deletions(-)
->
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index a52dd38d2b4a..b67d7981fafb 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -3235,34 +3235,20 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
->   	DEFINE_READAHEAD(ractl, file, ra, mapping, vmf->pgoff);
->   	struct file *fpin = NULL;
->   	vm_flags_t vm_flags = vmf->vma->vm_flags;
-> +	bool force_thp_readahead = false;
->   	unsigned short mmap_miss;
->   
-> -#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->   	/* Use the readahead code, even if readahead is disabled */
-> -	if ((vm_flags & VM_HUGEPAGE) && HPAGE_PMD_ORDER <= MAX_PAGECACHE_ORDER) {
-> -		fpin = maybe_unlock_mmap_for_io(vmf, fpin);
-> -		ractl._index &= ~((unsigned long)HPAGE_PMD_NR - 1);
-> -		ra->size = HPAGE_PMD_NR;
-> -		/*
-> -		 * Fetch two PMD folios, so we get the chance to actually
-> -		 * readahead, unless we've been told not to.
-> -		 */
-> -		if (!(vm_flags & VM_RAND_READ))
-> -			ra->size *= 2;
-> -		ra->async_size = HPAGE_PMD_NR;
-> -		ra->order = HPAGE_PMD_ORDER;
-> -		page_cache_ra_order(&ractl, ra);
-> -		return fpin;
-> -	}
-> -#endif
-> -
-> +	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
-> +	    (vm_flags & VM_HUGEPAGE) && HPAGE_PMD_ORDER <= MAX_PAGECACHE_ORDER)
-> +		force_thp_readahead = true;
->   	/*
->   	 * If we don't want any read-ahead, don't bother. VM_EXEC case below is
->   	 * already intended for random access.
->   	 */
->   	if ((vm_flags & (VM_RAND_READ | VM_EXEC)) == VM_RAND_READ)
->   		return fpin;
-> -	if (!ra->ra_pages)
-> +	if (!ra->ra_pages && !force_thp_readahead)
->   		return fpin;
->   
->   	if (vm_flags & VM_SEQ_READ) {
-> @@ -3283,6 +3269,22 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
->   	if (mmap_miss > MMAP_LOTSAMISS)
->   		return fpin;
->   
+All tests passing for Tegra ...
 
-You have moved the PMD-THP logic below the VM_SEQ_READ check, is that intentional?
-So VMAs on which sequential read is expected will now use the common readahead algorithm,
-instead of always benefitting from reduced TLB pressure through PMD mapping, if my understanding
-is correct?
+Test results for stable-v6.17:
+    10 builds:	10 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    120 tests:	120 pass, 0 fail
 
-> +	if (force_thp_readahead) {
-> +		fpin = maybe_unlock_mmap_for_io(vmf, fpin);
-> +		ractl._index &= ~((unsigned long)HPAGE_PMD_NR - 1);
-> +		ra->size = HPAGE_PMD_NR;
-> +		/*
-> +		 * Fetch two PMD folios, so we get the chance to actually
-> +		 * readahead, unless we've been told not to.
-> +		 */
-> +		if (!(vm_flags & VM_RAND_READ))
-> +			ra->size *= 2;
-> +		ra->async_size = HPAGE_PMD_NR;
-> +		ra->order = HPAGE_PMD_ORDER;
-> +		page_cache_ra_order(&ractl, ra);
-> +		return fpin;
-> +	}
-> +
->   	if (vm_flags & VM_EXEC) {
->   		/*
->   		 * Allow arch to request a preferred minimum folio order for
+Linux version:	6.17.1-rc1-ge7da5b86b53d
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
+                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
 
