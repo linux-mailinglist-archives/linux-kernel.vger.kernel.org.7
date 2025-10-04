@@ -1,244 +1,115 @@
-Return-Path: <linux-kernel+bounces-842036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00848BB8D1D
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 14:14:05 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF4A4BB8D36
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 14:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A96CB3C48DB
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 12:14:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 106824E46B8
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 12:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1E126A1B9;
-	Sat,  4 Oct 2025 12:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9A72737E4;
+	Sat,  4 Oct 2025 12:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b0jTYyUe"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pIT0QsS8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750BA2356C7
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 12:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2F220B7EE;
+	Sat,  4 Oct 2025 12:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759580039; cv=none; b=WdYa+QL0fvWhLI+PJZBKkxaChgn+aRyw7r7TTNHUosQaOqRGL4iGXt8DAG2Qw6EcfJsnQim/4u6GbN7x86C1OI7tJUjBs36IIM7xBeJbGmPcn+aJ+8qJPL8ZgLsNOX6GLfvTXEY/2H8LVGVhxRJKzo4YNfOe7hI0yoe+AN+rMfs=
+	t=1759580947; cv=none; b=F93d6pGCBLPCOYZny4YGPpXMpm8Xdp27G16jgFcxsIxUwM6MVWomb7M420sNRI6dp9JhOC7y+N20Dtn4vAK5GJpjyuzUlPwIYCjCAeyXNnoSnBuQ8p+3AfZmi8vVSPU32e29yQXLd/cQJXf4JZUAXobGRCfDpRZkZGIb9Q/sDTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759580039; c=relaxed/simple;
-	bh=XQxVEshz28IKhO0p+ZQMpTW7xOSwxxB1o6rEgJHFH6w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ti8L9W4EN07XfUiqjKuKcu9LuiZQ8hxx2BLIDeDlxqVxYqJhSCCHF0oBu4ea+h2KXgCxmmsjpFqlE4mgj7wOi/EY2i/h/2ByWQIGHVkd8lQziPtQDeBayt59wtd9rTPr4rsVcVomzj/BgMI1CpgXua1xPaKH0CeQPTK6fhhsVq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b0jTYyUe; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b555ab7fabaso3158198a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 05:13:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759580037; x=1760184837; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dhEvWiXk60BQY92FOylfO8eNaNBD8kDsdejX07MfHU4=;
-        b=b0jTYyUehc5p9Goc69Tk1KLVN3AxyI+foDJpG5YEimdlQDF9bCH1exIjaQ1g4wk/lc
-         aniFcu3lT8msm9ivR3jDeI5DmkTMQStg75qumuFY7s3h4CUTlM4wFTk1w7HU3egqllL7
-         9wpN4+D9L+jsEwqnNC0Ubp0hV/fpv7gQYaNiJqcSYUiQ+aO1dw0odky5TuakJCSGzkIG
-         vCizreFc0jn4mQOP7jCPOIq1GxNWucXoUFtmL7NghZZTlO4q8c6BpHtzk1ZmwmSrnHw0
-         E4TBKU4VJ5n7+o5G90HQq2/oIXhCL4quXMu/20b7E1dOaz8Kqgp643/s/NaqS5rRFR95
-         CWSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759580037; x=1760184837;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dhEvWiXk60BQY92FOylfO8eNaNBD8kDsdejX07MfHU4=;
-        b=dmC/83R9f7MrxnsILhK7wHNUWj0/J2gPsEEjZWkCnJ52PYvTDNHOxoH/y2hzn8VuXw
-         bFJeVOb5USf8fxQIn9IkfUmlRI6G53cAJlCj6shA2o/GmgSclykb5q1FxMBEZfCWCUlJ
-         gHDz+kG0aTs2f6vTOh30om6ceFPp1ODPVvOsQ+/MK+J5ncv7rlgzXWsw2M44XDYxOyRK
-         2iq/AZiFuBwO5cpCfrxrNkpJhYHmWyi+hCv5WtG33aaEtyoNAyIgGovvoZpWdebXCyIA
-         JWQGd5hzPw8nZNaZUou2f5krhpKaNCXiq0l7DdBpe803tTzdk8xpHbPs2y0ngt67Ksjz
-         tz5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWJ2DBwJ9kwC6PigEOkXog56An6nAyj1zazMhsXlt69RQQOS0o6DZyIpQEYr/Rnliml03f1M9ojS8aqYL8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8agOhtpAMUFQEi4GuYkf7u7chgbwRlAQZW4LOfkxPk7O9KOdx
-	3fDBUNVF+R1t6o/T2axiOg/bpeHEoSzlfig3aTFUYm12MfPWH3PnqIC1ENIeAVP/dwsmwt0iZxz
-	DrOCF+Yn0x+XOlCN6bLPlF2V3SFxot3mcM0hjZy583A==
-X-Gm-Gg: ASbGncsd63fyLlbZibd+lej8AxL5b7IrpKnB3tag6K9HUve70kSDk0K9+kB98ibPJx2
-	lfN225I9civmaV3osnXHqYnZmpckJrARUT9u5TfVkGnatKrfsim+0gJE4+Y6prlhySOLTYzEFIW
-	pSCVAbFbw1NfIhjFubNRrGEFQrE6rRSDnJJj77rAFHbpb7LV0OGEYVK8G6oNjdzhqz4Aa3rtJj/
-	3INdPxFZgGa2SMzqL5dxreo8kWhvo8shFGZvnr2UeHTX1BxMQ7y6AmX82yw+zu8hwh60ShiYDQf
-	9u0jOGQDNmyTLfyYDSKKONM6Y1U/M00kDVs=
-X-Google-Smtp-Source: AGHT+IE9EcSqKs9pW7HpnTAx+2XrLnXQii3siZ9Bu3lX8wr5mdTW4z/DbBU7rWeDupsrW/IY1PfSanz3+PPWrpWVzrM=
-X-Received: by 2002:a17:903:234b:b0:275:1833:96e5 with SMTP id
- d9443c01a7336-28e9a5beed8mr79039585ad.24.1759580036770; Sat, 04 Oct 2025
- 05:13:56 -0700 (PDT)
+	s=arc-20240116; t=1759580947; c=relaxed/simple;
+	bh=9Uqa4igeOXRbdC7N4zAS26I7Y+Q/wNuxNUGVmWyzUog=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=suI2t1RqMjUzoHu9wy00hxAntVE4ydT7E4AlnsAmJT8YRgMkQBa+1YYQcALH+cirFlPXDZhyLK+uIvxF1Mk6kGwfS5aMkmAwkl5yN/E4TpIfiOHL/QA8DTTWndHtmCLcblJ9tO2w8QFZ0rduIk8flaEun9DoRixkzqOUNhzcEqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pIT0QsS8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91DF1C4CEF1;
+	Sat,  4 Oct 2025 12:29:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759580946;
+	bh=9Uqa4igeOXRbdC7N4zAS26I7Y+Q/wNuxNUGVmWyzUog=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pIT0QsS8AI1KnvbRzmlwubSwAl6HVxbQHkhgw6BKT0s+5yrfP+jg/+q1bDY6+2zLC
+	 mBziejwTvyNcqOVgeIYugczSClL8f5chu8rWBx58GjBuvIYPNdhBWtpnsYl7hliD7w
+	 4SSS4SkM3oe+LXmIH2OHiFRsOaF8v8hi9GLDvyNeB1mKlHJPSIuYtJ0XobS1Cdv8c3
+	 PTOOwUcWgvEQuFCICXLJv0CIxb8MY2mTyrrI7vsPULYqmOoGrlVmR/ldcOtbLF5I9r
+	 dwtY+sq9E2UZYWAILuzfKCYitBNDYhcnpbIQ+IlWQem+XfFBCIqTNpsi8/4D6ugOXg
+	 Ib5MNRJaML73g==
+Date: Sat, 4 Oct 2025 15:29:03 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Shahriyar Jalayeri <shahriyar@posteo.de>
+Cc: peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: infineon: add bounds check in tpm_inf_recv
+Message-ID: <aOETD4GrSrQGkIAx@kernel.org>
+References: <20251003092544.12118-1-shahriyar@posteo.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251003160338.463688162@linuxfoundation.org>
-In-Reply-To: <20251003160338.463688162@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Sat, 4 Oct 2025 17:43:45 +0530
-X-Gm-Features: AS18NWDKQHmwVr2XeBE_n915Zz4jcEjLc8nkYxw_IvMT8WzsEY2RMYkVEVebbNo
-Message-ID: <CA+G9fYsjU1tMnt3E055cBCzA_wk3H7LHa=Qy5Kat05xAJFgD2w@mail.gmail.com>
-Subject: Re: [PATCH 6.12 00/10] 6.12.51-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
-	achill@achill.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251003092544.12118-1-shahriyar@posteo.de>
 
-On Fri, 3 Oct 2025 at 21:38, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Fri, Oct 03, 2025 at 09:25:47AM +0000, Shahriyar Jalayeri wrote:
+> Ensure tpm_inf_recv() does not overflow the provided buffer when
+> the TPM reports more data than the caller expects.
+> 
+> Signed-off-by: Shahriyar Jalayeri <shahriyar@posteo.de>
+
+missing:
+
+Fixes: ebb81fdb3dd0 ("[PATCH] tpm: Support for Infineon TPM")
+
+> ---
+>  drivers/char/tpm/tpm_infineon.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/drivers/char/tpm/tpm_infineon.c b/drivers/char/tpm/tpm_infineon.c
+> index 7638b65b8..eb6dd55ff 100644
+> --- a/drivers/char/tpm/tpm_infineon.c
+> +++ b/drivers/char/tpm/tpm_infineon.c
+> @@ -250,6 +250,12 @@ static int tpm_inf_recv(struct tpm_chip *chip, u8 * buf, size_t count)
+>  	number_of_wtx = 0;
+>  
+>  recv_begin:
+> +	if (count < 4) {
+> +		dev_err(&chip->dev,
+> +			"count less than the header size!\n");
+> +		return -EIO;
+> +	}
+
+Please remove dev_err() 
+
+> +
+>  	/* start receiving header */
+>  	for (i = 0; i < 4; i++) {
+>  		ret = wait(chip, STAT_RDA);
+> @@ -268,6 +274,12 @@ static int tpm_inf_recv(struct tpm_chip *chip, u8 * buf, size_t count)
+>  		/* size of the data received */
+>  		size = ((buf[2] << 8) | buf[3]);
+>  
+> +		if (size > count) {
+> +			dev_err(&chip->dev,
+> +				"Buffer too small for incoming data!\n");
+> +			return -EIO;
+> +		}
+
+
+Ditto
 >
-> This is the start of the stable review cycle for the 6.12.51 release.
-> There are 10 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 05 Oct 2025 16:02:25 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.12.51-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.12.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+>  		for (i = 0; i < size; i++) {
+>  			wait(chip, STAT_RDA);
+>  			buf[i] = tpm_data_in(RDFIFO);
+> -- 
+> 2.43.0
 
-
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
-
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build
-* kernel: 6.12.51-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 791ab27b9c005e9996ed4ff5785a84890ea86f8b
-* git describe: v6.12.50-11-g791ab27b9c00
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.12.y/build/v6.12=
-.50-11-g791ab27b9c00
-
-## Test Regressions (compared to v6.12.49-90-g8e6ad214c7b3)
-
-## Metric Regressions (compared to v6.12.49-90-g8e6ad214c7b3)
-
-## Test Fixes (compared to v6.12.49-90-g8e6ad214c7b3)
-
-## Metric Fixes (compared to v6.12.49-90-g8e6ad214c7b3)
-
-## Test result summary
-total: 156220, pass: 132956, fail: 4989, skip: 17711, xfail: 564
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 139 total, 137 passed, 2 failed
-* arm64: 57 total, 51 passed, 6 failed
-* i386: 18 total, 18 passed, 0 failed
-* mips: 34 total, 33 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 40 total, 39 passed, 1 failed
-* riscv: 25 total, 24 passed, 1 failed
-* s390: 22 total, 21 passed, 1 failed
-* sh: 5 total, 5 passed, 0 failed
-* sparc: 4 total, 3 passed, 1 failed
-* x86_64: 49 total, 46 passed, 3 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* lava
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-* rt-tests-cyclicdeadline
-* rt-tests-pi-stress
-* rt-tests-pmqtest
-* rt-tests-rt-migrate-test
-* rt-tests-signaltest
-
---
-Linaro LKFT
-https://lkft.linaro.org
+BR, Jarkko
 
