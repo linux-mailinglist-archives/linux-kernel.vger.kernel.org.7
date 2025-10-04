@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-842192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C895BB92E9
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 01:50:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B62CBB92FB
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 01:51:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18FF03BDAD3
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 23:50:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6A171883535
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 23:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB55D255E40;
-	Sat,  4 Oct 2025 23:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B126F24A074;
+	Sat,  4 Oct 2025 23:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FPemoOJA"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EtOYVSxY"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6293E254B18
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 23:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6946D2571DA
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 23:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759621836; cv=none; b=LMrqHK1kE2TB1w/Gjpv0Yq+n2M0tpKCmMHWNa+LP3y4+tzTihcXos3bQY5b+/R+OB5KblwryjU4j5VzBAnYd34JHUA6MZ1jOJQCWU33woNMaV7j3khGvGkED8+B9Cro8y2koI+nqo2+Myz+vvNh6ms9POtsueAgyqGJkZS+o0w8=
+	t=1759621840; cv=none; b=bEPvak5e/i8F4SL4BL8fP4jiqj5+fs8Di88i9LeEgUWUKq3XpgJ+KANn5yUpbmGgVkwwjC34qLrdaLJYI7DAi8xJdDuQiNk/PppvovRUlSlARu3xiRw9p4oVo8heBsos5L+oVV4u7CD6jHo+T8S4Z2Aa3J2/4uY0upBR5p7FxXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759621836; c=relaxed/simple;
-	bh=z2ogZjxuTKMpoCR+MQb93w82gXJuW+Rka1YSqoLx4LI=;
+	s=arc-20240116; t=1759621840; c=relaxed/simple;
+	bh=MWAW5VhfWlORCG3RklRaoqfXc6Pl+r6/x4eDwg+XNP8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IvYmesS04L5IVuUGF+y/j0GEcMb6aoGIz3wys/aAljd77yqwIXen8KGNnm5N68Z40fq7FfECk/gqGT08bG0vnVZwNz9zTRukv/EOsHNttUY3gE8CpTvbL5mW3zGeeKiTanMH1Vzjm4a5UaVYVDGrriR1nNnXtPmG3CdFDTv/rTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FPemoOJA; arc=none smtp.client-ip=209.85.219.49
+	 MIME-Version; b=ERts/TzC3gGbqJXX7J8l9dkwce35Ei2SKdNIY8G3UJEtq4MTPaCESOUsDMt0es6h2ct9upRe4qlpczHpHTZ4rprlDRoKBLGlYieh9lXdyIBxDT2A2Vuau03Dl80ltkRuzwQT+OMxhWvnPY2whW5Y+hRhEg3G+KOG1M30gIcIAcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EtOYVSxY; arc=none smtp.client-ip=209.85.219.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-796d68804a0so44737906d6.3
-        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 16:50:34 -0700 (PDT)
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-78e9f48da30so32557446d6.1
+        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 16:50:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759621833; x=1760226633; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759621837; x=1760226637; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0ZrEnyLevXoIcXltBXj1n0pXN58lCz/lcC/iI5a2jGg=;
-        b=FPemoOJAyHihAj7y/qFgGq20d3xX6mgGMln21Jd3Qp0yV+wgtHI4M2DR1/2AsAPLbm
-         hFMsBpLNXg01/z5srVi2CFWrhu3lNOLPI54yGb0yUMqP10IqjFFPIMYfx4EX5suLrcRs
-         YkUQpOWmrn9toPbYvwuIavPJVuXtXpMAAgjwtEAtivi3sS/xdLMZb9XBFxQ4pxEHtfhZ
-         eU2tptPMhKoSg/G6UiZaM17FuKKd9VWisXtUHfqoVScn09R4hGqUIEw4RErCNV/x+4MT
-         1QG72udVg+yUC27R2D+weDAE1tbSXbQigXpVOCHH1jIyUwoDTMb7S9TfAGaYiVk/SFhS
-         uiog==
+        bh=LKpSd7nKkEP6TPwK8huS4lw5ZBZ0Awry5aiCZmFREXY=;
+        b=EtOYVSxYUr2vLD1TGDyUpImsjKjaYvueya6SSME6tbh6GNx3Bj2qNTe7oYT2iY2Pic
+         ESbNklCrshBqAzZVvkGVlcmA34OUAlKNXOoivVzDn/PnsUmGkJIKtC+z3bN7UoTsdIwe
+         gM4VUWqEPeRPUZPTI0RQqUxRqiWltTTI+uuxbAQyZGbZ2OXROt4U/zrOzGHtn0ZUTsAI
+         PYtgl7TjcMDz+63X3ftjfX2y7P4nJibIihlOh2sNmL1j2YtGB+B8CmOf5/YK9Mhns6MS
+         Icuh/hDWaWCneYQz21oZJMk/fYWB3VRs9ir0GvefKarQUIFKDEHH/m6IUth02rCkvoxm
+         NY/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759621833; x=1760226633;
+        d=1e100.net; s=20230601; t=1759621837; x=1760226637;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0ZrEnyLevXoIcXltBXj1n0pXN58lCz/lcC/iI5a2jGg=;
-        b=QcZwfWFUcq0H/u4RG64ksmJUA6zTTOiIK+idyQzVh32da+k4kilR8UuxzsiOX3uHpJ
-         Mh/Liz/Z6fW7g4mHTRp4wM9dVEYIbyhD1a0W0nCDtREKGEPiwOSHKs251lZozpWj9U4X
-         VzqnxW1G+YigF0cz/BDzQcjVCVTM6c8gkDfwxdcJKRgxvftwYacnDyCdwqjFaNa6QER5
-         3q51GYZ/m4VY7TA8nRqLW/zr1EnDaSs9H8qq755YKAbR9hgMvc94ZD5Tad7JgruXXNU5
-         ixQrwKz6N6GqfwY4JeuHz8iFjQn4h3KmF25Mwwlqy6oOm6ttOT2H9S+oUCtkWnP/5J6r
-         qaWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVD/Br52RD/c+qKvy4/Qqxu1nsqcYJwBDl37S4LeEusY3FPxAPOB3EjgVsA8SFLyVIxdJF2GpMxEEf6yag=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMusYy2TWmCVv/20qUS4o4wtU1Tgqo3xUuDysbYMjCZg24gN0Z
-	NR+GrFiADWadJPE59PWgJQyaRaxPdhq10oVH/RzHFrki9Y82GBFDV+7C
-X-Gm-Gg: ASbGncu2xQBFGJ1IUxEINDJ+6OfV+ReTYb9thE92RcnU7nPbDu3vpoUaNHekwTuqkTF
-	Egpc33TytCSfxjQJgEIgSCRIVtdlqqYjJfR/aoIvp7S6/KI4GQEEipObqsiPlSIcDp/AHx4Pmzu
-	FYF0j11FZ9jIzW0F0mDDBxPHhshsoyfnrnXRICmeW+s/vy5CslgqHvhIoedMKQrs2kkXUvhXBDu
-	jf8QbbXQaYG1QSvz7/a9uoouz+jAPdIn7Mv+Tl+MKFeOZWJEWIZEKAZkslDcZnHrqXP1tb83894
-	EKRy04fNsEoUsDvW/CYtSx8KMOwygn0KIzH2rGYvoNly02jg/f8wzXj4uvsDQ24k2RHLVqkfclI
-	4AFxbiHIlYT0X2/TiMXSSgRTLqz76seOFsehmjEen7FSfuwUhilNUskfH3MjzyuMwjbRRgXeKzx
-	J/1C0mzUiO6BWkQy5nWKXVTgyKVA==
-X-Google-Smtp-Source: AGHT+IEfRMsUaYJ/XAJjWbILMrV1deJg/SxAXLDq4HjDEvGxveOHDphSf6WABh59w/bzNL05Mif4ew==
-X-Received: by 2002:ad4:5d69:0:b0:818:54be:2381 with SMTP id 6a1803df08f44-879dc8303d8mr89763246d6.42.1759621833194;
-        Sat, 04 Oct 2025 16:50:33 -0700 (PDT)
+        bh=LKpSd7nKkEP6TPwK8huS4lw5ZBZ0Awry5aiCZmFREXY=;
+        b=qfp/ZQRNQdN/4aEnju63kPu5Ll905/i3qHraKAR4kz0nSD5gzxP5bkkp8Rh8sQXx34
+         2gvI2aqezICTJeEUalmWfjtzewLYwzFhnMjgEK1qnkvv89vuUd5eylg5D4rSPnnUUnPa
+         PPxp7NaeHqp2jXYzfa25TDY4hK8f8tdCyYx6PLM9f0KF5ZF+B7F90jqwLGxtIHmFjlWx
+         gHD6CrsPUMzH/HnqzdUGWUgh2UWf5VDzoivGxI5XPb+Ud97LzU7nLK7DdaSshe+F9W+9
+         1n3wx+FGo9Lkm9bqb02FdkCeZbUMH4yTIinCyAfkFIHe+0dcSULt8969cDy8YNdsFXDV
+         C5xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVD3/Kk00BcoXe7daQOplhcsqwd+jHlF8DbRBFUfqxkuDkZXPGILvdwnLOoNt8QXrAcbCrEbTQWMZ8unYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKmA5couNlJQzBIh7beX/o9YH3nk+02thfEKOMKavxvMbcVJfX
+	700svWDRNiNcuJVVGfjNmm1XA+27BnBcJCvxEWBjPkU5y82bOIJPiVfV
+X-Gm-Gg: ASbGnctZp2LkdtiK73TL6hnQK3UZDcIHbEVZhv9lPZF+xVefEi1div3yNJV6NR2CAvD
+	F7gzlDbINHf+Io6vzfwBALVKlc2kP+Xrus24onuL3MHpEYe+zZeS4rNLacWZUnGIfy4EIiI/aLM
+	tCUdgNNJdkKh8k4Kaais0RVeEifHQgIHsYedCbVXRJI8bKmkfome9om9PETftAc9HK6MKwCN4k5
+	R+MLfjAYV/VCc8QkwOmoByXy5uMJNtcLmF5fqG5ZvluMs7AULIWqCXrRAxU4I9NsRrmGRzry8sa
+	TKuByIgNn2zHeN8jE+q5ZgWVBZ1IwX8Pxzj+T4xOnV6mdFrVWjIR15+T4LY8qnDvxUYvDyeCu3K
+	qP5kdyg6ImFT4oUcroeWFZwQlaCURLjLrvvBRA3VpttaS3mXXkYVvek6iAQ89gPLRylZCrA0dP7
+	SmPVPNd2ZeWBznnVAciQhyA7fOFQ==
+X-Google-Smtp-Source: AGHT+IFTFbWAAtyaYWQZu7JpRusB2bhk0aVf9mwA/xe8QOYGt6MnziETDI6P8vQ523aryY3fgxqaAw==
+X-Received: by 2002:a05:6214:3319:20b0:879:defa:a6f2 with SMTP id 6a1803df08f44-879defaa90emr75983146d6.18.1759621837280;
+        Sat, 04 Oct 2025 16:50:37 -0700 (PDT)
 Received: from seokw-960QHA.mynetworksettings.com ([2600:4041:4491:2000:dd54:e5ff:d4b7:cf43])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878bdf5383fsm76180216d6.56.2025.10.04.16.50.30
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878bdf5383fsm76180216d6.56.2025.10.04.16.50.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Oct 2025 16:50:32 -0700 (PDT)
+        Sat, 04 Oct 2025 16:50:35 -0700 (PDT)
 From: Ryan Chung <seokwoo.chung130@gmail.com>
 To: rostedt@goodmis.org,
 	mhiramat@kernel.org
@@ -85,9 +85,9 @@ Cc: mathieu.desnoyers@efficios.com,
 	linux-kselftest@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	seokwoo.chung130@gmail.com
-Subject: [PATCH v3 2/5] tracing: fprobe: require explicit [GROUP/]EVENT for list/wildcard
-Date: Sun,  5 Oct 2025 08:46:56 +0900
-Message-ID: <20251004235001.133111-3-seokwoo.chung130@gmail.com>
+Subject: [PATCH v3 3/5] tracing: fprobe: support comma-separated symbols and :entry/:exit
+Date: Sun,  5 Oct 2025 08:46:57 +0900
+Message-ID: <20251004235001.133111-4-seokwoo.chung130@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251004235001.133111-1-seokwoo.chung130@gmail.com>
 References: <20251004235001.133111-1-seokwoo.chung130@gmail.com>
@@ -101,23 +101,382 @@ Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Ryan Chung <seokwoo.chung130@gmail.com>
 ---
- kernel/trace/trace.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ kernel/trace/trace_fprobe.c | 247 ++++++++++++++++++++++++++++--------
+ 1 file changed, 192 insertions(+), 55 deletions(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index b3c94fbaf002..ac0d3acc337e 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -5524,7 +5524,8 @@ static const char readme_msg[] =
- 	"\t           r[maxactive][:[<group>/][<event>]] <place> [<args>]\n"
- #endif
- #ifdef CONFIG_FPROBE_EVENTS
--	"\t           f[:[<group>/][<event>]] <func-name>[%return] [<args>]\n"
-+	"\t           f[:[<group>/][<event>]] <func-name>[:entry|:exit] [<args>]\n"
-+	"\t                (single symbols still accept %return)\n"
- 	"\t           t[:[<group>/][<event>]] <tracepoint> [<args>]\n"
- #endif
- #ifdef CONFIG_HIST_TRIGGERS
+diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
+index b36ade43d4b3..ec5b6e1c1a1b 100644
+--- a/kernel/trace/trace_fprobe.c
++++ b/kernel/trace/trace_fprobe.c
+@@ -191,6 +191,9 @@ struct trace_fprobe {
+ 	bool			tprobe;
+ 	struct tracepoint_user	*tuser;
+ 	struct trace_probe	tp;
++	char			*filter;
++	char			*nofilter;
++	bool			list_mode;
+ };
+ 
+ static bool is_trace_fprobe(struct dyn_event *ev)
+@@ -203,14 +206,10 @@ static struct trace_fprobe *to_trace_fprobe(struct dyn_event *ev)
+ 	return container_of(ev, struct trace_fprobe, devent);
+ }
+ 
+-/**
+- * for_each_trace_fprobe - iterate over the trace_fprobe list
+- * @pos:	the struct trace_fprobe * for each entry
+- * @dpos:	the struct dyn_event * to use as a loop cursor
+- */
+-#define for_each_trace_fprobe(pos, dpos)	\
+-	for_each_dyn_event(dpos)		\
+-		if (is_trace_fprobe(dpos) && (pos = to_trace_fprobe(dpos)))
++static struct trace_fprobe *trace_fprobe_from_dyn(struct dyn_event *ev)
++{
++	return is_trace_fprobe(ev) ? to_trace_fprobe(ev) : NULL;
++}
+ 
+ static bool trace_fprobe_is_return(struct trace_fprobe *tf)
+ {
+@@ -227,6 +226,109 @@ static const char *trace_fprobe_symbol(struct trace_fprobe *tf)
+ 	return tf->symbol ? tf->symbol : "unknown";
+ }
+ 
++static bool has_wildcard(const char *s)
++{
++	return s && (strchr(s, '*') || strchr(s, '?'));
++}
++
++static int parse_fprobe_spec(const char *in, bool is_tracepoint,
++		char **base, bool *is_return, bool *list_mode,
++		char **filter, char **nofilter)
++{
++	const char *p;
++	char *work = NULL;
++	char *b = NULL, *f = NULL, *nf = NULL;
++	bool legacy_ret = false;
++	bool list = false;
++	int ret = 0;
++
++	if (!in || !base || !is_return || !list_mode || !filter || !nofilter)
++		return -EINVAL;
++
++	*base = NULL; *filter = NULL; *nofilter = NULL;
++	*is_return = false; *list_mode = false;
++
++	if (is_tracepoint) {
++		if (strchr(in, ',') || strchr(in, ':'))
++			return -EINVAL;
++		if (strstr(in, "%return"))
++			return -EINVAL;
++		for (p = in; *p; p++)
++			if (!isalnum(*p) && *p != '_')
++				return -EINVAL;
++		b = kstrdup(in, GFP_KERNEL);
++		if (!b)
++			return -ENOMEM;
++		*base = b;
++		return 0;
++	}
++
++	work = kstrdup(in, GFP_KERNEL);
++	if (!work)
++		return -ENOMEM;
++
++	p = strstr(work, "%return");
++	if (p) {
++		if (!strcmp(p, ":exit")) {
++			*is_return = true;
++			*p = '\0';
++		} else if (!strcmp(p, ":entry")) {
++			*p = '\0';
++		} else {
++			ret = -EINVAL;
++			goto out;
++		}
++	}
++
++	list = !!strchr(work, ',') || has_wildcard(work);
++	if (legacy_ret)
++		*is_return = true;
++
++	b = kstrdup(work, GFP_KERNEL);
++	if (!b) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	if (list) {
++		char *tmp = b, *tok;
++		size_t fsz = strlen(b) + 1, nfsz = strlen(b) + 1;
++
++		f = kzalloc(fsz, GFP_KERNEL);
++		nf = kzalloc(nfsz, GFP_KERNEL);
++		if (!f || !nf) {
++			ret = -ENOMEM;
++			goto out;
++		}
++
++		while ((tok = strsep(&tmp, ",")) != NULL) {
++			char *dst;
++			bool neg = (*tok == '!');
++
++			if (*tok == '\0')
++				continue;
++			if (neg)
++				tok++;
++			dst = neg ? nf : f;
++			if (dst[0] != '\0')
++				strcat(dst, ",");
++			strcat(dst, tok);
++		}
++		*list_mode = true;
++	}
++
++	*base = b; b = NULL;
++	*filter = f; f = NULL;
++	*nofilter = nf; nf = NULL;
++
++out:
++	kfree(work);
++	kfree(b);
++	kfree(f);
++	kfree(nf);
++	return ret;
++}
++
+ static bool trace_fprobe_is_busy(struct dyn_event *ev)
+ {
+ 	struct trace_fprobe *tf = to_trace_fprobe(ev);
+@@ -556,13 +658,17 @@ static void free_trace_fprobe(struct trace_fprobe *tf)
+ 		trace_probe_cleanup(&tf->tp);
+ 		if (tf->tuser)
+ 			tracepoint_user_put(tf->tuser);
++		kfree(tf->filter);
++		kfree(tf->nofilter);
+ 		kfree(tf->symbol);
+ 		kfree(tf);
+ 	}
+ }
+ 
+ /* Since alloc_trace_fprobe() can return error, check the pointer is ERR too. */
+-DEFINE_FREE(free_trace_fprobe, struct trace_fprobe *, if (!IS_ERR_OR_NULL(_T)) free_trace_fprobe(_T))
++DEFINE_FREE(free_trace_fprobe, struct trace_fprobe *,
++	if (!IS_ERR_OR_NULL(_T))
++		free_trace_fprobe(_T))
+ 
+ /*
+  * Allocate new trace_probe and initialize it (including fprobe).
+@@ -605,10 +711,16 @@ static struct trace_fprobe *find_trace_fprobe(const char *event,
+ 	struct dyn_event *pos;
+ 	struct trace_fprobe *tf;
+ 
+-	for_each_trace_fprobe(tf, pos)
++	list_for_each_entry(pos, &dyn_event_list, list) {
++		tf = trace_fprobe_from_dyn(pos);
++		if (!tf)
++			continue;
++
+ 		if (strcmp(trace_probe_name(&tf->tp), event) == 0 &&
+ 		    strcmp(trace_probe_group_name(&tf->tp), group) == 0)
+ 			return tf;
++	}
++
+ 	return NULL;
+ }
+ 
+@@ -835,7 +947,12 @@ static int __register_trace_fprobe(struct trace_fprobe *tf)
+ 	if (trace_fprobe_is_tracepoint(tf))
+ 		return __regsiter_tracepoint_fprobe(tf);
+ 
+-	/* TODO: handle filter, nofilter or symbol list */
++	/* Registration path:
++	 *  - list_mode: pass filter/nofilter
++	 *  - single: pass symbol only (legacy)
++	 */
++	if (tf->list_mode)
++		return register_fprobe(&tf->fp, tf->filter, tf->nofilter);
+ 	return register_fprobe(&tf->fp, tf->symbol, NULL);
+ }
+ 
+@@ -1114,7 +1231,11 @@ static int __tprobe_event_module_cb(struct notifier_block *self,
+ 		return NOTIFY_DONE;
+ 
+ 	mutex_lock(&event_mutex);
+-	for_each_trace_fprobe(tf, pos) {
++	list_for_each_entry(pos, &dyn_event_list, list) {
++		tf = trace_fprobe_from_dyn(pos);
++		if (!tf)
++			continue;
++
+ 		/* Skip fprobe and disabled tprobe events. */
+ 		if (!trace_fprobe_is_tracepoint(tf) || !tf->tuser)
+ 			continue;
+@@ -1155,55 +1276,35 @@ static int parse_symbol_and_return(int argc, const char *argv[],
+ 				   char **symbol, bool *is_return,
+ 				   bool is_tracepoint)
+ {
+-	char *tmp = strchr(argv[1], '%');
+-	int i;
+-
+-	if (tmp) {
+-		int len = tmp - argv[1];
+-
+-		if (!is_tracepoint && !strcmp(tmp, "%return")) {
+-			*is_return = true;
+-		} else {
+-			trace_probe_log_err(len, BAD_ADDR_SUFFIX);
+-			return -EINVAL;
+-		}
+-		*symbol = kmemdup_nul(argv[1], len, GFP_KERNEL);
+-	} else
+-		*symbol = kstrdup(argv[1], GFP_KERNEL);
+-	if (!*symbol)
+-		return -ENOMEM;
+-
+-	if (*is_return)
+-		return 0;
++	int i, ret;
++	bool list_mode = false;
++	char *filter = NULL; *nofilter = NULL;
+ 
+-	if (is_tracepoint) {
+-		tmp = *symbol;
+-		while (*tmp && (isalnum(*tmp) || *tmp == '_'))
+-			tmp++;
+-		if (*tmp) {
+-			/* find a wrong character. */
+-			trace_probe_log_err(tmp - *symbol, BAD_TP_NAME);
+-			kfree(*symbol);
+-			*symbol = NULL;
+-			return -EINVAL;
+-		}
+-	}
++	ret = parse_fprobe_spec(argv[1], is_tracepoint, symbol, is_return,
++			&list_mode, &filter, &nofilter);
++	if (ret)
++		return ret;
+ 
+-	/* If there is $retval, this should be a return fprobe. */
+ 	for (i = 2; i < argc; i++) {
+-		tmp = strstr(argv[i], "$retval");
++		char *tmp = strstr(argv[i], "$retval");
++
+ 		if (tmp && !isalnum(tmp[7]) && tmp[7] != '_') {
+ 			if (is_tracepoint) {
+ 				trace_probe_log_set_index(i);
+ 				trace_probe_log_err(tmp - argv[i], RETVAL_ON_PROBE);
+ 				kfree(*symbol);
+ 				*symbol = NULL;
++				kfree(filter);
++				kfree(nofilter);
+ 				return -EINVAL;
+ 			}
+ 			*is_return = true;
+ 			break;
+ 		}
+ 	}
++
++	kfree(filter);
++	kfree(nofilter);
+ 	return 0;
+ }
+ 
+@@ -1247,6 +1348,11 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
+ 	int i, new_argc = 0, ret = 0;
+ 	bool is_tracepoint = false;
+ 	bool is_return = false;
++	bool list_mode = false;
++
++	char *parsed_filter __free(kfree) = NULL;
++	char *parsed_nofilter __free(kfree) = NULL;
++	bool has_wild = false;
+ 
+ 	if ((argv[0][0] != 'f' && argv[0][0] != 't') || argc < 2)
+ 		return -ECANCELED;
+@@ -1267,8 +1373,9 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
+ 
+ 	trace_probe_log_set_index(1);
+ 
+-	/* a symbol(or tracepoint) must be specified */
+-	ret = parse_symbol_and_return(argc, argv, &symbol, &is_return, is_tracepoint);
++	/* Parse spec early (single vs list, suffix, base symbol) */
++	ret = parse_fprobe_spec(argv[1], is_tracepoint, &symbol, &is_return,
++			&list_mode, &parsed_filter, &parsed_nofilter);
+ 	if (ret < 0)
+ 		return -EINVAL;
+ 
+@@ -1283,10 +1390,16 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
+ 			return -EINVAL;
+ 	}
+ 
+-	if (!event) {
+-		ebuf = kmalloc(MAX_EVENT_NAME_LEN, GFP_KERNEL);
+-		if (!ebuf)
+-			return -ENOMEM;
++		if (!event) {
++		/*
++		 * Event name rules:
++		 * - For list/wildcard: require explicit [GROUP/]EVENT
++		 * - For single literal: autogenerate symbol__entry/symbol__exit
++		 */
++			if (list_mode || has_wildcard(symbol)) {
++				trace_probe_log_err(0, NO_GROUP_NAME);
++			return -EINVAL;
++		}
+ 		/* Make a new event name */
+ 		if (is_tracepoint)
+ 			snprintf(ebuf, MAX_EVENT_NAME_LEN, "%s%s",
+@@ -1319,7 +1432,8 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
+ 							NULL, NULL, NULL, sbuf);
+ 		}
+ 	}
+-	if (!ctx->funcname)
++
++	if (!list_mode && !has_wildcard(symbol) && !is_tracepoint)
+ 		ctx->funcname = symbol;
+ 
+ 	abuf = kmalloc(MAX_BTF_ARGS_LEN, GFP_KERNEL);
+@@ -1353,6 +1467,21 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
+ 		return ret;
+ 	}
+ 
++	/* carry list parsing result into tf */
++	if (!is_tracepoint) {
++		tf->list_mode = list_mode;
++			if (parsed_filter) {
++				tf->filter = kstrdup(parsed_filter, GFP_KERNEL);
++				if (!tf->filter)
++					return -ENOMEM;
++			}
++			if (parsed_nofilter) {
++				tf->nofilter = kstrdup(parsed_nofilter, GFP_KERNEL);
++				if (!tf->nofilter)
++					return -ENOMEM;
++			}
++		}
++
+ 	/* parse arguments */
+ 	for (i = 0; i < argc; i++) {
+ 		trace_probe_log_set_index(i + 2);
+@@ -1439,8 +1568,16 @@ static int trace_fprobe_show(struct seq_file *m, struct dyn_event *ev)
+ 	seq_printf(m, ":%s/%s", trace_probe_group_name(&tf->tp),
+ 				trace_probe_name(&tf->tp));
+ 
+-	seq_printf(m, " %s%s", trace_fprobe_symbol(tf),
+-			       trace_fprobe_is_return(tf) ? "%return" : "");
++	seq_printf(m, "%s", trace_fprobe_symbol(tf));
++	if (!trace_fprobe_is_tracepoint(tf)) {
++		if (tf->list_mode) {
++			if (trace_fprobe_is_return(tf))
++				seq_puts(m, ":exit");
++		} else {
++			if (trace_fprobe_is_return(tf))
++				seq_puts(m, "%return");
++		}
++	}
+ 
+ 	for (i = 0; i < tf->tp.nr_args; i++)
+ 		seq_printf(m, " %s=%s", tf->tp.args[i].name, tf->tp.args[i].comm);
 -- 
 2.43.0
 
