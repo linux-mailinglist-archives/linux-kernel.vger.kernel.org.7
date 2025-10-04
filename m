@@ -1,96 +1,139 @@
-Return-Path: <linux-kernel+bounces-842019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DAF2BB8CA3
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 13:12:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27C27BB8CAC
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 13:16:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B682189F631
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 11:12:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BD5F3C5EFF
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 11:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C4426CE0A;
-	Sat,  4 Oct 2025 11:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C0326D4F8;
+	Sat,  4 Oct 2025 11:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="OfXButu/"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="EDR5sTuf";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nDA3Xv+c"
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538E8DF72;
-	Sat,  4 Oct 2025 11:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2FC326AEC;
+	Sat,  4 Oct 2025 11:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759576343; cv=none; b=jGsEFyEu4wOV1GHL9oSe8WkDdSvbCj0/eoH/PB7cwKEyvLH6QUJX421ma0wTMK0IK1S+vnMx5y1evHuJTWNb+v9IxSgrd0iTotISLm0Q5cws7BZJcyjCP6KS8Wurj6thowANpW+RWZ6PrNAhXde2Q226m6TygwujXr+Y2YN49iA=
+	t=1759576588; cv=none; b=IKmlWsPVYAD3BvInIK12FUwKvBs0rr9yHhXqaKfq+TooVf84iWu8+Rh62SxdbXslWoFaqT1q5uBq+yW4hus4xq+wjxNqqnA3KbkeJn4zi3aP7aa7aY8ZxIMJm88erK1r8u72R/IQwo7RLDsOaOxFJLbnRR3TJQXJ+2YfjAuLSNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759576343; c=relaxed/simple;
-	bh=b+vW8XmJHwvEkqXrQD81vA2ZXuY4RouSMS4t19KM8pA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uahb2NVS4XBqjfAOxH8sQW95qIsOJPmtGr3DL8FY1PujVv8cpBmB7lihsa2Cd2cFBH2fOEsOio4ZtwKQo3Wx8+q9f3QK8QxS6IjWII+SBJgD0rRe+5tLC0zbKx+pKQhQaHD3X6R1l1QhUe/zf1hRATauo/PDxnaHQb9cl5M4j3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=OfXButu/; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=KCaVhDOz2Z3mf9DFpWVfqYcdgkfbhEgEHiXYwCHCvyw=; t=1759576341;
-	x=1760008341; b=OfXButu/S6vwwaeLtWdPDjPFaHhnW4NHu04aD4zYW/j38QjAoojhLzKpo5JpB
-	EDZw56MHUt/V15J1QjTzMxusnJu/D4NZPscBZZ1RQrAibgonFsVQxAShMMZ0YjStWhD+EFQUFbjxW
-	5bmCgIxAw4oJ73lyDZfuBkJAwdkDqrremSSGpV/yZXQIOwMQgVAbv4KmXh0JMGGb1Are2SCRxTc7P
-	+KHTC6do/8eIlKtnp/luCdPwoqIJRoJkIgvhVsW5fzRNM01PsrJnvgzZeDSWIi8HSmN+wrBAeS7Iu
-	0tzu/hlML9wYZyrIMk6GnEj8mzVGPT0X6wpmq4YtrqHMf0mrVQ==;
-Received: from [2a02:8108:8984:1d00:a0cf:1912:4be:477f]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
-	id 1v50BR-002cCP-0J;
-	Sat, 04 Oct 2025 13:12:13 +0200
-Message-ID: <d9ae2341-b385-45f4-9359-550d1118efb7@leemhuis.info>
-Date: Sat, 4 Oct 2025 13:12:12 +0200
+	s=arc-20240116; t=1759576588; c=relaxed/simple;
+	bh=sppidEJWrn51K2Ay2MTBv9KfF+d6xRCaoO0w4IsE4s0=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=HITiINWOknBy7911PPUn7eQiPC/WzKZfDlvF/giGZiwsJQ+TJEIDrgiqbpddnUNnC/2hOTH4HJFCdK4YOEPUpexl8Hv0VxotdirV0gYFyAlkoRqO7unBlFkVr5oudisaPLCG9Wv0trKRpUIlnCeISw/qIDCTGJvtbMNmwYUslA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=EDR5sTuf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nDA3Xv+c; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 0A06A1400103;
+	Sat,  4 Oct 2025 07:16:24 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Sat, 04 Oct 2025 07:16:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
+	1759576584; x=1759662984; bh=3bjlNIuw0PXZPG1iCnKUGLpTk5DueM3VuTn
+	kFpcjqT4=; b=EDR5sTufmaeqdNP6XAtqq5I/hmDAPQPjGumygl4+Ca/tvgPzF8O
+	K1B/DF+Anv1l7RJhtbMmHsWq3wMavDlAZO83fNjoySN9tAeyL3NuSZXrolTEaewq
+	kNaKwZf8HwaHdO9ezGiFitXuDmUIMWrvid8SNZKobgy4IvIouLeAb6JWfGPIkl8p
+	BBxDfPeTqV+nseuKyh+hbv5lgXTlMc9AmmaHztOOjSnqfhrovoaHEys0DI1XaEDd
+	Duz/7fq8QBW7w+pySagZzy0Rsh9zI9xmaI/393jFI5KWcJ7hR6djTFggfdkB/HOM
+	K4HmkM37bVJmmrapiSsl5aCqVtpCIivV+MQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759576584; x=
+	1759662984; bh=3bjlNIuw0PXZPG1iCnKUGLpTk5DueM3VuTnkFpcjqT4=; b=n
+	DA3Xv+cmiyneLY3/4uTwqNDH7DJAKnX2WmZ6y3wmL5SALneWAI86Ao03W1Ab+Vhw
+	TbAzlVylh76vL0wU4tRNLwuaJd5wGLpY7aHbibrjPZM+WJd+DFru0JXjoU70oKNn
+	gaXUAIo4h0Hb5HMSgakxJkSa9zrwjfhe6NCTHUo2yptVLDb5yd9lmRkgGBDQ4/LC
+	BC8iaBitxPPP6cq9npYXbo/fpT1lxcX2Pfx/+WpihKof7a8wej3RbgKTIyNjIdnd
+	EM/7zHQN1r3/NeOF3Zkis/sV2Kr9ojThAMh5STMOV9/7Sj5ynBLdu/rpicfWjDIo
+	d6akvtJidQv00aFdG/9pA==
+X-ME-Sender: <xms:BwLhaP6W0Xjv1JOOhIgGRvGo8taww6z_xp-mZwqJoJqM-apku9uK6Q>
+    <xme:BwLhaFU0r0ZlgDWBlW1Xima-sCobOeL0wfwQpBv6eLrE3llKMXH3O7YwNxtuOEp07
+    p36NcswY4gJeKHOCxY3t2bAlrciausP8mdrMVAgzX1DeQ4o0Q>
+X-ME-Received: <xmr:BwLhaHKiAD-vZBEMuXEBcbJ7IJnFu11gXEQ3qTw9sDCWo0Q-hkd2DvKfVsG3PkbsI7nYrD5i4r7YUEamuy6zGnOovqIhzzsN23eduoUzXDWx>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeludeifecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpegtgfgghffvvefujghffffkrhesthekredttddtjeenucfhrhhomheppfgvihhluehr
+    ohifnhcuoehnvghilhgssehofihnmhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    eukeeuueeiueeluedvtedtieeuffffudejgeehuddvhfevhefgvdeludfhgfekteenucff
+    ohhmrghinhepsghoohhtlhhinhdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehnvghilhgssehofihnmhgrihhlrdhnvghtpdhnsggp
+    rhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmrghrkhhush
+    drvghlfhhrihhnghesfigvsgdruggvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqtghifhhsse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgvrhhnvghlqdhjrghnihht
+    ohhrshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehtohhmsehtrghlph
+    gvhidrtghomhdprhgtphhtthhopehmvghtiigvsehsrghmsggrrdhorhhgpdhrtghpthht
+    oheplhhinhhkihhnjhgvohhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsmhhfrh
+    gvnhgthhesghhmrghilhdrtghomhdprhgtphhtthhopehsvghnohiihhgrthhskhihsegt
+    hhhrohhmihhumhdrohhrgh
+X-ME-Proxy: <xmx:BwLhaHt9G3pJIKYd8H7D6XXXyMWB1kRlB3SH7gStVnCfl46flWQa4g>
+    <xmx:BwLhaEIoe3szVinsi8uFdjWA2Rrx5enMUKLYXgzfNKn4808AI6ZljQ>
+    <xmx:BwLhaHNx6MI7tFRZNzHlde85Hcs4-sRV1YN7m90kFqqxIkkGL7VHLw>
+    <xmx:BwLhaPV3B39lGmo6XrxmqfJtKjm-E375D5vdJzre1sT5rRrhkliirw>
+    <xmx:CALhaNmjtkN4JTebGoKMjXq1b9kQR4hxPQsDvBUwAZfZkxUBLK3hCYJk>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 4 Oct 2025 07:16:21 -0400 (EDT)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Bug] Memory allocation errors and system crashing due to buggy
- disk cache/inode allocations by ntfs3 kernel module.
-To: craftfever@tutamail.com, Ntfs3 <ntfs3@lists.linux.dev>,
- Linux Kernel <linux-kernel@vger.kernel.org>,
- Regressions <regressions@lists.linux.dev>
-Cc: Almaz Alexandrovich <almaz.alexandrovich@paragon-software.com>
-References: <OaiQgS3--F-9@tutamail.com> <Oait04j--F-9@tutamail.com>
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Content-Language: de-DE, en-US
-In-Reply-To: <Oait04j--F-9@tutamail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1759576341;3c7a4580;
-X-HE-SMSGID: 1v50BR-002cCP-0J
+From: NeilBrown <neilb@ownmail.net>
+To: "Markus Elfring" <Markus.Elfring@web.de>
+Cc: linux-cifs@vger.kernel.org, "LKML" <linux-kernel@vger.kernel.org>,
+ kernel-janitors@vger.kernel.org, "Namjae Jeon" <linkinjeon@kernel.org>,
+ "Sergey Senozhatsky" <senozhatsky@chromium.org>,
+ "Stefan Metzmacher" <metze@samba.org>, "Steve French" <smfrench@gmail.com>,
+ "Tom Talpey" <tom@talpey.com>
+Subject: Re: ksmbd: Use common error handling code in ksmbd_vfs_path_lookup()
+In-reply-to: <2d533e64-8543-402d-9295-5fd2f314f35d@web.de>
+References: <6d759211-79e7-4d86-b22e-2ae46d209622@web.de>,
+ <175953064635.1793333.2429881029964457140@noble.neil.brown.name>,
+ <2d533e64-8543-402d-9295-5fd2f314f35d@web.de>
+Date: Sat, 04 Oct 2025 21:16:17 +1000
+Message-id: <175957657719.1793333.15585390544259019306@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-
-
-On 10/4/25 13:03, craftfever@tutamail.com wrote:
+On Sat, 04 Oct 2025, Markus Elfring wrote:
+> …> - declare  struct path path __free(path_-put) = {};
+> …>    return_path->dentry = no_free_ptr(path.dentry);
+> >    return_path->mnt = no_free_ptr(path.mnt);
+> >    return 0;
+> > 
+> > This is based on the pattern in kern_path_parent() and
+> > __start_removing_path().
 > 
-> Oct 4, 2025, 11:55 by craftfever@tutamail.com:
-> 
->> I'm expecting serious bug when writing large amount of files to
->> NTFS hard drive, shortly after memory allocation errors and system
->> crash occurs/ Firstly, I thought, than this is bug in linux kernel
->> itself, somewhat disk cache allocation error, but when I tested
->> same operations on ext4 drive or using NTFS-3G module, bug is not
->> present.
->> 
-> To reproduce a bug, try cloning two big Git repositories to an
-> external NTFS drive mounted with ntfs3 module.
-Thx for the report.
+> Do you propose that affected software components may benefit more from
+> the application of scope-based resource management?
+> https://elixir.bootlin.com/linux/v6.17/source/include/linux/path.h#L22-L28
 
-What kernel version are your using?
+Exactly.  It doesn't suit every case, but if you are going to make
+changes to the exit paths of a function, I think it is worth
+considering if scope-based code will work well for the particular
+function.
 
-You CCed the regression list, so I assume this used to work, which leads
-to two more questions: What was the last version where this works? Could
-you bisect?
+Since v6.17 there has already been a net increase of 167 uses of __free
+(though some might be in comments....) and 1902 more uses for guard().
+So at least some people think it is a good idea.
 
-Ciao, Thorsten
+NeilBrown
 
