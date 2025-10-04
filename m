@@ -1,144 +1,190 @@
-Return-Path: <linux-kernel+bounces-842085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778A3BB8EAD
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 16:23:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C9ABBB8EB6
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 16:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BDC94A150B
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 14:23:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 72C2D4E80C9
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 14:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153BD21D5BC;
-	Sat,  4 Oct 2025 14:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C891821FF2A;
+	Sat,  4 Oct 2025 14:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TD+nJktW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="VTYZRikn"
+Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6235F1CEAC2;
-	Sat,  4 Oct 2025 14:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7F923CB;
+	Sat,  4 Oct 2025 14:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759587778; cv=none; b=NbfKHIEoHIqCcuExjw2wAKDAkrcns24AtuWoW8mG9oU3eNpq52xPxaTbBIfv8sUEQenskJYPXJPXWiYW7OAv4Ixl1usG5sbdVbyx9ERVcCc1A2JNZgVQSZ2MK+aGtkjIT9QuXJ5CFhrj6F/SfP7/hDEtv0W+RB5svTT+h4zfEqY=
+	t=1759587848; cv=none; b=FZtMqdqeP75iKWdO1DkH2s6CGAw0I3AwgYUN9Zxsjr/bphRq/eQ8DvkTWnlCqX5jssVtOMQThBp7E9rUZpw1cQ5scDO61l6jHETGgZyZUwPOZXjDQAODTCBKjSJlXjHc/iWPS5DMahrwUXqQtxh+H6yN4eajrBBkAzzmeb6D6Uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759587778; c=relaxed/simple;
-	bh=Ykj/QzqagXSCHVyL+LX/ShUGuN8G2LZiLhlNW8hbKmk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LEWtkBXHL5CqtDz8Tlv4l5jSwEPEUuXIXDnPAJxOKsrEFih0noDEuftJUZR2TJQtyvbh+DITb9sJtYxIejeXr7Pl7WzvCp51aruCcn418eRsH3HHUwi+pOU5CQimGSTB/q9LjU6rD7acX+JdavYz7h/Xgg0m8TODXzaemUf2rtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TD+nJktW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A066C4CEF1;
-	Sat,  4 Oct 2025 14:22:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759587778;
-	bh=Ykj/QzqagXSCHVyL+LX/ShUGuN8G2LZiLhlNW8hbKmk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TD+nJktWVfu1vCw6/X+MbGpHZHGTYp7Kyqlr67ngMRU73cWCfzHb7kSFbkjDEGp7O
-	 WInnC+c91g128puiKY6THQZP5l8sywdW89I5RbSW2hB8hUhQA9raqER8QCCnjpohoK
-	 i2tJD9CVmn8Q3Nlin76Y6VZwmN5GD18+NijYvH5XkPWs+zO0Uom7ZyxFtJaCSfZTks
-	 PUZX2hkFD9hrsETHqgPJTuhU1L01DLh9vD9etWailBINTLfmIIxjOM8XUrte0ucCAQ
-	 jd2mg96E+7BXL30FImo7EqklwcVhvNXfsXQCf8EMWIdmaM/Cw+RVPf8EtHkPIk/JMg
-	 CM8Q0uMJRUbSQ==
-Date: Sat, 4 Oct 2025 15:22:49 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: Antoniu Miclaus <antoniu.miclaus@analog.com>, robh@kernel.org,
- conor+dt@kernel.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] iio: adc: ad4080: fix chip identification
-Message-ID: <20251004152249.18116842@jic23-huawei>
-In-Reply-To: <3c959b42a01d3af75fdf536fc3e3289a076953c3.camel@gmail.com>
-References: <20250930103229.28696-1-antoniu.miclaus@analog.com>
-	<3c959b42a01d3af75fdf536fc3e3289a076953c3.camel@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759587848; c=relaxed/simple;
+	bh=4+YQxF6Yyc1qXtgVJuJFdGLf98O+4LvnwmYl2kYaVqQ=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=e0U0g22HeEEcQldaoeSykiL6OUP4NVkVXpwxTDE+Ww++v9Y/XA4fJeKbMfiDi7x/padmigcmqyxV77PF9PSs9m2BGdGqP7AeBwtWY9lamMb+8VeTrcaC3HDKzPZcyHUBQVYapOeDeKVKhvWvQe5bht0dy3ijK9PwBh8xLFt1xg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=VTYZRikn; arc=none smtp.client-ip=162.62.57.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1759587839;
+	bh=qeV31WK13cjvz6ZRDqN9endiddVqQ/kjv9Yxi6CDY5Q=;
+	h=From:To:Cc:Subject:Date;
+	b=VTYZRiknXBVg4yooD+mCdzWX3NChqfj1LlVHLdP9+yyPbb2UlTMZ9kvPU2u6WA0Lq
+	 iOiNhVNiebCPKsDHC1TI3C/5rnsdirR09ltYOy/XvXueOHx2a9O68uR4f11ycAY1Cc
+	 8FIut4RfZGvyzB+TT/wOJWI7lhzrMdAvO9utTPuQ=
+Received: from rtoax ([183.198.135.10])
+	by newxmesmtplogicsvrszc41-0.qq.com (NewEsmtp) with SMTP
+	id 5EC3BCB8; Sat, 04 Oct 2025 22:23:44 +0800
+X-QQ-mid: xmsmtpt1759587824tx35rnprp
+Message-ID: <tencent_1259E1972E2A9FAF3DA342882306E1421308@qq.com>
+X-QQ-XMAILINFO: MB5+LsFw85Nollo+Kiye9TdhQSym4B0s+hcbxKm8a2p/mMhbBb+s8jB31bFjkI
+	 ho3wMSVBBn9o4LV1T8RHItO7tZRnOQI9SfVcA2F1Zj9o5Ed8KF97g60wFzNebfp82KeJTz8/2iv+
+	 DSEWN+bEVP7ykds9aKw8g2MStMdtsoLiyh5yWNVOojXZG4UlIeEsBlJ8G2tsypfWDo43p0FLBWR3
+	 N61rIkxKyq3Dc7NUVpeOn7ieR6dZ2TJlkq8amUNPk2K/rY3PscTHFjgfEg4EZBeFRrpqb9vUUZW1
+	 UUkPVodDxt5GVUhwkK981oNj7lYii0yjdNPRyit3tSwjlBvRiYcw5ETU1TurtyDODEn7v/ckuOZ/
+	 ZH8j2yporc4ZN1jVk+aGb4ypegnp7h0Ju9HOw3305C7jWPQwWBRNZIRCnQ71UhMEe5WxofQ40MIm
+	 RhgdXsYmziK/yy1pwONhOZRJAMJ4+7IfrNRQ183gk+gblh1dKIz3ID9HLO9YGpJU81bXMayRZpk1
+	 ozPu8ahR9Ovwi4jGZXK6jhUR8/rJToyTqqdEzv/xHq7MQu1jU+QYqG0PCQbFYkORgyaVinqJBOmC
+	 M+Fd5K7v5jA3AikDWUDOawRdHwtyIXRpnQJv/HYUZ8vRwXSodEKSpCvHlLM9zqz95oXpYx36pZA/
+	 Et4vEDMV7FJRqRjmyhdDy5MmCLdvBs6YWQlXlp3ruM7LkLcZV2/dcU3aLMdI6EVEqN1UmctLG6oA
+	 3qRyhktHtIOtKDBIYryrD3Hmg9dA2ENXfWwuUgxeHUAgvKLnQUb0s5EvAsz7zWYxgbhaQNNgx44N
+	 SFUqIwXZmYGjtVNvrgcKdcWo50uLUCnwDvRC7VeGd22OWQSO+TfqB4XxlhheeZFCGdqbB91KX+zK
+	 517l/8vvS27wGQTjSaPsWMBij7LYVhcjJDzQ3icakTa4LwOug9xfh6cOPKVvbpuot3mv/4oON9rU
+	 heHWqG3w6t07CD+jHSkaMkH3T9QMS8WRih6f2iEILJkBpoyxuViGQtAN5y/eByNhryxwDA9BeYQb
+	 PWc9cU0ahI5/MmCcJzQ3IFDbuM6MGf5GYoKk9ouw==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Rong Tao <rtoax@foxmail.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	yonghong.song@linux.dev
+Cc: rtoax@foxmail.com,
+	Rong Tao <rongtao@cestc.cn>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Jason Xing <kerneljasonxing@gmail.com>,
+	Willem de Bruijn <willemb@google.com>,
+	Paul Chaignon <paul.chaignon@gmail.com>,
+	Tao Chen <chen.dylane@linux.dev>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Martin Kelly <martin.kelly@crowdstrike.com>,
+	Anton Protopopov <a.s.protopopov@gmail.com>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
+	linux-kernel@vger.kernel.org (open list),
+	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
+Subject: [PATCH bpf-next] bpf_doc: Support 1st const parameter of bpf_d_path()
+Date: Sat,  4 Oct 2025 22:23:29 +0800
+X-OQ-MSGID: <20251004142334.209116-1-rtoax@foxmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, 30 Sep 2025 13:35:46 +0100
-Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+From: Rong Tao <rongtao@cestc.cn>
 
-> Hi Antoniu,
->=20
-> I think that for a series like this you should include a cover letter...
-Yup. Then I'd be replying to that rather than here!
+Since commit 1b8abbb12128 ("bpf...d_path(): constify path argument"),
+the first parameter of the bpf_d_path() has been changed to a const
+constant. We need to modify the header file and bpf_doc.py.
 
->=20
-> On Tue, 2025-09-30 at 10:32 +0000, Antoniu Miclaus wrote:
-> > Fix AD4080 chip identification by using the correct 16-bit product ID
-> > (0x0050) instead of GENMASK(2, 0). Update the chip reading logic to
-> > use regmap_bulk_read to read both PRODUCT_ID_L and PRODUCT_ID_H
-> > registers and combine them into a 16-bit value.
-> >=20
-> > The original implementation was incorrectly reading only 3 bits,
-> > which would not correctly identify the AD4080 chip.
-> >=20
-> > Fixes: 6b31ba1811b6 ("iio: adc: ad4080: add driver support")
-> > Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> > ---
-> > changes in v2:
-> > =C2=A0- add the chip id handling into a separate commit.
-> > =C2=A0- use regmap_bulk_read.
-> > =C2=A0drivers/iio/adc/ad4080.c | 5 +++--
-> > =C2=A01 file changed, 3 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/iio/adc/ad4080.c b/drivers/iio/adc/ad4080.c
-> > index 6e61787ed321..b80560aebe2d 100644
-> > --- a/drivers/iio/adc/ad4080.c
-> > +++ b/drivers/iio/adc/ad4080.c
-> > @@ -125,7 +125,7 @@
-> > =C2=A0
-> > =C2=A0/* Miscellaneous Definitions */
-> > =C2=A0#define
-> > AD4080_SPI_READ						BIT(7)
-> > -#define AD4080_CHIP_ID						GENMASK(2, 0)
-> > +#define AD4080_CHIP_ID						0x0050
-> > =C2=A0
-> > =C2=A0#define AD4080_LVDS_CNV_CLK_CNT_MAX				7
-> > =C2=A0
-> > @@ -458,10 +458,11 @@ static int ad4080_setup(struct iio_dev *indio_dev)
-> > =C2=A0	if (ret)
-> > =C2=A0		return ret;
-> > =C2=A0
-> > -	ret =3D regmap_read(st->regmap, AD4080_REG_CHIP_TYPE, &id);
-> > +	ret =3D regmap_bulk_read(st->regmap, AD4080_REG_PRODUCT_ID_L, &id, 2);
-> > =C2=A0	if (ret)
-> > =C2=A0		return ret;
-> > =C2=A0
-> > +	id =3D get_unaligned_le16(&id); =20
->=20
-> Being id an 'unsigned int' I'm not really sure the above will work on big=
- endian
-> machines as we should only populate the 2 MSB, right? But independent of =
-that,
-> id is only being used in here so I would use proper __le16 (and u16) and
-> le16_to_cpu().
->=20
-Spot on.  Types are a mess here and will trigger issues if sparse is pointed
-at this code (and possibly other compiler related warnings).
+The two error messages are as follows:
 
-The series otherwise looks good to me. You could probably have added all th=
-e DT
-changes in one patch and all the devices support in another (rather than 2 =
-of each)
-but that's not important enough to change now.
+    linux/tools/testing/selftests/bpf$ make
 
-So I'll pick the whole thing up on v3 once this type issue is resolved.
+      CLNG-BPF [test_progs] bpf_iter_task_vmas.bpf.o
+    progs/bpf_iter_task_vmas.c:52:14: error: passing 'const struct path *'
+    to parameter of type 'struct path *' discards qualifiers
+    [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+       52 |                 bpf_d_path(&file->f_path, d_path_buf, D_PATH_BUF_SIZE);
+          |                            ^~~~~~~~~~~~~
+    1 error generated.
+    ....
+    progs/verifier_vfs_accept.c:80:7: error: assigning to 'struct path *'
+    from 'const struct path *' discards qualifiers
+    [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+       80 |         path = &file->f_path;
+          |              ^ ~~~~~~~~~~~~~
+    1 error generated.
 
-thanks,
+Fixes: 1b8abbb12128 ("bpf...d_path(): constify path argument")
+Signed-off-by: Rong Tao <rongtao@cestc.cn>
+---
+ include/uapi/linux/bpf.h                                | 2 +-
+ scripts/bpf_doc.py                                      | 1 +
+ tools/include/uapi/linux/bpf.h                          | 2 +-
+ tools/testing/selftests/bpf/progs/verifier_vfs_accept.c | 2 +-
+ 4 files changed, 4 insertions(+), 3 deletions(-)
 
-Jonathan
-
-> - Nuno S=C3=A1
->=20
-> > =C2=A0	if (id !=3D AD4080_CHIP_ID)
-> > =C2=A0		dev_info(dev, "Unrecognized CHIP_ID 0x%X\n", id);
-> > =C2=A0 =20
+diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+index ae83d8649ef1..6829936d33f5 100644
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@ -4891,7 +4891,7 @@ union bpf_attr {
+  *
+  *		**-ENOENT** if the bpf_local_storage cannot be found.
+  *
+- * long bpf_d_path(struct path *path, char *buf, u32 sz)
++ * long bpf_d_path(const struct path *path, char *buf, u32 sz)
+  *	Description
+  *		Return full path for given **struct path** object, which
+  *		needs to be the kernel BTF *path* object. The path is
+diff --git a/scripts/bpf_doc.py b/scripts/bpf_doc.py
+index c77dc40f7689..15d113a1bc1d 100755
+--- a/scripts/bpf_doc.py
++++ b/scripts/bpf_doc.py
+@@ -788,6 +788,7 @@ class PrinterHelpersHeader(Printer):
+             'struct task_struct',
+             'struct cgroup',
+             'struct path',
++            'const struct path',
+             'struct btf_ptr',
+             'struct inode',
+             'struct socket',
+diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+index ae83d8649ef1..6829936d33f5 100644
+--- a/tools/include/uapi/linux/bpf.h
++++ b/tools/include/uapi/linux/bpf.h
+@@ -4891,7 +4891,7 @@ union bpf_attr {
+  *
+  *		**-ENOENT** if the bpf_local_storage cannot be found.
+  *
+- * long bpf_d_path(struct path *path, char *buf, u32 sz)
++ * long bpf_d_path(const struct path *path, char *buf, u32 sz)
+  *	Description
+  *		Return full path for given **struct path** object, which
+  *		needs to be the kernel BTF *path* object. The path is
+diff --git a/tools/testing/selftests/bpf/progs/verifier_vfs_accept.c b/tools/testing/selftests/bpf/progs/verifier_vfs_accept.c
+index 3e2d76ee8050..55398c04290a 100644
+--- a/tools/testing/selftests/bpf/progs/verifier_vfs_accept.c
++++ b/tools/testing/selftests/bpf/progs/verifier_vfs_accept.c
+@@ -70,7 +70,7 @@ __success
+ int BPF_PROG(path_d_path_from_file_argument, struct file *file)
+ {
+ 	int ret;
+-	struct path *path;
++	const struct path *path;
+ 
+ 	/* The f_path member is a path which is embedded directly within a
+ 	 * file. Therefore, a pointer to such embedded members are still
+-- 
+2.51.0
 
 
