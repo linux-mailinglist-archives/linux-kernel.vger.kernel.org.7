@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-842191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A70F3BB92E0
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 01:50:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C895BB92E9
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 01:50:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C99F19A0666
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 23:51:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18FF03BDAD3
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 23:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB25248898;
-	Sat,  4 Oct 2025 23:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB55D255E40;
+	Sat,  4 Oct 2025 23:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fMkjKima"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FPemoOJA"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A504B24728F
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 23:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6293E254B18
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 23:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759621831; cv=none; b=UjWJ0WSYi1U3XMvZsK5iJQwY1jDUoVKXcAFvQmRmKoT8Q2s9Se8FlTYrYAwI68Ij2jHR99MSz7ukbC9qiR4foy90tTY/AM0+c/hepZq2GwQvHAWHq59+7TmpT+8fbbe7bBFyin1LDgOiRXtAGHEHtjsUe/ekyBJ50+ser46j4yI=
+	t=1759621836; cv=none; b=LMrqHK1kE2TB1w/Gjpv0Yq+n2M0tpKCmMHWNa+LP3y4+tzTihcXos3bQY5b+/R+OB5KblwryjU4j5VzBAnYd34JHUA6MZ1jOJQCWU33woNMaV7j3khGvGkED8+B9Cro8y2koI+nqo2+Myz+vvNh6ms9POtsueAgyqGJkZS+o0w8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759621831; c=relaxed/simple;
-	bh=M8zHmRZzh1etGfBTEYtac4q+pXAyTpkj0u0emKPd9iw=;
+	s=arc-20240116; t=1759621836; c=relaxed/simple;
+	bh=z2ogZjxuTKMpoCR+MQb93w82gXJuW+Rka1YSqoLx4LI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ULi2WPkbYmHLsdBJ4XuU4ZkWDknEbn58nRZudbEQAHzx2zNxC8bzR12lqlQi3uAym0cZ5+7f1M70kVLgbV2ZHh9NSkD2GLEBIbtVyFC6dzsDob757mZ6ym2CgMN3kGY+7nNAKe6hBhHA7Oe6eTWjgaPa2pqKXMm1xN/dwLk+SUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fMkjKima; arc=none smtp.client-ip=209.85.219.41
+	 MIME-Version; b=IvYmesS04L5IVuUGF+y/j0GEcMb6aoGIz3wys/aAljd77yqwIXen8KGNnm5N68Z40fq7FfECk/gqGT08bG0vnVZwNz9zTRukv/EOsHNttUY3gE8CpTvbL5mW3zGeeKiTanMH1Vzjm4a5UaVYVDGrriR1nNnXtPmG3CdFDTv/rTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FPemoOJA; arc=none smtp.client-ip=209.85.219.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-879b99b7ca8so23924266d6.0
-        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 16:50:29 -0700 (PDT)
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-796d68804a0so44737906d6.3
+        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 16:50:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759621828; x=1760226628; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759621833; x=1760226633; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NT7b4ZLvKRu3HtUu6iokqc97ftNCnhP9nU4dbxg6QfE=;
-        b=fMkjKima8ShJwt0+Rc7DvxiVBD9aOe3Mxk1C+BfSNO74DAvOf7qUHpTZrX4eYD2YJf
-         CQYhbdkDDL1RnDhGG8y185OCBSCo0gZHmFWS/UCtQ8qk2g4u8Et22mfjxSpKSadTUy8F
-         Q2cpcNcI74psTU1hjyeGSe0TNKD1cZdIVp7d4eQHTjdUoS9+xnVu/2KBSohYRhkczgwk
-         i9ZfZx7wZ4ahx8mbY4GGATIGHSyloaS1+B/6KlwPU1IXGJC7Ih9giVqtPf+7i/g5KcoX
-         aOfGijmqt9pzgl+5R4NelymLL/1FSMX/hNajgvf3b2D16/zHwXyoIG4bAitWJuWPX384
-         8imw==
+        bh=0ZrEnyLevXoIcXltBXj1n0pXN58lCz/lcC/iI5a2jGg=;
+        b=FPemoOJAyHihAj7y/qFgGq20d3xX6mgGMln21Jd3Qp0yV+wgtHI4M2DR1/2AsAPLbm
+         hFMsBpLNXg01/z5srVi2CFWrhu3lNOLPI54yGb0yUMqP10IqjFFPIMYfx4EX5suLrcRs
+         YkUQpOWmrn9toPbYvwuIavPJVuXtXpMAAgjwtEAtivi3sS/xdLMZb9XBFxQ4pxEHtfhZ
+         eU2tptPMhKoSg/G6UiZaM17FuKKd9VWisXtUHfqoVScn09R4hGqUIEw4RErCNV/x+4MT
+         1QG72udVg+yUC27R2D+weDAE1tbSXbQigXpVOCHH1jIyUwoDTMb7S9TfAGaYiVk/SFhS
+         uiog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759621828; x=1760226628;
+        d=1e100.net; s=20230601; t=1759621833; x=1760226633;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NT7b4ZLvKRu3HtUu6iokqc97ftNCnhP9nU4dbxg6QfE=;
-        b=f9dCUbOyrCUk0vRYwHHb0wmnDcsBCrsazV2T0+oE0LRHI58Gxbjg+arSvFDi2yaKNe
-         1mf4erqqgADoiK5ULkpPD8KGT7Bgd6UPgz9QO+5C+dwIb1laFOzC3x4NgS8S3qVRlMCR
-         k8CXZeVidEB/A+d7+z3gwjBFI2lo3PjC721m1I8Sntl8VFkZtN6uGJPB92JPmWQS4kPT
-         xDu60xp1IJjVMnmR+m4YQdL+iiT7lwyVHi3Rp6CZfBf8PawksegL76ptx6kzI9clzx74
-         eGZ/KsEAurjCo06cFzf+vfYtDQO9gdn4Adc+4zsyABcuFY5AXOblbVCNARxogNvWReR5
-         HDRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVO/Gf57v4ZjHJqcAP52v12Okpnaw9+jd6hS00r/HTJlB4CpmlNQ3cGzUW3wo5lBjWmLx4IpRausFvU9RY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxcWhiaZODM1SkPmSCB9QFUj/9uQl2I6IsNPCMje3LlTOCsExH
-	fzjGki3QDGUUUTJXyMCkDmrJHo8MtqmipDUVYDINxLtNsUoks8itGbOP
-X-Gm-Gg: ASbGncswbcnbf/myydaSczGUzLJ8/zN8UTUlFhuRQZ8dfF8CLRaRcMtUBhni+NHX9Nj
-	Df+9Ln9uFdBGIEcSPCil2op1fZQD26sXPE7Rx71AleWy0rGlNMCLmYRM1E1PPKPuK6kpvNHkdQR
-	laziCzuARVVOwVE0vHrVEmbMHCaDQBo2FNsFXCxjVIOH4mUMsho6ul9NkhA2cZFXVgbPaSj+biQ
-	As1y1qO/3k2JHkxBwSlAnOR0EZ4FqdvCo6eFlrMA0GNRY1rA0K6jApAYygI9EDgWXXV3MHZLxHu
-	sHV202RGcGi69AbQtbbgaWQPHmnTN88kBEiHRKMIatMinA2mtZNqZ8bqR2uXLnliKhLqwidOsF/
-	dGH3pWS61fFMWj25OM/7II58mGTBV1E1DFgbUTMlw5xf/jasV1aYY3O3MtW4h+CC95P1JFNXd24
-	iU+AA9U1LvjsNeLBM=
-X-Google-Smtp-Source: AGHT+IFkMKsThVh6BHIAWVgjKNvGuStlv8+DHWcDDo6wEzsC1RPtLuqj3cUETmYY2xxLYuWZjAbclw==
-X-Received: by 2002:a05:6214:19e1:b0:76a:fcee:97ad with SMTP id 6a1803df08f44-879dc8ab120mr106203176d6.60.1759621828437;
-        Sat, 04 Oct 2025 16:50:28 -0700 (PDT)
+        bh=0ZrEnyLevXoIcXltBXj1n0pXN58lCz/lcC/iI5a2jGg=;
+        b=QcZwfWFUcq0H/u4RG64ksmJUA6zTTOiIK+idyQzVh32da+k4kilR8UuxzsiOX3uHpJ
+         Mh/Liz/Z6fW7g4mHTRp4wM9dVEYIbyhD1a0W0nCDtREKGEPiwOSHKs251lZozpWj9U4X
+         VzqnxW1G+YigF0cz/BDzQcjVCVTM6c8gkDfwxdcJKRgxvftwYacnDyCdwqjFaNa6QER5
+         3q51GYZ/m4VY7TA8nRqLW/zr1EnDaSs9H8qq755YKAbR9hgMvc94ZD5Tad7JgruXXNU5
+         ixQrwKz6N6GqfwY4JeuHz8iFjQn4h3KmF25Mwwlqy6oOm6ttOT2H9S+oUCtkWnP/5J6r
+         qaWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVD/Br52RD/c+qKvy4/Qqxu1nsqcYJwBDl37S4LeEusY3FPxAPOB3EjgVsA8SFLyVIxdJF2GpMxEEf6yag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMusYy2TWmCVv/20qUS4o4wtU1Tgqo3xUuDysbYMjCZg24gN0Z
+	NR+GrFiADWadJPE59PWgJQyaRaxPdhq10oVH/RzHFrki9Y82GBFDV+7C
+X-Gm-Gg: ASbGncu2xQBFGJ1IUxEINDJ+6OfV+ReTYb9thE92RcnU7nPbDu3vpoUaNHekwTuqkTF
+	Egpc33TytCSfxjQJgEIgSCRIVtdlqqYjJfR/aoIvp7S6/KI4GQEEipObqsiPlSIcDp/AHx4Pmzu
+	FYF0j11FZ9jIzW0F0mDDBxPHhshsoyfnrnXRICmeW+s/vy5CslgqHvhIoedMKQrs2kkXUvhXBDu
+	jf8QbbXQaYG1QSvz7/a9uoouz+jAPdIn7Mv+Tl+MKFeOZWJEWIZEKAZkslDcZnHrqXP1tb83894
+	EKRy04fNsEoUsDvW/CYtSx8KMOwygn0KIzH2rGYvoNly02jg/f8wzXj4uvsDQ24k2RHLVqkfclI
+	4AFxbiHIlYT0X2/TiMXSSgRTLqz76seOFsehmjEen7FSfuwUhilNUskfH3MjzyuMwjbRRgXeKzx
+	J/1C0mzUiO6BWkQy5nWKXVTgyKVA==
+X-Google-Smtp-Source: AGHT+IEfRMsUaYJ/XAJjWbILMrV1deJg/SxAXLDq4HjDEvGxveOHDphSf6WABh59w/bzNL05Mif4ew==
+X-Received: by 2002:ad4:5d69:0:b0:818:54be:2381 with SMTP id 6a1803df08f44-879dc8303d8mr89763246d6.42.1759621833194;
+        Sat, 04 Oct 2025 16:50:33 -0700 (PDT)
 Received: from seokw-960QHA.mynetworksettings.com ([2600:4041:4491:2000:dd54:e5ff:d4b7:cf43])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878bdf5383fsm76180216d6.56.2025.10.04.16.50.25
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878bdf5383fsm76180216d6.56.2025.10.04.16.50.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Oct 2025 16:50:27 -0700 (PDT)
+        Sat, 04 Oct 2025 16:50:32 -0700 (PDT)
 From: Ryan Chung <seokwoo.chung130@gmail.com>
 To: rostedt@goodmis.org,
 	mhiramat@kernel.org
@@ -85,9 +85,9 @@ Cc: mathieu.desnoyers@efficios.com,
 	linux-kselftest@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	seokwoo.chung130@gmail.com
-Subject: [PATCH v3 1/5] docs: tracing: fprobe: document list filters and :entry/:exit
-Date: Sun,  5 Oct 2025 08:46:55 +0900
-Message-ID: <20251004235001.133111-2-seokwoo.chung130@gmail.com>
+Subject: [PATCH v3 2/5] tracing: fprobe: require explicit [GROUP/]EVENT for list/wildcard
+Date: Sun,  5 Oct 2025 08:46:56 +0900
+Message-ID: <20251004235001.133111-3-seokwoo.chung130@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251004235001.133111-1-seokwoo.chung130@gmail.com>
 References: <20251004235001.133111-1-seokwoo.chung130@gmail.com>
@@ -101,56 +101,23 @@ Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Ryan Chung <seokwoo.chung130@gmail.com>
 ---
- Documentation/trace/fprobetrace.rst | 27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
+ kernel/trace/trace.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/trace/fprobetrace.rst b/Documentation/trace/fprobetrace.rst
-index b4c2ca3d02c1..629e2d7402bd 100644
---- a/Documentation/trace/fprobetrace.rst
-+++ b/Documentation/trace/fprobetrace.rst
-@@ -25,21 +25,36 @@ Synopsis of fprobe-events
- -------------------------
- ::
- 
--  f[:[GRP1/][EVENT1]] SYM [FETCHARGS]                       : Probe on function entry
--  f[MAXACTIVE][:[GRP1/][EVENT1]] SYM%return [FETCHARGS]     : Probe on function exit
--  t[:[GRP2/][EVENT2]] TRACEPOINT [FETCHARGS]                : Probe on tracepoint
-+  # fprobe (function entry/exit)
-+  f[:[GRP1/][EVENT1]] SYM_OR_LIST[:entry|:exit] [FETCHARGS]
-+
-+  # legacy single-symbol exit
-+  f[MAXACTIVE][:[GRP1/][EVENT1]] SYM%return [FETCHARGS]
-+
-+  # Probe on tracepoint
-+  t[:[GRP2/][EVENT2]] TRACEPOINT [FETCHARGS]
- 
-  GRP1           : Group name for fprobe. If omitted, use "fprobes" for it.
-  GRP2           : Group name for tprobe. If omitted, use "tracepoints" for it.
-- EVENT1         : Event name for fprobe. If omitted, the event name is
--                  "SYM__entry" or "SYM__exit".
-+ EVENT1         : Event name for fprobe. If omitted,
-+                  - For a single literal symbol, the event name is
-+                    "SYM__entry" or "SYM__exit".
-+                  - For a *list or any wildcard*, an explicit [GRP1/][EVENT1]
-+                    is required; otherwise the parser rejects it.
-  EVENT2         : Event name for tprobe. If omitted, the event name is
-                   the same as "TRACEPOINT", but if the "TRACEPOINT" starts
-                   with a digit character, "_TRACEPOINT" is used.
-  MAXACTIVE      : Maximum number of instances of the specified function that
-                   can be probed simultaneously, or 0 for the default value
-                   as defined in Documentation/trace/fprobe.rst
--
-+ SYM_OR_LIST    : Either a single symbol, or a comma-separated list of
-+                  include/exclude patterns:
-+                  - Tokens are matched as symbols; wildcards may be used.
-+                  - Tokens prefixed with '!' are exclusions.
-+                  - Examples:
-+                        foo             # single literal (entry)
-+                        foo:exit        # single literal exit
-+                        foo%return      # legacy single-symbol exit
-  FETCHARGS      : Arguments. Each probe can have up to 128 args.
-   ARG           : Fetch "ARG" function argument using BTF (only for function
-                   entry or tracepoint.) (\*1)
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index b3c94fbaf002..ac0d3acc337e 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -5524,7 +5524,8 @@ static const char readme_msg[] =
+ 	"\t           r[maxactive][:[<group>/][<event>]] <place> [<args>]\n"
+ #endif
+ #ifdef CONFIG_FPROBE_EVENTS
+-	"\t           f[:[<group>/][<event>]] <func-name>[%return] [<args>]\n"
++	"\t           f[:[<group>/][<event>]] <func-name>[:entry|:exit] [<args>]\n"
++	"\t                (single symbols still accept %return)\n"
+ 	"\t           t[:[<group>/][<event>]] <tracepoint> [<args>]\n"
+ #endif
+ #ifdef CONFIG_HIST_TRIGGERS
 -- 
 2.43.0
 
