@@ -1,211 +1,306 @@
-Return-Path: <linux-kernel+bounces-842027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC6B6BB8CDD
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 13:37:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2497DBB8CE9
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 13:42:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7116F18917B5
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 11:38:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DFF674E5208
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 11:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B20A26F28D;
-	Sat,  4 Oct 2025 11:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353E626CE05;
+	Sat,  4 Oct 2025 11:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="JBmXJMwI"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LZtQZYCt"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C665E1A83F9;
-	Sat,  4 Oct 2025 11:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C892580DE
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 11:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759577852; cv=none; b=ftnlU4tmtIPlB0F3HZS++SjTkUPsxx16c172SkX5GiQ27IjueJlyeV7zBqvfkOQf3MMhCr8MzZiXxthwY47nDzmyQxCXJ0lP1biUiZSc6UeVVBwrDoNYvwPw8s26OEfASdRVqqXg4clD0AjGZ7dLDqVo8K0ZdstOcZXET2FIvHs=
+	t=1759578117; cv=none; b=KrWXsqp6BzCjSLfUKNhGSJ/fiyzoDa5JAYz8iVZsjCIZy51FtUUp37vI/YQvMvtoSw2/fRYpQQEZLATlrr2GI6LRXaJiC+gA01Z1DW0JaJeJggUbDtxOrHHQS0Vjn4HOr377ozu25elUtDbRIIbaFUtIPXdsNVOzu3DUGAVlHQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759577852; c=relaxed/simple;
-	bh=ZMwJ94JZSndxN2070LKEhVYMAa3Woj6Sfn6AMz7xuSc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=o2q60hACdynQURc+1ia9gadBhSErrf20Q92jH3gVfRx2DjxEZpYUzH1o2656U8MzE22kvXXLEk8b4Fs6L54VTmSRViNjN0vgNgEX/6GYe9QENsKwlvqKQsO+py46fGRRSy+KaIsoM7kl+UTvJAQ4Vq21jBY1btlbfAjr8IZ2DUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=JBmXJMwI; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1759577825; x=1760182625; i=markus.elfring@web.de;
-	bh=HKk/p/TS5yX8/Fbq0swMeIhFh6TV1S5qYhu0g+U1Mpc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=JBmXJMwINu99OTPvhAVjSQKRasRj1qXvWWXSdMZw790J4GyKFC7JIJBozVqUTxYK
-	 AZc0xG24a+Krfy943IsUgNxasufUIwOwJNPM+9dlxMsbkqhq18Q8RNoG/X2RFbg8L
-	 4yrIpyM/D5yg9OcvZc0SPaNHH6YS74OFuQnR+JfGfWLPOPE8QgjpoH+Cxn9NDPxgy
-	 bOVfpKJap4OvWFm+ThzqW1Ogp5OEX/cV9GIOzcAHQL0IDXeOnjMUDtoThCuy1goYG
-	 f3yvZmnBWTzfbMN4psoA/Ph8gb0BYI8qDSPqxB0P/0Q/T8Kubqd/x0AO1HJSBpi0g
-	 n1kN/wS5Carrxdt52w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.173]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MnG2C-1uOHI51smq-00iUvZ; Sat, 04
- Oct 2025 13:37:05 +0200
-Message-ID: <1abbfe84-e3f1-4163-9789-6ec49a3ce821@web.de>
-Date: Sat, 4 Oct 2025 13:36:54 +0200
+	s=arc-20240116; t=1759578117; c=relaxed/simple;
+	bh=fIv6+iNPwuIXIA9bqyP1R0SZQuMQXSRAy6Am2xHkuh4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sWBX9HysI1VBYPuy2AlHXkYuzxznvgQzc2i0Py0mDXCP1+W2OmRMRSQ/mIg8xv6LvKKQyWRaSJjXZxFQcrqqmb04OcRoMMEhfgxppX8EBDQMhnI1jerzB8/qTs67BepFnztJ4abxldkhrU1l1qyfEyXfdKumDI42rBVrP9idGAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LZtQZYCt; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b109c6b9fcso33307361cf.3
+        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 04:41:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759578114; x=1760182914; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WpR+xC9UI9aVYPaJ+/mAuENyABy3uI8m/ggwA2QkJpA=;
+        b=LZtQZYCtEoqbcvWgc7ljR3eQc4vZ2wavCYcrXFPYCiDg7mjtcTcow+Qo5Is7PA3qqN
+         bFl42w9O6fT/sS1g+aRRjvUf7MRmes5ZXIsvaLvvZhwBpUgHuTY2rohv9lBrwVOYjcas
+         ztG8PoJXz7QurVtet/1Z+SYKvwCqboeEDC93J5JoyW602V9bIZm6fHc1kQjCfpB0Lu2J
+         Aq9pl3NLCJT37k2QWM3zTNRXY5IoAaqbPVgb1+vt9FXRN+YHVDS7P/PD6Il6i5SGtJut
+         /EzEyikba+ZI3WMFtDO0ZYucEbBpFZecrfg+COd4cDmX51LcQqiWxDdvyxKSgVe97fxw
+         kLvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759578114; x=1760182914;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WpR+xC9UI9aVYPaJ+/mAuENyABy3uI8m/ggwA2QkJpA=;
+        b=QRP/E69ONNxwch7uIHrkB7+yxNO78G1z1zchVpBFx+CJmSmenLjVbAyphQbtaWl/la
+         0dotC0Xxy9E+QrG7tBG7Bu5m6XEmKZaq2ygSCSVQGP4g16emg1xflMDID9ijN6f3RWqp
+         XW1+eP3N1XAarY8Ui6bykcqzuVaCpaqq2kgnSpyDVz7VsIzzyFrztxkSdo6Nkxlmwv6v
+         9ktCuA3ieZG6hG1d6OzpTJxxEZPGeiMBOGCgCuuRZ8zU3ylv8cm0QIuqFW9hkrHa+gBW
+         E17axxYvUHdTfpX99ppcFGroV32fwsIY4d4oycuyF4yMxbTgy+ldW9Ux9/kozj/uJNRI
+         /K7A==
+X-Forwarded-Encrypted: i=1; AJvYcCWrkImP5ZWqMbY+tHjdCRQ8HAGPQ3DCs11QInj9DdGJyRii2TSTtexRUzGU0EnggKROWztUMtBCyQGa60A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3IYrnMYHjBNJOgrIiZyvFT4til2HHvy5xpqvNGiNapQ+z03Ok
+	SdoCL+OLczVX9+7zo4FoAgo6IUWkp4u2RqN+pYbsmSGqZ32O6MKO8EBK7jOXpp0Szbv/hVlXJ/V
+	w4YjUXqdgqCZEfmO1R8qIoGfa649uksp7Zmf+D4idcg==
+X-Gm-Gg: ASbGnctJKqQXm02ochLJJ9kZ7WrjS/BS1Ijl7/pAoM0S7rw/WyR46F/KX6NLpmMV1a+
+	uYTEqkPeGlPsZpiTx7AA9yKj14cbgYiKQLEAtlpxg8rOt4kMg7Xel8K+jBOUlOQWOsRDtD4jEOp
+	H4740HOZBtl7VUuxuyi9jAdzfcLsVFUOJO3ssralI/UuE42ezwevblqSwkdo8SzI/UPcgnJfaZg
+	SlQweSwwwHMXpVcafJvn67TMxkpOXWH0w==
+X-Google-Smtp-Source: AGHT+IEiCgoQUtulfjfbUZqNJXGTIrrJgjtpSpNPgwEgXUAG2pMT/f/hMciGbXI2869MDPsj8X8CukNldkZDB51bknk=
+X-Received: by 2002:ac8:5e4e:0:b0:4e3:16bd:3e16 with SMTP id
+ d75a77b69052e-4e576b06dc6mr76789121cf.56.1759578114196; Sat, 04 Oct 2025
+ 04:41:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB, de-DE
-To: linux-cifs@vger.kernel.org, Namjae Jeon <linkinjeon@kernel.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Steve French <smfrench@gmail.com>, Tom Talpey <tom@talpey.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Neil Brown <neil@brown.name>, Stefan Metzmacher <metze@samba.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] ksmbd: Use scope-based resource management in
- ksmbd_validate_name_reconnect()
-Content-Type: text/plain; charset=UTF-8
+References: <20250124052611.3705-1-eagle.alexander923@gmail.com>
+ <CABjd4YwA8P9LVuDviO6xydkHpuuOY7XT0pk1oa+FDqOo=uZN4A@mail.gmail.com>
+ <a76f315f023a3f8f5435e0681119b4eb@manjaro.org> <CABjd4Ywh_AkbXHonx-8vL-hNY5LMLJge5e4oqxvUG+qe6OF-Og@mail.gmail.com>
+ <61b494b209d7360d0f36adbf6d5443a4@manjaro.org> <CABjd4Yx0p0B=e00MjCpDDq8Z=0FtM0s9EN86WdvRimt-_+kh2w@mail.gmail.com>
+ <CABjd4Yy14bpjzvFyc8et-=pmds5uwzfxNqcs7L=+XRXBogZEsQ@mail.gmail.com>
+ <20251003133304.GA21023@pendragon.ideasonboard.com> <CABjd4YxbyUWghd1ya8UayFkAE-VWQSd5-J2QD0sV7WmS8AXkCg@mail.gmail.com>
+ <CABjd4YwtwUYFX4bX5vy=AFi=Dn1r6nxWtMvmeKBSjkvriNJtsQ@mail.gmail.com> <20251003232856.GC1492@pendragon.ideasonboard.com>
+In-Reply-To: <20251003232856.GC1492@pendragon.ideasonboard.com>
+From: Alexey Charkov <alchark@gmail.com>
+Date: Sat, 4 Oct 2025 15:41:41 +0400
+X-Gm-Features: AS18NWD5l826BtvjlGeJjlKkvc2YdZS_POG-dgOrknV-XIqi7CLGxEQUrunvhfM
+Message-ID: <CABjd4Yx9rt2W=MhCSyO5vaxndD1jvGHNWsz7J=HnvnJcgOvQHw@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: rockchip: Fix broken tsadc pinctrl binding
+ for rk3588
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Dragan Simic <dsimic@manjaro.org>, Alexander Shiyan <eagle.alexander923@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+	devicetree@vger.kernel.org, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>, stable@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:30zlWL/vsYH/8dKaHWL52jHbcZAoIA9hLosEgNIdMvBeSL7X3KC
- ++Ek5EuIzWXabCyhkIoN2j5HU+4ImJJUqiMYT93klvm+BjDrbEP01R/Sxi+w7jAT9JbytXj
- aGtELHQgWzg2v2CiWdyBz1QbxmJW7sk8d3NBbg+xYwd9elS7wEdSWkJNajiLpIJnETiaveE
- bX2sGfoyxmfbZRbr58DAA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:EqOcctrBT5A=;IFzq6NNB+F05BvoWnAPH+jAhrBJ
- 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
- 0kxCWnwJEon1/MFX4=
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 4 Oct 2025 13:27:12 +0200
+On Sat, Oct 4, 2025 at 3:29=E2=80=AFAM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Alexey,
+>
+> On Fri, Oct 03, 2025 at 06:55:26PM +0400, Alexey Charkov wrote:
+> > On Fri, Oct 3, 2025 at 6:13=E2=80=AFPM Alexey Charkov wrote:
+> > > On Fri, Oct 3, 2025 at 5:33=E2=80=AFPM Laurent Pinchart wrote:
+> > > > On Fri, Jan 24, 2025 at 11:44:34PM +0400, Alexey Charkov wrote:
+> > > > > On Fri, Jan 24, 2025 at 9:23=E2=80=AFPM Alexey Charkov <alchark@g=
+mail.com> wrote:
+> > > > > > On Fri, Jan 24, 2025 at 2:37=E2=80=AFPM Dragan Simic <dsimic@ma=
+njaro.org> wrote:
+> > > > > > > On 2025-01-24 11:25, Alexey Charkov wrote:
+> > > > > > > > On Fri, Jan 24, 2025 at 2:06=E2=80=AFPM Dragan Simic <dsimi=
+c@manjaro.org>
+> > > > > > > > wrote:
+> > > > > > > >> On 2025-01-24 09:33, Alexey Charkov wrote:
+> > > > > > > >> > On Fri, Jan 24, 2025 at 9:26=E2=80=AFAM Alexander Shiyan
+> > > > > > > >> > <eagle.alexander923@gmail.com> wrote:
+> > > > > > > >> >>
+> > > > > > > >> >> There is no pinctrl "gpio" and "otpout" (probably desig=
+ned as
+> > > > > > > >> >> "output")
+> > > > > > > >> >> handling in the tsadc driver.
+> > > > > > > >> >> Let's use proper binding "default" and "sleep".
+> > > > > > > >> >
+> > > > > > > >> > This looks reasonable, however I've tried it on my Radxa=
+ Rock 5C and
+> > > > > > > >> > the driver still doesn't claim GPIO0 RK_PA1 even with th=
+is change. As
+> > > > > > > >> > a result, a simulated thermal runaway condition (I've ch=
+anged the
+> > > > > > > >> > tshut temperature to 65000 and tshut mode to 1) doesn't =
+trigger a PMIC
+> > > > > > > >> > reset, even though a direct `gpioset 0 1=3D0` does.
+> > > > > > > >> >
+> > > > > > > >> > Are any additional changes needed to the driver itself?
+> > > > > > > >>
+> > > > > > > >> I've been digging through this patch the whole TSADC/OTP t=
+hing in the
+> > > > > > > >> last couple of hours, and AFAIK some parts of the upstream=
+ driver are
+> > > > > > > >> still missing, in comparison with the downstream driver.
+> > > > > > > >>
+> > > > > > > >> I've got some small suggestions for the patch itself, but =
+the issue
+> > > > > > > >> you observed is obviously of higher priority, and I've sin=
+gled it out
+> > > > > > > >> as well while digging through the code.
+> > > > > > > >>
+> > > > > > > >> Could you, please, try the patch below quickly, to see is =
+it going to
+> > > > > > > >> fix the issue you observed?  I've got some "IRL stuff" to =
+take care of
+> > > > > > > >> today, so I can't test it myself, and it would be great to=
+ know is it
+> > > > > > > >> the right path to the proper fix.
+> > > > > > > >>
+> > > > > > > >> diff --git i/drivers/thermal/rockchip_thermal.c
+> > > > > > > >> w/drivers/thermal/rockchip_thermal.c
+> > > > > > > >> index f551df48eef9..62f0e14a8d98 100644
+> > > > > > > >> --- i/drivers/thermal/rockchip_thermal.c
+> > > > > > > >> +++ w/drivers/thermal/rockchip_thermal.c
+> > > > > > > >> @@ -1568,6 +1568,11 @@ static int rockchip_thermal_probe(s=
+truct
+> > > > > > > >> platform_device *pdev)
+> > > > > > > >>          thermal->chip->initialize(thermal->grf, thermal->=
+regs,
+> > > > > > > >>                                    thermal->tshut_polarity=
+);
+> > > > > > > >>
+> > > > > > > >> +       if (thermal->tshut_mode =3D=3D TSHUT_MODE_GPIO)
+> > > > > > > >> +               pinctrl_select_default_state(dev);
+> > > > > > > >> +       else
+> > > > > > > >> +               pinctrl_select_sleep_state(dev);
+> > > > > > > >
+> > > > > > > > I believe no 'else' block is needed here, because if tshut_=
+mode is not
+> > > > > > > > TSHUT_MODE_GPIO then the TSADC doesn't use this pin at all,=
+ so there's
+> > > > > > > > no reason for the driver to mess with its pinctrl state. I'=
+d rather
+> > > > > > > > put a mirroring block to put the pin back to its 'sleep' st=
+ate in the
+> > > > > > > > removal function for the TSHUT_MODE_GPIO case.
+> > > > > > >
+> > > > > > > You're right, but the "else block" is what the downstream dri=
+ver does,
+> > > > > >
+> > > > > > Does it though? It only handles the TSHUT_MODE_GPIO case as far=
+ as I
+> > > > > > can tell (or TSHUT_MODE_OTP in downstream driver lingo) [1]
+> > > > > >
+> > > > > > [1] https://github.com/radxa/kernel/blob/edb3eeeaa4643ecac6f418=
+5d6d391c574735fca1/drivers/thermal/rockchip_thermal.c#L2564
+> > > > > >
+> > > > > > > so I think it's better to simply stay on the safe side and fo=
+llow that
+> > > > > > > logic in the upstream driver.  Is it really needed?  Perhaps =
+not, but
+> > > > > > > it also shouldn't hurt.
+> > > > > > >
+> > > > > > > > Will try and revert.
+> > > > > > >
+> > > > > > > Awesome, thanks!
+> > > > > > >
+> > > > > > > > P.S. Just looked at the downstream driver, and it actually =
+calls
+> > > > > > > > TSHUT_MODE_GPIO TSHUT_MODE_OTP instead, so it seems that "o=
+tpout" was
+> > > > > > > > not a typo in the first place. So maybe the right approach =
+here is not
+> > > > > > > > to change the device tree but rather fix the "gpio" / "otpo=
+ut" pinctrl
+> > > > > > > > state handling in the driver.
+> > > > > > >
+> > > > > > > Indeed, "otpout" wasn't a typo, and I've already addressed th=
+at in my
+> > > > > > > comments to Alexander's patch.  Will send that response a bit=
+ later.
+> > > > > > >
+> > > > > > > I think it's actually better to accept the approach in Alexan=
+der's
+> > > > > > > patch, because the whole thing applies to other Rockchip SoCs=
+ as well,
+> > > > > > > not just to the RK3588(S).
+> > > > > >
+> > > > > > Anyway, I've just tried it after including the changes below, a=
+nd
+> > > > > > while /sys/kernel/debug/pinctrl/pinctrl-handles shows the expec=
+ted
+> > > > > > pinctrls under tsadc, the driver still doesn't seem to be trigg=
+ering a
+> > > > > > PMIC reset. Weird. Any thoughts welcome.
+> > > > >
+> > > > > I found the culprit. "otpout" (or "default" if we follow Alexande=
+r's
+> > > > > suggested approach) pinctrl state should refer to the &tsadc_shut=
+_org
+> > > > > config instead of &tsadc_shut - then the PMIC reset works.
+> > > >
+> > > > I've recently brought up an RK3588S-based Orange Pi CM5 Base board,=
+ made
+> > > > of a compute module (CM5, see [1]) and a carrier board (Base, see [=
+2]).
+> > > > The carrier board has a reset button which pulls the PMIC_RESET_L s=
+ignal
+> > > > of the CM5 to GND (see page 3 of the schematics in [3]).
+> > > >
+> > > > With &tsadc_shut_org the reset button has absolutely no effect. Wit=
+h
+> > > > &tsadc_shut it resets the board as expected.
+> > >
+> > > Interesting. The TSADC shouldn't affect the physical button operation
+> > > at all, if it's really wired to the PMIC as the signal name implies.
+> > > There isn't even any default pull value associated with the TSHUT pin
+> > > config.
+> >
+> > On a second thought, I've got another hypothesis. Your baseboard only
+> > pulls the reset line through  a 100 Ohm resistor when the button is
+> > pressed. So if the TSHUT pin is in its default push-pull mode and
+> > stays high when no thermal runaway reset is requested, the reset
+> > button won't pull the line fully to zero, as the TSHUT line pulls it
+> > high at the same time.
+>
+> That's the most likely cause, I agree.
+>
+> > If you switch it from &tsadc_shut_org to &tsadc_shut, then it stops
+> > working properly as the thermal protection reset, and GPIO0_A1 remains
+> > high-impendance, thus allowing the reset button to function even
+> > though its pull is too weak.
+>
+> By the way, what is the difference between tsadc_shut_org and tsadc_shut
+> ? I haven't seen it being clearly documented in the TRM.
 
-Scope-based resource management became supported for some
-programming interfaces by contributions of Peter Zijlstra on 2023-05-26.
-See also the commit 54da6a0924311c7cf5015533991e44fb8eb12773 ("locking:
-Introduce __cleanup() based infrastructure").
+No idea frankly. Looks like a half-finished design change to me, which
+left the non-"org" version unconnected internally.
 
-* Thus use the attribute =E2=80=9C__free(kfree)=E2=80=9D.
+> > So maybe change the pin configuration of &tsadc_shut_org in
+> > rk3588-base-pinctrl.dtsi to open drain and retry?
+>
+> That's a good idea, but... how ? The pinctrl-rockchip driver doesn't
+> seem to support generic open-drain configuration.
 
-* Reduce the scope for the local variable =E2=80=9Cab_pathname=E2=80=9D.
+I thought I saw open-drain configurations here, but after reviewing
+the TRM, bindings and the driver it turns out I must have been
+daydreaming :( Sorry.
 
-* Omit two kfree() calls accordingly.
+Looks like the best we can try is a lower drive strength while keeping
+the push-pull mode, but I'm afraid this 100 Ohm pulldown is too weak,
+because the lowest TSHUT drive strength Rockchip offers is 100 Ohm,
+while the PMIC would only count anything below 30% reference voltage
+as logical low. Maybe adding a pulldown to the pin config can help,
+but most likely this board will require switching the pin to GPIO
+input for high-z, and switching the TSHUT mode to CRU.
 
-* Return status codes directly without using an intermediate variable.
+So how about something like this first:
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- fs/smb/server/vfs_cache.c | 17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+&tsadc_shut_org {
+        rockchip,pins =3D <0 RK_PA1 1 &pcfg_pull_down_drv_level_0>;
+};
 
-diff --git a/fs/smb/server/vfs_cache.c b/fs/smb/server/vfs_cache.c
-index dfed6fce8904..af8a16879b88 100644
-=2D-- a/fs/smb/server/vfs_cache.c
-+++ b/fs/smb/server/vfs_cache.c
-@@ -933,27 +933,22 @@ void ksmbd_free_global_file_table(void)
- int ksmbd_validate_name_reconnect(struct ksmbd_share_config *share,
- 				  struct ksmbd_file *fp, char *name)
- {
--	char *pathname, *ab_pathname;
--	int ret =3D 0;
-+	char *pathname __free(kfree) =3D kmalloc(PATH_MAX, KSMBD_DEFAULT_GFP);
-=20
--	pathname =3D kmalloc(PATH_MAX, KSMBD_DEFAULT_GFP);
- 	if (!pathname)
- 		return -EACCES;
-=20
--	ab_pathname =3D d_path(&fp->filp->f_path, pathname, PATH_MAX);
--	if (IS_ERR(ab_pathname)) {
--		kfree(pathname);
-+	char *ab_pathname =3D d_path(&fp->filp->f_path, pathname, PATH_MAX);
-+
-+	if (IS_ERR(ab_pathname))
- 		return -EACCES;
--	}
-=20
- 	if (name && strcmp(&ab_pathname[share->path_sz + 1], name)) {
- 		ksmbd_debug(SMB, "invalid name reconnect %s\n", name);
--		ret =3D -EINVAL;
-+		return -EINVAL;
- 	}
-=20
--	kfree(pathname);
--
--	return ret;
-+	return 0;
- }
-=20
- int ksmbd_reopen_durable_fd(struct ksmbd_work *work, struct ksmbd_file *f=
-p)
-=2D-=20
-2.51.0
-
+Best regards,
+Alexey
 
