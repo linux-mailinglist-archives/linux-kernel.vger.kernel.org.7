@@ -1,177 +1,155 @@
-Return-Path: <linux-kernel+bounces-842177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 959B0BB9282
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 00:40:32 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22C8BB928E
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 00:53:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 453D33AD27B
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 22:40:31 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 35268344D16
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 22:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8B3243954;
-	Sat,  4 Oct 2025 22:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F5022FE18;
+	Sat,  4 Oct 2025 22:53:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JCMH1+A3"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="GpantFcj"
+Received: from smtp153-163.sina.com.cn (smtp153-163.sina.com.cn [61.135.153.163])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82D8F9C1
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 22:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2866F21638D
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 22:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759617626; cv=none; b=Du/DN2POKM23SlO1dBqyhx0FaK1xWQ4B7oLY+fXagzjjqn3t6sryRUDbB1B2+CkrRVJe3vlb0yLUhzDks9973Vp9v6pfY4gE5g/KmzP1nNOpBnm1Zrpp4ZxDEIZFOAwnGLyKANdKsJy7GSSN3tcH13MlKv/JzMxG1gfA31Qy5Wg=
+	t=1759618404; cv=none; b=CxM+TtkBRRhd7maZTiQCBPjSyZD/uLSmj+5yIX34hCtyZ6H2pW/UrV75yWbh+4sE3wnZWHcU4XvdMlx5ht1trvH+TZ/dKelO9z9qHGBDJMCiYDrdeNjJIB4BERz6NdrHs1MVYzsh7Ydjxo4s8NAoyeI8DAIqwTgMO3W8iOZy2RQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759617626; c=relaxed/simple;
-	bh=Zdzv8LqE1xV8irEczQnr5M3hEcuJkYOP2kFHEQM1ImE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cjwk3gg89hPapHANfWmFUvXdvXShuB/pTD8YLvQuQMcgF1e8AbWXW4c+X53DVBGLvGFE9B2X1PDWNVrdO9TIFeujK2yy39PX75zR8DikQhDx6KKWVZg0jOdvZhmY2dOsz+yLsHjUHIf2TmqzDtRUqJJ7BUuRgqjgA+wNWlyEMQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JCMH1+A3; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-269af38418aso43029005ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 15:40:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759617624; x=1760222424; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bOAdntz+KeAlO/SvuA1JcD8OWmt9u//UdVphsQBdXps=;
-        b=JCMH1+A3t9UG68byFsy17Mm1obo032RbrbLzfft/T5wac5hSIkjuTQITjzMdT4T3gC
-         B80e8aLAD9v1RWfM6Ga/QKLR5iPSBEaZB6pSoBgxXljEUD+t6/M9Rr8OSiFG3m189zRr
-         LF956tqU8OXbra4hnI/w0/OWkikj5sTi5lLmIjgs6xYn0dnT2/LDJkYmb6omtgGT/l6w
-         eRfU82NNCaDDpOnNE5V6la0DUHrRe9D4Fjv4pCrdD09dKNZAyUvmNVqht8HkwJlbTYEq
-         w/iuYCmBTjINdtq6Xl9vV3z8pdWBE161BivdI9xzY6/4ZI1Ws/IeQF0bdei3JuUaAEX9
-         INAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759617624; x=1760222424;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bOAdntz+KeAlO/SvuA1JcD8OWmt9u//UdVphsQBdXps=;
-        b=qdI4F42ubkxzV8sHg9UypYcd7RKisQj+3PWk9+DA8kxqmTiUGQMAbtOhmRas/aFuF/
-         VKHqqgbbnm90YdWeNsGQWVYW9KpNuQ5NZZlSZy+x+O+KaHuDWCuA39+TkebqRqQkIbrF
-         YmBPQm47qMkoZssBG9sY2gtt6cY8kglvk1hyzuiuPJOIIDro3qMnxPCRjkRyC6Di+tB+
-         8nWnWrt3Vun6rhRiQJBFwSnz17mB52AwP2Lh9ogZmrvRoC2SBh7YncmiXmEG3LSjoWWd
-         Zxsfe7mq5Hsxzb3gHkI0wO0NElwuymaCMsvFJj7UKnYtfRSl9qqSV9uzN11lyvx/VJZd
-         GIJw==
-X-Gm-Message-State: AOJu0YxVJ/OZ/jvFs9jhvbCFYpTg59Wkoxrv+II5pHAwP0th55s3mro6
-	+YjpaWQbPVCskm3f4wU1/CwMHdhOkHmkrd+Pz3GphZkxc+22b7RHgF8Y
-X-Gm-Gg: ASbGncuH4mSacAIHHMYm68aYVzXmwbpnxIfOFPx5fA6Af6NGWYxthEZlXjea8OSjC7K
-	QsnEPO/9ueOw3RnB4iCvH7Etc01ERN4zQ1uW21ueN5U2lnBRBpdQtK1zbXjh7idXaOImrQsnrUh
-	eQ3CJVHtnQul8iq8JwKZGpf7YgZMx+Sa1o+87A5s/uYB9vK+FRGch8cYnR4hyJn0mR+uTvB4jKV
-	pAJPco8vHtvXP5Zczj0L9OGoBZ55PHszxVQ7EI16r4gmDs6bNydFBvnoD+RdQfpJm9HsqaC+fkD
-	anOQF4/7HKRg/XcxKPNErZXVSXTDCChsFO1c37tjfQFP2dnK4tkxlBvNB15eKCRZDeIkbdo+gsG
-	5i8tenErg6xTuA+ZMURGftwZrK1qZ4cBCTYIDG58rFq5rBB6sMM1LMgACjKRG
-X-Google-Smtp-Source: AGHT+IEEuDpKzQXtVuShc4pJf9BgCPzJ18iq05PWmkh13oJnHgXyYPdarqa0eRgaRYG+SwX7DVV9HQ==
-X-Received: by 2002:a17:903:28e:b0:270:ba81:14d9 with SMTP id d9443c01a7336-28e9a693fd4mr103604355ad.36.1759617623667;
-        Sat, 04 Oct 2025 15:40:23 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d111910sm88078525ad.18.2025.10.04.15.40.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Oct 2025 15:40:22 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 835BE4233433; Sun, 05 Oct 2025 05:40:19 +0700 (WIB)
-Date: Sun, 5 Oct 2025 05:40:19 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: =?utf-8?B?TG/Dr2M=?= Molinari <loic.molinari@collabora.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>, Melissa Wen <mwen@igalia.com>,
-	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
-	Hugh Dickins <hughd@google.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	=?utf-8?Q?Miko=C5=82aj?= Wasiak <mikolaj.wasiak@intel.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Nitin Gote <nitin.r.gote@intel.com>,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	Christopher Healy <healych@amazon.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, linux-mm@kvack.org,
-	kernel@collabora.com
-Subject: Re: [PATCH v3 10/10] Documentation/gpu/drm-mm: Add THP paragraph to
- GEM mapping section
-Message-ID: <aOGiU77k1XPb9W9M@archie.me>
-References: <20251004093054.21388-1-loic.molinari@collabora.com>
- <20251004093054.21388-11-loic.molinari@collabora.com>
+	s=arc-20240116; t=1759618404; c=relaxed/simple;
+	bh=zbr0YOn69vjdMcpOPt1aH/4nX38FY7qmYKacgXkoWzQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=N55CBEMcvdCtQGkGDenVsEvihs8FcFsHfdTFFf6iEBXtMzTydEWImGe1be/7bHSYTfYCMnFfedEsiiXvGgjf/eaxCQSnb823/izC7f6kX0rlHtoP7lZ2ABZVPjicvGUli6QUIYMaJ16OGOmJ2a8dmLFu4msUhHY3Ufx0ayAH1Sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=GpantFcj; arc=none smtp.client-ip=61.135.153.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1759618396;
+	bh=WHbjCHjWNsWqrqhO7WMq/PYe5xmO6aQuPRPzug8DmiM=;
+	h=From:Subject:Date:Message-ID;
+	b=GpantFcjQRAajLK7SMMEztYnKPgGRstnZdvpy1VBa92u5l47bH1q3mSmqqrRa7X04
+	 V1Vq3buLuEnjfkzVlzPPbDZQRCisJ5eNIHNnOKbxhhaENfXTGkzQEfZjL5AOjh1Ecf
+	 DKIw3xOLJq3FPwXbs+ZDWYR1YR9rj+YJ2PKSPaeA=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.32) with ESMTP
+	id 68E1A54F0000331E; Sat, 5 Oct 2025 06:53:06 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 6253434456756
+X-SMAIL-UIID: AC868A3814AE47A19B29B4AFA13DD6CA-20251005-065306-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+ae8ad52680705c162471@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [afs?] KASAN: slab-use-after-free Read in afs_dynroot_readdir (2)
+Date: Sun,  5 Oct 2025 06:52:55 +0800
+Message-ID: <20251004225256.8119-1-hdanton@sina.com>
+In-Reply-To: <68e0b0f4.050a0220.396d9c.066c.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cgdVn3+TYG3JLZOy"
-Content-Disposition: inline
-In-Reply-To: <20251004093054.21388-11-loic.molinari@collabora.com>
+Content-Transfer-Encoding: 8bit
 
+> Date: Fri, 03 Oct 2025 22:30:28 -0700	[thread overview]
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    9b0d551bcc05 Merge tag 'pull-misc' of git://git.kernel.org..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=144e8304580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3affc19c35df22d7
+> dashboard link: https://syzkaller.appspot.com/bug?extid=ae8ad52680705c162471
+> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17856a7c580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15a05214580000
 
---cgdVn3+TYG3JLZOy
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+#syz test
 
-On Sat, Oct 04, 2025 at 11:30:53AM +0200, Lo=C3=AFc Molinari wrote:
-> @@ -290,7 +292,7 @@ The open and close operations must update the GEM obj=
-ect reference
->  count. Drivers can use the drm_gem_vm_open() and drm_gem_vm_close() help=
-er
->  functions directly as open and close handlers.
-> =20
-> -The fault operation handler is responsible for mapping individual pages
-> +The fault operation handlers are responsible for mapping individual pages
->  to userspace when a page fault occurs. Depending on the memory
->  allocation scheme, drivers can allocate pages at fault time, or can
->  decide to allocate memory for the GEM object at the time the object is
-> @@ -299,6 +301,19 @@ created.
->  Drivers that want to map the GEM object upfront instead of handling page
->  faults can implement their own mmap file operation handler.
-> =20
-> +In order to reduce page table overhead, if the internal shmem mountpoint
-> +"shm_mnt" is configured to use transparent huge pages (for builds with
-> +CONFIG_TRANSPARENT_HUGEPAGE enabled) and if the shmem backing store
-> +manages to allocate huge pages, faulty addresses within huge pages will
-> +be mapped into the tables using the huge page fault handler. In such
-> +cases, mmap() user address alignment for GEM objects is handled by
-> +providing a custom get_unmapped_area properly forwarding to the shmem
-> +backing store. For most drivers, which don't create a huge mountpoint by
-> +default or through a module parameter, transparent huge pages can be
-> +enabled by either setting the "transparent_hugepage_shmem" kernel
-> +parameter or the "/sys/kernel/mm/transparent_hugepage/shmem_enabled"
-> +sysfs knob.
-> +
->  For platforms without MMU the GEM core provides a helper method
->  drm_gem_dma_get_unmapped_area(). The mmap() routines will call this to g=
-et a
->  proposed address for the mapping.
-=20
-LGTM, thanks!
-
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---cgdVn3+TYG3JLZOy
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaOGiTwAKCRD2uYlJVVFO
-owsBAP926UwrcUZLpaNBVlMMMAJn+GCE/YTh2qS92wDMr5wDhAD8D6FJXmT5X1j7
-e7eeG3goT2uCJaiZG5r1107jYRzKSAs=
-=vdd1
------END PGP SIGNATURE-----
-
---cgdVn3+TYG3JLZOy--
+--- x/fs/afs/dynroot.c
++++ y/fs/afs/dynroot.c
+@@ -290,15 +290,21 @@ static int afs_dynroot_readdir_cells(str
+ 	for (;;) {
+ 		unsigned int ix = ctx->pos >> 1;
+ 
++		rcu_read_lock();
+ 		cell = idr_get_next(&net->cells_dyn_ino, &ix);
+-		if (!cell)
++		if (!cell) {
++			rcu_read_unlock();
+ 			return 0;
++		}
+ 		if (READ_ONCE(cell->state) == AFS_CELL_REMOVING ||
+-		    READ_ONCE(cell->state) == AFS_CELL_DEAD) {
++		    READ_ONCE(cell->state) == AFS_CELL_DEAD ||
++		    !refcount_inc_not_zero(&cell->ref)) {
++			rcu_read_unlock();
+ 			ctx->pos += 2;
+ 			ctx->pos &= ~1;
+ 			continue;
+ 		}
++		rcu_read_unlock();
+ 
+ 		newpos = ix << 1;
+ 		if (newpos > ctx->pos)
+@@ -308,16 +314,21 @@ static int afs_dynroot_readdir_cells(str
+ 
+ 		if ((ctx->pos & 1) == 0) {
+ 			if (!dir_emit(ctx, cell->name, cell->name_len,
+-				      cell->dynroot_ino, DT_DIR))
++				      cell->dynroot_ino, DT_DIR)) {
++				afs_put_cell(cell, afs_cell_trace_put_atcell);
+ 				return 0;
++			}
+ 			ctx->pos++;
+ 		}
+ 		if ((ctx->pos & 1) == 1) {
+ 			if (!dir_emit(ctx, cell->name - 1, cell->name_len + 1,
+-				      cell->dynroot_ino + 1, DT_DIR))
++				      cell->dynroot_ino + 1, DT_DIR)) {
++				afs_put_cell(cell, afs_cell_trace_put_atcell);
+ 				return 0;
++			}
+ 			ctx->pos++;
+ 		}
++		afs_put_cell(cell, afs_cell_trace_put_atcell);
+ 	}
+ 	return 0;
+ }
+--- x/fs/afs/cell.c
++++ y/fs/afs/cell.c
+@@ -520,7 +520,6 @@ static void afs_cell_destroy(struct rcu_
+ 	afs_put_vlserverlist(net, rcu_access_pointer(cell->vl_servers));
+ 	afs_unuse_cell(cell->alias_of, afs_cell_trace_unuse_alias);
+ 	key_put(cell->anonymous_key);
+-	idr_remove(&net->cells_dyn_ino, cell->dynroot_ino);
+ 	kfree(cell->name - 1);
+ 	kfree(cell);
+ 
+@@ -565,6 +564,9 @@ void afs_put_cell(struct afs_cell *cell,
+ 		zero = __refcount_dec_and_test(&cell->ref, &r);
+ 		trace_afs_cell(debug_id, r - 1, a, reason);
+ 		if (zero) {
++			struct afs_net *net = cell->net;
++
++			idr_remove(&net->cells_dyn_ino, cell->dynroot_ino);
+ 			a = atomic_read(&cell->active);
+ 			WARN(a != 0, "Cell active count %u > 0\n", a);
+ 			WARN_ON(!queue_work(afs_wq, &cell->destroyer));
+--
 
