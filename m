@@ -1,149 +1,109 @@
-Return-Path: <linux-kernel+bounces-842087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C356BBB8EBF
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 16:28:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E675BB8EC4
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 16:28:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 025084A17C5
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 14:28:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 90E2E4E8E7C
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 14:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2EF2206A7;
-	Sat,  4 Oct 2025 14:28:05 +0000 (UTC)
-Received: from mail.aperture-lab.de (mail.aperture-lab.de [116.203.183.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8354B21FF55;
+	Sat,  4 Oct 2025 14:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HgUGJyU9"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA25A21D3C5;
-	Sat,  4 Oct 2025 14:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.183.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AD620E704
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 14:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759588084; cv=none; b=pmSE8k8U5Aop+AB9T/AQz3IsDTQygio1fM4IKIOFYCUrWEvk1gHxGcO0/zWxc7+eo7XvrVeNth1Y+W3ZWMFcxXwoa9G6ShlKKmkJdipfo77EuGT0sz2TlND/MSQtGODszYTUvhYUH1NL1jlzZdMkxuPiEfvXP4Yive/jrVrPNmI=
+	t=1759588118; cv=none; b=o6LHfjrY6rsgrMsrx1NXfomNOCiM2Ij2w8K5QeqGQ0NjVVGHIWsMEauc6L08ARS6PbYOOdTqKPNKeq1w3Z/XE0IKf+qNZLp46O3OK5KBYhiCq/2raJKzLgs1zGwWec8AcR/Tsp7C/JnZr8cR+Bu4JHtDWqXqyphRAhl/ZV6ZjtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759588084; c=relaxed/simple;
-	bh=tl77jBe7fIPku8Z7eZo9//stu+k4QPsQ0UhsRrMUZ/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aAn7DlRGO3OyXVuYi3V5Q3sKzhdLye+NWOpQF5WvldcmJj28fd7ZkOBJtuXazZzTF8twWxRPe92KlVuCamb5ngUVzbUZ/rKm2MFshsuOnoPMH+AvC4hQH4iUpDUXOF5OI0gQZXWpdASWttdW6ipm0OpsE9vjtvoeGNSaoi3/afM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c0d3.blue; spf=pass smtp.mailfrom=c0d3.blue; arc=none smtp.client-ip=116.203.183.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c0d3.blue
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=c0d3.blue
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B85B954C477;
-	Sat,  4 Oct 2025 16:27:55 +0200 (CEST)
-Date: Sat, 4 Oct 2025 16:27:54 +0200
-From: Linus =?utf-8?Q?L=C3=BCssing?= <linus.luessing@c0d3.blue>
-To: Ido Schimmel <idosch@nvidia.com>
-Cc: "Huang, Joseph" <joseph.huang.at.garmin@gmail.com>,
-	Joseph Huang <Joseph.Huang@garmin.com>, netdev@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	David Ahern <dsahern@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Ahmed Zaki <ahmed.zaki@intel.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	linux-kernel@vger.kernel.org, bridge@lists.linux.dev
-Subject: Re: [PATCH net] net: bridge: Trigger host query on v6 addr valid
-Message-ID: <aOEu6uQ4pP4PJH-y@sellars>
-References: <20250912223937.1363559-1-Joseph.Huang@garmin.com>
- <aMW2lvRboW_oPyyP@shredder>
- <be567dd9-fe5d-499d-960d-c7b45f242343@gmail.com>
- <aMqb63dWnYDZANdb@shredder>
+	s=arc-20240116; t=1759588118; c=relaxed/simple;
+	bh=ojfKhhX/8wUyfMb+0xl3q5bck6Je10S6jxPo6lslJEg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ktkiOXcmWCG3I4wSfeDq7BifJJGA3Pl2IJrfIv1HzcmWgVsoHIk3BaYZN68rMivfs3N+FJRVLo86w3sSH251mSswkmYzh9UrrcmuXf3ExJ992FtKyOOMA7xtMIbzwzL5LICRBv8ZA+7BC+rSKeQbS+f8D80fUg79oLYvcsF2YqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HgUGJyU9; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e3a50bc0fso26650245e9.3
+        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 07:28:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759588116; x=1760192916; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CK0v4OX8W8IlBqQJ3Wzl4GiNbbL02OCOeiXzShfxTf4=;
+        b=HgUGJyU9lY9XfMmR5jKWeDUi6m6Zz7B8cOMokwD14swueHss1J3cQZNw/fTghgopFf
+         pNxCKAn5MK6a5x5sWvxwHG4yGeOxNoO7IBR7PThtpXXPHQRl63H9HS2kd9egqr4JD4ix
+         wjHQtKTfRf8lwNFdlrD1w2AmqnntF92gs26RXr1r8YDvrthCMUJapVc6hsRl4pH5mBhi
+         Mz1CCjxovOK3WncCW0SXUq+dsrrF7debagSsE2fL6c3RyGG6abNeGVxTD9OwAHHZOJDV
+         p10Ir8KMYAN12HV29Wu3pv4qevyU5fA1+XItfJver/MbWsHiRjHVcYGGsBqEJZD8KxdK
+         pgYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759588116; x=1760192916;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CK0v4OX8W8IlBqQJ3Wzl4GiNbbL02OCOeiXzShfxTf4=;
+        b=IRBvgRscNSbkTPk/xcyUJHf015ujQp1Dl3iKrI11y6IhtJ8uDyTO37H7AxJMfz0OfR
+         fMz3NwHzYobI1vIRQbJD9u+dXCdDar/3rw3kWGk6Fw1WlsvNLr4DugR7/HMqLOndY9/b
+         4xFTtpmHZcMY1d659k0uf9FFWXk83HSMV4y9Al3U4P/2LxoBQJK0w04xvlt3WO4bXYdJ
+         epyEHakPndTmXg/BlwWda2Fy6ipFtuGttmDxLFsl3PxaW8K2sV07+64VbJj1i2/Yx+VB
+         h4kWZpMuV++6fXZNPH6mvOeCrAG7nl38jNgeFrKUqGVEw+aDKLi4y5NRUHQ3DnwZ2M5a
+         jf3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWojn/bCh38XfkrO9oUKtX/cowMz/xDr3u0EodD2ui9NstDejJS63c7WnT1Go8uZfPzkrdba5nCurBg+PM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfZZbtjQEX+lbfbyPUHGL90zf8Pivfd7AXcrDC6vd/HPCeCI3v
+	eKdAcf7EN2yYwN3oZ6U27VFpy1Qf/dUmWjJMOwa2V2XzG5UJbyJj22Uk1tYVMBGaQtz8CnaPuX4
+	I7OP6mZ5+yA+ZsusM9g/Bl4YiRMrZFx0=
+X-Gm-Gg: ASbGncvd0hyCgroA4pxv/dB+MBOuSj7ZTjjnYGq+GZXOfOTZI6j0QV2ltUNadErKg/M
+	ONsewN+WCKZQJP0jgCIDVQHaZMcuLAcLl7Ll1tvcW3oV4UdewouA6A2abgJZrqZ1HIIfcEcmDV1
+	u0R6SlUUGe5aQwrPjT3K6QkPlf9CsQABzpXWwjS2BHBk15X2BmMI5MAR7Wod+/WX0RpbUMsqBSL
+	3d3KVeJS8fxQnpGtX8igunqW3AQq0HnTuUJjg0UsrlFBJpED43eZ2m6KpEQ
+X-Google-Smtp-Source: AGHT+IE4Og6jwiPBBmHNkCPbBDPgBPqP5LwHuX1iUxTwECiL+8Mx2MUFp14C8Hb8qOdMhIteAMZP/szUC0EtCxKPQzg=
+X-Received: by 2002:a05:6000:2dc3:b0:425:58d0:483b with SMTP id
+ ffacd0b85a97d-425671ab837mr4385671f8f.45.1759588115404; Sat, 04 Oct 2025
+ 07:28:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aMqb63dWnYDZANdb@shredder>
-X-Last-TLS-Session-Version: TLSv1.3
+References: <cover.1759584052.git.rongtao@cestc.cn> <tencent_8AF4D15B4475031E2185ACDE4B1495995707@qq.com>
+In-Reply-To: <tencent_8AF4D15B4475031E2185ACDE4B1495995707@qq.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Sat, 4 Oct 2025 07:28:24 -0700
+X-Gm-Features: AS18NWCncY86K82MEOsvI4_LR56kfq3c6aMGWJWk4LCNmAzvAbhcCXDAaeximk8
+Message-ID: <CAADnVQ+iERbZZ35CbPRamMqEu32ptEAXL0OQAhansfzBX+HDKQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 1/2] bpf: add bpf_strcasestr,bpf_strncasestr kfuncs
+To: Rong Tao <rtoax@foxmail.com>
+Cc: Viktor Malik <vmalik@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Rong Tao <rongtao@cestc.cn>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+	"open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)" <bpf@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 17, 2025 at 02:30:51PM +0300, Ido Schimmel wrote:
-> But before making changes, I want to better understand the problem you
-> are seeing. Is it specific to the offloaded data path? I believe the
-> problem was fixed in the software data path by this commit:
+On Sat, Oct 4, 2025 at 6:37=E2=80=AFAM Rong Tao <rtoax@foxmail.com> wrote:
+>
+> -__bpf_kfunc int bpf_strnstr(const char *s1__ign, const char *s2__ign, si=
+ze_t len)
+> +__bpf_kfunc int __bpf_strnstr(const char *s1, const char *s2, size_t len=
+,
+> +                                                         bool ignore_cas=
+e)
+>  {
 
-Two issues I noticed recently, even without any hardware switch
-offloading, on plain soft bridges:
+Still __bpf_kfunc ?
 
-1) (Probably not the issue here? But just to avoid that this
-causes additional confusion:) we don't seem to properly converge to
-the lowest MAC address, which is a bug, a violation of the RFCs.
-
-If we received an IGMP/MLD query from a foreign host with an
-address like fe80::2 and selected it and then enable our own
-multicast querier with a lower address like fe80::1 on our bridge
-interface for example then we won't send our queries, won't reelect
-ourself. If I recall correctly. (Not too critical though, as at least we
-have a querier on the link. But I find the election code a bit
-confusing and I wouldn't dare to touch it without adding some tests.)
-
-2) Without Ido's suggested workaround when the bridge multicast snooping
-+ querier is enabled before the IPv6 DAD has taken place then our
-first IGMP/MLD query will fizzle, not be transmitted.
-
-However (at least for a non-hardware-offloaded) bridge as far as I
-recall this shouldn't create any multicast packet loss and should
-operate as "normal" with flooding multicast data packets first,
-with multicast snooping activating on multicast data
-after another IGMP/MLD querier interval has elapsed (default:
-125 sec.)?
-
-Which indeed could be optimized and is confusing, this delay could
-be avoided. Is that that the issue you mean, Joseph?
-(I'd consider it more an optimization, so for net-next, not
-net though.)
-
-> In current implementation, :: always wins the election
-
-That would be news to me.
-
-RFC2710, section 5:
-
-   To be valid, the Query message MUST come from a link-
-   local IPv6 Source Address
-
-RFC3810, section 5.1.14, is even more explicit:
-
-   5.1.14.  Source Addresses for Queries
-
-   All MLDv2 Queries MUST be sent with a valid IPv6 link-local source
-   address.  If a node (router or host) receives a Query message with
-   the IPv6 Source Address set to the unspecified address (::), or any
-   other address that is not a valid IPv6 link-local address, it MUST
-   silently discard the message and SHOULD log a warning.
-
-So :: can't be used as a source address for an MLD query.
-And since 2014 with "bridge: multicast: add sanity check for query source addresses"
-(https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=6565b9eeef194afbb3beec80d6dd2447f4091f8c)
-we should be adhering to that requirement? Let me know if I'm missing
-something.
-
-For IPv4 and 0.0.0.0 this is a different story though... I'm not
-aware of a requirement in RFCs to avoid 0.0.0.0 in IGMP
-queries. And "intuitively" one would prefer 0.0.0.0 to be the
-least prefered querier address. But when taking the IGMP RFCs
-literally then 0.0.0.0 would be the lowest one and always win... And RFC4541
-unfortunately does not clarify the use of 0.0.0.0 for IGMP queries.
-Not quite sure what the common practice among other layer 2 multicast
-snooping implemetations across other vendos is.
-
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0888d5f3c0f183ea6177355752ada433d370ac89
-> 
-> And Linus is working [1][2] on reflecting it to device drivers so that
-> the hardware data path will act like the software data path and flood
-> unregistered multicast traffic to all the ports as long as no querier
-> was detected.
-
-Right, for hardware offloading bridges/switches I'm on it, next
-revision shouldn't take much longer...
-
-Regards, Linus
+pw-bot: cr
 
