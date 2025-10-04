@@ -1,104 +1,99 @@
-Return-Path: <linux-kernel+bounces-842006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4E93BB8C31
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 11:47:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5403CBB8C37
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 11:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 09DF54E7787
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 09:47:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECD8119C2D61
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 09:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67289226863;
-	Sat,  4 Oct 2025 09:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B607923AB81;
+	Sat,  4 Oct 2025 09:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ISvKLycM"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EHdf8jSy"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDA5157A6B
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 09:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72899213E6D
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 09:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759571240; cv=none; b=XB3Q8QvQKYZvCQfjy1mLHWa+5elUUe7Jc5W17koAZ5W8G5XGLGJJMaN7mj6roM1zr0YCU96r4Vg961hjb2h6l5qTVWF6I5Jid95xtpcG7dSVFLa0qDwcivOG/4X1WyiXaURFC78Hmd6vZOPTXj6SR1m97Ta38eIXAqISssUuAAI=
+	t=1759571596; cv=none; b=TSQBhWB1212nk80IRxoPEbepOMD//oq2PIWqhAMdV2IQo+LKimU0v1eIi8V79GvRHxS8BNOeKEwW4oS4zC3QZeWUVIPII4hHrN0X+EYjK0bC65gCBsnLJ5sUntRTpLC2eN0vt2I/UKEvXzoYBXZqAmkuzktN4yVa4gpnbDIhe68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759571240; c=relaxed/simple;
-	bh=rENxmg/Su5nou7KjTwC8IAwpqJbVkm3I/Y5tIcKcEN0=;
+	s=arc-20240116; t=1759571596; c=relaxed/simple;
+	bh=IcIPtQiWpSeMO818KUlsCLajKwr4Lh2CGTpur3OdmUM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UhyL53aZGfhdoV0qJsWA1rczUifDJRNq2TbmqI226XpKTaq9mihO9bVUR+3Xw/r0psfdWy4IrGzCy1qj3ZQ1wntXjz8U8HCZqtT+fG9Jg2ShWotCTdh8YjmgftaHiWmIyL0q7bvtn+Pl7TFDkF5fZ51kRkUWwnrQuMXZRYjm+Yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ISvKLycM; arc=none smtp.client-ip=205.220.168.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=qcW83KxwktHmuylXmvLMiVP4qwzs4Ye7nyEYVkcr8QM6L4U6+H42gPH/atw8QPX2lauj6VhvzNQfEtIlT0UFFPsSiSfeNqq5WtJQO0NT94hJNgnt7ph7eg81jp63yX6DJyqvYpWID5UdHBaFvChIFXYY8pw53aatnzPClMUvI6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EHdf8jSy; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5944ppoU002598
-	for <linux-kernel@vger.kernel.org>; Sat, 4 Oct 2025 09:47:18 GMT
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5945U5r9027786
+	for <linux-kernel@vger.kernel.org>; Sat, 4 Oct 2025 09:53:13 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=JyJUqoq9hNFWEpkGuYsnzzOl
-	rgkS1VzZQ9NH0b/ALic=; b=ISvKLycMDh7Y7wxdJh4i9yYpIOXUD4ZAK1GWCR8K
-	96pawdlJTaEiVBbn46J6hh5tCb4LPQ9uqe/olea1DTvEYzbCq8PHkCkdRiuS8u+i
-	oy6z/FerSl0Fk+NK7/UhEOFalilaXjUddB6zHmX+uTNBuxzB/ag0n63/dTOCyMEJ
-	GRZEYp7f4XXLmAVkK6v8Rny4E77JCx/7dlaaYCnLQc70Vub98JEoDIVRfVjGDM1q
-	tE1ZVg1rhQNZ33ISuRqoomD0mrdxGpNn+3F5d3NUFdf77XpwL3fkYiYJ3/0D+YCi
-	ZnzgkaobacKI8tVUho9NnPdKyvoWcB59OVo83tDikcckBA==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jthprjfx-1
+	:references:subject:to; s=qcppdkim1; bh=PEu4XGrNpP8Sls3jA34iE2v0
+	JtpnErFtIM1Spm/CEcw=; b=EHdf8jSyX1HVhonHRF51NNtpRt5DKbEgf8KW+kNV
+	wsBD/DhcZn7FoP8DyV3mu4ukIp75k48epks5mY/1wBKgHhCCyRXs7EEBaF1/bliu
+	E3/HdgznVJjJKWX+M+K1LpJQ97kpCEYf9LyuTI7hTgQ3HHpp+AF3LsizXbqCJaQl
+	uN82/3br3CfjIUDDGocP2mDDo07Dasa8ozWzyq0s3PHtAFs6St3F0ij4xm085ZM6
+	L252K+lY5vz/iGZfXM7plzUeESq/0V8CgybqLvOtxqXu67WzeKsWWE6X/EqBCFxe
+	m5krfjeL9MUPnD0R6dcC73zK2YWV+L/90+50roTsdvwrdg==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49ju5x8h2g-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 09:47:17 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4db75c7fa8dso76110311cf.0
-        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 02:47:17 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 09:53:13 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4e56cd1d360so75769481cf.0
+        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 02:53:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759571236; x=1760176036;
+        d=1e100.net; s=20230601; t=1759571592; x=1760176392;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JyJUqoq9hNFWEpkGuYsnzzOlrgkS1VzZQ9NH0b/ALic=;
-        b=lhZuVpMj7Hu6F0mVbvULhOZ0o3yfaf8zFiFOdKQ9hkb746oe3hPxTO55MAFdBDQjBk
-         FHWsAPTju59VFvViaCGf/XBC+f4ggP30JMGl+9BerfAInntZU/yX07G0SpVQfkISaGhn
-         8jqQjrqfy9u9zagJ02X7j4DMnr5kYqlWj7tNTLymXcNtObc6qLHYGJ42nqN3XtthItNw
-         0xDgi8HOdVU1pAb5M1B0DmBd9uHo88PfaOyHnMnXMjsgXjA8/1cxFi3V1hmbYYbgUvpW
-         pnD4bXyqrxnjteyVnJ6aFFHnG2XST3cXqXtJh8njJ1vWKd5T6ruN0+DwazolSPPMxinL
-         qofQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW39wwfrtqkhLXwy2tArv30CwJfjAFLBKYuBmjvWHnc4/BHblUrDRMiPm/RZ7sLl0gp/IM9N9WWdYle6Ek=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlDK3mBxaAc5jv5o8y50C8s40uLnWt6UDpWV2LubmU1NrZrjj/
-	2WdQEZCjo/yDDS8pMmWY8IC2dfvBxqwuh1Ds2OyYj3cSIpbxa3rQ1/xDdPRjnVjFwr9EXkFXj3n
-	0zfMxqr8Q68LW0vi8LaUzBnqzjykOzsrwKbm4DiUyhzndSafdXTbZLixB18Zi3ElTNCQ=
-X-Gm-Gg: ASbGnctZrQhm5PTcybAOC0PRSCv3eCCZo51Ja5OYCueoYsz0IYfATNmyOdcqUOA5jLA
-	9T3P53CLA4+oIopdXTiDdYAwr2UDaFtH/q7vyI/YCiP9SElDKpNWxMRNBSn90eQb1+QuQbxwy1D
-	rDFzd64jpfTHCkElKzXjGrJnUJ4CXdPFIPufeE2TKQbxMX82wluHAEDaVgXWUyxeKXn14fYGKEZ
-	iekq0rpvqOmnKdNf4kmMb3oQj2/2kTOR/84cydLMqk5PzClLwIV9OAYyx7UU1eTZ2VzCa5HWMxi
-	0z/NtUPXJlG8zYUUYaEODD1tdc2ZWvbt3LuW6r1PMTEAB1AT8XAdY621OIuvGvQ8MLamFE6+DJY
-	rtQYdkCTwvmWOcOrauCP3xgKZ1PGrgatcV7owaSIeOuH3GFWaLs96zpwxLw==
-X-Received: by 2002:ac8:5796:0:b0:4d9:f384:76a3 with SMTP id d75a77b69052e-4e576a2b23emr79564211cf.1.1759571236332;
-        Sat, 04 Oct 2025 02:47:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGynVz3EPA0ykwKTN7pQT6siayEYYAGehr4shsq6/DGHHpjk3iwkY69IuP8QMQLOHlDY8wdAA==
-X-Received: by 2002:ac8:5796:0:b0:4d9:f384:76a3 with SMTP id d75a77b69052e-4e576a2b23emr79563971cf.1.1759571235845;
-        Sat, 04 Oct 2025 02:47:15 -0700 (PDT)
+        bh=PEu4XGrNpP8Sls3jA34iE2v0JtpnErFtIM1Spm/CEcw=;
+        b=DByftG7kAuleeFd7lCfeF/Pho89lqPMwdFqi/uLGWYbEsRLn23ne+qnOJNHV7cKxZ6
+         lTIkjep4vHTgTEaemgO4ms1OeLLO+bRyyypTD2AFx7FveUlVZPouR6cKMoUUdSvtc6Ji
+         RmBvzghO/lbf6K8QjfEL0oxoC5xNb1jjYcqYWOQQkHaWnEqSh3RGeF/YIXZTXkG4J5ua
+         hbrprzjlqsfGn1G330vdlqlP4nXQe8XQI62bBJlIDzRxwkvURul2Y6j8ScpBOLyFJfpl
+         WVHnnhRuXgtRWABOhgRpNud0DldjTTLfDBSrd60pGc1+HkYKJXBh/Yh+HaEcbmxxxPeU
+         eR2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVo7RCglv+vCZWSgkNoRCOeyyW8AoS44qFZZ6DhVQn5UUgNbhKjSJnkToZ95n4nfGDP1NopxFQWCl2+khE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeA7VYkvXb70ryA3lMp8rtTdYy52lk3dvGB5Xm/0C5T2x3Ww+H
+	MQXqXk2MCpG5s69zNwK37h95+naifw1ICCNBb70x1HvjxXsWV12W8+jcxzL54GhpnUOLG31lIdP
+	0UuDqxOGoatqcF52N6RJJFQcPeFtaxXaDdj6En7Z1UaLND6HfZFW/DfTJEh6RuQrdtUs=
+X-Gm-Gg: ASbGncuF8j6SXZl2zuNXNeFjpWo1fqbaUrjE7m2Wk74cQhW0zSWjAYS1oLp+cQEY3st
+	bmQVrt8W1mjVXJ9GnbAxG6/6OHe6nELnP0uWJRdeiHf9YGml8WNPecgYhbrr1LrXZL3W69wkeLq
+	ekoAvQmfJw5JjSSo3qAAQu8IzIFwfu27s7Im2clEbdfaAfVh+CsULF1OL6cZQCHzzHhPl0MZpbx
+	KDaZs6OHD/XbX7XMSD3uVJDa1vVI6wTPjH7K4CzE86du4fkpof+2jRBjti3o/zPFpbOwxcJlQ86
+	lNLn4ofZ6TvUB8bHcRblubcv8dUgRdQLYcfDXBzz9RgJbM28Kb5GS4VDkptBXRRJyJCAdKqfIUe
+	ACrRrcE5f/PR6ZmPPZzRLjTGse1T9buI+f3ujRJK7LVeU0rvcdLbq9+blxA==
+X-Received: by 2002:a05:622a:98e:b0:4e2:f1b3:3466 with SMTP id d75a77b69052e-4e576adc4dbmr83002191cf.49.1759571592329;
+        Sat, 04 Oct 2025 02:53:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFTbBIG6kyIQSt9ZYaRoA6T3Hag/xgJTs/P9Rv1Tz+gyuxM60ZQciRckMkBxOJAK+a1jNQcgg==
+X-Received: by 2002:a05:622a:98e:b0:4e2:f1b3:3466 with SMTP id d75a77b69052e-4e576adc4dbmr83002021cf.49.1759571591862;
+        Sat, 04 Oct 2025 02:53:11 -0700 (PDT)
 Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b0119e86dsm2686516e87.97.2025.10.04.02.47.14
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b011ab24fsm2675693e87.120.2025.10.04.02.53.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Oct 2025 02:47:14 -0700 (PDT)
-Date: Sat, 4 Oct 2025 12:47:13 +0300
+        Sat, 04 Oct 2025 02:53:10 -0700 (PDT)
+Date: Sat, 4 Oct 2025 12:53:07 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Hui Pu <Hui.Pu@gehealthcare.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/7] drm/encoder: add mutex to protect the bridge chain
-Message-ID: <2ksmq6ytj3zabxuexzjuqovalik6memy33vrba2aihfld7b7so@lhqhmaargucp>
-References: <20251003-drm-bridge-alloc-encoder-chain-mutex-v2-0-78bf61580a06@bootlin.com>
- <20251003-drm-bridge-alloc-encoder-chain-mutex-v2-1-78bf61580a06@bootlin.com>
+To: Devarsh Thakkar <devarsht@ti.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+        airlied@gmail.com, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, tzimmermann@suse.de,
+        dri-devel@lists.freedesktop.org, simona@ffwll.ch,
+        linux-kernel@vger.kernel.org, tomi.valkeinen@ideasonboard.com,
+        jani.nikula@intel.com, praneeth@ti.com, vigneshr@ti.com,
+        aradhya.bhatia@linux.dev, s-jain1@ti.com, s-wang12@ti.com,
+        r-donadkar@ti.com, h-shenoy@ti.com
+Subject: Re: [PATCH] drm/bridge: sii902x: Fix HDMI detection with
+ DRM_BRIDGE_ATTACH_NO_CONNECTOR
+Message-ID: <gc7prlpfdb4zgqtxz5fog2mi4x6vefwcrnuw53i6xbd3vguf3h@gtb3bdy7zogu>
+References: <20251003143642.4072918-1-devarsht@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -107,147 +102,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251003-drm-bridge-alloc-encoder-chain-mutex-v2-1-78bf61580a06@bootlin.com>
-X-Proofpoint-GUID: Sx0tN-n6RoPTyYwvcoP4_iuAyALrgNsC
-X-Authority-Analysis: v=2.4 cv=N5gk1m9B c=1 sm=1 tr=0 ts=68e0ed25 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=P-IC7800AAAA:8 a=KD47DfvlZnWFAtPs4N0A:9 a=CjuIK1q_8ugA:10
- a=dawVfQjAaf238kedN5IG:22 a=d3PnA9EDa4IxuAV0gXij:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAxNiBTYWx0ZWRfXwCQsfBBYsb3B
- +bjTMMr49IJdDZqvHvTZRX2imtXseq4iZ2SBa3yXEcFrYeopR5LtQCHGBk1o1jEALjKZ4TT1Tw6
- hMJxiLTW+udmduB+arbKOT57IxWpLeT9VdgVd5iA58T7O9b2zp+Xvm9Vsa5H+XzroTzg5gWYjS7
- bhBeONwBklq16v8aDwIwk8AUcKmxrHZbSAu2qrNLwt//wrCbBFljee2ZmmkYt+OpfkIHS1ELENs
- +Ul/8jmerQd2WQUuOF4He4rLg+U+izhgZQX8PCEErQqtDO9il5ExLN2B+FnMtCd82V1raLrdoFI
- 1D/VlmCNELtjFHrC6y44uKwiB2nfv2ycPS5qWrv4JA2DNHUBYkfshlXBEwrZUukiOkJ3sJPko+u
- Mk10ipt4ysNPpnhIZ494xTJl9FyHHw==
-X-Proofpoint-ORIG-GUID: Sx0tN-n6RoPTyYwvcoP4_iuAyALrgNsC
+In-Reply-To: <20251003143642.4072918-1-devarsht@ti.com>
+X-Authority-Analysis: v=2.4 cv=FooIPmrq c=1 sm=1 tr=0 ts=68e0ee89 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=sozttTNsAAAA:8 a=KF_ZkVnESvHIPKe9pLAA:9 a=CjuIK1q_8ugA:10
+ a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-ORIG-GUID: klzylW75fdTC_uxaW6zSJLJcerZo7vfs
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAyMiBTYWx0ZWRfX0dHMyM7A/0gV
+ bYE16kuCH29x5X/M0IcBMPjxKUshKO3yh1je6J/NhxjjFqDZdZUGa0HqGTTopVtUnlJknKQVUfi
+ EwjMWDNp4E/NVYbCDtdKZBUkRzhBP7bcDJGxEl41k80Cv7ArPA81Aw2wRRGtxJE923QvylTTS7W
+ Tks59dBi6ahv2bOeh1cr2liHZ/87JNDP6QMLk5pDAytAUPByoDEDSOEcWTxWrPKZFyCDucqSmtZ
+ YTsrJjWZSu7GwKVHTylI9qvkVyr6R72Dktz6keYPAHn9CL4wLTjW9CfWZb62a1X7MYvH/WMmSFs
+ 290DUkJGdy01iq/6ZN4Gpl3mZYAtxaEwFUykQuQJkEpwGzkjIeVxn/NRcwljgkHF5ZyaHL7IGol
+ MXLp4S37bIpYvmJVgWoFsaT+hVIBDw==
+X-Proofpoint-GUID: klzylW75fdTC_uxaW6zSJLJcerZo7vfs
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-03_07,2025-10-02_03,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 malwarescore=0 clxscore=1015 suspectscore=0 adultscore=0
- impostorscore=0 phishscore=0 priorityscore=1501 lowpriorityscore=0
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2510040016
+ clxscore=1015 malwarescore=0 suspectscore=0 impostorscore=0 bulkscore=0
+ phishscore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040022
 
-On Fri, Oct 03, 2025 at 12:39:23PM +0200, Luca Ceresoli wrote:
-> The per-encoder bridge chain is currently assumed to be static once it is
-> fully initialized. Work is in progress to add hot-pluggable bridges,
-> breaking that assumption.
+On Fri, Oct 03, 2025 at 08:06:42PM +0530, Devarsh Thakkar wrote:
+> The SII902x HDMI bridge driver wasn't working properly with drivers that
+> use the newer bridge connector architecture with the
+> DRM_BRIDGE_ATTACH_NO_CONNECTOR flag, like TIDSS.  This caused HDMI audio to
+> fail since the driver wasn't properly setting the sink_is_hdmi flag when
+> the bridge was attached without a connector since .get_modes() is never
+> called in this case. Fix it by setting sink_is_hdmi flag when reading
+> the EDID block itself.
 > 
-> With bridge removal, the encoder chain can change without notice, removing
-> tail bridges. This can be problematic while iterating over the chain.
-> 
-> Add a mutex to be taken whenever looping or changing the encoder chain.
-> 
-> Also add two APIs to lock/unlock the mutex without the need to manipulate
-> internal struct drm_encoder fields.
-> 
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> 
+> Fixes: 3de47e1309c2 ("drm/bridge: sii902x: use display info is_hdmi")
+> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
 > ---
+>  drivers/gpu/drm/bridge/sii902x.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 > 
-> Changes in v2:
-> - Added documentation to new APIs
-> ---
->  drivers/gpu/drm/drm_encoder.c |  2 ++
->  include/drm/drm_encoder.h     | 39 +++++++++++++++++++++++++++++++++++++++
->  2 files changed, 41 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_encoder.c b/drivers/gpu/drm/drm_encoder.c
-> index 8f2bc6a28482229fd0b030a1958f87753ad7885f..3261f142baea30c516499d23dbf8d0acf5952cd6 100644
-> --- a/drivers/gpu/drm/drm_encoder.c
-> +++ b/drivers/gpu/drm/drm_encoder.c
-> @@ -129,6 +129,7 @@ static int __drm_encoder_init(struct drm_device *dev,
+> diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
+> index d537b1d036fb..3d169b9fac70 100644
+> --- a/drivers/gpu/drm/bridge/sii902x.c
+> +++ b/drivers/gpu/drm/bridge/sii902x.c
+> @@ -292,10 +292,16 @@ static const struct drm_edid *sii902x_edid_read(struct sii902x *sii902x,
+>  						struct drm_connector *connector)
+>  {
+>  	const struct drm_edid *drm_edid;
+> +	const struct edid *edid;
+>  
+>  	mutex_lock(&sii902x->mutex);
+>  
+>  	drm_edid = drm_edid_read_ddc(connector, sii902x->i2cmux->adapter[0]);
+> +	if (drm_edid) {
+> +		edid = drm_edid_raw(drm_edid);
+> +		if (edid && drm_detect_hdmi_monitor(edid))
+> +			sii902x->sink_is_hdmi = true;
+
+Just call drm_edid_connector_update() here. The drm_edid_raw() has a
+very nice comment:
+
+ * This is for transition only. Avoid using this like the plague.
+
+
+And we really need to convert the bridge to the HDMI helpers.
+
+> +	}
+>  
+>  	mutex_unlock(&sii902x->mutex);
+>  
+> @@ -315,8 +321,6 @@ static int sii902x_get_modes(struct drm_connector *connector)
+>  		drm_edid_free(drm_edid);
 >  	}
 >  
->  	INIT_LIST_HEAD(&encoder->bridge_chain);
-> +	mutex_init(&encoder->bridge_chain_mutex);
->  	list_add_tail(&encoder->head, &dev->mode_config.encoder_list);
->  	encoder->index = dev->mode_config.num_encoder++;
->  
-> @@ -202,6 +203,7 @@ void drm_encoder_cleanup(struct drm_encoder *encoder)
->  	kfree(encoder->name);
->  	list_del(&encoder->head);
->  	dev->mode_config.num_encoder--;
-> +	mutex_destroy(&encoder->bridge_chain_mutex);
->  
->  	memset(encoder, 0, sizeof(*encoder));
->  }
-> diff --git a/include/drm/drm_encoder.h b/include/drm/drm_encoder.h
-> index 977a9381c8ba943b4d3e021635ea14856df8a17d..449281c37e39f67a0037603762f347f5086df983 100644
-> --- a/include/drm/drm_encoder.h
-> +++ b/include/drm/drm_encoder.h
-> @@ -25,6 +25,7 @@
->  
->  #include <linux/list.h>
->  #include <linux/ctype.h>
-> +#include <linux/mutex.h>
->  #include <drm/drm_crtc.h>
->  #include <drm/drm_mode.h>
->  #include <drm/drm_mode_object.h>
-> @@ -189,6 +190,9 @@ struct drm_encoder {
->  	 */
->  	struct list_head bridge_chain;
->  
-> +	/** @bridge_chain_mutex: protect bridge_chain from changes while iterating */
-> +	struct mutex bridge_chain_mutex;
-> +
->  	const struct drm_encoder_funcs *funcs;
->  	const struct drm_encoder_helper_funcs *helper_private;
->  
-> @@ -319,6 +323,41 @@ static inline struct drm_encoder *drm_encoder_find(struct drm_device *dev,
->  	return mo ? obj_to_encoder(mo) : NULL;
+> -	sii902x->sink_is_hdmi = connector->display_info.is_hdmi;
+> -
+>  	return num;
 >  }
 >  
-> +/**
-> + * drm_encoder_chain_lock - lock the encoder bridge chain
-> + * @encoder: encoder whose bridge chain must be locked
-> + *
-> + * Locks the mutex protecting the bridge chain from concurrent access.
-> + * To be called by code modifying ot iterating over the bridge chain to
-> + * prevent the list from changing while iterating over it.
-> + * Call drm_encoder_chain_unlock() when done to unlock the mutex.
-> + *
-> + * Returns:
-> + * Pointer to @encoder. Useful to lock the chain and then operate on the
-> + * in the same statement, e.g.:
-> + * list_first_entry_or_null(&drm_encoder_chain_lock(encoder)->bridge_chain)
-> + */
-> +static inline struct drm_encoder *drm_encoder_chain_lock(struct drm_encoder *encoder)
-
-What is the use case for these wrappers? I'm asking especially since
-you almost never use the return value of the _lock() one. I think with
-scoped_guard you can get the same kind of code without needing extra API
-or extra wrappers.
-
-> +{
-> +	if (!WARN_ON_ONCE(!encoder))
-> +		mutex_lock(&encoder->bridge_chain_mutex);
-> +
-> +	return encoder;
-> +}
-> +
-> +/**
-> + * drm_encoder_chain_unlock - unlock the encoder bridge chain
-> + * @encoder: encoder whose bridge chain must be unlocked
-> + *
-> + * Unlocks the mutex protecting the bridge chain from concurrent access,
-> + * matching drm_encoder_chain_lock().
-> + */
-> +static inline void drm_encoder_chain_unlock(struct drm_encoder *encoder)
-> +{
-> +	if (!WARN_ON_ONCE(!encoder))
-> +		mutex_unlock(&encoder->bridge_chain_mutex);
-> +}
-> +
->  void drm_encoder_cleanup(struct drm_encoder *encoder);
->  
->  /**
-> 
 > -- 
-> 2.51.0
+> 2.39.1
 > 
 
 -- 
