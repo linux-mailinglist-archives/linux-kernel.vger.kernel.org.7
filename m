@@ -1,165 +1,171 @@
-Return-Path: <linux-kernel+bounces-841981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56AEBBB8B5E
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 10:46:12 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03855BB8B67
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 10:52:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 841D7188EAD4
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 08:46:34 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7D49C3459B8
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 08:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573D8228CA9;
-	Sat,  4 Oct 2025 08:46:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA2A23BD17;
+	Sat,  4 Oct 2025 08:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vLapQ71f"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FgJ+ExF2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F7886342;
-	Sat,  4 Oct 2025 08:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6BFC1EA7FF;
+	Sat,  4 Oct 2025 08:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759567561; cv=none; b=WDMBTEgy4Qz/ESbiGfAjTmfKOpXPESwZUXDLCgUtwh4OBOeWxtQkFIwbIjDC53AO3BspgYzIH67ixMvgQvZBJukdackvVnm9ddfh59FS1jo9W6bzL1ljqg7D5dEp6lX1i2UbmnAzrcTiQGwGV+5W7SZnzeuGg4ehBC+ryst+kNM=
+	t=1759567907; cv=none; b=ImGKD3Q/vNtESYH9af8+jdfrGYTtyxdsDboTdtbyENLg6RYfm8f8bz3Xc8C66bsHC2mGuOTKrZrrZ8yfjKGEfQWQWM31S/w7r/8UZN0xrX7/DaQtOPRtMMVs8L/WjvPoSOCYy3koEapVKRfEKrbHd4lOXV3r0qJk8l52Q01dSpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759567561; c=relaxed/simple;
-	bh=KE2PBqgtr1R2voBioWIHbwel/ej2jMYwTDhpJHHh2cU=;
+	s=arc-20240116; t=1759567907; c=relaxed/simple;
+	bh=/IB8ujFWe6EWSDPEJq2XqSK0nAWZ0LrB0KZJrYSGi/U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PlnLL9xYTtaDEJgkMzpeeZt48ZoEA9sCsyNQ3oHcMf4v7wNeAExPYcwf0KXT77O99kJ1swbLw3WBgdZdNXOiqOrAKx0NH9k18VUKr4ef8pVr+xJv9I9v6XxLBSZSn/cth9lgTamlTQREVNRkwVDBBCzwawJMTkG2oLVeppMB6KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vLapQ71f; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1759567537; x=1760172337; i=markus.elfring@web.de;
-	bh=oiFWZwgE13+/heK3BtOCRly+uNdxnMzI7j9JbRtvT04=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=vLapQ71fd89ucYuy1t/EvLFhEg2NkXpPHMnA2sNBgivtQxMEjwxALluXjgzq2iiS
-	 tw2gSk8a2TnETsJAK16EW9dSICeqo/uzg+ptHdw7U+CjfxqULIdL3Gjc1ukOijG25
-	 HMRs2/Wt9v3alZ2nShAFwyCeIUwFK0AnF/0MVF8cc5IXRoNn88ulpzFtNqeAdxJDT
-	 WbO6TuhhXL2loT3mXrSmkw61COWCibb7PPZmHK9nfQUaWt9Ex+YxyiiiXpohbPdyQ
-	 pwIOC62+duEZTvR1M4IL4yf1rnZto+Z5sTD0f/4n+JpFeHJIe9jUauX/uOqctWBpI
-	 Oz1ro7rcTgbFk5NlQA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.173]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MqIFD-1uS4Qc2qnL-00ptZd; Sat, 04
- Oct 2025 10:45:37 +0200
-Message-ID: <2d533e64-8543-402d-9295-5fd2f314f35d@web.de>
-Date: Sat, 4 Oct 2025 10:45:22 +0200
+	 In-Reply-To:Content-Type; b=hKfT0MdcwtnV6R6E3PA6rXX231a7PUsNfqzVktElHXG9eGYcKXPagqQ4iWHfIEqUOpgJGy1GGivei0fSuHD5L46ji8/40POKxvwvpv2LWdZBPphzOPmbXMLV2QcQ3gY2AQt0XFRhDGk+R+8vpdIfRGVCfNePJ1kWRPFcYp1zk/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FgJ+ExF2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE98DC4CEF1;
+	Sat,  4 Oct 2025 08:51:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759567906;
+	bh=/IB8ujFWe6EWSDPEJq2XqSK0nAWZ0LrB0KZJrYSGi/U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FgJ+ExF2Fvcgfnb8bgsANiVdaAauxX/DFvwDKucflo/ZyQDcBhmvZZRGOMQ25u3vG
+	 48SH8I6Z/0GMFrOQ55Rbq5YOJGGuOAfupXoEQBuvjM6XpslL6WC1q/0VPb1Uzn0a0g
+	 UMIXxnkesdOSVa0+dvpLNjrIfUIyiReYdHJcXLbmjQNUeUUr/e6cmV6HDdGwoDQnXo
+	 3NQMK3PWCirg6AG6nk8Sa7ECe8WhvQvZiR/+5TVE2bHnWOI7L7cLsDPZpO3U2EsADt
+	 r0ByAmxQBONbT/KL+urq4sU+ztZa2kWWLSMDdk8MR3MIv2oLR/ZOAAvlm0dFesWnuT
+	 lyr2lq+WuO3lA==
+Message-ID: <8b49ca48-ff6b-40ed-8322-e0c9791d1d17@kernel.org>
+Date: Sat, 4 Oct 2025 10:51:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: ksmbd: Use common error handling code in ksmbd_vfs_path_lookup()
-To: Neil Brown <neil@brown.name>, linux-cifs@vger.kernel.org
-Cc: Neil Brown <neilb@ownmail.net>, LKML <linux-kernel@vger.kernel.org>,
- kernel-janitors@vger.kernel.org, Namjae Jeon <linkinjeon@kernel.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Stefan Metzmacher <metze@samba.org>, Steve French <smfrench@gmail.com>,
- Tom Talpey <tom@talpey.com>
-References: <6d759211-79e7-4d86-b22e-2ae46d209622@web.de>
- <175953064635.1793333.2429881029964457140@noble.neil.brown.name>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <175953064635.1793333.2429881029964457140@noble.neil.brown.name>
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH bpf] selftests/bpf: fix implicit-function-declaration
+ errors
+Content-Language: en-GB, fr-BE
+To: Eduard Zingerman <eddyz87@gmail.com>, ihor.solodrai@linux.dev,
+ alan.maguire@oracle.com
+Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+ Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+References: <20251003-bpf-sft-fix-build-err-6-18-v1-1-2a71170861ef@kernel.org>
+ <d108d59be611a63c73303347d07fe0ba5f2b74b7.camel@gmail.com>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <d108d59be611a63c73303347d07fe0ba5f2b74b7.camel@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:GtmNObrEe2RGJ/TFAqKx+TLt+80qxeC7jspZaOsWDb+YuzXznUx
- B6xf2InLNW0SpT//CR3/WBuSoNinUtfTzMQbxJHTmZt03GwbWAgW9wevFvrzVHiwmUdDwfm
- ttcXlLnOEeK+Z3IQNR/NdBHlfLPVxLLG8bq//ZHjuCj4zbO4/P+7fbgH0iLDK3uqX2VyvKh
- vRgaEwa7UMl8fcG3MUuLw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:RnESL/q2QzY=;/xFdurcqhgIvh5lWB9Ub3C6u2Wg
- 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
- LUfwAfMtKeWyMHTy1namkmGfldpj9S15AKM=
+Content-Transfer-Encoding: 7bit
 
-=E2=80=A6> - declare  struct path path __free(path_-put) =3D {};
-=E2=80=A6>    return_path->dentry =3D no_free_ptr(path.dentry);
->    return_path->mnt =3D no_free_ptr(path.mnt);
->    return 0;
->=20
-> This is based on the pattern in kern_path_parent() and
-> __start_removing_path().
+Hi Eduard,
 
-Do you propose that affected software components may benefit more from
-the application of scope-based resource management?
-https://elixir.bootlin.com/linux/v6.17/source/include/linux/path.h#L22-L28
+On 04/10/2025 01:37, Eduard Zingerman wrote:
+> On Fri, 2025-10-03 at 17:24 +0200, Matthieu Baerts (NGI0) wrote:
+>> When trying to build the latest BPF selftests, with a debug kernel
+>> config, Pahole 1.30 and CLang 20.1.8 (and GCC 15.2), I got these errors:
+>>
+>>   progs/dynptr_success.c:579:9: error: call to undeclared function 'bpf_dynptr_slice'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+>>     579 |         data = bpf_dynptr_slice(&ptr, 0, NULL, 1);
+>>         |                ^
+>>   progs/dynptr_success.c:579:9: note: did you mean 'bpf_dynptr_size'?
+>>   .virtme/build-debug-btf//tools/include/vmlinux.h:120280:14: note: 'bpf_dynptr_size' declared here
+>>    120280 | extern __u32 bpf_dynptr_size(const struct bpf_dynptr *p) __weak __ksym;
+>>           |              ^
+>>   progs/dynptr_success.c:579:7: error: incompatible integer to pointer conversion assigning to '__u64 *' (aka 'unsigned long long *') from 'int' [-Wint-conversion]
+>>     579 |         data = bpf_dynptr_slice(&ptr, 0, NULL, 1);
+>>         |              ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>   progs/dynptr_success.c:596:9: error: call to undeclared function 'bpf_dynptr_slice'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+>>     596 |         data = bpf_dynptr_slice(&ptr, 0, NULL, 10);
+>>         |                ^
+>>   progs/dynptr_success.c:596:7: error: incompatible integer to pointer conversion assigning to 'char *' from 'int' [-Wint-conversion]
+>>     596 |         data = bpf_dynptr_slice(&ptr, 0, NULL, 10);
+>>         |              ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>
+>> I don't have these errors without the debug kernel config from
+>> kernel/configs/debug.config. With the debug kernel, bpf_dynptr_slice()
+>> is not declared in vmlinux.h. It is declared there without debug.config.
+>>
+>> The fix is similar to what is done in dynptr_fail.c which is also using
+>> bpf_dynptr_slice(): bpf_kfuncs.h is now included.
+>>
+>> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+>> ---
+> 
+> I can reproduce similar issue when including
+> kernel/configs/debug.config with my regular dev config, but for
+> different functions: bpf_rcu_read_{un,}lock().
 
-Regards,
-Markus
+Thank you for having checked! I also had issues with these functions on
+my side, when testing on top of 'net'.
+
+> However, this is not a way to fix this.
+> Kfuncs are not supposed to just disappear from DWARF.
+
+Indeed. But strange it was fine before. Or fine without debug.config.
+
+Cheers,
+Matt
+-- 
+Sponsored by the NGI0 Core fund.
+
 
