@@ -1,182 +1,103 @@
-Return-Path: <linux-kernel+bounces-841889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BB69BB87A4
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 03:13:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EBC4BB87AD
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 03:15:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C15A619C600C
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 01:13:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5BCD24E1BEA
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 01:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A201DF248;
-	Sat,  4 Oct 2025 01:11:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F2712E1E9;
+	Sat,  4 Oct 2025 01:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HEu+/A1T"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k31ZZfSm"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E5E19ABDE;
-	Sat,  4 Oct 2025 01:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56AE527461
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 01:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759540311; cv=none; b=qAUC6XeL07v9mTJ5fcnvL7qwe3mP04RQxw1bUtcN9Z2JQDrwXyL+saponYtHX03UWwsnwgPi4ocib6uJXJUv+bLpkvxELy4jsFiIW9uR+Vur+Cw6sQz/c/7iZZddupMe9aHZz8ewR/O/fq5E+zMkHEllo/Ic9y1F4AN8Jk642NI=
+	t=1759540534; cv=none; b=i7ABLU0XxJINx/kgp81cmGytuMLCLvvVyc2Q3cZZYEwfvWt+fWutdr1NSuDwDCsujXaYtDA9U0LMBsEQdTjVnbEq/VmQO7huUjJr2bji2hVMErdoXm007ACcUANxLMTcqxhYD3KCwsCBg4kDIbbmqwh6sZnMY+bhbwPDmI7mHpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759540311; c=relaxed/simple;
-	bh=rZZepSYfDiUzsD7VqNluWBfF+i3UxghvOp7/jfoABGM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dbFZLpyJNOoszG3n1aAaPtIwPwagshkk7GCfueHk3oJM2uMaiSpYFqC8I3iPpPWM/8KDrNiQ6TpUSgGkBo6KPZxQ5APNjErIjgIdthg3jQ3jqks+nc0QX48KT/lsy698Pjo9QuejccDpZfOelVvhRWN/qjCVeCPAprkMTEHeAmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HEu+/A1T; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759540309; x=1791076309;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:references:in-reply-to:to:cc;
-  bh=rZZepSYfDiUzsD7VqNluWBfF+i3UxghvOp7/jfoABGM=;
-  b=HEu+/A1TAsNRIhwMZkAzJYQlGYqLxxF7C+f6npOV4Bjv4KTEBDdMBq13
-   8DRIO+KiDUxlB3n10hIlR6s3Sp2zS+jKdWgmG2SKIrP2s2CPves3pRHeq
-   L4d1knM5dYW39qXyrDUx1joo+weURJ+KrUfw/nKfptcokapfmbQ0JHCw/
-   evJYDX5uNPJ9gLmwCPx5DYKRh2CjsnzDZ6wDPoNPyJJZ3C8INfhqtGMLQ
-   xAPdSlNai0ettIS6hMpSU3cLrN5pfQJDN29rHoapOmSKuQZ1ejV0WeTb+
-   nnskKlNZIVI2yZ0ajO3KJRuE+y5hnWeAlmGnjP+4zywFaaJLfBGeph2ed
-   A==;
-X-CSE-ConnectionGUID: T1hSJBKDRCqd1aRi346NaA==
-X-CSE-MsgGUID: dQQ9PIDIRKCwd9yIkSHtwQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="65650047"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="65650047"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 18:11:43 -0700
-X-CSE-ConnectionGUID: iycJbPhkQiGswpMTEukUiw==
-X-CSE-MsgGUID: LWNwNC2MSMGW1d7Zd8uotQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,314,1751266800"; 
-   d="scan'208";a="178543217"
-Received: from orcnseosdtjek.jf.intel.com (HELO [10.166.28.70]) ([10.166.28.70])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 18:11:43 -0700
-From: Jacob Keller <jacob.e.keller@intel.com>
-Date: Fri, 03 Oct 2025 18:09:49 -0700
-Subject: [PATCH net v2 6/6] ixgbe: fix too early devlink_free() in
- ixgbe_remove()
+	s=arc-20240116; t=1759540534; c=relaxed/simple;
+	bh=ozrD/peI6GWbnjfEB0am4HrVU0aHO2Cal0rob+h8+EQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WE4I6drVbiEHNgfEWhfQ++bJ4swQxuK1+3tKOwA3Rz/S7WhHz/Hx1+JkOxrEmRrjiWUdHDtxYS+ZD6PbaJooi/pxh0AUadSswWXGk/6Op/j7M/qPV37XBJ3C0WXILfRtuUXUl8DIKSCfoSp46K4D9gxozQDFLtyElB2sH5egKlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k31ZZfSm; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7835321bc98so2947787b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 18:15:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759540532; x=1760145332; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ft4oJcHCndXOje2FL6bfxG8G5ibctH8M0O2TsZseJRA=;
+        b=k31ZZfSmBhYF+LpSypimkNtQ3SqtEZmF1mtB0zwblCKVzcx02P8k7FKAhhRJMeg4ij
+         osEJoh4cqgdV3941Mng/lK6FRx6LYgeksKyp5UUWGiGpC8p46hlYVQ0TJlQx8KrLFKM0
+         9s3oU5TPG6pkxBw+ClRwLy4I4ke48k2Cw1t7ULCheDPFJAte4YfFCMNeqFuTnUmmPcXw
+         7ae1XS+Dk8eeKEIq0YH3NiHqha93mKCmXGjOFRFIVm3upvFwM2NBucUKhpIX/wPFx25t
+         SifAHexwR4PETDdwYcCaWXxZaK1o7DXFPZUls65egWVr7scv6bPvNK1wpLLadFCWsQl8
+         YkMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759540532; x=1760145332;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ft4oJcHCndXOje2FL6bfxG8G5ibctH8M0O2TsZseJRA=;
+        b=rt5HIKEkgIQP1w+65ZHWp5spa7iUOHmL4mnsOzFavgIjEKvuXZOX+nVaFGfCFDxasN
+         cfJOhEOi7VLqfswlJWsJY0rWBcHJm33FM/KG9dLJS8rhufPIu/Hiqur5BH/QShQB3lsb
+         pfrxNEeoCf2ffftLa1cr3zfkI2hqA+z9iLMxxtVI2f0a3USk2IIxXJjEihvbtz45ucHv
+         cMn0/n01gmiTepNvfHYmZVtET0m63M3mfuWzyrPhGC3nq29Ki9Ng4Ne9nvT3VHvOzC48
+         b+zSky5LKQOBZr2iF4XdkYynOLJkmKL6WTziEcfrCXyQpapn+67pMKvYH3CeHdm86Ylp
+         9G1w==
+X-Gm-Message-State: AOJu0YzWhZ7eU8QdMHBK6IKeQ501lCrMpJ95Eh8uec+MiVzwJwtsU1qR
+	bORi9zhedeZka+3EJrmLxhCEydHWM2Gyo682IWyCc9gB7a7Arfv25psx
+X-Gm-Gg: ASbGncvPb4fnllHfHaJQTuPWKwyEpXf+vtx3QEovHmGAnWKkrpf5e8IvdHAsYO2a8NU
+	FLczle1FPeNScDHybL/XHTefbx3DUtkmtE/YPntphw0HKFSM0CfSfJed5gYea0lT8ALMinGd8mC
+	8JDl24vkgfwUG6Ta/oHXJFtsCMqZnN6/xaY5I2BYcbW2gbrOVdwTzu9p9TcCdN0gFymCl3yprhX
+	SzT2mdjoM5gcmtcopMCB0QADgJxsvMZ5cZ0LK3f6m4vezmlXd0L9VQFUwiWYjIafqVEj81j+JTY
+	cb6J0zlmHoremTSYOF7IK/4BCrroSxTLbH8cRoydBV1pMFv9TmBdtkTVp/mvLnPRRp2svMj0sIL
+	S9JP4ZTkHV2WIH/l93H9xWh3jvuBWi+C05D9jIxNshI0cLEvNicmWp6XGgqyBJoFyXej2fHW7ii
+	Y0F/lLlMYB5MthHFOPmF6OkDlPHdQ=
+X-Google-Smtp-Source: AGHT+IEyCHmvms5vErzLy5gTZbE16mnhBHhNhmvwIzKJKVDW6N1jGKpi5QbCIBUQ7oN61aL3umREug==
+X-Received: by 2002:a17:903:298d:b0:264:70e9:dcb8 with SMTP id d9443c01a7336-28e9a6fd918mr56953665ad.55.1759540532424;
+        Fri, 03 Oct 2025 18:15:32 -0700 (PDT)
+Received: from deepanshu-kernel-hacker.. ([2401:4900:5d47:aa18:ed90:18ec:5962:971a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1d574csm62324145ad.108.2025.10.03.18.15.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Oct 2025 18:15:31 -0700 (PDT)
+From: Deepanshu Kartikey <kartikey406@gmail.com>
+To: abbotti@mev.co.uk,
+	hsweeten@visionengravers.com,
+	gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] comedi: fix divide-by-zero in comedi_buf_munge()
+Date: Sat,  4 Oct 2025 06:45:22 +0530
+Message-ID: <20251004011522.5076-1-kartikey406@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251003-jk-iwl-net-2025-10-01-v2-6-e59b4141c1b5@intel.com>
-References: <20251003-jk-iwl-net-2025-10-01-v2-0-e59b4141c1b5@intel.com>
-In-Reply-To: <20251003-jk-iwl-net-2025-10-01-v2-0-e59b4141c1b5@intel.com>
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Emil Tantilov <emil.s.tantilov@intel.com>, 
- Alexander Lobakin <aleksander.lobakin@intel.com>, 
- Willem de Bruijn <willemb@google.com>, 
- Sridhar Samudrala <sridhar.samudrala@intel.com>, 
- Phani Burra <phani.r.burra@intel.com>, 
- Piotr Kwapulinski <piotr.kwapulinski@intel.com>, 
- Simon Horman <horms@kernel.org>, Radoslaw Tyl <radoslawx.tyl@intel.com>, 
- Jedrzej Jagielski <jedrzej.jagielski@intel.com>
-Cc: Anton Nadezhdin <anton.nadezhdin@intel.com>, 
- Konstantin Ilichev <konstantin.ilichev@intel.com>, 
- Milena Olech <milena.olech@intel.com>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jacob Keller <jacob.e.keller@intel.com>, 
- Koichiro Den <den@valinux.co.jp>, Rinitha S <sx.rinitha@intel.com>, 
- Aleksandr Loktionov <aleksandr.loktionov@intel.com>, 
- Paul Menzel <pmenzel@molgen.mpg.de>
-X-Mailer: b4 0.15-dev-cbe0e
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2595;
- i=jacob.e.keller@intel.com; h=from:subject:message-id;
- bh=uPUFa5XRwwizNw3cq6xE4VL/A1dp66wRXQlgd3W4V14=;
- b=owGbwMvMwCWWNS3WLp9f4wXjabUkhowHJX4v3KJ4HugVTAnnnh4+rbD6dsVmY9Ny3lPLTkkpO
- c+W2JfSUcrCIMbFICumyKLgELLyuvGEMK03znIwc1iZQIYwcHEKwETUixn+hzzk251/Ide93aq6
- pPNTu+FKa669fU025pu01pRw7nbnZ2R48IvNbI+p2NSf8X7z54sKOXZxGe0RTvL0q+Mp38sueI8
- VAA==
-X-Developer-Key: i=jacob.e.keller@intel.com; a=openpgp;
- fpr=204054A9D73390562AEC431E6A965D3E6F0F28E8
+Content-Transfer-Encoding: 8bit
 
-From: Koichiro Den <den@valinux.co.jp>
 
-Since ixgbe_adapter is embedded in devlink, calling devlink_free()
-prematurely in the ixgbe_remove() path can lead to UAF. Move devlink_free()
-to the end.
+Hello Ian and maintainers,
 
-KASAN report:
+Just a gentle ping on this patch. It's been 10 days since v2 was sent
+incorporating Ian's feedback to merge the chanlist_len check with the 
+existing early return.
 
- BUG: KASAN: use-after-free in ixgbe_reset_interrupt_capability+0x140/0x180 [ixgbe]
- Read of size 8 at addr ffff0000adf813e0 by task bash/2095
- CPU: 1 UID: 0 PID: 2095 Comm: bash Tainted: G S  6.17.0-rc2-tnguy.net-queue+ #1 PREEMPT(full)
- [...]
- Call trace:
-  show_stack+0x30/0x90 (C)
-  dump_stack_lvl+0x9c/0xd0
-  print_address_description.constprop.0+0x90/0x310
-  print_report+0x104/0x1f0
-  kasan_report+0x88/0x180
-  __asan_report_load8_noabort+0x20/0x30
-  ixgbe_reset_interrupt_capability+0x140/0x180 [ixgbe]
-  ixgbe_clear_interrupt_scheme+0xf8/0x130 [ixgbe]
-  ixgbe_remove+0x2d0/0x8c0 [ixgbe]
-  pci_device_remove+0xa0/0x220
-  device_remove+0xb8/0x170
-  device_release_driver_internal+0x318/0x490
-  device_driver_detach+0x40/0x68
-  unbind_store+0xec/0x118
-  drv_attr_store+0x64/0xb8
-  sysfs_kf_write+0xcc/0x138
-  kernfs_fop_write_iter+0x294/0x440
-  new_sync_write+0x1fc/0x588
-  vfs_write+0x480/0x6a0
-  ksys_write+0xf0/0x1e0
-  __arm64_sys_write+0x70/0xc0
-  invoke_syscall.constprop.0+0xcc/0x280
-  el0_svc_common.constprop.0+0xa8/0x248
-  do_el0_svc+0x44/0x68
-  el0_svc+0x54/0x160
-  el0t_64_sync_handler+0xa0/0xe8
-  el0t_64_sync+0x1b0/0x1b8
+Please let me know if any further changes are needed.
 
-Fixes: a0285236ab93 ("ixgbe: add initial devlink support")
-Signed-off-by: Koichiro Den <den@valinux.co.jp>
-Tested-by: Rinitha S <sx.rinitha@intel.com>
-Reviewed-by: Jedrzej Jagielski <jedrzej.jagielski@intel.com>
-Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
-Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
----
- drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-index 6218bdb7f941..86b9caece104 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-@@ -12091,7 +12091,6 @@ static void ixgbe_remove(struct pci_dev *pdev)
- 
- 	devl_port_unregister(&adapter->devlink_port);
- 	devl_unlock(adapter->devlink);
--	devlink_free(adapter->devlink);
- 
- 	ixgbe_stop_ipsec_offload(adapter);
- 	ixgbe_clear_interrupt_scheme(adapter);
-@@ -12127,6 +12126,8 @@ static void ixgbe_remove(struct pci_dev *pdev)
- 
- 	if (disable_dev)
- 		pci_disable_device(pdev);
-+
-+	devlink_free(adapter->devlink);
- }
- 
- /**
-
--- 
-2.51.0.rc1.197.g6d975e95c9d7
+Thank you,
+Deepanshu
 
 
