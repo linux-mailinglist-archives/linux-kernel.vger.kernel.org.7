@@ -1,126 +1,191 @@
-Return-Path: <linux-kernel+bounces-842014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F14A6BB8C62
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 12:10:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BA9FBB8C78
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 12:43:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 903C14E0FE7
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 10:10:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF0BE189E8E0
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 10:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3925025CC6C;
-	Sat,  4 Oct 2025 10:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VUCEPerC"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC1D26C383;
+	Sat,  4 Oct 2025 10:43:37 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017C8156C6A
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 10:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A584C13774D
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 10:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759572648; cv=none; b=mqq72oCpKS3D5apJecHsBKxsJE9ytVyCgTKLDaumSSY8529sULYe+C228lT3d47iXgwgIVFSuGeyqaikvTDl081PFUkMOhxK8g576DbIsQo6GlkPw7p4yK5wWdShHTtw6eQ1hFjhdQ/DXmhaNP8PGVW+aizGShLonSxYkhJOZJk=
+	t=1759574617; cv=none; b=mCk38/VX836a5+CKKL2ov8CT/cAMz5P9GzghTPBFtmL5NwKVrTnfacINjvUqG25moM0tRjXpQ8QtvPSzfoNkDugZso1CKSHiJJJZo6krxzaRMMJmK6LKT5esysWrB1mzMRAdJ8SCe4kjnSNaOnEPCng4++Ald6qhqOL+hEkDKiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759572648; c=relaxed/simple;
-	bh=qPwDC5nuZkzu0IGOT3SooZBzDPmuTwFRd6vD7umpYgM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OpyvNEjlzm5fjhNQg1ZWYonSrdQEiMEyyd6sZXRS3tSYGhmXYljJzyPhn/Cs9jcePneEPBzM0UKpTPJIJM6hlCYVIrLLhaKd9sM7U67Fxvwqs4bxa3v44QOAss5fDysHb7L2F0UUc8OB4lYVfJY74dCXAMLDZZEGVAeSvkOReX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VUCEPerC; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b07d4d24d09so577288966b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 03:10:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759572645; x=1760177445; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tFV0Rbv7UxWT395pItSgd0J0HOojkalhaGP8JovflMo=;
-        b=VUCEPerCKpPGYd1rInNdibr6ifJLSnken3ELackHMU1soaor2sknSuGdOwqu0UAwYd
-         mGLhz6p1DZaBFLWRHBTejPnX1Dt265SF1BMgig75bEz6D1vnTvR29IsTaLSX18sACDpJ
-         F7F3cyG8D43n4BqdQLnSZKwKoVHhAee0xuEKwc4Be3UZL7IpmeIozE2/AUP5TEkSkc+G
-         iEqGmz+6vrXCyMzp5rkNaXq9fVZ8aLIwAZVYUYC3Tm9GqGxfnfVeXtlol29RIRLPd9lK
-         BfsQPxlwhyzl+GaRWy9OhF0w5OTHng/5lT5OF2eJ4TdJeJkbgQqdeRt/G1KHGdn1/uFu
-         m08Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759572645; x=1760177445;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tFV0Rbv7UxWT395pItSgd0J0HOojkalhaGP8JovflMo=;
-        b=xPsRcTiQ7Y2rgJ/BHkNl5s405EF5pqWyOyaogOnxj+C3oV3CLKu3Wnab1zGpvkbfh8
-         XdbkruWQrppp9vQh/WrqMDqQvS9wSjilVC5D95qtMf/JPCgH/kMIUMJpxGrUEvmMFXSV
-         +Ruwfr2pwb/CQrbgRaFu5OX4TCntpH/4sz3+A6TKFPYI7IDAVZd3nca0cyPJUClTVBon
-         +iFGySjaPXW9kj4PE6v63STWkBuzyIH4D0oD4pkk+/LojbX/3V1bee0tRiHhutwuExFv
-         g7Mk/stMYhJa2ni3qlsg/QiCLxUtz3VyuCGBcy7nxB2M6GAOijK0hBrYbMA3qc+jvvlb
-         V/Gg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvGOJoKcnKRQLLTgvu8m/bwK0ZkssX8jMh2rNP77M13/8ooFWIUCwJT9RgNTz3VXGCIV3SjLdhKcg33Nw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVtWKScTcxEgo1NL5gO7+dPfhj3jmm/g2iPExnPFx+Tmphg7Nw
-	CrfN42UUrOUVh89sOXVaG7ME0UNJYvJxCQRI7fgaBlGQAP2o6i7BeG/t
-X-Gm-Gg: ASbGncuNE9ps1F6zhbODBzgZxVlUpJhE+WgjQeNJ6GEi/b6jXsqYk5709AhOhdOkKWZ
-	A9u90F5R92967u8IcbJrqvwwc2I0KdrZE2g1gHmL6QnL8YePQXwpvoXMoYm8AUhwGNCImdaCMrp
-	kL1PpR3iiXFi6tOSkohZFMsoBeSo/z41Cr7xsDeEDWhkqvQnbi7ur4lMtq3Mi7Kkk8qQk6vYQWS
-	LcpGv3A/VyseW98tpnCFU/PRfTYmZhd3dDL2M9lBgwfwa5tI2pHP3vLSOwHCx8BnImlzdfNquxp
-	5A87vXsOfVenDy943r+50gBm7HYOd5AqNA6bOMjwqFUqLpvhsm0PQ+pS6SZJ4XtLuHip9/yPDQj
-	lSQN0xaTdAXsZZ2q+LtQsjyaVeroODY+TBSfBz0u5LOB1WcZrrTvXbICJfkEpGcBK6folA+WziC
-	UaBBQ=
-X-Google-Smtp-Source: AGHT+IH0c2naAO4lXwzQkD+k6vPjbzkl1A28iEcQHuUM0hgRbQTGs6OFsIxPmvxUYAU7ofKDgf4KkQ==
-X-Received: by 2002:a17:907:3e13:b0:b33:a2ef:c7 with SMTP id a640c23a62f3a-b49c42769bcmr750600366b.55.1759572645170;
-        Sat, 04 Oct 2025 03:10:45 -0700 (PDT)
-Received: from tumbleweed (ip-77-25-33-35.web.vodafone.de. [77.25.33.35])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652a9f5dsm650069666b.11.2025.10.04.03.10.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Oct 2025 03:10:44 -0700 (PDT)
-From: Michael Straube <straube.linux@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: hdegoede@redhat.com,
-	Larry.Finger@lwfinger.net,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH] staging: rtl8723bs: fall back to random mac address
-Date: Sat,  4 Oct 2025 12:10:36 +0200
-Message-ID: <20251004101036.673834-1-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759574617; c=relaxed/simple;
+	bh=LSc2k3JG640I+h7g5SBcDrjqgT5YyCRJVhxvq/KrV/o=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Ua/P4Cc+HRNXhyro9xC3XguGAgjcp+BTBB7HQWyZ9qbM6CZtKmukhchvwZNxskxBwoMVgBOWquwCkCRBDBB8qTPR7jgmcR9vjxWTVZlw2jDPxchL4dcV2ItCabtH5mKjnYkNU5qlSDje+rBehMdhIglIZl1tgojxtZBgw7NR8ZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 594Ah8tw090063;
+	Sat, 4 Oct 2025 19:43:08 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 594Ah1dj090035
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 4 Oct 2025 19:43:08 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <842b3b43-0a1c-4fe8-adff-94fdb2cee59b@I-love.SAKURA.ne.jp>
+Date: Sat, 4 Oct 2025 19:43:02 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [ntfs3?] INFO: trying to register non-static key in
+ ntfs_set_size
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: almaz.alexandrovich@paragon-software.com, ntfs3@lists.linux.dev,
+        Edward Adam Davis <eadavis@qq.com>
+Cc: syzbot <syzbot+bdeb22a4b9a09ab9aa45@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <68c8583d.050a0220.2ff435.03a1.GAE@google.com>
+ <bcd184f1-acbc-46c7-9e30-045a8f17fc5c@I-love.SAKURA.ne.jp>
+ <d79cb8dd-7dc3-49da-8fb1-793fa7e2a7e0@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+In-Reply-To: <d79cb8dd-7dc3-49da-8fb1-793fa7e2a7e0@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav301.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-Use a random mac address if we cannot load it from the efuses.
+On 2025/09/20 18:42, Tetsuo Handa wrote:
+> On 2025/09/16 12:48, Tetsuo Handa wrote:
+>> Well, we need to also initialize ni->file.run_lock, for vfs_truncate() now
+>> passes the
+>>
+>> 	/* For directories it's -EISDIR, for other non-regulars - -EINVAL */
+>> 	if (S_ISDIR(inode->i_mode))
+>> 		return -EISDIR;
+>> 	if (!S_ISREG(inode->i_mode))
+>> 		return -EINVAL;
+>>
+>> check. But do we really want to pretend as if S_IFREG ?
+>>
+>> diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+>> index 37cbbee7fa58..ea2193ebf8fc 100644
+>> --- a/fs/ntfs3/inode.c
+>> +++ b/fs/ntfs3/inode.c
+>> @@ -471,6 +471,8 @@ static struct inode *ntfs_read_mft(struct inode *inode,
+>>                    fname->home.seq == cpu_to_le16(MFT_REC_EXTEND)) {
+>>                 /* Records in $Extend are not a files or general directories. */
+>>                 inode->i_op = &ntfs_file_inode_operations;
+>> +               mode = S_IFREG;
+>> +               init_rwsem(&ni->file.run_lock);
+>>         } else {
+>>                 err = -EINVAL;
+>>                 goto out;
+>>
+>> Are records in $Extend expected to be truncated to arbitrary size? Should we
+>> prepend something other than S_IFREG (at least S_IFREG so that truncate()
+> 
+> pretend something other than S_IFREG (at least S_IFDIR so that truncate()
+> 
+>> will fail, or possibly S_IFSOCK so that open() will fail) ?
 
-Do not use a constant mac address as fallback. This may create conflicts
-if we have several rtl8723bs devices on the network.
+I tested using a legitimate filesystem image, and I came to a conclusion that
+pretending as if S_IFREG seems to be OK because normal operations (e.g. read,
+truncate) fail with "No such device or address" despite S_IFREG.
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- drivers/staging/rtl8723bs/hal/sdio_halinit.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+Therefore, please apply
+https://lkml.kernel.org/r/tencent_F24B651BC22523BA92BB5A337D9E2A1B5F08@qq.com
+and send to linux.git .
 
-diff --git a/drivers/staging/rtl8723bs/hal/sdio_halinit.c b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
-index 6f1f726d1630..4e81ef53dc47 100644
---- a/drivers/staging/rtl8723bs/hal/sdio_halinit.c
-+++ b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
-@@ -1014,14 +1014,10 @@ static void Hal_EfuseParseMACAddr_8723BS(
- 	struct adapter *padapter, u8 *hwinfo, bool AutoLoadFail
- )
- {
--	u16 i;
--	u8 sMacAddr[6] = {0x00, 0xE0, 0x4C, 0xb7, 0x23, 0x00};
- 	struct eeprom_priv *pEEPROM = GET_EEPROM_EFUSE_PRIV(padapter);
- 
- 	if (AutoLoadFail) {
--/* 		sMacAddr[5] = (u8)GetRandomNumber(1, 254); */
--		for (i = 0; i < 6; i++)
--			pEEPROM->mac_addr[i] = sMacAddr[i];
-+		eth_random_addr(pEEPROM->mac_addr);
- 	} else {
- 		/* Read Permanent MAC address */
- 		memcpy(pEEPROM->mac_addr, &hwinfo[EEPROM_MAC_ADDR_8723BS], ETH_ALEN);
--- 
-2.51.0
+------------------------------------------------------------
+[root@localhost ~]# truncate -s 100M testfile.img
+[root@localhost ~]# mkfs.ntfs -F testfile.img
+testfile.img is not a block device.
+mkntfs forced anyway.
+The sector size was not specified for testfile.img and it could not be obtained automatically.  It has been set to 512 bytes.
+The partition start sector was not specified for testfile.img and it could not be obtained automatically.  It has been set to 0.
+The number of sectors per track was not specified for testfile.img and it could not be obtained automatically.  It has been set to 0.
+The number of heads was not specified for testfile.img and it could not be obtained automatically.  It has been set to 0.
+Cluster size has been automatically set to 4096 bytes.
+To boot from a device, Windows needs the 'partition start sector', the 'sectors per track' and the 'number of heads' to be set.
+Windows will not be able to boot from this device.
+Initializing device with zeroes: 100% - Done.
+Creating NTFS volume structures.
+mkntfs completed successfully. Have a nice day.
+[root@localhost ~]# mount -t ntfs3 -o loop testfile.img /mnt/
+for i in '$ObjId' '$Quota' '$Reparse'
+do
+  stat /mnt/\$Extend/$i
+  truncate -s 1024 /mnt/\$Extend/$i
+  chmod 7777 /mnt/\$Extend/$i
+  chown 1 /mnt/\$Extend/$i
+  cat /mnt/\$Extend/\$Reparse
+  stat /mnt/\$Extend/$i
+  rm -f /mnt/\$Extend/$i
+done
+  File: /mnt/$Extend/$ObjId
+  Size: 0               Blocks: 0          IO Block: 4096   regular empty file
+Device: 7,0     Inode: 25          Links: 1
+Access: (0000/----------)  Uid: (    0/    root)   Gid: (    0/    root)
+Access: 2025-10-04 19:26:28.077612000 +0900
+Modify: 2025-10-04 19:26:28.077612000 +0900
+Change: 2025-10-04 19:26:28.077612000 +0900
+ Birth: 2025-10-04 19:26:28.077612000 +0900
+truncate: cannot open '/mnt/$Extend/$ObjId' for writing: No such device or address
+cat: '/mnt/$Extend/$Reparse': No such device or address
+  File: /mnt/$Extend/$ObjId
+  Size: 0               Blocks: 0          IO Block: 4096   regular empty file
+Device: 7,0     Inode: 25          Links: 1
+Access: (1777/-rwxrwxrwt)  Uid: (    1/     bin)   Gid: (    0/    root)
+Access: 2025-10-04 19:26:28.077612000 +0900
+Modify: 2025-10-04 19:26:28.077612000 +0900
+Change: 2025-10-04 19:28:18.811900400 +0900
+ Birth: 2025-10-04 19:26:28.077612000 +0900
+  File: /mnt/$Extend/$Quota
+  Size: 0               Blocks: 0          IO Block: 4096   regular empty file
+Device: 7,0     Inode: 24          Links: 1
+Access: (0000/----------)  Uid: (    0/    root)   Gid: (    0/    root)
+Access: 2025-10-04 19:26:28.077612000 +0900
+Modify: 2025-10-04 19:26:28.077612000 +0900
+Change: 2025-10-04 19:26:28.077612000 +0900
+ Birth: 2025-10-04 19:26:28.077612000 +0900
+truncate: cannot open '/mnt/$Extend/$Quota' for writing: No such device or address
+cat: '/mnt/$Extend/$Reparse': No such device or address
+  File: /mnt/$Extend/$Quota
+  Size: 0               Blocks: 0          IO Block: 4096   regular empty file
+Device: 7,0     Inode: 24          Links: 1
+Access: (1777/-rwxrwxrwt)  Uid: (    1/     bin)   Gid: (    0/    root)
+Access: 2025-10-04 19:26:28.077612000 +0900
+Modify: 2025-10-04 19:26:28.077612000 +0900
+Change: 2025-10-04 19:28:18.901901800 +0900
+ Birth: 2025-10-04 19:26:28.077612000 +0900
+  File: /mnt/$Extend/$Reparse
+  Size: 0               Blocks: 0          IO Block: 4096   regular empty file
+Device: 7,0     Inode: 26          Links: 1
+Access: (0000/----------)  Uid: (    0/    root)   Gid: (    0/    root)
+Access: 2025-10-04 19:26:28.077612000 +0900
+Modify: 2025-10-04 19:26:28.077612000 +0900
+Change: 2025-10-04 19:26:28.077612000 +0900
+ Birth: 2025-10-04 19:26:28.077612000 +0900
+truncate: cannot open '/mnt/$Extend/$Reparse' for writing: No such device or address
+cat: '/mnt/$Extend/$Reparse': No such device or address
+  File: /mnt/$Extend/$Reparse
+  Size: 0               Blocks: 0          IO Block: 4096   regular empty file
+Device: 7,0     Inode: 26          Links: 1
+Access: (1777/-rwxrwxrwt)  Uid: (    1/     bin)   Gid: (    0/    root)
+Access: 2025-10-04 19:26:28.077612000 +0900
+Modify: 2025-10-04 19:26:28.077612000 +0900
+Change: 2025-10-04 19:28:18.983903100 +0900
+ Birth: 2025-10-04 19:26:28.077612000 +0900
+------------------------------------------------------------
 
 
