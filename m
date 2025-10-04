@@ -1,220 +1,186 @@
-Return-Path: <linux-kernel+bounces-842056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE888BB8DC6
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 15:16:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77307BB8DD0
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 15:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C46A189EF89
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 13:17:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 374C03C33AB
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 13:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56C3275860;
-	Sat,  4 Oct 2025 13:16:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC392773F1;
+	Sat,  4 Oct 2025 13:16:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h5FuXRY3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ccjXR+w5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3FD220766E;
-	Sat,  4 Oct 2025 13:16:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE1C25A642;
+	Sat,  4 Oct 2025 13:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759583792; cv=none; b=JAJa3a7LKlA5fhpiqh0aM7lIrxMx1pHfR8IiVgYTJ1CnAk6rM93ctQQ4NnHWnROklPGwHCMoLXIhEdZ+43k3dEB1JOBaMdr6ZsBjLJ1AanJ4a44ePmfZLwh/5bC04H8Mlyv2txncGuH94LGs0ZL+G0PZGQWDR981qd2Vn6CjVe8=
+	t=1759583815; cv=none; b=kKiKGbbeRUGvct5VIvqcvDH4gsA9kZLstTaVAp4Ie5V/eA2wZLBZ/5By4qLq4d6xjLEcPFoHTdZCqWhfTlK3Y+nfWNMNI+8WXlaMm7UGBe3x64HH+jYQdVucaT35p+nPyf4nYZu1ePgu7eovWNDta16FAzSkfEmCDin0GcUjqbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759583792; c=relaxed/simple;
-	bh=I08Nc5q5l8NppZLvGTcwZIupkZuUfHohxlx6YSbLewk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RvOwjAJEIm5Oj7HpwS25xl8mYhALv6qY5gXP7+b28vODFFowo3mEGatTsmJUnaHaCDllPsziNuZfNAof0tbiME4htTKeSlSkHLHjQSYJSX2ENbu8nQzxeexjUndJBaA81iOFhdJfWXIE/PrPmhBaCttNLmBzvp7XBFRZ+lYsW+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h5FuXRY3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6B3FC4CEF1;
-	Sat,  4 Oct 2025 13:16:13 +0000 (UTC)
+	s=arc-20240116; t=1759583815; c=relaxed/simple;
+	bh=hzxcdp7JsMWXprVyzYy5th44+3G4WR8/1+0zoIxXo1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ev/oD4BFGa5/kUqWqmecbKNN1/Oe+p4RkPsZ3R4bwujUGEQAzifI0bVXmY7U/keA1JyMzhQf2iwh7AiL6meYrbFe5NHeYeyHnESYcpQWM4uM0Ae07GdzVFwt8daEZtmN+b1lDNvEtGiB/R2DTewFzxTh+it9mg3CGJ4aSYh3Vrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ccjXR+w5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA180C4CEF1;
+	Sat,  4 Oct 2025 13:16:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759583791;
-	bh=I08Nc5q5l8NppZLvGTcwZIupkZuUfHohxlx6YSbLewk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=h5FuXRY3gTUhF8vmvnIftl9SK1p0HVgQBoEaGnoAnkbjYlysNFEMGuFLLApSwqh1P
-	 N5cvKvZ/R8fc7+01dERuDrHqatFrqmkHblChqJM89tEU0qqgND/gGM2B6PO/DxYl0P
-	 dBsNXe8nIraqK9Uu1H+Du0IYBmuuJ4CO+65s/BfqXHSlf1pCFcvrFE8b1vf4yX3eGi
-	 gMF4aXHlselDAZou4l1OdOEvU6jtlTc1CvRxKxZ/yAcY7O1Gw0G4S9tcVwze672uFm
-	 g77r0geiW3jJJOUrmUze93h3qE7mbcuhOXDPGo9HHJrPiaty9n0ye7bGVPsF74X6/m
-	 qAE2JrTmIfvwA==
-Message-ID: <f9c922f5-52af-45bb-a4ca-7ca80c0c3534@kernel.org>
-Date: Sat, 4 Oct 2025 14:16:08 +0100
+	s=k20201202; t=1759583814;
+	bh=hzxcdp7JsMWXprVyzYy5th44+3G4WR8/1+0zoIxXo1Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ccjXR+w5iVWiklHsEyDLwvfx+No3oghNKAD9wybGzpQ9awVF9sdbKBxlPzJwEFDZ1
+	 BQtB/pOgi1xItVlYT4ydp+g49Bfa3U23sfrReTgwyZTsm7LtQWg7W2nGvaajGhS//5
+	 JZZrQ/uLhiXPWzojWz0b/zFa9dQakc94+Mugrw4a94OQuQ00WxzBzB/3Kk8PpaCMvg
+	 LsJfshbpEOp/HQwZ3fdZhk1U0FOYnwbqnIdkktSBnvhuo/IM7v1e+i2544d+9wf+3V
+	 nS8Eah+H6x9GpUg3HUPIzx90KTD+FEjymu1p3huNu3EoCJcHqXTmmfLl5u6mYysRCd
+	 gfyjzgNk3p6Zg==
+Date: Sat, 4 Oct 2025 14:16:44 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Shrikant Raskar <raskar.shree97@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+ matt@ranostay.sg, skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH 2/2] iio: health: max30100: Add pulse-width
+ configuration via DT
+Message-ID: <20251004141644.7fcb9106@jic23-huawei>
+In-Reply-To: <20251004015623.7019-3-raskar.shree97@gmail.com>
+References: <20251004015623.7019-1-raskar.shree97@gmail.com>
+	<20251004015623.7019-3-raskar.shree97@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/display: add hw_params callback function to
- drm_connector_hdmi_audio_ops
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Cc: Srinivas Kandagatla <srini@kernel.org>,
- Jianfeng Liu <liujianfeng1994@gmail.com>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- linux-arm-msm@vger.kernel.org, Xilin Wu <sophon@radxa.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>, David Airlie <airlied@gmail.com>,
- Dmitry Baryshkov <lumag@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>,
- Thomas Zimmermann <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
-References: <20250925040530.20731-1-liujianfeng1994@gmail.com>
- <46q2pje4hginnm2wld6ejyo36hfkmkzydaa4qggx47gd2p4q4z@q6vmomtgqihv>
- <cc1afa21-8a66-4e0c-8fae-d0b07142b11d@kernel.org>
- <rydatk4grelhg6w57wwkqafq5ghccnsuiwvfqvvdv7qum5dg5a@scoc76ni7hue>
- <e69b23de-e9b6-4dfc-af01-7d2726dc23e4@oss.qualcomm.com>
- <bnrpfijh4rljdzroduqncfygysvgblljlhdpvq7ubajlbbwvwd@ohdmpjvpzj33>
-Content-Language: en-US
-From: Srinivas Kandagatla <srini@kernel.org>
-In-Reply-To: <bnrpfijh4rljdzroduqncfygysvgblljlhdpvq7ubajlbbwvwd@ohdmpjvpzj33>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
+On Sat,  4 Oct 2025 07:26:23 +0530
+Shrikant Raskar <raskar.shree97@gmail.com> wrote:
 
-
-On 10/3/25 6:02 PM, Dmitry Baryshkov wrote:
-> On Fri, Oct 03, 2025 at 05:35:16PM +0100, Srinivas Kandagatla wrote:
->>
->>
->> On 9/26/25 4:09 PM, Dmitry Baryshkov wrote:
->>> On Fri, Sep 26, 2025 at 11:30:26AM +0100, Srinivas Kandagatla wrote:
->>>>
->>>>
->>>> On 9/25/25 5:28 AM, Dmitry Baryshkov wrote:
->>>>> On Thu, Sep 25, 2025 at 12:05:09PM +0800, Jianfeng Liu wrote:
->>>>>> After reusing drm_hdmi_audio_* helpers and drm_bridge_connector
->>>>>> integration in drm/msm/dp, we have dropped msm_dp_audio_hw_params and
->>>>>> use msm_dp_audio_prepare instead. While userspace is still calling
->>>>>> hw_params to do audio initialization, and we get the following errors:
->>>>>>
->>>>>> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
->>>>>> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
->>>>>> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
->>>>>> hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
->>>>>> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
->>>>>> qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
->>>>>> qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
->>>>>> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
->>>>>> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
->>>>>> MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
->>>>>
->>>>> And a call to hdmi_codec_prepare() comes only at this place.
->>>>>
->>>>> Srini, Mark, when selecting to only implement .prepare for codec ops I
->>>>> was following the commit 2fef64eec23a ("ASoC: hdmi-codec: Add a prepare
->>>>> hook"), which documents that IEC958 status bit is set after
->>>>> .hw_params(), so it's only visible during .prepare(). Is it okay to
->>>>> implement both callbacks? Or should the audioreach DAI driver be fixed
->>>>> somehow instead (I suppose it assumes that the port is available after
->>>>> .hw_params(), not sure if that assumption is correct)?
->>>>>
->>>>>>
->>>>>> msm_dp_audio_prepare is not called because hdmi-codec driver only checks
->>>>>> and runs hw_params before q6apm_lpass_dai_prepare(). This commit will
->>>>>> add hw_params callback same as drm_connector_hdmi_audio_prepare, so that
->>>>>> hdmi-codec driver can work with userspace alsa.
->>>>>>
->>>>>> Tested with Radxa Dragon Q6A.
->>>>>>
->>>>>> Fixes: 98a8920e7b07 ("drm/msm/dp: reuse generic HDMI codec implementation")
->>>>>> Signed-off-by: Jianfeng Liu <liujianfeng1994@gmail.com>
->>>>>
->>>>> The patch LGTM, but I would wait for response from audio maintainers.
->>>>>
->>>>
->>>> The ordering matters in this case as we need clocks and audio
->>>> configuration on DP codec side to be setup before we start configuring
->>>> the dsp pipeline. Looks like that DSP is trying to setup DP endpoint
->>>> even before it is ready.
->>>>
->>>> q6apm prepare loads the dsp pipeline and starts configuring the
->>>> endpoints, if the DP endpoint is not ready dsp would throw an error.
->>>>
->>>> We might be able to pull in some dsp logs to confirm this, but I dont
->>>> have a setup that I can reproduce this issue.
->>>
->>> What would be your recommendation to proceed? Is it okay for the DAI
->>> driver to depend on the .hw_params enabling the clock? Also I see that
->>> the error regarding the clocks comes from .prepare callback too. What is
->>> the order of .prepare callbacks()? Can we influence it?
->>
->> prepare follows hw-params, and prepare can be called multiple times
->>
->> When you mean order of prepare callbacks, you mean w.r.t codec and dsp
->> backend dia link drivers ?
+> The MAX30100 driver previously hardcoded the SPO2 pulse width to
+> 1600us. This patch adds support for reading the pulse width from
+> device tree (`maxim,pulse-width`) and programming it into the SPO2
+> configuration register.
 > 
-> Yes. Here we got a dependency from the cpu dai to be prepare()'d after
-> the DP driver performs some actions, which were a part of hw_params()
-> callback but were moved to be executed during prepare() callback.
+> If no property is provided, the driver falls back to 1600us to
+> preserve existing behavior.
 > 
-> This leads me to two sets of questions:
-> - In which order are those callbacks executed? Can we make the ASoC
->   enforce some order of DAI's prepare() callbacks?
-> 
-> - More improtantly, isn't it a sympthom of DP driver (incorrectly)
->   performing too much in the .hw_params() / .prepare() callback? Should
->   we move some of the setup to the .audio_startup() instead? What is the
->   expected split between those callbacks?
+> Testing:
+> Hardware: Raspberry Pi 3B + MAX30100 breakout
+> Verified DT property read in probe()
+> Confirmed SPO2_CONFIG register written correctly using regmap_read()
+A few minor comments inline.
+Thanks,
 
-I have not looked at full dp sequences but, if prepare is the only place
-when it enables the required clocks for audio block, then it is a
-problem, we should do it early so that DSP can enable the required
-configuration in prepare.
-
-Its also doable to move out the clock related settings from  prepare to
-startup which should work aswell.
-
---srini
+Jonathan
 
 > 
->>
->> TBH, Am not sure, I did not find anything that was obvious from the code.
->>
->>
->>
->> --srini
->>
->>
->>
->>>
->>>>
->>>>
->>>> --srini
->>>>>> ---
->>>>>>
->>>>>> Changes in v2:
->>>>>> - Link to v1: https://lore.kernel.org/linux-arm-msm/20250924085804.34183-1-liujianfeng1994@gmail.com/
->>>>>> - Use more detailed trace log in commit message.
->>>>>> - Drop the empty line between Fixex and SoB.
->>>>>>
->>>>>>  drivers/gpu/drm/display/drm_hdmi_audio_helper.c | 1 +
->>>>>>  1 file changed, 1 insertion(+)
->>>>>>
->>>>>> diff --git a/drivers/gpu/drm/display/drm_hdmi_audio_helper.c b/drivers/gpu/drm/display/drm_hdmi_audio_helper.c
->>>>>> index 7d78b02c1446..6ca1c7ad0632 100644
->>>>>> --- a/drivers/gpu/drm/display/drm_hdmi_audio_helper.c
->>>>>> +++ b/drivers/gpu/drm/display/drm_hdmi_audio_helper.c
->>>>>> @@ -130,6 +130,7 @@ EXPORT_SYMBOL(drm_connector_hdmi_audio_plugged_notify);
->>>>>>  
->>>>>>  static const struct hdmi_codec_ops drm_connector_hdmi_audio_ops = {
->>>>>>  	.audio_startup = drm_connector_hdmi_audio_startup,
->>>>>> +	.hw_params = drm_connector_hdmi_audio_prepare,
->>>>>>  	.prepare = drm_connector_hdmi_audio_prepare,
->>>>>>  	.audio_shutdown = drm_connector_hdmi_audio_shutdown,
->>>>>>  	.mute_stream = drm_connector_hdmi_audio_mute_stream,
->>>>>> -- 
->>>>>> 2.43.0
->>>>>>
->>>>>
->>>>
->>>
->>
+> Signed-off-by: Shrikant Raskar <raskar.shree97@gmail.com>
+> ---
+>  drivers/iio/health/max30100.c | 39 +++++++++++++++++++++++++++++++++--
+>  1 file changed, 37 insertions(+), 2 deletions(-)
 > 
+> diff --git a/drivers/iio/health/max30100.c b/drivers/iio/health/max30100.c
+> index 814f521e47ae..2b3348c75beb 100644
+> --- a/drivers/iio/health/max30100.c
+> +++ b/drivers/iio/health/max30100.c
+> @@ -5,7 +5,6 @@
+>   * Copyright (C) 2015, 2018
+>   * Author: Matt Ranostay <matt.ranostay@konsulko.com>
+>   *
+> - * TODO: enable pulse length controls via device tree properties
+>   */
+>  
+>  #include <linux/module.h>
+> @@ -54,6 +53,9 @@
+>  #define MAX30100_REG_SPO2_CONFIG		0x07
+>  #define MAX30100_REG_SPO2_CONFIG_100HZ		BIT(2)
+>  #define MAX30100_REG_SPO2_CONFIG_HI_RES_EN	BIT(6)
+> +#define MAX30100_REG_SPO2_CONFIG_200US		0x0
+> +#define MAX30100_REG_SPO2_CONFIG_400US		0x1
+> +#define MAX30100_REG_SPO2_CONFIG_800US		0x2
+>  #define MAX30100_REG_SPO2_CONFIG_1600US		0x3
+>  
+>  #define MAX30100_REG_LED_CONFIG			0x09
+> @@ -306,19 +308,52 @@ static int max30100_led_init(struct max30100_data *data)
+>  		MAX30100_REG_LED_CONFIG_LED_MASK, reg);
+>  }
+>  
+> +static int max30100_get_pulse_width(unsigned int pwidth_us)
+> +{
+> +	switch (pwidth_us) {
+> +	case 200:
+> +		return MAX30100_REG_SPO2_CONFIG_200US;
+> +	case 400:
+> +		return MAX30100_REG_SPO2_CONFIG_400US;
+> +	case 800:
+> +		return MAX30100_REG_SPO2_CONFIG_800US;
+> +	case 1600:
+> +		return MAX30100_REG_SPO2_CONFIG_1600US;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+>  static int max30100_chip_init(struct max30100_data *data)
+>  {
+>  	int ret;
+> +	unsigned int pulse_us;
+> +	unsigned int pulse_width;
+> +	struct device *dev = &data->client->dev;
+>  
+>  	/* setup LED current settings */
+>  	ret = max30100_led_init(data);
+>  	if (ret)
+>  		return ret;
+>  
+> +	/* Get pulse width from DT, default = 1600us */
+> +	ret = device_property_read_u32(dev, "maxim,pulse-width", &pulse_us);
+> +	if (ret) {
+> +		dev_warn(dev, "no pulse-width defined, defaulting to 1600us\n");
+> +		pulse_width = MAX30100_REG_SPO2_CONFIG_1600US;
+
+Usual trick for these is to set pulse_us to 1600 before calling the
+device_property_read_u32(). If that fails then the default value will remain
+in the variable and we can just call the code below without needing
+to explicitly handle two cases.
+
+> +	} else {
+> +		pulse_width = max30100_get_pulse_width(pulse_us);
+> +		if (pulse_width < 0) {
+> +			dev_err(dev, "invalid pulse-width %u\n", pulse_us);
+
+Only happens in probe() so prefer use of return dev_err_probe()
+for compactness in this case.
+
+> +			return pulse_width;
+> +		}
+> +	}
+> +
+>  	/* enable hi-res SPO2 readings at 100Hz */
+>  	ret = regmap_write(data->regmap, MAX30100_REG_SPO2_CONFIG,
+>  				 MAX30100_REG_SPO2_CONFIG_HI_RES_EN |
+> -				 MAX30100_REG_SPO2_CONFIG_100HZ);
+> +				 MAX30100_REG_SPO2_CONFIG_100HZ |
+> +				 pulse_width);
+
+Even though it's the lowest field in this register. I'd prefer
+a mask being defined and FIELD_PREP() used to set it.
+That way we don't need to know it is the lowest field when looking at this
+code.
+
+>  	if (ret)
+>  		return ret;
+>  
 
 
