@@ -1,128 +1,148 @@
-Return-Path: <linux-kernel+bounces-842152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E755BB9176
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 21:59:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE6DBB9173
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 21:58:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC4013B9BDE
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 19:59:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E4FC1896532
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 19:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E4F5233D9E;
-	Sat,  4 Oct 2025 19:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B5F6284671;
+	Sat,  4 Oct 2025 19:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="DDulwQAJ"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h7j348sz"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5FE223DE5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F91119D071
 	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 19:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759607929; cv=none; b=UEpki5AlNqFRSxkmbyw5rOSVHdnMEKZV1c//aksuzGPK5ga1rbp4RPDSMfjgFWhcJUTdJXf7IVfsE4FW5v4eRpE4YhlDzvKfWoEYPp1GdWUIlgFNd5EBAazR8AbOgA57OUKMZlHwuJThnCM9T9vewMiJ4OtwI+IlU/SPhvMkN80=
+	t=1759607925; cv=none; b=fhpxqYM5ysOugVBpj8/4DfPFGVEvIH+yBmvFjChDqWPLLH5B/jphgwMkBWdyhLtGYiruFfPHHZd8zMpDl0xbVF3f/673I9l+x+ztfCq9XyMmDjAL6YreHYf81uY+HndB1dNcZ9bZds7g5QW7DSYka9fW6zf4cxTBrjJtChMiC9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759607929; c=relaxed/simple;
-	bh=YypJ2n6ObcheY1R39FEjFgc/VMR3Ck0gVe3LYOexbGY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J/sxxduaJRkzjras3Lq6FTPlOH3QFQx0pFY2rCUbB2GoXmHtuY7BE2y0zLhuUXSl2FPMIT4aqt2vc9tKCR0BqC86uIy9TLs+fj4+bCaxkjNSHJ7MSQK8D3uAAER0ZCt0PYjmvXidN+xe/gdFY1gtR1/v1RvVcWtx4RElZCjQBEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=DDulwQAJ; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-3306d3ab2e4so4089868a91.3
+	s=arc-20240116; t=1759607925; c=relaxed/simple;
+	bh=pMCt5So7d35T+EQJr6XS6fKwbUBcfWV1tFGLm+0+fk0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RPB49vEjx2O89SjMB4G4gtVqzBXMP9uOt2NQiMNn5/ibHLG2zYAFLsShHM0/hHzzrCfU1RJvZEaxlVElaTyZHj+HeP5kzrr9YdmPtZNDCjhqmYPN+hCw3/q3bcbmxl0G2hnuuq/fDZB/ZVvuKGml6mmEQolFtJIuszNDZYFwXYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h7j348sz; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-789fb76b466so3117661b3a.0
         for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 12:58:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1759607923; x=1760212723; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RkUHHW/8YstHHualb/SiYorZ1DiF4W6i84iViR0FPpY=;
-        b=DDulwQAJT/4kxHMHPsS7SQqDG5dKYf/D4I6d8cJ3oefzj8PJe14kFrNvjlEnGOBcMj
-         VivrHLmb9khnqo2FpDjwZs++u3VD1y8Fy7HX9K59XhqRUZVZhtqiWwUHpznipucfBIAc
-         a9Kqj21Ney9QqrOSIgiXUEWnwrl54Lc9T5DZZCTDgXeXy0M+Rpwyf7gOD20o0gc7VgYu
-         L5HoiGBCQQZdCflq1E7JJumeRWgu8FeuVdQJYJl9kl558TrGBLJalrUCb8YrvdiEdK3J
-         2oBRJiMM0eL1DlpLLuUZhPsKaVaxbd6O+3ciI/WNP0FO0xRfGI1+p4Zv5qBWfMyomz7O
-         vlIA==
+        d=gmail.com; s=20230601; t=1759607923; x=1760212723; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TDUXnOisudwg4cuwDop3UH0IpAiy5MdQyAMUD6KrYSM=;
+        b=h7j348szm1hWErHr3oj7cyDHNZE6gQzOervWE7vUVMEOpx8KXr1P36oN6hjvDvVvUc
+         A/FrI8Zyvp/uokp3q1pGAd+xiIAttFY7aacVmVi5wX8ItyoGe6wGVBm5NAnBBADcJq3f
+         7zxFCyMIJBORyylUK2SQj68wExaNzebQSI2NS46fFu2SQ6+ORh0FpPwekx+CqVkU65+c
+         WT8nTePV4NeoVU/IMN5w5QVENpMU8k7M6DXPhona+KksS8BUttHIaTBKr3Adxm/WgbfO
+         7Kudi+3t7GT+gvgFzCdA8R5YuGV/uVxPngE1fmw2ZKpyqyTvGv1RWIGLT1BlwaJZnwEi
+         i6Sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1759607923; x=1760212723;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RkUHHW/8YstHHualb/SiYorZ1DiF4W6i84iViR0FPpY=;
-        b=B5/9P33GFcMU0ozniXBH7UdgnyRQ2PFsKSver6qPyiLdb4mlFApBbatCzwhw0Qqz+Q
-         hTr6xnMB0HmVXyV+MdJD4Y2bgV+Rfgiu98WnIvy7vvwVrtJSLK+7yHHzrv3oRfLVMUh6
-         Pi596843CxBUwtC5Naqqd9jpKmJi4/sgQ8EmJ9hgwk/kNtdDylwZ21nW2nMNq4njKxJh
-         n+wA/yBD148cOp06heubZ3I1PzvDtAgYRF/UM7pZA4OtMLKk/4/7IiwTF1n7GmIktf3Y
-         FP7oNKgSajH0Ho1jplTs8x8bB5XV3h+x5KeNpcCqpx3gJnGJ0AZ3hPwwfcbM4gRVm9AG
-         JknA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKREBd0ganTN8wqyRIXZe4hUPXe7ii0M16P8/WxmxHNM4MJeKA5riPLpEKSv0OErZcYG0a5UDOCAA9BK8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQ3wtFIN9/jLrqB1iEXIBPsPIK0EmqsBMeYwa4Tkr41ZhuwMMv
-	cxrqhjIc9DLjbVYSTzIfad7M1mleHNghuKZjlWejWOMlTx4hy+oGLyzso+DUvUuePL4s1NIOPGg
-	zMrUB7L2Lm765aFIXzTzNXDz9+xbLH2M=
-X-Gm-Gg: ASbGncu96CkXlLRgCzwf/ib/Y8Q0micBRvduahIedfr3RgslhljdQTX98RiWhctnMGp
-	dDgHaYcvmZt1rno2kHYLr5hsLMoz8veVwaCH79ZIrV/0b/cADuon8xab9p7wCD3mHJFO+L+blQu
-	XSum9xA+XfwpQHZWYrtD3YZ+qcAMtjmv8LHJqIcB1uGaFmRyB777v4Rs0+WwWJQBJQ+R0igdpra
-	h/15TKyJG8OuODVHZS8JiAUi5pmmr7kmjNhRCmDPrh0uiq8E7iMiN+ecVHT/EsTqWBXcQhGV28=
-X-Google-Smtp-Source: AGHT+IHIlqoFMv9csx8XRng4syXVJftJT6zd7u5YxyOumBwLOTKBWwzcxLH9Rhpq2ydFsn3WZaZHOCkzeoZW36Gl4Kk=
-X-Received: by 2002:a17:902:d483:b0:264:567b:dd92 with SMTP id
- d9443c01a7336-28e9a664e7cmr89943225ad.52.1759607923096; Sat, 04 Oct 2025
- 12:58:43 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TDUXnOisudwg4cuwDop3UH0IpAiy5MdQyAMUD6KrYSM=;
+        b=cu+IXtB9dqaDOcb4YRN/85comaI/2NUuWdUMcLGYmQduFITxaWDY4fwdKE2cbnt/ub
+         qTNluccQWWBJYg3RG9WeYece8cw1uESRPSfB6wvlE7r3C2J3Ya2F307X56rUuFt5bZK0
+         YNiUin9buE+FVKbVW0Ha7RgPeG6pFAA5PlRF6SNUd+ambjQngVB5m/upK1XPiMj+zZsO
+         HoEMet3fD3dB4Q5+0cgH6/kIiUWTqJxkXR3zZolVDJo9fjMxzT9iyBbTTW0PGPuq6NTI
+         WUD0of4LpnQw0Mw4IjAZEzTigKyPLllA93uCk5IW7A8JuG7ZlJApPlSLkrh4uF/LAQVK
+         Eo2A==
+X-Gm-Message-State: AOJu0YyOJXnaoZ70svldo/0Yc3cLAD+veUhG3VBp7rKmroCPdfD6uvbc
+	Jo/jNLFiTz+t5kImJPg1LisXW9kIWBv3/MhV62f2vyfgHP59pnq1CfmX
+X-Gm-Gg: ASbGncsHyzfmLBWSSXyE9NaCAW3hABVKEi2aDJYeySVlFX+ZTIbRSZXgSE2jJMXoqil
+	iSOnkv720KkkunIW5ofGh63nSI6Rf9Y+SIx08NrmuLH0pn6OYMA1N3v7JPIblhOJMGVJo9tRHym
+	dOrvr29dAU772pQ+0Q0a3LCRdWliQDwCXAGbiumo5/tHJMPsz8zWCXQPqFmJ+5fDsKIB9oUW5Dj
+	z+W3f30Qivlk3eHWJT/L3mmqp+o9BVEh959EuSYM+xzHzCfgCNfiw1FIQBIKEv14PWiz8t3kN1I
+	NZ8UXg7AM/s6z9IA260VVaeU2bhz8rooxPU+cOHj6ebDZ6y+arKvezGMdtoVGSdG4NOIG2zVTMy
+	ELph6C9E+egJW2xQK2nhueXc1fJ0qCkRXeicYPA0Lh7opIZky
+X-Google-Smtp-Source: AGHT+IFnCzzPoXkuwM4lENEctJ1L5p07eqsCrfMj5TPd3iUYnbW6H9x+DWodOKi+2J1pOPfJsino0g==
+X-Received: by 2002:a05:6a20:4320:b0:2fc:a1a1:480a with SMTP id adf61e73a8af0-32b6209594amr10097686637.38.1759607922770;
+        Sat, 04 Oct 2025 12:58:42 -0700 (PDT)
+Received: from archlinux ([36.255.84.62])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b62e121e0afsm4482536a12.25.2025.10.04.12.58.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 04 Oct 2025 12:58:42 -0700 (PDT)
+From: Madhur Kumar <madhurkumar004@gmail.com>
+To: brauner@kernel.org,
+	jlayton@kernel.org,
+	geert+renesas@glider.be,
+	arnd@arndb.de
+Cc: linux-kernel@vger.kernel.org,
+	Madhur Kumar <madhurkumar004@gmail.com>
+Subject: [PATCH] samples/vfs: Undefine conflicting AT_RENAME_* macros in test-statx
+Date: Sun,  5 Oct 2025 01:28:34 +0530
+Message-ID: <20251004195834.1415468-1-madhurkumar004@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250927125006.824293-1-christianshewitt@gmail.com>
- <20250927125006.824293-2-christianshewitt@gmail.com> <CAFBinCDQc=2xrKbGunSKJjLhGd0bCGN+3oYd_bg0ySs+WHxZjA@mail.gmail.com>
- <6B97C24A-A1C0-46F9-BC74-3E7D2119B6D6@gmail.com>
-In-Reply-To: <6B97C24A-A1C0-46F9-BC74-3E7D2119B6D6@gmail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Sat, 4 Oct 2025 21:58:32 +0200
-X-Gm-Features: AS18NWCb80TyhWmdif5KiXRRfxefpRACPUKw21AL9syFqt4EGgXmS0JSw7hcZh4
-Message-ID: <CAFBinCBrG0xZ6sWwZYtB2k_giZoOKjB_AmtbidVtyhib=UzDfg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: meson: add initial device-tree for Tanix
- TX9 Pro
-To: Christian Hewitt <christianshewitt@gmail.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 29, 2025 at 1:43=E2=80=AFAM Christian Hewitt
-<christianshewitt@gmail.com> wrote:
->
-> > On 29 Sep 2025, at 1:12=E2=80=AFam, Martin Blumenstingl <martin.blumens=
-tingl@googlemail.com> wrote:
-> >
-> > Hi Christian,
-> >
-> > thank you for the patch!
-> >
-> > On Sat, Sep 27, 2025 at 2:50=E2=80=AFPM Christian Hewitt
-> > <christianshewitt@gmail.com> wrote:
-> > [...]
-> >> +++ b/arch/arm64/boot/dts/amlogic/meson-gxm-tx9-pro.dts
-> >> @@ -0,0 +1,90 @@
-> >> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> >> +/*
-> >> + * Copyright (c) 2016 Endless Computers, Inc.
-> >> + * Author: Carlo Caione <carlo@endlessm.com>
-> > Is Carlo really the author?
->
-> He=E2=80=99s the author of the original device tree that 95%
-> of the content for this one is taken from; as is the
-> case for most older Amlogic hardware. The decision
-> on which bits to copy and paste was all mine, but I=E2=80=99m
-> not  sure that skill deserves too much credit :)
-I just wasn't sure whether it was a left-over or on purpose.
+The test-statx program in samples/vfs/ includes both <stdio.h> and
+usr/include/linux/fcntl.h, leading to redefinition errors for
+AT_RENAME_NOREPLACE, AT_RENAME_EXCHANGE, and AT_RENAME_WHITEOUT. These
+macros, defined in both glibc headers (via <stdio.h>, likely including
+<fcntl.h>) and the kernel's usr/include/linux/fcntl.h, are not directly
+used in test-statx.c but cause a build failure with -Werror due to
+redefinition warnings like:
 
-> I can resend with my own name (or mine appended) if
-> that would be preferred?
-I'll ultimately leave it up to Neil. Maybe if he wants your name in
-too, he can just append it when applying?
+    In file included from samples/vfs/test-statx.c:23:
+    usr/include/linux/fcntl.h:160:9: error: ‘AT_RENAME_NOREPLACE’ redefined [-Werror]
+    160 | #define AT_RENAME_NOREPLACE     0x0001
+        |         ^~~~~~~~~~~~~~~~~~~
+    In file included from samples/vfs/test-statx.c:13:
+    /usr/include/stdio.h:171:10: note: this is the location of the previous definition
+    171 | # define AT_RENAME_NOREPLACE RENAME_NOREPLACE
+        |          ^~~~~~~~~~~~~~~~~~~
+    usr/include/linux/fcntl.h:161:9: error: ‘AT_RENAME_EXCHANGE’ redefined [-Werror]
+    161 | #define AT_RENAME_EXCHANGE      0x0002
+        |         ^~~~~~~~~~~~~~~~~~
+    /usr/include/stdio.h:173:10: note: this is the location of the previous definition
+    173 | # define AT_RENAME_EXCHANGE RENAME_EXCHANGE
+        |          ^~~~~~~~~~~~~~~~~~
+    usr/include/linux/fcntl.h:162:9: error: ‘AT_RENAME_WHITEOUT’ redefined [-Werror]
+    162 | #define AT_RENAME_WHITEOUT      0x0004
+        |         ^~~~~~~~~~~~~~~~~~
+    /usr/include/stdio.h:175:10: note: this is the location of the previous definition
+    175 | # define AT_RENAME_WHITEOUT RENAME_WHITEOUT
+        |          ^~~~~~~~~~~~~~~~~~
+
+Since test-statx relies on other kernel-specific definitions from
+usr/include/linux/fcntl.h, this patch adds #undef directives for the
+conflicting macros before including the kernel header, ensuring the
+kernel's definitions are used without warnings.
+
+Signed-off-by: Madhur Kumar <madhurkumar004@gmail.com>
+---
+ samples/vfs/test-statx.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/samples/vfs/test-statx.c b/samples/vfs/test-statx.c
+index 49c7a46cee07..17332100a2b5 100644
+--- a/samples/vfs/test-statx.c
++++ b/samples/vfs/test-statx.c
+@@ -20,6 +20,9 @@
+ #include <sys/syscall.h>
+ #include <sys/types.h>
+ #include <linux/stat.h>
++#undef AT_RENAME_NOREPLACE
++#undef AT_RENAME_EXCHANGE
++#undef AT_RENAME_WHITEOUT
+ #include <linux/fcntl.h>
+ #define statx foo
+ #define statx_timestamp foo_timestamp
+-- 
+2.51.0
+
 
