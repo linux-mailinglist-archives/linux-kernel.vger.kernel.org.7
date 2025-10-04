@@ -1,80 +1,62 @@
-Return-Path: <linux-kernel+bounces-841891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01E9CBB87B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 03:19:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 079BFBB87C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 03:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE9733AE02D
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 01:19:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D536019C720C
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 01:26:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15F7149C6F;
-	Sat,  4 Oct 2025 01:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC33149C6F;
+	Sat,  4 Oct 2025 01:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ktCZCCQr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=gvernon.com header.i=@gvernon.com header.b="bHm/JpiG"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7627EEEA8;
-	Sat,  4 Oct 2025 01:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD39AA944
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 01:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759540765; cv=none; b=A6H71/Hpj/i8ivncvbrTFAZrI8dBAvd1KmYH1TN2tjn9mLuhTcGe2MgzGdJr+DaB8cgyf0CDnDw63qxPPt4ZAAOUo44cDyhPM8sBCx5VpLZ6ggyULmJq8MEUT4ROtm256yAENrcOo4p+2Q9qJm/o7WHMVNX5Da2fjkALSHTEZ2A=
+	t=1759541136; cv=none; b=nReUNUbPp3ka020OMSGqX2d8xbGL2qNKb2qMrM+0tjL1wfiM4Euqng/SJuSnxBhr6V+ufuTnOIzRg6llykylfYFR/y5neX7OrStE9ZMib8ZpQZYtnOughQniYOo9S0htktYVckTyPcSCq32pOOzm1DCzk9ECwMGR3e/Z/UZyBWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759540765; c=relaxed/simple;
-	bh=fNfRYHZRZciYP1VNcc5BID8iEUccG3YVhkfMXauiGIc=;
+	s=arc-20240116; t=1759541136; c=relaxed/simple;
+	bh=FDkFCEGWhZHa1Woj7m+2H/+uk27BBMDyqk5dQoPv0vk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HVQTQyqjD4t9YtFRhDxqVx4iE3cU6lCP+ZG7vHGr8DgPfXcDpOFFkj4Or9tzA8Zv61E4f13Ul12szPrm/0OhXZIpmjTGBAKutEhNRiDrdydPGS8NvVzR9CcCfRZVv/EL+4PMjPZamZuz+pY/QUt+x+stA3047Bc9pcBrVym5sX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ktCZCCQr; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759540764; x=1791076764;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fNfRYHZRZciYP1VNcc5BID8iEUccG3YVhkfMXauiGIc=;
-  b=ktCZCCQrnFGXis9AaiZLIevQVceogQxjQi+0XxrtVQbGex2Z8aaBwp+g
-   bJfAXOnBk7INmyALnYLesShpPbWsPouITS+Hfb+nKperkxxueKSFQGIRR
-   WwnliC3xQHclCw9//kw1Fz2UFebSaQ0u7CJHsDZbKoktWQoExHBzjoGLG
-   ApO+wh8F52Y2lyTLO9p3hDxS0Xt+CcsAT1YMa2UVZgd9F86OgmBuPPPMk
-   AwsaR5l/jxBpgwlSZ91q9Hi0FqlDUhJ0eiFG9+wm2OAikEebf/mpQyc9O
-   ZoLVbWIr4K0y29EDUijeBUtWHzrF8gUsGzzd/8RcG8NmAsJvEiedYx3Kx
-   A==;
-X-CSE-ConnectionGUID: H/hDFKyJRbelj0cwge65gQ==
-X-CSE-MsgGUID: IeTkcbNyRUiDWizL9Sq2kA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11571"; a="61988898"
-X-IronPort-AV: E=Sophos;i="6.18,314,1751266800"; 
-   d="scan'208";a="61988898"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 18:19:23 -0700
-X-CSE-ConnectionGUID: 7KqFVGjMReazrN229o0DBA==
-X-CSE-MsgGUID: qNiyH4HgSxOJmfJN43zV6g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,314,1751266800"; 
-   d="scan'208";a="179840945"
-Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 03 Oct 2025 18:19:20 -0700
-Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v4qvd-00050h-1N;
-	Sat, 04 Oct 2025 01:19:17 +0000
-Date: Sat, 4 Oct 2025 09:18:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Pavitrakumar Managutte <pavitrakumarm@vayavyalabs.com>,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, herbert@gondor.apana.org.au,
-	robh@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, krzk+dt@kernel.org,
-	conor+dt@kernel.org, Ruud.Derwig@synopsys.com,
-	manjunath.hadli@vayavyalabs.com, adityak@vayavyalabs.com,
-	Pavitrakumar Managutte <pavitrakumarm@vayavyalabs.com>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v6 4/4] Add SPAcc Kconfig and Makefile
-Message-ID: <202510040852.qK4TiL4k-lkp@intel.com>
-References: <20250929074334.118413-5-pavitrakumarm@vayavyalabs.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WIiL9/oarTTb02biX5AIEzp8yWA094MsF5xcNj8KZuf/HnSPDCyU3uAFLI7yzy1tFKoCGWR69muUBaFmzCYQLiNNZmDZXmYnTJVO81XGygeFMYGiMQPRqj7WqQG6haXhUGvY4J0q60qKdDBasR3zTY61UyE6jjNeAfvMwbl8XXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gvernon.com; spf=pass smtp.mailfrom=gvernon.com; dkim=pass (2048-bit key) header.d=gvernon.com header.i=@gvernon.com header.b=bHm/JpiG; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gvernon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gvernon.com
+Date: Sat, 4 Oct 2025 02:25:16 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gvernon.com; s=key1;
+	t=1759541121;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vxMDW/Dq4L6kXa9Vwh1VX6wM7Gn8hhMzHJhGHctQQmc=;
+	b=bHm/JpiGEzh6zFXYgcRBqn76ahirD+9VZqXqBdohezHrI1PWNVzOf19YSoH5H5cWy56Qz7
+	VMTRVN0/k+c+w8Kj2onD/wdeH/lPhAEnKU9e6UWG+A6J0TG2G6iBek0Lv57q6Xu8TuUzHI
+	sFlVM8vDH0X5HhbUsAH0nWEIso5cCEz7Oyu5k0M+O+up971afmUtWrVjSZ1+livCFqcG/E
+	n7AEq1j34CyGZNM4Av5r7ve3g4mr7Y369+vzJys2n9cCb3UawmvQNx5XbsHznnVXOzkvGu
+	KwKoIxdQlh9f9ljVkhtDaEQBPXPzAovh88oY84hGa8RLlz03kwl9nfmlW48Amw==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: George Anthony Vernon <contact@gvernon.com>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+	"slava@dubeyko.com" <slava@dubeyko.com>,
+	"frank.li@vivo.com" <frank.li@vivo.com>,
+	"skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel-mentees@lists.linux.dev" <linux-kernel-mentees@lists.linux.dev>,
+	"syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com" <syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] hfs: Validate CNIDs in hfs_read_inode
+Message-ID: <aOB3fME3Q4GfXu0O@Bertha>
+References: <20251003024544.477462-1-contact@gvernon.com>
+ <405569eb2e0ec4ce2afa9c331eb791941d0cf726.camel@ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,50 +65,119 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250929074334.118413-5-pavitrakumarm@vayavyalabs.com>
+In-Reply-To: <405569eb2e0ec4ce2afa9c331eb791941d0cf726.camel@ibm.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Pavitrakumar,
+On Fri, Oct 03, 2025 at 10:40:16PM +0000, Viacheslav Dubeyko wrote:
+> Let's pay respect to previous efforts. I am suggesting to add this line:
+> 
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> 
+> Are you OK with it?
+I agree with paying respect to Tetsuo. The kernel docs indicate that the SoB tag
+isn't used like that. Would the Suggested-by: tag be more appropriate?
 
-kernel test robot noticed the following build errors:
+> I think we can declare like this:
+> 
+> static inline
+> bool is_valid_cnid(unsigned long cnid, s8 type)
+> 
+> Why cnid has unsigned long type? The u32 is pretty enough.
+Because struct inode's inode number is an unsigned long.
+> 
+> Why type has signed type (s8)? We don't expect negative values here. Let's use
+> u8 type.
+Because the type field of struct hfs_cat_rec is an s8. Is there anything to gain
+by casting the s8 to a u8?
 
-[auto build test ERROR on 166c83f7789ed02dc1f25bc7bed4a1beb25343aa]
+> 
+> > +{
+> > +	if (likely(cnid >= HFS_FIRSTUSER_CNID))
+> > +		return true;
+> > +
+> > +	switch (cnid) {
+> > +	case HFS_POR_CNID:
+> > +	case HFS_ROOT_CNID:
+> > +		return type == HFS_CDR_DIR;
+> > +	case HFS_EXT_CNID:
+> > +	case HFS_CAT_CNID:
+> > +	case HFS_BAD_CNID:
+> > +	case HFS_EXCH_CNID:
+> > +		return type == HFS_CDR_FIL;
+> > +	default:
+> > +		return false;
+> 
+> We can simply have default that is doing nothing:
+> 
+> default:
+>     /* continue logic */
+>     break;
+> 
+> > +	}
+> 
+> I believe that it will be better to return false by default here (after switch).
+We can do that, but why would it be better, is it an optimisation? We don't have
+any logic to continue.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Pavitrakumar-Managutte/dt-bindings-crypto-Document-support-for-SPAcc/20250929-155434
-base:   166c83f7789ed02dc1f25bc7bed4a1beb25343aa
-patch link:    https://lore.kernel.org/r/20250929074334.118413-5-pavitrakumarm%40vayavyalabs.com
-patch subject: [PATCH v6 4/4] Add SPAcc Kconfig and Makefile
-config: i386-randconfig-013-20251004 (https://download.01.org/0day-ci/archive/20251004/202510040852.qK4TiL4k-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251004/202510040852.qK4TiL4k-lkp@intel.com/reproduce)
+> > +			break;
+> > +		}
+> >  		inode->i_size = be16_to_cpu(rec->dir.Val) + 2;
+> >  		HFS_I(inode)->fs_blocks = 0;
+> >  		inode->i_mode = S_IFDIR | (S_IRWXUGO & ~hsb->s_dir_umask);
+> 
+> We have practically the same check for the case of hfs_write_inode():
+> 
+> int hfs_write_inode(struct inode *inode, struct writeback_control *wbc)
+> {
+> 	struct inode *main_inode = inode;
+> 	struct hfs_find_data fd;
+> 	hfs_cat_rec rec;
+> 	int res;
+> 
+> 	hfs_dbg("ino %lu\n", inode->i_ino);
+> 	res = hfs_ext_write_extent(inode);
+> 	if (res)
+> 		return res;
+> 
+> 	if (inode->i_ino < HFS_FIRSTUSER_CNID) {
+> 		switch (inode->i_ino) {
+> 		case HFS_ROOT_CNID:
+> 			break;
+> 		case HFS_EXT_CNID:
+> 			hfs_btree_write(HFS_SB(inode->i_sb)->ext_tree);
+> 			return 0;
+> 		case HFS_CAT_CNID:
+> 			hfs_btree_write(HFS_SB(inode->i_sb)->cat_tree);
+> 			return 0;
+> 		default:
+> 			BUG();
+> 			return -EIO;
+> 
+> I think we need to select something one here. :) I believe we need to remove
+> BUG() and return -EIO, finally. What do you think? 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510040852.qK4TiL4k-lkp@intel.com/
+I think that with validation of inodes in hfs_read_inode this code path should
+no longer be reachable by poking the kernel interface from userspace. If it is
+ever reached, it means kernel logic is broken, so it should be treated as a bug.
 
-All errors (new ones prefixed by >>):
+> 
+> 		}
+> 	}
+> 
+> <skipped>
+> }
+> 
+> What's about to use your check here too?
 
->> ld.lld: error: undefined symbol: crypto_engine_alloc_init
-   >>> referenced by spacc_device.c:88 (drivers/crypto/dwc-spacc/spacc_device.c:88)
-   >>>               drivers/crypto/dwc-spacc/spacc_device.o:(spacc_crypto_probe) in archive vmlinux.a
---
->> ld.lld: error: undefined symbol: crypto_engine_start
-   >>> referenced by spacc_device.c:95 (drivers/crypto/dwc-spacc/spacc_device.c:95)
-   >>>               drivers/crypto/dwc-spacc/spacc_device.o:(spacc_crypto_probe) in archive vmlinux.a
---
->> ld.lld: error: undefined symbol: crypto_engine_stop
-   >>> referenced by spacc_device.c:203 (drivers/crypto/dwc-spacc/spacc_device.c:203)
-   >>>               drivers/crypto/dwc-spacc/spacc_device.o:(spacc_crypto_probe) in archive vmlinux.a
-   >>> referenced by spacc_device.c:250 (drivers/crypto/dwc-spacc/spacc_device.c:250)
-   >>>               drivers/crypto/dwc-spacc/spacc_device.o:(spacc_crypto_remove) in archive vmlinux.a
---
->> ld.lld: error: undefined symbol: crypto_engine_exit
-   >>> referenced by spacc_device.c:206 (drivers/crypto/dwc-spacc/spacc_device.c:206)
-   >>>               drivers/crypto/dwc-spacc/spacc_device.o:(spacc_crypto_probe) in archive vmlinux.a
-   >>> referenced by spacc_device.c:251 (drivers/crypto/dwc-spacc/spacc_device.c:251)
-   >>>               drivers/crypto/dwc-spacc/spacc_device.o:(spacc_crypto_remove) in archive vmlinux.a
+Let's do that, I'll include it in V2.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+> Mostly, I like your approach but the patch needs some polishing yet. ;)
+> 
+> Thanks,
+> Slava.
+
+Thank you for taking the time to give detailed feedback, I really appreciate it.
+
+George
 
