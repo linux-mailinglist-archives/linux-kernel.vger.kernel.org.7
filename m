@@ -1,193 +1,165 @@
-Return-Path: <linux-kernel+bounces-841979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69343BB8B4D
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 10:36:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56AEBBB8B5E
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 10:46:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 927654A00EF
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 08:36:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 841D7188EAD4
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 08:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB66246BD7;
-	Sat,  4 Oct 2025 08:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573D8228CA9;
+	Sat,  4 Oct 2025 08:46:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O9gzqenE"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vLapQ71f"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D4118FDAF
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 08:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F7886342;
+	Sat,  4 Oct 2025 08:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759566957; cv=none; b=DQEuqhA6AnNs9eY+Zqj8oEn4Feer0qMnApQ4HSPYCWXcbXxnSd8uN0EDHhtZyRAS3XG3u5xzJbzIWIOM5LgM8a+Iuezus3imL75/W3OBu8NlGNaKBoiuwKTNRtpjef17hNHf17yjPPIw4qpTmuFCNEikVgqhgq8YY2R94K+Yrbg=
+	t=1759567561; cv=none; b=WDMBTEgy4Qz/ESbiGfAjTmfKOpXPESwZUXDLCgUtwh4OBOeWxtQkFIwbIjDC53AO3BspgYzIH67ixMvgQvZBJukdackvVnm9ddfh59FS1jo9W6bzL1ljqg7D5dEp6lX1i2UbmnAzrcTiQGwGV+5W7SZnzeuGg4ehBC+ryst+kNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759566957; c=relaxed/simple;
-	bh=JsQqE9p1BnSsmmi8AuDK+KSrAV78o80Mh5hwa3pmkBE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=nUVj3N+AkUTIoU1wiOHLmVkS3k/5FrNKVFz0hoCAkuBfB0dZQNrkRPVp7SeUq5X7aL3fLIlC+zvD6kJGUhzAz5WYIZHavC/O41DRW0bxSl3UONwVJUjROEQ4y0+4Otvq5SA+BJ5vaCQ/vOdQID3rrPX56H9vteVlQxr59h5pYuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O9gzqenE; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46e4ad36541so33861265e9.0
-        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 01:35:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759566952; x=1760171752; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=SAZP7F4LpAyeiWuUVfM9K9SMysgSblKGV29vPTVd7ME=;
-        b=O9gzqenEkTa+j1dpa+3eP0IZbvPDo8W7UNh1hmvhLyNcN6EioxisQSBZYhLgFUVAgX
-         AXVYwxOn4pr4gYpBfzYwQxykivVjRFLVp9vrY+jpFoOtfEB7AtWwsg9Z/apg0BJFJVc4
-         5GDD/43/hf/M1VcELu51Yf6HaMT217x11sMf8JWPGFD9SnOlcqFBOKKdz625EwGGcsOq
-         pIS75zAcJP6vdOmdTnZQ0k8HPxl1i4OBLsZjP3rkENDXHI/bdG4WcrGaLUWAlywCxeqB
-         SOtO0BPtn35IixOJoLj9S/9nsELsuLCX2oZ0ihy/89E7lDZayRKDyRzvHkl2mMKZPwTr
-         gJGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759566952; x=1760171752;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SAZP7F4LpAyeiWuUVfM9K9SMysgSblKGV29vPTVd7ME=;
-        b=vgKivJGsVQz5KGg55Wj9/AqPweXMN/K3aLKpD5LNChPdgVXiuy3J3WhRNozT3xKCrq
-         ZX8NdkBuYr25S+xU6MY8DI3n0T2dGzb7mOtAZPLKRtOSQojp/Zl1a4+4ZXOMYMFVkY89
-         UJKG+1o7ZZQyZdGIH5fDrNSZaNwgsr6Q2QWKyrFv1s5OeDe4cJqqhk9Lv+Ju8Ll3jLao
-         q2F8aWnkbv9eZYgJA5fOFzYbaTx1WS68U/aKHCuXkAD7hWo9E54KtQ356fPEzLxxyGQK
-         OTJgHwV+c8DZZOGD9aqoA/otGuIPwkSOBj19TIOOANhKpH2MjUgYd9JvKiyDQ2bWTfv8
-         7N/A==
-X-Forwarded-Encrypted: i=1; AJvYcCW+Rjv610M7tmBtxq8kdHGq/f0no0fYPtqE24/F7gvBcd2WcQ02u27GQCAsJ/8GaJX4tg1LPLX0yNS2PzA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoAUsmnHPWuXUe2qXrLU0FHRQqo0HkY64IAIW50I41osPNdYUH
-	TycVnbg8ABZq/T/6BQpuTN8Dnx9rxPOyoE3bPcLvf9kI5MKV5u2G3rWt9tYAEkYvywM=
-X-Gm-Gg: ASbGnctVPnvjS/btJvUEqsmh+0pIX4uhMTbuo4MJwYOfvnVq4uUYJGY5/gO5w5/YZeO
-	sCIU18pLQb7J9tBe4/ZtW0QF6vT9m0W9WrX7/JIC3KI5j/IQO3vWTT4qa/WC6tgHgjyEnaDIxAN
-	WppfKqxvy8tDj5TNGTDCNK6jgkk1nt02XAyyMqtBl0+o+733NdSTrEnOzf1K0F+UB/8/6TcHq8f
-	Renz2FwQpwuSSaiEbSz/AJwSVA+ndIgndbw3XTWBZkFJUWP5XGFZGJQjUdPvm9aMX9qhTDeFGvP
-	iFwYJSM5FRlt1JxTL5YL1QtgUZsM1+53mIOe8VrhNlUKRhQpNG2lf5L1XoTk/Ik6oHtSPkGYi6n
-	37J9pZ/LqLtJeboOs2zNnSOyniviXyc0TkO2VHxSKpT8CtW6BE0GAP8b5xhXsl3pWx7U=
-X-Google-Smtp-Source: AGHT+IGa6E+3wJm7+c+5/woLvErvO0WuhjoiRpVAjW0z69Cszk2FpgixLHJeZ82h4IS7E9Toa0IMxQ==
-X-Received: by 2002:a05:600c:8b6e:b0:46e:4499:ba30 with SMTP id 5b1f17b1804b1-46e71153ad0mr42510465e9.30.1759566952004;
-        Sat, 04 Oct 2025 01:35:52 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e723614c9sm63490555e9.14.2025.10.04.01.35.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Oct 2025 01:35:51 -0700 (PDT)
-Date: Sat, 4 Oct 2025 11:35:47 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
-	linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Subject: Re: [PATCH] sched: drop unused variable cpumask in mm_cid_get()
-Message-ID: <202510041546.DvhFLp2x-lkp@intel.com>
+	s=arc-20240116; t=1759567561; c=relaxed/simple;
+	bh=KE2PBqgtr1R2voBioWIHbwel/ej2jMYwTDhpJHHh2cU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PlnLL9xYTtaDEJgkMzpeeZt48ZoEA9sCsyNQ3oHcMf4v7wNeAExPYcwf0KXT77O99kJ1swbLw3WBgdZdNXOiqOrAKx0NH9k18VUKr4ef8pVr+xJv9I9v6XxLBSZSn/cth9lgTamlTQREVNRkwVDBBCzwawJMTkG2oLVeppMB6KU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vLapQ71f; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1759567537; x=1760172337; i=markus.elfring@web.de;
+	bh=oiFWZwgE13+/heK3BtOCRly+uNdxnMzI7j9JbRtvT04=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=vLapQ71fd89ucYuy1t/EvLFhEg2NkXpPHMnA2sNBgivtQxMEjwxALluXjgzq2iiS
+	 tw2gSk8a2TnETsJAK16EW9dSICeqo/uzg+ptHdw7U+CjfxqULIdL3Gjc1ukOijG25
+	 HMRs2/Wt9v3alZ2nShAFwyCeIUwFK0AnF/0MVF8cc5IXRoNn88ulpzFtNqeAdxJDT
+	 WbO6TuhhXL2loT3mXrSmkw61COWCibb7PPZmHK9nfQUaWt9Ex+YxyiiiXpohbPdyQ
+	 pwIOC62+duEZTvR1M4IL4yf1rnZto+Z5sTD0f/4n+JpFeHJIe9jUauX/uOqctWBpI
+	 Oz1ro7rcTgbFk5NlQA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.173]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MqIFD-1uS4Qc2qnL-00ptZd; Sat, 04
+ Oct 2025 10:45:37 +0200
+Message-ID: <2d533e64-8543-402d-9295-5fd2f314f35d@web.de>
+Date: Sat, 4 Oct 2025 10:45:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251002-sched-w1-v1-1-a6fdf549d179@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: ksmbd: Use common error handling code in ksmbd_vfs_path_lookup()
+To: Neil Brown <neil@brown.name>, linux-cifs@vger.kernel.org
+Cc: Neil Brown <neilb@ownmail.net>, LKML <linux-kernel@vger.kernel.org>,
+ kernel-janitors@vger.kernel.org, Namjae Jeon <linkinjeon@kernel.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Stefan Metzmacher <metze@samba.org>, Steve French <smfrench@gmail.com>,
+ Tom Talpey <tom@talpey.com>
+References: <6d759211-79e7-4d86-b22e-2ae46d209622@web.de>
+ <175953064635.1793333.2429881029964457140@noble.neil.brown.name>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <175953064635.1793333.2429881029964457140@noble.neil.brown.name>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:GtmNObrEe2RGJ/TFAqKx+TLt+80qxeC7jspZaOsWDb+YuzXznUx
+ B6xf2InLNW0SpT//CR3/WBuSoNinUtfTzMQbxJHTmZt03GwbWAgW9wevFvrzVHiwmUdDwfm
+ ttcXlLnOEeK+Z3IQNR/NdBHlfLPVxLLG8bq//ZHjuCj4zbO4/P+7fbgH0iLDK3uqX2VyvKh
+ vRgaEwa7UMl8fcG3MUuLw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:RnESL/q2QzY=;/xFdurcqhgIvh5lWB9Ub3C6u2Wg
+ 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
+ LUfwAfMtKeWyMHTy1namkmGfldpj9S15AKM=
 
-Hi André,
+=E2=80=A6> - declare  struct path path __free(path_-put) =3D {};
+=E2=80=A6>    return_path->dentry =3D no_free_ptr(path.dentry);
+>    return_path->mnt =3D no_free_ptr(path.mnt);
+>    return 0;
+>=20
+> This is based on the pattern in kern_path_parent() and
+> __start_removing_path().
 
-kernel test robot noticed the following build warnings:
+Do you propose that affected software components may benefit more from
+the application of scope-based resource management?
+https://elixir.bootlin.com/linux/v6.17/source/include/linux/path.h#L22-L28
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andr-Draszik/sched-drop-unused-variable-cpumask-in-mm_cid_get/20251002-192448
-base:   3b9b1f8df454caa453c7fb07689064edb2eda90a
-patch link:    https://lore.kernel.org/r/20251002-sched-w1-v1-1-a6fdf549d179%40linaro.org
-patch subject: [PATCH] sched: drop unused variable cpumask in mm_cid_get()
-config: i386-randconfig-141-20251004 (https://download.01.org/0day-ci/archive/20251004/202510041546.DvhFLp2x-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202510041546.DvhFLp2x-lkp@intel.com/
-
-smatch warnings:
-kernel/sched/sched.h:3810 switch_mm_cid() error: we previously assumed 'next->mm' could be null (see line 3772)
-
-vim +3810 kernel/sched/sched.h
-
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3762  static inline void switch_mm_cid(struct rq *rq,
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3763  				 struct task_struct *prev,
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3764  				 struct task_struct *next)
-af7f588d8f7355 Mathieu Desnoyers 2022-11-22  3765  {
-af7f588d8f7355 Mathieu Desnoyers 2022-11-22  3766  	/*
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3767  	 * Provide a memory barrier between rq->curr store and load of
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3768  	 * {prev,next}->mm->pcpu_cid[cpu] on rq->curr->mm transition.
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3769  	 *
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3770  	 * Should be adapted if context_switch() is modified.
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3771  	 */
-223baf9d17f25e Mathieu Desnoyers 2023-04-20 @3772  	if (!next->mm) {                                // to kernel
-
-Can ->mm_cid_active be true when next->mm is false?  I don't know.
-If so then it's fine.  I suspect it's fine...
-
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3773  		/*
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3774  		 * user -> kernel transition does not guarantee a barrier, but
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3775  		 * we can use the fact that it performs an atomic operation in
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3776  		 * mmgrab().
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3777  		 */
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3778  		if (prev->mm)                           // from user
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3779  			smp_mb__after_mmgrab();
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3780  		/*
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3781  		 * kernel -> kernel transition does not change rq->curr->mm
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3782  		 * state. It stays NULL.
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3783  		 */
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3784  	} else {                                        // to user
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3785  		/*
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3786  		 * kernel -> user transition does not provide a barrier
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3787  		 * between rq->curr store and load of {prev,next}->mm->pcpu_cid[cpu].
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3788  		 * Provide it here.
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3789  		 */
-fe90f3967bdb3e Mathieu Desnoyers 2024-04-15  3790  		if (!prev->mm) {                        // from kernel
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3791  			smp_mb();
-fe90f3967bdb3e Mathieu Desnoyers 2024-04-15  3792  		} else {				// from user
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3793  			/*
-fe90f3967bdb3e Mathieu Desnoyers 2024-04-15  3794  			 * user->user transition relies on an implicit
-fe90f3967bdb3e Mathieu Desnoyers 2024-04-15  3795  			 * memory barrier in switch_mm() when
-fe90f3967bdb3e Mathieu Desnoyers 2024-04-15  3796  			 * current->mm changes. If the architecture
-fe90f3967bdb3e Mathieu Desnoyers 2024-04-15  3797  			 * switch_mm() does not have an implicit memory
-fe90f3967bdb3e Mathieu Desnoyers 2024-04-15  3798  			 * barrier, it is emitted here.  If current->mm
-fe90f3967bdb3e Mathieu Desnoyers 2024-04-15  3799  			 * is unchanged, no barrier is needed.
-af7f588d8f7355 Mathieu Desnoyers 2022-11-22  3800  			 */
-fe90f3967bdb3e Mathieu Desnoyers 2024-04-15  3801  			smp_mb__after_switch_mm();
-fe90f3967bdb3e Mathieu Desnoyers 2024-04-15  3802  		}
-af7f588d8f7355 Mathieu Desnoyers 2022-11-22  3803  	}
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3804  	if (prev->mm_cid_active) {
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3805  		mm_cid_snapshot_time(rq, prev->mm);
-
-Same thing for "prev->mm".
-
-223baf9d17f25e Mathieu Desnoyers 2023-04-20  3806  		mm_cid_put_lazy(prev);
-af7f588d8f7355 Mathieu Desnoyers 2022-11-22  3807  		prev->mm_cid = -1;
-af7f588d8f7355 Mathieu Desnoyers 2022-11-22  3808  	}
-af7f588d8f7355 Mathieu Desnoyers 2022-11-22  3809  	if (next->mm_cid_active)
-7e019dcc470f27 Mathieu Desnoyers 2024-10-09 @3810  		next->last_mm_cid = next->mm_cid = mm_cid_get(rq, next, next->mm);
-                                                                                                                        ^^^^^^^^
-Unchecked dereference.
-
-af7f588d8f7355 Mathieu Desnoyers 2022-11-22  3811  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+Regards,
+Markus
 
