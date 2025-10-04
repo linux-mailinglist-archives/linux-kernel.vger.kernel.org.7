@@ -1,152 +1,135 @@
-Return-Path: <linux-kernel+bounces-841926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D80E4BB88B8
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 05:08:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D336BBB88BE
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 05:09:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 500C43C5649
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 03:08:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6425C3C8703
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 03:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B264E1B4257;
-	Sat,  4 Oct 2025 03:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0816C21C16E;
+	Sat,  4 Oct 2025 03:08:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bi1E45ly"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Z+6Lp6AJ"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E784639FD9
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 03:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A62917A2EA
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 03:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759547334; cv=none; b=RG7OvkJwcO6t0UiFICTELbId6dy00R/Qgl97CEyDLC0vDzjMUxbZZVlViZ89cdarL6o3iYd6v7n0VBE+epLNIiGrM+R2e67w48Zkj26mjKRFPOXZiN3L/PlLBdTj9DoG8Z7ZOy5YOjWFwbVoSzEjZ0zismO7/rf/Hn0ArZDHc9k=
+	t=1759547335; cv=none; b=oIDxHPdSUdwLc/reX4HZzGTEcpwGfrhyy4YfDkoN2JJMA8aFCEb1kJfOs4CbyD6Zue9DBeP5KLcKhVAMXRW5NXOIvjri50SLi+8T3JK5idUycXv+GVSaYjgsMQut0YGi+iiBHw4Bb7WBH2PVMVJZD9Sm/Z+HoJ2pE3U48QcLEwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759547334; c=relaxed/simple;
-	bh=ogkvRpl5jgbLFMsYrPO1gQLgC/yLv4i/cNaVBL6t75g=;
+	s=arc-20240116; t=1759547335; c=relaxed/simple;
+	bh=SA0GQY/BUXdQlPfp3N1GJWXZvhF2ZRNt7QOm5VUjtSo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SF5QUilwCjgQ6TxDzV49n+nrD8Ld2z0koa5pDqffizj27m5ND+HyOyyhgdSkW7PJ1mNsaKa/IgRCYShLwe4G21UhLtCyOoqzJr1eq1rufFx5jmkwWwYeOY9lt9v/yJfW9fW+kJgOkl0Q8pb5iyxtwLQdygR8c+CJBU5Gzs9limE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bi1E45ly; arc=none smtp.client-ip=95.215.58.177
+	 In-Reply-To:Content-Type; b=lb5kix9WpyHfCYK4fBsITYxZj6lWoaUPZJyn5HI7LRFSGUN9J86Rk2cUPExXqxoWkZbRXRyWhoBqTaURcSOzlU4xDO8WiKVriUzxIolY4GYi3U/QLVtLGoWUOjUIPdPV5e30zexDNaKQXR1cH9Q2nFMkwmrr1gvjHkPnbg4+8Cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Z+6Lp6AJ; arc=none smtp.client-ip=95.215.58.186
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <2ecb9ba1-8801-42b8-9575-5add856d0441@linux.dev>
+Message-ID: <43eebdf1-5ea9-4991-88c3-f0780d7c42c6@linux.dev>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759547330;
+	t=1759547331;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=VH7Jum0STCRvqZ+0XX5TR3xWpnSLpgoUkMhO7MpcgEk=;
-	b=bi1E45lyAmGuMPAX85dpy4bq2sam/tjVCrywn8Xl6Pg/gGO8PIxt6apUejVSKZsxuBpjiZ
-	mAj0a/Kzw92YoPRyG5UjziWIYipIzm3E51orNfMiAGSHg2n5jVYNim5yfMpTdqResIZwbS
-	hgHF7dRMDgQ5SWRuOwfS0yjN33kK+Ck=
-Date: Sat, 4 Oct 2025 11:08:40 +0800
+	bh=Zn+pcM7PQPj2tE8YHaK7fwhWUvFKFy4bznwVXHweHVY=;
+	b=Z+6Lp6AJQO+Zr74dHglZWtWNzr+SiYMEOYvM1NBytfEaRtdZk+9vh5xO6BrGJT7K+ripU8
+	k2Lei0zV0flgdgHrgFezD7ItwSjz7jIC00eS0NcU1EWRQ8tQRnpXkLYn2bqAmhp0S2BwWg
+	rFdNwQEBOODNFwRPFky0yyUYKz4b4Bo=
+Date: Fri, 3 Oct 2025 20:08:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH mm-new 1/2] mm/khugepaged: optimize PTE scanning with
- if-else-if-else-if chain
+Subject: Re: [PATCH bpf] selftests/bpf: fix implicit-function-declaration
+ errors
+To: Eduard Zingerman <eddyz87@gmail.com>,
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, alan.maguire@oracle.com
+Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+ Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+References: <20251003-bpf-sft-fix-build-err-6-18-v1-1-2a71170861ef@kernel.org>
+ <d108d59be611a63c73303347d07fe0ba5f2b74b7.camel@gmail.com>
 Content-Language: en-US
-To: Dev Jain <dev.jain@arm.com>
-Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
- npache@redhat.com, ryan.roberts@arm.com, baohua@kernel.org,
- lorenzo.stoakes@oracle.com, david@redhat.com, ioworker0@gmail.com,
- richard.weiyang@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- akpm@linux-foundation.org
-References: <20251002073255.14867-1-lance.yang@linux.dev>
- <20251002073255.14867-2-lance.yang@linux.dev>
- <b8fc9ab7-a96f-4763-9432-8aa8c3c2a87d@arm.com>
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <b8fc9ab7-a96f-4763-9432-8aa8c3c2a87d@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Ihor Solodrai <ihor.solodrai@linux.dev>
+In-Reply-To: <d108d59be611a63c73303347d07fe0ba5f2b74b7.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Migadu-Flow: FLOW_OUT
 
 
 
-On 2025/10/4 00:33, Dev Jain wrote:
-> 
-> On 02/10/25 1:02 pm, Lance Yang wrote:
->> From: Lance Yang <lance.yang@linux.dev>
+On 10/3/25 4:37 PM, Eduard Zingerman wrote:
+> On Fri, 2025-10-03 at 17:24 +0200, Matthieu Baerts (NGI0) wrote:
+>> When trying to build the latest BPF selftests, with a debug kernel
+>> config, Pahole 1.30 and CLang 20.1.8 (and GCC 15.2), I got these errors:
 >>
->> As pointed out by Dev, the PTE checks for disjoint conditions in the
->> scanning loops can be optimized. is_swap_pte, (pte_none && is_zero_pfn),
->> and pte_uffd_wp are mutually exclusive.
+>>   progs/dynptr_success.c:579:9: error: call to undeclared function 'bpf_dynptr_slice'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+>>     579 |         data = bpf_dynptr_slice(&ptr, 0, NULL, 1);
+>>         |                ^
+>>   progs/dynptr_success.c:579:9: note: did you mean 'bpf_dynptr_size'?
+>>   .virtme/build-debug-btf//tools/include/vmlinux.h:120280:14: note: 'bpf_dynptr_size' declared here
+>>    120280 | extern __u32 bpf_dynptr_size(const struct bpf_dynptr *p) __weak __ksym;
+>>           |              ^
+>>   progs/dynptr_success.c:579:7: error: incompatible integer to pointer conversion assigning to '__u64 *' (aka 'unsigned long long *') from 'int' [-Wint-conversion]
+>>     579 |         data = bpf_dynptr_slice(&ptr, 0, NULL, 1);
+>>         |              ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>   progs/dynptr_success.c:596:9: error: call to undeclared function 'bpf_dynptr_slice'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+>>     596 |         data = bpf_dynptr_slice(&ptr, 0, NULL, 10);
+>>         |                ^
+>>   progs/dynptr_success.c:596:7: error: incompatible integer to pointer conversion assigning to 'char *' from 'int' [-Wint-conversion]
+>>     596 |         data = bpf_dynptr_slice(&ptr, 0, NULL, 10);
+>>         |              ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 >>
->> This patch refactors the loops in both __collapse_huge_page_isolate() and
->> hpage_collapse_scan_pmd() to use a continuous if-else-if-else-if chain
->> instead of separate if blocks.
+>> I don't have these errors without the debug kernel config from
+>> kernel/configs/debug.config. With the debug kernel, bpf_dynptr_slice()
+>> is not declared in vmlinux.h. It is declared there without debug.config.
 >>
->> Also, this is a preparatory step to make it easier to merge the
->> almost-duplicated scanning logic in these two functions, as suggested
->> by David.
+>> The fix is similar to what is done in dynptr_fail.c which is also using
+>> bpf_dynptr_slice(): bpf_kfuncs.h is now included.
 >>
->> Suggested-by: Dev Jain <dev.jain@arm.com>
->> Suggested-by: David Hildenbrand <david@redhat.com>
->> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+>> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 >> ---
->>   mm/khugepaged.c | 12 ++++--------
->>   1 file changed, 4 insertions(+), 8 deletions(-)
->>
->> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->> index f4f57ba69d72..808523f92c7b 100644
->> --- a/mm/khugepaged.c
->> +++ b/mm/khugepaged.c
->> @@ -548,8 +548,7 @@ static int __collapse_huge_page_isolate(struct 
->> vm_area_struct *vma,
->>       for (_pte = pte; _pte < pte + HPAGE_PMD_NR;
->>            _pte++, addr += PAGE_SIZE) {
->>           pte_t pteval = ptep_get(_pte);
->> -        if (pte_none(pteval) || (pte_present(pteval) &&
->> -                is_zero_pfn(pte_pfn(pteval)))) {
->> +        if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
 > 
-> Should have mentioned in the description that pte_present() is not required
-> here, so removing it.
-
-Yep, got it.
-
+> I can reproduce similar issue when including
+> kernel/configs/debug.config with my regular dev config, but for
+> different functions: bpf_rcu_read_{un,}lock().
 > 
-> Reviewed-by: Dev Jain <dev.jain@arm.com>
-
-Cheers,
-Lance
-
+> However, this is not a way to fix this.
+> Kfuncs are not supposed to just disappear from DWARF.
 > 
->>               ++none_or_zero;
->>               if (!userfaultfd_armed(vma) &&
->>                   (!cc->is_khugepaged ||
->> @@ -560,12 +559,10 @@ static int __collapse_huge_page_isolate(struct 
->> vm_area_struct *vma,
->>                   count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
->>                   goto out;
->>               }
->> -        }
->> -        if (!pte_present(pteval)) {
->> +        } else if (!pte_present(pteval)) {
->>               result = SCAN_PTE_NON_PRESENT;
->>               goto out;
->> -        }
->> -        if (pte_uffd_wp(pteval)) {
->> +        } else if (pte_uffd_wp(pteval)) {
->>               result = SCAN_PTE_UFFD_WP;
->>               goto out;
->>           }
->> @@ -1316,8 +1313,7 @@ static int hpage_collapse_scan_pmd(struct 
->> mm_struct *mm,
->>                   count_vm_event(THP_SCAN_EXCEED_SWAP_PTE);
->>                   goto out_unmap;
->>               }
->> -        }
->> -        if (pte_uffd_wp(pteval)) {
->> +        } else if (pte_uffd_wp(pteval)) {
->>               /*
->>                * Don't collapse the page if any of the small
->>                * PTEs are armed with uffd write protection.
+> Running pahole in verbose mode I see the following output:
+> 
+>   $ pahole -V \
+>       --btf_features=encode_force,var,float,enum64,decl_tag,type_tag,optimized_func,consistent_func,decl_tag_kfuncs \
+>       --btf_features=attributes \
+>       --lang_exclude=rust \
+>       --btf_encode_detached=/dev/null vmlinux
+>   ...
+>   matched function 'bpf_rcu_read_lock' with 'bpf_rcu_read_lock.cold'
+>   ...
+> 
+> Alan, Ihor, does this sound familiar?
 
+This is most likely the issue addressed in this patch:
+https://lore.kernel.org/dwarves/f7553b3f-5827-4f50-81a9-9bd0802734b9@linux.dev/
+
+There wasn't a new pahole release with it yet.
 
