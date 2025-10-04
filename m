@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-841998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 019E7BB8BFB
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 11:32:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DB4CBB8BFE
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 11:32:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CD5E54E5D08
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 09:32:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0939319C1DC7
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 09:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B3E280328;
-	Sat,  4 Oct 2025 09:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B227B26CE23;
+	Sat,  4 Oct 2025 09:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fr5vjJJL"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qVW4BEgc"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5019E27EC73
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 09:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D6428031D
+	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 09:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759570278; cv=none; b=ghQ603G75GfTQWrxPCdFgvhcZTomSmqm6yHaLPxOqQK+3dl6kWJdXY63hDgj5GDj9uXgRaPv5tLkf7qiws0gtn+Dl/lkcbc2X+T9533R9yOOLMnC/J3rHh0g2/7YWtjCnffnBwBdkYx220HdhrqCgDkbatMfvfKPFDMVf7pFdDE=
+	t=1759570279; cv=none; b=nvqNnFAakAsVxUvU3E6ML2HaCnYQWqqdQaApuw+nlYHt2hp0zZ70AqS8xzH3o6JRpulzS8M5dlJXFij2Xl/a8evnX3o+3DvXuu/fUz83WbgsdRBvH0UkfzxYmYDTJjdRzYSH9CtTBE7xyvuXTNUk6tcKFoEvtkXT2qF9RNb63PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759570278; c=relaxed/simple;
-	bh=ROKoonOOaPmiRlBVqml71l+74uvjDMGSuEeXXfy4kSs=;
+	s=arc-20240116; t=1759570279; c=relaxed/simple;
+	bh=5f3j5sCwUUm4zOM7eQNMiBq0+mfIGQqbuZDFMB62Zc4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e847C23le02odoWcfA+KcLnLng14Qjjx/oCHDT9XkzmQrhlZ/IEW/NmBN/3CvBbpQgqZfFruLY2pbK7m0ZivsdV8j7fGdBk9sUTgDTkc8J6qUDLRrpzHbqzq3GvaZPPNfgv4usDVcBNVrk+CzE269hR7wYHLKO8tBjJqusRIFGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fr5vjJJL; arc=none smtp.client-ip=148.251.105.195
+	 MIME-Version:Content-Type; b=aB8a4yI8fptfNOTCM9O4w9LCxTbabdfsiWdxfz2Q8v57rsPw4/psAKGiCS+aasYjwzCTecTGFVy8IZFPgc9a0HXnNZUWGqXmZBJOBoQEdZPZ/0spKEHvv47FDp4rKO9aEO7oF6yD1ctr13/Dni6ePhdwTG/zwesu1HvKd8I2UeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qVW4BEgc; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759570274;
-	bh=ROKoonOOaPmiRlBVqml71l+74uvjDMGSuEeXXfy4kSs=;
+	s=mail; t=1759570276;
+	bh=5f3j5sCwUUm4zOM7eQNMiBq0+mfIGQqbuZDFMB62Zc4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fr5vjJJLezWUZE/y6PH51c7nZ6qWesMFK6/h4UtO1zaEOw8K9k9eSpe3gF+4M4/Kc
-	 BF0Wm+0fOvnqC9YZzeV6VrANKW13NkkRLg29nu1NKsREzCb3DSBCa16ksweI/z7PID
-	 y+vnGvbrenzbK+Jc6ZyM7t6dHo4WxCFFkjVMTlCXXnYU+s62FvYr629FEELjV1YTaB
-	 FrGG6iVuV/WfeEgUd/NET0l07ZJQaueiigQz/CYC16Osb70CMUQ0T1te+W3Xy+GDIf
-	 pVNly8S61gLafxHpne/2nHCRUkJLFq81J3LP5Opfvr5HXtcj/Ho7LZvBTp/MVbY5Qo
-	 dtNOAHaNMRogg==
+	b=qVW4BEgczpRlg+66tqdysqb6yDeiDP1nw9RCe9ZZ80f015QEko/NejBcfYdz9Kb2z
+	 1jhA5y36QlTRURsuDSmk84vy00x9LWTQImTdcPwmDiOw1WxEcll0Ss0ERu/gvyAIcH
+	 lw6riW++z57enRybhqjT372MdkcF/lqjt3JJnzL4zKAfookzGX+MgKF9LBpUzDU6iS
+	 So8h2kBEhZ8r/hzk+dDBDv6R4wocIPLFEg46db6PEGrQ0ihW1F5TwRdzhY7TU/PO6k
+	 KWSZxBZPP6Mk0fZYTwYA31YMgHq2Zzd9aN8u/QJJO68dJ2mUEAQa31OuhCF07J+Lxk
+	 g0ifKxJN5cxlQ==
 Received: from debian-rockchip-rock5b-rk3588.. (unknown [IPv6:2a01:e0a:5e3:6100:2e0:4cff:fe03:d8c])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: loicmolinari)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id D1BF817E154C;
-	Sat,  4 Oct 2025 11:31:13 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id B031717E13C3;
+	Sat,  4 Oct 2025 11:31:15 +0200 (CEST)
 From: =?UTF-8?q?Lo=C3=AFc=20Molinari?= <loic.molinari@collabora.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
@@ -78,9 +78,9 @@ Cc: linux-kernel@vger.kernel.org,
 	intel-gfx@lists.freedesktop.org,
 	linux-mm@kvack.org,
 	kernel@collabora.com
-Subject: [PATCH v3 08/10] drm/panthor: Improve IOMMU map/unmap debugging logs
-Date: Sat,  4 Oct 2025 11:30:51 +0200
-Message-ID: <20251004093054.21388-9-loic.molinari@collabora.com>
+Subject: [PATCH v3 09/10] drm/panfrost: Introduce huge tmpfs mount point option
+Date: Sat,  4 Oct 2025 11:30:52 +0200
+Message-ID: <20251004093054.21388-10-loic.molinari@collabora.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251004093054.21388-1-loic.molinari@collabora.com>
 References: <20251004093054.21388-1-loic.molinari@collabora.com>
@@ -93,77 +93,133 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Log the number of pages and their sizes actually mapped/unmapped by
-the IOMMU page table driver. Since a map/unmap op is often split in
-several ops depending on the underlying scatter/gather table, add the
-start address and the total size to the debugging logs in order to
-help understand which batch an op is part of.
+Introduce the 'panfrost.transparent_hugepage' boolean module parameter
+(false by default). When the parameter is set to true, a new tmpfs
+mount point is created and mounted using the 'huge=within_size'
+option. It's then used at GEM object creation instead of the default
+'shm_mnt' mount point in order to enable Transparent Hugepage (THP)
+for the object (without having to rely on a system wide parameter).
+
+v3:
+- use huge tmpfs mountpoint in drm_device
 
 Signed-off-by: Loïc Molinari <loic.molinari@collabora.com>
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 ---
- drivers/gpu/drm/panthor/panthor_mmu.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/panfrost/panfrost_device.c |  3 +++
+ drivers/gpu/drm/panfrost/panfrost_drv.c    |  6 ++++++
+ drivers/gpu/drm/panfrost/panfrost_drv.h    | 11 +++++++++++
+ drivers/gpu/drm/panfrost/panfrost_gem.c    | 19 +++++++++++++++++++
+ drivers/gpu/drm/panfrost/panfrost_gem.h    |  2 ++
+ 5 files changed, 41 insertions(+)
+ create mode 100644 drivers/gpu/drm/panfrost/panfrost_drv.h
 
-diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-index 6dec4354e378..aefbd83d1a75 100644
---- a/drivers/gpu/drm/panthor/panthor_mmu.c
-+++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-@@ -917,10 +917,9 @@ static int panthor_vm_unmap_pages(struct panthor_vm *vm, u64 iova, u64 size)
+diff --git a/drivers/gpu/drm/panfrost/panfrost_device.c b/drivers/gpu/drm/panfrost/panfrost_device.c
+index 04bec27449cb..a189bfaac959 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_device.c
++++ b/drivers/gpu/drm/panfrost/panfrost_device.c
+@@ -12,6 +12,7 @@
+ #include "panfrost_device.h"
+ #include "panfrost_devfreq.h"
+ #include "panfrost_features.h"
++#include "panfrost_gem.h"
+ #include "panfrost_issues.h"
+ #include "panfrost_gpu.h"
+ #include "panfrost_job.h"
+@@ -266,6 +267,8 @@ int panfrost_device_init(struct panfrost_device *pfdev)
+ 	if (err)
+ 		goto out_job;
+ 
++	panfrost_gem_init(pfdev);
++
+ 	return 0;
+ out_job:
+ 	panfrost_job_fini(pfdev);
+diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+index 22350ce8a08f..e376e70a3379 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_drv.c
++++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+@@ -862,6 +862,12 @@ static const struct drm_driver panfrost_drm_driver = {
+ #endif
+ };
+ 
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++bool panfrost_transparent_hugepage;
++module_param_named(transparent_hugepage, panfrost_transparent_hugepage, bool, 0400);
++MODULE_PARM_DESC(transparent_hugepage, "Use a dedicated tmpfs mount point with Transparent Hugepage enabled (false = default)");
++#endif
++
+ static int panfrost_probe(struct platform_device *pdev)
  {
- 	struct panthor_device *ptdev = vm->ptdev;
- 	struct io_pgtable_ops *ops = vm->pgtbl_ops;
-+	u64 start_iova = iova;
- 	u64 offset = 0;
- 
--	drm_dbg(&ptdev->base, "unmap: as=%d, iova=%llx, len=%llx", vm->as.id, iova, size);
--
- 	while (offset < size) {
- 		size_t unmapped_sz = 0, pgcount;
- 		size_t pgsize = get_pgsize(iova + offset, size - offset, &pgcount);
-@@ -935,6 +934,12 @@ static int panthor_vm_unmap_pages(struct panthor_vm *vm, u64 iova, u64 size)
- 			panthor_vm_flush_range(vm, iova, offset + unmapped_sz);
- 			return  -EINVAL;
- 		}
+ 	struct panfrost_device *pfdev;
+diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.h b/drivers/gpu/drm/panfrost/panfrost_drv.h
+new file mode 100644
+index 000000000000..60454611b6a6
+--- /dev/null
++++ b/drivers/gpu/drm/panfrost/panfrost_drv.h
+@@ -0,0 +1,11 @@
++// SPDX-License-Identifier: GPL-2.0 or MIT
++/* Copyright 2025 Amazon.com, Inc. or its affiliates */
 +
-+		drm_dbg(&ptdev->base,
-+			"unmap: as=%d, iova=0x%llx, sz=%llu, va=0x%llx, pgcnt=%zu, pgsz=%zu",
-+			vm->as.id, start_iova, size, iova + offset,
-+			unmapped_sz / pgsize, pgsize);
++#ifndef __PANFROST_DRV_H__
++#define __PANFROST_DRV_H__
 +
- 		offset += unmapped_sz;
- 	}
- 
-@@ -950,6 +955,7 @@ panthor_vm_map_pages(struct panthor_vm *vm, u64 iova, int prot,
- 	struct scatterlist *sgl;
- 	struct io_pgtable_ops *ops = vm->pgtbl_ops;
- 	u64 start_iova = iova;
-+	u64 start_size = size;
- 	int ret;
- 
- 	if (!size)
-@@ -969,15 +975,18 @@ panthor_vm_map_pages(struct panthor_vm *vm, u64 iova, int prot,
- 		len = min_t(size_t, len, size);
- 		size -= len;
- 
--		drm_dbg(&ptdev->base, "map: as=%d, iova=%llx, paddr=%pad, len=%zx",
--			vm->as.id, iova, &paddr, len);
--
- 		while (len) {
- 			size_t pgcount, mapped = 0;
- 			size_t pgsize = get_pgsize(iova | paddr, len, &pgcount);
- 
- 			ret = ops->map_pages(ops, iova, paddr, pgsize, pgcount, prot,
- 					     GFP_KERNEL, &mapped);
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++extern bool panfrost_transparent_hugepage;
++#endif
 +
-+			drm_dbg(&ptdev->base,
-+				"map: as=%d, iova=0x%llx, sz=%llu, va=0x%llx, pa=%pad, pgcnt=%zu, pgsz=%zu",
-+				vm->as.id, start_iova, start_size, iova, &paddr,
-+				mapped / pgsize, pgsize);
++#endif
+diff --git a/drivers/gpu/drm/panfrost/panfrost_gem.c b/drivers/gpu/drm/panfrost/panfrost_gem.c
+index 85d6289a6eda..c3883a639e13 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_gem.c
++++ b/drivers/gpu/drm/panfrost/panfrost_gem.c
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /* Copyright 2019 Linaro, Ltd, Rob Herring <robh@kernel.org> */
++/* Copyright 2025 Amazon.com, Inc. or its affiliates */
+ 
+ #include <linux/cleanup.h>
+ #include <linux/err.h>
+@@ -9,9 +10,27 @@
+ 
+ #include <drm/panfrost_drm.h>
+ #include "panfrost_device.h"
++#include "panfrost_drv.h"
+ #include "panfrost_gem.h"
+ #include "panfrost_mmu.h"
+ 
++void panfrost_gem_init(struct panfrost_device *pfdev)
++{
++	int err;
 +
- 			iova += mapped;
- 			paddr += mapped;
- 			len -= mapped;
++	if (!panfrost_transparent_hugepage)
++		return;
++
++	err = drm_gem_huge_mnt_create(pfdev->ddev, "within_size");
++	if (err && err != -EEXIST) {
++		drm_warn(pfdev->ddev, "Can't use Transparent Hugepage (%d)\n",
++			 -err);
++		return;
++	}
++
++	drm_info(pfdev->ddev, "Using Transparent Hugepage\n");
++}
++
+ #ifdef CONFIG_DEBUG_FS
+ static void panfrost_gem_debugfs_bo_add(struct panfrost_device *pfdev,
+ 					struct panfrost_gem_object *bo)
+diff --git a/drivers/gpu/drm/panfrost/panfrost_gem.h b/drivers/gpu/drm/panfrost/panfrost_gem.h
+index 8de3e76f2717..1a62529ff06f 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_gem.h
++++ b/drivers/gpu/drm/panfrost/panfrost_gem.h
+@@ -124,6 +124,8 @@ drm_mm_node_to_panfrost_mapping(struct drm_mm_node *node)
+ 	return container_of(node, struct panfrost_gem_mapping, mmnode);
+ }
+ 
++void panfrost_gem_init(struct panfrost_device *pfdev);
++
+ struct drm_gem_object *panfrost_gem_create_object(struct drm_device *dev, size_t size);
+ 
+ struct drm_gem_object *
 -- 
 2.47.3
 
