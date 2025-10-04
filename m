@@ -1,170 +1,74 @@
-Return-Path: <linux-kernel+bounces-841955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76DB8BB89C2
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 07:31:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70E43BB89C8
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 07:46:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63DC919C2DDC
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 05:32:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBD4A189E3C0
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 05:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6851CDFAC;
-	Sat,  4 Oct 2025 05:31:37 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4A31E0DCB;
+	Sat,  4 Oct 2025 05:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vqS+TO00"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0096A8634F
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 05:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59C319F127;
+	Sat,  4 Oct 2025 05:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759555896; cv=none; b=OPIeATSzJWP9orFEc76Zu35AfMpjULaZVe4HlFwm92QL7AtJ88yy5gpZilYno1+PYk4081Qhs0nWdA6Ufj5FEnsEZRr5f71Ca7rYds/hePB0DvOTEoX3dhV+2geMjP/sVlKk6qqb/ls1EqJuveqheh+HZvhNWyz2BTvUdp0jR0w=
+	t=1759556787; cv=none; b=eZubKPBKprnrbEjB1EejSMbNyCeBkFQ3w4NDknFH0wis8k9JxwX1Tl03ZzILkhth9bdXA63wquMwE6++2H4Oai4oUD55KShmKFzteWt+cLgrsmJvE4uGybujurF5rcTVBK6Qi667sM5XWn5AJGDAeOsWXc/hoNFz7XBCN9ZdNxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759555896; c=relaxed/simple;
-	bh=Msh5q5/tToZaTH3AP/OWVHXVJPHfkLxOp9cj1IfNjB8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ieM1iImvgpP1i4NCZl4vLRv6LcOi44MFauzZdVXL007ST8pgiLqXZO1HHyS2bIRfeu/Id7JK2GAOBesGQ2FAgW/jYurMu9oqkRqjuaW+3vsSfQ+E3tnfuwhAP70g4fue9ONtkfapCYeFylyeO9cPNBpXv5vkkpfhh5hsxEt5us0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-427811cad57so94074265ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 22:31:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759555894; x=1760160694;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6/r9vzzDPn9YCHOBtkYu9Mz2upRISy7aH063KJreCS0=;
-        b=l5YFxHk3gnOXvGyu4kVyzaSF9MHwQ0ToKDF3aIC72IBCpkouxFzUhq6bqsSBS7p6XV
-         X23m44nrhRN+gD6NUPD4ohgnjT/2YL/TKCX7rkJbXn+x44apNrcieXJAl8Erbd5G2rdk
-         ahFFNzYtKXYVr/VJeP0ziR+UJULn16OV0sLH3t88Ru05tbRlDK+0vgi58EVYJiYIlR+g
-         /OgJeE/SjKSltnwLNcSFkJM0bt9saOrlYRezDdLR/Fc6w2GwnFbq10fKALZazyk4EAhC
-         gFmkJ7cnWfxugixNYGTZAi74lbjUMTUYLw4xqU5bT2XudLdbUazIPHPAz0UeDFiGfvUa
-         PshA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmkJafB3H+mUly/p4KV72Q7ASuvh+FFKYwaR6HpTLWXF7cYdjgwWbRC71vFnjirnJ84hPez8xLC/GdjAY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQEmcegQv+fRK9WXJzNc8vZFSJ1Z+6bwxqmsVd4cdZSWzHloFP
-	/Zjh4Hgjo1nXRyG9bbhi5j6H7/I6oYHysae12A5KRYwxWRexr9Djo71QeQ5tYKhhaH3qr4Id239
-	DbX+rerudD5rKJ4qQnCQmz26E+yBIoAu3dmHb0oeBwJiNEpB0aVAkXgbzy0M=
-X-Google-Smtp-Source: AGHT+IHYQKxsFVz0yqASVCHIRyez4nQPsGpRoe/oTcmmwUqE4Iifm5EK5arkuMRrlmgo3x5fDF/TG2VxQi8kanQ8iu49NEkAd1tS
+	s=arc-20240116; t=1759556787; c=relaxed/simple;
+	bh=lr0JYjIYAKp5wehBATp8ykgGfrMeMLZNv/WG1AhuRMw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dll5kkeZfC3m0fkbAzly/RzcCuM2PgesJO4IuTCmWw01+ghRmWpq2/zVqkOejUhB7FUPry3htlhipJc2IOjUa+4Kk+v7CW1dJROlYZwZ8J1vAkDxODoay0S8YT46X2zCWUM6tDEhWv4ETWzXIZo2oG4P9tWzy7hM7bZ/YF/Y3vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vqS+TO00; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5FFCC4CEF1;
+	Sat,  4 Oct 2025 05:46:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1759556787;
+	bh=lr0JYjIYAKp5wehBATp8ykgGfrMeMLZNv/WG1AhuRMw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vqS+TO005cf5RtqKtS0QxIl0c0e9D6bEgDZHPX7cSfj4a6iC7emNFfTBAt79xuGmz
+	 N1hf4MvD9RGrsETWUlcGcKRIh34+NXjJNhq8KDEZ2qqfwqSDmtIiZvwI2ezi1RrMf+
+	 2bAozdBCLmkNtjRy6nBAEKzyTsivW2GcAffKUDKY=
+Date: Sat, 4 Oct 2025 07:46:24 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Deepanshu Kartikey <kartikey406@gmail.com>
+Cc: abbotti@mev.co.uk, hsweeten@visionengravers.com,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] comedi: fix divide-by-zero in comedi_buf_munge()
+Message-ID: <2025100459-say-tabloid-ed3a@gregkh>
+References: <20251004011522.5076-1-kartikey406@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:198a:b0:424:8b1a:9326 with SMTP id
- e9e14a558f8ab-42e7ad97443mr83371385ab.21.1759555894158; Fri, 03 Oct 2025
- 22:31:34 -0700 (PDT)
-Date: Fri, 03 Oct 2025 22:31:34 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e0b136.050a0220.2c17c1.002d.GAE@google.com>
-Subject: [syzbot] [ocfs2?] kernel BUG in ocfs2_refcount_cal_cow_clusters
-From: syzbot <syzbot+6fdd8fa3380730a4b22c@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251004011522.5076-1-kartikey406@gmail.com>
 
-Hello,
+On Sat, Oct 04, 2025 at 06:45:22AM +0530, Deepanshu Kartikey wrote:
+> 
+> Hello Ian and maintainers,
+> 
+> Just a gentle ping on this patch. It's been 10 days since v2 was sent
+> incorporating Ian's feedback to merge the chanlist_len check with the 
+> existing early return.
+> 
+> Please let me know if any further changes are needed.
 
-syzbot found the following issue on:
+It's the middle of the merge window, I will get to these pending patches
+when it ends in a week.
 
-HEAD commit:    f79e772258df Merge tag 'media/v6.18-1' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=151d1ee2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7f967f2c97bd611a
-dashboard link: https://syzkaller.appspot.com/bug?extid=6fdd8fa3380730a4b22c
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16e84458580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=163c9214580000
+thanks,
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-f79e7722.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9d29501fc412/vmlinux-f79e7722.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/773691b45948/bzImage-f79e7722.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/2a53f186d930/mount_0.gz
-  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=12731092580000)
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6fdd8fa3380730a4b22c@syzkaller.appspotmail.com
-
-         option from the mount to silence this warning.
-=======================================================
-ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
-------------[ cut here ]------------
-kernel BUG at fs/ocfs2/refcounttree.c:2678!
-Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5498 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:ocfs2_refcount_cal_cow_clusters+0x12a1/0x12b0 fs/ocfs2/refcounttree.c:2678
-Code: 94 6d 8d ba 69 0a 00 00 48 c7 c1 a0 40 8b 8b 4c 8b 4c 24 30 e8 00 51 10 00 90 0f 0b e8 d8 83 17 fe 90 0f 0b e8 d0 83 17 fe 90 <0f> 0b 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90
-RSP: 0018:ffffc90002bbf5e0 EFLAGS: 00010293
-RAX: ffffffff83a70250 RBX: 1ffff1100863069a RCX: ffff888000bdc900
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90002bbf7a8 R08: 00000000ffffffff R09: ffffc90002bbf85c
-R10: 00000000fffffffc R11: 0000000000000000 R12: 0000000000000000
-R13: 1ffff1100863069a R14: ffff8880431834d0 R15: 0000000000000000
-FS:  0000555579608500(0000) GS:ffff88808d969000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000020000000b000 CR3: 000000004f2d3000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- ocfs2_refcount_cow_hunk fs/ocfs2/refcounttree.c:3385 [inline]
- ocfs2_refcount_cow+0x31f/0xc90 fs/ocfs2/refcounttree.c:3467
- ocfs2_prepare_inode_for_write fs/ocfs2/file.c:2340 [inline]
- ocfs2_file_write_iter+0xe28/0x1d10 fs/ocfs2/file.c:2451
- new_sync_write fs/read_write.c:593 [inline]
- vfs_write+0x5c9/0xb30 fs/read_write.c:686
- ksys_write+0x145/0x250 fs/read_write.c:738
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f386f58eec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffecc491f98 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f386f7e5fa0 RCX: 00007f386f58eec9
-RDX: 000000000000001c RSI: 0000200000000100 RDI: 0000000000000005
-RBP: 00007f386f611f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f386f7e5fa0 R14: 00007f386f7e5fa0 R15: 0000000000000003
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:ocfs2_refcount_cal_cow_clusters+0x12a1/0x12b0 fs/ocfs2/refcounttree.c:2678
-Code: 94 6d 8d ba 69 0a 00 00 48 c7 c1 a0 40 8b 8b 4c 8b 4c 24 30 e8 00 51 10 00 90 0f 0b e8 d8 83 17 fe 90 0f 0b e8 d0 83 17 fe 90 <0f> 0b 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90
-RSP: 0018:ffffc90002bbf5e0 EFLAGS: 00010293
-RAX: ffffffff83a70250 RBX: 1ffff1100863069a RCX: ffff888000bdc900
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90002bbf7a8 R08: 00000000ffffffff R09: ffffc90002bbf85c
-R10: 00000000fffffffc R11: 0000000000000000 R12: 0000000000000000
-R13: 1ffff1100863069a R14: ffff8880431834d0 R15: 0000000000000000
-FS:  0000555579608500(0000) GS:ffff88808d969000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000020000000b000 CR3: 000000004f2d3000 CR4: 0000000000352ef0
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+greg k-h
 
