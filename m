@@ -1,129 +1,83 @@
-Return-Path: <linux-kernel+bounces-842164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB94ABB91FE
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 23:11:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2441FBB9205
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 23:19:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9494E3BB6B7
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 21:11:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8A0C3BDA85
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 21:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7AF286883;
-	Sat,  4 Oct 2025 21:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3598A27A444;
+	Sat,  4 Oct 2025 21:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="t6lTLZMB"
-Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="k9BG+bUc"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE5A242D63
-	for <linux-kernel@vger.kernel.org>; Sat,  4 Oct 2025 21:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F87119DF66;
+	Sat,  4 Oct 2025 21:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759612307; cv=none; b=H4aT2nTkd57okpRxg+UCU9areGcQ+n9wCV5RJQHHMAkTKXw0GxMidBotiXGw+i8tjGQQRFqmlfYXqK2zYBdUaxJCHJVIooQf/qpl9LuvW8+cv0oSB96dQpPycrRzZHpLUf10Em19Y+RyQ7lJHWKjWBTQxmOQ+SoL6xFoburwU+4=
+	t=1759612756; cv=none; b=MNG7L6mNPO4Z30UzToRYQSTC1Jr7mjjKRIKFPbVQMSWOnIeN4gXVGkpXYUZdurTFWIbpJ6IHUF7GjAft1yOTbXhU26ROYBH6vPOLP1apEBHIlU+J8MjjSwJw0VBpiHfPcbnbYvgHbe3vrnlnUzyOhUb4I8fqAUhNd1UxA1LOYRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759612307; c=relaxed/simple;
-	bh=8xdhFsItQ0U2tYROnaMCOHxanXUQgL2CLXiRIQQkiOU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y7gDqqB18tHvCDbal6bFIR1Vr9Qf2i3Gy+W7R3wjQ6PaNH4+Nwk7H5+IUr6GVrMIBAWAbXcmFux986u0wMyB0UfA3Mi7oBwdfIVFi8aB+Y2vR4myuhJXFOgX1riG3Cc7HNOqLMU20nSQ6H8LlDtC5YL2L/VQ1RUBNT1vT4NORp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=t6lTLZMB; arc=none smtp.client-ip=44.202.169.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5001b.ext.cloudfilter.net ([10.0.29.181])
-	by cmsmtp with ESMTPS
-	id 59MJvwVAIv72459XcvbGsA; Sat, 04 Oct 2025 21:11:44 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id 59XbvP4VCrMH559XcvHQWj; Sat, 04 Oct 2025 21:11:44 +0000
-X-Authority-Analysis: v=2.4 cv=eaE9f6EH c=1 sm=1 tr=0 ts=68e18d90
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=V69s+psccbVPjTVCvylqlbTUuMfJKlsD2LVf5RTBIxQ=; b=t6lTLZMBVApxforEGZB1iMm6Lt
-	9B9py77ZUU+WUWtCzT8C71KfTYOMqyIGpZEB+oxEJHyHGJ0zuOQ7TyjUkgTm/mcg5PLoowchGLRXe
-	YjjqXJhSTwAUWH7Soq3fPrxteaHASC27QzrQ1zY7+umI9KRmDC44zKGrzRNQL6QcdL2MwmechReRX
-	oJuU/UPgSwEsOPE1HrzRWgLdKuUcnKG0YBqTQs3LzE2OzAc0YrMIAU6H/TkVXCP5avMpRPZG3Mtqa
-	0SrjTrCEwaZL0lR5W2Xh3abk2hp9eRj6mf+NM5nQiih8C9w9r1BADVo/ICwgiWG8URbSf0gn8irNG
-	gb0hpGoQ==;
-Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:52342 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1v59Xa-00000003mTf-3hL3;
-	Sat, 04 Oct 2025 15:11:42 -0600
-Message-ID: <348a7f0f-7fd0-4ef3-8a77-ed19d8ddd0f2@w6rz.net>
-Date: Sat, 4 Oct 2025 14:11:40 -0700
+	s=arc-20240116; t=1759612756; c=relaxed/simple;
+	bh=a4i0WDfDD/1WjtOnt/a+bp/d7HUJuTDNeXkfWD0GC2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jePmGkSAq7zkE9pLuuI5quNZcZO+YFmYZxHaUVyYIzcUhmoCk0+4wzyaBvxyVcOpzk0//+0pym98SQ7k1FFxDNEfrm1hH+HHv8FJkB3fSXyZrdt4minZ8rS3uE8k0/CEDiw3t4rNDbE4SLpzYG2liRRTbvpluTT0ypl/r4gSzqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=k9BG+bUc; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=a4i0WDfDD/1WjtOnt/a+bp/d7HUJuTDNeXkfWD0GC2g=; b=k9BG+bUcSymbO6LRhkTI02JDeL
+	vMMHw/elVbteR1giDoXVn/MR2zLhet4ADehCa2GwikQqJ68ve+b8h8hvlIw0qfkGj7EeHBzTe9n7N
+	eEPOJlBjvH3Xpgywft3nr+ZyZDHcfM8juKpxUbzmsID40D39kH/Na6C7yRakMyT0wsPi+78F36gmi
+	z4aaRwY2TZSwPaHjp965SS2LxWBwSt1HUvgs3JEMJs953lWqBR2N25OghVASYxABbPL/LEpvewmsK
+	f2FD+47Rjb5utyCdpyYbApFMlR9OsLsuqza+iSY5C/6YntnATMq9k7Q858BYF33bxB1dTkGrKsxPO
+	ACrhvQLw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v59em-0000000FnCA-49kD;
+	Sat, 04 Oct 2025 21:19:09 +0000
+Date: Sat, 4 Oct 2025 22:19:08 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Miquel =?iso-8859-1?Q?Sabat=E9_Sol=E0?= <mssola@mssola.com>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
+	linux-kernel@vger.kernel.org, jack@suse.cz
+Subject: Re: [PATCH] fs: Use a cleanup attribute in copy_fdtable()
+Message-ID: <20251004211908.GD2441659@ZenIV>
+References: <20251004210340.193748-1-mssola@mssola.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.16 00/14] 6.16.11-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20251003160352.713189598@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20251003160352.713189598@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.92.56.26
-X-Source-L: No
-X-Exim-ID: 1v59Xa-00000003mTf-3hL3
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:52342
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 35
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfIOZb+dVXWGh0AlJikwkhZGrBR3OXH5R3wTSzzI1mU6JfCrQiIAHUxShWiPgxpKO14gjhmtgon73B/0pYuYCPUYsD+BvMT7b8e0HTig1XAj3QQCv8/Ii
- fD8ii0XPKX7uZ643mdEbTOJfzWLvhBYVd/aXNf4feU5wR0X2291TrtUwiXlQjbQO317IKmcUYo7rILMJLV3o621GiAg11JrjI0o=
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251004210340.193748-1-mssola@mssola.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 10/3/25 09:05, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.16.11 release.
-> There are 14 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 05 Oct 2025 16:02:25 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.11-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Sat, Oct 04, 2025 at 11:03:40PM +0200, Miquel Sabaté Solà wrote:
+> This is a small cleanup in which by using the __free(kfree) cleanup
+> attribute we can avoid three labels to go to, and the code turns to be
+> more concise and easier to follow.
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+Have you tried to build and boot that?
 
-Tested-by: Ron Economos <re@w6rz.net>
+That aside, it is not easier to follow in that form - especially since
+kfree() is *not* the right destructor for the object in question.
+Having part of destructor done via sodding __cleanup, with the rest
+open-coded on various failure exits is confusing as hell.
 
+RAII has its uses, but applied unidiomatically it ends up being a mess
+that is harder to follow and reason about than the dreadful gotos it
+replaces.
+
+NAKed-by: Al Viro <viro@zeniv.linux.org.uk>
 
