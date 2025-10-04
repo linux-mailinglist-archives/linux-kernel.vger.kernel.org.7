@@ -1,82 +1,55 @@
-Return-Path: <linux-kernel+bounces-841976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7753EBB8B2C
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 10:10:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D826CBB8B53
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 10:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E7D619C2B76
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 08:10:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C2A2188C8F2
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Oct 2025 08:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6694E2505A5;
-	Sat,  4 Oct 2025 08:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7DC724E4A1;
+	Sat,  4 Oct 2025 08:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZFcicLqa"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b="YaZxJuTK"
+Received: from mail.antaris-organics.com (mail.antaris-organics.com [91.227.220.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321D5248891;
-	Sat,  4 Oct 2025 08:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1031F5851;
+	Sat,  4 Oct 2025 08:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.227.220.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759565398; cv=none; b=BfCE7EXPdjgIhExenSNo2r5ZSn5jRqgJrXWk++3DQ4tqM6jvfp4arz8VHv+AeMCQ0KL27cRyeAK+r0rkbLnNI7ezL5qGFlHE2j9XFbP5BciHzeZ3HfIbF0SuAjH6bihaMunDsq9nAFdcOuXBUAdgvceUDLE9OQKHUzWv9u4prZg=
+	t=1759567245; cv=none; b=t2iSgR3izDggFwPYh3vRqCk3w1QSi0Hd3zwgVUrqQZkdfq9G/SibokF+xpN0aUNxM63RX+cSG8XQMB49kTJ+qED2dT0s2m5Kms2OLXsvOZ+qYywVSruK8o9YwL9RivoQVOSrMBGbd5md/tNbha63lkJWPcxwkMQBayTkxhQ3uwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759565398; c=relaxed/simple;
-	bh=B96OmDeOmMDIhrgUpXpMInr1UGo5k+vzJaFEQqQ3TuI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ApDrLB4gv1N350LXOvs8VbhAMkPfl8adp+IKobp2CNJZXb5BU6NR49lMWIjoWe6e9bN36sUl0lkc0mFOl7T5QFsHCyD5QWJfqjrCTCXQvO9SlPT+NKnf7duJBvTTx9/aUeNfCQnMdHKfTUBeXjkKSSoTD8nqik4ArpgNOxMxN7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZFcicLqa; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759565398; x=1791101398;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=B96OmDeOmMDIhrgUpXpMInr1UGo5k+vzJaFEQqQ3TuI=;
-  b=ZFcicLqacAe25Ethvk3AihypAEefx0TbudE5Gh/Qp1E0EpGy9DtPJGTZ
-   bTdDwQdJ4hybKxcfCzAhWIMAsBmPXfqr8MvubxMhv+3iTIFWoVZniNlrb
-   F8Vn2UJG8JLA3rPyDIMw04CG5y4M+/aPTjIjrLwz+1mf6u+skJW4CO2TD
-   Sd152y4y5t6Qn+2AlyWmpuxN3SRRtGod1i5aVVZIVGyfqud+pwC8RbzJY
-   XXKbmVXU4OBYPJBFmUKQpUHEjx0NTQG/Pntacsyooq9IqjkMaNEl/A9vN
-   qhQz4Htn0aQo7ETbsxlRNM6HtxQb4uF0tVpzFvg6BRV95vclZ9pS2WiA/
-   A==;
-X-CSE-ConnectionGUID: 4ViLsB/yRcur2WH4vrjLFw==
-X-CSE-MsgGUID: fJGs9i+kTKOBxK4IAdFJcQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61749223"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="61749223"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2025 01:09:57 -0700
-X-CSE-ConnectionGUID: fL8QGjcqTXm1u6X0ZSdpdw==
-X-CSE-MsgGUID: 5v6lvpaFSeeHqo6qgEPQVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,314,1751266800"; 
-   d="scan'208";a="183855351"
-Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 04 Oct 2025 01:09:51 -0700
-Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v4xKu-00059b-1f;
-	Sat, 04 Oct 2025 08:09:48 +0000
-Date: Sat, 4 Oct 2025 16:09:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Roman Kisel <romank@linux.microsoft.com>, arnd@arndb.de, bp@alien8.de,
-	corbet@lwn.net, dave.hansen@linux.intel.com, decui@microsoft.com,
-	haiyangz@microsoft.com, hpa@zytor.com, kys@microsoft.com,
-	mikelley@microsoft.com, mingo@redhat.com, tglx@linutronix.de,
-	Tianyu.Lan@microsoft.com, wei.liu@kernel.org, x86@kernel.org,
-	linux-hyperv@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	benhill@microsoft.com, bperkins@microsoft.com,
-	sunilmut@microsoft.com, romank@linux.microsoft.com
-Subject: Re: [PATCH hyperv-next v6 05/17] arch/x86: mshyperv: Trap on access
- for some synthetic MSRs
-Message-ID: <202510041544.zPic8ogA-lkp@intel.com>
-References: <20251003222710.6257-6-romank@linux.microsoft.com>
+	s=arc-20240116; t=1759567245; c=relaxed/simple;
+	bh=zxbvHP+9YLMTvKq9WNEqCHLjpHhvEiTPvZG1TtH0/QA=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tmzc0WURTlcoSDndXTcKhSfIiKwnRVdm5oBTy+MLjAItJvK7LkO9/tfic2PmBbL5rIbK7KnDBzUjPp63dq37FcTVpWE3S4tgj6Hxjy5qUYZafu3313XNv5u+dTJTEZpLuwcZzqOwpgEyk3uyYwqlJ8EGiK+5t/rYu20Nfc46NIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com; spf=pass smtp.mailfrom=mareichelt.com; dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b=YaZxJuTK; arc=none smtp.client-ip=91.227.220.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mareichelt.com
+Date: Sat, 4 Oct 2025 10:31:11 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mareichelt.com;
+	s=202107; t=1759566672;
+	bh=zxbvHP+9YLMTvKq9WNEqCHLjpHhvEiTPvZG1TtH0/QA=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To:Cc:Cc:content-type:content-type:date:date:
+	 From:from:in-reply-to:in-reply-to:message-id:mime-version:
+	 mime-version:references:reply-to:Sender:Subject:Subject:To:To;
+	b=YaZxJuTK0FRsbivmHfUWNBVK7GfApz4JQGu/8wXCkvCb9QOvaZJmRHxQTBob5K9NH
+	 0M2ZNOI6A4N/7R62fPQh4p+19aYw75z7UGKt9u4MJl/SWxu89eTcfUdyq6K0FNkPiF
+	 SLfXajpxqDrLylqJyBZ5xsUpiAIBGXmV/JaQjx09OX6OdZ+ndUs1hZbiGaKX9raUQw
+	 FWMMBACu6pXYlAn57TTEGgnVg66EB/cZj3BH+citwHy807ITAb0yQOq3Cc7WsOyJpS
+	 RhPvDS5uHmaqSyEqpnDZuqHwoNqYuNA5DG/4DBBMiWtNkCrdYf6C4oOqXAaRAAvzrc
+	 +k4VQnx+xgndA==
+From: Markus Reichelt <lkt+2023@mareichelt.com>
+To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6.16 00/14] 6.16.11-rc1 review
+Message-ID: <20251004083111.GA18723@pc21.mareichelt.com>
+Mail-Followup-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251003160352.713189598@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,46 +58,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251003222710.6257-6-romank@linux.microsoft.com>
+In-Reply-To: <20251003160352.713189598@linuxfoundation.org>
 
-Hi Roman,
+* Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 
-kernel test robot noticed the following build warnings:
+> This is the start of the stable review cycle for the 6.16.11 release.
+> There are 14 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun, 05 Oct 2025 16:02:25 +0000.
+> Anything received after that time might be too late.
 
-[auto build test WARNING on b595edcb24727e7f93e7962c3f6f971cc16dd29e]
+Hi Greg
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Roman-Kisel/Documentation-hyperv-Confidential-VMBus/20251004-063158
-base:   b595edcb24727e7f93e7962c3f6f971cc16dd29e
-patch link:    https://lore.kernel.org/r/20251003222710.6257-6-romank%40linux.microsoft.com
-patch subject: [PATCH hyperv-next v6 05/17] arch/x86: mshyperv: Trap on access for some synthetic MSRs
-config: i386-buildonly-randconfig-003-20251004 (https://download.01.org/0day-ci/archive/20251004/202510041544.zPic8ogA-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251004/202510041544.zPic8ogA-lkp@intel.com/reproduce)
+6.16.11-rc1 compiles on x86_64 (Xeon E5-1620 v2, Slackware64-15.0),
+and boots & runs on x86_64 (AMD Ryzen 5 7520U, Slackware64-current).
+No regressions observed.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510041544.zPic8ogA-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> arch/x86/kernel/cpu/mshyperv.c:46:13: warning: unused variable 'hv_para_sint_proxy' [-Wunused-variable]
-      46 | static bool hv_para_sint_proxy;
-         |             ^~~~~~~~~~~~~~~~~~
-   1 warning generated.
-
-
-vim +/hv_para_sint_proxy +46 arch/x86/kernel/cpu/mshyperv.c
-
-    41	
-    42	/*
-    43	 * When running with the paravisor, controls proxying the synthetic interrupts
-    44	 * from the host
-    45	 */
-  > 46	static bool hv_para_sint_proxy;
-    47	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Tested-by: Markus Reichelt <lkt+2023@mareichelt.com>
 
