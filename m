@@ -1,76 +1,75 @@
-Return-Path: <linux-kernel+bounces-842309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1882BB979A
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 15:33:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C4AABB979D
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 15:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8DA624E4A9E
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 13:33:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBE34188DD08
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 13:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2045288C96;
-	Sun,  5 Oct 2025 13:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF57C28A1F3;
+	Sun,  5 Oct 2025 13:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pinefeat.co.uk header.i=@pinefeat.co.uk header.b="CQUBJilP"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=pinefeat.co.uk header.i=@pinefeat.co.uk header.b="N6T1hDCf"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B422882A9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6672882CD
 	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 13:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759671186; cv=none; b=HNlO0c9yPl6CYIYOMsOq+OswjydEcZIflczTEp4Yb1Iu6dk0CspiQTE4sUaiwrFwKUoii53X/3/vpgLG33wW7A1DMsIpRHBEQxjyHDbcvVkCtOgLBXcKu+ffigAE7VWgdWf63gL7sdQl/dI3KMDmgMiD9e00lFQdNvutF5ZHlmo=
+	t=1759671186; cv=none; b=MXcKiA2nChFP/3JVzA9d033oN0ILJpk/vgQxDn3XuNyc9maGHnGuNnAm3hvqsmpZbu8LOTJX6NzNzbtMy7/ANu54feuWs+DCAVQFjWJgRn0PTc6Yzc7Bq4B6j79J8ZOC+7eCaYcBqPugOZ5kt7KecNJk3jNQNTguN68rkDmSkYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1759671186; c=relaxed/simple;
-	bh=f6vqOFM1ClMIQTvzAyqnN3otmVngL9gxp0vwpvcnK+Y=;
+	bh=R8/xVkkUeee4LadW992nyvaoYl0mD4tQyfxnRhjiTaU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jOxfEQ77OoU26NlGgmetXl63UqRTia4PMGwT//bRmlQKpCqzEuxclY0ZdSJJTt1bypEqAoPirnl3dcJ8xSGv9inFZUjVztg/CtPZupIKH8e5ubma9NjR2ZEkmZKR74x0S52QFCah8C40yPUCndpk4Is8C2U2snzuKs4+UMz2yXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pinefeat.co.uk; spf=pass smtp.mailfrom=pinefeat.co.uk; dkim=pass (2048-bit key) header.d=pinefeat.co.uk header.i=@pinefeat.co.uk header.b=CQUBJilP; arc=none smtp.client-ip=209.85.221.51
+	 MIME-Version; b=krdKCLTQybrWsOTvjAlkvdbQMGihWDmv6suP9yQ6qxuST4RFCZw62f/SL6VHYePS7qlN0CeDuhxwtBVPgk5dy66pYPkT1zFAcvjhoIGrf3Hd62xNLHx+KZvI3zNMI2gJUbM3MeHzzzi7eDOem9Iuus1voykYfV9KABAScUhxg/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pinefeat.co.uk; spf=pass smtp.mailfrom=pinefeat.co.uk; dkim=pass (2048-bit key) header.d=pinefeat.co.uk header.i=@pinefeat.co.uk header.b=N6T1hDCf; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pinefeat.co.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pinefeat.co.uk
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-421851bcb25so2126348f8f.2
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e37d10ed2so35368475e9.2
         for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 06:33:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=pinefeat.co.uk; s=google; t=1759671183; x=1760275983; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2j+Q9MMzpQKCegI0LqVFwaTuZf6jfnXFIw0HL+3JIHQ=;
-        b=CQUBJilPLqZRpUN7azm7hbXs+iU4AbuhZOanCBG13Pa+gxRdu3bQdlpSSrdb6B97cE
-         o4Q3IAXVQt3DonrHwNjkqEwwlrKIW5IEv9uuINERJupV44A0H51Q5ZIXPQgkAGiARW19
-         9o4G4/Qjh+XcplxeFQ/zD2Ah5FxkW/CSva0JmJSLbYiWN45HsTWaV0YbIbJ6F3k0hsYB
-         lKqdBUu9sZNnUyNUrLZRNsg4+rxsl/GqXcSUc3aMlqCmIoJL9gIMgwI8qookyKZoFKgN
-         FberwDQqfu/kQDzo8S3R338MMVjsulFC7lhdeXEm/PcmebkaRq9BAwyWNRBCgL+nwJl6
-         eV7Q==
+        bh=03HwctAT/wNPXgGyWRgPGKbJBAtqAT5TaM8xCGN0inc=;
+        b=N6T1hDCfxus3JcywoqC+FTNw1hp8uLmJB8+1ls7b5v9fmQU5G81gkb8Y3KVCQEG+Jq
+         C4pjFmOB8YEcDD42AhTcz7eYIFEyTLNKz+dz/tIZ6bs6IajGg0xg9gsLkM1lUyM7akEY
+         CcWwEzIzCK5MORmgxGNMQ8OX2KxJNUcEI9nFWIWGXOLTFXEoWKU2RPkOc9Ze2Ax0wJl7
+         OGyPXTrJqWVskLhnMDsutIgNWvtnh+n1gzXakCerjoD/M08q3AbIs3XnZ5Jy1nFRFXC3
+         Yg1JYcDgxtOxNF9VNxmL92Hgj9+ztcKp5eUWXALuxoWgogvk5MMRoJmslB/QiZnq//Oi
+         1cEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1759671183; x=1760275983;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2j+Q9MMzpQKCegI0LqVFwaTuZf6jfnXFIw0HL+3JIHQ=;
-        b=wUUTX3qlW2C/m9slWRyao9ok0mtNA40STfRXiZYwuVGqawcPhh+CW/I4TfLqDperdk
-         JhqfU491KT4uTuV0o3r2tJYxNcDME6ovxdsxmg/KJt7EkL43+Q+M8p1HQxdwI6OeyKmW
-         gu8HNsrfseiCLoeaB3xPryd4SGe2Ro+rGd9j0SzD89wduO0Lu3nV7r99XC0t2rUbFv6O
-         hEsLg+UZt1jKV/I5XmrrAUlo1w670fu/Wz5krlHypIPRX3OBpOfLzc3zrXm0gXVjwo4z
-         b+RbqicO45URMjA9G72ZvpuSww/A+3MigA2j69kTQsu+rRUb2ZaM8gT1CY/QHaUJnqH0
-         YERA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDVlDCAH/ZOiLI9QgCiZV+dum9zgTpFTG2A8zD+4aI403V/6ijAMMHhI2jaBBWGZKtmWa4gugxxMlPp2w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzc7gb2OcNFAXPWV3d18/Ydb3NTcRd0Cey/7WDR+eklGsylQ6aS
-	84sTp+C+9Sxs20CVnSGLKnZXFpueG66EVmmvLnJtDjRuzZ+v9JX2k/RRhA05g/ZHdps=
-X-Gm-Gg: ASbGncvLsZoduPD3DEXn8s1sghc2hitX9qQHEwhryddpqXhzCQ/0bEbYchEH3xIfg+G
-	qbMQCYng6aLZof3Bn1WRajn31XPwr1MHUC3LKfLa+HmwqGPHQz5c125446bHpd13iSe4VXMkcYt
-	MqdQQTLjxr9cDCKxGFKMxgRtJJeUhSFRZcC+pGHlVCJM3aiTejyK61k3vuZSghupqX/NnKuENa2
-	dvUHADE7j1YJkUrBKP0ZvjFJ4IOziXE2KOSiVyVP4+omxfbybgooxfES38hTGjfexFG+IaQWnZn
-	P5obQUWnuKZPEYKGY/Xa8FWC1F9a7fO7exy0usboehW4ZGZ5dM7u/dZP8Ku0lfqNA1+RBdY5KVV
-	w/FT4W/jbFfbS11EDMEFzMWY9Zro5buDFSdgCUqDDpaoa2EbPKmM71GNq2O+pkws+sq8e1ftY6u
-	k=
-X-Google-Smtp-Source: AGHT+IE4EINjbOD0Nv4TfZcchd929tbPxzPg0iqO1k5gau9eTOYrCdwVAmX2EdM3NGwqRr9r0K6bNA==
-X-Received: by 2002:a05:6000:402b:b0:3ea:6680:8fce with SMTP id ffacd0b85a97d-4256719383emr6163478f8f.48.1759671182253;
+        bh=03HwctAT/wNPXgGyWRgPGKbJBAtqAT5TaM8xCGN0inc=;
+        b=JRW3ehR+PIrAQt5EjcileS3OPhCSdWtsb0zsO+m3fygfVC/HMn6Mq5bUPNaNt0tBDt
+         MSvk2k1InQnZ5HHtNLdAoHR1oiFCKVpZMTIB0qOoIy6ed0QI5Uanhdm/TsQPS/ZZ6ZQF
+         ic45wyZJCHhEYjh/A/5fuYoxrSiNv/V2nWNGUDobF6OfgFHFoU6fmaWwHUWXklGrumTx
+         zB4wp9HAFAWIpbrgkRhqw4rC/shAxMNw4HGFgg3hYAjYGal54l/xuyemgtrWiz00GSuA
+         Nn07NYu/ixgZJJhoZkbGntzlh7DevNSrqDFxmfKMTq+v/N5qVCx1BUDtVoU4UYCnBW2q
+         CEPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWiVmwBulI/PMiUS3AARfNMPsdn8Of89nGB5GXXrKHIFG2Fssn3o/jsBBmxzdtQVKE8ZVfe7Nng/MXWRKs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpjR+HOrjXSTqWEoycXvnp1jOGAMlbXiIJ5Gin5pe9rTU77shX
+	vCu2wBJMv/ovWd6iKEPYl2Wg+DFNohgNJpyJOEItnHBu8aB4OPhIPbwAGsWVMUQeEkQ=
+X-Gm-Gg: ASbGnctsqds1TwBcnM1mnl+zIYYHWSZeTNLsfbnbEiybSPH3ZQoUxvypPA/wjHctlc3
+	pFVtPHV2wyOXsSTyFdXiGq8ZcXdhAPVYIjteG6tP19Nh2g50RTB6gPsV6JxnvRN6Q9TSb9P+uUK
+	H7vVVFJMvLdK8v2d8/N3zWBOMszTXPrF3fBekeWWbMm4cjmBHLCk98myCYrmXU4Q+uHT6S/0cew
+	o0kXDx4w2e38NGFcl2kvsHB8bDxZfcBA4Ehq3ZftyCz0SmL3oo1Y81smAKEO07GcFjvy3LPF+wH
+	050SJSblUMNgzXO1duobiJ68CxqMh/J+xL0Ei9u6KCfUFn1srLe4qSBJzuCfWsmyUW3wsFceiRQ
+	1zl2LjMtek1XQoiMreYfkQhBWxxEGht3MrVk7Nay5givj6FJ/eHOvQ29CEmwcYdeC
+X-Google-Smtp-Source: AGHT+IHRTp1HDiKTzviSzcMpBq0Uk9BgzdXRulKr1xzAhaDkC/muSdUgBn2Yvtz/jmJhT5/0MtAlgw==
+X-Received: by 2002:a05:6000:1787:b0:425:57dd:58c4 with SMTP id ffacd0b85a97d-425671598f4mr6988036f8f.26.1759671182891;
         Sun, 05 Oct 2025 06:33:02 -0700 (PDT)
 Received: from asmirnov-G751JM.Home ([2a02:c7c:b28c:1f00:33bb:4d0:68e8:89b8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f4cc3sm16459730f8f.55.2025.10.05.06.33.01
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f4cc3sm16459730f8f.55.2025.10.05.06.33.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Sun, 05 Oct 2025 06:33:02 -0700 (PDT)
 From: Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>
@@ -84,9 +83,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-media@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>
-Subject: [PATCH v5 1/2] dt-bindings: Pinefeat cef168 lens control board
-Date: Sun,  5 Oct 2025 14:32:27 +0100
-Message-Id: <20251005133228.62704-2-asmirnou@pinefeat.co.uk>
+Subject: [PATCH v5 2/2] media: i2c: Pinefeat cef168 lens control board driver
+Date: Sun,  5 Oct 2025 14:32:28 +0100
+Message-Id: <20251005133228.62704-3-asmirnou@pinefeat.co.uk>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251005133228.62704-1-asmirnou@pinefeat.co.uk>
 References: <20251005133228.62704-1-asmirnou@pinefeat.co.uk>
@@ -98,106 +97,418 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the Device Tree schema and examples for the Pinefeat cef168 lens
-control board. This board interfaces Canon EF & EF-S lenses with
-non-Canon camera bodies, enabling electronic control of focus and
-aperture via V4L2.
-
-Power supply is derived from fixed supplies via connector or GPIO
-header. Therefore, the driver does not manage any regulator, so
-representing any supply in the binding is redundant.
+Add support for the Pinefeat cef168 lens control board that provides
+electronic focus and aperture control for Canon EF & EF-S lenses on
+non-Canon camera bodies.
 
 Signed-off-by: Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>
 ---
- .../bindings/media/i2c/pinefeat,cef168.yaml   | 47 +++++++++++++++++++
- .../devicetree/bindings/vendor-prefixes.yaml  |  2 +
- MAINTAINERS                                   |  6 +++
- 3 files changed, 55 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/pinefeat,cef168.yaml
+ MAINTAINERS                        |   1 +
+ drivers/media/i2c/Kconfig          |   9 +
+ drivers/media/i2c/Makefile         |   1 +
+ drivers/media/i2c/cef168.c         | 331 +++++++++++++++++++++++++++++
+ include/uapi/linux/v4l2-controls.h |   6 +
+ 5 files changed, 348 insertions(+)
+ create mode 100644 drivers/media/i2c/cef168.c
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/pinefeat,cef168.yaml b/Documentation/devicetree/bindings/media/i2c/pinefeat,cef168.yaml
-new file mode 100644
-index 000000000000..1295b1f4edeb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/i2c/pinefeat,cef168.yaml
-@@ -0,0 +1,47 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+# Copyright (c) 2025 Pinefeat LLP
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/media/i2c/pinefeat,cef168.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Pinefeat cef168 lens driver
-+
-+maintainers:
-+  - Aliaksandr Smirnou <support@pinefeat.co.uk>
-+
-+description: |
-+  Pinefeat produces an adapter designed to interface between
-+  Canon EF & EF-S lenses and non-Canon camera bodies, incorporating
-+  features for electronic focus and aperture adjustment. The cef168
-+  circuit board, included with the adapter, provides a software
-+  programming interface that allows control of lens focus and
-+  aperture positions.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - pinefeat,cef168
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        camera-lens@d {
-+            compatible = "pinefeat,cef168";
-+            reg = <0x0d>;
-+        };
-+    };
-+
-+...
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index f1d1882009ba..4f50c35ed670 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -1241,6 +1241,8 @@ patternProperties:
-     description: Picochip Ltd
-   "^pine64,.*":
-     description: Pine64
-+  "^pinefeat,.*":
-+    description: Pinefeat LLP
-   "^pineriver,.*":
-     description: Shenzhen PineRiver Designs Co., Ltd.
-   "^pixcir,.*":
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 5a2cde903910..a59cd27caf11 100644
+index a59cd27caf11..0cf3b3a35827 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -20332,6 +20332,12 @@ S:	Supported
- F:	Documentation/devicetree/bindings/input/pine64,pinephone-keyboard.yaml
- F:	drivers/input/keyboard/pinephone-keyboard.c
+@@ -20337,6 +20337,7 @@ M:	Aliaksandr Smirnou <support@pinefeat.co.uk>
+ L:	linux-media@vger.kernel.org
+ S:	Supported
+ F:	Documentation/devicetree/bindings/media/i2c/pinefeat,cef168.yaml
++F:	drivers/media/i2c/cef168.c
  
-+PINEFEAT CEF168 LENS DRIVER
-+M:	Aliaksandr Smirnou <support@pinefeat.co.uk>
-+L:	linux-media@vger.kernel.org
-+S:	Supported
-+F:	Documentation/devicetree/bindings/media/i2c/pinefeat,cef168.yaml
-+
  PLANTOWER PMS7003 AIR POLLUTION SENSOR DRIVER
  M:	Tomasz Duszynski <tduszyns@gmail.com>
- S:	Maintained
+diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+index cdd7ba5da0d5..694b2571de37 100644
+--- a/drivers/media/i2c/Kconfig
++++ b/drivers/media/i2c/Kconfig
+@@ -823,6 +823,15 @@ config VIDEO_AK7375
+ 	  capability. This is designed for linear control of
+ 	  voice coil motors, controlled via I2C serial interface.
+ 
++config VIDEO_CEF168
++	tristate "CEF168 lens control support"
++	select CRC8
++	help
++	  This is a driver for the CEF168 lens control board.
++	  The board provides an I2C interface for electronic focus
++	  and aperture control of EF and EF-S lenses. The driver
++	  integrates with the V4L2 sub-device API.
++
+ config VIDEO_DW9714
+ 	tristate "DW9714 lens voice coil support"
+ 	depends on GPIOLIB
+diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
+index 57cdd8dc96f6..2e8f0a968352 100644
+--- a/drivers/media/i2c/Makefile
++++ b/drivers/media/i2c/Makefile
+@@ -25,6 +25,7 @@ obj-$(CONFIG_VIDEO_BT856) += bt856.o
+ obj-$(CONFIG_VIDEO_BT866) += bt866.o
+ obj-$(CONFIG_VIDEO_CCS) += ccs/
+ obj-$(CONFIG_VIDEO_CCS_PLL) += ccs-pll.o
++obj-$(CONFIG_VIDEO_CEF168) += cef168.o
+ obj-$(CONFIG_VIDEO_CS3308) += cs3308.o
+ obj-$(CONFIG_VIDEO_CS5345) += cs5345.o
+ obj-$(CONFIG_VIDEO_CS53L32A) += cs53l32a.o
+diff --git a/drivers/media/i2c/cef168.c b/drivers/media/i2c/cef168.c
+new file mode 100644
+index 000000000000..cfcef476f09d
+--- /dev/null
++++ b/drivers/media/i2c/cef168.c
+@@ -0,0 +1,331 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2025 Pinefeat LLP
++
++#include <linux/crc8.h>
++#include <linux/delay.h>
++#include <linux/i2c.h>
++#include <linux/module.h>
++#include <linux/v4l2-controls.h>
++#include <media/v4l2-ctrls.h>
++#include <media/v4l2-device.h>
++#include <media/v4l2-event.h>
++
++#define CEF168_NAME "cef168"
++
++#define CEF168_V4L2_CID_CUSTOM(ctrl) \
++	(V4L2_CID_USER_CEF168_BASE + custom_##ctrl)
++
++enum { custom_lens_id, custom_data, custom_focus_range, custom_calibrate };
++
++#define INP_CALIBRATE 0x22
++#define INP_SET_FOCUS 0x80
++#define INP_SET_FOCUS_P 0x81
++#define INP_SET_FOCUS_N 0x82
++#define INP_SET_APERTURE 0x7A
++#define INP_SET_APERTURE_P 0x7B
++#define INP_SET_APERTURE_N 0x7C
++
++#define CEF_CRC8_POLYNOMIAL 168
++
++DECLARE_CRC8_TABLE(cef168_crc8_table);
++
++struct cef168_data {
++	__u8 lens_id;
++	__u8 moving : 1;
++	__u8 calibrating : 2;
++	__u16 moving_time;
++	__u16 focus_position_min;
++	__u16 focus_position_max;
++	__u16 focus_position_cur;
++	__u16 focus_distance_min;
++	__u16 focus_distance_max;
++	__u8 crc8;
++} __packed;
++
++struct cef168_device {
++	struct v4l2_ctrl_handler ctrls;
++	struct v4l2_subdev sd;
++};
++
++static inline struct cef168_device *to_cef168(struct v4l2_ctrl *ctrl)
++{
++	return container_of(ctrl->handler, struct cef168_device, ctrls);
++}
++
++static inline struct cef168_device *sd_to_cef168(struct v4l2_subdev *subdev)
++{
++	return container_of(subdev, struct cef168_device, sd);
++}
++
++static int cef168_i2c_write(struct cef168_device *cef168_dev, u8 cmd, u16 val)
++{
++	struct i2c_client *client = v4l2_get_subdevdata(&cef168_dev->sd);
++	int retry, ret;
++
++	__le16 le_data = cpu_to_le16(val);
++	char tx_data[4] = { cmd, ((u8 *)&le_data)[0], ((u8 *)&le_data)[1] };
++
++	tx_data[3] = crc8(cef168_crc8_table, tx_data, 3, CRC8_INIT_VALUE);
++
++	for (retry = 0; retry < 3; retry++) {
++		ret = i2c_master_send(client, tx_data, sizeof(tx_data));
++		if (ret == sizeof(tx_data))
++			return 0;
++		else if (ret != -EIO && ret != -EREMOTEIO)
++			break;
++	}
++
++	dev_err(&client->dev, "I2C write fail after %d retries, ret=%d\n",
++		retry, ret);
++	return -EIO;
++}
++
++static int cef168_i2c_read(struct cef168_device *cef168_dev,
++			   struct cef168_data *rx_data)
++{
++	struct i2c_client *client = v4l2_get_subdevdata(&cef168_dev->sd);
++
++	int ret = i2c_master_recv(client, (char *)rx_data,
++				  sizeof(struct cef168_data));
++	if (ret != sizeof(struct cef168_data)) {
++		dev_err(&client->dev, "I2C read fail, ret=%d\n", ret);
++		return -EIO;
++	}
++
++	u8 computed_crc = crc8(cef168_crc8_table, (const u8 *)rx_data,
++			       sizeof(struct cef168_data) - 1, CRC8_INIT_VALUE);
++	if (computed_crc != rx_data->crc8) {
++		dev_err(&client->dev,
++			"CRC mismatch calculated=0x%02X read=0x%02X\n",
++			computed_crc, rx_data->crc8);
++		return -EIO;
++	}
++
++	rx_data->moving_time = le16_to_cpup((__le16 *)&rx_data->moving_time);
++	rx_data->focus_position_min = le16_to_cpup((__le16 *)&rx_data->focus_position_min);
++	rx_data->focus_position_max = le16_to_cpup((__le16 *)&rx_data->focus_position_max);
++	rx_data->focus_position_cur = le16_to_cpup((__le16 *)&rx_data->focus_position_cur);
++	rx_data->focus_distance_min = le16_to_cpup((__le16 *)&rx_data->focus_distance_min);
++	rx_data->focus_distance_max = le16_to_cpup((__le16 *)&rx_data->focus_distance_max);
++
++	return 0;
++}
++
++static int cef168_set_ctrl(struct v4l2_ctrl *ctrl)
++{
++	struct cef168_device *dev = to_cef168(ctrl);
++	u8 cmd;
++
++	switch (ctrl->id) {
++	case V4L2_CID_FOCUS_ABSOLUTE:
++		return cef168_i2c_write(dev, INP_SET_FOCUS, ctrl->val);
++	case V4L2_CID_FOCUS_RELATIVE:
++		cmd = ctrl->val < 0 ? INP_SET_FOCUS_N : INP_SET_FOCUS_P;
++		return cef168_i2c_write(dev, cmd, abs(ctrl->val));
++	case V4L2_CID_IRIS_ABSOLUTE:
++		return cef168_i2c_write(dev, INP_SET_APERTURE, ctrl->val);
++	case V4L2_CID_IRIS_RELATIVE:
++		cmd = ctrl->val < 0 ? INP_SET_APERTURE_N : INP_SET_APERTURE_P;
++		return cef168_i2c_write(dev, cmd, abs(ctrl->val));
++	case CEF168_V4L2_CID_CUSTOM(calibrate):
++		return cef168_i2c_write(dev, INP_CALIBRATE, 0);
++	}
++
++	return -EINVAL;
++}
++
++static int cef168_get_ctrl(struct v4l2_ctrl *ctrl)
++{
++	struct cef168_data data;
++	struct cef168_device *dev = to_cef168(ctrl);
++	int rval;
++
++	rval = cef168_i2c_read(dev, &data);
++	if (rval < 0)
++		return rval;
++
++	switch (ctrl->id) {
++	case V4L2_CID_FOCUS_ABSOLUTE:
++		ctrl->val = data.focus_position_cur;
++		return 0;
++	case CEF168_V4L2_CID_CUSTOM(focus_range):
++		ctrl->p_new.p_u32[0] = ((u32)data.focus_position_min << 16) |
++				       (u32)data.focus_position_max;
++		return 0;
++	case CEF168_V4L2_CID_CUSTOM(lens_id):
++		ctrl->p_new.p_u8[0] = data.lens_id;
++		return 0;
++	case CEF168_V4L2_CID_CUSTOM(data):
++		memcpy(ctrl->p_new.p_u8, &data, sizeof(data));
++		return 0;
++	}
++
++	return -EINVAL;
++}
++
++static const struct v4l2_ctrl_ops cef168_ctrl_ops = {
++	.g_volatile_ctrl = cef168_get_ctrl,
++	.s_ctrl = cef168_set_ctrl,
++};
++
++static const struct v4l2_ctrl_config cef168_lens_id_ctrl = {
++	.ops = &cef168_ctrl_ops,
++	.id = CEF168_V4L2_CID_CUSTOM(lens_id),
++	.type = V4L2_CTRL_TYPE_U8,
++	.name = "Lens ID",
++	.min = 0,
++	.max = U8_MAX,
++	.step = 1,
++	.def = 0,
++	.flags = V4L2_CTRL_FLAG_VOLATILE | V4L2_CTRL_FLAG_READ_ONLY,
++};
++
++static const struct v4l2_ctrl_config cef168_focus_range_ctrl = {
++	.ops = &cef168_ctrl_ops,
++	.id = CEF168_V4L2_CID_CUSTOM(focus_range),
++	.type = V4L2_CTRL_TYPE_U32,
++	.name = "Focus Range",
++	.min = 0,
++	.max = U32_MAX,
++	.step = 1,
++	.def = 0,
++	.flags = V4L2_CTRL_FLAG_VOLATILE | V4L2_CTRL_FLAG_READ_ONLY,
++};
++
++static const struct v4l2_ctrl_config cef168_data_ctrl = {
++	.ops = &cef168_ctrl_ops,
++	.id = CEF168_V4L2_CID_CUSTOM(data),
++	.type = V4L2_CTRL_TYPE_U8,
++	.name = "Data",
++	.min = 0,
++	.max = U8_MAX,
++	.step = 1,
++	.def = 0,
++	.dims = { sizeof(struct cef168_data) / sizeof(u8) },
++	.elem_size = sizeof(u8),
++	.flags = V4L2_CTRL_FLAG_VOLATILE | V4L2_CTRL_FLAG_READ_ONLY,
++};
++
++static const struct v4l2_ctrl_config cef168_calibrate_ctrl = {
++	.ops = &cef168_ctrl_ops,
++	.id = CEF168_V4L2_CID_CUSTOM(calibrate),
++	.type = V4L2_CTRL_TYPE_BUTTON,
++	.name = "Calibrate",
++};
++
++static const struct v4l2_subdev_core_ops cef168_core_ops = {
++	.log_status = v4l2_ctrl_subdev_log_status,
++	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
++	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
++};
++
++static const struct v4l2_subdev_ops cef168_ops = {
++	.core = &cef168_core_ops,
++};
++
++static int cef168_init_controls(struct cef168_device *dev)
++{
++	struct v4l2_ctrl *ctrl;
++	struct v4l2_ctrl_handler *hdl = &dev->ctrls;
++	const struct v4l2_ctrl_ops *ops = &cef168_ctrl_ops;
++
++	v4l2_ctrl_handler_init(hdl, 8);
++
++	ctrl = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_FOCUS_ABSOLUTE, 0, S16_MAX,
++				 1, 0);
++	if (ctrl)
++		ctrl->flags |= V4L2_CTRL_FLAG_VOLATILE |
++			       V4L2_CTRL_FLAG_EXECUTE_ON_WRITE;
++	v4l2_ctrl_new_std(hdl, ops, V4L2_CID_FOCUS_RELATIVE, S16_MIN, S16_MAX,
++			  1, 0);
++	ctrl = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_IRIS_ABSOLUTE, 0, S16_MAX,
++				 1, 0);
++	if (ctrl)
++		ctrl->flags |= V4L2_CTRL_FLAG_WRITE_ONLY |
++			       V4L2_CTRL_FLAG_EXECUTE_ON_WRITE;
++	v4l2_ctrl_new_std(hdl, ops, V4L2_CID_IRIS_RELATIVE, S16_MIN, S16_MAX, 1,
++			  0);
++	ctrl = v4l2_ctrl_new_custom(hdl, &cef168_calibrate_ctrl, NULL);
++	if (ctrl)
++		ctrl->flags |= V4L2_CTRL_FLAG_WRITE_ONLY |
++			       V4L2_CTRL_FLAG_EXECUTE_ON_WRITE;
++	v4l2_ctrl_new_custom(hdl, &cef168_focus_range_ctrl, NULL);
++	v4l2_ctrl_new_custom(hdl, &cef168_data_ctrl, NULL);
++	v4l2_ctrl_new_custom(hdl, &cef168_lens_id_ctrl, NULL);
++
++	if (hdl->error)
++		dev_err(dev->sd.dev, "%s fail error: 0x%x\n", __func__,
++			hdl->error);
++	dev->sd.ctrl_handler = hdl;
++	return hdl->error;
++}
++
++static int cef168_probe(struct i2c_client *client)
++{
++	struct cef168_device *cef168_dev;
++	int rval;
++
++	cef168_dev = devm_kzalloc(&client->dev, sizeof(*cef168_dev),
++				  GFP_KERNEL);
++	if (!cef168_dev)
++		return -ENOMEM;
++
++	v4l2_i2c_subdev_init(&cef168_dev->sd, client, &cef168_ops);
++	cef168_dev->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
++				V4L2_SUBDEV_FL_HAS_EVENTS;
++
++	rval = cef168_init_controls(cef168_dev);
++	if (rval)
++		goto err_cleanup;
++
++	rval = media_entity_pads_init(&cef168_dev->sd.entity, 0, NULL);
++	if (rval < 0)
++		goto err_cleanup;
++
++	cef168_dev->sd.entity.function = MEDIA_ENT_F_LENS;
++
++	rval = v4l2_async_register_subdev(&cef168_dev->sd);
++	if (rval < 0)
++		goto err_cleanup;
++
++	crc8_populate_msb(cef168_crc8_table, CEF_CRC8_POLYNOMIAL);
++
++	return 0;
++
++err_cleanup:
++	v4l2_ctrl_handler_free(&cef168_dev->ctrls);
++	media_entity_cleanup(&cef168_dev->sd.entity);
++
++	return rval;
++}
++
++static void cef168_remove(struct i2c_client *client)
++{
++	struct v4l2_subdev *sd = i2c_get_clientdata(client);
++	struct cef168_device *cef168_dev = sd_to_cef168(sd);
++
++	v4l2_async_unregister_subdev(&cef168_dev->sd);
++	v4l2_ctrl_handler_free(&cef168_dev->ctrls);
++	media_entity_cleanup(&cef168_dev->sd.entity);
++}
++
++static const struct of_device_id cef168_of_table[] = {
++	{ .compatible = "pinefeat,cef168" },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, cef168_of_table);
++
++static struct i2c_driver cef168_i2c_driver = {
++	.driver = {
++		.name = CEF168_NAME,
++		.of_match_table = cef168_of_table,
++	},
++	.probe = cef168_probe,
++	.remove = cef168_remove,
++};
++
++module_i2c_driver(cef168_i2c_driver);
++
++MODULE_AUTHOR("support@pinefeat.co.uk>");
++MODULE_DESCRIPTION("CEF168 lens driver");
++MODULE_LICENSE("GPL");
+diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+index 2d30107e047e..f8ca4f8c89af 100644
+--- a/include/uapi/linux/v4l2-controls.h
++++ b/include/uapi/linux/v4l2-controls.h
+@@ -228,6 +228,12 @@ enum v4l2_colorfx {
+  */
+ #define V4L2_CID_USER_RKISP1_BASE		(V4L2_CID_USER_BASE + 0x1220)
+ 
++/*
++ * The base for Pinefeat CEF168 driver controls.
++ * We reserve 16 controls for this driver.
++ */
++#define V4L2_CID_USER_CEF168_BASE		(V4L2_CID_USER_BASE + 0x1230)
++
+ /* MPEG-class control IDs */
+ /* The MPEG controls are applicable to all codec controls
+  * and the 'MPEG' part of the define is historical */
 -- 
 2.34.1
 
