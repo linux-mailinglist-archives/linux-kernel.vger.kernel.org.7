@@ -1,119 +1,83 @@
-Return-Path: <linux-kernel+bounces-842473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45AA6BBCC91
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 23:30:21 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98202BBCCA3
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 23:39:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C22463A9882
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 21:30:19 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 119F2348317
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 21:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9589523A564;
-	Sun,  5 Oct 2025 21:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="iCGL4MsG"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A844239567;
+	Sun,  5 Oct 2025 21:38:58 +0000 (UTC)
+Received: from mail.treewalker.org (mail.treewalker.org [78.47.88.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0332156F20;
-	Sun,  5 Oct 2025 21:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17462156F20
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 21:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.47.88.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759699813; cv=none; b=O2IuWBRhixmn2+xP5IPKRmcvoFfjaYSzPbJevyUuhpbzyQYqxLGTFSlUzLnE31GBM2p4xeLLrIwrCOjSnUd5Q5KFOOfpBsCmW6LJ/hSWQUkMXmsmcn6FwEt9QNdkBHWUxdKgVIaeG1eufM+ahxjiU9NFzN3woENQi+41S5Mv/WY=
+	t=1759700337; cv=none; b=mlb5bDvoZO0N63gIcDe+yYhHgFRkaRcZAeb9je49P/IpaobqAk6Hg2Gdd7QNn1D2lDH6/Vl9YZFU2UBL/wrOLBR3jZ7PL/AFMkx0HDugQ7oWehVed75h7FktPCLMzXnlvWSq1JvQdljQDB5UvtE41VrZCMA3W98g6fTlbmLCAXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759699813; c=relaxed/simple;
-	bh=X2Sj+X4ry8CeKTZ3BjYqZlfUBwPFnjOa3L+N/yV5Yqo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W0gcd7XVPGtWm03L/4m5zgmyt93g/yM2o52Q6ytqxG4zLmU+XGQfntifd65RF/WVtKukgkg6kUyFt2rN9flvFgphu79HQbtQfUIZVzZIkrv7QCI73umzsRr1Yy7X21T0cAjJNW6P3ae1JFGLWr5G8ZabtSrU9TvMlVBvYj1q/dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=iCGL4MsG; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=av6tgXA9OEKZB5j5EgDH2KVUpfC7vQCZYrM0ThTzPwk=; b=iCGL4MsGwWmPlwMXPOthkmEvq+
-	kuQs491WFrxUWEWnQiyWnRO9OAeVyZ4zEK5L2xzpiwxgCx+mID+AvEEfx2MQZPjc1xPqVqNa2TOO8
-	qq8m/NVf01VlzvwvV79HQ4ehuQ8B6/IKbKmxKXNhzsQma898hESFrEEACrXi1Kl4NVvWEtYpXDIbS
-	TPku5wazwD+FyTRWBUcQgyNXteVxS+qeLfLGInm4M0MhBKqD8tTfqXbK3M5f6ca5dm+YrVt6CLVnW
-	kUnlz7Ge9DnwetHj6Y+0tXm6rD8mte5/5BVZ4ClgAC/Pby/6jZTSQPcgdHs9E72GfTTylmtn7Cn6S
-	cbzuCfDA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v5WIx-00000001mYO-2GSj;
-	Sun, 05 Oct 2025 21:30:07 +0000
-Date: Sun, 5 Oct 2025 22:30:07 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Miquel =?iso-8859-1?Q?Sabat=E9_Sol=E0?= <mssola@mssola.com>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
-	linux-kernel@vger.kernel.org, jack@suse.cz
-Subject: Re: [PATCH] fs: Use a cleanup attribute in copy_fdtable()
-Message-ID: <20251005213007.GG2441659@ZenIV>
-References: <20251004210340.193748-1-mssola@mssola.com>
- <20251004211908.GD2441659@ZenIV>
- <20251005090152.GE2441659@ZenIV>
- <87y0pp455w.fsf@>
+	s=arc-20240116; t=1759700337; c=relaxed/simple;
+	bh=/vXPd85vKu1f7zNLV2mMdyJ32zm5bBgngP0fpCo/7iQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sML0n1qAZr1D4BBU2Adj7tIOsoaI4nOm48xWPxslG+I85+/qEf2yHIky0XaTwWG8o7e/dQoCrjS4JMu4cbzfMao+zOiAPJZ4RUDiX5LwX9xjdY8gXy/2DeFmpXzTg2f7U9j16dr4SK41nfXcnlQSQwF4r2U17iGR2PWV6q6go1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=treewalker.org; spf=pass smtp.mailfrom=treewalker.org; arc=none smtp.client-ip=78.47.88.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=treewalker.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treewalker.org
+Received: from hyperion.localnet (unknown [IPv6:2a10:3781:5345:1:a81:e1dc:2665:ea0c])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by mail.treewalker.org (Postfix) with ESMTPSA id 8EB611FDC2;
+	Sun,  5 Oct 2025 23:31:04 +0200 (CEST)
+From: Maarten ter Huurne <maarten@treewalker.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ John Hubbard <jhubbard@nvidia.com>
+Cc: Dave Airlie <airlied@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Sima Vetter <sima@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>,
+ LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [git pull] drm for 6.18-rc1
+Date: Sun, 05 Oct 2025 23:31:03 +0200
+Message-ID: <3771775.lGaqSPkdTl@hyperion>
+In-Reply-To: <bd004ac5-9e51-4e90-a3a4-025d74941a38@nvidia.com>
+References:
+ <CAPM=9tzYUBfz+YmifRDgdBsuTL=FpBxQVfxu23it48kGRzJNPQ@mail.gmail.com>
+ <CANiq72kq5YHovH=_a9c0JQgfrAx9gRsQvVo1VfHd-FaupOp7rQ@mail.gmail.com>
+ <bd004ac5-9e51-4e90-a3a4-025d74941a38@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87y0pp455w.fsf@>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On Sun, Oct 05, 2025 at 07:41:47PM +0200, Miquel Sabaté Solà wrote:
-> Al Viro @ 2025-10-05 10:01 +01:
-> 
-> > On Sun, Oct 05, 2025 at 07:37:50AM +0200, Miquel Sabaté Solà wrote:
-> >> Al Viro @ 2025-10-04 22:19 +01:
-> >>
-> >> > On Sat, Oct 04, 2025 at 11:03:40PM +0200, Miquel Sabaté Solà wrote:
-> >> >> This is a small cleanup in which by using the __free(kfree) cleanup
-> >> >> attribute we can avoid three labels to go to, and the code turns to be
-> >> >> more concise and easier to follow.
-> >> >
-> >> > Have you tried to build and boot that?
-> >>
-> >> Yes, and it worked on my machine...
-> >
-> > Unfortunately, it ends up calling that kfree() on success as well as on failure.
-> > Idiomatic way to avoid that would be
-> > 	return no_free_ptr(fdt);
-> > but you've left bare
-> > 	return fdt;
-> > in there, ending up with returning dangling pointers to the caller.  So as
-> > soon as you get more than BITS_PER_LONG descriptors used by a process,
-> > you'll get trouble.  In particular, bash(1) running as an interactive shell
-> > would hit that - it has descriptor 255 opened...
-> 
-> Ugh, this is just silly from my end...
-> 
-> You are absolutely right. I don't know what the hell I was doing while
-> testing that prevented me from realizing this before, but as you say
-> it's quite obvious and I was just blind or something.
-> 
-> Sorry for the noise and thanks for your patience...
+On Saturday 4 October 2025 03:53:34 CEST John Hubbard wrote:
 
-FWIW, the real low-level destructor (__free_fdtable()) *does* cope with ->fd
-or ->open_fds left NULL, so theoretically we could replace kmalloc with
-kzalloc in alloc_fdtable(), add use that thing via DEFINE_FREE()/__free(...);
-I'm not sure if it's a good idea, though - at the very least, that property
-of destructor would have to be spelled out with explanations, both in
-__free_fdtable() and in alloc_fdtable().
+> The main complaint with rustfmt is that it is extremely twitchy and
+> unstable with respect to one-line, vs. multi-line output.
+> 
+> *Especially* with "use" statements.
 
-Matter of taste, but IMO it's not worth bothering with - figuring out why
-the damn thing is correct would take at least as much time and attention
-from readers as the current variant does.
+The Black and Ruff formatting tools for Python use a "magic comma" rule 
+that works well in practice: if the last item has a trailing comma, the 
+items are guaranteed to be formatted multi-line, while if there is no 
+trailing comma, single-line formatting is attempted.
 
-BTW, there's a chance to kill struct fdtable off - a project that got stalled
-about a year ago (see https://lore.kernel.org/all/20240806010217.GL5334@ZenIV/
-and subthread from there on for details) that just might end up eliminating
-that double indirect.  I'm not saying that it's a reason not to do cleanups in
-what exists right now, just a tangentially related thing that might be interesting
-to resurrect...
+I couldn't find documentation of the feature itself, but there is a 
+settings flag to turn it off that contains an example:
+
+https://docs.astral.sh/ruff/settings/#format_skip-magic-trailing-comma
+
+Bye,
+		Maarten
+
+
+
 
