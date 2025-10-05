@@ -1,395 +1,207 @@
-Return-Path: <linux-kernel+bounces-842479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F083EBBCCBE
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 23:57:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F7FBBBCCD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 00:02:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6D2ED3484E1
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 21:57:06 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D03F4348589
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 22:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9DB1E376C;
-	Sun,  5 Oct 2025 21:56:59 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9586B23D7DF;
+	Sun,  5 Oct 2025 22:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lF6Cdduc"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0162A1CF;
-	Sun,  5 Oct 2025 21:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382A01A9FA8
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 22:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759701418; cv=none; b=CJuD1oRKmp5maRE+eUkxsPV+lC3RW4YzFWMjYRJkWdyN++fkpwW9Ge9vq7kUbyVDEVzW/flZ4EuL0fZ9aFOL3x+GInmV/QuRcQm+DzRZt0gbm5m7J9rou5/8a+EgMMBkTKttbz9qs/lPQM9lxuNCOEKfCqZ1NFdCaE0HpR/6K20=
+	t=1759701735; cv=none; b=lwuIlJyKOdhOUnRIcb0+h59DIrBiw4kBsVTSKq83/xD3vxeq0r4uelgEZPsUAbfU6y7hfGP63WoHRV/qdeD3XvyU7ZZt1q4EcBkITlbT6+3UnDgUtztSP1U+RTB66lAX/romOHZ9cCtvol9yC9jwuXEzN0Nc8nYmMmokiRqt2as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759701418; c=relaxed/simple;
-	bh=ZPuLZMTDLLctIl395YutGFv90SdSy3FAHvE1GyuzzKo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Dbhxqmjutxc0KUMDFEtOOJs19xzXIv6NXlbzPxJYhZLNRuRd+CndVZijRTcInlvU96xkhj/nqpptpi9QoFBCiLGyUgotzKEvOwikdylJbV5TKsoa3OxCHLtRQfhGUwGtTxqi5ZJpR6KkfJcCPs1ZZWuFJbs8/WupXERJqnB8oRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCDC7C4CEF4;
-	Sun,  5 Oct 2025 21:56:57 +0000 (UTC)
-Message-ID: <cd8e3d8c-314a-4a77-a3c1-665957f4ea9a@kernel.og>
-Date: Sun, 5 Oct 2025 16:56:56 -0500
+	s=arc-20240116; t=1759701735; c=relaxed/simple;
+	bh=YgLo6dEzUPmKG0n4v0UvXEdOJ/Qo5qEUw/SfGkaorUI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o5VVW7bYywZfetPr69wLO55tNPZ/Jmwhpj5qxEPw27UN+jZpvcjaYKbXmAMLKV67LovYFC3gciul/TPPFVPAc/adJiGenQ0LNdHfsTy9groUJC2S2XaMzUSlk+qhrfZj0EUbLzG7HJYNvAwxLxdNLEpWDl3Je7pgI8YsuuuVPe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lF6Cdduc; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 595FS5r9016469
+	for <linux-kernel@vger.kernel.org>; Sun, 5 Oct 2025 22:02:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=N256hlAuYoC5VZZOOilDZ2b/
+	UfNCJGDfOP6dgO8ecLc=; b=lF6CdducMpVUxg7v5KV2xvLDDr/WMRHAUalgLEZ7
+	kLNEId6NLIuWAfWhK047h0e2/E0TQO5xAMTh8+awSmuUS37KuZSQ/MyJEKnp7PZn
+	K0/MIrNdK0xbz9X4rt5bA2v1BQmG2hrxZKckDOiUEfCoZoGMKrjRdMJHdbrvcTiS
+	wAW5ZGsnrRQAtQve6pOyQTX7Zqs1iGsyxYdFcP19g4LnNi110y3zaKvW91gQThcY
+	rojAaBssKiLTLp3HImNDdKOoy5KuBIwQoooOcFqJ4vc5g/7l6+PDfUoo31QGmoAP
+	QgsjbfQ68z1fZyNnSwpoTdPFjw5mGc877HnZN968KnS7jQ==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jrxn2srr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 22:02:12 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-28973df6a90so40050455ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 15:02:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759701732; x=1760306532;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N256hlAuYoC5VZZOOilDZ2b/UfNCJGDfOP6dgO8ecLc=;
+        b=uKMyWcetyv8yNOlc3ZvTEjzN34McuNao/M3jASctwK1CXcvydDFC8A3e8hXyqHVzw+
+         lpknScyCaWp6A0xjTeJA7w/4s8EgkJHiXBKCPJDAw6uFCZs64Z97PV6A2oYhvcsVgu86
+         onjQi4GnuokRIe7arEA8y+Claqc+Nv6Iq9C5SQYk+l9mOf4B6B6NOc7iwUDHpzcTujJL
+         8GZTnowEyBTsRVcJ++ICZUjLSvW2UXIdqbeyQeesCA/Kzm8tkNrtg1HCvxLifiwISZYI
+         17IOQ1cmIhcONKsQxC2UydgJC1AjIN2V/Hd/qQr6jvYfTtdeZUYkA0nsXJ0Rtm5oIyF5
+         nN8g==
+X-Forwarded-Encrypted: i=1; AJvYcCW5ixR2CLdSORH3c8m3DYhrxa68mltVyRv8kpEPib1uIH01Y7dUrijunMqKYc5SZ2zeBN4bhHL+aJyk6DA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2X+weHGRe5gS7znqa8xGh/F1iTymUXNvJo/cdpyhDBxH2r94Q
+	vxaadxK8czQW7BIHFNRIJNttTJu+P5U71qGDIol8iYHa5zKKGj1dXbdEKV7zB1hLMqMhcGu8FZB
+	h3dAIq7PRciYkbnJ/XXHDFT1rPTzNP5oSpq6wgyziDYzg1gE8nmvM/Sh7oAD2acAW9TV8kN41M2
+	ZAnFoyOfyPApsgjQwPgHgId3tiW01+9n3EPdPerJfKiQ==
+X-Gm-Gg: ASbGncsRmmn33hitKiSPpQsyJ+bGVJzVapsrnzDwm3FSE3hVhITknR+qyiybjqRAhkc
+	e3SobvlHKYt45zNihqnhzQ14qrxLYwukeH3lTOSizm7QdcHPaDogh4qXKBcz8M5nrZY3vAj05TI
+	9TBu0YfTleGY0uhSUNTtItl7ql36YyC84RVbX5IYq+aV+GZmPhY0vc8s9zhg==
+X-Received: by 2002:a17:902:db0b:b0:269:b2a5:8827 with SMTP id d9443c01a7336-28e9a5441d2mr123489865ad.16.1759701731635;
+        Sun, 05 Oct 2025 15:02:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEw5H3bnClwmyFijTzPlTIdJv/FoUFtpaPkBeTmanH+Kmn1x1n5CJdxzZudHkd+BA4S2ApQpqFUagP05oAcE14=
+X-Received: by 2002:a17:902:db0b:b0:269:b2a5:8827 with SMTP id
+ d9443c01a7336-28e9a5441d2mr123489405ad.16.1759701731098; Sun, 05 Oct 2025
+ 15:02:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] clk: socfpga: agilex5: add clock driver for Agilex5
-To: Khairul Anuar Romli <khairul.anuar.romli@altera.com>,
- Dinh Nguyen <dinguyen@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>,
- "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- Ang Tien Sung <tiensung.ang@altera.com>
-References: <cover.1759482803.git.khairul.anuar.romli@altera.com>
- <e7e7e105327aafd54e58d1786a7a55ff0ea4aa9b.1759482803.git.khairul.anuar.romli@altera.com>
-Content-Language: en-US
-From: Dinh Nguyen <dinguyen@kernel.og>
-In-Reply-To: <e7e7e105327aafd54e58d1786a7a55ff0ea4aa9b.1759482803.git.khairul.anuar.romli@altera.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250925053602.4105329-1-quic_amakhija@quicinc.com>
+ <20250925053602.4105329-3-quic_amakhija@quicinc.com> <vsty7sy7gi2eeyifokwcqpoycmarxietkijmlkymwrmzmdsfws@x64f4ulbc6ja>
+ <aaa9f760-70aa-4bee-b6ab-d6fb02ea3c78@quicinc.com>
+In-Reply-To: <aaa9f760-70aa-4bee-b6ab-d6fb02ea3c78@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Date: Mon, 6 Oct 2025 01:01:59 +0300
+X-Gm-Features: AS18NWCM1r74v1bXxfrsrgftusyMHXRCg5iM3xO5_k0pu2EPz6imHWWBkRHsRFA
+Message-ID: <CAO9ioeWHJSj74VBR=2kHJDe_p1oG9Ngs6q9+s=CySGD3KY6sPQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] arm64: dts: qcom: qcs8300: add Display Serial
+ Interface device nodes
+To: Ayushi Makhija <quic_amakhija@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, robdclark@gmail.com, sean@poorly.run,
+        marijn.suijten@somainline.org, andersson@kernel.org, robh@kernel.org,
+        robh+dt@kernel.org, krzk+dt@kernel.org, konradybcio@kernel.org,
+        conor+dt@kernel.org, andrzej.hajda@intel.com,
+        neil.armstrong@linaro.org, rfoss@kernel.org,
+        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+        jernej.skrabec@gmail.com, quic_rajeevny@quicinc.com,
+        quic_vproddut@quicinc.com, quic_jesszhan@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAwMSBTYWx0ZWRfX9Kz4vnKl5kXp
+ o4BKQd7eTZ92brj8LSq6OC2zwsSvmSaxGQ30A2W6ikgCcfYOni4gSUOLrhaWIJ/YRNGnTB0qqjB
+ DX1DVfV/8vFzzwstwV2Lsjk0Y7AaDUMUejhK6DoKmn4IYtW6bzAfsU8pXC7PBNoCQqZxdXyzSt9
+ 4fWXTg8dGU+i71DwFGly3LyYtLMN/2ANBJC9Y8LqONbQQSVmJ3cEYL5ZNAhI4++G78BRTjkqslb
+ Val1IAr7pI4COWBx2z6WqZ4ScU18rSU+UtL2x9eAWzIaqOvlpZ5U6cq5HbdhkpFV5zrM4QrTDrg
+ 0JsUo08Q1Lnawd2auqBwjD/AKb/+8aQVJt9m+op3VA3y/Oji8uhxChY39EiI9Oy9GlMCGh4LaRL
+ kOypo1u7aP3wElyn4wMmALk4MZiQZQ==
+X-Proofpoint-GUID: szU6wyKPCsyr0gD8FcTabzU9e4C2xJ79
+X-Proofpoint-ORIG-GUID: szU6wyKPCsyr0gD8FcTabzU9e4C2xJ79
+X-Authority-Analysis: v=2.4 cv=EqnfbCcA c=1 sm=1 tr=0 ts=68e2eae5 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
+ a=gEfo2CItAAAA:8 a=COk6AnOGAAAA:8 a=0nM2LEvACttjMDtNBYMA:9 a=QEXdDO2ut3YA:10
+ a=324X-CrmTo6CU4MGRt3R:22 a=sptkURWiP4Gy88Gu7hUp:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-05_07,2025-10-02_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 spamscore=0 lowpriorityscore=0 malwarescore=0
+ adultscore=0 suspectscore=0 bulkscore=0 impostorscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040001
 
+On Sun, 5 Oct 2025 at 19:49, Ayushi Makhija <quic_amakhija@quicinc.com> wrote:
+>
+> On 9/26/2025 3:32 AM, Dmitry Baryshkov wrote:
+> > On Thu, Sep 25, 2025 at 11:06:01AM +0530, Ayushi Makhija wrote:
+> >> Add device tree nodes for the DSI0 controller with their corresponding
+> >> PHY found on Qualcomm QCS8300 SoC.
+> >>
+> >> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
+> >> ---
+> >>  arch/arm64/boot/dts/qcom/qcs8300.dtsi | 95 ++++++++++++++++++++++++++-
+> >>  1 file changed, 94 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
+> >> index e0e1f63fc45b..834ae0522f2f 100644
+> >> --- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
+> >> +++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
+> >> @@ -3,6 +3,7 @@
+> >>   * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> >>   */
+> >>
+> >> +#include <dt-bindings/clock/qcom,dsi-phy-28nm.h>
+> >>  #include <dt-bindings/clock/qcom,qcs8300-gcc.h>
+> >>  #include <dt-bindings/clock/qcom,rpmh.h>
+> >>  #include <dt-bindings/clock/qcom,sa8775p-camcc.h>
+> >> @@ -4854,6 +4855,13 @@ dpu_intf0_out: endpoint {
+> >>                                                      remote-endpoint = <&mdss_dp0_in>;
+> >>                                              };
+> >>                                      };
+> >> +
+> >> +                                    port@1 {
+> >> +                                            reg = <1>;
+> >> +                                            dpu_intf1_out: endpoint {
+> >> +                                                    remote-endpoint = <&mdss_dsi0_in>;
+> >> +                                            };
+> >> +                                    };
+> >>                              };
+> >>
+> >>                              mdp_opp_table: opp-table {
+> >> @@ -4881,6 +4889,89 @@ opp-650000000 {
+> >>                              };
+> >>                      };
+> >>
+> >> +                    mdss_dsi0: dsi@ae94000 {
+> >> +                            compatible =  "qcom,sa8775p-dsi-ctrl","qcom,mdss-dsi-ctrl";
+> >
+> > qcom,qcs8300-dsi-ctrl. You might use three compatibles (qcs8300, sa8775p
+> > and the generic one), but there should be qcs8300 one.
+> >
+>
+> Hi Dmitry,
+>
+> If I am adding three compatible string for ctrl,
+>
+> compatible = "qcom,qcs8300-dsi-ctrl",
+>              "qcom,sa8775p-dsi-ctrl",
+>              "qcom,mdss-dsi-ctrl";
+>
+> while validating dt-binding and dtsi against dt-schema. I am getting below errors
+>
+>
+> /local/mnt/workspace/amakhija/linux_next/linux/arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: dsi@ae94000: compatible: 'oneOf' conditional failed, one must be fixed:
+>         ['qcom,qcs8300-dsi-ctrl', 'qcom,sa8775p-dsi-ctrl', 'qcom,mdss-dsi-ctrl'] is too long
+>         'qcom,qcs8300-dsi-ctrl' is not one of ['qcom,dsi-ctrl-6g-qcm2290', 'qcom,mdss-dsi-ctrl']
+>         'qcom,mdss-dsi-ctrl' was expected
+>         from schema $id: http://devicetree.org/schemas/display/msm/dsi-controller-main.yaml#
+>
+> According to the dsi-controller-main.yaml schema only two strings are allowed one is the SOC specific and other one is generic "qcom,mdss-dsi-ctrl".
+>
+> Shall I keep only two strings qcom,qcs8300-mdss.yaml and the generic one "qcom,mdss-dsi-ctrl" or if we want to support 3 strings in compatible sting we need to modify the dsi-controller-main.yaml ?
 
+Of course.
 
-On 10/3/25 04:19, Khairul Anuar Romli wrote:
-> Add the new Clock manager driver to support new Agilex5 platform. The new
-> driver got rid of the clk_parent_data structures as there are no 'clock-names'
-> property in the DT bindings and use parent_names internally. This is based on
-> the previous feedback from the maintainer.
-> 
-> Signed-off-by: Ang Tien Sung <tiensung.ang@altera.com>
-> Signed-off-by: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-> ---
->   drivers/clk/socfpga/clk-agilex5.c    | 563 +++++++++++++++++++++++++++
->   drivers/clk/socfpga/clk-gate-s10.c   |  53 +++
->   drivers/clk/socfpga/clk-periph-s10.c |  41 ++
->   drivers/clk/socfpga/clk-pll-s10.c    |  38 +-
->   drivers/clk/socfpga/stratix10-clk.h  |  43 ++
->   5 files changed, 737 insertions(+), 1 deletion(-)
+> Similarly, I am getting error for dsi_phy compatible string only one SOC specific compatible string is allow.
 
-Do you want to add it a Makefile to build it?
+So, what's the question? You are adding support for the platform. So
+yes, you need to modify the schema.
 
->   create mode 100644 drivers/clk/socfpga/clk-agilex5.c
-> 
-> diff --git a/drivers/clk/socfpga/clk-agilex5.c b/drivers/clk/socfpga/clk-agilex5.c
-> new file mode 100644
-> index 000000000000..0013fab81357
-> --- /dev/null
-> +++ b/drivers/clk/socfpga/clk-agilex5.c
-> @@ -0,0 +1,563 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2022-2024, Intel Corporation
-> + * Copyright (C) 2025, Altera Corporation
-> + */
-> +#include <linux/slab.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/of_device.h>
-> +#include <linux/of_address.h>
-
-Remove of_device.h and of_address and just use of.h.
-
-> +#include <linux/platform_device.h>
-> +#include  <dt-bindings/clock/intel,agilex5-clkmgr.h>
-> +#include "stratix10-clk.h"
-> +#include "clk.h"
-> +
-
-<snip>
-
-
-> +
-> +static int
-> +agilex5_clk_register_c_perip(const struct stratix10_perip_c_clock *clks,
-> +			     int nums, struct stratix10_clock_data *data)
-> +{
-> +	struct clk_hw *hw_clk;
-> +	void __iomem *base = data->base;
-> +	int i;
-> +
-> +	for (i = 0; i < nums; i++) {
-> +		hw_clk = s10_register_periph(&clks[i], base);
-> +		if (IS_ERR(hw_clk)) {
-> +			pr_err("%s: failed to register clock %s\n", __func__,
-> +			       clks[i].name);
-> +			continue;
-> +		}
-> +		data->clk_data.hws[clks[i].id] = hw_clk;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static int
-> +agilex5_clk_register_cnt_perip(const struct agilex5_perip_cnt_clock *clks,
-> +			       int nums, struct stratix10_clock_data *data)
-> +{
-> +	struct clk_hw *hw_clk;
-> +	void __iomem *base = data->base;
-> +	int i;
-> +
-> +	for (i = 0; i < nums; i++) {
-> +		hw_clk = agilex5_register_cnt_periph(&clks[i], base);
-> +		if (IS_ERR(hw_clk)) {
-> +			pr_err("%s: failed to register clock %s\n", __func__,
-> +			       clks[i].name);
-> +			continue;
-> +		}
-> +		data->clk_data.hws[clks[i].id] = hw_clk;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int agilex5_clk_register_gate(const struct agilex5_gate_clock *clks,
-> +				     int nums,
-> +				     struct stratix10_clock_data *data)
-> +{
-> +	struct clk_hw *hw_clk;
-> +	void __iomem *base = data->base;
-> +	int i;
-> +
-> +	for (i = 0; i < nums; i++) {
-> +		hw_clk = agilex5_register_gate(&clks[i], base);
-> +		if (IS_ERR(hw_clk)) {
-> +			pr_err("%s: failed to register clock %s\n", __func__,
-> +			       clks[i].name);
-> +			continue;
-> +		}
-> +		data->clk_data.hws[clks[i].id] = hw_clk;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int agilex5_clk_register_pll(const struct agilex5_pll_clock *clks,
-> +				    int nums, struct stratix10_clock_data *data)
-> +{
-> +	struct clk_hw *hw_clk;
-> +	void __iomem *base = data->base;
-> +	int i;
-> +
-> +	for (i = 0; i < nums; i++) {
-> +		hw_clk = agilex5_register_pll(&clks[i], base);
-> +		if (IS_ERR(hw_clk)) {
-> +			pr_err("%s: failed to register clock %s\n", __func__,
-> +			       clks[i].name);
-> +			continue;
-> +		}
-> +		data->clk_data.hws[clks[i].id] = hw_clk;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int agilex5_clkmgr_init(struct platform_device *pdev)
-> +{
-> +	struct device_node *np = pdev->dev.of_node;
-> +	struct device *dev = &pdev->dev;
-> +	struct stratix10_clock_data *clk_data;
-> +	struct resource *res;
-> +	void __iomem *base;
-> +	int i, num_clks;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	base = devm_ioremap_resource(dev, res);
-
-Use devm_platform_ioremap_resource() for simpler code.
-
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
-> +	num_clks = AGILEX5_NUM_CLKS;
-> +
-> +	clk_data = devm_kzalloc(dev, struct_size(clk_data, clk_data.hws, num_clks), GFP_KERNEL);
-> +	if (!clk_data)
-> +		return -ENOMEM;
-
-Please take a look at commit "65f9e1becb55 clk: socfpga: agilex: Add 
-bounds-checking coverage for struct stratix10_clock_data"
-
-
-> +
-> +	for (i = 0; i < num_clks; i++)
-> +		clk_data->clk_data.hws[i] = ERR_PTR(-ENOENT);
-> +
-> +	clk_data->base = base;
-> +	clk_data->clk_data.num = num_clks;
-> +
-> +	agilex5_clk_register_pll(agilex5_pll_clks, ARRAY_SIZE(agilex5_pll_clks),
-> +				 clk_data);
-> +
-> +	/* mainPLL C0, C1, C2, C3 and periph PLL C0, C1, C2, C3*/
-> +	agilex5_clk_register_c_perip(agilex5_main_perip_c_clks,
-> +				     ARRAY_SIZE(agilex5_main_perip_c_clks),
-> +				     clk_data);
-> +
-> +	agilex5_clk_register_cnt_perip(agilex5_main_perip_cnt_clks,
-> +				       ARRAY_SIZE(agilex5_main_perip_cnt_clks),
-> +				       clk_data);
-> +
-> +	agilex5_clk_register_gate(agilex5_gate_clks,
-> +				  ARRAY_SIZE(agilex5_gate_clks), clk_data);
-> +
-> +	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &clk_data->clk_data);
-> +	return 0;
-> +}
-> +
-> +static int agilex5_clkmgr_probe(struct platform_device *pdev)
-> +{
-> +	int (*probe_func)(struct platform_device *init_func);
-> +
-> +	probe_func = of_device_get_match_data(&pdev->dev);
-> +	if (!probe_func)
-> +		return -ENODEV;
-> +	return probe_func(pdev);
-> +}
-> +
-> +static const struct of_device_id agilex5_clkmgr_match_table[] = {
-> +	{ .compatible = "intel,agilex5-clkmgr", .data = agilex5_clkmgr_init },
-> +	{}
-> +};
-> +
-> +static struct platform_driver agilex5_clkmgr_driver = {
-> +	.probe		= agilex5_clkmgr_probe,
-> +	.driver		= {
-> +		.name	= "agilex5-clkmgr",
-> +		.suppress_bind_attrs = true,
-> +		.of_match_table = agilex5_clkmgr_match_table,
-> +	},
-> +};
-> +
-> +static int __init agilex5_clk_init(void)
-> +{
-> +	return platform_driver_register(&agilex5_clkmgr_driver);
-> +}
-> +core_initcall(agilex5_clk_init);
-> diff --git a/drivers/clk/socfpga/clk-gate-s10.c b/drivers/clk/socfpga/clk-gate-s10.c
-> index 3930d922efb4..dce3ef137bf3 100644
-> --- a/drivers/clk/socfpga/clk-gate-s10.c
-> +++ b/drivers/clk/socfpga/clk-gate-s10.c
-> @@ -239,3 +239,56 @@ struct clk_hw *agilex_register_gate(const struct stratix10_gate_clock *clks, voi
->   	}
->   	return hw_clk;
->   }
-> +
-> +struct clk_hw *agilex5_register_gate(const struct agilex5_gate_clock *clks, void __iomem *regbase)
-> +{
-> +	struct clk_hw *hw_clk;
-> +	struct socfpga_gate_clk *socfpga_clk;
-> +	struct clk_init_data init;
-> +	int ret;
-> +
-> +	socfpga_clk = kzalloc(sizeof(*socfpga_clk), GFP_KERNEL);
-> +	if (!socfpga_clk)
-> +		return NULL;
-> +
-> +	socfpga_clk->hw.reg = regbase + clks->gate_reg;
-> +	socfpga_clk->hw.bit_idx = clks->gate_idx;
-> +
-> +	gateclk_ops.enable = clk_gate_ops.enable;
-> +	gateclk_ops.disable = clk_gate_ops.disable;
-> +
-> +	socfpga_clk->fixed_div = clks->fixed_div;
-> +
-> +	if (clks->div_reg)
-> +		socfpga_clk->div_reg = regbase + clks->div_reg;
-> +	else
-> +		socfpga_clk->div_reg = NULL;
-> +
-> +	socfpga_clk->width = clks->div_width;
-> +	socfpga_clk->shift = clks->div_offset;
-> +
-> +	if (clks->bypass_reg)
-> +		socfpga_clk->bypass_reg = regbase + clks->bypass_reg;
-> +	else
-> +		socfpga_clk->bypass_reg = NULL;
-> +	socfpga_clk->bypass_shift = clks->bypass_shift;
-> +
-> +	if (streq(clks->name, "cs_pdbg_clk"))
-> +		init.ops = &dbgclk_ops;
-> +	else
-> +		init.ops = &agilex_gateclk_ops;
-> +
-> +	init.name = clks->name;
-> +	init.flags = clks->flags;
-> +	init.num_parents = clks->num_parents;
-> +	init.parent_names = clks->parent_names;
-> +	socfpga_clk->hw.hw.init = &init;
-> +	hw_clk = &socfpga_clk->hw.hw;
-> +
-> +	ret = clk_hw_register(NULL, &socfpga_clk->hw.hw);
-> +	if (ret) {
-> +		kfree(socfpga_clk);
-> +		return ERR_PTR(ret);
-> +	}
-> +	return hw_clk;
-> +}
-> diff --git a/drivers/clk/socfpga/clk-periph-s10.c b/drivers/clk/socfpga/clk-periph-s10.c
-> index f5c1ca42b668..f12ca43ffe7c 100644
-> --- a/drivers/clk/socfpga/clk-periph-s10.c
-> +++ b/drivers/clk/socfpga/clk-periph-s10.c
-> @@ -214,3 +214,44 @@ struct clk_hw *s10_register_cnt_periph(const struct stratix10_perip_cnt_clock *c
->   	}
->   	return hw_clk;
->   }
-> +
-> +struct clk_hw *agilex5_register_cnt_periph(const struct agilex5_perip_cnt_clock *clks,
-> +					   void __iomem *regbase)
-> +{
-> +	struct clk_hw *hw_clk;
-> +	struct socfpga_periph_clk *periph_clk;
-> +	struct clk_init_data init;
-> +	const char *name = clks->name;
-> +	int ret;
-> +
-> +	periph_clk = kzalloc(sizeof(*periph_clk), GFP_KERNEL);
-> +	if (WARN_ON(!periph_clk))
-> +		return NULL;
-> +
-> +	if (clks->offset)
-> +		periph_clk->hw.reg = regbase + clks->offset;
-> +	else
-> +		periph_clk->hw.reg = NULL;
-> +
-> +	if (clks->bypass_reg)
-> +		periph_clk->bypass_reg = regbase + clks->bypass_reg;
-> +	else
-> +		periph_clk->bypass_reg = NULL;
-> +	periph_clk->bypass_shift = clks->bypass_shift;
-> +	periph_clk->fixed_div = clks->fixed_divider;
-> +
-> +	init.name = name;
-> +	init.ops = &peri_cnt_clk_ops;
-> +	init.flags = clks->flags;
-> +	init.num_parents = clks->num_parents;
-> +	init.parent_names = clks->parent_names;
-> +	periph_clk->hw.hw.init = &init;
-> +	hw_clk = &periph_clk->hw.hw;
-> +
-> +	ret = clk_hw_register(NULL, hw_clk);
-> +	if (ret) {
-> +		kfree(periph_clk);
-> +		return ERR_PTR(ret);
-> +	}
-> +	return hw_clk;
-> +}
-> diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pll-s10.c
-> index a88c212bda12..ae80814cfa92 100644
-> --- a/drivers/clk/socfpga/clk-pll-s10.c
-> +++ b/drivers/clk/socfpga/clk-pll-s10.c
-> @@ -182,7 +182,7 @@ static const struct clk_ops clk_pll_ops = {
->   };
->   
->   static const struct clk_ops clk_boot_ops = {
-> -	.recalc_rate = clk_boot_clk_recalc_rate,
-> +	.recalc_rate = clk_boot_clk_recalc_rate, /* TODO this is wrong*/
-
-Do you know what's wrong with it? Maybe fix it first?
-
-
-Dinh
+-- 
+With best wishes
+Dmitry
 
