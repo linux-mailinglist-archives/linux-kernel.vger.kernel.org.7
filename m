@@ -1,342 +1,267 @@
-Return-Path: <linux-kernel+bounces-842278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89224BB966A
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 14:56:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5881CBB9673
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 14:58:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3E8964E2D75
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 12:56:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAEE83B8DCA
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 12:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8951F2877EA;
-	Sun,  5 Oct 2025 12:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CA12877E7;
+	Sun,  5 Oct 2025 12:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f4bFxHk+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="P7HuhMFk"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904182773F7;
-	Sun,  5 Oct 2025 12:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D14826F296;
+	Sun,  5 Oct 2025 12:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759668975; cv=none; b=Bc7NEOIUl7IxXFTxBx/+W8pGt3AdCmfjLXH+bTVe+pfzwhW8LxkYtOuMjjOnbULqArfIXIAVV98zNbnOSrpJULjqkLqTmGKNMJKmtqCF78xGbC4gq+QHKVZt4eCLmUY1S44vBZrnQuShWzUlfZA3FMz8Zq5/1zaT1O3lGyVY7ac=
+	t=1759669075; cv=none; b=OcY/nK3o6Rwn+hDE3A9MYK/Heu4GYX8UhDeuBMFyNt529GE4Pr/Wl8nrD9Yrux+AW+gAIQKRMpPfqNV5NOITxiGyB3/gk8RetZyVr7qqnMacvy55DTlupqhicOiQ21fcXp4WJVv8MCmu+clhVnhcVRm0K59UQtwcIQD1PmAHOmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759668975; c=relaxed/simple;
-	bh=2dWQPeBmfuCIMPI8LT0IPUyJaGtEuhcG7d4a+m1kWHs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=jbZnTFOxOzVriN6/6wHUwpb1QEWkf6b9EZXrOUTSoBEcufq6qclDVtSHSxg6hwJcXn6CLlzccua8936qUgY4l2H76bLUplHhLnrbjMAwvlWOmAn+Eafsq+U8tHkeiHdUXuHtA/gv2dBAocph6uhIMLEU/daRVUWjeLDr7WmNvqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f4bFxHk+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70800C4CEF4;
-	Sun,  5 Oct 2025 12:56:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759668975;
-	bh=2dWQPeBmfuCIMPI8LT0IPUyJaGtEuhcG7d4a+m1kWHs=;
-	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
-	b=f4bFxHk+quP1JF210mDDlL9TCVKpGGccU9y+5XwqDlIA4j8aEkmc2dwo/w+FiccQV
-	 k3UW9lTihn/StIeqmtzX4XG3VaHtgMRmK5yhijokglmC1pSwvDWQsIR60Kf8jrkIW0
-	 oGRf898QGoD6NE9q/SyWhs1+9h5myxxtYgVwcAtxlXgDAyRoz2q8RXfwse9995rd5/
-	 tSGuXQ2J//EUkpogJhdM7Gx0Sw/zOYuJT3AObg7+kMJuyTT54YwjIZx16RnQ5bxoJM
-	 HyEq1W9V5JRuu2rcQ7nQ7kPopWTbdhN4AewkeKJxykNQs5f/FT2XSVeNfdkACuBuMX
-	 ywBqJLBMWIfFQ==
+	s=arc-20240116; t=1759669075; c=relaxed/simple;
+	bh=JOtrgIFMA/XfbL6fHJCJRpqC1D4e4vVoAsCZGZ5+H9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RYBvdZLBzEFC0rOtQhrBnc8NiBJnadbXT6xBiYiVuwjalZanNyWToQrvjaNOgfRz6zNaDsWcII21H1RHv7MGzDlOIwjjDaFjbcwhMl71qrrnIFIRQ7YI9gdQrGz5C68bodRDtsTdWd+gTRZL8vgKWQUP8sSEW+q3/C4YFuBCtMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=P7HuhMFk; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 595BG849012592;
+	Sun, 5 Oct 2025 12:57:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=Fq2MpqyxaLCZkO5uTWI87jwkjhWfjE
+	x+GVMgvaCqS8E=; b=P7HuhMFksu1HfV/nDvnxpjHKiJIoNBquc2vgq/lOSkPVbw
+	yKyb55fbyNHbB9nzImH39xiWVwx2+wfNZ0FNHJ7acFsiDxqhyRnZxF8QUduADrzU
+	hs+opK/YTRbUn06c+NBdXi8X5RRYbRdx1m7QUcb+7nN6m+SIastxPtavcQDNBc/N
+	yAp4xH9A/DOnzczcp+zzDMn6NuRqtl9yaVARk04+sdX/ree+s0FWW5ghrmqIJ1Fq
+	1ZQ7FvKrpkVNGGBHd7B5NBoLzwaJdTJg4KaOmKoyT8TED10DIKKiwg79gbKK4j7n
+	kgApqe1driMKI7IawbLYtMFn6YWtcVdavcFuoCWw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49ju8ackjg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 05 Oct 2025 12:57:37 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 595Cva2V031349;
+	Sun, 5 Oct 2025 12:57:36 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49ju8ackjd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 05 Oct 2025 12:57:36 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5958pDBt013206;
+	Sun, 5 Oct 2025 12:57:36 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49kg4j9evj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 05 Oct 2025 12:57:35 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 595CvYEe52494844
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 5 Oct 2025 12:57:34 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2559320043;
+	Sun,  5 Oct 2025 12:57:34 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C25A220040;
+	Sun,  5 Oct 2025 12:57:31 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.213.138])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Sun,  5 Oct 2025 12:57:31 +0000 (GMT)
+Date: Sun, 5 Oct 2025 18:27:24 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Zorro Lang <zlang@redhat.com>
+Cc: fstests@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+        djwong@kernel.org, john.g.garry@oracle.com, tytso@mit.edu,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v7 04/12] ltp/fsx.c: Add atomic writes support to fsx
+Message-ID: <aOJrNHcQPD7bgnfB@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <cover.1758264169.git.ojaswin@linux.ibm.com>
+ <c3a040b249485b02b569b9269b649d02d721d995.1758264169.git.ojaswin@linux.ibm.com>
+ <20250928131924.b472fjxwir7vphsr@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <aN683ZHUzA5qPVaJ@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <20251003171932.pxzaotlafhwqsg5v@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 05 Oct 2025 14:56:08 +0200
-Message-Id: <DDAEL8DQFWKX.1BSBDMMN9I5B0@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- <nouveau@lists.freedesktop.org>, <rust-for-linux@vger.kernel.org>,
- <linux-pci@vger.kernel.org>, <acourbot@nvidia.com>, "Alistair Popple"
- <apopple@nvidia.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "John Hubbard" <jhubbard@nvidia.com>,
- "Timur Tabi" <ttabi@nvidia.com>, <joel@joelfernandes.org>, "Daniel Almeida"
- <daniel.almeida@collabora.com>, "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-To: "Joel Fernandes" <joelagnelf@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v2] rust: pci: Allocate and manage PCI interrupt vectors
-References: <20251002183912.1096508-1-joelagnelf@nvidia.com>
-In-Reply-To: <20251002183912.1096508-1-joelagnelf@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251003171932.pxzaotlafhwqsg5v@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: E9LjcbRf2ACn-j0Otu8rlDNde32xW-yj
+X-Authority-Analysis: v=2.4 cv=BpiQAIX5 c=1 sm=1 tr=0 ts=68e26b41 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
+ a=yPCof4ZbAAAA:8 a=VnNF1IyMAAAA:8 a=4M2DtjJ0x0aIFulMiq0A:9 a=CjuIK1q_8ugA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAyMiBTYWx0ZWRfX3/KYNw2nye67
+ RjPXL4u0mUOsmV+E4AtWRvTlKjjgACWD0905oVurAdGpWzwlTe9FXbVQlQzWV4kUEYji4dVjmlR
+ BEkv3U1GAYxWAn64QYfwjQn6wRGtTOO9AYTMy2FClIu3yp7+Zjd/JLM+HXuqxj1fit6j4XVikp/
+ v2aHP2KdxN8W/Fq6KOtP92pWM5h16S0JXB8PlBBLHuE2ESABVqvg9xCiAPEm0BDa2LFyx2EEIR+
+ pncCMvezEO/tZznKsF2Al+7pylKt51G3g0GWw0KUdkjBe/3qWm/gWUJcM+bqubJWxnFtCMRT00Z
+ s9ir35ywlW95JPeKd/1EiKznlucK29JOfMEO8JH6byOVbkczRwhVCDk5Cf+hanLs69Z9kcGsldX
+ IFp67+/Ru1pmstBGvB8APNnQCcu3gg==
+X-Proofpoint-ORIG-GUID: 7pExbhTlPZ5hfCrC55R04dqPB9GGFGOa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-05_04,2025-10-02_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 lowpriorityscore=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 bulkscore=0 impostorscore=0 adultscore=0 clxscore=1015
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
+ definitions=main-2510040022
 
-On Thu Oct 2, 2025 at 8:39 PM CEST, Joel Fernandes wrote:
-> Add support to PCI rust module to allocate, free and manage IRQ vectors.
-> Integrate with devres for managing the allocated resources.
->
-> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-> ---
-> Previous patch was here:
-> https://lore.kernel.org/all/20250910035415.381753-1-joelagnelf@nvidia.com=
-/
->
->  rust/kernel/pci.rs | 199 ++++++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 186 insertions(+), 13 deletions(-)
->
-> diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-> index 78271bf88cea..f97a6a36cf5e 100644
-> --- a/rust/kernel/pci.rs
-> +++ b/rust/kernel/pci.rs
-> @@ -6,8 +6,9 @@
-> =20
->  use crate::{
->      bindings, container_of, device,
-> +    device::Bound,
->      device_id::{RawDeviceId, RawDeviceIdIndex},
-> -    devres::Devres,
-> +    devres::{self, Devres},
->      driver,
->      error::{from_result, to_result, Result},
->      io::{Io, IoRaw},
-> @@ -19,7 +20,7 @@
->  };
->  use core::{
->      marker::PhantomData,
-> -    ops::Deref,
-> +    ops::{Deref, RangeInclusive},
->      ptr::{addr_of_mut, NonNull},
->  };
->  use kernel::prelude::*;
-> @@ -28,6 +29,59 @@
-> =20
->  pub use self::id::{Class, ClassMask, Vendor};
-> =20
-> +/// IRQ type flags for PCI interrupt allocation.
-> +#[derive(Debug, Clone, Copy)]
-> +pub enum IrqType {
-> +    /// Legacy INTx interrupts
-> +    Legacy,
+On Sat, Oct 04, 2025 at 01:19:32AM +0800, Zorro Lang wrote:
+> On Thu, Oct 02, 2025 at 11:26:45PM +0530, Ojaswin Mujoo wrote:
+> > On Sun, Sep 28, 2025 at 09:19:24PM +0800, Zorro Lang wrote:
+> > > On Fri, Sep 19, 2025 at 12:17:57PM +0530, Ojaswin Mujoo wrote:
+> > > > Implement atomic write support to help fuzz atomic writes
+> > > > with fsx.
+> > > > 
+> > > > Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> > > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> > > > Reviewed-by: John Garry <john.g.garry@oracle.com>
+> > > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > > > ---
+> > > 
+> > > Hmm... this patch causes more regular fsx test cases fail on old kernel,
+> > > (e.g. g/760, g/617, g/263 ...) except set "FSX_AVOID=-a". Is there a way
+> > > to disable "atomic write" automatically if it's not supported by current
+> > > system?
+> > 
+> > Hi Zorro, 
+> > Sorry for being late, I've been on vacation this week.
+> > 
+> > Yes so by design we should be automatically disabling atomic writes when
+> > they are not supported by the stack but seems like the issue is that
+> > when we do disable it we print some extra messages to stdout/err which
+> > show up in the xfstests output causing failure.
+> > 
+> > I can think of 2 ways around this:
+> > 
+> > 1. Don't print anything and just silently drop atomic writes if stack
+> > doesn't support them.
+> > 
+> > 2. Make atomic writes as a default off instead of default on feature but
+> > his loses a bit of coverage as existing tests wont get atomic write
+> > testing free of cost any more.
+> 
+> Hi Ojaswin,
+> 
+> Please have a nice vacation :)
+> 
+> It's not the "extra messages" cause failure, those "quiet" failures can be fixed
+> by:
 
-Like Bjorn said, I'd go with INTx too, also given that the C define is
-PCI_IRQ_INTX.
+Oh okay got it.
 
-> +    /// Message Signaled Interrupts (MSI)
-> +    Msi,
-> +    /// Extended Message Signaled Interrupts (MSI-X)
-> +    MsiX,
-> +}
-> +
-> +impl IrqType {
-> +    /// Convert to the corresponding kernel flags
-
-Please end with a period, here and in multiple other places.
-
-> +    const fn as_raw(self) -> u32 {
-> +        match self {
-> +            IrqType::Legacy =3D> bindings::PCI_IRQ_INTX,
-> +            IrqType::Msi =3D> bindings::PCI_IRQ_MSI,
-> +            IrqType::MsiX =3D> bindings::PCI_IRQ_MSIX,
-> +        }
-> +    }
-> +}
-> +
-> +/// Set of IRQ types that can be used for PCI interrupt allocation.
-> +#[derive(Debug, Clone, Copy, Default)]
-> +pub struct IrqTypes(u32);
-> +
-> +impl IrqTypes {
-> +    /// Create a set containing all IRQ types (MSI-X, MSI, and Legacy)
-> +    pub const fn all() -> Self {
-> +        Self(bindings::PCI_IRQ_ALL_TYPES)
-> +    }
-> +
-> +    /// Build a set of IRQ types
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```ignore
-> +    /// // Create a set with only MSI and MSI-X (no legacy interrupts)
-> +    /// let msi_only =3D IrqTypes::default()
-> +    ///     .with(IrqType::Msi)
-> +    ///     .with(IrqType::MsiX);
-> +    /// ```
-> +    pub const fn with(mut self, irq_type: IrqType) -> Self {
-> +        self.0 |=3D irq_type.as_raw();
-> +        self
-
-NIT: I'd probably write this as:
-=09
-	Self(self.0 | irq_type.as_raw())
-
-> +    }
-> +
-> +    /// Get the raw flags value
-> +    const fn as_raw(self) -> u32 {
-> +        self.0
-> +    }
-> +}
-> +
->  /// An adapter for the registration of PCI drivers.
->  pub struct Adapter<T: Driver>(T);
-> =20
-> @@ -516,6 +570,76 @@ pub fn pci_class(&self) -> Class {
->      }
+> 
+> diff --git a/ltp/fsx.c b/ltp/fsx.c
+> index bdb87ca90..0a035b37b 100644
+> --- a/ltp/fsx.c
+> +++ b/ltp/fsx.c
+> @@ -1847,8 +1847,9 @@ int test_atomic_writes(void) {
+>         struct statx stx;
+>  
+>         if (o_direct != O_DIRECT) {
+> -               fprintf(stderr, "main: atomic writes need O_DIRECT (-Z), "
+> -                               "disabling!\n");
+> +               if (!quiet)
+> +                       fprintf(stderr, "main: atomic writes need O_DIRECT (-Z), "
+> +                                       "disabling!\n");
+>                 return 0;
+>         }
+>  
+> @@ -1867,8 +1868,9 @@ int test_atomic_writes(void) {
+>                 return 1;
+>         }
+>  
+> -       fprintf(stderr, "main: IO Stack does not support "
+> -                       "atomic writes, disabling!\n");
+> +       if (!quiet)
+> +               fprintf(stderr, "main: IO Stack does not support "
+> +                               "atomic writes, disabling!\n");
+>         return 0;
 >  }
-> =20
-> +/// Represents an allocated IRQ vector for a specific PCI device.
-> +///
-> +/// This type ties an IRQ vector to the device it was allocated for,
-> +/// ensuring the vector is only used with the correct device.
-> +#[derive(Clone, Copy)]
-> +pub struct IrqVector<'a> {
-> +    dev: &'a Device<Bound>,
-> +    index: u32,
-> +}
-> +
-> +impl<'a> IrqVector<'a> {
-> +    /// Creates a new `IrqVector` for the given device and index.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// - `index` must be a valid IRQ vector index for `dev`.
-> +    unsafe fn new(dev: &'a Device<Bound>, index: u32) -> Self {
-> +        Self { dev, index }
-> +    }
-> +
-> +    /// Returns the raw vector index.
-> +    fn index(&self) -> u32 {
-> +        self.index
-> +    }
-> +}
-> +
-> +/// Represents an IRQ vector allocation for a PCI device.
-> +///
-> +/// This type ensures that IRQ vectors are properly allocated and freed =
-by
-> +/// tying the allocation to the lifetime of this registration object.
-> +struct IrqVectorRegistration {
-> +    dev: ARef<Device>,
-> +}
-> +
-> +impl IrqVectorRegistration {
-> +    /// Allocate IRQ vectors for the given PCI device.
-> +    ///
-> +    /// Returns the registration object and a range of valid IRQ vectors=
-.
-> +    fn new<'a>(
-> +        dev: &'a Device<Bound>,
-> +        min_vecs: u32,
-> +        max_vecs: u32,
-> +        irq_types: IrqTypes,
-> +    ) -> Result<(Self, RangeInclusive<IrqVector<'a>>)> {
-> +        // SAFETY: `dev.as_raw()` is guaranteed to be a valid pointer to=
- a `struct pci_dev`
-> +        // by the type invariant of `Device`.
-> +        // `pci_alloc_irq_vectors` internally validates all parameters a=
-nd returns error codes.
 
-"all other parameters"?
+> 
+> But I hit more read or write failures e.g. [1], this failure can't be
+> reproduced with FSX_AVOID=-a. Is it a atomic write bug or an unexpected
+> test failure?
+> 
+> Thanks,
+> Zorro
+> 
 
-Please also format multiple statements in a safety comment as list.
+<...>
 
-> +        let ret =3D unsafe {
-> +            bindings::pci_alloc_irq_vectors(dev.as_raw(), min_vecs, max_=
-vecs, irq_types.as_raw())
-> +        };
-> +
-> +        to_result(ret)?;
-> +        let count =3D ret as u32;
-> +
-> +        // SAFETY: Vectors are 0-based, so valid indices are [0, count-1=
-].
-> +        // pci_alloc_irq_vectors guarantees count >=3D min_vecs > 0, so =
-count - 1 is valid.
+> +244(244 mod 256): SKIPPED (no operation)
+> +245(245 mod 256): FALLOC   0x695c5 thru 0x6a2e6	(0xd21 bytes) INTERIOR
+> +246(246 mod 256): MAPWRITE 0x5ac00 thru 0x5b185	(0x586 bytes)
+> +247(247 mod 256): WRITE    0x31200 thru 0x313ff	(0x200 bytes)
+> +248(248 mod 256): SKIPPED (no operation)
+> +249(249 mod 256): TRUNCATE DOWN	from 0x78242 to 0xf200	******WWWW
+> +250(250 mod 256): FALLOC   0x65000 thru 0x66f26	(0x1f26 bytes) PAST_EOF
+> +251(251 mod 256): WRITE    0x45400 thru 0x467ff	(0x1400 bytes) HOLE	***WWWW
+> +252(252 mod 256): SKIPPED (no operation)
+> +253(253 mod 256): SKIPPED (no operation)
+> +254(254 mod 256): MAPWRITE 0x4be00 thru 0x4daee	(0x1cef bytes)
+> +255(255 mod 256): MAPREAD  0xc000 thru 0xcae9	(0xaea bytes)
+> +256(  0 mod 256): READ     0x3e000 thru 0x3efff	(0x1000 bytes)
+> +257(  1 mod 256): SKIPPED (no operation)
+> +258(  2 mod 256): INSERT 0x45000 thru 0x45fff	(0x1000 bytes)
+> +259(  3 mod 256): ZERO     0x1d7d5 thru 0x1f399	(0x1bc5 bytes)	******ZZZZ
+> +260(  4 mod 256): TRUNCATE DOWN	from 0x4eaef to 0x11200	******WWWW
+> +261(  5 mod 256): WRITE    0x43000 thru 0x43fff	(0x1000 bytes) HOLE	***WWWW
+> +262(  6 mod 256): WRITE    0x2200 thru 0x31ff	(0x1000 bytes)
+> +263(  7 mod 256): WRITE    0x15000 thru 0x15fff	(0x1000 bytes)
+> +264(  8 mod 256): WRITE    0x2e400 thru 0x2e7ff	(0x400 bytes)
+> +265(  9 mod 256): COPY 0xd000 thru 0xdfff	(0x1000 bytes) to 0x1d800 thru 0x1e7ff	******EEEE
+> +266( 10 mod 256): CLONE 0x2a000 thru 0x2afff	(0x1000 bytes) to 0x21000 thru 0x21fff
+> +267( 11 mod 256): MAPREAD  0x31000 thru 0x31d0a	(0xd0b bytes)
+> +268( 12 mod 256): SKIPPED (no operation)
+> +269( 13 mod 256): WRITE    0x25000 thru 0x25fff	(0x1000 bytes)
+> +270( 14 mod 256): SKIPPED (no operation)
+> +271( 15 mod 256): MAPREAD  0x30000 thru 0x30577	(0x578 bytes)
+> +272( 16 mod 256): PUNCH    0x1a267 thru 0x1c093	(0x1e2d bytes)
+> +273( 17 mod 256): MAPREAD  0x1f000 thru 0x1f9c9	(0x9ca bytes)
+> +274( 18 mod 256): WRITE    0x40800 thru 0x40dff	(0x600 bytes)
+> +275( 19 mod 256): SKIPPED (no operation)
+> +276( 20 mod 256): MAPWRITE 0x20600 thru 0x22115	(0x1b16 bytes)
+> +277( 21 mod 256): MAPWRITE 0x3d000 thru 0x3ee5a	(0x1e5b bytes)
+> +278( 22 mod 256): WRITE    0x2ee00 thru 0x2efff	(0x200 bytes)
+> +279( 23 mod 256): WRITE    0x76200 thru 0x769ff	(0x800 bytes) HOLE
+> +280( 24 mod 256): SKIPPED (no operation)
+> +281( 25 mod 256): SKIPPED (no operation)
+> +282( 26 mod 256): MAPREAD  0xa000 thru 0xa5e7	(0x5e8 bytes)
+> +283( 27 mod 256): SKIPPED (no operation)
+> +284( 28 mod 256): SKIPPED (no operation)
+> +285( 29 mod 256): SKIPPED (no operation)
+> +286( 30 mod 256): SKIPPED (no operation)
+> +287( 31 mod 256): COLLAPSE 0x11000 thru 0x11fff	(0x1000 bytes)
+> +288( 32 mod 256): COPY 0x5d000 thru 0x5dfff	(0x1000 bytes) to 0x4ca00 thru 0x4d9ff
+> +289( 33 mod 256): TRUNCATE DOWN	from 0x75a00 to 0x1e400
+> +290( 34 mod 256): MAPREAD  0x1c000 thru 0x1d802	(0x1803 bytes)	***RRRR***
+> +Log of operations saved to "/mnt/xfstests/test/junk.fsxops"; replay with --replay-ops
+> +Correct content saved for comparison
+> +(maybe hexdump "/mnt/xfstests/test/junk" vs "/mnt/xfstests/test/junk.fsxgood")
+> 
+> Thanks,
+> Zorro
 
-This is a justification why the range makes sense (which makes sense to kee=
-p as
-a separate comment), but it doesn't justify the safety requirement of
-IrqVector::new().
+Hi Zorro, just to confirm is this on an older kernel that doesnt support
+RWF_ATOMIC or on a kernle that does support it.
 
-> +        let range =3D unsafe { IrqVector::new(dev, 0)..=3DIrqVector::new=
-(dev, count - 1) };
-> +
-> +        Ok((Self { dev: dev.into() }, range))
-> +    }
-> +}
-> +
-> +impl Drop for IrqVectorRegistration {
-> +    fn drop(&mut self) {
-> +        // SAFETY: `self.dev` is a valid ARef to a `struct pci_dev` that=
- has successfully
-> +        // allocated IRQ vectors.
-
-The "successfully allocated IRQ vectors" part should be a type invariant.
-
-NIT: s/ARef/`ARef`/
-
-> +        unsafe { bindings::pci_free_irq_vectors(self.dev.as_raw()) };
-> +    }
-> +}
-
-<snip>
-
-> +    /// Allocate IRQ vectors for this PCI device with automatic cleanup.
-> +    ///
-> +    /// Allocates between `min_vecs` and `max_vecs` interrupt vectors fo=
-r the device.
-> +    /// The allocation will use MSI-X, MSI, or legacy interrupts based o=
-n the `irq_types`
-> +    /// parameter and hardware capabilities. When multiple types are spe=
-cified, the kernel
-> +    /// will try them in order of preference: MSI-X first, then MSI, the=
-n legacy interrupts.
-> +    ///
-> +    /// The allocated vectors are automatically freed when the device is=
- unbound, using the
-> +    /// devres (device resource management) system.
-> +    ///
-> +    /// # Arguments
-> +    ///
-> +    /// * `min_vecs` - Minimum number of vectors required
-> +    /// * `max_vecs` - Maximum number of vectors to allocate
-> +    /// * `irq_types` - Types of interrupts that can be used
-> +    ///
-> +    /// # Returns
-> +    ///
-> +    /// Returns a range of IRQ vectors that were successfully allocated,=
- or an error if the
-> +    /// allocation fails or cannot meet the minimum requirement.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```ignore
-> +    /// // Allocate using any available interrupt type in the order ment=
-ioned above.
-> +    /// let vectors =3D dev.alloc_irq_vectors(1, 32, IrqTypes::all())?;
-> +    ///
-> +    /// // Allocate MSI or MSI-X only (no legacy interrupts)
-> +    /// let msi_only =3D IrqTypes::default()
-> +    ///     .with(IrqType::Msi)
-> +    ///     .with(IrqType::MsiX);
-> +    /// let vectors =3D dev.alloc_irq_vectors(4, 16, msi_only)?;
-> +    /// ```
-> +    pub fn alloc_irq_vectors(
-> +        &self,
-> +        min_vecs: u32,
-> +        max_vecs: u32,
-> +        irq_types: IrqTypes,
-> +    ) -> Result<RangeInclusive<IrqVector<'_>>> {
-> +        let (irq_vecs, range) =3D IrqVectorRegistration::new(self, min_v=
-ecs, max_vecs, irq_types)?;
-> +
-> +        devres::register(self.as_ref(), irq_vecs, GFP_KERNEL)?;
-
-If we move the call to devres::register() into IrqVectorRegistration::new()
-(which I'd call IrqVectorRegistration::register() then) we can enforce the
-guarantee that an IrqVectorRegistration must not out-live the device / driv=
-er
-binding internally.
-
-> +        Ok(range)
-> +    }
->  }
+Regards,
+ojaswin
 
