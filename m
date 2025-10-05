@@ -1,210 +1,186 @@
-Return-Path: <linux-kernel+bounces-842438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8335BBB9CBE
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 21:51:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D8B0BB9CC6
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 21:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2503218942BB
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 19:52:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 552DD18926FD
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 19:59:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC741DF73A;
-	Sun,  5 Oct 2025 19:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6731E570D;
+	Sun,  5 Oct 2025 19:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="fiiHV27q"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="iCmTayLk"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCE6273FD;
-	Sun,  5 Oct 2025 19:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014121D63C5;
+	Sun,  5 Oct 2025 19:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759693911; cv=none; b=M1oCzkx5TJezZBwduah1irqmjQKPO/nxDgur3dOKACskOx8Bs88tWQOhW57g3uF9vD602Zi76uQNCk1VmrIY0gH4kt11ky759pSKGZNanVqRKoi2snCKRfinocWhN3S4IDa8OZ30Bd+w5hgYUdAHXs7bfzzZmsgsoZ5rraceNJQ=
+	t=1759694324; cv=none; b=SUVfxz4VfXBzyieyV5GKwkKKhbeSMeUde8jPU1nKKPDu0igHpIqeJuk9tgYRgoIBXWd9bbZ23CzQz3DcTemXIhyeSGJUTRETdrod5njmIvjFBHd2UzMQcZkUs8r04WV6p9qZp/rcL5w4XUZKdWO2ACxKTAbGZjOoFeVi3sJ6pok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759693911; c=relaxed/simple;
-	bh=VtXUhOxZN4989b8+PrAq6TYdMN4QXIW8KGlCJyeulsk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rqi/qSHpRQnJikuBFChfRonU3+1xztiv0FVaIVq7AsDMhU/ozUn3o41PFCt1lK9QAX8bs18lENk5WpVNzWZHJnClI2ICLQxSJoBwlAi+WccZBeZCUNCapKxhLNMK3MOfDBKzmGXXf+e8aKgE189W1a+46ii8cP3hTY/EKkhwUc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=fiiHV27q; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1759693906; x=1760298706; i=deller@gmx.de;
-	bh=nt5tkux+e+yUs8Sl0cKCutBI53eY5AUY8ghPdaW2iMA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=fiiHV27qaeaS4g5h2l4DtxTrpMzmu/LXpvLrTK/0fFEYnBvpyUb7UtzFvtQ3+b6r
-	 ukTwSXkW4SfkTYT+pORYLuryW31Z6ynvu/AQR0UnfcnDsWGId3oFiscj2zUAq8uzg
-	 dqO6guhi1C+8hgOR3tGj8YtsgKxb9mz6ij9qIOmRA3mNerbifw9DnvZvOl/Sz4qUd
-	 jfcVtvGhN4c3r5s0gjn2qEFUjsbk8RUQcTARHFNYPrCWQsDmyqXYVXe0Tq5YQ/Vy2
-	 ui2ausOperkYr4b/80y1GyjxTabcr0+Hi38XKLLcoms+rijSow78eZi9SR4pO187A
-	 4BOc/d4nhJxop1IdTA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.55] ([109.250.50.59]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MJmGP-1uqIKx349Z-00Kh2t; Sun, 05
- Oct 2025 21:51:46 +0200
-Message-ID: <8909158b-5175-43f6-981e-da3228e0821b@gmx.de>
-Date: Sun, 5 Oct 2025 21:51:45 +0200
+	s=arc-20240116; t=1759694324; c=relaxed/simple;
+	bh=hcHoPuDASvo7L4YoQIIOIVa3he8Xm/yVQ4dMNyufHBc=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=rnkPBA3fT+RlByJAsC2QgT3VS4WSYijxLgoacRD4zvJ+VtPFklh45Tdkc2Ev1tOU+5rFoVvqCCRLlaDfUl6tIpWFd+vdoHKLG7C9Q4EBwLm5a9/GMyksjE7A7YB/l6p89isV1EWqh40TFA70Enzggepeq7jGbWOBP+R+IHsuFdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=iCmTayLk; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4FAC2C7A;
+	Sun,  5 Oct 2025 21:57:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1759694227;
+	bh=hcHoPuDASvo7L4YoQIIOIVa3he8Xm/yVQ4dMNyufHBc=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=iCmTayLk9hIK6HaDN+pHYnMRTzULWpiRwz3JYNchd6BO+xgXcfVn6F0CSlrGEllD9
+	 fwh9DuqvY6G8pCw19T95Y1+RcCXtluAHVUayaru6DSDgM3+kiXE5vmSPuta2LiaxSr
+	 s6Zng1KSRWC6QEUi+4KWXEhkade0a+mir4xuTmis=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fbdev: mb862xxfbdrv: Make CONFIG_FB_DEVICE optional
-To: Javier Garcia <rampxxxx@gmail.com>, u.kleine-koenig@baylibre.com,
- tzimmermann@suse.de
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, shuah@kernel.org
-References: <20251005173812.1169436-1-rampxxxx@gmail.com>
-Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- xsFNBF3Ia3MBEAD3nmWzMgQByYAWnb9cNqspnkb2GLVKzhoH2QD4eRpyDLA/3smlClbeKkWT
- HLnjgkbPFDmcmCz5V0Wv1mKYRClAHPCIBIJgyICqqUZo2qGmKstUx3pFAiztlXBANpRECgwJ
- r+8w6mkccOM9GhoPU0vMaD/UVJcJQzvrxVHO8EHS36aUkjKd6cOpdVbCt3qx8cEhCmaFEO6u
- CL+k5AZQoABbFQEBocZE1/lSYzaHkcHrjn4cQjc3CffXnUVYwlo8EYOtAHgMDC39s9a7S90L
- 69l6G73lYBD/Br5lnDPlG6dKfGFZZpQ1h8/x+Qz366Ojfq9MuuRJg7ZQpe6foiOtqwKym/zV
- dVvSdOOc5sHSpfwu5+BVAAyBd6hw4NddlAQUjHSRs3zJ9OfrEx2d3mIfXZ7+pMhZ7qX0Axlq
- Lq+B5cfLpzkPAgKn11tfXFxP+hcPHIts0bnDz4EEp+HraW+oRCH2m57Y9zhcJTOJaLw4YpTY
- GRUlF076vZ2Hz/xMEvIJddRGId7UXZgH9a32NDf+BUjWEZvFt1wFSW1r7zb7oGCwZMy2LI/G
- aHQv/N0NeFMd28z+deyxd0k1CGefHJuJcOJDVtcE1rGQ43aDhWSpXvXKDj42vFD2We6uIo9D
- 1VNre2+uAxFzqqf026H6cH8hin9Vnx7p3uq3Dka/Y/qmRFnKVQARAQABzRxIZWxnZSBEZWxs
- ZXIgPGRlbGxlckBnbXguZGU+wsGRBBMBCAA7AhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheA
- FiEERUSCKCzZENvvPSX4Pl89BKeiRgMFAl3J1zsCGQEACgkQPl89BKeiRgNK7xAAg6kJTPje
- uBm9PJTUxXaoaLJFXbYdSPfXhqX/BI9Xi2VzhwC2nSmizdFbeobQBTtRIz5LPhjk95t11q0s
- uP5htzNISPpwxiYZGKrNnXfcPlziI2bUtlz4ke34cLK6MIl1kbS0/kJBxhiXyvyTWk2JmkMi
- REjR84lCMAoJd1OM9XGFOg94BT5aLlEKFcld9qj7B4UFpma8RbRUpUWdo0omAEgrnhaKJwV8
- qt0ULaF/kyP5qbI8iA2PAvIjq73dA4LNKdMFPG7Rw8yITQ1Vi0DlDgDT2RLvKxEQC0o3C6O4
- iQq7qamsThLK0JSDRdLDnq6Phv+Yahd7sDMYuk3gIdoyczRkXzncWAYq7XTWl7nZYBVXG1D8
- gkdclsnHzEKpTQIzn/rGyZshsjL4pxVUIpw/vdfx8oNRLKj7iduf11g2kFP71e9v2PP94ik3
- Xi9oszP+fP770J0B8QM8w745BrcQm41SsILjArK+5mMHrYhM4ZFN7aipK3UXDNs3vjN+t0zi
- qErzlrxXtsX4J6nqjs/mF9frVkpv7OTAzj7pjFHv0Bu8pRm4AyW6Y5/H6jOup6nkJdP/AFDu
- 5ImdlA0jhr3iLk9s9WnjBUHyMYu+HD7qR3yhX6uWxg2oB2FWVMRLXbPEt2hRGq09rVQS7DBy
- dbZgPwou7pD8MTfQhGmDJFKm2jvOwU0EXchrcwEQAOsDQjdtPeaRt8EP2pc8tG+g9eiiX9Sh
- rX87SLSeKF6uHpEJ3VbhafIU6A7hy7RcIJnQz0hEUdXjH774B8YD3JKnAtfAyuIU2/rOGa/v
- UN4BY6U6TVIOv9piVQByBthGQh4YHhePSKtPzK9Pv/6rd8H3IWnJK/dXiUDQllkedrENXrZp
- eLUjhyp94ooo9XqRl44YqlsrSUh+BzW7wqwfmu26UjmAzIZYVCPCq5IjD96QrhLf6naY6En3
- ++tqCAWPkqKvWfRdXPOz4GK08uhcBp3jZHTVkcbo5qahVpv8Y8mzOvSIAxnIjb+cklVxjyY9
- dVlrhfKiK5L+zA2fWUreVBqLs1SjfHm5OGuQ2qqzVcMYJGH/uisJn22VXB1c48yYyGv2HUN5
- lC1JHQUV9734I5cczA2Gfo27nTHy3zANj4hy+s/q1adzvn7hMokU7OehwKrNXafFfwWVK3OG
- 1dSjWtgIv5KJi1XZk5TV6JlPZSqj4D8pUwIx3KSp0cD7xTEZATRfc47Yc+cyKcXG034tNEAc
- xZNTR1kMi9njdxc1wzM9T6pspTtA0vuD3ee94Dg+nDrH1As24uwfFLguiILPzpl0kLaPYYgB
- wumlL2nGcB6RVRRFMiAS5uOTEk+sJ/tRiQwO3K8vmaECaNJRfJC7weH+jww1Dzo0f1TP6rUa
- fTBRABEBAAHCwXYEGAEIACAWIQRFRIIoLNkQ2+89Jfg+Xz0Ep6JGAwUCXchrcwIbDAAKCRA+
- Xz0Ep6JGAxtdEAC54NQMBwjUNqBNCMsh6WrwQwbg9tkJw718QHPw43gKFSxFIYzdBzD/YMPH
- l+2fFiefvmI4uNDjlyCITGSM+T6b8cA7YAKvZhzJyJSS7pRzsIKGjhk7zADL1+PJei9p9idy
- RbmFKo0dAL+ac0t/EZULHGPuIiavWLgwYLVoUEBwz86ZtEtVmDmEsj8ryWw75ZIarNDhV74s
- BdM2ffUJk3+vWe25BPcJiaZkTuFt+xt2CdbvpZv3IPrEkp9GAKof2hHdFCRKMtgxBo8Kao6p
- Ws/Vv68FusAi94ySuZT3fp1xGWWf5+1jX4ylC//w0Rj85QihTpA2MylORUNFvH0MRJx4mlFk
- XN6G+5jIIJhG46LUucQ28+VyEDNcGL3tarnkw8ngEhAbnvMJ2RTx8vGh7PssKaGzAUmNNZiG
- MB4mPKqvDZ02j1wp7vthQcOEg08z1+XHXb8ZZKST7yTVa5P89JymGE8CBGdQaAXnqYK3/yWf
- FwRDcGV6nxanxZGKEkSHHOm8jHwvQWvPP73pvuPBEPtKGLzbgd7OOcGZWtq2hNC6cRtsRdDx
- 4TAGMCz4j238m+2mdbdhRh3iBnWT5yPFfnv/2IjFAk+sdix1Mrr+LIDF++kiekeq0yUpDdc4
- ExBy2xf6dd+tuFFBp3/VDN4U0UfG4QJ2fg19zE5Z8dS4jGIbLg==
-In-Reply-To: <20251005173812.1169436-1-rampxxxx@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:6VxOeFFnIMUyMl3dAR5gAJg2y/9clbdMIP8kILB9BLNEgZoYrZP
- vm3J9tAnLgOrGIskPUdckFRcVbM3RY+m+d9DwAgGy+kr5M6zrolk1UhOAR8AwdmQJXpdLPz
- KnJ7Z5T6wauglxB879NpRZ6+c5TJiZf2rADuGcV4Q8dbZSadxjPLM+2uxL6ITyFNNhzjHez
- EimYNou3dyyy1noa0NF4Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:KP5IyvZabq0=;IGSf9Y9gwk4esKworazr/+NqPLO
- 1LOiIJiRYCaoEU52oK33Rvh8RIqrpEvaEWobqTA0IxzTKCOj5EuL1pZNVb/rv0EOFAVUg/+k/
- dKkh1+S947k5HJeWK21zgsmwyXtS4TFGiT2gF1ehUNnTGBdu6cckW6+IOLLTVO+TOgYal53pZ
- zd+ACWPoNQwUabjJPcmNmIVG3FqsYdFuLQ/Ms9oExIgy/Uu3tsMfMSir9iMLWyk4zZuxmb+bd
- G285Vron5r/v046Sm7Ui7k/6b1jFlFcNwffUYDB3PfYWKfBwdFHgRsp80YhRsRw/6ds+MO+n9
- YP1cyGMbNLK7VtM2smunqYjljx+SXA7kKD9+WsotTPrw7cqX3D7nMb30X5VK0VX30M1Iscvt+
- 89MFP1G0p1jrCJt9dcUziH3o+pjLF4se9jVS8aepjBdnLeHt2rbTVdoTt9qeG032T81FDN2rZ
- genKRqb1PTg9NS/JpdMt/akX6bYrGugbcTC0xaa3AbSWKFmdqV+DcNLzIYJyDg6TIKHCi4x/5
- Zws9HwK41xYJenMLYOcya/lR2feWuqLaY0KygUg+PHcDf89WuSfVO0RDJfmW0fMXwaNdMJ9gZ
- lFHg76Pl66MPiRgQtMnp5VfKUQNcOVev02S4XUiN+syiHv1xCSbtGwRe9kV7q4MX4Ubk2jFCu
- xdnynXRvPQCxg7umPdxe3qb2TId0dbXexvBR+Cjk9qXjQsz0Yk6h3cjnPC5FMZ7npEcmLDgTz
- ecAfwHT8pav/CuOv79iYHb8OnYOw/uVf04/xAeiFh8ONb27bytAPz5qLSwoec3CCNnMiF9gnb
- n0Am7HFMOgdUJHjdSrxXeduQ3X2+RdVRHpZEfM2YtYx3SxziAM7ahAZ34olAOgHIHz9HHOFtU
- 7G4xT+Z6v4mLphw3ALngOyIo+bCZYVJps6wykjyjGI5dQu3jpGrXkvgg2IwglpCfNAE9N040B
- 2EP4i9svQbjK1XUY8JQ96OihNhycu6mTbkMq8X5Zk/Wm4YBc8LtqA+VN9qkrfgJYKnhq1A0TN
- i0qduDRwR5Ow6LY1KRFV4EzzzAgLDPYg9YDqtFkrf0fPguHnmgdNImOMr1d0wuZuvLaa3EF8i
- BPMln+sG0056IRm5Piw7TnlJmPmo9caklHzHyqIdIoKQoHHLevTr4h4Kl5SPQhQyAFgTyhJ5f
- HEGQxwHCDXw/LrhlcPIQ8F/r0xFDg4sbrtM8+9YbEICagpVtsiJ70XJ/v+5opP7eWmmUeyatD
- 5KGhpI8rw9ow83C32Dccpzj8up1+0DHFXgHQJcusK61G6P6BzSyAnWlrhR6pQOeC1fJAN1QeB
- xjwnSgOgVF7gL6XdjvZR7rWJrEPxvIBNMzDbVWiTbV4G+uHc5d7Iu66avlz1r9OeRGmr1JxF2
- n5Ofkbw2qtL7ZP4YsHBBxK80uvQwqEF3y6k+UDZCLH2DYjLaZbiOMp6l0i0+jJXPNf0YpJSQV
- 9M4PsGvTogusmcXa/uAZJkP6bLsQHaXzoRue9leSVFA6bvJS/BY11rX1yryWdRLFmxntQnNou
- Fd0S65CgfRuCsNN7LuAgCZpA/vc2zStyGRsHidEKOFLPAQXassGoPUiu/fFMlnq4gFhBUP4Dv
- wf1IlbCHQe/Ejx3LMBUEmLP2YrZ4nT8++BE/4EA+zRrvfCoD5u3tx+a0qSSjAi3riCp3aPXu+
- aZzHdrjENtR9rQ+K1c8+tKoqRvlq4gn1AMwSn2UHFH93vrOQPldXc6CdAmev+0DAEgNJGdvzt
- aZEz5Kx3ENh/fEFtF4gkJMAp76mdnPExC42DFQeW/UQa0UXVnr22Zo4t9C6d442SYnv6hf16E
- YiKZUv2O1cEnzpzWzhfKPIxtD6soj5OB1uwpMIeE4qUqwOUoumii9zzuIhKUHT8mkhQc/pfTn
- BM1UEDbD8U17wD4jcnhV4tcKxV3oDWYF2P9MhNMExqx8EDkXwTes7zldGPZiuoYraU5XbfH8p
- y6Lm3ZhtB6ebbhf8dZ+zwjNuNjJQKP0aECtl3525FaSZn/zm01h6NbV1dLltv5swURiQFvd8l
- AlFcEUB4sl2JSVa5oyjWa5vyyDsWaDxnF4zpBxN8rRZ8WpbcFLVGuPj7xVxpJ9zgEwVhzPGHR
- IyjjilcIftjV+/szl2o2YaaMGOthXRe7Sb9mG95uS9NhQkwGZ+3jZfLQ64l0YDpxIcUL/ny/Z
- EzRjGQqjgm8uNMuKNgwW9tHvaSqZWoAYY0+dmqJCiEdOkLq+L53XISbwB1pNXd7H9tsNRwQKS
- WPqTuIzPw7i6V90cGsPMSfsnvb8tFIgmp3EOiglIuBaHYFKS9EwxpbqjMYqfSfn9BGxa4Badh
- jWWviQKXzQofjuFRriuWCYPFdCAJB5ivYeI9z4+zTXtKV0gp2jB0/sW4MZml8c5LL7UhFaYpY
- PnGZsHJJK67o0Dttnc1H/WGTMm4maGMOMDlSzxpJcZWuQNtBz4wByXpTPDrEtNC9fsvtcT8OW
- kk8uhW4qBHpTQpLl5E38L0JbOf81frRgQXMKacgFFdHpZE0KlfxAXLuKyeA8gUrGD6tSm+Sg2
- RxVpf/pmw8Im58V3voQJ2lhSWlmNr0XgGtwIL+Z1Vw7lY2fSO9tahsVb/YNlEthmrPTOYkD2b
- sDQ2bvddzgaMumhs3nqFX6zePAdqbF1aYpG/cK+iUexPI+jM7RbCjo7g77gRYV6qUaaz8E2SZ
- vm9+4T9Zg4p4+oGkXn1e7ThmzfH3OYpZhk7n87W8HSz+4dW+jJjBLS3dwz3WfycHXhAxScljE
- 4Xg4HnOqLS8FTKgmfJT7GvsGY6pCph/miTpKEmWp8OF7vAP97Ya+Jfd3SgKINmPZrc5eqmxM6
- 2PtI9EcTKskFp1nyJ9CsnJIU/6oQv7HqdYVGg5GOvjAizICyxbgUbqDqvxgqLH3Oa/XAsabvT
- jgCaRwfQZPKVraBfS/cTNEDOVA5xgbQ5wHxmuIOf4BsIS5VTolMF1juUcYowvMZP3aYpMVuxP
- QBa7heQkghAbQ3kHLHxCXFrUB2lgRScM8q3iSEUn8t0+bbJNHgb8U0sRg/MQlYtomSAckmKVN
- Df3rdxcqgizCk6dMK0/J3pl9kn8FbEl750HolvlLTcPltVCRFVPouA/k4cbRdtoUxX1PSdUj1
- POI4D1y71ADlaHza9L5vf9xloVeADb1O7AuY84X+ClaEfpFFIJ26tQhveakLJYRNrcfgPTUUS
- 64+gBDyD3c/dPu2qr6npsaUuIXdds6WPztbFeUEoumUlHEhGNQAuohvjgL5sLKNaX03Y6v65Z
- Cfv66UuisWihv7fNRl68cU3/VT7ldFVPO/EIfKtN/gavqJipoh2ptgBr+oKN2tqV2RPAStiVA
- CoZMcm3L6cv0rez48MeNpjW3eWpOaUUjLRV11Yzyi7dNu/BCeyqxMojCajt1KgxNZ4YsHzSUD
- 2umAu2YSY37YaCR82E0o0daxTa2w5bwdkP8PuW8BwVO4QBJbApZrzFyJPAD4RGm4NSJx8db8V
- T8JgAg3//Aufrg0BBewQktx+zaZginqS3K0Tj2C33JhFHm1nNMvZV3gbgj9d4WsuxaDudhrqi
- BrBg1RxAtneSXFgza5sxh7NIzNqJ27HvRHmd7UsUuK45hQy+XnKTyboxw/zAFb55yCmZZ2NF/
- aBMHex3A/x7kgRj2f61NHyu0l1mhI19MQdJLWo3iKTXClII3maDO31QndkXfEIus7EIEP6o3h
- 7qMOYcARbDjo3DGSdJ0fgsCeOtINq+4nuBXBLkmAOgDou3ViexI7FM8R3hgeL0oh2sayMXcVL
- qG6O5H4ymCvVGJWHfp2KDwQ+o8VlVHeBDbQluTRu+0EQWlWeyvtqQUS7VrLJZIsEOoMibqSj1
- ySMFoz0ZocgfnVZlrl4jSguFI8aRW35CsXr27r9BgoTPYdv0pavtIU5dViPU55/TtPrJC76AX
- gC6EaF/VyzfpytKaURnB3mmv1RFb+41fJ/XvQ8OkVG7zdMqkH+l0ICK6Eg/pskp3CQq4W7kI5
- d5inylOWgXxEticJvFKvBTeeIAtoi8NG7C8twBh8nCS//SnPWlDTDNgW9PBl7lijlDxNkeAZd
- V4cUohxE2qltQu56LAY6bX+Dj+QB6TLzNTm68LMMfV4CDjFGLflLvhVYjrNSSuaTxeQ01BgCR
- Rp1hx4WK3zGq0Im8NPOcQETvlmrWtDu9GxHLohUxEJAlz0WO9a/mNLTKEjsfHtsbrGY92S4iG
- DuOG7Asdfq27xxSlQMqSSQCP6Hi1EH3Ob0nmVILio/jAwURJkP3EC616rGOvENOFQimKgvnyS
- UG2cUJQGzV1ZgSMeWWTP80FU9gMJ9J51HR1FYWZrXayTUKE5Fg9/Bf+VFJ0UzeuqXpa9On9Vk
- ZJB8qSpdjK4qZmnttsJfydWt4xZ0nKxmh83OKX0xjC/fFdxwTav0eiqL7TnMXckAjRH0g+2KJ
- CNz+G8f6hdM0p1MPzxx8JrdUe/OxSk6qqOyD6jeB+uZC30kaC5CdwhnLk2AxS1v3H61MGOu5g
- KCjNEbVS1bnroxqyhzlwQ4p5nn+2L8mT+ncoX4J1UQ4s+uiJ2UF/HnxGfQYTnCpSLT7D/0JfS
- CjMN/ANYcZlqOVPQjXbHsU1VtM/s1IvGFx1g7Q1rVG1z29tjrAIZK5JdeZ+SD+A+FGd001kGc
- p/o8ZyFguyaOSZ/Yk7OKo/TC5u55TSFonXja6/RMfbeGx0lt7Nt8H0jxZdIWnH5OwrRDRFhqc
- OdRihPdMF9eNzGeg4x8OxpNxjBOfAQdk1fO4hA+xnTyHeZB1JxVXPY2zZpWKYAwiqiuw/p/BK
- E3Iv5AiaqFEnQ8JTjI9WZYUWaBbYN39insywkcg+PWS//wcGgE0u735LqcfmjF2W/pZEzEm06
- aie11LL98/cd5wV++jly4eNVyoCtbqITq6KhLwD5/xg3EX76JDZEBVfWXLCKRWQbDyuYGOIAk
- Xkx/ZXavWc3UYRHxLUL6nbOmF8QvIMjc4oDU9cVJh188xP4Waia45cmE8ouA3CnrGgjyYr08Y
- wgPL6r5Ztw145l2See+ZnpZB+fByXfqmAbaMpsed5dAF3Hat+hUzE7XEwpllXp2zhSpg2YMpH
- S71H94/EDizCED3R2IUnYDJz8g=
+In-Reply-To: <20251005180025.69602-1-asmirnou@pinefeat.co.uk>
+References: <175967476560.756374.10666787102940352317@ping.linuxembedded.co.uk> <20251005180025.69602-1-asmirnou@pinefeat.co.uk>
+Subject: Re: [PATCH v5 2/2] media: i2c: Pinefeat cef168 lens control board driver
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: asmirnou@pinefeat.co.uk, conor+dt@kernel.org, devicetree@vger.kernel.org, hverkuil@xs4all.nl, jacopo.mondi@ideasonboard.com, krzk+dt@kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, mchehab@kernel.org, robh@kernel.org
+To: Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>
+Date: Sun, 05 Oct 2025 20:58:36 +0100
+Message-ID: <175969431602.1246375.2429212814766056041@ping.linuxembedded.co.uk>
+User-Agent: alot/0.9.1
 
-On 10/5/25 19:38, Javier Garcia wrote:
-> This patch wraps the relevant code blocks with #ifdef CONFIG_FB_DEVICE,
-> allowing the driver to be built and used even if CONFIG_FB_DEVICE is not=
- selected.
+Quoting Aliaksandr Smirnou (2025-10-05 19:00:25)
+> Hi Kieran,
 >=20
-> The sysfs only give access to show some controller and cursor registers =
-so
-> it's not needed to allow driver works correctly.
+> On Sun, 05 Oct 2025 15:32:45 +0100, Kieran Bingham wrote:
+> > I'm really looking forward to trying this device out sometime. Very
+> > interesting piece of kit - Thank you for working directly to upstream
+> > the support! That's really awesome.
 >=20
-> Signed-off-by: Javier Garcia <rampxxxx@gmail.com>
-> ---
->   drivers/video/fbdev/mb862xx/mb862xxfbdrv.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
+> Thanks! I appreciate that. It's been interesting work, and it's great
+> to see the device getting some attention. I'm looking forward to hearing
+> your impressions once you get a chance to try it out.
+>=20
+> > > +  rx_data->focus_distance_min =3D le16_to_cpup((__le16 *)&rx_data->f=
+ocus_distance_min);
+> > > +  rx_data->focus_distance_max =3D le16_to_cpup((__le16 *)&rx_data->f=
+ocus_distance_max);
+> >
+> > What is the focus distance in this case? Is it a measured distance that
+> > could be applied to focus?
+>=20
+> The focus distance reported by the lens is the distance between the
+> camera's sensor and the subject currently in focus, measured in meters.
+> It correlates with the focus position - higher positions correspond to
+> greater distances - but the relationship is non-linear.
 
-applied.
+What's measuring this distance ? Something in the lens, rather than the
+sensor?
 
-Thanks!
-Helge
+>=20
+> Libcamera's autofocus algorithm works in dioptres, which are the inverse
+> of distance. In the driver, reading the distance from the lens allows
+> the creation of a piecewise linear (PWL) function that maps inverse
+> distance to the hardware lens setting.
+>=20
+> > > +       case CEF168_V4L2_CID_CUSTOM(calibrate):
+> > > +               return cef168_i2c_write(dev, INP_CALIBRATE, 0);
+> >=20
+> > Is there any documentation on how to use this control?
+>=20
+> The control performs a calibration action operated by the controller
+> to determine the total number of focus steps. The action is invoked
+> by the calibration utility, which moves the lens, reads the changing
+> focus distance, and finally generates a PWL function to be included
+> in the Libcamera tuning file.
+>=20
+> End users are not expected to trigger this control manually through
+> the V4L2 API, as it is intended for use by the calibration tool during
+> system setup. For this reason, separate user-facing documentation for
+> the control has not been added.
+>=20
+> In other use cases, calibration can be performed simply by toggling
+> the AF/MF switch on the lens three times within 15 seconds.
+>=20
+> > > +       case CEF168_V4L2_CID_CUSTOM(focus_range):
+> > > +               ctrl->p_new.p_u32[0] =3D ((u32)data.focus_position_mi=
+n << 16) |
+> > > +                                      (u32)data.focus_position_max;
+> >=20
+> > Is this really a custom control ? Is there any way to convey this
+> > through the min/max of the FOCUS_ABSOLUTE control ?
+>=20
+> We aimed to minimize the use of custom controls, but in this case one
+> is necessary.
+>=20
+> When the driver is already loaded and initialized, the focus range of
+> the lens may vary depending on the lens state and configuration
+> options. Because the control's operational range is defined during
+> driver probe, the Linux V4L2 API does not allow the minimum and
+> maximum values to be changed while the driver is running.
+
+Have you tried with __v4l2_ctrl_modify_range() ?
+
+We should make sure this also generates an event that libcamera can
+subscribe to to make sure it knows there's been an update.
+
+
+> The maximum focus position is not known until calibration is
+> performed, so initially the position is set to zero. The focus range
+> may vary slightly between calibration runs, as it is derived from
+> counting motor steps, and its precision depends on the lens's focusing
+> mechanics.
+>=20
+> Additionally, some lenses provide a two-position switch that changes
+> the minimum focusing distance, significantly reducing the focus range
+>  - for example, from 2100 to 800.
+
+I see, so a user interaction can update it too. Does the driver have to
+poll to get this update? Or does it just find out on the next read ?
+
+>=20
+> > > +       case CEF168_V4L2_CID_CUSTOM(lens_id):
+> > > +               ctrl->p_new.p_u8[0] =3D data.lens_id;
+> > > +               return 0;
+> >=20
+> > Is this a specific individual ID value for the connected lens (i.e.
+> > every lens has a custom id?) or is it a reference to the lens
+> > model/type?
+> >=20
+> > Is this something we could use in libcamera for instance to select an
+> > appropriate tuning file per lens (type) ?
+>=20
+> It represents the ID of the lens model/type. Correct, it's purpose to
+> assist in selecting the appropriate autofocus algorithm settings.
+
+We're also pushing for a core control for this I think. That's something
+we 'need' in libcamera globally for all cameras. Unfortunately I can't
+point you at an existing control yet ;-(
+
+
+> For calibrated lenses, the controller stores the focus range in EEPROM,
+> allowing lenses to be swapped without repeating calibration. The
+> Libcamera tuning file includes an autofocus algorithm section that is
+> linked to the lens's focus range, focus distance, and focusing speed.
+> Therefore, reading the lens ID when loading the corresponding tuning
+> file after a lens swap is both convenient and necessary.
+>=20
+> It can be read as follows:
+>=20
+> v4l2-ctl -d /dev/v4l-subdev3 -C lens_id
+
+I'll see if I can find time to order a kit, and get a compatible lens. I
+have a Nikon DSLR though so I don't have lenses to match this yet :-(
+
+--
+Kieran
 
