@@ -1,106 +1,73 @@
-Return-Path: <linux-kernel+bounces-842222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29C5FBB9428
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 07:40:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF660BB942D
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 08:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 986CD18987EE
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 05:40:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8876E1896EBD
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 06:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F651E260C;
-	Sun,  5 Oct 2025 05:39:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E93F1DF247;
+	Sun,  5 Oct 2025 06:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VuB3jYPK"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="elHc3QSx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE6415ECCC;
-	Sun,  5 Oct 2025 05:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B080C13AF2
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 06:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759642796; cv=none; b=nrfUELzevJM2SIeGdKAGxetB6qI9I1/EF6/kvCZ3q0HFrWt6rrpU3C1xvXnVClYvDLJ/4VoeeQ+BNDfcOn+9vzyLwDeHx9/NWmWSY6nOuLknBJV6M9ZhOQkGWOiLRIYet6cfG4sU1y1bV9rzDcrApXKPcHzhzpBZiYsu0ee4qck=
+	t=1759645464; cv=none; b=QtEyPZ3kKdwai7rz7Aq6tX6zDHVMBoKbOknsPACiDciF1Vb/o2RzOR3lH6z2eghoza2OPat/QkAcrk8OHv+QLE5Vpvjmv8KB9HnqlM+5B5OGEvk/Bk3gx1/UmPoJThOJaqRWaEACsl9bwErOICz+MNB8/I0J38yTPApSM168BcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759642796; c=relaxed/simple;
-	bh=NZCzWl9AB2y422Nwn0yx+KSPggqE2G6/stIinDXFMaY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sSGUEX0NKN7D/nLQath5lmS4JnbQlblMB8bEnbdMp8H5JD9czVlP/xDJfwzaQvZi/+dtCwnzCL0eEJllJOr/SB4wigPA8rfMh2rP8KbwsOMYajNNXlbhNzj6wWs5eLUBTyv/TuAJSwWO52UKzkoEqfBJvAziCNTMhThd51J5YBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VuB3jYPK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A914BC4CEF4;
-	Sun,  5 Oct 2025 05:39:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759642796;
-	bh=NZCzWl9AB2y422Nwn0yx+KSPggqE2G6/stIinDXFMaY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VuB3jYPKVZ64xA5pd3uKC26zEa2PTUT0xsI6tBMSOKsVGZQp6iynYTsAv++c20tR8
-	 XTh5XTP9Hglzd5GkoIFKnDlo38tfEn4d8Q7sZCCkybVcy/NFELzoIyJ8x+Zch+pcG/
-	 lXuvISW9clYRheCPteSUkyqEOdgJV1hvNDERZhimk179Ij5CdPyxF1XZ73JkEiQQ2O
-	 vxZHHnFiExDdeNKbl0ATez/s4gPMe9iKHjDkZ1gm8kSZYHgdAMB7X5zZHw0qF4yS+J
-	 li6Izk/ct5zk7yy4BATzUocxZQCmk4mCbzY2vEqFMPBXoh+I16XYGZrjMqr2n64RAf
-	 WRnTj0RfvfNSA==
-From: William Breathitt Gray <wbg@kernel.org>
-To: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: William Breathitt Gray <wbg@kernel.org>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	linux-iio@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: Update Intel Quadrature Encoder Peripheral maintainer
-Date: Sun,  5 Oct 2025 14:39:43 +0900
-Message-ID: <20251005053945.2213668-1-wbg@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <70ef3a26-d70b-3506-3bae-6c87c39f3d22@linux.intel.com>
-References: 
+	s=arc-20240116; t=1759645464; c=relaxed/simple;
+	bh=umoRovBsip0RXPLbRuzD+/yCJzmUGlTa25/YNNq75R4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XcpD0yE9cM1IzV+z9gUlGleViZ5yUijDUet7CbF5eESH5OcI+v3vkktPK5HseqNWhzeHK5MZ7M8mLdgl/IJ1qvWqqIxvVJzOtahQFxQXG8seSYR3Xjy317vGu3JIe/mwUAHK+uWQRQam0DzAOJH/MDEd8fk5lCHD0EnlcRs8Xa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=elHc3QSx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF5FBC4CEF4;
+	Sun,  5 Oct 2025 06:24:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1759645464;
+	bh=umoRovBsip0RXPLbRuzD+/yCJzmUGlTa25/YNNq75R4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=elHc3QSxhSyGcfDAwJhIiWQorFHB9pLhzKJJPE2XZ5OtoWlbgFv1k7ki3tPDEWI/T
+	 GC5SwuA9YmRr0DqYXWdR+2K11gfZD/tFoK63HdmSlRmeSkxL+ZlS7KA2pfK2ghyxlA
+	 JMnGrBe3NP0D/gRsOmuuP93hfQgQDr5zjm8MfERU=
+Date: Sun, 5 Oct 2025 08:24:20 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Madhur Kumar <madhurkumar004@gmail.com>
+Cc: mirq-linux@rere.qmqm.pl, arnd@arndb.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] misc: cb710: Replace deprecated PCI functions
+Message-ID: <2025100559-array-reverse-9fb0@gregkh>
+References: <aM7Vab4TWill5vev@qmqm.qmqm.pl>
+ <20251004215357.1839791-1-madhurkumar004@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1185; i=wbg@kernel.org; h=from:subject; bh=NZCzWl9AB2y422Nwn0yx+KSPggqE2G6/stIinDXFMaY=; b=owGbwMvMwCW21SPs1D4hZW3G02pJDBmPWHz82NrbhD4cU91a7hWn/W/uE5+7DIs1HrDJiAidi ir2SXjdUcrCIMbFICumyNJrfvbug0uqGj9ezN8GM4eVCWQIAxenAEzk40qG/0k2FqGOYsfWcnrO 3bDvp4hOH+vdV9eNAzIDKuf6TBd12MTIsO2t8xyxyfxqLUVxtzOSX01s+zjzl0zNmsMtqx7wRQT m8gMA
-X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251004215357.1839791-1-madhurkumar004@gmail.com>
 
-On Wed, Sep 24, 2025 at 04:33:30PM +0300, Ilpo Järvinen wrote:
-> On Wed, 24 Sep 2025, Jarkko Nikula wrote:
+On Sun, Oct 05, 2025 at 03:23:04AM +0530, Madhur Kumar wrote:
+> On Sat, Sep 20, 2025 at 18:25:13 +0200, Michał Mirosław wrote:
+> > Acked-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 > 
-> > My address is going to bounce soon and Ilpo agreed to be a new
-> > maintainer.
-> >
-> > Cc: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> > Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+> Thanks for the Ack!
 > 
-> Acked-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> 
-> --
->  i.
-> 
-> > ---
-> >  MAINTAINERS | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index b9fc91b4ce4f..8fc8426d88c8 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -12609,7 +12609,7 @@ S:	Orphan
-> >  F:	drivers/ptp/ptp_dfl_tod.c
-> >
-> >  INTEL QUADRATURE ENCODER PERIPHERAL DRIVER
-> > -M:	Jarkko Nikula <jarkko.nikula@linux.intel.com>
-> > +M:	Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> >  L:	linux-iio@vger.kernel.org
-> >  F:	drivers/counter/intel-qep.c
+> Has this patch been applied or queued somewhere? Any feedback on the change?
 
-Hi Ilpo,
+It's the middle of the merge window, I can't do anything with it until
+after -rc1 is out.
 
-Is this driver "Supported" (someone is actually paid to look after it)?
-If so, you should an "S:" entry indicating the Supported status here in
-this patch as well so we can track it.
+thanks,
 
-Thanks,
-
-William Breathitt Gray
+greg k-h
 
