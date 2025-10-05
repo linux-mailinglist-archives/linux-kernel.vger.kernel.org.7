@@ -1,164 +1,122 @@
-Return-Path: <linux-kernel+bounces-842376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95FF7BB9A25
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 19:39:57 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19CBEBB9A40
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 19:41:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 810A04E130D
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 17:39:56 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A44C634617E
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 17:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD52C1A254E;
-	Sun,  5 Oct 2025 17:39:49 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 445641AB6F1;
+	Sun,  5 Oct 2025 17:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i/eOmwwW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5286ADD
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 17:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798F912FF6F
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 17:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759685989; cv=none; b=PJekhbq0kxuMNo27pamA+Dv+Yuc4hagmAYoG0qm9fHe1OkrWvSoLHFaC8xcwh1wOUY3E0topuPLTKxi/jGvQ2AjkNKCB9tOZE/cGJIzyMMzTorGtNN64y+eSaC5AFodLj1fRMW+owAdKyZVPT6QopR9lupVYYl4RXoe2wKCVj6s=
+	t=1759686107; cv=none; b=j9WcUJhv31xH6Y/qfEmy8mDWyTs14Av3c8RFXyHFOj8LZuXbLmay+Stguj5IiK6aGLYYIArezpcZL6OQWlVpupm+08xRKGz7A0ZHeKKsTU3lwaIAkgBknv9WEMQPNyl3qmi5Kmd2sx+MOwWJQ1ZcVGalMvFtE7z3bQBNyYB6hnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759685989; c=relaxed/simple;
-	bh=nGMZlh8YRXJFiwj1WHQWX3DEZ/YTq1nxUfTioYgrzEE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Jp6s6W+/vm8XQZbJk9+1/aW0eYhwP6g6fWAOvbo9Bg6kCciNX61LYb9TH43FIc5Fy6TPw48RkOIKiAhPP/a0E5KCIGtTEZltoJ4DxZnPAs7rpI+vX/dDrPGjGB+XBCShpg35Jm4MQSBiV1cRazaclErncbfPAng8XH+kxbORjVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-42f65c920dcso29833475ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 10:39:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759685987; x=1760290787;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UM/s2stlbkbjMDBqjadsHrnvi+SIhkGISTSy+AXGwiI=;
-        b=UP5FVTqOnM6l+7slGwGlDFnMd/XZQ0AFwaJumY3L7e1A8K280G4/uVBD2jQUmO/zmw
-         EDUyAFLJjV/FSkYZ7ic8mwPWn88sF9LEWeXgyhHTrYGTKMomYbAFObtW6koHoyrAhQsN
-         maIRxBxPVRkbrQU2ei1UWSodFc13FlESbbZHOCfVau37Cr2IcVeNijwxUvYvpoPEURwQ
-         1l8P/QRjjSZaz11haFbo7Cwjs/ZfFSNmGqU5SUNwTaD2pZIJdj+1W3lM/rTmF6benebl
-         33Qj6+AMnPCl8nj/NzWYkO8pvPCWXxoGPg34uTSp/Y/iTlAUM2StgAc/w/yXiVsKkrzm
-         Rtog==
-X-Forwarded-Encrypted: i=1; AJvYcCXB8kIyMPlykWW9XDmZTNmrZSsoVI6Pc7i3SbwwWdrMIDuR5Tu2S5zwTXqWylmASC4ksNfLHi+c7ZM91Ok=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKEP2UQoyRtNGydp4CJaW6C6upvtQ+qAirZVXK/80RiHfLCx/f
-	4OsVlPxARm2BYcF1lTT1PfqL6ZAcxHafVTq76eLvPvkDBA3ATZYD2wJs2dRuQgOXBmR8mEG9lHg
-	M2B1+IQBkTD3xyKW34JGpmdYdIysnuUQFbtdjC0ywadoK+lEAir6OS45q0sM=
-X-Google-Smtp-Source: AGHT+IFdNHa3yHnwgUcHEAKF175+o/JdTd73vogzQbGtwiKpPd5+lgXkDQhfcQyCVNSsI1AtNs52jPtyEfsoAVwu73jso91W3hIE
+	s=arc-20240116; t=1759686107; c=relaxed/simple;
+	bh=TXFd7/3FqnHWELv/Ea6uDVP94OHBKV/Ebdx8I7W/T4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H2zcwD4pIiXcNjocWqUGJr2U51j8eRrKP5KdpRH17YDd9uxO1HkiF0Mac3+Xmbl2r5RhHD6QHyYdYRV9QyP8kPw7MDqyvJLRB1IYN3j2ln6+KKeDCjvbwEyI4hepoMF94sDa1q2uPd1CtY6LrLJWXFH46qgnmGhH457gx4ad8ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i/eOmwwW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759686104;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F0S1vPSRJ5NnfHBNzwpj/3+V8U0XpDMUFkziRa/whMs=;
+	b=i/eOmwwWdeEpu5xk/YjouU48ukNSQ/mA0BmK749fSEte3fC0GcLBExvyHFLbLc1azEEw6P
+	BVn5kDe9cHlW26j4glggq+Vl7+g4xjj89IqAjs8G5JJSmQniPusG6uvVmukZknFaJZwJ8R
+	yj2jU95zkJN/2mCYHHl4UGXU7OKS0ps=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-77-4pgTW0HvMEWQvPQThhQCIg-1; Sun,
+ 05 Oct 2025 13:41:39 -0400
+X-MC-Unique: 4pgTW0HvMEWQvPQThhQCIg-1
+X-Mimecast-MFC-AGG-ID: 4pgTW0HvMEWQvPQThhQCIg_1759686098
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8BF7618004D8;
+	Sun,  5 Oct 2025 17:41:37 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.5])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 9BFD11800452;
+	Sun,  5 Oct 2025 17:41:33 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun,  5 Oct 2025 19:40:16 +0200 (CEST)
+Date: Sun, 5 Oct 2025 19:40:11 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Boqun Feng <boqun.feng@gmail.com>, David Howells <dhowells@redhat.com>,
+	Ingo Molnar <mingo@redhat.com>, Li RongQing <lirongqing@baidu.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5] seqlock: introduce SEQLOCK_READ_SECTION()
+Message-ID: <20251005174010.GC6063@redhat.com>
+References: <20250928161953.GA3112@redhat.com>
+ <20251005144929.GB1188@redhat.com>
+ <20251005153008.GF2441659@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b41:b0:42d:7dea:1e09 with SMTP id
- e9e14a558f8ab-42e7ad6ea2fmr120047055ab.21.1759685986895; Sun, 05 Oct 2025
- 10:39:46 -0700 (PDT)
-Date: Sun, 05 Oct 2025 10:39:46 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e2ad62.a00a0220.2ba410.0018.GAE@google.com>
-Subject: [syzbot] [net?] WARNING in xfrm_state_migrate (2)
-From: syzbot <syzbot+5cd6299ede4d4f70987b@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, herbert@gondor.apana.org.au, 
-	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, steffen.klassert@secunet.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251005153008.GF2441659@ZenIV>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Hello,
+On 10/05, Al Viro wrote:
+>
+> On Sun, Oct 05, 2025 at 04:49:29PM +0200, Oleg Nesterov wrote:
+>
+> > 	static char *__dentry_path(const struct dentry *d, struct prepend_buffer *p)
+> > 	{
+> > 		const struct dentry *dentry;
+> > 		struct prepend_buffer b;
+> >
+> > 		rcu_read_lock();
+> > 		__SEQLOCK_READ_SECTION(&rename_lock, lockless, seq, NULL) {
+> > 			dentry = d;
+> > 			b = *p;
+> > 			while (!IS_ROOT(dentry)) {
+> > 				const struct dentry *parent = dentry->d_parent;
+> >
+> > 				prefetch(parent);
+> > 				if (!prepend_name(&b, &dentry->d_name))
+> > 					break;
+> > 				dentry = parent;
+> > 			}
+> > 			if (lockless)
+> > 				rcu_read_unlock();
+>
+> <cringe>
 
-syzbot found the following issue on:
+Weird or buggy?
 
-HEAD commit:    4b946f6bb7d6 selftests/bpf: Fix realloc size in bpf_get_ad..
-git tree:       bpf
-console output: https://syzkaller.appspot.com/x/log.txt?x=13be46e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8f1ac8502efee0ee
-dashboard link: https://syzkaller.appspot.com/bug?extid=5cd6299ede4d4f70987b
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> prepend_path() would be interesting to look at...
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Yeah, I have already looked at it.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f0ef71bdead6/disk-4b946f6b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0c8251d5df12/vmlinux-4b946f6b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/29bad3cdad16/bzImage-4b946f6b.xz
+Not sure yet what the "good" cleanup could do. Will think about it more.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5cd6299ede4d4f70987b@syzkaller.appspotmail.com
+Oleg.
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 30386 at net/xfrm/xfrm_state.c:800 __xfrm_state_destroy net/xfrm/xfrm_state.c:800 [inline]
-WARNING: CPU: 0 PID: 30386 at net/xfrm/xfrm_state.c:800 xfrm_state_put include/net/xfrm.h:928 [inline]
-WARNING: CPU: 0 PID: 30386 at net/xfrm/xfrm_state.c:800 xfrm_state_migrate+0x13bc/0x1b10 net/xfrm/xfrm_state.c:2165
-Modules linked in:
-CPU: 0 UID: 0 PID: 30386 Comm: syz.6.7969 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-RIP: 0010:__xfrm_state_destroy net/xfrm/xfrm_state.c:800 [inline]
-RIP: 0010:xfrm_state_put include/net/xfrm.h:928 [inline]
-RIP: 0010:xfrm_state_migrate+0x13bc/0x1b10 net/xfrm/xfrm_state.c:2165
-Code: da fd de f7 90 0f 0b 90 e9 ab fa ff ff e8 cc fd de f7 4c 89 f7 be 03 00 00 00 e8 0f f0 a4 fa e9 77 fb ff ff e8 b5 fd de f7 90 <0f> 0b 90 e9 f6 fe ff ff e8 a7 fd de f7 eb d9 44 89 f1 80 e1 07 38
-RSP: 0018:ffffc90003afecc0 EFLAGS: 00010287
-RAX: ffffffff89df782b RBX: ffff888029ffc880 RCX: 0000000000080000
-RDX: ffffc90020769000 RSI: 0000000000000213 RDI: 0000000000000214
-RBP: 0000000000000001 R08: ffff888029ffc8eb R09: 1ffff110053ff91d
-R10: dffffc0000000000 R11: ffffed10053ff91e R12: dffffc0000000000
-R13: 1ffff9200075fe2a R14: ffff888029ffc8e8 R15: ffff888079932200
-FS:  00007fe59aadf6c0(0000) GS:ffff888126373000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000110c31a411 CR3: 00000000280be000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000200000000300
-DR3: 0000000000000000 DR6: 00000000ffff0ff1 DR7: 0000000000000600
-Call Trace:
- <TASK>
- xfrm_migrate+0xefa/0x2330 net/xfrm/xfrm_policy.c:4669
- xfrm_do_migrate+0x796/0x900 net/xfrm/xfrm_user.c:3144
- xfrm_user_rcv_msg+0x7a0/0xab0 net/xfrm/xfrm_user.c:3501
- netlink_rcv_skb+0x205/0x470 net/netlink/af_netlink.c:2552
- xfrm_netlink_rcv+0x79/0x90 net/xfrm/xfrm_user.c:3523
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x82f/0x9e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg+0x219/0x270 net/socket.c:729
- ____sys_sendmsg+0x505/0x830 net/socket.c:2617
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2671
- __sys_sendmsg net/socket.c:2703 [inline]
- __do_sys_sendmsg net/socket.c:2708 [inline]
- __se_sys_sendmsg net/socket.c:2706 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2706
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe599b8eec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fe59aadf038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fe599de6090 RCX: 00007fe599b8eec9
-RDX: 0000000000042000 RSI: 0000200000000380 RDI: 0000000000000005
-RBP: 00007fe599c11f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fe599de6128 R14: 00007fe599de6090 R15: 00007ffdb88a6108
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
