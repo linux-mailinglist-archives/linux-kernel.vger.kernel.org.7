@@ -1,53 +1,39 @@
-Return-Path: <linux-kernel+bounces-842423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86138BB9B38
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 20:45:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84274BB9B41
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 20:47:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3E0B3B5767
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 18:45:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 313D01892A22
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 18:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CABE91D9324;
-	Sun,  5 Oct 2025 18:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ZvAFWDDJ"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7D81DAC95;
+	Sun,  5 Oct 2025 18:47:41 +0000 (UTC)
+Received: from freeshell.de (freeshell.de [116.202.128.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709B135962;
-	Sun,  5 Oct 2025 18:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDF335962;
+	Sun,  5 Oct 2025 18:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759689947; cv=none; b=rIa2VlNHsU9Du3UdyPTj51kneDBA6aKeNciuFdV9lBE7pumU17DMF3mFq/vgpoD4kJ1nuptO2NnmZ2njSrI3K/69MRBau5H1J6l7evUS+iBirWkNlDyArTkucJq1I3VhtVBmEynH+jRdUdO0OKbinx2Z87WRXZzLFBaZv6mv/WI=
+	t=1759690060; cv=none; b=NMeFCBHxl3uW4CUJEUy0Lfuq51dST5PzZVl0CkWM86YO6M6R8QxTII5o5dHUl8qOFvAQ6/AKpiPYT9iVVrzK4X05sYtCIWRN9S8MIdQoXcboEAMmbAU9AIy6rzTCHwFYBNOhxvHgrJrbsLHE9GRdkKH8fHyhpg926ZZNMS/zl2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759689947; c=relaxed/simple;
-	bh=tyUV7eL3UA2aE5gXchrtrxZilc1JXmXcK3D7dnKbFbE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=q/P/aFiDbMW42llOLKNlGO+uEBS7kNUf43/UNKHVGONaklGC3yb1oCGGeXYrv4gczTuH/Xchp1o/w+pQDyVJEyas7VyF/BNZUyMkaXY0M6lufs3AmGs6undSxo4iHwf2izSsDd5u5LzU54ga+qcZlQZAtuzF7p9CViRIgpPINnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ZvAFWDDJ; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1759689923; x=1760294723; i=markus.elfring@web.de;
-	bh=4MU6UTSRzswNDy+Tvyb+jXhguOel7ObaYmVxD8CubbU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=ZvAFWDDJUsb0z6/LMnwJ9ZCWMq6R2oJ9ENtD44oJyZpmWBPPfqv//L01AvVp3v+4
-	 h/Ki7hD+c0eBwrQGS1LkZzAlmks58hsJDdOQwJ/R+n4ajTmXMS1KdZDahMZ1OM5W2
-	 9+7u9NnO+oRg4zUbvig2vaC9kKjYYOOi6waeQFbn43D+jVKSBSBRsVfiKCwvCBcQu
-	 +lkwIV5ne4aeBng4eRBlACZSPqOmWrcqz3zmQlrLR829SsBAroOBT13BXHYPaUhsp
-	 39ykjfnDbksI/OVL4aKcwZVUHOz6m87Qg+xS1JaxJ0W1Ug8pcdLEooSpB4tVkC2hK
-	 kBnsYdNhP764Jl572w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.233]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MQ8ao-1usKZO3aaW-00SK9A; Sun, 05
- Oct 2025 20:45:22 +0200
-Message-ID: <59292fe5-1730-475d-bb5d-1e70f3d3fa1b@web.de>
-Date: Sun, 5 Oct 2025 20:45:21 +0200
+	s=arc-20240116; t=1759690060; c=relaxed/simple;
+	bh=gED3S8ccspfVXZz2lRG9Skb15smgiAQICDm9pQJAR1Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MtizWk6XDFaPWkjPUaBgTa3NIHosL6QLmCW0TPfiemr8gcJKO6lbXA1Ttx+B66K8z9fak5pD6gb1tQnmbzUZke7DZwA/NbmVLvSQFv1lvrLK5jPN+5RTvaU3aVWHjdU+dqn17hDVx+qudBS+luwQRfo0KOrCJIcjbA4PiJt0JQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
+Received: from [10.73.18.150] (static-68-235-38-18.cust.tzulo.com [68.235.38.18])
+	(Authenticated sender: e)
+	by freeshell.de (Postfix) with ESMTPSA id 24E92B22034F;
+	Sun,  5 Oct 2025 20:47:31 +0200 (CEST)
+Message-ID: <b8db0cdf-163e-416d-94b8-c9e1f10c8011@freeshell.de>
+Date: Sun, 5 Oct 2025 11:47:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,125 +41,240 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Content-Language: en-GB, de-DE
-To: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
- Al Viro <viro@zeniv.linux.org.uk>, Bharath SM <bharathsm@microsoft.com>,
- Paulo Alcantara <pc@manguebit.org>,
- Ronnie Sahlberg <ronniesahlberg@gmail.com>,
- Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
- Tom Talpey <tom@talpey.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] smb: client: Use common code in cifs_do_create()
+Subject: Re: [PATCH v2 2/2] riscv: dts: starfive: add DT for Orange Pi RV
+To: Icenowy Zheng <uwu@icenowy.me>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Emil Renner Berthing <kernel@esmil.dk>,
+ Michael Zhu <michael.zhu@starfivetech.com>,
+ Drew Fustini <drew@beagleboard.org>, Yao Zi <ziyao@disroot.org>
+Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250930100318.2131968-1-uwu@icenowy.me>
+ <20250930100318.2131968-2-uwu@icenowy.me>
+ <579dad6b4ab0c981b8d51383af2db3a9f4394609.camel@icenowy.me>
+Content-Language: en-US
+From: E Shattow <e@freeshell.de>
+In-Reply-To: <579dad6b4ab0c981b8d51383af2db3a9f4394609.camel@icenowy.me>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:+HpnVjfYEnNkH78FCb7pVJd/PcsDn4coe5cIVKwCYMGURkwkXkh
- aa27jgIM1yLjHCPwWeKL1QxRGZTFbUxzRRZI7dPI9Z3qmQR0v7u3BrlDfT43YpEqw1SwVF2
- 4+VScr3r3vZzhtEee6/UCV5F9LMlRrl8IJk5cEs2uAvyJc6GGnjqKtvuJiOQU4AeFyBVYQ7
- lsQmS2nVYznp0PuncJ8/w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:bz8mFcKz4HI=;7D/dG9AckHxnQxllU4XGMNXcrAk
- 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
- OpPedgdl0C1VNqcrxVwmzPlbnU=
+Content-Transfer-Encoding: 8bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 5 Oct 2025 20:36:33 +0200
+Hi Icenowy,
 
-Use a label once more so that a bit of common code can be better reused
-at the end of this function implementation.
+On 9/30/25 08:51, Icenowy Zheng wrote:
+> 在 2025-09-30星期二的 18:03 +0800，Icenowy Zheng写道：
+>> Orange Pi RV is a newly released SBC with JH7110 SoC, single GbE port
+>> (connected to JH7110 GMAC0 via a YT8531 PHY), 4 USB ports (via a
+>> VL805
+>> PCIe USB controller connected to JH7110 PCIE0), a M.2 M-key slot
+>> (connected to JH7110 PCIE1), a HDMI video output, a 3.5mm audio
+>> output
+>> and a microSD slot.
+>>
+>> Other Onboard peripherals contain a SPI NOR (which contains the U-
+>> Boot
+>> firmware), a 24c02 EEPROM storing some StarFive-specific information
+>> (factory programmed and read only by default) and an Ampak AP6256
+>> SDIO
+>> Wi-Fi module.
+>>
+>> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+>> ---
+>> Changes in v2:
+>> - Property order change mentioned in the review of v1.
+>> - Added Wi-Fi (along with the always on VCC3V3_PCIE regulator, which
+>> is
+>>   used to power up WIFI_3V3). The OOB IRQ is still not possible to
+>> use
+>>   because of some incompatibility between StarFive pinctrl driver and
+>>   brcmfmac.
+>> - Removed the LED because it's in common DTSI.
+>>
+>>  arch/riscv/boot/dts/starfive/Makefile         |  1 +
+>>  .../boot/dts/starfive/jh7110-orangepi-rv.dts  | 87
+>> +++++++++++++++++++
+>>  2 files changed, 88 insertions(+)
+>>  create mode 100644 arch/riscv/boot/dts/starfive/jh7110-orangepi-
+>> rv.dts
+>>
+>> diff --git a/arch/riscv/boot/dts/starfive/Makefile
+>> b/arch/riscv/boot/dts/starfive/Makefile
+>> index b3bb12f78e7d5..24f1a44828350 100644
+>> --- a/arch/riscv/boot/dts/starfive/Makefile
+>> +++ b/arch/riscv/boot/dts/starfive/Makefile
+>> @@ -10,6 +10,7 @@ dtb-$(CONFIG_ARCH_STARFIVE) += jh7100-starfive-
+>> visionfive-v1.dtb
+>>  
+>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-deepcomputing-fml13v01.dtb
+>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-milkv-mars.dtb
+>> +dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-orangepi-rv.dtb
+>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-pine64-star64.dtb
+>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-
+>> v1.2a.dtb
+>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-
+>> v1.3b.dtb
+>> diff --git a/arch/riscv/boot/dts/starfive/jh7110-orangepi-rv.dts
+>> b/arch/riscv/boot/dts/starfive/jh7110-orangepi-rv.dts
+>> new file mode 100644
+>> index 0000000000000..5a917b7db6f78
+>> --- /dev/null
+>> +++ b/arch/riscv/boot/dts/starfive/jh7110-orangepi-rv.dts
+>> @@ -0,0 +1,87 @@
+>> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+>> +/*
+>> + * Copyright (C) 2025 Icenowy Zheng <uwu@icenowy.me>
+>> + */
+>> +
+>> +/dts-v1/;
+>> +#include "jh7110-common.dtsi"
+>> +
+>> +/ {
+>> +       model = "Xunlong Orange Pi RV";
+>> +       compatible = "xunlong,orangepi-rv", "starfive,jh7110";
+>> +
+>> +       /* This regulator is always on by hardware */
+>> +       reg_vcc3v3_pcie: regulator-vcc3v3-pcie {
+>> +               compatible = "regulator-fixed";
+>> +               regulator-name = "vcc3v3-pcie";
+>> +               regulator-min-microvolt = <3300000>;
+>> +               regulator-max-microvolt = <3300000>;
+>> +               regulator-always-on;
+>> +       };
+>> +
+>> +       wifi_pwrseq: wifi-pwrseq {
+>> +               compatible = "mmc-pwrseq-simple";
+>> +               reset-gpios = <&sysgpio 62 GPIO_ACTIVE_LOW>;
+>> +       };
+>> +};
+>> +
+>> +&gmac0 {
+>> +       assigned-clocks = <&aoncrg JH7110_AONCLK_GMAC0_TX>;
+>> +       assigned-clock-parents = <&aoncrg
+>> JH7110_AONCLK_GMAC0_RMII_RTX>;
+>> +       starfive,tx-use-rgmii-clk;
+>> +       status = "okay";
+>> +};
+>> +
+>> +&mmc0 {
+>> +       #address-cells = <1>;
+>> +       #size-cells = <0>;
+>> +       cap-sd-highspeed;
+>> +       mmc-pwrseq = <&wifi_pwrseq>;
+>> +       vmmc-supply = <&reg_vcc3v3_pcie>;
+>> +       vqmmc-supply = <&vcc_3v3>;
+>> +       status = "okay";
+>> +
+>> +       ap6256: wifi@1 {
+>> +               compatible = "brcm,bcm43456-fmac", "brcm,bcm4329-
+>> fmac";
+>> +               reg = <1>;
+>> +               /* TODO: out-of-band IRQ on GPIO21 */
+>> +       };
+>> +};
+>> +
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- fs/smb/client/dir.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+>> +&mmc0_pins {
+>> +       /*
+>> +        * As the MMC0 bus is used to connect a SDIO Wi-Fi card
+>> instead of
+>> +        * an eMMC card, and the eMMC RST is repurposed to be an
+>> enablement
+>> +        * pin of the SDIO Wi-Fi, remove it from the pinctrl node and
+>> manage
+>> +        * it as a GPIO instead.
+>> +        */
+>> +       /delete-node/ rst-pins;
+>> +};
+>> +
 
-diff --git a/fs/smb/client/dir.c b/fs/smb/client/dir.c
-index fc67a6441c96..6aa8740c2932 100644
-=2D-- a/fs/smb/client/dir.c
-+++ b/fs/smb/client/dir.c
-@@ -200,8 +200,8 @@ static int cifs_do_create(struct inode *inode, struct =
-dentry *direntry, unsigned
-=20
- 	full_path =3D build_path_from_dentry(direntry, page);
- 	if (IS_ERR(full_path)) {
--		free_dentry_path(page);
--		return PTR_ERR(full_path);
-+		rc =3D PTR_ERR(full_path);
-+		goto out;
- 	}
-=20
- 	/* If we're caching, we need to be able to fill in around partial writes=
-. */
-=2D-=20
-2.51.0
+Listed on the schematic [1] as:
+Default function SDIO0 RSTn GPIO62 for eMMC:J9
+Highlighted (non-default?) function GPIO62 D17 << WIFI_EN_H_GPIO62
+WIFI_EN_H_GPIO62 >> WIFI_PWREN (pin 12 WL_REG_ON of module AP6256)
+
+I've sent a patch [2] to portion out mmc0 reset pins from jh7110-common.dtsi
+
+>> +&mmc1 {
+>> +       /delete-property/ cd-gpios;
+>> +       broken-cd;
+> 
+> Well it's found that the card detect is working, although with
+> different polarity with other boards.
+> 
+> Here should be:
+> ```
+> 	cd-gpios = <&sysgpio 41 GPIO_ACTIVE_HIGH>;
+> ```
+> 
+> Will be fixed in the next revision.
+
+Yes, listed on the schematic [1] as:
+SD SDIO0 CD GPIO41 for MicroSD:J10
+
+There is not a mention of active high or active low on the schematic
+label, however there is listed a 10Kohm pull-up to +Vdd1.833 for the
+circuit diagram of the Micro SD Card. The card holder is referenced to
+ground and could reasonably be N/O or N/C switch operation depending on
+the exact part selected for manufacture.
+
+> 
+>> +};
+>> +
+>> +&pcie0 {
+>> +       status = "okay";
+>> +};
+>> +
+>> +&pcie1 {
+>> +       status = "okay";
+>> +};
+>> +
+
+>> +&phy0 {
+>> +       rx-internal-delay-ps = <1500>;
+>> +       tx-internal-delay-ps = <1500>;
+>> +       motorcomm,tx-clk-adj-enabled;
+>> +       motorcomm,tx-clk-10-inverted;
+>> +       motorcomm,tx-clk-100-inverted;
+>> +       motorcomm,tx-clk-1000-inverted;
+>> +       motorcomm,rx-clk-drv-microamp = <3970>;
+>> +       motorcomm,rx-data-drv-microamp = <2910>;
+>> +};
+
+'motorcomm,rx' before 'motorcomm,tx' in `LANG=C sort` of vendor-specific
+properties.
+
+>> +
+>> +&pwmdac {
+>> +       status = "okay";
+>> +};
+> 
+Additional non-default GPIO as listed in the Orange Pi design:
+GPIO21 WIFI_WAKE_HOST_H /* default vf2 function PCIE_PWREN_H_GPIO21 */
+GPIO22 >> BT_UART_RXD /* default vf2 function MIPI_PWR_EN */
+GPIO23 << BT_UART_TXD /* default vf2 function LCD RESET */
+GPIO24 << BT_UART_CTS /* default vf2 function MIPI_LCD_BL */
+GPIO25 << BT_UART_RTS /* default vf2 function TP_DET_GPIO25 */
+GPIO30 << BT_EN_H_GPIO30 /* default vf2 function TP_INT_L */
+GPIO31 << BT_WAKE_GPIO31 /* default vf2 function TP_RST_L */
+
+Of all the above, GPIO21 is defined in jh7110-common.dtsi
+&pcie1_pins/wake-pins and may need consideration.
+
+There is a note about "PMIC_PWRON as Key" and so does this have the
+meaning of it is used as an input device?
+
+Also noted is that the USB over-current circuit appears to be
+implemented, different than being absent in other VF2 designs.
+
+1:
+http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/service-and-support/Orange-Pi-RV.html
+2: https://lore.kernel.org/lkml/20251005174450.1949110-1-e@freeshell.de/
+
+With the card detect describing hardware corrected, and clean up the
+vendor property sort, then please confirm if you think GPIO21 is
+described correctly.
+
+Acked-by: E Shattow <e@freeshell.de>
 
 
