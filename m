@@ -1,280 +1,88 @@
-Return-Path: <linux-kernel+bounces-842424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84274BB9B41
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 20:47:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74AA5BB9B47
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 20:51:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 313D01892A22
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 18:48:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAA843B5AD6
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 18:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7D81DAC95;
-	Sun,  5 Oct 2025 18:47:41 +0000 (UTC)
-Received: from freeshell.de (freeshell.de [116.202.128.144])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6711DC994;
+	Sun,  5 Oct 2025 18:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LpQp/mGI"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDF335962;
-	Sun,  5 Oct 2025 18:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909B734BA47
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 18:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759690060; cv=none; b=NMeFCBHxl3uW4CUJEUy0Lfuq51dST5PzZVl0CkWM86YO6M6R8QxTII5o5dHUl8qOFvAQ6/AKpiPYT9iVVrzK4X05sYtCIWRN9S8MIdQoXcboEAMmbAU9AIy6rzTCHwFYBNOhxvHgrJrbsLHE9GRdkKH8fHyhpg926ZZNMS/zl2A=
+	t=1759690302; cv=none; b=d4nZBAai43ZNYMeFeQA0A3n7aqT0lHlVrizHdNGdqyiPVgEsID0/skD/W9hLuuTCtyhYXLKRQe+9c9oDH6nkBpoP5O8mWkMDXiyFOHOXL19DzP2ILzGnX5CMBTMuCLlB5UlXCLEFcJaErMtynCUStp5rr5aiy2uDKGNFPBz1J2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759690060; c=relaxed/simple;
-	bh=gED3S8ccspfVXZz2lRG9Skb15smgiAQICDm9pQJAR1Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MtizWk6XDFaPWkjPUaBgTa3NIHosL6QLmCW0TPfiemr8gcJKO6lbXA1Ttx+B66K8z9fak5pD6gb1tQnmbzUZke7DZwA/NbmVLvSQFv1lvrLK5jPN+5RTvaU3aVWHjdU+dqn17hDVx+qudBS+luwQRfo0KOrCJIcjbA4PiJt0JQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
-Received: from [10.73.18.150] (static-68-235-38-18.cust.tzulo.com [68.235.38.18])
-	(Authenticated sender: e)
-	by freeshell.de (Postfix) with ESMTPSA id 24E92B22034F;
-	Sun,  5 Oct 2025 20:47:31 +0200 (CEST)
-Message-ID: <b8db0cdf-163e-416d-94b8-c9e1f10c8011@freeshell.de>
-Date: Sun, 5 Oct 2025 11:47:29 -0700
+	s=arc-20240116; t=1759690302; c=relaxed/simple;
+	bh=IUKD0+ADU4UnQEpeie5i0GKKyLwSoueCoB/MShZDZq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j9mufHACNO6bItJWBqG2QYG5LaIz/iQzUZ86R7v1yS33Sxfy5I9ihhET5DE+cJhBU+vHYTwLZVU4a3G+Mm21vWJinR1+27Lyox/c6MZAQ+J3UOi5g6ToIGpxiBezjGigGEPy4hiLz8fM7SSL8iwss1Y6fwb3p/P0kLv3/TGTXzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LpQp/mGI; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 91D39C0358B
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 18:51:12 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id A21566065F;
+	Sun,  5 Oct 2025 18:51:30 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 65431102F1D0B;
+	Sun,  5 Oct 2025 20:51:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1759690289; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=0RLcbxdoO8qQhFouwp+kCoEbahNiZlchBj+VX9oB1Fk=;
+	b=LpQp/mGI5WwFk0At2y2/u8JJ+/2xkPOBQ/h7gGRR1ef3XjmEpoAmWOJ2ySi1P71ZIFLbLz
+	w7EhzRO9a0ZuHF7m1ca3HHZD2mqJpqULCGTvj9FHujk/FwjnfsF1z3MHEuzigqabs0XMEF
+	uJs4yyyGxqnyAAdbJsBSmIPZpXu6Eg8rTceGZvLHg1enT6SjG4m8wYNiWx5CdxvdecvuV9
+	7pvY/MLAv/SsH6qWqTt7wB77w+uZsfFe4qGhafFYxphk2TXpaENc5Fy36ncyE+jJIKB0Ia
+	yKGiCCJdA/7mtrxfTTgGz0MVweyL9ccN6SWBKD9k9KtFr+gYdSunwnTa7YE6uA==
+Date: Sun, 5 Oct 2025 20:51:25 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Khuong Dinh <khuong@os.amperecomputing.com>,
+	"Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: rtc: Convert apm,xgene-rtc to DT schema
+Message-ID: <175969027436.3719968.15009798867106471646.b4-ty@bootlin.com>
+References: <20250924222848.2949235-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] riscv: dts: starfive: add DT for Orange Pi RV
-To: Icenowy Zheng <uwu@icenowy.me>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Emil Renner Berthing <kernel@esmil.dk>,
- Michael Zhu <michael.zhu@starfivetech.com>,
- Drew Fustini <drew@beagleboard.org>, Yao Zi <ziyao@disroot.org>
-Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250930100318.2131968-1-uwu@icenowy.me>
- <20250930100318.2131968-2-uwu@icenowy.me>
- <579dad6b4ab0c981b8d51383af2db3a9f4394609.camel@icenowy.me>
-Content-Language: en-US
-From: E Shattow <e@freeshell.de>
-In-Reply-To: <579dad6b4ab0c981b8d51383af2db3a9f4394609.camel@icenowy.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250924222848.2949235-1-robh@kernel.org>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Icenowy,
-
-On 9/30/25 08:51, Icenowy Zheng wrote:
-> 在 2025-09-30星期二的 18:03 +0800，Icenowy Zheng写道：
->> Orange Pi RV is a newly released SBC with JH7110 SoC, single GbE port
->> (connected to JH7110 GMAC0 via a YT8531 PHY), 4 USB ports (via a
->> VL805
->> PCIe USB controller connected to JH7110 PCIE0), a M.2 M-key slot
->> (connected to JH7110 PCIE1), a HDMI video output, a 3.5mm audio
->> output
->> and a microSD slot.
->>
->> Other Onboard peripherals contain a SPI NOR (which contains the U-
->> Boot
->> firmware), a 24c02 EEPROM storing some StarFive-specific information
->> (factory programmed and read only by default) and an Ampak AP6256
->> SDIO
->> Wi-Fi module.
->>
->> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
->> ---
->> Changes in v2:
->> - Property order change mentioned in the review of v1.
->> - Added Wi-Fi (along with the always on VCC3V3_PCIE regulator, which
->> is
->>   used to power up WIFI_3V3). The OOB IRQ is still not possible to
->> use
->>   because of some incompatibility between StarFive pinctrl driver and
->>   brcmfmac.
->> - Removed the LED because it's in common DTSI.
->>
->>  arch/riscv/boot/dts/starfive/Makefile         |  1 +
->>  .../boot/dts/starfive/jh7110-orangepi-rv.dts  | 87
->> +++++++++++++++++++
->>  2 files changed, 88 insertions(+)
->>  create mode 100644 arch/riscv/boot/dts/starfive/jh7110-orangepi-
->> rv.dts
->>
->> diff --git a/arch/riscv/boot/dts/starfive/Makefile
->> b/arch/riscv/boot/dts/starfive/Makefile
->> index b3bb12f78e7d5..24f1a44828350 100644
->> --- a/arch/riscv/boot/dts/starfive/Makefile
->> +++ b/arch/riscv/boot/dts/starfive/Makefile
->> @@ -10,6 +10,7 @@ dtb-$(CONFIG_ARCH_STARFIVE) += jh7100-starfive-
->> visionfive-v1.dtb
->>  
->>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-deepcomputing-fml13v01.dtb
->>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-milkv-mars.dtb
->> +dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-orangepi-rv.dtb
->>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-pine64-star64.dtb
->>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-
->> v1.2a.dtb
->>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-
->> v1.3b.dtb
->> diff --git a/arch/riscv/boot/dts/starfive/jh7110-orangepi-rv.dts
->> b/arch/riscv/boot/dts/starfive/jh7110-orangepi-rv.dts
->> new file mode 100644
->> index 0000000000000..5a917b7db6f78
->> --- /dev/null
->> +++ b/arch/riscv/boot/dts/starfive/jh7110-orangepi-rv.dts
->> @@ -0,0 +1,87 @@
->> +// SPDX-License-Identifier: GPL-2.0 OR MIT
->> +/*
->> + * Copyright (C) 2025 Icenowy Zheng <uwu@icenowy.me>
->> + */
->> +
->> +/dts-v1/;
->> +#include "jh7110-common.dtsi"
->> +
->> +/ {
->> +       model = "Xunlong Orange Pi RV";
->> +       compatible = "xunlong,orangepi-rv", "starfive,jh7110";
->> +
->> +       /* This regulator is always on by hardware */
->> +       reg_vcc3v3_pcie: regulator-vcc3v3-pcie {
->> +               compatible = "regulator-fixed";
->> +               regulator-name = "vcc3v3-pcie";
->> +               regulator-min-microvolt = <3300000>;
->> +               regulator-max-microvolt = <3300000>;
->> +               regulator-always-on;
->> +       };
->> +
->> +       wifi_pwrseq: wifi-pwrseq {
->> +               compatible = "mmc-pwrseq-simple";
->> +               reset-gpios = <&sysgpio 62 GPIO_ACTIVE_LOW>;
->> +       };
->> +};
->> +
->> +&gmac0 {
->> +       assigned-clocks = <&aoncrg JH7110_AONCLK_GMAC0_TX>;
->> +       assigned-clock-parents = <&aoncrg
->> JH7110_AONCLK_GMAC0_RMII_RTX>;
->> +       starfive,tx-use-rgmii-clk;
->> +       status = "okay";
->> +};
->> +
->> +&mmc0 {
->> +       #address-cells = <1>;
->> +       #size-cells = <0>;
->> +       cap-sd-highspeed;
->> +       mmc-pwrseq = <&wifi_pwrseq>;
->> +       vmmc-supply = <&reg_vcc3v3_pcie>;
->> +       vqmmc-supply = <&vcc_3v3>;
->> +       status = "okay";
->> +
->> +       ap6256: wifi@1 {
->> +               compatible = "brcm,bcm43456-fmac", "brcm,bcm4329-
->> fmac";
->> +               reg = <1>;
->> +               /* TODO: out-of-band IRQ on GPIO21 */
->> +       };
->> +};
->> +
-
->> +&mmc0_pins {
->> +       /*
->> +        * As the MMC0 bus is used to connect a SDIO Wi-Fi card
->> instead of
->> +        * an eMMC card, and the eMMC RST is repurposed to be an
->> enablement
->> +        * pin of the SDIO Wi-Fi, remove it from the pinctrl node and
->> manage
->> +        * it as a GPIO instead.
->> +        */
->> +       /delete-node/ rst-pins;
->> +};
->> +
-
-Listed on the schematic [1] as:
-Default function SDIO0 RSTn GPIO62 for eMMC:J9
-Highlighted (non-default?) function GPIO62 D17 << WIFI_EN_H_GPIO62
-WIFI_EN_H_GPIO62 >> WIFI_PWREN (pin 12 WL_REG_ON of module AP6256)
-
-I've sent a patch [2] to portion out mmc0 reset pins from jh7110-common.dtsi
-
->> +&mmc1 {
->> +       /delete-property/ cd-gpios;
->> +       broken-cd;
+On Wed, 24 Sep 2025 17:28:46 -0500, Rob Herring (Arm) wrote:
+> Convert the APM XGene RTC binding to DT schema format. It's a
+> straight-forward conversion.
 > 
-> Well it's found that the card detect is working, although with
-> different polarity with other boards.
 > 
-> Here should be:
-> ```
-> 	cd-gpios = <&sysgpio 41 GPIO_ACTIVE_HIGH>;
-> ```
-> 
-> Will be fixed in the next revision.
 
-Yes, listed on the schematic [1] as:
-SD SDIO0 CD GPIO41 for MicroSD:J10
+Applied, thanks!
 
-There is not a mention of active high or active low on the schematic
-label, however there is listed a 10Kohm pull-up to +Vdd1.833 for the
-circuit diagram of the Micro SD Card. The card holder is referenced to
-ground and could reasonably be N/O or N/C switch operation depending on
-the exact part selected for manufacture.
+[1/1] dt-bindings: rtc: Convert apm,xgene-rtc to DT schema
+      https://git.kernel.org/abelloni/c/a6b4f791cdc5
 
-> 
->> +};
->> +
->> +&pcie0 {
->> +       status = "okay";
->> +};
->> +
->> +&pcie1 {
->> +       status = "okay";
->> +};
->> +
+Best regards,
 
->> +&phy0 {
->> +       rx-internal-delay-ps = <1500>;
->> +       tx-internal-delay-ps = <1500>;
->> +       motorcomm,tx-clk-adj-enabled;
->> +       motorcomm,tx-clk-10-inverted;
->> +       motorcomm,tx-clk-100-inverted;
->> +       motorcomm,tx-clk-1000-inverted;
->> +       motorcomm,rx-clk-drv-microamp = <3970>;
->> +       motorcomm,rx-data-drv-microamp = <2910>;
->> +};
-
-'motorcomm,rx' before 'motorcomm,tx' in `LANG=C sort` of vendor-specific
-properties.
-
->> +
->> +&pwmdac {
->> +       status = "okay";
->> +};
-> 
-Additional non-default GPIO as listed in the Orange Pi design:
-GPIO21 WIFI_WAKE_HOST_H /* default vf2 function PCIE_PWREN_H_GPIO21 */
-GPIO22 >> BT_UART_RXD /* default vf2 function MIPI_PWR_EN */
-GPIO23 << BT_UART_TXD /* default vf2 function LCD RESET */
-GPIO24 << BT_UART_CTS /* default vf2 function MIPI_LCD_BL */
-GPIO25 << BT_UART_RTS /* default vf2 function TP_DET_GPIO25 */
-GPIO30 << BT_EN_H_GPIO30 /* default vf2 function TP_INT_L */
-GPIO31 << BT_WAKE_GPIO31 /* default vf2 function TP_RST_L */
-
-Of all the above, GPIO21 is defined in jh7110-common.dtsi
-&pcie1_pins/wake-pins and may need consideration.
-
-There is a note about "PMIC_PWRON as Key" and so does this have the
-meaning of it is used as an input device?
-
-Also noted is that the USB over-current circuit appears to be
-implemented, different than being absent in other VF2 designs.
-
-1:
-http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/service-and-support/Orange-Pi-RV.html
-2: https://lore.kernel.org/lkml/20251005174450.1949110-1-e@freeshell.de/
-
-With the card detect describing hardware corrected, and clean up the
-vendor property sort, then please confirm if you think GPIO21 is
-described correctly.
-
-Acked-by: E Shattow <e@freeshell.de>
-
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
