@@ -1,156 +1,134 @@
-Return-Path: <linux-kernel+bounces-842219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09B25BB9419
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 07:22:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D7BDBB941C
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 07:28:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C2DA4E149C
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 05:22:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 14B0E4E1E85
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 05:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198D91E1C1A;
-	Sun,  5 Oct 2025 05:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DABC1DFE22;
+	Sun,  5 Oct 2025 05:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RCWjjr87"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="G27dcEQh"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129BF10A1E
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 05:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176EE6FBF
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 05:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759641770; cv=none; b=txqtOrIvuU9zfHIXtmIilxzmWN0Nw5oLLW1w+ZC2nOBl1/nN5R2U+07QJpTSj89rXOJ4bzxNEu3umbKHTM0K1m26ROMCLWVE8TAzpaytDgfVFt/qfkJ3I1r4DZWBAQzrPIbg67pc/9JirzMqj6NXW+64tisVFSrpG8aZdOMrrZQ=
+	t=1759642113; cv=none; b=Ocw+0kNAqRLgM5Op5OtSRpfbsrkEwBi0YHnVKS2L1ezh7lY3Hj887C1xyU7SCYJRLz7xnHuhd2gjsbUMXxTsVKMPEgbK8TaCjA+vSEBAsADCORK823z8VFQsp9+svlRccuUduxmKQF3WivF5BV9ysbwzhkM47swxr2+RuRXkcn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759641770; c=relaxed/simple;
-	bh=dqOi+MY78NsDOxDex+3RbETGEFiqYs1aaeXItxShAr8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=ffJJPGm9pu/KcCbB6k7ip+C/Lsoev8Ktb3EIDLyjUrlwKpB4VZEx/ZLdsHTIRS/zxSiU2fz9KlxhsDMhPdNSyZVYDp5TdoqzRSjTOL9U/83IacTRKNjnwN3/kSKZoOjQvPjBnviiUfXOztqOEA48OEH++8QeoCdksqo9n3EdQsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RCWjjr87; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-3324fdfd54cso4331544a91.0
-        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 22:22:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759641767; x=1760246567; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:subject:from:to:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bl4f3lUngLx4Rr2JAATJH0JKZYoNdISvwmWY0T8sTHM=;
-        b=RCWjjr87Rd2vecWCLnN6OxdPX0L0CntqhpnvNF8n/L6XNeqr6PerncDQbc36owty6Y
-         5Osm00lgc5ASi4057sq5KWPpKYQPNdNPb31RnsoCevJT2M/Dy97CMkYJmngJUMoZtWjH
-         xuZHdMc2NGxiAPznXuhH2rvWPlrJrIWsBJFAi8KOyKnjFLCmV/ax7wgcc3Y6lNrQo7eO
-         O5fTRm3AII7Nzcn/7MoK2aMqjHVSrBgAgT6Kg6nyoppGhvrSUc3qNBArCFKJbWBxMGwk
-         AvUwGEKPHO7pwsKN58gTLin2qX/eq6NnGKv8Z0qUEnpN9RPY1U9d+mLTxk1e+hbQcgpz
-         46vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759641767; x=1760246567;
-        h=in-reply-to:references:cc:subject:from:to:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=bl4f3lUngLx4Rr2JAATJH0JKZYoNdISvwmWY0T8sTHM=;
-        b=vULzSyv3QPkFjon557abRtF3tIhVP9iPN+bqeYHxpuVHIwCaUN5ODt4cQ2LK09KF0y
-         W0SKpOVGcWdHBfHnty2FVhM0oOLuT6TGywFD9F40qXPM0pcvj8Kef/zA0kmavkF3UL7O
-         TjJIrEBUccmTmi9R6J6SeyjCGrAaT8xl46/fEBJ0vKRlArhNsdpNG25K55C07+Lc6dyh
-         0hCkePdrD1rPVdJdjahiLf/A7UiyRxI7QTCiNpTZGCD+N739BK2OCabcAgLZtGpW5zDF
-         zITKV2uRIJZ+Nbm4PKj7pjNKlSCng5vgDJV5dUJPVd7weqZz6VIlaX7NU+z5GwyXLW39
-         WkMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWlgZKCqeIxBw+K1n/VwSz+/s/jN9q/0Jvwj4ti0PLplSqie0aUXTRUXCImvzP3bdOGns0qldf/LNDTECk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoiWBJ0RiLv5aAt/nKTVnUV1Qv081xzEQfig1JRkoqe7AysM3A
-	77n4zbUMiPXpoqrGVVnGZFs83VQvqkmb943cRrJLFGg2Tuc44R0OccUP
-X-Gm-Gg: ASbGncsS6yOyfc24Dg7udaokBOGmKjCsfd/4R19j46YFZKpL3ch9fRsVaTBEVdR8+LC
-	vZbdPDUJygn2kZsEEoCHsmD6Zx4z6nDycTH9hrEfNBs5fseKoz8UGALvKARp8Ry2T+jbqhbVtfc
-	BxFA1oe3qFpEmPtmumgskTBQ4suugL/VmCCASYgI1WzIMm26M4JyVamBOY95XtwIpA4ZYAE8dFP
-	UPgYUitxc57RB9knJ1/xKO8XLxVM2AlapVNnyCR0jXs9SaTAz8/py5mLOeTkd2Lp9nCJ7dvfKfv
-	eRnp1cmrVj7k9YmIxsZF0v1tOrgwtdAF0EbRPL0ZGOe3QvRlPGDjpunvfN/U0Be0Db9ShMew5WF
-	xKPBgnJ1wK8RVRDm85fpv9B+e/QcFIG5+Mbn7cfNky7A=
-X-Google-Smtp-Source: AGHT+IFRMPV/2tU3v8ACGpBhtXjHmMDZIjexNHZU5hi30zMXqAgqm8rywJTqpp3BUVdjaLbyzhqfkA==
-X-Received: by 2002:a17:90b:1642:b0:338:3789:6c60 with SMTP id 98e67ed59e1d1-339c27b5af3mr9660501a91.36.1759641766902;
-        Sat, 04 Oct 2025 22:22:46 -0700 (PDT)
-Received: from localhost ([175.204.162.54])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339c4a0d50esm6732991a91.2.2025.10.04.22.22.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 04 Oct 2025 22:22:46 -0700 (PDT)
+	s=arc-20240116; t=1759642113; c=relaxed/simple;
+	bh=lSQ8HAtiqRvKPWBUdmp32X4c9mOaWNkPum34eaq65nY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=elKCBBGq3ePVmSRxYWBJty+RZI0PwRLgQdpC44lSkHkUuYQBM/Usjq9sPZB7mFkdVB/v7dlOARSuvjPcoEnYW8+M0LHlaemf1rzMld9lAWxWcSPJhDw6PioDcvCPk/nP6IQZsd633aa7K6cBHb8JIFqDHF7lWZEDgjOkEc/sOo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=G27dcEQh; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3F38440E0194;
+	Sun,  5 Oct 2025 05:28:27 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 3TUA45zQHCYB; Sun,  5 Oct 2025 05:28:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1759642097; bh=lSQ8HAtiqRvKPWBUdmp32X4c9mOaWNkPum34eaq65nY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=G27dcEQhBBh5P8KICkNcZJrmVIhmdkDtRPIJHQ3QzuLMKv1jW3stSGBPrhcdVrPBy
+	 zksi2ZyQq6m3sEkEzz+W46oubhQksZhzA3Y4/1BsZUZfuONBJSj6i8AVZn64fp/j6S
+	 RLsSuqQ7MslQL1B8i3RmOwgufXe8HA333L40K4JgCmUikRcCEfbirF02pG488f9Pjz
+	 pCzB+M9tlOcdzWG4qULvN41Fx/ASZNh/qBvPTJOSEiVO6sFu7/ZLsyIqvsLNP5fmCg
+	 uGPYRDquN6Vj2JjitjuhKGH5cYzJZSEZ1uBSOQs7c3CdnwgbKeUTnlpsxX8weHeN88
+	 aY+Ob9IRhjtCfP9Uu+RfuodBneeRBIlZ74Ks8vZh5w/LuBnRAb5jSyV64AaYF7VvOi
+	 G9XqEFDhZzfCjwyxrVxD2zWENl1Kdti1b3Uj3oKhdwFTBv8EzDRvYWsNhqMJ9K75hF
+	 Qgj5MeTBuOI5D2bINKWTBnn/gA1b4i0BjQLwEAafvGhnACDK4JdyScaYu3wpRlm9xw
+	 fsAC5U5DLSnpo2Eo47wXqx8jfpTk8ov7zgUKXaWxXVN/9JgX22bhYNRjtrzXIhAZaf
+	 171+OX7BaMeqURrGhqFH7qw/buElXLmlV9Q0oEKF55+BFZ3Nw61Nao+kd7jbUK81lo
+	 paNadokGw55LeRKbinbcX8Ow=
+Received: from ehlo.thunderbird.net (unknown [IPv6:2a02:3035:e62:bf7a:f880:d6ab:37f8:f6f8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 34CD340E00DE;
+	Sun,  5 Oct 2025 05:28:01 +0000 (UTC)
+Date: Sun, 05 Oct 2025 08:27:54 +0300
+From: Borislav Petkov <bp@alien8.de>
+To: Dave Hansen <dave.hansen@intel.com>,
+ Xose Vazquez Perez <xose.vazquez@gmail.com>
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Nikolay Borisov <nik.borisov@suse.com>,
+ Alex Murray <alex.murray@canonical.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>,
+ Sohil Mehta <sohil.mehta@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>, X86-ML <x86@kernel.org>,
+ KERNEL-ML <linux-kernel@vger.kernel.org>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_RFC=5D_x86/microco?=
+ =?US-ASCII?Q?de/intel=3A_Refresh_the_revisi?=
+ =?US-ASCII?Q?ons_that_determine_old=5Fmicr?=
+ =?US-ASCII?Q?ocode_to_20250812_=28Aug_2025=29?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <8826a146-ba01-4f97-9fc5-7bf42c1e768d@intel.com>
+References: <20251004222528.119977-1-xose.vazquez@gmail.com> <8F0DE1AD-5532-4581-9716-581FB2777404@alien8.de> <8826a146-ba01-4f97-9fc5-7bf42c1e768d@intel.com>
+Message-ID: <F5790843-AB8B-4E07-8A62-5F777249CFCF@alien8.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 05 Oct 2025 14:22:43 +0900
-Message-Id: <DDA4Y2GRUHD4.1DFHX01NOJYCB@gmail.com>
-To: "Simon Horman" <horms@kernel.org>
-From: "Yeounsu Moon" <yyyynoom@gmail.com>
-Subject: Re: [PATCH net] net: dlink: handle dma_map_single() failure
- properly
-Cc: "Andrew Lunn" <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>,
- <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20251002152638.1165-1-yyyynoom@gmail.com>
- <20251003094424.GF2878334@horms.kernel.org>
-In-Reply-To: <20251003094424.GF2878334@horms.kernel.org>
 
-Hello Simon.
+On October 5, 2025 6:58:05 AM GMT+03:00, Dave Hansen <dave=2Ehansen@intel=
+=2Ecom> wrote:
+>On 10/4/25 19:42, Borislav Petkov wrote:
+>> This is turning into exactly what I was afraid and I warned it would tu=
+rn onto:
+>>=20
+>> 1=2E https://git=2Ekernel=2Eorg/tip/952df63ef426b21d6da14bb48748f12b0ae=
+2fe36 - we *just* updated it and there's already a new one
+>>=20
+>> 2=2E Random people - not Intel - are going to be sending updates too=2E
+>>=20
+>> This is a mess waiting to happen=2E ;-/
+>
+>In the end, we've got an lightly documented patch that doesn't make a
+>lot of sense to apply=2E Not exactly a unique situation=2E ;)
+>
+>Xose, do you have any specific, practical reasons this should be
+>applied? Honestly, I don't hold the "HIGH" Intel SA rating in super high
+>regard=2E
 
-I'm currenly re-writing the code as you suggested. I think `alloc_list()`=
-=20
-can easily adopt the `goto` pattern, but for others functions, it's not=20
-that straightforward.
+That's the problem=2E It'll be needless and endless discussions of the sor=
+t: oh, why do you need to update those revisions? But but, I need this and =
+that=2E Oh but you don't=2E Blablabla=2E=2E=2E Upstream has these revisions=
+, why aren't they backported=2E=2E=2E?
 
-My question is whether a style combining `goto`, `continue`, and `break`
-would be acceptable in this context:
+Versus: people should always update to the latest microcode and we're not =
+tracking this in the kernel because there's really no need to=2E
 
-```c
-	if (np->cur_rx - np->old_rx >=3D RX_RING_SIZE) {
-		printk(KERN_INFO "Try to recover rx ring exhausted...\n");
-		/* Re-allocate skbuffs to fill the descriptor ring */
-		for (; np->cur_rx - np->old_rx > 0; np->old_rx++) {
-			struct sk_buff *skb;
-			dma_addr_t addr;
-			entry =3D np->old_rx % RX_RING_SIZE;
-			/* Dropped packets don't need to re-allocate */
-			if (np->rx_skbuff[entry])
-				goto fill_entry;
+And none of those issues exist anymore=2E
 
-			skb =3D netdev_alloc_skb_ip_align(dev, np->rx_buf_sz);
-			if (skb =3D=3D NULL)
-				goto out_clear_fraginfo;
+This is one of the reasons why I'm making sure the loader always works and=
+ is very easy to update microcode=2E You always update and that's it=2E
 
-			addr =3D dma_map_single(&np->pdev->dev, skb->data,
-					      np->rx_buf_sz,
-					      DMA_FROM_DEVICE);
-			if (dma_mapping_error(&np->pdev->dev, addr))
-				goto out_kfree_skb;
+So you don't need any of that unnecessary work=2E
 
-			np->rx_skbuff[entry] =3D skb;
-			np->rx_ring[entry].fraginfo =3D cpu_to_le64(addr);
-fill_entry:
-			np->rx_ring[entry].fraginfo |=3D
-			    cpu_to_le64((u64)np->rx_buf_sz << 48);
-			np->rx_ring[entry].status =3D 0;
-			continue;
+Thx=2E
 
-out_kfree_skb:
-			dev_kfree_skb_irq(skb);
-out_clear_fraginfo:
-			np->rx_ring[entry].fraginfo =3D 0;
-			printk(KERN_INFO
-			       "%s: Still unable to re-allocate Rx skbuff.#%d\n"
-			       , dev->name, entry);
-			break;
-		} /* end for */
-	} /* end if */
-	spin_unlock_irqrestore (&np->rx_lock, flags);
-	np->timer.expires =3D jiffies + next_tick;
-	add_timer(&np->timer);
-}
-```
 
-Or is there any better way to handle errors here?
-I'd appreciate your guidance.
+Small device=2E Typos and formatting crap
 
