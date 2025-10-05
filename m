@@ -1,40 +1,38 @@
-Return-Path: <linux-kernel+bounces-842226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06069BB9442
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 08:51:31 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A6EEBB947A
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 09:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DE4518987C1
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 06:51:53 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6FEFB3458A8
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 07:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF671E3787;
-	Sun,  5 Oct 2025 06:51:23 +0000 (UTC)
-Received: from baidu.com (mx24.baidu.com [111.206.215.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04C81EA7CF;
+	Sun,  5 Oct 2025 07:31:17 +0000 (UTC)
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCA63BB5A;
-	Sun,  5 Oct 2025 06:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C51D3BB48
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 07:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759647083; cv=none; b=rFXbyq42S0eMlXt7iHPieWHz9XHOvupw3zq3R7K4ADFuij5ujMIxrswh46u8ERrabbc3W5AI9Eo8c6hgc+9Lo4OhNncGE0+ql9tmAtX2vSV4vkVXEwLYYFPGp0vGg3pi4hmSmpNm8QAQFs/CpFSRHwcnN08hw3ICCO4UWBMctAc=
+	t=1759649477; cv=none; b=iN38sKfE64duRDZWJ/RI/HqIC6iJDim7j2tG9eDj8XJ7jS+mZyEB2pVtk/uArVc7IAu1OH9RFJALw8JRyumVmL/2wq3zMwy9bVIV9bCKpLdMyn/xQ7a5GQ3QG67Eg/cDZJyWyrgF+D6OKNzB3+M8EasQxEQwR0U7dgSFtHHM3oU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759647083; c=relaxed/simple;
-	bh=oiKmkFwA1KNcZUbmSQOvC5FPhmAJ5a+cWFYUwCSINuc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ntSAKWP2sjpxJ0p7eacRxFjGZLFs442BpJq0AFj14bIB7di2Ecr3+fUASuNqxdQhrGipdCFHBCtPTADt6F2rmNBr4GYsJ+Lhzhn97/VxjngSFQLW2fFUJAuh9hZzy4BrdZzzjDbf0/jsn9k/8q75ti7YJ5az+TJgnk+ruTnKXtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+	s=arc-20240116; t=1759649477; c=relaxed/simple;
+	bh=//J9zrjS38rnrVl8EjJ3d4tBXaEE7EHJu2CG8NsJ944=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rJ6QL5Dt/0Cw2TYavcx+P0WARQZ+MXkiVMmeIFfvdr3nUmAItaXR2gRa0M+G6e0d0QZe3tlvvRhQMEmIPjHR1Pw474dYZyWksljcvKB9tp41heblQ79Lx3NfZnFbYcpgmYGid+TFV3fFvQQl1M9b271bFAY86brAo4toV7M16lM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
 From: Fushuai Wang <wangfushuai@baidu.com>
-To: <sfrench@samba.org>, <pc@manguebit.org>, <ronniesahlberg@gmail.com>,
-	<sprasad@microsoft.com>, <tom@talpey.com>, <bharathsm@microsoft.com>
-CC: <linux-cifs@vger.kernel.org>, <samba-technical@lists.samba.org>,
-	<linux-kernel@vger.kernel.org>, Fushuai Wang <wangfushuai@baidu.com>
-Subject: [PATCH] cifs: Fix copy_to_iter return value check
-Date: Sun, 5 Oct 2025 14:49:52 +0800
-Message-ID: <20251005064952.4056-1-wangfushuai@baidu.com>
+To: <anna-maria@linutronix.de>, <frederic@kernel.org>, <tglx@linutronix.de>
+CC: <linux-kernel@vger.kernel.org>, Fushuai Wang <wangfushuai@baidu.com>
+Subject: [PATCH] timers/migration: Remove redundant ternary operator
+Date: Sun, 5 Oct 2025 15:30:21 +0800
+Message-ID: <20251005073021.6810-1-wangfushuai@baidu.com>
 X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -44,37 +42,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: bjkjy-exc7.internal.baidu.com (172.31.50.51) To
+X-ClientProxiedBy: bjhj-exc10.internal.baidu.com (172.31.3.20) To
  bjkjy-exc17.internal.baidu.com (172.31.50.13)
 X-FEAS-Client-IP: 172.31.50.13
 X-FE-Policy-ID: 52:10:53:SYSTEM
 
-The return value of copy_to_iter() function will never be negative,
-it is the number of bytes copied, or zero if nothing was copied.
-Update the check to treat length <= 0 as an error, and return -1
-in that case.
+The ternary operator is redundant here, so remove it.
 
-Fixes: d08089f649a0 ("cifs: Change the I/O paths to use an iterator rather than a page list")
 Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
 ---
- fs/smb/client/smb2ops.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/time/timer_migration.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-index 058050f744c0..2383a80b9ed1 100644
---- a/fs/smb/client/smb2ops.c
-+++ b/fs/smb/client/smb2ops.c
-@@ -4764,8 +4764,8 @@ handle_read_data(struct TCP_Server_Info *server, struct mid_q_entry *mid,
- 		/* read response payload is in buf */
- 		WARN_ONCE(buffer, "read data can be either in buf or in buffer");
- 		length = copy_to_iter(buf + data_offset, data_len, &rdata->subreq.io_iter);
--		if (length < 0)
--			return length;
-+		if (length <= 0)
-+			return -1;
- 		rdata->got_bytes = data_len;
+diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
+index c0c54dc5314c..b869b244025f 100644
+--- a/kernel/time/timer_migration.c
++++ b/kernel/time/timer_migration.c
+@@ -751,7 +751,7 @@ bool tmigr_update_events(struct tmigr_group *group, struct tmigr_group *child,
+ 		 * be scheduled. If the activate wins, the event is properly
+ 		 * ignored.
+ 		 */
+-		ignore = (nextexp == KTIME_MAX) ? true : false;
++		ignore = (nextexp == KTIME_MAX);
+ 		WRITE_ONCE(evt->ignore, ignore);
  	} else {
- 		/* read response payload cannot be in both buf and pages */
+ 		nextexp = data->nextexp;
 -- 
 2.36.1
 
