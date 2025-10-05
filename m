@@ -1,198 +1,119 @@
-Return-Path: <linux-kernel+bounces-842472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ABCEBBCC8E
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 23:29:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45AA6BBCC91
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 23:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFB7018949F0
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 21:29:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C22463A9882
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 21:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4EC2BDC1E;
-	Sun,  5 Oct 2025 21:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9589523A564;
+	Sun,  5 Oct 2025 21:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z7ggeLPm"
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="iCGL4MsG"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357CE1CAA6C
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 21:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0332156F20;
+	Sun,  5 Oct 2025 21:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759699761; cv=none; b=Prgr8yUn01lgKEcPaKhE+f+InnyFUMhQGkRzHXRznXEx3+M6De9dkqka2BRisVDjjUpXIWPTuBV4rIYrsx4IhPnmexxVOTNVd/oYHI7+ngV+gKRstnS6UFSDlkj/EHqRTdzBh/Pjgir5opqMrQHBOVlb+tZScTvAz0wyiw5vLck=
+	t=1759699813; cv=none; b=O2IuWBRhixmn2+xP5IPKRmcvoFfjaYSzPbJevyUuhpbzyQYqxLGTFSlUzLnE31GBM2p4xeLLrIwrCOjSnUd5Q5KFOOfpBsCmW6LJ/hSWQUkMXmsmcn6FwEt9QNdkBHWUxdKgVIaeG1eufM+ahxjiU9NFzN3woENQi+41S5Mv/WY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759699761; c=relaxed/simple;
-	bh=jwBiU8rBJyfy0hIrN+9UdEqQBiAEMFjI/OXJALXj3EI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pz3ft5tY22vG2t45wevxLippv6EUsOW2puDP8ucS3u0qvXMBNgj+6bacX8wp3B8yAkxbgs+zP6NlNUD5PaNBBZC19ss2tiJqVv37CDcnMA7LYJvYljzTY7mTGKK/HetINENaPTqdn9eVe+6VcsLFS6did4MbxC8JKFMNnlaqWrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z7ggeLPm; arc=none smtp.client-ip=209.85.161.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-64e3e259f93so2063248eaf.3
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 14:29:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759699759; x=1760304559; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6o2TOg0k6IWIl8VdR4B9mf3AL58I4LVgFxkfcM+WkCU=;
-        b=Z7ggeLPmy5hFyDBsUr/hZ45CpjeZ+kMWm/Ei+n3+pkwQ2GUZJmPfMuuCnVvvIt5KEc
-         gACVlfwQV4AVszshRh3r/YeUmh9X8mGFn+MiZAaHWtKxk7IXitnOy1ZXnjorqs25WyNU
-         OX9zsxAchl4hiTnWruqChCMG9TAv+5sCMxDm5qB9POTkyE6jkvHZlECG/1cnomQo6FRv
-         3xKjCIMdK77vALFQLym7fuyMw8r42HMP77/7CUtHXwE9f3AyGeJgJrSS6VTHGF7djrAA
-         AmaURLVNpHr0gXnbVjNOiQBmY13jZyMamHcf+ldG2i3F8xRvOhLTVVGcmPKNJ0QXcnzh
-         4YoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759699759; x=1760304559;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6o2TOg0k6IWIl8VdR4B9mf3AL58I4LVgFxkfcM+WkCU=;
-        b=uxpFuyJPThZaw5YrUBtq9OK2AyNS2fN49JIV/rqdsUkXAMhj9Y4djwsj478V2irreO
-         G+byUEL+VtA+K7StdQPfSkNrhncDfHvbF888gg507m3tEiLVmUEed6VpmkdTqq2wiwqT
-         DTIztU8CqgJsTb9Z7sZ65u6ZAw50F6S7GZVZX54r+XvIRu5L/AE2/z0WAZnXsLczVtTV
-         qMorBi9U7BRIlt1O6zavxfF65oFBmL9YFcJMlSGALLHMsP5l/nk4e0uyW3r0Z3JB5sv8
-         5c4xoX6dzrR0I40REx2olJ9xPK85z9yMT08IJhCG1TXFcF2Lzk1ZsX0q0HyrPrW0BGgw
-         h4kg==
-X-Forwarded-Encrypted: i=1; AJvYcCX+Tysd5AuZT9geXU5dEBIa/EdFYMPRTXD8iRIAwv06irDtzNznwkgbcIw8vS6/mREMlMoeeWlW3BONtYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yye7BeGDS5ZdynXQgplq6MNTRuV7zU3ck7o+/ytLMN0WsGlR8O4
-	5uzCX2/3ZxOCFlHyRY6PiOAiSx3iHszkz/vEMJ34Y22JA6t5VUZYnynyWq7qotoVwYdJ1FAUfkR
-	K2D83NTHJSABa2OLrlQgzbI9B4gOV2KU=
-X-Gm-Gg: ASbGncvNEHPlbkQELLcWzuBNU+4TlMS/X8u1cwPTU28BBB0xqKY/vmkealbfAtxm7A/
-	E4fm46ReQeDtFBvVvygHSjEuaUKr5TK9UwhOiMa0gMW0jHdGNpAVXAInW7oX702KtzqtwoNf5jG
-	ZV/4ZEWelkyAOQOcFCBFo7nUaXeoQ9XkQ7SEH+Acl1HvAGAyUMcuR+2psaFoKITS5o+YCwrF8pA
-	bcIiooZ9y1rEyn0wOP1OLEDbG9+p+Xk5qM54YZJ7A4=
-X-Google-Smtp-Source: AGHT+IHSD/taCi9Ux6T9oOEN+76qc9NZsXUV4XRYcCBn5g+09Kgy6Q5JWqCYduGZS5k+iG7g7Y9+SQg61aT7cbUXawM=
-X-Received: by 2002:a05:6871:5823:b0:3a5:81b0:8339 with SMTP id
- 586e51a60fabf-3b1018ad4acmr5552603fac.31.1759699759141; Sun, 05 Oct 2025
- 14:29:19 -0700 (PDT)
+	s=arc-20240116; t=1759699813; c=relaxed/simple;
+	bh=X2Sj+X4ry8CeKTZ3BjYqZlfUBwPFnjOa3L+N/yV5Yqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W0gcd7XVPGtWm03L/4m5zgmyt93g/yM2o52Q6ytqxG4zLmU+XGQfntifd65RF/WVtKukgkg6kUyFt2rN9flvFgphu79HQbtQfUIZVzZIkrv7QCI73umzsRr1Yy7X21T0cAjJNW6P3ae1JFGLWr5G8ZabtSrU9TvMlVBvYj1q/dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=iCGL4MsG; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=av6tgXA9OEKZB5j5EgDH2KVUpfC7vQCZYrM0ThTzPwk=; b=iCGL4MsGwWmPlwMXPOthkmEvq+
+	kuQs491WFrxUWEWnQiyWnRO9OAeVyZ4zEK5L2xzpiwxgCx+mID+AvEEfx2MQZPjc1xPqVqNa2TOO8
+	qq8m/NVf01VlzvwvV79HQ4ehuQ8B6/IKbKmxKXNhzsQma898hESFrEEACrXi1Kl4NVvWEtYpXDIbS
+	TPku5wazwD+FyTRWBUcQgyNXteVxS+qeLfLGInm4M0MhBKqD8tTfqXbK3M5f6ca5dm+YrVt6CLVnW
+	kUnlz7Ge9DnwetHj6Y+0tXm6rD8mte5/5BVZ4ClgAC/Pby/6jZTSQPcgdHs9E72GfTTylmtn7Cn6S
+	cbzuCfDA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v5WIx-00000001mYO-2GSj;
+	Sun, 05 Oct 2025 21:30:07 +0000
+Date: Sun, 5 Oct 2025 22:30:07 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Miquel =?iso-8859-1?Q?Sabat=E9_Sol=E0?= <mssola@mssola.com>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
+	linux-kernel@vger.kernel.org, jack@suse.cz
+Subject: Re: [PATCH] fs: Use a cleanup attribute in copy_fdtable()
+Message-ID: <20251005213007.GG2441659@ZenIV>
+References: <20251004210340.193748-1-mssola@mssola.com>
+ <20251004211908.GD2441659@ZenIV>
+ <20251005090152.GE2441659@ZenIV>
+ <87y0pp455w.fsf@>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926153311.2202648-1-sudeep.holla@arm.com>
- <2ef6360e-834f-474d-ac4d-540b8f0c0f79@amperemail.onmicrosoft.com>
- <CABb+yY2Uap0ePDmsy7x14mBJO9BnTcCKZ7EXFPdwigt5SO1LwQ@mail.gmail.com>
- <0f48a2b3-50c4-4f67-a8f6-853ad545bb00@amperemail.onmicrosoft.com>
- <CABb+yY1w-e3+s6WT2b7Ro9x9mUbtMajQOL0-Q+EHvAYAttmyaA@mail.gmail.com> <3c3d61f2-a754-4a44-a04d-54167b313aec@amperemail.onmicrosoft.com>
-In-Reply-To: <3c3d61f2-a754-4a44-a04d-54167b313aec@amperemail.onmicrosoft.com>
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Sun, 5 Oct 2025 16:29:08 -0500
-X-Gm-Features: AS18NWATM3rjVCftataNysY7UQuMLs5RrQDj0NVCBPWbbYhYtZsdg0yjDMjBqRU
-Message-ID: <CABb+yY2-CQj=S6FYaOq=78EuQCnpKFUqFSJV+NHdLBjS-txnAw@mail.gmail.com>
-Subject: Re: [PATCH] Revert "mailbox/pcc: support mailbox management of the
- shared buffer"
-To: Adam Young <admiyo@amperemail.onmicrosoft.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Adam Young <admiyo@os.amperecomputing.com>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87y0pp455w.fsf@>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, Oct 2, 2025 at 6:17=E2=80=AFPM Adam Young
-<admiyo@amperemail.onmicrosoft.com> wrote:
->
->
-> On 10/1/25 16:32, Jassi Brar wrote:
-> > On Wed, Oct 1, 2025 at 12:25=E2=80=AFAM Adam Young
-> > <admiyo@amperemail.onmicrosoft.com> wrote:
+On Sun, Oct 05, 2025 at 07:41:47PM +0200, Miquel Sabaté Solà wrote:
+> Al Viro @ 2025-10-05 10:01 +01:
+> 
+> > On Sun, Oct 05, 2025 at 07:37:50AM +0200, Miquel Sabaté Solà wrote:
+> >> Al Viro @ 2025-10-04 22:19 +01:
 > >>
-> >> On 9/29/25 20:19, Jassi Brar wrote:
-> >>> On Mon, Sep 29, 2025 at 12:11=E2=80=AFPM Adam Young
-> >>> <admiyo@amperemail.onmicrosoft.com> wrote:
-> >>>> I posted a patch that addresses a few of these issues.  Here is a to=
-p
-> >>>> level description of the isse
-> >>>>
-> >>>>
-> >>>> The correct way to use the mailbox API would be to allocate a buffer=
- for
-> >>>> the message,write the message to that buffer, and pass it in to
-> >>>> mbox_send_message.  The abstraction is designed to then provide
-> >>>> sequential access to the shared resource in order to send the messag=
-es
-> >>>> in order.  The existing PCC Mailbox implementation violated this
-> >>>> abstraction.  It requires each individual driver re-implement all of=
- the
-> >>>> sequential ordering to access the shared buffer.
-> >>>>
-> >>>> Why? Because they are all type 2 drivers, and the shared buffer is
-> >>>> 64bits in length:  32bits for signature, 16 bits for command, 16 bit=
-s
-> >>>> for status.  It would be execessive to kmalloc a buffer of this size=
-.
-> >>>>
-> >>>> This shows the shortcoming of the mailbox API.  The mailbox API assu=
-mes
-> >>>> that there is a large enough buffer passed in to only provide a void=
- *
-> >>>> pointer to the message.  Since the value is small enough to fit into=
- a
-> >>>> single register, it the mailbox abstraction could provide an
-> >>>> implementation that stored a union of a void * and word.
-> >>>>
-> >>> Mailbox api does not make assumptions about the format of message
-> >>> hence it simply asks for void*.
-> >>> Probably I don't understand your requirement, but why can't you pass =
-the pointer
-> >>> to the 'word' you want to use otherwise?
-> >>>
-> >> The mbox_send_message call will then take the pointer value that you
-> >> give it and put it in a ring buffer.  The function then returns, and t=
-he
-> >> value may be popped off the stack before the message is actually sent.
-> >> In practice we don't see this because much of the code that calls it i=
-s
-> >> blocking code, so the value stays on the stack until it is read.  Or, =
-in
-> >> the case of the PCC mailbox, the value is never read or used.  But, as
-> >> the API is designed, the memory passed into to the function should
-> >> expect to live longer than the function call, and should not be
-> >> allocated on the stack.
+> >> > On Sat, Oct 04, 2025 at 11:03:40PM +0200, Miquel Sabaté Solà wrote:
+> >> >> This is a small cleanup in which by using the __free(kfree) cleanup
+> >> >> attribute we can avoid three labels to go to, and the code turns to be
+> >> >> more concise and easier to follow.
+> >> >
+> >> > Have you tried to build and boot that?
 > >>
-> > Mailbox api doesn't dictate the message format, so it simply accepts th=
-e message
-> > pointer from the client and passes that to the controller driver. The
-> > message, pointed
-> > to by the submitted pointer, should be available to the controller
-> > driver until transmitted.
-> > So yes, the message should be allocated either not on stack or, if on s=
-tack, not
-> > popped until tx_done. You see it as a "shortcoming" because your
-> > message is simply
-> > a word that you want to submit and be done with.
->
-> Yes.  There seems to be little value in doing a kmalloc for a single
-> word, but without that, the pointer needs to point to memory that lives
-> until the mailbox API is done with it, and that forces it to be a
-> blocking call.
->
-> This is a  real shortcoming, as it means the that the driver must
-> completely deal with one message before the next one comes in, forcing
-> it to implement its own locking, and reducing the benefit of  the
-> Mailbox API.  the CPPC code in particular suffers from the  need to keep
-> track if reads and writes are  interleaved: this is where an API like
-> Mailbox should provide a big benefit.
->
-> If the mailbox API could  deal with single words of data (whatever fits
-> in a register) you could instead store that value in the ring buffer,
-> and then the mailbox API could be fire-and-forget for small messages.
->
-> I was able to get a prototype working that casts the  uint64 to void *
-> before calling mbox_send_message, and casts the  void * mssg to uint64
-> inside a modified  send_data function.  This is kinda gross, but it does
-> work. Nothing checks if these are valid pointers.
->
-Even if you pass a pointer to data, what validates that it points to
-the correct message?
+> >> Yes, and it worked on my machine...
+> >
+> > Unfortunately, it ends up calling that kfree() on success as well as on failure.
+> > Idiomatic way to avoid that would be
+> > 	return no_free_ptr(fdt);
+> > but you've left bare
+> > 	return fdt;
+> > in there, ending up with returning dangling pointers to the caller.  So as
+> > soon as you get more than BITS_PER_LONG descriptors used by a process,
+> > you'll get trouble.  In particular, bash(1) running as an interactive shell
+> > would hit that - it has descriptor 255 opened...
+> 
+> Ugh, this is just silly from my end...
+> 
+> You are absolutely right. I don't know what the hell I was doing while
+> testing that prevented me from realizing this before, but as you say
+> it's quite obvious and I was just blind or something.
+> 
+> Sorry for the noise and thanks for your patience...
 
-API doesn't care what you submit to the controller driver - it may be a poi=
-nter
-to data or data itself.  Some drivers (ex MHU) do that, and that is
-how you could do it.
+FWIW, the real low-level destructor (__free_fdtable()) *does* cope with ->fd
+or ->open_fds left NULL, so theoretically we could replace kmalloc with
+kzalloc in alloc_fdtable(), add use that thing via DEFINE_FREE()/__free(...);
+I'm not sure if it's a good idea, though - at the very least, that property
+of destructor would have to be spelled out with explanations, both in
+__free_fdtable() and in alloc_fdtable().
 
--jassi
+Matter of taste, but IMO it's not worth bothering with - figuring out why
+the damn thing is correct would take at least as much time and attention
+from readers as the current variant does.
+
+BTW, there's a chance to kill struct fdtable off - a project that got stalled
+about a year ago (see https://lore.kernel.org/all/20240806010217.GL5334@ZenIV/
+and subthread from there on for details) that just might end up eliminating
+that double indirect.  I'm not saying that it's a reason not to do cleanups in
+what exists right now, just a tangentially related thing that might be interesting
+to resurrect...
 
