@@ -1,186 +1,96 @@
-Return-Path: <linux-kernel+bounces-842439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D8B0BB9CC6
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 21:58:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14FFEBB9CDA
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 22:19:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 552DD18926FD
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 19:59:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9BB074E2964
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 20:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6731E570D;
-	Sun,  5 Oct 2025 19:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B0A1E5B7C;
+	Sun,  5 Oct 2025 20:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="iCmTayLk"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fNhbgcX2"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014121D63C5;
-	Sun,  5 Oct 2025 19:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A40A1A9F86
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 20:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759694324; cv=none; b=SUVfxz4VfXBzyieyV5GKwkKKhbeSMeUde8jPU1nKKPDu0igHpIqeJuk9tgYRgoIBXWd9bbZ23CzQz3DcTemXIhyeSGJUTRETdrod5njmIvjFBHd2UzMQcZkUs8r04WV6p9qZp/rcL5w4XUZKdWO2ACxKTAbGZjOoFeVi3sJ6pok=
+	t=1759695592; cv=none; b=ZyCOEkAn9mILQFWHVlqU6IejL75Fabez9iwP/qhRrESzqXVzMWryPHRbU7JJae9XaoNFHeYqflhAqe3C/+iTX27DkbJQb46Onac4TsbJMYMXGcUCIgPxvalJT9BTnfxsJy9cAE23dYu+tWtA0zlfuZdjzqBB3mPcDT9dfJLm35k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759694324; c=relaxed/simple;
-	bh=hcHoPuDASvo7L4YoQIIOIVa3he8Xm/yVQ4dMNyufHBc=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=rnkPBA3fT+RlByJAsC2QgT3VS4WSYijxLgoacRD4zvJ+VtPFklh45Tdkc2Ev1tOU+5rFoVvqCCRLlaDfUl6tIpWFd+vdoHKLG7C9Q4EBwLm5a9/GMyksjE7A7YB/l6p89isV1EWqh40TFA70Enzggepeq7jGbWOBP+R+IHsuFdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=iCmTayLk; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4FAC2C7A;
-	Sun,  5 Oct 2025 21:57:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1759694227;
-	bh=hcHoPuDASvo7L4YoQIIOIVa3he8Xm/yVQ4dMNyufHBc=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=iCmTayLk9hIK6HaDN+pHYnMRTzULWpiRwz3JYNchd6BO+xgXcfVn6F0CSlrGEllD9
-	 fwh9DuqvY6G8pCw19T95Y1+RcCXtluAHVUayaru6DSDgM3+kiXE5vmSPuta2LiaxSr
-	 s6Zng1KSRWC6QEUi+4KWXEhkade0a+mir4xuTmis=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1759695592; c=relaxed/simple;
+	bh=rM4/5G2V30Hbl+Iq+kXNIQ4tx7lDkcC9tVgWpq0vXWQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qEOdBEYKnv+xd46JTV6aICavhKACzhvU+SroWZ41DRfAPZQVzUGkXVqbK/h3hl7WQ1ZUq8LVc86nWBFlUPnQEF5GKVI2vAkRn5EHCILipyuj4Q4Ho+IlDsy21gchavwgpHccu/j8Uil2OkdvPc4DzYx2JJLx8cumh09/x+Dsh0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fNhbgcX2; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id AAEF74E40EEA;
+	Sun,  5 Oct 2025 20:19:45 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 68A2E6065F;
+	Sun,  5 Oct 2025 20:19:45 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EF500102F1D0B;
+	Sun,  5 Oct 2025 22:19:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1759695584; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=D1+ThUd0H2aIR2MQVkM0B+QGXcipu5gIAh7qnE8fBhw=;
+	b=fNhbgcX2EhHS7NE7wTwB7JJJIlHkmroOt1QLsmNgouMG2jW8ImCjI3TIVEaiMur8/Qw2cx
+	SLqQZAhWUMMR3i3gM5sEKfXvnRZs9fm9MR36w6pphoUi95lHixWoZPMxlpTI34n3px5A+u
+	OwMp20t2pwQ+A88K8eRtj657wDWQYQiSuxk+UeWYJMXp9Gf44s7Doz6BRAue+EnSIcp8Ct
+	MXi5DrbkbiOJa3Dxv3uWZfpR8HsSr/NvUmP2UXAwCgQeGWQfAbBfvoEwFSEzwDIJlj/K9+
+	XeXuURp2TxUv3ppgAwjS2LlxSzjlwOYKn2eoCctC1Pib58ryJikBd2UbQs4xrA==
+From: alexandre.belloni@bootlin.com
+To: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: kernel test robot <lkp@intel.com>,
+	linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] rtc: optee: make optee_rtc_pm_ops static
+Date: Sun,  5 Oct 2025 22:19:24 +0200
+Message-ID: <20251005201925.3757345-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20251005180025.69602-1-asmirnou@pinefeat.co.uk>
-References: <175967476560.756374.10666787102940352317@ping.linuxembedded.co.uk> <20251005180025.69602-1-asmirnou@pinefeat.co.uk>
-Subject: Re: [PATCH v5 2/2] media: i2c: Pinefeat cef168 lens control board driver
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: asmirnou@pinefeat.co.uk, conor+dt@kernel.org, devicetree@vger.kernel.org, hverkuil@xs4all.nl, jacopo.mondi@ideasonboard.com, krzk+dt@kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, mchehab@kernel.org, robh@kernel.org
-To: Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>
-Date: Sun, 05 Oct 2025 20:58:36 +0100
-Message-ID: <175969431602.1246375.2429212814766056041@ping.linuxembedded.co.uk>
-User-Agent: alot/0.9.1
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Quoting Aliaksandr Smirnou (2025-10-05 19:00:25)
-> Hi Kieran,
->=20
-> On Sun, 05 Oct 2025 15:32:45 +0100, Kieran Bingham wrote:
-> > I'm really looking forward to trying this device out sometime. Very
-> > interesting piece of kit - Thank you for working directly to upstream
-> > the support! That's really awesome.
->=20
-> Thanks! I appreciate that. It's been interesting work, and it's great
-> to see the device getting some attention. I'm looking forward to hearing
-> your impressions once you get a chance to try it out.
->=20
-> > > +  rx_data->focus_distance_min =3D le16_to_cpup((__le16 *)&rx_data->f=
-ocus_distance_min);
-> > > +  rx_data->focus_distance_max =3D le16_to_cpup((__le16 *)&rx_data->f=
-ocus_distance_max);
-> >
-> > What is the focus distance in this case? Is it a measured distance that
-> > could be applied to focus?
->=20
-> The focus distance reported by the lens is the distance between the
-> camera's sensor and the subject currently in focus, measured in meters.
-> It correlates with the focus position - higher positions correspond to
-> greater distances - but the relationship is non-linear.
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-What's measuring this distance ? Something in the lens, rather than the
-sensor?
+Fix sparse warningg:
+drivers/rtc/rtc-optee.c:714:1: sparse: sparse: symbol 'optee_rtc_pm_ops' was not
+declared. Should it be static?
 
->=20
-> Libcamera's autofocus algorithm works in dioptres, which are the inverse
-> of distance. In the driver, reading the distance from the lens allows
-> the creation of a piecewise linear (PWL) function that maps inverse
-> distance to the hardware lens setting.
->=20
-> > > +       case CEF168_V4L2_CID_CUSTOM(calibrate):
-> > > +               return cef168_i2c_write(dev, INP_CALIBRATE, 0);
-> >=20
-> > Is there any documentation on how to use this control?
->=20
-> The control performs a calibration action operated by the controller
-> to determine the total number of focus steps. The action is invoked
-> by the calibration utility, which moves the lens, reads the changing
-> focus distance, and finally generates a PWL function to be included
-> in the Libcamera tuning file.
->=20
-> End users are not expected to trigger this control manually through
-> the V4L2 API, as it is intended for use by the calibration tool during
-> system setup. For this reason, separate user-facing documentation for
-> the control has not been added.
->=20
-> In other use cases, calibration can be performed simply by toggling
-> the AF/MF switch on the lens three times within 15 seconds.
->=20
-> > > +       case CEF168_V4L2_CID_CUSTOM(focus_range):
-> > > +               ctrl->p_new.p_u32[0] =3D ((u32)data.focus_position_mi=
-n << 16) |
-> > > +                                      (u32)data.focus_position_max;
-> >=20
-> > Is this really a custom control ? Is there any way to convey this
-> > through the min/max of the FOCUS_ABSOLUTE control ?
->=20
-> We aimed to minimize the use of custom controls, but in this case one
-> is necessary.
->=20
-> When the driver is already loaded and initialized, the focus range of
-> the lens may vary depending on the lens state and configuration
-> options. Because the control's operational range is defined during
-> driver probe, the Linux V4L2 API does not allow the minimum and
-> maximum values to be changed while the driver is running.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202509230549.L26lw7UZ-lkp@intel.com/
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/rtc/rtc-optee.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Have you tried with __v4l2_ctrl_modify_range() ?
+diff --git a/drivers/rtc/rtc-optee.c b/drivers/rtc/rtc-optee.c
+index 3d5662aa1bd8..184c6d142801 100644
+--- a/drivers/rtc/rtc-optee.c
++++ b/drivers/rtc/rtc-optee.c
+@@ -712,7 +712,7 @@ static int optee_rtc_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-DEFINE_SIMPLE_DEV_PM_OPS(optee_rtc_pm_ops, optee_rtc_suspend, NULL);
++static DEFINE_SIMPLE_DEV_PM_OPS(optee_rtc_pm_ops, optee_rtc_suspend, NULL);
+ 
+ static const struct tee_client_device_id optee_rtc_id_table[] = {
+ 	{UUID_INIT(0xf389f8c8, 0x845f, 0x496c,
+-- 
+2.51.0
 
-We should make sure this also generates an event that libcamera can
-subscribe to to make sure it knows there's been an update.
-
-
-> The maximum focus position is not known until calibration is
-> performed, so initially the position is set to zero. The focus range
-> may vary slightly between calibration runs, as it is derived from
-> counting motor steps, and its precision depends on the lens's focusing
-> mechanics.
->=20
-> Additionally, some lenses provide a two-position switch that changes
-> the minimum focusing distance, significantly reducing the focus range
->  - for example, from 2100 to 800.
-
-I see, so a user interaction can update it too. Does the driver have to
-poll to get this update? Or does it just find out on the next read ?
-
->=20
-> > > +       case CEF168_V4L2_CID_CUSTOM(lens_id):
-> > > +               ctrl->p_new.p_u8[0] =3D data.lens_id;
-> > > +               return 0;
-> >=20
-> > Is this a specific individual ID value for the connected lens (i.e.
-> > every lens has a custom id?) or is it a reference to the lens
-> > model/type?
-> >=20
-> > Is this something we could use in libcamera for instance to select an
-> > appropriate tuning file per lens (type) ?
->=20
-> It represents the ID of the lens model/type. Correct, it's purpose to
-> assist in selecting the appropriate autofocus algorithm settings.
-
-We're also pushing for a core control for this I think. That's something
-we 'need' in libcamera globally for all cameras. Unfortunately I can't
-point you at an existing control yet ;-(
-
-
-> For calibrated lenses, the controller stores the focus range in EEPROM,
-> allowing lenses to be swapped without repeating calibration. The
-> Libcamera tuning file includes an autofocus algorithm section that is
-> linked to the lens's focus range, focus distance, and focusing speed.
-> Therefore, reading the lens ID when loading the corresponding tuning
-> file after a lens swap is both convenient and necessary.
->=20
-> It can be read as follows:
->=20
-> v4l2-ctl -d /dev/v4l-subdev3 -C lens_id
-
-I'll see if I can find time to order a kit, and get a compatible lens. I
-have a Nikon DSLR though so I don't have lenses to match this yet :-(
-
---
-Kieran
 
