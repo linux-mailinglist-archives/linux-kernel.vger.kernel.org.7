@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-842465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C7F0BBCC61
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 23:23:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ED5FBBCC73
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 23:24:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED3934E652F
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 21:23:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B39F3B974C
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 21:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941682C1580;
-	Sun,  5 Oct 2025 21:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6BE22C21EA;
+	Sun,  5 Oct 2025 21:22:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0rfF4aoE"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MjBB6XQm"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC522C0F7C
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 21:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374C32C11FB
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 21:22:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759699355; cv=none; b=H5MY9H+YKw9oY5C9bRTglHWUUga9+dEnTrEgzjRU6XtHGt9QSKa/1nv/Ref7AUuKIEgTV0LI9R2E0+0uj6UN0etf0j5jRjOA5ws97uhBksUB/gRQmAGEGOwmQTb3yRk5YDEQsV3y9cAq7/l3ZswAOAJmA/hPMcig/0dD96qKKpc=
+	t=1759699359; cv=none; b=EWSq3gErek8P5wo3uJe8tgdebZ5X/kbWAKRpdLTqxJemEoNnmdWT95oGG/YkZQiiisR7RwmJEYwGXR9hvgGH/fqSStx2j9JpT2HXT4KPfk+sD61ds9Myv3IT4tRTyWS4IOPmu0k8RN6TNkY8M4LJvDGjzPKOp9OZN9dvLFXJCGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759699355; c=relaxed/simple;
-	bh=WlZay7JBScKarmUmUW5W4rt0ZQNci9N/og2V+ODkwEE=;
+	s=arc-20240116; t=1759699359; c=relaxed/simple;
+	bh=BiTq4fssAm6mOmNgnub5TZ1Ugc7+SEH09i/QbCY9KbA=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=pEWwu1zWSbPHX+wEXkM1ZspYdKyUeMFfGtMGTvvKNEyoYZbXTU6H0NZG5cgQ1vuvYYtbupqcbi4uC7J5wfIx3voT4BrRxQWy25GbxzkZDCwXfDF6xNEHJM5CBz3X5aeNsVMaGcN4jS001lc841MasLRVQJIxef2XZ5J2vf0l5xY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0rfF4aoE; arc=none smtp.client-ip=209.85.210.202
+	 To:Content-Type; b=TuTLJpdKaETqxgX0h3wjVPKnLMhVdqNaevJOPF4mjxkcHBTHtCbRVR5YeUabLCVMyS9idSU3gi763eXc9whL9r7mMrrykSXV9CqT52GszHSTKu4OB0MXRuKipf/Cyy/lLajIYe7rjYHTajGmcX8dnaFCRCy6GWc7bUe9QcBiX40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MjBB6XQm; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-77f5e6a324fso6416929b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 14:22:33 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-27356178876so26300485ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 14:22:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759699353; x=1760304153; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1759699356; x=1760304156; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=wulS2NGvKURng0Egd2IGwMyFIkt/Pg3ipSmNBN6RrB4=;
-        b=0rfF4aoEG5vsKg6z2lCfbHy9iPfb3X2nhejGwhUaXIG+h+SpERjF6P3elhAr+nDhsJ
-         EI+/RtNRXreFDg1y7vX6uhLARYWQ8i73rqKfCIdzaEGERKx4bzk9jM+PCiR8xyQcNLAj
-         7OgXIMiGWKGxbBOcj1ojnO9rngadVW5aToVN0KJZCmMDqLNccZc669fZW1qrcJ5fNwQh
-         YUaeI/XpU/eBqi+wJdyv+74rhGSWTduWYAXfpJ6NscnPSa2w28lLEk6RFiOY/37pRwBo
-         lKHJaTxfFP5DrjF6+bpC+yk2eutH5/jeBPPsCoWzT+ASCGba4BQ8ghdT3zkzJn/xGZKu
-         Ed4w==
+        bh=2cA3lKnCtBfH4M0wODrAsUo3j0OeWCdqHdGSVaUVEmE=;
+        b=MjBB6XQmjziqd+LZUT6QLt4AA8F1hhat556N0T+QBmhwlbryajUl5z4PTlU2Xr5VcP
+         D++zEzaF2tWqa5Hqsm7aeQzT83p2QXgSkFFsRG8WxW8RFZNhJPA7epjq8ooEjL+z//VF
+         JcoAoWMY/M7dWh3EI5VwOC9ft0tUNQNU6l2WQp6LOLaJ7b7nTl9AI07eYi61lYoww0C4
+         o6eRI5/jQpBymKM7CBh+tUdeX80mMBRydYbBevzr2+No9EBadPhzMbtPpfqlJ0SGb6jp
+         +Jn4rH0O7Sk/Ei+URojnBU+AQH591juAlEsyXohol/9BIjWtdEGLjrD7MXPYvw2u4HQJ
+         r5fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759699353; x=1760304153;
+        d=1e100.net; s=20230601; t=1759699356; x=1760304156;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wulS2NGvKURng0Egd2IGwMyFIkt/Pg3ipSmNBN6RrB4=;
-        b=gYtIqtejMaCIJDlY2WsHe0a2dmc1fRhUPQRlYEBrXHSg+EIbzU3b6mjXkPmQsMSWb5
-         tn9ecuMvcRejK9HuK50K1lv8yK9wVlGFbPAfu/OyMza+xy3xcQxsjfUKtFGrBxLC1h3m
-         0kcAJR2uxjWDi74US9+qlOD9Lx4q7tQCxf8uo29phmqKIO2CqapcakSVm0qVuurztpRJ
-         SLWy4cUGW41wY+SA5b42SLwjCF4+CHnI3YvZHc/7t0C4rM2j2gFBcmLCgcm+srJmgtRb
-         JOF7H5qiGMVtEXxw0+GG0TDUdU4Y6PltmR0bPOPRSAJBF/Y6YzOgfhnIS8htdv3U6uO+
-         aoXA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfZhKwjOpzSLGYyZ4Mw6xF5qEQ8rU7ZQ0p6raKMkUMpnhOWBpZkDDw/UZNkyR4L7t9sPap6UHg0VEz+ug=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKFy193AT+QFAbOV4qbkiz7Eq/lCjCB1B/Vgi4W3if4IrQtb8m
-	E8/AV/RgqTSPk4g8XRJ0pMokreVKIlbpd8UGftpQdbmG+r6b+KHO3AYMJ/NB27E8XGjvWliaMCy
-	uLEuXG8kKkw==
-X-Google-Smtp-Source: AGHT+IGisVDrX4jLxBH+/IAg/iMlAvXEniLcqb7zAD7YH4cEtUgSeVtwpZqI4UICoBZYGGFSpiSyYOt983pn
-X-Received: from pgnr5.prod.google.com ([2002:a63:8f45:0:b0:b62:8092:7d58])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:7f90:b0:2c0:227b:13ea
- with SMTP id adf61e73a8af0-32b61e5c57emr14386613637.22.1759699353384; Sun, 05
- Oct 2025 14:22:33 -0700 (PDT)
-Date: Sun,  5 Oct 2025 14:22:07 -0700
+        bh=2cA3lKnCtBfH4M0wODrAsUo3j0OeWCdqHdGSVaUVEmE=;
+        b=cWGAZgCU0tt3sbNUOGncyeAAS5JVZ5CjRHNgIQ3IkAS61xiPE8Jz7oN7sZTziNbTwy
+         arnsw7e0JS3MCFLMus+eFXi7COYrXikxBt9LG7IVDU6vClOJwzRXmJvkhtFPGoHjJDjQ
+         1huZzMHgsWksteiMQkued9/oPnHeFhWrTTsLSor1YFI5bkSsSPsW/e50g9DPN4EpgG7f
+         mQKeZQk7EMk3ascwlNqB6oDW896kMX4HtW+46EAxa4wmJqUs/olZt5hBbm8jeSMqhram
+         yOeOkQD/PqFx+HayCgqhdjYzfvY3JnVpybegEB8gLrbuXk3fprC3bfBG+j6R+tVVEHkW
+         tBvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWpFkcnzwptPQy4su+AcRVSNXuyiZzhR6rHznS47oMp67nVBCOlt0sKIdqwF7bddC2+k/0oNmBl6IJQ2xQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzuSui2pthjZNWdj//c6U05ipg9cx3EutmGA3+sWNq3CglF1dK
+	dJgubpS/n/ScatCcC2yOdwkBBAJ4xK/s/hQ7l9UBE2gT24gWyqC9SAg/kx4tVjSSh+80HHAZg4M
+	YfCwS7xMB5w==
+X-Google-Smtp-Source: AGHT+IFvXBMVV5w/AF3VWxrW+XaOVbikBXiXWPFa7SjtjiGiK3DgGiu8R0bOo2AB4r2nTW1zud3tsLDsT+GV
+X-Received: from plsp10.prod.google.com ([2002:a17:902:bd0a:b0:267:a5c9:8a4c])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f693:b0:269:96db:94f
+ with SMTP id d9443c01a7336-28e9a635959mr133768165ad.49.1759699355633; Sun, 05
+ Oct 2025 14:22:35 -0700 (PDT)
+Date: Sun,  5 Oct 2025 14:22:08 -0700
 In-Reply-To: <20251005212212.2892175-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251005212212.2892175-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
-Message-ID: <20251005212212.2892175-7-irogers@google.com>
-Subject: [PATCH v7 06/11] perf disasm: Make ins__scnprintf and ins__is_nop static
+Message-ID: <20251005212212.2892175-8-irogers@google.com>
+Subject: [PATCH v7 07/11] perf srcline: Fallback between addr2line implementations
 From: Ian Rogers <irogers@google.com>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
 	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>, 
@@ -93,57 +93,1121 @@ To: Arnaldo Carvalho de Melo <acme@kernel.org>, Peter Zijlstra <peterz@infradead
 	Song Liu <song@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-Reduce the scope of ins__scnprintf and ins__is_nop that aren't used
-outside of disasm.c.
+Factor the addr2line function implementation into separate source
+files (addr2line.[ch]) and rename the addr2line function
+cmd__addr2line. In srcline replace the ifdef-ed addr2line
+implementations with one that first tries the llvm__addr2line
+implementation, then the deprecated libbfd__addr2line function and on
+failure uses cmd__addr2line.
+
+If HAVE_LIBLLVM_SUPPORT is enabled the llvm__addr2line will execute
+against the libLLVM.so it is linked against.
+
+If HAVE_LIBLLVM_DYNAMIC is enabled then libperf-llvm.so (that links
+against libLLVM.so) will be dlopened. If the dlopen succeeds then the
+behavior should match HAVE_LIBLLVM_SUPPORT. On failure cmd__addr2line
+is used. The dlopen is only tried once.
+
+If HAVE_LIBLLVM_DYNAMIC isn't enabled then llvm__addr2line immediately
+fails and cmd__addr2line is used.
+
+Clean up the dso__free_a2l logic, which is only needed in the non-LLVM
+version and moved to addr2line.c.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/disasm.c | 6 +++---
- tools/perf/util/disasm.h | 3 ---
- 2 files changed, 3 insertions(+), 6 deletions(-)
+ tools/perf/util/Build       |   1 +
+ tools/perf/util/addr2line.c | 439 ++++++++++++++++++++++++++++++++
+ tools/perf/util/addr2line.h |  20 ++
+ tools/perf/util/config.c    |   2 +-
+ tools/perf/util/llvm.c      |   5 -
+ tools/perf/util/llvm.h      |   3 -
+ tools/perf/util/srcline.c   | 495 ++----------------------------------
+ tools/perf/util/srcline.h   |   1 -
+ 8 files changed, 485 insertions(+), 481 deletions(-)
+ create mode 100644 tools/perf/util/addr2line.c
+ create mode 100644 tools/perf/util/addr2line.h
 
-diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
-index e64902e520ab..50b9433f3f8e 100644
---- a/tools/perf/util/disasm.c
-+++ b/tools/perf/util/disasm.c
-@@ -247,8 +247,8 @@ static int ins__raw_scnprintf(struct ins *ins, char *bf, size_t size,
- 	return scnprintf(bf, size, "%-*s %s", max_ins_name, ins->name, ops->raw);
+diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+index e6b396d919bb..4be313cd115a 100644
+--- a/tools/perf/util/Build
++++ b/tools/perf/util/Build
+@@ -2,6 +2,7 @@ include $(srctree)/tools/scripts/Makefile.include
+ include $(srctree)/tools/scripts/utilities.mak
+ 
+ perf-util-y += arm64-frame-pointer-unwind-support.o
++perf-util-y += addr2line.o
+ perf-util-y += addr_location.o
+ perf-util-y += annotate.o
+ perf-util-y += block-info.o
+diff --git a/tools/perf/util/addr2line.c b/tools/perf/util/addr2line.c
+new file mode 100644
+index 000000000000..f2d94a3272d7
+--- /dev/null
++++ b/tools/perf/util/addr2line.c
+@@ -0,0 +1,439 @@
++// SPDX-License-Identifier: GPL-2.0
++#include "addr2line.h"
++#include "debug.h"
++#include "dso.h"
++#include "string2.h"
++#include "srcline.h"
++#include "symbol.h"
++#include "symbol_conf.h"
++
++#include <api/io.h>
++#include <linux/zalloc.h>
++#include <subcmd/run-command.h>
++
++#include <inttypes.h>
++#include <signal.h>
++#include <stdlib.h>
++#include <string.h>
++
++#define MAX_INLINE_NEST 1024
++
++/* If addr2line doesn't return data for 1 second then timeout. */
++int addr2line_timeout_ms = 1 * 1000;
++
++static int filename_split(char *filename, unsigned int *line_nr)
++{
++	char *sep;
++
++	sep = strchr(filename, '\n');
++	if (sep)
++		*sep = '\0';
++
++	if (!strcmp(filename, "??:0"))
++		return 0;
++
++	sep = strchr(filename, ':');
++	if (sep) {
++		*sep++ = '\0';
++		*line_nr = strtoul(sep, NULL, 0);
++		return 1;
++	}
++	pr_debug("addr2line missing ':' in filename split\n");
++	return 0;
++}
++
++static void addr2line_subprocess_cleanup(struct child_process *a2l)
++{
++	if (a2l->pid != -1) {
++		kill(a2l->pid, SIGKILL);
++		finish_command(a2l); /* ignore result, we don't care */
++		a2l->pid = -1;
++		close(a2l->in);
++		close(a2l->out);
++	}
++
++	free(a2l);
++}
++
++static struct child_process *addr2line_subprocess_init(const char *addr2line_path,
++							const char *binary_path)
++{
++	const char *argv[] = {
++		addr2line_path ?: "addr2line",
++		"-e", binary_path,
++		"-a", "-i", "-f", NULL
++	};
++	struct child_process *a2l = zalloc(sizeof(*a2l));
++	int start_command_status = 0;
++
++	if (a2l == NULL) {
++		pr_err("Failed to allocate memory for addr2line");
++		return NULL;
++	}
++
++	a2l->pid = -1;
++	a2l->in = -1;
++	a2l->out = -1;
++	a2l->no_stderr = 1;
++
++	a2l->argv = argv;
++	start_command_status = start_command(a2l);
++	a2l->argv = NULL; /* it's not used after start_command; avoid dangling pointers */
++
++	if (start_command_status != 0) {
++		pr_warning("could not start addr2line (%s) for %s: start_command return code %d\n",
++			addr2line_path, binary_path, start_command_status);
++		addr2line_subprocess_cleanup(a2l);
++		return NULL;
++	}
++
++	return a2l;
++}
++
++enum a2l_style {
++	BROKEN,
++	GNU_BINUTILS,
++	LLVM,
++};
++
++static enum a2l_style addr2line_configure(struct child_process *a2l, const char *dso_name)
++{
++	static bool cached;
++	static enum a2l_style style;
++
++	if (!cached) {
++		char buf[128];
++		struct io io;
++		int ch;
++		int lines;
++
++		if (write(a2l->in, ",\n", 2) != 2)
++			return BROKEN;
++
++		io__init(&io, a2l->out, buf, sizeof(buf));
++		ch = io__get_char(&io);
++		if (ch == ',') {
++			style = LLVM;
++			cached = true;
++			lines = 1;
++			pr_debug3("Detected LLVM addr2line style\n");
++		} else if (ch == '0') {
++			style = GNU_BINUTILS;
++			cached = true;
++			lines = 3;
++			pr_debug3("Detected binutils addr2line style\n");
++		} else {
++			if (!symbol_conf.disable_add2line_warn) {
++				char *output = NULL;
++				size_t output_len;
++
++				io__getline(&io, &output, &output_len);
++				pr_warning("%s %s: addr2line configuration failed\n",
++					   __func__, dso_name);
++				pr_warning("\t%c%s", ch, output);
++			}
++			pr_debug("Unknown/broken addr2line style\n");
++			return BROKEN;
++		}
++		while (lines) {
++			ch = io__get_char(&io);
++			if (ch <= 0)
++				break;
++			if (ch == '\n')
++				lines--;
++		}
++		/* Ignore SIGPIPE in the event addr2line exits. */
++		signal(SIGPIPE, SIG_IGN);
++	}
++	return style;
++}
++
++static int read_addr2line_record(struct io *io,
++				 enum a2l_style style,
++				 const char *dso_name,
++				 u64 addr,
++				 bool first,
++				 char **function,
++				 char **filename,
++				 unsigned int *line_nr)
++{
++	/*
++	 * Returns:
++	 * -1 ==> error
++	 * 0 ==> sentinel (or other ill-formed) record read
++	 * 1 ==> a genuine record read
++	 */
++	char *line = NULL;
++	size_t line_len = 0;
++	unsigned int dummy_line_nr = 0;
++	int ret = -1;
++
++	if (function != NULL)
++		zfree(function);
++
++	if (filename != NULL)
++		zfree(filename);
++
++	if (line_nr != NULL)
++		*line_nr = 0;
++
++	/*
++	 * Read the first line. Without an error this will be:
++	 * - for the first line an address like 0x1234,
++	 * - the binutils sentinel 0x0000000000000000,
++	 * - the llvm-addr2line the sentinel ',' character,
++	 * - the function name line for an inlined function.
++	 */
++	if (io__getline(io, &line, &line_len) < 0 || !line_len)
++		goto error;
++
++	pr_debug3("%s %s: addr2line read address for sentinel: %s", __func__, dso_name, line);
++	if (style == LLVM && line_len == 2 && line[0] == ',') {
++		/* Found the llvm-addr2line sentinel character. */
++		zfree(&line);
++		return 0;
++	} else if (style == GNU_BINUTILS && (!first || addr != 0)) {
++		int zero_count = 0, non_zero_count = 0;
++		/*
++		 * Check for binutils sentinel ignoring it for the case the
++		 * requested address is 0.
++		 */
++
++		/* A given address should always start 0x. */
++		if (line_len >= 2 || line[0] != '0' || line[1] != 'x') {
++			for (size_t i = 2; i < line_len; i++) {
++				if (line[i] == '0')
++					zero_count++;
++				else if (line[i] != '\n')
++					non_zero_count++;
++			}
++			if (!non_zero_count) {
++				int ch;
++
++				if (first && !zero_count) {
++					/* Line was erroneous just '0x'. */
++					goto error;
++				}
++				/*
++				 * Line was 0x0..0, the sentinel for binutils. Remove
++				 * the function and filename lines.
++				 */
++				zfree(&line);
++				do {
++					ch = io__get_char(io);
++				} while (ch > 0 && ch != '\n');
++				do {
++					ch = io__get_char(io);
++				} while (ch > 0 && ch != '\n');
++				return 0;
++			}
++		}
++	}
++	/* Read the second function name line (if inline data then this is the first line). */
++	if (first && (io__getline(io, &line, &line_len) < 0 || !line_len))
++		goto error;
++
++	pr_debug3("%s %s: addr2line read line: %s", __func__, dso_name, line);
++	if (function != NULL)
++		*function = strdup(strim(line));
++
++	zfree(&line);
++	line_len = 0;
++
++	/* Read the third filename and line number line. */
++	if (io__getline(io, &line, &line_len) < 0 || !line_len)
++		goto error;
++
++	pr_debug3("%s %s: addr2line filename:number : %s", __func__, dso_name, line);
++	if (filename_split(line, line_nr == NULL ? &dummy_line_nr : line_nr) == 0 &&
++	    style == GNU_BINUTILS) {
++		ret = 0;
++		goto error;
++	}
++
++	if (filename != NULL)
++		*filename = strdup(line);
++
++	zfree(&line);
++	line_len = 0;
++
++	return 1;
++
++error:
++	free(line);
++	if (function != NULL)
++		zfree(function);
++	if (filename != NULL)
++		zfree(filename);
++	return ret;
++}
++
++static int inline_list__append_record(struct dso *dso,
++				      struct inline_node *node,
++				      struct symbol *sym,
++				      const char *function,
++				      const char *filename,
++				      unsigned int line_nr)
++{
++	struct symbol *inline_sym = new_inline_sym(dso, sym, function);
++
++	return inline_list__append(inline_sym, srcline_from_fileline(filename, line_nr), node);
++}
++
++int cmd__addr2line(const char *dso_name, u64 addr,
++		   char **file, unsigned int *line_nr,
++		   struct dso *dso,
++		   bool unwind_inlines,
++		   struct inline_node *node,
++		   struct symbol *sym __maybe_unused)
++{
++	struct child_process *a2l = dso__a2l(dso);
++	char *record_function = NULL;
++	char *record_filename = NULL;
++	unsigned int record_line_nr = 0;
++	int record_status = -1;
++	int ret = 0;
++	size_t inline_count = 0;
++	int len;
++	char buf[128];
++	ssize_t written;
++	struct io io = { .eof = false };
++	enum a2l_style a2l_style;
++
++	if (!a2l) {
++		if (!filename__has_section(dso_name, ".debug_line"))
++			goto out;
++
++		dso__set_a2l(dso,
++			     addr2line_subprocess_init(symbol_conf.addr2line_path, dso_name));
++		a2l = dso__a2l(dso);
++	}
++
++	if (a2l == NULL) {
++		if (!symbol_conf.disable_add2line_warn)
++			pr_warning("%s %s: addr2line_subprocess_init failed\n", __func__, dso_name);
++		goto out;
++	}
++	a2l_style = addr2line_configure(a2l, dso_name);
++	if (a2l_style == BROKEN)
++		goto out;
++
++	/*
++	 * Send our request and then *deliberately* send something that can't be
++	 * interpreted as a valid address to ask addr2line about (namely,
++	 * ","). This causes addr2line to first write out the answer to our
++	 * request, in an unbounded/unknown number of records, and then to write
++	 * out the lines "0x0...0", "??" and "??:0", for GNU binutils, or ","
++	 * for llvm-addr2line, so that we can detect when it has finished giving
++	 * us anything useful.
++	 */
++	len = snprintf(buf, sizeof(buf), "%016"PRIx64"\n,\n", addr);
++	written = len > 0 ? write(a2l->in, buf, len) : -1;
++	if (written != len) {
++		if (!symbol_conf.disable_add2line_warn)
++			pr_warning("%s %s: could not send request\n", __func__, dso_name);
++		goto out;
++	}
++	io__init(&io, a2l->out, buf, sizeof(buf));
++	io.timeout_ms = addr2line_timeout_ms;
++	switch (read_addr2line_record(&io, a2l_style, dso_name, addr, /*first=*/true,
++				      &record_function, &record_filename, &record_line_nr)) {
++	case -1:
++		if (!symbol_conf.disable_add2line_warn)
++			pr_warning("%s %s: could not read first record\n", __func__, dso_name);
++		goto out;
++	case 0:
++		/*
++		 * The first record was invalid, so return failure, but first
++		 * read another record, since we sent a sentinel ',' for the
++		 * sake of detected the last inlined function. Treat this as the
++		 * first of a record as the ',' generates a new start with GNU
++		 * binutils, also force a non-zero address as we're no longer
++		 * reading that record.
++		 */
++		switch (read_addr2line_record(&io, a2l_style, dso_name,
++					      /*addr=*/1, /*first=*/true,
++					      NULL, NULL, NULL)) {
++		case -1:
++			if (!symbol_conf.disable_add2line_warn)
++				pr_warning("%s %s: could not read sentinel record\n",
++					   __func__, dso_name);
++			break;
++		case 0:
++			/* The sentinel as expected. */
++			break;
++		default:
++			if (!symbol_conf.disable_add2line_warn)
++				pr_warning("%s %s: unexpected record instead of sentinel",
++					   __func__, dso_name);
++			break;
++		}
++		goto out;
++	default:
++		/* First record as expected. */
++		break;
++	}
++
++	if (file) {
++		*file = strdup(record_filename);
++		ret = 1;
++	}
++	if (line_nr)
++		*line_nr = record_line_nr;
++
++	if (unwind_inlines) {
++		if (node && inline_list__append_record(dso, node, sym,
++						       record_function,
++						       record_filename,
++						       record_line_nr)) {
++			ret = 0;
++			goto out;
++		}
++	}
++
++	/*
++	 * We have to read the records even if we don't care about the inline
++	 * info. This isn't the first record and force the address to non-zero
++	 * as we're reading records beyond the first.
++	 */
++	while ((record_status = read_addr2line_record(&io,
++						      a2l_style,
++						      dso_name,
++						      /*addr=*/1,
++						      /*first=*/false,
++						      &record_function,
++						      &record_filename,
++						      &record_line_nr)) == 1) {
++		if (unwind_inlines && node && inline_count++ < MAX_INLINE_NEST) {
++			if (inline_list__append_record(dso, node, sym,
++						       record_function,
++						       record_filename,
++						       record_line_nr)) {
++				ret = 0;
++				goto out;
++			}
++			ret = 1; /* found at least one inline frame */
++		}
++	}
++
++out:
++	free(record_function);
++	free(record_filename);
++	if (io.eof) {
++		dso__set_a2l(dso, NULL);
++		addr2line_subprocess_cleanup(a2l);
++	}
++	return ret;
++}
++
++void dso__free_a2l(struct dso *dso)
++{
++	struct child_process *a2l = dso__a2l(dso);
++
++	if (!a2l)
++		return;
++
++	addr2line_subprocess_cleanup(a2l);
++
++	dso__set_a2l(dso, NULL);
++}
+diff --git a/tools/perf/util/addr2line.h b/tools/perf/util/addr2line.h
+new file mode 100644
+index 000000000000..d35a47ba8dab
+--- /dev/null
++++ b/tools/perf/util/addr2line.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __PERF_ADDR2LINE_H
++#define __PERF_ADDR2LINE_H
++
++#include <linux/types.h>
++
++struct dso;
++struct inline_node;
++struct symbol;
++
++extern int addr2line_timeout_ms;
++
++int cmd__addr2line(const char *dso_name, u64 addr,
++		   char **file, unsigned int *line_nr,
++		   struct dso *dso,
++		   bool unwind_inlines,
++		   struct inline_node *node,
++		   struct symbol *sym);
++
++#endif /* __PERF_ADDR2LINE_H */
+diff --git a/tools/perf/util/config.c b/tools/perf/util/config.c
+index ae72b66b6ded..6f914620c6ff 100644
+--- a/tools/perf/util/config.c
++++ b/tools/perf/util/config.c
+@@ -19,7 +19,7 @@
+ #include "util/hist.h"  /* perf_hist_config */
+ #include "util/stat.h"  /* perf_stat__set_big_num */
+ #include "util/evsel.h"  /* evsel__hw_names, evsel__use_bpf_counters */
+-#include "util/srcline.h"  /* addr2line_timeout_ms */
++#include "util/addr2line.h"  /* addr2line_timeout_ms */
+ #include "build-id.h"
+ #include "debug.h"
+ #include "config.h"
+diff --git a/tools/perf/util/llvm.c b/tools/perf/util/llvm.c
+index 2351393e33c5..565cad1969e5 100644
+--- a/tools/perf/util/llvm.c
++++ b/tools/perf/util/llvm.c
+@@ -70,11 +70,6 @@ int llvm__addr2line(const char *dso_name __maybe_unused, u64 addr __maybe_unused
+ #endif
  }
  
--int ins__scnprintf(struct ins *ins, char *bf, size_t size,
--		   struct ins_operands *ops, int max_ins_name)
-+static int ins__scnprintf(struct ins *ins, char *bf, size_t size,
-+			  struct ins_operands *ops, int max_ins_name)
+-void dso__free_a2l_llvm(struct dso *dso __maybe_unused)
+-{
+-	/* Nothing to free. */
+-}
+-
+ static void init_llvm(void)
  {
- 	if (ins->ops->scnprintf)
- 		return ins->ops->scnprintf(ins, bf, size, ops, max_ins_name);
-@@ -828,7 +828,7 @@ static struct ins_ops ret_ops = {
- 	.scnprintf = ins__raw_scnprintf,
- };
+ 	static bool init;
+diff --git a/tools/perf/util/llvm.h b/tools/perf/util/llvm.h
+index 8aa19bb6b068..57f6bafb24bb 100644
+--- a/tools/perf/util/llvm.h
++++ b/tools/perf/util/llvm.h
+@@ -15,9 +15,6 @@ int llvm__addr2line(const char *dso_name, u64 addr,
+ 		bool unwind_inlines, struct inline_node *node,
+ 		struct symbol *sym);
  
--bool ins__is_nop(const struct ins *ins)
-+static bool ins__is_nop(const struct ins *ins)
- {
- 	return ins->ops == &nop_ops;
+-
+-void dso__free_a2l_llvm(struct dso *dso);
+-
+ int symbol__disassemble_llvm(const char *filename, struct symbol *sym,
+ 			     struct annotate_args *args);
+ 
+diff --git a/tools/perf/util/srcline.c b/tools/perf/util/srcline.c
+index 23b942d4729e..27c0966611ab 100644
+--- a/tools/perf/util/srcline.c
++++ b/tools/perf/util/srcline.c
+@@ -1,30 +1,15 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#include <inttypes.h>
+-#include <signal.h>
+-#include <stdio.h>
+-#include <stdlib.h>
+-#include <string.h>
+-#include <sys/types.h>
+-
+-#include <linux/compiler.h>
+-#include <linux/kernel.h>
+-#include <linux/string.h>
+-#include <linux/zalloc.h>
+-
+-#include <api/io.h>
+-
+-#include "util/dso.h"
+-#include "util/debug.h"
+-#include "util/callchain.h"
+-#include "util/symbol_conf.h"
+-#include "llvm.h"
+ #include "srcline.h"
+-#include "string2.h"
++#include "addr2line.h"
++#include "dso.h"
++#include "callchain.h"
++#include "libbfd.h"
++#include "llvm.h"
+ #include "symbol.h"
+-#include "subcmd/run-command.h"
+ 
+-/* If addr2line doesn't return data for 1 second then timeout. */
+-int addr2line_timeout_ms = 1 * 1000;
++#include <inttypes.h>
++#include <string.h>
++
+ bool srcline_full_filename;
+ 
+ char *srcline__unknown = (char *)"??:0";
+@@ -129,458 +114,23 @@ struct symbol *new_inline_sym(struct dso *dso,
+ 	return inline_sym;
  }
-diff --git a/tools/perf/util/disasm.h b/tools/perf/util/disasm.h
-index 2cb4e1a6bd30..09c86f540f7f 100644
---- a/tools/perf/util/disasm.h
-+++ b/tools/perf/util/disasm.h
-@@ -110,13 +110,10 @@ struct arch *arch__find(const char *name);
- bool arch__is(struct arch *arch, const char *name);
  
- struct ins_ops *ins__find(struct arch *arch, const char *name, struct disasm_line *dl);
--int ins__scnprintf(struct ins *ins, char *bf, size_t size,
--		   struct ins_operands *ops, int max_ins_name);
+-#ifdef HAVE_LIBLLVM_SUPPORT
+-#include "llvm.h"
+-
+-static int addr2line(const char *dso_name, u64 addr,
+-		     char **file, unsigned int *line, struct dso *dso,
+-		      bool unwind_inlines, struct inline_node *node,
+-		      struct symbol *sym)
+-{
+-	return llvm__addr2line(dso_name, addr, file, line, dso, unwind_inlines, node, sym);
+-}
+-
+-void dso__free_a2l(struct dso *dso)
+-{
+-	dso__free_a2l_llvm(dso);
+-}
+-#elif defined(HAVE_LIBBFD_SUPPORT)
+-#include "libbfd.h"
+-
+-static int addr2line(const char *dso_name, u64 addr,
+-		     char **file, unsigned int *line, struct dso *dso,
+-		     bool unwind_inlines, struct inline_node *node,
++static int addr2line(const char *dso_name, u64 addr, char **file, unsigned int *line_nr,
++		     struct dso *dso, bool unwind_inlines, struct inline_node *node,
+ 		     struct symbol *sym)
+ {
+-	return libbfd__addr2line(dso_name, addr, file, line, dso, unwind_inlines, node, sym);
+-}
+-
+-void dso__free_a2l(struct dso *dso)
+-{
+-	dso__free_a2l_libbfd(dso);
+-}
+-
+-#else /* HAVE_LIBBFD_SUPPORT */
+-
+-static int filename_split(char *filename, unsigned int *line_nr)
+-{
+-	char *sep;
+-
+-	sep = strchr(filename, '\n');
+-	if (sep)
+-		*sep = '\0';
+-
+-	if (!strcmp(filename, "??:0"))
+-		return 0;
+-
+-	sep = strchr(filename, ':');
+-	if (sep) {
+-		*sep++ = '\0';
+-		*line_nr = strtoul(sep, NULL, 0);
+-		return 1;
+-	}
+-	pr_debug("addr2line missing ':' in filename split\n");
+-	return 0;
+-}
+-
+-static void addr2line_subprocess_cleanup(struct child_process *a2l)
+-{
+-	if (a2l->pid != -1) {
+-		kill(a2l->pid, SIGKILL);
+-		finish_command(a2l); /* ignore result, we don't care */
+-		a2l->pid = -1;
+-		close(a2l->in);
+-		close(a2l->out);
+-	}
+-
+-	free(a2l);
+-}
+-
+-static struct child_process *addr2line_subprocess_init(const char *addr2line_path,
+-							const char *binary_path)
+-{
+-	const char *argv[] = {
+-		addr2line_path ?: "addr2line",
+-		"-e", binary_path,
+-		"-a", "-i", "-f", NULL
+-	};
+-	struct child_process *a2l = zalloc(sizeof(*a2l));
+-	int start_command_status = 0;
+-
+-	if (a2l == NULL) {
+-		pr_err("Failed to allocate memory for addr2line");
+-		return NULL;
+-	}
+-
+-	a2l->pid = -1;
+-	a2l->in = -1;
+-	a2l->out = -1;
+-	a2l->no_stderr = 1;
+-
+-	a2l->argv = argv;
+-	start_command_status = start_command(a2l);
+-	a2l->argv = NULL; /* it's not used after start_command; avoid dangling pointers */
+-
+-	if (start_command_status != 0) {
+-		pr_warning("could not start addr2line (%s) for %s: start_command return code %d\n",
+-			addr2line_path, binary_path, start_command_status);
+-		addr2line_subprocess_cleanup(a2l);
+-		return NULL;
+-	}
+-
+-	return a2l;
+-}
+-
+-enum a2l_style {
+-	BROKEN,
+-	GNU_BINUTILS,
+-	LLVM,
+-};
+-
+-static enum a2l_style addr2line_configure(struct child_process *a2l, const char *dso_name)
+-{
+-	static bool cached;
+-	static enum a2l_style style;
+-
+-	if (!cached) {
+-		char buf[128];
+-		struct io io;
+-		int ch;
+-		int lines;
+-
+-		if (write(a2l->in, ",\n", 2) != 2)
+-			return BROKEN;
+-
+-		io__init(&io, a2l->out, buf, sizeof(buf));
+-		ch = io__get_char(&io);
+-		if (ch == ',') {
+-			style = LLVM;
+-			cached = true;
+-			lines = 1;
+-			pr_debug3("Detected LLVM addr2line style\n");
+-		} else if (ch == '0') {
+-			style = GNU_BINUTILS;
+-			cached = true;
+-			lines = 3;
+-			pr_debug3("Detected binutils addr2line style\n");
+-		} else {
+-			if (!symbol_conf.disable_add2line_warn) {
+-				char *output = NULL;
+-				size_t output_len;
+-
+-				io__getline(&io, &output, &output_len);
+-				pr_warning("%s %s: addr2line configuration failed\n",
+-					   __func__, dso_name);
+-				pr_warning("\t%c%s", ch, output);
+-			}
+-			pr_debug("Unknown/broken addr2line style\n");
+-			return BROKEN;
+-		}
+-		while (lines) {
+-			ch = io__get_char(&io);
+-			if (ch <= 0)
+-				break;
+-			if (ch == '\n')
+-				lines--;
+-		}
+-		/* Ignore SIGPIPE in the event addr2line exits. */
+-		signal(SIGPIPE, SIG_IGN);
+-	}
+-	return style;
+-}
+-
+-static int read_addr2line_record(struct io *io,
+-				 enum a2l_style style,
+-				 const char *dso_name,
+-				 u64 addr,
+-				 bool first,
+-				 char **function,
+-				 char **filename,
+-				 unsigned int *line_nr)
+-{
+-	/*
+-	 * Returns:
+-	 * -1 ==> error
+-	 * 0 ==> sentinel (or other ill-formed) record read
+-	 * 1 ==> a genuine record read
+-	 */
+-	char *line = NULL;
+-	size_t line_len = 0;
+-	unsigned int dummy_line_nr = 0;
+-	int ret = -1;
+-
+-	if (function != NULL)
+-		zfree(function);
+-
+-	if (filename != NULL)
+-		zfree(filename);
+-
+-	if (line_nr != NULL)
+-		*line_nr = 0;
+-
+-	/*
+-	 * Read the first line. Without an error this will be:
+-	 * - for the first line an address like 0x1234,
+-	 * - the binutils sentinel 0x0000000000000000,
+-	 * - the llvm-addr2line the sentinel ',' character,
+-	 * - the function name line for an inlined function.
+-	 */
+-	if (io__getline(io, &line, &line_len) < 0 || !line_len)
+-		goto error;
+-
+-	pr_debug3("%s %s: addr2line read address for sentinel: %s", __func__, dso_name, line);
+-	if (style == LLVM && line_len == 2 && line[0] == ',') {
+-		/* Found the llvm-addr2line sentinel character. */
+-		zfree(&line);
+-		return 0;
+-	} else if (style == GNU_BINUTILS && (!first || addr != 0)) {
+-		int zero_count = 0, non_zero_count = 0;
+-		/*
+-		 * Check for binutils sentinel ignoring it for the case the
+-		 * requested address is 0.
+-		 */
+-
+-		/* A given address should always start 0x. */
+-		if (line_len >= 2 || line[0] != '0' || line[1] != 'x') {
+-			for (size_t i = 2; i < line_len; i++) {
+-				if (line[i] == '0')
+-					zero_count++;
+-				else if (line[i] != '\n')
+-					non_zero_count++;
+-			}
+-			if (!non_zero_count) {
+-				int ch;
+-
+-				if (first && !zero_count) {
+-					/* Line was erroneous just '0x'. */
+-					goto error;
+-				}
+-				/*
+-				 * Line was 0x0..0, the sentinel for binutils. Remove
+-				 * the function and filename lines.
+-				 */
+-				zfree(&line);
+-				do {
+-					ch = io__get_char(io);
+-				} while (ch > 0 && ch != '\n');
+-				do {
+-					ch = io__get_char(io);
+-				} while (ch > 0 && ch != '\n');
+-				return 0;
+-			}
+-		}
+-	}
+-	/* Read the second function name line (if inline data then this is the first line). */
+-	if (first && (io__getline(io, &line, &line_len) < 0 || !line_len))
+-		goto error;
+-
+-	pr_debug3("%s %s: addr2line read line: %s", __func__, dso_name, line);
+-	if (function != NULL)
+-		*function = strdup(strim(line));
+-
+-	zfree(&line);
+-	line_len = 0;
+-
+-	/* Read the third filename and line number line. */
+-	if (io__getline(io, &line, &line_len) < 0 || !line_len)
+-		goto error;
+-
+-	pr_debug3("%s %s: addr2line filename:number : %s", __func__, dso_name, line);
+-	if (filename_split(line, line_nr == NULL ? &dummy_line_nr : line_nr) == 0 &&
+-	    style == GNU_BINUTILS) {
+-		ret = 0;
+-		goto error;
+-	}
+-
+-	if (filename != NULL)
+-		*filename = strdup(line);
+-
+-	zfree(&line);
+-	line_len = 0;
+-
+-	return 1;
+-
+-error:
+-	free(line);
+-	if (function != NULL)
+-		zfree(function);
+-	if (filename != NULL)
+-		zfree(filename);
+-	return ret;
+-}
+-
+-static int inline_list__append_record(struct dso *dso,
+-				      struct inline_node *node,
+-				      struct symbol *sym,
+-				      const char *function,
+-				      const char *filename,
+-				      unsigned int line_nr)
+-{
+-	struct symbol *inline_sym = new_inline_sym(dso, sym, function);
+-
+-	return inline_list__append(inline_sym, srcline_from_fileline(filename, line_nr), node);
+-}
+-
+-static int addr2line(const char *dso_name, u64 addr,
+-		     char **file, unsigned int *line_nr,
+-		     struct dso *dso,
+-		     bool unwind_inlines,
+-		     struct inline_node *node,
+-		     struct symbol *sym __maybe_unused)
+-{
+-	struct child_process *a2l = dso__a2l(dso);
+-	char *record_function = NULL;
+-	char *record_filename = NULL;
+-	unsigned int record_line_nr = 0;
+-	int record_status = -1;
+-	int ret = 0;
+-	size_t inline_count = 0;
+-	int len;
+-	char buf[128];
+-	ssize_t written;
+-	struct io io = { .eof = false };
+-	enum a2l_style a2l_style;
+-
+-	if (!a2l) {
+-		if (!filename__has_section(dso_name, ".debug_line"))
+-			goto out;
+-
+-		dso__set_a2l(dso,
+-			     addr2line_subprocess_init(symbol_conf.addr2line_path, dso_name));
+-		a2l = dso__a2l(dso);
+-	}
+-
+-	if (a2l == NULL) {
+-		if (!symbol_conf.disable_add2line_warn)
+-			pr_warning("%s %s: addr2line_subprocess_init failed\n", __func__, dso_name);
+-		goto out;
+-	}
+-	a2l_style = addr2line_configure(a2l, dso_name);
+-	if (a2l_style == BROKEN)
+-		goto out;
+-
+-	/*
+-	 * Send our request and then *deliberately* send something that can't be
+-	 * interpreted as a valid address to ask addr2line about (namely,
+-	 * ","). This causes addr2line to first write out the answer to our
+-	 * request, in an unbounded/unknown number of records, and then to write
+-	 * out the lines "0x0...0", "??" and "??:0", for GNU binutils, or ","
+-	 * for llvm-addr2line, so that we can detect when it has finished giving
+-	 * us anything useful.
+-	 */
+-	len = snprintf(buf, sizeof(buf), "%016"PRIx64"\n,\n", addr);
+-	written = len > 0 ? write(a2l->in, buf, len) : -1;
+-	if (written != len) {
+-		if (!symbol_conf.disable_add2line_warn)
+-			pr_warning("%s %s: could not send request\n", __func__, dso_name);
+-		goto out;
+-	}
+-	io__init(&io, a2l->out, buf, sizeof(buf));
+-	io.timeout_ms = addr2line_timeout_ms;
+-	switch (read_addr2line_record(&io, a2l_style, dso_name, addr, /*first=*/true,
+-				      &record_function, &record_filename, &record_line_nr)) {
+-	case -1:
+-		if (!symbol_conf.disable_add2line_warn)
+-			pr_warning("%s %s: could not read first record\n", __func__, dso_name);
+-		goto out;
+-	case 0:
+-		/*
+-		 * The first record was invalid, so return failure, but first
+-		 * read another record, since we sent a sentinel ',' for the
+-		 * sake of detected the last inlined function. Treat this as the
+-		 * first of a record as the ',' generates a new start with GNU
+-		 * binutils, also force a non-zero address as we're no longer
+-		 * reading that record.
+-		 */
+-		switch (read_addr2line_record(&io, a2l_style, dso_name,
+-					      /*addr=*/1, /*first=*/true,
+-					      NULL, NULL, NULL)) {
+-		case -1:
+-			if (!symbol_conf.disable_add2line_warn)
+-				pr_warning("%s %s: could not read sentinel record\n",
+-					   __func__, dso_name);
+-			break;
+-		case 0:
+-			/* The sentinel as expected. */
+-			break;
+-		default:
+-			if (!symbol_conf.disable_add2line_warn)
+-				pr_warning("%s %s: unexpected record instead of sentinel",
+-					   __func__, dso_name);
+-			break;
+-		}
+-		goto out;
+-	default:
+-		/* First record as expected. */
+-		break;
+-	}
+-
+-	if (file) {
+-		*file = strdup(record_filename);
+-		ret = 1;
+-	}
+-	if (line_nr)
+-		*line_nr = record_line_nr;
+-
+-	if (unwind_inlines) {
+-		if (node && inline_list__append_record(dso, node, sym,
+-						       record_function,
+-						       record_filename,
+-						       record_line_nr)) {
+-			ret = 0;
+-			goto out;
+-		}
+-	}
+-
+-	/*
+-	 * We have to read the records even if we don't care about the inline
+-	 * info. This isn't the first record and force the address to non-zero
+-	 * as we're reading records beyond the first.
+-	 */
+-	while ((record_status = read_addr2line_record(&io,
+-						      a2l_style,
+-						      dso_name,
+-						      /*addr=*/1,
+-						      /*first=*/false,
+-						      &record_function,
+-						      &record_filename,
+-						      &record_line_nr)) == 1) {
+-		if (unwind_inlines && node && inline_count++ < MAX_INLINE_NEST) {
+-			if (inline_list__append_record(dso, node, sym,
+-						       record_function,
+-						       record_filename,
+-						       record_line_nr)) {
+-				ret = 0;
+-				goto out;
+-			}
+-			ret = 1; /* found at least one inline frame */
+-		}
+-	}
+-
+-out:
+-	free(record_function);
+-	free(record_filename);
+-	if (io.eof) {
+-		dso__set_a2l(dso, NULL);
+-		addr2line_subprocess_cleanup(a2l);
+-	}
+-	return ret;
+-}
+-
+-void dso__free_a2l(struct dso *dso)
+-{
+-	struct child_process *a2l = dso__a2l(dso);
++	int ret;
  
- bool ins__is_call(const struct ins *ins);
- bool ins__is_jump(const struct ins *ins);
- bool ins__is_fused(struct arch *arch, const char *ins1, const char *ins2);
--bool ins__is_nop(const struct ins *ins);
- bool ins__is_ret(const struct ins *ins);
- bool ins__is_lock(const struct ins *ins);
+-	if (!a2l)
+-		return;
++	ret = llvm__addr2line(dso_name, addr, file, line_nr, dso, unwind_inlines, node, sym);
++	if (ret > 0)
++		return ret;
  
+-	addr2line_subprocess_cleanup(a2l);
++	ret = libbfd__addr2line(dso_name, addr, file, line_nr, dso, unwind_inlines, node, sym);
++	if (ret > 0)
++		return ret;
+ 
+-	dso__set_a2l(dso, NULL);
++	return cmd__addr2line(dso_name, addr, file, line_nr, dso, unwind_inlines, node, sym);
+ }
+ 
+-#endif /* HAVE_LIBBFD_SUPPORT */
+-
+ static struct inline_node *addr2inlines(const char *dso_name, u64 addr,
+ 					struct dso *dso, struct symbol *sym)
+ {
+@@ -595,7 +145,9 @@ static struct inline_node *addr2inlines(const char *dso_name, u64 addr,
+ 	INIT_LIST_HEAD(&node->val);
+ 	node->addr = addr;
+ 
+-	addr2line(dso_name, addr, NULL, NULL, dso, true, node, sym);
++	addr2line(dso_name, addr, /*file=*/NULL, /*line_nr=*/NULL, dso,
++		  /*unwind_inlines=*/true, node, sym);
++
+ 	return node;
+ }
+ 
+@@ -622,7 +174,7 @@ char *__get_srcline(struct dso *dso, u64 addr, struct symbol *sym,
+ 		goto out_err;
+ 
+ 	if (!addr2line(dso_name, addr, &file, &line, dso,
+-		       unwind_inlines, NULL, sym))
++		       unwind_inlines, /*node=*/NULL, sym))
+ 		goto out_err;
+ 
+ 	srcline = srcline_from_fileline(file, line);
+@@ -668,7 +220,8 @@ char *get_srcline_split(struct dso *dso, u64 addr, unsigned *line)
+ 	if (dso_name == NULL)
+ 		goto out_err;
+ 
+-	if (!addr2line(dso_name, addr, &file, line, dso, true, NULL, NULL))
++	if (!addr2line(dso_name, addr, &file, line, dso, /*unwind_inlines=*/true,
++			/*node=*/NULL, /*sym=*/NULL))
+ 		goto out_err;
+ 
+ 	dso__set_a2l_fails(dso, 0);
+diff --git a/tools/perf/util/srcline.h b/tools/perf/util/srcline.h
+index 6e66ddbcc879..c36f573cd339 100644
+--- a/tools/perf/util/srcline.h
++++ b/tools/perf/util/srcline.h
+@@ -9,7 +9,6 @@
+ struct dso;
+ struct symbol;
+ 
+-extern int addr2line_timeout_ms;
+ extern bool srcline_full_filename;
+ char *get_srcline(struct dso *dso, u64 addr, struct symbol *sym,
+ 		  bool show_sym, bool show_addr, u64 ip);
 -- 
 2.51.0.618.g983fd99d29-goog
 
