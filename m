@@ -1,175 +1,457 @@
-Return-Path: <linux-kernel+bounces-842500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6EADBBCDC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 01:15:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC596BBCDD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 01:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AFB304E313D
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 23:15:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3EAB3B28E7
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 23:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4420D221704;
-	Sun,  5 Oct 2025 23:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC64D2343BE;
+	Sun,  5 Oct 2025 23:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N/2M55xr"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lSZqoVy/"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D84F9C1
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 23:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35AF4189B80
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 23:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759706135; cv=none; b=WmaJ2RPScDzeioASJX1xYWLa1iH/ODLmu604cSTRwDiK+1AjRTrMEm1E8/0FN+SqjpwOFx8lSBBFgAXTdZKLhjaTDkekN/oDdjo2cNKcGoXRAe11rrKlFX6WlVFE9jzuP3ZqIG3OG/2SMw0yi1tE80n8ym9XDUqwzzby5xpIW0E=
+	t=1759706529; cv=none; b=AGQsrTONnVZRpY51x4fcJ8OS/sCNzKb+fnGTsJd3MnQHkY5ZvSM1ZzZbsVHozBlukp4l7dDu2lsLoMgEhljR9k2B4GuuHBYWPJqektibaKpgjWnEXO0qXgruPurBZm/5TjCFaJJV3nGMF9Jagaxajgq7dnO3+o7gNR4yW201KPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759706135; c=relaxed/simple;
-	bh=fybNiBAefFTh//jSRU2sf0Ny8KCLWtk1ph7b062OZqI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qGv6uqEedMRmFcMmtrQ3MtEHw2YQEGeBC6UnLX7WPGv+3KTAZmspko8dICocHAX/MmKPzjslCTvNJVBGn7hv+8aMHUCDq+6JmsXHlw7Nx4Yz1+BG3JB2CW94McvdX49lepp4/DboriGzdEX0+MdTBIaLrQr6mbvtx3EhrANOIVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N/2M55xr; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e6a689bd0so32356395e9.1
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 16:15:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759706132; x=1760310932; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IZVLKUfxISrsNrnwMvWMj0ZRjTubuXUM3Dffz3zRah8=;
-        b=N/2M55xroM1u/eI1YLJLxLzvNfaoPyUk03HUDeaUbmX2GzfN/UDduSpOaD4e7CMH2O
-         fsrcK2N5kZrdXKuCd04emIeCbJ0gVEWdWieln+QGisIvgGcTyE+02ghAJPP8NEp0uiOL
-         df2iuoD66DOAhoxLSGkw16wVERTxy9xHarxXuFYDSRHIlgc2daiC53O3fwETY44gSENU
-         R3otJ5srvh2uKoE3SAIisLz0Yl1zP6UfTVzk9ql8sOyHyHjJvu9FS0j5k50eDaP6J6pC
-         8DmMotN6BOh+UBgwCHnvwz5AdQY45D3m+Kf+Jlq0f5TIirioB6iAnx5UjfBqHKVwwC+P
-         YEkw==
+	s=arc-20240116; t=1759706529; c=relaxed/simple;
+	bh=n5Vtzxojo2wmWBghdlmj8H+Pd5c51UdEJ4MCqmEx6aU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cgCrA1zqbjWneNNcInVN3jlRsL1gvGRMLKySHGD5unBEfpgGMaipWPy19olvCw7wnP+TD2riEnynuGUq8bI05IPaq5Q1ZZacPEF1SvKR5eiBo0ChEYl6IdrFkT2cGs4WNVczrtpKt3cyheqjoR+hcsJekh2gYjBPScfvFEGZP0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lSZqoVy/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 595MhsBb028991
+	for <linux-kernel@vger.kernel.org>; Sun, 5 Oct 2025 23:22:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=Tb08ffW4DbsnaOmuGQXt22LR
+	uzui+lNjPwPW3k8wy1s=; b=lSZqoVy/4aXEtSB+LkhqFrCu5WmeS1yItyTkUslR
+	TeMNRjI1gyFIeY5cKmyvs22hVPxtjr8sCbLUgRqAPMHBYCzWsgj4KgIaMhnXa/Ix
+	LRe1mNpfRBLosC7iQijY6tzDHImClzkBjJGyzFEV6uRFKqf3V/Sr4wvP0c/5P4kM
+	CISymuSyY2T3IMg5BiyvAOnSpSx/BWiEJXdI1R1HebMjSJoKgNjOm43WAzRNjlGy
+	Br6DZfU8BygeuY3gOrJIb5/wolDAniUGavobQj+XxCVfOq18fmXCq/XWjxUTz5fo
+	ntnbqHHAi4eeBfNAsEmJEOgshz6bGGuN/lwMf4Cs+N20lw==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jtwgjpcn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 23:22:05 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4e5739a388bso92306821cf.2
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 16:22:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759706132; x=1760310932;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IZVLKUfxISrsNrnwMvWMj0ZRjTubuXUM3Dffz3zRah8=;
-        b=vRgTIYuRcYlfepNG3IGR1SPWIwqc2u/BwVZAwcU4F8IncmE05GbwtN5/ccFCNsD9sH
-         +c0WI2O/FQpwkSLT1/XXi1soMfJXlNQ2urn3vKfIn03jmNfGqI1HCgDj6eS3wUjxAB5N
-         H9qD+BjuyYBtstV22z8Iaeg9H1tLPO6O49jeM3V3GMk5nqHoMkvn8yvufvIuVXIZElC6
-         EeqWvOUuPsKdyK55fN9Wdw0vlC4gKeHtt63BkMiwgAgi9IigtM7O71hL3karQ60B0ciu
-         L7wFiEPjBUohj0NUO8NdPR+bL4KAXR8CEPfHGq/PGJ4tcSt2MTYrqbtoZjEVBznfsAVF
-         QcSA==
-X-Forwarded-Encrypted: i=1; AJvYcCVTMJVm1OaBexEjigwkvgbkBlCk8oGzw2HZaSaZ9SCs9kJ4LoOyFy5JiR5FBcNLPut4mY7twT+4cSXRlVQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9AYa3kEsV4jENZgVNxiP4uVz9JUlzYU7WqPQwhMniGpAInm5O
-	276v9/XYi+4GMgMc0TPFvEG3pOavHwy5qCatyU12/0bGgTq14PBYEDSX
-X-Gm-Gg: ASbGncsKKin7oX0SmBtZHrKHghRS9uaqkSTh95X3JruU7YmPIDpvhfuG8rBMajbkUrC
-	mwK48yYuJKhNbotnlcyycnDWyDAjSWK0ROWAU5RAr7U+0u15tYpC1RApB4yJ4ucC2zo9PMhSWDH
-	gDG4m/PGBTcXwlBNHnIp6BWO4WBICZwATk+6iP4wx8e9HCcnp8FRcxP0XRKGxQIvnMpTHCwjm/n
-	L9gHzqZzcz263kR60Ab9LKg3JoXzTYd5rf4Ke4cncNAi2cMfd9Ez96IapUuXAtZ/fhoExvk8/Wq
-	5Fkct7SgwgSFlcDD6geXau8v0SgiXUQd83pJY4j4Halibbu7zt7NAU8wX37kAZ0O7vk8thbwMo3
-	M4gQEfCgO+tMagoYCw2AIVlp9Sp1kCnUi0V7yY4YbTaCD6hpJo+1XgsLe/zDMTmfOfZ4dJTog4C
-	xNR8rKaL3JwiEOEfIQ24GgZPHa34IumUts
-X-Google-Smtp-Source: AGHT+IEO23zbV1o6Dod3OnepyrZ499l60l15zhzyFc5iTDUQFeRUVPj+KaAJtZN9R8sEfUGcnJfl7Q==
-X-Received: by 2002:a05:600c:34ce:b0:46e:4ac4:b7b8 with SMTP id 5b1f17b1804b1-46e7114e923mr68621845e9.25.1759706131907;
-        Sun, 05 Oct 2025 16:15:31 -0700 (PDT)
-Received: from f.. (cst-prg-79-205.cust.vodafone.cz. [46.135.79.205])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8e9780sm17920640f8f.29.2025.10.05.16.15.30
+        d=1e100.net; s=20230601; t=1759706525; x=1760311325;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Tb08ffW4DbsnaOmuGQXt22LRuzui+lNjPwPW3k8wy1s=;
+        b=R9LWJ+soAOHZr3c2M2YQNuogNaVwkdzYbooPBoeMErl5FtcLR98olZKPT3Kc2/rG9L
+         iuFoDwDLWVal77FC0K077T3Ou5INTd3O+eWXpurJxNbVp5ucJ+l+W+JYBHaQZmtLUBXU
+         zmuw2l2wT6aut1aJFgzZe9nnbG4nFCCeLCDBXaiqWNPR49fgQPa+hixgHMRuBqbcfewS
+         OJ04yTbL9pnuFrT14gkQGGChAcR9OSueN6C/XJ7k8flA/bdD+cOhYpU6L4XnRXFvmpsh
+         mzWHazGSA/90YgmEJfBSLnMC9W/Fntprfzbv1JE3XLrBeOG0nJngRZGlHaF6vj5J8ATT
+         HMqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVybu7Zk/b6vM7vlWVl/ddGv667/CABemLlXb8trxgdIzwNJF/Pqf2xKdL1qk9pVrmFaan4bFk7zASnXus=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1nDC+IvmS1Ptjl80D2baWhvrVy4IpNgEpSge6tZkC/sxsMO25
+	zdA6o/ASSFaDNYzvxT3prI6+FuyVkfGu2cFpAHtaXGkqlqDyS47uLOBs1kaxIWtSWjm4imzcPvJ
+	h83Rc675mV9FhM0s1pfcSfQJYV7NHdbWB/WiFQr2a4YnhsyOdqkxXqQPjgj+PZeUlyGg=
+X-Gm-Gg: ASbGnct0g6excwtJX5NfQUbZ5UNXPsnu9tFXLo44LuNLaDhvA3kSD3SI021yTkmP3mj
+	xhnIXX7g+LMVjFnGwt7BMS5sKdcsJp806eNYSVW+a7DsXefP9kQlhb5qxTXV7SXvxzFC1n49I9C
+	8tyHZDvGJcIXRV/KItljGHwYsws5UaIkv2AmQZDZr1C1UScqaFqFmN2+eGsBbo87pHZ5QUQMAnx
+	dzJfholsa+qzaMjYxKJa6yNRL4HDIvbFoEsnj7yPdtnEMWO2jFIm7tx0mt+v37HHt9udzjF3/U9
+	/+rohBppATGkHfBaMc7fHqkOFjuro+pLm2p6E9JT4YnGNHhfqiJ4mODe+psnV5d20hdubhDu/pO
+	GhgeZMk6g3JoWG/ozhtFGk1dQQpZgnOi7e/lKk8DWzasK8aUXRHETRSJBaw==
+X-Received: by 2002:a05:622a:998:b0:4db:9c75:abad with SMTP id d75a77b69052e-4e576b307c5mr126255671cf.74.1759706524729;
+        Sun, 05 Oct 2025 16:22:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFJULL2VZQjCLXKuYta5vackW0AYBFaK3yrYJMbji+l7aGMwmBnu+kqmtXsQ9JSHKRG6CXTOA==
+X-Received: by 2002:a05:622a:998:b0:4db:9c75:abad with SMTP id d75a77b69052e-4e576b307c5mr126255421cf.74.1759706524145;
+        Sun, 05 Oct 2025 16:22:04 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b0118d88fsm4371863e87.69.2025.10.05.16.22.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Oct 2025 16:15:31 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] fs: add missing fences to I_NEW handling
-Date: Mon,  6 Oct 2025 01:15:26 +0200
-Message-ID: <20251005231526.708061-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Sun, 05 Oct 2025 16:22:02 -0700 (PDT)
+Date: Mon, 6 Oct 2025 02:21:59 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
+Cc: neil.armstrong@linaro.org, jessica.zhang@oss.qualcomm.com,
+        airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, dianders@chromium.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] drm/panel: Add driver for Tianma TL121BVMS07-00
+ panel
+Message-ID: <anldo4jltvbu2smqo4ognxkauqs6aomm742f5v7bhryi6jappx@lfcig7pn5go6>
+References: <20250930075044.1368134-1-yelangyan@huaqin.corp-partner.google.com>
+ <20250930075044.1368134-3-yelangyan@huaqin.corp-partner.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250930075044.1368134-3-yelangyan@huaqin.corp-partner.google.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAxOSBTYWx0ZWRfXw5aBETVfqobX
+ 4aqnnNT46FgK/te9sMqTenF+kbB0UKj6XCFZbQ/aoLOV7yzlSp/mehEfriLJLIKa7VMRUUEVgrs
+ Ja4NZHdOxNslgiJAuI495v0oz3oEPxXVUKAw925TSDU3FzZP7W/08ii6XH6rTqrFk0Dx8X561YG
+ /VwBUyePPfuPVNpxnuieLBet7axG/NU/yo7wdQEfUadShSMuyfsUo/i/fut4wW1WBVjvouqbgcG
+ Y04SKMCpMWj1+bt2QC1q8mxhfvakEZqYKryX1VFYH9+2X+JlojssSf95KfMPC0yvAuYtFlLc5qw
+ V6qy4vbvA21+W67WjAHxH8wDD89dgbt16jNIc/fneyr14F/T0QsDNDg3/Mke7KpVQLqLVhYOVCG
+ 2tohSXa9JRT5UoR7mqsfvKPUMPAzzg==
+X-Authority-Analysis: v=2.4 cv=B6O0EetM c=1 sm=1 tr=0 ts=68e2fd9d cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=1XWaLZrsAAAA:8 a=NJAL_iFP5D2qNw8AoYUA:9 a=CjuIK1q_8ugA:10
+ a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-GUID: LXK7FdA6KCCmmMbfBTyTTJHQQUk8xt1e
+X-Proofpoint-ORIG-GUID: LXK7FdA6KCCmmMbfBTyTTJHQQUk8xt1e
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-05_08,2025-10-02_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 lowpriorityscore=0 adultscore=0
+ impostorscore=0 spamscore=0 bulkscore=0 phishscore=0 malwarescore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
+ definitions=main-2510040019
 
-Suppose there are 2 CPUs racing inode hash lookup func (say ilookup5())
-and unlock_new_inode().
+On Tue, Sep 30, 2025 at 03:50:44PM +0800, Langyan Ye wrote:
+> Add a DRM panel driver for the Tianma TL121BVMS07-00 12.1"
+> MIPI-DSI TFT LCD panel. The panel requires multiple power
+> supplies (AVDD, AVEE, 1.8V logic), an enable GPIO, and a
+> backlight device. The panel is based on the Ilitek IL79900A
+> controller.
 
-In principle the latter can clear the I_NEW flag before prior stores
-into the inode were made visible.
+The rest of panels based on Ilitek controllers are handled by
+panel-ilitek-iliNNNN.c drivers (which might or might not be shared by
+several panels). Is there a reason to deviate from that custom?
 
-The former can in turn observe I_NEW is cleared and proceed to use the
-inode, while possibly reading from not-yet-published areas.
+> 
+> Signed-off-by: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
+> ---
+>  .../drm/panel/panel-tianma-tl121bvms07-00.c   | 419 ++++++++++++++++++
+>  1 file changed, 419 insertions(+)
+>  create mode 100644 drivers/gpu/drm/panel/panel-tianma-tl121bvms07-00.c
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-tianma-tl121bvms07-00.c b/drivers/gpu/drm/panel/panel-tianma-tl121bvms07-00.c
+> new file mode 100644
+> index 000000000000..5facffeda864
+> --- /dev/null
+> +++ b/drivers/gpu/drm/panel/panel-tianma-tl121bvms07-00.c
+> @@ -0,0 +1,419 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * DRM panel driver for Tianma TL121BVMS07-00 12.1" MIPI-DSI TFT LCD panel
+> + *
+> + * Based on drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c
+> + */
+> +
+> +
+> +#include <linux/delay.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/regulator/consumer.h>
+> +
+> +#include <drm/drm_connector.h>
+> +#include <drm/drm_crtc.h>
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
+Unnecessary
 
-I don't think this is a serious bug in the sense I doubt anyone ever ran
-into it, but this is an issue on paper.
+> +#include <drm/drm_mipi_dsi.h>
+> +#include <drm/drm_panel.h>
+> +
+> +#include <video/mipi_display.h>
+> +
+> +struct tm_panel;
+> +
+> +struct panel_desc {
+> +	const struct drm_display_mode *modes;
+> +	unsigned int bpc;
+> +
+> +	/**
+> +	 * @width_mm: width of the panel's active display area
+> +	 * @height_mm: height of the panel's active display area
+> +	 */
+> +	struct {
+> +		unsigned int width_mm;
+> +		unsigned int height_mm;
+> +	} size;
+> +
+> +	unsigned long mode_flags;
+> +	enum mipi_dsi_pixel_format format;
+> +	int (*init)(struct tm_panel *tm);
+> +	unsigned int lanes;
+> +	bool discharge_on_disable;
+> +	bool lp11_before_reset;
+> +};
+> +
+> +struct tm_panel {
+> +	struct drm_panel base;
+> +	struct mipi_dsi_device *dsi;
+> +
+> +	const struct panel_desc *desc;
+> +
+> +	enum drm_panel_orientation orientation;
+> +	struct regulator *pp1800;
+> +	struct regulator *avee;
+> +	struct regulator *avdd;
+> +	struct gpio_desc *enable_gpio;
+> +
+> +	bool prepared;
+> +};
+> +
+> +static int tm_tl121bvms07_00_init(struct tm_panel *tm)
+> +{
+> +	struct mipi_dsi_multi_context ctx = { .dsi = tm->dsi };
+> +	struct mipi_dsi_device *dsi = ctx.dsi;
+> +
+> +	mipi_dsi_dcs_write_seq_multi(&ctx, 0xff, 0x5a, 0xa5, 0x06);
+> +	mipi_dsi_dcs_write_seq_multi(&ctx, 0x3e, 0x62);
+> +
+> +
+> +	mipi_dsi_generic_write_seq(dsi, 0xff, 0x5a, 0xa5, 0x02);
+> +	mipi_dsi_dcs_write_seq_multi(&ctx, 0x1b, 0x20);
+> +	mipi_dsi_dcs_write_seq_multi(&ctx, 0x5d, 0x00);
+> +	mipi_dsi_dcs_write_seq_multi(&ctx, 0x5e, 0x40);
+> +
+> +	mipi_dsi_dcs_write_seq_multi(&ctx, 0xff, 0x5a, 0xa5, 0x07);
+> +	mipi_dsi_dcs_write_seq_multi(&ctx, 0X29, 0x00);
+> +
+> +	mipi_dsi_generic_write_seq(dsi, 0xff, 0x5a, 0xa5, 0x00);
+> +
+> +	mipi_dsi_dcs_write_seq_multi(&ctx, 0X11);
+> +
+> +	if (ctx.accum_err)
+> +		return ctx.accum_err;
+> +
+> +	msleep(120);
+> +
+> +	mipi_dsi_dcs_write_seq_multi(&ctx, 0X29);
+> +
+> +	if (ctx.accum_err)
+> +		return ctx.accum_err;
+> +
+> +	msleep(80);
+> +
+> +	return 0;
+> +};
+> +
+> +static inline struct tm_panel *to_tm_panel(struct drm_panel *panel)
+> +{
+> +	return container_of(panel, struct tm_panel, base);
+> +}
 
-I'm doing some changes in the area and I figured I'll get this bit out
-of the way.
+I'd expect this function to be present right after struct tm_panel
+definition.
 
- fs/dcache.c               | 4 ++++
- fs/inode.c                | 8 ++++++++
- include/linux/writeback.h | 4 ++++
- 3 files changed, 16 insertions(+)
+> +
+> +static int tm_panel_enter_sleep_mode(struct tm_panel *tm)
+> +{
+> +	struct mipi_dsi_device *dsi = tm->dsi;
+> +	int ret;
+> +
+> +	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
+> +
+> +	ret = mipi_dsi_dcs_set_display_off(dsi);
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index a067fa0a965a..806d6a665124 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1981,6 +1981,10 @@ void d_instantiate_new(struct dentry *entry, struct inode *inode)
- 	spin_lock(&inode->i_lock);
- 	__d_instantiate(entry, inode);
- 	WARN_ON(!(inode->i_state & I_NEW));
-+	/*
-+	 * Pairs with smp_rmb in wait_on_inode().
-+	 */
-+	smp_wmb();
- 	inode->i_state &= ~I_NEW & ~I_CREATING;
- 	/*
- 	 * Pairs with the barrier in prepare_to_wait_event() to make sure
-diff --git a/fs/inode.c b/fs/inode.c
-index ec9339024ac3..842ee973c8b6 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1181,6 +1181,10 @@ void unlock_new_inode(struct inode *inode)
- 	lockdep_annotate_inode_mutex_key(inode);
- 	spin_lock(&inode->i_lock);
- 	WARN_ON(!(inode->i_state & I_NEW));
-+	/*
-+	 * Pairs with smp_rmb in wait_on_inode().
-+	 */
-+	smp_wmb();
- 	inode->i_state &= ~I_NEW & ~I_CREATING;
- 	/*
- 	 * Pairs with the barrier in prepare_to_wait_event() to make sure
-@@ -1198,6 +1202,10 @@ void discard_new_inode(struct inode *inode)
- 	lockdep_annotate_inode_mutex_key(inode);
- 	spin_lock(&inode->i_lock);
- 	WARN_ON(!(inode->i_state & I_NEW));
-+	/*
-+	 * Pairs with smp_rmb in wait_on_inode().
-+	 */
-+	smp_wmb();
- 	inode->i_state &= ~I_NEW;
- 	/*
- 	 * Pairs with the barrier in prepare_to_wait_event() to make sure
-diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-index 22dd4adc5667..e1e1231a6830 100644
---- a/include/linux/writeback.h
-+++ b/include/linux/writeback.h
-@@ -194,6 +194,10 @@ static inline void wait_on_inode(struct inode *inode)
- {
- 	wait_var_event(inode_state_wait_address(inode, __I_NEW),
- 		       !(READ_ONCE(inode->i_state) & I_NEW));
-+	/*
-+	 * Pairs with routines clearing I_NEW.
-+	 */
-+	smp_rmb();
- }
- 
- #ifdef CONFIG_CGROUP_WRITEBACK
+Use _multi.
+
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +static int tm_panel_disable(struct drm_panel *panel)
+> +{
+> +	struct tm_panel *tm = to_tm_panel(panel);
+> +	int ret;
+> +
+> +	ret = tm_panel_enter_sleep_mode(tm);
+
+Inline
+
+> +	if (ret < 0) {
+> +		dev_err(panel->dev, "failed to set panel off: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	msleep(150);
+
+And here use DSI-specific wrapper.
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int tm_panel_unprepare(struct drm_panel *panel)
+> +{
+> +	struct tm_panel *tm = to_tm_panel(panel);
+> +
+> +	if (!tm->prepared)
+> +		return 0;
+> +
+> +	if (tm->desc->discharge_on_disable) {
+> +		regulator_disable(tm->avee);
+> +		regulator_disable(tm->avdd);
+> +		usleep_range(5000, 7000);
+> +		gpiod_set_value(tm->enable_gpio, 0);
+> +		usleep_range(5000, 7000);
+> +		regulator_disable(tm->pp1800);
+> +	} else {
+> +		gpiod_set_value(tm->enable_gpio, 0);
+> +		usleep_range(1000, 2000);
+> +		regulator_disable(tm->avee);
+> +		regulator_disable(tm->avdd);
+> +		usleep_range(5000, 7000);
+> +		regulator_disable(tm->pp1800);
+> +	}
+> +
+> +	tm->prepared = false;
+> +
+> +	return 0;
+> +}
+> +
+> +static int tm_panel_prepare(struct drm_panel *panel)
+> +{
+> +	struct tm_panel *tm = to_tm_panel(panel);
+> +	int ret;
+> +
+> +	if (tm->prepared)
+> +		return 0;
+> +
+> +	ret = regulator_enable(tm->pp1800);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	usleep_range(6000, 8000);
+> +
+> +	ret = regulator_enable(tm->avdd);
+> +	if (ret < 0)
+> +		goto poweroff1v8;
+> +	ret = regulator_enable(tm->avee);
+> +	if (ret < 0)
+> +		goto poweroffavdd;
+> +
+> +	usleep_range(11000, 12000);
+> +
+> +	gpiod_set_value(tm->enable_gpio, 1);
+> +
+> +	if (tm->desc->lp11_before_reset) {
+> +		ret = mipi_dsi_dcs_nop(tm->dsi);
+> +		if (ret < 0) {
+> +			dev_err(&tm->dsi->dev, "Failed to send NOP: %d\n", ret);
+> +			goto poweroff;
+> +		}
+> +		usleep_range(1000, 2000);
+> +	}
+> +	gpiod_set_value(tm->enable_gpio, 0);
+> +	usleep_range(1000, 2000);
+> +	gpiod_set_value(tm->enable_gpio, 1);
+> +	usleep_range(20000, 21000);
+> +
+> +	ret = tm->desc->init(tm);
+> +	if (ret < 0)
+> +		goto poweroff;
+> +
+> +	tm->prepared = true;
+> +	return 0;
+> +
+> +poweroff:
+> +	gpiod_set_value(tm->enable_gpio, 0);
+> +	regulator_disable(tm->avee);
+> +poweroffavdd:
+> +	regulator_disable(tm->avdd);
+> +poweroff1v8:
+> +	usleep_range(5000, 7000);
+> +	regulator_disable(tm->pp1800);
+> +
+> +	return ret;
+> +}
+> +
+> +static int tm_panel_enable(struct drm_panel *panel)
+> +{
+> +	msleep(130);
+> +	return 0;
+> +}
+> +
+> +static const struct drm_display_mode tm_tl121bvms07_00_default_mode = {
+> +	.clock = 264355,
+> +	.hdisplay = 1600,
+> +	.hsync_start = 1600 + 20,
+> +	.hsync_end = 1600 + 20 + 4,
+> +	.htotal = 1600 + 20 + 4 + 20,
+> +	.vdisplay = 2560,
+> +	.vsync_start = 2560 + 82,
+> +	.vsync_end = 2560 + 82 + 2,
+> +	.vtotal = 2560 + 82 + 2 + 36,
+> +};
+> +
+> +static const struct panel_desc tm_tl121bvms07_00_desc = {
+> +	.modes = &tm_tl121bvms07_00_default_mode,
+> +	.bpc = 8,
+> +	.size = {
+> +		.width_mm = 163,
+> +		.height_mm = 260,
+> +	},
+> +	.lanes = 3,
+> +	.format = MIPI_DSI_FMT_RGB888,
+> +	.mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
+> +		      MIPI_DSI_MODE_LPM,
+> +	.init = tm_tl121bvms07_00_init,
+> +	.lp11_before_reset = true,
+> +};
+> +
+> +static int tm_panel_get_modes(struct drm_panel *panel,
+> +			       struct drm_connector *connector)
+> +{
+> +	struct tm_panel *tm = to_tm_panel(panel);
+> +	const struct drm_display_mode *m = tm->desc->modes;
+> +	struct drm_display_mode *mode;
+> +
+> +	mode = drm_mode_duplicate(connector->dev, m);
+> +	if (!mode) {
+> +		dev_err(panel->dev, "failed to add mode %ux%u@%u\n",
+> +			m->hdisplay, m->vdisplay, drm_mode_vrefresh(m));
+> +		return -ENOMEM;
+> +	}
+
+See drm_connector_helper_get_modes_fixed()
+
+> +
+> +	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
+> +	drm_mode_set_name(mode);
+> +	drm_mode_probed_add(connector, mode);
+> +
+> +	connector->display_info.width_mm = tm->desc->size.width_mm;
+> +	connector->display_info.height_mm = tm->desc->size.height_mm;
+> +	connector->display_info.bpc = tm->desc->bpc;
+> +	/*
+> +	 * TODO: Remove once all drm drivers call
+> +	 * drm_connector_set_orientation_from_panel()
+> +	 */
+> +	drm_connector_set_panel_orientation(connector, tm->orientation);
+> +
+> +	return 1;
+> +}
+> +
+
 -- 
-2.34.1
-
+With best wishes
+Dmitry
 
