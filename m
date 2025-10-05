@@ -1,129 +1,99 @@
-Return-Path: <linux-kernel+bounces-842477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5685BBCCAF
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 23:43:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C836BBCCB2
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 23:52:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E2BF18957FB
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 21:43:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FB501890909
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 21:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9D2239567;
-	Sun,  5 Oct 2025 21:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C821CAA85;
+	Sun,  5 Oct 2025 21:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PvZjfjqA"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="xTjpe0gj"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7A02356C9;
-	Sun,  5 Oct 2025 21:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3A92A1CF
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 21:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759700584; cv=none; b=CVupLkH6DE21of4R6a3yuc4cYC3RvStgH6fZPutr0cF+kCrSAV+M/j2kZpPwNhNtMe0H4bnlUdSUG0N/MSgJaykP5zUFdrE9CnAglr+K6zjWlUo3fbF000I4OBftXGBQzh29Ct8r39llYCzxAGERNdG+FTs0LDwl6NqNNQE6QO4=
+	t=1759701131; cv=none; b=ksAbq6nzHYsUiBhZtL1Ud996n2pgtnqwxsMaeRdIMdaYg0NruBw+QyntOQVp7p6NtIzS27ee775qbiiF/vrutUpiUf6FUqN6KH7v6cbAKWmWvVUNdY+pqm7z2wKi10ZeynUMS34fDCRGQ+u4yA7yLmPu0BchP+FbRiU8KyD9lWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759700584; c=relaxed/simple;
-	bh=5XJgpqDZDnylQZRR2q1O9ljc7bO6cYURHlEah3vm1sk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JRz1nsXODdj9Pbg0FbmfFbewqRO9/xPXMj+pdWL/L4oNPbf5bEo81ccqZyT6AITwtJlHw2SFEdrzky8wOYe7Pg0fh2xjfGeoHZWxEJMHfScZ1eylDVOAnxXlIgfqfmbt2KEC8VG4xCFtcYTa3YxcwajifSyLUO2f/kjN4XUGKvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PvZjfjqA; arc=none smtp.client-ip=185.171.202.116
+	s=arc-20240116; t=1759701131; c=relaxed/simple;
+	bh=08W6Kwy3jW8/F90wDEtMrHnRQUE0hr5hEhuG7b0c9aU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=egFKXGMEt3d7Uqb2cmlMRy83kElZYWaZtXLK3kpYXkHs/GD60qhBJ7D0vwl3R6R0FbuzKXgK/SaqfpkzQeMs4aehfGNTKS+4C81mhKZwNbHWAfBsPljytRshCjgo8odA0BHniwA3ZgHSDmgX2SzpSJdiB0o1OQkWrgDxohALM9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=xTjpe0gj; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 730BBC03590;
-	Sun,  5 Oct 2025 21:42:41 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 53DAC1A1109;
+	Sun,  5 Oct 2025 21:52:07 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 7E86F6065F;
-	Sun,  5 Oct 2025 21:42:59 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C5495102F1CFA;
-	Sun,  5 Oct 2025 23:42:53 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 1806E6065F;
+	Sun,  5 Oct 2025 21:52:07 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D71EF102F1CFA;
+	Sun,  5 Oct 2025 23:52:00 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759700578; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=ikxEv8Gm2su2ZZEUWd9/OL6i4Bjm4NlNTOBJiXZjuKs=;
-	b=PvZjfjqAbdQefUvmkSB9K7Y2494tOfSCjqAXKt1DMeY5Xtl8NrI/4bvMwtNvT81hWqfAgy
-	7tjvcLVuSsvQsngJL/cuSH1qfegGQo1x6oFGN4CRYawRaR04v8R9cy6qMSbFMGQg0sUzCN
-	iCE05d/25g9mU91lgHCmlCcIgYsB2jfKIo335J0dKHdIMhcQM1FF1MuvdIbaAlljEpzsU/
-	xEhl7lu59CW8XVTxe5DyGl4B7Z34MtPft0UKKu9XarYPuL3y+Jp0SZfIB8izS7dfm9Xwc1
-	wOdWCHgFeUcz7xW2+cncOlUmJxX1VaigvGbmv4bnNaHd79/hM+DjN80aWYkZ5A==
-Date: Sun, 5 Oct 2025 23:42:53 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Devang Tailor <dev.tailor@samsung.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	alim.akhtar@samsung.com, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	henrik@grimler.se, faraz.ata@samsung.com
-Subject: Re: [PATCH v3 0/3] On-chip RTC support for ExynosAutov9
-Message-ID: <202510052142538d7fd672@mail.local>
-References: <CGME20250905105708epcas5p159281b73f87fae88e824b97889908649@epcas5p1.samsung.com>
- <20250905110554.2212304-1-dev.tailor@samsung.com>
+	t=1759701125; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=CSMS0CXfRVEbW7/IAycMvjhwOpwfcl8AilW2Tzo8ENw=;
+	b=xTjpe0gj2TcjVRSgjDHkX32NBe/s8UUmjSZqoM89yCanjaSMZp4DG3xMU2WmZhUtnwSR8f
+	o142dWAQbz5ERd4KUleFMQB86xSjzPwxx5YXGt29yIL/86YRGhs5JNSUBaW5Bz+coIXj+F
+	FP21CgZY1iBR+dwCPcE49cU6EPNKjaqBk3rV4L2grasbi5YtK/l8zbfTNxa+JyVBom4QoM
+	8871x2WB77IXzl6XPdSjR2ooe4haD1C2zMk8+qHF54Khd9gOl3UEc+V9e6vv6wtvc4HzW3
+	ydOPF6z1jxJ8bo8C2VBwn+/+8iag71I/XflX/mrkTc4sf+HqK10HEFyo6ooqKA==
+From: alexandre.belloni@bootlin.com
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: dts: imx6q-evi: fix rtc compatible
+Date: Sun,  5 Oct 2025 23:51:45 +0200
+Message-ID: <20251005215146.3804629-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905110554.2212304-1-dev.tailor@samsung.com>
+Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-On 05/09/2025 16:35:51+0530, Devang Tailor wrote:
-> Enable on-chip RTC support. The on-chip RTC of this SoC is similar
-> to the previous version of Samsung SoCs except for TICNT tick time
-> counter. So re-use the existing RTC driver with applicable call-backs
-> for initialization and IRQ handling without accessing TICNT counter.
-> 
-> As suggested in review comment, instead of adding separate disable()
-> call-back, re-used the existing s3c24xx_rtc_disable() by adding a new
-> bool 'use_s3c2410_ticnt' in rtc_data to avoid accessing TICNT counter
-> which is not valid for RTC of ExynosAutov9.
-> 
-> Setting and getting hardware clock has been tested using 'hwclock'
-> and 'date' utilities.
-> 
-> Alarm interrupt has been checked with incrementing interrupt
-> count via "cat /proc/interrupts | grep rtc" for 10sec
-> wakeup time via "echo +10 > /sys/class/rtc/rtc0/wakealarm"
-> 
-> changelog
-> ---
-> Changes in v3:
-> - 1/3 : Added Tag 'Reviewed-by'
-> - 2/3 : Fixed the review comment of v2 to re-use the existing disable()
-> 	instead of adding new one.
->       : Not adding Tag 'Reviewed-by' from V2 since the patch has been
-> 	changed
-> - 3/3 : Added Tag 'Reviewed-by'
-> link for v2 : https://lore.kernel.org/linux-rtc/20250710083434.1821671-1-dev.tailor@samsung.com/
-> 
-> 
-> Changes in v2:
-> - Fixed the review comment of v1 for mis-aligmnent & asymmetry bit logic.
-> - link for v1 : https://lore.kernel.org/linux-rtc/20250702052426.2404256-1-dev.tailor@samsung.com/
-> 
-> 
-> Devang Tailor (3):
->   dt-bindings: rtc: s3c-rtc: add compatible for exynosautov9
->   rtc: s3c: support for exynosautov9 on-chip RTC
->   arm64: dts: exynosautov9: add RTC DT node
-> 
->  .../devicetree/bindings/rtc/s3c-rtc.yaml      |  1 +
->  .../boot/dts/exynos/exynosautov9-sadk.dts     |  4 ++++
->  arch/arm64/boot/dts/exynos/exynosautov9.dtsi  | 10 +++++++++
->  drivers/rtc/rtc-s3c.c                         | 21 ++++++++++++++++---
->  4 files changed, 33 insertions(+), 3 deletions(-)
-> 
-> 
-> base-commit: 4ac65880ebca1b68495bd8704263b26c050ac010
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-You should rebase on top of rtc-next as s3c2410 support has been
-removed.
+The correct compatible is nxp,pcf2123
 
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ arch/arm/boot/dts/nxp/imx/imx6q-evi.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-evi.dts b/arch/arm/boot/dts/nxp/imx/imx6q-evi.dts
+index 78d941fef5df..5da9631cb3ec 100644
+--- a/arch/arm/boot/dts/nxp/imx/imx6q-evi.dts
++++ b/arch/arm/boot/dts/nxp/imx/imx6q-evi.dts
+@@ -134,7 +134,7 @@ eeprom: m95m02@1 {
+ 	};
+ 
+ 	pb_rtc: rtc@3 {
+-		compatible = "nxp,rtc-pcf2123";
++		compatible = "nxp,pcf2123";
+ 		spi-max-frequency = <2450000>;
+ 		spi-cs-high;
+ 		reg = <3>;
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.51.0
+
 
