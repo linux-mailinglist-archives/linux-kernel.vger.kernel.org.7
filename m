@@ -1,183 +1,115 @@
-Return-Path: <linux-kernel+bounces-842390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E82B4BB9AB6
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 20:14:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E385CBB9AB9
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 20:15:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A60263B1F1F
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 18:14:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33D153B270D
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 18:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB501D47B4;
-	Sun,  5 Oct 2025 18:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB711B4224;
+	Sun,  5 Oct 2025 18:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RCYtvh5/"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IWpo0jZc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B2E1527B4
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 18:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE4C34BA3E;
+	Sun,  5 Oct 2025 18:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759688068; cv=none; b=aqLQabpMVbqlBgOui5FhVIZGsy/4K5biZ3k9SMa2UMxusQiE/2sFfq+Lwew4ESvlk/YNFuVliZbYYhadvBcoMVhHGxwVBAe+2aVzQJJV4iIxUn685W+V4vkV0g1lGNyKp6yNYW9NI6ilsAjb7IDLrfGx/3gx+mRseA+V9Q3fVrI=
+	t=1759688139; cv=none; b=Yp4A+NZT2FVT6f3If4XtrP5WjHj2ad3/ltQXixIf0G+vkEsNUv8V2WWwtS4pckxCuTubAxzMtN0c+2q6jc6lLZXD9VF9pXIwkJ25UnG1MHEsHROcCfR8tdJt4OGbYDiHCgotWnAt2lLhmRUSrRQW8qYnoCEZL4cz0PkICdAYhl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759688068; c=relaxed/simple;
-	bh=jKJufSzsIoGcPnz19tjXEcjablrQpmKm53WL7N/ygy8=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=eFOhGqiOKEGM7jRmzumutG39BJ048UlIePuhqUyBnJRTAAILozxceqJQpQSuX5hsc3Wd+uz7NArapgw1+AadEP5kqz5VtQeMbpDNHRNHZfh6Zi0qbgeEon9XIWiNAxRa8ptpfnrsHbs4vdwfXnIw1bSJSR8kcAS52v4v+wseVNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RCYtvh5/; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-77fab059344so14748927b3.2
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 11:14:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759688065; x=1760292865; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=sOkNJ+T+Tdfr45vmGmFX0Mkoori48Hk8UPWsdnH0IUA=;
-        b=RCYtvh5/HruTnbS46wxZ/lN0mkE1dKZ2UZaF+17/kkuHmmkDchBMyvUT4ADzsENtfB
-         7HCbTtTu4pIB+/YDoFvlBIQMBWSdxE/hPiduAK3WQ338H2xUHvd5++om2HNAKWS2Use+
-         1XLTxh1sysZCiXwzSggNDzPkgZuHOjdD+Kif9GjFbBXOGjsaXsSHPlL4ojnmYl+Hfv3P
-         x40e8NgeJnp7BdaFlYMhlS1N3KEj6rIWh6I0JVgUJ8+ietw6sSrmPf+2nc6TRpi65ml3
-         /W25E9molfTyik+rd9xWGrLbSLVVPSO9czRE7EzPcQj9rZMxA8aFMYrzLVXZ7pT15Wr8
-         RLyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759688065; x=1760292865;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sOkNJ+T+Tdfr45vmGmFX0Mkoori48Hk8UPWsdnH0IUA=;
-        b=SdGqbhahoe5qUZKffLXm6uZ7hILFdJjN0XsQcWSUTZADktSGPSarEkNKjlT4Q0nQqL
-         UQPQLNuVj1u24C93FWi95H+N+TsoKJbzt3uA1vNOsuO/n04UCUaaQ9zrqTIckkvhrEeb
-         I/XcXueM9gn/uO/miQs3P0Yk7ZOdipUK3Z2v5Vt4R63ZVO0z3QC13pMRth6IsE1zl2Nu
-         1kQNtMM3hVlWhwTxulWfbGIg+e4rTDRXQipDgNuCZp1UTgZmFES47fMq/zxratk2d2UI
-         5bFVsBZBcTuCfXJ9XF4T3xUUVio6aFYgF267ZP48TxksmOP8X9YMKtu6U/1Odo8U7Bwf
-         /pJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXjsuMiUFqu9oRfwrVZziNUgtstvyPbWEeLuq7rzeiJgC3YctKAFh9Nrdq9fxweLPrYHSzZTzGFIBCq1cY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI9MWNExCaOnGNAy1SudJsqTopWZOOkOGe0RTk0OqbqOpJmiHo
-	SVOnL5pD3F0+ZDWetIcW6cg+1CY9LdmvqssF4JGJzKZeeb6GYacmEjtmJT9pfr0EgNR+K3mE4eT
-	5H6jTSCf2ng==
-X-Google-Smtp-Source: AGHT+IExPa7jt6IjPv1ZghhlDGVqvEx9LAVQg1UNjFhdGHMbp3SUqMPu4Z3IxXaPOIqxEklUHvGMN8/FJJ93
-X-Received: from ywbfl2.prod.google.com ([2002:a05:690c:3382:b0:77f:7918:3482])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:690c:691:b0:77f:937f:32be
- with SMTP id 00721157ae682-77f94705f60mr202405377b3.41.1759688065332; Sun, 05
- Oct 2025 11:14:25 -0700 (PDT)
-Date: Sun,  5 Oct 2025 11:14:21 -0700
+	s=arc-20240116; t=1759688139; c=relaxed/simple;
+	bh=WrGBOIZjlmquZN7ZYu+iwJ9XEfXTRM1X6w/j88Z/5W8=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=Hx1xU2non5pM7tXKBuVurFk8y5t7us/WTxrr9tF0bqFaOW08MwuRmlBPHjUMj685VbK6cfuMSHgWvb3M49vIa+IhXoyEQm7JCopAVdJVB6/V6mtOq1rjQ89zsIQAz/VuAqv9U3B0DOBayaPlX7QY0V2h5gBW8DFhVBN29UUlx0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IWpo0jZc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6622C4CEF4;
+	Sun,  5 Oct 2025 18:15:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1759688138;
+	bh=WrGBOIZjlmquZN7ZYu+iwJ9XEfXTRM1X6w/j88Z/5W8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=IWpo0jZc/QIF8KOLnFDnHf2LxTHDktEADz4tGQc5ySBtwLUgB/xproCBlAO/TWM3V
+	 kDxZw0PPe5+JOuH1uDmsq32y/4jKvFv/gpW5S8sgWJEyAw64StzmXjA5/RX10BVBBF
+	 YDA8+K8aWh/Tv1Ems/TXnv4f7qX7jMGH7ZWmiCXE=
+Date: Sun, 5 Oct 2025 11:15:38 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Linus Torvalds <torvalds@linuxfoundation.org>
+Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: [GIT PULL] additional MM updates for 6.18-rc1
+Message-Id: <20251005111538.3996dae46662e46054d46528@linux-foundation.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
-Message-ID: <20251005181421.2787960-1-irogers@google.com>
-Subject: [PATCH v1] perf stat: Additional verbose details for <not supported> events
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-If an event shows as "<not supported>" in perf stat output, in verbose
-mode add the strerror output to help diagnose the issue.
 
-Consider:
-```
-$ perf stat -e cycles,data_read,instructions true
+Linus, please merge this small and final batch of MM updates for the
+6.18-rc development cycle.
 
- Performance counter stats for 'true':
+No conflicts are seen or anticipated.
 
-           357,457      cycles:u
-   <not supported> MiB  data_read:u
-           156,182      instructions:u                   #    0.44  insn per cycle
+Thanks.
 
-       0.001250315 seconds time elapsed
 
-       0.001283000 seconds user
-       0.000000000 seconds sys
-```
+The following changes since commit 1367da7eb875d01102d2ed18654b24d261ff5393:
 
-To understand why the data_read uncore event failed, with this change:
-```
-$ perf stat -v -e cycles,data_read,instructions true
-Using CPUID GenuineIntel-6-8D-1
-cycles -> cpu/cycles/
-data_read -> uncore_imc_free_running_0/data_read/
-data_read -> uncore_imc_free_running_1/data_read/
-instructions -> cpu/instructions/
-Control descriptor is not initialized
-Warning:
-kernel.perf_event_paranoid=2, trying to fall back to excluding kernel and hypervisor  samples
-Warning:
-kernel.perf_event_paranoid=2, trying to fall back to excluding kernel and hypervisor  samples
-Warning:
-kernel.perf_event_paranoid=2, trying to fall back to excluding kernel and hypervisor  samples
-Warning:
-data_read:u event is not supported by the kernel.
-Invalid event (data_read:u) in per-thread mode, enable system wide with '-a'.
-Warning:
-kernel.perf_event_paranoid=2, trying to fall back to excluding kernel and hypervisor  samples
-Warning:
-data_read:u event is not supported by the kernel.
-Invalid event (data_read:u) in per-thread mode, enable system wide with '-a'.
-cycles:u: 351621 362833 362833
-failed to read counter data_read:u
-failed to read counter data_read:u
-instructions:u: 156184 362833 362833
+  mm: swap: check for stable address space before operating on the VMA (2025-09-28 11:51:34 -0700)
 
- Performance counter stats for 'true':
+are available in the Git repository at:
 
-           351,621      cycles:u
-   <not supported> MiB  data_read:u
-           156,184      instructions:u                   #    0.44  insn per cycle
+  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-stable-2025-10-03-16-49
 
-       0.001584472 seconds time elapsed
+for you to fetch changes up to c14bdcc9f274620492aba7d920cc2641440cf1ba:
 
-       0.001811000 seconds user
-       0.000000000 seconds sys
-```
-where without this change only "data_read:u event is not supported by
-the kernel." is shown.
+  mm/khugepaged: use KMEM_CACHE() (2025-10-03 16:42:44 -0700)
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/builtin-stat.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+----------------------------------------------------------------
+Only two patch series in this pull request:
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 7006f848f87a..84e06ec09cc2 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -624,8 +624,9 @@ static enum counter_recovery stat_handle_error(struct evsel *counter, int err)
- 	 */
- 	if (err == EINVAL || err == ENOSYS || err == ENOENT || err == ENXIO) {
- 		if (verbose > 0) {
--			ui__warning("%s event is not supported by the kernel.\n",
--				    evsel__name(counter));
-+			evsel__open_strerror(counter, &target, err, msg, sizeof(msg));
-+			ui__warning("%s event is not supported by the kernel.\n%s\n",
-+				    evsel__name(counter), msg);
- 		}
- 		return COUNTER_SKIP;
- 	}
-@@ -649,10 +650,11 @@ static enum counter_recovery stat_handle_error(struct evsel *counter, int err)
- 		}
- 	}
- 	if (verbose > 0) {
-+		evsel__open_strerror(counter, &target, err, msg, sizeof(msg));
- 		ui__warning(err == EOPNOTSUPP
--			? "%s event is not supported by the kernel.\n"
--			: "skipping event %s that kernel failed to open.\n",
--			evsel__name(counter));
-+			? "%s event is not supported by the kernel.\n%s\n"
-+			: "skipping event %s that kernel failed to open.\n%s\n",
-+			evsel__name(counter), msg);
- 	}
- 	return COUNTER_SKIP;
- }
--- 
-2.51.0.618.g983fd99d29-goog
+- The 3 patch series "mm/memory_hotplug: fixup crash during uevent
+  handling" from Hannes Reinecke which fixes a race which was causing udev
+  to trigger a crash in the memory hotplug code.
+
+- The 2 patch series "mm_slot: following fixup for usage of
+  mm_slot_entry()" from Wei Yang adds some touchups to the just-merged
+  mm_slot changes.
+
+----------------------------------------------------------------
+Anshuman Khandual (1):
+      Documentation/mm: drop pxx_mkdevmap() descriptions from page table helpers
+
+Hannes Reinecke (3):
+      drivers/base/memory: add node id parameter to add_memory_block()
+      mm/memory_hotplug: activate node before adding new memory blocks
+      drivers/base: move memory_block_add_nid() into the caller
+
+Lance Yang (1):
+      mm: clean up is_guard_pte_marker()
+
+Wei Yang (2):
+      mm/ksm: cleanup mm_slot_entry() invocation
+      mm/khugepaged: use KMEM_CACHE()
+
+ Documentation/mm/arch_pgtable_helpers.rst |  6 ----
+ drivers/base/memory.c                     | 53 ++++++++++++++-----------------
+ drivers/base/node.c                       | 10 +++---
+ include/linux/memory.h                    |  5 ++-
+ mm/khugepaged.c                           |  5 +--
+ mm/ksm.c                                  | 27 ++++++++--------
+ mm/madvise.c                              |  4 +--
+ mm/memory_hotplug.c                       | 32 ++++++++++---------
+ 8 files changed, 63 insertions(+), 79 deletions(-)
+
 
 
