@@ -1,515 +1,230 @@
-Return-Path: <linux-kernel+bounces-842310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C4AABB979D
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 15:33:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9599FBB97AF
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 15:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBE34188DD08
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 13:33:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40F9518902B7
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 13:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF57C28A1F3;
-	Sun,  5 Oct 2025 13:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D0928851E;
+	Sun,  5 Oct 2025 13:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pinefeat.co.uk header.i=@pinefeat.co.uk header.b="N6T1hDCf"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c6F+xdkE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6672882CD
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 13:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759671186; cv=none; b=MXcKiA2nChFP/3JVzA9d033oN0ILJpk/vgQxDn3XuNyc9maGHnGuNnAm3hvqsmpZbu8LOTJX6NzNzbtMy7/ANu54feuWs+DCAVQFjWJgRn0PTc6Yzc7Bq4B6j79J8ZOC+7eCaYcBqPugOZ5kt7KecNJk3jNQNTguN68rkDmSkYo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759671186; c=relaxed/simple;
-	bh=R8/xVkkUeee4LadW992nyvaoYl0mD4tQyfxnRhjiTaU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=krdKCLTQybrWsOTvjAlkvdbQMGihWDmv6suP9yQ6qxuST4RFCZw62f/SL6VHYePS7qlN0CeDuhxwtBVPgk5dy66pYPkT1zFAcvjhoIGrf3Hd62xNLHx+KZvI3zNMI2gJUbM3MeHzzzi7eDOem9Iuus1voykYfV9KABAScUhxg/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pinefeat.co.uk; spf=pass smtp.mailfrom=pinefeat.co.uk; dkim=pass (2048-bit key) header.d=pinefeat.co.uk header.i=@pinefeat.co.uk header.b=N6T1hDCf; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pinefeat.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pinefeat.co.uk
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e37d10ed2so35368475e9.2
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 06:33:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pinefeat.co.uk; s=google; t=1759671183; x=1760275983; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=03HwctAT/wNPXgGyWRgPGKbJBAtqAT5TaM8xCGN0inc=;
-        b=N6T1hDCfxus3JcywoqC+FTNw1hp8uLmJB8+1ls7b5v9fmQU5G81gkb8Y3KVCQEG+Jq
-         C4pjFmOB8YEcDD42AhTcz7eYIFEyTLNKz+dz/tIZ6bs6IajGg0xg9gsLkM1lUyM7akEY
-         CcWwEzIzCK5MORmgxGNMQ8OX2KxJNUcEI9nFWIWGXOLTFXEoWKU2RPkOc9Ze2Ax0wJl7
-         OGyPXTrJqWVskLhnMDsutIgNWvtnh+n1gzXakCerjoD/M08q3AbIs3XnZ5Jy1nFRFXC3
-         Yg1JYcDgxtOxNF9VNxmL92Hgj9+ztcKp5eUWXALuxoWgogvk5MMRoJmslB/QiZnq//Oi
-         1cEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759671183; x=1760275983;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=03HwctAT/wNPXgGyWRgPGKbJBAtqAT5TaM8xCGN0inc=;
-        b=JRW3ehR+PIrAQt5EjcileS3OPhCSdWtsb0zsO+m3fygfVC/HMn6Mq5bUPNaNt0tBDt
-         MSvk2k1InQnZ5HHtNLdAoHR1oiFCKVpZMTIB0qOoIy6ed0QI5Uanhdm/TsQPS/ZZ6ZQF
-         ic45wyZJCHhEYjh/A/5fuYoxrSiNv/V2nWNGUDobF6OfgFHFoU6fmaWwHUWXklGrumTx
-         zB4wp9HAFAWIpbrgkRhqw4rC/shAxMNw4HGFgg3hYAjYGal54l/xuyemgtrWiz00GSuA
-         Nn07NYu/ixgZJJhoZkbGntzlh7DevNSrqDFxmfKMTq+v/N5qVCx1BUDtVoU4UYCnBW2q
-         CEPA==
-X-Forwarded-Encrypted: i=1; AJvYcCWiVmwBulI/PMiUS3AARfNMPsdn8Of89nGB5GXXrKHIFG2Fssn3o/jsBBmxzdtQVKE8ZVfe7Nng/MXWRKs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpjR+HOrjXSTqWEoycXvnp1jOGAMlbXiIJ5Gin5pe9rTU77shX
-	vCu2wBJMv/ovWd6iKEPYl2Wg+DFNohgNJpyJOEItnHBu8aB4OPhIPbwAGsWVMUQeEkQ=
-X-Gm-Gg: ASbGnctsqds1TwBcnM1mnl+zIYYHWSZeTNLsfbnbEiybSPH3ZQoUxvypPA/wjHctlc3
-	pFVtPHV2wyOXsSTyFdXiGq8ZcXdhAPVYIjteG6tP19Nh2g50RTB6gPsV6JxnvRN6Q9TSb9P+uUK
-	H7vVVFJMvLdK8v2d8/N3zWBOMszTXPrF3fBekeWWbMm4cjmBHLCk98myCYrmXU4Q+uHT6S/0cew
-	o0kXDx4w2e38NGFcl2kvsHB8bDxZfcBA4Ehq3ZftyCz0SmL3oo1Y81smAKEO07GcFjvy3LPF+wH
-	050SJSblUMNgzXO1duobiJ68CxqMh/J+xL0Ei9u6KCfUFn1srLe4qSBJzuCfWsmyUW3wsFceiRQ
-	1zl2LjMtek1XQoiMreYfkQhBWxxEGht3MrVk7Nay5givj6FJ/eHOvQ29CEmwcYdeC
-X-Google-Smtp-Source: AGHT+IHRTp1HDiKTzviSzcMpBq0Uk9BgzdXRulKr1xzAhaDkC/muSdUgBn2Yvtz/jmJhT5/0MtAlgw==
-X-Received: by 2002:a05:6000:1787:b0:425:57dd:58c4 with SMTP id ffacd0b85a97d-425671598f4mr6988036f8f.26.1759671182891;
-        Sun, 05 Oct 2025 06:33:02 -0700 (PDT)
-Received: from asmirnov-G751JM.Home ([2a02:c7c:b28c:1f00:33bb:4d0:68e8:89b8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f4cc3sm16459730f8f.55.2025.10.05.06.33.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Oct 2025 06:33:02 -0700 (PDT)
-From: Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>
-To: jacopo.mondi@ideasonboard.com,
-	hverkuil@xs4all.nl,
-	mchehab@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>
-Subject: [PATCH v5 2/2] media: i2c: Pinefeat cef168 lens control board driver
-Date: Sun,  5 Oct 2025 14:32:28 +0100
-Message-Id: <20251005133228.62704-3-asmirnou@pinefeat.co.uk>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251005133228.62704-1-asmirnou@pinefeat.co.uk>
-References: <20251005133228.62704-1-asmirnou@pinefeat.co.uk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7538A28727C;
+	Sun,  5 Oct 2025 13:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759671413; cv=fail; b=Yi7g62ms8naDnQKfuizgRfJrAPeCSXwqRfNr9SB8NLjvY0hQryGsFa2eTrKV2E/C1nVKEsoF0gqh7sAD1G1vtgOeyky5oxWc7kEafvrhim7IxgWrO/9ZoAN1yaw6KuDt/ynXXikoGfkXUcEv84NV6GAscNYXcBm7gtkKF8gIw/k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759671413; c=relaxed/simple;
+	bh=DnGei9H8eJmnBgeD1kLZFi235NyeSVXgzvNCSuUxk18=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=qNYeqgUteUMNIlGFcpNFEX5wVgIXnNf7WZDYw+VB+o0+RW5Al3+EJ1GMQM+MbrEbHaNr+Flnu/T4cDib9oTzI3/rz1Php6bbmj6BjFptqWYLXY/fgvFFOvjzrOEfK4zkQgrFhyJIzGumjpaQD1gjraXZCShrHumtannZrtjtlP4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c6F+xdkE; arc=fail smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759671411; x=1791207411;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=DnGei9H8eJmnBgeD1kLZFi235NyeSVXgzvNCSuUxk18=;
+  b=c6F+xdkEl1l5Sd+wD3F+6BFNJw0MBWJn9zPhLjDY+RSVJ8OgxRpC9lib
+   /1nHQEIvi7dl63/gWziTqRKg1LA/Qio2IfjG8zUl5quTfqTSqn/JElxaC
+   FgzhxBs05ycni6M+idq+r7B7GGHCRGiJlgrUAzVinRxGcPve/Cowt/Tyn
+   4GLZyo0y0/tNXNBi7/O9V5dPxIc4c15uQeA7UJ647ExT5JIh2q1oaKOdb
+   I+Kf6YB3n46qgJqVNJMbQzfcFT7/4Tcl4RkOQ0kUz6dLP5LO8K6vJ42+w
+   YpaZUnn2umRufbQh/ZO0xVA0tbi5QYQ6iZRgz5P8hPBg6ax0HNcZq2MIL
+   A==;
+X-CSE-ConnectionGUID: XTKtGvQbTaWfxgtJ8W22Dw==
+X-CSE-MsgGUID: qQOtzvB3SK2EKcMz+H0/wA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11573"; a="64492505"
+X-IronPort-AV: E=Sophos;i="6.18,318,1751266800"; 
+   d="scan'208";a="64492505"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2025 06:36:51 -0700
+X-CSE-ConnectionGUID: XrIvV5VzRSaJnKFqUaDRNA==
+X-CSE-MsgGUID: Nm9wfSy9SDyBG1Xe5zZnKQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,318,1751266800"; 
+   d="scan'208";a="183962680"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2025 06:36:49 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Sun, 5 Oct 2025 06:36:48 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Sun, 5 Oct 2025 06:36:48 -0700
+Received: from CY7PR03CU001.outbound.protection.outlook.com (40.93.198.42) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Sun, 5 Oct 2025 06:36:48 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=P4vhEQU9UHrP9zdgXeDDRFncZEJHO0XjrT9ZQXGM/KnOFkAMB23+IPb3+3KAe3CgtjwTItACEU1/a2BGKom6n74pu3W4xEk0b9yYDvUYmAkDyUE+42bWPwUMbik/l0NyY8T5hMVMI+N6MyPeprG0iss7BzZuZQuv4lfY/uljE2f9UBYqqJlXBYA40ys3byPiPObyVNkDIWsPpcwQ73NDLRBN0CbwSUpRq8+uYiiuK0DvqNhhIFjOrd5tZXcRqlfVsKn6wsfCf9H7Ie4DBmKeazlt/Ft6C8imfzUov5t4tSE87Y3AE+iOvZQ+110hBuPq+Ov3creA8ufPVNYO+sj4EA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DnGei9H8eJmnBgeD1kLZFi235NyeSVXgzvNCSuUxk18=;
+ b=c1rttJXF2pGF2E1rPk1u/pk4Uic1kck7w/w2D9CVcaiGaYRS5CiZKa0odPp3UDz2sYByWbmYZGxvfURi0ltoD4u3FQ6G5VfQeRTiATWMaL+BVA5hQr7mK6eGrYMnXQs3tXW7M87wmqS5gxB+kZxkEtrAH1Y2wd9G18asTR6LL1XuFxqMTgReKFq63UD5EXy4yE20oNgf83qKFmoHU/sVqt3JCsnMqKYO4BwGrNoOdqbR5NPrXiVngEihWzRx7qqe2sSN+Py3L2U1ARhvrNZ3GcDXP1QrwNvO7PZxtW+ND7rPt3p8eMSFl8kUs4cjpYwhYK7KvaHvelunBPXG2YFjpg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM3PPF63A6024A9.namprd11.prod.outlook.com
+ (2603:10b6:f:fc00::f27) by BN9PR11MB5289.namprd11.prod.outlook.com
+ (2603:10b6:408:136::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.17; Sun, 5 Oct
+ 2025 13:36:42 +0000
+Received: from DM3PPF63A6024A9.namprd11.prod.outlook.com
+ ([fe80::f55e:9ab0:c331:f987]) by DM3PPF63A6024A9.namprd11.prod.outlook.com
+ ([fe80::f55e:9ab0:c331:f987%5]) with mapi id 15.20.9137.018; Sun, 5 Oct 2025
+ 13:36:42 +0000
+From: "Korenblit, Miriam Rachel" <miriam.rachel.korenblit@intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+CC: "Berg, Johannes" <johannes.berg@intel.com>, "Anjaneyulu, Pagadala Yesu"
+	<pagadala.yesu.anjaneyulu@intel.com>, "Grumbach, Emmanuel"
+	<emmanuel.grumbach@intel.com>, Bhaskar Chowdhury <unixbhaskar@gmail.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, "Peer, Ilan"
+	<ilan.peer@intel.com>, "Gabay, Daniel" <daniel.gabay@intel.com>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] Revert "wifi: iwlwifi: mvm: remove support for
+ REDUCE_TX_POWER_CMD ver 6 and 7"
+Thread-Topic: [PATCH] Revert "wifi: iwlwifi: mvm: remove support for
+ REDUCE_TX_POWER_CMD ver 6 and 7"
+Thread-Index: AQHcNTlm+VnB67gfYEuELYoxWi9tT7SyCSiAgABvtjCAAMNrgIAAFz8QgAARxgCAAAEkgA==
+Date: Sun, 5 Oct 2025 13:36:41 +0000
+Message-ID: <DM3PPF63A6024A92B862A68F1EA07192752A3E2A@DM3PPF63A6024A9.namprd11.prod.outlook.com>
+References: <20251004141539.6512-1-brgl@bgdev.pl>
+ <CAMRc=Mepopam1zhUONtratqopa6zHhsJfah9JO9D2VKyXcqjEQ@mail.gmail.com>
+ <DM3PPF63A6024A97A503FF0208F582651E1A3E5A@DM3PPF63A6024A9.namprd11.prod.outlook.com>
+ <CAMRc=MdtkAFJBGN1biaGDLjgwjuzJ=kjDzEWbrX+DX27e8jYhg@mail.gmail.com>
+ <DM3PPF63A6024A9796B12A990D023532081A3E2A@DM3PPF63A6024A9.namprd11.prod.outlook.com>
+ <CAMRc=McJ649k44-Y9ugjq1-xKX9QL4c4MX_LeYs12N1SD4D7_g@mail.gmail.com>
+In-Reply-To: <CAMRc=McJ649k44-Y9ugjq1-xKX9QL4c4MX_LeYs12N1SD4D7_g@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM3PPF63A6024A9:EE_|BN9PR11MB5289:EE_
+x-ms-office365-filtering-correlation-id: e35a4f72-14bf-44c4-99af-08de0414380e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700021;
+x-microsoft-antispam-message-info: =?utf-8?B?SWFKUUo0b1ltcGNPa1IyTGhSV2ZsRGhWSU9CV0p4R0piUGpyZ0ZTYnJlTGtC?=
+ =?utf-8?B?YW90ajJkb294Sm5wQlovMGFDZDBFVHJycy9ybmZOamtoZWcraEY5WDdvTmx5?=
+ =?utf-8?B?Z2hBVXc5TDdDRm1EVFFrTzRwYzNPYnBqcSs5N2l5M2ZLMW9Za2pReGpJMnZz?=
+ =?utf-8?B?eGJScnZkU2ZkUVd3TkorZU1KdE16dmNSRXYvTVRuQTdyT1A1NEJGSjQrRUhj?=
+ =?utf-8?B?aHJZOTZ1ZXFFU21mRTd6OGJPbXhGSGxEUU8vUU1qazI0NmpxYm1uMHI0QnpE?=
+ =?utf-8?B?T0ZMaUNvVklPZVFBeW53UzZ6THBBQkxsZmI4SVJ4NVhjV1VCSURWTTFLUEQx?=
+ =?utf-8?B?R1pKZXZnVXBQYzVZbzRCUlVTMzN0Um9INnZzanVjUzRkVVhmZVUxYndxR2pN?=
+ =?utf-8?B?WmJpSnNyWVRtRnpsT2ZyS3FVRTZDR0tqaU5aa1FQQXRxNVlNK3NtbjE5c1Y0?=
+ =?utf-8?B?aWIrQ1l3TXE1d0hCMW5IS3hoa3VmdFovQ2FaYkxwaG5tdVBpVVAybWQwZG5S?=
+ =?utf-8?B?ZitPY0VaeGxnMFBHaTZ1dmtRYmNJK1BMdS9CZVkyL1pIeFd0RTBFc3Z6V0dE?=
+ =?utf-8?B?Z0VVZXlQZkk5T0ZUY3Y2dkJHQU1wWEh2dnFIaXBzM0ExdW1zWTAwVitFL09w?=
+ =?utf-8?B?U1ptZERIMCtqbmRXQ0N4K1JualJVNENkMzA1U0doWFowZjFWWkZBdDJHcDZn?=
+ =?utf-8?B?Rmp0a2xoQ0lBczdDcWd0Ny9jTzBSaEkrVGVibk9td2hVb0lPK1locG54RXQ3?=
+ =?utf-8?B?T293UmdHdnZld3J4Qm5IYlM0QlNra2I1KzRYdCtIbVZER1VqT0tzY21xT2du?=
+ =?utf-8?B?eCt6bnBaY0JJelFUVXpITzQ5aTk0cmhxUUVDZ0c0Nm9Ca1JMWlZyTVRIUWZu?=
+ =?utf-8?B?OEhiUllPd3U4TEl6UnVlaVVTYmJFK3dsVzF5QWt0MUtXdlI0SmJvOHpxNm44?=
+ =?utf-8?B?cjQwRFFSa0RBSThDVGgwY3gzZTNIZkNRUWRYbk9mOWFvVU1TV28xS0pzNkZs?=
+ =?utf-8?B?M1ZHZWhuUlNxS2diZ1BYM1poYndNOGNZbVlvYjB4S21rR05wMkJVdmhjanNN?=
+ =?utf-8?B?S21LemVOaDdRbUhpbDBYazNqUkxSK0Z3eXRNeGxLZjRqT2Zmck5jcDA5RUl2?=
+ =?utf-8?B?MWovN3hNVFd2SUI5NkV2L1gyeTZvOERKYXdueXBIMlgzOS8xa0RndVp0OHg1?=
+ =?utf-8?B?ajB6T3E3K2N1NW51bDEvZXpBRTBhRHo5UTNVM1BMVFpEcHhUdkRZN1dlbWhF?=
+ =?utf-8?B?S3phVnZzNHZqbmxqRThLcnc4VGprQ2dDVGx5N3NaNXlRZGdTQ3lSV0Z4YmNL?=
+ =?utf-8?B?V21DZEJ3bmVuTkkzNU9TbFNlWC9KQVl5eGk4blU3ejVIVkQ2MThkUzErZlhn?=
+ =?utf-8?B?aldKK3JsQ3NaSTBEMUc2WWRLTlEyYmIzL0c3YVdDMzZQZmxhZ0xQRUk1MVh4?=
+ =?utf-8?B?cWllNGU5VUtEZmplYTBGN1QyWnNLVTN3TEkzamE5dmlpVFcyeDh5MUxsSDBi?=
+ =?utf-8?B?UTB6T0NqSWtiZUxNSVRPbWx5cXNPdi9JMFFJT21aTngweEVveDlOSjN3OWta?=
+ =?utf-8?B?RjJieHVpSjZLYm1TcTN5OHorUzgrUDB5ckRqK2NpTytzMVB4a3REalN3bngz?=
+ =?utf-8?B?U1lvYURFNUhBSWN6VXFJYlBSNXdWZ2YvTlRGNUFjTUphdHgxVjNRcS81NHl6?=
+ =?utf-8?B?cGxoUnQ5VEhZQ1pFdXFGdSt4ZkpmV0R0ZkwvQ2pnNFNYSHdDTjZpYzA4YnVW?=
+ =?utf-8?B?d2F3d3RyRWQ5VmgrdjUyd0xQK09MdUVMVjl3VmJyR043TXRpT2RwMDhzU1B0?=
+ =?utf-8?B?QTRnNi9MYW1zeC84Y3NXYmt5Wllib1dXSDZWR2FHNG5CZ3JHZ1BRT3NoSUV1?=
+ =?utf-8?B?c1VoOGZqTmxxNkFGamxUV2VDbTdWWGJ5Tlc5dEFQa0E4OVFWTDQ3R2pTOWlG?=
+ =?utf-8?B?cnhzTDFyMUJKSjdZK2pobml2V0hKOFdSZTFScGR1Y0p5NGk5dHJOWWVLVHJX?=
+ =?utf-8?B?WGpsNDlncXFETzA3MGxObStzK1g1clVLMEFPRS9xUm1XVXU5R3JqUSs0K1Rw?=
+ =?utf-8?Q?VqX71i?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM3PPF63A6024A9.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?d1FWbEhMZTYwTm1JZEFLVjZmMHZzOXQyNWZ5YktmOERZaldSZWpLR20zUlM4?=
+ =?utf-8?B?ZGs1Q1Zabm5DcEIyRmtFY0w1ZmppY3lRUThvVG1UVzhIMGRGTjEwUlhiOXls?=
+ =?utf-8?B?cVZOMFRYNGp3NisxblBxMitFMFJtMXFSNWQydi9nbHNIMWlNOXhzUzVwd1FD?=
+ =?utf-8?B?dFRidmV5VEp0NUVrYnk3SHdCbzJJalVUS3hNd1R3UHVRY2QvdWE0VXgzbStR?=
+ =?utf-8?B?RzQ4R2FXMVk0N0dFVi9sYkgxWVVoK0ZOVVhPS2xVU3JwSlZFeTJ0Y1pRV2xG?=
+ =?utf-8?B?b1pUaDVPNlJUS2d5a1pseHE5Z3o0SkJTQ01raGdFYzdtRSt5b1hVOFZNVnRh?=
+ =?utf-8?B?Njh5MTlZRGw0K0tjSkRjaTVyQktOWnh4dzc3RTBiaGRuMGFKTXpoRC9HeEdj?=
+ =?utf-8?B?WHMyRXJQQVZsZEg1WEFFNWIwK3F4ekRtUnJpZE1xSXB2VWZmZnRzYUFyc0Vs?=
+ =?utf-8?B?bmdSeW1rSmI1S3ZKUElSQkwxM1NObkdISmVteHNrdEVJNHBRZWZjTm9GaDRH?=
+ =?utf-8?B?d0FiWmhFMnZJYmZ4a3hucm5zNEliSWRZczJxaWRiSlJNbUtFS2hveDcwWXVn?=
+ =?utf-8?B?NEFSRytsRDRGRFI5ZFRJQWhUc3BJejFZZDRKcVdDYnNOczROZ2VOWVdjTEpR?=
+ =?utf-8?B?OVUxNWNsQk0yQ1JMaFBWSWVRZ05XNzAvYjVtSG0ramxqeUdPV1FLNkNoMzB5?=
+ =?utf-8?B?WHdOMGo0UWhEeFhwR1V1SEQxM0YvSFEzUGI4VFY4dnB3Z2dWZTRvd0JFM3Nx?=
+ =?utf-8?B?MnRydytMNGdNQTNpOThJdDVBUFZ1bXZrK1ZwUWlLWTJkNVVTSExEQ3YxZEtJ?=
+ =?utf-8?B?enFQLzZWQk1HdnA0blg5WlQ1MmY4OU10L1JNQTFRcUlzYStjZTRST0VLaysz?=
+ =?utf-8?B?MXNtUmJkRzRwSjZhN2lCanZQQTNMQnM5K0hsT3dOOURoVFY5OFBMY3FrZk5m?=
+ =?utf-8?B?UW9TQklXMHhqVWd1cHU1VFJwL2FkRVRkWHMrUzhxSS9CVXQzNjNMY2NwbFdL?=
+ =?utf-8?B?cU5xZEUzVmo2S2NNNjNncGIzT1FZK0puV1lEY0Z6aEtOdEJ1S3QwMGlGVFor?=
+ =?utf-8?B?QlJlcEQ4S0JqS0RwYmxKaTBOOEU4b2liRElpZGtlTFFzOVIwY1NXSXlRZU54?=
+ =?utf-8?B?RGEwTHhIZDdaNktrOFNOYk42MjBoejg4c29XZW9Gb1JraUY1UUtENnNOZCt4?=
+ =?utf-8?B?QWQvMjFYcVF0MnVxZytRWEhEWE5odFo1NDFpNlh5dEh0NEJ1YW01UFNZbFVv?=
+ =?utf-8?B?RXlleWpDQUtpY29HVytrRkhjRXNkNEtWTUdFL0xyVms3SHRObisrVUFheDBk?=
+ =?utf-8?B?WmV1M1FPUHJrYml5UFJUSXZFMVVSazZVSzZEYmo4bERLUmlLeHFXZFlQcEwz?=
+ =?utf-8?B?ZkhjODJGRW5rOGl4ektlaVFNdzlRYjBDK1NaRWNWeG5TNnBQMCsveFp4SUVp?=
+ =?utf-8?B?ZldzbURwSzVobFhCQU1VcTVVb0p2ZXhuYXVRTXREdUMyQjl4WFQxNm1YRTZP?=
+ =?utf-8?B?bTE2a1hXTnRERi8yY2FvSzhqWHViVzYxWE80WWttaGowdmRlb0ZCbGwwYXpy?=
+ =?utf-8?B?Z2hTVWNoanNUL1RuOUxKSWIySEoyZytXQUVZdEMvTTNDdENFbW4vNElxSkdt?=
+ =?utf-8?B?T2lrTnVWQWJnZEhRZkZPby9tMGZmWWtFK3QwNXpiWHd0RXM0Z3NqNmUwSFNS?=
+ =?utf-8?B?N1oyR2loTHN6cy9uc3lnMjd4S3pYRnBhWG9PcSs2SWZoZzI0dVlhUnJ1RkdJ?=
+ =?utf-8?B?K28vaHY2N2ZSK2U2RkM0NlYwRlVWWXlnMXAzOEJuZmgxMG9PVGNqR0lVM1B1?=
+ =?utf-8?B?dDJBRkdDQmJuWmNHVjZldWt1L2hxVzlGUWhzdVcyVktHd1U3elBiUWRVUWV4?=
+ =?utf-8?B?RnlMSmVCaTBsM2NFdlZhV2NIT3ZjdlI5VmRONmpmaGhFb2U3ZnN1MnNVRWJB?=
+ =?utf-8?B?VDAzblFVdHIxUWtBa2xUekRBNEZ3NFBGZXBlRS9jZ1Z4MlE0S0NVNzVmUTdl?=
+ =?utf-8?B?dFJCRVF3RjlSaFRpSXRYVWM2SVdvYThCbytYMFNvWFgrTjN0VzZnd2wvbGlV?=
+ =?utf-8?B?a3llanNicXllRUs1clA5NEt2VUZxb2JLQlJNKytJWVVBenR6bHF3eEt6Nm80?=
+ =?utf-8?B?NHI4RVJqRUwwOTNoNTJ0V3lFajJsdUdaeDFLeUljT3RwYVpUSTZUUVE4Y09X?=
+ =?utf-8?B?RHc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM3PPF63A6024A9.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e35a4f72-14bf-44c4-99af-08de0414380e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Oct 2025 13:36:41.9429
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Elnn05m6sisDAQyvVEPSYy5a1m93g7k52XLowq/+dIDcUvKZ455dXS8eRKbOlW1EqFRsABV3eQJEZevH6H9y3vmXupXqHN+fUUHGGPZi/KCIxUtprd2eoOfJKaLVpQY5
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR11MB5289
+X-OriginatorOrg: intel.com
 
-Add support for the Pinefeat cef168 lens control board that provides
-electronic focus and aperture control for Canon EF & EF-S lenses on
-non-Canon camera bodies.
-
-Signed-off-by: Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>
----
- MAINTAINERS                        |   1 +
- drivers/media/i2c/Kconfig          |   9 +
- drivers/media/i2c/Makefile         |   1 +
- drivers/media/i2c/cef168.c         | 331 +++++++++++++++++++++++++++++
- include/uapi/linux/v4l2-controls.h |   6 +
- 5 files changed, 348 insertions(+)
- create mode 100644 drivers/media/i2c/cef168.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a59cd27caf11..0cf3b3a35827 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20337,6 +20337,7 @@ M:	Aliaksandr Smirnou <support@pinefeat.co.uk>
- L:	linux-media@vger.kernel.org
- S:	Supported
- F:	Documentation/devicetree/bindings/media/i2c/pinefeat,cef168.yaml
-+F:	drivers/media/i2c/cef168.c
- 
- PLANTOWER PMS7003 AIR POLLUTION SENSOR DRIVER
- M:	Tomasz Duszynski <tduszyns@gmail.com>
-diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index cdd7ba5da0d5..694b2571de37 100644
---- a/drivers/media/i2c/Kconfig
-+++ b/drivers/media/i2c/Kconfig
-@@ -823,6 +823,15 @@ config VIDEO_AK7375
- 	  capability. This is designed for linear control of
- 	  voice coil motors, controlled via I2C serial interface.
- 
-+config VIDEO_CEF168
-+	tristate "CEF168 lens control support"
-+	select CRC8
-+	help
-+	  This is a driver for the CEF168 lens control board.
-+	  The board provides an I2C interface for electronic focus
-+	  and aperture control of EF and EF-S lenses. The driver
-+	  integrates with the V4L2 sub-device API.
-+
- config VIDEO_DW9714
- 	tristate "DW9714 lens voice coil support"
- 	depends on GPIOLIB
-diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-index 57cdd8dc96f6..2e8f0a968352 100644
---- a/drivers/media/i2c/Makefile
-+++ b/drivers/media/i2c/Makefile
-@@ -25,6 +25,7 @@ obj-$(CONFIG_VIDEO_BT856) += bt856.o
- obj-$(CONFIG_VIDEO_BT866) += bt866.o
- obj-$(CONFIG_VIDEO_CCS) += ccs/
- obj-$(CONFIG_VIDEO_CCS_PLL) += ccs-pll.o
-+obj-$(CONFIG_VIDEO_CEF168) += cef168.o
- obj-$(CONFIG_VIDEO_CS3308) += cs3308.o
- obj-$(CONFIG_VIDEO_CS5345) += cs5345.o
- obj-$(CONFIG_VIDEO_CS53L32A) += cs53l32a.o
-diff --git a/drivers/media/i2c/cef168.c b/drivers/media/i2c/cef168.c
-new file mode 100644
-index 000000000000..cfcef476f09d
---- /dev/null
-+++ b/drivers/media/i2c/cef168.c
-@@ -0,0 +1,331 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2025 Pinefeat LLP
-+
-+#include <linux/crc8.h>
-+#include <linux/delay.h>
-+#include <linux/i2c.h>
-+#include <linux/module.h>
-+#include <linux/v4l2-controls.h>
-+#include <media/v4l2-ctrls.h>
-+#include <media/v4l2-device.h>
-+#include <media/v4l2-event.h>
-+
-+#define CEF168_NAME "cef168"
-+
-+#define CEF168_V4L2_CID_CUSTOM(ctrl) \
-+	(V4L2_CID_USER_CEF168_BASE + custom_##ctrl)
-+
-+enum { custom_lens_id, custom_data, custom_focus_range, custom_calibrate };
-+
-+#define INP_CALIBRATE 0x22
-+#define INP_SET_FOCUS 0x80
-+#define INP_SET_FOCUS_P 0x81
-+#define INP_SET_FOCUS_N 0x82
-+#define INP_SET_APERTURE 0x7A
-+#define INP_SET_APERTURE_P 0x7B
-+#define INP_SET_APERTURE_N 0x7C
-+
-+#define CEF_CRC8_POLYNOMIAL 168
-+
-+DECLARE_CRC8_TABLE(cef168_crc8_table);
-+
-+struct cef168_data {
-+	__u8 lens_id;
-+	__u8 moving : 1;
-+	__u8 calibrating : 2;
-+	__u16 moving_time;
-+	__u16 focus_position_min;
-+	__u16 focus_position_max;
-+	__u16 focus_position_cur;
-+	__u16 focus_distance_min;
-+	__u16 focus_distance_max;
-+	__u8 crc8;
-+} __packed;
-+
-+struct cef168_device {
-+	struct v4l2_ctrl_handler ctrls;
-+	struct v4l2_subdev sd;
-+};
-+
-+static inline struct cef168_device *to_cef168(struct v4l2_ctrl *ctrl)
-+{
-+	return container_of(ctrl->handler, struct cef168_device, ctrls);
-+}
-+
-+static inline struct cef168_device *sd_to_cef168(struct v4l2_subdev *subdev)
-+{
-+	return container_of(subdev, struct cef168_device, sd);
-+}
-+
-+static int cef168_i2c_write(struct cef168_device *cef168_dev, u8 cmd, u16 val)
-+{
-+	struct i2c_client *client = v4l2_get_subdevdata(&cef168_dev->sd);
-+	int retry, ret;
-+
-+	__le16 le_data = cpu_to_le16(val);
-+	char tx_data[4] = { cmd, ((u8 *)&le_data)[0], ((u8 *)&le_data)[1] };
-+
-+	tx_data[3] = crc8(cef168_crc8_table, tx_data, 3, CRC8_INIT_VALUE);
-+
-+	for (retry = 0; retry < 3; retry++) {
-+		ret = i2c_master_send(client, tx_data, sizeof(tx_data));
-+		if (ret == sizeof(tx_data))
-+			return 0;
-+		else if (ret != -EIO && ret != -EREMOTEIO)
-+			break;
-+	}
-+
-+	dev_err(&client->dev, "I2C write fail after %d retries, ret=%d\n",
-+		retry, ret);
-+	return -EIO;
-+}
-+
-+static int cef168_i2c_read(struct cef168_device *cef168_dev,
-+			   struct cef168_data *rx_data)
-+{
-+	struct i2c_client *client = v4l2_get_subdevdata(&cef168_dev->sd);
-+
-+	int ret = i2c_master_recv(client, (char *)rx_data,
-+				  sizeof(struct cef168_data));
-+	if (ret != sizeof(struct cef168_data)) {
-+		dev_err(&client->dev, "I2C read fail, ret=%d\n", ret);
-+		return -EIO;
-+	}
-+
-+	u8 computed_crc = crc8(cef168_crc8_table, (const u8 *)rx_data,
-+			       sizeof(struct cef168_data) - 1, CRC8_INIT_VALUE);
-+	if (computed_crc != rx_data->crc8) {
-+		dev_err(&client->dev,
-+			"CRC mismatch calculated=0x%02X read=0x%02X\n",
-+			computed_crc, rx_data->crc8);
-+		return -EIO;
-+	}
-+
-+	rx_data->moving_time = le16_to_cpup((__le16 *)&rx_data->moving_time);
-+	rx_data->focus_position_min = le16_to_cpup((__le16 *)&rx_data->focus_position_min);
-+	rx_data->focus_position_max = le16_to_cpup((__le16 *)&rx_data->focus_position_max);
-+	rx_data->focus_position_cur = le16_to_cpup((__le16 *)&rx_data->focus_position_cur);
-+	rx_data->focus_distance_min = le16_to_cpup((__le16 *)&rx_data->focus_distance_min);
-+	rx_data->focus_distance_max = le16_to_cpup((__le16 *)&rx_data->focus_distance_max);
-+
-+	return 0;
-+}
-+
-+static int cef168_set_ctrl(struct v4l2_ctrl *ctrl)
-+{
-+	struct cef168_device *dev = to_cef168(ctrl);
-+	u8 cmd;
-+
-+	switch (ctrl->id) {
-+	case V4L2_CID_FOCUS_ABSOLUTE:
-+		return cef168_i2c_write(dev, INP_SET_FOCUS, ctrl->val);
-+	case V4L2_CID_FOCUS_RELATIVE:
-+		cmd = ctrl->val < 0 ? INP_SET_FOCUS_N : INP_SET_FOCUS_P;
-+		return cef168_i2c_write(dev, cmd, abs(ctrl->val));
-+	case V4L2_CID_IRIS_ABSOLUTE:
-+		return cef168_i2c_write(dev, INP_SET_APERTURE, ctrl->val);
-+	case V4L2_CID_IRIS_RELATIVE:
-+		cmd = ctrl->val < 0 ? INP_SET_APERTURE_N : INP_SET_APERTURE_P;
-+		return cef168_i2c_write(dev, cmd, abs(ctrl->val));
-+	case CEF168_V4L2_CID_CUSTOM(calibrate):
-+		return cef168_i2c_write(dev, INP_CALIBRATE, 0);
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int cef168_get_ctrl(struct v4l2_ctrl *ctrl)
-+{
-+	struct cef168_data data;
-+	struct cef168_device *dev = to_cef168(ctrl);
-+	int rval;
-+
-+	rval = cef168_i2c_read(dev, &data);
-+	if (rval < 0)
-+		return rval;
-+
-+	switch (ctrl->id) {
-+	case V4L2_CID_FOCUS_ABSOLUTE:
-+		ctrl->val = data.focus_position_cur;
-+		return 0;
-+	case CEF168_V4L2_CID_CUSTOM(focus_range):
-+		ctrl->p_new.p_u32[0] = ((u32)data.focus_position_min << 16) |
-+				       (u32)data.focus_position_max;
-+		return 0;
-+	case CEF168_V4L2_CID_CUSTOM(lens_id):
-+		ctrl->p_new.p_u8[0] = data.lens_id;
-+		return 0;
-+	case CEF168_V4L2_CID_CUSTOM(data):
-+		memcpy(ctrl->p_new.p_u8, &data, sizeof(data));
-+		return 0;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static const struct v4l2_ctrl_ops cef168_ctrl_ops = {
-+	.g_volatile_ctrl = cef168_get_ctrl,
-+	.s_ctrl = cef168_set_ctrl,
-+};
-+
-+static const struct v4l2_ctrl_config cef168_lens_id_ctrl = {
-+	.ops = &cef168_ctrl_ops,
-+	.id = CEF168_V4L2_CID_CUSTOM(lens_id),
-+	.type = V4L2_CTRL_TYPE_U8,
-+	.name = "Lens ID",
-+	.min = 0,
-+	.max = U8_MAX,
-+	.step = 1,
-+	.def = 0,
-+	.flags = V4L2_CTRL_FLAG_VOLATILE | V4L2_CTRL_FLAG_READ_ONLY,
-+};
-+
-+static const struct v4l2_ctrl_config cef168_focus_range_ctrl = {
-+	.ops = &cef168_ctrl_ops,
-+	.id = CEF168_V4L2_CID_CUSTOM(focus_range),
-+	.type = V4L2_CTRL_TYPE_U32,
-+	.name = "Focus Range",
-+	.min = 0,
-+	.max = U32_MAX,
-+	.step = 1,
-+	.def = 0,
-+	.flags = V4L2_CTRL_FLAG_VOLATILE | V4L2_CTRL_FLAG_READ_ONLY,
-+};
-+
-+static const struct v4l2_ctrl_config cef168_data_ctrl = {
-+	.ops = &cef168_ctrl_ops,
-+	.id = CEF168_V4L2_CID_CUSTOM(data),
-+	.type = V4L2_CTRL_TYPE_U8,
-+	.name = "Data",
-+	.min = 0,
-+	.max = U8_MAX,
-+	.step = 1,
-+	.def = 0,
-+	.dims = { sizeof(struct cef168_data) / sizeof(u8) },
-+	.elem_size = sizeof(u8),
-+	.flags = V4L2_CTRL_FLAG_VOLATILE | V4L2_CTRL_FLAG_READ_ONLY,
-+};
-+
-+static const struct v4l2_ctrl_config cef168_calibrate_ctrl = {
-+	.ops = &cef168_ctrl_ops,
-+	.id = CEF168_V4L2_CID_CUSTOM(calibrate),
-+	.type = V4L2_CTRL_TYPE_BUTTON,
-+	.name = "Calibrate",
-+};
-+
-+static const struct v4l2_subdev_core_ops cef168_core_ops = {
-+	.log_status = v4l2_ctrl_subdev_log_status,
-+	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
-+	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
-+};
-+
-+static const struct v4l2_subdev_ops cef168_ops = {
-+	.core = &cef168_core_ops,
-+};
-+
-+static int cef168_init_controls(struct cef168_device *dev)
-+{
-+	struct v4l2_ctrl *ctrl;
-+	struct v4l2_ctrl_handler *hdl = &dev->ctrls;
-+	const struct v4l2_ctrl_ops *ops = &cef168_ctrl_ops;
-+
-+	v4l2_ctrl_handler_init(hdl, 8);
-+
-+	ctrl = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_FOCUS_ABSOLUTE, 0, S16_MAX,
-+				 1, 0);
-+	if (ctrl)
-+		ctrl->flags |= V4L2_CTRL_FLAG_VOLATILE |
-+			       V4L2_CTRL_FLAG_EXECUTE_ON_WRITE;
-+	v4l2_ctrl_new_std(hdl, ops, V4L2_CID_FOCUS_RELATIVE, S16_MIN, S16_MAX,
-+			  1, 0);
-+	ctrl = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_IRIS_ABSOLUTE, 0, S16_MAX,
-+				 1, 0);
-+	if (ctrl)
-+		ctrl->flags |= V4L2_CTRL_FLAG_WRITE_ONLY |
-+			       V4L2_CTRL_FLAG_EXECUTE_ON_WRITE;
-+	v4l2_ctrl_new_std(hdl, ops, V4L2_CID_IRIS_RELATIVE, S16_MIN, S16_MAX, 1,
-+			  0);
-+	ctrl = v4l2_ctrl_new_custom(hdl, &cef168_calibrate_ctrl, NULL);
-+	if (ctrl)
-+		ctrl->flags |= V4L2_CTRL_FLAG_WRITE_ONLY |
-+			       V4L2_CTRL_FLAG_EXECUTE_ON_WRITE;
-+	v4l2_ctrl_new_custom(hdl, &cef168_focus_range_ctrl, NULL);
-+	v4l2_ctrl_new_custom(hdl, &cef168_data_ctrl, NULL);
-+	v4l2_ctrl_new_custom(hdl, &cef168_lens_id_ctrl, NULL);
-+
-+	if (hdl->error)
-+		dev_err(dev->sd.dev, "%s fail error: 0x%x\n", __func__,
-+			hdl->error);
-+	dev->sd.ctrl_handler = hdl;
-+	return hdl->error;
-+}
-+
-+static int cef168_probe(struct i2c_client *client)
-+{
-+	struct cef168_device *cef168_dev;
-+	int rval;
-+
-+	cef168_dev = devm_kzalloc(&client->dev, sizeof(*cef168_dev),
-+				  GFP_KERNEL);
-+	if (!cef168_dev)
-+		return -ENOMEM;
-+
-+	v4l2_i2c_subdev_init(&cef168_dev->sd, client, &cef168_ops);
-+	cef168_dev->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
-+				V4L2_SUBDEV_FL_HAS_EVENTS;
-+
-+	rval = cef168_init_controls(cef168_dev);
-+	if (rval)
-+		goto err_cleanup;
-+
-+	rval = media_entity_pads_init(&cef168_dev->sd.entity, 0, NULL);
-+	if (rval < 0)
-+		goto err_cleanup;
-+
-+	cef168_dev->sd.entity.function = MEDIA_ENT_F_LENS;
-+
-+	rval = v4l2_async_register_subdev(&cef168_dev->sd);
-+	if (rval < 0)
-+		goto err_cleanup;
-+
-+	crc8_populate_msb(cef168_crc8_table, CEF_CRC8_POLYNOMIAL);
-+
-+	return 0;
-+
-+err_cleanup:
-+	v4l2_ctrl_handler_free(&cef168_dev->ctrls);
-+	media_entity_cleanup(&cef168_dev->sd.entity);
-+
-+	return rval;
-+}
-+
-+static void cef168_remove(struct i2c_client *client)
-+{
-+	struct v4l2_subdev *sd = i2c_get_clientdata(client);
-+	struct cef168_device *cef168_dev = sd_to_cef168(sd);
-+
-+	v4l2_async_unregister_subdev(&cef168_dev->sd);
-+	v4l2_ctrl_handler_free(&cef168_dev->ctrls);
-+	media_entity_cleanup(&cef168_dev->sd.entity);
-+}
-+
-+static const struct of_device_id cef168_of_table[] = {
-+	{ .compatible = "pinefeat,cef168" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, cef168_of_table);
-+
-+static struct i2c_driver cef168_i2c_driver = {
-+	.driver = {
-+		.name = CEF168_NAME,
-+		.of_match_table = cef168_of_table,
-+	},
-+	.probe = cef168_probe,
-+	.remove = cef168_remove,
-+};
-+
-+module_i2c_driver(cef168_i2c_driver);
-+
-+MODULE_AUTHOR("support@pinefeat.co.uk>");
-+MODULE_DESCRIPTION("CEF168 lens driver");
-+MODULE_LICENSE("GPL");
-diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-index 2d30107e047e..f8ca4f8c89af 100644
---- a/include/uapi/linux/v4l2-controls.h
-+++ b/include/uapi/linux/v4l2-controls.h
-@@ -228,6 +228,12 @@ enum v4l2_colorfx {
-  */
- #define V4L2_CID_USER_RKISP1_BASE		(V4L2_CID_USER_BASE + 0x1220)
- 
-+/*
-+ * The base for Pinefeat CEF168 driver controls.
-+ * We reserve 16 controls for this driver.
-+ */
-+#define V4L2_CID_USER_CEF168_BASE		(V4L2_CID_USER_BASE + 0x1230)
-+
- /* MPEG-class control IDs */
- /* The MPEG controls are applicable to all codec controls
-  * and the 'MPEG' part of the define is historical */
--- 
-2.34.1
-
+PiBTbyB0aGUgODkgYXQgdGhlIGVuZCBvZiB0aGUgZmlsZW5hbWUgaXMgbm90IHRoZSB2ZXJzaW9u
+IG9mIHRoZSBmaXJtd2FyZT8NCkl0IGlzLiBCdXQgbm90IGZvciAiZnJvemVuIGRldmljZXMiIC0g
+bGlrZSB5b3Vycy4NCkluIHN1Y2ggZGV2aWNlcywgdGhlIEFQSSBudW1iZXIgKDg5IGluIHlvdXIg
+Y2FzZSkgZG9lc24ndCBpbmNyZWFzZSBhbnltb3JlLA0KYnV0IHdlIHN0aWxsIHVwZGF0ZSB0aGUg
+RlcgZnJvbSB0aW1lIHRvIHRpbWUuDQoNCj4gTm8gdGhlIGZ1bGwgdmVyc2lvbiBhbnl3YXk/IEkg
+d2Fzbid0IGF3YXJlIG9mIHRoaXMuIFdoZXJlIGlzIHRoZSB2ZXJzaW9uDQo+IGluZm9ybWF0aW9u
+IGVuY29kZWQgb3RoZXIgdGhhbiB0aGUgbGludXgtZmlybXdhcmUgZ2l0IGxvZz8NCg0KWW91IGNh
+biBzZWUgdGhlIFNIQS0xIG9mIHRoZSBGVyBpbiB0aGUgZG1lc2cuIEZvciBleGFtcGxlLCBpbiB0
+aGUgbG9nIHlvdSBzZW50Og0KTG9hZGVkIGZpcm13YXJlIHZlcnNpb246IDg5LmU5Y2VjNzhlLjAg
+dHktYTAtZ2YtYTAtODkudWNvZGUNClRoZSBTSEEtMSBpcyBlOWNlYzc4ZS4NCg0KTWlyaQ0KDQo=
 
