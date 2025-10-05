@@ -1,89 +1,79 @@
-Return-Path: <linux-kernel+bounces-842245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20871BB94FB
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 11:02:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 146D7BB9506
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 11:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9394C345AB9
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 09:02:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6B25D4E3069
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 09:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E55237172;
-	Sun,  5 Oct 2025 09:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="NANlqXQ/"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6427223908B;
+	Sun,  5 Oct 2025 09:12:28 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968F74F5E0;
-	Sun,  5 Oct 2025 09:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCBD74040;
+	Sun,  5 Oct 2025 09:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759654918; cv=none; b=Xpa5vOhXwn51AL3vUu34aQmGY7UrLnrL9zuGM3NCbOYtH35ZT++TUynkxUHrq61f6G3+9I8o9opaxLgCVpsu3oFvaUln6jRudC7JRDskEv7p2F4cAxYPspYG7mCVlS5Hbm7yHEQ4vOtteMy3K4wAq/LwG5axNs2+U2/v0F2gmuw=
+	t=1759655548; cv=none; b=oKX3PiIG8SK4d1sqTxshGrAqaugD+cS6foDYqKd23GJU2v7zrz1ueRMQvhzCFmh0AxP1/5kqgHbofRfKNmHJ/6igZ+LUjFDfG+fVLj/3RmF7BZR05XYoeN3KBWituLI5wuh++sTiaoVYeeLkLKkh7GCBvcwSx0jwIA3Tv2gP/JI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759654918; c=relaxed/simple;
-	bh=ruSIOi8cxJhaTEz5uwpfuf5bGlZ4IWTtrl9ZQQR8irk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ew6nrbynR4tEuE5Uo2fQUs+Oo/DVIv/2wgwc0SFUbqSa8hIXswlotWElUYtTawMHeBYH0CS3pzjw/qw4NJaopkVcG0kyWi6bhk4vnjlm5VQ5PeEazbg3NNZhUyKJK9L7EGwdOdPY8+4pfXbzTIL34LiZVRVJb9e9kUZz5oxnRyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=NANlqXQ/; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=WVxoh7xrdV57yDzDDRJoT49omMHhETGCnKdD+7NLzGE=; b=NANlqXQ/44AvovIlDfLGNhPgYa
-	scmEBdVmWMmaFORHhoS9oaAgPWi8y9bkyy/VeEcCA8eZO162hI5aKMviVPQfmTmK1s75I9vndvXGi
-	iwzEyvW1kcp3g3fzDV8W6wGQ0+5fjhIJrXuL7sx9uKvyO9/fyJnCYBXkAk9+VBU+9xrRj31mFCAbC
-	KV/EoImprZlRtCqOYOWttvsDdxXF6j9dgWKJnWQi3vgTe2hbO9o9C+4HqZx3edtOIXXK2woT+Y4Dy
-	ELoovY4SMOxnp8rSKZIiP8N7Kr6/f3Uq7INI7aotqDaG89sytZa4/7+TPcoZsWVMQT6N8VzPXXXXE
-	e0TRqgGw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v5Kcq-00000007vOO-3Mn3;
-	Sun, 05 Oct 2025 09:01:52 +0000
-Date: Sun, 5 Oct 2025 10:01:52 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Miquel =?iso-8859-1?Q?Sabat=E9_Sol=E0?= <mssola@mssola.com>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
-	linux-kernel@vger.kernel.org, jack@suse.cz
-Subject: Re: [PATCH] fs: Use a cleanup attribute in copy_fdtable()
-Message-ID: <20251005090152.GE2441659@ZenIV>
-References: <20251004210340.193748-1-mssola@mssola.com>
- <20251004211908.GD2441659@ZenIV>
- <878qhpc3ip.fsf@>
+	s=arc-20240116; t=1759655548; c=relaxed/simple;
+	bh=cp/WEM8v3vxRWSNXoRp8Fwrnj8DXhf8ZjY7a3Xm8wQQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=pSCAQT7znk22x2EMfHdouQHi6Vpm/oGqz3NrkW2wXMkPViMDJeEY1MSMHZMRLqu/9lToY1BYmL0lu5IAgl6FCKk7Q+Ebn7Edn1gDcOY72z4+aHNElSLEiD1XZHdE6Ck5VVGEBnHGoODdTVCDHgjy4mXlTfoe6aTN20xymg8XfVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.2.212] (p5dc55e4b.dip0.t-ipconnect.de [93.197.94.75])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id B9D336028F370;
+	Sun, 05 Oct 2025 11:12:10 +0200 (CEST)
+Message-ID: <72f869f4-8320-4bdb-a7ba-714e46928a69@molgen.mpg.de>
+Date: Sun, 5 Oct 2025 11:12:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Bluetooth: btusb: Add new VID/PID 2b89/6275 for
+ RTL8761BUV
+To: Chingbin Li <liqb365@163.com>
+References: <aOIyJOnP55mmZUut@9950x-Ubunbu-24-04-dev>
+Content-Language: en-US
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <aOIyJOnP55mmZUut@9950x-Ubunbu-24-04-dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <878qhpc3ip.fsf@>
-Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sun, Oct 05, 2025 at 07:37:50AM +0200, Miquel Sabaté Solà wrote:
-> Al Viro @ 2025-10-04 22:19 +01:
-> 
-> > On Sat, Oct 04, 2025 at 11:03:40PM +0200, Miquel Sabaté Solà wrote:
-> >> This is a small cleanup in which by using the __free(kfree) cleanup
-> >> attribute we can avoid three labels to go to, and the code turns to be
-> >> more concise and easier to follow.
-> >
-> > Have you tried to build and boot that?
-> 
-> Yes, and it worked on my machine...
+Dear Chingbin,
 
-Unfortunately, it ends up calling that kfree() on success as well as on failure.
-Idiomatic way to avoid that would be
-	return no_free_ptr(fdt);
-but you've left bare
-	return fdt;
-in there, ending up with returning dangling pointers to the caller.  So as
-soon as you get more than BITS_PER_LONG descriptors used by a process,
-you'll get trouble.  In particular, bash(1) running as an interactive shell
-would hit that - it has descriptor 255 opened...
+
+Thank you for your patch.
+
+Am 05.10.25 um 10:53 schrieb Chingbin Li:
+>  From 5676b7b1029c11ec99b119a3b56945ba8a766c0a Mon Sep 17 00:00:00 2001
+> From: Chingbin Li <liqb365@163.com>
+> Date: Sun, 5 Oct 2025 16:28:28 +0800
+> Subject: [PATCH] Bluetooth: btusb: Add new VID/PID 2b89/6275 for RTL8761BUV
+
+Having these additional lines is incorrect. Please use `git send-email` 
+or b4 to submit your patch.
+
+[â€¦]
+
+
+Kind regards,
+
+Paul
 
