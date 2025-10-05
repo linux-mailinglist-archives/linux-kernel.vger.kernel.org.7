@@ -1,125 +1,95 @@
-Return-Path: <linux-kernel+bounces-842271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE600BB962E
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 14:22:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7914FBB9637
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 14:27:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E0BF1893A56
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 12:23:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2893B4E267B
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 12:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CF72877D8;
-	Sun,  5 Oct 2025 12:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HCGfqsdE"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D999E2882AC;
+	Sun,  5 Oct 2025 12:27:29 +0000 (UTC)
+Received: from baidu.com (mx24.baidu.com [111.206.215.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3812877C3
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 12:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288B71DED5B;
+	Sun,  5 Oct 2025 12:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759666972; cv=none; b=Oj5GpgcVTVYJ8D6KDEl8AFvB2ZMfNFVCX0FKHNotf1zH0BSXGPlIY382TMo32tgg3Vx6IT6hFwgbWux2nZ/2Izn5ST88XaSGoMd25Ux8yASzSffznmdMFxPWkWEDmO1xxm+DjKn3J/7oOaURCrQBCdbd/uhgbYGrj0Q+Xhfyl9A=
+	t=1759667249; cv=none; b=QwuW5LDCkugvxvBHl3Mg2bMt9Do6Kbt9/sln6zKuZ5i3aTXJTQzqMnyaDSesxtqkQSM772/lz5Kp3p6hZK9A0DK1AIM+sMxK0bCWzyzuTKt/sPPvMP+jd7Y4Nh9cBzMLp+wHJCjd6LB/DdhCe82dWx770AL0wL10Tti8WfAasow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759666972; c=relaxed/simple;
-	bh=xCCjpTo0Xm1Q6VB/DT5XzgQNr1xoL4KQI3MIBUtOwKg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cJifaQcHJHEWxC+RB+KKPkpS/mfBf3Xysu6PRfskAKG0VSY5uKg5pld9h+DToHd+5/KMfAz5KvVTji8hRXStMMkgTUOxmEmixyuOUUEHevJ1DJi6obER/0FERNoBfWvjuCNEws9bP793wRlq6UWPNdngcHhN45jywp0jk8HEwkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HCGfqsdE; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e6c8bc46eso24319045e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 05:22:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759666969; x=1760271769; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xCCjpTo0Xm1Q6VB/DT5XzgQNr1xoL4KQI3MIBUtOwKg=;
-        b=HCGfqsdEJ/LCuaffupzO+CcDo2KGtRFVizTbjDObMH7DVR4QnedTMWbyck0aXBoJgF
-         dIFUzENFFwtE5Zce4nCAvsWuWjco9YtZDKwXf9+yOUQ/cYlUadu5k53QzwfizapydOZz
-         +fQCWzRH2zxEFKOPFYYxBk0D1vbuG1sx5bQdG9ylgs8X34clpd8DspROafLwUt3s7R/5
-         L6BKidS4lJopSF6OIUvTi29LazN6YPWgg8TcpR4/R4oW1M0kcZnuYpHtTxSIVs6oOUAD
-         1Uy1Mn6daeo/tiaLfiyLw1XMK6+aOH0v41hfARjhQno9aBCGdb1wlJWp+uRf0gzxdaEw
-         Pzcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759666969; x=1760271769;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xCCjpTo0Xm1Q6VB/DT5XzgQNr1xoL4KQI3MIBUtOwKg=;
-        b=HG7Wb/fkQVr68Dd4IBG7PaxCdAbRF2E5oJXokms6sH3CXm2+h2uP4cHkicBzeU2saC
-         seqw4BRIW6Z6dkig02ueNveptp+15GBzU2t41/kNL595iT2YNdu2a4pWZ367wqADhAGg
-         tFtKQBUFlRqFXDzigbSstejMivGqbY6SmibKPpBnzPr7I47cYawUF0qxl8yv5ot8Uc8O
-         NWFNlNTAxxJd0l9Iqdcy8EKiHA4pH/frAfe2b38rc3mFcg//CAgb2flTHk75OCgRhVGw
-         i8fYKKdK8H2cKCE9WgE2NFes+ip6bUANJgwY3EoOzPGnU96gZ8NPJ11aRWntCQE2/OWI
-         QHtw==
-X-Forwarded-Encrypted: i=1; AJvYcCUIemphBevO66AgJ9L++wqB0d3Z/K3QRaY/k9uByDfRWcSeQNL2wOM2b6bVPfM0mOKEReq4NQpBiziumNQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlwWDs7yYCxMRtJbaT5taSjWuiGMpRQok/0hwqyGR+mi/hsv/f
-	IZOCyvcBMlKce7aLTgcOXBGSl0Obrgwx7rvptZluZUyJjJWfhKqZu2xr
-X-Gm-Gg: ASbGncsFavH4mxIFuMy/Tdh9MvhDvD+af4vMoz1orJbYV4eKqte/8ysKUnaRwHnkolv
-	f2xB9HbmV1R2bTCCm1KA6OKBPY/+Lb9Ds0rFDZxBPtVeWNLIGKa4UHDFJAnc7fgfJx76tyHtsH3
-	kHlGIhKfzkONK4LV/nn80c2fBhIG42SdzZLiLsBXJFNp4ACgN3Z8FgMgC5bjr+3zG++/RkC1GWT
-	85ENNIdOxcwbK/ps1xMBfdowXgcMJJC2yrvy1SIc/0n8XTl0wrBFMljt+QF8vJl5z0rZfEqnTGl
-	/Ej5S2Rmoka44xey0IvuB/Nh6PLd1uBceh52AoNKK2jltS3QPpMa3O/yXhVqwCBPKpIR07qM/Z+
-	/U2DMVinJjm4jTL5plg2jG4btIXMgskjLSdzVxwwKRGMWmfiKajvzMTxSFh2T
-X-Google-Smtp-Source: AGHT+IFauZYrcWKdkKAjjqjKwWod79ljqaANmBQBFKDSTbXLK/2mmthdIJvXaFH9DzC9ZGpdamDCBQ==
-X-Received: by 2002:a05:600c:c4a3:b0:46e:3dcb:35b0 with SMTP id 5b1f17b1804b1-46e7110401cmr46951695e9.2.1759666969244;
-        Sun, 05 Oct 2025 05:22:49 -0700 (PDT)
-Received: from [192.168.1.121] ([176.206.100.218])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e619b86e1sm204632165e9.5.2025.10.05.05.22.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 Oct 2025 05:22:48 -0700 (PDT)
-Message-ID: <34852b92-a859-4e18-ba2a-c3cab814c2b8@gmail.com>
-Date: Sun, 5 Oct 2025 14:22:48 +0200
+	s=arc-20240116; t=1759667249; c=relaxed/simple;
+	bh=8NEuS4IryImOLuWbk47FRs5S5vyICdNE+kwwGvuwb9c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AvRmbGecLVwzJmLr7xnxiroPUgO6P2TA5S3Xasahasz9ORFzB7uOOneR0cx1NCzD9fw4tv12tQPJLeqPecPR5KTrMsI+6Rdk3rOWO6apcXxq4Drr3rHh/mGizrN/GCGXTuzzYipK7OpRPgHryuf3nExPTrhJfGXZ7e7DdikUjm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: Fushuai Wang <wangfushuai@baidu.com>
+To: <Jason@zx2c4.com>, <andrew+netdev@lunn.ch>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>
+CC: <wireguard@lists.zx2c4.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Fushuai Wang <wangfushuai@baidu.com>
+Subject: [PATCH] wireguard: allowedips: Use kfree_rcu() instead of call_rcu()
+Date: Sun, 5 Oct 2025 20:26:26 +0800
+Message-ID: <20251005122626.26988-1-wangfushuai@baidu.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] : [PATCH v12 8/8] platform/x86: asus-armoury: add
- ppt_* and nv_* tuning knobs
-To: ALOK TIWARI <alok.a.tiwari@oracle.com>, linux-kernel@vger.kernel.org
-Cc: platform-driver-x86@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- "Limonciello, Mario" <mario.limonciello@amd.com>,
- "Luke D . Jones" <luke@ljones.dev>,
- Derek John Clark <derekjohn.clark@gmail.com>
-References: <20251003185520.1083875-1-benato.denis96@gmail.com>
- <20251003185520.1083875-9-benato.denis96@gmail.com>
- <86282444-f489-49e8-892f-46ce655030b5@oracle.com>
-Content-Language: en-US, it-IT, en-US-large
-From: Denis Benato <benato.denis96@gmail.com>
-In-Reply-To: <86282444-f489-49e8-892f-46ce655030b5@oracle.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: bjkjy-exc2.internal.baidu.com (172.31.50.46) To
+ bjkjy-exc17.internal.baidu.com (172.31.50.13)
+X-FEAS-Client-IP: 172.31.50.13
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
+Replace call_rcu() + kmem_cache_free() with kfree_rcu() to simplify
+the code and reduce function size.
 
-On 10/4/25 13:42, ALOK TIWARI wrote:
->
->
-> On 10/4/2025 12:25 AM, Denis Benato wrote:
->> +struct power_data {
->> +        const struct power_limits *ac_data;
->> +        const struct power_limits *dc_data;
->> +        bool requires_fan_curve;
->> +};
->> +
->> +/*
->> + * For each avilable attribute there must be a min and a max.
->
-> typo  avilable > + * _def is not required and will be assumed to be default == max if missing. 
-Hello and thanks for your suggestions!
-I am not understanding if you are suggesting of just fixing the typo or changing the phrasing.
+Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
+---
+ drivers/net/wireguard/allowedips.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-Thanks,
-Denis
->> + */
->
-> Thanks,
-> Alok
+diff --git a/drivers/net/wireguard/allowedips.c b/drivers/net/wireguard/allowedips.c
+index 09f7fcd7da78..506f7cf0d7cf 100644
+--- a/drivers/net/wireguard/allowedips.c
++++ b/drivers/net/wireguard/allowedips.c
+@@ -48,11 +48,6 @@ static void push_rcu(struct allowedips_node **stack,
+ 	}
+ }
+ 
+-static void node_free_rcu(struct rcu_head *rcu)
+-{
+-	kmem_cache_free(node_cache, container_of(rcu, struct allowedips_node, rcu));
+-}
+-
+ static void root_free_rcu(struct rcu_head *rcu)
+ {
+ 	struct allowedips_node *node, *stack[MAX_ALLOWEDIPS_DEPTH] = {
+@@ -271,13 +266,13 @@ static void remove_node(struct allowedips_node *node, struct mutex *lock)
+ 	if (free_parent)
+ 		child = rcu_dereference_protected(parent->bit[!(node->parent_bit_packed & 1)],
+ 						  lockdep_is_held(lock));
+-	call_rcu(&node->rcu, node_free_rcu);
++	kfree_rcu(&node, rcu);
+ 	if (!free_parent)
+ 		return;
+ 	if (child)
+ 		child->parent_bit_packed = parent->parent_bit_packed;
+ 	*(struct allowedips_node **)(parent->parent_bit_packed & ~3UL) = child;
+-	call_rcu(&parent->rcu, node_free_rcu);
++	kfree_rcu(&parent, rcu);
+ }
+ 
+ static int remove(struct allowedips_node __rcu **trie, u8 bits, const u8 *key,
+-- 
+2.36.1
+
 
