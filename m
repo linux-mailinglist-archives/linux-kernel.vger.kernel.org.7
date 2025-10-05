@@ -1,151 +1,81 @@
-Return-Path: <linux-kernel+bounces-842225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 321F2BB943C
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 08:45:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06069BB9442
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 08:51:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D42D21895ABE
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 06:45:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DE4518987C1
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 06:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89CE1E47C5;
-	Sun,  5 Oct 2025 06:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JRoFj2b2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF671E3787;
+	Sun,  5 Oct 2025 06:51:23 +0000 (UTC)
+Received: from baidu.com (mx24.baidu.com [111.206.215.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E2C1C28E;
-	Sun,  5 Oct 2025 06:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCA63BB5A;
+	Sun,  5 Oct 2025 06:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759646715; cv=none; b=OiqlPzB6Y7sTgBMLaXqM+PczBt5m6MXNhC6VrUlMPFLOBZqwXwcEIAIsudDlRxNtfaaYMAoBLInPWhGAzVrw8VkRFx5867UIor3hxpmU7lB4RHZIZwxdJY4bZB/wC4wGUKk5qeh2AQWucVnGhbf53fG+TdIkcDy9yjNUWT/gito=
+	t=1759647083; cv=none; b=rFXbyq42S0eMlXt7iHPieWHz9XHOvupw3zq3R7K4ADFuij5ujMIxrswh46u8ERrabbc3W5AI9Eo8c6hgc+9Lo4OhNncGE0+ql9tmAtX2vSV4vkVXEwLYYFPGp0vGg3pi4hmSmpNm8QAQFs/CpFSRHwcnN08hw3ICCO4UWBMctAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759646715; c=relaxed/simple;
-	bh=pd4v5G9qSeuHCK9g5lQEesKWwYfL4dDwpPnx6E3wQrk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TRso8u3xgxynmjscc3YEdKY9EeXM851saf315iB9ZIn4yBAYr6X8hUC0D7bnCCWK04FfHrc2YIbJdzWLOaIpOhiDHQ3UDysuFqNzBHJNqewS72JzEAExwROMbvvA1rNri16TcK7NjfuFXNPnfT4Mo9NDzRcH6TlAA726i+RKTuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JRoFj2b2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA65CC4CEF4;
-	Sun,  5 Oct 2025 06:45:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759646714;
-	bh=pd4v5G9qSeuHCK9g5lQEesKWwYfL4dDwpPnx6E3wQrk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JRoFj2b2vXMi4f5icQ1TgIk7qSYmLvKOsTOdSlqUMH+M91GymXT7PoK9ag5RnwOWT
-	 2aG2w2Q0avSbkYM+WbRX0L9y2b5NDNNnXudFYErv3xAj9+RjKh/U+nQ6jN2LFn/Jn6
-	 Il2Az1gI++JNX6aDycodP7yvwED7KSSjgbqjpt72AvNTSD1676uCIhCKLxKzkeekOv
-	 v+SZnde2Z6WEUtY1x2r6LzRHlbwwV1L/9j5rbX7oZBwqORBG+VTnbS+Yy21lCLRIkn
-	 J8u77wd2SodGX81PQBask7rhHWjtzOPIv8gXERvWjogFGEjPriN3YWOg+pQkZgmdCH
-	 oHJNJZy+91qyg==
-From: William Breathitt Gray <wbg@kernel.org>
-To: Lakshay Piplani <lakshay.piplani@nxp.com>
-Cc: William Breathitt Gray <wbg@kernel.org>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	vikash.bansal@nxp.com,
-	priyanka.jain@nxp.com,
-	shashank.rebbapragada@nxp.com
-Subject: Re: [PATCH 1/2] dt-bindings: counter: Add binding for NXP PCF85263/PCF85363 stopwatch
-Date: Sun,  5 Oct 2025 15:45:01 +0900
-Message-ID: <20251005064503.2216520-1-wbg@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250915071415.1956219-1-lakshay.piplani@nxp.com>
-References: 
+	s=arc-20240116; t=1759647083; c=relaxed/simple;
+	bh=oiKmkFwA1KNcZUbmSQOvC5FPhmAJ5a+cWFYUwCSINuc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ntSAKWP2sjpxJ0p7eacRxFjGZLFs442BpJq0AFj14bIB7di2Ecr3+fUASuNqxdQhrGipdCFHBCtPTADt6F2rmNBr4GYsJ+Lhzhn97/VxjngSFQLW2fFUJAuh9hZzy4BrdZzzjDbf0/jsn9k/8q75ti7YJ5az+TJgnk+ruTnKXtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: Fushuai Wang <wangfushuai@baidu.com>
+To: <sfrench@samba.org>, <pc@manguebit.org>, <ronniesahlberg@gmail.com>,
+	<sprasad@microsoft.com>, <tom@talpey.com>, <bharathsm@microsoft.com>
+CC: <linux-cifs@vger.kernel.org>, <samba-technical@lists.samba.org>,
+	<linux-kernel@vger.kernel.org>, Fushuai Wang <wangfushuai@baidu.com>
+Subject: [PATCH] cifs: Fix copy_to_iter return value check
+Date: Sun, 5 Oct 2025 14:49:52 +0800
+Message-ID: <20251005064952.4056-1-wangfushuai@baidu.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2641; i=wbg@kernel.org; h=from:subject; bh=pd4v5G9qSeuHCK9g5lQEesKWwYfL4dDwpPnx6E3wQrk=; b=owGbwMvMwCW21SPs1D4hZW3G02pJDBmPhO+8ClwvcDlqVX3+PqP9+QJBdScubzk26d9yi5eMu 2dsM1d93VHKwiDGxSArpsjSa3727oNLqho/XszfBjOHlQlkCAMXpwBMZLkiwz/jBJmtN7Z3df3P uageWPA8q0fh6lJ/rTQORi9W4yCVykZGhkWqdVasCpft521wDP/M/Gkic/5F/ikTj9yNNan2Uy7 ZzgAA
-X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: bjkjy-exc7.internal.baidu.com (172.31.50.51) To
+ bjkjy-exc17.internal.baidu.com (172.31.50.13)
+X-FEAS-Client-IP: 172.31.50.13
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-On Mon, Sep 15, 2025 at 12:44:14PM +0530, Lakshay Piplani wrote:
-> Add a devicetree binding schema for the NXP PCF8263/PCF85363 devices when used in
-> stopwatch (counter) mode.
-> 
-> In this configuration, the device operates as a high resolution stopwatch over I2C,
-> counting in centiseconds (1/100th of a second) up to 999,999 hours.
-> 
-> Signed-off-by: Lakshay Piplani <lakshay.piplani@nxp.com>
-> ---
->  .../counter/nxp,pcf85363-stopwatch.yaml       | 49 +++++++++++++++++++
->  1 file changed, 49 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/counter/nxp,pcf85363-stopwatch.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/counter/nxp,pcf85363-stopwatch.yaml b/Documentation/devicetree/bindings/counter/nxp,pcf85363-stopwatch.yaml
-> new file mode 100644
-> index 000000000000..5fbb3f22ace4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/counter/nxp,pcf85363-stopwatch.yaml
-> @@ -0,0 +1,49 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/counter/nxp,pcf85363-stopwatch.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP PCF85263ATL/PCF85363ATL Stopwatch (counter) mode
-> +
-> +maintainers:
-> +  - Lakshay Piplani <lakshay.piplani@nxp.com>
-> +
-> +description: |
-> +  Binding for NXP PCF82563ATL/PCF85363ATL devices when used in the
-> +  stopwatch mode. In this mode, the device provides a centi-seconds
-> +  (1/100th of a second) resolution operating over i2c.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - nxp,pcf85263atl
-> +      - nxp,pcf85363atl
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  quartz-load-femtofarads:
-> +    description:
-> +      The capacitive load of the quartz(x-tal).
-> +    enum: [6000, 7000, 12500]
-> +    default: 7000
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +
-> +      counter@51 {
-> +        compatible = "nxp,pcf85363atl";
-> +        reg = <0x51>;
-> +        quartz-load-femtofarads = <7000>;
-> +      };
-> +    };
+The return value of copy_to_iter() function will never be negative,
+it is the number of bytes copied, or zero if nothing was copied.
+Update the check to treat length <= 0 as an error, and return -1
+in that case.
 
-Hi Lakshay,
+Fixes: d08089f649a0 ("cifs: Change the I/O paths to use an iterator rather than a page list")
+Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
+---
+ fs/smb/client/smb2ops.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-It sounds like you're trying to implement a clock. Is there any
-particular reason you are trying to do this as a counter driver instead
-of using the common clk[^1] framework? The Linux counter interface isn't
-specifically designed for clock operations so I suspect a stopwatch
-module would fit better in the clk subsystem instead.
+diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
+index 058050f744c0..2383a80b9ed1 100644
+--- a/fs/smb/client/smb2ops.c
++++ b/fs/smb/client/smb2ops.c
+@@ -4764,8 +4764,8 @@ handle_read_data(struct TCP_Server_Info *server, struct mid_q_entry *mid,
+ 		/* read response payload is in buf */
+ 		WARN_ONCE(buffer, "read data can be either in buf or in buffer");
+ 		length = copy_to_iter(buf + data_offset, data_len, &rdata->subreq.io_iter);
+-		if (length < 0)
+-			return length;
++		if (length <= 0)
++			return -1;
+ 		rdata->got_bytes = data_len;
+ 	} else {
+ 		/* read response payload cannot be in both buf and pages */
+-- 
+2.36.1
 
-Wiliam Breathitt Gray
-
-[^1] https://docs.kernel.org/driver-api/clk.html
 
