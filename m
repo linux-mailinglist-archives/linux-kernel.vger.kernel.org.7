@@ -1,174 +1,241 @@
-Return-Path: <linux-kernel+bounces-842217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD7D3BB9409
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 06:55:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6237BB9412
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 07:13:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F36C3189A517
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 04:55:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F4E718978B8
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 05:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB9E1A316E;
-	Sun,  5 Oct 2025 04:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A3C1A9F94;
+	Sun,  5 Oct 2025 05:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FUoKGH6d"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="W7rEZp68"
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11023072.outbound.protection.outlook.com [40.93.196.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E492BA45
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 04:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759640123; cv=none; b=Ivcn0VVwyjGzih5SSj2Yn9fPF7xOqOcPLdYtaaZQjSckQoIhiQA7mmfoZo3qupf2YiCMV+QossLbWBxOhiliNUFfreh/OdlefgmG8mmktAOSS4QBxQBUfE+kEq6mkhMVVbyBg5ez2wHKpk7gtLNaOrGvbUrNzTqhkC8mg5hwNMg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759640123; c=relaxed/simple;
-	bh=uUxZnW5KUkMiHEzGNRHBsp+KaVM7fDpIrP+h9PlG5Rw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CFcBU/T2fIWNFyjaXwRdAed+74ti8Mix98pQ8IIGaDQRSDXzFy6EGMgDpRxmF5rbNC01i1FKOp/+KbY4in1yDjcEIhtR928MVccpLaqCJeQOXAxVNVNB5InaO/HqwOvzTLfZ5XMe6Ty1pS/nzcyaj3pdbwiWXRWm0pAQajsNjEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FUoKGH6d; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-781ea2cee3fso3559456b3a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 21:55:21 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29BE919D065;
+	Sun,  5 Oct 2025 05:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759641209; cv=fail; b=VHPPuNjjzI0F/BiyWx2a7nLWAlkBiXOSjrY6f2Yz1RUhrBq2Hqx1tOEGTuIfOgepiUfd3KDe4P2e7hsv+s8POj3NyvxFueS1yPwTUikkbNKYfzQjNpqvgsWWZzHuebf5yUserUQrQdpnTkezAnpmjhn6yiQ2Nz7tCVHXACbVmJk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759641209; c=relaxed/simple;
+	bh=DqpfYD488ya/ohBQ9D9pdqswvD+0UMaleBYwvC6oHuE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=aRHsCsXCWhSPnNK3YoKiRweJdjpWj0Fdica3c0LAXfp7dLpAjglbxeROgUdD2315qjwIYPviA2Y58G0IELl/WEJzDOyNDW6pfEsfOzvW6MQwfoCSQ+dZ7AUJQqDRdZ6+wUeIXlpBD2H71/w8X1AWCwLnmU/5RjKSMuyHtXyP6zs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=W7rEZp68 reason="key not found in DNS"; arc=fail smtp.client-ip=40.93.196.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=knfYpvL+KEqjHONdSVp2LMW8V/4osgZa28qsjNCka+iOHiotVGBVvk1DpP+IfoOkQXmghzGrR4Pezjby10qWCVTaIhOTMwxCi9A6aLU82Kjxm8Lqn1HtvINgFu5RUFBDt59Yd7Q0VoPPbq/UT4ipmQdXmxSthEDCPm0bcEVb0FAaneZehP7+CBTaOyAjljhWrcAhESyGo/MNTt7dxNqZ84fDZSZh9hf1kSaCkW1CdfaGrA9Are6JZuoBsR90wBvmQ7seErqjtTVgutl07LBx3W9YfONTgOadNs2zuycft5084ODAZW5tTLIYBdms4HUXjg8/jhdBEoU0BA7vssr+uA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=R7DK4YPLNq4RkMP5j4W3wkudwoghUDk7p1wH3nOKCio=;
+ b=avdPagD4MY8MPCOu3XV6qgFBXyZGk2AbpVS1+YFNl4FbhBGoFB1uHFMdyKm5EcEr5E63LM8MWy7Rny+csbULR2VP82zIjwXXyxMjUGED632xZU9NPgtEbG700fxlKVe9T+taXvV7dZXV8Ak1SsE5jM8pdTPcKKImmEN+QTEbHZqeQ9uOFK8g5mR4ciCSIKo4En81KLB4NkRWnch8jAb4wPFMSxfmMgl8ehqPdMxd/pTf1MyW7CpkENBwNLQh3s62WJf/rwBnXfsdGY6Owxl2ZU3027uJ6wFVPG+8tgmwF45pwGtHGlhjhRXtrIRll733uLkoI9/hsVlsG5z+sEUwGA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=amperemail.onmicrosoft.com; dkim=pass
+ header.d=amperemail.onmicrosoft.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759640121; x=1760244921; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l9ES7sgSCHDlhobwO0ZrFKVNTVshI11voBNNIhtfWjA=;
-        b=FUoKGH6dnOK6ESX9CySoBBsh8dD9OYlQ9zEhdkedYJpLQATW4x17vUQ+BXDA3UDS9F
-         wAnAAePn1EFbUKdyDkZXVPa4UaJSHm76B6pJmY7MT46h+7rH0x4bSEZ0xzGlSdRtVWbF
-         98NP18UNddcO6fMnABNOXRrToDiu5I7KwLuk0XrnfBD4dN68JGyVm1oHrwx+ia47Ntyi
-         ixM1/UrgvvbVmt9GCEtAG/myNDMVwBctTMpGwZq515dLaAPSl5OINEqWWzlWDdgDd3kZ
-         6+/6uFHI2bL2d2cR0pHFSjmOjZBsU4W8+xeGo4sgo01l8V5TY23lTWPqlYqIQrZp2DKy
-         EEWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759640121; x=1760244921;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l9ES7sgSCHDlhobwO0ZrFKVNTVshI11voBNNIhtfWjA=;
-        b=KMyDFcyf6PoEb8HUr13eK6sYa28RD6XeQdxMBY3wEQEYwRrHgjbmaEER3G75K4/rMe
-         qHNRxDBedx5kPb7ZNz9eoRtK0RpkPKrcMLfdWYApuGSeBBflcYy4v7SDDY/wSSaAtcvl
-         H1AZOqFDlsE8J8+E97Egzhpe0/LFmhK0vNESjt/JWmcoTsl67fVjed8weBzF2A7kTy8Y
-         9Q31DfPDlzhmH9UjGgyfY4E+ye7zQxe5HMOMpyK9tbyC+ZDrTafnIV6X+xdT0f9N5zDY
-         4Kxna8IWXdQMgNnpkQl6HDDRLct5Y1xG5Hj3975VtOKygs87q/A05MbCHI4//sarJC9x
-         ayXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWHz6fgNUx0Pi6S+toUQKs/tDb2q5msPu+4oBMOTqJCSpEoMnIVWLNyaVukXXwbSmE8878hyCQ13yWr+IM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRNaRsq4ab3UNbIABvys3kmldPGWpFV27BTuaT8IfJT5X5aT1K
-	XQbeL9SUsMdDYZyJu/3rZXtvtneHWcTkxhj9z5swIMYSZbpbyLS/s7kA
-X-Gm-Gg: ASbGncurzGMlGhqPcWtmhA6kd8Jz83Q362CFcVnpykU/ArJu5mLYyvgvSLeJgnXE2qR
-	CI9+Nhd84pM7nxjRAwgPEoUW/Wf/jdxpsGDK31CkYTWfpSNP8Fv+dEvQdHjjgaQB9gFYhibnUWN
-	wsm6lLQ9CwAhqcs5ovrbmd+nkAbE76GVByRiQdKJI4y6K2hS3JAVjFaJc07yLVngJ72kk4YjNwt
-	OFcYXdEQsWgq5VJX/zm9HTWamq30WiEtRXhzfJCPKRJTzWkURFbbMgqP06uUml24yYw8KhuTXZU
-	960csMQsEjlWheNAvgKWE7PAdwh5d6YqV80jhPB2HMHVYgSPdAmTa+/JqYOtoGN9So55bOLOECk
-	F8xmH2lPCFz1/e6HmGbIENZJRAMnQ0ztTUkpggCaBvby7t0WsHLJal7fr1rry33elfn7zZpfx8I
-	BsuU6yUQesr3qfkFq8I8jMWQGDgWP79coJknc=
-X-Google-Smtp-Source: AGHT+IHrXDCzsLNximokCsFX8BTq6/xEQSVOcieVuoemZgV4yRTvna8trHt71DcqUkLSfovmVG7MFg==
-X-Received: by 2002:a05:6a21:999d:b0:2f6:cabe:a7a8 with SMTP id adf61e73a8af0-32b6209626amr10163253637.32.1759640121168;
-        Sat, 04 Oct 2025 21:55:21 -0700 (PDT)
-Received: from [192.168.68.61] (104-12-136-65.lightspeed.irvnca.sbcglobal.net. [104.12.136.65])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6099d4cfbesm8686558a12.28.2025.10.04.21.55.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 04 Oct 2025 21:55:20 -0700 (PDT)
-Message-ID: <37f2603e-8c51-4f92-a7af-0e60cd577004@gmail.com>
-Date: Sat, 4 Oct 2025 21:55:19 -0700
+ d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=R7DK4YPLNq4RkMP5j4W3wkudwoghUDk7p1wH3nOKCio=;
+ b=W7rEZp68oRWtOOZNYIaz9chKU2nUbT4V96K7/oY2rWfjocAUgB/Grv2IR7g7jy1UAKS7gt1j7y1k7myz4CxF0cTSGXEMs0pp18plMcit/9t02Dc5fVmWdToQQGJsT7xY4az4Os7G+3Sxeo2XJC7LptnssSWtkX730JlDiSnniRY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
+Received: from BN3PR01MB9212.prod.exchangelabs.com (2603:10b6:408:2cb::8) by
+ LV8PR01MB9353.prod.exchangelabs.com (2603:10b6:408:2a0::10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9182.18; Sun, 5 Oct 2025 05:13:20 +0000
+Received: from BN3PR01MB9212.prod.exchangelabs.com
+ ([fe80::3513:ad6e:208c:5dbd]) by BN3PR01MB9212.prod.exchangelabs.com
+ ([fe80::3513:ad6e:208c:5dbd%3]) with mapi id 15.20.9182.015; Sun, 5 Oct 2025
+ 05:13:19 +0000
+Message-ID: <5dacc0c7-0399-4363-ba9c-944a95afab20@amperemail.onmicrosoft.com>
+Date: Sun, 5 Oct 2025 01:13:17 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v29 1/3] mailbox: add callback function for rx
+ buffer allocation
+To: Adam Young <admiyo@os.amperecomputing.com>,
+ Jassi Brar <jassisinghbrar@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jeremy Kerr <jk@codeconstruct.com.au>,
+ Matt Johnston <matt@codeconstruct.com.au>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Huisong Li <lihuisong@huawei.com>
+References: <20250925190027.147405-1-admiyo@os.amperecomputing.com>
+ <20250925190027.147405-2-admiyo@os.amperecomputing.com>
+Content-Language: en-US
+From: Adam Young <admiyo@amperemail.onmicrosoft.com>
+In-Reply-To: <20250925190027.147405-2-admiyo@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BLAPR03CA0105.namprd03.prod.outlook.com
+ (2603:10b6:208:32a::20) To BN3PR01MB9212.prod.exchangelabs.com
+ (2603:10b6:408:2cb::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/5] Upstreaming Pinephone Pro Patches
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Ondrej Jirman <megi@xff.cz>, "Leonardo G. Trombetta" <lgtrombetta@gmx.com>
-References: <20250921-ppp_light_accel_mag_vol-down-v3-0-7af6651f77e4@gmail.com>
- <53eabe34a310ea9c74315fa09a604e4a@manjaro.org>
- <b01ed528-8b29-4a6a-bdff-88f2e3b5dd2e@gmail.com>
- <115da845d9161e6ecfa67cf189b84aa8@manjaro.org>
-Content-Language: en-US
-From: Rudraksha Gupta <guptarud@gmail.com>
-In-Reply-To: <115da845d9161e6ecfa67cf189b84aa8@manjaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PR01MB9212:EE_|LV8PR01MB9353:EE_
+X-MS-Office365-Filtering-Correlation-Id: dea8ec66-8082-4568-1f89-08de03cde60e
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aERBU0JWdmd6dkRRWm5qTFlnWDRwMGlISVBaV2RuWjgrSnA0c2ZnbzdJeHlm?=
+ =?utf-8?B?N2h5N3NLNkdzK2loOUp6bW05Y1k3VW9YVUtleHlZZlowZll0eG01WHYwZjNZ?=
+ =?utf-8?B?ZXpuSFFqRHM2dVdHNmxSNXdBK2NNbEFYak4zaEZhbUtxUWJNNVdtYnM4YTQ1?=
+ =?utf-8?B?UFFPdVNSTnJVLzJVMHdMT0grMmNiL1RkUk5hZ2pSSmpCcTB1alBiSGU1YlAy?=
+ =?utf-8?B?VC9NdlRTcHhpNkMrRjk0S1VIbkUxdWY3bkdyYWZXaEJOVHErelNKUjJtZVhC?=
+ =?utf-8?B?RVdyL1pGMkdLN05ha0toTFJpemdmcE5YcHNERmlCL21VWVEvNnhtS2tWZU5I?=
+ =?utf-8?B?UWd6d2xNYXFtdEdlOGtBVTN3RFk5UHZ3V1ZOL1E5UGxEL3J0TWpYSENCZCto?=
+ =?utf-8?B?bUNVclhUVWhQbmZ0L001N0ZJSmRROGsxS3BlaDlxUlNDVU5RWFpNcVdCU1NH?=
+ =?utf-8?B?eXduL1RKVnptRmE4Z3I4OHhhVXljWDZLSmZzbW5aTVhUOEkzdXNEcGJrUlQr?=
+ =?utf-8?B?KzZrRlNYR25GWXpkRWRFZVUxV0Jjb2dVUG9uK0VlMmZEbmg0L2dNdUJYMmdq?=
+ =?utf-8?B?ZFVySk5Tbi9PTDg3RldMbE41SjlSSkNlUUNFZEp1cHN1MFNISG1jZFRJQjJm?=
+ =?utf-8?B?VXlmK01rNWVDSS9zMEdKWTZoMVBQTTFzM3BRclFoNzRYamdyYzFtUHhlYSsy?=
+ =?utf-8?B?Rk9JMXdHczZqRy9OaDZZTGtPWFplTHB6SEhEdUVoUEppMFhuWjRMdUUxTGxQ?=
+ =?utf-8?B?bWNSUkpLclExQytyY2R5Vkpsb2FoblQ4ZkFsT1lFZUNhNzN4WUh1VDQwQm1Y?=
+ =?utf-8?B?VDJJOUlQV2E1bm8rekgzNzRLWjltSXAzTjhhOWQ4YkhneGsvVFUrTElTamgv?=
+ =?utf-8?B?K0VsWTZPYm5lYzJNNmdXTExqUXdyS0NxVzFsN1BzY21GcytVcXNPQUVybEtW?=
+ =?utf-8?B?czIzWktiTm1OaFFCOC9lR0d0Sm5Wb0I2YmdYMUY5VjdERWdnSkl5dmpBS3pp?=
+ =?utf-8?B?VmhIUFo2L3E3ZFcrN2xnajNEM2c5MFUxbDQ0K3NSY1RGa2pqTm0vdEZHZ0F6?=
+ =?utf-8?B?cXVPOW5UY3BvM3prUzY2SkhCQnhOYTQ3OUFvcHZackdib1RySTlYVCtRTWdQ?=
+ =?utf-8?B?Tlh1UytpeHUxMDRhMHQzUDUrSHJRWG1PbktVMGZTNVNMVG5MOGoxUUlQRDdi?=
+ =?utf-8?B?V3FCbnFyeUtNb3ZhODZ4MWZLakVnaG9LOVF3WGMyZWRiUTJseHNML2tFNUJk?=
+ =?utf-8?B?MHlNcmxLbVMyeXJRVGc2aGc2cmxmQWV5TU9GcnpQSHNHeVNDMU1EKzFnOU5z?=
+ =?utf-8?B?SlBNZlZSRFI1T0hKWHlMLzljVmVGZDZQWmhpTEFuVkFZbGtvclhEdFVVZkZ5?=
+ =?utf-8?B?OUhxZ2J0Vkp3aXQzZVl4eENDa0FaOVBHdUlzU2lTL29Ia2ZaOUVlMi9HVHRQ?=
+ =?utf-8?B?UWpBcWt4WjZEM2IzRDJKamdBU1N5OUt6ZEcxVEdidnViS3Zvem1iQVpiKzlE?=
+ =?utf-8?B?SVlwNXlWaXpYZkNpQUkyM1RqdURDQ0gyd0xGZlhFRWVvQTFVZjVFeG02ZFpE?=
+ =?utf-8?B?aFFjcnZpaDA2RnZLVzh5U1ZSWDR3L2tZaDNZYnVMRHhubDc5VzRKQXVPd1lv?=
+ =?utf-8?B?elIrVzBaaW40dDRyT25ISUhrbWNVMmhCWWd0RndMN2lvSHZyLytBdStyMTFu?=
+ =?utf-8?B?WUd5bmIzYXhMVloyTVlSZ0ZjNk5jOENDTVNGYkkzWFkvQnk4STl5d0dGaXRX?=
+ =?utf-8?B?bU96Y0FhdjR4Q3dvQ0UwcEZYTzErbXowWnh4SmliZDJMQnZvdUFLSzVQckx5?=
+ =?utf-8?B?RzU4bUxkQlZnelVvVG9FVmt0R3JmWi9SdTIwQi9FNS9laGhKcFdNMUxLZ3cx?=
+ =?utf-8?B?b1ZUTDdsM3NMQVRrd2tydWlRT2RSazdQL2czZlFNajJ2VlhybitGZSsrUjJs?=
+ =?utf-8?Q?MlwyPCi5jqGjQs/gboJDCtpswpY0NKIf?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN3PR01MB9212.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(10070799003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Z09XOEJFQjZocXE2NVhxTmMxS2JreGNkQUcxWCswc0tUeGMrZFFnZ1B6U1FN?=
+ =?utf-8?B?a1BQUEJoV2NHcGRhY1FpNHViWnB0SVFPdy9hZGwrRFdMWHM0cEViU2RZU3ZN?=
+ =?utf-8?B?T3Z2RzFDM1FlRmZPdUU4SjhTOFJWOGxuS2NwNlFDcHFGaHdTdTVHcDhtcXpF?=
+ =?utf-8?B?V2VzVTNRTnFXZXlLVzBibXlLVlU0UUdqajBFT0J3SE8vd1RjWktlZmxacEFO?=
+ =?utf-8?B?czNLdDdaRnNLTWh2UjBuS25TV3NBaVUzRld5ZlVldXJXNGNtZ2QrbEdvMTRS?=
+ =?utf-8?B?YlMxTzFmaEFiY1lGa2tucGpnSnFaZExYL3VzMjZYc2ZqV2hzWHdmajFudkpI?=
+ =?utf-8?B?K1RmaW03SmJLMHpGMkN2OERsczZNOTFaUDFhUWt2elNRWUgwWjB3Z2VHWXJ6?=
+ =?utf-8?B?Nks0dE5WOGQ2aEFNZDc4MVh2Z0ljQW9pOERJeTBiN2JuRTlIY0tJenFJZkpu?=
+ =?utf-8?B?b0o0WjNscVEvRlBCZDVLT21Vak9LTTlPV3VHWGJKa0JGS0NIY1R2OWNGbXpz?=
+ =?utf-8?B?Ty8zcFdqSzJMbGNRSGZNa1dPanZ6TytBYWo4Y0ZrS0xtY2hKenQ3T2ZvWWJH?=
+ =?utf-8?B?QnYyajJERHBaN3lPbzM1REhsaUhWcjQ5dlNSaHlpTUJUTzVZYTFtcTlrbzl3?=
+ =?utf-8?B?b0lxMXZoQzlmRzBENW1Oa3ZaTlNxM2NxMXhXcUtEZnJNSTFlSnFvbFN6c1lR?=
+ =?utf-8?B?Z3hNRnp0WVZISzB5eXZJQjNoTVJ2b3FVUXNOQkFPNGRHbUtJQTV2Y01Lb1NU?=
+ =?utf-8?B?bVpRK3FLS2lYWlY1Z3pPMXRGc3RuRlVua3I5YkdWMHdEVVlLUVpWWlc0R3Q0?=
+ =?utf-8?B?NVJZemI5bU5SdmZjek9HV1NBQjJISUZPZEYwV3ZWUmd5ZlZwbnlnS2YveWZG?=
+ =?utf-8?B?Tk9DaU9IWGxUY2Q5QXJrazdwK01iQVNNeFlTMlhlcXM3TVdGaDJDOFZab2Vp?=
+ =?utf-8?B?anV1R2djQndRbFluL2J2cG4xZDJrS05CcHVBTFlvSktjMDAzcWRzWFRNSHF6?=
+ =?utf-8?B?OEVzTEJRdVhWN0oyMTlQMnRvZUVKcmxaWGNOL1Z4ZjZCalZueGN2dnhteEkr?=
+ =?utf-8?B?MWVGY2tndUsrdStraGpub204MHQxYUh5N2VvUmd2bXhoQTh4V1hjZjRCTzBt?=
+ =?utf-8?B?S1RRbWpLRi9Cd3d2cmM4QW0zWndqWHZSNDNpTUFRMEkvU1ZYWG5sOFhrN0c1?=
+ =?utf-8?B?N0ZJTlAxaU9TcVhIVCtuZnJ3OHovdmczQll5L3VVbzZRQlNxOFUzekhVS0Np?=
+ =?utf-8?B?amRueW90TVpJVjhNTUkrNURFdDRqeVFnc0IrRzE2ZDcrZFRGYWZGS1A0V1ZI?=
+ =?utf-8?B?eHVzSlp6eG02K0I2Sm4wTFBzbFN2ZG5lYXFHcUxlckhIZm40aU4ycEx0cUxE?=
+ =?utf-8?B?NlJYL0I4SVVROUZDVXBXVnpRaXArYkcxOWFhaGxyeUtvTWpvaTR5SWJwMDFI?=
+ =?utf-8?B?eFV4OFZ4OExjQ1hPS05XZ1cxZ1FXOTlNdm51VUtkbnovRzZyZTRqZU5KcUhM?=
+ =?utf-8?B?ZHowVUFPU2RmMlR4dUFXdjVGL3dDRXFuOG0vY25FMklWVmNYVm1TajFYbDBl?=
+ =?utf-8?B?MStvaHpaS0hHS0xrdUg4L1lEMWgvNVJmZEw2L1J1Q2pHYW1MMXZnRUNPN0J6?=
+ =?utf-8?B?RTVoSEFqYTVWNVhxVENFN0ZFNlBQenBtMENURkZmYUh6eEQwMXphSkQvd2oz?=
+ =?utf-8?B?S1U4Y3VPSG9jT3NHNmtuMGl1SlZwZHJLa2dUMXZoc1lzSEtrTGZUZCtmcUY2?=
+ =?utf-8?B?VVVudjdReWFZNERSSHVKeitLdDRiSFVpQndxQU01Y3BFV0h2QWF0QzlWS2g3?=
+ =?utf-8?B?UTNyODUzQzBBdWVhMjVMTXlVdGNsYnNudFozMlc5WkZ6TWxUcDdGRE1xNmpk?=
+ =?utf-8?B?UFROb2RyVThsaEZkbDBQNjVDVkkwQ3VXQUhUSzhlZ2gva2duTFpaeEcyY1VO?=
+ =?utf-8?B?RHdqTW9wdGMySjBWem1rRnc4NU12cW9lVCtDR2Vta2FEVXRmb25nNzZSS21n?=
+ =?utf-8?B?L1dBTWhYQ21nZUgxWGpMUW1RWDFWdzhlcEYyS2RRd0ZRZ1RPdFhjN3phYkZG?=
+ =?utf-8?B?QmgwWnFlWm1KZzlTOWpINXlhalNyeURuUEpDTXVpaEV2T1NOWEFpY05iUjA1?=
+ =?utf-8?B?NktOelJ1SUVhY0FML2NQWmhuRmc3TEJMSWpuVGMvV2tYNVdoUnNibnRsNS9t?=
+ =?utf-8?B?NTZOa1dhMHFBR2M2dzcxV3g2TDhBRUE1Y0JjQWdXZnRKUUdvU2lsbnVhcHo1?=
+ =?utf-8?Q?RKJeblUMplBNR4267EOlIcwRiS2n1thaFhjUPrVBdY=3D?=
+X-OriginatorOrg: amperemail.onmicrosoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dea8ec66-8082-4568-1f89-08de03cde60e
+X-MS-Exchange-CrossTenant-AuthSource: BN3PR01MB9212.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2025 05:13:19.8961
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TISH1OHs4X14La3ul7e3uwn3yTIMkYjx6Yzpvq8CPvuQHOEMsNC4Oo5mSXq+irDpiGF8PemjtZ1DJicx2W0IpuPFITXK3ybVHVFb35V6o9TmI0kkkN9ytYL7JyA1fyI9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR01MB9353
 
-Hello Dragan,
+Jassi, this one needs your attention specifically.
+
+Do you have an issue with adding this callback?  I think it will add an 
+important ability to the receive path for the mailbox API: letting the 
+client driver specify how to allocate the memory that the message is 
+coming in.  For general purpose mechanisms like PCC, this is essential:  
+the mailbox cannot know all of the different formats that the drivers 
+are going to require.  For example, the same system might have MPAM 
+(Memory Protection) and MCTP (Network Protocol) driven by the same PCC 
+Mailbox.
 
 
-> Thanks for improving the patch descriptions in the v4 of this series.
-> I just went quickly through the v4 and it looks much better.
+On 9/25/25 15:00, Adam Young wrote:
+> Allows the mailbox client to specify how to allocate the memory
+> that the mailbox controller uses to send the message to the client.
 >
-> It could be said that the new patch descriptions are now a bit too
-> verbose, in the sense that the test procedures and their results could
-> be summed up a bit better in prose, instead of providing the "raw"
-> inputs and outputs.  However, it's still better to have those, than
-> not to have anything.  Writing good prose is a skill that usually
-> requires learning and practice.
-
-Awesome! I was hoping that others would comment on the testing I've done 
-(especially for the accelerometer and magnetometer patches) as I can't 
-tell if userspace is wrong or if my testing/conclusion is wrong. Mobile 
-Linux is very early stages at the moment, and I suspect the Pinephone 
-and Pinephone Pro were used as reference devices with Megi's downstream 
-kernel. Wrong mount matrices in the downstream kernel might be affecting 
-userspace. This means that with the corrected mount matrices in this 
-patch series, userspace is slightly broken (eg. since I fixed the 
-accelerometer, the screen in Phosh and KDE Plasma are upside down. I 
-suspect KDE's Kompass and Leonardo's compass app might be the same if 
-I'm changing the mount matrix for the magnetometer). This is why I 
-decided to showcase the raw values in my testing. If my testing is 
-incorrect, please feel free to let me know.
-
-I think I will leave my testing in the commits itself this time. If the 
-mount matrices are correct based on my testing, it will probably be 
-helpful in the future in identifying why downstream is slightly broken.
-
-
-> You haven't done anything technically wrong, but the way you submitted
-> the v2 and v3 made them feel a bit like you picked those patches from
-> some random place and submitted them to the mailing list without really
-> understanding the subject matter.  In other words, it's the contributor's
-> job to convince everyone else that the submitted patches are fine to
-> become accepted, and the v2 and v3 simply lacked that.
-
-That's fair. I was under the assumption I had to keep the patches mostly 
-in its original form.
-
-
-> I wonder how would some forge prevent "spamming"?  It isn't about the
-> possible "spamming", but about the act of submitting different versions,
-> which would be present regardless of the way they'd be submitted, and
-> the reviewers would need to be aware (i.e. "spammed") of them anyway.
-
-At least with Gitlab & Codeberg, a lot of the notifications can be muted 
-(I believe updates to pull requests is one of them) and pipelines can be 
-created to ensure that formatting is correct and that the proper sub 
-maintainers are notified automagically. In my opinion, b4 just brings 
-some of the forge's functionalities into an email based workflow, but 
-will have to fight it's own problems such as: 
-https://social.kernel.org/notice/AypvdTWyAs5km0Gc3k. I don't mean to 
-detract from it; it is very commendable what Konstantin Ryabitsev is doing.
-
-If there are concerns about centralization, there are alternatives like 
-Radical. I heard that Codeberg is looking to also decentralize in the 
-future as well (Maybe using Radical's protocol? Not sure). If there is a 
-call to action from the Linux maintainers about looking into 
-decentralized forges, I bet there would be many projects excited to be 
-used by the Linux kernel. It will also help get new people excited to be 
-involved in the Linux kernel and potentially become kernel maintainers 
-in the future
-
-I think I will leave it at that, as I don't want to further derail the 
-conversation from the ppp series.
-
-
-Rudraksha
-
+> In the case of a network driver, the message should be allocated as
+> a struct sk_buff allocated and managed by the network subsystem.  The
+> two parameters passed back from the callback represent the sk_buff
+> itself and the data section inside the skbuff where the message gets
+> written.
+>
+> For simpler cases where the client kmallocs a buffer or returns
+> static memory, both pointers should point to the same value.
+>
+> Signed-off-by: Adam Young <admiyo@os.amperecomputing.com>
+> ---
+>   include/linux/mailbox_client.h | 7 +++++++
+>   1 file changed, 7 insertions(+)
+>
+> diff --git a/include/linux/mailbox_client.h b/include/linux/mailbox_client.h
+> index c6eea9afb943..901184d0515e 100644
+> --- a/include/linux/mailbox_client.h
+> +++ b/include/linux/mailbox_client.h
+> @@ -21,6 +21,12 @@ struct mbox_chan;
+>    * @knows_txdone:	If the client could run the TX state machine. Usually
+>    *			if the client receives some ACK packet for transmission.
+>    *			Unused if the controller already has TX_Done/RTR IRQ.
+> + * @rx_alloc		Optional callback that allows the driver
+> + *			to allocate the memory used for receiving
+> + *			messages.  The handle parameter is the value to return
+> + *			to the client,buffer is the location the mailbox should
+> + *			write to, and size it the size of the buffer to allocate.
+> + *			inside the buffer where the mailbox should write the data.
+>    * @rx_callback:	Atomic callback to provide client the data received
+>    * @tx_prepare: 	Atomic callback to ask client to prepare the payload
+>    *			before initiating the transmission if required.
+> @@ -32,6 +38,7 @@ struct mbox_client {
+>   	unsigned long tx_tout;
+>   	bool knows_txdone;
+>   
+> +	void (*rx_alloc)(struct mbox_client *cl, void **handle, void **buffer, int size);
+>   	void (*rx_callback)(struct mbox_client *cl, void *mssg);
+>   	void (*tx_prepare)(struct mbox_client *cl, void *mssg);
+>   	void (*tx_done)(struct mbox_client *cl, void *mssg, int r);
 
