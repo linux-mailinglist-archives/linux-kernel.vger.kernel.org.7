@@ -1,154 +1,192 @@
-Return-Path: <linux-kernel+bounces-842282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF31CBB9682
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 15:04:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 065C8BB967F
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 15:03:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 00EF83456A2
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 13:04:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B98753B91E0
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 13:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3729B274B48;
-	Sun,  5 Oct 2025 13:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055AB26463A;
+	Sun,  5 Oct 2025 13:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cBhNDEyO"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SQZHt57C"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0870B1D7E42
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 13:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6FC7483
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 13:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759669487; cv=none; b=jfYUje0HvlM9vFvQR+S2wrbseEKa37mby7HrxJSrE9PJJQZFXlv6k2wOVhiWCuxBeiDQUCAEpo1H/WKuTO5VYOGkvr2tBkXNr6ttzW94aHYQICUFJsXLHCuRdQ1BeO2vRPnShclCQY4f1DerIwmjPZ2yt0U7P3gZb/FXKNR/fzg=
+	t=1759669396; cv=none; b=W8N0sZZ6hUXk1nwMXJ1syJ1tPbxeEuiAIi83t2aQNQck+vs0ix1NmqdJfaHaTJm9lp0KT+SQ9fETYi1FaKpZai5nq7n32AbBBaSPSw7/34h97FsrLZkBtkrl/wqLuqqf/qkxuAj9dwL6YtgTj7B4l/LzLFgg/t81RbSF8bM2UoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759669487; c=relaxed/simple;
-	bh=IBM0gXe2yx+GuSNwZdH9eUDPRt/hJimlr6GRydvgk7U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IUtbBrD7QsdqzK1KQ8yudwNv+cK/r75aJeDAmVmUg5E8G8pEDNHSWKZ9fBu4xwoA6hVrTNJSfg96xCkKmVGuU4k5iRiwu2iYsI24RR9OsY53LLt7Z/TwobxIjYXZGJBZZNKao/gsalwBrZr3prpOpNqaEWdCyYAo4DmFkrpdNao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cBhNDEyO; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4da3019b6b6so37792761cf.3
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 06:04:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759669485; x=1760274285; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N+RJQKjQrFkOXYT+itRREJcbwRQ3We70gB/GA7XkcNY=;
-        b=cBhNDEyOta2wB1P//4V3618rwYnhuTb0R4QwvgJncTEoyw4PKmT+swBJxGyLIjq3WC
-         jqRw7wGH9qMKUDD5VLguzgxGhD8LuTLrogmSfw42yItX8zdaUPEaUtoE1bZf9EUWbewL
-         pUcVpAMA85v9BzN30r+hYvY9WJLTl28IZ+TB2Vpm2nLTZLpkm0M/2e33D7/cS4Ct9eHL
-         OkbU/31e5zceaIXsT+48QJ/rbRwYboUrXi2F5MJR6EeNOC/Uxb7wakHiFto+qzp3oXk0
-         T+gg4mW3xBSrZvPGdp69uGFzMyQNFc0Cjf3TFsNxx5XUo7lAbMffYj+Wm0GHuNUmHEYE
-         R7fA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759669485; x=1760274285;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N+RJQKjQrFkOXYT+itRREJcbwRQ3We70gB/GA7XkcNY=;
-        b=Ip5p6DZu/QWiwVgVTZIzoAhjAHP67zzN4kcQxMvWUnK1A95/1u1IBbycxiTnNSHj94
-         7Jg/WAoFpZHqH5+zIbT40FKpJiZSt848ZtFGrqke7gim/S706XfDnsGvDIz2YHERQhJ7
-         La2+dt2a+rYWFtBOuqPx8uvkKxYWplS0KJV+8EIurV4Liyiq1RRHRQqPEmCyRFV0FsaL
-         Pq36sz40ZkYnIok192x9QfYEcilt2SlxNpe2Ik3M57avuRCFU+fSowZQ1TxlrjRK09aa
-         pUoaWmy2W3VisU3KJHavFXa0MxW3JJUXONQgU7CLlQUVPqzRO2F3QDSCZD479i6MHqrI
-         z3FA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQvkLPSY2u7/TNA7fyA7bWlsqAxdVh+GAXwMef7QHIkQcx8subpJ+D+XuYE4f+d+J7l/MVFYEWk1diDZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxywDzw6nGYb2bf6J4Y/pTi/myCt6CY2rb3UDBPI5t82DQGCiVq
-	mh2n4NhPbKqEBseUJj7k3Ga6ors7UIcCFGBqdtv15/3nuU1aua6NJE4pvv5WkvAAkYfCOGf+Itp
-	FAFg2s/RteNGSlZwke/m5JSnjZOGCUGdZbZyfdlpQ
-X-Gm-Gg: ASbGncu8O/VwFg3ur2psjECtsp8DMLCAjboNckKPuu7inUKTZHUj3TOU09wFCA1muya
-	TxDIbGIf2f+rgohLwzo93tAny6LbJd1S3uduzNQb+vcx5uC8ASjLyY1Is3T+AOpV1HV+aju3pKV
-	y2TzDFzCATgRQX/sS1VMLmXX1RjluEy84XjIM39Id+4OwAjYgUL7kNonZk85u1KaR1NTW8YR8cW
-	hQs9A4UdLrfNKS10zTz/saG/7TML5dfdfWb8mLhPhDe2BQk
-X-Google-Smtp-Source: AGHT+IGPsbMcZU+vFeo9ZAmXgvwpBCCrndDdbMORhec+3i6dz7273LfwEIxnyR+I3xhjhE1r1jbPhGJsmb1RmGw5LpA=
-X-Received: by 2002:a05:622a:1885:b0:4b7:90e2:40df with SMTP id
- d75a77b69052e-4e576a44e99mr114292601cf.1.1759669484326; Sun, 05 Oct 2025
- 06:04:44 -0700 (PDT)
+	s=arc-20240116; t=1759669396; c=relaxed/simple;
+	bh=FvrH+3aJxrA4aLXH/Nmy63niNBpgyQ0KUCdej2/z7eU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l9Bfu8qY1uB1igP6GXAa68KAVVkdVeOxsSqoxKVrfqT4guM1T2GWlrPKvNdWqWqohhGR+fYI5rcuvGIgfzNLuKtQUaPercXumYnbGQRdWQiUC3FGKJxMxtBcbR6Js36hIJK6/zFNO16ti6mCo8nHl/1wjJyL39erWN/cTlOEd30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SQZHt57C; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759669386;
+	bh=FvrH+3aJxrA4aLXH/Nmy63niNBpgyQ0KUCdej2/z7eU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=SQZHt57C+EwgKJpvzLH+8UZFz3MG6bL7pho9WA6Jz/iThwWDQzrEXxu6LYij8/YzZ
+	 qA1k3driC6QgNHjrrW7pISAsB7Xf3pMtp95WvSYaLNb6b1HhsZupuDN9ClEdGT+h8B
+	 wy2thHPCN1D4Bz16MpMnBVB7kaS4y1RkCC/yZSnsNkXLbkoJqvfTgewvIJExxPG3ba
+	 yGNW8vnPQB6uCWuQwiijfK3A3eV1VhCsc72ndKf69FsbwErTDY9cE5sGTH6oAMuB2J
+	 JQMxLnhHyyuA2sycfcnaXA0eO+m424ow2N+wJFZDHafRQ/x1I+/qtzukBg8craCh/J
+	 EZFfopqbxnEyA==
+Received: from localhost.localdomain (unknown [92.206.120.121])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: gerddie)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 23CED17E0AC3;
+	Sun,  5 Oct 2025 15:03:06 +0200 (CEST)
+From: Gert Wollny <gert.wollny@collabora.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	amd-gfx@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Gert Wollny <gert.wollny@collabora.com>
+Subject: [PATCH] drm/radeon: fix allocation of ring memory in *copy_dma
+Date: Sun,  5 Oct 2025 15:04:54 +0200
+Message-ID: <20251005130454.11322-1-gert.wollny@collabora.com>
+X-Mailer: git-send-email 2.49.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251005122626.26988-1-wangfushuai@baidu.com>
-In-Reply-To: <20251005122626.26988-1-wangfushuai@baidu.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Sun, 5 Oct 2025 06:04:31 -0700
-X-Gm-Features: AS18NWAzrupW0HYnpOxSwBwRSmRYD-ffu1xxO0-ekzBqui4Dt-9D_s306e6ZH0E
-Message-ID: <CANn89iJs+Y7Ge2sbAOQSsuE6O1GbxuHbNrFxBO0fq1C3HOfxPA@mail.gmail.com>
-Subject: Re: [PATCH] wireguard: allowedips: Use kfree_rcu() instead of call_rcu()
-To: Fushuai Wang <wangfushuai@baidu.com>
-Cc: Jason@zx2c4.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	kuba@kernel.org, pabeni@redhat.com, wireguard@lists.zx2c4.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Oct 5, 2025 at 5:26=E2=80=AFAM Fushuai Wang <wangfushuai@baidu.com>=
- wrote:
->
-> Replace call_rcu() + kmem_cache_free() with kfree_rcu() to simplify
-> the code and reduce function size.
->
-> Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
+When running e.g. many deqp-gles31 tests in parallel kernel
+warnings
+ "radeon: writing more dwords to the ring than expected!"
+are issued.
+On evergree this happens because in evengreen_copy_dma not
+enough space is allocated in the ring memory, i.e. the amount
+of allocated memory only accounts for one possible wait
+semaphore and doesn't take the padding of the ring buffer
+into account.
+The code suggest that in r600_copy_dma and rv770_copy_dma
+the same problem exists.
 
-Hmm... have you compiled this patch ?
+Fix this by assuming the worst case, i.e. that RADEON_NUM_SYNCS
+wait semaphores need to be emitted and take also the padding
+into account.
 
-I think  all compilers would complain loudly.
+The patch fixes the issue in evengreen_copy_dma, r600_copy_dma,
+and rv770_copy_dma.
 
-> ---
->  drivers/net/wireguard/allowedips.c | 9 ++-------
->  1 file changed, 2 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/net/wireguard/allowedips.c b/drivers/net/wireguard/a=
-llowedips.c
-> index 09f7fcd7da78..506f7cf0d7cf 100644
-> --- a/drivers/net/wireguard/allowedips.c
-> +++ b/drivers/net/wireguard/allowedips.c
-> @@ -48,11 +48,6 @@ static void push_rcu(struct allowedips_node **stack,
->         }
->  }
->
-> -static void node_free_rcu(struct rcu_head *rcu)
-> -{
-> -       kmem_cache_free(node_cache, container_of(rcu, struct allowedips_n=
-ode, rcu));
-> -}
-> -
->  static void root_free_rcu(struct rcu_head *rcu)
->  {
->         struct allowedips_node *node, *stack[MAX_ALLOWEDIPS_DEPTH] =3D {
-> @@ -271,13 +266,13 @@ static void remove_node(struct allowedips_node *nod=
-e, struct mutex *lock)
->         if (free_parent)
->                 child =3D rcu_dereference_protected(parent->bit[!(node->p=
-arent_bit_packed & 1)],
->                                                   lockdep_is_held(lock));
-> -       call_rcu(&node->rcu, node_free_rcu);
-> +       kfree_rcu(&node, rcu);
+Signed-off-by: Gert Wollny <gert.wollny@collabora.com>
+---
+ drivers/gpu/drm/radeon/evergreen_dma.c | 13 +++++++++++--
+ drivers/gpu/drm/radeon/r600_dma.c      | 13 +++++++++++--
+ drivers/gpu/drm/radeon/rv770_dma.c     | 13 +++++++++++--
+ 3 files changed, 33 insertions(+), 6 deletions(-)
 
-kfree_rcu(node, rcu);
+diff --git a/drivers/gpu/drm/radeon/evergreen_dma.c b/drivers/gpu/drm/radeon/evergreen_dma.c
+index 52c79da1ecf5..1f07ee6f3f6a 100644
+--- a/drivers/gpu/drm/radeon/evergreen_dma.c
++++ b/drivers/gpu/drm/radeon/evergreen_dma.c
+@@ -113,7 +113,7 @@ struct radeon_fence *evergreen_copy_dma(struct radeon_device *rdev,
+ 	struct radeon_sync sync;
+ 	int ring_index = rdev->asic->copy.dma_ring_index;
+ 	struct radeon_ring *ring = &rdev->ring[ring_index];
+-	u32 size_in_dw, cur_size_in_dw;
++	u32 size_in_dw, cur_size_in_dw, ring_size_reserve;
+ 	int i, num_loops;
+ 	int r = 0;
+ 
+@@ -121,7 +121,16 @@ struct radeon_fence *evergreen_copy_dma(struct radeon_device *rdev,
+ 
+ 	size_in_dw = (num_gpu_pages << RADEON_GPU_PAGE_SHIFT) / 4;
+ 	num_loops = DIV_ROUND_UP(size_in_dw, 0xfffff);
+-	r = radeon_ring_lock(rdev, ring, num_loops * 5 + 11);
++
++	/* Worst case needed dwords:
++	 *  - 3 * RADEON_NUM_SYNCS for semaphore waits
++	 *  - 5 * num_loops for copy packages
++	 *  - 8 for fence
++	 * Finally, the block align block size to account for padding.
++	 */
++	ring_size_reserve = __ALIGN_MASK(RADEON_NUM_SYNCS * 3 + num_loops * 5 + 8,
++					 ring->align_mask);
++	r = radeon_ring_lock(rdev, ring, ring_size_reserve);
+ 	if (r) {
+ 		DRM_ERROR("radeon: moving bo (%d).\n", r);
+ 		radeon_sync_free(rdev, &sync, NULL);
+diff --git a/drivers/gpu/drm/radeon/r600_dma.c b/drivers/gpu/drm/radeon/r600_dma.c
+index 89ca2738c5d4..d55b0d721fb0 100644
+--- a/drivers/gpu/drm/radeon/r600_dma.c
++++ b/drivers/gpu/drm/radeon/r600_dma.c
+@@ -449,7 +449,7 @@ struct radeon_fence *r600_copy_dma(struct radeon_device *rdev,
+ 	struct radeon_sync sync;
+ 	int ring_index = rdev->asic->copy.dma_ring_index;
+ 	struct radeon_ring *ring = &rdev->ring[ring_index];
+-	u32 size_in_dw, cur_size_in_dw;
++	u32 size_in_dw, cur_size_in_dw, ring_size_reserve;
+ 	int i, num_loops;
+ 	int r = 0;
+ 
+@@ -457,7 +457,16 @@ struct radeon_fence *r600_copy_dma(struct radeon_device *rdev,
+ 
+ 	size_in_dw = (num_gpu_pages << RADEON_GPU_PAGE_SHIFT) / 4;
+ 	num_loops = DIV_ROUND_UP(size_in_dw, 0xFFFE);
+-	r = radeon_ring_lock(rdev, ring, num_loops * 4 + 8);
++
++	/* Worst case needed dwords:
++	 *  - 3 * RADEON_NUM_SYNCS for semaphore waits
++	 *  - 4 * num_loops for copy packages
++	 *  - 5 for fence
++	 * Finally, the block align block size to account for padding.
++	 */
++	ring_size_reserve = __ALIGN_MASK(RADEON_NUM_SYNCS * 3 + num_loops * 4 + 5,
++					 ring->align_mask);
++	r = radeon_ring_lock(rdev, ring, ring_size_reserve);
+ 	if (r) {
+ 		DRM_ERROR("radeon: moving bo (%d).\n", r);
+ 		radeon_sync_free(rdev, &sync, NULL);
+diff --git a/drivers/gpu/drm/radeon/rv770_dma.c b/drivers/gpu/drm/radeon/rv770_dma.c
+index 4c91614b5e70..c28c11a91e07 100644
+--- a/drivers/gpu/drm/radeon/rv770_dma.c
++++ b/drivers/gpu/drm/radeon/rv770_dma.c
+@@ -48,7 +48,7 @@ struct radeon_fence *rv770_copy_dma(struct radeon_device *rdev,
+ 	struct radeon_sync sync;
+ 	int ring_index = rdev->asic->copy.dma_ring_index;
+ 	struct radeon_ring *ring = &rdev->ring[ring_index];
+-	u32 size_in_dw, cur_size_in_dw;
++	u32 size_in_dw, cur_size_in_dw, ring_size_reserve;
+ 	int i, num_loops;
+ 	int r = 0;
+ 
+@@ -56,7 +56,16 @@ struct radeon_fence *rv770_copy_dma(struct radeon_device *rdev,
+ 
+ 	size_in_dw = (num_gpu_pages << RADEON_GPU_PAGE_SHIFT) / 4;
+ 	num_loops = DIV_ROUND_UP(size_in_dw, 0xFFFF);
+-	r = radeon_ring_lock(rdev, ring, num_loops * 5 + 8);
++
++	/* Worst case needed dwords:
++	 *  - 3 * RADEON_NUM_SYNCS for semaphore waits
++	 *  - 5 * num_loops for copy packages
++	 *  - 5 for fence
++	 * Finally, the block align block size to account for padding.
++	 */
++	ring_size_reserve = __ALIGN_MASK(
++		RADEON_NUM_SYNCS * 3 + num_loops * 5 + 5, ring->align_mask);
++	r = radeon_ring_lock(rdev, ring, ring_size_reserve);
+ 	if (r) {
+ 		DRM_ERROR("radeon: moving bo (%d).\n", r);
+ 		radeon_sync_free(rdev, &sync, NULL);
+-- 
+2.49.1
 
->         if (!free_parent)
->                 return;
->         if (child)
->                 child->parent_bit_packed =3D parent->parent_bit_packed;
->         *(struct allowedips_node **)(parent->parent_bit_packed & ~3UL) =
-=3D child;
-> -       call_rcu(&parent->rcu, node_free_rcu);
-> +       kfree_rcu(&parent, rcu);
-
-kfree_rcu(parent, rcu);
-
->  }
->
->  static int remove(struct allowedips_node __rcu **trie, u8 bits, const u8=
- *key,
-> --
-> 2.36.1
->
 
