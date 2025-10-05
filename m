@@ -1,534 +1,128 @@
-Return-Path: <linux-kernel+bounces-842400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03758BB9ADE
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 20:25:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4BD9BB9AC9
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 20:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A510B1895840
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 18:26:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B5151895572
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 18:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC43C28B4FA;
-	Sun,  5 Oct 2025 18:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11D21D5178;
+	Sun,  5 Oct 2025 18:24:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Yz+kd2Aw"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="giKTBQge"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C28E28727B
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 18:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC5C81720
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 18:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759688690; cv=none; b=I2+pKluL3VjJkj/YmbtOK0lRz/+zYpgnjATGPWV71Q1z2YtuleqajlA2cVaNaes8FkgEVPhJvW8YJHNlTnLLRNkY6vL003D8cOyBOv0TfSi8xYTXtIpj0sAXnG/agIUW7NYUtJO7aq5WbfTpJSyQbp9JESFOCHibZflFLlowyXU=
+	t=1759688670; cv=none; b=XqNmnMn41pUBaBVEVh30/LPGRBw1lEH9SgB8b09FW2oMHgaA27sRWmW4OXQ+wvRXBmFq+fNuh8k0dBDUEWpI5OTkut9BxhFm1BpJMpmRGfpBG0KONR1clOhnQ3Irxz0q0vcbfvoxtHJOkmBtIAK/CEE7g8c3IC7QihVPtb/iEbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759688690; c=relaxed/simple;
-	bh=sWV8Ll1Ve8c/FXitNqkLKkzg1Dp5zZhN3njp+zX35mE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JVSUFVgwWgGQDnXoWXd+1K+m2xhhcWjrntlFFwJGvnMsfQUcuOxbRfL/IFjKtOnSvgtdNgl8rKmZwJgfubhwCkw3mtOhkefpeyyA9BBRNtcZgaHvUyao22AQ0m6jiXkaiH3Fm/dz7KWJ8muxzqNOwj/MBVeXs1E4YgUlHSj3XAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Yz+kd2Aw; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-27c62320f16so39246535ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 11:24:48 -0700 (PDT)
+	s=arc-20240116; t=1759688670; c=relaxed/simple;
+	bh=9WjzuHBdxag7kq4Nilmq5RRZAta4IJxqsLveY2PxQo4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t1EFu2ddbCkGx7EacY4r4h98hEjm1iM6vbz2dXC4Qx2QvLNNdz9SpaVAOfifbzc74XFtczYMcm+q4vt7P5pYlEmw5wJs+u4a0/pLFbS+tWm/OLYbMECP8gmNuDSn4mPOVbBcbbV4t1fVySEebw924NVkZ1Im4EpnMH0WcZkVbbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=giKTBQge; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afcb7a16441so671193066b.2
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 11:24:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759688688; x=1760293488; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kxk3DUt2nP9SJOZ7uD9B4q0ExZ3890SLHx1MZtRj7n0=;
-        b=Yz+kd2AwzYnKQIBVSwWjRJfuxU6+xrmaVwl2srm8EH03TcZa7/03Xe3L8Xv8DHwTTo
-         lhJ2wf65knL+9UimFxUY1hDqKk0maraS17ZFujXKjkGolMghUZbXduf3uBJHDDUzJQhZ
-         JhXozdyvf8o9nfKrc/waEEqH50VO59CuErZ80jA39HMRRzTsIQlkw4MQJMHED83Ygp9H
-         NoWW9ceXIzKqSp32P2fnGXgeFZbVSihV909ACBUFEmIF69ACytE3d7BzdlCNrR+6D7RE
-         SLVuucE73d3JdTngzdwHeMAmwJHOwmg1Yvo4u6G7cPdJi1Tc0EsEvq663vz5amorxWId
-         xT0Q==
+        d=linux-foundation.org; s=google; t=1759688666; x=1760293466; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wpo9TLVZT45BbNVhzNvMd0DcfN1QJDQZVUcsc3h68LA=;
+        b=giKTBQgelJMv8HlzSf8xwLbFS65/lNgWtn9YRMEJNc9oTdvd6vnjl7OgWwpguQTiRc
+         wOUy+vNsdL+yiw9k8TYte88zYuC4NG1Q/PxLePT9UU5XAep1uhtCgPAMTbYEJbFdCRH5
+         BQWO6FAd93kmuQ+pgXDDr3+R4dClbuK7CjtQE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759688688; x=1760293488;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kxk3DUt2nP9SJOZ7uD9B4q0ExZ3890SLHx1MZtRj7n0=;
-        b=TZGWLWU0FJfj1B+t+ftSRejo6oR0VCllSekvnROaVf/TlNapQb37TMuL7w2RbIPJGR
-         qZVxqxQIs/fxnuspP/fmxQonzTrqo7OXEvoXWe09zFAT6KCgTE3YH+bj8GpCYssptZmr
-         KGax1tqCWS8EUkF/crI1E3WbDtuTIIpiBCuAIQZPUSKSD+l+L0mW94UBTvKRffl1YFML
-         nkO7rXLO+88ks6DxfbavVzGw1q0bhiqSkQZhqgiC/k2whMUWebg8QI8Qr4eJJHIDVAQP
-         uwHq0uTPH3JlVlP7/tnf+nnNP3qpys94OgGuOOGn68YEHur8agnozoY2f9N9r2O4eI4T
-         IAqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTCCWsED7/sehA3aEPYQjkLE4Q6xlaa/h8XvsIt1f547MUoz6+ou2bulItD9HP66LClQY3RGAq5rsqHUs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZmd3pCqfGmr8+nekVf87mNhv+ZZGW8xYmRUJjq0/1qIQclxiS
-	F2kqq7FCVBPVpeRS6FMn26t1MnSIUe5ZEfpJcjxcdZalJLqa+QPlTRY6afixnYHvSx1mC+ls423
-	mIgvfhWGoZg==
-X-Google-Smtp-Source: AGHT+IGHAVQ0PRAFExjuXPjAPkU9KULIqincJcUq+6tSB2PL7wMz6Ue7ju6vwmCxn3BfHBz9hbQV5iKAitBA
-X-Received: from plld24.prod.google.com ([2002:a17:902:7298:b0:269:8f89:1a58])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1446:b0:24c:9a51:9a33
- with SMTP id d9443c01a7336-28e9a583236mr101707555ad.22.1759688688014; Sun, 05
- Oct 2025 11:24:48 -0700 (PDT)
-Date: Sun,  5 Oct 2025 11:24:09 -0700
-In-Reply-To: <20251005182430.2791371-1-irogers@google.com>
+        d=1e100.net; s=20230601; t=1759688666; x=1760293466;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Wpo9TLVZT45BbNVhzNvMd0DcfN1QJDQZVUcsc3h68LA=;
+        b=IWjgnUM+g2WmOeXwByCEzsYDQ+NXcX85QWPGE8nvq10ByMtA6ns5MkkhxuRi/3hAMO
+         zrzQk6dUj5I5gyp3x/5x7oaR5osyksxD6ibDPqxaJhF/Eh8jVuRjQUQTD3A97nhepyRc
+         +XOQAEaLxb7m1vq+IkwtAQ3EOR4ZOE3nNs1VGNYmA+JJCBSJ6LYC9chSU2NZci3DDn21
+         ITRJmNjfAPz2bUW9DX/p3bqyKxTgvNB5J7hDRFUgnT3GV/J1/EUgyWhmDaQ4GqDAKkQJ
+         ypHx54IP/9mJXiNjT63sQqrQUWF6q408YR0UF17Wu/sIjcYWZd1SWq0D2i392FAnK+AB
+         ibnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBoe6wtAKcHI3mSbUbBz6PuU5D1fiZQCiAgEfxufsMODDDAwcfRhaU+EsOLTj8LRVUA9U2HS2Cem5Hvgs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD4603xRmv4QRjB8MeuW5M+sxcQ+IqnChatkhrQwffLW/316iT
+	AAaix98sGiMu0PT2KYId3CQl2eGcgrZU0vje3njiBsIzXAUH4uN+sVXvuH9MNqdAbtmC1lywinm
+	X9MDwTkM=
+X-Gm-Gg: ASbGncvk+n2r1zJasFzVspEcZJAH+ufjfNXKbFR1MkrBpzZFJpDhKOTDlj2buA4tWGs
+	WQ8tGxsd+Ec0VNNBcAkXMvY8o58neGF+26bZYoSUBjYZFA2ZQNJDWfTnlJAqfLh60rx0p1jV/B3
+	clEbNdO0xuRnrtK6zIbrlkUMQlw0HZCZy2+8ZL9jDwL2r4uYzlGzY7o6GTZ5TAHlQtGivEMZutr
+	hxzqORVEgRu9kYrlytf42dQqsVUok60FaVrKJXU/yYurEdDyepxZIRuri4PhKnSyIcLok7jwRU3
+	wOfOjKPDRAbgJc+cK/SZu9GinIi6z0qTKb2iQq4jwL1lHFKT+Z29f566Zy2WtDPJWRlD0Znr9XJ
+	9SmYEXGh7L+w58UH9vP+ewjcQwWBkVDaBI5irsqqVYtZBCE6w5fbunx7kTHbo+lJZBkHrfAuKlx
+	7i3T/PPQ0ZrYdnNsl9DuVjVaiUKt7ffOo=
+X-Google-Smtp-Source: AGHT+IFSoRnWbztvFEg/q1xcvgaWcGMwgAGQ9m53pez5ctJAohydEV+J1UCkRmfQ3Fz/q3ZWBslCbw==
+X-Received: by 2002:a17:907:3e92:b0:b3e:580a:184f with SMTP id a640c23a62f3a-b49c1b6bf0bmr1200466066b.4.1759688666142;
+        Sun, 05 Oct 2025 11:24:26 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486970b5acsm962058866b.60.2025.10.05.11.24.25
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 05 Oct 2025 11:24:25 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6395172532fso4548989a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 11:24:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXFQeVZswU+cGeh07igN7O6FR7InXrs9eSOh8QVaDks20JwmD8XLmeyFuNIe+CX8tav0BonwMhDqGs3LAk=@vger.kernel.org
+X-Received: by 2002:a17:907:2da6:b0:b3e:ac8a:b1e1 with SMTP id
+ a640c23a62f3a-b49c27518demr1450075066b.27.1759688665152; Sun, 05 Oct 2025
+ 11:24:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251005182430.2791371-1-irogers@google.com>
-X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
-Message-ID: <20251005182430.2791371-7-irogers@google.com>
-Subject: [PATCH v7 06/27] perf pmu: Don't eagerly parse event terms
-From: Ian Rogers <irogers@google.com>
-To: James Clark <james.clark@linaro.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Xu Yang <xu.yang_2@nxp.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Andi Kleen <ak@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	Atish Patra <atishp@rivosinc.com>, Beeman Strong <beeman@rivosinc.com>, Leo Yan <leo.yan@arm.com>, 
-	Vince Weaver <vincent.weaver@maine.edu>
-Cc: Ian Rogers <irogers@google.com>, Thomas Richter <tmricht@linux.ibm.com>
+MIME-Version: 1.0
+References: <aOKTFv1vh1cvvcLk@kernel.org>
+In-Reply-To: <aOKTFv1vh1cvvcLk@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 5 Oct 2025 11:24:09 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whSe9AGigVydkwo=ewE6_GFTJ_rU=XzO=v1N1sWyfVmAw@mail.gmail.com>
+X-Gm-Features: AS18NWBWjtRNMqiFhMnbqxI4QyLpCSEY68UKMaGvljy0AnFZ4D7Y6Tta1dBrPrw
+Message-ID: <CAHk-=whSe9AGigVydkwo=ewE6_GFTJ_rU=XzO=v1N1sWyfVmAw@mail.gmail.com>
+Subject: Re: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-v6.18
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, David Howells <dhowells@redhat.com>, 
+	keyrings@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-When an event/alias is created for a PMU the terms are eagerly parsed
-using parse_events_terms. For a command like perf stat or perf record,
-the particular event/alias will be found, the terms parsed, the
-terms cloned for use in the event parsing, and then the terms used to
-configure the perf_event_attr. Events/aliases may be eagerly loaded,
-such as from sysfs or in perf list, in which case the aliases terms
-will be little or never used. To avoid redundant work, to avoid
-cloning, and to reduce memory overhead, hold the terms for an event as
-a string until they need handling as a term list. This may introduce
-duplicate parsing if an event is repeated in a list, but this
-situation is expected to be uncommon.
+On Sun, 5 Oct 2025 at 08:47, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+>
+> and apologies for this late pull request. This pull request disables
+> TCG_TPM2_HMAC from the default configuration as it does not perform well
+> enough
 
-Measuring the number of instructions before and after with a sysfs
-event and perf stat, there is a minor reduction in the number of
-instructions executed by 0.3%.
+So having looked more at this, not only does it disable that
+TCG_TPM2_HMAC, it does a lot of other things too.
 
-Tested-by: Thomas Richter <tmricht@linux.ibm.com>
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/tests/pmu-events.c  |  24 +------
- tools/perf/util/parse-events.c |   3 +-
- tools/perf/util/parse-events.h |   1 -
- tools/perf/util/pmu.c          | 111 ++++++++++++++++++++-------------
- 4 files changed, 70 insertions(+), 69 deletions(-)
+I really am going to require a better pull request, and I have thrown
+this one away.
 
-diff --git a/tools/perf/tests/pmu-events.c b/tools/perf/tests/pmu-events.c
-index 95fd9f671a22..f40a828c9861 100644
---- a/tools/perf/tests/pmu-events.c
-+++ b/tools/perf/tests/pmu-events.c
-@@ -22,10 +22,6 @@ struct perf_pmu_test_event {
- 	/* used for matching against events from generated pmu-events.c */
- 	struct pmu_event event;
- 
--	/* used for matching against event aliases */
--	/* extra events for aliases */
--	const char *alias_str;
--
- 	/*
- 	 * Note: For when PublicDescription does not exist in the JSON, we
- 	 * will have no long_desc in pmu_event.long_desc, but long_desc may
-@@ -52,7 +48,6 @@ static const struct perf_pmu_test_event bp_l1_btb_correct = {
- 		.desc = "L1 BTB Correction",
- 		.topic = "branch",
- 	},
--	.alias_str = "event=0x8a",
- };
- 
- static const struct perf_pmu_test_event bp_l2_btb_correct = {
-@@ -63,7 +58,6 @@ static const struct perf_pmu_test_event bp_l2_btb_correct = {
- 		.desc = "L2 BTB Correction",
- 		.topic = "branch",
- 	},
--	.alias_str = "event=0x8b",
- };
- 
- static const struct perf_pmu_test_event segment_reg_loads_any = {
-@@ -74,7 +68,6 @@ static const struct perf_pmu_test_event segment_reg_loads_any = {
- 		.desc = "Number of segment register loads",
- 		.topic = "other",
- 	},
--	.alias_str = "event=0x6,period=0x30d40,umask=0x80",
- };
- 
- static const struct perf_pmu_test_event dispatch_blocked_any = {
-@@ -85,7 +78,6 @@ static const struct perf_pmu_test_event dispatch_blocked_any = {
- 		.desc = "Memory cluster signals to block micro-op dispatch for any reason",
- 		.topic = "other",
- 	},
--	.alias_str = "event=0x9,period=0x30d40,umask=0x20",
- };
- 
- static const struct perf_pmu_test_event eist_trans = {
-@@ -96,7 +88,6 @@ static const struct perf_pmu_test_event eist_trans = {
- 		.desc = "Number of Enhanced Intel SpeedStep(R) Technology (EIST) transitions",
- 		.topic = "other",
- 	},
--	.alias_str = "event=0x3a,period=0x30d40",
- };
- 
- static const struct perf_pmu_test_event l3_cache_rd = {
-@@ -108,7 +99,6 @@ static const struct perf_pmu_test_event l3_cache_rd = {
- 		.long_desc = "Attributable Level 3 cache access, read",
- 		.topic = "cache",
- 	},
--	.alias_str = "event=0x40",
- 	.alias_long_desc = "Attributable Level 3 cache access, read",
- };
- 
-@@ -130,7 +120,6 @@ static const struct perf_pmu_test_event uncore_hisi_ddrc_flux_wcmd = {
- 		.topic = "uncore",
- 		.pmu = "hisi_sccl,ddrc",
- 	},
--	.alias_str = "event=0x2",
- 	.matching_pmu = "hisi_sccl1_ddrc2",
- };
- 
-@@ -142,7 +131,6 @@ static const struct perf_pmu_test_event unc_cbo_xsnp_response_miss_eviction = {
- 		.topic = "uncore",
- 		.pmu = "uncore_cbox",
- 	},
--	.alias_str = "event=0x22,umask=0x81",
- 	.matching_pmu = "uncore_cbox_0",
- };
- 
-@@ -154,7 +142,6 @@ static const struct perf_pmu_test_event uncore_hyphen = {
- 		.topic = "uncore",
- 		.pmu = "uncore_cbox",
- 	},
--	.alias_str = "event=0xe0",
- 	.matching_pmu = "uncore_cbox_0",
- };
- 
-@@ -166,7 +153,6 @@ static const struct perf_pmu_test_event uncore_two_hyph = {
- 		.topic = "uncore",
- 		.pmu = "uncore_cbox",
- 	},
--	.alias_str = "event=0xc0",
- 	.matching_pmu = "uncore_cbox_0",
- };
- 
-@@ -178,7 +164,6 @@ static const struct perf_pmu_test_event uncore_hisi_l3c_rd_hit_cpipe = {
- 		.topic = "uncore",
- 		.pmu = "hisi_sccl,l3c",
- 	},
--	.alias_str = "event=0x7",
- 	.matching_pmu = "hisi_sccl3_l3c7",
- };
- 
-@@ -190,7 +175,6 @@ static const struct perf_pmu_test_event uncore_imc_free_running_cache_miss = {
- 		.topic = "uncore",
- 		.pmu = "uncore_imc_free_running",
- 	},
--	.alias_str = "event=0x12",
- 	.matching_pmu = "uncore_imc_free_running_0",
- };
- 
-@@ -202,7 +186,6 @@ static const struct perf_pmu_test_event uncore_imc_cache_hits = {
- 		.topic = "uncore",
- 		.pmu = "uncore_imc",
- 	},
--	.alias_str = "event=0x34",
- 	.matching_pmu = "uncore_imc_0",
- };
- 
-@@ -226,7 +209,6 @@ static const struct perf_pmu_test_event sys_ddr_pmu_write_cycles = {
- 		.pmu = "uncore_sys_ddr_pmu",
- 		.compat = "v8",
- 	},
--	.alias_str = "event=0x2b",
- 	.matching_pmu = "uncore_sys_ddr_pmu0",
- };
- 
-@@ -239,7 +221,6 @@ static const struct perf_pmu_test_event sys_ccn_pmu_read_cycles = {
- 		.pmu = "uncore_sys_ccn_pmu",
- 		.compat = "0x01",
- 	},
--	.alias_str = "config=0x2c",
- 	.matching_pmu = "uncore_sys_ccn_pmu4",
- };
- 
-@@ -252,7 +233,6 @@ static const struct perf_pmu_test_event sys_cmn_pmu_hnf_cache_miss = {
- 		.pmu = "uncore_sys_cmn_pmu",
- 		.compat = "(434|436|43c|43a).*",
- 	},
--	.alias_str = "eventid=0x1,type=0x5",
- 	.matching_pmu = "uncore_sys_cmn_pmu0",
- };
- 
-@@ -374,9 +354,9 @@ static int compare_alias_to_test_event(struct pmu_event_info *alias,
- 		return -1;
- 	}
- 
--	if (!is_same(alias->str, test_event->alias_str)) {
-+	if (!is_same(alias->str, test_event->event.event)) {
- 		pr_debug("testing aliases PMU %s: mismatched str, %s vs %s\n",
--			  pmu_name, alias->str, test_event->alias_str);
-+			  pmu_name, alias->str, test_event->event.event);
- 		return -1;
- 	}
- 
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 90a765016f64..8f320d08cf1f 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -40,6 +40,7 @@ static int get_config_terms(const struct parse_events_terms *head_config,
- 			    struct list_head *head_terms);
- static int parse_events_terms__copy(const struct parse_events_terms *src,
- 				    struct parse_events_terms *dest);
-+static int parse_events_terms__to_strbuf(const struct parse_events_terms *terms, struct strbuf *sb);
- 
- const struct event_symbol event_symbols_hw[PERF_COUNT_HW_MAX] = {
- 	[PERF_COUNT_HW_CPU_CYCLES] = {
-@@ -2876,7 +2877,7 @@ void parse_events_terms__delete(struct parse_events_terms *terms)
- 	free(terms);
- }
- 
--int parse_events_terms__to_strbuf(const struct parse_events_terms *terms, struct strbuf *sb)
-+static int parse_events_terms__to_strbuf(const struct parse_events_terms *terms, struct strbuf *sb)
- {
- 	struct parse_events_term *term;
- 	bool first = true;
-diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-events.h
-index 8af19dec6a17..ed7b73591139 100644
---- a/tools/perf/util/parse-events.h
-+++ b/tools/perf/util/parse-events.h
-@@ -200,7 +200,6 @@ void parse_events_terms__delete(struct parse_events_terms *terms);
- void parse_events_terms__init(struct parse_events_terms *terms);
- void parse_events_terms__exit(struct parse_events_terms *terms);
- int parse_events_terms(struct parse_events_terms *terms, const char *str, FILE *input);
--int parse_events_terms__to_strbuf(const struct parse_events_terms *terms, struct strbuf *sb);
- 
- struct parse_events_modifier {
- 	u8 precise;	/* Number of repeated 'p' for precision. */
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 3d1f975e8db9..102fabfbf1d5 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -67,8 +67,8 @@ struct perf_pmu_alias {
- 	 * json events.
- 	 */
- 	char *topic;
--	/** @terms: Owned list of the original parsed parameters. */
--	struct parse_events_terms terms;
-+	/** @terms: Owned copy of the event terms. */
-+	char *terms;
- 	/**
- 	 * @pmu_name: The name copied from the json struct pmu_event. This can
- 	 * differ from the PMU name as it won't have suffixes.
-@@ -429,7 +429,7 @@ static void perf_pmu_free_alias(struct perf_pmu_alias *alias)
- 	zfree(&alias->long_desc);
- 	zfree(&alias->topic);
- 	zfree(&alias->pmu_name);
--	parse_events_terms__exit(&alias->terms);
-+	zfree(&alias->terms);
- 	free(alias);
- }
- 
-@@ -537,8 +537,8 @@ static int update_alias(const struct pmu_event *pe,
- 	assign_str(pe->name, "topic", &data->alias->topic, pe->topic);
- 	data->alias->per_pkg = pe->perpkg;
- 	if (pe->event) {
--		parse_events_terms__exit(&data->alias->terms);
--		ret = parse_events_terms(&data->alias->terms, pe->event, /*input=*/NULL);
-+		zfree(&data->alias->terms);
-+		data->alias->terms = strdup(pe->event);
- 	}
- 	if (!ret && pe->unit) {
- 		char *unit;
-@@ -590,7 +590,6 @@ static int perf_pmu__new_alias(struct perf_pmu *pmu, const char *name,
- 	if (!alias)
- 		return -ENOMEM;
- 
--	parse_events_terms__init(&alias->terms);
- 	alias->scale = 1.0;
- 	alias->unit[0] = '\0';
- 	alias->per_pkg = perpkg;
-@@ -615,11 +614,16 @@ static int perf_pmu__new_alias(struct perf_pmu *pmu, const char *name,
- 	if (ret)
- 		return ret;
- 
--	ret = parse_events_terms(&alias->terms, val, val_fd);
--	if (ret) {
--		pr_err("Cannot parse alias %s: %d\n", val, ret);
--		free(alias);
--		return ret;
-+	if (!val_fd) {
-+		alias->terms = strdup(val);
-+	} else {
-+		size_t line_len;
-+
-+		ret = getline(&alias->terms, &line_len, val_fd) < 0 ? -errno : 0;
-+		if (ret) {
-+			pr_err("Failed to read alias %s\n", name);
-+			return ret;
-+		}
- 	}
- 
- 	alias->name = strdup(name);
-@@ -767,29 +771,21 @@ static int pmu_aliases_parse_eager(struct perf_pmu *pmu, int sysfs_fd)
- 	return ret;
- }
- 
--static int pmu_alias_terms(struct perf_pmu_alias *alias, int err_loc, struct list_head *terms)
-+static int pmu_alias_terms(struct perf_pmu_alias *alias, struct list_head *terms)
- {
--	struct parse_events_term *term, *cloned;
--	struct parse_events_terms clone_terms;
--
--	parse_events_terms__init(&clone_terms);
--	list_for_each_entry(term, &alias->terms.terms, list) {
--		int ret = parse_events_term__clone(&cloned, term);
-+	struct parse_events_terms alias_terms;
-+	int ret;
- 
--		if (ret) {
--			parse_events_terms__exit(&clone_terms);
--			return ret;
--		}
--		/*
--		 * Weak terms don't override command line options,
--		 * which we don't want for implicit terms in aliases.
--		 */
--		cloned->weak = true;
--		cloned->err_term = cloned->err_val = err_loc;
--		list_add_tail(&cloned->list, &clone_terms.terms);
-+	parse_events_terms__init(&alias_terms);
-+	ret = parse_events_terms(&alias_terms, alias->terms, /*input=*/NULL);
-+	if (ret) {
-+		pr_err("Cannot parse '%s' terms '%s': %d\n",
-+		       alias->name, alias->terms, ret);
-+		parse_events_terms__exit(&alias_terms);
-+		return ret;
- 	}
--	list_splice_init(&clone_terms.terms, terms);
--	parse_events_terms__exit(&clone_terms);
-+	list_splice_init(&alias_terms.terms, terms);
-+	parse_events_terms__exit(&alias_terms);
- 	return 0;
- }
- 
-@@ -1813,10 +1809,10 @@ int perf_pmu__check_alias(struct perf_pmu *pmu, struct parse_events_terms *head_
- 		alias = pmu_find_alias(pmu, term);
- 		if (!alias)
- 			continue;
--		ret = pmu_alias_terms(alias, term->err_term, &term->list);
-+		ret = pmu_alias_terms(alias, &term->list);
- 		if (ret) {
- 			parse_events_error__handle(err, term->err_term,
--						strdup("Failure to duplicate terms"),
-+						strdup("Failed to parse terms"),
- 						NULL);
- 			return ret;
- 		}
-@@ -2036,18 +2032,37 @@ static int sub_non_neg(int a, int b)
- static char *format_alias(char *buf, int len, const struct perf_pmu *pmu,
- 			  const struct perf_pmu_alias *alias, bool skip_duplicate_pmus)
- {
-+	struct parse_events_terms terms;
- 	struct parse_events_term *term;
-+	int ret, used;
- 	size_t pmu_name_len = pmu_deduped_name_len(pmu, pmu->name,
- 						   skip_duplicate_pmus);
--	int used = snprintf(buf, len, "%.*s/%s", (int)pmu_name_len, pmu->name, alias->name);
- 
--	list_for_each_entry(term, &alias->terms.terms, list) {
-+	/* Paramemterized events have the parameters shown. */
-+	if (strstr(alias->terms, "=?")) {
-+		/* No parameters. */
-+		snprintf(buf, len, "%.*s/%s/", (int)pmu_name_len, pmu->name, alias->name);
-+		return buf;
-+	}
-+
-+	parse_events_terms__init(&terms);
-+	ret = parse_events_terms(&terms, alias->terms, /*input=*/NULL);
-+	if (ret) {
-+		pr_err("Failure to parse '%s' terms '%s': %d\n",
-+			alias->name, alias->terms, ret);
-+		parse_events_terms__exit(&terms);
-+		snprintf(buf, len, "%.*s/%s/", (int)pmu_name_len, pmu->name, alias->name);
-+		return buf;
-+	}
-+	used = snprintf(buf, len, "%.*s/%s", (int)pmu_name_len, pmu->name, alias->name);
-+
-+	list_for_each_entry(term, &terms.terms, list) {
- 		if (term->type_val == PARSE_EVENTS__TERM_TYPE_STR)
- 			used += snprintf(buf + used, sub_non_neg(len, used),
- 					",%s=%s", term->config,
- 					term->val.str);
- 	}
--
-+	parse_events_terms__exit(&terms);
- 	if (sub_non_neg(len, used) > 0) {
- 		buf[used] = '/';
- 		used++;
-@@ -2070,7 +2085,6 @@ int perf_pmu__for_each_event(struct perf_pmu *pmu, bool skip_duplicate_pmus,
- 		.event_type_desc = "Kernel PMU event",
- 	};
- 	int ret = 0;
--	struct strbuf sb;
- 	struct hashmap_entry *entry;
- 	size_t bkt;
- 
-@@ -2081,7 +2095,6 @@ int perf_pmu__for_each_event(struct perf_pmu *pmu, bool skip_duplicate_pmus,
- 	if (perf_pmu__is_drm(pmu))
- 		return drm_pmu__for_each_event(pmu, state, cb);
- 
--	strbuf_init(&sb, /*hint=*/ 0);
- 	pmu_aliases_parse(pmu);
- 	pmu_add_cpu_aliases(pmu);
- 	hashmap__for_each_entry(pmu->aliases, entry, bkt) {
-@@ -2116,16 +2129,14 @@ int perf_pmu__for_each_event(struct perf_pmu *pmu, bool skip_duplicate_pmus,
- 		info.desc = event->desc;
- 		info.long_desc = event->long_desc;
- 		info.encoding_desc = buf + buf_used;
--		parse_events_terms__to_strbuf(&event->terms, &sb);
- 		buf_used += snprintf(buf + buf_used, sizeof(buf) - buf_used,
--				"%.*s/%s/", (int)pmu_name_len, info.pmu_name, sb.buf) + 1;
-+				"%.*s/%s/", (int)pmu_name_len, info.pmu_name, event->terms) + 1;
-+		info.str = event->terms;
- 		info.topic = event->topic;
--		info.str = sb.buf;
- 		info.deprecated = event->deprecated;
- 		ret = cb(state, &info);
- 		if (ret)
- 			goto out;
--		strbuf_setlen(&sb, /*len=*/ 0);
- 	}
- 	if (pmu->selectable) {
- 		info.name = buf;
-@@ -2141,7 +2152,6 @@ int perf_pmu__for_each_event(struct perf_pmu *pmu, bool skip_duplicate_pmus,
- 		ret = cb(state, &info);
- 	}
- out:
--	strbuf_release(&sb);
- 	return ret;
- }
- 
-@@ -2589,10 +2599,21 @@ const char *perf_pmu__name_from_config(struct perf_pmu *pmu, u64 config)
- 	hashmap__for_each_entry(pmu->aliases, entry, bkt) {
- 		struct perf_pmu_alias *event = entry->pvalue;
- 		struct perf_event_attr attr = {.config = 0,};
-+		struct parse_events_terms terms;
-+		int ret;
- 
--		int ret = perf_pmu__config(pmu, &attr, &event->terms, /*apply_hardcoded=*/true,
--					   /*err=*/NULL);
-+		parse_events_terms__init(&terms);
-+		ret = parse_events_terms(&terms, event->terms, /*input=*/NULL);
-+		if (ret) {
-+			pr_debug("Failed to parse '%s' terms '%s': %d\n",
-+				event->name, event->terms, ret);
-+			parse_events_terms__exit(&terms);
-+			continue;
-+		}
-+		ret = perf_pmu__config(pmu, &attr, &terms, /*apply_hardcoded=*/true,
-+				       /*err=*/NULL);
- 
-+		parse_events_terms__exit(&terms);
- 		if (ret == 0 && config == attr.config)
- 			return event->name;
- 	}
--- 
-2.51.0.618.g983fd99d29-goog
+The exclusive access looks debatable to me too. I think you should
+also require that the open was done not only with O_EXCL, but as a
+write too.
 
+Exclusive reads do not make sense.
+
+Now, I certainly *hope* that nobody has /dev/tmp being world-readable,
+so it probably doesn't matter, but that new exclusive access thing is
+very different than what the code used to do, and if I read it
+correctly it will also disable the kernel doing certain operations. So
+it needs to be as limited as possible.
+
+And damn it, it needs to be *explained*. Not have a pull request where
+one single line is explained badly.
+
+             Linus
 
