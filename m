@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-842402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD022BB9AE4
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 20:26:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DF96BB9AE7
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 20:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ED80C346FD2
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 18:26:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D7F53A5BEC
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 18:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D809D28CF77;
-	Sun,  5 Oct 2025 18:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D072957CD;
+	Sun,  5 Oct 2025 18:24:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HqN8sLLn"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pJ4nOr6j"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B4828AAE0
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 18:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F5528CF4A
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 18:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759688695; cv=none; b=mLUgVWod9IrrUmmzneJApAaUDkYGJ2n/+vVJJFtT7KYvftZa+TyY/RJEhXxNpdV4Zwy4lNVsCYc0fYAipPajucC6RN7hxs8I5bht4n09vDKAzQAorKbu6jj/rs/aUW7l35jNgrPyTAO5fhuurR78zMA+JRtVUJ6obR1vyF8QzW0=
+	t=1759688696; cv=none; b=c/eh7lgT4XTEkDhFPb+LZby+QnFobzkdDV5qJ3YQt3UNqu9I8oo1PrQAgxe7wvNKEWukehrvagS/GqgECrP9jr45z/yntTI4fu+8ZlXJ96+7IKcbstKNx8GeZMfWjZ7o9TSVK0+K0lroZGIARhhbyXM3+THUG0Ns6p6/cbh0naM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759688695; c=relaxed/simple;
-	bh=oZnPNPyMW5ix5+T/Kd4AGKTs8ir+V+xUhPwOTmL9jbs=;
+	s=arc-20240116; t=1759688696; c=relaxed/simple;
+	bh=6p43zhgfxzOqfth9ihxTy+OAOu1uvEgAxqAGt//52mo=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=d3m0rgJdNE47cnfssGJVvNCqJgWz/nKvkWD1pfkN51a1xIPh6k9183phqH5owgys9X3HzGerkmuXA0frCZxg510CcyNTRD1f4UKy1tGZkB9JcZNlVMUQnHgB/YfJEvHGLWtWx99bhbQffvl69QSwIsMySxXkTDiMlkIDKiwZvV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HqN8sLLn; arc=none smtp.client-ip=209.85.128.202
+	 To:Cc:Content-Type; b=B4EynEHriqUE480wdELhpoUnofn0XihApHNacZje4r7JKbmt7h1hTme8wzM6Xygb9H6GJsfgXeR/oysZjrB3m57uRuhZ6Udr4iRUw1Qx01WQKeqh7IPNu2jvSupVUmlHnp+Hm505u/Sokx8IATzqqJzFhIBhjNMSesrXVgtR/8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pJ4nOr6j; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-746b28ff4c5so43440677b3.3
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 11:24:53 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-277f0ea6fc6so96499845ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 11:24:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759688692; x=1760293492; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1759688694; x=1760293494; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=D4arvNqKzsedVSCdkfpQZv0S1WpR+wuKFKQuvrv0EL4=;
-        b=HqN8sLLnDjEymguEwvIeLLasbmcEJJnoxTUnuJxNyyVJuCXPN2Qeud+zkiPogFymn3
-         8OuPVNJOWhAjaxylDJs95fv/b0mKatE4IBqhy78EJPeEQIeUl+zKM89PFOyVjJrK294N
-         +wH0L5Dq0D1q3LwlwxBY+cokO7vN7poJ9ZHlyg/ur5cdflSM/8od1WEO1lPBm72FqZRf
-         NhhSWMipjJMcgiEAew9RQcEyDPvPIF9LHG9WP85VZOxzpp/ORgm0zBKROSqVNHYc4fUi
-         coXDCr61eF/TeU+RqtRvhgth0Wo/P5PSmzKvaUJ3kYYx/rF6sl++5+IS7FvKQ0vsGRsI
-         Sw3A==
+        bh=UK+9vKYDI5SO95JZJfkR0FuzR6EHsxaM13pctEfDrUM=;
+        b=pJ4nOr6j6wXa9YC4owfswi3NkR5iDXJ1Kp82bDtTlLatvgr+viLkQ/jjGOP9WuQe6T
+         BOF4uZ9D+bR/UnergMQiCRHR3/5HqfuC7OWTz75bVT1mvDuATSti3VgsRO030TbcPk3M
+         7R/s/+5COpBFsFaY7pFgAsPMjz/uq/ZI82YzLrO45w6FB74uPy0GzgGbz5mf3YUBdyiZ
+         NOL+cPlr82KBfrWi2q36vyEzu9lwvawl3Sy1qT517Bhm1vT6lppPhdon4lWK0DhntqAM
+         1MHMRXd2a6OwJnyy0JBAZtpQ+lvHYIWCVNpPUjoT5S2/GUG5fdD76azAUl3vfd6SKyoy
+         tZqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759688692; x=1760293492;
+        d=1e100.net; s=20230601; t=1759688694; x=1760293494;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D4arvNqKzsedVSCdkfpQZv0S1WpR+wuKFKQuvrv0EL4=;
-        b=KsgXgc9t7w7PRDUUTPpAjPiSHIvUhNXai2d+YQe6MKv3si3hNIETQOsUEjTRMKCLEn
-         QF7b871ADxJEGSR5mEhK9Y2itk42xTGqoaKsz4C4Co8aXmSiRGPWst5TiSKdQ7YfJzIa
-         4amLBZH/xBsAJHjcSO1JGL9lWY7RCKxOdtADehU+F/WqIZfl06jOCzGnu6f9t9ysMbP+
-         pKclDpMcYZjQS59rKzIgUt1bC6dqP8j9w+Y9fu4OQl1wpEXGqO2zDzeVDH86KnlhrQU5
-         lWf4JdcVicBxT+z10ciinNF1ZjT4Hxyt3XaaNwfadDxbj93unL4Obg0CHi10tjnNaP69
-         oVOw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJBBXxjTz+GJUF+KaD39TE4Q+1X83OBNJEZHs+txylGoX0UjgQ7NnB3KfHaAQMusnBMonSpbHu2ORJ8vg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzv7s9KMa7nEFUYYtqeIdYgfuWiPu4J8p278uSqdawcYHkMNMdh
-	eqJiEl2y6OFitROO7q3ePJ02iZZPU1I/6dwa2iikzqG3m9Tw3nqcjNqE0v/MSz0iQIVkvTh/3ZC
-	0rEPwN4CJPg==
-X-Google-Smtp-Source: AGHT+IEw2/JXqLShPZMslUk0GjRr0iuxlNgoFPDvapIN0gqC4oxja82ZpFUlCEDu9ZwJOU2j/xwpivCNzl1z
-X-Received: from ywbhv8.prod.google.com ([2002:a05:690c:4988:b0:729:15e7:9e4f])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:690c:7341:b0:74d:4623:46d6
- with SMTP id 00721157ae682-77f9470ac39mr109550347b3.50.1759688692320; Sun, 05
- Oct 2025 11:24:52 -0700 (PDT)
-Date: Sun,  5 Oct 2025 11:24:11 -0700
+        bh=UK+9vKYDI5SO95JZJfkR0FuzR6EHsxaM13pctEfDrUM=;
+        b=VRrT0CnAnhQYa7ZL128rqGrH0Q5XRDiMauroUUHYG+51oaEoFsTV/VtC7sMYA9Vxl5
+         72TVfKcn7NUfFonxjZ+hNYYb7MR4wMCTBGJIRcU60ZLvUXgKHpjJ6hXC6aXx0dABIDhB
+         oHaTb25SDB0oSwk+7WAOMeyYTVk0M/xtzL4ZPbiUsMLjC1IYjJW2JNNhQgHoMEQbwRt+
+         ncCaLGDWiLrhrLRc+VimBbwYrBPXjsfJfOTNFVdgwKWing8tsfA3PvdDfxrP6ikAT+S4
+         tpW0nXqXJxI1qpb12qr0KJGrT9IuEu7LkUM07YUqjHc5VlyO+4afnqmxBB6F6+XsEHw/
+         jHgg==
+X-Forwarded-Encrypted: i=1; AJvYcCVn6644upQCPokK1xCxtVx8MssdqYQeGnAxagCjFESUviRrF3Z9YLtyddcqt4tt3nXCaOA0ZAoMH6CAFik=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynOGK/DBSb+cVk6kfwejSHYkNnI/x7ymoYc9gBeSWOuxlY4r6u
+	CMJWgXRQaIfo+A735rQgP5eu7NVu+mq0jnfGvHBiOX6NzVXmCNNd+ImzKkGzE8eNeZTV6qgxawY
+	QaI1WuISV7g==
+X-Google-Smtp-Source: AGHT+IFi+hH2WneunbqqhaE8Ef1ChJUxSeOfMr0ECoCsbafDNVNagVd87dwIdieJ8xXqAMa60zcvqumJrM3I
+X-Received: from plsp10.prod.google.com ([2002:a17:902:bd0a:b0:267:a5c9:8a4c])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:3807:b0:28d:18d3:46ca
+ with SMTP id d9443c01a7336-28e9a6be420mr122481015ad.49.1759688694620; Sun, 05
+ Oct 2025 11:24:54 -0700 (PDT)
+Date: Sun,  5 Oct 2025 11:24:12 -0700
 In-Reply-To: <20251005182430.2791371-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251005182430.2791371-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
-Message-ID: <20251005182430.2791371-9-irogers@google.com>
-Subject: [PATCH v7 08/27] perf pmu: Use fd rather than FILE from new_alias
+Message-ID: <20251005182430.2791371-10-irogers@google.com>
+Subject: [PATCH v7 09/27] perf pmu: Factor term parsing into a perf_event_attr
+ into a helper
 From: Ian Rogers <irogers@google.com>
 To: James Clark <james.clark@linaro.org>, Peter Zijlstra <peterz@infradead.org>, 
 	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -87,92 +88,66 @@ To: James Clark <james.clark@linaro.org>, Peter Zijlstra <peterz@infradead.org>,
 Cc: Ian Rogers <irogers@google.com>, Thomas Richter <tmricht@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 
-The FILE argument was necessary for the scanner but now that
-functionality is not being used we can switch to just using
-io__getline which should cut down on stdio buffer usage.
+Factor existing functionality in perf_pmu__name_from_config into a
+helper that will be used in later patches.
 
 Tested-by: Thomas Richter <tmricht@linux.ibm.com>
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/pmu.c | 23 ++++++++++-------------
- 1 file changed, 10 insertions(+), 13 deletions(-)
+ tools/perf/util/pmu.c | 33 +++++++++++++++++++--------------
+ 1 file changed, 19 insertions(+), 14 deletions(-)
 
 diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 876e87708b03..7992bd923515 100644
+index 7992bd923515..2c3e539851c4 100644
 --- a/tools/perf/util/pmu.c
 +++ b/tools/perf/util/pmu.c
-@@ -563,7 +563,7 @@ static int update_alias(const struct pmu_event *pe,
- }
- 
- static int perf_pmu__new_alias(struct perf_pmu *pmu, const char *name,
--				const char *desc, const char *val, FILE *val_fd,
-+				const char *desc, const char *val, int val_fd,
- 			        const struct pmu_event *pe, enum event_source src)
- {
- 	struct perf_pmu_alias *alias, *old_alias;
-@@ -614,12 +614,15 @@ static int perf_pmu__new_alias(struct perf_pmu *pmu, const char *name,
- 	if (ret)
- 		return ret;
- 
--	if (!val_fd) {
-+	if (val_fd < 0) {
- 		alias->terms = strdup(val);
- 	} else {
-+		char buf[256];
-+		struct io io;
- 		size_t line_len;
- 
--		ret = getline(&alias->terms, &line_len, val_fd) < 0 ? -errno : 0;
-+		io__init(&io, val_fd, buf, sizeof(buf));
-+		ret = io__getline(&io, &alias->terms, &line_len) < 0 ? -errno : 0;
- 		if (ret) {
- 			pr_err("Failed to read alias %s\n", name);
- 			return ret;
-@@ -698,7 +701,6 @@ static int __pmu_aliases_parse(struct perf_pmu *pmu, int events_dir_fd)
- 	while ((evt_ent = io_dir__readdir(&event_dir))) {
- 		char *name = evt_ent->d_name;
- 		int fd;
--		FILE *file;
- 
- 		if (!strcmp(name, ".") || !strcmp(name, ".."))
- 			continue;
-@@ -714,17 +716,12 @@ static int __pmu_aliases_parse(struct perf_pmu *pmu, int events_dir_fd)
- 			pr_debug("Cannot open %s\n", name);
- 			continue;
- 		}
--		file = fdopen(fd, "r");
--		if (!file) {
--			close(fd);
--			continue;
--		}
- 
- 		if (perf_pmu__new_alias(pmu, name, /*desc=*/ NULL,
--					/*val=*/ NULL, file, /*pe=*/ NULL,
-+					/*val=*/ NULL, fd, /*pe=*/ NULL,
- 					EVENT_SRC_SYSFS) < 0)
- 			pr_debug("Cannot set up %s\n", name);
--		fclose(file);
-+		close(fd);
- 	}
- 
- 	pmu->sysfs_aliases_loaded = true;
-@@ -1041,7 +1038,7 @@ static int pmu_add_cpu_aliases_map_callback(const struct pmu_event *pe,
- {
- 	struct perf_pmu *pmu = vdata;
- 
--	perf_pmu__new_alias(pmu, pe->name, pe->desc, pe->event, /*val_fd=*/ NULL,
-+	perf_pmu__new_alias(pmu, pe->name, pe->desc, pe->event, /*val_fd=*/ -1,
- 			    pe, EVENT_SRC_CPU_JSON);
+@@ -1763,6 +1763,24 @@ static int check_info_data(struct perf_pmu *pmu,
  	return 0;
  }
-@@ -1090,7 +1087,7 @@ static int pmu_add_sys_aliases_iter_fn(const struct pmu_event *pe,
- 				pe->name,
- 				pe->desc,
- 				pe->event,
--				/*val_fd=*/ NULL,
-+				/*val_fd=*/ -1,
- 				pe,
- 				EVENT_SRC_SYS_JSON);
+ 
++static int perf_pmu__parse_terms_to_attr(struct perf_pmu *pmu, const char *terms_str,
++					 struct perf_event_attr *attr)
++{
++	struct parse_events_terms terms;
++	int ret;
++
++	parse_events_terms__init(&terms);
++	ret = parse_events_terms(&terms, terms_str);
++	if (ret) {
++		pr_debug("Failed to parse terms '%s': %d\n", terms_str, ret);
++		parse_events_terms__exit(&terms);
++		return ret;
++	}
++	ret = perf_pmu__config(pmu, attr, &terms, /*apply_hardcoded=*/true, /*err=*/NULL);
++	parse_events_terms__exit(&terms);
++	return ret;
++}
++
+ /*
+  * Find alias in the terms list and replace it with the terms
+  * defined for the alias
+@@ -2596,21 +2614,8 @@ const char *perf_pmu__name_from_config(struct perf_pmu *pmu, u64 config)
+ 	hashmap__for_each_entry(pmu->aliases, entry, bkt) {
+ 		struct perf_pmu_alias *event = entry->pvalue;
+ 		struct perf_event_attr attr = {.config = 0,};
+-		struct parse_events_terms terms;
+-		int ret;
++		int ret = perf_pmu__parse_terms_to_attr(pmu, event->terms, &attr);
+ 
+-		parse_events_terms__init(&terms);
+-		ret = parse_events_terms(&terms, event->terms);
+-		if (ret) {
+-			pr_debug("Failed to parse '%s' terms '%s': %d\n",
+-				event->name, event->terms, ret);
+-			parse_events_terms__exit(&terms);
+-			continue;
+-		}
+-		ret = perf_pmu__config(pmu, &attr, &terms, /*apply_hardcoded=*/true,
+-				       /*err=*/NULL);
+-
+-		parse_events_terms__exit(&terms);
+ 		if (ret == 0 && config == attr.config)
+ 			return event->name;
  	}
 -- 
 2.51.0.618.g983fd99d29-goog
