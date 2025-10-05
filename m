@@ -1,122 +1,131 @@
-Return-Path: <linux-kernel+bounces-842377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19CBEBB9A40
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 19:41:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68464BB9A46
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 19:42:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A44C634617E
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 17:41:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BCC644E6622
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 17:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 445641AB6F1;
-	Sun,  5 Oct 2025 17:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249951A9FAC;
+	Sun,  5 Oct 2025 17:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i/eOmwwW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b="fb6rMpC1"
+Received: from mout-y-209.mailbox.org (mout-y-209.mailbox.org [91.198.250.237])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798F912FF6F
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 17:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FE81A0BF1;
+	Sun,  5 Oct 2025 17:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.237
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759686107; cv=none; b=j9WcUJhv31xH6Y/qfEmy8mDWyTs14Av3c8RFXyHFOj8LZuXbLmay+Stguj5IiK6aGLYYIArezpcZL6OQWlVpupm+08xRKGz7A0ZHeKKsTU3lwaIAkgBknv9WEMQPNyl3qmi5Kmd2sx+MOwWJQ1ZcVGalMvFtE7z3bQBNyYB6hnQ=
+	t=1759686123; cv=none; b=VC+QWGVmb08AwR8sCauoD2cw1wdaMX7r4qkLZZboS3sYTfZhjPTggVC1N3JpPwNgR1VzDL9uIHqjXdzqWysRZZ2jjkQ2gccsIJ0uBYcJORs7a5NSBTVH5eovtzsl/mb5cxLazAuN1NZqLiufamcIustkfIns8ZibZtdgKmFp6qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759686107; c=relaxed/simple;
-	bh=TXFd7/3FqnHWELv/Ea6uDVP94OHBKV/Ebdx8I7W/T4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H2zcwD4pIiXcNjocWqUGJr2U51j8eRrKP5KdpRH17YDd9uxO1HkiF0Mac3+Xmbl2r5RhHD6QHyYdYRV9QyP8kPw7MDqyvJLRB1IYN3j2ln6+KKeDCjvbwEyI4hepoMF94sDa1q2uPd1CtY6LrLJWXFH46qgnmGhH457gx4ad8ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i/eOmwwW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759686104;
+	s=arc-20240116; t=1759686123; c=relaxed/simple;
+	bh=U9YZJCh701mHZrCDuiXPvnGd1GKQaSrniSbzzi4JuLA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sG/x84ayfCYM4z3tRRb6QoKI5L68i5TWGN3YWH/7GTeUjZUyXXoR5vebF46gKA8JJvu2Pj0m73p4o5E4Dyn3tLyNDZAImlyaxawlANVNVKx16P62oaq0xS5s0vQ8fHpDscieod8UxV15293RUdgAP8728Uvzi9jPhoYWCr2ywFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com; spf=fail smtp.mailfrom=mssola.com; dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b=fb6rMpC1; arc=none smtp.client-ip=91.198.250.237
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mssola.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-y-209.mailbox.org (Postfix) with ESMTPS id 4cfqTW2Cc5zB0X5;
+	Sun,  5 Oct 2025 19:41:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mssola.com; s=MBO0001;
+	t=1759686111;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=F0S1vPSRJ5NnfHBNzwpj/3+V8U0XpDMUFkziRa/whMs=;
-	b=i/eOmwwWdeEpu5xk/YjouU48ukNSQ/mA0BmK749fSEte3fC0GcLBExvyHFLbLc1azEEw6P
-	BVn5kDe9cHlW26j4glggq+Vl7+g4xjj89IqAjs8G5JJSmQniPusG6uvVmukZknFaJZwJ8R
-	yj2jU95zkJN/2mCYHHl4UGXU7OKS0ps=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-77-4pgTW0HvMEWQvPQThhQCIg-1; Sun,
- 05 Oct 2025 13:41:39 -0400
-X-MC-Unique: 4pgTW0HvMEWQvPQThhQCIg-1
-X-Mimecast-MFC-AGG-ID: 4pgTW0HvMEWQvPQThhQCIg_1759686098
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8BF7618004D8;
-	Sun,  5 Oct 2025 17:41:37 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.5])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 9BFD11800452;
-	Sun,  5 Oct 2025 17:41:33 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun,  5 Oct 2025 19:40:16 +0200 (CEST)
-Date: Sun, 5 Oct 2025 19:40:11 +0200
-From: Oleg Nesterov <oleg@redhat.com>
+	bh=+X4afsKMgpdir61D2meXQMLBHW4HISvDZMs7EQHCVsI=;
+	b=fb6rMpC14nhvtDU0jlgR4YIPc1AGuRD/N+PDVw23U71N1DLka+7Fu3wG5huOg/en5GlDMN
+	VA7NU3xL7xOK8aV8y4W+HTWNzvPXPyqvCJqdlnm7R8M3173fAYr/5aj49/WsI1gaEutMo+
+	KGaj5SjVfTz9gTk3Ur4CagMKIP3HFuWwn4Pp38RQJF+VXcjg6HsG3l3YKjk/4tJAO7tjwZ
+	BO1eRtn0sABSf+xYsejR0bO9XMf/tRRv8Wr1MhR6VwoKkYX0GvL8CL8iMkOUwFVRCzupnf
+	jJgRKdj50lIOv+sKMeAM06if6UFTqQ2aNM9cpW/x1K0/MXookDK0xH+OOT0Ogw==
+From: =?utf-8?Q?Miquel_Sabat=C3=A9_Sol=C3=A0?= <mssola@mssola.com>
 To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Boqun Feng <boqun.feng@gmail.com>, David Howells <dhowells@redhat.com>,
-	Ingo Molnar <mingo@redhat.com>, Li RongQing <lirongqing@baidu.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] seqlock: introduce SEQLOCK_READ_SECTION()
-Message-ID: <20251005174010.GC6063@redhat.com>
-References: <20250928161953.GA3112@redhat.com>
- <20251005144929.GB1188@redhat.com>
- <20251005153008.GF2441659@ZenIV>
+Cc: linux-fsdevel@vger.kernel.org,  brauner@kernel.org,
+  linux-kernel@vger.kernel.org,  jack@suse.cz
+Subject: Re: [PATCH] fs: Use a cleanup attribute in copy_fdtable()
+In-Reply-To: <20251005090152.GE2441659@ZenIV> (Al Viro's message of "Sun, 5
+	Oct 2025 10:01:52 +0100")
+References: <20251004210340.193748-1-mssola@mssola.com>
+	<20251004211908.GD2441659@ZenIV> <20251005090152.GE2441659@ZenIV>
+Date: Sun, 05 Oct 2025 19:41:47 +0200
+Message-ID: <87y0pp455w.fsf@>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251005153008.GF2441659@ZenIV>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 
-On 10/05, Al Viro wrote:
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+Al Viro @ 2025-10-05 10:01 +01:
+
+> On Sun, Oct 05, 2025 at 07:37:50AM +0200, Miquel Sabat=C3=A9 Sol=C3=A0 wr=
+ote:
+>> Al Viro @ 2025-10-04 22:19 +01:
+>>
+>> > On Sat, Oct 04, 2025 at 11:03:40PM +0200, Miquel Sabat=C3=A9 Sol=C3=A0=
+ wrote:
+>> >> This is a small cleanup in which by using the __free(kfree) cleanup
+>> >> attribute we can avoid three labels to go to, and the code turns to be
+>> >> more concise and easier to follow.
+>> >
+>> > Have you tried to build and boot that?
+>>
+>> Yes, and it worked on my machine...
 >
-> On Sun, Oct 05, 2025 at 04:49:29PM +0200, Oleg Nesterov wrote:
->
-> > 	static char *__dentry_path(const struct dentry *d, struct prepend_buffer *p)
-> > 	{
-> > 		const struct dentry *dentry;
-> > 		struct prepend_buffer b;
-> >
-> > 		rcu_read_lock();
-> > 		__SEQLOCK_READ_SECTION(&rename_lock, lockless, seq, NULL) {
-> > 			dentry = d;
-> > 			b = *p;
-> > 			while (!IS_ROOT(dentry)) {
-> > 				const struct dentry *parent = dentry->d_parent;
-> >
-> > 				prefetch(parent);
-> > 				if (!prepend_name(&b, &dentry->d_name))
-> > 					break;
-> > 				dentry = parent;
-> > 			}
-> > 			if (lockless)
-> > 				rcu_read_unlock();
->
-> <cringe>
+> Unfortunately, it ends up calling that kfree() on success as well as on f=
+ailure.
+> Idiomatic way to avoid that would be
+> 	return no_free_ptr(fdt);
+> but you've left bare
+> 	return fdt;
+> in there, ending up with returning dangling pointers to the caller.  So as
+> soon as you get more than BITS_PER_LONG descriptors used by a process,
+> you'll get trouble.  In particular, bash(1) running as an interactive she=
+ll
+> would hit that - it has descriptor 255 opened...
 
-Weird or buggy?
+Ugh, this is just silly from my end...
 
-> prepend_path() would be interesting to look at...
+You are absolutely right. I don't know what the hell I was doing while
+testing that prevented me from realizing this before, but as you say
+it's quite obvious and I was just blind or something.
 
-Yeah, I have already looked at it.
+Sorry for the noise and thanks for your patience...
 
-Not sure yet what the "good" cleanup could do. Will think about it more.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Oleg.
+-----BEGIN PGP SIGNATURE-----
 
+iQJiBAEBCgBMFiEEG6U8esk9yirP39qXlr6Mb9idZWUFAmjirdsbFIAAAAAABAAO
+bWFudTIsMi41KzEuMTEsMiwyEhxtc3NvbGFAbXNzb2xhLmNvbQAKCRCWvoxv2J1l
+ZQRhD/4oVdh7E9IgzRXIcY7MyZdmeGG0MzOOvbOF9ZXrdrFHdmLAHnPt1UFn/JGi
+BrgE0UE0w7wQupgO+TwcczWCGN7twfVxreyn5uF8UmaMcFMId3KbdDlS5QnaItTx
+pwzBrJQQTEKGppVXh+8giKrL5fLiVzoRTilvFvR5mthqBxIlg1AE+z8HgDjf4foB
+zOMFxgEZ98mT4YkV32sRxcbfqiXFwgASKI2gVEsHwNbJ9vneqhyQIfBlVJxt3RlP
+dBmb4iuzUDcBMvVH9LtU3Jtns2qVkl9Qwn9/1jNb0DRML5hlRM0h82x9882Dt/nt
+2S4gbcX0aa1xHnQwIB1F+yUWFzsiX07qWNmjyyR7pHSxZ2z1f6jopWU/5j0lONZc
+Pcw6J3j/iCY9rppExwbIfpmmwhGPEsbGaHySSN6l/hPqJ+RmlljsaKeZX+JcRXji
+IdvX63BC/PHL0CiXYXSn/ysUxwplB/lnwngtOtV+bZTmfb8mR29fY0lS9uW3V8Z0
+8Cof8XeMs1CMhwoDLd/U/WwvCWpttKhAnHwVLP+Z069xD1frRyoGe8tCCgFCEpNH
+2c6mh1szw0am4G/mSMxsxiIDVVJYdjOb0/iDIB3uLRdzrpEhhshd5980sEViWR8z
+4YW2lkQyAaTA9NP519k0yYVhxN1OrEVEj8+gFGwuApPgAKZISw==
+=JOJu
+-----END PGP SIGNATURE-----
+--=-=-=--
 
