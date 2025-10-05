@@ -1,269 +1,170 @@
-Return-Path: <linux-kernel+bounces-842201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A35C3BB933B
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 02:53:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FE7BBB935E
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 03:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1B8E84E4405
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 00:53:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C112D3A51B7
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 01:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E4614B950;
-	Sun,  5 Oct 2025 00:53:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74C71527B4;
+	Sun,  5 Oct 2025 01:05:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="N65kl0JJ"
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012052.outbound.protection.outlook.com [40.107.200.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EgFc7RHK"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4D386334;
-	Sun,  5 Oct 2025 00:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759625611; cv=fail; b=r9jCMGcLhubXbrVfbPuBF8OMwIOHhu9zke0ZK3ytzOd6+IzT4jlLgbJEUo73ideRfzswP+5rIWsyePVObtEHKJAbtGJKlulJ0yj1M13z0wkYKVGgxPTeUniTqUuArFuBhgE2x6EbSPLd8VtwLVvM4AEPESMghhmCPx5sLK9362Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759625611; c=relaxed/simple;
-	bh=p6JIxoI4dT4LQW7tyXbLYkxz7afazfqimWbCeM5Rquw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZJ/upMFfcpnSjwoVa4VS6uijPP59M4JQdnQrz6/jfOBq/BLeCu5ajl9jC7q4w2g0WjkQktdYftGrVpseN134OBHepyuWEezYUojjy/ziT5/h3BQAYzpP71b/1Yogy6K1/54dN9LtmS0Jwk3/8VTEed7ySUm9VbgieNR59cQOsIY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=N65kl0JJ; arc=fail smtp.client-ip=40.107.200.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=u4MXLHZ+F/6RD1qu+QOYk6rBdAW3dNqEmkm+6ldArj4ICudVGi6BFRi2IUeO8yLId5FFdtGwfNnk/TJraCSMkR+3nfcILiPx7NpE+etEIvZfYX6umKHAQjobhtt2LeS9DpO31wig+Zjonn0oJ9m7jc43JpBhlWNIoe+L4umXNaoHbBw9hVJGrRp1BhwsB9pSytRYgDmjQkM68cUZUTpQOQ4pRAod5JMyhtPnrDE9jpXpQ4Au/zCAefZjZnu7YEV/lxO6BjkcN3uOnsnpJ1+XVkhfuUG2xAEOxcWQJ2DkJAMbtavSrNCBYxdwgQtfZkUk7ElADXxhdwSK1lNDGewA4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Iyr3+fyNgTGnRRCM9BUuv/Dxmti0CPZo7VAJGCRs4bw=;
- b=WvqBmpmGO10orzUXTgapct661qjISHu08Tid6YX/LSjvKhexGafSao0rwZwQ4y5ThtlhoiRQxg1YQjPk8nE8FjgZwRoekYVT/60PGxxEhkdQPM/JZCtWAze6Fl6E6PxQDYX83ySc4ERrc4cmJRqo4mU4QP1BtRqrvBDQRDsF3pWMOm1ljvdZxtzrcV208EMpmd6iW8M5xWY1xqKoq5u7cj7iOPr2SDFoEmsJfLsIyBrPY6IH8+PFs5ro4tBhbkZ+XrYz9heE9Fs/Ey792uBrSB1nRJgj57OjrpMszav+uL7Wt5joc8p3WelhN1+J2HupoA1N8sEtQwjybJWd+ibyog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Iyr3+fyNgTGnRRCM9BUuv/Dxmti0CPZo7VAJGCRs4bw=;
- b=N65kl0JJmtmJUmEo+MKUbjdfO0l/Umr6wjkDwWkL3Un38/aYNPZK8KnjWgo9eK2kJFROMqmaeahbHMOCMyrf4j18m3gArtI441l2VM8FyMo03lMUZGrNFBOVtxF8Z2AxalI4wYJ1a6CsXV3f8KR7ZnnOjbFAK2aSzC9950KBNI4PCfNOqp/qMun5FE4p7HT3Gtp3qgGtbi1WN83T+hMbH6+ZMY8pVP6z0IipcYz2jis+PzbWTJvLzGWfVAE0XEHo8uNlL+vrrmZj5BfdhAtP1g9jKZxPKx8MDndH1e85t94E/Mq7+NVZYa2jJtt2XZpXS1K7c5I6BHZ5PL7b1rUVHw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB2667.namprd12.prod.outlook.com (2603:10b6:5:42::28) by
- SA5PPF9176ED2F1.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8d7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Sun, 5 Oct
- 2025 00:53:21 +0000
-Received: from DM6PR12MB2667.namprd12.prod.outlook.com
- ([fe80::bd88:b883:813d:54a2]) by DM6PR12MB2667.namprd12.prod.outlook.com
- ([fe80::bd88:b883:813d:54a2%6]) with mapi id 15.20.9182.015; Sun, 5 Oct 2025
- 00:53:21 +0000
-Message-ID: <600dc476-6922-4cd5-b3e3-ef10cd38085e@nvidia.com>
-Date: Sat, 4 Oct 2025 17:53:18 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 13/29] arm_mpam: Probe the hardware features resctrl
- supports
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
-Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250910204309.20751-1-james.morse@arm.com>
- <20250910204309.20751-14-james.morse@arm.com>
-Content-Language: en-US
-From: Fenghua Yu <fenghuay@nvidia.com>
-In-Reply-To: <20250910204309.20751-14-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0256.namprd03.prod.outlook.com
- (2603:10b6:a03:3a0::21) To DM6PR12MB2667.namprd12.prod.outlook.com
- (2603:10b6:5:42::28)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7729735963
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 01:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759626316; cv=none; b=CGD520ZXKYRy98PgX5H/LmTYGXZzRBbn7RT6M+963hMypq6x8jb5MtMTn+GYQF973uAPJI1mmEFJIaqnbucEkdaVYj5h6CYipUryr29rQszrGhQ/rolcBx4EgwTH8cUNgYBPP7UMVXKJtHYir0816BGhVCWKf3QmqEbQlZbEmH8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759626316; c=relaxed/simple;
+	bh=xaGPLxHO60K3uqiewy7ePzmU5lzkODzUUgz1CREMDZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qat0w+ZUlS//LO1z7fu28+D3vEUJGZLyvAT7/+yKmhZ9IVFyPeCnzz0Lj1lObIoS/f73UkU2aHfAQZ0G/dgEY4vlB1nYvvhSDKAXoNRphRXKZ4IYIfxo/wK4XVSTilbhXXN+HQS+ighXUkecAlxtHoObvOKlJdgb6Fs3byfYjUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EgFc7RHK; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-636de696e18so4718678a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 18:05:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759626313; x=1760231113; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UxmchDTPhZsqpU6gIxr0BxrKIvUH4UuMs0rK+gl2l/I=;
+        b=EgFc7RHK12FcmQqtWn5QeqHCJrVNTftZ6LY14jlnWlhABmgIqOXNeJXBu0WKuHdutv
+         Bbeg316zsr0L/1F985tj0z51T4jlP9zGGfW4gU528EFIkSRUtIKoPhOQolzud9xgNDmB
+         MP8w568tJMk6JPTePC3FoI7gfi9gIQLRN+UK1v/8g8HSSehEEDk2z0D9hLXkBofL7MFz
+         oCR/WzTDTfrpsH4toce+uuDAx00WuZRaZpLCEmmwH1xokjgghbj88EER82hEd8ZHfomc
+         mXdwmUA97fT4Kqw8j5d5nzYUJFbzn/cSCbrVpuOoMlGE7lMHTFi09THlM8UCnku3qHy3
+         Oy+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759626313; x=1760231113;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=UxmchDTPhZsqpU6gIxr0BxrKIvUH4UuMs0rK+gl2l/I=;
+        b=xCcY5GHcBTxS5pJU+CjwF5g13RNqvZ/yXKMrnCY+MNEjnVHF7m2/dmQDSym66zp8pc
+         OvYfKJwYdlO0o0OLG0G1NFzODU/nCxPOA8HlUQsJorwBm3+bGN/c4Su5oSzo2IuLtIk4
+         rMzDrWts9xviw7Yh4QoESWdxPscuwbCl4UVUFykeiQqmTfxoZzZSlRa0+vGnUCID7nmX
+         QNaXfGjJd/LPtwBVR0HSmW/iuuQMKZQrP1RnfvGsUCzbyTH+zsdr9lMN2QVzN2WPFqGi
+         soA1TdN/i3uyqfZIiYwKXKtsXkCijGMz6OIX0lbvUIzyPiShvduKFEXaPIiLgOksjMvc
+         gyfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5HbhnxGrQhAgVY1Eco/6cJBmI7BBDViewKJ7iTkMdJA9bdbhmtBkfRITRc2F8hYC1EkPF4pyFb6s1MzQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbMSxFuyniAPCjn1e5DNaUkZfwtLbFE1KF6MyKBbfSvsx+6WZ9
+	yvL96Rlg8NwJgO6xt4pd/UQUTlzEdikBFjXU1IYS4WdxxJlJbdrUznQu
+X-Gm-Gg: ASbGncviHx+e2f+RRNstVz2w/u1pP2LZ1hxoasa9wfJA74TzVjiP47miZ6VedW+fk/M
+	6nZauc9JpqZPNRcGc44tcqt0r2JXmocOreHhotS570mEeczfgcqSRSEtE/36/z96qfyReF1EGnp
+	xsyZakwUieh+C74EYzQAyLwuag+7934YIBDNmzU6tWLWUSH1drjSuHYAghCu3dkjrYKrU7+m6u+
+	SsmyhZ+lmODqUVoqsb4h72imxjvHoECD+yOh4cLNz05clkKpyGAF4GurYoJnva4q/nF3z1/gBmB
+	WLhnqb2J5SI0WKffWSccZ8UXuJ2ogCa6vAHSPwn2WPgrFAHfM+5oPa+0uVwmmpxm9sJCSi11HVi
+	BM8NMOz/7JXhPX+kGSic9UBNfgrO2OeHt1gdJ8Z3PlMDBKcxRcgcpyHdvI7jrRdmDQzE=
+X-Google-Smtp-Source: AGHT+IEJ+DV6wCXDb2a3k9uAeEgMCr1cVjIoxxlb4UYBMuoIs2Zd0lJV3rJ10CH8141p7yP2iS38cA==
+X-Received: by 2002:a17:907:2da6:b0:b2b:59b5:ae38 with SMTP id a640c23a62f3a-b49c2761ad2mr1100209266b.40.1759626312428;
+        Sat, 04 Oct 2025 18:05:12 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486970a60dsm794414466b.63.2025.10.04.18.05.11
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 04 Oct 2025 18:05:11 -0700 (PDT)
+Date: Sun, 5 Oct 2025 01:05:11 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Lance Yang <lance.yang@linux.dev>
+Cc: Wei Yang <richard.weiyang@gmail.com>, akpm@linux-foundation.org,
+	david@redhat.com, lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com, baohua@kernel.org,
+	baolin.wang@linux.alibaba.com, dev.jain@arm.com, hughd@google.com,
+	ioworker0@gmail.com, kirill@shutemov.name,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	mpenttil@redhat.com, npache@redhat.com, ryan.roberts@arm.com,
+	ziy@nvidia.com
+Subject: Re: [PATCH mm-new v2 1/1] mm/khugepaged: abort collapse scan on
+ non-swap entries
+Message-ID: <20251005010511.ysek2nqojebqngf3@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20251001032251.85888-1-lance.yang@linux.dev>
+ <20251001085425.5iq2mgfom6sqkbbx@master>
+ <1d09acbf-ccc9-4f06-9392-669c98e34661@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB2667:EE_|SA5PPF9176ED2F1:EE_
-X-MS-Office365-Filtering-Correlation-Id: 84953a07-05f5-4e17-36fe-08de03a99473
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MzRsUG9BVnVWQ3hvL1IwdGpEMSs1S3BoVzJBNEJXYjVTYmlYTytQSlZMNy9J?=
- =?utf-8?B?cHlueCtRanh5cTRieFYxV3Yxd1ZYZjN0K2Nub0JGMU9ZVjg3ZHEzM0Rra2pv?=
- =?utf-8?B?Z3N2OGpURWY3ekpySWU1bURDVmZkWW1NNU1MTlM0NlhWV0FPV1hNZnJKdk04?=
- =?utf-8?B?TnBRY2JTVmJjSVRORE1OR29hT25pMWRONnJuTVJsZ04wazI3NlRrbFVRYnlH?=
- =?utf-8?B?WWdUSnF3YTdGeG1jYkJNMWkzU1J2UVMweEY0N0RpeXBhZGtHWldzVTlRQlNr?=
- =?utf-8?B?aXE5R2x2b1l0K3pwQzNZWXUvTUVaMC9VUmk4N1QreGg3MElUbFlNbkZxZ2lQ?=
- =?utf-8?B?dDFoa3owdmdKb0JUeWNYMlR3OGxFcFlzT0NWZ2dFRkV3ZkJpUCs3dXFGbk9k?=
- =?utf-8?B?cGd3ZmwvL3VkNnVNL0tybUtWbU4zdFdyYWlEVmozbUFha2pJc2dIS0Fna241?=
- =?utf-8?B?c2c1OFpTcGI2ckFvM2xvOTFxTFRiaDFqQ0VvaENjNlJ4U1JQUnJDbVp2UnVU?=
- =?utf-8?B?NTJzZ2Y1ZkR4dXRGUmNPV2llckFPaElWV05SeXdaUzRUbGtVVkJEcU1wL3U2?=
- =?utf-8?B?ekg2WmZNRGNueWxHdndDdW9MM0lPa25qM1pHZzhZam4zNTRsVVVpZ2pLbDJU?=
- =?utf-8?B?Q1lDSmJuSloxcXNZTkx5NWk1WnNIa21hVXlUcmU1Y0hFVVBhOGJzbk5iUXVI?=
- =?utf-8?B?S2dQSk93dXRYeEhhcGxNWDNIZ2MvaHVmR3NjYm41bkNoQ3d5a0FHdjkramJa?=
- =?utf-8?B?aDlQN0tIa28zWjAyYUQzR25DQVI0TGJXMjA0bERVUWtvSjRvMmZCdmlyaGJO?=
- =?utf-8?B?cjUxcG9tTlhIbGJjK244cExONzk5bDlCdHFHM1h6SzFsZnhqMmYwVy9EdTB0?=
- =?utf-8?B?Rkp5Y1ZaMytIN0JlWllBWVFMQncvbVNjV2xkaWpWQWk4VUtvWnRIQnFwVTFZ?=
- =?utf-8?B?M2kzVTk0UmdzVWpONzB2Rk41SlVONFpOSE0wUkJaN0VwenlDcUNtM3dDUHlx?=
- =?utf-8?B?bm1VbXFLODZyVGRuZFZFbXBnU3ZqNVcrZzNsOXBkUWUrdzRZV1MwbTVFV3R1?=
- =?utf-8?B?YVo2Mm5HY3E4bHlURC8yN2lWNWNqNi9oK0J3U0JNdlR5OFYzSHpZajUxUWQ2?=
- =?utf-8?B?ZHdzWlYwcG9sdDFENytKQXNYWHBnRUk3WFlqSkN5OVdZVDROaW93czJTMVN2?=
- =?utf-8?B?WG95KzdFNEdxTm1lUUtDQjlEWjRYN3NmV2RVWjhIWGZtd3RGdDlhdnlXa3J4?=
- =?utf-8?B?aSsvUHdVUnpOU3E3QlArVTdCWFR3Ym0rWFBwUGdQOXpSTnNKUkhBQVB5OFNU?=
- =?utf-8?B?S3VjQ3NrS3VTaHBmalJ2REZlR2FrRVh5UTduMEQ3Wm5lTFViVWZyUDk0R0pG?=
- =?utf-8?B?U3plR1gzTS9QRnBVUFNsYm14RXMvNm5VdVBZM1RrRXF2bXJkZFZaaVVPLzNE?=
- =?utf-8?B?QTF0Wld1ZmZrNDU2eGtTL3hXQlN5MFNKazZxUnphdFk5MVdXd203R0tDajhw?=
- =?utf-8?B?SEVOOUhOZFZLSTM3VGJWSURiVlhVbVAzNE16c2o1ZHRSc3lwUUNkQ1BCV09R?=
- =?utf-8?B?OHgvZ3c5bFRSMkZUaEZTSFN4V1c0aWt1VmxIVE5ZWnFjYkpoT2JDR3pqRDYr?=
- =?utf-8?B?ak8zdmRPbkMvVGZhKzRaL2J5SXhVMEZsNHZPSGJjc2JsQnk2a1NzbkNoL2Vq?=
- =?utf-8?B?c28rSWViZXlDRUpSd2pYNE5yc1cza0xiSjFIRDhqM21sZUEybDRZRmJpRlJP?=
- =?utf-8?B?RjY1RzN1c1pYS1JmcUczWENhR1lBdUJMVFBsYzI4cXdtRzhDOThWdTVvQXBo?=
- =?utf-8?B?OGRQOUNiTExqSWNoeUZDSW5VTEJCZDM2dmxvTHlBa3N5cUZqcnIxVFo4cURJ?=
- =?utf-8?B?UXMvd1FZYXdhWDhXSDdCMldJR1pzS2FSVWJwb3A0bUphWnBGdE14bVNzWWp3?=
- =?utf-8?Q?Ks6aPZb9DVhJmC91Cack8VUJhtZCTHet?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB2667.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SDZ6Qy96RFJ2a2dNcnNTWHpVZkR2ekNPbkl2RGVPNVJTUDVsaVNnOTdVbjU3?=
- =?utf-8?B?enkzejdidGN4VHQ2c2IzOUlIdHZMYjk1YUNDQkVoNXRFVDZzUzFSRUtVNG1Q?=
- =?utf-8?B?Y2ozaENhSFMrVVQzSHdjeUl6ci9RRlg3MjNqUTVqcEI2SWpTTHBiSzRVNUFp?=
- =?utf-8?B?R2p4b3VmL1krQ3M1ZllXOEd5WVVWOUtDbWFpbFpiR2tFbjV3M0tWK21PcG85?=
- =?utf-8?B?SUJUcUsrdXZyMlZ3ZlNZM2pSWW9BSEtPbEIvMHc3TDI1eDRpMFU5cjBScnR4?=
- =?utf-8?B?TW1SSnJEVTFJeFBaWnNaeHBKcERGK2orVmpWaGMreXhoc24xbmtheEdld25v?=
- =?utf-8?B?bFZQV1JDMFZEa3RRZmtlRFFsY2VPQWhHNzQ5SkEzRDg2WERobkR0emo1SzBi?=
- =?utf-8?B?WVY1V0lXUnI2bHlkd2ZaZ3ErMHFWcC9OdDhCeGZOc3drUDBneTcrRUJLZXVZ?=
- =?utf-8?B?WlRjWFQveC96bStqekU3eWZCYmRFcVNiWTJrTWpJa2c4eWdJSVVoKzBUbEdq?=
- =?utf-8?B?ZHRJZ2ZQOFZ0cGoxMmhWZ2xjY3lJOE5kRmFSMlg0Q0JTZGxiRzA3VEp5Z1JD?=
- =?utf-8?B?RFpjUitYMVFRMGkwN1pybCtybmJkWjJsV3hYcTdpY2JLdjlidHR0c0laOEtw?=
- =?utf-8?B?bkF5WEU1eVlSblBFWWYzOWRWOU8wZUREaEpUbGxnTjhNakQzMklnZGhPbkZl?=
- =?utf-8?B?VVNqcWpLNm1kYVJxdE5GTlhuMElHcjh1TkVwdGhuQzl4NG80UjlZZHBvOElO?=
- =?utf-8?B?dHhOdWhJdVJJTkF4ajlTcnZOYmR3bjlwV293Y2ROdFU4U1JSa0VHZEpJTlc5?=
- =?utf-8?B?aXNzTHViY05JY2NxMXpIYjVLdHZnV1QxUlI5YUsvRVk5U3RLQVFvWFlZdUpC?=
- =?utf-8?B?R2h6dnRoRXV0ajBMZytQc1VUT2ZOUnlRM0xVa25mMURPcjdpZURNbFFLVVZp?=
- =?utf-8?B?Y3JjaDF5ZXRNNFZkZml6WHlJOEpHb3diNk82TEpCSjJjRWZGeCthcmpidkh4?=
- =?utf-8?B?aXZ6Zi9WNkxzQml6UDhESTR2N3NmS0ttaHUrUjc1YnpFVHhKVml4RkVmM0pP?=
- =?utf-8?B?YU40ZEhIZ3JFdFV0TUlhK0dJMXEvS1JxY0JNMDVHZkVPcmgrdDl3NTQvbi9Q?=
- =?utf-8?B?cUZYQTZkNlk0Yi9rRlREMWx3akdPV3k1QVVtTEJzM1ptSEpkTFFobEpmK2ly?=
- =?utf-8?B?RHg1amhTVUlyQWxmai9CSE1mN2x1SEl6SGllbXF1dDJkOTZHNVRoQ2l5aHJB?=
- =?utf-8?B?U3Z6QUFyNkdtVXEzU0QwdXVNMTlVdjlMY293bmtHN2RZOU85am1XZlpFTWF0?=
- =?utf-8?B?cldQem1ldHdFQ0ErUHA1c2E2Q0xvcXBLVFZOWDNCOWdPZmtTOHhoaDFVRnBp?=
- =?utf-8?B?QlZhd2tEK1NROEk2elFFMkorMlZoWnJuSDNRWk5jeXFDbnlseE9lVGUyUkdB?=
- =?utf-8?B?QWJWT2FOTmMvcUZFU0VBM1pVU3pFQzZwdWdUOWcxSFdaWnJGSHpvZTJxTWJM?=
- =?utf-8?B?MzJpQ2hBSjh6REExRW1lRDZWVlFMcE1GcFErUGNXK20xMDJvQW9aSllkWktz?=
- =?utf-8?B?WFFpeURPTml5RDEyUW5MeGd3YmIwOUdoQlhsMTBYQmVuYU9leUJyK2JRdk02?=
- =?utf-8?B?SHEzaVhjY1MySUpacWNVMkhleWN2U2FiYW8rYXlSNkVNNWZWaW5Ia0xRK2Zi?=
- =?utf-8?B?czVmUFhkYjlKL2t4Z2ZPZDF1RUVDWklRSTBwaHVnL29mZzNBcjRzRzdSRDkz?=
- =?utf-8?B?cHVzVUs4dno1UFBndVZHN0w4S2VMQ0Q5Qm5ESlQ0NGVXOURQdU1mWmZsaFNv?=
- =?utf-8?B?MnhhU3RDNFl4S3pxNC9IblJIZ25lWUhJT3lRemZLOForUUdlQkkwT3ZET0RW?=
- =?utf-8?B?eTREMk1CSjNUSFc3ZUVwRkdjb0g0SnY4QlE4SkIwV09zWXlGbkg1L3BYU3o3?=
- =?utf-8?B?RVV2TnVXamlEQzBNSmdsV3VyYjBtczlGdTNxQThoSDZMeThoa203bldBTmwz?=
- =?utf-8?B?OGlIdU1TNHZHaUtLUGlRcVB2UFVDWlM2bUtGT2xacTZxcS8zaGhNSU9OWi9X?=
- =?utf-8?B?NXd4ZVJBeTZ1dXJtWmduL3VNKytkb2U4SzBpWDFjNitEUXlTMjJNTENPWjVY?=
- =?utf-8?Q?mbtoQVgywBe0oGN7YHxgxWW73?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 84953a07-05f5-4e17-36fe-08de03a99473
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB2667.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2025 00:53:21.2312
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2UgOziKq4gZzEQHChdPhU6zeY8wF3ybG++CpFurQSM4qZ9lMeHfnuM/zyOM8/uEd/oAWTn3ySlI8YTzWQv7dMQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPF9176ED2F1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1d09acbf-ccc9-4f06-9392-669c98e34661@linux.dev>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-
-On 9/10/25 13:42, James Morse wrote:
-> Expand the probing support with the control and monitor types
-> we can use with resctrl.
+On Wed, Oct 01, 2025 at 06:05:57PM +0800, Lance Yang wrote:
 >
-> CC: Dave Martin <Dave.Martin@arm.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-
-Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
-
-A couple of minor comments below.
-
-> ---
-> Changes since v1:
->   * added an underscore to a variable name.
 >
-> Changes since RFC:
->   * Made mpam_ris_hw_probe_hw_nrdy() more in C.
->   * Added static assert on features bitmap size.
-> ---
->   drivers/resctrl/mpam_devices.c  | 151 ++++++++++++++++++++++++++++++++
->   drivers/resctrl/mpam_internal.h |  53 +++++++++++
->   2 files changed, 204 insertions(+)
+>On 2025/10/1 16:54, Wei Yang wrote:
+>> On Wed, Oct 01, 2025 at 11:22:51AM +0800, Lance Yang wrote:
+>> > From: Lance Yang <lance.yang@linux.dev>
+>> > 
+>> > Currently, special non-swap entries (like migration, hwpoison, or PTE
+>> > markers) are not caught early in hpage_collapse_scan_pmd(), leading to
+>> > failures deep in the swap-in logic.
+>> > 
+>> > hpage_collapse_scan_pmd()
+>> > `- collapse_huge_page()
+>> >      `- __collapse_huge_page_swapin() -> fails!
+>> > 
+>> > As David suggested[1], this patch skips any such non-swap entries
+>> > early. If any one is found, the scan is aborted immediately with the
+>> > SCAN_PTE_NON_PRESENT result, as Lorenzo suggested[2], avoiding wasted
+>> > work.
+>> > 
+>> > [1] https://lore.kernel.org/linux-mm/7840f68e-7580-42cb-a7c8-1ba64fd6df69@redhat.com
+>> > [2] https://lore.kernel.org/linux-mm/7df49fe7-c6b7-426a-8680-dcd55219c8bd@lucifer.local
+>> > 
+>> > Suggested-by: David Hildenbrand <david@redhat.com>
+>> > Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>> > Signed-off-by: Lance Yang <lance.yang@linux.dev>
+>> > ---
+>> > v1 -> v2:
+>> > - Skip all non-present entries except swap entries (per David) thanks!
+>> > - https://lore.kernel.org/linux-mm/20250924100207.28332-1-lance.yang@linux.dev/
+>> > 
+>> > mm/khugepaged.c | 32 ++++++++++++++++++--------------
+>> > 1 file changed, 18 insertions(+), 14 deletions(-)
+>> > 
+>> > diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>> > index 7ab2d1a42df3..d0957648db19 100644
+>> > --- a/mm/khugepaged.c
+>> > +++ b/mm/khugepaged.c
+>> > @@ -1284,7 +1284,23 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+>> > 	for (addr = start_addr, _pte = pte; _pte < pte + HPAGE_PMD_NR;
+>> > 	     _pte++, addr += PAGE_SIZE) {
+>> > 		pte_t pteval = ptep_get(_pte);
+>> > -		if (is_swap_pte(pteval)) {
+>> 
+>> It looks is_swap_pte() is mis-leading?
 >
-> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
-> index a26b012452e2..ba8e8839cdc4 100644
-> --- a/drivers/resctrl/mpam_devices.c
-> +++ b/drivers/resctrl/mpam_devices.c
-[SNIP]
-> @@ -592,6 +736,7 @@ static int mpam_msc_hw_probe(struct mpam_msc *msc)
->   	mutex_lock(&msc->part_sel_lock);
->   	idr = mpam_msc_read_idr(msc);
->   	mutex_unlock(&msc->part_sel_lock);
-> +
+>Hmm.. not to me, IMO. is_swap_pte() just means:
+>
+>!pte_none(pte) && !pte_present(pte)
+>
 
-Adding this blank line is irrelevant to this patch. It's better to move 
-this blank line to the original patch #11.
+Maybe it has some reason.
 
->   	msc->ris_max = FIELD_GET(MPAMF_IDR_RIS_MAX, idr);
->   
->   	/* Use these values so partid/pmg always starts with a valid value */
-> @@ -614,6 +759,12 @@ static int mpam_msc_hw_probe(struct mpam_msc *msc)
->   		mutex_unlock(&mpam_list_lock);
->   		if (IS_ERR(ris))
->   			return PTR_ERR(ris);
-> +		ris->idr = idr;
-> +
-> +		mutex_lock(&msc->part_sel_lock);
-> +		__mpam_part_sel(ris_idx, 0, msc);
-> +		mpam_ris_hw_probe(ris);
-> +		mutex_unlock(&msc->part_sel_lock);
->   	}
->   
->   	spin_lock(&partid_max_lock);
-> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
-> index 4cc44d4e21c4..5ae5d4eee8ec 100644
-> --- a/drivers/resctrl/mpam_internal.h
-> +++ b/drivers/resctrl/mpam_internal.h
-> @@ -112,6 +112,55 @@ static inline void mpam_mon_sel_lock_init(struct mpam_msc *msc)
->   	raw_spin_lock_init(&msc->_mon_sel_lock);
->   }
->   
-> +/*
-> + * When we compact the supported features, we don't care what they are.
-> + * Storing them as a bitmap makes life easy.
-> + */
-> +typedef u16 mpam_features_t;
-> +
+I took another look into __collapse_huge_page_swapin(), which just check
+is_swap_pte() before do_swap_page().
 
-mpam_features_t is changed to u32 later in patch #21. It's better to 
-directly define it as u32 here and remove the type change in patch #21.
+We have filtered non-swap entries in hpage_collapse_scan_pmd(), but we drop
+mmap lock before isolation. This looks we may have a chance to get non-swap
+entry.
 
-[SNIP]
+Do you think it is reasonable to add a non_swap_entry() check before
+do_swap_page()?
 
-Thanks.
-
--Fenghua
-
+-- 
+Wei Yang
+Help you, Help me
 
