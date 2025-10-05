@@ -1,134 +1,129 @@
-Return-Path: <linux-kernel+bounces-842220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D7BDBB941C
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 07:28:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5C80BB941F
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 07:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 14B0E4E1E85
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 05:28:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C0B1C4E0656
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 05:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DABC1DFE22;
-	Sun,  5 Oct 2025 05:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30BD1E230E;
+	Sun,  5 Oct 2025 05:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="G27dcEQh"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b="OqUzqsmn"
+Received: from mout-y-111.mailbox.org (mout-y-111.mailbox.org [91.198.250.236])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176EE6FBF
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 05:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6B7126C05;
+	Sun,  5 Oct 2025 05:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759642113; cv=none; b=Ocw+0kNAqRLgM5Op5OtSRpfbsrkEwBi0YHnVKS2L1ezh7lY3Hj887C1xyU7SCYJRLz7xnHuhd2gjsbUMXxTsVKMPEgbK8TaCjA+vSEBAsADCORK823z8VFQsp9+svlRccuUduxmKQF3WivF5BV9ysbwzhkM47swxr2+RuRXkcn8=
+	t=1759642681; cv=none; b=pcanPouoEIrG32wrVoy4y2B54T/Zy2jao/NUAI0ECCNtBu+igfhY10UWHeQNkYLKpW+wGYrC6dS3hnLcVF9cMnhtyT6np2mwgdvUGGZ5ziig3cCTpPgVV98W8/jOuMBp3gJZ9Gq6rrkqt/wr6397HReIdhk3e1YJ/uyFKvXlTLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759642113; c=relaxed/simple;
-	bh=lSQ8HAtiqRvKPWBUdmp32X4c9mOaWNkPum34eaq65nY=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=elKCBBGq3ePVmSRxYWBJty+RZI0PwRLgQdpC44lSkHkUuYQBM/Usjq9sPZB7mFkdVB/v7dlOARSuvjPcoEnYW8+M0LHlaemf1rzMld9lAWxWcSPJhDw6PioDcvCPk/nP6IQZsd633aa7K6cBHb8JIFqDHF7lWZEDgjOkEc/sOo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=G27dcEQh; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3F38440E0194;
-	Sun,  5 Oct 2025 05:28:27 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 3TUA45zQHCYB; Sun,  5 Oct 2025 05:28:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1759642097; bh=lSQ8HAtiqRvKPWBUdmp32X4c9mOaWNkPum34eaq65nY=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=G27dcEQhBBh5P8KICkNcZJrmVIhmdkDtRPIJHQ3QzuLMKv1jW3stSGBPrhcdVrPBy
-	 zksi2ZyQq6m3sEkEzz+W46oubhQksZhzA3Y4/1BsZUZfuONBJSj6i8AVZn64fp/j6S
-	 RLsSuqQ7MslQL1B8i3RmOwgufXe8HA333L40K4JgCmUikRcCEfbirF02pG488f9Pjz
-	 pCzB+M9tlOcdzWG4qULvN41Fx/ASZNh/qBvPTJOSEiVO6sFu7/ZLsyIqvsLNP5fmCg
-	 uGPYRDquN6Vj2JjitjuhKGH5cYzJZSEZ1uBSOQs7c3CdnwgbKeUTnlpsxX8weHeN88
-	 aY+Ob9IRhjtCfP9Uu+RfuodBneeRBIlZ74Ks8vZh5w/LuBnRAb5jSyV64AaYF7VvOi
-	 G9XqEFDhZzfCjwyxrVxD2zWENl1Kdti1b3Uj3oKhdwFTBv8EzDRvYWsNhqMJ9K75hF
-	 Qgj5MeTBuOI5D2bINKWTBnn/gA1b4i0BjQLwEAafvGhnACDK4JdyScaYu3wpRlm9xw
-	 fsAC5U5DLSnpo2Eo47wXqx8jfpTk8ov7zgUKXaWxXVN/9JgX22bhYNRjtrzXIhAZaf
-	 171+OX7BaMeqURrGhqFH7qw/buElXLmlV9Q0oEKF55+BFZ3Nw61Nao+kd7jbUK81lo
-	 paNadokGw55LeRKbinbcX8Ow=
-Received: from ehlo.thunderbird.net (unknown [IPv6:2a02:3035:e62:bf7a:f880:d6ab:37f8:f6f8])
+	s=arc-20240116; t=1759642681; c=relaxed/simple;
+	bh=6F0CzM+vMWA9ALL6cpRvIbUDqS/dg+JYk9nyEMxzxZU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fFeyHCZ1z9p4C0pwlB7k/Ry1s++mgU57tbE2xrh8zDYNe7QoSdOFINSSUCMH+VkMb+ED+Nw2g9R5keGdeHN3tjNo+1C4V8ydZk+CaB6ahjaYa48JBZq2GxLZcl66YDsHvo199BMl4DUPg07mflmKkRRgSPnWie0cjUbGtu+5HsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com; spf=fail smtp.mailfrom=mssola.com; dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b=OqUzqsmn; arc=none smtp.client-ip=91.198.250.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mssola.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 34CD340E00DE;
-	Sun,  5 Oct 2025 05:28:01 +0000 (UTC)
-Date: Sun, 05 Oct 2025 08:27:54 +0300
-From: Borislav Petkov <bp@alien8.de>
-To: Dave Hansen <dave.hansen@intel.com>,
- Xose Vazquez Perez <xose.vazquez@gmail.com>
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Nikolay Borisov <nik.borisov@suse.com>,
- Alex Murray <alex.murray@canonical.com>,
- Andrew Cooper <andrew.cooper3@citrix.com>,
- Sohil Mehta <sohil.mehta@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dave Hansen <dave.hansen@linux.intel.com>, X86-ML <x86@kernel.org>,
- KERNEL-ML <linux-kernel@vger.kernel.org>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_RFC=5D_x86/microco?=
- =?US-ASCII?Q?de/intel=3A_Refresh_the_revisi?=
- =?US-ASCII?Q?ons_that_determine_old=5Fmicr?=
- =?US-ASCII?Q?ocode_to_20250812_=28Aug_2025=29?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <8826a146-ba01-4f97-9fc5-7bf42c1e768d@intel.com>
-References: <20251004222528.119977-1-xose.vazquez@gmail.com> <8F0DE1AD-5532-4581-9716-581FB2777404@alien8.de> <8826a146-ba01-4f97-9fc5-7bf42c1e768d@intel.com>
-Message-ID: <F5790843-AB8B-4E07-8A62-5F777249CFCF@alien8.de>
+	by mout-y-111.mailbox.org (Postfix) with ESMTPS id 4cfWQB0ZDlz9yBj;
+	Sun,  5 Oct 2025 07:37:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mssola.com; s=MBO0001;
+	t=1759642674;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6F0CzM+vMWA9ALL6cpRvIbUDqS/dg+JYk9nyEMxzxZU=;
+	b=OqUzqsmn39dM8pmMwAaqi934iWsGE6Cxdm+O3v3QPjZSF6jXp10TRjQqAlyeodgYETQzmH
+	BGlsyl3RI/vOtDYCZIPyVhIsQ8CO5XVgBllLSsqCYreEYrRJIIm3KAmQu9MkGec8ffCY7U
+	IH3G7pNbIfOpjD0UmHBv3yqj9YTV2N46M8JkJyjNOijz+grg27rAqhxbfRbc6VplfUWwOA
+	J1Xj1yJ3tGORgB0jvDyEW/PBH9EG6Tgu3j7MmcodpCfz52P/Lp419bhJiH+TSuVQeNVWjT
+	NOQQsemiYouEs6swm+glIW7bo1FBza7i4awlVIP+6lc1CNfj2BcuCf36rrEmqg==
+From: =?utf-8?Q?Miquel_Sabat=C3=A9_Sol=C3=A0?= <mssola@mssola.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org,  brauner@kernel.org,
+  linux-kernel@vger.kernel.org,  jack@suse.cz
+Subject: Re: [PATCH] fs: Use a cleanup attribute in copy_fdtable()
+In-Reply-To: <20251004211908.GD2441659@ZenIV> (Al Viro's message of "Sat, 4
+	Oct 2025 22:19:08 +0100")
+References: <20251004210340.193748-1-mssola@mssola.com>
+	<20251004211908.GD2441659@ZenIV>
+Date: Sun, 05 Oct 2025 07:37:50 +0200
+Message-ID: <878qhpc3ip.fsf@>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
+
+--=-=-=
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On October 5, 2025 6:58:05 AM GMT+03:00, Dave Hansen <dave=2Ehansen@intel=
-=2Ecom> wrote:
->On 10/4/25 19:42, Borislav Petkov wrote:
->> This is turning into exactly what I was afraid and I warned it would tu=
-rn onto:
->>=20
->> 1=2E https://git=2Ekernel=2Eorg/tip/952df63ef426b21d6da14bb48748f12b0ae=
-2fe36 - we *just* updated it and there's already a new one
->>=20
->> 2=2E Random people - not Intel - are going to be sending updates too=2E
->>=20
->> This is a mess waiting to happen=2E ;-/
+Al Viro @ 2025-10-04 22:19 +01:
+
+> On Sat, Oct 04, 2025 at 11:03:40PM +0200, Miquel Sabat=C3=A9 Sol=C3=A0 wr=
+ote:
+>> This is a small cleanup in which by using the __free(kfree) cleanup
+>> attribute we can avoid three labels to go to, and the code turns to be
+>> more concise and easier to follow.
 >
->In the end, we've got an lightly documented patch that doesn't make a
->lot of sense to apply=2E Not exactly a unique situation=2E ;)
+> Have you tried to build and boot that?
+
+Yes, and it worked on my machine...
+
 >
->Xose, do you have any specific, practical reasons this should be
->applied? Honestly, I don't hold the "HIGH" Intel SA rating in super high
->regard=2E
+> That aside, it is not easier to follow in that form - especially since
+> kfree() is *not* the right destructor for the object in question.
+> Having part of destructor done via sodding __cleanup, with the rest
+> open-coded on various failure exits is confusing as hell.
+>
+> RAII has its uses, but applied unidiomatically it ends up being a mess
+> that is harder to follow and reason about than the dreadful gotos it
+> replaces.
 
-That's the problem=2E It'll be needless and endless discussions of the sor=
-t: oh, why do you need to update those revisions? But but, I need this and =
-that=2E Oh but you don't=2E Blablabla=2E=2E=2E Upstream has these revisions=
-, why aren't they backported=2E=2E=2E?
+I agree that it would generally not be the right destructor for it, but
+in the case of this function it ends up being equivalent. But I see
+that, if in general that wouldn't be the proper way, declaring the
+fdtable variable like that can be misleading, even if equivalent
+here. Thus, defeating the purpose of this patch.
 
-Versus: people should always update to the latest microcode and we're not =
-tracking this in the kernel because there's really no need to=2E
+>
+> NAKed-by: Al Viro <viro@zeniv.linux.org.uk>
 
-And none of those issues exist anymore=2E
+Thanks for the review,
+Miquel
 
-This is one of the reasons why I'm making sure the loader always works and=
- is very easy to update microcode=2E You always update and that's it=2E
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-So you don't need any of that unnecessary work=2E
+-----BEGIN PGP SIGNATURE-----
 
-Thx=2E
-
-
-Small device=2E Typos and formatting crap
+iQJiBAEBCgBMFiEEG6U8esk9yirP39qXlr6Mb9idZWUFAmjiBC4bFIAAAAAABAAO
+bWFudTIsMi41KzEuMTEsMiwyEhxtc3NvbGFAbXNzb2xhLmNvbQAKCRCWvoxv2J1l
+ZQ4lD/40OwC5BCFB9rDGuIf0ooR/hI0Il00SlqwopgV/iqTtwTUWJjb2lwHc92x1
+8gxHgPImTG5AVa2DrhrTqn4loWDelK0m1OWQPEfnuFFAFg71+uRLc54VPPbHMo+N
+QqQQ32u2z2BphQ7xO+QUGf1w5t5NxjaRnqdjNEdnsaMIY9ieW94YCFSGJ+6IFfEZ
+Dm/zlgj/3kIrmo/la9VryTLrv0jvSkaR8Rc44PYMdLM2hQDhrOKSwy8yF8ILnm1Z
+WHXD9ugIFFhCCT9/ideu5tysSoe/E3Eowd6+bBJOPobn2I7cqbHVCV3nMN2mCTkK
+3GM+urRqHGOIEOpUBLVhbUJsTR9TOuAmkjzIVtllKSWNlI4DbP2wAusmhoDCI7Yg
+74Bms+3avhtl1QAKx0Tv0Kz3D3Lx545A/SFF80CGC08XgM6HryFwAos5eylKcuIU
+mMAUFrQpFMvzp/eq0IkeBUriAKf2qLxUUGz0x3U8GEWqx+RwxXH8uHsP3TYxS6yr
+JicWcQNYSR2wFm2Ocvfae7p5sCvYHcl2lCh8GShsld64h+q3/wF1onuXsL4oP6yh
+ZFyLH1Iktj9EYxG2/GrO9ZnSElOaGtTSrdqcyVCJGFsMxmqMN7Pmoit5HlAVeqDM
+vAANrBTBHwTEsaWS2oT4vkTAp1OQCU6TZol9YiXVKA7zsl9a6w==
+=tKwb
+-----END PGP SIGNATURE-----
+--=-=-=--
 
