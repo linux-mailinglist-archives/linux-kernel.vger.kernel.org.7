@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-842418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F380BB9B11
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 20:30:05 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 228EEBB9B16
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 20:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18D0F3AFB3E
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 18:30:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9DAE7347EE0
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 18:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D383A2BEFFB;
-	Sun,  5 Oct 2025 18:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B212BF005;
+	Sun,  5 Oct 2025 18:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="22FcYi/m"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jlG3DFDM"
 Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405E72BE65B
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 18:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C5D2BEFF6
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 18:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759688729; cv=none; b=gFms+TE0cm1DQ/4WV23Ey7mooo8J1+T3ca8SVQFVIV+/Gv6Id5nts5QtcXkkpUKcFgUJRnQKoidl5PJQ9ehzllGtdClfSv2VTXd562Tx556P6SX78+WtkHyhOfPGmLcleOx84jE2YqbeIL025WFUmQVAX5bT9cHjSLFIFyf6rsc=
+	t=1759688732; cv=none; b=NSn14BLhYlX6ys9ZIZVgLkaW35N8JwYBAKyIZ8SwSgom7VvsGbcyevZNL4imoxogHMeu/e3BH+Tqon95e5N7ePsbgNKkLCzfb2vGmDpQFj3Vet1RHnf2omW0INoY3yYpPhoMFxeoiEL4L5MyAOw1s9P8DWjVlbMzouNc2NvHKKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759688729; c=relaxed/simple;
-	bh=jA8V8JQzSzzDaPIOYv6X7BrlScdsF10G+8JsMA7kuTo=;
+	s=arc-20240116; t=1759688732; c=relaxed/simple;
+	bh=7NfXoXjCmippNcPV17LsBuq2kpdjq25juLwJVddyl4E=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=C+Vvn3nvkO9n2OSvRfqmTw0y/4iimxDQZVcZ3uVv+kdgvAoF5o8Iyb5nYp1tNrd2YTZ8ASgsHba8z8HqmMMXApELa2/xmkCivX1ixgNvjbB1R0RETc4n3AIdWkwRtNmsoitLO10DoML/HJxLKjA+fjcPuORQRQOxB2YbZDkf+cY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=22FcYi/m; arc=none smtp.client-ip=209.85.214.202
+	 To:Cc:Content-Type; b=WrIYlERubbqmgIX2YnW439A2G86LMXznsCRpE4KCwAmbtC+plkNyEhFkTHz9+IZqvp+z/hQM/ZqjcSTZglhayWigbnn35yOyChzQ2DhOXl6a0kUtkAoa5nyDVWUonpN4KyumShbzlpn2AdrXbEXJBMrVoBQkL5FmL4Hd4v+r2ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jlG3DFDM; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-28e538b5f23so43807915ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 11:25:28 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-28c58e009d1so68603805ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 11:25:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759688727; x=1760293527; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1759688729; x=1760293529; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=04jhWbIOWQVvHP4/B5QDDspC12yS1PC3rpInKNqRvvM=;
-        b=22FcYi/mY3828b0v3gUbDZjjjGI29PzuyzMOEF8QZ4oHGWsFYUG1xwAtKW+GTLHGg3
-         zsc3q3xp9LnH8kX1vmqvgrHkdvMPm8heJaB/PzTJx+NZdqubnfxRu0orB+IhbqZ87wKp
-         HNye1qbXEuL76dK+P0P2cbgXi6y59XEsKe6mNinFFgXHWhZ5YqOXC5yJlD4BXP2jZE2W
-         V/j3uAlb4S9SlKAGsZ6XPPK5eqUHCfom8KYBYpCJSWFIhfMxwcsz0o96twffbyNdo0jK
-         d3DmLaRHAZHR9PePd2D3FFVVF/6qvetFdiAqHywDdbG5Y7ttIlz+BI7MsmCWoxYSPWBU
-         dTbA==
+        bh=eslNOVp40osNcdUjiaj9HXK8o7Gak8RPSpTueusR0jI=;
+        b=jlG3DFDMfE0fRAXHsbWYCtlQ6A2PAzFeGtQ9pUOEkknceaxiQe8JGAbG63XpVO6WVe
+         enlRJvgoETmqZHNTSGGPRN1zNtMSjiuvwnz6XVot8E2/5q6CWm3P5EX067VBN77alE3v
+         VHLMCG9uScC5kfDvaHpP/RPz9hhVadSj3lQJw6Bs75ApC9tnCoFFy6WpaKawsm/enw80
+         v+6UKtSsgso2+z5LOABGt0sp2Y+7wlniznjbE6VrfjqqWdKITf/JLyqhwlY3WVhEafbL
+         xB7oWbaay7a2c+BY+GBs7hyvJvFcIRVxpzJ0aoKTRRjGVPxjstYkoQrDz+SEr4vekvs8
+         ICOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759688727; x=1760293527;
+        d=1e100.net; s=20230601; t=1759688729; x=1760293529;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=04jhWbIOWQVvHP4/B5QDDspC12yS1PC3rpInKNqRvvM=;
-        b=dRyEJ/d9nkQH4IQgCVT+JLvjBPj7IeS0C5cp0KLKJhwMbYVDt2PmPgMxmS/LoJGPkL
-         +s6t2cxgRI7Q+LfOXY2+13wOSK5hMVhQAGmaIiZO3zG2mTe50Ph8+w4pN6RQ/XemLmbV
-         buOaAVsJo6lrokNHvd+0L7dLmz2y6pTKNLT591dWZ39LAcBlnVTvqTCsKTipgaNmqHWX
-         w+E7RcoZHsVqwISuCItXvRp0zIG9rM58MnKbFU9W+5q0cFWytGiFUWnmED9tutlbnVPz
-         NMG9iA8SIlhngPnDXsP1jHaOwDC1mMOu0OKptcC1WhR5u7Bg4kXPFAmjiU/LuKcw0RwD
-         hL5g==
-X-Forwarded-Encrypted: i=1; AJvYcCV1p8WKJ5LLXhcUsbAYLOOdhzGBLHom/vyCJ0cpR3A6C+mXmdXcnPIBFk9/U64eHjP213do0aSS873NfrU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvN3V074LaRA5rc1qX5d4k50zm4KPDUWLwdEFs33zFCKG3WAuN
-	UXf2bV1O7Lsv854l42HrEMFIuxvykFIL50sh0dnI/iOjMFTA93/vJoR6cd5TParTM+Lda/6xype
-	lyE+OkxqFxA==
-X-Google-Smtp-Source: AGHT+IE1ZmsKY4hNrxEAw+Tq+R1d8naqF7yJZyzDeYLPtjsVSiH93uuW+T1nuP4eF+Rcs0FCfN7MI/2SDDK3
-X-Received: from plot3.prod.google.com ([2002:a17:902:8c83:b0:27e:4187:b4d3])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:b4e:b0:275:2aac:fef8
- with SMTP id d9443c01a7336-28e9a61abc1mr122423885ad.38.1759688727421; Sun, 05
- Oct 2025 11:25:27 -0700 (PDT)
-Date: Sun,  5 Oct 2025 11:24:27 -0700
+        bh=eslNOVp40osNcdUjiaj9HXK8o7Gak8RPSpTueusR0jI=;
+        b=NGQMGzSXutkrs6waAxjYU2TaZOoDMieKSmJ63jGWtTRIiA/yNCaukDHOvNgwJ9lDDq
+         G6+TS3VfAGj7Ru3B6RiIKoh68V+C+mQpcWk+bQXDwLcXbaIfqxUr6KLyAGCW2yJ04LBq
+         Nuxz177/zha4pOGm4MZZmoX1jXkYj1Rdy0ku/cBlNpA8twx4bWaQEtJPK4IpLMb66+Ov
+         AM0DuGRa3uJZtx+vIDReRECnkOj0rvaQcMTgosvxfGKt1as/ohwaxUeaXlxGQj2FvBkn
+         lHkZryGpcCDJKZej+5/KaHiJxFouzIHEuY2VV8CGkWE8SjSic15+srZoWc8OPzm4LdfN
+         JiSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0Fvr6EYRBgQSXRyrYzVYdrHTtVl6lRJwEgpY2O5sY/HNFGBD7RxNte0FfPbbMsq6QTqc2h6e1Rl6BIa0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoOCyXHWfMduaGhxLYh1bPHkc0tYaK9QzzgQ002U5U+CLMgHqg
+	Z815otLHkqCS9h72IQjvXej+VxIRRS8TdAqtSvMCkS+BBxNcHAHoztohw7sShGadHJUA8DsEYrk
+	D6dOB007+ug==
+X-Google-Smtp-Source: AGHT+IHiE+aTEy1l6BRt3qiCFrB5gxX3VeXUaGVK3goFmEPGbBhBVjDZfjHzbdAHxJrqXh2MSSt4KANfteu2
+X-Received: from plblq3.prod.google.com ([2002:a17:903:1443:b0:28e:82ea:1815])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:3c70:b0:265:47:a7bd
+ with SMTP id d9443c01a7336-28e9a565600mr102685075ad.4.1759688729574; Sun, 05
+ Oct 2025 11:25:29 -0700 (PDT)
+Date: Sun,  5 Oct 2025 11:24:28 -0700
 In-Reply-To: <20251005182430.2791371-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251005182430.2791371-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
-Message-ID: <20251005182430.2791371-25-irogers@google.com>
-Subject: [PATCH v7 24/27] perf test: Switch cycles event to cpu-cycles
+Message-ID: <20251005182430.2791371-26-irogers@google.com>
+Subject: [PATCH v7 25/27] perf test: Clean up test_..config helpers
 From: Ian Rogers <irogers@google.com>
 To: James Clark <james.clark@linaro.org>, Peter Zijlstra <peterz@infradead.org>, 
 	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -87,78 +87,69 @@ To: James Clark <james.clark@linaro.org>, Peter Zijlstra <peterz@infradead.org>,
 Cc: Ian Rogers <irogers@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Without a PMU perf matches an event against any PMU with the
-event. Unfortunately some PMU drivers advertise a "cycles" event which
-is typically just a core event. As tests assume a core event, switch
-to use "cpu-cycles" that avoids the overloaded "cycles" event on
-troublesome PMUs and is so far not overloaded. Note, on x86 this
-changes a legacy event into a sysfs one.
+Just have a single test_hw_config helper that strips extended type
+information in the case of hardware and hardware cache events.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/tests/code-reading.c     | 2 +-
- tools/perf/tests/keep-tracking.c    | 2 +-
- tools/perf/tests/perf-time-to-tsc.c | 4 ++--
- tools/perf/tests/switch-tracking.c  | 2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
+ tools/perf/tests/parse-events.c | 23 ++++-------------------
+ 1 file changed, 4 insertions(+), 19 deletions(-)
 
-diff --git a/tools/perf/tests/code-reading.c b/tools/perf/tests/code-reading.c
-index 9c2091310191..4574a7e528ec 100644
---- a/tools/perf/tests/code-reading.c
-+++ b/tools/perf/tests/code-reading.c
-@@ -649,7 +649,7 @@ static int do_test_code_reading(bool try_kcore)
- 	struct map *map;
- 	bool have_vmlinux, have_kcore;
- 	struct dso *dso;
--	const char *events[] = { "cycles", "cycles:u", "cpu-clock", "cpu-clock:u", NULL };
-+	const char *events[] = { "cpu-cycles", "cpu-cycles:u", "cpu-clock", "cpu-clock:u", NULL };
- 	int evidx = 0;
- 	struct perf_env host_env;
+diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
+index 5dd2f03e952d..b6ba0e632454 100644
+--- a/tools/perf/tests/parse-events.c
++++ b/tools/perf/tests/parse-events.c
+@@ -41,22 +41,7 @@ static int num_core_entries(struct evlist *evlist)
+ 	return 1;
+ }
  
-diff --git a/tools/perf/tests/keep-tracking.c b/tools/perf/tests/keep-tracking.c
-index eafb49eb0b56..729cc9cc1cb7 100644
---- a/tools/perf/tests/keep-tracking.c
-+++ b/tools/perf/tests/keep-tracking.c
-@@ -90,7 +90,7 @@ static int test__keep_tracking(struct test_suite *test __maybe_unused, int subte
- 	perf_evlist__set_maps(&evlist->core, cpus, threads);
- 
- 	CHECK__(parse_event(evlist, "dummy:u"));
--	CHECK__(parse_event(evlist, "cycles:u"));
-+	CHECK__(parse_event(evlist, "cpu-cycles:u"));
- 
- 	evlist__config(evlist, &opts, NULL);
- 
-diff --git a/tools/perf/tests/perf-time-to-tsc.c b/tools/perf/tests/perf-time-to-tsc.c
-index d4437410c99f..cca41bd37ae3 100644
---- a/tools/perf/tests/perf-time-to-tsc.c
-+++ b/tools/perf/tests/perf-time-to-tsc.c
-@@ -101,11 +101,11 @@ static int test__perf_time_to_tsc(struct test_suite *test __maybe_unused, int su
- 
- 	perf_evlist__set_maps(&evlist->core, cpus, threads);
- 
--	CHECK__(parse_event(evlist, "cycles:u"));
-+	CHECK__(parse_event(evlist, "cpu-cycles:u"));
- 
- 	evlist__config(evlist, &opts, NULL);
- 
--	/* For hybrid "cycles:u", it creates two events */
-+	/* For hybrid "cpu-cycles:u", it creates two events */
- 	evlist__for_each_entry(evlist, evsel) {
- 		evsel->core.attr.comm = 1;
- 		evsel->core.attr.disabled = 1;
-diff --git a/tools/perf/tests/switch-tracking.c b/tools/perf/tests/switch-tracking.c
-index 5be294014d3b..15791fcb76b2 100644
---- a/tools/perf/tests/switch-tracking.c
-+++ b/tools/perf/tests/switch-tracking.c
-@@ -332,7 +332,7 @@ static int process_events(struct evlist *evlist,
- static int test__switch_tracking(struct test_suite *test __maybe_unused, int subtest __maybe_unused)
+-static bool test_config(const struct evsel *evsel, __u64 expected_config)
+-{
+-	__u32 type = evsel->core.attr.type;
+-	__u64 config = evsel->core.attr.config;
+-
+-	if (type == PERF_TYPE_HARDWARE || type == PERF_TYPE_HW_CACHE) {
+-		/*
+-		 * HARDWARE and HW_CACHE events encode the PMU's extended type
+-		 * in the top 32-bits. Mask in order to ignore.
+-		 */
+-		config &= PERF_HW_EVENT_MASK;
+-	}
+-	return config == expected_config;
+-}
+-
+-static bool test_perf_config(const struct perf_evsel *evsel, __u64 expected_config)
++static bool test_hw_config(const struct perf_evsel *evsel, __u64 expected_config)
  {
- 	const char *sched_switch = "sched:sched_switch";
--	const char *cycles = "cycles:u";
-+	const char *cycles = "cpu-cycles:u";
- 	struct switch_tracking switch_tracking = { .tids = NULL, };
- 	struct record_opts opts = {
- 		.mmap_pages	     = UINT_MAX,
+ 	return (evsel->attr.config & PERF_HW_EVENT_MASK) == expected_config;
+ }
+@@ -129,7 +114,7 @@ static int test__checkevent_raw(struct evlist *evlist)
+ 		struct perf_pmu *pmu __maybe_unused = NULL;
+ 		bool type_matched = false;
+ 
+-		TEST_ASSERT_VAL("wrong config", test_perf_config(evsel, 0x1a));
++		TEST_ASSERT_VAL("wrong config", test_hw_config(evsel, 0x1a));
+ 		TEST_ASSERT_VAL("event not parsed as raw type",
+ 				evsel->attr.type == PERF_TYPE_RAW);
+ #if defined(__aarch64__)
+@@ -215,7 +200,7 @@ static int test__checkevent_genhw(struct evlist *evlist)
+ 
+ 	perf_evlist__for_each_entry(&evlist->core, evsel) {
+ 		TEST_ASSERT_VAL("wrong type", PERF_TYPE_HW_CACHE == evsel->attr.type);
+-		TEST_ASSERT_VAL("wrong config", test_perf_config(evsel, 1 << 16));
++		TEST_ASSERT_VAL("wrong config", test_hw_config(evsel, 1 << 16));
+ 	}
+ 	return TEST_OK;
+ }
+@@ -596,7 +581,7 @@ static int test__checkevent_pmu(struct evlist *evlist)
+ 
+ 	TEST_ASSERT_VAL("wrong number of entries", 1 == evlist->core.nr_entries);
+ 	TEST_ASSERT_VAL("wrong type", core_pmu->type == evsel->core.attr.type);
+-	TEST_ASSERT_VAL("wrong config",    test_config(evsel, 10));
++	TEST_ASSERT_VAL("wrong config",    test_hw_config(&evsel->core, 10));
+ 	TEST_ASSERT_VAL("wrong config1",    1 == evsel->core.attr.config1);
+ 	TEST_ASSERT_VAL("wrong config2",    3 == evsel->core.attr.config2);
+ 	TEST_ASSERT_VAL("wrong config3",    0 == evsel->core.attr.config3);
 -- 
 2.51.0.618.g983fd99d29-goog
 
