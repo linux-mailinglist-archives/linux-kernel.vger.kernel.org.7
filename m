@@ -1,143 +1,144 @@
-Return-Path: <linux-kernel+bounces-842215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95765BB9402
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 06:39:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48E78BB9406
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 06:48:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5897718979C5
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 04:39:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04BA418998D3
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 04:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CBD619DF62;
-	Sun,  5 Oct 2025 04:39:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b="Zoq7tnkY"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0CC919D8A7;
+	Sun,  5 Oct 2025 04:48:37 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B22CA4B
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 04:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA255DF49
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 04:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759639166; cv=none; b=MJqjvvJUhlvSzKEI5ybBBU4yvd7RHHuJtW5I1IlO81rawFZAfHZ+QHJLI2ZnZeYRKJDrlauRrJkNpA6qb5u57kca2Wf07LqQLWbzGObq+sjrlkWzojdsSRRhIS9iVj/Y/EqYBDWuKU+Vlk5oWGm1hzhxu7wxo+I/CZ5iz+UY5nw=
+	t=1759639717; cv=none; b=gpwx2oQ+1FOpMv2rZ5TzXLkHevHCuZQidSgltmb0EQijRhyfJIEMMjLWm8g5GIomeR1WzGYyQPjzwp/vSHM10AyS0b+4EUqp+ofVAuVd+5GOo/ykNgPZtRP5zAYdWc5CLaIL63Qw1xS50GoZc90mUaRmoXy9vFUPmgsQh6TiK+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759639166; c=relaxed/simple;
-	bh=XH2xXUswwjYui6iwKQscZaPoZe7ppMJZ6Sgoi/ykVGI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aKE1oL8V13xI9NywFulPbGm2He+DAvVmHNhnk7CqPum2K8/rOYZEp3Oxcz91B8MruIUYP9yT9TzKwm2Meya6/wlooQqvF7Ps0SG5mOMcrJXcs9yG7oZrwoqcg2qXuSsshVM02XNpRALeQ66Jt5GLGCS/0Ef3m3AnOX1COGKEVHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in; spf=none smtp.mailfrom=ee.vjti.ac.in; dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b=Zoq7tnkY; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ee.vjti.ac.in
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-33082c95fd0so4016225a91.1
-        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 21:39:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=vjti.ac.in; s=google; t=1759639163; x=1760243963; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Apb38vvwB4yx6ZuSTdH5FloXnDPkndq4ehFPRMxQ1PA=;
-        b=Zoq7tnkYdhztbb8x4zsdNzsS1v4Pi1UmMtbx9tCYMB4ZHr003/gXfaWB9OKxjyZCx1
-         TrEnfYeAambmGtUS1uF0z6ukFCO8jTKhpITZpsnqwuAMtlqByTT1rd5In9gKoQbuHiUI
-         jKvx/G4XOXwJe3In3Dr/wQdrFzoUAYIb3E0Ns=
+	s=arc-20240116; t=1759639717; c=relaxed/simple;
+	bh=zob1Z+bggh2wgwtwyrO8vEZO7GC5E/2Ir1fGJPfxAhI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=G4ZkyKW26raE9oxLq28crRHipsRn1qf1PCgJkP87xBdkN4I53eN5CL7xgl95zlRvt6oNVFm8VVfa4XVIm9/fkd2PLtisWcSAcbTI8Wu141RNGBkY7MTCesCugv3K+PgOwK+WlzAoxDPcxmQhjZfBd6Jq8Ke0nnQS3i4y+rLhw1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-9286199b46fso385230839f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 21:48:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759639163; x=1760243963;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Apb38vvwB4yx6ZuSTdH5FloXnDPkndq4ehFPRMxQ1PA=;
-        b=ojUawV9tWb7Qlhwd3WQ7ckY7ddhwrzk9sOw4xdVLPjzQ/w2vnuK2UzzXOhNbUcczPf
-         X0aqJc4QoFKYxleUqJZna8kDLnznbeTrQ8tk0uEDIVXI3ZvFyjIXJmtcNpzkSLO5VGbZ
-         mUhJlk2fx9Wk+kbnLGI6Ig7BNs6qnMaiLOf6I1v2BtzPFT3AolrcL/a+HlWJDoHqVW/9
-         quxRJ10t4Qr5Xw5HN7OkkVM0vM7KPVa6MekcUTUE2uHLkObhgEBbVWyY0PL6VL4mdg9w
-         uAeeR6hzYP4FWmuoLkEc1C+VcJSet2UDPaqetjmlF4UlwOwqksCsufcGkMIrXDGvFKxt
-         9krg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFlek/TTa94/wehU/1nRr4mRGMHVkSGEmdXLVOfHRpxmKZI01gF35T3N1K8Jd1wK1aFlGtVAJyjmrDTqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOpHuZi9qMGSrB5BPnLns4dBslTclyjC3F+tvbEw8njccANrKZ
-	m2/bb6/VVMJUdQ6XgDLFIUj9R53qyKqH0/dtFNwdUDBhZ7rtVYzqEDyeUBVNUoxSEIw=
-X-Gm-Gg: ASbGncsxNZB2tqrWPuQmPYw1LqFoiVIw7jKUxNeqJONv7N1fhnbO7vRnJqVVrMrVbMV
-	APht7zth6XN90ViaMBSbL0twN1FZVJX9/tdvZLCgVyn7HQLTF0SfDgL8fEka1J96iAFi0c9qUck
-	MVZPt6Z19kDLedvsJWghNXr+XQ/rQj5gefkBYsYNAgMelIi0T/qsLnSYuJgSEpnmogTkDd5eu56
-	FpKkOEv2cP5MMmyGi9xG8fsprURkohlvhrler6HUPy6GzeysF7DPX+ZTKJZ2ybWceky9qiIUKEb
-	KWvbChhDuPBYjgHohCswdfppdEs2mY566GBo6nHQYEjrN1xvLVNErPDfzIPHheptYO3VJ3zQ2g7
-	xoHQPfZxjDmWRuIUDxX0i+pO0glWxZ+lDj2ksj6BSnMbjvY65ENL6P1k1v53plzBuK1rP4B95Tx
-	HC8xEjgZyscOmWl0u5o3w=
-X-Google-Smtp-Source: AGHT+IGifsrczbdDKYNtv1noTEjGaiFZdC0gFOLKpD4Gx2VS5pRYTYCIpxROzAXFy+ub6zSL+d/53w==
-X-Received: by 2002:a17:902:e801:b0:269:ba8b:8476 with SMTP id d9443c01a7336-28e9a6a20efmr107869995ad.56.1759639163061;
-        Sat, 04 Oct 2025 21:39:23 -0700 (PDT)
-Received: from ranegod-HP-ENVY-x360-Convertible-13-bd0xxx.. ([2409:40c0:105f:3153:f16e:6b07:4a58:8dc0])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1d574csm93059645ad.108.2025.10.04.21.39.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Oct 2025 21:39:22 -0700 (PDT)
-From: ssrane_b23@ee.vjti.ac.in
-X-Google-Original-From: ssranevjti@gmail.com
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Shaurya Rane <ssrane_b23@ee.vjti.ac.in>,
-	syzbot+564efbe31172fe908429@syzkaller.appspotmail.com
-Subject: [PATCH] bcachefs:fix use-after-free in __bch2_bkey_fsck_err
-Date: Sun,  5 Oct 2025 10:09:10 +0530
-Message-Id: <20251005043910.32975-1-ssranevjti@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1759639715; x=1760244515;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MRw6kQ7NQTHzEKLukPtcZ5PmWxL56zkThQhorWgQoDA=;
+        b=tMpkIuHefCNMYmaAYkat7SCQRp/k1A0WOa3wAh5lOOZTRzyCoq93kPOD7Cy0kFaU2t
+         O2Nqb9aE/zg3enXshktHWMCjWzGkrMrJEu6OSwr46e+FDN1kiMLxHVWXc2fUvotvcsWj
+         cyVMOJ2JQ4U71xi+T/81w9BLMucBDeC4oouLPCS1zaRmNWeZ+FKBXf8i7PI2mDUfWQ0Z
+         98iQJyW3s7al8YhRu0cMtFyKVnS4shv8vahJDqbeTDlSSo5fudFA/P8lanasp8S1ozgf
+         xZQTl/SZGva8Q6DEE+yukOfB8loiNQgDTmMC1m7OXNCaBKEGopfDJv+rXdpq8ImaCju2
+         qblw==
+X-Gm-Message-State: AOJu0YzrIjin9VU4nDVqwmdp/C+/HZEl8jurhMUOjaCZdXvNUqHxgfj2
+	XYNEPyvvdpLZQjIXz2K2FvwSxNGcZL1Aqe0+zSK18p5GPmWUH0B6lOTc+Ymm+W+SnAqzHVf6I3k
+	nJzOBP+aKFPrfDPLVEXEaaZVkbYqbkQF4WQTFQGyzURLU7EXU1mrgZ3BRlLDxFg==
+X-Google-Smtp-Source: AGHT+IFvNczzEzaaf08eM9b/Hy9aU9vUeeXh+CfbpIaSQvlVasGfo6UYE0XCG7c7kCHVKIUNrSQMYhbDeck+sILgBepaJ9pQmV3m
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:7407:b0:91c:fcd:88e6 with SMTP id
+ ca18e2360f4ac-93b96937759mr1085218239f.1.1759639714831; Sat, 04 Oct 2025
+ 21:48:34 -0700 (PDT)
+Date: Sat, 04 Oct 2025 21:48:34 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e1f8a2.a00a0220.102ee.0126.GAE@google.com>
+Subject: [syzbot] [kernel?] WARNING in kcov_task_exit
+From: syzbot <syzbot+47cf95ca1f9dcca872c8@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
+Hello,
 
-When mounting a corrupted bcachefs filesystem, KASAN detects a
-use-after-free in the error reporting path. This occurs due to a race
-between error reporting and key deletion during fsck.
+syzbot found the following issue on:
 
-The sequence of events:
+HEAD commit:    cbf33b8e0b36 Merge tag 'bpf-fixes' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10440ee2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d4754d79c625c476
+dashboard link: https://syzkaller.appspot.com/bug?extid=47cf95ca1f9dcca872c8
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-1. extent_ptr_validate() detects an invalid extent pointer with a
-   corrupt disk offset
-2. It calls __bch2_bkey_fsck_err() to report the error
-3. The fsck logic decides to delete the corrupt key
-4. Meanwhile, __bch2_bkey_fsck_err() calls bch2_bkey_val_to_text()
-5. This traverses the extent entries via bch2_extent_ptr_to_text()
-6. sector_to_bucket_and_offset() is called with the corrupt offset
-7. Memory access occurs on data being concurrently freed
+Unfortunately, I don't have any reproducer for this issue yet.
 
-The crash happens in bch2_extent_ptr_to_text() when it attempts to
-validate bucket boundaries using already-freed extent pointer data.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f8dd21bcf666/disk-cbf33b8e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/190c622f8270/vmlinux-cbf33b8e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/95c5beb798e9/bzImage-cbf33b8e.xz
 
-Replace bch2_bkey_val_to_text() with bch2_bpos_to_text() to print
-only the key position (inode, offset, snapshot) instead of traversing
-potentially corrupt or freed extent metadata. The position is part of
-the key header and remains safe to read even as the extent data is
-being freed. The specific validation error is still printed in the
-subsequent lines, providing sufficient context for debugging.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+47cf95ca1f9dcca872c8@syzkaller.appspotmail.com
 
-Tested successfully locally using syzbot provided reproducer
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 11596 at kernel/kcov.c:477 kcov_task_exit+0x13c/0x150 kernel/kcov.c:477
+Modules linked in:
+CPU: 1 UID: 0 PID: 11596 Comm: syz.4.1726 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+RIP: 0010:kcov_task_exit+0x13c/0x150 kernel/kcov.c:477
+Code: c7 c7 40 98 a4 8e 48 c7 c6 3c c6 ba 8c 48 c7 c2 fa 9c b9 8c 4c 89 f9 e8 32 46 f0 02 4c 39 bb 98 00 00 00 0f 84 ff fe ff ff 90 <0f> 0b 90 4c 89 f7 5b 41 5e 41 5f e9 f4 9f f7 08 0f 1f 40 00 90 90
+RSP: 0018:ffffc900055ffd00 EFLAGS: 00010287
+RAX: f6d69a1b07268900 RBX: ffff88814131d800 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff8b1dc0c0 RDI: 00000000ffffffff
+RBP: ffffc900055ffe78 R08: 0000000000000000 R09: ffffffff8ab4d7a1
+R10: dffffc0000000000 R11: fffffbfff1d6b527 R12: 1ffff11004c9279d
+R13: 0000000000000000 R14: ffff88814131d808 R15: ffff888036835a00
+FS:  000055557c98c500(0000) GS:ffff88812712f000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005562f7e5e000 CR3: 00000000685d0000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ do_exit+0x105/0x2300 kernel/exit.c:905
+ do_group_exit+0x21c/0x2d0 kernel/exit.c:1107
+ __do_sys_exit_group kernel/exit.c:1118 [inline]
+ __se_sys_exit_group kernel/exit.c:1116 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1116
+ x64_sys_call+0x21f7/0x2200 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f57eb2feec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffee660d918 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f57eb2feec9
+RDX: 00007f57ea569000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 00007ffee660d97c R08: 00000000000123ac R09: 00000000000927c0
+R10: 0000000000000000 R11: 0000000000000246 R12: 000000000000012a
+R13: 00000000000927c0 R14: 000000000009ff7c R15: 00007ffee660d9d0
+ </TASK>
 
-Reported-by: syzbot+564efbe31172fe908429@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?id=564efbe31172fe908429
-Fixes: d97de0d017cd ("bcachefs: Make bkey_fsck_err() a wrapper around fsck_err()")
-Signed-off-by: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
+
 ---
- fs/bcachefs/error.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/bcachefs/error.c b/fs/bcachefs/error.c
-index 267e73d9d7e6..b0bf08915aa2 100644
---- a/fs/bcachefs/error.c
-+++ b/fs/bcachefs/error.c
-@@ -688,7 +688,7 @@ int __bch2_bkey_fsck_err(struct bch_fs *c,
- 	bch2_btree_id_to_text(&buf, from.btree);
- 	prt_printf(&buf, " level=%u: ", from.level);
- 
--	bch2_bkey_val_to_text(&buf, c, k);
-+	bch2_bpos_to_text(&buf, k.k->p);
- 	prt_newline(&buf);
- 
- 	va_list args;
--- 
-2.34.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
