@@ -1,131 +1,78 @@
-Return-Path: <linux-kernel+bounces-842378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68464BB9A46
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 19:42:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 735EABB9A5E
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 19:43:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BCC644E6622
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 17:42:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 018E83B674A
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 17:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249951A9FAC;
-	Sun,  5 Oct 2025 17:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA04A1A9FB4;
+	Sun,  5 Oct 2025 17:43:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b="fb6rMpC1"
-Received: from mout-y-209.mailbox.org (mout-y-209.mailbox.org [91.198.250.237])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQQ+ZnyI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FE81A0BF1;
-	Sun,  5 Oct 2025 17:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.237
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3133BEACD;
+	Sun,  5 Oct 2025 17:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759686123; cv=none; b=VC+QWGVmb08AwR8sCauoD2cw1wdaMX7r4qkLZZboS3sYTfZhjPTggVC1N3JpPwNgR1VzDL9uIHqjXdzqWysRZZ2jjkQ2gccsIJ0uBYcJORs7a5NSBTVH5eovtzsl/mb5cxLazAuN1NZqLiufamcIustkfIns8ZibZtdgKmFp6qo=
+	t=1759686197; cv=none; b=LxI73C+srqTz2b56/jPlcILyKn50h1QtL8DUgx2Ymy4j2XKwjmJmy+03DFD+e3D5hnkL39nZrbt8D344BXpXpiUY/FEAAgQ62puRmCJOkexAMdbvvG/TaZ/EcgfxTNMrxbi9GxakfS6zt6MMv2gleO/0W9TDQCm8SXKinpINots=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759686123; c=relaxed/simple;
-	bh=U9YZJCh701mHZrCDuiXPvnGd1GKQaSrniSbzzi4JuLA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sG/x84ayfCYM4z3tRRb6QoKI5L68i5TWGN3YWH/7GTeUjZUyXXoR5vebF46gKA8JJvu2Pj0m73p4o5E4Dyn3tLyNDZAImlyaxawlANVNVKx16P62oaq0xS5s0vQ8fHpDscieod8UxV15293RUdgAP8728Uvzi9jPhoYWCr2ywFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com; spf=fail smtp.mailfrom=mssola.com; dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b=fb6rMpC1; arc=none smtp.client-ip=91.198.250.237
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mssola.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-y-209.mailbox.org (Postfix) with ESMTPS id 4cfqTW2Cc5zB0X5;
-	Sun,  5 Oct 2025 19:41:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mssola.com; s=MBO0001;
-	t=1759686111;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+X4afsKMgpdir61D2meXQMLBHW4HISvDZMs7EQHCVsI=;
-	b=fb6rMpC14nhvtDU0jlgR4YIPc1AGuRD/N+PDVw23U71N1DLka+7Fu3wG5huOg/en5GlDMN
-	VA7NU3xL7xOK8aV8y4W+HTWNzvPXPyqvCJqdlnm7R8M3173fAYr/5aj49/WsI1gaEutMo+
-	KGaj5SjVfTz9gTk3Ur4CagMKIP3HFuWwn4Pp38RQJF+VXcjg6HsG3l3YKjk/4tJAO7tjwZ
-	BO1eRtn0sABSf+xYsejR0bO9XMf/tRRv8Wr1MhR6VwoKkYX0GvL8CL8iMkOUwFVRCzupnf
-	jJgRKdj50lIOv+sKMeAM06if6UFTqQ2aNM9cpW/x1K0/MXookDK0xH+OOT0Ogw==
-From: =?utf-8?Q?Miquel_Sabat=C3=A9_Sol=C3=A0?= <mssola@mssola.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org,  brauner@kernel.org,
-  linux-kernel@vger.kernel.org,  jack@suse.cz
-Subject: Re: [PATCH] fs: Use a cleanup attribute in copy_fdtable()
-In-Reply-To: <20251005090152.GE2441659@ZenIV> (Al Viro's message of "Sun, 5
-	Oct 2025 10:01:52 +0100")
-References: <20251004210340.193748-1-mssola@mssola.com>
-	<20251004211908.GD2441659@ZenIV> <20251005090152.GE2441659@ZenIV>
-Date: Sun, 05 Oct 2025 19:41:47 +0200
-Message-ID: <87y0pp455w.fsf@>
+	s=arc-20240116; t=1759686197; c=relaxed/simple;
+	bh=+7pguDcr2we/KzgWM4xKYN/cG8I2Dw+s2UaHd81qOMU=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=FDbgzosCnXh10LQ7omAd/K86hkxzyXsPtQRY0wvAIONF5PIODXw8W0afEZ3RrUzy6ifzxbhD7IH40VnKrNbPiU/7hPvX1qHwb/we9zH/opkTKzX8uRBL4gsYaocwWPxuxPlXO5F/y0gn4jF8p9QhHQ6vPK59p0idXXTAwUcY/Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQQ+ZnyI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5CC5C4CEF4;
+	Sun,  5 Oct 2025 17:43:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759686196;
+	bh=+7pguDcr2we/KzgWM4xKYN/cG8I2Dw+s2UaHd81qOMU=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=KQQ+ZnyIiyw84tI7qbhNSnntP2YLUtgwxnHWckCuomrvjQKLBqRA7Xx8tld2bmE9O
+	 sBo5z/d82FQtYFc6LUfK4oE7IJiPHkx2qX2xgxjYFaO0hG19C40C3LUHkYqfy7pVJ9
+	 PH9UoBsSjmkLsQ1s7bDfebEubgQa8yCm5CtxGo3VMewYA9+YFreWK+aPWULCpwhZM9
+	 T8UrAoBLpzw5SlPOwOUveV3NIMx7fDVW80dzC1PLh+uAfY29L7Qo6PUBjALSTI8NZa
+	 8E+Hgm76hI0VOhC8AwYlkSOHTZwB2OQD93MsLVLTbJF+qWqdpzRz4kt1Vitz4sgukx
+	 0a16Ug3C2Udvg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33EAE39D0C1A;
+	Sun,  5 Oct 2025 17:43:08 +0000 (UTC)
+Subject: Re: [GIT PULL] OpenRISC updates for 6.18
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <aOIRtnhTn3Gt8yr5@antec>
+References: <aOIRtnhTn3Gt8yr5@antec>
+X-PR-Tracked-List-Id: <linux-openrisc.vger.kernel.org>
+X-PR-Tracked-Message-Id: <aOIRtnhTn3Gt8yr5@antec>
+X-PR-Tracked-Remote: https://github.com/openrisc/linux.git tags/for-linus
+X-PR-Tracked-Commit-Id: 8c30b0018f9d93391573e091960d257fd9de120a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 742adaa16db994ba1748465b95548e2f28aa18ca
+Message-Id: <175968618674.698585.16079975281024454367.pr-tracker-bot@kernel.org>
+Date: Sun, 05 Oct 2025 17:43:06 +0000
+To: Stafford Horne <shorne@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux OpenRISC <linux-openrisc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+The pull request you sent on Sun, 5 Oct 2025 07:35:34 +0100:
 
-Al Viro @ 2025-10-05 10:01 +01:
+> https://github.com/openrisc/linux.git tags/for-linus
 
-> On Sun, Oct 05, 2025 at 07:37:50AM +0200, Miquel Sabat=C3=A9 Sol=C3=A0 wr=
-ote:
->> Al Viro @ 2025-10-04 22:19 +01:
->>
->> > On Sat, Oct 04, 2025 at 11:03:40PM +0200, Miquel Sabat=C3=A9 Sol=C3=A0=
- wrote:
->> >> This is a small cleanup in which by using the __free(kfree) cleanup
->> >> attribute we can avoid three labels to go to, and the code turns to be
->> >> more concise and easier to follow.
->> >
->> > Have you tried to build and boot that?
->>
->> Yes, and it worked on my machine...
->
-> Unfortunately, it ends up calling that kfree() on success as well as on f=
-ailure.
-> Idiomatic way to avoid that would be
-> 	return no_free_ptr(fdt);
-> but you've left bare
-> 	return fdt;
-> in there, ending up with returning dangling pointers to the caller.  So as
-> soon as you get more than BITS_PER_LONG descriptors used by a process,
-> you'll get trouble.  In particular, bash(1) running as an interactive she=
-ll
-> would hit that - it has descriptor 255 opened...
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/742adaa16db994ba1748465b95548e2f28aa18ca
 
-Ugh, this is just silly from my end...
+Thank you!
 
-You are absolutely right. I don't know what the hell I was doing while
-testing that prevented me from realizing this before, but as you say
-it's quite obvious and I was just blind or something.
-
-Sorry for the noise and thanks for your patience...
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQJiBAEBCgBMFiEEG6U8esk9yirP39qXlr6Mb9idZWUFAmjirdsbFIAAAAAABAAO
-bWFudTIsMi41KzEuMTEsMiwyEhxtc3NvbGFAbXNzb2xhLmNvbQAKCRCWvoxv2J1l
-ZQRhD/4oVdh7E9IgzRXIcY7MyZdmeGG0MzOOvbOF9ZXrdrFHdmLAHnPt1UFn/JGi
-BrgE0UE0w7wQupgO+TwcczWCGN7twfVxreyn5uF8UmaMcFMId3KbdDlS5QnaItTx
-pwzBrJQQTEKGppVXh+8giKrL5fLiVzoRTilvFvR5mthqBxIlg1AE+z8HgDjf4foB
-zOMFxgEZ98mT4YkV32sRxcbfqiXFwgASKI2gVEsHwNbJ9vneqhyQIfBlVJxt3RlP
-dBmb4iuzUDcBMvVH9LtU3Jtns2qVkl9Qwn9/1jNb0DRML5hlRM0h82x9882Dt/nt
-2S4gbcX0aa1xHnQwIB1F+yUWFzsiX07qWNmjyyR7pHSxZ2z1f6jopWU/5j0lONZc
-Pcw6J3j/iCY9rppExwbIfpmmwhGPEsbGaHySSN6l/hPqJ+RmlljsaKeZX+JcRXji
-IdvX63BC/PHL0CiXYXSn/ysUxwplB/lnwngtOtV+bZTmfb8mR29fY0lS9uW3V8Z0
-8Cof8XeMs1CMhwoDLd/U/WwvCWpttKhAnHwVLP+Z069xD1frRyoGe8tCCgFCEpNH
-2c6mh1szw0am4G/mSMxsxiIDVVJYdjOb0/iDIB3uLRdzrpEhhshd5980sEViWR8z
-4YW2lkQyAaTA9NP519k0yYVhxN1OrEVEj8+gFGwuApPgAKZISw==
-=JOJu
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
