@@ -1,192 +1,157 @@
-Return-Path: <linux-kernel+bounces-842281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 065C8BB967F
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 15:03:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D12D4BB9755
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 15:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B98753B91E0
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 13:03:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E78A188A942
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 13:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055AB26463A;
-	Sun,  5 Oct 2025 13:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A22288C20;
+	Sun,  5 Oct 2025 13:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SQZHt57C"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b="UR/GKyRv"
+Received: from mail.subdimension.ro (nalicastle.subdimension.ro [172.105.74.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6FC7483
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 13:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5727404E;
+	Sun,  5 Oct 2025 13:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.105.74.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759669396; cv=none; b=W8N0sZZ6hUXk1nwMXJ1syJ1tPbxeEuiAIi83t2aQNQck+vs0ix1NmqdJfaHaTJm9lp0KT+SQ9fETYi1FaKpZai5nq7n32AbBBaSPSw7/34h97FsrLZkBtkrl/wqLuqqf/qkxuAj9dwL6YtgTj7B4l/LzLFgg/t81RbSF8bM2UoY=
+	t=1759670415; cv=none; b=ibxVsLGU/n0ZAqzKspU+L2oz665MBYvGzToR+pUf3B9JFn/DbKonAwdGBXv/Q68pB6BVuR3ta1vQN7yI71zxE3YIosw4q6FC55SBzIag/UMYsUUGH9d+6GUzpVCWHnvgeRORI0nmFu6vR651H7UkCES1GIzFB9a7ThkUo6cj1bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759669396; c=relaxed/simple;
-	bh=FvrH+3aJxrA4aLXH/Nmy63niNBpgyQ0KUCdej2/z7eU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l9Bfu8qY1uB1igP6GXAa68KAVVkdVeOxsSqoxKVrfqT4guM1T2GWlrPKvNdWqWqohhGR+fYI5rcuvGIgfzNLuKtQUaPercXumYnbGQRdWQiUC3FGKJxMxtBcbR6Js36hIJK6/zFNO16ti6mCo8nHl/1wjJyL39erWN/cTlOEd30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SQZHt57C; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759669386;
-	bh=FvrH+3aJxrA4aLXH/Nmy63niNBpgyQ0KUCdej2/z7eU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=SQZHt57C+EwgKJpvzLH+8UZFz3MG6bL7pho9WA6Jz/iThwWDQzrEXxu6LYij8/YzZ
-	 qA1k3driC6QgNHjrrW7pISAsB7Xf3pMtp95WvSYaLNb6b1HhsZupuDN9ClEdGT+h8B
-	 wy2thHPCN1D4Bz16MpMnBVB7kaS4y1RkCC/yZSnsNkXLbkoJqvfTgewvIJExxPG3ba
-	 yGNW8vnPQB6uCWuQwiijfK3A3eV1VhCsc72ndKf69FsbwErTDY9cE5sGTH6oAMuB2J
-	 JQMxLnhHyyuA2sycfcnaXA0eO+m424ow2N+wJFZDHafRQ/x1I+/qtzukBg8craCh/J
-	 EZFfopqbxnEyA==
-Received: from localhost.localdomain (unknown [92.206.120.121])
+	s=arc-20240116; t=1759670415; c=relaxed/simple;
+	bh=f7KLDAodIHfk17l27mAPyJygswUhI6CzvIQ+CXzSVBo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BAE1MszzJ99v1EPIjC9JJNtm0HNkGKF+TfjlzRVd4BwYG/ZNCvCagH2lily0f34nHWii5prxJEmjhH+UsP8nRGdpWou3ZVlZkAX9vlPMsOtZPa+2ERKXehePZtrKzgObZemyesio+1yCic8ENhZkO6QouPMG7hDUvYtYUJ91OEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro; spf=pass smtp.mailfrom=subdimension.ro; dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b=UR/GKyRv; arc=none smtp.client-ip=172.105.74.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=subdimension.ro
+Received: from [10.212.0.13] (unknown [IPv6:2a02:2f0e:3e0c:5b00:e2d5:5eff:fed9:f1c4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: gerddie)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 23CED17E0AC3;
-	Sun,  5 Oct 2025 15:03:06 +0200 (CEST)
-From: Gert Wollny <gert.wollny@collabora.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	amd-gfx@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Gert Wollny <gert.wollny@collabora.com>
-Subject: [PATCH] drm/radeon: fix allocation of ring memory in *copy_dma
-Date: Sun,  5 Oct 2025 15:04:54 +0200
-Message-ID: <20251005130454.11322-1-gert.wollny@collabora.com>
-X-Mailer: git-send-email 2.49.1
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.subdimension.ro (Postfix) with ESMTPSA id 5D198173BE2;
+	Sun, 05 Oct 2025 16:12:59 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=subdimension.ro;
+	s=mail; t=1759669979;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=UzX+EUuxYZCKZQCIkyxrwphKqB7kjA8IgCPgmxiC86c=;
+	b=UR/GKyRvkAb6Kdeh2qruTdOthQqm326b+jMmsrw1McqIyljwTIDA9EXvJNJhFKjyzgHTRS
+	Xr07jWt+wjjENE/GgRKlvcUKiLZs7BQsIGZw3sWgdoS9SB0MXFRO+hQHvco9kIozmFMjMu
+	ZugTSej5CB3Wv3lc9vVTfBMUiTwr5PzFbaqALAmfersxueFSARnEt09IXNkFZcesaFWo+W
+	7zZODiX+zWq13E8ejnFjdA4gDghKcQxr/2/Eq9n0HciRQ9ULfPGDAegX89LfBrUh5uIIQV
+	NKqWq0PFsZ48tIDbObMNgnRG8nVp79CijJ98fWUDYg3Y8D4IwuBcxyxCyITWag==
+From: Petre Rodan <petre.rodan@subdimension.ro>
+Subject: [PATCH v4 00/19] iio: accel: bma220 improvements
+Date: Sun, 05 Oct 2025 16:12:09 +0300
+Message-Id: <20251005-b4-bma220_improvements-v4-0-0f449ba31585@subdimension.ro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKlu4mgC/4WOQQ7CIBBFr9LMWgwCTVNX3sM0hpGpnQXQQCWap
+ neX9gIu38z/b2aFTIkpw7VZIVHhzDFUMKcGnpMNLxLsKoOSqpX9RQs0Ar1VSj7YzykW8hSWLKy
+ TqN1YU4hQy3OikT+H+D5UnjgvMX2PO0Xv07/KooUUEvtOdT0aMu0tv9FxXe5PnlOEYdu2HyV3l
+ oDCAAAA
+X-Change-ID: 20250913-b4-bma220_improvements-ad0b3df025bb
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2267;
+ i=petre.rodan@subdimension.ro; h=from:subject:message-id;
+ bh=f7KLDAodIHfk17l27mAPyJygswUhI6CzvIQ+CXzSVBo=;
+ b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0o0bkFGdEFwTDlrQTBEQUFvQmRDc25wM
+ k02U1dNQnl5WmlBR2ppYnF6MEVKdVp5RzZUU1h5RjZkSlhTL3FYCncxRkZpeVAzOUJReTExWU1Z
+ bEErcG9rQ013UUFBUW9BSFJZaEJCb2ltQncrRGJ4UXBFNmlkM1FySjZkak9rbGoKQlFKbzRtNnN
+ BQW9KRUhRcko2ZGpPa2xqRFdjUC9pK1c1VUt1NWJFZllJdCtERlh0ZktadWRDS1dHd25ZcGlhWQ
+ pKYVBzZ3hwSGNmN3BsWjBVQXZoS3dsL3pHRC9xUE4zU20rc0wxeHpacGdVV2xLVUttM2YzQ2Uve
+ llpemFueTZUCk9teTlTcU1JNzZsVmRuMkRMeUVIWEVLNkpzSks4c1ZXVGNBZGZZeWFQYXQ1TUxZ
+ TDF0azAxYzJuSWkyZjVEaGwKcFlZQytXcHFIL3d3Y3FjYzduQ3FoQVU3TVhpcmFpSERneW1zVUQ
+ 2dThZY2NFampBelNraWN0QUE0c2lYL1JsaApJRC9naVZCVzVTcEwxb2xsYmgyMGNUcGkxcU9zZW
+ RRTDBTUHlZRzFyeHFHVzh2VmVldGJWMlc3T2VWbDZUMGdYCld5cmliTklaZEIwMHduY2N6dHhtW
+ loya1lITWtKQVZKUjZlSXlqOXFjMVpWMllSS3o1dXUvNFgyU3dNbVBtK3IKamNubGNyV3c1MU1u
+ dW5PTEtITVVvTTh3R2VhbXdnZC91blNWRTEvUTNjcHA1ZWlYY2lab3FDbUpSSEljNFgxegp0RmM
+ 4REZRYldKMHlWQ1E0ZTJFV2pMMTZCeXdlanE2SkJhMHhzRVdUaHloTzhvUnFMcmVZeWMxS0NPdT
+ JBbnVUCklKWit6Nks3RGpmN2hHU3ljQ0hPaGJQV1dZaGt6OVg2TWtTVERGUzl5aitFa095NnFsM
+ mFuNW53cUJWSlRGc2kKQ2Ruei85ZERmMW84UEtoS0FPSzdwZEc3SWc5cjVyaGxmeXluWVVlLzQw
+ L1J4dVpqT1Nuc25SWXBJTGJMckpBRwo2Z1QwSXBoMFRodTB2SHhneVlVYkUyeDFTQUMwNndxdmx
+ qdG9MTDJBVEJONHNJdG4zdno3bk9xSFJ0bjdGV2hVCmNnQnZyeVd0aHh3ZStnPT0KPUUxZkwKLS
+ 0tLS1FTkQgUEdQIE1FU1NBR0UtLS0tLQo=
+X-Developer-Key: i=petre.rodan@subdimension.ro; a=openpgp;
+ fpr=D80A7FC176151935EC3E5FA9CF269999844E7F30
 
-When running e.g. many deqp-gles31 tests in parallel kernel
-warnings
- "radeon: writing more dwords to the ring than expected!"
-are issued.
-On evergree this happens because in evengreen_copy_dma not
-enough space is allocated in the ring memory, i.e. the amount
-of allocated memory only accounts for one possible wait
-semaphore and doesn't take the padding of the ring buffer
-into account.
-The code suggest that in r600_copy_dma and rv770_copy_dma
-the same problem exists.
+Series of patches that switch the driver to the regmap API and add
+i2c connectivity.
 
-Fix this by assuming the worst case, i.e. that RADEON_NUM_SYNCS
-wait semaphores need to be emitted and take also the padding
-into account.
+Tested in I2C and SPI modes with two different sensors.
 
-The patch fixes the issue in evengreen_copy_dma, r600_copy_dma,
-and rv770_copy_dma.
+Event-related code was skipped since the patch series was getting too
+large.
 
-Signed-off-by: Gert Wollny <gert.wollny@collabora.com>
+Bindings have been merged into testing branch, but this series is still
+based on 'togreg'.
+
+Contains fixes based on feedback from Krzysztof, David, Jonathan and Andy.
+
+Signed-off-by: Petre Rodan <petre.rodan@subdimension.ro>
 ---
- drivers/gpu/drm/radeon/evergreen_dma.c | 13 +++++++++++--
- drivers/gpu/drm/radeon/r600_dma.c      | 13 +++++++++++--
- drivers/gpu/drm/radeon/rv770_dma.c     | 13 +++++++++++--
- 3 files changed, 33 insertions(+), 6 deletions(-)
+Changes in v4:
+- fixes based on Andy's feedback
+- patch reordering (Andy)
+- Link to v3: https://lore.kernel.org/r/20250913-b4-bma220_improvements-v3-0-0b97279b4e45@subdimension.ro
 
-diff --git a/drivers/gpu/drm/radeon/evergreen_dma.c b/drivers/gpu/drm/radeon/evergreen_dma.c
-index 52c79da1ecf5..1f07ee6f3f6a 100644
---- a/drivers/gpu/drm/radeon/evergreen_dma.c
-+++ b/drivers/gpu/drm/radeon/evergreen_dma.c
-@@ -113,7 +113,7 @@ struct radeon_fence *evergreen_copy_dma(struct radeon_device *rdev,
- 	struct radeon_sync sync;
- 	int ring_index = rdev->asic->copy.dma_ring_index;
- 	struct radeon_ring *ring = &rdev->ring[ring_index];
--	u32 size_in_dw, cur_size_in_dw;
-+	u32 size_in_dw, cur_size_in_dw, ring_size_reserve;
- 	int i, num_loops;
- 	int r = 0;
- 
-@@ -121,7 +121,16 @@ struct radeon_fence *evergreen_copy_dma(struct radeon_device *rdev,
- 
- 	size_in_dw = (num_gpu_pages << RADEON_GPU_PAGE_SHIFT) / 4;
- 	num_loops = DIV_ROUND_UP(size_in_dw, 0xfffff);
--	r = radeon_ring_lock(rdev, ring, num_loops * 5 + 11);
-+
-+	/* Worst case needed dwords:
-+	 *  - 3 * RADEON_NUM_SYNCS for semaphore waits
-+	 *  - 5 * num_loops for copy packages
-+	 *  - 8 for fence
-+	 * Finally, the block align block size to account for padding.
-+	 */
-+	ring_size_reserve = __ALIGN_MASK(RADEON_NUM_SYNCS * 3 + num_loops * 5 + 8,
-+					 ring->align_mask);
-+	r = radeon_ring_lock(rdev, ring, ring_size_reserve);
- 	if (r) {
- 		DRM_ERROR("radeon: moving bo (%d).\n", r);
- 		radeon_sync_free(rdev, &sync, NULL);
-diff --git a/drivers/gpu/drm/radeon/r600_dma.c b/drivers/gpu/drm/radeon/r600_dma.c
-index 89ca2738c5d4..d55b0d721fb0 100644
---- a/drivers/gpu/drm/radeon/r600_dma.c
-+++ b/drivers/gpu/drm/radeon/r600_dma.c
-@@ -449,7 +449,7 @@ struct radeon_fence *r600_copy_dma(struct radeon_device *rdev,
- 	struct radeon_sync sync;
- 	int ring_index = rdev->asic->copy.dma_ring_index;
- 	struct radeon_ring *ring = &rdev->ring[ring_index];
--	u32 size_in_dw, cur_size_in_dw;
-+	u32 size_in_dw, cur_size_in_dw, ring_size_reserve;
- 	int i, num_loops;
- 	int r = 0;
- 
-@@ -457,7 +457,16 @@ struct radeon_fence *r600_copy_dma(struct radeon_device *rdev,
- 
- 	size_in_dw = (num_gpu_pages << RADEON_GPU_PAGE_SHIFT) / 4;
- 	num_loops = DIV_ROUND_UP(size_in_dw, 0xFFFE);
--	r = radeon_ring_lock(rdev, ring, num_loops * 4 + 8);
-+
-+	/* Worst case needed dwords:
-+	 *  - 3 * RADEON_NUM_SYNCS for semaphore waits
-+	 *  - 4 * num_loops for copy packages
-+	 *  - 5 for fence
-+	 * Finally, the block align block size to account for padding.
-+	 */
-+	ring_size_reserve = __ALIGN_MASK(RADEON_NUM_SYNCS * 3 + num_loops * 4 + 5,
-+					 ring->align_mask);
-+	r = radeon_ring_lock(rdev, ring, ring_size_reserve);
- 	if (r) {
- 		DRM_ERROR("radeon: moving bo (%d).\n", r);
- 		radeon_sync_free(rdev, &sync, NULL);
-diff --git a/drivers/gpu/drm/radeon/rv770_dma.c b/drivers/gpu/drm/radeon/rv770_dma.c
-index 4c91614b5e70..c28c11a91e07 100644
---- a/drivers/gpu/drm/radeon/rv770_dma.c
-+++ b/drivers/gpu/drm/radeon/rv770_dma.c
-@@ -48,7 +48,7 @@ struct radeon_fence *rv770_copy_dma(struct radeon_device *rdev,
- 	struct radeon_sync sync;
- 	int ring_index = rdev->asic->copy.dma_ring_index;
- 	struct radeon_ring *ring = &rdev->ring[ring_index];
--	u32 size_in_dw, cur_size_in_dw;
-+	u32 size_in_dw, cur_size_in_dw, ring_size_reserve;
- 	int i, num_loops;
- 	int r = 0;
- 
-@@ -56,7 +56,16 @@ struct radeon_fence *rv770_copy_dma(struct radeon_device *rdev,
- 
- 	size_in_dw = (num_gpu_pages << RADEON_GPU_PAGE_SHIFT) / 4;
- 	num_loops = DIV_ROUND_UP(size_in_dw, 0xFFFF);
--	r = radeon_ring_lock(rdev, ring, num_loops * 5 + 8);
-+
-+	/* Worst case needed dwords:
-+	 *  - 3 * RADEON_NUM_SYNCS for semaphore waits
-+	 *  - 5 * num_loops for copy packages
-+	 *  - 5 for fence
-+	 * Finally, the block align block size to account for padding.
-+	 */
-+	ring_size_reserve = __ALIGN_MASK(
-+		RADEON_NUM_SYNCS * 3 + num_loops * 5 + 5, ring->align_mask);
-+	r = radeon_ring_lock(rdev, ring, ring_size_reserve);
- 	if (r) {
- 		DRM_ERROR("radeon: moving bo (%d).\n", r);
- 		radeon_sync_free(rdev, &sync, NULL);
+---
+Petre Rodan (19):
+      iio: accel: bma220: remove incorrect kernel-doc marking
+      iio: accel: bma220: relax constraints during probe()
+      iio: accel: bma220: cleanup license string
+      iio: accel: bma220: shorten spi->dev calls
+      iio: accel: bma220: move bma220_power function
+      iio: accel: bma220: cleanup includes
+      iio: accel: bma220: split original driver
+      iio: accel: bma220: add open firmware table
+      iio: accel: bma220: turn power supplies on
+      iio: accel: bma220: reset registers during init stage
+      iio: accel: bma220: migrate to regmap API
+      iio: accel: bma220: populate buffer ts in trigger handler
+      iio: accel: bma220: use find_match_table fct
+      iio: accel: bma220: add i2c module
+      iio: accel: bma220: add i2c watchdog feature
+      iio: accel: bma220: add interrupt trigger
+      iio: accel: bma220: add LPF cut-off frequency mapping
+      iio: accel: bma220: add debugfs reg access
+      iio: accel: bma220: add maintainer
+
+ MAINTAINERS                     |   7 +
+ drivers/iio/accel/Kconfig       |  19 +-
+ drivers/iio/accel/Makefile      |   4 +-
+ drivers/iio/accel/bma220.h      |  22 ++
+ drivers/iio/accel/bma220_core.c | 603 ++++++++++++++++++++++++++++++++++++++++
+ drivers/iio/accel/bma220_i2c.c  |  58 ++++
+ drivers/iio/accel/bma220_spi.c  | 319 ++-------------------
+ 7 files changed, 735 insertions(+), 297 deletions(-)
+---
+base-commit: 561285d048053fec8a3d6d1e3ddc60df11c393a0
+change-id: 20250913-b4-bma220_improvements-ad0b3df025bb
+
+Best regards,
 -- 
-2.49.1
+Petre Rodan <petre.rodan@subdimension.ro>
 
 
