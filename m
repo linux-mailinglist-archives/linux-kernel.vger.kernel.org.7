@@ -1,142 +1,151 @@
-Return-Path: <linux-kernel+bounces-842224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84D50BB9433
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 08:35:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 321F2BB943C
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 08:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 60AA64E1127
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 06:35:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D42D21895ABE
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 06:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 157031DF75C;
-	Sun,  5 Oct 2025 06:35:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89CE1E47C5;
+	Sun,  5 Oct 2025 06:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lSpiZXbI"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JRoFj2b2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE6C374EA
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 06:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E2C1C28E;
+	Sun,  5 Oct 2025 06:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759646141; cv=none; b=BeY5aLQeCKXZUY4Q13lFSui5wBGPzGZyZT/reEI4HX2ensRicE2zCcKt5X4bQpGk+QsCDjc7zhkRQWIEad6qhqk5ouoU4NSqi2sAXGNGf2sicxD1msSsBJY/fccAgCYk0zRLqubsDiMtHdWzrd+EQzJ465P8CKe7Nz0/T31JWJs=
+	t=1759646715; cv=none; b=OiqlPzB6Y7sTgBMLaXqM+PczBt5m6MXNhC6VrUlMPFLOBZqwXwcEIAIsudDlRxNtfaaYMAoBLInPWhGAzVrw8VkRFx5867UIor3hxpmU7lB4RHZIZwxdJY4bZB/wC4wGUKk5qeh2AQWucVnGhbf53fG+TdIkcDy9yjNUWT/gito=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759646141; c=relaxed/simple;
-	bh=5VrhzHDMjjWSE91exTxL2AaN739vo05Zspz0TxMnduE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dADN9AcXH/KfN2GPzEgK3fkC0j5MAn/2pA6bh1gecCQDoH0Og5QBgiqO9vxrAKrC5HnpGXTeZ8gvV7n7J5O74bAaY8VBcuZvXMFT6EKKMyJDAQZGPnTPEzzL0lO+yQb5k33IJfawPA89t2nIhM/NZTOq8qYeIVmro+dyQYHChuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lSpiZXbI; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-46e504975dbso21976525e9.1
-        for <linux-kernel@vger.kernel.org>; Sat, 04 Oct 2025 23:35:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759646138; x=1760250938; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2rcSyZ+WMtwF2hZaJMeBS9ckws0AkW9s6+ei9+CY7Kk=;
-        b=lSpiZXbIP9QfYuPlIgFNMUXG/LObHjgBXjAZtUE93s7vVICxfMA3NwhJ1uHEgymQiG
-         gRMY88qIOePszKTWF0hsgvmo/KakQU1Tu1GPTp/YKI4WbdewNF+AbSAIct89Vfb4NZUg
-         MuO0kM3/3UikIrI8oy4J8ui4smjw624PuWDHaJMK1t04HxfQPzhTUU5a5ZMNwe6UlklI
-         d6RNAJy0jzGX49i3OwsXJmk0Xsfr2MqASkzGAdOlprJEhnre/z4V6f74J3K3TXP9szKp
-         pET7skjKU67PYWfiQjlul1+rvvemlIeA9DF/p63L/ylL6OOFnB/H8Hz3gNoRVCJIw9zV
-         tzxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759646138; x=1760250938;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2rcSyZ+WMtwF2hZaJMeBS9ckws0AkW9s6+ei9+CY7Kk=;
-        b=DESv6D4ZZjerGOx7rtgrdtl+CEo2cT8dPvv6oX/0yJiy7R2DwoNuT2zxK0vwSsy+fY
-         irrRkbYVXONzmxuwT3Yhax4iNEnsB1U9jOGwhQQZZmegVzwRUzLLvrCNm7eeEhIdstWH
-         PokDQfAG4/VpUb143zJIwE4ItssFBGunf6KxDkvOnAWGHWef/fuBsgKtBVeTY+K3/ZD1
-         HVVffsT6rr1RUdZ3OQMTmUB9zbDJaYUj821AqLzMR/MFcAVZSYP0vb5JGaqHJBLy15S7
-         IId+CUOMc8e9feh7WdWY7qu442zboVpBCcSwWVOt6t2FKh44kHpoyGxG08JXsUHKhLU1
-         6hrg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLP6u94+3o2p/WgXw8YcUS4wwFWDxTsTzlzZ1huxPsZDR6EogqGBnQ94qiSaEJsOp/MwuA2QpfsiHqfkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXni8oiAUEIpsvY0YaFHELd8HGKt05osh3m+5ZWgnLlsgXSSez
-	FQYw+0l02KRniC/hm2qq4AA6B8HLmfcVump0E3Ivqh6tMXJbdrK+dd1B
-X-Gm-Gg: ASbGncuPZzItjqlWtwB+hsu9goQigksDVIfY6KnvZqNWfbuQ5eZLYRjpxfO7T0KZgnr
-	gIaCBxlwfIG78Cxr79dRbB6Dkadm5f7QVpaTjl70y3K5o1AQbuoh19l4yvC572/9VHvV46Z3901
-	t2ju40vTDpVYDA81AZ20HfEKVJJFO9vPfC7P5SaMOzo/KwWQ7zSTUGlP9/MQaqJTOxbbfl1n2CF
-	pQ1TzkqsHJnDST0jW7lL7RxwayMj/NzNZIJCk99q4drQQfAcN4I7VeFxDMmob8CB9u46bk/Kl5V
-	Oy2h0trRMNJUbl9rQTrNNd56Dhqsa7VcVAzmfWC4MXmGWdqkBwjfxBhipGPjTHSvxP5kpzoVR1u
-	srf9VtTnhg1cEaxkBtDJvqdfWjv1peIK1Ma8n7fZmx4B5pRvBjQVn+xZrV2oemaBKEQ4g9Er0S0
-	IOzLuCimlOxSyBYtIj7qfp
-X-Google-Smtp-Source: AGHT+IG4EpN5GFt0hdbvyfHbROf8lY/f3eM4VfEv5SVIfYealuYiXMFchpEPZEsQb1Hc940YbQdTxA==
-X-Received: by 2002:a05:600c:8b16:b0:45f:29ed:2cff with SMTP id 5b1f17b1804b1-46e711725fdmr53349985e9.35.1759646137650;
-        Sat, 04 Oct 2025 23:35:37 -0700 (PDT)
-Received: from localhost (cpc1-brnt4-2-0-cust862.4-2.cable.virginm.net. [86.9.131.95])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e619b7e37sm197232645e9.1.2025.10.04.23.35.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Oct 2025 23:35:35 -0700 (PDT)
-Date: Sun, 5 Oct 2025 07:35:34 +0100
-From: Stafford Horne <shorne@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux OpenRISC <linux-openrisc@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] OpenRISC updates for 6.18
-Message-ID: <aOIRtnhTn3Gt8yr5@antec>
+	s=arc-20240116; t=1759646715; c=relaxed/simple;
+	bh=pd4v5G9qSeuHCK9g5lQEesKWwYfL4dDwpPnx6E3wQrk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TRso8u3xgxynmjscc3YEdKY9EeXM851saf315iB9ZIn4yBAYr6X8hUC0D7bnCCWK04FfHrc2YIbJdzWLOaIpOhiDHQ3UDysuFqNzBHJNqewS72JzEAExwROMbvvA1rNri16TcK7NjfuFXNPnfT4Mo9NDzRcH6TlAA726i+RKTuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JRoFj2b2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA65CC4CEF4;
+	Sun,  5 Oct 2025 06:45:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759646714;
+	bh=pd4v5G9qSeuHCK9g5lQEesKWwYfL4dDwpPnx6E3wQrk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=JRoFj2b2vXMi4f5icQ1TgIk7qSYmLvKOsTOdSlqUMH+M91GymXT7PoK9ag5RnwOWT
+	 2aG2w2Q0avSbkYM+WbRX0L9y2b5NDNNnXudFYErv3xAj9+RjKh/U+nQ6jN2LFn/Jn6
+	 Il2Az1gI++JNX6aDycodP7yvwED7KSSjgbqjpt72AvNTSD1676uCIhCKLxKzkeekOv
+	 v+SZnde2Z6WEUtY1x2r6LzRHlbwwV1L/9j5rbX7oZBwqORBG+VTnbS+Yy21lCLRIkn
+	 J8u77wd2SodGX81PQBask7rhHWjtzOPIv8gXERvWjogFGEjPriN3YWOg+pQkZgmdCH
+	 oHJNJZy+91qyg==
+From: William Breathitt Gray <wbg@kernel.org>
+To: Lakshay Piplani <lakshay.piplani@nxp.com>
+Cc: William Breathitt Gray <wbg@kernel.org>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	vikash.bansal@nxp.com,
+	priyanka.jain@nxp.com,
+	shashank.rebbapragada@nxp.com
+Subject: Re: [PATCH 1/2] dt-bindings: counter: Add binding for NXP PCF85263/PCF85363 stopwatch
+Date: Sun,  5 Oct 2025 15:45:01 +0900
+Message-ID: <20251005064503.2216520-1-wbg@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250915071415.1956219-1-lakshay.piplani@nxp.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2641; i=wbg@kernel.org; h=from:subject; bh=pd4v5G9qSeuHCK9g5lQEesKWwYfL4dDwpPnx6E3wQrk=; b=owGbwMvMwCW21SPs1D4hZW3G02pJDBmPhO+8ClwvcDlqVX3+PqP9+QJBdScubzk26d9yi5eMu 2dsM1d93VHKwiDGxSArpsjSa3727oNLqho/XszfBjOHlQlkCAMXpwBMZLkiwz/jBJmtN7Z3df3P uageWPA8q0fh6lJ/rTQORi9W4yCVykZGhkWqdVasCpft521wDP/M/Gkic/5F/ikTj9yNNan2Uy7 ZzgAA
+X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
+Content-Transfer-Encoding: 8bit
 
-Hello Linus,
+On Mon, Sep 15, 2025 at 12:44:14PM +0530, Lakshay Piplani wrote:
+> Add a devicetree binding schema for the NXP PCF8263/PCF85363 devices when used in
+> stopwatch (counter) mode.
+> 
+> In this configuration, the device operates as a high resolution stopwatch over I2C,
+> counting in centiseconds (1/100th of a second) up to 999,999 hours.
+> 
+> Signed-off-by: Lakshay Piplani <lakshay.piplani@nxp.com>
+> ---
+>  .../counter/nxp,pcf85363-stopwatch.yaml       | 49 +++++++++++++++++++
+>  1 file changed, 49 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/counter/nxp,pcf85363-stopwatch.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/counter/nxp,pcf85363-stopwatch.yaml b/Documentation/devicetree/bindings/counter/nxp,pcf85363-stopwatch.yaml
+> new file mode 100644
+> index 000000000000..5fbb3f22ace4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/counter/nxp,pcf85363-stopwatch.yaml
+> @@ -0,0 +1,49 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/counter/nxp,pcf85363-stopwatch.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP PCF85263ATL/PCF85363ATL Stopwatch (counter) mode
+> +
+> +maintainers:
+> +  - Lakshay Piplani <lakshay.piplani@nxp.com>
+> +
+> +description: |
+> +  Binding for NXP PCF82563ATL/PCF85363ATL devices when used in the
+> +  stopwatch mode. In this mode, the device provides a centi-seconds
+> +  (1/100th of a second) resolution operating over i2c.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nxp,pcf85263atl
+> +      - nxp,pcf85363atl
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  quartz-load-femtofarads:
+> +    description:
+> +      The capacitive load of the quartz(x-tal).
+> +    enum: [6000, 7000, 12500]
+> +    default: 7000
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      counter@51 {
+> +        compatible = "nxp,pcf85363atl";
+> +        reg = <0x51>;
+> +        quartz-load-femtofarads = <7000>;
+> +      };
+> +    };
 
-Please consider for pull,
+Hi Lakshay,
 
-The following changes since commit 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c:
+It sounds like you're trying to implement a clock. Is there any
+particular reason you are trying to do this as a counter driver instead
+of using the common clk[^1] framework? The Linux counter interface isn't
+specifically designed for clock operations so I suspect a stopwatch
+module would fit better in the clk subsystem instead.
 
-  Linux 6.17-rc5 (2025-09-07 14:22:57 -0700)
+Wiliam Breathitt Gray
 
-are available in the Git repository at:
-
-  https://github.com/openrisc/linux.git tags/for-linus
-
-for you to fetch changes up to 8c30b0018f9d93391573e091960d257fd9de120a:
-
-  openrisc: Add jump label support (2025-09-11 11:27:59 +0100)
-
-----------------------------------------------------------------
-OpenRISC updates for 6.18
-
-I picked up one series from Chen Miao, our Google Summer
-of Code contributor:
-
- - Added OpenRISC support for static keys
-
-----------------------------------------------------------------
-chenmiao (4):
-      openrisc: Add text patching API support
-      openrisc: Add R_OR1K_32_PCREL relocation type module support
-      openrisc: Regenerate defconfigs.
-      openrisc: Add jump label support
-
- .../features/core/jump-labels/arch-support.txt     |  2 +-
- arch/openrisc/Kconfig                              |  2 +
- arch/openrisc/configs/or1ksim_defconfig            | 19 ++----
- arch/openrisc/configs/virt_defconfig               |  2 +-
- arch/openrisc/include/asm/Kbuild                   |  1 -
- arch/openrisc/include/asm/fixmap.h                 |  1 +
- arch/openrisc/include/asm/insn-def.h               | 15 ++++
- arch/openrisc/include/asm/jump_label.h             | 72 ++++++++++++++++++++
- arch/openrisc/include/asm/text-patching.h          | 13 ++++
- arch/openrisc/kernel/Makefile                      |  2 +
- arch/openrisc/kernel/jump_label.c                  | 51 ++++++++++++++
- arch/openrisc/kernel/module.c                      |  4 ++
- arch/openrisc/kernel/patching.c                    | 79 ++++++++++++++++++++++
- arch/openrisc/kernel/setup.c                       |  2 +
- arch/openrisc/mm/init.c                            |  6 +-
- 15 files changed, 255 insertions(+), 16 deletions(-)
- create mode 100644 arch/openrisc/include/asm/insn-def.h
- create mode 100644 arch/openrisc/include/asm/jump_label.h
- create mode 100644 arch/openrisc/include/asm/text-patching.h
- create mode 100644 arch/openrisc/kernel/jump_label.c
- create mode 100644 arch/openrisc/kernel/patching.c
+[^1] https://docs.kernel.org/driver-api/clk.html
 
