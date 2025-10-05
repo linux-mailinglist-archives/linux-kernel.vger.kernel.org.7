@@ -1,121 +1,127 @@
-Return-Path: <linux-kernel+bounces-842388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAE6ABB9AA7
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 20:09:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7B8BBB9AB3
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 20:12:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 762533A8E27
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 18:09:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 968E04E2AFC
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 18:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1451CD1E4;
-	Sun,  5 Oct 2025 18:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA18E1D0DEE;
+	Sun,  5 Oct 2025 18:12:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XgT6lb7n"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="coy51G+6"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63231527B4
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 18:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C86626ACB
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 18:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759687770; cv=none; b=W5uZCRH8nMdzPQ16cyqn3xXXGLQjfG+9eSn4aEtpOt+rYAkjDS5ySi9ZSvmU4x6lzgrMGBfZXaFHYK9XSgK+OkTm+JbevKUv65zjO/Fxsp/+yncOmovEnPGKHKUv4OVI07Xr3yYyU08wvuvFueCdimOkR2Cd5a/JPp7BnOnZ7Zk=
+	t=1759687974; cv=none; b=UWNlPK+X+JnzUxYCYwdBhprDfG9HkaznBgH034gpUuzc+7dC8Oug10MAao4LXl+2Gv9US/M0qH9aAEDxeF1v9Ck2M0jis7bxty99IyoVFs1QASJLDK1ZFf8HfWB8FFpjWUg1Hk2A73TCwRI10HkZl53BlRPVkUDLL+ZktQ10sLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759687770; c=relaxed/simple;
-	bh=camg0iKThq865GJUn9nyBstkvg6jbOfG+xY6ZZ721ko=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aqHerkRXV26HYSLa4TK1OWAGkIuchAIifjzzvDsmv0D6P9a1L3tmv5D1sN4DofOIh6LIiQRvkW37K1zXfPtrIxLDA8e0mzq5MeLb5GqQNB1nG4OzXKDbJOexVbIOP/ghxiFXJip7IW7F+rS71onMMINwICGUG0TH5WAxpWiluYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XgT6lb7n; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b3d5088259eso601978166b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 11:09:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1759687766; x=1760292566; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HywiWrZnA2plSPoOMy05VizUC7aDffpgiwOCnh4rnRA=;
-        b=XgT6lb7nYX2FWcz9eNC493CnAFAzxPUNhWRBpzE6Wc0wS87ZcNi8lHMAIsLuHFGbi1
-         6KrvObLdbzZQFvzQRV8UkXutuNzPCgJv+n2QM/U6oWjPekNuBNt5GjoUz+/d8gylWohr
-         D6bocXrCxqOsllXkieMc4ZvSQUiR7kE67ut3I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759687766; x=1760292566;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HywiWrZnA2plSPoOMy05VizUC7aDffpgiwOCnh4rnRA=;
-        b=VOz70zaJgtiDqWMbRQ1xb9tifmsec6F0e86IDWH07p5pCF7ESPhfGecfjxlabl4Ory
-         ljpQe60p2mXuDGw4OA40vXgPOWZZWsgF/+Es7EFHaYaVpAeCW+89QgmsCANbVdMDfPMo
-         jfjHcRHeMRDhpGXgK3eg+SQsdtvIGzH3VMaqPu4eaiodIoUnIQfFkFVZkI3FLuTIo5ay
-         Vx0Yu7E3LK+pYsWq1b6riUWsVcvlGfQA7HVUZCvDypL1e7hhEWfkulPLYKw/uCoXV6/c
-         CleUAQlNFTJFb9m4ZAMeiDSogZTqPahKYV5DIuXPO43b3RiH70NVcpTlXJxGsxuCP9vh
-         heRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHswrgM+OH3EDSa/fGgOK5x9DSs3hPO+jVRWoM7vB/8trQA7sPcAO6PT8AvuINNwaFyXEv851zMTle9DA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhQiua/sdoAPr76xSYMRseNNAvR5gFyxHisLnc/wmv7HjyXpPO
-	gsJmXFtGwigovGQObLWq0N4nn/VNou3P5ks88yICa2Pri7/OwFRO4UV3gMrkHZFqQZUybBhXo7d
-	vrqJpKYg=
-X-Gm-Gg: ASbGnct6WUTafmZYYDUXoQZr6CdBr4XXDZuzojfCqoFJdx9A1+n0J2CUYSoy9mggtJu
-	TA2MqpThmPHETEd8WbqiQMNMpUkidmjzxoxUWQOkxeJT11c8GxoBQDBlN4wQoxsclyct2kTLmS+
-	ei5WyMQDQEt+MRnFVf3wIfa+UvPPDjZ0VxLDyWCf89NOANa9QxENwo9TRxf/eBoSsqZtwnMt7YO
-	suCgjxNuvrcnLS5v7uHb9EFJNC9lZTQOySQ8gZrn8ukK0XMCknLd8Toet+DooO/fDwBVNfjbsJc
-	cxv0h4/0ZEcC/UowhEt8r6cHg29ElWwEl8lUrk1yBY/MDMCGGsiCUjFW/hHMaVOQshaBkWEkvFm
-	6wlXntmYFkyAZUpIHCixcQheQItURaUBDEJQ1eGYlc/GJXmvSJ1RSdpEvjqEkcTDOXXK8IBc5HQ
-	6p8bnhDYcDqEDNfW7c1FlVLv/w02dRuTtYQQWDbpXRRA==
-X-Google-Smtp-Source: AGHT+IGL7ajmQ+ankYF9/gY/orVMzTWU1P6OlYX+lOS8/I1rwax2jl6aH+AIzyTFKNQArfwKkNNErA==
-X-Received: by 2002:a17:906:7313:b0:b3d:30d8:b897 with SMTP id a640c23a62f3a-b49c1f5ce3bmr1267000766b.14.1759687765722;
-        Sun, 05 Oct 2025 11:09:25 -0700 (PDT)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486970b315sm962321566b.64.2025.10.05.11.09.24
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 Oct 2025 11:09:25 -0700 (PDT)
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b3d5088259eso601975666b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 11:09:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUGqPE/3WqQbeqg5jkxlYu72Jl/zArZ+H+QYD/UHe4BRu3eW6TtLwV+rMOXsWjLuPLNy6HEUnzTBM7V37s=@vger.kernel.org
-X-Received: by 2002:a17:906:d542:b0:b48:44bc:44d5 with SMTP id
- a640c23a62f3a-b49c407909cmr1225542266b.43.1759687764580; Sun, 05 Oct 2025
- 11:09:24 -0700 (PDT)
+	s=arc-20240116; t=1759687974; c=relaxed/simple;
+	bh=N3KEX9yMfDskK1jzwp3R8XS991ozbyb1KWcGozNRcQw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MwTmLmqr+sTNciBg4OWo42lSK09iqLBQ+ifnvK131fdYWNtsO3R0VDHddEyDTaEaH8HIkB5k9uj4Rcy4gWBupvQVpempkFNSTEO+bVZZJv4WRoMMumQVsX6dD6KQFtleDUwxtXXShAFU5fEZWX2r4SRnJy96wogmjeJlM/bSe3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=coy51G+6; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 595HOS9O029328;
+	Sun, 5 Oct 2025 18:12:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=VAryTyAJu9KZaSYEcp5AUrvC36hG8
+	7ym/EbK85YtUck=; b=coy51G+6/D0iGPmOLkETZQIXnTLU0iu3Qk+qXOvWQ7wZt
+	5m4sWwU6p1DnBvl2ONzI67O+oK+I5TjGY9nbKQxLapj2ZYDuUt49crY+G41PDxGU
+	9U1GQ3LdpCwn+g0zo8H7QpKZbzVlm7TNdr5L2ba4BIbUi5TuCW+ra4l7y682MYSY
+	HhYPMPk3m765Em+htWqp6VJg2g3CVzQB7KI98SleyrCdEifi9JzP3Is2AlpcZ85+
+	duHlIXE2+zdw5/+nx8THgWo0E6jDvIrA9dIUOrLXITDYjuS4a4WrWNJEI/WzFQdc
+	D8NPTXkoBMohddeBYXZBotHb3imHpUyTUEnpq8dDA==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49kvtwr0tu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 05 Oct 2025 18:12:37 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 595H01JI035081;
+	Sun, 5 Oct 2025 18:12:36 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49kdp2q6f3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 05 Oct 2025 18:12:36 +0000
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 595ICZ3W020065;
+	Sun, 5 Oct 2025 18:12:35 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 49kdp2q6ex-1;
+	Sun, 05 Oct 2025 18:12:35 +0000
+From: Alok Tiwari <alok.a.tiwari@oracle.com>
+To: eperezma@redhat.com, mst@redhat.com, jasowang@redhat.com,
+        xuanzhuo@linux.alibaba.com, virtualization@lists.linux.dev
+Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] virtio_vdpa: fix misleading return in void function
+Date: Sun,  5 Oct 2025 11:12:29 -0700
+Message-ID: <20251005181232.3320977-1-alok.a.tiwari@oracle.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aOKTFv1vh1cvvcLk@kernel.org>
-In-Reply-To: <aOKTFv1vh1cvvcLk@kernel.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 5 Oct 2025 11:09:08 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiCWiDcLEE3YqQo78piVHpwY2iXFW--6FbmFAURtor2+w@mail.gmail.com>
-X-Gm-Features: AS18NWBEWs0_aNhsaDpKimWKOjw3bWPdM4hwd_m5NImN1ornADwAqfSmAg4O0Zc
-Message-ID: <CAHk-=wiCWiDcLEE3YqQo78piVHpwY2iXFW--6FbmFAURtor2+w@mail.gmail.com>
-Subject: Re: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-v6.18
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, David Howells <dhowells@redhat.com>, 
-	keyrings@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-05_06,2025-10-02_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
+ adultscore=0 mlxscore=0 spamscore=0 phishscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2509150000 definitions=main-2510050156
+X-Proofpoint-ORIG-GUID: OkDpaI_kCMkJMe5z2KVg-QCHDlRmuvUi
+X-Authority-Analysis: v=2.4 cv=dprWylg4 c=1 sm=1 tr=0 ts=68e2b515 b=1 cx=c_pps
+ a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
+ a=x6icFKpwvdMA:10 a=yPCof4ZbAAAA:8 a=Cu5L_QzEE98FA8FmBg8A:9 cc=ntf
+ awl=host:12092
+X-Proofpoint-GUID: OkDpaI_kCMkJMe5z2KVg-QCHDlRmuvUi
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA1MDE0NyBTYWx0ZWRfX5+r1vcXv7fiB
+ LYr7Uq2Eu1sqyDFJURQoL8d25SGwts4laqJ6sBibKD684vmYpATfo5S0KxEAZYkY6KzyedzCuKp
+ IKAAMIBHugs7073BSH5kL9Im1CE4d+0D14NHgnvuXKbxoZfWrd9Ce425EFOuuAy12Naa9RwX96q
+ TAJc+ze2VGRKt4n9PSV+r6vUmCvMjCMX0YOglgrhQcJWBFGMmompEu4SzxSJqrZq59iyFR8d9i6
+ En0ZlFdXwP6n/H7m5JyoaR4nrX6/4Oc8LczcjlrA7j0CLmclBfAjZyrro1rPMmj2uCYGSysyVRN
+ 6tEdrJm4w01lbJnK/UFtSEzbHiB2iPw5EIfNnshXegpN52HWZtMTU8Sg4Gvo+OFdnFGYG/OGmhA
+ jbFAfP1OnwfKREQOJTfvQXShfUjIsJMedGTVisgEh/FScD+UP6I=
 
-On Sun, 5 Oct 2025 at 08:47, Jarkko Sakkinen <jarkko@kernel.org> wrote:
->
->      This pull request disables
-> TCG_TPM2_HMAC from the default configuration as it does not perform well
-> enough [1].
->
-> [1] https://lore.kernel.org/linux-integrity/20250825203223.629515-1-jarkko@kernel.org/
+virtio_vdpa_set_status() is declared as returning void, but it used
+"return vdpa_set_status()" Since vdpa_set_status() also returns
+void, the return statement is unnecessary and misleading.
+Remove it.
 
-This link is entirely useless, and doesn't explain what the problem
-was and *why* TPM2_TCG_HMAC shouldn't be on by default.
+Fixes: c043b4a8cf3b ("virtio: introduce a vDPA based transport")
+Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+---
+v1 -> v2
+added fixes tag
+---
+ drivers/virtio/virtio_vdpa.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I think a much better link is
+diff --git a/drivers/virtio/virtio_vdpa.c b/drivers/virtio/virtio_vdpa.c
+index 657b07a60788..1abecaf76465 100644
+--- a/drivers/virtio/virtio_vdpa.c
++++ b/drivers/virtio/virtio_vdpa.c
+@@ -80,7 +80,7 @@ static void virtio_vdpa_set_status(struct virtio_device *vdev, u8 status)
+ {
+ 	struct vdpa_device *vdpa = vd_get_vdpa(vdev);
+ 
+-	return vdpa_set_status(vdpa, status);
++	vdpa_set_status(vdpa, status);
+ }
+ 
+ static void virtio_vdpa_reset(struct virtio_device *vdev)
+-- 
+2.50.1
 
-   https://lore.kernel.org/linux-integrity/20250814162252.3504279-1-cfenn@google.com/
-
-which talks about the problems that TPM2_TCG_HMAC causes.
-
-Which weren't just about "not performing well enough", but actually
-about how it breaks TPM entirely for some cases.
-
-              Linus
 
