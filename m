@@ -1,128 +1,529 @@
-Return-Path: <linux-kernel+bounces-842330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80463BB9840
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 16:29:32 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 867C4BB984F
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 16:33:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A3803B9B6C
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 14:29:31 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0AF083464B8
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 14:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F0028A1D5;
-	Sun,  5 Oct 2025 14:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA8328B7DA;
+	Sun,  5 Oct 2025 14:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Xjfl0yNW"
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="iy6yKPtC"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B845C34BA35;
-	Sun,  5 Oct 2025 14:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A77939FD9;
+	Sun,  5 Oct 2025 14:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759674563; cv=none; b=uiZrEJNcwglyG1LWq4StQgEdYYXqM/Mx+N1gDrG+CCRCxXbvI94Mgm7k9NVcVLi212ZtOUtzPpvsgr/4GjCyMm4XaoFxSG00esK6oJKqfnbbb2Z2JmWzmKOG+VGKx5AJDhndhO+DKTNKYtmfF6sBTfVFuu23ZYVtZaSj4RVJpMI=
+	t=1759674776; cv=none; b=SefGZy+hti/krLyiu0Be3slRh+aPhoFuhtuksVIe3qpBTH5lC3XQpyGOKNEfZBs5WVyI2FPlf/L9W8Du4p2Sf9lROT1fva9VDjA7AkcjMqKg2XVb8A8rSU/HZxcRXdMvQvo6Wp0fpce4IQH6q8Hz8gPTw96se/U2PPlE9332aHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759674563; c=relaxed/simple;
-	bh=hrsv2YDzWLNG7Ngtd7/6UjmmDS9vVj1AT8usgE7qgQI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MyOFYMGbedAHDbo4fPt4/g8yt0APtU7Yp269uT8dA+q3c1gJrAVMOFUqjVEB02Jt7dlOMXVLQXPz2BZUhQshv90Qii02SrjOgDCAbvdLUz2KktnmAH+9dRKhDfF329PVkO1pw//m3sF52TS6Y0EKNYZDpY3d8n8hfZkTX7OahRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=Xjfl0yNW; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1759674560;
-	bh=hrsv2YDzWLNG7Ngtd7/6UjmmDS9vVj1AT8usgE7qgQI=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=Xjfl0yNWvNlgfTU8/EAtoWEJVM/U3ViTlMzofQd5PTmLzm6zW9WheCJfZQBWMf/Sx
-	 PS4SvfONhUji+BpjFDo64XZP9T6ZIhKXhywCfLN/UQS3ZvwBWm/hIyqdey/rZSYGFE
-	 L93/5IM0KbGEcCMPzv6xPzkYlBejcfGaIgzTmGwQ=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id A7B691C0096;
-	Sun, 05 Oct 2025 10:29:19 -0400 (EDT)
-Message-ID: <ce05d6629571eba0a2f0a104fb5584021806addc.camel@HansenPartnership.com>
-Subject: Re: [PATCH v1 3/9] parisc: Convert DMA map_page to map_phys
- interface
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: John David Anglin <dave.anglin@bell.net>, Jason Gunthorpe
- <jgg@nvidia.com>,  Leon Romanovsky <leon@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Leon Romanovsky
- <leonro@nvidia.com>, Andreas Larsson <andreas@gaisler.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "David S.
- Miller" <davem@davemloft.net>, Geoff Levand <geoff@infradead.org>, Helge
- Deller <deller@gmx.de>, Ingo Molnar <mingo@redhat.com>,
- iommu@lists.linux.dev, Jason Wang <jasowang@redhat.com>, Juergen Gross
- <jgross@suse.com>, linux-alpha@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
- linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Madhavan
- Srinivasan <maddy@linux.ibm.com>, Matt Turner <mattst88@gmail.com>, Michael
- Ellerman <mpe@ellerman.id.au>, "Michael S. Tsirkin" <mst@redhat.com>,
- Richard Henderson <richard.henderson@linaro.org>,
- sparclinux@vger.kernel.org, Stefano Stabellini <sstabellini@kernel.org>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,  Thomas Gleixner
- <tglx@linutronix.de>, virtualization@lists.linux.dev, x86@kernel.org, 
- xen-devel@lists.xenproject.org, Magnus Lindholm <linmag7@gmail.com>
-Date: Sun, 05 Oct 2025 10:29:19 -0400
-In-Reply-To: <610b10bc-1aa2-4fad-a40b-be5fcfa04430@bell.net>
-References: <cover.1759071169.git.leon@kernel.org>
-	 <333ec4dabec16d3d913a93780bc6e7ddb5240fcf.1759071169.git.leon@kernel.org>
-	 <20251003150144.GC3360665@nvidia.com>
-	 <610b10bc-1aa2-4fad-a40b-be5fcfa04430@bell.net>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1759674776; c=relaxed/simple;
+	bh=sxY2NAIOW2lWzLmqZchAt2vALq/TgAC3j2XHh1mx9HI=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=uhnvbX8ovekB8YiSsSkJURiH6MzrXaz+2zPYlSmArBXNozF07UR3ODz0YwfjDDN67J09NFsqMaObHms4VAx5iUxSf9r5uinu8Yf74THbp6dLOkMWjOKBccroexLjQbdMJgY5tplUZKfoLkWpTi+UdXW8qEygPXNGG81heQtn8Oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=iy6yKPtC; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4DBFE1340;
+	Sun,  5 Oct 2025 16:31:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1759674677;
+	bh=sxY2NAIOW2lWzLmqZchAt2vALq/TgAC3j2XHh1mx9HI=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=iy6yKPtCPoiuEyTw9qvyhRuQmm948gHWrjkIy5FabeN7vyJvqjBb76wkrHXGBWzFG
+	 nNk9APUI9iNmYI5I0g7eHbvFEBlBL92t4OjocjYqKjZYkn8IAeEGf8h1s8yQCTRsB1
+	 wcfp4hiZ0SVfBBVJvhD/LeJV3A5wArX10nBU07RM=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251005133228.62704-3-asmirnou@pinefeat.co.uk>
+References: <20251005133228.62704-1-asmirnou@pinefeat.co.uk> <20251005133228.62704-3-asmirnou@pinefeat.co.uk>
+Subject: Re: [PATCH v5 2/2] media: i2c: Pinefeat cef168 lens control board driver
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>
+To: Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>, conor+dt@kernel.org, hverkuil@xs4all.nl, jacopo.mondi@ideasonboard.com, krzk+dt@kernel.org, mchehab@kernel.org, robh@kernel.org
+Date: Sun, 05 Oct 2025 15:32:45 +0100
+Message-ID: <175967476560.756374.10666787102940352317@ping.linuxembedded.co.uk>
+User-Agent: alot/0.9.1
 
-On Fri, 2025-10-03 at 13:18 -0400, John David Anglin wrote:
-> On 2025-10-03 11:01 a.m., Jason Gunthorpe wrote:
-> > This doesn't actually use the virt at all:
-> >=20
-> > 	offset =3D ((unsigned long) addr) & ~IOVP_MASK;
-> > 	if((size % L1_CACHE_BYTES) || ((unsigned long)addr %
-> > L1_CACHE_BYTES))
-> > 		ccio_io_pdir_entry(pdir_start, KERNEL_SPACE,
-> > (unsigned long)addr, hint);
-> >=20
-> > And ccio_io_pdir_entry():
-> > 	pa =3D lpa(vba);
-> >=20
-> > Is a special instruction that uses virt but AI tells me that
-> > special LPA instruction is returning phys. Not sure if that is a
-> > different value than virt_to_phys()..
+Hi Aliaksandr,
+
+Quoting Aliaksandr Smirnou (2025-10-05 14:32:28)
+> Add support for the Pinefeat cef168 lens control board that provides
+> electronic focus and aperture control for Canon EF & EF-S lenses on
+> non-Canon camera bodies.
+
+I'm really looking forward to trying this device out sometime. Very
+interesting piece of kit - Thank you for working directly to upstream
+the support! That's really awesome.
+
+> Signed-off-by: Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>
+> ---
+>  MAINTAINERS                        |   1 +
+>  drivers/media/i2c/Kconfig          |   9 +
+>  drivers/media/i2c/Makefile         |   1 +
+>  drivers/media/i2c/cef168.c         | 331 +++++++++++++++++++++++++++++
+>  include/uapi/linux/v4l2-controls.h |   6 +
+>  5 files changed, 348 insertions(+)
+>  create mode 100644 drivers/media/i2c/cef168.c
 >=20
-> ccio_io_pdir_entry currently only supports KERNEL_SPACE.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a59cd27caf11..0cf3b3a35827 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -20337,6 +20337,7 @@ M:      Aliaksandr Smirnou <support@pinefeat.co.u=
+k>
+>  L:     linux-media@vger.kernel.org
+>  S:     Supported
+>  F:     Documentation/devicetree/bindings/media/i2c/pinefeat,cef168.yaml
+> +F:     drivers/media/i2c/cef168.c
+> =20
+>  PLANTOWER PMS7003 AIR POLLUTION SENSOR DRIVER
+>  M:     Tomasz Duszynski <tduszyns@gmail.com>
+> diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+> index cdd7ba5da0d5..694b2571de37 100644
+> --- a/drivers/media/i2c/Kconfig
+> +++ b/drivers/media/i2c/Kconfig
+> @@ -823,6 +823,15 @@ config VIDEO_AK7375
+>           capability. This is designed for linear control of
+>           voice coil motors, controlled via I2C serial interface.
+> =20
+> +config VIDEO_CEF168
+> +       tristate "CEF168 lens control support"
+> +       select CRC8
+> +       help
+> +         This is a driver for the CEF168 lens control board.
+> +         The board provides an I2C interface for electronic focus
+> +         and aperture control of EF and EF-S lenses. The driver
+> +         integrates with the V4L2 sub-device API.
+> +
+>  config VIDEO_DW9714
+>         tristate "DW9714 lens voice coil support"
+>         depends on GPIOLIB
+> diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
+> index 57cdd8dc96f6..2e8f0a968352 100644
+> --- a/drivers/media/i2c/Makefile
+> +++ b/drivers/media/i2c/Makefile
+> @@ -25,6 +25,7 @@ obj-$(CONFIG_VIDEO_BT856) +=3D bt856.o
+>  obj-$(CONFIG_VIDEO_BT866) +=3D bt866.o
+>  obj-$(CONFIG_VIDEO_CCS) +=3D ccs/
+>  obj-$(CONFIG_VIDEO_CCS_PLL) +=3D ccs-pll.o
+> +obj-$(CONFIG_VIDEO_CEF168) +=3D cef168.o
+>  obj-$(CONFIG_VIDEO_CS3308) +=3D cs3308.o
+>  obj-$(CONFIG_VIDEO_CS5345) +=3D cs5345.o
+>  obj-$(CONFIG_VIDEO_CS53L32A) +=3D cs53l32a.o
+> diff --git a/drivers/media/i2c/cef168.c b/drivers/media/i2c/cef168.c
+> new file mode 100644
+> index 000000000000..cfcef476f09d
+> --- /dev/null
+> +++ b/drivers/media/i2c/cef168.c
+> @@ -0,0 +1,331 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2025 Pinefeat LLP
+> +
+> +#include <linux/crc8.h>
+> +#include <linux/delay.h>
+> +#include <linux/i2c.h>
+> +#include <linux/module.h>
+> +#include <linux/v4l2-controls.h>
+> +#include <media/v4l2-ctrls.h>
+> +#include <media/v4l2-device.h>
+> +#include <media/v4l2-event.h>
+> +
+> +#define CEF168_NAME "cef168"
+> +
+> +#define CEF168_V4L2_CID_CUSTOM(ctrl) \
+> +       (V4L2_CID_USER_CEF168_BASE + custom_##ctrl)
+> +
+> +enum { custom_lens_id, custom_data, custom_focus_range, custom_calibrate=
+ };
+> +
+> +#define INP_CALIBRATE 0x22
+> +#define INP_SET_FOCUS 0x80
+> +#define INP_SET_FOCUS_P 0x81
+> +#define INP_SET_FOCUS_N 0x82
+> +#define INP_SET_APERTURE 0x7A
+> +#define INP_SET_APERTURE_P 0x7B
+> +#define INP_SET_APERTURE_N 0x7C
+> +
+> +#define CEF_CRC8_POLYNOMIAL 168
+> +
+> +DECLARE_CRC8_TABLE(cef168_crc8_table);
+> +
+> +struct cef168_data {
+> +       __u8 lens_id;
+> +       __u8 moving : 1;
+> +       __u8 calibrating : 2;
+> +       __u16 moving_time;
+> +       __u16 focus_position_min;
+> +       __u16 focus_position_max;
+> +       __u16 focus_position_cur;
+> +       __u16 focus_distance_min;
+> +       __u16 focus_distance_max;
+> +       __u8 crc8;
+> +} __packed;
+> +
+> +struct cef168_device {
+> +       struct v4l2_ctrl_handler ctrls;
+> +       struct v4l2_subdev sd;
+> +};
+> +
+> +static inline struct cef168_device *to_cef168(struct v4l2_ctrl *ctrl)
+> +{
+> +       return container_of(ctrl->handler, struct cef168_device, ctrls);
+> +}
+> +
+> +static inline struct cef168_device *sd_to_cef168(struct v4l2_subdev *sub=
+dev)
+> +{
+> +       return container_of(subdev, struct cef168_device, sd);
+> +}
+> +
+> +static int cef168_i2c_write(struct cef168_device *cef168_dev, u8 cmd, u1=
+6 val)
+> +{
+> +       struct i2c_client *client =3D v4l2_get_subdevdata(&cef168_dev->sd=
+);
+> +       int retry, ret;
+> +
+> +       __le16 le_data =3D cpu_to_le16(val);
+> +       char tx_data[4] =3D { cmd, ((u8 *)&le_data)[0], ((u8 *)&le_data)[=
+1] };
+> +
+> +       tx_data[3] =3D crc8(cef168_crc8_table, tx_data, 3, CRC8_INIT_VALU=
+E);
+> +
+> +       for (retry =3D 0; retry < 3; retry++) {
+> +               ret =3D i2c_master_send(client, tx_data, sizeof(tx_data));
+> +               if (ret =3D=3D sizeof(tx_data))
+> +                       return 0;
+> +               else if (ret !=3D -EIO && ret !=3D -EREMOTEIO)
+> +                       break;
+> +       }
+> +
+> +       dev_err(&client->dev, "I2C write fail after %d retries, ret=3D%d\=
+n",
+> +               retry, ret);
+> +       return -EIO;
+> +}
+> +
+> +static int cef168_i2c_read(struct cef168_device *cef168_dev,
+> +                          struct cef168_data *rx_data)
+> +{
+> +       struct i2c_client *client =3D v4l2_get_subdevdata(&cef168_dev->sd=
+);
+> +
+> +       int ret =3D i2c_master_recv(client, (char *)rx_data,
+> +                                 sizeof(struct cef168_data));
+> +       if (ret !=3D sizeof(struct cef168_data)) {
+> +               dev_err(&client->dev, "I2C read fail, ret=3D%d\n", ret);
+> +               return -EIO;
+> +       }
+> +
+> +       u8 computed_crc =3D crc8(cef168_crc8_table, (const u8 *)rx_data,
+> +                              sizeof(struct cef168_data) - 1, CRC8_INIT_=
+VALUE);
+> +       if (computed_crc !=3D rx_data->crc8) {
+> +               dev_err(&client->dev,
+> +                       "CRC mismatch calculated=3D0x%02X read=3D0x%02X\n=
+",
+> +                       computed_crc, rx_data->crc8);
+> +               return -EIO;
+> +       }
+> +
+> +       rx_data->moving_time =3D le16_to_cpup((__le16 *)&rx_data->moving_=
+time);
+> +       rx_data->focus_position_min =3D le16_to_cpup((__le16 *)&rx_data->=
+focus_position_min);
+> +       rx_data->focus_position_max =3D le16_to_cpup((__le16 *)&rx_data->=
+focus_position_max);
+> +       rx_data->focus_position_cur =3D le16_to_cpup((__le16 *)&rx_data->=
+focus_position_cur);
+> +       rx_data->focus_distance_min =3D le16_to_cpup((__le16 *)&rx_data->=
+focus_distance_min);
+> +       rx_data->focus_distance_max =3D le16_to_cpup((__le16 *)&rx_data->=
+focus_distance_max);
 
-Actually there's a bit more nuance to it than that.  Obviously DMA has
-to support user pages otherwise I/O wouldn't work.  The way it does  is
-that all physical pages are mapped in the kernel and we try to make
-sure all user mappings are on cache stride (4MB) boundaries so the
-coherence index of the kernel virtual address and the user virtual
-address are the same, so we can solely use the kernel virtual address
-to calculate the coherence index for the IOMMU.  If that's not true, we
-flush the user virtual address range in gup and the kernel virtual
-address range before sending the I/O completion.
+What is the focus distance in this case? Is it a measured distance that
+could be applied to focus?
 
-Regards,
+> +
+> +       return 0;
+> +}
+> +
+> +static int cef168_set_ctrl(struct v4l2_ctrl *ctrl)
+> +{
+> +       struct cef168_device *dev =3D to_cef168(ctrl);
+> +       u8 cmd;
+> +
+> +       switch (ctrl->id) {
+> +       case V4L2_CID_FOCUS_ABSOLUTE:
+> +               return cef168_i2c_write(dev, INP_SET_FOCUS, ctrl->val);
+> +       case V4L2_CID_FOCUS_RELATIVE:
+> +               cmd =3D ctrl->val < 0 ? INP_SET_FOCUS_N : INP_SET_FOCUS_P;
+> +               return cef168_i2c_write(dev, cmd, abs(ctrl->val));
+> +       case V4L2_CID_IRIS_ABSOLUTE:
+> +               return cef168_i2c_write(dev, INP_SET_APERTURE, ctrl->val);
+> +       case V4L2_CID_IRIS_RELATIVE:
+> +               cmd =3D ctrl->val < 0 ? INP_SET_APERTURE_N : INP_SET_APER=
+TURE_P;
+> +               return cef168_i2c_write(dev, cmd, abs(ctrl->val));
+> +       case CEF168_V4L2_CID_CUSTOM(calibrate):
+> +               return cef168_i2c_write(dev, INP_CALIBRATE, 0);
 
-James
+Is there any documentation on how to use this control?
+
+> +       }
+> +
+> +       return -EINVAL;
+> +}
+> +
+> +static int cef168_get_ctrl(struct v4l2_ctrl *ctrl)
+> +{
+> +       struct cef168_data data;
+> +       struct cef168_device *dev =3D to_cef168(ctrl);
+> +       int rval;
+> +
+> +       rval =3D cef168_i2c_read(dev, &data);
+> +       if (rval < 0)
+> +               return rval;
+> +
+> +       switch (ctrl->id) {
+> +       case V4L2_CID_FOCUS_ABSOLUTE:
+> +               ctrl->val =3D data.focus_position_cur;
+> +               return 0;
+> +       case CEF168_V4L2_CID_CUSTOM(focus_range):
+> +               ctrl->p_new.p_u32[0] =3D ((u32)data.focus_position_min <<=
+ 16) |
+> +                                      (u32)data.focus_position_max;
+
+Is this really a custom control ? Is there any way to convey this
+through the min/max of the FOCUS_ABSOLUTE control ?
+
+> +               return 0;
+> +       case CEF168_V4L2_CID_CUSTOM(lens_id):
+> +               ctrl->p_new.p_u8[0] =3D data.lens_id;
+> +               return 0;
+
+Is this a specific individual ID value for the connected lens (i.e.
+every lens has a custom id?) or is it a reference to the lens
+model/type?
+
+Is this something we could use in libcamera for instance to select an
+appropriate tuning file per lens (type) ?
 
 
+> +       case CEF168_V4L2_CID_CUSTOM(data):
+> +               memcpy(ctrl->p_new.p_u8, &data, sizeof(data));
+> +               return 0;
+> +       }
+> +
+> +       return -EINVAL;
+> +}
+> +
+> +static const struct v4l2_ctrl_ops cef168_ctrl_ops =3D {
+> +       .g_volatile_ctrl =3D cef168_get_ctrl,
+> +       .s_ctrl =3D cef168_set_ctrl,
+> +};
+> +
+> +static const struct v4l2_ctrl_config cef168_lens_id_ctrl =3D {
+> +       .ops =3D &cef168_ctrl_ops,
+> +       .id =3D CEF168_V4L2_CID_CUSTOM(lens_id),
+> +       .type =3D V4L2_CTRL_TYPE_U8,
+> +       .name =3D "Lens ID",
+> +       .min =3D 0,
+> +       .max =3D U8_MAX,
+> +       .step =3D 1,
+> +       .def =3D 0,
+> +       .flags =3D V4L2_CTRL_FLAG_VOLATILE | V4L2_CTRL_FLAG_READ_ONLY,
+> +};
+> +
+> +static const struct v4l2_ctrl_config cef168_focus_range_ctrl =3D {
+> +       .ops =3D &cef168_ctrl_ops,
+> +       .id =3D CEF168_V4L2_CID_CUSTOM(focus_range),
+> +       .type =3D V4L2_CTRL_TYPE_U32,
+> +       .name =3D "Focus Range",
+> +       .min =3D 0,
+> +       .max =3D U32_MAX,
+> +       .step =3D 1,
+> +       .def =3D 0,
+> +       .flags =3D V4L2_CTRL_FLAG_VOLATILE | V4L2_CTRL_FLAG_READ_ONLY,
+> +};
+> +
+> +static const struct v4l2_ctrl_config cef168_data_ctrl =3D {
+> +       .ops =3D &cef168_ctrl_ops,
+> +       .id =3D CEF168_V4L2_CID_CUSTOM(data),
+> +       .type =3D V4L2_CTRL_TYPE_U8,
+> +       .name =3D "Data",
+> +       .min =3D 0,
+> +       .max =3D U8_MAX,
+> +       .step =3D 1,
+> +       .def =3D 0,
+> +       .dims =3D { sizeof(struct cef168_data) / sizeof(u8) },
+> +       .elem_size =3D sizeof(u8),
+> +       .flags =3D V4L2_CTRL_FLAG_VOLATILE | V4L2_CTRL_FLAG_READ_ONLY,
+> +};
+> +
+> +static const struct v4l2_ctrl_config cef168_calibrate_ctrl =3D {
+> +       .ops =3D &cef168_ctrl_ops,
+> +       .id =3D CEF168_V4L2_CID_CUSTOM(calibrate),
+> +       .type =3D V4L2_CTRL_TYPE_BUTTON,
+> +       .name =3D "Calibrate",
+> +};
+> +
+> +static const struct v4l2_subdev_core_ops cef168_core_ops =3D {
+> +       .log_status =3D v4l2_ctrl_subdev_log_status,
+> +       .subscribe_event =3D v4l2_ctrl_subdev_subscribe_event,
+> +       .unsubscribe_event =3D v4l2_event_subdev_unsubscribe,
+> +};
+> +
+> +static const struct v4l2_subdev_ops cef168_ops =3D {
+> +       .core =3D &cef168_core_ops,
+> +};
+> +
+> +static int cef168_init_controls(struct cef168_device *dev)
+> +{
+> +       struct v4l2_ctrl *ctrl;
+> +       struct v4l2_ctrl_handler *hdl =3D &dev->ctrls;
+> +       const struct v4l2_ctrl_ops *ops =3D &cef168_ctrl_ops;
+> +
+> +       v4l2_ctrl_handler_init(hdl, 8);
+> +
+> +       ctrl =3D v4l2_ctrl_new_std(hdl, ops, V4L2_CID_FOCUS_ABSOLUTE, 0, =
+S16_MAX,
+> +                                1, 0);
+> +       if (ctrl)
+> +               ctrl->flags |=3D V4L2_CTRL_FLAG_VOLATILE |
+> +                              V4L2_CTRL_FLAG_EXECUTE_ON_WRITE;
+> +       v4l2_ctrl_new_std(hdl, ops, V4L2_CID_FOCUS_RELATIVE, S16_MIN, S16=
+_MAX,
+> +                         1, 0);
+> +       ctrl =3D v4l2_ctrl_new_std(hdl, ops, V4L2_CID_IRIS_ABSOLUTE, 0, S=
+16_MAX,
+> +                                1, 0);
+> +       if (ctrl)
+> +               ctrl->flags |=3D V4L2_CTRL_FLAG_WRITE_ONLY |
+> +                              V4L2_CTRL_FLAG_EXECUTE_ON_WRITE;
+> +       v4l2_ctrl_new_std(hdl, ops, V4L2_CID_IRIS_RELATIVE, S16_MIN, S16_=
+MAX, 1,
+> +                         0);
+> +       ctrl =3D v4l2_ctrl_new_custom(hdl, &cef168_calibrate_ctrl, NULL);
+> +       if (ctrl)
+> +               ctrl->flags |=3D V4L2_CTRL_FLAG_WRITE_ONLY |
+> +                              V4L2_CTRL_FLAG_EXECUTE_ON_WRITE;
+> +       v4l2_ctrl_new_custom(hdl, &cef168_focus_range_ctrl, NULL);
+> +       v4l2_ctrl_new_custom(hdl, &cef168_data_ctrl, NULL);
+> +       v4l2_ctrl_new_custom(hdl, &cef168_lens_id_ctrl, NULL);
+> +
+> +       if (hdl->error)
+> +               dev_err(dev->sd.dev, "%s fail error: 0x%x\n", __func__,
+> +                       hdl->error);
+> +       dev->sd.ctrl_handler =3D hdl;
+> +       return hdl->error;
+> +}
+> +
+> +static int cef168_probe(struct i2c_client *client)
+> +{
+> +       struct cef168_device *cef168_dev;
+> +       int rval;
+> +
+> +       cef168_dev =3D devm_kzalloc(&client->dev, sizeof(*cef168_dev),
+> +                                 GFP_KERNEL);
+> +       if (!cef168_dev)
+> +               return -ENOMEM;
+> +
+> +       v4l2_i2c_subdev_init(&cef168_dev->sd, client, &cef168_ops);
+> +       cef168_dev->sd.flags |=3D V4L2_SUBDEV_FL_HAS_DEVNODE |
+> +                               V4L2_SUBDEV_FL_HAS_EVENTS;
+> +
+> +       rval =3D cef168_init_controls(cef168_dev);
+> +       if (rval)
+> +               goto err_cleanup;
+> +
+> +       rval =3D media_entity_pads_init(&cef168_dev->sd.entity, 0, NULL);
+> +       if (rval < 0)
+> +               goto err_cleanup;
+> +
+> +       cef168_dev->sd.entity.function =3D MEDIA_ENT_F_LENS;
+> +
+> +       rval =3D v4l2_async_register_subdev(&cef168_dev->sd);
+> +       if (rval < 0)
+> +               goto err_cleanup;
+> +
+> +       crc8_populate_msb(cef168_crc8_table, CEF_CRC8_POLYNOMIAL);
+> +
+> +       return 0;
+> +
+> +err_cleanup:
+> +       v4l2_ctrl_handler_free(&cef168_dev->ctrls);
+> +       media_entity_cleanup(&cef168_dev->sd.entity);
+> +
+> +       return rval;
+> +}
+> +
+> +static void cef168_remove(struct i2c_client *client)
+> +{
+> +       struct v4l2_subdev *sd =3D i2c_get_clientdata(client);
+> +       struct cef168_device *cef168_dev =3D sd_to_cef168(sd);
+> +
+> +       v4l2_async_unregister_subdev(&cef168_dev->sd);
+> +       v4l2_ctrl_handler_free(&cef168_dev->ctrls);
+> +       media_entity_cleanup(&cef168_dev->sd.entity);
+> +}
+> +
+> +static const struct of_device_id cef168_of_table[] =3D {
+> +       { .compatible =3D "pinefeat,cef168" },
+> +       { /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, cef168_of_table);
+> +
+> +static struct i2c_driver cef168_i2c_driver =3D {
+> +       .driver =3D {
+> +               .name =3D CEF168_NAME,
+> +               .of_match_table =3D cef168_of_table,
+> +       },
+> +       .probe =3D cef168_probe,
+> +       .remove =3D cef168_remove,
+> +};
+> +
+> +module_i2c_driver(cef168_i2c_driver);
+> +
+> +MODULE_AUTHOR("support@pinefeat.co.uk>");
+> +MODULE_DESCRIPTION("CEF168 lens driver");
+> +MODULE_LICENSE("GPL");
+> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2=
+-controls.h
+> index 2d30107e047e..f8ca4f8c89af 100644
+> --- a/include/uapi/linux/v4l2-controls.h
+> +++ b/include/uapi/linux/v4l2-controls.h
+> @@ -228,6 +228,12 @@ enum v4l2_colorfx {
+>   */
+>  #define V4L2_CID_USER_RKISP1_BASE              (V4L2_CID_USER_BASE + 0x1=
+220)
+> =20
+> +/*
+> + * The base for Pinefeat CEF168 driver controls.
+> + * We reserve 16 controls for this driver.
+> + */
+> +#define V4L2_CID_USER_CEF168_BASE              (V4L2_CID_USER_BASE + 0x1=
+230)
+> +
+>  /* MPEG-class control IDs */
+>  /* The MPEG controls are applicable to all codec controls
+>   * and the 'MPEG' part of the define is historical */
+> --=20
+> 2.34.1
+>
 
