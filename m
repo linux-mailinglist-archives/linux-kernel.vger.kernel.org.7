@@ -1,190 +1,181 @@
-Return-Path: <linux-kernel+bounces-842228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B3D5BB9481
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 10:12:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9814BB948E
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 10:29:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D67721896F5C
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 08:13:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 765D71898559
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 08:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8A51EA7DB;
-	Sun,  5 Oct 2025 08:12:35 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F02B1F03EF;
+	Sun,  5 Oct 2025 08:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="JR0/A5o1"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazolkn19013072.outbound.protection.outlook.com [52.103.43.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1941E47CC
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 08:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759651955; cv=none; b=WZBzNbR2jogDJjR/PwPhEWYAzwox7e8ib2EpBHjDpcZAHVGmewRYFG9/wyycseumbshbDAkUOmtY2e1xVAFK0cegEXbh/DHmDYYUxEoXCldDboipvRkeMOlGqLSX4g1mvtC7F4N6dW4ijTB9pKRIRIJUDhnMYiH2N+/kiF4GKQA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759651955; c=relaxed/simple;
-	bh=4AExFuaMq6f1QZpxPNj/dyNQEBY3IJ5HVdQ/MVV1ZL8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qMBZvjhPq7jHbx33GNiiPnHaO6gugvOwn7qARFTK4pBg0Ix18k55Ev8MXVJYDa+Cxi5Gh6eajjv1ExGH5vjf93Su/wrQVvzA7SodZvSo36jcczTi0O1u4vGY5/3BB35evG1Mwcig2i90tf+Q1z627M+ZvysFlGPZPV0GpbtBlI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1v5Jqh-0000xV-Ru; Sun, 05 Oct 2025 10:12:07 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1v5Jqe-0022Kc-2k;
-	Sun, 05 Oct 2025 10:12:04 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.98.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1v5Jqe-0000000Cs7z-3CsR;
-	Sun, 05 Oct 2025 10:12:04 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	=?UTF-8?q?Hubert=20Wi=C5=9Bniewski?= <hubert.wisniewski.25632@gmail.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	stable@vger.kernel.org,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Lukas Wunner <lukas@wunner.de>,
-	Russell King <linux@armlinux.org.uk>,
-	Xu Yang <xu.yang_2@nxp.com>,
-	linux-usb@vger.kernel.org
-Subject: [PATCH net v3 1/1] net: usb: asix: hold PM usage ref to avoid PM/MDIO + RTNL deadlock
-Date: Sun,  5 Oct 2025 10:12:03 +0200
-Message-ID: <20251005081203.3067982-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.47.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8141E47B3;
+	Sun,  5 Oct 2025 08:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.43.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759652946; cv=fail; b=Md7/ry8akwloVRGOzXWfZoXvi6t7p+NuAfVtWrT8Uh8ZC3m+/n2d+Eo7baMHr+Gjqbfet0FvMiDQhPIM7O4g1ZfOuxQ7X/cJENKq7rUMzh8Nf/HFU593UfQhqE9LvOuHyl7bUtu1CVdwqpEIL3NxdRd0RZk9vpqWgsHMR1qhLE0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759652946; c=relaxed/simple;
+	bh=ckcWjQfxrqMjP6HTtAFs5Ih4bT6BmqfaG3uz7YLutZw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=czzUS0Gy5EdcPMP1QK5oFwM4LEPCifDxHpWrDQ0jqrSkIZSjO5xq3Q48sHfNdYiUoUQHVqV3WNRqG87hlk1Jfeur1Jomq0ZvHo0vVFeRh11BXkZv0WxK7q5n9tU329bLcIAE46GIxBM6Ps6fIE84AuNYcrMQ3367t7wz5kzi7ss=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=JR0/A5o1; arc=fail smtp.client-ip=52.103.43.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EudmFWCZx7WhLeWuXj85msnAJWyX1WPdMxX3xWl/yn4ipgjsKbIqpz2x6hVIgwW6LE300Bw7q9JTGcW3kD6j4pguLpyOqkj0/4ONpVeV73i1Rc5JuamQd2ZyaaJLhOhc9Wtj+twWDkhcsEi4jZ8cUJM8u7OH8fXNvSpUOpOMMUUQV0T5nVKSIfgT3q9OLGSsvtD0Hy2kQYIbbB8DEqWo+Fxf4ZkEukjtiGpBXHbQOUmG49Dr66dQvXTuFy+B/y2lgQbmqCnBOLAWb8Pnznz/yG48kdsGYiHR3vrJQvOzq/n9lAMzp3YKNA0E0QaMr6ehlvwNF4EF+Au63jaVrV6BcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=f3Q6qRPOTogd/8ivxkckdQB3tZANWiJhV3vzfn9GLjk=;
+ b=L5yee1t9/Akx08SDWzKz3CkG9rsq71q80q+s7d2O68Krx8McSMChyriF+caYItJO3LYREK8P/7Kx94IV5BjPc98fF3Yf014P6h0IGmL0WCRa7e8W4Qzs8uXNERj/C+wQbKWKqPKW+ON/hDCYbImDohgenIXdlgfvwwMvaVeYhi7VLxqvXFNkZQDcwGYXFsXnF3FWaaVhWk3k6pxujJqgY/QDMNgWh3WNsoEdGm5vVzB7J9wan2YQTTj18hYro59sVrzzHv1jqCwxgppT3UlvQqOdXrsQFUfuPRfYGK8lzcRHDKqeUj4hULlmxqdAxb5diHljzlM+j9BDL4XHXRJ2rA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=f3Q6qRPOTogd/8ivxkckdQB3tZANWiJhV3vzfn9GLjk=;
+ b=JR0/A5o1howE9HUpy8Hp3K6aK/HRthbGSi3pdE1UxRNcG9MY81vqT3waMofWZMx93vhggu34X+PywMiKGHdjQ4sn4zgTrYTg5oHJj5ai6w1+uoI5fCuqWa2FGf25NsQDI3m+0DiCklKpoBNlRQGZLzVg3LrbD4YslHtWXScDpPBc9K6JgE9RjCJ9bD4cW6SwS8cOD9lnv+cbFzjljJhGkeQF7K/JpbHMq/ESVk1oTfl6kd57szqw9zjkwsq86viTinewoaL/kQusAMtFk+7QcsjreePuLjGaugpodKSGzryqXOe/Ag5gyCT3cwzwfCae6U/xlmp4a5fuA2ozDf18IQ==
+Received: from KUZPR04MB9265.apcprd04.prod.outlook.com (2603:1096:d10:5a::6)
+ by TYPPR04MB8960.apcprd04.prod.outlook.com (2603:1096:405:314::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Sun, 5 Oct
+ 2025 08:28:59 +0000
+Received: from KUZPR04MB9265.apcprd04.prod.outlook.com
+ ([fe80::3c38:c065:daf4:cbfa]) by KUZPR04MB9265.apcprd04.prod.outlook.com
+ ([fe80::3c38:c065:daf4:cbfa%5]) with mapi id 15.20.9182.017; Sun, 5 Oct 2025
+ 08:28:59 +0000
+Message-ID:
+ <KUZPR04MB926510C2B83347B393638AA2F3E2A@KUZPR04MB9265.apcprd04.prod.outlook.com>
+Date: Sun, 5 Oct 2025 16:28:51 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 06/18] iommu/riscv: Implement MSI table management
+ functions
+To: Andrew Jones <ajones@ventanamicro.com>, iommu@lists.linux.dev,
+ kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: jgg@nvidia.com, zong.li@sifive.com, tjeznach@rivosinc.com,
+ joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, anup@brainfault.org,
+ atish.patra@linux.dev, tglx@linutronix.de, alex.williamson@redhat.com,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, alex@ghiti.fr
+References: <20250920203851.2205115-20-ajones@ventanamicro.com>
+ <20250920203851.2205115-26-ajones@ventanamicro.com>
+Content-Language: en-US
+From: "Nutty.Liu" <nutty.liu@hotmail.com>
+In-Reply-To: <20250920203851.2205115-26-ajones@ventanamicro.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TYCP286CA0078.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b3::15) To KUZPR04MB9265.apcprd04.prod.outlook.com
+ (2603:1096:d10:5a::6)
+X-Microsoft-Original-Message-ID:
+ <50e239d8-d8b8-4c75-b492-13c2f1dc95ec@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KUZPR04MB9265:EE_|TYPPR04MB8960:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8272999a-e58f-40d0-e060-08de03e93aa9
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|5072599009|15080799012|461199028|6090799003|8060799015|23021999003|37102599003|19110799012|3412199025|40105399003|440099028;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZmF1VlR2WXkrTnBQV21XRGhWcmh4WG43SnM2a1U4SzAvUUZFT2NjTWdQZUR6?=
+ =?utf-8?B?azN5TVVsRmJnWjUzVkt1U0JCOU5sQXhZSGJSUzRXWXlzdzVBeEpKSUdHNjQx?=
+ =?utf-8?B?Z0p1YjZPbzBFZG5PNThCa1BUQVZlNDQxYjlMbjMyM1djUnRVeUhPQks1WGFq?=
+ =?utf-8?B?aVdmM3dFTUl6WS9qN0hhd0cxblJQZ05GVFJpTXVDUjRJeWkyN2dzUThHL21U?=
+ =?utf-8?B?TVJiSFNjTEIxS09CaC9zaTJxbzVHUE9pcGdxTHdhWHJ3ZUZpelA0Tlo5eGtM?=
+ =?utf-8?B?NjVyWUk3NkQrZFJDcEZudm1WaG4wclFDbGFWTGhsUUllV3ZhRUVyR3dWSVUz?=
+ =?utf-8?B?Y3hIVnBnWlhrbitVNmU4aEJ3TThJRHRZdFBlMW9yL29UdVg0aWdPb3VUdTZB?=
+ =?utf-8?B?VWhrNW9Pc3JJSzlUeFFnc29TaEtiVVpsZGlzN2dLT3lidmVnTXJ6azJFWnds?=
+ =?utf-8?B?WFpOTFR1RWNVbWo5NTdYa1ptMDZXd01sTzd3ODk4ckJSQUIxdGoxaWR2Wkxi?=
+ =?utf-8?B?SWhoR2FTc3lrMlltVjFlQURtK2dwMENCdzQxR29qdjFxayt3bEwvK2I4MXNW?=
+ =?utf-8?B?ZFkzaWtXeHFVQk53QmlqYXlGaWdzUFFPc0xlK3JzcVJxN1lIbEtKM3AvdWtV?=
+ =?utf-8?B?UU9oRHVEZHpud0t0RnJMY0RHSGZJNGZKUjExTUxaUTNWUkVkcXB2TjdnOGtH?=
+ =?utf-8?B?TFRZbXFXb3dwN2k1Nm1BaXREcUh3WjdaeVpFMENPZXgvVGFDZEJRVTF1NFFR?=
+ =?utf-8?B?V29DQlNaNWZNdy9Va1l4cmVJY1JKV211REdjckxKalcycHVYRUUzeDAvUkRY?=
+ =?utf-8?B?MXE3WjBreFRvV1dDZFBodS9IaFh6N2wyN1pDOEZpN0MrQ1FzeCtSQVlMTjRt?=
+ =?utf-8?B?WHdVNjcvcVpEdWdhaHM4NHVHT0QwWENEYmp0UkMzeDhJQjdrV25iemhPc05n?=
+ =?utf-8?B?MjdoNXY1UlY2dkxkMUpkMndRYXVuRmFyOW9Lb2FCRXJjUi9PWlJZZTdyMUk1?=
+ =?utf-8?B?cURQN3MwVDM1RVdBdkgxWGpiZ1ZNbzkvZ0tTWDU3T2MxbGFNODdLamdSWWZJ?=
+ =?utf-8?B?dnE5c2JiVlI3WFdNek10bjV5bU55aGdtME9KUkVPb1RaK1k2Smlmc1VvVVV1?=
+ =?utf-8?B?MEZxb3dYaHRBbFVEQU1zZERFTUw1NVh6cUp2UVRsRm1UMVExNXpQeDU5U0k3?=
+ =?utf-8?B?eFk4Z2NTdVVhdkt5UElyN0xhamlzajFuZUZXWEdJdVVDQjl6RmFmSkdmN2R4?=
+ =?utf-8?B?c05GdWdHa0lHU1N2WUZGemlGQTlDNHE1WU9CUkhsYzcwa1BZWEMzb1FMa3hW?=
+ =?utf-8?B?MDUrdi9mQ3lMQmhLQUhEY1dRc1R0MWNtMnJxdlNRSUpMTmZzbnp6b0FDUWpL?=
+ =?utf-8?B?U1RMOWJZbjdMdzlPcXJNeUxXRm1ub3RVYXZmaG9ORitUaGVpaDZhS0hKZ3A2?=
+ =?utf-8?B?OFBhUnRTSzZsRUxST0NxU0ZqUTVKZnV0a2FuVnl6VmtNdGJMQTZSakFwK0F5?=
+ =?utf-8?B?dmZqbHAydWF5ZHBDL3gvNDBKWDIyZFJ1R2pBV045VW9FdVhQVVREbUVQR25k?=
+ =?utf-8?B?cXMzTGVyRUMraTJvRmRyaldZK3E4R0xPQnhPZ0U3QWthNXNNdmdiNVJlcTRS?=
+ =?utf-8?B?TExvUERiNGViSStRQTVPZzZ6bTRtQ0E9PQ==?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bmVHL0NWc1JtN3QxR0NLVTFlSnJtMVJrVWVaSnFTeFcxZklYN3RjL2sxMUxF?=
+ =?utf-8?B?d3lVNEhPUE5Qd0ViSnhPTFppZ01zT0NWSUhWTTFoMURmSzlEdUJkYkVGV1Rt?=
+ =?utf-8?B?WVlydU5aQkZ4YktYOWU2azhMc0I0Q0Y4eEM4bXlwWCtoc1c2Z2c2YzM5L3g2?=
+ =?utf-8?B?RVRkRHZJT3hyRlcrTVd1MXluZE9Uc2RuSC83VE1YZWQwRGJOQUl2dENhd21U?=
+ =?utf-8?B?K2hSUjA5N1pQLzJGUmgxUTR4bXVkcUVWNmFhMXhBWVRLdlNwa003UjN2OGkv?=
+ =?utf-8?B?clB3MndUTHFXeXhhcGhXWG9LSEVwL0ttSlpNdlpNRzdlM1oydHV0RmJIaFFP?=
+ =?utf-8?B?SzI3aVY2R01xQzF3eHdzZVM5MVdFZnRkL0Z5aDM2MlV6UjQxZzk1VmZxUTdq?=
+ =?utf-8?B?dmpwSFMvTVdjQlc5TnNiL3haZmc4Y0UvdXd4WnhrS3dFYm9GMlJnR0gxSjZX?=
+ =?utf-8?B?VnFmcUl5eTNnUisySG4yTjBDOWgvaFdQc2YrT2hYakQ0V1NZbUErSk1teCtl?=
+ =?utf-8?B?NFhRV0R0aVpaUHEybFR4M2NydWJUbU9KUmdLZXFZVWk0M1ZMVEhIc01CUGht?=
+ =?utf-8?B?S0x6N2s1eFJVL2ErMHZNZ2JMVDN4N0JiWEtLQnkxUm5uTk41cjNPK0YyWWky?=
+ =?utf-8?B?TGU1bDFyaW92QzFQekdiTHNyQjM2d2RCcndvZEM5ZXI1Z2JFQm5YSDA3YmxU?=
+ =?utf-8?B?WlhPRFZZdXFPN04xNlpBblo4NGYydkQwMHlNL0NXZDN0RWJ4SERlUVp0d2tN?=
+ =?utf-8?B?TjVlZTBEWEE5bzcwTVQ5bGh4SXF0RnN1NFVIZy9nZEhUTDlwY0pOM3VURS9C?=
+ =?utf-8?B?S3JNNE80WWg1WkhuSmZ0ek9GamF5bTlhaUU5NnFOZnN5UjVOb1pBSFBubWdn?=
+ =?utf-8?B?YVpyQ3RwZ0U4Wlo5TFdpZ1BCQ2NRSGY2QTRqZmVZMXRZYUhIN3RrUVZwK1Br?=
+ =?utf-8?B?OXdPaVNVZll3U3JpRWtSQ1RoeXRuaHN4RURLMnN4em1Pby9sdXNaeG9EdDZa?=
+ =?utf-8?B?d1ErOUpkbm9tN0RLZmh1dHN1Um5MQU56a08rL0NvQ2JHMnM3R3hUL1Y0cXN3?=
+ =?utf-8?B?Wnd5cC8yWmlIamNpK1V2ODJxY0czVjJrSUZELzBvVWo0bExEU1ovYldER210?=
+ =?utf-8?B?bFBoNEdWcUNMcE40RWptK2wwanMvUFkzOXQxM1JyVVBLYjdqS2M2VXBCNHpz?=
+ =?utf-8?B?aU83d0h2eU1mWmZkYk52dHdWY3BYcEpKbXpxUCtkeDRwcTJUWjBOVjJrUTIz?=
+ =?utf-8?B?NUQ1SHBNMFA3VXI2YlhoVnFOSGs5a3RlQ0ZCTXFrVllmYjB0bjZ2NkZPQ2Fz?=
+ =?utf-8?B?T3ZHS3RqM3J3RG5QY29JOGtzU1JENmtkbGk1cTRwU2FvQlRIZlFBMDNZOHFZ?=
+ =?utf-8?B?VmxSZHI3UUNDUEZuUStIWjNnMEJQV1lScXYxOTRMMVQwVDIwNVZGRmZQcjN2?=
+ =?utf-8?B?bUM4WFJ5NTlNN3cyeE1vNW1hQk04WmNWdkNUaExvc2FFSHBsRGZoKzdxSzd5?=
+ =?utf-8?B?T0lSVjVwT05PVlpRUVprcEFnUjQzSVkvckhwN3QrM0dYMEFCTnlSNG1hS3JW?=
+ =?utf-8?B?YjEwWTIwZSt4VWRpOHVGRUxxYzVYcDBsR0lPLzBLNHVaTEhCVkdUZC85bFYv?=
+ =?utf-8?Q?XDZYwoQ1UQ+q3byVxzUUU6WrLF8wkJy3u30u4yWC7z3U=3D?=
+X-OriginatorOrg: sct-15-20-9052-0-msonline-outlook-38779.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8272999a-e58f-40d0-e060-08de03e93aa9
+X-MS-Exchange-CrossTenant-AuthSource: KUZPR04MB9265.apcprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2025 08:28:58.2241
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYPPR04MB8960
 
-Prevent USB runtime PM (autosuspend) for AX88772* in bind.
 
-usbnet enables runtime PM (autosuspend) by default, so disabling it via
-the usb_driver flag is ineffective. On AX88772B, autosuspend shows no
-measurable power saving with current driver (no link partner, admin
-up/down). The ~0.453 W -> ~0.248 W drop on v6.1 comes from phylib powering
-the PHY off on admin-down, not from USB autosuspend.
+On 9/21/2025 4:38 AM, Andrew Jones wrote:
+> Export more in iommu.h from iommu.c and implement functions needed
+> to manage the MSI table.
+>
+> Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
+> ---
+>   drivers/iommu/riscv/iommu-bits.h |  7 ++++++
+>   drivers/iommu/riscv/iommu-ir.c   | 43 ++++++++++++++++++++++++++++++++
+>   drivers/iommu/riscv/iommu.c      | 36 +++-----------------------
+>   drivers/iommu/riscv/iommu.h      | 32 ++++++++++++++++++++++++
+>   4 files changed, 86 insertions(+), 32 deletions(-)
+>
+Reviewed-by: Nutty Liu <nutty.liu@hotmail.com>
 
-The real hazard is that with runtime PM enabled, ndo_open() (under RTNL)
-may synchronously trigger autoresume (usb_autopm_get_interface()) into
-asix_resume() while the USB PM lock is held. Resume paths then invoke
-phylink/phylib and MDIO, which also expect RTNL, leading to possible
-deadlocks or PM lock vs MDIO wake issues.
-
-To avoid this, keep the device runtime-PM active by taking a usage
-reference in ax88772_bind() and dropping it in unbind(). A non-zero PM
-usage count blocks runtime suspend regardless of userspace policy
-(.../power/control - pm_runtime_allow/forbid), making this approach
-robust against sysfs overrides.
-
-Holding a runtime-PM usage ref does not affect system-wide suspend;
-system sleep/resume callbacks continue to run as before.
-
-Fixes: 4a2c7217cd5a ("net: usb: asix: ax88772: manage PHY PM from MAC")
-Reported-by: Hubert Wiśniewski <hubert.wisniewski.25632@gmail.com>
-Closes: https://lore.kernel.org/all/DCGHG5UJT9G3.2K1GHFZ3H87T0@gmail.com
-Tested-by: Hubert Wiśniewski <hubert.wisniewski.25632@gmail.com>
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Closes: https://lore.kernel.org/all/b5ea8296-f981-445d-a09a-2f389d7f6fdd@samsung.com
-Cc: stable@vger.kernel.org
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
-changes v3
-- update comments and commit message
-changes v2:
-- Switch from pm_runtime_forbid()/allow() to pm_runtime_get_noresume()/put()
-  as suggested by Alan Stern, to block autosuspend robustly.
-- Reword commit message to clarify the actual deadlock condition
-  (autoresume under RTNL) as pointed out by Oliver Neukum.
-- Keep explanation in commit message, shorten in-code comment.
-
-Link to the measurement results:
-https://lore.kernel.org/all/aMkPMa650kfKfmF4@pengutronix.de/
----
- drivers/net/usb/asix_devices.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
-
-diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
-index 792ddda1ad49..85bd5d845409 100644
---- a/drivers/net/usb/asix_devices.c
-+++ b/drivers/net/usb/asix_devices.c
-@@ -625,6 +625,21 @@ static void ax88772_suspend(struct usbnet *dev)
- 		   asix_read_medium_status(dev, 1));
- }
- 
-+/* Notes on PM callbacks and locking context:
-+ *
-+ * - asix_suspend()/asix_resume() are invoked for both runtime PM and
-+ *   system-wide suspend/resume. For struct usb_driver the ->resume()
-+ *   callback does not receive pm_message_t, so the resume type cannot
-+ *   be distinguished here.
-+ *
-+ * - The MAC driver must hold RTNL when calling phylink interfaces such as
-+ *   phylink_suspend()/resume(). Those calls will also perform MDIO I/O.
-+ *
-+ * - Taking RTNL and doing MDIO from a runtime-PM resume callback (while
-+ *   the USB PM lock is held) is fragile. Since autosuspend brings no
-+ *   measurable power saving here, we block it by holding a PM usage
-+ *   reference in ax88772_bind().
-+ */
- static int asix_suspend(struct usb_interface *intf, pm_message_t message)
- {
- 	struct usbnet *dev = usb_get_intfdata(intf);
-@@ -919,6 +934,13 @@ static int ax88772_bind(struct usbnet *dev, struct usb_interface *intf)
- 	if (ret)
- 		goto initphy_err;
- 
-+	/* Keep this interface runtime-PM active by taking a usage ref.
-+	 * Prevents runtime suspend while bound and avoids resume paths
-+	 * that could deadlock (autoresume under RTNL while USB PM lock
-+	 * is held, phylink/MDIO wants RTNL).
-+	 */
-+	pm_runtime_get_noresume(&intf->dev);
-+
- 	return 0;
- 
- initphy_err:
-@@ -948,6 +970,8 @@ static void ax88772_unbind(struct usbnet *dev, struct usb_interface *intf)
- 	phylink_destroy(priv->phylink);
- 	ax88772_mdio_unregister(priv);
- 	asix_rx_fixup_common_free(dev->driver_priv);
-+	/* Drop the PM usage ref taken in bind() */
-+	pm_runtime_put(&intf->dev);
- }
- 
- static void ax88178_unbind(struct usbnet *dev, struct usb_interface *intf)
-@@ -1600,6 +1624,11 @@ static struct usb_driver asix_driver = {
- 	.resume =	asix_resume,
- 	.reset_resume =	asix_resume,
- 	.disconnect =	usbnet_disconnect,
-+	/* usbnet enables autosuspend by default (supports_autosuspend=1).
-+	 * We keep runtime-PM active for AX88772* by taking a PM usage
-+	 * reference in ax88772_bind() (pm_runtime_get_noresume()) and
-+	 * dropping it in unbind(), which effectively blocks autosuspend.
-+	 */
- 	.supports_autosuspend = 1,
- 	.disable_hub_initiated_lpm = 1,
- };
--- 
-2.47.3
-
+Thanks,
+Nutty
 
