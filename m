@@ -1,95 +1,68 @@
-Return-Path: <linux-kernel+bounces-842313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43C1DBB97B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 15:40:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F18ABB97C4
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 15:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0D9214E34A8
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 13:40:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C33B4E2552
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 13:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8081528851E;
-	Sun,  5 Oct 2025 13:40:18 +0000 (UTC)
-Received: from baidu.com (mx24.baidu.com [111.206.215.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1BF6288C26;
+	Sun,  5 Oct 2025 13:52:43 +0000 (UTC)
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205BD28727C;
-	Sun,  5 Oct 2025 13:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E741EA7CE;
+	Sun,  5 Oct 2025 13:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759671618; cv=none; b=UTRHw88cwPHAhuVdolFzDXdHiJ6iaMlOT9adekz1OhjeJ8sKAIjciGFWx9djvvCjUuPTPbOk/KLSNRSSrNGRurvBTMWJz2fJa4WLN1Z9J6FbDSldLFmEy/SnHzD63v5lBfQkBLz28Put/fNC8E1GWCe4yfpxswif0ZEv3nHzYVQ=
+	t=1759672363; cv=none; b=TeQsDMFrDlo1Cz+PC2W3XyRzGa+/C2dar/l08LbtS3ow7xPX4AsNQdhhvjqSfp96U6fdCCGSMXM3i1+Wt5oxTm3yYIeyV3JGn8ZJvjqI5XkuoKbginj1nLoCsG20yCp6x1oNeh8aTZY9eRpWkwHk06wYvxVl5taP7sad6CFcOMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759671618; c=relaxed/simple;
-	bh=x28M0/u657nk2zwrojJZ1LNMdc7vu7oCVsG8XfFSxx8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XDQuteUERUqbjCeI5E/gNJQmlew7q1Lk7BbBnR/WFD0GkH2Hh7G91BCdiFlUmLFfmc9+2IURcMXukmWpfY8I2MSM2qhxdPEl6rWBzBxtievwsXOuCqUpv6fhwXoUvDZPiqw+6DKT0K369H0Ad6T/j69TxN0t3dKG9UcK0Y5biD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+	s=arc-20240116; t=1759672363; c=relaxed/simple;
+	bh=fQdQWY5g46NxSisspRkkYJxgdteAG6yAeRwHCdL2AcY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jskzCIUCkTc0gP5KcqP0o96UadRGj07tNvc3cKTcEBuiHCsNupUQ+d4z+epEZFLUHpDOaw3etidI3aCGQPvpYnQy1e+b+/2gH4Pw1nQNNNIW+fSDIsTA0mXtrQ2wswieZ6H8UHbmXQQWha4Vnkyr72EkfcbPao+Sf3MzV/bjbaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
 From: Fushuai Wang <wangfushuai@baidu.com>
-To: <Jason@zx2c4.com>, <andrew+netdev@lunn.ch>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>
-CC: <wireguard@lists.zx2c4.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Fushuai Wang <wangfushuai@baidu.com>
-Subject: [PATCH v2] wireguard: allowedips: Use kfree_rcu() instead of call_rcu()
-Date: Sun, 5 Oct 2025 21:39:36 +0800
-Message-ID: <20251005133936.32667-1-wangfushuai@baidu.com>
+To: <markus.elfring@web.de>
+CC: <bharathsm@microsoft.com>, <linux-cifs@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <pc@manguebit.org>,
+	<ronniesahlberg@gmail.com>, <samba-technical@lists.samba.org>,
+	<sfrench@samba.org>, <sprasad@microsoft.com>, <tom@talpey.com>,
+	<wangfushuai@baidu.com>
+Subject: Re: [PATCH] cifs: Fix copy_to_iter return value check
+Date: Sun, 5 Oct 2025 21:51:32 +0800
+Message-ID: <20251005135132.33612-1-wangfushuai@baidu.com>
 X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+In-Reply-To: <912d867a-f08f-40d3-bbd3-9ada24f468fd@web.de>
+References: <912d867a-f08f-40d3-bbd3-9ada24f468fd@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="y"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: bjkjy-exc5.internal.baidu.com (172.31.50.49) To
+X-ClientProxiedBy: bjkjy-exc8.internal.baidu.com (172.31.50.52) To
  bjkjy-exc17.internal.baidu.com (172.31.50.13)
 X-FEAS-Client-IP: 172.31.50.13
 X-FE-Policy-ID: 52:10:53:SYSTEM
 
-Replace call_rcu() + kmem_cache_free() with kfree_rcu() to simplify
-the code and reduce function size.
+>> The return value of copy_to_iter() function will never be negative,
+>> it is the number of bytes copied, or zero if nothing was copied.
+> …
+> 
+> Why do you propose to preserve the comparison operator part “<” then?
+> Would the condition check “!length” be nicer at this place?
 
-Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
----
- drivers/net/wireguard/allowedips.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+Yes, you are right. I will send a v2 shortly.
 
-diff --git a/drivers/net/wireguard/allowedips.c b/drivers/net/wireguard/allowedips.c
-index 09f7fcd7da78..5ece9acad64d 100644
---- a/drivers/net/wireguard/allowedips.c
-+++ b/drivers/net/wireguard/allowedips.c
-@@ -48,11 +48,6 @@ static void push_rcu(struct allowedips_node **stack,
- 	}
- }
- 
--static void node_free_rcu(struct rcu_head *rcu)
--{
--	kmem_cache_free(node_cache, container_of(rcu, struct allowedips_node, rcu));
--}
--
- static void root_free_rcu(struct rcu_head *rcu)
- {
- 	struct allowedips_node *node, *stack[MAX_ALLOWEDIPS_DEPTH] = {
-@@ -271,13 +266,13 @@ static void remove_node(struct allowedips_node *node, struct mutex *lock)
- 	if (free_parent)
- 		child = rcu_dereference_protected(parent->bit[!(node->parent_bit_packed & 1)],
- 						  lockdep_is_held(lock));
--	call_rcu(&node->rcu, node_free_rcu);
-+	kfree_rcu(node, rcu);
- 	if (!free_parent)
- 		return;
- 	if (child)
- 		child->parent_bit_packed = parent->parent_bit_packed;
- 	*(struct allowedips_node **)(parent->parent_bit_packed & ~3UL) = child;
--	call_rcu(&parent->rcu, node_free_rcu);
-+	kfree_rcu(parent, rcu);
- }
- 
- static int remove(struct allowedips_node __rcu **trie, u8 bits, const u8 *key,
--- 
-2.36.1
-
+Regards,
+Wang.
 
