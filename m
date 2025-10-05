@@ -1,78 +1,219 @@
-Return-Path: <linux-kernel+bounces-842383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9A47BB9A6D
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 19:44:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A41EBB9A73
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 19:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C00784E6945
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 17:44:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CEC73B9204
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 17:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E69A1D47B4;
-	Sun,  5 Oct 2025 17:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UNhkHe9i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A851BD9D3;
+	Sun,  5 Oct 2025 17:46:17 +0000 (UTC)
+Received: from freeshell.de (freeshell.de [116.202.128.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E431C9DE5;
-	Sun,  5 Oct 2025 17:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236A31AAA1C;
+	Sun,  5 Oct 2025 17:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759686223; cv=none; b=WHUKSlc5cTNmlxFGIAvD/EDGY/A975U4+rZxq/gsBTDpCIzpOxxCzUHRp7dxBFm7MxRN6wJNsGqC3/jx9o6o/Sk9XTbKGMTRVQOi9Wbf2QD72Johl/PqddofTbL79ScIj3YhIBCAsxsUxSLOGbkuO5YXZU1YiLI7P7yYumsVy0w=
+	t=1759686376; cv=none; b=PWkQQTJNfgbocBokXbrsNs7j4imBysqcZhpUHW0w6+TIAPMW3xclh2IypJXgpe/C9t0jc7oT7E9nNnzHd7hyyEKBFEgS7RY8yV5voyPCuO5Z4adhfdq3SCgHpkUejYcpX9Xp89s5+q6V/CnELe6Qf81w+qmsECntasGLC6yjg5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759686223; c=relaxed/simple;
-	bh=z/5JgtI0tJwE0I2BaD6SiKRejwr/3tB6mu6XNaiLjbk=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=YsVaLrq8MBVkynZsEPvxpnjDxVuBuWpE1oBsYIDMvU/r+u/KYIcngnztUjG3PcxVOEyoDI7j2nH7Th3/aR6Y1aPeELaxKEA0Y6REwMp6d8DaG3KqWiYiXudaO8gVS8sZdiIy7BH9oTrRTJlLDh6JutZHgspO9nhrdsNmbOjXVBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UNhkHe9i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B960BC4CEF4;
-	Sun,  5 Oct 2025 17:43:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759686223;
-	bh=z/5JgtI0tJwE0I2BaD6SiKRejwr/3tB6mu6XNaiLjbk=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=UNhkHe9iPYYrz1mVEzNfc+3ZxhbqzTzOIyzHFO/XhqHsuvyAOuMaxSYJ+iNNMFKfW
-	 yLj3u7lQQsY1j6MzmkhdfWfHfLrl4BSSPKs0j79fJddznzrzW4c0n6jdoP+LJjslhg
-	 7IHE+8++IQ15PSGZhw8w58A/xkZ30FQ8lKLFJq8yR5sC78EVwri6ILGj9OOB/7gwGJ
-	 1wLrefi4mPZ0GRnZWo8RCM4gFmWCHvav2JFkFjlrMI2fTYF4XUvpr1hiUwtCJb0ECR
-	 Lja13JoV8jusVT5hYMQ+jGjFymOjlFwf2eJRfIePMszNkTcJkW7T44emu4TMA2Trm3
-	 MSiC508frJzYg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33BFC39D0C1A;
-	Sun,  5 Oct 2025 17:43:35 +0000 (UTC)
-Subject: Re: [GIT PULL] MIPS changes for v6.18
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <aOI6ca7yqZGqwTRL@alpha.franken.de>
-References: <aOI6ca7yqZGqwTRL@alpha.franken.de>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <aOI6ca7yqZGqwTRL@alpha.franken.de>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git/ tags/mips_6.18
-X-PR-Tracked-Commit-Id: c662a6fef10aff3b13befc499335a334205316d5
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6a74422b9710e987c7d6b85a1ade7330b1e61626
-Message-Id: <175968621383.698585.6780233142386182560.pr-tracker-bot@kernel.org>
-Date: Sun, 05 Oct 2025 17:43:33 +0000
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: torvalds@linux-foundation.org, linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1759686376; c=relaxed/simple;
+	bh=a0N1zcN86aqW1+2RupNVIT1sSg6OWkR+fyhZihL9WUg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cwGC8tagJDxZ/cGrvNMJNiuzU2VZENItg4Av/6N4dTWaBo7aISFRaVlmefUNPxvHnLV7kjAk1c8eO+gKe1pX8y/KRx6eTqtfhu6dKCNog1ZtC9ME3jnuNl7+0RIOGKNj0QJntoa1wUnsPzJQEUe+zQhYS19OHTNUYqC+Mzfx7Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
+Received: from hay.lan (unknown [IPv6:2605:59c0:2078:cf00:6ecf:39ff:fe00:8375])
+	(Authenticated sender: e)
+	by freeshell.de (Postfix) with ESMTPSA id A498BB220074;
+	Sun,  5 Oct 2025 19:46:02 +0200 (CEST)
+From: E Shattow <e@freeshell.de>
+To: Emil Renner Berthing <kernel@esmil.dk>,
+	Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>
+Cc: E Shattow <e@freeshell.de>,
+	linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dts: starfive: jh7110-common: split out mmc0 reset pins from common into boards
+Date: Sun,  5 Oct 2025 10:44:28 -0700
+Message-ID: <20251005174450.1949110-1-e@freeshell.de>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Sun, 5 Oct 2025 11:29:21 +0200:
+Prepare for Orange Pi RV using jh7110-common.dtsi having GPIO62 assignment
+different than mmc0 reset by splitting this out into each board dts.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git/ tags/mips_6.18
+Signed-off-by: E Shattow <e@freeshell.de>
+---
+ arch/riscv/boot/dts/starfive/jh7110-common.dtsi     | 11 -----------
+ .../dts/starfive/jh7110-deepcomputing-fml13v01.dts  | 13 +++++++++++++
+ arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts  | 13 +++++++++++++
+ .../boot/dts/starfive/jh7110-milkv-marscm.dtsi      | 13 +++++++++++++
+ .../boot/dts/starfive/jh7110-pine64-star64.dts      | 13 +++++++++++++
+ .../dts/starfive/jh7110-starfive-visionfive-2.dtsi  | 13 +++++++++++++
+ 6 files changed, 65 insertions(+), 11 deletions(-)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6a74422b9710e987c7d6b85a1ade7330b1e61626
+diff --git a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+index 5dc15e48b74b..083ec80b4e44 100644
+--- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
++++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+@@ -444,17 +444,6 @@ GPOEN_SYS_I2C6_DATA,
+ 	};
+ 
+ 	mmc0_pins: mmc0-0 {
+-		 rst-pins {
+-			pinmux = <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
+-					      GPOEN_ENABLE,
+-					      GPI_NONE)>;
+-			bias-pull-up;
+-			drive-strength = <12>;
+-			input-disable;
+-			input-schmitt-disable;
+-			slew-rate = <0>;
+-		};
+-
+ 		mmc-pins {
+ 			pinmux = <PINMUX(PAD_SD0_CLK, 0)>,
+ 				 <PINMUX(PAD_SD0_CMD, 0)>,
+diff --git a/arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts b/arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts
+index f2857d021d68..0243e54a84ed 100644
+--- a/arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts
++++ b/arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts
+@@ -11,6 +11,19 @@ / {
+ 	compatible = "deepcomputing,fml13v01", "starfive,jh7110";
+ };
+ 
++&mmc0_pins {
++	 rst-pins {
++		pinmux = <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
++				      GPOEN_ENABLE,
++				      GPI_NONE)>;
++		bias-pull-up;
++		drive-strength = <12>;
++		input-disable;
++		input-schmitt-disable;
++		slew-rate = <0>;
++	};
++};
++
+ &pcie1 {
+ 	perst-gpios = <&sysgpio 21 GPIO_ACTIVE_LOW>;
+ 	phys = <&pciephy1>;
+diff --git a/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts b/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
+index fdaf6b4557da..5ca10597dcd9 100644
+--- a/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
++++ b/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
+@@ -22,6 +22,19 @@ &i2c0 {
+ 	status = "okay";
+ };
+ 
++&mmc0_pins {
++	 rst-pins {
++		pinmux = <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
++				      GPOEN_ENABLE,
++				      GPI_NONE)>;
++		bias-pull-up;
++		drive-strength = <12>;
++		input-disable;
++		input-schmitt-disable;
++		slew-rate = <0>;
++	};
++};
++
+ &pcie0 {
+ 	status = "okay";
+ };
+diff --git a/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm.dtsi b/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm.dtsi
+index 25b70af564ee..025471061d43 100644
+--- a/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm.dtsi
++++ b/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm.dtsi
+@@ -40,6 +40,19 @@ &i2c6 {
+ 	status = "disabled";
+ };
+ 
++&mmc0_pins {
++	 rst-pins {
++		pinmux = <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
++				      GPOEN_ENABLE,
++				      GPI_NONE)>;
++		bias-pull-up;
++		drive-strength = <12>;
++		input-disable;
++		input-schmitt-disable;
++		slew-rate = <0>;
++	};
++};
++
+ &mmc1 {
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
+diff --git a/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts b/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
+index 31e825be2065..980e24e3dbc8 100644
+--- a/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
++++ b/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
+@@ -44,6 +44,19 @@ &i2c0 {
+ 	status = "okay";
+ };
+ 
++&mmc0_pins {
++	 rst-pins {
++		pinmux = <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
++				      GPOEN_ENABLE,
++				      GPI_NONE)>;
++		bias-pull-up;
++		drive-strength = <12>;
++		input-disable;
++		input-schmitt-disable;
++		slew-rate = <0>;
++	};
++};
++
+ &pcie1 {
+ 	status = "okay";
+ };
+diff --git a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+index 5f14afb2c24d..574e128138c2 100644
+--- a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
++++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+@@ -41,6 +41,19 @@ &mmc0 {
+ 	non-removable;
+ };
+ 
++&mmc0_pins {
++	 rst-pins {
++		pinmux = <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
++				      GPOEN_ENABLE,
++				      GPI_NONE)>;
++		bias-pull-up;
++		drive-strength = <12>;
++		input-disable;
++		input-schmitt-disable;
++		slew-rate = <0>;
++	};
++};
++
+ &pcie0 {
+ 	status = "okay";
+ };
 
-Thank you!
-
+base-commit: 6093a688a07da07808f0122f9aa2a3eed250d853
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.50.0
+
 
