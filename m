@@ -1,76 +1,81 @@
-Return-Path: <linux-kernel+bounces-842324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CD70BB97FF
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 16:17:01 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E032BB980E
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 16:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FF241887247
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 14:17:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7D87934657D
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 14:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4CEF288CA3;
-	Sun,  5 Oct 2025 14:16:52 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E8826E6EA;
+	Sun,  5 Oct 2025 14:20:44 +0000 (UTC)
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0D434BA46
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 14:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26335A935;
+	Sun,  5 Oct 2025 14:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759673812; cv=none; b=lP3DM84p60fBSyBx5q6bZE1fZ7l650a86AaV3DgdDLOAwYWpAR5lPillKdc0Ry1cqc8SewxRZXoq5Qi9642BZ93L5Hba4GvFYRvu+F1iL0eRmFJP9ZPM6hd6j5G9gtRzIhJX5G9OantMoIo0gGjXGOtqGM8+FbNujw/KVoW6mPc=
+	t=1759674043; cv=none; b=BI8YQ3a302+dbKP2Cvoak4uxSJCqSLJosVSywVX/Fu6mdqoPrcvNR6Q3tEshewAOYdYp9z5I/TW7GetjagOViMe6OHjTIXva5ZM7VzIzgAn29cewQgqLijNiCUaDM9gmn2yEptrA5JO6UM2H3BzeFGZoF6uJLiKA97dpS0H+q6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759673812; c=relaxed/simple;
-	bh=Kpvh2nr5GCO+3G4nJ7iokN5C+UPwy7b5oSVqyXPBoc4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=f62NciUB8fAMmJ7EPtKVQHB0tMjDTk9SU25LzN0EiQHA09WOWp8nWAg+UANmj6yCMkHxCbwXVqniGvIqg4PjUT7kxeu7EOXaj1T8iiuxKB3xLxss99iB8MfVrK0hhCfcGAOri47t9UOj3FcEqF5qyh+cjZzRvcMezG7Hn78VKyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42f6639fb22so13207585ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 07:16:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759673810; x=1760278610;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kpvh2nr5GCO+3G4nJ7iokN5C+UPwy7b5oSVqyXPBoc4=;
-        b=uQADd74qANCCpk9Sul+jGTIKeD0YgsymATKNrriA5vc7FXEyxYjq5v/eLZ+yShCtna
-         uXjFKIIHuRTa7y8zlae1p+EL4HCW1ajqjYNG8Us8q5hJ+us95u5c+4f6+tvUm4lskDNt
-         Psira84vP+ayhbBsi06xMSevuw/eXkOOcHilxdKLeIVwryrSNeVM0yYG83utYQBhpGsx
-         8T2Z3Ea865/6HfcOg3lzgGTHCqQ6c+zwn8AAsl5x2X4h+XSD8xh9gkomp8xHz8qdMQtT
-         kef3CGo3GUFz0KuUcUNN+2Sh5kRdRXaNE354kQJc9NPtl3nzonXH4jMuOVEzbd+N/jrd
-         P3VA==
-X-Gm-Message-State: AOJu0Yyeb2uTzbTDxY1a/qVFdce5n5FLJ/jW3r5EvVB5fXsBCkeNpdTV
-	kxCgoIOptAJBvTE96vZ/+8Zpk3r5Qho0Wys/Q3U1W3w5cvCRox2u13IfT/UNv34CBf1mswtZX77
-	cOA+a1zBCi8niiAnvFFmuU1haZbU0ZSBkysN5H1nJvluyghSQzkbBpLDpCLw=
-X-Google-Smtp-Source: AGHT+IFZV6lzP20VhsA0FUGsjRFTmsNcV1qMC7ZCqzj6D6Nu+ZPOcbotsjPkZUhNQT1zEFXZ6UuuHFSMKtqZg9IOD0Eclv9AouGA
+	s=arc-20240116; t=1759674043; c=relaxed/simple;
+	bh=ONq0PNi6UwOCafQyksxAYfcB2UsExegLXKe1F8+JDa4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IfN01z7Vfn37siojIp994uX+WnwyMPPrYV1lS81yKZen08/D/0ytksD8YO+otWz3nVufri5D/fTCeNXfwhuAJJ0WC0Fk6gbNWZChRWoxjsc96wYk+XUq6DJHLpvyZqdZiuj2Biv9mLQ0iuNfdbb8lQ9KIPeqkcZUwbfmT4GwkRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: Fushuai Wang <wangfushuai@baidu.com>
+To: <sfrench@samba.org>, <pc@manguebit.org>, <ronniesahlberg@gmail.com>,
+	<sprasad@microsoft.com>, <tom@talpey.com>, <bharathsm@microsoft.com>
+CC: <linux-cifs@vger.kernel.org>, <samba-technical@lists.samba.org>,
+	<linux-kernel@vger.kernel.org>, Fushuai Wang <wangfushuai@baidu.com>
+Subject: [PATCH v2] cifs: Fix copy_to_iter return value check
+Date: Sun, 5 Oct 2025 22:19:25 +0800
+Message-ID: <20251005141925.35461-1-wangfushuai@baidu.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2581:b0:426:e20b:f5d4 with SMTP id
- e9e14a558f8ab-42e7ad16b0bmr121902455ab.10.1759673809944; Sun, 05 Oct 2025
- 07:16:49 -0700 (PDT)
-Date: Sun, 05 Oct 2025 07:16:49 -0700
-In-Reply-To: <20251005141636.12405-1-ssranevjti@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e27dd1.a00a0220.102ee.012d.GAE@google.com>
-Subject: Re: 
-From: syzbot <syzbot+c530b4d95ec5cd4f33a7@syzkaller.appspotmail.com>
-To: ssrane_b23@ee.vjti.ac.in
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, rostedt@goodmis.org, 
-	ssrane_b23@ee.vjti.ac.in, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: bjhj-exc13.internal.baidu.com (172.31.4.11) To
+ bjkjy-exc17.internal.baidu.com (172.31.50.13)
+X-FEAS-Client-IP: 172.31.50.13
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-> #syz test on: linux-next
+The return value of copy_to_iter() function will never be negative,
+it is the number of bytes copied, or zero if nothing was copied.
+Update the check to treat !length as an error, and return -1 in
+that case.
 
-This crash does not have a reproducer. I cannot test it.
+Fixes: d08089f649a0 ("cifs: Change the I/O paths to use an iterator rather than a page list")
+Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
+---
+ fs/smb/client/smb2ops.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->
->
+diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
+index 058050f744c0..577ac2e11e77 100644
+--- a/fs/smb/client/smb2ops.c
++++ b/fs/smb/client/smb2ops.c
+@@ -4764,8 +4764,8 @@ handle_read_data(struct TCP_Server_Info *server, struct mid_q_entry *mid,
+ 		/* read response payload is in buf */
+ 		WARN_ONCE(buffer, "read data can be either in buf or in buffer");
+ 		length = copy_to_iter(buf + data_offset, data_len, &rdata->subreq.io_iter);
+-		if (length < 0)
+-			return length;
++		if (!length)
++			return -1;
+ 		rdata->got_bytes = data_len;
+ 	} else {
+ 		/* read response payload cannot be in both buf and pages */
+-- 
+2.36.1
+
 
