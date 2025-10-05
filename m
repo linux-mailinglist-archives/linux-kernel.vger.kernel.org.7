@@ -1,94 +1,142 @@
-Return-Path: <linux-kernel+bounces-842426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0A6BBB9B50
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 20:53:40 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A146DBB9B5C
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 21:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 770F64E5FEC
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 18:53:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1405B347299
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 19:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A981DBB13;
-	Sun,  5 Oct 2025 18:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113C21DE3C7;
+	Sun,  5 Oct 2025 19:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XlNG5njp"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="a21mgdE1"
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843B034BA47;
-	Sun,  5 Oct 2025 18:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836E31C69D
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 19:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759690413; cv=none; b=WSRtKR3sWMhoeO5kUVTjoE0BDd1aP6y6KdlJFd/uGFVShsWa30hTupxAGEIJtKuIEG1V1Pv8b4Uj1J3cYQB+KfXPlkXMLRboBdngZE+ww9VSnnM3PksHKOpyphSFlmti3Z/bWm1RmSudEGjahrn9wdbzwb2pbz9ARVmIUnJX0mI=
+	t=1759691129; cv=none; b=m2M1NpVdTcj34Zt807LEVsFcbIv+yIgslw0CgztpNLz4sF9cK7i/AWiqIQBdR8hEKm4b7Pn2ct6Sjztn6p1KNbSKvHg23r8BpQqNBRd+6nzVmvy1qPmEyFnVuav0BT9bgS75SGn78EkgudGel8VnO22YQPchtYaafI5bY5kuptE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759690413; c=relaxed/simple;
-	bh=pYyxpJTNmJ4wh7iuWFc02oK80AUpboI7y+evLOttDLk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l7Ucd0zxEVo1Mxlokf+ypTku5sjiHBZsL6wFhxytkbU1ClVtd2jYFFZKNdsT7FZG0tBbNksGch7c4RkBqEuHNSwS01Y23wUFKb1JYNxhdn1ihLSfzRzQ2a7/pJOmtkdC4kyxUrJYG65iJtny0b4kdpSw9j6+d51N67b4mpmtcR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XlNG5njp; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id B6A954E40E54;
-	Sun,  5 Oct 2025 18:53:29 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 8D1786065F;
-	Sun,  5 Oct 2025 18:53:29 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 00BE4102F1D0B;
-	Sun,  5 Oct 2025 20:53:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759690409; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=u19hvYqBtDPln0UXyuVWirL2/wEHjSw45hYDP0ZXJFE=;
-	b=XlNG5njp78SjaC4uxyvvm341zexEW1eOW0/u2B3ghp0eTasMqbZPTR1Ktvx+Y8AMVPjaPx
-	MMkJTS+eL83lfzrIGoPLaKMPfhOVpSHJuWk4qkWnTt30NrNZ7fr/umQ5BUFwwkrYRI3OBx
-	4JYcOM96kDuct3kSw6We7HV5ciFZN0vtSvgKwzoO+zdR06udIU29Ij9VRZbMdqa1izKnzq
-	H+o5qQ4bjtIMVyceZMUPoc91Cd9L63iMegdol4mBqvIQdDJ37tbEnk9rZlxXaGmQS6jBqB
-	8IiakDlpIXESyhqcrjffszxR0pumFlekrvxLwy/5Czdri79PEZa4rYj93pkIFg==
-Date: Sun, 5 Oct 2025 20:53:24 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Cc: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
-	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH 0/2] rtc: optee: Fix a couple error codes
-Message-ID: <175969036642.3720436.4580102508635950819.b4-ty@bootlin.com>
-References: <cover.1758182509.git.dan.carpenter@linaro.org>
+	s=arc-20240116; t=1759691129; c=relaxed/simple;
+	bh=Hwi1284EkrF0Ifu2DGjRUiVIIL7BNMIg9CrtSuAlhds=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=mkbVeUguqBYnd7rcfqTp8zb2rAUpto0mN1ijBaTq7VyZjckzQSnehwR8J/8yAfzA2CRBtEX5WIhqEkcz1ZXH61901xWvZwsOR1pwFm/QOp2sNMgsYj+TUD/7cEy7wDdI4GuhtsS//tfblFndhr3kYs4mDt/+kS+VK8NzWeEwur8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=a21mgdE1; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id 37285240104
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 21:05:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
+	t=1759691120; bh=4jxCC/9Oy6hHpadQU5pNEEKsMB5vQCfRe7j6NOhEZaU=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:
+	 Content-Transfer-Encoding:MIME-Version:Autocrypt:OpenPGP:From;
+	b=a21mgdE1+0jF+PLnHW5Us/KZ/5NPlnj8mXwVwuT02S/Gg4DLeDPRzpVCNgo+6U/Gy
+	 RQLxLM6SZDb7uKrfmQT7XOqnBoM5Y2fFf2lg0Lw2Vm4xFH8Ym9pQAuP9ykYp5SzVOP
+	 ugPwSsiWiHc7w+Eu6y2LesfY30HucU0TopXuWC0SKqFtk+xS8l7iwT5ykrtpUKcbbe
+	 eaBu3uGtusk4b56sZ/leMCFWbl0x45BYv6AuTqXTs580/sNxW3VQJKX8eaA4cY4VK2
+	 d2kuJYGzJ9FsVu5g7kRFbmgN2aXmHZO/9tIWcmLPHm9+RLYUcmJLDN6W6loyTpPWFr
+	 +QsvmnlwI3y/g==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4cfsKp6gw3z9rxR;
+	Sun,  5 Oct 2025 21:05:18 +0200 (CEST)
+Message-ID: <8c3cb28c57462f9665b08fdaa022e6abc57fcd9e.camel@posteo.de>
+Subject: [PATCH 0/2] Support power resources in ata ports
+From: Markus Probst <markus.probst@posteo.de>
+To: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, "Martin K.
+ Petersen" <martin.petersen@oracle.com>
+Cc: linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Markus Probst <markus.probst@posteo.de>
+Date: Sun, 05 Oct 2025 19:05:19 +0000
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1758182509.git.dan.carpenter@linaro.org>
-X-Last-TLS-Session-Version: TLSv1.3
+Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
+  keydata=xsFNBGiDvXgBEADAXUceKafpl46S35UmDh2wRvvx+UfZbcTjeQOlSwKP7YVJ4JOZrVs93qReNLkO
+  WguIqPBxR9blQ4nyYrqSCV+MMw/3ifyXIm6Pw2YRUDg+WTEOjTixRCoWDgUj1nOsvJ9tVAm76Ww+
+  /pAnepVRafMID0rqEfD9oGv1YrfpeFJhyE2zUw3SyyNLIKWD6QeLRhKQRbSnsXhGLFBXCqt9k5JA
+  RhgQof9zvztcCVlT5KVvuyfC4H+HzeGmu9201BVyihJwKdcKPq+n/aY5FUVxNTgtI9f8wIbmfAja
+  oT1pjXSp+dszakA98fhONM98pOq723o/1ZGMZukyXFfsDGtA3BB79HoopHKujLGWAGskzClwTjRQ
+  xBqxh/U/lL1pc+0xPWikTNCmtziCOvv0KA0arDOMQlyFvImzX6oGVgE4ksKQYbMZ3Ikw6L1Rv1J+
+  FvN0aNwOKgL2ztBRYscUGcQvA0Zo1fGCAn/BLEJvQYShWKeKqjyncVGoXFsz2AcuFKe1pwETSsN6
+  OZncjy32e4ktgs07cWBfx0v62b8md36jau+B6RVnnodaA8++oXl3FRwiEW8XfXWIjy4umIv93tb8
+  8ekYsfOfWkTSewZYXGoqe4RtK80ulMHb/dh2FZQIFyRdN4HOmB4FYO5sEYFr9YjHLmDkrUgNodJC
+  XCeMe4BO4iaxUQARAQABzRdtYXJrdXMucHJvYnN0QHBvc3Rlby5kZcLBkQQTAQgAOxYhBIJ0GMT0
+  rFjncjDEczR2H/jnrUPSBQJog714AhsDBQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEDR2
+  H/jnrUPSgdkQAISaTk2D345ehXEkn5z2yUEjaVjHIE7ziqRaOgn/QanCgeTUinIv6L6QXUFvvIfH
+  1OLPwQ1hfvEg9NnNLyFezWSy6jvoVBTIPqicD/r3FkithnQ1IDkdSjrarPMxJkvuh3l7XZHo49GV
+  HQ8i5zh5w4YISrcEtE99lJisvni2Jqx7we5tey9voQFDyM8jxlSWv3pmoUTCtBkX/eKHJXosgsuS
+  B4TGDCVPOjla/emI5c9MhMG7O4WEEmoSdPbmraPw66YZD6uLyhV4DPHbiDWRzXWnClHSyjB9rky9
+  lausFxogvu4l9H+KDsXIadNDWdLdu1/enS/wDd9zh5S78rY2jeXaG4mnf4seEKamZ7KQ6FIHrcyP
+  ezdDzssPQcTQcGRMQzCn6wP3tlGk7rsfmyHMlFqdRoNNv+ZER/OkmZFPW655zRfbMi0vtrqK2Awm
+  9ggobb1oktfd9PPNXMUY+DNVlgR2G7jLnenSoQausLUm0pHoNE8TWFv851Y6SOYnvn488sP1Tki5
+  F3rKwclawQFHUXTCQw+QSh9ay8xgnNZfH+u9NY7w3gPoeKBOAFcBc2BtzcgekeWS8qgEmm2/oNFV
+  G0ivPQbRx8FjRKbuF7g3YhgNZZ0ac8FneuUtJ2PkSIFTZhaAiC0utvxk0ndmWFiW4acEkMZGrLaM
+  L2zWNjrqwsD2zsFNBGiDvXgBEADCXQy1n7wjRxG12DOVADawjghKcG+5LtEf31WftHKLFbp/HArj
+  BhkT6mj+CCI1ClqY+FYU5CK/s0ScMfLxRGLZ0Ktzawb78vOgBVFT3yB1yWBTewsAXdqNqRooaUNo
+  8cG/NNJLjhccH/7PO/FWX5qftOVUJ/AIsAhKQJ18Tc8Ik73v427EDxuKb9mTAnYQFA3Ev3hAiVbO
+  6Rv39amVOfJ8sqwiSUGidj2Fctg2aB5JbeMln0KCUbTD1LhEFepeKypfofAXQbGwaCjAhmkWy/q3
+  IT1mUrPxOngbxdRoOx1tGUC0HCMUW1sFaJgQPMmDcR0JGPOpgsKnitsSnN7ShcCr1buel7vLnUMD
+  +TAZ5opdoF6HjAvAnBQaijtK6minkrM0seNXnCg0KkV8xhMNa6zCs1rq4GgjNLJue2EmuyHooHA4
+  7JMoLVHcxVeuNTp6K2+XRx0Pk4e2Lj8IVy9yEYyrywEOC5XRW37KJjsiOAsumi1rkvM7QREWgUDe
+  Xs0+RpxI3QrrANh71fLMRo7LKRF3Gvw13NVCCC9ea20P4PwhgWKStkwO2NO+YJsAoS1QycMi/vKu
+  0EHhknYXamaSV50oZzHKmX56vEeJHTcngrM8R1SwJCYopCx9gkz90bTVYlitJa5hloWTYeMD7FNj
+  Y6jfVSzgM/K4gMgUNDW/PPGeMwARAQABwsF2BBgBCAAgFiEEgnQYxPSsWOdyMMRzNHYf+OetQ9IF
+  AmiDvXgCGwwACgkQNHYf+OetQ9LHDBAAhk+ab8+WrbS/b1/gYW3q1KDiXU719nCtfkUVXKidW5Ec
+  Idlr5HGt8ilLoxSWT2Zi368iHCXS0WenGgPwlv8ifvB7TOZiiTDZROZkXjEBmU4nYjJ7GymawpWv
+  oQwjMsPuq6ysbzWtOZ7eILx7cI0FjQeJ/Q2baRJub0uAZNwBOxCkAS6lpk5Fntd2u8CWmDQo4SYp
+  xeuQ+pwkp0yEP30RhN2BO2DXiBEGSZSYh+ioGbCHQPIV3iVj0h6lcCPOqopZqyeCfigeacBI0nvN
+  jHWz/spzF3+4OS+3RJvoHtAQmProxyGib8iVsTxgZO3UUi4TSODeEt0i0kHSPY4sCciOyXfAyYoD
+  DFqhRjOEwBBxhr+scU4C1T2AflozvDwq3VSONjrKJUkhd8+WsdXxMdPFgBQuiKKwUy11mz6KQfcR
+  wmDehF3UaUoxa+YIhWPbKmycxuX/D8SvnqavzAeAL1OcRbEI/HsoroVlEFbBRNBZLJUlnTPs8ZcU
+  4+8rq5YX1GUrJL3jf6SAfSgO7UdkEET3PdcKFYtS+ruV1Cp5V0q4kCfI5jk25iiz8grM2wOzVSsc
+  l1mEkhiEPH87HP0whhb544iioSnumd3HJKL7dzhRegsMizatupp8D65A2JziW0WKopa1iw9fti3A
+  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
+OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
 
-On Thu, 18 Sep 2025 12:48:39 +0300, Dan Carpenter wrote:
-> Fix a couple error codes detected by Smatch.
-> 
-> Dan Carpenter (2):
->   rtc: optee: fix error code in probe()
->   rtc: optee: Fix error code in optee_rtc_read_alarm()
-> 
-> drivers/rtc/rtc-optee.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> [...]
+This series adds support for power resources defined in acpi for ata
+ports. A device can define a power resource in an ata port, which then
+gets turned on right before the port is probed. This can be useful for
+devices, which have ata ports that are:
+  a: powered down by default
+  b: can be individually powered on
+like in every synology nas device that supports a feature they call
+"deep-sleep". If thats the case it will be assumed, that the power
+resource won't survive reboots and therefore the disk will be stopped.
 
-Applied, thanks!
+I will maybe extend it later to allow
+  - setting a delay between the probes (embedded devices have limited
+power and if the disks are all spin up at the same time it would cause
+a power peak)
+  - powering down the ata ports (removing power from the disks) while
+the disk is spin down (saving power and possibly disk lifetime)
 
-[1/2] rtc: optee: fix error code in probe()
-      https://git.kernel.org/abelloni/c/8bbd727453b4
-[2/2] rtc: optee: Fix error code in optee_rtc_read_alarm()
-      https://git.kernel.org/abelloni/c/eb7392a01964
 
-Best regards,
+For details, look at the individual commit messages.
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Markus Probst (2):
+  Add manage_restart device attribute to scsi_disk
+  Power on ata ports defined in ACPI before probing ports
+
+ drivers/ata/libata-acpi.c  | 68
+++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/ata/libata-core.c  | 21 ++++++++++++++
+ drivers/ata/libata-scsi.c  |  1 +
+ drivers/ata/libata.h       |  4 +++
+ drivers/scsi/sd.c          | 35 +++++++++++++++++++++++-
+ include/linux/libata.h     |  1 +
+ include/scsi/scsi_device.h |  6 ++++
+ 7 files changed, 135 insertions(+), 1 deletion(-)
+
 
