@@ -1,138 +1,140 @@
-Return-Path: <linux-kernel+bounces-842333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45B3FBB9856
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 16:37:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481BABB988B
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 16:49:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4F253AA907
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 14:37:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EE2954E2D53
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 14:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414FC289811;
-	Sun,  5 Oct 2025 14:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE1C289802;
+	Sun,  5 Oct 2025 14:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b="XPJbynRL"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UyNgnZi4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C687272E45
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 14:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC1E1F936
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 14:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759675049; cv=none; b=KrpW5k152PrkE/bb+FhyCWQPpj9AZMysoytIj/YC/vyZsJb/LkWTyb6r2a8SAe5Ri76fvrK1zAjqJShFeOR3c60j7XnSTIW9uQONDUb/2R2ankfj0HZIkmecPrO4/MfPsTYihNlVJM/DDcF6clN2Z75J8YRw4KQiVRbKVFiNIVQ=
+	t=1759675745; cv=none; b=nPgENF2UL0cKyfePC40Og7E0CKvsakegPX1joq49cCe27N7CzmeDslf7hPlJL2Wdvq2jkqy2GD9IDm7KZZq0WxMpQDk9IRszVO50N6Dd6124dPYAqEgT7MxX7bxFBf24IVB6ubTPG4sIccwKJJBUHxz3D1uddz2UfRH3H7ea2FU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759675049; c=relaxed/simple;
-	bh=68Hs1m2KCNgUTWFrubMbAjOMlruERL80FpRXR3jtVUY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H9+CRXbPjtfbhumwYmoW0jt8RVBN+o08B8rffqLDCsOtKNBjHMRx1/mcFiRvg0MTKvV1SAf4cTk7Cxw3XOx8bCLPXqhoxqZPvsMZCSSMi0mP3puH33Lq6LcuNndrXNdo19R889eHAIYXxh8zohnjAOMcW5wz0kdFAcVzb7Or8ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b=XPJbynRL; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2698384978dso28487845ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 07:37:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=futuring-girl.com; s=google; t=1759675047; x=1760279847; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nqeLcDuce/fJEO6dWcvk7aWGQEF9pvPJT1tdDWjmEQM=;
-        b=XPJbynRLo2d4Z3Qyidy8Ih+M/8YJ5cj5EaMTXzDtNfHfFyRBlgU8zcFFQeegcMoQQz
-         dVI3WsHNo8sJIphjVniH6/inQVTGA7T+OVU3m77d2TB7wrvDuPS63GrBFG6FsoSjOabT
-         tc5gvNenzTAAqY2pq9o8ufVw1dMCL/wUt3OIS7vny1XO/AJzSJjqcfytiOUcZgLQxnGL
-         frdpTH8dj+hJBNp0twFV20a/ENqyFgGIPP8RJ9h75SMGmRMLeAPYZdsEfBlt4konE8V2
-         nf5I3QqJdmw9u2y4eKGYxw6r0N5xh7w9T7jP5VrmfpJCn1/9TDVyaakDiC6xubAATkGa
-         oKeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759675047; x=1760279847;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nqeLcDuce/fJEO6dWcvk7aWGQEF9pvPJT1tdDWjmEQM=;
-        b=KQ08xvwuSjDlliJfNoOjI5BTS2PeHu23fHB8ScSZra0p3BLTAHSRZh0qxq8FWal2jD
-         U3aLwj1eMZCLO0lQWJPTIhH68WeVbxZiXr9Dc4ijTj6IXyXKje/X0Ysb4AvJJHwyi/yW
-         ksmOY+Zv3Df4+WaE0x/vhQ3i1HT3YqfZnIciE1FgiDYwCxFfDl8IzaxQisb+kFBcCHeZ
-         KQTKVQQsmaW9bEj9LhryMMLxR11gXzZKkRjU4Db4gXV6KzXyVP2MpHJTSyt/1oSCg20p
-         19ARxg9aqmM/9QYuasc7wnkSRKc6coyTH8JaILPDThNu+VuBsoEkWofArjs3KBnww3wb
-         AtEw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbYr8sPpRcy5E1KJoJA8d6G0yePRocC4Mk3aAU4BvukPQOV+xavmXJpwA7kYLpS16EvYiFuakqsT9JVks=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH63nyCo+hj+aukerD7QPI4OE+GW2/SqoH9rV0F13ED45IlBFQ
-	3EWKH7Cqbt+eOeAS5sTY+Ulh/9Hxetlk2OYR6Ei7HioOakQm6zkxRnHp/3aP8ds/5NZ5VFEkC6E
-	zJA/casn5/vrvj0YCym5/wXFG5y9/3sLsxAcX4biRjaQN99SAzakDb4fLRQ==
-X-Gm-Gg: ASbGncue2Ysn4ZfUiBcL9bFaqLq0LwAf0ZmbUIM4DxLk5buvyqE+U/NdD3++F8pWPRw
-	Xr09G/p0Cqd6/2q+Dcklprdlrbvq/8EO/C68IKc6invyxfHSeL5icd5O639W7fSr84V5xM5E597
-	AsAZG8qrY2Y1ll5TJwZWOVevX0mjGgpdjdZYy4b2Ngt4IkbGULp4HcsdyTG/5v0HC8ylCWLgZWv
-	/gGIab6Gsd5gQW99gapB3B33OEtm4RcKK9ZXywQbg==
-X-Google-Smtp-Source: AGHT+IF2SH2TFu3dkLS6uR8T8yDPp0+s2BJIdcXwXmq/VC0MdS0nzpDNEz9+ew3L3311RjuGHEf4dr7QtIGIj6GFOYw=
-X-Received: by 2002:a17:903:3504:b0:24a:fab6:d15a with SMTP id
- d9443c01a7336-28e9a5665f8mr106992295ad.20.1759675047357; Sun, 05 Oct 2025
- 07:37:27 -0700 (PDT)
+	s=arc-20240116; t=1759675745; c=relaxed/simple;
+	bh=sJoMvAO/VdeBbQOVDl5SJHrJ1YL/1r9w2VgHIkPAjBs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a9sLiyFYuIfNY0Y9EGzaLoiq5EHUHYcgVQp/cQ90fRcQO+4wZBzMv0lC+x5CvvqXMvMnaUafGq9Ed0rVnB5hUS0Hu7CcFYFREGGXzLL2fEwAG9Lu+zAsRZUjCNnudaApZajmpich8VkEmqma73SuwFQyc8+pO+2xCW+cc3+nqNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UyNgnZi4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759675739;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wKRWNImlooZ1Fo3Wa8tFOs52ibHxagit0G6SvS/nTUg=;
+	b=UyNgnZi4af2eO5ClMPCpv3gmzbcolzs3u0+utsgEMUtyxTS4SUgKjmQCtGmu281gKGXaBv
+	tm9tAhM2KGm4FEoSFZnL8959/DvFas2JDIRqFEQUVDvHo0RIrd7m81KNQQnM0Q0SKiF61f
+	isEe/8k8PQIdVQ/epg8oZhJQkiUPVM0=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-106-ZK7MV2KzMQKRdn7WNnwFWg-1; Sun,
+ 05 Oct 2025 10:48:55 -0400
+X-MC-Unique: ZK7MV2KzMQKRdn7WNnwFWg-1
+X-Mimecast-MFC-AGG-ID: ZK7MV2KzMQKRdn7WNnwFWg_1759675734
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CF7291800378;
+	Sun,  5 Oct 2025 14:48:53 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.5])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id E143D180047F;
+	Sun,  5 Oct 2025 14:48:49 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun,  5 Oct 2025 16:47:32 +0200 (CEST)
+Date: Sun, 5 Oct 2025 16:47:27 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Boqun Feng <boqun.feng@gmail.com>, David Howells <dhowells@redhat.com>,
+	Ingo Molnar <mingo@redhat.com>, Li RongQing <lirongqing@baidu.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] seqlock: introduce SEQLOCK_READ_SECTION()
+Message-ID: <20251005144727.GA1188@redhat.com>
+References: <20250928161953.GA3112@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251003160359.831046052@linuxfoundation.org>
-In-Reply-To: <20251003160359.831046052@linuxfoundation.org>
-From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
-Date: Sun, 5 Oct 2025 23:37:11 +0900
-X-Gm-Features: AS18NWBfJZ5Th1MJIXFkn-PdqzYH5JpHlnaEZ3ST9sWDu2YJAX0wQLCac07MmBY
-Message-ID: <CAKL4bV6Gw4KL0=bnh3hWk1bwQ2txSAViM=k+BKZa=FT4opoXGw@mail.gmail.com>
-Subject: Re: [PATCH 6.17 00/15] 6.17.1-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
-	achill@achill.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250928161953.GA3112@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Hi Greg
+OK, let me name it SEQLOCK_READ_SECTION().
 
-On Sat, Oct 4, 2025 at 1:07=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.17.1 release.
-> There are 15 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 05 Oct 2025 16:02:25 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.17.1-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.17.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+Al, could you look at 5/5? Please nack it if you think it makes no sense
+or wrong. I abused __dentry_path() to add another example. To simplify the
+review, this is how it looks after the patch:
 
-6.17.1-rc1 tested.
+	static char *__dentry_path(const struct dentry *d, struct prepend_buffer *p)
+	{
+		const struct dentry *dentry;
+		struct prepend_buffer b;
 
-Build successfully completed.
-Boot successfully completed.
-No dmesg regressions.
-Video output normal.
-Sound output normal.
+		rcu_read_lock();
+		__SEQLOCK_READ_SECTION(&rename_lock, lockless, seq, NULL) {
+			dentry = d;
+			b = *p;
+			while (!IS_ROOT(dentry)) {
+				const struct dentry *parent = dentry->d_parent;
 
-Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
+				prefetch(parent);
+				if (!prepend_name(&b, &dentry->d_name))
+					break;
+				dentry = parent;
+			}
+			if (lockless)
+				rcu_read_unlock();
+		}
 
-[    0.000000] Linux version 6.17.1-rc1rv-ge7da5b86b53d
-(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 15.2.1 20250813, GNU ld (GNU
-Binutils) 2.45.0) #1 SMP PREEMPT_DYNAMIC Sun Oct  5 22:53:48 JST 2025
+		if (b.len == p->len)
+			prepend_char(&b, '/');
+		return extract_string(&b);
+	}
 
-Thanks
 
-Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+TODO: add another trivial helper
+
+	static inline int need_seqretry_or_lock(seqlock_t *lock, int *seq)
+	{
+		int ret = !(*seq & 1) && read_seqretry(lock, *seq);
+
+		if (ret)
+			*seq = 1; /* make this counter odd */
+
+		return ret;
+	}
+
+which can be used when the read section is more complex. Say, d_walk().
+
+Oleg.
+---
+
+ fs/d_path.c             | 31 +++++++++++++------------------
+ fs/proc/array.c         |  9 ++-------
+ fs/proc/base.c          |  9 ++-------
+ include/linux/seqlock.h | 49 +++++++++++++++++++++++++++++++++++++++++++++++++
+ kernel/sched/cputime.c  | 14 +++-----------
+ 5 files changed, 69 insertions(+), 43 deletions(-)
+
 
