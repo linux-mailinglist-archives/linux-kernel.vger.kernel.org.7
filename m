@@ -1,161 +1,175 @@
-Return-Path: <linux-kernel+bounces-842499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63BC6BBCDC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 01:12:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6EADBBCDC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 01:15:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40C7A189519B
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 23:12:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AFB304E313D
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 23:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035231EA7CF;
-	Sun,  5 Oct 2025 23:12:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4420D221704;
+	Sun,  5 Oct 2025 23:15:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hvC5j7I4"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N/2M55xr"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D047D158538
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 23:12:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D84F9C1
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 23:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759705949; cv=none; b=aHoxuhqDQefkpqTrN0TZwqjCybQoexqsV65cBD755JpgaCppL9/TrorVFZ2M7349rtctGBJk3DZuZIXZ7rWIxpDaadUWbDxHLZTlbf/XFU1Bt+7PaD1pB1sHC206VDAwz8+zeB8VFzQZuaWSaAJoYxLoz94LPLL8KYvtO/98aAE=
+	t=1759706135; cv=none; b=WmaJ2RPScDzeioASJX1xYWLa1iH/ODLmu604cSTRwDiK+1AjRTrMEm1E8/0FN+SqjpwOFx8lSBBFgAXTdZKLhjaTDkekN/oDdjo2cNKcGoXRAe11rrKlFX6WlVFE9jzuP3ZqIG3OG/2SMw0yi1tE80n8ym9XDUqwzzby5xpIW0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759705949; c=relaxed/simple;
-	bh=Y3Ht7f7nrEpHtlFNdZNsllmb1x0yPFEHbbueGl26KJs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O9GlM+pK3a6v4YDorSxo/fsWSh+L8QFxZ+PpsVWocv5hNYUwFO7kD3kUgM/JcZz4nGpPaKnK4zTaXLcdzaX59PXfA7poJiA9L1atouLBkNJsyE13nZGieo4ZsEq5DZRN5Ulo9j9OMP5C7+7AQ68cWXWxGQo1UOABtZJKcmdZAiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hvC5j7I4; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 595MpcIa022724
-	for <linux-kernel@vger.kernel.org>; Sun, 5 Oct 2025 23:12:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=HHz1XHRoPTjYuq1eGLoVmJz+
-	8qY4LFrDTanivRV6fFo=; b=hvC5j7I4Y3cfgL2cAabLQxLD6LV8G+NnR546DdL1
-	gulUx+Z/m+83VrNRoFhJEHHjS2FjBpJ7GaF/6wJdmj/aNIUokBAmxVGDYFdYFa+9
-	VuLYzCe/n1Q3/4nQH63M9lWX6TQkJxRw7KZhUbFKwqWff8zXcGU+7IqN1tzt0avV
-	1peo6TVLJnkrJD7li+sM/Xjb6/3ZTVkGbMahytdnmBn1svTWxQL9AoSaFUSSfqrp
-	6WTuKMXfwZLyyxhAFvnFc1lKxeBb2W4PBSrAzmEjak1Z9nLgufmrJWTPRAVY6oet
-	V4HRyiS/M3G2VkhOAjDvQx1WvFAU6F6ODKa0ABJEdcuzdQ==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49juy6thdh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 23:12:26 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4e484dccaafso112194781cf.1
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 16:12:26 -0700 (PDT)
+	s=arc-20240116; t=1759706135; c=relaxed/simple;
+	bh=fybNiBAefFTh//jSRU2sf0Ny8KCLWtk1ph7b062OZqI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qGv6uqEedMRmFcMmtrQ3MtEHw2YQEGeBC6UnLX7WPGv+3KTAZmspko8dICocHAX/MmKPzjslCTvNJVBGn7hv+8aMHUCDq+6JmsXHlw7Nx4Yz1+BG3JB2CW94McvdX49lepp4/DboriGzdEX0+MdTBIaLrQr6mbvtx3EhrANOIVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N/2M55xr; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e6a689bd0so32356395e9.1
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 16:15:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759706132; x=1760310932; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IZVLKUfxISrsNrnwMvWMj0ZRjTubuXUM3Dffz3zRah8=;
+        b=N/2M55xroM1u/eI1YLJLxLzvNfaoPyUk03HUDeaUbmX2GzfN/UDduSpOaD4e7CMH2O
+         fsrcK2N5kZrdXKuCd04emIeCbJ0gVEWdWieln+QGisIvgGcTyE+02ghAJPP8NEp0uiOL
+         df2iuoD66DOAhoxLSGkw16wVERTxy9xHarxXuFYDSRHIlgc2daiC53O3fwETY44gSENU
+         R3otJ5srvh2uKoE3SAIisLz0Yl1zP6UfTVzk9ql8sOyHyHjJvu9FS0j5k50eDaP6J6pC
+         8DmMotN6BOh+UBgwCHnvwz5AdQY45D3m+Kf+Jlq0f5TIirioB6iAnx5UjfBqHKVwwC+P
+         YEkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759705946; x=1760310746;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HHz1XHRoPTjYuq1eGLoVmJz+8qY4LFrDTanivRV6fFo=;
-        b=hHqt24KG2uQI8Dv7mCqGSItK+jXoyLQ1jBF4/XV99ay7UAFE+dyBnGF5+5sf8AYfnn
-         OAhYNeP/dAbIGZ9SwxQq8Px/GKbYZPbC5cS2vilmQxiY8ZzyDNAwvaDlUmVGg+qfpzfw
-         pvnd6oTZK61dG/eBipwoUpPw+qEM6CMIFuGsNovrHNbvrWAkDtgeSWGV1bBoNi7Phme7
-         C7zBjQwaknJ3l2++VNx8CULNlYO8ZfEwWQKaCEuMOxN6sK6GzXjPm89RlxUHQj93BC8t
-         TCb1wGVqqZcO5jUU2p+GHzN7iefKsyaNr0AKPAu547Shhv1kxEOtc1I9ZTnyIsSXeW/O
-         jzyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWM+19oDW6fYNSvxspPFk4jZgsYfxOaSaIGqs81J0ity3IqoesFtAGf6y5SiTlD/DzmxQnUCQzRgV4ZYKs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVvDstwuc61t34ToLzHJFkMGEkKg7Cr3H0nHppR40cX0mU8+ng
-	6li9HKpTBq9rlzvPFWEUBcBJwgS9kmsTpjX3tmyBDlJPy8Q/ntMYtDCIL2qSHY4m2NL0OMOsVPn
-	TF0ICq2aXBbfFQzRVYRlni4dWpt0mK5tynVPKjiOt755F/o7iM44hdL7Cpu+AwsheZr8=
-X-Gm-Gg: ASbGnctx/d9xOWztL04DmfJw6/n9ZQJ7VvLqjwOZrCAnXeQOCBFokhBUz5MaIQqjySP
-	VTXBcRD0RGdUDCGqDQ0PUODXOXApIJapdJJUKbypXHVLXXdYoUz9D6VHpoKGXoH1jT9R7CcOvKk
-	l4FMaWYfhzjMrlG03SVs4KgMpMFNXtwXpP6d7SSjl72yMHIITAm9wfI4SBjtF7RedcO2k2vLNsH
-	pWPhCOSrGNqY8PzvXaQq2RxXfK/6Rq5uCTYvh9NyDCOfkxslXmkJCI1l0iGKDzlsLGfVB0r9cCk
-	qkoaHa/Z+nqenvtE4Lun+gK7iwRCtGmKtBVQi3wVKspAIq4spVdXvcTC44WSy2Pi8PlNpv9WLgt
-	hVeZ1JttbqTbWoMnjESkRe5TlBmOI/QowTIGjmQh3y/hYnEEYxh7/87qoVw==
-X-Received: by 2002:a05:622a:612:b0:4b0:6a6c:c8cf with SMTP id d75a77b69052e-4e561bc866cmr187860421cf.15.1759705945754;
-        Sun, 05 Oct 2025 16:12:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEvSrZ9fGfo4WCllM+4UshMyxEsLlwrMoEfa4edaPi+oczMnlRj/hsY1Ofr3AbckUjsmQn/OA==
-X-Received: by 2002:a05:622a:612:b0:4b0:6a6c:c8cf with SMTP id d75a77b69052e-4e561bc866cmr187859961cf.15.1759705945225;
-        Sun, 05 Oct 2025 16:12:25 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b011243f0sm4414769e87.27.2025.10.05.16.12.21
+        d=1e100.net; s=20230601; t=1759706132; x=1760310932;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IZVLKUfxISrsNrnwMvWMj0ZRjTubuXUM3Dffz3zRah8=;
+        b=vRgTIYuRcYlfepNG3IGR1SPWIwqc2u/BwVZAwcU4F8IncmE05GbwtN5/ccFCNsD9sH
+         +c0WI2O/FQpwkSLT1/XXi1soMfJXlNQ2urn3vKfIn03jmNfGqI1HCgDj6eS3wUjxAB5N
+         H9qD+BjuyYBtstV22z8Iaeg9H1tLPO6O49jeM3V3GMk5nqHoMkvn8yvufvIuVXIZElC6
+         EeqWvOUuPsKdyK55fN9Wdw0vlC4gKeHtt63BkMiwgAgi9IigtM7O71hL3karQ60B0ciu
+         L7wFiEPjBUohj0NUO8NdPR+bL4KAXR8CEPfHGq/PGJ4tcSt2MTYrqbtoZjEVBznfsAVF
+         QcSA==
+X-Forwarded-Encrypted: i=1; AJvYcCVTMJVm1OaBexEjigwkvgbkBlCk8oGzw2HZaSaZ9SCs9kJ4LoOyFy5JiR5FBcNLPut4mY7twT+4cSXRlVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9AYa3kEsV4jENZgVNxiP4uVz9JUlzYU7WqPQwhMniGpAInm5O
+	276v9/XYi+4GMgMc0TPFvEG3pOavHwy5qCatyU12/0bGgTq14PBYEDSX
+X-Gm-Gg: ASbGncsKKin7oX0SmBtZHrKHghRS9uaqkSTh95X3JruU7YmPIDpvhfuG8rBMajbkUrC
+	mwK48yYuJKhNbotnlcyycnDWyDAjSWK0ROWAU5RAr7U+0u15tYpC1RApB4yJ4ucC2zo9PMhSWDH
+	gDG4m/PGBTcXwlBNHnIp6BWO4WBICZwATk+6iP4wx8e9HCcnp8FRcxP0XRKGxQIvnMpTHCwjm/n
+	L9gHzqZzcz263kR60Ab9LKg3JoXzTYd5rf4Ke4cncNAi2cMfd9Ez96IapUuXAtZ/fhoExvk8/Wq
+	5Fkct7SgwgSFlcDD6geXau8v0SgiXUQd83pJY4j4Halibbu7zt7NAU8wX37kAZ0O7vk8thbwMo3
+	M4gQEfCgO+tMagoYCw2AIVlp9Sp1kCnUi0V7yY4YbTaCD6hpJo+1XgsLe/zDMTmfOfZ4dJTog4C
+	xNR8rKaL3JwiEOEfIQ24GgZPHa34IumUts
+X-Google-Smtp-Source: AGHT+IEO23zbV1o6Dod3OnepyrZ499l60l15zhzyFc5iTDUQFeRUVPj+KaAJtZN9R8sEfUGcnJfl7Q==
+X-Received: by 2002:a05:600c:34ce:b0:46e:4ac4:b7b8 with SMTP id 5b1f17b1804b1-46e7114e923mr68621845e9.25.1759706131907;
+        Sun, 05 Oct 2025 16:15:31 -0700 (PDT)
+Received: from f.. (cst-prg-79-205.cust.vodafone.cz. [46.135.79.205])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8e9780sm17920640f8f.29.2025.10.05.16.15.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Oct 2025 16:12:23 -0700 (PDT)
-Date: Mon, 6 Oct 2025 02:12:19 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Harikrishna Shenoy <h-shenoy@ti.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
-        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-        jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-        simona@ffwll.ch, lumag@kernel.org, dianders@chromium.org,
-        andy.yan@rock-chips.com, mordan@ispras.ru, linux@treblig.org,
-        viro@zeniv.linux.org.uk, aradhya.bhatia@linux.dev, javierm@redhat.com,
-        tomi.valkeinen@ideasonboard.com, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, devarsht@ti.com, u-kumar1@ti.com,
-        s-jain1@ti.com, lyude@redhat.com, luca.ceresoli@bootlin.com
-Subject: Re: [PATCH v7 3/6] drm/bridge: cadence: cdns-mhdp8546-core: Set the
- mhdp connector earlier in atomic_enable()
-Message-ID: <gtj43rfr2dgegutffma34w5bhvdmvx44jhwxgxb3ficqh5tm53@2iyr6ho3qfdh>
-References: <20250929083936.1575685-1-h-shenoy@ti.com>
- <20250929083936.1575685-4-h-shenoy@ti.com>
+        Sun, 05 Oct 2025 16:15:31 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] fs: add missing fences to I_NEW handling
+Date: Mon,  6 Oct 2025 01:15:26 +0200
+Message-ID: <20251005231526.708061-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250929083936.1575685-4-h-shenoy@ti.com>
-X-Authority-Analysis: v=2.4 cv=IrITsb/g c=1 sm=1 tr=0 ts=68e2fb5a cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=sozttTNsAAAA:8 a=DjEzn2y0vucNjJZnUoQA:9 a=CjuIK1q_8ugA:10
- a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-GUID: A06pyHgosrXfEeRoWRCc1LXRWApGbs-z
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAyOSBTYWx0ZWRfX5TrKw3vjQVUF
- DlCQTXh/OoVb71238TR71dq0Va9i8LHSMI/EhUvByMWaAg41iRFloW85TwB5P5YiWYDqqCQTL+g
- xHFI/SdmMmTTaLBk3XMpvEB+VnXSrbjdgJ7hTBJ4UEOoKT/jwpBffN0iEgN5OTrzC0A87TvIAPL
- T7wMLDMiRmEybtHQvTwzrSeiE8DplsZ1McfjiGXdTdcFIBw1lrQj+FX8+euzkUZNatYgbBY0KD9
- IYswjgPVj4cBjKP7GanqRJRpqpftgcMVteSXKHqYdsi1cKrFn+jw0x+PuVAqt052OypxSSPMGh3
- QXTZtJHpIorArT1n7r4H7LA6rY3EVm1qG5yxczEyvpVN/wGgP1lOGEOhGalD4a/9BS9QdsAaB5D
- zEWKd4sowkwMI2HWeniY0ZKYLDTW1w==
-X-Proofpoint-ORIG-GUID: A06pyHgosrXfEeRoWRCc1LXRWApGbs-z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-05_08,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 bulkscore=0 clxscore=1015 malwarescore=0
- spamscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040029
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 29, 2025 at 02:09:33PM +0530, Harikrishna Shenoy wrote:
-> From: Jayesh Choudhary <j-choudhary@ti.com>
-> 
-> In case if we get errors in cdns_mhdp_link_up() or cdns_mhdp_reg_read()
-> in atomic_enable, we will go to cdns_mhdp_modeset_retry_fn() and will hit
-> NULL pointer while trying to access the mutex. We need the connector to
-> be set before that. Unlike in legacy !(DBANC) cases, we do not have
-> connector initialised in bridge_attach(). Now that we have the connector
-> pointer in mhdp bridge structure, so set the mhdp->connector in
-> atomic_enable() earlier to avoid possible NULL pointer dereference
-> in recovery paths like modeset_retry_fn() with the DBANC flag set.
-> 
-> Fixes: c932ced6b585 ("drm/tidss: Update encoder/bridge chain connect model")
+Suppose there are 2 CPUs racing inode hash lookup func (say ilookup5())
+and unlock_new_inode().
 
-This Fixes tag means that this patch can be attempted to be backported
-back to v6.5 (even w/o cc:stable, etc). I know that it is a pain, but
-please move all Fixes to the top of the series. Yes, you want to drop
-non-DBANC case first and then fix everything. It doesn't look like it is
-a correct approach for the sake of maintaing the -stable branches.
+In principle the latter can clear the I_NEW flag before prior stores
+into the inode were made visible.
 
-> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
-> Signed-off-by: Harikrishna Shenoy <h-shenoy@ti.com>
-> ---
->  .../drm/bridge/cadence/cdns-mhdp8546-core.c   | 20 +++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
-> 
+The former can in turn observe I_NEW is cleared and proceed to use the
+inode, while possibly reading from not-yet-published areas.
 
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+
+I don't think this is a serious bug in the sense I doubt anyone ever ran
+into it, but this is an issue on paper.
+
+I'm doing some changes in the area and I figured I'll get this bit out
+of the way.
+
+ fs/dcache.c               | 4 ++++
+ fs/inode.c                | 8 ++++++++
+ include/linux/writeback.h | 4 ++++
+ 3 files changed, 16 insertions(+)
+
+diff --git a/fs/dcache.c b/fs/dcache.c
+index a067fa0a965a..806d6a665124 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -1981,6 +1981,10 @@ void d_instantiate_new(struct dentry *entry, struct inode *inode)
+ 	spin_lock(&inode->i_lock);
+ 	__d_instantiate(entry, inode);
+ 	WARN_ON(!(inode->i_state & I_NEW));
++	/*
++	 * Pairs with smp_rmb in wait_on_inode().
++	 */
++	smp_wmb();
+ 	inode->i_state &= ~I_NEW & ~I_CREATING;
+ 	/*
+ 	 * Pairs with the barrier in prepare_to_wait_event() to make sure
+diff --git a/fs/inode.c b/fs/inode.c
+index ec9339024ac3..842ee973c8b6 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1181,6 +1181,10 @@ void unlock_new_inode(struct inode *inode)
+ 	lockdep_annotate_inode_mutex_key(inode);
+ 	spin_lock(&inode->i_lock);
+ 	WARN_ON(!(inode->i_state & I_NEW));
++	/*
++	 * Pairs with smp_rmb in wait_on_inode().
++	 */
++	smp_wmb();
+ 	inode->i_state &= ~I_NEW & ~I_CREATING;
+ 	/*
+ 	 * Pairs with the barrier in prepare_to_wait_event() to make sure
+@@ -1198,6 +1202,10 @@ void discard_new_inode(struct inode *inode)
+ 	lockdep_annotate_inode_mutex_key(inode);
+ 	spin_lock(&inode->i_lock);
+ 	WARN_ON(!(inode->i_state & I_NEW));
++	/*
++	 * Pairs with smp_rmb in wait_on_inode().
++	 */
++	smp_wmb();
+ 	inode->i_state &= ~I_NEW;
+ 	/*
+ 	 * Pairs with the barrier in prepare_to_wait_event() to make sure
+diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+index 22dd4adc5667..e1e1231a6830 100644
+--- a/include/linux/writeback.h
++++ b/include/linux/writeback.h
+@@ -194,6 +194,10 @@ static inline void wait_on_inode(struct inode *inode)
+ {
+ 	wait_var_event(inode_state_wait_address(inode, __I_NEW),
+ 		       !(READ_ONCE(inode->i_state) & I_NEW));
++	/*
++	 * Pairs with routines clearing I_NEW.
++	 */
++	smp_rmb();
+ }
+ 
+ #ifdef CONFIG_CGROUP_WRITEBACK
 -- 
-With best wishes
-Dmitry
+2.34.1
+
 
