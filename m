@@ -1,191 +1,89 @@
-Return-Path: <linux-kernel+bounces-842244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F296BB94F7
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 10:54:22 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20871BB94FB
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 11:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F00018986E1
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 08:54:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9394C345AB9
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 09:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C32221726;
-	Sun,  5 Oct 2025 08:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E55237172;
+	Sun,  5 Oct 2025 09:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ED0tJ2Qc"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="NANlqXQ/"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1863212566;
-	Sun,  5 Oct 2025 08:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968F74F5E0;
+	Sun,  5 Oct 2025 09:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759654455; cv=none; b=STwS9Qbc9EjMov+Gcdd5KfsnnbkS34dWTB9Dvove6qca4J5uGAStTtuwSJi1PnuMjGx/+5Qm0DwQlOraJM0HnQrZPowTZoisspLIUa14i5iU1QlQ8mQzJy+uUl08Whjgq9NdWowhzFvYlP0YGylqJDDVUuNPZxyRQ+v2yI1LTF4=
+	t=1759654918; cv=none; b=Xpa5vOhXwn51AL3vUu34aQmGY7UrLnrL9zuGM3NCbOYtH35ZT++TUynkxUHrq61f6G3+9I8o9opaxLgCVpsu3oFvaUln6jRudC7JRDskEv7p2F4cAxYPspYG7mCVlS5Hbm7yHEQ4vOtteMy3K4wAq/LwG5axNs2+U2/v0F2gmuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759654455; c=relaxed/simple;
-	bh=y6Thp0mTzrmk2k2RL8bTB/soX9MDqJ52ayiMM5B77A8=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=QlJW8DM9RvkYJ0+B1wrU54y2lMiCqwFsioe2eIKbpXwysPzIy8F7pa1W73gWbixtl3CJK44NoWMvzdvFZj2yZny3SKj7Q300/nvWHhgHXiZcNio4tKTyWrrv3+5NDIYYQlILEFhK3tMAGogkxKU7Q6sRkcKF2PALdL5GbObd7DU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ED0tJ2Qc; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=3iYrGsULfLNOR8HeDH4+AMLiCUEZim8TOnC8ldZpHBE=;
-	b=ED0tJ2QceYrdbqH5EgkeGSRj2qpdkEPdixUFbCQ9Vznz7xD7TIKjtgV3++CmLH
-	ezImq5tBl/389PmTbCCKFSRww8VWarT3056BjPq/xOTTcYqdEYO2FbTH2cwOACtm
-	6lCdrsRDvZGQ6cm959P1WaUesLgtFdyVuR0nrOTYa8jEA=
-Received: from localhost (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD3N0UkMuJo4u1sCA--.9915S2;
-	Sun, 05 Oct 2025 16:53:56 +0800 (CST)
-Date: Sun, 5 Oct 2025 16:53:56 +0800
-From: Chingbin Li <liqb365@163.com>
-To: marcel@holtmann.org, luiz.dentz@gmail.com,
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Bluetooth: btusb: Add new VID/PID 2b89/6275 for RTL8761BUV
-Message-ID: <aOIyJOnP55mmZUut@9950x-Ubunbu-24-04-dev>
+	s=arc-20240116; t=1759654918; c=relaxed/simple;
+	bh=ruSIOi8cxJhaTEz5uwpfuf5bGlZ4IWTtrl9ZQQR8irk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ew6nrbynR4tEuE5Uo2fQUs+Oo/DVIv/2wgwc0SFUbqSa8hIXswlotWElUYtTawMHeBYH0CS3pzjw/qw4NJaopkVcG0kyWi6bhk4vnjlm5VQ5PeEazbg3NNZhUyKJK9L7EGwdOdPY8+4pfXbzTIL34LiZVRVJb9e9kUZz5oxnRyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=NANlqXQ/; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=WVxoh7xrdV57yDzDDRJoT49omMHhETGCnKdD+7NLzGE=; b=NANlqXQ/44AvovIlDfLGNhPgYa
+	scmEBdVmWMmaFORHhoS9oaAgPWi8y9bkyy/VeEcCA8eZO162hI5aKMviVPQfmTmK1s75I9vndvXGi
+	iwzEyvW1kcp3g3fzDV8W6wGQ0+5fjhIJrXuL7sx9uKvyO9/fyJnCYBXkAk9+VBU+9xrRj31mFCAbC
+	KV/EoImprZlRtCqOYOWttvsDdxXF6j9dgWKJnWQi3vgTe2hbO9o9C+4HqZx3edtOIXXK2woT+Y4Dy
+	ELoovY4SMOxnp8rSKZIiP8N7Kr6/f3Uq7INI7aotqDaG89sytZa4/7+TPcoZsWVMQT6N8VzPXXXXE
+	e0TRqgGw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v5Kcq-00000007vOO-3Mn3;
+	Sun, 05 Oct 2025 09:01:52 +0000
+Date: Sun, 5 Oct 2025 10:01:52 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Miquel =?iso-8859-1?Q?Sabat=E9_Sol=E0?= <mssola@mssola.com>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
+	linux-kernel@vger.kernel.org, jack@suse.cz
+Subject: Re: [PATCH] fs: Use a cleanup attribute in copy_fdtable()
+Message-ID: <20251005090152.GE2441659@ZenIV>
+References: <20251004210340.193748-1-mssola@mssola.com>
+ <20251004211908.GD2441659@ZenIV>
+ <878qhpc3ip.fsf@>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="yalHI+Ut+nM983X2"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-X-CM-TRANSID:_____wD3N0UkMuJo4u1sCA--.9915S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uF47Ww18Wr1kJrWkGr13CFg_yoW8ury7pF
-	4rA3ZxXr1fKr1Uur909F18AayfW3s7u347X3W7Gw13WFZ5Aan7J3W7ArWrXFs2kw4Ig3Z0
-	qrnxu3yfKryxJrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07USdgtUUUUU=
-X-CM-SenderInfo: xoltujiwv6il2tof0z/1tbiRAHdcGjiJyR3mAABsP
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <878qhpc3ip.fsf@>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
+On Sun, Oct 05, 2025 at 07:37:50AM +0200, Miquel Sabaté Solà wrote:
+> Al Viro @ 2025-10-04 22:19 +01:
+> 
+> > On Sat, Oct 04, 2025 at 11:03:40PM +0200, Miquel Sabaté Solà wrote:
+> >> This is a small cleanup in which by using the __free(kfree) cleanup
+> >> attribute we can avoid three labels to go to, and the code turns to be
+> >> more concise and easier to follow.
+> >
+> > Have you tried to build and boot that?
+> 
+> Yes, and it worked on my machine...
 
---yalHI+Ut+nM983X2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-From 5676b7b1029c11ec99b119a3b56945ba8a766c0a Mon Sep 17 00:00:00 2001
-From: Chingbin Li <liqb365@163.com>
-Date: Sun, 5 Oct 2025 16:28:28 +0800
-Subject: [PATCH] Bluetooth: btusb: Add new VID/PID 2b89/6275 for RTL8761BUV
-
-Bluetooth: btusb: Add new VID/PID 2b89/6275 for RTL8761BUV
-
-Add VID 2b89 & PID 6275 for Realtek RTL8761BUV USB Bluetooth chip.
-
-The information in /sys/kernel/debug/usb/devices about the Bluetooth
-device is listed as the below.
-
-T:  Bus=01 Lev=01 Prnt=01 Port=02 Cnt=01 Dev#=  6 Spd=12   MxCh= 0
-D:  Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=2b89 ProdID=6275 Rev= 2.00
-S:  Manufacturer=Realtek
-S:  Product=Bluetooth Radio
-S:  SerialNumber=00E04C239987
-C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-
-Signed-off-by: Chingbin Li <liqb365@163.com>
-
-Chingbin Li (1):
-  Bluetooth: btusb: Add new VID/PID 2b89/6275 for RTL8761BUV
-
- drivers/bluetooth/btusb.c | 2 ++
- 1 file changed, 2 insertions(+)
-
---
-2.43.0
-
---yalHI+Ut+nM983X2
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0001-Bluetooth-btusb-Add-new-VID-PID-2b89-6275-for-RTL876.patch"
-
-From 5676b7b1029c11ec99b119a3b56945ba8a766c0a Mon Sep 17 00:00:00 2001
-From: Chingbin Li <liqb365@163.com>
-Date: Sun, 5 Oct 2025 16:21:26 +0800
-Subject: [PATCH 1/1] Bluetooth: btusb: Add new VID/PID 2b89/6275 for
- RTL8761BUV
-
-Add VID 2b89 & PID 6275 for Realtek RTL8761BUV USB Bluetooth chip.
-
-The information in /sys/kernel/debug/usb/devices about the Bluetooth
-device is listed as the below.
-
-T:  Bus=01 Lev=01 Prnt=01 Port=02 Cnt=01 Dev#=  6 Spd=12   MxCh= 0
-D:  Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=2b89 ProdID=6275 Rev= 2.00
-S:  Manufacturer=Realtek
-S:  Product=Bluetooth Radio
-S:  SerialNumber=00E04C239987
-C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-
-Signed-off-by: Chingbin Li <liqb365@163.com>
----
- drivers/bluetooth/btusb.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 5e9ebf0c5312..3ca17d283d26 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -781,6 +781,8 @@ static const struct usb_device_id quirks_table[] = {
- 						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x2b89, 0x8761), .driver_info = BTUSB_REALTEK |
- 						     BTUSB_WIDEBAND_SPEECH },
-+	{ USB_DEVICE(0x2b89, 0x6275), .driver_info = BTUSB_REALTEK |
-+						     BTUSB_WIDEBAND_SPEECH },
-
- 	/* Additional Realtek 8821AE Bluetooth devices */
- 	{ USB_DEVICE(0x0b05, 0x17dc), .driver_info = BTUSB_REALTEK },
---
-2.43.0
-
-
---yalHI+Ut+nM983X2--
-
+Unfortunately, it ends up calling that kfree() on success as well as on failure.
+Idiomatic way to avoid that would be
+	return no_free_ptr(fdt);
+but you've left bare
+	return fdt;
+in there, ending up with returning dangling pointers to the caller.  So as
+soon as you get more than BITS_PER_LONG descriptors used by a process,
+you'll get trouble.  In particular, bash(1) running as an interactive shell
+would hit that - it has descriptor 255 opened...
 
