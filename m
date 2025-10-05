@@ -1,140 +1,142 @@
-Return-Path: <linux-kernel+bounces-842340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4DBDBB989D
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 16:52:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F16ABB98A6
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 16:55:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40C6D3B51FC
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 14:52:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4104D1890EF1
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 14:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B0E28C86C;
-	Sun,  5 Oct 2025 14:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C127428B4F0;
+	Sun,  5 Oct 2025 14:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZvLWnqb8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1BvxJgG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A250928B4F0
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 14:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B8D192D68
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 14:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759675935; cv=none; b=l3iwtzXNB2ILoTjFR3HlpoG6DooGLvZZjLzNFZKEvRGlRlyuND58XHwErwLhV7NJRcdfkLyBVJqEy6uBgyTZrM3Bk/BEPZIufb50lFcIBGmd6uZIK1AXYYrBvaI276T8ADm0nNPG7UEDg0yDDuG++XEtlKfc7Pg6/5iVGhaoFXE=
+	t=1759676102; cv=none; b=S9K6kUMIZWSuatn6mdwPBEXxZFBFryumCRIKoP98afpa0J9fFEMZC6zHfkQe6M+4CYruJnaGpJFPQ9vKSVM5HOG+Y8ghnknWVqmTpXLXjGaUqUACnUM3Ucle0NNhFUAbnjEIvu/nOTC6NKcJ0CoSDLw7Uz9xG5GUEfiCoRbA22M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759675935; c=relaxed/simple;
-	bh=eNMb/LOH8STtC2n7cxPseKu/VPrmpdGzSGzzVQe6kFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=pSpXQwGo85ggVRBoA93SvVrOOYueRzJKyj0cu22tQE4IRgqrXJHg3Il44PTFkwxq8aLehLAO8OtwLX/aBgEU9oEFJ/l3/jhX5xgco2EcEEJafKI/Tz838iZksK/BfVW5F2JQnNcI32ug3gYni8wlD3n9gJQkT6JFOhCSKi3EUq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZvLWnqb8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759675932;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=ttN0gc8Al1vCK63h1373HhrrlY+8UEv8GvNSaU8FRRE=;
-	b=ZvLWnqb8Ejml9yLFs6ryuyJcTQCru7eHnUPFzU82tmCxHVAd5W9XXrsRB0vQIAOUu12pCo
-	0Usc7FK3lIx7hPRh+r2HkXdktEQx/KW/Cb8leOi7XV+TUbo8jcmlTBlCMTI0igRADna2Bf
-	Fc9RVjVkOr+Gi6KcvzGWLalZfYJaZus=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-311-t5Jw6-0hPfKxeJPQOQC4Yw-1; Sun,
- 05 Oct 2025 10:52:09 -0400
-X-MC-Unique: t5Jw6-0hPfKxeJPQOQC4Yw-1
-X-Mimecast-MFC-AGG-ID: t5Jw6-0hPfKxeJPQOQC4Yw_1759675928
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E5B5B1956087;
-	Sun,  5 Oct 2025 14:52:07 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.5])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 894EB1956056;
-	Sun,  5 Oct 2025 14:52:03 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun,  5 Oct 2025 16:50:46 +0200 (CEST)
-Date: Sun, 5 Oct 2025 16:50:41 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-	Li RongQing <lirongqing@baidu.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] seqlock: change __dentry_path() to use
- __SEQLOCK_READ_SECTION()
-Message-ID: <20251005145041.GA1266@redhat.com>
+	s=arc-20240116; t=1759676102; c=relaxed/simple;
+	bh=ZYk6FsRH/jslXCq9/JcYnqOpDmX7r2GE6f0FlyCufN0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KW6dF6PDJMaUHs/EIXbu7CDL9/Z/WcSApbtAwFE/iaPovB/4epp8dkM7WDPcQF10UlNptfdSk0iK2F+wTJd+9rUaR472KjqF9gxxleROy1qky0M4/wd1phrh3wi5XqC/HV55ThS55mZAUZHhxV5XjeMogT8HzTX4BdQtczOcV1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b1BvxJgG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4B74C4CEF4
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 14:55:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759676101;
+	bh=ZYk6FsRH/jslXCq9/JcYnqOpDmX7r2GE6f0FlyCufN0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=b1BvxJgGYWtcwBRRq327um1fnP0lBeCEz7UGPXdPP2f5skpT0SDfvUuRJohTfYNpx
+	 xKCbOhSVwXMx49vtfIH+mazpkNHhxtyl8gvj3egwkjIthhhTUtRxOvbk6c2HC8X+Ae
+	 hNi5HJCT/QbpBeem7Nl/3TLnq5CSGQSeUEnf+7lUXQX6dZc6Hr0A4OuqeZchnRBS4C
+	 tkXR85iGX10PsDkS60FvCD/wMpv0UQ3LpHnSQGBjoAOPrmd42cttLUr4FfEKSOBWbH
+	 qk0ZUgYTitIbOAHSnud2gcpiXlLZPs8/hrkzR/Hf+WLicLN30EljzRHgJf+3KNLETZ
+	 ASogja45v2Qow==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-367ce660b61so39171981fa.1
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 07:55:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVHZPsUkwjYhzUHdJbDFJsMVg8X/9Jan2FefaAkV7S+XD/JqA1HvEPHg7vw50ldqxMIAKwi5SeDjRXjlOA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzlsP5Ve8yvr6lKZ+0vk7Tp8sE0i9g7iSswiJu2rU3FINX1BcT
+	t22wWU7m+XkZicXCCz/fCBdnnoGJGU2SO67RAoyBfZFRFldonrgImo5mi4cBBMvlXH4e1aAZw8d
+	jSWLK7HoR9O5E2omgiaWhREmqKlFHR0k=
+X-Google-Smtp-Source: AGHT+IEWPLhimWsF9enpUuiQN4vp9kszXmdsUSVze7V2BuBpO3kLXs30fu/IjwtJEP8PxidGp4iNP3GkdNE0i5UM0aQ=
+X-Received: by 2002:a05:651c:19a6:b0:372:921b:4b83 with SMTP id
+ 38308e7fff4ca-374c37eb675mr27154721fa.20.1759676100148; Sun, 05 Oct 2025
+ 07:55:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251005144929.GB1188@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+References: <20251001210201.838686-22-ardb+git@google.com> <20251001210201.838686-42-ardb+git@google.com>
+ <20251003201818.GA24598@quark>
+In-Reply-To: <20251003201818.GA24598@quark>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Sun, 5 Oct 2025 16:54:48 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXEMZO8RLiqxHFkVqy-xe_e7D3JGTTdObRP=93B98PFR9g@mail.gmail.com>
+X-Gm-Features: AS18NWBDyP2sRFU_7qLcyZdPGkaKIOB0fx5JmAkiVfN9-rbRf3z-I5vTQBCXLIE
+Message-ID: <CAMj1kXEMZO8RLiqxHFkVqy-xe_e7D3JGTTdObRP=93B98PFR9g@mail.gmail.com>
+Subject: Re: [PATCH v2 20/20] arm64/fpsimd: Allocate kernel mode FP/SIMD
+ buffers on the stack
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	herbert@gondor.apana.org.au, linux@armlinux.org.uk, 
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Kees Cook <keescook@chromium.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-To simplify the code and make it more readable.
+On Fri, 3 Oct 2025 at 22:18, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> On Wed, Oct 01, 2025 at 11:02:22PM +0200, Ard Biesheuvel wrote:
+> > diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
+> > index 4f8d677b73ee..93bca4d454d7 100644
+> > --- a/arch/arm64/include/asm/processor.h
+> > +++ b/arch/arm64/include/asm/processor.h
+> > @@ -172,7 +172,7 @@ struct thread_struct {
+> >       unsigned long           fault_code;     /* ESR_EL1 value */
+> >       struct debug_info       debug;          /* debugging */
+> >
+> > -     struct user_fpsimd_state        kernel_fpsimd_state;
+> > +     struct user_fpsimd_state        *kernel_fpsimd_state;
+>
+> Is TIF_KERNEL_FPSTATE redundant with kernel_fpsimd_state != NULL?
 
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
----
- fs/d_path.c | 31 +++++++++++++------------------
- 1 file changed, 13 insertions(+), 18 deletions(-)
+Not entirely.
 
-diff --git a/fs/d_path.c b/fs/d_path.c
-index bb365511066b..0dab1ab1e78d 100644
---- a/fs/d_path.c
-+++ b/fs/d_path.c
-@@ -332,28 +332,23 @@ static char *__dentry_path(const struct dentry *d, struct prepend_buffer *p)
- {
- 	const struct dentry *dentry;
- 	struct prepend_buffer b;
--	int seq = 0;
- 
- 	rcu_read_lock();
--restart:
--	dentry = d;
--	b = *p;
--	read_seqbegin_or_lock(&rename_lock, &seq);
--	while (!IS_ROOT(dentry)) {
--		const struct dentry *parent = dentry->d_parent;
-+	__SEQLOCK_READ_SECTION(&rename_lock, lockless, seq, NULL) {
-+		dentry = d;
-+		b = *p;
-+		while (!IS_ROOT(dentry)) {
-+			const struct dentry *parent = dentry->d_parent;
- 
--		prefetch(parent);
--		if (!prepend_name(&b, &dentry->d_name))
--			break;
--		dentry = parent;
--	}
--	if (!(seq & 1))
--		rcu_read_unlock();
--	if (need_seqretry(&rename_lock, seq)) {
--		seq = 1;
--		goto restart;
-+			prefetch(parent);
-+			if (!prepend_name(&b, &dentry->d_name))
-+				break;
-+			dentry = parent;
-+		}
-+		if (lockless)
-+			rcu_read_unlock();
- 	}
--	done_seqretry(&rename_lock, seq);
-+
- 	if (b.len == p->len)
- 		prepend_char(&b, '/');
- 	return extract_string(&b);
--- 
-2.25.1.362.g51ebf55
+The generic kernel_fpu_begin/end API that the amdgpu driver uses
+cannot straight-forwardly use a stack buffer, given how the API is
+implemented. Since this code already disables preemption when using
+the FPU, and should not assume being able to use kernel mode FP in
+softirq context, I think we'll end up doing something like the
+following for arm64
 
+void kernel_fpu_begin(void)
+{
+  preempt_disable();
+  local_bh_disable();
+  kernel_neon_begin(NULL);
+}
+
+etc, as it never actually needs this buffer to begin with.
+
+Technically, setting TIF_KERNEL_FPSTATE is not necessary when no
+scheduling or softirq interruptions may be expected, but I still think
+it is better to keep these separate.
+
+> > +void kernel_neon_begin(struct user_fpsimd_state *s)
+> >  {
+> >       if (WARN_ON(!system_supports_fpsimd()))
+> >               return;
+> > @@ -1866,8 +1869,16 @@ void kernel_neon_begin(void)
+> >                * mode in task context. So in this case, setting the flag here
+> >                * is always appropriate.
+> >                */
+> > -             if (IS_ENABLED(CONFIG_PREEMPT_RT) || !in_serving_softirq())
+> > +             if (IS_ENABLED(CONFIG_PREEMPT_RT) || !in_serving_softirq()) {
+> > +                     /*
+> > +                      * Record the caller provided buffer as the kernel mode
+> > +                      * FP/SIMD buffer for this task, so that the state can
+> > +                      * be preserved and restored on a context switch.
+> > +                      */
+> > +                     if (cmpxchg(&current->thread.kernel_fpsimd_state, NULL, s))
+> > +                             BUG();
+>
+> Does this really need to be a cmpxchg, vs. a regular load and store?
+> It's just operating on current.
+>
+
+It does not need to be atomic, no. I moved this around a bit while I
+was working on it, but in its current form, we can just BUG/WARN on
+the old value being wrong, and set the new one using an ordinary store
+(in both cases).
 
