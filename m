@@ -1,127 +1,183 @@
-Return-Path: <linux-kernel+bounces-842389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7B8BBB9AB3
-	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 20:12:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E82B4BB9AB6
+	for <lists+linux-kernel@lfdr.de>; Sun, 05 Oct 2025 20:14:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 968E04E2AFC
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 18:12:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A60263B1F1F
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Oct 2025 18:14:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA18E1D0DEE;
-	Sun,  5 Oct 2025 18:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB501D47B4;
+	Sun,  5 Oct 2025 18:14:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="coy51G+6"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RCYtvh5/"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C86626ACB
-	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 18:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B2E1527B4
+	for <linux-kernel@vger.kernel.org>; Sun,  5 Oct 2025 18:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759687974; cv=none; b=UWNlPK+X+JnzUxYCYwdBhprDfG9HkaznBgH034gpUuzc+7dC8Oug10MAao4LXl+2Gv9US/M0qH9aAEDxeF1v9Ck2M0jis7bxty99IyoVFs1QASJLDK1ZFf8HfWB8FFpjWUg1Hk2A73TCwRI10HkZl53BlRPVkUDLL+ZktQ10sLs=
+	t=1759688068; cv=none; b=aqLQabpMVbqlBgOui5FhVIZGsy/4K5biZ3k9SMa2UMxusQiE/2sFfq+Lwew4ESvlk/YNFuVliZbYYhadvBcoMVhHGxwVBAe+2aVzQJJV4iIxUn685W+V4vkV0g1lGNyKp6yNYW9NI6ilsAjb7IDLrfGx/3gx+mRseA+V9Q3fVrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759687974; c=relaxed/simple;
-	bh=N3KEX9yMfDskK1jzwp3R8XS991ozbyb1KWcGozNRcQw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MwTmLmqr+sTNciBg4OWo42lSK09iqLBQ+ifnvK131fdYWNtsO3R0VDHddEyDTaEaH8HIkB5k9uj4Rcy4gWBupvQVpempkFNSTEO+bVZZJv4WRoMMumQVsX6dD6KQFtleDUwxtXXShAFU5fEZWX2r4SRnJy96wogmjeJlM/bSe3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=coy51G+6; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 595HOS9O029328;
-	Sun, 5 Oct 2025 18:12:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=VAryTyAJu9KZaSYEcp5AUrvC36hG8
-	7ym/EbK85YtUck=; b=coy51G+6/D0iGPmOLkETZQIXnTLU0iu3Qk+qXOvWQ7wZt
-	5m4sWwU6p1DnBvl2ONzI67O+oK+I5TjGY9nbKQxLapj2ZYDuUt49crY+G41PDxGU
-	9U1GQ3LdpCwn+g0zo8H7QpKZbzVlm7TNdr5L2ba4BIbUi5TuCW+ra4l7y682MYSY
-	HhYPMPk3m765Em+htWqp6VJg2g3CVzQB7KI98SleyrCdEifi9JzP3Is2AlpcZ85+
-	duHlIXE2+zdw5/+nx8THgWo0E6jDvIrA9dIUOrLXITDYjuS4a4WrWNJEI/WzFQdc
-	D8NPTXkoBMohddeBYXZBotHb3imHpUyTUEnpq8dDA==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49kvtwr0tu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 05 Oct 2025 18:12:37 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 595H01JI035081;
-	Sun, 5 Oct 2025 18:12:36 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49kdp2q6f3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 05 Oct 2025 18:12:36 +0000
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 595ICZ3W020065;
-	Sun, 5 Oct 2025 18:12:35 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 49kdp2q6ex-1;
-	Sun, 05 Oct 2025 18:12:35 +0000
-From: Alok Tiwari <alok.a.tiwari@oracle.com>
-To: eperezma@redhat.com, mst@redhat.com, jasowang@redhat.com,
-        xuanzhuo@linux.alibaba.com, virtualization@lists.linux.dev
-Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] virtio_vdpa: fix misleading return in void function
-Date: Sun,  5 Oct 2025 11:12:29 -0700
-Message-ID: <20251005181232.3320977-1-alok.a.tiwari@oracle.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1759688068; c=relaxed/simple;
+	bh=jKJufSzsIoGcPnz19tjXEcjablrQpmKm53WL7N/ygy8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=eFOhGqiOKEGM7jRmzumutG39BJ048UlIePuhqUyBnJRTAAILozxceqJQpQSuX5hsc3Wd+uz7NArapgw1+AadEP5kqz5VtQeMbpDNHRNHZfh6Zi0qbgeEon9XIWiNAxRa8ptpfnrsHbs4vdwfXnIw1bSJSR8kcAS52v4v+wseVNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RCYtvh5/; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-77fab059344so14748927b3.2
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 11:14:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759688065; x=1760292865; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=sOkNJ+T+Tdfr45vmGmFX0Mkoori48Hk8UPWsdnH0IUA=;
+        b=RCYtvh5/HruTnbS46wxZ/lN0mkE1dKZ2UZaF+17/kkuHmmkDchBMyvUT4ADzsENtfB
+         7HCbTtTu4pIB+/YDoFvlBIQMBWSdxE/hPiduAK3WQ338H2xUHvd5++om2HNAKWS2Use+
+         1XLTxh1sysZCiXwzSggNDzPkgZuHOjdD+Kif9GjFbBXOGjsaXsSHPlL4ojnmYl+Hfv3P
+         x40e8NgeJnp7BdaFlYMhlS1N3KEj6rIWh6I0JVgUJ8+ietw6sSrmPf+2nc6TRpi65ml3
+         /W25E9molfTyik+rd9xWGrLbSLVVPSO9czRE7EzPcQj9rZMxA8aFMYrzLVXZ7pT15Wr8
+         RLyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759688065; x=1760292865;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sOkNJ+T+Tdfr45vmGmFX0Mkoori48Hk8UPWsdnH0IUA=;
+        b=SdGqbhahoe5qUZKffLXm6uZ7hILFdJjN0XsQcWSUTZADktSGPSarEkNKjlT4Q0nQqL
+         UQPQLNuVj1u24C93FWi95H+N+TsoKJbzt3uA1vNOsuO/n04UCUaaQ9zrqTIckkvhrEeb
+         I/XcXueM9gn/uO/miQs3P0Yk7ZOdipUK3Z2v5Vt4R63ZVO0z3QC13pMRth6IsE1zl2Nu
+         1kQNtMM3hVlWhwTxulWfbGIg+e4rTDRXQipDgNuCZp1UTgZmFES47fMq/zxratk2d2UI
+         5bFVsBZBcTuCfXJ9XF4T3xUUVio6aFYgF267ZP48TxksmOP8X9YMKtu6U/1Odo8U7Bwf
+         /pJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXjsuMiUFqu9oRfwrVZziNUgtstvyPbWEeLuq7rzeiJgC3YctKAFh9Nrdq9fxweLPrYHSzZTzGFIBCq1cY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI9MWNExCaOnGNAy1SudJsqTopWZOOkOGe0RTk0OqbqOpJmiHo
+	SVOnL5pD3F0+ZDWetIcW6cg+1CY9LdmvqssF4JGJzKZeeb6GYacmEjtmJT9pfr0EgNR+K3mE4eT
+	5H6jTSCf2ng==
+X-Google-Smtp-Source: AGHT+IExPa7jt6IjPv1ZghhlDGVqvEx9LAVQg1UNjFhdGHMbp3SUqMPu4Z3IxXaPOIqxEklUHvGMN8/FJJ93
+X-Received: from ywbfl2.prod.google.com ([2002:a05:690c:3382:b0:77f:7918:3482])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:690c:691:b0:77f:937f:32be
+ with SMTP id 00721157ae682-77f94705f60mr202405377b3.41.1759688065332; Sun, 05
+ Oct 2025 11:14:25 -0700 (PDT)
+Date: Sun,  5 Oct 2025 11:14:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-05_06,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
- adultscore=0 mlxscore=0 spamscore=0 phishscore=0 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2509150000 definitions=main-2510050156
-X-Proofpoint-ORIG-GUID: OkDpaI_kCMkJMe5z2KVg-QCHDlRmuvUi
-X-Authority-Analysis: v=2.4 cv=dprWylg4 c=1 sm=1 tr=0 ts=68e2b515 b=1 cx=c_pps
- a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=x6icFKpwvdMA:10 a=yPCof4ZbAAAA:8 a=Cu5L_QzEE98FA8FmBg8A:9 cc=ntf
- awl=host:12092
-X-Proofpoint-GUID: OkDpaI_kCMkJMe5z2KVg-QCHDlRmuvUi
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA1MDE0NyBTYWx0ZWRfX5+r1vcXv7fiB
- LYr7Uq2Eu1sqyDFJURQoL8d25SGwts4laqJ6sBibKD684vmYpATfo5S0KxEAZYkY6KzyedzCuKp
- IKAAMIBHugs7073BSH5kL9Im1CE4d+0D14NHgnvuXKbxoZfWrd9Ce425EFOuuAy12Naa9RwX96q
- TAJc+ze2VGRKt4n9PSV+r6vUmCvMjCMX0YOglgrhQcJWBFGMmompEu4SzxSJqrZq59iyFR8d9i6
- En0ZlFdXwP6n/H7m5JyoaR4nrX6/4Oc8LczcjlrA7j0CLmclBfAjZyrro1rPMmj2uCYGSysyVRN
- 6tEdrJm4w01lbJnK/UFtSEzbHiB2iPw5EIfNnshXegpN52HWZtMTU8Sg4Gvo+OFdnFGYG/OGmhA
- jbFAfP1OnwfKREQOJTfvQXShfUjIsJMedGTVisgEh/FScD+UP6I=
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
+Message-ID: <20251005181421.2787960-1-irogers@google.com>
+Subject: [PATCH v1] perf stat: Additional verbose details for <not supported> events
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-virtio_vdpa_set_status() is declared as returning void, but it used
-"return vdpa_set_status()" Since vdpa_set_status() also returns
-void, the return statement is unnecessary and misleading.
-Remove it.
+If an event shows as "<not supported>" in perf stat output, in verbose
+mode add the strerror output to help diagnose the issue.
 
-Fixes: c043b4a8cf3b ("virtio: introduce a vDPA based transport")
-Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+Consider:
+```
+$ perf stat -e cycles,data_read,instructions true
+
+ Performance counter stats for 'true':
+
+           357,457      cycles:u
+   <not supported> MiB  data_read:u
+           156,182      instructions:u                   #    0.44  insn per cycle
+
+       0.001250315 seconds time elapsed
+
+       0.001283000 seconds user
+       0.000000000 seconds sys
+```
+
+To understand why the data_read uncore event failed, with this change:
+```
+$ perf stat -v -e cycles,data_read,instructions true
+Using CPUID GenuineIntel-6-8D-1
+cycles -> cpu/cycles/
+data_read -> uncore_imc_free_running_0/data_read/
+data_read -> uncore_imc_free_running_1/data_read/
+instructions -> cpu/instructions/
+Control descriptor is not initialized
+Warning:
+kernel.perf_event_paranoid=2, trying to fall back to excluding kernel and hypervisor  samples
+Warning:
+kernel.perf_event_paranoid=2, trying to fall back to excluding kernel and hypervisor  samples
+Warning:
+kernel.perf_event_paranoid=2, trying to fall back to excluding kernel and hypervisor  samples
+Warning:
+data_read:u event is not supported by the kernel.
+Invalid event (data_read:u) in per-thread mode, enable system wide with '-a'.
+Warning:
+kernel.perf_event_paranoid=2, trying to fall back to excluding kernel and hypervisor  samples
+Warning:
+data_read:u event is not supported by the kernel.
+Invalid event (data_read:u) in per-thread mode, enable system wide with '-a'.
+cycles:u: 351621 362833 362833
+failed to read counter data_read:u
+failed to read counter data_read:u
+instructions:u: 156184 362833 362833
+
+ Performance counter stats for 'true':
+
+           351,621      cycles:u
+   <not supported> MiB  data_read:u
+           156,184      instructions:u                   #    0.44  insn per cycle
+
+       0.001584472 seconds time elapsed
+
+       0.001811000 seconds user
+       0.000000000 seconds sys
+```
+where without this change only "data_read:u event is not supported by
+the kernel." is shown.
+
+Signed-off-by: Ian Rogers <irogers@google.com>
 ---
-v1 -> v2
-added fixes tag
----
- drivers/virtio/virtio_vdpa.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/builtin-stat.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/virtio/virtio_vdpa.c b/drivers/virtio/virtio_vdpa.c
-index 657b07a60788..1abecaf76465 100644
---- a/drivers/virtio/virtio_vdpa.c
-+++ b/drivers/virtio/virtio_vdpa.c
-@@ -80,7 +80,7 @@ static void virtio_vdpa_set_status(struct virtio_device *vdev, u8 status)
- {
- 	struct vdpa_device *vdpa = vd_get_vdpa(vdev);
- 
--	return vdpa_set_status(vdpa, status);
-+	vdpa_set_status(vdpa, status);
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 7006f848f87a..84e06ec09cc2 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -624,8 +624,9 @@ static enum counter_recovery stat_handle_error(struct evsel *counter, int err)
+ 	 */
+ 	if (err == EINVAL || err == ENOSYS || err == ENOENT || err == ENXIO) {
+ 		if (verbose > 0) {
+-			ui__warning("%s event is not supported by the kernel.\n",
+-				    evsel__name(counter));
++			evsel__open_strerror(counter, &target, err, msg, sizeof(msg));
++			ui__warning("%s event is not supported by the kernel.\n%s\n",
++				    evsel__name(counter), msg);
+ 		}
+ 		return COUNTER_SKIP;
+ 	}
+@@ -649,10 +650,11 @@ static enum counter_recovery stat_handle_error(struct evsel *counter, int err)
+ 		}
+ 	}
+ 	if (verbose > 0) {
++		evsel__open_strerror(counter, &target, err, msg, sizeof(msg));
+ 		ui__warning(err == EOPNOTSUPP
+-			? "%s event is not supported by the kernel.\n"
+-			: "skipping event %s that kernel failed to open.\n",
+-			evsel__name(counter));
++			? "%s event is not supported by the kernel.\n%s\n"
++			: "skipping event %s that kernel failed to open.\n%s\n",
++			evsel__name(counter), msg);
+ 	}
+ 	return COUNTER_SKIP;
  }
- 
- static void virtio_vdpa_reset(struct virtio_device *vdev)
 -- 
-2.50.1
+2.51.0.618.g983fd99d29-goog
 
 
