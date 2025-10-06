@@ -1,133 +1,147 @@
-Return-Path: <linux-kernel+bounces-842908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB997BBDF22
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 14:01:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF1FBBBDF3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 14:02:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA6E73BD208
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 12:01:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C854A1897FE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 12:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7ACA27817F;
-	Mon,  6 Oct 2025 12:01:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0FD279329;
+	Mon,  6 Oct 2025 12:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BEK8hTWg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XrCExbDG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEF110FD
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 12:01:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EDD10FD;
+	Mon,  6 Oct 2025 12:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759752103; cv=none; b=hCbwLwrbBWsNqesN9ru/xc70T2fJ8ZsVrAnbywSlE1Vqcqj6h/lM0ri9C1qCNSWYLABh8DM1CXCljXJaAmQABtpp4eVonkUlF2/WxAiyCSHwIEXgWYzFeajC3vAjkX5IJ88kz/k2rRImjTWnj6rYx5p0c00X+RPo6hpuzMQDSek=
+	t=1759752168; cv=none; b=QlERonl441m9+rSOEYkJpR8r8aVoTgqhyj49v6ry3HH5nM0LFb2QkvsWWDlX18Cco+DsWOdCpbQ0H5y9YGQEh5qOhwe59D0QGwLYRAd0gfJn5fl8Fxg9fzfZtoV1M3CNcxMaDQ3So5uGMua4M6oT2qWY/LbkuHCRGOGXoeCLe0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759752103; c=relaxed/simple;
-	bh=KJCCmXxR0Jo79346y4t9YN9VEcxsTs6ZNPs0qbDdQDg=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=VYrnBEcOqNCFUV4yroomwqoZv/45UKt2Lj8cfSh/sAN9tQ2Dxzcg97/e1dhfjUWBo1xtxGh4LxhQDhJcP/GYDmE1clmCwwVowF8BtymlhJdrYhcRAIZ1wxiDJYkWbZTtwQOmuJrwItrF3lXWeiuJ1ae/EtSzz6e2vuGR+AJMGII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BEK8hTWg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83106C4CEF5;
-	Mon,  6 Oct 2025 12:01:41 +0000 (UTC)
+	s=arc-20240116; t=1759752168; c=relaxed/simple;
+	bh=cUe8CtrafWoQsXn9fWcPDQv7fF4kzWcQD9k5yUC/Uwg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LKJz7zaQiJkV6OrMvdjmY6zhERdhkahIu/nFBq+RjAIwjMW+Yz/7Y9WEkT++5yuzGIv1l5HiDyD6Zd9aX3nNe/37XI0W6jgQNIi4o8ybwhvRhlNxxC+hsUWBo7oRItT/RHK3TVl8bvfLLlVy4NvgUAffS53R1S3tazxvb6FWRmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XrCExbDG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB346C4CEF5;
+	Mon,  6 Oct 2025 12:02:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759752102;
-	bh=KJCCmXxR0Jo79346y4t9YN9VEcxsTs6ZNPs0qbDdQDg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BEK8hTWgoyceSzzuNRsvb90TKd1ujqMybqezIlUMv6mRlyejsNlP5KZ2AX8cts41C
-	 sTuJmAsW8UVhJmI12o9ggNBotjnFgJIkmwMgiDdG/jqrZPwac/23ale9Y0IRI3Bmjs
-	 QyjfHywpCEYWM2esSAJGwkPhBUDLCnHsDnBxedjFiNBPjO/bRBIAqZc5/1xLzFE5lJ
-	 Q/Nm472zV1PV4PSWTm0Rj3SrGymO2f41CqfeoHi1KGuAhxXSTbdlbVW2+ca0jBFoB/
-	 cAlJAZOLgDb1GSCSTF1sYkarno0DtI61RUKNkdBlUFb/da6Gld2cnxBV9zAxtHj8mn
-	 uKSeAKwIWl65Q==
-Date: Mon, 6 Oct 2025 21:01:39 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Menglong Dong <menglong8.dong@gmail.com>, Thorsten Blum
- <thorsten.blum@linux.dev>, Steven Rostedt <rostedt@goodmis.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] probes: Update for v6.18
-Message-Id: <20251006210139.122cad3973a85f93601082fa@kernel.org>
-In-Reply-To: <CAHk-=whpwrrkPCmPa1dnejVr8AcJVpfyh0CfD-3sNhUO47A1dQ@mail.gmail.com>
-References: <20251003084426.f2de6028fd74e1af4e13d190@kernel.org>
-	<CAHk-=wg6=DwTD7xT3=Zya-ytYrtS2969KtnTWRPskq5fx2Ev+g@mail.gmail.com>
-	<20251006092743.295205e486acf1b69ca61b89@kernel.org>
-	<CAHk-=whpwrrkPCmPa1dnejVr8AcJVpfyh0CfD-3sNhUO47A1dQ@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1759752167;
+	bh=cUe8CtrafWoQsXn9fWcPDQv7fF4kzWcQD9k5yUC/Uwg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=XrCExbDGUw0LYXohARq0wj5ixhBkiguFlV69LWhd/t5NkqihItIxVGgkJYVYebHeS
+	 bbGyaUuLZY+rwJSwZdtdSVGYP6I24TmlPhVDqN3Wu92pv+ho39wr+IsgKQ4bTbIXIF
+	 /rxkzb2rUvpt4jA4wBfhlKXw9LrjD5ZY3pm0GvalCYvKo8YZv0RDduhtmOOi5uTZcr
+	 5QGgim6xn/vbzvVz0I6jiD9IgFzb0QM0DR+KeRrjaciAgfDTBhDRWzcUBYkJdaez7v
+	 oj403k6Xyt+lqNwWRmPTY+GWjQCnvIg51e+wjQY/qGWc5qLIda+gQeEaowTaVrk0Rs
+	 AiZqBRuYNrzoQ==
+From: Maxime Ripard <mripard@kernel.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maxime Ripard <mripard@kernel.org>
+Cc: dri-devel@lists.freedesktop.org,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
+	Louis Chauvet <louis.chauvet@bootlin.com>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	linux-mips@vger.kernel.org,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Manikandan Muralidharan <manikandan.m@microchip.com>,
+	Dharma Balasubiramani <dharma.b@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	linux-arm-kernel@lists.infradead.org,
+	Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	Liu Ying <victor.liu@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	imx@lists.linux.dev,
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+	Edmund Dea <edmund.j.dea@intel.com>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Sui Jingfeng <suijingfeng@loongson.cn>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	Sandy Huang <hjc@rock-chips.com>,
+	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	linux-rockchip@lists.infradead.org,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-sunxi@lists.linux.dev,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org,
+	Hans de Goede <hansg@kernel.org>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
+Subject: Re: [PATCH v5 00/39] drm/atomic: Get rid of existing states (not really)
+Date: Mon,  6 Oct 2025 14:02:42 +0200
+Message-ID: <175975215493.792368.2468724280200785252.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250930-drm-no-more-existing-state-v5-0-eeb9e1287907@kernel.org>
+References: <20250930-drm-no-more-existing-state-v5-0-eeb9e1287907@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Sun, 5 Oct 2025 20:09:02 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Tue, 30 Sep 2025 12:59:15 +0200, Maxime Ripard wrote:
+> Here's a series to get rid of the drm_atomic_helper_get_existing_*_state
+> accessors.
+> 
+> The initial intent was to remove the __drm_*_state->state pointer to
+> only rely on old and new states, but we still need it now to know which
+> of the two we need to free: if a state has not been committed (either
+> dropped or checked only), then we need to free the new one, if it has
+> been committed we need to free the old state.
+> 
+> [...]
 
-> On Sun, 5 Oct 2025 at 17:27, Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> >
-> > Hmm, I applogise this error. I locally ran build tests and it passed.
-> > But I might missed something.
-> 
-> So this is why linux-next exists - to get testing with different
-> configurations, different compiler versions, different architectures
-> etc.
+Applied to misc/kernel.git (drm-misc-next).
 
-Yes, I have noticed the limitations of creating a local test environment,
-and I would like to utilize linux-next.
-
-> 
-> Local build tests are good, and obviously necessary for some very basic testing.
-> 
-> And local build test can be perfectly sufficient - if it's some small
-> obvious fix, it's often simply not worth it waiting for a few days for
-> linux-next to get it merged and tested.
-> 
-> And no, linux-next isn't perfect, and won't find everything anyway.
-> 
-> And even the most trivial small change that quite reasonably didn't go
-> through linux-next because it was so simple can also end up breaking
-> things.
-> 
-> So none of this is some kind of "absolute black-and-white rule", and
-> none of this _guarantees_ that everything always works.
-> 
-> Even when everybody does the best they can, something will
-> occasionally be missed. I definitely accept that we're not perfect.
-> 
-> But big new features coming in during the merge window had better be
-> extensively checked _some_ way.
-
-Yes, that was my fault.
-
-> 
-> If I find problems in my fairly limited sanity-check build tests, I get unhappy.
-> 
-> It's one thing if it's some little mistake that I feel reasonably
-> missed testing for some understandable reason.
-> 
-> But if I get the feeling that the problem was that there just wasn't
-> enough care to begin with, that's when I go "nope, this will need to
-> wait for another release and be done properly".
-> 
-> And that's what happened this time around. That wasn't some trivial
-> little change, and it clearly didn't get a lot of coverage testing.
-
-I'm very sorry about causing this.
-
-> 
-> It should have gone through linux-next, and the problem would have
-> been found there instead of when I tried to merge it.
-
-Next time I'm sure the features are at least tested on linux-next.
-I'm trying to update my PR checker to check it too.
-
-> 
->                Linus
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Thanks!
+Maxime
 
