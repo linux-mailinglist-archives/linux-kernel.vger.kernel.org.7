@@ -1,105 +1,89 @@
-Return-Path: <linux-kernel+bounces-843391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96082BBF166
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 21:25:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF2FBBF172
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 21:26:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1FE0534B287
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 19:25:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD1271898EAF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 19:26:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4CC2DD5EB;
-	Mon,  6 Oct 2025 19:24:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD032DE70E;
+	Mon,  6 Oct 2025 19:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mYB/1Hwk"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KWf2ZncX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEA72641C6
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 19:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814E9156236;
+	Mon,  6 Oct 2025 19:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759778696; cv=none; b=iv7wGV643yOBMIDGNpQkMmd9UcXnkZpIxRtUC5mZUl4kpw8nb+yNgerQ9sjrbl/K4kyCNTTsJOMLw8XZVtyLGUGgdtFVDPhgkqWsFusTf0aeK7YaPcGOd+Wccxm1ZvY8LGkXCfw2uYbzuBKkAUchrqaCOEP+0tNJrk14Q5FcxHc=
+	t=1759778785; cv=none; b=fueeTB5svoQKgtfXdUeW2ZtaT+wZwODkGJuFnMUvNFnjFvbx0i//3H2dvFzdqcppLEoQnWp//eDl68PMhPy1Nyfccb0NrsM0OxP1tUgOxPcq2tm7a9LjxilEE8Cf5PVc4Iy/N4Bl9lWvxH/+hpbMkex1qQd1rPhk37ujGgKGigc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759778696; c=relaxed/simple;
-	bh=gzzvKnF6qJ7lJudLs/+S8tBn4LMDyPLqXA/nMHePsSc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lSwpbyPnrOTfEcF6QV1qc34/GfC+E6mGhW9MBNiwZTmfqEmhWf2bMSGIESwXNCtm54vbsR2IJUgvewCHayYhikiDlt/32DsCaf/oLt2nhRxYIJ/ar4O/pjt6qKUSON8m8RB9xc0T7VkXI1giyMsIKM7BQBW1kTqYv6WhCzQSeAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mYB/1Hwk; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-77f2466eeb5so4948693b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 12:24:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759778694; x=1760383494; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MwCv/q5RLrOVP5H2/mUJFVpJKUB0tJIPOkj23AFdbos=;
-        b=mYB/1Hwk5/djOTQkZojycRPAJ17J8MkN12THO24D6IxGz4uHfoLTEQZ6OE3cvFtbfP
-         b4p2Ak4Dyc40UZKmkrqy7vXWJB6ce5yn+nW0ASQI4fRFEd4pZEdFnFuOkWawfqCzWdNj
-         ciVjSDyM0vZ0IfpZezELznHeQkRtEWiKbBF4t9supT4HdBEOEeNyhAjryPJZEst6epx3
-         6NV95NWGlQv2Nk9FrTr9wog3LXU215QcdMy0rS7YGnJdO4eBM5iUqfN2JegLVbRPIXHH
-         NyAwGajYxqvkVCIsU4YCzepF3+y7AUNzIMg+Smz/daP2EXH0QaXL+oVnUTM4v1UWYvMo
-         sENA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759778694; x=1760383494;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MwCv/q5RLrOVP5H2/mUJFVpJKUB0tJIPOkj23AFdbos=;
-        b=Y9dakegKdzenRppw7oOpmKqBU2Kr+rIE2WQfBYKdlCyFT3H6hH+zxq4RK+dLJPrkOh
-         bTn0Z6wMS0f/3rLTwu5j1cci8/6TGnNnovgXf4e1lWeh2bypIUNlYzH+nHWSvf3Xr+Yq
-         t4fUkXM7MZITwhY8YlzTFT1sa6vm7ovDmT0dtMMn0PSHZNW2LcagtmCn0jRuHM6u5ko3
-         XJhaT/Q1jH9fXyl/DU39/P6+pkkqYI6nbIXZjhE1J0r47SSMSgfepoEW9OMtVOHTmzyW
-         MzB+pp9AUvhFqSrLs+rLK/jdkjSuJoEBK7vCmbgx9s3GUBcGJdr2LgME8GaNnS7lmI0+
-         ndpg==
-X-Forwarded-Encrypted: i=1; AJvYcCWeVia2plzIsG8xhXgOTfJ/2u5jIMvLJV4HzijtF1PW67733jCnWgkYjJ93xsj3sagfhwIDOX3YbHLiP8I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF1Ngzw1qhpDdUvbZM/m8novTJXypWatbOY8w9dOG1sBQQg/Vi
-	Xs4LZnV44f6QOERAzL+RHndhPzps6C3OIrKo2PlrwaJOHLYS1aHTJjuwT3VKNA4898mso4SqGun
-	E+ANyLg==
-X-Google-Smtp-Source: AGHT+IHiIsra+i6pzpFSJKTUcR3R1ZEtEd8CiGXaiveuskEqCtWdUdLIj7ydtiLIe9mDGjYusezaU4r2um0=
-X-Received: from pgbdo10.prod.google.com ([2002:a05:6a02:e8a:b0:b5f:5359:4b92])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:e290:b0:2c2:626b:b052
- with SMTP id adf61e73a8af0-32b6209da14mr18587401637.38.1759778693902; Mon, 06
- Oct 2025 12:24:53 -0700 (PDT)
-Date: Mon, 6 Oct 2025 12:24:52 -0700
-In-Reply-To: <diqz5xcrgaa5.fsf@google.com>
+	s=arc-20240116; t=1759778785; c=relaxed/simple;
+	bh=quimo5ouivxUpUMJUfFCgFEDlaRUcgwrcu89Pfdan7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=idezrbI7SVEJSIdPVfuB4+LbQOg4QntXOAhNCiL8LDV9msphM7jRL2UlMo6pnjykZ1BCincd3GrjavSAXpPnxzkfdy15leZqIfHeMiPwcLtkzXER7ESsebC3Dgnoz+XZSEuQQkwYBq8oFik9cjB6TzIOH5hDue9Gdt+m/uqh9wQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KWf2ZncX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C443C4CEF5;
+	Mon,  6 Oct 2025 19:26:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759778785;
+	bh=quimo5ouivxUpUMJUfFCgFEDlaRUcgwrcu89Pfdan7U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KWf2ZncXZChMgbnKxJSXynd4mKkYgjUYsT7AQ59e+vv7FarO2F2HoZ+KPxmclQw2m
+	 W8+kBn/cVr6MdtvFQ7qwLqpjaXEOPvnV4LgwWF1RfPxTGrExbvdmeJk0FJpGJ+yY/8
+	 Vgz3U/sbvIGgvLgbiJk6i6ymWyMwIJ2HXT7AneWRxoSrm+r2K76paPIM6Efz/I8MEV
+	 mtQ43iQtPNpFRerys4FCKO+GkF9gBoZ0CorxAnK3Bn0vJQETusdWeWoV/HSDMHwkbe
+	 49sOvnX5V4f6MVPTpfwqWmEMJ4/SuHXWjWPPX/OoDN9NGmdaimJ1Lh0YHg9xfjDv9d
+	 UxJCXWmzsuHUA==
+Date: Mon, 6 Oct 2025 19:26:22 +0000
+From: Eric Biggers <ebiggers@kernel.org>
+To: Vegard Nossum <vegard.nossum@oracle.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+	Theodore Ts'o <tytso@mit.edu>, "nstange@suse.de" <nstange@suse.de>,
+	"Wang, Jay" <wanjay@amazon.com>
+Subject: Re: 6.17 crashes in ipv6 code when booted fips=1 [was: [GIT PULL]
+ Crypto Update for 6.17]
+Message-ID: <20251006192622.GA1546808@google.com>
+References: <562363e8-ea90-4458-9f97-1b1cb433c863@kernel.org>
+ <8bb5a196-7d55-4bdb-b890-709f918abad0@kernel.org>
+ <1a71398e-637f-4aa5-b4c6-0d3502a62a0c@kernel.org>
+ <f31dbb22-0add-481c-aee0-e337a7731f8e@oracle.com>
+ <20251002172310.GC1697@sol>
+ <2981dc1d-287f-44fc-9f6f-a9357fb62dbf@oracle.com>
+ <CAHk-=wjcXn+uPu8h554YFyZqfkoF=K4+tFFtXHsWNzqftShdbQ@mail.gmail.com>
+ <3b1ff093-2578-4186-969a-3c70530e57b7@oracle.com>
+ <CAHk-=whzJ1Bcx5Yi5JC57pLsJYuApTwpC=WjNi28GLUv7HPCOQ@mail.gmail.com>
+ <e1dc974a-eb36-4090-8d5f-debcb546ccb7@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251003232606.4070510-1-seanjc@google.com> <20251003232606.4070510-14-seanjc@google.com>
- <diqz5xcrgaa5.fsf@google.com>
-Message-ID: <aOQXhJyTXHt8Kw7F@google.com>
-Subject: Re: [PATCH v2 13/13] KVM: selftests: Verify that reads to
- inaccessible guest_memfd VMAs SIGBUS
-From: Sean Christopherson <seanjc@google.com>
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>, 
-	Fuad Tabba <tabba@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e1dc974a-eb36-4090-8d5f-debcb546ccb7@oracle.com>
 
-On Mon, Oct 06, 2025, Ackerley Tng wrote:
-> Sean Christopherson <seanjc@google.com> writes:
-> 
-> > Expand the guest_memfd negative testcases for overflow and MAP_PRIVATE to
-> > verify that reads to inaccessible memory also get a SIGBUS.
-> >
-> > Opportunistically fix the write path to use the "val" instead of hardcoding
-> > the literal value a second time, and to use TEST_FAIL(...) instead of
-> > TEST_ASSERT(false, ...).
-> >
-> 
-> The change the use "val" isn't in this patch, and I think the
-> TEST_FAIL() change was intended for another earlier patch.
+On Mon, Oct 06, 2025 at 09:11:41PM +0200, Vegard Nossum wrote:
+> The fact is that fips=1 is not useful if it doesn't actually result
+> something that complies with the standard; the only purpose of fips=1 is
+> to allow the kernel to be used and certified as a FIPS module.
 
-Yep.  I originally had the TEST_ASSERT => TEST_FAIL change in this patch, and
-forgot all about the changelog when I added the SIGBUS "catch".
+Don't all the distros doing this actually carry out-of-tree patches to
+fix up some things required for certification that upstream has never
+done?  So that puts the upstream fips=1 support in an awkward place,
+where it's always been an unfinished (and undocumented) feature.
 
-Thanks!
+- Eric
 
