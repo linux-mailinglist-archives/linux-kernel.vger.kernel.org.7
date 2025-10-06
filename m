@@ -1,123 +1,151 @@
-Return-Path: <linux-kernel+bounces-843597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31C65BBFCB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 01:46:30 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30C2BBBFCB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 01:52:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 252B11896F45
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 23:46:53 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9ADAF34A623
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 23:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66F56F06B;
-	Mon,  6 Oct 2025 23:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1225207A38;
+	Mon,  6 Oct 2025 23:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKvFIIZo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JCQ2UMea"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3FE4204E
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 23:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E208CA4B
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 23:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759794383; cv=none; b=N4xG2AvfT2Ne2bacVJ+EV1jG4wlFVinPg77bbopcYxjg7zLpA5H4JgYxPWcJ7hq677bUsN6pIRvgh/vsYgI5fBsC82PoMJ8bXGaWJwvHhlM7VaAhtEOOQXBS8tow7G51oxc5llWUnzxMe3140S4pN2EvY9ucYdvYXwNox8s83uY=
+	t=1759794770; cv=none; b=TSva7JJI/S8I23e6H0Jxjwe0srQBdXoeKpGhcA1KNy1aIk5SijDJC1m2EqNIpKziWTzpecOc09iXiDi9RLfsVZhxJMe82xLKniEp/8UXreRzIMw8GQL5IcezRtN136+YlchhnB7DgDErFunRQFeGt+1eWZw+ShhkhOx8LqGvtNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759794383; c=relaxed/simple;
-	bh=DI5307X01YY+aSgpiw1sHT8lbRJrsLbNU3nv0IkXloE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HEJXYAIM2bed7yv8wEL5aM+7me3f6cw9QCSGZ8TILhK1QGojhtKnusa+0IlyXfrKg//x1IV+buvruCEQEkSmgarhpKyPKVvoChQ4KIYWcHgfwYrlW04VfXrcekpt60q0oSPAn6GTmkPlN6PsWTP7zPy1+D3XO5aVAacDWTEbfWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OKvFIIZo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACAEBC113D0
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 23:46:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759794382;
-	bh=DI5307X01YY+aSgpiw1sHT8lbRJrsLbNU3nv0IkXloE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=OKvFIIZoRi0LpBPdTV8Kx1P18NQQA+SjQev3uvKjk18HPjfFOMqKin3dR7bQ0hmkk
-	 BeUW1/eCdJod9iHOXmxf5MSNOmIQWkji0g/u+AhlY0rdcs6u3BOsEjdf7aGtz+7Wgl
-	 o0UsD22nzrgaDhRKAtEwVuC4FnTxoVDQmtlJc8QF+yEFQoF/PMOh/jaqC0J55cCPHi
-	 4r8HfZ/LLDvSupLXMPJx4w/WMQdDvzCQd2BcJanO1XiLZtcn4VuzCNP4p/YCXz2EJJ
-	 mNfm1L0cvcSIIWjHPBQrTRzX/3vUFH4VjefoB9oVHNi8AO1/orapA84T0MDTlfnEy3
-	 X4TXI5NmFzwew==
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-36639c30bb7so49482751fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 16:46:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU9u2Ysb5jTqXDDYiZf9grvj9BUJuxUcyEKGqUz1Zilim2WwlfpHk63FHbQ+HvMXahcLaiPK61Hsn+HBSk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7kXkSIyJEi5CCGbXyhAzw1qqiFlha013nolvOH6w43g2iqF2O
-	SjyUsZNkXUOaRJnnmpzqiyMBuV3qc4eY3p551+GvkPj+qpyoRgZ3TbSxjLl1leahU+7K0hiOjJm
-	/Xw7luXBlS4xkblaIueOeFlqoSit1iWM=
-X-Google-Smtp-Source: AGHT+IHyvFvoeGr40G3kZ7whYFBDihuxtMO4/vgOVFvYBnjqmXXCXOzZUwFZ12WiEap229737Koq6XBMGJvl3PK5iDo=
-X-Received: by 2002:a05:651c:544:b0:360:99c:e44a with SMTP id
- 38308e7fff4ca-374c371c08bmr43001041fa.11.1759794381063; Mon, 06 Oct 2025
- 16:46:21 -0700 (PDT)
+	s=arc-20240116; t=1759794770; c=relaxed/simple;
+	bh=WCUKFNV9pB2HHiGXvox0lNS0cxJuEqyCXiERPvgsXT4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HnVboe45eQSA2hBZvByfNzg0eMLfaxWYC/3ZKU3dhV5J6BxVYIL1kFovuCFgOcK/JDHvWjd7LbgNqQUgKUmGJZ6Y0UlnTGz/E0Vydh9L8RNpZ/0kp0R7hhsxYdNqa5zk2+qLGJR30qxwsA6HDkvUoQfihrtuuGgWIyKDzkN9f4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JCQ2UMea; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759794756;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WCUKFNV9pB2HHiGXvox0lNS0cxJuEqyCXiERPvgsXT4=;
+	b=JCQ2UMea2wNbBv+MsAu1MjQcoFWbbExLj4kIDJJ3yije2EJP5s/UKafwWfgrhCH52KkRrn
+	fCeFW0gYdQSat/OfaAQL3jGUClrKvovbnWe2a8uj5S4jl+VkKqQ/WscTZGcnZIoIegSRtN
+	bo2rFN2ywB5fu9PKFArPOXAjoOibACI=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>,  Alexei Starovoitov
+ <alexei.starovoitov@gmail.com>,  Kumar Kartikeya Dwivedi
+ <memxor@gmail.com>,  linux-mm <linux-mm@kvack.org>,  bpf
+ <bpf@vger.kernel.org>,  Suren Baghdasaryan <surenb@google.com>,  Johannes
+ Weiner <hannes@cmpxchg.org>,  Michal Hocko <mhocko@suse.com>,  David
+ Rientjes <rientjes@google.com>,  Matt Bobrowski
+ <mattbobrowski@google.com>,  Song Liu <song@kernel.org>,  Alexei
+ Starovoitov <ast@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>,
+  LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 01/14] mm: introduce bpf struct ops for OOM handling
+In-Reply-To: <CAEf4BzafXv-PstSAP6krers=S74ri1+zTB4Y2oT6f+33yznqsA@mail.gmail.com>
+	(Andrii Nakryiko's message of "Mon, 6 Oct 2025 16:21:24 -0700")
+References: <20250818170136.209169-1-roman.gushchin@linux.dev>
+	<20250818170136.209169-2-roman.gushchin@linux.dev>
+	<CAP01T76AUkN_v425s5DjCyOg_xxFGQ=P1jGBDv6XkbL5wwetHA@mail.gmail.com>
+	<87ms7tldwo.fsf@linux.dev>
+	<1f2711b1-d809-4063-804b-7b2a3c8d933e@linux.dev>
+	<87wm6rwd4d.fsf@linux.dev>
+	<ef890e96-5c2a-4023-bcb2-7ffd799155be@linux.dev>
+	<CAADnVQ+LGbXXHHTbBB9b-RjAXO4B6=3Z=G0=7ToZVuH61OONWA@mail.gmail.com>
+	<87iki0n4lm.fsf@linux.dev>
+	<a76ad1e9-07d5-4ba1-83e4-22fe36a32df0@linux.dev>
+	<877bxb77eh.fsf@linux.dev>
+	<CAEf4BzafXv-PstSAP6krers=S74ri1+zTB4Y2oT6f+33yznqsA@mail.gmail.com>
+Date: Mon, 06 Oct 2025 16:52:26 -0700
+Message-ID: <871pnfk2px.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251006-arm64-text-offset-v1-1-bf0e8a27383b@oss.qualcomm.com> <aOPLv_-f5sNGtG4e@willie-the-truck>
-In-Reply-To: <aOPLv_-f5sNGtG4e@willie-the-truck>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 7 Oct 2025 01:46:08 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHhetfN_bY5AAqqfC4=N9yQCO5R_n7H0BMXZ2VXudv5pQ@mail.gmail.com>
-X-Gm-Features: AS18NWCf2njkvOwODgn8kpQQmCSEMJuBMgh3f5ZuQwXggeLdvTDI9CwNbJxtZGw
-Message-ID: <CAMj1kXHhetfN_bY5AAqqfC4=N9yQCO5R_n7H0BMXZ2VXudv5pQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: head: set TEXT_OFFSET to the historical value
-To: Will Deacon <will@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, David Heidelberg <david@ixit.cz>, 
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	mark.rutland@arm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 6 Oct 2025 at 16:01, Will Deacon <will@kernel.org> wrote:
->
-> [+Ard and Mark]
->
-> On Mon, Oct 06, 2025 at 01:21:04AM +0300, Dmitry Baryshkov wrote:
-> > From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >
-> > Historically arm64 kernel contained (almost fixed) value of 0x8000 at
->
-> 0x8000 or 0x80000?
->
-> > the TEXT_OFFSET. The commit cfa7ede20f13 ("arm64: set TEXT_OFFSET to 0x0
-> > in preparation for removing it entirely") and then commit 120dc60d0bdb
-> > ("arm64: get rid of TEXT_OFFSET") replaced this field with 0.
->
-> Given that we made the initial change over five years ago, I'm struggling
-> to see why we should start caring about old broken bootloaders _now_.
->
-> In fact, I'm far more concerned about changing this to a non-zero value
-> and having more recent bootloaders misbehave.
->
-> > This caused no problems so far, because nobody seemed to be playing with
-> > the extremely picky Qualcomm bootloader as used on some of Google Pixel
-> > phones. Current attempting to boot the Linux kernel on those devices
-> > will fail to load on those phones with the following message:
-> >
-> > KernelDecompress failed: Invalid Parameter Kernel TextOffset does not match
-> > Error calling BootPrepareAsync Invalid Parameter
-> >
-> > Since the kernel ignores the field, set it to the expected value of
-> > 0x8000, unbreaking boot of upstream kernels on Qualcomm devices.
->
-> (same typo)
->
+Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
 
-Just setting the header field and not updating the base address also
-means that the boot breaks without CONFIG_RELOCATABLE, and you will
-get a warning in the kernel log about the load address not being
-aligned to 2 MiB.
+> On Fri, Oct 3, 2025 at 7:01=E2=80=AFPM Roman Gushchin <roman.gushchin@lin=
+ux.dev> wrote:
+>>
+>> Martin KaFai Lau <martin.lau@linux.dev> writes:
+>>
+>> > On 9/2/25 10:31 AM, Roman Gushchin wrote:
+>> >> Btw, what's the right way to attach struct ops to a cgroup, if there =
+is
+>> >> one? Add a cgroup_id field to the struct and use it in the .reg()
+>> >
+>> > Adding a cgroup id/fd field to the struct bpf_oom_ops will be hard to
+>> > attach the same bpf_oom_ops to multiple cgroups.
+>> >
+>> >> callback? Or there is something better?
+>> >
+>> > There is a link_create.target_fd in the "union bpf_attr". The
+>> > cgroup_bpf_link_attach() is using it as cgroup fd. May be it can be
+>> > used here also. This will limit it to link attach only. Meaning the
+>> > SEC(".struct_ops.link") is supported but not the older
+>> > SEC(".struct_ops"). I think this should be fine.
+>>
+>> I thought a bit more about it (sorry for the delay):
+>> if we want to be able to attach a single struct ops to multiple cgroups
+>> (and potentially other objects, e.g. sockets), we can't really
+>> use the existing struct ops's bpf_link.
+>>
+>> So I guess we need to add a new .attach() function beside .reg()
+>> which will take the existing link and struct bpf_attr as arguments and
+>> return a new bpf_link. And in libbpf we need a corresponding new
+>> bpf_link__attach_cgroup().
+>>
+>> Does it sound right?
+>>
+>
+> Not really, but I also might be missing some details (I haven't read
+> the entire thread).
+>
+> But conceptually, what you describe is not how things work w.r.t. BPF
+> links and attachment.
+>
+> You don't attach a link to some hook (e.g., cgroup). You attach either
+> BPF program or (as in this case) BPF struct_ops map to a hook (i.e.,
+> cgroup), and get back the BPF link. That BPF link describes that one
+> attachment of prog/struct_ops to that hook. Each attachment gets its
+> own BPF link FD.
+>
+> So, there cannot be bpf_link__attach_cgroup(), but there can be (at
+> least conceptually) bpf_map__attach_cgroup(), where map is struct_ops
+> map.
 
-So I don't think this is the right solution.
+I see...
+So basically when a struct ops map is created we have a fd and then
+we can attach it (theoretically multiple times) using BPF_LINK_CREATE.
 
-If this is really something that needs to be fixed upstream, we should
-just bring back TEXT_OFFSET in its entirety, but I'm not convinced
-that this is really justified here. As a workaround, you could just
-add 2 MiB - 0x80000 bytes of padding at the start of the image, and
-add your own header (as Will alludes to as well)
+>
+> Having said that, we do have bpf_map__attach_struct_ops() already
+> (it's using BPF_LINK_CREATE command under the hood), and so perhaps
+> the right way is to have bpf_map__attach_struct_ops_opts() API, which
+> will accept optional extra attachment parameters which will be passed
+> into bpf_attr.link_create.struct_ops section of UAPI. That thing can
+> have target FD, where FD is cgroup/task/whatever we need to specify
+> attachment target. Just like we do that for BPF program's
+> BPF_LINK_CREATE, really.
+
+Yes, this sounds good to me!
+
+Thanks you for the clarification.
 
