@@ -1,107 +1,159 @@
-Return-Path: <linux-kernel+bounces-842633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F625BBD342
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 09:22:04 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A3F7BBD35A
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 09:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2C5104E6781
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 07:22:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2278F4E5A9D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 07:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6044257829;
-	Mon,  6 Oct 2025 07:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C882571CD;
+	Mon,  6 Oct 2025 07:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="wZP6kRgK"
-Received: from r3-20.sinamail.sina.com.cn (r3-20.sinamail.sina.com.cn [202.108.3.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L6h2Ce3Y"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7A12405F8
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 07:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69B4231829
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 07:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759735318; cv=none; b=F/6WvVsz0lfrmmft3sN+zOv3OAcMY6EWUX+N+zI6tWsvDl8+WunAhPhBvqciJRqRZ2HwnoSRbL7FfGcqmIplGeMT3IEwGwXSlziHm6QpAL6ewc0KuTFX56VshtgBimk8FJJYtWaFZtdpPWgBX/BkpNwkP+u20aJMlomYV9nlu6c=
+	t=1759735618; cv=none; b=X/HnC1wzMcxk7OG+EoYuJxMViDsWjjWUiMoBRJqdr6DGkmGjJP4+50VNWwwnIe8Bn7W54O2EauEQgfUpLVIC4HNvlJMpHlkvIPEamNaHXDkLxIZdsY29E4GJ2mR4IhZcMJamvc971O5JdT9OHuK2ce/KL+xRg/Thsefi8gAfoDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759735318; c=relaxed/simple;
-	bh=IS8FP+HFTGX/hKWw0IiRmebLsU4ORkTaoZ293YLvHA8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V/OiRz0tN/1H68Q7mRqFXGzekhjlw/y2SR/AKjwER08Cafu1cYl5XJtQ03Ub3leRKxYS7ja3w6MR9miCjZqkUTULDvTjugx77wYPbxY1RQ4rh8+0f/8J7MPWOnffC4XIOTalqf3OVpw+9TSW+e/+w7qbU4/qkvxnYDLkhCaqtrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=wZP6kRgK; arc=none smtp.client-ip=202.108.3.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1759735314;
-	bh=l+4oQF7uaD56NnROc22RBOL/qGGAHvdKqWFp59zG2xk=;
-	h=From:Subject:Date:Message-ID;
-	b=wZP6kRgKtdiiQizg5DacKpNSj1yAdLKo76AuVqRpXRhhWkSKjsg8qy6S8B7XswyJP
-	 zduxJEXr0+YRkl/itZQjcKLYdF0YdC1oJb94C8bH2qWNwBK/8xl8RigYKL27DOXrV1
-	 k0jLTdEGfSoWt1Ibuug7oQsWckUGpby+OE4VLRTc=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.32) with ESMTP
-	id 68E36E0600006DF5; Mon, 6 Oct 2025 15:21:44 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 3463654456658
-X-SMAIL-UIID: DA3A89ED1FB64D27A9F663C80BDA8ED2-20251006-152144-1
-From: Hillf Danton <hdanton@sina.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: add missing fences to I_NEW handling
-Date: Mon,  6 Oct 2025 15:21:08 +0800
-Message-ID: <20251006072136.8236-1-hdanton@sina.com>
-In-Reply-To: <CAGudoHFi-9qYPnb9xPtGsUq+Mf_8h+uk4iQDo1TggZYPgTv6fA@mail.gmail.com>
-References: 
+	s=arc-20240116; t=1759735618; c=relaxed/simple;
+	bh=ZSV4IFjn5S/793vrMHRESbrBLLit6xDjG7yB+mPfIgo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HuGMUpoxr8OZjWOYkdIP5iLu6/GwlNMyU1Bkfg1PI/7kJZnGYzdp66Xgi+YSc69uRbwwLISUlE3LSjk0G5FuqijUCVoxFPiHJK4X6WrJKg6pW1gr3ROAFzH0Dn0eN+pAUzGswxgUqLZ69QqT5fxoDur1Up1VLn0Ekl+JNeKAV00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L6h2Ce3Y; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3ee13baf2e1so3162765f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 00:26:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759735615; x=1760340415; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DrN7ZozqF/Mn/6ehte6QeL3Mcq45F8goFBLH3ErZr3c=;
+        b=L6h2Ce3YzQOk9NgQtoOgWG6xecEqn7Hegdb5iKv4pmUQ1M6fXJM4pVylN6poKH6hf5
+         BXcAv4OOJL6I4/jzGpHqZLO6XKVQ5R01FgKINBZwrpFev841t/LAaBSYnzXMVoe62FtA
+         pGS+l9o+/1Fmej+6rAWcJ0LPNlyo8hdFCMXp6wzlb3zux0Bs51GIAhA+Rop4clQMjI0B
+         ZuOoL6Zc01tRIrjsZUuV93rycq3PAGw2wkhnS5zmxALRBBlTwSTvSaYEP4NLnr//IYXf
+         9KwUPaG6O2TBku44Yl4zip61DgotyPu2SrGsIpUupCw4Nuqc6kEX8LdlMqO4YIfKe0BJ
+         e7Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759735615; x=1760340415;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DrN7ZozqF/Mn/6ehte6QeL3Mcq45F8goFBLH3ErZr3c=;
+        b=e3pnXR5ByG36vE6rPfOR4hqbOKWtTmyXR9gqpR6VT2LgmkgJYcDmZgRY/QrpQN+ZoH
+         zrOCTbAXeNBSJuPGLueIUxPFFCnWLsTl3qWjXSWmoeJoXlmVaX+qQFQnoZQsU78KdCts
+         kXmKsjHHyAPXukNF1HDnLkK9sDRWd1okYlaq22zioVOypNnWuSyq6KL2cFuG9DPWF+Kf
+         CCC50AW15PFijW7Rb8oSRHDvB3HcrsSaWpFiJ2knPi12lXvZIXiG/0XLEw52QfyqR2zw
+         0aWBwcN6WTqF4ojD9lmnI2yF4wNfG7T5/qNbARTTGQN98WsLKi0tTXvYuSPvOJH85WEL
+         KEjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUl19ahTk8ogn+ji0upxMDCK6gjc74TDiT2pCJwIx4+kYawmOWMMqmxuWeeEQFa9qYaY6jicb+OEyo6J/0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO95yB/OCynuOIx33C+tZHss7c0uIA2DGg1khyE4VNKUdAmz4K
+	HZJMuYFYC07e5J+dnVl8Gpzcidh/XCdqClpggXRKMWfag5D8SdadwKRpQaa6Iq+48e1xllvOdF3
+	VZGdu
+X-Gm-Gg: ASbGncujfwkaCvbNwEzM7CT6BEz5gKJ19OM/+2ucFNFPHm/XN5Wx6YmAKHIWvhe6sVR
+	kxDZZnYPccjK8arEizl1kF8nfbfMmh9t45GBaojn5//mD6t8Xnpc2PuX1YWUd3mx0wAM26+HM/R
+	pBg2Ep96/1f3ufTUb6SdNkb07zR6zIp8IDEqFOyxuKAXCK1jXGTAZMyilQaGTBrZWWukNQjwd0O
+	CDQHEfWZUoDNvpwRm7z1WVzFD5RxIH47iNq9BHHzGFIbvVjbNw1dDO2GG6amPPvNTTIHSu9RNSn
+	T6fa98Y5jS66GNsaZkD+UFOSMuNEJCxl+EX2KVeCGMmy2guWb3VQswiILNJrApj2N+HZXS6Nlka
+	DUjEbEX5vmfRfbNOH5du42x/py3XJUf9q0EfWqQlIx3fmzcPE8mEA8aIHf1MosmMjHb8=
+X-Google-Smtp-Source: AGHT+IG2XBqil6G6TC4mt93U+4Uu572R8R0hylqEdTrhXnnJpQZ4j3fC83aTn/veVeHYslgxQyxt+A==
+X-Received: by 2002:a05:6000:1847:b0:425:75b7:4b67 with SMTP id ffacd0b85a97d-42575b74b70mr3419997f8f.58.1759735614851;
+        Mon, 06 Oct 2025 00:26:54 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4255d8e960asm19393087f8f.37.2025.10.06.00.26.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 00:26:54 -0700 (PDT)
+Date: Mon, 6 Oct 2025 10:26:50 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Rohan Tripathi <trohan2000@gmail.com>
+Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] staging: rtl8723bs: clean up lines ending with '('
+ in rtw_ap.c
+Message-ID: <aONvOsbVxGYKZnvD@stanley.mountain>
+References: <20251005155920.381334-1-trohan2000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251005155920.381334-1-trohan2000@gmail.com>
 
-On Mon, 6 Oct 2025 03:16:43 +0200 Mateusz Guzik wrote:
-> On Mon, Oct 6, 2025 at 2:57 AM Hillf Danton <hdanton@sina.com> wrote:
-> > On Mon,  6 Oct 2025 01:15:26 +0200 Mateusz Guzik wrote:
-> > > Suppose there are 2 CPUs racing inode hash lookup func (say ilookup5())
-> > > and unlock_new_inode().
-> > >
-> > > In principle the latter can clear the I_NEW flag before prior stores
-> > > into the inode were made visible.
-> > >
-> > Given difficulty following up here, could you specify why the current
-> > mem barrier [1] in unlock_new_inode() is not enough?
-> >
-> That fence synchronizes against threads which went to sleep.
+On Sun, Oct 05, 2025 at 11:59:16AM -0400, Rohan Tripathi wrote:
+> This patch fixes coding style issues where lines ended with an opening
+> parenthesis. These expressions were reformatted so that opening
+> parentheses remain on the same line as the statement, with proper
+> alignment of continued arguments.
 > 
-> In the example I'm providing this did not happen.
+> This is a coding style cleanup only. No functional changes.
 > 
->   193 static inline void wait_on_inode(struct inode *inode)
->   194 {
->   195         wait_var_event(inode_state_wait_address(inode, __I_NEW),
->   196                       !(READ_ONCE(inode->i_state) & I_NEW));
-> 
->   303 #define wait_var_event(var, condition)                                  \
->   304 do {                                                                    \
->   305         might_sleep();                                                  \
->   306         if (condition)                                                  \
->   307                 break;                                                  \
-> 
-> I_NEW is tested here without any locks or fences.
-> 
-Thanks, got it but given the comment of the current mem barrier in
-unlock_new_inode(), why did peterZ/Av leave such a huge chance behind?
+> Signed-off-by: Rohan Tripathi <trohan2000@gmail.com>
+> ---
 
-The condition check in wait_var_event() matches waitqueue_active() in
-__wake_up_bit(), and both make it run fast on both the waiter and the
-waker sides, no?
+This needs to be marked as a v2:
+https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
+
+>  drivers/staging/rtl8723bs/core/rtw_ap.c | 250 +++++++++++-------------
+>  1 file changed, 109 insertions(+), 141 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8723bs/core/rtw_ap.c b/drivers/staging/rtl8723bs/core/rtw_ap.c
+> index 0908f2234f67..93ab0015ca89 100644
+> --- a/drivers/staging/rtl8723bs/core/rtw_ap.c
+> +++ b/drivers/staging/rtl8723bs/core/rtw_ap.c
+> @@ -480,14 +480,13 @@ void update_sta_info_apmode(struct adapter *padapter, struct sta_info *psta)
+>  		/* check if sta supports rx ampdu */
+>  		phtpriv_sta->ampdu_enable = phtpriv_ap->ampdu_enable;
+>  
+> -		phtpriv_sta->rx_ampdu_min_spacing = (
+> -			phtpriv_sta->ht_cap.ampdu_params_info & IEEE80211_HT_CAP_AMPDU_DENSITY
+> -		) >> 2;
+> +		phtpriv_sta->rx_ampdu_min_spacing =
+> +		(phtpriv_sta->ht_cap.ampdu_params_info &
+> +		 IEEE80211_HT_CAP_AMPDU_DENSITY) >> 2;
+
+No, still not nice.  I think I would go over 80 characters.
+
+	phtpriv_sta->rx_ampdu_min_spacing = (phtpriv_sta->ht_cap.ampdu_params_info &
+					     IEEE80211_HT_CAP_AMPDU_DENSITY) >> 2;
+
+Another option would be to do:
+
+	phtpriv_sta->rx_ampdu_min_spacing =
+			(phtpriv_sta->ht_cap.ampdu_params_info &
+			 IEEE80211_HT_CAP_AMPDU_DENSITY) >> 2;
+
+> @@ -498,15 +497,13 @@ void update_sta_info_apmode(struct adapter *padapter, struct sta_info *psta)
+>  		phtpriv_sta->ch_offset = pmlmeext->cur_ch_offset;
+>  
+>  		/* check if sta support s Short GI 20M */
+> -		if ((
+> -			phtpriv_sta->ht_cap.cap_info & phtpriv_ap->ht_cap.cap_info
+> -		) & cpu_to_le16(IEEE80211_HT_CAP_SGI_20))
+> +		if ((phtpriv_sta->ht_cap.cap_info & phtpriv_ap->ht_cap.cap_info) &
+> +		cpu_to_le16(IEEE80211_HT_CAP_SGI_20))
+
+This needs to be done like so:
+
+		if ((phtpriv_sta->ht_cap.cap_info & phtpriv_ap->ht_cap.cap_info) &
+		    cpu_to_le16(IEEE80211_HT_CAP_SGI_20))
+
+[tab][tab][space][space][space][space]cpu_to_le16(IEEE80211_HT_CAP_SGI_20))
+
+You get the idea.  Same for the rest of the patchset.
+
+regards,
+dan carpenter
+
 
