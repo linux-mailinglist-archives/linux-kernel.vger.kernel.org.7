@@ -1,180 +1,142 @@
-Return-Path: <linux-kernel+bounces-842992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 223AFBBE25F
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:13:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A934BBE26A
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:16:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 63F7B34AC61
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:13:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8F4E3BBADC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ABD929B200;
-	Mon,  6 Oct 2025 13:13:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB052C234C;
+	Mon,  6 Oct 2025 13:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ilvokhin.com header.i=@ilvokhin.com header.b="l3eGI8Us"
-Received: from mail.ilvokhin.com (mail.ilvokhin.com [178.62.254.231])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="CVk8qiBu"
+Received: from smtp153-166.sina.com.cn (smtp153-166.sina.com.cn [61.135.153.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072CA28CF42
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 13:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.62.254.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A610285C8A
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 13:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759756401; cv=none; b=Ma0+9XkKLNSswLCDDyxgPz8ghYNnfGQLu8HdSTCcZdV6J78qAXco0ktgzzHeJGOnrYLzsKwPTNIEPbX2qeEevkkBRkKbWYHnr68DNIIREqyWbKPogctlabF9NxCp7hVvMUE+FR2QwZl+A00DZJ7mFEUYKPn61hRkWLC7iO2G7ZI=
+	t=1759756570; cv=none; b=eN+UjKLdzEk+6gc7AfF1qyKCXO+rhHDv9aYzCb1khkzt2brmAFAm/cY6PSgJ+0wbZnZPeuawM79RtEUE2Q9YEuV3bYdqv3BJp1woZcKXXzeSDIBIxgq4cplpSErbg1hNR+8Oh2gORtuvOWS5jTWQZFyXDgFHIZqyJGoWUKmbVQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759756401; c=relaxed/simple;
-	bh=1UEEWkH5//PrU6Nrh0T/VNYOo6LAPA69+n94q5/dC3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qs0CDcaXfx29v10c09AKAPYzNsCEJ/otFQyiiVEurZzgYSgbbCF9uQ9VeYlhdN5rXds35JMBSQensHUt6Lmj0C/cMcpGpTaDImv5V7Gc1HhA0aOYIGqi0MDGiWsC14XihBqFhYXD7mGiTScIxvmhz22QLbqa1fualvhLqQe8unI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com; spf=pass smtp.mailfrom=ilvokhin.com; dkim=pass (1024-bit key) header.d=ilvokhin.com header.i=@ilvokhin.com header.b=l3eGI8Us; arc=none smtp.client-ip=178.62.254.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ilvokhin.com
-Received: from shell.ilvokhin.com (shell.ilvokhin.com [138.68.190.75])
-	(Authenticated sender: d@ilvokhin.com)
-	by mail.ilvokhin.com (Postfix) with ESMTPSA id E921E92EFE;
-	Mon, 06 Oct 2025 13:13:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ilvokhin.com;
-	s=mail; t=1759756397;
-	bh=hr1104ycRcsIOhou1aWTfKsVmRoAhTvW0HOxhU8+Ze0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=l3eGI8UsFrKDophnQmoitZ7Bot8B/Y3z/mfTGaDPGlYmKV4M3WyP2Y6ILAxAzzPfU
-	 y4ogsiKwug6iSlcJkWwJwBecKxAN5FMxZ+wvGszHOg6iy9UxLcBvzrmTs9tYHuqs1V
-	 o5dxZeOKkey/PoHSciSxIJ+X0jYVCd9ZCtsVEcXI=
-Date: Mon, 6 Oct 2025 13:13:15 +0000
-From: Dmitry Ilvokhin <d@ilvokhin.com>
-To: Kiryl Shutsemau <kas@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Kemeng Shi <shikemeng@huaweicloud.com>,
-	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
-	Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>,
-	Chris Li <chrisl@kernel.org>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
-	Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH] mm: skip folio_activate() for mlocked folios
-Message-ID: <aOPAay5im1lJhHFm@shell.ilvokhin.com>
-References: <aN_bix3wDpwYPoVp@shell.ilvokhin.com>
- <hnpzad4aehmp6ncgwhlinzx55z3zst5dlkhsjphpazccy5lzpv@hfj2eyewuplz>
- <aOOxAtD9oeiYlo7G@shell.ilvokhin.com>
+	s=arc-20240116; t=1759756570; c=relaxed/simple;
+	bh=u3cKwQ/hTEFRDr4aDr8z7FfCeyXmAvEuSX0PEbU89WQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fqCFP5TEFPNEGaooYpvCPZqxXd+ZrVRrCVMoBO6BVfI2uxlRBHSZnuHHpfdGiimfaNBBLZiQByst7xu8y3tTUyqDjUbL6XFufafiGKMOg3mOagX0IqxZ/Dr9c0nfOy1hR6C67GksHAhHhEYm0YuejiHvFNF4hR6Z9eyM68eg32I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=CVk8qiBu; arc=none smtp.client-ip=61.135.153.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1759756561;
+	bh=fgLvmbN/6fP7SxWS3f2gpTaHJkF8Nxr/COMwyxv8VTw=;
+	h=From:Subject:Date:Message-ID;
+	b=CVk8qiBuEfe4t3Br2uaeI90X6CHQDdd5IeeVXvOtCqUFLOcOHc2TglLGCUTkOniBD
+	 wiz2vSy+XOID/HleUf9pAoRO895bfXuwSxCuNObRC6yEj/vxAAMn4VDynSdXrOBUPx
+	 3TVsbVDtbtG8aBCLaVFBMlVgfB2hpfdEYgYC2Ic4=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.33) with ESMTP
+	id 68E3C106000075F8; Mon, 6 Oct 2025 21:15:52 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 4891596685193
+X-SMAIL-UIID: 0E362BD497144BB5BF50782985302B98-20251006-211552-1
+From: Hillf Danton <hdanton@sina.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: add missing fences to I_NEW handling
+Date: Mon,  6 Oct 2025 21:15:38 +0800
+Message-ID: <20251006131543.8283-1-hdanton@sina.com>
+In-Reply-To: <CAGudoHFai7eUj3W-wW_8Cb4HFhTH3a=_37kT-eftP-QZv7zdPg@mail.gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aOOxAtD9oeiYlo7G@shell.ilvokhin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 06, 2025 at 12:07:48PM +0000, Dmitry Ilvokhin wrote:
-> On Fri, Oct 03, 2025 at 03:41:05PM +0100, Kiryl Shutsemau wrote:
-> > On Fri, Oct 03, 2025 at 02:19:55PM +0000, Dmitry Ilvokhin wrote:
-> > > __mlock_folio() should update stats, when lruvec_add_folio() is called,
-> > 
-> > The update of stats is incidental to moving to unevicable LRU. But okay.
-> > 
-> 
-> Good point. I'll rephrase commit message in terms of unevicable
-> LRU instead of stat updates in v2.
-> 
-> > > but if folio_test_clear_lru() check failed, then __mlock_folio() gives
-> > > up early. From the other hand, folio_mark_accessed() calls
-> > > folio_activate() which also calls folio_test_clear_lru() down the line.
-> > > When folio_activate() successfully removed folio from LRU,
-> > > __mlock_folio() will not update any stats, which will lead to inaccurate
-> > > values in /proc/meminfo as well as cgroup memory.stat.
-> > > 
-> > > To prevent this case from happening also check for folio_test_mlocked()
-> > > in folio_mark_accessed(). If folio is not yet marked as unevictable, but
-> > > already marked as mlocked, then skip folio_activate() call to allow
-> > > __mlock_folio() to make all necessary updates.
-> > > 
-> > > To observe the problem mmap() and mlock() big file and check Unevictable
-> > > and Mlocked values from /proc/meminfo. On freshly booted system without
-> > > any other mlocked memory we expect them to match or be quite close.
-> > > 
-> > > See below for more detailed reproduction steps. Source code of stat.c
-> > > is available at [1].
-> > > 
-> > >   $ head -c 8G < /dev/urandom > /tmp/random.bin
-> > > 
-> > >   $ cc -pedantic -Wall -std=c99 stat.c -O3 -o /tmp/stat
-> > >   $ /tmp/stat
-> > >   Unevictable:     8389668 kB
-> > >   Mlocked:         8389700 kB
-> > > 
-> > >   Need to run binary twice. Problem does not reproduce on the first run,
-> > >   but always reproduces on the second run.
-> > > 
-> > >   $ /tmp/stat
-> > >   Unevictable:     5374676 kB
-> > >   Mlocked:         8389332 kB
-> > 
-> > I think it is worth starting with the problem statement.
-> > 
-> > I like to follow this pattern of commit messages:
-> > 
-> > <Background, if needed>
-> > 
-> > <Issue statement>
-> > 
-> > <Proposed solution>
+On Mon, 6 Oct 2025 12:30:01 +0200 Mateusz Guzik wrote:
+> On Mon, Oct 6, 2025 at 9:21 AM Hillf Danton <hdanton@sina.com> wrote:
+> > On Mon, 6 Oct 2025 03:16:43 +0200 Mateusz Guzik wrote:
+> > > That fence synchronizes against threads which went to sleep.
+> > >
+> > > In the example I'm providing this did not happen.
+> > >
+> > >   193 static inline void wait_on_inode(struct inode *inode)
+> > >   194 {
+> > >   195         wait_var_event(inode_state_wait_address(inode, __I_NEW),
+> > >   196                       !(READ_ONCE(inode->i_state) & I_NEW));
+> > >
+> > >   303 #define wait_var_event(var, condition)                                  \
+> > >   304 do {                                                                    \
+> > >   305         might_sleep();                                                  \
+> > >   306         if (condition)                                                  \
+> > >   307                 break;                                                  \
+> > >
+> > > I_NEW is tested here without any locks or fences.
+> > >
+> > Thanks, got it but given the comment of the current mem barrier in
+> > unlock_new_inode(), why did peterZ/Av leave such a huge chance behind?
 > >
+> My guess is nobody is perfect -- mistakes happen.
 > 
-> Thanks for suggestion, v2 commit message will much this pattern.
-> 
-> > > 
-> > > [1]: https://gist.github.com/ilvokhin/e50c3d2ff5d9f70dcbb378c6695386dd
-> > > 
-> > > Co-developed-by: Kiryl Shutsemau <kas@kernel.org>
-> > > Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
-> > > Signed-off-by: Dmitry Ilvokhin <d@ilvokhin.com>
-> > 
-> > Your Co-developed-by is missing. See submitting-patches.rst.
-> > 
-> 
-> I followed an example of a patch submitted by the From: author from
-> submitting-patches.rst. This example doesn't have Co-developed-by tag
-> from the From Author. That's being said, I found both cases usage in the
-> mm commit log, so I'll add mine Co-developed-by tag in the v2.
+I do not think you are so lucky -- the code has been there for quite a while.
 
-Turns out scripts/checkpatch.pl is able to catch that with the following
-message: "Co-developed-by: should not be used to attribute nominal patch
-author", so I'll obey automation suggestion here and will not add mine
-Co-developed-by tag here.
-
+> > The condition check in waitqueue_active() matches waitqueue_active() in
+> > __wake_up_bit(), and both make it run fast on both the waiter and the
+> > waker sides, no?
 > 
-> > > ---
-> > >  mm/swap.c | 10 ++++++++++
-> > >  1 file changed, 10 insertions(+)
-> > > 
-> > > diff --git a/mm/swap.c b/mm/swap.c
-> > > index 2260dcd2775e..f682f070160b 100644
-> > > --- a/mm/swap.c
-> > > +++ b/mm/swap.c
-> > > @@ -469,6 +469,16 @@ void folio_mark_accessed(struct folio *folio)
-> > >  		 * this list is never rotated or maintained, so marking an
-> > >  		 * unevictable page accessed has no effect.
-> > >  		 */
-> > > +	} else if (folio_test_mlocked(folio)) {
-> > > +		/*
-> > > +		 * Pages that are mlocked, but not yet on unevictable LRU.
-> > > +		 * They might be still in mlock_fbatch waiting to be processed
-> > > +		 * and activating it here might interfere with
-> > > +		 * mlock_folio_batch(). __mlock_folio() will fail
-> > > +		 * folio_test_clear_lru() check and give up. It happens because
-> > > +		 * __folio_batch_add_and_move() clears LRU flag, when adding
-> > > +		 * folio to activate batch.
-> > > +		 */
-> > >  	} else if (!folio_test_active(folio)) {
-> > >  		/*
-> > >  		 * If the folio is on the LRU, queue it for activation via
-> > > -- 
-> > > 2.47.3
-> > > 
-> > 
-> > -- 
-> >   Kiryl Shutsemau / Kirill A. Shutemov
+Your quotation here is different from my reply [2]. Weird.
+
+    The condition check in wait_var_event() matches waitqueue_active() in
+    __wake_up_bit(), and both make it run fast on both the waiter and the
+    waker sides, no?
+
+[2] https://lore.kernel.org/lkml/20251006072136.8236-1-hdanton@sina.com/
+
+> So happens the commentary above wait_var_event() explicitly mentions
+> you want an acquire fence:
+>   299  * The condition should normally use smp_load_acquire() or a similarly
+>   300  * ordered access to ensure that any changes to memory made before the
+>   301  * condition became true will be visible after the wait completes.
+
+What is missed is recheck -- adding self on to wait queue with a true condition
+makes no sense.
+
+ * Wait for a @condition to be true, only re-checking when a wake up is
+ * received for the given @var (an arbitrary kernel address which need
+ * not be directly related to the given condition, but usually is).
+> 
+> The commentary about waitqueue_active() says you want and even
+> stronger fence (smp_mb) for that one:
+
+Yes, it matches the current code, so your change is not needed.
+
+>    104  * Use either while holding wait_queue_head::lock or when used for wakeups
+>    105  * with an extra smp_mb() like::
+>    106  *
+>    107  *      CPU0 - waker                    CPU1 - waiter
+>    108  *
+>    109  *                                      for (;;) {
+>    110  *      @cond = true; 			   prepare_to_wait(&wq_head, &wait, state);
+>    111  *      smp_mb();                         // smp_mb() from set_current_state()
+>    112  *      if (waitqueue_active(wq_head))         if (@cond)
+>    113  *        wake_up(wq_head);                      break;
+>    114  *                                        schedule();
+>    115  *                                      }
+>    116  *                                      finish_wait(&wq_head, &wait);
 
