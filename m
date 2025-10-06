@@ -1,214 +1,357 @@
-Return-Path: <linux-kernel+bounces-843572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23EAEBBFBFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 01:10:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8CAFBBFBFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 01:10:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 017244EE5F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 23:09:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3D7C24ED27D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 23:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33B0207A32;
-	Mon,  6 Oct 2025 23:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02711E47C5;
+	Mon,  6 Oct 2025 23:10:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ACd35Qs0"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lj1QRuZZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9202C1DF261
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 23:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759792191; cv=none; b=uX818eKmEoYTFuyQTp0M5n7M6u/AbU/HnTsBRGh46J0/NhT/du12TNxNBy6P2H9QnBUeeYeJwENtD399Z3IqQO/YGlkAby9uUi+nXx49bOd6VF6XIiRDEpOtK0DQ5EJ0YDQKr32/ql9kcTf+7Ieu5XFvRXEm50cNvBqRRbm4a0E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759792191; c=relaxed/simple;
-	bh=NQ8J43I4uNCJEJQ0QsFSMKAS5RFA5CEyKQ6v5lKmyLc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FpwsNTXYMUWUXLo1L77uqUN4gTY3fft4YTHL0G7UFDapKcsLDWTsmYA4ilZz7oI30IBmjCtoCuktZZ+haEBLb5OQpBaaKs+lpgvy9BqJ/rbTo8sTdhUl1FLkOn1uHHaStObcu/+xaT6qhaWirWltPMegrknD5aC2x6SjlHwxL4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ACd35Qs0; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b109c6b9fcso56054441cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 16:09:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759792187; x=1760396987; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=3EJTfcu8h4GhEEKd8FZr25euFK3dzJW/aZJwSSRQB9Y=;
-        b=ACd35Qs0tflW5xK4gwx3MfmO4jWIEj4rT8bVEoZx/sPO4ZoEMIn57TRsRFXG6PaJFy
-         cQoqV5jaN5CFYk8jFkbvr2w9inz4Nas0uovcRIFNpHSdwNY+dbrVdU4hPoOhwp/sbRiO
-         1ocWR4W8gw+g/TWIjKP6wgP2ekGUg5UPinCv8vCxTVmirdcbKI3HKYuTcXwDihUfUd+i
-         8NN7ihRyOCjF/WiwAAB0A62w4TMvD2Z9n8vXnOQ87U4h20hVEyhzJU05Innv4BLzAHfl
-         BIqpaygfc4E+iTZ+67UNiFGseQs/QhdiyIcbNLbQSPOFj/FJICl0odXzrJrqeNyVxEKV
-         1PdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759792187; x=1760396987;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3EJTfcu8h4GhEEKd8FZr25euFK3dzJW/aZJwSSRQB9Y=;
-        b=lApJ828a1eW3UlcWWW+Pz3o350yEVUe2S103FzSwTT1MmTu6rP5cW5tTR3xjUlrrfu
-         rHZPeKJIpr/kcGuK28JC6JRQtoiXpVVJcHeitAPNElNWWAljj0xDnSKOQZr8jzgz+KF6
-         q90dG/gyylCr/DUPMkWWLl8OhHC8ypuO5WwuZv6YF/hoZ/LmHSHcDDPk/bzQIOLM9FZK
-         W78f+PTha8f/xBInkcKE1gsQ5eUJNGVR73hBPHylGJi9egavYJYkLfZDZvj+C73WVLvR
-         SJ1SfNxCmHwZFr0gP1f8CCnIm/hI57+0SbETfN+zH9aehrYBda1Jdy2HqQFWWCgYnoeA
-         bIpg==
-X-Forwarded-Encrypted: i=1; AJvYcCXMZK2AFx3+Pd07rYULtRPlcA7mU9NZ6SIcuEVDCfd5DLjIptRXP8O+iNppbZrhFF3umRgpCRZ4Mgpe2no=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbNNWQJGxA0HyEOKpEpysMnfX7nKp9Pa8eqVEu4rEtsfBhGgb1
-	j7B6m8wUz3iafu2Tsgaf0qDsn7JlQineDdR/KbSoP2p1B5JGL2Uu2O8j
-X-Gm-Gg: ASbGncsb8/o3OD2+5RE/NcwwbMW/IfkN3DhtPeCrMhM5mHQMnDdIYZiQ43QTphZgC3t
-	gzI3bOrHPCFRLdUsl2y9GyOqNQYaWouH/+c7CpJBW3ckm6ax9aUzrhZKlQen8QCq8W+u0pk0IZ+
-	zlfDDAIkmN5g39TsXZDK/oCWgPYAMPXP0oGtz+F1VPeIYCLJ1ZLu4HTUz9DMGM0q4T4lzz6vUPF
-	+9OpzjVOvhh6g6aeRHTZKIA6LBdBa5OfKWtE5H7mUNPWw0r3sDn8nq/eocyFV5x3nKb43PRzTZm
-	x/IwomAEEjD2VvWnbGxqstAsoP9bzmVgQ77K2Y59YMAwbkDabrpFjmU7vQTGUDiL3Sxjnb9lS2R
-	JnevxtVmHI56DkTgmwcrASFNXCTdlbG0xUgMdkmTWtIdP9eO+UZlK6FM057rQglTyQ2TumEY8/d
-	DAv2S9kxD35JCG9J/Gupt68eigI63MvYr2zIpCl61FH7QvwtQ=
-X-Google-Smtp-Source: AGHT+IFreUBAqPeM2h2ornDIoHcelDSJDRklng9KnvFrE/xsqQejPQGKywtCZzD+qAhNnKO9SG6+Wg==
-X-Received: by 2002:ac8:7d8e:0:b0:4b7:9f86:8705 with SMTP id d75a77b69052e-4e576b15df1mr138802431cf.65.1759792187194;
-        Mon, 06 Oct 2025 16:09:47 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e55a34b607sm131310111cf.4.2025.10.06.16.09.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 16:09:46 -0700 (PDT)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 887B0F4006A;
-	Mon,  6 Oct 2025 19:09:45 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Mon, 06 Oct 2025 19:09:45 -0400
-X-ME-Sender: <xms:OUzkaCQ75Y-hcc_LvPhoJ0YN6Xgs0nsh9PWtsv0mylW7vQNHvyVX1Q>
-    <xme:OUzkaAmUpnMh6LBCkU_sV76O5HPD5xqkhXqvTWethJikQUqhadii5q9lwk2vKIFC9
-    MuIghayWuNacFY7CU6kO8z2cBACJY2_DMYepgi_oSq5TuMgJpOw>
-X-ME-Received: <xmr:OUzkaBLPCsvOYl0oh78al3vBl2MQskwS19troTAiNz2wKRO1nv248x_QIMh6mtJ3Q1qtdK7taENqPrpdwl9wTBPLAaCw5F6gzw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdelkeekvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecunecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertd
-    dttddunecuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhm
-    rghilhdrtghomheqnecuggftrfgrthhtvghrnheptdegheelveffudejffegvdelgffhhf
-    elkeeiieefgeevteejvdegveeuffeihefhnecuvehluhhsthgvrhfuihiivgeptdenucfr
-    rghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsoh
-    hnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhg
-    peepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedvud
-    dpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepfihorhhksehonhhurhhoiihkrghn
-    rdguvghvpdhrtghpthhtoheprhhushhtqdhfohhrqdhlihhnuhigsehvghgvrhdrkhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhopehgrg
-    hrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehprhho
-    thhonhhmrghilhdrtghomhdprhgtphhtthhopehlohhsshhinheskhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthht
-    ohepthhmghhrohhsshesuhhmihgthhdrvgguuh
-X-ME-Proxy: <xmx:OUzkaDRba0ULP75wnv53fSYRkJdNYns20KlkrHscX4RE312vaYkLEw>
-    <xmx:OUzkaPQ0Utk0y1dB5o-gqieUeM-tP7w4sVXwMyaWSOcSD0jz9Pnr6w>
-    <xmx:OUzkaFxhqRJ5jZV_eWHsL_c3SeMLTkhl6_3rnwpVDgeg1z3nXrHg_g>
-    <xmx:OUzkaFvj08Mb_nWTPWlrCvauDCMQRZxBY3f4qbOBhhg6aNwwSbWPdA>
-    <xmx:OUzkaEzTHRa-phZDTucTY704fcIZcWxJuFGc1c1DSnfy9p-rtdrayqdR>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 6 Oct 2025 19:09:44 -0400 (EDT)
-Date: Mon, 6 Oct 2025 16:09:42 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Onur =?iso-8859-1?Q?=D6zkan?= <work@onurozkan.dev>
-Cc: rust-for-linux@vger.kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, lossin@kernel.org,
-	aliceryhl@google.com, tmgross@umich.edu, dakr@kernel.org,
-	linux-kernel@vger.kernel.org, acourbot@nvidia.com,
-	airlied@gmail.com, simona@ffwll.ch,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, corbet@lwn.net, lyude@redhat.com,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH 1/3] rust: xarray: abstract `xa_alloc`
-Message-ID: <aORMNreduCPSIL82@tardis-2.local>
-References: <20251006163024.18473-1-work@onurozkan.dev>
- <20251006163024.18473-2-work@onurozkan.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081681D61BC
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 23:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759792244; cv=fail; b=LmwKO+EHQyiSdeyQouxTrCfK7mEY4hgTVfpsAnMg8JW8Mxg3i9fNumN4qKbbQRLT16zP/phRFNtSH2m54LMGQCyveT2eKdvEiOGiIrqEqU1ejAY0RzlFwSZCG79KRdt3SrjwYRvsLLTdL0ThYnKpaCPcnUNUMYIPe8ZWDNAVPZs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759792244; c=relaxed/simple;
+	bh=3id6DDPy8oHmBBslNXnBB1fe/2O+ThQzav+oNEMpOY4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=d00bumhEdVOO2jEMoSunUV3wkF2lZxls9FaGVYOdnpExryopslYp9KYjJHq3fQ82m9skn4+oabBYv2FRhyPAOWSJ7zGkdJatHgcwHt7mX8PbUmomzg1wT6JY3UwBKHp3OZ3AffWTxQ7vvbD7R8fnYtt4YK6XlOroIUhzd+aQIUc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lj1QRuZZ; arc=fail smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759792243; x=1791328243;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=3id6DDPy8oHmBBslNXnBB1fe/2O+ThQzav+oNEMpOY4=;
+  b=Lj1QRuZZgdzRrBpDHw0GZO0rP8R57sDgX/QGHeHtebSpa5jqlU8vm5s3
+   +QYV4c3oYUdlY+FI1ykL01+ci193sHmWXBciue0PbHN0Gv3PW6QN3bJsI
+   0jIeKQZe+tND9T6kKzNT+2la9cigsSBV08BtlPC2AuoIEzdcC2DebVWk3
+   t0FltDg3vKFloteJ4wll3aDJlIETwW6cLurtTXSDwks3XLCvHzHOtCz/z
+   Lv2PFDhWAoBfRdWtXaK1gPuSv0OD7YcT5rY/bgAPFzAUdMaG9GZ0Ldz2w
+   l0zxcE+bpz5Ci5ovYPH8/SwNabaO+72HgymW62zyYl2DDGlDDEOdF9o0n
+   Q==;
+X-CSE-ConnectionGUID: Sp6XMSNZSRy6vpQrASZzPQ==
+X-CSE-MsgGUID: sAUdUFXFTNecxukOPQWzNw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11574"; a="64590371"
+X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
+   d="scan'208";a="64590371"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 16:10:42 -0700
+X-CSE-ConnectionGUID: cpVqsu63SeieK5dG/Dy1Ng==
+X-CSE-MsgGUID: p+KKAJ6iSCWJ0va1E8vNuw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
+   d="scan'208";a="185284673"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 16:10:41 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 6 Oct 2025 16:10:41 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Mon, 6 Oct 2025 16:10:41 -0700
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.36)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 6 Oct 2025 16:10:40 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JIgIqqKqVz010ZCHKyug6eBACcGce0EgzhZfAGSxJJghlMnMHOuzTSzR+SDDRMaTyGfn0yCwWzhNvhCA3AauXbnK/QdHN75Q5/MBjpn+jHBTQGgQjEyhCg3w46ipsplXaxAXOyF2WrRtpaSf20CvQOV860c1achH3sKtmAjq7FHbPn50uJFLg7BxAv5Dp/VEToeRKN0Lic+r66fKc37X+LdmetKmTbw+0lpnsw1jR3FLk77KjQziMg+LTh6uuHvMWTOpgt9u34HTHyhJKiQTWzwRywE09dGZTOHtj0EwZXHYjcBo5u1EaiOSMpsZ04QArUjnnnYjMZEFHcxdhPjVZw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9VN8QqbIQU0yS/ibmzYiBuM0on8CfRIKeShKenpKB1g=;
+ b=V5UQXu6lR/yXwAXlx6RWOsa8jUxnZx0J9Jima61rIJ6iRWKM+6JuOxCJOchDbhzwuAvb4rJTha5QMUhtdDywqzGHORlMCaMcwl0S9ERX8k4MA2W5WW0Tm3k7v152ApJzzetlK8cB+NfarLbo426eNuIDMvYS978YCpiWEgUaDL4iuyJFfozITPrNeTybYSP5/RF5gfRgGZnB+3qOgOf2eBfW1l9xjPraA0D3aIrullJdmYEAHe780HuE8dO+xWXDf93isDh/yGllVz7r0sbCsg5QlaaoFGv76M3Yq4oqez+D6VB/J8qhHhfMVj+v1ltMP6bu8gVGTSolX1onLQSLQQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
+ by SA1PR11MB5875.namprd11.prod.outlook.com (2603:10b6:806:238::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Mon, 6 Oct
+ 2025 23:10:34 +0000
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361%7]) with mapi id 15.20.9182.017; Mon, 6 Oct 2025
+ 23:10:34 +0000
+Date: Mon, 6 Oct 2025 16:10:31 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+CC: Fenghua Yu <fenghuay@nvidia.com>, Maciej Wieczor-Retman
+	<maciej.wieczor-retman@intel.com>, Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, "Drew
+ Fustini" <dfustini@baylibre.com>, Dave Martin <Dave.Martin@arm.com>, Chen Yu
+	<yu.c.chen@intel.com>, <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<patches@lists.linux.dev>
+Subject: Re: [PATCH v11 20/31] fs/resctrl: Refactor Sub-NUMA Cluster (SNC) in
+ mkdir/rmdir code flow
+Message-ID: <aORMZ6NUXMpECHU6@agluck-desk3>
+References: <20250925200328.64155-1-tony.luck@intel.com>
+ <20250925200328.64155-21-tony.luck@intel.com>
+ <fbd49f1a-ddb2-45e2-b943-df43d2173503@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <fbd49f1a-ddb2-45e2-b943-df43d2173503@intel.com>
+X-ClientProxiedBy: SJ0PR03CA0143.namprd03.prod.outlook.com
+ (2603:10b6:a03:33c::28) To SJ1PR11MB6083.namprd11.prod.outlook.com
+ (2603:10b6:a03:48a::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251006163024.18473-2-work@onurozkan.dev>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PR11MB6083:EE_|SA1PR11MB5875:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1125e18e-ee5e-4ae1-15f6-08de052d8d67
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?T7MYboRBgvHjq8+VpUwK2kQEVV8AcYTCc5UxN4//EKYgdYzlHwuOgIR8zwyV?=
+ =?us-ascii?Q?xheG6RFbgM2lwfDhVmQwFLsiu4HzZ9PSA0mlnOd2Ymaq5b/5noZFWNPeUa0u?=
+ =?us-ascii?Q?eSbZUEo5Y+omEWLwomwF+bkFf7mbHl6JVaSQ8KKuQkh/1N8YD38gr3pAIKm9?=
+ =?us-ascii?Q?yv4jtGWMjO/6DP5DW1pPKqIM6/2uIIuSDL+RFLWgSQ48Cn5M4liaK8E5RvJc?=
+ =?us-ascii?Q?FmeUx5IAkT9BdgZiuuPpG7v63JCa6sfdoAe7PVsJBkAuj0QdmfgrXE/81CuH?=
+ =?us-ascii?Q?1QuSi4mILpEEEECY1Awjzd5PNbiX3sIvhASLtpNqMDzSUOZ4GcoqMr8lTnQk?=
+ =?us-ascii?Q?n4yXZSWN6hArPUB0Hqa5mQBhAEKTra1jQzIe1VRKverW9eyhchp31g+tMl/e?=
+ =?us-ascii?Q?UwFZxsPPg683IQkmE+VGl4RF6G3hfx05UJaRVnIcgaHbylH9MCD+96FU/Ep5?=
+ =?us-ascii?Q?uy/Ic7vlmVFmju1aekzazuCfegQrye3u1aJtSaSTLFFQ1EEPNPF1+Ofrw4Dc?=
+ =?us-ascii?Q?sxio2KBKBmkr8ePc1ukPP6reM5B96ls/OnE+LDyPy/UEBSdn1u82VuEHqkR3?=
+ =?us-ascii?Q?6OmMZu88/Thl7kNVV9M86H9mxh7YH1xGEzKd6CafSUbL8smG1oA+Eihus4fC?=
+ =?us-ascii?Q?la8JJueGjGueJsBI0wJzz2dS8nNuUpN/nTwpb5V7HIui82sX4JVa3pTHn1fT?=
+ =?us-ascii?Q?1deIjvRKd844gZFVBWo1QElKJxxFotPqKH5iV0D28/Q3JREBhNNlzzXq+GjO?=
+ =?us-ascii?Q?Ncujb4u9jrjgGsICE8V6eTORWfCcs5ACfXufmv/T97E0kTIYChIY+Sej6iOO?=
+ =?us-ascii?Q?IYLlEFaUD5U9E2FdZMiDayCQP70iWFnSXeaZtSNrpbNnEmE1f27IZOGCozFo?=
+ =?us-ascii?Q?wlHNHfegBYxFDc8GLK1AHUvbD0W3W/4WjUu/0Yzqz9fjRofGpzYgLxcl1hL+?=
+ =?us-ascii?Q?8lSJOyDIvx5qg8IU/hJ2IkPI5Zf9swbIW7Or/+hEHTjQxP/65H+LoGKBQhC8?=
+ =?us-ascii?Q?i6i96PfT5R5IKDZ3B6mh+DooS8rwGei0FVPlg3D5C5Oe7KjlaW3bDNJPCJ+d?=
+ =?us-ascii?Q?S4Y67F/amV7X/P7IpZk/T3g6z7ilnvz9Sx5gCFkqbbZavoltjaKqnak9Jgx0?=
+ =?us-ascii?Q?aCKicWk3bjvjQNEssUhaJ3idgB8Dq0Zk3eX3uF6AZPLaVIKyN/UOUp99YTSy?=
+ =?us-ascii?Q?FqUq6kJ6sP4fIeZJqQEsA9Y6yIHnGhBA8XbYRsLi40dwJmPZPDUAp2Ktnfqr?=
+ =?us-ascii?Q?KixuYVra4v0g6tRDX206i62ZEmpTRBy9jo4jDvNND6r3Ye5KaJOqGJ2MDTYd?=
+ =?us-ascii?Q?t1fxQIiX0gaJv+1ouH2L70o/oowgFyVEwAiHWfpBj8MnwWHRRfLREk9cyPJm?=
+ =?us-ascii?Q?FDtR67VuLz5/9+qFFI0Va8xkn8W4nV+JsHstzhmo5QveAGmnYs2va38veYmz?=
+ =?us-ascii?Q?Zzp4zLnbREAAG2IbcZt9N5VjJGd39Sb3?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?LIMB1b4/+0yz03qZxnDHFWRD2CM3Bk98RTmgZLnwXhwA0kBM2ihtR3JGdMJg?=
+ =?us-ascii?Q?9L18HYsVVMIgOCmA6Xj6cOe+VFQyr8xdoRL4HAB54645Wfwlx/i7FwI2SSIV?=
+ =?us-ascii?Q?7bTCMCLnMoVvQQ/epLd1b4QXOKaK4JqOrN9LYiuKnQ8fTpXnFWGW4O6krjxF?=
+ =?us-ascii?Q?tsFu+cVHCGMFS63OjT3ciUAOvIb1BlpKN80XehJie+dIibSUtzBEKi0LDh7o?=
+ =?us-ascii?Q?yCbNrQo9cUuyxXbgcvyJWzkjutaL0pQXN69UMIVF8wGMNU84wof8D0xouXT5?=
+ =?us-ascii?Q?6tssvsBD5hqc6ZGXpTLuRwXDqfT2MKLc+5UByR1408OSrF0GSLKFxJbqq3hK?=
+ =?us-ascii?Q?BeNppC55M/2tKA+TAgbH0n9TlDE2q1vjQRmCpNlbO2qLgBQcTnA02Ful8494?=
+ =?us-ascii?Q?MWIMex8NP1FWhaWt3sQ8JC7+ozPnSL8yA5yTPsEHcOczW4+j7tyzyJXF8vF0?=
+ =?us-ascii?Q?NpMdFKQffbLXkiIvgLdeV91PEYW3dK7kMg86zZcweAgT4ohKa63ACjGhiPKf?=
+ =?us-ascii?Q?ehhyE75QkrshJM8bD/3rTjXqYdjZLd9gHCdafGnm7tgcEL9+pcBUAhFXKt/I?=
+ =?us-ascii?Q?OgjYDEdoMG7gH0Q6b5oMSfZ1uwsj5/khjCA5H0KhOHsdxYH5nGH25JyxbXlJ?=
+ =?us-ascii?Q?p1ITaYpf1Ia5mQZ/rr2WQasg4YAPSmL3nHmg/SZXvQzMzieHt3fvUcoS12FX?=
+ =?us-ascii?Q?3qasQBlYv3H3VtZiNab/nGtp7xqNNxlXHFBYgpchztQZ6+MqY/1n4VrOwYYR?=
+ =?us-ascii?Q?k7VDOqjDjTMZjdoa21a64SocixDuZHSiVipW1VZY1cVxIrGGPKntjz7kaBz7?=
+ =?us-ascii?Q?r9tUopwdOEAB4nH/bzvoC81BX3bSAGACpc/s6KH5zF5vf8BxPbiTT3z6j58g?=
+ =?us-ascii?Q?R4KSgZ2CzvHskG3IsinNMf6QNAKPCdWK91aangG9Jk6iRcdOiWkMa06RAMV/?=
+ =?us-ascii?Q?FSdYrlVuXFQqd51TevBaXbhFHNUq87T5/SFysD0iXpmNkFwxsEmiKYAbHvT5?=
+ =?us-ascii?Q?FT2FIX26X5i+T6UcmOlzLN3uECVPvc6PcTlanVJhOgzK078TDIQM9R3Ah+fk?=
+ =?us-ascii?Q?gQIb/TbfEyQmw83WnJ39M66dzXRIj56e+deytHzSiDIsD1ZZoWTqxFdaibTf?=
+ =?us-ascii?Q?FkrCaUXe4f0PRRAzkp3YS538bEnVzTwc1RZ0F9aExvCBZ8Zshrhy/xmTcxPv?=
+ =?us-ascii?Q?ZfqH4dz5EDDwyJyzmBpzjwbbhgUrAawpguYPuzpwsDbRSE/yup9aE5u2trD8?=
+ =?us-ascii?Q?jdsIM50JHK98BxKH5E8w8q0EzM1riei2GxNTapqnaDZjf552AVDFSx2+A/eB?=
+ =?us-ascii?Q?VgFP77qONK5jB5vaHtJF89TJqCVkMpLTZLYG+HxQiC3lzgYpKx4iU9H+dMIj?=
+ =?us-ascii?Q?gWXBnXU+BmCnJvFRF1kUV2EDd8o3rS+5ZBuLLaDtENi+QmCp9Hmoivv85Y8R?=
+ =?us-ascii?Q?1YggeTfRaK+2Kk8WrS30folLG83BjOI9McUeQ75JzGzGiCn28OjkySe2b2Zo?=
+ =?us-ascii?Q?cLMLhtlLBcvL6yXmDy2fkrw8PbU3fwwb3acbk+dG97WFc8+QZTPmOvZvb3DD?=
+ =?us-ascii?Q?4bgl0nKtEt3J/Se0lGHNHWhnAu615Gec6dQBh/6o?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1125e18e-ee5e-4ae1-15f6-08de052d8d67
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2025 23:10:34.0016
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: iRNyuSq2qb+JdMJgXy/AJ+AliyD2sSSEzq02pGu4YhmgYfb0MfZ444uxJiN7JC39NWFsyKM8iT6yj+LB3ozn4w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB5875
+X-OriginatorOrg: intel.com
 
-HI Onur,
-
-On Mon, Oct 06, 2025 at 07:30:22PM +0300, Onur Özkan wrote:
-> Implements `alloc` function to `XArray<T>` that wraps
-> `xa_alloc` safely.
+On Fri, Oct 03, 2025 at 04:58:45PM -0700, Reinette Chatre wrote:
+> Hi Tony,
 > 
-> Resolves a task from the nova/core task list under the "XArray
-> bindings [XARR]" section in "Documentation/gpu/nova/core/todo.rst"
-> file.
+> On 9/25/25 1:03 PM, Tony Luck wrote:
+> > SNC is only present in the RDT_RESOURCE_L3 domain.
+> > 
+> > Refactor code that makes and removes directories under "mon_data" to
 > 
-
-Having this information is good, however I feel it's better if you
-explain/expand what exact the usage will be on the XArray, otherwise,
-it'll be hard for people to dig in the history and find out why we add
-this. Thanks!
-
-Regards,
-Boqun
-
-> Signed-off-by: Onur Özkan <work@onurozkan.dev>
-> ---
->  rust/kernel/xarray.rs | 39 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
+> "makes and removes directories" -> "makes and removes SNC directories"?
 > 
-> diff --git a/rust/kernel/xarray.rs b/rust/kernel/xarray.rs
-> index a49d6db28845..1b882cd2f58b 100644
-> --- a/rust/kernel/xarray.rs
-> +++ b/rust/kernel/xarray.rs
-> @@ -266,6 +266,45 @@ pub fn store(
->              Ok(unsafe { T::try_from_foreign(old) })
->          }
->      }
-> +
-> +    /// Allocates an empty slot within the given limit range and stores `value` there.
-> +    ///
-> +    /// May drop the lock if needed to allocate memory, and then reacquire it afterwards.
-> +    ///
-> +    /// On success, returns the allocated id.
-> +    ///
-> +    /// On failure, returns the element which was attempted to be stored.
-> +    pub fn alloc(
-> +        &mut self,
-> +        limit: bindings::xa_limit,
-> +        value: T,
-> +        gfp: alloc::Flags,
-> +    ) -> Result<u32, StoreError<T>> {
-> +        build_assert!(
-> +            T::FOREIGN_ALIGN >= 4,
-> +            "pointers stored in XArray must be 4-byte aligned"
-> +        );
-> +
-> +        let new = value.into_foreign();
-> +        let mut id: u32 = 0;
-> +
-> +        // SAFETY:
-> +        // - `self.xa.xa` is valid by the type invariant.
-> +        // - `new` came from `T::into_foreign`.
-> +        let ret =
-> +            unsafe { bindings::__xa_alloc(self.xa.xa.get(), &mut id, new, limit, gfp.as_raw()) };
-> +
-> +        if ret < 0 {
-> +            // SAFETY: `__xa_alloc` doesn't take ownership on error.
-> +            let value = unsafe { T::from_foreign(new) };
-> +            return Err(StoreError {
-> +                value,
-> +                error: Error::from_errno(ret),
-> +            });
-> +        }
-> +
-> +        Ok(id)
-> +    }
->  }
+> > special case the L3 resource.
 > 
->  // SAFETY: `XArray<T>` has no shared mutable state so it is `Send` iff `T` is `Send`.
-> --
-> 2.51.0
+> Why?
+> 
+> > 
+> > Signed-off-by: Tony Luck <tony.luck@intel.com>
+> > ---
+> >  fs/resctrl/rdtgroup.c | 50 +++++++++++++++++++++++++++----------------
+> >  1 file changed, 32 insertions(+), 18 deletions(-)
+> > 
+> > diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
+> > index 6e8937f94e7a..cab5cb9e6c93 100644
+> > --- a/fs/resctrl/rdtgroup.c
+> > +++ b/fs/resctrl/rdtgroup.c
+> > @@ -3155,6 +3155,7 @@ static void mon_rmdir_one_subdir(struct kernfs_node *pkn, char *name, char *subn
+> >  		return;
+> >  	kernfs_put(kn);
+> >  
+> > +	/* Subdirectories are only present on SNC enabled systems */
+> >  	if (kn->dir.subdirs <= 1)
+> >  		kernfs_remove(kn);
+> >  	else
+> > @@ -3171,19 +3172,24 @@ static void rmdir_mondata_subdir_allrdtgrp(struct rdt_resource *r,
+> >  					   struct rdt_domain_hdr *hdr)
+> >  {
+> >  	struct rdtgroup *prgrp, *crgrp;
+> > -	struct rdt_l3_mon_domain *d;
+> > +	int domid = hdr->id;
+> >  	char subname[32];
+> > -	bool snc_mode;
+> >  	char name[32];
+> >  
+> > -	if (!domain_header_is_valid(hdr, RESCTRL_MON_DOMAIN, RDT_RESOURCE_L3))
+> > -		return;
+> > +	if (r->rid == RDT_RESOURCE_L3) {
+> > +		struct rdt_l3_mon_domain *d;
+> >  
+> > -	d = container_of(hdr, struct rdt_l3_mon_domain, hdr);
+> > -	snc_mode = r->mon_scope == RESCTRL_L3_NODE;
+> > -	sprintf(name, "mon_%s_%02d", r->name, snc_mode ? d->ci_id : d->hdr.id);
+> > -	if (snc_mode)
+> > -		sprintf(subname, "mon_sub_%s_%02d", r->name, d->hdr.id);
+> > +		if (!domain_header_is_valid(hdr, RESCTRL_MON_DOMAIN, RDT_RESOURCE_L3))
+> > +			return;
+> > +
+> > +		d = container_of(hdr, struct rdt_l3_mon_domain, hdr);
+> > +		/* SNC mode? */
+> > +		if (r->mon_scope == RESCTRL_L3_NODE) {
+> > +			domid = d->ci_id;
+> > +			sprintf(subname, "mon_sub_%s_%02d", r->name, hdr->id);
+> > +		}
+> > +	}
+> > +	sprintf(name, "mon_%s_%02d", r->name, domid);
+> >  
+> >  	list_for_each_entry(prgrp, &rdt_all_groups, rdtgroup_list) {
+> >  		mon_rmdir_one_subdir(prgrp->mon.mon_data_kn, name, subname);
+> > @@ -3213,7 +3219,7 @@ static int mon_add_all_files(struct kernfs_node *kn, struct rdt_domain_hdr *hdr,
+> >  		if (ret)
+> >  			return ret;
+> >  
+> > -		if (!do_sum && resctrl_is_mbm_event(mevt->evtid))
+> > +		if (r->rid == RDT_RESOURCE_L3 && !do_sum && resctrl_is_mbm_event(mevt->evtid))
+> >  			mon_event_read(&rr, r, hdr, prgrp, &hdr->cpu_mask, mevt, true);
+> >  	}
+> >  
+> > @@ -3225,19 +3231,27 @@ static int mkdir_mondata_subdir(struct kernfs_node *parent_kn,
+> >  				struct rdt_resource *r, struct rdtgroup *prgrp)
+> >  {
+> >  	struct kernfs_node *kn, *ckn;
+> > -	struct rdt_l3_mon_domain *d;
+> > +	bool snc_mode = false;
+> > +	int domid = hdr->id;
+> >  	char name[32];
+> > -	bool snc_mode;
+> >  	int ret = 0;
+> >  
+> >  	lockdep_assert_held(&rdtgroup_mutex);
+> >  
+> > -	if (!domain_header_is_valid(hdr, RESCTRL_MON_DOMAIN, RDT_RESOURCE_L3))
+> > -		return -EINVAL;
+> > +	if (r->rid == RDT_RESOURCE_L3) {
+> > +		snc_mode = r->mon_scope == RESCTRL_L3_NODE;
+> > +		if (snc_mode) {
+> > +			struct rdt_l3_mon_domain *d;
+> > +
+> > +			if (!domain_header_is_valid(hdr, RESCTRL_MON_DOMAIN, RDT_RESOURCE_L3))
+> > +				return -EINVAL;
+> > +
+> > +			d = container_of(hdr, struct rdt_l3_mon_domain, hdr);
+> > +			domid = d->ci_id;
+> > +		}
+> > +	}
+> > +	sprintf(name, "mon_%s_%02d", r->name, domid);
+> >  
+> > -	d = container_of(hdr, struct rdt_l3_mon_domain, hdr);
+> > -	snc_mode = r->mon_scope == RESCTRL_L3_NODE;
+> > -	sprintf(name, "mon_%s_%02d", r->name, snc_mode ? d->ci_id : d->hdr.id);
+> >  	kn = kernfs_find_and_get(parent_kn, name);
+> >  	if (kn) {
+> >  		/*
+> > @@ -3253,7 +3267,7 @@ static int mkdir_mondata_subdir(struct kernfs_node *parent_kn,
+> >  		ret = rdtgroup_kn_set_ugid(kn);
+> >  		if (ret)
+> >  			goto out_destroy;
+> > -		ret = mon_add_all_files(kn, hdr, r, prgrp, hdr->id, snc_mode);
+> > +		ret = mon_add_all_files(kn, hdr, r, prgrp, domid, snc_mode);
+> >  		if (ret)
+> >  			goto out_destroy;
+> >  	}
+> 
+> mkdir_mondata_subdir(), similar to __mon_event_count(), is now unreasonably
+> complicated. Just like in that earlier change this inconsistently adds 
+> RDT_RESOURCE_L3 checks, not to separate L3 code but instead to benefit PERF_PKG
+> enabling to reach the handful of lines needed by it. 
+> Here too I think the best way forward is to split mkdir_mondata_subdir().
+> 
+> rmdir_mondata_subdir_allrdtgrp() may also do with a split ... most of the
+> code within it is dedicated to SNC and mon_rmdir_one_subdir() only exists
+> because of SNC ... any other usage can just call kernfs_remove_by_name(), no?
+> 
+> SNC is already complicated enabling and I think that PERF_PKG trying to wedge
+> itself into that is just too confusing. I expect separating this should simplify
+> this a lot.
+
+Ok. Splitting these makes sense. I'm terrible at naming. So I
+tentatively have:
+
+static int mkdir_mondata_subdir(struct kernfs_node *parent_kn,
+				struct rdt_domain_hdr *hdr,
+				struct rdt_resource *r, struct rdtgroup *prgrp)
+{
+	lockdep_assert_held(&rdtgroup_mutex);
+
+	if (r->mon_scope == RESCTRL_L3_NODE)
+		return mkdir_mondata_subdir_snc(parent_kn, hdr, r, prgrp);
+	else
+		return mkdir_mondata_subdir_normal(parent_kn, hdr, r, prgrp);
+}
+
+and:
+
+static void rmdir_mondata_subdir_allrdtgrp(struct rdt_resource *r,
+					   struct rdt_domain_hdr *hdr)
+{
+	if (r->mon_scope == RESCTRL_L3_NODE)
+		rmdir_mondata_subdir_allrdtgrp_snc(r, hdr);
+	else
+		rmdir_mondata_subdir_allrdtgrp_normal(r, hdr);
+}
+
+Better suggestions gratefully accepted.
+
+> 
+> Reinette
 > 
 
