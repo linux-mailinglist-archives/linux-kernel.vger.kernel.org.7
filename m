@@ -1,294 +1,121 @@
-Return-Path: <linux-kernel+bounces-842715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 292EABBD60E
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 10:46:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84F00BBD61A
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 10:47:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFFAC1891FCE
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 08:47:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B7E91894DC1
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 08:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38351262FC1;
-	Mon,  6 Oct 2025 08:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A262261B99;
+	Mon,  6 Oct 2025 08:47:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FnXoz5QW"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="A0Mqpbu4"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEEA3D561;
-	Mon,  6 Oct 2025 08:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79451231829;
+	Mon,  6 Oct 2025 08:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759740394; cv=none; b=rSa5E+P0bK+DldtrrQOFAWCSun0PfR3FuzQ9XVNvqeUlvmoG0tfSWV4v/4/Rppuv25jSngKTrt7otZsre52NnpOb+uHG7qKg7nf6Jyg/Cu6anvKXQizKIJL/rteft4/AFXx0OUFViX2j3J+7KLWiEiVtWkctk4tnH0MENWx+9cA=
+	t=1759740437; cv=none; b=r7VRqc0bcXsttt5B4Kd7UjezoKYBr8Xc94kmEv8+sdz3lAcT9ppjZiSWssS7oZH+BQ/mzawFPt9EytdzFYHXDcqAw7bUlS8FtDEBcIvJ7EWA3HEcjrmnie2YV4iOHos2vOjeTEd6UJ8ljkOFIMfwg2lfFlPsqlzbH4abfFWsex8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759740394; c=relaxed/simple;
-	bh=lg/0CoDJFVsjnpabZKc/yrmMxMAlxruKk619GK2DT2U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JGivsa62IBEeV1ankNMH7rZV2k6lcDI5bCJQYlMfCPPloZUXCB6NBeFML8Ssk9Y3PjYLWgogaqhgfC5fmwZ5YjtWbYB20GebFgksltuyq7bkQmjaEAmLEG4RYZAaEOOJCqtYUgT7UZ0BxkFWbvE+2q9s4sCDNWOu5QXXazefl7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=FnXoz5QW; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.0.43] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net [86.13.91.161])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 64D1DBD2;
-	Mon,  6 Oct 2025 10:44:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1759740297;
-	bh=lg/0CoDJFVsjnpabZKc/yrmMxMAlxruKk619GK2DT2U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FnXoz5QWH/2mMWru77xfToPvAHl8UUykfDJG/wyRvbdHQRR9FDV2xowV8SYNM10GS
-	 xFbcWIuM+vmj1PA287rEXnsXkeuSA7aRGVQBAOEDG/FBok3GhLDxtL3N8OcYbv9Gpl
-	 A1o3MkLwJSKAmMMJOIAthOJMCgkZwv3ajRNYSpms=
-Message-ID: <246ae834-3077-4e38-b419-5c8773139e65@ideasonboard.com>
-Date: Mon, 6 Oct 2025 09:46:26 +0100
+	s=arc-20240116; t=1759740437; c=relaxed/simple;
+	bh=IzIhp5dUepY9MmY78wLvtgLm9Fvq7PK6A4cvqTgpA/g=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=b5dDKYI6HU3+r+NxNnSB9UOu9wrYsvNxO1U2pfPxNOjal37e/9khhIwJHVuJt1A/OM2yqHx2/dqltoJK8oYdMtijMOvcxwY7EjQ+D+lPdYmJ2TudI32P3NqcxbVTHPhZqQ/zEjoIcGUuLMpi81p7Qj6iX0xtSFaA+CEYhBdL36c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=A0Mqpbu4; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Cc
+	wnoxPqYyXU1wNy7MHuZsxfu9hybasnCZholcU269Q=; b=A0Mqpbu4Pjkt6ZmbpU
+	lBNruBx4xAXmmpEpid/hmvqdpT3jbpIWdDUJOPjKJ/LtmpthQf6z96vt7i+Gsr93
+	9bJKLi7x10xu2PWqrig3K80gJOjDcpteMi8qeKlRNLHYfVG+7X2ep2T9DMQgkmaf
+	AFfluPut7bzJvJ6ioc48widSY=
+Received: from 163.com (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wDHbzj4geNoWg8PCQ--.40488S2;
+	Mon, 06 Oct 2025 16:46:49 +0800 (CST)
+From: Chingbin Li <liqb365@163.com>
+To: pmenzel@molgen.mpg.de,
+	marcel@holtmann.org,
+	luiz.dentz@gmail.com,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] Bluetooth: btusb: Add new VID/PID 2b89/6275 for RTL8761BUV
+Date: Mon,  6 Oct 2025 16:46:47 +0800
+Message-ID: <20251006084647.19902-1-liqb365@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/8] media: uapi: Introduce V4L2 generic ISP types
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Dafna Hirschfeld <dafna@fastmail.com>, Keke Li <keke.li@amlogic.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Sakari Ailus <sakari.ailus@linux.intel.com>,
- Antoine Bouyer <antoine.bouyer@nxp.com>, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250915-extensible-parameters-validation-v5-0-e6db94468af3@ideasonboard.com>
- <20250915-extensible-parameters-validation-v5-1-e6db94468af3@ideasonboard.com>
- <20251005000602.GA13055@pendragon.ideasonboard.com>
- <badf4971-0916-45f9-952c-09963c6cb19a@ideasonboard.com>
- <20251006082751.GA16422@pendragon.ideasonboard.com>
-Content-Language: en-US
-From: Dan Scally <dan.scally@ideasonboard.com>
-In-Reply-To: <20251006082751.GA16422@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDHbzj4geNoWg8PCQ--.40488S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7uF47KF4xWF47ZFW5Xw43KFg_yoW8Kr4DpF
+	4UJ3ZxZF1fKF1UGr9IkF18CayrW34xu342g3ZrGw1fXFZ5Aan7J3WUAryfXrsayr4Sg3ZY
+	qFnrC3yFkr17JrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Ul_MfUUUUU=
+X-CM-SenderInfo: xoltujiwv6il2tof0z/1tbiURPecGjjdy3PvwAAsN
 
-On 06/10/2025 09:27, Laurent Pinchart wrote:
-> On Mon, Oct 06, 2025 at 09:15:47AM +0100, Daniel Scally wrote:
->> On 05/10/2025 01:06, Laurent Pinchart wrote:
->>> On Mon, Sep 15, 2025 at 07:18:10PM +0200, Jacopo Mondi wrote:
->>>> Introduce v4l2-isp.h in the Linux kernel uAPI.
->>>>
->>>> The header includes types for generic ISP configuration parameters
->>>> and will be extended in future with support for generic ISP statistics
->>>
->>> s/in future/in the future/
->>>
->>> (and you can reflow the commit message)
->>>
->>>> formats.
->>>>
->>>> Generic ISP parameters support is provided by introducing two new
->>>> types that represent an extensible and versioned buffer of ISP
->>>> configuration parameters.
->>>>
->>>> The v4l2_params_block_header structure represents the header to be
->>>> prepend to each ISP configuration block and the v4l2_params_buffer type
->>>> represents the base type for the configuration parameters buffer.
->>>
->>> The second part of the sentence describes the same structure as the next
->>> paragraph.
->>>
->>>> The v4l2_params_buffer represents the container for the ISP
->>>> configuration data block. The generic type is defined with a 0-sized
->>>> data member that the ISP driver implementations shall properly size
->>>> according to their capabilities.
->>>
->>> This will be easier to understand if you describe v4l2_params_buffer
->>> first.
->>>
->>> The commit message would benefit from being rewritten.
->>>
->>>> [Add v4l2_params_buffer_size()]
->>>> Signed-off-by: Daniel Scally <dan.scally@ideasonboard.com>
->>>> Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
->>>> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
->>>> ---
->>>>    MAINTAINERS                         |   6 +++
->>>>    include/uapi/linux/media/v4l2-isp.h | 100 ++++++++++++++++++++++++++++++++++++
->>>>    2 files changed, 106 insertions(+)
->>>>
->>>> diff --git a/MAINTAINERS b/MAINTAINERS
->>>> index ee8cb2db483f6a5e96b62b6f2edd05b1427b69f5..e82c3d0758d6033fe8fcd56ffde2c03c4319fd11 100644
->>>> --- a/MAINTAINERS
->>>> +++ b/MAINTAINERS
->>>> @@ -26410,6 +26410,12 @@ F:	drivers/media/i2c/vd55g1.c
->>>>    F:	drivers/media/i2c/vd56g3.c
->>>>    F:	drivers/media/i2c/vgxy61.c
->>>>    
->>>> +V4L2 GENERIC ISP PARAMETERS AND STATISTIC FORMATS
->>>> +M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
->>>> +L:	linux-media@vger.kernel.org
->>>> +S:	Maintained
->>>> +F:	include/uapi/linux/media/v4l2-isp.h
->>>> +
->>>>    VF610 NAND DRIVER
->>>>    M:	Stefan Agner <stefan@agner.ch>
->>>>    L:	linux-mtd@lists.infradead.org
->>>> diff --git a/include/uapi/linux/media/v4l2-isp.h b/include/uapi/linux/media/v4l2-isp.h
->>>> new file mode 100644
->>>> index 0000000000000000000000000000000000000000..b838555dce2b290a14136ab09ea4d2dfdc95b26b
->>>> --- /dev/null
->>>> +++ b/include/uapi/linux/media/v4l2-isp.h
->>>> @@ -0,0 +1,100 @@
->>>> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
->>>> +/*
->>>> + * Video4Linux2 generic ISP parameters and statistics support
->>>> + *
->>>> + * Copyright (C) 2025 Ideas On Board Oy
->>>> + * Author: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
->>>> + */
->>>> +
->>>> +#ifndef _UAPI_V4L2_ISP_H_
->>>> +#define _UAPI_V4L2_ISP_H_
->>>> +
->>>> +#include <linux/stddef.h>
->>>> +#include <linux/types.h>
->>>> +
->>>> +#define V4L2_PARAMS_FL_BLOCK_DISABLE	(1U << 0)
->>>> +#define V4L2_PARAMS_FL_BLOCK_ENABLE	(1U << 1)
->>>> +
->>>> +/*
->>>> + * Reserve the first 8 bits for V4L2_PARAMS_FL_* flag.
->>>> + *
->>>> + * Driver-specific flags should be defined as:
->>>> + * #define PLATFORM_SPECIFIC_FLAG0     ((1U << V4L2_PARAMS_FL_DRIVER_FLAGS(0))
->>>
->>> s/PLATFORM/DRIVER/
->>>
->>>> + * #define PLATFORM_SPECIFIC_FLAG1     ((1U << V4L2_PARAMS_FL_DRIVER_FLAGS(1))
->>>> + */
->>>> +#define V4L2_PARAMS_FL_DRIVER_FLAGS(n)       ((n) + 8)
->>>> +
->>>> +/**
->>>> + * struct v4l2_params_block_header - V4L2 extensible parameters block header
->>>> + *
->>>> + * This structure represents the common part of all the ISP configuration
->>>> + * blocks. Each parameters block shall embed an instance of this structure type
->>>> + * as its first member, followed by the block-specific configuration data. The
->>>> + * driver inspects this common header to discern the block type and its size and
->>>> + * properly handle the block content.
->>>
->>> The last sentence is not relevant for the UAPI.
->>>
->>>> + *
->>>> + * The @type field is an ISP driver-specific value that identifies the block
->>>> + * type. The @size field specifies the size of the parameters block.
->>>> + *
->>>> + * The @flags field is a bitmask of per-block flags V4L2_PARAMS_FL_* and
->>>> + * driver-specific flags specified by the driver header.
->>>> + *
->>>> + * @type: The parameters block type (driver-specific)
->>>> + * @flags: A bitmask of block flags (driver-specific)
->>>> + * @size: Size (in bytes) of the parameters block, including this header
->>>
->>> I think the fields usually go right after the structure name, followed
->>> by the rest of the documentation.
->>>
->>>> + */
->>>> +struct v4l2_params_block_header {
->>>> +	__u16 type;
->>>> +	__u16 flags;
->>>> +	__u32 size;
->>>> +} __attribute__((aligned(8)));
->>>> +
->>>> +/**
->>>> + * v4l2_params_buffer_size - Calculate size of v4l2_params_buffer for a platform
->>>> + *
->>>> + * Users of the v4l2 extensible parameters will have differing sized data arrays
->>>> + * depending on their specific parameter buffers. Drivers and userspace will
->>>> + * need to be able to calculate the appropriate size of the struct to
->>>> + * accommodate all ISP configuration blocks provided by the platform.
->>>> + * This macro provides a convenient tool for the calculation.
->>>> + *
->>>> + * @max_params_size: The total size of the ISP configuration blocks
->>>> + */
->>>> +#define v4l2_params_buffer_size(max_params_size) \
->>>> +	(offsetof(struct v4l2_params_buffer, data) + (max_params_size))
->>>
->>> This isn't used in this series as far as I can tell, and neither is it
->>> used in your libcamera implementation. I'd drop the macro (as well as
->>> the mention in the commit message).
->>
->> This is because the rkisp1 and c3 ISP implementations are already merged with a custom parameters
->> buffer struct defined at [1] and [2]. There the array size is set to the max size macro. This series
->> just asserts that the header part is a size match for struct v4l2_params_buffer to guarantee
->> compatibility, so throughout those drivers they can use sizeof(struct c3_isp_params_cfg) or the
->> rkisp equivalent and it's fine.
->>
->> For new users that don't have a custom struct in their uAPI and are relying on struct
->> v4l2_params_buffer we can't just do sizeof(), so the idea was for this to provide a canonical way
->> for the size calculation to be done across both the kernel and userspace.
->>
->> If we decide that it's worth keeping but want a user in this series to justify its inclusion, it
->> could be used in patches 2 and 3 - I'll reply to patch 2 in a second to indicate where.
-> 
-> Will it be used by userspace too for the Mali C55, or only by the kernel
+Add VID 2b89 & PID 6275 for Realtek RTL8761BUV USB Bluetooth chip.
 
-I have used it in userspace too.
+The information in /sys/kernel/debug/usb/devices about the Bluetooth
+device is listed as the below.
 
-Thanks
-Dan
+T:  Bus=01 Lev=01 Prnt=01 Port=02 Cnt=01 Dev#=  6 Spd=12   MxCh= 0
+D:  Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=2b89 ProdID=6275 Rev= 2.00
+S:  Manufacturer=Realtek
+S:  Product=Bluetooth Radio
+S:  SerialNumber=00E04C239987
+C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
 
-> driver ?
-> 
->> [1] https://elixir.bootlin.com/linux/v6.17/source/include/uapi/linux/rkisp1-config.h#L1675
->> [2] https://elixir.bootlin.com/linux/v6.17/source/include/uapi/linux/media/amlogic/c3-isp-config.h#L558>
->>
->>>> +
->>>> +/**
->>>> + * struct v4l2_params_buffer - V4L2 extensible parameters configuration
->>>> + *
->>>> + * This struct contains the configuration parameters of the ISP algorithms,
->>>
->>> s/struct/structure/
->>>
->>>> + * serialized by userspace into a data buffer. Each configuration parameter
->>>> + * block is represented by a block-specific structure which contains a
->>>> + * :c:type:`v4l2_params_block_header` entry as first member. Userspace populates
->>>> + * the @data buffer with configuration parameters for the blocks that it intends
->>>> + * to configure. As a consequence, the data buffer effective size changes
->>>> + * according to the number of ISP blocks that userspace intends to configure and
->>>> + * is set by userspace in the @data_size field.
->>>> + *
->>>> + * The parameters buffer is versioned by the @version field to allow modifying
->>>> + * and extending its definition. Userspace shall populate the @version field to
->>>> + * inform the driver about the version it intends to use. The driver will parse
->>>> + * and handle the @data buffer according to the data layout specific to the
->>>> + * indicated version and return an error if the desired version is not
->>>> + * supported.
->>>> + *
->>>> + * For each ISP block that userspace wants to configure, a block-specific
->>>> + * structure is appended to the @data buffer, one after the other without gaps
->>>> + * in between nor overlaps. Userspace shall populate the @data_size field with
->>>
->>> I think you can drop "nor overlaps", nobody in their right mind should
->>> think the blocks could be overlayed :-)
->>>
->>>> + * the effective size, in bytes, of the @data buffer.
->>>> + *
->>>> + * @version: The parameters buffer version (driver-specific)
->>>> + * @data_size: The configuration data effective size, excluding this header
->>>> + * @data: The configuration data
->>>
->>> Move the fields up just after the structure name.
->>>
->>> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->>>
->>>> + */
->>>> +struct v4l2_params_buffer {
->>>> +	__u32 version;
->>>> +	__u32 data_size;
->>>> +	__u8 data[] __counted_by(data_size);
->>>> +};
->>>> +
->>>> +#endif /* _UAPI_V4L2_ISP_H_ */
-> 
+Signed-off-by: Chingbin Li <liqb365@163.com>
+---
+ drivers/bluetooth/btusb.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 5e9ebf0c5312..3ca17d283d26 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -781,6 +781,8 @@ static const struct usb_device_id quirks_table[] = {
+ 						     BTUSB_WIDEBAND_SPEECH },
+ 	{ USB_DEVICE(0x2b89, 0x8761), .driver_info = BTUSB_REALTEK |
+ 						     BTUSB_WIDEBAND_SPEECH },
++	{ USB_DEVICE(0x2b89, 0x6275), .driver_info = BTUSB_REALTEK |
++						     BTUSB_WIDEBAND_SPEECH },
+ 
+ 	/* Additional Realtek 8821AE Bluetooth devices */
+ 	{ USB_DEVICE(0x0b05, 0x17dc), .driver_info = BTUSB_REALTEK },
+-- 
+2.43.0
 
 
