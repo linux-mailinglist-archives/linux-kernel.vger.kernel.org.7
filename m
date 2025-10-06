@@ -1,143 +1,372 @@
-Return-Path: <linux-kernel+bounces-843215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72D5BBBEA67
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:31:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EE93BBEA97
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:32:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACFA73B8D04
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:31:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37D283B77B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0F321D00E;
-	Mon,  6 Oct 2025 16:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE6F2DCF43;
+	Mon,  6 Oct 2025 16:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nmOzWz2S"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CwnYn4NH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F8F20E03F;
-	Mon,  6 Oct 2025 16:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB7A21FF3E;
+	Mon,  6 Oct 2025 16:31:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759768260; cv=none; b=SJQZUhTWurYpz/Qi6lDJqGPaOcHxAB3KxwqINd6pCaLQQCMKl8nwYvPAaoQsdfdgh0zqCjWWia83ooO1PkCesWw0tcB2LTCMvz35Mq0SOGrzNINLTNR3vqDPDPCeybvxhNdHOmQVPURP4fOJmz/YQ/6IEUzx/3igt5zotxMfR3E=
+	t=1759768314; cv=none; b=BNcqk0gcciXtU/oruH/K+yx0xt6zOQshs8fttmyPW/g5huqhEpmIwqGOBHUWz9ml3/jl4PZOkWzt1YdPYATHFNi+mo1HwgVpcU5KfdmB7k/gBilMo7/RN08cS3rgl3dLJ+SEHfPHdugfv0wqecEa0FMkkvmelwbClLf2A1SL9W8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759768260; c=relaxed/simple;
-	bh=yD0PjDQlf46RiJVrF/Aszb7CVdshcKm/wDonN3zBFKU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZTCZEr4tI5O6zdHJ5SJ4+BOF4b1RpGl5I/muHuePIMINQkg2ZedXLM1pSa9T+W4OAqNiU/OU6Lu8QH/FDzAW7Tt2zQ5Kt4vKMEqdWYnBjE+8mxmUBnxG3+HgkEIpwoURqFUlGrcJkjg95Klu2hdTP9crJfpF21ZebrDiAa5W4UA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nmOzWz2S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E435C4CEF5;
-	Mon,  6 Oct 2025 16:30:50 +0000 (UTC)
+	s=arc-20240116; t=1759768314; c=relaxed/simple;
+	bh=lmmhiSMSM0QI5UtyLT1oRwAi1Xu2NtSABJdRNdbbkNE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OBrDHVRkKAzsCD/t4B/4QsL0x0zi9Et8SsM5Q7HoNcAyzIQQRMQZV+QqBq4LV7F/wXQ4LaVUIk9PIKsjRLGY5R1jQ5TYyoWCXmO3kVK/RlLMTmTEo+Ig2bR58mxU4+GGIqbMBv9V/BEmWrYglRx8B4uFMd36SkZqZdX5riwTZEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CwnYn4NH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EC01DC4CEF5;
+	Mon,  6 Oct 2025 16:31:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759768260;
-	bh=yD0PjDQlf46RiJVrF/Aszb7CVdshcKm/wDonN3zBFKU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=nmOzWz2SnthepQu0FPGRBR+aVkqF9ApmQ+zx91kTdSjpax06w+O1ocikxZUxhTvEl
-	 BkiQ/OdKVfDKPNQf3b8Cv0Vuv74aRdbYVmxzDhgVhHTLZyqhQenmnJj1HZ5JZctahT
-	 j3vRK2ho7EZrufPIHz0BSk+yB3W5zeHAxAMPQ9ODza2WiQAMGpi87FP23eg3+eWSU7
-	 xAwJMgbFq6blAZze7hA6lAChs0wcA40LSeN6YRe/c6r6npA76+nE84OWCU3cHivFdm
-	 /LXzBroGswAo/PYUtcx8R9abLLGBwJ9guZ+FWOq2tKSpMydDSnFGR03gTDNMfHe2Sb
-	 TGHeqGQZhy+0A==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org,  jasonmiu@google.com,  graf@amazon.com,
-  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
-  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
-  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
-  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
-  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
-  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
-  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
-  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
-  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com,
-  hughd@google.com,  skhawaja@google.com,  chrisl@kernel.org,
-  steven.sistare@oracle.com
-Subject: Re: [PATCH v4 02/30] kho: make debugfs interface optional
-In-Reply-To: <20250929010321.3462457-3-pasha.tatashin@soleen.com> (Pasha
-	Tatashin's message of "Mon, 29 Sep 2025 01:02:53 +0000")
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
-	<20250929010321.3462457-3-pasha.tatashin@soleen.com>
-Date: Mon, 06 Oct 2025 18:30:49 +0200
-Message-ID: <mafs07bx8ouva.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=k20201202; t=1759768314;
+	bh=lmmhiSMSM0QI5UtyLT1oRwAi1Xu2NtSABJdRNdbbkNE=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=CwnYn4NHuuK2n+KeFOkVrYSrz7n6GusDJdpomGbI25ZrSucN60q12b+U00K9N5Jqo
+	 tIxIu75efDoSY0RpM6GXkUJ7gFlKNK+Swvp1ee4nlNimP5stM0KRRgznWB3ykSBFhh
+	 pszmsF/cfWyXCmT1AR00Cyy1O8ROROl2A3QiLzBLp+gmTea4mBWqaqgOlFiJOPGYfJ
+	 Goxm52Ko5z7ft7lhqv+oQ83w5QN6N6I7g7LRLx9tvp+eI62DzGEJIbjh3QtYH7xrje
+	 gq/qXCKamoh5wGnf/u7uDmGtc7NLtawyIw6Zp3+Bxc4PbQ9RkwJV18VlWVMRT5/Sks
+	 zVE9CJFsWMdJg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D95F8CCA470;
+	Mon,  6 Oct 2025 16:31:53 +0000 (UTC)
+From: Jan Petrous via B4 Relay <devnull+jan.petrous.oss.nxp.com@kernel.org>
+Date: Mon, 06 Oct 2025 18:31:28 +0200
+Subject: [PATCH] arm64: dts: freescale: Add GMAC Ethernet for S32G2 EVB and
+ RDB2 and S32G3 RDB3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251006-nxp-s32g-boards-v1-1-f70a57b8087f@oss.nxp.com>
+X-B4-Tracking: v=1; b=H4sIAN/u42gC/x3MMQqAMAxA0atIZgNtJIJeRRysjTVLlQZEEO9uc
+ XzD/w+YFBWDsXmgyKWmR67wbQPrvuQkqLEayBF753rM94nWUcJwLCUaUvTcE3PggaBWZ5FN7/8
+ 4ze/7AaoG5dxhAAAA
+To: Chester Lin <chester62515@gmail.com>, 
+ Matthias Brugger <mbrugger@suse.com>, 
+ Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, 
+ NXP S32 Linux Team <s32@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Richard Cochran <richardcochran@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759768312; l=7038;
+ i=jan.petrous@oss.nxp.com; s=20240922; h=from:subject:message-id;
+ bh=TMWFQ/FCO7r1LG54aYnEDegZ7oUI5MIx6sPdhGBxOcA=;
+ b=BYkrZtIcJy8FigoNiS7KdvSacfpqLvQ8+glEubaeNymGK1JA+8tu/tR1m9gshcgR22HkuQ5Mw
+ Cmy9eQyLBqgD4z5OxjWHaoTIiGXyJAXPiv+S2FEYTssNJq0IC465zL+
+X-Developer-Key: i=jan.petrous@oss.nxp.com; a=ed25519;
+ pk=Ke3wwK7rb2Me9UQRf6vR8AsfJZfhTyoDaxkUCqmSWYY=
+X-Endpoint-Received: by B4 Relay for jan.petrous@oss.nxp.com/20240922 with
+ auth_id=217
+X-Original-From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
+Reply-To: jan.petrous@oss.nxp.com
 
-On Mon, Sep 29 2025, Pasha Tatashin wrote:
+From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
 
-> Currently, KHO is controlled via debugfs interface, but once LUO is
-> introduced, it can control KHO, and the debug interface becomes
-> optional.
->
-> Add a separate config CONFIG_KEXEC_HANDOVER_DEBUG that enables
-> the debugfs interface, and allows to inspect the tree.
->
-> Move all debugfs related code to a new file to keep the .c files
-> clear of ifdefs.
->
-> Co-developed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> ---
->  MAINTAINERS                      |   3 +-
->  kernel/Kconfig.kexec             |  10 ++
->  kernel/Makefile                  |   1 +
->  kernel/kexec_handover.c          | 255 +++++--------------------------
->  kernel/kexec_handover_debug.c    | 218 ++++++++++++++++++++++++++
->  kernel/kexec_handover_internal.h |  44 ++++++
->  6 files changed, 311 insertions(+), 220 deletions(-)
->  create mode 100644 kernel/kexec_handover_debug.c
->  create mode 100644 kernel/kexec_handover_internal.h
->
-[...]
-> --- a/kernel/Kconfig.kexec
-> +++ b/kernel/Kconfig.kexec
-> @@ -109,6 +109,16 @@ config KEXEC_HANDOVER
->  	  to keep data or state alive across the kexec. For this to work,
->  	  both source and target kernels need to have this option enabled.
->  
-> +config KEXEC_HANDOVER_DEBUG
+Add support for the Ethernet connection over GMAC controller connected to
+the Micrel KSZ9031 Ethernet RGMII PHY located on the boards.
 
-Nit: can we call it KEXEC_HANDOVER_DEBUGFS instead? I think we would
-like to add a KEXEC_HANDOVER_DEBUG at some point to control debug
-asserts for KHO, and the naming would get confusing. And renaming config
-symbols is kind of a pain.
+The mentioned GMAC controller is one of two network controllers
+embedded on the NXP Automotive SoCs S32G2 and S32G3.
 
-> +	bool "kexec handover debug interface"
-> +	depends on KEXEC_HANDOVER
-> +	depends on DEBUG_FS
-> +	help
-> +	  Allow to control kexec handover device tree via debugfs
-> +	  interface, i.e. finalize the state or aborting the finalization.
-> +	  Also, enables inspecting the KHO fdt trees with the debugfs binary
-> +	  blobs.
-> +
-[...]
+The supported boards:
+ * EVB:  S32G-VNP-EVB with S32G2 SoC
+ * RDB2: S32G-VNP-RDB2
+ * RDB3: S32G-VNP-RDB3
 
+Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+---
+ arch/arm64/boot/dts/freescale/s32g2.dtsi        | 50 ++++++++++++++++++++++++-
+ arch/arm64/boot/dts/freescale/s32g274a-evb.dts  | 21 ++++++++++-
+ arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts | 19 ++++++++++
+ arch/arm64/boot/dts/freescale/s32g3.dtsi        | 50 ++++++++++++++++++++++++-
+ arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts | 21 ++++++++++-
+ 5 files changed, 157 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/freescale/s32g2.dtsi b/arch/arm64/boot/dts/freescale/s32g2.dtsi
+index d167624d1f0c..d06103e9564e 100644
+--- a/arch/arm64/boot/dts/freescale/s32g2.dtsi
++++ b/arch/arm64/boot/dts/freescale/s32g2.dtsi
+@@ -3,7 +3,7 @@
+  * NXP S32G2 SoC family
+  *
+  * Copyright (c) 2021 SUSE LLC
+- * Copyright 2017-2021, 2024 NXP
++ * Copyright 2017-2021, 2024-2025 NXP
+  */
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+@@ -738,5 +738,53 @@ gic: interrupt-controller@50800000 {
+ 			interrupt-controller;
+ 			#interrupt-cells = <3>;
+ 		};
++
++		gmac0: ethernet@4033c000 {
++			compatible = "nxp,s32g2-dwmac";
++			reg = <0x4033c000 0x2000>, /* gmac IP */
++			      <0x4007c004 0x4>;    /* GMAC_0_CTRL_STS */
++			interrupt-parent = <&gic>;
++			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "macirq";
++			snps,mtl-rx-config = <&mtl_rx_setup>;
++			snps,mtl-tx-config = <&mtl_tx_setup>;
++			status = "disabled";
++
++			mtl_rx_setup: rx-queues-config {
++				snps,rx-queues-to-use = <5>;
++
++				queue0 {
++				};
++				queue1 {
++				};
++				queue2 {
++				};
++				queue3 {
++				};
++				queue4 {
++				};
++			};
++
++			mtl_tx_setup: tx-queues-config {
++				snps,tx-queues-to-use = <5>;
++
++				queue0 {
++				};
++				queue1 {
++				};
++				queue2 {
++				};
++				queue3 {
++				};
++				queue4 {
++				};
++			};
++
++			gmac0mdio: mdio {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				compatible = "snps,dwmac-mdio";
++			};
++		};
+ 	};
+ };
+diff --git a/arch/arm64/boot/dts/freescale/s32g274a-evb.dts b/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
+index c4a195dd67bf..f020da03979a 100644
+--- a/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
++++ b/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+ /*
+  * Copyright (c) 2021 SUSE LLC
+- * Copyright 2019-2021, 2024 NXP
++ * Copyright 2019-2021, 2024-2025 NXP
+  */
+ 
+ /dts-v1/;
+@@ -15,6 +15,7 @@ / {
+ 
+ 	aliases {
+ 		serial0 = &uart0;
++		ethernet0 = &gmac0;
+ 	};
+ 
+ 	chosen {
+@@ -43,3 +44,21 @@ &usdhc0 {
+ 	no-1-8-v;
+ 	status = "okay";
+ };
++
++&gmac0 {
++	clocks = <&clks 24>, <&clks 19>, <&clks 18>, <&clks 15>;
++	clock-names = "stmmaceth", "tx", "rx", "ptp_ref";
++	phy-mode = "rgmii-id";
++	phy-handle = <&rgmiiaphy4>;
++	status = "okay";
++};
++
++&gmac0mdio {
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	/* KSZ 9031 on RGMII */
++	rgmiiaphy4: ethernet-phy@4 {
++		reg = <4>;
++	};
++};
+diff --git a/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts b/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
+index 4f58be68c818..b9c2f964b3f7 100644
+--- a/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
++++ b/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
+@@ -16,6 +16,7 @@ / {
+ 	aliases {
+ 		serial0 = &uart0;
+ 		serial1 = &uart1;
++		ethernet0 = &gmac0;
+ 	};
+ 
+ 	chosen {
+@@ -77,3 +78,21 @@ &usdhc0 {
+ 	no-1-8-v;
+ 	status = "okay";
+ };
++
++&gmac0 {
++	clocks = <&clks 24>, <&clks 19>, <&clks 18>, <&clks 15>;
++	clock-names = "stmmaceth", "tx", "rx", "ptp_ref";
++	phy-mode = "rgmii-id";
++	phy-handle = <&rgmiiaphy1>;
++	status = "okay";
++};
++
++&gmac0mdio {
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	/* KSZ 9031 on RGMII */
++	rgmiiaphy1: ethernet-phy@1 {
++		reg = <1>;
++	};
++};
+diff --git a/arch/arm64/boot/dts/freescale/s32g3.dtsi b/arch/arm64/boot/dts/freescale/s32g3.dtsi
+index be3a582ebc1b..e31184847371 100644
+--- a/arch/arm64/boot/dts/freescale/s32g3.dtsi
++++ b/arch/arm64/boot/dts/freescale/s32g3.dtsi
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
+ /*
+- * Copyright 2021-2024 NXP
++ * Copyright 2021-2025 NXP
+  *
+  * Authors: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+  *          Ciprian Costea <ciprianmarian.costea@nxp.com>
+@@ -883,6 +883,54 @@ gic: interrupt-controller@50800000 {
+ 			      <0x50420000 0x2000>;
+ 			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
++
++		gmac0: ethernet@4033c000 {
++			compatible = "nxp,s32g2-dwmac";
++			reg = <0x4033c000 0x2000>, /* gmac IP */
++			      <0x4007c004 0x4>;    /* GMAC_0_CTRL_STS */
++			interrupt-parent = <&gic>;
++			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "macirq";
++			snps,mtl-rx-config = <&mtl_rx_setup>;
++			snps,mtl-tx-config = <&mtl_tx_setup>;
++			status = "disabled";
++
++			mtl_rx_setup: rx-queues-config {
++				snps,rx-queues-to-use = <5>;
++
++				queue0 {
++				};
++				queue1 {
++				};
++				queue2 {
++				};
++				queue3 {
++				};
++				queue4 {
++				};
++			};
++
++			mtl_tx_setup: tx-queues-config {
++				snps,tx-queues-to-use = <5>;
++
++				queue0 {
++				};
++				queue1 {
++				};
++				queue2 {
++				};
++				queue3 {
++				};
++				queue4 {
++				};
++			};
++
++			gmac0mdio: mdio {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				compatible = "snps,dwmac-mdio";
++			};
++		};
+ 	};
+ 
+ 	timer {
+diff --git a/arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts b/arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts
+index e94f70ad82d9..4a74923789ae 100644
+--- a/arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts
++++ b/arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
+ /*
+- * Copyright 2021-2024 NXP
++ * Copyright 2021-2025 NXP
+  *
+  * NXP S32G3 Reference Design Board 3 (S32G-VNP-RDB3)
+  */
+@@ -18,6 +18,7 @@ aliases {
+ 		mmc0 = &usdhc0;
+ 		serial0 = &uart0;
+ 		serial1 = &uart1;
++		ethernet0 = &gmac0;
+ 	};
+ 
+ 	chosen {
+@@ -93,3 +94,21 @@ &usdhc0 {
+ 	disable-wp;
+ 	status = "okay";
+ };
++
++&gmac0 {
++	clocks = <&clks 24>, <&clks 19>, <&clks 18>, <&clks 15>;
++	clock-names = "stmmaceth", "tx", "rx", "ptp_ref";
++	phy-mode = "rgmii-id";
++	phy-handle = <&rgmiiaphy1>;
++	status = "okay";
++};
++
++&gmac0mdio {
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	/* KSZ 9031 on RGMII */
++	rgmiiaphy1: ethernet-phy@1 {
++		reg = <1>;
++	};
++};
+
+---
+base-commit: fd94619c43360eb44d28bd3ef326a4f85c600a07
+change-id: 20251006-nxp-s32g-boards-2d156255b592
+
+Best regards,
 -- 
-Regards,
-Pratyush Yadav
+Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+
+
 
