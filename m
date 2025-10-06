@@ -1,78 +1,76 @@
-Return-Path: <linux-kernel+bounces-842667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC679BBD45C
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 09:50:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35B34BBD45F
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 09:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEFAC3BA90D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 07:48:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69EB53BAC4C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 07:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C310122D4C3;
-	Mon,  6 Oct 2025 07:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0460265CA4;
+	Mon,  6 Oct 2025 07:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="uAWjDbov";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="uAWjDbov"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="IZTvAVk9";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="IZTvAVk9"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F1E25B69F
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 07:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B319264F96
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 07:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759736847; cv=none; b=ciWLsJ2YZSbzvrWfBJIIslm7pMiVSvNAU2DdsXcIQ14p3J2kSciqsLe6lyy6KCTyYpxP7r2lBCJ8WrlumJcW+x+/czq1up73PH6QMMOInOYQkQ+N79SjrttDM9Hu15K/2K2sX8RO46EYFRmjmkRsOBT0+ZFtEEFCHdYu1/sKIyM=
+	t=1759736853; cv=none; b=XAQp3Z0iRlbwU+bENtl+3QYKVfov9OJGNQauZSFgdUaRT+2JS0QqUFQayu/n+fcMIgxw7PHzcXvwCS7JeYaaJZ4cN8pi0Xma1Zcl97NUMkKdW30Zpciys9BeADDoTOfQQ+2hu+6NYayxT4qRdfxsIGUs/9PJP4XkpkUCmSYi6kY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759736847; c=relaxed/simple;
-	bh=ZBXa0AnBEh9zIWPO1dUUZ1OMB2NiZ8t2FMeCbR1vx6w=;
+	s=arc-20240116; t=1759736853; c=relaxed/simple;
+	bh=nIRySOT2pPuOHT+dnFvmJctkKtXylRy/0jXTsQosxrM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Gg1s2JfO8g/y6TUZzTJLVQHRiU/oimNMpiB7jPul0cOIoCMgo6btKWGiaTUFTGQx7UFSoLoV+xchcSX4j8AsiX0VWxEOPkeOhbZYpE4llK5ShscP2XESBLv9fXEZJwdrTfEOMUKSpUHEHqCupkivHMSkAJViDhqn3686znObGfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=uAWjDbov; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=uAWjDbov; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version; b=WMebEYNhOrrfJljs3lLIF5Z0tJhxitUsPtm/TE337NDjS/ta0eTHvmXxMijamrKxv1YLXRYvlZW0bs03Izj/TO7Y49MVpEvAXiePzzm2lLcyazT/1g66XU4KCGdFjiNygkoL35EU9Qgh6J79PVtXfVt0jcnjj9ylNUimRfzPvf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=IZTvAVk9; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=IZTvAVk9; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8B8731F80D;
-	Mon,  6 Oct 2025 07:47:23 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 77481336CB;
+	Mon,  6 Oct 2025 07:47:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1759736843; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1759736849; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gztxpq9DX+nPOLwjlXTO5zTcC6KXOoTlESO5Ptm2kQY=;
-	b=uAWjDbov57SfsgvL9XuUkGg3UngmXjlrvDwEbKxyZ3m2gY84LRj+RQoBf4tOK+Jmq4QiJr
-	IJxKk1AXIs4eCwe1v1Vi4pYRq+hv5BF2OxjsTnOM4QudY7KcnmjHlqcWyeCgA/VzzsSV7l
-	83YvdxHWN/R/12B2WcAecixZ0Cntyo0=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=uAWjDbov
+	bh=0vLZFP8NFZ1/X1AyjobjHKnI++28gh5LEu/UDtvy5bk=;
+	b=IZTvAVk91vTvMpgiB+Gi/6tSbR+GYTfMgy+TNGVjqHZIdi53GSFTw1hoXLQImcp3OVxIoo
+	z8sESIgXsyVscCELYoiVHvlpGTqLU6eqXJTY1P9lQsd33BMsTuRUw2MHKqvHoy+aHiBlow
+	GuoZuk7Xe9urVIdUwB8XSlNMLdaJopg=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=IZTvAVk9
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1759736843; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1759736849; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gztxpq9DX+nPOLwjlXTO5zTcC6KXOoTlESO5Ptm2kQY=;
-	b=uAWjDbov57SfsgvL9XuUkGg3UngmXjlrvDwEbKxyZ3m2gY84LRj+RQoBf4tOK+Jmq4QiJr
-	IJxKk1AXIs4eCwe1v1Vi4pYRq+hv5BF2OxjsTnOM4QudY7KcnmjHlqcWyeCgA/VzzsSV7l
-	83YvdxHWN/R/12B2WcAecixZ0Cntyo0=
+	bh=0vLZFP8NFZ1/X1AyjobjHKnI++28gh5LEu/UDtvy5bk=;
+	b=IZTvAVk91vTvMpgiB+Gi/6tSbR+GYTfMgy+TNGVjqHZIdi53GSFTw1hoXLQImcp3OVxIoo
+	z8sESIgXsyVscCELYoiVHvlpGTqLU6eqXJTY1P9lQsd33BMsTuRUw2MHKqvHoy+aHiBlow
+	GuoZuk7Xe9urVIdUwB8XSlNMLdaJopg=
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CE4B513A7E;
-	Mon,  6 Oct 2025 07:47:22 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0548713A7E;
+	Mon,  6 Oct 2025 07:47:28 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id eMCKMAp042iHHgAAD6G6ig
-	(envelope-from <jgross@suse.com>); Mon, 06 Oct 2025 07:47:22 +0000
+	id HhMROxB042iPHgAAD6G6ig
+	(envelope-from <jgross@suse.com>); Mon, 06 Oct 2025 07:47:28 +0000
 From: Juergen Gross <jgross@suse.com>
 To: linux-kernel@vger.kernel.org,
 	x86@kernel.org,
-	virtualization@lists.linux.dev,
-	kvm@vger.kernel.org,
-	linux-hyperv@vger.kernel.org
+	virtualization@lists.linux.dev
 Cc: Juergen Gross <jgross@suse.com>,
 	Ajay Kaher <ajay.kaher@broadcom.com>,
 	Alexey Makhalov <alexey.makhalov@broadcom.com>,
@@ -82,19 +80,10 @@ Cc: Juergen Gross <jgross@suse.com>,
 	Borislav Petkov <bp@alien8.de>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
 	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	xen-devel@lists.xenproject.org,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: [PATCH v3 12/21] x86/paravirt: Move paravirt_sched_clock() related code into tsc.c
-Date: Mon,  6 Oct 2025 09:45:57 +0200
-Message-ID: <20251006074606.1266-13-jgross@suse.com>
+	Oleg Nesterov <oleg@redhat.com>
+Subject: [PATCH v3 13/21] x86/paravirt: Introduce new paravirt-base.h header
+Date: Mon,  6 Oct 2025 09:45:58 +0200
+Message-ID: <20251006074606.1266-14-jgross@suse.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251006074606.1266-1-jgross@suse.com>
 References: <20251006074606.1266-1-jgross@suse.com>
@@ -107,7 +96,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Level: 
 X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 8B8731F80D
+X-Rspamd-Queue-Id: 77481336CB
 X-Rspamd-Action: no action
 X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spamd-Result: default: False [-3.01 / 50.00];
@@ -125,9 +114,9 @@ X-Spamd-Result: default: False [-3.01 / 50.00];
 	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	MIME_TRACE(0.00)[0:+];
 	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RCPT_COUNT_TWELVE(0.00)[24];
+	RCPT_COUNT_TWELVE(0.00)[13];
 	RCVD_COUNT_TWO(0.00)[2];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:dkim,suse.com:mid,suse.com:email,infradead.org:email];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:dkim,suse.com:mid,suse.com:email];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	R_RATELIMIT(0.00)[to_ip_from(RLkdkdrsxe9hqhhs5ask8616i6)];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
@@ -136,149 +125,162 @@ X-Spamd-Result: default: False [-3.01 / 50.00];
 	FROM_HAS_DN(0.00)[];
 	RCVD_TLS_ALL(0.00)[];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,infradead.org:email,suse.com:dkim,suse.com:mid,suse.com:email]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:dkim,suse.com:mid,suse.com:email]
 X-Spam-Score: -3.01
 
-The only user of paravirt_sched_clock() is in tsc.c, so move the code
-from paravirt.c and paravirt.h to tsc.c.
+Move the pv_info related definitions and the declarations of the global
+paravirt function primitives into a new header file paravirt-base.h.
+
+This enables to use that header instead of paravirt_types.h in
+ptrace.h.
+
+Additionally it is in preparation of reducing include hell with
+paravirt enabled.
 
 Signed-off-by: Juergen Gross <jgross@suse.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/include/asm/paravirt.h    | 12 ------------
- arch/x86/include/asm/timer.h       |  1 +
- arch/x86/kernel/kvmclock.c         |  1 +
- arch/x86/kernel/paravirt.c         |  7 -------
- arch/x86/kernel/tsc.c              | 10 +++++++++-
- arch/x86/xen/time.c                |  1 +
- drivers/clocksource/hyperv_timer.c |  2 ++
- 7 files changed, 14 insertions(+), 20 deletions(-)
+V2:
+- new patch
+---
+ arch/x86/include/asm/paravirt-base.h  | 29 +++++++++++++++++++++++++++
+ arch/x86/include/asm/paravirt.h       |  4 +++-
+ arch/x86/include/asm/paravirt_types.h | 23 +--------------------
+ arch/x86/include/asm/ptrace.h         |  2 +-
+ 4 files changed, 34 insertions(+), 24 deletions(-)
+ create mode 100644 arch/x86/include/asm/paravirt-base.h
 
+diff --git a/arch/x86/include/asm/paravirt-base.h b/arch/x86/include/asm/paravirt-base.h
+new file mode 100644
+index 000000000000..3827ea20de18
+--- /dev/null
++++ b/arch/x86/include/asm/paravirt-base.h
+@@ -0,0 +1,29 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++
++#ifndef _ASM_X86_PARAVIRT_BASE_H
++#define _ASM_X86_PARAVIRT_BASE_H
++
++/*
++ * Wrapper type for pointers to code which uses the non-standard
++ * calling convention.  See PV_CALL_SAVE_REGS_THUNK below.
++ */
++struct paravirt_callee_save {
++	void *func;
++};
++
++struct pv_info {
++#ifdef CONFIG_PARAVIRT_XXL
++	u16 extra_user_64bit_cs;  /* __USER_CS if none */
++#endif
++	const char *name;
++};
++
++void default_banner(void);
++extern struct pv_info pv_info;
++unsigned long paravirt_ret0(void);
++#ifdef CONFIG_PARAVIRT_XXL
++u64 _paravirt_ident_64(u64);
++#endif
++#define paravirt_nop	((void *)nop_func)
++
++#endif /* _ASM_X86_PARAVIRT_BASE_H */
 diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
-index 766a7cee3d64..b69e75a5c872 100644
+index b69e75a5c872..62399f5d037d 100644
 --- a/arch/x86/include/asm/paravirt.h
 +++ b/arch/x86/include/asm/paravirt.h
-@@ -14,20 +14,8 @@
+@@ -4,6 +4,9 @@
+ /* Various instructions on x86 need to be replaced for
+  * para-virtualization: those hooks are defined here. */
+ 
++#ifndef __ASSEMBLER__
++#include <asm/paravirt-base.h>
++#endif
+ #include <asm/paravirt_types.h>
+ 
+ #ifdef CONFIG_PARAVIRT
+@@ -601,7 +604,6 @@ static __always_inline unsigned long arch_local_irq_save(void)
+ #undef PVOP_VCALL4
+ #undef PVOP_CALL4
+ 
+-extern void default_banner(void);
+ void native_pv_lock_init(void) __init;
+ 
+ #else  /* __ASSEMBLER__ */
+diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
+index 7acff40cc159..148d157e2a4a 100644
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@ -7,6 +7,7 @@
  #ifndef __ASSEMBLER__
  #include <linux/types.h>
- #include <linux/cpumask.h>
--#include <linux/static_call_types.h>
- #include <asm/frame.h>
  
--u64 dummy_sched_clock(void);
++#include <asm/paravirt-base.h>
+ #include <asm/desc_defs.h>
+ #include <asm/pgtable_types.h>
+ #include <asm/nospec-branch.h>
+@@ -18,23 +19,6 @@ struct cpumask;
+ struct flush_tlb_info;
+ struct vm_area_struct;
+ 
+-/*
+- * Wrapper type for pointers to code which uses the non-standard
+- * calling convention.  See PV_CALL_SAVE_REGS_THUNK below.
+- */
+-struct paravirt_callee_save {
+-	void *func;
+-};
 -
--DECLARE_STATIC_CALL(pv_sched_clock, dummy_sched_clock);
+-/* general info */
+-struct pv_info {
+-#ifdef CONFIG_PARAVIRT_XXL
+-	u16 extra_user_64bit_cs;  /* __USER_CS if none */
+-#endif
 -
--void paravirt_set_sched_clock(u64 (*func)(void));
+-	const char *name;
+-};
 -
--static __always_inline u64 paravirt_sched_clock(void)
--{
--	return static_call(pv_sched_clock)();
--}
--
- __visible void __native_queued_spin_unlock(struct qspinlock *lock);
- bool pv_is_native_spin_unlock(void);
- __visible bool __native_vcpu_is_preempted(long cpu);
-diff --git a/arch/x86/include/asm/timer.h b/arch/x86/include/asm/timer.h
-index 23baf8c9b34c..fda18bcb19b4 100644
---- a/arch/x86/include/asm/timer.h
-+++ b/arch/x86/include/asm/timer.h
-@@ -12,6 +12,7 @@ extern void recalibrate_cpu_khz(void);
- extern int no_timer_check;
+ #ifdef CONFIG_PARAVIRT_XXL
+ struct pv_lazy_ops {
+ 	/* Set deferred update mode, used for batching operations. */
+@@ -226,7 +210,6 @@ struct paravirt_patch_template {
+ 	struct pv_lock_ops	lock;
+ } __no_randomize_layout;
  
- extern bool using_native_sched_clock(void);
-+void paravirt_set_sched_clock(u64 (*func)(void));
+-extern struct pv_info pv_info;
+ extern struct paravirt_patch_template pv_ops;
  
- /*
-  * We use the full linear equation: f(x) = a + b*x, in order to allow
-diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
-index ca0a49eeac4a..b5991d53fc0e 100644
---- a/arch/x86/kernel/kvmclock.c
-+++ b/arch/x86/kernel/kvmclock.c
-@@ -19,6 +19,7 @@
- #include <linux/cc_platform.h>
+ #define paravirt_ptr(op)	[paravirt_opptr] "m" (pv_ops.op)
+@@ -497,17 +480,13 @@ extern struct paravirt_patch_template pv_ops;
+ 	__PVOP_VCALL(op, PVOP_CALL_ARG1(arg1), PVOP_CALL_ARG2(arg2),	\
+ 		     PVOP_CALL_ARG3(arg3), PVOP_CALL_ARG4(arg4))
  
- #include <asm/hypervisor.h>
-+#include <asm/timer.h>
- #include <asm/x86_init.h>
- #include <asm/kvmclock.h>
- 
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index 42991d471bf3..4e37db8073f9 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -60,13 +60,6 @@ void __init native_pv_lock_init(void)
- 		static_branch_enable(&virt_spin_lock_key);
- }
- 
--DEFINE_STATIC_CALL(pv_sched_clock, native_sched_clock);
--
--void paravirt_set_sched_clock(u64 (*func)(void))
--{
--	static_call_update(pv_sched_clock, func);
--}
--
- static noinstr void pv_native_safe_halt(void)
- {
- 	native_safe_halt();
-diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-index 87e749106dda..554b54783a04 100644
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -266,19 +266,27 @@ u64 native_sched_clock_from_tsc(u64 tsc)
- /* We need to define a real function for sched_clock, to override the
-    weak default version */
- #ifdef CONFIG_PARAVIRT
-+DEFINE_STATIC_CALL(pv_sched_clock, native_sched_clock);
-+
- noinstr u64 sched_clock_noinstr(void)
- {
--	return paravirt_sched_clock();
-+	return static_call(pv_sched_clock)();
- }
- 
- bool using_native_sched_clock(void)
- {
- 	return static_call_query(pv_sched_clock) == native_sched_clock;
- }
-+
-+void paravirt_set_sched_clock(u64 (*func)(void))
-+{
-+	static_call_update(pv_sched_clock, func);
-+}
- #else
- u64 sched_clock_noinstr(void) __attribute__((alias("native_sched_clock")));
- 
- bool using_native_sched_clock(void) { return true; }
-+void paravirt_set_sched_clock(u64 (*func)(void)) { }
+-unsigned long paravirt_ret0(void);
+ #ifdef CONFIG_PARAVIRT_XXL
+-u64 _paravirt_ident_64(u64);
+ unsigned long pv_native_save_fl(void);
+ void pv_native_irq_disable(void);
+ void pv_native_irq_enable(void);
+ unsigned long pv_native_read_cr2(void);
  #endif
  
- notrace u64 sched_clock(void)
-diff --git a/arch/x86/xen/time.c b/arch/x86/xen/time.c
-index e4754b2fa900..6f9f665bb7ae 100644
---- a/arch/x86/xen/time.c
-+++ b/arch/x86/xen/time.c
-@@ -19,6 +19,7 @@
- #include <linux/sched/cputime.h>
+-#define paravirt_nop	((void *)nop_func)
+-
+ #endif	/* __ASSEMBLER__ */
  
- #include <asm/pvclock.h>
-+#include <asm/timer.h>
- #include <asm/xen/hypervisor.h>
- #include <asm/xen/hypercall.h>
- #include <asm/xen/cpuid.h>
-diff --git a/drivers/clocksource/hyperv_timer.c b/drivers/clocksource/hyperv_timer.c
-index 2edc13ca184e..6397a7ba4a98 100644
---- a/drivers/clocksource/hyperv_timer.c
-+++ b/drivers/clocksource/hyperv_timer.c
-@@ -535,6 +535,8 @@ static __always_inline void hv_setup_sched_clock(void *sched_clock)
- 	sched_clock_register(sched_clock, 64, NSEC_PER_SEC);
- }
- #elif defined CONFIG_PARAVIRT
-+#include <asm/timer.h>
-+
- static __always_inline void hv_setup_sched_clock(void *sched_clock)
- {
- 	/* We're on x86/x64 *and* using PV ops */
+ #define ALT_NOT_XEN	ALT_NOT(X86_FEATURE_XENPV)
+diff --git a/arch/x86/include/asm/ptrace.h b/arch/x86/include/asm/ptrace.h
+index 50f75467f73d..fe2dab7d74e3 100644
+--- a/arch/x86/include/asm/ptrace.h
++++ b/arch/x86/include/asm/ptrace.h
+@@ -172,7 +172,7 @@ struct pt_regs {
+ #endif /* !__i386__ */
+ 
+ #ifdef CONFIG_PARAVIRT
+-#include <asm/paravirt_types.h>
++#include <asm/paravirt-base.h>
+ #endif
+ 
+ #include <asm/proto.h>
 -- 
 2.51.0
 
