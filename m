@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-843335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 491F1BBEF67
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:31:22 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25AF4BBEF6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:31:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2952D4F3511
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:29:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B06F04F2031
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92DFA2D8DCF;
-	Mon,  6 Oct 2025 18:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7E92DECA3;
+	Mon,  6 Oct 2025 18:29:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QupWDp8D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rjGqnnC5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6ED2D8DA6;
-	Mon,  6 Oct 2025 18:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434242DEA77;
+	Mon,  6 Oct 2025 18:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759775351; cv=none; b=hDfaDPveOniD14pjPGcaQRFu2jKPHDmMqLf7c6H9vIJqMpNQDF2EDxXT1+jz6GLmx1b1nO5sDJsemA49DR0lZTJXCxqv6adIPeWAhgjj8zpSQn6+V5PsWJLIvcSdtFs9CL8VB0es4RU8phbDwLXCPjxB4k7YVGk8lOBSBdrOgTc=
+	t=1759775353; cv=none; b=qWoJldcJUUV0SpNwruRO57kBAgKfCSert1RrPbOXr3YSBBEJ3ZBSM3UuvxsSalZ9ptq/5b6K66KFE2+Dr1kOFRzQZQB0goP16XDTexM9GYpFBsgc4fIEYkzg4E86yb72hRT9ZcShztYF26To1rASSreP7kiD2cl1djJ+jjSsPsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759775351; c=relaxed/simple;
-	bh=5ooOlWaOfW4KsyQHF8xArsJ/7sq0FETgAFci5I1u3ZU=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=g8RWSW0mOhKPwDXa9EVkc7XpUT+fo9xqh8I77pL3kouHDmEROoAqKT5Q3dYkXln2vZVFB5VKiSIaiWZbNt/AWBm/eXPYXhwsTTX+393DLWllM1WsHGf+Y7b0L+FAtaMz5Ay5gFLA454L246LLx7Wap7tanbJf5bgGFNMnMyigto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QupWDp8D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5E5EC4CEF5;
-	Mon,  6 Oct 2025 18:29:10 +0000 (UTC)
+	s=arc-20240116; t=1759775353; c=relaxed/simple;
+	bh=4OPjsd3hGqeEHe+IBM8r7ydWtHscntUugIR6NMawL2g=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Cf+5B29LV73jA3/CE+N//W1yLBxH0/5LNsCTTgQpppRATw4c3ypI8QyQMW0/WAzqSsyRK7xTOueWpJszkRC23k9c8lf2/lUzfiPuhBelLjXZD+uWQe4dZsxb5GlNbLVkxJzNK56sK3CB+dzpjAHVXeS0VK0B6Y/QAsZbLERzFQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rjGqnnC5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C63F5C4CEF5;
+	Mon,  6 Oct 2025 18:29:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759775350;
-	bh=5ooOlWaOfW4KsyQHF8xArsJ/7sq0FETgAFci5I1u3ZU=;
+	s=k20201202; t=1759775352;
+	bh=4OPjsd3hGqeEHe+IBM8r7ydWtHscntUugIR6NMawL2g=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=QupWDp8D+kH38+dxV8NDpndwgTvlYaj9AT01wjsBwKSPKMDi1+vhXOAjMXSkob0Ak
-	 aZHHr3PP9gflXp0n5E1ihIcXaUs1CMV1JcU5AoqC/uhredFnlFpnmqoixwNqBjyu6C
-	 MAzE8ovkz0hlkCOK8jbbNwCky+z71YhYuuQrORzfDnFPVKhQLm+XWUyq2C/K+o2Bdp
-	 UbrteXUEygdZF0rpyh8qXxj3Ci5iwV0WxcelYuBx3/Jdp6W0QoV+dGVUaDfb8owUwf
-	 7+Hc54Og+CiHBBhRg+FK74ddWiVJ9Az6AvwOYvlYW1Z4vCGotyPsvEjcY6eIW771bd
-	 WbpoV8sqznsiQ==
+	b=rjGqnnC5+RGuvN6Pz+7cAAAjy1bCSaVT5mlox8Jw+BlHklMbEZXWy1mjTuS7dUp4Q
+	 dlriMNEKyKjvLwmjiV1VxTPC26EWTw8rERRoaSNpVaCHfFxNZUaee2VFHv5KB9tkWV
+	 mx5AGe9KlkJz+CepNIs7hqz/Zn2EL4IvV1kkUQEt9pM8Prhb9zD2YkS8+JKpySigJC
+	 kaKqhCYWSsl6y6SWSyqZyj6LJ+HTfv3l7Op8bUY5/mHWdx4DE8FnTE5FBDS4rGeleT
+	 aW32oriehCs9LemsAPNJgHb3HBpUDXp4+L+kIoSEKxHGz1/Aq3szWDTAkzs4o4W7Su
+	 5W89feEs+nm3Q==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADEEC39D0C1A;
-	Mon,  6 Oct 2025 18:29:01 +0000 (UTC)
-Subject: Re: [GIT PULL] PCI changes for v6.18
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE1A539D0C1A;
+	Mon,  6 Oct 2025 18:29:03 +0000 (UTC)
+Subject: Re: [GIT PULL] NVDIMM for 6.18
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <20251006160918.GA521548@bhelgaas>
-References: <20251006160918.GA521548@bhelgaas>
+In-Reply-To: <68e3f338166e_2bc301294bb@iweiny-mobl.notmuch>
+References: <68e3f338166e_2bc301294bb@iweiny-mobl.notmuch>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20251006160918.GA521548@bhelgaas>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.18-changes
-X-PR-Tracked-Commit-Id: 51204faa4273a64b7066b5c1b5383e9b20d58caa
+X-PR-Tracked-Message-Id: <68e3f338166e_2bc301294bb@iweiny-mobl.notmuch>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm.git tags/libnvdimm-for-6.18
+X-PR-Tracked-Commit-Id: 5c34f2b6f89ad4f31db15f9c658b597e23bacdf8
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2f2c7254931f41b5736e3ba12aaa9ac1bbeeeb92
-Message-Id: <175977534038.1510490.17534093334537568587.pr-tracker-bot@kernel.org>
-Date: Mon, 06 Oct 2025 18:29:00 +0000
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Manivannan Sadhasivam <mani@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+X-PR-Merge-Commit-Id: ba9dac987319d4f3969691dcf366ef19c9ed8281
+Message-Id: <175977534233.1510490.17244866347602340338.pr-tracker-bot@kernel.org>
+Date: Mon, 06 Oct 2025 18:29:02 +0000
+To: Ira Weiny <ira.weiny@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 'Linux Kernel Mailing List' <linux-kernel@vger.kernel.org>, linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev, "Jiang, Dave" <dave.jiang@intel.com>, Xichao Zhao <zhao.xichao@vivo.com>, Colin Ian King <colin.i.king@gmail.com>, Jonathan Cameron <jonathan.cameron@huawei.com>, Dan Williams <dan.j.williams@intel.com>, Guangshuo Li <lgs201920130244@gmail.com>, Alison Schofield <alison.schofield@intel.com>, Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, Abaci Robot <abaci@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Mon, 6 Oct 2025 11:09:18 -0500:
+The pull request you sent on Mon, 6 Oct 2025 11:50:00 -0500:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.18-changes
+> https://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm.git tags/libnvdimm-for-6.18
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2f2c7254931f41b5736e3ba12aaa9ac1bbeeeb92
+https://git.kernel.org/torvalds/c/ba9dac987319d4f3969691dcf366ef19c9ed8281
 
 Thank you!
 
