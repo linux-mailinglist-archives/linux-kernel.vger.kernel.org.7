@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-843324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15318BBEEE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:21:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1455FBBEEE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:22:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2EAEE4F0EBD
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:21:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1243189B3DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AEED2DF71B;
-	Mon,  6 Oct 2025 18:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308572DF709;
+	Mon,  6 Oct 2025 18:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tPk+qTHi"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WLu6zL4h"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8022F2DF3EA
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 18:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1B52D061C
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 18:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759774898; cv=none; b=Sq5r1TLi6fWxyuHMOlsHxNU0kH8Jc6yibdrLkS/z7TNw/g3Q5Xju6nzeVXCDjjG++nxO3SYTCoKDGhsteBZGir2NeI4T+K2bAM3s/H1xkO5JHW0a9j5HuDDYUV7rnFXKWsPB5fZFRhukWjfTmK+UZeqbZyHIBbPJW/wipHNQreg=
+	t=1759774965; cv=none; b=tYFaUcsYxkxlNmUsytkokDQBGgEVGvS1XrwJiRT3vIrIJRB/eQtdzwn4pj4suoF5LPDN1IdaJ8vUBi1m2S73u2xj5ZF8sP8LmNGWKenpbVMmL/tbXzHMldcOKmI/csbV8ZI1Q00jZpfRKNuYYiN9mTAYvEqsMUw79ab2rNB/coI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759774898; c=relaxed/simple;
-	bh=vUNyMXLW555PbQjtFhHdeKypqLjRIGe+0r6N0aMxImQ=;
+	s=arc-20240116; t=1759774965; c=relaxed/simple;
+	bh=m7paGbWFFBSImtX6nHJNm0p7ZiwLv+r3xgGqbIaxnZE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=eZb4tkORAG5TZz8ZqSKKqEdHt2sdVoJBuXXVZNFUoQfKZlbfC4sGoOJOkQWQirYTGKbHdQvB/AEp2yaBMwjVyR+vZwbAFnGqwP1L+vpL1uncHQTBd4+Ayc1OB4rY+ec/sTzHQrACCLDS291KCebl865YjPkqRV2NZ90Q8DJaZhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tPk+qTHi; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=GYahxwiQVy2inWgqQfiYyvXsU3yZKJ7FE7SAfVO4PYuglC+0tdk95ZnoZTGh1CAhLlFuhquPlw1zXiQpJgfD2vMCpgLcwh48ALFUsXfqHbPP1aEfoO1FdUxlYBMQLomJHbkUgwDHzCPynYp7Ix26Scj9cSL/13859P9d74TKTt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WLu6zL4h; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-339b704e2e3so5171088a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 11:21:36 -0700 (PDT)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3304def7909so4708108a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 11:22:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759774896; x=1760379696; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1759774963; x=1760379763; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dXVMuz/bVScWtirOeDxzOFNaCT5UWxBdmG0wX2KZTp4=;
-        b=tPk+qTHijtEfnzIHW8iRHDxVTDoe6EoJbbqNU6o6793qvD5lQLC0SwqFBPCa5PICYL
-         5iuruAYRGJSnJNYx3A37QIIuwUp4lgXeRKNHL61B9r9xBazeFsCF71E/LISi5E4qpbRt
-         LDizj3NfXO+hqjOs5LBPxNSSsRU8LtatQkeQpCke8xUgD3bihBVVK54d7ZEKVxtxECNZ
-         +8eNWeDkZUMilouNfWst6WbW5ukXTOV+bZFNac6vYHurW2Clxif6LDvVhF7hgrElgSyO
-         PTLj9+vdmE98K+rl3Vf/cP3+uZWVn0PMyxgc61CjvW2wSHjfi559kMcExHrulpAVYwaF
-         L+Gw==
+        bh=YN0oMwvKdUWgqAuB19e9YFtlf2v/xKc04bK+lsGf56U=;
+        b=WLu6zL4haK923ijbGCGrBakcJCIBcYV+fr08zvzjSVYVap//YGxvZDw67cqvLUfVyV
+         ayYf6OIifBbJ4c7XicKrxEdkoCnaCyo8uaTvKh6zmbWttxWQmE2k5Z8aOjLhULOL9nTk
+         pzCKGieI4MmuN1hOH8TtX9ZPGkCXRALVXD5S7FFGDZoG8eRy/6FB+mbCYtUrnfZyVTGQ
+         3QshBAvoDSwkOz0FSYYAHcL6SnmqMawmA4rNTcl/aQ0kCceqbHx34xJueHMzyNckh2OI
+         F0N6DoW+SsuJND/pjOqua4o3j+Vc1C7vcEkyM59gYO7QVV7AXDnhJkf6MHM2KmaGL12o
+         oxOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759774896; x=1760379696;
+        d=1e100.net; s=20230601; t=1759774963; x=1760379763;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dXVMuz/bVScWtirOeDxzOFNaCT5UWxBdmG0wX2KZTp4=;
-        b=XTfjG73hDalLNbpxni5gWUhF+JIjIlJ7qrqaE9YtZq0qSDNOC0DTzNDld7f7QUyKmM
-         0f94140Eh9R/n5O849jApEkRVSiKcNiWAW6cGjkeKpCNDRqYChRXXaNeh/Cwx+v3bFZJ
-         PKJo9nclPKwjJxVMRAAbsM0vmXOoMbapUY8jOHRd5U7kIYmOGolUQPh9V9Wbe34Hfs9d
-         KZNbS1rvgZMf8wQEYo/g1hauxt2wXvaErY9qfDsyhYoSGCXwFJb4LvI9oVKwy0bl4N/3
-         A+sw28bG5aIVk/dRDCdJ9BG8Vu8s7lvh6llkweDRMlhiUvOTpapfpLKxGfKghufboJGa
-         sqTw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/fvNccHAc0gN5yLGba/sJDcJz1DTUV99H93eJhsQ7d3bKko1SJy6AgXSS8DB+pdwxARnhVism7bemMHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyicvyrSGAaK7blUVaiS1A7AYqMeQLnQmVc0KXzKoE/yeEIv3AR
-	KCeZ+Sb8Qtqw2OHdi7BvrsJeCARyLrKuuU6FmUqgQFWjfdDClR2J/P2CzywV+luUFAfrPwb4YrX
-	+xQhoTc4q2aVQlT1nFYLcquJdlg==
-X-Google-Smtp-Source: AGHT+IGdnZEEtOtcdma1gAEsWJl6MN7TNWFT8q5PwrIeW9ovMJjMQK/RyT5JOJyizFrhnD8maWtVkZ8sXrjGITphQA==
-X-Received: from pjbnb17.prod.google.com ([2002:a17:90b:35d1:b0:330:6cf5:5f38])
+        bh=YN0oMwvKdUWgqAuB19e9YFtlf2v/xKc04bK+lsGf56U=;
+        b=Z3al9fU6wRVTkmfPRTZ/15iUMKOrdYelGmO3sMnxfryhn947iPOHZLhboOoHnBadrX
+         zshr5x0cOPlD60ErSFlHP7iIsMaNz2Gw0UnbhoD9EKBCmQTtqBI/c9whKs7fWSYpHp9o
+         d5794Pc+tjnm6HYSyAcFXyFoq1gjHavaibxs9pBHbTwcHj0mQkJe/i6PBDEXraGKTR3d
+         y3G8iUjTm3e9lcIKLT+K/0SVsIK3E8v2dK/fJddlPloYKPOLRDE+ShB5UJqjg2NoqEf7
+         i4o2Rqq1dBZsGmXdmM4ebhIzT3B+9OmZjiCYNtQo9RblNx05PZz3rK6Y8QOrojDO4/0n
+         upew==
+X-Forwarded-Encrypted: i=1; AJvYcCVrIVosG6W7eryVmr0bVOP8PZWGhOZgmcDPrx4k0Ledn/WKlXqRpmdCc2cx0Rx3B7P9vs97nerFZ6FF4ik=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5OUzgVddbMHJBQkja5xjoyXCifDMk2LtcWEIrjvPrSur4yBEn
+	0Rvr170M7wsPj7XdJMrXK0a+5MM9zhXX4EvcGHbvNLTkhIA6sFKdBZzyPhhdU5JwSJ5yvYr8x4w
+	tmp4ORyCgLv8koJyIdOa63evw3Q==
+X-Google-Smtp-Source: AGHT+IHFncbPWDhVRLIgPUtpUh3hqv+dcSxTiha2K3meOqKbz/8kUQgGm6FLuTXkR5xpnKPelQkZBZJkQVo0GM3Z6w==
+X-Received: from pjbpx12.prod.google.com ([2002:a17:90b:270c:b0:329:ccdd:e725])
  (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:1e05:b0:338:3e6f:2d63 with SMTP id 98e67ed59e1d1-339c276d90amr16922266a91.6.1759774895769;
- Mon, 06 Oct 2025 11:21:35 -0700 (PDT)
-Date: Mon, 06 Oct 2025 11:21:33 -0700
-In-Reply-To: <20251003232606.4070510-12-seanjc@google.com>
+ 2002:a17:90b:3ec5:b0:32e:1b61:309 with SMTP id 98e67ed59e1d1-339c27865b8mr18152084a91.23.1759774963468;
+ Mon, 06 Oct 2025 11:22:43 -0700 (PDT)
+Date: Mon, 06 Oct 2025 11:22:42 -0700
+In-Reply-To: <20251003232606.4070510-14-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20251003232606.4070510-1-seanjc@google.com> <20251003232606.4070510-12-seanjc@google.com>
-Message-ID: <diqz8qhngac2.fsf@google.com>
-Subject: Re: [PATCH v2 11/13] KVM: selftests: Add wrapper macro to handle and
- assert on expected SIGBUS
+References: <20251003232606.4070510-1-seanjc@google.com> <20251003232606.4070510-14-seanjc@google.com>
+Message-ID: <diqz5xcrgaa5.fsf@google.com>
+Subject: Re: [PATCH v2 13/13] KVM: selftests: Verify that reads to
+ inaccessible guest_memfd VMAs SIGBUS
 From: Ackerley Tng <ackerleytng@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
 	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
@@ -85,142 +85,37 @@ Content-Type: text/plain; charset="UTF-8"
 
 Sean Christopherson <seanjc@google.com> writes:
 
-> Extract the guest_memfd test's SIGBUS handling functionality into a common
-> TEST_EXPECT_SIGBUS() macro in anticipation of adding more SIGBUS testcases.
-> Eating a SIGBUS isn't terrible difficult, but it requires a non-trivial
-
-terrible => terribly
-
-> amount of boilerplate code, and using a macro allows selftests to print
-> out the exact action that failed to generate a SIGBUS without the developer
-> needing to remember to add a useful error message.
+> Expand the guest_memfd negative testcases for overflow and MAP_PRIVATE to
+> verify that reads to inaccessible memory also get a SIGBUS.
+>
+> Opportunistically fix the write path to use the "val" instead of hardcoding
+> the literal value a second time, and to use TEST_FAIL(...) instead of
+> TEST_ASSERT(false, ...).
 >
 
-Adding TEST_FAIL() after action on behalf of the developer (easily
-forgotten/left out) helps ensure that test runs don't falsely pass if
-there was no SIGBUS.
-
-> Explicitly mark the SIGBUS handler as "used", as gcc-14 at least likes to
-> discard the function before linking.
->
-
-I think you also meant to talk about opportunistically using TEST_FAIL()
-instead of TEST_ASSERT(false, ...) here.
-
-> Suggested-by: Ackerley Tng <ackerleytng@google.com>
-
-Not sure if these still apply after the Suggested-by tag, but anyway:
+The change the use "val" isn't in this patch, and I think the
+TEST_FAIL() change was intended for another earlier patch.
 
 Reviewed-by: Ackerley Tng <ackerleytng@google.com>
 Tested-by: Ackerley Tng <ackerleytng@google.com>
 
 > Signed-off-by: Sean Christopherson <seanjc@google.com>
 > ---
->  .../testing/selftests/kvm/guest_memfd_test.c  | 18 +-----------------
->  .../testing/selftests/kvm/include/test_util.h | 19 +++++++++++++++++++
->  tools/testing/selftests/kvm/lib/test_util.c   |  7 +++++++
->  3 files changed, 27 insertions(+), 17 deletions(-)
+>  tools/testing/selftests/kvm/guest_memfd_test.c | 1 +
+>  1 file changed, 1 insertion(+)
 >
 > diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
-> index 640636c76eb9..73c2e54e7297 100644
+> index f5372fdf096d..e7d9aeb418d3 100644
 > --- a/tools/testing/selftests/kvm/guest_memfd_test.c
 > +++ b/tools/testing/selftests/kvm/guest_memfd_test.c
-> @@ -14,8 +14,6 @@
->  #include <linux/bitmap.h>
->  #include <linux/falloc.h>
->  #include <linux/sizes.h>
-> -#include <setjmp.h>
-> -#include <signal.h>
->  #include <sys/mman.h>
->  #include <sys/types.h>
->  #include <sys/stat.h>
-> @@ -77,17 +75,8 @@ static void test_mmap_supported(int fd, size_t total_size)
->  	kvm_munmap(mem, total_size);
->  }
->  
-> -static sigjmp_buf jmpbuf;
-> -void fault_sigbus_handler(int signum)
-> -{
-> -	siglongjmp(jmpbuf, 1);
-> -}
-> -
->  static void test_fault_overflow(int fd, size_t total_size)
->  {
-> -	struct sigaction sa_old, sa_new = {
-> -		.sa_handler = fault_sigbus_handler,
-> -	};
->  	size_t map_size = total_size * 4;
->  	const char val = 0xaa;
->  	char *mem;
-> @@ -95,12 +84,7 @@ static void test_fault_overflow(int fd, size_t total_size)
->  
+> @@ -84,6 +84,7 @@ static void test_fault_sigbus(int fd, size_t accessible_size, size_t map_size)
 >  	mem = kvm_mmap(map_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd);
 >  
-> -	sigaction(SIGBUS, &sa_new, &sa_old);
-> -	if (sigsetjmp(jmpbuf, 1) == 0) {
-> -		memset(mem, 0xaa, map_size);
-> -		TEST_ASSERT(false, "memset() should have triggered SIGBUS.");
-> -	}
-> -	sigaction(SIGBUS, &sa_old, NULL);
-> +	TEST_EXPECT_SIGBUS(memset(mem, val, map_size));
+>  	TEST_EXPECT_SIGBUS(memset(mem, val, map_size));
+> +	TEST_EXPECT_SIGBUS((void)READ_ONCE(mem[accessible_size]));
 >  
->  	for (i = 0; i < total_size; i++)
+>  	for (i = 0; i < accessible_size; i++)
 >  		TEST_ASSERT_EQ(READ_ONCE(mem[i]), val);
-> diff --git a/tools/testing/selftests/kvm/include/test_util.h b/tools/testing/selftests/kvm/include/test_util.h
-> index c6ef895fbd9a..b4872ba8ed12 100644
-> --- a/tools/testing/selftests/kvm/include/test_util.h
-> +++ b/tools/testing/selftests/kvm/include/test_util.h
-> @@ -8,6 +8,8 @@
->  #ifndef SELFTEST_KVM_TEST_UTIL_H
->  #define SELFTEST_KVM_TEST_UTIL_H
->  
-> +#include <setjmp.h>
-> +#include <signal.h>
->  #include <stdlib.h>
->  #include <stdarg.h>
->  #include <stdbool.h>
-> @@ -78,6 +80,23 @@ do {									\
->  	__builtin_unreachable(); \
->  } while (0)
->  
-> +extern sigjmp_buf expect_sigbus_jmpbuf;
-> +void expect_sigbus_handler(int signum);
-> +
-> +#define TEST_EXPECT_SIGBUS(action)						\
-> +do {										\
-> +	struct sigaction sa_old, sa_new = {					\
-> +		.sa_handler = expect_sigbus_handler,				\
-> +	};									\
-> +										\
-> +	sigaction(SIGBUS, &sa_new, &sa_old);					\
-> +	if (sigsetjmp(expect_sigbus_jmpbuf, 1) == 0) {				\
-> +		action;								\
-> +		TEST_FAIL("'%s' should have triggered SIGBUS", #action);	\
-> +	}									\
-> +	sigaction(SIGBUS, &sa_old, NULL);					\
-> +} while (0)
-> +
->  size_t parse_size(const char *size);
->  
->  int64_t timespec_to_ns(struct timespec ts);
-> diff --git a/tools/testing/selftests/kvm/lib/test_util.c b/tools/testing/selftests/kvm/lib/test_util.c
-> index 03eb99af9b8d..8a1848586a85 100644
-> --- a/tools/testing/selftests/kvm/lib/test_util.c
-> +++ b/tools/testing/selftests/kvm/lib/test_util.c
-> @@ -18,6 +18,13 @@
->  
->  #include "test_util.h"
->  
-> +sigjmp_buf expect_sigbus_jmpbuf;
-> +
-> +void __attribute__((used)) expect_sigbus_handler(int signum)
-> +{
-> +	siglongjmp(expect_sigbus_jmpbuf, 1);
-> +}
-> +
->  /*
->   * Random number generator that is usable from guest code. This is the
->   * Park-Miller LCG using standard constants.
 > -- 
 > 2.51.0.618.g983fd99d29-goog
 
