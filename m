@@ -1,113 +1,158 @@
-Return-Path: <linux-kernel+bounces-843161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAF59BBE891
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:48:22 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E175BBE8A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B9D23BD57D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:48:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 647D84EACB3
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33BB2D879C;
-	Mon,  6 Oct 2025 15:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2042D8DA7;
+	Mon,  6 Oct 2025 15:48:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GNZwWqda"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="2zo+Zien"
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A5A2D7DF7
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 15:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68F72D061E
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 15:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759765699; cv=none; b=i9YvDxwuDiVCkk0Qf4K5JvSxKxBlzOE3QD17iPnov3PffgwxmDRhQbQekeCd+GoOBZ5YRSwxsr/iIz/Z1idWSKHfu767/wM/CCsjkNLPtZaflnQIVQU0Tq+C0Q8QPuB/7xf8sF+NryHlHfj88a62vLqJYfziZ/9PhSJnXkStjfE=
+	t=1759765737; cv=none; b=e3bP1Xl3CRQykJMYJyvU8uE3xP/2NPF4QnmqQoTR6qFN7xcohGK4il/5pmp0IEiSUcEKJnlmztK4/fQIQc47+QJQFEYUQ+vPSfZjLmDHT8q8SZaqjNuV16cvJ7HA93G9ApJNcGfMhs/Lu1twPl40E3vw/xpcQ4pdCKn55CLp3zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759765699; c=relaxed/simple;
-	bh=BUomoTM50ZpVJiLs3X6oVZX0pfV6Je/dUk1cBR7BzMM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=L0Mxh5z+klt/ihZQy58edIEz8/B6nobpogQn7IxgdYf7fmisZGH5vquBNDL1kXjBaKLLuA7BvskHurSWFr3nZXb/GNh1V11Hga8R4ibN15dJmlvp0xA7cjsJjHFjFbLjZLq44p57BoFN7fHtrpWbUcxTHh38ZjBbBIrOij2YWTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GNZwWqda; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759765696;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BUomoTM50ZpVJiLs3X6oVZX0pfV6Je/dUk1cBR7BzMM=;
-	b=GNZwWqdakp89luWjfEDHhx4dReBNKC2Ai7KC0aszJGioSCLo/imgg+m9G2kIyppeDs9iCe
-	Vg03E/cNc+Mk2fs5W1BzEbhfs82Owec25XiazcyDlXGTwXnXKMX56QtiKJF78nkdlqRkTB
-	8hyZLabC9rCBZYiSsClw4+/s4riKMLs=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-257-HS1ncar9M4Oy7a-AI_QqFQ-1; Mon, 06 Oct 2025 11:48:14 -0400
-X-MC-Unique: HS1ncar9M4Oy7a-AI_QqFQ-1
-X-Mimecast-MFC-AGG-ID: HS1ncar9M4Oy7a-AI_QqFQ_1759765693
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-78e45d71f05so102800396d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 08:48:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759765693; x=1760370493;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+	s=arc-20240116; t=1759765737; c=relaxed/simple;
+	bh=7cCqsIleQbTCE8nJ/cqNLb6Xh7ymZFZDoUIkZvvwW5c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Im8/s4jXoXmZL9TiCg+h/Hag6tq2kl5e1hw225oy7xi/jVc1VPYpCmW6gwyRySnEhgy/bSYgJBoM2SPUpYPJhOuh+tfI7erBwvLx0b8jOuxW31TMrvu3DJlZJZWh2aVyueNlhxWClsr8R69pGviampQC74BXtSQwX9p1HlxCmy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=2zo+Zien; arc=none smtp.client-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-7b6ac55cf86so3189286a34.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 08:48:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1759765734; x=1760370534; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=BUomoTM50ZpVJiLs3X6oVZX0pfV6Je/dUk1cBR7BzMM=;
-        b=iZ9u92wK/GYcLoMP18KQWlgpWL8T03a2sUFeBURC76zI4gGBD5xZpLTeiAaDn9YnnK
-         aD+EX9Unvq9vPB3B+tlgtXAbqgRVvp5K/MEx0X96bBBPg70QFfdNUJKooibtSQFG80B7
-         pak4/gzq/1a/U78d844Z+mbK1qI/Rl/u1c487Ug2GVUqE4aDqMAKtlS4Jxikhu3uKtsT
-         2RuX9JxEbAp6fPevnIn5ISt/7ReOg2HEkO61ZaIO6vUAEzO8quPoj+xB5N8/OZZaRRLR
-         eG7nDMmljTbOe3wDWd5MT3J8D8Jsgk/ztxAR5k4f50xTud/TafSMKoDpC1uoD5FKg2JF
-         CKiA==
-X-Gm-Message-State: AOJu0YwV5i9owc/VKrgkCWJR3u/ZKV3LxajcKyzUQxB3VZ9P2alndFyC
-	H4bINu+gyYtIZpEoXbxTaUPY11COMv645uTi9QqoJ35rETF4nlUlYNe0xTtxP82TZCs+GcINmip
-	H7miHwhgiJx2NCMRuvmrYTNKlSbJU/oc//o34vdVmSa7yGzxvX4Mwlsp7PUKMOSd+iA==
-X-Gm-Gg: ASbGncuh7sRBmx0a+8QJw3XPYKwVAhhf/Jcfrowsq/+AbyvbuKA05st+Tu7QTIo/hZa
-	vddvEQUSvhw+LToxnJuLmQWmF4a+b7kFtwzvVAUN3vb4ZbbIU8JRbW+CQiArsFua981mCHfK/gX
-	tF3rb9zZaWFTMdDVFE6CSLqgUL0w77JV/iRJ+MmUSa1gUhGUE4ab94ChrrGn9jOg2dMaNltnlDY
-	Q6LmMghHkl8UnADfkeRfV8F0iWc92RgmKkA9+JNQJkVujUrGG1nt1x/N/M/dza5XSclL4ZW+8tl
-	tsLLKYfbphvE3a0Uywx57YiubZ5DNzo7Ng3Ue5syas9hcW14M5iFfNNtSsCnhV496D/NfySbF57
-	kYw==
-X-Received: by 2002:ad4:5c62:0:b0:820:a83:eaec with SMTP id 6a1803df08f44-879dc83ba80mr158373216d6.35.1759765693544;
-        Mon, 06 Oct 2025 08:48:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHfLZ1f3qpnRgTtZvkawGBLghHiAlBOXN2Q/bWoviGmMhDGlpipOxyVJQE/8jmdAneAYFG3Wg==
-X-Received: by 2002:ad4:5c62:0:b0:820:a83:eaec with SMTP id 6a1803df08f44-879dc83ba80mr158372046d6.35.1759765692276;
-        Mon, 06 Oct 2025 08:48:12 -0700 (PDT)
-Received: from crwood-thinkpadp16vgen1.minnmso.csb ([2601:447:c680:2b50:ee6f:85c2:7e3e:ee98])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878bd786797sm119195476d6.39.2025.10.06.08.48.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 08:48:12 -0700 (PDT)
-Message-ID: <b98f4e857bf20ca9d46c8f30b68d7705e5a9c506.camel@redhat.com>
-Subject: Re: [PATCH 1/2] tools/rtla: Fix --on-threshold always triggering
-From: Crystal Wood <crwood@redhat.com>
-To: Tomas Glozar <tglozar@redhat.com>, Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel	
- <linux-trace-kernel@vger.kernel.org>, John Kacur <jkacur@redhat.com>, Luis
- Goncalves <lgoncalv@redhat.com>, Costa Shulyupin <costa.shul@redhat.com>,
- Wander Lairson Costa	 <wander@redhat.com>
-Date: Mon, 06 Oct 2025 10:48:10 -0500
-In-Reply-To: <20251006142616.136296-1-tglozar@redhat.com>
-References: <20251006142616.136296-1-tglozar@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+        bh=T869gDVevA9LpG7p7hXPgb7SP5eHhcw4WWhaTQBkq5A=;
+        b=2zo+ZienJvyGr8v4PFCMg777UXY9YbInkEZSYVHaJh1LkrIiNQ5HSe30lkob5edkt5
+         gcX38kXd54+hdz1yB+LZchELWJwKFEYW6WPTMhoDU2sZJV9RMloSAwWUqZ30V8Lnx+uc
+         PY/8SPITCvzJqOCIRj+gVJDSKdycdYsh6BimWJeM4zC+xWQvYFDAWTaZ4m5iS/d0p01y
+         hkgQo2wu9L+mIVevhyMuhUgNS2SGZslZyXHWJhw9wI/cOl8vTr+GfP/IIkvlCHeBX7wx
+         uzYomOekrrB/vn4cgha4lqO2Iw/ryKlaHS7hjIrj06Wl2Zbe+nTh1//C9yR+dyrsEnkv
+         XTGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759765734; x=1760370534;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T869gDVevA9LpG7p7hXPgb7SP5eHhcw4WWhaTQBkq5A=;
+        b=PxfJPYeZXDfgXBMOGCcyAYm6/0bv2bHEEoQmoUXUpqcShBmI2RoeRZXgrQExJWuoFb
+         XsMoQdtjpOg5Qkt/+EFiF22rq6YU5YbfgndBUY1oIk3gx8RXsnJS4rBo0dz6OWEji7m3
+         na7eQJiiM1xqG2msRLsHJ1uC1Wq2HCU0JWEaa3fgezv9+GBVpu2EyS1NrhtWQ3vCqxXM
+         XTf+6Srv0mViZEWaag7SJRWQZAQecpO6YXAWEqG2XkebKgdaavqs4rXAowuZaQdyGKTA
+         az65zYTMWFtU58ROcHNR6FugpJU5/vh2y4d14SUbT/qt2cekpUpn19ZwxfuSHJYQPY8n
+         hsgw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCReBm20NXOVoTddj/IBFxl5RkW6diW5+lLrj0W4fQ6xGgWb9YnkFL/creyTIIDCU247MCiOXXhduEQJ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJRKRxmXSyi+MIzYYVvRjhHQb/KtOzw5Yut1ZT/INGb7uYZO7J
+	Afdo7a2zClrFMohEPFy+rzTKuXbUO6fSZqmLaFGd4pZfIBO9aH/OMeR/hgQxoXrNGy5ceD3CIGE
+	cJYmDjuk=
+X-Gm-Gg: ASbGncsaKLEwb8Uli+c24zgiwojanT/pPE4b1LaAfygy8O/cIyBlaFvLTMFnAuNeU2L
+	6VWxdJPz5/M/Qj42yimaoYI22Emn8xhzYyOlMI/e23abg+t65rOXrFPPKtk/IL+2ib6vRTpYguQ
+	UZIOXWfjF+EoGSFje6c+PQLQ+qyDlLXR4s8fdcnKtcHtT0lQZaKXlA1muZkDXhpy2AI2haBwa6O
+	4beRCDpcHEXno8eTFuOS70T3x7ZzNCcXmaw+GslWhyRV6wdY3xLfd5gnZGe6iqL/d9udQYy836S
+	yVcAVVYk+OT9vGUpN00MFURxu2ZtRDTveKmuGhy1mj28XIqTiNizfuxQufNiJMzqE8IxUY/NlSF
+	d8Jnsg2wbZoZ0UobSiNlMJ82HD2qP4f6OzjDy7kbkv5kdYVuRHG5IpVtdO7tDOWQQpugNAaspk7
+	ZNT+xr2Ggtacc7rvpHfNfyBir9q1LBncA0/w==
+X-Google-Smtp-Source: AGHT+IH6njM+4Hb3ORuQPgRlqgDWQXTIapYtLEi8wuRV94ziPpiWcaXvJxfwgPJWYXWshy0ytCVboA==
+X-Received: by 2002:a05:6830:374c:b0:7bb:79ad:6604 with SMTP id 46e09a7af769-7bf77538cccmr7827018a34.22.1759765733844;
+        Mon, 06 Oct 2025 08:48:53 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:a1fd:4fbd:e7a6:9246? ([2600:8803:e7e4:1d00:a1fd:4fbd:e7a6:9246])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7bf3fdcfb69sm3892248a34.13.2025.10.06.08.48.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Oct 2025 08:48:53 -0700 (PDT)
+Message-ID: <da087553-c6d6-4e51-ac57-1be95a3c04b7@baylibre.com>
+Date: Mon, 6 Oct 2025 10:48:51 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 2/3] iio: adc: max14001: New driver
+To: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Kim Seer Paller <kimseer.paller@analog.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+ Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
+ Ceclan Dumitru <dumitru.ceclan@analog.com>,
+ Jonathan Santos <Jonathan.Santos@analog.com>,
+ Dragos Bogdan <dragos.bogdan@analog.com>
+References: <961e5351afa408e69541b60ec75852fbbd1ddd24.1759121938.git.marilene.agarcia@gmail.com>
+ <476b75cff0c3e5ff23ba7c642924511f3ba09a3f.1759121938.git.marilene.agarcia@gmail.com>
+ <CAMknhBHt9JVkaf1Kq76BKFM-Ff38-7ws6gaq+5fwy=pAih-fww@mail.gmail.com>
+ <9ee20209-efba-44b1-9902-5885bacfb290@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <9ee20209-efba-44b1-9902-5885bacfb290@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2025-10-06 at 16:26 +0200, Tomas Glozar wrote:
+On 10/5/25 6:25 PM, Marilene Andrade Garcia wrote:
+> On 01/10/2025 11:03, David Lechner wrote:
+>> On Mon, Sep 29, 2025 at 7:59 AM Marilene Andrade Garcia
+>> <marilene.agarcia@gmail.com> wrote:
+>>>
+>>
+> ...
+>>> +static int max14001_read_raw(struct iio_dev *indio_dev,
+>>> +                            struct iio_chan_spec const *chan,
+>>> +                            int *val, int *val2, long mask)
+>>> +{
+>>> +       struct max14001_state *st = iio_priv(indio_dev);
+>>> +       int ret;
+>>> +
+>>> +       switch (mask) {
+>>> +       case IIO_CHAN_INFO_RAW:
+>>> +               ret = regmap_read(st->regmap, MAX14001_REG_ADC, val);
+>>> +               if (ret)
+>>> +                       return ret;
+>>> +
+>>> +               return IIO_VAL_INT;
+>>> +       case IIO_CHAN_INFO_AVERAGE_RAW:
+>>> +               ret = regmap_read(st->regmap, MAX14001_REG_FADC, val);
+>>
+>> I don't remember... did you give a reason why this should not be a
+>> separate channel? Or just use REG_FADC as the raw value and forget
+>> about REG_ADC? In any case we would want another attribute to control
+>> the filter window size.
+> ...
+> 
+> Hello David,
+> 
+> Thank you for the review and suggestions.
+> Sorry for not adding any comments about that in v12. From what I understood from our previous conversation, for now the code could have one channel to keep things simple, since we’re not sure if anyone will actually need to read both the filtered and unfiltered data at the same time.
+> 
+> I was thinking of sending a separate set of commits to address that after this one gets merged, as it will involve new code changes related to adding a function to configure how many ADC readings are included in the mean calculation, and adding a new attribute to sysfs.
+> 
+> Since both IIO_CHAN_INFO_RAW and IIO_CHAN_INFO_AVERAGE_RAW are currently returning the same value, I could drop IIO_CHAN_INFO_AVERAGE_RAW in v13 and add it back in the next series of commits to implement the related feature.
+> 
+> I would like to know your thoughts about it, because if you prefer, I could change my plans and implement it in v13.
+> 
+> Best Regards,
+> Marilene
+> 
 
-> Also, fix incorrect brackets in hist_main_loop to match the
-> semantics of top_main_loop.
-
-Oops, thanks for fixing this!
-
-Reviewed-by: Crystal Wood <crwood@redhat.com>
-
--Crystal
-
+Since everything else looks good, I think Marcelo's suggestion to drop
+averaging from this series and add it in a later series is the best advice.
 
