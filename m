@@ -1,143 +1,149 @@
-Return-Path: <linux-kernel+bounces-843193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8B69BBE9B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:14:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE0BBBE9A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:13:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 351333BF812
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:14:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FD13189A291
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B6C2D9EDB;
-	Mon,  6 Oct 2025 16:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05ED52D9ED0;
+	Mon,  6 Oct 2025 16:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="ULvoXn2N"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GsSbTKm2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249AD2DBF4B;
-	Mon,  6 Oct 2025 16:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B293735898;
+	Mon,  6 Oct 2025 16:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759767234; cv=none; b=LJ+kP/rhL7011/GVF53TeXKPiSgRTNOOfKX/hsIK0tMSuIGOCzoNEnpEfvlZYxpbBxkFPtJuoorv3B8ZQXX1DWnzbsRbfCxfDJW1PfPqZ6GkV5Au2EYM57ptjWp9Kt5dPE3IhyFNGCkHDV+TzsFEiA3OKyg2SorhS+17VBSv0Bc=
+	t=1759767227; cv=none; b=OA0ImKrPxZqYeTxYUk+CcWOcVpbus0JStkpLM48R0VNPQLbKTgkHfxuP5ZOyFfEajtgTttpFLXrYpFzgPwAYARpfyxthkUPmXWfFrNfyCJ4epBYmnFX/cUq4o8mGnJEiCi7fTDXtuJCuRyoBVN0G//RJkvmCDdjrbY/DSKaqP0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759767234; c=relaxed/simple;
-	bh=7PpltU9DGGP6qfqzqgQNBhyvFnEH5t9R+C6nSh6GRO4=;
+	s=arc-20240116; t=1759767227; c=relaxed/simple;
+	bh=tfu2TRdArAqNNnaXATXklqcBw7fADoLtctfv35pmzSY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fN2k2J/ZohzbpDjajC4yDWLoZkmFxgsniVibrycW0YK5vPDsZGm7i/uri5aYPOjEesQy5ADYOsCAa8MeagBVF/owdblMiH22eN36mWtFdJB/uIGM/OdBwdb7GXb+BeBlQ8YL4u+XE6uKNuVmqab7nYAGvMgIJIUFhHVimZIpGKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=ULvoXn2N; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
-Message-ID: <2564cdec-9726-4efa-ba07-a2f2646168c6@packett.cool>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
-	s=key1; t=1759767230;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oXidAQDLxmoPTgrGv7pYlMirqlSYDUPqKshvVJjRl/U=;
-	b=ULvoXn2NmM9A547Ta6cpDp3p7vf06JYkkubX/G15oFdb/s4IuGCeAWJFjGXcBpGrCmVZxe
-	PJW9epfxlOxoPlOFpnxr9hi7JuXAvem9IqqJK0zHIdqzgsMoksVqSpmKpddtKtRwBOK6q1
-	8HMc/ExFVs9AbpORmMPfOdDYf3mENwDn5idIzBqZ90dkvrJU7E8pbKAh1XZxUXA/HlIERF
-	pZm3NmI3oMjYgSsLluxOOzdDIBSyTgwXkh8MmvH7OJqdbsUzSFLIW57croeCG9vin13SCG
-	HuGZ5njg7qSFs85Ua0g121AfUt+5HUZqcQBd1vsbKlaygScKR/YQETgWBnXoLA==
-Date: Mon, 6 Oct 2025 13:13:42 -0300
+	 In-Reply-To:Content-Type; b=uDN4pnu4QP37nFUfmodSX/nGjK5VuDXIZvSGxecLNJRnZVAnmaRvcq5tbpMN9/j60qURF1YsqGmWfPYercvqz9WN6VpzlKhzbCgHVC7hdyduV835J4M2/xQqAUhCaO1FwYXhmoe/xXkGca3I8CSeGBql/pl9/jqVJ5ypy3gNVXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GsSbTKm2; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759767226; x=1791303226;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=tfu2TRdArAqNNnaXATXklqcBw7fADoLtctfv35pmzSY=;
+  b=GsSbTKm2feNHUzbjQ1b5SWVswi1/tsG+Il19R4Q6SkpF45QXV0eTqcG8
+   Ct2BySDiYwbvfspGHaQAbfnvJpZVN2kcJzWwot0rKJ1wVqnwdfPTxYnVy
+   RhXQ/vqYpBowGoulHbQA1Xcd7F9OY2rmyDEkH/yQc+UNZl28nGEtyNvbD
+   8sJKYTeZZsEyh+ZkxSR+O6gQumOBtpH/b2WruWJMnvZoSEye9wrakE1mt
+   UboqftMtHyW7fj7JF53OWFd3k31hfIk8TfImgVQuBAWevAwYlt0AfmFth
+   JFnIJ7yDDdUshaQMXjGu3jU5fT6zEpuF+s6BLAeihrTK0LVVYkrE+GsY7
+   w==;
+X-CSE-ConnectionGUID: 4QyMBs2NRpKq4wkOxBiang==
+X-CSE-MsgGUID: EUiT0In6Rce53IRB7Ifybg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11574"; a="72196500"
+X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
+   d="scan'208";a="72196500"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 09:13:45 -0700
+X-CSE-ConnectionGUID: asQcShZxSsS4leEL7+ui2Q==
+X-CSE-MsgGUID: RyEmm41BSO6mRRkB5BJt5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
+   d="scan'208";a="180710614"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.110.110]) ([10.125.110.110])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 09:13:44 -0700
+Message-ID: <dc9adde2-2c07-4249-b788-63f50c8e429e@intel.com>
+Date: Mon, 6 Oct 2025 09:13:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] phy: qcom: qmp-combo: Move pipe_clk on/off to common
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250927093915.45124-2-val@packett.cool>
- <e6754738-76c9-4080-bbed-17f02e6535bf@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 20/20] cxl/pmem: Add CXL LSA 2.1 support in cxl pmem
+To: Neeraj Kumar <s.neeraj@samsung.com>
+Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-kernel@vger.kernel.org, gost.dev@samsung.com,
+ a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+ cpgs@samsung.com
+References: <20250917134116.1623730-1-s.neeraj@samsung.com>
+ <CGME20250917134213epcas5p139ba10deb2f4361f9bbab8e8490c4720@epcas5p1.samsung.com>
+ <20250917134116.1623730-21-s.neeraj@samsung.com>
+ <28d78d2b-c17d-4910-9f28-67af1fbb10ee@intel.com>
+ <1256440269.161759726504643.JavaMail.epsvc@epcpadp1new>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Val Packett <val@packett.cool>
-In-Reply-To: <e6754738-76c9-4080-bbed-17f02e6535bf@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <1256440269.161759726504643.JavaMail.epsvc@epcpadp1new>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
-On 10/6/25 11:44 AM, Konrad Dybcio wrote:
-> On 9/27/25 11:17 AM, Val Packett wrote:
->> Keep the USB pipe clock working when the phy is in DP-only mode, because
->> the dwc controller still needs it for USB 2.0 over the same Type-C port.
->> [..]
+
+On 9/29/25 7:02 AM, Neeraj Kumar wrote:
+> On 24/09/25 01:47PM, Dave Jiang wrote:
 >>
->> In [1] Konrad mentioned that "the hardware disagrees" with keeping the USB
->> PLL always on. I'm not sure what exactly was meant by disagreement there,
->> and I didn't find any specific code that touches that PLL in the driver,
->> so I decided to just try it anyway.
-> So what I did was playing around with the RESET_OVRD settings, which
-> dictate what parts of the PHY (and their associated PLLs) are kept online..
-> but I totally forgot that there is a branch/gate clock in GCC that sits
-> inbetween!
->
->> [..]
->> I'm sure it might not be that simple but from my limited and uninformed
->> understanding without any internal knowledge, the "sneaky workaround"
->> might actually be the intended way to do things?
-> Normally the clock which you're enabling is sourced from the QMPPHY.
-> The other option (bar some debug outputs) is for it to be driven by
-> the 19.2 MHz always-on crystal (instead of $lots_of_mhz from the PHY).
->
-> For USB hosts without a USB3 phy connected to them, there's an option
-> to mux the controller's PIPE clock to be sourced from the UTMI clock
-> input. In those cases, the UTMI (and therefore PIPE) clock runs at..
-> well, 19.2 MHz!
->
-> (you can actually do that on USB3-phy-connected hosts too, at the cost
-> of.. USB3, probably)
->
-> So I'm not sure how much of that is well thought-out design and how
-> much is luck, but this ends up working for us anyway, with seemingly
-> no downsides.
->
-> At least that's my understanding of the situation.
+>>> +++ b/drivers/cxl/core/pmem_region.c
+>>> @@ -290,3 +290,56 @@ int devm_cxl_add_pmem_region(struct cxl_region *cxlr)
+>>>      return rc;
+>>>  }
+>>>  EXPORT_SYMBOL_NS_GPL(devm_cxl_add_pmem_region, "CXL");
+>>> +
+>>> +static int match_free_ep_decoder(struct device *dev, const void *data)
+>>> +{
+>>> +    struct cxl_decoder *cxld = to_cxl_decoder(dev);
+>>
+>> I think this is needed if the function is match_free_ep_decoder().
+>>
+>> if (!is_endpoint_decoder(dev))
+>>     return 0;
+>>
+> 
+> Yes this check is required, I will add this.
+> 
+>>> +
+>>> +    return !cxld->region;
+>>> +}
+>>
+>> May want to borrow some code from match_free_decoder() in core/region.c. I think the decoder commit order matters?
+>>
+> 
+> Yes Dave, Looking at [1], seems commit order matters. Sure I will look
+> at match_free_decoder() in core/region.c
+> [1] https://lore.kernel.org/all/172964783668.81806.14962699553881333486.stgit@dwillia2-xfh.jf.intel.com/
+> 
+> 
+>>> +
+>>> +static struct cxl_decoder *cxl_find_free_ep_decoder(struct cxl_port *port)
+>>> +{
+>>> +    struct device *dev;
+>>> +
+>>> +    dev = device_find_child(&port->dev, NULL, match_free_ep_decoder);
+>>> +    if (!dev)
+>>> +        return NULL;
+>>> +
+>>> +    /* Release device ref taken via device_find_child() */
+>>> +    put_device(dev);
+>>
+>> Should have the caller put the device.
+> 
+> Its like taking device ref temporarly and releasing it then and there
+> after finding proper root decoder. I believe, releasing device ref
+> from caller would make it look little out of context.
 
-I wonder how Windows drivers handle this.
+As mentioned in my response to 15/20, the caller should be releasing the device reference since the caller is using the endpoint decoder. I would also add a comment to the new functions acquiring the decoders that the caller is expected to put_device() on the decoder dev when done.
 
-The ability to use the UTMI clock sounds more appropriate for when only 
-a legacy USB2 device is plugged in and the entirety of QMPPHY is 
-unnecessary and can be shut down to save power.
+DJ
 
-BTW I'm still seeing USB2 functionality die if I boot with the monitor 
-cable *already* plugged in, but that sounds like a very different issue 
-(the host controller starting to touch the bus before the PIPE clock is 
-up? something something probe order?)
-
-> The suspend logic is broken and unused anyway, but that's a nice catch,
-> the PIPE clock in question is even conveniently called "usb3_pipe" in DT
-
-Hmm. Is it unused? Oh, you mean the pm_runtime_forbid(), right.
-
-Do you have any pointers about what exactly is broken there? I've been 
-poking at the runtime PM stuff too 
-(https://gitlab.com/Linaro/arm64-laptops/linux/-/issues/14 for USB), the 
-PHYs are the biggest missing piece there overall..
-
->> [..]
->> @@ -3103,6 +3110,7 @@ static int qmp_combo_com_exit(struct qmp_combo *qmp, bool force)
->>   	reset_control_bulk_assert(cfg->num_resets, qmp->resets);
->>   
->>   	clk_bulk_disable_unprepare(qmp->num_clks, qmp->clks);
->> +	clk_disable_unprepare(qmp->pipe_clk);
-> Let's disable this one first, to preserve existing behavior (and it
-> makes sense logically - if the PHY doesn't have its clocks, it can't
-> really generate one either)
-
-Sure, nice catch. Will send a V2 with this fixed.
-
-Thanks,
-~val
+> 
+> 
+> Regards,
+> Neeraj
+> 
 
 
