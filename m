@@ -1,116 +1,89 @@
-Return-Path: <linux-kernel+bounces-842858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A463CBBDCE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:55:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90F3DBBDCF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:56:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84F09188DC8B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:55:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 489FA188E515
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9991F2620E5;
-	Mon,  6 Oct 2025 10:54:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B966C2571C7;
+	Mon,  6 Oct 2025 10:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mcD9iO5S"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HrdX/ZK0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED6F247DE1
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 10:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD18247DE1;
+	Mon,  6 Oct 2025 10:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759748093; cv=none; b=pEHtAum0EhcRQxfiFCc1trIulrFJkF7x4QpvSjfmjmIcq3Y9QWKRGEOrU0NR/kfjvD2jQRHWmCl8PPFumUiaMhPiKxq9GYEA7gk8Pk3v0BZTgNzg3Rp7PlMpSOWzGOHkpcrMDQBhA2/97BTAiPv8NMlcm0kqVL4apBwy+ub9BCw=
+	t=1759748197; cv=none; b=faL/b6ikUDIKx229dlK9TLSnVGaU9jMYwDOnzjloFxIj5Ht7hMgPU4OB7JI54Z+nWbUVmfLtUMeX8MuE0ilGdVMsQs0dv99afuzdG+r1zNKWb8lI2cRDW2lVfidoPJ75ZYuoh03/CgyEvt23TmuObsVydw8aO2S1t6ztHkGbb+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759748093; c=relaxed/simple;
-	bh=qXNXLA2jr121IED5txM/3X9BlnZFSO/JqrdDDHaU+08=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uvgwIiiA95WJCqT8FZJB54f5L1zp6p8ZCb+MhRQfvNNWMdtj2fo1pJ3qrbRBP/bpjMS5jDmutBbfxWJtmQI2G/2wqk0DMhifxENpEtOGZeIEjqtIzkLIvhlLa3OgkjtptPA66GJ7gcKo1vT/GrDd9rC+RbGoWXe1FCjqimR0nqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mcD9iO5S; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b40f11a1027so856284066b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 03:54:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759748090; x=1760352890; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=qXNXLA2jr121IED5txM/3X9BlnZFSO/JqrdDDHaU+08=;
-        b=mcD9iO5SD00hbHWBr0Dhlc8KF+ra94YzesMKP3XXBwhNP8xToWwzubBEpzahu8QqUy
-         zI/WgdSEYkwezj0ymaSLJF3ewQVBsMUYg2oQicusBkCsLJH2HDUxs3HCQlfPuT46gZPX
-         FhYGtkldR1Pqq/d6t/vTl9yOPLBw9ldUUdRJXZ5F9wIJSXqdFaG+t8Gc99cJvBjgl7Tb
-         9TuVHFU+lWg1TH8U0pjU23c+I68ScA5DI3YfijN8X8Pq1RoALif0DICnL+iB8MBpiZmf
-         5fC4Ij8jbQH/lXFy11ZMr8IT6K1bysipUr8eWSdvZkpIni2AMIvq5KNtqaKPqxrd+guu
-         90Bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759748090; x=1760352890;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qXNXLA2jr121IED5txM/3X9BlnZFSO/JqrdDDHaU+08=;
-        b=AHMrwZFZZqz/OfS1ictSv3SzlTvZ2lnqSoRFB7gyBb4qx8GYW6ms8YKE9g2Gn2Z3ET
-         eUgzGKC+++4XOYg0kREZ1Ds4X/a70qb5+z89zF+k9Qz+QlsWiczZOM3j+3vSDAXNvwuC
-         XG8N/bjoQETtDyDPt4H4GycpHiC0Peb9FfffxOgS+7+6OwPSH/l+PuDte+FOuJVkIUTL
-         M+ZwjJeX+IWZf4tBse8rtxeV0ro/CxzmF+El2eqtRX/hr0zX/lVWJAbaAujqS3ECZe0s
-         A4EnE++yxB6AwIlNqOvu7oYdfw2opYEML6xRGFUbIVFIWg6H8fzVbDK1nWZ/foGMJqiJ
-         GS/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWQnT1yMIV6ojx4RyqQtPl3tJb/pQqnlmD23FO/swETkRRIJOt+9HQ2E1I4vj8xXLsGmu5CS8Mt16wRH5A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhqMI/Sx8bphYCRjP6V22nT++fzqw30a1Pao9dGtwLl9WB9vgM
-	w6ZnaUbIhGzbKtvoX3OEaV8LAthQe2r10DUTsj8HRrhL6YWIUdUQ61dK
-X-Gm-Gg: ASbGncvCsoB1C6RcWDNP7LsuRjCff2mckZPUR9ctk3XOP+gSuRuBTBVCACnAddDgAYx
-	sqr4sD7dXaKRuOkNEH53IQ/eIzdFX1m3jrAK8RC/uwMXO6fVIozJ1FJrYPGL3rKQBmHoKN2ZBJR
-	eyPyL5meYcPcdTy4IIqkLK/kj+D/IuTLvpML6/G16FwPdY797wwEnPGVz3Y11ovv4FP5L40YqzZ
-	WHOaSX7b6ihVrF2zEzjBesEonexbNji1+vaiUAtYpk2cgrd4X2mXGYArDWsfVK7wa1pxgpOxZNZ
-	s9TJptcsTqQCm7kd3AKiRFZ18o6b2Fo2MoBiBwpI7lZWW1jlwBizjHHaGyPMeDYPNOblcZIPm6R
-	KytwVlG9DEYKQii2rODggE4SniwWTKSH9WJEpaor0LvXMjzYv1g==
-X-Google-Smtp-Source: AGHT+IFsbJIMX046ZdbgwCO0LHE40l3aSoIKhdw9r12MAKMtV4NAk+2OeC5sVS+LTODNz1eBr36Z6A==
-X-Received: by 2002:a17:907:2d26:b0:b04:3302:d7a8 with SMTP id a640c23a62f3a-b49c4394dfbmr1406539366b.58.1759748089518;
-        Mon, 06 Oct 2025 03:54:49 -0700 (PDT)
-Received: from [10.176.235.211] ([137.201.254.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652ad839sm1117104566b.1.2025.10.06.03.54.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 03:54:49 -0700 (PDT)
-Message-ID: <41093b6af67db2073a141527e44e575d0811d55b.camel@gmail.com>
-Subject: Re: [PATCH v2 1/3] rpmb: move rpmb_frame struct and constants to
- common header
-From: Bean Huo <huobean@gmail.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: avri.altman@wdc.com, bvanassche@acm.org, alim.akhtar@samsung.com, 
-	jejb@linux.ibm.com, martin.petersen@oracle.com, can.guo@oss.qualcomm.com, 
-	beanhuo@micron.com, jens.wiklander@linaro.org, linux-scsi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 06 Oct 2025 12:54:47 +0200
-In-Reply-To: <CAPDyKFpyh7Qag+ckCcPkr1RWh8YiST-4V2_Y7xvBU4LRLNC28A@mail.gmail.com>
-References: <20251001060805.26462-1-beanhuo@iokpp.de>
-	 <20251001060805.26462-2-beanhuo@iokpp.de>
-	 <CAPDyKFpyh7Qag+ckCcPkr1RWh8YiST-4V2_Y7xvBU4LRLNC28A@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1759748197; c=relaxed/simple;
+	bh=UAythQDaYi2XxgVjAL308Lv+v+AkGlInraSgKbq0OrQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qnHlnzRWKYWiKgNE8hnEu0L/VdcUgf5ROQxjQ7rEHie1Rni38SP5inV7KilG3TUPeuY3R5034OBoHuE8J0nw/6KnSo50F5QIf4VNg6rbjNu6kgjNDsniDu59plrkel5SX/y4GKf+B/4+/N+JAb1ctDgbKbou8nGFJPtq/cx9Szw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HrdX/ZK0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D78C2C4CEF5;
+	Mon,  6 Oct 2025 10:56:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759748196;
+	bh=UAythQDaYi2XxgVjAL308Lv+v+AkGlInraSgKbq0OrQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=HrdX/ZK0YPUePeTD7KR3YeVMhi7OGKDi55b/GODf7zBrXWMr/yWv81nNi10qVB6V+
+	 DCnNvBwgKwregzjBuLkrEH5ApiZQ0ydT0TXoKQNBfzxdipA6veax0UgXPuOa37FIRZ
+	 gLRoyudwZy2VKiv6+q1GOGHMQ473pKzihVo1I0LmI4U8fpwwhWd8FXlUqIwh41A2OY
+	 oRqlC3CUb5y9PJbgfAJ72oVYMekHxHOh/FO7E6edCBq9w5TVN9n42SrvE2n/fsheTo
+	 qsb+JHGJJXuFKFLClGvKTLUC2Bf8mT2WkIs7v7JHmAteJZLeAY0HqGIdsNCci6mee1
+	 +21k+9hxeBpoA==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: assert ->i_lock held in __iget()
+Date: Mon,  6 Oct 2025 12:56:30 +0200
+Message-ID: <20251006-viermal-sorgsam-9c931bef2f1a@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20250930235314.88372-1-mjguzik@gmail.com>
+References: <20250930235314.88372-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=874; i=brauner@kernel.org; h=from:subject:message-id; bh=UAythQDaYi2XxgVjAL308Lv+v+AkGlInraSgKbq0OrQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ8XhDHv2vVo59TOO2fvpY6Jb0k7cznKKXARxJPCvlnP eF36w491FHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRulyG/wUvkitfSShLRh0V KHS24WrmDXsaFjhDcOVmo0mhzW//BjL8s1//XSaJb23NXTf57e2/rE8emPgx4F+x9csFLbes5so F8QEA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2025-10-06 at 12:21 +0200, Ulf Hansson wrote:
-> > Signed-off-by: Bean Huo <beanhuo@micron.com>
->=20
-> I have queued this up via my mmc tree and plan to send a late
-> pull-request to Linus to get this included for 6.18-rc1.
->=20
-> That should help to land the remaining pieces for ufs in the second
-> step without having to care about the mmc parts.
->=20
-> Kind regards
-> Uffe
+On Wed, 01 Oct 2025 01:53:14 +0200, Mateusz Guzik wrote:
+> Also remove the now redundant comment.
+> 
+> 
 
+Applied to the vfs-6.19.inode branch of the vfs/vfs.git tree.
+Patches in the vfs-6.19.inode branch should appear in linux-next soon.
 
-thanks Uffe,
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Kind regards,
-Bean
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.19.inode
+
+[1/1] fs: assert ->i_lock held in __iget()
+      https://git.kernel.org/vfs/vfs/c/0cb93842ce06
 
