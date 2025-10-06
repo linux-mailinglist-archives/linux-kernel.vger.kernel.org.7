@@ -1,182 +1,224 @@
-Return-Path: <linux-kernel+bounces-842618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14672BBD29A
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 08:52:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C7FABBD2A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 08:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BBE414E3AC6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 06:52:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38A724E8055
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 06:53:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EB725393E;
-	Mon,  6 Oct 2025 06:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72EBA254B03;
+	Mon,  6 Oct 2025 06:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kXHwNrEB"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="eIwlSBHH"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F45E44C63
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 06:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F493208
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 06:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759733565; cv=none; b=XcR2amIIQlv3ldB53bXx1lp6rcSiTiqjLtqtsHBcraizC+xkh2/M3N5RKwrqC0B/gClwte+dg2/hhJaGI3EVNptNN89F35fKUHr+GYh49/lsuvdNO46x6rZyVpqx7/2C3W2xgt8+XymIrlnomDN8Jt82eXhMHFG0XTwXWY2DLwY=
+	t=1759733577; cv=none; b=eXogMTU+A+/KEv+54IN84h6Tk6FLfWSSH/qXZw2Z0ztJ2vkdNjNSM+Wi9pPEXOa9KBA8Ppbn6Ec8uHRaRynP9BhdSE0tQ91e/jZH5rPB4KXx8Qk2Za/0Tqd2/JxOdXbbktPSzENIurXMd8+ERO9ga2HS5iPepoLYq7cM0EPEJ+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759733565; c=relaxed/simple;
-	bh=HXmc7QpSTt9ZosNT5x1nSeoE8ULcpihYGG51Sy2vopY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=G3QUmuixpq8tUjwAYvP+8lbZSzS7oNnRmuzSi1gnN+08IygFYSqgx1qrZzf7JAUIAA8W05cXrzP4lpFTgwxtfx8trBlun8ggek5PD1m1A7THQk0RezPtIwr8jrjKrtxa2llzFGRULvZJFJkxHqMNok4euxqmi0kNsGNBNmBv7Qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kXHwNrEB; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6349e3578adso8098412a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 23:52:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759733562; x=1760338362; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HXmc7QpSTt9ZosNT5x1nSeoE8ULcpihYGG51Sy2vopY=;
-        b=kXHwNrEBamhLVSJBRnPQ7KGz5OINhghCavCed1EbBkoIm4RVA7eFF9Aij7IxEGssxh
-         mgCguwfeb6I2xLrnnkAs8Ly2591QB6CMOYP20WmADzW7KwLqSJqJEFZxwzJC9BvLgRax
-         OO8XnJf95IizJPMMHJ4QrWvZUlaTCKOz8F5wWlFYexaTVBpM9FAs5CeEuEB0XXmGgd/w
-         LfZwg/3baUnzS6G7AsTEIpmFQcQUw1K0uX0aRlDjDd5efc7ou/2Bul3ngY2s9518P42V
-         nMtVE51KHtbE1nm60fjYyD1kVXdMN58ALPWEOO7TtN1IEkZ0EWzeq1VCHY2NH4cCQz+c
-         LvSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759733562; x=1760338362;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HXmc7QpSTt9ZosNT5x1nSeoE8ULcpihYGG51Sy2vopY=;
-        b=uZdyYzlUuCTSkNQ+vZkKH9alnNNWpnft7Fl46x1rHA8gK6bkwfMmEP4fyxduWHRh3b
-         xiHzCzSVDXDNSTDVC79PHO11QcZKskJeJkRR8dnHzZNZLQzcQIT1nALrw1tgHDsYjEIu
-         F5P+xTGf3UgDJguIuBSMGiR3ABtcchwxi3ZuEc9LLMf/u3GUYH4qhcwKCepE92EgYpVC
-         qMXI4RtjP5QzYLqDUrr/zRRWaw1zjlSCL/WPqV0Rwk+VOYsV2In8T/O9iaIMoOj/A2ZE
-         zJtgfiE7PSCZoFDai+jLds/aHTz0Qp53PtIrDzDQAilSin83dwE+rKRarB19LqaySKs0
-         QndQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUu0NlNYDsNqZJgePzGBe8tGYfqwZwEk7eM26+kHOqv/PQFdoN4jZXQ6EDbdHOEbrd78hk58r8pdtzQATA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSdMSjLLAUtsd6ZhB3qQ2HoBgCPKJlnv1t+aR73f9/i3Us2Jzo
-	Rrrl5eimJWzQeBNe9N25V1770h50F1hPovXY6TI8/XbAVA39BKnjUTSpe6aalXfkgSs=
-X-Gm-Gg: ASbGncuhypzcwkhXsPsYl5MoKlvl4gh+wmxcizsMvwHHf3GXu1RmsS6AuMCkb2TEFOc
-	/7RT9+cen61Cb7bndooTwuDFxgHCybIzrxBdQ/B0l2wElLxqkNW9wH4rKcdA/fr/YIElGcrHkWn
-	ewc4n/RXSlalbS8JvIlp1umK1HvL/5LmgkTTnWtnqdhZAek5VZRLnw+oEfPCzHAQid7WdBvlRD0
-	QFWvjwM41jgOKPbxFljdBXfuZ6gWbevPf+LvhnQNHBMlTJJciPgfJSQGPJz//qyuBU9qHoGQxZ1
-	BRnu7PAPvSYkCLTscPQGntTjbLCA6LUp22N0lAKCHhZVXsQG7ObRO5oonaDJttC0MmMnt7dO2c6
-	h4VBI0sCXP3Uwyvx7d4lVWtPF2NyloI3LqZkEddlxwpNs2nzq+se0fnYYHzSGvpQB
-X-Google-Smtp-Source: AGHT+IFH+Nm6t/KLP6g5tq5oQKi62aAAd8k2tFyYYm8tKkws1sxOeiOGOYBNadAisWD6RX0oCu0zaA==
-X-Received: by 2002:a17:907:3f0a:b0:b45:60ad:daff with SMTP id a640c23a62f3a-b49c214c03fmr1480542166b.28.1759733561787;
-        Sun, 05 Oct 2025 23:52:41 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486a173b03sm1058949066b.84.2025.10.05.23.52.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Oct 2025 23:52:41 -0700 (PDT)
-Message-ID: <949da0fec08f09bd6b70b14f3361f4a4584b42c3.camel@linaro.org>
-Subject: Re: [PATCH 2/3] soc: samsung: exynos-pmu: move some gs101 related
- code into new file
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>,  Peter Griffin <peter.griffin@linaro.org>, Tudor
- Ambarus <tudor.ambarus@linaro.org>, Will McVicker	
- <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 06 Oct 2025 07:52:40 +0100
-In-Reply-To: <CAPLW+4=+efttfgj9gMSGpv2sjhJQ7whtoCuitK+Ku4U7hzE+1A@mail.gmail.com>
-References: <20251002-gs101-pmu-regmap-tables-v1-0-1f96f0920eb3@linaro.org>
-	 <20251002-gs101-pmu-regmap-tables-v1-2-1f96f0920eb3@linaro.org>
-	 <CAPLW+4=+efttfgj9gMSGpv2sjhJQ7whtoCuitK+Ku4U7hzE+1A@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2 
+	s=arc-20240116; t=1759733577; c=relaxed/simple;
+	bh=dz/7ybhFy53bNalb8jRF6/95hGJfso+9p3SQZuWaD+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=um1625gmTsRzq/81WNCC/vptRx24l4YvdCKlMsQsTL+zGsKe0i+JPGaefrNalzccdwfystHk1I75TTbWjP9BYo2xRtL52VKujdxytEf/4JRSsUdhW5eMTUxZ6bUR+DfpsVOgD0X2OBwGwgRXtB2g2Ba+CmawkiKhwgVwhPKKfZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=eIwlSBHH; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759733572;
+	bh=dz/7ybhFy53bNalb8jRF6/95hGJfso+9p3SQZuWaD+w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=eIwlSBHHSU3fGpgntkmPgbspid1vf+fh1JA91yxAY6BJMprianRhs2g6YgCGjCuT+
+	 ojdXWJPfdA926eGkHDJ864aW57Ntr8XblLboCkbpRwnnkcPzUo2208o+A0ik1zQWx3
+	 E/3y4Pg075Zq/9MU7ziDIdiAnYTXh0GNZ4u+/KxBvkLSh2Sb3Z8BcRTyKwqQUq8s76
+	 8li7JiqVY7anifjlHOR0rfFyVRjgMtemgO1XGquYJCcv64T530YToTfq5UQSzMBmJD
+	 kiLUoKNzQPFCM7b+QiiAe/ljf3G9b3/GtyyIGfAEGXlbbL466HvAh8q/gqVtDlpO9U
+	 cqd76BOVb58EQ==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 543B617E0AC3;
+	Mon,  6 Oct 2025 08:52:51 +0200 (CEST)
+Date: Mon, 6 Oct 2025 08:52:47 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?TG/Dr2M=?= Molinari <loic.molinari@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, Rob Herring <robh@kernel.org>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Melissa Wen <mwen@igalia.com>, =?UTF-8?B?TWHDrXJh?= Canal
+ <mcanal@igalia.com>, Hugh Dickins <hughd@google.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, =?UTF-8?B?TWlrb8WCYWo=?= Wasiak
+ <mikolaj.wasiak@intel.com>, Christian Brauner <brauner@kernel.org>, Nitin
+ Gote <nitin.r.gote@intel.com>, Andi Shyti <andi.shyti@linux.intel.com>,
+ Christopher Healy <healych@amazon.com>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ linux-mm@kvack.org, kernel@collabora.com, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v3 01/10] drm/shmem-helper: Add huge page fault handler
+Message-ID: <20251006085247.52f29f59@fedora>
+In-Reply-To: <20251004093054.21388-2-loic.molinari@collabora.com>
+References: <20251004093054.21388-1-loic.molinari@collabora.com>
+	<20251004093054.21388-2-loic.molinari@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Sam,
+On Sat,  4 Oct 2025 11:30:44 +0200
+Lo=C3=AFc Molinari <loic.molinari@collabora.com> wrote:
 
-On Fri, 2025-10-03 at 12:55 -0500, Sam Protsenko wrote:
-> On Thu, Oct 2, 2025 at 5:33=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik@=
-linaro.org> wrote:
-> >=20
-> > To avoid cluttering common code, move most of the gs101 code into a new
-> > file, gs101-pmu.c
-> >=20
-> > More code is going to be added for gs101 - having it all in one file
-> > helps keeping the common code (file) more readable.
-> >=20
+> This gives the mm subsystem the ability to propose the insertion of
+> PUD or PMD-sized mappings for the faulting addresses.
 >=20
-> Maybe add "no functional change" note for refactoring/cleanup patches lik=
-e this.
-
-Sure
-
-
-[...]
-
-> >=20
-> > diff --git a/drivers/soc/samsung/exynos-pmu.h b/drivers/soc/samsung/exy=
-nos-pmu.h
-> > index 113149ed32c88a09b075be82050c26970e4c0620..fe11adc4f6ac8fc8bce228d=
-5852deaff7c438221 100644
-> > --- a/drivers/soc/samsung/exynos-pmu.h
-> > +++ b/drivers/soc/samsung/exynos-pmu.h
-> > @@ -44,7 +44,14 @@ extern const struct exynos_pmu_data exynos4412_pmu_d=
-ata;
-> > =C2=A0extern const struct exynos_pmu_data exynos5250_pmu_data;
-> > =C2=A0extern const struct exynos_pmu_data exynos5420_pmu_data;
-> > =C2=A0#endif
-> > +extern const struct exynos_pmu_data gs101_pmu_data;
-> >=20
-> > =C2=A0extern void pmu_raw_writel(u32 val, u32 offset);
-> > =C2=A0extern u32 pmu_raw_readl(u32 offset);
-> > +
-> > +int tensor_sec_reg_write(void *context, unsigned int reg, unsigned int=
- val);
-> > +int tensor_sec_reg_read(void *context, unsigned int reg, unsigned int =
-*val);
-> > +int tensor_sec_update_bits(void *ctx, unsigned int reg, unsigned int m=
-ask,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 unsigned int val);
+> On builds with CONFIG_TRANSPARENT_HUGEPAGE enabled, if the mmap() user
+> address is aligned to a huge page size, if the GEM object is backed by
+> shmem buffers on mount points setting the 'huge=3D' option and if the
+> shmem backing store manages to allocate a huge folio, the CPU mapping
+> will then benefit from significantly increased memcpy() performance.
+> When these conditions are met on a system with 2 MiB huge pages, an
+> aligned copy of 2 MiB would raise a single page fault instead of 4096.
 >=20
-> Nitpick: just noticed the inconsistency between context/ctx wording
-> usage in above function arguments.
-
-Interesting... I'll fix it as part of the move.
-
+> v2:
+> - set ret to VM_FAULT_FALLBACK in default switch statement
+> - ifdef out paddr declaration
 >=20
-> > +
-> > =C2=A0#endif /* __EXYNOS_PMU_H */
-> > diff --git a/drivers/soc/samsung/gs101-pmu.c b/drivers/soc/samsung/gs10=
-1-pmu.c
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..b5a535822ec830b751e36a3=
-3121e2a03ef2ebcb2
-> > --- /dev/null
-> > +++ b/drivers/soc/samsung/gs101-pmu.c
-> > @@ -0,0 +1,141 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +//
-> > +// Copyright 2025 Linaro Ltd.
-> > +//
-> > +// GS101 PMU (Power Management Unit) support
-> > +
+> Signed-off-by: Lo=C3=AFc Molinari <loic.molinari@collabora.com>
+> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202509241315.8jjCyL7U-lkp@i=
+ntel.com/
+> Closes: https://lore.kernel.org/oe-kbuild-all/202509241654.qJk1H5kr-lkp@i=
+ntel.com/
+> Closes: https://lore.kernel.org/oe-kbuild-all/202509241920.PtSEkfd4-lkp@i=
+ntel.com/
+
+I'm not sure those Closes/Reported-by tags are needed when you fix bugs
+introduced in a previous revisions of the patchset.
+
+> ---
+>  drivers/gpu/drm/drm_gem_shmem_helper.c | 56 ++++++++++++++++++++++++--
+>  1 file changed, 52 insertions(+), 4 deletions(-)
 >=20
-> AFAIR headers like these should be made using multi-line comments (not
-> talking about SPDX part). Or is it the latest fashion trends in
-> kernel?
+> diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm=
+_gem_shmem_helper.c
+> index 50594cf8e17c..22c4b09e10a3 100644
+> --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
+> +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+> @@ -573,7 +573,8 @@ int drm_gem_shmem_dumb_create(struct drm_file *file, =
+struct drm_device *dev,
+>  }
+>  EXPORT_SYMBOL_GPL(drm_gem_shmem_dumb_create);
+> =20
+> -static vm_fault_t drm_gem_shmem_fault(struct vm_fault *vmf)
+> +static vm_fault_t drm_gem_shmem_huge_fault(struct vm_fault *vmf,
+> +					   unsigned int order)
+>  {
+>  	struct vm_area_struct *vma =3D vmf->vma;
+>  	struct drm_gem_object *obj =3D vma->vm_private_data;
+> @@ -582,6 +583,10 @@ static vm_fault_t drm_gem_shmem_fault(struct vm_faul=
+t *vmf)
+>  	vm_fault_t ret;
+>  	struct page *page;
+>  	pgoff_t page_offset;
+> +	unsigned long pfn;
+> +#if defined(CONFIG_ARCH_SUPPORTS_PMD_PFNMAP) || defined(CONFIG_ARCH_SUPP=
+ORTS_PUD_PFNMAP)
+> +	unsigned long paddr;
+> +#endif
+> =20
+>  	/* We don't use vmf->pgoff since that has the fake offset */
+>  	page_offset =3D (vmf->address - vma->vm_start) >> PAGE_SHIFT;
+> @@ -592,17 +597,57 @@ static vm_fault_t drm_gem_shmem_fault(struct vm_fau=
+lt *vmf)
+>  	    drm_WARN_ON_ONCE(obj->dev, !shmem->pages) ||
+>  	    shmem->madv < 0) {
+>  		ret =3D VM_FAULT_SIGBUS;
+> -	} else {
+> -		page =3D shmem->pages[page_offset];
+> +		goto out;
+> +	}
+> =20
+> -		ret =3D vmf_insert_pfn(vma, vmf->address, page_to_pfn(page));
+> +	page =3D shmem->pages[page_offset];
+> +	pfn =3D page_to_pfn(page);
+> +
+> +	switch (order) {
+> +	case 0:
+> +		ret =3D vmf_insert_pfn(vma, vmf->address, pfn);
+> +		break;
+> +
+> +#ifdef CONFIG_ARCH_SUPPORTS_PMD_PFNMAP
+> +	case PMD_ORDER:
+> +		paddr =3D pfn << PAGE_SHIFT;
+> +		if (((vmf->address & ~PMD_MASK) =3D=3D (paddr & ~PMD_MASK)) &&
+> +		    (folio_order(page_folio(page)) =3D=3D PMD_ORDER))
+> +			ret =3D vmf_insert_pfn_pmd(
+> +				    vmf, pfn & (PMD_MASK >> PAGE_SHIFT), false);
+> +		else
+> +			ret =3D VM_FAULT_FALLBACK;
+> +		break;
+> +#endif
+> +
+> +#ifdef CONFIG_ARCH_SUPPORTS_PUD_PFNMAP
+> +	case PUD_ORDER:
+> +		paddr =3D pfn << PAGE_SHIFT;
+> +		if (((vmf->address & ~PUD_MASK) =3D=3D (paddr & ~PUD_MASK)) &&
+> +		    (folio_order(page_folio(page)) =3D=3D PUD_ORDER))
+> +			ret =3D vmf_insert_pfn_pud(
+> +				    vmf, pfn & (PUD_MASK >> PAGE_SHIFT), false);
+> +		else
+> +			ret =3D VM_FAULT_FALLBACK;
+> +		break;
+> +#endif
+> +
+> +	default:
+> +		ret =3D VM_FAULT_FALLBACK;
+> +		break;
+>  	}
+> =20
+> + out:
+>  	dma_resv_unlock(shmem->base.resv);
+> =20
+>  	return ret;
+>  }
+> =20
+> +static vm_fault_t drm_gem_shmem_fault(struct vm_fault *vmf)
+> +{
+> +	return drm_gem_shmem_huge_fault(vmf, 0);
+> +}
+> +
+>  static void drm_gem_shmem_vm_open(struct vm_area_struct *vma)
+>  {
+>  	struct drm_gem_object *obj =3D vma->vm_private_data;
+> @@ -639,6 +684,9 @@ static void drm_gem_shmem_vm_close(struct vm_area_str=
+uct *vma)
+> =20
+>  const struct vm_operations_struct drm_gem_shmem_vm_ops =3D {
+>  	.fault =3D drm_gem_shmem_fault,
+> +#if defined(CONFIG_ARCH_SUPPORTS_PMD_PFNMAP) || defined(CONFIG_ARCH_SUPP=
+ORTS_PUD_PFNMAP)
+> +	.huge_fault =3D drm_gem_shmem_huge_fault,
+> +#endif
+>  	.open =3D drm_gem_shmem_vm_open,
+>  	.close =3D drm_gem_shmem_vm_close,
+>  };
 
-Depends on subsystem, but multi-line for most. Here I went with existing st=
-yle for
-the PMU-related files, though.
-
-Cheers,
-Andre'
 
