@@ -1,103 +1,277 @@
-Return-Path: <linux-kernel+bounces-842758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06A40BBD7D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 11:47:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84EFABBD7E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 11:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D960C18916BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 09:47:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 316223B6EDC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 09:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D452B20110B;
-	Mon,  6 Oct 2025 09:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB41C207A32;
+	Mon,  6 Oct 2025 09:47:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kInQ3g7r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pUyd3KOf"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0AF126C05;
-	Mon,  6 Oct 2025 09:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E14201033
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 09:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759744038; cv=none; b=CL0xBRoUFIzlEnt0VI4vD1EdgW8kP4toboPqrr4c8vbAZlvkg+bCSHPAyZYXdkwYYOz73h6pC0D4VSDVHeKXsAiLTj2XosyPQXrn8ojoLH5yCrsjSSGGUcNSpzmvFAv5rEbqmGg8rg7Kt+LZ/lOqmxbdwTiqIcbcTLn7QvF7/LI=
+	t=1759744076; cv=none; b=CSQKci+r5KtPmD+bnNHURp7nPqD30wUvcRkkMXd/lO4lbYJVb8bg7leT6Q/U77/x2WQQNLKP/64m2Dq9TyiHB/X+mYW9kcbMZu74EHmW9HH/bfESUXx3xw9kjNgz3QSHLFY6fZBFQNO8B3hhK9SRnLrzsQrI4fRmYEHBsMyLWAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759744038; c=relaxed/simple;
-	bh=QhzIG03aHboFObiRBtxv27Nts9zZSF/gkbUUOv91YoA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jqicyFF/ZKVReZ0FcrHZXnvrs5H9UHY5TkZ0YfFaJTXFWyLSFdSeOIJMQZXbxX0aymwxsyy3ZCenKZcuOkGfTtleGz0+vBZWWN5WojUrLN1Emq+6PryxTqfLYccOps1LP9tp7Yyjaji0sGqtjKPUk7EWiZMJy5IKWlg2AOJg/Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kInQ3g7r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AFBBC4CEF5;
-	Mon,  6 Oct 2025 09:47:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759744037;
-	bh=QhzIG03aHboFObiRBtxv27Nts9zZSF/gkbUUOv91YoA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=kInQ3g7rmAPmJlKrHwBOT+EO6DFomMRjCDB1xhOjl+UTuHhoAgUFOtYfacsoy/fbx
-	 Mvi8z6wk2hlyxcxtBHvOqwkB8IZUB6mOAffoqbG1gHrD9tQ/BWwpaDFyEtsA1xCMWT
-	 058bjMrpx8Qk94S1obLFE3znGxvJ0uYg+qMPw/LhNMVl5BPkGL/eOj6tpMZK/wb0D4
-	 1TcrkZn5jT/6yktfDtzvWrcVPKdw+/eo9LJuBiEUFGRTK5ViLyDdqoh67rSmMjofML
-	 B9Voa3Ud+sdTgat6SwnysQu95EE3DFl/u+APycvloYjAMgnKRkstKkkdqHKS1dEQzA
-	 MaH4biIQdcElQ==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mark Brown <broonie@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Menglong Dong <menglong8.dong@gmail.com>,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH] tracing: wprobe: Fix to use IS_ERR_PCPU() for per-cpu pointer
-Date: Mon,  6 Oct 2025 18:47:12 +0900
-Message-ID: <175974403177.1372080.12078001360837326466.stgit@devnote2>
-X-Mailer: git-send-email 2.43.0
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1759744076; c=relaxed/simple;
+	bh=NVc36TGbNflxbPQDRRl0haz/TUVlsWdECo1JWukAVH8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ErBmgGU7kwZzoFzznfDb5dxFJ2CsW1hz+LsbBUdhDfKebd1bdPx9Y1sqMKFMNqsb+XSJJBlVGqrS2TgoniKySQFDbj1vwTMLurFy5cTaxDELIjYFw3tM4s+km5sPPTg17ftpQ7mViPMEPpfmv6hdOMIa90wQInzFlT4RFgVQTHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pUyd3KOf; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-631df7b2dffso10862948a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 02:47:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759744072; x=1760348872; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=NVc36TGbNflxbPQDRRl0haz/TUVlsWdECo1JWukAVH8=;
+        b=pUyd3KOf/ViqPgLWXTuDX6y5+iT3/e1CzssaJt/0S5qJ7h0NuM+qMuOqhlmV2TceoV
+         PSYCTE/FTbbGNMmAnB3UAudtb27GqkvXy81HmaZ91PkbpedDA8WDLrWvjCnyWtasnVCi
+         JxbbTRUWzMDNvNQoHqvpHQ7xKCZpq3Q9NmYO76PGjQt+0e2Q5UlnJrGAYSZQqg0zeILK
+         QoHGOSOMhoivtPtL4WlxEckSC8On0qEScBVFsWqmQ7G+V1NRycsXUcXucJol6bpa8VM+
+         oCLcj72Xo6FXcORA0cxXDJAFSQSO9m0Vb/grqt9ir3Yz7fBj3LBzaAGeHpVzwIUtGbLM
+         8qRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759744072; x=1760348872;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NVc36TGbNflxbPQDRRl0haz/TUVlsWdECo1JWukAVH8=;
+        b=WNNmMepwVRvdy7FOuUj5ajn+h9g7ZH9up9s+41O36BguqBI/PAwWo0JyrR2G7iD4j+
+         l1zh9uJjoSAWS7yFqzai/HCRgbkYRqiQoIiTK0MGNwwA2NSYDUSbGOko+Oy5EGCi2FA6
+         7FWvAvS95AJ5pXM66j0sPIeBR4QQg1uAFRAjmydsXIOSm6Bo+U1skT7/txOnKkM2F9r1
+         tvdbAMtyU9ptNxO5paSR6DtWpMyV/W+jN9Cq6z8tK7B9S3mM0dvhNQcG5hv9PsGUmKvG
+         JoUT5sYAQsqfQbef0Cnw6SG6BpWmJtXy/FjDCPjeNYrfm68+dpENMjSRdqyHBarklbYe
+         oKOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVzv8Mq6pCtnB1b8keMG3fqBvFP78DRXnHEuB00B4p1qxAgu2Z+Fe3KzZolGyXB9lInTbExyt1ODRsfjz4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyC0Uloj6WR//0JHg4antNdWDW12UExZKG9YexkOriVkXdZIEO
+	3A7A/1evKn4EaugO6vMAGhxGoPQj321yQ5w13ksQsaHtI63/kJYL3Jvmz3JSQas1f90=
+X-Gm-Gg: ASbGncu2SiYYzdp2HZKv55EAea0dom9sjq6iT4pOp4obWzqsEiRg+5HuYy5v6voYEoc
+	jaX2AKHXA0jWvptHKuBrtH+TtMIOXDNzVYvti6zET/NvoOextHjsD1sQROcC/as0rcIjgHmJ+el
+	iPCl7k7LykiW8upH52sAXVgW+N4IobbdPr+NYxkxivLZdeszE5a4XTOMaSwRvNOBykdkWJsadxT
+	w8NEImsvV0cpqSV9UTndXJZBJyLdDmy/1+ZNOOFxqVAauVsKRR7rJfoFVtASKtc2PFv78gek6Db
+	tbo030618Wwn3BuSP6RSXYLp9YGJeA2Q4Pcmk7PperA9Tq+aOKf8cOb1amhxFZDXdclghrg35UM
+	oNXLbF3pr5MpqZz3NY2j1bCuK7KvqCvXDUg6YAra6tv400GO4oeTFvw==
+X-Google-Smtp-Source: AGHT+IFtzyuEM86nDZ1afipZ9gjtIoBXDJIw39RxT9KiIYyBACUqX8txUSjLeqwb6sRvJD4CXeYSfA==
+X-Received: by 2002:a05:6402:13d6:b0:636:6e11:2fd1 with SMTP id 4fb4d7f45d1cf-638fcb65499mr14959712a12.4.1759744072376;
+        Mon, 06 Oct 2025 02:47:52 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6378811f14bsm9884430a12.45.2025.10.06.02.47.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 02:47:51 -0700 (PDT)
+Message-ID: <a4834c957f518d9f172b5a2dd0b8cd34980c7653.camel@linaro.org>
+Subject: Re: [PATCH v2 02/17] regulator: dt-bindings: add s2mpg10-pmic
+ regulators
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>,  Lee Jones <lee@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski	 <brgl@bgdev.pl>, Peter
+ Griffin <peter.griffin@linaro.org>, Will McVicker	
+ <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+Date: Mon, 06 Oct 2025 10:47:50 +0100
+In-Reply-To: <20250611-statuesque-dolphin-of-felicity-6fbf54@kuoka>
+References: <20250606-s2mpg1x-regulators-v2-0-b03feffd2621@linaro.org>
+	 <20250606-s2mpg1x-regulators-v2-2-b03feffd2621@linaro.org>
+	 <20250611-statuesque-dolphin-of-felicity-6fbf54@kuoka>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Hi Krzysztof,
 
-Since wprobe uses IS_ERR() for per-cpu pointer, it failed to build.
+On Wed, 2025-06-11 at 10:55 +0200, Krzysztof Kozlowski wrote:
+> On Fri, Jun 06, 2025 at 04:02:58PM GMT, Andr=C3=A9 Draszik wrote:
+> > The S2MPG10 PMIC is a Power Management IC for mobile applications with
+> > buck converters, various LDOs, power meters, RTC, clock outputs, and
+> > additional GPIO interfaces.
+> >=20
+> > It has 10 buck and 31 LDO rails. Several of these can either be
+> > controlled via software or via external signals, e.g. input pins
+> > connected to a main processor's GPIO pins.
+> >=20
+> > Add documentation related to the regulator (buck & ldo) parts like
+> > devicetree definitions, regulator naming patterns, and additional
+> > properties.
+> >=20
+> > S2MPG10 is typically used as the main-PMIC together with an S2MPG11
+> > PMIC in a main/sub configuration, hence the datasheet and the binding
+> > both suffix the rails with an 'm'.
+> >=20
+> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> >=20
+> > ---
+> > v2:
+> > - drop | (literal style mark) from samsung,ext-control-gpios
+> > =C2=A0 description
+> > ---
+> > =C2=A0.../regulator/samsung,s2mpg10-regulator.yaml=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 | 147 +++++++++++++++++++++
+> > =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> > =C2=A0.../regulator/samsung,s2mpg10-regulator.h=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 48 +++++++
+> > =C2=A03 files changed, 196 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mpg1=
+0-regulator.yaml
+> > b/Documentation/devicetree/bindings/regulator/samsung,s2mpg10-regulator=
+.yaml
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..82f2b06205e9bdb15cf90b1=
+e896fe52c335c52c4
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/regulator/samsung,s2mpg10-regul=
+ator.yaml
+> > @@ -0,0 +1,147 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/regulator/samsung,s2mpg10-regulator=
+.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Samsung S2MPG10 Power Management IC regulators
+> > +
+> > +maintainers:
+> > +=C2=A0 - Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> > +
+> > +description: |
+> > +=C2=A0 This is part of the device tree bindings for the S2MG10 Power M=
+anagement IC
+> > +=C2=A0 (PMIC).
+> > +
+> > +=C2=A0 The S2MPG10 PMIC provides 10 buck and 31 LDO regulators.
+> > +
+> > +=C2=A0 See also Documentation/devicetree/bindings/mfd/samsung,s2mps11.=
+yaml for
+> > +=C2=A0 additional information and example.
+> > +
+> > +definitions:
+> > +=C2=A0 s2mpg10-ext-control:
+> > +=C2=A0=C2=A0=C2=A0 properties:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 samsung,ext-control:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 description: |
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 These rails can=
+ be controlled via one of several possible external
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (hardware) sign=
+als. If so, this property configures the signal the PMIC
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 should monitor.=
+ For S2MPG10 rails where external control is possible other
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 than ldo20m, th=
+e following values generally corresponding to the
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 respective on-c=
+hip pin are valid:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 0=
+ # S2MPG10_PCTRLSEL_ON - always on
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 1=
+ # S2MPG10_PCTRLSEL_PWREN - PWREN pin
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 2=
+ # S2MPG10_PCTRLSEL_PWREN_TRG - PWREN_TRG bit in MIMICKING_CTRL
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 3=
+ # S2MPG10_PCTRLSEL_PWREN_MIF - PWREN_MIF pin
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 4=
+ # S2MPG10_PCTRLSEL_PWREN_MIF_TRG - PWREN_MIF_TRG bit in MIMICKING_CTRL
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 5=
+ # S2MPG10_PCTRLSEL_AP_ACTIVE_N - ~AP_ACTIVE_N pin
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 6=
+ # S2MPG10_PCTRLSEL_AP_ACTIVE_N_TRG - ~AP_ACTIVE_N_TRG bit in MIMICKING_CTR=
+L
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 7=
+ # S2MPG10_PCTRLSEL_CPUCL1_EN - CPUCL1_EN pin
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 8=
+ # S2MPG10_PCTRLSEL_CPUCL1_EN2 - CPUCL1_EN & PWREN pins
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 9=
+ # S2MPG10_PCTRLSEL_CPUCL2_EN - CPUCL2_EN pin
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 1=
+0 # S2MPG10_PCTRLSEL_CPUCL2_EN2 - CPUCL2_E2 & PWREN pins
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 1=
+1 # S2MPG10_PCTRLSEL_TPU_EN - TPU_EN pin
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 1=
+2 # S2MPG10_PCTRLSEL_TPU_EN2 - TPU_EN & ~AP_ACTIVE_N pins
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 1=
+3 # S2MPG10_PCTRLSEL_TCXO_ON - TCXO_ON pin
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 1=
+4 # S2MPG10_PCTRLSEL_TCXO_ON2 - TCXO_ON & ~AP_ACTIVE_N pins
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 For S2MPG10 ldo=
+20m, the following values are valid
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 0=
+ # S2MPG10_PCTRLSEL_LDO20M_ON - always on
+>=20
+> No, use standard regulator properties - regulator-always-on
+>=20
+>=20
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 1=
+ # S2MPG10_PCTRLSEL_LDO20M_EN_SFR - VLDO20M_EN & LDO20M_SFR
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 2=
+ # S2MPG10_PCTRLSEL_LDO20M_EN - VLDO20M_EN pin
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 3=
+ # S2MPG10_PCTRLSEL_LDO20M_SFR - LDO20M_SFR in LDO_CTRL1 register
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 4=
+ # S2MPG10_PCTRLSEL_LDO20M_OFF - disable
+>=20
+> I don't think we allowed such property in the past.
 
-/tmp/next/build/kernel/trace/trace_wprobe.c: In function '__register_trace_wprobe':
-/tmp/next/build/kernel/trace/trace_wprobe.c:176:20: error: cast to generic address space pointer from disjoint '__seg_gs' address space pointer [-Werror]
-  176 |         if (IS_ERR((void * __force)tw->bp_event)) {
-      |                    ^
-/tmp/next/build/kernel/trace/trace_wprobe.c:177:35: error: cast to generic address space pointer from disjoint '__seg_gs' address space pointer [-Werror]
-  177 |                 int ret = PTR_ERR((void * __force)tw->bp_event);
-      |                                   ^
+I've done some more investigation now - the reason we need to configure
+control of rails via signals (i.e. input pin on S2MPG1x) is that the PMU
+and power domains in particular control at least some of them.
 
-Use IS_ERR_PCPU() instead.
+As an example, power domain g3d disable toggles an output pin on GS101,
+which is connected to the G3D_EN pin on S2MPG1x on Pixel. The regulator
+driver needs to configure all the G3D-related-PMIC rails to react to this
+signal. There a) is a large amount of flexibility as to which rail should
+react to which signal, and b) the bootloader doesn't configure (all of)
+them.
 
-Reported-by: Mark Brown <broonie@kernel.org>
-Closes: https://lore.kernel.org/all/aN6fTmAjD7-SJsw2@sirena.org.uk/
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- - Confirmed that `make allmodconfig && make` passed on x86_64 and arm64.
----
- kernel/trace/trace_wprobe.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Therefore, we need to be able to specify which rail should be controlled
+by which signal, both in DT and in the driver.
 
-diff --git a/kernel/trace/trace_wprobe.c b/kernel/trace/trace_wprobe.c
-index 4b00a8e917c1..aa8ef173528b 100644
---- a/kernel/trace/trace_wprobe.c
-+++ b/kernel/trace/trace_wprobe.c
-@@ -173,7 +173,7 @@ static int __register_trace_wprobe(struct trace_wprobe *tw)
- 	attr.bp_type = tw->type;
- 
- 	tw->bp_event = register_wide_hw_breakpoint(&attr, wprobe_perf_handler, tw);
--	if (IS_ERR((void * __force)tw->bp_event)) {
-+	if (IS_ERR_PCPU((void * __force)tw->bp_event)) {
- 		int ret = PTR_ERR((void * __force)tw->bp_event);
- 
- 		tw->bp_event = NULL;
+The alternative would be do add explicit (driver-based) regulator control
+for each power domain, rather than having the PMU handle this. Such an
+approach appears suboptimal, because after all that's what the PMU is for.
 
+Additionally, there are sequencing requirements on enabling/disabling rails
+and when using the signals, the PMIC will ensure they're followed, whereas
+a driver would have to duplicate that information and could get it a) wrong=
+,
+b) would use more CPU cycles due to additional code, and c) leave the rail
+on for longer than necessarily due to timer resolution.
+
+Also, it might not work in all cases, e.g. if the PMU disables the rail for
+the CPU, the Linux driver can not afterwards disable the PMIC rail anymore,
+leaving it unnecessarily enabled. Equally, the Linux driver can not disable
+the rail before turning off the power domain, as once the rail is off, the
+CPU/Linux can not execute any further code.
+
+
+Hope the above justifies the introduction of this property :-)
+
+
+Cheers,
+Andre'
 
