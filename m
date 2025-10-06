@@ -1,173 +1,114 @@
-Return-Path: <linux-kernel+bounces-843068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B82EEBBE595
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:30:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5382BBE5A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 310713BF42F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:30:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C0ED04E7EE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082F12D063B;
-	Mon,  6 Oct 2025 14:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327172D063B;
+	Mon,  6 Oct 2025 14:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rBmeTHEd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EBkNG+hD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5679E24B28;
-	Mon,  6 Oct 2025 14:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B7BC2D5C68
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 14:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759761018; cv=none; b=CaY06M06uj34wLNAdDiWe2QWdYXbHa8h4+KNAsu+W37VyASAaE4hDzfDCh6tI6muMzP2q6mb4ZIQ11XHzVnlnAVEYHF7jP1qe9YqA2h6y5Scbt2RWZd/9NW4K1dJ5UpR5y6x/lawGSPKIRSAFUF+TvfTBHL8uJjhZjcu6k08y8k=
+	t=1759761077; cv=none; b=usQrdPst7RdBfiOUE6B/4JmYpKg3Kn2ms+Kfz8R0Nute2i+xWVjPFPpxteiNWFo8R4+p8148sL+nC9bEZO1gOWx+u9jfy4jy1GkjSYOYWLKwAhhmiBUjsYRYlEGO1Q0gkJub9ZXWLmII7+9a5zlMCs3sp3w9iVThpo20jX+PhWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759761018; c=relaxed/simple;
-	bh=voL61pr7tpXNE7UVtTh1JilvSM6+IA0wwZxpEOl0whI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qu9OGwgIurMqF0ICS4j+lk7sqjzJ9lNMko4MAZ+EPoy+jiwg63UUx6Sku6OYO9MlPlBWPNpJQiYW2Yo3BrXwiwnslCtetU4ABQk0EOzs9Ff4Dn7hZEK7Hu3lhgiNc+782b+Az1CQpxQtZwFqC1KuFc57hj/WASq5qM80Iu2ACo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rBmeTHEd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8871FC4CEF9;
-	Mon,  6 Oct 2025 14:30:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759761017;
-	bh=voL61pr7tpXNE7UVtTh1JilvSM6+IA0wwZxpEOl0whI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rBmeTHEd7NuFo1jgnvRcZSNaXhsnQPuQsbFDKS4E5H4u+AV+AO7kK/oQMGzwzMPof
-	 WTq77WOP2j38MKJ/kmKpqz0KJR7NPE7Na+7H4t1dHlmvZgIX4CqQziK8+inb+ZnN3H
-	 mBqOocfZFqf6zBB67g8v/8pwp6ZsWc0VSVwd3YKPWvsdaotK+5frbMF+7K0b0acfw2
-	 3mx5uCNUQw7dNvieGaRerKJmEZBp+l1nbguj0JKn9jXqs4i+hD93rXNnysIDdxCxCu
-	 DEzg3xyj22KDSnVosNGbPtECL6b2iSm5mCyXcm3pilxjuCCjM4rFtbyix6dli0KlKV
-	 WbtVmN8R44aGw==
-Date: Mon, 6 Oct 2025 17:30:14 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-v6.18
-Message-ID: <aOPSdstd1bk0pM3R@kernel.org>
-References: <aOKTFv1vh1cvvcLk@kernel.org>
- <CAHk-=wiCWiDcLEE3YqQo78piVHpwY2iXFW--6FbmFAURtor2+w@mail.gmail.com>
- <aOOu1f1QWQNtkl6c@kernel.org>
- <aOPOZwp_inGui9Bx@kernel.org>
- <aOPPpVK8rJUuDgWD@kernel.org>
+	s=arc-20240116; t=1759761077; c=relaxed/simple;
+	bh=xXvB05+JXWunM/ZZ7+8SH3cVZRqU/GJnOV4tEaSXfi0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tU3/4kl2kRA/leSliutJSkDAMB55vLSlpjl2+03AeF0KN4Lf3P63kgOql24zQmnEDcvgG0p5+36HJ8OGLX33N3T+TYDfsbL6v80zwzDgPOqSCgLIk2xfzo7ivefgDeR73r8ETDgRumM9/YCuqVxw+lYFnvugBWU9HoqL536ulNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EBkNG+hD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759761075;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=WG6rfa392OPZRww4x0r3OSF9GJZW1H33YuysnWkj2NU=;
+	b=EBkNG+hD5jwk8YCHouF9J5xvDzSMPPYkfAEnhy5ShHoJowiRA6ki+wumze2zSSvN8oliFw
+	ZIimZMaRXrQeth/jbUxGx/5AWElHA63oP52k2Zhb3jLju32v+G3rCHfC7/fzc1hnBq9TK6
+	ECyL6PhRhlxbk63URfwSILlSYJkqHWs=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-75-0KhC7PTiM0mByPq9ZE3GDQ-1; Mon,
+ 06 Oct 2025 10:31:10 -0400
+X-MC-Unique: 0KhC7PTiM0mByPq9ZE3GDQ-1
+X-Mimecast-MFC-AGG-ID: 0KhC7PTiM0mByPq9ZE3GDQ_1759761068
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1903A195608F;
+	Mon,  6 Oct 2025 14:31:08 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.44.32.125])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5D9B81955F19;
+	Mon,  6 Oct 2025 14:31:04 +0000 (UTC)
+From: Tomas Glozar <tglozar@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+	John Kacur <jkacur@redhat.com>,
+	Luis Goncalves <lgoncalv@redhat.com>,
+	Costa Shulyupin <costa.shul@redhat.com>,
+	Crystal Wood <crwood@redhat.com>,
+	Wander Lairson Costa <wander@redhat.com>,
+	Tomas Glozar <tglozar@redhat.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] rtla/timerlat_bpf: Stop tracing on user latency
+Date: Mon,  6 Oct 2025 16:31:00 +0200
+Message-ID: <20251006143100.137255-1-tglozar@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aOPPpVK8rJUuDgWD@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Mon, Oct 06, 2025 at 05:18:13PM +0300, Jarkko Sakkinen wrote:
-> On Mon, Oct 06, 2025 at 05:13:02PM +0300, Jarkko Sakkinen wrote:
-> > On Mon, Oct 06, 2025 at 02:58:17PM +0300, Jarkko Sakkinen wrote:
-> > > On Sun, Oct 05, 2025 at 11:09:08AM -0700, Linus Torvalds wrote:
-> > > > On Sun, 5 Oct 2025 at 08:47, Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> > > > >
-> > > > >      This pull request disables
-> > > > > TCG_TPM2_HMAC from the default configuration as it does not perform well
-> > > > > enough [1].
-> > > > >
-> > > > > [1] https://lore.kernel.org/linux-integrity/20250825203223.629515-1-jarkko@kernel.org/
-> > > > 
-> > > > This link is entirely useless, and doesn't explain what the problem
-> > > > was and *why* TPM2_TCG_HMAC shouldn't be on by default.
-> > > > 
-> > > > I think a much better link is
-> > > > 
-> > > >    https://lore.kernel.org/linux-integrity/20250814162252.3504279-1-cfenn@google.com/
-> > > > 
-> > > > which talks about the problems that TPM2_TCG_HMAC causes.
-> > > > 
-> > > > Which weren't just about "not performing well enough", but actually
-> > > > about how it breaks TPM entirely for some cases.
-> > > 
-> > > Fair enough. I'll also enumerate the issues, and also roadmap
-> > > to heal the feature.
-> > 
-> > So some of the arguments in Chris' email are debatable, such as
-> > this list:
-> > 
-> > - TPM_RH_NULL
-> > - TPM2_CreatePrimary
-> > - TPM2_ContextSave
-> > - ECDH-P256
-> > - AES-128-CFB
-> > 
-> > 
-> > We've never encountered a TPM chip without those TPM commands, and e.g.
-> > /dev/tpmrm0 heavily relies on TPM2_ContextSave, and has been in the
-> > mainline since 2017. And further, this has been the case on ARM too.
-> > 
-> > So using all of the arguments as rationale for the change that according
-> > to Chris' email are broken because I cannnot objectively on all of the
-> > arguments.
-> > 
-> > E.g. I have to assume to this day that all known TPM chips have those
-> > commands because no smoking gun exists. And if DID exist, then I'd
-> > assume someone would fixed /dev/tpmrm0 ages ago.
-> > 
-> > That said, I do agree on disabling the feature for the time being:
-> > we have consensus on actions but not really on stimulus tbh.
-> > And if there is stimulus I would postpone this patch to create
-> > fix also for /dev/tpmrm0.
-> > 
-> > Argument where I meet with Chris suggestion are:
-> > 
-> > 1. Performance. The key generation during boot is extremely bad
-> >    idea and depending on the deployment the encryption cost is
-> >    too much (e.g. with my laptop having fTPM it does not really
-> >    matter).
-> > 2. Null seed was extremely bad idea. The way I'm planning to actually
-> >    fix this is to parametrize the primary key to a persistent key handle
-> >    stored into nvram of the chip instead of genration. This will address
-> >    also ambiguity and can be linked directly to vendor ceritifcate
-> >    for e.g. to perfom remote attesttion.
-> > 
-> > Things don't go broken by saying that they are broken and nothing
-> > elsewhere in the mainline has supporting evidence that those commands
-> > would be optional. I cannot agree on argument which I have zero
-> > means to measure in any possible way.
-> > 
-> > This is exactly also the root reason why I wrote my own commit instead
-> > with the same change: I could have never signed off the commit that
-> > I don't believe is true in its storyline.
-> > 
-> > So if I write cover for the pull request where I use the subset of
-> > arguments with shared consensus would that be enough to get this
-> > through? As for primary key handle fix I rather do that with
-> > time and proper care.
-> 
-> I had to use few hours to remind why I did my commit instead of acking
-> the original and this is the root. We've never had e.g. a bug in the
-> wild that would /dev/tpmrm0 to be broken because ContextSave is not
-> available, and it is *widely* used device across all major platforms.
+rtla-timerlat allows a *thread* latency threshold to be set via the
+-T/--thread option. However, the timerlat tracer calls this *total*
+latency (stop_tracing_total_us), and stops tracing also when the
+return-to-user latency is over the threshold.
 
-Here's mobile client profile:
+Change the behavior of the timerlat BPF program to reflect what the
+timerlat tracer is doing, to avoid discrepancy between stopping
+collecting data in the BPF program and stopping tracing in the timerlat
+tracer.
 
-https://trustedcomputinggroup.org/wp-content/uploads/TPM_2.0_Mobile_Common_Profile_v2r31_FINAL.pdf
+Cc: stable@vger.kernel.org
+Fixes: e34293ddcebd ("rtla/timerlat: Add BPF skeleton to collect samples")
+Signed-off-by: Tomas Glozar <tglozar@redhat.com>
+---
+ tools/tracing/rtla/src/timerlat.bpf.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Unless I missed a tidbit I see nothing in it saying that ContextSave
-would be optional. If there was even a known legit spec bringing some
-context to the claims, that would move things forward.
+diff --git a/tools/tracing/rtla/src/timerlat.bpf.c b/tools/tracing/rtla/src/timerlat.bpf.c
+index 084cd10c21fc..e2265b5d6491 100644
+--- a/tools/tracing/rtla/src/timerlat.bpf.c
++++ b/tools/tracing/rtla/src/timerlat.bpf.c
+@@ -148,6 +148,9 @@ int handle_timerlat_sample(struct trace_event_raw_timerlat_sample *tp_args)
+ 	} else {
+ 		update_main_hist(&hist_user, bucket);
+ 		update_summary(&summary_user, latency, bucket);
++
++		if (thread_threshold != 0 && latency_us >= thread_threshold)
++			set_stop_tracing();
+ 	}
+ 
+ 	return 0;
+-- 
+2.51.0
 
-Section 2.3 states this about ContextSave:
-
-"The symmetric cipher mode TPM_ALG_CFB is REQUIRED by TCG TPM 2.0
-Library specification Part 1 [1] and is also necessary for
-implementation of TPM2_Create, TPM2_Load, TPM 2_ContextSave,
-TPM2_ContextLoad, and other TPM commands"
-
-which actually claims that TPM_ALG_CFB is required where as Chris'
-patch claims 180 degrees opposite what the spec says.
-
-Perhaps there's some other random TCG spec that I've missed, it's
-entirely possible...
-
-BR, Jarkko 
 
