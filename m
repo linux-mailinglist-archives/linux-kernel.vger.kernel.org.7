@@ -1,149 +1,112 @@
-Return-Path: <linux-kernel+bounces-843191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCE0BBBE9A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:13:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 302DEBBE9BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:14:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FD13189A291
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:14:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2FD53BF9D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05ED52D9ED0;
-	Mon,  6 Oct 2025 16:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8B2285C8D;
+	Mon,  6 Oct 2025 16:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GsSbTKm2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MpUOsYsw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B293735898;
-	Mon,  6 Oct 2025 16:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8557D2D73A7;
+	Mon,  6 Oct 2025 16:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759767227; cv=none; b=OA0ImKrPxZqYeTxYUk+CcWOcVpbus0JStkpLM48R0VNPQLbKTgkHfxuP5ZOyFfEajtgTttpFLXrYpFzgPwAYARpfyxthkUPmXWfFrNfyCJ4epBYmnFX/cUq4o8mGnJEiCi7fTDXtuJCuRyoBVN0G//RJkvmCDdjrbY/DSKaqP0M=
+	t=1759767289; cv=none; b=QpKIzk+Y0nTKtI9IruXjk2N1wj0FSnHNItNSHisSj/Y+Um165mKNKbnQYk7kmD+pXBnly5gw5yDyCq8JPeFA9ecr3ueFvbFVLXwe8Ejcruw5XhPvPrygEwcI15VHPiUb/AH3rAiurjpcOcKSx3UYEqcfF20+EoYaJqYLp8Mq04U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759767227; c=relaxed/simple;
-	bh=tfu2TRdArAqNNnaXATXklqcBw7fADoLtctfv35pmzSY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uDN4pnu4QP37nFUfmodSX/nGjK5VuDXIZvSGxecLNJRnZVAnmaRvcq5tbpMN9/j60qURF1YsqGmWfPYercvqz9WN6VpzlKhzbCgHVC7hdyduV835J4M2/xQqAUhCaO1FwYXhmoe/xXkGca3I8CSeGBql/pl9/jqVJ5ypy3gNVXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GsSbTKm2; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759767226; x=1791303226;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=tfu2TRdArAqNNnaXATXklqcBw7fADoLtctfv35pmzSY=;
-  b=GsSbTKm2feNHUzbjQ1b5SWVswi1/tsG+Il19R4Q6SkpF45QXV0eTqcG8
-   Ct2BySDiYwbvfspGHaQAbfnvJpZVN2kcJzWwot0rKJ1wVqnwdfPTxYnVy
-   RhXQ/vqYpBowGoulHbQA1Xcd7F9OY2rmyDEkH/yQc+UNZl28nGEtyNvbD
-   8sJKYTeZZsEyh+ZkxSR+O6gQumOBtpH/b2WruWJMnvZoSEye9wrakE1mt
-   UboqftMtHyW7fj7JF53OWFd3k31hfIk8TfImgVQuBAWevAwYlt0AfmFth
-   JFnIJ7yDDdUshaQMXjGu3jU5fT6zEpuF+s6BLAeihrTK0LVVYkrE+GsY7
-   w==;
-X-CSE-ConnectionGUID: 4QyMBs2NRpKq4wkOxBiang==
-X-CSE-MsgGUID: EUiT0In6Rce53IRB7Ifybg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11574"; a="72196500"
-X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
-   d="scan'208";a="72196500"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 09:13:45 -0700
-X-CSE-ConnectionGUID: asQcShZxSsS4leEL7+ui2Q==
-X-CSE-MsgGUID: RyEmm41BSO6mRRkB5BJt5w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
-   d="scan'208";a="180710614"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.110.110]) ([10.125.110.110])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 09:13:44 -0700
-Message-ID: <dc9adde2-2c07-4249-b788-63f50c8e429e@intel.com>
-Date: Mon, 6 Oct 2025 09:13:43 -0700
+	s=arc-20240116; t=1759767289; c=relaxed/simple;
+	bh=94oJ9caDdvG59xpvIjfSBv9UCE7Qfj6W+KBmHijwk+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ZhXV4kNMIIUD+yp0CAxYE/R/dVAGG5ltxitQAA7ryyngDUuubFsDtahkb17pxd8pU4pkuMYaHTwz0uy9kwZCyBmtfPRsAE5t/dysEMeQH7L/E+ORsNUE9y8ptOqk87bSpN9YTyVcW/jsMGdw+aJr9nXUEnLEqpKhXKj74kaFHXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MpUOsYsw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0025C4CEF5;
+	Mon,  6 Oct 2025 16:14:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759767289;
+	bh=94oJ9caDdvG59xpvIjfSBv9UCE7Qfj6W+KBmHijwk+w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=MpUOsYswLerIqfAAY58/P2aoL+Ggn3eBaT/bQoiNgTM22caB9MDJiAxYOtiUyNBKZ
+	 MJzwdjVNVThhasekah8wteKl7FnB2pwYWUUuoWxALK2hfe0bK9Xs3uCgwI93egSMcF
+	 G/3YCozmcjdk0b/lGOah6j7i9HqhYMX/Qzk20yT78CrGnMqQiaC15fILOxlUWVMhFX
+	 jMS3X21BqO8s3VN2JkP8YCqpdpK6Mm2bUNLgZkkZfcGZHEIE24qgVN1E3jCh115qcz
+	 GwZOOn/0LMmHhdUV1d9uUUPix5NFanpfiAnyg6Uom0grsLcXLiWD4MLzk0+sM3RFoW
+	 bZ+dA+XB6VppQ==
+Date: Mon, 6 Oct 2025 11:14:47 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Victor Paul <vipoll@mainlining.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lukas Wunner <lukas@wunner.de>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Daniel Martin <dmanlfc@gmail.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] PCI: probe: fix typo: CONFIG_PCI_PWRCTRL ->
+ CONFIG_PCI_PWRCTL
+Message-ID: <20251006161447.GA521686@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 20/20] cxl/pmem: Add CXL LSA 2.1 support in cxl pmem
-To: Neeraj Kumar <s.neeraj@samsung.com>
-Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
- linux-kernel@vger.kernel.org, gost.dev@samsung.com,
- a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
- cpgs@samsung.com
-References: <20250917134116.1623730-1-s.neeraj@samsung.com>
- <CGME20250917134213epcas5p139ba10deb2f4361f9bbab8e8490c4720@epcas5p1.samsung.com>
- <20250917134116.1623730-21-s.neeraj@samsung.com>
- <28d78d2b-c17d-4910-9f28-67af1fbb10ee@intel.com>
- <1256440269.161759726504643.JavaMail.epsvc@epcpadp1new>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <1256440269.161759726504643.JavaMail.epsvc@epcpadp1new>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251006143714.18868-1-vipoll@mainlining.org>
 
+On Mon, Oct 06, 2025 at 06:37:14PM +0400, Victor Paul wrote:
+> The commit
+> 	8c493cc91f3a ("PCI/pwrctrl: Create pwrctrl devices only when CONFIG_PCI_PWRCTRL is enabled")
+> introduced a typo, it uses CONFIG_PCI_PWRCTRL while the correct symbol
+> is CONFIG_PCI_PWRCTL. As reported by Daniel Martin, it causes device
+> initialization failures on some arm boards.
+> I encountered it on sm8250-xiaomi-pipa after rebasing from v6.15.8
+> to v6.15.11, with the following error:
+> [    6.035321] pcieport 0000:00:00.0: Failed to create device link (0x180) with supplier qca6390-pmu for /soc@0/pcie@1c00000/pcie@0/wifi@0
+> 
+> Fix the typo to use the correct CONFIG_PCI_PWRCTL symbol.
+> 
+> Fixes: 8c493cc91f3a ("PCI/pwrctrl: Create pwrctrl devices only when CONFIG_PCI_PWRCTRL is enabled")
+> Cc: stable@vger.kernel.org
+> Reported-by: Daniel Martin <dmanlfc@gmail.com>
+> Closes: https://lore.kernel.org/linux-pci/2025081053-expectant-observant-6268@gregkh/
+> Signed-off-by: Victor Paul <vipoll@mainlining.org>
 
+Might this be a stale .config file?
 
-On 9/29/25 7:02 AM, Neeraj Kumar wrote:
-> On 24/09/25 01:47PM, Dave Jiang wrote:
->>
->>> +++ b/drivers/cxl/core/pmem_region.c
->>> @@ -290,3 +290,56 @@ int devm_cxl_add_pmem_region(struct cxl_region *cxlr)
->>>      return rc;
->>>  }
->>>  EXPORT_SYMBOL_NS_GPL(devm_cxl_add_pmem_region, "CXL");
->>> +
->>> +static int match_free_ep_decoder(struct device *dev, const void *data)
->>> +{
->>> +    struct cxl_decoder *cxld = to_cxl_decoder(dev);
->>
->> I think this is needed if the function is match_free_ep_decoder().
->>
->> if (!is_endpoint_decoder(dev))
->>     return 0;
->>
-> 
-> Yes this check is required, I will add this.
-> 
->>> +
->>> +    return !cxld->region;
->>> +}
->>
->> May want to borrow some code from match_free_decoder() in core/region.c. I think the decoder commit order matters?
->>
-> 
-> Yes Dave, Looking at [1], seems commit order matters. Sure I will look
-> at match_free_decoder() in core/region.c
-> [1] https://lore.kernel.org/all/172964783668.81806.14962699553881333486.stgit@dwillia2-xfh.jf.intel.com/
-> 
-> 
->>> +
->>> +static struct cxl_decoder *cxl_find_free_ep_decoder(struct cxl_port *port)
->>> +{
->>> +    struct device *dev;
->>> +
->>> +    dev = device_find_child(&port->dev, NULL, match_free_ep_decoder);
->>> +    if (!dev)
->>> +        return NULL;
->>> +
->>> +    /* Release device ref taken via device_find_child() */
->>> +    put_device(dev);
->>
->> Should have the caller put the device.
-> 
-> Its like taking device ref temporarly and releasing it then and there
-> after finding proper root decoder. I believe, releasing device ref
-> from caller would make it look little out of context.
+I think 13bbf6a5f065 ("PCI/pwrctrl: Rename pwrctrl Kconfig symbols and
+slot module") should have resolved this. 
 
-As mentioned in my response to 15/20, the caller should be releasing the device reference since the caller is using the endpoint decoder. I would also add a comment to the new functions acquiring the decoders that the caller is expected to put_device() on the decoder dev when done.
+In the current upstream tree (fd94619c4336 ("Merge tag 'zonefs-6.18-rc1'
+of git://git.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs"),
+git grep "\<CONFIG_PCI_PWRCTL\>" finds nothing at all.
 
-DJ
-
+> ---
+>  drivers/pci/probe.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index 19010c382864..7e97e33b3fb5 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -2508,7 +2508,7 @@ bool pci_bus_read_dev_vendor_id(struct pci_bus *bus, int devfn, u32 *l,
+>  }
+>  EXPORT_SYMBOL(pci_bus_read_dev_vendor_id);
+>  
+> -#if IS_ENABLED(CONFIG_PCI_PWRCTRL)
+> +#if IS_ENABLED(CONFIG_PCI_PWRCTL)
+>  static struct platform_device *pci_pwrctrl_create_device(struct pci_bus *bus, int devfn)
+>  {
+>  	struct pci_host_bridge *host = pci_find_host_bridge(bus);
+> -- 
+> 2.51.0
 > 
-> Regards,
-> Neeraj
-> 
-
 
