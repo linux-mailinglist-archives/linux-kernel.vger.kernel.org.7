@@ -1,126 +1,221 @@
-Return-Path: <linux-kernel+bounces-843037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B880BBE43C
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:01:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F238BBE45C
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 476963AA9E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:01:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 218874E23E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5ED279DDD;
-	Mon,  6 Oct 2025 14:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C80268C55;
+	Mon,  6 Oct 2025 14:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cEXSwoYf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="HzfwidL4"
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46B43770B;
-	Mon,  6 Oct 2025 14:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E693770B
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 14:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759759301; cv=none; b=t3UZ6pvFE0QJYV+7RwtzJ8BmiVGa8dxbwCGRhZH29n2Dvy5GBWFyXGjKBJkrvern5QcIlp5Mo/HIYPxb8b8ilTpo2unVxdnt91yOtRhy8txMmG/BzQraMYp5UlNI8pSq+9/t6j4Tgu+xPad5X4ISJW1FM2mFBvIdj5cFBs6xtAY=
+	t=1759759411; cv=none; b=HmY6VtQLTYlfwCzGcITZDobOi91FFGzy35TwNw6M9bdNL8XNqNEkmIkfdNqrxO0bE/nFqk6x52lsJT5ctZKQdJIet2PyzTHari8G8DMqDspXsOM/sqreYy4KcdgqDDvbIXjSkobjePT6v+q/86VAFqr7MHaVDj+2lIpjuvn1F7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759759301; c=relaxed/simple;
-	bh=ABqqFmeqDAlhbrH9IOkJtThyT+fAKJdIn7eBS7vRYtc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SWdfJ32A4X6R3rMJHFu7iEwdGIrGpAdPJNn/NEC+NjoD7IqoUIct3hdbn5mRaWix0/wwCJQmCGMSRh4JZYu7nqc74clCuueaeEjnOj3waCgsvZsCtclzZCE9Yi6GUAz4l2zKUesHl5c3yBUVxGBSFqTlpmxUbciAaNtTQRpn0zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cEXSwoYf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DA26C4CEF5;
-	Mon,  6 Oct 2025 14:01:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759759301;
-	bh=ABqqFmeqDAlhbrH9IOkJtThyT+fAKJdIn7eBS7vRYtc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cEXSwoYf4qRnBAkMtgQ/WrvDQxF2P+QFIIzlcZLavupMDnUa9ljFpQpxuR8+/asD5
-	 ymxOrUWXdPwxg7ttW9tvVRG436dUgBPCUd/Z4VbUFmrtDCjYw/Y4N+jKjQWVfq/yUK
-	 51pLaCwKCeotgyLPi3Sl7uNkOaWWy9b6NxnZFO54z0ztiAd2dyc5430uChhX+3n4/1
-	 vttPwceFL+gxEuc4i3fklR/MpJzYxZ18R/Q8vewECgzzN3HjU4Jxg+roONgiJq8/H7
-	 7EWSQ988UP385MTWmI6gMLdB9RyXREhm6OSjN99CGm+aPWbT13QaDzH3qlVr7mrnUu
-	 RBl/CaIY/Md6w==
-Date: Mon, 6 Oct 2025 15:01:35 +0100
-From: Will Deacon <will@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	David Heidelberg <david@ixit.cz>,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, ardb@kernel.org,
-	mark.rutland@arm.com
-Subject: Re: [PATCH] arm64: head: set TEXT_OFFSET to the historical value
-Message-ID: <aOPLv_-f5sNGtG4e@willie-the-truck>
-References: <20251006-arm64-text-offset-v1-1-bf0e8a27383b@oss.qualcomm.com>
+	s=arc-20240116; t=1759759411; c=relaxed/simple;
+	bh=+yEfXF921uRRUVIU5eNoFwcMt8qXIPcVyxQRC2ripRc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gDInsO01JkA4E5Whral3hW8AzSld5rWLP2fhw/GVYaO3P4QF51R9jFyBkHVf6vsz3HHCCvBarVRmMryaAOgL1Yfqjd2G00wDl08mMvUIDxrCeff/rvqzr7HjuQeg4weFzyPATO5Kq1WqZ55ct8IwoqkIhmteVVOhIuMSJ/doVrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=HzfwidL4; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-91fbba9a8f5so407704039f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 07:03:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1759759407; x=1760364207; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=F7SQCp24RNvOTegVrAKR3/DTuZvaz1VTJ+woslYjIWw=;
+        b=HzfwidL4mWqTInADCg1KVuVqzZCjBn1m898zKtkI8bKFhlQiOeHatNnzTw2UPpZ/0h
+         v76Ni796NYIv9j6WkGZ+QX6nsaEXjuipqGSCdzxm/x5JYtiQsM6e94iksW9T5dkdkodK
+         GttAB3R0M7S6uV0f+jc0pU5EM47Yo74dA+geiXVRnpY2nPhyMyH9qEWyfWZv1HNPq9az
+         DKRR2yUSW8CcC9qwuzT0+lZmItakdh5Pk3lX3unXlrbmBYCfEWh845pRRIY3kz3QsLhN
+         fb5QilCsXj3khfzY2NSEbc2hyKuB6esSTkLl1hrh4GqYPBvJjxCTDnC7zoucLEKm6U/l
+         2BLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759759407; x=1760364207;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F7SQCp24RNvOTegVrAKR3/DTuZvaz1VTJ+woslYjIWw=;
+        b=NpUZu/1Nwi1nP+vzPgB4ZPGDYDyui52jQrpnpGdqLgmdJUSV3e7saWpFa1095yqUVs
+         OoQonE3yVO6Gq+JT/TXXIR1nsu/Zj7urUqj8eRcRw3foJyUCLAw91yFp0xqBQMysDg/x
+         vYcDYWwRwgwq4u0vdsIExTHZXpr1zkJZn1Saaceus4gt7UYOJSTRdZhQyX1Z6OH9Od1q
+         HtEveMCMvtiFGKnTXslfTRW7xNY9PoH4a4xCJV0zV+jss2wdx76ZzR6CTJtKOUh6bOH7
+         /3RVY/GsFyrOzZontry4wn8ZMdu6HHnWbg8r/9Rgv/bpqyclWdN7dylHQf5axVV4ZOdT
+         GSeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXCwl80/88GVKETVD7SArFQtRS5CZuZWdyfDMEgRllq4Q5JwWDDvqXxB7/tWcc/X3UxgJpe+7/wIsodAuE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwulLKgdiU9SAUl5lnWt2ntf9CXLhnJXwVjvLBkLRR/282cHTlX
+	vCkhPYtCA8KBzmnRFSsdoai+f7hL4omTonVo2AC0F8fj1cRc5XWLd950f6D6wl3TQHA=
+X-Gm-Gg: ASbGnctq2JtvL8tz7mc8lIE8A03Q5bBhgruKIfECL9ysgB9xBy/SOZU8htfSgieQnST
+	H+d7oT9vW8wLaxN9HBODPub179HBQOlmeuzJBuxBcNJBIB7VFXcaxG15301j6Nc9BSr+viUFLkT
+	UVJbU2WWYbfGAbBfB7ll2Ar8X4QJYdOuleji9XHwAnr7gP2zqP/jaU8VRKPGMM3VIE9JYADmA8f
+	b1oyfkb2x+/aleekEoX0BO3GJxENQv9xY7hFJaxLPr/3YvSBlpfOj94VldTz5N8JBWEN+uVwVI8
+	G9uTQq5lB+2YtuGvAZwCCv3DjwTR5aXfZCQRTz7We5srodIkbUnhLwY/Slfe0wmLHiKV3Gwa7fx
+	xoHw/6EzpI0Iv02h7qbfyoHNXC6MwGeJEqM5uca3kPcxhhdn5Y1TuUUE=
+X-Google-Smtp-Source: AGHT+IFHBexVu3+mYH51hQgPiGJhkCZp9Y+80XStbABQGIysYZxyv/J7bi+a6nL+jYlUhwyLSftMxg==
+X-Received: by 2002:a92:cda3:0:b0:42d:89b9:5d30 with SMTP id e9e14a558f8ab-42e7ad887d6mr177792435ab.19.1759759406381;
+        Mon, 06 Oct 2025 07:03:26 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-57b5ec5f51fsm4790440173.70.2025.10.06.07.03.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Oct 2025 07:03:24 -0700 (PDT)
+Message-ID: <ecb74c6c-8de6-4774-8159-2ec118437c57@kernel.dk>
+Date: Mon, 6 Oct 2025 08:03:23 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251006-arm64-text-offset-v1-1-bf0e8a27383b@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] Revert "sunvdc: Do not spin in an infinite loop when
+ vio_ldc_send() returns EAGAIN"
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Andreas Larsson <andreas@gaisler.com>,
+ Anthony Yznaga <anthony.yznaga@oracle.com>, Sam James <sam@gentoo.org>,
+ "David S . Miller" <davem@davemloft.net>,
+ Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>,
+ sparclinux@vger.kernel.org
+References: <20251006100226.4246-2-glaubitz@physik.fu-berlin.de>
+ <d78a1704-31dc-4eaa-8189-e3aba51d3fe2@kernel.dk>
+ <4e45e3182c4718cafad1166e9ef8dcca1c301651.camel@physik.fu-berlin.de>
+ <a80a1c5f-da21-4437-b956-a9f659c355a4@kernel.dk>
+ <e6a7e68ff9e23aee448003ee1a279a4ab13192c0.camel@physik.fu-berlin.de>
+ <cef07e8f-a919-4aa1-9904-84b16dfa8fe6@kernel.dk>
+ <5b3caa0e218dd473c8871c1b1f09a8dc1c356f1e.camel@physik.fu-berlin.de>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <5b3caa0e218dd473c8871c1b1f09a8dc1c356f1e.camel@physik.fu-berlin.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-[+Ard and Mark]
-
-On Mon, Oct 06, 2025 at 01:21:04AM +0300, Dmitry Baryshkov wrote:
-> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+On 10/6/25 7:56 AM, John Paul Adrian Glaubitz wrote:
+> On Mon, 2025-10-06 at 07:46 -0600, Jens Axboe wrote:
+>>
+>>>> The nicer approach would be to have sunvdc punt retries back up to the
+>>>> block stack, which would at least avoid a busy spin for the condition.
+>>>> Rather than return BLK_STS_IOERR which terminates the request and
+>>>> bubbles back the -EIO as per your log. IOW, if we've already spent
+>>>> 10.5ms in that busy loop as per the above rough calculation, perhaps
+>>>> we'd be better off restarting the queue and hence this operation after a
+>>>> small sleeping delay instead. That would seem a lot saner than hammering
+>>>> on it.
+>>>
+>>> I generally agree with this remark. I just wonder whether this
+>>> behavior should apply for a logical domain as well. I guess if a
+>>> request doesn't succeed immediately, it's an urgent problem if the
+>>> logical domain locks up, is it?
+>>
+>> It's just bad behavior. Honestly most of this just looks like either a
+>> bad implementation of the protocol as it's all based on busy looping, or
+>> a badly designed protocol. And then the sunvdc usage of it just
+>> proliferates that problem, rather than utilizing the tools that exist in
+>> the block stack to take a breather rather than repeatedly hammering on
+>> the hardware for conditions like this.
 > 
-> Historically arm64 kernel contained (almost fixed) value of 0x8000 at
+> To be fair, the sunvdc driver is fairly old and I'm not sure whether these
+> tools already existed back then. FWIW, Oracle engineers did actually work
+> on the Linux for SPARC code for a while and it might be possible that their
+> UEK kernel tree [1] contains some improvements in this regard.
 
-0x8000 or 0x80000?
+Requeueing and retry has always been available on the block side. It's
+not an uncommon thing for a driver to need, in case of resource
+starvation. And sometimes those resources can be unrelated to the IO, eg
+iommu shortages. Or this busy condition.
 
-> the TEXT_OFFSET. The commit cfa7ede20f13 ("arm64: set TEXT_OFFSET to 0x0
-> in preparation for removing it entirely") and then commit 120dc60d0bdb
-> ("arm64: get rid of TEXT_OFFSET") replaced this field with 0.
+But that's fine, it's not uncommon for drivers to miss things like that,
+and then we fix them up when noticed. It was probably written by someone
+not super familiar with the IO stack.
 
-Given that we made the initial change over five years ago, I'm struggling
-to see why we should start caring about old broken bootloaders _now_.
-
-In fact, I'm far more concerned about changing this to a non-zero value
-and having more recent bootloaders misbehave.
-
-> This caused no problems so far, because nobody seemed to be playing with
-> the extremely picky Qualcomm bootloader as used on some of Google Pixel
-> phones. Current attempting to boot the Linux kernel on those devices
-> will fail to load on those phones with the following message:
+>>>>> And unlike the change in adddc32d6fde ("sunvnet: Do not spin in an infinite
+>>>>> loop when vio_ldc_send() returns EAGAIN"), we can't just drop data as this
+>>>>> driver concerns a block device while the other driver concerns a network
+>>>>> device. Dropping network packages is expected, dropping bytes from a block
+>>>>> device driver is not.
+>>>>
+>>>> Right, but we can sanely retry it rather than sit in a tight loop.
+>>>> Something like the entirely untested below diff.
+>>>>
+>>>> diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
+>>>> index db1fe9772a4d..aa49dffb1b53 100644
+>>>> --- a/drivers/block/sunvdc.c
+>>>> +++ b/drivers/block/sunvdc.c
+>>>> @@ -539,6 +539,7 @@ static blk_status_t vdc_queue_rq(struct blk_mq_hw_ctx *hctx,
+>>>>  	struct vdc_port *port = hctx->queue->queuedata;
+>>>>  	struct vio_dring_state *dr;
+>>>>  	unsigned long flags;
+>>>> +	int ret;
+>>>>  
+>>>>  	dr = &port->vio.drings[VIO_DRIVER_TX_RING];
+>>>>  
+>>>> @@ -560,7 +561,13 @@ static blk_status_t vdc_queue_rq(struct blk_mq_hw_ctx *hctx,
+>>>>  		return BLK_STS_DEV_RESOURCE;
+>>>>  	}
+>>>>  
+>>>> -	if (__send_request(bd->rq) < 0) {
+>>>> +	ret = __send_request(bd->rq);
+>>>> +	if (ret == -EAGAIN) {
+>>>> +		spin_unlock_irqrestore(&port->vio.lock, flags);
+>>>> +		/* already spun for 10msec, defer 10msec and retry */
+>>>> +		blk_mq_delay_kick_requeue_list(hctx->queue, 10);
+>>>> +		return BLK_STS_DEV_RESOURCE;
+>>>> +	} else if (ret < 0) {
+>>>>  		spin_unlock_irqrestore(&port->vio.lock, flags);
+>>>>  		return BLK_STS_IOERR;
+>>>>  	}
+>>>
+>>> We could add this particular change on top of mine after we have
+>>> extensively tested it.
+>>
+>> It doesn't really make sense on top of yours, as that removes the
+>> limited looping that sunvdc would do...
 > 
-> KernelDecompress failed: Invalid Parameter Kernel TextOffset does not match
-> Error calling BootPrepareAsync Invalid Parameter
+> Why not? From what I understood, you're moving the limited looping to a
+> different part of the driver where it can delegate the request back up
+> the stack meaning that the current place to implement the limitation is
+> not correct anyway, is it?
+
+Because your change never gives up, hence it'd never trigger the softer
+retry condition. It'll just keep busy looping.
+
+>>> For now, I would propose to pick up my patch to revert the previous
+>>> change. I can then pick up your proposed change and deploy it for
+>>> extensive testing and see if it has any side effects.
+>>
+>> Why not just test this one and see if it works? As far as I can tell,
+>> it's been 6.5 years since this change went in, I can't imagine there's a
+>> huge sense of urgency to fix it up that can't wait for testing a more
+>> proper patch rather than a work-around?
 > 
-> Since the kernel ignores the field, set it to the expected value of
-> 0x8000, unbreaking boot of upstream kernels on Qualcomm devices.
+> Well, the thing is that a lot of people have been running older kernels
+> on SPARC because of issues like these and I have started working on trying
+> to track down all of these issues now [2] for users to be able to run a
+> current kernel. So, the 6.5 years existence of this change shouldn't
+> be an argument I think.
 
-(same typo)
+While I agree that the bug is unfortunate, it's also a chance to
+properly fix it rather than just go back to busy looping. How difficult
+is it to test an iteration of the patch? It'd be annoying to queue a
+bandaid only to have to revert that again for a real fix. If this was a
+regression from the last release or two then that'd be a different
+story, but the fact that this has persisted for 6.5 years and is only
+bubbling back up to mainstream now would seem to indicate that we should
+spend a bit of extra time to just get it right the first time.
 
-> Note: I purposedly didn't add Fixes tags, since those commits didn't
-> break any of devices that were supported at that time.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
->  arch/arm64/kernel/head.S | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
-> index ca04b338cb0d173f6d9f5bcee52f6d3d06552599..05e874977de376835625f52bfdda78305dca28b5 100644
-> --- a/arch/arm64/kernel/head.S
-> +++ b/arch/arm64/kernel/head.S
-> @@ -60,7 +60,7 @@
->  	 */
->  	efi_signature_nop			// special NOP to identity as PE/COFF executable
->  	b	primary_entry			// branch to kernel start, magic
-> -	.quad	0				// Image load offset from start of RAM, little-endian
-> +	.quad	0x80000				// Image load offset from start of RAM, little-endian
->  	le64sym	_kernel_size_le			// Effective size of kernel image, little-endian
->  	le64sym	_kernel_flags_le		// Informative flags, little-endian
->  	.quad	0				// reserved
-
-Could you wrap the kernel Image in your own header to workaround the
-issue?
-
-Will
+-- 
+Jens Axboe
 
