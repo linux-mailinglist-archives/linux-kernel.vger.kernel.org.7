@@ -1,112 +1,222 @@
-Return-Path: <linux-kernel+bounces-843438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19BFEBBF2E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 22:22:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 645BBBBF2B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 22:17:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BDAF74F14DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 20:22:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A5AA3BDEBE
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 20:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028D41DB12E;
-	Mon,  6 Oct 2025 20:22:36 +0000 (UTC)
-Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5FB254B03;
+	Mon,  6 Oct 2025 20:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eAuBZ+Ss"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F0F226D14;
-	Mon,  6 Oct 2025 20:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A4C846F;
+	Mon,  6 Oct 2025 20:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759782155; cv=none; b=tKoZDnB0hBzGO6bffOduMaLHcxW7pythGshR+KvDPxXDHzsDOCTHUhj98N8ulhbX7Z3iXdCmZ00lYzUSIFUpWtB/hz7HfUfypwTFenCsQR+qFL30zFo1SVo/tJXpP5heQcOOjI9ZES9kHouIp4QSQlfL9FFOg+K5X1w5iaPJGh4=
+	t=1759781834; cv=none; b=XiUPuDpHu7zkBlG7V3ID6R1wm2P9CC0DhXFoqipM8mu2sjK18t4Mhh2DFVQlb3LTRrHUFEMGBigUmAPrNk1sToIVaRUYuyhf8Tak4l8FCrt48r+3b5DiHbzl60dl1WIMuR8acxmHUxCsuyukdbs9++3uPa67p3PiLtHKYZrd5gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759782155; c=relaxed/simple;
-	bh=LhjB5H9mrCqOGAXj5HXNdyEVYPj6mQQyTvJX1KEHiMI=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=jHYxgiin8Aj5maU50jptELm1NBlbc60+XOn3m+L03lF/7CpMu3PF7dxhyXiZZxmlHEqc9tCBTruB39RJg6/J9TzKwdz//kt6rEeh1ibAFEkuLANpHQf3ej1CzcfERrnbmz6Hf56vzf9ISnow50Z8SztWmG7zTgfIxKHwwtgKf7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 853FF2B4F9D;
-	Mon,  6 Oct 2025 22:15:23 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id JD4v2hnJ6q9P; Mon,  6 Oct 2025 22:15:22 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 0C4012B03C9;
-	Mon,  6 Oct 2025 22:15:22 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id j6VbrBHYDJpt; Mon,  6 Oct 2025 22:15:21 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id B486A2ABFC1;
-	Mon,  6 Oct 2025 22:15:21 +0200 (CEST)
-Date: Mon, 6 Oct 2025 22:15:21 +0200 (CEST)
-From: Richard Weinberger <richard@nod.at>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Dave Hansen <dave@sr71.net>, ksummit <ksummit@lists.linux.dev>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, 
-	linux-mips <linux-mips@vger.kernel.org>, 
-	linux-mm <linux-mm@kvack.org>, imx <imx@lists.linux.dev>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Lucas Stach <l.stach@pengutronix.de>, 
-	Linus Walleij <linus.walleij@linaro.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Ankur Arora <ankur.a.arora@oracle.com>, 
-	David Hildenbrand <david@redhat.com>, 
-	Mike Rapoport <rppt@kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Matthew Wilcox <willy@infradead.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, vbabka <vbabka@suse.cz>, 
-	Suren Baghdasaryan <surenb@google.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Nishanth Menon <nm@ti.com>, 
-	heiko <heiko@sntech.de>, 
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
-	"Chester A. Unal" <chester.a.unal@arinc9.com>, 
-	Sergio Paracuellos <sergio.paracuellos@gmail.com>, 
-	Andreas Larsson <andreas@gaisler.com>
-Message-ID: <1190290449.3827.1759781721487.JavaMail.zimbra@nod.at>
-In-Reply-To: <4fcd272f-81e3-4729-922b-588ad144e39b@app.fastmail.com>
-References: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com> <497308537.21756.1757513073548.JavaMail.zimbra@nod.at> <dec53524-97ee-4e56-8795-c7549c295fac@sr71.net> <640041197.22387.1757536385810.JavaMail.zimbra@nod.at> <4fcd272f-81e3-4729-922b-588ad144e39b@app.fastmail.com>
-Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
+	s=arc-20240116; t=1759781834; c=relaxed/simple;
+	bh=+oT/xuytsjmBWaOYYjWmCBaW4i4nhXKCXQF1DctjriA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pGa1yn5SHeDYzjdcLnF/rVQm58+TWsrHvOTCxHcggC4PytK74TW/pChZFO1pPPK9xcp5cJmhJTwVmtP0II9MOlqOHQRMqWtCxGc/f4oJMmEdfEu21lWoBwhwWB1lXHQXWYd3qSkQ3N4whUjJ9xvYToYychYrVMFDcVVPHUVUh7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eAuBZ+Ss; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759781833; x=1791317833;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=+oT/xuytsjmBWaOYYjWmCBaW4i4nhXKCXQF1DctjriA=;
+  b=eAuBZ+SsXPQHDRizP2yBrTO4CRhY5C45khVOEOWGr9Pgg5t/+S3iFV9y
+   5081paK8YxoN2VrgsFiGYUKhwD5MaX907ftcNgZFQ8ZciN0liThcEzMQh
+   /9D9il57FaE3Qjbku7wHt1n4zz1GsFDIWx85ErvYA24xZpeposdYm4wwH
+   ZDWFyMcC7uL59UbnnzzW3/hI26Bf/F3MaedHadWWKjIbErCfkG69pOaNW
+   OkGjHPNpG8rpX4/ahzJm2htRelxnDIYo4UU9khnTpYpCalxfHWD99Puzb
+   yffXdw+fTMwHWrlGNI3hHWE2bZeMAgyyfGO99V3LI9ifZhuUN21dN9YWt
+   g==;
+X-CSE-ConnectionGUID: 1WEFXnK8Rj2sQWNIS6S4Ag==
+X-CSE-MsgGUID: wE4LinCuRFCOfJyCpX2nGQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11574"; a="73065434"
+X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
+   d="scan'208";a="73065434"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 13:17:13 -0700
+X-CSE-ConnectionGUID: os7z3RI6RTmDyWYoEHB69Q==
+X-CSE-MsgGUID: V9O7MdJ1TKKGda+HCy87dA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
+   d="scan'208";a="180762982"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.110.110]) ([10.125.110.110])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 13:17:10 -0700
+Message-ID: <e54a790d-2fd9-4224-b9e8-96b3a4a5ff0e@intel.com>
+Date: Mon, 6 Oct 2025 13:17:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF141 (Linux)/8.8.12_GA_3809)
-Thread-Topic: Reaching consensus on CONFIG_HIGHMEM phaseout
-Thread-Index: 4qe/Jvt6A7Z6bNoIFm3Eugvg7UbUaA==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 20/25] PCI/AER: Dequeue forwarded CXL error
+To: "Cheatham, Benjamin" <benjamin.cheatham@amd.com>,
+ Terry Bowman <terry.bowman@amd.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ dave@stgolabs.net, jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ dan.j.williams@intel.com, bhelgaas@google.com, shiju.jose@huawei.com,
+ ming.li@zohomail.com, Smita.KoralahalliChannabasappa@amd.com,
+ rrichter@amd.com, dan.carpenter@linaro.org,
+ PradeepVineshReddy.Kodamati@amd.com, lukas@wunner.de,
+ sathyanarayanan.kuppuswamy@linux.intel.com, linux-cxl@vger.kernel.org,
+ alucerop@amd.com, ira.weiny@intel.com
+References: <20250925223440.3539069-1-terry.bowman@amd.com>
+ <20250925223440.3539069-21-terry.bowman@amd.com>
+ <c38af7bc-140c-419f-9071-08eed448e585@amd.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <c38af7bc-140c-419f-9071-08eed448e585@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
------ Urspr=C3=BCngliche Mail -----
-> Von: "Arnd Bergmann" <arnd@arndb.de>
->>> Has anybody run into actual end user visible problems when using one of
->>> weirdo PAGE_OFFSET configs?
->>
->> In the past I saw that programs such as the Java Runtime (JRE) ran into
->> address space limitations due to a 2G/2G split on embedded systems.
->> Reverting to a 3G/1G split fixed the problems.
->=20
-> Right, that makes sense, given the tricks they likely play on the
-> virtual address space. Are the 2GB devices you maintain using a JRE,
-> or was this on other embedded hardware? How common is Java still in
-> this type of workload?
 
-Sorry for the late reply, I was on vacation.
 
-No, the devices with the JRE issues are from a different customer.
-Since I work as a consultant lots of strange issues get thrown my way
+On 10/3/25 1:12 PM, Cheatham, Benjamin wrote:
+> [snip]
+> 
+>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+>> index 1a4f61caa0db..c8f17233a18e 100644
+>> --- a/drivers/pci/pci.c
+>> +++ b/drivers/pci/pci.c
+>> @@ -2328,6 +2328,7 @@ void pcie_clear_device_status(struct pci_dev *dev)
+>>  	pcie_capability_read_word(dev, PCI_EXP_DEVSTA, &sta);
+>>  	pcie_capability_write_word(dev, PCI_EXP_DEVSTA, sta);
+>>  }
+>> +EXPORT_SYMBOL_NS_GPL(pcie_clear_device_status, "CXL");
+> 
+> Probably should just use EXPORT_SYMBOL_GPL() here. Doesn't make sense to export in the CXL namespace
+> for a non-CXL specific function.
 
-I wouldn't say Java is super common but I still see it from time to time.
-=20
-Thanks,
-//richard
+Typically unless the function is being used somewhere else besides CXL, it's probably good to reside in the CXL namespace. Of course it's up to Bjorn if he wants it different.
+
+DJ
+
+> 
+>>  #endif
+>>  
+>>  /**
+>> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+>> index 22e8f9a18a09..189b22ab2b1b 100644
+>> --- a/drivers/pci/pci.h
+>> +++ b/drivers/pci/pci.h
+>> @@ -692,16 +692,10 @@ static inline bool pci_dpc_recovered(struct pci_dev *pdev) { return false; }
+>>  void pci_rcec_init(struct pci_dev *dev);
+>>  void pci_rcec_exit(struct pci_dev *dev);
+>>  void pcie_link_rcec(struct pci_dev *rcec);
+>> -void pcie_walk_rcec(struct pci_dev *rcec,
+>> -		    int (*cb)(struct pci_dev *, void *),
+>> -		    void *userdata);
+>>  #else
+>>  static inline void pci_rcec_init(struct pci_dev *dev) { }
+>>  static inline void pci_rcec_exit(struct pci_dev *dev) { }
+>>  static inline void pcie_link_rcec(struct pci_dev *rcec) { }
+>> -static inline void pcie_walk_rcec(struct pci_dev *rcec,
+>> -				  int (*cb)(struct pci_dev *, void *),
+>> -				  void *userdata) { }
+>>  #endif
+>>  
+>>  #ifdef CONFIG_PCI_ATS
+>> @@ -1081,7 +1075,6 @@ void pci_restore_aer_state(struct pci_dev *dev);
+>>  static inline void pci_no_aer(void) { }
+>>  static inline void pci_aer_init(struct pci_dev *d) { }
+>>  static inline void pci_aer_exit(struct pci_dev *d) { }
+>> -static inline void pci_aer_clear_fatal_status(struct pci_dev *dev) { }
+>>  static inline int pci_aer_clear_status(struct pci_dev *dev) { return -EINVAL; }
+>>  static inline int pci_aer_raw_clear_status(struct pci_dev *dev) { return -EINVAL; }
+>>  static inline void pci_save_aer_state(struct pci_dev *dev) { }
+>> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+>> index ccefbcfe5145..e018531f5982 100644
+>> --- a/drivers/pci/pcie/aer.c
+>> +++ b/drivers/pci/pcie/aer.c
+>> @@ -288,6 +288,7 @@ void pci_aer_clear_fatal_status(struct pci_dev *dev)
+>>  	if (status)
+>>  		pci_write_config_dword(dev, aer + PCI_ERR_UNCOR_STATUS, status);
+>>  }
+>> +EXPORT_SYMBOL_GPL(pci_aer_clear_fatal_status);
+>>  
+>>  /**
+>>   * pci_aer_raw_clear_status - Clear AER error registers.
+>> diff --git a/drivers/pci/pcie/rcec.c b/drivers/pci/pcie/rcec.c
+>> index d0bcd141ac9c..fb6cf6449a1d 100644
+>> --- a/drivers/pci/pcie/rcec.c
+>> +++ b/drivers/pci/pcie/rcec.c
+>> @@ -145,6 +145,7 @@ void pcie_walk_rcec(struct pci_dev *rcec, int (*cb)(struct pci_dev *, void *),
+>>  
+>>  	walk_rcec(walk_rcec_helper, &rcec_data);
+>>  }
+>> +EXPORT_SYMBOL_NS_GPL(pcie_walk_rcec, "CXL");
+> 
+> Same thing as above?
+> 
+>>  
+>>  void pci_rcec_init(struct pci_dev *dev)
+>>  {
+>> diff --git a/include/linux/aer.h b/include/linux/aer.h
+>> index 6b2c87d1b5b6..64aef69fb546 100644
+>> --- a/include/linux/aer.h
+>> +++ b/include/linux/aer.h
+>> @@ -66,6 +66,7 @@ struct cxl_proto_err_work_data {
+>>  
+>>  #if defined(CONFIG_PCIEAER)
+>>  int pci_aer_clear_nonfatal_status(struct pci_dev *dev);
+>> +void pci_aer_clear_fatal_status(struct pci_dev *dev);
+>>  int pcie_aer_is_native(struct pci_dev *dev);
+>>  void pci_aer_unmask_internal_errors(struct pci_dev *dev);
+>>  #else
+>> @@ -73,6 +74,7 @@ static inline int pci_aer_clear_nonfatal_status(struct pci_dev *dev)
+>>  {
+>>  	return -EINVAL;
+>>  }
+>> +static inline void pci_aer_clear_fatal_status(struct pci_dev *dev) { }
+>>  static inline int pcie_aer_is_native(struct pci_dev *dev) { return 0; }
+>>  static inline void pci_aer_unmask_internal_errors(struct pci_dev *dev) { }
+>>  #endif
+>> diff --git a/include/linux/pci.h b/include/linux/pci.h
+>> index bc3a7b6d0f94..b8e36bde346c 100644
+>> --- a/include/linux/pci.h
+>> +++ b/include/linux/pci.h
+>> @@ -1825,6 +1825,9 @@ extern bool pcie_ports_native;
+>>  
+>>  int pcie_set_target_speed(struct pci_dev *port, enum pci_bus_speed speed_req,
+>>  			  bool use_lt);
+>> +void pcie_walk_rcec(struct pci_dev *rcec,
+>> +		    int (*cb)(struct pci_dev *, void *),
+>> +		    void *userdata);
+>>  #else
+>>  #define pcie_ports_disabled	true
+>>  #define pcie_ports_native	false
+>> @@ -1835,8 +1838,14 @@ static inline int pcie_set_target_speed(struct pci_dev *port,
+>>  {
+>>  	return -EOPNOTSUPP;
+>>  }
+>> +
+>> +static inline void pcie_walk_rcec(struct pci_dev *rcec,
+>> +				  int (*cb)(struct pci_dev *, void *),
+>> +				  void *userdata) { }
+>>  #endif
+>>  
+>> +void pcie_clear_device_status(struct pci_dev *dev);
+>> +
+>>  #define PCIE_LINK_STATE_L0S		(BIT(0) | BIT(1)) /* Upstr/dwnstr L0s */
+>>  #define PCIE_LINK_STATE_L1		BIT(2)	/* L1 state */
+>>  #define PCIE_LINK_STATE_L1_1		BIT(3)	/* ASPM L1.1 state */
+> 
+
 
