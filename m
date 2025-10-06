@@ -1,143 +1,98 @@
-Return-Path: <linux-kernel+bounces-843129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B71B5BBE751
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:13:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0962BBE75D
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3CD7C3494A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:13:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9F3424EABD1
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634312D6400;
-	Mon,  6 Oct 2025 15:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACA72D6E64;
+	Mon,  6 Oct 2025 15:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Op4soA22"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDF01DFFC
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 15:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="hX46UL9c"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714AA2D6400
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 15:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759763621; cv=none; b=BJqpb2YaacluhbPqxS0gbTrnf1IyX7R8gNf7acr26sAMnMVtEgajhwk1z/cQAIGw8M5VkbpNB8vYD735zsMiJSVTrq7MMZGx1Rl7ea9MO4m+WXiVk7ORblbs9ITMs9V5cm+4HptxtMcPNMfi+OpD1uap5xPnvM8ppQJO/xorArA=
+	t=1759763673; cv=none; b=ISCLMb4nfEManNplsffUxAHPGDCZn8c80cX7ybKgWgsrxKn8MW12oXrdxQvcRKlueHvHkeUZfcYQV3vtTMh70cLOjbLFCiWuHKhvT+GpqaodCr/QuNpMWAZkorBqZJHUDAukyJRd8/geahYyAb90ryC2cp+zkAALLPse54MghvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759763621; c=relaxed/simple;
-	bh=mYl/jWIZpcM7NOIheKXXnCr8a3Fz+M9vKWd5YhidvIE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LjdK5oMMFZCKdyI5aPAsbe8WzMMKkS1ktGqwPe5ebQ7JMAng+ZTUaTV8dbH4RVdOTs5wkcWTKoJ68+/y22HnqTVTcK6q/eptXe1XHzfAVOqjuGWH1UB7SeioKCTWvj+kure9p7mJZziUv07G2xXBo1CzBY8L0IDci+XtijOHuQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Op4soA22; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759763620; x=1791299620;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=mYl/jWIZpcM7NOIheKXXnCr8a3Fz+M9vKWd5YhidvIE=;
-  b=Op4soA22QTEC1XTP3SnmZtL13RNYljR4Xb7tuILmBYsaAizn6wkt6TiZ
-   xvtLySJuAXtAKj+tKHGXBeaanbLxW2hYLeAt6t1sjVsKL89VzdsyM4EaP
-   /r7c9HO5g7UZuL9xUgylAsNAhZgqmnJRKM3820XiwO2mtXOvIXkW/pNMh
-   6fn2OewnhSsLX5jdV4tawQwxdCMPMZaGN046MSj1/OQjEk9dDTlb7+rVy
-   1nGMyLaa1eLbD0UiL1yVSNSEnhPPAGk2bdIfxMB0HlwM1pb2hYgrbOP8B
-   VL5w2GWXBH1ncP9HHNQfKH+gavKaoaDi6ZMuvRONR5xYn5hnPef8eDqwG
-   w==;
-X-CSE-ConnectionGUID: 5hSjCemoQpWSmBUoHJaENg==
-X-CSE-MsgGUID: uMjDJ5kUQo+05U4YmceHNw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11574"; a="65584137"
-X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
-   d="scan'208";a="65584137"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 08:13:39 -0700
-X-CSE-ConnectionGUID: HcAZOHZyTJ+yzL4oq3jJBw==
-X-CSE-MsgGUID: HlBBfMv6SkuUcV2XCG/WUA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
-   d="scan'208";a="179178387"
-Received: from krybak-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.162])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 08:13:33 -0700
-From: Jani Nikula <jani.nikula@intel.com>
-To: Devarsh Thakkar <devarsht@ti.com>, andrzej.hajda@intel.com,
- neil.armstrong@linaro.org, rfoss@kernel.org, airlied@gmail.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, dri-devel@lists.freedesktop.org, simona@ffwll.ch,
- linux-kernel@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com
-Cc: tomi.valkeinen@ideasonboard.com, praneeth@ti.com, vigneshr@ti.com,
- aradhya.bhatia@linux.dev, s-jain1@ti.com, s-wang12@ti.com,
- r-donadkar@ti.com, h-shenoy@ti.com, devarsht@ti.com
-Subject: Re: [PATCH v2] drm/bridge: sii902x: Fix HDMI detection with
- DRM_BRIDGE_ATTACH_NO_CONNECTOR
-In-Reply-To: <20251006150714.3144368-1-devarsht@ti.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20251006150714.3144368-1-devarsht@ti.com>
-Date: Mon, 06 Oct 2025 18:13:30 +0300
-Message-ID: <d14f940ed04e04df4a112588cdb6fa4df770b9fb@intel.com>
+	s=arc-20240116; t=1759763673; c=relaxed/simple;
+	bh=P7q3L9cFl4NvnpsWufccAUkKh6NxRK8XD6itRENZbm4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ofNmeRAcspPAykUfASRD2g0DrH34ykT0ujkthD6FLP+5qs2dpUp2oU4U4Khj+D+pa+JHxEJNvfJoFd71JlH3uNT23MKOl6WKlE6ZL/vgyh6sjl38iKybDWBo3I1xalrvKKdA52C2J2m6klG/2pVsbaeVxxAIj++unj+NCQLHXQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=hX46UL9c; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from localhost (unknown [20.236.11.185])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 6751C211AF2F;
+	Mon,  6 Oct 2025 08:14:31 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6751C211AF2F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1759763671;
+	bh=72+JPJiOqDjJvRgkstdls2WR3nyNfas3QPwyZMW3m9g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hX46UL9co1odEUHSfaKn+tsxM4VCxi0h2LU7nq4Lb3j0kFmVGxWVkaUWzf89XYqqc
+	 ISU3Y8V8uR+M4Vf57wp+BQx2Kef6qiIEEa+E7fkLG8Vg6rEGUs7omhgVFgW5ErljTM
+	 /T7cmdhedgd4BkybvVjbHA4qekpKU1JupDcL5igU=
+Date: Mon, 6 Oct 2025 08:14:29 -0700
+From: Jacob Pan <jacob.pan@linux.microsoft.com>
+To: linux-kernel@vger.kernel.org, "iommu@lists.linux.dev"
+ <iommu@lists.linux.dev>, Will Deacon <will@kernel.org>, Jason Gunthorpe
+ <jgg@nvidia.com>, Robin Murphy <robin.murphy@arm.com>, Nicolin Chen
+ <nicolinc@nvidia.com>
+Cc: Zhang Yu <zhangyu1@linux.microsoft.com>, Jean Philippe-Brucker
+ <jean-philippe@linaro.org>, Alexander Grest
+ <Alexander.Grest@microsoft.com>, Joerg Roedel <joro@8bytes.org>
+Subject: Re: [PATCH 0/2] SMMU v3 CMDQ fix and improvement
+Message-ID: <20251006081429.000002c0@linux.microsoft.com>
+In-Reply-To: <20250924175438.7450-1-jacob.pan@linux.microsoft.com>
+References: <20250924175438.7450-1-jacob.pan@linux.microsoft.com>
+Organization: LSG
+X-Mailer: Claws Mail 3.21.0 (GTK+ 2.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, 06 Oct 2025, Devarsh Thakkar <devarsht@ti.com> wrote:
-> The SII902x HDMI bridge driver wasn't working properly with drivers that
-> use the newer bridge connector architecture with the
-> DRM_BRIDGE_ATTACH_NO_CONNECTOR flag, like TIDSS.  This caused HDMI audio to
-> fail since the driver wasn't properly setting the sink_is_hdmi flag when
-> the bridge was attached without a connector since .get_modes() is never
-> called in this case. Fix it by setting sink_is_hdmi flag when reading
-> the EDID block itself.
->
-> Fixes: 3de47e1309c2 ("drm/bridge: sii902x: use display info is_hdmi")
-> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
-> ---
-> V2: Use drm_edid_connector_update to detect HDMI as suggested
->
-> Link to V1:
-> https://lore.kernel.org/all/20251003143642.4072918-1-devarsht@ti.com/
-> ---
->  drivers/gpu/drm/bridge/sii902x.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
-> index d537b1d036fb..d36466d73385 100644
-> --- a/drivers/gpu/drm/bridge/sii902x.c
-> +++ b/drivers/gpu/drm/bridge/sii902x.c
-> @@ -296,6 +296,10 @@ static const struct drm_edid *sii902x_edid_read(struct sii902x *sii902x,
->  	mutex_lock(&sii902x->mutex);
->  
->  	drm_edid = drm_edid_read_ddc(connector, sii902x->i2cmux->adapter[0]);
-> +	if (drm_edid) {
-> +		drm_edid_connector_update(connector, drm_edid);
+Hi, any thoughts on these?
 
-Mmmh, as a rule, you should do drm_edid_connector_update() even if it's
-NULL to reset all the previous stuff.
+@Jason @Nicolin 
 
-BR,
-Jani.
+On Wed, 24 Sep 2025 10:54:36 -0700
+Jacob Pan <jacob.pan@linux.microsoft.com> wrote:
 
-> +		sii902x->sink_is_hdmi = connector->display_info.is_hdmi;
-> +	}
->  
->  	mutex_unlock(&sii902x->mutex);
->  
-> @@ -309,14 +313,11 @@ static int sii902x_get_modes(struct drm_connector *connector)
->  	int num = 0;
->  
->  	drm_edid = sii902x_edid_read(sii902x, connector);
-> -	drm_edid_connector_update(connector, drm_edid);
->  	if (drm_edid) {
->  		num = drm_edid_connector_add_modes(connector);
->  		drm_edid_free(drm_edid);
->  	}
->  
-> -	sii902x->sink_is_hdmi = connector->display_info.is_hdmi;
-> -
->  	return num;
->  }
+> Hi Will et al,
+> 
+> These two patches are derived from testing SMMU driver with smaller
+> CMDQ sizes where we see soft lockups.
+> 
+> This happens on HyperV emulated SMMU v3 as well as baremetal ARM
+> servers with artificially reduced queue size and microbenchmark to
+> stress test concurrency.
+> 
+> Thanks,
+> 
+> Jacob 
+> 
+> 
+> Alexander Grest (1):
+>   iommu/arm-smmu-v3: Improve CMDQ lock fairness and efficiency
+> 
+> Jacob Pan (1):
+>   iommu/arm-smmu-v3: Fix CMDQ timeout warning
+> 
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 85
+> +++++++++------------ 1 file changed, 35 insertions(+), 50
+> deletions(-)
+> 
 
--- 
-Jani Nikula, Intel
 
