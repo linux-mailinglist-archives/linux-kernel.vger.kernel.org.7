@@ -1,199 +1,321 @@
-Return-Path: <linux-kernel+bounces-842998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96B58BBE2A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:19:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D583ABBE2B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7BC384E97AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:19:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A014D189816A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702902C3248;
-	Mon,  6 Oct 2025 13:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BB12C325F;
+	Mon,  6 Oct 2025 13:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="i7dn/dme"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="db5FxWEG"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDDF825B1CE
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 13:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3236A18872A;
+	Mon,  6 Oct 2025 13:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759756786; cv=none; b=TTab1Zly0Vqw4uaR+enxCW45ARU2Rlt3sM7to+mzHaax1F+HB1aVwMc6YpP6wSI4yHnkZR0SkR9jBl++BTbJfjDfmjthcd/QQH1ClRkgP3Q5h4iqL5um4ceuJjIDF5EYoAxiUEgYgv5iiX83tBM6TYRpoMvpQxUeXA+n4vbqfrI=
+	t=1759756826; cv=none; b=Yxc7wZg7IKdLaHEGi/+9gcGM8tnR9PxhDLH4H8x/dTJNnmuIxo5bRoAY6sgaO32efmGscFaHsgCBCklpYVYsgmJ3pdeznm9g8vsFagNTLwSgpTnqYOgReifSJs1GTP5ZFDBX4zNfqdGcicBMR4CXWbq/fV0pPtA5QkpTrggLea4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759756786; c=relaxed/simple;
-	bh=MZ18A4gLjl2ofNFo8pVu+q9KoC0G2BHWLpsbcUhn5RQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WlA4/eXJDR0XuqSLKh9y6BeVo1Zzwk7a8lC6EH8oY47iTbVHqNLvM0wtHZ8dcYVd9mCHvVKJw31PbF8lqQ8VeQDyEDPLiM6bfK/+qk665Wv8PvMZy7ApAXqCSELIybWeZvO7EXlMiZcCF9o+mWBGOgED+1v1XWX+rTxfwa+0w3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=i7dn/dme; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-42d857dcf92so19156035ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 06:19:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1759756783; x=1760361583; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1yjlfu6wP14JG2qLbK/JxxY/6QM3hGKhTMIqs+UYsEc=;
-        b=i7dn/dmeT+rbWjgi+kowpqT3H6eZYZRPRznyuwDZ9NNrIWQky0W3N8mRMiaBR3Xmd8
-         39Gc7GeV1CTUQ70gZabBdDaDymvkPzKPR+ACH4DyHJmzGwLs84sOz2UjtJXcuNvICRFo
-         sj5K7MySvId4hvx2qGHUufRgdqCZR0fqIA+gKlyEKbtMcbPx9KdvvTauul/UeLClRW9D
-         ZeIjHTx867rg1MXji+jVZx9VeGZz9J85TpvXKti1iU2kM1Q0Lp9pGfjVoYzZzCr7wKhr
-         /+UmWgHHOMs09XMIqbW5NZs6BweQywcsUyhuiJPWzrh5FQEBOdMbJpJblInYW0eHBMr9
-         +yRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759756783; x=1760361583;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1yjlfu6wP14JG2qLbK/JxxY/6QM3hGKhTMIqs+UYsEc=;
-        b=jXaa0VDQ4tt6FczwgccvF3Mdje1D46VbAgm8tMuRIjPyNZzCQWrWKhAEkUDwRo/mxL
-         mI1Cg2Sk5JhcF3mziptTGQd1Br1W/9gJkcCA7JrggK+nRRdJctxdbmkp6cPVSxzZWt8+
-         TDYVqgNd8MABrN5kurZyoQDu1Ov7Glarn63fYGpgKxfnSphNLvFIq8PIKlNS+kanrjH8
-         UH2ql0si4+3Zly4HpGXSquPPBgF8lg6nPiLREc/ymPmJSXXW3dBumYM6qKYONWYXcv8P
-         qyCjN4aQ2nnz3QVL9xJzkmA4dAe5uzCUGJV9CnAiIRs8c43mLb+tFHqhchj/UeQSrFsk
-         KoMA==
-X-Forwarded-Encrypted: i=1; AJvYcCViTqBdGzNtrfND5MdL1rCQ1cmaHUczOg72AllsbKQkkMh+xqvWhu+AAquBoS/PFOcP/j7REibX4uEVnUU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVKlN+HA3blWnKuVlGFBiNfPPG3E2z08hYGKVADusZU43IwXQA
-	EgUrlNPSgK27cYL0G9fMO6sJglLw61U+qIaKSINQZrpVWVtOmCACAnl9J3ZH3eJmvVs=
-X-Gm-Gg: ASbGncvaNXBqB/Ihedodevxs0D6YpwyBnjHBmjjtKyylmYBBG4m8X8ZPwhwbaLAWa6H
-	JvEjsk/coLzoBzMw22KiYZ4nknV2hGi/zv8od3gcYsnQTwheSubWfpBmZ60AA/6JRn81aevnk0/
-	Fk8mJjLDN4vRdSp7aSPy1rMnBBzgdiGBVCkOnnGHpCD8PjzlmmscSyIAM1M9NP5BY6pyZSqbavq
-	11HXzBdrXmKINQ8f9rTeFkTzFBF11mKLpDlvY7RDhfUEtqAHtqFDeZqh2UE67sr7QVfuaMmnH7x
-	8ZYcbXS7hJRZxzJMK8jZvlVClGjQjF5vcGVyPpO+oLeQUeNisiNxeeBj1hbPdCoVQ01sC93Xow2
-	2W5FwJzfGb/+26MvVw11kbA3Gu9MxYBlJGGzSZlXw2Yds
-X-Google-Smtp-Source: AGHT+IHKeVryFAtYSIbEs3E1K0UFPxxx3iI1l+x8ykYI9cmgWxrUy0Vw2vbSc5wuuCkxsB1Ih5am5g==
-X-Received: by 2002:a05:6e02:1c0c:b0:427:70e7:ea09 with SMTP id e9e14a558f8ab-42e7ad400aemr178502065ab.14.1759756782742;
-        Mon, 06 Oct 2025 06:19:42 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-42e7bd2f139sm41896385ab.8.2025.10.06.06.19.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Oct 2025 06:19:41 -0700 (PDT)
-Message-ID: <a80a1c5f-da21-4437-b956-a9f659c355a4@kernel.dk>
-Date: Mon, 6 Oct 2025 07:19:40 -0600
+	s=arc-20240116; t=1759756826; c=relaxed/simple;
+	bh=GAN8MKxZQN3HrJZ+qCnRJUbdWuET+LWmlhK5xB5RswE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cGoeW7iG/8ldQzaG1AbyVjaK9vBYROOpfDk8C3+Jm/cq60nyF4xmme8LHabH0sTN6Mv3LTfKO+QkbkkB1Swk3Bsvh+SvXo2+s6ji9pXr+BxsQpKxDrJCvISGzFwyIZe9Nw8l1784hCMGGrg2lCzptUuxt66bMoRmtGzYTiWa5QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=db5FxWEG; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 596AeFsP026167;
+	Mon, 6 Oct 2025 13:20:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=rPQz2Zk8MLDb5HnBtre5RW+hptJDF9
+	yMlAGywrPL/7Q=; b=db5FxWEGuErTWDd9eto4iIRvnPLUkRohStZekuNVjz6tAO
+	IF5f7+mjzoxYH0/iOaV4z5i8G5Bud0Nsv3d0uaGIfYQFImctVhHiaarHg9COBMpd
+	45NrW3LWF8RuCcbVa1R0Attor2xeTn33C7lMbyNGM2gHzZ3qb+O3JAi9zJF2Z4xJ
+	yqX6/spGLyVbtDASmMW7X5fJ3UIQqXxKjCeq9ZI3FLDSrIcfh+zhBN0LNySO791u
+	SaGI5+TNOphtF63+yplb/IQ4/DDKvD9KB78kSdniVXsBh5Qsy2JBnO0uOjuKddnR
+	Tg/oyBqwFa9a1KRJ+6j7Z9zcT8/aqt36Juqv6XvQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49ju8ah19s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 06 Oct 2025 13:20:10 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 596DKAGT020248;
+	Mon, 6 Oct 2025 13:20:10 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49ju8ah19n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 06 Oct 2025 13:20:10 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5969cAaQ028443;
+	Mon, 6 Oct 2025 13:20:09 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49kewmx52y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 06 Oct 2025 13:20:09 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 596DK7Im50594178
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 6 Oct 2025 13:20:07 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5F2012004B;
+	Mon,  6 Oct 2025 13:20:07 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9DD2320040;
+	Mon,  6 Oct 2025 13:20:05 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.109.219.158])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon,  6 Oct 2025 13:20:05 +0000 (GMT)
+Date: Mon, 6 Oct 2025 18:50:03 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Zorro Lang <zlang@redhat.com>
+Cc: fstests@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+        djwong@kernel.org, john.g.garry@oracle.com, tytso@mit.edu,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v7 04/12] ltp/fsx.c: Add atomic writes support to fsx
+Message-ID: <aOPCAzx0diQy7lFN@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <cover.1758264169.git.ojaswin@linux.ibm.com>
+ <c3a040b249485b02b569b9269b649d02d721d995.1758264169.git.ojaswin@linux.ibm.com>
+ <20250928131924.b472fjxwir7vphsr@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <aN683ZHUzA5qPVaJ@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <20251003171932.pxzaotlafhwqsg5v@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <aOJrNHcQPD7bgnfB@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <20251005153956.zofernclbbva3xt6@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] Revert "sunvdc: Do not spin in an infinite loop when
- vio_ldc_send() returns EAGAIN"
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Andreas Larsson <andreas@gaisler.com>,
- Anthony Yznaga <anthony.yznaga@oracle.com>, Sam James <sam@gentoo.org>,
- "David S . Miller" <davem@davemloft.net>,
- Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>,
- sparclinux@vger.kernel.org
-References: <20251006100226.4246-2-glaubitz@physik.fu-berlin.de>
- <d78a1704-31dc-4eaa-8189-e3aba51d3fe2@kernel.dk>
- <4e45e3182c4718cafad1166e9ef8dcca1c301651.camel@physik.fu-berlin.de>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <4e45e3182c4718cafad1166e9ef8dcca1c301651.camel@physik.fu-berlin.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251005153956.zofernclbbva3xt6@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: x_-iZWWAYB6ZGcdzgv673gKZ31JDN_dC
+X-Authority-Analysis: v=2.4 cv=BpiQAIX5 c=1 sm=1 tr=0 ts=68e3c20a cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
+ a=yPCof4ZbAAAA:8 a=VnNF1IyMAAAA:8 a=KhzlYSSnZSZoo7An4sMA:9 a=CjuIK1q_8ugA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAyMiBTYWx0ZWRfX00xsKLkHrR6x
+ m4ZW/nYCPBl5px3zrSoLD8NKuXfnfNCGTKqLHdLiwsgvE7P6+MIzx+Vhm2bCjww5OaUysP7vqmh
+ RaY8pIMfO1qKjOf9y1imCXQ+hD4RLdxhD8YXEAni5c2oEzFOPcoW1hM20FEoFWE5u6Y3RrniKZa
+ cjl5PUUbAWN7XtariCXBi3L3bdvmWl4G94sqJgK6oFjio5Ozf6YrzhxQeT669Am7ehxPey6PrLO
+ oBAj/42qXqdeKHr+iaggOmusIfDX1DBN20h27YWXVzMaYbPGwuYV/C4lmclO1476/Or1ijcFoLp
+ whXC2sLTwCDSrlxwtDSMqDNQ0HwUaop3iofhQoD0hr00y8YbacmCkSJZFh/AGv8UqQoSROUlI4n
+ cfibErkAaczEZHaoqD8IbTqD5T0q9w==
+X-Proofpoint-ORIG-GUID: BKVGDBmBJdBMT_GIsIc7FCYGKOKA8Gmq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-06_04,2025-10-02_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 lowpriorityscore=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 bulkscore=0 impostorscore=0 adultscore=0 clxscore=1015
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
+ definitions=main-2510040022
 
-On 10/6/25 7:00 AM, John Paul Adrian Glaubitz wrote:
-> Hi Jens,
+On Sun, Oct 05, 2025 at 11:39:56PM +0800, Zorro Lang wrote:
+> On Sun, Oct 05, 2025 at 06:27:24PM +0530, Ojaswin Mujoo wrote:
+> > On Sat, Oct 04, 2025 at 01:19:32AM +0800, Zorro Lang wrote:
+> > > On Thu, Oct 02, 2025 at 11:26:45PM +0530, Ojaswin Mujoo wrote:
+> > > > On Sun, Sep 28, 2025 at 09:19:24PM +0800, Zorro Lang wrote:
+> > > > > On Fri, Sep 19, 2025 at 12:17:57PM +0530, Ojaswin Mujoo wrote:
+> > > > > > Implement atomic write support to help fuzz atomic writes
+> > > > > > with fsx.
+> > > > > > 
+> > > > > > Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> > > > > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> > > > > > Reviewed-by: John Garry <john.g.garry@oracle.com>
+> > > > > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > > > > > ---
+> > > > > 
+> > > > > Hmm... this patch causes more regular fsx test cases fail on old kernel,
+> > > > > (e.g. g/760, g/617, g/263 ...) except set "FSX_AVOID=-a". Is there a way
+> > > > > to disable "atomic write" automatically if it's not supported by current
+> > > > > system?
+> > > > 
+> > > > Hi Zorro, 
+> > > > Sorry for being late, I've been on vacation this week.
+> > > > 
+> > > > Yes so by design we should be automatically disabling atomic writes when
+> > > > they are not supported by the stack but seems like the issue is that
+> > > > when we do disable it we print some extra messages to stdout/err which
+> > > > show up in the xfstests output causing failure.
+> > > > 
+> > > > I can think of 2 ways around this:
+> > > > 
+> > > > 1. Don't print anything and just silently drop atomic writes if stack
+> > > > doesn't support them.
+> > > > 
+> > > > 2. Make atomic writes as a default off instead of default on feature but
+> > > > his loses a bit of coverage as existing tests wont get atomic write
+> > > > testing free of cost any more.
+> > > 
+> > > Hi Ojaswin,
+> > > 
+> > > Please have a nice vacation :)
+> > > 
+> > > It's not the "extra messages" cause failure, those "quiet" failures can be fixed
+> > > by:
+> > 
+> > Oh okay got it.
+> > 
+> > > 
+> > > diff --git a/ltp/fsx.c b/ltp/fsx.c
+> > > index bdb87ca90..0a035b37b 100644
+> > > --- a/ltp/fsx.c
+> > > +++ b/ltp/fsx.c
+> > > @@ -1847,8 +1847,9 @@ int test_atomic_writes(void) {
+> > >         struct statx stx;
+> > >  
+> > >         if (o_direct != O_DIRECT) {
+> > > -               fprintf(stderr, "main: atomic writes need O_DIRECT (-Z), "
+> > > -                               "disabling!\n");
+> > > +               if (!quiet)
+> > > +                       fprintf(stderr, "main: atomic writes need O_DIRECT (-Z), "
+> > > +                                       "disabling!\n");
+> > >                 return 0;
+> > >         }
+> > >  
+> > > @@ -1867,8 +1868,9 @@ int test_atomic_writes(void) {
+> > >                 return 1;
+> > >         }
+> > >  
+> > > -       fprintf(stderr, "main: IO Stack does not support "
+> > > -                       "atomic writes, disabling!\n");
+> > > +       if (!quiet)
+> > > +               fprintf(stderr, "main: IO Stack does not support "
+> > > +                               "atomic writes, disabling!\n");
+> > >         return 0;
+> > >  }
+> > 
+> > > 
+> > > But I hit more read or write failures e.g. [1], this failure can't be
+> > > reproduced with FSX_AVOID=-a. Is it a atomic write bug or an unexpected
+> > > test failure?
+> > > 
+> > > Thanks,
+> > > Zorro
+> > > 
+> > 
+> > <...>
+> > 
+> > > +244(244 mod 256): SKIPPED (no operation)
+> > > +245(245 mod 256): FALLOC   0x695c5 thru 0x6a2e6	(0xd21 bytes) INTERIOR
+> > > +246(246 mod 256): MAPWRITE 0x5ac00 thru 0x5b185	(0x586 bytes)
+> > > +247(247 mod 256): WRITE    0x31200 thru 0x313ff	(0x200 bytes)
+> > > +248(248 mod 256): SKIPPED (no operation)
+> > > +249(249 mod 256): TRUNCATE DOWN	from 0x78242 to 0xf200	******WWWW
+> > > +250(250 mod 256): FALLOC   0x65000 thru 0x66f26	(0x1f26 bytes) PAST_EOF
+> > > +251(251 mod 256): WRITE    0x45400 thru 0x467ff	(0x1400 bytes) HOLE	***WWWW
+> > > +252(252 mod 256): SKIPPED (no operation)
+> > > +253(253 mod 256): SKIPPED (no operation)
+> > > +254(254 mod 256): MAPWRITE 0x4be00 thru 0x4daee	(0x1cef bytes)
+> > > +255(255 mod 256): MAPREAD  0xc000 thru 0xcae9	(0xaea bytes)
+> > > +256(  0 mod 256): READ     0x3e000 thru 0x3efff	(0x1000 bytes)
+> > > +257(  1 mod 256): SKIPPED (no operation)
+> > > +258(  2 mod 256): INSERT 0x45000 thru 0x45fff	(0x1000 bytes)
+> > > +259(  3 mod 256): ZERO     0x1d7d5 thru 0x1f399	(0x1bc5 bytes)	******ZZZZ
+> > > +260(  4 mod 256): TRUNCATE DOWN	from 0x4eaef to 0x11200	******WWWW
+> > > +261(  5 mod 256): WRITE    0x43000 thru 0x43fff	(0x1000 bytes) HOLE	***WWWW
+> > > +262(  6 mod 256): WRITE    0x2200 thru 0x31ff	(0x1000 bytes)
+> > > +263(  7 mod 256): WRITE    0x15000 thru 0x15fff	(0x1000 bytes)
+> > > +264(  8 mod 256): WRITE    0x2e400 thru 0x2e7ff	(0x400 bytes)
+> > > +265(  9 mod 256): COPY 0xd000 thru 0xdfff	(0x1000 bytes) to 0x1d800 thru 0x1e7ff	******EEEE
+> > > +266( 10 mod 256): CLONE 0x2a000 thru 0x2afff	(0x1000 bytes) to 0x21000 thru 0x21fff
+> > > +267( 11 mod 256): MAPREAD  0x31000 thru 0x31d0a	(0xd0b bytes)
+> > > +268( 12 mod 256): SKIPPED (no operation)
+> > > +269( 13 mod 256): WRITE    0x25000 thru 0x25fff	(0x1000 bytes)
+> > > +270( 14 mod 256): SKIPPED (no operation)
+> > > +271( 15 mod 256): MAPREAD  0x30000 thru 0x30577	(0x578 bytes)
+> > > +272( 16 mod 256): PUNCH    0x1a267 thru 0x1c093	(0x1e2d bytes)
+> > > +273( 17 mod 256): MAPREAD  0x1f000 thru 0x1f9c9	(0x9ca bytes)
+> > > +274( 18 mod 256): WRITE    0x40800 thru 0x40dff	(0x600 bytes)
+> > > +275( 19 mod 256): SKIPPED (no operation)
+> > > +276( 20 mod 256): MAPWRITE 0x20600 thru 0x22115	(0x1b16 bytes)
+> > > +277( 21 mod 256): MAPWRITE 0x3d000 thru 0x3ee5a	(0x1e5b bytes)
+> > > +278( 22 mod 256): WRITE    0x2ee00 thru 0x2efff	(0x200 bytes)
+> > > +279( 23 mod 256): WRITE    0x76200 thru 0x769ff	(0x800 bytes) HOLE
+> > > +280( 24 mod 256): SKIPPED (no operation)
+> > > +281( 25 mod 256): SKIPPED (no operation)
+> > > +282( 26 mod 256): MAPREAD  0xa000 thru 0xa5e7	(0x5e8 bytes)
+> > > +283( 27 mod 256): SKIPPED (no operation)
+> > > +284( 28 mod 256): SKIPPED (no operation)
+> > > +285( 29 mod 256): SKIPPED (no operation)
+> > > +286( 30 mod 256): SKIPPED (no operation)
+> > > +287( 31 mod 256): COLLAPSE 0x11000 thru 0x11fff	(0x1000 bytes)
+> > > +288( 32 mod 256): COPY 0x5d000 thru 0x5dfff	(0x1000 bytes) to 0x4ca00 thru 0x4d9ff
+> > > +289( 33 mod 256): TRUNCATE DOWN	from 0x75a00 to 0x1e400
+> > > +290( 34 mod 256): MAPREAD  0x1c000 thru 0x1d802	(0x1803 bytes)	***RRRR***
+> > > +Log of operations saved to "/mnt/xfstests/test/junk.fsxops"; replay with --replay-ops
+> > > +Correct content saved for comparison
+> > > +(maybe hexdump "/mnt/xfstests/test/junk" vs "/mnt/xfstests/test/junk.fsxgood")
+> > > 
+> > > Thanks,
+> > > Zorro
+> > 
+> > Hi Zorro, just to confirm is this on an older kernel that doesnt support
+> > RWF_ATOMIC or on a kernle that does support it.
 > 
-> On Mon, 2025-10-06 at 06:48 -0600, Jens Axboe wrote:
->> When you apply this patch and things work, how many times does it
->> generally spin where it would've failed before? It's a bit unnerving to
->> have a never ending spin loop for this, with udelay spinning in between
->> as well. Looking at vio_ldc_send() as well, that spins for potentially
->> 1000 loops of 1usec each, which would be 1ms. With the current limit of
->> 10 retries, the driver would end up doing udelays of:
->>
->> 1
->> 2
->> 4
->> 8
->> 16
->> 32
->> 64
->> 128
->> 128
->> 128
->>
->> which is 511 usec on top, for 10.5ms in total spinning time before
->> giving up. That is kind of mind boggling, that's an eternity.
+> I tested on linux 6.16 and current latest linux v6.17+ (will be 6.18-rc1 later).
+> About the RWF_ATOMIC flag in my system:
 > 
-> The problem is that giving up can lead to filesystem corruption which
-> is problem that was never observed before the change from what I know.
+> # grep -rsn RWF_ATOMIC /usr/include/
+> /usr/include/bits/uio-ext.h:51:#define RWF_ATOMIC       0x00000040 /* Write is to be issued with torn-write
+> /usr/include/linux/fs.h:424:#define RWF_ATOMIC  ((__kernel_rwf_t)0x00000040)
+> /usr/include/linux/fs.h:431:                     RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC |\
+> /usr/include/xfs/linux.h:236:#ifndef RWF_ATOMIC
+> /usr/include/xfs/linux.h:237:#define RWF_ATOMIC ((__kernel_rwf_t)0x00000040)
 
-Yes, I get that.
+Hi Zorro, thanks for checking this. So correct me if im wrong but I
+understand that you have run this test on an atomic writes enabled 
+kernel where the stack also supports atomic writes.
 
-> We have deployed a kernel with the change reverted on several LDOMs that
-> are seeing heavy use such as cfarm202.cfarm.net and we have seen any system
-> lock ups or similar.
+Looking at the bad data log:
 
-I believe you. I'm just wondering how long you generally need to spin,
-as per the question above: how many times does it generally spin where
-it would've failed before?
+	+READ BAD DATA: offset = 0x1c000, size = 0x1803, fname = /mnt/xfstests/test/junk
+	+OFFSET      GOOD    BAD     RANGE
+	+0x1c000     0x0000  0xcdcd  0x0
+	+operation# (mod 256) for the bad data may be 205
 
->> Not that it's _really_ that important as this is a pretty niche driver,
->> but still pretty ugly... Does it work reliably with a limit of 100
->> spins? If things get truly stuck, spinning forever in that loop is not
->> going to help. In any case, your patch should have
+We see that 0x0000 was expected but we got 0xcdcd. Now the operation
+that caused this is indicated to be 205, but looking at that operation:
+
++205(205 mod 256): ZERO     0x6dbe6 thru 0x6e6aa	(0xac5 bytes)
+
+This doesn't even overlap the range that is bad. (0x1c000 to 0x1c00f).
+Infact, it does seem like an unlikely coincidence that the actual data
+in the bad range is 0xcdcd which is something xfs_io -c "pwrite" writes
+to default (fsx writes random data in even offsets and operation num in
+odd).
+
+I am able to replicate this but only on XFS but not on ext4 (atleast not
+in 20 runs).  I'm trying to better understand if this is a test issue or
+not. Will keep you update.
+
+I'm not sure how this will affect the upcoming release, if you want
+shall I send a small patch to make the atomic writes feature default off
+instead of default on till we root cause this?
+
+Regards,
+Ojaswin
+
 > 
-> Isn't it possible that the call to vio_ldc_send() will eventually succeed
-> which is why there is no need to abort in __vdc_tx_trigger()?
-
-Of course. Is it also possible that some conditions will lead it to
-never succeed?
-
-The nicer approach would be to have sunvdc punt retries back up to the
-block stack, which would at least avoid a busy spin for the condition.
-Rather than return BLK_STS_IOERR which terminates the request and
-bubbles back the -EIO as per your log. IOW, if we've already spent
-10.5ms in that busy loop as per the above rough calculation, perhaps
-we'd be better off restarting the queue and hence this operation after a
-small sleeping delay instead. That would seem a lot saner than hammering
-on it.
-
-> And unlike the change in adddc32d6fde ("sunvnet: Do not spin in an infinite
-> loop when vio_ldc_send() returns EAGAIN"), we can't just drop data as this
-> driver concerns a block device while the other driver concerns a network
-> device. Dropping network packages is expected, dropping bytes from a block
-> device driver is not.
-
-Right, but we can sanely retry it rather than sit in a tight loop.
-Something like the entirely untested below diff.
-
-diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
-index db1fe9772a4d..aa49dffb1b53 100644
---- a/drivers/block/sunvdc.c
-+++ b/drivers/block/sunvdc.c
-@@ -539,6 +539,7 @@ static blk_status_t vdc_queue_rq(struct blk_mq_hw_ctx *hctx,
- 	struct vdc_port *port = hctx->queue->queuedata;
- 	struct vio_dring_state *dr;
- 	unsigned long flags;
-+	int ret;
- 
- 	dr = &port->vio.drings[VIO_DRIVER_TX_RING];
- 
-@@ -560,7 +561,13 @@ static blk_status_t vdc_queue_rq(struct blk_mq_hw_ctx *hctx,
- 		return BLK_STS_DEV_RESOURCE;
- 	}
- 
--	if (__send_request(bd->rq) < 0) {
-+	ret = __send_request(bd->rq);
-+	if (ret == -EAGAIN) {
-+		spin_unlock_irqrestore(&port->vio.lock, flags);
-+		/* already spun for 10msec, defer 10msec and retry */
-+		blk_mq_delay_kick_requeue_list(hctx->queue, 10);
-+		return BLK_STS_DEV_RESOURCE;
-+	} else if (ret < 0) {
- 		spin_unlock_irqrestore(&port->vio.lock, flags);
- 		return BLK_STS_IOERR;
- 	}
-
--- 
-Jens Axboe
+> Thanks,
+> Zorro
+> 
+> > 
+> > Regards,
+> > ojaswin
+> > 
+> 
 
