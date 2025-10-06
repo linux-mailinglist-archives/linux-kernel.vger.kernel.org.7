@@ -1,218 +1,143 @@
-Return-Path: <linux-kernel+bounces-842712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE498BBD5F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 10:41:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A837CBBD5FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 10:43:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AACD34E93EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 08:41:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C866B3AB3F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 08:43:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E52726158C;
-	Mon,  6 Oct 2025 08:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17D4262FD2;
+	Mon,  6 Oct 2025 08:43:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SYGXVVaF"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cJ8YUCzB"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C082D3BB5A
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 08:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B618D25C818
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 08:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759740081; cv=none; b=Dc19iJ7/UEtMB1p9yg18jfNdTIz6rbA1sgXdjE0NMVeZOkie3Co41M1ybOwQZdWXyDcGRdxKlQhjMZzcvUPAuFiJ4NLUYsYCdMRfB/AjuSyxB5s5z5B/EKgslW0lm/M11VorZahpYWP1nk9/qAQwKW4XQ4WB7q50InGJSUytBWA=
+	t=1759740216; cv=none; b=DNFxciukKz3zqjs7DzMKZaje5SbScnwSZypptTDWYzcO8SGoTVbJ5jH9C6TJ2MREnraglH/8JiBofCJIytcNxYTM8zpGqgp6x5bDgAs7XSrGFF56t87slOa6701i/O8zdCKqYlxhMU3o/TajXaynrzjDt6vumMPw6TL/ScG9a80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759740081; c=relaxed/simple;
-	bh=WWoORRJWGz0OyFtL4IFXdUu7eTKdL9fsQsesOKiF5xY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LXMrpEEF1RGbPOrW8u45SVcThb0SITOZnIP91lq2yBcl12LLCErN25GJ3nLXrt4VG0D6+fEs9iymVbpxG+is+QcfS7pc31A/ZpsvQr721nuYaIyBc4BzmgxNZBOv6kvoQEWjtMwZSIwFjwbW0+HQKZudueiM2UaFuHn20eWEd9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SYGXVVaF; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1759740216; c=relaxed/simple;
+	bh=0rqNTIzuAUmGUZmDFajGT6N8yRPrwxMpdo1LXU+gh4k=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=rE4S0y41cE6lrv9XBXqdGuApLzuEsmqDPQJK6QIS36w3FR2jbgT7QabqZgjEJ84yTk3/JEPB1htQIyPsfqtyU9P9uhsC9PNFW9zehpSehThefIpejwNaIyT5G5a+Oe22OXQ5wVbXGySNug47mi2TnywtFQloMnKbCw2DgkSdcG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cJ8YUCzB; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e6a689bd0so35690635e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 01:41:19 -0700 (PDT)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-27d4d6b7ab5so65869615ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 01:43:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759740078; x=1760344878; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y63nOSKBOZb8Xi0WfMVSnEc0ViCBynY2ybYfLq11XEc=;
-        b=SYGXVVaF2c1hmxoAYD2+N2rllgLv17/qt+gJI/Z0bGru1oposM/IInp2i65mNGTxMO
-         zTSx6crJ1TPBJoD0RbKva594qwhkC5q0chfFFfZW0MLZUVj6DRp0ArTjWBMrWJGyfyKw
-         8Iubu3CR+XyiUM07vpVHCPFnA2U7bJ60TF9L1tAoM6p9mIFq+8x6MMJdK9YlId2koI2F
-         HtuABuWOT/T8K0vMH0BlXyjV+PLwZjI6y1CyExlACKSDLL+p5+uDchP8W8a1wJTz4UL7
-         0da1D3f9bhvDAddNZP2sHsyIliiC5a3eTEHVZ5z+q5rJRtbqiqq+MHdsxHdePix8Y9YM
-         rNSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759740078; x=1760344878;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+        d=linaro.org; s=google; t=1759740214; x=1760345014; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=Y63nOSKBOZb8Xi0WfMVSnEc0ViCBynY2ybYfLq11XEc=;
-        b=gLBunP7xJoPJXPjJU68pi68e9EILkAkuDz9qt77FbVeHIENZuS0RcrGaM0PG9dtrzm
-         soupdKbniAfmuYDgBgsxmXG8C/qSKbjjmUTIQWEqlE+6E+0D/F4RI02bXt7GsN/DBaEZ
-         hagsYqrF0XIJngIBOOFlZcK5zb44NkINy69ahAcwv1RdLvnJwifo5ZNZEwCYW5n2HVAm
-         /UZdcf/D2LuZd9yAZrJyZxADdY0v+qrH+9OqjrEcnv8oNtGe3YelxL2U6otQeO7Fvl2V
-         bbpiU3HUdIhpoIKupvbbxpHFBCgOfWhjU6lRNJhKZzg62T04JXudUf/OvC+M4vQQ0Gai
-         xTCg==
-X-Forwarded-Encrypted: i=1; AJvYcCVVJTCQbflpGPTXMewzFXBdz6VRETq0oru/al9uejkt0rSPJ4SMyaS446DKiJPzpe9DZlG8VOpDbETLqac=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+LulyAQpqVG6Pne3oRTbq9uy5NTELRy5I+1SVOmWIKMaLM1x9
-	uuqtFYBy5kkSlBwx3kCo3MxB9unqphjsvqbX8qs6FBbL0IVFV8nLvcLx1Umg0c4q0Wo=
-X-Gm-Gg: ASbGncsfyFmcQ8neRR82MmtRBc/M+ILURm8i3RJCQdYM+UibuylDtwIwKkkhkn9Kdi6
-	Cyp8JJ4i8gbK+CF25j0A6rMCVEuEIY7w62bbUtGolbPAYhhIiArkpvsGD5ihcevI25CF28U8myO
-	8jhDDkeroSDV5QiLG0gZOmYHA1jzqAwvt9wGTdwApWqd3zxXt9igk2Ka5Cc7aY1KAj5vxTam7BP
-	rTu1PgkpTnAnnWj2pLvsGvkxv0o+nGfGozxpK83o3L+5/onnHBuJlzOAnoEZp5fKE5XOEUqc/k0
-	Z4xmRGg/TjrJjaJuY3YhYWqj8RlhWagT1bMEV6pph+UdCDQXfkA8SBL2giU7KS0JPKjMU2XC64r
-	jcU7aOl9kfZb2nZy+aU25poSQ92ECqIyqzwb4oJKf0R2XSGkmg4VbWQ+sgCwXKOahXBHAmKa8c2
-	DZDGSDxzhPAt8O7aGxocwa1ts8pPLhURIMw7evwA==
-X-Google-Smtp-Source: AGHT+IEWwWaYh44sv9Oqx0ZChqrUk1Sr1HBR21zDGZTRQfiGbC8OZi2rvU8z63aitXqs6CRfThx14w==
-X-Received: by 2002:a05:600c:3f08:b0:45b:9a46:69e9 with SMTP id 5b1f17b1804b1-46e7114e92fmr82535805e9.31.1759740077891;
-        Mon, 06 Oct 2025 01:41:17 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:2dd0:9118:d7f5:51d9? ([2a01:e0a:3d9:2080:2dd0:9118:d7f5:51d9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8a6c3esm19968974f8f.1.2025.10.06.01.41.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Oct 2025 01:41:17 -0700 (PDT)
-Message-ID: <2914e235-9e6c-4b46-ba4a-3fd4758eadef@linaro.org>
-Date: Mon, 6 Oct 2025 10:41:16 +0200
+        bh=XbkOLsSeEc4de19QVHiox7c6UUo78PKyegeBXplGkhg=;
+        b=cJ8YUCzBb5G9PfkgAPSMa4Iy5wp8EC8wwtX5dLd6yab9UyLYGfLtlB13fZ8tkOPFCj
+         SsafTvLDf8M7ksnNllYQlRCCChJ5rrr0dDGXTAb0Ujq2BYRjhlDiWNEyOKNWN7t5mtzf
+         oyKYAh525eoDu59Xd/ecekpQkJUuh0Uzbz5rrcSnAyvVda3GKVch8xj5XeQfGGqDTuq2
+         wGgq82HHwMo8gpuB+CEk5x9Ri3FmQY4vlAHAcQ3gaa/mXcc471cdwegDcl6PFUGx2axn
+         pRprrRAUGmyvYb+BE0GTSVrGay2gZa+hhYgmHtMAzg/PRe2Pydl6H7cUB+jJwS/WbZq8
+         3rIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759740214; x=1760345014;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XbkOLsSeEc4de19QVHiox7c6UUo78PKyegeBXplGkhg=;
+        b=PqGje9idBSYDTBmZ9x4ox85bsOpwRIxwFLkQ0iAEARb7nMqNORFI0fGe7QHP1+WhPs
+         G0c4rkTLc5990nGe1hcvfhbLpFCWVKiLus/cSlI8hKtIkc8xM+O68dR4+7Bkp75HLR2W
+         hrVzh+cRgMBp82iJEyRR0iq1gTD+LnMGGLsfDSbj/Ypo0CKMmsbHquVVs2e/w2bsix8F
+         IKcyE8GYP7I4cDCselq+G3GBJ/oPDy4I/MilJl8jn4KrRSyl65HV4QlIngfGdWMcz9JK
+         ATgSrIuSrY29c6PS6k35lg2/4cR1F1dWlSIEvhgBki17KLlpcaBRYpIdUGaqk77E3cS4
+         gxvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWDBg6FSD3ddvnOQyjyyuB/RTN7W4KisZqEF1oeI5CGKmsTo4kNsABzLJeIaV8nx7PA5XbLiyETZrrz/Q8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB7IhQNBtekTSfvFzKtejDt2iQ1789+XWHTohePluAAsUEaf6I
+	j9XYF67iTelzd5UEc7KXG74Vk3Ie514fgVn/tWrY2fwdce4cZ7GIouIVLI+oApjASO5r1tH7mHc
+	qvrhczS0S6ZmBIaIQHPMG7b63U+Rzv18Tqc1WZVs5zg==
+X-Gm-Gg: ASbGnctWWIaj/K2v7XBfZSf95vtLzvqIQ/4PXf8eXA+RiQd+d5Cr7qP2Cfz1TQRgQ7I
+	w3mChGUTYBIMiv02GXJigrKDxLeZABIMddMJTZ98UKGKicfZ5ZtgF0Gw3QkZszsO//XNm002lag
+	2D7APMnurmD6CY+ulBAToc4TrqiGjjbHfucPRW1Mnn+32uevjuCJi4bHq/LlMTWBaf+5JMkuG4P
+	l3AH9lQ7Tkt90rAsxExHeSEFRinT9z3o+7rf3QC1OZVVZ/dgtDUgXYQdg81MdnvC8zI+o+D3D/y
+	U4f/tBTmXoSnCB65pjTxIaS+c9IKM+D+JyYK8r6c9ho1Pw==
+X-Google-Smtp-Source: AGHT+IG70fTPRSenFkY+h0Ci4bsOWclGRtd5+NQm5QtlMXDZUWAfWyV7v3HpmAz+QpEftxA1fNt3+ZAYzqOOG5usHHU=
+X-Received: by 2002:a17:903:2f4c:b0:27e:d4a8:56ad with SMTP id
+ d9443c01a7336-28e9a6a2eb6mr138892325ad.61.1759740213842; Mon, 06 Oct 2025
+ 01:43:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH] dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp: do not
- reference whole usb-switch.yaml
-To: Rob Herring <robh@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250902-topic-sm8x50-fix-qmp-usb43dp-usb-switch-v1-1-5b4a51c8c5a8@linaro.org>
- <20250905175533.GA1000951-robh@kernel.org>
- <nwtt76n4t7tlf26ex47wrot7g7nldtmavbzgwmluls3egamjsi@mkomopb6fjh6>
- <20251001163139.GA1877961-robh@kernel.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20251001163139.GA1877961-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Mon, 6 Oct 2025 14:13:22 +0530
+X-Gm-Features: AS18NWA6yLhMUIQR5RWLa0LAv-ggCbP2Rb4RY4ONcT6ZxSvFVMy57u3jDGKEbJ4
+Message-ID: <CA+G9fYsZvF1f25x10oL=Gs=+f_AFmaUFtUT8Qs1bXugEaJeoMA@mail.gmail.com>
+Subject: next-20250102: arm64: gcc-8-defconfig: Assembler messages: Error:
+ unknown architectural extension `simd;'
+To: linux-rdma@vger.kernel.org, Netdev <netdev@vger.kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Patrisious Haddad <phaddad@nvidia.com>, Michael Guralnik <michaelgur@nvidia.com>, 
+	Moshe Shemesh <moshe@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Ben Copeland <benjamin.copeland@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/1/25 18:31, Rob Herring wrote:
-> On Tue, Sep 30, 2025 at 10:10:25PM +0300, Dmitry Baryshkov wrote:
->> On Fri, Sep 05, 2025 at 12:55:33PM -0500, Rob Herring wrote:
->>> On Tue, Sep 02, 2025 at 06:10:05PM +0200, Neil Armstrong wrote:
->>>> Both bindings describe a different layout of the ports properties,
->>>> leading to errors when validating DT using this PHY bindings as
->>>> reported by Rob Herring.
->>>>
->>>> Reported-by: Rob Herring <robh@kernel.org>
->>>> Closes: https://lore.kernel.org/all/175462129176.394940.16810637795278334342.robh@kernel.org/
->>>> Fixes: 3bad7fe22796 ("dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp: Reference usb-switch.yaml to allow mode-switch")
->>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->>>> ---
->>>>   .../devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml    | 8 +++++---
->>>>   1 file changed, 5 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
->>>> index c8bc512df08b5694c8599f475de78679a4438449..5005514d7c3a1e4a8893883497fd204bc04e12be 100644
->>>> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
->>>> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
->>>> @@ -73,8 +73,11 @@ properties:
->>>>       description:
->>>>         See include/dt-bindings/phy/phy-qcom-qmp.h
->>>>   
->>>> -  mode-switch: true
->>>> -  orientation-switch: true
->>>> +  mode-switch:
->>>> +    $ref: /schemas/usb/usb-switch.yaml#properties/mode-switch
->>>> +
->>>> +  orientation-switch:
->>>> +    $ref: /schemas/usb/usb-switch.yaml#properties/orientation-switch
-> 
-> Looking at this again, this isn't even correct and I don't think it
-> works. It's missing a '/' and  should be ...#/properties/... to be a
-> valid json pointer.
-> 
-> I thought we checked this...
-> 
->>>
->>> This is a pattern we try to avoid with references at a property level. I
->>> prefer you make port and ports not required in usb-switch.yaml.
->>
->> But this solution is also not perfect. E.g.
->> Documentation/devicetree/bindings/phy/fsl,imx8mq-usb-phy.yaml should
->> only allow the orienttion-switch property, while using
->> allOf:$ref:usb-switch.yaml allows all three (orientation-switch,
->> mode-switch, retimer-switch).
-> 
-> That can be handled like this:
-> 
-> $ref: usb-switch.yaml
-> properties:
->    orientation-switch: true
-> additionalProperties: false
-> 
-> Though if you need unevaluatedProperties for some other reason, then
-> that won't enforce it and it's just documentation. In that case, then
-> perhaps usb-switch.yaml is not the right granularity and should be split
-> up.
+The arm64 defconfig builds failed on the Linux next-20251002 tag build due
+to following build warnings / errors with gcc-8 toolchain.
 
-I tried :
-    - $ref: /schemas/usb/usb-switch.yaml#
-+      properties:
-+        mode-switch: true
-+        orientation-switch: true
-+      additionalProperties: false
+* arm64, build
+  - gcc-8-defconfig
 
-But it doesn't work:
-phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml:108:17: [error] syntax error: mapping values are not allowed here (syntax)
-phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml:108:17: mapping values are not allowed in this context
-   DTEX    Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.example.dts
-phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml:108:17: mapping values are not allowed in this context
+First seen on next-20251002
+Good: next-20250929
+Bad: next-20251002..next-20251003
 
-> 
-> I put this into the category of "this is the least of our problems". I'm
-> not that interested in enforcing what common properties a device uses or
-> not. It's undocumented properties I'm worried about or lack of
-> constraints (on reg, clocks, interrupts, etc.).
+Regression Analysis:
+- New regression? yes
+- Reproducibility? yes
 
-I'll revert the patch until we find a proper solution.
+Build regression: next-20250102: arm64: gcc-8-defconfig: Assembler
+messages: Error: unknown architectural extension `simd;'
 
-Neil>
-> Rob
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
+### Build error log
+/tmp/cclfMnj9.s: Assembler messages:
+/tmp/cclfMnj9.s:656: Error: unknown architectural extension `simd;'
+make[8]: *** [scripts/Makefile.build:287:
+drivers/net/ethernet/mellanox/mlx5/core/wc.o] Error 1
+
+Suspecting commit,
+$ git blame -L 269 drivers/net/ethernet/mellanox/mlx5/core/wc.c
+fd8c8216648cd8 (Patrisious Haddad 2025-09-29 00:08:08 +0300 269)
+         (".arch_extension simd;\n\t"
+fd8c8216648cd net/mlx5: Improve write-combining test reliability for
+ARM64 Grace CPUs
+
+## Source
+* Kernel version: 6.17.0
+* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+* Git commit: 47a8d4b89844f5974f634b4189a39d5ccbacd81c
+* Architectures: arm64
+* Toolchains: gcc-8
+* Kconfigs: defconfig
+
+## Build
+* Build log: https://storage.tuxsuite.com/public/linaro/lkft/builds/33YUHcFKTLSBTOxNIJqF9vJqcxt/build.log
+* Build details:
+https://regressions.linaro.org/lkft/linux-next-master/next-20251003/build/gcc-8-defconfig/
+* Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/33YUHcFKTLSBTOxNIJqF9vJqcxt
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/33YUHcFKTLSBTOxNIJqF9vJqcxt/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/33YUHcFKTLSBTOxNIJqF9vJqcxt/config
+
+--
+Linaro LKFT
 
