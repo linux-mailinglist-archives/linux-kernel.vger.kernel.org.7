@@ -1,95 +1,118 @@
-Return-Path: <linux-kernel+bounces-843457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69D49BBF66F
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 22:53:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D01DBBF7F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 22:58:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51681189C25E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 20:54:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A922189BFE4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 20:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C602E25A2BB;
-	Mon,  6 Oct 2025 20:53:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04FC725A633;
+	Mon,  6 Oct 2025 20:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="igLEaH4C"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ED+fnBuh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20728223DD1;
-	Mon,  6 Oct 2025 20:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFA91DE2D7;
+	Mon,  6 Oct 2025 20:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759784018; cv=none; b=tEzBKtfV6rKtcbW0NTleaLkxjLDmGvCEkniuHKY2DzVU/CSvf3PTZ3ISnrZsmP3TfbMJ4PDPase/1PidJyjBuDtp3Da/lOmCc3mZTTMpNgWkojocZ6DdzbxyIIzeQ0peG472XEC8AyBAK7xYeFlJFbWWH18hnTsEMraBaoC6hqs=
+	t=1759784305; cv=none; b=tGw6G4HXOh7DQaT2+wnEUYGjby4yzbp9Tut95swWKFLjhiIzascJ6F3SVgpthzIUTzB2XXzojS5iZJClQW/ZBIuNxWQy2drBvZ996QGarGRt41u8s1V8NiXMWhl4zKOiyjlBvMQXuyLOoQHjC4ChSTjeLGl9pMrdSKfEKaWkTIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759784018; c=relaxed/simple;
-	bh=0tCd4WF0gQtfi6/fB2e1mBANwyNMnWMhiYWPsP6L4b4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RpSE44K+yj6jgPSIEdlVKuwJIbTASSV8M3Y8krXb+Q2f7Aqzr3EXz0j9gVUR+vlJsXEPD996ypMYBIJoVuWMuWzTbzDt7glv74KG9WKCmIRYJUvNyXod5ALprjPYnWreZi2ErxTBflTeiXXCeucxcVC/1zK+FAZEpC2R3lduQqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=igLEaH4C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7199AC4CEF5;
-	Mon,  6 Oct 2025 20:53:37 +0000 (UTC)
+	s=arc-20240116; t=1759784305; c=relaxed/simple;
+	bh=hklacsREQOjXIvE2pwhv3opzzHrR7jdcgp9qeYjOpsk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n+UzdnIBZqu+4+2I+t1Dye7Eoc0Xi8C0xaDOGbMyPlD7BTSrixOERaCw9SFcDMY6x8wFn58unSJ4Vgc9s8MK3xB14NN2ki6d4ycQil59z/oiccCwxYpS7b6C/CnmOb7o/xI1jU+Og+ycbHs2y8RNb5bAF966LgumPnxrKDunufo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ED+fnBuh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28C95C116B1;
+	Mon,  6 Oct 2025 20:58:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759784017;
-	bh=0tCd4WF0gQtfi6/fB2e1mBANwyNMnWMhiYWPsP6L4b4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=igLEaH4CU8kFnBHLB8+7B/C+/775mvsFWWGMwqL/+iOGRFpic5iwoBGBCMunOKQj1
-	 caxJUTzwJQsFj2+GTKVA6x/Be2ciFIV2vsPxOfFlpyGSixxfYrPNA7mop0Y/RHFVwb
-	 EpGtxCL4NdwCKZVUF9bL3615/Hxt7B+dxTWxJ+0vb6rRvgUWm2ViiTR5Vz0b5qmFq1
-	 UYctq6gFsHmXYLXJvjJxwYlTilTF0ODJsEqgfztVaGXLR4iIPPcy7DEG0yGPHtDyfB
-	 2Z1qb8LOySvxZP5qoUzlwxq91n1FVsrIWGyj0S7srBm56v0dsTqyYwM7gBAIuktG07
-	 5SwJceazLJCBA==
-Date: Mon, 6 Oct 2025 15:53:36 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: "Sven Eckelmann (Plasma Cloud)" <se@simonwunderlich.de>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Sean Wang <sean.wang@mediatek.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Ryder Lee <ryder.lee@mediatek.com>, Felix Fietkau <nbd@nbd.name>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-wireless@vger.kernel.org,
-	Shayne Chen <shayne.chen@mediatek.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH mt76 v2 2/3] dt-bindings: net: wireless: mt76: introduce
- backoff limit properties
-Message-ID: <175978385977.561952.12777844195936444721.robh@kernel.org>
-References: <20250926-backoff-table-support-v2-0-16d3726646c4@simonwunderlich.de>
- <20250926-backoff-table-support-v2-2-16d3726646c4@simonwunderlich.de>
+	s=k20201202; t=1759784304;
+	bh=hklacsREQOjXIvE2pwhv3opzzHrR7jdcgp9qeYjOpsk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ED+fnBuhHPVzjaZtBwcjbsUJkfrbj/81NWqWwD9S0br+ltxooOxg5Xo7968ui9hgW
+	 8Sc7pQLEwvWXK1jEFL4SBlHc0M9EfkR/GI5THhu7v4Pw75FCP9V9VsXwWyR2qDjOPk
+	 e0J09gZ5IykikLDrv7RmI7cxTwmODWf7fg1kSYlxn9aro1LE5uUZyZUi7SvtnZj+rh
+	 bhKOcacPPP6MNrpYMUkTm0OMCPgQJmWVS134b3yTu1ce6YKnql41MNBoy8tMe8sRPJ
+	 7Zh3ODgMSuq2ZCwbw/a2UvKjQVnNAoCZ2gWQXxjuED9Ty6K6wq1wI3GFocU7ohWc+l
+	 afA6ubptPyd2w==
+Message-ID: <26c34ef2-8309-4625-9bee-bb3e5c056568@kernel.org>
+Date: Mon, 6 Oct 2025 16:58:22 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926-backoff-table-support-v2-2-16d3726646c4@simonwunderlich.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] NFSD changes for v6.18
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Christian Brauner <brauner@kernel.org>,
+ Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+ Jeff Layton <jlayton@kernel.org>
+References: <20251006135010.2165-1-cel@kernel.org>
+ <CAHk-=wiH4-v3YxzN9_obL8Z_d9+TiFOdXwiDAauHqO-1vymY-w@mail.gmail.com>
+Content-Language: en-US
+From: Chuck Lever <cel@kernel.org>
+Organization: kernel.org
+In-Reply-To: <CAHk-=wiH4-v3YxzN9_obL8Z_d9+TiFOdXwiDAauHqO-1vymY-w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-On Fri, 26 Sep 2025 12:04:53 +0200, Sven Eckelmann (Plasma Cloud) wrote:
-> Introduce path backoff limit properties in mt76 binding in order to specify
-> beamforming and non-beamforming backoff limits for 802.11n/ac/ax.
+On 10/6/25 4:51 PM, Linus Torvalds wrote:
+> On Mon, 6 Oct 2025 at 06:50, Chuck Lever <cel@kernel.org> wrote:
+>>
+>> One potential merge conflict has been reported for nfsd-6.18.
 > 
-> Signed-off-by: Sven Eckelmann (Plasma Cloud) <se@simonwunderlich.de>
-> ---
->  .../bindings/net/wireless/mediatek,mt76.yaml       | 60 ++++++++++++++++++++++
->  1 file changed, 60 insertions(+)
+> No problem, this is the simple kind of explicit conflict (famous last
+> words before I mess one of those things up).
 > 
+> Anyway, the reason I'm replying is actually that I notice that you
+> added that ATTR_CTIME_SET flag in <linux/fs.h> in commit afc5b36e29b9
+> ("vfs: add ATTR_CTIME_SET flag").
+> 
+> No complaints about it, but it looks a bit odd with ATTR_{A,M}TIME_SET
+> in bits 7 and 8, and then the new ATTR_CTIME_SET is in bit 10 with the
+> entirely unrelated ATTR_FORCE in between them all.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Oof. We should have gotten Acks for "vfs: add ATTR_CTIME_SET flag". My
+bad.
 
-Though I know nothing about this. Is there any reason why this is 
-all specific to mt76 rather than being common? Perhaps these settings 
-are all just part of the opaque "calibration data" in the QCom case?
 
-Rob
+> So I'm thinking it would look cleaner if we just swapped
+> ATTR_CTIME_SET and ATTR_FORCE around - these are all just our own
+> kernel-internal bits (and the reason bit 10 was unused is that it used
+> to contain the odd ATTR_ATTR_FLAG that was never used).
+> 
+> Danger Will Robinson: hostfs has odd duplicate copies of all these, including a
+> 
+>    #define HOSTFS_ATTR_ATTR_FLAG   1024
+> 
+> of that no-longer existing flag.
+> 
+> But hostfs doesn't use ATTR_FORCE (aka HOSTFS_ATTR_FORCE), so
+> switching those two bits around wouldn't affect it either, even if you
+> were to have a version mismatch between the client and host when doing
+> UML (which I don't know
+> 
+> Adding Christian to the participants list, because I did *not* do that
+> cleanup thing myself, because I'm slightly worried that I'm missing
+> something. But it would seem to be a good thing to do just to have the
+> numbering make more sense, and Christian is probably the right person.
+> 
+> And adding Johannes Berg due to the UML connection, just to see that I
+> haven't misread that odd hostfs situation.
+> 
+> Comments?
+> 
+>             Linus
+
+
+-- 
+Chuck Lever
 
