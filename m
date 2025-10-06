@@ -1,251 +1,157 @@
-Return-Path: <linux-kernel+bounces-843584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C5A2BBFC59
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 01:22:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AB9ABBFC35
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 01:21:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D160189CA1B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 23:22:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 412F74EB3C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 23:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9BC2222D2;
-	Mon,  6 Oct 2025 23:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E1A1A254E;
+	Mon,  6 Oct 2025 23:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dARvVH29"
-Received: from mail-oa1-f73.google.com (mail-oa1-f73.google.com [209.85.160.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IS1f4wmJ"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED2D21ABDD
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 23:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5DA91A9FA1
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 23:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759792918; cv=none; b=MgrFw4XFGReyihYe6xt46zN2Um7eq0WvHeNER9Eloe8BdTSmt9BmKrZGmSfYiY/3Tgm4xTd1v0a02yPi25riV04t3Smoog7bXj/fHMo7DhFJiMDu+v2L0QqLB0LaV0g+Ra7ymtEIQVEhaDNdfsxOjXTV/T0WAf8xoAiJESBxm08=
+	t=1759792901; cv=none; b=H1SttFaa499ZrpIx4G63s6c1/PA13ZDAE/5g/7kCjuwfbo97tq7rMSqGh1Uh8Lf6wOTfZ2KksSrMeuPKbSvGPaN/qdK/Cw1GJsfvfOryvLdHav4p3HRh7SVnntG4vEFpqvmanLH0B4mxpupHrZfMa7ZENGFX5l2wIwc0U8uGJKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759792918; c=relaxed/simple;
-	bh=UViTHWvwXuqcjmgVhoJDzPkLVSAoP6S0yomom/AscBs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ZhOhDCXscnep0vSK4VvpsV2/92MDCelWZGuaEpxe3wsGKpwsePNOs0nglif7XoKmEqZjIss63WibL8Av/s8cPAl1GQKjJt2/t2QqdVFMrqPhqxmxHGmZCoRvXeHHVJpUE2GtjlBhULO2xqstZ3M+e0wzMpvKQDfJ1LiagTcRnew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dARvVH29; arc=none smtp.client-ip=209.85.160.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com
-Received: by mail-oa1-f73.google.com with SMTP id 586e51a60fabf-36d429b919cso6990497fac.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 16:21:56 -0700 (PDT)
+	s=arc-20240116; t=1759792901; c=relaxed/simple;
+	bh=BlF8MRmuAY5ZGP/hSG05FFgxKgRsiLUZrKxnhJp/7YA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d5/O++EMZrnnF9KbT264PsHK6J2zWFSmSaTFFs2Rl7IV12WKYwC/HOvAHA0opD0nETznAEPgP7ECL2ZZKaqPzWEQ+d5vLPSP4JvaFNC+DPURaHQbQ4CPNLcTUxyKWZjTLVV85+CzqNvlQfBBP6i40UWQ3YRkeVsJV4kDul9p3KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IS1f4wmJ; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-26983b5411aso36621505ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 16:21:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759792916; x=1760397716; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EoPxQXwQ5XFM/6+OUgDgFqK1K2D8fPLQvjVzNWUSG1k=;
-        b=dARvVH292hn74XaNx57yl9m1Qvoz6SGvtXKIyXc5ToyQtVJ8g4w4amNTkxaQWbqumP
-         w7okBvWM0J7d8jihA8bYEr6DVBdGaguMRyrOcsysSHGsfDzUKOgYc7zAMHCnR2M5Kuck
-         WRpvF6rT8ZsZNobFrlOX5MMfsBLOpqcYWvNOg2PANzeNaanMvNYXEYjivxytVwx3jfxp
-         jdWOJ/3l+erE3wuYi886QGoLl5SROapItko8hgAX/Jcw8qZGKIe1wdUVWwu858Vvrkbt
-         uwIf1x+deKaKIzNf97N8+zf0MszhekUAMzS+S7BWK9X7itbn7zy7KLpVWTp6IuLWXUqY
-         10UA==
+        d=gmail.com; s=20230601; t=1759792899; x=1760397699; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BlF8MRmuAY5ZGP/hSG05FFgxKgRsiLUZrKxnhJp/7YA=;
+        b=IS1f4wmJL9fFXAGzRb6belq7QkyOYZ9d+m1R10KdtSrofhS7r6/4V5rEtQO4QZ6RX0
+         iuPcEIxcRNWhnapKfJXwotXg/uATlRUCOhJq6bk7C4Rj5aEFYnIWDkEdzhbB0/KqtaTd
+         8wZNGko7fvUkdB94fR3vijdcU63xxzJQUTdNgPXaWlGIro8mBOzIrm4jU72gZAB3fb9Q
+         IU4kDSVzxG9eWZ311BZ9ZcJk0SAGg7uMgt+XZ4yNTLBuI2pRlF+mqfao0wP53yu/nUa5
+         P1Ykf/wiDP+o8mHkpbz5OT6yi64ennv0WE0cYKZdieO8LTF+Gf80ULWllB1iL/4lH72z
+         o7XQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759792916; x=1760397716;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EoPxQXwQ5XFM/6+OUgDgFqK1K2D8fPLQvjVzNWUSG1k=;
-        b=g17z0fiMv+le7G0NpJbmnDRL9E0PO67c3zzfb8vN0PX41SwML8zNv/g6il+nQZwXaU
-         0wvxKQDWg6l0VPuCMnPxOnWNchH9srhA8HnVZSvooevScoozF8P0T7ea+EA3ALO/AztK
-         xAGq3EaIKxQWbHZiWD720+uYzDYJgREb8s858rJS/URXw9mZOKTS/kJbS26gHYDrFnSy
-         vyfWpNsLqPZxyI9p7PzuPCbQ/Vcscr+VYfcAU4uP+fMzZogo1pJNODXK+Xc0sxnDEhTY
-         20/8wxkBM7E2mpS8rMRcWX3xOf7G1TCWmZKrNQjrkcG+8cSKT9OvnI00sg56Pr/2vVE2
-         TPPA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGBs59Z7rTO4ihcBFS5Kr20TJ9jQylYrB6UVjK9Tq9J+upY/U5OPk1+GVjphaODjeMtnWQtIUsLFp+OGY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5zBhftuvbnOh/MEJ8rVi8OPJHxVby/WCevWOz4KKfKMFazONv
-	po7omN5JESXFnAUbQeXDfJkVT9Yds+it85z5IExpqWKd38q2iEzQx5H8Vdd5mR4XVxaWmBto76p
-	FLW/jsw==
-X-Google-Smtp-Source: AGHT+IHuvSLSe+7hqIjhfAafsJ/Rg53JuStEyumsyKGui3lJI0P+5OWjCcwfbXPLbHA2q9kxTGLsRs1awBo=
-X-Received: from oala19.prod.google.com ([2002:a05:6870:b153:b0:359:cc61:b60e])
- (user=royluo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6870:959a:b0:345:bbd6:b0a1
- with SMTP id 586e51a60fabf-3b10283e13cmr8039798fac.30.1759792915730; Mon, 06
- Oct 2025 16:21:55 -0700 (PDT)
-Date: Mon,  6 Oct 2025 23:21:23 +0000
-In-Reply-To: <20251006232125.1833979-1-royluo@google.com>
+        d=1e100.net; s=20230601; t=1759792899; x=1760397699;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BlF8MRmuAY5ZGP/hSG05FFgxKgRsiLUZrKxnhJp/7YA=;
+        b=pL8hwynZvNqzLsIfjc+8/tT5SvoT4OsbeGqpW6HUoh74mqw8vWCIuya88eRPglsUhx
+         2hZfp2jKrhWE9hMjL0mcKwAB4cSo9cP3BDrVSXIgVqHqOchFodbrokF6OI6VJrHAp5qY
+         9Mm97/lAI4u3jpz7BJk3mvCaVbN71ll9wqBo8G6GvKN4x7djgqsSQFc+njLACIrDSe7l
+         O5sM7UPmwYOUu7oXLCBoBGMU8UfIcoqFBWZW/9+F5NP7v9WfPwYlEoCHK4CsLEtd6aDQ
+         3aETBG1QWrMHzpkYNCrpwnLxb2ca4YnNm7OQopKOYbDxk51RfxgLJwWoRhc7xMhF18dA
+         bH6w==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ/aDs2A4XsZp31MH0KYV5POyDnjzbe2xgSP9Bhmkg2ovo5RlVorLSMYxpSLV226hMwKqwn7B+3xvF46Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFbP56wPk04tTM91pZHiireYyB6RCVxwMAtUxV1WoTamUon+H+
+	+9FBgaX4Vgl7JGr1S3BzM4x6TAWn2FkAiMpFXLTGasljTC+QDms8M8R+KFnt8o3i09e3vxlTngM
+	S2o4TT4vSTO8tC+lQXVQNcN2W8ZbG17k=
+X-Gm-Gg: ASbGncujqpkI8qcC8Ux3gJjDrrJ+7g5M8yIgAtiDolOBSWAym5PHEdD6dMVX5/bWYKy
+	2+sP8hu0UORfd0OTTUqwujhVR+f2PHp3IRMT8tPjTcjFBIj86UWjXBt9/gWynM0hwqTn4+IFCvg
+	OTil6IQRcuLPZHKooA871hOz1I/dzLQyHDeyhwteITcu5YiY0rukObID6geycmp018iCv50U7A3
+	VGLOhTA1lPDsBliZG0Epgl2WNIWpgH318ANONIdNmk1XZ0=
+X-Google-Smtp-Source: AGHT+IFbiIZLWXUzbg0MpPNz8jI3+5uhR1e00vTKI1xy/5u7Pb90M6pGakUvtknMmHcQXhggccYvP9be6Tx3vlFcycs=
+X-Received: by 2002:a17:903:b83:b0:26e:62c9:1cc4 with SMTP id
+ d9443c01a7336-28e9a54ef95mr136288395ad.4.1759792898721; Mon, 06 Oct 2025
+ 16:21:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251006232125.1833979-1-royluo@google.com>
-X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
-Message-ID: <20251006232125.1833979-3-royluo@google.com>
-Subject: [PATCH v1 2/4] dt-bindings: usb: dwc3: Add Google SoC DWC3 USB
-From: Roy Luo <royluo@google.com>
-To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
-	"=?UTF-8?q?Andr=C3=A9=20Draszik?=" <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>, Roy Luo <royluo@google.com>, 
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+MIME-Version: 1.0
+References: <20250818170136.209169-1-roman.gushchin@linux.dev>
+ <20250818170136.209169-2-roman.gushchin@linux.dev> <CAP01T76AUkN_v425s5DjCyOg_xxFGQ=P1jGBDv6XkbL5wwetHA@mail.gmail.com>
+ <87ms7tldwo.fsf@linux.dev> <1f2711b1-d809-4063-804b-7b2a3c8d933e@linux.dev>
+ <87wm6rwd4d.fsf@linux.dev> <ef890e96-5c2a-4023-bcb2-7ffd799155be@linux.dev>
+ <CAADnVQ+LGbXXHHTbBB9b-RjAXO4B6=3Z=G0=7ToZVuH61OONWA@mail.gmail.com>
+ <87iki0n4lm.fsf@linux.dev> <a76ad1e9-07d5-4ba1-83e4-22fe36a32df0@linux.dev> <877bxb77eh.fsf@linux.dev>
+In-Reply-To: <877bxb77eh.fsf@linux.dev>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 6 Oct 2025 16:21:24 -0700
+X-Gm-Features: AS18NWDafFk0nrI4dX1WXSkb90Zju3Gm0uidZQfWzJfIM8rRKysrrjNo3H_c-hs
+Message-ID: <CAEf4BzafXv-PstSAP6krers=S74ri1+zTB4Y2oT6f+33yznqsA@mail.gmail.com>
+Subject: Re: [PATCH v1 01/14] mm: introduce bpf struct ops for OOM handling
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>, Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, linux-mm <linux-mm@kvack.org>, bpf <bpf@vger.kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>, 
+	David Rientjes <rientjes@google.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Song Liu <song@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Document the DWC3 USB bindings for Google Tensor SoCs.
+On Fri, Oct 3, 2025 at 7:01=E2=80=AFPM Roman Gushchin <roman.gushchin@linux=
+.dev> wrote:
+>
+> Martin KaFai Lau <martin.lau@linux.dev> writes:
+>
+> > On 9/2/25 10:31 AM, Roman Gushchin wrote:
+> >> Btw, what's the right way to attach struct ops to a cgroup, if there i=
+s
+> >> one? Add a cgroup_id field to the struct and use it in the .reg()
+> >
+> > Adding a cgroup id/fd field to the struct bpf_oom_ops will be hard to
+> > attach the same bpf_oom_ops to multiple cgroups.
+> >
+> >> callback? Or there is something better?
+> >
+> > There is a link_create.target_fd in the "union bpf_attr". The
+> > cgroup_bpf_link_attach() is using it as cgroup fd. May be it can be
+> > used here also. This will limit it to link attach only. Meaning the
+> > SEC(".struct_ops.link") is supported but not the older
+> > SEC(".struct_ops"). I think this should be fine.
+>
+> I thought a bit more about it (sorry for the delay):
+> if we want to be able to attach a single struct ops to multiple cgroups
+> (and potentially other objects, e.g. sockets), we can't really
+> use the existing struct ops's bpf_link.
+>
+> So I guess we need to add a new .attach() function beside .reg()
+> which will take the existing link and struct bpf_attr as arguments and
+> return a new bpf_link. And in libbpf we need a corresponding new
+> bpf_link__attach_cgroup().
+>
+> Does it sound right?
+>
 
-Signed-off-by: Roy Luo <royluo@google.com>
----
- .../bindings/usb/google,snps-dwc3.yaml        | 144 ++++++++++++++++++
- 1 file changed, 144 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/usb/google,snps-dwc3.yaml
+Not really, but I also might be missing some details (I haven't read
+the entire thread).
 
-diff --git a/Documentation/devicetree/bindings/usb/google,snps-dwc3.yaml b/Documentation/devicetree/bindings/usb/google,snps-dwc3.yaml
-new file mode 100644
-index 000000000000..3e8bcc0c2cef
---- /dev/null
-+++ b/Documentation/devicetree/bindings/usb/google,snps-dwc3.yaml
-@@ -0,0 +1,144 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+# Copyright (c) 2025, Google LLC
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/usb/google,snps-dwc3.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Google DWC3 USB SoC Controller
-+
-+maintainers:
-+  - Roy Luo <royluo@google.com>
-+
-+description:
-+  Describes the Google DWC3 USB block, based on Synopsys DWC3 IP.
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - google,lga-dwc3
-+      - const: google,snps-dwc3
-+
-+  reg:
-+    minItems: 3
-+    maxItems: 3
-+
-+  reg-names:
-+    description: |
-+      The following memory regions must present:
-+        - dwc3_core: Core DWC3 IP registers.
-+        - host_cfg_csr: Hibernation control registers.
-+        - usbint_csr: Hibernation interrupt registers.
-+    items:
-+      - const: dwc3_core
-+      - const: host_cfg_csr
-+      - const: usbint_csr
-+
-+  interrupts:
-+    minItems: 3
-+    maxItems: 3
-+
-+  interrupt-names:
-+    description: |
-+      The following interrupts must present:
-+        - dwc_usb3: Core DWC3 interrupt.
-+        - hs_pme_irq: High speed remote wakeup interrupt for hibernation.
-+        - ss_pme_irq: Super speed remote wakeup interrupt for hibernation.
-+    items:
-+      - const: dwc_usb3
-+      - const: hs_pme_irq
-+      - const: ss_pme_irq
-+
-+  clocks:
-+    minItems: 3
-+    maxItems: 3
-+
-+  clock-names:
-+    minItems: 3
-+    maxItems: 3
-+
-+  resets:
-+    minItems: 5
-+    maxItems: 5
-+
-+  reset-names:
-+    items:
-+      - const: usbc_non_sticky
-+      - const: usbc_sticky
-+      - const: usb_drd_bus
-+      - const: u2phy_apb
-+      - const: usb_top_csr
-+
-+  power-domains:
-+    minItems: 2
-+    maxItems: 2
-+
-+  power-domain-names:
-+    description: |
-+      The following power domain must present:
-+          - usb_psw_pd: The child power domain of usb_top_pd. Turning it on puts the controller
-+                         into full power state, turning it off puts the controller into power
-+                         gated state.
-+          - usb_top_pd: The parent power domain of usb_psw_pd. Turning it on puts the controller
-+                         into power gated state, turning it off completely shuts off the
-+                         controller.
-+    items:
-+      - const: usb_psw_pd
-+      - const: usb_top_pd
-+
-+  iommus:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - interrupts
-+  - interrupt-names
-+  - clocks
-+  - resets
-+  - reset-names
-+  - power-domains
-+  - power-domain-names
-+
-+allOf:
-+  - $ref: snps,dwc3-common.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        usb@c400000 {
-+            compatible = "google,lga-dwc3", "google,snps-dwc3";
-+            reg = <0 0x0c400000  0 0xd060>, <0 0x0c450000 0 0x14>, <0 0x0c450020 0 0x8>;
-+            reg-names = "dwc3_core", "host_cfg_csr", "usbint_csr";
-+            interrupts = <GIC_SPI 580 IRQ_TYPE_LEVEL_HIGH 0>,
-+                         <GIC_SPI 597 IRQ_TYPE_LEVEL_HIGH 0>,
-+                         <GIC_SPI 598 IRQ_TYPE_LEVEL_HIGH 0>;
-+            interrupt-names = "dwc_usb3", "hs_pme_irq", "ss_pme_irq";
-+            clocks = <&hsion_usbc_non_sticky_clk>,  <&hsion_usbc_sticky_clk>,
-+                     <&hsion_u2phy_apb_clk>;
-+            clock-names = "usbc_non_sticky", "usbc_sticky", "u2phy_apb";
-+            resets = <&hsion_resets_usbc_non_sticky>, <&hsion_resets_usbc_sticky>,
-+                     <&hsion_resets_usb_drd_bus>, <&hsion_resets_u2phy_apb>,
-+                     <&hsion_resets_usb_top_csr>;
-+            reset-names = "usbc_non_sticky", "usbc_sticky",
-+                     "usb_drd_bus", "u2phy_apb",
-+                     "usb_top_csr";
-+            power-domains = <&hsio_n_usb_psw_pd>, <&hsio_n_usb_pd>;
-+            power-domain-names = "usb_psw_pd", "usb_top_pd";
-+            phys = <&usb_phy 0>;
-+            phy-names = "usb2-phy";
-+            snps,quirk-frame-length-adjustment = <0x20>;
-+            snps,gfladj-refclk-lpm-sel-quirk;
-+            snps,incr-burst-type-adjustment = <4>;
-+        };
-+    };
-+...
--- 
-2.51.0.618.g983fd99d29-goog
+But conceptually, what you describe is not how things work w.r.t. BPF
+links and attachment.
 
+You don't attach a link to some hook (e.g., cgroup). You attach either
+BPF program or (as in this case) BPF struct_ops map to a hook (i.e.,
+cgroup), and get back the BPF link. That BPF link describes that one
+attachment of prog/struct_ops to that hook. Each attachment gets its
+own BPF link FD.
+
+So, there cannot be bpf_link__attach_cgroup(), but there can be (at
+least conceptually) bpf_map__attach_cgroup(), where map is struct_ops
+map.
+
+Having said that, we do have bpf_map__attach_struct_ops() already
+(it's using BPF_LINK_CREATE command under the hood), and so perhaps
+the right way is to have bpf_map__attach_struct_ops_opts() API, which
+will accept optional extra attachment parameters which will be passed
+into bpf_attr.link_create.struct_ops section of UAPI. That thing can
+have target FD, where FD is cgroup/task/whatever we need to specify
+attachment target. Just like we do that for BPF program's
+BPF_LINK_CREATE, really.
 
