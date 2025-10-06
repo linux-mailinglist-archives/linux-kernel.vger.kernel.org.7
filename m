@@ -1,238 +1,91 @@
-Return-Path: <linux-kernel+bounces-842864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 218AEBBDD10
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:57:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6746BBBDC4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:49:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71D97188FA64
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:58:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 357734EC42A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E3C26A0F8;
-	Mon,  6 Oct 2025 10:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IWTTWG7H"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E35626463A;
+	Mon,  6 Oct 2025 10:47:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBAE260590;
-	Mon,  6 Oct 2025 10:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B34258CD9
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 10:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759748232; cv=none; b=mXanGQJJU4gENOiLWbE21ThxyKKN/Wu9siEconfgB8DCS9G0IvZrg9qIcJH6peXP7YtOgwZ3HIvjQmtr/wdNT13w8tZpNq6i2YJjlPuKXKW9W9t4Sw7dfD+Fv1uIkUzYoEIrFNLEMSZPMJE4j1i6HwlIn2TtICW/npkmFfVRjPY=
+	t=1759747625; cv=none; b=IH2idGVH2UaFo7ycZx9oAevBoCvOHuMfzaUpkjSJYK1XVjvK3vMudLKiAKG7DiUEVLuudQP9SsjfQmK+eAq2cabyNe3vpOOkmmpXUh9r+xTJ8XrvtJ5wosXq2AHQMJsrVCbjBiTKP3ij//IpiA97mLkYas7VEVS4UJ4t+ydbY2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759748232; c=relaxed/simple;
-	bh=vyaUnMdaOtXeKrezU9V9CDGlAt+GFGGC6ePt8MPN0kQ=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=m4EMRVkryk7GB3cFH/5ZIVdxdzNAzyFB1Hi7oOyS9/l+CPw76h7pJVvAdGEZBO4Z/QqMvlEkQ2a3cyAPM/gssBDKxJgRV/Vgti+Tie9uu96GFcprYDcp4ZUhv9VcWomS6EAI2Q42z+TpGt2SUyWE5Ws44hOcpu61Y35Gb9LDRWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IWTTWG7H; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
-	Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To;
-	bh=eRhxKTeuHgwgyCO6J7vkEdd6ETjweUfiuf4s5wTK13Y=; b=IWTTWG7HNuq7QsUnKs3FwCyLRK
-	lf69/Skb+fADkPvzhMwFmQOO7TvSvT6NXolLQXC7s9tGeKuP0b7UnaR+Q+6kM06sEE2nFHAhWb6sM
-	bQ3RR/JIqOHuv8ydN3yeTheWRzCC6HaOy03Qeqa0ANi8Qp+f+AeNEQC59ZBdd86JeWrJPEZwE0RpW
-	WlHk+JlucG2Hrr8WWLnm49aSP+Ufhn+fJ5AUbdPPCu1lbdEIowpGodfLhKwP2ncCA/WB7iFgstsn6
-	3L8W4HieLYSaUhdE9tg1d4db6sB4cyR5rFG5aZPbiJtl5+5emZBHdZcUAzAlW7u1Vud/HedQs3SMK
-	3xJreQKw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v5ito-0000000GrzH-3ZfR;
-	Mon, 06 Oct 2025 10:57:01 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id 6C51C300754; Mon, 06 Oct 2025 12:57:00 +0200 (CEST)
-Message-ID: <20251006105453.769281377@infradead.org>
-User-Agent: quilt/0.68
-Date: Mon, 06 Oct 2025 12:46:55 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: tj@kernel.org
-Cc: linux-kernel@vger.kernel.org,
- peterz@infradead.org,
- mingo@kernel.org,
- juri.lelli@redhat.com,
- vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com,
- rostedt@goodmis.org,
- bsegall@google.com,
- mgorman@suse.de,
- vschneid@redhat.com,
- longman@redhat.com,
- hannes@cmpxchg.org,
- mkoutny@suse.com,
- void@manifault.com,
- arighi@nvidia.com,
- changwoo@igalia.com,
- cgroups@vger.kernel.org,
- sched-ext@lists.linux.dev,
- liuwenfang@honor.com,
- tglx@linutronix.de
-Subject: [RFC][PATCH 3/3] sched/ext: Fold balance_scx() into pick_task_scx()
-References: <20251006104652.630431579@infradead.org>
+	s=arc-20240116; t=1759747625; c=relaxed/simple;
+	bh=MRguVoH9xVXZ8xCke5EDKsRyE5O3HLuD7jYGE6bFqkM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=jjHnh9KV9CHX5WEXcBZDwXlU7v0VxolBEVioXsim8I1oe8kHsOPHLGLyxGGHr57fv0aXbK01RfaVOwfn+oTSBFycxV87UB02EA/E1Qh0c29JHTJ+R7mhRESysqdW9nEbhVDT2pmZFZvrFxCPAPuGkIU5wFFW9VvCoFfNNzHbMqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42f7b2cb176so91565ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 03:47:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759747622; x=1760352422;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YnhgHNmaKn33yO8Yk7hjkUq3ciy72gfjIkejk7N2DN8=;
+        b=FAziN8g1HmOS2SmhLgv6Pc+LQtdoDlM3WgIX1huavg/mTrePAsTghIN/v3w4afyAOJ
+         YwN5ldea+c2jF1jatusb20krX/UbgatE1K63+StArzBu0n54U4iVCMTtOb45j5YJrEXP
+         gcaFMRiTknDeKbwqDx9wwtz4PpJO0IumAoFYZt6Dh7V4FaI8IGmxcd3BhfeQ2g6ZmECj
+         ZuQsTGFouQYY7kJxBiLRty8VcrtRyxecjLPj0iRKwiq9Y9/AxIsK7+UVdwbpHOnjEd4m
+         mYPczhNE3LPoBEZiJRbUTMSFimEkgXAnWSGrZE5WqHlQGbRz+vEUuC8/1oBsEPRdezLC
+         GS3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWaQ1Pt3hHP1ws/R9Fg65YRQ5sJN0IvhItcz3S0zf9axWSzrceGnphuXHHmoSGvA2Ih2B54RujSUXjMKk4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpFdAWlPcJf1xdvfeXf0M5fGj7jWQd6ieY+/cdzvE1/DVrstwq
+	clrsLHI6tPLevf4fUlpX8qCrsO5rQBd8821FKuXv5TBmxFIgg9d6liZAWR66TdO4H4PR59AZIZT
+	uCYxn4hhmBigEBfJectnfu+Jt6AIfuqVubuGybC2cI84+7L6WElOu/s7liT4=
+X-Google-Smtp-Source: AGHT+IGlVMdpwvaBxkFYUgpvxCjgSFNJRiWa2s5eXLMCmT8Fnhtpp5bUCBQ+kY6C6sIk8Q9NZmshceROFLnHuDn3g/kQzY29Du8S
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Received: by 2002:a05:6e02:174e:b0:424:fd76:2a2d with SMTP id
+ e9e14a558f8ab-42e7ad8a126mr175026145ab.29.1759747622580; Mon, 06 Oct 2025
+ 03:47:02 -0700 (PDT)
+Date: Mon, 06 Oct 2025 03:47:02 -0700
+In-Reply-To: <68e2ff91.050a0220.2c17c1.003a.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e39e26.a00a0220.2a5ca.000a.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] WARNING in indx_insert_into_buffer (3)
+From: syzbot <syzbot+3a1878433bc1cb97b42a@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-With pick_task() having an rf argument, it is possible to do the
-lock-break there, get rid of the weird balance/pick_task hack.
+syzbot has bisected this issue to:
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- kernel/sched/core.c  |   13 --------
- kernel/sched/ext.c   |   78 +++++++--------------------------------------------
- kernel/sched/sched.h |    1 
- 3 files changed, 12 insertions(+), 80 deletions(-)
+commit acdbd67bf939577d6f9e3cf796a005c31cec52d8
+Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Date:   Fri Jun 28 15:27:46 2024 +0000
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5845,19 +5845,6 @@ static void prev_balance(struct rq *rq,
- 	const struct sched_class *start_class = prev->sched_class;
- 	const struct sched_class *class;
- 
--#ifdef CONFIG_SCHED_CLASS_EXT
--	/*
--	 * SCX requires a balance() call before every pick_task() including when
--	 * waking up from SCHED_IDLE. If @start_class is below SCX, start from
--	 * SCX instead. Also, set a flag to detect missing balance() call.
--	 */
--	if (scx_enabled()) {
--		rq->scx.flags |= SCX_RQ_BAL_PENDING;
--		if (sched_class_above(&ext_sched_class, start_class))
--			start_class = &ext_sched_class;
--	}
--#endif
--
- 	/*
- 	 * We must do the balancing pass before put_prev_task(), such
- 	 * that when we release the rq->lock the task is in the same
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -2013,7 +2013,7 @@ static int balance_one(struct rq *rq, st
- 
- 	lockdep_assert_rq_held(rq);
- 	rq->scx.flags |= SCX_RQ_IN_BALANCE;
--	rq->scx.flags &= ~(SCX_RQ_BAL_PENDING | SCX_RQ_BAL_KEEP);
-+	rq->scx.flags &= ~SCX_RQ_BAL_KEEP;
- 
- 	if ((sch->ops.flags & SCX_OPS_HAS_CPU_PREEMPT) &&
- 	    unlikely(rq->scx.cpu_released)) {
-@@ -2119,40 +2119,6 @@ static int balance_one(struct rq *rq, st
- 	return true;
- }
- 
--static int balance_scx(struct rq *rq, struct task_struct *prev,
--		       struct rq_flags *rf)
--{
--	int ret;
--
--	rq_unpin_lock(rq, rf);
--
--	ret = balance_one(rq, prev);
--
--#ifdef CONFIG_SCHED_SMT
--	/*
--	 * When core-sched is enabled, this ops.balance() call will be followed
--	 * by pick_task_scx() on this CPU and the SMT siblings. Balance the
--	 * siblings too.
--	 */
--	if (sched_core_enabled(rq)) {
--		const struct cpumask *smt_mask = cpu_smt_mask(cpu_of(rq));
--		int scpu;
--
--		for_each_cpu_andnot(scpu, smt_mask, cpumask_of(cpu_of(rq))) {
--			struct rq *srq = cpu_rq(scpu);
--			struct task_struct *sprev = srq->curr;
--
--			WARN_ON_ONCE(__rq_lockp(rq) != __rq_lockp(srq));
--			update_rq_clock(srq);
--			balance_one(srq, sprev);
--		}
--	}
--#endif
--	rq_repin_lock(rq, rf);
--
--	return ret;
--}
--
- static void process_ddsp_deferred_locals(struct rq *rq)
- {
- 	struct task_struct *p;
-@@ -2335,38 +2301,19 @@ static struct task_struct *first_local_t
- static struct task_struct *pick_task_scx(struct rq *rq, struct rq_flags *rf)
- {
- 	struct task_struct *prev = rq->curr;
-+	bool keep_prev, kick_idle = false;
- 	struct task_struct *p;
--	bool keep_prev = rq->scx.flags & SCX_RQ_BAL_KEEP;
--	bool kick_idle = false;
- 
--	/*
--	 * WORKAROUND:
--	 *
--	 * %SCX_RQ_BAL_KEEP should be set iff $prev is on SCX as it must just
--	 * have gone through balance_scx(). Unfortunately, there currently is a
--	 * bug where fair could say yes on balance() but no on pick_task(),
--	 * which then ends up calling pick_task_scx() without preceding
--	 * balance_scx().
--	 *
--	 * Keep running @prev if possible and avoid stalling from entering idle
--	 * without balancing.
--	 *
--	 * Once fair is fixed, remove the workaround and trigger WARN_ON_ONCE()
--	 * if pick_task_scx() is called without preceding balance_scx().
--	 */
--	if (unlikely(rq->scx.flags & SCX_RQ_BAL_PENDING)) {
--		if (prev->scx.flags & SCX_TASK_QUEUED) {
--			keep_prev = true;
--		} else {
--			keep_prev = false;
--			kick_idle = true;
--		}
--	} else if (unlikely(keep_prev &&
--			    prev->sched_class != &ext_sched_class)) {
--		/*
--		 * Can happen while enabling as SCX_RQ_BAL_PENDING assertion is
--		 * conditional on scx_enabled() and may have been skipped.
--		 */
-+	rq->queue_mask = 0;
-+	rq_unpin_lock(rq, rf);
-+	balance_one(rq, prev);
-+	rq_repin_lock(rq, rf);
-+	if (rq->queue_mask & ~((ext_sched_class.queue_mask << 1)-1))
-+		return RETRY_TASK;
-+
-+	keep_prev = rq->scx.flags & SCX_RQ_BAL_KEEP;
-+	if (unlikely(keep_prev &&
-+		     prev->sched_class != &ext_sched_class)) {
- 		WARN_ON_ONCE(scx_enable_state() == SCX_ENABLED);
- 		keep_prev = false;
- 	}
-@@ -3243,7 +3190,6 @@ DEFINE_SCHED_CLASS(ext) = {
- 
- 	.wakeup_preempt		= wakeup_preempt_scx,
- 
--	.balance		= balance_scx,
- 	.pick_task		= pick_task_scx,
- 
- 	.put_prev_task		= put_prev_task_scx,
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -779,7 +779,6 @@ enum scx_rq_flags {
- 	 */
- 	SCX_RQ_ONLINE		= 1 << 0,
- 	SCX_RQ_CAN_STOP_TICK	= 1 << 1,
--	SCX_RQ_BAL_PENDING	= 1 << 2, /* balance hasn't run yet */
- 	SCX_RQ_BAL_KEEP		= 1 << 3, /* balance decided to keep current */
- 	SCX_RQ_BYPASSING	= 1 << 4,
- 	SCX_RQ_CLK_VALID	= 1 << 5, /* RQ clock is fresh and valid */
+    fs/ntfs3: Optimize large writes into sparse file
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=147995cd980000
+start commit:   6093a688a07d Merge tag 'char-misc-6.18-rc1' of git://git.k..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=167995cd980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=127995cd980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e654219ed2546322
+dashboard link: https://syzkaller.appspot.com/bug?extid=3a1878433bc1cb97b42a
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=104b692f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17962458580000
 
+Reported-by: syzbot+3a1878433bc1cb97b42a@syzkaller.appspotmail.com
+Fixes: acdbd67bf939 ("fs/ntfs3: Optimize large writes into sparse file")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
