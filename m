@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-843509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E4DBBF9CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 23:54:45 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF5FBBF9D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 23:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D6503C39D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 21:54:44 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BD11D34BF03
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 21:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DABC41F4C8B;
-	Mon,  6 Oct 2025 21:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3BD2DC764;
+	Mon,  6 Oct 2025 21:54:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MK9VHRl0"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AKiqWG8R"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC0F262FED
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 21:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE20126561D
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 21:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759787665; cv=none; b=uiPXLiJiYWfKoxfQZRajSG/O0KVegY3Q5BT7ivS+WSThHg0/rfGldQvMOPEAUKUHOLkkIKqPKbnJLLSDd7WAlmjIy4f6ks0Zv6jQuQUAgXH5JfsR9iSk5BCNZnAWVC2QbtuhtYm4WEiyV/K73SWu2z+ADeQY3XPBRL5cwHlHUEU=
+	t=1759787667; cv=none; b=Ag+CwQsliieEaWSA2jGW3V06tutNb1jUxiXtTHtPt7j5jMRvI1tORL8bXxN1ssLhsVtgY3y9ph3HFRVIiSsIyyg6EtaQMm+JS9SW2kOkFqVbxFZd2rjfE8STXREi4eGfbZgZk5I8wIc8IeOGH0+wrzV5tvEHUXOhN6hEjpw01Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759787665; c=relaxed/simple;
-	bh=lcwr7p7IeenqPSqZwD5YJmYNSJcgYSh3rTbWFbZvh5c=;
+	s=arc-20240116; t=1759787667; c=relaxed/simple;
+	bh=SDk0ccNxqbagGL5JM2RvP/qQ71Mw0w3Sux7TGmbM89w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dzMqhiTplkig7OYMeaIqHocM+osdmCryTmP5LEG8g1QHN5YazYA+6pBwolAJN3NSjLdlVlZ4FQjqX+2j+uQ7N6gY4WFCkYybWDmWza/LY9R7El3G97mt13b1/rCApeQpXNRI8F4p06O2Bw6mGpu8qwDorgTpvkWSTyFUfFWCGPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MK9VHRl0; arc=none smtp.client-ip=209.85.160.170
+	 MIME-Version; b=UK8yy0awdqdK59gvxNWNdvJwwi0zoxAZTlZyKDP5HDEzfY4eF2R45eGlL+FJQ0A2rlMUkRuFumKpNUzX/6vfT9pEskzeHMZIVCT1XLGwudB5qMIe8viPlZFFubKtj2+vBQSZw56hayZOQwJON0oM9jLfKS3QjkoARjPZGO8sVO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AKiqWG8R; arc=none smtp.client-ip=209.85.222.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4d9f38478e0so54772371cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 14:54:23 -0700 (PDT)
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-85d5cd6fe9fso432052185a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 14:54:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759787662; x=1760392462; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759787665; x=1760392465; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3Q6YwOnteWkXrFVfwwt3UMJd59Tc05yv6Qyt+3nvVpc=;
-        b=MK9VHRl0C7xTbRgycWkLpie2uS7POKLl1hZZA/J/ZeIrOnfcJDzE+zrMiLG2ptcHFT
-         lFvTOo8to+yWN3PTV9mApv/AnDqoIr9fD1I2s0U7TIcaAKHZ9+8lTgXQhQk0SwLDREQn
-         ontLrRD0KiHhu2ZIHOcuVQTJ2z/O3GnQ0nonYJCHQokmRoU8O+4EB1uX8u465nSa2ndq
-         NFQ/5RDH0ck6U4E9efRbQZQRYLWAc5tBOVSx99AL4YdT3MxIp2NS2GNsVQbXSZE0kZCz
-         GY9pOS9XuNLQrxzs055arWkVCxV1ZUaD5HYR3hqC8E5WfGv4S4k987u7KeTQ6d9MZ/Xp
-         hhKQ==
+        bh=JHzE09hpsw0lAJL0J8v7uFjrU395EJVLjHASm1HYY4s=;
+        b=AKiqWG8Rit6wYf5ZiVdmg8+/v1KXWj4nmZsVctvwomGDm0n7gDoJJ0r8KWy1p+GNrW
+         etLpFxXI0rSy0zFcAfvUEEokPC7lWv4wcoJgfZYvHYiTLo9AayEw4L+/3K/9e6Ja7Mid
+         fsjkmVT4mjtyHDTsxv9HQRgqe/6zur9RJNhncM8qSzQmMmdu4yheLf8yTdMGe4zRvWXs
+         svSGF9Co7WWJJWsDkBacnJ2LO0Wz+/NlC+IMjvKzyhpbyiohcAqGMjY7p6g2s1FA+OjS
+         KiajEEZ0I3ofYgyJUQOsRRRzOhtsDRwyMB0fVNkG80wAwzt/gCqzA11N54EhiD5eHYT2
+         HkoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759787662; x=1760392462;
+        d=1e100.net; s=20230601; t=1759787665; x=1760392465;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3Q6YwOnteWkXrFVfwwt3UMJd59Tc05yv6Qyt+3nvVpc=;
-        b=k2Y4U23h3YiBFLur0iDxNAv+mvHl1DVUpgJBwZCWQfxSRhcHKXSdC6qnMWKHAq66yK
-         iD/mHWZGWyhLgvhmY9HI4TGx5gsk/uN9nhYX8A4pCXH+Sk0Av7YudFGQoOm0b07Blw90
-         8/Tk1DT/ls4QYbT915pi4Lekz/RsejXDVcPC7pbqVUXWzZgJ0BX5YGKnccKY9UTmWbYW
-         64DP2JH7FcNDhqgyQGzLFEhKGx8EjI6ZOPkKo2gTYwmerg8PMqgzUGKmGG2ft2gpGHTk
-         YLoLf7YkJ+oa1gnT15cFlmUg3Sq8+66Kn377neSFVUaRoiZ84YKFCEwg+z/Zd8rNQx/i
-         n6jA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQ7obwN+v9Jpd02Rw19B9MQaIMjM0WxMHNdw2CymFDHFP20ZPQ/xhtSBodOpAdcEWy4dzxwblbfJPP6kA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHQENBb4UaWOIBcFCXITItul01jt+wRsHjpgLWIw49M9U9KJea
-	ctO67XMUC6vUsNN5bQ9b9F/r97Vx3+U/rQ2H23hdWcf+hmOs+JxIJoc4
-X-Gm-Gg: ASbGnctzDkW2gA3q7iiWEq2PAMsbmqmsR0xYIs/dAI4jd46lJ+FVo3g6f/iTD+4+ISE
-	Ysd8JHMKGGJEcC8dH6DjCz2TitPD25le0fucZm8zGBp0zPibd5zRHzAlYLWWtB2GdXQfHeb+Oc0
-	4+qPvbx+y/r7O5oliqVnx+mgW9yGq4jGKWCpk95gJcsCRgHvH1yIT01kXsOhVlysueC+S2qyzB4
-	esCP4w5hVDju0HvitlGGmSS/YOnmGLK2FG4yLuXiBcQ9VaEJUlGn/hnu0n2VT9OU4FC46JazcWP
-	i41qVx3vBw6f91/7G3nEZg6ByVejtNsLJ1RdRuh7By3BaNlTYjSQ3ZfwWkPjgkKbJbW2W06+CgD
-	86Ipkyt9R/kqurSrXEaTf4T5mql74NpBomAHOVg==
-X-Google-Smtp-Source: AGHT+IHchaEbDnZ8Ri0i8FvX4Rk3xyBgP25U5vpYrxC0Nu/hB8ro4Sxja78hVg7UibwtHsPynnNHWQ==
-X-Received: by 2002:ac8:5f0e:0:b0:4cf:1eba:f30d with SMTP id d75a77b69052e-4e6de86ab3dmr16256151cf.23.1759787662397;
-        Mon, 06 Oct 2025 14:54:22 -0700 (PDT)
+        bh=JHzE09hpsw0lAJL0J8v7uFjrU395EJVLjHASm1HYY4s=;
+        b=BHhYdF7qu31BYBhXwBdq56sI4lUDAQZpHW6Ifdq31FXss+SCuuwt+/ubHYz4jYGMGr
+         hgeM3trmw/H+YQYJqo0MICKatGN0BiNT+ZdP9tGNALrTW9YohpHoZ1cSSWUqtMRV823E
+         xtltOJ+1ToBcJwDotGlWlGXROsvo7xIWKEYqCM80/tU0KM/4ITRpwssw6EIYptFpq5oe
+         LmhNt/CLI1QJJm5mDW2qols2fYL3NdDJZxzQcilbmqqwM/JpMpYfkCwj1CaRGAWg9zbu
+         zifcOgj4IeAiyAPLUVEJH/YrXSup0/sTk+L9eHNY3bT/KYEcjKUZEYsVJ6AdQZiq/sAF
+         Mjkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVznRbPeJbXAzj3etbhIBDnnCsiLQ362LF5UNsUlmx3hviSOfSJ7vztCQudPt8zIzW/3CI2sQQ6MynBves=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFRW7hFKSfd1Q6ZYvH1uVP5kNqN5/Izlh/uTbX9u+wnaHmQeVJ
+	B1w/DpaAprJpOd5ibmMHF+0vl+uYHq72+V8gtFqN/06+ehfrpw8zRCbw
+X-Gm-Gg: ASbGncuzRZMdtOcKwmKRUdJYqbrY+2AZgHR0+nQtuWnbNcgS+A7VUZAxdt4+pGEIV5u
+	xj7nRY7a2LGt4Wr/tIJxoFiZGo0Qj/96Q+SArUe/Ivs0hfXXSIyS38GlhLFWcmbg4Xp1/xfTknE
+	7iMcfizjxypHmIAvhkZvlfAmfCKvkLaAZB7/qpo4dnkwPgvUwDrvJ89oONlqSoYng9PhWB0MfMv
+	lryQyzkrlFzi1GOgMY6LUBQAzYyjdejD3cwBzcz0I6dCEWzDDnZUEpBCUBbybmPnUPuI9wvzgF7
+	Cl41tDuBPFllzSs78fD/bRH51Xoev8dVO0zbWDEbdvrT1obueBwRPDH/C8ihUzJjV2/Ftu2kvYw
+	G89hKRZBCRjveThTDzrN1gDgLUrwb/VJmpHDkVg1t/BJJE2fsDyAg+rag93M=
+X-Google-Smtp-Source: AGHT+IG2LvrD5cGaVRdPojLb3sWgPRcj64j9A2zviwnX8ynP3ZNTQ1PYKRgkchhEsVFBNjv83jnmsQ==
+X-Received: by 2002:a05:620a:3950:b0:817:4e4a:6969 with SMTP id af79cd13be357-87a3b891276mr1586802785a.78.1759787664836;
+        Mon, 06 Oct 2025 14:54:24 -0700 (PDT)
 Received: from fr.lan ([81.200.23.195])
-        by smtp.googlemail.com with ESMTPSA id af79cd13be357-87771129478sm1314168585a.1.2025.10.06.14.54.20
+        by smtp.googlemail.com with ESMTPSA id af79cd13be357-87771129478sm1314168585a.1.2025.10.06.14.54.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 14:54:22 -0700 (PDT)
+        Mon, 06 Oct 2025 14:54:24 -0700 (PDT)
 From: Ivan Mikhaylov <fr0st61te@gmail.com>
 To: Iwona Winiarska <iwona.winiarska@intel.com>,
 	Guenter Roeck <linux@roeck-us.net>
@@ -79,9 +79,9 @@ Cc: linux-hwmon@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	openbmc@lists.ozlabs.org,
 	Ivan Mikhaylov <fr0st61te@gmail.com>
-Subject: [PATCH 2/3] hwmon: (peci/dimmtemp) add Intel Emerald Rapids platform support
-Date: Tue,  7 Oct 2025 00:53:20 +0300
-Message-ID: <20251006215321.5036-3-fr0st61te@gmail.com>
+Subject: [PATCH 3/3] hwmon: (peci/cputemp) add Intel Emerald Rapids support
+Date: Tue,  7 Oct 2025 00:53:21 +0300
+Message-ID: <20251006215321.5036-4-fr0st61te@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20251006215321.5036-1-fr0st61te@gmail.com>
 References: <20251006215321.5036-1-fr0st61te@gmail.com>
@@ -93,71 +93,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Extend the functionality of hwmon (peci/dimmtemp) for Emerald Rapids
-platform.
-
-The patch has been tested on a 5S system with 16 DIMMs installed.
-Verified read of DIMM temperature thresholds & temperature.
-
-Using Sapphire's callbacks about getting thresholds because it's same
-platform/socket.
+Add support to read DTS for reading Intel Emerald Rapids platform.
 
 Signed-off-by: Ivan Mikhaylov <fr0st61te@gmail.com>
 ---
- drivers/hwmon/peci/dimmtemp.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/hwmon/peci/cputemp.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/hwmon/peci/dimmtemp.c b/drivers/hwmon/peci/dimmtemp.c
-index fbe82d9852e0..a281476c7a31 100644
---- a/drivers/hwmon/peci/dimmtemp.c
-+++ b/drivers/hwmon/peci/dimmtemp.c
-@@ -32,6 +32,8 @@
- #define DIMM_IDX_MAX_ON_ICXD	2
- #define CHAN_RANK_MAX_ON_SPR	8
- #define DIMM_IDX_MAX_ON_SPR	2
-+#define CHAN_RANK_MAX_ON_EMR	8
-+#define DIMM_IDX_MAX_ON_EMR	2
- 
- #define CHAN_RANK_MAX		CHAN_RANK_MAX_ON_HSX
- #define DIMM_IDX_MAX		DIMM_IDX_MAX_ON_HSX
-@@ -571,6 +573,12 @@ read_thresholds_spr(struct peci_dimmtemp *priv, int dimm_order, int chan_rank, u
- 	return 0;
- }
- 
-+static int read_thresholds_emr(struct peci_dimmtemp *priv, int dimm_order,
-+			       int chan_rank, u32 *data)
-+{
-+	return read_thresholds_spr(priv, dimm_order, chan_rank, data);
-+}
-+
- static const struct dimm_info dimm_hsx = {
- 	.chan_rank_max	= CHAN_RANK_MAX_ON_HSX,
- 	.dimm_idx_max	= DIMM_IDX_MAX_ON_HSX,
-@@ -620,6 +628,13 @@ static const struct dimm_info dimm_spr = {
- 	.read_thresholds = &read_thresholds_spr,
+diff --git a/drivers/hwmon/peci/cputemp.c b/drivers/hwmon/peci/cputemp.c
+index c7112dbf008b..b350c9a76894 100644
+--- a/drivers/hwmon/peci/cputemp.c
++++ b/drivers/hwmon/peci/cputemp.c
+@@ -364,6 +364,7 @@ static int init_core_mask(struct peci_cputemp *priv)
+ 	case INTEL_ICELAKE_X:
+ 	case INTEL_ICELAKE_D:
+ 	case INTEL_SAPPHIRERAPIDS_X:
++	case INTEL_EMERALDRAPIDS_X:
+ 		ret = peci_ep_pci_local_read(peci_dev, 0, reg->bus, reg->dev,
+ 					     reg->func, reg->offset + 4, &data);
+ 		if (ret)
+@@ -539,6 +540,13 @@ static struct resolved_cores_reg resolved_cores_reg_spr = {
+ 	.offset = 0x80,
  };
  
-+static const struct dimm_info dimm_emr = {
-+	.chan_rank_max  = CHAN_RANK_MAX_ON_EMR,
-+	.dimm_idx_max  = DIMM_IDX_MAX_ON_EMR,
-+	.min_peci_revision = 0x40,
-+	.read_thresholds = &read_thresholds_emr,
++static struct resolved_cores_reg resolved_cores_reg_emr = {
++	.bus = 31,
++	.dev = 30,
++	.func = 6,
++	.offset = 0x80,
 +};
 +
- static const struct auxiliary_device_id peci_dimmtemp_ids[] = {
+ static const struct cpu_info cpu_hsx = {
+ 	.reg		= &resolved_cores_reg_hsx,
+ 	.min_peci_revision = 0x33,
+@@ -563,6 +571,12 @@ static const struct cpu_info cpu_spr = {
+ 	.thermal_margin_to_millidegree = &dts_ten_dot_six_to_millidegree,
+ };
+ 
++static const struct cpu_info cpu_emr = {
++	.reg    = &resolved_cores_reg_emr,
++	.min_peci_revision = 0x40,
++	.thermal_margin_to_millidegree = &dts_ten_dot_six_to_millidegree,
++};
++
+ static const struct auxiliary_device_id peci_cputemp_ids[] = {
  	{
- 		.name = "peci_cpu.dimmtemp.hsx",
-@@ -649,6 +664,10 @@ static const struct auxiliary_device_id peci_dimmtemp_ids[] = {
- 		.name = "peci_cpu.dimmtemp.spr",
- 		.driver_data = (kernel_ulong_t)&dimm_spr,
+ 		.name = "peci_cpu.cputemp.hsx",
+@@ -592,6 +606,10 @@ static const struct auxiliary_device_id peci_cputemp_ids[] = {
+ 		.name = "peci_cpu.cputemp.spr",
+ 		.driver_data = (kernel_ulong_t)&cpu_spr,
  	},
 +	{
-+		.name = "peci_cpu.dimmtemp.emr",
-+		.driver_data = (kernel_ulong_t)&dimm_emr,
++		.name = "peci_cpu.cputemp.emr",
++		.driver_data = (kernel_ulong_t)&cpu_emr,
 +	},
  	{ }
  };
- MODULE_DEVICE_TABLE(auxiliary, peci_dimmtemp_ids);
+ MODULE_DEVICE_TABLE(auxiliary, peci_cputemp_ids);
 -- 
 2.49.0
 
