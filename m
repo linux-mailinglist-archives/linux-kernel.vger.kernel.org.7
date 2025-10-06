@@ -1,47 +1,46 @@
-Return-Path: <linux-kernel+bounces-843403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43D81BBF1D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 21:41:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ABD4BBF1EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 21:43:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F03BD4E67EC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 19:41:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 376024F188E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 19:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D59F27A12B;
-	Mon,  6 Oct 2025 19:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F10255E26;
+	Mon,  6 Oct 2025 19:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EBbMtXrc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b="fkbzrcUe"
+Received: from mailbackend.panix.com (mailbackend.panix.com [166.84.1.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990F93595C;
-	Mon,  6 Oct 2025 19:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0ED22AF1B;
+	Mon,  6 Oct 2025 19:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.84.1.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759779691; cv=none; b=jzQgkriNUWaAQmDr2HK+dqZWe3RZN93P/I6seJ+a10X7sV1jBcew2aYwAKZDECgRN7XLwh8x/PDu/HIiCJpARVUeScLeApGeHEhxrZ4MXty11YZD1312kHovLsn6E1WG5af0DGMuGEfjO0fmUL18jVaJD/d1cbAPC7Fd3pM3jow=
+	t=1759779769; cv=none; b=Hr+v092LQHXtIQ3NAZ6eE9GpW71hGLeXCS0zaVwq2LxQeTI/x4AzJRDoM0dsMVvi5rX3joouXjvnZz6nbhMO8ZE3UZgXHXHFoTgzlyG+47NDHotVYWkCo8gteuekD9UAX5vPQSziErzkBAZovew/kpPc6OGgqHVxewRfWhqELYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759779691; c=relaxed/simple;
-	bh=jxP0zMtLefG3gelLpEwi/Nfyuz8ryR09EqQ3t1WBA+w=;
+	s=arc-20240116; t=1759779769; c=relaxed/simple;
+	bh=agAOwGGk7/WaedOho35v/y7fkZ6L2K5cWMQgm+4Dw14=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rYhBYZKUjnT5WiZwNf22UZhIeAcQn/lrTGdXafANgbaSlGuLeibxPy7NQzuhQbYtxT4F8DtHzRVla6CQhUdTfbYLaNaP8MAqvlmJxyt8En1rYovijUChFbYXavlci9IlMoVNIIrSU4mIydyXAOrpiAgplmlGubA5RZ4mNPkTJSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EBbMtXrc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF9C2C4CEF5;
-	Mon,  6 Oct 2025 19:41:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759779691;
-	bh=jxP0zMtLefG3gelLpEwi/Nfyuz8ryR09EqQ3t1WBA+w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EBbMtXrcRPtkn+cXtsxzXPsiAnxRORCr2LiSol6hGiagi4OlD2EnkiyranHO9bSpv
-	 AZEv624lzFrw28XtMPu3gUaR+UIuuPiuYqudLRmE+tKPI2Nk7z1wZ/Nfo6nY4ADXH/
-	 INFg9ih6Jfs0dPPt2n7NFude6dR1lhYnG7KoURLi/8Gp/NNMy6A4jizA6tYOIa0moG
-	 /gnKML89dXOJZ1FLEhorRVVxlx1kUgH5jlFjMPrEOY9YM3m3fLZPfPZnEDsBlU6nVa
-	 QeFks1SeRxZ9uN1ajzMQmMCnV3iyFv/vCAVXivzsZZ+UBpjQdAFJ7YydsVMCCr+edn
-	 4Wh2yLZ4DPzwQ==
-Message-ID: <a6709051-bd95-4f7f-8a85-d4d670f7a316@kernel.org>
-Date: Mon, 6 Oct 2025 13:41:30 -0600
+	 In-Reply-To:Content-Type; b=nwf0va0z281/mv6XaMSdQyRoS2c6rmJo+XkuYKSU0MEhzgcqY4BqooK95aHsL9pqWO/T1lZPLiU6eVukcxF9x2NiLMiGoAaIW4OGgubDLPUX2YneOtqHJGyk7IcXbGiKq6CZqyKSrhy2IySUM/uBjyvHOXmvmDV18mEG+Xjm834=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com; spf=pass smtp.mailfrom=panix.com; dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b=fkbzrcUe; arc=none smtp.client-ip=166.84.1.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=panix.com
+Received: from [10.50.4.39] (45-31-46-51.lightspeed.sndgca.sbcglobal.net [45.31.46.51])
+	by mailbackend.panix.com (Postfix) with ESMTPSA id 4cgV6R3H8kz4YbS;
+	Mon,  6 Oct 2025 15:42:39 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=panix.com; s=panix;
+	t=1759779760; bh=agAOwGGk7/WaedOho35v/y7fkZ6L2K5cWMQgm+4Dw14=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=fkbzrcUe0oF6iL72n91Lzd5KQVs4pQoGPto4C1OcdfCEW0GJsEV1bCkWDZ5uvhQhp
+	 chUB3eXfHVWORwYqfxJUYPNJLnwr+HVdQVlYxnxIEstR0Hy5cJxMqqY3OVIDe2F8it
+	 Y20ZU2sHt7dCISBbTqGO4DroK1MoE3Accp2BVReA=
+Message-ID: <b2f03b08-4361-4e5d-aaed-8b63ec7c4870@panix.com>
+Date: Mon, 6 Oct 2025 12:42:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,54 +48,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: fix shift out-of-bounds in sg_build_indirect The
- num variable is set to 0. The variable num gets its value from
- scatter_elem_sz. However the minimum value of scatter_elem_sz is PAGE_SHIFT.
- So setting num to PAGE_SIZE when num < PAGE_SIZE.
-To: Kshitij Paranjape <kshitijvparanjape@gmail.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: Doug Gilbert <dgilbert@interlog.com>,
- "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
- skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linux.dev, stable@vger.kernel.org,
- syzbot+270f1c719ee7baab9941@syzkaller.appspotmail.com
-References: <20251006174658.217497-1-kshitijvparanjape@gmail.com>
+Subject: Re: [PATCH V3 1/2] PCI/ASPM: Add host-bridge API to override default
+ ASPM/CLKPM link state
+To: Manivannan Sadhasivam <mani@kernel.org>,
+ "David E. Box" <david.e.box@linux.intel.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, rafael@kernel.org,
+ bhelgaas@google.com, vicamo.yang@canonical.com,
+ ilpo.jarvinen@linux.intel.com, nirmal.patel@linux.intel.com,
+ linux-pm@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Kenneth C <kenny@panix.com>
+References: <20250904171158.GA1268495@bhelgaas>
+ <121a26de-b5d4-42a2-ae52-02b386f17109@panix.com>
+ <s7t5duadivgemkwmx4vjrzsaxy3xdeotwve734sq7iy477g2ur@lwusjd2iklxl>
 Content-Language: en-US
-From: Khalid Aziz <khalid@kernel.org>
-In-Reply-To: <20251006174658.217497-1-kshitijvparanjape@gmail.com>
+From: Kenneth Crudup <kenny@panix.com>
+In-Reply-To: <s7t5duadivgemkwmx4vjrzsaxy3xdeotwve734sq7iy477g2ur@lwusjd2iklxl>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/6/25 11:46 AM, Kshitij Paranjape wrote:
-> Cc: <stable@vger.kernel.org>
-> Reported-by: syzbot+270f1c719ee7baab9941@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=270f1c719ee7baab9941
-> Signed-off-by: Kshitij Paranjape <kshitijvparanjape@gmail.com>
-> ---
->   drivers/scsi/sg.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
-> index effb7e768165..9ae41bb256d7 100644
-> --- a/drivers/scsi/sg.c
-> +++ b/drivers/scsi/sg.c
-> @@ -1888,6 +1888,7 @@ sg_build_indirect(Sg_scatter_hold * schp, Sg_fd * sfp, int buff_size)
->   		if (num < PAGE_SIZE) {
->   			scatter_elem_sz = PAGE_SIZE;
->   			scatter_elem_sz_prev = PAGE_SIZE;
-> +			num = scatter_elem_sz;
->   		} else
->   			scatter_elem_sz_prev = num;
->   	}
 
-Have you seen any issues caused by not setting num to PAGE_SIZE when num 
-< PAGE_SIZE?
 
- From what I can see, num is used to calculate the page order for 
-allocation which will be 0 whether num=PAGE_SIZE or < PAGE_SIZE. After 
-that num gets assigned a new value any way before its next use.
+On 9/23/25 23:12, Manivannan Sadhasivam wrote:
 
---
-Khalid
+> ASPM patches targeting devicetree plaforms are now in pci/aspm and merged to
+> pci/next for testing. 
+ > https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=aspm
+
+Yes and I see they're in Linus' master now.
+
+> David could send a followup to add the VMD driver now
+> reusing the pcie_{aspm/clkpm}_override_default_link_state() helpers.
+
+David? Your old commit doesn't apply cleanly now; I'll give it a shot 
+trying to redo it with the new API from above, but as this is your baby 
+maybe you could refactor it as well?
+
+Thanks,
+
+-Kenny
+
+-- 
+Kenneth R. Crudup / Sr. SW Engineer, Scott County Consulting, Orange 
+County CA
+
 
