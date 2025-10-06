@@ -1,118 +1,113 @@
-Return-Path: <linux-kernel+bounces-843114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEBA1BBE6DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:04:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 855D1BBE6E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:06:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5EC13348E88
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:04:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 873D51892235
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA372D6400;
-	Mon,  6 Oct 2025 15:04:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9645819F115;
-	Mon,  6 Oct 2025 15:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011722D6400;
+	Mon,  6 Oct 2025 15:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="MHuxLh+r"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C482652A6;
+	Mon,  6 Oct 2025 15:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759763069; cv=none; b=reRI2zs4S4gF3TmLZf4PmtSbJcigKjrknpbyRdFb2kfSD2F8MKVduNROZ87PccfpOY6PpLiy86a5wLL1E5VddUi3gHTU5oJQfce7dren/kpduv+NU1HBZEjOwj9fJRql9ciUjud9xrI+oxTDxMhC2sm68LUpxSzJKX3NPnnnFE8=
+	t=1759763171; cv=none; b=DKK+3YYSK54M3bDEUa7sfhO96ngnYvgXjulacOAdGG4OZ4UaB4pHy46qmz+ZPXJjELJ7U6sjXJ+SFdkDwgEEeMVudrf3Z1hmdGXClj8qnJeA1UiMJfBq24m6Ombu7O9y5b1DYZWoDKJDClZabSM/YCyTrHGX9PkVt5Oe0+hOsQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759763069; c=relaxed/simple;
-	bh=0B0iR2A3/3ULUTFpkpZyX/WPowk5NM3sAUJwWo0eieE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UtJYdaU1diEDg9O8WD3tuSV+XTS3jLAT3+rabzpV32+ibI/c5dLe+YC8i7X9lDh6u6cGeQC6r0KO2qmOADVKrVAf7qDYBH/9rK9pfIwQnc9/1hblTeMuz8aUUcBOL5h7hT4rZn10kGj+UoFLgwCU2QBtcR8NQPJamtZc0xHJEzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D19BB1515;
-	Mon,  6 Oct 2025 08:04:18 -0700 (PDT)
-Received: from [10.57.81.160] (unknown [10.57.81.160])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F30893F66E;
-	Mon,  6 Oct 2025 08:04:24 -0700 (PDT)
-Message-ID: <ae61f721-3d07-4908-ad31-9c25e8b8119e@arm.com>
-Date: Mon, 6 Oct 2025 16:04:23 +0100
+	s=arc-20240116; t=1759763171; c=relaxed/simple;
+	bh=SPFBHoPXdWKgOZgmM7vLVhGzo5rEIe9DbYUn7Vtzweg=;
+	h=Subject:From:To:Cc:Date:Message-ID:MIME-Version:Content-Type; b=MW0a0PyyxZL4PtNyopBJnQfGrKhG7+ldcIj/ketOdofpKDpZmKYF65PbUaGKpvZ26zgF3SjSLxU5O7orDl9gLyKq9MmU4mIK2ekY9/hkVuM52va4Sc7obgT3aYI2WuGWruSKVazUBNzg11gO3Ugr8erGcZH6ryYpSozTYiLfZwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=MHuxLh+r; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from skinsburskii-cloud-desktop.internal.cloudapp.net (unknown [4.155.116.186])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 8638D2012C1C;
+	Mon,  6 Oct 2025 08:06:06 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8638D2012C1C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1759763166;
+	bh=zLEmFCFdXZazQv8KlqAh7/t6gQYCtTaqB1Ht33uqNLE=;
+	h=Subject:From:To:Cc:Date:From;
+	b=MHuxLh+rWdekkwu6LTNF7RAtseg1JgZ/yFgOb5EGj/yTRDuwP8icy4LLwIWuY1rla
+	 2QBBSjHnfN0H98DnxnMKb3Z//NS5zmgO2Hj16E/6GqsNgGPmDwfz8kLR1o3kdbXt2l
+	 D631cT3tmaK3JA5VOa3VyRx/jPpZDnPe7PMjejj0=
+Subject: [PATCH v4 0/5] Introduce movable pages for Hyper-V guests
+From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+To: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 06 Oct 2025 15:06:06 +0000
+Message-ID: 
+ <175976284493.16834.4572937416426518745.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] fsnotify: Pass correct offset to fsnotify_mmap_perm()
-Content-Language: en-GB
-To: Jan Kara <jack@suse.cz>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Amir Goldstein <amir73il@gmail.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20251003155238.2147410-1-ryan.roberts@arm.com>
- <uyh6y4qjuj6vcpsdnexwl2xqf2jnp6ejj7esr3g3hix66ml2zi@pqsbsjtt6apl>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <uyh6y4qjuj6vcpsdnexwl2xqf2jnp6ejj7esr3g3hix66ml2zi@pqsbsjtt6apl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 06/10/2025 15:55, Jan Kara wrote:
-> On Fri 03-10-25 16:52:36, Ryan Roberts wrote:
->> fsnotify_mmap_perm() requires a byte offset for the file about to be
->> mmap'ed. But it is called from vm_mmap_pgoff(), which has a page offset.
->> Previously the conversion was done incorrectly so let's fix it, being
->> careful not to overflow on 32-bit platforms.
->>
->> Discovered during code review.
->>
->> Cc: <stable@vger.kernel.org>
->> Fixes: 066e053fe208 ("fsnotify: add pre-content hooks on mmap()")
->> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->> ---
->> Applies against today's mm-unstable (aa05a436eca8).
-> 
-> Thanks Ryan! I've added the patch to my tree. As a side note, I know the
-> callsite is in mm/ but since this is clearly impacting fsnotify, it would
-> be good to add to CC relevant people (I'm not following linux-mm nor
-> linux-kernel) and discovered this only because of Kiryl's link...
+From the start, the root-partition driver allocates, pins, and maps all
+guest memory into the hypervisor at guest creation. This is simple: Linux
+cannot move the pages, so the guest’s view in Linux and in Microsoft
+Hypervisor never diverges.
 
-Ahh good point... Sorry I was sleepwalking through the process on Friday
-afternoon and blindly sent it to the maintainers and reviewers that
-get_maintainer.pl spat out. It didn't even occur to me that this wasn't an mm
-thing. :-|
+However, this approach has major drawbacks:
+ - NUMA: affinity can’t be changed at runtime, so you can’t migrate guest memory closer to the CPUs running it → performance hit.
+ - Memory management: unused guest memory can’t be swapped out, compacted, or merged.
+ - Provisioning time: upfront allocation/pinning slows guest create/destroy.
+ - Overcommit: no memory overcommit on hosts with pinned-guest memory.
 
-> 
-> 								Honza
-> 
->>  mm/util.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/mm/util.c b/mm/util.c
->> index 6c1d64ed0221..8989d5767528 100644
->> --- a/mm/util.c
->> +++ b/mm/util.c
->> @@ -566,6 +566,7 @@ unsigned long vm_mmap_pgoff(struct file *file, unsigned long addr,
->>  	unsigned long len, unsigned long prot,
->>  	unsigned long flag, unsigned long pgoff)
->>  {
->> +	loff_t off = (loff_t)pgoff << PAGE_SHIFT;
->>  	unsigned long ret;
->>  	struct mm_struct *mm = current->mm;
->>  	unsigned long populate;
->> @@ -573,7 +574,7 @@ unsigned long vm_mmap_pgoff(struct file *file, unsigned long addr,
->>
->>  	ret = security_mmap_file(file, prot, flag);
->>  	if (!ret)
->> -		ret = fsnotify_mmap_perm(file, prot, pgoff >> PAGE_SHIFT, len);
->> +		ret = fsnotify_mmap_perm(file, prot, off, len);
->>  	if (!ret) {
->>  		if (mmap_write_lock_killable(mm))
->>  			return -EINTR;
->> --
->> 2.43.0
->>
+This series adds movable memory pages for Hyper-V child partitions. Guest
+pages are no longer allocated upfront; they’re allocated and mapped into
+the hypervisor on demand (i.e., when the guest touches a GFN that isn’t yet
+backed by a host PFN).
+When a page is moved, Linux no longer holds it and it is unmapped from the hypervisor.
+As a result, Hyper-V guests behave like regular Linux processes, enabling standard Linux memory features to apply to guests.
+
+Exceptions (still pinned):
+ 1. Encrypted guests (explicit).
+ 2. Guests with passthrough devices (implicitly pinned by the VFIO framework).
+
+v4:
+ - Fix a bug in batch unmapping can skip mapped pages when selecting a new
+   batch due to wrong offset calculation.
+ - Fix an error message in case of failed memory region pinning.
+
+v3:
+ - Region is invalidated even if the mm has no users.
+ - Page remapping logic is updated to support 2M-unaligned remappings for
+   regions that are PMD-aligned, which can occur during both faults and
+   invalidations.
+
+v2:
+ - Split unmap batching into a separate patch.
+ - Fixed commit messages from v1 review.
+ - Renamed a few functions for clarity.
+
+---
+
+Stanislav Kinsburskii (5):
+      Drivers: hv: Refactor and rename memory region handling functions
+      Drivers: hv: Centralize guest memory region destruction
+      Drivers: hv: Batch GPA unmap operations to improve large region performance
+      Drivers: hv: Ensure large page GPA mapping is PMD-aligned
+      Drivers: hv: Add support for movable memory regions
+
+
+ drivers/hv/Kconfig             |    1 
+ drivers/hv/mshv_root.h         |   10 +
+ drivers/hv/mshv_root_hv_call.c |    2 
+ drivers/hv/mshv_root_main.c    |  495 +++++++++++++++++++++++++++++++++-------
+ 4 files changed, 424 insertions(+), 84 deletions(-)
 
 
