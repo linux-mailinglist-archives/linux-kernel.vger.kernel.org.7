@@ -1,155 +1,317 @@
-Return-Path: <linux-kernel+bounces-843269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 514B9BBECE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 19:24:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3606CBBED04
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 19:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41145189AFEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 17:24:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B03C3BF48B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 17:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7994C233722;
-	Mon,  6 Oct 2025 17:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0AD24293C;
+	Mon,  6 Oct 2025 17:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ILJtI9wu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k01sfhYm";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MqRDCRKl";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="m4nf8Jbf"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PiWkv+HH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FDD225414
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 17:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D01323F42D;
+	Mon,  6 Oct 2025 17:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759771433; cv=none; b=m/hrf+4/lFJHVQg7Fia++Zo7B6rsNM38BsjGex9xmq1qsCzqcP091PNYuuO7mHXn8OIkoX+WKFiklwcOxm9SgdA9nrJy7Wsv/KAQtQlvjRIgIycg/r0wl5hU9jD0J4w6JlQ1hSii7Oq6YyYKp6wvEKSSkcXxYMjMgiZ2yGWXmZk=
+	t=1759771714; cv=none; b=APDqGNzkTI0FLMD0HiHxH+jAWf7TGRh4+AMyHc3M+3BvywoDr5+pKBolc7rNLydvvZICTnUA/eBZvHL7PGoyvqX9aVvxemXjG5eokO8flZy0bIhtpiGwuO+DamSNybraWcC5InLCpKnH2QLY3etgafkgkrz45s4LOKShyU9eYI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759771433; c=relaxed/simple;
-	bh=ZeaGMx8w4FiIQan7pESD85thqMtxADdk5RzhM3lspTk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PDqoUd+kUurWazBrufrJaRyKBNsMyIfdRuNYQ6xXUkDbcMekiK0xtpCiK4iTxBdzqdsChJCDiEy+0OE7L0uj9YTuUQ7PF0t9Rij5/RM8TpcGuMxqfvig/9f+O/vZY5aThuZfbBsIN7SIQiXH5eqWMal6pkSD5IO6abcrAuTGuRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ILJtI9wu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k01sfhYm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MqRDCRKl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=m4nf8Jbf; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E043F336C4;
-	Mon,  6 Oct 2025 17:23:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759771428;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KHx8s6doP1vCz5xGqfXMd/mLDJcI1MG6Od/8Lre67DM=;
-	b=ILJtI9wu6PdBZlYT7v16iaDUVK+5zwZ6+3/Ye57b2A1QpZk906PzR1t1EO9zdLBZ0jek3n
-	h5y1Xf0Ph85YMK2qSkSAMIBXTm2uBe34NPtYMmGayl0dOCLcWFwPSR6dBk0OAQ4TRoXFxQ
-	UssiAMzG2Zf3Cw/twULXpVHgi8nnEiY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759771428;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KHx8s6doP1vCz5xGqfXMd/mLDJcI1MG6Od/8Lre67DM=;
-	b=k01sfhYmoVSERyxiV8cIfo4I5SdQXCfY+RhQMvvZvCjlxQSEmI71Qucw3I8aeDXoaA/QIM
-	0/1CB9aaG/a5VyCg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=MqRDCRKl;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=m4nf8Jbf
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759771427;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KHx8s6doP1vCz5xGqfXMd/mLDJcI1MG6Od/8Lre67DM=;
-	b=MqRDCRKlmkSUKj53DXzmSt5X9qnPsOjm6kGJLWsvq4FxSfln81EGHBpNXtB7rkNzokp5kI
-	ZLBnqbWB5asKXWc/bN5FJAlqVgbSbHSoCuY6siXUiNlJvuanlGvs2KVzxGJLfGLlR5WOR3
-	30BMuJfwMGNXw8YHfLsGalCjcETd2Ck=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759771427;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KHx8s6doP1vCz5xGqfXMd/mLDJcI1MG6Od/8Lre67DM=;
-	b=m4nf8Jbf2EAojKHVUsMi61tIE98fRXNQNw3DHaujSSU9UGrfiP4kC1xb/iJHoDdn4b8GJK
-	+u0GZVHAe7hburDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C676C13995;
-	Mon,  6 Oct 2025 17:23:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id l9g/MCP742jKTgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Mon, 06 Oct 2025 17:23:47 +0000
-Date: Mon, 6 Oct 2025 19:23:38 +0200
-From: David Sterba <dsterba@suse.cz>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] btrfs: Avoid -Wflex-array-member-not-at-end warning
-Message-ID: <20251006172338.GB4412@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <aN_Zeo7JH9nogwwq@kspp>
+	s=arc-20240116; t=1759771714; c=relaxed/simple;
+	bh=KB/lwlRx83OoSAfOSb1yEtbijWQHkZuthuV9r/J09w8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dr5IwuWNKgq/MJ4bn+2Qk8VwpdbEBQwC1gsIZN1losdL9CWqY3qT/3g/aOR/ExS+Ghhq9DZSRjRaqJhBmYaVcXeujwlBV4mm0kFiuelyzUn8twRmfct0X8oHihyWYSOtkXi/T4B5PS3CdyNfLiMg9aOMTmKcOtul2kX1qasciB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PiWkv+HH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 879DEC4CEF5;
+	Mon,  6 Oct 2025 17:28:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759771713;
+	bh=KB/lwlRx83OoSAfOSb1yEtbijWQHkZuthuV9r/J09w8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PiWkv+HHxSV3/ip+v3eFaX8RYKNvo7t+NTYSTBnxHDFF++GmlVZyd5tyd2jK1WaSA
+	 CJ6IYPQgSEbtVOjelVkIQRp05ZR68+u0uT/13ZFOcGePSfBhwvVplYDooaMUQM/334
+	 9w2L8T74uWY3iMeomE5cHclFm4PdTuW8SAypP2OE3P/euGTzBFGi1qyJkubxrKPZ4p
+	 lh+N6kLOQEivLdaq+Hk7sp3BxGZndik5j2ltFlDx/obMlDIwTP1KBzrQNvqd9JWSxU
+	 y1bi8vdh09q2d/x11WCpVI50MNf6dvF48N6hrer62ZLv51c8nBtbSz2xmoD8E+2rfZ
+	 Wm3gNVKhExr4A==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Joachim Vandersmissen <git@jvdsn.com>,
+	David Howells <dhowells@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH] lib/crypto: Add FIPS pre-operational self-test for SHA algorithms
+Date: Mon,  6 Oct 2025 10:26:12 -0700
+Message-ID: <20251006172612.75240-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aN_Zeo7JH9nogwwq@kspp>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_TLS_ALL(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: E043F336C4
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.21
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 03, 2025 at 03:11:06PM +0100, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
-> 
-> Move the conflicting declaration to the end of the corresponding
-> structure. Notice that `struct fs_path` is a flexible structure,
-> this is a structure that contains a flexible-array member (`char
-> inline_buf[];` in this case).
-> 
-> Fix the following warning:
-> 
-> fs/btrfs/send.c:181:24: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Add FIPS pre-operational self-tests for all SHA-1 and SHA-2 algorithms.
+Following the "Implementation Guidance for FIPS 140-3" document, to
+achieve this it's sufficient to just test a single test vector for each
+of HMAC-SHA1, HMAC-SHA256, and HMAC-SHA512.
 
-Added to for-next, with updated changelog. Thanks.
+Link: https://lore.kernel.org/linux-crypto/20250917184856.GA2560@quark/
+Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+---
+
+Since there seemed to be more interest in complaining that these are
+missing than actually writing a patch, I decided to just do it.
+
+ lib/crypto/fips.h                   | 38 +++++++++++++++++++++++++++++
+ lib/crypto/sha1.c                   | 19 ++++++++++++++-
+ lib/crypto/sha256.c                 | 19 ++++++++++++++-
+ lib/crypto/sha512.c                 | 19 ++++++++++++++-
+ scripts/crypto/gen-fips-testvecs.py | 33 +++++++++++++++++++++++++
+ 5 files changed, 125 insertions(+), 3 deletions(-)
+ create mode 100644 lib/crypto/fips.h
+ create mode 100755 scripts/crypto/gen-fips-testvecs.py
+
+diff --git a/lib/crypto/fips.h b/lib/crypto/fips.h
+new file mode 100644
+index 0000000000000..78a1bdd33a151
+--- /dev/null
++++ b/lib/crypto/fips.h
+@@ -0,0 +1,38 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/* This file was generated by: gen-fips-testvecs.py */
++
++#include <linux/fips.h>
++
++static const u8 fips_test_data[] __initconst __maybe_unused = {
++	0x66, 0x69, 0x70, 0x73, 0x20, 0x74, 0x65, 0x73,
++	0x74, 0x20, 0x64, 0x61, 0x74, 0x61, 0x00, 0x00,
++};
++
++static const u8 fips_test_key[] __initconst __maybe_unused = {
++	0x66, 0x69, 0x70, 0x73, 0x20, 0x74, 0x65, 0x73,
++	0x74, 0x20, 0x6b, 0x65, 0x79, 0x00, 0x00, 0x00,
++};
++
++static const u8 fips_test_hmac_sha1_value[] __initconst __maybe_unused = {
++	0x29, 0xa9, 0x88, 0xb8, 0x5c, 0xb4, 0xaf, 0x4b,
++	0x97, 0x2a, 0xee, 0x87, 0x5b, 0x0a, 0x02, 0x55,
++	0x99, 0xbf, 0x86, 0x78,
++};
++
++static const u8 fips_test_hmac_sha256_value[] __initconst __maybe_unused = {
++	0x59, 0x25, 0x85, 0xcc, 0x40, 0xe9, 0x64, 0x2f,
++	0xe9, 0xbf, 0x82, 0xb7, 0xd3, 0x15, 0x3d, 0x43,
++	0x22, 0x0b, 0x4c, 0x00, 0x90, 0x14, 0x25, 0xcf,
++	0x9e, 0x13, 0x2b, 0xc2, 0x30, 0xe6, 0xe8, 0x93,
++};
++
++static const u8 fips_test_hmac_sha512_value[] __initconst __maybe_unused = {
++	0x6b, 0xea, 0x5d, 0x27, 0x49, 0x5b, 0x3f, 0xea,
++	0xde, 0x2d, 0xfa, 0x32, 0x75, 0xdb, 0x77, 0xc8,
++	0x26, 0xe9, 0x4e, 0x95, 0x4d, 0xad, 0x88, 0x02,
++	0x87, 0xf9, 0x52, 0x0a, 0xd1, 0x92, 0x80, 0x1d,
++	0x92, 0x7e, 0x3c, 0xbd, 0xb1, 0x3c, 0x49, 0x98,
++	0x44, 0x9c, 0x8f, 0xee, 0x3f, 0x02, 0x71, 0x51,
++	0x57, 0x0b, 0x15, 0x38, 0x95, 0xd8, 0xa3, 0x81,
++	0xba, 0xb3, 0x15, 0x37, 0x5c, 0x6d, 0x57, 0x2b,
++};
+diff --git a/lib/crypto/sha1.c b/lib/crypto/sha1.c
+index 5904e4ae85d24..001059cb0fce4 100644
+--- a/lib/crypto/sha1.c
++++ b/lib/crypto/sha1.c
+@@ -10,10 +10,11 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/string.h>
+ #include <linux/unaligned.h>
+ #include <linux/wordpart.h>
++#include "fips.h"
+ 
+ static const struct sha1_block_state sha1_iv = {
+ 	.h = { SHA1_H0, SHA1_H1, SHA1_H2, SHA1_H3, SHA1_H4 },
+ };
+ 
+@@ -328,14 +329,30 @@ void hmac_sha1_usingrawkey(const u8 *raw_key, size_t raw_key_len,
+ 	hmac_sha1_update(&ctx, data, data_len);
+ 	hmac_sha1_final(&ctx, out);
+ }
+ EXPORT_SYMBOL_GPL(hmac_sha1_usingrawkey);
+ 
+-#ifdef sha1_mod_init_arch
++#if defined(sha1_mod_init_arch) || defined(CONFIG_CRYPTO_FIPS)
+ static int __init sha1_mod_init(void)
+ {
++#ifdef sha1_mod_init_arch
+ 	sha1_mod_init_arch();
++#endif
++	if (fips_enabled) {
++		/*
++		 * FIPS pre-operational self-test.  As per the FIPS
++		 * Implementation Guidance, testing HMAC-SHA1 satisfies the test
++		 * requirement for SHA-1 too.
++		 */
++		u8 mac[SHA1_DIGEST_SIZE];
++
++		hmac_sha1_usingrawkey(fips_test_key, sizeof(fips_test_key),
++				      fips_test_data, sizeof(fips_test_data),
++				      mac);
++		if (memcmp(fips_test_hmac_sha1_value, mac, sizeof(mac)) != 0)
++			panic("sha1: FIPS pre-operational self-test failed\n");
++	}
+ 	return 0;
+ }
+ subsys_initcall(sha1_mod_init);
+ 
+ static void __exit sha1_mod_exit(void)
+diff --git a/lib/crypto/sha256.c b/lib/crypto/sha256.c
+index 8fa15165d23e8..6b3cf105147ff 100644
+--- a/lib/crypto/sha256.c
++++ b/lib/crypto/sha256.c
+@@ -15,10 +15,11 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/string.h>
+ #include <linux/unaligned.h>
+ #include <linux/wordpart.h>
++#include "fips.h"
+ 
+ static const struct sha256_block_state sha224_iv = {
+ 	.h = {
+ 		SHA224_H0, SHA224_H1, SHA224_H2, SHA224_H3,
+ 		SHA224_H4, SHA224_H5, SHA224_H6, SHA224_H7,
+@@ -416,14 +417,30 @@ void hmac_sha256_usingrawkey(const u8 *raw_key, size_t raw_key_len,
+ 	hmac_sha256_final(&ctx, out);
+ }
+ EXPORT_SYMBOL_GPL(hmac_sha256_usingrawkey);
+ #endif /* !__DISABLE_EXPORTS */
+ 
+-#ifdef sha256_mod_init_arch
++#if defined(sha256_mod_init_arch) || defined(CONFIG_CRYPTO_FIPS)
+ static int __init sha256_mod_init(void)
+ {
++#ifdef sha256_mod_init_arch
+ 	sha256_mod_init_arch();
++#endif
++	if (fips_enabled) {
++		/*
++		 * FIPS pre-operational self-test.  As per the FIPS
++		 * Implementation Guidance, testing HMAC-SHA256 satisfies the
++		 * test requirement for SHA-224, SHA-256, and HMAC-SHA224 too.
++		 */
++		u8 mac[SHA256_DIGEST_SIZE];
++
++		hmac_sha256_usingrawkey(fips_test_key, sizeof(fips_test_key),
++					fips_test_data, sizeof(fips_test_data),
++					mac);
++		if (memcmp(fips_test_hmac_sha256_value, mac, sizeof(mac)) != 0)
++			panic("sha256: FIPS pre-operational self-test failed\n");
++	}
+ 	return 0;
+ }
+ subsys_initcall(sha256_mod_init);
+ 
+ static void __exit sha256_mod_exit(void)
+diff --git a/lib/crypto/sha512.c b/lib/crypto/sha512.c
+index d8062188be98a..65447083c0456 100644
+--- a/lib/crypto/sha512.c
++++ b/lib/crypto/sha512.c
+@@ -15,10 +15,11 @@
+ #include <linux/module.h>
+ #include <linux/overflow.h>
+ #include <linux/string.h>
+ #include <linux/unaligned.h>
+ #include <linux/wordpart.h>
++#include "fips.h"
+ 
+ static const struct sha512_block_state sha384_iv = {
+ 	.h = {
+ 		SHA384_H0, SHA384_H1, SHA384_H2, SHA384_H3,
+ 		SHA384_H4, SHA384_H5, SHA384_H6, SHA384_H7,
+@@ -403,14 +404,30 @@ void hmac_sha512_usingrawkey(const u8 *raw_key, size_t raw_key_len,
+ 	hmac_sha512_update(&ctx, data, data_len);
+ 	hmac_sha512_final(&ctx, out);
+ }
+ EXPORT_SYMBOL_GPL(hmac_sha512_usingrawkey);
+ 
+-#ifdef sha512_mod_init_arch
++#if defined(sha512_mod_init_arch) || defined(CONFIG_CRYPTO_FIPS)
+ static int __init sha512_mod_init(void)
+ {
++#ifdef sha512_mod_init_arch
+ 	sha512_mod_init_arch();
++#endif
++	if (fips_enabled) {
++		/*
++		 * FIPS pre-operational self-test.  As per the FIPS
++		 * Implementation Guidance, testing HMAC-SHA512 satisfies the
++		 * test requirement for SHA-384, SHA-512, and HMAC-SHA384 too.
++		 */
++		u8 mac[SHA512_DIGEST_SIZE];
++
++		hmac_sha512_usingrawkey(fips_test_key, sizeof(fips_test_key),
++					fips_test_data, sizeof(fips_test_data),
++					mac);
++		if (memcmp(fips_test_hmac_sha512_value, mac, sizeof(mac)) != 0)
++			panic("sha512: FIPS pre-operational self-test failed\n");
++	}
+ 	return 0;
+ }
+ subsys_initcall(sha512_mod_init);
+ 
+ static void __exit sha512_mod_exit(void)
+diff --git a/scripts/crypto/gen-fips-testvecs.py b/scripts/crypto/gen-fips-testvecs.py
+new file mode 100755
+index 0000000000000..26e12397bceb2
+--- /dev/null
++++ b/scripts/crypto/gen-fips-testvecs.py
+@@ -0,0 +1,33 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: GPL-2.0-or-later
++#
++# Script that generates lib/crypto/fips.h
++#
++# Copyright 2025 Google LLC
++
++import hmac
++
++fips_test_data = b"fips test data\0\0"
++fips_test_key = b"fips test key\0\0\0"
++
++def print_static_u8_array_definition(name, value):
++    print('')
++    print(f'static const u8 {name}[] __initconst __maybe_unused = {{')
++    for i in range(0, len(value), 8):
++        line = '\t' + ''.join(f'0x{b:02x}, ' for b in value[i:i+8])
++        print(f'{line.rstrip()}')
++    print('};')
++
++print('/* SPDX-License-Identifier: GPL-2.0-or-later */')
++print(f'/* This file was generated by: gen-fips-testvecs.py */')
++print()
++print('#include <linux/fips.h>')
++
++print_static_u8_array_definition("fips_test_data", fips_test_data)
++print_static_u8_array_definition("fips_test_key", fips_test_key)
++
++for alg in 'sha1', 'sha256', 'sha512':
++    ctx = hmac.new(fips_test_key, digestmod=alg)
++    ctx.update(fips_test_data)
++    print_static_u8_array_definition(f'fips_test_hmac_{alg}_value', ctx.digest())
++
+
+base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
+-- 
+2.51.0
+
 
