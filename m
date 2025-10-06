@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-843506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87C0EBBF9BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 23:54:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C969BBF9C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 23:54:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CC5824F24FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 21:54:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F088F3C29E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 21:54:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D782609E3;
-	Mon,  6 Oct 2025 21:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F82525F99B;
+	Mon,  6 Oct 2025 21:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZpvuLjag"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JI1Inr+F"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED5025A630
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 21:54:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357C7266582
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 21:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759787650; cv=none; b=A6LwmfrLU2k1QrAW4y4BVpODhVfKT1WUU1ioEWp7gmyKPJXSazttfUP9HDtjYXL7r9cao7kNMGS0arKTelBqlyiACNGNhMXK7OC1siI7SY03HTWLrlRUs0sNYNdEXRpRYx3Mm1+eMwzTaUWZRAKJpswrDX3H8QwfXFvwUS3VZ5s=
+	t=1759787657; cv=none; b=L4ZQ4xC2R4G0MtX8L+/4AU7qUCmJzbmXEoDguosbGDZiUoiBRz6ZemLSYuHnQxw3wP7816hPNXO4MWVi+UznwZ86lWea+mClxPnk6rQ9mnD5rrY+GlfCPonXj62X16uDr42KBxEJE/xQ1XTPjorUj04AKUkKVGae81/NUwL/VTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759787650; c=relaxed/simple;
-	bh=eiISPe7E0tv7cAYf9Q7LNVtb80iqR4+ue9pgUekuy+4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=abC93SDy/EHIJluP71ta+6ELlM7ppwaPECq4OwEcz3j62DKaDK3qMrdSj2tBJWJp76TF2eJtjmH8MyUf8WvocVByxfyR9HAnFV6DFfZ5/PGAdT5XZDITK2APd+A9nslIZ5RMZx/Nl315PCAZoMubK6Gqtls6BSte8mvJ17yEWC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZpvuLjag; arc=none smtp.client-ip=209.85.222.178
+	s=arc-20240116; t=1759787657; c=relaxed/simple;
+	bh=TN8DVVtOI0uVF0pVf3w3bAdjS3386PQdWfU2VmCuHTQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ezUMfUwn/VWB9WdvgnOYP4qa8eDtGnqRN69TVwhRCyq1x26Mgo0McQ5o7gYEUhHHHmTpvd9BX8+3U2W3dnKkEGgYRNwXAKOg6nOBof+6ZnoBsfSs6cD3/l1Z2dinMeMA6Mi1Jq++/sEihtvU/i8kgRlvBgf/TEaRWIBboFdZSt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JI1Inr+F; arc=none smtp.client-ip=209.85.222.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-856328df6e1so528294285a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 14:54:08 -0700 (PDT)
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-85ed0a1b35dso445529785a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 14:54:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759787647; x=1760392447; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GzHR9nOubrbOV66JDSdOHQf9JHwFVJCFi2cD9sJyIbU=;
-        b=ZpvuLjagy9UsmaEbNSIJYZ5e1y83BvWWsXOVZQzgiLMXuS4V/QjpymvSwTFSbLIOY2
-         JWFy5AIxUcPBxE92gHNUE26bhgfFMZtyimXxqCdS/8QX29U61UBT8mYhvkPpFAfu80nW
-         MaVSR3pkLVX8Ac2gD9W4Da2dGET7yWFu3aejDl/ZgtZ8wqtgbTKCZWHJZLwJRqCPDK6B
-         AkwM2S0FKpc2d3I8kEbkzwkQnz4aOcr2+xdAC8/eZ45/xHYZy0EPPMXVCdbNV1iE58km
-         yzLJND/oND6CQFGFHJuXCJKqzFU8ccvnoiKEGpZZZQNJnp8uzzqWWjIdQOYkm8rXyqVp
-         qDLQ==
+        d=gmail.com; s=20230601; t=1759787655; x=1760392455; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/2sIp4WFShfr4eCKdCALf03P/N949F7OBVMFA66z5UM=;
+        b=JI1Inr+Fb9nlMSCVFZ4/9Gey825jgXgglAzX22S4ifTSYWMVEU0qXc4VT31hy8e71f
+         BycTkvF5rPHtBomz/W8EdVlP3X0zrKqUEk0Z3j19yyYSXfzilbFJIUYgSZzmgvVct95C
+         tDejA5TTLg2dW64jPh3sutopQznh+/7dGdCHJzQOcfsbOCtNOjCmG9L5lLgPamtSRF9y
+         NdsnGR5EtJX9ac8UiBWkrxo3BGiIGBtTXdlJLdylMmCacFSrvifkqwVlqM0qoXerUIsI
+         zZhvQge3J9FkMT4cc/jfvkmBJ7clSJaHlDK0DkUPCfdmCDi8FiM/dBKxVyi5xba1bCjG
+         4aUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759787647; x=1760392447;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GzHR9nOubrbOV66JDSdOHQf9JHwFVJCFi2cD9sJyIbU=;
-        b=KZlWfmXs2zHzJFh6qs3Ro9G76CKmnhpixbzC6M3kg5vn1iMXH61c39/wU4SIMTMbZw
-         rG9tVEk6aHBKhPRjsy0gbuFrKvhiveyjnZey0i0MoGKyXqlWESFt0fJKfLlbM6J7Ltoe
-         k2EmA0mzdQrKwmMps/m8mn6Nvx6CbKdgC3pg6tfbMUEsly7CqdNYTGqg/Z6Dm4rZyBFc
-         phIvpMidBSaCYvDEIThcfDsEw9ROWGzpHQBsKWnlVYlpulHKvk4rXEmra8Qyghhw3+St
-         XijLIotMuIXYBAratM5Vm2tWrj9FvTVaRgkljx8t5wk0VzdiegMMh+2PqtavLBU7Imqp
-         oSOg==
-X-Forwarded-Encrypted: i=1; AJvYcCWAcTmyFeRvs4xUoN56KJ7f83j5HCd5NMgddWE3b0b+28kM0SJbqHO9epECnjt3o+ZonFEyrrLK1FN35rw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzgx3gpit0f0fIrLfngBmc4a31uaBLzgchWlNrCteM+ZCaTrsW0
-	wmFsm6AajSxFAP4H1lva2F84NNUukgCxnWaxPeB67SVUmFscxjwUGsme
-X-Gm-Gg: ASbGncvt7mk2ue0I9jUr61mGAx/8IS9B4lhD2HIryUk/KXwhMuP7poT4+Kx1MVfS2+Y
-	6pM1RH44x6aRCvKdUmwkVGz9V320G3C2bHjPfZTAMqcmb5fpsVUX2n2fXpr1uVqRajzd4ny3MJ6
-	fb/SUn1TZ1dF36Y1/ICAFWjZePKlpQQzH9G8wt7y8NEeBtI+CSHXQtmPVpnVHiIgaWiZVecko0C
-	qI9Zg+f157cM1RmyBmkE+tqHzSUK0WibWg+Krs2QbVvwCh3LLRvBJ5Safjt5tIBxMDNxZjCw3Bm
-	amnKL0YHb8qsED+MfrhvPXRcGVJTtjPufLdi0MDCuXvwdCGf65fMZgwYmuQY8UkmG0QCbwVFk+F
-	oymF+/vRaH5o+cqSZg5CTExv6MdQRVizH+FejTw==
-X-Google-Smtp-Source: AGHT+IG0UNlyx78vsddyW3DjBY/aA6lui1aLxmretPKBkhllfywXoRVS9YugmVjoHVxZWQR0Lyw84w==
-X-Received: by 2002:a05:620a:4514:b0:858:a4dd:d180 with SMTP id af79cd13be357-87a3808f557mr1974325785a.40.1759787647517;
-        Mon, 06 Oct 2025 14:54:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759787655; x=1760392455;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/2sIp4WFShfr4eCKdCALf03P/N949F7OBVMFA66z5UM=;
+        b=sUorQV6/hY56cNb9VPw9x28QCZnrXARpHPAyxepmkwBsSC5j5yssFhRDa1rMSZoNkw
+         pMjOiBVFXKLwu7h2czAmVWPVvAKosunerhf3vdvq6InKzDJYg69mFu3QrBLAeBenOulm
+         w9vNLxoHgnlbPDAGr1tT8mNt4q647fmLBp+hU1vJvr3zPE61N7KP3NgVTMZH4Xp/tuxI
+         Mqfo+1Tl9yrmrflo9TCakTHvn063xRL6FMew1Z+MD1XVmffU0i05c0wn1pbG34zF4tA+
+         9C8Sm2XHxzVzr2o3RFVscYF8g1obmNaR7kmL7JZPEEHR3M33R2lxHwz/C/26peTqD892
+         N03A==
+X-Forwarded-Encrypted: i=1; AJvYcCU/sd+vwXRxDZ0m56iFoWr5s4XjHQEGePDieuvZMNd+gSmfQiRcNhrLMVktw/amGP8zqeMA4THy7WHCaz8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlvfaHvhO56YaoINhoTxUWz8u+9Sfn/B7r8K67Ywb2eyLfLU1O
+	rPP7f95Td58cUScAQXUMrIUkiibOBMiVxoG9WbtbI9NlVXg+wmFHEVkJ
+X-Gm-Gg: ASbGncsLSDTX4XbQEMAbr0Qb+Pen/dQqMcj/dqwhdwP6lKsE/hVMlB5AFpfbzyxBM+U
+	oG7Qu2kD3CdYsTEgDmR4jMSUC5DK3gIwG95T97fCt07mGe8kmGeomN5lJ32OTyfez/KMeMPOp1R
+	49XmKFWQsqGLOJbX4wLWiC+H9jjU3GNQGc4oCnWE0ZVr2tJutNjf9kn5NpzAA79CvxCmI07xQES
+	8EVNc7k5NgvW2NgVBKUj1WAGPQfoS5arlRe5ytO0K9b2LkG/VuFIeoIkDn4KE2pd/IRrtXA03q9
+	VWdJ3RNvAcbYgaT8gvEQYyQX3gmdvfsAKSv6MpO81bX5dPudZEBGkOI86GLCyMXkg38BQFc0Tn6
+	nU2K1RPdKkKSkaplONNqniE82wObUTXKG46wDAsN4clUf6BbE
+X-Google-Smtp-Source: AGHT+IFqsWVnCpjYKU1itjoK+0G07oo7F31f4A0dLj7qpRKOEEW3bL5j0OvrFQf9Ro4ztA0Q1cj6GQ==
+X-Received: by 2002:a05:620a:40d1:b0:85e:adef:a774 with SMTP id af79cd13be357-87a390f16b8mr1404131885a.82.1759787654780;
+        Mon, 06 Oct 2025 14:54:14 -0700 (PDT)
 Received: from fr.lan ([81.200.23.195])
-        by smtp.googlemail.com with ESMTPSA id af79cd13be357-87771129478sm1314168585a.1.2025.10.06.14.54.05
+        by smtp.googlemail.com with ESMTPSA id af79cd13be357-87771129478sm1314168585a.1.2025.10.06.14.54.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 14:54:07 -0700 (PDT)
+        Mon, 06 Oct 2025 14:54:14 -0700 (PDT)
 From: Ivan Mikhaylov <fr0st61te@gmail.com>
 To: Iwona Winiarska <iwona.winiarska@intel.com>,
 	Guenter Roeck <linux@roeck-us.net>
@@ -77,10 +79,12 @@ Cc: linux-hwmon@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	openbmc@lists.ozlabs.org,
 	Ivan Mikhaylov <fr0st61te@gmail.com>
-Subject: [PATCH 0/3] Add Emerald Rapids PECI support
-Date: Tue,  7 Oct 2025 00:53:18 +0300
-Message-ID: <20251006215321.5036-1-fr0st61te@gmail.com>
+Subject: [PATCH 1/3] peci: cpu: add Intel Emerald Rapids support
+Date: Tue,  7 Oct 2025 00:53:19 +0300
+Message-ID: <20251006215321.5036-2-fr0st61te@gmail.com>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20251006215321.5036-1-fr0st61te@gmail.com>
+References: <20251006215321.5036-1-fr0st61te@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,20 +93,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add PECI Emerald Rapids support for CPU and hwmon interfaces. dimmtemp use
-Sapphire's callbacks about reading thresholds because it's same
-platform/socket.
+Add support for detection of Intel Emerald Rapids processor based on
+CPU model.
 
-Ivan Mikhaylov (3):
-  peci: cpu: add Intel Emerald Rapids support
-  hwmon: (peci/dimmtemp) add Intel Emerald Rapids platform support
-  hwmon: (peci/cputemp) add Intel Emerald Rapids support
+Emerald Rapids Xeon processors with the model set to
+INTEL_EMERALDRAPIDS_X. The data field for this entry is "emr".
 
- drivers/hwmon/peci/cputemp.c  | 18 ++++++++++++++++++
- drivers/hwmon/peci/dimmtemp.c | 19 +++++++++++++++++++
- drivers/peci/cpu.c            |  4 ++++
- 3 files changed, 41 insertions(+)
+Tested the patch series with AST2600 BMC with 5S Intel Emerald Rapids
+processors & verified by reading cpu & dimm temperature which matches
+host sensor values from lmsensors.
 
+Signed-off-by: Ivan Mikhaylov <fr0st61te@gmail.com>
+---
+ drivers/peci/cpu.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/peci/cpu.c b/drivers/peci/cpu.c
+index 2dac8ba82787..fbccc1d1b637 100644
+--- a/drivers/peci/cpu.c
++++ b/drivers/peci/cpu.c
+@@ -321,6 +321,10 @@ static const struct peci_device_id peci_cpu_device_ids[] = {
+ 		.x86_vfm = INTEL_SAPPHIRERAPIDS_X,
+ 		.data	= "spr",
+ 	},
++	{ /* Emerald Rapids Xeon */
++		.x86_vfm  = INTEL_EMERALDRAPIDS_X,
++		.data  = "emr",
++	},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(peci, peci_cpu_device_ids);
 -- 
 2.49.0
 
