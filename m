@@ -1,166 +1,210 @@
-Return-Path: <linux-kernel+bounces-843130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68FF1BBE75A
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:14:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EA90BBE764
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:17:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 345B24EEA43
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:14:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 139891892F99
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:17:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989E72D6E7A;
-	Mon,  6 Oct 2025 15:14:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76ED12D6400;
-	Mon,  6 Oct 2025 15:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7982D5C8E;
+	Mon,  6 Oct 2025 15:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JfEGVaD3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="28LwVFZv";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JfEGVaD3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="28LwVFZv"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BEFA1B3925
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 15:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759763661; cv=none; b=PeBBpYyay/X5zJolggNnWwzYPrQWDFNlud9KvOH16xjqbVoK5L14ltjiRcUhk5tnKkQKyN9xElrqf7xNE/AFm+HnZlBPbGXl/4IS2C60si9b8MkZ2EzeRMgaTQaq9tFfMDzzcN2DnHVJ0jiPeMeNJB9kGw0beXl/OyqdzW4yaYw=
+	t=1759763818; cv=none; b=A92DBcx/KGrt6L6qMiRqnwWQ6+a9N1qyOr5ucmNAaLc6+9j4msRQxB8y0Z+5NZRLm+wYHUXvPV6jy8rzX6XndF9X/RbPGh3RHeab3noIRbHloz0E3P7g5fsV0iQlQkG7/eTgexlFtLWl4wYvXpqU6/ly2tYsESjxDIeVNK7VcqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759763661; c=relaxed/simple;
-	bh=GLwTmNbaE5ztZ0vdwoTwTWKhIPtRaHXVJ6jDdkayzk0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NBZRDLcy4xDdlLQTsmZldClmHV2iVpcAmwiDao7flvNqiHcXSyADlIzKen0qAdLKbe9BMwCGoSm5RHSqjjuswxvQTs2ttXd4AKyKGzCeqpx5ZsqlFGwCJFMNCZBsd0a/fBF9a3ljK5MBO62lwRivHnIlgARv2yq/SL7bttxyItI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF8071515;
-	Mon,  6 Oct 2025 08:14:10 -0700 (PDT)
-Received: from [10.57.81.187] (unknown [10.57.81.187])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E8A0B3F66E;
-	Mon,  6 Oct 2025 08:14:16 -0700 (PDT)
-Message-ID: <13c009f6-5fc9-41ef-aa94-acd99b9c774d@arm.com>
-Date: Mon, 6 Oct 2025 16:14:38 +0100
+	s=arc-20240116; t=1759763818; c=relaxed/simple;
+	bh=peOE6eITOVQUeZwE5IMNl27NOUYJJIKBK0gTxg2ZGTs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VQCnYRIDJZYEQdZLMT/XQhDC9SdMbV5XOj9FBypiY8rF6GCLDZ2ne2XLjEzJ3lylNJNSQWt2VxsJ5KASMtOqacViHKIND2ov6X2rp5106TQWdqxmfmfJt6GuvwdvhgRzXRL813wByB04Z2j96G+Flw5MWkQN8wh1zTvtlev1suA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JfEGVaD3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=28LwVFZv; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JfEGVaD3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=28LwVFZv; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5E5721F451;
+	Mon,  6 Oct 2025 15:16:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759763814; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7iUrqCG2h/I1kRo24kmzmf4tFUsBJ4OjTnSbR2SFuFU=;
+	b=JfEGVaD3xh5+rmLVKhixC+7z96nZowCL5NScoOMVuVk/bQIwvSbew88VA/YM6Q7niHB+Ag
+	Iu4Wzd3N7rR3qQ92Ba5vXEgxrsQ205qSrLwGB93NY38ApH+cRZBmIF1RaNcYvAbPjbAbLv
+	ilo09AW3jes1CZK2ISoUb95Ql6t965U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759763814;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7iUrqCG2h/I1kRo24kmzmf4tFUsBJ4OjTnSbR2SFuFU=;
+	b=28LwVFZvAKU+Z4+kGtMvQyiy8dMdufZOzfvwRYUH2295mE216DJt13+Aq02HqstGEILoy5
+	2YhoQSZ9xhbKJMCQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=JfEGVaD3;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=28LwVFZv
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759763814; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7iUrqCG2h/I1kRo24kmzmf4tFUsBJ4OjTnSbR2SFuFU=;
+	b=JfEGVaD3xh5+rmLVKhixC+7z96nZowCL5NScoOMVuVk/bQIwvSbew88VA/YM6Q7niHB+Ag
+	Iu4Wzd3N7rR3qQ92Ba5vXEgxrsQ205qSrLwGB93NY38ApH+cRZBmIF1RaNcYvAbPjbAbLv
+	ilo09AW3jes1CZK2ISoUb95Ql6t965U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759763814;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7iUrqCG2h/I1kRo24kmzmf4tFUsBJ4OjTnSbR2SFuFU=;
+	b=28LwVFZvAKU+Z4+kGtMvQyiy8dMdufZOzfvwRYUH2295mE216DJt13+Aq02HqstGEILoy5
+	2YhoQSZ9xhbKJMCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4F1DF13AAD;
+	Mon,  6 Oct 2025 15:16:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id D7NJE2bd42gILAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 06 Oct 2025 15:16:54 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id F1784A0ABF; Mon,  6 Oct 2025 17:16:53 +0200 (CEST)
+Date: Mon, 6 Oct 2025 17:16:53 +0200
+From: Jan Kara <jack@suse.cz>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Amir Goldstein <amir73il@gmail.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v1] fsnotify: Pass correct offset to fsnotify_mmap_perm()
+Message-ID: <pg55elgetdhvjhda36xr63esawc3t6y6lbiesyfxhousmzmil3@rwd54tfm2jh5>
+References: <20251003155238.2147410-1-ryan.roberts@arm.com>
+ <uyh6y4qjuj6vcpsdnexwl2xqf2jnp6ejj7esr3g3hix66ml2zi@pqsbsjtt6apl>
+ <ae61f721-3d07-4908-ad31-9c25e8b8119e@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v4 03/10] PM: EM: Add an iterator and accessor for
- the performance domain
-To: Changwoo Min <changwoo@igalia.com>
-Cc: christian.loehle@arm.com, tj@kernel.org, pavel@kernel.org,
- len.brown@intel.com, rafael@kernel.org, kernel-dev@igalia.com,
- linux-pm@vger.kernel.org, sched-ext@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250921031928.205869-1-changwoo@igalia.com>
- <20250921031928.205869-4-changwoo@igalia.com>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <20250921031928.205869-4-changwoo@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ae61f721-3d07-4908-ad31-9c25e8b8119e@arm.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 5E5721F451
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,linux-foundation.org,redhat.com,oracle.com,kernel.org,google.com,suse.com,gmail.com,kvack.org,vger.kernel.org];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,arm.com:email]
+X-Spam-Score: -4.01
 
-
-
-On 9/21/25 04:19, Changwoo Min wrote:
-> Add an iterator function (for_each_em_perf_domain) that iterates all the
-> performance domains in the global list. A passed callback function (cb) is
-> called for each performance domain.
+On Mon 06-10-25 16:04:23, Ryan Roberts wrote:
+> On 06/10/2025 15:55, Jan Kara wrote:
+> > On Fri 03-10-25 16:52:36, Ryan Roberts wrote:
+> >> fsnotify_mmap_perm() requires a byte offset for the file about to be
+> >> mmap'ed. But it is called from vm_mmap_pgoff(), which has a page offset.
+> >> Previously the conversion was done incorrectly so let's fix it, being
+> >> careful not to overflow on 32-bit platforms.
+> >>
+> >> Discovered during code review.
+> >>
+> >> Cc: <stable@vger.kernel.org>
+> >> Fixes: 066e053fe208 ("fsnotify: add pre-content hooks on mmap()")
+> >> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> >> ---
+> >> Applies against today's mm-unstable (aa05a436eca8).
+> > 
+> > Thanks Ryan! I've added the patch to my tree. As a side note, I know the
+> > callsite is in mm/ but since this is clearly impacting fsnotify, it would
+> > be good to add to CC relevant people (I'm not following linux-mm nor
+> > linux-kernel) and discovered this only because of Kiryl's link...
 > 
-> Additionally, add a lookup function (em_perf_domain_get_by_id) that
-> searches for a performance domain by matching the ID in the global list.
+> Ahh good point... Sorry I was sleepwalking through the process on Friday
+> afternoon and blindly sent it to the maintainers and reviewers that
+> get_maintainer.pl spat out. It didn't even occur to me that this wasn't an mm
+> thing. :-|
+
+No harm done really. The change is an obvious fix and it would find its way
+to the kernel sooner or later. As I wrote above, this is just a note for
+the future to think a bit about patch recipients before hitting send :) It
+may help to get the patch merged faster.
+
+								Honza
+
+> >>  mm/util.c | 3 ++-
+> >>  1 file changed, 2 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/mm/util.c b/mm/util.c
+> >> index 6c1d64ed0221..8989d5767528 100644
+> >> --- a/mm/util.c
+> >> +++ b/mm/util.c
+> >> @@ -566,6 +566,7 @@ unsigned long vm_mmap_pgoff(struct file *file, unsigned long addr,
+> >>  	unsigned long len, unsigned long prot,
+> >>  	unsigned long flag, unsigned long pgoff)
+> >>  {
+> >> +	loff_t off = (loff_t)pgoff << PAGE_SHIFT;
+> >>  	unsigned long ret;
+> >>  	struct mm_struct *mm = current->mm;
+> >>  	unsigned long populate;
+> >> @@ -573,7 +574,7 @@ unsigned long vm_mmap_pgoff(struct file *file, unsigned long addr,
+> >>
+> >>  	ret = security_mmap_file(file, prot, flag);
+> >>  	if (!ret)
+> >> -		ret = fsnotify_mmap_perm(file, prot, pgoff >> PAGE_SHIFT, len);
+> >> +		ret = fsnotify_mmap_perm(file, prot, off, len);
+> >>  	if (!ret) {
+> >>  		if (mmap_write_lock_killable(mm))
+> >>  			return -EINTR;
+> >> --
+> >> 2.43.0
+> >>
 > 
-> Signed-off-by: Changwoo Min <changwoo@igalia.com>
-> ---
->   include/linux/energy_model.h | 15 +++++++++++++++
->   kernel/power/energy_model.c  | 34 ++++++++++++++++++++++++++++++++++
->   2 files changed, 49 insertions(+)
-> 
-> diff --git a/include/linux/energy_model.h b/include/linux/energy_model.h
-> index 43aa6153dc57..21279e779188 100644
-> --- a/include/linux/energy_model.h
-> +++ b/include/linux/energy_model.h
-> @@ -344,6 +344,10 @@ struct em_perf_state *em_perf_state_from_pd(struct em_perf_domain *pd)
->   	return rcu_dereference(pd->em_table)->state;
->   }
->   
-> +int for_each_em_perf_domain(int (*cb)(struct em_perf_domain*, void *),
-> +			    void *data);
-> +struct em_perf_domain *em_perf_domain_get_by_id(int id);
-> +
-
-This doesn't have to go into this header.
-
->   #else
->   struct em_data_callback {};
->   #define EM_ADV_DATA_CB(_active_power_cb, _cost_cb) { }
-> @@ -420,6 +424,17 @@ int em_update_performance_limits(struct em_perf_domain *pd,
->   }
->   static inline void em_adjust_cpu_capacity(unsigned int cpu) {}
->   static inline void em_rebuild_sched_domains(void) {}
-> +static inline
-> +int for_each_em_perf_domain(int (*cb)(struct em_perf_domain*, void *),
-> +			    void *data)
-> +{
-> +	return -EINVAL;
-> +}
-> +static inline
-> +struct em_perf_domain *em_perf_domain_get_by_id(int id)
-> +{
-> +	return NULL;
-> +}
->   #endif
-
-
-Please create a local helpers header:
-kernel/power/em_helpers.h
-
-and add these two declarations there. In that new
-local header there is no need to implement the empty
-inline functions as well (so would be simpler).
-
->   
->   #endif
-> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
-> index 8998a7f4910a..740076d24479 100644
-> --- a/kernel/power/energy_model.c
-> +++ b/kernel/power/energy_model.c
-> @@ -1000,3 +1000,37 @@ void em_rebuild_sched_domains(void)
->   	 */
->   	schedule_work(&rebuild_sd_work);
->   }
-> +
-> +int for_each_em_perf_domain(int (*cb)(struct em_perf_domain*, void *),
-> +			    void *data)
-> +{
-> +	struct em_perf_domain *pd;
-> +
-> +	lockdep_assert_not_held(&em_pd_mutex);
-> +	guard(mutex)(&em_pd_list_mutex);
-> +
-> +	list_for_each_entry(pd, &em_pd_list, node) {
-> +		int ret;
-> +
-> +		ret = cb(pd, data);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +struct em_perf_domain *em_perf_domain_get_by_id(int id)
-> +{
-> +	struct em_perf_domain *pd;
-> +
-> +	lockdep_assert_not_held(&em_pd_mutex);
-> +	guard(mutex)(&em_pd_list_mutex);
-> +
-> +	list_for_each_entry(pd, &em_pd_list, node) {
-> +		if (pd->id == id)
-> +			return pd;
-> +	}
-> +
-> +	return NULL;
-> +}
-
-That code looks good, you can keep it. Although, please
-add the comments above these functions that they are
-only used locally as helpers for the notifications.
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
