@@ -1,250 +1,225 @@
-Return-Path: <linux-kernel+bounces-843004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C16D3BBE2D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:26:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D86BBBE2DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:26:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 474B04E3C1E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:26:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5997D4E80F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299312C3258;
-	Mon,  6 Oct 2025 13:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573A02D063D;
+	Mon,  6 Oct 2025 13:26:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PqQ4jB3B"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Pj+bBsVa"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E173298991
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 13:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3992D061A
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 13:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759757171; cv=none; b=OmPJeUuKhvl9bPZ7XumQz5HaNMNp3OCzyO2sdVj5InmwCbwh6Al9w73K29hBYPjLizEL6vW5TeFhSlJ6SRXwar1DX6colNiLC8UKm4rAPc9fEcZVh2o+xAn84U/SbVtK/fuGF/wCG7hlCdSaOxrFnb+fId2kBGq3xBzC80+a0Ho=
+	t=1759757177; cv=none; b=adQhhqAdhjoUMeLFxm6pS8gyEUkbEHvPXM7dz9tiSZuftc6oyqePb7uYEyVUHwKgnPNgJF/kLHNFbq/cM3AFyJSK+ghJ4On4eIsAbKPvzctC24QwUxZF32DBsEnfwYaQ1mnME3V6Z23SsaAhIEDl8cnfJYOwsrH8Tnfz0G+47g4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759757171; c=relaxed/simple;
-	bh=UPEIO1q9s3v6EiLHhnEtvwRzF+JBuGEFKcg/DjYi36o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IBgQsiRU0TJ7o8+yQofK9g1zaT9jiohtd9i90emW7r+wSS437mUB05OkbivjDZ9Uo1NyF5ktmsb5S0c86Oj/9lAOMaqlaInnlEOupVYQekNeNDw4f4C7JGq3zNE0cpGwtcA7HIR56vsyMjK33irTChlFKutNfTyeGYdq2WRVgQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PqQ4jB3B; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759757165;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=iwrArVYN6Hgp4+ZQLHEDAJ1uYbH7JoKb4sYghjkBJlo=;
-	b=PqQ4jB3BNvxUuzxiVTG4e+fhAFhS8jpMM4kIVKjznDbnEQqGo15C2XRDmtr5BATj4sDnJq
-	Dk+wVTEteDNqXBuoRnxqtjNAY3tS5vz5dYTIwQ+rpR1fT8PUFWlavk9NEN0RdCwk/JL+Co
-	Y7s4CZqYohVm+qQ32n4iRWc9jLwXJBk=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-147-l2-_x238ObCPRougIfIl2A-1; Mon, 06 Oct 2025 09:26:02 -0400
-X-MC-Unique: l2-_x238ObCPRougIfIl2A-1
-X-Mimecast-MFC-AGG-ID: l2-_x238ObCPRougIfIl2A_1759757161
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-46e35baddc1so26339275e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 06:26:02 -0700 (PDT)
+	s=arc-20240116; t=1759757177; c=relaxed/simple;
+	bh=MT9skSBafU/OO6TyPXQDKc8LwQvb8rKcFgEGPquoaCw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=suibK5xOVlKGBThhKmJXcy1R9jqqVyf5h8VOfE/xIh8thPL9aaBre/MeWth1VNHtCsD9+T22XqQZctZGqUYZIbJB7ORcbjZSlF/Foyjtyh+trTcv1WO/4dxWjrhvFqDliP8vbI53qIuyiPy1fSEWpseccXr8EgLmNWmOFol36kY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Pj+bBsVa; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5962h2xD017143
+	for <linux-kernel@vger.kernel.org>; Mon, 6 Oct 2025 13:26:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=N6ypGwDaGlhrK6ZG0i30/Y0b
+	yq9GzIhyKl5ZGLSoyg8=; b=Pj+bBsVa5wdki1EC9M/Y/T2PXX2Nn0MrZz3/MJFP
+	8ODFOvriAzyVcNtwGjIvxQoANbtaKse6qUooemhy/RqvMcoUslVCM+t8L/OWc6Dk
+	mmnsnplzFmw0sOWgV8BcYhtuuft4mJSAZaa6UuYU64Cxo1tA+thDg10WuD5DYA+D
+	ShBBedvpkOc2BPIi+NeEohURSC9tA+lcQrRzqv9WMWeQSA/GX1NPpYKIgoy5uDD3
+	9vEPi4hAYBCtRuP+C68uS+05T6wlMtNON68nwFlDo3Oo+uHQAs2GTU/iRnvckP8N
+	Zc4rbShhk6MOqt5JINFdFsGlErCfHDN8WRItOpYM0WmWHA==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49k6bfk2v1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 13:26:14 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-28bd8b3fa67so42775805ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 06:26:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759757161; x=1760361961;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iwrArVYN6Hgp4+ZQLHEDAJ1uYbH7JoKb4sYghjkBJlo=;
-        b=C83NCXBiA1Vw1UcV6Mt9RJzI0au7rC+DCp/BhgCFf0fmgQ7B94ibUjd2O6KSCLs35Y
-         emSloaDxqM9IZlcvOte6nwd49zNBdS4MiL+xNLoBJQDQOhorkS5n4Xs+jqP1LZdrzeun
-         ksZFvpoORn/DS7SglmQ1vzhrUjtr7g3ZqYHtltNNqL/icICRUBWFdz1hTSYqiR4xHn+V
-         QJQ/2nz88Oo5qjLiPtDFB6xesKNUbYyTCb9XE18Y6ec1dvGfkxe1s9xKe5m8ZjsQL35G
-         m0wsjrg2lQpSjUQh3rEounqBoISdCV7erijDRqMVEPDI1YSGiHidIphr1QMDtZmbfUsP
-         hCrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV71vIDcumiu0j4dd6cvX5jsV51B9iS/t0C2i4b19uJXF/PO+jfyV7feGXl6mfZiy5iDab79p+PX+hhsNw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsH0SJstxPBiFRUmxs8rzEVrsNF32DgL+ujer90dqW0k7PWIsY
-	hmffn96d/SPELEgVoAorxBJcggDGIsQsV22r0powRPPl3t9wLxSldU8VKNLAZZB/4wI5EFRNj/Q
-	MUOm/eGpfbB/R51mfwjWGspuJBfmFMecSTR0uWveLfHgnAjsL5dqeGfwsFJCXt4lc3g==
-X-Gm-Gg: ASbGncvHR3DQuWN29ieU8PSQJY+HWf7PP8RHy71bS7BSW8PyWETwiZkwkejyxUBL8EX
-	u/N4PQKAN37kgjxE9lnGbWvMGrtMjtDFDWqsYKWD21jXdJew2sEy3wk0IKm1yzXopYBct+IgR9l
-	95OC7VCG1UjHW2wu3Wvb1SG0ey+xg0MU5+mG38R/M+WGG4oU8rnqaw1i9WxngaywRMaKp4wtKwt
-	T63T2n+8jIy+0CeaursNnErTmLeTEilnroxECJOnw1cRWQ9ompSGfVHPxuB218ep4tyHo7RQ0d/
-	N4FhQ33mxvtOqeYReefT0klwjIVlR6A/LkrlIxzAYRAkqlhmcAfzlyn2kHEJrUtesQ4yoRRp9bx
-	XUaxryNdH
-X-Received: by 2002:a05:600c:3149:b0:46e:33b2:c8da with SMTP id 5b1f17b1804b1-46e7114829cmr73081735e9.32.1759757161015;
-        Mon, 06 Oct 2025 06:26:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEB001Cs9Kie3XUKMPuCcgnWS4oQSNxtEp884mpAdG/6G6PtAWiaGPAxipwUeejHIFC7ewNJg==
-X-Received: by 2002:a05:600c:3149:b0:46e:33b2:c8da with SMTP id 5b1f17b1804b1-46e7114829cmr73081485e9.32.1759757160599;
-        Mon, 06 Oct 2025 06:26:00 -0700 (PDT)
-Received: from [192.168.3.141] (tmo-083-110.customers.d1-online.com. [80.187.83.110])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e723431f5sm156675695e9.2.2025.10.06.06.25.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Oct 2025 06:26:00 -0700 (PDT)
-Message-ID: <1d5df7c9-8eec-49ad-b4c7-39c70bd172d7@redhat.com>
-Date: Mon, 6 Oct 2025 15:25:58 +0200
+        d=1e100.net; s=20230601; t=1759757174; x=1760361974;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N6ypGwDaGlhrK6ZG0i30/Y0byq9GzIhyKl5ZGLSoyg8=;
+        b=E4EpyNISaqZ+dTFeLe4zAMtO5XIIFGFM2sBpTYcKNTEFmtmhsxHgenOk5gQM4qqeTJ
+         LgIV3nTtIFfYejWMCIb9aCZVy4AUb79Ogm5NDs9Yj7WHg43FfBrZSBVJkMi9nH+jRP55
+         SeNx/gdQH28zgdet3lTgcqPWI3f1OUqJtKJUNuGPq2U5XWh5oohevbkSri1FZp4elzKx
+         CRF9gRyQR1EyKD2BD/AYICD5vB/ZjHrVRuE7A0fihmynop2SU+5yrePXEa7MhqZyPjk7
+         xHrG9uZ3LNQQY3W3gGbyMMhQiVy9rHtbme3DwB9PUCsj8zVGIKB4AC+Vf3cUIHC6Qv1X
+         3DOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFeDoD0MZGZkXSSpwdUCcGy6z/RK/znrn3jW2X1LWRcU5pXr5wz/FTbc1tPqhBR8hdzTxBOAZowCeeTy0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+tXlqqeva/nQmv6ne0WbvAmgwUHLPe/aFB5Km3NZ/sS9qqE9G
+	oRdbmTVZy/br9If+v0RUGLMzzrg9t9JIXRfi6havRIcDReoDXy0wpZ59nrbzOqjd5dVGO3ng3pa
+	phVUQyDcn26z8/aCNU/o6JjoJ8J3CwCzY+dukZpYqscv6dl0VGmt6DY56OdGqXHyMslM=
+X-Gm-Gg: ASbGnctSMbQPipq9AIHSz5AOWctXaDfhOW/TYZNMvmCXpSZmgmHEQCOWq8+TYjJ3SUv
+	7JE2W4rGw58/cuxDSQktACt55HXuQN1xLgRbYQoM3D1WV6pcN/m/jbK61cEkct+Mgb0Od+816lt
+	FxcxIcj9pv+94Xqzh7gO5veB17dxYGpl8hNiXa5QNTOzcb0vAi+eNbq06vWdXUnZQWD0zQ+i1W7
+	So4cSV4MotEphK3hWwZ11tqqvwkIc5e2hrIVcZ6Gum0VcXVPia/Fpy5nhJjlWTutxNOgl25QGNH
+	/I73nFi9k8sW0LtWCQEzj9HIKex8OdE3d19cH5tyBkBfi/dmg0Cpxx+1qw19ENZavNh6YI8wfej
+	8eRE=
+X-Received: by 2002:a17:903:fa7:b0:26d:72f8:8d0a with SMTP id d9443c01a7336-28e9a546107mr157426345ad.12.1759757173863;
+        Mon, 06 Oct 2025 06:26:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFFCL9tEe0bUa/fsgaePc+hDb76CeL+9swiqptY7n40Bj6hjQm6jXL8R3obANVcrWL1Rq7DAw==
+X-Received: by 2002:a17:903:fa7:b0:26d:72f8:8d0a with SMTP id d9443c01a7336-28e9a546107mr157426005ad.12.1759757173382;
+        Mon, 06 Oct 2025 06:26:13 -0700 (PDT)
+Received: from hu-pkondeti-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d126ad9sm133655095ad.45.2025.10.06.06.26.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 06:26:13 -0700 (PDT)
+Date: Mon, 6 Oct 2025 18:56:06 +0530
+From: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>,
+        hrishabh.rajput@oss.qualcomm.com,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v2] watchdog: Add driver for Gunyah Watchdog
+Message-ID: <491de94c-e3c5-4f81-8e1a-82596413cede@quicinc.com>
+References: <20251006-gunyah_watchdog-v2-1-b99d41d45450@oss.qualcomm.com>
+ <3b901f9d-dbfa-4f93-a8d2-3e89bd9783c9@kernel.org>
+ <a7633abf-0005-423b-b152-e8c70aa5c27a@quicinc.com>
+ <b94d8ca3-af58-4a78-9a5a-12e3db0bf75f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [arm?] WARNING in copy_highpage
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: syzbot <syzbot+d1974fc28545a3e6218b@syzkaller.appspotmail.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, will@kernel.org,
- Kefeng Wang <wangkefeng.wang@huawei.com>
-References: <68dda1ae.a00a0220.102ee.0065.GAE@google.com>
- <aOACSWYIOD3llWnj@arm.com> <7af02ceb-563a-4bad-84ee-620aaa513bed@redhat.com>
- <aOPBdNLJUdN4EAF0@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <aOPBdNLJUdN4EAF0@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b94d8ca3-af58-4a78-9a5a-12e3db0bf75f@kernel.org>
+X-Proofpoint-GUID: 3V8L3bH9NeFOfrf2YmeCvrK02k42-4_2
+X-Proofpoint-ORIG-GUID: 3V8L3bH9NeFOfrf2YmeCvrK02k42-4_2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDEzNSBTYWx0ZWRfX4r7LuHyl2Bbl
+ n0+Ok1vn7NAvqxRGXKz4kak6t7DdanEIIlPnkDCvlMMvIsSVyEnxXpKRJoL0gbBEIUc64CoBfTu
+ VJo8ugZatafe7A4du+FWxFi7oCeR5IHW+i65gEr5FzwmZCFkjt5vnCGrNvQX/gZKJjyPtq4m0Bq
+ 5qxTjT/XXPLnpkd14ivSTlB1Vd6QP3VZXEKpFWDn8gkbaZc6J3aoRKWNSVGc7ul/ZO36blRJZ6s
+ Z71qT16a9PrRlc0JV07HqJchWOjs8gPnYhww9/fJW0fGEX/Op7A6mqXV2KKRlw5qa/X6nMiLaW4
+ gyH0tieylnaUBs2a9+I6oX91o2/EcDOYt8F7Q1V8b1pwXbC/8AQ+bk2zTFTBmp5m6b1ITDCzQSO
+ 4pNwtcO4tCi86FqtabBVzyJAjzgFpA==
+X-Authority-Analysis: v=2.4 cv=Hr572kTS c=1 sm=1 tr=0 ts=68e3c377 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=Jc37b2qoeXC1bbEKzk4A:9
+ a=CjuIK1q_8ugA:10 a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-06_04,2025-10-02_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 lowpriorityscore=0 priorityscore=1501
+ spamscore=0 bulkscore=0 impostorscore=0 phishscore=0 clxscore=1015
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
+ definitions=main-2510040135
 
-On 06.10.25 15:17, Catalin Marinas wrote:
-> On Mon, Oct 06, 2025 at 09:55:27AM +0200, David Hildenbrand wrote:
->>>> Modules linked in:
->>>> CPU: 1 UID: 0 PID: 25189 Comm: syz.2.7336 Not tainted syzkaller #0 PREEMPT
->>>> Hardware name: linux,dummy-virt (DT)
->>>> pstate: 00402009 (nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->>>> pc : copy_highpage+0x150/0x334 arch/arm64/mm/copypage.c:55
->>>> lr : copy_highpage+0xb4/0x334 arch/arm64/mm/copypage.c:25
->>>> sp : ffff800088053940
->>>> x29: ffff800088053940 x28: ffffc1ffc0acf800 x27: ffff800088053b10
->>>> x26: ffffc1ffc0acf808 x25: ffffc1ffc037b1c0 x24: ffffc1ffc037b1c0
->>>> x23: ffffc1ffc0acf800 x22: ffffc1ffc0acf800 x21: fff000002b3e0000
->>>> x20: fff000000dec7000 x19: ffffc1ffc037b1c0 x18: 0000000000000000
->>>> x17: fff07ffffcffa000 x16: ffff800080008000 x15: 0000000000000001
->>>> x14: 0000000000000000 x13: 0000000000000003 x12: 000000000006d9ad
->>>> x11: 0000000000000000 x10: 0000000000000010 x9 : 0000000000000000
->>>> x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
->>>> x5 : ffff800088053b18 x4 : ffff80008032df94 x3 : 00000000ff000000
->>>> x2 : 01ffc00003000001 x1 : 01ffc00003000001 x0 : 01ffc00003000001
->>>> Call trace:
->>>>    try_page_mte_tagging arch/arm64/include/asm/mte.h:93 [inline] (P)
->>>>    copy_highpage+0x150/0x334 arch/arm64/mm/copypage.c:55 (P)
->>>>    copy_mc_highpage include/linux/highmem.h:383 [inline]
->>>>    folio_mc_copy+0x44/0x6c mm/util.c:740
->>>>    __migrate_folio.constprop.0+0xc4/0x23c mm/migrate.c:851
->>>>    migrate_folio+0x1c/0x2c mm/migrate.c:882
->>>>    move_to_new_folio+0x58/0x144 mm/migrate.c:1097
->>>>    migrate_folio_move mm/migrate.c:1370 [inline]
->>>>    migrate_folios_move mm/migrate.c:1719 [inline]
->>>>    migrate_pages_batch+0xaf4/0x1024 mm/migrate.c:1966
->>>>    migrate_pages_sync mm/migrate.c:2023 [inline]
->>>>    migrate_pages+0xb9c/0xcdc mm/migrate.c:2105
->>>>    do_mbind+0x20c/0x4a4 mm/mempolicy.c:1539
->>>>    kernel_mbind mm/mempolicy.c:1682 [inline]
->>>>    __do_sys_mbind mm/mempolicy.c:1756 [inline]
->>>
->>> I don't think we ever stressed MTE with mbind before. I have a suspicion
->>> this problem has been around for some time.
->>>
->>> My reading of do_mbind() is that it ends up allocating pages for
->>> migrating into via alloc_migration_target_by_mpol() ->
->>> folio_alloc_mpol(). Pages returned should be untagged and uninitialised
->>> unless the PG_* flags have not been cleared on a prior free. Or
->>> migrate_pages_batch() somehow reuses some pages instead of reallocating.
->>
->> Staring at __migrate_folio(), I assume we can end up successfully calling
->> folio_mc_copy(), but then failing in __folio_migrate_mapping().
->>
->> Seems to be as easy as failing the folio_ref_freeze() in
->> __folio_migrate_mapping().
->>
->> We return -EAGAIN in that case, making the caller retry, stumbling into an
->> already-tagged page. (with the same source / destination parameters) IIRC)
->>
->> So likely this is simply us re-doing the copy after a migration failed after
->> the copy.
->>
->> Could it happen that we are calling it with a different source/destination
->> combination the second time? I don't think so, but I am not 100% sure.
+On Mon, Oct 06, 2025 at 10:03:59PM +0900, Krzysztof Kozlowski wrote:
+> On 06/10/2025 19:03, Pavan Kondeti wrote:
+> > On Mon, Oct 06, 2025 at 05:56:42PM +0900, Krzysztof Kozlowski wrote:
+> >> On 06/10/2025 16:37, Hrishabh Rajput via B4 Relay wrote:
+> >>> +
+> >>> +static int __init gunyah_wdt_init(void)
+> >>> +{
+> >>> +	struct arm_smccc_res res;
+> >>> +	struct watchdog_device *wdd;
+> >>> +	struct device_node *np;
+> >>> +	int ret;
+> >>> +
+> >>> +	np = of_find_compatible_node(NULL, NULL, "qcom,kpss-wdt");
+> >>> +	if (np) {
+> >>> +		of_node_put(np);
+> >>> +		return -ENODEV;
+> >>> +	}
+> >>> +
+> >>> +	np = of_find_compatible_node(NULL, NULL, "arm,sbsa-gwdt");
+> >>> +	if (np) {
+> >>> +		of_node_put(np);
+> >>> +		return -ENODEV;
+> >>> +	}
+> >>> +
+> >>> +	ret = gunyah_wdt_call(GUNYAH_WDT_STATUS, 0, 0, &res);
+> >>> +	if (ret)
+> >>> +		return -ENODEV;
+> >>
+> >> No, your hypervisor driver (which you have) should start the module via
+> >> adding platform/aux/something devices. Now you are running this on every
+> >> machine, which is clearly wrong...
+> >>
+> > 
+> > This is a good point. Thanks for bringing it up. We don't have a
+> > hypervisor glue driver (yet!) that can add an aux device. Based on v1
+> > feedback, we would like to be a standalone module that can self discover
+> > gunyah hypercall interface.
+> > 
+> > Currently this driver depends on ARCH_QCOM || COMPILE_TEST. So,
+> > technically this can be built and loaded on all non-Qualcomm machines.
 > 
-> Thanks David. I can now see how it would retry on the same pages without
-> reallocating. At least we know it's not causing any side-effects, only
-> messing up the MTE safety warnings.
+> 
+> Not technically, but practically. We do not make single-platform kernels
+> anymore, it's not 2010. Entire arm64 is multiarch.
 
-As long as the folio is not getting reused elsewhere, yes.
-
-I haven't fully understood yet if there could be cases where we use the 
-folio for another source. But I think it's not trivially possible, 
-because I think we allocate dst folios based on source-folio properties 
-(order, node, zone, etc).
+Thanks, I understand that we build single kernel image that works across
+machines. However, I wonder do all modules built say from
+arch/arm64/configs/defconfig gets loaded? Usually, the modules
+corresponding to drivers for which devices are registered (modalias
+based) gets loaded, correct? In this case, we don't have a device, so
+there may be an explicit rule to load this module. I totally get your
+point on why it would be preferred to make this module active only on
+QCOM platform.
 
 > 
->> The most reliable way would be to un-tag in case folio_mc_copy succeeded but
->> __folio_migrate_mapping() failed.
+> > 
+> > We can make the STATUS SMCC before looking for the other watchdog
+> > devices and fail early.
+> > 
+> > Our Gunyah glue driver [1] do make SMCC call to establish that we
+> > are actually a guest under Gunyah. Since our intention here is to
+> > support watchdog on as many as platform as possible, it is better not to
+> > tie this with glue driver and make it a stand alone and self discovery
+> > module.
 > 
-> Clearing an MTE specific flag in the core code doesn't look great. Also
-> going for some generic mask like PAGE_FLAGS_CHECK_AT_PREP may have
-> side-effects as we don't know where the page is coming from (we have
-> those get_new_folio()/put_new_folio() arguments passed on by higher up
-> callers).
+> 
+> I think you should have only one driver pinging for Gunyah, so glue
+> driver or this. Not both. If you add such SMC here, then how do you
+> determine the platform in the glue driver? Via DT? Then DT supersedes this.
 
-As an alternative, I would probably have done something like providing a 
-simple folio_mc_copy_abort().
+The SMCC that this module would be using is specific to Gunyah watchdog
+interface. So there is no real dependency w/ Gunyah glue driver. I
+understand your point that there should not be two drivers probing the
+watchdog.
 
 > 
-> I'm tempted to just drop the warning in the arm64 copy_highpage(),
-> replace it with a comment about migration retrying on a potentially
-> tagged page. It will have to override the tags each time (as it
-> currently does but also warns).
+> > 
+> > If this is not an acceptable solution (Please let us know), we can find other 
+> > ways to limit it to only work on Qualcomm machines. For ex: Socinfo
+> > platform device is added from SMEM driver which make it only probed on 
+> > Qualcomm machines. We can look into this. 
+> 
+> 
+> To me socinfo feels even better. That way only, really only qcom devices
+> will execute this SMC.
+> 
 
-Works for me. Maybe we could warn if the tag would change, because I 
-think after we unmapped the folio during migration, the tag can no 
-longer change.
+Ok, we will look into this.
 
--- 
-Cheers
-
-David / dhildenb
-
+Thanks,
+Pavan
 
