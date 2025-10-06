@@ -1,179 +1,251 @@
-Return-Path: <linux-kernel+bounces-843537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B2F3BBFADA
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 00:22:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F896BBFAEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 00:22:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 714EE189E0E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 22:22:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9FA4189E1E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 22:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908DC2E0410;
-	Mon,  6 Oct 2025 22:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C93B217F36;
+	Mon,  6 Oct 2025 22:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bEZcXWu8"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VFNfrcD2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5ED2DF153
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 22:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942002B9A7;
+	Mon,  6 Oct 2025 22:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759789226; cv=none; b=YvfaMhoXoUVEPWvflKD+vxnyv/Bk1qUrJcEpY6TC5owVzE1i4ix3bukjqRLNvsr1v4REQBS0KRTW1fnCPU1V/S/zJtOV4OWbZ65TsazT8yodsUekbyfkXcMoI/z+PuGp3QepiEPsq210c19UzyoWnhMaMk4od6co5T3XjAgA4jw=
+	t=1759789275; cv=none; b=W5xjS3P5BAY57gyryFqcVWsNWF7zqQBNu/Hd+z5hIhJdj3D4W3XKbE9qj6Yi2RfpjDKnEvy2NGd92nd+0HTGECsdIiZY/6Qr4g3CY8SRhfyxnO/tB7MRFG2o4z9RPcfpUf5ek5ug6on6aghlBWuD7LPNeX4GlkoaE6a1oeIbudM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759789226; c=relaxed/simple;
-	bh=KRfbO68RqNXGYUxEscJ9pAB4g2zVH9KTs2sCuSCOkhg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ppYTzqIvaYw2YI9xqzE63Mj9kkIFfgcmgpBZ5e5k+4AhpK0kFU0aoXXH0SgtIzsjfoHjJjSC/ZDn3v2bnEHpjVLfcJj1Ps7PVLuMTX57vSNcPltJf/p8FIiRzYXzk7EznSJz2nrySvVV8eRRfUHufmaPOYW1thohnXDEikcyf5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bEZcXWu8; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 596FChxp007705
-	for <linux-kernel@vger.kernel.org>; Mon, 6 Oct 2025 22:20:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=NVYsIQDhA8R
-	ySLuD9P7ecPi4IEalfEg3vxqe/TJrcfQ=; b=bEZcXWu8NYn46iYEKSdylzHMVZy
-	gooOnhtZQeHCkoXjGF/y0SKEH7q34nM08Ra7APR3HaFpGpUfSRnymRLhRyRsd5HS
-	utkBW1Wvn10t51JG9uRC7wrN66j9X7nRK3RRlf7CB5GDWH9hLW0wdDKRqu2Iv1Ap
-	zSSVk3Cpom/EAnpcJWyMYo6XNTHm454L4Ab93HbU7OagYHNByUwYFypcu+/6Mfpy
-	EEl8724bZapd/NQKFvUMpcfEfZaBTT02iuaxcKfnACJsEg1DxtQoLZh3C6wi4tu1
-	enmxOhzdg7rtPBqZWcDR+P7FiUizwnSLDgrL2rVCfZKZdaIX+84nShcPcNw==
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jut1n9yq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 22:20:22 +0000 (GMT)
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-780f82484faso3734948b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 15:20:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759789221; x=1760394021;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NVYsIQDhA8RySLuD9P7ecPi4IEalfEg3vxqe/TJrcfQ=;
-        b=Gc0tyIvZ7Jo8HZRclqjM63464mACDfIJMX3g9VkvpMn9r5ZnL2w/3IAWPgqEbwNOwy
-         C7MRYppS9Yl3spq2yV8Df6mSGtO0tnsgimJgUVIiPBEbOf3qA79V7mM8Uqbp8PcOTmv1
-         tThZ51hmhQ8rCi0d9W5B83rIS1AlgUAU6iRJNywGNh1XEoFZTJMEGJt4O2Y8r0iEqucR
-         wrcP3Gdn9x3E8APwnrjY1MbcXxCcHGT8nQfksrGPttG7s/h87Jsc6bfxKduRwjSy5RZb
-         XObD1QbG74HwPA0xTMon2/kL/BXInyYHTfotEDx9xLQds0ltu8ZQ3PEVfOiE5TlaJbR5
-         aXAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGXVpCAMgHYrKHrEfPO1NVtRviYYWvuuAvGVdKYGn3kr0o9XAz9oyfjy001ip2Fjk7RJZ2uOHKIAcr8PQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzik1UOjXg/ZvNl3T/2bnT+2gyOrQRhmvj1MSiCASbJpvc4EKHT
-	fendgNqwc7DZBQKVGMcO9BYbPirWLFMGznEuNg2qDXP9h4RyJVsxPJgmHlDRQPsCJhUevABD3uI
-	9BLG6uocD8KeLg73Q7PTn6c3DUDvUnLSLpyFJ7RDoTq/Godjeaisp+RYBdJ8BY0GIuD4=
-X-Gm-Gg: ASbGncti1f2vEcmJ9neh41+1Qj366nx4YKBrDoDpTxNJH+fsoHE5+WmvO07XE70s0yF
-	PEHwQFcv5qLughk3mCNjt5rcVcbUWme8XfQvgXtjGkdHkDsRu0skY0l50AnnI7CFlop7CNm2OGg
-	tDiBg4NBrYRc804Z8+15uUF88J6eALWCVVWXcHgE5s0UVwxr4JUgmY59fEHfjxnbrjrF0baKunN
-	+z6g6Uu8+yB3z+1uISHxaGQ3ttJqvMCxVDutOFOtLZu7vOYXNQ4QwA32pbz2o9eUR1JCxDJKaev
-	KYEtctbYJ+bfKaulcHHSow8fFRtEZQIf25WyblPaFbTsfh47pYNlcsqm0iy5P+C+yuvXV/Y9ieK
-	i6MdYwsQCzVTA2OCIDieXOg==
-X-Received: by 2002:a05:6a00:2ea7:b0:781:24ec:c8f4 with SMTP id d2e1a72fcca58-78c98d3303amr13937022b3a.3.1759789221386;
-        Mon, 06 Oct 2025 15:20:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEmbjvu8YGs2epcEfo1RGDSZj+PsWdieVwkMJHJiW2v7Dd75B2hyrpkavb8BTk22/5l9Ds/9Q==
-X-Received: by 2002:a05:6a00:2ea7:b0:781:24ec:c8f4 with SMTP id d2e1a72fcca58-78c98d3303amr13936990b3a.3.1759789220852;
-        Mon, 06 Oct 2025 15:20:20 -0700 (PDT)
-Received: from hu-wcheng-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b01fb281bsm13734968b3a.37.2025.10.06.15.20.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 15:20:20 -0700 (PDT)
-From: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
-To: krzk+dt@kernel.org, conor+dt@kernel.org, konrad.dybcio@oss.qualcomm.com,
-        dmitry.baryshkov@oss.qualcomm.com, kishon@kernel.org, vkoul@kernel.org,
-        gregkh@linuxfoundation.org, robh@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Wesley Cheng <wesley.cheng@oss.qualcomm.com>
-Subject: [PATCH v5 10/10] phy: qualcomm: eusb2-repeater: Add SMB2370 eUSB2 repeater support
-Date: Mon,  6 Oct 2025 15:20:02 -0700
-Message-Id: <20251006222002.2182777-11-wesley.cheng@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251006222002.2182777-1-wesley.cheng@oss.qualcomm.com>
-References: <20251006222002.2182777-1-wesley.cheng@oss.qualcomm.com>
+	s=arc-20240116; t=1759789275; c=relaxed/simple;
+	bh=y9HkAkMswhuhnlObmY879hYAYn5iP/hSOUaR/NYB2Ms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NqxWTElAmumunWxUNWntifnHQEouz+5yNZ/41u8BInjL2cFAStQsaeGjQ4RmkhL1at45c6xcrEjEQl8q+MyuFFNx9tzHHKfhcdrhTYgOAGelJgSy8xVufEsLC/bJmVGYjI9eGhgFFJOZUc4hrohlxyGt0j9UsQ+kA+G1RfnlbHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VFNfrcD2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CC2CC4CEF5;
+	Mon,  6 Oct 2025 22:21:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759789275;
+	bh=y9HkAkMswhuhnlObmY879hYAYn5iP/hSOUaR/NYB2Ms=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VFNfrcD2/2boUqakycWq4TlbFMTApjkUYi8DjvsiDpzm85PyxuQiuWX9Qkv3mlqwf
+	 7T8UZVNdBAPTbG2eELOgBrrBZ6I0jqDAjMLw7aVeqF4QGVfqlyGBBNbwY0/BfX2Mpr
+	 NOD6rPyi4OmcgOqxcT8golJ7xV73/9WTIGTu2IY/zfx2AR0SZODIRAKVqvQIc6LGHO
+	 kGF4XsN/Oa61ChgQmX0etTDTarcF1Nw2E2hdKZdTw9I6BQ/SHx/xJB+ib1V1kIJyGC
+	 /BSxGwNIUnaC2xi0psmWHIopi5S4NMEpNbpapuwdsdX7uMxYvMS5shyQ2P9mOp3muH
+	 tmx7NwjI2FWEw==
+Message-ID: <6492e444-4196-4900-a741-a74a8c506a6d@kernel.org>
+Date: Mon, 6 Oct 2025 23:21:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: VRXYLBnbPsQSmiXfdMFNv5h-vFhGjGZy
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAyNyBTYWx0ZWRfX8dYpLKIErjwD
- I9feGQmxSDbiD5z78Vv967nVoPQot2x2Wzh41915tbe6b4ClnIr3g8Fs6ZrEklGGDfPUuoVGKbG
- 3ieY9ez6Fq5HocuIWYp/dIUiOhLIeXKLUJjWE4h4+kYxmrrUD3pqc87moFv9J2sAG2NeD43dj88
- 96xa0xIeNGkSVR72Q97FQ8VykxcWZW4XFoDasL5me1IKqRkE3bIVdYyiAtD8yav3mKfSrfQhohQ
- 2HLBWxD64S5MopaOGSRt/E3TUTqtfb0jLVJ1w6nMdKQ+BtSfkR/7FFCaTS6jnpMlEr6lEKwOvnz
- t0eQnfNP7X0HZBY/R43fpNXmr3T1RZSHGlRtD5lyMJ/22+38h3fjRHEuGc9iIhSsyj4fRqwrzHk
- Q/ggZzgg7TF3Vgp4xP0zkV85AbZFHg==
-X-Authority-Analysis: v=2.4 cv=Vqcuwu2n c=1 sm=1 tr=0 ts=68e440a6 cx=c_pps
- a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=Zq12RZiOzp0PcbRnEbUA:9
- a=IoOABgeZipijB_acs4fv:22
-X-Proofpoint-ORIG-GUID: VRXYLBnbPsQSmiXfdMFNv5h-vFhGjGZy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-06_06,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 adultscore=0 malwarescore=0 spamscore=0 priorityscore=1501
- suspectscore=0 bulkscore=0 clxscore=1015 impostorscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040027
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 3/6] ASoC: soc: qcom: sc8280xp: add support for I2S
+ clocks
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+ Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20251006-topic-sm8x50-next-hdk-i2s-v1-0-184b15a87e0a@linaro.org>
+ <20251006-topic-sm8x50-next-hdk-i2s-v1-3-184b15a87e0a@linaro.org>
+Content-Language: en-US
+From: Srinivas Kandagatla <srini@kernel.org>
+In-Reply-To: <20251006-topic-sm8x50-next-hdk-i2s-v1-3-184b15a87e0a@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Introduce support for the SMB2370 based eUSB2 repeater.  Configure the
-proper repeater tuning settings, as if this is not done correctly, it
-can lead to instability on the USB2 link, which leads to USB2
-enumeration failures, or random disconnects.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Signed-off-by: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
----
- drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c b/drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c
-index 651a12b59bc8..441996480a67 100644
---- a/drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c
-+++ b/drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c
-@@ -75,6 +75,13 @@ static const struct eusb2_repeater_init_tbl_reg smb2360_init_tbl[] = {
- 	{ EUSB2_TUNE_USB2_PREEM, 0x2 },
- };
- 
-+static const struct eusb2_repeater_init_tbl_reg smb2370_init_tbl[] = {
-+	{ EUSB2_TUNE_IUSB2, 0x4 },
-+	{ EUSB2_TUNE_SQUELCH_U, 0x3 },
-+	{ EUSB2_TUNE_USB2_SLEW, 0x7 },
-+	{ EUSB2_TUNE_USB2_PREEM, 0x0 },
-+};
-+
- static const struct eusb2_repeater_cfg pm8550b_eusb2_cfg = {
- 	.init_tbl	= pm8550b_init_tbl,
- 	.init_tbl_num	= ARRAY_SIZE(pm8550b_init_tbl),
-@@ -97,6 +104,13 @@ static const struct eusb2_repeater_cfg smb2360_eusb2_cfg = {
- 	.num_vregs	= ARRAY_SIZE(pm8550b_vreg_l),
- };
- 
-+static const struct eusb2_repeater_cfg smb2370_eusb2_cfg = {
-+	.init_tbl	= smb2370_init_tbl,
-+	.init_tbl_num	= ARRAY_SIZE(smb2370_init_tbl),
-+	.vreg_list	= pm8550b_vreg_l,
-+	.num_vregs	= ARRAY_SIZE(pm8550b_vreg_l),
-+};
-+
- static int eusb2_repeater_init_vregs(struct eusb2_repeater *rptr)
- {
- 	int num = rptr->cfg->num_vregs;
-@@ -278,6 +292,10 @@ static const struct of_device_id eusb2_repeater_of_match_table[] = {
- 		.compatible = "qcom,smb2360-eusb2-repeater",
- 		.data = &smb2360_eusb2_cfg,
- 	},
-+	{
-+		.compatible = "qcom,smb2370-eusb2-repeater",
-+		.data = &smb2370_eusb2_cfg,
-+	},
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, eusb2_repeater_of_match_table);
+On 10/6/25 7:37 PM, Neil Armstrong wrote:
+> Add support for getting the I2S clocks used for the MI2S
+> interfaces, and enable/disable the clocks on the PCM
+> startup and shutdown card callbacks.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  sound/soc/qcom/sc8280xp.c | 104 +++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 103 insertions(+), 1 deletion(-)
+> 
+> diff --git a/sound/soc/qcom/sc8280xp.c b/sound/soc/qcom/sc8280xp.c
+> index 78e327bc2f07767b1032f09af7f45b947e7eb67a..ad4ee5c6fab8994f18de572842f3dab6f4f5397e 100644
+> --- a/sound/soc/qcom/sc8280xp.c
+> +++ b/sound/soc/qcom/sc8280xp.c
+> @@ -4,6 +4,8 @@
+>  #include <dt-bindings/sound/qcom,q6afe.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/clk.h>
+> +#include <linux/of_clk.h>
+>  #include <sound/soc.h>
+>  #include <sound/soc-dapm.h>
+>  #include <sound/pcm.h>
+> @@ -15,12 +17,16 @@
+>  #include "common.h"
+>  #include "sdw.h"
+>  
+> +#define I2S_MAX_CLKS	5
+> +
+>  struct sc8280xp_snd_data {
+>  	bool stream_prepared[AFE_PORT_MAX];
+>  	struct snd_soc_card *card;
+>  	struct sdw_stream_runtime *sruntime[AFE_PORT_MAX];
+>  	struct snd_soc_jack jack;
+>  	struct snd_soc_jack dp_jack[8];
+> +	struct clk *i2s_clk[I2S_MAX_CLKS];
+> +	struct clk *i2s_mclk[I2S_MAX_CLKS];
+>  	bool jack_setup;
+>  };
+>  
+> @@ -68,12 +74,66 @@ static int sc8280xp_snd_init(struct snd_soc_pcm_runtime *rtd)
+>  	return qcom_snd_wcd_jack_setup(rtd, &data->jack, &data->jack_setup);
+>  }
+>  
+> +static int sc8280xp_snd_i2s_index(struct snd_soc_dai *dai)
+> +{
+> +	switch (dai->id) {
+> +	case PRIMARY_MI2S_RX..PRIMARY_MI2S_TX:
+> +		return 0;
+> +	case  SECONDARY_MI2S_RX.. SECONDARY_MI2S_TX:
+> +		return 1;
+> +	case TERTIARY_MI2S_RX..TERTIARY_MI2S_TX:
+> +		return 2;
+> +	case QUATERNARY_MI2S_RX..QUATERNARY_MI2S_TX:
+> +		return 3;
+> +	case QUINARY_MI2S_RX..QUINARY_MI2S_TX:
+> +		return 4;
+> +	default:
+> +		return -1;
+> +	}
+> +}
+> +
+> +static int sc8280xp_snd_startup(struct snd_pcm_substream *substream)
+> +{
+> +	unsigned int codec_dai_fmt = SND_SOC_DAIFMT_BC_FC | SND_SOC_DAIFMT_NB_NF | SND_SOC_DAIFMT_I2S;
+> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+> +	struct sc8280xp_snd_data *pdata = snd_soc_card_get_drvdata(rtd->card);
+> +	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
+> +	struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
+> +	int index;
+> +
+> +	switch (cpu_dai->id) {
+> +	case PRIMARY_MI2S_RX...QUATERNARY_MI2S_TX:
+> +	case QUINARY_MI2S_RX...QUINARY_MI2S_TX:
+> +		index = sc8280xp_snd_i2s_index(cpu_dai);
+
+What is the mclk and bitclk rate set here, we can not rely on the
+default rate.
+--srini
+> +		clk_enable(pdata->i2s_mclk[index]);
+> +		clk_enable(pdata->i2s_clk[index]);
+> +		snd_soc_dai_set_fmt(codec_dai, codec_dai_fmt);
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +
+> +	return qcom_snd_sdw_startup(substream);
+> +}
+> +
+>  static void sc8280xp_snd_shutdown(struct snd_pcm_substream *substream)
+>  {
+>  	struct snd_soc_pcm_runtime *rtd = snd_soc_substream_to_rtd(substream);
+>  	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
+>  	struct sc8280xp_snd_data *pdata = snd_soc_card_get_drvdata(rtd->card);
+>  	struct sdw_stream_runtime *sruntime = pdata->sruntime[cpu_dai->id];
+> +	int index;
+> +
+> +	switch (cpu_dai->id) {
+> +	case PRIMARY_MI2S_RX..TERTIARY_MI2S_RX:
+> +	case QUINARY_MI2S_RX...QUINARY_MI2S_TX:
+> +		index = sc8280xp_snd_i2s_index(cpu_dai);
+> +		clk_disable(pdata->i2s_clk[index]);
+> +		clk_disable(pdata->i2s_mclk[index]);
+> +		break;
+> +	default:
+> +		break;
+> +	}
+>  
+>  	pdata->sruntime[cpu_dai->id] = NULL;
+>  	sdw_release_stream(sruntime);
+> @@ -141,7 +201,7 @@ static int sc8280xp_snd_hw_free(struct snd_pcm_substream *substream)
+>  }
+>  
+>  static const struct snd_soc_ops sc8280xp_be_ops = {
+> -	.startup = qcom_snd_sdw_startup,
+> +	.startup = sc8280xp_snd_startup,
+>  	.shutdown = sc8280xp_snd_shutdown,
+>  	.hw_params = sc8280xp_snd_hw_params,
+>  	.hw_free = sc8280xp_snd_hw_free,
+> @@ -162,6 +222,44 @@ static void sc8280xp_add_be_ops(struct snd_soc_card *card)
+>  	}
+>  }
+>  
+> +static const char * const i2s_bus_names[I2S_MAX_CLKS] = {
+> +	"primary",
+> +	"secondary",
+> +	"tertiary",
+> +	"quaternary",
+> +	"quinary",
+> +};
+> +
+> +static int sc8280xp_get_i2c_clocks(struct platform_device *pdev,
+> +				   struct sc8280xp_snd_data *data)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	int i;
+> +
+> +	if (!device_property_present(dev))
+> +		return 0;
+> +
+> +	for (i = 0; i < I2S_MAX_CLKS; ++i) {
+> +		char name[16];
+> +
+> +		snprintf(name, 16, "%s-mi2s", i2s_bus_names, i);
+> +		data->i2s_clk[i] = devm_clk_get_optional_prepared(dev, name);
+> +		if (IS_ERR(data->i2s_clk[i]))
+> +			return dev_err_probe(dev, PTR_ERR(data->i2s_clk[i]),
+> +					     "unable to get %s clock\n",
+> +					     name);
+> +
+> +		snprintf(name, 16, "%s-mclk", i2s_bus_names, i);
+> +		data->i2s_mclk[i] = devm_clk_get_optional_prepared(dev, name);
+> +		if (IS_ERR(data->i2s_mclk[i]))
+> +			return dev_err_probe(dev, PTR_ERR(data->i2s_mclk[i]),
+> +					     "unable to get %s clock\n",
+> +					     name);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int sc8280xp_platform_probe(struct platform_device *pdev)
+>  {
+>  	struct snd_soc_card *card;
+> @@ -185,6 +283,10 @@ static int sc8280xp_platform_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
+>  
+> +	ret = sc8280xp_get_i2c_clocks(pdev, data);
+> +	if (ret)
+> +		return ret;
+> +
+>  	card->driver_name = of_device_get_match_data(dev);
+>  	sc8280xp_add_be_ops(card);
+>  	return devm_snd_soc_register_card(dev, card);
+> 
+
 
