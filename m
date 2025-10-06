@@ -1,143 +1,203 @@
-Return-Path: <linux-kernel+bounces-842902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8FE9BBDEE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 13:55:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFF3BBBDEEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 13:56:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 66B8F4EB9F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 11:55:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 76DC44E1654
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 11:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC80A26A0F8;
-	Mon,  6 Oct 2025 11:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A65275AFA;
+	Mon,  6 Oct 2025 11:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="1B+Ndkfz"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b="uGBW4ypu"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75D22594BD
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 11:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9801D275845
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 11:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759751716; cv=none; b=MgUFHDReF86uwSwKdGHQAUJC4+w0zL34jdXjW+0yVhfTp0Wm4xuLbx84xbAa+dcyqTOnqTvtlKUR1N6McGY0AssULmrUCCMjZvoWHocP9E/DBRxXOIWv+HJRGGxn3OJr6ddWSz4R92aNcb2SysJ7Zc1om41zyZP1R4j3Xg1SRBc=
+	t=1759751781; cv=none; b=iqAjtYvdBSndD6dj4ny4d4zyrTbv5ayDwewdWpaIFt5DSdVcgn/8gWMvidPz4Lq8W3hOb53ron51oKdLJ8NSC/MX1qA4nD8stznwnQAe6L4gzD6o1hqLUlPXuCIEvI8wWivBpy1Zprgedg9eZ3H5JfuBqWEbj1kzVrit0lt+3x8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759751716; c=relaxed/simple;
-	bh=o88ha/e4gk/j47+reFyIn+VgsrMXI5uaxH81XcB5pnY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nlN8by3eIuEsEVEKizBzRRASMxJC7NHPJxH4eM4GSH0dF5SGP21uaHn9aPvxoSc+SqzkpyJJFx4p7Cmhq8/xKjQOuDXogHaSLvCsamQ9y6M6W1iZ86qkTZUm9zR2ZF0p4aZ8OfnftLZIZDsxbvTm1m/yLBvliz58T9cHeHFrhdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=1B+Ndkfz; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-3696f1d5102so26811281fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 04:55:14 -0700 (PDT)
+	s=arc-20240116; t=1759751781; c=relaxed/simple;
+	bh=wrbHTVgjTq2O8XParlMCWpyu37Ui/UVjk417+ozSffY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R7SCDYLMcCRSglfaHNla0Qm2/GNjHnsIdWPEmHmd3QiHZRXC9dGi9NCK4UQh1iywaQy/ly9IS8aDyB69VYXAXIFEWZtwLz/ijql2k9ijJMRiPAvSSWN0+AwoXLIV1wBpjIkE0OL8axLhepbTunN5IUUairyxB8L3XL2rRj69/m4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com; spf=none smtp.mailfrom=readmodwrite.com; dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b=uGBW4ypu; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=readmodwrite.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3f99ac9acc4so4297222f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 04:56:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1759751713; x=1760356513; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o88ha/e4gk/j47+reFyIn+VgsrMXI5uaxH81XcB5pnY=;
-        b=1B+NdkfzkKQImgJQQdFsgUKPpm8sBT3nizg6TZCsth3g6ipK1whKp5EaPdCR3SKyrj
-         rRHbCnQ9D3FKPIbu7B1+CCNAcQ7mC3/cgjs+aL01zXGYynq5zeGzP2Sgu4LKEU7H+ghG
-         BKBT2Vj1nl5PdArvm+xbi495HG80nQxdIWjCCgWnj1no0USINVQpoSP4EyyfHE1rHsAB
-         7sP0OzVUR7gA5JBvFDjsqC/Wxqv+AFxQv/DaGLgFAhgSlc6eOO1mVyg/N0mqlA2GIe5l
-         jX/6ZOkqGpYzNVBppW28NuoAWD2hqjYlsXMQcOWjgHHlOm7VOjXesOS/2BoTidx5br08
-         qEqQ==
+        d=readmodwrite-com.20230601.gappssmtp.com; s=20230601; t=1759751778; x=1760356578; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3nbV5f3XstJLy0t8dFU+ULrkXIa5z+4WHcRiH+hJ6r0=;
+        b=uGBW4ypu9qZztNYMii3UQuwE6a8QChNiNYr86UHjoMvm9hoC0pgON4tfxCntCnF4PF
+         HV7gVw6Up3Nlg/4L0svu3+ze8WuDMrNaeXq57U43WEQ22fwYs891nXmSHDulDo42mL2P
+         umOGqqolU17vBjRjUAv0qdh9toWXT1zEndmpqgJvq9PJEiq6MrCLLadxa1ZVCkj5WLB2
+         S62MLKel7VtDYwaCpT36f63D1pOSM+eow4ov0ZMjIBvPJxwX5H+04LH7/2Gd2ieUzmGD
+         5RUSKsSuM/61y3hzqAR8wfOvjh+s8opK80s1OtD73Kg8Fp+DYSuxTVviOvHlQnSJUOlr
+         8HGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759751713; x=1760356513;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o88ha/e4gk/j47+reFyIn+VgsrMXI5uaxH81XcB5pnY=;
-        b=wDSmBz5x2bkkTTc5XGgb9Qu9uiugAuWFzPS0IAUnfZNKUnUUwTxaRAy4va2xg8gMDK
-         78rTfUBh+cn8dVxtb4xvn83MW0QY0FRo2cffm2CssttyTcPZH7bJMndCzOCJlePwyFlm
-         qr/x7eFgFLUxwJDguZThHSGUrt94sddSzI6zM1VHJzTl0v/p8PNndIa4VEO3KQ7frLBP
-         b8vcRLLluVKVWk3gwF3iJZFVm+aXjhDCBYLLV+31HwASdPRRZRTc+iPHHsQ1Dsnxtovs
-         3mc+200PkVHj2pKm9IV6wBpFYYYhtbSlC9nzE8r6t3/+6xweWxQIITLrj4BUZOhP14XW
-         CbOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJvfPWcA0lXGfRqHKePTQV22/DB3yqUIJngFTOEyKNI2bN6MX0BXYg6mTJMxKUP8pP1/90wZLA/+SHNqs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx28je5z83dMfXbUxhQGSHOvezqXBdI02Zkk4suChzzKiC9pqez
-	uHTjzv6IrnBB2UivwDF8mTT8zWEoQ4HV++EqsnRAxIGrzax/wN18txSRSrfzc2766O3HggS5lK1
-	rtcw42THnMRXOoofwSNOalIlW5/rMyM8SiopMcKAlDw==
-X-Gm-Gg: ASbGncvrUW4E1mfG3suBA0lkf8MNEucp0Wgt9FNpshp/zuLreWpHe7kIBK1OVw0zyfg
-	Vb1yQSzyRpvYOKvqSLnKEuT9DayBuaE31JIGrkOs8lHhFQszYDIYMB5ngj+C618dvPVil0ra4Vr
-	0fGosZqe2w7CUgwP0t6WXVpmVx5wTu9IBcX4gbfuXQu+NdJrclmZkas7qiVMWLty09oVS88Qh5y
-	kl5GAmLe2AYJIWNMs+CKFzOEfKyVScoec2MNLMeZ/Mn3nqFB3g1Frb2pvuiA+0HRuQhPkOOiw==
-X-Google-Smtp-Source: AGHT+IFimUYcDrg2G1TEWgg30XOxFQcNPZ7in8UOx4Uq0QD6a7uE0edrd5tvO1JATw877D2GtEmmVeOuzKJjG1mqPQE=
-X-Received: by 2002:a05:651c:1b0f:b0:36f:4c94:b585 with SMTP id
- 38308e7fff4ca-374c3727355mr34984151fa.17.1759751712890; Mon, 06 Oct 2025
- 04:55:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759751778; x=1760356578;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3nbV5f3XstJLy0t8dFU+ULrkXIa5z+4WHcRiH+hJ6r0=;
+        b=sBLgZRBxYpDJto2gy+z3U1LO9krAfxj1od50l0kCNi8gvLQHZrK2kTzVna3aCzSA6r
+         fbBLF2Ao1puGAmxfekXbyKih4FfvePrQCx73+22xc8sSlnbPoVoqYbR1+Xwnn1Ax0Qhc
+         YGadI+Tul5FmxqKKGyUd7yB3MFm8NBYC5E2uqRRHyYj8oFEB28r+AB5ipMNOsk3QLDR/
+         Yi7HCXPYgitIVznncNzW/lCZLxXig5eQE8lW6MEkE4rbLMy0kGDxESe3xDx7OngWgKqa
+         GbY/NU9nn4fEl+4V6C6WLmQHN2mm8XEBqMEcoAltQuYlE3NaOfDCspcldID7gMydry6H
+         VLFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVXaCSA2chQwezBc1BFoYJ++7Mzjgdu6JakU+iEFEdhgItOfZZB5wVJgc4fHcppK+Ig5ydSzwg9h0kMuOI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZGIpiSgLCTA9qqYhWtEOwnWgYBmgYwUf6ekgyYX7cgBaylcUk
+	hcQI+Nbfip8KpjfuejGfvQ71E1ybVlm6YofTDbwI7Q3XoRtCOx/irruJfb9go7RprQU=
+X-Gm-Gg: ASbGncuJ0HCPIIL5lpqn2OKiWLkx7aDbDGJdl3/hSUfIBwa0/0gKh9DiC/LQBEzM+d3
+	QmS/YXozwnkV1gZBpTSynRM9/S0URpjuhwrhmjm1IXO6rJ8OR8D+vOFlu3q/h+LM+53INWLbreM
+	j6P3AzTWMmdzVFPCHjepRctFtSc6xaKmmiLxsKz4iDBKXKg8rcF6XV31dBBEdk+bDsCcM7pnz/e
+	m6Q4+QhOMtJ/JO7s7D+fV0MLbIqA2azDorLtB0b7DqAM4ZFqBovqHS/KSAswKo9daP8iS1HbR8C
+	89uu62NQDBz8pvIDmjsaTjg18ucmZbn46wN9MzRgwyaKqPG9qwkb0Iq4Qlv3X2Lv+65zAz4z6Kz
+	ujeqn7RD1ZY2Ekyy/c+YX/igpToThpy+OA9Jwr/P23l02oCVOcVpEvQAInQ==
+X-Google-Smtp-Source: AGHT+IHcu55JZb+QMGkTtdqsOpdfQTS9H0v4wFjgnm088OjhN8myHoA2yHtMbs7aZj1YDYIl3fN4uQ==
+X-Received: by 2002:a05:6000:604:b0:424:211a:4141 with SMTP id ffacd0b85a97d-42567165eabmr8187487f8f.27.1759751777806;
+        Mon, 06 Oct 2025 04:56:17 -0700 (PDT)
+Received: from matt-Precision-5490.. ([2a09:bac1:2880:f0::2e0:b5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e72343260sm154020345e9.4.2025.10.06.04.56.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 04:56:17 -0700 (PDT)
+From: Matt Fleming <matt@readmodwrite.com>
+To: Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>
+Cc: linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@cloudflare.com,
+	linux-fsdevel@vger.kernel.org,
+	Matthew Wilcox <willy@infradead.org>
+Subject: ext4 writeback performance issue in 6.12
+Date: Mon,  6 Oct 2025 12:56:15 +0100
+Message-Id: <20251006115615.2289526-1-matt@readmodwrite.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250924-gpio-shared-v1-0-775e7efeb1a3@linaro.org> <0b402bba-0399-4f93-873e-890a78570ff7@kernel.org>
-In-Reply-To: <0b402bba-0399-4f93-873e-890a78570ff7@kernel.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 6 Oct 2025 13:55:00 +0200
-X-Gm-Features: AS18NWCcgxeUyOPczJhdeT-2OxosYn-Q0vbiWg2Io_Y9VuYPbgrPQiw2FGc9xs8
-Message-ID: <CAMRc=MfwEHGV-HZQURR3JNg1HatAeWO17qbRmkWUXTSBWj5jSg@mail.gmail.com>
-Subject: Re: [PATCH RFC 0/9] gpio: improve support for shared GPIOs
-To: Srinivas Kandagatla <srini@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Andy Shevchenko <andy@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-hardening@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 4, 2025 at 3:32=E2=80=AFPM Srinivas Kandagatla <srini@kernel.or=
-g> wrote:
-> On 9/24/25 3:51 PM, Bartosz Golaszewski wrote:
-> > Here's a functional RFC for improving the handling of shared GPIOs in
-> > linux.
-> >
-> > Problem statement: GPIOs are implemented as a strictly exclusive
-> > resource in the kernel but there are lots of platforms on which single
-> > pin is shared by multiple devices which don't communicate so need some
-> > way of properly sharing access to a GPIO. What we have now is the
-> > GPIOD_FLAGS_BIT_NONEXCLUSIVE flag which was introduced as a hack and
-> > doesn't do any locking or arbitration of access - it literally just han=
-d
-> > the same GPIO descriptor to all interested users.
->
-> Isn't the main issue here is about not using a correct framework around
-> to the gpios that driver uses. ex: the codec usecase that you are
-> refering in this is using gpio to reset the line, instead of using a
-> proper gpio-reset control. same with some of the gpio-muxes. the problem
-> is fixed once such direct users of gpio are move their correct frameworks=
-.
->
+Hi,
 
-If they were called "reset-gpios" then we could (and should) use
-Krzysztof's reset-gpio driver here, but we have many cases where
-that's not the case and the names (and implied functions) are
-arbitrary. In the case addressed in this series, the GPIOs are called
-"powerdown". The second big user of nonexclusive GPIOs are fixed
-regulators where the line isn't called "reset" either. There are also
-various other uses sprinkled all over the kernel for which no good
-abstraction exists or can even be designed in a generic way.
+We're seeing writeback take a long time and triggering blocked task
+warnings on some of our database nodes, e.g.
 
-> Am not sure adding a abstraction with-in gpio framework is right
-> solution, But I do agree that NONEXCLUSIVE flags should disappear and
-> users that are using this should be moved to correct frameworks where
-> they belong.
->
+  INFO: task kworker/34:2:243325 blocked for more than 225 seconds.
+        Tainted: G           O       6.12.41-cloudflare-2025.8.2 #1
+  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+  task:kworker/34:2    state:D stack:0     pid:243325 tgid:243325 ppid:2      task_flags:0x4208060 flags:0x00004000
+  Workqueue: cgroup_destroy css_free_rwork_fn
+  Call Trace:
+   <TASK>
+   __schedule+0x4fb/0xbf0
+   schedule+0x27/0xf0
+   wb_wait_for_completion+0x5d/0x90
+   ? __pfx_autoremove_wake_function+0x10/0x10
+   mem_cgroup_css_free+0x19/0xb0
+   css_free_rwork_fn+0x4e/0x430
+   process_one_work+0x17e/0x330
+   worker_thread+0x2ce/0x3f0
+   ? __pfx_worker_thread+0x10/0x10
+   kthread+0xd2/0x100
+   ? __pfx_kthread+0x10/0x10
+   ret_from_fork+0x34/0x50
+   ? __pfx_kthread+0x10/0x10
+   ret_from_fork_asm+0x1a/0x30
+   </TASK>
 
-I'm open to suggestions but DT maintainers have not been particularly
-fond of creating "virtual" devices to accommodate driver
-implementations.
+A large chunk of system time (4.43%) is being spent in the following
+code path:
 
-Bartosz
+   ext4_get_group_info+9
+   ext4_mb_good_group+41
+   ext4_mb_find_good_group_avg_frag_lists+136
+   ext4_mb_regular_allocator+2748
+   ext4_mb_new_blocks+2373
+   ext4_ext_map_blocks+2149
+   ext4_map_blocks+294
+   ext4_do_writepages+2031
+   ext4_writepages+173
+   do_writepages+229
+   __writeback_single_inode+65
+   writeback_sb_inodes+544
+   __writeback_inodes_wb+76
+   wb_writeback+413
+   wb_workfn+196
+   process_one_work+382
+   worker_thread+718
+   kthread+210
+   ret_from_fork+52
+   ret_from_fork_asm+26
+
+That's the path through the CR_GOAL_LEN_FAST allocator.
+
+The primary reason for all these cycles looks to be that we're spending
+a lot of time in ext4_mb_find_good_group_avg_frag_lists(). The fragment
+lists seem quite big and the function fails to find a suitable group
+pretty much every time it's called either because the frag list is empty
+(orders 10-13) or the average size is < 1280 (order 9). I'm assuming it
+falls back to a linear scan at that point.
+
+  https://gist.github.com/mfleming/5b16ee4cf598e361faf54f795a98c0a8
+
+$ sudo cat /proc/fs/ext4/md127/mb_structs_summary
+optimize_scan: 1
+max_free_order_lists:
+	list_order_0_groups: 0
+	list_order_1_groups: 1
+	list_order_2_groups: 6
+	list_order_3_groups: 42
+	list_order_4_groups: 513
+	list_order_5_groups: 62
+	list_order_6_groups: 434
+	list_order_7_groups: 2602
+	list_order_8_groups: 10951
+	list_order_9_groups: 44883
+	list_order_10_groups: 152357
+	list_order_11_groups: 24899
+	list_order_12_groups: 30461
+	list_order_13_groups: 18756
+avg_fragment_size_lists:
+	list_order_0_groups: 108
+	list_order_1_groups: 411
+	list_order_2_groups: 1640
+	list_order_3_groups: 5809
+	list_order_4_groups: 14909
+	list_order_5_groups: 31345
+	list_order_6_groups: 54132
+	list_order_7_groups: 90294
+	list_order_8_groups: 77322
+	list_order_9_groups: 10096
+	list_order_10_groups: 0
+	list_order_11_groups: 0
+	list_order_12_groups: 0
+	list_order_13_groups: 0
+
+These machines are striped and are using noatime:
+
+$ grep ext4 /proc/mounts
+/dev/md127 /state ext4 rw,noatime,stripe=1280 0 0
+
+Is there some tunable or configuration option that I'm missing that
+could help here to avoid wasting time in
+ext4_mb_find_good_group_avg_frag_lists() when it's most likely going to
+fail an order 9 allocation anyway?
+
+I'm happy to provide any more details that might help.
+
+Thanks,
+Matt
 
