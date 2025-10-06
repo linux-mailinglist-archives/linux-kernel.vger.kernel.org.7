@@ -1,128 +1,230 @@
-Return-Path: <linux-kernel+bounces-843251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 729EABBEC2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:57:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AE40BBEC37
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 19:02:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2043918970E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:57:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78ED31896424
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 17:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E84D12D6E66;
-	Mon,  6 Oct 2025 16:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52527223DE8;
+	Mon,  6 Oct 2025 17:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cg8BEA2u"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NgLfsYlT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC512367AC;
-	Mon,  6 Oct 2025 16:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2FE1E511;
+	Mon,  6 Oct 2025 17:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759769831; cv=none; b=fpNVMu8AlRTAwGeVAdOAqmt76zZHgPycIxI5LVgjMAPBANUrKNGVoKVE8B8+CVfGHphMH7aHsclfv6RJw0mGdqR/l3wMkXfE9N80Gzxp5BMp8gpLPjWbXNTcBJo4aQ8V2wL9/1JPcpcSJ6CgUqJcel4D1awn2Uq2/zW3uuk1Mfk=
+	t=1759770110; cv=none; b=SB1M9pubQ3hsMM7LApXrnEDbdIMlz5ebs1lXC7WdmbkwjAragc/HmBmg2o2mUH0I5seIv427u0ncrobgYV16p3JVOl7U05Pk8IGe7WgGfocYh+J8NJhsGRzRp+TP66n0IpPZo85uRT/VkleyfbsTHROWlpkAvf7GJNnWryEL3hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759769831; c=relaxed/simple;
-	bh=MTyzOQ65D3yo+3oxCfSL27YKKf7wwGR9IB0zRc/aHMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pGa8si8sDElpCaV4gNDmnvBASZHmBfQBQMlVQ6fC7JFy231tE8SORy3B2RVAeVHDaVQjRnPCP88UoQHE+TshTdPrmM7zt7xJRa7SYpKBlqNJD6noT+uo83a3+53nB/p7tq2TsXQGjF1g6Y/+ZjvjzXhkd9Ju2tmVX5l+cPYou/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cg8BEA2u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47E9AC4CEF5;
-	Mon,  6 Oct 2025 16:57:09 +0000 (UTC)
+	s=arc-20240116; t=1759770110; c=relaxed/simple;
+	bh=MG1dcQMphQ748JndS811tTZbOvZl5viKUiBdA36kux8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=iJOQyagk1PvCjlFhH6MMCWYochbzXFCk/Nu/p/YW47Bi3n2IoOVb/LFDEDlG8MwqBB8WTZSMnxu03Kej0mjNWcgQC5ge4xyx71EpYsa1dpIj+fHiUVvGaRF+Uy+4Tyz2mfRsIfZBjxAvUR115++M4pNZXNoLFfU+b8gC0zouGaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NgLfsYlT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2E62C4CEF5;
+	Mon,  6 Oct 2025 17:01:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759769829;
-	bh=MTyzOQ65D3yo+3oxCfSL27YKKf7wwGR9IB0zRc/aHMg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cg8BEA2uCYLJeCBdRnpOQuodVhixbeBqCmGHjBgeD5gTn51vBh1KRrUGx2wxVXSY2
-	 urkOplG65teNQuRCOY585tgNBLLwSVnDn1oOr6Uo1VjYs1XHPO7zoIr2iam9G2uh7t
-	 rkMcEDGhX55TtBekhYzLI3DXJMKCDqDAAL6K+BeFsh8f7s8i1Y+RQ7hmQ/wFndAzs2
-	 pzzTy3Isa7kXQELe9s94p8P3tWJNjk3i3lBIou6RkFz/5VWSVkz7XiHK2Z4xXQI80i
-	 Fhkw+vqwnh7usf7kxEVir1Zs5b8Wi5KF30ooRdeCDs/rN3cPgSbcexvHvn3Clw7QwT
-	 URAlQbi5eTWPA==
-Date: Mon, 6 Oct 2025 19:57:05 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-v6.18
-Message-ID: <aOP04Yy3m23E4kjf@kernel.org>
-References: <aOKTFv1vh1cvvcLk@kernel.org>
- <CAHk-=wiCWiDcLEE3YqQo78piVHpwY2iXFW--6FbmFAURtor2+w@mail.gmail.com>
- <aOOu1f1QWQNtkl6c@kernel.org>
- <aOPOZwp_inGui9Bx@kernel.org>
- <125ba81bb222cdffef05ef9868c68002efd61235.camel@HansenPartnership.com>
- <aOPzovsBYlH3ojTR@kernel.org>
+	s=k20201202; t=1759770108;
+	bh=MG1dcQMphQ748JndS811tTZbOvZl5viKUiBdA36kux8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=NgLfsYlTgtpvDbSOm2NiGUojPOjwRGe/OH3C0JNNWeU0NeJOo51dJ2Ci9kDtEdQQe
+	 3k5DscndvUU0phiQ/ZHNvwhZrgX6lqwI5J/xlNMT8aZdV5u3WDO3VM8ATPykvRSGGT
+	 r5b1d+SHy8/FqS7MKcd7EdWJCNFHUCHjE9sfR1Z8e+WnV6oVs1zsX8KGWKj3S8B7Ik
+	 dfqxPViKr/BDk3+rzxCGaCa3H0MaJSLU2n1ptlHIv/2Y1ql7EfqnzAbEI1HB2hxOHp
+	 1IF9IgN+pr/DVwtODnsjwyUKJ4s19AHLk26ebEq26WDj2aZOB2f8yyO+hVGm27x+7w
+	 a51lxbN5OsjFQ==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org,  jasonmiu@google.com,  graf@amazon.com,
+  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
+  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
+  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
+  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
+  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
+  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
+  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
+  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
+  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
+  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
+  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com,
+  hughd@google.com,  skhawaja@google.com,  chrisl@kernel.org,
+  steven.sistare@oracle.com
+Subject: Re: [PATCH v4 03/30] kho: drop notifiers
+In-Reply-To: <20250929010321.3462457-4-pasha.tatashin@soleen.com> (Pasha
+	Tatashin's message of "Mon, 29 Sep 2025 01:02:54 +0000")
+References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
+	<20250929010321.3462457-4-pasha.tatashin@soleen.com>
+Date: Mon, 06 Oct 2025 19:01:37 +0200
+Message-ID: <mafs0tt0cnevi.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aOPzovsBYlH3ojTR@kernel.org>
+Content-Type: text/plain
 
-On Mon, Oct 06, 2025 at 07:51:51PM +0300, Jarkko Sakkinen wrote:
-> On Mon, Oct 06, 2025 at 10:33:40AM -0400, James Bottomley wrote:
-> > On Mon, 2025-10-06 at 17:12 +0300, Jarkko Sakkinen wrote:
-> > > 2. Null seed was extremely bad idea. The way I'm planning to actually
-> > >    fix this is to parametrize the primary key to a persistent key
-> > > handle
-> > >    stored into nvram of the chip instead of genration. This will
-> > > address
-> > >    also ambiguity and can be linked directly to vendor ceritifcate
-> > >    for e.g. to perfom remote attesttion.
-> > 
-> > Just a minute, there's been no discussion or debate about this on the
-> > list.  The rationale for using the NULL seed is clearly laid out here:
-> > 
-> > https://docs.kernel.org/security/tpm/tpm-security.html
-> > 
-> > But in brief it is the only way to detect reset attacks against the TPM
-> > and a reset attack is the single simplest attack an interposer can do.
-> > 
-> > If you think there's a problem with the approach, by all means let's
-> > have a debate, since TPM security is always a trade off, but you can't
-> > simply come to your own opinion and try to impose it by fiat without at
-> > least raising whatever issue you think you've found with the parties
-> > who contributed the code in the first place.
-> 
-> Ok fair enough, it's quite context dependent what is not secure and
-> what is secure.
-> 
-> What I've thought, or have planned to implement, is not to discard null
-> seed but instead parmetrize the primary key as a kernel command-line
-> parameter.
-> 
-> E.g. "tpm.integrity_key={off,null,handle}" and
-> "tpm.integrity_key_handle" to specify an NV index. The default value is
-> off and I think also that with this change and possibly with some
-> additional polishing it can reappear in default config,
-> 
-> This out of context for the PR but I will take your comment into account
-> in the pull request.
-> 
-> My main issue preventing sending a new pull request is that weird list
-> of core TPM2 features that is claimed "not to be required" with zero
-> references. Especially it is contraditory claim that TPM2_CreatePrimary
-> would be optional feature as the whole chip standard is based on three
-> random seeds from which primary keys are templated and used as root
-> keys for other keys.
-> 
-> So I guess I cherry-pick the claims from Chris' patch that I can cope
-> with, look what I wrote to my commit and adjust that accordingly and
-> finally write a tag message with summarization of all this. I exactly
-> drop the arguments with no quantitative evidence, which is probably
-> a sane way to move forward.
+On Mon, Sep 29 2025, Pasha Tatashin wrote:
 
-Personally I think that once there's correctly implemented command-line
-option, the feature flag is somewhat redundant (and we've never had one
-for /dev/tpmrm0). And it will help a lot with kernel QA as you can run
-tests with same kernel image without recompilation.
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+>
+> The KHO framework uses a notifier chain as the mechanism for clients to
+> participate in the finalization process. While this works for a single,
+> central state machine, it is too restrictive for kernel-internal
+> components like pstore/reserve_mem or IMA. These components need a
+> simpler, direct way to register their state for preservation (e.g.,
+> during their initcall) without being part of a complex,
+> shutdown-time notifier sequence. The notifier model forces all
+> participants into a single finalization flow and makes direct
+> preservation from an arbitrary context difficult.
+> This patch refactors the client participation model by removing the
+> notifier chain and introducing a direct API for managing FDT subtrees.
+>
+> The core kho_finalize() and kho_abort() state machine remains, but
+> clients now register their data with KHO beforehand.
+>
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+[...]
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index e23e16618e9b..c4b2d4e4c715 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+> @@ -2444,53 +2444,18 @@ int reserve_mem_release_by_name(const char *name)
+>  #define MEMBLOCK_KHO_FDT "memblock"
+>  #define MEMBLOCK_KHO_NODE_COMPATIBLE "memblock-v1"
+>  #define RESERVE_MEM_KHO_NODE_COMPATIBLE "reserve-mem-v1"
+> -static struct page *kho_fdt;
+> -
+> -static int reserve_mem_kho_finalize(struct kho_serialization *ser)
+> -{
+> -	int err = 0, i;
+> -
+> -	for (i = 0; i < reserved_mem_count; i++) {
+> -		struct reserve_mem_table *map = &reserved_mem_table[i];
+> -		struct page *page = phys_to_page(map->start);
+> -		unsigned int nr_pages = map->size >> PAGE_SHIFT;
+> -
+> -		err |= kho_preserve_pages(page, nr_pages);
+> -	}
+> -
+> -	err |= kho_preserve_folio(page_folio(kho_fdt));
+> -	err |= kho_add_subtree(ser, MEMBLOCK_KHO_FDT, page_to_virt(kho_fdt));
+> -
+> -	return notifier_from_errno(err);
+> -}
+> -
+> -static int reserve_mem_kho_notifier(struct notifier_block *self,
+> -				    unsigned long cmd, void *v)
+> -{
+> -	switch (cmd) {
+> -	case KEXEC_KHO_FINALIZE:
+> -		return reserve_mem_kho_finalize((struct kho_serialization *)v);
+> -	case KEXEC_KHO_ABORT:
+> -		return NOTIFY_DONE;
+> -	default:
+> -		return NOTIFY_BAD;
+> -	}
+> -}
+> -
+> -static struct notifier_block reserve_mem_kho_nb = {
+> -	.notifier_call = reserve_mem_kho_notifier,
+> -};
+>  
+>  static int __init prepare_kho_fdt(void)
+>  {
+>  	int err = 0, i;
+> +	struct page *fdt_page;
+>  	void *fdt;
+>  
+> -	kho_fdt = alloc_page(GFP_KERNEL);
+> -	if (!kho_fdt)
+> +	fdt_page = alloc_page(GFP_KERNEL);
+> +	if (!fdt_page)
+>  		return -ENOMEM;
+>  
+> -	fdt = page_to_virt(kho_fdt);
+> +	fdt = page_to_virt(fdt_page);
+>  
+>  	err |= fdt_create(fdt, PAGE_SIZE);
+>  	err |= fdt_finish_reservemap(fdt);
+> @@ -2499,7 +2464,10 @@ static int __init prepare_kho_fdt(void)
+>  	err |= fdt_property_string(fdt, "compatible", MEMBLOCK_KHO_NODE_COMPATIBLE);
+>  	for (i = 0; i < reserved_mem_count; i++) {
+>  		struct reserve_mem_table *map = &reserved_mem_table[i];
+> +		struct page *page = phys_to_page(map->start);
+> +		unsigned int nr_pages = map->size >> PAGE_SHIFT;
+>  
+> +		err |= kho_preserve_pages(page, nr_pages);
+>  		err |= fdt_begin_node(fdt, map->name);
+>  		err |= fdt_property_string(fdt, "compatible", RESERVE_MEM_KHO_NODE_COMPATIBLE);
+>  		err |= fdt_property(fdt, "start", &map->start, sizeof(map->start));
+> @@ -2507,13 +2475,14 @@ static int __init prepare_kho_fdt(void)
+>  		err |= fdt_end_node(fdt);
+>  	}
+>  	err |= fdt_end_node(fdt);
+> -
+>  	err |= fdt_finish(fdt);
+>  
+> +	err |= kho_preserve_folio(page_folio(fdt_page));
+> +	err |= kho_add_subtree(MEMBLOCK_KHO_FDT, fdt);
+> +
+>  	if (err) {
+>  		pr_err("failed to prepare memblock FDT for KHO: %d\n", err);
+> -		put_page(kho_fdt);
+> -		kho_fdt = NULL;
+> +		put_page(fdt_page);
 
-BR, Jarkko
+This adds subtree to KHO even if the FDT might be invalid. And then
+leaves a dangling reference in KHO to the FDT in case of an error. I
+think you should either do this check after
+kho_preserve_folio(page_folio(fdt_page)) and do a clean error check for
+kho_add_subtree(), or call kho_remove_subtree() in the error block.
+
+I prefer the former since if kho_add_subtree() is the one that fails,
+there is little sense in removing a subtree that was never added.
+
+>  	}
+>  
+>  	return err;
+> @@ -2529,13 +2498,6 @@ static int __init reserve_mem_init(void)
+>  	err = prepare_kho_fdt();
+>  	if (err)
+>  		return err;
+> -
+> -	err = register_kho_notifier(&reserve_mem_kho_nb);
+> -	if (err) {
+> -		put_page(kho_fdt);
+> -		kho_fdt = NULL;
+> -	}
+> -
+>  	return err;
+>  }
+>  late_initcall(reserve_mem_init);
+
+-- 
+Regards,
+Pratyush Yadav
 
