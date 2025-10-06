@@ -1,81 +1,80 @@
-Return-Path: <linux-kernel+bounces-843416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B31BBBF23F
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 22:03:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 841C7BBF242
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 22:03:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BF2574F1A06
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 20:03:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2DED3C4152
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 20:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D9B2DC764;
-	Mon,  6 Oct 2025 20:03:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA5C12D94A1;
+	Mon,  6 Oct 2025 20:03:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="izBSrTzq"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ndopRxne"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457DB2DC79D
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 20:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8782A2DE1F0
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 20:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759780990; cv=none; b=P/GNpudiw1PRr306BzAPKks0qJMfySR9vveB1cLimEb/88iHlAe0oe4OiTBstdx/KCjjye1zz2AEjBnNn3+MELJV2/S2q4b096P2AiXMN66TaQhXbtHE/mnH81URPIez8WCBgBdN7bKYckFhzoyWdyTfn2T+wuTrEvj/jm9nZCA=
+	t=1759780995; cv=none; b=rz1Jze6yrCFNpx+yzOeNR5s3OL6Hq5wGSnUWjfvE5fPIBzGF3DFpsy0UVJtwCJXBvvUbNZYBZbcoGtUflF5Oggt4lDg329yZ+nUZm4u/jB/cSW6jyS42+8qgMxdOlmmPlsunalKL0iH2lJRm8gj6vc81fHifGYi2L7U+mO+JIwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759780990; c=relaxed/simple;
-	bh=Sq9BZkzhI30LkCNbkX6MyuInjbp5KHwDN549JuJlWgw=;
+	s=arc-20240116; t=1759780995; c=relaxed/simple;
+	bh=9q7atItYA1TlcduEE3c+VIaxBOMZXl/TTmoi3n+8OJ8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NiZ20zI7DsIr1X5hmaquXReTR+YX6VrcptCzFaEsk5m9r/oF57t5n4XViPnf+C8hQ5uoMkp2moKu8Y39fArfikwGZIBlXays87OXbA5jiFz2YNNUxkqtXi5F8BODtNKzeEQ2I7tJ4aK+y6bmo0kZ+sZb8z4xfDHJXw50z7Ev+8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=izBSrTzq; arc=none smtp.client-ip=209.85.216.53
+	 In-Reply-To:To:Cc; b=D1b7fsFOlZFDadyjMdRikpP1412H5yOeNn/CK9GSEEkp2zfEO24u5xjLcOTLPC50KaMVeKdS94d4oHCXh+SiJEXdmmQcXP2fQkzS9X8rQiCeMKtqxa4JWS7LFkWlKGWQxUBaG85n7uPBO4Z5VaLAVoHmYqDu1vY1gk/Ywt5LrEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ndopRxne; arc=none smtp.client-ip=209.85.216.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3306d93e562so5885937a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 13:03:09 -0700 (PDT)
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-336b9473529so4998540a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 13:03:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759780988; x=1760385788; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759780993; x=1760385793; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/FfTKpzDhNY44hq6VBsPjCO9xlzMvi5CioCxjggBxGo=;
-        b=izBSrTzqIrbOb2CvT1BZWhYTSG7nRvyhBYL0g/pNXtOiZmqGbYMYXU4QHXjXbFVfq5
-         kanMiwI1tLAbM0XAvST0kmBcVlpAxVvE+gd13ZQwhkzm8tn9GPW7El/GI9grq2+Rcm35
-         nIEZoNgALAQ71f2SWfNHqSUw8mIifmmzKcqCrEUIZO8gK5I+UHfenqHzusd+ohNPtOom
-         +RdJxth/baoTYapNYGrQkLmUEb/XCzywL06CAc4lwn6R+tnvYpnY7qWd/H6pKDZKF2v5
-         gV0430vQD6QCFqYO6ht7eA3qTNOiWTr71fogrrHNsBK0h1B8MYbwrgRQlnGW9hBwlUSz
-         F+jQ==
+        bh=VextjEGcnlm32GGbyDeUjgrLV8IU5CS7mWQhtH32SsI=;
+        b=ndopRxnexzdJTQ85qNNwCSjDhYCIK0cscoxLcsG7TOQb+CR+AolnzX/j+r7IF6uPCj
+         0fk64S4rAoYeqcDEQlXNZrNkrN4z2s14QCTv/K+SoiSBVPCqwK+pTh6fZjA9TT2Fh2+N
+         VSPvxXEFU4UImIFT5fB80j6YdkSz/B0QaiVnHbZ76k16x3AqbW//ZCc/jnnXRR7hy/fR
+         XFTSdrDHlVX0wfi6HcfAj0/k5ZLHtogDnETP0z23YhalD5WEYiOzLKYE9i2A3zLiI+Wh
+         6NYvKbJeiQUqju/4ShJscG7Usy+G/j5K8Cxx85lFAPtN9/Oq4Pg6UMvQX94d/NOmMf8B
+         BTRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759780988; x=1760385788;
+        d=1e100.net; s=20230601; t=1759780993; x=1760385793;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/FfTKpzDhNY44hq6VBsPjCO9xlzMvi5CioCxjggBxGo=;
-        b=LFQ2XPpl1NmtiKIFzS+Poo1gL2/PL/CZD7A9dHQ4F7R6Kt9DGAt/Bi+yfZOE39mtH6
-         nqXEH+JuZ1qqyKvv+RKdyHsz+IbwqQL8HE8rwFDbnrq5Ei1lMNhv0bTCVveI1rlhDcZI
-         X2AKJin4M99aWvwOfJ/poi6FPx64+2XE0cYvkqo11E62FDZEoGZ7X9L6nP2w8RdA5pvd
-         vnD5UooAqoPClw4eEBXsq3mCAfs1VpRVw+RJaic1oHyz71FxUVy3fYmD2qFQ8UENPcBD
-         mlbVjfW6Q/d8HW/8znLHR4EfZq00slwicjbW5LZNijci3ncjDGOdsiirQcjWHhfOrr6p
-         A0fg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwk06YCaRET7ZiX1e0pBYhkattWMcf7chPbjymYln7tIeUKnbvOlT0QKlFVdgnalkN+oh0oF85Lp/bOq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8pZ2W6o3UMXFu4G9izdEGFHWbr0gXSvd6eAh8/1dFw4e7Xatd
-	OYyqm5hEyfOwbYRQtuthOBSDha0hUBc56NK/1LKplIEZyZGj1OTlmc7H
-X-Gm-Gg: ASbGncu/C+kItRuxOihmeoTkH4alY+ES+NEYe9hBLxM9sHwvCI6MrVVm4HqsRhcVIW5
-	X6FfiaIcnD5xL69Qy8KzYmYuyNXaPaIqlunC8GaJ3j3hrQmELDcLsyZ796OiDeBqueIWm22jY4I
-	e8BYCJImb3Up/mu6oc/YXc16Bw01KZ/x/BsStSJVih7Yf553lpSuOwTG7LrYHye9POzxqE4xURY
-	9wX13JYFA3h/rpVBDJ2Y+wJpdQUCCFqjvqYSCbshd7B17Jb08XL9v7TBNtQDPQz5019HhMphhf5
-	QggT8OOEMfcE3G9yX2DJeZ5Y6/Xm2dMZLSAb/RUJjF9K0JGKsxxA3XB/F4mXOKCYCdmyZ8QwXWu
-	pE/ZgjQ2e8RZMQ2WYkkuMH+SR+v4uBFTi7rIdBRyWuzNk2xtKirwNxasOWvu926g=
-X-Google-Smtp-Source: AGHT+IGKgvoWh2AlA1gEXZJS741XwWofagS2eT43KDPpL42IYIXONw/GpTUsn2xjQoYVEGK0eUrkbg==
-X-Received: by 2002:a17:90b:5807:b0:339:dcc3:82ca with SMTP id 98e67ed59e1d1-339dcc38971mr8109209a91.6.1759780988397;
-        Mon, 06 Oct 2025 13:03:08 -0700 (PDT)
+        bh=VextjEGcnlm32GGbyDeUjgrLV8IU5CS7mWQhtH32SsI=;
+        b=vj+41mP3idUsbZ27WfKTOj1/N9dG9WO/od7sO+u8+OoW4RzFo+510enGPyR2mvded7
+         ae26DRCYvr2gJUsWJZcOX1mR9abDzoeo+3XotnSAHtRvF+nQYr+LTi4WKNM2gbMSIr7y
+         MfESg5UneGWgDikRW5/hm8FqVKDmerPwMQBmi+ls1f6JjUxtEff3tsdAPzJgwVg8GyrO
+         MusrgxlHOHwPqQCHjvvkykGz8PL29aAexb9Ki7FhxWoGXK/oxTDYNFG4iPy+bcu8TJ25
+         SByNKPsoumMU6d5bgLDV9xEHsPU+Wa70qzKPhN7cRf2gM0GT37hp/O1D2LkuqfqV82Tj
+         gi1w==
+X-Forwarded-Encrypted: i=1; AJvYcCXvquTDVI6H6fA2OeEX8kO8rBflLisIwSFC6kv8GDQAZ+Qpvn8bcBvjlKLH3ga7WTI/U2RshP65ThruncA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywmj7rAPew66Ui8PzmD8BLv8ObXckd+1GquyU59jgmxxOnb79K3
+	pYod1He++jGCRNPC0HTlhbCF/ZvQUwcTV9kgT8J0mR7rS0Cvytt3B14W
+X-Gm-Gg: ASbGncsLfjmbFxFmI9fMPr8F84hwO3cg7HpFPKElPIT4iWFvYYvajNEsTE+fC6TfHzS
+	Eo7jv+0iRI7U2MX3yr0zyPDVpvmw7y5ww/R1EY64BlPQ4dyzcn3JKRRsbX2nRErG3sb1QTPXiTy
+	EeUeY5JQ0vzATHvYp+RkGol9aG5HutIlkZf/G+AE17A1XR1k47K7vP2tGndkYg9dtVCXU/RxSmg
+	S6XeH4ZsLWsFhi6BxjojSWEOMbYm6p/YsSZoE6qStEVqCTQ4spJGg0+DkUiTyB80u7QfhH/SINu
+	GhuBYhb9qdzqPPKN2LFp3PK6gEG8Vj6f1FNv4I9hqPiAj8YBxFRn2klbMDYk4VhhWMEVuad0oOW
+	PObyESlUAoinvhwi1ZasFz0I+Tzr+oqqhx3SBVdLCW2YPAyMIBAS40D5jnhFzD4E=
+X-Google-Smtp-Source: AGHT+IEEC/OlDJjYylUZwXM70t8C4JnPOT0aE/22j79CrAET4Rb6cfD67kwfl+/Yi6S6WmLn1QYf+g==
+X-Received: by 2002:a17:90b:58ec:b0:330:a1ee:e119 with SMTP id 98e67ed59e1d1-339edaae564mr1057063a91.9.1759780992601;
+        Mon, 06 Oct 2025 13:03:12 -0700 (PDT)
 Received: from [127.0.0.1] ([101.32.222.185])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339ee0ba20asm163148a91.4.2025.10.06.13.03.04
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339ee0ba20asm163148a91.4.2025.10.06.13.03.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 13:03:07 -0700 (PDT)
+        Mon, 06 Oct 2025 13:03:12 -0700 (PDT)
 From: Kairui Song <ryncsn@gmail.com>
-Date: Tue, 07 Oct 2025 04:02:33 +0800
-Subject: [PATCH 1/4] mm, swap: do not perform synchronous discard during
- allocation
+Date: Tue, 07 Oct 2025 04:02:34 +0800
+Subject: [PATCH 2/4] mm, swap: rename helper for setup bad slots
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251007-swap-clean-after-swap-table-p1-v1-1-74860ef8ba74@tencent.com>
+Message-Id: <20251007-swap-clean-after-swap-table-p1-v1-2-74860ef8ba74@tencent.com>
 References: <20251007-swap-clean-after-swap-table-p1-v1-0-74860ef8ba74@tencent.com>
 In-Reply-To: <20251007-swap-clean-after-swap-table-p1-v1-0-74860ef8ba74@tencent.com>
 To: linux-mm@kvack.org
@@ -96,117 +95,83 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
  David Hildenbrand <david@redhat.com>, 
  "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
  Ying Huang <ying.huang@linux.alibaba.com>, Kairui Song <ryncsn@gmail.com>, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
+ linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.3
 
 From: Kairui Song <kasong@tencent.com>
 
-Since commit 1b7e90020eb77 ("mm, swap: use percpu cluster as allocation
-fast path"), swap allocation is protected by a local lock, which means
-we can't do any sleeping calls during allocation.
+The name inc_cluster_info_page is very confusing, as this helper is only
+used during swapon to mark bad slots. Rename it properly and turn the
+VM_BUG_ON in it into WARN_ON to expose more potential issues. Swapon is
+a cold path, so adding more checks should be a good idea.
 
-However, the discard routine is not taken well care of. When the swap
-allocator failed to find any usable cluster, it would look at the
-pending discard cluster and try to issue some blocking discards. It may
-not necessarily sleep, but the cond_resched at the bio layer indicates
-this is wrong when combined with a local lock. And the bio GFP flag used
-for discard bio is also wrong (not atomic).
+No feature change except new WARN_ON.
 
-It's arguable whether this synchronous discard is helpful at all. In
-most cases, the async discard is good enough. And the swap allocator is
-doing very differently at organizing the clusters since the recent
-change, so it is very rare to see discard clusters piling up.
-
-So far, no issues have been observed or reported with typical SSD setups
-under months of high pressure. This issue was found during my code
-review. But by hacking the kernel a bit: adding a mdelay(100) in the
-async discard path, this issue will be observable with WARNING triggered
-by the wrong GFP and cond_resched in the bio layer.
-
-So let's fix this issue in a safe way: remove the synchronous discard in
-the swap allocation path. And when order 0 is failing with all cluster
-list drained on all swap devices, try to do a discard following the swap
-device priority list. If any discards released some cluster, try the
-allocation again. This way, we can still avoid OOM due to swap failure
-if the hardware is very slow and memory pressure is extremely high.
-
-Cc: <stable@vger.kernel.org>
-Fixes: 1b7e90020eb77 ("mm, swap: use percpu cluster as allocation fast path")
 Signed-off-by: Kairui Song <kasong@tencent.com>
 ---
- mm/swapfile.c | 40 +++++++++++++++++++++++++++++++++-------
- 1 file changed, 33 insertions(+), 7 deletions(-)
+ mm/swapfile.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
 diff --git a/mm/swapfile.c b/mm/swapfile.c
-index cb2392ed8e0e..0d1924f6f495 100644
+index 0d1924f6f495..732e07c70ce9 100644
 --- a/mm/swapfile.c
 +++ b/mm/swapfile.c
-@@ -1101,13 +1101,6 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
- 			goto done;
- 	}
- 
--	/*
--	 * We don't have free cluster but have some clusters in discarding,
--	 * do discard now and reclaim them.
--	 */
--	if ((si->flags & SWP_PAGE_DISCARD) && swap_do_scheduled_discard(si))
--		goto new_cluster;
--
- 	if (order)
- 		goto done;
- 
-@@ -1394,6 +1387,33 @@ static bool swap_alloc_slow(swp_entry_t *entry,
- 	return false;
+@@ -751,14 +751,14 @@ static void relocate_cluster(struct swap_info_struct *si,
  }
  
-+/*
-+ * Discard pending clusters in a synchronized way when under high pressure.
-+ * Return: true if any cluster is discarded.
-+ */
-+static bool swap_sync_discard(void)
-+{
-+	bool ret = false;
-+	int nid = numa_node_id();
-+	struct swap_info_struct *si, *next;
-+
-+	spin_lock(&swap_avail_lock);
-+	plist_for_each_entry_safe(si, next, &swap_avail_heads[nid], avail_lists[nid]) {
-+		spin_unlock(&swap_avail_lock);
-+		if (get_swap_device_info(si)) {
-+			if (si->flags & SWP_PAGE_DISCARD)
-+				ret = swap_do_scheduled_discard(si);
-+			put_swap_device(si);
-+		}
-+		if (ret)
-+			break;
-+		spin_lock(&swap_avail_lock);
-+	}
-+	spin_unlock(&swap_avail_lock);
-+
-+	return ret;
-+}
-+
- /**
-  * folio_alloc_swap - allocate swap space for a folio
-  * @folio: folio we want to move to swap
-@@ -1432,11 +1452,17 @@ int folio_alloc_swap(struct folio *folio, gfp_t gfp)
- 		}
+ /*
+- * The cluster corresponding to page_nr will be used. The cluster will not be
+- * added to free cluster list and its usage counter will be increased by 1.
+- * Only used for initialization.
++ * The cluster corresponding to @offset will be accounted as having one bad
++ * slot. The cluster will not be added to the free cluster list, and its
++ * usage counter will be increased by 1. Only used for initialization.
+  */
+-static int inc_cluster_info_page(struct swap_info_struct *si,
+-	struct swap_cluster_info *cluster_info, unsigned long page_nr)
++static int swap_cluster_setup_bad_slot(struct swap_cluster_info *cluster_info,
++				       unsigned long offset)
+ {
+-	unsigned long idx = page_nr / SWAPFILE_CLUSTER;
++	unsigned long idx = offset / SWAPFILE_CLUSTER;
+ 	struct swap_table *table;
+ 	struct swap_cluster_info *ci;
+ 
+@@ -772,8 +772,8 @@ static int inc_cluster_info_page(struct swap_info_struct *si,
+ 
+ 	ci->count++;
+ 
+-	VM_BUG_ON(ci->count > SWAPFILE_CLUSTER);
+-	VM_BUG_ON(ci->flags);
++	WARN_ON(ci->count > SWAPFILE_CLUSTER);
++	WARN_ON(ci->flags);
+ 
+ 	return 0;
+ }
+@@ -3396,7 +3396,7 @@ static struct swap_cluster_info *setup_clusters(struct swap_info_struct *si,
+ 	 * See setup_swap_map(): header page, bad pages,
+ 	 * and the EOF part of the last cluster.
+ 	 */
+-	err = inc_cluster_info_page(si, cluster_info, 0);
++	err = swap_cluster_setup_bad_slot(cluster_info, 0);
+ 	if (err)
+ 		goto err;
+ 	for (i = 0; i < swap_header->info.nr_badpages; i++) {
+@@ -3404,12 +3404,12 @@ static struct swap_cluster_info *setup_clusters(struct swap_info_struct *si,
+ 
+ 		if (page_nr >= maxpages)
+ 			continue;
+-		err = inc_cluster_info_page(si, cluster_info, page_nr);
++		err = swap_cluster_setup_bad_slot(cluster_info, page_nr);
+ 		if (err)
+ 			goto err;
  	}
- 
-+again:
- 	local_lock(&percpu_swap_cluster.lock);
- 	if (!swap_alloc_fast(&entry, order))
- 		swap_alloc_slow(&entry, order);
- 	local_unlock(&percpu_swap_cluster.lock);
- 
-+	if (unlikely(!order && !entry.val)) {
-+		if (swap_sync_discard())
-+			goto again;
-+	}
-+
- 	/* Need to call this even if allocation failed, for MEMCG_SWAP_FAIL. */
- 	if (mem_cgroup_try_charge_swap(folio, entry))
- 		goto out_free;
+ 	for (i = maxpages; i < round_up(maxpages, SWAPFILE_CLUSTER); i++) {
+-		err = inc_cluster_info_page(si, cluster_info, i);
++		err = swap_cluster_setup_bad_slot(cluster_info, i);
+ 		if (err)
+ 			goto err;
+ 	}
 
 -- 
 2.51.0
