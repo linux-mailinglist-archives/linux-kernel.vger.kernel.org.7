@@ -1,184 +1,221 @@
-Return-Path: <linux-kernel+bounces-843184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E1F6BBE961
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C98BBE962
 	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:06:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CDDE1890AB8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:06:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 759C04E7A92
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7733A2D9EEA;
-	Mon,  6 Oct 2025 16:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8436626F2A7;
+	Mon,  6 Oct 2025 16:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="b0VvG3CR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eNUlMqtP";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="b0VvG3CR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eNUlMqtP"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AXJVgd+K"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE2D2D979C
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 16:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A94171C9;
+	Mon,  6 Oct 2025 16:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759766766; cv=none; b=G7hAQncn9ICXErKWspDBmNzjaUhprtQMe50EPm42/3y4konmcMwWakp+Ge2K2mEhgLjIQTsNAuygGgpbIIY2qaOCN7uRg7kPaMiGP+VCd+z/6M2G6E3W4a1YZxvm0htJ19pFRSBYo7a07Tdhnq3RVV/ofg9towGgz9WxXV8G7uQ=
+	t=1759766790; cv=none; b=XhiFKI2gLUoBpQTlZVfV+m2ikS4aeWqKTYePv4PVyO6maT7CrImBKFo9uL7l0LdvmppnhdgCjwc1phHQflnSLjE4PyH3N6yls0DS5dJXIdKHZaLx1RXlL0UIRQFwUISbG9KC4g7wyjwZW6qS1S204MqPfQoUsBw7TxWRVRtY52g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759766766; c=relaxed/simple;
-	bh=UCtcz4BM/dYS/3QrJ2luvCuYKAgvRw2ZJGUlSmdLNSo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uqreLfbb4FSC3kN036yTw7ZkXVROOy/syIxl86eKrl9lTKzWmVO3Ufw1FohEHbLchtUmGcBmmtU4hjUslFsQy3db9+Au3evAZSQXty8NnKabo/n3wnqG/qEHT1CTIBUzC77m7Q2kEKjZNW8V4WXO3s8alpT1k9LFjF2T6Hwkp0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=b0VvG3CR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eNUlMqtP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=b0VvG3CR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eNUlMqtP; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 7D9141F451;
-	Mon,  6 Oct 2025 16:06:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759766762;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qLcfZHjAO66RJDxbKzGGoktyPs2gBHEvgJU/ulxjnrc=;
-	b=b0VvG3CRemH27cSbFswY9EJ9gyEPQt7SQ6Sa3Czjj7hAR/2zsW+uUgEG6aDU/6mjFFZa15
-	0xbBUbfj6P5ulUJ7GTl+S1+QDn9iz9IvLc0QIYVBEOBEvMWNOWKNeOukLtWmKjvuYufr9W
-	rAAkF1zgBMJOMCX1cbYgVFl5X1Pf+bQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759766762;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qLcfZHjAO66RJDxbKzGGoktyPs2gBHEvgJU/ulxjnrc=;
-	b=eNUlMqtPVfsYfY08Hcy5T/WPIXWokoADID4FGJ/IaCGaJ9xI6kpfrRkbPJuwEKFdWa5+1T
-	c/Jr9X8FvIZl37Ag==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=b0VvG3CR;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=eNUlMqtP
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759766762;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qLcfZHjAO66RJDxbKzGGoktyPs2gBHEvgJU/ulxjnrc=;
-	b=b0VvG3CRemH27cSbFswY9EJ9gyEPQt7SQ6Sa3Czjj7hAR/2zsW+uUgEG6aDU/6mjFFZa15
-	0xbBUbfj6P5ulUJ7GTl+S1+QDn9iz9IvLc0QIYVBEOBEvMWNOWKNeOukLtWmKjvuYufr9W
-	rAAkF1zgBMJOMCX1cbYgVFl5X1Pf+bQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759766762;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qLcfZHjAO66RJDxbKzGGoktyPs2gBHEvgJU/ulxjnrc=;
-	b=eNUlMqtPVfsYfY08Hcy5T/WPIXWokoADID4FGJ/IaCGaJ9xI6kpfrRkbPJuwEKFdWa5+1T
-	c/Jr9X8FvIZl37Ag==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6A99013700;
-	Mon,  6 Oct 2025 16:06:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id teHbGero42jfOQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Mon, 06 Oct 2025 16:06:02 +0000
-Date: Mon, 6 Oct 2025 18:06:01 +0200
-From: David Sterba <dsterba@suse.cz>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: dsterba@suse.cz, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] btrfs: Avoid -Wflex-array-member-not-at-end warning
-Message-ID: <20251006160601.GA4412@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <aN_Zeo7JH9nogwwq@kspp>
- <20251003143502.GJ4052@suse.cz>
- <b59ed01f-d9d5-4de8-8a12-1e506962b2d9@embeddedor.com>
- <20251003151509.GK4052@suse.cz>
- <10762d3f-361a-48b7-8e46-5e5b8a9887fb@embeddedor.com>
+	s=arc-20240116; t=1759766790; c=relaxed/simple;
+	bh=G7QG3+/2/Dyp16EoSQYPRrzMXelmXKhdN1+e9k61Mi4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gnWOrWkIXXNn1DS+YMJ7V3Mby37euWDYJr8EeSyFg6Pukr8gMqxC+842GZb/D750lpOW9hnnlrv3jL0S9xB71Bify/pt+pC/USyLjQOPcegY5ygMcQwwMIRERShTWiBr3d+I/m3EBcvF4oUAQIXEeZUuBTdOnPOfIMyONdGLQLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AXJVgd+K; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759766789; x=1791302789;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=G7QG3+/2/Dyp16EoSQYPRrzMXelmXKhdN1+e9k61Mi4=;
+  b=AXJVgd+KdeyTJ61RQncg7xJN15Ef3VB92HHR/SOUArs81j4ndjbDCPPz
+   2vo4yGsRVz+Z9I6cwPu6ncbusiwjf/lJlpPQ2BHE9uGExf3SJMDGKsBwL
+   4BMoKpXhuZh68I3Lm2BBGcrpf76RAGjO4dp1ih76A3eTUd0EAhAO6YNqg
+   b367yyj1Ypkef5f5XgMgl6TPAPVF1ZD6IQRz9CwG9bJMZrGfwPxFJ8WTH
+   VQp0TeAGc1y+BBz3q+v6Lw204nsbDuOTC7+xAapvhRffuE7Sz1SVYegaY
+   0WtgFVxEDte9KxG1AOOdCmulJGMoaXSWkpmEZt833kXL+bSaqr018i92I
+   Q==;
+X-CSE-ConnectionGUID: 4pMwFwbKQbez/7RymTFo8w==
+X-CSE-MsgGUID: rmY6X2JXSU+fTlzyJ4zZjQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11574"; a="72557656"
+X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
+   d="scan'208";a="72557656"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 09:06:28 -0700
+X-CSE-ConnectionGUID: nC8Lj1xzS7+53cBp2yHTgA==
+X-CSE-MsgGUID: nW2tsgZRS5ekdpwj0aiglA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
+   d="scan'208";a="179732410"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.110.110]) ([10.125.110.110])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 09:06:27 -0700
+Message-ID: <6e893bd1-467a-4e9a-91ca-536afa6e4767@intel.com>
+Date: Mon, 6 Oct 2025 09:06:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <10762d3f-361a-48b7-8e46-5e5b8a9887fb@embeddedor.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,twin.jikos.cz:mid,suse.cz:replyto,suse.cz:dkim];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 7D9141F451
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.21
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 18/20] cxl/pmem_region: Prep patch to accommodate
+ pmem_region attributes
+To: Neeraj Kumar <s.neeraj@samsung.com>
+Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-kernel@vger.kernel.org, gost.dev@samsung.com,
+ a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+ cpgs@samsung.com
+References: <20250917134116.1623730-1-s.neeraj@samsung.com>
+ <CGME20250917134209epcas5p1b7f861dbd8299ec874ae44cbf63ce87c@epcas5p1.samsung.com>
+ <20250917134116.1623730-19-s.neeraj@samsung.com>
+ <147c4f1a-b8f6-4a99-8469-382b897f326d@intel.com>
+ <1279309678.121759726504330.JavaMail.epsvc@epcpadp1new>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <1279309678.121759726504330.JavaMail.epsvc@epcpadp1new>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 03, 2025 at 04:21:17PM +0100, Gustavo A. R. Silva wrote:
-> On 10/3/25 16:15, David Sterba wrote:
-> > On Fri, Oct 03, 2025 at 03:51:24PM +0100, Gustavo A. R. Silva wrote:
-> >>>>
-> >>>> diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
-> >>>> index 9230e5066fc6..2b7cf49a35bb 100644
-> >>>> --- a/fs/btrfs/send.c
-> >>>> +++ b/fs/btrfs/send.c
-> >>>> @@ -178,7 +178,6 @@ struct send_ctx {
-> >>>>    	u64 cur_inode_rdev;
-> >>>>    	u64 cur_inode_last_extent;
-> >>>>    	u64 cur_inode_next_write_offset;
-> >>>> -	struct fs_path cur_inode_path;
-> >>>>    	bool cur_inode_new;
-> >>>>    	bool cur_inode_new_gen;
-> >>>>    	bool cur_inode_deleted;
-> >>>> @@ -305,6 +304,9 @@ struct send_ctx {
-> >>>>    
-> >>>>    	struct btrfs_lru_cache dir_created_cache;
-> >>>>    	struct btrfs_lru_cache dir_utimes_cache;
-> >>>> +
-> >>>> +	/* Must be last --ends in a flexible-array member. */
-> >>>                           ^^
-> >>>
-> >>> Is this an en dash?
-> >>
-> >> Not sure what you mean.
-> > 
-> > En dash is a punctuation mark not typically used in comments, nowadays
-> > found in AI generated code/text. I was just curious.
+
+
+On 9/29/25 6:57 AM, Neeraj Kumar wrote:
+> On 24/09/25 11:53AM, Dave Jiang wrote:
+>>
+>>
+>> On 9/17/25 6:41 AM, Neeraj Kumar wrote:
+>>> Created a separate file core/pmem_region.c along with CONFIG_PMEM_REGION
+>>> Moved pmem_region related code from core/region.c to core/pmem_region.c
+>>> For region label update, need to create device attribute, which calls
+>>> nvdimm exported function thus making pmem_region dependent on libnvdimm.
+>>> Because of this dependency of pmem region on libnvdimm, segregated pmem
+>>> region related code from core/region.c
+>>
+>> We can minimize the churn in this patch by introduce the new core/pmem_region.c and related bits in the beginning instead of introduce new functions and then move them over from region.c.
 > 
-> Ah yes, I've been using this punctuation mark for this sorts of comments,
+> Hi Dave,
+> 
+> As per LSA 2.1, during region creation we need to intract with nvdimmm
+> driver to write region label into LSA.
+> This dependency of libnvdimm is only for PMEM region, therefore I have
+> created a seperate file core/pmem_region.c and copied pmem related functions
+> present in core/region.c into core/pmem_region.c.
+> Because of this movemement of code we have churn introduced in this patch.
+> Can you please suggest optimized way to handle dependency on libnvdimm
+> with minimum code changes.
 
-It's quite odd to see it formatted like that, it's confusing and looks
-like a typo. The emdash "---" looks like the right punct. mark as it
-separates extra information, if we'd want to delve into typographical
-conventions.
+Hmm....maybe relegate the introduction of core/pmem_region.c new file and only the moving of the existing bits into the new file to a patch. And then your patch will be rid of the delete/add bits of the old code? Would that work?
+
+DJ
+ 
+> 
+>>
+>>> diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
+>>> index 48b7314afdb8..532eaa1bbdd6 100644
+>>> --- a/drivers/cxl/Kconfig
+>>> +++ b/drivers/cxl/Kconfig
+>>> @@ -211,6 +211,20 @@ config CXL_REGION
+>>>
+>>>        If unsure say 'y'
+>>>
+>>> +config CXL_PMEM_REGION
+>>> +    bool "CXL: Pmem Region Support"
+>>> +    default CXL_BUS
+>>> +    depends on CXL_REGION
+>>
+>>> +    depends on PHYS_ADDR_T_64BIT
+>>> +    depends on BLK_DEV
+>> These 2 deps are odd. What are the actual dependencies?
+>>
+> 
+> We need to add these 2 deps to fix v2 0Day issue [1]
+> I have taken reference from bdf97013ced5f [2]
+> Seems, I also have to add depends on ARCH_HAS_PMEM_API. I will update it
+> in V3.
+> 
+> [1] https://lore.kernel.org/linux-cxl/202507311017.7ApKmtQc-lkp@intel.com/
+> [2] https://elixir.bootlin.com/linux/v6.13.7/source/drivers/acpi/nfit/Kconfig#L4
+> 
+>>
+>>> +    select LIBNVDIMM
+>>> +    help
+>>> +      Enable the CXL core to enumerate and provision CXL pmem regions.
+>>> +      A CXL pmem region need to update region label into LSA. For LSA
+>>> +      updation/deletion libnvdimm is required.
+>>
+>> s/updation/update/
+>>
+> 
+> Sure, Will fix it
+> 
+>>> +
+>>> +      If unsure say 'y'
+>>> +
+>>>  config CXL_REGION_INVALIDATION_TEST
+>>>      bool "CXL: Region Cache Management Bypass (TEST)"
+>>>      depends on CXL_REGION
+> 
+> <snip>
+> 
+>>> --- a/drivers/cxl/core/port.c
+>>> +++ b/drivers/cxl/core/port.c
+>>> @@ -53,7 +53,7 @@ static int cxl_device_id(const struct device *dev)
+>>>          return CXL_DEVICE_NVDIMM_BRIDGE;
+>>>      if (dev->type == &cxl_nvdimm_type)
+>>>          return CXL_DEVICE_NVDIMM;
+>>> -    if (dev->type == CXL_PMEM_REGION_TYPE())
+>>> +    if (dev->type == CXL_PMEM_REGION_TYPE)
+>>
+>> Stray edit? I don't think anything changed in the declaration.
+>>
+> 
+> Sure, Will fix it
+> 
+>>>          return CXL_DEVICE_PMEM_REGION;
+>>>      if (dev->type == CXL_DAX_REGION_TYPE())
+>>>          return CXL_DEVICE_DAX_REGION;
+> 
+> <snip>
+> 
+>>> @@ -2382,7 +2380,7 @@ bool is_cxl_region(struct device *dev)
+>>>  }
+>>>  EXPORT_SYMBOL_NS_GPL(is_cxl_region, "CXL");
+>>>
+>>> -static struct cxl_region *to_cxl_region(struct device *dev)
+>>> +struct cxl_region *to_cxl_region(struct device *dev)
+>>>  {
+>>>      if (dev_WARN_ONCE(dev, dev->type != &cxl_region_type,
+>>>                "not a cxl_region device\n"))
+>>> @@ -2390,6 +2388,7 @@ static struct cxl_region *to_cxl_region(struct device *dev)
+>>>
+>>>      return container_of(dev, struct cxl_region, dev);
+>>>  }
+>>> +EXPORT_SYMBOL_NS_GPL(to_cxl_region, "CXL");
+>>
+>> Maybe just move this into the header file instead.
+>>
+>> DJ
+> 
+> Actually to_cxl_region() is internal to cxl/core and especially to core/region.c
+> So, Its better to compeletly remove EXPORT_SYMBOL_NS_GPL(to_cxl_region, "CXL")
+> 
+> Even EXPORT_SYMBOL_NS_GPL(is_cxl_region, "CXL") is internal to cxl/core/region.c
+> Should I also remove it?
+> 
+> Even we can remove declaration of is_cxl_region() and to_cxl_region()
+> from drivers/cxl/cxl.h as these functions are internal to cxl/core/region.c
+> 
+> 
+> Regards,
+> Neeraj
+> 
+> 
+
 
