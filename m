@@ -1,106 +1,113 @@
-Return-Path: <linux-kernel+bounces-843201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88550BBEA04
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:22:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A8F3BBEA0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 352DB34A207
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:22:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98156189ADA6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928662DC32E;
-	Mon,  6 Oct 2025 16:21:46 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE33C2DAFCA
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 16:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F372DC786;
+	Mon,  6 Oct 2025 16:21:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F772DC77A;
+	Mon,  6 Oct 2025 16:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759767706; cv=none; b=V9kKlDy32PT+FPypTJzTxFW4duq9nD7QyBgOmANoSnuBtTr4B6Musv/LeYMNyP/TrS62b/DJBW8VpLCVarbW63o6OXcdogVubBGd8x7Yxn5fW7RSQx44YsfORhgozInSBkKQTC9PHZRrHU8+XlfoQDWSfe0i6BexY/SOjkhwbEA=
+	t=1759767710; cv=none; b=o8Cy9jSwq8xvgVxCgMnJaJo+xJAOEgOqDiGR7SxyYPo6uVEO96PTP2JgE2QUaOsCXBKM9Pu8umrHsvB/5prFGIbPS2vPCPXvENdBT/YIcKYFrRZQWGfXrdnSc7I0K9EQAnWIC6n0SX2tuu6AeIW9g//xaE9PQX2cbpd4XluYfCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759767706; c=relaxed/simple;
-	bh=M6/Yngir4VMXHpYqGxzz/Lji5KGMdeW0/+E+BMjMFyE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oIwF84rQyCBV0rNwkdaqWCvn6+IjNv1rTgGsq04GQfXUYf48wLJCAf4hv3XbTcDKE7Xtybaw3FVYCP7tFRgUgQfTCclQPZYcp+u6i4IW3M+J4us9Xqtmi9kzEcEBd3rvLrMvvbMduHABGjQmRW7uuhV5BgYOHEQ2ijz2ZILcH4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v5nxm-0000oi-Ef; Mon, 06 Oct 2025 18:21:26 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v5nxl-002GFW-1G;
-	Mon, 06 Oct 2025 18:21:25 +0200
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v5nxl-00000000DI2-1Hhd;
-	Mon, 06 Oct 2025 18:21:25 +0200
-Message-ID: <c3e1e3da577de1370e7604560f0b42c0fcb7db44.camel@pengutronix.de>
-Subject: Re: [PATCH 03/18] reset: rzv2h-usb2phy: Simplify pm_runtime driver
- handling
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
-	tomm.merciai@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com, Yoshihiro
- Shimoda <yoshihiro.shimoda.uh@renesas.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I	 <kishon@kernel.org>, Geert Uytterhoeven
- <geert+renesas@glider.be>, Magnus Damm	 <magnus.damm@gmail.com>, Fabrizio
- Castro <fabrizio.castro.jz@renesas.com>,  Lad Prabhakar
- <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-phy@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 06 Oct 2025 18:21:25 +0200
-In-Reply-To: <20251001212709.579080-4-tommaso.merciai.xr@bp.renesas.com>
-References: <20251001212709.579080-1-tommaso.merciai.xr@bp.renesas.com>
-	 <20251001212709.579080-4-tommaso.merciai.xr@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1759767710; c=relaxed/simple;
+	bh=m3SmlzRsMKVpO74OXfiVE3r/DuuiN/mWjDes/0cwih0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=WsADCAGrxHjta/6pVT7AGVMYQ/cZ8M1Vfspd9j2sq6wSkkvThdCxdOeG6mSyXA3zNQrEP+NuEyVsqNtA3KNC+ts0SYnjcDYbtVf3RqshpBwSvrBbjsyIyM9C6NpzO08LJDsvq4OL6BNxhG9Th39Pp/8Pd1MJWG52kNKqUBJujg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F160C1515;
+	Mon,  6 Oct 2025 09:21:39 -0700 (PDT)
+Received: from e132581.arm.com (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 684C33F738;
+	Mon,  6 Oct 2025 09:21:45 -0700 (PDT)
+From: Leo Yan <leo.yan@arm.com>
+Date: Mon, 06 Oct 2025 17:21:25 +0100
+Subject: [PATCH v3 3/9] perf build: Correct CROSS_ARCH for clang
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251006-perf_build_android_ndk-v3-3-4305590795b2@arm.com>
+References: <20251006-perf_build_android_ndk-v3-0-4305590795b2@arm.com>
+In-Reply-To: <20251006-perf_build_android_ndk-v3-0-4305590795b2@arm.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+ Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, James Clark <james.clark@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+ llvm@lists.linux.dev, linux-riscv@lists.infradead.org, 
+ Leo Yan <leo.yan@arm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759767696; l=1923;
+ i=leo.yan@arm.com; s=20250604; h=from:subject:message-id;
+ bh=m3SmlzRsMKVpO74OXfiVE3r/DuuiN/mWjDes/0cwih0=;
+ b=P/jhnB+7EFmN27NsILJyvdp237PuNM9MUTeMFHprYYaxLA9gJqDTnVDbR8lhu5730vVdvjaG0
+ /AvvxHOtS/eBQ59/Cb4kIikDOUVFG9H+euApMwSOZP2VL59wm5Fu2M4
+X-Developer-Key: i=leo.yan@arm.com; a=ed25519;
+ pk=k4BaDbvkCXzBFA7Nw184KHGP5thju8lKqJYIrOWxDhI=
 
-Hi Tommaso,
+Clang's -dumpmachine outputs "aarch64-unknown-linux-gnu", which does not
+match the MultiArch convention. This prevents the build system from
+detecting installed packages.
 
-On Mi, 2025-10-01 at 23:26 +0200, Tommaso Merciai wrote:
-> Remove redundant pm_runtime_resume_and_get() and pm_runtime_put() calls
-> from the reset assert, deassert, and status paths.
+Fix by stripping the trailing '-' from CROSS_COMPILE when setting
+CROSS_ARCH.
 
-These calls are only made redundant by this patch.
+Signed-off-by: Leo Yan <leo.yan@arm.com>
+---
+ tools/build/feature/Makefile | 2 +-
+ tools/perf/Makefile.perf     | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-> These paths do not require runtime PM handling, as power management is
-> already taken care of during probe and remove.
+diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
+index bd615a708a0aa89ddbe87401f04bd736e384a9c4..214ccaee69181cce1f8e736b85c8dc940efa6c19 100644
+--- a/tools/build/feature/Makefile
++++ b/tools/build/feature/Makefile
+@@ -94,7 +94,7 @@ else
+   # paths are used instead.
+   ifdef CROSS_COMPILE
+     ifeq ($(PKG_CONFIG_LIBDIR)$(PKG_CONFIG_PATH)$(PKG_CONFIG_SYSROOT_DIR),)
+-      CROSS_ARCH = $(shell $(CC) -dumpmachine)
++      CROSS_ARCH = $(notdir $(CROSS_COMPILE:%-=%))
+       PKG_CONFIG_LIBDIR := /usr/local/$(CROSS_ARCH)/lib/pkgconfig/
+       PKG_CONFIG_LIBDIR := $(PKG_CONFIG_LIBDIR):/usr/local/lib/$(CROSS_ARCH)/pkgconfig/
+       PKG_CONFIG_LIBDIR := $(PKG_CONFIG_LIBDIR):/usr/lib/$(CROSS_ARCH)/pkgconfig/
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index e2150acc2c13325f93a2d5cd4a60b4a6bfeedc94..47bc9d8a91df90535408c427909bcb3f7cd50970 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -194,7 +194,7 @@ else
+   # paths are used instead.
+   ifdef CROSS_COMPILE
+     ifeq ($(PKG_CONFIG_LIBDIR)$(PKG_CONFIG_PATH)$(PKG_CONFIG_SYSROOT_DIR),)
+-      CROSS_ARCH = $(shell $(CC) -dumpmachine)
++      CROSS_ARCH = $(notdir $(CROSS_COMPILE:%-=%))
+       PKG_CONFIG_LIBDIR := /usr/local/$(CROSS_ARCH)/lib/pkgconfig/
+       PKG_CONFIG_LIBDIR := $(PKG_CONFIG_LIBDIR):/usr/local/lib/$(CROSS_ARCH)/pkgconfig/
+       PKG_CONFIG_LIBDIR := $(PKG_CONFIG_LIBDIR):/usr/lib/$(CROSS_ARCH)/pkgconfig/
 
-Only since you removed the pm_runtime_put() in
-rzv2h_usb2phy_reset_probe(). It feels like the important part of this
-patch is actually the side note:
+-- 
+2.34.1
 
-> Additionally, the IP is active only when its clock is enabled.
-> Previously, the clock was being turned off immediately after register
-> configuration, which is incorrect. The code may have appeared to work
-> if another module had incremented the clock usage count, but this
-> behavior is unreliable.
-
-So this is a reliability fix first and foremost?
-The IP must be active to reliably keep reset lines at the configured
-level?
-
-If so, please make this clear in the commit subject and description.
-
-regards
-Philipp
 
