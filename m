@@ -1,153 +1,160 @@
-Return-Path: <linux-kernel+bounces-842549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C7D0BBCFB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 04:00:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89FDCBBCFF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 05:04:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 179B318947AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 02:01:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 778C41892B2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 03:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56F91C9DE5;
-	Mon,  6 Oct 2025 02:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6D219F137;
+	Mon,  6 Oct 2025 03:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b="mfAKRSzA"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YJIXXkSs"
+Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8348D1E86E;
-	Mon,  6 Oct 2025 02:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759716052; cv=pass; b=uZ8sJ3xjba1Kd7dxdluKoY2pnYnXo3a9GxLxto9CJ0WJa1YgeoJliNQ+ZR4p6R+RhTeECHcXEFYUodNdjvG1Cm8jnd/8douove4lxNKhGiOjmY+fs3DF+dIIHzLLPZgA9f74k4j+p6PnIh8U8xtOf0At1jAyb1VVbO+TKCFJfQA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759716052; c=relaxed/simple;
-	bh=MQmjzkDsYImA7LkqWmo/Tf4blD/4rYp5gJnAuUsS/aE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eZxX1jwoNtzySyJ9Yp7WJoSPWqwvc2G9GYJtaUqUg0OANy61nJBBh9wFqg0f9C7iPrrX0YO+Hrcr7gFfmzu+I6znEhfEEQnyV+wShUWXW9CPd3C0phCCRjMYBn/SN6f6e+qWMNc1/12LPD/9JIrZ5pMt5baVpOZTH4gZsSMNQSY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yukuai.org.cn; spf=pass smtp.mailfrom=yukuai.org.cn; dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b=mfAKRSzA; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yukuai.org.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yukuai.org.cn
-ARC-Seal: i=1; a=rsa-sha256; t=1759716031; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ivdPhjUqCSFJHJC9TYxol/HZl9yN46KsOCBqmJVDSx7IikjcnW7Ho31jiytpcFlyrBhplRB05ky18/xAGA9xinGh5eqR7HABfnVwKN5+j/QNJi3HgUupAQn/WAUmGF03MfvklcYVm5QTGOHpUsss0k5lEGk7RcUCs55MhZ6qZJE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1759716031; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=i6HvTzDFXM2i+hOW7AdoTG+3sf6ePO2MTm2ej+wcfDU=; 
-	b=CJF7z+6nPWn997YPFc8rvn5dDRjgeGAUgA6ASOPVvKE7pOSS3S6s96QeswjSJ87KhRv2V6fropHiy4qrDRR1R5V7XIUUr7T+906wiQPcZMenQeIJl+6sDfEnlsHQ03LgKJ0ku6Uy8aPKDpZNF+5malfFOUXW01xogdoqV9MdDpQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=yukuai.org.cn;
-	spf=pass  smtp.mailfrom=hailan@yukuai.org.cn;
-	dmarc=pass header.from=<hailan@yukuai.org.cn>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759716031;
-	s=zmail; d=yukuai.org.cn; i=hailan@yukuai.org.cn;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=i6HvTzDFXM2i+hOW7AdoTG+3sf6ePO2MTm2ej+wcfDU=;
-	b=mfAKRSzAA+a1jryzwwiwHGLXq12UJvkDTofDYkgNP93ekL8yEgk4gehdpvQJC5J3
-	Z9/vKH/8BhtTcsCeAC+9TLMBRJ5BM2X1yhKuAwybcNxCTnkL7getME0NmwTSgr79Xnp
-	TjTuPbOgaDjiu0wDiDMFGS6hW3b2VONXI5C1KQus=
-Received: by mx.zohomail.com with SMTPS id 1759716028586169.51610235497185;
-	Sun, 5 Oct 2025 19:00:28 -0700 (PDT)
-Message-ID: <60a26451-22cd-409b-920d-eb9d8490e246@yukuai.org.cn>
-Date: Mon, 6 Oct 2025 10:00:21 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816CF15D5B6
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 03:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759719858; cv=none; b=dTPjG2H8rIxTr8YfyaTYD2/EgBDvkA/ens5Te84Xs8VZzshuhWiy/9Z70nNI5+Nisy7uzuRZ4rFGa7Il9qayGTeZPkovHp/tOnTQ5qm+PUm5cUXarstBWC0KWcnMkFfVSl+ryihFlfrdU+LR42+NN+TY8hPQsBu8VAIJZpLPNgA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759719858; c=relaxed/simple;
+	bh=zrCv2LuYmCw0DiAsIUBqoGDXiizxKiHny8jAmmjwrG4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qBnQnfceKiAF6SltyCxT5OMZRaihYQlEBFV4sd+OBRgu3r1HEGAo8s4lwVbrmJWKSi5eBEqoVFu5raMfjRo8OzlWA8fyEtjGWyD9K99/coQslPS4Jt/lOiOICKAQOXnsqtm0gN+I4HvwrSDnxHpUamV+gtwbJsWfLve3h2fHml0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YJIXXkSs; arc=none smtp.client-ip=209.85.218.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-b3d5088259eso638506866b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 20:04:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759719855; x=1760324655; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g8HZij/mNEbJxirmDzZ6t2wS0k3yCLSvvwCRqNRU6uM=;
+        b=YJIXXkSsgC2BoGgPSWJYw5kEoT86Eplto3z1sfN8z54Uy07oKHcC/hjVaIUFtaDU4A
+         /7ULBpartBIlKjKPsPe9/dUQttddwyIEx20x3DFMWSWUoplHyT577QrLn35HXLdd2RDg
+         n8rRlFEte8KHyrTzBmglmcCGGt01nMCrSfjAVNywtNNyp/GgoefOIGL3S3eb7Jc4Npb8
+         9ETmhiySQHBx0PONg7yGkilRzWrJ734CNL1I76/0tyD5Om8nHvJm/hcLMYCfRMygAK3n
+         tONATrfZ/K3hP+XFCssyeFlfDYFQ1JtqqlGyPMO2FEFzOJGeNb/Dod/mdw/rtkSobodi
+         qwuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759719855; x=1760324655;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g8HZij/mNEbJxirmDzZ6t2wS0k3yCLSvvwCRqNRU6uM=;
+        b=OODEPaDNYSVj7ycNoB4LS62cFsc3/tQoDlOs02sU6bBwWU9TwixHOIsIK81Qpfhu+q
+         WiDA44doSplVt9mpTHdLCJ6VKsSriW8XdTCh+5bTIt+JcR1qLAxY1R7QSuIijMVWIjxj
+         6Q5ICsS//0GVJjEsASqDUHaCVQ34qmSU2E7WEO3fInZZRbPgLo3zZL6KljznHel19xEo
+         HPf6N0C22SlQTHMktYXY4MCAkiu9BopNs3XURneP2dcOUf2olHyoEOyFuhVUiqx2s28S
+         AHzdFr0eOqMA7gwhX1/v5CriTqQIwFiAqaeGptZgGq148kkCLMlkswHFnUZha0V8ZIKJ
+         Zt6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXdBAptyocyv6MP+h2c5dkSpjMf8fKsLm8Nn+MPtk3nkxAPSr1QrWXsuioANENlUPJHQf8VhyGiGP12fnc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxwne3cbwZPMMq2OwWJdxYiHge5vOoE9Sccoh41xd3ool6gUypi
+	2NvEgFBorGIcq6z3nGYbr7TfqMkQ7i87laujrECqDE1v8YosX0B+/5JR0EnJ2qjJU+PPPKg4F6D
+	V2o6N8IbFSpWjZxrx1n3A8EnYICVRDG8=
+X-Gm-Gg: ASbGnctNWAESAQfbN0lsZqL9eRjf+CctSKkvQDW2zsiBL9jraO6Rl8wVLpZgq7gyTQG
+	i1x1TdPwN+iBWVXVtvB1J/+g/vTB87Vanm1sAps5oalOfr0tn4Uj9U0J4EDlwxZHRMRtdLKw05o
+	1laEziXdcj0smd+ssIBYHBTkERy3gUECof612EcWPY63KaAn0je6HmWvuDHaebGNV2d1QZiTEvc
+	BxowQJw/ZmoM5tFkg6B757MN0JfQCaYy0CELcc/CA==
+X-Google-Smtp-Source: AGHT+IF3g5iOV5bBmvcCjDZVj28/wSv9TwXn03R1OV6xFO9+YKnCOgJo0QkX4WrE9j8JvzAze30xlaVLyrf8o/PLByI=
+X-Received: by 2002:a17:907:7e8c:b0:b04:5b0a:5850 with SMTP id
+ a640c23a62f3a-b49c3b25f61mr1442292266b.40.1759719854642; Sun, 05 Oct 2025
+ 20:04:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] blk-mq: add documentation for new queue attribute
- async_dpeth
-To: Nilay Shroff <nilay@linux.ibm.com>, Yu Kuai <yukuai1@huaweicloud.com>,
- axboe@kernel.dk, bvanassche@acm.org, ming.lei@redhat.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com
-References: <20250930071111.1218494-1-yukuai1@huaweicloud.com>
- <20250930071111.1218494-8-yukuai1@huaweicloud.com>
- <cbdb4a5a-a8ca-436b-a2ed-59f650a3dce7@linux.ibm.com>
-From: Yu Kuai <hailan@yukuai.org.cn>
-In-Reply-To: <cbdb4a5a-a8ca-436b-a2ed-59f650a3dce7@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+References: <20251004015623.7019-1-raskar.shree97@gmail.com>
+ <20251004015623.7019-2-raskar.shree97@gmail.com> <20251004141231.632c311d@jic23-huawei>
+In-Reply-To: <20251004141231.632c311d@jic23-huawei>
+From: Shrikant <raskar.shree97@gmail.com>
+Date: Mon, 6 Oct 2025 08:34:03 +0530
+X-Gm-Features: AS18NWCdUtEmwAviFScR6aUatO9T_ZkTtEYw9JwSoZ6crvMFN1TNWl_QFZoYWvY
+Message-ID: <CAHc1_P7MU=BYf_8sbZqikpXpfuvAtLNJ2E_hmi-50ohoh+gQcg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: iio: max30100: Add pulse-width property
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, matt@ranostay.sg, 
+	skhan@linuxfoundation.org, david.hunter.linux@gmail.com, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Sat, Oct 4, 2025 at 6:42=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
+wrote:
+>
+> On Sat,  4 Oct 2025 07:26:22 +0530
+> Shrikant Raskar <raskar.shree97@gmail.com> wrote:
+>
+> > The MAX30100 sensor supports multiple LED pulse widths (200us, 400us,
+> > 800us, 1600us). These settings affect measurement resolution and power
+> > consumption. Until now, the driver always defaulted to 1600us.
+> >
+> > Introduce a new device tree property `maxim,pulse-width` that allows
+> > users to select the desired pulse width in microseconds from device
+> > tree.
+> >
+> > Valid values are: 200, 400, 800, 1600.
+> >
+> > This prepares for driver changes that read this property and configure
+> > the SPO2 register accordingly.
+> >
+> > Signed-off-by: Shrikant Raskar <raskar.shree97@gmail.com>
+> Hi Shrikant,
+>
+> Explain why this is in some way related to characteristics of how the
+> system containing this chip is built (wiring, lenses etc).  Otherwise
+> this might instead be something that should be controlled from userspace
+> not firmware.
+>
+> Also, give a little more on why we care about controlling it at all.
+> Is there a usecase where power use of this chip matters?  Mostly I'd expe=
+ct
+> it to be in measurement equipment with relatively short measuring periods=
+.
+>
+> Jonathan
+Hi Jonathan,
 
-在 2025/10/2 23:12, Nilay Shroff 写道:
->
-> On 9/30/25 12:41 PM, Yu Kuai wrote:
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> Explain the attribute and the default value in different case.
->>
->> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->> ---
->>   Documentation/ABI/stable/sysfs-block | 10 ++++++++++
->>   1 file changed, 10 insertions(+)
->>
->> diff --git a/Documentation/ABI/stable/sysfs-block b/Documentation/ABI/stable/sysfs-block
->> index 0ed10aeff86b..09b9b3db9a1f 100644
->> --- a/Documentation/ABI/stable/sysfs-block
->> +++ b/Documentation/ABI/stable/sysfs-block
->> @@ -609,6 +609,16 @@ Description:
->>   		enabled, and whether tags are shared.
->>   
->>   
->> +What:		/sys/block/<disk>/queue/async_depth
->> +Date:		August 2025
->> +Contact:	linux-block@vger.kernel.org
->> +Description:
->> +		[RW] This controls how many async requests may be allocated in the
->> +		block layer. If elevator is none, then this value is nr_requests.
->> +		By default, this value is 75% of nr_requests for bfq and kyber,
->> +		abd nr_requests for mq-deadline.
->> +
-> Hmm, it seems we need to further elaborate above documentation, seeing the
-> way this new sysfs interface is playing out now for different I/O schedulers.
-> I'd suggest rewriting this as follow (you may further modify/simplify it based
-> on your taste, if needed):
->
-> Description:
-> [RW] Controls how many asynchronous requests may be allocated in the
-> block layer. The value is always capped at nr_requests.
->
->    When no elevator is active (none):
->    - async_depth is always equal to nr_requests.
->
->    For bfq scheduler:
->    - By default, async_depth is set to 75% of nr_requests.
->      Internal limits are then derived from this value:
->      * Sync writes: limited to async_depth (≈75% of nr_requests).
->      * Async I/O: limited to ~2/3 of async_depth (≈50% of nr_requests).
->
->      If a bfq_queue is weight-raised:
->      * Sync writes: limited to ~1/2 of async_depth (≈37% of nr_requests).
->      * Async I/O: limited to ~1/4 of async_depth (≈18% of nr_requests).
->
->    - If the user writes a custom value to async_depth, BFQ will recompute
->      these limits proportionally based on the new value.
->
->    For Kyber:
->    - By default async_depth is set to 75% of nr_requests.
->    - If the user writes a custom value to async_depth, then it override the
->      default and directly control the limit for writes and async I/O.
->
->    For mq-deadline:
->    - By default async_depth is set to nr_requests.
->    - If the user writes a custom value to async_depth, then it override the
->      default and directly control the limit for writes and async I/O.
+Thanks for the feedback.
 
-This is great! I will use this in the next version.
+The pulse width configuration is indeed dependent on the hardware integrati=
+on
+of the MAX30100. It affects how much optical energy the LEDs emit per sampl=
+e,
+which in turn depends on physical factors such as:
 
-Thanks
-Kuai
+ - The type and thickness of the optical window or lens covering the sensor
+ - The distance between the LED and photodiode
+ - The reflectivity of the skin/contact surface
 
-> Thanks,
-> --Nilay
->
->
+For example:
+ - A smartwatch/wearable ring with a thin glass window can operate
+with 200=E2=80=93400 =C2=B5s pulses to
+   save power, while
+ - A medical-grade pulse oximeter or a sensor mounted behind a thicker
+   protective layer may require 800=E2=80=931600 =C2=B5s for reliable signa=
+l amplitude.
+
+I believe it would be appropriate to describe these fixed,
+board-specific characteristics in the Device Tree,
+since they are determined by the hardware design rather than being
+runtime or user-controlled parameters.
+
+Would it be okay if I send v2 of the patch with the above explanation
+included in the commit message?
+
+Thanks and regards,
+Shrikant
 
