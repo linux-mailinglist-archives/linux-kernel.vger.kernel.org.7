@@ -1,139 +1,123 @@
-Return-Path: <linux-kernel+bounces-842548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83410BBCFAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 03:58:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8718BBCFA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 03:57:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 297853B4AEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 01:58:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C099F4E7C05
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 01:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13791C4609;
-	Mon,  6 Oct 2025 01:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DEE61B0439;
+	Mon,  6 Oct 2025 01:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b="AlO7Tvvp"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WJAM12+G"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C441A9FB3;
-	Mon,  6 Oct 2025 01:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759715897; cv=pass; b=X7GfZS/gwreTAsEDhdzZfPbWZzqKkdSHVS2t+hX5PYptKbUoh7hECE15IVjMuBZWjchsevzT+7VlibV0Sgl44ht8aubPQ306rlGmVUftrG4wqllVQLzSTVFsa1sSWzYwIAdFMAi+2cFszsW2ghwgCNQAnBsb6dpGshTG47zXWmI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759715897; c=relaxed/simple;
-	bh=jjIl0nqSSkyWwW5ny8VmXYPStzzy5sW4Vo4U1n1NiCA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sEtNlhm5GQOHITNzUx9mzujtnPgL2TR4NLaG0eWEvyjrvZEOmuhM5QUkytsRJZctFI1JitxaKSmk+efSEPRy9uNArB3mOBla/e0QpUSKEU1tm39Ec2ZQuXe1sPzGObpAP+swOA8xEStmq1cV6YxOBrJtgxLY5VcfyN/+QWHfruM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yukuai.org.cn; spf=pass smtp.mailfrom=yukuai.org.cn; dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b=AlO7Tvvp; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yukuai.org.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yukuai.org.cn
-ARC-Seal: i=1; a=rsa-sha256; t=1759715868; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=F9dHfa3fjP/CjifAght5PqoVABMJWvz/9kAsl1qLVohLRnZH0vyY3N7+tkCVahqAZSJ4pGxopbMYYNXbblkfvFsnfiGflqkNPoRNNqo9i144jHtMQAb29l8mptYjcWYyHXBNAhq0u9qgdp8deK4oKNOIVluWfAu0M1jdRBaRZBY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1759715868; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=0KzPODIwtT/gBCZCni7pFtUuEDHEM0mg2yw5SS0aE3g=; 
-	b=UYGpMTRIQBLF4bsky0g3qlXclgb32yMRyT9CvWWX3l/kNNyQGKEQMT9cSB2g4mExrDLzDo2kk0b4gXDj1waCiGNdLnsnKKC8ks07D5FWYBGK+1XjKQLUbp6ahlCX1GPOpfokI9Scwjn4J8dO4xc+3a1l/dnkteqYaX/rfYQn97E=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=yukuai.org.cn;
-	spf=pass  smtp.mailfrom=hailan@yukuai.org.cn;
-	dmarc=pass header.from=<hailan@yukuai.org.cn>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759715868;
-	s=zmail; d=yukuai.org.cn; i=hailan@yukuai.org.cn;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=0KzPODIwtT/gBCZCni7pFtUuEDHEM0mg2yw5SS0aE3g=;
-	b=AlO7TvvpvIAIphZTltU5u/ZdMXJeG4X+GUYIBUq3rV/4z/6WhybCW61R//2ihNAl
-	W1k4Toq1Kti8SXnVs/2Mdpq+lhGOh9Gpnpqm3UJaspIu78tBjsQ9BorOrfLww6ay5Tj
-	tjeK67YO6G2MMxDDkzNHZ6sbKApQrCM05O7TnOVg=
-Received: by mx.zohomail.com with SMTPS id 175971586559510.290897249693785;
-	Sun, 5 Oct 2025 18:57:45 -0700 (PDT)
-Message-ID: <f7fd8fa3-6368-48c1-93b2-942d9d0f75c7@yukuai.org.cn>
-Date: Mon, 6 Oct 2025 09:57:40 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02561B3935
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 01:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759715856; cv=none; b=Fr0N8fglNJrfGK+B3d2BD/dVNgaAT7nCUmXdCS4jwOrkgUggPVPsF4AnXKbL93QOWGSETRK39eHA9BNi8EbqUaZqW0RsiVA3TQ1yZCWUll5jbLNivIeJ0DNjrfphROKo3x/MQnWlSwwF5aAdC8oC1oJ7ZupcohD0tQ6q1wNF348=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759715856; c=relaxed/simple;
+	bh=t1TjX5ePi1X3+k/g4daoZ7ysf42qp+fq0bm+w5WO+KI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RnkmtoxN5VHNec0j0lGIKC3w1MtJa56WLOtRXgT76+ap9cVfgp9zIeE7sI/YnAeO01kQiSCG5vK3w2cC3P3PG6tjU4VpjZX9+rTsizmxuInzM8XIixeLUAaKgqnPAC0QUslmpnHdfQqyP2BO6hYaRo1ZtXKBH3oBOxhOYQowyoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WJAM12+G; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-782bfd0a977so3657822b3a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 18:57:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759715854; x=1760320654; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hJqT6wVQ58a6IoyXBnf5WKla2qjZwqbObYMHqCGe1mA=;
+        b=WJAM12+G1/XA+8Uo9wwnwBUmSJHgsTzE037Kkx1u3YIvZNweO1fxPIUiHV9SQa1eiN
+         z6sZGDH0CIFfdBwgMhbaVEpbXTxt5Z6nIJqQzC/Ma5sbF9zq4BdDXphA85XiOjBUeRN8
+         nGXog7zDwH1iHLY/U6Q7s6jTg+ZDidy8lOwJc3dwLlMXZeG42ihrBensLmbHknQh+JQ2
+         /j1rKPDrX9+j9Hbt4WPO2YFLC5orspKS+tXIycUgBXEL1ugBpepG6KMszVjLI3kLc92N
+         kTc9vrRR6g8VW+LN0AX0EtOgF3l3+dPVG0g8p/JxF20SHkxmU/vtT+DNg3ZswujPU+SV
+         AqzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759715854; x=1760320654;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hJqT6wVQ58a6IoyXBnf5WKla2qjZwqbObYMHqCGe1mA=;
+        b=Vlecfk6WLnE1H+RbNJB7bNvwcyKVNl4KaN6cOIN5AmL8ccxnd5BP0Z90bM8h/kqxWu
+         4BaBhMDmsXpy0qu+j9JitMzAoALVowPXbLrJsRG+XpuGxo5KHaH+vq1Ko0HXIsA2KSRR
+         WIe8vp+tuTDfSMpKDwvKh+v/Yr1QyyGnK9rtTjti6NkAn5n6QUktcLC1BErQwcXxK+cy
+         YazCJPJ63r+jL9FTf/UM+OIxTU88XMiSFCtYjj/ARhgLi+ExHPqxg4NaJNmDhwBPicZO
+         hL2thFqdjnwteyMVPhkpu5nYu2JrEA5Lw+Of0weYgAzdspaoSDK+imZ6CNoXm1aNgDrk
+         1xDw==
+X-Forwarded-Encrypted: i=1; AJvYcCXKpbqYdrmjwnsE3jT1dD7Q2f6pfCGEPnN+fLv1M8ylqcFFNjgCCDOooz7Rz073lR+xG1JyXQi+MSM0Ll8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM7raf6u6/HcjfFw9Pa7epo2sGCUC+l4QZgQyoeJXw8zLiJ0wS
+	5ySksDSebJE4J/6vnPuMIdIhWiqFy+hxFdvttZ5v1R2IhI0llt2DQD8600dpZQzo
+X-Gm-Gg: ASbGncuemQkjtTEk0p18BFqzh0pNASjz9AuyK9hb/ZGZgMhiDwWIVqspG46hWwwUG2T
+	gGqGclnvh1bCB9sRnhDY9FWrZtvCIsSti6eJlZYfb1iBIy/v+s09ecJvA4vbYcItbgDZ9f6o8h2
+	4wjKw37/hY7dbO8DMoIyUaOoro9ktW96gqbhonktTJSp1f1kXdbHntTmLX8ssBP24RRtJ+A2BOu
+	1EOd1uKCs0zvWH6HNacnvCB8fbH5EKQn92LgMXe1qM3MEhLjs8/rTYfLaxfQQKO+RDNdgqNcLpl
+	TzNd3JyNt3KPubSVyRE7/2yUSLvHpspeNNRvlhtB0UR87lIWY8wihJ/9OIxngfM+w+Dc3REYLe+
+	0LcTad3l8jAs29lDWi3faJFolFnewtldIOnjVazyxLJgvHD7AVzFCLPOLcfBop7qKUg==
+X-Google-Smtp-Source: AGHT+IHFDxt76FMK+klPkErNo9wPL3/XQa1q3bkxlDYdv5wuOXYrYCvor5915AfB/uysOfWm3wUaYw==
+X-Received: by 2002:a05:6a20:3ca5:b0:32a:ce3e:fb9b with SMTP id adf61e73a8af0-32b62139888mr14319007637.59.1759715853867;
+        Sun, 05 Oct 2025 18:57:33 -0700 (PDT)
+Received: from localhost ([2804:30c:b65:6a00:ceaa:2ed0:e81e:8f51])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-78b020938b1sm10763506b3a.83.2025.10.05.18.57.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 Oct 2025 18:57:33 -0700 (PDT)
+Date: Sun, 5 Oct 2025 22:58:30 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Kim Seer Paller <kimseer.paller@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
+	Ceclan Dumitru <dumitru.ceclan@analog.com>,
+	Jonathan Santos <Jonathan.Santos@analog.com>,
+	Dragos Bogdan <dragos.bogdan@analog.com>
+Subject: Re: [PATCH v12 1/3] dt-bindings: iio: adc: add max14001
+Message-ID: <aOMiRpPO-PrJP8vG@debian-BULLSEYE-live-builder-AMD64>
+References: <961e5351afa408e69541b60ec75852fbbd1ddd24.1759121938.git.marilene.agarcia@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] blk-mq: add a new queue sysfs attribute async_depth
-To: Nilay Shroff <nilay@linux.ibm.com>, Yu Kuai <yukuai1@huaweicloud.com>,
- axboe@kernel.dk, bvanassche@acm.org, ming.lei@redhat.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com
-References: <20250930071111.1218494-1-yukuai1@huaweicloud.com>
- <20250930071111.1218494-4-yukuai1@huaweicloud.com>
- <91799590-15cd-437d-900f-8bc372f7298b@linux.ibm.com>
-From: Yu Kuai <hailan@yukuai.org.cn>
-In-Reply-To: <91799590-15cd-437d-900f-8bc372f7298b@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <961e5351afa408e69541b60ec75852fbbd1ddd24.1759121938.git.marilene.agarcia@gmail.com>
 
-Hi,
-
-在 2025/10/2 23:10, Nilay Shroff 写道:
->
-> On 9/30/25 12:41 PM, Yu Kuai wrote:
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> Add a new field async_depth to request_queue and related APIs, this is
->> currently not used, following patches will convert elevators to use
->> this instead of internal async_depth.
->>
->> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->> ---
->>   block/blk-core.c       |  1 +
->>   block/blk-mq.c         |  4 ++++
->>   block/blk-sysfs.c      | 47 ++++++++++++++++++++++++++++++++++++++++++
->>   block/elevator.c       |  1 +
->>   include/linux/blkdev.h |  1 +
->>   5 files changed, 54 insertions(+)
->>
->> diff --git a/block/blk-core.c b/block/blk-core.c
->> index dd39ff651095..76df70cfc103 100644
->> --- a/block/blk-core.c
->> +++ b/block/blk-core.c
->> @@ -463,6 +463,7 @@ struct request_queue *blk_alloc_queue(struct queue_limits *lim, int node_id)
->>   	fs_reclaim_release(GFP_KERNEL);
->>   
->>   	q->nr_requests = BLKDEV_DEFAULT_RQ;
->> +	q->async_depth = BLKDEV_DEFAULT_RQ;
->>   
->>   	return q;
->>   
->> diff --git a/block/blk-mq.c b/block/blk-mq.c
->> index 09f579414161..260e54fa48f0 100644
->> --- a/block/blk-mq.c
->> +++ b/block/blk-mq.c
->> @@ -529,6 +529,8 @@ static struct request *__blk_mq_alloc_requests(struct blk_mq_alloc_data *data)
->>   			data->rq_flags |= RQF_USE_SCHED;
->>   			if (ops->limit_depth)
->>   				ops->limit_depth(data->cmd_flags, data);
->> +			else if (!blk_mq_sched_sync_request(data->cmd_flags))
->> +				data->shallow_depth = q->async_depth;
->>   		}
-> In the subsequent patches, I saw that ->limit_depth is still used for the
-> BFQ scheduler. Given that, it seems more consistent to also retain ->limit_depth
-> for the mq-deadline and Kyber schedulers, and set data->shallow_depth within their
-> respective ->limit_depth methods. If we take this approach, the additional
-> blk_mq_sched_sync_request() check above becomes unnecessary.
->
-> So IMO:
-> - Keep ->limit_depth for all schedulers (bfq, mq-deadline, kyber).
-> - Remove the extra blk_mq_sched_sync_request() check from the core code.
-
-I was thinking to save a function call for deadline and kyber, however, I don't
-have preference here and I can do this in the next version.
-
-Thanks,
-Kuai
-
-> Thanks,
-> --Nilay
->
+On 09/29, Marilene Andrade Garcia wrote:
+> Add device-tree documentation for MAX14001/MAX14002 ADCs.
+> The MAX14001/MAX14002 are isolated, single-channel analog-to-digital
+> converters with programmable voltage comparators and inrush current
+> control optimized for configurable binary input applications.
+> 
+> They share the same features, but in the MAX14001 the inrush trigger
+> threshold, current magnitude, and current duration are all programmable,
+> whereas in the MAX14002 these parameters are fixed.
+> 
+> Co-developed-by: Kim Seer Paller <kimseer.paller@analog.com>
+> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+> Signed-off-by: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+> ---
+> 
+No strong opinion about the dt doc file name.
+With Conor's suggesting of dropping the label applied,
+Reviewed-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
 
