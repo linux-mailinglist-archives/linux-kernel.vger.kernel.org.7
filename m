@@ -1,158 +1,165 @@
-Return-Path: <linux-kernel+bounces-843162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E175BBE8A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:49:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B22D2BBE8AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 647D84EACB3
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:49:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BF1D94EF9AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2042D8DA7;
-	Mon,  6 Oct 2025 15:48:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="2zo+Zien"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68F72D061E
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 15:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3FE82D8DB1;
+	Mon,  6 Oct 2025 15:49:04 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93A22D5408;
+	Mon,  6 Oct 2025 15:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759765737; cv=none; b=e3bP1Xl3CRQykJMYJyvU8uE3xP/2NPF4QnmqQoTR6qFN7xcohGK4il/5pmp0IEiSUcEKJnlmztK4/fQIQc47+QJQFEYUQ+vPSfZjLmDHT8q8SZaqjNuV16cvJ7HA93G9ApJNcGfMhs/Lu1twPl40E3vw/xpcQ4pdCKn55CLp3zI=
+	t=1759765744; cv=none; b=KV/m4r9VFbCbGr6XI7aP2Mp2HQTYwr9ONPW1xD/5Jibt1CK4lb63p7tTblvKMrL3JLZ5cLWTx/twGh9SbPG1e82uy6Ill/nytsZk2m1M9x/ZYRRL7HYHagv+RGsyRQ8cHcwcA+WS0ZhFjpay1SRAL2DLtpBPoauWe0SryOaByBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759765737; c=relaxed/simple;
-	bh=7cCqsIleQbTCE8nJ/cqNLb6Xh7ymZFZDoUIkZvvwW5c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Im8/s4jXoXmZL9TiCg+h/Hag6tq2kl5e1hw225oy7xi/jVc1VPYpCmW6gwyRySnEhgy/bSYgJBoM2SPUpYPJhOuh+tfI7erBwvLx0b8jOuxW31TMrvu3DJlZJZWh2aVyueNlhxWClsr8R69pGviampQC74BXtSQwX9p1HlxCmy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=2zo+Zien; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-7b6ac55cf86so3189286a34.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 08:48:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1759765734; x=1760370534; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=T869gDVevA9LpG7p7hXPgb7SP5eHhcw4WWhaTQBkq5A=;
-        b=2zo+ZienJvyGr8v4PFCMg777UXY9YbInkEZSYVHaJh1LkrIiNQ5HSe30lkob5edkt5
-         gcX38kXd54+hdz1yB+LZchELWJwKFEYW6WPTMhoDU2sZJV9RMloSAwWUqZ30V8Lnx+uc
-         PY/8SPITCvzJqOCIRj+gVJDSKdycdYsh6BimWJeM4zC+xWQvYFDAWTaZ4m5iS/d0p01y
-         hkgQo2wu9L+mIVevhyMuhUgNS2SGZslZyXHWJhw9wI/cOl8vTr+GfP/IIkvlCHeBX7wx
-         uzYomOekrrB/vn4cgha4lqO2Iw/ryKlaHS7hjIrj06Wl2Zbe+nTh1//C9yR+dyrsEnkv
-         XTGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759765734; x=1760370534;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T869gDVevA9LpG7p7hXPgb7SP5eHhcw4WWhaTQBkq5A=;
-        b=PxfJPYeZXDfgXBMOGCcyAYm6/0bv2bHEEoQmoUXUpqcShBmI2RoeRZXgrQExJWuoFb
-         XsMoQdtjpOg5Qkt/+EFiF22rq6YU5YbfgndBUY1oIk3gx8RXsnJS4rBo0dz6OWEji7m3
-         na7eQJiiM1xqG2msRLsHJ1uC1Wq2HCU0JWEaa3fgezv9+GBVpu2EyS1NrhtWQ3vCqxXM
-         XTf+6Srv0mViZEWaag7SJRWQZAQecpO6YXAWEqG2XkebKgdaavqs4rXAowuZaQdyGKTA
-         az65zYTMWFtU58ROcHNR6FugpJU5/vh2y4d14SUbT/qt2cekpUpn19ZwxfuSHJYQPY8n
-         hsgw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCReBm20NXOVoTddj/IBFxl5RkW6diW5+lLrj0W4fQ6xGgWb9YnkFL/creyTIIDCU247MCiOXXhduEQJ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJRKRxmXSyi+MIzYYVvRjhHQb/KtOzw5Yut1ZT/INGb7uYZO7J
-	Afdo7a2zClrFMohEPFy+rzTKuXbUO6fSZqmLaFGd4pZfIBO9aH/OMeR/hgQxoXrNGy5ceD3CIGE
-	cJYmDjuk=
-X-Gm-Gg: ASbGncsaKLEwb8Uli+c24zgiwojanT/pPE4b1LaAfygy8O/cIyBlaFvLTMFnAuNeU2L
-	6VWxdJPz5/M/Qj42yimaoYI22Emn8xhzYyOlMI/e23abg+t65rOXrFPPKtk/IL+2ib6vRTpYguQ
-	UZIOXWfjF+EoGSFje6c+PQLQ+qyDlLXR4s8fdcnKtcHtT0lQZaKXlA1muZkDXhpy2AI2haBwa6O
-	4beRCDpcHEXno8eTFuOS70T3x7ZzNCcXmaw+GslWhyRV6wdY3xLfd5gnZGe6iqL/d9udQYy836S
-	yVcAVVYk+OT9vGUpN00MFURxu2ZtRDTveKmuGhy1mj28XIqTiNizfuxQufNiJMzqE8IxUY/NlSF
-	d8Jnsg2wbZoZ0UobSiNlMJ82HD2qP4f6OzjDy7kbkv5kdYVuRHG5IpVtdO7tDOWQQpugNAaspk7
-	ZNT+xr2Ggtacc7rvpHfNfyBir9q1LBncA0/w==
-X-Google-Smtp-Source: AGHT+IH6njM+4Hb3ORuQPgRlqgDWQXTIapYtLEi8wuRV94ziPpiWcaXvJxfwgPJWYXWshy0ytCVboA==
-X-Received: by 2002:a05:6830:374c:b0:7bb:79ad:6604 with SMTP id 46e09a7af769-7bf77538cccmr7827018a34.22.1759765733844;
-        Mon, 06 Oct 2025 08:48:53 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:a1fd:4fbd:e7a6:9246? ([2600:8803:e7e4:1d00:a1fd:4fbd:e7a6:9246])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7bf3fdcfb69sm3892248a34.13.2025.10.06.08.48.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Oct 2025 08:48:53 -0700 (PDT)
-Message-ID: <da087553-c6d6-4e51-ac57-1be95a3c04b7@baylibre.com>
-Date: Mon, 6 Oct 2025 10:48:51 -0500
+	s=arc-20240116; t=1759765744; c=relaxed/simple;
+	bh=U4EyToafNC5MnqAwQQIy5rWeujtlVsbLqs/JsM2ItZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZsmcjT4Hgh0qVratR7vpwImeBQk9zH3HBwVBOMxogg5sV76zrFIBmiN6OTivf5bMakWkccGMW9eOQsb+dHDotz9JHvBAD/0kDdaIjK5OqU12Cl+USo4h+GzYTGQWT9xlrDo5VwCpxZ/DCZiGcTEcwOOiinB4Nb/4In8XnaNrJG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 47CE11515;
+	Mon,  6 Oct 2025 08:48:54 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D63313F66E;
+	Mon,  6 Oct 2025 08:48:59 -0700 (PDT)
+Date: Mon, 6 Oct 2025 16:48:57 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Adam Young <admiyo@amperemail.onmicrosoft.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Adam Young <admiyo@os.amperecomputing.com>,
+	Sudeep Holla <sudeep.holla@arm.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Huisong Li <lihuisong@huawei.com>
+Subject: Re: [PATCH net-next v29 1/3] mailbox: add callback function for rx
+ buffer allocation
+Message-ID: <20251006-large-astute-rattlesnake-c913fe@sudeepholla>
+References: <20250925190027.147405-1-admiyo@os.amperecomputing.com>
+ <20250925190027.147405-2-admiyo@os.amperecomputing.com>
+ <5dacc0c7-0399-4363-ba9c-944a95afab20@amperemail.onmicrosoft.com>
+ <CABb+yY3T6LdPoGysNAyNr_EgCAcq2Vxz3V1ReDgF_fGYcqRrbw@mail.gmail.com>
+ <fe645202-9e00-4968-9aea-8680271a2067@amperemail.onmicrosoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 2/3] iio: adc: max14001: New driver
-To: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Kim Seer Paller <kimseer.paller@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
- Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
- Ceclan Dumitru <dumitru.ceclan@analog.com>,
- Jonathan Santos <Jonathan.Santos@analog.com>,
- Dragos Bogdan <dragos.bogdan@analog.com>
-References: <961e5351afa408e69541b60ec75852fbbd1ddd24.1759121938.git.marilene.agarcia@gmail.com>
- <476b75cff0c3e5ff23ba7c642924511f3ba09a3f.1759121938.git.marilene.agarcia@gmail.com>
- <CAMknhBHt9JVkaf1Kq76BKFM-Ff38-7ws6gaq+5fwy=pAih-fww@mail.gmail.com>
- <9ee20209-efba-44b1-9902-5885bacfb290@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <9ee20209-efba-44b1-9902-5885bacfb290@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <fe645202-9e00-4968-9aea-8680271a2067@amperemail.onmicrosoft.com>
 
-On 10/5/25 6:25 PM, Marilene Andrade Garcia wrote:
-> On 01/10/2025 11:03, David Lechner wrote:
->> On Mon, Sep 29, 2025 at 7:59 AM Marilene Andrade Garcia
->> <marilene.agarcia@gmail.com> wrote:
->>>
->>
-> ...
->>> +static int max14001_read_raw(struct iio_dev *indio_dev,
->>> +                            struct iio_chan_spec const *chan,
->>> +                            int *val, int *val2, long mask)
->>> +{
->>> +       struct max14001_state *st = iio_priv(indio_dev);
->>> +       int ret;
->>> +
->>> +       switch (mask) {
->>> +       case IIO_CHAN_INFO_RAW:
->>> +               ret = regmap_read(st->regmap, MAX14001_REG_ADC, val);
->>> +               if (ret)
->>> +                       return ret;
->>> +
->>> +               return IIO_VAL_INT;
->>> +       case IIO_CHAN_INFO_AVERAGE_RAW:
->>> +               ret = regmap_read(st->regmap, MAX14001_REG_FADC, val);
->>
->> I don't remember... did you give a reason why this should not be a
->> separate channel? Or just use REG_FADC as the raw value and forget
->> about REG_ADC? In any case we would want another attribute to control
->> the filter window size.
-> ...
+On Mon, Oct 06, 2025 at 11:24:23AM -0400, Adam Young wrote:
 > 
-> Hello David,
+> On 10/5/25 19:34, Jassi Brar wrote:
+> > On Sun, Oct 5, 2025 at 12:13 AM Adam Young
+> > <admiyo@amperemail.onmicrosoft.com> wrote:
+> > > Jassi, this one needs your attention specifically.
+> > > 
+> > > Do you have an issue with adding this callback?  I think it will add an
+> > > important ability to the receive path for the mailbox API: letting the
+> > > client driver specify how to allocate the memory that the message is
+> > > coming in.  For general purpose mechanisms like PCC, this is essential:
+> > > the mailbox cannot know all of the different formats that the drivers
+> > > are going to require.  For example, the same system might have MPAM
+> > > (Memory Protection) and MCTP (Network Protocol) driven by the same PCC
+> > > Mailbox.
+> > > 
+> > Looking at the existing code, I am not even sure if rx_alloc() is needed at all.
+> > 
+> > Let me explain...
+> > 1) write_response, via rx_alloc, is basically asking the client to
+> > allocate a buffer of length parsed from the pcc header in shmem.
+> Yes, that is exactly what it is doing.  Write response encapsulates the PCC
+> specific logic for extracting the message length from the shared buffer. 
+> Anything using an extended memory (type 3 or 4) PCC channel is going to have
+> to do this logic.
+> > 2) write_response is called from isr and even before the
+> > mbox_chan_received_data() call.
+> Yes. Specifically, it is marshalling the data from the shared buffer into
+> kernel space.  This is logic that every single PCC driver needs to do.  It
+> should be put in  common code.
+> > 
+> > Why can't you get rid of write_response() and simply call
+> >      mbox_chan_received_data(chan, pchan->chan.shmem)
+> > for the client to allocate and memcpy_fromio itself?
 > 
-> Thank you for the review and suggestions.
-> Sorry for not adding any comments about that in v12. From what I understood from our previous conversation, for now the code could have one channel to keep things simple, since we’re not sure if anyone will actually need to read both the filtered and unfiltered data at the same time.
-> 
-> I was thinking of sending a separate set of commits to address that after this one gets merged, as it will involve new code changes related to adding a function to configure how many ADC readings are included in the mean calculation, and adding a new attribute to sysfs.
-> 
-> Since both IIO_CHAN_INFO_RAW and IIO_CHAN_INFO_AVERAGE_RAW are currently returning the same value, I could drop IIO_CHAN_INFO_AVERAGE_RAW in v13 and add it back in the next series of commits to implement the related feature.
-> 
-> I would like to know your thoughts about it, because if you prefer, I could change my plans and implement it in v13.
-> 
-> Best Regards,
-> Marilene
+> Moving write_response into the client and out of the mailbox means that it
+> has to be implemented properly on every driver, leading to cut-and-paste
+> errors.
 > 
 
-Since everything else looks good, I think Marcelo's suggestion to drop
-averaging from this series and add it in a later series is the best advice.
+Agreed, but I don’t think we need to add a new API to the mailbox framework
+solely to handle duplication across PCC client drivers. As I’ve mentioned a
+few times already, we can introduce common helpers later if a second driver
+ends up replicating this logic. That alone isn’t a good reason to add generic
+APIs to the mailbox framework right now.
+
+We can revisit this idea in the future if there’s a clear benefit, but in my
+opinion, a multi-step approach is more appropriate:
+
+1. First, add the initial driver with all the required client handling.
+
+2. Then, if a second driver needs similar functionality, we can introduce
+   shared helpers.
+
+3. Finally, if it still makes sense at that point, we can discuss defining a
+   new mailbox API - with the benefit of having concrete examples already in the
+   upstream tree.
+
+> So, yes, I can do that, but then every single driver that needs to use the
+> pcc mailbox has to do the exact same code.  This is the first Type 3/4 PCC
+> driver to use extended memory, and thus it needs to implement new logic. 
+> That logic is to make sure  we have proper serialized access to the shared
+> buffer.  It is this kind of access that the mailbox API is well designed to
+> provide:  if both sides follow the protocol, it will only deliver a single
+> message at a time.  If we move the logic out of the mailbox, we end up
+> duplicating the serialization code in the client driver.  I could make a
+> helper function for it, but we are getting to the point, then, where the
+> mailbox API is not very useful.   If we are going to have an abstraction
+> like this (and I think we should) then we should use it.
+>
+
+Sorry but you haven't demonstrated this with example. First try the above
+mentioned step and lets talk later if you still have issues.
+
+> We have more drivers like this coming.  There is code that is going to be
+> non-PCC, but really PCC like that will need an MCTP driver.  That driver
+> will also need to allocate an sk_buff for receiving the  data.  There is
+> also MPAM code that will use the PCC driver and a type3  (extended memory)
+> channel.  The mailbox API, in order to be more generally useful, should
+> allow for swapping the memory allocation scheme between different clients of
+> the same mailbox.  Then the mailbox layer is responsible for handling the
+> mailboxes, and the clients are domain-specific code.
+> 
+
+You can always improve the code later. We don't know what will the discussions
+lead to when you submit that driver later. We can keep those discussion for
+later and just concentrate on getting the first step done here.
+
+Hi Jassi,
+
+If you don't have any objections, can we first get the revert in place and
+let Adam attempt adding code to the client and take the discussions from
+there.
+
+-- 
+Regards,
+Sudeep
 
