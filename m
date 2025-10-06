@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-843417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 841C7BBF242
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 22:03:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E46BBF248
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 22:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2DED3C4152
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 20:03:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 623343C3E5E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 20:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA5C12D94A1;
-	Mon,  6 Oct 2025 20:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D702DE71B;
+	Mon,  6 Oct 2025 20:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ndopRxne"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b8gkG1q5"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8782A2DE1F0
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 20:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7CA2DCBEB
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 20:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759780995; cv=none; b=rz1Jze6yrCFNpx+yzOeNR5s3OL6Hq5wGSnUWjfvE5fPIBzGF3DFpsy0UVJtwCJXBvvUbNZYBZbcoGtUflF5Oggt4lDg329yZ+nUZm4u/jB/cSW6jyS42+8qgMxdOlmmPlsunalKL0iH2lJRm8gj6vc81fHifGYi2L7U+mO+JIwA=
+	t=1759780999; cv=none; b=YEz9JFJFgfbyo2/wNXfDjDDHhT9gNdMCHWLAEPGbeX2XVbfXVfBTtvdy620NoLt/2KqGh9w3nqNvB51yxwRvg8xFKFVSOuSyQ91wnn9tLsC/OLE3K6rYEcoi8X6oJsohwFNlslkhKjw0RMsaFmHlkND2ltkMgQI4vHWgyb4QWLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759780995; c=relaxed/simple;
-	bh=9q7atItYA1TlcduEE3c+VIaxBOMZXl/TTmoi3n+8OJ8=;
+	s=arc-20240116; t=1759780999; c=relaxed/simple;
+	bh=BI23GMC9t6RGb9fZd+kNiyuir60KlSVll6HSYgnUNwo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=D1b7fsFOlZFDadyjMdRikpP1412H5yOeNn/CK9GSEEkp2zfEO24u5xjLcOTLPC50KaMVeKdS94d4oHCXh+SiJEXdmmQcXP2fQkzS9X8rQiCeMKtqxa4JWS7LFkWlKGWQxUBaG85n7uPBO4Z5VaLAVoHmYqDu1vY1gk/Ywt5LrEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ndopRxne; arc=none smtp.client-ip=209.85.216.44
+	 In-Reply-To:To:Cc; b=LAju84tQx0uq/6s7/xNWblLtVpyzv8M2smvkrD9y+fmQhmdx4reDoVgUxYT9iOqNvBSRKnT6VA4WY/bl9wyye3/aOJS1kncpSJDlgEabRfyZrRn+WIUnzHp9C0IKBtzXh8VZcuZEBUS9e6cmIzCF7YyN6FN+BShbR/U7qfqXso8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b8gkG1q5; arc=none smtp.client-ip=209.85.216.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-336b9473529so4998540a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 13:03:13 -0700 (PDT)
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-339c9bf3492so4313442a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 13:03:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759780993; x=1760385793; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759780997; x=1760385797; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=VextjEGcnlm32GGbyDeUjgrLV8IU5CS7mWQhtH32SsI=;
-        b=ndopRxnexzdJTQ85qNNwCSjDhYCIK0cscoxLcsG7TOQb+CR+AolnzX/j+r7IF6uPCj
-         0fk64S4rAoYeqcDEQlXNZrNkrN4z2s14QCTv/K+SoiSBVPCqwK+pTh6fZjA9TT2Fh2+N
-         VSPvxXEFU4UImIFT5fB80j6YdkSz/B0QaiVnHbZ76k16x3AqbW//ZCc/jnnXRR7hy/fR
-         XFTSdrDHlVX0wfi6HcfAj0/k5ZLHtogDnETP0z23YhalD5WEYiOzLKYE9i2A3zLiI+Wh
-         6NYvKbJeiQUqju/4ShJscG7Usy+G/j5K8Cxx85lFAPtN9/Oq4Pg6UMvQX94d/NOmMf8B
-         BTRQ==
+        bh=JOUsOsGJd3wfEZwhNSB4DJHpM3wcqaShHziJPPLEM9s=;
+        b=b8gkG1q5DsWlmQXXFpdAyTAIZZtLD19F8HXSLdhKwESRRuzmB166EwUP7/GaeOVTXA
+         sJphax2vgn68vkQlg/qGglFRpAKVGjXkODaxDnZbUm10KJXLCFwEEbLslO8NV8uehwZb
+         M4fQdLi5MzcXCt4MZpXHS9NLAo/P0KLDYUBewIzTMzXmAhtw6GVgpCYadtTJeWQtCCYI
+         nGsepIOJ0oF3b3pnTPTW5TLjaQ1pqLkfcofXh5yqKFw0RaUsCFHOiYRYxSP3HZjiXW9L
+         tVFW9Niw3KQWDYd/chAoNYfcSVCQs+dtDfrd3cDhADIJgCSlfLmBzssCQYyPtWWElhJ4
+         L2jA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759780993; x=1760385793;
+        d=1e100.net; s=20230601; t=1759780997; x=1760385797;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VextjEGcnlm32GGbyDeUjgrLV8IU5CS7mWQhtH32SsI=;
-        b=vj+41mP3idUsbZ27WfKTOj1/N9dG9WO/od7sO+u8+OoW4RzFo+510enGPyR2mvded7
-         ae26DRCYvr2gJUsWJZcOX1mR9abDzoeo+3XotnSAHtRvF+nQYr+LTi4WKNM2gbMSIr7y
-         MfESg5UneGWgDikRW5/hm8FqVKDmerPwMQBmi+ls1f6JjUxtEff3tsdAPzJgwVg8GyrO
-         MusrgxlHOHwPqQCHjvvkykGz8PL29aAexb9Ki7FhxWoGXK/oxTDYNFG4iPy+bcu8TJ25
-         SByNKPsoumMU6d5bgLDV9xEHsPU+Wa70qzKPhN7cRf2gM0GT37hp/O1D2LkuqfqV82Tj
-         gi1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXvquTDVI6H6fA2OeEX8kO8rBflLisIwSFC6kv8GDQAZ+Qpvn8bcBvjlKLH3ga7WTI/U2RshP65ThruncA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywmj7rAPew66Ui8PzmD8BLv8ObXckd+1GquyU59jgmxxOnb79K3
-	pYod1He++jGCRNPC0HTlhbCF/ZvQUwcTV9kgT8J0mR7rS0Cvytt3B14W
-X-Gm-Gg: ASbGncsLfjmbFxFmI9fMPr8F84hwO3cg7HpFPKElPIT4iWFvYYvajNEsTE+fC6TfHzS
-	Eo7jv+0iRI7U2MX3yr0zyPDVpvmw7y5ww/R1EY64BlPQ4dyzcn3JKRRsbX2nRErG3sb1QTPXiTy
-	EeUeY5JQ0vzATHvYp+RkGol9aG5HutIlkZf/G+AE17A1XR1k47K7vP2tGndkYg9dtVCXU/RxSmg
-	S6XeH4ZsLWsFhi6BxjojSWEOMbYm6p/YsSZoE6qStEVqCTQ4spJGg0+DkUiTyB80u7QfhH/SINu
-	GhuBYhb9qdzqPPKN2LFp3PK6gEG8Vj6f1FNv4I9hqPiAj8YBxFRn2klbMDYk4VhhWMEVuad0oOW
-	PObyESlUAoinvhwi1ZasFz0I+Tzr+oqqhx3SBVdLCW2YPAyMIBAS40D5jnhFzD4E=
-X-Google-Smtp-Source: AGHT+IEEC/OlDJjYylUZwXM70t8C4JnPOT0aE/22j79CrAET4Rb6cfD67kwfl+/Yi6S6WmLn1QYf+g==
-X-Received: by 2002:a17:90b:58ec:b0:330:a1ee:e119 with SMTP id 98e67ed59e1d1-339edaae564mr1057063a91.9.1759780992601;
-        Mon, 06 Oct 2025 13:03:12 -0700 (PDT)
+        bh=JOUsOsGJd3wfEZwhNSB4DJHpM3wcqaShHziJPPLEM9s=;
+        b=ji5E20MeohHWSaCcCsTMusur1d/WHBSQCuAG7s31FScIBJjjbCX5P2iNFchyHPQyp4
+         csC5C1Ya6LAXAIgJLa9HHQ0XBJ1yz732FUfM3R274rRb8co3E2GO869b1oFjQhjSjZOb
+         sG3h/XHeLdVnGG6xoCpCUaH6sMag367/WijTilAnSEgtDer3ukCR8+/4EjCLCmS097eK
+         pTAM+m9o8c9MIUAItRwxxu8z92AN3AZxtsUfw0gfNgXgHvxTM4n+vwrvcvP6erzJTRpF
+         qwu3EbEpCyV3MGKtHyvqKL5mGqgR0SSnA4rTsMv4AJrGvuPJDPoqTVJr5csWjdr55Tr6
+         /WKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWLic0YYMjY5j8Dryc7yhTMWovCXxgRwJZBxS6c2l2KCRLL3xkk0u5T6fXxjYkg9PkRltSKhl6n/2CmwIw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKkmIBzO1h7sjxEmwipegUu+g89TVjRknxMvN+dosgGXlVwFhO
+	RSBhIkDarZPYtqzSdN1Vr8jDrbVW5iqDt/bUqXe2HMhUHQERGfUXoigf
+X-Gm-Gg: ASbGncv4qmiDI/uxiJ2S+zw9WGz+l2RfXOnzfmPkgQWRP9ZJFUpeAZ1ObQJDQ7ayv9Q
+	PjHJoIS1eWKzhJ9RHZiDAiBqgsY3C3I+Ugj/fNfnXuk5iVJuGCOjBZfTNOKubyZD6k6aoUHI0aa
+	J0ZcpAW9CildelNtNSmznWgf5f7q8OIUAeZb3N3BIdFFYwyrSJUzBMycj/asEiM9dBw5M8Fd6CB
+	bWbey8H9c2oBDmC66up+1E0LnUB5VzMamBHb87+pMLQJGgggcIuSCWnalVsMs2FoQHGB4zJ4snf
+	TJ0gIKcpnF/97ZIXDncbw3G25PcOtS4nwc8ieWNe/3JgT21LSUjxWq9BC8O6dDDM96KPEXNfS7f
+	rIwnByFuoRmEF6KH1PyHltp+0LRpc9HHij2FPLws1ZgJRM6BzyT5Ko7VX9xEm9O4=
+X-Google-Smtp-Source: AGHT+IGtlcgIQ18cOW4NX8p8Ae8A6QlZc0kl78+mT+F6McwCAq86Egqg4BpOisoBrQ9R2ia0C29Faw==
+X-Received: by 2002:a17:90b:1d10:b0:332:793e:c2d1 with SMTP id 98e67ed59e1d1-339c27d7865mr16524955a91.36.1759780996556;
+        Mon, 06 Oct 2025 13:03:16 -0700 (PDT)
 Received: from [127.0.0.1] ([101.32.222.185])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339ee0ba20asm163148a91.4.2025.10.06.13.03.08
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339ee0ba20asm163148a91.4.2025.10.06.13.03.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 13:03:12 -0700 (PDT)
+        Mon, 06 Oct 2025 13:03:16 -0700 (PDT)
 From: Kairui Song <ryncsn@gmail.com>
-Date: Tue, 07 Oct 2025 04:02:34 +0800
-Subject: [PATCH 2/4] mm, swap: rename helper for setup bad slots
+Date: Tue, 07 Oct 2025 04:02:35 +0800
+Subject: [PATCH 3/4] mm, swap: cleanup swap entry allocation parameter
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251007-swap-clean-after-swap-table-p1-v1-2-74860ef8ba74@tencent.com>
+Message-Id: <20251007-swap-clean-after-swap-table-p1-v1-3-74860ef8ba74@tencent.com>
 References: <20251007-swap-clean-after-swap-table-p1-v1-0-74860ef8ba74@tencent.com>
 In-Reply-To: <20251007-swap-clean-after-swap-table-p1-v1-0-74860ef8ba74@tencent.com>
 To: linux-mm@kvack.org
@@ -100,78 +100,94 @@ X-Mailer: b4 0.14.3
 
 From: Kairui Song <kasong@tencent.com>
 
-The name inc_cluster_info_page is very confusing, as this helper is only
-used during swapon to mark bad slots. Rename it properly and turn the
-VM_BUG_ON in it into WARN_ON to expose more potential issues. Swapon is
-a cold path, so adding more checks should be a good idea.
+We no longer need this GFP parameter after commit 8578e0c00dcf ("mm, swap:
+use the swap table for the swap cache and switch API"). Before that
+commit the GFP parameter is already almost identical for all callers, so
+nothing changed by that commit. Swap table just moved the GFP to lower
+layer and make it more defined and changes depend on atomic or sleep
+allocation.
 
-No feature change except new WARN_ON.
+Now this parameter is no longer used, just remove it. No behavior
+change.
 
 Signed-off-by: Kairui Song <kasong@tencent.com>
 ---
- mm/swapfile.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ include/linux/swap.h | 4 ++--
+ mm/shmem.c           | 2 +-
+ mm/swapfile.c        | 2 +-
+ mm/vmscan.c          | 4 ++--
+ 4 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 0d1924f6f495..732e07c70ce9 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -751,14 +751,14 @@ static void relocate_cluster(struct swap_info_struct *si,
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index e818fbade1e2..a4b264817735 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -462,7 +462,7 @@ static inline long get_nr_swap_pages(void)
  }
  
- /*
-- * The cluster corresponding to page_nr will be used. The cluster will not be
-- * added to free cluster list and its usage counter will be increased by 1.
-- * Only used for initialization.
-+ * The cluster corresponding to @offset will be accounted as having one bad
-+ * slot. The cluster will not be added to the free cluster list, and its
-+ * usage counter will be increased by 1. Only used for initialization.
-  */
--static int inc_cluster_info_page(struct swap_info_struct *si,
--	struct swap_cluster_info *cluster_info, unsigned long page_nr)
-+static int swap_cluster_setup_bad_slot(struct swap_cluster_info *cluster_info,
-+				       unsigned long offset)
- {
--	unsigned long idx = page_nr / SWAPFILE_CLUSTER;
-+	unsigned long idx = offset / SWAPFILE_CLUSTER;
- 	struct swap_table *table;
- 	struct swap_cluster_info *ci;
- 
-@@ -772,8 +772,8 @@ static int inc_cluster_info_page(struct swap_info_struct *si,
- 
- 	ci->count++;
- 
--	VM_BUG_ON(ci->count > SWAPFILE_CLUSTER);
--	VM_BUG_ON(ci->flags);
-+	WARN_ON(ci->count > SWAPFILE_CLUSTER);
-+	WARN_ON(ci->flags);
- 
+ extern void si_swapinfo(struct sysinfo *);
+-int folio_alloc_swap(struct folio *folio, gfp_t gfp_mask);
++int folio_alloc_swap(struct folio *folio);
+ bool folio_free_swap(struct folio *folio);
+ void put_swap_folio(struct folio *folio, swp_entry_t entry);
+ extern swp_entry_t get_swap_page_of_type(int);
+@@ -560,7 +560,7 @@ static inline int swp_swapcount(swp_entry_t entry)
  	return 0;
  }
-@@ -3396,7 +3396,7 @@ static struct swap_cluster_info *setup_clusters(struct swap_info_struct *si,
- 	 * See setup_swap_map(): header page, bad pages,
- 	 * and the EOF part of the last cluster.
- 	 */
--	err = inc_cluster_info_page(si, cluster_info, 0);
-+	err = swap_cluster_setup_bad_slot(cluster_info, 0);
- 	if (err)
- 		goto err;
- 	for (i = 0; i < swap_header->info.nr_badpages; i++) {
-@@ -3404,12 +3404,12 @@ static struct swap_cluster_info *setup_clusters(struct swap_info_struct *si,
  
- 		if (page_nr >= maxpages)
- 			continue;
--		err = inc_cluster_info_page(si, cluster_info, page_nr);
-+		err = swap_cluster_setup_bad_slot(cluster_info, page_nr);
- 		if (err)
- 			goto err;
+-static inline int folio_alloc_swap(struct folio *folio, gfp_t gfp_mask)
++static inline int folio_alloc_swap(struct folio *folio)
+ {
+ 	return -EINVAL;
+ }
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 45f51745ad88..63092cc0b141 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1617,7 +1617,7 @@ int shmem_writeout(struct folio *folio, struct swap_iocb **plug,
+ 		folio_mark_uptodate(folio);
  	}
- 	for (i = maxpages; i < round_up(maxpages, SWAPFILE_CLUSTER); i++) {
--		err = inc_cluster_info_page(si, cluster_info, i);
-+		err = swap_cluster_setup_bad_slot(cluster_info, i);
- 		if (err)
- 			goto err;
- 	}
+ 
+-	if (!folio_alloc_swap(folio, __GFP_HIGH | __GFP_NOMEMALLOC | __GFP_NOWARN)) {
++	if (!folio_alloc_swap(folio)) {
+ 		bool first_swapped = shmem_recalc_inode(inode, 0, nr_pages);
+ 		int error;
+ 
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 732e07c70ce9..534b21aeef5a 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -1425,7 +1425,7 @@ static bool swap_sync_discard(void)
+  * Context: Caller needs to hold the folio lock.
+  * Return: Whether the folio was added to the swap cache.
+  */
+-int folio_alloc_swap(struct folio *folio, gfp_t gfp)
++int folio_alloc_swap(struct folio *folio)
+ {
+ 	unsigned int order = folio_order(folio);
+ 	unsigned int size = 1 << order;
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index aadbee50a851..c99f7d6d5dd9 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1296,7 +1296,7 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+ 					    split_folio_to_list(folio, folio_list))
+ 						goto activate_locked;
+ 				}
+-				if (folio_alloc_swap(folio, __GFP_HIGH | __GFP_NOWARN)) {
++				if (folio_alloc_swap(folio)) {
+ 					int __maybe_unused order = folio_order(folio);
+ 
+ 					if (!folio_test_large(folio))
+@@ -1312,7 +1312,7 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+ 					}
+ #endif
+ 					count_mthp_stat(order, MTHP_STAT_SWPOUT_FALLBACK);
+-					if (folio_alloc_swap(folio, __GFP_HIGH | __GFP_NOWARN))
++					if (folio_alloc_swap(folio))
+ 						goto activate_locked_split;
+ 				}
+ 				/*
 
 -- 
 2.51.0
