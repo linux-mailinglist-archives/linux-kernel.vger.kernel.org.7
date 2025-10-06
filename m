@@ -1,184 +1,184 @@
-Return-Path: <linux-kernel+bounces-843153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 855A6BBE828
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:40:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D49ABBE849
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D8487347BB1
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:40:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2142E1896C46
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC9972D838E;
-	Mon,  6 Oct 2025 15:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C1F2D877B;
+	Mon,  6 Oct 2025 15:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="j5sZlXBu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ofk75a3B";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="j5sZlXBu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ofk75a3B"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="dSA3plS7"
+Received: from mx12.kaspersky-labs.com (mx12.kaspersky-labs.com [91.103.66.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4431D2D77FE
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 15:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E163D18FDBD;
+	Mon,  6 Oct 2025 15:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.103.66.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759765195; cv=none; b=pheL8WnrUvLb/VrFXpxg4RbXOBw6wtLyAEG6wdhvo+OTW02eOYeUtbD0a9bpCfzZmRpxT1NfOU8r5N/jI9gzGs2CBB/7en5EehHQ103Ce1fmT4obevV+6BwADs6ar73Z8xz5kTWDVYTUIysLKLBcf2CZgqQrU/WhGs5fyzIP/AY=
+	t=1759765278; cv=none; b=QJtjLNm/QKS5lYYe49vB+7MaVEqpe9LAkFULVoh/WtzydZHtXdzFpIcojMz+GGXTp7WsKkUyJ5aSNy2cMZoV6DPpmLLDfmTt5jPrrJMGFFWIEJ0WhhzrKnh/B/M1eW/Exxqe+X91BbLJDNrMWP5DUXvHSIt4bJgxchV2Q+u+Q4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759765195; c=relaxed/simple;
-	bh=ama3Wf+FzOOqL29SQs0q73QNhx/M/49ONwjiktce0FM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TlBfuBFMU1vUkMlTg6xo2nPjJlFsIZjed17CMufu3C+As/9oKGTf+4YfX6pkTYaTkP5icKQLd1M4g5YOH0/u1fD+nurl7rwrhipwBLmhCUmMFaNBjLCG/88LKNLEl9vrc1aWnNgKiNBvuMuSwF/Mjl8dJzRoKBZtF+CKCvDbXvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=j5sZlXBu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ofk75a3B; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=j5sZlXBu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ofk75a3B; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8B08D33685;
-	Mon,  6 Oct 2025 15:39:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759765191; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V5cMrfe4Mswv5iwXTNR0nUU42XbqIMSeF700oVgdzRc=;
-	b=j5sZlXBuD6ENssugkER28jdA3cQMT/Eei5cvymv1Yj92NcY6u7ZIzPLPO27eDrePR9smTr
-	ePHuOVfMhhkPFmRjv+ruIXQBup4bQKmoJS9/U6mUN8aWHXHNcqPRSDtPo2fRKU0iJ1qWSq
-	s+dFB6JBO5DjU7kNQLuwq6d7sx63Y4w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759765191;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V5cMrfe4Mswv5iwXTNR0nUU42XbqIMSeF700oVgdzRc=;
-	b=ofk75a3BSTxpC0Uc3RKJT56aKe7FVin4gtK9DyKLxxi/Euw+xAkPV83GgZdZq7nkHA7t5x
-	H2XcbDgY9KOIdTBA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759765191; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V5cMrfe4Mswv5iwXTNR0nUU42XbqIMSeF700oVgdzRc=;
-	b=j5sZlXBuD6ENssugkER28jdA3cQMT/Eei5cvymv1Yj92NcY6u7ZIzPLPO27eDrePR9smTr
-	ePHuOVfMhhkPFmRjv+ruIXQBup4bQKmoJS9/U6mUN8aWHXHNcqPRSDtPo2fRKU0iJ1qWSq
-	s+dFB6JBO5DjU7kNQLuwq6d7sx63Y4w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759765191;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V5cMrfe4Mswv5iwXTNR0nUU42XbqIMSeF700oVgdzRc=;
-	b=ofk75a3BSTxpC0Uc3RKJT56aKe7FVin4gtK9DyKLxxi/Euw+xAkPV83GgZdZq7nkHA7t5x
-	H2XcbDgY9KOIdTBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 73B5113700;
-	Mon,  6 Oct 2025 15:39:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Cl08HMfi42h2MgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 06 Oct 2025 15:39:51 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 03E7EA0ABF; Mon,  6 Oct 2025 17:39:46 +0200 (CEST)
-Date: Mon, 6 Oct 2025 17:39:46 +0200
-From: Jan Kara <jack@suse.cz>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Andrey Albershteyn <aalbersh@redhat.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	selinux@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH v6 4/6] fs: make vfs_fileattr_[get|set] return -EOPNOSUPP
-Message-ID: <jp3vopwtpik7bj77aejuknaziecuml6x2l2dr3oe2xoats6tls@yskzvehakmkv>
-References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
- <20250630-xattrat-syscall-v6-4-c4e3bc35227b@kernel.org>
- <a622643f-1585-40b0-9441-cf7ece176e83@kernel.org>
+	s=arc-20240116; t=1759765278; c=relaxed/simple;
+	bh=R+sN6ADGlt2sSI1kf77k/uVsIU5tLFT2ohjqAkS9vX4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iq1fNEDy8LzaynCjHWMF+t/lrtxCE9o5UeJp6sFSxnJzv4roNEDEGW9e6cTeuTq8f8NoP6BjpkP9IFzc4yhnugYBAeEfvRRTu8GXwcxcFAgNboEmaql0oLRwUSYFRg/fy1wqCYSte1r6haLA/jdFb9LOMEFvqMqipP1J5zRpCas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com; spf=pass smtp.mailfrom=kaspersky.com; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=dSA3plS7; arc=none smtp.client-ip=91.103.66.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaspersky.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
+	s=mail202505; t=1759765266;
+	bh=V6hz1B4mtJdzT98ieCSTKsGH6x9KhsbT0+TQ+ObugME=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=dSA3plS7an6tlB67+hp2tdvPlNOHq9yz33iq9hbkVsMYumqj0Fm218g9tqcXxpFKJ
+	 pGR93brh5LChoqtTSb8tSYitOLJDq7wcO83m6wwkQvP0gYoX8DEThDo6JEmuU8xFmu
+	 eLCxllc3AC6xzo7z4PIc65qYWayPzAdNHSSJG5EmXxDzYIuUgEjO2x3C5O7LHGMRVp
+	 BGVRKFVp6CPqwOGfTD/w60B34RQfFlVA2YXNpF/qsnlo35tbhqV0RvaNN1Gfh2qP25
+	 0UYpUVwpqizLg1ntvUm4E2ns1NfznVBlPSYHFx88zMKty5h4CgGhvPtgxF931jdVoR
+	 L+6eK3jqhl43A==
+Received: from relay12.kaspersky-labs.com (localhost [127.0.0.1])
+	by relay12.kaspersky-labs.com (Postfix) with ESMTP id DCEFC5A48E2;
+	Mon,  6 Oct 2025 18:41:06 +0300 (MSK)
+Received: from mail-hq2.kaspersky.com (unknown [91.103.66.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "mail-hq2.kaspersky.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
+	by mailhub12.kaspersky-labs.com (Postfix) with ESMTPS id C4EDD5A5600;
+	Mon,  6 Oct 2025 18:41:05 +0300 (MSK)
+Received: from zhigulin-p.avp.ru (10.16.104.190) by HQMAILSRV2.avp.ru
+ (10.64.57.52) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.36; Mon, 6 Oct
+ 2025 18:41:05 +0300
+From: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
+To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+CC: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>, Dikshita Agarwal
+	<dikshita.agarwal@oss.qualcomm.com>, Bryan O'Donoghue <bod@kernel.org>, Mauro
+ Carvalho Chehab <mchehab@kernel.org>, Stanimir Varbanov
+	<stanimir.varbanov@linaro.org>, <linux-media@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH] media: venus: prevent potential integer overflow in decide_core()
+Date: Mon, 6 Oct 2025 18:40:39 +0300
+Message-ID: <20251006154041.1804800-1-Pavel.Zhigulin@kaspersky.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a622643f-1585-40b0-9441-cf7ece176e83@kernel.org>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	URIBL_BLOCKED(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[redhat.com,gmail.com,arndb.de,schaufler-ca.com,kernel.org,suse.cz,paul-moore.com,vger.kernel.org];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: HQMAILSRV3.avp.ru (10.64.57.53) To HQMAILSRV2.avp.ru
+ (10.64.57.52)
+X-KSE-ServerInfo: HQMAILSRV2.avp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 10/06/2025 15:29:05
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 0
+X-KSE-AntiSpam-Info: Lua profiles 196845 [Oct 06 2025]
+X-KSE-AntiSpam-Info: Version: 6.1.1.11
+X-KSE-AntiSpam-Info: Envelope from: Pavel.Zhigulin@kaspersky.com
+X-KSE-AntiSpam-Info: LuaCore: 69 0.3.69
+ 3c9ee7b2dda8a12f0d3dc9d3a59fa717913bd018
+X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
+X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: zhigulin-p.avp.ru:5.0.1,7.1.1;kaspersky.com:5.0.1,7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
+X-KSE-AntiSpam-Info: {Tracking_white_helo}
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: Rate: 0
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Deterministic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 10/06/2025 15:32:00
+X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
+ rules found
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 10/6/2025 2:38:00 PM
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
+ rules found
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/10/06 14:52:00 #27885947
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 52
 
-On Mon 06-10-25 13:09:05, Jiri Slaby wrote:
-> On 30. 06. 25, 18:20, Andrey Albershteyn wrote:
-> > Future patches will add new syscalls which use these functions. As
-> > this interface won't be used for ioctls only, the EOPNOSUPP is more
-> > appropriate return code.
-> > 
-> > This patch converts return code from ENOIOCTLCMD to EOPNOSUPP for
-> > vfs_fileattr_get and vfs_fileattr_set. To save old behavior translate
-> > EOPNOSUPP back for current users - overlayfs, encryptfs and fs/ioctl.c.
-> > 
-> > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-> ...
-> > @@ -292,6 +294,8 @@ int ioctl_setflags(struct file *file, unsigned int __user *argp)
-> >   			fileattr_fill_flags(&fa, flags);
-> >   			err = vfs_fileattr_set(idmap, dentry, &fa);
-> >   			mnt_drop_write_file(file);
-> > +			if (err == -EOPNOTSUPP)
-> > +				err = -ENOIOCTLCMD;
-> 
-> This breaks borg code (unit tests already) as it expects EOPNOTSUPP, not
-> ENOIOCTLCMD/ENOTTY:
-> https://github.com/borgbackup/borg/blob/1c6ef7a200c7f72f8d1204d727fea32168616ceb/src/borg/platform/linux.pyx#L147
-> 
-> I.e. setflags now returns ENOIOCTLCMD/ENOTTY for cases where 6.16 used to
-> return EOPNOTSUPP.
-> 
-> This minimal testcase program doing ioctl(fd2, FS_IOC_SETFLAGS,
-> &FS_NODUMP_FL):
-> https://github.com/jirislaby/collected_sources/tree/master/ioctl_setflags
-> 
-> dumps in 6.16:
-> sf: ioctl: Operation not supported
-> 
-> with the above patch:
-> sf: ioctl: Inappropriate ioctl for device
-> 
-> Is this expected?
+The function 'decide_core()' contains the following code:
 
-No, that's a bug and a clear userspace regression so we need to fix it. I
-think we need to revert this commit and instead convert ENOIOCTLCMD from
-vfs_fileattr_get/set() to EOPNOTSUPP in appropriate places. Andrey?
+	cur_inst_load = load_per_instance(inst);
+	cur_inst_load *= inst->clk_data.vpp_freq;
+	...
+	cur_inst_lp_load = load_per_instance(inst);
+	cur_inst_lp_load *= inst->clk_data.low_power_freq;
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+This can lead to an integer overflow because the variables
+'cur_inst_load' and 'cur_inst_lp_load' are of type u32.
+
+The overflow can occur in the following scenario:
+
+  1. The current FPS is 240 (VENUS_MAX_FPS constant).
+     The processed image frame has a resolution of 4096x4096 pixels.
+  2. According to 'codec_freq_data':
+       - 'inst->clk_data.low_power_freq' can be up to 320
+       - 'inst->clk_data.vpp_freq' can be up to 675
+     (see drivers/media/platform/qcom/venus/hfi_platform_v4.c
+      and drivers/media/platform/qcom/venus/hfi_platform_v6.c)
+  3. 'load_per_instance()' returns 15728640 under these conditions.
+  4. As a result:
+       cur_inst_load *= inst->clk_data.vpp_freq → 10616832000
+       cur_inst_lp_load *= inst->clk_data.low_power_freq → 5033164800
+
+The proposed fix changes the type of these variables from u32 to u64
+to prevent overflow.
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Fixes: 3cfe5815ce0e ("media: venus: Enable low power setting for encoder")
+Signed-off-by: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
+---
+ drivers/media/platform/qcom/venus/pm_helpers.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/drivers/media/platform/qcom/venus/pm_helpers.c
+index f0269524ac70..caaab097a04d 100644
+--- a/drivers/media/platform/qcom/venus/pm_helpers.c
++++ b/drivers/media/platform/qcom/venus/pm_helpers.c
+@@ -582,9 +582,9 @@ static int move_core_to_power_save_mode(struct venus_core *core,
+ }
+
+ static void
+-min_loaded_core(struct venus_inst *inst, u32 *min_coreid, u32 *min_load, bool low_power)
++min_loaded_core(struct venus_inst *inst, u64 *min_coreid, u64 *min_load, bool low_power)
+ {
+-	u32 mbs_per_sec, load, core1_load = 0, core2_load = 0;
++	u64 mbs_per_sec, load, core1_load = 0, core2_load = 0;
+ 	u32 cores_max = core_num_max(inst);
+ 	struct venus_core *core = inst->core;
+ 	struct venus_inst *inst_pos;
+@@ -639,8 +639,8 @@ static int decide_core(struct venus_inst *inst)
+ {
+ 	const u32 ptype = HFI_PROPERTY_CONFIG_VIDEOCORES_USAGE;
+ 	struct venus_core *core = inst->core;
+-	u32 min_coreid, min_load, cur_inst_load;
+-	u32 min_lp_coreid, min_lp_load, cur_inst_lp_load;
++	u64 min_coreid, min_load, cur_inst_load;
++	u64 min_lp_coreid, min_lp_load, cur_inst_lp_load;
+ 	struct hfi_videocores_usage_type cu;
+ 	unsigned long max_freq = ULONG_MAX;
+ 	struct device *dev = core->dev;
+--
+2.43.0
+
 
