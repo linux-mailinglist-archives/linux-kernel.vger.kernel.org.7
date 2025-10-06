@@ -1,119 +1,87 @@
-Return-Path: <linux-kernel+bounces-842579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21339BBD125
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 06:56:25 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29C28BBD07C
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 06:11:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 086C21885E2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 04:56:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8FD813483CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 04:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BACD259CBF;
-	Mon,  6 Oct 2025 04:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="S1Bq9dIE"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304311C3C1F;
+	Mon,  6 Oct 2025 04:11:08 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5CC248896
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 04:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFEB3595C
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 04:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759726510; cv=none; b=cFbnc/xueHsrr0GFIqaFRonL6V/h4o19fnzDwT5vwYBytGdKWZDFD6Ip5qHlpbVOsfWIFJ1nYZmtfnPjPtgn7tonKaXKJVLvvc/3eUIqQzVaATOf+ZWuboZIrXlZMpE4IOw+2KUrdOxrma1+IFZRbyDZ/z29iWbrK6scqqWqLi0=
+	t=1759723867; cv=none; b=dA1IWGr9eN6oa+Mq8fRSYKP77d202NuGOQMKpXpiTwNdjD5At13OBCPCt52HbkHwV+OjA28AB0YswMwV23iIOIwnsKSHMU8m2YcIsz2MOW8m0JFB8nBZfWYBj8Em+W9+lOrdV+UONXL5yQk+8Q1r/w1ryfRFJOVy+TgogXiiSyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759726510; c=relaxed/simple;
-	bh=ivNLbrcVf31S8sBPae+ncnEMp0uVn4p3a8QV2tab48U=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=eooCZZjHUB4PPjdJFKneGICp49fYnj5QZTQdEsGKd/01MqrYqoBI8MbThslz+cVObnQGBn/xSWsd1sN0G/+mrM8YHP+EI4Zb4yVlmXfozAYQ/HQkwVjN9aeBV3//f7ccaSQraBDJ5XgfiVszFq5L8TL9lLv8mE0zutHfHs4ySuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=S1Bq9dIE; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20251006045505epoutp029be903d8265cdaa20f278849c197ff98~rze8FHm3Q1050510505epoutp02l
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 04:55:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20251006045505epoutp029be903d8265cdaa20f278849c197ff98~rze8FHm3Q1050510505epoutp02l
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1759726505;
-	bh=ivNLbrcVf31S8sBPae+ncnEMp0uVn4p3a8QV2tab48U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=S1Bq9dIEJKGcEpGQorBManeodrB/OzpdAJ/ZKW4ZtUHBJ5G/KgXUWMre1emF944XI
-	 fJLHdmVg4MTxZ4jjAcXFXvUrKUrAqZ3BVA+t3vteYDKME4ADZwbG7ir2Qhkixh3Xa5
-	 EEOju8ABpzY/QOXFuIZjjpe4K6wrgHj+gj9DL7zc=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20251006045505epcas5p31ab6da49f91e0ee8a2955e1dbfed18bb~rze7thTUR2860328603epcas5p3J;
-	Mon,  6 Oct 2025 04:55:05 +0000 (GMT)
-Received: from epcpadp1new (unknown [182.195.40.141]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4cg6QK3Fhrz6B9mB; Mon,  6 Oct
-	2025 04:55:05 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250929141921epcas5p108726cfc1dcbc0f911df2ac28e6b54b4~pxqmxKVhp2852028520epcas5p1x;
-	Mon, 29 Sep 2025 14:19:21 +0000 (GMT)
-Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250929141917epsmtip2886d4998032f062d081d50a0dfcd91bf~pxqjJhU8W1938819388epsmtip2v;
-	Mon, 29 Sep 2025 14:19:17 +0000 (GMT)
-Date: Mon, 29 Sep 2025 19:49:13 +0530
-From: Neeraj Kumar <s.neeraj@samsung.com>
-To: Alison Schofield <alison.schofield@intel.com>
-Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
-	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
-	cpgs@samsung.com
-Subject: Re: [PATCH V3 04/20] nvdimm/label: Update mutex_lock() with
- guard(mutex)()
-Message-ID: <720167805.241759726505455.JavaMail.epsvc@epcpadp1new>
+	s=arc-20240116; t=1759723867; c=relaxed/simple;
+	bh=VZyjs+3USMlWDqfZlsJk1lDMZQX6ofjl87/RS5R9Y4U=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=q99uFAnXWzOgM/rwzaGNCzfWqAEK9Dh6hfhpxCfuJZI8MoEiPW0u6BuT8sQPhvQ0QwKRBVg+WVmbKeCsv47mrDsUT2vYHuYUHXTcf1WPr/WGPvU9YPMc/O6VvR5mpIP7BGJ2wjsh+Q5sqNky2mswmJlYH2TZtfr8DoF8VuTGLsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-88c2f1635e1so437443439f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 21:11:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759723865; x=1760328665;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XDiw9WVl53v6BHLMc3f27WbmqoHZFSlIIbdmqdNv+0o=;
+        b=mAuxlXYLhuitSZeVMLtI7w1EXlSLMtB8i9mgS758IQF/MwbwOJecXu8SjgWeBA1v1y
+         JCaMx5IIvwY/reaRthutzGoL4QnxabAfRTWDLo08RfdQoWs+Hys7wDU7vX9gChq/YuWT
+         7VFL9vW+BO8hJqH5OMSibO4PuWbuQWrVfkwVemtuMuKe+/gHHMleM8S0TmrPdm1ag0yX
+         5UxjcjbOM26B8OoIvfThwtjHPmyTlfD4D4uQFUV3HvR9KlByNg+oTK0Yrw5zkFBTxi1N
+         ZczGbQed2aEEaqqd/QO57apqOzOXrP1Z3R5oCuM5T0lCFBMA174hO/AOoQrNwD0c9+q7
+         CM4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXEbvwHkAfEDoU275X3JNnCryGqzqGWLqWy37KHIIKRff5017l9/ncQVlkM9gUmPkf4gwY2IMLfOFn2qq4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbUswtVBVZOARpRwIGwuzGaqrXJ4jdYbPy3heHevRjQ1ran/B9
+	zybtNdk/0BaafZ4U8Yx87VCQ5WaW5BZH/PbM+WnA4uTJWSa+Ji5/clnfE/s7j4yMvGi9jcYWOb/
+	ydX3OX/lRHU85gxhHiXdG3wxR0/sWiB1QryTy5TDj96srUn+AQ7vgz4gLFQY=
+X-Google-Smtp-Source: AGHT+IE8Ls6IvJwjwYHxKCqdGX70VLaq+H9kF7MVUCjhkfwrI0I/XtLnL3QcAa4ZlNhTOQ1ixNeigkplXxUziSwmnmicaCmmt24/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <aNRlzI9b2oFk_VeC@aschofie-mobl2.lan>
-X-CMS-MailID: 20250929141921epcas5p108726cfc1dcbc0f911df2ac28e6b54b4
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----SANDhlYmavlWOafSlba8Uwn5SYx3JopzY9bfx6BHCYDp5Sgs=_75b2_"
-CMS-TYPE: 105P
-X-CPGSPASS: Y
-X-Hop-Count: 3
-X-CMS-RootMailID: 20250917134136epcas5p118f18ce5139d489d90ac608e3887c1fc
-References: <20250917134116.1623730-1-s.neeraj@samsung.com>
-	<CGME20250917134136epcas5p118f18ce5139d489d90ac608e3887c1fc@epcas5p1.samsung.com>
-	<20250917134116.1623730-5-s.neeraj@samsung.com>
-	<aNRlzI9b2oFk_VeC@aschofie-mobl2.lan>
+X-Received: by 2002:a05:6602:7407:b0:91c:fcd:88e6 with SMTP id
+ ca18e2360f4ac-93b96937759mr1485881639f.1.1759723865475; Sun, 05 Oct 2025
+ 21:11:05 -0700 (PDT)
+Date: Sun, 05 Oct 2025 21:11:05 -0700
+In-Reply-To: <20251006032505.366466-1-aha310510@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e34159.a00a0220.2ba410.0020.GAE@google.com>
+Subject: Re: [syzbot] [exfat?] KASAN: stack-out-of-bounds Read in exfat_nls_to_utf16
+From: syzbot <syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-------SANDhlYmavlWOafSlba8Uwn5SYx3JopzY9bfx6BHCYDp5Sgs=_75b2_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
+Hello,
 
-On 24/09/25 02:42PM, Alison Schofield wrote:
->On Wed, Sep 17, 2025 at 07:11:00PM +0530, Neeraj Kumar wrote:
->> Updated mutex_lock() with guard(mutex)()
->
->Along with the other reviewer comments to limit the application
->of guard() to where it is most useful, can this be spun off
->as a single patch that would be done irregardless on the
->new label support?
->
->I'm asking the question. I don't know the answer ;)
->
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-This patch is independent and not related with this series.
-Its good to send this seperately.
+Reported-by: syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
+Tested-by: syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
 
+Tested on:
 
-Regards,
-Neeraj
+commit:         7a405dbb Merge tag 'mm-stable-2025-10-03-16-49' of git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1436d092580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e2b03b8b7809165e
+dashboard link: https://syzkaller.appspot.com/bug?extid=98cc76a76de46b3714d4
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12b67214580000
 
-
-------SANDhlYmavlWOafSlba8Uwn5SYx3JopzY9bfx6BHCYDp5Sgs=_75b2_
-Content-Type: text/plain; charset="utf-8"
-
-
-------SANDhlYmavlWOafSlba8Uwn5SYx3JopzY9bfx6BHCYDp5Sgs=_75b2_--
-
+Note: testing is done by a robot and is best-effort only.
 
