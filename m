@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-842895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20090BBDEA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 13:50:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17E22BBDE99
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 13:50:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 700DF3AC2C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 11:50:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EF8718940C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 11:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA6F26A0AD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED33272811;
 	Mon,  6 Oct 2025 11:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="opQIIg0N"
-Received: from mx-relay76-hz1.antispameurope.com (mx-relay76-hz1.antispameurope.com [94.100.133.238])
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="ZuS+6zeK"
+Received: from mx-relay04-hz1.antispameurope.com (mx-relay04-hz1.antispameurope.com [94.100.132.204])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B7D34BA3A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0415026E6EA
 	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 11:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.133.238
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.132.204
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759751406; cv=pass; b=XTVneQqRI+lIdChZ39zfE/Wmm66CVtveiJaGqqtn3bRIJzlHpgaCkOrCVBQG3Z4kSUjKtmVNd5HxfmCnQp3xFWVjjbgVOWoDFLbOBSI2V+CzAJvNvtYCJOPNaVqkOQ6vvOZOK9Ww6Fa4BRSqJNqP9eY2XC2QdwbAm4Qb0tyv01w=
+	t=1759751406; cv=pass; b=D8LDxiVenX/bfLwd1J/gFH6mXTOZfyZ4vX3LZmLaS5FaPrpfz2ryGbOGeDa2T50sRb4WBNusL0s0z91uh8+zAwW9nWUz+1ge6ZJkXM5Hp9tnSi3QzhfWmF2RzW9Yxp1DIxsO/IdYXMjNiPqflqzkHPvOeS5jn4J8LyAMGF6OCIE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1759751406; c=relaxed/simple;
-	bh=lQusUQvXdBnjoaLEEe4P5A98H/WHgUn83QJF2IuKnxA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CxS5uwEuWN2MMjONfFAOs5npOxzmazWftgkx8d36KUZxCbl/0CzkRUPIjyxzJGCpbbT7G60rO1NxVCFB7Gr9okxfWJcF3DrKAJiV/F1+P1x9NlrmI0bAqoM8ac797howVoXJhcM08nz7WS1XRZRIGjuiJdHwaFZcgFgiJwumrms=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=opQIIg0N; arc=pass smtp.client-ip=94.100.133.238
+	bh=qarvGPIXqA4kc0VRJVXX2DsO6Wnlroa5YHsjyH+FLN4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YTBMkLj9RXFMwjFqwR62DVekDW83KCYWAt3Op708AdwNHjHP0noS+VqOW0jvhqULGSRAvBrYNvHYv/1+I4x3+gCRrIDheUrk8G5DelzugpKqlIVyaWf5Yc3yq8Fv50MX5CQpG0DKi2JXZ/goO3IEE0GUg/cm0XlAUIikc8aJuAk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=ZuS+6zeK; arc=pass smtp.client-ip=94.100.132.204
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-ARC-Authentication-Results: i=1; mx-gate76-hz1.hornetsecurity.com 1; spf=pass
+ARC-Authentication-Results: i=1; mx-gate04-hz1.hornetsecurity.com 1; spf=pass
  reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
  smtp.mailfrom=ew.tq-group.com
  smtp.helo=hmail-p-smtp01-out04-hz1.hornetsecurity.com; dmarc=pass
  header.from=ew.tq-group.com orig.disposition=pass
 ARC-Message-Signature: a=rsa-sha256;
- bh=Nwv2x3AV2URX4eDt226Z25gIAY13bxvGxt/6sHiSWCk=; c=relaxed/relaxed;
+ bh=KYptHwQxYppzTfCWVdL/R5bMHuCmx/luf6VVt6namUI=; c=relaxed/relaxed;
  d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
- t=1759751360;
- b=L5HcGPeYkrtdOUf5aqR+92eJ3qZP4Zg3W7BdJPg/DGvsB6OX2M06n+rBUWKUZqMvjCVhUJ3a
- +bdMsdcqk3Nhrg5GAIaRigolVpCAKPNJslZ672ZVtvRMFKb937nTOXl2jwQ/D8d4v9lH5vSuD3O
- YI1PiWCIuQ7tlnQoD3NKjyJPNOaTpHW9FP5p4g3I4f5hXh5oCwVcACMr4KvBcIHzs/w0XFwq0UY
- dDc6SUrXguHgduaIAI5JYivR1aUMR7Qa9bGDLmSxzmlfJJGjM9++xBhrVPYRGjankM0CHp0iRb/
- BEwS6dPAT5hLAzRLnFjUb+x/Y3BLnMqCQM4ulDiBKXHOQ==
+ t=1759751363;
+ b=KHHu+2AWTl8szZRo9T8SZQQFxIdGrW331oXUGWY51dqHgo0mcFENo9KORmm245IHIfo4f/hx
+ q9M9vLx0qU/p3/cz5g+cuu7Qh5A4sxCDV5SIZe1O5mFPvGpViznVZbKi4SKrxIdVat8UJfXYpmW
+ +rpbKZSH1CoUmxPGfIgLD68iLMSuNNasjrdAFuiOYkabEc3GUgWglYc9915H6/f6zjdYDVMyJ9/
+ vObYpreFntKchL6IMITuXm7bCQC8PbV7CgML/yyBo1SxiGeQcZjgXq+fpESWHO5RbqyfGlbulb7
+ pxQNkhPRe15b3ZyzHTSrX9wzZkQOlaY3yCnH72rDHpARw==
 ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
- t=1759751360;
- b=QQJGs859nLM0JXoiogG38Hsl6cQ3cnc+ovx+sb/tPPaX9rmiC+P8aOmxWa+Vj71IlYcBkmM5
- XRHbWz+gHY1PZ0vMK2cQRSjY05YD9PHqdIiZ4WWcxil73aW0qo7gXqgOPBv/SDUECxOFDbMJZ1p
- kZgvDM9jvpLufcFbFq6OUnjmvv4gJU7gOkaao3RHrEtoYut2tgSFpnA8XgC9/5H7uWXIJvhLSgR
- PZtcAvjHQZNHfKqyCv45WUad8UUS4LMmgMb6cRMw1BLc0MMMh+emzKqGc9l7E9ThXBmWObPoVms
- mZgGQfWbsZL0KXTGK0eDOBYaGhDiwGMJgQvvbe6pSGo/w==
-Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay76-hz1.antispameurope.com;
- Mon, 06 Oct 2025 13:49:20 +0200
+ t=1759751363;
+ b=XdmcP+y/weriuG1EJzg7zGgzuOXA86wQ0ukdFLVeasWgyUtcjvYkOuCQHyhDOcXNHczLrZjr
+ yM9namYRrrW7FMzKC7uyn7sl4pRdPVl8OIEyx2Yx5vVyAEjZ5SGW62+nRBbe+H+erLE5VPPbjSo
+ 5TPIjbSmOFJHI/qbB0/Rdc8tVs1f0znV7ovD9z1llW/p1Z1SEYVLJNDkv4Sk4t3YlSuy2o8nYti
+ q0OIemoR/z247MRg5YNNS+3CAJzJxwDKn7a7WrWGt5HSQWE83z4IPGObrfUduqVIR5WX8SDczUy
+ ysG9Npqb80TCuuUVsLpGhyVQFDVhcr8/QlB4+gYFH0M+g==
+Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay04-hz1.antispameurope.com;
+ Mon, 06 Oct 2025 13:49:23 +0200
 Received: from schifferm-ubuntu.tq-net.de (host-82-135-125-110.customer.m-online.net [82.135.125.110])
 	(Authenticated sender: matthias.schiffer@ew.tq-group.com)
-	by hmail-p-smtp01-out04-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 67843220CBE;
-	Mon,  6 Oct 2025 13:49:02 +0200 (CEST)
+	by hmail-p-smtp01-out04-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 4F5EC220CF2;
+	Mon,  6 Oct 2025 13:49:03 +0200 (CEST)
 From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
 To: Nishanth Menon <nm@ti.com>,
 	Vignesh Raghavendra <vigneshr@ti.com>,
@@ -73,10 +74,12 @@ Cc: Rob Herring <robh@kernel.org>,
 	linux-hardening@vger.kernel.org,
 	linux@ew.tq-group.com,
 	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Subject: [PATCH v3 0/2] TQ-Systems TQMa62xx SoM and MBa62xx board
-Date: Mon,  6 Oct 2025 13:47:46 +0200
-Message-ID: <cover.1759749553.git.matthias.schiffer@ew.tq-group.com>
+Subject: [PATCH v3 1/2] dt-bindings: arm: ti: Add compatible for AM625-based TQMa62xx SOM family and carrier board
+Date: Mon,  6 Oct 2025 13:47:47 +0200
+Message-ID: <7691a2ca5ed49da6276d406e5dd986c91f221c9b.1759749553.git.matthias.schiffer@ew.tq-group.com>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <cover.1759749553.git.matthias.schiffer@ew.tq-group.com>
+References: <cover.1759749553.git.matthias.schiffer@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,60 +94,48 @@ X-cloud-security-crypt: load encryption module
 X-cloud-security-Mailarchiv: E-Mail archived for: matthias.schiffer@ew.tq-group.com
 X-cloud-security-Mailarchivtype:outbound
 X-cloud-security-Virusscan:CLEAN
-X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay76-hz1.antispameurope.com with 4cgHbz2JRWz4LZB9
+X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay04-hz1.antispameurope.com with 4cgHc010rQzS0jY
 X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
-X-cloud-security-Digest:48afd15d2880b31a25c63c7ab36f7410
-X-cloud-security:scantime:2.103
+X-cloud-security-Digest:b8a1cefe5a1b3338a1f745c2baa9dc55
+X-cloud-security:scantime:2.278
 DKIM-Signature: a=rsa-sha256;
- bh=Nwv2x3AV2URX4eDt226Z25gIAY13bxvGxt/6sHiSWCk=; c=relaxed/relaxed;
+ bh=KYptHwQxYppzTfCWVdL/R5bMHuCmx/luf6VVt6namUI=; c=relaxed/relaxed;
  d=ew.tq-group.com;
  h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
- t=1759751360; v=1;
- b=opQIIg0N/ivILzz3T3EsyYMkWCXzCOFrntX0Qcf2jRQIpIaCP955f9upCWEFTEcdWH7Gl99P
- 1JCB/Dh822LliHMXYcTFarGHhNXHWtqfzdFnIPRvcFjHg89n2sMCrpQD0wRehg1nxlaSV1KnwU2
- PuO7i0R+RU8wZOaJeAlfCkynOnRA0K1VTgTPIGf6IqwmZs5BNi0FxK8/F3DBlhpHaGjxIzp8HEm
- 88fV64Jdf8r0GVou/UA14jTy7FFjmk5IlfCB3trGZnKceD+lUtCzPs8wLO34qNCPRYN9TWtijfz
- 409lCfEDQJCJ7M1EzefxLGOEBD+/8LFWMQbhvTbSZK3/w==
+ t=1759751363; v=1;
+ b=ZuS+6zeKrccSv8WUDdfGwhmqg1T/Q1+usj1KmJdTQbL03RW9xi4K+yARe5OrqQbFPc3ZUOX1
+ +4LEMwxv+lug7KWguEJYQfpBfhdwLO9ZO7fEZXjIEFytOPuf49Ekf9G+4AJmHYxGe0MRAmNX8n6
+ OvMcUBccCthhF2J/sCSe1KwqB1QBNHAvaYgpDUC9ZfGfutLGkp7jB69IsrWss3e4NVIYJByIdH/
+ x0FtpDhmJ8A0dxfveSK2iiGif4Umz6r4+HLcWHLDFDPB2fzlECE7/NO6qoNwMf8pLWGVBIuUQIL
+ uFqujqO2n1Bumlu0VS2l/W965gO+g2WOdUxdS58EeFfFQ==
 
-This adds Device Trees for out AM62x-based SoM TQMa62xx and its
-reference carrier board MBa62xx.
+The TQMa62xx is a SoM family with a pluggable connector. The MBa62xx is
+the matching reference/starterkit carrier board.
 
-Not yet included are overlays to enable LVDS display output and MIPI-CSI
-camera input.
+Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/arm/ti/k3.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Changes in v3:
-- Rebased onto ti-k3-dt-for-v6.18
-- 3 of the 5 patches in v2 have been applied already and are dropped
-- Include k3-am62-ti-ipc-firmware.dtsi, drop now redundant configuration
-- Change node name for MCU reserved memory to 'memory'
-- Use rgmii-id PHY mode
-- Drop now redundant ti,rx-internal-delay
-- Update simple-audio-card,name to match other TQ SOMs with compatible
-  configuration
-- Reference dss_pins in dss node (actual display support will be added
-  in a follow-up patch series)
-- Consistently use GPIO_ACTIVE_HIGH define
-- Drop unneeded usb0 quirk flags
-- Add boot phase tags
-
-Changes in v2:
-- Collected acks and reviews
-- Rebased onto v6.13-rc1
-
-Matthias Schiffer (2):
-  dt-bindings: arm: ti: Add compatible for AM625-based TQMa62xx SOM
-    family and carrier board
-  arm64: dts: ti: Add TQ-Systems TQMa62xx SoM and MBa62xx carrier board
-    Device Trees
-
- .../devicetree/bindings/arm/ti/k3.yaml        |   7 +
- arch/arm64/boot/dts/ti/Makefile               |   1 +
- .../boot/dts/ti/k3-am625-tqma62xx-mba62xx.dts | 928 ++++++++++++++++++
- arch/arm64/boot/dts/ti/k3-am625-tqma62xx.dtsi | 319 ++++++
- 4 files changed, 1255 insertions(+)
- create mode 100644 arch/arm64/boot/dts/ti/k3-am625-tqma62xx-mba62xx.dts
- create mode 100644 arch/arm64/boot/dts/ti/k3-am625-tqma62xx.dtsi
-
+diff --git a/Documentation/devicetree/bindings/arm/ti/k3.yaml b/Documentation/devicetree/bindings/arm/ti/k3.yaml
+index 0105dcda6e04d..ed89a7a36e1f8 100644
+--- a/Documentation/devicetree/bindings/arm/ti/k3.yaml
++++ b/Documentation/devicetree/bindings/arm/ti/k3.yaml
+@@ -89,6 +89,13 @@ properties:
+           - const: toradex,verdin-am62          # Verdin AM62 Module
+           - const: ti,am625
+ 
++      - description: K3 AM625 SoC on TQ-Systems TQMa62xx SoM
++        items:
++          - enum:
++              - tq,am625-tqma6254-mba62xx # MBa62xx base board
++          - const: tq,am625-tqma6254
++          - const: ti,am625
++
+       - description: K3 AM62P5 SoC Toradex Verdin Modules and Carrier Boards
+         items:
+           - enum:
 -- 
 TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
 Amtsgericht München, HRB 105018
