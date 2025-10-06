@@ -1,229 +1,158 @@
-Return-Path: <linux-kernel+bounces-843045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDC2FBBE4AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:12:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C23FBBE4B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:13:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E2A61898B47
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:12:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AEFF1898BE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06522D4801;
-	Mon,  6 Oct 2025 14:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="GEzwgLzf"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E347081C;
-	Mon,  6 Oct 2025 14:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9AF2D4806;
+	Mon,  6 Oct 2025 14:13:11 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4159B7081C
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 14:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759759941; cv=none; b=jxs5dM5lCuADzKZty1JtIft780a4gfCsl2G7EuwXyYPq/TcBf9TFDuVEfobDDAo+VmOoSwF4QCYHsgZdS9scf7rN1oyCaUdh6QAoRs+j5uzlEIbH+7SLhcw6eQ6Ty3oKgcL0UZZpvNLyzb61ntlN9avg8hbXb8mhOzHsH2YEzGs=
+	t=1759759991; cv=none; b=jG5H/TvdBkZmxNn8dVEqQ46Bq/Xs6/qIJSfJjV6ugFd44lxh6kZ4vUIUSrUqJEijAATG6Nn2mxgUjtYCHIVn6oigPiOkxeyfToiU8dq101pMKZltPwPzRLNnyhD/GZHvDZ+X8oUt6zFPqmS4MioNyfyM0YyVjGtHT+GxyPcwAEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759759941; c=relaxed/simple;
-	bh=oX0hxl9y2RR15gDl1PquBggQpEN7Bar/5nFx6gYMVkQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fVNV0MQuQYb4exvK1f/qmiX4yubvjFizgFdSieosXBuZ4vQDagoyZ7v7qpKCDN/1NymJDFotuvGnETHfXErfBTRy029UPPvmSYrLEtd7e/DlE2NXuF/E6BApoMybwYy0dQ91SrTLkrIuxtG5A4mz3Vr4hXlxaw6kmrqlny54RqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=GEzwgLzf; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=23CVLylcgnapJ6jlYQdsh4lJ2r8jytwkumAM2tRh278=; t=1759759937;
-	x=1760364737; b=GEzwgLzfpVbYuZIy7eRCTrkqAGA2EvfozW7j9CIQ6HkqNZaDv+nTKCO6JtuUx
-	PgKRY+/hJCyNL2Tel4MhWGB3yowQA4gcefW3bSB4KRr65uMhIbh+XvR+wxcNSl46t/ml2X0mZVnXP
-	9RQoqnVDDstENpXHaPTwal13oEVdLn4sVZ0je+LiiCMjzi6YfMJUt2a7XDYB5yrAN+JCjK3WuBGSr
-	JCyoC1VbhjNdxAgiFY+ersB86zczr45USVpx1U/FLkjRdYTSOpo7QevKtEv+ivuLQmsQWfkOu/a9H
-	qoe+5f2EtmR7V4yD915gVbwWLTRm0lut+ZLCj+eCrb69L4qRQQ==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1v5lwi-00000000WeH-3Sgl; Mon, 06 Oct 2025 16:12:12 +0200
-Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1v5lwi-00000003G0x-2LVk; Mon, 06 Oct 2025 16:12:12 +0200
-Message-ID: <6ed7112cb4f338ba02d9ab67c14e7a3af4afbca0.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH v2] Revert "sunvdc: Do not spin in an infinite loop when
- vio_ldc_send() returns EAGAIN"
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: Andreas Larsson <andreas@gaisler.com>, Anthony Yznaga	
- <anthony.yznaga@oracle.com>, Sam James <sam@gentoo.org>, "David S . Miller"
-	 <davem@davemloft.net>, Michael Karcher
- <kernel@mkarcher.dialup.fu-berlin.de>, 	sparclinux@vger.kernel.org
-Date: Mon, 06 Oct 2025 16:12:11 +0200
-In-Reply-To: <ecb74c6c-8de6-4774-8159-2ec118437c57@kernel.dk>
-References: <20251006100226.4246-2-glaubitz@physik.fu-berlin.de>
-	 <d78a1704-31dc-4eaa-8189-e3aba51d3fe2@kernel.dk>
-	 <4e45e3182c4718cafad1166e9ef8dcca1c301651.camel@physik.fu-berlin.de>
-	 <a80a1c5f-da21-4437-b956-a9f659c355a4@kernel.dk>
-	 <e6a7e68ff9e23aee448003ee1a279a4ab13192c0.camel@physik.fu-berlin.de>
-	 <cef07e8f-a919-4aa1-9904-84b16dfa8fe6@kernel.dk>
-	 <5b3caa0e218dd473c8871c1b1f09a8dc1c356f1e.camel@physik.fu-berlin.de>
-	 <ecb74c6c-8de6-4774-8159-2ec118437c57@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.0 
+	s=arc-20240116; t=1759759991; c=relaxed/simple;
+	bh=uP6CerlMC0Y3nc50t2A1HH3D4P1/cf2ULQQcMRhQSOk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qBO2Q1gzdkaTvO971ZvRFSs8+H4CSPC7yAvXPtiVwDAtF1cOEEOhaMRVegh2e0mbsB6555+uzDFnFLrzLVHEeYzVY41fJQ1d/Gwldu7wovoBfTjmcztizddLXoVWzK/q/lAEgkQYJ023Wg0iFjpT20VxWt70NVpvV2jqbIrdkDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.68.198])
+	by gateway (Coremail) with SMTP id _____8DxO9JrzuNoPfsSAA--.40287S3;
+	Mon, 06 Oct 2025 22:12:59 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.64.68.198])
+	by front1 (Coremail) with SMTP id qMiowJCxrsNhzuNosArSAA--.62698S2;
+	Mon, 06 Oct 2025 22:12:57 +0800 (CST)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Guo Ren <guoren@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: [GIT PULL] LoongArch changes for v6.18
+Date: Mon,  6 Oct 2025 22:12:28 +0800
+Message-ID: <20251006141228.3534607-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJCxrsNhzuNosArSAA--.62698S2
+X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoWxWr1rZFWDWrW5KF4kKw4DAwc_yoWrJrW8pr
+	43urnxJF4UGrsxJr9xt345uF15twn7Gry7Xa1akry8Cr1UZr1UGw1xXF97Xa4Ut3yrJr1I
+	qr1rG34jg3WUJagCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
+	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
+	1lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
+	Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
+	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
+	cVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI
+	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v2
+	6r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jOiSdUUUUU=
 
-On Mon, 2025-10-06 at 08:03 -0600, Jens Axboe wrote:
-> > To be fair, the sunvdc driver is fairly old and I'm not sure whether th=
-ese
-> > tools already existed back then. FWIW, Oracle engineers did actually wo=
-rk
-> > on the Linux for SPARC code for a while and it might be possible that t=
-heir
-> > UEK kernel tree [1] contains some improvements in this regard.
->=20
-> Requeueing and retry has always been available on the block side. It's
-> not an uncommon thing for a driver to need, in case of resource
-> starvation. And sometimes those resources can be unrelated to the IO, eg
-> iommu shortages. Or this busy condition.
+The following changes since commit e5f0a698b34ed76002dc5cff3804a61c80233a7a:
 
-I see. Makes sense.
+  Linux 6.17 (2025-09-28 14:39:22 -0700)
 
-> But that's fine, it's not uncommon for drivers to miss things like that,
-> and then we fix them up when noticed. It was probably written by someone
-> not super familiar with the IO stack.
+are available in the Git repository at:
 
-FWIW, Oracle engineers actually made some significant changes to the driver
-that they never upstreamed, see:
+  git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-6.18
 
-https://github.com/oracle/linux-uek/commits/uek4/qu7/drivers/block/sunvdc.c
+for you to fetch changes up to 032676ff8217cab3273da56ee774b64c46b56b5e:
 
-In particular, they added support for out-of-order execution:
+  LoongArch: Update Loongson-3 default config file (2025-10-05 11:52:43 +0800)
 
-https://github.com/oracle/linux-uek/commit/68f7c9c17fb80d29cbc1e5110f6c021f=
-8da8d610
+----------------------------------------------------------------
+LoongArch changes for v6.18
 
-and they also changed the driver to use the BIO-based interface for VDC I/O=
- requests:
+1, Init acpi_gbl_use_global_lock to false;
+2, Allow specify SIMD width via kernel parameters;
+3, Add kexec_file (both EFI & ELF format) support;
+4, Add PER_VMA_LOCK for page fault handling support;
+5, Improve BPF trampoline support;
+6, Update the default config file;
+7, Some bug fixes and other small changes.
 
-https://github.com/oracle/linux-uek/commit/4b725eb64cc10a4877f2af75ff3a7765=
-86f68eb7
+Note: There is a conflict in arch/loongarch/Kconfig but can be simply
+fixed by adjusting context.
 
-Could you review these two changes and tell me whether these would actually=
- implement
-the changes you would want to see? I think the BIO layer is a generic inter=
-face of
-the block layer in the kernel, isn't it?
+----------------------------------------------------------------
+Hengqi Chen (8):
+      LoongArch: BPF: Remove duplicated flags check
+      LoongArch: BPF: Remove duplicated bpf_flush_icache()
+      LoongArch: BPF: No text_poke() for kernel text
+      LoongArch: BPF: No support of struct argument in trampoline programs
+      LoongArch: BPF: Don't align trampoline size
+      LoongArch: BPF: Make trampoline size stable
+      LoongArch: BPF: Make error handling robust in arch_prepare_bpf_trampoline()
+      LoongArch: BPF: Sign-extend struct ops return values properly
 
-> > > > > > And unlike the change in adddc32d6fde ("sunvnet: Do not spin in=
- an infinite
-> > > > > > loop when vio_ldc_send() returns EAGAIN"), we can't just drop d=
-ata as this
-> > > > > > driver concerns a block device while the other driver concerns =
-a network
-> > > > > > device. Dropping network packages is expected, dropping bytes f=
-rom a block
-> > > > > > device driver is not.
-> > > > >=20
-> > > > > Right, but we can sanely retry it rather than sit in a tight loop=
-.
-> > > > > Something like the entirely untested below diff.
-> > > > >=20
-> > > > > diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
-> > > > > index db1fe9772a4d..aa49dffb1b53 100644
-> > > > > --- a/drivers/block/sunvdc.c
-> > > > > +++ b/drivers/block/sunvdc.c
-> > > > > @@ -539,6 +539,7 @@ static blk_status_t vdc_queue_rq(struct blk_m=
-q_hw_ctx *hctx,
-> > > > >  	struct vdc_port *port =3D hctx->queue->queuedata;
-> > > > >  	struct vio_dring_state *dr;
-> > > > >  	unsigned long flags;
-> > > > > +	int ret;
-> > > > > =20
-> > > > >  	dr =3D &port->vio.drings[VIO_DRIVER_TX_RING];
-> > > > > =20
-> > > > > @@ -560,7 +561,13 @@ static blk_status_t vdc_queue_rq(struct blk_=
-mq_hw_ctx *hctx,
-> > > > >  		return BLK_STS_DEV_RESOURCE;
-> > > > >  	}
-> > > > > =20
-> > > > > -	if (__send_request(bd->rq) < 0) {
-> > > > > +	ret =3D __send_request(bd->rq);
-> > > > > +	if (ret =3D=3D -EAGAIN) {
-> > > > > +		spin_unlock_irqrestore(&port->vio.lock, flags);
-> > > > > +		/* already spun for 10msec, defer 10msec and retry */
-> > > > > +		blk_mq_delay_kick_requeue_list(hctx->queue, 10);
-> > > > > +		return BLK_STS_DEV_RESOURCE;
-> > > > > +	} else if (ret < 0) {
-> > > > >  		spin_unlock_irqrestore(&port->vio.lock, flags);
-> > > > >  		return BLK_STS_IOERR;
-> > > > >  	}
-> > > >=20
-> > > > We could add this particular change on top of mine after we have
-> > > > extensively tested it.
-> > >=20
-> > > It doesn't really make sense on top of yours, as that removes the
-> > > limited looping that sunvdc would do...
-> >=20
-> > Why not? From what I understood, you're moving the limited looping to a
-> > different part of the driver where it can delegate the request back up
-> > the stack meaning that the current place to implement the limitation is
-> > not correct anyway, is it?
->=20
-> Because your change never gives up, hence it'd never trigger the softer
-> retry condition. It'll just keep busy looping.
+Huacai Chen (6):
+      Merge tag 'acpi-6.18-rc1' into loongarch-next
+      LoongArch: Fix build error for LTO with LLVM-18
+      LoongArch: Init acpi_gbl_use_global_lock to false
+      LoongArch: Allow specify SIMD width via kernel parameters
+      LoongArch: BPF: Fix uninitialized symbol 'retval_off'
+      LoongArch: Update Loongson-3 default config file
 
-Ah, that makes sense.
+Tiezhu Yang (3):
+      LoongArch: Add cflag -fno-isolate-erroneous-paths-dereference
+      LoongArch: Handle new atomic instructions for probes
+      LoongArch: BPF: Optimize sign-extention mov instructions
 
-> > > > For now, I would propose to pick up my patch to revert the previous
-> > > > change. I can then pick up your proposed change and deploy it for
-> > > > extensive testing and see if it has any side effects.
-> > >=20
-> > > Why not just test this one and see if it works? As far as I can tell,
-> > > it's been 6.5 years since this change went in, I can't imagine there'=
-s a
-> > > huge sense of urgency to fix it up that can't wait for testing a more
-> > > proper patch rather than a work-around?
-> >=20
-> > Well, the thing is that a lot of people have been running older kernels
-> > on SPARC because of issues like these and I have started working on try=
-ing
-> > to track down all of these issues now [2] for users to be able to run a
-> > current kernel. So, the 6.5 years existence of this change shouldn't
-> > be an argument I think.
->=20
-> While I agree that the bug is unfortunate, it's also a chance to
-> properly fix it rather than just go back to busy looping. How difficult
-> is it to test an iteration of the patch? It'd be annoying to queue a
-> bandaid only to have to revert that again for a real fix. If this was a
-> regression from the last release or two then that'd be a different
-> story, but the fact that this has persisted for 6.5 years and is only
-> bubbling back up to mainstream now would seem to indicate that we should
-> spend a bit of extra time to just get it right the first time.
+Wentao Guan (1):
+      LoongArch: Try VMA lock-based page fault handling first
 
-We could do that for sure. But I would like to hear your opinion on the cha=
-nges
-contributed by Oracle engineers first. Maybe their improvements are much be=
-tter
-so that it might make sense to try to upstream them.
+Youling Tang (6):
+      LoongArch: Add struct loongarch_image_header for kernel
+      LoongArch: Add preparatory infrastructure for kexec_file
+      LoongArch: Add EFI binary support for kexec_file
+      LoongArch: Add ELF binary support for kexec_file
+      LoongArch: Add crash dump support for kexec_file
+      LoongArch: Automatically disable kaslr if boot from kexec_file
 
-Adrian
+ arch/loongarch/Kconfig                     |  11 ++
+ arch/loongarch/Makefile                    |   4 +-
+ arch/loongarch/configs/loongson3_defconfig |  73 ++++++++-
+ arch/loongarch/include/asm/image.h         |  52 +++++++
+ arch/loongarch/include/asm/inst.h          |   5 +
+ arch/loongarch/include/asm/kexec.h         |  12 ++
+ arch/loongarch/kernel/Makefile             |   1 +
+ arch/loongarch/kernel/cpu-probe.c          |  46 +++++-
+ arch/loongarch/kernel/inst.c               |  12 ++
+ arch/loongarch/kernel/kexec_efi.c          | 113 ++++++++++++++
+ arch/loongarch/kernel/kexec_elf.c          | 105 +++++++++++++
+ arch/loongarch/kernel/machine_kexec.c      |  37 +++--
+ arch/loongarch/kernel/machine_kexec_file.c | 239 +++++++++++++++++++++++++++++
+ arch/loongarch/kernel/relocate.c           |   4 +
+ arch/loongarch/kernel/setup.c              |   1 +
+ arch/loongarch/mm/fault.c                  |  58 ++++++-
+ arch/loongarch/net/bpf_jit.c               |  86 ++++++++---
+ 17 files changed, 809 insertions(+), 50 deletions(-)
+ create mode 100644 arch/loongarch/include/asm/image.h
+ create mode 100644 arch/loongarch/kernel/kexec_efi.c
+ create mode 100644 arch/loongarch/kernel/kexec_elf.c
+ create mode 100644 arch/loongarch/kernel/machine_kexec_file.c
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
