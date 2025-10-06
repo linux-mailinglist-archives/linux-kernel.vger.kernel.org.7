@@ -1,96 +1,112 @@
-Return-Path: <linux-kernel+bounces-842887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4BB9BBDE3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 13:38:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E51C0BBDE40
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 13:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 37FE64ED2CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 11:37:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB2C33ACF90
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 11:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E57270540;
-	Mon,  6 Oct 2025 11:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F46726FD9A;
+	Mon,  6 Oct 2025 11:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bszp0Jq3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="KggantfS"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C140E26E70B;
-	Mon,  6 Oct 2025 11:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A81B20FA9C;
+	Mon,  6 Oct 2025 11:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759750676; cv=none; b=QMeHzyKaId92myZQ+rww62HdcNUW2toJMhMFwka7CmZaQ/axrtEmlDM5xHGpoIRfGka9MJbuX76kN6ptWxPpYBz7PM7aBZijg/tJ5YHjdEkiRysuh5es3OLMFbcA+1wOu43SZJg9jdRNDm8IYdASnmEBiVC3jrO8zt8OMucRGkU=
+	t=1759750728; cv=none; b=aPOxFjoliA+qe7oIb3B4wz08g40A5GS3UGqBsC63W1moZmoDqnMOnO2K1ZcNj1LJ2uemN74J9YwwYrym5Weass9WA2QCcngiSB7p14UerGSmYrKgf+pxUDXBABMWNKxVx2Wz46YAGfkjZbu66NSe79QVmR4k4cswI8AtO/o4dSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759750676; c=relaxed/simple;
-	bh=4Z/iRF9EQRx6VVJtWLtlXGVmt3w8RmCR3Ot/liAqvZw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cnz6nd1C0vkwRcRXHzLJ6e1ZHsWu35vWDy4XzlBU0eeuW/UExI1IcBiN2YgYiMz+FaVEW5eO6l9z+YOuP+51gKmwDqHXs3tuvjqxMBFUuIyl9AKSB143qVGMfjEdocEbBZLX1zTMT6VswY2yVjY5Dk6zS5+3rcKEWobNq2Rldps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bszp0Jq3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8E09C4CEFF;
-	Mon,  6 Oct 2025 11:37:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759750676;
-	bh=4Z/iRF9EQRx6VVJtWLtlXGVmt3w8RmCR3Ot/liAqvZw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Bszp0Jq38sBFKB3MpjnJO4RYbh5L+e4zdy7S7jEGuEsUl6c2Z64jUZzXm5ch8QoDn
-	 gKyR0kEqq4b/qswoblta5reytncwHWINXwN6XHEfwIDRPaUiLNk9JXoNmidUZg06TB
-	 hp0JREKOS/hPA2pawcQAxK0TgJmpQO+uP8Ac27sqRX8smPkInGmDI/M4DfIqf/4kpu
-	 x90HppNep0ulchjBeRaXp/6fPdubHkoxdCo2H45RtymffXKvRKLQ/AN848GbplcynN
-	 qWE/jfV/FZqsXbjbXDfkw2bedOB1VHVw2FDcyzd2P/5BP/o3ZKMqoOxJKD9vWw3a/q
-	 VM98i+WbANO2Q==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: add missing fences to I_NEW handling
-Date: Mon,  6 Oct 2025 13:37:51 +0200
-Message-ID: <20251006-hauer-salzig-7f287781757a@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251005231526.708061-1-mjguzik@gmail.com>
-References: <20251005231526.708061-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1759750728; c=relaxed/simple;
+	bh=lUyf8dRTZJ7H+iCSUJCsHO6JJYThEWG8/fGHYur8uXI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IBN7wcHK2Sbh2ceMD2Ka/3x5tZ+n2pFgDf2SMVZ8Wxux8CtWilcjv48bV23R5GTePrOZTlCR61RmWjp7t1nPlDhKWDjrjL0bIvneyYO0gAYBwAKHbNoTbVoC/N/kZoBxwpyUZkyHaMqQoZsXEM4NLJsSoMgRiKLdtpdbhWwiqzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=KggantfS; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759750724;
+	bh=lUyf8dRTZJ7H+iCSUJCsHO6JJYThEWG8/fGHYur8uXI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KggantfSacRddPWuPTYjy0Vo9SJFsnxyKDMjdMxtJA2lOfn+8ZbuYwYYTtsw+LFpm
+	 TWC7DcRAVyQlPNFNQh2aTWTmcDHwqVPY0zzo1curXryvy1HFC1PhctEqUXy0kkGQdp
+	 7oSZEzx2fxof7oSJUuMWAGwXvNwUbLaYlJvgLgm8chzhSu/HU3dCybidZMPtzwc9Ar
+	 rCQ6w4Fxe86teKnTm3zJIwrMzq1APHGTHuIuYH2TnmaKXTA2xKlhRguo245AcDchv4
+	 oeEEbnadKNn3WfFesMDILKQ2Migox/dXrpwPgZAQVicdFDGj4tq5i2BdHwSoXmxhdx
+	 0VonwL9gEWhIw==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5229717E0AC3;
+	Mon,  6 Oct 2025 13:38:44 +0200 (CEST)
+Date: Mon, 6 Oct 2025 13:38:32 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Matthew Brost
+ <matthew.brost@intel.com>, Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?=
+ <thomas.hellstrom@linux.intel.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Steven Price <steven.price@arm.com>,
+ Daniel Almeida <daniel.almeida@collabora.com>, Liviu Dudau
+ <liviu.dudau@arm.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] drm/gpuvm: add deferred vm_bo cleanup
+Message-ID: <20251006133832.6d385b23@fedora>
+In-Reply-To: <CAH5fLgipghDp3W+Gr0YfHT0HOp3vcF+mfBAbtiAiLOKRYt43Sw@mail.gmail.com>
+References: <20251001-vmbo-defer-v3-0-a3fe6b6ae185@google.com>
+	<20251001-vmbo-defer-v3-1-a3fe6b6ae185@google.com>
+	<CAH5fLgipghDp3W+Gr0YfHT0HOp3vcF+mfBAbtiAiLOKRYt43Sw@mail.gmail.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1197; i=brauner@kernel.org; h=from:subject:message-id; bh=4Z/iRF9EQRx6VVJtWLtlXGVmt3w8RmCR3Ot/liAqvZw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ8XiXw+cHB4It/dl28Ie+6YPqO56sNV4QlPWdvuBEYG nhzYduM7o5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJsMswMvx0uCC9QISlfuGL 9eUSm6anzEz6o/fS+35aBMO9Rz13jBUZ/rvGCTRVCGfZ/bb10w7yO1zwxuaUiMEpP3mmxyuDT/5 4xgYA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 06 Oct 2025 01:15:26 +0200, Mateusz Guzik wrote:
-> Suppose there are 2 CPUs racing inode hash lookup func (say ilookup5())
-> and unlock_new_inode().
-> 
-> In principle the latter can clear the I_NEW flag before prior stores
-> into the inode were made visible.
-> 
-> The former can in turn observe I_NEW is cleared and proceed to use the
-> inode, while possibly reading from not-yet-published areas.
-> 
-> [...]
+On Mon, 6 Oct 2025 13:30:59 +0200
+Alice Ryhl <aliceryhl@google.com> wrote:
 
-Applied to the vfs-6.19.inode branch of the vfs/vfs.git tree.
-Patches in the vfs-6.19.inode branch should appear in linux-next soon.
+> On Wed, Oct 1, 2025 at 12:41=E2=80=AFPM Alice Ryhl <aliceryhl@google.com>=
+ wrote:
+> >
+> > When using GPUVM in immediate mode, it is necessary to call
+> > drm_gpuvm_unlink() from the fence signalling critical path. However,
+> > unlink may call drm_gpuvm_bo_put(), which causes some challenges:
+> >
+> > 1. drm_gpuvm_bo_put() often requires you to take resv locks, which you
+> >    can't do from the fence signalling critical path.
+> > 2. drm_gpuvm_bo_put() calls drm_gem_object_put(), which is often going
+> >    to be unsafe to call from the fence signalling critical path.
+> >
+> > To solve these issues, add a deferred version of drm_gpuvm_unlink() that
+> > adds the vm_bo to a deferred cleanup list, and then clean it up later.
+> >
+> > The new methods take the GEMs GPUVA lock internally rather than letting
+> > the caller do it because it also needs to perform an operation after
+> > releasing the mutex again. This is to prevent freeing the GEM while
+> > holding the mutex (more info as comments in the patch). This means that
+> > the new methods can only be used with DRM_GPUVM_IMMEDIATE_MODE.
+> >
+> > Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com> =20
+>=20
+> In this version, I got rid of the kref_put_mutex() usage, but I
+> realized that maybe we should bring it back. With the current code,
+> it's actually possible to observe a zombie vm_bo in the GEM's list
+> because we don't drop the refcount while holding the mutex.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.19.inode
-
-[1/1] fs: add missing fences to I_NEW handling
-      https://git.kernel.org/vfs/vfs/c/fb43e3dde8ec
+Alright, let's get back to the kref_put_mutex() approach then.
 
