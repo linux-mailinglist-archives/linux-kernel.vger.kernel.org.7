@@ -1,129 +1,110 @@
-Return-Path: <linux-kernel+bounces-843284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82544BBED64
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 19:44:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D5B7BBED67
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 19:44:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2F2CC34A832
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 17:44:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ACAA134A8D7
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 17:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689792652A6;
-	Mon,  6 Oct 2025 17:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442E82571BC;
+	Mon,  6 Oct 2025 17:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GHKtrkyr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZxqVh7It"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9BE4242D6F;
-	Mon,  6 Oct 2025 17:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D44D24679A
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 17:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759772635; cv=none; b=a7lnpIn5XKqRTb0miZ6WAzE4Zgtzx5bbrsNy98nYT/JcF55IlJBX1N2YFxn92TJzqn4eCE/SFl4AZi6lvZSd7ayKACPSpsgcqqn+E+pC5ALSqDPcfNdLlVm7XJG14igh8xykT16YepD96T7L0g3if+24c6w+rKTqxEtXDTHh9CI=
+	t=1759772658; cv=none; b=NCSki8SXyHmtn7UAHPgE45tTYB4JGJk3MROtsRCX8wf+F3b7zV2K5lo/zYrtMI4qDgeD5QRxfSZp6uk6Bhd9sE+UCaM46Bpkk7//NbssHCyZ15WzjiII6LPDNWkGTjgUAhgvKmY6Bn8CjPqOvYqf3H7C0m3o/YpOFRuDO5/3Qyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759772635; c=relaxed/simple;
-	bh=Y6uixzSgd1RpD1Qpsk4LEEaC4r3WAyx/6nNmZNF/E2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CYG1noZWZJNRn+nn29Oo/UEZYDC212o998/vIjYuVJ1arLKz3Zp5yRtFxQK/pGv2PrxFx08SkEgFGaacO+lMub5ddZ1ZbP+sG+wBo/HYvWdzceSwHZxrTY5L8272Oi+M+Pv2jJHZSt1kQxGL4lP6XUnaRKHWNscuGFGwt48XBho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GHKtrkyr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C37EAC4CEF5;
-	Mon,  6 Oct 2025 17:43:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759772635;
-	bh=Y6uixzSgd1RpD1Qpsk4LEEaC4r3WAyx/6nNmZNF/E2c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GHKtrkyrOO9H9F6SQsYF6oGmNZ5jvPK81Un6DOPAkWMb+J/vb+M5p/5gfXu9wE/ym
-	 sFVgdbGrBfzHwzqK29ihMKQICHNz6QKbpLObSbnnQRqnaNtJsNlnc2U3NwoeGDmIPv
-	 Erwx47FkRSZLylNzBE0nXBnE8HutO4hG8bxJsfxJY9Znnah1QKCE40w/l5L+7FLUk5
-	 5RGP+22jbw8x07KUryToDF8FpkjdfXiH8NXQmEakBCnazAYuz2aflB8o/4sajdW2rT
-	 O+8ZZCbYiVz66N0NUG3zRsL+JrDlQHkGovr/WFP0aNseHZFaOM62y+cJO4s4vRbDO+
-	 qQWlSjQoGtAoQ==
-Date: Mon, 6 Oct 2025 10:43:53 -0700
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Victor Paul <vipoll@mainlining.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Lukas Wunner <lukas@wunner.de>, Greg KH <gregkh@linuxfoundation.org>, 
-	Daniel Martin <dmanlfc@gmail.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH] PCI: probe: fix typo: CONFIG_PCI_PWRCTRL ->
- CONFIG_PCI_PWRCTL
-Message-ID: <32xgw5nop3xl4toudpskhqppzxa3swtsiueggot4kvrh7q3gn2@jslnan4pmwia>
-References: <20251006143714.18868-1-vipoll@mainlining.org>
- <20251006161447.GA521686@bhelgaas>
+	s=arc-20240116; t=1759772658; c=relaxed/simple;
+	bh=o5l5mXnTufqPwWpkCxK8mb3zhCUr0ejTPKcGXYktr5Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ORuemLnCVvJYQmkCUa4Ge1w2AiJRL3nCEU9iIgqCUHsBihFc1IQJ23t7dvmSrdkFBrAu2ORLBwXViVi8STb2nxy5VXBhoIG3qkzKcU87CWYIc9rKb4aB01KFuUY2gySqBZps/M96HJp4Fm+eG2x+WtNXJcAAYcRUsp/MEFZI9+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZxqVh7It; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759772652;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QcosD5rlzA4TE7AntBZPfeAW0/FnSxIJ3VMLbX62WUE=;
+	b=ZxqVh7ItL0Tel/7B30RzqqAsLAe9Tay1fWGS1l5VTeYoHM2MLnWp5pZaEFzgsOB+TSCK1s
+	Ny80HiVfF9LMmEhag8nyFNiq/lRp0oFmHHyA4xV+enn3M8SmbIoUmrZ1ni8B3iabRROqIu
+	1TW2ECx5W1zO0B8tZwGI3KQxozwH1cw=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Jan Kara <jack@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+  linux-kernel@vger.kernel.org,  "Matthew Wilcox (Oracle)"
+ <willy@infradead.org>,  Dev Jain <dev.jain@arm.com>,  linux-mm@kvack.org
+Subject: Re: [PATCH v2] mm: readahead: make thp readahead conditional to
+ mmap_miss logic
+In-Reply-To: <e2zblaknfnzjtlo3df4aozoxuir6zgnycdjj4ywbu7rsnpw6hr@ocemkpucjd2d>
+	(Jan Kara's message of "Mon, 6 Oct 2025 14:31:06 +0200")
+References: <20251006015409.342697-1-roman.gushchin@linux.dev>
+	<e2zblaknfnzjtlo3df4aozoxuir6zgnycdjj4ywbu7rsnpw6hr@ocemkpucjd2d>
+Date: Mon, 06 Oct 2025 10:44:07 -0700
+Message-ID: <87qzvg6i3c.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251006161447.GA521686@bhelgaas>
+Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Oct 06, 2025 at 11:14:47AM -0500, Bjorn Helgaas wrote:
-> On Mon, Oct 06, 2025 at 06:37:14PM +0400, Victor Paul wrote:
-> > The commit
-> > 	8c493cc91f3a ("PCI/pwrctrl: Create pwrctrl devices only when CONFIG_PCI_PWRCTRL is enabled")
-> > introduced a typo, it uses CONFIG_PCI_PWRCTRL while the correct symbol
-> > is CONFIG_PCI_PWRCTL. As reported by Daniel Martin, it causes device
-> > initialization failures on some arm boards.
-> > I encountered it on sm8250-xiaomi-pipa after rebasing from v6.15.8
-> > to v6.15.11, with the following error:
-> > [    6.035321] pcieport 0000:00:00.0: Failed to create device link (0x180) with supplier qca6390-pmu for /soc@0/pcie@1c00000/pcie@0/wifi@0
-> > 
-> > Fix the typo to use the correct CONFIG_PCI_PWRCTL symbol.
-> > 
-> > Fixes: 8c493cc91f3a ("PCI/pwrctrl: Create pwrctrl devices only when CONFIG_PCI_PWRCTRL is enabled")
-> > Cc: stable@vger.kernel.org
-> > Reported-by: Daniel Martin <dmanlfc@gmail.com>
-> > Closes: https://lore.kernel.org/linux-pci/2025081053-expectant-observant-6268@gregkh/
-> > Signed-off-by: Victor Paul <vipoll@mainlining.org>
-> 
-> Might this be a stale .config file?
-> 
-> I think 13bbf6a5f065 ("PCI/pwrctrl: Rename pwrctrl Kconfig symbols and
-> slot module") should have resolved this. 
-> 
+Jan Kara <jack@suse.cz> writes:
 
-Looks like 13bbf6a5f065 was not backported to 6.15 (since it is not a fix), but
-8c493cc91f3a was (since it is a fix). But 6.15 is not LTS and the stable release
-has been stopped with 6.15.11, we can't backport any fixes now.
+> On Sun 05-10-25 18:54:09, Roman Gushchin wrote:
+>> Commit 4687fdbb805a ("mm/filemap: Support VM_HUGEPAGE for file mappings")
+>> introduced a special handling for VM_HUGEPAGE mappings: even if the
+>> readahead is disabled, 1 or 2 HPAGE_PMD_ORDER pages are
+>> allocated.
+>> 
+>> This change causes a significant regression for containers with a
+>> tight memory.max limit, if VM_HUGEPAGE is widely used. Prior to this
+>> commit, mmap_miss logic would eventually lead to the readahead
+>> disablement, effectively reducing the memory pressure in the
+>> cgroup. With this change the kernel is trying to allocate 1-2 huge
+>> pages for each fault, no matter if these pages are used or not
+>> before being evicted, increasing the memory pressure multi-fold.
+>> 
+>> To fix the regression, let's make the new VM_HUGEPAGE conditional
+>> to the mmap_miss check, but keep independent from the ra->ra_pages.
+>> This way the main intention of commit 4687fdbb805a ("mm/filemap:
+>> Support VM_HUGEPAGE for file mappings") stays intact, but the
+>> regression is resolved.
+>> 
+>> The logic behind this changes is simple: even if a user explicitly
+>> requests using huge pages to back the file mapping (using VM_HUGEPAGE
+>> flag), under a very strong memory pressure it's better to fall back
+>> to ordinary pages.
+>> 
+>> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
+>> Reviewed-by: Jan Kara <jack@suse.cz>
+>> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+>> Cc: Dev Jain <dev.jain@arm.com>
+>> Cc: linux-mm@kvack.org
+>> 
+>> --
+>> 
+>> v2: fixed VM_SEQ_READ handling (by Dev Jain)
+>
+> OK, but now we'll do mmap_miss detection and bail-out even for VM_SEQ_READ
+> | VM_HUGEPAGE vmas. And without VM_HUGEPAGE we won't do it which is really
+> odd. So I think you want to make the whole mmap_miss logic conditional on
+> !VM_SEQ_READ...
 
-So I think you should move on to 6.16 based kernel where the issue is not
-present, or carry the fix in your tree.
+Yeah, agree, good point.
 
-- Mani
-
-> In the current upstream tree (fd94619c4336 ("Merge tag 'zonefs-6.18-rc1'
-> of git://git.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs"),
-> git grep "\<CONFIG_PCI_PWRCTL\>" finds nothing at all.
-> 
-> > ---
-> >  drivers/pci/probe.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> > index 19010c382864..7e97e33b3fb5 100644
-> > --- a/drivers/pci/probe.c
-> > +++ b/drivers/pci/probe.c
-> > @@ -2508,7 +2508,7 @@ bool pci_bus_read_dev_vendor_id(struct pci_bus *bus, int devfn, u32 *l,
-> >  }
-> >  EXPORT_SYMBOL(pci_bus_read_dev_vendor_id);
-> >  
-> > -#if IS_ENABLED(CONFIG_PCI_PWRCTRL)
-> > +#if IS_ENABLED(CONFIG_PCI_PWRCTL)
-> >  static struct platform_device *pci_pwrctrl_create_device(struct pci_bus *bus, int devfn)
-> >  {
-> >  	struct pci_host_bridge *host = pci_find_host_bridge(bus);
-> > -- 
-> > 2.51.0
-> > 
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+Thanks!
 
