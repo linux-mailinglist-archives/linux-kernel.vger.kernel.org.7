@@ -1,150 +1,184 @@
-Return-Path: <linux-kernel+bounces-843111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C76BBE6CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:01:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D485BBE6D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:01:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 70DCA4EE9D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:01:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5D0D74EEC74
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495B627F754;
-	Mon,  6 Oct 2025 15:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA402D640D;
+	Mon,  6 Oct 2025 15:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ghD8fpiZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="S7DInRGp"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013046.outbound.protection.outlook.com [40.107.201.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F61B1799F
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 15:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759762862; cv=none; b=TYMKvmKt7Yh1LkZ+SZ80Cov+aBXZ2IKskSbeRwEo2SarFrNUYkbVIH0QGpqjJ3ogZXKHK2SNVFL4m6rk+QbqkWfbqXZ8C/+n/hIumYwZVh08zdsiDh0MimqJ1azXNrzVzhmnej5IOJ1n4Ou1nBNbv39tT5PPNparJCUq6Z9Ke0o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759762862; c=relaxed/simple;
-	bh=PRg9QTHdBIQ2drBq4Jauhpal3A3q0Xroku6xft7iOEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j/3oog1MfQNGPHnJk84HgCKXA50xILnR0rztXrPJ49eyrsSSAlDZ6VsP0Da2o19dUZSlQwXkJKxgdxqFbqtewn8q+EU4zLSKmuGSTkKdxmA5rxse559JHbXCc+YiDcaUJNb59I5tuED01o4XklW4WirJsUni/Jn1wD2EexBbtZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ghD8fpiZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E92EC4CEF5;
-	Mon,  6 Oct 2025 15:00:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759762862;
-	bh=PRg9QTHdBIQ2drBq4Jauhpal3A3q0Xroku6xft7iOEk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ghD8fpiZsoXXJu9uoHHp6SN+bVL1Vz+pFOosG1v3TxPaC8aN6TsjsZXQA/60mCtJ6
-	 XEcwlIVFTjDI/+5DzteTNePKVXs0L3MRU/dEYfN80EVa2uj85p9Pu0yX5vDS3NhnpX
-	 9txbpPWiJ1HBrN15Xi8AYwUi0Q7spUqFcG/j7kqctqPSx1Of8MHdENllihszCYIPPT
-	 3zEsxeu34QItDPb+izcWyc3wl375PUQcDQdFHREDx4Io84ucrxRYK6477xv3IYLMJh
-	 /XZjjkC54p/EytjpOioxbPtpMF+Zykm+GPVpW/kTNSU64CX6jSOOcmgLAPmSVUAaCz
-	 n2a8WrmSGTCIA==
-Date: Mon, 6 Oct 2025 17:00:56 +0200
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Sascha Bischoff <sascha.bischoff@arm.com>,
-	Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH] irqchip/gic-v5: Fix GIC CDEOI instruction encoding
-Message-ID: <aOPZqM2xGIrPJH/d@lpieralisi>
-References: <20251006100758.624934-1-lpieralisi@kernel.org>
- <aOPEXEx-QRv7v9A5@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACF527F754
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 15:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759762898; cv=fail; b=Xsgd7iiZCSFH/0+NfY2Zxsf/ZquTHwp2lU9D14Fm3Vl7YCTq+DsQWwe6Clp8yFyQhIVDsQHAJnaT4sGwYtJvnyyl4W6ZDxqoqBMq7P7tSKmLwdIxI+VNcnAf07RsXAyM0hDiZrRFL6KvBnpq8dj2Hn/vPGulBvadBnCqayn6G3c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759762898; c=relaxed/simple;
+	bh=1UpGRSgXaZNw9/dikDuwCjI7IMxNO/fU2hMAkAr49nk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=eXeUSunxICZ5UQv7wGJ2xVh9vNvBG2ung++QsS6OyTfG6EhK5gE+FW+aFqSm0MSQZvR6O3gZEVd3Pqzt1RTBKUdOQfW2Vjy/uspCCQOaJ6lJ2G2tVAGrtP8rj/UZJqoQGpEHW+UYUYBixaeDXc8PFL1r5n2+/SeDzaVoaZi7UyY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=S7DInRGp; arc=fail smtp.client-ip=40.107.201.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rLdQJ4SgSdYZOo2G0zkQxJeN5EExhWN8+cw3H4kHcfBeTCsKZSGU/uqKDUrfvatBbaP/j+VbhlHybB9iT1iQU3Whquc6Z/3a1abap5Nk26JbJmufOCjVHYO9HWMN/0IFK/In6Jop6uZL5BRuCelZuL4lN+TKKSV3w3+8F2AS9jmeuN7WEA7PJlzoUC68dShx/4t2WeXbuv3VE6s5+aw8FFB0xJfxUjNRO/qyY+8KUv2wl4GbYM22SOEGJXeoCxvB6ttEcblNNBlUXrdne8yMhDGzgMgAUgEXZWnpe6x9YoB6w1Z+6v5QHyilBp0WfY+uXZRw4eK6lKl3/owRYP+2Mw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VxZhR/sT7xzje4hE37Fe4i9cMyEDu/51QIZYAHGnGq0=;
+ b=zTIFwPWwNNOB8WwmLfify1r08dAzly9RnAN2nUABqs4fSFRm21xMemSF6bGc1PfhF4bm0IEq1SEFhNq4tXJ7051PnFA/xxFA87GnQ/R6QWsszpToIbBK3m1MvxdVJsvHJOBC9yp7UWh+nWKVg9Eesn1xdQ6zWg/Zjg7Nj7AbSeKoJ9KB4Oz6mIbczUBHiTeSKwj/0gZ8xC79tuXUFraormGSTzQlLPEI+tSKw9fA7liZKd68FYxID2vn6gS/4sI4cJVstzNL8tijE/mUtJwvTqdHxsTm3J/RvBQzSfKUOZumwpF6fTKjB+FdwftDZDI1KFOZRfrPxg3+7DGtHFb8Aw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VxZhR/sT7xzje4hE37Fe4i9cMyEDu/51QIZYAHGnGq0=;
+ b=S7DInRGpa0Qy/OKhgzkIp7YYm/Q2ycaxsKS2bn1BmDOxrMeuXeottqX7TvEwjuej3wkPMZwR4QW2BcR8u8Zjz7PQz+q0r+hgJXXPduP1xA+naMSJ2xQSZlPuHjSUYozog0sZQoVPKid2CozHRw85lf1s+F4UVEYPFa5Q2tm+wdtI+F+Ate/CEQt7RtXODUdbvRa9xhE5Dewj/rQbGAc0dgA0e5Q9Djfw8X54kT3yvuQcZIUAZl3ERNJ5OLHoyZIm0tSIM7Tavm8FEJsiWy+FqzWQnzWO3l6QmjUt1kITwbKuOv3YHF/2nWqASWClSftlcTMPoXIB8CyV4bYeKpXXhw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
+ by MN2PR12MB4319.namprd12.prod.outlook.com (2603:10b6:208:1dc::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.16; Mon, 6 Oct
+ 2025 15:01:30 +0000
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9182.017; Mon, 6 Oct 2025
+ 15:01:29 +0000
+Date: Mon, 6 Oct 2025 12:01:28 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+	linux-kernel@vger.kernel.org, robin.murphy@arm.com, will@kernel.org,
+	joro@8bytes.org, kevin.tian@intel.com, jsnitsel@redhat.com,
+	vasant.hegde@amd.com, iommu@lists.linux.dev, santosh.shukla@amd.com,
+	sairaj.arunkodilkar@amd.com, jon.grimm@amd.com,
+	prashanthpra@google.com, wvw@google.com, wnliu@google.com,
+	gptran@google.com, kpsingh@google.com, joao.m.martins@oracle.com,
+	alejandro.j.jimenez@oracle.com
+Subject: Re: [PATCH v2 12/12] iommu/amd: Introduce IOMMUFD vIOMMU support for
+ AMD
+Message-ID: <20251006150128.GU3360665@nvidia.com>
+References: <20251001060954.5030-1-suravee.suthikulpanit@amd.com>
+ <20251001060954.5030-13-suravee.suthikulpanit@amd.com>
+ <aN7bDNTAadHI/+qn@Asurada-Nvidia>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aN7bDNTAadHI/+qn@Asurada-Nvidia>
+X-ClientProxiedBy: BN9P220CA0025.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:408:13e::30) To PH7PR12MB5757.namprd12.prod.outlook.com
+ (2603:10b6:510:1d0::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aOPEXEx-QRv7v9A5@arm.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|MN2PR12MB4319:EE_
+X-MS-Office365-Filtering-Correlation-Id: ccbac97a-5ba5-4d12-a2b0-08de04e93aef
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?AIq4usR45V3Ws96TVR2L1PwcboLGqdgWtlA3Av6+Nz9HqWytqGyyKmHl6blB?=
+ =?us-ascii?Q?4MEexyYSas5bak83R7HOH6C2arcglSmm9qsKzT9NYnVF4njVumIYhRYv1cwZ?=
+ =?us-ascii?Q?QlfvfyPzHLWObrxyMtqOH19LUfGBWGI0m+2vj0aBsO1btdX54sSNcmionGus?=
+ =?us-ascii?Q?VT0LVHncr+DGhEagHuUZDHYntBRR4xlweJ1DLsDSF8wCygMleboIUOs8llyA?=
+ =?us-ascii?Q?X10fGWsCClSxOUdyXROpwxKqLhBulnjRlhfr3c/8NSux6PGr4zmViFDVvWu1?=
+ =?us-ascii?Q?XjrWyJM7XORqrG09SCYU39ybrXCedfcjO+/ikZd9diWXcJ5TDJiRhNgvMpyU?=
+ =?us-ascii?Q?1ypXkaqK5e6VFJcJj31XZy3y8uchhfv8uic7tazAZHSXu6/RorOrcxrQ/QjR?=
+ =?us-ascii?Q?HeVTVuw6KL9Y7Mq7ZRHYx2FIy6pTRF9Awa6byDIB/hlsa2pzng4yRtlBIyBp?=
+ =?us-ascii?Q?kkIu6bz49TmQRfVflcUmHLV5AVFxbuvA3n1R/9bIMn3qbaStrYqCK1CFf6qS?=
+ =?us-ascii?Q?ep0KSBijAF220rrSIHQDNi/3RScMf5tpikLg+PFLMXvTJ37kT7UH4iOIwsY3?=
+ =?us-ascii?Q?lnagfPKicA0ReZriuJMhkX1L8eP61IeRuZXHAX7wq+AzYq/ZIMF1e+qoDerH?=
+ =?us-ascii?Q?EBooEm23MsF9wBDFx/7CRypREmPrRhtWxybiPcg8xTxoFTMKYwDOOaGR4yN9?=
+ =?us-ascii?Q?ZcwcUMJvTZeuR6e8aV6CqWQtO1g5AWqmeqS9mZPVgOAgQhNvtf1ItMmV/nYz?=
+ =?us-ascii?Q?Po1OUy91/9byhlDNv15uBiBH+4n0EUr8sYR/aiYltCVoV6opHRkF/oTGfWke?=
+ =?us-ascii?Q?Wk/dk4IXCyKr9SeXDK/55om1ItDM3MY/rjuhLkTn6MUQzVLXMIe9YTUlfEkZ?=
+ =?us-ascii?Q?ZbMm5H6PfhWphpsNJpmul1RmaBSptwKPR70aeSn7Cq+43kGY9EenjWIR1axD?=
+ =?us-ascii?Q?SLT+XUUdc88ejv8saSB2PCwQbHjKYwofc+xRP11am22litnBNCHJH3mNfe96?=
+ =?us-ascii?Q?Um+RIZyrbvQnAncHuVx2jXWVbNxABhQAfwdJG7r32lAVBAhgPGtEIPc9PBpM?=
+ =?us-ascii?Q?6pTA+GaFXtY77LaRLOeAuLY1F1tGo3NxWzhvJex9CGEFI6MKiefyzInRCnIN?=
+ =?us-ascii?Q?hfchgbRrG239dholVWagb2h3ZXhLZyfhuaAKWnJLWRRoZYoZGUeUdn4Y9K6x?=
+ =?us-ascii?Q?nxmYLT60MFfgxfQkylBSG+s6rrTumbck+INsK5Q5+TeV87g3qITWl8AuHBeC?=
+ =?us-ascii?Q?yi6tnmbMWKkGG4gtEC1wqYR8Sl7ipRYoqANTEtL374yVjtCC/QsjYxB9jAiP?=
+ =?us-ascii?Q?zarhuhxeX/m7uHlf0kfmW9rLFyp7wMWrXyJV9l920i4EgACqkCZ53BEYv9LI?=
+ =?us-ascii?Q?jPSXrVHHhgq6snrE1h7v2dA65wF9hsbsALwKFLq3mfx/tJsiWpM0JcZM56ml?=
+ =?us-ascii?Q?ewKFb8Dm3CmyM7HAPZMi+ZQje3rXiid2?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?KUWIhez7eWY+cHuoZKmzmmzZzWOTyj6jpVshpd8mTbdtLUORt9ee3kXbbJXg?=
+ =?us-ascii?Q?wsqHmlT1BRgZQz6IVBiYM1F3C3crsUclMZHGDZyBeTW6leLMT7cOZR3DrDSj?=
+ =?us-ascii?Q?fH7jZ27qiT6hcNb/90Sc+5z9dy5yIiNR3Gye7ZBLln8ncvAgUyiuqCv6XJ0v?=
+ =?us-ascii?Q?TnTFMIwj7hEl/gD1cYifE01MQ8kaDVVWdighAOSpDjZhw07E8QAJqE6gIVnl?=
+ =?us-ascii?Q?/fIwx3YdwRvyIhaYjiTTrt3WP/s6/XZkRhy3FGCom5iz4+3XCskpiIiOhETF?=
+ =?us-ascii?Q?hbW9oXqpI3qy2OqdRksG9YNZfls+UDhj7dChlsxXWSt92zjgIMZbiyLhkWSu?=
+ =?us-ascii?Q?jfFg8Fiv54AoM/jSYdaCAxZaxBbm/9htGwgcXWCPOp7SPNURR8BjjhsyUX6U?=
+ =?us-ascii?Q?w2m6WZ3ERNroQm/pdzkPOiOnGKPQHH0XEPsjHvAam+F0SLc5F64tg9/u6Pdw?=
+ =?us-ascii?Q?boxA+fHlmQtgnh5EPLhXRLduaWr5myJcxO5ClDkFoRRnr50s5sziLWFUW6UO?=
+ =?us-ascii?Q?Nkq7oRLgjD9w9orobhBbtF2rUf0j+zDoma2Cq3Fh8l3cmCTCA5N0jt/ht7W5?=
+ =?us-ascii?Q?izUBICpuIAKA8cKub5uE2gAkPnWINVmXhlEw9QRsVr8z6p32UZE3LCSHQMMg?=
+ =?us-ascii?Q?0i4cKmvCY8aebQ0Cl722Yluw2ZQjv+AfQVL/VEZdzP41EnRvhUckti8H+Ezp?=
+ =?us-ascii?Q?JbqfXzwTI4JW3sVQYN7dAVsYeQJg3wBXfNpvxfAstpxqq7IBjg/1sjWn661W?=
+ =?us-ascii?Q?bTXHRUMTRDLF15HnHen19shv4QA7jfj7iVKRasb5U5lPB1DoReQH/NYwoOF5?=
+ =?us-ascii?Q?0Cm2xpjWesnspJTbn2N6CCLQVQH4D2yNP+suNL4ATsnUzLNI8CzSth0ScP+v?=
+ =?us-ascii?Q?eEiejCcXwTntZdJ0Fcx22/22OE1P++05JGgs7Gkk8JfWOwOAh76wGzIvwyz5?=
+ =?us-ascii?Q?KvICetVUUaaodUnLMigYbULR/YSJP0x4Q/BoYOaMCwJHd/DSl9tzclUN8pEL?=
+ =?us-ascii?Q?dkkymWv5mpRWdwpZuJneo121ACZbiGt48Y90Vumlf7CqOPQcj2ftf3sBvcGF?=
+ =?us-ascii?Q?YSRnHDEIsak+XkW7/RfcSFP68UC1sqA7ITcbcgJ3NxTW7LI+A276VSHQoRPe?=
+ =?us-ascii?Q?jmAmecrkbq9MdXClE4LUvQ1pifKxj1eual3f9sayjiBBtyADEdC++qoZLQ+y?=
+ =?us-ascii?Q?o8sKPeapdo8KXXJmKU0QdwdPkuj5d4ED+Xvo492ESqI+304L/nLf7qXyV36Y?=
+ =?us-ascii?Q?qYZTCJw1rZ2+7Jl8kRTjSx1VtLAK0UFoBlZxhb6c8l95h+V5H98a4NfOlKfJ?=
+ =?us-ascii?Q?WgNFfaMUdsImKIyy8FZ0PlAIJtjRynhIhwi+/mqSsmb1NX877EtVPsYFf+Q1?=
+ =?us-ascii?Q?ZeHgrZ5FJ5IJDC2fZv2Y1mtGiXK50LqTra/8qAht1ogdzVCRlzLMEUcRIQpG?=
+ =?us-ascii?Q?feS2uflzcA+fr2U4XH45nldiWOkjAmInIt19W14Gs1EtF9TjwuO/YC5P6PCy?=
+ =?us-ascii?Q?YYvtOY59LVP5jjmw1f6HnbSCkofhYWZpxHJCSORncSjjymeFZhH4qyRyNFRY?=
+ =?us-ascii?Q?gguCtJhC/o416Rp9pDg=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ccbac97a-5ba5-4d12-a2b0-08de04e93aef
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2025 15:01:29.8102
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Taxs/2k9y3r6xsKv4A1HCFyEjpmVFpocs8PmYklLFk5NRxQaawCZc4dX9KlmnZCr
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4319
 
-On Mon, Oct 06, 2025 at 02:30:04PM +0100, Catalin Marinas wrote:
-> On Mon, Oct 06, 2025 at 12:07:58PM +0200, Lorenzo Pieralisi wrote:
-> > diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
-> > index 6455db1b54fd..6cf8c46ddde5 100644
-> > --- a/arch/arm64/include/asm/sysreg.h
-> > +++ b/arch/arm64/include/asm/sysreg.h
-> > @@ -113,14 +113,14 @@
-> >  /* Register-based PAN access, for save/restore purposes */
-> >  #define SYS_PSTATE_PAN			sys_reg(3, 0, 4, 2, 3)
-> >  
-> > -#define __SYS_BARRIER_INSN(op0, op1, CRn, CRm, op2, Rt)			\
-> > +#define __SYS_INSN(op0, op1, CRn, CRm, op2, Rt)				\
-> >  	__emit_inst(0xd5000000					|	\
-> >  		    sys_insn((op0), (op1), (CRn), (CRm), (op2))	|	\
-> >  		    ((Rt) & 0x1f))
-> >  
-> > -#define SB_BARRIER_INSN			__SYS_BARRIER_INSN(0, 3, 3, 0, 7, 31)
-> > -#define GSB_SYS_BARRIER_INSN		__SYS_BARRIER_INSN(1, 0, 12, 0, 0, 31)
-> > -#define GSB_ACK_BARRIER_INSN		__SYS_BARRIER_INSN(1, 0, 12, 0, 1, 31)
-> > +#define SB_BARRIER_INSN			__SYS_INSN(0, 3, 3, 0, 7, 31)
-> > +#define GSB_SYS_BARRIER_INSN		__SYS_INSN(1, 0, 12, 0, 0, 31)
-> > +#define GSB_ACK_BARRIER_INSN		__SYS_INSN(1, 0, 12, 0, 1, 31)
-> >  
-> >  /* Data cache zero operations */
-> >  #define SYS_DC_ISW			sys_insn(1, 0, 7, 6, 2)
-> > @@ -1075,7 +1075,6 @@
-> >  #define GICV5_OP_GIC_CDDIS		sys_insn(1, 0, 12, 1, 0)
-> >  #define GICV5_OP_GIC_CDHM		sys_insn(1, 0, 12, 2, 1)
-> >  #define GICV5_OP_GIC_CDEN		sys_insn(1, 0, 12, 1, 1)
-> > -#define GICV5_OP_GIC_CDEOI		sys_insn(1, 0, 12, 1, 7)
-> >  #define GICV5_OP_GIC_CDPEND		sys_insn(1, 0, 12, 1, 4)
-> >  #define GICV5_OP_GIC_CDPRI		sys_insn(1, 0, 12, 1, 2)
-> >  #define GICV5_OP_GIC_CDRCFG		sys_insn(1, 0, 12, 1, 5)
-> > @@ -1129,6 +1128,17 @@
-> >  #define gicr_insn(insn)			read_sysreg_s(GICV5_OP_GICR_##insn)
-> >  #define gic_insn(v, insn)		write_sysreg_s(v, GICV5_OP_GIC_##insn)
-> >  
+On Thu, Oct 02, 2025 at 01:05:32PM -0700, Nicolin Chen wrote:
 > > +/*
-> > + * GIC CDEOI encoding requires Rt to be 0b11111.
-> > + * gic_insn() with an immediate value of 0 cannot be used to encode it
-> > + * because some compilers do not follow asm inline constraints in
-> > + * write_sysreg_s() to turn an immediate 0 value into an XZR as
-> > + * MSR source register.
-> > + * Use __SYS_INSN to specify its precise encoding explicitly.
+> > + * See include/linux/iommufd.h
+> > + * struct iommufd_viommu_ops - vIOMMU specific operations
 > > + */
-> > +#define GICV5_CDEOI_INSN		__SYS_INSN(1, 0, 12, 1, 7, 31)
-> > +#define gic_cdeoi()			asm volatile(GICV5_CDEOI_INSN)
+> > +const struct iommufd_viommu_ops amd_viommu_ops = {
+> > +	.alloc_domain_nested = amd_iommu_alloc_domain_nested,
+> > +};
 > 
-> Would something like this work? Completely untested (and build still
-> going):
+> Unfortunately, a viommu_ops with alloc_domain_nested is incomplete,
+> IMHO. If this series gets merged alone, it declares that the kernel
+> now supports AMD IOMMU's virtualization, which actually won't work
+> without a cache invalidation op (SW) or hw_queue (HW-acceleration).
 
-I tested the GIC CDEOI code generated with GCC/LLVM and it works.
+Yeah, I'd move this patch to a series implementing viommu fully.
 
-My only remark there is that even as the code in mainline stands with
-GCC, it is not very clear that we rely on implicit XZR generation to
-make sure the instruction encoding generated is correct - it looks
-like a bit of a stretch to reuse a sysreg write with immediate value == 0
-to generate a system instruction write with Rt == 0b11111, it works
-but it is a bit opaque or at least not straighforward to grok.
+I'm pretty sure this series is OK as is without it, but it would be
+good to at least share a sketch of the viommu support to be sure
+before merging it.
 
-Obviously the patch below improves LLVM code generation too in the process.
-
-I don't know what's best - I admit I am on the fence on this one.
-
-Thanks !
-Lorenzo
-
-> diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
-> index 6604fd6f33f4..7aa962f7bdd6 100644
-> --- a/arch/arm64/include/asm/sysreg.h
-> +++ b/arch/arm64/include/asm/sysreg.h
-> @@ -1234,7 +1234,10 @@
->  #define write_sysreg_s(v, r) do {					\
->  	u64 __val = (u64)(v);						\
->  	u32 __maybe_unused __check_r = (u32)(r);			\
-> -	asm volatile(__msr_s(r, "%x0") : : "rZ" (__val));		\
-> +	if (__builtin_constant_p(__val) && __val == 0)			\
-> +		asm volatile(__msr_s(r, "xzr"));			\
-> +	else								\
-> +		asm volatile(__msr_s(r, "%x0") : : "r" (__val));	\
->  } while (0)
->  
->  /*
-> 
-> -- 
-> Catalin
+Jason
 
