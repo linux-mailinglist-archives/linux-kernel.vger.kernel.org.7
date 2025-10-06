@@ -1,147 +1,152 @@
-Return-Path: <linux-kernel+bounces-842800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07975BBDA3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:13:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0A56BBD9BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:07:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B01FE34A01E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:13:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F342D4EAAAA
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB5C222562;
-	Mon,  6 Oct 2025 10:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E805220694;
+	Mon,  6 Oct 2025 10:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=folker-schwesinger.de header.i=@folker-schwesinger.de header.b="U1YWadyo"
-Received: from www522.your-server.de (www522.your-server.de [195.201.215.122])
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="YRe9Turp"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542292046BA;
-	Mon,  6 Oct 2025 10:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.215.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D9B1F4CB3;
+	Mon,  6 Oct 2025 10:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759745620; cv=none; b=qlbmNUaKFmoxSdFxopZ/MLcl6ysfXoFOlxtjnod7DANsBZQDOf7dWAccUbCP3yBVyi+9ZTcoFOyqsXAAK/Otx6xFNzgccZFhjsQlRIt/d82GRAQQy5iDR6xx3XoY+lL3p/PL4XKP2vILUwkeE61k0AOPDFlY0N6fZjiLKCkySSQ=
+	t=1759745214; cv=none; b=cLm4xF5Sl5LjRhXsIOJI6tf4xao6HeOklmbbcEJB+eyCmFHhdD8DhPCnHBI4peFSKr5nlQh7naaVyOyavPIgVZQZFUKX0HyU4+MfXY5pOufgtlJJe8urAVpGSKOZ3hkunLAMBdwPyd8COnQ8HDgw0eYXqwRl/Xp7ixCziC0uPlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759745620; c=relaxed/simple;
-	bh=PHbc21kaTsr/iK9wGPsPvZQ0ScdAEYoydb2YAlePOy0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:From:To:Subject:
-	 References:In-Reply-To; b=LXH+iTK1vohIYKvwOnmraHyigfZScBLL9m7r4TM/H4YdN55fK4W09wVRZFfxVDuXXUibr+7rvsfRsMcR4kBMLeCcJxOXByL9BUZgMi6wL72jSOVUbar+xJqA5yKJSgwaC1Jnv5kjL9L+3LL0l2x36BC8tQKSiTrqbYktifBhrDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=folker-schwesinger.de; spf=pass smtp.mailfrom=folker-schwesinger.de; dkim=pass (2048-bit key) header.d=folker-schwesinger.de header.i=@folker-schwesinger.de header.b=U1YWadyo; arc=none smtp.client-ip=195.201.215.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=folker-schwesinger.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=folker-schwesinger.de
+	s=arc-20240116; t=1759745214; c=relaxed/simple;
+	bh=RqgAW9lbqtckIbXNmjORUUqpdakAcL+TaSmrw3Jzu/M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P2De6LJs6cyIMBW1PB0QrPuIssiy/ZB/zz5xwsDSaJXSDnp8eK4KLCRCekDwIbgjIMZ7/iqS94KqZmBdjkFzTQ6maLR+EKJk++K6NYnhWKtSlJSr647FPXWwX1hIyWeOe8aSBika00lxn4KrXcUw2hCnbpBrnZZO9scSkO9Un4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=YRe9Turp; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=folker-schwesinger.de; s=default2212; h=In-Reply-To:References:Subject:To:
-	From:Cc:Message-Id:Date:Content-Type:Content-Transfer-Encoding:Mime-Version:
-	Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=M2+AdvJEarXyjOc4kgwr0OGK2UDYTIAIMd4EPnbaUnk=; b=U1YWadyoifm7mM0YGP+poyHkVT
-	CQzuj1ezWhJjFCvgKBX1PwHo868THq65o/dt6vLLvzRFg2k6Jn6tDtGPDi9Tby22L4H0ckzeOGtsA
-	i5Kd6FAj9HxgLJbEl6aRrXZuEe6eHkYk3yXKFCWhl03Ohq0frjynbbsSvf5ziD0FyDxA6wYshycOD
-	AQxfENVX39WT8yQK9d4Ob2Zc9jpk3AdH8u1MU9bfO8xHMdAxNTWBJubJLwiG8mveJre2JAmn9vtZ+
-	crg7vQFCJ7cKctWs5RGjOPfg3IMbL/p+DS2rer5t2erLusdoVmlpmDU6RufiywivdEr1EC66Ev8gY
-	Sm0alTnQ==;
-Received: from sslproxy05.your-server.de ([78.46.172.2])
-	by www522.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <dev@folker-schwesinger.de>)
-	id 1v5i2V-000C3T-0E;
-	Mon, 06 Oct 2025 12:01:55 +0200
-Received: from localhost ([127.0.0.1])
-	by sslproxy05.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <dev@folker-schwesinger.de>)
-	id 1v5i2U-000EoX-1D;
-	Mon, 06 Oct 2025 12:01:54 +0200
+	d=fu-berlin.de; s=fub01; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+	Date:Subject:Cc:To:From:From:Reply-To:Subject:Date:Message-ID:To:Cc:
+	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=HORcpKNl5P77OslotDTpzvdXhKvc79Dm6vcBc2f2Cfw=; t=1759745211; x=1760350011; 
+	b=YRe9TurpPZqO+QFE4ADnowcxhQD6cXtOHYtMzOGEemPpQ2T9KMoAqIt+9wKPIRMFdpFjQPxxW/D
+	rlI5N5B2O9Huv4PLCXhJI3YPZ6rAraBNQUKa6lHpKz0uJwYAy5guDC3QH2gbHotMxCFWFQup0ynZN
+	X+WCLtW3tPDuAteMqIrumkgOzE8YfkAS3CnjM0nTamOpPhCM6GcS61m6gvwLZehe/HaKELiZhZDNC
+	4u3a1Nbas9LkDtQ50CXsjSjSoCP3KYfLzZ+lhZuEBl/AqAHIUQvsJiyKkbt82kVFYfg2Aan15d4dA
+	+jTh0L1bbdUHHb8qj+d5VZwy8Mn+2bRGV3aA==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1v5i7E-00000002s6d-3DKw; Mon, 06 Oct 2025 12:06:48 +0200
+Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=z6.fritz.box)
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1v5i7E-00000002bP1-29Iz; Mon, 06 Oct 2025 12:06:48 +0200
+Received: from glaubitz by z6.fritz.box with local (Exim 4.98.2)
+	(envelope-from <glaubitz@physik.fu-berlin.de>)
+	id 1v5i7E-0000000019q-0cDx;
+	Mon, 06 Oct 2025 12:06:48 +0200
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Jens Axboe <axboe@kernel.dk>,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Andreas Larsson <andreas@gaisler.com>,
+	Anthony Yznaga <anthony.yznaga@oracle.com>,
+	Sam James <sam@gentoo.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>,
+	sparclinux@vger.kernel.org,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Subject: [PATCH v2] Revert "sunvdc: Do not spin in an infinite loop when vio_ldc_send() returns EAGAIN"
+Date: Mon,  6 Oct 2025 12:02:26 +0200
+Message-ID: <20251006100226.4246-2-glaubitz@physik.fu-berlin.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 06 Oct 2025 10:01:54 +0000
-Message-Id: <DDB5IDDEOVBT.NHJF03FYW2BN@folker-schwesinger.de>
-Cc: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>
-From: "Folker Schwesinger" <dev@folker-schwesinger.de>
-To: "Suraj Gupta" <suraj.gupta2@amd.com>, <vkoul@kernel.org>,
- <radhey.shyam.pandey@amd.com>, <michal.simek@amd.com>
-Subject: Re: [PATCH V2 1/3] dmaengine: xilinx_dma: Fix channel idle state
- management in AXIDMA and MCDMA interrupt handlers
-X-Mailer: aerc 0.21.0-9-ga57e783008e9
-References: <20251003061910.471575-1-suraj.gupta2@amd.com>
- <20251003061910.471575-2-suraj.gupta2@amd.com>
-In-Reply-To: <20251003061910.471575-2-suraj.gupta2@amd.com>
-X-Virus-Scanned: Clear (ClamAV 1.0.9/27780/Thu Oct  2 04:58:32 2025)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Fri Oct 3, 2025 at 8:19 AM CEST, Suraj Gupta wrote:
-> Fix a race condition in AXIDMA and MCDMA irq handlers where the channel
-> could be incorrectly marked as idle and attempt spurious transfers when
-> descriptors are still being processed.
->
-> The issue occurs when:
-> 1. Multiple descriptors are queued and active.
-> 2. An interrupt fires after completing some descriptors.
-> 3. xilinx_dma_complete_descriptor() moves completed descriptors to
-> done_list.
-> 4. Channel is marked idle and start_transfer() is called even though
->    active_list still contains unprocessed descriptors.
-> 5. This leads to premature transfer attempts and potential descriptor
->    corruption or missed completions.
->
-> Only mark the channel as idle and start new transfers when the active lis=
-t
-> is actually empty, ensuring proper channel state management and avoiding
-> spurious transfer attempts.
->
-> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
-> Co-developed-by: Srinivas Neeli <srinivas.neeli@amd.com>
-> Signed-off-by: Srinivas Neeli <srinivas.neeli@amd.com>
-> Fixes: c0bba3a99f07 ("dmaengine: vdma: Add Support for Xilinx AXI Direct =
-Memory Access Engine")
+In a11f6ca9aef9 ("sunvdc: Do not spin in an infinite loop when vio_ldc_send()
+returns EAGAIN"), a maximum retry count was added to __vdc_tx_trigger().
 
-For the AXIDMA code paths:
+After this change, several users reported disk I/O errors when running Linux
+inside a logical domain on Solaris 11.4:
 
-Tested-by: Folker Schwesinger <dev@folker-schwesinger.de>
+[19095.192532] sunvdc: vdc_tx_trigger() failure, err=-11
+[19095.192605] I/O error, dev vdiskc, sector 368208928 op 0x1:(WRITE) flags 0x1000 phys_seg 2 prio class 2
+[19095.205681] XFS (vdiskc1): metadata I/O error in "xfs_buf_ioend+0x28c/0x600 [xfs]" at daddr 0x15f26420 len 32 error 5
+[19432.043471] sunvdc: vdc_tx_trigger() failure, err=-11
+[19432.043529] I/O error, dev vdiskc, sector 3732568 op 0x1:(WRITE) flags 0x1000 phys_seg 1 prio class 2
+[19432.058821] sunvdc: vdc_tx_trigger() failure, err=-11
+[19432.058843] I/O error, dev vdiskc, sector 3736256 op 0x1:(WRITE) flags 0x1000 phys_seg 4 prio class 2
+[19432.074109] sunvdc: vdc_tx_trigger() failure, err=-11
+[19432.074128] I/O error, dev vdiskc, sector 3736512 op 0x1:(WRITE) flags 0x1000 phys_seg 4 prio class 2
+[19432.089425] sunvdc: vdc_tx_trigger() failure, err=-11
+[19432.089443] I/O error, dev vdiskc, sector 3737024 op 0x1:(WRITE) flags 0x1000 phys_seg 1 prio class 2
+[19432.100964] XFS (vdiskc1): metadata I/O error in "xfs_buf_ioend+0x28c/0x600 [xfs]" at daddr 0x38ec58 len 8 error 5
 
-> ---
->  drivers/dma/xilinx/xilinx_dma.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_=
-dma.c
-> index fabff602065f..53b82ddad007 100644
-> --- a/drivers/dma/xilinx/xilinx_dma.c
-> +++ b/drivers/dma/xilinx/xilinx_dma.c
-> @@ -1857,8 +1857,10 @@ static irqreturn_t xilinx_mcdma_irq_handler(int ir=
-q, void *data)
->  	if (status & XILINX_MCDMA_IRQ_IOC_MASK) {
->  		spin_lock(&chan->lock);
->  		xilinx_dma_complete_descriptor(chan);
-> -		chan->idle =3D true;
-> -		chan->start_transfer(chan);
-> +		if (list_empty(&chan->active_list)) {
-> +			chan->idle =3D true;
-> +			chan->start_transfer(chan);
-> +		}
->  		spin_unlock(&chan->lock);
->  	}
-> =20
-> @@ -1914,8 +1916,10 @@ static irqreturn_t xilinx_dma_irq_handler(int irq,=
- void *data)
->  		      XILINX_DMA_DMASR_DLY_CNT_IRQ)) {
->  		spin_lock(&chan->lock);
->  		xilinx_dma_complete_descriptor(chan);
-> -		chan->idle =3D true;
-> -		chan->start_transfer(chan);
-> +		if (list_empty(&chan->active_list)) {
-> +			chan->idle =3D true;
-> +			chan->start_transfer(chan);
-> +		}
->  		spin_unlock(&chan->lock);
->  	}
-> =20
+Since this change seems to have only been justified by reading the code which
+becomes evident by the reference to adddc32d6fde ("sunvnet: Do not spin in an
+infinite loop when vio_ldc_send() returns EAGAIN") in the commit message, it
+can be safely assumed that the change was neither properly tested nor motivated
+by any actual bug reports.
+
+Thus, let's revert this change to address the disk I/O errors above.
+
+Signed-off-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+---
+Changes since v1:
+- Rephrase commit message
+---
+ drivers/block/sunvdc.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
+index 282f81616a78..f56023c2b033 100644
+--- a/drivers/block/sunvdc.c
++++ b/drivers/block/sunvdc.c
+@@ -45,8 +45,6 @@ MODULE_VERSION(DRV_MODULE_VERSION);
+ #define WAITING_FOR_GEN_CMD	0x04
+ #define WAITING_FOR_ANY		-1
+ 
+-#define	VDC_MAX_RETRIES	10
+-
+ static struct workqueue_struct *sunvdc_wq;
+ 
+ struct vdc_req_entry {
+@@ -437,7 +435,6 @@ static int __vdc_tx_trigger(struct vdc_port *port)
+ 		.end_idx		= dr->prod,
+ 	};
+ 	int err, delay;
+-	int retries = 0;
+ 
+ 	hdr.seq = dr->snd_nxt;
+ 	delay = 1;
+@@ -450,8 +447,6 @@ static int __vdc_tx_trigger(struct vdc_port *port)
+ 		udelay(delay);
+ 		if ((delay <<= 1) > 128)
+ 			delay = 128;
+-		if (retries++ > VDC_MAX_RETRIES)
+-			break;
+ 	} while (err == -EAGAIN);
+ 
+ 	if (err == -ENOTCONN)
+-- 
+2.47.3
 
 
