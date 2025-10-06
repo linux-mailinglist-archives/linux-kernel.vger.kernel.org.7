@@ -1,89 +1,79 @@
-Return-Path: <linux-kernel+bounces-843547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 494D0BBFB37
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 00:39:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F402BBFB2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 00:39:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1635189E181
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 22:39:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3481E3BD04B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 22:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC4034BA5F;
-	Mon,  6 Oct 2025 22:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC31920B81B;
+	Mon,  6 Oct 2025 22:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="exIh3aPe"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qbo6czX7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6278E20ADF8
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 22:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53403288A2
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 22:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759790349; cv=none; b=CDv73mzdx0NYe8mYQd2ANuh6FND8mEhu7AqfbmhrdQkMaisinDMMjLIS5PZf9HpC7emcmKQpnitXAb1ryMFHfrQ3vh+SVAWtJY1WlpGyr8rGaDNwbX16/MrnO1cBrzLwqL+EZ3XeKjX36iGNpZ3i2Q3vObEFIU54noE6KH9FtHw=
+	t=1759790336; cv=none; b=i/QjjtUf3WJlM6+26FOL7aWa4AmRU9vyuIsap2klCow2JDWb5Sbcm6L23jGCkZDqEec52WY5jJX3AG9f10TIv0CPEs3XCXJUzhI6rNhWZWQBiD57aTlTJoMVbKDunPFUCWwxLOXy5QGtPJ+AMcIAfbIbkxjBVFwcwnbtkhRGULw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759790349; c=relaxed/simple;
-	bh=476qFSj3sr1jIr2YGzC22ubQeJw0gVOQ7vtxudlpjmY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SvoXpY92RJP1MuQzsdHRsqudkd2qWPDNOznLThHun7C8A3Qg6QqZzh4tz738FdcqTAXfS1E2cUVZ88imKvy6f9bkbf+oy31hxCXiNLDBoS+5je9mp9Ayi70wS5/OTROCbEdN9Tumtp45OzgWxZjLTqxmjXYoBFpEP6JBlyknPs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=exIh3aPe; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b5f2c1a7e48so3812889a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 15:39:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759790347; x=1760395147; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=epHNuGWjtr5JgO8lZyH/Ct6cqyHhs3SVgqyLVnQj8Gc=;
-        b=exIh3aPeiPaLF5GBvkDPbpvqKVizrcOF6l5ef2IipoIwu3xUWAEOeWaj7SIq6r+Cb9
-         bugiefM5PIv+ltmSIJJUSOYZPa6GhdVW3sJQRq56zOxGmux33zFUH0h+0EwTp9DecGjt
-         QSFtt21gZDyOEO36KFyTKJOrn5hcgLGvDVC5cALiaW6HZpF+fDzyKBWPW3mU54R/hvsX
-         pwq2qSJeTGGSWrps/AVoqp0F058VIwezSxsCs9b4YAB+dTy7DUWJEDfyHxpcxFi90Uco
-         VLsThEooeqm7vX2mVQ/w0l1n2t2cAULl3WUS65C1TsFDAzbNDMYX9qbDll2tRQ3NfVGI
-         320g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759790347; x=1760395147;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=epHNuGWjtr5JgO8lZyH/Ct6cqyHhs3SVgqyLVnQj8Gc=;
-        b=nsQDs14bo2b37GjNDp2QWgfZ2XO/tQwlel5qWdTxUsewYIZbdTHR175DxlitK7Cn6N
-         eDME4fR2EkurFDd/TUW5xeSoj+xU8IlKBgNUx8nca9iIQPeeeTSewtzXHVwiF1Lf7Bj7
-         9LPdtvLoUK+KFQS3p3XHuOrqE/FBZ6g/x5yKasaFN7IR1SIo9U+r18vlmnbq01VdyMUZ
-         xgO9ImIuEi0kJfY6WKwuX7ySlHE0sF3me6yJrbLVbZcuthe6HJypyf2gzZDQ2NZpRoHp
-         KabAf3mV/qi5FxaW/3ROj6Mfh/Y9Ij8CCNpqEzKs1+/OgMz8FLWY1jqKk2V4TXdTFAd4
-         1gng==
-X-Forwarded-Encrypted: i=1; AJvYcCWqwDdWPuv76umvwfdYHOuBl9lGoVKX15pT0uBD2xDHyCVf77hng2yxVQVWmkGJLIT6smg7Jx0EO6JVYBg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybrPKK59RyIJA00osF7G/sCv2BVc6F/UaaV0o2Mw7Uh95H8eyP
-	n2fCS0UujxX2+UphxdPK+POe25Rn7mCktMmwVHz7B7At+qYsDdD41xel
-X-Gm-Gg: ASbGncu0WNzMTsBTFxi7HKnZTDJUol3Cnn5Zoyijpz7v1mKrBtZvXawCZK2eZ1K+Pew
-	L0qDkfHSJYc+VOxWzfEAYcjD8YYdZOcgLaA38QwnFhPDXI5wSFljFNle52/V7qduiwiy17dttp0
-	hTk3/wccdZbRTUNA90Nw9JGWGuBQeHh1cKVCEJhFDV2ZeyVpMPC7XqoRlfqL+bZJarQdBsQvRU9
-	NckcnrfWnXAzq1xPZ0bdIAxr3jmlsOuo44ubdGH+6unA3fc2dUN1HVgTKVhKCp2w/WX+0rERCW5
-	Lj0Pfp3igdHJhMayzMWEPQwDc4IL6tcbwQ3LAGktAlsaA0tmu85oMtmQ/U1j7ZFO4PNioA0LsQa
-	g2B02ZFyBus/WgwIUsyBsI6XkxHF5OsRQm39mlhfc+A==
-X-Google-Smtp-Source: AGHT+IF6xREOFF7VwHOye2oqD0t5qCm6RdBUaVqYPSYZgYjGI++60wK2ctzYcgxahLhIk9GjvsroCg==
-X-Received: by 2002:a17:902:f78c:b0:25c:8005:3efb with SMTP id d9443c01a7336-28e9a6fd985mr177313305ad.54.1759790346635;
-        Mon, 06 Oct 2025 15:39:06 -0700 (PDT)
-Received: from fedora ([119.161.98.68])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1b87dcsm143480895ad.90.2025.10.06.15.39.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 15:39:06 -0700 (PDT)
-From: Nirbhay Sharma <nirbhay.lkd@gmail.com>
-To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc: david.hunter.linux@gmail.com,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	khalid@kernel.org,
-	Nirbhay Sharma <nirbhay.lkd@gmail.com>,
-	syzbot+83c9dd5c0dcf6184fdbf@syzkaller.appspotmail.com,
-	ntfs3@lists.linux.dev,
+	s=arc-20240116; t=1759790336; c=relaxed/simple;
+	bh=hAfYBMHPx4SL0CGF9z/5CE1gPni2z7TafaalDEB4P7A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cDYuoSbpgdyjJqTbA81e0P1v3jk4sLAT35OyLJFoy9GKl4+Tp8ua8mdtZ9B9kai3oRkwPEqv9Mo1EivIfoz3oxfiDljA3qEeH8XThX2acZ/KKODkL8/LS+kXbQLYsZFtggflkoI23Ckh7Z/5pli4KwwnA7EK2c59QO4dQL75/Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qbo6czX7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759790333;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=lt1XDt+iqYJyCmKmJhO9a3u66KtKOoS8YbEa9uYzXU4=;
+	b=Qbo6czX7yAmi0RIlghw2PyV2cu4k8Hfjuve+jGuUxJqRsfYKIhv/3CXRbWA7SWDO2vKPt1
+	jsCqTORdkUF6jPRHaI+qKCQcpSS7PxIjVxT6hi3AA1DcEzhE/Tcl4xM2qgtUoEsphpfUoc
+	YdZ6oLDwCTT0J8MXZrD7jWZ6q+8GdpU=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-576-qGWzE8P9O9uG9asD58o6jQ-1; Mon,
+ 06 Oct 2025 18:38:50 -0400
+X-MC-Unique: qGWzE8P9O9uG9asD58o6jQ-1
+X-Mimecast-MFC-AGG-ID: qGWzE8P9O9uG9asD58o6jQ_1759790328
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3373C1800576;
+	Mon,  6 Oct 2025 22:38:48 +0000 (UTC)
+Received: from thinkpad-p1.kanata.rendec.net (unknown [10.22.90.133])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E5AA21800452;
+	Mon,  6 Oct 2025 22:38:44 +0000 (UTC)
+From: Radu Rendec <rrendec@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Manivannan Sadhasivam <mani@kernel.org>
+Cc: Daniel Tsai <danielsftsai@google.com>,
+	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+	Krishna Chaitanya Chundru <quic_krichai@quicinc.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Rob Herring <robh@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Brian Masney <bmasney@redhat.com>,
+	Eric Chanudet <echanude@redhat.com>,
+	Alessandro Carminati <acarmina@redhat.com>,
+	Jared Kangas <jkangas@redhat.com>,
+	linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] fs/ntfs3: fix KMSAN uninit-value in ni_create_attr_list
-Date: Tue,  7 Oct 2025 04:08:04 +0530
-Message-ID: <20251006223805.139206-1-nirbhay.lkd@gmail.com>
-X-Mailer: git-send-email 2.51.0
+Subject: [PATCH v2 0/3] Enable MSI affinity support for dwc PCI
+Date: Mon,  6 Oct 2025 18:38:10 -0400
+Message-ID: <20251006223813.1688637-1-rrendec@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,53 +81,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-The call to kmalloc() to allocate the attribute list buffer is given a
-size of al_aligned(rs). This size can be larger than the data
-subsequently copied into the buffer, leaving trailing bytes uninitialized.
+Various attempts have been made so far to support CPU affinity control
+for (de)multiplexed interrupts. Some examples are [1] and [2]. That work
+was centered around the idea to control the parent interrupt's CPU
+affinity, since the child interrupt handler runs in the context of the
+parent interrupt handler, on whatever CPU it was triggered.
 
-This can trigger a KMSAN "uninit-value" warning if that memory is
-later accessed.
+This is a new attempt based on a different approach. Instead of touching
+the parent interrupt's CPU affinity, the child interrupt is allowed to
+freely change its affinity setting, independently of the parent. If the
+interrupt handler happens to be triggered on an "incompatible" CPU (a
+CPU that's not part of the child interrupt's affinity mask), the handler
+is redirected and runs in IRQ work context on a "compatible" CPU. This
+is a direct follow up to the (unsubmitted) patches that Thomas Gleixner
+proposed in [3].
 
-Fix this by using kzalloc() instead, which ensures the entire
-allocated buffer is zero-initialized, preventing the warning.
+The first patch adds support for interrupt redirection to the IRQ core,
+without making any functional change to irqchip drivers. The other two
+patches modify the dwc PCI core driver to enable interrupt redirection
+using the new infrastructure added in the first patch.
 
-Reported-by: syzbot+83c9dd5c0dcf6184fdbf@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=83c9dd5c0dcf6184fdbf
-Signed-off-by: Nirbhay Sharma <nirbhay.lkd@gmail.com>
+Thomas, however, I made a small design change to your original patches.
+Instead of keeping track of the parent interrupt's affinity setting (or
+rather the first CPU in its affinity mask) and attempting to pick the
+same CPU for the child (as the target CPU) if possible, I just check if
+the child handler fires on a CPU that's part of its affinity mask (which
+is already stored anyway). As an optimization for the case when the
+current CPU is *not* part of the mask and the handler needs to be
+redirected, I pre-calculate and store the first CPU in the mask, at the
+time when the child affinity is set. In my opinion, this is simpler and
+cleaner, at the expense of a cpumask_test_cpu() call on the fast path,
+because:
+- It no longer needs to keep track of the parent interrupt's affinity
+  setting.
+- If the parent interrupt can run on more than one CPU, the child can
+  also run on any of those CPUs without being redirected (in case the
+  child's affinity mask is the same as the parent's or a superset).
+
+Last but not least, since most of the code in these patches is your
+code, I took the liberty to add your From and Signed-off-by tags to
+properly attribute authorship. I hope that's all right, and if for any
+reason you don't want that, then please accept my apologies and I will
+remove them in a future version. Of course, you can always remove them
+yourself if you want (assuming the patches are merged at some point),
+since you are the maintainer :)
+
+[1] https://lore.kernel.org/all/20220502102137.764606ee@thinkpad/
+[2] https://lore.kernel.org/all/20230530214550.864894-1-rrendec@redhat.com/
+[3] https://lore.kernel.org/linux-pci/878qpg4o4t.ffs@tglx/
+
+Signed-off-by: Radu Rendec <rrendec@redhat.com>
 ---
-The following syzbot test commands were used to verify the fix against
-both linux-next and a specific mainline commit. Both kernels were
-configured with CONFIG_KMSAN=y, and no KMSAN warnings were observed
-with the patch applied.
+Changes in v2:
+- Fix compile errors on configurations where CONFIG_SMP is disabled
 
-An attempt to test against the latest mainline tip failed due to an
-unrelated boot failure in the SCSI subsystem (KMSAN: use-after-free in
-scsi_get_vpd_buf). Therefore, testing was done on the last known-good
-mainline commit below.
+---
+Radu Rendec (3):
+  genirq: Add interrupt redirection infrastructure
+  PCI: dwc: Code cleanup
+  PCI: dwc: Enable MSI affinity support
 
-For mainline commit 9b0d551bcc05 ("Merge tag 'pull-misc' of..."):
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 9b0d551bcc05
+ .../pci/controller/dwc/pcie-designware-host.c | 127 ++++++++----------
+ drivers/pci/controller/dwc/pcie-designware.h  |   7 +-
+ include/linux/irq.h                           |  10 ++
+ include/linux/irqdesc.h                       |  11 +-
+ kernel/irq/chip.c                             |  22 ++-
+ kernel/irq/irqdesc.c                          |  51 ++++++-
+ kernel/irq/manage.c                           |  16 ++-
+ 7 files changed, 164 insertions(+), 80 deletions(-)
 
-For the linux-next branch:
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-
- fs/ntfs3/frecord.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
-index 8f9fe1d7a690..4fe8da7fc034 100644
---- a/fs/ntfs3/frecord.c
-+++ b/fs/ntfs3/frecord.c
-@@ -767,7 +767,7 @@ int ni_create_attr_list(struct ntfs_inode *ni)
- 	 * Skip estimating exact memory requirement.
- 	 * Looks like one record_size is always enough.
- 	 */
--	le = kmalloc(al_aligned(rs), GFP_NOFS);
-+	le = kzalloc(al_aligned(rs), GFP_NOFS);
- 	if (!le)
- 		return -ENOMEM;
- 
 -- 
 2.51.0
 
