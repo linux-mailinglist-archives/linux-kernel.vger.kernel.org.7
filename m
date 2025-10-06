@@ -1,184 +1,150 @@
-Return-Path: <linux-kernel+bounces-843359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8F80BBF03F
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:46:19 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85229BBEFCA
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:37:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B24F23AC22C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:46:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 90ED034ACFF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C1323A58E;
-	Mon,  6 Oct 2025 18:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A282DCBF8;
+	Mon,  6 Oct 2025 18:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="i3ClO5jk"
-Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FB9pwUFB"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1753A1F7098;
-	Mon,  6 Oct 2025 18:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE59723507C
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 18:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759776368; cv=none; b=YGkDrpxr/XJACpQD0GHJOBnSpa7zuxxvyHFsBn2ONxj7/aozHc4pKVnEHHVh/p0/JME3GjzTYe003GaIHLYvg+TcNTlaC1DalLpwLvdXOtrzOgChZPRqSsXmL1YE+nkis2Iso6YXq4xmjmMNHgaOxJARQE8oL7jTNebhFnds1YU=
+	t=1759775849; cv=none; b=kfBvBsrCEHuozkCnBUMfQWhua8ksOwqDAZW7TjudPozbm2rGrueV8ixsNiCJNPD2xcL7fA4xljD3XAzKPmhgAtg/c/YegmWel1bzt6XnT5Y4JNAMSShkXb/hj82ufY2qk1s5jTHuUa6SO/8cmCr8NRTDJclgpUIoE6TWPAVw9Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759776368; c=relaxed/simple;
-	bh=ji018SfjwN2M+GQX18OazxVjUwdrp8zoeY53TXXqyco=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=RDFRGJVqIHPH1a1VHfLPqJ25vqwLNoEM6wxi3h0S6MVHVFTSE4CDFmd2TtdQzMv0N+crYGW5S7p9gMVZQSD7F+D169frhJB1Imuwnk3uN7al6VApzvOASDF1rQB9qlsikJaSCF6/GNONJ7hpPehe/9+nQf/QbGFyye6stsD9UKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=i3ClO5jk; arc=none smtp.client-ip=162.62.57.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1759776054; bh=bZ3DcGJ+3f3q61fb0vjsoxJFDfw3N9Ux8Yh2qfDnDUM=;
-	h=From:To:Cc:Subject:Date;
-	b=i3ClO5jkLjKeKrWTOIK63M40+zh6HnN7+UQ3tk00lljO6uniGsF20fnP78Hir2QhA
-	 cTvwD76kMVtjQZ2c/QraJBgZ5S6yOwTLv/mv+mls/Cl16funYAAhZxLtRffAF0aapM
-	 DTl2HZxjx528pcdgrLS8rM6rJmirzvgGmy4+0h5A=
-Received: from localhost.localdomain ([113.102.239.212])
-	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
-	id 8AAA6AD2; Tue, 07 Oct 2025 02:34:42 +0800
-X-QQ-mid: xmsmtpt1759775682tu8rjbowu
-Message-ID: <tencent_B5CE9A8654E8B2476383AEC85C25BDA7BD05@qq.com>
-X-QQ-XMAILINFO: Nr4sKL92GIu+xw0M0OARNyF+E4+Q6kKkdYlgvVFn21lPEPwycQ8X9mZKdqBnWg
-	 CjGz+Aeyqmvsafo24cOfWru0TwE1wW0BO74CxxmKfnfZ0EaBOuJR7OnZnkgE1J0fI4FtqzZKKXP4
-	 bpwvGshsTHCeuC00dAqjSODOZJM0GoQ/nPoq7/dKndSVgMU9Rklptcan0h0uULL3IgOb4MxL+Bx0
-	 SxbiAxqlE1nU8zdBYPIMCXU7tjM+kHTC7BPrQRuTBqLOvwrh9Cg2OnhvImxkMPFsBNx36X5FILeE
-	 IP3oVBn1+UNC22xC+Qdld27GW9qovPLAb3lPsIOh9g7Zq5lUVF9Djpthb4q2bZcbPWyHYQifU8BE
-	 6nNf3DGpdrRbwM/vOlYD24afYN8s+iVRrJcF8qKuCL6MhDfyefJzaiTKuWz/C5AsWNn7iaGKxMIT
-	 OBd0630UgAED9xYoLg+nOpI7OvdR7MbrQylRHk2dCpYKADjRQKui4bg1AGy70iWmbXdCnrqt8MHI
-	 Ls7c97g3fq+0Qsygi7oBCNFmCRvBGj1c4lnHbZ0EOV+aepdVCMAvxnU2xdUw4Y3ySHYuCe34HQ6X
-	 Mmq9aRkUzr1R0YFy5a2EdWNhwLLNBuqq3laAOBGWYMJVH3vcjWAYctDGKiPxq3kzuvj4v1tsLWnC
-	 TKrA4BKsOkszwRoE5MVscrVlFqs0nL+vqV9dnORSxRt9tDuDl2p2FxfEVwKqIeta0wEppdRQn6/+
-	 9TFylGuaNusZ7CicdQqDnp6x9pSrf0ljSfSp4Ejz3/R5YP0XkRcddh4lAQTFpAmslikHIX0Q/Lby
-	 ESGc60m4T38R5ILqzrIhNOqs6q+NeaILUGTlrgjE10AkFsqDhYK/3KmmpY+xWDJasNGeGlTajcNX
-	 Q2uMKYNdxQJ0lxKhn4ecZJWO5b288c9TatzlTFkp5ZeC9zmva27fusX8tsMOxa/b7OQTnn/D5uXG
-	 CCMQp3QwmmXZVNALrdOE0jzGz9mQ+6HVzJHvKSM0dEAaZc5Eb4AUYwbqq7BzaPxN4kEMP43NZ6wh
-	 buizhcin5P7YEN/lo8GsBzocO5cZ4=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Guangbo Cui <2407018371@qq.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-rt-devel@lists.linux.dev,
-	Waiman Long <longman@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	Guangbo Cui <2407018371@qq.com>
-Subject: [PATCH] lockdep: Account for lockdep hardirq context in irq_forced_thread_fn under PREEMPT_RT
-Date: Mon,  6 Oct 2025 18:34:09 +0000
-X-OQ-MSGID: <20251006183408.41851-2-2407018371@qq.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759775849; c=relaxed/simple;
+	bh=5wsM5LebMkcZgbjiXILXd0ARkDCBtVHtSsfSQKGRUu8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=C/jcnbV4DT6RjpI1EOUuiXljuKeW8WNH7TB1jGf7VO1P94MEpPTUhRTFzgV2k3UPMWFMmnfc/dLPNLV1OIR9HNcPojlpS4j5RnO2hIpUgMW+65Pg8BP6XelimqbCkvU8VcEKdkSEDLR5esgaplhVbgyLDex6OJqyXqS+Z3UacP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FB9pwUFB; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-46e61ebddd6so50523235e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 11:37:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759775846; x=1760380646; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tqKVD0TJShzCJ/c8DJ47gqXoMP4jBRHFIfpasBYTRgk=;
+        b=FB9pwUFBIKPAsXb+/tIMfAoq9con/2bkAbL9NAXh1kwv6EyUzXxgBKUCVL7zuhnkn+
+         bvzIQd+Ru58cy9RYvR3ShUQ2IpOHzF0hff5ikX+2/JNE7v4EelRAHWJVLEGpFwplHyGH
+         FEEirM460feH6yAMPfoduIw4a8kFOPBdh/JdlHyLG3NCApQJ//zrNoJWtybzAK2zHZBk
+         /c3zjuW16EAfmh8ii96dTc7sWFng9Uk1cXxNa0H63puRPR4AROujr9Q0p60sSXjlsULe
+         /0+gFanwOcQYJAyVp8w1ZQxyGTILVmlfn5kDcKq8IUyLkASrn6KjpIBkVti7LXMC0Zzw
+         JW0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759775846; x=1760380646;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tqKVD0TJShzCJ/c8DJ47gqXoMP4jBRHFIfpasBYTRgk=;
+        b=HJMOLWyqDjCVwb7g1M1IeiqEpVcwmV+4GizM2KgzQRG4cAin70BQnBj9p8oVnseuIp
+         JjO7hiabEjApysBpFbnTMeYOV24d4H3HXR+KvojbWuddojyzJYfau+A9ROdmCouz/VOf
+         00qHmXGA7ip/BzZQ9mCHRcJpizS3bl43Ppb9IIhCCapCsJ/UoXgCIrpq1UDd0bwm2oSf
+         XzeX5GSo8euAbUE9ZkEr2dKmbjS7z1motYublHoNl6zp88CN9onJiN8s/LAqFDxq7qNF
+         Em55uE6BO+deRhfndQNAAOKK2Rkq52cIUSSFxmzjys5R6VezLgbG2vazOge7ENLLh9eZ
+         DXtA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2I0jGdv68FtPRJUvIpNo8PV1fQSpzX3CUzB9I7DIYG59JG7W/PGB4aAG000P5BIBbyS5S1l7+scm9deo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywin8Uy4/2P8BSVyaZ3pMxVa27kYDn3Qk+T25UXj9924pbr8/3Z
+	qX/zW8qaaupByINUxA2eqkM+dgx/bHWz7rNdZvdZETVvWld0mkItafZgS6iECnPtSzI=
+X-Gm-Gg: ASbGncs4qucWJksbwZxspIwmD/7zEJ6kg+1UgT1Wl9EgfykGLxWAFPlJkJGueEYEj7D
+	NICK4aqbZEh4MwzJGUDum8Jj4EtwJ4+uvtBDifYaa92OBJepXAZ5KQerMQoK9ro/SB+NkNMiYsD
+	5mX9VzPPuVDkvDxDngmTF74G67Tb7IGald1RGp9EJZ/2z8txxz+gHQscWc7Dn3h89nKyy/TH7Lk
+	zW+oq/fx2lAYQwf4OgTa6sXp5v+4kCw8c63TqmOpi2qiBW04kKo8IPEybNhw1IVVUmUApIA54EO
+	iRvBbXYL4SsWLdObOHfAS96AtXHGgB+Snii62p91VOPxr00sZXj3dFHO88ZSXc7RbN5kb/B4xmt
+	+vDy8MRVaohHm8WaRqohJcUorVA0RdzbAL71QHqNfIYpTV9H4/HpdlTo3QXW4mW/RaN7qYuo=
+X-Google-Smtp-Source: AGHT+IHL3z2V7QcvdglZc+TKevKizgY6323yo5vQNfxVrjx3QeZLmTEe9Yq701nbY4ow/ZAHuz9Gow==
+X-Received: by 2002:a05:600c:4fd3:b0:46e:477a:16cc with SMTP id 5b1f17b1804b1-46e7113ebe5mr99977585e9.24.1759775845796;
+        Mon, 06 Oct 2025 11:37:25 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e61a022d8sm254997085e9.12.2025.10.06.11.37.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 11:37:25 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH RFC 0/6] ASoC: qcom: enable HDMI audio on SM8[456]50 HDK
+ boards
+Date: Mon, 06 Oct 2025 20:37:13 +0200
+Message-Id: <20251006-topic-sm8x50-next-hdk-i2s-v1-0-184b15a87e0a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFkM5GgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDAwMz3ZL8gsxk3eJciwpTA9281IoS3YyUbN1Mo2JdMzMLY4u0VEszw5Q
+ kJaD+gqLUtMwKsNnRSkFuzkqxtbUAY8uonHAAAAA=
+X-Change-ID: 20251006-topic-sm8x50-next-hdk-i2s-66838fe961db
+To: Srinivas Kandagatla <srini@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1474;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=5wsM5LebMkcZgbjiXILXd0ARkDCBtVHtSsfSQKGRUu8=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBo5AxhDpU3tII7hgllOW+aBuKRKJcpr8xCL9xKPUwE
+ LraOxoeJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaOQMYQAKCRB33NvayMhJ0ZCsD/
+ 9pssBcYE+Tl5o2xV4QAg98eRT0spllfy38vMmFwpyoytKTIYPEXIZDkABQhnLLL9ibw0HtHZKbb/ww
+ lLtLB8O7ycugOja7s9vIUauZWbf9LkY2/V4ZuLmlpWu6xvxKczF8uH3l/k1HeCVsF5itSRZFYKUtHg
+ DiZx6IHvzH41ImMUDOHIqZ/Usx2yUYZCmjtRFApEcN05Dbcf5MuN9RQR0iLJawEGZN+L29dcEENNB1
+ hkPChkRHwNu1M8c5g4kSxcphJQ7DXWE55rUx+N6UeRTqRdFqyB8DhWF0W+vru5HAk2PEADZeWWPaoF
+ 0hRAYQJJNUFoxxIA5zEuZC5bNQ9BwSDVRniidtPkaOJxvD2MREbuzRzcA2QHJ2peEMTJxAKqlsIgUN
+ LNpdiWyTVL4vIDtlbSbXObeThx+aY31ecbJQtOBpmu+7ibOSGZcYlYZCLpK9D+GOm9lzgocDxKQ5RS
+ 4CHHf1T132QjnXTD/ovMY/EN0z7REMMuDyfqj0zZ6u6h3mzwMwTadHrtTYbTz18nWiC73U09jLQd3B
+ uRmUDWVVpYm9fmYR4NooefmL4EnClJG5jH8MnaKcvRzEb0NMfOF8yT8ufcUXlncviCbNgGbfWnDvwl
+ uxikkMDp+enZHlyS/1RNkig6hWEnt4omHxtx0uONTpvKJoCe9CQhYFuXncMg==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-In PREEMPT_RT, IRQs are forced to run in threaded. However, lockdep did not correctly
-account for this case, causing false-positive warnings about hardirq context violations
-when analyzing lock acquisition in such threaded IRQs (see function `task_wait_context`).
+Now the I2S interface is working on AudioReach platforms,
+add the required plumbing and DT nodes to allow playing
+audio via the on-board DSI-HDMI bridge.
 
-This patch updates `irq_forced_thread_fn` to explicitly call `lockdep_hardirq_enter()`
-and `lockdep_hardirq_exit()` when PREEMPT_RT is enabled, ensuring lockdep correctly
-tracks the hardirq context even when the IRQ is executed in a forced thread.
-
-This was discovered while testing PCIe AER error injection on an arm64 QEMU virtual machine:
-
-```
-  qemu-system-aarch64 \
-      -nographic \
-      -machine virt,highmem=off,gic-version=3 \
-      -cpu cortex-a72 \
-      -kernel arch/arm64/boot/Image \
-      -initrd initramfs.cpio.gz \
-      -append "console=ttyAMA0 root=/dev/ram rdinit=/linuxrc earlyprintk nokaslr" \
-      -m 2G \
-      -smp 1 \
-      -netdev user,id=net0,hostfwd=tcp::2223-:22 \
-      -device virtio-net-pci,netdev=net0 \
-      -device pcie-root-port,id=rp0,chassis=1,slot=0x0 \
-      -device pci-testdev -s -S
-```
-
-Injecting a correctable PCIe error via /dev/aer_inject caused a BUG
-report with "Invalid wait context" in the irq/PCIe thread.
-
-```
-~ # export HEX="00020000000000000100000000000000000000000000000000000000"
-~ # echo -n "$HEX" | xxd -r -p | tee /dev/aer_inject >/dev/null
-[ 1850.947170] pcieport 0000:00:02.0: aer_inject: Injecting errors 00000001/00000000 into device 0000:00:02.0
-[ 1850.949951]
-[ 1850.950479] =============================
-[ 1850.950780] [ BUG: Invalid wait context ]
-[ 1850.951152] 6.17.0-11316-g7a405dbb0f03-dirty #7 Not tainted
-[ 1850.951457] -----------------------------
-[ 1850.951680] irq/16-PCIe PME/56 is trying to lock:
-[ 1850.952004] ffff800082865238 (inject_lock){+.+.}-{3:3}, at: aer_inj_read_config+0x38/0x1dc
-[ 1850.952731] other info that might help us debug this:
-[ 1850.952997] context-{5:5}
-[ 1850.953192] 5 locks held by irq/16-PCIe PME/56:
-[ 1850.953415]  #0: ffff800082647390 (local_bh){.+.+}-{1:3}, at: __local_bh_disable_ip+0x30/0x268
-[ 1850.953931]  #1: ffff8000826c6b38 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x48
-[ 1850.954453]  #2: ffff000004bb6c58 (&data->lock){+...}-{3:3}, at: pcie_pme_irq+0x34/0xc4
-[ 1850.954949]  #3: ffff8000826c6b38 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x48
-[ 1850.955420]  #4: ffff800082863d10 (pci_lock){....}-{2:2}, at: pci_bus_read_config_dword+0x5c/0xd8
-[ 1850.955932] stack backtrace:
-[ 1850.956412] CPU: 0 UID: 0 PID: 56 Comm: irq/16-PCIe PME Not tainted 6.17.0-11316-g7a405dbb0f03-dirty #7 PREEMPT_{RT,(full)}
-[ 1850.957039] Hardware name: linux,dummy-virt (DT)
-[ 1850.957409] Call trace:
-[ 1850.957727]  show_stack+0x18/0x24 (C)
-[ 1850.958089]  dump_stack_lvl+0x40/0xbc
-[ 1850.958339]  dump_stack+0x18/0x24
-[ 1850.958586]  __lock_acquire+0xa84/0x3008
-[ 1850.958907]  lock_acquire+0x128/0x2a8
-[ 1850.959171]  rt_spin_lock+0x50/0x1b8
-[ 1850.959476]  aer_inj_read_config+0x38/0x1dc
-[ 1850.959821]  pci_bus_read_config_dword+0x80/0xd8
-[ 1850.960079]  pcie_capability_read_dword+0xac/0xd8
-[ 1850.960454]  pcie_pme_irq+0x44/0xc4
-[ 1850.960728]  irq_forced_thread_fn+0x30/0x94
-[ 1850.960984]  irq_thread+0x1ac/0x3a4
-[ 1850.961308]  kthread+0x1b4/0x208
-[ 1850.961557]  ret_from_fork+0x10/0x20
-[ 1850.963088] pcieport 0000:00:02.0: AER: Correctable error message received from 0000:00:02.0
-[ 1850.963330] pcieport 0000:00:02.0: PCIe Bus Error: severity=Correctable, type=Physical Layer, (Receiver ID)
-[ 1850.963351] pcieport 0000:00:02.0:   device [1b36:000c] error status/mask=00000001/0000e000
-[ 1850.963385] pcieport 0000:00:02.0:    [ 0] RxErr                  (First)
-```
-
-Signed-off-by: Guangbo Cui <2407018371@qq.com>
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- kernel/irq/manage.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Neil Armstrong (6):
+      ASoC: qcom: qdsp6: q6prm: add the missing MCLK clock IDs
+      ASoC: dt-bindings: qcom,sm8250: Add clocks properties for I2S
+      ASoC: soc: qcom: sc8280xp: add support for I2S clocks
+      sm8650-hdk: Enable I2S for HDMI
+      sm8550-hdk: Enable I2S for HDMI
+      sm8450-hdk: Enable I2S for HDMI
 
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index c94837382037..80007bce5625 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -1150,9 +1150,13 @@ static irqreturn_t irq_forced_thread_fn(struct irq_desc *desc, struct irqaction
- 	local_bh_disable();
- 	if (!IS_ENABLED(CONFIG_PREEMPT_RT))
- 		local_irq_disable();
-+	else
-+		lockdep_hardirq_enter();
- 	ret = irq_thread_fn(desc, action);
- 	if (!IS_ENABLED(CONFIG_PREEMPT_RT))
- 		local_irq_enable();
-+	else
-+		lockdep_hardirq_exit();
- 	local_bh_enable();
- 	return ret;
- }
+ .../devicetree/bindings/sound/qcom,sm8250.yaml     |  18 ++++
+ arch/arm64/boot/dts/qcom/sm8450-hdk.dts            |  30 ++++++
+ arch/arm64/boot/dts/qcom/sm8450.dtsi               |  40 ++++++++
+ arch/arm64/boot/dts/qcom/sm8550-hdk.dts            |  30 ++++++
+ arch/arm64/boot/dts/qcom/sm8550.dtsi               |  73 +++++++++++++++
+ arch/arm64/boot/dts/qcom/sm8650-hdk.dts            |  30 ++++++
+ arch/arm64/boot/dts/qcom/sm8650.dtsi               |  40 ++++++++
+ sound/soc/qcom/qdsp6/q6prm-clocks.c                |   5 +
+ sound/soc/qcom/qdsp6/q6prm.h                       |  11 +++
+ sound/soc/qcom/sc8280xp.c                          | 104 ++++++++++++++++++++-
+ 10 files changed, 380 insertions(+), 1 deletion(-)
+---
+base-commit: 4a71531471926e3c391665ee9c42f4e0295a4585
+change-id: 20251006-topic-sm8x50-next-hdk-i2s-66838fe961db
+
+Best regards,
 -- 
-2.43.0
+Neil Armstrong <neil.armstrong@linaro.org>
 
 
