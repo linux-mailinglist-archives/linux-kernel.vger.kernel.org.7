@@ -1,100 +1,124 @@
-Return-Path: <linux-kernel+bounces-843544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 296D8BBFB28
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 00:38:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EAD4BBFB55
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 00:42:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B67B44E19DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 22:38:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD4823C00A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 22:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE75A1F37D3;
-	Mon,  6 Oct 2025 22:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6724420C001;
+	Mon,  6 Oct 2025 22:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="K3GK5gjD"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6B5196C7C
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 22:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="DUlG9RIH"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB0934BA5F;
+	Mon,  6 Oct 2025 22:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759790318; cv=none; b=gHSPL861Za/HvRz5TeG2oT7I3OZiummUDz+TRvFRd0/2tmGVrShIorv34hdfKiReWHEM/cXA8zZTdUm+rYjvjUrtwv5UfMdMQyrAOyIhCZLP0OoBOrtiu3bwztN+cDpsrpKrGwv+NQjarM86B3bMRwPElsuaHOYIbuBR7SfkI34=
+	t=1759790536; cv=none; b=RyRndXDhUxD/4SpzbDIV4Ep8j8/fsYelsjR6c5cYTnWInK2UTufNZaBaoW4irujqunAKXmFm3SvWyeSa15RGGdLmReKKDi3TSwshxdEGlGk7ozhBcnUGYHbgb1BwHoKlPtY53YCJxCYkNFhhO2mmBGnqYbNaU+tWIWDc0j4mddw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759790318; c=relaxed/simple;
-	bh=XLlA+k9x7mm8GgqyzRlgaNvgq0Wf1m5JDE638oBb7mk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r+c6driaeHAPRMDYmPE/pbozfz6pS+vthGd9FBHBqrRHkGIy5x1p9ktCEAd4LrZnwlDJYqnsFli8xkNjuJqs/GTMQI/xY4LgaPj4MeNCYPfjqDoe0uIc+u903W1I9e1Ykn1wqyoFf/k9a/z2+9r+I3aRaZyjOuqaO88KLVLWI3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=K3GK5gjD; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <21760ebf-99f8-4ea3-8841-e023e00ae574@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759790310;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kOFih1hTDf2jYUgbN3HvZ18kSxomlomXmLCFXqJg8d4=;
-	b=K3GK5gjDGx4ZJRh0lp7zOoB97hI8lH74FO15WAvIQ9Oz2QPqHxBjs16jyWnvb7uNwx0Wvc
-	Q/KQQiPWNHzTsvkCb0NDH7fWCMtLGFZMzcNvu/zxnZ0qCrx3NVBzxdO39lh327DtG4OoaK
-	DaqcNAcoNPT9p73/QxbwulUQA7OyvyE=
-Date: Mon, 6 Oct 2025 18:38:27 -0400
+	s=arc-20240116; t=1759790536; c=relaxed/simple;
+	bh=JC3PtmGSuHGNwX/n7XZ+q5TOo5+bg7eggD2SQKbmqw4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oABRZm/vUXm/2ArRha6SmiWrUnEWct5VHNP7+iXqyyg7buusML9dt4wVPrUPU55Gs42xmPK65oHFj+PAyrGb+lzirylKosBg7GPE7Ihez04wPGUazJ1SvOrQICVc4egL+zIcXPGr1Xl3sy6Cs3SRK9ruSMz5XsR/6I0Xurug4uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=DUlG9RIH; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from mrdev.corp.microsoft.com (192-184-212-33.fiber.dynamic.sonic.net [192.184.212.33])
+	by linux.microsoft.com (Postfix) with ESMTPSA id ED405211AF3F;
+	Mon,  6 Oct 2025 15:42:13 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com ED405211AF3F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1759790534;
+	bh=lfFnN2zSYZqHKaI+3lFIiwJexefKef7Xf1P2QYZKBOg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DUlG9RIH0xCXLrEZtI0q4utqVN+UxjGbH7F/V6YMFhAlo5DD7CcD+TlAbEOV9CLvf
+	 +y9cW9oeyEQ2BSyvwa6c8h6a8PHJoAOAu65wr+WH2bu8A5MDDKGg0m3rtGRabionPP
+	 /NBrhtLw0wpWHrlSQOInaZ73/fdqcAkE1t2R1TS4=
+From: Mukesh Rathor <mrathor@linux.microsoft.com>
+To: linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org
+Cc: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	arnd@arndb.de
+Subject: [PATCH v3 0/6] Hyper-V: Implement hypervisor core collection
+Date: Mon,  6 Oct 2025 15:42:02 -0700
+Message-Id: <20251006224208.1060990-1-mrathor@linux.microsoft.com>
+X-Mailer: git-send-email 2.36.1.vfs.0.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] mtd: spi-nor: Enable locking for n25q00a
-To: Tudor Ambarus <tudor.ambarus@linaro.org>,
- Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
- linux-mtd@lists.infradead.org
-Cc: Richard Weinberger <richard@nod.at>, linux-kernel@vger.kernel.org,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Vignesh Raghavendra <vigneshr@ti.com>
-References: <20251006223409.3475001-1-sean.anderson@linux.dev>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <20251006223409.3475001-1-sean.anderson@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On 10/6/25 18:34, Sean Anderson wrote:
-> The datasheet for n25q00a shows that the status register has the same
-> layout as for n25q00, so use the same flags to enable locking support.
-> These flags should have been added back in commit 150ccc181588 ("mtd:
-> spi-nor: Enable locking for n25q128a11"), but they were removed by the
+This patch series implements hypervisor core collection when running
+under Linux as root. By default initial hypervisor RAM is already mapped
+into Linux as reserved. Further any RAM deposited comes from Linux memory
+heap. The hypervisor locks all that RAM to protect it from root or any
+other domains. At a high level, the methodology involes devirtualizing
+the system on the fly upon either Linux crash or the hypervisor crash,
+then collecting core as usual. This means hypervisor RAM is automatically
+collected into the vmcore.  Devirtualization is the process of disabling
+the hypervisor and taking control of the system.
 
-Sorry, this should be commit f80ff13135cb ("mtd: spi-nor: micron-st: Enable locking for n25q00")
+Hypervisor pages are then accessible via crash command (using raw mem
+dump) or windbg which has the ability to read hypervisor pdb symbol
+file.
 
-https://lore.kernel.org/all/20200421063313.32655-1-js07.lee@samsung.com/
+V3:
+ o remove usage of the word "dom0" as asked by maintainer
+ o change hyp to hv in comment and ipi to IPI
+ o rebase to:  hyperv-next: commit b595edcb2472
 
-> maintainer...
-> 
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> ---
-> Tested with a mt25qu01gbbb, which shares the same flash ID.
-> 
->  drivers/mtd/spi-nor/micron-st.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/mtd/spi-nor/micron-st.c b/drivers/mtd/spi-nor/micron-st.c
-> index 187239ccd549..17c7d6322508 100644
-> --- a/drivers/mtd/spi-nor/micron-st.c
-> +++ b/drivers/mtd/spi-nor/micron-st.c
-> @@ -486,6 +486,8 @@ static const struct flash_info st_nor_parts[] = {
->  		.id = SNOR_ID(0x20, 0xbb, 0x21),
->  		.name = "n25q00a",
->  		.size = SZ_128M,
-> +		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB | SPI_NOR_4BIT_BP |
-> +			 SPI_NOR_BP3_SR_BIT6,
->  		.no_sfdp_flags = SECT_4K | SPI_NOR_QUAD_READ,
->  		.mfr_flags = USE_FSR,
->  		.fixups = &n25q00_fixups,
+V2:
+ o change few comments and commit-messages
+ o add support for panic_timeout for better support if kdump kernel
+   is not loaded.
+ o some other minor changes, like change devirt_cr3arg to devirt_arg,
+   int to bool. 
+
+V1:
+ o Describe changes in imperative mood. Remove "This commit"
+ o Remove pr_emerg: causing unnecessary review noise
+ o Add missing kexec_crash_loaded()
+ o Remove leftover unnecessary memcpy in hv_crash_setup_trampdata
+ o Address objtool warnings via annotations
+
+Mukesh Rathor (6):
+  x86/hyperv: Rename guest crash shutdown function
+  hyperv: Add two new hypercall numbers to guest ABI public header
+  hyperv: Add definitions for hypervisor crash dump support
+  x86/hyperv: Add trampoline asm code to transition from hypervisor
+  x86/hyperv: Implement hypervisor RAM collection into vmcore
+  x86/hyperv: Enable build of hypervisor crashdump collection files
+
+ arch/x86/hyperv/Makefile        |   6 +
+ arch/x86/hyperv/hv_crash.c      | 642 ++++++++++++++++++++++++++++++++
+ arch/x86/hyperv/hv_init.c       |   1 +
+ arch/x86/hyperv/hv_trampoline.S | 101 +++++
+ arch/x86/include/asm/mshyperv.h |  13 +
+ arch/x86/kernel/cpu/mshyperv.c  |   5 +-
+ include/hyperv/hvgdk_mini.h     |   2 +
+ include/hyperv/hvhdk_mini.h     |  55 +++
+ 8 files changed, 823 insertions(+), 2 deletions(-)
+ create mode 100644 arch/x86/hyperv/hv_crash.c
+ create mode 100644 arch/x86/hyperv/hv_trampoline.S
+
+-- 
+2.36.1.vfs.0.0
 
 
