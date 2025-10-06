@@ -1,118 +1,130 @@
-Return-Path: <linux-kernel+bounces-843106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2829BBE6A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:57:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39025BBE6AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4E32134920C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:57:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B77714EF30D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12492D663D;
-	Mon,  6 Oct 2025 14:57:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33C72874FC;
-	Mon,  6 Oct 2025 14:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE1D2D6626;
+	Mon,  6 Oct 2025 14:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="oEStiC6v"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA962874FC;
+	Mon,  6 Oct 2025 14:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759762646; cv=none; b=qKlOFn1JIofDZezCjJFlld5OfDTK1ZJI2M0ycaIE3UapaDbEYioSia662M4uf4EjtRd1Nv5rcufm1IBaf8s3hV5CN1uuAoDEC8MLeBGXq5BbRe1U53CQiBJgLWDPMpRIjHIpbj3NUGX0lf1+KqpGHbe36OxwAzQuwRlExGDZszg=
+	t=1759762658; cv=none; b=c5fuvABmDkMUu4tKa7cz41UZp1HvZ8fTBJTlTNriDiRsPfnlingqRfiq/1/bJ4EucdWHv7MVOejZq7F/FQklqdhVWbd6mV7UhoLAFevOmUJO/DaW2Ln29zztH9bAhdlC85W4oh5Fs8dmkoDekWHfneO2TFomcrOgQ+szkgRdLKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759762646; c=relaxed/simple;
-	bh=mq4o+Iek00n4Z74NDlPOsqkGaxioXduQbo3moJx9Oyw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pWx3eHdryIBN+IzZcM+lP8sfiuoAbJaoj5XKOTzJ4M8JiBdL4oQ+U5W7oRK4ha00T3Wf2uaqWLYhimCza0V03LUPJiceJakzsl4xt3ADihbjE/aMrC4Q+Sua7zhgRQpaASpaPPxwktx2yMVJ6PKqxAlQUbroTOORGl+MyalxAUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B292E1515;
-	Mon,  6 Oct 2025 07:57:14 -0700 (PDT)
-Received: from [10.1.197.69] (eglon.cambridge.arm.com [10.1.197.69])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AB30B3F66E;
-	Mon,  6 Oct 2025 07:57:17 -0700 (PDT)
-Message-ID: <2e5d3b5e-0d76-4594-8a65-9baa635cfcd8@arm.com>
-Date: Mon, 6 Oct 2025 15:57:16 +0100
+	s=arc-20240116; t=1759762658; c=relaxed/simple;
+	bh=ytf4ipQXatOJxMwXD9g2DwKjh0LUdQtU5IEm8uwoCio=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qSmHV2lR8u/e/N9X4u2lcPFNc05LoklUCDafdD9HhqBSxL8yQrm9s+kSW8LgFBcDesM2Q8Hj/5+X6ng0F0WxyF+PG+1fOL1qHYDhrA/VvarJi6bXkYj3ycwd+hJtoRHMVwIEBhtSytQWg546bMv7HqcvV0KNFBHXDswPD8NKHqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=oEStiC6v; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from skinsburskii.localdomain (unknown [20.236.11.29])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 85458211AF2F;
+	Mon,  6 Oct 2025 07:57:35 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 85458211AF2F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1759762655;
+	bh=LHomZsLEZ2pFtx8kCHjpo3QuoYe8gJzHT3CKF8ivZbY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oEStiC6vW1ya8MyD8tb3oH8I2uDE5CKzC8hZTQtqPhnJraGpswKrfVr0JUwRyKvrY
+	 5BGV3XOLFJJpdEvQ+OI0Dzup6UYQnSo1dv30UGmw8NiZmgrHZFLyJnH/i9UtcoOPUG
+	 LXXKDHgrOoRmjMYPZPV43Reo/7h+o/ENsbKpVgv8=
+Date: Mon, 6 Oct 2025 07:57:32 -0700
+From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: "kys@microsoft.com" <kys@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/5] Drivers: hv: Refactor and rename memory region
+ handling functions
+Message-ID: <aOPY3J-opH2k6YZ-@skinsburskii.localdomain>
+References: <175942263069.128138.16103948906881178993.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+ <175942295032.128138.5037691911773684559.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+ <SN6PR02MB4157D88089F3221A853B1C67D4E3A@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 22/29] arm_mpam: Add helpers to allocate monitors
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-acpi@vger.kernel.org,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- fenghuay@nvidia.com, baisheng.gao@unisoc.com, Rob Herring <robh@kernel.org>,
- Rohit Mathew <rohit.mathew@arm.com>, Rafael Wysocki <rafael@kernel.org>,
- Len Brown <lenb@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>, Ben Horgan <ben.horgan@arm.com>
-References: <20250910204309.20751-1-james.morse@arm.com>
- <20250910204309.20751-23-james.morse@arm.com>
- <20250912141123.000068e2@huawei.com>
-Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <20250912141123.000068e2@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN6PR02MB4157D88089F3221A853B1C67D4E3A@SN6PR02MB4157.namprd02.prod.outlook.com>
 
-Hi Jonathan,
-
-On 12/09/2025 14:11, Jonathan Cameron wrote:
-> On Wed, 10 Sep 2025 20:43:02 +0000
-> James Morse <james.morse@arm.com> wrote:
+On Mon, Oct 06, 2025 at 03:08:02AM +0000, Michael Kelley wrote:
+> From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com> Sent: Thursday, October 2, 2025 9:36 AM
+> > 
+> > Simplify and unify memory region management to improve code clarity and
+> > reliability. Consolidate pinning and invalidation logic, adopt consistent
+> > naming, and remove redundant checks to reduce complexity.
+> > 
+> > Enhance documentation and update call sites for maintainability.
+> > 
+> > Signed-off-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+> > ---
+> >  drivers/hv/mshv_root_main.c |   78 +++++++++++++++++++------------------------
+> >  1 file changed, 35 insertions(+), 43 deletions(-)
+> > 
+> > diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+> > index fa42c40e1e02f..29d0c2c9ae4c8 100644
+> > --- a/drivers/hv/mshv_root_main.c
+> > +++ b/drivers/hv/mshv_root_main.c
 > 
->> MPAM's MSC support a number of monitors, each of which supports
->> bandwidth counters, or cache-storage-utilisation counters. To use
->> a counter, a monitor needs to be configured. Add helpers to allocate
->> and free CSU or MBWU monitors.
->>
->> Signed-off-by: James Morse <james.morse@arm.com>
->> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
+> [snip]
 > 
-> One minor requested change inline that will probably otherwise get picked
-> up by someone's cleanup script
+> > @@ -1264,17 +1248,25 @@ static int mshv_partition_create_region(struct mshv_partition *partition,
+> >  	return 0;
+> >  }
+> > 
+> > -/*
+> > - * Map guest ram. if snp, make sure to release that from the host first
+> > - * Side Effects: In case of failure, pages are unpinned when feasible.
+> > +/**
+> > + * mshv_prepare_pinned_region - Pin and map memory regions
+> > + * @region: Pointer to the memory region structure
+> > + *
+> > + * This function processes memory regions that are explicitly marked as pinned.
+> > + * Pinned regions are preallocated, mapped upfront, and do not rely on fault-based
+> > + * population. The function ensures the region is properly populated, handles
+> > + * encryption requirements for SNP partitions if applicable, maps the region,
+> > + * and performs necessary sharing or eviction operations based on the mapping
+> > + * result.
+> > + *
+> > + * Return: 0 on success, negative error code on failure.
+> >   */
+> > -static int
+> > -mshv_partition_mem_region_map(struct mshv_mem_region *region)
+> > +static int mshv_prepare_pinned_region(struct mshv_mem_region *region)
+> >  {
+> >  	struct mshv_partition *partition = region->partition;
+> >  	int ret;
+> > 
+> > -	ret = mshv_region_populate(region);
+> > +	ret = mshv_region_pin(region);
+> >  	if (ret) {
+> >  		pt_err(partition, "Failed to populate memory region: %d\n",
 > 
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-
-Thanks!
-
-
->> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
->> index 326ba9114d70..81c4c2bfea3d 100644
->> --- a/drivers/resctrl/mpam_internal.h
->> +++ b/drivers/resctrl/mpam_internal.h
-
->> +static inline int mpam_alloc_mbwu_mon(struct mpam_class *class)
->> +{
->> +	struct mpam_props *cprops = &class->props;
->> +
->> +	if (!mpam_has_feature(mpam_feat_msmon_mbwu, cprops))
->> +		return -EOPNOTSUPP;
->> +
->> +	return ida_alloc_range(&class->ida_mbwu_mon, 0,
->> +			       cprops->num_mbwu_mon - 1, GFP_KERNEL);
+> Nit: This error message should probably use the new "pin" terminology
+> instead of "populate".
 > 
-> ida_alloc_max() - which is just a wrapper that sets the minimum to 0
-> but none the less perhaps conveys things slightly better.
 
-Sure - I didn't spot that when I did this.
-
+Yes, it should.
 
 Thanks,
+Stanislav
 
-James
+> Michael
 
