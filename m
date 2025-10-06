@@ -1,56 +1,55 @@
-Return-Path: <linux-kernel+bounces-842511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B3A2BBCE71
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 02:27:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 086B4BBCE77
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 02:31:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD2B53B6B82
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 00:27:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB9D918916BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 00:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98A318FDBE;
-	Mon,  6 Oct 2025 00:27:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D7C823DD;
+	Mon,  6 Oct 2025 00:31:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FGnQqJAI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/E8tJ6L"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CEE315667D
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 00:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2870C1E49F;
+	Mon,  6 Oct 2025 00:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759710468; cv=none; b=uAtf1CkMQV79gfARWcLch1ZGBA+mx7ZGqXha/nPxMp+LiEmuxKWZu2XDhdv3ajadrL85+sxm5VmZoh4bFV1J0/XTWOzF4g6OgFvTecyNG+S7SDJFCL20uJPf89OwXS9CvlbAcQXeOTboEIvgjmxZbO/p4DibGC9v7uEkPv0oAhU=
+	t=1759710687; cv=none; b=p22Wbvbo99ZQ3Obx2UvnTYgwUsP4omF/typaDykWWb4TDCn8wSsr9pklbfyxqbQxH3JAnIpdJZjC4UVB0Ap3b2Nit8LPbKFryugeZnCXj0N0BRnVrhxHGKqpPV64h3C5I+hdakRLtxROV1AvXbYqU2dRAyb6tO6XB0+u5Tghssg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759710468; c=relaxed/simple;
-	bh=X5cVIO8baff3ScFfSO+chK+gXKaeiJ49jcjJ5QYjaQo=;
+	s=arc-20240116; t=1759710687; c=relaxed/simple;
+	bh=w4V2/m3skwlikC16DhlKeNYYOZoi8ZUngvkwOhByhGI=;
 	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=mB0GIhnj3LG4ZHjEYt2jFUQewQCKlVzGdBqrVFKsIul8xlFH0CRDP8TAGL8XP1mRfwdODBu9YSZKgAU1T4Oao9reuyCkoHSDmymtLK7X6WFiYBV3xC6kGAArbP0xycNHOKnF6P5aAEIs1AMjPedWzieCwbgKoKyGRkZDqAksA9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FGnQqJAI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1040C4CEF4;
-	Mon,  6 Oct 2025 00:27:45 +0000 (UTC)
+	 Mime-Version:Content-Type; b=Mzf+KnZqy0S/HCHl0vKoBfhtJEWQoHdczsVgRi2xTUfvyzyB1yKMimMr2jo6IyxQ2HoHdLaQum0vbuuFrpB/+GkJX+TK0V5B/kyq6GLLR31pCKOOGk9KX3ao4Kh7QphPut4VMFKzaxu06Zd9P/q5vCReIRXUVDG8aeQlgKIeosg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/E8tJ6L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A3DAC4CEF4;
+	Mon,  6 Oct 2025 00:31:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759710467;
-	bh=X5cVIO8baff3ScFfSO+chK+gXKaeiJ49jcjJ5QYjaQo=;
+	s=k20201202; t=1759710686;
+	bh=w4V2/m3skwlikC16DhlKeNYYOZoi8ZUngvkwOhByhGI=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FGnQqJAIKQYB8NMl+bspoFySbEmGY2Uz8P68kowqfQ17lim0iJX0D2xDTOJxcB2et
-	 z6qZe80RybiTXxCDCh8uciyRYHDT9L+QkRytE9HHBi2k2BLnf8Hz7BXRVcuCcURDTJ
-	 QcV+ZUdQNS9ThhPwehKGkN67p6FL71yEdN46lpjNCBnKySlIZg8qfvjSn34e8bftd6
-	 8JFAy06Uyca3Kj0H0bfgxiELiLQagYcuum/pNqkA4//I0lfDAZvN6SoDOtOthF4M0a
-	 lpoiV5c/0xAHswDF/Qhfy+zxbLG3f7eS7kYWbvH6Xocsgdu5tf7W0RSHBspLnzqXr7
-	 B0rZEuDGK9ctA==
-Date: Mon, 6 Oct 2025 09:27:43 +0900
+	b=F/E8tJ6L8pvmS0zJaIKpi++JIvXkvB7grR9IOLFRBkkxixqXt6vPI7XBGhqYi2GeR
+	 PRSl00D7l2mztHhSz+nOQx0giDLjvKhD+BmFH/Ieifj1qjKtF+yvL6onZe7me7/nYu
+	 VydYf7Z+D/+yPLlSPRyRhv40NB4nlaJIkq2ZLR9Zc24HUeMiX2qThziCBwvsPzQE3s
+	 ++oLRxO+HJmWX2ubmkupfUc7aH0ICPwX69LwR7dXt7QnWHEWnJpiYUydul5JjVEk7u
+	 kS5SFLDK47n4N3i+4soy73DTJTyYF/CZ3PIPR5wSuV/BiF/4bvbbUt0qbQGfaxlfM5
+	 Ju/tQe/VrLWgg==
+Date: Mon, 6 Oct 2025 09:31:23 +0900
 From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Menglong Dong <menglong8.dong@gmail.com>, Thorsten Blum
- <thorsten.blum@linux.dev>, Steven Rostedt <rostedt@goodmis.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] probes: Update for v6.18
-Message-Id: <20251006092743.295205e486acf1b69ca61b89@kernel.org>
-In-Reply-To: <CAHk-=wg6=DwTD7xT3=Zya-ytYrtS2969KtnTWRPskq5fx2Ev+g@mail.gmail.com>
-References: <20251003084426.f2de6028fd74e1af4e13d190@kernel.org>
-	<CAHk-=wg6=DwTD7xT3=Zya-ytYrtS2969KtnTWRPskq5fx2Ev+g@mail.gmail.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the ftrace tree
+Message-Id: <20251006093123.c06337b8f9928ab8c8278b74@kernel.org>
+In-Reply-To: <aN6fTmAjD7-SJsw2@sirena.org.uk>
+References: <aN6fTmAjD7-SJsw2@sirena.org.uk>
 X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -58,60 +57,32 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, 5 Oct 2025 09:20:29 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Thu, 2 Oct 2025 16:50:38 +0100
+Mark Brown <broonie@kernel.org> wrote:
 
-> On Thu, 2 Oct 2025 at 16:44, Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> >
-> > - wprobe: Introduce a watchpoint probe event based on hw_breakpoint.
+> Hi all,
 > 
-> This doesn't even build.
+> After merging the ftrace tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
->   kernel/trace/trace_wprobe.c: In function ‘__register_trace_wprobe’:
->   kernel/trace/trace_wprobe.c:176:20: error: cast to generic address
-> space pointer from disjoint ‘__seg_gs’ address space pointer [-Werror]
+> /tmp/next/build/kernel/trace/trace_wprobe.c: In function '__register_trace_wprobe':
+> /tmp/next/build/kernel/trace/trace_wprobe.c:176:20: error: cast to generic address space pointer from disjoint '__seg_gs' address space pointer [-Werror]
+>   176 |         if (IS_ERR((void * __force)tw->bp_event)) {
+>       |                    ^
+> /tmp/next/build/kernel/trace/trace_wprobe.c:177:35: error: cast to generic address space pointer from disjoint '__seg_gs' address space pointer [-Werror]
+>   177 |                 int ret = PTR_ERR((void * __force)tw->bp_event);
+>       |                                   ^
 > 
-> and I see from the code that it has tried to brute-force it with an
-> ugly cast, and it still is horribly horribly wrong.
-
-Hmm, I applogise this error. I locally ran build tests and it passed.
-But I might missed something.
-
+> Caused by commit
 > 
-> The fix for compiler errors is basically never to just add a random
-> cast. That will just make things worse, and in this case that
-> 'IS_ERR()' function literally exists to find bad users like this.
-
-OK.
-
+>    eaa7b0b3b9875 ("tracing: wprobe: Add watchpoint probe event based on hardware breakpoint")
 > 
-> I wondered why this hadn't been reported in linux-next, and the reason
-> appears simple: none of this has BEEN in linux-next.
-> 
-> So no. I'm not pulling this. This violates all the regular rules for
-> sending me new development, and then it doesn't even compile.
-> 
-> Since the pointer is a percpu pointer, the trivial fix is ato use the
-> per-cpu specific functions (IS_ERR_PCPU(), PTR_ERR_PCPU(), etc).
+> I have used the version from 20250929 instead.
 
-OK.
-
-> 
-> However, since this wasn't in linux-next, that's not what I'm doing.
-> 
-> This is not getting pulled for 6.18 AT ALL, and for 6.19 it had better
-> be in linux-next for a LOONG time.
-
-Got it. Sorry about my mistake. Let me fix it on for-next, and
-keep checking it is in linux-next and tested well.
-
-Thank you,
-
-> 
->            Linus
+Oops, this is the error. Thanks for reporting!
 
 
 -- 
