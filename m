@@ -1,87 +1,79 @@
-Return-Path: <linux-kernel+bounces-843100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C34E8BBE679
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:52:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93A34BBE685
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EB9B18952C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:52:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 751CF1895E39
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:53:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132CC2D662D;
-	Mon,  6 Oct 2025 14:52:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E8B2D6605;
+	Mon,  6 Oct 2025 14:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gZH/dAeA"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="rTv35cvP"
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA312D6621
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 14:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB47C2D594F
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 14:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759762321; cv=none; b=XjikLxuNJsQuFJiNmCkWRfEYNT8qp6Qp1zBIRfAOBUgkPEjoxWnBrzmwbDWOQQ7ihNVuPcfGPEvSQrdx/DVxuKcbRmhpM69eVlqzMyY71eOJ3o8y7AziHidUqFt+EI/GOZ5S3VKysmmg4dknUvEk+8wAEcbAQjUBdJcgGZN0Jhk=
+	t=1759762359; cv=none; b=p1ilD9ITrdJGEAZC+l8rK5khHxImR4aafhGlk8gsfWXs7psbMtenwaaBCaLu880Myg/HEvOq4ywoPgnYmEvq7BtktRCBAyxvWTrccey7xTvAPRsOyjVHR+8u46QYQwwCNlHRHyNusIKgVIoJELyXOBGwWCGwa5p4+ByC99IVhuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759762321; c=relaxed/simple;
-	bh=10PEtw6twoEMwTGl0F8JEVM35Pm4DuZVOVadFVAmEhE=;
+	s=arc-20240116; t=1759762359; c=relaxed/simple;
+	bh=mFLE8Eki8UEtgO9xXuNzCmZEcwPiCVe2BIsOrzsAxI8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qh8AkzEbR1pwITiPsmAhhcAImsVHJGZsC6jXW26K0qIDH2L0nXUAKBv0IppV2wQG3ymx9atXL3qYGnA8vzikvkknZ4cGSbd3Y8rUzV1d9/e+x2c/qmJMzMNc6bN8AquQHwyUosNRJXJz/8QWjcoyoBaOvYw/JQyyYydN0/opjuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gZH/dAeA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5961V5RZ012073
-	for <linux-kernel@vger.kernel.org>; Mon, 6 Oct 2025 14:51:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	uykABRp9hc8kRbSBpNRtLJa1EeJ+2rYcJ3127irL/TA=; b=gZH/dAeAjED6Djdw
-	l2qx377PkuBGVZiofC9iJ1qxudZMCcOp7IH2VV7sJjAQ8KIcXHChf4cukIHDXK33
-	MhJyXCjS4F9Xy9aEMukTffYsbc6KadkyJ3TKrDohhJfFyJ6D89DSVIarjO5D/Vfw
-	GnVXkemJ+22pRDFPjKnZEL8fALTgx31mjK21z/5JJA6FItTRPp5f9EYxKQ5d3gHE
-	/GESbJ+6AYpak1NZKFiuWL/UlhOXM5nMAU7RfkTtOtzFPgBmQCLQpgrLhNeawmFR
-	md1hgwKbG1yGqIjeCEUw7QhcgFLuExUn3zszvpRHYjru8olWjh10HKdK88T1hEDy
-	9w1lXw==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jrxn4cpn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 14:51:58 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4d880ce17bbso5097261cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 07:51:58 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=hBYOOEisYtcjy1YyrZI/buLkG38T6l3Ey+gbKUDjnYL/yxFZDojPMaKup32YhPmbC/uBysqI19JGZAc8fjlA1+jwZ/+O0oGsT1+UJQ3rWQ4DaY935HFK1j6NfdmQr6AgQgJMduGICmPQxP5Al6zMN+OVOJUrLTyDvWxkC1mN89Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=rTv35cvP; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-8ca2e53c37bso450881739f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 07:52:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1759762356; x=1760367156; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PlbR/hLzOsQLmDn5DZrzY4KfozQVDsskYfJwhYrKehw=;
+        b=rTv35cvPOF3gl1PlI6nlFqC5rHqzVJmdTp44CYywF08ZDLvizbaBbmvarH99bAn3If
+         k5+S5uzq6pJmJI8Ep9fyM5RNnvWymHhqWVXhHfkodEQopG5bLQdaA9EdJ7Bp9S4qT1fb
+         +D5ftXAdAVnaD8o0bofA5jIBeqT2uW3JvJHCflRMCWcFRAEBOfuAonTfgA+PHuARSHEO
+         jsXLG2LAvOm4R4lU3UPH3P59vAb4ym2V9WnNxnvkwkysPadb6MlTSmefvVjSQxWKKtcE
+         XFDYD3+T4zCzAe6fbAPfldIvqNTGPKlhvgkKIQKc+BccLDMSSjCfzWWS8awmsmPgWo2M
+         8HIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759762318; x=1760367118;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=1e100.net; s=20230601; t=1759762356; x=1760367156;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uykABRp9hc8kRbSBpNRtLJa1EeJ+2rYcJ3127irL/TA=;
-        b=puMvGahSFhjajBfYph/BEIaXKwm8kBh9GhYDrn+3pPon4Okqh+2Ow41jnoZLF+NniL
-         wUKNmEyuERA3/xbj/Xpe11CSChcWHV03uSK+i9+S+1xp23fmXiaMl1eCZFYWpfXeI4Sd
-         yjtdF+7mLgJIXaP9TCsX9LaHW0TrPDOIidVWcs2hiomkUKUA0Ej7vzoh/cBWKYT2DkFR
-         WXTjVbZYTeo2lWe35RRCDADhivX2rweGPiTqI/OLyXR39MgHGEMCqediqibfRTdly0ZJ
-         ut4HKmxSXYMJryx3n2p80NX+aI28JtYjPaC7VpVGt5EBu1E8Tu2NRphfQoPcyJp2P5Cy
-         CmQA==
-X-Forwarded-Encrypted: i=1; AJvYcCX1TKH6tnmyVFZzM+VZE6piWozOhjfC4vsmfek6i5hQbXQ04JjZNPqudvWI8G4u0mZYsxU68qa1mOpjfO0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoyTXTmijN9J88fXuHKXrLeCwqZxjzZT9505p8wiv32brhy7PN
-	5HKVrYh0bte94oBNfLUZDHrGEfqvqOlUg4L0mmcixODbwTJEaNORk1+MBPj7pvRALGZLk4PA8TI
-	q1PUjpEGIh64PLywzaDaAb2cp77+VgDPYVwXWAf0fPZ3e37FRM0dhAQ9oRNlf4lHZZ3k=
-X-Gm-Gg: ASbGncvu0wAtqOiR9LIw+SW9O2etNAIT93WasJZBBN3cLhjUxYZ1Zb8WPTyp+wZfqvR
-	xFfFZ+9biICxdkwRVbZ8unAYS1PwDG4mQ7Y26+v+zjeq3/d/74xQGjrCRDBIahuxKJjpmv6XSt0
-	VrdUMzcLLQL6L7Fx7AdlfQoFXadUmzWsQHS/1lEV8LtRj57zeXVxYTL/35Ve44L2B4XNgzZoQfO
-	6zOvjsYoiQOcwxehueoWHrE1Xiq/0EoNa4Zb1TpkM+Na78uvMbv3DdNoAUt4oCQ3n+ECe++tMIk
-	evSZcnY4qScDyb0BV7aD+YtR8gaB4w+yV7P+gE6WonGtVqsB+byhIzhZOmq4c0BMnte7BdHe/oq
-	cgKIvkahuPsEDRclGd18RBDgs52A=
-X-Received: by 2002:ac8:7f08:0:b0:4db:1bd:c21c with SMTP id d75a77b69052e-4e576ac746amr103555551cf.12.1759762317675;
-        Mon, 06 Oct 2025 07:51:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFNQFQNaOw+YDqi93+F/z85X3qTNZ4A1Fy6bJXByTp8nf40QE5W21EnEc61g5O03NMlZ9vJFw==
-X-Received: by 2002:ac8:7f08:0:b0:4db:1bd:c21c with SMTP id d75a77b69052e-4e576ac746amr103555261cf.12.1759762317030;
-        Mon, 06 Oct 2025 07:51:57 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b4c855585d1sm441287466b.67.2025.10.06.07.51.55
+        bh=PlbR/hLzOsQLmDn5DZrzY4KfozQVDsskYfJwhYrKehw=;
+        b=Rzcnbpr3SmFH4tZTRGfL9BjZs0j+PMxlOhdAPRIRyWBXDeoFxAuha+u7O/b5zxu5zt
+         sxvAbpm6GIYFveybGqdSC8DsJQKyIPdTnSaG1Li7LsRlQ8zqPt21+TlmZGjNvXBo7Td4
+         J1ayGDMntm71sxlCLeRCBoPly0jraWm+BUWq/f0d6Bz+v2xsSu3A0pGvmLZhG1NxKomr
+         aWE6ECBEcwXfOFGyP+ngUFwWfsSmaW8GBBkB8pEkrRwga4+oEtXRUTfbMJArrXSqGSJf
+         0hzBe59HKzOOz4R3lyLtFXB5jyLbmUzktqEuw+r6cJ/jCfNYNYlM0bi5/o5vDmAZ3g45
+         QCnA==
+X-Forwarded-Encrypted: i=1; AJvYcCXl4nEtPd8eDUABHSCDvt5etyyeMPb8Bawxhhgq44z3ztm79W4njCrT+yShrxW4VReOZHntUW/HU99R8VE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjMfXXmnmVD4nTT9LJgXe45x4soT4KO2CvGBznnZliVcOePhxN
+	YKDoZzsF4uaGgBTdOM6PLFIeeYUqCxCPS9KVus4xiA3oJ5iLa93ylVgte2qdet/xspo=
+X-Gm-Gg: ASbGncu5+JLQVRuYsvqlpTMo2BstlePsr3CQwtHnZdVhbs0zh20TcZS3s3BE+CwlnEC
+	JeUJlAF7ifk2SM4tHeKsAZxOavuoia2VtE1nMomp6t8awcoq2rQhMsWdOzUhndsFxoIP86jDQEU
+	hqWKqxxLbJ9m56oxl1QIsGotEnPB9ruPK1RWUblkrbFS6v7Ekru4GIlDark/zFfXzq7+jVPlh64
+	MeoYA9RJfRjl70eo6zfMV/jyUKOxGZhOOKlP6/zYCymgQiqqF89MwfhQcWwllwRliar8jF5DsKn
+	fWEhYjT0uF+RSpu45z21BbM6iEn5sUrdpfSXtYo5Dgb9CZXvtq/fsdcUoDpIztAdEWhDGCVERp9
+	oLVx6bMqRUAoCA2spFDbnRY1ikUt3+Fwpxx/42rIKutJ/
+X-Google-Smtp-Source: AGHT+IEJN7EykLM4II7Nc1RZBJ1wPHjey+isWsfIbGWEkw9SfJz+SZYeKca+xUOdqaMCUV6s4N14AA==
+X-Received: by 2002:a05:6e02:1a0d:b0:42e:729a:4b0d with SMTP id e9e14a558f8ab-42e7ad6e802mr163997875ab.20.1759762350058;
+        Mon, 06 Oct 2025 07:52:30 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-57b5e9eb49fsm4975250173.1.2025.10.06.07.52.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Oct 2025 07:51:56 -0700 (PDT)
-Message-ID: <9d503228-2a54-40f3-ad6d-500144e14b2a@oss.qualcomm.com>
-Date: Mon, 6 Oct 2025 16:51:54 +0200
+        Mon, 06 Oct 2025 07:52:28 -0700 (PDT)
+Message-ID: <24f8b266-f17c-4909-b43d-8ab05721c5d8@kernel.dk>
+Date: Mon, 6 Oct 2025 08:52:27 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,69 +81,133 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: sdm845-oneplus: Correct gpio used for
- slider
-To: David Heidelberg <david@ixit.cz>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Casey Connolly <casey.connolly@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Gergo Koteles <soyer@irl.hu>
-References: <20250927-slider-correct-v1-1-fb8cc7fdcedf@ixit.cz>
- <babe2e5e-87a4-4871-a836-ddbd9cc8d868@oss.qualcomm.com>
- <8a21a653-4dcf-4418-9bb7-76e940ddcab2@ixit.cz>
+Subject: Re: [PATCH v2] Revert "sunvdc: Do not spin in an infinite loop when
+ vio_ldc_send() returns EAGAIN"
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Andreas Larsson <andreas@gaisler.com>,
+ Anthony Yznaga <anthony.yznaga@oracle.com>, Sam James <sam@gentoo.org>,
+ "David S . Miller" <davem@davemloft.net>,
+ Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>,
+ sparclinux@vger.kernel.org
+References: <20251006100226.4246-2-glaubitz@physik.fu-berlin.de>
+ <d78a1704-31dc-4eaa-8189-e3aba51d3fe2@kernel.dk>
+ <4e45e3182c4718cafad1166e9ef8dcca1c301651.camel@physik.fu-berlin.de>
+ <a80a1c5f-da21-4437-b956-a9f659c355a4@kernel.dk>
+ <e6a7e68ff9e23aee448003ee1a279a4ab13192c0.camel@physik.fu-berlin.de>
+ <cef07e8f-a919-4aa1-9904-84b16dfa8fe6@kernel.dk>
+ <5b3caa0e218dd473c8871c1b1f09a8dc1c356f1e.camel@physik.fu-berlin.de>
+ <ecb74c6c-8de6-4774-8159-2ec118437c57@kernel.dk>
+ <6ed7112cb4f338ba02d9ab67c14e7a3af4afbca0.camel@physik.fu-berlin.de>
+ <d23fa119-c1df-4861-99e2-c35c1214baa1@kernel.dk>
+ <576197870bdf21ea97559a1d84869fdcb9535156.camel@physik.fu-berlin.de>
+From: Jens Axboe <axboe@kernel.dk>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <8a21a653-4dcf-4418-9bb7-76e940ddcab2@ixit.cz>
+In-Reply-To: <576197870bdf21ea97559a1d84869fdcb9535156.camel@physik.fu-berlin.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAwMSBTYWx0ZWRfX7MSNE4YQt7Xv
- BuKMBc6wwe/wgpdHXmljz5aK2ypUGhVxwb1VaqV9natGSNpZhd0Lx+3r+BOCwGVk5fda6DvNsrB
- F+OxZD3IF/y/t7iC6JN+5H9ODbxLq0Hczk6/nkqDRPHRqLH+4sB/2QiFqkrAuq5SIs6DTPlRgcR
- GPZcwO1OcNULOVz29Nbu0LHQgT8BfaRs/fY/mg02q1Y8CNDTE+GIGfgCTIggCK6xEPYNIVVImSN
- ouiGH5C9gIGSoK5O01dsmLMCStSm9AcQTXaAiqkqYYHTmsTxglVkKlkGY4lJTTmQVSsVdnHgjy4
- QmXQpANfhbaCaFL+rlofkcpiwIrQiorfQ23nwVA3WGbStbIKo+a9DlDTTLXb9+L/hRZ5RMCMgDu
- j8ZYg38D19U/ivH+N0wkrcfE9SZ+5g==
-X-Proofpoint-GUID: l1REcWiSiJ1FYJaR5CsrCSQ3zFSl5ud7
-X-Proofpoint-ORIG-GUID: l1REcWiSiJ1FYJaR5CsrCSQ3zFSl5ud7
-X-Authority-Analysis: v=2.4 cv=EqnfbCcA c=1 sm=1 tr=0 ts=68e3d78e cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=L94DSdHg0uYc9iSAjtcA:9
- a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-06_04,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 spamscore=0 lowpriorityscore=0 malwarescore=0
- adultscore=0 suspectscore=0 bulkscore=0 impostorscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040001
 
-On 10/6/25 4:32 PM, David Heidelberg wrote:
-> On 06/10/2025 16:15, Konrad Dybcio wrote:
->> On 9/27/25 1:20 PM, David Heidelberg via B4 Relay wrote:
->>> From: Gergo Koteles <soyer@irl.hu>
+On 10/6/25 8:48 AM, John Paul Adrian Glaubitz wrote:
+> On Mon, 2025-10-06 at 08:27 -0600, Jens Axboe wrote:
+>>>> But that's fine, it's not uncommon for drivers to miss things like that,
+>>>> and then we fix them up when noticed. It was probably written by someone
+>>>> not super familiar with the IO stack.
 >>>
->>> The previous GPIO numbers were wrong. Update them to the correct
->>> ones and fix the label.
+>>> FWIW, Oracle engineers actually made some significant changes to the
+>>> driver that they never upstreamed, see:
 >>>
->>> Fixes: 288ef8a42612 ("arm64: dts: sdm845: add oneplus6/6t devices")
->>> Signed-off-by: Gergo Koteles <soyer@irl.hu>
->>> Signed-off-by: David Heidelberg <david@ixit.cz>
->>> ---
+>>> https://github.com/oracle/linux-uek/commits/uek4/qu7/drivers/block/sunvdc.c
+>>>
+>>> In particular, they added support for out-of-order execution:
+>>>
+>>> https://github.com/oracle/linux-uek/commit/68f7c9c17fb80d29cbc1e5110f6c021f8da8d610
+>>>
+>>> and they also changed the driver to use the BIO-based interface for
+>>> VDC I/O requests:
+>>>
+>>> https://github.com/oracle/linux-uek/commit/4b725eb64cc10a4877f2af75ff3a776586f68eb7
+>>>
+>>> Could you review these two changes and tell me whether these would
+>>> actually implement the changes you would want to see? I think the BIO
+>>> layer is a generic interface of the block layer in the kernel, isn't
+>>> it?
 >>
->> This is currently unused, can you bundle (or squash?) this with the
->> "add slider" series instead?
+>> Moving lower down the stack to use a bio directly is not a good idea,
+>> it's in fact going the opposite direction of what we'd like to see in
+>> the storage stack. And it would then mean you'd need to implement your
+>> own internal requeueing and retrying.
 > 
-> The seriess didn't received any attention or reviews, so I hoped in least fixing the upstream device-tree before someone will have time to look at the whole.
+> I looked at the virtio_blk driver and that seems to confirm it. There is no
+> use of the bio interface either, so I guess we should not pick up this
+> patch.
+
+I'd be very hesitant to pick anything up that hasn't been posted and
+included upstream...
+
+> What do you think about the out-of-order execution? Would that make sense
+> to upstream it? Does it look reasonable?
+
+I have no opinion on that, there's not even a description of why that
+change makes any sense. Sorry but I'm not going to waste my time
+reviewing out-of-tree code, it's just not a very useful thing to do. If
+the changes get submitted upstream for review in a suitable fashion,
+then they will get reviewed.
+
+>> These are the kind of changes that happen when development is done and
+>> changes aren't submitted upstream. It's unfortunate drift...
 > 
-> Would you recommend sending the "Add support for sound profile switching and leverage for OnePlus 6 slider" again, just with this small split improvement now?
+> Well, the problem here is that Oracle stopped working on Linux for SPARC
+> abruptly, so many of their improvements were never sent upstream and did
+> not see any reviews which would have caught this.
 
-It's been a good 2 months, so it wouldn't hurt.. perhaps wait
-one more week for -rc1 to come out, in case anyone you depend on
-is *that* pedantic..
+And to be frank, the changes you referenced also look pretty incomplete
+and would not pass upstream review. I guess they are dead in the water
+at this point, unless someone else picks them up and polishes them into
+something that can be sent upstream for review.
 
-Konrad
+>>>>>>> For now, I would propose to pick up my patch to revert the previous
+>>>>>>> change. I can then pick up your proposed change and deploy it for
+>>>>>>> extensive testing and see if it has any side effects.
+>>>>>>
+>>>>>> Why not just test this one and see if it works? As far as I can tell,
+>>>>>> it's been 6.5 years since this change went in, I can't imagine there's a
+>>>>>> huge sense of urgency to fix it up that can't wait for testing a more
+>>>>>> proper patch rather than a work-around?
+>>>>>
+>>>>> Well, the thing is that a lot of people have been running older kernels
+>>>>> on SPARC because of issues like these and I have started working on trying
+>>>>> to track down all of these issues now [2] for users to be able to run a
+>>>>> current kernel. So, the 6.5 years existence of this change shouldn't
+>>>>> be an argument I think.
+>>>>
+>>>> While I agree that the bug is unfortunate, it's also a chance to
+>>>> properly fix it rather than just go back to busy looping. How difficult
+>>>> is it to test an iteration of the patch? It'd be annoying to queue a
+>>>> bandaid only to have to revert that again for a real fix. If this was a
+>>>> regression from the last release or two then that'd be a different
+>>>> story, but the fact that this has persisted for 6.5 years and is only
+>>>> bubbling back up to mainstream now would seem to indicate that we should
+>>>> spend a bit of extra time to just get it right the first time.
+>>>
+>>> We could do that for sure. But I would like to hear your opinion on
+>>> the changes contributed by Oracle engineers first. Maybe their
+>>> improvements are much better so that it might make sense to try to
+>>> upstream them.
+>>
+>> Won't help this case, and it's actively going the wrong direction
+>> imho...
+> 
+> OK, so your opinion is then to add the patch that you proposed on top
+> of what's currently there in Linus' tree, meaning adding some code
+> that will requeue requests once the retry limit has been reached?
+
+Right, the patch I sent is against the normal upstream tree.
+
+> Can you maybe post a proper patch then which I (and others) could test
+> and then hopefully add their "Tested-by"?
+
+Sure.
+
+-- 
+Jens Axboe
 
