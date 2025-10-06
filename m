@@ -1,143 +1,229 @@
-Return-Path: <linux-kernel+bounces-843043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB60BBBE495
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:11:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDC2FBBE4AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:12:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F99C3B99F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:10:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E2A61898B47
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9FC2D480F;
-	Mon,  6 Oct 2025 14:10:34 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06522D4801;
+	Mon,  6 Oct 2025 14:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="GEzwgLzf"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1D21B5EC8
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 14:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E347081C;
+	Mon,  6 Oct 2025 14:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759759833; cv=none; b=jmuxVIyQ+PcYzTRVWaOFG7D2FJKvxdjnHsIjQJvzSvUsyFmgYw1oJLDXNjWFPfqqGaBEeiuPCqYmOTpeJd9K/2MW2vbil0J88UgqTO9gwSp3ORAKk12nGvm8sMdmvL9TB1S06hVYGS7VoTHSvJ+JCaGbdGBBSEVptwu16V093Mw=
+	t=1759759941; cv=none; b=jxs5dM5lCuADzKZty1JtIft780a4gfCsl2G7EuwXyYPq/TcBf9TFDuVEfobDDAo+VmOoSwF4QCYHsgZdS9scf7rN1oyCaUdh6QAoRs+j5uzlEIbH+7SLhcw6eQ6Ty3oKgcL0UZZpvNLyzb61ntlN9avg8hbXb8mhOzHsH2YEzGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759759833; c=relaxed/simple;
-	bh=rHh8rFyaVv9BgcPlqmMwESfOSSluDMke8GaIK2QXtgI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=FQDlCJ8J2FJ7ukfvKAPBWm0T/u1vbcolOR29Y0GbxthZpaVevAPArdlNMnxD+M+II7EzMhnE6KcnTtn12dWqK301TUojFdV/+Wd2kAjSacM7/xicYt87N8Csh9YySurFFFeGB3bDBM93DEzD1+X2OX1JzdXiG7dsGBqIkgyuU5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-42f63bf6387so67795445ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 07:10:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759759831; x=1760364631;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MwjzkJ160sD+DlJCkji9uVcuXgvmehtyE1uZWuxgyZ4=;
-        b=o4OzbIP2vv7ObjDnX8IcooVbZqtX722UeMOLZuDMjBvITfLWcxvbY4bgZewo8V5A6y
-         RgOOhBAYAcBiUNmQrFMaTuFd+SilZ1NkrPAJXxWjVIRnB3I2sM0JZS0IocS1SjXBPueS
-         uQ6x2Hvf27xJEvh0PWY7l64rkqclI93KpIu2FYdxOpHvw13N/DmbyMoeefbPuXxO6K7+
-         iVBPjPtJrljEDC0dwugipjZe0+w5D0XwgGStZ/zXrvKn+QfO+DqFL9k6PBdxDlnsMpeT
-         8wFvB2fCRMxHiN3W7JJyHeFxigR4hB9VcikKVsnV9bNst9F+smOORP4kgPRy62vUOT1u
-         V+Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCWJ9bzyjfOurTyuy8AT2aWv1hQED0P5RVOTS4fsA7eySYQ1i9Ipxv3A9ivK9c1XC4Wi4irkqu5/kSV2ejw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy12o9v54oCyOpE8rCI25wGZnCjuqUcIYqN/zDIwte1rBbbFpGR
-	tb+uQI9UmvPjAPRuL4df6bvHYtrQp0QhAqenZas0XDH3AHb60pMmJf8ktkNiVdcvhJTxmArEW3c
-	wF6tW/UxTEP1084Wrq5Kc9CZ3z5KEOR0FjP/eNn4mS1u4tNsozlM2Vd3xBmQ=
-X-Google-Smtp-Source: AGHT+IGm0eIv24hz/zlDzqj0kJrSq5C4onbZ3P4ubt50mfZ5GJhsVyj9yZqVYGVHYSE96lIC8rty0OglBkK+KVnQw33/w+ceYrK3
+	s=arc-20240116; t=1759759941; c=relaxed/simple;
+	bh=oX0hxl9y2RR15gDl1PquBggQpEN7Bar/5nFx6gYMVkQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fVNV0MQuQYb4exvK1f/qmiX4yubvjFizgFdSieosXBuZ4vQDagoyZ7v7qpKCDN/1NymJDFotuvGnETHfXErfBTRy029UPPvmSYrLEtd7e/DlE2NXuF/E6BApoMybwYy0dQ91SrTLkrIuxtG5A4mz3Vr4hXlxaw6kmrqlny54RqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=GEzwgLzf; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=23CVLylcgnapJ6jlYQdsh4lJ2r8jytwkumAM2tRh278=; t=1759759937;
+	x=1760364737; b=GEzwgLzfpVbYuZIy7eRCTrkqAGA2EvfozW7j9CIQ6HkqNZaDv+nTKCO6JtuUx
+	PgKRY+/hJCyNL2Tel4MhWGB3yowQA4gcefW3bSB4KRr65uMhIbh+XvR+wxcNSl46t/ml2X0mZVnXP
+	9RQoqnVDDstENpXHaPTwal13oEVdLn4sVZ0je+LiiCMjzi6YfMJUt2a7XDYB5yrAN+JCjK3WuBGSr
+	JCyoC1VbhjNdxAgiFY+ersB86zczr45USVpx1U/FLkjRdYTSOpo7QevKtEv+ivuLQmsQWfkOu/a9H
+	qoe+5f2EtmR7V4yD915gVbwWLTRm0lut+ZLCj+eCrb69L4qRQQ==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1v5lwi-00000000WeH-3Sgl; Mon, 06 Oct 2025 16:12:12 +0200
+Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1v5lwi-00000003G0x-2LVk; Mon, 06 Oct 2025 16:12:12 +0200
+Message-ID: <6ed7112cb4f338ba02d9ab67c14e7a3af4afbca0.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v2] Revert "sunvdc: Do not spin in an infinite loop when
+ vio_ldc_send() returns EAGAIN"
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: Andreas Larsson <andreas@gaisler.com>, Anthony Yznaga	
+ <anthony.yznaga@oracle.com>, Sam James <sam@gentoo.org>, "David S . Miller"
+	 <davem@davemloft.net>, Michael Karcher
+ <kernel@mkarcher.dialup.fu-berlin.de>, 	sparclinux@vger.kernel.org
+Date: Mon, 06 Oct 2025 16:12:11 +0200
+In-Reply-To: <ecb74c6c-8de6-4774-8159-2ec118437c57@kernel.dk>
+References: <20251006100226.4246-2-glaubitz@physik.fu-berlin.de>
+	 <d78a1704-31dc-4eaa-8189-e3aba51d3fe2@kernel.dk>
+	 <4e45e3182c4718cafad1166e9ef8dcca1c301651.camel@physik.fu-berlin.de>
+	 <a80a1c5f-da21-4437-b956-a9f659c355a4@kernel.dk>
+	 <e6a7e68ff9e23aee448003ee1a279a4ab13192c0.camel@physik.fu-berlin.de>
+	 <cef07e8f-a919-4aa1-9904-84b16dfa8fe6@kernel.dk>
+	 <5b3caa0e218dd473c8871c1b1f09a8dc1c356f1e.camel@physik.fu-berlin.de>
+	 <ecb74c6c-8de6-4774-8159-2ec118437c57@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a29:b0:427:8024:750e with SMTP id
- e9e14a558f8ab-42e7ad8401emr173160865ab.20.1759759831140; Mon, 06 Oct 2025
- 07:10:31 -0700 (PDT)
-Date: Mon, 06 Oct 2025 07:10:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e3cdd7.a00a0220.2a5ca.000b.GAE@google.com>
-Subject: [syzbot] [afs?] WARNING in delete_node (4)
-From: syzbot <syzbot+34813cbce633c9091556@syzkaller.appspotmail.com>
-To: dhowells@redhat.com, linux-afs@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, marc.dionne@auristor.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-Hello,
+On Mon, 2025-10-06 at 08:03 -0600, Jens Axboe wrote:
+> > To be fair, the sunvdc driver is fairly old and I'm not sure whether th=
+ese
+> > tools already existed back then. FWIW, Oracle engineers did actually wo=
+rk
+> > on the Linux for SPARC code for a while and it might be possible that t=
+heir
+> > UEK kernel tree [1] contains some improvements in this regard.
+>=20
+> Requeueing and retry has always been available on the block side. It's
+> not an uncommon thing for a driver to need, in case of resource
+> starvation. And sometimes those resources can be unrelated to the IO, eg
+> iommu shortages. Or this busy condition.
 
-syzbot found the following issue on:
+I see. Makes sense.
 
-HEAD commit:    7f7072574127 Merge tag 'kbuild-6.18-1' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12c55942580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8582d1234819ed79
-dashboard link: https://syzkaller.appspot.com/bug?extid=34813cbce633c9091556
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+> But that's fine, it's not uncommon for drivers to miss things like that,
+> and then we fix them up when noticed. It was probably written by someone
+> not super familiar with the IO stack.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+FWIW, Oracle engineers actually made some significant changes to the driver
+that they never upstreamed, see:
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-7f707257.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0e0a26398b43/vmlinux-7f707257.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/44d1286a1f5d/bzImage-7f707257.xz
+https://github.com/oracle/linux-uek/commits/uek4/qu7/drivers/block/sunvdc.c
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+34813cbce633c9091556@syzkaller.appspotmail.com
+In particular, they added support for out-of-order execution:
 
-------------[ cut here ]------------
-WARNING: CPU: 3 PID: 33 at lib/radix-tree.c:572 delete_node+0x223/0x8d0 lib/radix-tree.c:572
-Modules linked in:
-CPU: 3 UID: 0 PID: 33 Comm: ksoftirqd/3 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:delete_node+0x223/0x8d0 lib/radix-tree.c:572
-Code: 66 58 f6 41 bc 01 00 00 00 e8 49 ea 71 f6 44 89 e0 48 83 c4 28 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc e8 2e ea 71 f6 90 <0f> 0b 90 e8 25 ea 71 f6 48 c7 c6 90 88 48 8b 4c 89 e7 e8 a6 66 58
-RSP: 0018:ffffc900005bfac0 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff88802aec6160 RCX: ffffffff8b489df3
-RDX: ffff88801bbea480 RSI: ffffffff8b489e82 RDI: ffff88802aec61a8
-RBP: ffff888025afc000 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000004 R11: 0000000000002b71 R12: ffff888025afc018
-R13: dffffc0000000000 R14: 0000000000000000 R15: 0000000004000004
-FS:  0000000000000000(0000) GS:ffff888097f66000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000008001b000 CR3: 000000005e8cd000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- __radix_tree_delete+0x193/0x3d0 lib/radix-tree.c:1379
- radix_tree_delete_item+0xea/0x230 lib/radix-tree.c:1430
- afs_cell_destroy+0x1db/0x310 fs/afs/cell.c:523
- rcu_do_batch kernel/rcu/tree.c:2605 [inline]
- rcu_core+0x799/0x1530 kernel/rcu/tree.c:2861
- handle_softirqs+0x219/0x8e0 kernel/softirq.c:622
- run_ksoftirqd kernel/softirq.c:1063 [inline]
- run_ksoftirqd+0x3a/0x60 kernel/softirq.c:1055
- smpboot_thread_fn+0x3f4/0xae0 kernel/smpboot.c:160
- kthread+0x3c2/0x780 kernel/kthread.c:463
- ret_from_fork+0x56d/0x730 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+https://github.com/oracle/linux-uek/commit/68f7c9c17fb80d29cbc1e5110f6c021f=
+8da8d610
 
+and they also changed the driver to use the BIO-based interface for VDC I/O=
+ requests:
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+https://github.com/oracle/linux-uek/commit/4b725eb64cc10a4877f2af75ff3a7765=
+86f68eb7
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Could you review these two changes and tell me whether these would actually=
+ implement
+the changes you would want to see? I think the BIO layer is a generic inter=
+face of
+the block layer in the kernel, isn't it?
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+> > > > > > And unlike the change in adddc32d6fde ("sunvnet: Do not spin in=
+ an infinite
+> > > > > > loop when vio_ldc_send() returns EAGAIN"), we can't just drop d=
+ata as this
+> > > > > > driver concerns a block device while the other driver concerns =
+a network
+> > > > > > device. Dropping network packages is expected, dropping bytes f=
+rom a block
+> > > > > > device driver is not.
+> > > > >=20
+> > > > > Right, but we can sanely retry it rather than sit in a tight loop=
+.
+> > > > > Something like the entirely untested below diff.
+> > > > >=20
+> > > > > diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
+> > > > > index db1fe9772a4d..aa49dffb1b53 100644
+> > > > > --- a/drivers/block/sunvdc.c
+> > > > > +++ b/drivers/block/sunvdc.c
+> > > > > @@ -539,6 +539,7 @@ static blk_status_t vdc_queue_rq(struct blk_m=
+q_hw_ctx *hctx,
+> > > > >  	struct vdc_port *port =3D hctx->queue->queuedata;
+> > > > >  	struct vio_dring_state *dr;
+> > > > >  	unsigned long flags;
+> > > > > +	int ret;
+> > > > > =20
+> > > > >  	dr =3D &port->vio.drings[VIO_DRIVER_TX_RING];
+> > > > > =20
+> > > > > @@ -560,7 +561,13 @@ static blk_status_t vdc_queue_rq(struct blk_=
+mq_hw_ctx *hctx,
+> > > > >  		return BLK_STS_DEV_RESOURCE;
+> > > > >  	}
+> > > > > =20
+> > > > > -	if (__send_request(bd->rq) < 0) {
+> > > > > +	ret =3D __send_request(bd->rq);
+> > > > > +	if (ret =3D=3D -EAGAIN) {
+> > > > > +		spin_unlock_irqrestore(&port->vio.lock, flags);
+> > > > > +		/* already spun for 10msec, defer 10msec and retry */
+> > > > > +		blk_mq_delay_kick_requeue_list(hctx->queue, 10);
+> > > > > +		return BLK_STS_DEV_RESOURCE;
+> > > > > +	} else if (ret < 0) {
+> > > > >  		spin_unlock_irqrestore(&port->vio.lock, flags);
+> > > > >  		return BLK_STS_IOERR;
+> > > > >  	}
+> > > >=20
+> > > > We could add this particular change on top of mine after we have
+> > > > extensively tested it.
+> > >=20
+> > > It doesn't really make sense on top of yours, as that removes the
+> > > limited looping that sunvdc would do...
+> >=20
+> > Why not? From what I understood, you're moving the limited looping to a
+> > different part of the driver where it can delegate the request back up
+> > the stack meaning that the current place to implement the limitation is
+> > not correct anyway, is it?
+>=20
+> Because your change never gives up, hence it'd never trigger the softer
+> retry condition. It'll just keep busy looping.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Ah, that makes sense.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+> > > > For now, I would propose to pick up my patch to revert the previous
+> > > > change. I can then pick up your proposed change and deploy it for
+> > > > extensive testing and see if it has any side effects.
+> > >=20
+> > > Why not just test this one and see if it works? As far as I can tell,
+> > > it's been 6.5 years since this change went in, I can't imagine there'=
+s a
+> > > huge sense of urgency to fix it up that can't wait for testing a more
+> > > proper patch rather than a work-around?
+> >=20
+> > Well, the thing is that a lot of people have been running older kernels
+> > on SPARC because of issues like these and I have started working on try=
+ing
+> > to track down all of these issues now [2] for users to be able to run a
+> > current kernel. So, the 6.5 years existence of this change shouldn't
+> > be an argument I think.
+>=20
+> While I agree that the bug is unfortunate, it's also a chance to
+> properly fix it rather than just go back to busy looping. How difficult
+> is it to test an iteration of the patch? It'd be annoying to queue a
+> bandaid only to have to revert that again for a real fix. If this was a
+> regression from the last release or two then that'd be a different
+> story, but the fact that this has persisted for 6.5 years and is only
+> bubbling back up to mainstream now would seem to indicate that we should
+> spend a bit of extra time to just get it right the first time.
 
-If you want to undo deduplication, reply with:
-#syz undup
+We could do that for sure. But I would like to hear your opinion on the cha=
+nges
+contributed by Oracle engineers first. Maybe their improvements are much be=
+tter
+so that it might make sense to try to upstream them.
+
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
