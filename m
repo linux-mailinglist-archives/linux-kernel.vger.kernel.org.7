@@ -1,167 +1,177 @@
-Return-Path: <linux-kernel+bounces-842727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE6AABBD681
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 11:05:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E928BBD68D
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 11:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 925264E1933
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 09:05:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A46E18929CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 09:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64902641C6;
-	Mon,  6 Oct 2025 09:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211A3265CA8;
+	Mon,  6 Oct 2025 09:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J2hWO+UY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="A6haOVVu";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ifuwRhCD"
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27AA170A11
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 09:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6F1219E8D;
+	Mon,  6 Oct 2025 09:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759741509; cv=none; b=LmJ6eo44lDYxw8aredpTEcMYjKJQJ7IhmWza9ogYs6APZJj919QaEupeTjuFcBTjmEMA/cc8w3iaIoiKUdXeiwLqVZD+y+HMvWhI9lQpC3fjqYypv33ViJMUxssvZLUAgkv50kNXQGY5i+uMYgbe4EqQWjdzjYjh9dBSrRDNkcY=
+	t=1759741608; cv=none; b=DV+KkXR1FqmTsICr6ZH2wv/ILVwpcoNeSa5aKt9MTkinS4X3dc6qDe1AHQLRn0RmhboHgCNyWfm+W8q5+/ErYS05l9y2C00OxUTP90bwWSMIo6qC3jD3U+XBmQdztiwdXq+aIE5wt8sojgAq6oqDnJkKz2Mar3GUwG7uT6ENmAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759741509; c=relaxed/simple;
-	bh=M7RY/jKXEGp1I0Cbhg+O8MbCIaKKQJ0d3+bkdHMZ+so=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=jywqJY2FXFXgcBrOT9/VCK5LZhitQFi/SQvjnaeRHuSI7hmQY1+RamwnAXaJ9p9a3K7T8UX6yAiJjjUXB0Dq7UM/TpIeaWB7qU0TJbGDvV7TpQ7Ro9fxBpe64kzlAvnA0BndLVoqtHgpBJX+VQKj0pZmW8++UORHYsX1QgPIm4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J2hWO+UY; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759741507; x=1791277507;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=M7RY/jKXEGp1I0Cbhg+O8MbCIaKKQJ0d3+bkdHMZ+so=;
-  b=J2hWO+UYmlrM4eU8ZDPoL4ZFZxCwXFc5SGTopdJ5tre38i/5RuMifQmu
-   Ii2Z/GL81PE7ijKVDOz6boEx5EAW66XKCCNjyGcXnQWoj0/nJrQP4KMwX
-   yKdDqs7tQmkICU4Ql/nU/a+PNTIzLUmdfmqaUZHaGkEXypyQWkPUNI26M
-   MctwRXRuQgYQ6yNjRzG1gn0wvJ6XvX8zi2W4qpF2g1GxjxIimxoZI+V23
-   Z+zTxpWdUBJFUfaF85AvpTZFfYzIHllRkPc6AAddbpwIam7WB1lyZVwAM
-   kqyrMI7r7USKyiq6QPdl6toK5bM6sbVRc8CSRupZd2HGjTnbRaZDBdq15
-   g==;
-X-CSE-ConnectionGUID: tbWNRFrQT1C3SxFI7YYqIQ==
-X-CSE-MsgGUID: d/patFxhTEC6pzCT30FmAQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11573"; a="72163932"
-X-IronPort-AV: E=Sophos;i="6.18,319,1751266800"; 
-   d="scan'208";a="72163932"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 02:05:06 -0700
-X-CSE-ConnectionGUID: eKjp6VwDSmiuOlV6c3AQEw==
-X-CSE-MsgGUID: CprpgsMbQP2lu51Sw82TWQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,319,1751266800"; 
-   d="scan'208";a="179451494"
-Received: from krybak-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.162])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 02:05:03 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Jocelyn Falempe <jfalempe@redhat.com>, Francesco Valla
- <francesco@valla.it>, Javier Martinez Canillas <javierm@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] drm/draw: add drm_draw_can_convert_from_xrgb8888
-In-Reply-To: <b026d815-dd6e-48a6-8efa-4631ed7cca9c@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20251005-drm_draw_conv_check-v1-0-9c814d9362f6@valla.it>
- <20251005-drm_draw_conv_check-v1-1-9c814d9362f6@valla.it>
- <a669b2ee89865e9150efd38e181cdc838c2ac522@intel.com>
- <b026d815-dd6e-48a6-8efa-4631ed7cca9c@redhat.com>
-Date: Mon, 06 Oct 2025 12:05:00 +0300
-Message-ID: <1793a882aba06d4b770799633b4443439d978679@intel.com>
+	s=arc-20240116; t=1759741608; c=relaxed/simple;
+	bh=xRNYcmWHVy9+rCxbrkxC7eKueSZYi3qjzHfFxl9ECYg=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=MJuCUOW4Fgp9M1I6svPhTugYITF6ffRF8F21SnzqCLs5Qf8nvdWd0UuHXy/IBJdmYnu6ezuUL1Zg+orVeyTFMH5gybRlOp62emoItsZzPWXWwRRF9Rp9JLRepel+nOgjwN5xAJkNCtCrMTv1tk6WGSZy0XcWv2vvqopyQJrO8Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=A6haOVVu; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ifuwRhCD; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id A0CED14000B6;
+	Mon,  6 Oct 2025 05:06:44 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Mon, 06 Oct 2025 05:06:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1759741604;
+	 x=1759828004; bh=GteAlwawFXfbnqA53uD7MPQFqbjH5yXXPYtKPXcgtd4=; b=
+	A6haOVVuUxnYrnBwImh+OfR1gdGrw/QjPVvoFWVqrOrvoYMVp4ZcQ1RINRhlWHeT
+	nB8i89rxtHeoWmnKPAnO8CjfMgTtzV+E/H+6bI4SAHnisCMGAES2eGP89i8RFLP0
+	ENU9eo27kfDgxSSVp01WjGCvRw+0YGavz6bhhZoLJ3q08em2sn/+4tji6MX9kwBV
+	obcdhm69G/NmFUA42M5/cabMctl0vg7foHHWM9mOgLOgfO+dLv7W5+qMTE0Wmfaq
+	ub9UmHG7FqKItTSQAw4uuGn48mpjFiqtB8rGbLY4YA6O7fInaVLKj+qYkwzeCkA0
+	erjjDflsBibubTjthKR/+A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759741604; x=
+	1759828004; bh=GteAlwawFXfbnqA53uD7MPQFqbjH5yXXPYtKPXcgtd4=; b=i
+	fuwRhCDAaC4fJI6sIFUOJs+6isA/hhSfrWrmD12iIEbMGHdibrniT6arNk8O6lNw
+	dzFYfQvx6QYftsvxrdYSi4hHnRWp4vpBzIMM3ijKU1UbPurg+wdMNstmhQgCUwSu
+	m99ylBg2mAzRYm4AEuF1lVi+onQJ0iMjtMGC85GIMNbEiOby4cwPQxjvBhJ/e+GA
+	g5isJMRUBPlpET3nEQupTkOucC7+swgRD+1Scwd7AM9LdBmeWF6E9yssQlOts4FJ
+	6m8kBJ88ifMFEwH/0DtH94bThF3Lg3mQUkLfhO5qfmMvp5T2GzsgAhMXgZjJnjN9
+	rWmvzxMFrId3dE6Ppkd8Q==
+X-ME-Sender: <xms:o4bjaAcSFNyOB0d8DGsdJlMvDwBT97yGRq_kAlNKVpzmfptFbxb3Og>
+    <xme:o4bjaNDKwEjJ637TwMfwccKPF9k4atMQRcdpFUaST43GZdW8zjBlTKFkZcImuXuGN
+    0mMkkXMEiYBYEYaxIDhi2LR9XopcwalO66IpdbNljMrJrRH4pYOB7ZE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeljedufecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduhedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtoheprghurhgvlhhivghnsegruhhrvghlfedvrdhnvghtpdhrtghpthhtoh
+    epmhhmrgihvghrsegsrhhorggutghomhdrtghomhdprhgtphhtthhopehnihgtohhlrghs
+    rdhfrhgrthhtrghrohhlihestgholhhlrggsohhrrgdrtghomhdprhgtphhtthhopegrnh
+    hsuhgvlhhsmhhthhesghhmrghilhdrtghomhdprhgtphhtthhopehhvghrsggvrhhtsehg
+    ohhnughorhdrrghprghnrgdrohhrghdrrghupdhrtghpthhtoheprghrnhgusehkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdp
+    rhgtphhtthhopegtrghirdhhuhhoqhhinhhgsehlihhnuhigrdguvghvpdhrtghpthhtoh
+    epuggrnhhivghlsehmrghkrhhothhophhirgdrohhrgh
+X-ME-Proxy: <xmx:o4bjaDVBRGyiQxPDBvQys3EDOI4xxiSyCIjC3OszXN1CgE_QUZTtOQ>
+    <xmx:o4bjaDIxE9UXdVNyzKg7F7_jqciBdXkUXl8jAZ6eQ5e7FWRKR8THpg>
+    <xmx:o4bjaPDoIcixkH703wXHXdPUb9N-NRy5Yk7KJknmkSSAV64M_UBlDg>
+    <xmx:o4bjaLEtqz73lCG7toIzUWB5vlq5Ig6MbB7dR6IhV7FKE0u-Mal6Ew>
+    <xmx:pIbjaFDgUHr2OriFSXanbJ678QIMayb-5IrUrP4dVxl6oEc3qV1dMsTU>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 0BEF7700069; Mon,  6 Oct 2025 05:06:43 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-ThreadId: ABZYucWfS4iZ
+Date: Mon, 06 Oct 2025 11:06:22 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Geert Uytterhoeven" <geert@linux-m68k.org>,
+ "Arnd Bergmann" <arnd@kernel.org>
+Cc: "Olivia Mackall" <olivia@selenic.com>,
+ "Herbert Xu" <herbert@gondor.apana.org.au>,
+ "Cai Huoqing" <cai.huoqing@linux.dev>, "Dragan Simic" <dsimic@manjaro.org>,
+ "Francesco Dolcini" <francesco.dolcini@toradex.com>,
+ "Daniel Golle" <daniel@makrotopia.org>,
+ "Christian Marangi" <ansuelsmth@gmail.com>,
+ "Aurelien Jarno" <aurelien@aurel32.net>,
+ "Markus Mayer" <mmayer@broadcom.com>,
+ "Lukas Bulwahn" <lukas.bulwahn@redhat.com>,
+ "Nicolas Frattaroli" <nicolas.frattaroli@collabora.com>,
+ linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <80792144-66c3-46a7-a1a7-2e934a31ee2b@app.fastmail.com>
+In-Reply-To: 
+ <CAMuHMdW6jCbB80JhUVjBPnMCAXn5Amdr6KM48jvnd+VnMR40gg@mail.gmail.com>
+References: <20250729152804.2411621-1-arnd@kernel.org>
+ <CAMuHMdW6jCbB80JhUVjBPnMCAXn5Amdr6KM48jvnd+VnMR40gg@mail.gmail.com>
+Subject: Re: [PATCH] hwrng: nomadik: add ARM_AMBA dependency
 Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Mon, 06 Oct 2025, Jocelyn Falempe <jfalempe@redhat.com> wrote:
-> On 10/6/25 08:48, Jani Nikula wrote:
->> On Sun, 05 Oct 2025, Francesco Valla <francesco@valla.it> wrote:
->>> Add drm_draw_can_convert_from_xrgb8888() function that can be used to
->>> determine if a XRGB8888 color can be converted to the specified format.
->>>
->>> Signed-off-by: Francesco Valla <francesco@valla.it>
->>> ---
->>>   drivers/gpu/drm/drm_draw.c          | 84 +++++++++++++++++++++++++++----------
->>>   drivers/gpu/drm/drm_draw_internal.h |  2 +
->>>   2 files changed, 63 insertions(+), 23 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/drm_draw.c b/drivers/gpu/drm/drm_draw.c
->>> index 9dc0408fbbeadbe8282a2d6b210e0bfb0672967f..2641026a103d3b28cab9f5d378604b0604520fe4 100644
->>> --- a/drivers/gpu/drm/drm_draw.c
->>> +++ b/drivers/gpu/drm/drm_draw.c
->>> @@ -15,45 +15,83 @@
->>>   #include "drm_draw_internal.h"
->>>   #include "drm_format_internal.h"
->>>   
->>> -/**
->>> - * drm_draw_color_from_xrgb8888 - convert one pixel from xrgb8888 to the desired format
->>> - * @color: input color, in xrgb8888 format
->>> - * @format: output format
->>> - *
->>> - * Returns:
->>> - * Color in the format specified, casted to u32.
->>> - * Or 0 if the format is not supported.
->>> - */
->>> -u32 drm_draw_color_from_xrgb8888(u32 color, u32 format)
->>> +static int __drm_draw_color_from_xrgb8888(u32 color, u32 format, u32 *out_color)
->> 
->> Is there any reason to change the return value of this function and
->> return the result via out_color? It already returns 0 if the format is
->> not supported. If there's a reason, it needs to be in the commit
->> message.
+On Mon, Oct 6, 2025, at 10:23, Geert Uytterhoeven wrote:
+> On Tue, 29 Jul 2025 at 17:28, Arnd Bergmann <arnd@kernel.org> wrote:
+>> From: Arnd Bergmann <arnd@arndb.de>
+>>
+>> Compile-testing this driver is only possible when the AMBA bus driver is
+>> available in the kernel:
+>>
+>> x86_64-linux-ld: drivers/char/hw_random/nomadik-rng.o: in function `nmk_rng_remove':
+>> nomadik-rng.c:(.text+0x67): undefined reference to `amba_release_regions'
+>> x86_64-linux-ld: drivers/char/hw_random/nomadik-rng.o: in function `nmk_rng_probe':
+>> nomadik-rng.c:(.text+0xee): undefined reference to `amba_request_regions'
+>> x86_64-linux-ld: nomadik-rng.c:(.text+0x18d): undefined reference to `amba_release_regions'
+>>
+>> The was previously implied by the 'depends on ARCH_NOMADIK', but needs to be
+>> specified for the COMPILE_TEST case.
+>>
+>> Fixes: d5e93b3374e4 ("hwrng: Kconfig - Add helper dependency on COMPILE_TEST")
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 >
-> I think the problem is that 0, is also a valid color.
+> Thanks for your patch, which is now commit efaa2d815a0e4d1c ("hwrng:
+> nomadik - add ARM_AMBA dependency") upstream.
+>
+>> --- a/drivers/char/hw_random/Kconfig
+>> +++ b/drivers/char/hw_random/Kconfig
+>> @@ -312,6 +312,7 @@ config HW_RANDOM_INGENIC_TRNG
+>>  config HW_RANDOM_NOMADIK
+>>         tristate "ST-Ericsson Nomadik Random Number Generator support"
+>>         depends on ARCH_NOMADIK || COMPILE_TEST
+>> +       depends on ARM_AMBA
+>>         default HW_RANDOM
+>>         help
+>>           This driver provides kernel-side support for the Random Number
+>
+> After seeing CONFIG_HW_RANDOM_NOMADIK disappear from m68k
+> all{mod,yes}config, I became intrigued, as it did build fine before?
+> If CONFIG_ARM_AMBA is not enabled, both __amba_driver_register() and
+> amba_driver_unregister() become static inline dummies, and the rest
+> of the code and data is not referenced, thus optimized away by the
+> compiler.  I verified this is the case on amd64 allmodconfig, too.
+> How come this failed for you?
 
-Right, of course.
+I believe this was the result of new build options getting adding
+to the randconfig test matrix. If for any reason the
+__amba_driver_register() function does not get inlined, the caller
+will still have a permanent reference to the amba_driver structure,
+and the rest of the file does not get removed by dead-code elimination.
 
-> Maybe it would be better to split it into 2 functions, and duplicate the 
-> switch case.
->
-> ie:
->
-> u32 drm_draw_color_from_xrgb8888(u32 color, u32 format)
-> {
-> 	switch(format) {
-> 	case DRM_FORMAT_RGB565:
-> 		return drm_pixel_xrgb8888_to_rgb565(color);
->
-> ....
->
->
-> bool drm_draw_can_convert_from_xrgb8888(u32 format)
-> {
->
-> 	switch(format) {
-> 	case DRM_FORMAT_RGB565:
-> 		return true;
->
-> ....
-> 	default:
-> 		return false;
->
->
-> I didn't do it this way, because there is a risk to add a format to only 
-> one of the switch. But after more thinking, that would be simpler overall.
+Most likely this change happens because the __init attribute on
+the module_init function puts it into a separate section from
+the __amba_driver_register() function, causing the compiler to
+refuse inlining them. Marking __amba_driver_register() as
+__always_inline, or changing the amba_driver_register() macro
+to not pass the pointer should also work here.
 
-The duplication is a bit annoying, but it might be simpler. Dunno.
-
-BR,
-Jani.
-
-
-
-
->
-> Best regards,
-
--- 
-Jani Nikula, Intel
+     Arnd
 
