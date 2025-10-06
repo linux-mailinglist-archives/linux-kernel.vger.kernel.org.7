@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-842636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FC03BBD366
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 09:29:35 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2FDFBBD369
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 09:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 23E3834908C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 07:29:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 49AFE34892B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 07:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC4C256C71;
-	Mon,  6 Oct 2025 07:29:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22559255222;
+	Mon,  6 Oct 2025 07:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nvm0gjB8"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B792VVeg"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8FB189B80
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 07:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B84128819
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 07:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759735768; cv=none; b=r2hgG3dxAQkFa0cmp0duGt4MmSKZMFTH54gMBjdSZAVVzugRrm4t+sy2uQ1Hi5mk4rcU0rgnItNoyBYSelhjkpbcJxWf6tggsvYYLtBpG34YODj9dQL9YEAz7lyvRfLX16MoIoOV+3j0WLkfGBlz1WUGKthGnU1LTx56rAAIcs8=
+	t=1759735818; cv=none; b=Q1dDuOMZAPx4Asu7cnLQ8dZz/lAh7x9IkhJtRALLlXR7q4KN8KADzU/KltvM2QutZUqQzmkimDGdZ/Lwazi8XQCRE4031jctAnIljk02UmixR/0TiDtvRGnmI6/D92umCzbHhC9IWxcU+QrtGvv5celr3dwtuiS1H2BkCEcg5e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759735768; c=relaxed/simple;
-	bh=pcBAm+wm8c6AgGBg52xkIT6OpiZn0ht/Z5hua5dnd4s=;
+	s=arc-20240116; t=1759735818; c=relaxed/simple;
+	bh=ZQRchX5XNIjfkgA4fLsxerAd7QtYqk1aoXp2CVgu4dI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V/k7MFhRaKdjLMp+kA46CHtcwT600gu6ge8+y1vaN7tFTDc21TleF9+uTmJg20T44h/bILCH3YUahQ8nnPXC7RaCF7p6Nv95DSMFF7Y/o6rWeLeWkLCAOv53OWeDwLcaru9HPBT2PW9qmBmEbCvru1GIPomtkPUGulRa4VPLQ/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Nvm0gjB8; arc=none smtp.client-ip=209.85.128.49
+	 Content-Type:Content-Disposition:In-Reply-To; b=MU8L22QRIOrbnOspsaGJTlGKUh/YaLkdYKV4kQ8fVh2H+HTB2Rbdr5QBGYiua43Re+jY8PuamqvlzSJwDr3EwtTDrHibBjgpAHC/7z7GDqvwS/3QfddBt1FvOYsa9MKE3/cSxS1TCHZ9pZZBskl+1FUTr2evSbT5AcBnUHXrGDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B792VVeg; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e2e6a708fso29110545e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 00:29:26 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-46b303f7469so28368535e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 00:30:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759735765; x=1760340565; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1759735815; x=1760340615; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9sghbtbNFIONQugpyNGOw93WuDTAMae0oqKLTraeLW4=;
-        b=Nvm0gjB8nd/uEKNdzbd8d/dMWK5g+enjmRmfMj2jMO4ocfdpKsHOdCFvRviIm8FpIy
-         x4N+f16xI9LgVRMJRA9OHVm35htmn5qgtyJdZfdL7QL0ImxObNZvck7ppqQ6eDW9s5k2
-         ohsm24jCrUGl6QsYIAWo1h9PrOpNROvzqA76XyGrE+rD+7M1P3qqCYVhpWkCl1C2O/Y6
-         JVWfvwqlMJz4SfWeDB4vNE8ycPH7HsO8Y65QakD3HuLJF24xAhKj+97wU7oB1nZ21h3x
-         s/qvvBSpldzeDIFzZIfwjq0TXH59EQdCFQZ5jJQp9WtWmIh+0d3EbVCz9HZeH6YaCu/H
-         ZTXw==
+        bh=Uf4L8RA/IZXS6HOIL8R8teBc6YGCc1dTgFC5yo9YzMI=;
+        b=B792VVegVxwYsPZR3jBjot4Q/7uQwcrWqPjICw/mTIxEQXpS3MeseHr/0SEXf/hSjH
+         aFiZ9O3atrKq2PkxYXeH9vYnMkzQo2T5lCdTDvCGSOOsFt9tmMsVkc5hu5VRcI1TfhKO
+         RjFgs7+jUfkwi3FkOl3CI6oZPS9tzNW9VUEaL770NOx4YDPuMQ6WNE+n3j5Sp8HLmuRH
+         rg70C94qEUaYy+hp+ZpAPDIlxFX2vK1vlEfzfQYOHkY+Sps8Cj+V4Ma93DSbE3EUaoU3
+         6idEG3prX2OaCZjSEgGUVXdNwvaBOB3kmlfTKAmiLct2HiZ1PM7BCmcuW9XaqN8lmZLC
+         Ehmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759735765; x=1760340565;
+        d=1e100.net; s=20230601; t=1759735815; x=1760340615;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9sghbtbNFIONQugpyNGOw93WuDTAMae0oqKLTraeLW4=;
-        b=ammsMjDyalRU2K8MjGDSK4Cl+rtjTV6a/oyTcQXTXa9DABLSCqFQaMoZKyWe97sEOI
-         wAkoQh0/IXrbWUqik+e+6/RhsVScCPRnvK21PlzPYyfZ5hi/ZtOosfTrRgNpIx6IQdXI
-         y3OKJJEze5+ER9rjBVqW/inUurlUYaHViyWy69TIoiiLqQn9aYewhtgDyRD8we8i8TtP
-         tVePjVJ0VmfastKLTNr3gsT4qEYrmNbR/JSlPswgbO6xE6DC37ik70W3LdsBn0nt00Uq
-         +/t/FGxWuxBmU10EF0P0HEGMLFY5nQJAIeEtzIclkmtC+xt0s6CB8NPMyDzO0J87qhvV
-         D8ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXJsTz1iUYY7ooKvWYxj4rkGc0B9D9zAiX1mr1h2i3WWV4DQmn//Iit4irRhBraBWEhFS/mgdxnyO4YQiM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiGBJjSKYBiTzNL/XHPNrzqNSQL8tMBrkO17W0tApuK6Dd9IoI
-	juCF9rHEJp7EKtA3Cj4H4vneNxe5T80sIiEra150BG6CzAJmMlc2nyKy/d7BXamfFO4=
-X-Gm-Gg: ASbGncvmBHTMSux7fnPShNVZvbxOVIycuHW8ipeZdgBDV9e+5TV2PhsBpWhb3TJy/wa
-	hsVBroow+tt/bFIh9loVMtjj8GL3RGeHvhOqIMTnZv01O5oEr32OYjI8Wjcitq6r+szii/AX1lu
-	tncuesQqIZx1WKPtj0UjkBGXdEmQFZeKu6lbLMvgsih/QgJzYvLPNrO9FBIoCWea7GqprTeA5zo
-	81uWZt1duYxuWS3KJvWvOa25tHf8wWa3SwQNnNRJUS4iSXdfMgKfF0+SzhiTSJyJuB7/YpqUT6Y
-	mlC279LRP7+8oRqM97CBcDpEw76Ago9zEMyKEw2mW6bvM2XauDT9jCc9B3xXBKht4iJjGvNCFmx
-	SaeBbwO5jPcXo85LAKyzb6e0tzNaa85H80k+qxkh1D6kOlrZFZw9udvpgYicJhJpXcSw=
-X-Google-Smtp-Source: AGHT+IGO0iR1Dm38qNqAUxs3JVr09b3dfZJrEsZ7XuRj7eZYj72+1AemzTj/wV9N9lOXV9YTsf+chQ==
-X-Received: by 2002:a05:600c:4ec6:b0:46e:1a14:a81b with SMTP id 5b1f17b1804b1-46e7115b667mr79587095e9.36.1759735764818;
-        Mon, 06 Oct 2025 00:29:24 -0700 (PDT)
+        bh=Uf4L8RA/IZXS6HOIL8R8teBc6YGCc1dTgFC5yo9YzMI=;
+        b=NZ4hbdvrDbX+6jbHIdxMyen/z/GFbbXg0nZG7XycvnnIxvcb0gp619bPpJ+AlnT5ey
+         c0KUkLyPsJ7k/iFqFDtUoj3zGiOiPFD6Plr7rNWlmqlButuEcD/J9fBqy8VKKEPI1UTf
+         nqnuQ7/kt4DJz0KSFEcsE72KBNhVO5pGQQnh0II52P4IArm43YrwTq+DN6w+O8hqYrkP
+         Aj0XabTFvMS3qvu/2ztBdhl426+vr8auCyF9oZ5kqmhykyT6wP0Snh/zVnzpxhHXeVDA
+         Gv/vJx3LWBcoKYJFEFpX31KWK1f2a6/V5V8PC/HlL2BhQSGxK1zpffFYsdOGPS+HR2nA
+         7slA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfD7PD0wtLJW56Dyh3rSG03F+6doOY78E17HuTuaCIJ3yIdBXO+UHijSunLpWcT2ynDrEVrgyq+v2kS0c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysMojYMqkELgIU9i3hBo+MDPYhdatlp1vv+UnapjBNUjoESwVZ
+	viYvDIWsIp3KaWxLzfEeXylcqH6ZBavEp53kQjFX39hcGDtropOAs1lFC5o5E4zOckk=
+X-Gm-Gg: ASbGncs8tBsTgdP4mtHfo1bynpS9mpGxUUlFRkf1SMwhd0SCpxWQwSbnU/2jdnc0s41
+	qhOCE1+Mn1w+Kwf3AqDzc/wqcKOknyCOFOCixysf28d34PeiMwio6PeWGf1x2FWzRmyfGQpFZvv
+	UhH2OsXJdeZwX2j96QsnpfKbSaSMPddzp+Nhap/iS7uVqYCteLj9w97F56+WYUWwoV5ayPrjEZY
+	i5ire9nG8MUAGbzB0UjeY5IIm6KOk8Q8MgMxONyO3YItR2zKlUl+qaQHM8noY1aqqovAyhnvB5Z
+	2eVbHzBFzCWQhtFZdrhDVrbPoMxviFsi5hznhjrF9/fU4eqYW8fKQt2HETsG+DyP10KFaEchjxt
+	m3qEfljJgwdHbfyfMJKuiaa6l9wtfwLGuMrg4Pa/teZYXy9IOo1Pwepot
+X-Google-Smtp-Source: AGHT+IHiuM1xHkBMQnAT7uqFLgh/CgZeXvWiOZCyevwvHia0yK8WCmbmVIHa/xjRLr6XfhSV7yHHmg==
+X-Received: by 2002:a05:600c:8b42:b0:46d:3a07:73cd with SMTP id 5b1f17b1804b1-46e7113f6f4mr71668335e9.23.1759735814631;
+        Mon, 06 Oct 2025 00:30:14 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e723432c9sm144973015e9.1.2025.10.06.00.29.23
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e72374ac5sm161139725e9.18.2025.10.06.00.30.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 00:29:24 -0700 (PDT)
-Date: Mon, 6 Oct 2025 10:29:20 +0300
+        Mon, 06 Oct 2025 00:30:13 -0700 (PDT)
+Date: Mon, 6 Oct 2025 10:30:09 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
 To: Rohan Tripathi <trohan2000@gmail.com>
 Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8723bs: clean up style in rtw_ap.c
-Message-ID: <aONv0JIZNA2GPzKG@stanley.mountain>
+Subject: Re: [PATCH 2/4] staging: rtl8723bs: split long comments in rtw_ap.c
+Message-ID: <aONwAXk2EcV9Bgrv@stanley.mountain>
 References: <20251005155920.381334-1-trohan2000@gmail.com>
- <20251005155920.381334-2-trohan2000@gmail.com>
+ <20251005155920.381334-3-trohan2000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,24 +88,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251005155920.381334-2-trohan2000@gmail.com>
+In-Reply-To: <20251005155920.381334-3-trohan2000@gmail.com>
 
-On Sun, Oct 05, 2025 at 11:59:17AM -0400, Rohan Tripathi wrote:
-> This patch fixes several coding style issues reported by checkpatch.pl
-> in rtw_ap.c. Changes include:
-> - Removed cases where lines ended with an opening parenthesis
-> - Broke long comments exceeding 100 characters
-> - Fixed alignment in multi-line function calls
+On Sun, Oct 05, 2025 at 11:59:18AM -0400, Rohan Tripathi wrote:
+> This patch splits overly long comments that exceeded 100 characters
+> into multiple shorter lines, following kernel coding style guidelines.
 > 
-> These are coding style cleanups only. No functional changes.
+> This is a coding style cleanup only. No functional changes.
 > 
 > Signed-off-by: Rohan Tripathi <trohan2000@gmail.com>
 > ---
->  drivers/staging/rtl8723bs/core/rtw_ap.c | 270 +++++++++++-------------
->  1 file changed, 123 insertions(+), 147 deletions(-)
+>  drivers/staging/rtl8723bs/core/rtw_ap.c | 17 +++++++++++++----
+>  1 file changed, 13 insertions(+), 4 deletions(-)
 > 
 > diff --git a/drivers/staging/rtl8723bs/core/rtw_ap.c b/drivers/staging/rtl8723bs/core/rtw_ap.c
-> index 0908f2234f67..9aa225bcf9d6 100644
+> index 93ab0015ca89..2c906c1137bf 100644
 > --- a/drivers/staging/rtl8723bs/core/rtw_ap.c
 > +++ b/drivers/staging/rtl8723bs/core/rtw_ap.c
 > @@ -391,7 +391,9 @@ void update_bmc_sta(struct adapter *padapter)
@@ -116,45 +113,19 @@ On Sun, Oct 05, 2025 at 11:59:17AM -0400, Rohan Tripathi wrote:
 > +		/* psta->dot118021XPrivacy = _NO_PRIVACY_;
 > +		 * remove it, because it has been set before this.
 > +		 */
-
-Just delete dead code.
-
 >  
 >  		/* prepare for add_RATid */
 >  		supportRateNum = rtw_get_rateset_len((u8 *)&pcur_network->supported_rates);
-> @@ -436,7 +438,6 @@ void update_bmc_sta(struct adapter *padapter)
->  		spin_lock_bh(&psta->lock);
->  		psta->state = _FW_LINKED;
->  		spin_unlock_bh(&psta->lock);
-> -
->  	}
-
-This is fine, but it's unrelated to the rest of the patch so it needs to
-be done as a separate patch.
-
->  }
+> @@ -655,7 +657,10 @@ void start_bss_network(struct adapter *padapter)
+>  	cur_ch_offset = HAL_PRIME_CHNL_OFFSET_DONT_CARE;
 >  
-> @@ -480,14 +481,13 @@ void update_sta_info_apmode(struct adapter *padapter, struct sta_info *psta)
->  		/* check if sta supports rx ampdu */
->  		phtpriv_sta->ampdu_enable = phtpriv_ap->ampdu_enable;
->  
-> -		phtpriv_sta->rx_ampdu_min_spacing = (
-> -			phtpriv_sta->ht_cap.ampdu_params_info & IEEE80211_HT_CAP_AMPDU_DENSITY
-> +		phtpriv_sta->rx_ampdu_min_spacing = (phtpriv_sta->ht_cap.ampdu_params_info &
-> +		IEEE80211_HT_CAP_AMPDU_DENSITY
->  		) >> 2;
->  
->  		/*  bwmode */
-> -		if ((
-> -			phtpriv_sta->ht_cap.cap_info & phtpriv_ap->ht_cap.cap_info
-> -		) & cpu_to_le16(IEEE80211_HT_CAP_SUP_WIDTH))
-> +		if ((phtpriv_sta->ht_cap.cap_info & phtpriv_ap->ht_cap.cap_info) &
-> +			cpu_to_le16(IEEE80211_HT_CAP_SUP_WIDTH))
+>  	/* check if there is wps ie, */
+> -	/* if there is wpsie in beacon, the hostapd will update beacon twice when stating hostapd, */
+> +	/* if there is wpsie in beacon,
+> +	 *the hostapd will update beacon
+> +	 *twice when stating hostapd,
 
-This isn't aligned correctly.  Use a combination of tabs and spaces to
-make it exact.
-
-Same for all the rest etc.
+Missing space after the asterisk.
 
 regards,
 dan carpenter
