@@ -1,148 +1,146 @@
-Return-Path: <linux-kernel+bounces-842701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E677ABBD539
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 10:22:51 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C21BBD53F
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 10:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1A183A6A21
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 08:22:49 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CF5FD349AE9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 08:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1402625D540;
-	Mon,  6 Oct 2025 08:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gEE2azDC"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8D925C818;
+	Mon,  6 Oct 2025 08:23:37 +0000 (UTC)
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E203E223DED;
-	Mon,  6 Oct 2025 08:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC62223DED
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 08:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759738964; cv=none; b=Lde+7JQAEOog2VD8qx1yu6SaKZkrE3xQIbxNYS/6Cwnpq+XVv8gI3mL+D3KXZbqfNSFM7N5MgqsqFj1JyEGQHnnQOFG53uDb+6o8Abz7AQmF51D4ttT/xiyPuNZfLeNKpNiGEt4qjIHU5Q59Z/YNGOlM07JDh1PK7DIM88XcvXI=
+	t=1759739017; cv=none; b=bsKoH6J2JIO3OvhJ8BWUCn0cHQZ+4o8sRwI4rhkhE56A9v3TrszQ0Rh/lbPIqAzyZLmeK8zNLwSRppXBCHReG/Ju8Doek/z+cpWPwW484JBdo0xxYCpff0zp4QQGKwXPJsElX2y5SpWxgkjz25t+q6OAK8fFTO5Vb5gWTecU8fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759738964; c=relaxed/simple;
-	bh=TRozN4AkVHNS643uev2vttUK93EmrcMcBZHnd2VsoUI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JqgXHf5pb77YvH1PXUCRSriB1E5T8rJrNM699P3wjP799hK158BrOAGAc5Nc0tfwDZ8q762kYSAc59aqt9XlCo7yghgvDS9yDXIqd91ZeqUoCN8pykWOAnUbggmQHJ19ageFwsJaPlQb809ZNSTP+OessdN8ietf6V/hGYWfYG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gEE2azDC; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=vXAnmWNGdjCkoluz5OPpyVXAyj8svxHC44InLHCVtJw=; b=gEE2azDCjsco3KRFLdk4M4yeQP
-	oC47spRIMXgs+p6kyntVmdKMD1Vgdc9P0PhE8Q02/T0BO7/l3tyavb33DN/u8awko61OtC0QjEFLb
-	3l9uSFfYnAHLjK8G+n5IzZGJ0JZwZGvAdIraBQa3OSj9Q5JVa44y7h4k8Y0G6ITSJe6/+y4XwklZi
-	o31pmSmXykoJnmw+KdAFF/Kxh9AuHnW4pqhiq96TIiTGXfUD09mEAD3xpHgRk+ZuOB0y3WsRoQVDI
-	UI1La2Rb9NFBjlraXc7S9yS72H5J1fwhoF/C3UrhFkIOnHXlUipKlqVCTCAMEQTMszExvQLZO5BXb
-	qHLPBvNA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v5gUR-0000000GnQC-0o7F;
-	Mon, 06 Oct 2025 08:22:39 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 3C7CF300289; Mon, 06 Oct 2025 10:22:38 +0200 (CEST)
-Date: Mon, 6 Oct 2025 10:22:38 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-perf-users@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf/events: replace READ_ONCE() with standard page
- table accessors
-Message-ID: <20251006082238.GQ3245006@noisy.programming.kicks-ass.net>
-References: <20251006042622.1743675-1-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1759739017; c=relaxed/simple;
+	bh=yPJ4uhScVV52KX4qfADm9W+4Y+fnBc/G5x2E3kGOXeI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wue8yHJNHQPtmmuebupGJnpWL4ydaAW52Lhq/WL5qmfRgUQWgUNYyQW9oEOxvVP/UdfcRQVF7muzmKraDxKCAE+RZ3ErEDFbRHnG6D55DsCkYik0oWAGpmaLVIXwUuz3MrmPFCb2a2Q4szR6cQfqwWV90GZ0Y4KzOhV0YN3PUhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-5521c99636cso1605295e0c.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 01:23:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759739014; x=1760343814;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VCOFbZedcMVlIFhZ5V9Jemyp+1b5l06JAScJmhtxVpA=;
+        b=i61z4L459WRaAAuVruNyDvyMTVAwFB+GVA+r59o7hnVUzk4901dKB/cln8hHuXR7ZP
+         KH5dJEVSgDjpxheDo926SoPsYzDLeuMfl06FAvQr7x9gEHJ+orFjsaceQWLZFnQ1FQAg
+         hR2ItnROOr9lSHDy74b5idGQTI758OMX3B0CACr8jQRy3HbfzS5hYSxOyqcWMLGfnEYQ
+         WLYqTNoqqCjQWHxdAUoK6og/8XtuJuLS0637u/7U17J4MDi4UaLM3Qy/q4vxTQ8JSC42
+         X3SHgY8ZwpF8Iom+GZ1T3OLCIOku+GvEpAFWexpcr2bXGXVI1+O+qCXZeldmDLl8bDFa
+         oy/A==
+X-Forwarded-Encrypted: i=1; AJvYcCXXs4U8mPTGu5bJNcAqcmxQp6fpWD4iRV0HILK/ruio3QeHBlu0CtpAttEiaTwQpWXvMAy8cmAY496T3qo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+g74iHhvxCBxud9yLyqBpogbicDYUP+X2JmKGJi8XvDc9+KRg
+	MIOXhMirQQwDXyLHpTv8y70iz+WNrzDNAB38Eoc+zUmI0OY+i4ZyxJWTwKCWw2xP
+X-Gm-Gg: ASbGnctHSIPdLR7B0n8GETkunitOXag/foifmgmIrqlBYhjUFB22X9QPbEnnuQ3at4C
+	fqwETG+ffyzsnagFoa0rQLPkOFweEApUw+w+1H3R7DSjpwQoUX4TuGOFg3RJIUDlexWMxTEpyJB
+	RZSHeQKiF6EnW5xw1ZC9BiadSV0vC2JQpOH8w9HiwEBGKif+FjucXY3+NWb9xY9PnI69qZjrsnI
+	WHzWdmwAwwHYxC9wxOHop+4ErqqMN/0eiCNUxZ2H4FWQIr6oLUeGGQSTFJyavayWJ7A7Z7cETm5
+	3rCDk8X+tU+oUjeHzKEXHIeU04RyD88CC/YS8IDVf0rlcc0J5U7kNZJuZI4f0aa1fXdg6wgUt3Q
+	WP3PYK7urOJzvE0Dy23hNgOuCk6JAdtXCYh7zXUg8VlT4nAglxSZF7/zQD1kO4GNkXgauxwT3q7
+	UkMAocbJ6mTvx743Xb12s=
+X-Google-Smtp-Source: AGHT+IE8LVdAzCX0QproU2wtlaKKy4FXncXCYP2t4KqIL2D3a/wGEcSVqyQuNYCL3yQxznmzfmsHfg==
+X-Received: by 2002:a05:6122:659f:b0:544:9a46:7c85 with SMTP id 71dfb90a1353d-5524e8884a7mr4112423e0c.4.1759739013579;
+        Mon, 06 Oct 2025 01:23:33 -0700 (PDT)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5523ce202bbsm2882775e0c.4.2025.10.06.01.23.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Oct 2025 01:23:33 -0700 (PDT)
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-580a1f1f187so1925442137.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 01:23:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVUa0eOLEXJcCl2rmh/O3yysrkfz0wbWVgu0HLc2rmJHbgunAmGsiskO7bMQblixjXIfIn32q60FBqUTAs=@vger.kernel.org
+X-Received: by 2002:a05:6102:5548:b0:4de:d08f:6727 with SMTP id
+ ada2fe7eead31-5d41d0015a6mr3619673137.13.1759739012879; Mon, 06 Oct 2025
+ 01:23:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251006042622.1743675-1-anshuman.khandual@arm.com>
+References: <20250729152804.2411621-1-arnd@kernel.org>
+In-Reply-To: <20250729152804.2411621-1-arnd@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 6 Oct 2025 10:23:21 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW6jCbB80JhUVjBPnMCAXn5Amdr6KM48jvnd+VnMR40gg@mail.gmail.com>
+X-Gm-Features: AS18NWApwbBW2RVTzdSSIapTOtWIdeCfjdH3fDWaLQJJ19wwGQqxgXBBfp0nwbw
+Message-ID: <CAMuHMdW6jCbB80JhUVjBPnMCAXn5Amdr6KM48jvnd+VnMR40gg@mail.gmail.com>
+Subject: Re: [PATCH] hwrng: nomadik: add ARM_AMBA dependency
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	Cai Huoqing <cai.huoqing@linux.dev>, Arnd Bergmann <arnd@arndb.de>, Dragan Simic <dsimic@manjaro.org>, 
+	Francesco Dolcini <francesco.dolcini@toradex.com>, Daniel Golle <daniel@makrotopia.org>, 
+	Christian Marangi <ansuelsmth@gmail.com>, Aurelien Jarno <aurelien@aurel32.net>, 
+	Markus Mayer <mmayer@broadcom.com>, Lukas Bulwahn <lukas.bulwahn@redhat.com>, 
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, linux-crypto@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 06, 2025 at 05:26:22AM +0100, Anshuman Khandual wrote:
-> Replace READ_ONCE() with standard page table accessors i.e pxdp_get() which
-> anyways default into READ_ONCE() in cases where platform does not override.
+Hi Arnd,
 
-Note that these accessors are more recent than the code in question.
+On Tue, 29 Jul 2025 at 17:28, Arnd Bergmann <arnd@kernel.org> wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> Compile-testing this driver is only possible when the AMBA bus driver is
+> available in the kernel:
+>
+> x86_64-linux-ld: drivers/char/hw_random/nomadik-rng.o: in function `nmk_rng_remove':
+> nomadik-rng.c:(.text+0x67): undefined reference to `amba_release_regions'
+> x86_64-linux-ld: drivers/char/hw_random/nomadik-rng.o: in function `nmk_rng_probe':
+> nomadik-rng.c:(.text+0xee): undefined reference to `amba_request_regions'
+> x86_64-linux-ld: nomadik-rng.c:(.text+0x18d): undefined reference to `amba_release_regions'
+>
+> The was previously implied by the 'depends on ARCH_NOMADIK', but needs to be
+> specified for the COMPILE_TEST case.
+>
+> Fixes: d5e93b3374e4 ("hwrng: Kconfig - Add helper dependency on COMPILE_TEST")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Furthermore, I can only find two pointless overrides and suggest the
-below.
+Thanks for your patch, which is now commit efaa2d815a0e4d1c ("hwrng:
+nomadik - add ARM_AMBA dependency") upstream.
 
-This then raises the question of the purpose of these accessors; why
-isn't a plain READ_ONCE() preferred if that is really all it is?
+> --- a/drivers/char/hw_random/Kconfig
+> +++ b/drivers/char/hw_random/Kconfig
+> @@ -312,6 +312,7 @@ config HW_RANDOM_INGENIC_TRNG
+>  config HW_RANDOM_NOMADIK
+>         tristate "ST-Ericsson Nomadik Random Number Generator support"
+>         depends on ARCH_NOMADIK || COMPILE_TEST
+> +       depends on ARM_AMBA
+>         default HW_RANDOM
+>         help
+>           This driver provides kernel-side support for the Random Number
 
-[ this skips over the ptep_get() issue, which does seem a little more
-involved -- but also has some definite want of cleanups ]
+After seeing CONFIG_HW_RANDOM_NOMADIK disappear from m68k
+all{mod,yes}config, I became intrigued, as it did build fine before?
+If CONFIG_ARM_AMBA is not enabled, both __amba_driver_register() and
+amba_driver_unregister() become static inline dummies, and the rest
+of the code and data is not referenced, thus optimized away by the
+compiler.  I verified this is the case on amd64 allmodconfig, too.
+How come this failed for you?
 
----
-diff --git a/arch/arm/include/asm/pgtable.h b/arch/arm/include/asm/pgtable.h
-index 86378eec7757..c4c23dc4dc77 100644
---- a/arch/arm/include/asm/pgtable.h
-+++ b/arch/arm/include/asm/pgtable.h
-@@ -150,8 +150,6 @@ extern pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
- 
- extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
- 
--#define pgdp_get(pgpd)		READ_ONCE(*pgdp)
--
- #define pud_page(pud)		pmd_page(__pmd(pud_val(pud)))
- #define pud_write(pud)		pmd_write(__pmd(pud_val(pud)))
- 
-diff --git a/arch/loongarch/include/asm/pgtable.h b/arch/loongarch/include/asm/pgtable.h
-index bd128696e96d..8184e8c44db6 100644
---- a/arch/loongarch/include/asm/pgtable.h
-+++ b/arch/loongarch/include/asm/pgtable.h
-@@ -107,7 +107,6 @@ extern unsigned long empty_zero_page[PAGE_SIZE / sizeof(unsigned long)];
- #define KFENCE_AREA_END		(KFENCE_AREA_START + KFENCE_AREA_SIZE - 1)
- 
- #define ptep_get(ptep) READ_ONCE(*(ptep))
--#define pmdp_get(pmdp) READ_ONCE(*(pmdp))
- 
- #define pte_ERROR(e) \
- 	pr_err("%s:%d: bad pte %016lx.\n", __FILE__, __LINE__, pte_val(e))
-diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-index 25a7257052ff..bc76db9974e4 100644
---- a/include/linux/pgtable.h
-+++ b/include/linux/pgtable.h
-@@ -341,33 +341,25 @@ static inline pte_t ptep_get(pte_t *ptep)
- }
- #endif
- 
--#ifndef pmdp_get
- static inline pmd_t pmdp_get(pmd_t *pmdp)
- {
- 	return READ_ONCE(*pmdp);
- }
--#endif
- 
--#ifndef pudp_get
- static inline pud_t pudp_get(pud_t *pudp)
- {
- 	return READ_ONCE(*pudp);
- }
--#endif
- 
--#ifndef p4dp_get
- static inline p4d_t p4dp_get(p4d_t *p4dp)
- {
- 	return READ_ONCE(*p4dp);
- }
--#endif
- 
--#ifndef pgdp_get
- static inline pgd_t pgdp_get(pgd_t *pgdp)
- {
- 	return READ_ONCE(*pgdp);
- }
--#endif
- 
- #ifndef __HAVE_ARCH_PTEP_TEST_AND_CLEAR_YOUNG
- static inline int ptep_test_and_clear_young(struct vm_area_struct *vma,
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
