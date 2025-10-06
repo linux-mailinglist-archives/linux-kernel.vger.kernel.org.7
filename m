@@ -1,190 +1,211 @@
-Return-Path: <linux-kernel+bounces-843133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2EC1BBE76D
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:18:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08C27BBE770
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45BBA3B7862
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:18:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0A643B8405
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC1B2D3EE3;
-	Mon,  6 Oct 2025 15:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4792D6603;
+	Mon,  6 Oct 2025 15:19:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="02fDO24u"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010013.outbound.protection.outlook.com [52.101.61.13])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A9e6Fq4l"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC49194C86;
-	Mon,  6 Oct 2025 15:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759763876; cv=fail; b=GF24DTwv93FkEceRI8xCMl0E4x8PPEenDUayBakP9mq4ton0R/nTWlj+LSwqfpodDgSgO4n/IsiBuV4cuA9aOSt4PRLRcgyrbF8rC6l0paxVE0DCrw8k97sSbYu9SqzPdBgQHmXw28t8i1eq78IOUkx7r/05bjpDNxWEe4Y3GP8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759763876; c=relaxed/simple;
-	bh=XHkaduVY4ALMXUe+mC31KrY8PfBUwTJDDGJUhfk97ow=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tCzGGaAlMt7xQvqJKvuH7kGsEIZi9Jg5GNTlECoqupatOSgTGMkqkwPJQAugZB2o8gFJle/WSzXugafvdKCdooTS60a9u5suySpWbXp3kM6JEi42Gayxagg4ekC4EZqKUAFA5+DDqeq3GahFt2BHztVs5uavN30MbOnMqmOrOEc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=02fDO24u; arc=fail smtp.client-ip=52.101.61.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T11rgFgp88Dw3HWf/TdXtrVniylko0/TrC7IF/NLpcOm87roYnWtWRM8fu3yvTrORnd+YfP4C+bLi8CSjQd5PJZsuNAREgClmtTInRyEGb4GS1kqpsqXYUN/dxjXOvcwXzodvy3JVtw2QrnpZUU3sK9T+r8qmvy0SG3af+7EqSdlmI571zzLggXFLSAOxnxGI5qOzOWs8c6WgF/yPABMyPfoxEFPLXxsyT2Py9cVIVU3ZCiR89epte6MOq38bSD3CRljFi6q56K9PNMgNznjEUdvqvAJbZGe2mkucbjhY+KadFyD+Ufy8OLl4gMSRCDMVsrvFM9zClMVoScEyUvw9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bFL8cGLxDANHtox70QuZLBcNahtrSMQ0m0zihYNKYlc=;
- b=rJAxTKkc44MYpWpaGF5lq1/AQ9PBvfCsSJe4J6fkq2MJaWIDoCMcNg/SVq1G+ApMYrZVhD7EEJp44UpJsu2snyRPcNjQHMDR2dOD+W/sFZtnT837bnF0vet6KfiBhmM8lHuU6Y8wyP4mcKZt9kXF2Fmv2JXtOe9mEBp5oZ3pFAItkCgyHgwsFzvEqQEd64obxKCdz5mJvbvDc4PmLEeR3HgXgdJ8Q7m6BKA0+1m0Zwte1lnD8Cvx1B98IHU4g6fFg7FfxZruvCitiQuv09s4/vqNZVMmCFV0R6h5ZSRgGiMGoWBs9dwz9aXKXlLoXgBWgW77I10QkulQMptaNchM9w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=alien8.de smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bFL8cGLxDANHtox70QuZLBcNahtrSMQ0m0zihYNKYlc=;
- b=02fDO24uceqqzanQSm3FKuET11DjhcYk/PPHwYqDa1OgKRfUKgYW715IbphJK+RWVUnJNJ7fOsjUthhtBHQm1P12ac8TInSuxmVVSKryjv6/leogozgOo/8opi0k7+wytgQIMYjtdTmQrrWYYHL1QoVivWHPQIPWlfZ+QYToEeE=
-Received: from MN0PR05CA0008.namprd05.prod.outlook.com (2603:10b6:208:52c::18)
- by SN7PR12MB8772.namprd12.prod.outlook.com (2603:10b6:806:341::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Mon, 6 Oct
- 2025 15:17:45 +0000
-Received: from MN1PEPF0000ECD7.namprd02.prod.outlook.com
- (2603:10b6:208:52c:cafe::c8) by MN0PR05CA0008.outlook.office365.com
- (2603:10b6:208:52c::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.9 via Frontend Transport; Mon, 6
- Oct 2025 15:17:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- MN1PEPF0000ECD7.mail.protection.outlook.com (10.167.242.136) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9203.9 via Frontend Transport; Mon, 6 Oct 2025 15:17:45 +0000
-Received: from purico-9eb2host.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 6 Oct
- 2025 08:17:42 -0700
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: <bp@alien8.de>, <tony.luck@intel.com>, <linux-edac@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <avadhut.naik@amd.com>,
-	<john.allen@amd.com>, Yazen Ghannam <yazen.ghannam@amd.com>
-Subject: [PATCH] RAS/AMD/FMPM: Add option to ignore CEs
-Date: Mon, 6 Oct 2025 15:17:31 +0000
-Message-ID: <20251006151731.1885098-1-yazen.ghannam@amd.com>
-X-Mailer: git-send-email 2.51.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD8D196C7C
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 15:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759763972; cv=none; b=WVgsaSXtbEWdvBPTbA/+UNQPa1jMh28whc+8xNHK8e9DvME28TyLekLH3eN03zI2vovJOl96ZtzTBp5ZNSCw/WxpePEmpjI8BBfdtZIASZY21/Mt3YRM+0bWhqX8sO6WxN8FAFM6aK9ax0SiCDdoXXd2fLY+gBl/BNbA2Mt0Cv0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759763972; c=relaxed/simple;
+	bh=QSfsbYVXfa4yZWYa7PwAUZH5Ynxmc9HSGg8nJqJMmk4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=I3nrill+XvmWSPguIh6ZgzqpTwt0NeOTm/KxeXBdt799elCXl1lWi8Y8nY2lIs+ud1wH7lxosRatLIvyPSC3RcN7nShX3LfaWZ6xK6ramskrlrME48CdjuslW41j1t6VLzV/2aheLRBvYpitI1c9PQf+KkjOUIW2h7PL4W1ozNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A9e6Fq4l; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759763969;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QSfsbYVXfa4yZWYa7PwAUZH5Ynxmc9HSGg8nJqJMmk4=;
+	b=A9e6Fq4lmIfLE/4fLZ1UTSSOld3iuYsE0/Q8rmrmNCBlBzzxsT5AFqjJz+gnmbRst/GP/p
+	t84sgLlF9ZZ/nEQjwCiuEKtgJrmgn0OY+IMPWbSjsNQZs19CiX8r5ajEtyCJO+ESQCIQAo
+	F2O600UPrjkelAZyVM2VmCF4LgqvUsY=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-56-uQWEhmZqPq6afz-Kr3-0ZQ-1; Mon, 06 Oct 2025 11:19:27 -0400
+X-MC-Unique: uQWEhmZqPq6afz-Kr3-0ZQ-1
+X-Mimecast-MFC-AGG-ID: uQWEhmZqPq6afz-Kr3-0ZQ_1759763967
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-42557bdbe50so2842459f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 08:19:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759763966; x=1760368766;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QSfsbYVXfa4yZWYa7PwAUZH5Ynxmc9HSGg8nJqJMmk4=;
+        b=bTyTZNhu5ENOBY6ZvoX+e8AFlSBz5jcyo6X1VxS6O0QgVqBfrMlQnokJsbqw0cepjg
+         YVhl7tPEHBrtIEUbFyPzA0i7nrV8LPmBwfGUjZAtBbr/NBDAepaVnVAftO00hEqFDx8O
+         dc2byBorBZZq1Rj+AWjyBWyvO1zfzaH89VEbihU+LDB0ZusDydFSHZ23ezXHOlTStDHO
+         F2eqauSJnILd82wNUgBTTgOu7XScW/ZufzHSKRxKU8qjVt3eH2Mjp1IorGFY4qEpYdi6
+         ikx5LjYNf0JlubYmP0YH4QhX45ZtI2/8/xPGvVuoMtz8Kkr4zP/kcXt9kiLgssOUoL3C
+         Fkmg==
+X-Forwarded-Encrypted: i=1; AJvYcCVbrN6AqZFo8REkYZHZ1PNRjKqKTgL7KQtKaa4TpIKs46+UcLE5Vfa1a8cFHr/m93iOYjF3fT6uLdSxELk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr/QIQ69x7EA1XthEyJDiJKzjo9EQgvFcZU4+GkLlwZdpV9dHj
+	VbYdfrpDU+IaIGXNpD+EjbHp8Jmfbdb93aMD+YumfZSTkJaEPOdZoWbrLYFjMn1uTpgoRKXYVsr
+	SvMalywla0/ez6a7ujPF/WRJd+HtVVB5IFCfEjzMl0GrxBN2jt9PvobauPpQ1D8gmqw==
+X-Gm-Gg: ASbGncuuu4rxg80TBtNXwa25M8/cjZLixKWg45J70ehgz6ym+D2XpQhgDkanSyKzgAp
+	i5LBe9BPlpgoDkGLY7zON9VRmP2N5PpaoNpStYyq0NGsOeg2gftrW+3gFZF3MGKGXCiopp7XyQU
+	4JmxJTlMb2f8d3j6asDAOCDGKQM89aNXOnYdQE8y43Bj3+oCrv+qSmnK1gIUrYwHaxKoae+h0Co
+	lfkHfV1Mg5dw5vKLvl9EOf20yppKwd/ks8bAOD6nXto9d4RU2Oj4cIpNllVkkrvlze8Q5Ahn3Qh
+	IIalzr09BFLd1KCi3yQ7S9u2UQdTcQ3sK62jTxxmuxUwnG+wdiQajqW+9u2RKNX6SMetmeM=
+X-Received: by 2002:a05:6000:3103:b0:3f5:3578:e538 with SMTP id ffacd0b85a97d-4255d2ca77emr10468439f8f.21.1759763966637;
+        Mon, 06 Oct 2025 08:19:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHjOGZhBb1Hj6boNC5jaq+DsBlqku3D3S8G53bScw07rODCyR44HfCHuJGOAX5DYcdXXAMU1w==
+X-Received: by 2002:a05:6000:3103:b0:3f5:3578:e538 with SMTP id ffacd0b85a97d-4255d2ca77emr10468415f8f.21.1759763966126;
+        Mon, 06 Oct 2025 08:19:26 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.42])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e7234e58asm160675225e9.7.2025.10.06.08.19.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 08:19:25 -0700 (PDT)
+Message-ID: <2536a7777eb54ede40a335fa4204e87301b13040.camel@redhat.com>
+Subject: Re: [PATCH] rv: Add signal reactor
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Nam Cao <namcao@linutronix.de>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>
+Date: Mon, 06 Oct 2025 17:19:24 +0200
+In-Reply-To: <20251006115555-9822f5f1-fc9d-4d6a-9735-274b242e0eba@linutronix.de>
+References: <20250919-rv-reactor-signal-v1-1-fb0012034158@linutronix.de>
+	 <d0aaaf1f47f0d948b60b0575e179564e3c024188.camel@redhat.com>
+	 <20250922162900.eNwI7CS0@linutronix.de>
+	 <ced1cdde298d105ba2d789e4e4704caac8dec518.camel@redhat.com>
+	 <6a5fde33-b3e3-44e2-8ea5-5f4cf350cf35@linutronix.de>
+	 <87ikgxqrna.fsf@yellow.woof>
+	 <3c55441187b869b5bb07b74ef88c10bfd51f9fb1.camel@redhat.com>
+	 <20251006115555-9822f5f1-fc9d-4d6a-9735-274b242e0eba@linutronix.de>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0BrZXJuZWwub3JnPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmjKX2MCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfIQuAD+JulczTN6l7oJjyroySU55Fbjdvo52xiYYlMjPG7dCTsBAMFI7dSL5zg98I+8
+ cXY1J7kyNsY6/dcipqBM4RMaxXsOtCRHYWJyaWVsZSBNb25hY28gPGdtb25hY29AcmVkaGF0LmNvb
+ T6InAQTFgoARAIbAwUJBaOagAULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBMrKEfgLgd0WcK
+ eo9u9KbElYeE3yBQJoymCyAhkBAAoJEO9KbElYeE3yjX4BAJ/ETNnlHn8OjZPT77xGmal9kbT1bC1
+ 7DfrYVISWV2Y1AP9HdAMhWNAvtCtN2S1beYjNybuK6IzWYcFfeOV+OBWRDQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD7:EE_|SN7PR12MB8772:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1e78b4c9-b63b-4b45-b1f4-08de04eb8068
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pPf5fKf1KgVTzKsYrr6T9MCnnrwbVO+z8DzEZsE7uue2gi7zBYY0YioCvFeO?=
- =?us-ascii?Q?Mi0oq+OM0SMt5tmExQ3lyHCYTqz33MEzG1E0G1HzokRa1wjJP/qdyLQ+qiaR?=
- =?us-ascii?Q?s+LaGw1V/Ry9QHjmjdO1bDuDz6F0awE63hVsENgox9s0OQ74ef5UO0MW5LeM?=
- =?us-ascii?Q?9fJYqg6KT1P5YfmUZY4bUJOtFlvFrGOVyc8qAqOfqhG/eYfUvPHYPTRzlErQ?=
- =?us-ascii?Q?OUMyBRASmn8ahxaOmLDH31uOCKmwA411Fktm/5hJshV9UWX1+nPBZSjovogk?=
- =?us-ascii?Q?KlW5yn2DbmXDzvgwcXYwG+8vDdRH1s4ClTA+0Kwp99BS4lq0sV8wSL/UkLdp?=
- =?us-ascii?Q?3TYwwJXVunYmLihre0Tdb4q6cS6ebV0mQDpGdlzbM/4bkssu1zZSe0Yjtdx6?=
- =?us-ascii?Q?JQRLKJMjY+rTfijJHlDLdGx172p99PQ6aW52d069Fv+Z27orlEdrV7X07Boo?=
- =?us-ascii?Q?3ec9EHOaDG0M+qdMH3wafeetQJvYAONK8YXEExrkNyqm4h4ViQ0LaMEA4mdk?=
- =?us-ascii?Q?P5RrsCzLzj9Sikpsv/db89C1jFg778r6sA0vox8rgCVQN4LjUm+xvJOW0jje?=
- =?us-ascii?Q?dTcpswXCedEZ/8rrbDjAomFVlo0iP8BtodKcXsr0ni517uJL1d0BTFj8JqY/?=
- =?us-ascii?Q?0/HlzUEqSsUKR6yo1VHpJFtezrgehHGiEWJq5n0n2ODe/FV5qFI84sz/ZPKH?=
- =?us-ascii?Q?WNPSg2wi6rKwP31sLZe2jMF2OJNQgSuqgrAtzqDm4M7BGUM/olmwwdivIUDi?=
- =?us-ascii?Q?vbGgpMWj4ww6jw4X7PmRKi44jgzOEWpKGJn0SDjpBB3e/PGNc6spDHhtFmY+?=
- =?us-ascii?Q?VuGU1FPoC/dzxHMlFUSC34fsDMKqiqvmvJXFQLdi5mAcWsnYbPQiCB3KVLNJ?=
- =?us-ascii?Q?GuvEGQ8jBdf8njOHYeGM1Q5u+QSeH2DMvHV3WTcPPCXjlWZag15lwakPfcet?=
- =?us-ascii?Q?VxF8f6qOkic9d0aKooWC/Foz8yz3HfFk7llu3LJ66JiKibq5WKjiLAtGYUBh?=
- =?us-ascii?Q?ZmjkTDtZrP3YFNOV75PX3YzVLiLNXewxrEES4qYsuYLRkWCro8tG8Aw/UjIQ?=
- =?us-ascii?Q?mH3b/5XyVeimZQOcC8VajBaTciJCiFySwGNkOF81lNx8czAnp6vkY+tR0+eV?=
- =?us-ascii?Q?uCaRF5V/3QYehbCIzFJm5lOCk3z1oxJ+n2sOK3F0Z5CO59AMkeGi/OavxHy4?=
- =?us-ascii?Q?aBCAks53RCK8+rD7eTNgNNZIaf8eOU6DENTQXpVf4XNUQ9/7eqgJwh79pPT4?=
- =?us-ascii?Q?Obv+2vcSe6qS9k3ZYU/lyeI6q6J9xSFnHWpBSZgLZt8IRYR2Cwkux7VrGrv5?=
- =?us-ascii?Q?0yTIdYJxk1MsrylXTjqy+255Q72U/HMUdKP65wZ4zG8aqpBxnkRqzp1JGvJB?=
- =?us-ascii?Q?6PLFGn6fJSzO2lyiPE3rUjq9uTMCaLioWEkXzLXPF4Ljnx8dvZ2xfkINNkOt?=
- =?us-ascii?Q?7XaWVO4sb0rHfDIqupz0+yqTrcaJ3CEJ5OBZtNyCQUKUZjKuJ2EsI5KlmxKb?=
- =?us-ascii?Q?0qtynMSr/ip9Eiq6u/bSgSS6Ux2H0wBigCKhSgH6Ixuq1PmjKbuDkAYzH0WA?=
- =?us-ascii?Q?C02xai7xTDOvB7/Wxqs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2025 15:17:45.0825
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e78b4c9-b63b-4b45-b1f4-08de04eb8068
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000ECD7.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8772
 
-Generally, FMPM will handle all memory errors as it is expected that
-"upstream" entities, like hardware thresholding or other Linux notifier
-blocks, will filter out errors.
+On Mon, 2025-10-06 at 12:10 +0200, Thomas Wei=C3=9Fschuh wrote:
+> Hi Gabriele,
+>=20
+> > Well, many use cases might be better off with tracepoints, but reactors=
+ do
+> > things tracepoints cannot really do.
+> > Printk is much faster (and perhaps more reliable) than the trace buffer=
+ for
+> > printing, panic can be used to gather a kernel dump.
+> > One may just attach to tracepoints via libtracefs/BPF and do most of th=
+e
+> > things you'd want to do with a new reactor, but I see reactors much eas=
+ier
+> > to use from scripts, for instance.
+> >=20
+> > LTLs don't benefit as much as they don't print any additional informati=
+on
+> > via reactors, but DA/HA give hints on what's wrong.
+> >=20
+> > I wouldn't get rid of reactors until they become a huge maintenance bur=
+den,
+> > but probably we could think about it twice before extending or making t=
+hem
+> > more complex.
+>=20
+> The existing reactors could be implemented on top of the tracepoints.
+> This should make the RV core a bit simpler.
+>=20
+> Note: The current interface between the RV core and the reactors is
+> inflexible.
+> Passing only opaque varargs requires all reactors to format the string fr=
+om
+> within the tracepoint handler, as they can not know how long the objects
+> referenced by the varargs are valid. Passing the actual objects would all=
+ow
+> for example the signal reactor to format its message as part of the task_=
+work
+> handler instead of the signal handler and avoid the allocation of a fixed=
+ size
+> message buffer.
 
-However, some users prefer that correctable errors are not filtered out
-but only that FMPM does not take action on them.
+Yeah that's right current reactors don't really make sense for things that =
+are
+not printing. But as mentioned before, fitting this for all the different
+monitors types (per-cpu/per-task or something more exotic) and model types =
+(DA
+or LTL) has its challenges.
 
-Add a module parameter to ignore correctable errors.
+I personally never really used the panic reactor to get a crash dump, but I=
+'d
+probably miss the printk one, since it's much faster than waiting for the
+tracepoint stuff (at least when matching with other things on the ringbuffe=
+r).
 
-When set, FMPM will not retire memory nor will it save FRU records for
-correctable errors.
+As I get it, extending the reactors integration to support more things migh=
+t not
+be too useful, but I'm not too convinced on removing reactors for good.
+I'm gonna give a little more thought on this one.
 
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
----
- drivers/ras/amd/fmpm.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+> > For instance, what's the exact use case of the signal reactor? Isn't it
+> > simpler
+> > to do everything in BPF? Is the signal needed at all or something else =
+(e.g.
+> > perf) would do the job?
+>=20
+> The signal reactor is convenient to write automated tests. It can be used=
+ to
+> validate the monitors by triggering known-bad systemcalls from a test
+> executable and expect it to be killed with the reactor signal, see below =
+for
+> an example.
+> On the other hand it can be used to validate that the kernel itself does =
+not
+> regress with respect to RV-validated properties. For example the test pro=
+gram
+> can enable the rtapp monitor and run an example RT application using all =
+kinds
+> of known-good IPC mechanisms without it being killed.
+>=20
 
-diff --git a/drivers/ras/amd/fmpm.c b/drivers/ras/amd/fmpm.c
-index 8877c6ff64c4..08b16a133f20 100644
---- a/drivers/ras/amd/fmpm.c
-+++ b/drivers/ras/amd/fmpm.c
-@@ -129,6 +129,14 @@ static struct dentry *fmpm_dfs_entries;
- 	GUID_INIT(0x5e4706c1, 0x5356, 0x48c6, 0x93, 0x0b, 0x52, 0xf2,	\
- 		  0x12, 0x0a, 0x44, 0x58)
- 
-+/**
-+ * DOC: ignore_ce (bool)
-+ * Switch to handle or ignore correctable errors.
-+ */
-+static bool ignore_ce;
-+module_param(ignore_ce, bool, 0644);
-+MODULE_PARM_DESC(ignore_ce, "Ignore correctable errors");
-+
- /**
-  * DOC: max_nr_entries (byte)
-  * Maximum number of descriptor entries possible for each FRU.
-@@ -413,6 +421,9 @@ static int fru_handle_mem_poison(struct notifier_block *nb, unsigned long val, v
- 	if (!mce_is_memory_error(m))
- 		return NOTIFY_DONE;
- 
-+	if (ignore_ce && mce_is_correctable(m))
-+		return NOTIFY_DONE;
-+
- 	retire_dram_row(m->addr, m->ipid, m->extcpu);
- 
- 	/*
+Yeah, what I meant is: having a signal isn't your goal. Easily understand i=
+f
+there was a reaction is.
+You could even restructure your test using tracepoints without any signal.
 
-base-commit: fd94619c43360eb44d28bd3ef326a4f85c600a07
--- 
-2.51.0
+So if I get it correctly, you are both "voting" for removing reactors in fa=
+vour
+of tracepoint-only error reporting.
+Am I getting this right?
+
+Thanks,
+Gabriele
 
 
