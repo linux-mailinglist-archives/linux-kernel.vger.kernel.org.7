@@ -1,144 +1,620 @@
-Return-Path: <linux-kernel+bounces-843469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F950BBF8B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 23:09:45 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D6CBBF8BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 23:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DEBE24E3EE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 21:09:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4EDD834BCC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 21:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B2029B776;
-	Mon,  6 Oct 2025 21:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1862D5A14;
+	Mon,  6 Oct 2025 21:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="AO0KEAPd"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nY36OQdx"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012069.outbound.protection.outlook.com [52.101.43.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903431A83F7
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 21:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759784979; cv=none; b=GEobbj4Ny4hz5xrPruhxWpCYLfX+pkp5FtrTDNi3sxJfFnqw3u2htKeH1oZwMHJ56CTvcvN5ZdUUktdmoOjSQ2Nd/eTIbdhSgnmHLVqYEOTIaxGTt+UKWHnJQ54KBFNI4KBGsVGQa7Ns/ti8lFN4SOCQMhf/yqyeyHQgpXwNIU0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759784979; c=relaxed/simple;
-	bh=Ap074zAXu4mFrWRLm0JmNuIFRsZhfvi1z8w8FgfUmBo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UKlOg6MJhCQhiBIJdjshCu4yFVGEZ5uLYL3JdFE14F7VtYXQ0RtNx9k9BScKM3q+rNppsjHo5EbQfpxWqqbzJU5B16zgZXbCiVpgaRUhJbvIIbIw9z8bl8HlNBzdA90jIZW3cPsOkt0m/zmp1gOWbeqjB5S9zaRwI//lt1/XjGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=AO0KEAPd; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E2A4640E01C9;
-	Mon,  6 Oct 2025 21:09:32 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id kO3OOCYxCCv7; Mon,  6 Oct 2025 21:09:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1759784968; bh=c1+6SsyXr16iTJ9Mxlw1sQUYPEdrrt9C/MDPFCz5oQY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AO0KEAPdmak5kRZvbh+e01mPzXjcPeHZCiS0xWxsAS1eszdoNs7KjyvcEaSYvRZ1q
-	 2FPsrvEh2yqV6krGFgLzaaucDGzpu1CrWXQKAefaxjYGVaqSv5XfmkWuxXxQaEmq+y
-	 RXtJMIGOSpbz3WzmLb3a/evVa7wklFQLgABJ0juUi95nG5dzv5BxC+NyBykYDbKCTv
-	 CC5KS8Y6UlZraisI6n6W+qvzTf+m0NB751l28oRwVoUc05HpbukcSRk8yFUshhPaKJ
-	 86QX86hdyuMZhKViNqA/+I7f6Cg5js0WhAusT8TW1NVrO3oaQOfEERGFKOmnLG/V0+
-	 L//RiJXyJZZd2IIl8UC+0+jZsuh+cFfk7+rpyl72aEToR/H0+Nwd0F8agUsmT0D9TR
-	 HVkP5eBnYtwOprWa3cxigmP+n+uDePA1QdL+Gov0McM30JJr7mYz0bXhqcOK9sriZi
-	 /ric9zerBvVhuQ6Z2JgaF0JXvyW4P/Yp1oVxaIu5CYtLoUrPW6b9wveHjLFGWboqiK
-	 BO5UiufMZ0pGMHaS7O92gzAQvTHdBZPNNGBcJ7YsL6wmC0tHtnvyaLVtU0gjOsvqy5
-	 4BYGt6XqqTd0QRAGL3l4CLYCjLQ4P6sq1t3UnKZ+O8bAZfOYWWcyntJzMvgiT4Lfn4
-	 okWIRMFGNrfK8E6Rkpayoccg=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 8DFD840E019B;
-	Mon,  6 Oct 2025 21:09:24 +0000 (UTC)
-Date: Mon, 6 Oct 2025 23:09:19 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ingo Molnar <mingo@kernel.org>, x86-ml <x86@kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] x86/apic for v6.18-rc1
-Message-ID: <20251006210919.GIaOQv_6AwhmPRu7fr@fat_crate.local>
-References: <20250926102823.GAaNZqxzXkasrXXFjn@fat_crate.local>
- <CAHk-=wibOJBAp66CPz0qfSWe93iisGvN4xL_MzuwSZ8sAut09A@mail.gmail.com>
- <20251006122857.GAaOO2CX8vkmVw_4Ya@fat_crate.local>
- <CAHk-=wg65RDkvPd3rFZr32n8L_LQJAcWie1K-=azcLS6Y5JwkQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BA91A83F7;
+	Mon,  6 Oct 2025 21:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759785020; cv=fail; b=YjHLkkEemjTVJCEA0KoG1E2Pl2UnRw3l1L17FB6EiEBwURdZWSiGHYPzssFinAuryWusLab7uUwW7fMiU+e42A1hdOw2YRgV90I65iI9L75AUJ9HvRjyTZnLDv3dPzL9GSv1NZUr+ji/hbMaOTlOxOfAiuOartfzoqjWMw4nJ2s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759785020; c=relaxed/simple;
+	bh=0txdW3svak9Zq1FPfG+qDQ6EmJKgdEuwbRoWjPQqe9o=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=QEYVBZZ3rhDO13xvwsRnMcK1w2D5NjY/VVV99TdVijxrpwD1Ik8Im4VYKHOd1D8aLLSJOPyx5jXEij6TB7gM9QSxIr4xcoJy1R14djX1O3nkSoS4QoVq0/A8tFFjzF5ST5kJOLPwh4FkTmTWDBSfuvfDZr4S/t9ALR4vkm7M5JE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nY36OQdx; arc=fail smtp.client-ip=52.101.43.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wgMSjgathNrh67HiaywoZW/CaQCePOVTDstf7nsWasCwWN87RdgsolgFDtyx7z9TZ4kE1JQR5Gwye7SboqdeBWD3abeM6ujh4bbF0BzG4HbIiKzu+HeVEsColwVt7oMiEgvYp2VPjmhMDWxTkTcQWd8A3odYTIBmeBhb/KSMwraCSz9i7sPjNV6J8oTQAwDBY3RgnvDQ5sTUrZU3z03e8tpXHW4pmSyecUM7cIopTXIRgcnXXUx4vTT9NZAOHlIMN3Li55n5eksiVzQ7ilaqH9pRg4PSA6Kk4hgCAcxqcX3nyYma55MOZWOQPjQhium4N3OKEWuOxE6JQBjnh1ew0g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OB+X8JXmGiaCiI8A4/cDXjWD6BBcQU4A/IAF9sl6Kt4=;
+ b=rNWjU1xzzsIjgKw6fvENN7HVO+2gvFQWUIq6GkQTkdZ2N5O1AGFSv4YIwl948gPxDvivoArMu9SFrjLCKOG3G4TgYnoC/M8X0nKAajAqOXgGstkCBT2iXAiQfV6zWtcnrtX3N2CsK+3qZHxuULwT7Pz0rXoCofbyVhQWUsc9Nsk966KB1eWktflrgja3K194+ZFKH6M5xy0cIzjJv3VqZ27Fv20uCRL0QJlJumVorUornm53KM1cyMtPFGBOhgqoQIupVDOdVjTwZ6PYOXnJiu5kPqgbJ9Vf+id/2yOsC9bYMeURbcWv68Tt05DyCnx6HQdijWXxFgNAH/MpWbjGog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OB+X8JXmGiaCiI8A4/cDXjWD6BBcQU4A/IAF9sl6Kt4=;
+ b=nY36OQdxyxuVrsNe0rMKwSVmSFUW9EJxwFddKUJi4kEwhY36snUMtoQs9AjCsVZ7r35r1lUGzzqleG9yZ3WK2XfJ0bFtLkXjOhFoKSBo0uly5B88l9oCyjakm1CCI1IcmGruAjmdO4l9yrN85x0Vof8/54shEjR7tJQHM4RhqdPhtrIQJQ2dg76nDF0QOu1R1165SU6nk72dq56+C0Kst39AZW2NZpr2m2pobSqg5IHMxZHvoW4WHbJ0yXop8xRq/okqVivbGMua1a8kvTk+Be5xGr8MhOGnTXjgQp85+u4BH5GsErApuPYD4y5NmZhjuZc8yktuaUCe2GSFOFhP+g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by SA0PR12MB4430.namprd12.prod.outlook.com (2603:10b6:806:70::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Mon, 6 Oct
+ 2025 21:10:08 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9182.017; Mon, 6 Oct 2025
+ 21:10:08 +0000
+From: Joel Fernandes <joelagnelf@nvidia.com>
+To: linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	dakr@kernel.org,
+	acourbot@nvidia.com
+Cc: Alistair Popple <apopple@nvidia.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	bjorn3_gh@protonmail.com,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Timur Tabi <ttabi@nvidia.com>,
+	joel@joelfernandes.org,
+	Elle Rhumsaa <elle@weathered-steel.dev>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Andrea Righi <arighi@nvidia.com>,
+	nouveau@lists.freedesktop.org
+Subject: [PATCH RFC] nova-core: mm: Add initial structures for page table management
+Date: Mon,  6 Oct 2025 17:09:56 -0400
+Message-Id: <20251006210956.3232421-1-joelagnelf@nvidia.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BLAPR03CA0092.namprd03.prod.outlook.com
+ (2603:10b6:208:32a::7) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wg65RDkvPd3rFZr32n8L_LQJAcWie1K-=azcLS6Y5JwkQ@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|SA0PR12MB4430:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6a582dd0-b1c5-471d-ffd7-08de051cbac9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?WSbzmPUEjb6uuqujXv8NM5DiUWoN1WzfFOugkqwVN4YkpA8SjAZujnIr8i4P?=
+ =?us-ascii?Q?eJjY/JuyCKb1en+oP7inOyOdk1lzNLld7YGXrTFe0jAJtDJg0UuljlqeuCE6?=
+ =?us-ascii?Q?oyNkOW6MqTd7XjF+ynXQ0db657oygx8wXCvp8ZbK+QHsh+i4Fjn61I2Z0rd1?=
+ =?us-ascii?Q?9WEys6N5g8w4Uz//J0//1uthTca2PhOBVcFOq0aTGWqMWGey+6ycMhFGfdNc?=
+ =?us-ascii?Q?3JJq8kDRBKVmUzuaVygha1qhJdnUDPzF4ZwYxfIrfrgfQQcP3i0bPBJ5vF0W?=
+ =?us-ascii?Q?pk0l2wL1DCg55TdxlXTFvfGkRHyv1an+O9ZyboLOrsIqsgAxksYy5ZTKE/Af?=
+ =?us-ascii?Q?hXC1+AbHOnncULlil4bhs0grpwgl/TMROuCcASFHCmSzjNcE8DgWGWvYY7zz?=
+ =?us-ascii?Q?1MzGoVqNIvvvEBfxty+2nrcMoyE7D6onN0+4gi5t4DoORUUaqiLW+pXuEPHO?=
+ =?us-ascii?Q?aP2vVcbpzVe6/HIrEH4Bl8dIAzOgkpR+nEuADU5zvk4H9yYx9BsDDDGQvgjl?=
+ =?us-ascii?Q?/iK8J3ZCtdvBtLfAdCxJaJstQbpbPY+l7zbeqBwaoJIz7h79XXCwte6CN9fa?=
+ =?us-ascii?Q?nkMDngbvei0w1wn+WLVxuJhEuBZj0fcAVUOBcGq//tKd0LpLqIAdFHUZu+s1?=
+ =?us-ascii?Q?nqxoMJCTy9D5dCRC2OCYQ2MNIBzsjMPMREJQomy2cix0jY+JrWce4PA0VesF?=
+ =?us-ascii?Q?loIOvSnYM0SDSvZ7Lvyg2h/0pNFiRSXzbCOcjCrQ9hvM00/w3ZZyneUvIB/o?=
+ =?us-ascii?Q?9xaEQXekOvPCzJzcjoySw4+Gz/C61z1xKZZSuJEwJpcjMRRRg0UNNf/btXW1?=
+ =?us-ascii?Q?KLFzQnZ3huCNylf0Dyz0lFl9phEbIjc0geS8zwcGdm5681gwsx5DvuM3ZJX7?=
+ =?us-ascii?Q?zJWP48nlTjvepgTnVLWgXbQf2Anz5aGv0YMOCtrj7wljkTVcs5+C76B+HEtW?=
+ =?us-ascii?Q?uRrioHJgFKwheUnWrGyTOEyduvOfjus9Ab/HzuZflCV6LS1JrkDuF3CSp8fq?=
+ =?us-ascii?Q?dOfxWr8kJPyWsKX1Bqinug7TuWv/bX5Uyw5WJFEH/sctNeJIYmJSB4yzZXou?=
+ =?us-ascii?Q?w9GCRr8bcfLZOVgFZQmm/TwT73NPW/hlaiw2CjN7GNyDfxPuL9cb8t3zjVic?=
+ =?us-ascii?Q?Ucx7BO0WUIWaqIt8xG4ke9DF4wnc2fWt+q6QKgJHtRdI+NBZmGYNr3LpT7XR?=
+ =?us-ascii?Q?jgOwZLu//sRVjVcwrA9XerL6R+Jufkt4m+ZJP+VA27RRyz1T2gUxPhYh2Kil?=
+ =?us-ascii?Q?XeGtnqfX0OxFShFfIG5Z+/1mxKhdRFwJ3aNnlaBn6NdNBBVfLYCuv2e+Q+c2?=
+ =?us-ascii?Q?hF7QxmOWyF+L1knWCNOxSuY/YnzAUQ0XiE/GSoaeMtlUkv7db2QB4Mm3gaXE?=
+ =?us-ascii?Q?q9OO1pX+1O4cEqL9SApVCUNIo8rrZOEhXM81DvVUdcuK1Rx90p5fwUo5RH6d?=
+ =?us-ascii?Q?hQqHJRoxK1txw6uv7TOjFV4YTLd5n66C?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ywRsLaPdrcifJF3sL9ratv3TCMfio1i8exV5jFYtAgVudZ+qeI6AcHomFcUT?=
+ =?us-ascii?Q?5Qb+fyyTXlH14i+ZWvOsKC3+6p90Wrmwv6HmGXixIWZ+J0vMyicdS3NAPIJF?=
+ =?us-ascii?Q?dzWCAxTvQjJ0j98YanP5juHX6OGXSMMI4oaX3tPqGbOZNT5sjJI7cJvLkZLa?=
+ =?us-ascii?Q?019l8IH4PHMyOrUz76bW1AlRL5h2KZqK77jJcLIW6xBpMyB7xVn1jlXDFQeS?=
+ =?us-ascii?Q?OLh4fDpMbKF96hl4NR2xftbxpbb1g5yIlXHxVgsdTgPVkhkUsVn5sQnAZyUn?=
+ =?us-ascii?Q?20QwRSlk88uXvXzSu/Z+l+JpbPSmSyU9fqpOsFegEYYgQhpjiAswjqhVHi+I?=
+ =?us-ascii?Q?hxmQAt7PnWgcopGW5XB+E7pDFWF4ZYKsCgsgjIiKlZzls/vWNh3aEfvopsJ/?=
+ =?us-ascii?Q?+QHyg9fuWTQi1bvur9SzYKBNPcNebz1L5KHvMk/5WDfIbGbI1vqqQw2hinJQ?=
+ =?us-ascii?Q?I9h4Nm43eCb4uhywU+b+P76hOUpI+y04Zb6EQ8lLhcq2KejlWn1C8JCuOKlp?=
+ =?us-ascii?Q?+Awe2TAj7vOIirylzgKhl1CXvDYpnjcWiEdbLVG6gKyahexCjRVkQAQBUQyt?=
+ =?us-ascii?Q?BVYWHXOUXJaHlMylMPzrjNMR+/PCAm0yA/weh8bSZ/R6matRXRboE3B+fbrg?=
+ =?us-ascii?Q?eO44WxR0bl3osy2TsYCFLZHn857Z86VefEAMZd16zvt4MR0w9ZLwHUko+Ywz?=
+ =?us-ascii?Q?rL/BGuA3mlKvHn/fMg6u2q8wHtJHAt8e/u61FRNafGEhYFi9pfh1xMsID8Ai?=
+ =?us-ascii?Q?veOZnRQs3V3/9SRgYR47ChJgmYUA8PCIRiuVbptpANVoGxoq7jL3U3gEe3II?=
+ =?us-ascii?Q?QLVCfqy2Ihj6nzDl8tfZN2Lh4mhtT0m+Q1nZkwtrJyGNd4hzhtHz/84kf9f+?=
+ =?us-ascii?Q?8a0zhH7KGXt+OYSPD11JguV26tHGwZ3Im89AjQ0QHkZbw0vIyQ2bhCyqbx+h?=
+ =?us-ascii?Q?qiEtE7BBwoQjJkQlDIJvKgJoiBV5t3ObpdblABwLKzDXxARDsJ07VAf6Vj2l?=
+ =?us-ascii?Q?+BOKMfccrW/yeJ6Ai/f1wNzs9fL2f7BbWnyTm9RieKy6pw/chY2jVQAYn6ta?=
+ =?us-ascii?Q?Z02QCjcXGJopGimvt4+YBog+vxbeq7JpuMkgmh4A6xP89KKO54bQOeenSNXH?=
+ =?us-ascii?Q?VcnX7KXIHC28CblprlGrJ3NT6lFlZwSPJuQ0BmmXoSdEidDK9SmN64HAhQbR?=
+ =?us-ascii?Q?EaiAo9nccvJcgilT7tw9qnzA2Tmbja2C9WknkWHc/QF4gTxV4me6x2sw0Ehz?=
+ =?us-ascii?Q?4tmr4Idoyxmb6Jw+eJ68lq8mP090/Wsl6020XFCba5OJKiQBW2DnbfLY4MKU?=
+ =?us-ascii?Q?q5O2rsnOUtcpUuqN1EWg/6jOJYGN+TlO+M+VpLJ6QzMzatSO7M9pRNiYNBcZ?=
+ =?us-ascii?Q?flSiF4PwkJ+pWIF5NcdgsI8RuogsVpsBTTC/aNN46/ZS189KAJzYHdbGCo5x?=
+ =?us-ascii?Q?jGV6SuSv6HwE8SzSY7ltd1n/LSW5qYR5avZlorvhXU4VJ8zlVqCo1fE9zYqM?=
+ =?us-ascii?Q?LXTEexhrtl+a///rdvN05ydjPikwQRGr7+Ou+/HwJNzuC71MkeLYPEfdR2Fm?=
+ =?us-ascii?Q?9woi6W/HEJeNsgCfJ3xouJ/uA+20CPNfyuhSV7T7?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a582dd0-b1c5-471d-ffd7-08de051cbac9
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2025 21:10:08.7230
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: I5KmEcgxiK2ailXGEN2o++3DbYX60etVi3qC7NZCpbkwt6rnIntwhwl/26wDC1VY4e2K9wdVzw5/2J/1blTXnw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4430
 
-On Mon, Oct 06, 2025 at 08:59:09AM -0700, Linus Torvalds wrote:
-> So the biggest issue really was just the explanations. Both the
-> explanation for why the merge happened in the first place, but then
-> also the resulting explanation in the pull request.
-> 
-> Due to the merge, I feel that the explanations in *my* merge ends up
-> being less than great. I think it would have been good to just have
-> separate explanations for the apic init thing and the SEV parts,
-> because they seem entirely independent.
-> 
-> But maybe they weren't as independent as I think they are, and there
-> was some deeper reason for the merge that just was never explained.
+Add initial structures and helpers for page table management. Will
+expand and build on this in later patches. Uses bitstruct for clean
+code.
 
-So there was some confusion with urgent stuff we send you during the -rc
-phase, see
+Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+---
+Rebased on rust-drm-next + bitfield patches [1].
 
-85df1cd15ff5 ("Merge branch 'x86/urgent' into x86/apic, to resolve conflict")
+[1] https://lore.kernel.org/all/20251003154748.1687160-1-joelagnelf@nvidia.com/
 
-but it is still not clear to me - maybe I'm missing it - why mingo did those
-merges... when I merge the topic branches, rerere works just fine and there's
-no need to prematurely resolve conflicts and then make them permanent.
-Especially if things might change later...
+ drivers/gpu/nova-core/falcon/gsp.rs |   2 +-
+ drivers/gpu/nova-core/mm/mod.rs     |   3 +
+ drivers/gpu/nova-core/mm/types.rs   | 382 ++++++++++++++++++++++++++++
+ drivers/gpu/nova-core/nova_core.rs  |   1 +
+ 4 files changed, 387 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpu/nova-core/mm/mod.rs
+ create mode 100644 drivers/gpu/nova-core/mm/types.rs
 
-> Basically, a conflict is never a reason for a merge. That would be
-> unphysical: conflicts happen _due_ to a merge, so a merge is the
-> reason for a conflict, not the other way around.
-> 
-> If the merge was done for some linux-next or testing purpose, then the
-> merging should have been done in a branch _for_ testing or linux-next
-> integration, and then there would be a reason  ("merge for testing /
-> linux-next").
-
-Right. There was a x86/merge branch in the past for similar reasons...
-
-> And if the merge is because of some future conflict resolution, then
-> that should be stated too ("This conflict is so complicated that we
-> don't trust that Linus will get it right, so we're merging it for him.
-> Linus needs all the help he can get, and he's not always at his
-> sharpest").
-
-Bah, there's no need for that. That is basically done by: "Hey Linus, here's
-the merge I've done, the end result should be like this..."
-
-:-)
-
-> But "merge due to a conflict" is simply never a reason in itself. It's
-> like saying "The sun came up because I woke up". That's not how the
-> world works.
-
-Right, like I said, there might be a reason for this which I'm not aware of.
-But for the future, I'll pay attention and keep such branches separate and
-give you the gory merging details + patch tetris instead so that you can have
-some of the fun too. :-)
-
-Thx.
-
+diff --git a/drivers/gpu/nova-core/falcon/gsp.rs b/drivers/gpu/nova-core/falcon/gsp.rs
+index cd4960e997c8..839c803001b5 100644
+--- a/drivers/gpu/nova-core/falcon/gsp.rs
++++ b/drivers/gpu/nova-core/falcon/gsp.rs
+@@ -5,7 +5,7 @@
+ use crate::{
+     driver::Bar0,
+     falcon::{Falcon, FalconEngine, PFalcon2Base, PFalconBase},
+-    regs::self,
++    regs,
+ };
+ 
+ /// Type specifying the `Gsp` falcon engine. Cannot be instantiated.
+diff --git a/drivers/gpu/nova-core/mm/mod.rs b/drivers/gpu/nova-core/mm/mod.rs
+new file mode 100644
+index 000000000000..4cebfa3cf184
+--- /dev/null
++++ b/drivers/gpu/nova-core/mm/mod.rs
+@@ -0,0 +1,3 @@
++// SPDX-License-Identifier: GPL-2.0
++
++pub(crate) mod types;
+diff --git a/drivers/gpu/nova-core/mm/types.rs b/drivers/gpu/nova-core/mm/types.rs
+new file mode 100644
+index 000000000000..6eca8bcb24a6
+--- /dev/null
++++ b/drivers/gpu/nova-core/mm/types.rs
+@@ -0,0 +1,382 @@
++// SPDX-License-Identifier: GPL-2.0
++//! Page table data management for NVIDIA GPUs
++
++#![expect(dead_code)]
++
++use kernel::bitfield;
++
++/// Memory size constants
++pub(crate) const KB: usize = 1024;
++pub(crate) const MB: usize = KB * 1024;
++
++/// Page size: 4 KiB
++pub(crate) const PAGE_SIZE: usize = 4 * KB;
++
++/// Page Table Level hierarchy
++#[derive(Debug, Clone, Copy, PartialEq)]
++pub(crate) enum PageTableLevel {
++    Pdb, // Level 0 - Page Directory Base
++    L1,  // Level 1
++    L2,  // Level 2
++    L3,  // Level 3 - Dual PDE (128-bit entries)
++    L4,  // Level 4 - PTEs
++}
++
++impl PageTableLevel {
++    /// Get the entry size for this level
++    pub(crate) fn entry_size(&self) -> usize {
++        match self {
++            Self::L3 => 16, // 128-bit dual PDE
++            _ => 8,         // 64-bit PDE/PTE
++        }
++    }
++
++    /// PDE levels constant array for iteration
++    const PDE_LEVELS: [PageTableLevel; 4] = [
++        PageTableLevel::Pdb,
++        PageTableLevel::L1,
++        PageTableLevel::L2,
++        PageTableLevel::L3,
++    ];
++
++    /// Get iterator over PDE levels
++    pub(crate) fn pde_levels() -> impl Iterator<Item = PageTableLevel> {
++        Self::PDE_LEVELS.into_iter()
++    }
++}
++
++/// Memory aperture for Page Directory Entries (PDEs)
++#[repr(u8)]
++#[derive(Debug, Clone, Copy, PartialEq, Default)]
++pub(crate) enum AperturePde {
++    #[default]
++    Invalid = 0,
++    VideoMemory = 1,
++    SystemCoherent = 2,
++    SystemNonCoherent = 3,
++}
++
++impl From<u8> for AperturePde {
++    fn from(val: u8) -> Self {
++        match val {
++            1 => Self::VideoMemory,
++            2 => Self::SystemCoherent,
++            3 => Self::SystemNonCoherent,
++            _ => Self::Invalid,
++        }
++    }
++}
++
++impl From<AperturePde> for u8 {
++    fn from(val: AperturePde) -> Self {
++        val as u8
++    }
++}
++
++impl From<AperturePde> for u64 {
++    fn from(val: AperturePde) -> Self {
++        val as u64
++    }
++}
++
++/// Memory aperture for Page Table Entries (PTEs)
++#[repr(u8)]
++#[derive(Debug, Clone, Copy, PartialEq, Default)]
++pub(crate) enum AperturePte {
++    #[default]
++    VideoMemory = 0,
++    PeerVideoMemory = 1,
++    SystemCoherent = 2,
++    SystemNonCoherent = 3,
++}
++
++impl From<u8> for AperturePte {
++    fn from(val: u8) -> Self {
++        match val {
++            0 => Self::VideoMemory,
++            1 => Self::PeerVideoMemory,
++            2 => Self::SystemCoherent,
++            3 => Self::SystemNonCoherent,
++            _ => Self::VideoMemory,
++        }
++    }
++}
++
++impl From<AperturePte> for u8 {
++    fn from(val: AperturePte) -> Self {
++        val as u8
++    }
++}
++
++impl From<AperturePte> for u64 {
++    fn from(val: AperturePte) -> Self {
++        val as u64
++    }
++}
++
++/// Common trait for address types
++pub(crate) trait Address {
++    /// Get raw u64 value
++    fn raw(&self) -> u64;
++
++    /// Get the frame number (upper 52 bits)
++    fn frame_number(&self) -> u64 {
++        self.raw() >> 12
++    }
++
++    /// Get the offset within the frame (lower 12 bits)
++    fn frame_offset(&self) -> u16 {
++        (self.raw() & 0xFFF) as u16
++    }
++
++    /// Convert to usize
++    fn to_usize(&self) -> usize {
++        self.raw() as usize
++    }
++}
++
++// VRAM address representation - used with Pfn for GPU video memory allocation
++// and page table entries.
++bitfield! {
++    pub(crate) struct VramAddress(u64) {
++        11:0    offset          as u16;    // Offset within 4KB page
++        63:12   frame_number    as u64;    // Frame number (52 bits)
++    }
++}
++
++impl Address for VramAddress {
++    fn raw(&self) -> u64 {
++        self.0
++    }
++}
++
++impl From<u64> for VramAddress {
++    fn from(val: u64) -> Self {
++        VramAddress(val)
++    }
++}
++
++impl From<usize> for VramAddress {
++    fn from(val: usize) -> Self {
++        VramAddress(val as u64)
++    }
++}
++
++impl From<Pfn> for VramAddress {
++    fn from(pfn: Pfn) -> VramAddress {
++        VramAddress::default().set_frame_number(pfn.raw())
++    }
++}
++
++// Virtual address
++bitfield! {
++    pub(crate) struct VirtualAddress(u64) {
++        11:0    offset      as u16;    // Offset within 4KB page
++        20:12   l4_index    as u16;    // Level 4 index (PTE)
++        29:21   l3_index    as u16;    // Level 3 index
++        38:30   l2_index    as u16;    // Level 2 index
++        47:39   l1_index    as u16;    // Level 1 index
++        56:48   l0_index    as u16;    // Level 0 index (PDB)
++    }
++}
++
++impl VirtualAddress {
++    /// Get index for a specific page table level
++    pub(crate) fn level_index(&self, level: PageTableLevel) -> u16 {
++        match level {
++            PageTableLevel::Pdb => self.l0_index(),
++            PageTableLevel::L1 => self.l1_index(),
++            PageTableLevel::L2 => self.l2_index(),
++            PageTableLevel::L3 => self.l3_index(),
++            PageTableLevel::L4 => self.l4_index(),
++        }
++    }
++}
++
++impl Address for VirtualAddress {
++    fn raw(&self) -> u64 {
++        self.0
++    }
++}
++
++impl From<u64> for VirtualAddress {
++    fn from(addr: u64) -> Self {
++        Self(addr)
++    }
++}
++
++impl From<Vfn> for VirtualAddress {
++    fn from(vfn: Vfn) -> VirtualAddress {
++        VirtualAddress::from(vfn.raw() << 12)
++    }
++}
++
++// Page Table Entry (PTE) - 64-bit entry at level 4
++// Note: PTE has V=1 for valid, and includes aperture bits
++bitfield! {
++    pub(crate) struct Pte(u64) {
++        0:0     valid           as bool;    // (1 = valid for PTEs)
++        1:1     privilege       as bool;    // P - Privileged/kernel-only access
++        2:2     read_only       as bool;    // RO - Write protection
++        3:3     atomic_disable  as bool;    // AD - Disable atomic ops
++        4:4     encrypted       as bool;    // E - Encryption enabled
++        39:8    frame_number    as u64;     // PA[39:8] - Physical frame number (32 bits)
++        41:40   aperture        as u8 => AperturePte;   // Memory aperture type.
++        42:42   volatile        as bool;    // VOL - Volatile flag
++        50:43   kind            as u8;      // K[7:0] - Compression/tiling kind
++        63:51   comptag_line    as u16;     // CTL[12:0] - Compression tag line (partial, shared with PA)
++    }
++}
++
++impl Pte {
++    /// Set the address for this PTE
++    pub(crate) fn set_address(&mut self, addr: VramAddress) {
++        self.set_frame_number(addr.frame_number());
++    }
++
++    /// Get the address from this PTE
++    pub(crate) fn address(&self) -> VramAddress {
++        VramAddress::default().set_frame_number(self.frame_number())
++    }
++
++    /// Get raw u64 value
++    pub(crate) fn raw(&self) -> u64 {
++        self.0
++    }
++}
++
++// Page Directory Entry (PDE) - 64-bit entry at levels 0-2
++// Note: V=0 means valid for PDEs (inverted), aperture=0 means invalid
++bitfield! {
++    pub(crate) struct Pde(u64) {
++        0:0     valid_inverted       as bool;    // V - Valid bit (0=valid for PDEs)
++        2:1     aperture             as u8 => AperturePde;      // Memory aperture type
++        3:3     volatile             as bool;    // VOL - Volatile flag
++        39:8    table_frame_number   as u64;     // PA[39:8] - Table frame number (32 bits)
++    }
++}
++
++impl Pde {
++    /// Check if PDE is valid
++    pub(crate) fn is_valid(&self) -> bool {
++        !self.valid_inverted() && self.aperture() != AperturePde::Invalid
++    }
++
++    /// The valid bit is inverted so add an accessor to flip it
++    pub(crate) fn set_valid(&self, value: bool) -> Pde {
++        self.set_valid_inverted(!value)
++    }
++
++    /// Set the table address for this PDE
++    pub(crate) fn set_table_address(&mut self, addr: VramAddress) {
++        self.set_table_frame_number(addr.frame_number());
++    }
++
++    /// Get the table address from this PDE
++    pub(crate) fn table_address(&self) -> VramAddress {
++        VramAddress::default().set_frame_number(self.table_frame_number())
++    }
++
++    /// Get raw u64 value
++    pub(crate) fn raw(&self) -> u64 {
++        self.0
++    }
++}
++
++/// Dual PDE at Level 3 - 128-bit entry containing both LPT and SPT pointers
++/// Lower 64 bits = big/large page, upper 64 bits = small page
++#[repr(C)]
++#[derive(Debug, Clone, Copy)]
++pub(crate) struct DualPde {
++    pub lpt: Pde, // Large/Big Page Table pointer (2MB pages) - bits 63:0 (lower)
++    pub spt: Pde, // Small Page Table pointer (4KB pages) - bits 127:64 (upper)
++}
++
++impl DualPde {
++    /// Create a new empty dual PDE
++    pub(crate) fn new() -> Self {
++        Self {
++            spt: Pde::default(),
++            lpt: Pde::default(),
++        }
++    }
++
++    /// Set the Small Page Table address with aperture
++    pub(crate) fn set_small_pt_address(&mut self, addr: VramAddress, aperture: AperturePde) {
++        self.spt = Pde::default()
++            .set_valid(true)
++            .set_table_frame_number(addr.frame_number())
++            .set_aperture(aperture);
++    }
++
++    /// Set the Large Page Table address with aperture
++    pub(crate) fn set_large_pt_address(&mut self, addr: VramAddress, aperture: AperturePde) {
++        self.lpt = Pde::default()
++            .set_valid(true)
++            .set_table_frame_number(addr.frame_number())
++            .set_aperture(aperture);
++    }
++
++    /// Check if has valid Small Page Table
++    pub(crate) fn has_small_pt_address(&self) -> bool {
++        self.spt.is_valid()
++    }
++
++    /// Check if has valid Large Page Table
++    pub(crate) fn has_large_pt_address(&self) -> bool {
++        self.lpt.is_valid()
++    }
++
++    /// Set SPT (Small Page Table) using Pfn
++    pub(crate) fn set_spt(&mut self, pfn: Pfn, aperture: AperturePde) {
++        self.spt = Pde::default()
++            .set_valid(true)
++            .set_aperture(aperture)
++            .set_table_frame_number(pfn.raw());
++    }
++}
++
++/// Virtual Frame Number - virtual address divided by 4KB
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub(crate) struct Vfn(u64);
++
++impl Vfn {
++    /// Create a new VFN from a frame number
++    pub(crate) const fn new(frame_number: u64) -> Self {
++        Self(frame_number)
++    }
++
++    /// Get raw frame number
++    pub(crate) const fn raw(&self) -> u64 {
++        self.0
++    }
++}
++
++impl From<VirtualAddress> for Vfn {
++    fn from(vaddr: VirtualAddress) -> Self {
++        Self(vaddr.frame_number())
++    }
++}
++
++/// Physical Frame Number - physical address divided by 4KB
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub(crate) struct Pfn(u64);
++
++impl Pfn {
++    /// Create a new PFN from a frame number
++    pub(crate) const fn new(frame_number: u64) -> Self {
++        Self(frame_number)
++    }
++
++    /// Get raw frame number
++    pub(crate) const fn raw(&self) -> u64 {
++        self.0
++    }
++}
++
++impl From<VramAddress> for Pfn {
++    fn from(addr: VramAddress) -> Self {
++        let frame = addr.frame_number();
++        Self(frame)
++    }
++}
+diff --git a/drivers/gpu/nova-core/nova_core.rs b/drivers/gpu/nova-core/nova_core.rs
+index fffcaee2249f..ff994f1ec9b9 100644
+--- a/drivers/gpu/nova-core/nova_core.rs
++++ b/drivers/gpu/nova-core/nova_core.rs
+@@ -10,6 +10,7 @@
+ mod gfw;
+ mod gpu;
+ mod gsp;
++mod mm;
+ mod regs;
+ mod util;
+ mod vbios;
 -- 
-Regards/Gruss,
-    Boris.
+2.34.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
