@@ -1,248 +1,162 @@
-Return-Path: <linux-kernel+bounces-842635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6430BBD363
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 09:29:15 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FC03BBD366
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 09:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7687418933D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 07:29:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 23E3834908C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 07:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803292571CD;
-	Mon,  6 Oct 2025 07:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC4C256C71;
+	Mon,  6 Oct 2025 07:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="O5eXUFUl"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nvm0gjB8"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77B1189B80
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 07:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8FB189B80
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 07:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759735747; cv=none; b=rMizkgyeNjUZdLFVuqqreOFook1K2M+buFW7dEkTiRWFhVbAB7pPHd3dMA9vEqW0AxQwK2Vrr6hOh1dSmE27BA0AAx98NDa+6YsKfMNtCZNmz/2XfBev4O/t4zEsVf4ys7+jqsd8w34OWHAAiZE6fhPjBExTImGc8YAL0QRJ7ks=
+	t=1759735768; cv=none; b=r2hgG3dxAQkFa0cmp0duGt4MmSKZMFTH54gMBjdSZAVVzugRrm4t+sy2uQ1Hi5mk4rcU0rgnItNoyBYSelhjkpbcJxWf6tggsvYYLtBpG34YODj9dQL9YEAz7lyvRfLX16MoIoOV+3j0WLkfGBlz1WUGKthGnU1LTx56rAAIcs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759735747; c=relaxed/simple;
-	bh=7u6njRZi53HEITWpF/3FhQ3+p0lf8NCaxmZY8Xmxj9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LeA2Ekm5qYadnUHNS8UBGYhlJZh61vw4nKFLKT9Oy6J/94p3l80ZRGy5PoB9MHwmpLyqoWEVaVyVV5kpof9iA3HH7bsYpuzOEedeyfBlHKPhnBedr46Ll4JInp8I2DQAvKt8t/l6MeVa0KA7XM5dNA8NtQWEUYW8SSFU2x1IeNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=O5eXUFUl; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759735743;
-	bh=7u6njRZi53HEITWpF/3FhQ3+p0lf8NCaxmZY8Xmxj9s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=O5eXUFUleMPqO2Ywy4QyrepgQ1KXJnTMFgAnOtA2JgnHjiC9rOkobKGtXh1fIiZk1
-	 9iw6ttXCAKNR6fDiJMmBRrZec/leiNBm0+L32JHGUhrf+BEu572h7ic5/5sJvCR1QP
-	 PubgMyV6lIMWcQ2WXG8a+GOdLL4YnOdoBKc+HHD7K7fEWADWi2SPP5w57eW6AtWED3
-	 rH6UsYNvBuwN4i4sopayRMDgS0TE0mkA9RwVRcYLyWzs+FJvOF7RHydS+9uYU43Qzk
-	 ze+ydH43V6poYejVi07Aobzbscrmul43S/P0V03gThahbOC3LMJGNCDxazhonl2Hxr
-	 /a01UTmomtx7Q==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id BE80C17E0B83;
-	Mon,  6 Oct 2025 09:29:02 +0200 (CEST)
-Date: Mon, 6 Oct 2025 09:28:56 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?TG/Dr2M=?= Molinari <loic.molinari@collabora.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jani Nikula
- <jani.nikula@linux.intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, Rob Herring <robh@kernel.org>,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Melissa Wen <mwen@igalia.com>, =?UTF-8?B?TWHDrXJh?= Canal
- <mcanal@igalia.com>, Hugh Dickins <hughd@google.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>,
- Al Viro <viro@zeniv.linux.org.uk>, =?UTF-8?B?TWlrb8WCYWo=?= Wasiak
- <mikolaj.wasiak@intel.com>, Christian Brauner <brauner@kernel.org>, Nitin
- Gote <nitin.r.gote@intel.com>, Andi Shyti <andi.shyti@linux.intel.com>,
- Christopher Healy <healych@amazon.com>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- linux-mm@kvack.org, kernel@collabora.com
-Subject: Re: [PATCH v3 07/10] drm/panthor: Introduce huge tmpfs mount point
- option
-Message-ID: <20251006092856.02fbfd9e@fedora>
-In-Reply-To: <20251004093054.21388-8-loic.molinari@collabora.com>
-References: <20251004093054.21388-1-loic.molinari@collabora.com>
-	<20251004093054.21388-8-loic.molinari@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1759735768; c=relaxed/simple;
+	bh=pcBAm+wm8c6AgGBg52xkIT6OpiZn0ht/Z5hua5dnd4s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V/k7MFhRaKdjLMp+kA46CHtcwT600gu6ge8+y1vaN7tFTDc21TleF9+uTmJg20T44h/bILCH3YUahQ8nnPXC7RaCF7p6Nv95DSMFF7Y/o6rWeLeWkLCAOv53OWeDwLcaru9HPBT2PW9qmBmEbCvru1GIPomtkPUGulRa4VPLQ/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Nvm0gjB8; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e2e6a708fso29110545e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 00:29:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759735765; x=1760340565; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9sghbtbNFIONQugpyNGOw93WuDTAMae0oqKLTraeLW4=;
+        b=Nvm0gjB8nd/uEKNdzbd8d/dMWK5g+enjmRmfMj2jMO4ocfdpKsHOdCFvRviIm8FpIy
+         x4N+f16xI9LgVRMJRA9OHVm35htmn5qgtyJdZfdL7QL0ImxObNZvck7ppqQ6eDW9s5k2
+         ohsm24jCrUGl6QsYIAWo1h9PrOpNROvzqA76XyGrE+rD+7M1P3qqCYVhpWkCl1C2O/Y6
+         JVWfvwqlMJz4SfWeDB4vNE8ycPH7HsO8Y65QakD3HuLJF24xAhKj+97wU7oB1nZ21h3x
+         s/qvvBSpldzeDIFzZIfwjq0TXH59EQdCFQZ5jJQp9WtWmIh+0d3EbVCz9HZeH6YaCu/H
+         ZTXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759735765; x=1760340565;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9sghbtbNFIONQugpyNGOw93WuDTAMae0oqKLTraeLW4=;
+        b=ammsMjDyalRU2K8MjGDSK4Cl+rtjTV6a/oyTcQXTXa9DABLSCqFQaMoZKyWe97sEOI
+         wAkoQh0/IXrbWUqik+e+6/RhsVScCPRnvK21PlzPYyfZ5hi/ZtOosfTrRgNpIx6IQdXI
+         y3OKJJEze5+ER9rjBVqW/inUurlUYaHViyWy69TIoiiLqQn9aYewhtgDyRD8we8i8TtP
+         tVePjVJ0VmfastKLTNr3gsT4qEYrmNbR/JSlPswgbO6xE6DC37ik70W3LdsBn0nt00Uq
+         +/t/FGxWuxBmU10EF0P0HEGMLFY5nQJAIeEtzIclkmtC+xt0s6CB8NPMyDzO0J87qhvV
+         D8ZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXJsTz1iUYY7ooKvWYxj4rkGc0B9D9zAiX1mr1h2i3WWV4DQmn//Iit4irRhBraBWEhFS/mgdxnyO4YQiM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiGBJjSKYBiTzNL/XHPNrzqNSQL8tMBrkO17W0tApuK6Dd9IoI
+	juCF9rHEJp7EKtA3Cj4H4vneNxe5T80sIiEra150BG6CzAJmMlc2nyKy/d7BXamfFO4=
+X-Gm-Gg: ASbGncvmBHTMSux7fnPShNVZvbxOVIycuHW8ipeZdgBDV9e+5TV2PhsBpWhb3TJy/wa
+	hsVBroow+tt/bFIh9loVMtjj8GL3RGeHvhOqIMTnZv01O5oEr32OYjI8Wjcitq6r+szii/AX1lu
+	tncuesQqIZx1WKPtj0UjkBGXdEmQFZeKu6lbLMvgsih/QgJzYvLPNrO9FBIoCWea7GqprTeA5zo
+	81uWZt1duYxuWS3KJvWvOa25tHf8wWa3SwQNnNRJUS4iSXdfMgKfF0+SzhiTSJyJuB7/YpqUT6Y
+	mlC279LRP7+8oRqM97CBcDpEw76Ago9zEMyKEw2mW6bvM2XauDT9jCc9B3xXBKht4iJjGvNCFmx
+	SaeBbwO5jPcXo85LAKyzb6e0tzNaa85H80k+qxkh1D6kOlrZFZw9udvpgYicJhJpXcSw=
+X-Google-Smtp-Source: AGHT+IGO0iR1Dm38qNqAUxs3JVr09b3dfZJrEsZ7XuRj7eZYj72+1AemzTj/wV9N9lOXV9YTsf+chQ==
+X-Received: by 2002:a05:600c:4ec6:b0:46e:1a14:a81b with SMTP id 5b1f17b1804b1-46e7115b667mr79587095e9.36.1759735764818;
+        Mon, 06 Oct 2025 00:29:24 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e723432c9sm144973015e9.1.2025.10.06.00.29.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 00:29:24 -0700 (PDT)
+Date: Mon, 6 Oct 2025 10:29:20 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Rohan Tripathi <trohan2000@gmail.com>
+Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8723bs: clean up style in rtw_ap.c
+Message-ID: <aONv0JIZNA2GPzKG@stanley.mountain>
+References: <20251005155920.381334-1-trohan2000@gmail.com>
+ <20251005155920.381334-2-trohan2000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251005155920.381334-2-trohan2000@gmail.com>
 
-On Sat,  4 Oct 2025 11:30:50 +0200
-Lo=C3=AFc Molinari <loic.molinari@collabora.com> wrote:
-
-> Introduce the 'panthor.transparent_hugepage' boolean module parameter
-> (false by default). When the parameter is set to true, a new tmpfs
-> mount point is created and mounted using the 'huge=3Dwithin_size'
-> option. It's then used at GEM object creation instead of the default
-> 'shm_mnt' mount point in order to enable Transparent Hugepage (THP)
-> for the object (without having to rely on a system wide parameter).
->=20
-> v3:
-> - use huge tmpfs mountpoint in drm_device
->=20
-> Signed-off-by: Lo=C3=AFc Molinari <loic.molinari@collabora.com>
+On Sun, Oct 05, 2025 at 11:59:17AM -0400, Rohan Tripathi wrote:
+> This patch fixes several coding style issues reported by checkpatch.pl
+> in rtw_ap.c. Changes include:
+> - Removed cases where lines ended with an opening parenthesis
+> - Broke long comments exceeding 100 characters
+> - Fixed alignment in multi-line function calls
+> 
+> These are coding style cleanups only. No functional changes.
+> 
+> Signed-off-by: Rohan Tripathi <trohan2000@gmail.com>
 > ---
->  drivers/gpu/drm/panthor/panthor_device.c |  3 +++
->  drivers/gpu/drm/panthor/panthor_drv.c    |  7 +++++++
->  drivers/gpu/drm/panthor/panthor_drv.h    | 11 +++++++++++
->  drivers/gpu/drm/panthor/panthor_gem.c    | 19 +++++++++++++++++++
->  drivers/gpu/drm/panthor/panthor_gem.h    |  2 ++
->  5 files changed, 42 insertions(+)
->  create mode 100644 drivers/gpu/drm/panthor/panthor_drv.h
->=20
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/p=
-anthor/panthor_device.c
-> index 81df49880bd8..3c0387156bb9 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.c
-> +++ b/drivers/gpu/drm/panthor/panthor_device.c
-> @@ -17,6 +17,7 @@
->  #include "panthor_devfreq.h"
->  #include "panthor_device.h"
->  #include "panthor_fw.h"
-> +#include "panthor_gem.h"
->  #include "panthor_gpu.h"
->  #include "panthor_hw.h"
->  #include "panthor_mmu.h"
-> @@ -269,6 +270,8 @@ int panthor_device_init(struct panthor_device *ptdev)
->  	if (ret)
->  		goto err_unplug_fw;
-> =20
-> +	panthor_gem_init(ptdev);
-> +
->  	/* ~3 frames */
->  	pm_runtime_set_autosuspend_delay(ptdev->base.dev, 50);
->  	pm_runtime_use_autosuspend(ptdev->base.dev);
-> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/pant=
-hor/panthor_drv.c
-> index fdbe89ef7f43..a2be3b904ca2 100644
-> --- a/drivers/gpu/drm/panthor/panthor_drv.c
-> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
-> @@ -1556,6 +1556,7 @@ static const struct file_operations panthor_drm_dri=
-ver_fops =3D {
->  	.read =3D drm_read,
->  	.llseek =3D noop_llseek,
->  	.mmap =3D panthor_mmap,
-> +	.get_unmapped_area =3D drm_gem_get_unmapped_area,
->  	.show_fdinfo =3D drm_show_fdinfo,
->  	.fop_flags =3D FOP_UNSIGNED_OFFSET,
->  };
-> @@ -1623,6 +1624,12 @@ static const struct drm_driver panthor_drm_driver =
-=3D {
->  #endif
->  };
-> =20
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +bool panthor_transparent_hugepage;
-> +module_param_named(transparent_hugepage, panthor_transparent_hugepage, b=
-ool, 0400);
-> +MODULE_PARM_DESC(transparent_hugepage, "Use a dedicated tmpfs mount poin=
-t with Transparent Hugepage enabled (false =3D default)");
+>  drivers/staging/rtl8723bs/core/rtw_ap.c | 270 +++++++++++-------------
+>  1 file changed, 123 insertions(+), 147 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8723bs/core/rtw_ap.c b/drivers/staging/rtl8723bs/core/rtw_ap.c
+> index 0908f2234f67..9aa225bcf9d6 100644
+> --- a/drivers/staging/rtl8723bs/core/rtw_ap.c
+> +++ b/drivers/staging/rtl8723bs/core/rtw_ap.c
+> @@ -391,7 +391,9 @@ void update_bmc_sta(struct adapter *padapter)
+>  
+>  		memset((void *)&psta->sta_stats, 0, sizeof(struct stainfo_stats));
+>  
+> -		/* psta->dot118021XPrivacy = _NO_PRIVACY_;//!!! remove it, because it has been set before this. */
+> +		/* psta->dot118021XPrivacy = _NO_PRIVACY_;
+> +		 * remove it, because it has been set before this.
+> +		 */
 
-nit: I'd go for a slightly shorter name, like [panthor_]enable_thp.
+Just delete dead code.
 
-The patch is
+>  
+>  		/* prepare for add_RATid */
+>  		supportRateNum = rtw_get_rateset_len((u8 *)&pcur_network->supported_rates);
+> @@ -436,7 +438,6 @@ void update_bmc_sta(struct adapter *padapter)
+>  		spin_lock_bh(&psta->lock);
+>  		psta->state = _FW_LINKED;
+>  		spin_unlock_bh(&psta->lock);
+> -
+>  	}
 
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+This is fine, but it's unrelated to the rest of the patch so it needs to
+be done as a separate patch.
 
-regardless.
-
-> +#endif
-> +
->  static int panthor_probe(struct platform_device *pdev)
->  {
->  	struct panthor_device *ptdev;
-> diff --git a/drivers/gpu/drm/panthor/panthor_drv.h b/drivers/gpu/drm/pant=
-hor/panthor_drv.h
-> new file mode 100644
-> index 000000000000..27fe9b6f77bd
-> --- /dev/null
-> +++ b/drivers/gpu/drm/panthor/panthor_drv.h
-> @@ -0,0 +1,11 @@
-> +// SPDX-License-Identifier: GPL-2.0 or MIT
-> +/* Copyright 2025 Amazon.com, Inc. or its affiliates */
-> +
-> +#ifndef __PANTHOR_DRV_H__
-> +#define __PANTHOR_DRV_H__
-> +
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +extern bool panthor_transparent_hugepage;
-> +#endif
-> +
-> +#endif
-> diff --git a/drivers/gpu/drm/panthor/panthor_gem.c b/drivers/gpu/drm/pant=
-hor/panthor_gem.c
-> index 156c7a0b62a2..49b7d288bfdf 100644
-> --- a/drivers/gpu/drm/panthor/panthor_gem.c
-> +++ b/drivers/gpu/drm/panthor/panthor_gem.c
-> @@ -1,6 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0 or MIT
->  /* Copyright 2019 Linaro, Ltd, Rob Herring <robh@kernel.org> */
->  /* Copyright 2023 Collabora ltd. */
-> +/* Copyright 2025 Amazon.com, Inc. or its affiliates */
-> =20
->  #include <linux/cleanup.h>
->  #include <linux/dma-buf.h>
-> @@ -11,10 +12,28 @@
->  #include <drm/panthor_drm.h>
-> =20
->  #include "panthor_device.h"
-> +#include "panthor_drv.h"
->  #include "panthor_fw.h"
->  #include "panthor_gem.h"
->  #include "panthor_mmu.h"
-> =20
-> +void panthor_gem_init(struct panthor_device *ptdev)
-> +{
-> +	int err;
-> +
-> +	if (!panthor_transparent_hugepage)
-> +		return;
-> +
-> +	err =3D drm_gem_huge_mnt_create(&ptdev->base, "within_size");
-> +	if (err && err !=3D -EEXIST) {
-> +		drm_warn(&ptdev->base, "Can't use Transparent Hugepage (%d)\n",
-> +			 -err);
-> +		return;
-> +	}
-> +
-> +	drm_info(&ptdev->base, "Using Transparent Hugepage\n");
-> +}
-> +
->  #ifdef CONFIG_DEBUG_FS
->  static void panthor_gem_debugfs_bo_init(struct panthor_gem_object *bo)
->  {
-> diff --git a/drivers/gpu/drm/panthor/panthor_gem.h b/drivers/gpu/drm/pant=
-hor/panthor_gem.h
-> index 80c6e24112d0..2eefe9104e5e 100644
-> --- a/drivers/gpu/drm/panthor/panthor_gem.h
-> +++ b/drivers/gpu/drm/panthor/panthor_gem.h
-> @@ -136,6 +136,8 @@ struct panthor_gem_object *to_panthor_bo(struct drm_g=
-em_object *obj)
->  	return container_of(to_drm_gem_shmem_obj(obj), struct panthor_gem_objec=
-t, base);
 >  }
-> =20
-> +void panthor_gem_init(struct panthor_device *ptdev);
-> +
->  struct drm_gem_object *panthor_gem_create_object(struct drm_device *ddev=
-, size_t size);
-> =20
->  int
+>  
+> @@ -480,14 +481,13 @@ void update_sta_info_apmode(struct adapter *padapter, struct sta_info *psta)
+>  		/* check if sta supports rx ampdu */
+>  		phtpriv_sta->ampdu_enable = phtpriv_ap->ampdu_enable;
+>  
+> -		phtpriv_sta->rx_ampdu_min_spacing = (
+> -			phtpriv_sta->ht_cap.ampdu_params_info & IEEE80211_HT_CAP_AMPDU_DENSITY
+> +		phtpriv_sta->rx_ampdu_min_spacing = (phtpriv_sta->ht_cap.ampdu_params_info &
+> +		IEEE80211_HT_CAP_AMPDU_DENSITY
+>  		) >> 2;
+>  
+>  		/*  bwmode */
+> -		if ((
+> -			phtpriv_sta->ht_cap.cap_info & phtpriv_ap->ht_cap.cap_info
+> -		) & cpu_to_le16(IEEE80211_HT_CAP_SUP_WIDTH))
+> +		if ((phtpriv_sta->ht_cap.cap_info & phtpriv_ap->ht_cap.cap_info) &
+> +			cpu_to_le16(IEEE80211_HT_CAP_SUP_WIDTH))
+
+This isn't aligned correctly.  Use a combination of tabs and spaces to
+make it exact.
+
+Same for all the rest etc.
+
+regards,
+dan carpenter
 
 
