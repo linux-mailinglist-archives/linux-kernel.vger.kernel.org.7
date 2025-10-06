@@ -1,137 +1,221 @@
-Return-Path: <linux-kernel+bounces-843313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17EF5BBEE55
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:14:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70662BBEE68
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:18:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B117334AB81
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:14:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A5BF3BC9D3
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632CE2D5427;
-	Mon,  6 Oct 2025 18:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3B32D5427;
+	Mon,  6 Oct 2025 18:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CS5gBvo9"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNaEequq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93DE38FA6;
-	Mon,  6 Oct 2025 18:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3B6B661;
+	Mon,  6 Oct 2025 18:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759774487; cv=none; b=pOZ1tARYZX+pTDORnPJXpUBiVbas/54r+RN7asRH6jAGMgZBZFfcnMqZmcupseE9CyqeWsOpCNRPL5qiPWowOdROSr4ucHL5+xrM8GLFcdqH2YT4UM6Y5bgEqXDhjEzs71EbGZbdofld8hTGKgZTIwCtJuFL7KesoAu8+mBmyHg=
+	t=1759774719; cv=none; b=ogefgl+wQGwhFP57m1aAkN2cRo9R9lNaCGSJN0DqcV/CvDoUIO7FEQ4Lm95s7oYf47BqnT+V7rK9bSVy0tD78nMVbhaoEF2SV8dfo7g9A7jJdC6q2LdoFUcemXIFF+gw/2zZq9YvQVnf6NM6Rxs20qOCSYNzW4tnL8vQZZAotGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759774487; c=relaxed/simple;
-	bh=3uRNiWVly4CAnAg3uAC85gdadwgEoKVbIoyClmEJbK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P5I2rwqOl3d6l7PfwbZsAVsP3A8DtHR1pC9FdwvFLdwNRNsIWAJ/nKxJRP7O9vCTKMzNxD2rhTZ827d2CR6d5k2+9PAvROhKPGkKndh8U8F/P4ycicEeH7hZUTPfDSCZOJw/aDxhTi2S6MLMTY7ioGRF3CS5lG+D+Tsje+KNJ8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CS5gBvo9; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=xaUexNMvUYJY72kamRxZMI7KBSdMfJKNfOgDc1kRXDw=; b=CS5gBvo9jMBljOpCsFx5Zwh95q
-	CT2/DA4FLbY+lWr3EbLy2XrTUlQ85h3xMzSq8NGqJLyNbUTT5LJN6EthVm4Smgn0IJv3qr7DXdEeq
-	wWLBWrbDeX3+ha/pMSuew4xs0uwt0//W21XJm+3EvhFtgsDju7PdchGnsVgD3puPbK47plvIEi8dB
-	+VnzgzR9382/sg1CTO4hLc/ECNv8078qlKKgdJaykChW/sEoD55DQIbAN83YehYxhNTiuvks/bFgv
-	o/ChssjCCmnoboDsAbq/aLb7rYV/Tqy2Lm0tgsVcziZ/lSKev7aXc58XxA9ePE/cLKhDsDWJJ6O13
-	jegZRMbw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v5pjG-0000000H6Cb-0C5Z;
-	Mon, 06 Oct 2025 18:14:34 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 1EAA1300212; Mon, 06 Oct 2025 20:14:29 +0200 (CEST)
-Date: Mon, 6 Oct 2025 20:14:29 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
-	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
-	changwoo@igalia.com, cgroups@vger.kernel.org,
-	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de,
-	tj@kernel.org
-Subject: Re: [PATCH 01/14] sched: Employ sched_change guards
-Message-ID: <20251006181429.GV3245006@noisy.programming.kicks-ass.net>
-References: <20250910154409.446470175@infradead.org>
- <20250910155808.415580225@infradead.org>
- <fee0edd5-86d1-4dff-9e07-70fd2208b073@linux.ibm.com>
+	s=arc-20240116; t=1759774719; c=relaxed/simple;
+	bh=R1mnFJVtirenhdP0X3we1THI4lBu0uptnlr13foqCDM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=clqfpMeJ1PAX58fM4DbQIet8ErRrul+0rNVFX+lPFHCRpHiI9kMwFevewjNoeRgssruRtXCfLoTPynCn/BD4sF95Gn/JSmOJ0A29yu7O4JRrdS1IKOIbOLxfQuLRyNH8PSJOqj1R3QjaLIMPDOF3qik4sxLLM9bBEmwwgZ1sVTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNaEequq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CE2AC4CEF5;
+	Mon,  6 Oct 2025 18:18:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759774718;
+	bh=R1mnFJVtirenhdP0X3we1THI4lBu0uptnlr13foqCDM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZNaEequq2D2ioKzjjSX7bUj37yiPmvXpvCGGcdC3D12R+4l73kYNQ6EhLAJ/QVe7V
+	 xAY2WEvF8XoHAc+oq8yVOZ67gBrNzilojtJtv4vvTXu2gyqkxc06rYrEwLUC1esE7m
+	 D4F1yYnY8F+f8bU5A+4xsQsw5Zk2S2C/H0gsFYqXrlZerB3zVRBw9XjgtwDI5P0PrI
+	 aT05szO8qhQvlBZw0xC9Dmj2JFN1aRcw8IpO9AnPHAiSHtzPzjCL4dUiP/LWr8kqJr
+	 NmjDJX9sHYSnFGAok6TX6nmVwYPwue+dNw80WmRaF0wj0/S5gqmM2OaV8zfyldN5PE
+	 WXDjEIQ+al6EQ==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Nathan Chancellor <nathan@kernel.org>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	Sasha Levin <sashal@kernel.org>,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH AUTOSEL 6.17-5.4] x86/build: Remove cc-option from stack alignment flags
+Date: Mon,  6 Oct 2025 14:17:33 -0400
+Message-ID: <20251006181835.1919496-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fee0edd5-86d1-4dff-9e07-70fd2208b073@linux.ibm.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.17.1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 06, 2025 at 08:51:27PM +0530, Shrikanth Hegde wrote:
-> 
-> 
-> On 9/10/25 9:14 PM, Peter Zijlstra wrote:
-> > As proposed a long while ago -- and half done by scx -- wrap the
-> > scheduler's 'change' pattern in a guard helper.
-> > 
-> [...]>   		put_task_struct(p);
-> > --- a/kernel/sched/sched.h
-> > +++ b/kernel/sched/sched.h
-> > @@ -3860,23 +3860,22 @@ extern void check_class_changed(struct r
-> >   extern struct balance_callback *splice_balance_callbacks(struct rq *rq);
-> >   extern void balance_callbacks(struct rq *rq, struct balance_callback *head);
-> > -#ifdef CONFIG_SCHED_CLASS_EXT
-> > -/*
-> > - * Used by SCX in the enable/disable paths to move tasks between sched_classes
-> > - * and establish invariants.
-> > - */
-> > -struct sched_enq_and_set_ctx {
-> > +struct sched_change_ctx {
-> >   	struct task_struct	*p;
-> > -	int			queue_flags;
-> > +	int			flags;
-> >   	bool			queued;
-> >   	bool			running;
-> >   };
-> > -void sched_deq_and_put_task(struct task_struct *p, int queue_flags,
-> > -			    struct sched_enq_and_set_ctx *ctx);
-> > -void sched_enq_and_set_task(struct sched_enq_and_set_ctx *ctx);
-> > +struct sched_change_ctx *sched_change_begin(struct task_struct *p, unsigned int flags);
-> > +void sched_change_end(struct sched_change_ctx *ctx);
-> > -#endif /* CONFIG_SCHED_CLASS_EXT */
-> > +DEFINE_CLASS(sched_change, struct sched_change_ctx *,
-> > +	     sched_change_end(_T),
-> > +	     sched_change_begin(p, flags),
-> > +	     struct task_struct *p, unsigned int flags)
-> > +
-> > +DEFINE_CLASS_IS_UNCONDITIONAL(sched_change)
-> >   #include "ext.h"
-> could you please add a comment on matching flags on dequeue/enqueue
-> here?
+From: Nathan Chancellor <nathan@kernel.org>
 
-Would something like so be okay? This assumes at least the second patch
-is applied as well.
+[ Upstream commit d87208128a3330c0eab18301ab39bdb419647730 ]
 
+'-mpreferred-stack-boundary' (the GCC option) and '-mstack-alignment'
+(the clang option) have been supported in their respective compilers for
+some time, so it is unnecessary to check for support for them via
+cc-option. '-mpreferred-stack-boundary=3' had a restriction on
+'-mno-sse' until GCC 7.1 but that is irrelevant for most of the kernel,
+which includes '-mno-sse'.
+
+Move to simple Kconfig checks to avoid querying the compiler for the
+flags that it supports.
+
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/20250814-x86-min-ver-cleanups-v1-2-ff7f19457523@kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -10783,6 +10783,12 @@ struct sched_change_ctx *sched_change_be
- 	struct sched_change_ctx *ctx = this_cpu_ptr(&sched_change_ctx);
- 	struct rq *rq = task_rq(p);
+LLM Generated explanations, may be completely bogus:
+
+Based on my comprehensive analysis of this commit, here is my
+determination:
+
+## Backport Status: NO
+
+### Extensive Analysis
+
+**Commit Context:**
+- Upstream commit: d87208128a3330c0eab18301ab39bdb419647730 (August 14,
+  2025)
+- Author: Nathan Chancellor
+- Part of patch series: "x86-min-ver-cleanups-v1"
+- Already backported to 6.17 stable as 8be33f616f1c4 via AUTOSEL
+  (Automatic Stable Election)
+- Target tree: linux-autosel-6.17 (kernel 6.17)
+
+**What the Commit Does:**
+The commit removes runtime compiler capability checks (`cc-option`) for
+stack alignment flags and replaces them with build-time Kconfig checks:
+- For GCC: Uses `CONFIG_CC_IS_GCC` to unconditionally set `-mpreferred-
+  stack-boundary=2/3`
+- For Clang: Uses `CONFIG_CC_IS_CLANG` to unconditionally set `-mstack-
+  alignment=4/8`
+
+**Code Changes Analysis:**
+```makefile
+# OLD: Runtime check if compiler supports the flags
+-ifneq ($(call cc-option, -mpreferred-stack-boundary=4),)
++ifdef CONFIG_CC_IS_GCC
+       cc_stack_align4 := -mpreferred-stack-boundary=2
+       cc_stack_align8 := -mpreferred-stack-boundary=3
+-else ifneq ($(call cc-option, -mstack-alignment=16),)
++endif
++ifdef CONFIG_CC_IS_CLANG
+       cc_stack_align4 := -mstack-alignment=4
+       cc_stack_align8 := -mstack-alignment=8
+ endif
+```
+
+**Dependency Analysis:**
+- Requires minimum GCC 8.1 for x86 (introduced in v6.15 via commit
+  a3e8fe814ad1)
+- Requires minimum Clang 15.0.0 for x86 (commit 7861640aac52b)
+- Both requirements are satisfied in 6.17 stable tree (verified via
+  scripts/min-tool-version.sh)
+- GCC 7.1+ supports `-mpreferred-stack-boundary=3` with `-msse` (per GCC
+  commit 34fac449e121)
+
+**Evaluation Against Stable Kernel Rules:**
+
+According to Documentation/process/stable-kernel-rules.rst, stable
+patches must:
+
+1. ✅ **Already exist in mainline**: YES -
+   d87208128a3330c0eab18301ab39bdb419647730
+2. ✅ **Obviously correct and tested**: YES - simple Makefile change, no
+   issues found
+3. ✅ **Not bigger than 100 lines**: YES - only 5 lines changed (3
+   insertions, 2 deletions)
+4. ✅ **Follow submitting-patches.rst rules**: YES
+5. ❌ **Fix a real bug or add device ID**: **NO - This is the critical
+   failure**
+
+The rules explicitly state (lines 15-31 of stable-kernel-rules.rst):
+> "It must either fix a real bug that bothers people or just add a
+device ID."
+
+This commit:
+- Does **NOT** fix a bug (no oops, hang, data corruption, security
+  issue, build error, etc.)
+- Is a **cleanup/optimization** to improve build performance
+- Provides **no user-visible bug fix**
+- Falls under "trivial fixes without benefit for users" category (rule
+  line 30-31)
+- The original author did **NOT** tag it with `Cc:
+  stable@vger.kernel.org`
+
+**Search for Issues/Regressions:**
+- Searched Linux kernel mailing lists: No issues found
+- Searched for reverts: None found
+- Searched for build failures: None reported
+- Part of systematic cleanup series with no reported problems
+
+**Risk Assessment:**
+- **Technical risk**: Very low - simple change, dependencies satisfied
+- **Regression risk**: Very low - no functionality change, just build
+  system optimization
+- **Policy compliance**: **Does not meet stable kernel criteria**
+
+### Conclusion
+
+While this commit is technically safe and provides a marginal build-time
+performance improvement by eliminating unnecessary runtime compiler
+checks, **it does not meet the fundamental requirement for stable kernel
+backporting**: it does not fix a bug that affects users.
+
+The commit is purely a cleanup that removes obsolete code after compiler
+minimum version requirements were raised. Such cleanups belong in
+mainline development, not stable trees, which should focus exclusively
+on fixing bugs that impact users.
+
+The fact that it was auto-selected by AUTOSEL does not override the
+documented stable kernel rules. This commit should be **rejected** from
+stable backporting or **reverted** if already applied.
+
+ arch/x86/Makefile | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index 1913d342969ba..7cfc1b31f17e1 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -37,10 +37,11 @@ export RETPOLINE_VDSO_CFLAGS
  
-+	/*
-+	 * Must exclusively use matched flags since this is both dequeue and
-+	 * enqueue.
-+	 */
-+	WARN_ON_ONCE(flags & 0xFFFF0000);
-+
- 	lockdep_assert_rq_held(rq);
- 
- 	if (!(flags & DEQUEUE_NOCLOCK)) {
+ # For gcc stack alignment is specified with -mpreferred-stack-boundary,
+ # clang has the option -mstack-alignment for that purpose.
+-ifneq ($(call cc-option, -mpreferred-stack-boundary=4),)
++ifdef CONFIG_CC_IS_GCC
+       cc_stack_align4 := -mpreferred-stack-boundary=2
+       cc_stack_align8 := -mpreferred-stack-boundary=3
+-else ifneq ($(call cc-option, -mstack-alignment=16),)
++endif
++ifdef CONFIG_CC_IS_CLANG
+       cc_stack_align4 := -mstack-alignment=4
+       cc_stack_align8 := -mstack-alignment=8
+ endif
+-- 
+2.51.0
+
 
