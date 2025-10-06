@@ -1,102 +1,105 @@
-Return-Path: <linux-kernel+bounces-843341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D975BBEF8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:33:41 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05733BBEF61
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:31:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B14D24F434D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:30:55 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A5AD434ADA4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D58C2D94A6;
-	Mon,  6 Oct 2025 18:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A994A2DCBFA;
+	Mon,  6 Oct 2025 18:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JhpOJQ6C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F832DF126;
-	Mon,  6 Oct 2025 18:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="aFf4iSCN"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B671D618C;
+	Mon,  6 Oct 2025 18:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759775427; cv=none; b=Acj0Y1nfPgpmL8Ox4fGOIfmfCo9CmzBdZ7fWZCtbH8V3F4RJTpXR0AyxUM5s/uFqOsl2hkj6k32SqXFTPISH1CHo6abk0Us33Kp/wSancFXOuVhlTbBe/rTN/TP8BBiix5da1WzWhsYc6EQnuTIzjZEjNBpA9z0H9EpuTcjIhrg=
+	t=1759775442; cv=none; b=VXdyu1IiwTS+nm0GlhyuWcwPeqtjLK9lYhewZbw7ze5dqcCUGW1LkeSgfW4OC4a7Z93lCb3j7t4NQH5iekigv9Kw4LPqhKcVSvhEUgboVFPMRs9kGjXx6itse9fnaLGa7eSHOBrPErvVKb5psv2YQT5Vp/mwov4Qf4lJ6GlPfUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759775427; c=relaxed/simple;
-	bh=mZ0XaT79G0QkL+0/drk+BoeqH74wESaS8ejqJLg1Ya4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=NWHoY5UA1RohnSInvfFQwRiM/qpFrgBzXVwywEdMl5Q+1rJuszRW5WUdIyxGdoFf/s45WK23iDz+QX+oIA26x7SfSrF48a9DG8fJxweu1bVYLco3Jg8zWcTurH0wiVjsGPbrRGaI6QaUTD+xvwdTSGvYR29pQXQJ+rnH52Ytdwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JhpOJQ6C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C52EEC4CEF7;
-	Mon,  6 Oct 2025 18:30:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759775426;
-	bh=mZ0XaT79G0QkL+0/drk+BoeqH74wESaS8ejqJLg1Ya4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=JhpOJQ6CUnP9DejYRQRLmcyz4jXvH90xuPqFtLBdF95IzvKmMM+Felqn2F6U6zsLa
-	 8mzjjFzY8VJqZv+MY25FjkE4r9uw2jt12sfJDlmLLUNR50Fha8JYd/22WwIS1ETI4q
-	 kE0SEs5PQnCm+CYwDtxdrorlCYQIq3Xj91wiQxCvMt0JKI/G5lVDMoYXzenYGbEQds
-	 vfM937kEH0w1HipCKnxuwMNbPLsx5DUUFl85wju4jLWl8xYl4RnUmbXftHlBhu29+2
-	 C7rTp3rJxslVn+s/wvRR8hyHNluMCk7rfiN4FBLsg+YNvau02KdPiEMwmu21PYedLj
-	 DrHm42kYWUjmQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE09D39D0C1A;
-	Mon,  6 Oct 2025 18:30:17 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1759775442; c=relaxed/simple;
+	bh=iUCByOCa4O0HN9ykRHF9A6sRhtXzXxF8NdZt7hDemZg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g7oMe5DOrW1izZKiQoiFvL+CFeZvazEhTVEpwQ8RZZRalW2mabSTJj4qcSKfoYzvBKtgqfkk/61unuAQooiaR7Mg672PTsFMFWyf5AN2cn1xwXjZUFAItk1RjCQrSLXyLv26TaVnaMi7XorK6TSVJjFopRji7Ju6XDfrZuiOu3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=aFf4iSCN; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.184.60] (unknown [131.107.1.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id C0D97211CDEF;
+	Mon,  6 Oct 2025 11:30:39 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C0D97211CDEF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1759775440;
+	bh=cyxIx+MJtrd6uNL71MuB7b1PPIy+SoA2XMGIG2qal7I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aFf4iSCNj2NMfgURX6QLKtEU8RIrB9LGM1bU4rzVOPieXcWuZm3GScH0g+exvsvJ9
+	 wZNdVSY6qiBOsLYigB9SXJZpPM74lauBNchPeOlQp/bC+7GQHTkt+vs6rGmqRnseuX
+	 eN+EuQ36+nsqr4JLccXFNKOJXDWHtJ7wVh5OX384=
+Message-ID: <6a8176dd-ffa7-4ec1-a373-6ab61abd962e@linux.microsoft.com>
+Date: Mon, 6 Oct 2025 11:30:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 net] net: mscc: ocelot: Fix use-after-free caused by
- cyclic
- delayed work
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175977541624.1511446.1704376269622300510.git-patchwork-notify@kernel.org>
-Date: Mon, 06 Oct 2025 18:30:16 +0000
-References: <20251001011149.55073-1-duoming@zju.edu.cn>
-In-Reply-To: <20251001011149.55073-1-duoming@zju.edu.cn>
-To: Duoming Zhou <duoming@zju.edu.cn>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com,
- kuba@kernel.org, edumazet@google.com, davem@davemloft.net,
- andrew+netdev@lunn.ch, UNGLinuxDriver@microchip.com,
- alexandre.belloni@bootlin.com, claudiu.manoil@nxp.com,
- vladimir.oltean@nxp.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH hyperv-next v6 05/17] arch/x86: mshyperv: Trap on access
+ for some synthetic MSRs
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: "benhill@microsoft.com" <benhill@microsoft.com>,
+ "bperkins@microsoft.com" <bperkins@microsoft.com>,
+ "sunilmut@microsoft.com" <sunilmut@microsoft.com>,
+ "arnd@arndb.de" <arnd@arndb.de>, "bp@alien8.de" <bp@alien8.de>,
+ "corbet@lwn.net" <corbet@lwn.net>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "hpa@zytor.com" <hpa@zytor.com>, "kys@microsoft.com" <kys@microsoft.com>,
+ "mikelley@microsoft.com" <mikelley@microsoft.com>,
+ "mingo@redhat.com" <mingo@redhat.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "Tianyu.Lan@microsoft.com" <Tianyu.Lan@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>, "x86@kernel.org"
+ <x86@kernel.org>, "linux-hyperv@vger.kernel.org"
+ <linux-hyperv@vger.kernel.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+References: <20251003222710.6257-1-romank@linux.microsoft.com>
+ <20251003222710.6257-6-romank@linux.microsoft.com>
+ <SN6PR02MB41571BD37714C5F0AB770CB5D4E3A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB41571BD37714C5F0AB770CB5D4E3A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello:
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
 
-On Wed,  1 Oct 2025 09:11:49 +0800 you wrote:
-> The origin code calls cancel_delayed_work() in ocelot_stats_deinit()
-> to cancel the cyclic delayed work item ocelot->stats_work. However,
-> cancel_delayed_work() may fail to cancel the work item if it is already
-> executing. While destroy_workqueue() does wait for all pending work items
-> in the work queue to complete before destroying the work queue, it cannot
-> prevent the delayed work item from being rescheduled within the
-> ocelot_check_stats_work() function. This limitation exists because the
-> delayed work item is only enqueued into the work queue after its timer
-> expires. Before the timer expiration, destroy_workqueue() has no visibility
-> of this pending work item. Once the work queue appears empty,
-> destroy_workqueue() proceeds with destruction. When the timer eventually
-> expires, the delayed work item gets queued again, leading to the following
-> warning:
+On 10/6/2025 9:55 AM, Michael Kelley wrote:
+> From: Roman Kisel <romank@linux.microsoft.com> Sent: Friday, October 3, 2025 3:27 PM
+
+[...]
+
+>> +/*
+>> + * When running with the paravisor, controls proxying the synthetic interrupts
+>> + * from the host
+>> + */
+>> +static bool hv_para_sint_proxy;
 > 
-> [...]
+> This needs to move down a few lines and be under the #if IS_ENABLED(CONFIG_HYPERV)
+> in order to eliminate the "unused variable" warning reported by the kernel test robot.
 
-Here is the summary with links:
-  - [v2,net] net: mscc: ocelot: Fix use-after-free caused by cyclic delayed work
-    https://git.kernel.org/netdev/net/c/bc9ea7870796
+Thanks, Michael, will do!
 
-You are awesome, thank you!
+[...]
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Thank you,
+Roman
 
 
