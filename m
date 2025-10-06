@@ -1,118 +1,93 @@
-Return-Path: <linux-kernel+bounces-843378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACC8FBBF0E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 21:08:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03B21BBF0F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 21:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56BAE3BE3C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 19:08:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 276AF3BF386
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 19:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516C4252904;
-	Mon,  6 Oct 2025 19:07:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF3B2D3727;
+	Mon,  6 Oct 2025 19:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cKaSIEWl"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uD8hJPWF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24DEB247281;
-	Mon,  6 Oct 2025 19:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02061D61A3;
+	Mon,  6 Oct 2025 19:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759777678; cv=none; b=QGon7vBFmNeB9rnuJmCrqsMurK4sR3KGhjaXKuSowwp1suvQoP1wU3Gxm89i+BSi3Cf9QUAHzzN8x2GmLwrpAlvDeGDGHnrjvmGPMncpRkLWjky8ggAwfw8RV1obxNK7Nm7oMrr0AM/ARTXyRBK9GUcZT9UhtRxpKfS6btnCMz4=
+	t=1759777706; cv=none; b=ZlE6mvjrqMW8l0X0JbL6pGtmekn0jEv4TY/egC+i0xqaORBvNbQW4xvk6mHCRgHM0vaKoVBl/PdiLRTPXg9rH8GW1OJlncypvFjplIj8jz/uGi1VOCVPjiOWM9313/bk9etO53B42Sd0emmRjoHfcEpKd0Udv2286dxmRBK7TA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759777678; c=relaxed/simple;
-	bh=K++5qxJVpYqWIl/13U8wEuzPuzmB0ihAKHJzOja16LY=;
+	s=arc-20240116; t=1759777706; c=relaxed/simple;
+	bh=y7eB5Aq5t61EIBq8FizZqyAOn5r9BRoMjG9Gdpz6Tzo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gXEwR/NDeYDjBuTagGqXvvx8PPCyLYUC29lGb5CuHZtFGNNcNZh6FWvoUV4xxkbeQ0VULGI2E80a4gWeY7Tcn3LscGLM2TDv6+E9rq5xfQmddedsMPXdDAWfut8hKdw2s4BHBDt7G3bNeG8nXIcDUyaFDDsSfp61PwxSaBLrZ6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cKaSIEWl; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=Gt6UOW/sVchKMmtHmO/QIVQId/DdO6/CiuTOEihhEPo=; b=cKaSIEWl3S9EuI52fXbr9UQl3o
-	eK8mc2PZIaxMQ9t5WI0kcHPz1IC+mCSReym7NzbC4Og13D7RtOp7OQe2d8zfX4bjDpKgPJGjmydWa
-	TczjmNdAuvpoyFuYdy+I0kbVIRB945K87HCTKvOCHiPstsrIAim+c3T6qd6lJfLvUIJFMnWwIbruw
-	y+MNuilGsstVRRLWpAIeVHHn7NWjS+dMjWvJKCQ6thcApbvUNt/gYw8OLvAb7oDzy5N8Lj6V00Ey8
-	+91opC2ib1Rr3IggpvpRpi1NKeOULpR6sz8AKLWQWQaLTSSFd8Ad4lQ3z6xTXkeGDzFyOUVKKB+FK
-	7yk+Lsog==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v5qYd-0000000H7kP-49ye;
-	Mon, 06 Oct 2025 19:07:40 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 86AFD300325; Mon, 06 Oct 2025 21:07:39 +0200 (CEST)
-Date: Mon, 6 Oct 2025 21:07:39 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: cuiguoqi <cuiguoqi@kylinos.cn>
-Cc: rostedt@goodmis.org, bigeasy@linutronix.de, bsegall@google.com,
-	clrkwllms@kernel.org, dietmar.eggemann@arm.com, guoqi0226@163.com,
-	juri.lelli@redhat.com, linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev, mgorman@suse.de, mingo@redhat.com,
-	vincent.guittot@linaro.org, vschneid@redhat.com
-Subject: Re: [PATCH] sched: Fix race in rt_mutex_pre_schedule by removing
- non-atomic fetch_and_set
-Message-ID: <20251006190739.GZ3245006@noisy.programming.kicks-ass.net>
-References: <20250826095615.14259d90@gandalf.local.home>
- <20250827081750.3606616-1-cuiguoqi@kylinos.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vh3isF4Yv3iGI3vZ07VmtjLteKX6M/sEhSr5V/C7b2gs3H6nh4G7XV6aapuuOrtab9Ps8Mq0uce8dmpqATDtdfdzFUGsA8x2b+CWlNDb6aVPOWHjZh1UbLIGs80xEN316jrpmsFcHeMyr/ZJyTnMattvo96djDEYmt8Ag6sh3f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uD8hJPWF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CD38C4CEF5;
+	Mon,  6 Oct 2025 19:08:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759777705;
+	bh=y7eB5Aq5t61EIBq8FizZqyAOn5r9BRoMjG9Gdpz6Tzo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uD8hJPWFbKLdWtulj5XUIgCrgpIcXYfvHT3M5zcTUwJx1jEWY9+hLIGQtBcBkAUmw
+	 aw6NdNg7CAlhFc2cpBwi7dDlXnRBv6CeW0mahR9pAxsbLsG6z/uQvR2nBsDicZgIhc
+	 Wp7PA+XsGZG4KcPFfEFda/4JIgRQsRyorjpZOI1MeAFcgefs+fuBvBxe0YFFHwicea
+	 ETsv4DZwn81arKsESHcZ9H4om40CElC0vToQ9HpDxiqOBFw6xz1Nl9IxwwStJkn2E3
+	 JCUoblTAm/VMMN75XQyLiCL81CvjUtiRxD0Axr83xKYZHe8/kreEvJR27D6hnhZNY3
+	 L2JuBxXk++h2Q==
+Date: Mon, 6 Oct 2025 12:08:19 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: kernel test robot <lkp@intel.com>, ilpo.jarvinen@linux.intel.com,
+	hdegoede@redhat.com, chumuzero@gmail.com, corbet@lwn.net,
+	cs@tuxedo.de, wse@tuxedocomputers.com, ggo@tuxedocomputers.com,
+	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org, rdunlap@infradead.org,
+	alok.a.tiwari@oracle.com, linux-leds@vger.kernel.org,
+	lee@kernel.org, pobrn@protonmail.com
+Subject: Re: [PATCH v4 1/2] platform/x86: Add Uniwill laptop driver
+Message-ID: <20251006190819.GA2406882@ax162>
+References: <20250928013253.10869-2-W_Armin@gmx.de>
+ <202509290415.uez00SgW-lkp@intel.com>
+ <6146d57b-f855-40b1-a644-3af6b28ceea4@gmx.de>
+ <20251002233627.GA3978676@ax162>
+ <402f254d-7217-43e8-867f-66daab3ead86@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250827081750.3606616-1-cuiguoqi@kylinos.cn>
+In-Reply-To: <402f254d-7217-43e8-867f-66daab3ead86@gmx.de>
 
-On Wed, Aug 27, 2025 at 04:17:50PM +0800, cuiguoqi wrote:
-> The issue arises during EDEADLK testing in `lib/locking-selftest.c` when `is_wait_die=1`.
+On Sun, Oct 05, 2025 at 08:06:57PM +0200, Armin Wolf wrote:
+> Am 03.10.25 um 01:36 schrieb Nathan Chancellor:
 > 
-> In this mode, the current thread's `debug_locks` flag is disabled via `__debug_locks_off` (which calls `xchg(&debug_locks, 0)`) during the blocking path of `rt_mutex_slowlock`, specifically in `rt_mutex_slowlock_block()`:
+> > Hi Armin,
+> > 
+> > On Thu, Oct 02, 2025 at 08:41:19PM +0200, Armin Wolf wrote:
+> > > i think this is a problem inside the clang compiler. I did not encounter this warning when
+> > > build for x86-64 using gcc.
+> > Clang is actually saving you from yourself, it is a bug in GCC that it
+> > does not warn for this:
+> > 
+> > https://gcc.gnu.org/bugzilla/show_bug.cgi?id=91951
 > 
->   rt_mutex_slowlock()
->     rt_mutex_pre_schedule()
->       rt_mutex_slowlock_block()
->         DEBUG_LOCKS_WARN_ON(ww_ctx->contending_lock)
->           __debug_locks_off();  // xchg(&debug_locks, 0)
-> 
-> However, `rt_mutex_post_schedule()` still performs:
-> 
->   lockdep_assert(fetch_and_set(current->sched_rt_mutex, 0));
-> 
-> Which expands to:
-> 
->   do {
->       WARN_ON(debug_locks && !( ({ int _x = current->sched_rt_mutex; current->sched_rt_mutex = 0; _x; }) ));
->   } while (0)
-> 
-> The generated assembly shows that the entire assertion is conditional on `debug_locks`:
-> 
->   adrp    x0, debug_locks
->   ldr     w0, [x0]
->   cbz     w0, .label_skip_warn   // Skip WARN if debug_locks == 0
-> 
-> This means: if `debug_locks` was cleared earlier, the check on `current->sched_rt_mutex` is effectively skipped, and the flag may remain set.
-> 
-> Later, when the same task re-enters `rt_mutex_slowlock`, it calls `lockdep_reset()` to re-enable `debug_locks`, but the stale `current->sched_rt_mutex` state (left over from the previous lock attempt) causes a false-positive warning in `rt_mutex_pre_schedule()`:
-> 
->   WARNING: CPU: 0 PID: 0 at kernel/sched/core.c:7085 rt_mutex_pre_schedule+0xa8/0x108
-> 
-> Because:
->   - `rt_mutex_pre_schedule()` asserts `!current->sched_rt_mutex`
->   - But the flag was never properly cleared due to the skipped post-schedule check.
-> 
-> This is not a data race on the flag itself, but a **state inconsistency caused by conditional debugging logic** — the `fetch_and_set` macro is not atomic, but more importantly, the assertion is bypassed when `debug_locks` is off, breaking the expected state transition.
+> Oh my, i didn't expect that. Thank you for explaining this issue to to me,
+> it seems that i still have much to learn.
 
-Yeah, I can't really make myself care too much. This means you've
-already had errors before -- resulting in debug_locks getting cleared.
-Fix those and this problem goes away.
+In your defense, it is quite a subtle interaction. It is probably worth
+throwing something in the documentation that explicitly calls this out,
+though I am not immediately sure of where...
 
-debug_locks is inherently racy; I don't see value in trying to fix all
-that.
+Cheers,
+Nathan
 
