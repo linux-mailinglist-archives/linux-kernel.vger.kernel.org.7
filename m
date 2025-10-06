@@ -1,433 +1,199 @@
-Return-Path: <linux-kernel+bounces-843095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4581BBBE65B
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:48:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44ECCBBE652
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 000D53B722F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:48:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F265F3B43D7
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343BA2D641F;
-	Mon,  6 Oct 2025 14:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1C82D661A;
+	Mon,  6 Oct 2025 14:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gC7XqWLc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="oDNYzy3Z"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47AF2D5943
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 14:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37C81DE887;
+	Mon,  6 Oct 2025 14:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759762100; cv=none; b=cUYQiV25O2xLtOjlL0aRJeo3WUg2YK7Jx/xAI7u8e/rYhQHWZITY3BZ1EIjDg3nhfXnTdyGgA3JKJ1LrCqIjMRJ+Y+RT9nJreZlhXQbOtVLI95nTHOeLFVDTWEuvj4A9TuCEOgBRDKx7E+XIWizFaFyMdGZJq1IgqfRnrjn8sr8=
+	t=1759762092; cv=none; b=SjSmtVKw3RGelkdnK68g05BizuaZ+cy1mBksOD5wq2ranIN8gEu8/JDSrfLqcitcbIgPu8mSLvqLWPhqF7R5PlmBdYOQciQPK3HMPDkfShKIGFKf8PpN6Rjh2bL/6ZN4KoLrEXpPDpHT27HWYdfhv7YWowo0PqEKvWWSB+5PU8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759762100; c=relaxed/simple;
-	bh=pWCgg2LcL9NNgI9UUQVYFvkwIr7NlLiPjECQBr/yPQg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R0ekJFCTg8oiOIiF9CDFflP4A4R0DSlvOZ+4NRaQsL1E0tIyPGzNc2FIEH5YIhiG0kuVA/cvVYNgL/uj/031PEE7AabwNDtEa9CqW7hNxpLDHtp/uUWpMl4QcR0k90/IxPJ2KhBHmZaBosp3cK5jU9EFOHVt/I3R8f2uIlYpLrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gC7XqWLc; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759762097; x=1791298097;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=pWCgg2LcL9NNgI9UUQVYFvkwIr7NlLiPjECQBr/yPQg=;
-  b=gC7XqWLccQMBW4DaPnJy0jz8xUnyeJYYT/B8yLpACn3+A8nNyJV71tNm
-   +kWG7h0HoI94zAc/geWlRNeTLclBNeytE4bWdUHq//QDEj+03PTAxXTlv
-   CMB9yMyoVAlYvctn6+AjkK2cz7NQsifDTBIU5Evpu0NipxGxe1EyjwRfn
-   DKo0fmPkjy+72Belpjwi1rsRMe0tDvXI1yk5P+xbtBgTmm9wO10RnInH5
-   oLKYQ3JN6Z3tBHQaY4oHnR+3KBcqzGerJ445C0tVEe59yPt2eQkcmLvLy
-   +MFvibaIxZBkukra3ord57TrTN8ViMbmLZ3yI+MIin/80rSe1ZEu0NawO
-   w==;
-X-CSE-ConnectionGUID: yo1h5F/7SmGgICPVjfd33A==
-X-CSE-MsgGUID: pDFDVTf6R3KuC78WajdLEA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11574"; a="61840171"
-X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
-   d="scan'208";a="61840171"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 07:48:12 -0700
-X-CSE-ConnectionGUID: DfbLrz5wTW6Jf58Fl3lB6w==
-X-CSE-MsgGUID: aiEvbrb4RROMh44Gjzu4Cg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
-   d="scan'208";a="184178171"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.80])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 07:48:09 -0700
-Date: Mon, 6 Oct 2025 17:48:05 +0300
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <siqueira@igalia.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	s=arc-20240116; t=1759762092; c=relaxed/simple;
+	bh=fwAzFzgYYqKMsi/+jH1fKNFJ9VHgpxV+bXbMYhiX/X8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EQeaTFRioCkf+6LAw/IXBrgsiyHiT42R0aPWyov7Qa1rxaHvjh4Wzr0roGSZtnFTbxrvhGIjgR7TcHfLteELmkh0A4MdmacK9gWGCiwv2wz0Dl7NCMURcGWHSYzt+JNvPnOY6idl02RtpgUNx8DYEamEPSHCHQuDOSgUhtrtrcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=oDNYzy3Z; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=5Wm3ETjVyISlPlN7DSrYCbT+fhXJZiuM2/CVIR4HuLQ=; t=1759762089;
+	x=1760366889; b=oDNYzy3ZQF4VXaasCsKhwf7PBqTc4E9esQmw0U9lGovP66Jr96ZhJxbffpjIt
+	aVoWxqLlPKqFVvuOXepdYyL5+7S6T+kf8ME4y0wF17o8xX3D5ZjsnWFBbRdIrPc/iI2A+cg+BYPBo
+	f+3AllwBzxjwFWKqvXEWbEPOCYKdo4UEv+EymEldGTBhmyeV7A4Z6SdtD/vz2HVLLSrX6NrharlRZ
+	t6zKQw+kVRwpvp78z4OhTKEqVOXtQjCrs5gwwCdX6u5Ckzn0rKDKML3osFogxWOLYSnZABY4IYEkA
+	RMYvrsSMpsJhnf1VGkhzFmwzBRpWj0NTJlyzSX3qmXgxlY7W/g==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1v5mVS-00000000nGj-2Bkp; Mon, 06 Oct 2025 16:48:06 +0200
+Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1v5mVS-00000003LLs-19Vh; Mon, 06 Oct 2025 16:48:06 +0200
+Message-ID: <576197870bdf21ea97559a1d84869fdcb9535156.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v2] Revert "sunvdc: Do not spin in an infinite loop when
+ vio_ldc_send() returns EAGAIN"
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/atomic: Change state pointers to a more meaningful
- name
-Message-ID: <aOPWpV9bCoSTtBq-@intel.com>
-References: <20251006-drm-rename-state-v1-1-5b7c4154772b@kernel.org>
+Cc: Andreas Larsson <andreas@gaisler.com>, Anthony Yznaga	
+ <anthony.yznaga@oracle.com>, Sam James <sam@gentoo.org>, "David S . Miller"
+	 <davem@davemloft.net>, Michael Karcher
+ <kernel@mkarcher.dialup.fu-berlin.de>, 	sparclinux@vger.kernel.org
+Date: Mon, 06 Oct 2025 16:48:05 +0200
+In-Reply-To: <d23fa119-c1df-4861-99e2-c35c1214baa1@kernel.dk>
+References: <20251006100226.4246-2-glaubitz@physik.fu-berlin.de>
+	 <d78a1704-31dc-4eaa-8189-e3aba51d3fe2@kernel.dk>
+	 <4e45e3182c4718cafad1166e9ef8dcca1c301651.camel@physik.fu-berlin.de>
+	 <a80a1c5f-da21-4437-b956-a9f659c355a4@kernel.dk>
+	 <e6a7e68ff9e23aee448003ee1a279a4ab13192c0.camel@physik.fu-berlin.de>
+	 <cef07e8f-a919-4aa1-9904-84b16dfa8fe6@kernel.dk>
+	 <5b3caa0e218dd473c8871c1b1f09a8dc1c356f1e.camel@physik.fu-berlin.de>
+	 <ecb74c6c-8de6-4774-8159-2ec118437c57@kernel.dk>
+	 <6ed7112cb4f338ba02d9ab67c14e7a3af4afbca0.camel@physik.fu-berlin.de>
+	 <d23fa119-c1df-4861-99e2-c35c1214baa1@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251006-drm-rename-state-v1-1-5b7c4154772b@kernel.org>
-X-Patchwork-Hint: comment
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Mon, Oct 06, 2025 at 03:22:26PM +0200, Maxime Ripard wrote:
-> The state pointer found in the struct drm_atomic_state internals for
-> most object is a bit ambiguous, and confusing when those internals also
-> have old state and new state.
-> 
-> After the recent cleanups, the state pointer only use is to point to the
-> state we need to free when destroying the atomic state.
-> 
-> We can thus rename it something less ambiguous, and hopefully more
-> meaningful.
+On Mon, 2025-10-06 at 08:27 -0600, Jens Axboe wrote:
+> > > But that's fine, it's not uncommon for drivers to miss things like th=
+at,
+> > > and then we fix them up when noticed. It was probably written by some=
+one
+> > > not super familiar with the IO stack.
+> >=20
+> > FWIW, Oracle engineers actually made some significant changes to the
+> > driver that they never upstreamed, see:
+> >=20
+> > https://github.com/oracle/linux-uek/commits/uek4/qu7/drivers/block/sunv=
+dc.c
+> >=20
+> > In particular, they added support for out-of-order execution:
+> >=20
+> > https://github.com/oracle/linux-uek/commit/68f7c9c17fb80d29cbc1e5110f6c=
+021f8da8d610
+> >=20
+> > and they also changed the driver to use the BIO-based interface for
+> > VDC I/O requests:
+> >=20
+> > https://github.com/oracle/linux-uek/commit/4b725eb64cc10a4877f2af75ff3a=
+776586f68eb7
+> >=20
+> > Could you review these two changes and tell me whether these would
+> > actually implement the changes you would want to see? I think the BIO
+> > layer is a generic interface of the block layer in the kernel, isn't
+> > it?
+>=20
+> Moving lower down the stack to use a bio directly is not a good idea,
+> it's in fact going the opposite direction of what we'd like to see in
+> the storage stack. And it would then mean you'd need to implement your
+> own internal requeueing and retrying.
 
-I would have perhaps just gone for '_state' to indicate to people
-that it's very private. But I guess we could have something a bit
-more verbose as well.
+I looked at the virtio_blk driver and that seems to confirm it. There is no
+use of the bio interface either, so I guess we should not pick up this
+patch.
 
-'freeable_state' doen't really give me the right vibes however.
-Maybe 'state_to_free' or 'state_to_destroy' or someting like that?
+What do you think about the out-of-order execution? Would that make sense
+to upstream it? Does it look reasonable?
 
-> 
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  4 ++--
->  drivers/gpu/drm/drm_atomic.c                      | 24 +++++++++++------------
->  drivers/gpu/drm/drm_atomic_helper.c               |  8 ++++----
->  include/drm/drm_atomic.h                          | 16 +++++++--------
->  4 files changed, 26 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> index 62defeccbb5ca09c89523fc4112d2085bbdbb0a9..b9036b59a671b2802fae28db623f020bbc535837 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> @@ -12335,22 +12335,22 @@ static int amdgpu_dm_atomic_check(struct drm_device *dev,
->  
->  			if (obj->funcs == adev->dm.atomic_obj.funcs) {
->  				int j = state->num_private_objs-1;
->  
->  				dm_atomic_destroy_state(obj,
-> -						state->private_objs[i].state);
-> +						state->private_objs[i].freeable_state);
->  
->  				/* If i is not at the end of the array then the
->  				 * last element needs to be moved to where i was
->  				 * before the array can safely be truncated.
->  				 */
->  				if (i != j)
->  					state->private_objs[i] =
->  						state->private_objs[j];
->  
->  				state->private_objs[j].ptr = NULL;
-> -				state->private_objs[j].state = NULL;
-> +				state->private_objs[j].freeable_state = NULL;
->  				state->private_objs[j].old_state = NULL;
->  				state->private_objs[j].new_state = NULL;
->  
->  				state->num_private_objs = j;
->  				break;
-> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-> index 0fda567c390057b10bce691d9ddc11308088d92e..f3e6a3fc0fdd0a7ad77209dcae1be59759e2a7c1 100644
-> --- a/drivers/gpu/drm/drm_atomic.c
-> +++ b/drivers/gpu/drm/drm_atomic.c
-> @@ -205,13 +205,13 @@ void drm_atomic_state_default_clear(struct drm_atomic_state *state)
->  
->  		if (!connector)
->  			continue;
->  
->  		connector->funcs->atomic_destroy_state(connector,
-> -						       state->connectors[i].state);
-> +						       state->connectors[i].freeable_state);
->  		state->connectors[i].ptr = NULL;
-> -		state->connectors[i].state = NULL;
-> +		state->connectors[i].freeable_state = NULL;
->  		state->connectors[i].old_state = NULL;
->  		state->connectors[i].new_state = NULL;
->  		drm_connector_put(connector);
->  	}
->  
-> @@ -220,14 +220,14 @@ void drm_atomic_state_default_clear(struct drm_atomic_state *state)
->  
->  		if (!crtc)
->  			continue;
->  
->  		crtc->funcs->atomic_destroy_state(crtc,
-> -						  state->crtcs[i].state);
-> +						  state->crtcs[i].freeable_state);
->  
->  		state->crtcs[i].ptr = NULL;
-> -		state->crtcs[i].state = NULL;
-> +		state->crtcs[i].freeable_state = NULL;
->  		state->crtcs[i].old_state = NULL;
->  		state->crtcs[i].new_state = NULL;
->  
->  		if (state->crtcs[i].commit) {
->  			drm_crtc_commit_put(state->crtcs[i].commit);
-> @@ -240,24 +240,24 @@ void drm_atomic_state_default_clear(struct drm_atomic_state *state)
->  
->  		if (!plane)
->  			continue;
->  
->  		plane->funcs->atomic_destroy_state(plane,
-> -						   state->planes[i].state);
-> +						   state->planes[i].freeable_state);
->  		state->planes[i].ptr = NULL;
-> -		state->planes[i].state = NULL;
-> +		state->planes[i].freeable_state = NULL;
->  		state->planes[i].old_state = NULL;
->  		state->planes[i].new_state = NULL;
->  	}
->  
->  	for (i = 0; i < state->num_private_objs; i++) {
->  		struct drm_private_obj *obj = state->private_objs[i].ptr;
->  
->  		obj->funcs->atomic_destroy_state(obj,
-> -						 state->private_objs[i].state);
-> +						 state->private_objs[i].freeable_state);
->  		state->private_objs[i].ptr = NULL;
-> -		state->private_objs[i].state = NULL;
-> +		state->private_objs[i].freeable_state = NULL;
->  		state->private_objs[i].old_state = NULL;
->  		state->private_objs[i].new_state = NULL;
->  	}
->  	state->num_private_objs = 0;
->  
-> @@ -359,11 +359,11 @@ drm_atomic_get_crtc_state(struct drm_atomic_state *state,
->  
->  	crtc_state = crtc->funcs->atomic_duplicate_state(crtc);
->  	if (!crtc_state)
->  		return ERR_PTR(-ENOMEM);
->  
-> -	state->crtcs[index].state = crtc_state;
-> +	state->crtcs[index].freeable_state = crtc_state;
->  	state->crtcs[index].old_state = crtc->state;
->  	state->crtcs[index].new_state = crtc_state;
->  	state->crtcs[index].ptr = crtc;
->  	crtc_state->state = state;
->  
-> @@ -544,11 +544,11 @@ drm_atomic_get_plane_state(struct drm_atomic_state *state,
->  
->  	plane_state = plane->funcs->atomic_duplicate_state(plane);
->  	if (!plane_state)
->  		return ERR_PTR(-ENOMEM);
->  
-> -	state->planes[index].state = plane_state;
-> +	state->planes[index].freeable_state = plane_state;
->  	state->planes[index].ptr = plane;
->  	state->planes[index].old_state = plane->state;
->  	state->planes[index].new_state = plane_state;
->  	plane_state->state = state;
->  
-> @@ -856,11 +856,11 @@ drm_atomic_get_private_obj_state(struct drm_atomic_state *state,
->  
->  	obj_state = obj->funcs->atomic_duplicate_state(obj);
->  	if (!obj_state)
->  		return ERR_PTR(-ENOMEM);
->  
-> -	state->private_objs[index].state = obj_state;
-> +	state->private_objs[index].freeable_state = obj_state;
->  	state->private_objs[index].old_state = obj->state;
->  	state->private_objs[index].new_state = obj_state;
->  	state->private_objs[index].ptr = obj;
->  	obj_state->state = state;
->  
-> @@ -1159,11 +1159,11 @@ drm_atomic_get_connector_state(struct drm_atomic_state *state,
->  	connector_state = connector->funcs->atomic_duplicate_state(connector);
->  	if (!connector_state)
->  		return ERR_PTR(-ENOMEM);
->  
->  	drm_connector_get(connector);
-> -	state->connectors[index].state = connector_state;
-> +	state->connectors[index].freeable_state = connector_state;
->  	state->connectors[index].old_state = connector->state;
->  	state->connectors[index].new_state = connector_state;
->  	state->connectors[index].ptr = connector;
->  	connector_state->state = state;
->  
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index d5ebe6ea0acbc5a08aef7fa41ecb9ed5d8fa8e80..7b9cee78f0969ee9bd66ac7f28cbe39c747f7ab2 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -3234,21 +3234,21 @@ int drm_atomic_helper_swap_state(struct drm_atomic_state *state,
->  		WARN_ON(connector->state != old_conn_state);
->  
->  		old_conn_state->state = state;
->  		new_conn_state->state = NULL;
->  
-> -		state->connectors[i].state = old_conn_state;
-> +		state->connectors[i].freeable_state = old_conn_state;
->  		connector->state = new_conn_state;
->  	}
->  
->  	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state, new_crtc_state, i) {
->  		WARN_ON(crtc->state != old_crtc_state);
->  
->  		old_crtc_state->state = state;
->  		new_crtc_state->state = NULL;
->  
-> -		state->crtcs[i].state = old_crtc_state;
-> +		state->crtcs[i].freeable_state = old_crtc_state;
->  		crtc->state = new_crtc_state;
->  
->  		if (new_crtc_state->commit) {
->  			spin_lock(&crtc->commit_lock);
->  			list_add(&new_crtc_state->commit->commit_entry,
-> @@ -3264,22 +3264,22 @@ int drm_atomic_helper_swap_state(struct drm_atomic_state *state,
->  		WARN_ON(plane->state != old_plane_state);
->  
->  		old_plane_state->state = state;
->  		new_plane_state->state = NULL;
->  
-> -		state->planes[i].state = old_plane_state;
-> +		state->planes[i].freeable_state = old_plane_state;
->  		plane->state = new_plane_state;
->  	}
->  	drm_panic_unlock(state->dev, flags);
->  
->  	for_each_oldnew_private_obj_in_state(state, obj, old_obj_state, new_obj_state, i) {
->  		WARN_ON(obj->state != old_obj_state);
->  
->  		old_obj_state->state = state;
->  		new_obj_state->state = NULL;
->  
-> -		state->private_objs[i].state = old_obj_state;
-> +		state->private_objs[i].freeable_state = old_obj_state;
->  		obj->state = new_obj_state;
->  	}
->  
->  	return 0;
->  }
-> diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
-> index c8ab2163bf658cd06b12a8dabada7c088a328654..cdb76ed0bcc08b82b728747f915f064f1ddbcbf7 100644
-> --- a/include/drm/drm_atomic.h
-> +++ b/include/drm/drm_atomic.h
-> @@ -159,11 +159,11 @@ struct drm_crtc_commit {
->  
->  struct __drm_planes_state {
->  	struct drm_plane *ptr;
->  
->  	/**
-> -	 * @state:
-> +	 * @freeable_state:
->  	 *
->  	 * Used to track the @drm_plane_state we will need to free when
->  	 * tearing down the associated &drm_atomic_state in
->  	 * $drm_mode_config_funcs.atomic_state_clear or
->  	 * drm_atomic_state_default_clear().
-> @@ -171,20 +171,20 @@ struct __drm_planes_state {
->  	 * Before a commit, and the call to
->  	 * drm_atomic_helper_swap_state() in particular, it points to
->  	 * the same state than @new_state. After a commit, it points to
->  	 * the same state than @old_state.
->  	 */
-> -	struct drm_plane_state *state;
-> +	struct drm_plane_state *freeable_state;
->  
->  	struct drm_plane_state *old_state, *new_state;
->  };
->  
->  struct __drm_crtcs_state {
->  	struct drm_crtc *ptr;
->  
->  	/**
-> -	 * @state:
-> +	 * @freeable_state:
->  	 *
->  	 * Used to track the @drm_crtc_state we will need to free when
->  	 * tearing down the associated &drm_atomic_state in
->  	 * $drm_mode_config_funcs.atomic_state_clear or
->  	 * drm_atomic_state_default_clear().
-> @@ -192,11 +192,11 @@ struct __drm_crtcs_state {
->  	 * Before a commit, and the call to
->  	 * drm_atomic_helper_swap_state() in particular, it points to
->  	 * the same state than @new_state. After a commit, it points to
->  	 * the same state than @old_state.
->  	 */
-> -	struct drm_crtc_state *state;
-> +	struct drm_crtc_state *freeable_state;
->  
->  	struct drm_crtc_state *old_state, *new_state;
->  
->  	/**
->  	 * @commit:
-> @@ -214,11 +214,11 @@ struct __drm_crtcs_state {
->  
->  struct __drm_connnectors_state {
->  	struct drm_connector *ptr;
->  
->  	/**
-> -	 * @state:
-> +	 * @freeable_state:
->  	 *
->  	 * Used to track the @drm_connector_state we will need to free
->  	 * when tearing down the associated &drm_atomic_state in
->  	 * $drm_mode_config_funcs.atomic_state_clear or
->  	 * drm_atomic_state_default_clear().
-> @@ -226,11 +226,11 @@ struct __drm_connnectors_state {
->  	 * Before a commit, and the call to
->  	 * drm_atomic_helper_swap_state() in particular, it points to
->  	 * the same state than @new_state. After a commit, it points to
->  	 * the same state than @old_state.
->  	 */
-> -	struct drm_connector_state *state;
-> +	struct drm_connector_state *freeable_state;
->  
->  	struct drm_connector_state *old_state, *new_state;
->  
->  	/**
->  	 * @out_fence_ptr:
-> @@ -391,11 +391,11 @@ struct drm_private_state {
->  
->  struct __drm_private_objs_state {
->  	struct drm_private_obj *ptr;
->  
->  	/**
-> -	 * @state:
-> +	 * @freeable_state:
->  	 *
->  	 * Used to track the @drm_private_state we will need to free
->  	 * when tearing down the associated &drm_atomic_state in
->  	 * $drm_mode_config_funcs.atomic_state_clear or
->  	 * drm_atomic_state_default_clear().
-> @@ -403,11 +403,11 @@ struct __drm_private_objs_state {
->  	 * Before a commit, and the call to
->  	 * drm_atomic_helper_swap_state() in particular, it points to
->  	 * the same state than @new_state. After a commit, it points to
->  	 * the same state than @old_state.
->  	 */
-> -	struct drm_private_state *state;
-> +	struct drm_private_state *freeable_state;
->  
->  	struct drm_private_state *old_state, *new_state;
->  };
->  
->  /**
-> 
-> ---
-> base-commit: 7a031e8d3528ba0860d282ffd3c88fbda4bf8c4c
-> change-id: 20251006-drm-rename-state-b2b0fed05f82
-> 
-> Best regards,
-> -- 
-> Maxime Ripard <mripard@kernel.org>
+> These are the kind of changes that happen when development is done and
+> changes aren't submitted upstream. It's unfortunate drift...
 
--- 
-Ville Syrjälä
-Intel
+Well, the problem here is that Oracle stopped working on Linux for SPARC
+abruptly, so many of their improvements were never sent upstream and did
+not see any reviews which would have caught this.
+
+> > > > > > For now, I would propose to pick up my patch to revert the prev=
+ious
+> > > > > > change. I can then pick up your proposed change and deploy it f=
+or
+> > > > > > extensive testing and see if it has any side effects.
+> > > > >=20
+> > > > > Why not just test this one and see if it works? As far as I can t=
+ell,
+> > > > > it's been 6.5 years since this change went in, I can't imagine th=
+ere's a
+> > > > > huge sense of urgency to fix it up that can't wait for testing a =
+more
+> > > > > proper patch rather than a work-around?
+> > > >=20
+> > > > Well, the thing is that a lot of people have been running older ker=
+nels
+> > > > on SPARC because of issues like these and I have started working on=
+ trying
+> > > > to track down all of these issues now [2] for users to be able to r=
+un a
+> > > > current kernel. So, the 6.5 years existence of this change shouldn'=
+t
+> > > > be an argument I think.
+> > >=20
+> > > While I agree that the bug is unfortunate, it's also a chance to
+> > > properly fix it rather than just go back to busy looping. How difficu=
+lt
+> > > is it to test an iteration of the patch? It'd be annoying to queue a
+> > > bandaid only to have to revert that again for a real fix. If this was=
+ a
+> > > regression from the last release or two then that'd be a different
+> > > story, but the fact that this has persisted for 6.5 years and is only
+> > > bubbling back up to mainstream now would seem to indicate that we sho=
+uld
+> > > spend a bit of extra time to just get it right the first time.
+> >=20
+> > We could do that for sure. But I would like to hear your opinion on
+> > the changes contributed by Oracle engineers first. Maybe their
+> > improvements are much better so that it might make sense to try to
+> > upstream them.
+>=20
+> Won't help this case, and it's actively going the wrong direction
+> imho...
+
+OK, so your opinion is then to add the patch that you proposed on top of wh=
+at's
+currently there in Linus' tree, meaning adding some code that will requeue =
+requests
+once the retry limit has been reached?
+
+Can you maybe post a proper patch then which I (and others) could test and =
+then
+hopefully add their "Tested-by"?
+
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
