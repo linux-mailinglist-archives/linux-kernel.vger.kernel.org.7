@@ -1,129 +1,184 @@
-Return-Path: <linux-kernel+bounces-843183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27B66BBE940
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:03:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E1F6BBE961
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:06:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 39FA14EFDD2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:02:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CDDE1890AB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4D72D9498;
-	Mon,  6 Oct 2025 16:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7733A2D9EEA;
+	Mon,  6 Oct 2025 16:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bgDNE/1h"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="b0VvG3CR";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eNUlMqtP";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="b0VvG3CR";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eNUlMqtP"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CA02517AC;
-	Mon,  6 Oct 2025 16:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE2D2D979C
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 16:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759766571; cv=none; b=coGLmWG4yoANuf4S2A3LmJps8Sz1QXuI/zqYBB28yrtc82YHV+QoUWBYn4h0qUFBEEqK71ALVarawZd3ad/vWp5fC3BVKZtQ35TkzJGF5H5JgNu40MSRJIjXDqjYEF3Z47N0MRdmUcgIZIE7mIcqK6aqx423r7cofzHrm1Y7YsE=
+	t=1759766766; cv=none; b=G7hAQncn9ICXErKWspDBmNzjaUhprtQMe50EPm42/3y4konmcMwWakp+Ge2K2mEhgLjIQTsNAuygGgpbIIY2qaOCN7uRg7kPaMiGP+VCd+z/6M2G6E3W4a1YZxvm0htJ19pFRSBYo7a07Tdhnq3RVV/ofg9towGgz9WxXV8G7uQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759766571; c=relaxed/simple;
-	bh=ap/MH3N7hqYGFTkBJ9RD/CX2ovQ2nfWxR6HMrzY58BA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EiPHpqxTeJ8bGOzEpxRd4rkBy/UvVpDqH1X3+SDWKQ4kELQiX6aJLb5vxDckKuDjeVs4BUFlpujD3sOM4/xHM+XlfMJZeigabxWWPbHEmKxGYgtWmsgxyKr+kDTnnwGo0g27hFyFaEFOnl7uwMTmqqcgCaZPQra6caTXM8/GIo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bgDNE/1h; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759766570; x=1791302570;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ap/MH3N7hqYGFTkBJ9RD/CX2ovQ2nfWxR6HMrzY58BA=;
-  b=bgDNE/1hTjMXAfnHYbPq9XwoRqJRY0xdMFB+WBtWZSr793jZDPOwsrFr
-   gqqm/FcxIe2/t1g3/2X1pHNuWM9yQMUtwNKAPaxPyTD06gUE3Q34YotWD
-   f/qHmAC8wMfSTtvFxpunw2yz90SSNhhFcsakr6NKoZjX9b1U2ceNLEf2Z
-   qWN8gOe0FpTMWLBk+xpLcmym2GP6FwHccp2FrGiRQkMBRyBASMAjHuiMY
-   8PhZiED+JdntkkruDj0QoJ9/HtN0zfVOydjWilvRkqYdn7Jb2LoXsh9Ke
-   w1U+4FzwChogrriFnUYUeahaHjpZnEDgGCAjHICZYWqEQMBVQEVRGT8yX
-   A==;
-X-CSE-ConnectionGUID: E44bq26MQPO4xCY5TCjIsA==
-X-CSE-MsgGUID: iOLsXlT0Rvy5yxr1FWUl8A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11574"; a="62040173"
-X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
-   d="scan'208";a="62040173"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 09:02:49 -0700
-X-CSE-ConnectionGUID: dXD2RJ93Tt6pyX+xAJ2NDw==
-X-CSE-MsgGUID: hSuR6kTMRn+AGELD/f8cHA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
-   d="scan'208";a="179516188"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.110.110]) ([10.125.110.110])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 09:02:48 -0700
-Message-ID: <327e32f1-fba8-4b5a-b7a2-9fc875017521@intel.com>
-Date: Mon, 6 Oct 2025 09:02:47 -0700
+	s=arc-20240116; t=1759766766; c=relaxed/simple;
+	bh=UCtcz4BM/dYS/3QrJ2luvCuYKAgvRw2ZJGUlSmdLNSo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uqreLfbb4FSC3kN036yTw7ZkXVROOy/syIxl86eKrl9lTKzWmVO3Ufw1FohEHbLchtUmGcBmmtU4hjUslFsQy3db9+Au3evAZSQXty8NnKabo/n3wnqG/qEHT1CTIBUzC77m7Q2kEKjZNW8V4WXO3s8alpT1k9LFjF2T6Hwkp0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=b0VvG3CR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eNUlMqtP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=b0VvG3CR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eNUlMqtP; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7D9141F451;
+	Mon,  6 Oct 2025 16:06:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759766762;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qLcfZHjAO66RJDxbKzGGoktyPs2gBHEvgJU/ulxjnrc=;
+	b=b0VvG3CRemH27cSbFswY9EJ9gyEPQt7SQ6Sa3Czjj7hAR/2zsW+uUgEG6aDU/6mjFFZa15
+	0xbBUbfj6P5ulUJ7GTl+S1+QDn9iz9IvLc0QIYVBEOBEvMWNOWKNeOukLtWmKjvuYufr9W
+	rAAkF1zgBMJOMCX1cbYgVFl5X1Pf+bQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759766762;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qLcfZHjAO66RJDxbKzGGoktyPs2gBHEvgJU/ulxjnrc=;
+	b=eNUlMqtPVfsYfY08Hcy5T/WPIXWokoADID4FGJ/IaCGaJ9xI6kpfrRkbPJuwEKFdWa5+1T
+	c/Jr9X8FvIZl37Ag==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=b0VvG3CR;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=eNUlMqtP
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759766762;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qLcfZHjAO66RJDxbKzGGoktyPs2gBHEvgJU/ulxjnrc=;
+	b=b0VvG3CRemH27cSbFswY9EJ9gyEPQt7SQ6Sa3Czjj7hAR/2zsW+uUgEG6aDU/6mjFFZa15
+	0xbBUbfj6P5ulUJ7GTl+S1+QDn9iz9IvLc0QIYVBEOBEvMWNOWKNeOukLtWmKjvuYufr9W
+	rAAkF1zgBMJOMCX1cbYgVFl5X1Pf+bQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759766762;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qLcfZHjAO66RJDxbKzGGoktyPs2gBHEvgJU/ulxjnrc=;
+	b=eNUlMqtPVfsYfY08Hcy5T/WPIXWokoADID4FGJ/IaCGaJ9xI6kpfrRkbPJuwEKFdWa5+1T
+	c/Jr9X8FvIZl37Ag==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6A99013700;
+	Mon,  6 Oct 2025 16:06:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id teHbGero42jfOQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Mon, 06 Oct 2025 16:06:02 +0000
+Date: Mon, 6 Oct 2025 18:06:01 +0200
+From: David Sterba <dsterba@suse.cz>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: dsterba@suse.cz, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] btrfs: Avoid -Wflex-array-member-not-at-end warning
+Message-ID: <20251006160601.GA4412@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <aN_Zeo7JH9nogwwq@kspp>
+ <20251003143502.GJ4052@suse.cz>
+ <b59ed01f-d9d5-4de8-8a12-1e506962b2d9@embeddedor.com>
+ <20251003151509.GK4052@suse.cz>
+ <10762d3f-361a-48b7-8e46-5e5b8a9887fb@embeddedor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 15/20] cxl: Add a routine to find cxl root decoder on
- cxl bus using cxl port
-To: Neeraj Kumar <s.neeraj@samsung.com>
-Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
- linux-kernel@vger.kernel.org, gost.dev@samsung.com,
- a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
- cpgs@samsung.com
-References: <20250917134116.1623730-1-s.neeraj@samsung.com>
- <CGME20250917134202epcas5p23f718742c74c5b519ecbbc1e04840c03@epcas5p2.samsung.com>
- <20250917134116.1623730-16-s.neeraj@samsung.com>
- <43772918-1911-46a5-8165-bf612056a8e6@intel.com>
- <700072760.81759726504033.JavaMail.epsvc@epcpadp1new>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <700072760.81759726504033.JavaMail.epsvc@epcpadp1new>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <10762d3f-361a-48b7-8e46-5e5b8a9887fb@embeddedor.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,twin.jikos.cz:mid,suse.cz:replyto,suse.cz:dkim];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 7D9141F451
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.21
 
-
-
-On 9/29/25 6:40 AM, Neeraj Kumar wrote:
-> On 24/09/25 11:11AM, Dave Jiang wrote:
->>
->>> +struct cxl_root_decoder *cxl_find_root_decoder_by_port(struct cxl_port *port)
->>> +{
->>> +    struct cxl_root *cxl_root __free(put_cxl_root) = find_cxl_root(port);
->>> +    struct device *dev;
->>> +
->>> +    if (!cxl_root)
->>> +        return NULL;
->>> +
->>> +    dev = device_find_child(&cxl_root->port.dev, NULL, match_root_decoder);
->>> +    if (!dev)
->>> +        return NULL;
->>> +
->>> +    /* Release device ref taken via device_find_child() */
->>> +    put_device(dev);
->>
->> Should the caller release the device reference instead?
->>
->> DJ
+On Fri, Oct 03, 2025 at 04:21:17PM +0100, Gustavo A. R. Silva wrote:
+> On 10/3/25 16:15, David Sterba wrote:
+> > On Fri, Oct 03, 2025 at 03:51:24PM +0100, Gustavo A. R. Silva wrote:
+> >>>>
+> >>>> diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
+> >>>> index 9230e5066fc6..2b7cf49a35bb 100644
+> >>>> --- a/fs/btrfs/send.c
+> >>>> +++ b/fs/btrfs/send.c
+> >>>> @@ -178,7 +178,6 @@ struct send_ctx {
+> >>>>    	u64 cur_inode_rdev;
+> >>>>    	u64 cur_inode_last_extent;
+> >>>>    	u64 cur_inode_next_write_offset;
+> >>>> -	struct fs_path cur_inode_path;
+> >>>>    	bool cur_inode_new;
+> >>>>    	bool cur_inode_new_gen;
+> >>>>    	bool cur_inode_deleted;
+> >>>> @@ -305,6 +304,9 @@ struct send_ctx {
+> >>>>    
+> >>>>    	struct btrfs_lru_cache dir_created_cache;
+> >>>>    	struct btrfs_lru_cache dir_utimes_cache;
+> >>>> +
+> >>>> +	/* Must be last --ends in a flexible-array member. */
+> >>>                           ^^
+> >>>
+> >>> Is this an en dash?
+> >>
+> >> Not sure what you mean.
+> > 
+> > En dash is a punctuation mark not typically used in comments, nowadays
+> > found in AI generated code/text. I was just curious.
 > 
-> Actually caller of this function wants to find root decoder information from cxl_port.
-> So in order to find root decoder we have used device_find_child() which internally
-> takes device ref. Therefore, just after finding the appropriate dev, I am releasing
-> device ref.
-> Its like taking device ref temporarly and releasing it then and there after finding
-> proper root decoder.
-> I believe, Releasing device ref from caller would make it look little out of context.
+> Ah yes, I've been using this punctuation mark for this sorts of comments,
 
-With the caller acquiring the root decoder, it should hold a reference until it is done with it. See usages of cxl_find_root_decoder(). i.e. core/region.c:cxl_add_to_region(). cxl_find_root_decoder_by_port() should do something similar. 
-
-DJ
- 
-> 
-> 
-> Regards,
-> Neeraj
-> 
-
+It's quite odd to see it formatted like that, it's confusing and looks
+like a typo. The emdash "---" looks like the right punct. mark as it
+separates extra information, if we'd want to delve into typographical
+conventions.
 
