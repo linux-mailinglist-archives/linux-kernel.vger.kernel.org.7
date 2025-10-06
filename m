@@ -1,218 +1,120 @@
-Return-Path: <linux-kernel+bounces-843023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 208C9BBE3B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:52:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74DF8BBE3BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F0D2B4E7534
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:52:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0544E1898CF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD01329993A;
-	Mon,  6 Oct 2025 13:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82DF229993A;
+	Mon,  6 Oct 2025 13:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XRNdRPlS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NUK46W1G";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="265bKRdl";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ABrEXBxS"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O7HV3MDd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C72927F19F
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 13:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A55D27F19F;
+	Mon,  6 Oct 2025 13:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759758727; cv=none; b=uMFd53QCfTbrTu4KLigCjahVxvujuanv+V1gN1GlQGR2EdsdmhsAdm06XgJQSUp+otynXl821VPmZBEnJoHQenmT1/MHwII017ESrZWlmJXfyEo/nUylYb9Qpvrdnduq76Zw7yj4CXo+UVvtbg2yDR6iqTpX9vYkl9elzyU55Jg=
+	t=1759758748; cv=none; b=jT/JAL3NKaZUxz9gAF+4FZ5MSvH/mLwcohhVib3wq9kDNq+ZnOhnYKgMdvAILzF9Z798Hxf1fEhDaPamRWxMQqg62E/xqIF/vf9feEUgh+cvBlQyqe/AiMNrLG9ZqxlHFVV6yl0I38QmcSVJtoCnG3vJk3fC3sH8RNqp3PwailA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759758727; c=relaxed/simple;
-	bh=FSSI7T28/5nGLrzHnqI4wkLx/x5cgaJTMHAEzO99lmk=;
+	s=arc-20240116; t=1759758748; c=relaxed/simple;
+	bh=4IBVQkaNlJQeL/7kwoMR2W+EtGDZZF8s1gjkN1ztlQo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=apSe5sN2qKVwgOoMp90+euDPCF+uv6fPw6zTW25jCenwGGvnWVoX67Cau9SgPinDc8OkMVYDfvmizj1HrJUSsEL0vYUypY0BzndzEFZ1RIXrz47bCG7OeHRMkcdSEuS3sCSanc7SFJEd3veSvn0D5j/QEA2sY7POiXY0j9min8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XRNdRPlS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NUK46W1G; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=265bKRdl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ABrEXBxS; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 812F61F451;
-	Mon,  6 Oct 2025 13:52:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759758723; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2AipBtX5SHCGh8rxdgPoJALPEAq4mP96kjbl6iC4fBQ=;
-	b=XRNdRPlSI7p/wO9RMInYBkwsSvYlDCNMWsvjBy05zl4QKhAnwNvnGW61ngAKutupjJatTF
-	qG1HQe7XuepNUpcK3ym2drF75HxAm/MnY4dnYakHtQOOW1KAqubtHcYIzV92S7wBoCL9qe
-	pvlhP11E1f7bwCM7DvppJJpVRBeOxl8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759758723;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2AipBtX5SHCGh8rxdgPoJALPEAq4mP96kjbl6iC4fBQ=;
-	b=NUK46W1Gtevn6jXHuUSYSefAxcwqpTXNTOTXA76QnPUkIYL7a3cfufHVfoP7kb88dAW8My
-	KfBf8GP64xLEivCQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=265bKRdl;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ABrEXBxS
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759758722; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2AipBtX5SHCGh8rxdgPoJALPEAq4mP96kjbl6iC4fBQ=;
-	b=265bKRdlxuJRpzHLUt+7Wjk+CAOQqYwgTY8P6qjDTtPyu9H6Bl5tqsmcxAURXquDxVCInM
-	7V3Aun5k+gqKlTSd0W+LCfYNuHgsWFux49viSNLeXavBuZmUEATBqmvxBpUG13c3MrI+xK
-	UKgbI06HBmw+53LBm4wirdQJIRT8sp8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759758722;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2AipBtX5SHCGh8rxdgPoJALPEAq4mP96kjbl6iC4fBQ=;
-	b=ABrEXBxSYoP8KepcsAXec5ziQbln6xKyRZevWK3Hda08SotNdGHqDK+N7eCCKl68BRs3Iw
-	MU9fizVHll6X0nBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6CE1213700;
-	Mon,  6 Oct 2025 13:52:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id r8yPGoLJ42hEEgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 06 Oct 2025 13:52:02 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B3341A0AB6; Mon,  6 Oct 2025 15:52:01 +0200 (CEST)
-Date: Mon, 6 Oct 2025 15:52:01 +0200
-From: Jan Kara <jack@suse.cz>
-To: Ted Tso <tytso@mit.edu>
-Cc: Zhang Yi <yi.zhang@huaweicloud.com>, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, adilger.kernel@dilger.ca, 
-	jack@suse.cz, yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, 
-	yangerkun@huawei.com, Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: Re: [PATCH 0/2] ext4: fix an data corruption issue in nojournal mode
-Message-ID: <5vukrmwjsvvucw7ugpirmetr2inzgimkap4fhevb77dxqa7uff@yutnpju2e472>
-References: <20250916093337.3161016-1-yi.zhang@huaweicloud.com>
- <4a152e1b-c468-4fbf-ac0b-dbb76fa1e2ac@linux.alibaba.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=b/Heai8rPr7ruPDgle3pUDovyb74IWkhYS46sm5QeoeV1eOxaFnIg8znFM+eAontou8KKPyf7NsKhFBoGO1TzvP2mYnKOQYYxi+TBp1EDo5zX5RLcUw7jK/DVW9K1lNVWx98QD1k60n9ENSGHBQnl/uM9gtWVRb9nKuq9b6ETeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O7HV3MDd; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759758747; x=1791294747;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4IBVQkaNlJQeL/7kwoMR2W+EtGDZZF8s1gjkN1ztlQo=;
+  b=O7HV3MDdjI5Q4po7Fp2ev7UX64pZ3O4fLw2xtKlTqDno1vVHKbvy0zoe
+   NPgPp3HeeostlKvo4HmAzeDH1M5A2MFGddBmKocZumjvQ9cbFe7PH7ITV
+   t2rP9e92HGJJDaW93UVGySUQHm3TmK0xwvEO5bQdpnkZ6w7NffRF9ozJG
+   kHRep43j/ddkgJ7VCjNEIcQGzL4l/EaP+uOQGDLgecD1wJNSUvbJ6RsWD
+   0ZeXYvl8NeMDyeuDxr5NiGBokSxt5+KQFO4DEFj2hZEUcIhE1bjIlYLIB
+   kPxwqmQclI4HDVb6Kbjr1oPOoiXXQAZiE93fr5nj8JtmqQQu7O8Fh+u/A
+   w==;
+X-CSE-ConnectionGUID: 9hEX/jZ6R1K/ym3tK9wOLw==
+X-CSE-MsgGUID: 88uAAA+PRL6QxpMzJ0L8wg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11574"; a="64549511"
+X-IronPort-AV: E=Sophos;i="6.18,319,1751266800"; 
+   d="scan'208";a="64549511"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 06:52:26 -0700
+X-CSE-ConnectionGUID: Nr5aZJQfTgitbiz4KLiTlg==
+X-CSE-MsgGUID: FNCCBtwYRXKwAfPz0lGLSA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,319,1751266800"; 
+   d="scan'208";a="179160338"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa010.jf.intel.com with ESMTP; 06 Oct 2025 06:52:24 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1001)
+	id 9F51295; Mon, 06 Oct 2025 15:52:22 +0200 (CEST)
+Date: Mon, 6 Oct 2025 15:52:22 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	Brian Norris <briannorris@google.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] PCI/PM: Avoid redundant delays on D3hot->D3cold
+Message-ID: <20251006135222.GD2912318@black.igk.intel.com>
+References: <20251003154008.1.I7a21c240b30062c66471329567a96dceb6274358@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4a152e1b-c468-4fbf-ac0b-dbb76fa1e2ac@linux.alibaba.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 812F61F451
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
-	RCVD_COUNT_THREE(0.00)[3];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.01
+In-Reply-To: <20251003154008.1.I7a21c240b30062c66471329567a96dceb6274358@changeid>
 
-Hi Ted!
+Hi,
 
-I think this patch series has fallen through the cracks. Can you please
-push it to Linus? Given there are real users hitting the data corruption,
-we should do it soon (although it isn't a new issue so it isn't
-supercritical).
-
-On Thu 02-10-25 19:42:34, Gao Xiang wrote:
-> On 2025/9/16 17:33, Zhang Yi wrote:
-> > From: Zhang Yi <yi.zhang@huawei.com>
-> > 
-> > Hello!
-> > 
-> > This series fixes an data corruption issue reported by Gao Xiang in
-> > nojournal mode. The problem is happened after a metadata block is freed,
-> > it can be immediately reallocated as a data block. However, the metadata
-> > on this block may still be in the process of being written back, which
-> > means the new data in this block could potentially be overwritten by the
-> > stale metadata and trigger a data corruption issue. Please see below
-> > discussion with Jan for more details:
-> > 
-> >    https://lore.kernel.org/linux-ext4/a9417096-9549-4441-9878-b1955b899b4e@huaweicloud.com/
-> > 
-> > Patch 1 strengthens the same case in ordered journal mode, theoretically
-> > preventing the occurrence of stale data issues.
-> > Patch 2 fix this issue in nojournal mode.
+On Fri, Oct 03, 2025 at 03:40:09PM -0700, Brian Norris wrote:
+> From: Brian Norris <briannorris@google.com>
 > 
-> It seems this series is not applied, is it ignored?
+> When transitioning to D3cold, __pci_set_power_state() will first
+> transition a device to D3hot. If the device was already in D3hot, this
+> will add excess work:
+> (a) read/modify/write PMCSR; and
+> (b) excess delay (pci_dev_d3_sleep()).
 
-Well, likely Ted just missed it when collecting patches for his PR.
+How come the device is already in D3hot when __pci_set_power_state() is
+called? IIRC PCI core will transition the device to low power state so that
+it passes there the deepest possible state, and at that point the device is
+still in D0. Then __pci_set_power_state() puts it into D3hot and then turns
+if the power resource -> D3cold.
 
-> When ext4 nojournal mode is used, it is actually a very
-> serious bug since data corruption can happen very easily
-> in specific conditions (we actually have a specific
-> environment which can reproduce the issue very quickly)
+What I'm missing here?
 
-This is good to know so that we can prioritize accordingly.
-
-> Also it seems AWS folks reported this issue years ago
-> (2021), the phenomenon was almost the same, but the issue
-> still exists until now:
-> https://lore.kernel.org/linux-ext4/20211108173520.xp6xphodfhcen2sy@u87e72aa3c6c25c.ant.amazon.com/
-
-Likely yes, but back then we weren't able to figure out the root cause.
-
-> Some of our internal businesses actually rely on EXT4
-> no_journal mode and when they upgrade the kernel from
-> 4.19 to 5.10, they actually read corrupted data after
-> page cache memory is reclaimed (actually the on-disk
-> data was corrupted even earlier).
+> For (b), we already performed the necessary delay on the previous D3hot
+> entry; this was extra noticeable when evaluating runtime PM transition
+> latency.
 > 
-> So personally I wonder what's the current status of
-> EXT4 no_journal mode since this issue has been existing
-> for more than 5 years but some people may need
-> an extent-enabled ext2 so they selected this mode.
+> Check whether we're already in the target state before continuing.
+> 
+> Note that __pci_set_power_state() already does this same check for other
+> state transitions, but D3cold is special because __pci_set_power_state()
+> converts it to D3hot for the purposes of PMCSR.
+> 
+> This seems to be an oversight in commit 0aacdc957401 ("PCI/PM: Clean up
+> pci_set_low_power_state()").
+> 
+> Fixes: 0aacdc957401 ("PCI/PM: Clean up pci_set_low_power_state()")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Brian Norris <briannorris@google.com>
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
 
-The nojournal mode is fully supported. There are many enterprise customers
-(mostly cloud vendors) that depend on it. Including Ted's employer ;)
-
-> We already released an announcement to advise customers
-> not using no_journal mode because it seems lack of
-> enough maintainence (yet many end users are interested
-> in this mode):
-> https://www.alibabacloud.com/help/en/alinux/support/data-corruption-risk-and-solution-in-ext4-nojounral-mode
-
-Well, it's good to be cautious but the reality is that data corruption
-issues do happen from time to time. Both in nojournal mode and in normal
-journalled mode. And this one exists since the beginning when nojournal
-mode was implemented. So it apparently requires rather specific conditions
-to hit.
-
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+BTW, I think only one SoB from you is enough ;-)
 
