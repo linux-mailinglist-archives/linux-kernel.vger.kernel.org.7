@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-842697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2AE7BBD527
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 10:17:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A4D5BBD521
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 10:17:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0DF654E92EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 08:17:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 073913B0F68
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 08:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1ED25D540;
-	Mon,  6 Oct 2025 08:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="iHfHZ9Gm"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4512B1C3BE0;
-	Mon,  6 Oct 2025 08:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0926E257836;
+	Mon,  6 Oct 2025 08:17:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57BD51C3BE0;
+	Mon,  6 Oct 2025 08:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759738652; cv=none; b=DKERqNovszvN8YsLIJdJkJtcVcc2KG0pRvvPZc4NYlnEv7cozQcCYf7stTNM1EnzGHNRHmdpD2mjixide+ALfZ4HAJRGB4qYd6upD/Wm0sGhtiXcOBOy5/+eliF/spDtwI58Q9kO/QMFWw9x4kKreXFWdPaXB8edTZLgwPT5djw=
+	t=1759738647; cv=none; b=IJeGD/l3FNxpa1ckCpriQWt/b5QZM5/gxE4vs9SuWng0xEvqXw5MaZIxuFNJPKro4vtqTfof8iC0veAYEpS69AingHzvfCQEjE0pOdFR17fPhXN/7AAo/rklSjjWflUMopoyxt3ridXueauj1D9iqA9U0FtoIrUVKnqs2ARzPrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759738652; c=relaxed/simple;
-	bh=aA/I3kEr0Ua0c+w7+YGuNFNBB4mnxQd6zoNE4ELw98c=;
+	s=arc-20240116; t=1759738647; c=relaxed/simple;
+	bh=91NGgeU0Lxk81ktZH9chiaamZ0sYOIN8XpLkLkr5/v0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DonPDrOmyij7NNPhWs/MiHay/iJs8PBexS/9LLtnSTkh3a18CMaFEVzpkR5jiNTtRxDYmXGopB4LDJs4sYmdkqSePKfRz8LDPKDNd6j1AzScpMDBaBJpaYtZ1eZfUwF12uVuuS7gU4izDJfA224xtI7S211G4JqWXJTd4mrGCvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=iHfHZ9Gm; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.0.43] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net [86.13.91.161])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 243221FBC;
-	Mon,  6 Oct 2025 10:15:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1759738556;
-	bh=aA/I3kEr0Ua0c+w7+YGuNFNBB4mnxQd6zoNE4ELw98c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iHfHZ9Gm4obkvzugFnjJr4sloUJvxTHwN7jxhwrAc3H8V2bbwJkgPc4ltqnLPAgQ1
-	 zPrH4tWR2pX5c6OWYEkHSoMyPdQeu+X3pn+rDwb7VHk9UzC9hJrrTMKHOumF5DWESY
-	 yj14aMQfqXdDin/+0Ymb0BRZ32Yw5kBKn4IbVed8=
-Message-ID: <f64bdf69-bc06-4c83-9e7f-5de18fb64d47@ideasonboard.com>
-Date: Mon, 6 Oct 2025 09:17:25 +0100
+	 In-Reply-To:Content-Type; b=GzQLqfH3THGEJiyRFQxYosCniwZAUUeUanolKqebjnGvnmhSek9e8R/3UGyJRZSAGIKNU7mYId2EHQYHZjhazmgtWf3rQYLrzysdXQ4Zg4f+KgBYgbOPBmjfnszbloQy23zgCbr6sVe0in7b1OX+5734/9DUP+fQHBZNdKSs8JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7862F1515;
+	Mon,  6 Oct 2025 01:17:15 -0700 (PDT)
+Received: from [10.57.81.187] (unknown [10.57.81.187])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9BDA43F59E;
+	Mon,  6 Oct 2025 01:17:21 -0700 (PDT)
+Message-ID: <05359260-336f-4047-bc3a-003ace5ad7c4@arm.com>
+Date: Mon, 6 Oct 2025 09:17:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,216 +41,163 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/8] media: uapi: Convert RkISP1 to V4L2 extensible
- params
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Dafna Hirschfeld <dafna@fastmail.com>, Keke Li <keke.li@amlogic.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Sakari Ailus <sakari.ailus@linux.intel.com>,
- Antoine Bouyer <antoine.bouyer@nxp.com>, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250915-extensible-parameters-validation-v5-0-e6db94468af3@ideasonboard.com>
- <20250915-extensible-parameters-validation-v5-2-e6db94468af3@ideasonboard.com>
- <20251005001847.GB13055@pendragon.ideasonboard.com>
+Subject: Re: [PATCH RESEND v4 01/10] PM: EM: Assign a unique ID when creating
+ a performance domain
+To: Changwoo Min <changwoo@igalia.com>
+Cc: christian.loehle@arm.com, tj@kernel.org, pavel@kernel.org,
+ len.brown@intel.com, rafael@kernel.org, kernel-dev@igalia.com,
+ linux-pm@vger.kernel.org, sched-ext@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250921031928.205869-1-changwoo@igalia.com>
+ <20250921031928.205869-2-changwoo@igalia.com>
 Content-Language: en-US
-From: Dan Scally <dan.scally@ideasonboard.com>
-In-Reply-To: <20251005001847.GB13055@pendragon.ideasonboard.com>
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <20250921031928.205869-2-changwoo@igalia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Laurent, Jacopo
+Hi Chanwoo,
 
-On 05/10/2025 01:18, Laurent Pinchart wrote:
-> Hi Jacopo,
+My apologies to delay on this topic.
+
+On 9/21/25 04:19, Changwoo Min wrote:
+> It is necessary to refer to a specific performance domain from a
+> userspace. For example, the energy model of a particular performance
+> domain is updated.
 > 
-> Thank you for the patch.
+> To this end, assign a unique ID to each performance domain to address it,
+
+Is this related to the sched_ext view on the EM that we cannot re-use
+the allocated ID for the given domain?
+
+> and manage them in a global linked list to look up a specific one by
+> matching ID. IDA is used for ID assignment, and the mutex is used to
+> protect the global list from concurrent access.
 > 
-> On Mon, Sep 15, 2025 at 07:18:11PM +0200, Jacopo Mondi wrote:
->> With the introduction of common types for extensible parameters
->> format, convert the rkisp1-config.h header to use the new types.
->>
->> Factor-out the documentation that is now part of the common header
->> and only keep the driver-specific on in place.
->>
->> The conversion to use common types doesn't impact userspace as the
->> new types are either identical to the ones already existing in the
->> RkISP1 uAPI or are 1-to-1 type convertible.
->>
->> Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
->> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> Note that the mutex (em_pd_list_mutex) is not supposed to hold while
+> holding em_pd_mutex to avoid ABBA deadlock.
+
+This might be tricky design, but I have seen in some other
+patches you've added the lockdep, so we might have some safety net.
+
 > 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Signed-off-by: Changwoo Min <changwoo@igalia.com>
+> ---
+>   include/linux/energy_model.h |  4 ++++
+>   kernel/power/energy_model.c  | 33 ++++++++++++++++++++++++++++++++-
+>   2 files changed, 36 insertions(+), 1 deletion(-)
 > 
->> ---
->>   include/uapi/linux/rkisp1-config.h | 104 ++++++++-----------------------------
->>   1 file changed, 22 insertions(+), 82 deletions(-)
->>
->> diff --git a/include/uapi/linux/rkisp1-config.h b/include/uapi/linux/rkisp1-config.h
->> index 3b060ea6eed71b87d79abc8401eae4e9c9f5323a..b90d94d3a852fb0af0fe447649487e9e80aca795 100644
->> --- a/include/uapi/linux/rkisp1-config.h
->> +++ b/include/uapi/linux/rkisp1-config.h
->> @@ -7,8 +7,13 @@
->>   #ifndef _UAPI_RKISP1_CONFIG_H
->>   #define _UAPI_RKISP1_CONFIG_H
->>   
->> +#ifdef __KERNEL__
->> +#include <linux/build_bug.h>
->> +#endif /* __KERNEL__ */
->>   #include <linux/types.h>
->>   
->> +#include <linux/media/v4l2-isp.h>
->> +
->>   /* Defect Pixel Cluster Detection */
->>   #define RKISP1_CIF_ISP_MODULE_DPCC		(1U << 0)
->>   /* Black Level Subtraction */
->> @@ -1158,79 +1163,26 @@ enum rkisp1_ext_params_block_type {
->>   	RKISP1_EXT_PARAMS_BLOCK_TYPE_WDR,
->>   };
->>   
->> -#define RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE	(1U << 0)
->> -#define RKISP1_EXT_PARAMS_FL_BLOCK_ENABLE	(1U << 1)
->> +/* For backward compatibility */
->> +#define RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE	V4L2_PARAMS_FL_BLOCK_DISABLE
->> +#define RKISP1_EXT_PARAMS_FL_BLOCK_ENABLE	V4L2_PARAMS_FL_BLOCK_ENABLE
->>   
->>   /* A bitmask of parameters blocks supported on the current hardware. */
->>   #define RKISP1_CID_SUPPORTED_PARAMS_BLOCKS	(V4L2_CID_USER_RKISP1_BASE + 0x01)
->>   
->>   /**
->> - * struct rkisp1_ext_params_block_header - RkISP1 extensible parameters block
->> - *					   header
->> + * rkisp1_ext_params_block_header - RkISP1 extensible parameters block header
->>    *
->>    * This structure represents the common part of all the ISP configuration
->> - * blocks. Each parameters block shall embed an instance of this structure type
->> - * as its first member, followed by the block-specific configuration data. The
->> - * driver inspects this common header to discern the block type and its size and
->> - * properly handle the block content by casting it to the correct block-specific
->> - * type.
->> + * blocks and is identical to :c:type:`v4l2_params_block_header`.
->>    *
->> - * The @type field is one of the values enumerated by
->> + * The type field is one of the values enumerated by
->>    * :c:type:`rkisp1_ext_params_block_type` and specifies how the data should be
->> - * interpreted by the driver. The @size field specifies the size of the
->> - * parameters block and is used by the driver for validation purposes.
->> - *
->> - * The @flags field is a bitmask of per-block flags RKISP1_EXT_PARAMS_FL_*.
->> - *
->> - * When userspace wants to configure and enable an ISP block it shall fully
->> - * populate the block configuration and set the
->> - * RKISP1_EXT_PARAMS_FL_BLOCK_ENABLE bit in the @flags field.
->> - *
->> - * When userspace simply wants to disable an ISP block the
->> - * RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE bit should be set in @flags field. The
->> - * driver ignores the rest of the block configuration structure in this case.
->> - *
->> - * If a new configuration of an ISP block has to be applied userspace shall
->> - * fully populate the ISP block configuration and omit setting the
->> - * RKISP1_EXT_PARAMS_FL_BLOCK_ENABLE and RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE bits
->> - * in the @flags field.
->> - *
->> - * Setting both the RKISP1_EXT_PARAMS_FL_BLOCK_ENABLE and
->> - * RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE bits in the @flags field is not allowed
->> - * and not accepted by the driver.
->> - *
->> - * Userspace is responsible for correctly populating the parameters block header
->> - * fields (@type, @flags and @size) and the block-specific parameters.
->> - *
->> - * For example:
->> + * interpreted by the driver.
->>    *
->> - * .. code-block:: c
->> - *
->> - *	void populate_bls(struct rkisp1_ext_params_block_header *block) {
->> - *		struct rkisp1_ext_params_bls_config *bls =
->> - *			(struct rkisp1_ext_params_bls_config *)block;
->> - *
->> - *		bls->header.type = RKISP1_EXT_PARAMS_BLOCK_ID_BLS;
->> - *		bls->header.flags = RKISP1_EXT_PARAMS_FL_BLOCK_ENABLE;
->> - *		bls->header.size = sizeof(*bls);
->> - *
->> - *		bls->config.enable_auto = 0;
->> - *		bls->config.fixed_val.r = blackLevelRed_;
->> - *		bls->config.fixed_val.gr = blackLevelGreenR_;
->> - *		bls->config.fixed_val.gb = blackLevelGreenB_;
->> - *		bls->config.fixed_val.b = blackLevelBlue_;
->> - *	}
->> - *
->> - * @type: The parameters block type, see
->> - *	  :c:type:`rkisp1_ext_params_block_type`
->> - * @flags: A bitmask of block flags
->> - * @size: Size (in bytes) of the parameters block, including this header
->> + * The flags field is a bitmask of per-block flags RKISP1_EXT_PARAMS_FL_*.
->>    */
->> -struct rkisp1_ext_params_block_header {
->> -	__u16 type;
->> -	__u16 flags;
->> -	__u32 size;
->> -};
->> +#define rkisp1_ext_params_block_header v4l2_params_block_header
->>   
->>   /**
->>    * struct rkisp1_ext_params_bls_config - RkISP1 extensible params BLS config
->> @@ -1594,21 +1546,7 @@ enum rksip1_ext_param_buffer_version {
->>   /**
->>    * struct rkisp1_ext_params_cfg - RkISP1 extensible parameters configuration
->>    *
->> - * This struct contains the configuration parameters of the RkISP1 ISP
->> - * algorithms, serialized by userspace into a data buffer. Each configuration
->> - * parameter block is represented by a block-specific structure which contains a
->> - * :c:type:`rkisp1_ext_params_block_header` entry as first member. Userspace
->> - * populates the @data buffer with configuration parameters for the blocks that
->> - * it intends to configure. As a consequence, the data buffer effective size
->> - * changes according to the number of ISP blocks that userspace intends to
->> - * configure and is set by userspace in the @data_size field.
->> - *
->> - * The parameters buffer is versioned by the @version field to allow modifying
->> - * and extending its definition. Userspace shall populate the @version field to
->> - * inform the driver about the version it intends to use. The driver will parse
->> - * and handle the @data buffer according to the data layout specific to the
->> - * indicated version and return an error if the desired version is not
->> - * supported.
->> + * This is the driver-specific implementation of :c:type:`v4l2_params_buffer`.
->>    *
->>    * Currently the single RKISP1_EXT_PARAM_BUFFER_V1 version is supported.
->>    * When a new format version will be added, a mechanism for userspace to query
->> @@ -1624,11 +1562,6 @@ enum rksip1_ext_param_buffer_version {
->>    * the maximum value represents the blocks supported by the kernel driver,
->>    * independently of the device instance.
->>    *
->> - * For each ISP block that userspace wants to configure, a block-specific
->> - * structure is appended to the @data buffer, one after the other without gaps
->> - * in between nor overlaps. Userspace shall populate the @data_size field with
->> - * the effective size, in bytes, of the @data buffer.
->> - *
->>    * The expected memory layout of the parameters buffer is::
->>    *
->>    *	+-------------------- struct rkisp1_ext_params_cfg -------------------+
->> @@ -1678,4 +1611,11 @@ struct rkisp1_ext_params_cfg {
->>   	__u8 data[RKISP1_EXT_PARAMS_MAX_SIZE];
->>   };
->>   
->> +#ifdef __KERNEL__
->> +/* Make sure the header is type-convertible to the generic v4l2 params one */
->> +static_assert((sizeof(struct rkisp1_ext_params_cfg) -
->> +	      RKISP1_EXT_PARAMS_MAX_SIZE) ==
->> +	      sizeof(struct v4l2_params_buffer));
->> +#endif /* __KERNEL__ */
+> diff --git a/include/linux/energy_model.h b/include/linux/energy_model.h
+> index 61d50571ad88..43aa6153dc57 100644
+> --- a/include/linux/energy_model.h
+> +++ b/include/linux/energy_model.h
+> @@ -54,6 +54,8 @@ struct em_perf_table {
+>   /**
+>    * struct em_perf_domain - Performance domain
+>    * @em_table:		Pointer to the runtime modifiable em_perf_table
+> + * @node:		node in	em_pd_list (in energy_model.c)
+> + * @id:			A unique ID number for each performance domain
+>    * @nr_perf_states:	Number of performance states
+>    * @min_perf_state:	Minimum allowed Performance State index
+>    * @max_perf_state:	Maximum allowed Performance State index
+> @@ -71,6 +73,8 @@ struct em_perf_table {
+>    */
+>   struct em_perf_domain {
+>   	struct em_perf_table __rcu *em_table;
+> +	struct list_head node;
+> +	int id;
+>   	int nr_perf_states;
+>   	int min_perf_state;
+>   	int max_perf_state;
+> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
+> index 8df55397414a..3fe562b6230e 100644
+> --- a/kernel/power/energy_model.c
+> +++ b/kernel/power/energy_model.c
+> @@ -23,6 +23,16 @@
+>    */
+>   static DEFINE_MUTEX(em_pd_mutex);
+>   
+> +/*
+> + * Manage performance domains with IDs. One can iterate the performance domains
+> + * through the list and pick one with their associated ID. The mutex serializes
+> + * the list access. When holding em_pd_list_mutex, em_pd_mutex should not be
+> + * taken to avoid potential deadlock.
+> + */
+> +static DEFINE_IDA(em_pd_ida);
+> +static LIST_HEAD(em_pd_list);
+> +static DEFINE_MUTEX(em_pd_list_mutex);
+> +
+>   static void em_cpufreq_update_efficiencies(struct device *dev,
+>   					   struct em_perf_state *table);
+>   static void em_check_capacity_update(void);
+> @@ -396,7 +406,7 @@ static int em_create_pd(struct device *dev, int nr_states,
+>   	struct em_perf_table *em_table;
+>   	struct em_perf_domain *pd;
+>   	struct device *cpu_dev;
+> -	int cpu, ret, num_cpus;
+> +	int cpu, ret, num_cpus, id;
+>   
+>   	if (_is_cpu_device(dev)) {
+>   		num_cpus = cpumask_weight(cpus);
+> @@ -420,6 +430,13 @@ static int em_create_pd(struct device *dev, int nr_states,
+>   
+>   	pd->nr_perf_states = nr_states;
+>   
+> +	INIT_LIST_HEAD(&pd->node);
+> +
+> +	id = ida_alloc(&em_pd_ida, GFP_KERNEL);
+> +	if (id < 0)
+> +		return -ENOMEM;
+> +	pd->id = id;
+> +
+>   	em_table = em_table_alloc(pd);
+>   	if (!em_table)
+>   		goto free_pd;
+> @@ -444,6 +461,7 @@ static int em_create_pd(struct device *dev, int nr_states,
+>   	kfree(em_table);
+>   free_pd:
+>   	kfree(pd);
+> +	ida_free(&em_pd_ida, id);
+>   	return -EINVAL;
+>   }
+>   
+> @@ -660,6 +678,13 @@ int em_dev_register_pd_no_update(struct device *dev, unsigned int nr_states,
+>   unlock:
+>   	mutex_unlock(&em_pd_mutex);
+>   
+> +	if (_is_cpu_device(dev))
+> +		em_check_capacity_update();
+> +
+> +	mutex_lock(&em_pd_list_mutex);
+> +	list_add_tail(&dev->em_pd->node, &em_pd_list);
+> +	mutex_unlock(&em_pd_list_mutex);
+> +
+>   	return ret;
+>   }
+>   EXPORT_SYMBOL_GPL(em_dev_register_pd_no_update);
+> @@ -678,6 +703,10 @@ void em_dev_unregister_perf_domain(struct device *dev)
+>   	if (_is_cpu_device(dev))
+>   		return;
+>   
+> +	mutex_lock(&em_pd_list_mutex);
+> +	list_del_init(&dev->em_pd->node);
+> +	mutex_unlock(&em_pd_list_mutex);
+> +
+>   	/*
+>   	 * The mutex separates all register/unregister requests and protects
+>   	 * from potential clean-up/setup issues in the debugfs directories.
+> @@ -689,6 +718,8 @@ void em_dev_unregister_perf_domain(struct device *dev)
+>   	em_table_free(rcu_dereference_protected(dev->em_pd->em_table,
+>   						lockdep_is_held(&em_pd_mutex)));
+>   
+> +	ida_free(&em_pd_ida, dev->em_pd->id);
+> +
+>   	kfree(dev->em_pd);
+>   	dev->em_pd = NULL;
+>   	mutex_unlock(&em_pd_mutex);
 
-This is where I was thinking v4l2_params_buffer_size could be used:
+Apart from that, the code itself looks sane.
 
-
-static assert(sizeof(struct rkisp1_ext_params_cfg) == 
-v4l2_params_buffer_size(RKISP1_EXT_PARAMS_MAX_SIZE))
-
-Dan
-
->> +
->>   #endif /* _UAPI_RKISP1_CONFIG_H */
->>
-> 
-
+Regards,
+Lukasz
 
