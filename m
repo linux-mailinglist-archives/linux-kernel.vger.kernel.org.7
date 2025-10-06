@@ -1,144 +1,77 @@
-Return-Path: <linux-kernel+bounces-843148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70614BBE7DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:30:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA74BBE7E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:32:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20BF63A67F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:30:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C87FF4ECEF3
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC170283FE5;
-	Mon,  6 Oct 2025 15:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Fe/cNu0r"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770C22D6E68;
+	Mon,  6 Oct 2025 15:32:36 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F2AA926
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 15:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6D0270EC1
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 15:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759764630; cv=none; b=RkDOz4o7RLEn5r6cPtn+52R/blcbqfVhtFzYo94XHqsLPx1k/4zxiE9RqcEao9sK46tKgaONLnQu0HcP7HvNFhYy8sTlWHGta+kUrhJQuacqeVUBSoBSCCSKoVCQMm3AVEtplbbOoeV7NUh9AmFczfHsydivoObp38ssNwuIvn4=
+	t=1759764756; cv=none; b=pQhc8+OeT9DNv+8QHYSJHYzod5sTQArgDbkWjiUpTBONlFfGjrf11r02P8Bon3nGLCQzH4c5MOUN/+8OPetd06U5OB4ZyewaaRRs57T9eY7sadHR1Mwo+J+5z0eSo7ExYCeDmRoZM4YPUP/E7yzwLSaBroYMCB7c+XuVqJVQ3t8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759764630; c=relaxed/simple;
-	bh=KfEpPX6KTwp0yN4qfLT4LXJb5WVsFjNmfSxhuw6//Tg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=RIm97tjfYkqs2/8RqllFXR4X2UehQZe03DK+KMjQPn00ml/DmAriVpb09yfTVE1G68HmY4d4rbBUljdg//kCHCpWEec7FsgkGPCo59f9wnWuC/3cksSZ0dp0atIpLOd7KSwIL46RNw6Vj8f7uHjo8Yte2+oMLEHA0EAph9c9e6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Fe/cNu0r; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <ff21cbd1-dc77-43ae-85a8-dc6a56a1cefa@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759764625;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nXyoKN4j7tjDil/ht3RE4A/98xpfn+XOg18nSC63YxI=;
-	b=Fe/cNu0rr623OU3+9Ti9ilVTCZn9uAu/4R9seUwKi1wiqTULHwiFAtmOQfNqBi/s98yzjN
-	GERZwA4JTt8odBfVuDE6VeHz2PmiluWbhv/obSptS1gcMUx/ZcQ3Us/dAVtmGn5r5OyVHg
-	0z4dog6KEnfJc3NI3xAgiS/dd3DYNyA=
-Date: Mon, 6 Oct 2025 16:30:19 +0100
+	s=arc-20240116; t=1759764756; c=relaxed/simple;
+	bh=zw2z/ool9cWByM8Pa1OqN2nv8gNSRE6SZmipZLjuYTM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=bhFgceF7WxINiLEJKIlFg9KndFba0Cfp95l4ChyvFYFbjlZIlqNm6FwovYpHGgVD/fhph4lBGA72PcWuKLQJhfZa+wS5+eZY37N3LZ9arg9eZOsQ4K9XwuEDGPAzixfkejDV7rttS11mA0edJUhdjyj6WwG2LGGn5cYuxT2cYp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-429278a11f7so55929915ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 08:32:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759764753; x=1760369553;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zw2z/ool9cWByM8Pa1OqN2nv8gNSRE6SZmipZLjuYTM=;
+        b=oviDJ3BEJMVg9tOJtHU+L14mcWR/9zzn38/n7nUJhX3AJCKf635LEz3er1z4SMjl0C
+         L0NDzw5MzaVIhjIKXK3nGlnwZwfgOIpHFJ9ebM2q/kLHosmI8F+V2UDcSAjFwOSXLA4J
+         lmaKQMMFAjb4qW+arTgxyAjopYesuB4r2+h1Ky7y5Ebn6vSwGsohljCV9EdvKHhmioKb
+         yfRtVVMCqyDFWC/7V9qwoMytTJ0WKF8r7X1Lsxzb4jrtJAa0sBspXNPvNpAof54e7aMk
+         wZ9xU38WJx/1VcHbhAXg7t6Fu2jgU/5chPVGp/rm0ckkKK8l8E+dYS0tgV0InBHei37m
+         BN7g==
+X-Gm-Message-State: AOJu0YxUSMYZ0nefJ2PKWfdxjGzwozScqiErXJjUKn1rSA6veoiAdfQ6
+	tJITncMNnz52+s9vQSrocCgDi5umnfQs+ASRu1buF4SJDDXMf5/fhnoy/+nTgska+5I1u+ZnE0p
+	nib8V/Ky+0AI1tYkHi/MOEIr1zUNHcwbjllgUhpFX2wbo7H+gPHDDa4YH+7o=
+X-Google-Smtp-Source: AGHT+IE90dEK3YAMhVHY0i4ewTMQdNjWySmGQ5a2v1utj4r4h/zydEZMySCJF2593bjMg1VgG44HoqHMXNN7F7J3O+iMck/WoBBa
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v13 3/4] drm/atomic-helper: Re-order bridge chain
- pre-enable and post-disable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
-To: Vicente Bergas <vicencb@gmail.com>
-Cc: Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
- alexander.sverdlin@siemens.com, andrzej.hajda@intel.com, devarsht@ti.com,
- dri-devel <dri-devel@lists.freedesktop.org>, jernej.skrabec@gmail.com,
- Jonas Karlman <jonas@kwiboo.se>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, lumag@kernel.org,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- neil.armstrong@linaro.org, nm@ti.com, rfoss@kernel.org, simona@ffwll.ch,
- tomi.valkeinen@ideasonboard.com, tzimmermann@suse.de, vigneshr@ti.com,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Douglas Anderson <dianders@chromium.org>,
- Damon Ding <damon.ding@rock-chips.com>, Sandy Huang <hjc@rock-chips.com>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Andy Yan <andy.yan@rock-chips.com>,
- Linux Rockchip Support List <linux-rockchip@lists.infradead.org>,
- Devarsh Thakkar <devarsht@ti.com>
-References: <CAAMcf8BfxMJx+5ttEXx0kONP2OYWSLFqEYF6rfVBKoRg5TKZzQ@mail.gmail.com>
- <bea50d14-2311-46ad-bb30-9d60a4c5e3a2@linux.dev>
-Content-Language: en-US
-In-Reply-To: <bea50d14-2311-46ad-bb30-9d60a4c5e3a2@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6e02:1a46:b0:424:bec:4a01 with SMTP id
+ e9e14a558f8ab-42e7ad8470cmr145237565ab.16.1759764753718; Mon, 06 Oct 2025
+ 08:32:33 -0700 (PDT)
+Date: Mon, 06 Oct 2025 08:32:33 -0700
+In-Reply-To: <68e2ffd0.050a0220.2c17c1.003b.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e3e111.a70a0220.160221.0003.GAE@google.com>
+Subject: Forwarded: Re: test
+From: syzbot <syzbot+83c9dd5c0dcf6184fdbf@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-+rockchip maintainers
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Hi Vicente, all,
+***
 
+Subject: Re: test
+Author: nirbhay.lkd@gmail.com
 
-I went through the drivers and the affected areas in the gru-kevin
-chromebook pipeline last week, but nothing has stood out.
-
-
-Pipeline:
-
-rockchip,display-subsystem / rk3399-vop (Big/Lite) (CRTC) ->
-rk3399-edp (Encoder) -> analogix_dp_core (Bridge) ->
-sharp,lq123p (edp-panel)
-
-I am unable to debug this further since I do not have the hardware.
-
-I could use some help, especially from folks who understand the hardware
-requirements better.
-
-
-On 11/09/25 09:01, Aradhya Bhatia wrote:
-> Hi Vicente,
-> 
-> Thank you for the bisection and reporting the issue.
-> 
-> On 10/09/25 16:17, Vicente Bergas wrote:
->> Hi,
->> this patch causes a regression. It has been reported in
->> https://bugzilla.kernel.org/show_bug.cgi?id=220554
->>
->> It affects the gru/kevin platform (arm64,RK3399) with the Panfrost DRM driver.
-> 
-> I believe the Panfrost DRM driver may only be for the GPU.
-> 
-> Based on the dts files in arm64/rockchip/, this is the pipeline of the
-> gru-kevin setup that I understand.
-> 
-> 	rk3399-vop (Big/Lite) -> rk3399-edp -> sharp,lq123p (edp-panel)
-> 
-> The setup seems to be using the drm/rockchip drivers for the display
-> controller and for the bridge.
-> 
->>
->> When it boots in console mode, the blinking of the cursor keeps the display on.
->> If it is turned off via /sys/class/graphics/fbcon/cursor_blink, then
->> the display briefly shows each key press presented on screen for less
->> than one second and then powers off.
->>
->> When starting the graphical mode (wayland), if there are no
->> applications drawing on the screen, the only way to keep the display
->> on is by continuously moving the mouse.
->>
-> 
-> Okay!
-> 
-> I will have a look through the drivers. In the meanwhile, please do
-> report back if you find any other observations.
-> 
-> 
-
--- 
-Regards
-Aradhya
-
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+master
 
