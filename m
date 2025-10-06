@@ -1,126 +1,153 @@
-Return-Path: <linux-kernel+bounces-842741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E5E2BBD706
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 11:26:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56F60BBD70F
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 11:28:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FAA13ABCA7
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 09:26:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB8D71894464
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 09:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433DA266584;
-	Mon,  6 Oct 2025 09:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3F6269D18;
+	Mon,  6 Oct 2025 09:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="vbn4Wcse"
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BNMVWT1x"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4161262FE9;
-	Mon,  6 Oct 2025 09:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A08267B01
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 09:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759742761; cv=none; b=tPIeSqv6rr8Moe7LYjh0LnJ/ehQ9cf1P1PmV6S1NdKrWhP2mdzRw3EC7h8vLhSY+cfXQFaQ7Dy2x73BbHYK836Qe2MH2IcZjstrV8wDnpn8rGsXPjjY/PsUXEPK5FL3Si7rRKdxabChUyQGiUZPUPIDEuFWJzfT83vqQRAJZ4fk=
+	t=1759742879; cv=none; b=IW2sPZ0jDnhNSMnd44b7OLXjhXNU0Mdohz4SK1pMe9fQYnxQ/VmfsPepMNtIw25kaZpaDmWhCk6kQj2n4jjKI6eqfLiDjnRYLTaa5HYpr2le/dPDbYnPqko1/GkjfY/m6M26rKyQU/USfM4VWJ6QCCSEovRtUpvjFUrGS0cOwd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759742761; c=relaxed/simple;
-	bh=UySLR6TmbZVuXe9tJaNxLhSTcW7QSfIrkFO0rBy6FIo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=M4AU181N+spqiZvEeHvieso1XSAG+MOx6LK1oxOji1VJ/hQLexqhiKvEHWOHOENw3cr1e71/970xqu1fKB8cIUQKdnDUU1XlW0uXgYw5kFJQr0wUTG4moUU1prVkW7E6h50x9s72Mvsshax+Ytsm6uTWxYZWykJQpMluyHMGeRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=vbn4Wcse; arc=none smtp.client-ip=202.12.124.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id DA75E7A005D;
-	Mon,  6 Oct 2025 05:25:58 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Mon, 06 Oct 2025 05:25:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1759742758; x=1759829158; bh=qod5y7xd7sXLsKt/VwC7GHOOQx3sEX5cZEN
-	DcS4e0w8=; b=vbn4WcseJA8B2WjfLM27TqHv8cJRoVxXgsEPgjrnryJooSdxioY
-	KUL9aO+zuyN8xI12XWjZW3mIG9qKRC6WTPYz39InE2dFSrDUHpqkxj10nRpk2wHt
-	AOwE4I1M2ij9D9aIfYjcUw9OLf20gTjRagZb89AXFRf1l/EijePJ134aXsciwoJZ
-	oZxIGl1EL7uEopsNDAcGAvABRl5WcQ61C4foyRC/urZKfdBcvG1sdZoeX8r/Bfnl
-	4f+8EN3Hu693MZuQ4DjH3+swjf5z3wyvJJQgyOpmfL2nZpyfkv1VdWts1qIlElx+
-	CTw9MNkkKH+7Hy1GjdUeDV6SW51nAXZKL2g==
-X-ME-Sender: <xms:JovjaOnSW0LvWWnZfcHCdOZhAw1_X7viIuVW7t8MhC_k8vYbz2Efgw>
-    <xme:JovjaN_0YGh425YTJXlKVY2JKqSFDE3kpALYC8vNc3HLKiNy0V_IpmK1uzIjuiVxn
-    MuoMUxLkRpO6Bdxwx1pgmV06uySyNTXmsW4bGXUF6Rt5v2keaLIXv0>
-X-ME-Received: <xmr:JovjaMKqdXYxFSqG-uwQBsr1KeQwlTbPNsIgTdiB4302mXx94WxIebaRnekRkktSrV-srPmarhfprHG41EskOZcEhKVW8WXd8pU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeljedujecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefujgfkfhggtgesthdtredttddtvdenucfhrhhomhephfhinhhnucfvhhgr
-    ihhnuceofhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrgheqnecuggftrfgrthhtvg
-    hrnhepleeuheelheekgfeuvedtveetjeekhfffkeeffffftdfgjeevkeegfedvueehueel
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepfhhthh
-    grihhnsehlihhnuhigqdhmieekkhdrohhrghdpnhgspghrtghpthhtohepuddvpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpth
-    htohepghgvvghrtheslhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtohepphgvthgv
-    rhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdho
-    rhhgpdhrtghpthhtohepsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpth
-    htoheptghorhgsvghtsehlfihnrdhnvghtpdhrtghpthhtohepmhgrrhhkrdhruhhtlhgr
-    nhgusegrrhhmrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrh
-    drkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:JovjaCh_xiAl-7cdLtm-JQSPmeDt74upCUK2V5eUo-z6Ob5oKjmTNw>
-    <xmx:JovjaI81krDfjINsFKIotuMtakJjoV_yT_03Av0Y5o8SDVUIiCoihQ>
-    <xmx:JovjaHPnoFHiwVt9MO-nh3oZ3ApbrHhy53GlrxlNHd1PaslIAhen2Q>
-    <xmx:JovjaMDoYQL0CJCVVXSChenkeO-IxRPiW81QVAIl9P8B0OeLWcfYmw>
-    <xmx:JovjaAVcMKLcxmugAlm2C6iZpBAWorRbpyZxxsXVQxORiSnkjr8d0x4o>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 6 Oct 2025 05:25:57 -0400 (EDT)
-Date: Mon, 6 Oct 2025 20:25:59 +1100 (AEDT)
-From: Finn Thain <fthain@linux-m68k.org>
-To: Arnd Bergmann <arnd@arndb.de>
-cc: Geert Uytterhoeven <geert@linux-m68k.org>, 
-    Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-    Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, 
-    Linux-Arch <linux-arch@vger.kernel.org>, linux-m68k@vger.kernel.org, 
-    Lance Yang <lance.yang@linux.dev>
-Subject: Re: [RFC v2 2/3] atomic: Specify alignment for atomic_t and
- atomic64_t
-In-Reply-To: <7de25cf0-595e-4b8e-b0da-6e5a66ec1358@app.fastmail.com>
-Message-ID: <68bd3bbd-66cd-8acc-1e17-c677193172a5@linux-m68k.org>
-References: <cover.1757810729.git.fthain@linux-m68k.org> <abf2bf114abfc171294895b63cd00af475350dba.1757810729.git.fthain@linux-m68k.org> <CAMuHMdUgkVYyUvc85_P9TyTM5f-=mC=+X=vtCWN45EMPqF7iMg@mail.gmail.com> <6c295a4e-4d18-a004-5db8-db2e57afc957@linux-m68k.org>
- <57ac401b-222b-4c85-b719-9e671a4617cf@app.fastmail.com> <86be5cf0-065e-d55d-fdb6-b9cf6655165e@linux-m68k.org> <ec2982e3-2996-918e-f406-32f67a0decfe@linux-m68k.org> <e02f861b-706c-4f6d-bded-002601da954a@app.fastmail.com> <60325e45-e4a7-d0cf-ba28-a1a811f9a890@linux-m68k.org>
- <7de25cf0-595e-4b8e-b0da-6e5a66ec1358@app.fastmail.com>
+	s=arc-20240116; t=1759742879; c=relaxed/simple;
+	bh=QU58PgIDoxyXxvtrv9nIkUTP1aP3Ji5RwiYuSuwuyDc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mcC+QXbd+RB7yGp1pTxRmKuOSl7aZhCoIjr/SH/s2nT31zOKhlTgjV3l5ZtisFh46uUGuDmPBJBAT1jX3jJki+hHT/RaPS5VcVYqiw0g3AjTkFBVjBsKulZ56uJyE0Qg0PXIkZbnhPax29Il/imOG/NBiZnrjhEjcszaKChBnb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BNMVWT1x; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 595NK1DO012815
+	for <linux-kernel@vger.kernel.org>; Mon, 6 Oct 2025 09:27:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/pcwlnjS2vmra4LDe4EMuIdtHHOf5Cpr9bJvDe22TZQ=; b=BNMVWT1xSfVjrHr6
+	prZKemFBfBPrpPFDPdzuWXdSw/eyvjjkfTuK4EC8BfbYyenDb0KTt4araD0L1j9t
+	pTlpG5+WoZtokGsVfQ5tw2Y/mOKz59A3ZRjCfQdUI6jaXjJdcvYyoIygeobayeiO
+	9181KHoE0VCsa0eljEi/nfPmUr4T5gmOAjV4p7IDEwwQVcCRyKGeQFJlOzdsajkg
+	8az/qTMih45U1obx60ypgShyItRAqI3HITH/Ux8heegdywKkizP4dnk0yQa8hNOL
+	ZuVeet7oenEJQJPfT3bT5E19z0cSKhefPipEG9jRw91eBAw5CBRLNCNHseODcqzv
+	92N6MA==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jtk6uhka-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 09:27:53 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4e0f9bedf1aso15132291cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 02:27:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759742873; x=1760347673;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/pcwlnjS2vmra4LDe4EMuIdtHHOf5Cpr9bJvDe22TZQ=;
+        b=QVcThKlhLbqdy7nO6ftszbfocwXVk3jAvBMIirgrYAXKB3d3ROGDFFYnRoW1KCplAK
+         NgTYL7qRQB9kl2WCEJA5gKtUrQ1Cp5k12AzDsWPQccyPSm59Qj2/W0K52Pg9UAiPipPS
+         yU37zX6eEhEBlxzGF1K1+rMB/CGrIncWDlkgptQbNSnhCm1rHGhrjoudTIW0Ck0EA+JE
+         wJ2J89yk1lij+FVOltac3p0bHtoDpml+1qSK5tjwGRBIlTNPYZw3UCqHVNLTRDPBxAKS
+         IKyVcIq3+qeMUzldymlWjx4F1WPUsTmd3hNyFG5dcqtghLtu4GOZBMVTcXAA6wUUhf4t
+         02IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGfWhs8r73xboUwhM0gdM1FZT+mwEg9Mxp7xkFWe93L+SICO77bD95M4Su6vhlGGoTreFGfP3PjJcETa8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8j+r7bQiR484mKpNH6GkH962c4XW0fj7hYdx/woH7/b2gWQ2E
+	yr1RFaU5HUMgKEoD8a/8yEmlcDZ4V03SMFNs3Z0OG8z4xS0+6j1on4VtC8k7E/bz7sDqmwfv9R5
+	2aNUI+QzPdqI/eX3jl0NsxOAx90hKlkYhn8rHiKuBelmoTJ65UReELRCJXNPvi/xCejA=
+X-Gm-Gg: ASbGnctUllQlBGTP09KIpC0YA1y6hn/7LGYs5PJW6qlV9kwn7ZM7BjG3V8oTTQ3d2RW
+	bx8hczGYEO7Y46RNJKV0t2I+buhwsaxMFRYIFgcOBEtf809DLvIQZtWZlzNAEyqZvfh3R7fuaju
+	QPgmbG8BjZVf0mge8ItLlQSiU1u406XHzcdXmueCC/G6GyaLGTutyUq83guO2Yb3PkEGfrIgQwp
+	4YFlBgmj0XxPLoXZ3OmF5sPxmqzDDXd6AF0W8fnSx3DIVeurJnllvHNhY+I2h5aCEa7+ODllwue
+	BJ6YZlty/ozJdeqcJw1j/rUjVP4qEVdQBZMoKN17ZK+n0HTU3unCHRVL++NYZDZ2EYI28g2RGEf
+	1uFINfhaoPd6zWjjwdS+ATCtXUuw=
+X-Received: by 2002:ac8:5f91:0:b0:4b5:eaee:1c04 with SMTP id d75a77b69052e-4e576955b55mr107433201cf.0.1759742872914;
+        Mon, 06 Oct 2025 02:27:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHk+OyISCU/gYVLyFTdyZBlaX8VxXHWghQ/t1CCKjFjUKk15AZPAUHnnfYB9omxMiCPUC3/Ww==
+X-Received: by 2002:ac8:5f91:0:b0:4b5:eaee:1c04 with SMTP id d75a77b69052e-4e576955b55mr107433051cf.0.1759742872419;
+        Mon, 06 Oct 2025 02:27:52 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b4869b4f1d1sm1089257366b.71.2025.10.06.02.27.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Oct 2025 02:27:51 -0700 (PDT)
+Message-ID: <4a442f02-405d-4a88-bca9-92233e602653@oss.qualcomm.com>
+Date: Mon, 6 Oct 2025 11:27:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: msm8996: add interconnect paths to
+ USB2 controller
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Georgi Djakov <djakov@kernel.org>,
+        Yassine Oudjana
+ <y.oudjana@protonmail.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20251002-fix-msm8996-icc-v1-0-a36a05d1f869@oss.qualcomm.com>
+ <20251002-fix-msm8996-icc-v1-2-a36a05d1f869@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251002-fix-msm8996-icc-v1-2-a36a05d1f869@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAxNyBTYWx0ZWRfX0W96YD2VI/sc
+ COAuetC4dW/3YNTuuNuhZC+KRAEEikUD8Xhs+El3ekiDtH7/K/aPXHqbKxr5pgHUibq9P11VRTY
+ 4IvtFc6Uq3wsk2ZTTdIICXDg0q43uUqc7PZ/7e0VSzBR68HmpwPjgfw1zailsA6sXBO6OQ41FdX
+ z7gya1DYGE5qiRQe2VStJKNTNi2B0yaQpxz1NH1LemvrJLqpXdkYsLkNGGWxq0+oBbmjAof1de0
+ pjx/5mf10NIj5E37ERAZBde9dRoHZ2g+YsMBNmFdiELKrLYf89fRkVgaEYuWX49PBAdyiuAGlRM
+ 3WDxnShbdkFXnttf/x/NvMgQR398czuu4izf17SbwZUMEGAV4BJSsaLilqf/BFUbw67XKBA+crK
+ tpL0gKq0loQsyl8y2AiDBzGL6qRMNw==
+X-Authority-Analysis: v=2.4 cv=do3Wylg4 c=1 sm=1 tr=0 ts=68e38b99 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=81On53fQ4K8t90Y-VgIA:9
+ a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-GUID: AMgHVp_sS1jmvqIIJQmzpYM6bG3Qh5zP
+X-Proofpoint-ORIG-GUID: AMgHVp_sS1jmvqIIJQmzpYM6bG3Qh5zP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-06_03,2025-10-02_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 adultscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015
+ malwarescore=0 spamscore=0 impostorscore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040017
 
-
-On Wed, 1 Oct 2025, Arnd Bergmann wrote:
-
-> >> Since there is nothing telling the compiler that the 'old' argument 
-> >> to atomic*_try_cmpcxchg() needs to be naturally aligned, maybe that 
-> >> check should be changed to only test for the ABI-guaranteed 
-> >> alignment? I think that would still be needed on x86-32.
-> >>  
-> >
-> > I don't know why we would check the alignment of the 'old' quantity. 
-> > It's going to be loaded into a register before being used, right?
+On 10/2/25 10:53 AM, Dmitry Baryshkov wrote:
+> Add the missing interconnects to the USB2 host. The Fixes tag points to
+> the commit which broke probing of the USB host on that platform.
 > 
-> I was wondering about that as well, but checking for alignof(*old) 
-> probably can't hurt. The only architectures that actually have a custom 
-> arch_try_cmpxchg*() are s390 and x86 and those don't care about 
-> alignmnent of 'old', but it's possible that another architecture that 
-> can't handle unaligned load/store would add an inline asm implementation 
-> in the future and break if an alignment fixup happens in the middle of 
-> an ll/sc loop.
+> Fixes: 130733a10079 ("interconnect: qcom: msm8996: Promote to core_initcall")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 > 
+> ---
+> Note: without the previous patch applying this one can result in the
+> kernel stuck at booting because of the EPROBE_DEFER loop. I suggest
+> applying them through the same tree in order to make sure that the tree
+> is not broken (or using an immutable tag for the icc commit).
+> ---
 
-That hypothetical future requirement seems improbable to me. Moreover, 
-would such an architecture have a need for CONFIG_DEBUG_ATOMIC?
+with that ^
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+Konrad
 
