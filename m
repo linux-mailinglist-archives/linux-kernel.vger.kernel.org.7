@@ -1,86 +1,78 @@
-Return-Path: <linux-kernel+bounces-842534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76097BBCF56
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 03:40:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA795BBCF7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 03:41:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 60B924E61C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 01:40:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 111653B8543
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 01:41:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D77D1DF759;
-	Mon,  6 Oct 2025 01:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE7B1C84B8;
+	Mon,  6 Oct 2025 01:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mmSksWsK"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CIn7E8lw"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35D41A23A5;
-	Mon,  6 Oct 2025 01:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF291B3935;
+	Mon,  6 Oct 2025 01:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759714788; cv=none; b=mJXbsETBuTwPBXc2p5rqGKze575QwU4T0Tqkk7pu4OwEY0Muz4UX9ax6dNidSIK1U3xJl6L5QvHIcQCsft1vZ+Yfo+3HyS324k8hyehvi8gYDdnWffNylL9KKjrrQ0NNDbLmbAuEYH1GgX4wKa6vgXUBGl7SmPiaNXG3JnyNjJ8=
+	t=1759714821; cv=none; b=DOFUcT63tDHpAl6ntnULnHqrUbTnNVzD9KAc27oJPzzryhDetR4DyHObETTup9dar4ycHssXUEm466/Iw7G8zDesIPxE9NExCycMk3vkhhPEhK9OJTWx2fr6bPtAiNR6Oyjx5hON7CkYUG1zUMWbmfRJwzBeOw6i86SPf3ucB7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759714788; c=relaxed/simple;
-	bh=NjPr6GDHnsClHMjyISm51wgYtG79KCy7M9/jK36VxX4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LMV4CNTKAC5wErB7puxrdmddXOZMiYZzD1Y2hwmigV3yqdBBeAd7FRu677tCpbYEE4agWfRJH3hS1tk1X5gKjC7nD6avqCDpFwHynv/1h9GCtSa6SqFBHlz50kyfknj2C+KGn7porjNlgHMr6Rg9UUOmMDuqIuKNL02TuUynWrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mmSksWsK; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5961TvVm017137;
-	Mon, 6 Oct 2025 01:39:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=19WFsK2uZEP
-	CoYq9JkZq3FCpogFeqhw7MzvA3wUKpks=; b=mmSksWsK+z/7ZWBPBm5m62KijhF
-	cPPW7UCpWeCr8NXVzkGg98GWAmZYYC+aPmtsgfGJLsPW44Ry5hTjgKw1A5BYfwmH
-	Ie6q9ZZY1yAPuDSJG/YbYaNg/WFr4ellHowYQJJ4Qfqof/yXqy8PmD2PP9+HsGQN
-	nSoABuc+Dv1CmhYqb5SJPJjdRLyvpLrez5vYB3B+SurhUh2EGQxqMAV1qeJ3fWKf
-	1ZD1EoyPhaj8oYKk62Jfe0BkkrfcMNqkzDkUAt92nIBHLUKiWmZ8kBgmGBf4KbeL
-	ZbekTC0/jIyF06O/knm4hIGv6JuK6kL9uUe2ezaKTNjy1thPY/swGmixm1w==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jtk6tu0c-1
+	s=arc-20240116; t=1759714821; c=relaxed/simple;
+	bh=58BjvUQEqPzD+9OK0iCgBRFpUAb5YsB7recq8WV52FE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hzdxhISxxBLmHWBoM9kcsNvy80xj3YuK25LuIqv3PfZYMvMIgxn+GGwOZSluwxC9RFOA+52S4nkYSII3Kh/DXhITtzDa+Ejoae91XBhN4krT30C0tvpQEBaEytQqfp2aKHXR6hXPuRCkz9D4bOMAnyykS4z/5rcn92C+MxlxRNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CIn7E8lw; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 595BlGaU018271;
+	Mon, 6 Oct 2025 01:40:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=qPcdImALRl72sFXkGrgNDZmhcloWFUe77eyxUhYR9
+	68=; b=CIn7E8lwYeNgwEzCKCYdOQzLL7ttoXu+s9rEfeXB3sXtHl2+gUkmcxNEj
+	mOuNPl/aPBDpkohYkGXQGvsVIkVEEZOffzWgAXR0aTrHrR0P9gjVhi5sPGNyY9ei
+	Qidkdi4DFoqfKZTUWx45yeJia1YUX3m6f6epTxjiEtRXYdIPwYiOg4JlZRldxmlp
+	IQ4e7L1g30YflwSx5y4xeSMGojCppmmJyfCSTVXonnQuTvVVkaNp4IEPHIpyxiTD
+	x//hCcY8HkkW4Dqcl86Bh9jhys3JpsBhnbhAIt6O9mwbjifQn6kzDdV/+Uspd3iU
+	lgdFM3hVsPehDjsmkYoI2lQrMVzAg==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49ju936q7f-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 06 Oct 2025 01:39:31 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5961dSCZ003806;
-	Mon, 6 Oct 2025 01:39:28 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 49jvnkybty-1
+	Mon, 06 Oct 2025 01:40:07 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5960SlwW030976;
+	Mon, 6 Oct 2025 01:40:06 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49kfdjupew-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 06 Oct 2025 01:39:28 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5961dS54003793;
-	Mon, 6 Oct 2025 01:39:28 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-amakhija-hyd.qualcomm.com [10.213.99.91])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 5961dS0l003791
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 06 Oct 2025 01:39:28 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 4090850)
-	id 60F655A0; Mon,  6 Oct 2025 07:09:26 +0530 (+0530)
-From: Ayushi Makhija <quic_amakhija@quicinc.com>
-To: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+	Mon, 06 Oct 2025 01:40:06 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5961e2IP60817744
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 6 Oct 2025 01:40:02 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3E60320049;
+	Mon,  6 Oct 2025 01:40:02 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D84B520040;
+	Mon,  6 Oct 2025 01:39:57 +0000 (GMT)
+Received: from aboo.ibm.com.com (unknown [9.150.9.46])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  6 Oct 2025 01:39:57 +0000 (GMT)
+From: Aboorva Devarajan <aboorvad@linux.ibm.com>
+To: rafael@kernel.org, christian.loehle@arm.com, daniel.lezcano@linaro.org
+Cc: aboorvad@linux.ibm.com, gautam@linux.ibm.com, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc: Ayushi Makhija <quic_amakhija@quicinc.com>, robdclark@gmail.com,
-        dmitry.baryshkov@oss.qualcomm.com, sean@poorly.run,
-        marijn.suijten@somainline.org, andersson@kernel.org, robh@kernel.org,
-        robh+dt@kernel.org, krzk+dt@kernel.org, konradybcio@kernel.org,
-        conor+dt@kernel.org, andrzej.hajda@intel.com,
-        neil.armstrong@linaro.org, rfoss@kernel.org,
-        Laurent.pinchart@ideasonboard.com, jonathan@marek.ca, jonas@kwiboo.se,
-        jernej.skrabec@gmail.com, quic_rajeevny@quicinc.com,
-        quic_vproddut@quicinc.com
-Subject: [PATCH v2 7/7] arm64: dts: qcom: qcs8300-ride: add anx7625 DSI to DP bridge node
-Date: Mon,  6 Oct 2025 07:09:24 +0530
-Message-Id: <20251006013924.1114833-8-quic_amakhija@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251006013924.1114833-1-quic_amakhija@quicinc.com>
-References: <20251006013924.1114833-1-quic_amakhija@quicinc.com>
+Subject: [PATCH v4] cpuidle: menu: Use residency threshold in polling state override decisions
+Date: Mon,  6 Oct 2025 07:09:54 +0530
+Message-ID: <20251006013954.17972-1-aboorvad@linux.ibm.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,255 +80,119 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAxNyBTYWx0ZWRfX6wuzJBPWz5Vv
- SJfNyKkLV3x6dtdvr0K1wDh5BelwLd0wbREqF/cx7sqyEki8ktQHejAu3XCqFW/M+w07xFKLNIx
- BhQKRZ6hESc1C0toN7VcwdIcxdVNgzNZmQuYUx+cP2CsY/tUE4ltigIj8obD7gJ1hKSC6PEpzVP
- DfABBLRwENZgtm4Lmn7awD5t0wZo9cY3JGm1Y0vTx5kB0oNhAEIdypskV4BP3XvnSwztClLVjnN
- 002LuvmTBT+m7fBPN9AjBa/eldvIyZc6bfatFz/i7Cr6aHBXo29YysCbCujc1p2Ggjse3Zqp+P9
- /8MwbIMlgQqiYjtpd08o9W8xHYd57XgFrRH7KE8K2cvy5XBBp+bXF8pLnykPT9MKMG2kfLJzeOw
- mJCKTV5BVn8v9CphIwBaDC0erTyYqQ==
-X-Authority-Analysis: v=2.4 cv=do3Wylg4 c=1 sm=1 tr=0 ts=68e31dd3 cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=x6icFKpwvdMA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=PS1UjZDpBljCGRlzRBMA:9
- a=TjNXssC_j7lpFel5tvFf:22 a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22
- a=xoEH_sTeL_Rfw54TyV31:22
-X-Proofpoint-GUID: gOyZQZQUy3LV01cZluVSVzs3Vrpbf6A5
-X-Proofpoint-ORIG-GUID: gOyZQZQUy3LV01cZluVSVzs3Vrpbf6A5
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: lsOe536Bmw4-ZKhEZfucf4OBJo6epKqT
+X-Proofpoint-ORIG-GUID: lsOe536Bmw4-ZKhEZfucf4OBJo6epKqT
+X-Authority-Analysis: v=2.4 cv=Fec6BZ+6 c=1 sm=1 tr=0 ts=68e31df7 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=7CQSdrXTAAAA:8
+ a=RMWZt8AqD-_lvsXj4dkA:9 a=a-qgeE7W1pNrGK8U0ZQC:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAyMiBTYWx0ZWRfX7SJcm5OmCgu1
+ nq+JvwQ7MvAGFITMDy+HozqkOHDhuTNiAIoJUO/4l76vBlmTIHaPeVvTsxIA9t1bFGuYASKM6CE
+ KPZJFGP7PvjVLjLsG8dVxx5lSVpY2UR6+6Wd22uNMtQlt4s7opnLQiQfAQSCMgbguGdfSQms/b3
+ SLNJiQSh1qMxZZUh35x6WwdZklIL7hTDVBJZd1RloIBm6njf2q0SKwL8BJjgL4dAYxriXRQHcKi
+ ryK7EwKP5CFf9aJLfgVGFzhTkHj67WhlUq+KyG6lG56ibeTrwQVob1d0kv8gBwI5SkeMRZhUSYm
+ 3dbME4HJEFiIT2lliatf7r8J9lMJmysUtUVO5Cc8phwuURU5TJlh3hRfZWUa3fSrMmpg0PxFDcB
+ iLHmffOTxg8tzU4AMlja1B+XsKv8uQ==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-06_01,2025-10-02_03,2025-03-28_01
+ definitions=2025-10-05_08,2025-10-02_03,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 adultscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015
- malwarescore=0 spamscore=0 impostorscore=0 priorityscore=1501 bulkscore=0
+ lowpriorityscore=0 impostorscore=0 suspectscore=0 spamscore=0 adultscore=0
+ clxscore=1015 malwarescore=0 priorityscore=1501 phishscore=0 bulkscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040017
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040022
 
-Add anx7625 DSI to DP bridge device node.
+On virtualized PowerPC (pseries) systems, where only one polling state
+(Snooze) and one deep state (CEDE) are available, selecting CEDE when
+the predicted idle duration is less than the target residency of CEDE
+state can hurt performance. In such cases, the entry/exit overhead of
+CEDE outweighs the power savings, leading to unnecessary state
+transitions and higher latency.
 
-Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Menu governor currently contains a special-case rule that prioritizes
+the first non-polling state over polling, even when its target residency
+is much longer than the predicted idle duration. On PowerPC/pseries,
+where the gap between the polling state (Snooze) and the first non-polling
+state (CEDE) is large, this behavior causes performance regressions.
+
+This patch refines the special case by adding an extra requirement:
+the first non-polling state can only be chosen if its
+target residency is below the defined RESIDENCY_THRESHOLD_NS. If
+this condition is not satisfied, polling is allowed instead, avoiding
+suboptimal non-polling state entries.
+
+This change is limited to the single special-case rule for the first
+non-polling state. The general non-polling state selection logic in the
+menu governor remains unchanged.
+
+Performance improvement observed with pgbench on PowerPC (pseries)
+system:
++---------------------------+------------+------------+------------+
+| Metric                    | Baseline   | Patched    | Change (%) |
++---------------------------+------------+------------+------------+
+| Transactions/sec (TPS)    | 495,210    | 536,982    | +8.45%     |
+| Avg latency (ms)          | 0.163      | 0.150      | -7.98%     |
++---------------------------+------------+------------+------------+
+CPUIdle state usage:
++--------------+--------------+-------------+
+| Metric       | Baseline     | Patched     |
++--------------+--------------+-------------+
+| Total usage  | 12,735,820   | 13,918,442  |
+| Above usage  | 11,401,520   | 1,598,210   |
+| Below usage  | 20,145       | 702,395     |
++--------------+--------------+-------------+
+
+Above/Total and Below/Total usage percentages:
++------------------------+-----------+---------+
+| Metric                 | Baseline  | Patched |
++------------------------+-----------+---------+
+| Above % (Above/Total)  | 89.56%    | 11.49%  |
+| Below % (Below/Total)  | 0.16%     | 5.05%   |
+| Total cpuidle miss (%) | 89.72%    | 16.54%  |
++------------------------+-----------+---------+
+
+The results indicate that restricting CEDE selection to cases where
+its residency matches the predicted idle time reduces mispredictions,
+lowers unnecessary state transitions, and improves overall throughput.
+
+Reviewed-by: Christian Loehle <christian.loehle@arm.com>
+Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
 ---
- arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 170 ++++++++++++++++++++++
- 1 file changed, 170 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-index 891e49602c97..5d4040376857 100644
---- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-@@ -24,6 +24,64 @@ chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
+v3: https://lore.kernel.org/all/20250908075443.208570-1-aboorvad@linux.ibm.com/
+
+v3 -> v4
+
+- Rebased onto the linux-pm/pm branch.
+- Updated commit message and comments based on review feedback.
+- Reordered condition checks as recommended in review.
+- Added Reviewed-by tag from Christian.
+
+---
+ drivers/cpuidle/governors/menu.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
+index 4d9aa5ce31f0..6a98a724442e 100644
+--- a/drivers/cpuidle/governors/menu.c
++++ b/drivers/cpuidle/governors/menu.c
+@@ -320,10 +320,12 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+ 		}
  
-+	vreg_12p0: vreg-12p0-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VREG_12P0";
-+
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+	};
-+
-+	vreg_5p0: vreg-5p0-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VREG_5P0";
-+
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+
-+		vin-supply = <&vreg_12p0>;
-+	};
-+
-+	vreg_1p8: vreg-1p8-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VREG_1P8";
-+
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+
-+		vin-supply = <&vreg_5p0>;
-+	};
-+
-+	vreg_1p0: vreg-1p0-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VREG_1P0";
-+
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <1000000>;
-+		regulator-max-microvolt = <1000000>;
-+
-+		vin-supply = <&vreg_1p8>;
-+	};
-+
-+	vreg_3p0: vreg-3p0-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VREG_3P0";
-+
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <3000000>;
-+		regulator-max-microvolt = <3000000>;
-+
-+		vin-supply = <&vreg_12p0>;
-+	};
-+
- 	dp0-connector {
- 		compatible = "dp-connector";
- 		label = "DP0";
-@@ -36,6 +94,18 @@ dp0_connector_in: endpoint {
- 		};
- 	};
- 
-+	dp-dsi0-connector {
-+		compatible = "dp-connector";
-+		label = "DSI0";
-+		type = "full-size";
-+
-+		port {
-+			dp_dsi0_connector_in: endpoint {
-+				remote-endpoint = <&dsi2dp_bridge_out>;
-+			};
-+		};
-+	};
-+
- 	regulator-usb2-vbus {
- 		compatible = "regulator-fixed";
- 		regulator-name = "USB2_VBUS";
-@@ -316,6 +386,70 @@ &gpu_zap_shader {
- 	firmware-name = "qcom/qcs8300/a623_zap.mbn";
- };
- 
-+&i2c8 {
-+	clock-frequency = <400000>;
-+	status = "okay";
-+
-+	io_expander: gpio@74 {
-+		compatible = "ti,tca9539";
-+		reg = <0x74>;
-+		interrupts-extended = <&tlmm 93 IRQ_TYPE_EDGE_BOTH>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		reset-gpios = <&tlmm 66 GPIO_ACTIVE_LOW>;
-+
-+		pinctrl-0 = <&io_expander_intr_active>,
-+			    <&io_expander_reset_active>;
-+		pinctrl-names = "default";
-+	};
-+
-+	i2c-mux@70 {
-+		compatible = "nxp,pca9543";
-+		#address-cells = <1>;
-+
-+		#size-cells = <0>;
-+		reg = <0x70>;
-+
-+		i2c@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			bridge@58 {
-+				compatible = "analogix,anx7625";
-+				reg = <0x58>;
-+				interrupts-extended = <&io_expander 2 IRQ_TYPE_EDGE_FALLING>;
-+				enable-gpios = <&io_expander 1 GPIO_ACTIVE_HIGH>;
-+				reset-gpios = <&io_expander 0 GPIO_ACTIVE_HIGH>;
-+				vdd10-supply = <&vreg_1p0>;
-+				vdd18-supply = <&vreg_1p8>;
-+				vdd33-supply = <&vreg_3p0>;
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+						dsi2dp_bridge_in: endpoint {
-+							remote-endpoint = <&mdss_dsi0_out>;
-+						};
-+					};
-+
-+					port@1 {
-+						reg = <1>;
-+						dsi2dp_bridge_out: endpoint {
-+							remote-endpoint = <&dp_dsi0_connector_in>;
-+						};
-+					};
-+				};
-+			};
-+		};
-+	};
-+};
-+
- &pmm8650au_1_gpios {
- 	usb2_en: usb2-en-state {
- 		pins = "gpio7";
-@@ -353,10 +487,31 @@ &mdss_dp0_phy {
- 	status = "okay";
- };
- 
-+&mdss_dsi0 {
-+	vdda-supply = <&vreg_l5a>;
-+
-+	status = "okay";
-+};
-+
-+&mdss_dsi0_phy {
-+	vdds-supply = <&vreg_l4a>;
-+
-+	status = "okay";
-+};
-+
-+&mdss_dsi0_out {
-+	data-lanes = <0 1 2 3>;
-+	remote-endpoint = <&dsi2dp_bridge_in>;
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
- 
-+&qupv3_id_1 {
-+	status = "okay";
-+};
-+
- &remoteproc_adsp {
- 	firmware-name = "qcom/qcs8300/adsp.mbn";
- 	status = "okay";
-@@ -419,6 +574,21 @@ dp_hot_plug_det: dp-hot-plug-det-state {
- 		function = "edp0_hot";
- 		bias-disable;
- 	};
-+
-+	io_expander_intr_active: io-expander-intr-active-state {
-+		pins = "gpio93";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	io_expander_reset_active: io-expander-reset-active-state {
-+		pins = "gpio66";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+		output-high;
-+	};
- };
- 
- &uart7 {
+ 		/*
+-		 * Use a physical idle state, not busy polling, unless a timer
+-		 * is going to trigger soon enough.
++		 * Use a physical idle state instead of busy polling as long as
++		 * its target residency is below the residency threshold and the
++		 * next timer doesn't expire soon.
+ 		 */
+ 		if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
++		    s->target_residency_ns < RESIDENCY_THRESHOLD_NS &&
+ 		    s->target_residency_ns <= data->next_timer_ns) {
+ 			predicted_ns = s->target_residency_ns;
+ 			idx = i;
 -- 
-2.34.1
+2.47.1
 
 
