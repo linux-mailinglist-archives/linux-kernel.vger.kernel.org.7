@@ -1,265 +1,245 @@
-Return-Path: <linux-kernel+bounces-842919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7C36BBDFAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 14:11:23 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 653EDBBDFBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 14:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99BDD3AC9CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 12:10:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D82D734B394
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 12:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9288227A92B;
-	Mon,  6 Oct 2025 12:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED9427A93A;
+	Mon,  6 Oct 2025 12:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="tf8mpKrI"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="oT1aSPuj"
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0F627CB35;
-	Mon,  6 Oct 2025 12:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F814262FC0
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 12:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759752612; cv=none; b=i93wigzag/XPCIQZOFCDZ1lIZ4cd++kDLVk8LQR61a5AWSFdLyzqRIGFcJzTgA8WoSDGnIoJV8/FfXlsH4zJsjvo87AsHBCphK6F4Yy1JvrD0kwUecvNwXBBd6QP7yroQ43IMnW5epzY0xCLvzL+iAjCyCoTt6Vs4WpxLo687hg=
+	t=1759752712; cv=none; b=vD37wJDbNxBQA5mQPgrIeaSMqnwuDmT4/0IKfGm6pFx/v9NeHPnL5trFQOFv+esv5DYMhWavA01J1rtdbvBbPn76eGqUWsvRRaWcHKTvbh+a/YA9v1UObxWJuAI8J6sL6GstnC1hsY+0suMS3JkKeGZa7KlSTn7tNewrbW7lypI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759752612; c=relaxed/simple;
-	bh=x6yPRPDpJD1ql7OMC854mk/tDZ8LbOk3qCqdy7g553g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bx2fxnuDVVdxmvEuQmn5y8LM3JiwC+/6qpQLQQ+HfSAiVdQQktEqwD7wJOS2XeaQmWxZMaUjCUKc8MYdGFB4sFjo8t2vv/LurKSSRjz8rMFw466tOPzQf/983y0FsJJ9wQ5aAbVtjp4uF//knhJ/CZawViGN5GTauxH1cl9xsLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=tf8mpKrI; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1759752593; x=1760357393; i=spasswolf@web.de;
-	bh=XGzRVf02gTBD3S5SnDTLmspy+qED18SH6HSZJHztyKg=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=tf8mpKrIlsk0P07/Z01P6keU4qTA1qIVZh+B3u86TjA6TUi7ZztdT0Zi7auLq6iJ
-	 PkiY5naJsaSHabM8UM+qfTvF84AbzVwT5Tg0KTKDE2plLWybpb5H78ay+v2B92TUx
-	 m9VogZx4r9StwDk8Xh3z0FO4QJ5kOx38as0hwOFD4K75CtayMGIHx7ad/BMWNohIp
-	 cs+uGR0tm2gkeYsJCR0IGLCugnT5D0zb2Xruv6q/YsJM1Qis1vSdflZdy6M1/HwHa
-	 OWaNx3RezQrqBk1uHCnkNCuETjZYl1/4aoqps/wyedosiUT6wMaMwfow+O3Zcqry7
-	 bb8/eTdmE7XOqQvBSA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from localhost.localdomain ([95.223.134.88]) by smtp.web.de
- (mrweb006 [213.165.67.108]) with ESMTPSA (Nemesis) id
- 1MWiA0-1uly8X0Xay-00YNyg; Mon, 06 Oct 2025 14:09:53 +0200
-From: Bert Karwatzki <spasswolf@web.de>
-To: linux-kernel@vger.kernel.org
-Cc: Bert Karwatzki <spasswolf@web.de>,
-	linux-next@vger.kernel.org,
-	linux-stable@vger.kernel.org,
-	regressions@lists.linux.dev,
-	linux-pci@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	Mario Limonciello <superm1@kernel.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [REGRESSION 04/04] Crash during resume of pcie bridge
-Date: Mon,  6 Oct 2025 14:09:43 +0200
-Message-ID: <20251006120944.7880-5-spasswolf@web.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251006120944.7880-1-spasswolf@web.de>
-References: <20251006120944.7880-1-spasswolf@web.de>
+	s=arc-20240116; t=1759752712; c=relaxed/simple;
+	bh=bEpFkBhMAl+Kyv9UshSYj++BncULeY9oVKP4ESd6Yqw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=oBsHRpAPT/5XJpxl6PMfoKk5VgF5e/rJCgP8ZvUw5h/MIPrE5L9AP8XGJzSXY+NQRc5kfxNKeI78p9ynYY6F3/8Q/n3lK3av8mxsO7j/r5FqCp/jPozjAS2kO+YaNXXNvb4+ByU7Lz8FNHofPleXPDpQafoLZDaxe22ubfoiJyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=oT1aSPuj; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id 3D0EB240103
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 14:11:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
+	t=1759752707; bh=2zbnC8Z/CyeVECVYwsvs1oT4U41KTfZNklK696kKRTQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:
+	 Content-Transfer-Encoding:MIME-Version:Autocrypt:OpenPGP:From;
+	b=oT1aSPujWARqnkuEgI9skVSO1edRSQZdn5NVB8DdM4uIoq3hGsBtoMrJUUGfqLPra
+	 Vx6HBneQevsOvJBmw06KScau/6eW+tvKCgjFs84iMWrC6C4HCPceg49Y/R+gp/zf/w
+	 lZjSjo5MfTM6eNT5WH0blvlsJC5FzWtU+PBJAoaYxtqgJqv05XUs+va6KfgXlcoGHk
+	 4GslXLdPx32uB722r2lLIcDYZGt+dy3ZIuXZd5xzGNdADHFMEYa6OOyjOpzCs4vgjX
+	 zi2RD06L1WTePuZT/eHJANlUMdHmj/WnkfXf77+rjjPlr5NM1n8oyB/7UdvlX0Ok14
+	 8nli6YoJp2Pbw==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4cgJ696Q94z6v1b;
+	Mon,  6 Oct 2025 14:11:45 +0200 (CEST)
+Message-ID: <568ee07cc0155f3d05a868ae6dce102916b83566.camel@posteo.de>
+Subject: Re: [PATCH 1/2] Add manage_restart device attribute to scsi_disk
+From: Markus Probst <markus.probst@posteo.de>
+To: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, "Martin K.
+ Petersen" <martin.petersen@oracle.com>
+Cc: linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Mon, 06 Oct 2025 12:11:46 +0000
+In-Reply-To: <524f67bf-f4df-41bf-bf1b-5cd0a79649eb@kernel.org>
+References: <8c3cb28c57462f9665b08fdaa022e6abc57fcd9e.camel@posteo.de>
+	 <20251005190559.1472308-1-markus.probst@posteo.de>
+	 <524f67bf-f4df-41bf-bf1b-5cd0a79649eb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:FG1MSxGaf1Kex6prA/XwXmhc98V9DcWAHkr6vhcUabn7eKomQ6M
- gesYkAMgYq8MxGfrt1iQJBvPeWfxsI7o100GV5wBE7xGjF+cCRKsiJHtj3C6P/8ZuWW5iLt
- AtkiqZErmcitrTrye9FLx+EPsapZXpgRM8EAR2dMe8hvi020xbVqohDIm9GZ2Y3oiRtfEW0
- CQp73WNZ6vSR2GB9tFQFg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:q5m2nSVIEqc=;8+GFE8iwWxJYR9t4oyT8iSvBDJN
- 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
- Y2F+l/gX2Rj3Mhz3U=
+Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
+  keydata=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
+  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
+OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
 
-To further close in on the crash we'll continue testing with=20
-6.17.0-rc6-next-20250917-gpudebug-00029-ge797f42363d1
-which adds more dev_info()s to the critical part of rpm_resume() and remov=
-es some
-unneeded ones:
+On Mon, 2025-10-06 at 09:58 +0900, Damien Le Moal wrote:
+> On 10/6/25 04:06, Markus Probst wrote:
+> > there is already manage_shutdown, manage_system_start_stop and
+> > manage_runtime_start_stop device attributes that allows the high-
+> > level
+> > device driver (sd) manage the device power state, expect for the
+> > system_state SYSTEM_RESTART. With this device attribute, it is
+> > possible to
+> > let the high-level device driver (sd) manage the device power state
+> > for
+> > SYSTEM_RESTART too.
+> >=20
+> > Signed-off-by: Markus Probst <markus.probst@posteo.de>
+> > ---
+> > =C2=A0drivers/scsi/sd.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 | 35
+> > ++++++++++++++++++++++++++++++++++-
+> > =C2=A0include/scsi/scsi_device.h |=C2=A0 6 ++++++
+> > =C2=A02 files changed, 40 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+> > index 5b8668accf8e..a3e9c2e9d9f4 100644
+> > --- a/drivers/scsi/sd.c
+> > +++ b/drivers/scsi/sd.c
+> > @@ -318,6 +318,36 @@ static ssize_t manage_shutdown_store(struct
+> > device *dev,
+> > =C2=A0}
+> > =C2=A0static DEVICE_ATTR_RW(manage_shutdown);
+> > =C2=A0
+> > +static ssize_t manage_restart_show(struct device *dev,
+> > +				=C2=A0=C2=A0 struct device_attribute *attr,
+> > char *buf)
+> > +{
+> > +	struct scsi_disk *sdkp =3D to_scsi_disk(dev);
+> > +	struct scsi_device *sdp =3D sdkp->device;
+>=20
+> sdp is not really needed.
 
-commit e797f42363d101b146971ec4d7e6c90bcc4064cd
-Author: Bert Karwatzki <spasswolf@web.de>
-Date:   Mon Oct 6 12:17:16 2025 +0200
+Then it would be inconsistent with manage_shutdown_*,
+manage_runtime_start_stop_*, manage_system_start_stop_*, there it has
+the sdp variable declared.
 
-    power: runtime: and more dev_info()s to rpm_resume()
-   =20
-    Signed-off-by: Bert Karwatzki <spasswolf@web.de>
+>=20
+> > +
+> > +	return sysfs_emit(buf, "%u\n", sdp->manage_restart);
+> > +}
+> > +
+> > +
+> > +static ssize_t manage_restart_store(struct device *dev,
+> > +				=C2=A0=C2=A0=C2=A0 struct device_attribute *attr,
+> > +				=C2=A0=C2=A0=C2=A0 const char *buf, size_t count)
+> > +{
+> > +	struct scsi_disk *sdkp =3D to_scsi_disk(dev);
+> > +	struct scsi_device *sdp =3D sdkp->device;
+>=20
+> Same here.
+>=20
+> > +	bool v;
+> > +
+> > +	if (!capable(CAP_SYS_ADMIN))
+> > +		return -EACCES;
+> > +
+> > +	if (kstrtobool(buf, &v))
+> > +		return -EINVAL;
+> > +
+> > +	sdp->manage_restart =3D v;
+> > +
+> > +	return count;
+> > +}
+> > +static DEVICE_ATTR_RW(manage_restart);
+> > +
+> > =C2=A0static ssize_t
+> > =C2=A0allow_restart_show(struct device *dev, struct device_attribute
+> > *attr, char *buf)
+> > =C2=A0{
+> > @@ -654,6 +684,7 @@ static struct attribute *sd_disk_attrs[] =3D {
+> > =C2=A0	&dev_attr_manage_system_start_stop.attr,
+> > =C2=A0	&dev_attr_manage_runtime_start_stop.attr,
+> > =C2=A0	&dev_attr_manage_shutdown.attr,
+> > +	&dev_attr_manage_restart.attr,
+> > =C2=A0	&dev_attr_protection_type.attr,
+> > =C2=A0	&dev_attr_protection_mode.attr,
+> > =C2=A0	&dev_attr_app_tag_own.attr,
+> > @@ -4175,7 +4206,9 @@ static void sd_shutdown(struct device *dev)
+> > =C2=A0	=C2=A0=C2=A0=C2=A0 (system_state =3D=3D SYSTEM_POWER_OFF &&
+> > =C2=A0	=C2=A0=C2=A0=C2=A0=C2=A0 sdkp->device->manage_shutdown) ||
+> > =C2=A0	=C2=A0=C2=A0=C2=A0 (system_state =3D=3D SYSTEM_RUNNING &&
+> > -	=C2=A0=C2=A0=C2=A0=C2=A0 sdkp->device->manage_runtime_start_stop)) {
+> > +	=C2=A0=C2=A0=C2=A0=C2=A0 sdkp->device->manage_runtime_start_stop) ||
+> > +	=C2=A0=C2=A0=C2=A0 (system_state =3D=3D SYSTEM_RESTART &&
+> > +	=C2=A0=C2=A0=C2=A0=C2=A0 sdkp->device->manage_restart)) {
+> > =C2=A0		sd_printk(KERN_NOTICE, sdkp, "Stopping disk\n");
+> > =C2=A0		sd_start_stop_device(sdkp, 0);
+> > =C2=A0	}
+> > diff --git a/include/scsi/scsi_device.h
+> > b/include/scsi/scsi_device.h
+> > index 6d6500148c4b..c7e657ac8b6d 100644
+> > --- a/include/scsi/scsi_device.h
+> > +++ b/include/scsi/scsi_device.h
+> > @@ -178,6 +178,12 @@ struct scsi_device {
+> > =C2=A0	 */
+> > =C2=A0	unsigned manage_shutdown:1;
+> > =C2=A0
+> > +	/*
+> > +	 * If true, let the high-level device driver (sd) manage
+> > the device
+> > +	 * power state for system restart (reboot) operations.
+>=20
+> What about cold boot ? Same is needed, no ?
+Not sure what you mean with cold boot here.
 
-diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-index 27cce7f1b1d3..c99dac998047 100644
-=2D-- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -793,12 +793,8 @@ static int rpm_resume(struct device *dev, int rpmflag=
-s)
-=20
-  repeat:
- 	if (dev->power.runtime_error) {
--		if (!strcmp(dev_name(dev), "0000:00:01.1"))
--			dev_info(dev, "%s %d\n", __func__, __LINE__);
- 		retval =3D -EINVAL;
- 	} else if (dev->power.disable_depth > 0) {
--		if (!strcmp(dev_name(dev), "0000:00:01.1"))
--			dev_info(dev, "%s %d\n", __func__, __LINE__);
- 		if (dev->power.runtime_status =3D=3D RPM_ACTIVE &&
- 		    dev->power.last_status =3D=3D RPM_ACTIVE)
- 			retval =3D 1;
-@@ -887,32 +883,22 @@ static int rpm_resume(struct device *dev, int rpmfla=
-gs)
- 	 * the resume will actually succeed.
- 	 */
- 	if (dev->power.no_callbacks && !parent && dev->parent) {
--		if (!strcmp(dev_name(dev), "0000:00:01.1"))
--			dev_info(dev, "%s %d\n", __func__, __LINE__);
- 		spin_lock_nested(&dev->parent->power.lock, SINGLE_DEPTH_NESTING);
- 		if (dev->parent->power.disable_depth > 0 ||
- 		    dev->parent->power.ignore_children ||
- 		    dev->parent->power.runtime_status =3D=3D RPM_ACTIVE) {
--			if (!strcmp(dev_name(dev), "0000:00:01.1"))
--				dev_info(dev, "%s %d\n", __func__, __LINE__);
- 			atomic_inc(&dev->parent->power.child_count);
- 			spin_unlock(&dev->parent->power.lock);
- 			retval =3D 1;
- 			goto no_callback;	/* Assume success. */
- 		}
- 		spin_unlock(&dev->parent->power.lock);
--		if (!strcmp(dev_name(dev), "0000:00:01.1"))
--			dev_info(dev, "%s %d\n", __func__, __LINE__);
- 	}
-=20
- 	/* Carry out an asynchronous or a synchronous resume. */
- 	if (rpmflags & RPM_ASYNC) {
--		if (!strcmp(dev_name(dev), "0000:00:01.1"))
--			dev_info(dev, "%s %d\n", __func__, __LINE__);
- 		dev->power.request =3D RPM_REQ_RESUME;
- 		if (!dev->power.request_pending) {
--			if (!strcmp(dev_name(dev), "0000:00:01.1"))
--				dev_info(dev, "%s %d\n", __func__, __LINE__);
- 			dev->power.request_pending =3D true;
- 			queue_work(pm_wq, &dev->power.work);
- 		}
-@@ -929,8 +915,11 @@ static int rpm_resume(struct device *dev, int rpmflag=
-s)
- 		if (!strcmp(dev_name(dev), "0000:00:01.1"))
- 			dev_info(dev, "%s %d\n", __func__, __LINE__);
- 		parent =3D dev->parent;
--		if (dev->power.irq_safe)
-+		if (dev->power.irq_safe) {
-+			if (!strcmp(dev_name(dev), "0000:00:01.1"))
-+				dev_info(dev, "%s %d\n", __func__, __LINE__);
- 			goto skip_parent;
-+		}
-=20
- 		spin_unlock(&dev->power.lock);
-=20
-@@ -966,12 +955,22 @@ static int rpm_resume(struct device *dev, int rpmfla=
-gs)
- 	if (dev->power.no_callbacks)
- 		goto no_callback;	/* Assume success. */
-=20
-+	if (!strcmp(dev_name(dev), "0000:00:01.1"))
-+		dev_info(dev, "%s %d\n", __func__, __LINE__);
- 	__update_runtime_status(dev, RPM_RESUMING);
-=20
-+	if (!strcmp(dev_name(dev), "0000:00:01.1"))
-+		dev_info(dev, "%s %d\n", __func__, __LINE__);
- 	callback =3D RPM_GET_CALLBACK(dev, runtime_resume);
-=20
-+	if (!strcmp(dev_name(dev), "0000:00:01.1"))
-+		dev_info(dev, "%s %d callback =3D %0x\n", __func__, __LINE__, (void *) =
-callback);
- 	dev_pm_disable_wake_irq_check(dev, false);
-+	if (!strcmp(dev_name(dev), "0000:00:01.1"))
-+		dev_info(dev, "%s %d\n", __func__, __LINE__);
- 	retval =3D rpm_callback(callback, dev);
-+	if (!strcmp(dev_name(dev), "0000:00:01.1"))
-+		dev_info(dev, "%s %d\n", __func__, __LINE__);
- 	if (retval) {
- 		if (!strcmp(dev_name(dev), "0000:00:01.1"))
- 			dev_info(dev, "%s %d\n", __func__, __LINE__);
+> The name "manage_restart" is a bit
+> confusing since we already have manage_system_start_stop,
+> manage_runtime_start_stop and manage_shutdown. I do not have a better
+> suggestion
+> though.
+In that case, we could remove the DEVICE_ATTR_RW(manage_restart), so it
+would not be exposed to userspace yet and can later by changed without
+breaking userspace?
+>=20
+> > +	 */
+> > +	unsigned manage_restart:1;
+> > +
+> > =C2=A0	/*
+> > =C2=A0	 * If set and if the device is runtime suspended, ask the
+> > high-level
+> > =C2=A0	 * device driver (sd) to force a runtime resume of the
+> > device.
+>=20
 
-This test is currently running (booted 13:05, 6.10.2025) and I'll expect a=
- crash
-after at least 24h of runtime.
-
-Bert Karwatzki
-
+Thanks
+- Markus Probst
 
