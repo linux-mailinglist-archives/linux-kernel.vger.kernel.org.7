@@ -1,210 +1,155 @@
-Return-Path: <linux-kernel+bounces-843270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65BE2BBECE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 19:24:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 514B9BBECE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 19:24:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56C7C3BF4F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 17:24:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41145189AFEF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 17:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9772417E0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7994C233722;
 	Mon,  6 Oct 2025 17:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="OJrCUT8j"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ILJtI9wu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k01sfhYm";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MqRDCRKl";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="m4nf8Jbf"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF5823A9B3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FDD225414
 	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 17:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759771434; cv=none; b=aaEo21PicZb/JB56J/kAhtKNSMb/E0V7kR+fHL/RPY/YcHozL0DkBtcvL5bCuIcWYJMNfunsBzXuB1EIN7VlHo4+VF+WysFrerPEZ7l/RKw3QjyyDwvGThWtoCZsrq6FM6KsRwyAj2yn/vMu2LEer6+40U+zPvyk1eBwNvAVAJ8=
+	t=1759771433; cv=none; b=m/hrf+4/lFJHVQg7Fia++Zo7B6rsNM38BsjGex9xmq1qsCzqcP091PNYuuO7mHXn8OIkoX+WKFiklwcOxm9SgdA9nrJy7Wsv/KAQtQlvjRIgIycg/r0wl5hU9jD0J4w6JlQ1hSii7Oq6YyYKp6wvEKSSkcXxYMjMgiZ2yGWXmZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759771434; c=relaxed/simple;
-	bh=VCA8jFwiTolL3cm7GWMVLR0c56Cedh5z95+OPkLnavM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k41wF8dy7HAQ2uexwmYqbpm+P9hQ7Z9kn6ZvEkd1aS7mkuBOxKuC0PbxV/ZLVLkIsABcWF0ayFOzveoPKcr0xoUDEmE4l1uCOGXJb8xGhE5p+3a71YBjOCjd8rDlSpqy84aC/l6QBD4BTZFwaQU9Yp5SEpxbjpdXVSZw+xNi1f8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=OJrCUT8j; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-87808473c3bso683963885a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 10:23:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1759771430; x=1760376230; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eiMWaxwcwGco8r+FHYAdZ8/rgwTBKI1DQmsAsIjVEPg=;
-        b=OJrCUT8jQ1mNcnSR1NLmBIfqGdxpgHINYtabLRdjkMxkXPT6sGB7gIwQr1H9xNEona
-         DiC5wbz9mf1rauL19afcY+exwSjOTA36/uAwUq7iW7rNU1KqrG4P86xc/I59vVvmrTkZ
-         d14QO1XAbxvrlU2XyT2aPqmir6tqASQEM563cJAjxlwJifzUgk4dDxzXQmxd5N7AR+YR
-         Ml0FipJxTKlKwnCRMppOupicEfx6Hr5Z8I9lNpxrRfz8bw1r3HC/vaXnR+1QW0k3Na1V
-         MTeQkG7PrCLcQoD8JEPM9bkOWnkMoYom/DpuH+/VH8mYfgUxfx/CMPecfex4Tzcl9kRA
-         8V3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759771430; x=1760376230;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eiMWaxwcwGco8r+FHYAdZ8/rgwTBKI1DQmsAsIjVEPg=;
-        b=CLQYZ9dBk39w6IKp+8Pffa6EglQXqiiWcZFscRHhrPIBK2Y6lt0M+TnoEIENpFEgyo
-         2CQjDLqN9GKJVVHwleL+bJoah1BMmMHjQ4lYCDh+Mrt+rs/BadtloR6L6KOSH/rJ/OZL
-         4HqcEEoKaevU8fEZ+Mcur88251qPnx+begTrv9PX1vGXyklgO3Y4lywu/7D4KFsPgtZ/
-         6dUkoJWHheBN8HCxMBiMpCNdTyojo9Q/HXOPsTdm0LUpre9hww6xGv8AC6wUOSFke4Hj
-         bue7TQ/xTFPxo7KsXyIE5s2IxtH+fNz1dg67snJR1tm/OCSsC2dd4zZDmdsleZs/cKv+
-         kCzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVFV1/ZFb3hEor+5ogddWoTQIwHtWBQAhIPi1zxLeip3unCxunm27Ir+w9K6sl54hLFAtUnyfUpU68ZNss=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1VgqtSk07rpOfM3AFGxLDbkQpFxoJA4V0ld0G8GPiBZbbUOpo
-	rAFiHpNXCK7clR4ZLuCHoiay9T9KNxthmFygVtZoFnw6Fi8XeSUNAEBUw3MSKGb0UCe/iUGPdna
-	xf+GNBszwjyd5ClKDkFT54TXsZQGtYTDol8PhgxOMGg==
-X-Gm-Gg: ASbGnctoKZSuQoTuoDyxK8BXfAbF6EohAAQy4fA9SJynl3IAWYMQFcWYvO5fw1MlckQ
-	pZm9FoSaEEMgGML9/RA1/hrcc8n5LSN1qW/C1EXbgDjGgJQ+qmO3Gla+5rF/rzabXTHglWyCMcZ
-	7110KdvE9fgLAN0r4i/JjNtFWVI6jly/Y8LOkPJiduuSYXAZzcAUZ/7MBmpwJRfhDJMwTy6BinS
-	IZcQHKCVIkB/7m5UxGSppQ+W2mTXFY+VdK5ecQ=
-X-Google-Smtp-Source: AGHT+IFv/eQIGSPIMF5AtEJ9/NjM4NT3tDLx/ni0W3avlG1qBmkP6qV6SoLJbkqgHaLD5t7vOoviSBII4unw5QD/72E=
-X-Received: by 2002:a05:620a:469e:b0:85e:5022:33a2 with SMTP id
- af79cd13be357-87a3a34d387mr1695495985a.39.1759771429425; Mon, 06 Oct 2025
- 10:23:49 -0700 (PDT)
+	s=arc-20240116; t=1759771433; c=relaxed/simple;
+	bh=ZeaGMx8w4FiIQan7pESD85thqMtxADdk5RzhM3lspTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PDqoUd+kUurWazBrufrJaRyKBNsMyIfdRuNYQ6xXUkDbcMekiK0xtpCiK4iTxBdzqdsChJCDiEy+0OE7L0uj9YTuUQ7PF0t9Rij5/RM8TpcGuMxqfvig/9f+O/vZY5aThuZfbBsIN7SIQiXH5eqWMal6pkSD5IO6abcrAuTGuRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ILJtI9wu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k01sfhYm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MqRDCRKl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=m4nf8Jbf; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E043F336C4;
+	Mon,  6 Oct 2025 17:23:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759771428;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KHx8s6doP1vCz5xGqfXMd/mLDJcI1MG6Od/8Lre67DM=;
+	b=ILJtI9wu6PdBZlYT7v16iaDUVK+5zwZ6+3/Ye57b2A1QpZk906PzR1t1EO9zdLBZ0jek3n
+	h5y1Xf0Ph85YMK2qSkSAMIBXTm2uBe34NPtYMmGayl0dOCLcWFwPSR6dBk0OAQ4TRoXFxQ
+	UssiAMzG2Zf3Cw/twULXpVHgi8nnEiY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759771428;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KHx8s6doP1vCz5xGqfXMd/mLDJcI1MG6Od/8Lre67DM=;
+	b=k01sfhYmoVSERyxiV8cIfo4I5SdQXCfY+RhQMvvZvCjlxQSEmI71Qucw3I8aeDXoaA/QIM
+	0/1CB9aaG/a5VyCg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=MqRDCRKl;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=m4nf8Jbf
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759771427;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KHx8s6doP1vCz5xGqfXMd/mLDJcI1MG6Od/8Lre67DM=;
+	b=MqRDCRKlmkSUKj53DXzmSt5X9qnPsOjm6kGJLWsvq4FxSfln81EGHBpNXtB7rkNzokp5kI
+	ZLBnqbWB5asKXWc/bN5FJAlqVgbSbHSoCuY6siXUiNlJvuanlGvs2KVzxGJLfGLlR5WOR3
+	30BMuJfwMGNXw8YHfLsGalCjcETd2Ck=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759771427;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KHx8s6doP1vCz5xGqfXMd/mLDJcI1MG6Od/8Lre67DM=;
+	b=m4nf8Jbf2EAojKHVUsMi61tIE98fRXNQNw3DHaujSSU9UGrfiP4kC1xb/iJHoDdn4b8GJK
+	+u0GZVHAe7hburDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C676C13995;
+	Mon,  6 Oct 2025 17:23:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id l9g/MCP742jKTgAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Mon, 06 Oct 2025 17:23:47 +0000
+Date: Mon, 6 Oct 2025 19:23:38 +0200
+From: David Sterba <dsterba@suse.cz>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] btrfs: Avoid -Wflex-array-member-not-at-end warning
+Message-ID: <20251006172338.GB4412@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <aN_Zeo7JH9nogwwq@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
- <20250929010321.3462457-3-pasha.tatashin@soleen.com> <mafs0y0ponf6b.fsf@kernel.org>
-In-Reply-To: <mafs0y0ponf6b.fsf@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Mon, 6 Oct 2025 13:23:11 -0400
-X-Gm-Features: AS18NWCYmyLqK5As63FctOGJiEPF3B80wEZqrPZ_K5x_kzJeySLPd8Ta4rPXhIg
-Message-ID: <CA+CK2bC0j=CbTNo=V-dceZEz9mji0yTWkE7QyUzvR1SRCiAJ=A@mail.gmail.com>
-Subject: Re: [PATCH v4 02/30] kho: make debugfs interface optional
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: jasonmiu@google.com, graf@amazon.com, changyuanl@google.com, 
-	rppt@kernel.org, dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
-	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
-	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
-	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
-	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, leonro@nvidia.com, 
-	witu@nvidia.com, hughd@google.com, skhawaja@google.com, chrisl@kernel.org, 
-	steven.sistare@oracle.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aN_Zeo7JH9nogwwq@kspp>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_TLS_ALL(0.00)[];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: E043F336C4
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.21
 
-On Mon, Oct 6, 2025 at 12:55=E2=80=AFPM Pratyush Yadav <pratyush@kernel.org=
-> wrote:
->
-> Hi Pasha,
->
-> On Mon, Sep 29 2025, Pasha Tatashin wrote:
->
-> > Currently, KHO is controlled via debugfs interface, but once LUO is
-> > introduced, it can control KHO, and the debug interface becomes
-> > optional.
-> >
-> > Add a separate config CONFIG_KEXEC_HANDOVER_DEBUG that enables
-> > the debugfs interface, and allows to inspect the tree.
-> >
-> > Move all debugfs related code to a new file to keep the .c files
-> > clear of ifdefs.
-> >
-> > Co-developed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> [...]
-> > @@ -662,36 +660,24 @@ static void __init kho_reserve_scratch(void)
-> >       kho_enable =3D false;
-> >  }
-> >
-> > -struct fdt_debugfs {
-> > -     struct list_head list;
-> > -     struct debugfs_blob_wrapper wrapper;
-> > -     struct dentry *file;
-> > +struct kho_out {
-> > +     struct blocking_notifier_head chain_head;
-> > +     struct mutex lock; /* protects KHO FDT finalization */
-> > +     struct kho_serialization ser;
-> > +     bool finalized;
-> > +     struct kho_debugfs dbg;
-> >  };
-> >
-> > -static int kho_debugfs_fdt_add(struct list_head *list, struct dentry *=
-dir,
-> > -                            const char *name, const void *fdt)
-> > -{
-> > -     struct fdt_debugfs *f;
-> > -     struct dentry *file;
-> > -
-> > -     f =3D kmalloc(sizeof(*f), GFP_KERNEL);
-> > -     if (!f)
-> > -             return -ENOMEM;
-> > -
-> > -     f->wrapper.data =3D (void *)fdt;
-> > -     f->wrapper.size =3D fdt_totalsize(fdt);
-> > -
-> > -     file =3D debugfs_create_blob(name, 0400, dir, &f->wrapper);
-> > -     if (IS_ERR(file)) {
-> > -             kfree(f);
-> > -             return PTR_ERR(file);
-> > -     }
-> > -
-> > -     f->file =3D file;
-> > -     list_add(&f->list, list);
-> > -
-> > -     return 0;
-> > -}
-> > +static struct kho_out kho_out =3D {
-> > +     .chain_head =3D BLOCKING_NOTIFIER_INIT(kho_out.chain_head),
-> > +     .lock =3D __MUTEX_INITIALIZER(kho_out.lock),
-> > +     .ser =3D {
-> > +             .track =3D {
-> > +                     .orders =3D XARRAY_INIT(kho_out.ser.track.orders,=
- 0),
-> > +             },
-> > +     },
-> > +     .finalized =3D false,
-> > +};
->
-> There is already one definition for struct kho_out and a static struct
-> kho_out early in the file. This is a second declaration and definition.
-> And I was super confused when I saw patch 3 since it seemed to be making
-> unrelated changes to this struct (and removing an instance of this,
-> which should be done in this patch instead). In fact, this patch doesn't
-> even build due to this problem. I think some patch massaging is needed
-> to fix this all up.
+On Fri, Oct 03, 2025 at 03:11:06PM +0100, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
+> 
+> Move the conflicting declaration to the end of the corresponding
+> structure. Notice that `struct fs_path` is a flexible structure,
+> this is a structure that contains a flexible-array member (`char
+> inline_buf[];` in this case).
+> 
+> Fix the following warning:
+> 
+> fs/btrfs/send.c:181:24: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-Let me fix it. I Plan to send a separate series only with KHO changes
-from LUO, so we can expedite its landing.
-
-Pasha
-
->
-> >
-> >  /**
-> >   * kho_add_subtree - record the physical address of a sub FDT in KHO r=
-oot tree.
-> [...]
->
-> --
-> Regards,
-> Pratyush Yadav
+Added to for-next, with updated changelog. Thanks.
 
