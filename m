@@ -1,69 +1,85 @@
-Return-Path: <linux-kernel+bounces-843345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2776EBBEFB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:35:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4DC5BBEFA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:35:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A69D93C5AF5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:32:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BB5454F0FCB
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18EB2D5C95;
-	Mon,  6 Oct 2025 18:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53682376EB;
+	Mon,  6 Oct 2025 18:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OYpddVwN"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PujDmGmS"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A46283FE3
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 18:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B916F244692
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 18:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759775532; cv=none; b=Q1uxLah8BBz4+xCK2zsn18/9mHrh5a1OeIy93Ua87+Jq8iWX6NGv1JQqzaQZSF1NUONI33YVKVVTLrpUfVYC+lk2sjsHDwssBdpNC+UJxbcA7sTkZe7C7oLAJCobUSeuBp5qPbfQStFd1H/rpLynG/V69csISH5alhDktPHSb2o=
+	t=1759775563; cv=none; b=cewWOB1Yk5ht7eE5Ict/M3IJ/VU/JnN/Rs5dSYY57ymb2W7lL1ggcmpriSfqMG+vjtEvW4uuxbiSslJs78BPQvBjEcVYGNgSwVX1ay//laO5Iox3fp5zipHb4hGpRonYpzZ/k+p8SAtvQgvIx1BvDgBLXSheAwbIN3nOYxnT9/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759775532; c=relaxed/simple;
-	bh=AVECyVvVJT9MHSPO77txhpBax3GTs77J6kzt6LrtzWM=;
+	s=arc-20240116; t=1759775563; c=relaxed/simple;
+	bh=Dj6m4vh4I+aSGB7esG1Hx/YYkGrqbAo4J1raPd5acaM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QXoB/2OkhIu5de8vk4D5QHUg3pw7Ei3po2UNFsj9gSLWXMHXii8fL6pKkKls/6Huzh1f8Vn66NuCcu0RbNRFSsVfm1VOKxxdQti1JA4jJHBtqwttDMUXu8JwOjNahQkUAUpmz6tbhWu/vMJeXOzVyT0bZOZtscuC1D/KGvfx4oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OYpddVwN; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=uO3LfZeIvfpQMnzAlDj+jEBgIyA0tb9id+WZutQ73qM=; b=OYpddVwNDYlsqq3bTvjn0WeQJS
-	CuOB+uo0/Jibx79Z4offzhGGznMdVNDkY4u3lrIQdNVKk6f336iGzGSPtctrkcshK2+lkc7sXaADn
-	h6W1L97dntAOoDRNg7lGXfDU09T4Tj68Rnpswr7cEWDl0PbNAauzlVe570lYeTpN7wR3XWTOPh/qy
-	7v/zTv3ZppL9sgqZ9wq6U6mBs57PTsSjR3kR64vpUpIio/o1bbWmozqmcYG7SmW2oPNiHzFp7lR4P
-	sFp2MCCvDJzveHp8TGxMWMA/UQ8M2is2wQvk8wyLb6L6DmxoBaX7ZOGLIZzlUyvNCqZjWyr1kQLZN
-	BKzsU+FA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v5q08-0000000H5Rq-0KPJ;
-	Mon, 06 Oct 2025 18:32:01 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B2B65300212; Mon, 06 Oct 2025 20:31:59 +0200 (CEST)
-Date: Mon, 6 Oct 2025 20:31:59 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Waiman Long <longman@redhat.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Andrea Righi <righi.andrea@gmail.com>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	"Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
-	Joseph Salisbury <joseph.salisbury@oracle.com>
-Subject: Re: [PATCH] sched: cgroup: Move task_can_attach() to cpuset.c
-Message-ID: <20251006183159.GW3245006@noisy.programming.kicks-ass.net>
-References: <20251003121421.0cf4372d@gandalf.local.home>
- <aOBCQYxZp05lI6jA@slm.duckdns.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AAAkv58KzcmNP19spfaB2Mqc0z0D3oYktRRtjj2WcfrfhQ3/Ujm56Kb4++Jko4G6/FkvpZjxpqcpJRX5Gd4hphscNMn6bwELRTkglOnZYfhJ8oEp0YGGs9HaGRowRp9Id5VXeZxpu9lC0oYzkRYUP3FLo0TJ83GLY5/vb9A6Rj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PujDmGmS; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-27d3540a43fso55108035ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 11:32:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1759775561; x=1760380361; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uwSuYHyPWLnd4B0J2NLg4Ynddq4RJZuyBAc+JpL56Y0=;
+        b=PujDmGmSuclp/MSAl7Ki7Ge2233hL8EypmdA+14CW5MM6nNOSsqeebkCSafiFVoVVr
+         ANxVwvxEH/JfPgFzT4W8KOUCtVzVQlIDpM7LdWCSJO1Bk3gFsThmrIy4jHrhQe4HpFzZ
+         95gfPN844C3T4D2sbVqAsh6DRbIHZXw7pgYng=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759775561; x=1760380361;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uwSuYHyPWLnd4B0J2NLg4Ynddq4RJZuyBAc+JpL56Y0=;
+        b=IjCJqRoPAQZ6JyHELEz2Em9V4tH+dTnaBE1tVGm/TPbyyOVLzOkFMND2GTqa6d86OR
+         noqOHxHYz0rIlE+lPeLeQKkAEVGHGbOigtCX+9C+Blq7oewR5NyOTAtlKG/1FMoJ8BMv
+         rzqGKEyZwsl77KPEFbhL7bHlsJVM+p7cVLtVKBBrH8PNsFQszeV1eIkR7fLeeJfNlB43
+         OraZgcthde6IuN0ZkeI9DyDtWStYbirHzX7d5dB0uLPBSOoHHq+R8iOiHtdCr0inAOUe
+         XPg07tgm/w8w77wf0Lm7PC0fplFNj/DzqZuoYAuL5IGXVGVjc0iuiZ9zojo0TXQ9yWDt
+         rxUw==
+X-Forwarded-Encrypted: i=1; AJvYcCXMgEtiIXYeJFNn3gdoyv5OWimduiDr2hO80TQg8D6WqXC3uct1Ym0GKMGfg9wrcAOSij+GEaHUwvOGV7M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU/UesvehO+F4Dzewx/+XDrdAmbJD9IbRWegJoAP2//g/3ZSGl
+	o8nkVuaA5ye0hSFuxAVB7fujY0FaNbpiTVLpJ2Ho7UCmwthLYJALKiz7Xv1PoCgkng==
+X-Gm-Gg: ASbGncsXAmhWxIHIhxd3DPG8w8XT3BdHyfumfqCmOatAZRDRuEv7Dtkqfgn5+3MZQyl
+	PNuCKSJCGgjWPYhn7Bcr5BK5Ri1dl73XJmo7MTBsoyqeJliNifF63Jtfex6H9cSRDPv/shcxO9g
+	ChbZ6zC59qImcI0XS2zs3cuc8sP9cWdivCTAim1gmdh4ytBZPICL+P18oC1Qac3BNLwOJk1RL10
+	ceKN/vBWeNWIOSn8V7nMoa54e/7A2cHfRc8SKWtJusqTCt8RSrKj4Afw76B5xwmtjKblh5MWibb
+	adQ18/xKZQvfyhvsG02qEIqcUD9+V1I9JzalJFLLQ45Qvrj3cwYTBjHCA1rYp7wtTd0Svt+osRw
+	GHDRdD3lQaellAy4qVMy+iQhxpc+TCBCCAonJmNrGY1gsa5SM53Uj9+X1roCLsUyTA4GHVQrFfd
+	jmZW32i5TOtMe82MjHKio=
+X-Google-Smtp-Source: AGHT+IHyUh9+Wdk2VWGp0HemaJgNqqUfeJ8XAjYRPDqgSqGja/q3alk2W+weivII4Y0JLs+WqyHOXQ==
+X-Received: by 2002:a17:903:3c65:b0:269:8072:5be7 with SMTP id d9443c01a7336-28e9a6654c0mr169220315ad.56.1759775560991;
+        Mon, 06 Oct 2025 11:32:40 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e7c:8:299e:f3e3:eadb:de86])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-28e8d1108c5sm140090835ad.16.2025.10.06.11.32.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Oct 2025 11:32:40 -0700 (PDT)
+Date: Mon, 6 Oct 2025 11:32:38 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] PCI/PM: Avoid redundant delays on D3hot->D3cold
+Message-ID: <aOQLRhot8-MtXeE3@google.com>
+References: <20251003154008.1.I7a21c240b30062c66471329567a96dceb6274358@changeid>
+ <20251006135222.GD2912318@black.igk.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,26 +88,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aOBCQYxZp05lI6jA@slm.duckdns.org>
+In-Reply-To: <20251006135222.GD2912318@black.igk.intel.com>
 
-On Fri, Oct 03, 2025 at 11:38:09AM -1000, Tejun Heo wrote:
-> On Fri, Oct 03, 2025 at 12:14:21PM -0400, Steven Rostedt wrote:
-> > From: Steven Rostedt <rostedt@goodmis.org>
+Hi Mika,
+
+On Mon, Oct 06, 2025 at 03:52:22PM +0200, Mika Westerberg wrote:
+> On Fri, Oct 03, 2025 at 03:40:09PM -0700, Brian Norris wrote:
+> > From: Brian Norris <briannorris@google.com>
 > > 
-> > At our monthly stable meeting, we were talking about documenting non
-> > static functions and randomly picked a function to look at. That was
-> > task_can_attach(). It was then noticed that it's only used by
-> > cgroup/cpuset.c and nothing else. It's a simple function that doesn't
-> > reference anything unique to sched/core.c, hence there's no reason that
-> > function should be there.
-> > 
-> > Move it to cgroup/cpuset.c as that's the only place it is used. Also make
-> > it a static inline as it is so small.
-> > 
-> > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> > When transitioning to D3cold, __pci_set_power_state() will first
+> > transition a device to D3hot. If the device was already in D3hot, this
+> > will add excess work:
+> > (a) read/modify/write PMCSR; and
+> > (b) excess delay (pci_dev_d3_sleep()).
 > 
-> Peter, if it looks good to you, I can route it through cgroup tree.
+> How come the device is already in D3hot when __pci_set_power_state() is
+> called? IIRC PCI core will transition the device to low power state so that
+> it passes there the deepest possible state, and at that point the device is
+> still in D0. Then __pci_set_power_state() puts it into D3hot and then turns
+> if the power resource -> D3cold.
+> 
+> What I'm missing here?
 
-Yeah, I suppose so. But there were suggested changes to the Changelog
-and actual patch so perhaps wait for v2?
+Some PCI drivers call pci_set_power_state(..., PCI_D3hot) on their own
+when preparing for runtime or system suspend, so by the time they hit
+pci_finish_runtime_suspend(), they're in D3hot. Then, pci_target_state()
+may still pick a lower state (D3cold).
+
+HTH,
+Brian
 
