@@ -1,106 +1,149 @@
-Return-Path: <linux-kernel+bounces-843039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5FF8BBE46B
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:05:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8068BBE470
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:06:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B966E4ED1AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:05:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 005FD1891F57
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889892D29D6;
-	Mon,  6 Oct 2025 14:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358892D47F2;
+	Mon,  6 Oct 2025 14:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Y5BUz/Cu"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="LYocGvGx"
+Received: from mx13.kaspersky-labs.com (mx13.kaspersky-labs.com [91.103.66.164])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33AA3770B
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 14:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B233927FD51;
+	Mon,  6 Oct 2025 14:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.103.66.164
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759759507; cv=none; b=I2/FVHdpNwtFBnU96rzxze4ApYhobrWk6t4fG8EbXasQuDnA15Hlmjsv0ZIGO2kIwytKAu17/UB/g+JM3nHT4LcF+XLas6x2B/SspQYMeplXjsp6dgOWXHxtRNd9mKIDwmVvyXRRXrB4ZEnglXPqhHkfaeKEyi1lJtXNMt6eDUg=
+	t=1759759597; cv=none; b=PjN/VvwsZMMDp2JYkNeQfuDxUlJR0PVGZXRJgvmfBoi3vRfJMo2gOdFVhckX5K3awVQpRcS5jEH+XrYlmd+DWVM+hHJ3VDpe99/lTfvhVUdxWqHjUuuD9QNMxd4GvJ8iOX2tAJtkS26vhCrKxYKv4iJmJJNcgvNqRYL7MbV1p8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759759507; c=relaxed/simple;
-	bh=i716bZB2jFOR9HAlMh2NO5FwyUYT/QsD8Kmp6pPTzig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Aan+zlC5aeeM8P21MesLJc/DlwcMbNhG9MVYKYImftYqpp+/bbbusmrL6UT4/s51Fy1G7Ed05+XynY85Z5nRlxtWLKdmI6thB/N7Qq3ksWTPPP5twwUYGVk36KeSwZ2hv5PeDwnydQ0hV95hU5aKOiKxy9mrjL/tyPLeKz5aeyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Y5BUz/Cu; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6CF8B40E0196;
-	Mon,  6 Oct 2025 14:05:03 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id mxoPHDFv_C_G; Mon,  6 Oct 2025 14:05:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1759759500; bh=7XTZZ2lgqEkjBqbmTJ9XvScwjjMvvl0+kRTdGHql5xI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y5BUz/CukPxXVlQmq+p/mMa9PSjjspM2fpSkiGVy0r+8qTOG6bp/VrqeC2hj0X42j
-	 BQaZaHlC4uynZ7wgEEnOOPCo9kWP7Zdvf2aFaobFAQwM4SVyeHOBjvFNqZR1x3CCs6
-	 Qm1pxSXFEMLuYYuL7JpAFiwd1pvfKJZ5awN4LmUpQzZdZt2qErdL5tM3k9xYCQxa1t
-	 iDRNoUBtJWfZv2n9Jnx+JeibxpgdJVHZ6MkQyd3WPPms9DYIZQGdJs4aAKjarrAtlO
-	 8cyh27OXJFFD5RSMCc7xmXtbl/Q2gBLyCMQJith6+lfaCirGYkMWY6lbdHrfL772ZL
-	 93M/z+JOfLzAtkYwiSmpVWvpMLYMG4J4/xroroCy+i3Ec8/2bSyAYCn4RNDHrTWXbo
-	 jQpxKowPoYBVCXxZe0Gf67MFxCnZf4herzex827Gr51jWK1pK2adYUlBNzGzITna5N
-	 H/I5VcMZfZvpbNDLLaiBxF/eNdv9r5rIzHE4md9o4mdc6W0D+Vi57zaAJR2Z1eglJo
-	 v4Um0g623+D3hGJBi1D4qvp7qKJBx2VUZRydai6ERykIftNjnjSFW+86R74v2aXKX0
-	 jSvBDZVzy5oe50ai+FoU8+17Mqc3BtBfFzNZq9ND+0fMwHDZdyQ0au1TAhTYPzf3Pb
-	 dnczJocSSnGoGrlOaZ4KzOUI=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id E1CC740E00DE;
-	Mon,  6 Oct 2025 14:04:48 +0000 (UTC)
-Date: Mon, 6 Oct 2025 16:04:42 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Kaplan, David" <David.Kaplan@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Klaus Kusche <klaus.kusche@computerix.info>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/bugs: Qualify RETBLEED_INTEL_MSG
-Message-ID: <20251006140442.GDaOPMemqB7SRJSHWL@fat_crate.local>
-References: <20251003171936.155391-1-david.kaplan@amd.com>
- <20251006131126.GBaOO__iUbQHNR6QhW@fat_crate.local>
- <LV3PR12MB9265B9AA81E01A539214764A94E3A@LV3PR12MB9265.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1759759597; c=relaxed/simple;
+	bh=Bg+LDPTfIuzjaYiybbYNDse+KEcJd0p3G95PkmbFPPk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NJqztQPdXEOKvGTXqP99e9Xp+pGcftXpIIcu/Gxby194NAu+aUYFy+kGDfe/Ptbk7Qj8RP6MpD2Kgm3Kx6Ia+PKwUBY4I7/67DgneDqLRfAl2RSyja7k2GMxFVPyGR/QuONg4+q0aHZMO75StNZfbkiE2rNjSjmAlaLbhth5fRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com; spf=pass smtp.mailfrom=kaspersky.com; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=LYocGvGx; arc=none smtp.client-ip=91.103.66.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaspersky.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
+	s=mail202505; t=1759759594;
+	bh=5miWpi1kibqGA/F3XsgcIaA0DROTbkODnxAnR9p8Bjg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=LYocGvGxRrNhIkicVWuMLKhv/hCs69muNUJmya/+FgBVVZ1Hm7d5m2xL2FYpreK2s
+	 r0LYilJwp0iTC3Iiw7yDzYyzWO220cyzq0Ej/PYinglF5rbstRVLjcrX7VOduucM2Y
+	 2TlRG6T855PZJW1fz/pJq/75voBi5QTxMIZOKnUVynlg1zZYa3J18wTHEruRxExzbA
+	 NOI1U9Mzp5RaTJ0uG7iaLIxDU2A0RwxtksdHU242kWH/rBC7UQ3Hgb2IPQZN14y+t7
+	 MP9SchEXBWJ/rNljL51dZ1l5qsTVQ4I0BsbiS/km4vVm/f6+sO7FWw37VOmME6KXVK
+	 KFYWrVveB2QFw==
+Received: from relay13.kaspersky-labs.com (localhost [127.0.0.1])
+	by relay13.kaspersky-labs.com (Postfix) with ESMTP id F2BAF3E46BC;
+	Mon,  6 Oct 2025 17:06:33 +0300 (MSK)
+Received: from mail-hq2.kaspersky.com (unknown [91.103.66.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "mail-hq2.kaspersky.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
+	by mailhub13.kaspersky-labs.com (Postfix) with ESMTPS id 838CE3E35CE;
+	Mon,  6 Oct 2025 17:06:33 +0300 (MSK)
+Received: from zhigulin-p.avp.ru (10.16.104.190) by HQMAILSRV2.avp.ru
+ (10.64.57.52) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.36; Mon, 6 Oct
+ 2025 17:06:32 +0300
+From: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>, Peter Korsgaard
+	<jacmet@sunsite.dk>, <linux-usb@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: [PATCH] usb: c67x00 - fix potential division by zero in c67x00_end_of_data()
+Date: Mon, 6 Oct 2025 17:06:30 +0300
+Message-ID: <20251006140631.1406643-1-Pavel.Zhigulin@kaspersky.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <LV3PR12MB9265B9AA81E01A539214764A94E3A@LV3PR12MB9265.namprd12.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: HQMAILSRV3.avp.ru (10.64.57.53) To HQMAILSRV2.avp.ru
+ (10.64.57.52)
+X-KSE-ServerInfo: HQMAILSRV2.avp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 10/06/2025 13:54:44
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 0
+X-KSE-AntiSpam-Info: Lua profiles 196843 [Oct 06 2025]
+X-KSE-AntiSpam-Info: Version: 6.1.1.11
+X-KSE-AntiSpam-Info: Envelope from: Pavel.Zhigulin@kaspersky.com
+X-KSE-AntiSpam-Info: LuaCore: 69 0.3.69
+ 3c9ee7b2dda8a12f0d3dc9d3a59fa717913bd018
+X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
+X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: zhigulin-p.avp.ru:5.0.1,7.1.1;kaspersky.com:5.0.1,7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2
+X-KSE-AntiSpam-Info: {Tracking_white_helo}
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: Rate: 0
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Deterministic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 10/06/2025 13:56:00
+X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
+ rules found
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 10/6/2025 12:33:00 PM
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
+ rules found
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/10/06 03:36:00 #27884816
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 52
 
-On Mon, Oct 06, 2025 at 01:58:55PM +0000, Kaplan, David wrote:
-> Sounds rather yucky. 
+The function 'usb_maxpacket' relies on the value of 'epd->wMaxPacketSize',
+which can be zero if the device reports itself as an eUSB2 device
+(see 'usb_parse_endpoint' in drivers/usb/core/config.c). Under normal
+conditions everything works correctly, but if a broken or malformed
+device is handled by this module, a division by zero may occur.
 
-I'll give it a try at some point and see how ugly it becomes...
+Fix the division by zero by checking the result of the 'usb_maxpacket'
+call.
 
-> What about just not calling cpu_select_mitigations() if
-> CONFIG_CPU_MITIGATIONS=n?  Then you won't get any print messages either I'd
-> think.
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-I want to not compile in that code at all if CPU_MITIGATIONS=off, actually.
+Fixes: e9b29ffc519b ("USB: add Cypress c67x00 OTG controller HCD driver")
+Signed-off-by: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
+---
+ drivers/usb/c67x00/c67x00-sched.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
--- 
-Regards/Gruss,
-    Boris.
+diff --git a/drivers/usb/c67x00/c67x00-sched.c b/drivers/usb/c67x00/c67x00-sched.c
+index a09fa68a6ce7..3211843497cc 100644
+--- a/drivers/usb/c67x00/c67x00-sched.c
++++ b/drivers/usb/c67x00/c67x00-sched.c
+@@ -868,6 +868,9 @@ static inline int c67x00_end_of_data(struct c67x00_td *td)
 
-https://people.kernel.org/tglx/notes-about-netiquette
+ 	maxps = usb_maxpacket(td_udev(td), td->pipe);
+
++	if (unlikely(!maxps))
++		return 1;
++
+ 	if (unlikely(act_bytes < maxps))
+ 		return 1;	/* Smaller then full packet */
+
+--
+2.43.0
+
 
