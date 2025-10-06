@@ -1,160 +1,133 @@
-Return-Path: <linux-kernel+bounces-842907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 438ADBBDF1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 13:59:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB997BBDF22
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 14:01:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABAF93BA9F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 11:59:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA6E73BD208
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 12:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BBD2277023;
-	Mon,  6 Oct 2025 11:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7ACA27817F;
+	Mon,  6 Oct 2025 12:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="qhMhXeJk";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="B76/Ywx9"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BEK8hTWg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E3E276049;
-	Mon,  6 Oct 2025 11:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEF110FD
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 12:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759751944; cv=none; b=ZLAgpu/du3/Kljx9O+L31PuxZzJKvASGvK8JZvnonPLtoF2OEZxBZOCIZbd/Ts+I5IAWaKJfG4bjsLVmvlmjKhysMBzdUcUPYLv5epY3pdK20ZMXTa33vDLsalJL3B8FELUoHJBogMy0kiZbpTPxuJwdgKDq1w0wcEMtA5CC9tk=
+	t=1759752103; cv=none; b=hCbwLwrbBWsNqesN9ru/xc70T2fJ8ZsVrAnbywSlE1Vqcqj6h/lM0ri9C1qCNSWYLABh8DM1CXCljXJaAmQABtpp4eVonkUlF2/WxAiyCSHwIEXgWYzFeajC3vAjkX5IJ88kz/k2rRImjTWnj6rYx5p0c00X+RPo6hpuzMQDSek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759751944; c=relaxed/simple;
-	bh=vtj7u1PPyXg2zYDgNyYCdqqkCdW2GE7U6pgTcOk1lpY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=EbvvjFeYXO9kw1x9w+iRuNPqGbQ+lgiL73aEToav5tJoTxe1V5g+FUqlI7LekZ7Lit6KY2ijzO7U9os5W/GDnZKWPcw12P2V2NzVlfJjksmj0e/QPcUn79TxGCDUixDgAZht8APyDGHw4xPDsX3tLmRe5bdtUsjGi+dl/zrVu/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=qhMhXeJk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=B76/Ywx9; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 039E514000E2;
-	Mon,  6 Oct 2025 07:59:02 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Mon, 06 Oct 2025 07:59:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1759751942;
-	 x=1759838342; bh=7GQ/0jR0gVdoLEQuuwM/Hs1zQEnI3s78mUUBE3R9tUM=; b=
-	qhMhXeJkK0ZAsD8fQDGc9FkqBOdXuWYRz1JK0xf20I4m8zCP6yT4cHe6eiG+84zZ
-	cJCFYYa7AJux2umtoU1iLS817iOgJYfby79rTIDeTuhj4id2EVjaHlj3O1oSn9xl
-	JRufo260ZpCRun9DtA3wLjw+PTY57h6mY8oE8iEF9gQRB6B+4kI9e2qXa7i7PTKr
-	n3r8e5ed+/HWyqSybNNiXxF7yu0a1kjVww4+d3zC8SqhBErxFuJtauZPMWwuOl+i
-	qr9GOE1jsLW7upa8hXJT/EbRT8darbErd4x3bXzqJHGQU42NiR165Jjt6+jGYyK/
-	NygIlALHsVC17dqMTDa3lA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759751942; x=
-	1759838342; bh=7GQ/0jR0gVdoLEQuuwM/Hs1zQEnI3s78mUUBE3R9tUM=; b=B
-	76/Ywx9vbXjDjujzUcyhVWlQsYtwTAcOOGqpU1mFDCW9V5C6sUawSoYQlsCoVtgL
-	C6wZ0lQd0fQca7BHIjvhBmSG3NWQslmNdruZ7pKIYs9lrDefQ0Mbt+cWHR/mQbkW
-	Y2bNJcuzRXAbF41RqL0tAFwNCNZU6HewB0gGXAdf4OPIqLc8JLn/VmrM9uBWov1+
-	p5DmYWIU/8PBsqOiSTKwrY7Xr58rluhEWeKgifUv8ujqGVHOZLjQ8bJOo1djywL/
-	Figu72Xmtrwqj/ZzF5S+61uCsM55n3xyokp7LQZgyzxJ7ZbecLWFju/0I/mqy9nF
-	RdQKng5NtssSajknVV/DA==
-X-ME-Sender: <xms:Ba_jaEfGweUCEwN3MH9DoD4rXHqUcGIMIKY0UFGVRyI43VB3fwoeSA>
-    <xme:Ba_jaBAKqCIEh2FrkI6Rx4soK0iddDYv5Kxnj7hFhAy03QtSJWKgn_uO-bqey-NY9
-    -odQKcd38I7loLduSZJESt6NvHqwDdnmkcr_iwGQ0AknDPY-WjctbA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeljeegkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpeefuddtfeeukefgteduieeiuedvjeelgfettddtiefhfeefhfefffelvefhveeileen
-    ucffohhmrghinhepghhoohhglhgvshhouhhrtggvrdgtohhmpdhkvghrnhgvlhdrohhrgh
-    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhn
-    ugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedujedpmhhouggvpehsmhhtphhouh
-    htpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkuhgs
-    rgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgrthhhrghnsehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopegrnhguvghrshdrrhhogigvlhhlsehlihhnrghrohdrohhrghdp
-    rhgtphhtthhopegsvghnjhgrmhhinhdrtghophgvlhgrnhgusehlihhnrghrohdrohhrgh
-    dprhgtphhtthhopegurghnrdgtrghrphgvnhhtvghrsehlihhnrghrohdrohhrghdprhgt
-    phhtthhopehnrghrvghshhdrkhgrmhgsohhjuheslhhinhgrrhhordhorhhgpdhrtghpth
-    htoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggu
-    rdhorhhgpdhrtghpthhtoheplhhkfhhtqdhtrhhirghgvgeslhhishhtshdrlhhinhgrrh
-    hordhorhhg
-X-ME-Proxy: <xmx:Ba_jaKAGybnjVE-uWoUnRgJKlfqjmUKzRGjKe5q7nuLC4S_gzhkSwQ>
-    <xmx:Ba_jaNQtNC8ngmUykBG9GqraoJJS2h74jGCmuEaZ-J-FY_CxmDAl6A>
-    <xmx:Ba_jaMQac1xHqd8lsMQhNQm3ubOhUb9e6Pvi3vfNwtW0XA_CJZBaWg>
-    <xmx:Ba_jaLIU2c2cSGXiBrkAGglM2IVJxfWblgLf2CqrhvL0QcX1LqRTvA>
-    <xmx:Ba_jaO_bqHvRa8C_Gf8CDe9AB-0F0mHSrqoHkmY2exYkdtLoOdXjHIvZ>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 73FF3700065; Mon,  6 Oct 2025 07:59:01 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1759752103; c=relaxed/simple;
+	bh=KJCCmXxR0Jo79346y4t9YN9VEcxsTs6ZNPs0qbDdQDg=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=VYrnBEcOqNCFUV4yroomwqoZv/45UKt2Lj8cfSh/sAN9tQ2Dxzcg97/e1dhfjUWBo1xtxGh4LxhQDhJcP/GYDmE1clmCwwVowF8BtymlhJdrYhcRAIZ1wxiDJYkWbZTtwQOmuJrwItrF3lXWeiuJ1ae/EtSzz6e2vuGR+AJMGII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BEK8hTWg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83106C4CEF5;
+	Mon,  6 Oct 2025 12:01:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759752102;
+	bh=KJCCmXxR0Jo79346y4t9YN9VEcxsTs6ZNPs0qbDdQDg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BEK8hTWgoyceSzzuNRsvb90TKd1ujqMybqezIlUMv6mRlyejsNlP5KZ2AX8cts41C
+	 sTuJmAsW8UVhJmI12o9ggNBotjnFgJIkmwMgiDdG/jqrZPwac/23ale9Y0IRI3Bmjs
+	 QyjfHywpCEYWM2esSAJGwkPhBUDLCnHsDnBxedjFiNBPjO/bRBIAqZc5/1xLzFE5lJ
+	 Q/Nm472zV1PV4PSWTm0Rj3SrGymO2f41CqfeoHi1KGuAhxXSTbdlbVW2+ca0jBFoB/
+	 cAlJAZOLgDb1GSCSTF1sYkarno0DtI61RUKNkdBlUFb/da6Gld2cnxBV9zAxtHj8mn
+	 uKSeAKwIWl65Q==
+Date: Mon, 6 Oct 2025 21:01:39 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Menglong Dong <menglong8.dong@gmail.com>, Thorsten Blum
+ <thorsten.blum@linux.dev>, Steven Rostedt <rostedt@goodmis.org>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] probes: Update for v6.18
+Message-Id: <20251006210139.122cad3973a85f93601082fa@kernel.org>
+In-Reply-To: <CAHk-=whpwrrkPCmPa1dnejVr8AcJVpfyh0CfD-3sNhUO47A1dQ@mail.gmail.com>
+References: <20251003084426.f2de6028fd74e1af4e13d190@kernel.org>
+	<CAHk-=wg6=DwTD7xT3=Zya-ytYrtS2969KtnTWRPskq5fx2Ev+g@mail.gmail.com>
+	<20251006092743.295205e486acf1b69ca61b89@kernel.org>
+	<CAHk-=whpwrrkPCmPa1dnejVr8AcJVpfyh0CfD-3sNhUO47A1dQ@mail.gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-ThreadId: AOEbzVvuXYlJ
-Date: Mon, 06 Oct 2025 13:58:41 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Naresh Kamboju" <naresh.kamboju@linaro.org>,
- Netdev <netdev@vger.kernel.org>,
- "Linux ARM" <linux-arm-kernel@lists.infradead.org>,
- "open list" <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
- "Linux Regressions" <regressions@lists.linux.dev>, linux-rdma@vger.kernel.org
-Cc: "Ard Biesheuvel" <ardb@kernel.org>,
- "Patrisious Haddad" <phaddad@nvidia.com>,
- "Michael Guralnik" <michaelgur@nvidia.com>,
- "Moshe Shemesh" <moshe@nvidia.com>, "Tariq Toukan" <tariqt@nvidia.com>,
- "Jakub Kicinski" <kuba@kernel.org>,
- "Dan Carpenter" <dan.carpenter@linaro.org>,
- "Anders Roxell" <anders.roxell@linaro.org>,
- "Benjamin Copeland" <benjamin.copeland@linaro.org>,
- "Nathan Chancellor" <nathan@kernel.org>
-Message-Id: <a2357b92-8a8a-4d79-afb8-0bb8aee244ac@app.fastmail.com>
-In-Reply-To: 
- <CA+G9fYt+9QZ4TwEx7+m2S5Vtn7cq1N54oGceSR72upZJTrzkng@mail.gmail.com>
-References: 
- <CA+G9fYu-5gS0Z6+18qp1xdrYRtHXG_FeTV0hYEbhavuGe_jGQg@mail.gmail.com>
- <CA+G9fYt+9QZ4TwEx7+m2S5Vtn7cq1N54oGceSR72upZJTrzkng@mail.gmail.com>
-Subject: Re: next-20251002: arm64: gcc-8-defconfig: Assembler messages: Error: unknown
- architectural extension `simd;'
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 6, 2025, at 13:31, Naresh Kamboju wrote:
-> + linux-rdma@vger.kernel.org
->
-> On Mon, 6 Oct 2025 at 17:00, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
->> ### Build error log
->> /tmp/cclfMnj9.s: Assembler messages:
->> /tmp/cclfMnj9.s:656: Error: unknown architectural extension `simd;'
->> make[8]: *** [scripts/Makefile.build:287:
->> drivers/net/ethernet/mellanox/mlx5/core/wc.o] Error 1
->>
->> Suspecting commit,
->> $ git blame -L 269 drivers/net/ethernet/mellanox/mlx5/core/wc.c
->> fd8c8216648cd8 (Patrisious Haddad 2025-09-29 00:08:08 +0300 269)
->>          (".arch_extension simd;\n\t"
->> fd8c8216648cd net/mlx5: Improve write-combining test reliability for
->> ARM64 Grace CPUs
->>
->> ## Source
->> * Kernel version: 6.17.0
->> * Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
->> * Git commit: 47a8d4b89844f5974f634b4189a39d5ccbacd81c
->> * Architectures: arm64
->> * Toolchains: gcc-8
->> * Kconfigs: defconfig
->>
+On Sun, 5 Oct 2025 20:09:02 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Nathan already analyzed the problem and suggested a fix, but I could
-not find a patch on the mailing list so far and sent his suggestion
-now. Please check
+> On Sun, 5 Oct 2025 at 17:27, Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> >
+> > Hmm, I applogise this error. I locally ran build tests and it passed.
+> > But I might missed something.
+> 
+> So this is why linux-next exists - to get testing with different
+> configurations, different compiler versions, different architectures
+> etc.
 
-https://lore.kernel.org/all/20251006115640.497169-1-arnd@kernel.org/
+Yes, I have noticed the limitations of creating a local test environment,
+and I would like to utilize linux-next.
 
-    Arnd
+> 
+> Local build tests are good, and obviously necessary for some very basic testing.
+> 
+> And local build test can be perfectly sufficient - if it's some small
+> obvious fix, it's often simply not worth it waiting for a few days for
+> linux-next to get it merged and tested.
+> 
+> And no, linux-next isn't perfect, and won't find everything anyway.
+> 
+> And even the most trivial small change that quite reasonably didn't go
+> through linux-next because it was so simple can also end up breaking
+> things.
+> 
+> So none of this is some kind of "absolute black-and-white rule", and
+> none of this _guarantees_ that everything always works.
+> 
+> Even when everybody does the best they can, something will
+> occasionally be missed. I definitely accept that we're not perfect.
+> 
+> But big new features coming in during the merge window had better be
+> extensively checked _some_ way.
+
+Yes, that was my fault.
+
+> 
+> If I find problems in my fairly limited sanity-check build tests, I get unhappy.
+> 
+> It's one thing if it's some little mistake that I feel reasonably
+> missed testing for some understandable reason.
+> 
+> But if I get the feeling that the problem was that there just wasn't
+> enough care to begin with, that's when I go "nope, this will need to
+> wait for another release and be done properly".
+> 
+> And that's what happened this time around. That wasn't some trivial
+> little change, and it clearly didn't get a lot of coverage testing.
+
+I'm very sorry about causing this.
+
+> 
+> It should have gone through linux-next, and the problem would have
+> been found there instead of when I tried to merge it.
+
+Next time I'm sure the features are at least tested on linux-next.
+I'm trying to update my PR checker to check it too.
+
+> 
+>                Linus
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
