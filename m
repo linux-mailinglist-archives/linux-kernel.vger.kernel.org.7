@@ -1,212 +1,415 @@
-Return-Path: <linux-kernel+bounces-842824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D39FBBDB3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:35:20 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2F45BBDB51
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:37:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E09ED4EA36E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:35:18 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 22B9A34A645
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866AB23FC5A;
-	Mon,  6 Oct 2025 10:35:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD87B2417C5;
+	Mon,  6 Oct 2025 10:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bZo+kfQz"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hnO/NzcJ"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012026.outbound.protection.outlook.com [52.101.43.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CF723D289
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 10:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759746916; cv=none; b=ijrK+c6a0epZljNj/7MVrDpNnyW+jB4qIYv9XhsjVxCI8FE3SJG26g6KHutTgUvuToslgL3F7oFRYJK2JeW6dGu6/QvwnrUk+0uOmCYEJYlxVVK7DVi6aDAWAhkM29SLYLNrHz2X0x3z32n/PTmD6YW9kBvOPmckxcDB+XHSl6M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759746916; c=relaxed/simple;
-	bh=KOEfItLpTHHUF2NjaTltq4XrtKm97oaO8gQyfhxK6zg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a/GL8UUyVk9W7SJnPNbO4KotPpvpGPPdlY3/EaKyu8WGGFCNRHSo8lOaopjUVAPonRJ1eCwOZpSxbpKf4Wk9X0GUQ/SSyIqFFrwj5qLjRXyr4Y4wgTl5jFQQysxxXzobmAhZ3+Jk86zlLLlhCXIe3uq7mUuIukU+6cMAO7UvYQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bZo+kfQz; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 595NDf7p000970
-	for <linux-kernel@vger.kernel.org>; Mon, 6 Oct 2025 10:35:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=/GVt1K9Lflbj12O6/RaG4Mti
-	+z7CPLMv3q3Zlvsed98=; b=bZo+kfQzbY2w14g+9jjoaiorc2gFKSmmjrAZdx4v
-	2cTdYL8jmknRf+PryJo564MYnyPaNeyff33SJYOHctCuZbgQIoZwrEl0SmWJGkVh
-	6viz29fRyKqYPn4J4iKz5gqjfogUTuUiqz3XpuQ5UJfogW65pgeNJoZ1SmBVdEQ2
-	yU5TUiXE6uutxE5wzfXe87XMc2PbRfyQCYS0mdQ0aUGiaYrL8R6fpBLCfLUeiq/8
-	SbwZJ4pk1mhoUbpAlvd7msAajxhVP/Yfmsct/++485ZjMmGJcjcsRO8twyJnWGXz
-	3ARxoE8FARPiRMCxOgkoU4ZQZoWoKOlP4HwKVuIEnXfW1Q==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49js9duss0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 10:35:14 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4e5739a388bso102648681cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 03:35:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759746912; x=1760351712;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/GVt1K9Lflbj12O6/RaG4Mti+z7CPLMv3q3Zlvsed98=;
-        b=LEskgwSZpwtiJAEhIN3TFr5nfxEAdX1I8bYppzqZvzQol08IPuciEfn58069/UwhIV
-         7h/FLJJJNllICQGYgK4qgnbOkABCQhyaXIod3T5g8hdeCNzn3tNNirOtrm3pQ8oAeCqZ
-         kvzZ+EMGB/hYeHbzHuzc9UUH1TjOkGUahYsciib9zgRlkWTa/D0sHHcilqkYInAur6T1
-         etQum6TRajVe/k7V9gRn+1W4KeSvih/5Cv5UXZvWsyiI9pxOmLrYeb8JFMO8qAq3OVKe
-         aBfKCT4A8PiqhLxjD/IaFeVWnhTFGNYU0ost3gNLQYlB5WM1xRwicQuGmDghISULVeJR
-         qrVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXp8xdL0db4/YVIhg3zk38eABqwTw0V8cwb71RBPYqpYJDnTFDkK69q17lLEV73pMOtmszVsZ3qCgCG85E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjA6Qk/gtMzKOrAtvL4G+clEOTKNzCDji5qz3eb9+kSj+3dpey
-	IuuPjvy7oPIg7m2Xa3oE922SqBhEnkjSxCR5hTRaIJXqqQNkOmI9fJPeSoJ7ZwAk0uVoQqHKJdm
-	6sP9ihz6NBwcwVvjzbGtKu3v8UrN2jTPkiZHk5fYDkkoFIq7RVKEQeLSEWJYMOiym3YU=
-X-Gm-Gg: ASbGncsY7/QrfzkLzVLPpm2AHd4G4oRFaBry4byWvQoIBwlRDUgeBk1LVi81FHJsJWa
-	q9NAaHUPKZVjAWZwr3OPX9hnVSEsd5NhqWviS7rQCFW60JMoeqdZeerQVQR/1XsN8QaaOzxAz0S
-	rVv/AoZ/jb0vfBptlf/9CSs/Bbi3Mc9ZFVwjkqGPyjT9mVU8qTngs2VuoTqR7UxAm71uf2d2JH/
-	aHzLLeTqF3E9RaJAAjXAk2hWr1sf2oVLbFyNLuuS3KJSlf48SoqgUNhyHFtrHEyzNd8CfFCg+Do
-	Aos4KA3jV+gASAV5wwAZxeDNi5lMZtomBvmRE7ZFOBcLFdouI+LpH7ko1opGNVWjGU7EiRsH31C
-	bbvA6ajq1OwTzPfQyCDf+sxxoU0Y9wWTzYFxAcwpsgkazNdIHcl7W0Kwvow==
-X-Received: by 2002:a05:622a:4a8b:b0:4b6:2be2:e816 with SMTP id d75a77b69052e-4e576a45338mr152170461cf.8.1759746911811;
-        Mon, 06 Oct 2025 03:35:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHD7NGFTQ7j7kDpuOlH2JVm1Bio02PxWYP8W51tf9aEfgOxa//y48qL1owpgFsKldjyFIyTGA==
-X-Received: by 2002:a05:622a:4a8b:b0:4b6:2be2:e816 with SMTP id d75a77b69052e-4e576a45338mr152170291cf.8.1759746911251;
-        Mon, 06 Oct 2025 03:35:11 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-373ba4cdf47sm43332131fa.52.2025.10.06.03.35.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 03:35:10 -0700 (PDT)
-Date: Mon, 6 Oct 2025 13:35:08 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Xilin Wu <sophon@radxa.com>,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] phy: qcom: qmp-combo: get the USB3 & DisplayPort
- lanes mapping from DT
-Message-ID: <v4oxbjc4jho5uuz2k2ou4rvycdwifu2wuvbhldgfrm7ord4yqu@7ktz3a4233ff>
-References: <20250930-topic-x1e80100-hdmi-v4-0-86a14e8a34ac@linaro.org>
- <20250930-topic-x1e80100-hdmi-v4-2-86a14e8a34ac@linaro.org>
- <74446713-15a1-4706-b3c7-801724467575@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9862153EA;
+	Mon,  6 Oct 2025 10:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.26
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759747065; cv=fail; b=IViLvtzRhD//vb2BKbkBtQKCwhMJwSfbQuCbXGLrIUubvnISh+CnvLkRVQ5Af4+b23aAGZgVSlvIZgzYKVR6pOYDO9BIu8zqrNUuJHXLdTnLTLs7gHBlPhQmhnXu3QZbWNuvJ2XE2L8iVAY885iN9PQDckHrmAMgcXq4bIoyOM8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759747065; c=relaxed/simple;
+	bh=UBNbMfx8E20l4jtf5xpf6yBLhEIa1tkQNaF56d/Ix2g=;
+	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:References:
+	 In-Reply-To:MIME-Version; b=PGaSRKomUNYi0emcaH02PnVM0FR4z8rTwe5MNKY2otn+xJ2U6TQsiAb34/uJw5zKZv2rrWEZZClTFaydGzBDCEYfQgKUPFbdqb0MVzt1sovvOaBGwRd4OEj1uaX4GF8PVtSsvqCLkgvPrYQUHQtU2vcQPju+mxeFWtIjL5sSkYo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hnO/NzcJ; arc=fail smtp.client-ip=52.101.43.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vNKjF/uHXzuPLBMCplg8Isu9tJSelNzSb4EY5+/HM/t2tBmqxX947mI2fziKt5SUKZ51Re5ZTcx1lxli+TvNw9GzUfujBh05lRTccmE7uEcjzJiZdmTxsAR9+JaegpXUR8fiz0moADtGYplXYKIFNLRLDv/n2sr13dD3QNJUKi/6a+RgDw0HaGbsQW7PyppT0s0lF248AZxdFi5dnEXiUmn1WjcqGET6sr52N1yCmCcTmDWlqXP7PhNNMIfwz/ikvqOwJDNN0zfJmoW0FeRhy1ebYcXodutcEPbwY1cdtNpsQr2tKRjM/Wv1zj8huST7SKyeS3sUQJWsBgcaebqTSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ROzdjtrRp6v+qJkb7Jx0yVKzk6uKSgfNBknpm46Qic0=;
+ b=Lbm6H0wogwqqUjYMyR5Zr/0bQeHjkmIj98jalrP8umNHldZvYWE49ZltvMwSquv51GHihAMz3/5eAM7c4AjJkwzuMHMU3bHpKSn8HXRIaTTKNWupaFRPtqWJiVIQ92QkGmSLd/TpHjn3mcOzXoORLuTo91wSWWsB3XKkfphUXcLWgd+ZT89Wb0q80Gah3v/Y6gnt9DQjK022qeMnWlvUJiwquwYfxPyX4tjhcGq+iwAPl/W/ni3DERjfRwgZWy2yckJjwY2FwNKkeRS88FMbWqnrsY7Qce2GjENpwSfyIFNP0zeLGCyktnHFOrdpYG0ozTetnS/7MWm7TNcC6e47Qw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ROzdjtrRp6v+qJkb7Jx0yVKzk6uKSgfNBknpm46Qic0=;
+ b=hnO/NzcJ4gv6uT4EGgah5Mp+wpTAJDX6M5TzNz9dPvVtJ/J0Zww8KyTPffUCcH56vz5vOr8U2Dag3qfOX4lIJR9PEEmH/0NiJ/0IjkJ9TG1P5qL+uwrnJmSKD01Pf2hJsubs7SVkp+eVRFGTEfeBhw/tcsFtyAU6wFGqlos9eUNnMeIygN8ZizXCoAxbBWPzg5jrB2/G6jOYc8NZ9eXEmEfmuxrmAXJNDsSwBzg37diSbMzj0+kiU/WcbeQmu4sLzxIHwuag2A1Mpbr8VMkKreavmIYQ6dN8x1NmIYlY5ZnFDz11GOLRwIsMev5nZqEYkmztf5nEItjujumkbJE21Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by CY5PR12MB6526.namprd12.prod.outlook.com (2603:10b6:930:31::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Mon, 6 Oct
+ 2025 10:37:38 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9182.017; Mon, 6 Oct 2025
+ 10:37:37 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 06 Oct 2025 19:37:34 +0900
+Message-Id: <DDB69ONCWBEJ.1KGWC6H2VG2CE@nvidia.com>
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Joel Fernandes" <joelagnelf@nvidia.com>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <dakr@kernel.org>, <acourbot@nvidia.com>
+Cc: "Alistair Popple" <apopple@nvidia.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
+ <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>, "Yury
+ Norov" <yury.norov@gmail.com>, "Daniel Almeida"
+ <daniel.almeida@collabora.com>, "Andrea Righi" <arighi@nvidia.com>,
+ <nouveau@lists.freedesktop.org>
+Subject: Re: [PATCH v6 5/5] rust: bitfield: Add KUNIT tests for bitfield
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251003154748.1687160-1-joelagnelf@nvidia.com>
+ <20251003154748.1687160-6-joelagnelf@nvidia.com>
+In-Reply-To: <20251003154748.1687160-6-joelagnelf@nvidia.com>
+X-ClientProxiedBy: TYCP286CA0200.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:385::6) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <74446713-15a1-4706-b3c7-801724467575@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=Hrl72kTS c=1 sm=1 tr=0 ts=68e39b62 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=KKAkSRfTAAAA:8 a=LC5ovIGdoV6AwfhOO1gA:9 a=CjuIK1q_8ugA:10
- a=kacYvNCVWA4VmyqE58fU:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: qNl1z2Be1jl6vBCgUdavbJawyeqyw-Mk
-X-Proofpoint-ORIG-GUID: qNl1z2Be1jl6vBCgUdavbJawyeqyw-Mk
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAwNCBTYWx0ZWRfX4hNFvU9dpysV
- +TqOgXv6FFAMe0xuUOff54v8cA/89LInmd88RxL3sAZ2tu+A9K4Byd7fttlJHxHEo83LtRDb4Zp
- 90HsR6OTs3eAcIrwjPHUHet4B5Syl6y9fJtyuHpsucpQmZjW+GPpq7+saHAgMUM42V92rl8VUJA
- +aGakVr5+4NVUPOtQHwhAidqWtoV3qY4C5uM8ottEIGjUuhIwSv7N19q7Efh7yTjdui7QLVyE7X
- HnHTeOpQPEIPjCkp3UFC3nN9bvI+RpkAD7lJ/PqS0dzpGdBtK5MGvmQOowWW1yLqxvSrX8vrcuD
- KW2N+D+AUQgnpb2YF1IMchA7HbOQ/TyuJqOje+8+SqjkdRA92MwNNfr6StpAKBNRVPGk5q1WLHr
- DFx1+JNcLi6HdyQrLTDReQ0TkshkPw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-06_03,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 spamscore=0 adultscore=0 lowpriorityscore=0
- bulkscore=0 priorityscore=1501 malwarescore=0 impostorscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040004
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CY5PR12MB6526:EE_
+X-MS-Office365-Filtering-Correlation-Id: 63b07536-62d0-49c4-6b37-08de04c45e4a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?R0V6RnRQaGFWUDhXZU5QU29zQjQrbGNKN2g0ZnNoVndKVzlFeFhpVkovSDBz?=
+ =?utf-8?B?V0FrYWlzcG5FenBjQmZRaTJ3VWU4VGEzRENJMHdGNm1id3ZDMmxuTHNCN1F3?=
+ =?utf-8?B?RGtWVTk0bnJsUlE1bVlDekpTUDhWWmdSRTRvbXpJSDEwK0JhU0tCdTA5RVFE?=
+ =?utf-8?B?cUc2UWNjMGxQTFVEV2h2QzhpNFQrTDlzMUlaVjdFR1Mva1VVRTNCc2Y0RFV1?=
+ =?utf-8?B?OE5wY0dWa09FUlZRYlJrZDY2djJ0dXRXVDd1b0ZiZnNiOWFSdjZ3Y0c4QXR2?=
+ =?utf-8?B?SEhwZzNEUGRNK2VheEtyOFpncmtSUzhGZmlicHJtKzRFdVFYME81aGFvRmxZ?=
+ =?utf-8?B?UXlDMm81TGxtMVZlNDNUczVDMWhTRW5vUXFTOG95UFRkODdFT21pQ0tOZ29i?=
+ =?utf-8?B?b2hVMy9QVkRyVW55VEltbFRuNUhkV3FrSDNNVWprdW56ajVhRXV4bVNkS3Rl?=
+ =?utf-8?B?MElGN0ZhRHRBNEprUEpWR1ZqNzZaejVob0FlRzE2YlBGY2ROR2tlcnozQ1JI?=
+ =?utf-8?B?eUxsMGZLU2gzVW9DengzdEpoL1dOYVRXaHhZQlFDTERvdlNEcnVpNTA5QjVO?=
+ =?utf-8?B?K2xucHE3dm1ScXVNb3dtYTF5eFV3VWw5dTJUL1FraHdhUnRqVjhjZlgwUXh2?=
+ =?utf-8?B?VWR2TnpoUUkxZ0RBQzNoZGtoU2lKRWhTUXFQRGZEaE1kUUpQS3plZXFsYjY0?=
+ =?utf-8?B?Z2Q0aWtjK1BFZkRHdUZOLzFpWUljcjRjTDcvam1rbjJOUDV2UDhyNllwRHN0?=
+ =?utf-8?B?TGVvN3B6d1M4L1FxQmFRMGo5OURwZTlkMk1FQTQ0RGZuRjBxQjNiaVRuVmUw?=
+ =?utf-8?B?Y216RnBuSXo0Nnc5aXhGY0VBSjExU2ZocklJM01FcEVGQmZtM1FiOGZXUFFR?=
+ =?utf-8?B?TjhTdy81TGtLUkRFOEZFbG9nd0s1S0k5VE1MZXVuQjg1RlZXTVl6dWhrMkVW?=
+ =?utf-8?B?dGJNVEkzc1BTMitBT0FZRGpQYU5hb2ZGSXV2ZEoyUm1zV2xINDlwY2lTcEtM?=
+ =?utf-8?B?cm9VL05ITCtSN29VMHp2d1BnNEpXdmpxMUFmYW9zajdhSmRWUEtQZWE2czkr?=
+ =?utf-8?B?d3hDdVZzUXZvOHR2dFMwS0krMXQ2OVcxUGNlWmd1bGh0WENJbDdjd0lkVS9l?=
+ =?utf-8?B?MzdBeVRFZzVLbFRxdHhXeGJWai9zdHcxOXZYVlBBbHJEUjJaMURRWlU5UTJ4?=
+ =?utf-8?B?OTcvc3hodzNMd2RXdlNsWnJ5U3VBbUNmTjJsZG0vTlV6MHZFYlN1ck80Yitv?=
+ =?utf-8?B?Z1U5VG5XQWt3RGw3Z3NUV01ycG1vd3JMYWVDMTliRUZabUhwbnpOK0lIOVd6?=
+ =?utf-8?B?TEV4ak9EUHVJVUZONndKRjVySlc1ZXRaa2JndmpERkRHRU14V25UWnJwbUV3?=
+ =?utf-8?B?M25JVmRxL25yUkduV0JyZDhzRSs3RVVMQXBWdzU1eE9XSmRQR2pKK1hqR3k2?=
+ =?utf-8?B?RFp4TEk0MU9YNVRZdWJ2VUxOUjd5amU1Q2EwWElnenRuUkprak9qWVVuUzU3?=
+ =?utf-8?B?dXROanJ2RjhsRDNQcGwxc3ZZNTdNcGNQZkdxK2xmbFhNTW93dkszTStOUDJZ?=
+ =?utf-8?B?eWFZZi8yZFNiMjg4UUYzWC9VT0JUd1NYc1lNRjV3SW5HMkVtaXllbFArdUdj?=
+ =?utf-8?B?MGdPMVllQUU0QzdXNFNWSVZoZ2tBelRsejNDdTUzd3I3RjNJSjcvMldVM29K?=
+ =?utf-8?B?Q2d4bERMK0o2Z0xYcE5rbGNxdmdNRGxzYlhoeXBMWVllRS84VEJiSHZjb3lj?=
+ =?utf-8?B?L1Z2NXdraGVRT01TNlNLM00xbUxpMHNrOHc5U0lHMitVWWsxeU9uQlZyenM5?=
+ =?utf-8?B?MDJXNUlGMGkxNEhReGRBVUozSG5PT2RMTDlwUy9CMEZTVExSSjQxVGhLOUpJ?=
+ =?utf-8?B?cEtmVGhkNDl1YktCWVRQWkhLK1NpVHZiUUVQcW0wOExxQVNDd2VkelpZTVJU?=
+ =?utf-8?Q?9zTkp0LLQtMBqcZp+ewghUG8QfbfkSFH?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?THJtcS8xV21EVytocExid2xzcFVweTF0NGtxZjdtcDFrYjJHM3dXZjU0OVZI?=
+ =?utf-8?B?RDBaTnIyN3NaRkVyVGdEZXVlMDF1WEltUHVPZXE4R1R5N2llOHNuNmsxRzNY?=
+ =?utf-8?B?NCtUTmh0SUlLVWtIOXU5aUREMHJoQnh5SFZDZXNmSVBYTXg4Qzh0M1hZd0hu?=
+ =?utf-8?B?L3pSS253TzlDQncrWTRCOVhZeldSc1B6Zm9kR01vT1Y1aVFOZjAxbkRNTzYw?=
+ =?utf-8?B?cEF6Ykl1cGh2MFhmWC9XLzFaTGFNcXlla3BLeG1GRFkySFh6ZHRJOFp4SFJz?=
+ =?utf-8?B?WkJqbU1LRjYyOU4rZllCbU5tQ0ppSmNkRmVBY0pvR2pmZzdMN0xmRE5ROCtF?=
+ =?utf-8?B?UGhQMXBINWZJK0didVkzTG9ST2tuNWRzeGt3b3gvOHRLOTBCTzd4TnR2YW0z?=
+ =?utf-8?B?T1NrQk5DZWFRNnpGaGk2QW9mWFFWRkRZTzJGSlIveTJFWVFQQUZPUkwyVC9w?=
+ =?utf-8?B?UE5naE0zcDFQQUdqS0RnTFkyOFR6a204ZlFabEQxVjV0RFUyd3VFTnhDeHlZ?=
+ =?utf-8?B?V3VrSDF1RjUwQ0N4S3VlTHk4SGpjU3djMy9oZzZXQkJ0TFMwWmFZVnZkMHRM?=
+ =?utf-8?B?aWhUSUZyYVYzdURodWtlZ3RDMEVHNzFFKzE3KzA5KzR6Tm5Bc1RLN0dwc0lu?=
+ =?utf-8?B?amsyOFB0ZjJ6RGhQczg0bTdLdTNxdzB6RWdSMEpVVktZNE41RVJpR3pSaGhV?=
+ =?utf-8?B?a0JGVDM1RTNGY0RXaVF3dk5UTlpabUVCZ0pjSFpzRFJwRmVwRVBHOGZhcGZi?=
+ =?utf-8?B?TWZOYUptbW5BcEhKSXlTMUtmQmRYN1NLZGVtd1djck5tWjN0bUIybjRhVHdk?=
+ =?utf-8?B?K1JTVnhkRjhQN1R0dEJRa2NSQ1dUU2E2Q3U0NjhZM2tpUmYxbVRKTEcrLzZL?=
+ =?utf-8?B?R09NNFkzWjRwYitWa0g4WUI3N2JXNHgxTkptOGRBUFh1WEc2RzZ6S2NsZndW?=
+ =?utf-8?B?Q3pOT1lhQVdxN2QzVEpuSkFRRzB1UTF6ME9iaktkWjdycHlwelFNdFRDcXJ0?=
+ =?utf-8?B?dVIrdEIyamdqY3lybjhRY0ttVWtOSXYvZkcrR1ltMVdIVHB2c3BReTFZMmhP?=
+ =?utf-8?B?WVJ0Y3hHRnBBdXZQalFNY2pvR0FraE9UekRDYmR0d0RtK29oZ1ZBN1ZTU1Vv?=
+ =?utf-8?B?dkRXMDE3endxRDZNa0toT3RRUFF3UFFlSzV4alhPUkc3Y2k4bEhuRmZNZ1dY?=
+ =?utf-8?B?Mk1CYXdXQVltTmNsUHVtbnY2NElLRXVEZnp3TE8rUXRTZ3VGcmNPdlZ1b0dz?=
+ =?utf-8?B?RUk4ZitBR3laTE5lSE5EUGJKMWZONnQyaW5XaHRRM1lJWkhqTENhcnpJbEJw?=
+ =?utf-8?B?UUp4c1p1d0dScjdmV3JVWm5oeEhMQ1hEdDdsVjFlM0M2Ynl4cFQzVzUxb3px?=
+ =?utf-8?B?dmMrVVpYeXhIaDh5ZUFpckYzQytsaTB0bm5CcmFteTNVZFJURHJ1MFJlYVhO?=
+ =?utf-8?B?MTJKa25WaFphb0JvUCtlenVNZWlsVGx3UU1yZExaZDBkS001SStlUUwyRTJ1?=
+ =?utf-8?B?eE4vTWx0b3pBM1VWS0Mvd3NLd3RFeFlxUEZuSTZkV09oNWU5TUpNOUI0L3lD?=
+ =?utf-8?B?MnVra0RSVmJvWW1UTUU3MUJydlZYNnFxU3R5Nmx2dWRIdzV0ekRpYnhLZ1Mx?=
+ =?utf-8?B?ZXFPaU1PTURaVS9NTjI4dU1FNVRXelFwUmUxNVpxbHl3N25iQk5kMWRIdTZj?=
+ =?utf-8?B?NjdXQldOaEF6cHRrbHRqMXB6MVM0OEdsUGg2cUhvOGVJeDlscHd3S3dyUndh?=
+ =?utf-8?B?V1UvMFg2YjVnQU5nUnhzdXMvdXRPL09Ub0ZMRUVZMVhXbWdlUGUvK0M2THVo?=
+ =?utf-8?B?OWIrNXV0Z3JrWnVaRUgzcE4wajRCb0NRR3FZWkJ3Z05IQWpRVkhkRkN1Z0hG?=
+ =?utf-8?B?cGNDNFFqZVl5d1Y1eGVZcmFuMGxjUllFVi8wdFdoNUFBaCtpVUlqR1VhL3lC?=
+ =?utf-8?B?OURXcklUM2RQSHZ4NVB6L2FBU0M5ZnJhMmNKT3QzOUxHTmhXazRqMDZVSTQz?=
+ =?utf-8?B?VmN1N1NsZHN4eXdDUGdJTUFHZjVoOEpZNGVWbTFkamdwK1hISFcvRHlDZHhT?=
+ =?utf-8?B?UjNCMTdrYThIdjJBOWpOUHFCb3phVXlTMTA0dm5zTXM2OUtmT0MrQy8zZFRq?=
+ =?utf-8?B?V2cxbDdTNDNqMzJUMTV3M3hsYzIydGJEV3lGaWMrQWMvdHVLZkJHR1EycU1H?=
+ =?utf-8?Q?GXSrBwW3xlmKB9jVARcBZvwHZ6WnJ7UqJ0ceJqeaLIVP?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63b07536-62d0-49c4-6b37-08de04c45e4a
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2025 10:37:37.7328
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: q+XFxAHNETYx/dbXukzDwUXMIwaqb0OCsOC3IunoSaOFnkoBaYSsdzQeX+Ngtpqp/tVJMkLRnrtJnfSjwiPr0A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6526
 
-On Mon, Oct 06, 2025 at 12:08:22PM +0200, Konrad Dybcio wrote:
-> On 9/30/25 9:39 AM, Neil Armstrong wrote:
-> > The QMP USB3/DP Combo PHY hosts an USB3 phy and a DP PHY on top
-> > of a combo glue to route either lanes to the 4 shared physical lanes.
-> > 
-> > The routing of the lanes can be:
-> > - 2 DP + 2 USB3
-> > - 4 DP
-> > - 2 USB3
-> > 
-> > Get the lanes mapping from DT and stop registering the USB-C
-> > muxes in favor of a static mode and orientation detemined
-> > by the lanes mapping.
-> > 
-> > This allows supporting boards with direct connection of USB3 and
-> > DisplayPort lanes to the QMP Combo PHY lanes, not using the
-> > USB-C Altmode feature.
-> > 
-> > Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> > ---
-> 
-> [...]
-> 
-> > +struct qmp_combo_lane_mapping {
-> > +	unsigned int lanes_count;
-> 
-> "num_lanes"?
-> 
-> > +	enum typec_orientation orientation;
-> > +	u32 lanes[4];
-> > +};
-> > +
-> > +static const struct qmp_combo_lane_mapping usb3_data_lanes[] = {
-> > +	{ 2, TYPEC_ORIENTATION_NORMAL, { 1, 0 }},
-> > +	{ 2, TYPEC_ORIENTATION_REVERSE, { 2, 3 }},
-> > +};
-> > +
-> > +static const struct qmp_combo_lane_mapping dp_data_lanes[] = {
-> > +	{ 1, TYPEC_ORIENTATION_NORMAL, { 0 }},
-> > +	{ 1, TYPEC_ORIENTATION_REVERSE, { 3 }},
-> 
-> This is not corroborated by your bindings change ^
-> 
-> I'm also frankly not sure whether it's pin 2 or 3 that 1-lane-DP
-> would be TXd on
+On Sat Oct 4, 2025 at 12:47 AM JST, Joel Fernandes wrote:
+> Add KUNIT tests to make sure the macro is working correctly.
+>
+> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+> ---
+>  rust/kernel/bitfield.rs | 323 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 323 insertions(+)
+>
+> diff --git a/rust/kernel/bitfield.rs b/rust/kernel/bitfield.rs
+> index 09cd5741598c..f0e341a1a979 100644
+> --- a/rust/kernel/bitfield.rs
+> +++ b/rust/kernel/bitfield.rs
+> @@ -329,3 +329,326 @@ fn default() -> Self {
+>          }
+>      };
+>  }
+> +
+> +#[::kernel::macros::kunit_tests(kernel_bitfield)]
+> +mod tests {
+> +    use core::convert::TryFrom;
+> +
+> +    // Enum types for testing =3D> and ?=3D> conversions
+> +    #[derive(Debug, Default, Clone, Copy, PartialEq)]
+> +    enum MemoryType {
+> +        #[default]
+> +        Unmapped =3D 0,
+> +        Normal =3D 1,
+> +        Device =3D 2,
+> +        Reserved =3D 3,
+> +    }
+> +
+> +    impl TryFrom<u8> for MemoryType {
+> +        type Error =3D u8;
+> +        fn try_from(value: u8) -> Result<Self, Self::Error> {
+> +            match value {
+> +                0 =3D> Ok(MemoryType::Unmapped),
+> +                1 =3D> Ok(MemoryType::Normal),
+> +                2 =3D> Ok(MemoryType::Device),
+> +                3 =3D> Ok(MemoryType::Reserved),
+> +                _ =3D> Err(value),
+> +            }
+> +        }
+> +    }
+> +
+> +    impl From<MemoryType> for u64 {
+> +        fn from(mt: MemoryType) -> u64 {
+> +            mt as u64
+> +        }
+> +    }
+> +
+> +    #[derive(Debug, Default, Clone, Copy, PartialEq)]
+> +    enum Priority {
+> +        #[default]
+> +        Low =3D 0,
+> +        Medium =3D 1,
+> +        High =3D 2,
+> +        Critical =3D 3,
+> +    }
+> +
+> +    impl From<u8> for Priority {
+> +        fn from(value: u8) -> Self {
+> +            match value & 0x3 {
+> +                0 =3D> Priority::Low,
+> +                1 =3D> Priority::Medium,
+> +                2 =3D> Priority::High,
+> +                _ =3D> Priority::Critical,
+> +            }
+> +        }
+> +    }
+> +
+> +    impl From<Priority> for u16 {
+> +        fn from(p: Priority) -> u16 {
+> +            p as u16
+> +        }
+> +    }
+> +
+> +    bitfield! {
+> +        struct TestPageTableEntry(u64) {
+> +            0:0       present     as bool;
+> +            1:1       writable    as bool;
+> +            11:9      available   as u8;
+> +            13:12     mem_type    as u8 ?=3D> MemoryType;
+> +            17:14     extended_type as u8 ?=3D> MemoryType;  // For test=
+ing failures
+> +            51:12     pfn         as u64;
 
-If we follow the standard, it should be 3 (RX2, TX2, TX1, RX1)
+Is the overlap with `mem_type` and `extended_type` on purpose? It looks
+strange to me that the PFN also includes the memory type.
 
-> 
-> > +	{ 2, TYPEC_ORIENTATION_NORMAL, { 3, 2 }},
-> > +	{ 2, TYPEC_ORIENTATION_REVERSE, { 0, 1 }},
-> > +	{ 4, TYPEC_ORIENTATION_NORMAL, { 3, 2, 1, 0 }},
-> > +	{ 4, TYPEC_ORIENTATION_REVERSE, { 0, 1, 2, 3 }},
-> 
-> Would it be too cheesy to check orientation based like:
+> +            51:12     pfn_overlap as u64;
 
-That won't catch weird errors like {0, 2, 1, 3}.
+If `pfn` needs to be adjusted then I guess this one also needs to be.
 
-> 
-> static bool qmpphy_mapping_orient_flipped(u32 *data_lanes)
-> {
-> 	return data_lanes[0] == 0;
-> }
-> 
-> ?
-> 
-> > -	ret = qmp_combo_typec_register(qmp);
-> > -	if (ret)
-> > -		goto err_node_put;
-> > +	qmp->qmpphy_mode = QMPPHY_MODE_USB3DP;
-> > +
-> > +	if (of_find_property(dev->of_node, "mode-switch", NULL) ||
-> > +	    of_find_property(dev->of_node, "orientation-switch", NULL)) {
-> 
-> of_property_present()
-> 
-> Konrad
+> +            61:52     available2  as u16;
+> +        }
+> +    }
+> +
+> +    bitfield! {
+> +        struct TestControlRegister(u16) {
+> +            0:0       enable      as bool;
+> +            3:1       mode        as u8;
+> +            5:4       priority    as u8 =3D> Priority;
+> +            7:4       priority_nibble as u8;
+> +            15:8      channel     as u8;
+> +        }
+> +    }
+> +
+> +    bitfield! {
+> +        struct TestStatusRegister(u8) {
+> +            0:0       ready       as bool;
+> +            1:1       error       as bool;
+> +            3:2       state       as u8;
+> +            7:4       reserved    as u8;
+> +            7:0       full_byte   as u8;  // For entire register
+> +        }
+> +    }
+> +
+> +    #[test]
+> +    fn test_single_bits() {
+> +        let mut pte =3D TestPageTableEntry::default();
+> +
+> +        assert!(!pte.present());
+> +        assert!(!pte.writable());
+> +        assert_eq!(u64::from(pte), 0x0);
+> +
+> +        pte =3D pte.set_present(true);
+> +        assert!(pte.present());
+> +        assert_eq!(u64::from(pte), 0x1);
+> +
+> +        pte =3D pte.set_writable(true);
+> +        assert!(pte.writable());
+> +        assert_eq!(u64::from(pte), 0x3);
+> +
+> +        pte =3D pte.set_writable(false);
+> +        assert!(!pte.writable());
+> +        assert_eq!(u64::from(pte), 0x1);
+> +
+> +        assert_eq!(pte.available(), 0);
+> +        pte =3D pte.set_available(0x5);
+> +        assert_eq!(pte.available(), 0x5);
+> +        assert_eq!(u64::from(pte), 0xA01);
+> +    }
+> +
+> +    #[test]
+> +    fn test_range_fields() {
+> +        let mut pte =3D TestPageTableEntry::default();
+> +        assert_eq!(u64::from(pte), 0x0);
+> +
+> +        pte =3D pte.set_pfn(0x123456);
+> +        assert_eq!(pte.pfn(), 0x123456);
+> +        // Test overlapping field reads same value
+> +        assert_eq!(pte.pfn_overlap(), 0x123456);
+> +        assert_eq!(u64::from(pte), 0x123456000);
+> +
+> +        pte =3D pte.set_available(0x7);
+> +        assert_eq!(pte.available(), 0x7);
+> +        assert_eq!(u64::from(pte), 0x123456E00);
+> +
+> +        pte =3D pte.set_available2(0x3FF);
+> +        assert_eq!(pte.available2(), 0x3FF);
+> +        assert_eq!(u64::from(pte), 0x3FF0000123456E00);
+> +
+> +        // Test TryFrom with ?=3D> for MemoryType
+> +        pte =3D pte.set_mem_type(MemoryType::Device);
+> +        assert_eq!(pte.mem_type(), Ok(MemoryType::Device));
+> +        assert_eq!(u64::from(pte), 0x3FF0000123456E00);
+> +
+> +        pte =3D pte.set_mem_type(MemoryType::Normal);
+> +        assert_eq!(pte.mem_type(), Ok(MemoryType::Normal));
+> +        assert_eq!(u64::from(pte), 0x3FF0000123455E00);
+> +
+> +        // Test all valid values for mem_type
+> +        pte =3D pte.set_mem_type(MemoryType::Reserved);
+> +        assert_eq!(pte.mem_type(), Ok(MemoryType::Reserved));
+> +        assert_eq!(u64::from(pte), 0x3FF0000123457E00);
+> +
+> +        // Test failure case using extended_type field which has 4 bits =
+(0-15)
+> +        // MemoryType only handles 0-3, so values 4-15 should return Err
+> +        let mut raw =3D pte.into();
+> +        // Set bits 17:14 to 7 (invalid for MemoryType)
+> +        raw =3D (raw & !::kernel::bits::genmask_u64(14..=3D17)) | (0x7 <=
+< 14);
+> +        let invalid_pte =3D TestPageTableEntry(raw);
+> +        // Should return Err with the invalid value
+> +        assert_eq!(invalid_pte.extended_type(), Err(0x7));
+> +
+> +        // Test a valid value after testing invalid to ensure both cases=
+ work
+> +        // Set bits 17:14 to 2 (valid: Device)
+> +        raw =3D (raw & !::kernel::bits::genmask_u64(14..=3D17)) | (0x2 <=
+< 14);
+> +        let valid_pte =3D TestPageTableEntry(raw);
+> +        assert_eq!(valid_pte.extended_type(), Ok(MemoryType::Device));
+> +
+> +        let max_pfn =3D ::kernel::bits::genmask_u64(0..=3D39);
+> +        pte =3D pte.set_pfn(max_pfn);
+> +        assert_eq!(pte.pfn(), max_pfn);
+> +        assert_eq!(pte.pfn_overlap(), max_pfn);
+> +    }
+> +
+> +    #[test]
+> +    fn test_builder_pattern() {
+> +        let pte =3D TestPageTableEntry::default()
+> +            .set_present(true)
+> +            .set_writable(true)
+> +            .set_available(0x7)
+> +            .set_pfn(0xABCDEF)
+> +            .set_mem_type(MemoryType::Reserved)
+> +            .set_available2(0x3FF);
+> +
+> +        assert!(pte.present());
+> +        assert!(pte.writable());
+> +        assert_eq!(pte.available(), 0x7);
+> +        assert_eq!(pte.pfn(), 0xABCDEF);
+> +        assert_eq!(pte.pfn_overlap(), 0xABCDEF);
+> +        assert_eq!(pte.mem_type(), Ok(MemoryType::Reserved));
+> +        assert_eq!(pte.available2(), 0x3FF);
 
--- 
-With best wishes
-Dmitry
+Maybe check the raw value here as well, although I guess the previous
+test already covered this anyway.
+
+With these points confirmed,
+
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 
