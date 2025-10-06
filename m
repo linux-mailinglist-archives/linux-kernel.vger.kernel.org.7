@@ -1,230 +1,100 @@
-Return-Path: <linux-kernel+bounces-843252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AE40BBEC37
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 19:02:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ED97BBEC46
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 19:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78ED31896424
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 17:02:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6AC51896321
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 17:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52527223DE8;
-	Mon,  6 Oct 2025 17:01:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F17B223DE8;
+	Mon,  6 Oct 2025 17:02:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NgLfsYlT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="EmxmdXui"
+Received: from the.earth.li (the.earth.li [93.93.131.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2FE1E511;
-	Mon,  6 Oct 2025 17:01:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641F31E511;
+	Mon,  6 Oct 2025 17:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759770110; cv=none; b=SB1M9pubQ3hsMM7LApXrnEDbdIMlz5ebs1lXC7WdmbkwjAragc/HmBmg2o2mUH0I5seIv427u0ncrobgYV16p3JVOl7U05Pk8IGe7WgGfocYh+J8NJhsGRzRp+TP66n0IpPZo85uRT/VkleyfbsTHROWlpkAvf7GJNnWryEL3hU=
+	t=1759770140; cv=none; b=sNTzyVbbbE4GKBwR4SYOpTC/q4q0x3sK2opkgZ1a5igT84+0esj7Qmb8UVpQAvM8pdHl6nMq678PeoIa0MtloPd1GQESxRrXGlv76tcjWqTGIRwu1gsvQAA7xLAfn0R3b8ZWd+7XgZccZUuOQRIolnesQg8WqHmhVZBLBReJr9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759770110; c=relaxed/simple;
-	bh=MG1dcQMphQ748JndS811tTZbOvZl5viKUiBdA36kux8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iJOQyagk1PvCjlFhH6MMCWYochbzXFCk/Nu/p/YW47Bi3n2IoOVb/LFDEDlG8MwqBB8WTZSMnxu03Kej0mjNWcgQC5ge4xyx71EpYsa1dpIj+fHiUVvGaRF+Uy+4Tyz2mfRsIfZBjxAvUR115++M4pNZXNoLFfU+b8gC0zouGaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NgLfsYlT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2E62C4CEF5;
-	Mon,  6 Oct 2025 17:01:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759770108;
-	bh=MG1dcQMphQ748JndS811tTZbOvZl5viKUiBdA36kux8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=NgLfsYlTgtpvDbSOm2NiGUojPOjwRGe/OH3C0JNNWeU0NeJOo51dJ2Ci9kDtEdQQe
-	 3k5DscndvUU0phiQ/ZHNvwhZrgX6lqwI5J/xlNMT8aZdV5u3WDO3VM8ATPykvRSGGT
-	 r5b1d+SHy8/FqS7MKcd7EdWJCNFHUCHjE9sfR1Z8e+WnV6oVs1zsX8KGWKj3S8B7Ik
-	 dfqxPViKr/BDk3+rzxCGaCa3H0MaJSLU2n1ptlHIv/2Y1ql7EfqnzAbEI1HB2hxOHp
-	 1IF9IgN+pr/DVwtODnsjwyUKJ4s19AHLk26ebEq26WDj2aZOB2f8yyO+hVGm27x+7w
-	 a51lxbN5OsjFQ==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org,  jasonmiu@google.com,  graf@amazon.com,
-  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
-  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
-  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
-  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
-  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
-  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
-  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
-  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
-  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com,
-  hughd@google.com,  skhawaja@google.com,  chrisl@kernel.org,
-  steven.sistare@oracle.com
-Subject: Re: [PATCH v4 03/30] kho: drop notifiers
-In-Reply-To: <20250929010321.3462457-4-pasha.tatashin@soleen.com> (Pasha
-	Tatashin's message of "Mon, 29 Sep 2025 01:02:54 +0000")
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
-	<20250929010321.3462457-4-pasha.tatashin@soleen.com>
-Date: Mon, 06 Oct 2025 19:01:37 +0200
-Message-ID: <mafs0tt0cnevi.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1759770140; c=relaxed/simple;
+	bh=FbgypfBVoCihQT1Bpv7382CQ1pgmrhKThF2oi8F+Tr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iXWZvi5zJ3gcoHqQr8gBClwMo66Y4C058uYpo4n7+dn3mFaWXOPo2A+5bOVYQEz5LZvzvNsuOjlwdfVerG4/invoDok9UB5Z5E9HiFTwfxadUD4HABAoTDX3TvWO+BNiP17gIxnRtDc7zw8iyIjLDQZExWbGyttvVqlFcDyT+G8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=EmxmdXui; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
+	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=rlYLRvuiVU/hl7vTjDQy6QJsJ+NAQ0yKDWQ3yTyqNBA=; b=EmxmdXuiFFJuPs0vyL7SnNSIRT
+	GoqrIpv7PmrBx4dmI1xH9Mb02AoYf2yBD3gAeBEHE1Gt3EWYGf/sSSB75Z1IxKaeTaQNy4VCeXaGT
+	KjIoIZ5YrdD+SFk4Po9NNZduzGrcbLIxMoapJtBm9obShmZxJyqoP0mso/DKCq0jeaS/QKUgk4PtB
+	35+ipg8yOdV5DySKXRGKzIquAmvBGgKfSTgjawf8aVuks/AGe6Baln4AUc6jLkPhXFVYwloOlp/JF
+	EcYijj/DKM1K7Wt8MnnciEFyvvMKacxtrfUrmp+K34q9QsTWaVuM5K1b9wkbDVAU8LwHmt/dnMhSk
+	bSKQuCsA==;
+Received: from noodles by the.earth.li with local (Exim 4.96)
+	(envelope-from <noodles@earth.li>)
+	id 1v5ob7-00FTuE-19;
+	Mon, 06 Oct 2025 18:02:05 +0100
+Date: Mon, 6 Oct 2025 18:02:05 +0100
+From: Jonathan McDowell <noodles@earth.li>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-v6.18
+Message-ID: <aOP2DUj67yB0afUt@earth.li>
+References: <aOKTFv1vh1cvvcLk@kernel.org>
+ <CAHk-=wiCWiDcLEE3YqQo78piVHpwY2iXFW--6FbmFAURtor2+w@mail.gmail.com>
+ <aOOu1f1QWQNtkl6c@kernel.org>
+ <aOPOZwp_inGui9Bx@kernel.org>
+ <125ba81bb222cdffef05ef9868c68002efd61235.camel@HansenPartnership.com>
+ <aOPzovsBYlH3ojTR@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aOPzovsBYlH3ojTR@kernel.org>
 
-On Mon, Sep 29 2025, Pasha Tatashin wrote:
+On Mon, Oct 06, 2025 at 07:51:46PM +0300, Jarkko Sakkinen wrote:
+> My main issue preventing sending a new pull request is that weird list
+> of core TPM2 features that is claimed "not to be required" with zero
+> references. Especially it is contraditory claim that TPM2_CreatePrimary
+> would be optional feature as the whole chip standard is based on three
+> random seeds from which primary keys are templated and used as root
+> keys for other keys.
 
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
->
-> The KHO framework uses a notifier chain as the mechanism for clients to
-> participate in the finalization process. While this works for a single,
-> central state machine, it is too restrictive for kernel-internal
-> components like pstore/reserve_mem or IMA. These components need a
-> simpler, direct way to register their state for preservation (e.g.,
-> during their initcall) without being part of a complex,
-> shutdown-time notifier sequence. The notifier model forces all
-> participants into a single finalization flow and makes direct
-> preservation from an arbitrary context difficult.
-> This patch refactors the client participation model by removing the
-> notifier chain and introducing a direct API for managing FDT subtrees.
->
-> The core kho_finalize() and kho_abort() state machine remains, but
-> clients now register their data with KHO beforehand.
->
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-[...]
-> diff --git a/mm/memblock.c b/mm/memblock.c
-> index e23e16618e9b..c4b2d4e4c715 100644
-> --- a/mm/memblock.c
-> +++ b/mm/memblock.c
-> @@ -2444,53 +2444,18 @@ int reserve_mem_release_by_name(const char *name)
->  #define MEMBLOCK_KHO_FDT "memblock"
->  #define MEMBLOCK_KHO_NODE_COMPATIBLE "memblock-v1"
->  #define RESERVE_MEM_KHO_NODE_COMPATIBLE "reserve-mem-v1"
-> -static struct page *kho_fdt;
-> -
-> -static int reserve_mem_kho_finalize(struct kho_serialization *ser)
-> -{
-> -	int err = 0, i;
-> -
-> -	for (i = 0; i < reserved_mem_count; i++) {
-> -		struct reserve_mem_table *map = &reserved_mem_table[i];
-> -		struct page *page = phys_to_page(map->start);
-> -		unsigned int nr_pages = map->size >> PAGE_SHIFT;
-> -
-> -		err |= kho_preserve_pages(page, nr_pages);
-> -	}
-> -
-> -	err |= kho_preserve_folio(page_folio(kho_fdt));
-> -	err |= kho_add_subtree(ser, MEMBLOCK_KHO_FDT, page_to_virt(kho_fdt));
-> -
-> -	return notifier_from_errno(err);
-> -}
-> -
-> -static int reserve_mem_kho_notifier(struct notifier_block *self,
-> -				    unsigned long cmd, void *v)
-> -{
-> -	switch (cmd) {
-> -	case KEXEC_KHO_FINALIZE:
-> -		return reserve_mem_kho_finalize((struct kho_serialization *)v);
-> -	case KEXEC_KHO_ABORT:
-> -		return NOTIFY_DONE;
-> -	default:
-> -		return NOTIFY_BAD;
-> -	}
-> -}
-> -
-> -static struct notifier_block reserve_mem_kho_nb = {
-> -	.notifier_call = reserve_mem_kho_notifier,
-> -};
->  
->  static int __init prepare_kho_fdt(void)
->  {
->  	int err = 0, i;
-> +	struct page *fdt_page;
->  	void *fdt;
->  
-> -	kho_fdt = alloc_page(GFP_KERNEL);
-> -	if (!kho_fdt)
-> +	fdt_page = alloc_page(GFP_KERNEL);
-> +	if (!fdt_page)
->  		return -ENOMEM;
->  
-> -	fdt = page_to_virt(kho_fdt);
-> +	fdt = page_to_virt(fdt_page);
->  
->  	err |= fdt_create(fdt, PAGE_SIZE);
->  	err |= fdt_finish_reservemap(fdt);
-> @@ -2499,7 +2464,10 @@ static int __init prepare_kho_fdt(void)
->  	err |= fdt_property_string(fdt, "compatible", MEMBLOCK_KHO_NODE_COMPATIBLE);
->  	for (i = 0; i < reserved_mem_count; i++) {
->  		struct reserve_mem_table *map = &reserved_mem_table[i];
-> +		struct page *page = phys_to_page(map->start);
-> +		unsigned int nr_pages = map->size >> PAGE_SHIFT;
->  
-> +		err |= kho_preserve_pages(page, nr_pages);
->  		err |= fdt_begin_node(fdt, map->name);
->  		err |= fdt_property_string(fdt, "compatible", RESERVE_MEM_KHO_NODE_COMPATIBLE);
->  		err |= fdt_property(fdt, "start", &map->start, sizeof(map->start));
-> @@ -2507,13 +2475,14 @@ static int __init prepare_kho_fdt(void)
->  		err |= fdt_end_node(fdt);
->  	}
->  	err |= fdt_end_node(fdt);
-> -
->  	err |= fdt_finish(fdt);
->  
-> +	err |= kho_preserve_folio(page_folio(fdt_page));
-> +	err |= kho_add_subtree(MEMBLOCK_KHO_FDT, fdt);
-> +
->  	if (err) {
->  		pr_err("failed to prepare memblock FDT for KHO: %d\n", err);
-> -		put_page(kho_fdt);
-> -		kho_fdt = NULL;
-> +		put_page(fdt_page);
+My understanding here is that the main specification about what's 
+"required" for TPMs to implement is from the PC Client Platform TPM 
+Profile. There's no specific server PTP (though there is talk about 
+creating one), so _most_ vendors just implement the PC Client PTP. It 
+doesn't mean a TPM that doesn't do so isn't TPM compliant, just not PC 
+Client PTP compliant.
 
-This adds subtree to KHO even if the FDT might be invalid. And then
-leaves a dangling reference in KHO to the FDT in case of an error. I
-think you should either do this check after
-kho_preserve_folio(page_folio(fdt_page)) and do a clean error check for
-kho_add_subtree(), or call kho_remove_subtree() in the error block.
+Google have taken the approach in their Titan based TPM implementation 
+to avoid implementing features they don't need, to reduce attack 
+surface.
 
-I prefer the former since if kho_add_subtree() is the one that fails,
-there is little sense in removing a subtree that was never added.
+I'm not aware of anyone else who has done this.
 
->  	}
->  
->  	return err;
-> @@ -2529,13 +2498,6 @@ static int __init reserve_mem_init(void)
->  	err = prepare_kho_fdt();
->  	if (err)
->  		return err;
-> -
-> -	err = register_kho_notifier(&reserve_mem_kho_nb);
-> -	if (err) {
-> -		put_page(kho_fdt);
-> -		kho_fdt = NULL;
-> -	}
-> -
->  	return err;
->  }
->  late_initcall(reserve_mem_init);
+J.
 
 -- 
-Regards,
-Pratyush Yadav
+... You non-conformists are all alike.
 
