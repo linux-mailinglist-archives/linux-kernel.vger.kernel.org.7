@@ -1,221 +1,286 @@
-Return-Path: <linux-kernel+bounces-843188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46853BBE982
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:09:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16061BBE98B
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:10:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 448F9189979F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:10:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAE78189136E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860C22D97AC;
-	Mon,  6 Oct 2025 16:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7E22D94B3;
+	Mon,  6 Oct 2025 16:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C2CClYHS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WpoG0qEY"
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0621F8728;
-	Mon,  6 Oct 2025 16:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5771F8728
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 16:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759766981; cv=none; b=n2KOP8ExKADOdvCopq9luI9b5yEu1FvCu7IkQm7wv2igG3qCA8fJ6SYnkPZR4uh65PnYnbCBBt05OYB+RSf/TLPhoFdbKWkm4T93kqlMVj5GAvfCIypMNEgxBaqm1zFtkJmBeAKyTXU/6Gsc0PgxxqKr1E16I6MtTWUnEurENgs=
+	t=1759767030; cv=none; b=ovnEpObs91fwa4p7cOF801/TTY5MoAXXYeFWiwJ+WJ6nMNniXtx1I5wdhWzaq/7XlJpLCa6H/PFEXJ1CRtTBOrv7HzJ2xTkCnVIerG/lU5zv4ZP474CjVJRI73HW4eGbcGT/2/6jFTfoJ2/PqftducB25K+BfgVyD/QlDvu2Bck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759766981; c=relaxed/simple;
-	bh=givZed0PpwJdCIhCZbPswU9FycNDWl/nLqzjLr1upuo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e5+14wXHJx2VAHV0jmgJgKuAGlqMkp1Jda/D54z428mNK0y5NOfpmx21U1HiJiR9bdnv1kIjDSr1xnQHsR3iE1VlY3cle2xV2jwUuEYgkLQ2e3xf5Ky2J5Q6MG7GvNleMZMaD7zMVTs8H9qW96YN82KwC+JXYwN8OGO2lnTvbmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C2CClYHS; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759766980; x=1791302980;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=givZed0PpwJdCIhCZbPswU9FycNDWl/nLqzjLr1upuo=;
-  b=C2CClYHSNrgwZb9+D2jDiXcukYqz1d7icbNfj1SpraXDHfU0EjomdOOM
-   6eF6oWdOfk0QEpNzTKmDuzQ8Enjxo74uHNmiLAoEMJCY7pBcCu9LUjG+k
-   EvUQcsixxB+Y+DlEKi03sVORCrTF6DFLN/cJtc13z9dLRL9q3Uubvv6UX
-   6KoS05lljFFDdA3p8hmEARiYqG2SD8INiiKccB6HkNOXlLOU8BXpEnT26
-   Ptlj0yy0kdZ3koF3y1T5z6VhJv2wztaJW/lHl14evbnYsHcsfpHbEOTBP
-   +5dwWJlFzKknCZJ6G9jjIU/KS7WCaNruGcImISrxTx3a9IRXHUOKWRck0
-   A==;
-X-CSE-ConnectionGUID: Teg0MeDrRcm7AtiuGaRjLg==
-X-CSE-MsgGUID: rw9vQVjBS6aCWnYhCggyeA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11574"; a="61976299"
-X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
-   d="scan'208";a="61976299"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 09:09:39 -0700
-X-CSE-ConnectionGUID: k2UWq0gIS1iA14uL6ykWcg==
-X-CSE-MsgGUID: nCPFZlBiRKe2pdF33nDutw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
-   d="scan'208";a="184195947"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.110.110]) ([10.125.110.110])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 09:09:37 -0700
-Message-ID: <1ba93727-e673-48c8-b3b4-2aba96304053@intel.com>
-Date: Mon, 6 Oct 2025 09:09:37 -0700
+	s=arc-20240116; t=1759767030; c=relaxed/simple;
+	bh=ePa97dm3NcqZXftvfOWv2RSckfY9XMYCyQtd6xGsmCg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xt0QMq95MQ0hSzZ2nJZkN7TdHJTFPy5H5teexOcYTJi7s92Ua/sr+OjbMUJO2wjxvCD+2m224SOi1cokyzCHxeIwNtHOTABdbE70qiGUEJaiittoweWuwgj4pd9pjZ+vIO7rUduUwkwvWNt7RJsTLkAEvpKAs1mUXcYV9K/L+84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WpoG0qEY; arc=none smtp.client-ip=209.85.217.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-5a265e0ec25so4024842137.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 09:10:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759767027; x=1760371827; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Sns+z5Mv33hVtLxV8rlbvAVv+VeJiohyhxaGcNY7H14=;
+        b=WpoG0qEYC991WYLRwgiEEyK/jdfjXCDLT4S+UfrTHB1FDeszM3FdKsXREyxY8RbZxy
+         FpSWEU18pe5Uxsg4H0vVuseJOWWomWEe41Z5BA0YUAxMQzgW6y8PyCpdscjI7DXdhFiy
+         Fsz7gPU8/m++OTIx+b/LtLKW40qq0NwAGO8+hiuHDZUNnLhSPR00W1PwKKqq59f7OXKt
+         zAUsiro0ScwF9/i3qfEZCRBx03DMXCTpKFGyBQsBIIUwZluvHqhKnYAXLuCkUUtet3oE
+         YbKDCFKIGqH6pfveWIVs/iuDrcaEOrFQPP5E9dihNRg1ASAMTm1H0NRxafJ7/84a0NAm
+         OqOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759767027; x=1760371827;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Sns+z5Mv33hVtLxV8rlbvAVv+VeJiohyhxaGcNY7H14=;
+        b=A7QDHQemaR3oHP4XXuWppbdebyFiZQrKXlPO6QPfoxUeD4QK+fnL5GWe91WLATu+QM
+         RrAdrVaPvHM0W7VcY3900vWTwQ/2xcvfGKGlSeXDAazrsZCAQjGGMNag+0k6Rl5lTpRq
+         a41WkifdrHNuKacB2cycvQElmG1CbLxqFi+lGe2eFf+mlDISL8UWYcFvyjpm0z1h5Nw5
+         3B4L+n4Qo0OqUlepDfOBDx+EtyXDCrHKWWEV0gNmQCiWN7BtObWV1KBh8BbGjoaSXQ8p
+         2Gcgp2twvwHxW5GjOfEOGOatr/Q1FbLqEvVCpciNx8kr59q2IJHxropjlC8hkCjqF3k6
+         BgMw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrhNQcmIxz491KXCHtR9sfxAHt5GVSctZF5f0gDuyrOc6M0w6Tabja86hsY+aVR1OGV0v748dHdxaGI1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3QwAmLFDvCaquhKxvHHDLOejVwguLQIIW4d2/WztQduQ4jEgo
+	X1Ru84RiMyDNNQegzjBea6Z+6LOFhoRUImTkD12XWcwhE+xZDLRl8riNsXn4pkCESdIsonOFitI
+	ZIaQAqWWmvM3WUKk8ual7reiTKHzgFcw=
+X-Gm-Gg: ASbGnctqXYL3AAOvxMyX6hIq5lCFvrmzvXhNPl6u5tfxk0+MyM7HV+PxbwDfB0T89+1
+	Gd5YoOi3hi1R+SDuhl/iXwG+CMjQWrn86bYsVVW+HQ/xDB+BDkpK7HZkR9+nFEGc+sFB6rpj1WG
+	YGV314rErcUxKmJ1PyaFP3A3ttKbFY2i/6FQWYkac/igGs5DxefGxC0YwlULnlDE8JU36s7PNHP
+	rUG06Snr25v5y02wCvPbSkm9TiImTyWuxyUvGTdSQ==
+X-Google-Smtp-Source: AGHT+IGx2FWJKb95FW2SfxczsReiCSn/kQDzAgvpgQVCOUkA5uaUj6QL1gZm/DDn/MBdaheqD1T6ycaBXstgwm/g/6M=
+X-Received: by 2002:a05:6102:1613:b0:533:ff66:696d with SMTP id
+ ada2fe7eead31-5d41d0fd7efmr5390644137.23.1759767027433; Mon, 06 Oct 2025
+ 09:10:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 18/20] cxl/pmem_region: Prep patch to accommodate
- pmem_region attributes
-To: Neeraj Kumar <s.neeraj@samsung.com>
-Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
- linux-kernel@vger.kernel.org, gost.dev@samsung.com,
- a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
- cpgs@samsung.com
-References: <20250917134116.1623730-1-s.neeraj@samsung.com>
- <CGME20250917134209epcas5p1b7f861dbd8299ec874ae44cbf63ce87c@epcas5p1.samsung.com>
- <20250917134116.1623730-19-s.neeraj@samsung.com>
- <147c4f1a-b8f6-4a99-8469-382b897f326d@intel.com>
- <1279309678.121759726504330.JavaMail.epsvc@epcpadp1new>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <1279309678.121759726504330.JavaMail.epsvc@epcpadp1new>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251005173812.1169436-1-rampxxxx@gmail.com> <ewca4jzmahwdl47rbojxtynbizu2vuompjxrprsz7aelovnvao@kzpxjjbjj6px>
+In-Reply-To: <ewca4jzmahwdl47rbojxtynbizu2vuompjxrprsz7aelovnvao@kzpxjjbjj6px>
+From: Javier Garcia <rampxxxx@gmail.com>
+Date: Mon, 6 Oct 2025 18:10:16 +0200
+X-Gm-Features: AS18NWB4fZelcAzqnM_-bbbpZoWXlfxaoLs_XEpCmyOIHmZJDiAtcegNgh2-OWk
+Message-ID: <CABPJ0vjtr2e=PMPF7AAi-Q=CrwgdHoO6HDb+G8PWF8T6b2_6Vw@mail.gmail.com>
+Subject: Re: [PATCH] fbdev: mb862xxfbdrv: Make CONFIG_FB_DEVICE optional
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: deller@gmx.de, tzimmermann@suse.de, linux-fbdev@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	shuah@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hello.
 
+On Mon, 6 Oct 2025 at 10:07, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@baylibre.com> wrote:
+>
+> Hello,
+>
+> On Sun, Oct 05, 2025 at 07:38:12PM +0200, Javier Garcia wrote:
+> > This patch wraps the relevant code blocks with #ifdef CONFIG_FB_DEVICE,
+> > allowing the driver to be built and used even if CONFIG_FB_DEVICE is no=
+t selected.
+> >
+> > The sysfs only give access to show some controller and cursor registers=
+ so
+> > it's not needed to allow driver works correctly.
+> >
+> > Signed-off-by: Javier Garcia <rampxxxx@gmail.com>
+>
+> I don't understand this patch. CONFIG_FB_DEVICE is about legacy /dev/fb*
+> stuff, and this patch make the creation of a sysfs file dependent on
+> that.
 
-On 9/29/25 6:57 AM, Neeraj Kumar wrote:
-> On 24/09/25 11:53AM, Dave Jiang wrote:
->>
->>
->> On 9/17/25 6:41 AM, Neeraj Kumar wrote:
->>> Created a separate file core/pmem_region.c along with CONFIG_PMEM_REGION
->>> Moved pmem_region related code from core/region.c to core/pmem_region.c
->>> For region label update, need to create device attribute, which calls
->>> nvdimm exported function thus making pmem_region dependent on libnvdimm.
->>> Because of this dependency of pmem region on libnvdimm, segregated pmem
->>> region related code from core/region.c
->>
->> We can minimize the churn in this patch by introduce the new core/pmem_region.c and related bits in the beginning instead of introduce new functions and then move them over from region.c.
-> 
-> Hi Dave,
-> 
-> As per LSA 2.1, during region creation we need to intract with nvdimmm
-> driver to write region label into LSA.
-> This dependency of libnvdimm is only for PMEM region, therefore I have
-> created a seperate file core/pmem_region.c and copied pmem related functions
-> present in core/region.c into core/pmem_region.c.
-> Because of this movemement of code we have churn introduced in this patch.
-> Can you please suggest optimized way to handle dependency on libnvdimm
-> with minimum code changes.
-> 
->>
->>> diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
->>> index 48b7314afdb8..532eaa1bbdd6 100644
->>> --- a/drivers/cxl/Kconfig
->>> +++ b/drivers/cxl/Kconfig
->>> @@ -211,6 +211,20 @@ config CXL_REGION
->>>
->>>        If unsure say 'y'
->>>
->>> +config CXL_PMEM_REGION
->>> +    bool "CXL: Pmem Region Support"
->>> +    default CXL_BUS
->>> +    depends on CXL_REGION
->>
->>> +    depends on PHYS_ADDR_T_64BIT
->>> +    depends on BLK_DEV
->> These 2 deps are odd. What are the actual dependencies?
->>
-> 
-> We need to add these 2 deps to fix v2 0Day issue [1]
-> I have taken reference from bdf97013ced5f [2]
-> Seems, I also have to add depends on ARCH_HAS_PMEM_API. I will update it
-> in V3.
-> 
-> [1] https://lore.kernel.org/linux-cxl/202507311017.7ApKmtQc-lkp@intel.com/
-> [2] https://elixir.bootlin.com/linux/v6.13.7/source/drivers/acpi/nfit/Kconfig#L4
-> 
->>
->>> +    select LIBNVDIMM
->>> +    help
->>> +      Enable the CXL core to enumerate and provision CXL pmem regions.
->>> +      A CXL pmem region need to update region label into LSA. For LSA
->>> +      updation/deletion libnvdimm is required.
->>
->> s/updation/update/
->>
-> 
-> Sure, Will fix it
-> 
->>> +
->>> +      If unsure say 'y'
->>> +
->>>  config CXL_REGION_INVALIDATION_TEST
->>>      bool "CXL: Region Cache Management Bypass (TEST)"
->>>      depends on CXL_REGION
-> 
-> <snip>
-> 
->>> --- a/drivers/cxl/core/port.c
->>> +++ b/drivers/cxl/core/port.c
->>> @@ -53,7 +53,7 @@ static int cxl_device_id(const struct device *dev)
->>>          return CXL_DEVICE_NVDIMM_BRIDGE;
->>>      if (dev->type == &cxl_nvdimm_type)
->>>          return CXL_DEVICE_NVDIMM;
->>> -    if (dev->type == CXL_PMEM_REGION_TYPE())
->>> +    if (dev->type == CXL_PMEM_REGION_TYPE)
->>
->> Stray edit? I don't think anything changed in the declaration.
->>
-> 
-> Sure, Will fix it
-> 
->>>          return CXL_DEVICE_PMEM_REGION;
->>>      if (dev->type == CXL_DAX_REGION_TYPE())
->>>          return CXL_DEVICE_DAX_REGION;
-> 
-> <snip>
-> 
->>> @@ -2382,7 +2380,7 @@ bool is_cxl_region(struct device *dev)
->>>  }
->>>  EXPORT_SYMBOL_NS_GPL(is_cxl_region, "CXL");
->>>
->>> -static struct cxl_region *to_cxl_region(struct device *dev)
->>> +struct cxl_region *to_cxl_region(struct device *dev)
->>>  {
->>>      if (dev_WARN_ONCE(dev, dev->type != &cxl_region_type,
->>>                "not a cxl_region device\n"))
->>> @@ -2390,6 +2388,7 @@ static struct cxl_region *to_cxl_region(struct device *dev)
->>>
->>>      return container_of(dev, struct cxl_region, dev);
->>>  }
->>> +EXPORT_SYMBOL_NS_GPL(to_cxl_region, "CXL");
->>
->> Maybe just move this into the header file instead.
->>
->> DJ
-> 
-> Actually to_cxl_region() is internal to cxl/core and especially to core/region.c
-> So, Its better to compeletly remove EXPORT_SYMBOL_NS_GPL(to_cxl_region, "CXL")
-> 
-> Even EXPORT_SYMBOL_NS_GPL(is_cxl_region, "CXL") is internal to cxl/core/region.c
-> Should I also remove it?
-> 
-> Even we can remove declaration of is_cxl_region() and to_cxl_region()
-> from drivers/cxl/cxl.h as these functions are internal to cxl/core/region.c
+This is part of the TODO
+https://www.kernel.org/doc/html/latest/gpu/todo.html#remove-driver-dependen=
+cies-on-fb-device
 
-Yes we should probably clean that up if it's not being used externally. I don't think it should break cxl_test, but you should compile verify after you make the changes.
+I think the idea is to make the driver independent of CONFIG_FB_DEVICE .
 
-make M=tools/testing/cxl
+>
+> > diff --git a/drivers/video/fbdev/mb862xx/mb862xxfbdrv.c b/drivers/video=
+/fbdev/mb862xx/mb862xxfbdrv.c
+> > index ade88e7bc760..a691a5fefb25 100644
+> > --- a/drivers/video/fbdev/mb862xx/mb862xxfbdrv.c
+> > +++ b/drivers/video/fbdev/mb862xx/mb862xxfbdrv.c
+> > @@ -530,6 +530,7 @@ static int mb862xxfb_init_fbinfo(struct fb_info *fb=
+i)
+> >       return 0;
+> >  }
+> >
+> > +#ifdef CONFIG_FB_DEVICE
+> >  /*
+> >   * show some display controller and cursor registers
+> >   */
+> > @@ -569,6 +570,7 @@ static ssize_t dispregs_show(struct device *dev,
+> >  }
+> >
+> >  static DEVICE_ATTR_RO(dispregs);
+> > +#endif
+> >
+> >  static irqreturn_t mb862xx_intr(int irq, void *dev_id)
+> >  {
+> > @@ -759,9 +761,11 @@ static int of_platform_mb862xx_probe(struct platfo=
+rm_device *ofdev)
+> >
+> >       dev_set_drvdata(dev, info);
+> >
+> > +#ifdef CONFIG_FB_DEVICE
+> >       if (device_create_file(dev, &dev_attr_dispregs))
+> >               dev_err(dev, "Can't create sysfs regdump file\n");
+> >       return 0;
+> > +#endif
+>
+> That looks wrong. Without CONFIG_FB_DEVICE set the success return is
+> removed and all resources are freed essentially making the
+> CONFIG_FB_MB862XX_LIME part of the driver unusable.
 
-> 
-> 
-> Regards,
-> Neeraj
-> 
-> 
+Thanks, I'll fix that.
 
+And add your suggestion instead of the `ifdef`.
+
+>
+> >  rel_cmap:
+> >       fb_dealloc_cmap(&info->cmap);
+> > @@ -801,7 +805,9 @@ static void of_platform_mb862xx_remove(struct platf=
+orm_device *ofdev)
+> >       free_irq(par->irq, (void *)par);
+> >       irq_dispose_mapping(par->irq);
+> >
+> > +#ifdef CONFIG_FB_DEVICE
+> >       device_remove_file(&ofdev->dev, &dev_attr_dispregs);
+> > +#endif
+> >
+> >       unregister_framebuffer(fbi);
+> >       fb_dealloc_cmap(&fbi->cmap);
+> > @@ -1101,8 +1107,10 @@ static int mb862xx_pci_probe(struct pci_dev *pde=
+v,
+> >
+> >       pci_set_drvdata(pdev, info);
+> >
+> > +#ifdef CONFIG_FB_DEVICE
+> >       if (device_create_file(dev, &dev_attr_dispregs))
+> >               dev_err(dev, "Can't create sysfs regdump file\n");
+> > +#endif
+> >
+> >       if (par->type =3D=3D BT_CARMINE)
+> >               outreg(ctrl, GC_CTRL_INT_MASK, GC_CARMINE_INT_EN);
+> > @@ -1151,7 +1159,9 @@ static void mb862xx_pci_remove(struct pci_dev *pd=
+ev)
+> >
+> >       mb862xx_i2c_exit(par);
+> >
+> > +#ifdef CONFIG_FB_DEVICE
+> >       device_remove_file(&pdev->dev, &dev_attr_dispregs);
+> > +#endif
+> >
+> >       unregister_framebuffer(fbi);
+> >       fb_dealloc_cmap(&fbi->cmap);
+>
+> The amount of ifdefs could be greatly reduced using the following patch:
+>
+> diff --git a/drivers/video/fbdev/mb862xx/mb862xxfbdrv.c b/drivers/video/f=
+bdev/mb862xx/mb862xxfbdrv.c
+> index a691a5fefb25..3f79dfc27a53 100644
+> --- a/drivers/video/fbdev/mb862xx/mb862xxfbdrv.c
+> +++ b/drivers/video/fbdev/mb862xx/mb862xxfbdrv.c
+> @@ -530,7 +530,6 @@ static int mb862xxfb_init_fbinfo(struct fb_info *fbi)
+>         return 0;
+>  }
+>
+> -#ifdef CONFIG_FB_DEVICE
+>  /*
+>   * show some display controller and cursor registers
+>   */
+> @@ -570,7 +569,6 @@ static ssize_t dispregs_show(struct device *dev,
+>  }
+>
+>  static DEVICE_ATTR_RO(dispregs);
+> -#endif
+>
+>  static irqreturn_t mb862xx_intr(int irq, void *dev_id)
+>  {
+> @@ -761,11 +759,9 @@ static int of_platform_mb862xx_probe(struct platform=
+_device *ofdev)
+>
+>         dev_set_drvdata(dev, info);
+>
+> -#ifdef CONFIG_FB_DEVICE
+> -       if (device_create_file(dev, &dev_attr_dispregs))
+> +       if (IS_ENABLED(CONFIG_FB_DEVICE) && device_create_file(dev, &dev_=
+attr_dispregs))
+>                 dev_err(dev, "Can't create sysfs regdump file\n");
+>         return 0;
+> -#endif
+>
+>  rel_cmap:
+>         fb_dealloc_cmap(&info->cmap);
+> @@ -805,9 +801,8 @@ static void of_platform_mb862xx_remove(struct platfor=
+m_device *ofdev)
+>         free_irq(par->irq, (void *)par);
+>         irq_dispose_mapping(par->irq);
+>
+> -#ifdef CONFIG_FB_DEVICE
+> -       device_remove_file(&ofdev->dev, &dev_attr_dispregs);
+> -#endif
+> +       if (IS_ENABLED(CONFIG_FB_DEVICE))
+> +               device_remove_file(&ofdev->dev, &dev_attr_dispregs);
+>
+>         unregister_framebuffer(fbi);
+>         fb_dealloc_cmap(&fbi->cmap);
+> @@ -1107,10 +1102,8 @@ static int mb862xx_pci_probe(struct pci_dev *pdev,
+>
+>         pci_set_drvdata(pdev, info);
+>
+> -#ifdef CONFIG_FB_DEVICE
+> -       if (device_create_file(dev, &dev_attr_dispregs))
+> +       if (IS_ENABLED(CONFIG_FB_DEVICE) && device_create_file(dev, &dev_=
+attr_dispregs))
+>                 dev_err(dev, "Can't create sysfs regdump file\n");
+> -#endif
+>
+>         if (par->type =3D=3D BT_CARMINE)
+>                 outreg(ctrl, GC_CTRL_INT_MASK, GC_CARMINE_INT_EN);
+> @@ -1159,9 +1152,8 @@ static void mb862xx_pci_remove(struct pci_dev *pdev=
+)
+>
+>         mb862xx_i2c_exit(par);
+>
+> -#ifdef CONFIG_FB_DEVICE
+> -       device_remove_file(&pdev->dev, &dev_attr_dispregs);
+> -#endif
+> +       if (IS_ENABLED(CONFIG_FB_DEVICE))
+> +               device_remove_file(&pdev->dev, &dev_attr_dispregs);
+>
+>         unregister_framebuffer(fbi);
+>         fb_dealloc_cmap(&fbi->cmap);
+>
+> (It would still be questionable however to make the device file creation
+> dependent on FB_DEVICE.)
+
+https://www.kernel.org/doc/html/latest/gpu/todo.html#remove-driver-dependen=
+cies-on-fb-device
+
+>
+> Best regards
+> Uwe
 
