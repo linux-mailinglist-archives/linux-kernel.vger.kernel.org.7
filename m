@@ -1,74 +1,233 @@
-Return-Path: <linux-kernel+bounces-842889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3091DBBDE52
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 13:39:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5845CBBDE6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 13:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 99D0E4E8501
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 11:39:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4F7C24E7FD2
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 11:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05665272811;
-	Mon,  6 Oct 2025 11:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE4D271441;
+	Mon,  6 Oct 2025 11:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NpA9I2lN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="MMZpYfqp"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256012652B0;
-	Mon,  6 Oct 2025 11:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759750737; cv=none; b=IHzKyqbkX8P50sCEIimxacaZOc2Jio6kHnzZ6U97qFnLmHQz4NU+5L6GDBY3k/L3RdekS+cmgacOFrvF7G2v9CIar0+6ann0o9Jx4tN9Svkm8ks4BlEZrFiWMdE7rJaFy8+uNZKOnppU/ju9bwKr2gZt1LzS5y2u2PRlV5E7nxc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759750737; c=relaxed/simple;
-	bh=BQj54SuWzow3A4cUupmYN72ZEMbzW/KGXnzHQtj/5/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z0aaE0BpCn9JONTewF5+xObe7x9YKbgaaP/KYS0nhogI8EFAx2p9NIx7Bh/U55H73YvcOfpY2AEUSnuqreLfV3vnxnsw9e5l5fk27fDNFid0y8ETekMt/0rszXrFCE+V+nZL/ZIr7+cRbC3TbT0QP7fW9OTw5PTkCccSPuy58Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NpA9I2lN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C168FC4CEF5;
-	Mon,  6 Oct 2025 11:38:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759750736;
-	bh=BQj54SuWzow3A4cUupmYN72ZEMbzW/KGXnzHQtj/5/U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NpA9I2lNG0BgWGyKw3qyntnw8CCChSWltPmAnbK8646ulyoOyfrsnXKA3cyRenq5J
-	 bueKrGO+VIY9JLb0JPyrCPxinku9qZW0s5o6rY5XScR/Wd8GX9bk64wSVQjj4biHre
-	 LQM4Du2DQDbZgB8YATlPldMdykf6eZyjS99KgfJK5qg/almvHLTu7J5sourozxgWKV
-	 R7WBROU5TBHe9Ih/zwDMa6Ok7aGE2lnEToIzj3b7PvbChouP7ya0M//21zZd0Rv7Cy
-	 AeuFkQnvCvyIwT3DFN6mz8akA+8nVmJqz5C8wW0G9iwR0NHyrelz4qlyKA8AunMD6J
-	 QYKuvuroo44Pg==
-Date: Mon, 6 Oct 2025 13:38:51 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, kernel-team@fb.com, amir73il@gmail.com, 
-	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	ceph-devel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH v6 0/4] hide ->i_state behind accessors
-Message-ID: <20251006-kernlos-etablieren-25b07b5ea9b3@brauner>
-References: <20250923104710.2973493-1-mjguzik@gmail.com>
- <20250929-samstag-unkenntlich-623abeff6085@brauner>
- <CAGudoHFm9_-AuRh52-KRCADQ8suqUMmYUUsg126kmA+N8Ah+6g@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA39920FA9C;
+	Mon,  6 Oct 2025 11:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759750870; cv=pass; b=A/x81WvCJDpQXQUdYZP08FKu0/xdxNl4mk+DdXRr2BV1gxeli9ZnQVNeIOXgiIE9CSTqDHTMyXrweqTtxiOGuHdeJhQh2qpFaE8LOBhTSQb+wDTGSLaCjrtOCovtNFWWOVgayce21lQqB4TXrmz18VYIbcSqZrN1n0zF1uyKxNY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759750870; c=relaxed/simple;
+	bh=wWYDZbK9DMCkFdjpojlafJmg76EjaUQOk7qvY/cZfa4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R68cro2qFG07ZtW7jYiNEz7GgxS3oo5WMo3nNQfl9n9k7LHb29JV6RrrzxD/RDRciMrke2PBxU4FiUugiHzIsNxA5PL5LukyXw7d/FgMgRWBHsDoHj2bcZ2OGqMPBIu3drLwazbVlqfzq90acoQLAz6+y/6Mxv6HTMqYkIkrq6Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=MMZpYfqp; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1759750843; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=C8pwcjsJ+qowHJ37zlXp12Ma1w0Ko/I/NzluVBpY+/82lmGqlPpQvMpphsi4l9HCJpYdFV3dIJotUDRoRbIzK1u6ioMrJtEmt2FeIWl9tKwOqWP9xOq11BwfRRCYCeYEGXkX8gE5YRTUJrf9FsmKfBnMPytChaMtIyvSFrXRggk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1759750843; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=2zSa8t0BLFbE2sFL8sEge/sB6GfievzXdAQnRQjaaHE=; 
+	b=npgMq/QsQ/ncrLWzA2MOJFVNkUM49rUnZfnuxYOiG++NPcP5dp0wk2W4d2JT/tcHCvch/mfY/S0OWF9kuMJn+j/C4pGf+UYoMPBPmGlIA9GsnOLlFulC9AVMVoXiifzsLZy5fTlu7FBrkE3xZCoVO3SnmPBdt1Y1q3JVC9oDafk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759750843;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=2zSa8t0BLFbE2sFL8sEge/sB6GfievzXdAQnRQjaaHE=;
+	b=MMZpYfqpYfrc7dXHgD412byATIiTHhnz7W4rKmFMt2MG3Zl2+7d0+d0Ced8fa1W1
+	iBcyNF/oSgkohtiQC+CM3LAixL1bPSoHqFOaTAqQP+eHRAE4iMk2jsDArs+EnEt5AiJ
+	L4Jk/8QKvYFz2ARu1LgCLJ4C0C0B7pp+XYoUnv/o=
+Received: by mx.zohomail.com with SMTPS id 1759750841484642.2099292517786;
+	Mon, 6 Oct 2025 04:40:41 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Chia-I Wu <olvaffe@gmail.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Jassi Brar <jassisinghbrar@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-hardening@vger.kernel.org,
+ linux-pm@vger.kernel.org
+Subject: Re: [PATCH v6 7/7] pmdomain: mediatek: Add support for MFlexGraphics
+Date: Mon, 06 Oct 2025 13:40:35 +0200
+Message-ID: <2323923.iZASKD2KPV@workhorse>
+In-Reply-To: <8586490.T7Z3S40VBb@workhorse>
+References:
+ <20251003-mt8196-gpufreq-v6-0-76498ad61d9e@collabora.com>
+ <CAPaKu7QWBShwr+YhFi+nUFo0kJ06k4PK3zggcCefWGjqUmTx5w@mail.gmail.com>
+ <8586490.T7Z3S40VBb@workhorse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAGudoHFm9_-AuRh52-KRCADQ8suqUMmYUUsg126kmA+N8Ah+6g@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Sep 29, 2025 at 02:56:23PM +0200, Mateusz Guzik wrote:
-> This was a stripped down version (no lockdep) in hopes of getting into
-> 6.18. It also happens to come with some renames.
+On Monday, 6 October 2025 12:58:55 Central European Summer Time Nicolas Fra=
+ttaroli wrote:
+> On Friday, 3 October 2025 23:41:16 Central European Summer Time Chia-I Wu=
+ wrote:
+> > On Fri, Oct 3, 2025 at 1:16=E2=80=AFPM Nicolas Frattaroli
+> > <nicolas.frattaroli@collabora.com> wrote:
+> > >
+> > > Various MediaTek SoCs use GPU integration silicon named "MFlexGraphic=
+s"
+> > > by MediaTek. On the MT8196 and MT6991 SoCs, interacting with this
+> > > integration silicon is required to power on the GPU.
+> > >
+> > > This glue silicon is in the form of an embedded microcontroller runni=
+ng
+> > > special-purpose firmware, which autonomously adjusts clocks and
+> > > regulators.
+> > >
+> > > Implement a driver, modelled as a pmdomain driver with a
+> > > set_performance_state operation, to support these SoCs.
+> [...]
+> > > +static int mtk_mfg_probe(struct platform_device *pdev)
+> > > +{
+> > > +       struct device_node *shmem __free(device_node);
+> > > +       struct mtk_mfg *mfg;
+> > > +       struct device *dev =3D &pdev->dev;
+> > > +       const struct mtk_mfg_variant *data =3D of_device_get_match_da=
+ta(dev);
+> > > +       struct resource res;
+> > > +       int ret, i;
+> > > +
+> > > +       mfg =3D devm_kzalloc(dev, sizeof(*mfg), GFP_KERNEL);
+> > > +       if (!mfg)
+> > > +               return -ENOMEM;
+> > > +
+> > > +       mfg->pdev =3D pdev;
+> > > +       mfg->variant =3D data;
+> > > +
+> > > +       dev_set_drvdata(dev, mfg);
+> > > +
+> > > +       mfg->gpr =3D devm_platform_ioremap_resource(pdev, 0);
+> > > +       if (IS_ERR(mfg->gpr))
+> > > +               return dev_err_probe(dev, PTR_ERR(mfg->gpr),
+> > > +                                    "Couldn't retrieve GPR MMIO regi=
+sters\n");
+> > > +
+> > > +       mfg->rpc =3D devm_platform_ioremap_resource(pdev, 1);
+> > > +       if (IS_ERR(mfg->rpc))
+> > > +               return dev_err_probe(dev, PTR_ERR(mfg->rpc),
+> > > +                                    "Couldn't retrieve RPC MMIO regi=
+sters\n");
+> > > +
+> > > +       mfg->clk_eb =3D devm_clk_get(dev, "eb");
+> > > +       if (IS_ERR(mfg->clk_eb))
+> > > +               return dev_err_probe(dev, PTR_ERR(mfg->clk_eb),
+> > > +                                    "Couldn't get 'eb' clock\n");
+> > > +
+> > > +       mfg->gpu_clks =3D devm_kcalloc(dev, data->num_clks, sizeof(*m=
+fg->gpu_clks),
+> > > +                                    GFP_KERNEL);
+> > > +       if (!mfg->gpu_clks)
+> > > +               return -ENOMEM;
+> > > +
+> > > +       for (i =3D 0; i < data->num_clks; i++)
+> > > +               mfg->gpu_clks[i].id =3D data->clk_names[i];
+> > > +
+> > > +       ret =3D devm_clk_bulk_get(dev, data->num_clks, mfg->gpu_clks);
+> > > +       if (ret)
+> > > +               return dev_err_probe(dev, ret, "Couldn't get GPU cloc=
+ks\n");
+> > > +
+> > > +       mfg->gpu_regs =3D devm_kcalloc(dev, data->num_regulators,
+> > > +                                    sizeof(*mfg->gpu_regs), GFP_KERN=
+EL);
+> > > +       if (!mfg->gpu_regs)
+> > > +               return -ENOMEM;
+> > > +
+> > > +       for (i =3D 0; i < data->num_regulators; i++)
+> > > +               mfg->gpu_regs[i].supply =3D data->regulator_names[i];
+> > > +
+> > > +       ret =3D devm_regulator_bulk_get(dev, data->num_regulators, mf=
+g->gpu_regs);
+> > > +       if (ret)
+> > > +               return dev_err_probe(dev, ret, "Couldn't get GPU regu=
+lators\n");
+> > > +
+> > > +       ret =3D of_reserved_mem_region_to_resource(dev->of_node, 0, &=
+res);
+> > > +       if (ret)
+> > > +               return dev_err_probe(dev, ret, "Couldn't get GPUEB sh=
+ared memory\n");
+> > > +
+> > > +       mfg->shared_mem =3D devm_ioremap(dev, res.start, resource_siz=
+e(&res));
+> > > +       if (!mfg->shared_mem)
+> > > +               return dev_err_probe(dev, -ENOMEM, "Can't ioremap GPU=
+EB shared memory\n");
+> > > +       mfg->shared_mem_size =3D resource_size(&res);
+> > > +       mfg->shared_mem_phys =3D res.start;
+> > > +
+> > > +       if (data->init) {
+> > > +               ret =3D data->init(mfg);
+> > > +               if (ret)
+> > > +                       return dev_err_probe(dev, ret, "Variant init =
+failed\n");
+> > > +       }
+> > > +
+> > > +       mfg->pd.name =3D dev_name(dev);
+> > > +       mfg->pd.attach_dev =3D mtk_mfg_attach_dev;
+> > > +       mfg->pd.detach_dev =3D mtk_mfg_detach_dev;
+> > > +       mfg->pd.power_off =3D mtk_mfg_power_off;
+> > > +       mfg->pd.power_on =3D mtk_mfg_power_on;
+> > > +       mfg->pd.set_performance_state =3D mtk_mfg_set_performance;
+> > > +       mfg->pd.flags =3D GENPD_FLAG_OPP_TABLE_FW;
+> > > +
+> > > +       ret =3D pm_genpd_init(&mfg->pd, NULL, false);
+> > > +       if (ret)
+> > > +               return dev_err_probe(dev, ret, "Failed to initialise =
+power domain\n");
+> > We need to clean up mgf->md on errors from this point on. Maybe we can
+> > move this to a later point?
+> >=20
+> > > +
+> > > +       ret =3D mtk_mfg_init_mbox(mfg);
+> > > +       if (ret)
+> > > +               return dev_err_probe(dev, ret, "Couldn't initialise m=
+ailbox\n");
+> > We need to free the mboxes from this point on.
+> >=20
+>=20
+> For this and the one above, does .remove not get called on probe failure?=
+ If not,
+> I'll definitely do this. Otherwise it seems redundant, though with the ad=
+ded
+> concern that .remove does not check before calling those functions.
+>=20
 
-That was not obvious at all and I didn't read that anywhere in the
-commit messages?
+Alright nevermind, I'm being confused by devres vs. remove callback.
 
-Anyway, please resend on top of vfs-6.19.inode where I applied your
-other patches! Thank you!
+=2Eremove does not get called if the probe function fails, but devres
+handlers still do get called.
+
+Sorry for the confusion, will fix things accordingly.
+
+
+
 
