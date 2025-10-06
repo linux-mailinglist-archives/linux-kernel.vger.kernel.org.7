@@ -1,291 +1,214 @@
-Return-Path: <linux-kernel+bounces-842523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5B85BBCEB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 03:09:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5137BBBCEC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 03:17:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6845A3AFA04
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 01:09:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54BCC3B2C1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 01:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC191A9F80;
-	Mon,  6 Oct 2025 01:09:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82BD1A238F;
+	Mon,  6 Oct 2025 01:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EyoJyDB3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EN7+/dor"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44D334BA37;
-	Mon,  6 Oct 2025 01:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1434B79CD
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 01:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759712943; cv=none; b=OVUmARa4BAXk2dik1JskkuGH0bfUAw3bvf57V0WXzy70ETgfWTsN90DXG4utD/fS1+SbSyltwt4nsldRISr3TmawdEc/5qsav4fciNcN4eRHrT+PvEiBGS4CCeBWUAmfrevZYatXzPSiNFjUuWnIiGqIZRO+uaBFlrtqR+iT7jo=
+	t=1759713420; cv=none; b=Kro8E/J2F1xc2SkT6en6pFJEHzbybaEKhinQMRfoaAENk63bMaSTMuQvGauIpPV0XKUBf7JlQa6VHpaTEmqtU0Kox7hm1jUM4YU/OKAU9okhedgksw0JaMobKeRFfm+KSIAuMTwCicy1PnMUGfsqxRpCsL/BSiWBzFxoRuoJGS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759712943; c=relaxed/simple;
-	bh=0CVmKxnZq/4Ze7JXr0cU500rdoLgJfHc7/J5/Uy/nHg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tiuPl0K1yanEih4XvnDLlpK3WShlS4d8pLbY0fLRnE7IwL3p9UG1T/dC99I65l8y4SnncRiKOqOhle8+mFldhG9+eiGJkP9LMLH3MjIsLPQ6eaa2pJ8yvvO4LqsESIuGbu2deTUivm6piHxfjWa+pV0DBmmyGt9v8pf0pDB9oSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EyoJyDB3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C51BC4CEF4;
-	Mon,  6 Oct 2025 01:09:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759712942;
-	bh=0CVmKxnZq/4Ze7JXr0cU500rdoLgJfHc7/J5/Uy/nHg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EyoJyDB3hPGGIf44occZ0Z+qpGRs3kLTkTL7UOJP2ArEB0bATKfTPF9xZwMScEVii
-	 l3POzAgqd1I7GSYVHCvvpiaha8ZBT/d/xdD3qXo6gmgdpMbSVkl8HJ4kpCZz7lmHi7
-	 xdsx7Fx+ofDxTGR1lOaP0TxIhjOKwH84VmflftNjs7SD4UG5ohZFptKsaZMFnPg+mo
-	 or1VMfcxgRGpsaDJyEUzW5cq5eCbdVK/dz3rKMJtNNRpv6DXv6453394SFRuAgY1bj
-	 ATAqXmuI7OF3Cj1EQLig8+Jd9ehcbor6hooWL8xD8lTH+vpDk+5TkByN6ILPyUd2EZ
-	 6t9Iut5JPrhnQ==
-Message-ID: <7ab0ef5c-cce7-44d7-a416-4963e24e0b17@kernel.org>
-Date: Mon, 6 Oct 2025 10:09:00 +0900
+	s=arc-20240116; t=1759713420; c=relaxed/simple;
+	bh=0UGJqdPjjCSY04L6+CBMhmuXVEBK1Sf1gwPF3gCekqw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WUIZDjzsk099XUt0ARUd+fGTb52TTlcE4qPd8H5VgwzPRZ3PDmSU9WOrYuYN6I0PDcKIo26VVbAypcK136I9L9IDvRYzGgKdYXdSAYLLGMspTu4FmiBrHStrDqStYdJ3c7RmWpvt5APggwMTEb4fki/v/NWed/fP3M4bgr+ooMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EN7+/dor; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so764625366b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 18:16:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759713416; x=1760318216; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sbC1EOPE95OwfWLT6nyxetzcSIKUAu0yCntrWn74xYs=;
+        b=EN7+/dor6Zz+YDCMvkpkxQuXNnZA4VzY3+Jmj10izNyWgh8idoIE4ia+flBqQEpgt4
+         aNKK2Mq+ackEhZ7drG+ab4/iMKeuiHmfpH9j1qsfJ537yRegXOOnX6k00FGxkLO/hBQo
+         3j1OHUB8GVTCPoNtytggr0ZJvkd3EgbWDii3hV5umzm3DnBP0YHhkc+AEjQclqwvB/lc
+         UXdwObSqwvGFWpH6EoasPDI2DBNlqKiAsXQeZ1sPDHlwCf3gLcKkdfUye4j6qf4OLtP8
+         pTHVFTHKlIsUMWqjF4i2b2154RGvIPZdPQmEFZiOXMP/5KGN96waoRxYLJcAtp3vU4ej
+         IbmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759713416; x=1760318216;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sbC1EOPE95OwfWLT6nyxetzcSIKUAu0yCntrWn74xYs=;
+        b=MLCamKQp/ueoaiY80MyTzMAPBQ90nTkQlrRN8nZZjSmS0Pmv/e0ieCWI9Qh8MVPLQ3
+         G1/vG5wu3H6AzaItW3T1tL4O7i2rGXKe1WgoGteT5l7lZaQ1dgKthXzaVz+yi+p2ET1Y
+         I7TUdXfVisVbDIFWgdywsxG/iHELUj5yIt/9oNMqcamMqx+tmw/LETf3OMYh7qZ1aqPx
+         JQsBnG5vsPK/nUjkJDWgg13FKN259AsowUHcDkKbQL6RJ0BvHQhToUzl7s/lCr/33NE9
+         az9vpcqINk9TejCbuFss7La5VM5yL0Qe+sguUYPa7nqdWSwd4rTWmCHbG44YRWpueVg4
+         MAdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUeYVs4kF0d7xViK0vH0v2HjqHbgexTDr6YWGDJbwtEHJiJqKoZB9FVlmH5i2YEIgg+df/61DOxo/xBZl0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4rA38xha5k7h7DRsXvRmd3qnWNddIX5b1pLYnoKBRUjLWl4KT
+	SfcgMgBUwr5eNW6x0UvEgOzVqrMaJdfzqDI5GHPkKU1VJmJdCP74xVe1rd5Q5+MQVF70SvjjwKW
+	vGMlYaFFFsb810R4Gwb9UuqxOk5+a7Rc=
+X-Gm-Gg: ASbGncux/iS7tfIeDsWlqq9CooBnIOG1lDDMTTJvw4TmIgMoT36U/MxyfGIQdGIe5sm
+	1vWC9dABwiwfhPi1hdXLEijDUlt8qRzHRRuib+i00KIJvS6LRkxs6FbjTSf3dOi4ylTL7/FoQ+m
+	dZ30YPelDzqlBBndtiykdQofC7MbyTyeZ4zKl/fkBeW4JlG030OVJF2BFNGji+6SJfg+h1y3+xb
+	5sETpSDmTT8IJUckrq6cfPuDwBUtuEpSvXsc1kP3hezWA/naGhTFV5LAkPriR/RX83omZ9Amw==
+X-Google-Smtp-Source: AGHT+IEN51PEeSTCF3pWahfeOfpD9DykFpJzQEp+le9DBdwXfyV2kiw7brjPn8wm9xu5wGh5W76O7auORpiPFFlU+5Y=
+X-Received: by 2002:a17:907:1c84:b0:b3b:78a7:6220 with SMTP id
+ a640c23a62f3a-b49c4296104mr1414678266b.55.1759713416142; Sun, 05 Oct 2025
+ 18:16:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] Power on ata ports defined in ACPI before probing
- ports
-To: Markus Probst <markus.probst@posteo.de>, Niklas Cassel
- <cassel@kernel.org>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <8c3cb28c57462f9665b08fdaa022e6abc57fcd9e.camel@posteo.de>
- <20251005190559.1472308-1-markus.probst@posteo.de>
- <20251005190559.1472308-2-markus.probst@posteo.de>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20251005190559.1472308-2-markus.probst@posteo.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251005231526.708061-1-mjguzik@gmail.com> <20251006005642.8194-1-hdanton@sina.com>
+In-Reply-To: <20251006005642.8194-1-hdanton@sina.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 6 Oct 2025 03:16:43 +0200
+X-Gm-Features: AS18NWBfwgOLHulFdJnl7zfAPTI5kQEdChxeEzyE56yQDRW-IlZ1BRNNakFCakE
+Message-ID: <CAGudoHFi-9qYPnb9xPtGsUq+Mf_8h+uk4iQDo1TggZYPgTv6fA@mail.gmail.com>
+Subject: Re: [PATCH] fs: add missing fences to I_NEW handling
+To: Hillf Danton <hdanton@sina.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/6/25 04:06, Markus Probst wrote:
-> some devices (for example every synology nas with "deep sleep" support)
-> have the ability to power on and off each ata port individually. This
-> turns the specific port on, if power manageable in acpi, before probing
-> it.
+On Mon, Oct 6, 2025 at 2:57=E2=80=AFAM Hillf Danton <hdanton@sina.com> wrot=
+e:
+>
+> On Mon,  6 Oct 2025 01:15:26 +0200 Mateusz Guzik wrote:
+> > Suppose there are 2 CPUs racing inode hash lookup func (say ilookup5())
+> > and unlock_new_inode().
+> >
+> > In principle the latter can clear the I_NEW flag before prior stores
+> > into the inode were made visible.
+> >
+> Given difficulty following up here, could you specify why the current
+> mem barrier [1] in unlock_new_inode() is not enough?
+>
 
-Please add "ata: " prefix to the commit titel and capitalize the first letter of
-sentences.
+That fence synchronizes against threads which went to sleep.
 
-The commit message above should also be improved. E.g. The "This" in "This turns
-on..." is unclear (I am assuming you mean "this patch" ?).
+In the example I'm providing this did not happen.
 
-> 
-> This can later be extended to power down the ata ports (removing power
-> from a disk) while the disk is spin down.
-> 
-> Signed-off-by: Markus Probst <markus.probst@posteo.de>
-> ---
->  drivers/ata/libata-acpi.c | 68 +++++++++++++++++++++++++++++++++++++++
->  drivers/ata/libata-core.c | 21 ++++++++++++
->  drivers/ata/libata-scsi.c |  1 +
->  drivers/ata/libata.h      |  4 +++
->  include/linux/libata.h    |  1 +
->  5 files changed, 95 insertions(+)
-> 
-> diff --git a/drivers/ata/libata-acpi.c b/drivers/ata/libata-acpi.c
-> index f2140fc06ba0..891b59bfe29f 100644
-> --- a/drivers/ata/libata-acpi.c
-> +++ b/drivers/ata/libata-acpi.c
-> @@ -245,6 +245,74 @@ void ata_acpi_bind_dev(struct ata_device *dev)
->  				   ata_acpi_dev_uevent);
->  }
->  
-> +/**
-> + * ata_acpi_dev_manage_restart - if the disk should be stopped (spin down) on system restart.
+  193 static inline void wait_on_inode(struct inode *inode)
+  194 {
+  195         wait_var_event(inode_state_wait_address(inode, __I_NEW),
+  196                       !(READ_ONCE(inode->i_state) & I_NEW));
 
-Long line. Please split at 80 chars.
+  303 #define wait_var_event(var, condition)                               =
+   \
+  304 do {                                                                 =
+   \
+  305         might_sleep();                                               =
+   \
+  306         if (condition)                                               =
+   \
+  307                 break;                                               =
+   \
 
-> + * @dev: target ATA device
-> + *
-> + * RETURNS:
-> + * true if the disk should be stopped, otherwise false
-> + */
-> +bool ata_acpi_dev_manage_restart(struct ata_device *dev)
-> +{
-> +	// If the device is power manageable and we assume the disk loses power on reboot.
+I_NEW is tested here without any locks or fences.
 
-This is not C++. Please use C style comments and split the long line.
+  308         __wait_var_event(var, condition);                            =
+   \
+  309 } while (0)
 
-> +	if (dev->link->ap->flags & ATA_FLAG_ACPI_SATA) {
-> +		if (!is_acpi_device_node(dev->tdev.fwnode))
-> +			return false;
-> +		return acpi_bus_power_manageable(ACPI_HANDLE(&dev->tdev));
-> +	}
-> +
-> +	if (!is_acpi_device_node(dev->link->ap->tdev.fwnode))
-> +		return false;
-> +	return acpi_bus_power_manageable(ACPI_HANDLE(&dev->link->ap->tdev));
-> +}
-> +
-> +/**
-> + * ata_acpi_port_set_power_state - set the power state of the ata port
-> + * @ap: target ATA port
-> + *
-> + * This function is called at the begin of ata_port_probe.
-
-...at the beginning of ata_port_probe().
-
-> + */
-> +void ata_acpi_port_set_power_state(struct ata_port *ap, bool enable)
-> +{
-> +	acpi_handle handle;
-> +	unsigned char state;
-> +	int i;
-> +
-> +	if (libata_noacpi)
-> +		return;
-> +
-> +	if (enable)
-> +		state = ACPI_STATE_D0;
-> +	else
-> +		state = ACPI_STATE_D3_COLD;
-> +
-> +	if (ap->flags & ATA_FLAG_ACPI_SATA) {
-> +		for (i = 0; i < ATA_MAX_DEVICES; i++) {
-> +			if (!is_acpi_device_node(ap->link.device[i].tdev.fwnode))
-> +				continue;
-> +			handle = ACPI_HANDLE(&ap->link.device[i].tdev);
-> +			if (!acpi_bus_power_manageable(handle))
-> +				continue;
-> +			if (!acpi_bus_set_power(handle, state))
-> +				ata_dev_info(&ap->link.device[i], "acpi: power was set to %d\n",
-> +					     enable);
-> +			else
-> +				ata_dev_info(&ap->link.device[i], "acpi: power failed to be set\n");
-> +		}
-
-Add a return here to avoid the else.
-
-> +	} else {
-> +		if (!is_acpi_device_node(ap->tdev.fwnode))
-> +			return;
-> +		handle = ACPI_HANDLE(&ap->tdev);
-> +		if (!acpi_bus_power_manageable(handle))
-> +			return;
-> +
-> +		if (!acpi_bus_set_power(handle, state))
-> +			ata_port_info(ap, "acpi: power was set to %d\n", enable);
-
-ata_port_debug(ap, "acpi: power %sabled\n",
-	       enable ? "en" : "dis");
-
-> +		else
-> +			ata_port_info(ap, "acpi: power failed to be set\n");
-
-ata_port_err(ap, "acpi: failed to set power state\n");
-
-Overall, this hunk is the same as what is done in the loop above. So maybe
-create a helper function instead of repeating the same procedure.
-
-> +	}
-> +}
-> +
->  /**
->   * ata_acpi_dissociate - dissociate ATA host from ACPI objects
->   * @host: target ATA host
-> diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-> index ff53f5f029b4..a52b916af14c 100644
-> --- a/drivers/ata/libata-core.c
-> +++ b/drivers/ata/libata-core.c
-> @@ -5899,11 +5899,32 @@ void ata_host_init(struct ata_host *host, struct device *dev,
->  }
->  EXPORT_SYMBOL_GPL(ata_host_init);
->  
-> +static inline void ata_port_set_power_state(struct ata_port *ap, bool enable)
-> +{
-> +	ata_acpi_port_set_power_state(ap, enable);
-> +	// Maybe add a way with device tree and regulators too?
-
-Drop this comment please.
-
-> +}
-> +
-> +/**
-> + * ata_dev_manage_restart - if the disk should be stopped (spin down) on system restart.
-> + * @dev: target ATA device
-> + *
-> + * RETURNS:
-> + * true if the disk should be stopped, otherwise false
-> + */
-> +bool ata_dev_manage_restart(struct ata_device *dev)
-> +{
-> +	return ata_acpi_dev_manage_restart(dev);
-> +}
-> +EXPORT_SYMBOL_GPL(ata_dev_manage_restart);
-
-Why the export ? libata-core and libata-scsi are compiled together as libata.ko.
-The export should not be needed.
-
-> +
->  void ata_port_probe(struct ata_port *ap)
->  {
->  	struct ata_eh_info *ehi = &ap->link.eh_info;
->  	unsigned long flags;
->  
-> +	ata_port_set_power_state(ap, true);
-> +
->  	/* kick EH for boot probing */
->  	spin_lock_irqsave(ap->lock, flags);
->  
-> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-> index 2ded5e476d6e..52297d9e3dc2 100644
-> --- a/drivers/ata/libata-scsi.c
-> +++ b/drivers/ata/libata-scsi.c
-> @@ -1095,6 +1095,7 @@ int ata_scsi_dev_config(struct scsi_device *sdev, struct queue_limits *lim,
->  		 */
->  		sdev->manage_runtime_start_stop = 1;
->  		sdev->manage_shutdown = 1;
-> +		sdev->manage_restart = ata_dev_manage_restart(dev);
->  		sdev->force_runtime_start_on_system_start = 1;
->  	}
->  
-> diff --git a/drivers/ata/libata.h b/drivers/ata/libata.h
-> index e5b977a8d3e1..28cb652d99bc 100644
-> --- a/drivers/ata/libata.h
-> +++ b/drivers/ata/libata.h
-> @@ -130,6 +130,8 @@ extern void ata_acpi_on_disable(struct ata_device *dev);
->  extern void ata_acpi_set_state(struct ata_port *ap, pm_message_t state);
->  extern void ata_acpi_bind_port(struct ata_port *ap);
->  extern void ata_acpi_bind_dev(struct ata_device *dev);
-> +extern void ata_acpi_port_set_power_state(struct ata_port *ap, bool enable);
-> +extern bool ata_acpi_dev_manage_restart(struct ata_device *dev);
->  extern acpi_handle ata_dev_acpi_handle(struct ata_device *dev);
->  #else
->  static inline void ata_acpi_dissociate(struct ata_host *host) { }
-> @@ -140,6 +142,8 @@ static inline void ata_acpi_set_state(struct ata_port *ap,
->  				      pm_message_t state) { }
->  static inline void ata_acpi_bind_port(struct ata_port *ap) {}
->  static inline void ata_acpi_bind_dev(struct ata_device *dev) {}
-> +static inline void ata_acpi_port_set_power_state(struct ata_port *ap, bool enable) {}
-> +static inline bool ata_acpi_dev_manage_restart(struct ata_device *dev) { return false; }
->  #endif
->  
->  /* libata-scsi.c */
-> diff --git a/include/linux/libata.h b/include/linux/libata.h
-> index 0620dd67369f..af5974e91e1d 100644
-> --- a/include/linux/libata.h
-> +++ b/include/linux/libata.h
-> @@ -1302,6 +1302,7 @@ extern int sata_link_debounce(struct ata_link *link,
->  extern int sata_link_scr_lpm(struct ata_link *link, enum ata_lpm_policy policy,
->  			     bool spm_wakeup);
->  extern int ata_slave_link_init(struct ata_port *ap);
-> +extern bool ata_dev_manage_restart(struct ata_device *dev);
->  extern void ata_port_probe(struct ata_port *ap);
->  extern struct ata_port *ata_port_alloc(struct ata_host *host);
->  extern void ata_port_free(struct ata_port *ap);
-
-
--- 
-Damien Le Moal
-Western Digital Research
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
+ee/fs/inode.c#n1190
+>
+> > The former can in turn observe I_NEW is cleared and proceed to use the
+> > inode, while possibly reading from not-yet-published areas.
+> >
+> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> > ---
+> >
+> > I don't think this is a serious bug in the sense I doubt anyone ever ra=
+n
+> > into it, but this is an issue on paper.
+> >
+> > I'm doing some changes in the area and I figured I'll get this bit out
+> > of the way.
+> >
+> >  fs/dcache.c               | 4 ++++
+> >  fs/inode.c                | 8 ++++++++
+> >  include/linux/writeback.h | 4 ++++
+> >  3 files changed, 16 insertions(+)
+> >
+> > diff --git a/fs/dcache.c b/fs/dcache.c
+> > index a067fa0a965a..806d6a665124 100644
+> > --- a/fs/dcache.c
+> > +++ b/fs/dcache.c
+> > @@ -1981,6 +1981,10 @@ void d_instantiate_new(struct dentry *entry, str=
+uct inode *inode)
+> >       spin_lock(&inode->i_lock);
+> >       __d_instantiate(entry, inode);
+> >       WARN_ON(!(inode->i_state & I_NEW));
+> > +     /*
+> > +      * Pairs with smp_rmb in wait_on_inode().
+> > +      */
+> > +     smp_wmb();
+> >       inode->i_state &=3D ~I_NEW & ~I_CREATING;
+> >       /*
+> >        * Pairs with the barrier in prepare_to_wait_event() to make sure
+> > diff --git a/fs/inode.c b/fs/inode.c
+> > index ec9339024ac3..842ee973c8b6 100644
+> > --- a/fs/inode.c
+> > +++ b/fs/inode.c
+> > @@ -1181,6 +1181,10 @@ void unlock_new_inode(struct inode *inode)
+> >       lockdep_annotate_inode_mutex_key(inode);
+> >       spin_lock(&inode->i_lock);
+> >       WARN_ON(!(inode->i_state & I_NEW));
+> > +     /*
+> > +      * Pairs with smp_rmb in wait_on_inode().
+> > +      */
+> > +     smp_wmb();
+> >       inode->i_state &=3D ~I_NEW & ~I_CREATING;
+> >       /*
+> >        * Pairs with the barrier in prepare_to_wait_event() to make sure
+> > @@ -1198,6 +1202,10 @@ void discard_new_inode(struct inode *inode)
+> >       lockdep_annotate_inode_mutex_key(inode);
+> >       spin_lock(&inode->i_lock);
+> >       WARN_ON(!(inode->i_state & I_NEW));
+> > +     /*
+> > +      * Pairs with smp_rmb in wait_on_inode().
+> > +      */
+> > +     smp_wmb();
+> >       inode->i_state &=3D ~I_NEW;
+> >       /*
+> >        * Pairs with the barrier in prepare_to_wait_event() to make sure
+> > diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+> > index 22dd4adc5667..e1e1231a6830 100644
+> > --- a/include/linux/writeback.h
+> > +++ b/include/linux/writeback.h
+> > @@ -194,6 +194,10 @@ static inline void wait_on_inode(struct inode *ino=
+de)
+> >  {
+> >       wait_var_event(inode_state_wait_address(inode, __I_NEW),
+> >                      !(READ_ONCE(inode->i_state) & I_NEW));
+> > +     /*
+> > +      * Pairs with routines clearing I_NEW.
+> > +      */
+> > +     smp_rmb();
+> >  }
+>
+> Why is this needed as nobody cares I_NEW after wait?
+>
+> >
+> >  #ifdef CONFIG_CGROUP_WRITEBACK
+> > --
+> > 2.34.1
 
