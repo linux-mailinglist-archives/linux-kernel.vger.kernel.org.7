@@ -1,185 +1,146 @@
-Return-Path: <linux-kernel+bounces-842985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03CBCBBE226
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:04:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60398BBE22F
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CB473BF952
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:04:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 686B23A2017
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CF928CF7C;
-	Mon,  6 Oct 2025 13:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD5028D850;
+	Mon,  6 Oct 2025 13:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SvV7V9yZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DUc3bel/"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934B228AAEE;
-	Mon,  6 Oct 2025 13:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3383C28CF6B
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 13:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759755848; cv=none; b=TNU5Z7lEw5J2BAmFKMEVQnndkiQlhxGl9w016zABZ3OvnQ2RWq9QDMWSyO4sJQKMRsdaHZhRlnfUsbcnp6MnChRcuXu616nyVTCJJaU4gMo41t7uTPHQMaL1bO/ezfUjGfj69seoglbXQGlAbBscPmEKZVOfzMy6/ihz2JFoKVc=
+	t=1759755918; cv=none; b=pjpXsJO5wlDL5oN3Z4sYWbbA2rOuTjfcHGwnpATQlFU5uPSYgm5cItxmcjGJaift4yqjUDoYt+QqMxrIusWVFvQbKkLnrQuJRO92vk+8DX+GxZyz1hWa42UyiZs4QBlvXSlRyCNCYVeBpkfVfOvSoG/lGzEb1v9nLaTmH2abGTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759755848; c=relaxed/simple;
-	bh=WSc5N/iAmPiV35Hsw0XqC+hCf7iMvLKfpL2U3kMvVDI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HANI0rGSERZ3mGQxtxQ9XuVbPS7AdqlUrTCYNW2Tc34GgZTMkz5IslHF3h1wB7oRYgKqq894RizOHdZoDOF/y9VGqt6lxHPrXVrPaB84bF0gjnAyz52ubhh5sT27WAdAbarli78G51B8pA+RIWN/9wix0c78mM+tHdI5GBGm5IY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SvV7V9yZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F78DC4CEF5;
-	Mon,  6 Oct 2025 13:04:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759755848;
-	bh=WSc5N/iAmPiV35Hsw0XqC+hCf7iMvLKfpL2U3kMvVDI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SvV7V9yZ+2xYX8o3g05bKrYskbBcBtqdVMjjhiWSLd6EDBy2I6NoozVssVhg+Q14W
-	 O1o2CRLjvWfCjEeBc8hVyS/Y4seu7z0Z+oOTPShoLBx2+LFuFu1VROB1ySBQUhyK54
-	 kRoF/B3Kef2VH85nm251E659Qc45CijQ9youUzsNQwzlZ+B50WCKTMhXoUDvmBZiZV
-	 b47wUVsDB0pIB7dgvK8m2yWXh0XtbqZmWlfgW+A+X8EfQffHrQa0EbDCLYXts1fTMQ
-	 uYI4viMzl8R7LOWMlWlEqOTQnflvUrgb3kGq0ruC07W8+5GHYjMFdUAM2uJdoLb8Gp
-	 AGJooiDW2vIDA==
-Message-ID: <b94d8ca3-af58-4a78-9a5a-12e3db0bf75f@kernel.org>
-Date: Mon, 6 Oct 2025 22:03:59 +0900
+	s=arc-20240116; t=1759755918; c=relaxed/simple;
+	bh=S7lyBttrPJPkijgbApllX7uKgB3U2ULIQxLT+nP03f0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qtvMVR8OpE8zPtUelcyPlDKuK2e6GcUTNbnkbiJRgo6xNMcbvvI3ygmp77Jrr9DAB57xKqH8dIruDan8OBYs5kdpPUVjVZbKRUTwmQH4XChd7+F2S+jsgEFsphKx3lXHhvJJipLAd0uSpv3yI4Qf2HSExRN1PISpP94YXoT9/U8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DUc3bel/; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 686894E40F1D;
+	Mon,  6 Oct 2025 13:05:14 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 3FBC4606B7;
+	Mon,  6 Oct 2025 13:05:14 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0F3F5102F1D61;
+	Mon,  6 Oct 2025 15:05:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1759755913; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=JegcGv/k2YQkWxBfURfNq4FiXRA/L/54pqYZ6jCrdts=;
+	b=DUc3bel/JP4lBxMuMOn+vV/kxtk4Yi9sI3SSr/iGUh/vUYL55T5No+J1EVQ7xN0hduU/9w
+	OjrvAmUKteej+EhhuVXeVF+FxBYcYOccXeLMeh0Probd4NcjLQyv58z9bBbhuDegbVkemJ
+	j08zB1aYCnhcGkSed/1Y0N8r0O5L7Ig6/qWUaqvGUj8WfFzzm6I1Ic0OIXf9WpguSlS6cM
+	0rNeX3JQfiPUCSTAXzSEC/ohYMydAMpcw8dxfJdV5600vz3HavFkVXRwrNsZd3QGwzH0N+
+	5xCzKNhVKlylQ/VjYpcL7oH2Zt59xsVKOnDFuPi96Rpd3wP6k9eE6qFYM/pNSw==
+Date: Mon, 6 Oct 2025 15:05:05 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Thomas Wismer <thomas@wismer.xyz>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Thomas Wismer <thomas.wismer@scs.ch>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] net: pse-pd: tps23881: Add support for TPS23881B
+Message-ID: <20251006150505.643217e8@kmaincent-XPS-13-7390>
+In-Reply-To: <20251004180351.118779-6-thomas@wismer.xyz>
+References: <20251004180351.118779-2-thomas@wismer.xyz>
+	<20251004180351.118779-6-thomas@wismer.xyz>
+Organization: bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] watchdog: Add driver for Gunyah Watchdog
-To: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>
-Cc: hrishabh.rajput@oss.qualcomm.com, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-References: <20251006-gunyah_watchdog-v2-1-b99d41d45450@oss.qualcomm.com>
- <3b901f9d-dbfa-4f93-a8d2-3e89bd9783c9@kernel.org>
- <a7633abf-0005-423b-b152-e8c70aa5c27a@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <a7633abf-0005-423b-b152-e8c70aa5c27a@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 06/10/2025 19:03, Pavan Kondeti wrote:
-> On Mon, Oct 06, 2025 at 05:56:42PM +0900, Krzysztof Kozlowski wrote:
->> On 06/10/2025 16:37, Hrishabh Rajput via B4 Relay wrote:
->>> +
->>> +static int __init gunyah_wdt_init(void)
->>> +{
->>> +	struct arm_smccc_res res;
->>> +	struct watchdog_device *wdd;
->>> +	struct device_node *np;
->>> +	int ret;
->>> +
->>> +	np = of_find_compatible_node(NULL, NULL, "qcom,kpss-wdt");
->>> +	if (np) {
->>> +		of_node_put(np);
->>> +		return -ENODEV;
->>> +	}
->>> +
->>> +	np = of_find_compatible_node(NULL, NULL, "arm,sbsa-gwdt");
->>> +	if (np) {
->>> +		of_node_put(np);
->>> +		return -ENODEV;
->>> +	}
->>> +
->>> +	ret = gunyah_wdt_call(GUNYAH_WDT_STATUS, 0, 0, &res);
->>> +	if (ret)
->>> +		return -ENODEV;
->>
->> No, your hypervisor driver (which you have) should start the module via
->> adding platform/aux/something devices. Now you are running this on every
->> machine, which is clearly wrong...
->>
-> 
-> This is a good point. Thanks for bringing it up. We don't have a
-> hypervisor glue driver (yet!) that can add an aux device. Based on v1
-> feedback, we would like to be a standalone module that can self discover
-> gunyah hypercall interface.
-> 
-> Currently this driver depends on ARCH_QCOM || COMPILE_TEST. So,
-> technically this can be built and loaded on all non-Qualcomm machines.
+On Sat,  4 Oct 2025 20:03:51 +0200
+Thomas Wismer <thomas@wismer.xyz> wrote:
 
+> From: Thomas Wismer <thomas.wismer@scs.ch>
+>=20
+> The TPS23881B device requires different firmware, but has a more recent R=
+OM
+> firmware. Since no updated firmware has been released yet, the firmware
+> loading step must be skipped. The device runs from its ROM firmware.
+>=20
+> Signed-off-by: Thomas Wismer <thomas.wismer@scs.ch>
+> ---
+>  drivers/net/pse-pd/tps23881.c | 65 +++++++++++++++++++++++++++--------
+>  1 file changed, 51 insertions(+), 14 deletions(-)
+>=20
+> diff --git a/drivers/net/pse-pd/tps23881.c b/drivers/net/pse-pd/tps23881.c
+> index b724b222ab44..f45c08759082 100644
+> --- a/drivers/net/pse-pd/tps23881.c
+> +++ b/drivers/net/pse-pd/tps23881.c
+> @@ -55,8 +55,6 @@
+>  #define TPS23881_REG_TPON	BIT(0)
+>  #define TPS23881_REG_FWREV	0x41
+>  #define TPS23881_REG_DEVID	0x43
+> -#define TPS23881_REG_DEVID_MASK	0xF0
+> -#define TPS23881_DEVICE_ID	0x02
+>  #define TPS23881_REG_CHAN1_CLASS	0x4c
+>  #define TPS23881_REG_SRAM_CTRL	0x60
+>  #define TPS23881_REG_SRAM_DATA	0x61
+> @@ -1012,8 +1010,28 @@ static const struct pse_controller_ops tps23881_op=
+s =3D {
+>  	.pi_get_pw_req =3D tps23881_pi_get_pw_req,
+>  };
+> =20
+> -static const char fw_parity_name[] =3D "ti/tps23881/tps23881-parity-14.b=
+in";
+> -static const char fw_sram_name[] =3D "ti/tps23881/tps23881-sram-14.bin";
+> +struct tps23881_info {
+> +	u8 dev_id;	/* device ID and silicon revision */
+> +	const char *fw_parity_name;	/* parity code firmware file name
+> */
+> +	const char *fw_sram_name;	/* SRAM code firmware file name */
+> +};
+> +
+> +enum tps23881_model {
+> +	TPS23881,
+> +	TPS23881B,
+> +};
+> +
+> +static const struct tps23881_info tps23881_info[] =3D {
+> +	[TPS23881] =3D {
+> +		.dev_id =3D 0x22,
+> +		.fw_parity_name =3D "ti/tps23881/tps23881-parity-14.bin",
+> +		.fw_sram_name =3D "ti/tps23881/tps23881-sram-14.bin",
+> +	},
+> +	[TPS23881B] =3D {
+> +		.dev_id =3D 0x24,
+> +		/* skip SRAM load, ROM firmware already IEEE802.3bt
+> compliant */
+> +	},
 
-Not technically, but practically. We do not make single-platform kernels
-anymore, it's not 2010. Entire arm64 is multiarch.
+You are breaking Kyle's patch:
+https://patchwork.kernel.org/project/netdevbpf/patch/20240731154152.4020668=
+-1-kyle.swenson@est.tech/
 
-> 
-> We can make the STATUS SMCC before looking for the other watchdog
-> devices and fail early.
-> 
-> Our Gunyah glue driver [1] do make SMCC call to establish that we
-> are actually a guest under Gunyah. Since our intention here is to
-> support watchdog on as many as platform as possible, it is better not to
-> tie this with glue driver and make it a stand alone and self discovery
-> module.
+You should check only the device id and not the silicon id.
 
-
-I think you should have only one driver pinging for Gunyah, so glue
-driver or this. Not both. If you add such SMC here, then how do you
-determine the platform in the glue driver? Via DT? Then DT supersedes this.
-
-> 
-> If this is not an acceptable solution (Please let us know), we can find other 
-> ways to limit it to only work on Qualcomm machines. For ex: Socinfo
-> platform device is added from SMEM driver which make it only probed on 
-> Qualcomm machines. We can look into this. 
-
-
-To me socinfo feels even better. That way only, really only qcom devices
-will execute this SMC.
-
-Best regards,
-Krzysztof
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
