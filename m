@@ -1,136 +1,123 @@
-Return-Path: <linux-kernel+bounces-843388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 237AFBBF14A
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 21:15:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A0D8BBF151
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 21:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B87E0189AA23
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 19:15:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD8603BD90D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 19:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79E4253355;
-	Mon,  6 Oct 2025 19:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118621DF254;
+	Mon,  6 Oct 2025 19:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TS5rdk6C"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TE2t7rHO"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DB42DF12E
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 19:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113C4227563
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 19:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759778071; cv=none; b=MQoP42susQSF2V9NH+lEeGE9Kkm9BDzTnhbxX2yETLkIOv7rAnMPVBvCMtW0PjWynoxy26uzOM+aJu1UNBwsHROGIVMmvYXqwYmhSBi2Yri40I4gS35jkOw77VgIReK7kM0TsMhiplTkg45ypna/0PIu75xDv10m+na6ubOgRuI=
+	t=1759778222; cv=none; b=WB0iRm2z53GYyvf/SL581WqS/z4QuDezGKSqKc5ERLw+WR0ZOqOqwNPTmuXOQH+2qIReXWcgoxEvqAb4Wx9AZPJ9ONta7N0VOz66uhdRhIP5yz4fXPjL39IvFWRSRkvZ0FV4c7ef4AKrevbSgdCuAlJ8L0If8N3Uv4RNspnmTD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759778071; c=relaxed/simple;
-	bh=drAafvzz1pDZDG8f4ieZYxlF0QAwe5Jk7b+PINMyv8A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E0gD5saBDBEU1MR2x6s0Ib2nx1SJMDOnmIuuHnr1XobVwCu45oA9k3afglKaHncyMf87yfgFBuGFmSI52Aces7z1M4VD1S/oOJB+Ts1ENyNjFI+snGD8jHDPMI+CRf309w0ZMseWu77AW8aZYD5RyFPp7wZIyf7rlSNo/H59zVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TS5rdk6C; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-42420c7de22so2986273f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 12:14:29 -0700 (PDT)
+	s=arc-20240116; t=1759778222; c=relaxed/simple;
+	bh=cM60IkBOfzroK8/Hzvuzyt9qlRtbHMsJ/OSo9179Sq0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=N5rm0GaEYd4Cdt7ed/cCpWGd08UN1/Glfn2z0rSHcfdZrwyu7qzW0nZTfqeyzQqJkzYOAx+rUayHoh0Oa9DYS7TlyHaZR0cEwHDNU4kd5LGgPtXJGkxcVLz5/z7Ydl13UTNNCscnyyvHjRgW6gKEoJAOn9w2iPxqF0g/NKgoBq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TE2t7rHO; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b62b7af4fddso2392956a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 12:17:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759778067; x=1760382867; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cMtkl73qHUTB2Otzy8qJpuGWoZM+8mVXxqiE2cfrzu8=;
-        b=TS5rdk6CL2Ly+KN2AmI2KwS/sciwWsgldDADj5vFD4ljHoZbeu0LJAcWsVug6g7/q+
-         1+Y6zZSpUTurhcUBs0vnN2xKWEb0LM8gfcm63VZHvT4yvmOa8xWETflijTXcGtkzXIIg
-         5cmFuRR0TSojrKUARZE1P6NZC01vBpr6PojHyLyHBZhTUbS3knFvlXdyK6c8Iq1cWPgI
-         DDR3CSiFQ8HXxqESzIBnT/FFu2JjzMg5e874920OlDtwAbjuRrxASPOmB2f0UkrF+Yz7
-         CWWPmESL8sXRUt/A9Rvp3eorqHMpEtuAcN6GFoOk81n7+yIXeOWolF+VWh/8PEL3A5Qe
-         kiHg==
+        d=google.com; s=20230601; t=1759778220; x=1760383020; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UmP4P4nLLPuVhrMlePaQHRElG0BD9VdigM6MdStk+fU=;
+        b=TE2t7rHOVPb0OBN8svNnP6LY+cJXj2jyZBEYy1ljGiQLaiHX/Pt3U2gRJgynz2IFzQ
+         3h17ZJp2tLA16kvmUjVSf4pzX+WhuUAe2cgmUQXHiky6URyU+1NgDcPILwALgOjpAB+N
+         pB/F9jQBbBkLBPIcVdPuk456KmszUQHeQnybTlMn9Tl9HF2fv+gRFg4ZfR/0PSsIfxGp
+         j6v91Fxm3MwFV56dVWkOQ0FP7J7ea2PX8RmkyDQeSABj0IjQSLc/ZCOQxQNhOtMTrI2m
+         pPPVrU1lptz63wBFZIBEaAdbsUKbK0td5gscTTxR0HObsDnXgzY3uUK7x+7s/xTtdBSH
+         r0pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759778067; x=1760382867;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cMtkl73qHUTB2Otzy8qJpuGWoZM+8mVXxqiE2cfrzu8=;
-        b=c/tU+7fMQPyR+21yGaj0VI72XE0NXrHif9mmWJwkAZA7ixmT17T5cE2tcAe5up8QVO
-         joGdrsj+6BthdTZ09TauW+oeNlbNZU5VtiVDN538KyPnih5qTpS3dSLA/JQphHPh1LFV
-         nvs7knYsznSqHMNUPwzRujMBXIYKehUoh7Rk98yWwEBa26R3CScF4h0x7nxFE8HsO9e4
-         uAmBXc4FIhEDU/6jNWbhi/F6z7lzzm+4WENbJEz4Q0Fr1GyGR00Wvp4x6iqhxPE7G5sW
-         eY3lUcp1Us9nOgqdMOSsfWffz4fC5JqgfZmBqSRPAEOuXLwGbfIj/8r7gXtpv8Gdi8fa
-         9y+g==
-X-Gm-Message-State: AOJu0YwI2gqKyynUGuWEX+DUh1s4p5mceg10TU5NKYTlOmjbK5IwbA1i
-	ZAPHalpSTUdn8CWvBGpjORmAecPJN5W4PFyrp00+FczXmqJpGTC70tnm0WwTcQ==
-X-Gm-Gg: ASbGncsT7w63yV2zyBjuEjiddJqrjEkOIHUU4x0ryEzejoYUz5hQtwKfqtMY6F3Bfoj
-	ONNkSZA0+ZBCBvkqq/tt5tyCek72UqQ9799rDCRND4zfzlivX7CHm6fyMGdx5kOsE4pq+fT355Y
-	mEfUIP2CCygPb8+1tqXdAuKbOda6fFqGsNviLl8c2xxPVactHTlV38G9FF07LlxU4pYRVKvfvMe
-	PpHu7Yo0udLt+TZZ09mzsOkCZkZR8YOCj/612OMtiH1dLHz1z4roo05bv97wyJT79OPI7nzrbKe
-	GASEb7/EBmSs5vIfwoDr3IgBeQe70A3VcwRiSOUzNULP3bTYz1JLEnXfwi8tp4XA13CpmgqdaRe
-	7cL0Vq8bA0mNz71DI7HK6fT6R2fzeRWJVvEpwu7XWgKoQw2WTaUCulrhV2w==
-X-Google-Smtp-Source: AGHT+IHibl08k4JzpelLWXkVQvkZeAeMW83AzZ6iy5srSLOqcaI281FxHivtIMxMcy0ldDFLMpiz0Q==
-X-Received: by 2002:a05:6000:2dc3:b0:3ec:b899:bc39 with SMTP id ffacd0b85a97d-425671aaf41mr8629761f8f.58.1759778067482;
-        Mon, 06 Oct 2025 12:14:27 -0700 (PDT)
-Received: from fedora ([154.182.208.105])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4256866060fsm16646435f8f.14.2025.10.06.12.14.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 12:14:27 -0700 (PDT)
-From: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org,
-	Mary Guillemard <mary@mary.zone>,
-	Faith Ekstrand <faith.ekstrand@collabora.com>,
-	Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>,
-	Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	nouveau@lists.freedesktop.org
-Subject: [PATCH 5/5] drm/nouveau/drm: Bump the driver version to 1.4.1 to report new features
-Date: Mon,  6 Oct 2025 22:13:28 +0300
-Message-ID: <20251006191329.277485-6-mohamedahmedegypt2001@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251006191329.277485-1-mohamedahmedegypt2001@gmail.com>
-References: <20251006191329.277485-1-mohamedahmedegypt2001@gmail.com>
+        d=1e100.net; s=20230601; t=1759778220; x=1760383020;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UmP4P4nLLPuVhrMlePaQHRElG0BD9VdigM6MdStk+fU=;
+        b=T7mxD41SYTRyTL90dzS6WOA0zGQKZplwL0bT3BG2/AAo9JX2/XG6l9gNZo764Ad6MA
+         KRp4BX6dSKMpLL+GJtkwtNMa9WSm1Xk2Pxq+d+L4ZYMjHzWd/a7OL3HUmfZtFVIdrGtc
+         PKONJaPCYVAw9Cwcy8l6hdIaRdKzUJZJ/FXvs8pK2dplJCXl/omE1RyRIiF6JjpPm5Pm
+         iHQPxypdmm0Jqdx1dlk08g97yk23ZIBih8xbw5eyqWJ5a6hBUtRMQgmxlTyEX37Ie1mc
+         tBLt5uabEqJfW6IquswxuMScjSjkhWXciE/pAVb0G76em7PGWpIq6XwiNuQ0zx1aXhjc
+         J8KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUPlwf6BPWrvprAHNFgLvMrq3CWzhEdnn3Duud4crHyHAunxDIZC+iarqDvPYDE61zU3l+GOAEzivKFwTo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCrVsWz52zoN4bwExlN7qNewjQjVslpQ45SlIf5TPomdGOYraV
+	3IgQgcXhzM7Fx12xRopgNKR1RfTF/cC5jHLD/WLdB33VwDuVBCK54piMbTRziMSrqK5WyIII/ug
+	13R6DalzYv791fYyU5Dk70RtKFg==
+X-Google-Smtp-Source: AGHT+IFyvieDVAJzpWWfH+/pCoaAH28kEGEsXDjiF6l+kpgp/Oi5CGPOiOvnSAUYzLGP6ggwRAbOwNW8BRrqhE15cA==
+X-Received: from plau17.prod.google.com ([2002:a17:903:3051:b0:27e:ed03:b5a5])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:903:11c6:b0:262:79a:93fb with SMTP id d9443c01a7336-28e9a61a8a9mr128039295ad.32.1759778220362;
+ Mon, 06 Oct 2025 12:17:00 -0700 (PDT)
+Date: Mon, 06 Oct 2025 12:16:58 -0700
+In-Reply-To: <20251003232606.4070510-2-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20251003232606.4070510-1-seanjc@google.com> <20251003232606.4070510-2-seanjc@google.com>
+Message-ID: <diqzplazet79.fsf@google.com>
+Subject: Re: [PATCH v2 01/13] KVM: Rework KVM_CAP_GUEST_MEMFD_MMAP into KVM_CAP_GUEST_MEMFD_FLAGS
+From: Ackerley Tng <ackerleytng@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-This is so that NVK can enable compression for kernels that support it and
-avoid cases where an older kernel would MMU fault when a newer mesa would
-try to use compression.
+Sean Christopherson <seanjc@google.com> writes:
 
-Signed-off-by: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
----
- drivers/gpu/drm/nouveau/nouveau_drv.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> Rework the not-yet-released KVM_CAP_GUEST_MEMFD_MMAP into a more generic
+> KVM_CAP_GUEST_MEMFD_FLAGS capability so that adding new flags doesn't
+> require a new capability, and so that developers aren't tempted to bundle
+> multiple flags into a single capability.
+>
+> Note, kvm_vm_ioctl_check_extension_generic() can only return a 32-bit
+> value, but that limitation can be easily circumvented by adding e.g.
+> KVM_CAP_GUEST_MEMFD_FLAGS2 in the unlikely event guest_memfd supports more
+> than 32 flags.
+>
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drv.h b/drivers/gpu/drm/nouveau/nouveau_drv.h
-index 55abc510067b..9983dc57efc5 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drv.h
-+++ b/drivers/gpu/drm/nouveau/nouveau_drv.h
-@@ -10,7 +10,7 @@
- 
- #define DRIVER_MAJOR		1
- #define DRIVER_MINOR		4
--#define DRIVER_PATCHLEVEL	0
-+#define DRIVER_PATCHLEVEL	1
- 
- /*
-  * 1.1.1:
-@@ -35,6 +35,8 @@
-  *        programs that get directly linked with NVKM.
-  * 1.3.1:
-  *      - implemented limited ABI16/NVIF interop
-+ * 1.4.1:
-+ *		- add variable page sizes and compression for Turing+
-  */
- 
- #include <linux/notifier.h>
--- 
-2.51.0
+I know you suggested that guest_memfd's HugeTLB sizes shouldn't be
+squashed into the flags. Just using that as an example, would those
+kinds of flags (since they're using the upper bits, above the lower 32
+bits) be awkward to represent in this new model?
 
+In this model, conditionally valid flags are always set, but userspace
+won't be able to do a flags check against the returned 32-bit value. Or
+do you think when this issue comes up, we'd put the flags in the upper
+bits in KVM_CAP_GUEST_MEMFD_FLAGS2 and userspace would then check
+against the OR-ed set of flags instead?
+
+Reviewed-by: Ackerley Tng <ackerleytng@google.com>
+Tested-by: Ackerley Tng <ackerleytng@google.com>
+
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  Documentation/virt/kvm/api.rst                 | 10 +++++++---
+>  include/uapi/linux/kvm.h                       |  2 +-
+>  tools/testing/selftests/kvm/guest_memfd_test.c | 13 ++++++-------
+>  virt/kvm/kvm_main.c                            |  7 +++++--
+>  4 files changed, 19 insertions(+), 13 deletions(-)
+>
+> 
+> [...snip...]
+> 
 
