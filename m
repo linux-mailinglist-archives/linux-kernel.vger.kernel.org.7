@@ -1,143 +1,159 @@
-Return-Path: <linux-kernel+bounces-842713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A837CBBD5FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 10:43:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34291BBD605
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 10:45:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C866B3AB3F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 08:43:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC0841894E29
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 08:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17D4262FD2;
-	Mon,  6 Oct 2025 08:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950CB25A34F;
+	Mon,  6 Oct 2025 08:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cJ8YUCzB"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="W4W8E3MD"
+Received: from outbound.qs.icloud.com (p-east3-cluster2-host11-snip4-10.eps.apple.com [57.103.87.241])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B618D25C818
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 08:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFDF719FA8D
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 08:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.87.241
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759740216; cv=none; b=DNFxciukKz3zqjs7DzMKZaje5SbScnwSZypptTDWYzcO8SGoTVbJ5jH9C6TJ2MREnraglH/8JiBofCJIytcNxYTM8zpGqgp6x5bDgAs7XSrGFF56t87slOa6701i/O8zdCKqYlxhMU3o/TajXaynrzjDt6vumMPw6TL/ScG9a80=
+	t=1759740313; cv=none; b=SUiY8gZZsJmQeEa3uuNPCUGgQIs8wabZ+Jf9xonmLk9oPN5U/tArkA7rsB9KYNNgpHzTSN78fqWs8B3wlrL7o24ZftanFJ/mdUi1w+hOOHhEm2NVIS1L+q0ocH8g10ZIdLzUyFpIToq0+wTLoNjLL0M2WkMHZ1mNnuziTi9BNew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759740216; c=relaxed/simple;
-	bh=0rqNTIzuAUmGUZmDFajGT6N8yRPrwxMpdo1LXU+gh4k=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=rE4S0y41cE6lrv9XBXqdGuApLzuEsmqDPQJK6QIS36w3FR2jbgT7QabqZgjEJ84yTk3/JEPB1htQIyPsfqtyU9P9uhsC9PNFW9zehpSehThefIpejwNaIyT5G5a+Oe22OXQ5wVbXGySNug47mi2TnywtFQloMnKbCw2DgkSdcG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cJ8YUCzB; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-27d4d6b7ab5so65869615ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 01:43:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759740214; x=1760345014; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XbkOLsSeEc4de19QVHiox7c6UUo78PKyegeBXplGkhg=;
-        b=cJ8YUCzBb5G9PfkgAPSMa4Iy5wp8EC8wwtX5dLd6yab9UyLYGfLtlB13fZ8tkOPFCj
-         SsafTvLDf8M7ksnNllYQlRCCChJ5rrr0dDGXTAb0Ujq2BYRjhlDiWNEyOKNWN7t5mtzf
-         oyKYAh525eoDu59Xd/ecekpQkJUuh0Uzbz5rrcSnAyvVda3GKVch8xj5XeQfGGqDTuq2
-         wGgq82HHwMo8gpuB+CEk5x9Ri3FmQY4vlAHAcQ3gaa/mXcc471cdwegDcl6PFUGx2axn
-         pRprrRAUGmyvYb+BE0GTSVrGay2gZa+hhYgmHtMAzg/PRe2Pydl6H7cUB+jJwS/WbZq8
-         3rIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759740214; x=1760345014;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XbkOLsSeEc4de19QVHiox7c6UUo78PKyegeBXplGkhg=;
-        b=PqGje9idBSYDTBmZ9x4ox85bsOpwRIxwFLkQ0iAEARb7nMqNORFI0fGe7QHP1+WhPs
-         G0c4rkTLc5990nGe1hcvfhbLpFCWVKiLus/cSlI8hKtIkc8xM+O68dR4+7Bkp75HLR2W
-         hrVzh+cRgMBp82iJEyRR0iq1gTD+LnMGGLsfDSbj/Ypo0CKMmsbHquVVs2e/w2bsix8F
-         IKcyE8GYP7I4cDCselq+G3GBJ/oPDy4I/MilJl8jn4KrRSyl65HV4QlIngfGdWMcz9JK
-         ATgSrIuSrY29c6PS6k35lg2/4cR1F1dWlSIEvhgBki17KLlpcaBRYpIdUGaqk77E3cS4
-         gxvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDBg6FSD3ddvnOQyjyyuB/RTN7W4KisZqEF1oeI5CGKmsTo4kNsABzLJeIaV8nx7PA5XbLiyETZrrz/Q8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB7IhQNBtekTSfvFzKtejDt2iQ1789+XWHTohePluAAsUEaf6I
-	j9XYF67iTelzd5UEc7KXG74Vk3Ie514fgVn/tWrY2fwdce4cZ7GIouIVLI+oApjASO5r1tH7mHc
-	qvrhczS0S6ZmBIaIQHPMG7b63U+Rzv18Tqc1WZVs5zg==
-X-Gm-Gg: ASbGnctWWIaj/K2v7XBfZSf95vtLzvqIQ/4PXf8eXA+RiQd+d5Cr7qP2Cfz1TQRgQ7I
-	w3mChGUTYBIMiv02GXJigrKDxLeZABIMddMJTZ98UKGKicfZ5ZtgF0Gw3QkZszsO//XNm002lag
-	2D7APMnurmD6CY+ulBAToc4TrqiGjjbHfucPRW1Mnn+32uevjuCJi4bHq/LlMTWBaf+5JMkuG4P
-	l3AH9lQ7Tkt90rAsxExHeSEFRinT9z3o+7rf3QC1OZVVZ/dgtDUgXYQdg81MdnvC8zI+o+D3D/y
-	U4f/tBTmXoSnCB65pjTxIaS+c9IKM+D+JyYK8r6c9ho1Pw==
-X-Google-Smtp-Source: AGHT+IG70fTPRSenFkY+h0Ci4bsOWclGRtd5+NQm5QtlMXDZUWAfWyV7v3HpmAz+QpEftxA1fNt3+ZAYzqOOG5usHHU=
-X-Received: by 2002:a17:903:2f4c:b0:27e:d4a8:56ad with SMTP id
- d9443c01a7336-28e9a6a2eb6mr138892325ad.61.1759740213842; Mon, 06 Oct 2025
- 01:43:33 -0700 (PDT)
+	s=arc-20240116; t=1759740313; c=relaxed/simple;
+	bh=0y/tJlB/QNLH4JSDNiH1J3b9lD764Sm6vYuI9bPdIJk=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=glqgfM1x7ko0Sb4Po2VNpyzyJl8O+fQ/mwJC9F//a03dpwckWmny2EE5p2wnpoyhoFxKUIfO4gSoZUp1EsVJEAZwzVlU0h/crvdWa/uvzTLN5GBeJRyHs96Z44wVUVE4ppVtKWbAoN4B1VMPo1vdr07Mnm3gwuyKsY7F8WqvwR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=pass smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=W4W8E3MD; arc=none smtp.client-ip=57.103.87.241
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ljones.dev
+Received: from outbound.qs.icloud.com (unknown [127.0.0.2])
+	by p00-icloudmta-asmtp-us-east-2d-60-percent-11 (Postfix) with ESMTPS id D10771800146;
+	Mon,  6 Oct 2025 08:45:05 +0000 (UTC)
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; s=sig1; bh=NmmJuRpnjEPHFy7rpKMyL+ir1ct/FIcWdYPmbJcFT1I=; h=Content-Type:Mime-Version:Subject:From:Date:Message-Id:To:x-icloud-hme; b=W4W8E3MDR+B0RW3BzZ72jAt2W8UJbELyEV8y3bPw0cm4H6HG6QBN9N12Hcg7KWK8AAIeJjg9L8sKDeuv7UA8ZfQF/QZ3tZtfTvXojf5BuVxnynYEze+IPgDYhg5i8xIKii3d4D1DzXblz4smE6/FfQ4nD8+ROgGmmZBMYEpryNePyWw6OVFf7N6GXOthyOky0dih6HgLwOUYYnOws5zfRkzSGVBSMsyOUYnlyx5I4A4hJCL/hQopbOwOTkWQMlh8bWt4WiI1I7V2US8fgBTXtFdUSag6pUaEyBT9wqnBzkYtn7BLVtw7M/I8WQ7MGalRhVhz8g+tRmvB+zcOJHNg+A==
+mail-alias-created-date: 1566896761000
+Received: from smtpclient.apple (unknown [17.57.155.37])
+	by p00-icloudmta-asmtp-us-east-2d-60-percent-11 (Postfix) with ESMTPSA id A27EF180017A;
+	Mon,  6 Oct 2025 08:45:03 +0000 (UTC)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Mon, 6 Oct 2025 14:13:22 +0530
-X-Gm-Features: AS18NWA6yLhMUIQR5RWLa0LAv-ggCbP2Rb4RY4ONcT6ZxSvFVMy57u3jDGKEbJ4
-Message-ID: <CA+G9fYsZvF1f25x10oL=Gs=+f_AFmaUFtUT8Qs1bXugEaJeoMA@mail.gmail.com>
-Subject: next-20250102: arm64: gcc-8-defconfig: Assembler messages: Error:
- unknown architectural extension `simd;'
-To: linux-rdma@vger.kernel.org, Netdev <netdev@vger.kernel.org>, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Patrisious Haddad <phaddad@nvidia.com>, Michael Guralnik <michaelgur@nvidia.com>, 
-	Moshe Shemesh <moshe@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
-	Ben Copeland <benjamin.copeland@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.200.33\))
+Subject: Re: [PATCH] MAINTAINERS: add Denis Benato as maintainer for asus
+ notebooks
+From: luke@ljones.dev
+In-Reply-To: <ebe38602-1832-391f-b043-cae0c10d7e30@linux.intel.com>
+Date: Mon, 6 Oct 2025 10:44:51 +0200
+Cc: "Mario Limonciello (AMD) (kernel.org)" <superm1@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Hans de Goede <hansg@kernel.org>,
+ Denis Benato <benato.denis96@gmail.com>,
+ LKML <linux-kernel@vger.kernel.org>,
+ platform-driver-x86@vger.kernel.org,
+ Armin Wolf <W_Armin@gmx.de>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <E7993E86-3805-4E93-A714-0D4A33FBA759@ljones.dev>
+References: <20251003184949.1083030-1-benato.denis96@gmail.com>
+ <46762a7e-e8cb-45fb-8d62-062915133463@kernel.org>
+ <36720829-6ba3-4178-952c-4236622edfa2@kernel.org>
+ <ebe38602-1832-391f-b043-cae0c10d7e30@linux.intel.com>
+To: =?utf-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+X-Mailer: Apple Mail (2.3864.200.33)
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA2MDA2OSBTYWx0ZWRfX9Oc5lSQNey2f
+ BEp9lPvBCGvD5GzEkVrIoNvhr6xSc2+o5GqBEA8If1HjVoGQgmJqu3NakWbh/ZpNYbCFhWyC3aV
+ TTWMFr50uQMwJheImHd4QV3jWiK6v+c6h4SK67G/UCWXgFRqKoxRmIV0GlgsV+9syPbMdNHswA7
+ p/bWTaRpDjumSv4FcSxMcr+iq5iit++4slFMhqUZRVISConi+j5OVoWqI+BMzv+9QQ/lc4O1Vb5
+ Fef0Awx1p/dtpjmhewcrNwo0pf1XgtIVPXR9Fxx3rq//LddeUqAHo/sChez2xT8PparYEj5IM=
+X-Proofpoint-GUID: gf0Yb-eDMZe3BkoZtf2d74Ns211qwgiq
+X-Proofpoint-ORIG-GUID: gf0Yb-eDMZe3BkoZtf2d74Ns211qwgiq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-06_03,2025-10-02_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0
+ suspectscore=0 phishscore=0 spamscore=0 bulkscore=0 malwarescore=0 mlxscore=0
+ mlxlogscore=999 clxscore=1030 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.22.0-2506270000 definitions=main-2510060069
 
-The arm64 defconfig builds failed on the Linux next-20251002 tag build due
-to following build warnings / errors with gcc-8 toolchain.
 
-* arm64, build
-  - gcc-8-defconfig
 
-First seen on next-20251002
-Good: next-20250929
-Bad: next-20251002..next-20251003
+> On 6 Oct 2025, at 10:31, Ilpo J=C3=A4rvinen =
+<ilpo.jarvinen@linux.intel.com> wrote:
+>=20
+> On Fri, 3 Oct 2025, Mario Limonciello (AMD) (kernel.org) wrote:
+>> On 10/3/2025 1:58 PM, Hans de Goede wrote:
+>>> On 3-Oct-25 8:49 PM, Denis Benato wrote:
+>>>> Add myself as maintainer for "ASUS NOTEBOOKS AND EEEPC ACPI/WMI =
+EXTRAS
+>>>> DRIVERS" as suggested by Hans de Goede and Armin Wolf.
+>>>>=20
+>>>> Signed-off-by: Denis Benato <benato.denis96@gmail.com>
+>>>> Link:
+>>>> =
+https://lore.kernel.org/all/8128cd6b-50e3-464c-90c2-781f61c3963e@gmail.com=
 
-Regression Analysis:
-- New regression? yes
-- Reproducibility? yes
+>>>=20
+>>> Thanks, patch looks good to me:
+>>>=20
+>>> Reviewed-by: Hans de Goede <hansg@kernel.org>
+>>>=20
+>>> Regards,
+>>>=20
+>>> Hans
+>>=20
+>> Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+>>=20
+>> Luke,
+>>=20
+>> You are planning to step down from maintainer too, right?  Can you =
+send a last
+>> patch doing that too?  Or let Denis send one and Ack that?
 
-Build regression: next-20250102: arm64: gcc-8-defconfig: Assembler
-messages: Error: unknown architectural extension `simd;'
+I will eventually step down yes. Denis asked me to stay on for the =
+moment.
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>>=20
+>>>=20
+>>>=20
+>>>=20
+>>>> ---
+>>>>  MAINTAINERS | 1 +
+>>>>  1 file changed, 1 insertion(+)
+>>>>=20
+>>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>>> index 156fa8eefa69..81bcb934748d 100644
+>>>> --- a/MAINTAINERS
+>>>> +++ b/MAINTAINERS
+>>>> @@ -3841,6 +3841,7 @@ F: drivers/hwmon/asus-ec-sensors.c
+>>>>  ASUS NOTEBOOKS AND EEEPC ACPI/WMI EXTRAS DRIVERS
+>>>>  M: Corentin Chary <corentin.chary@gmail.com>
+>>>>  M: Luke D. Jones <luke@ljones.dev>
+>>>> +M: Denis Benato <benato.denis96@gmail.com>
+>>>>  L: platform-driver-x86@vger.kernel.org
+>>>>  S: Maintained
+>>>>  W: https://asus-linux.org/
+>=20
+> Hi all,
+>=20
+> Unrelated to the patch itself, I'm more wondering if Corentin Chary=20
+> <corentin.chary@gmail.com> is still around as I don't recall ever =
+hearing=20
+> anything from that address in any context. The latest email from that=20=
 
-### Build error log
-/tmp/cclfMnj9.s: Assembler messages:
-/tmp/cclfMnj9.s:656: Error: unknown architectural extension `simd;'
-make[8]: *** [scripts/Makefile.build:287:
-drivers/net/ethernet/mellanox/mlx5/core/wc.o] Error 1
+> address lore.kernel.org could find is from 2017.
+>=20
+> Maybe we should remove that address from the maintainers list?
 
-Suspecting commit,
-$ git blame -L 269 drivers/net/ethernet/mellanox/mlx5/core/wc.c
-fd8c8216648cd8 (Patrisious Haddad 2025-09-29 00:08:08 +0300 269)
-         (".arch_extension simd;\n\t"
-fd8c8216648cd net/mlx5: Improve write-combining test reliability for
-ARM64 Grace CPUs
+I=E2=80=99d been wondering if that should be done. Though never was sure =
+of the process or if that was okay.
 
-## Source
-* Kernel version: 6.17.0
-* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
-* Git commit: 47a8d4b89844f5974f634b4189a39d5ccbacd81c
-* Architectures: arm64
-* Toolchains: gcc-8
-* Kconfigs: defconfig
 
-## Build
-* Build log: https://storage.tuxsuite.com/public/linaro/lkft/builds/33YUHcFKTLSBTOxNIJqF9vJqcxt/build.log
-* Build details:
-https://regressions.linaro.org/lkft/linux-next-master/next-20251003/build/gcc-8-defconfig/
-* Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/33YUHcFKTLSBTOxNIJqF9vJqcxt
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/33YUHcFKTLSBTOxNIJqF9vJqcxt/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/33YUHcFKTLSBTOxNIJqF9vJqcxt/config
 
---
-Linaro LKFT
 
