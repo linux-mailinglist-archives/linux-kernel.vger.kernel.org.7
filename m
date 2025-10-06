@@ -1,61 +1,97 @@
-Return-Path: <linux-kernel+bounces-843364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A137BBF05A
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:52:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57454BBF069
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E176334AE6B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:52:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12D513A5E65
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575122DCF47;
-	Mon,  6 Oct 2025 18:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D482DE6E6;
+	Mon,  6 Oct 2025 18:53:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dQr/WvAh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cZc/yqqJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F47B1B042E;
-	Mon,  6 Oct 2025 18:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5DA280A56
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 18:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759776734; cv=none; b=OIdA9/XLxHfp1WHR1jVcp0A4Vsm6Nm3vBy8bTBTurco6Tyv2KnD6Py5//yAu5kGmQDRO6ZBescsXQH5Bkm1HkUKSrPkfjfEk2qPSU3eqzVCNqr4q48XIOZOxgNlnepGVfO7MVNGrb0Vm44b0gd6yZW/fuEgrzbyoubH8xh1nOOw=
+	t=1759776789; cv=none; b=tJw4FmePx9lAcljJZzho2BSjRhSHcqnLVBAtkdo52DtBhmNmpYPQ/lJQCNBGWfL1PSpxjllToBVJyOR/z1N4K8aU4w7kPMjjIEHSByge+OnWfXdZpqvMx4qMQgYTVKDbZf+tquA1/2P9S9DXFU+r9jYig65ztpESWcGYyVXc9Gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759776734; c=relaxed/simple;
-	bh=ZWvIVGXtiM/1nsG2Z8koPrcNspjPo3e9IYnBwDXQV30=;
+	s=arc-20240116; t=1759776789; c=relaxed/simple;
+	bh=eWI9PmOJt9WIaRlYjU78S12UG6uSHamRZWNSsCfgWvo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V8jhfpcnuvKQFhzaEX/hNg+JzRU0YULemUfxHMlW+asXgK8lJ+olugzN1bID13K4Hc3zqcjlRr8CXM4tL6pSDLH3ESfOaT8Lgujprm8emHxVSMQcNAu0NgUsh+YhOAJ3BfivgTSJ8uko1Ps5ZpIlQiONq4UDv7mDCDZ+6+TZJ+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dQr/WvAh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7F48C4CEF5;
-	Mon,  6 Oct 2025 18:52:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759776734;
-	bh=ZWvIVGXtiM/1nsG2Z8koPrcNspjPo3e9IYnBwDXQV30=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dQr/WvAh+y+d0RJDvIqzaEvsC4+YqkpNRMZegn/9RhfuEcXIP6vbZ2lCb3vhMACbv
-	 SbnNR3Zi8ly3zOl0WSV0C2aIWTKEImCE2awKQfcOc23+bRjW/F5KrZpkRD1vErunSF
-	 okbn6i9YHOzA+dMm3dQVE8km3I9EpbAcnB+Ys7BptD8Ku9sVRbwDG37QBs20F2Zu2N
-	 +2OAy063JaSuqbW6dXkezvxfSujipaTFr5jR7crcFntRQI5pD5b5B6LuKz0enfW7hz
-	 Ey7Y94ARuIdrWNtG47GlzfclMUmYmJ5taDoIK3UlOOVOThML9BM5gsCXmxJTUbOtti
-	 t/Y7HONM29MvA==
-Date: Mon, 6 Oct 2025 13:52:13 -0500
-From: Rob Herring <robh@kernel.org>
-To: Randolph Lin <randolph@andestech.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	jingoohan1@gmail.com, mani@kernel.org, lpieralisi@kernel.org,
-	kwilczynski@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
-	conor+dt@kernel.org, alex@ghiti.fr, aou@eecs.berkeley.edu,
-	palmer@dabbelt.com, paul.walmsley@sifive.com, ben717@andestech.com,
-	inochiama@gmail.com, thippeswamy.havalige@amd.com,
-	namcao@linutronix.de, shradha.t@samsung.com, pjw@kernel.org,
-	randolph.sklin@gmail.com, tim609@andestech.com
-Subject: Re: [PATCH v6 2/5] dt-bindings: PCI: Add Andes QiLai PCIe support
-Message-ID: <20251006185213.GA61386-robh@kernel.org>
-References: <20251003023527.3284787-1-randolph@andestech.com>
- <20251003023527.3284787-3-randolph@andestech.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QUpgF6/K0azngmbd9z7XTt2ieEgB4+nLfLTOHHUktyCU6u7HzgG/9ZZlXa8+8EK8Mm1Uj/0uH4yBmDqqZu8BQrv0lgxffe8clEl5rAlehckLbLXL/DmkBEDFKSGiPrNXQqR4JY7TUU0NRGDpI87zkXq9Ep+kIhrh45i7IzQwCxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cZc/yqqJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759776787;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3AELUvjO0N+ODGhRgLstmsznCqJ4q95SzfBUYFo2Qts=;
+	b=cZc/yqqJJlIIHPvNRrGGmAXMLPQwyPGyz9dgu3x+zm4Ea2kU3jYMdgh87eqsC7rAzyD4Ek
+	jMzl9/uCDYuDaze+LRHfxLZufcieVFrfUvJV2DSs7QGiStH9Y3bwvxtEdyYX1uQIT8/WXY
+	zBwQuCe4ZjILxjlM0lWgy0nPGgXgb4c=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-461-ErRacosrP_KSejMQur931g-1; Mon, 06 Oct 2025 14:53:06 -0400
+X-MC-Unique: ErRacosrP_KSejMQur931g-1
+X-Mimecast-MFC-AGG-ID: ErRacosrP_KSejMQur931g_1759776785
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-42421b15185so3705109f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 11:53:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759776785; x=1760381585;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3AELUvjO0N+ODGhRgLstmsznCqJ4q95SzfBUYFo2Qts=;
+        b=lW232NAZYdqHh3pVXWJcfLoQoyvMiVbg/au8beyXgVnG408o1WAF7L8ELS3P7SSb5P
+         qQQyGBzfVH4cGYmIsJ+9OpvN+vQc+2i7+oG5Y72Qq91hLCSsDyzhcXKt16DLWQnjDAvZ
+         hI4MfwlmmLd4y0A01qwv8k1iHuEYcbXCHOKiIEdRrcgqfDs3iKTlQa4tOh6Aq5KEyTOr
+         7L2+EfgzIoftrMGHpfJqBCp/oW9dAXrSZ80PLxP4tiyy6XJowHl9k5A9ur/Eb2RwP4Q1
+         3bflODvRz7c4CBWBBmt5DZwbvS11SftEKiw3G8kPfnhsKK/0nvrZxCXLGLGjU8cRbFX0
+         wr6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVWOlx9O6/rztmmgmaonP/oflOGimrkFAPntM6JZg+a/9Y+DcquA9Nzd3SI0eiTJp97Sournzqm1acXumg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZJc8DSUTSNWOO4lznYuKM/EV1cx/xqSNOAQR8yECcEAF3tlBS
+	3girBynvO2AmDMnhoae77R2/ysoMXam4JJ68xOgGFdTiQCIPBNYCGdjsxR9TW3f3vr1RJXehUWj
+	9xiVJqcvKl6365g28WJiXRISfAJvV5FhjXZ5b3RqC7L4776IToqecb3tKptNayhjH
+X-Gm-Gg: ASbGnctW9tOgslPm5CeUJVnc78Wx/LTuGhNTlIniMF4Rg/LdVFOVxBSNBi82rjShKki
+	MdIjDUjyQOVII+VBnViVws7jQCwhVK55F054RDveUcZZtXs2miur4/nZpNENxDIxWR8tH6CtPCm
+	8OaRdPtdCCudBMGnjczYhhgTBxyQv/WDD0uJsVQEV3PAp1TISZbMCvw9uSB7Uh0sD0gxdFsYAHv
+	5lQbUydHAou7GyjMQssAW/fmh/GUROizwdGn1P6w70VSyg5QEpR/80rtoWBTB3Ht5su6u86dbrE
+	7uXgWGXWsEj7ZjtXfFTUaUKC2l6EWJu7NaMnTwl66c8RnU6bE6213KFl+eReybnmDg==
+X-Received: by 2002:a05:6000:2303:b0:3ec:1154:7dec with SMTP id ffacd0b85a97d-42567164b20mr8887676f8f.25.1759776784552;
+        Mon, 06 Oct 2025 11:53:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEcKlhLopprqD0ctLDeK3ZiOapzKNjpNRXsOsRWDtqgxDtwJuOl9eDtA1aAuyt6f3P21Qd/GA==
+X-Received: by 2002:a05:6000:2303:b0:3ec:1154:7dec with SMTP id ffacd0b85a97d-42567164b20mr8887653f8f.25.1759776783878;
+        Mon, 06 Oct 2025 11:53:03 -0700 (PDT)
+Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f0170sm22533134f8f.49.2025.10.06.11.53.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 11:53:03 -0700 (PDT)
+Date: Mon, 6 Oct 2025 20:52:32 +0200
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Jiri Slaby <jirislaby@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Christian Brauner <brauner@kernel.org>, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
+	Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, selinux@vger.kernel.org, 
+	Andrey Albershteyn <aalbersh@kernel.org>
+Subject: Re: [PATCH v6 4/6] fs: make vfs_fileattr_[get|set] return -EOPNOSUPP
+Message-ID: <eyl6bzyi33tn6uys2ba5xjluvw7yjempqnla3jaih76mtgxgxq@i6xe2nquwqaf>
+References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
+ <20250630-xattrat-syscall-v6-4-c4e3bc35227b@kernel.org>
+ <a622643f-1585-40b0-9441-cf7ece176e83@kernel.org>
+ <jp3vopwtpik7bj77aejuknaziecuml6x2l2dr3oe2xoats6tls@yskzvehakmkv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,134 +100,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251003023527.3284787-3-randolph@andestech.com>
+In-Reply-To: <jp3vopwtpik7bj77aejuknaziecuml6x2l2dr3oe2xoats6tls@yskzvehakmkv>
 
-On Fri, Oct 03, 2025 at 10:35:24AM +0800, Randolph Lin wrote:
-> Add the Andes QiLai PCIe node, which includes 3 Root Complexes.
-> Only one example is required in the DTS bindings YAML file.
+On 2025-10-06 17:39:46, Jan Kara wrote:
+> On Mon 06-10-25 13:09:05, Jiri Slaby wrote:
+> > On 30. 06. 25, 18:20, Andrey Albershteyn wrote:
+> > > Future patches will add new syscalls which use these functions. As
+> > > this interface won't be used for ioctls only, the EOPNOSUPP is more
+> > > appropriate return code.
+> > > 
+> > > This patch converts return code from ENOIOCTLCMD to EOPNOSUPP for
+> > > vfs_fileattr_get and vfs_fileattr_set. To save old behavior translate
+> > > EOPNOSUPP back for current users - overlayfs, encryptfs and fs/ioctl.c.
+> > > 
+> > > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> > ...
+> > > @@ -292,6 +294,8 @@ int ioctl_setflags(struct file *file, unsigned int __user *argp)
+> > >   			fileattr_fill_flags(&fa, flags);
+> > >   			err = vfs_fileattr_set(idmap, dentry, &fa);
+> > >   			mnt_drop_write_file(file);
+> > > +			if (err == -EOPNOTSUPP)
+> > > +				err = -ENOIOCTLCMD;
+> > 
+> > This breaks borg code (unit tests already) as it expects EOPNOTSUPP, not
+> > ENOIOCTLCMD/ENOTTY:
+> > https://github.com/borgbackup/borg/blob/1c6ef7a200c7f72f8d1204d727fea32168616ceb/src/borg/platform/linux.pyx#L147
+> > 
+> > I.e. setflags now returns ENOIOCTLCMD/ENOTTY for cases where 6.16 used to
+> > return EOPNOTSUPP.
+> > 
+> > This minimal testcase program doing ioctl(fd2, FS_IOC_SETFLAGS,
+> > &FS_NODUMP_FL):
+> > https://github.com/jirislaby/collected_sources/tree/master/ioctl_setflags
+> > 
+> > dumps in 6.16:
+> > sf: ioctl: Operation not supported
+> > 
+> > with the above patch:
+> > sf: ioctl: Inappropriate ioctl for device
+> > 
+> > Is this expected?
 > 
-> Signed-off-by: Randolph Lin <randolph@andestech.com>
-> ---
->  .../bindings/pci/andestech,qilai-pcie.yaml    | 97 +++++++++++++++++++
->  1 file changed, 97 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/andestech,qilai-pcie.yaml
+> No, that's a bug and a clear userspace regression so we need to fix it. I
+> think we need to revert this commit and instead convert ENOIOCTLCMD from
+> vfs_fileattr_get/set() to EOPNOTSUPP in appropriate places. Andrey?
+
+I will prepare a patch soon
+
 > 
-> diff --git a/Documentation/devicetree/bindings/pci/andestech,qilai-pcie.yaml b/Documentation/devicetree/bindings/pci/andestech,qilai-pcie.yaml
-> new file mode 100644
-> index 000000000000..419468430e7e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/andestech,qilai-pcie.yaml
-> @@ -0,0 +1,97 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/andestech,qilai-pcie.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Andes QiLai PCIe host controller
-> +
-> +description:
-> +  Andes QiLai PCIe host controller is based on the Synopsys DesignWare
-> +  PCI core. It shares common features with the PCIe DesignWare core and
-> +  inherits common properties defined in
-> +  Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml.
-> +
-> +maintainers:
-> +  - Randolph Lin <randolph@andestech.com>
-> +
-> +allOf:
-> +  - $ref: /schemas/pci/snps,dw-pcie.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: andestech,qilai-pcie
-> +
-> +  reg:
-> +    items:
-> +      - description: Data Bus Interface (DBI) registers.
-> +      - description: APB registers.
-> +      - description: PCIe configuration space region.
-> +
-> +  reg-names:
-> +    items:
-> +      - const: dbi
-> +      - const: apb
-> +      - const: config
-> +
-> +  ranges:
-> +    maxItems: 2
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  "#interrupt-cells":
-> +    const: 1
-
-You can drop this. #interrupt-cells is already defined in 
-pci-bus-common.yaml.
-
-> +
-> +  interrupt-map: true
-> +
-> +required:
-> +  - reg
-> +  - reg-names
-> +  - "#interrupt-cells"
-> +  - interrupts
-> +  - interrupt-names
-> +  - interrupt-map-mask
-> +  - interrupt-map
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    soc {
-> +      #address-cells = <2>;
-> +      #size-cells = <2>;
-> +
-> +      bus@80000000 {
-> +        compatible = "simple-bus";
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-
-Drop this node. No reason to show "simple-bus" in this example. Also it 
-fails checks:
-
-Documentation/devicetree/bindings/pci/andestech,qilai-pcie.example.dts:30.24-59.13: Warning (unit_address_vs_reg): /example-0/soc/bus@80000000: node has a unit name, but no reg or ranges property
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/andestech,qilai-pcie.example.dtb: bus@80000000 (simple-bus): 'ranges' is a required property
-	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-
-> +
-> +        pcie@80000000 {
-> +          compatible = "andestech,qilai-pcie";
-> +          device_type = "pci";
-> +          reg = <0x0 0x80000000 0x0 0x20000000>,
-> +                <0x0 0x04000000 0x0 0x00001000>,
-> +                <0x0 0x00000000 0x0 0x00010000>;
-> +          reg-names = "dbi", "apb", "config";
-> +
-> +          linux,pci-domain = <0>;
-> +          #address-cells = <3>;
-> +          #size-cells = <2>;
-> +          ranges = <0x02000000 0x00 0x10000000 0x00 0x10000000 0x0 0xf0000000>,
-> +                   <0x43000000 0x01 0x00000000 0x01 0x0000000 0x1f 0x00000000>;
-> +
-> +          #interrupt-cells = <1>;
-> +          interrupts = <0xf>;
-> +          interrupt-names = "msi";
-> +          interrupt-parent = <&plic0>;
-> +          interrupt-map-mask = <0 0 0 7>;
-> +          interrupt-map = <0 0 0 1 &plic0 0xf IRQ_TYPE_LEVEL_HIGH>,
-> +                          <0 0 0 2 &plic0 0xf IRQ_TYPE_LEVEL_HIGH>,
-> +                          <0 0 0 3 &plic0 0xf IRQ_TYPE_LEVEL_HIGH>,
-> +                          <0 0 0 4 &plic0 0xf IRQ_TYPE_LEVEL_HIGH>;
-> +        };
-> +      };
-> +    };
+> 								Honza
 > -- 
-> 2.34.1
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 > 
+
+-- 
+- Andrey
+
 
