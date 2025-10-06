@@ -1,321 +1,121 @@
-Return-Path: <linux-kernel+bounces-842999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D583ABBE2B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:20:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1B76BBE2C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A014D189816A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:20:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A1B94EE8BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BB12C325F;
-	Mon,  6 Oct 2025 13:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="db5FxWEG"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75BE2C325D;
+	Mon,  6 Oct 2025 13:21:09 +0000 (UTC)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3236A18872A;
-	Mon,  6 Oct 2025 13:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9682D060E
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 13:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759756826; cv=none; b=Yxc7wZg7IKdLaHEGi/+9gcGM8tnR9PxhDLH4H8x/dTJNnmuIxo5bRoAY6sgaO32efmGscFaHsgCBCklpYVYsgmJ3pdeznm9g8vsFagNTLwSgpTnqYOgReifSJs1GTP5ZFDBX4zNfqdGcicBMR4CXWbq/fV0pPtA5QkpTrggLea4=
+	t=1759756869; cv=none; b=c99aXz1f56tB1ZFTVLn8pNRterJ2m/18THAGIC+BjonaYLc7M4+JKUhCRy/8NwoUxN7ikwmIE173AR0+2aFc1uQH/3qew4HfJR21g7Psllm6zmnV4QTPrRD3FzsPeIM3jjBt1r5zOCXlp2xoH0CblzBGSWNFPeAxHXmRLBD/vrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759756826; c=relaxed/simple;
-	bh=GAN8MKxZQN3HrJZ+qCnRJUbdWuET+LWmlhK5xB5RswE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cGoeW7iG/8ldQzaG1AbyVjaK9vBYROOpfDk8C3+Jm/cq60nyF4xmme8LHabH0sTN6Mv3LTfKO+QkbkkB1Swk3Bsvh+SvXo2+s6ji9pXr+BxsQpKxDrJCvISGzFwyIZe9Nw8l1784hCMGGrg2lCzptUuxt66bMoRmtGzYTiWa5QM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=db5FxWEG; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 596AeFsP026167;
-	Mon, 6 Oct 2025 13:20:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=rPQz2Zk8MLDb5HnBtre5RW+hptJDF9
-	yMlAGywrPL/7Q=; b=db5FxWEGuErTWDd9eto4iIRvnPLUkRohStZekuNVjz6tAO
-	IF5f7+mjzoxYH0/iOaV4z5i8G5Bud0Nsv3d0uaGIfYQFImctVhHiaarHg9COBMpd
-	45NrW3LWF8RuCcbVa1R0Attor2xeTn33C7lMbyNGM2gHzZ3qb+O3JAi9zJF2Z4xJ
-	yqX6/spGLyVbtDASmMW7X5fJ3UIQqXxKjCeq9ZI3FLDSrIcfh+zhBN0LNySO791u
-	SaGI5+TNOphtF63+yplb/IQ4/DDKvD9KB78kSdniVXsBh5Qsy2JBnO0uOjuKddnR
-	Tg/oyBqwFa9a1KRJ+6j7Z9zcT8/aqt36Juqv6XvQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49ju8ah19s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 06 Oct 2025 13:20:10 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 596DKAGT020248;
-	Mon, 6 Oct 2025 13:20:10 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49ju8ah19n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 06 Oct 2025 13:20:10 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5969cAaQ028443;
-	Mon, 6 Oct 2025 13:20:09 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49kewmx52y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 06 Oct 2025 13:20:09 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 596DK7Im50594178
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 6 Oct 2025 13:20:07 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5F2012004B;
-	Mon,  6 Oct 2025 13:20:07 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9DD2320040;
-	Mon,  6 Oct 2025 13:20:05 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.109.219.158])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon,  6 Oct 2025 13:20:05 +0000 (GMT)
-Date: Mon, 6 Oct 2025 18:50:03 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Zorro Lang <zlang@redhat.com>
-Cc: fstests@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
-        djwong@kernel.org, john.g.garry@oracle.com, tytso@mit.edu,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v7 04/12] ltp/fsx.c: Add atomic writes support to fsx
-Message-ID: <aOPCAzx0diQy7lFN@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <cover.1758264169.git.ojaswin@linux.ibm.com>
- <c3a040b249485b02b569b9269b649d02d721d995.1758264169.git.ojaswin@linux.ibm.com>
- <20250928131924.b472fjxwir7vphsr@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
- <aN683ZHUzA5qPVaJ@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <20251003171932.pxzaotlafhwqsg5v@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
- <aOJrNHcQPD7bgnfB@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <20251005153956.zofernclbbva3xt6@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+	s=arc-20240116; t=1759756869; c=relaxed/simple;
+	bh=KMVP6+NUbnV92gLmdFQjNvr3c1BiPckine2kLw4OB/c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bVQkerOZWvsW3YazVoZNOuajNy2lv6oSGyTj/3zCaGdj2h8UXiR7wzhCCsOM0g98yYS/8iiq1/jCwCE/axV6lBcOGZRVFsGEgfcOxGCgBbJhTA1ZC5ffu2+wc+3UKF2cNefkumUMudUZEYcD0YLrXlHJK/eLVNo56zZccGY91ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-8e1d6fd99c1so1549947241.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 06:21:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759756866; x=1760361666;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xuRqoxklPAOlbd1RPrmnGLCYcdAv9gdZsGWxssDdsVg=;
+        b=rs8Cbqoc6UA3RLvJ24/35OCrmzzIfZInKYN5l4aQ9i1s7FHEKj5J6Umc2gUd5R/yDg
+         8KlJwnuhv0uxAGWKpl+No5qCNm3q9MCmzsNNpJw90DFqCFNHUtEQOrXMj7gml1ntrrJE
+         fJuhoZcjRMPm62qzCaBPKNCfKFefN7d7LO2w5VXMrjIPXtEnqu3S2XpKtOO0go569Nz2
+         QLTlkUQcdIbJKfjjU3DSa9pss9x20DKBjFmHHTNUxL/iUxcB9JvcYJSBQ26+spBpChMQ
+         4PX9nnLFV48wMoEvcBwRWwCi7Yo8SdWLMkUm3v3RfvY/aVR118yY3YDtJULqdUAKVUTp
+         IGnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVZU6Hg1p/u4BDJsgTuo0dt/v4pQJem7DEnh0E80XsUdcxKwqfOXvciJ8W0NZ65FWvZqTLqGY/AVNukI1c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBobtutK07jJtF97ZO/aJDStwfGER1nwSae51+eRwcijVqWIBk
+	8UqKleTA5KEcqmdBwlEsMn8SCVpYi5OGpOcDux6RVPnNRzN/idueRZxQS0Cg51gT
+X-Gm-Gg: ASbGnctxK02XwG34OOHjgDfz/pszUpQpVLWkQSZtsgQ4ITolGI2Czk4DUZMAF8RbbVQ
+	+ZneKmGC6CPsKPw0WGeuAs/xJTcohl4+S3bvXalg6KMTrWavmONuzCEgjCzbbVX4SMFFbUU0gVB
+	esS4+Pyz/u/vfaJkSDFbngEW+jsLFECNqzk+9PJSoJlItLc9Mi2NdSUv6XgOpGKcJqs5ZbfEmng
+	UlBRexc5sJbGBzGUlZ5CmvYnoO35BfyB0u6BZn4mJ58Fk+OXYQvz6Xm/3PwhYPAYO6ePpglJFQe
+	pSTR4gYlJbRuoOn2qePzogJmzKY8V2nMyMt7El7vmXwp/3MbduoMlwj14jPJiNaIyYl7MNoP+v+
+	16au1cjG5Lbonudam+gnsUZXUkQlpkgj8OZcpGvpx4JPKONRpvnxxgt/oFaQvMke4MgmEWBh4M7
+	Bex8y8IBUM
+X-Google-Smtp-Source: AGHT+IF/zTR1WPQRmV5t9IXvuo3KHmewRzJ8mcYtP7JQDDif4hhATLmvwfEZ50F1D2ETUGM9RqhTtA==
+X-Received: by 2002:a05:6122:4f82:b0:53b:1998:dbf5 with SMTP id 71dfb90a1353d-5524e85f1dcmr3297640e0c.1.1759756864985;
+        Mon, 06 Oct 2025 06:21:04 -0700 (PDT)
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5549ab319e0sm660468e0c.0.2025.10.06.06.21.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Oct 2025 06:21:04 -0700 (PDT)
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-89018ea5625so1647912241.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 06:21:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVm41d7VuL28sJjKVrrDRBKRynnO/bzwVTtt+bBtDQ+LxDUgu6WjrZKF783EmM1W4bJ2weNiVdSUI1XX54=@vger.kernel.org
+X-Received: by 2002:a05:6102:442c:b0:529:fc9e:84a0 with SMTP id
+ ada2fe7eead31-5d41d17bfd3mr4212837137.32.1759756863544; Mon, 06 Oct 2025
+ 06:21:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251005153956.zofernclbbva3xt6@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: x_-iZWWAYB6ZGcdzgv673gKZ31JDN_dC
-X-Authority-Analysis: v=2.4 cv=BpiQAIX5 c=1 sm=1 tr=0 ts=68e3c20a cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
- a=yPCof4ZbAAAA:8 a=VnNF1IyMAAAA:8 a=KhzlYSSnZSZoo7An4sMA:9 a=CjuIK1q_8ugA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAyMiBTYWx0ZWRfX00xsKLkHrR6x
- m4ZW/nYCPBl5px3zrSoLD8NKuXfnfNCGTKqLHdLiwsgvE7P6+MIzx+Vhm2bCjww5OaUysP7vqmh
- RaY8pIMfO1qKjOf9y1imCXQ+hD4RLdxhD8YXEAni5c2oEzFOPcoW1hM20FEoFWE5u6Y3RrniKZa
- cjl5PUUbAWN7XtariCXBi3L3bdvmWl4G94sqJgK6oFjio5Ozf6YrzhxQeT669Am7ehxPey6PrLO
- oBAj/42qXqdeKHr+iaggOmusIfDX1DBN20h27YWXVzMaYbPGwuYV/C4lmclO1476/Or1ijcFoLp
- whXC2sLTwCDSrlxwtDSMqDNQ0HwUaop3iofhQoD0hr00y8YbacmCkSJZFh/AGv8UqQoSROUlI4n
- cfibErkAaczEZHaoqD8IbTqD5T0q9w==
-X-Proofpoint-ORIG-GUID: BKVGDBmBJdBMT_GIsIc7FCYGKOKA8Gmq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-06_04,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 lowpriorityscore=0 priorityscore=1501 malwarescore=0
- suspectscore=0 bulkscore=0 impostorscore=0 adultscore=0 clxscore=1015
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2510040022
+References: <949f096337e28d50510e970ae3ba3ec9c1342ec0.1759753998.git.geert@linux-m68k.org>
+ <mvm347wjj90.fsf@linux-m68k.org>
+In-Reply-To: <mvm347wjj90.fsf@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 6 Oct 2025 15:20:52 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXdeJ6Bq=zA7QcN82YNaZW3R8ebeXpGzqHus-KPkSj5XA@mail.gmail.com>
+X-Gm-Features: AS18NWBaXdKwIk39XXp--4bSlHAuBircfzV6tgtSqOZ0QwIv2ppBEo2LZ9edH4Q
+Message-ID: <CAMuHMdXdeJ6Bq=zA7QcN82YNaZW3R8ebeXpGzqHus-KPkSj5XA@mail.gmail.com>
+Subject: Re: [PATCH v2] kbuild: uapi: Strip comments before size type check
+To: Andreas Schwab <schwab@linux-m68k.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	linux-kbuild@vger.kernel.org, linux-m68k@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Oct 05, 2025 at 11:39:56PM +0800, Zorro Lang wrote:
-> On Sun, Oct 05, 2025 at 06:27:24PM +0530, Ojaswin Mujoo wrote:
-> > On Sat, Oct 04, 2025 at 01:19:32AM +0800, Zorro Lang wrote:
-> > > On Thu, Oct 02, 2025 at 11:26:45PM +0530, Ojaswin Mujoo wrote:
-> > > > On Sun, Sep 28, 2025 at 09:19:24PM +0800, Zorro Lang wrote:
-> > > > > On Fri, Sep 19, 2025 at 12:17:57PM +0530, Ojaswin Mujoo wrote:
-> > > > > > Implement atomic write support to help fuzz atomic writes
-> > > > > > with fsx.
-> > > > > > 
-> > > > > > Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> > > > > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> > > > > > Reviewed-by: John Garry <john.g.garry@oracle.com>
-> > > > > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> > > > > > ---
-> > > > > 
-> > > > > Hmm... this patch causes more regular fsx test cases fail on old kernel,
-> > > > > (e.g. g/760, g/617, g/263 ...) except set "FSX_AVOID=-a". Is there a way
-> > > > > to disable "atomic write" automatically if it's not supported by current
-> > > > > system?
-> > > > 
-> > > > Hi Zorro, 
-> > > > Sorry for being late, I've been on vacation this week.
-> > > > 
-> > > > Yes so by design we should be automatically disabling atomic writes when
-> > > > they are not supported by the stack but seems like the issue is that
-> > > > when we do disable it we print some extra messages to stdout/err which
-> > > > show up in the xfstests output causing failure.
-> > > > 
-> > > > I can think of 2 ways around this:
-> > > > 
-> > > > 1. Don't print anything and just silently drop atomic writes if stack
-> > > > doesn't support them.
-> > > > 
-> > > > 2. Make atomic writes as a default off instead of default on feature but
-> > > > his loses a bit of coverage as existing tests wont get atomic write
-> > > > testing free of cost any more.
-> > > 
-> > > Hi Ojaswin,
-> > > 
-> > > Please have a nice vacation :)
-> > > 
-> > > It's not the "extra messages" cause failure, those "quiet" failures can be fixed
-> > > by:
-> > 
-> > Oh okay got it.
-> > 
-> > > 
-> > > diff --git a/ltp/fsx.c b/ltp/fsx.c
-> > > index bdb87ca90..0a035b37b 100644
-> > > --- a/ltp/fsx.c
-> > > +++ b/ltp/fsx.c
-> > > @@ -1847,8 +1847,9 @@ int test_atomic_writes(void) {
-> > >         struct statx stx;
-> > >  
-> > >         if (o_direct != O_DIRECT) {
-> > > -               fprintf(stderr, "main: atomic writes need O_DIRECT (-Z), "
-> > > -                               "disabling!\n");
-> > > +               if (!quiet)
-> > > +                       fprintf(stderr, "main: atomic writes need O_DIRECT (-Z), "
-> > > +                                       "disabling!\n");
-> > >                 return 0;
-> > >         }
-> > >  
-> > > @@ -1867,8 +1868,9 @@ int test_atomic_writes(void) {
-> > >                 return 1;
-> > >         }
-> > >  
-> > > -       fprintf(stderr, "main: IO Stack does not support "
-> > > -                       "atomic writes, disabling!\n");
-> > > +       if (!quiet)
-> > > +               fprintf(stderr, "main: IO Stack does not support "
-> > > +                               "atomic writes, disabling!\n");
-> > >         return 0;
-> > >  }
-> > 
-> > > 
-> > > But I hit more read or write failures e.g. [1], this failure can't be
-> > > reproduced with FSX_AVOID=-a. Is it a atomic write bug or an unexpected
-> > > test failure?
-> > > 
-> > > Thanks,
-> > > Zorro
-> > > 
-> > 
-> > <...>
-> > 
-> > > +244(244 mod 256): SKIPPED (no operation)
-> > > +245(245 mod 256): FALLOC   0x695c5 thru 0x6a2e6	(0xd21 bytes) INTERIOR
-> > > +246(246 mod 256): MAPWRITE 0x5ac00 thru 0x5b185	(0x586 bytes)
-> > > +247(247 mod 256): WRITE    0x31200 thru 0x313ff	(0x200 bytes)
-> > > +248(248 mod 256): SKIPPED (no operation)
-> > > +249(249 mod 256): TRUNCATE DOWN	from 0x78242 to 0xf200	******WWWW
-> > > +250(250 mod 256): FALLOC   0x65000 thru 0x66f26	(0x1f26 bytes) PAST_EOF
-> > > +251(251 mod 256): WRITE    0x45400 thru 0x467ff	(0x1400 bytes) HOLE	***WWWW
-> > > +252(252 mod 256): SKIPPED (no operation)
-> > > +253(253 mod 256): SKIPPED (no operation)
-> > > +254(254 mod 256): MAPWRITE 0x4be00 thru 0x4daee	(0x1cef bytes)
-> > > +255(255 mod 256): MAPREAD  0xc000 thru 0xcae9	(0xaea bytes)
-> > > +256(  0 mod 256): READ     0x3e000 thru 0x3efff	(0x1000 bytes)
-> > > +257(  1 mod 256): SKIPPED (no operation)
-> > > +258(  2 mod 256): INSERT 0x45000 thru 0x45fff	(0x1000 bytes)
-> > > +259(  3 mod 256): ZERO     0x1d7d5 thru 0x1f399	(0x1bc5 bytes)	******ZZZZ
-> > > +260(  4 mod 256): TRUNCATE DOWN	from 0x4eaef to 0x11200	******WWWW
-> > > +261(  5 mod 256): WRITE    0x43000 thru 0x43fff	(0x1000 bytes) HOLE	***WWWW
-> > > +262(  6 mod 256): WRITE    0x2200 thru 0x31ff	(0x1000 bytes)
-> > > +263(  7 mod 256): WRITE    0x15000 thru 0x15fff	(0x1000 bytes)
-> > > +264(  8 mod 256): WRITE    0x2e400 thru 0x2e7ff	(0x400 bytes)
-> > > +265(  9 mod 256): COPY 0xd000 thru 0xdfff	(0x1000 bytes) to 0x1d800 thru 0x1e7ff	******EEEE
-> > > +266( 10 mod 256): CLONE 0x2a000 thru 0x2afff	(0x1000 bytes) to 0x21000 thru 0x21fff
-> > > +267( 11 mod 256): MAPREAD  0x31000 thru 0x31d0a	(0xd0b bytes)
-> > > +268( 12 mod 256): SKIPPED (no operation)
-> > > +269( 13 mod 256): WRITE    0x25000 thru 0x25fff	(0x1000 bytes)
-> > > +270( 14 mod 256): SKIPPED (no operation)
-> > > +271( 15 mod 256): MAPREAD  0x30000 thru 0x30577	(0x578 bytes)
-> > > +272( 16 mod 256): PUNCH    0x1a267 thru 0x1c093	(0x1e2d bytes)
-> > > +273( 17 mod 256): MAPREAD  0x1f000 thru 0x1f9c9	(0x9ca bytes)
-> > > +274( 18 mod 256): WRITE    0x40800 thru 0x40dff	(0x600 bytes)
-> > > +275( 19 mod 256): SKIPPED (no operation)
-> > > +276( 20 mod 256): MAPWRITE 0x20600 thru 0x22115	(0x1b16 bytes)
-> > > +277( 21 mod 256): MAPWRITE 0x3d000 thru 0x3ee5a	(0x1e5b bytes)
-> > > +278( 22 mod 256): WRITE    0x2ee00 thru 0x2efff	(0x200 bytes)
-> > > +279( 23 mod 256): WRITE    0x76200 thru 0x769ff	(0x800 bytes) HOLE
-> > > +280( 24 mod 256): SKIPPED (no operation)
-> > > +281( 25 mod 256): SKIPPED (no operation)
-> > > +282( 26 mod 256): MAPREAD  0xa000 thru 0xa5e7	(0x5e8 bytes)
-> > > +283( 27 mod 256): SKIPPED (no operation)
-> > > +284( 28 mod 256): SKIPPED (no operation)
-> > > +285( 29 mod 256): SKIPPED (no operation)
-> > > +286( 30 mod 256): SKIPPED (no operation)
-> > > +287( 31 mod 256): COLLAPSE 0x11000 thru 0x11fff	(0x1000 bytes)
-> > > +288( 32 mod 256): COPY 0x5d000 thru 0x5dfff	(0x1000 bytes) to 0x4ca00 thru 0x4d9ff
-> > > +289( 33 mod 256): TRUNCATE DOWN	from 0x75a00 to 0x1e400
-> > > +290( 34 mod 256): MAPREAD  0x1c000 thru 0x1d802	(0x1803 bytes)	***RRRR***
-> > > +Log of operations saved to "/mnt/xfstests/test/junk.fsxops"; replay with --replay-ops
-> > > +Correct content saved for comparison
-> > > +(maybe hexdump "/mnt/xfstests/test/junk" vs "/mnt/xfstests/test/junk.fsxgood")
-> > > 
-> > > Thanks,
-> > > Zorro
-> > 
-> > Hi Zorro, just to confirm is this on an older kernel that doesnt support
-> > RWF_ATOMIC or on a kernle that does support it.
-> 
-> I tested on linux 6.16 and current latest linux v6.17+ (will be 6.18-rc1 later).
-> About the RWF_ATOMIC flag in my system:
-> 
-> # grep -rsn RWF_ATOMIC /usr/include/
-> /usr/include/bits/uio-ext.h:51:#define RWF_ATOMIC       0x00000040 /* Write is to be issued with torn-write
-> /usr/include/linux/fs.h:424:#define RWF_ATOMIC  ((__kernel_rwf_t)0x00000040)
-> /usr/include/linux/fs.h:431:                     RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC |\
-> /usr/include/xfs/linux.h:236:#ifndef RWF_ATOMIC
-> /usr/include/xfs/linux.h:237:#define RWF_ATOMIC ((__kernel_rwf_t)0x00000040)
+Hi Andreas,
 
-Hi Zorro, thanks for checking this. So correct me if im wrong but I
-understand that you have run this test on an atomic writes enabled 
-kernel where the stack also supports atomic writes.
+On Mon, 6 Oct 2025 at 14:40, Andreas Schwab <schwab@linux-m68k.org> wrote:
+> On Okt 06 2025, Geert Uytterhoeven wrote:
+> > --- a/usr/include/headers_check.pl
+> > +++ b/usr/include/headers_check.pl
+> > @@ -155,6 +155,8 @@ sub check_sizetypes
+> >       if (my $included = ($line =~ /^\s*#\s*include\s+[<"](\S+)[>"]/)[0]) {
+> >               check_include_typesh($included);
+> >       }
+> > +     # strip comments (single-line only)
+> > +     $line =~ s@\/\*.*?\*\/@@;
+>
+> I don't think you need to quote the forward slashes in the regexp.
 
-Looking at the bad data log:
+Thanks, you are right!
 
-	+READ BAD DATA: offset = 0x1c000, size = 0x1803, fname = /mnt/xfstests/test/junk
-	+OFFSET      GOOD    BAD     RANGE
-	+0x1c000     0x0000  0xcdcd  0x0
-	+operation# (mod 256) for the bad data may be 205
+So far for not just following my instinct, but looking for similar functionality
+in other scripts like scripts/kernel-doc.pl...
 
-We see that 0x0000 was expected but we got 0xcdcd. Now the operation
-that caused this is indicated to be 205, but looking at that operation:
+Gr{oetje,eeting}s,
 
-+205(205 mod 256): ZERO     0x6dbe6 thru 0x6e6aa	(0xac5 bytes)
+                        Geert
 
-This doesn't even overlap the range that is bad. (0x1c000 to 0x1c00f).
-Infact, it does seem like an unlikely coincidence that the actual data
-in the bad range is 0xcdcd which is something xfs_io -c "pwrite" writes
-to default (fsx writes random data in even offsets and operation num in
-odd).
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-I am able to replicate this but only on XFS but not on ext4 (atleast not
-in 20 runs).  I'm trying to better understand if this is a test issue or
-not. Will keep you update.
-
-I'm not sure how this will affect the upcoming release, if you want
-shall I send a small patch to make the atomic writes feature default off
-instead of default on till we root cause this?
-
-Regards,
-Ojaswin
-
-> 
-> Thanks,
-> Zorro
-> 
-> > 
-> > Regards,
-> > ojaswin
-> > 
-> 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
