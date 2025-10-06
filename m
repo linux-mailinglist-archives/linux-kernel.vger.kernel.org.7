@@ -1,88 +1,88 @@
-Return-Path: <linux-kernel+bounces-842669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81539BBD42F
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 09:49:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F32FEBBD465
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 09:51:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2D78A34969D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 07:49:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC4163B9A2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 07:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9C2266565;
-	Mon,  6 Oct 2025 07:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778E2261B80;
+	Mon,  6 Oct 2025 07:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="mBuw3HsX";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="mBuw3HsX"
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Krt6Sl8L";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Krt6Sl8L"
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076DC25D533
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 07:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283CD25A2A5
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 07:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759736859; cv=none; b=QsB6q7B2c81SKYiXhHoDdJ5SQQY9u/p3ciwa73DFDXJF9vYVOewh/qm6ydf5DHkHkgkgVDnE34UWaUfXxWNVFP+7fmN+I8RpB63jAnXYTvFrPFBh4i50NzCBJ+OfprKeVXEiNLHbs8abNeQLHmaaKpCWdvz1LcjrbryZM1kkbb0=
+	t=1759736865; cv=none; b=SZst3EZCEkym9Tp9JRfT01/as4GVUv3i/40KrMuB5cxHiLAcT222d+Z/WUZA4Ap5AI5/vba23JM9ePgPEbcb3ofn8oczLPUdN6iCkLjHaTs3XkO0fxHIZxNvxA0ZS1lqkrGtjSrC60Pg3470VWcOhoEH9rWQQO2aB8H69Yzm7zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759736859; c=relaxed/simple;
-	bh=KS8fe3tcaEWBMDARocb/nL7jL4ZSZt3fJ4pVwL98WBA=;
+	s=arc-20240116; t=1759736865; c=relaxed/simple;
+	bh=iM+q3BKB2DcI3eSxAwpfnjLqEsbHfU3TXdUhciHRuYQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BzG9kG/lmkLwIg+m8HxPl4ov8p2nlqDcnOSaz9+RD2xsoCKY7+K9mlmmzW6aTtJJpbPGBuVgkuaBIvYv/ta6ISAFsi638Y/s+OrGli40rcFM9TyVCb/41Wp+A3n8ptKnu1Asr+vINhHcinvFRBSB+f55StjRmhFFviHpKwnZJFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=mBuw3HsX; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=mBuw3HsX; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=MebLqDDkGunRG4wWQalSvwU8z8P7b/mOS3jM/uYhNjLgrdFwV1vzEe2uVyoDoX25hNCvQ8WhOqSDSSQjwYjpj3Hhq3fDmu1Yncp8+6u56zn0Oz3wpF50TjNiQwEyEZ1rfyVWZ6r6SkHg9OP2pFZLyfVeNS3z7fFz+pePudIAE+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Krt6Sl8L; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Krt6Sl8L; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4FC5C336EF;
-	Mon,  6 Oct 2025 07:47:35 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3353A336CB;
+	Mon,  6 Oct 2025 07:47:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1759736855; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1759736861; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NfZM0KCyCe4PB+tPnZRIqKjxT1C+uq5P0n+UToNC19A=;
-	b=mBuw3HsXR2tDBs2SDlGbBQXo+hvvyqj7HECT9+y1BRmpF6pROJLBsEgISa99aZLHllAg6F
-	wjkpd00wqrqzzngg1RrwQsR1J1QQH36OKO59fQ8reeMMVZiRkaUIrvejs4sEHtQx8YLsiz
-	VEyG7LMRKR+UOODQsyqaWSGY1qeBE1E=
+	bh=Q+lJl3JITVnZ5PvoaijHvwhkZFrh8LSJFU4Q15RV3Uk=;
+	b=Krt6Sl8LhmPm5LkSxK8hqI/EN9rfY6cBrSO40Ndi9ngd2i1GKt5FWDAOED/pIZJ0ua5mxU
+	pkpPKGFH9WS8vdrhb1LwsPTh2FTGs0LL6S//lq4+rUmgN6is5P+jRClreZQS4myGlu9omD
+	QVbEWNxqk25gg4qTBlU2H3s9+Xpko1k=
 Authentication-Results: smtp-out1.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1759736855; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1759736861; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NfZM0KCyCe4PB+tPnZRIqKjxT1C+uq5P0n+UToNC19A=;
-	b=mBuw3HsXR2tDBs2SDlGbBQXo+hvvyqj7HECT9+y1BRmpF6pROJLBsEgISa99aZLHllAg6F
-	wjkpd00wqrqzzngg1RrwQsR1J1QQH36OKO59fQ8reeMMVZiRkaUIrvejs4sEHtQx8YLsiz
-	VEyG7LMRKR+UOODQsyqaWSGY1qeBE1E=
+	bh=Q+lJl3JITVnZ5PvoaijHvwhkZFrh8LSJFU4Q15RV3Uk=;
+	b=Krt6Sl8LhmPm5LkSxK8hqI/EN9rfY6cBrSO40Ndi9ngd2i1GKt5FWDAOED/pIZJ0ua5mxU
+	pkpPKGFH9WS8vdrhb1LwsPTh2FTGs0LL6S//lq4+rUmgN6is5P+jRClreZQS4myGlu9omD
+	QVbEWNxqk25gg4qTBlU2H3s9+Xpko1k=
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E27E713A7E;
-	Mon,  6 Oct 2025 07:47:34 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BDF1913A7E;
+	Mon,  6 Oct 2025 07:47:40 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id F57INRZ042iWHgAAD6G6ig
-	(envelope-from <jgross@suse.com>); Mon, 06 Oct 2025 07:47:34 +0000
+	id v6vfKxx042iuHgAAD6G6ig
+	(envelope-from <jgross@suse.com>); Mon, 06 Oct 2025 07:47:40 +0000
 From: Juergen Gross <jgross@suse.com>
 To: linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	virtualization@lists.linux.dev
+	x86@kernel.org
 Cc: Juergen Gross <jgross@suse.com>,
-	Ajay Kaher <ajay.kaher@broadcom.com>,
-	Alexey Makhalov <alexey.makhalov@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@redhat.com>,
 	Borislav Petkov <bp@alien8.de>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH v3 14/21] x86/paravirt: Move pv_native_*() prototypes to paravirt.c
-Date: Mon,  6 Oct 2025 09:45:59 +0200
-Message-ID: <20251006074606.1266-15-jgross@suse.com>
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	xen-devel@lists.xenproject.org
+Subject: [PATCH v3 15/21] x86/xen: Drop xen_irq_ops
+Date: Mon,  6 Oct 2025 09:46:00 +0200
+Message-ID: <20251006074606.1266-16-jgross@suse.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251006074606.1266-1-jgross@suse.com>
 References: <20251006074606.1266-1-jgross@suse.com>
@@ -93,6 +93,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
 X-Spamd-Result: default: False [-2.80 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
@@ -106,68 +107,74 @@ X-Spamd-Result: default: False [-2.80 / 50.00];
 	MIME_TRACE(0.00)[0:+];
 	TO_DN_SOME(0.00)[];
 	RCPT_COUNT_TWELVE(0.00)[12];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:mid,suse.com:email];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:mid,imap1.dmz-prg2.suse.org:helo];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
 	RCVD_COUNT_TWO(0.00)[2];
 	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	URIBL_BLOCKED(0.00)[suse.com:email,suse.com:mid,imap1.dmz-prg2.suse.org:helo];
 	R_RATELIMIT(0.00)[to_ip_from(RLfdszjqhz8kzzb9uwpzdm8png)];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
 	RCVD_TLS_ALL(0.00)[]
 X-Spam-Flag: NO
-X-Spam-Level: 
 X-Spam-Score: -2.80
 
-The only reason the pv_native_*() prototypes are needed is the complete
-definition of those functions via an asm() statement, which makes it
-impossible to have those functions as static ones.
-
-Move the prototypes from paravirt_types.h into paravirt.c, which is the
-only source referencing the functions.
+Instead of having a pre-filled array xen_irq_ops for Xen PV paravirt
+functions, drop the array and assign each element individually.
 
 Signed-off-by: Juergen Gross <jgross@suse.com>
 ---
 V2:
 - new patch
 ---
- arch/x86/include/asm/paravirt_types.h | 7 -------
- arch/x86/kernel/paravirt.c            | 5 +++++
- 2 files changed, 5 insertions(+), 7 deletions(-)
+ arch/x86/xen/irq.c    | 20 +++++++-------------
+ tools/objtool/check.c |  1 -
+ 2 files changed, 7 insertions(+), 14 deletions(-)
 
-diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
-index 148d157e2a4a..1e50f13e6543 100644
---- a/arch/x86/include/asm/paravirt_types.h
-+++ b/arch/x86/include/asm/paravirt_types.h
-@@ -480,13 +480,6 @@ extern struct paravirt_patch_template pv_ops;
- 	__PVOP_VCALL(op, PVOP_CALL_ARG1(arg1), PVOP_CALL_ARG2(arg2),	\
- 		     PVOP_CALL_ARG3(arg3), PVOP_CALL_ARG4(arg4))
- 
--#ifdef CONFIG_PARAVIRT_XXL
--unsigned long pv_native_save_fl(void);
--void pv_native_irq_disable(void);
--void pv_native_irq_enable(void);
--unsigned long pv_native_read_cr2(void);
--#endif
--
- #endif	/* __ASSEMBLER__ */
- 
- #define ALT_NOT_XEN	ALT_NOT(X86_FEATURE_XENPV)
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index 4e37db8073f9..5dfbd3f55792 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -45,6 +45,11 @@ void __init default_banner(void)
+diff --git a/arch/x86/xen/irq.c b/arch/x86/xen/irq.c
+index 39982f955cfe..d8678c3d3971 100644
+--- a/arch/x86/xen/irq.c
++++ b/arch/x86/xen/irq.c
+@@ -40,20 +40,14 @@ static void xen_halt(void)
+ 		xen_safe_halt();
  }
  
- #ifdef CONFIG_PARAVIRT_XXL
-+unsigned long pv_native_save_fl(void);
-+void pv_native_irq_disable(void);
-+void pv_native_irq_enable(void);
-+unsigned long pv_native_read_cr2(void);
+-static const typeof(pv_ops) xen_irq_ops __initconst = {
+-	.irq = {
+-		/* Initial interrupt flag handling only called while interrupts off. */
+-		.save_fl = __PV_IS_CALLEE_SAVE(paravirt_ret0),
+-		.irq_disable = __PV_IS_CALLEE_SAVE(paravirt_nop),
+-		.irq_enable = __PV_IS_CALLEE_SAVE(BUG_func),
+-
+-		.safe_halt = xen_safe_halt,
+-		.halt = xen_halt,
+-	},
+-};
+-
+ void __init xen_init_irq_ops(void)
+ {
+-	pv_ops.irq = xen_irq_ops.irq;
++	/* Initial interrupt flag handling only called while interrupts off. */
++	pv_ops.irq.save_fl = __PV_IS_CALLEE_SAVE(paravirt_ret0);
++	pv_ops.irq.irq_disable = __PV_IS_CALLEE_SAVE(paravirt_nop);
++	pv_ops.irq.irq_enable = __PV_IS_CALLEE_SAVE(BUG_func);
++	pv_ops.irq.safe_halt = xen_safe_halt;
++	pv_ops.irq.halt = xen_halt;
 +
- DEFINE_ASM_FUNC(_paravirt_ident_64, "mov %rdi, %rax", .text);
- DEFINE_ASM_FUNC(pv_native_save_fl, "pushf; pop %rax", .noinstr.text);
- DEFINE_ASM_FUNC(pv_native_irq_disable, "cli", .noinstr.text);
+ 	x86_init.irqs.intr_init = xen_init_IRQ;
+ }
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index a72059fcbc83..d66eb37ff294 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -593,7 +593,6 @@ static int init_pv_ops(struct objtool_file *file)
+ 	static const char *pv_ops_tables[] = {
+ 		"pv_ops",
+ 		"xen_cpu_ops",
+-		"xen_irq_ops",
+ 		"xen_mmu_ops",
+ 		NULL,
+ 	};
 -- 
 2.51.0
 
