@@ -1,143 +1,128 @@
-Return-Path: <linux-kernel+bounces-842869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEF2ABBDD56
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 13:09:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CE4ABBDD5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 13:10:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 396374EB463
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 11:09:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 040731898CF4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 11:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A27269CE1;
-	Mon,  6 Oct 2025 11:09:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B752690D9;
+	Mon,  6 Oct 2025 11:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="L0W0W0zr";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="csGpiTI/"
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WxnJJ2ZR"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE25170A11;
-	Mon,  6 Oct 2025 11:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C271C170A11;
+	Mon,  6 Oct 2025 11:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759748972; cv=none; b=aaIVmFAlqOtvxngd9SIfQ8yrRXhFxkH4YZXApgQXR8XoJPwAViaJcQ4G8Bgzthit0H3RyfX0QpjCId58s3VwUTjec90SLYgB+Fh3CiHRP+fRqWbPvV5H0NUqmY2C4pNunBmuPQ0eItk/NsMWotS3wOjD4r0K+VsMtoDsILFE0Hs=
+	t=1759749043; cv=none; b=MMT0lUQpxJ/feNkXY7crALcPB1w8/SX/4nQv+VC6gGdCLQ/xoqjpsg8ww1TOgE1y0kChvd7Dj4mMhe0xB7E09y1eQmPNtXlgldaKIT93i7Fx4egHZ5xECHTa9568GycJO93MxLOLBSGLRmQcdB5jTDBxhveGkjCgKCNMHe6pW5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759748972; c=relaxed/simple;
-	bh=iiNffHnTx8Pb202eharTBuQvX3jDw0eC9DrGa8U6EQA=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=loDOXuJk7WhoYfmKbGp4zcmt1jFP8GqCHOIr8bk59w6gcfhpBUWwIW434DQV4cesfJNx/PGTtSQa6wY/nBzaxKFp8QkD3CO/4MioHRtBoLHnI8KeQ5Zs0tTeOAb7hQWq1yMm//ZqyTbkELIP6mEk8i1ouwHzXsto2fRDsDj5la8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=L0W0W0zr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=csGpiTI/; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfout.phl.internal (Postfix) with ESMTP id 93285EC00DE;
-	Mon,  6 Oct 2025 07:09:28 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-06.internal (MEProxy); Mon, 06 Oct 2025 07:09:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1759748968;
-	 x=1759835368; bh=oQr2Z+5xhGdK3c4D5pXVny9a8KKlRowOFGyX0jHZkFk=; b=
-	L0W0W0zrDIxkRpMNjsP0GpnYr49Zm7NbXvAr3HV4YnE/L1NQuSKvD/6o9bS6/0G+
-	OTxSxNPQKiCQTS0jilYj/ug0+Tzejh/fEM+viQKDVE9Bf0JDFYWZ0AdwdrUZpCjr
-	tYyY7dBZw5OReKhGRdPyB1/BcGAVwUfVa9dV8B+qoha7LC83dMphyoOkiJXSQm2h
-	SOGm/uoQpP93QhcMi0K3IVbtrz24TuhqbPY4X2WGzvL+z+Frp2geDqmavLI1CHbU
-	6vvkd7H3RZA/kURLGxpbIqyczcFH5eGVcvtDdk2qTYUkhDaMDpCxDULGrKxBCu+b
-	dv3TgkErgUaay43QWw/jLQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759748968; x=
-	1759835368; bh=oQr2Z+5xhGdK3c4D5pXVny9a8KKlRowOFGyX0jHZkFk=; b=c
-	sGpiTI/QyhntH9oqno6KaikRMNh64/fbq2nUe0r3iiQPpiht8ZstyHst0ctTGzOm
-	Dbn/TwJcHL2tI8+FxO+dyU0M2Lh7nrJ6yC5L4jqdzEmOnfKTyBUkXO7OsBWz6Qfk
-	ovubapVYBxxVcnxx80ZfbEhsFf76SwefyULb4m+BPY0c1DqqCIfOZ/NaiyAevInh
-	MBuboA/2BvU1HhVUyunCLaIgSNEiMm4oG1ofbASLYCynQFpY/0ENmYXeK3J2E9/9
-	KldBnmz+uREeipvmhuEOvgpfDxtpF69NTz7wlhC5EnrpoLJdGTGNrcdAjTRFLRst
-	ykPmOvIpXhKqZA/FCtf1w==
-X-ME-Sender: <xms:Z6PjaBSeap3uRzX5Hfxsbtc9YjxTnLko18CYpLvxnYeZhDkr277K9Q>
-    <xme:Z6PjaCv90eZGDOM0u3pJNRH0JnN_kbmpEywY-cKHhVHUOSvhmY6cr0_UDXVPiTuen
-    NZzdg7J7AeycJ-_hl7OrkJjde1b4OUDElK3OOfJwHjM0VqX7uDOog>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeljeefkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhgusegrrhhmrdgtohhmpdhrtghpthhtoh
-    epsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepphgvthgvrhii
-    sehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
-    pdhrtghpthhtohepfhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtth
-    hopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlrghntggv
-    rdihrghngheslhhinhhugidruggvvhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnh
-    gvth
-X-ME-Proxy: <xmx:Z6PjaBX0cBgZ2CgBOyBd1TwdSkWiBoruyUO9s2Oxz5LB3GQA-d106Q>
-    <xmx:Z6PjaLStS_r5Errx1Qi3eBp4-QOpj97zD9y-2P-QDtT8L6KkYbppdQ>
-    <xmx:Z6PjaMvumckM1omos56IlPrzbowiquwXXaL602ABw6FmKpE_MdOIFw>
-    <xmx:Z6PjaMYsOmBqFct7xibtZ4Ln_DgNvjDzJwdIXQDrI9z1dGV5UKFXfQ>
-    <xmx:aKPjaN4wUe5yun1MsuHEzALlD7APlgm3cCx-9X6w9gyiOdeIWKW1goi9>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 98D76700065; Mon,  6 Oct 2025 07:09:27 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1759749043; c=relaxed/simple;
+	bh=DIlBSgr/mSzhziWJOmRfekecg8JOIy41/V+z1EQrEf4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UZ1lHwyrVP8F5D8S91pKih6mGDF2PcEopWCI2wd6nNaabfndauG2kYUQJSJXmOZOgdh+I0TTZlnyivZmvqcpOIR2cvSL8Ud3VWkT81tK2+5/Q04iImfkKSInxJ/SMQv0hqW0uzvveVP1gB4x7P/Xeihd0uEhzLHUnHc9afm1PJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WxnJJ2ZR; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=PH8rBo5IdyG01s0ryxVVuoYJyvhmSI/VIZPq4wZJnhA=; b=WxnJJ2ZRglzHWG0OLU/YCj6Qa5
+	RaL1eD6ah8PG3OFfola6UsQ1WjSDOzw5gYCQzHFNL2Bpm6zEAWwtyux1vs9MgyD2dyHn9vGv5dSjd
+	zJvJp+rbk3LDvOG19CPBSVMSH12sZd1lQ16efUF9XhjbVZi6FxpMXGwwS4y8t4jN1JK/6Lz/wdu4T
+	CbyVqAPWvj0CeRLMPpS2IL4cAn4UGncZdQCetLw0yWBHz2ZtFrJcNp06Tmeqj68ouMvvnRB4XT0sr
+	pP54/SFf+QrOuUrowYti/y+1F1ZyVaqEcOS7YVlOgpztvHyQMHMiAZYVXpjx3BEbPiXWiDrH/BTfp
+	X9MxlA5g==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v5j6t-0000000GsOH-0ag4;
+	Mon, 06 Oct 2025 11:10:31 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B341E300212; Mon, 06 Oct 2025 13:10:30 +0200 (CEST)
+Date: Mon, 6 Oct 2025 13:10:30 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Naman Jain <namjain@linux.microsoft.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Roman Kisel <romank@linux.microsoft.com>,
+	"K . Y . Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mhklinux@outlook.com
+Subject: Re: [PATCH] x86/hyperv: Export hv_hypercall_pg unconditionally
+Message-ID: <20251006111030.GU3245006@noisy.programming.kicks-ass.net>
+References: <20250825055208.238729-1-namjain@linux.microsoft.com>
+ <20250825094247.GU3245006@noisy.programming.kicks-ass.net>
+ <f154d997-f7a6-4379-b7e8-ac4ba990425c@linux.microsoft.com>
+ <20250826120752.GW4067720@noisy.programming.kicks-ass.net>
+ <efc06827-e938-42b5-bb45-705b880d11d9@linux.microsoft.com>
+ <27e50bb7-7f0e-48fb-bdbc-6c6d606e7113@redhat.com>
+ <aMl5ulY1K7cKcMfo@google.com>
+ <56521d85-1da5-4d25-b100-7dbe62e34d1d@linux.microsoft.com>
+ <20250918064713.GW3419281@noisy.programming.kicks-ass.net>
+ <9f8007a3-f810-4b60-8942-e721cd6a32c4@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Ah_uXtpTlO07
-Date: Mon, 06 Oct 2025 13:09:07 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Peter Zijlstra" <peterz@infradead.org>
-Cc: "Finn Thain" <fthain@linux-m68k.org>,
- "Geert Uytterhoeven" <geert@linux-m68k.org>, "Will Deacon" <will@kernel.org>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Jonathan Corbet" <corbet@lwn.net>,
- "Mark Rutland" <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-m68k@vger.kernel.org,
- "Lance Yang" <lance.yang@linux.dev>
-Message-Id: <92c5af4d-c6e9-43bf-ba2c-ce6627b8d962@app.fastmail.com>
-In-Reply-To: <20251006102228.GT3245006@noisy.programming.kicks-ass.net>
-References: <cover.1757810729.git.fthain@linux-m68k.org>
- <abf2bf114abfc171294895b63cd00af475350dba.1757810729.git.fthain@linux-m68k.org>
- <CAMuHMdUgkVYyUvc85_P9TyTM5f-=mC=+X=vtCWN45EMPqF7iMg@mail.gmail.com>
- <6c295a4e-4d18-a004-5db8-db2e57afc957@linux-m68k.org>
- <57ac401b-222b-4c85-b719-9e671a4617cf@app.fastmail.com>
- <86be5cf0-065e-d55d-fdb6-b9cf6655165e@linux-m68k.org>
- <ec2982e3-2996-918e-f406-32f67a0decfe@linux-m68k.org>
- <e02f861b-706c-4f6d-bded-002601da954a@app.fastmail.com>
- <257a045a-f39d-8565-608f-f01f7914be21@linux-m68k.org>
- <d9e3f41e-d152-4382-bb99-7b134ff9f26f@app.fastmail.com>
- <20251006102228.GT3245006@noisy.programming.kicks-ass.net>
-Subject: Re: [RFC v2 2/3] atomic: Specify alignment for atomic_t and atomic64_t
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9f8007a3-f810-4b60-8942-e721cd6a32c4@linux.microsoft.com>
 
-On Mon, Oct 6, 2025, at 12:22, Peter Zijlstra wrote:
-> On Mon, Oct 06, 2025 at 12:07:24PM +0200, Arnd Bergmann wrote:
->
->> It looks like Mark Rutland fixed the try_cmpxchg() function this
->> way in commit ec570320b09f ("locking/atomic: Correct (cmp)xchg()
->> instrumentation"), but for some reason we still have the wrong
->> annotation on the atomic_try_cmpxchg() helpers.
->
->> Mark, I've tried to modify your script to produce that output,
->> the output looks correct to me, but it makes the script more
->> complex than I liked and I'm not sure that matching on
->> "${type}"="p" is the best way to check for this.
->
-> I don't see anything wrong with this. The result looks good.
+On Mon, Oct 06, 2025 at 04:20:03PM +0530, Naman Jain wrote:
 
-Thanks for having a look, I've sent it out as a proper patch now.
+> I am facing issues in this approach, after moving the assembly code to a
+> separate file, using static calls, and making it noinstr.
+> 
+> We need to make a call to STATIC_CALL_TRAMP_STR(hv_hypercall_pg + offset) in
+> the assembly code. This offset is populated at run time in the driver, so I
+> have to pass this offset to the assembly function via function parameters or
+> a shared variable. This leaves noinstr section and results in below warning:
+> 
+> [1]: vmlinux.o: warning: objtool: __mshv_vtl_return_call+0x4f: call to
+> mshv_vtl_call_addr() leaves .noinstr.text section
+> 
+> 
+> To fix this, one of the ways was to avoid making indirect calls. So I used
+> EXPORT_STATIC_CALL to export the static call *trampoline and key* for the
+> static call we created in C driver. Then I figured, we could simply call
+> __SCT__<static_callname> in assembly code and it should work fine. But then
+> it leads to this error in objtool.
 
-      Arnd
+Easiest solution is to create a second static_call and have
+hv_set_hypercall_pg() set that to +offset.
+
+DEFINE_STATIC_CALL(__hv_vtl_hypercall);
+
+
+hv_set_hypercall()
+	...
+	static_call_update(__hv_vtl_hypercall, ptr+offset); /* +- cast to right function type */
+
+
+> [2]: arch/x86/hyperv/mshv_vtl_asm.o: error: objtool: static_call: can't find
+> static_call_key symbol: __SCK__mshv_vtl_return_hypercall
+
+Look at arch/x86/include/asm/preempt.h
+
+you might need that __STATIC_CALL_MOD_ADDRESSABLE() thing somewhere.
+
+
+Also, what's actually in that hypercall page that is so magical and
+can't just be an ALTERNATIVE() ?
+
+
 
