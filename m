@@ -1,117 +1,141 @@
-Return-Path: <linux-kernel+bounces-842560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C7D0BBD035
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 05:55:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6533BBD06E
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 06:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 336654E03FF
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 03:55:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2E3D3B7142
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 04:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076211D63EF;
-	Mon,  6 Oct 2025 03:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE141D6187;
+	Mon,  6 Oct 2025 04:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nq1VseOm"
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dx6gZOcR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA34413B280
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 03:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E566513E41A;
+	Mon,  6 Oct 2025 04:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759722937; cv=none; b=FJc55NEsjd96vFrXQ2r3MO8rI8A78WP9utb7qkALM727TR1mbwzIw2i/wFzOA1LbM4+/rcqKdsDkKGgMHPYc/zmgTV81axQW1RF1/+L2eHXOWeW17o9ZSpvKYYQYMeeQEBZ2xkOEmbI76sXWSbvy7v7W+70VXvaMgCZitQhTVg4=
+	t=1759723453; cv=none; b=KyOPWCAtELPi8NV7IlOaAEesdJQ/3HF6uWMhAZh0BK92EGYvRCiIkppHi1fDCOK3N0qU5Xya4TJh1LysI0ulPus/qFIeAcTLSBHJPuTbuiN/65yFxQ7jQHdA0nO+76Yd7pR0RME02eqmFHWqJzYM3P7VpLABvB2o+ys7xqxG62A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759722937; c=relaxed/simple;
-	bh=IVzci8UetoGcUjNzr9XskC+74VZiAYmvJdcqtTP8EHo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Oslfq/cEi1TtDg4ZYvXK6JMyKm76bMcKXkIwuRlDJgvJLfbRKHISQkzVKDcWTrI7a7yfUEVxAhULsPbh47gTQ+LFs48ufMrgsmlUbKc81uelKx8uxhg3lGKqPM1abDhlUJhzTegiUCEXNf58HOijxjFaMDeOQFagoFyWKA9Ofzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nq1VseOm; arc=none smtp.client-ip=209.85.217.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-5a0d17db499so4309628137.3
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 20:55:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759722935; x=1760327735; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=C4nyrG89q4JAPsozaOvAY1jJU52pK5NiRjM5aVZTpKE=;
-        b=nq1VseOmDCFOR65PPSRuycvbH/2N+tdXKp34soo9CtpK7L8Qw0W5HIV0A2QRk5B4RJ
-         QVDyxB0gX7vfS3FBCiALzzFGLIYZ6rkVVsbOAvfLMvjFXVT2747NWI89uqv/aG37I+wq
-         pDDDUtlF+m70K9h+zud6MJHYcC5Ksx4uqEodqq/UkDKggNvMqZ7rbeD1+df2h5FPIylg
-         6dP+CiNz6QID5DM0tEdYcPqGyuQUXtNmqvZuZxVsh3s67MbNIp8XwfCOLVU6gWkr2bvN
-         QQy28PpVBv46e0e+9/g1ldNLqIMQgEqorreUfedsNp5LUKWcWAyXX+ogzy9IB3JiC8c7
-         LcrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759722935; x=1760327735;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C4nyrG89q4JAPsozaOvAY1jJU52pK5NiRjM5aVZTpKE=;
-        b=IdN/0HH1xermIIFRpYBxDqzevVTUpky7U/N94s0qQ1/gug/tsm3EP1tveyF8AhxyHs
-         y856U4PhO5Eyc5DTQxn/ZH+9iXM46AxQF3MYBXRCdTgnEtONmHcFcoqzqUYS+uSe4Sso
-         EBnzmeAHHxcrwc3KEOzbkIZEmEs6CgtFg/pg4WprCTW+WIpQ1ZGkAqDP+Kha2d3Z67oM
-         H/g+CTpcQN7niEmofNLDJozmcLxAt8PsT5KIu8Kh0qeITksJ9SArZSYSZsNE1GAj0lnt
-         Tuxtzikda1eXCJznSc4PO9P3GVCphC9/BEPV79bOOTJAy5P4E2FWWqQh9arxH9hiQCEu
-         yFTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUdq6bstDognB991ER/suRlfIbY0EljNxc2OTBcNdYSCbjYH0U0Em9Fm0CFpljfWo/iW3RgqPBm019Nfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZcbn9C5A9xFotHzHZtEgaFJUnzSMKbCC/5Ycw0nE/N6BrGPOX
-	0VeLkom+DjpMHryMYIUaPqUCEOfCXEoYFscvxeVA7g69w+COEt0OUpg4
-X-Gm-Gg: ASbGnctnwpOneRe8Q2HqT9MqYIMauzxZLhFc8EaAhhFUAIt5DhEsKgp16TODWkWTOkK
-	vnHi4m5WHf1JYkg+ZVj9piEqqBhwB6Tbo35IUEPCBL737MCJWR1yoRImZnQxQOeofBpdYbMi8+W
-	wj2knkGoQqW6NLHweTXv6HnQY2Xf3ErO1E0XqXWtz2D/4J7VLKagLm4iVkudT5yGkq/sBAoIXam
-	ZPlA9KpYUAJfBq4wJtNt/V+g0okqaft6mlXLqLtIo373JU5U2d6/jdb/bF3HXEd1nDzV7rDyEji
-	+ndTBysPWZlCOHVA/HO2X/yYodT8B284VtiG3dJ2Vtb3QzkQs1bocF3lDbX11HwrkawfPdnfD/g
-	lGfU8dsworrKFytANNHNEJl801TK2o1Zh5px4Guc4MEgH7iNzRs+7lCQ5v6i2Li9sN4WOvyUuPQ
-	==
-X-Google-Smtp-Source: AGHT+IEM8YkzBfOFCcp56tbV9hhF70WPBySWeJNMA9HNLTpJu46u5ZW+1WmuFW5gSBnLYg5FkBvDOg==
-X-Received: by 2002:a05:6102:5347:b0:5ba:4f5c:874e with SMTP id ada2fe7eead31-5d41d16e253mr4258765137.31.1759722934712;
-        Sun, 05 Oct 2025 20:55:34 -0700 (PDT)
-Received: from [192.168.1.145] ([104.203.11.126])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5d40c6c7e73sm3130870137.15.2025.10.05.20.55.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 Oct 2025 20:55:34 -0700 (PDT)
-Message-ID: <a6526df2-2861-4142-95e7-1c6a83321ac3@gmail.com>
-Date: Sun, 5 Oct 2025 23:55:29 -0400
+	s=arc-20240116; t=1759723453; c=relaxed/simple;
+	bh=84injLzOLRzdmbDYcF7g7essdb0dt9odOMPRFgL8OhA=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Cv5qb6OASYygslA8cn+gdaLEwVd26MjPfzu1jgu9DeiKBQzPvuCwh3m0Pkx0VjXVtCdAnC3h6Qzsg218RZpCtbm7XQlmoJIL+STOvYmYNPjCX7gPJGHmJa45VZQXGRmYOnC63OwLqxoZnKFXHHJYliGzbwabIlvhkL+HR1LG2+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dx6gZOcR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95904C4CEF9;
+	Mon,  6 Oct 2025 04:04:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759723452;
+	bh=84injLzOLRzdmbDYcF7g7essdb0dt9odOMPRFgL8OhA=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=dx6gZOcRbqZU+4kUH56naw+qthiBcZkT1qtIonANRtUnPXGgZSzKl9WgCt0SFdIhm
+	 UbVwoHC4Vs5XWd+JXXmA7hVHDHHcljPxzABSrPU51Ilo+qPPKD4b50iM60t7KVVjsb
+	 SMzmXH2mA9VXny2uTwbYaN5+nstbvZoog7xyFS4WtMcvFaxYJ3i1X4/aK2vr9AVBnQ
+	 f0YfFDMNeIIwcHvnhWFJp9a2t2UhTULfUIaQQ+5l6+IR5madltMoqZysTSG0SPagkr
+	 ukbTi0OjnBiX86Vpr47x0xqWuIEElCfBCKo/rFvEhZv8rGQQRLNt3XkZDanjZzNwxN
+	 maoDHGG6tUMAQ==
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 6D24EF40066;
+	Mon,  6 Oct 2025 00:04:10 -0400 (EDT)
+Received: from phl-imap-08 ([10.202.2.84])
+  by phl-compute-12.internal (MEProxy); Mon, 06 Oct 2025 00:04:10 -0400
+X-ME-Sender: <xms:uj_jaP_ofC9a_l28ntKx_gy42AQmYCP8lb4C2SR10mCLtk9SsRoVMA>
+    <xme:uj_jaGgiJzpY8OBGdAHO0Sug4_6m8jP9b99pQfrT4W6TnMBKVOLM7R8GEtxUIBrad
+    -kpFskrRXUFhspIfBqdrOdo09KkfLKr2F4CPRVd9JM75FUTPegu8VYE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdelieehgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdfnvghonhcu
+    tfhomhgrnhhovhhskhihfdcuoehlvghonheskhgvrhhnvghlrdhorhhgqeenucggtffrrg
+    htthgvrhhnpeejvefflefgledvgfevvdetleehhfdvffehgeffkeevleeiveefjeetieel
+    ueeuvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hlvghonhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidquddvfedtheefleek
+    gedqvdejjeeljeejvdekqdhlvghonheppehkvghrnhgvlhdrohhrgheslhgvohhnrdhnuh
+    dpnhgspghrtghpthhtohepfedupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegs
+    phesrghlihgvnhekrdguvgdprhgtphhtthhopehtshgsohhgvghnugesrghlphhhrgdrfh
+    hrrghnkhgvnhdruggvpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgv
+    thdprhgtphhtthhopehmphgvsegvlhhlvghrmhgrnhdrihgurdgruhdprhgtphhtthhope
+    grnhgurhgvrghssehgrghishhlvghrrdgtohhmpdhrtghpthhtoheplhhinhhmrghgjees
+    ghhmrghilhdrtghomhdprhgtphhtthhopehmrghtthhsthekkeesghhmrghilhdrtghomh
+    dprhgtphhtthhopeguvghllhgvrhesghhmgidruggvpdhrtghpthhtohepjhgrmhgvshdr
+    sghothhtohhmlhgvhieshhgrnhhsvghnphgrrhhtnhgvrhhshhhiphdrtghomh
+X-ME-Proxy: <xmx:uj_jaLVfDv-gcu_8eG8KMmCcu_lqD-hKSTkIpQVlhGsqYjX-BjSkAg>
+    <xmx:uj_jaB0W371EPdKaI_VHwQcrPhlDBdzMVGXgBoeat-lOPO7F0-eoBA>
+    <xmx:uj_jaEj5JbL-yJ3t6Tejadmxf5_fK5DIiQgEqWTLJ9rYb1M0S8qU4w>
+    <xmx:uj_jaJIeYEGT-skfES59I8zK2h3dLuh_CCWKnOpBJzKNKgbBNwzpFQ>
+    <xmx:uj_jaFVMUbmcoU_NyQKMtnVnad6DjfKDRYBqvXnd_1VVAyrxFpX1Mb4b>
+Feedback-ID: i927946fb:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 14BDB2CE0072; Mon,  6 Oct 2025 00:04:10 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sound/core/seq: Initialize structure pointer to NULL to
- prevent undefined behavior
-To: hariconscious@gmail.com, perex@perex.cz, tiwai@suse.com
-Cc: khalid@kernel.org, shuah@kernel.org, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251002174301.15512-1-hariconscious@gmail.com>
-Content-Language: en-US
-From: David Hunter <david.hunter.linux@gmail.com>
-In-Reply-To: <20251002174301.15512-1-hariconscious@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+X-ThreadId: AYer2uYmcW7k
+Date: Mon, 06 Oct 2025 07:03:49 +0300
+From: "Leon Romanovsky" <leon@kernel.org>
+To: "Jason Gunthorpe" <jgg@nvidia.com>
+Cc: "Marek Szyprowski" <m.szyprowski@samsung.com>,
+ "Andreas Larsson" <andreas@gaisler.com>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "David Miller" <davem@davemloft.net>,
+ "Geoff Levand" <geoff@infradead.org>, "Helge Deller" <deller@gmx.de>,
+ "Ingo Molnar" <mingo@redhat.com>, iommu@lists.linux.dev,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ "Jason Wang" <jasowang@redhat.com>, "Juergen Gross" <jgross@suse.com>,
+ linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org,
+ "Madhavan Srinivasan" <maddy@linux.ibm.com>,
+ "Matt Turner" <mattst88@gmail.com>,
+ "Michael Ellerman" <mpe@ellerman.id.au>,
+ "Michael S. Tsirkin" <mst@redhat.com>,
+ "Richard Henderson" <richard.henderson@linaro.org>,
+ sparclinux@vger.kernel.org,
+ "Stefano Stabellini" <sstabellini@kernel.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Thomas Gleixner" <tglx@linutronix.de>, virtualization@lists.linux.dev,
+ x86@kernel.org, xen-devel@lists.xenproject.org,
+ "Magnus Lindholm" <linmag7@gmail.com>
+Message-Id: <d8c1e548-ebc5-4a07-8bf5-d98e9f2e6587@app.fastmail.com>
+In-Reply-To: <20251005233133.GL3360665@nvidia.com>
+References: <cover.1759071169.git.leon@kernel.org>
+ <333ec4dabec16d3d913a93780bc6e7ddb5240fcf.1759071169.git.leon@kernel.org>
+ <20251003150144.GC3360665@nvidia.com> <20251005132259.GA21221@unreal>
+ <20251005233133.GL3360665@nvidia.com>
+Subject: Re: [PATCH v1 3/9] parisc: Convert DMA map_page to map_phys interface
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 10/2/25 13:43, hariconscious@gmail.com wrote:
-> From: HariKrishna Sagala <hariconscious@gmail.com>
-> 
-> This change ensures the structure pointer is explicitly initialized to
-> NULL,preventing potential access to uninitialized memory. It improves
-> code safety and avoids undefined behavior during pointer dereferencing.
-> 
-> Signed-off-by: HariKrishna Sagala <hariconscious@gmail.com>
 
-Hi Harikrishna,
 
-Thank you for detailing your attempt at testing. Unfortunately, your
-patch makes no substantive change. The variable you are setting to NULL
-is assigned before use, so there is no risk of undefined behavior.
+On Mon, Oct 6, 2025, at 02:31, Jason Gunthorpe wrote:
+> On Sun, Oct 05, 2025 at 04:22:59PM +0300, Leon Romanovsky wrote:
+>> @@ -582,7 +582,7 @@ ccio_io_pdir_entry(__le64 *pdir_ptr, space_t sid, unsigned long vba,
+>>         ** Grab virtual index [0:11]
+>>         ** Deposit virt_idx bits into I/O PDIR word
+>>         */
+>> -       asm volatile ("lci %%r0(%1), %0" : "=r" (ci) : "r" (vba));
+>> +       asm volatile ("lci %%r0(%1), %0" : "=r" (ci) : "r" (pba));
+>
+> Don't know how I missed this, but this is the virtual address for the
+> cache invalidate James mentioned
+>
+> So the optimal is to drop the lpa() and to use phys_to_virt() to get
+> vba for this instruction.
 
-I know this can seem discouraging to hear, but I do want you to
-encourage you to keep looking for ways you can make contributions.
+The optimal is to keep parisc arch code as I did in v1 and don't change it too much.
 
-Thanks,
-David
+>
+> Jason
 
