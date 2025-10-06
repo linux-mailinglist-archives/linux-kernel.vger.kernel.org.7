@@ -1,102 +1,74 @@
-Return-Path: <linux-kernel+bounces-842749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6347BBD754
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 11:36:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 365D0BBD763
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 11:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 750FE4E22AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 09:36:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AAF474EA528
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 09:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314141F3B9E;
-	Mon,  6 Oct 2025 09:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oqea8QCy"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2058C1F3B9E;
+	Mon,  6 Oct 2025 09:38:25 +0000 (UTC)
+Received: from zulu.geekplace.eu (zulu.geekplace.eu [5.45.100.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5AC1F09AD;
-	Mon,  6 Oct 2025 09:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E338E34BA22
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 09:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.45.100.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759743376; cv=none; b=pGHqLG3AsX6aSvpsbyEHf2Of7T6boZz83gBndeJ5+zUoEUeqL9UyRrg32DItE7W7oP/QaORhbRZ42Y6n/eUJQ3eBubuNhHZ9oCJptaF1/8PpoLC3SuNtwWBBzs40lErJe5yKyugq/vmiAF8+BWGJf5dyWjbBOdUOGwTOznl3fJo=
+	t=1759743504; cv=none; b=SSc2GNbZE/hFwOPMEYh63t3O4Yw15vGRMXojBrWTS3B0yIW4QJ9IaeARpxw6IyVbAthrFPeIHY0GwmaTEO2ZhOiXB0j0uncAaYLMH+M5tPEANesAFXEj9burKOV21luCnduZEb9u9ya5cT2kw2Vq82KnVlyGB3WGgztVUd4MoIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759743376; c=relaxed/simple;
-	bh=Xp3by8t0maP1Vb90Nju6hz9/zSoF5Ht9B7xI4C7ASrY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FM6rWStWJt9fqmsIw5fhE80CvQixXgI15peiz3FxWJZ2X6p7/iGA4Zb7qys7Sp2nWMYtJyo9G6Iyi0m90JDrGyo1fBCyqVNt237oOElGReZLQO3PsSYgkMo98hX4ABfHypUVF1XJK0HnIPGsstdhDbXdV5Ko8txRWvVep2wfFbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oqea8QCy; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759743371;
-	bh=Xp3by8t0maP1Vb90Nju6hz9/zSoF5Ht9B7xI4C7ASrY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oqea8QCyl47tPr2p/I2JBWilB27/dytrdw7oUiy72JMtI+hZdP+/GK6bMH2b1ME3U
-	 tBJTqozUMuhy57OsKjw9xE+X2Mn2TK0KFsoxYVqVEPoT8sm3MhgeDQnLL6eHT8KN6P
-	 yfxg1uwEWuCeR7B/NKGiy645OImZrboJpCg5VUzChTWyElKansn6MrrDbbzT3Pbmvi
-	 9myQ4DYvltdcxXoVbXZM5kIIDecRP7QVtSNFTJLIZLEzNBlbFZt6m1c0TsshyPYifc
-	 Vmb1J6wn5DEuCDQG3hAdm9SOVs6Mcb42/H3Wtw/ACt0oshGypbrkCRrFxmkYeUq1J0
-	 TbpwM/i587E1Q==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C34CF17E0FC2;
-	Mon,  6 Oct 2025 11:36:10 +0200 (CEST)
-Message-ID: <137811e2-f28e-4605-a6b2-935a0a8b463b@collabora.com>
-Date: Mon, 6 Oct 2025 11:36:10 +0200
+	s=arc-20240116; t=1759743504; c=relaxed/simple;
+	bh=bM3eQ1iHMnjI+hHSlUGgsWOL5vu2GQTcxGjwGHxpfIU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OZQO5fZXmergsgvB2b//27KzrOpASxkNR/o4i/KPFICCjzrdB5WFOMVcWIY9Bivsdg1gQc1GWxvk2JiFZOM8+U6PZb8QIM3iF8h7UyWJlX0TpMurGxR3CEY1lB4N+gj6SysUpT4JvF7iuhaOoaD+o/6r2LTKdpnQRNue7Jr3hHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=geekplace.eu; spf=pass smtp.mailfrom=geekplace.eu; arc=none smtp.client-ip=5.45.100.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=geekplace.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geekplace.eu
+Received: from neo-pc.sch (unknown [IPv6:2001:4091:a241:81e7:34fb:50ff:feac:591b])
+	by zulu.geekplace.eu (Postfix) with ESMTPA id 6C1A44A00BC;
+	Mon,  6 Oct 2025 11:38:05 +0200 (CEST)
+From: Florian Schmaus <flo@geekplace.eu>
+To: Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Florian Schmaus <flo@geekplace.eu>
+Subject: [PATCH] riscv: entry: fix typo in comment 'instruciton' -> 'instruction'
+Date: Mon,  6 Oct 2025 11:37:42 +0200
+Message-ID: <20251006093742.53925-1-flo@geekplace.eu>
+X-Mailer: git-send-email 2.49.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/7] dt-bindings: power: Add MT8196 GPU frequency
- control binding
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Jassi Brar <jassisinghbrar@gmail.com>, Chia-I Wu <olvaffe@gmail.com>,
- Chen-Yu Tsai <wenst@chromium.org>, Steven Price <steven.price@arm.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-hardening@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20251003-mt8196-gpufreq-v6-0-76498ad61d9e@collabora.com>
- <20251003-mt8196-gpufreq-v6-2-76498ad61d9e@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20251003-mt8196-gpufreq-v6-2-76498ad61d9e@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Il 03/10/25 22:15, Nicolas Frattaroli ha scritto:
-> On the MT8196 and MT6991 SoCs, the GPU power and frequency is controlled
-> by some integration logic, referred to as "MFlexGraphics" by MediaTek,
-> which comes in the form of an embedded controller running
-> special-purpose firmware.
-> 
-> This controller takes care of the regulators and PLL clock frequencies
-> to squeeze the maximum amount of power out of the silicon.
-> 
-> Add a binding which models it as a power domain.
-> 
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Signed-off-by: Florian Schmaus <flo@geekplace.eu>
+---
+ arch/riscv/kernel/entry.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
+diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+index d3d92a4becc7..9b9dec6893b8 100644
+--- a/arch/riscv/kernel/entry.S
++++ b/arch/riscv/kernel/entry.S
+@@ -455,7 +455,7 @@ SYM_DATA_START_LOCAL(excp_vect_table)
+ 	RISCV_PTR do_trap_ecall_s
+ 	RISCV_PTR do_trap_unknown
+ 	RISCV_PTR do_trap_ecall_m
+-	/* instruciton page fault */
++	/* instruction page fault */
+ 	ALT_PAGE_FAULT(RISCV_PTR do_page_fault)
+ 	RISCV_PTR do_page_fault   /* load page fault */
+ 	RISCV_PTR do_trap_unknown
+-- 
+2.49.1
 
 
