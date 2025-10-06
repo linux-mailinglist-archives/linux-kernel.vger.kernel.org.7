@@ -1,136 +1,102 @@
-Return-Path: <linux-kernel+bounces-843077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EC73BBE5E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:37:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DCFCBBE62B
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:46:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 093113BDED4
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:37:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7BCF3B5419
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 413982D63FC;
-	Mon,  6 Oct 2025 14:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA8D2D663B;
+	Mon,  6 Oct 2025 14:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="RerWQn8w"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="q2ldwKH4";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="IacS/6YH"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B40286890;
-	Mon,  6 Oct 2025 14:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25CE1C7005;
+	Mon,  6 Oct 2025 14:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759761447; cv=none; b=L3qgBt+afWD168TagYJHzrYnPXlIsUFsmEZj/HMhEvXySz7B6w0RjRpdRll2TgP+8FA41kpLPit3pq9PbUputhFj+9X5e5J4eTLL9sO1uF0tC+zCasALy1s2EM8uCtYgFMU5mIro5PmrmSQYIJNKZFC4c34S78hnYgMmJyZmbvE=
+	t=1759761953; cv=none; b=NO98GrtXjkPlD22QECbUN5gw5xH3KzDxZF+WqCyPBma+agCj78e3gdKyPWBJBr/3/ovUHL+2OYIGqBG3dW/rgrt9GB1v9hOjXx891CHkxlbfLhpEIvNFrC9KY+0VNtHupgN71g2wTfdJWR3Aymhwet4WefpthiWEXCxcOqQ1daM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759761447; c=relaxed/simple;
-	bh=jGMLnJv9dXRh8RhNuUQfVvRt25nKmaUQw9AMgdQGEFk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nWMBDEWGIIRuY1e+NWv5xKQATvJzQakj2Hi9hS0U9iYu7n43Kl74VGGbI4NZcGrx37BbajlF0sKq1sf50wgGD2CPTQB/0G/UVuCxjsEVUfcKhcyU0j+Hn8Xm2SiyZwnjXTwDTh0BqhJz4UxnDG8NdTRBe/ljlwJl9OKbC39HRqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=RerWQn8w; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1759761434; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=MRd7MjBmC/eEJdzsD2vXfxk4wEMOk8EoYAwSAk67oLo=;
-	b=RerWQn8wGPehTSnKlHMekX+1T4pJ+p8FobtcRqEuBybHmSdnXWebFgx1+CFWPZMq2w+Ej09lFr0hP1nDZdvHZSBTfOyqCrH1axojqfLqsAqsU+MLCJAuhs+EFYeoAwB2ForvB8XiC+T4iACGysleot/bcm26VNTQ3i57x7k7jN4=
-Received: from 30.180.0.242(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WpXtsPz_1759761433 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 06 Oct 2025 22:37:14 +0800
-Message-ID: <7b05f88d-2e8f-4fbb-aecb-14b37b7bc99e@linux.alibaba.com>
-Date: Mon, 6 Oct 2025 22:37:12 +0800
+	s=arc-20240116; t=1759761953; c=relaxed/simple;
+	bh=f2lVa86/wPKb30SHUxj2idQocPvFNcnOkh58cZ4fb+0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lkuMtrEPZbwQihViw/xW5tpAIHaHBBocPE2OWxT+O3+Yr6WEW5YmZ62SVHgbaMzNkDDOJQPpdq3RLuiLJOG76/US85gC5CH3+8ZluDRuCKoUy+3WHcyutBpFJIFNn5+ofQMe+Gh3d9grxUGcTzWvdTtudBhyeXN6nD024XluQWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=q2ldwKH4; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=IacS/6YH; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Date:Subject:To:From; t=1759761455; bh=hT8aWyIDgjsEqbFovnN215l
+	unAK8tXcDqNu8S0mbHIk=; b=q2ldwKH4+hjp03qV0nrXpPeSeG0O+ZVqdjqGnNN/WJCPUoTXIK
+	AMCBfbklZQnYOpnUmlI+fWNlofqW3q3XlEJwNlSwtKrs5ZMpp3UviPVCH/tkecE9Sea0LeA7OF0
+	BqoKPZSLRglUnFRS+rLAt2A2cJ3PEgetlF41zpIJJpC2MhPBLcw3NJKJwO5rWxlH2/hmLLKrRbU
+	04ziV64hZuHKlBGWk5pT1aNiggV2yVVQoylVwB4sNe7GKW/YIr0Nbx+F6VqiRlTaPQZTQpb9rAY
+	IDP/ELG+EO/TcIeIUfiw5H8ex+pRYhzO9ldEB/gAZs/IBe/Vj9i9Trkuhc0P7k07EjQ==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Date:Subject:To:From; t=1759761455; bh=hT8aWyIDgjsEqbFovnN215l
+	unAK8tXcDqNu8S0mbHIk=; b=IacS/6YHNGEDLiMIOi3bysrK9L7quIybRkuHaOZWNJhsHoJCWn
+	7mZXe7pjFjDr2CNdpmyVC31w3irAGvzf9PDg==;
+From: Victor Paul <vipoll@mainlining.org>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lukas Wunner <lukas@wunner.de>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Daniel Martin <dmanlfc@gmail.com>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Victor Paul <vipoll@mainlining.org>,
+	stable@vger.kernel.org
+Subject: [PATCH] PCI: probe: fix typo: CONFIG_PCI_PWRCTRL -> CONFIG_PCI_PWRCTL
+Date: Mon,  6 Oct 2025 18:37:14 +0400
+Message-ID: <20251006143714.18868-1-vipoll@mainlining.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] ext4: fix an data corruption issue in nojournal mode
-To: Jan Kara <jack@suse.cz>, Ted Tso <tytso@mit.edu>
-Cc: Zhang Yi <yi.zhang@huaweicloud.com>, linux-ext4@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- adilger.kernel@dilger.ca, yi.zhang@huawei.com, libaokun1@huawei.com,
- yukuai3@huawei.com, yangerkun@huawei.com
-References: <20250916093337.3161016-1-yi.zhang@huaweicloud.com>
- <4a152e1b-c468-4fbf-ac0b-dbb76fa1e2ac@linux.alibaba.com>
- <5vukrmwjsvvucw7ugpirmetr2inzgimkap4fhevb77dxqa7uff@yutnpju2e472>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <5vukrmwjsvvucw7ugpirmetr2inzgimkap4fhevb77dxqa7uff@yutnpju2e472>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Jan,
+The commit
+	8c493cc91f3a ("PCI/pwrctrl: Create pwrctrl devices only when CONFIG_PCI_PWRCTRL is enabled")
+introduced a typo, it uses CONFIG_PCI_PWRCTRL while the correct symbol
+is CONFIG_PCI_PWRCTL. As reported by Daniel Martin, it causes device
+initialization failures on some arm boards.
+I encountered it on sm8250-xiaomi-pipa after rebasing from v6.15.8
+to v6.15.11, with the following error:
+[    6.035321] pcieport 0000:00:00.0: Failed to create device link (0x180) with supplier qca6390-pmu for /soc@0/pcie@1c00000/pcie@0/wifi@0
 
-On 2025/10/6 21:52, Jan Kara wrote:
-> Hi Ted!
-> 
-> I think this patch series has fallen through the cracks. Can you please
-> push it to Linus? Given there are real users hitting the data corruption,
-> we should do it soon (although it isn't a new issue so it isn't
-> supercritical).
+Fix the typo to use the correct CONFIG_PCI_PWRCTL symbol.
 
-Thanks for the ping.
+Fixes: 8c493cc91f3a ("PCI/pwrctrl: Create pwrctrl devices only when CONFIG_PCI_PWRCTRL is enabled")
+Cc: stable@vger.kernel.org
+Reported-by: Daniel Martin <dmanlfc@gmail.com>
+Closes: https://lore.kernel.org/linux-pci/2025081053-expectant-observant-6268@gregkh/
+Signed-off-by: Victor Paul <vipoll@mainlining.org>
+---
+ drivers/pci/probe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-
-..
-
-> 
->> Some of our internal businesses actually rely on EXT4
->> no_journal mode and when they upgrade the kernel from
->> 4.19 to 5.10, they actually read corrupted data after
->> page cache memory is reclaimed (actually the on-disk
->> data was corrupted even earlier).
->>
->> So personally I wonder what's the current status of
->> EXT4 no_journal mode since this issue has been existing
->> for more than 5 years but some people may need
->> an extent-enabled ext2 so they selected this mode.
-> 
-> The nojournal mode is fully supported. There are many enterprise customers
-> (mostly cloud vendors) that depend on it. Including Ted's employer ;)
-
-.. yet honestly, this issue can be easily observed in
-no_journal + memory pressure, and our new 5.10 kernel
-setup (previous 4.19) can catch this issue very easily.
-
-Unless the memory is sufficient, the valid page cache can
-cover up this issue, but the on-disk data could be still
-corrupted.
-
-So we wonder how large scale no_journal mode is used for
-now, and if they have  memory pressure workload.
-
-> 
->> We already released an announcement to advise customers
->> not using no_journal mode because it seems lack of
->> enough maintainence (yet many end users are interested
->> in this mode):
->> https://www.alibabacloud.com/help/en/alinux/support/data-corruption-risk-and-solution-in-ext4-nojounral-mode
-> 
-> Well, it's good to be cautious but the reality is that data corruption
-> issues do happen from time to time. Both in nojournal mode and in normal
-> journalled mode. And this one exists since the beginning when nojournal
-> mode was implemented. So it apparently requires rather specific conditions
-> to hit.
-
-The original issue (the one fixed by Yi in 2019) existed
-for a quite long time and I think it was hard to reproduce
-(compared to this one), but the regression out of lack of
-clean_bdev_aliases() and clean_bdev_bh_alias() makes another
-serious regression (which exists since 2019 until now) which
-can be easily reproduced on some specific VM setup (our
-workload is also create and delete some small and big files,
-and data corruption can be observed since some data is filled
-with extent layout, much like the previous AWS one).
-
-Thanks,
-Gao Xiang
-
-> 
-> 								Honza
-> 
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 19010c382864..7e97e33b3fb5 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -2508,7 +2508,7 @@ bool pci_bus_read_dev_vendor_id(struct pci_bus *bus, int devfn, u32 *l,
+ }
+ EXPORT_SYMBOL(pci_bus_read_dev_vendor_id);
+ 
+-#if IS_ENABLED(CONFIG_PCI_PWRCTRL)
++#if IS_ENABLED(CONFIG_PCI_PWRCTL)
+ static struct platform_device *pci_pwrctrl_create_device(struct pci_bus *bus, int devfn)
+ {
+ 	struct pci_host_bridge *host = pci_find_host_bridge(bus);
+-- 
+2.51.0
 
 
