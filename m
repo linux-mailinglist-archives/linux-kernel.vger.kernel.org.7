@@ -1,127 +1,117 @@
-Return-Path: <linux-kernel+bounces-843513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF9DBBF9F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 23:55:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD59BBBF9ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 23:55:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 17DDA4F28FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 21:55:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0522E4F2FDC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 21:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9DBB2638B2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4E4265CDD;
 	Mon,  6 Oct 2025 21:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sDCMggo7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HxcTn8rh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C201F4615;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D93184524;
 	Mon,  6 Oct 2025 21:55:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759787711; cv=none; b=KwGiY9twTRydEneKhZBl906J1/ogwQr/YZFt9I5j1FnwmNy9Z5DTPZDRq1N5lu9AxUqnIxxOrMnd2ei49iVMfG1Bjx9DD25n0gKIdFaOfrYae4QQeeG8EfwaDTuMuuTm8NmVdZUf05rB4vN5FkVfW20G/jZjfN+aHna4DZMpb28=
+	t=1759787710; cv=none; b=KjRPvpTB5uOsMn5EF5X9QRG0tiFdkQ+i5dqVynpaRCNlMlbv9DXxFYY8R/mKS66IDObYceXNXvDC/aWmkwmOly+idcM9O92y7D//AzmVXR+mVRGwx9DhfdnT/ypfiTrXdt5obx6vlpNIxAPEifPtMsfoqEy1U3+jeVaaA1vyIi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759787711; c=relaxed/simple;
-	bh=2aJnYVaGf8XUqQHTpB1VtEpe3tVyvm1Pn5nKvnx2EKI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lGZgMto220LJWJc9EOnWtJ/EHakkbI+atzZJnxc448WMVIoBW6sKDbSrI4/s83mhIhcwgDKHY3CGYvCa8fWAZOjlLziE1f2pBwYf3OhG/LGKVnee8unqJC2Yc0f81KD6uFedp2TjB1amVd3rObjiEVOgKZrf36T5V+i73LjTktg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sDCMggo7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C649C4CEF9;
-	Mon,  6 Oct 2025 21:55:09 +0000 (UTC)
+	s=arc-20240116; t=1759787710; c=relaxed/simple;
+	bh=QOuCeBcgcbWQto9WnsHySOKZ81rbgK/I39KFx6jJPbw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WBQriMSCBsBMffjF44o4A6ox0yC6xlT4GaXWnvNOft0OyWVHJAXepc9iBHuIrZsz17vXZet/csVQ9j5gPYPgTD56iStkiVIz8YJH19NhE9HDKgJPHfFLVxt98m90QoMB7SG2wPU68a0+EyAtWqKU2LSj51zH+624vVq57EIe3Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HxcTn8rh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2063C4CEF5;
+	Mon,  6 Oct 2025 21:55:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1759787710;
-	bh=2aJnYVaGf8XUqQHTpB1VtEpe3tVyvm1Pn5nKvnx2EKI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sDCMggo7LWAQ4bGGtpFw4mVsQnmJ8vYPGTBLFLD08OlFnkZ5rQvP8L7bOBcsCjeu1
-	 15MuEbCjbb/Ga3sQWrglz38c/riM+jyd6Iz/dNYD2DWgqF6f9mHNpuuNZE0LtcWbEi
-	 pgQ+20XL+LbqmKMBE5nLoUcnMFoYPsZ23MuOghofJ0wSyQDRs5jvm0mi73Z5jItlWG
-	 7u7abns/YhJzb9tB8844XHa6iXFxM2hbsPxuYjJzJfVduuOuDZQ/+g3Yy2VzCYvPc1
-	 iWldpKvf8ET82qOTJddDsXKtquQZ7yJ/dHAtGgWvvtthetXt1XADT4Xy+2CaEHA3dB
-	 nPzn4bwaSM6yw==
-Message-ID: <80347dcf-419b-489e-9b0e-d901fbacc71a@kernel.org>
-Date: Mon, 6 Oct 2025 22:55:04 +0100
+	bh=QOuCeBcgcbWQto9WnsHySOKZ81rbgK/I39KFx6jJPbw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HxcTn8rh2qtGoaJOOZNdQsG6QOQSuXkjo9ioB23X2j876uD5kx+XCssfZNvJDHdSj
+	 5Tb5LbzdYi3AKBXVuMAlbhzBe9bvJLgUEZImnWQGc0byYLUeLZRKw64qNit4AyUJxl
+	 4EmXamrJ0J7h0oV5jBeCGRI90XTCR1KkoV0+tcolM7Zgoep7gcISp4iBDLHzVi6ddz
+	 sZbZc+Lpe4V4zDMGLLOWaYO56mTkOQz5gREjezMUTZWmPaSrJkO4o2K+VQbwgM9zSm
+	 T7bPxWXmiPIu3yhaRGzsvqXXWs2NLC/+wTXugzEAjzS3AgIsDI+PCEpOPRAEFfh8xy
+	 RcIGXtWWzi7VQ==
+Date: Mon, 6 Oct 2025 14:55:05 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: patches@lists.linux.dev, stable@vger.kernel.org,
+	"Borislav Petkov (AMD)" <bp@alien8.de>, tglx@linutronix.de,
+	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH AUTOSEL 6.17-5.4] x86/build: Remove cc-option from stack
+ alignment flags
+Message-ID: <20251006215505.GB3234160@ax162>
+References: <20251006181835.1919496-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/9] gpio: improve support for shared GPIOs
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
- Srinivas Kandagatla <srini@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Saravana Kannan <saravanak@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Andy Shevchenko <andy@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20250924-gpio-shared-v1-0-775e7efeb1a3@linaro.org>
- <0b402bba-0399-4f93-873e-890a78570ff7@kernel.org>
- <CAMRc=MfwEHGV-HZQURR3JNg1HatAeWO17qbRmkWUXTSBWj5jSg@mail.gmail.com>
-Content-Language: en-US
-From: Srinivas Kandagatla <srini@kernel.org>
-In-Reply-To: <CAMRc=MfwEHGV-HZQURR3JNg1HatAeWO17qbRmkWUXTSBWj5jSg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251006181835.1919496-1-sashal@kernel.org>
 
-
-
-On 10/6/25 12:55 PM, Bartosz Golaszewski wrote:
-> On Sat, Oct 4, 2025 at 3:32 PM Srinivas Kandagatla <srini@kernel.org> wrote:
->> On 9/24/25 3:51 PM, Bartosz Golaszewski wrote:
->>> Here's a functional RFC for improving the handling of shared GPIOs in
->>> linux.
->>>
->>> Problem statement: GPIOs are implemented as a strictly exclusive
->>> resource in the kernel but there are lots of platforms on which single
->>> pin is shared by multiple devices which don't communicate so need some
->>> way of properly sharing access to a GPIO. What we have now is the
->>> GPIOD_FLAGS_BIT_NONEXCLUSIVE flag which was introduced as a hack and
->>> doesn't do any locking or arbitration of access - it literally just hand
->>> the same GPIO descriptor to all interested users.
->>
->> Isn't the main issue here is about not using a correct framework around
->> to the gpios that driver uses. ex: the codec usecase that you are
->> refering in this is using gpio to reset the line, instead of using a
->> proper gpio-reset control. same with some of the gpio-muxes. the problem
->> is fixed once such direct users of gpio are move their correct frameworks.
->>
+On Mon, Oct 06, 2025 at 02:17:33PM -0400, Sasha Levin wrote:
+> From: Nathan Chancellor <nathan@kernel.org>
 > 
-> If they were called "reset-gpios" then we could (and should) use
-> Krzysztof's reset-gpio driver here, but we have many cases where
-> that's not the case and the names (and implied functions) are
-Yes, these codec drivers are due to be moved to use reset-gpios.
+> [ Upstream commit d87208128a3330c0eab18301ab39bdb419647730 ]
+> 
+> '-mpreferred-stack-boundary' (the GCC option) and '-mstack-alignment'
+> (the clang option) have been supported in their respective compilers for
+> some time, so it is unnecessary to check for support for them via
+> cc-option. '-mpreferred-stack-boundary=3' had a restriction on
+> '-mno-sse' until GCC 7.1 but that is irrelevant for most of the kernel,
+> which includes '-mno-sse'.
+> 
+> Move to simple Kconfig checks to avoid querying the compiler for the
+> flags that it supports.
+> 
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+> Link: https://lore.kernel.org/20250814-x86-min-ver-cleanups-v1-2-ff7f19457523@kernel.org
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+...
+> ## Backport Status: NO
+...
+> **Dependency Analysis:**
+> - Requires minimum GCC 8.1 for x86 (introduced in v6.15 via commit
+>   a3e8fe814ad1)
+> - Requires minimum Clang 15.0.0 for x86 (commit 7861640aac52b)
+> - Both requirements are satisfied in 6.17 stable tree (verified via
+>   scripts/min-tool-version.sh)
+> - GCC 7.1+ supports `-mpreferred-stack-boundary=3` with `-msse` (per GCC
+>   commit 34fac449e121)
+...
+> ### Conclusion
+> 
+> While this commit is technically safe and provides a marginal build-time
+> performance improvement by eliminating unnecessary runtime compiler
+> checks, **it does not meet the fundamental requirement for stable kernel
+> backporting**: it does not fix a bug that affects users.
+> 
+> The commit is purely a cleanup that removes obsolete code after compiler
+> minimum version requirements were raised. Such cleanups belong in
+> mainline development, not stable trees, which should focus exclusively
+> on fixing bugs that impact users.
+> 
+> The fact that it was auto-selected by AUTOSEL does not override the
+> documented stable kernel rules. This commit should be **rejected** from
+> stable backporting or **reverted** if already applied.
 
---srini
-> arbitrary. In the case addressed in this series, the GPIOs are called
-> "powerdown". The second big user of nonexclusive GPIOs are fixed
-> regulators where the line isn't called "reset" either. There are also
-> various other uses sprinkled all over the kernel for which no good
-> abstraction exists or can even be designed in a generic way.
-> 
->> Am not sure adding a abstraction with-in gpio framework is right
->> solution, But I do agree that NONEXCLUSIVE flags should disappear and
->> users that are using this should be moved to correct frameworks where
->> they belong.
->>
-> 
-> I'm open to suggestions but DT maintainers have not been particularly
-> fond of creating "virtual" devices to accommodate driver
-> implementations.
-> 
-> Bartosz
+Based on all of this, I would agree that it is not really suitable for
+backporting (at least not beyond 6.15, whereas the subject says back to
+5.4), so why was this still sent for review?
 
+Cheers,
+Nathan
 
