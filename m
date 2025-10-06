@@ -1,147 +1,277 @@
-Return-Path: <linux-kernel+bounces-842739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B61DBBD6F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 11:25:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE0BABBD703
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 11:26:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 37EC94E9942
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 09:25:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECE103AD103
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 09:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B71D264F81;
-	Mon,  6 Oct 2025 09:25:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328412676DE;
+	Mon,  6 Oct 2025 09:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OP8VYXp1"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FJL1k0kr"
+Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B328262FE9
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 09:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C112690D5;
+	Mon,  6 Oct 2025 09:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759742729; cv=none; b=itomBHsRPQ5k7UHvtZd9WgiuUnPPV9MHeIdx7mHI4N1vNr9AqrGMgwFcU4uacO4qtigBHUa4u43/4ctHeVCH56YsL5IRJweDhYOOKUmBSxhZSB912LgLf2xUUpmWq1dpnmS/7NOPHJEPodZCcsXIClgR87cGJncRemYwtekwoFk=
+	t=1759742733; cv=none; b=RIHkymBOOOkXKwyXThDWn5wEUSnJ9F7XuSna7RR2noGQSMFQhE53jnuAF3ROkT/9UxDCD+l5Z7j4O3MvnIgHMRvpBwm8yA3Vs6Xnn9XgWXXmMurdMhNj7KC/jsPwJW8PsLTWgr2d1FBtR3KNeHZneZnC8nDzEvZ+eNBa5G7ZWnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759742729; c=relaxed/simple;
-	bh=Edw6e0og8KO+pLnhJlzP7tQrwfS/fTioEQtVFejS+5Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t6EjjWMM4IpVyNq3+zTHzV+TmynD+HzPlhTXuYL1u66BEcTDowMa6cQhPonu5vmvJagFrDItXtBrNDLbSv35QcPdNGxAPldDmBkWD1dQEylCJ4/uO27I2eXqpkNjts3BVPRTX2YooypZzGvgK0ipGydUSAh1JOk1vdd5Rr8oaNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OP8VYXp1; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5961EIlr028800
-	for <linux-kernel@vger.kernel.org>; Mon, 6 Oct 2025 09:25:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	bPnKDCAknnlQ5K1Y7MBqxGeVWc0/KKrFnvmpGWEd/iE=; b=OP8VYXp1NPHQZ1DC
-	PZwp1qm8s20FDro5w/TnwQ6vniSCPH1P1DeqqkSveXDbexOPAHUnEFxByrU1F+qL
-	VFsInYZ4ZXn9ARWgs9bCB4/o9A78k9jNzDliUyoAhBl+4wVusNHD/R4bNjbqmp2O
-	Z8jsHX/SvhbfBX3hZkJ+zndpwEfCFhrVi7ldLJz7RgQRqOYHtymYe8fja64allX2
-	0WXsZO1S9HRy1RvJ0HTqfWLDdaOmK3IVchBYc75kSW0CS6SN3sVzauuNrilh1lC+
-	C9w3hwv945uGMvLrJqPXXAIbUFHz1cZiFfG4kSzdkbeES1UNycF+aB6Z/slejDo3
-	dAQNPg==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49ju5xbey3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 09:25:26 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-85e23ce41bdso97786085a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 02:25:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759742725; x=1760347525;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bPnKDCAknnlQ5K1Y7MBqxGeVWc0/KKrFnvmpGWEd/iE=;
-        b=dZES8InYB+HLgqiyrMSi/8U84URTsqMaROABzw1t9HiMTSCnEdiW47R378LPPgK1f/
-         ef0WIvO4eGiq2w8GaZ58Jce1aLRVqAC+Oym2I6GosqMVDNEs4hYCZPK3Jbpi8fz32ILm
-         pE0h9d9ayvnVQTLiIyFLdpcARzUQBmDs0JZnsOmG/gAGEj1mhmFBDqFQd4E4SDl5aVOp
-         UAWgQBCwTL2i4d9NfQDmHWfQx9v6mJ50uN8sSEgFiVjxov4DgIUq5QTummrWt3fSEmUq
-         nH0e5CmIFeYohwzdKltOtdCi8dwY5kPLQyanWbdSU68dcaLQ/DSZmaftsvmfYrfg8bXK
-         2Scg==
-X-Forwarded-Encrypted: i=1; AJvYcCUx2hgwCqmq+nmLgBIPojJereMEI8CgeHqmn+QTo/W7ZNXD+e1/QtiJMyYsr8i9/htsPoNDBldTM+HPN1Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfgFZ+90tTz+Tx85y+ig8xKSB8IIf2nrB/55UQFaCiyDH7JwHR
-	OJ681W5vtRwzNnPTPqzUVBeQ04A8xnYjLjwEUYwUEkiKhCJ6a1VyGid6p2vhUtnTuCzh7RNDcBG
-	Uylv5qFO/TuZN6WifJBd4uNJIhkcFzeqAy4pTtzgCb66PS6dGesaSveZ6RdZWzfU/9vw=
-X-Gm-Gg: ASbGnctem7GmRzxYGe96FN2w9xHDxoXDAIXvOGYe9Sab41NXL0lQlnbQHNceHzPyeA1
-	W3m9DWFRHTxV0Lk0tCLP+IBZyUzbOyUUZNhZV0bcG3XPVgH4rlfUuQeAQvHjYEyTnN9lftPjeUX
-	b0nMlUgjJs7lMYnTRxoOt97tAEIzpLc5nq+HII7xhyio/yyJU7VuIPAK+LQx9FJ9zsFKu4Ydkqm
-	kNpYGy02rBsn6lZICfEH0BSycmbk3nDEGnmMe6Kq1Fd6Z90Hsg45yUqT/KnzhnLgJWwUsQzrMe1
-	1f4Zmon0CtN9eVvVMGBgtmcS+sswoVZL/unhnv/xEHIMPELTapvpJYNFS7BzrC3iZ5VJSyCl5k7
-	cF5MMzgV4SWTcpnlMOQrSJLAhsJI=
-X-Received: by 2002:a05:620a:2808:b0:878:7b3e:7bbf with SMTP id af79cd13be357-87a35ce66c1mr1023296685a.3.1759742725314;
-        Mon, 06 Oct 2025 02:25:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFvRfoZ03L6zTgPa9LKXYBO9blV6+FdfAe7dQyAmQoPVuIdAmyD2DdczNNxPH7bp8ruibwQLA==
-X-Received: by 2002:a05:620a:2808:b0:878:7b3e:7bbf with SMTP id af79cd13be357-87a35ce66c1mr1023293885a.3.1759742724700;
-        Mon, 06 Oct 2025 02:25:24 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486970b422sm1113154466b.54.2025.10.06.02.25.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Oct 2025 02:25:24 -0700 (PDT)
-Message-ID: <fde00935-6475-470d-bfde-4341d15c8441@oss.qualcomm.com>
-Date: Mon, 6 Oct 2025 11:25:21 +0200
+	s=arc-20240116; t=1759742733; c=relaxed/simple;
+	bh=R6wq/0ECdxmdAS9ozwPMla9UBXyiejwLuVyM57M7x+8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=TCw1CXdKYc0DDpmqXTIDp+AJQ9nxyFO1UK/dMsGFV5O5U1KK7wR+Cp/YRPL5apfiJcby8tVZSxM+La4wGRNtSiYBd5JT5XAazA9cmpEObrqL3CP00loLy0Sfdd5JXp2kIawRlOVwqyZ9wrEdQlgZplqUDw+8U0fgVYdJNu7vnvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FJL1k0kr; arc=none smtp.client-ip=202.12.124.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 69D447A001D;
+	Mon,  6 Oct 2025 05:25:29 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Mon, 06 Oct 2025 05:25:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1759742729; x=1759829129; bh=0MH0LJMlOe1MZQnPNMpJz9niI+z5sxtWGJK
+	DRhPfrtg=; b=FJL1k0kr0VWwZJHEW5DVIjWuf6O9uTuFhn6LGhysbx5Hyjn7yB0
+	CUwuy0GYGWoYlYx/nj+zKKn41dz08ToYu/ZSwPGUrO+A0Oqt0hR+iCs2X/mdceYI
+	gaQW/of/xXtz8l2KW/QgdeuktoDxGSBbVM0SA2vedd0nai9TSbnQq4JyThjuYDEv
+	s47Fd7SRsejkGp8LZCWDt+PW65GhM8c05kNCv7xXbwKzl84Z3QtJ1wcIMx4r0XFQ
+	FuS2YzdU2XdJLa1krvDis84k7lys+Bz+y40shd91+UIXaAz/Q/a+FVtu0JZwxKOq
+	XAVE5iqxmNn4fZJvrdTRTo8XK7qhGBH1hgQ==
+X-ME-Sender: <xms:CIvjaBu5nn3VATrxoW6ZrWN8Y8g8_XViQxxn9MPaJUd8VQxeWKwSZw>
+    <xme:CIvjaCnkxVD1Hv75CZbf3Lamz1kwQXcCf3YIZO_9026MyNsq9u25yrgHO0u5P86S6
+    0JTIkRruFcbClyFU6FBSiYyC_Y1MFvOVFh4euL-R8DAHgoF7unsArzc>
+X-ME-Received: <xmr:CIvjaEQJpNxo50QZxaIlUEYSDEhiKQoZLWT4DHsiOCuQTloDMc59_P2Ug8JABfm7J5Da34K3H0Kr8dE_kFWmV7kiiD9wJUAnuOg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeljedujecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefujgfkfhggtgesthdtredttddtvdenucfhrhhomhephfhinhhnucfvhhgr
+    ihhnuceofhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrgheqnecuggftrfgrthhtvg
+    hrnhepleeuheelheekgfeuvedtveetjeekhfffkeeffffftdfgjeevkeegfedvueehueel
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepfhhthh
+    grihhnsehlihhnuhigqdhmieekkhdrohhrghdpnhgspghrtghpthhtohepuddvpdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpth
+    htohepghgvvghrtheslhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtohepphgvthgv
+    rhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdho
+    rhhgpdhrtghpthhtohepsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpth
+    htoheptghorhgsvghtsehlfihnrdhnvghtpdhrtghpthhtohepmhgrrhhkrdhruhhtlhgr
+    nhgusegrrhhmrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrh
+    drkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:CIvjaIKIRScJpK4179O840zX3E7CIXKHDqpHMWH7Ph4ZUuy_aXAF7A>
+    <xmx:CIvjaOEMCEKQR3AqvpdsaJgMDVpmc7DLhilFACtCBML23Oxs3PbhnQ>
+    <xmx:CIvjaF1B2btK8R66galIPGhO79n86dESgNfdZMq85VumPWYEmqbZbA>
+    <xmx:CIvjaGJt4Kx3orESA3P97UShI7sUejpB9ZHm365bNYJKR-gH2Og7sQ>
+    <xmx:CYvjaHDkAH8ddbVJsMxuy-bAfLZUJxjdM6wFdFMnxPO-2z0IzZvdimDt>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 6 Oct 2025 05:25:26 -0400 (EDT)
+Date: Mon, 6 Oct 2025 20:25:33 +1100 (AEDT)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Arnd Bergmann <arnd@arndb.de>
+cc: Geert Uytterhoeven <geert@linux-m68k.org>, 
+    Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+    Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, 
+    Linux-Arch <linux-arch@vger.kernel.org>, linux-m68k@vger.kernel.org, 
+    Lance Yang <lance.yang@linux.dev>
+Subject: Re: [RFC v2 2/3] atomic: Specify alignment for atomic_t and
+ atomic64_t
+In-Reply-To: <e02f861b-706c-4f6d-bded-002601da954a@app.fastmail.com>
+Message-ID: <257a045a-f39d-8565-608f-f01f7914be21@linux-m68k.org>
+References: <cover.1757810729.git.fthain@linux-m68k.org> <abf2bf114abfc171294895b63cd00af475350dba.1757810729.git.fthain@linux-m68k.org> <CAMuHMdUgkVYyUvc85_P9TyTM5f-=mC=+X=vtCWN45EMPqF7iMg@mail.gmail.com> <6c295a4e-4d18-a004-5db8-db2e57afc957@linux-m68k.org>
+ <57ac401b-222b-4c85-b719-9e671a4617cf@app.fastmail.com> <86be5cf0-065e-d55d-fdb6-b9cf6655165e@linux-m68k.org> <ec2982e3-2996-918e-f406-32f67a0decfe@linux-m68k.org> <e02f861b-706c-4f6d-bded-002601da954a@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] interconnect: qcom: msm8996: add missing link to
- SLAVE_USB_HS
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Georgi Djakov <djakov@kernel.org>,
-        Yassine Oudjana
- <y.oudjana@protonmail.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20251002-fix-msm8996-icc-v1-0-a36a05d1f869@oss.qualcomm.com>
- <20251002-fix-msm8996-icc-v1-1-a36a05d1f869@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251002-fix-msm8996-icc-v1-1-a36a05d1f869@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=FooIPmrq c=1 sm=1 tr=0 ts=68e38b06 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=WPDsOxgxYxYm0iCLz50A:9
- a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-ORIG-GUID: 1AtVY-7_IUYJEeG7wdTKYEMD1XRPIUir
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAyMiBTYWx0ZWRfX+Onyf4eFinbp
- IgqLWmPZ3v6WJrLIzR/zT0N/jR7iobNd3cdo7qfLl2mIvo9zF0aObRQC2KoRA3uuPrbrTbqHWQ/
- J4Ri7AAnctT3QHY8C4iOXiFHgls5B255Vetwgou0G0qb6jabJ8xKjht6KbtL0mHimwQeYXiPL05
- kFGr65spG7L261+E6fxDjFxo/zjwcTCnN8RMDjm11+WjEQJ2vKIG87MBCjMtVYTXEOUAgNJHckc
- zUlbZxy6SeRHaoXfPP2BEzVflYAyJuuxx6sSwMdr24g3aHNolGRhQ7NwGZWZXv0u+XerL3QSjCS
- kY0jhRPrCnPGFc5uoSaxbbCzyQOc3QK3Ucn8oXfW0oGl5oPOOxuloWy9vlYDC8nQf0CiocoGeqp
- c+yzMxx5nQLY2P7Ho0+VPYb6VWljEQ==
-X-Proofpoint-GUID: 1AtVY-7_IUYJEeG7wdTKYEMD1XRPIUir
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-06_03,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 malwarescore=0 suspectscore=0 impostorscore=0 bulkscore=0
- phishscore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040022
+Content-Type: text/plain; charset=us-ascii
 
-On 10/2/25 10:53 AM, Dmitry Baryshkov wrote:
-> From the initial submission the interconnect driver missed the link from
-> SNOC_PNOC to the USB 2 configuration space. Add missing link in order to
-> let the platform configure and utilize this path.
+
+On Tue, 30 Sep 2025, Arnd Bergmann wrote:
+
+> On Tue, Sep 30, 2025, at 04:18, Finn Thain wrote:
 > 
-> Fixes: 7add937f5222 ("interconnect: qcom: Add MSM8996 interconnect provider driver")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
+> > It turned out that the problem wasn't dynamic allocations, it was a 
+> > local variable in the core locking code (kernel/locking/rwsem.c): a 
+> > misaligned long used with an atomic operation (cmpxchg). To get 
+> > natural alignment for 64-bit quantities, I had to align other local 
+> > variables as well, such as the one in ktime_get_real_ts64_mg() that's 
+> > used with atomic64_try_cmpxchg(). The atomic_t branch in my github 
+> > repo has the patches I wrote for that.
+> 
+> It looks like the variable you get the warning for is not even the 
+> atomic64_t but the 'old' argument to atomic64_try_cmpxchg(), at least in 
+> some of the cases you found if not all of them.
+> 
+> I don't see where why there is a requirement to have that aligned at 
+> all, even if we do require the atomic64_t to be naturally aligned, and I 
+> would expect the same warning to hit on x86-32 and the other 
+> architectures with 4-byte alignment of u64 variable on stack and .data.
+> 
+> ...
+> 
+> Since there is nothing telling the compiler that the 'old' argument to 
+> atomic*_try_cmpcxchg() needs to be naturally aligned, maybe that check 
+> should be changed to only test for the ABI-guaranteed alignment? I think 
+> that would still be needed on x86-32.
+>  
+>       Arnd
+> 
+> diff --git a/include/linux/atomic/atomic-instrumented.h b/include/linux/atomic/atomic-instrumented.h
+> index 9409a6ddf3e0..e57763a889bd 100644
+> --- a/include/linux/atomic/atomic-instrumented.h
+> +++ b/include/linux/atomic/atomic-instrumented.h
+> @@ -1276,7 +1276,7 @@ atomic_try_cmpxchg(atomic_t *v, int *old, int new)
+>  {
+>  	kcsan_mb();
+>  	instrument_atomic_read_write(v, sizeof(*v));
+> -	instrument_atomic_read_write(old, sizeof(*old));
+> +	instrument_atomic_read_write(old, alignof(*old));
+>  	return raw_atomic_try_cmpxchg(v, old, new);
+>  }
+>  
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In the same file, we have:
 
-Konrad
+#define try_cmpxchg(ptr, oldp, ...) \
+({ \
+        typeof(ptr) __ai_ptr = (ptr); \
+        typeof(oldp) __ai_oldp = (oldp); \
+        kcsan_mb(); \
+        instrument_atomic_read_write(__ai_ptr, sizeof(*__ai_ptr)); \
+        instrument_read_write(__ai_oldp, sizeof(*__ai_oldp)); \
+        raw_try_cmpxchg(__ai_ptr, __ai_oldp, __VA_ARGS__); \
+})
 
+In try_cmpxchg(), unlike atomic_try_cmpxchg(), the 'old' parameter is 
+checked by instrument_read_write() instead of 
+instrument_atomic_read_write(), which suggests a different patch. This 
+header is generated by a script so the change below would be more 
+complicated in practice.
+
+diff --git a/include/linux/atomic/atomic-instrumented.h b/include/linux/atomic/atomic-instrumented.h
+index 9409a6ddf3e0..ce3890bcd903 100644
+--- a/include/linux/atomic/atomic-instrumented.h
++++ b/include/linux/atomic/atomic-instrumented.h
+@@ -1276,7 +1276,7 @@ atomic_try_cmpxchg(atomic_t *v, int *old, int new)
+ {
+ 	kcsan_mb();
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_read_write(old, sizeof(*old));
+ 	return raw_atomic_try_cmpxchg(v, old, new);
+ }
+ 
+@@ -1298,7 +1298,7 @@ static __always_inline bool
+ atomic_try_cmpxchg_acquire(atomic_t *v, int *old, int new)
+ {
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_read_write(old, sizeof(*old));
+ 	return raw_atomic_try_cmpxchg_acquire(v, old, new);
+ }
+ 
+@@ -1321,7 +1321,7 @@ atomic_try_cmpxchg_release(atomic_t *v, int *old, int new)
+ {
+ 	kcsan_release();
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_read_write(old, sizeof(*old));
+ 	return raw_atomic_try_cmpxchg_release(v, old, new);
+ }
+ 
+@@ -1343,7 +1343,7 @@ static __always_inline bool
+ atomic_try_cmpxchg_relaxed(atomic_t *v, int *old, int new)
+ {
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_read_write(old, sizeof(*old));
+ 	return raw_atomic_try_cmpxchg_relaxed(v, old, new);
+ }
+ 
+@@ -2854,7 +2854,7 @@ atomic64_try_cmpxchg(atomic64_t *v, s64 *old, s64 new)
+ {
+ 	kcsan_mb();
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_read_write(old, sizeof(*old));
+ 	return raw_atomic64_try_cmpxchg(v, old, new);
+ }
+ 
+@@ -2876,7 +2876,7 @@ static __always_inline bool
+ atomic64_try_cmpxchg_acquire(atomic64_t *v, s64 *old, s64 new)
+ {
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_read_write(old, sizeof(*old));
+ 	return raw_atomic64_try_cmpxchg_acquire(v, old, new);
+ }
+ 
+@@ -2899,7 +2899,7 @@ atomic64_try_cmpxchg_release(atomic64_t *v, s64 *old, s64 new)
+ {
+ 	kcsan_release();
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_read_write(old, sizeof(*old));
+ 	return raw_atomic64_try_cmpxchg_release(v, old, new);
+ }
+ 
+@@ -2921,7 +2921,7 @@ static __always_inline bool
+ atomic64_try_cmpxchg_relaxed(atomic64_t *v, s64 *old, s64 new)
+ {
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_read_write(old, sizeof(*old));
+ 	return raw_atomic64_try_cmpxchg_relaxed(v, old, new);
+ }
+ 
+@@ -4432,7 +4432,7 @@ atomic_long_try_cmpxchg(atomic_long_t *v, long *old, long new)
+ {
+ 	kcsan_mb();
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_read_write(old, sizeof(*old));
+ 	return raw_atomic_long_try_cmpxchg(v, old, new);
+ }
+ 
+@@ -4454,7 +4454,7 @@ static __always_inline bool
+ atomic_long_try_cmpxchg_acquire(atomic_long_t *v, long *old, long new)
+ {
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_read_write(old, sizeof(*old));
+ 	return raw_atomic_long_try_cmpxchg_acquire(v, old, new);
+ }
+ 
+@@ -4477,7 +4477,7 @@ atomic_long_try_cmpxchg_release(atomic_long_t *v, long *old, long new)
+ {
+ 	kcsan_release();
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_read_write(old, sizeof(*old));
+ 	return raw_atomic_long_try_cmpxchg_release(v, old, new);
+ }
+ 
+@@ -4499,7 +4499,7 @@ static __always_inline bool
+ atomic_long_try_cmpxchg_relaxed(atomic_long_t *v, long *old, long new)
+ {
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_read_write(old, sizeof(*old));
+ 	return raw_atomic_long_try_cmpxchg_relaxed(v, old, new);
+ }
+ 
 
