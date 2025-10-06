@@ -1,185 +1,170 @@
-Return-Path: <linux-kernel+bounces-843288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9000BBED7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 19:48:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84EE7BBED94
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 19:49:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 89D924F03A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 17:48:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 585CB189B079
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 17:49:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A5B24677C;
-	Mon,  6 Oct 2025 17:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9A8285C8D;
+	Mon,  6 Oct 2025 17:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="s5nPKJxX"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mlq58Lnz"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEFD199237;
-	Mon,  6 Oct 2025 17:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E8AD1C84C0
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 17:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759772875; cv=none; b=q02mh5Ly0A9w8qQRsSf6nmVqqb/NJuG2zaiz/ZrXFbZ1ErXOXen5pqMW10RoxH4XGPLVQQJDoO7uZ3DaH4m/t6ttKZGuk5Bmz2tJr4u9AqCa+7uaRaNff2ZxIEkDfB3UV4Rzn8Af14E3CDuw+5rXJFLAjiywiYCNddSCmED6rec=
+	t=1759772953; cv=none; b=ULKrlp0G692GiGp0yDo5lrYNQMwfiWUJXqlO4mXelUNR3+39omzHs9h8urGIQ0gw+xs9VK2F3OdizQNG/XvryF36QSj6GyUSgBGGGbBmr+TV3KaDVsJIiLqNSu23rne4BCClQByNwDAn2R3PqrBTvNjk9rJRtrHlfaTCcLuvU7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759772875; c=relaxed/simple;
-	bh=fs9hUfEVexxAfYpjTyITTLJDNYflHPxV0GaTNmPv45g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LWyiGMQFACCVhnFoFQjfHXFkagJWeZ/cNEj2aaWdBQ52kqbndLa4e5MOc3fLL4sq/6icOq5Fo+umzhmlfrxl7vbnkQG5g5klPIo+XfsQWrH8LmGMEU6TAYP3V7oOlZSaMjEcLdFnTbvj7h1vjHuOXZ+eZ9m1NJhUEv79psRtO3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=s5nPKJxX; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 596GOgPg017742;
-	Mon, 6 Oct 2025 17:47:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=y650WnoV6UlxEDnN3qJMdVFPuu8AtV
-	zw/0GeglG768Q=; b=s5nPKJxXUPu6ahyAFV79OwrYQYaYZQsz6m3mw6BlZnSUaS
-	RVT2sncbFNrLLYTbiJx9vuzVKrCTV0pEGTkXSYqph6+/ih1uAv0GUNzjQOCI0Wur
-	S1i+IMfup4tQVwIY7VH2ht40Z/duRXQaXrEMLP/vidziLwTjmCsprGjDqgArYvkF
-	P9tgY1av72W7mTVbvUzV6ebM3qQwH7phBp+3Qh8UGiyWruEsSI4vLY5eL/34ChqG
-	GAxODZiPTco/o3jccz16c9sdIMm9KUuoH+qd3i71kLDNpt3X1WPdWM/4iiGvzbuY
-	kJ1xQ2KYEbgTAnGJld0KBPmoTlbaKFMjmlL3x9jw==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49ju93as0d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 06 Oct 2025 17:47:47 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 596ESFIe021174;
-	Mon, 6 Oct 2025 17:47:46 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49kgm171mg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 06 Oct 2025 17:47:46 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 596HlgLN48890170
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 6 Oct 2025 17:47:43 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D2AB020040;
-	Mon,  6 Oct 2025 17:47:42 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 26E5A20043;
-	Mon,  6 Oct 2025 17:47:42 +0000 (GMT)
-Received: from osiris (unknown [9.87.137.121])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon,  6 Oct 2025 17:47:42 +0000 (GMT)
-Date: Mon, 6 Oct 2025 19:47:40 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Alexey Gladkov <legion@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>
-Cc: linux-s390@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
-        lkft-triage@lists.linaro.org,
-        Linux Regressions <regressions@lists.linux.dev>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Ben Copeland <benjamin.copeland@linaro.org>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>
-Subject: Re: next-20251002: S390: gcc-8-defconfig: symbol `.modinfo' required
- but not present - no symbols
-Message-ID: <20251006174740.13659A33-hca@linux.ibm.com>
-References: <CA+G9fYvVktRhFtZXdNgVOL8j+ArsJDpvMLgCitaQvQmCx=hwOQ@mail.gmail.com>
+	s=arc-20240116; t=1759772953; c=relaxed/simple;
+	bh=nQoaKh0+iG4YyKUnAkYuu5p0DJ2aHhG3jPXqYWGllGQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QllojM0H5HYOlx8K9ul5sF7KedvUI/RenDj5FZTOjkGZ4Q0ElQlcP5aI5s2zNY+XrYCRgXU/mdXd3YWsgJXy+KbNpdi0gaFGTjOei/uOWwAg2BerT45r9D9lhJrYqEXA6zeh1eX714PKWAMETozPtcD2ixDEYvlLVfQdumcaAko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mlq58Lnz; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e61ebddd6so50062825e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 10:49:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759772949; x=1760377749; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OwPjYDue993F4kdSpEJug+JsTugVch4hbG5zN8v6Sko=;
+        b=mlq58Lnzm/E7pKrHZPOQUUN8nAZQB35MP6xwoUkCHIvS9aJsTmtqFMoIdjBAELS7CE
+         Ca7AeN2AYYjtGNODwZV+0LTQpSGyUqxf9F4Nzf8SkdDlxKGPiZj/6btWJlrkERlCunGe
+         HgTu3++wDGGgw1uZ1qBizoRbfD7a1Lu4L5f0+zOzZzcM4UT7zp2V4+wlE7pasQwKqIIq
+         R6joTr1TMUVOCWXVRcizjI+jrrZvU2Nsiaypt0ORHVZKeb/CTnqGJJvtsBUt0RMqGycF
+         Nu8f1NJvclQ0TGxEajvdFp0KkrZCAPMV+URUdc/j9k9Zr5PL3R4u82XVdaEHdemUq4NG
+         n3eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759772949; x=1760377749;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OwPjYDue993F4kdSpEJug+JsTugVch4hbG5zN8v6Sko=;
+        b=hg45FfMFbw6Kj2A7vjjEXRm02Oj/bFbsGalzn64OqwJ+LqmOH5QP4YTClqSoLTcJ6t
+         GZ5mIRa78o8KDk0AoeSPJGJjp75IiU0zX+rg4YryNI/XFchD/6NDhTBHbZ2cxG0xBSBy
+         4O1Jwxt9GfLxn4SkGmNg02g26iISvARqhJzX2Rve6C87ZzPYEveizbFNzlhek5lnBq/I
+         FFm3HfPqxyYyNYVMO8C4X8OLWafaHoURKg5/I+41MhOtP+cIJ2SaXCiGL6ts86ZVxOE3
+         6R3OuijYzMnFZ4agu+0jqbjf+MPTjc4gnd0y3n8QpVefISDrEsX9pd8g5QtNpFu1Snfc
+         2w5A==
+X-Gm-Message-State: AOJu0YwldkvWpqmAmwZGFp3OKXQtkgVhzmeTTen7Y9WJ+UMmAZUrNS4Z
+	N0/1NipH1JQZ78TZ7c8+Y5nCpwxmBL0Nwq5i2xnoMT2/q6PcZsS4Avnz
+X-Gm-Gg: ASbGncv3P2/ZQLU/74DsWg7D21nT98bBkJaGi2+i1T4AM7UaLIufyKsMsf9Re49EDFx
+	2qFUJ2Tiqf9IJqkPIj3zjclwxbYsVIdo4EbQMxB1Dmt4QZSDTMyZJQQK02wmtrSPDDmJmbs58ts
+	HIdQGONttPVF2n7+10IFesUUwXBBRfbFOYnzuKqZGAlteNpH6+9+6rkWx/v6AmIMk+L3kB20kRW
+	glURBI3P42pJOw4sGtX80T84dP24TA7BPQfGe1pVKTo5eBvCpxOwfvilkyMG2n8r+fJTEjLG5l2
+	MYGMx0tFByQPetuRq4OkGhSSLg9jBHsbcrjgwwm7ypacwIZsyyHoTzo+DYpcrizdlg1NH8yhng7
+	9DxkafVRDEcU3NK4MjJl5ByoWV3OAgarE5KUlEZhR1jWP2dtR5jO906tQw0xSxH521qK9VRHYC9
+	187zF4yQQyx5a+H3AigEOP6rlDJq6yT9YOnA==
+X-Google-Smtp-Source: AGHT+IGoQmqa08yh2oAWYFi0h/YVWQM5hhY6UDRLPAIKA3rUms7L/IUnK3x7/0LeBb8VrVVo34J77Q==
+X-Received: by 2002:a05:600c:46d1:b0:46e:4c02:c2f9 with SMTP id 5b1f17b1804b1-46e71157990mr93102665e9.36.1759772949081;
+        Mon, 06 Oct 2025 10:49:09 -0700 (PDT)
+Received: from ipedrosa-thinkpadx1carbongen12.rmtes.csb ([5.225.139.156])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e723431f5sm165583805e9.2.2025.10.06.10.49.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 10:49:08 -0700 (PDT)
+From: Iker Pedrosa <ikerpedrosam@gmail.com>
+Subject: [PATCH v3 0/3] drm/sitronix/st7920: Add support for the ST7920
+ controller
+Date: Mon, 06 Oct 2025 19:48:52 +0200
+Message-Id: <20251006-st7920-v3-0-4f89d656fa03@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYvVktRhFtZXdNgVOL8j+ArsJDpvMLgCitaQvQmCx=hwOQ@mail.gmail.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 4Vcvnt5Z0hm-q6z5TxGQIzN7HBiCKIvx
-X-Proofpoint-ORIG-GUID: 4Vcvnt5Z0hm-q6z5TxGQIzN7HBiCKIvx
-X-Authority-Analysis: v=2.4 cv=Fec6BZ+6 c=1 sm=1 tr=0 ts=68e400c3 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=Oh2cFVv5AAAA:8 a=21D8NHQQAAAA:8
- a=KKAkSRfTAAAA:8 a=5jmsZD25J3Aw2ox8uuIA:9 a=CjuIK1q_8ugA:10
- a=7KeoIwV6GZqOttXkcoxL:22 a=aE7_2WBlPvBBVsBbSUWX:22 a=cvBusfyB2V15izCimMoJ:22
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAyMiBTYWx0ZWRfX3QPbcpTlPtbx
- mH2t5fQ3iCfOvxGb+ZQinKFkHn71EHnt/vpXxmJISi/YUAOXZRdQ7p2KK2Tv9sDW4LTbu7/LIBK
- j91pxdcPkcEoRCqYr2Avxg4/OmRdIYDLdLTGu6Bti/2tYVwwAlhDLVf+19ux3vGNP1bocGsx5nU
- mq6MvaTYSlajnYl9TXT4eI+beOxmJh377jCDv8ete4k16mv53BaQbjj9FIoC6qmvIlhZDQmjrMd
- ef27oJ9O5uyNM9kEFAv2XI4g/XBUBpsLBM/DhrKOHT58vSyxkMR1RdrTl2b4kmRzIrz1I2hKsnW
- oVIEIAgGeBDGtOhFZZ0PEkFKW0N5XTDyjOxgZ63MCh5sKHO+OutK4pqI3wnq/AdRMxLrSz2m89g
- eENH/iXCrs3mEVnJ8rRt/l1YxcEjPA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-06_05,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 impostorscore=0 suspectscore=0 spamscore=0 adultscore=0
- clxscore=1011 malwarescore=0 priorityscore=1501 phishscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040022
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAQB5GgC/2WMyw7CIBBFf6VhLWYK9IEr/8O4GCq0k9hioCGap
+ v8u7UJNXJ6be87Cog1kIzsVCws2USQ/ZZCHgnUDTr3ldMvMBIgKWqh5nBstgNsGDUphJJqa5fM
+ jWEfPPXS5Zh4ozj689m4qt/UvkUoOvFZoKpTKaYRzPyLdj50f2ZZI4qtp0B9NZE2BdqrV4Ezlf
+ rV1Xd/Krf2s0wAAAA==
+X-Change-ID: 20250806-st7920-e7aba32b3ab6
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Javier Martinez Canillas <javierm@redhat.com>, 
+ Iker Pedrosa <ikerpedrosam@gmail.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ devicetree@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-[full quote below, adding Alexey and Nathan]
+This patch-series adds support for the Sitronix ST7920 controller, which
+is a monochrome dot-matrix graphical LCD controller that has SPI and
+parallel interfaces.
 
-On Mon, Oct 06, 2025 at 04:55:56PM +0530, Naresh Kamboju wrote:
-> The S390 defconfig builds failed on the Linux next-20251002 tag build due
-> to following build warnings / errors with gcc-8 toolchain.
-> 
-> * S390, build
->   - gcc-8-defconfig
-> 
-> First seen on next-20251002
-> Good: next-20250929
-> Bad: next-20251002..next-20251003
-> 
-> Regression Analysis:
-> - New regression? yes
-> - Reproducibility? yes
-> 
-> Test regression: next-20251002: S390: gcc-8-defconfig: symbol
-> `.modinfo' required but not present - no symbols
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> ### Build error log
-> s390x-linux-gnu-ld: .tmp_vmlinux1: warning: allocated section
-> `.got.plt' not in segment
-> s390x-linux-gnu-ld: .tmp_vmlinux2: warning: allocated section
-> `.got.plt' not in segment
-> s390x-linux-gnu-ld: vmlinux.unstripped: warning: allocated section
-> `.got.plt' not in segment
-> s390x-linux-gnu-objcopy: vmlinux: warning: allocated section
-> `.got.plt' not in segment
-> s390x-linux-gnu-objcopy: stM7JmYX: warning: allocated section
-> `.got.plt' not in segment
-> s390x-linux-gnu-objcopy: stM7JmYX: symbol `.modinfo' required but not present
-> s390x-linux-gnu-objcopy:stM7JmYX: no symbols
-> make[3]: *** [scripts/Makefile.vmlinux:97: vmlinux] Error 1
-> 
-> 
-> ## Source
-> * Kernel version: 6.17.0
-> * Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
-> * Git commit: 47a8d4b89844f5974f634b4189a39d5ccbacd81c
-> * Architectures: S390
-> * Toolchains: gcc-8
-> * Kconfigs: defconfig
-> 
-> ## Build
-> * Build log: https://storage.tuxsuite.com/public/linaro/lkft/builds/33YUHdDpSLSMJfU4MFvRyEUQuDn/build.log
-> * Build details:
-> https://regressions.linaro.org/lkft/linux-next-master/next-20251003/build/gcc-8-defconfig/
-> * Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/33YUHdDpSLSMJfU4MFvRyEUQuDn
-> * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/33YUHdDpSLSMJfU4MFvRyEUQuDn/
-> * Kernel config:
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/33YUHdDpSLSMJfU4MFvRyEUQuDn/config
-> 
-> 
-> ## Steps to reproduce
->   tuxmake --runtime podman --target-arch s390 --toolchain gcc-8
-> --kconfig defconfig --kconfig-add CONFIG_DEBUG_INFO_BTF=n
+The st7920 driver only has support for SPI so displays using other
+transport protocols are currently not supported.
 
-Isn't the above exactly what is supposed to be addressed with commit
-8d18ef04f940 ("s390: vmlinux.lds.S: Reorder sections")? Or did something
-change with the commit? Didn't check, and might look into this tomorrow,
-but adding Alexey and Nathan already now :)
+* Patch #1 adds the driver.
+* Patch #2 adds the DT binding schema.
+* Patch #3 adds the MAINTAINERS information.
+
+---
+Changes in v3:
+- Reorganize the patch documenting compatible (DT bindings) before their
+  use.
+- Drop reduntant information from DT bindings.
+- Use a goto label to ensure drm_dev_exit() is called in the error path
+  of drm_gem_fb_begin_cpu_access().
+- Link to v2: https://lore.kernel.org/r/20250909-st7920-v2-0-409f4890fb5f@gmail.com
+
+Changes in v2:
+- Refactor SPI communication:
+  * Internalize error handling and delays within the st7920_spi_write()
+    helper.
+  * Split the main SPI write function into smaller, command-specific
+    helpers for clarity.
+- Improve DRM/KMS logic:
+  * Relocate CPU access calls (drm_gem_fb...) to the atomic_update hook.
+  * Use standard DRM helpers (drm_crtc_helper_mode_valid_fixed and
+    drm_connector_helper_get_modes_fixed) for mode validation and
+    creation.
+- General code cleanup:
+  * Remove dead code related to ST7920_FAMILY.
+  * Replace WARN_ON() with drm_WARN_ON_ONCE().
+  * Ensure single variable assignments per line.
+- Fix probe initialization order:
+  * Move spi_set_drvdata() and st7920_init() to occur before device
+    registration.
+- Devicetree:
+  * Update bindings to address feedback from review (e.g., reference
+    common SPI properties).
+- MAINTAINERS:
+  * Add a proper commit message to the patch.
+- Link to v1: https://lore.kernel.org/r/20250806-st7920-v1-0-64ab5a34f9a0@gmail.com
+---
+
+Signed-off-by: Iker Pedrosa <ikerpedrosam@gmail.com>
+
+---
+Iker Pedrosa (3):
+      dt-bindings: display: sitronix,st7920: Add DT schema
+      drm: Add driver for Sitronix ST7920 LCD displays
+      MAINTAINERS: Add entry for Sitronix ST7920 driver
+
+ .../bindings/display/sitronix,st7920.yaml          |  50 ++
+ MAINTAINERS                                        |   7 +
+ drivers/gpu/drm/sitronix/Kconfig                   |  10 +
+ drivers/gpu/drm/sitronix/Makefile                  |   1 +
+ drivers/gpu/drm/sitronix/st7920.c                  | 892 +++++++++++++++++++++
+ 5 files changed, 960 insertions(+)
+---
+base-commit: c571cb70e1ed43ee543c70151e61a001ab2eefa2
+change-id: 20250806-st7920-e7aba32b3ab6
+
+Best regards,
+-- 
+Iker Pedrosa <ikerpedrosam@gmail.com>
+
 
