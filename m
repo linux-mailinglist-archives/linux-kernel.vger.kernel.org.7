@@ -1,165 +1,153 @@
-Return-Path: <linux-kernel+bounces-843163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B22D2BBE8AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:49:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B805BBE8BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BF1D94EF9AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:49:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF5063BF3EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3FE82D8DB1;
-	Mon,  6 Oct 2025 15:49:04 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93A22D5408;
-	Mon,  6 Oct 2025 15:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855E02D7DF7;
+	Mon,  6 Oct 2025 15:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gbnRMCvy"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB7D2D877B
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 15:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759765744; cv=none; b=KV/m4r9VFbCbGr6XI7aP2Mp2HQTYwr9ONPW1xD/5Jibt1CK4lb63p7tTblvKMrL3JLZ5cLWTx/twGh9SbPG1e82uy6Ill/nytsZk2m1M9x/ZYRRL7HYHagv+RGsyRQ8cHcwcA+WS0ZhFjpay1SRAL2DLtpBPoauWe0SryOaByBc=
+	t=1759765757; cv=none; b=FR3yNOeHs9v1OraUrtbXPIB6nAvIqFucEBD1DJtZKEpGi4tUFqedYkCzLGc3d5JhkbeQZHb2Fa7akibfcmf8N+Oz2aX5RgerDUP1yz9uUjH9Nmspz7yyCc0HbROtgmrHi/mwF3xTZJLUrCJRxZBUaFlug+AAZ71jfbEGOZfCUuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759765744; c=relaxed/simple;
-	bh=U4EyToafNC5MnqAwQQIy5rWeujtlVsbLqs/JsM2ItZ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZsmcjT4Hgh0qVratR7vpwImeBQk9zH3HBwVBOMxogg5sV76zrFIBmiN6OTivf5bMakWkccGMW9eOQsb+dHDotz9JHvBAD/0kDdaIjK5OqU12Cl+USo4h+GzYTGQWT9xlrDo5VwCpxZ/DCZiGcTEcwOOiinB4Nb/4In8XnaNrJG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 47CE11515;
-	Mon,  6 Oct 2025 08:48:54 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D63313F66E;
-	Mon,  6 Oct 2025 08:48:59 -0700 (PDT)
-Date: Mon, 6 Oct 2025 16:48:57 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Adam Young <admiyo@amperemail.onmicrosoft.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Adam Young <admiyo@os.amperecomputing.com>,
-	Sudeep Holla <sudeep.holla@arm.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Huisong Li <lihuisong@huawei.com>
-Subject: Re: [PATCH net-next v29 1/3] mailbox: add callback function for rx
- buffer allocation
-Message-ID: <20251006-large-astute-rattlesnake-c913fe@sudeepholla>
-References: <20250925190027.147405-1-admiyo@os.amperecomputing.com>
- <20250925190027.147405-2-admiyo@os.amperecomputing.com>
- <5dacc0c7-0399-4363-ba9c-944a95afab20@amperemail.onmicrosoft.com>
- <CABb+yY3T6LdPoGysNAyNr_EgCAcq2Vxz3V1ReDgF_fGYcqRrbw@mail.gmail.com>
- <fe645202-9e00-4968-9aea-8680271a2067@amperemail.onmicrosoft.com>
+	s=arc-20240116; t=1759765757; c=relaxed/simple;
+	bh=h7zPFSCY4N4s5k1Av1++h8vuQP5AfNULE5kid3kk/OY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=cNg4t86bD5e29/ize/d1lmUFUs+BI+4jhuLt6nWYRcoLKN9NeSB4dDRKaShuhWRySKLgfrNuKi9b3lxYW9Ua4bai5lQ11xzPqF8qkIhkhVuDANBJ6NhI8cfrx1bjox5G4oa83Nd4OZDBI2zVwTn4PzAqa6Sk+Bq0nsNrAMWZBRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gbnRMCvy; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-3369dcfef12so5712451a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 08:49:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759765755; x=1760370555; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=uKx7DTfvvmjIZ6cGtmnwuVyxZs+QDCyCKdDBftxtrEw=;
+        b=gbnRMCvys50MgBLoIagC0WuNVoaCHpvLGwOJfv/nX2U5BQfXelUYfxUIx48vulih44
+         SmqH1u8bNpGjoeo4Z/mGY4uoTwMRNq+q2TQg0T4sZzXrGgvyY/Y/JffCGXXEf7EOC+zN
+         8BI42SyjMs7vcRUCliWKLwR/z4J0jwdw9FYd4Ctw56oeHmQhq1Md+mVuGWscOlqrkRUc
+         Y1/SZEyqRWvTIoyVPcRbo0Eg8x/TKSphOiuWXdJ82kDH3xK9KObwYM1SfthcvO5CtUMB
+         BxWJlZbaJ8PaIXEKeJU25EdLj7e5k0A/oqi6tNU/0XHwgr/t0T3vsJnA3OHfFEQHyEBL
+         Uq5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759765755; x=1760370555;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uKx7DTfvvmjIZ6cGtmnwuVyxZs+QDCyCKdDBftxtrEw=;
+        b=vH5CwK5vkRg7BtRxgWksrINKY1P6EzYhjI1cTgiHuISbSnZ/mwUodMfeK/RCBe6cZ/
+         JDfVLlD43efLpCr1pAIZOUYhf3jqzGl6RHQ2bYFO6VVPEYk9F7ZMj0mbvr3Yd2PI2Rl4
+         iUM/QUo3ROvxGlnMrsKL0jFtWH6MvIR6ui+62wBYxOwhNv73eFYO7S9tsz8JSsst9Kvi
+         4iL8skDcvbaLZUM+S1SIna2phoJ4GtdZRY+hgT6ngNsh1Rbjd5rWTR7kxcsuEp7Zue3l
+         N/mMHlv35zAy1GKP26hamIZjMeigiYBCMpQDFFQ4Arw4yIDeSnWHXn5R5qVaWLeD6jYB
+         W5RA==
+X-Forwarded-Encrypted: i=1; AJvYcCWEFJxfImfld0ewl8beCVsAOyUyd9Tnb8f/KTo3Jfw6oyE66z9oaGChgRfJBIudMMRDZYcPpWuRG5JoZr8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxN69N1zlF9u5KEj0xHE1Mwqnj1azUDtGrT/0m/RCKk1TRujA5d
+	Gh1HRTOCGa+rABeVavrUzljbGkR/N0wMqAzuJ3pRvGRLtHahDA0awKqQ58Lv+QX+
+X-Gm-Gg: ASbGncuMMuYvh3R/zBlDOO6K5ohMZFRVsKL1S0dixhTpQgQBkzwgau7w7z/aw/SNA55
+	Y2Js9HXYcML41KO0UzQUz1Jbtnh2QmgPQHGll5HZY8O00ZPD3bBKN7k+5Idbyk+7oJBDAxMAkDR
+	fl8oYdq/KtTVq9solxyqZplMgohxrZuH4rHKZ8qPdIodQon0Z5m2DvlD56611lgUVrJaBLMlWhj
+	bJ5Q+KFI3f7PfCMQpTtJ5YL/fD/fZO+Imhe1ADJna7AmQRA+nWLsoxa1qad/mk5Se7aPGGOfMjN
+	o00K4Mx45n619nT0/cZbQNoLeMFZZP7ECb4iBeYW/AR5nbGJIfdjWfCLoovyEoUb7UXBe5GBfaR
+	hqj5Y3V46Pp+cedlrFqF55ZsTkX83d1wIha9sMn77rCaMHRnuJkMCu6cy1A==
+X-Google-Smtp-Source: AGHT+IH4Vfm2HXvCCkpVd9mobsIP67SLElIVdmkXufOG8TbovUst5yZCGISDNRa5UtQ9rmp5sk2B3w==
+X-Received: by 2002:a17:90b:2707:b0:32e:64ca:e84a with SMTP id 98e67ed59e1d1-339c273dbd2mr18130644a91.12.1759765755438;
+        Mon, 06 Oct 2025 08:49:15 -0700 (PDT)
+Received: from ehlo.thunderbird.net ([2804:18:932:c1e3:aaa3:c804:f5ef:49e7])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339c4a0d53fsm10911596a91.5.2025.10.06.08.49.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Oct 2025 08:49:14 -0700 (PDT)
+Date: Mon, 06 Oct 2025 12:49:10 -0300
+From: =?ISO-8859-1?Q?Eric_Gon=E7alves?= <ghatto404@gmail.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+CC: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] arm64: dts: qcom: r0q: enable hardware clocks
+User-Agent: Thunderbird for Android
+In-Reply-To: <c21a408b-ec4f-4de8-a9b6-ca25410ace6a@oss.qualcomm.com>
+References: <20250920014637.38175-1-ghatto404@gmail.com> <20250920014637.38175-5-ghatto404@gmail.com> <d16e8c07-6c10-4c91-9bbe-a260f0497d29@oss.qualcomm.com> <99D0B281-03A5-447E-A6BF-892C99829D0B@gmail.com> <c21a408b-ec4f-4de8-a9b6-ca25410ace6a@oss.qualcomm.com>
+Message-ID: <CC2BFAA0-7E61-4D91-B369-88EC9AD4A315@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fe645202-9e00-4968-9aea-8680271a2067@amperemail.onmicrosoft.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 06, 2025 at 11:24:23AM -0400, Adam Young wrote:
-> 
-> On 10/5/25 19:34, Jassi Brar wrote:
-> > On Sun, Oct 5, 2025 at 12:13 AM Adam Young
-> > <admiyo@amperemail.onmicrosoft.com> wrote:
-> > > Jassi, this one needs your attention specifically.
-> > > 
-> > > Do you have an issue with adding this callback?  I think it will add an
-> > > important ability to the receive path for the mailbox API: letting the
-> > > client driver specify how to allocate the memory that the message is
-> > > coming in.  For general purpose mechanisms like PCC, this is essential:
-> > > the mailbox cannot know all of the different formats that the drivers
-> > > are going to require.  For example, the same system might have MPAM
-> > > (Memory Protection) and MCTP (Network Protocol) driven by the same PCC
-> > > Mailbox.
-> > > 
-> > Looking at the existing code, I am not even sure if rx_alloc() is needed at all.
-> > 
-> > Let me explain...
-> > 1) write_response, via rx_alloc, is basically asking the client to
-> > allocate a buffer of length parsed from the pcc header in shmem.
-> Yes, that is exactly what it is doing.  Write response encapsulates the PCC
-> specific logic for extracting the message length from the shared buffer. 
-> Anything using an extended memory (type 3 or 4) PCC channel is going to have
-> to do this logic.
-> > 2) write_response is called from isr and even before the
-> > mbox_chan_received_data() call.
-> Yes. Specifically, it is marshalling the data from the shared buffer into
-> kernel space.  This is logic that every single PCC driver needs to do.  It
-> should be put in  common code.
-> > 
-> > Why can't you get rid of write_response() and simply call
-> >      mbox_chan_received_data(chan, pchan->chan.shmem)
-> > for the client to allocate and memcpy_fromio itself?
-> 
-> Moving write_response into the client and out of the mailbox means that it
-> has to be implemented properly on every driver, leading to cut-and-paste
-> errors.
-> 
 
-Agreed, but I don’t think we need to add a new API to the mailbox framework
-solely to handle duplication across PCC client drivers. As I’ve mentioned a
-few times already, we can introduce common helpers later if a second driver
-ends up replicating this logic. That alone isn’t a good reason to add generic
-APIs to the mailbox framework right now.
 
-We can revisit this idea in the future if there’s a clear benefit, but in my
-opinion, a multi-step approach is more appropriate:
-
-1. First, add the initial driver with all the required client handling.
-
-2. Then, if a second driver needs similar functionality, we can introduce
-   shared helpers.
-
-3. Finally, if it still makes sense at that point, we can discuss defining a
-   new mailbox API - with the benefit of having concrete examples already in the
-   upstream tree.
-
-> So, yes, I can do that, but then every single driver that needs to use the
-> pcc mailbox has to do the exact same code.  This is the first Type 3/4 PCC
-> driver to use extended memory, and thus it needs to implement new logic. 
-> That logic is to make sure  we have proper serialized access to the shared
-> buffer.  It is this kind of access that the mailbox API is well designed to
-> provide:  if both sides follow the protocol, it will only deliver a single
-> message at a time.  If we move the logic out of the mailbox, we end up
-> duplicating the serialization code in the client driver.  I could make a
-> helper function for it, but we are getting to the point, then, where the
-> mailbox API is not very useful.   If we are going to have an abstraction
-> like this (and I think we should) then we should use it.
+On October 6, 2025 9:31:42 AM GMT-03:00, Konrad Dybcio <konrad=2Edybcio@os=
+s=2Equalcomm=2Ecom> wrote:
+>On 10/5/25 5:50 AM, Eric Gon=C3=A7alves wrote:
+>>=20
+>>=20
+>> On September 25, 2025 10:09:48 AM GMT-03:00, Konrad Dybcio <konrad=2Edy=
+bcio@oss=2Equalcomm=2Ecom> wrote:
+>>> On 9/20/25 3:46 AM, Eric Gon=C3=A7alves wrote:
+>>>> Enable the real-time clocks found in R0Q board=2E
+>>>>
+>>>> Signed-off-by: Eric Gon=C3=A7alves <ghatto404@gmail=2Ecom>
+>>>> ---
+>>>>  arch/arm64/boot/dts/qcom/sm8450-samsung-r0q=2Edts | 15 +++++++++++++=
+++
+>>>>  1 file changed, 15 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q=2Edts b/arch=
+/arm64/boot/dts/qcom/sm8450-samsung-r0q=2Edts
+>>>> index c1b0b21c0ec5=2E=2Ec088f1acf6ea 100644
+>>>> --- a/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q=2Edts
+>>>> +++ b/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q=2Edts
+>>>> @@ -225,6 +225,21 @@ vol_up_n: vol-up-n-state {
+>>>>  	};
+>>>>  };
+>>>> =20
+>>>> +&pmk8350_rtc {
+>>>> +	nvmem-cells =3D <&rtc_offset>;
+>>>> +	nvmem-cell-names =3D "offset";
+>>>> +
+>>>> +	status =3D "okay";
+>>>> +};
+>>>> +
+>>>> +&pmk8350_sdam_2 {
+>>>> +	status =3D "okay";
+>>>> +
+>>>> +	rtc_offset: rtc-offset@bc {
+>>>
+>>> Is this an offset you took from somewhere downstream?
+>>>
+>>> Generally you *really don't want to* poke at random SDAM cells,
+>>> as they contain a lot of important settings (incl=2E battery/charging)
+>> From another sm8450 device, I'm sure it's okay=2E
 >
-
-Sorry but you haven't demonstrated this with example. First try the above
-mentioned step and lets talk later if you still have issues.
-
-> We have more drivers like this coming.  There is code that is going to be
-> non-PCC, but really PCC like that will need an MCTP driver.  That driver
-> will also need to allocate an sk_buff for receiving the  data.  There is
-> also MPAM code that will use the PCC driver and a type3  (extended memory)
-> channel.  The mailbox API, in order to be more generally useful, should
-> allow for swapping the memory allocation scheme between different clients of
-> the same mailbox.  Then the mailbox layer is responsible for handling the
-> mailboxes, and the clients are domain-specific code.
-> 
-
-You can always improve the code later. We don't know what will the discussions
-lead to when you submit that driver later. We can keep those discussion for
-later and just concentrate on getting the first step done here.
-
-Hi Jassi,
-
-If you don't have any objections, can we first get the revert in place and
-let Adam attempt adding code to the client and take the discussions from
-there.
-
--- 
-Regards,
-Sudeep
+>That as an argument alone doesn't sound convincing to me, since vendors
+>also sometimes repurpose unused-by-Qualcomm SDAM cells
+>
+>I actually found a data source internally and this cell you're trying
+>to use is reserved for PBS (see drivers/soc/qcom/qcom-pbs=2Ec), meaning
+>you already fell into this trap=2E=2E
+Interesting, in this case then why does rtc still work? And
+how can I find the real cell? It's not in downstream DT=2E
+>
+>Konrad
 
