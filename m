@@ -1,91 +1,55 @@
-Return-Path: <linux-kernel+bounces-842847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 207C1BBDC87
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:50:05 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA10BBDC95
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F35B04EC557
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:50:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E05D24EC5A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE3B226D4E3;
-	Mon,  6 Oct 2025 10:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72203273D81;
+	Mon,  6 Oct 2025 10:47:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="E597mMN/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DPLvp5HE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8D4259C83;
-	Mon,  6 Oct 2025 10:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E94272E6D;
+	Mon,  6 Oct 2025 10:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759747669; cv=none; b=tml4xtVwYWs7mwKu465pxaD9M1wNYmsIhsvhYxtQe8J4IYyauWoIwFyBOajIomUKRi+FbYs4heASeBAJovYd3/4qXOaToPNs2uKLWlmDGAxuudifybv/pb6Jz16G0BR61jbzOUzpKpUlXQcLdtryVBvskiTo1m9DbqRTPnXAq0k=
+	t=1759747675; cv=none; b=sX58/7S+vmtzfzPlZCNC56pLnrwiCS+KohEy9PSQVIEC1cSty6jPgIsBox0Vmh+x5hkgZ0fuHvEVX7TCyaa5+Wmx5rR5K19QEDYOti4uCxdlKIScikxaIYeErY1s8F5i5e3coaRZIlEQIntXkjVBxlzrDRMxuB0vhmavb6vssoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759747669; c=relaxed/simple;
-	bh=FX1Lzu7+bvM9e8qmukvbO1hpPMzmlxgfp1qFo7AK/EQ=;
+	s=arc-20240116; t=1759747675; c=relaxed/simple;
+	bh=zYprqry9t4ZevNtP8tEWITF5icbe5Cfg3GMohDrfass=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=miDG5M6zH2nR+N4KhMGspZyicQXFTmDEh9ybswXjTlXN3HR+mLrxpPwebHxHysiiOqDHjMS/H8EKFHhQdNj4df9F7p4DBzVyfAygw1GCUL1GC9xovSEVk5dzcfGjbrAE8tYY2km5ucrFKZ8EY44tph7O1wcpbAS0IbE7mE7jP10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=E597mMN/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FDD7C4CEF5;
-	Mon,  6 Oct 2025 10:47:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759747669;
-	bh=FX1Lzu7+bvM9e8qmukvbO1hpPMzmlxgfp1qFo7AK/EQ=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y7DcxyuZXhjWWOJJbiDKrTa6nj2P/aVUfHDFByXBhvV/MxiBnEGaC5jdz3Rpb0Xl1FXVdhPoyBLyTVM+w8Azd6CcBObOwKOzcUKsCvZspdx4XnUDVCskA5CSK7819o/JFOOZEE1ZZcSy58WWx5iHYnWYqo5TpB2ZIAsHlmRkNEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DPLvp5HE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A475C4CEFF;
+	Mon,  6 Oct 2025 10:47:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759747675;
+	bh=zYprqry9t4ZevNtP8tEWITF5icbe5Cfg3GMohDrfass=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E597mMN/x7YVkjNX1Bc0G8W7GHt89kk8u2seksXgi5q2H3Gw9DqBry/MoIgd7Hl/f
-	 QcuYuZ/DwxfZxXg04LwRoNwgtiAl8T7SsOstK7UXK8SyqkUmffohAckrwzORjzcTe+
-	 /i/1SV3Pn0pttPu3dXePy8Hlmyjuwx9fL801o6Qw=
-Date: Mon, 6 Oct 2025 12:47:45 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Eliav Farber <farbere@amazon.com>
-Cc: jdike@addtoit.com, richard@nod.at, anton.ivanov@cambridgegreys.com,
-	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
-	hpa@zytor.com, tony.luck@intel.com, qiuxu.zhuo@intel.com,
-	james.morse@arm.com, rric@kernel.org, airlied@linux.ie,
-	daniel@ffwll.ch, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, robdclark@gmail.com,
-	sean@poorly.run, jdelvare@suse.com, linux@roeck-us.net,
-	linus.walleij@linaro.org, dmitry.torokhov@gmail.com, maz@kernel.org,
-	wens@csie.org, jernej.skrabec@gmail.com, agk@redhat.com,
-	snitzer@redhat.com, dm-devel@redhat.com, davem@davemloft.net,
-	kuba@kernel.org, mcoquelin.stm32@gmail.com,
-	krzysztof.kozlowski@canonical.com, malattia@linux.it,
-	hdegoede@redhat.com, mgross@linux.intel.com, jejb@linux.ibm.com,
-	martin.petersen@oracle.com, sakari.ailus@linux.intel.com,
-	clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, jack@suse.com,
-	tytso@mit.edu, adilger.kernel@dilger.ca, dushistov@mail.ru,
-	luc.vanoostenryck@gmail.com, rostedt@goodmis.org, pmladek@suse.com,
-	senozhatsky@chromium.org, andriy.shevchenko@linux.intel.com,
-	linux@rasmusvillemoes.dk, minchan@kernel.org, ngupta@vflare.org,
-	akpm@linux-foundation.org, yoshfuji@linux-ipv6.org,
-	dsahern@kernel.org, pablo@netfilter.org, kadlec@netfilter.org,
-	fw@strlen.de, jmaloy@redhat.com, ying.xue@windriver.com,
-	shuah@kernel.org, willy@infradead.org, sashal@kernel.org,
-	quic_akhilpo@quicinc.com, ruanjinjie@huawei.com,
-	David.Laight@aculab.com, herve.codina@bootlin.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-um@lists.infradead.org, linux-edac@vger.kernel.org,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-	linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-media@vger.kernel.org,
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	platform-driver-x86@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-sparse@vger.kernel.org,
-	linux-mm@kvack.org, netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org, tipc-discussion@lists.sourceforge.net,
-	linux-kselftest@vger.kernel.org, stable@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Subject: Re: [PATCH v2 07/19 5.15.y] minmax: simplify and clarify
- min_t()/max_t() implementation
-Message-ID: <2025100648-capable-register-101b@gregkh>
-References: <20251003130006.41681-1-farbere@amazon.com>
- <20251003130006.41681-8-farbere@amazon.com>
+	b=DPLvp5HEFax2cyv0F35o7qNcFd+V3uCO/GgsKz62gZdlgUFE/F/WiLCf22is7pW7g
+	 88hQIm6ZXviepsQ+l3vftDMtMwloggKpUSVlPc+q/sz3RJsxRwzvCNyPo8E4U0jMTV
+	 Cu3Bz7kD5S7I1KfQIIIQwHkFHysx5c/N+ywPYCYVHdi065jf9lyH4Yls/y0m1Zmb8+
+	 Hg5ulviYrgWzJcs7Hj9PclKfTOobNM3EbsHlnSFx3Rv/b0y1ey0EfuqHvpetUrZYT8
+	 Y7qPq+tjTDy+KOAI9umWSWK29pbW6gtUX307GD0bsZgGFxSg+JonW7wlsLQxjuMdta
+	 kRMecoOh8XSjg==
+Date: Mon, 6 Oct 2025 12:47:50 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: syzbot <syzbot+a9391462075ffb9f77c6@syzkaller.appspotmail.com>, 
+	jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [fs?] [mm?] WARNING in path_noexec (2)
+Message-ID: <20251006-wachsen-zusendung-6cc31055eb75@brauner>
+References: <68dc3ade.a70a0220.10c4b.015b.GAE@google.com>
+ <202509301457.30490A014C@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,61 +58,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251003130006.41681-8-farbere@amazon.com>
+In-Reply-To: <202509301457.30490A014C@keescook>
 
-On Fri, Oct 03, 2025 at 12:59:54PM +0000, Eliav Farber wrote:
-> From: Linus Torvalds <torvalds@linux-foundation.org>
+On Tue, Sep 30, 2025 at 03:04:22PM -0700, Kees Cook wrote:
+> On Tue, Sep 30, 2025 at 01:17:34PM -0700, syzbot wrote:
+> > Reported-by: syzbot+a9391462075ffb9f77c6@syzkaller.appspotmail.com
+> > 
+> > ------------[ cut here ]------------
+> > WARNING: CPU: 1 PID: 6000 at fs/exec.c:119 path_noexec+0x1af/0x200 fs/exec.c:118
 > 
-> [ Upstream commit 017fa3e89187848fd056af757769c9e66ac3e93d ]
+> Christian, this is:
 > 
-> This simplifies the min_t() and max_t() macros by no longer making them
-> work in the context of a C constant expression.
+> bool path_noexec(const struct path *path)
+> {
+>         /* If it's an anonymous inode make sure that we catch any shenanigans. */
+>         VFS_WARN_ON_ONCE(IS_ANON_FILE(d_inode(path->dentry)) &&
+>                          !(path->mnt->mnt_sb->s_iflags & SB_I_NOEXEC));
+>         return (path->mnt->mnt_flags & MNT_NOEXEC) ||
+>                (path->mnt->mnt_sb->s_iflags & SB_I_NOEXEC);
+> }
 > 
-> That means that you can no longer use them for static initializers or
-> for array sizes in type definitions, but there were only a couple of
-> such uses, and all of them were converted (famous last words) to use
-> MIN_T/MAX_T instead.
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13e5fd6f980000
 > 
-> Cc: David Laight <David.Laight@aculab.com>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Eliav Farber <farbere@amazon.com>
+> I think is from the created fd_dma_buf. I expect this would fix it:
+> 
+> 
+> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+> index 2bcf9ceca997..6e2ab1a4560d 100644
+> --- a/drivers/dma-buf/dma-buf.c
+> +++ b/drivers/dma-buf/dma-buf.c
+> @@ -189,6 +189,8 @@ static int dma_buf_fs_init_context(struct fs_context *fc)
+>  {
+>  	struct pseudo_fs_context *ctx;
+>  
+> +	fc->s_iflags |= SB_I_NOEXEC;
+> +	fc->s_iflags |= SB_I_NODEV;
 
-Eliav, your testing infrastructure needs some work, this patch breaks
-the build on this kernel tree:
+Yeah, that seems like a good thing to do.
+I'm quite happy that the VFS_WARN_ON_ONCE() in there is catching all
+this!
 
-In file included from ./include/linux/kernel.h:16,
-                 from ./include/linux/list.h:9,
-                 from ./include/linux/wait.h:7,
-                 from ./include/linux/wait_bit.h:8,
-                 from ./include/linux/fs.h:6,
-                 from fs/erofs/internal.h:10,
-                 from fs/erofs/zdata.h:9,
-                 from fs/erofs/zdata.c:6:
-fs/erofs/zdata.c: In function ‘z_erofs_decompress_pcluster’:
-fs/erofs/zdata.h:185:61: error: ISO C90 forbids variable length array ‘pages_onstack’ [-Werror=vla]
-  185 |         min_t(unsigned int, THREAD_SIZE / 8 / sizeof(struct page *), 96U)
-      |                                                             ^~~~
-./include/linux/minmax.h:49:23: note: in definition of macro ‘__cmp_once_unique’
-   49 |         ({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
-      |                       ^
-./include/linux/minmax.h:164:27: note: in expansion of macro ‘__cmp_once’
-  164 | #define min_t(type, x, y) __cmp_once(min, type, x, y)
-      |                           ^~~~~~~~~~
-fs/erofs/zdata.h:185:9: note: in expansion of macro ‘min_t’
-  185 |         min_t(unsigned int, THREAD_SIZE / 8 / sizeof(struct page *), 96U)
-      |         ^~~~~
-fs/erofs/zdata.c:847:36: note: in expansion of macro ‘Z_EROFS_VMAP_ONSTACK_PAGES’
-  847 |         struct page *pages_onstack[Z_EROFS_VMAP_ONSTACK_PAGES];
-      |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~
-cc1: all warnings being treated as errors
+Do you want to send a real patch I can pick up?
 
+>  	ctx = init_pseudo(fc, DMA_BUF_MAGIC);
+>  	if (!ctx)
+>  		return -ENOMEM;
+> 
+> 
+> Which reminds me, this still isn't landed either for secretmem:
+> https://lore.kernel.org/all/20250707171735.GE1880847@ZenIV/
 
-I'll drop this whole series, please do a bit more testing before sending
-out a new version.
-
-thanks,
-
-greg k-h
+It should be in mainline as:
+commit 98f99394a104cc80296da34a62d4e1ad04127013 ("secretmem: use SB_I_NOEXEC")
 
