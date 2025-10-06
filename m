@@ -1,156 +1,117 @@
-Return-Path: <linux-kernel+bounces-843008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 591BFBBE30D
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:30:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 049D6BBE310
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:31:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C6961891B3E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:30:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CC4354E7E9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648342D238D;
-	Mon,  6 Oct 2025 13:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05AEA2D0C7B;
+	Mon,  6 Oct 2025 13:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="vhOopDo6"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="VO+V1ZNW"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B620D2D1F7B;
-	Mon,  6 Oct 2025 13:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5F920330
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 13:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759757417; cv=none; b=RqEUFRisvT92pc3yUQ+ka31syoJEBYkcUyxWp24Qn/K+Cpaf/P68dABimuosj/kK2xx3cV5KqBvt4YiRaBn+zi5zFUmRrK9iHy+cY7SY8P8BJJ/zqNFDFeVAgIjMQc2bvtNJaj1bBiTqRMh4eW+fYTOhRgWKLdsWHJ6sg7THH84=
+	t=1759757511; cv=none; b=BKbG79sVdVt+j225NoeE3f49vgsT33NATbEyC9jIALfX0yCkJd9O5XOil9m+Jd33zljG6KCt+NUUGSlkR37N31SkFKCxj95vwn4DtEh8bl17sNw06K29nEEjZAt1gerUjNIQREUBWKLjW/AX2Jpulk3hJ1d0EaA62ymknHZ5xz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759757417; c=relaxed/simple;
-	bh=ldZ6ZgVaPGWhx0Z8wK74yN++j5mjCqvwbRgE1RzMiZU=;
+	s=arc-20240116; t=1759757511; c=relaxed/simple;
+	bh=DqULx7OzGhVZvldtgJDVJjS9EzOntOWcDaUYk91ctHk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E1ULIuw4Oy7In1gijCH7hP20jqcl5ZzzZMLAROAU3rLzdsDdMmrEQBpPjOMkDZylYnCy2tq5KM2AQgebUyitj62qakeKCSn26dkwu7vio7MZ2VV/zZKSXE037gDuMd87nRTMm2DpRINgFdoaHui8Zuzq21mIyouEO5adWY/G9Hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=vhOopDo6; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 93EFC1D00154;
-	Mon,  6 Oct 2025 09:30:14 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Mon, 06 Oct 2025 09:30:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1759757414; x=1759843814; bh=9Er25Kd2ILGUTjSaojxcUAIlBwBd/yvlRQ1
-	/6RThMGI=; b=vhOopDo6S3myENtCAXRNjhYSJ2w5UukaRVVwGP3jwsmfJSA4PSM
-	+lKT6JCwmYqS71yYsKhfx01Gq2UVwlga7j90hy75zo7i/O8ffHL0JP4yk8Ryhrkc
-	g5FaOTgSI4byzayjM49YbAa87UAs+hXuuJprc5tf2T9PossFzSk3viDHyFrA0HeY
-	qbATjVljNs7tPMSvceEiuxD8XTaQPLoeqCcv09z5gHiImuXx4UAUXH/LCixCRF3k
-	w58nONV2Z/Wf1jdSm4G1m5BYG1W1QRR2sFZT5uk4MN/k2tARh9K6qIav44J1L0Eh
-	a9aNY3HZouQNDmUK5NoIj/+jgZones7B0Vg==
-X-ME-Sender: <xms:ZsTjaIkWEgiZT1PXBbN8FZ6fdTeXhbyE9Y18WRL-ICvC0EWaaiQ0SQ>
-    <xme:ZsTjaMxjy1GpoTfxmywO-FvKzQYACeLSSUI3ZfUh9-hwo85-YxrSgJyTzuwkgba6O
-    Hc6oMkzTzZSvbMjvq3em_d8utGPAmatln6J9Ob7H0HySeZ2tjs>
-X-ME-Received: <xmr:ZsTjaK710vjORanLgy1c5conHFe3nRXViKa6M14iaT5CPYTPgKYSwh6uvYj2Z0hpRnPK4-s_MbbeD1FxwdlAJzNQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeljeeiiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefkughoucfutghh
-    ihhmmhgvlhcuoehiughoshgthhesihguohhstghhrdhorhhgqeenucggtffrrghtthgvrh
-    hnpedvudefveekheeugeeftddvveefgfduieefudeifefgleekheegleegjeejgeeghfen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehiughosh
-    gthhesihguohhstghhrdhorhhgpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopeguvghmvghtrhhiohhushiisehprhhothhonhdrmhgvpdhrtg
-    hpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegushgr
-    hhgvrhhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhooh
-    hglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhorhhmsheskh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhg
-X-ME-Proxy: <xmx:ZsTjaEWlluzN-PKtDTQQ6k3rxj20EiO1gAF-f36OCCdliFvCVngVMA>
-    <xmx:ZsTjaKJYQw9KZdPhrYkI0DWugjAQIbKGHHzYGXMEFzIQ2O-23W2KNA>
-    <xmx:ZsTjaOsvcqqFkFnZFoLiYa7AGUVkHzqtTtj4n4Yc4aXBSZ5xNfVvQg>
-    <xmx:ZsTjaPLB9ZOmlV-a3GXBRfb4GjlP0yWFMhA27MJVZgbmRRCvpZubdQ>
-    <xmx:ZsTjaIcuDtLCzWB-e4YxjlfZ2VSYcVUBgEiPJTKCs9y0ILMVNH7eSwdd>
-Feedback-ID: i494840e7:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 6 Oct 2025 09:30:13 -0400 (EDT)
-Date: Mon, 6 Oct 2025 16:30:11 +0300
-From: Ido Schimmel <idosch@idosch.org>
-To: demetriousz@proton.me
-Cc: "David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: ipv6: respect route prfsrc and fill empty
- saddr before ECMP hash
-Message-ID: <aOPEYwnyGnMQCp-f@shredder>
-References: <20251005-ipv6-set-saddr-to-prefsrc-before-hash-to-stabilize-ecmp-v1-1-d43b6ef00035@proton.me>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EYOHno78dewfBn2mC44VRWgo+Qrv3h+j29minQqIyzZyX6HcPpGRBXmfFsCFC7Mr10S5Iv3l/OFflQfzMz65o8Ejq6JByDlqRR1l+0VnGFZ5AiAA+oonknbfIsZjiQ1ZtKurMxnNnHbyqu35CE8CLejLPyhiGT2Ts40LREcgqjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=VO+V1ZNW; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C07E540E00DE;
+	Mon,  6 Oct 2025 13:31:46 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 3eJ9uyeo1yOA; Mon,  6 Oct 2025 13:31:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1759757503; bh=uLzs6Q1ZS9QMR/ROOs/UFruOdJjpboa8xAlFKS9dyt8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VO+V1ZNWQvvaa5LPaItvre0UGlO39hzdnvY69Qsk+lQdg9hIaWiVFI8NHaIJ0gIan
+	 JVQG7Z3k3CSKJV9u+y++up5J5u9Xrl/AXdsLjHSI3CJanROCv5XnPEQDoxpVu1lwo3
+	 zTct6AlO+EH71WsstKmFi/WUKx/jPo7m2+KVuSeYs0YPlTUUS9GKvuuEnG3irILxVQ
+	 rWesGnC1RIWYALmgdz4AAwezouz/8ie+Fn8sSHFROMRSSKQPPrpLxnp73fyL2oejBF
+	 BizsR1zjZldtbp9pD1daq3BboeV7Q7DmGLIzvr6bF50Ctavf3NEGzYnLcwhZDtneV7
+	 btBlgy1uQHceamfH69bypPnTWr27vLf7goai7oa+fufT93htpcNa6awiw7gaRFohEz
+	 fFjyc0U+kwzOrXH8c1U/fcM5+RS+PUzK0UG6RbpanwJIZ11KKJr2zADpXDVHpS9l2B
+	 o4x+g3eIfiWlMV4Z8yUuXjJ5eTh4u32VZGXgOK5kn2SONt9nbJoQEUI96BmDovRafX
+	 BpFqY/ch2f+vLLxNVgdhzVvSQPhwI+lh8KiwJbY5LxwxC+Pn8ZT7ohw33a5monnDuH
+	 4ld6Y8LGMC+nK/UIbWA8XhHUc3c9bvLWe5TqRg68Uptxl/AY/Ro6yar93l099Ufo1n
+	 NaY9yyc0dbbyYE7D2nKYYoOA=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id E43C140E0196;
+	Mon,  6 Oct 2025 13:31:33 +0000 (UTC)
+Date: Mon, 6 Oct 2025 15:31:28 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Rong Zhang <i@rong.moe>
+Cc: "Mario Limonciello (AMD) (kernel.org)" <superm1@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Yazen Ghannam <yazen.ghannam@amd.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/CPU/AMD: Prevent reset reasons from being retained
+ among boots
+Message-ID: <20251006133128.GCaOPEsFuhJI89YG8L@fat_crate.local>
+References: <20250913144245.23237-1-i@rong.moe>
+ <20250916140227.GGaMlt8xSp3eMI8Veu@fat_crate.local>
+ <1e07144c-da10-4817-a2c6-ea11988936ee@kernel.org>
+ <a1eff492b192bbe68716b46c18cd7152951c6550.camel@rong.moe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251005-ipv6-set-saddr-to-prefsrc-before-hash-to-stabilize-ecmp-v1-1-d43b6ef00035@proton.me>
+In-Reply-To: <a1eff492b192bbe68716b46c18cd7152951c6550.camel@rong.moe>
 
-On Sun, Oct 05, 2025 at 08:49:55PM +0000, Dmitry Z via B4 Relay wrote:
-> From: Dmitry Z <demetriousz@proton.me>
+On Tue, Sep 30, 2025 at 06:18:30PM +0800, Rong Zhang wrote:
+> A user may feel confused: Two bits are set, but only one reason is
+> reported. Hmm... Is there a hidden failure?
+
+Why would you assume that 1 set bit == 1 failure reason?
+
+> Unless the user has read the PPR, it's hard to realize BIT(11) is
+> already set in the reset value. The debug message is here to help:
 > 
-> In an IPv6 ECMP scenario, if a multi-homed host initiates a connection,
-> `saddr` may remain empty during the initial call to `rt6_multipath_hash()`.
-> It gets filled later, once the outgoing interface (OIF) is determined and
-> `ipv6_dev_get_saddr()` (RFC 6724) selects the proper source address.
+>    Cleared system reset reasons [0x08000800 => 0x00000800]
+>                                     ^   ^         ^   ^
 > 
-> In some cases, this can cause the flow to switch paths: the first packets
-> go via one link, while the rest of the flow is routed over another.
+> Now the user realizes that BIT(11) has nothing to do with reboot
+> reasons.
 > 
-> A practical example is a Git-over-SSH session. When running `git fetch`,
-> the initial control traffic uses TOS 0x48, but data transfer switches to
-> TOS 0x20. This triggers a new hash computation, and at that time `saddr`
-> is already populated. As a result, packets with TOS 0x20 may be sent via
-> a different OIF, because `rt6_multipath_hash()` now produces a different
-> result.
-> 
-> This issue can happen even if the matched IPv6 route specifies a `src`
-> (preferred source) address. The actual impact depends on the network
-> topology. In my setup, the flow was redirected to a different switch and
-> reached another host, leading to TCP RSTs from the host where the session
-> was never established.
-> 
-> Possible workarounds:
-> 1. Use netfilter to normalize the DSCP field before route lookup.
->    (breaks DSCP/TOS assignment set by the socket)
-> 2. Exclude the source address from the ECMP hash via sysctl knobs.
->    (excludes an important part from hash computation)
+> This was literally the confusion I experienced. I had to take some time
+> looking for an appropriate public PPR and reading the PPR before
+> realizing this fact.
 
-Two more options (which I didn't test):
+Please explain in detail what confusion you were experiencing so that we can
+address it properly.
 
-3. Setting "IPQoS" in SSH config to a single value. It should prevent
-OpenSSH from switching DSCP while the connection is alive. Switching
-DSCP triggers a route lookup since commit 305e95bb893c ("net-ipv6:
-changes to ->tclass (via IPV6_TCLASS) should sk_dst_reset()"). To be
-clear, I don't think this commit is problematic as there are other
-events that can invalidate cached dst entries.
+Thx.
 
-4. Setting "BindAddress" in SSH config. It should make sure that the
-same source address is used for all route lookups.
+-- 
+Regards/Gruss,
+    Boris.
 
-> This patch uses the `fib6_prefsrc.addr` value from the selected route to
-> populate `saddr` before ECMP hash computation, ensuring consistent path
-> selection across the flow.
-
-I'm not convinced the problem is in the kernel. As long as all the
-packets are sent with the same 5-tuple, it's up to the network to
-deliver them correctly. I don't know how your topology looks like, but
-in the general case packets belonging to the same flow can be routed via
-different paths over time. If multiple servers can service incoming SSH
-connections, then there should be a stateful load balancer between them
-and the clients so that packets belonging to the same flow are always
-delivered to the same server. ECMP cannot be relied on to do load
-balancing alone as it's stateless.
+https://people.kernel.org/tglx/notes-about-netiquette
 
