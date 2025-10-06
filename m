@@ -1,235 +1,244 @@
-Return-Path: <linux-kernel+bounces-843353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE66FBBEFE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:38:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CEB5BBF009
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5412F344640
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:38:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50B7F3BBD75
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF2162DFF0D;
-	Mon,  6 Oct 2025 18:37:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1ACB661;
+	Mon,  6 Oct 2025 18:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GOBAWtz5"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YzHuEdSi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AFD92DEA90
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 18:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CC418DF89;
+	Mon,  6 Oct 2025 18:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759775854; cv=none; b=HaEdfeqarLIqFPZs6ezZw40SMDXPuKKP80Tr0iQjhA7zTVUTukjtZy5ddFMdmybg7MBr4MhirBJ2U6oU7XauaDn+pWUDW6Z7dJ/78EkosIt9Dv7UZww0bkwShXIKqrcs/WMyz4JsGQdrFyoV7Q4fW5nM374MVa2I9wWinUBL2Sg=
+	t=1759775954; cv=none; b=VcKvqygXFjhJRNanqH9bCYa6zqQkfeyqUOs+b+Yf9Z3Lxk8sWgWJ+n6g7yxtyv3me5QOC3HGrz+p2MZblAMCgwODm64zypDf+Ua8Xng6VaXSfjNbOQIE3OR3BTyfr8UVpWDN2BEVn43te0Ymwy+6xx4h0WLKjGHW1vTIPgD3RLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759775854; c=relaxed/simple;
-	bh=zXvVqOY+FmkLEkipbzYVu9WiK1E5b/lEUQslscbETwc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=j0RJ3gJL+RdkMW3u05QlNj1pguexMS8STzw4fuOg5rH6gCgEw1DNZKx96nhTxjL9SxxFE/zkMipnGXOKzpmAvFrmCWfO8p4KOIL0kepCZ13v5HQetNRjuNF8TV+ksKC1OHzrAbAWexpVWj4BtyqJtoSOqqxXwYHGwzq0OVKbOx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GOBAWtz5; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3ee12807d97so4386919f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 11:37:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759775850; x=1760380650; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QnX5XErDx5O3zbBQ7ufQmhBI+YSqvg4f14xs2R71brc=;
-        b=GOBAWtz5AJ3DuuRSv+O8vCaxdolOVa7Fy8opj6vg9Y6ogfjRwbgcEl/eQfl7wwnw4l
-         Q4/o7GnYZkCc97fd/H/7MlvrDIU+qMnN1vPnk/UokRdePqsYlGR3xITlpbWNVYLSs+ZO
-         n/pcJDvG+jJKkTHMp3O6uqgYrqfGYkEmtICjNicXvwbZf/8uJVK7eUms5aFFOlde6uge
-         Fi5DOSTbOFE2yspCQuhufyefiw9oly8Ffgaoxf/isDrkH+JCkNZ91f40yVa0dig3eUF5
-         SnXBxYFgQu+EBguWYYw1fu/8ai0WnTu1+boc8/FGE9mjF5mxtu37PxAGL5GzsGr/EuYz
-         XnuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759775850; x=1760380650;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QnX5XErDx5O3zbBQ7ufQmhBI+YSqvg4f14xs2R71brc=;
-        b=PbdMZeqbvZ8fiwO+vnPH6md7n/ze308ReC+E/oDVBwXdo38+S+w+0IVgftPPd5q5Y4
-         yPgeFBYzhaL/clzCtFR1MUA2dusH309LRKlo7yIhyN68WZELeb5ulBxcSMNhVu7Yt3BJ
-         yBvPj1KyxuNvzJSRsoDAfWmqOFu5Id91emqKUqWNOSNQ6Wdaq5uUEkGK2a6fHwXfsswd
-         sbRtwp3MCdNeMfGzSWOlTzwEgYc2cG3iMf2QuqniFXEE+LL/yiZZZ+4fV+z9ydL85IVc
-         YRHntgq9vr973ZRx016W/kjNSOn7sjnqh4dHoPoxUTbsE7sqYvA/mGqmWLzGmosLJBvY
-         gy6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWYlJESn+YFaoy2XDMJo3YG67XpQ18zoRgJ0NVnW+hhcCcQLj4GMXhErMB8GzDd/4hfjCiT0peRUzBrHfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjaGDuN/DMEUQuVQ/rIvNfNMaF3ohexqj2PnUfq1HsMa7tEXK4
-	Cx8JCwBMeU3xFkVUUG1nzgEYJPQJWBF0zHk43Sn8471u3CkJF4du0YveZAPMAw3efok=
-X-Gm-Gg: ASbGncsIIe+K1QklaRecdQeKbL0ERtd7/QJZAlCEn7vGH7N4XlkwAwiPQXnwDru/2g9
-	1TIaZvJ5YVl3Y9fW0ZuAeufgtoVGNCkPb9Pv4kjYgUuaeZwnL0NwHxRFQ3J5gFPkeEdUMIuC3CO
-	3pkS14433OfGlX4ggtWjw0+nLPkHUslCPKLM8d/CbrhXoEhlFjs4vejdxTam4XHnq9985CPU0BF
-	xjShv+xBTteU0YLfFBJwTNp3MX5ScIUpf+vFnHfwPOVnk/lGsea4qFmmQ3EpegNdgPS4avr8PEo
-	DsxMfqkpxe2XGp1eqpiy8KhvmrhSWv/xaxQHsDU30hQESvcy0hzBmfa8nN7ZRp3YKldEfR5Qjsu
-	2j2lzOFKP3dcioKiJt3PXjZDo6PJEO/NwSo629B4ifOE/r+5knJSQR/f+C915u2H/6zEIYm4=
-X-Google-Smtp-Source: AGHT+IHmiv4QNzGSgUm/ckW+jgSBd7VLloyZLLNL+/yjR4sSGkKLrO/+NrpaCk6W+wa8KoSBCF8W9g==
-X-Received: by 2002:a05:6000:4382:b0:3ea:5f76:3f7a with SMTP id ffacd0b85a97d-4256714a519mr8024107f8f.22.1759775850429;
-        Mon, 06 Oct 2025 11:37:30 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e61a022d8sm254997085e9.12.2025.10.06.11.37.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 11:37:30 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Mon, 06 Oct 2025 20:37:19 +0200
-Subject: [PATCH RFC 6/6] sm8450-hdk: Enable I2S for HDMI
+	s=arc-20240116; t=1759775954; c=relaxed/simple;
+	bh=ZYBGbMiAvRmmZykI4RviAOYJTMl4sMmYDh/NDlSP5v4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lY9WCYi2CFteH1sQ5g4GQOWH8iEAQJM3+NO6QQluwQtVcQIGp5qtawfR8al+RaqrARDFj6xpd5Zm1e1y4KGgWGaXNwT+YzPwpwAjyByUxRHA9oIGegdlvhMhhxaIR+rWNxaSJ4C6QPYOO7lR+ClPSiZfb7v5s9f28ZCWN1xLzDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YzHuEdSi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01326C4CEF5;
+	Mon,  6 Oct 2025 18:39:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759775953;
+	bh=ZYBGbMiAvRmmZykI4RviAOYJTMl4sMmYDh/NDlSP5v4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YzHuEdSitbPTGtmCA65o2wQDu+REURCt5h4LPkEvkXD5P4NhaqWSkHCNJwl+hMjeV
+	 WNyaLAHLHD9/datVmp5o/TDHkgOAZcx8uObwGR8tGBMSS7/1ncCJwTOObiE1EcKwel
+	 qsA3bxRSnsA0In8+tUZAocRvq5ZNK1I/A+cAYXiJMzkpVta9xTp0O27LoamAEJq4mv
+	 qfUZ7f9zArShyb6oLloRDR9+WWMMGhXmMKg/5Panwz3Iz7CGUoMTBfU8Pcgd3HFTof
+	 ZltJxPpsnax8JAS/XSzAenZGgZ7uGzD7b/Aqn71Fqw3BVUwJgkgN+2g3XPl18zyP7J
+	 DyFKsxkIyqP4w==
+Date: Mon, 6 Oct 2025 15:39:10 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Collin Funk <collin.funk1@gmail.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Li Huafei <lihuafei1@huawei.com>,
+	Athira Rajeev <atrajeev@linux.ibm.com>,
+	Stephen Brennan <stephen.s.brennan@oracle.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Haibo Xu <haibo1.xu@intel.com>, Andi Kleen <ak@linux.intel.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	bpf@vger.kernel.org, llvm@lists.linux.dev,
+	Song Liu <song@kernel.org>
+Subject: Re: [PATCH v7 00/11] Capstone/llvm improvements + dlopen support
+Message-ID: <aOQMzhBqoL8qs5t2@x1>
+References: <20251005212212.2892175-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251006-topic-sm8x50-next-hdk-i2s-v1-6-184b15a87e0a@linaro.org>
-References: <20251006-topic-sm8x50-next-hdk-i2s-v1-0-184b15a87e0a@linaro.org>
-In-Reply-To: <20251006-topic-sm8x50-next-hdk-i2s-v1-0-184b15a87e0a@linaro.org>
-To: Srinivas Kandagatla <srini@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3244;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=zXvVqOY+FmkLEkipbzYVu9WiK1E5b/lEUQslscbETwc=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBo5AxkIxmKn5IT1+b4gR0HImUqI1UGtFwwvxZXXk0/
- 9W1tRUqJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaOQMZAAKCRB33NvayMhJ0XBvD/
- 4hnkvv1QftgEOxXWgVl6SGY6xgEt37UnmWMdFb5pHZNPt2NpiK30PK3phila+tmSllvcE5922lIipV
- iA00yRuF/EmkF4+6JCbOC7FYu0a3jIDJ2vL9nkPkaIs8vUIGxuxpJQP1sKTviqJ/UdeJwWKJX0Cpvg
- HNsBDQHPRjfSVVkHgfyaa/u6ZgqSyu+uM39s0FcXyjQ5h/ANNpQI1ejDfsTJ3gLQYqRqd/DQH7z3sv
- u0K3KHkYJbDCXLfgM6L77OF0oXe4BLzKcjIsftfzDUxo1jr9+8u1GdwzOCq0tYThHVIf1BMF4EEhM4
- srH5d76BCSsJbGQE6Fy9U1sthvmyt9jj2IeH9c/H43dRtiC2O2QUsycfgHBPBKfhc2X02Weo1yT9ZK
- 8r2m2xXIcdbiy0EjPYqxByBWsezqZTrbYetEaOuPAGLcoDKne7puRxOyWReVq4NHj8n8jdVs3PMdTL
- kpXhdg8MsXqYIwqx775ee/93ld8j7C4jCa7MQ4uYaW2Ow5LnRSInUVw0SW0SB1PPd5c+EApHnsPE1g
- LnJBTGXTzcQ08Jq1yGscYHopnBBTu3xSMdrJPSdmAyYJrPsok7UpdQxQqfGx/XZjwnmYz9FTQsCl4W
- SGg4rlHYlP9RRrXPr74jniXK6d31yi1PsWwVDpn9hVIQBlTK6FDXCUw99RJQ==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251005212212.2892175-1-irogers@google.com>
 
-Add the necessary nodes to configure the right I2S interface
-to output audio via the DSI HDMI bridge.
+On Sun, Oct 05, 2025 at 02:22:01PM -0700, Ian Rogers wrote:
+> Linking against libcapstone and libLLVM can be a significant increase
+> in dependencies and file size if building statically. For something
+> like `perf record` the disassembler and addr2line functionality won't
+> be used. Support dynamically loading these libraries using dlopen and
+> then calling the appropriate functions found using dlsym.
+> 
+> The patch series:
+> 1) feature check libLLVM support and avoid always reinitializing the
+>    disassembler.
+> 2) adds BPF JIT disassembly support to in memory disassemblers (LLVM
+>    and capstone) by just directing them at the BPF info linear JIT
+>    instructions (note this doesn't support source lines);
+> 3) adds fallback to srcline's addr2line so that llvm_addr2line is
+>    tried first, then the deprecated libbfd and then the forked command
+>    tried next, moving the code for forking out of the main srcline.c
+>    file in the process.
+> 4) adds perf_ variants of the capstone/llvm functions that will either
+>    directly call the function or use dlsym to discover it;
+> 
+> The addr2line LLVM functionality is written in C++. To avoid linking
+> against libLLVM for this, a new LIBLLVM_DYNAMIC option is added where
+> the C++ code with the libLLVM dependency will be built into a
+> libperf-llvm.so and that dlsym-ed and called against. Ideally LLVM
+> would extend their C API to avoid this.
+> 
+> v7: Refactor now the first 5 patches, that largely moved code around,
+>     have landed. Move the dlopen code to the end of the series so that
+>     the first 8 patches can be picked improving capstone/LLVM support
 
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- arch/arm64/boot/dts/qcom/sm8450-hdk.dts | 30 +++++++++++++++++++++++++
- arch/arm64/boot/dts/qcom/sm8450.dtsi    | 40 +++++++++++++++++++++++++++++++++
- 2 files changed, 70 insertions(+)
+So I tentatively picked the first 8 patches, will test it now, hopefully
+we can go with it to have BPF annotation...
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8450-hdk.dts b/arch/arm64/boot/dts/qcom/sm8450-hdk.dts
-index 0c6aa7ddf43263f30595b3f0733ec3e126e38608..c8fd4c8c6bc644ccb5f9fb05c099f27513b86e99 100644
---- a/arch/arm64/boot/dts/qcom/sm8450-hdk.dts
-+++ b/arch/arm64/boot/dts/qcom/sm8450-hdk.dts
-@@ -667,6 +667,8 @@ lt9611_codec: hdmi-bridge@2b {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&lt9611_irq_pin &lt9611_rst_pin>;
- 
-+		#sound-dai-cells = <1>;
-+
- 		ports {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -1016,6 +1018,18 @@ &sound {
- 			"TX SWR_INPUT0", "ADC3_OUTPUT",
- 			"TX SWR_INPUT1", "ADC4_OUTPUT";
- 
-+	pinctrl-0 = <&i2s0_default_state>, <&audio_mclk0_default_state>;
-+	pinctrl-names = "default";
-+	clocks = <&q6prmcc LPASS_CLK_ID_PRI_MI2S_IBIT LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-+		 <&q6prmcc LPASS_CLK_ID_MCLK_1 LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
-+	clock-names = "pri-mi2s",
-+		      "pri-mclk";
-+
-+	assigned-clocks = <&q6prmcc LPASS_CLK_ID_PRI_MI2S_IBIT LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-+			  <&q6prmcc LPASS_CLK_ID_MCLK_1 LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
-+	assigned-clock-rates = <1536000>,
-+				       <24576000>;
-+
- 	wcd-playback-dai-link {
- 		link-name = "WCD Playback";
- 
-@@ -1079,6 +1093,22 @@ platform {
- 			sound-dai = <&q6apm>;
- 		};
- 	};
-+
-+	prim-mi2s-dai-link {
-+		link-name = "Primary MI2S Playback";
-+
-+		cpu {
-+			sound-dai = <&q6apmbedai PRIMARY_MI2S_RX>;
-+		};
-+
-+		codec {
-+			sound-dai = <&lt9611_codec 0>;
-+		};
-+
-+		platform {
-+			sound-dai = <&q6apm>;
-+		};
-+	};
- };
- 
- &swr0 {
-diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi b/arch/arm64/boot/dts/qcom/sm8450.dtsi
-index 23420e6924728cb80fc9e44fb4d7e01fbffae21f..5ddc1169e8c23327261820f7baa31983a3eb0bf8 100644
---- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
-@@ -4288,6 +4288,46 @@ qup_uart20_default: qup-uart20-default-state {
- 				pins = "gpio76", "gpio77", "gpio78", "gpio79";
- 				function = "qup20";
- 			};
-+
-+			audio_mclk0_default_state: audio-mclk0-default-state {
-+				pins = "gpio125";
-+				function = "pri_mi2s";
-+				drive-strength = <8>;
-+				bias-disable;
-+				output-high;
-+			};
-+
-+			i2s0_default_state: i2s0-default-state {
-+				sck-pins {
-+					pins = "gpio126";
-+					function = "mi2s0_sck";
-+					drive-strength = <8>;
-+					bias-disable;
-+					output-high;
-+				};
-+
-+				data0-pins {
-+					pins = "gpio127";
-+					function = "mi2s0_data0";
-+					drive-strength = <8>;
-+					bias-disable;
-+				};
-+
-+				data1-pins {
-+					pins = "gpio128";
-+					function = "mi2s0_data1";
-+					drive-strength = <8>;
-+					bias-disable;
-+				};
-+
-+				ws-pins {
-+					pins = "gpio129";
-+					function = "mi2s0_ws";
-+					drive-strength = <8>;
-+					bias-disable;
-+					output-high;
-+				};
-+			};
- 		};
- 
- 		lpass_tlmm: pinctrl@3440000 {
+Wait, will try to fix this one:
 
--- 
-2.34.1
+⬢ [acme@toolbx perf-tools-next]$ git log --oneline -1 ; time make -C tools/perf build-test
+                 make_static: cd . && make LDFLAGS=-static NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX32=1 NO_JVMTI=1 NO_LIBTRACEEVENT=1 NO_LIBELF=1 -j32  DESTDIR=/tmp/tmp.w26bDGykTM
+cd . && make LDFLAGS=-static NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX32=1 NO_JVMTI=1 NO_LIBTRACEEVENT=1 NO_LIBELF=1 -j32 DESTDIR=/tmp/tmp.w26bDGykTM
+  BUILD:   Doing 'make -j32' parallel build
+<SNIP>
+Auto-detecting system features:
+...                                   libdw: [ OFF ]
+...                                   glibc: [ on  ]
+...                                  libelf: [ OFF ]
+...                                 libnuma: [ OFF ]
+...                  numa_num_possible_cpus: [ OFF ]
+...                               libpython: [ OFF ]
+...                             libcapstone: [ OFF ]
+...                               llvm-perf: [ OFF ]
+...                                    zlib: [ OFF ]
+...                                    lzma: [ OFF ]
+...                               get_cpuid: [ on  ]
+...                                     bpf: [ on  ]
+...                                  libaio: [ on  ]
+...                                 libzstd: [ OFF ]
+<SNIP>
+ CC      tests/api-io.o
+  CC      util/sha1.o
+  CC      util/smt.o
+  LD      util/intel-pt-decoder/perf-util-in.o
+  CC      tests/demangle-java-test.o
+  CC      util/strbuf.o
+  CC      util/string.o
+  CC      tests/demangle-ocaml-test.o
+  CC      util/strlist.o
+  CC      tests/demangle-rust-v0-test.o
+  CC      tests/pfm.o
+  CC      tests/parse-metric.o
+  CC      util/strfilter.o
+  CC      tests/pe-file-parsing.o
+util/llvm.c: In function ‘init_llvm’:
+util/llvm.c:78:17: error: implicit declaration of function ‘LLVMInitializeAllTargetInfos’ [-Wimplicit-function-declaration]
+   78 |                 LLVMInitializeAllTargetInfos();
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+util/llvm.c:79:17: error: implicit declaration of function ‘LLVMInitializeAllTargetMCs’ [-Wimplicit-function-declaration]
+   79 |                 LLVMInitializeAllTargetMCs();
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
+util/llvm.c:80:17: error: implicit declaration of function ‘LLVMInitializeAllDisassemblers’ [-Wimplicit-function-declaration]
+   80 |                 LLVMInitializeAllDisassemblers();
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+util/llvm.c: At top level:
+util/llvm.c:73:13: error: ‘init_llvm’ defined but not used [-Werror=unused-function]
+   73 | static void init_llvm(void)
+      |             ^~~~~~~~~
+cc1: all warnings being treated as errors
+  CC      tests/expand-cgroup.o
+  CC      util/top.o
+  CC      tests/perf-time-to-tsc.o
+  CC      util/usage.o
+make[6]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:86: util/llvm.o] Error 1
+make[6]: *** Waiting for unfinished jobs....
+  CC      tests/dlfilter-test.o
+  CC      tests/sigtrap.o
+  CC      tests/event_groups.o
 
+
+>     without adding the dlopen code. Rename the cover letter and
+>     disassembler cleanup patches.
+> v6: Refactor the libbfd along with capstone and LLVM, previous patch
+>     series had tried to avoid this by just removing the deprecated
+>     BUILD_NONDISTRO code. Remove the libtracefs removal into its own
+>     patch.
+> v5: Rebase and comment typo fix.
+> v4: Rebase and addition of a patch removing an unused struct variable.
+> v3: Add srcline addr2line fallback trying LLVM first then forking a
+>     process. This came up in conversation with Steinar Gunderson
+>     <sesse@google.com>.
+>     Tweak the cover letter message to try to address Andi Kleen's
+>     <ak@linux.intel.com> feedback that the series doesn't really
+>     achieve anything.
+> v2: Add mangling of the function names in libperf-llvm.so to avoid
+>     potential infinite recursion. Add BPF JIT disassembly support to
+>     LLVM and capstone. Add/rebase the BUILD_NONDISTRO cleanup onto the
+>     series from:
+>     https://lore.kernel.org/lkml/20250111202851.1075338-1-irogers@google.com/
+>     Some other minor additional clean up.
+> 
+> Ian Rogers (11):
+>   perf check: Add libLLVM feature
+>   perf llvm: Reduce LLVM initialization
+>   perf dso: Move read_symbol from llvm/capstone to dso
+>   perf dso: Support BPF programs in dso__read_symbol
+>   perf dso: Clean up read_symbol error handling
+>   perf disasm: Make ins__scnprintf and ins__is_nop static
+>   perf srcline: Fallback between addr2line implementations
+>   perf disasm: Remove unused evsel from annotate_args
+>   perf capstone: Support for dlopen-ing libcapstone.so
+>   perf llvm: Support for dlopen-ing libLLVM.so
+>   perf llvm: Mangle libperf-llvm.so function names
+> 
+>  tools/perf/Documentation/perf-check.txt |   1 +
+>  tools/perf/Makefile.config              |  13 +
+>  tools/perf/Makefile.perf                |  24 +-
+>  tools/perf/builtin-check.c              |   1 +
+>  tools/perf/tests/make                   |   2 +
+>  tools/perf/util/Build                   |   3 +-
+>  tools/perf/util/addr2line.c             | 439 +++++++++++++++++++++
+>  tools/perf/util/addr2line.h             |  20 +
+>  tools/perf/util/annotate.c              |   1 -
+>  tools/perf/util/capstone.c              | 352 ++++++++++++-----
+>  tools/perf/util/config.c                |   2 +-
+>  tools/perf/util/disasm.c                |  18 +-
+>  tools/perf/util/disasm.h                |   4 -
+>  tools/perf/util/dso.c                   | 112 ++++++
+>  tools/perf/util/dso.h                   |   4 +
+>  tools/perf/util/libbfd.c                |   4 +-
+>  tools/perf/util/libbfd.h                |   6 +-
+>  tools/perf/util/llvm-c-helpers.cpp      | 120 +++++-
+>  tools/perf/util/llvm-c-helpers.h        |  24 +-
+>  tools/perf/util/llvm.c                  | 374 +++++++++++++-----
+>  tools/perf/util/llvm.h                  |   3 -
+>  tools/perf/util/srcline.c               | 495 ++----------------------
+>  tools/perf/util/srcline.h               |   1 -
+>  23 files changed, 1314 insertions(+), 709 deletions(-)
+>  create mode 100644 tools/perf/util/addr2line.c
+>  create mode 100644 tools/perf/util/addr2line.h
+> 
+> -- 
+> 2.51.0.618.g983fd99d29-goog
+> 
 
