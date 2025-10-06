@@ -1,246 +1,155 @@
-Return-Path: <linux-kernel+bounces-842867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D09BBDD3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 13:07:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB3E4BBDD4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 13:09:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7D8324EB6D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 11:07:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E7463BD46A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 11:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07F52690D9;
-	Mon,  6 Oct 2025 11:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD4926A0A7;
+	Mon,  6 Oct 2025 11:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bTSvBZNx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AwWOeaFQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3489C223339;
-	Mon,  6 Oct 2025 11:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56989170A11;
+	Mon,  6 Oct 2025 11:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759748870; cv=none; b=VQmiY9O2nZc9T1rSZsYrym+ycivsICCB1nfX7w6QjEHbifb8rIY/kUdlnPQSzXWF+SvOUcrEXEptg2U/cAMSZMjiYf/AptTvSbIEom23Okif96LIItVfIWSAM+6jRVi7PTxSY9kucwj1fFeeSxqTzfMfrg4Yp+oOQ1GpygCDQ7Y=
+	t=1759748951; cv=none; b=MqweA50IP+7yhxauo5E1FBLDrcykLJvhG4MJKZaTMl0Zllr6cgQA7Adnx7lwPG29v6E4nOHy+AjQ4twJnCNoDk8pxwQXvRACm13M1fGi2e79vbctlEIx2AoaEJRLAqyGJp7IsqRvrSn7wI/RhNvqwzoCnmVcRHAn1CpH7I4zBqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759748870; c=relaxed/simple;
-	bh=H/JV3keURjBYWjBPl+P5pFvTDDpr2Zqj0n/evlTqhZg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=c1DVCRet5674WZIhh1kCGmWKd8q9TsomBc5jDRkcYkT5pfRKzFPFEmYp4qEumRXHTNS60OzMlAgXC3feDMJMBON9VvK8dhDhqAhln7QHF5eM8N+trrrgccDC6x2OJA+D9QCAYP7RLnUW4qqO35q44GPjsuxeHKhZ/Vl3MwWJx1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bTSvBZNx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFD8AC4CEF5;
-	Mon,  6 Oct 2025 11:07:47 +0000 (UTC)
+	s=arc-20240116; t=1759748951; c=relaxed/simple;
+	bh=iAUttCGRO/dduZhfc2/39dETHCE1Y3M+f3KADtcy2rk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pTsORPUarDvHIUk5Pq84xkCbHniQPmlpbTFdvxWOVvuJVBbxGiQHH831GnLgPNRPDa2vPJ97LFuIADlglsqCMJLLBLME1JWpjmKZVBiGMr2a441VMke7VKVKuN4JZo//sMEEi+uRZiklrKRvCVP2D3o655GFdCAPzCZ3Qmiup3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AwWOeaFQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21758C4CEF5;
+	Mon,  6 Oct 2025 11:09:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759748870;
-	bh=H/JV3keURjBYWjBPl+P5pFvTDDpr2Zqj0n/evlTqhZg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=bTSvBZNxrDEHRl923Elq+0kwdFS8sNKO6Uaa+ZaSwDpY0eAy2fh/0xSHYSonXwVHi
-	 4C1rJIEyb4selbzZe6m6spkGS0OwNxwVAf4ra2PuQH4xs/ufrPqxJ5TggwJCL3H8hf
-	 wverrlc7LX5kramgFCZj/KpAWEY5A8j2u9A+j4U8UgQQsuMSYVonbiC/5LNZvrBiSn
-	 JhHP6Wgfr1a8G53YsVNJiM/VmwryqdbIQTQ0jAekdTaxe/F1iSZbsg5Dsn/rgJDfFG
-	 /Jwnofo4Tn7oybqve5U4Zj6PuLCwO8offhpB+TylknkBIzH8jI9wZ5op/HLp9Z7npV
-	 fWJ7kx86cxMBw==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Linux-Arch <linux-arch@vger.kernel.org>,
-	linux-m68k@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Finn Thain <fthain@linux-m68k.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Gary Guo <gary@garyguo.net>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] atomic: skip alignment check for try_cmpxchg() old arg
-Date: Mon,  6 Oct 2025 13:07:32 +0200
-Message-Id: <20251006110740.468309-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=k20201202; t=1759748950;
+	bh=iAUttCGRO/dduZhfc2/39dETHCE1Y3M+f3KADtcy2rk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AwWOeaFQJ/VjsW+sWbulhEi3dU6wn+mmOthy+vla6dh6I6Ump1Be3uY0Yg0vesKZ+
+	 BOf6YGEptbFfwZFjmCtvseMZKBHlpDouEcU0SB58tAui9E7fZ2WLyhD+2JYqvVuydw
+	 ugDEytqinuL1khRuKkPTYmbkrLzj1NZDISFvkjm9LwzJgDUTFA+2YxtHmCfKczPQgv
+	 3y4GYAHV7uvVKJME+IyEMVPsFnaDpCMqWKJ6wD78fe8U4YH96v5DjfY1fBibXvLfac
+	 08QMhHHyAcLjKBt8U5nsp5kRAgedeeMJdHuYlIEdTv1NSh4lWts7r0QBVDD7lQbUGT
+	 GfHqhPPKXhE5Q==
+Message-ID: <a622643f-1585-40b0-9441-cf7ece176e83@kernel.org>
+Date: Mon, 6 Oct 2025 13:09:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/6] fs: make vfs_fileattr_[get|set] return -EOPNOSUPP
+To: Andrey Albershteyn <aalbersh@redhat.com>,
+ Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+ Casey Schaufler <casey@schaufler-ca.com>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
+ Paul Moore <paul@paul-moore.com>
+Cc: linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+ selinux@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
+References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
+ <20250630-xattrat-syscall-v6-4-c4e3bc35227b@kernel.org>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20250630-xattrat-syscall-v6-4-c4e3bc35227b@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+On 30. 06. 25, 18:20, Andrey Albershteyn wrote:
+> Future patches will add new syscalls which use these functions. As
+> this interface won't be used for ioctls only, the EOPNOSUPP is more
+> appropriate return code.
+> 
+> This patch converts return code from ENOIOCTLCMD to EOPNOSUPP for
+> vfs_fileattr_get and vfs_fileattr_set. To save old behavior translate
+> EOPNOSUPP back for current users - overlayfs, encryptfs and fs/ioctl.c.
+> 
+> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+...
+> @@ -292,6 +294,8 @@ int ioctl_setflags(struct file *file, unsigned int __user *argp)
+>   			fileattr_fill_flags(&fa, flags);
+>   			err = vfs_fileattr_set(idmap, dentry, &fa);
+>   			mnt_drop_write_file(file);
+> +			if (err == -EOPNOTSUPP)
+> +				err = -ENOIOCTLCMD;
 
-The 'old' argument in atomic_try_cmpxchg() and related functions is a
-pointer to a normal non-atomic integer number, which does not require
-to be naturally aligned, unlike the atomic_t/atomic64_t types themselves.
+This breaks borg code (unit tests already) as it expects EOPNOTSUPP, not 
+ENOIOCTLCMD/ENOTTY:
+https://github.com/borgbackup/borg/blob/1c6ef7a200c7f72f8d1204d727fea32168616ceb/src/borg/platform/linux.pyx#L147
 
-In order to add an alignment check with CONFIG_DEBUG_ATOMIC into the
-normal instrument_atomic_read_write() helper, change this check to use
-the non-atomic instrument_read_write(), the same way that was done
-earlier for try_cmpxchg() in commit ec570320b09f ("locking/atomic:
-Correct (cmp)xchg() instrumentation").
+I.e. setflags now returns ENOIOCTLCMD/ENOTTY for cases where 6.16 used 
+to return EOPNOTSUPP.
 
-This prevents warnings on m68k calling the 32-bit atomic_try_cmpxchg()
-with 16-bit aligned arguments as well as several more architectures
-including x86-32 when calling atomic64_try_cmpxchg() with 32-bit
-aligned u64 arguments.
+This minimal testcase program doing ioctl(fd2, FS_IOC_SETFLAGS, 
+&FS_NODUMP_FL):
+https://github.com/jirislaby/collected_sources/tree/master/ioctl_setflags
 
-Reported-by: Finn Thain <fthain@linux-m68k.org>
-Link: https://lore.kernel.org/all/cover.1757810729.git.fthain@linux-m68k.org/
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- include/linux/atomic/atomic-instrumented.h | 26 +++++++++++-----------
- scripts/atomic/gen-atomic-instrumented.sh  | 11 +++++----
- 2 files changed, 20 insertions(+), 17 deletions(-)
+dumps in 6.16:
+sf: ioctl: Operation not supported
 
-diff --git a/include/linux/atomic/atomic-instrumented.h b/include/linux/atomic/atomic-instrumented.h
-index 9409a6ddf3e0..37ab6314a9f7 100644
---- a/include/linux/atomic/atomic-instrumented.h
-+++ b/include/linux/atomic/atomic-instrumented.h
-@@ -1276,7 +1276,7 @@ atomic_try_cmpxchg(atomic_t *v, int *old, int new)
- {
- 	kcsan_mb();
- 	instrument_atomic_read_write(v, sizeof(*v));
--	instrument_atomic_read_write(old, sizeof(*old));
-+	instrument_read_write(old, sizeof(*old));
- 	return raw_atomic_try_cmpxchg(v, old, new);
- }
- 
-@@ -1298,7 +1298,7 @@ static __always_inline bool
- atomic_try_cmpxchg_acquire(atomic_t *v, int *old, int new)
- {
- 	instrument_atomic_read_write(v, sizeof(*v));
--	instrument_atomic_read_write(old, sizeof(*old));
-+	instrument_read_write(old, sizeof(*old));
- 	return raw_atomic_try_cmpxchg_acquire(v, old, new);
- }
- 
-@@ -1321,7 +1321,7 @@ atomic_try_cmpxchg_release(atomic_t *v, int *old, int new)
- {
- 	kcsan_release();
- 	instrument_atomic_read_write(v, sizeof(*v));
--	instrument_atomic_read_write(old, sizeof(*old));
-+	instrument_read_write(old, sizeof(*old));
- 	return raw_atomic_try_cmpxchg_release(v, old, new);
- }
- 
-@@ -1343,7 +1343,7 @@ static __always_inline bool
- atomic_try_cmpxchg_relaxed(atomic_t *v, int *old, int new)
- {
- 	instrument_atomic_read_write(v, sizeof(*v));
--	instrument_atomic_read_write(old, sizeof(*old));
-+	instrument_read_write(old, sizeof(*old));
- 	return raw_atomic_try_cmpxchg_relaxed(v, old, new);
- }
- 
-@@ -2854,7 +2854,7 @@ atomic64_try_cmpxchg(atomic64_t *v, s64 *old, s64 new)
- {
- 	kcsan_mb();
- 	instrument_atomic_read_write(v, sizeof(*v));
--	instrument_atomic_read_write(old, sizeof(*old));
-+	instrument_read_write(old, sizeof(*old));
- 	return raw_atomic64_try_cmpxchg(v, old, new);
- }
- 
-@@ -2876,7 +2876,7 @@ static __always_inline bool
- atomic64_try_cmpxchg_acquire(atomic64_t *v, s64 *old, s64 new)
- {
- 	instrument_atomic_read_write(v, sizeof(*v));
--	instrument_atomic_read_write(old, sizeof(*old));
-+	instrument_read_write(old, sizeof(*old));
- 	return raw_atomic64_try_cmpxchg_acquire(v, old, new);
- }
- 
-@@ -2899,7 +2899,7 @@ atomic64_try_cmpxchg_release(atomic64_t *v, s64 *old, s64 new)
- {
- 	kcsan_release();
- 	instrument_atomic_read_write(v, sizeof(*v));
--	instrument_atomic_read_write(old, sizeof(*old));
-+	instrument_read_write(old, sizeof(*old));
- 	return raw_atomic64_try_cmpxchg_release(v, old, new);
- }
- 
-@@ -2921,7 +2921,7 @@ static __always_inline bool
- atomic64_try_cmpxchg_relaxed(atomic64_t *v, s64 *old, s64 new)
- {
- 	instrument_atomic_read_write(v, sizeof(*v));
--	instrument_atomic_read_write(old, sizeof(*old));
-+	instrument_read_write(old, sizeof(*old));
- 	return raw_atomic64_try_cmpxchg_relaxed(v, old, new);
- }
- 
-@@ -4432,7 +4432,7 @@ atomic_long_try_cmpxchg(atomic_long_t *v, long *old, long new)
- {
- 	kcsan_mb();
- 	instrument_atomic_read_write(v, sizeof(*v));
--	instrument_atomic_read_write(old, sizeof(*old));
-+	instrument_read_write(old, sizeof(*old));
- 	return raw_atomic_long_try_cmpxchg(v, old, new);
- }
- 
-@@ -4454,7 +4454,7 @@ static __always_inline bool
- atomic_long_try_cmpxchg_acquire(atomic_long_t *v, long *old, long new)
- {
- 	instrument_atomic_read_write(v, sizeof(*v));
--	instrument_atomic_read_write(old, sizeof(*old));
-+	instrument_read_write(old, sizeof(*old));
- 	return raw_atomic_long_try_cmpxchg_acquire(v, old, new);
- }
- 
-@@ -4477,7 +4477,7 @@ atomic_long_try_cmpxchg_release(atomic_long_t *v, long *old, long new)
- {
- 	kcsan_release();
- 	instrument_atomic_read_write(v, sizeof(*v));
--	instrument_atomic_read_write(old, sizeof(*old));
-+	instrument_read_write(old, sizeof(*old));
- 	return raw_atomic_long_try_cmpxchg_release(v, old, new);
- }
- 
-@@ -4499,7 +4499,7 @@ static __always_inline bool
- atomic_long_try_cmpxchg_relaxed(atomic_long_t *v, long *old, long new)
- {
- 	instrument_atomic_read_write(v, sizeof(*v));
--	instrument_atomic_read_write(old, sizeof(*old));
-+	instrument_read_write(old, sizeof(*old));
- 	return raw_atomic_long_try_cmpxchg_relaxed(v, old, new);
- }
- 
-@@ -5050,4 +5050,4 @@ atomic_long_dec_if_positive(atomic_long_t *v)
- 
- 
- #endif /* _LINUX_ATOMIC_INSTRUMENTED_H */
--// 8829b337928e9508259079d32581775ececd415b
-+// f618ac667f868941a84ce0ab2242f1786e049ed4
-diff --git a/scripts/atomic/gen-atomic-instrumented.sh b/scripts/atomic/gen-atomic-instrumented.sh
-index 592f3ec89b5f..9c1d53f81eb2 100755
---- a/scripts/atomic/gen-atomic-instrumented.sh
-+++ b/scripts/atomic/gen-atomic-instrumented.sh
-@@ -12,7 +12,7 @@ gen_param_check()
- 	local arg="$1"; shift
- 	local type="${arg%%:*}"
- 	local name="$(gen_param_name "${arg}")"
--	local rw="write"
-+	local rw="atomic_write"
- 
- 	case "${type#c}" in
- 	i) return;;
-@@ -20,14 +20,17 @@ gen_param_check()
- 
- 	if [ ${type#c} != ${type} ]; then
- 		# We don't write to constant parameters.
--		rw="read"
-+		rw="atomic_read"
-+	elif [ "${type}" = "p" ] ; then
-+		# The "old" argument in try_cmpxchg() gets accessed non-atomically
-+		rw="read_write"
- 	elif [ "${meta}" != "s" ]; then
- 		# An atomic RMW: if this parameter is not a constant, and this atomic is
- 		# not just a 's'tore, this parameter is both read from and written to.
--		rw="read_write"
-+		rw="atomic_read_write"
- 	fi
- 
--	printf "\tinstrument_atomic_${rw}(${name}, sizeof(*${name}));\n"
-+	printf "\tinstrument_${rw}(${name}, sizeof(*${name}));\n"
- }
- 
- #gen_params_checks(meta, arg...)
+with the above patch:
+sf: ioctl: Inappropriate ioctl for device
+
+
+Is this expected?
+
+thanks,
 -- 
-2.39.5
+js
+suse labs
 
 
