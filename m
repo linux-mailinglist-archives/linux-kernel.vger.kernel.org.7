@@ -1,159 +1,117 @@
-Return-Path: <linux-kernel+bounces-842988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 660A4BBE247
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:06:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E44AEBBE24A
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:09:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1CFA1890AA0
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:07:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BB023A6ECC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:09:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46037299A8F;
-	Mon,  6 Oct 2025 13:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="pqLYTWRT"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6133E298CD7;
+	Mon,  6 Oct 2025 13:09:46 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF661F4CB3;
-	Mon,  6 Oct 2025 13:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E74C28DB56
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 13:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759755997; cv=none; b=K1RznooMk1Mh83IgGdUmfFMEIlKEVmrQ9SJb81nCmGTggZBRrLHil/UoqmIoy3d72fGYCtU1/7Ru9PfJGwdAhFHkX0IEpLsh4TaUbgU597gymmUCfvNvNz2Q0RO44IGy0HliWqYP3nWipE5EQXVssVpqv0UBdrfs/gcxCfz/CUM=
+	t=1759756186; cv=none; b=BD+O1TEKNtmkEkyYFgC6UGtiGC/tGUbxJ8SluPn/htcrSEl5MuDPQq/RoXYq2lGtDvE5MImugofT9V+LhGdlJfkvoj8ebfvlbJNEup81cyX1tsaRxJjldH/5jmrqtqlBEkR1yeyF5tPgsgF0WBfOXhih1+sLzsLRnJArAwjbsDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759755997; c=relaxed/simple;
-	bh=Se2h8mHA0GPBvqWfAGxuAl8vyGkUvNM8hK49ch6pvyA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IeXjO7n8DCGOHF3GQu5TGNOEPDZAMlL1GMtqhD3oZnms5AJuuFpEoVi5MQN4jFSvEMe5Wwk75uMtGxP0VbdecJPHuOxXRkbXayH4dGCeSkU0RpkS/9B7DlShSX1RtyPgFMSr/TYCSlqZONZGYydX3o6kb3cXrQg3YP2CIf7H3CI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=pqLYTWRT; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
-	Date:Subject:Cc:To:From:From:Reply-To:Subject:Date:Message-ID:To:Cc:
-	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=KwqAABJ6dqZZWn3QO15od/yjIGBnSfZpjDbm7FXan64=; t=1759755994; x=1760360794; 
-	b=pqLYTWRTGLjrbiVvTIPl+hBYcVNJdM5YCTIrpXqjHx6VnbmKoNQaZ/eeoVDX6vfgpMBvVhIL69F
-	eduK8Z01lSMufiuxwefe2bXaYVeopMwDELvhKqYneXqtO1+Wm5dG6aJXr+3308xzYpPL2Jo/ITddH
-	1H+aNIfyxYvrcz1Ibm/QBYdv4fG5L7Pvzh4uZXoV49MTzjqfld63pX/yy9iIr1IQtR1MjvGiGPvKH
-	vBQm73g9+7ySdBFk0fitTkdazWjK0VHL368u2Y5Gfpbo6lzkBFfjwxDpLOxQe5lHCVsYHPOX5s61T
-	YhCCbYNHL+yZXVaeaMW9mWjU280wQmFB0wRg==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1v5kv6-000000005sN-2Mjt; Mon, 06 Oct 2025 15:06:28 +0200
-Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=z6.fritz.box)
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1v5kv6-000000035Xg-1GZK; Mon, 06 Oct 2025 15:06:28 +0200
-Received: from glaubitz by z6.fritz.box with local (Exim 4.98.2)
-	(envelope-from <glaubitz@physik.fu-berlin.de>)
-	id 1v5kv5-000000000pp-3t0P;
-	Mon, 06 Oct 2025 15:06:27 +0200
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Jens Axboe <axboe@kernel.dk>,
-	Young Xiao <YangX92@hotmail.com>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Andreas Larsson <andreas@gaisler.com>,
-	Anthony Yznaga <anthony.yznaga@oracle.com>,
-	Sam James <sam@gentoo.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>,
-	sparclinux@vger.kernel.org,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	stable@vger.kernel.org
-Subject: [PATCH v3] Revert "sunvdc: Do not spin in an infinite loop when vio_ldc_send() returns EAGAIN"
-Date: Mon,  6 Oct 2025 15:05:42 +0200
-Message-ID: <20251006130542.3174-2-glaubitz@physik.fu-berlin.de>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1759756186; c=relaxed/simple;
+	bh=V1jL8Cp578efegsvBAdKZXpkptOyBF9OHb3REHf49JI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mjuXLAH2eLyJGS3ofTB9w42/8/L7k/EoaK9k0znnsroJmtanhqIt5U4pujHS9eNJxL3YFKQF55tZ45BC3MVnbswZNVDeouKIxOYqAzgzQgiCKjMRrFZDEbQIQcUbxhKuasdMO/GR5Jm635AvGPFaW4FODBxvsOoe4c6V6NYmWuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v5ky3-0006IW-7H; Mon, 06 Oct 2025 15:09:31 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v5ky0-002Eb3-38;
+	Mon, 06 Oct 2025 15:09:28 +0200
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v5kxv-000000009q1-3bRt;
+	Mon, 06 Oct 2025 15:09:23 +0200
+Message-ID: <bf3de9ecf10a3f6a63a6f2e235369519cb2f63e8.camel@pengutronix.de>
+Subject: Re: [PATCH] reset: core: reset-gpio: Suppress registration error
+ for optional resets
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Andre Przywara <andre.przywara@arm.com>, Krzysztof Kozlowski
+	 <krzysztof.kozlowski@linaro.org>
+Cc: linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Date: Mon, 06 Oct 2025 15:09:23 +0200
+In-Reply-To: <20251002222826.16516-1-andre.przywara@arm.com>
+References: <20251002222826.16516-1-andre.przywara@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-In a11f6ca9aef9 ("sunvdc: Do not spin in an infinite loop when vio_ldc_send()
-returns EAGAIN"), a maximum retry count was added to __vdc_tx_trigger().
+Hi Andre,
 
-After this change, several users reported disk I/O errors when running Linux
-inside a logical domain on Solaris 11.4:
+On Do, 2025-10-02 at 23:28 +0100, Andre Przywara wrote:
+> For reset controllers that are marked as optional, we should skip errors
+> during probing and return NULL, to avoid unnecessary failures. The
+> reset-gpio controller does this mostly, but returns the true error in
+> case the __reset_add_reset_gpio_device() call fails. Treat this call the
+> same as the other registration errors, and consider the optional flag.
+>=20
+> One could argue that at this point it's a proper error that should not
+> be ignored anymore, but in case of the reset-gpio controller this is not
+> entirely true, since the code at the moment does not support GPIO
+> controllers with three #gpio-cells - there is a TODO comment about this
+> in that said function. So to avoid unnecessary probe fails for devices
+> using reset-gpios (it's an optional reset after all), let's treat an
+> error as still optional at this point.
+>=20
+> This fixes operation of WiFi chips on Allwinner boards, where some use
+> reset-gpios, and which currently fail because all Allwinner SoCs use
+> GPIO controllers with 3 cells.
+>=20
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> ---
+>  drivers/reset/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+> index 22f67fc77ae53..c2ccd08fb36e1 100644
+> --- a/drivers/reset/core.c
+> +++ b/drivers/reset/core.c
+> @@ -1044,7 +1044,7 @@ __of_reset_control_get(struct device_node *node, co=
+nst char *id, int index,
+> =20
+>  		ret =3D __reset_add_reset_gpio_device(&args);
+>  		if (ret) {
+> -			rstc =3D ERR_PTR(ret);
+> +			rstc =3D optional ? NULL : ERR_PTR(ret);
 
-[19095.192532] sunvdc: vdc_tx_trigger() failure, err=-11
-[19095.192605] I/O error, dev vdiskc, sector 368208928 op 0x1:(WRITE) flags 0x1000 phys_seg 2 prio class 2
-[19095.205681] XFS (vdiskc1): metadata I/O error in "xfs_buf_ioend+0x28c/0x600 [xfs]" at daddr 0x15f26420 len 32 error 5
-[19432.043471] sunvdc: vdc_tx_trigger() failure, err=-11
-[19432.043529] I/O error, dev vdiskc, sector 3732568 op 0x1:(WRITE) flags 0x1000 phys_seg 1 prio class 2
-[19432.058821] sunvdc: vdc_tx_trigger() failure, err=-11
-[19432.058843] I/O error, dev vdiskc, sector 3736256 op 0x1:(WRITE) flags 0x1000 phys_seg 4 prio class 2
-[19432.074109] sunvdc: vdc_tx_trigger() failure, err=-11
-[19432.074128] I/O error, dev vdiskc, sector 3736512 op 0x1:(WRITE) flags 0x1000 phys_seg 4 prio class 2
-[19432.089425] sunvdc: vdc_tx_trigger() failure, err=-11
-[19432.089443] I/O error, dev vdiskc, sector 3737024 op 0x1:(WRITE) flags 0x1000 phys_seg 1 prio class 2
-[19432.100964] XFS (vdiskc1): metadata I/O error in "xfs_buf_ioend+0x28c/0x600 [xfs]" at daddr 0x38ec58 len 8 error 5
+Please move this into __reset_add_reset_gpio_device() and pass flags
+into it. Only the -ENOENT return value mentioned in the commit
+description should be suppressed by the optional flag, not any -ENOMEM.
+And especially not the return value of __reset_add_reset_gpio_lookup(),
+which may be -EPROBE_DEFER.
 
-Since this change seems to have only been justified by reading the code which
-becomes evident by the reference to adddc32d6fde ("sunvnet: Do not spin in an
-infinite loop when vio_ldc_send() returns EAGAIN") in the commit message, it
-can be safely assumed that the change was neither properly tested nor motivated
-by any actual bug reports.
-
-Thus, let's revert this change to address the disk I/O errors above.
-
-Cc: stable@vger.kernel.org
-Fixes: a11f6ca9aef9 ("sunvdc: Do not spin in an infinite loop when vio_ldc_send() returns EAGAIN")
-
-Signed-off-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
----
-Changes since v1:
-- Rephrase commit message
-Changes since v2:
-- Add missing CC and Fixes tags
----
- drivers/block/sunvdc.c | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
-index 282f81616a78..f56023c2b033 100644
---- a/drivers/block/sunvdc.c
-+++ b/drivers/block/sunvdc.c
-@@ -45,8 +45,6 @@ MODULE_VERSION(DRV_MODULE_VERSION);
- #define WAITING_FOR_GEN_CMD	0x04
- #define WAITING_FOR_ANY		-1
- 
--#define	VDC_MAX_RETRIES	10
--
- static struct workqueue_struct *sunvdc_wq;
- 
- struct vdc_req_entry {
-@@ -437,7 +435,6 @@ static int __vdc_tx_trigger(struct vdc_port *port)
- 		.end_idx		= dr->prod,
- 	};
- 	int err, delay;
--	int retries = 0;
- 
- 	hdr.seq = dr->snd_nxt;
- 	delay = 1;
-@@ -450,8 +447,6 @@ static int __vdc_tx_trigger(struct vdc_port *port)
- 		udelay(delay);
- 		if ((delay <<= 1) > 128)
- 			delay = 128;
--		if (retries++ > VDC_MAX_RETRIES)
--			break;
- 	} while (err == -EAGAIN);
- 
- 	if (err == -ENOTCONN)
--- 
-2.47.3
-
+regards
+Philipp
 
