@@ -1,160 +1,159 @@
-Return-Path: <linux-kernel+bounces-843365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57454BBF069
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:53:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18C65BBF07B
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:55:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12D513A5E65
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:53:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAE2F189ABF9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D482DE6E6;
-	Mon,  6 Oct 2025 18:53:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A04012DCF50;
+	Mon,  6 Oct 2025 18:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cZc/yqqJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SLuhxf/3"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5DA280A56
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 18:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19F717DFE7;
+	Mon,  6 Oct 2025 18:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759776789; cv=none; b=tJw4FmePx9lAcljJZzho2BSjRhSHcqnLVBAtkdo52DtBhmNmpYPQ/lJQCNBGWfL1PSpxjllToBVJyOR/z1N4K8aU4w7kPMjjIEHSByge+OnWfXdZpqvMx4qMQgYTVKDbZf+tquA1/2P9S9DXFU+r9jYig65ztpESWcGYyVXc9Gg=
+	t=1759776909; cv=none; b=movYaW7wphjXsn5uW0XGp+6UjA9usFP3y9W4atSCRDFxvKzz7QkwIDdQ/onxz/KnKzYpy1ocYAN+s7gZEYXX4GZqF9fk0xz6n53IEfEnfmBg42db0GJQH7hkq1Pz0reQtjZLJcB6Iy+qt2yOMm0Dc5F+vHeox91OOx7u6yzVTOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759776789; c=relaxed/simple;
-	bh=eWI9PmOJt9WIaRlYjU78S12UG6uSHamRZWNSsCfgWvo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QUpgF6/K0azngmbd9z7XTt2ieEgB4+nLfLTOHHUktyCU6u7HzgG/9ZZlXa8+8EK8Mm1Uj/0uH4yBmDqqZu8BQrv0lgxffe8clEl5rAlehckLbLXL/DmkBEDFKSGiPrNXQqR4JY7TUU0NRGDpI87zkXq9Ep+kIhrh45i7IzQwCxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cZc/yqqJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759776787;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3AELUvjO0N+ODGhRgLstmsznCqJ4q95SzfBUYFo2Qts=;
-	b=cZc/yqqJJlIIHPvNRrGGmAXMLPQwyPGyz9dgu3x+zm4Ea2kU3jYMdgh87eqsC7rAzyD4Ek
-	jMzl9/uCDYuDaze+LRHfxLZufcieVFrfUvJV2DSs7QGiStH9Y3bwvxtEdyYX1uQIT8/WXY
-	zBwQuCe4ZjILxjlM0lWgy0nPGgXgb4c=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-461-ErRacosrP_KSejMQur931g-1; Mon, 06 Oct 2025 14:53:06 -0400
-X-MC-Unique: ErRacosrP_KSejMQur931g-1
-X-Mimecast-MFC-AGG-ID: ErRacosrP_KSejMQur931g_1759776785
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-42421b15185so3705109f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 11:53:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759776785; x=1760381585;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3AELUvjO0N+ODGhRgLstmsznCqJ4q95SzfBUYFo2Qts=;
-        b=lW232NAZYdqHh3pVXWJcfLoQoyvMiVbg/au8beyXgVnG408o1WAF7L8ELS3P7SSb5P
-         qQQyGBzfVH4cGYmIsJ+9OpvN+vQc+2i7+oG5Y72Qq91hLCSsDyzhcXKt16DLWQnjDAvZ
-         hI4MfwlmmLd4y0A01qwv8k1iHuEYcbXCHOKiIEdRrcgqfDs3iKTlQa4tOh6Aq5KEyTOr
-         7L2+EfgzIoftrMGHpfJqBCp/oW9dAXrSZ80PLxP4tiyy6XJowHl9k5A9ur/Eb2RwP4Q1
-         3bflODvRz7c4CBWBBmt5DZwbvS11SftEKiw3G8kPfnhsKK/0nvrZxCXLGLGjU8cRbFX0
-         wr6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVWOlx9O6/rztmmgmaonP/oflOGimrkFAPntM6JZg+a/9Y+DcquA9Nzd3SI0eiTJp97Sournzqm1acXumg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZJc8DSUTSNWOO4lznYuKM/EV1cx/xqSNOAQR8yECcEAF3tlBS
-	3girBynvO2AmDMnhoae77R2/ysoMXam4JJ68xOgGFdTiQCIPBNYCGdjsxR9TW3f3vr1RJXehUWj
-	9xiVJqcvKl6365g28WJiXRISfAJvV5FhjXZ5b3RqC7L4776IToqecb3tKptNayhjH
-X-Gm-Gg: ASbGnctW9tOgslPm5CeUJVnc78Wx/LTuGhNTlIniMF4Rg/LdVFOVxBSNBi82rjShKki
-	MdIjDUjyQOVII+VBnViVws7jQCwhVK55F054RDveUcZZtXs2miur4/nZpNENxDIxWR8tH6CtPCm
-	8OaRdPtdCCudBMGnjczYhhgTBxyQv/WDD0uJsVQEV3PAp1TISZbMCvw9uSB7Uh0sD0gxdFsYAHv
-	5lQbUydHAou7GyjMQssAW/fmh/GUROizwdGn1P6w70VSyg5QEpR/80rtoWBTB3Ht5su6u86dbrE
-	7uXgWGXWsEj7ZjtXfFTUaUKC2l6EWJu7NaMnTwl66c8RnU6bE6213KFl+eReybnmDg==
-X-Received: by 2002:a05:6000:2303:b0:3ec:1154:7dec with SMTP id ffacd0b85a97d-42567164b20mr8887676f8f.25.1759776784552;
-        Mon, 06 Oct 2025 11:53:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEcKlhLopprqD0ctLDeK3ZiOapzKNjpNRXsOsRWDtqgxDtwJuOl9eDtA1aAuyt6f3P21Qd/GA==
-X-Received: by 2002:a05:6000:2303:b0:3ec:1154:7dec with SMTP id ffacd0b85a97d-42567164b20mr8887653f8f.25.1759776783878;
-        Mon, 06 Oct 2025 11:53:03 -0700 (PDT)
-Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f0170sm22533134f8f.49.2025.10.06.11.53.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 11:53:03 -0700 (PDT)
-Date: Mon, 6 Oct 2025 20:52:32 +0200
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Jiri Slaby <jirislaby@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Christian Brauner <brauner@kernel.org>, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, selinux@vger.kernel.org, 
-	Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH v6 4/6] fs: make vfs_fileattr_[get|set] return -EOPNOSUPP
-Message-ID: <eyl6bzyi33tn6uys2ba5xjluvw7yjempqnla3jaih76mtgxgxq@i6xe2nquwqaf>
-References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
- <20250630-xattrat-syscall-v6-4-c4e3bc35227b@kernel.org>
- <a622643f-1585-40b0-9441-cf7ece176e83@kernel.org>
- <jp3vopwtpik7bj77aejuknaziecuml6x2l2dr3oe2xoats6tls@yskzvehakmkv>
+	s=arc-20240116; t=1759776909; c=relaxed/simple;
+	bh=zATYGJ5s94ipPbFwAl7MAY7cDQkGbW0aMQw7dvwOS7Y=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=YvEvpKcCjaUzRsay34QZ/2J72vorXeZMWNQQwhjhhgA1vziCj01UNa8I4M8EXJaVdqQwB27/8o5MDx1yvrwRs8n8DHj2eRB468qWgCpxvoCS5is7igF3M52tBBA0vO6Pl8wDaSKdqCTNDfIfah3VRMwBf9cko0ZElD/Wx+X1x0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SLuhxf/3; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 930624E40F2C;
+	Mon,  6 Oct 2025 18:54:59 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 60899606B7;
+	Mon,  6 Oct 2025 18:54:59 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1C559102F2116;
+	Mon,  6 Oct 2025 20:54:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1759776897; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=KEzW3jit24CmXPxdwBbp7La6xIwBqgbqQZqEtvxRu/Q=;
+	b=SLuhxf/3XYFe9lSvtSeMg9+E9K5RRLzpeO6V1c2rDu+XPhBiz9+8CC4HkyDTDVE/k20H6P
+	mUw0uLt/vC1lUh/ptOhnnN8s02feywmxLly41Gn7Beb+CryrbBeU3h6VkynVX2v4t9fRTi
+	3e48jHMLpg2HeiMGvVWTkIi2YToLzMywVXpG6Nf0uFRKXHRhrrdGVLCUdyhBhRH9oBlmX/
+	HUg29WHlMfpvRBX/GpCd0eFB4Avn/1q/OnnDDz2h46/KHmYKXa2ljekJVxfmHKCqTPGgsj
+	sU9xl8XMOy8Q5/T9K6xwDjAlgwkSW3O8LqIiudrODya8XLUfODnncHp1fGWUZw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <jp3vopwtpik7bj77aejuknaziecuml6x2l2dr3oe2xoats6tls@yskzvehakmkv>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 06 Oct 2025 20:54:38 +0200
+Message-Id: <DDBGU9ELXIAW.1RLHSNOPVR9B3@bootlin.com>
+Cc: "David Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
+ "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Thierry Reding"
+ <thierry.reding@gmail.com>, "Jonathan Hunter" <jonathanh@nvidia.com>,
+ "Sowjanya Komatineni" <skomatineni@nvidia.com>, "Prashant Gaikwad"
+ <pgaikwad@nvidia.com>, "Michael Turquette" <mturquette@baylibre.com>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Linus Walleij"
+ <linus.walleij@linaro.org>, "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ =?utf-8?q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, "Dmitry
+ Osipenko" <digetx@gmail.com>, "Charan Pedumuru"
+ <charan.pedumuru@gmail.com>, "Diogo Ivo" <diogo.ivo@tecnico.ulisboa.pt>,
+ "Aaron Kling" <webgeek1234@gmail.com>, "Arnd Bergmann" <arnd@arndb.de>,
+ <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+ <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-media@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-staging@lists.linux.dev>
+Subject: Re: [PATCH v3 15/22] staging: media: tegra-video: tegra20: simplify
+ format align calculations
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+To: "Svyatoslav Ryhel" <clamor95@gmail.com>, "Mikko Perttunen"
+ <mperttunen@nvidia.com>
+X-Mailer: aerc 0.20.1
+References: <20250925151648.79510-1-clamor95@gmail.com>
+ <3665995.U7HbjWM52l@senjougahara>
+ <CAPVz0n3CrVufs8vbw8XnYuwoZoQ2Xsi3V4HimgT0=4RQySzvaw@mail.gmail.com>
+ <3862885.G96rZvMJ2N@senjougahara>
+ <CAPVz0n2shn41h4z4PoMdtCXzj+96ak69TCqt7Ag5qpqdWi6UWA@mail.gmail.com>
+In-Reply-To: <CAPVz0n2shn41h4z4PoMdtCXzj+96ak69TCqt7Ag5qpqdWi6UWA@mail.gmail.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 2025-10-06 17:39:46, Jan Kara wrote:
-> On Mon 06-10-25 13:09:05, Jiri Slaby wrote:
-> > On 30. 06. 25, 18:20, Andrey Albershteyn wrote:
-> > > Future patches will add new syscalls which use these functions. As
-> > > this interface won't be used for ioctls only, the EOPNOSUPP is more
-> > > appropriate return code.
-> > > 
-> > > This patch converts return code from ENOIOCTLCMD to EOPNOSUPP for
-> > > vfs_fileattr_get and vfs_fileattr_set. To save old behavior translate
-> > > EOPNOSUPP back for current users - overlayfs, encryptfs and fs/ioctl.c.
-> > > 
-> > > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-> > ...
-> > > @@ -292,6 +294,8 @@ int ioctl_setflags(struct file *file, unsigned int __user *argp)
-> > >   			fileattr_fill_flags(&fa, flags);
-> > >   			err = vfs_fileattr_set(idmap, dentry, &fa);
-> > >   			mnt_drop_write_file(file);
-> > > +			if (err == -EOPNOTSUPP)
-> > > +				err = -ENOIOCTLCMD;
-> > 
-> > This breaks borg code (unit tests already) as it expects EOPNOTSUPP, not
-> > ENOIOCTLCMD/ENOTTY:
-> > https://github.com/borgbackup/borg/blob/1c6ef7a200c7f72f8d1204d727fea32168616ceb/src/borg/platform/linux.pyx#L147
-> > 
-> > I.e. setflags now returns ENOIOCTLCMD/ENOTTY for cases where 6.16 used to
-> > return EOPNOTSUPP.
-> > 
-> > This minimal testcase program doing ioctl(fd2, FS_IOC_SETFLAGS,
-> > &FS_NODUMP_FL):
-> > https://github.com/jirislaby/collected_sources/tree/master/ioctl_setflags
-> > 
-> > dumps in 6.16:
-> > sf: ioctl: Operation not supported
-> > 
-> > with the above patch:
-> > sf: ioctl: Inappropriate ioctl for device
-> > 
-> > Is this expected?
-> 
-> No, that's a bug and a clear userspace regression so we need to fix it. I
-> think we need to revert this commit and instead convert ENOIOCTLCMD from
-> vfs_fileattr_get/set() to EOPNOTSUPP in appropriate places. Andrey?
+Hello Svyatoslav,
 
-I will prepare a patch soon
+On Thu Oct 2, 2025 at 8:20 AM CEST, Svyatoslav Ryhel wrote:
+>> > > > 12 represents amount of bits used per pixel, 8 for Y plane, 2 for =
+U
+>> > > > plane and 2 for V plane, total is 12. "but explainable with a comm=
+ent
+>> > > > and improve-able later" why then we cannot use 12 with a comment? =
+this
+>> > > > is all arbitrary. Downstream is not wrong from this perspective, y=
+ou
+>> > > > don't take into account that YUV420 is planar and it uses 3 planes=
+ a
+>> > > > whole Y plane and 1/4 of U and V which in total results in wigth +=
+ 2 *
+>> > > > 1/4 width which is width * 3/2
+>> > >
+>> > > Yes -- but AIUI, the only thing the bpp value is used for the bytesp=
+erline calculation. When we add the special case for planar formats, which =
+doesn't use the bpp value, then the value 12 is never used anywhere. We sho=
+uld at least have a comment saying it is unused. (At that point, we could j=
+ust hardcode the bpp values in the fmt_align function -- but I don't mind e=
+ither way.)
+>> > >
+>> > https://ffmpeg.org/pipermail/ffmpeg-user/2023-June/056488.html
+>>
+>> I understand very well that for YUV420, each pixel has 12 bits of color =
+information. But how many bits of color information each pixel has is not u=
+seful in the context of this driver. The number of bytes per line is not re=
+lated to how many bits of color information each pixel has for planar forma=
+ts.
+>
+> No, it has direct impact. This is how buffer size / image size is
+> calculated since we place each plane consecutive. And bytes per line
+> is used specifically in image size calculation. This is common part
+> with non-planar formats. Then since Tegra provides a dedicated
+> channels/buffers for each plane, configuration of planar format
+> includes an additional step with calculation for each plane.
 
-> 
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
-> 
+Sorry, I haven't followed the discussion in detail, but I tested you series
+on Tegra20 VIP and capture does not work, with a SIGSEGV in
+gstreamer. Bisecting pointed to this as the first commit where the issue
+happens.
 
--- 
-- Andrey
+I compared the input and output values of tegra20_fmt_align() at this
+commit and at the previous one, and this is the result:
 
+                       before this patch     with this patch
+  At function entry:
+  bpp                        1                     12
+  pix->width                 640                   640
+  pix->height                480                   480
+  		          =20
+  On return:       =20
+  pix->bytesperline          640                   960
+  pix->sizeimage             460800                460800
+
+I hope these info will help.
+
+Best regards,
+Luca
+
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
