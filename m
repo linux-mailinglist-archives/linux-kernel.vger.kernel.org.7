@@ -1,143 +1,175 @@
-Return-Path: <linux-kernel+bounces-842957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE506BBE0F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 14:40:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95E27BBDF55
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 14:06:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 471554EC20C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 12:40:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADE783B29AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 12:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF72427FB2D;
-	Mon,  6 Oct 2025 12:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C67279DDD;
+	Mon,  6 Oct 2025 12:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b="KkEA9hI0"
-Received: from www.linux-watchdog.org (www.linux-watchdog.org [185.87.125.42])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728011C69D;
-	Mon,  6 Oct 2025 12:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.87.125.42
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ml/ryJrk"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F7423B63C
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 12:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759754440; cv=none; b=LW/oZy1QGsomA2fBrb5wHkdNXv4sdMR6eUKIvBo2YDqXO/X1XJ07Ky19cwICohA9wu8Gl/elllr8zd1ElZZgx/bb00XSAxhkADbRbIw0shVHTuXPiU1mUCcjZNpzC/TBJ6bIObpf7uz3enknerJLTJFel2FIgWHduW8lTxcRZbc=
+	t=1759752367; cv=none; b=sM7xWU6jEtiFlKVRgHznw/v4X2au0rGN+MbhgeXyP5hjbhHNtm6vp3XhXHsjfJf0gDEg5m7j4GTOp+xa1iEzwoeX5wTiAi8uCgV+bhgYLubhLFMyCWgkAFKFCikfyrGdzocN6/JzM9OdEH5ONJuYt77Eaa/rAOIRpZgyJ9UpQQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759754440; c=relaxed/simple;
-	bh=u6MAwDPTW+DutUODWNAyTuUiMrElceEFAXo3cyLw9Ao=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Wr9tI7We3A0Ea8k1Y2HOYekqEDKPPRISO0mQImV4+ZJ9pEdHL4i6+/1ooFD6zSfzWiVBQ/WDVTt1yXA1bNLYVNAzo8Tphk6Fy0SywameQWReIA2iSuzN6JtTNDyOcTLA+Z6mraGKvOuDUy7zz+01rfS41xf9V2DECLL2poyXwTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org; spf=pass smtp.mailfrom=linux-watchdog.org; dkim=pass (2048-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b=KkEA9hI0; arc=none smtp.client-ip=185.87.125.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux-watchdog.org
-Received: by www.linux-watchdog.org (Postfix, from userid 500)
-	id 1344D409D1; Mon,  6 Oct 2025 13:46:34 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org 1344D409D1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
-	s=odk20250313; t=1759751194;
-	bh=u6MAwDPTW+DutUODWNAyTuUiMrElceEFAXo3cyLw9Ao=;
-	h=Date:From:To:Cc:Subject:From;
-	b=KkEA9hI0DzCpZLdQoPnjTYc5BHH6faqeMjT2/o+JTIZTZi08t7w7JNgRr1gIwneWB
-	 DKZF6hGXNGSExtn9SY/ML5Hct9wK8encG1t8AsF4Rq8Gbp4AM/KQeI9EmNmiuM64YW
-	 evOdA0o3s6Ho5rnufTBOowBLS1/cMXjLs1Il/sJV6BuaEzMQKGV+47mIpzNzZEmJxE
-	 QTJN3huqjvk9pCk0CLWNfzWRRXw2WN/zeiAsP6aDX/X+slRhdorBfNoSWDCp9ODin6
-	 r7OtzZbRiZ02+Z7F1DvxWsI3eMHhZ++Xz0/wgjWpO150U0knxTQaKoiGiuVlEb+oPn
-	 zbnPS0a9LkBsQ==
-Date: Mon, 6 Oct 2025 13:46:33 +0200
-From: Wim Van Sebroeck <wim@linux-watchdog.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Jerry Hoemann <jerry.hoemann@hpe.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Michael Walle <mwalle@kernel.org>,
-	Sangwook Shin <sw617.shin@samsung.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [GIT PULL REQUEST] watchdog - v6.18 release cycle.
-Message-ID: <20251006114633.GA23195@www.linux-watchdog.org>
+	s=arc-20240116; t=1759752367; c=relaxed/simple;
+	bh=0nkElAd5E12QHlg7Kb8WPr3y/YHY+cnYvzDlo0JgOKs=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Q/IzViqTTS6b119sjhqTKnOnK/SkIJ3K8yNwPZ0+OQXNs7n1h5xabpCkVQj8AB85dJHMVEhKRiX/UZe+SnczTtMfXTcG5hIfe0n7dHtjdbxIE0py8PMxMSsSLlkJLAV4cQUUEmX/d055qS8TG7o5x1DULffN/EKzSSVUVO6lVt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ml/ryJrk; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3ecdc9dbc5fso2638798f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 05:06:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759752364; x=1760357164; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/OB7xMh5+T9ypw6dAsTTgtORxWZ55dw+sNCcskl6+uI=;
+        b=ml/ryJrkwzkOuLDMYLSRLqXAHevA/wQQPaw7cI9W1pKriV94KDGrYwOj9zBa5W05FH
+         GmxU6M65PaBBL8SsJkA2llQZn52RnydOkzKeGgySkJQrVqWKec6nVCskhshbrsu3ay8w
+         nQ/Cs8ilHbX8fsyHYgxl2rFvpQYAd03N5KDvvyyaE5VLPsh9Q78I7LZOOJqJ8oGY49YC
+         u/94KqwP9Atg7KWHmbxooEGlhFOcziNTMZMfAeY+aj3sKqV+ojr1e5TuXOmorEUjZMy2
+         Tyc4+SsvwyLP8Oj59hxMPqXO96Xd71koQsUg0YRSzV3PnnHvB3oi4lwz9/N+OrFyFFed
+         Gp8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759752364; x=1760357164;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/OB7xMh5+T9ypw6dAsTTgtORxWZ55dw+sNCcskl6+uI=;
+        b=jRdJT3/muVdWpKwSlUFP3OYt0HAIR0jb1ZchcGUe1eqCQwfsNOEwuBGhIDyUaf49l3
+         SUNrtNJDIOHAxbafBgXoDJ9gJbJmkJ1FBjmVfOsbm97DS8EjMpnqjDxYn5QfZ2nNhw61
+         bcEYE4cgEh05U3/91OnIfXmmlvSUhJgGN7aDuYXBoxPco3G5ogt7a7J28DKaVUXiNhjL
+         SCjZ9SWkno/qEjUXnO3eZWqbKdDi0PaROlSWCf3UG8JR1tAF5wjOYfwDvciZ+Csh+whI
+         eomG/+Bdz+lL9SiQp84ZZSpY4wONEotXaKOQ63pZy4U9pMovJO1BtRlLyuYBrGEVK1jF
+         HT8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUNBDpskg+peW+rzd3WEVrXMwoPYOo/7OSpLwiFtwrJs6Zx8qhlIphJY7VtSQLE563DZEExir/9O9J+dFY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3v9GYZd8nyBnYgAajRQRJu208zx16TJZbDQNky9Yh9Amig3Jx
+	LULuX0b8YInXUbGWVzs+3S3uqiZcB/hZJtPQBmlrEwwhizm5016zmj37veY8F7BdQyrhU63O0U0
+	peZpAUkajD/vkYIPxAw==
+X-Google-Smtp-Source: AGHT+IGZiwn/2wr4en+CfzEIAktdUh7Xr9CEeu2eqUOcO9id7QGmI8fMYngV1eXRgRmIk6O9kosqt6M4YuIVHFI=
+X-Received: from wrrd12.prod.google.com ([2002:adf:fd8c:0:b0:3ec:df8a:fad0])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:400f:b0:414:a552:86b1 with SMTP id ffacd0b85a97d-425671c2cd5mr8127141f8f.63.1759752363933;
+ Mon, 06 Oct 2025 05:06:03 -0700 (PDT)
+Date: Mon, 06 Oct 2025 12:05:54 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.20 (2009-12-10)
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAKKw42gC/23N0Q6CIBTG8VdxXEc7gCh01Xu0LlAPypbSoLGa8
+ 91DL1quLr+z/f5nJhGDw0hOxUwCJhedn/IoDwVpBzP1SF2XN+HAJWiQNI2Npx1aDFRYYzV0ijM
+ rSQb3gNY9t9jlmvfg4sOH19ZObL3+zSRGgdYGmRGKN1Vdnnvv+xseWz+StZP4t9U7y7PVSsiuF qUGpX+s+FgGwHZWZGuExaqp8ncld3ZZljey9oPqHQEAAA==
+X-Change-Id: 20250905-vmbo-defer-3faf90d821f5
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3010; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=0nkElAd5E12QHlg7Kb8WPr3y/YHY+cnYvzDlo0JgOKs=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBo47ClY4kic2ueCmjFDZtvoHdJ9lRrq9D/h2+aK
+ c5IeVhtg/WJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaOOwpQAKCRAEWL7uWMY5
+ RrT9EAC0eBYJqZ0YqLg7uTb+b64n+6kwas/1IE95oVSribxOWjqYBvkfZJcY58pw0jTPloLNvMi
+ QisNu+vuY96By4D7jTRyd5V46+5jSM30A/Ll0iwefwlZd+Qdl977XgdsgydphsFZlCrcOEb8z6l
+ CA7mDys9ZOxDeVxML2FT//LX/Henv3DFOcA/yiqiXn+L5oMQSskfYpltLBsXFlsqYnXi641s8xF
+ uwvAbiGKXosPdqqpVHRN2y8CIWgnVsYO8a7ojpaotas3tQyHS6UVA4xAnhZFbaB2sUolAxuKi/d
+ JvRb1ZZ0cr/xpkHY4CixAFRimX1R4YNE8D2KJxMFmXZJZievFlPbmgMRYO8hMs6RO4gdnJIHIUv
+ s+JM0Al2XuB53wsPU0n323zrzEjnl1Eg1MrewjbygLK2nEW0waSPHcw/9LH5EwHbV44uieQf5Yn
+ cnkb2jgAZUj6XYEaeK+tpSa6251n1RUkhaxoO7I+QLmbaBwejm5RGGJsS6RFr/ABC4QsWZaRwiw
+ MNVWX5ai9ew9QMZy/c8xIMoLJTqq1COhGMWuUox+je59lZBfr6gfduUsUTmZd9uwkeB9cPxJEqu
+ 7GqRpp9BGq38ODG9DR1WI8KEDWaw/Gew3f567FubQ2DomJEVWb762jPeSyffVpvEaipypC3PA7m URQQFoOae7CXIlw==
+X-Mailer: b4 0.14.2
+Message-ID: <20251006-vmbo-defer-v4-0-30cbd2c05adb@google.com>
+Subject: [PATCH v4 0/2] Defer vm_bo cleanup in GPUVM with DRM_GPUVM_IMMEDIATE_MODE
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>, Matthew Brost <matthew.brost@intel.com>, 
+	"=?utf-8?q?Thomas_Hellstr=C3=B6m?=" <thomas.hellstrom@linux.intel.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Boris Brezillon <boris.brezillon@collabora.com>, Steven Price <steven.price@arm.com>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-Hi Linus,
+There are two main ways that GPUVM might be used:
 
-Please pull following watchdog changes for the v6.18 release cycle.
+* staged mode, where VM_BIND ioctls update the GPUVM immediately so that
+  the GPUVM reflects the state of the VM *including* staged changes that
+  are not yet applied to the GPU's virtual address space.
+* immediate mode, where the GPUVM state is updated during run_job(),
+  i.e., in the DMA fence signalling critical path, to ensure that the
+  GPUVM and the GPU's virtual address space has the same state at all
+  times.
 
-This series contains:
-* renesas,wdt: Add support for RZ/T2H and RZ/N2H
-* add SMARC-sAM67 support
-* Several small fixes and improvements
+Currently, only Panthor uses GPUVM in immediate mode, but the Rust
+drivers Tyr and Nova will also use GPUVM in immediate mode, so it is
+worth to support both staged and immediate mode well in GPUVM. To use
+immediate mode, we must manage the vm_bos and vas during the fence
+signalling critical path.
 
-The output from git request-pull:
-----------------------------------------------------------------
-The following changes since commit f777d1112ee597d7f7dd3ca232220873a34ad0c8:
+The first part of that work was the introduction of a fence signalling
+safe mutex for the GEMs GPUVA list in commit e7fa80e2932c ("drm_gem: add
+mutex to drm_gem_object.gpuva").
 
-  Merge tag 'vfs-6.17-rc6.fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs (2025-09-08 07:53:01 -0700)
+This is series the second part of that work: Dropping a vm_bo object in
+the fence signalling critical path is problematic for two reasons:
 
-are available in the git repository at:
+* When using DRM_GPUVM_RESV_PROTECTED, you cannot remove the vm_bo from
+  the extobj/evicted lists during the fence signalling path.
+* Dropping a vm_bo could lead to the GEM object getting destroyed.
+  The requirement that GEM object cleanup is fence signalling safe is
+  dubious and likely to be violated in practice.
 
-  git://www.linux-watchdog.org/linux-watchdog.git tags/linux-watchdog-6.18-rc1
+Panthor already has its own custom implementation of postponing vm_bo
+cleanup. Take inspiration from that by moving the logic into GPUVM, and
+adjust Panthor to use the new GPUVM logic.
 
-for you to fetch changes up to c64c2a50cdd487e2270c875c1770cd55705d75ff:
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Changes in v4:
+- Go back to using kref_put_mutex().
+- Change terminology of deferral methods to 'zombie' and improve their
+  docs.
+- Link to v3: https://lore.kernel.org/r/20251001-vmbo-defer-v3-0-a3fe6b6ae185@google.com
 
-  watchdog/hpwdt New maintianer (2025-09-28 14:05:58 +0200)
+Changes in v3:
+- Unpin in panthor on drm_gpuvm_bo_create() failure.
+- Use llist for bo_defer list.
+- Rename drm_gpuvm_bo_is_dead() to drm_gpuvm_bo_is_zombie().
+- Rename drm_gpuvm_bo_defer() to drm_gpuvm_bo_defer_free().
+- Link to v2: https://lore.kernel.org/r/20250909-vmbo-defer-v2-0-9835d7349089@google.com
 
-----------------------------------------------------------------
-linux-watchdog 6.18-rc1 tag
+Changes in v2:
+- Fix missing kfree in Panthor.
+- Rework mutex_lock() calls to be less confusing.
+- Add note about resv lock in drm_gpuvm_bo_is_dead() docs.
+- Link to v1: https://lore.kernel.org/r/20250905-vmbo-defer-v1-0-7ae1a382b674@google.com
 
-----------------------------------------------------------------
-Christophe Leroy (1):
-      watchdog: mpc8xxx_wdt: Reload the watchdog timer when enabling the watchdog
+---
+Alice Ryhl (2):
+      drm/gpuvm: add deferred vm_bo cleanup
+      panthor: use drm_gpuva_unlink_defer()
 
-Guenter Roeck (1):
-      watchdog: intel_oc_wdt: Do not try to write into const memory
+ drivers/gpu/drm/drm_gpuvm.c           | 191 ++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/panthor/panthor_mmu.c | 110 ++++----------------
+ include/drm/drm_gpuvm.h               |  16 +++
+ 3 files changed, 226 insertions(+), 91 deletions(-)
+---
+base-commit: b2ec5ca9d5c2c019e2316f7ba447596d1dcd8fde
+change-id: 20250905-vmbo-defer-3faf90d821f5
 
-Jerry Hoemann (1):
-      watchdog/hpwdt New maintianer
-
-Lad Prabhakar (6):
-      dt-bindings: watchdog: renesas,wdt: Add support for RZ/T2H and RZ/N2H
-      watchdog: rzv2h: Obtain clock-divider and timeout values from OF match data
-      watchdog: rzv2h: Make "oscclk" and reset controller optional
-      watchdog: rzv2h: Add support for configurable count clock source
-      watchdog: rzv2h: Add support for RZ/T2H
-      watchdog: rzv2h: Improve error strings and add newlines
-
-Michael Walle (1):
-      dt-bindings: watchdog: add SMARC-sAM67 support
-
-Sangwook Shin (5):
-      watchdog: s3c2410_wdt: Replace hardcoded values with macro definitions
-      watchdog: s3c2410_wdt: Fix max_timeout being calculated larger
-      watchdog: s3c2410_wdt: Increase max timeout value of watchdog
-      watchdog: s3c2410_wdt: exynosautov920: Enable QUIRK_HAS_32BIT_CNT
-      watchdog: s3c2410_wdt: exynosautov9: Enable supported features
-
-Wolfram Sang (3):
-      watchdog: rzg2l_wdt: don't print superfluous errors
-      watchdog: rzv2h_wdt: don't print superfluous errors
-      watchdog: visconti: don't print superfluous errors
-
- .../bindings/watchdog/kontron,sl28cpld-wdt.yaml    |   7 +-
- .../devicetree/bindings/watchdog/renesas,wdt.yaml  |  36 ++++-
- MAINTAINERS                                        |   2 +-
- drivers/watchdog/intel_oc_wdt.c                    |   8 +-
- drivers/watchdog/mpc8xxx_wdt.c                     |   2 +
- drivers/watchdog/rzg2l_wdt.c                       |   4 +-
- drivers/watchdog/rzv2h_wdt.c                       | 150 ++++++++++++++++++---
- drivers/watchdog/s3c2410_wdt.c                     |  46 +++++--
- drivers/watchdog/visconti_wdt.c                    |   5 +-
- 9 files changed, 212 insertions(+), 48 deletions(-)
-----------------------------------------------------------------
-
-Kind regards,
-Wim.
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
 
 
