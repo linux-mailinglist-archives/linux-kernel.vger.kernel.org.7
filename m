@@ -1,221 +1,161 @@
-Return-Path: <linux-kernel+bounces-843021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 668DBBBE3A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:50:22 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B49BBE3A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:52:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D557D1897283
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:50:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3EC0A4E36F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A6C2D373E;
-	Mon,  6 Oct 2025 13:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78E52D3A94;
+	Mon,  6 Oct 2025 13:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CX5+9fbc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oYwC8e2a"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F4B1F03D8;
-	Mon,  6 Oct 2025 13:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAB529993A
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 13:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759758614; cv=none; b=e4K9L0x+yWyu+gUwC8p8KmaR7C+yKtT3DHRhj7r3ASY+wSMICn+iInjiVthk1CY54THh1q9gp5BPD9qUZAIovjToKP4TQsKIEMhBpJYRbXEGG4FQKUILlWmFkw2tTa86/I4g6o1eoAScISi6Und+2rzv6M4noQpmpvC+QkqKSQc=
+	t=1759758719; cv=none; b=qHomMNwKrcOsD0UipkrBSytHwWXKBzMD0tYqKmPmxa3iyyB5DdgjvR8A8w1pHv13GEMPO5jBPYbexit+gmaLEFlX4EfWiuF5Xl3vrS7y4p0fYxbaWs6bPiSzSZ2QGCEpnbC3VXw/8ubR9sxy+rVQfMKmcw54Tokly5CAE8O6zRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759758614; c=relaxed/simple;
-	bh=LVbaVwyVG7huS4+RZPtiu2bWEjxrsFBDLHxGQqUS0Kk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lme+Ov1BbFzLhu9mG6UaIR6XE25F0fXHXA+nlqpwx34/q7sE9NagPVLIMHokJrA8UaG6yIJSnWduhD/2tAnpIeJnoQfhkVhKSQPqrS1L+KmcI6p9LET5wcyakEJzM0Gksrhllu5NaMkgR1kQgBbuIfLqvJk+kwy2dhelYv+xdCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CX5+9fbc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5406FC4CEF5;
-	Mon,  6 Oct 2025 13:50:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759758613;
-	bh=LVbaVwyVG7huS4+RZPtiu2bWEjxrsFBDLHxGQqUS0Kk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=CX5+9fbcSiHPJuyqmgzEi4EQ8wRy5aZlDJI003Pu0Ws8UUgxVX279Y8XVdF2j9W8/
-	 IJsWhq4vhWOA98pKqEYFvqHzCHpA4X1thvmoVMoPkIi10LI2WS4LSyQVWszSrtY7MR
-	 EGGwgDsB6CeUrafTVSDhfmXDfgcRlYSj4i5pv6e1zZMi0owRb4e/1WJzz2u9FUX0zJ
-	 SW2h0YA3O0J6GppGYSi4YnYUFCy//4tYuVMeLSPqRU6oPAprZCmoOs4YK8u8E+XrVY
-	 7Rg9URcaOgiZ7T6toZmyWzhZ5DxPnSB6hPmb6KqxdIOpl1kgwjoZpVrN1O68HklkLR
-	 MYPBwFpAlNpXw==
-From: Chuck Lever <cel@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: <linux-kernel@vger.kernel.org>,
-	<linux-nfs@vger.kernel.org>,
-	Jeff Layton <jlayton@kernel.org>
-Subject: [GIT PULL] NFSD changes for v6.18
-Date: Mon,  6 Oct 2025 09:50:10 -0400
-Message-ID: <20251006135010.2165-1-cel@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759758719; c=relaxed/simple;
+	bh=5+4PJ6jPfemENa4btjS7LirYUE2KnvwhBP+jw2X7dVQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=t9JNiSIPNgup3BMf8JNPj7ST6hskLMXGIhbVQppJkeGV/rCOkjKyVt8b+AxKP46yFj346oZ/rfIf0B2mgj9fuwJH/4180KTIFkQQ+kLvD79YvhSAXoyu8MYxKy0lOPxzzKQGaV6DZILWxRnqRi/U2vgbqIOteA+vHR1oLHeQtY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oYwC8e2a; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46b303f7469so31747885e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 06:51:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759758715; x=1760363515; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sl/Xsdwp7DpkeGa1ImOkGWOTN5ZyWaGLBtET9IVZcxU=;
+        b=oYwC8e2a+4ti8O2OSDQjxFcgTGMVI3ElmIZGOnuW9lssdlbpbUhtlZJG0SEmThveB1
+         2eYVQ02XSwg7eS8r8IH2RQrQTUuh3RZ1ygM4bBp27hpN/JJwRJfTWp6HgBrp0gFSeMLL
+         4oSW9fMeg0m1pRu6RoSDxj3gM7DHYiBQh6zO3O0OIBa7EhrwJUVBEWZowWBGcaIhTuGq
+         xV9Yp9u5o6jUE+vSZnxa7DKSAftyiKUqDK118D03XQJVXMm6EX0BZME7n0YC2CHNgCrm
+         f5dU9cL3Y1WkuLCIwUVwzOW102neTx35AeTkWuUReAUBg8SlImKPYD/k9SB1zR1kFwMX
+         y/+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759758715; x=1760363515;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Sl/Xsdwp7DpkeGa1ImOkGWOTN5ZyWaGLBtET9IVZcxU=;
+        b=IxOCFU5Q1/jVhN1KTHfaIoH0tTHiRC7TGtycaYECUqhA3lzB4ONgl3Osuny4o8WvcP
+         IZxj3T/rCG9DquCyvPHX7BCDP+ya6dsY5KivK55iOC3UvzZjvDUGV0jZkXhoS75HsuHC
+         FIyB5iMQU9PST9ThPzByqdmpv4o1DsTgXurNI5ePP1gvZ5lN+dAJMKmtNePRFq8tJqYY
+         roZeeE5ie8up4m82i2Z5pbv4IYK2b7TmsPGGEIrIbnrEbzjewT3259jCcyYvACg9clFo
+         f5W7r7N+J7lIHYlLpWlpZSkzv3YK+w0SdFoDxlKqN62f4HKotZvilu4FlhPrmFwkpnti
+         vzRw==
+X-Forwarded-Encrypted: i=1; AJvYcCVecbjEd4Qa8gBlXavg8cHcLxuSu1RiKfdaQjkYBEzWlu7JNzfX+VvYZrTagloii3tpeCmlwuE04i2oJG0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyeGhC0bKYQfPS1uoafaMl14zqYQ8obuyz8UxyektqOaz4dWi1
+	2edW69uESpjqiSBlR1/h+aztuWABr3bZuXFCBiJn2tHww/GMeFGzEGpfIHG0uFBU31I=
+X-Gm-Gg: ASbGncvW2Fya4K2YBqHu/+nc0RUuCnQWDmzDv2hmYgAS7QMFPa6lcpIw010gw57p5zF
+	PlL4dSAfW88ubdoAUTTwFU7KQ9QrYoLN7nV5x6eMqrXEjlW823pfa3Knucvy3B1T23CgwNu0Vh5
+	wtxVcWVZjcrMwwG0ocBDDc9eWGwtgI7szgZUtcmHESyB0YniaqHdQ2SIq4WhtrS8FWLxQy4mc89
+	GpBwl1PtzkqKQ2x/YvNFT9f/TuV2tmUdh0MkOWOQuDBrw1FpFKHdLTwSAEHrszNdMufSuAqG0wp
+	fC57/SIiG9vR/vAP06JSMriq0txyVo7KH9oJ58b3TWKHFA9/hGIBG8mOdQJqIwVKFu5a0+yvW60
+	CPO3x8JhJ2ajKmbrFPjzKLCQ8Y2wgvHtvHoumDxrh7Tj4Wtk0Phk944ugcKfJt/cRe01dWLw=
+X-Google-Smtp-Source: AGHT+IHf0XVleDEkE0BhbbDIPcUJVH+5v33yVTTQ/TAofs4Bb0q1LMt4liHnvPnDbjjsIjmsonEo/Q==
+X-Received: by 2002:a05:600c:154d:b0:46e:6c40:7377 with SMTP id 5b1f17b1804b1-46f9bb3fd36mr29299735e9.35.1759758715096;
+        Mon, 06 Oct 2025 06:51:55 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e723437d8sm161373265e9.3.2025.10.06.06.51.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 06:51:54 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Date: Mon, 06 Oct 2025 15:51:53 +0200
+Subject: [PATCH] dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp: Add
+ mode-switch
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251006-topic-sm8x50-qmp-combo-allow-mode-switch-v1-1-3d79e7ea6824@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAHnJ42gC/x3NTQqDMBBA4avIrDsQhdHSq5Qu8jPWAeOkiagg3
+ t3Q5bd574TCWbjAqzkh8yZFdKloHw34yS5fRgnV0JmOWmN6XDWJxxKfBxn8xYReo1O086w7Rg2
+ MZZfVT2gHYnJEbggj1FzKPMrxX70/13UDC6M3qHoAAAA=
+X-Change-ID: 20251006-topic-sm8x50-qmp-combo-allow-mode-switch-a75e5b55b7df
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1797;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=5+4PJ6jPfemENa4btjS7LirYUE2KnvwhBP+jw2X7dVQ=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBo48l6OT55Ag31LX05Dik6U7flL1LRcECV3P48fmDE
+ TId2NMiJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaOPJegAKCRB33NvayMhJ0c75EA
+ CdtICwvFHqp7DobK5NwBTBXdeEWfziO1B5o6TRtlyFfartZTPlBciNHfL80Iyk3Zvn/Bwvv0lZjqs7
+ Pgs2/TMlsScDFroBe0L+wPbPF95GXaUg5lYogAdm4a7nHolbsswGYikugIT0xHxghal77W+WeHSb6M
+ mfnnZj7Wpty/ilqvoyoNB5+Wvb4hGv1hAxwx0v0J6D0HGtJ64m17JV3+7Ioy1gW+3PyVsTTFAHQTr8
+ +G5pSMtZzqf963pvnhRPCaMqhGi/Gb3Ks/yOm5rzOJh7gvkrExraW3ACooQoq7TKK0YF42oyK4z8cV
+ sP8HdD8lxXXCUU3LiLHlLsCIZyJRD54Fq6pGBS2fP23+ZxZfRByCr0DgyrODdTr0uSdVkrZk5z4VYY
+ K9Dw80O0MphGGbHXEmOMTwnNwYUme64EXh/IRbZseeWhVpqHdjYZAkfQC5Bsfj57OfvgBS+7nOtLjj
+ jQVbagl7QvgsmagcI7Z75N7iEfqo1FofHJw/Q5pkQIrXaCL2/HwDUTOAtR7COPcko8wXUqYDLlHpWt
+ 5B/qXalYhJHanRRQJNDlunY9F02oKBmjZza6cTcDfH27xZnyhvybtada3MhiATJrKqLFWGHppgwbZ2
+ //70JOiIQXdWdHNHvdMNmHNQDMhhGdY5nTwtz+Q3W0SCeQ3YQp20MbFgA3bQ==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-Hi Linus-
+The QMP USB3/DP Combo PHY can work in 3 modes:
+- DisplayPort Only
+- USB3 Only
+- USB3 + DisplayPort Combo mode
 
-One potential merge conflict has been reported for nfsd-6.18.
-See the following URLs for recommended resolution:
+In order to switch between those modes, the PHY needs to receive
+Type-C events, allow marking to the phy with the mode-switch
+property in order to allow the PHY to receive Type-C events.
 
-https://lore.kernel.org/lkml/aN5dMYUPfFly6eUO@sirena.org.uk/
+Referencing usb-switch.yaml lookkied like as a simpler way to allow
+the mode-switch property instead of duplicating the property
+definition but it causes some issues with the ports definitions.
 
-or
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+Depends on:
+[1] https://lore.kernel.org/all/20251006-topic-sm8x50-fix-qmp-usb43dp-usb-switch-v2-1-3249e511013b@linaro.org/
+---
+ .../devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml       | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-https://lore.kernel.org/linux-nfs/aNxL88GmEzJ5hsHl@kernel.org/
+diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
+index 38ce04c35d945d0d8d319191c241920810ee9005..bdf7894ff84869030252f64f20acb4f920fd19e9 100644
+--- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
+@@ -73,6 +73,11 @@ properties:
+     description:
+       See include/dt-bindings/phy/phy-qcom-qmp.h
+ 
++  mode-switch:
++    description:
++      Flag the PHY as possible handler of USB Type-C altmode switching
++    type: boolean
++
+   orientation-switch:
+     description:
+       Flag the PHY as possible handler of USB Type-C orientation switching
 
+---
+base-commit: 9cba8ad3e538c0d955a9844fbe26a887dbb04f4a
+change-id: 20251006-topic-sm8x50-qmp-combo-allow-mode-switch-a75e5b55b7df
 
---- cut here ---
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
 
-The following changes since commit 07e27ad16399afcd693be20211b0dfae63e0615f:
-
-  Linux 6.17-rc7 (2025-09-21 15:08:52 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git tags/nfsd-6.18
-
-for you to fetch changes up to 73cc6ec1a89a6c443a77b9b93ddcea63b7cea223:
-
-  nfsd: discard nfserr_dropit (2025-10-01 15:54:01 -0400)
-
-----------------------------------------------------------------
-NFSD 6.18 Release Notes
-
-Mike Snitzer has prototyped a mechanism for disabling I/O caching in
-NFSD. This is introduced in v6.18 as an experimental feature. This
-enables scaling NFSD in /both/ directions:
-
-- NFS service can be supported on systems with small memory
-  footprints, such as low-cost cloud instances
-- Large NFS workloads will be less likely to force the eviction of
-  server-local activity, helping it avoid thrashing
-
-Jeff Layton contributed a number of fixes to the new attribute
-delegation implementation (based on a pending Internet RFC) that we
-hope will make attribute delegation reliable enough to enable by
-default, as it is on the Linux NFS client.
-
-The remaining patches in this pull request are clean-ups and minor
-optimizations. Many thanks to the contributors, reviewers, testers,
-and bug reporters who participated during the v6.18 NFSD development
-cycle.
-
-----------------------------------------------------------------
-Chuck Lever (7):
-      NFSD: Relocate the fh_want_write() and fh_drop_write() helpers
-      NFSD: Move the fh_getattr() helper
-      NFS: Remove rpcbind cleanup for NFSv4.0 callback
-      SUNRPC: Move the svc_rpcb_cleanup() call sites
-      NFSD: Delay adding new entries to LRU
-      NFSD: Reduce DRC bucket size
-      NFSD: Do the grace period check in ->proc_layoutget
-
-Colin Ian King (1):
-      lockd: Remove space before newline
-
-Dan Carpenter (1):
-      nfsd: delete unnecessary NULL check in __fh_verify()
-
-Eric Biggers (4):
-      nfsd: Replace open-coded conversion of bytes to hex
-      nfsd: Eliminate an allocation in nfs4_make_rec_clidname()
-      nfsd: Don't force CRYPTO_LIB_SHA256 to be built-in
-      SUNRPC: Make RPCSEC_GSS_KRB5 select CRYPTO instead of depending on it
-
-Jeff Layton (11):
-      sunrpc: delay pc_release callback until after the reply is sent
-      nfsd: fix assignment of ia_ctime.tv_nsec on delegated mtime update
-      nfsd: ignore ATTR_DELEG when checking ia_valid before notify_change()
-      vfs: add ATTR_CTIME_SET flag
-      nfsd: use ATTR_CTIME_SET for delegated ctime updates
-      nfsd: track original timestamps in nfs4_delegation
-      nfsd: fix SETATTR updates for delegated timestamps
-      nfsd: fix timestamp updates in CB_GETATTR
-      nfsd: freeze c/mtime updates with outstanding WRITE_ATTRS delegation
-      sunrpc: fix pr_notice in svc_tcp_sendto() to show correct length
-      sunrpc: eliminate return pointer in svc_tcp_sendmsg()
-
-Lei Lu (1):
-      sunrpc: fix null pointer dereference on zero-length checksum
-
-Mike Snitzer (1):
-      NFSD: Add io_cache_{read,write} controls to debugfs
-
-NeilBrown (2):
-      nfsd: discard nfsd_file_get_local()
-      nfsd: discard nfserr_dropit
-
-Olga Kornievskaia (2):
-      nfsd: unregister with rpcbind when deleting a transport
-      nfsd: nfserr_jukebox in nlm_fopen should lead to a retry
-
-Scott Mayhew (1):
-      nfsd: decouple the xprtsec policy check from check_nfsd_access()
-
-Sergey Bashirov (8):
-      sunrpc: Change ret code of xdr_stream_decode_opaque_fixed
-      NFSD: Rework encoding and decoding of nfsd4_deviceid
-      NFSD: Minor cleanup in layoutcommit processing
-      NFSD: Minor cleanup in layoutcommit decoding
-      NFSD: Implement large extent array support in pNFS
-      NFSD: Fix last write offset handling in layoutcommit
-      NFSD: Disallow layoutget during grace period
-      NFSD: Allow layoutcommit during grace period
-
-Thorsten Blum (1):
-      NFSD: Fix destination buffer size in nfsd4_ssc_setup_dul()
-
-Xichao Zhao (2):
-      NFSD: Drop redundant conversion to bool
-      sunrpc: fix "occurence"->"occurrence"
-
- fs/attr.c                                          |  44 +++----
- fs/lockd/svc.c                                     |   6 +-
- fs/lockd/svclock.c                                 |   2 +-
- fs/nfs/callback.c                                  |  10 +-
- fs/nfsd/Kconfig                                    |   2 +-
- fs/nfsd/blocklayout.c                              |  32 +++---
- fs/nfsd/blocklayoutxdr.c                           |  86 +++++++++-----
- fs/nfsd/blocklayoutxdr.h                           |   4 +-
- fs/nfsd/debugfs.c                                  |  95 ++++++++++++++-
- fs/nfsd/export.c                                   |  82 +++++++++----
- fs/nfsd/export.h                                   |   3 +
- fs/nfsd/filecache.c                                |  21 ----
- fs/nfsd/filecache.h                                |   1 -
- fs/nfsd/flexfilelayout.c                           |   4 +-
- fs/nfsd/flexfilelayoutxdr.c                        |   3 +-
- fs/nfsd/localio.c                                  |   1 -
- fs/nfsd/lockd.c                                    |  15 ++-
- fs/nfsd/nfs4layouts.c                              |   1 -
- fs/nfsd/nfs4proc.c                                 | 127 +++++++++++++++------
- fs/nfsd/nfs4recover.c                              |  31 +----
- fs/nfsd/nfs4state.c                                |  86 ++++++++++----
- fs/nfsd/nfs4xdr.c                                  |  32 ++----
- fs/nfsd/nfscache.c                                 |  15 +--
- fs/nfsd/nfsctl.c                                   |   2 +-
- fs/nfsd/nfsd.h                                     |  17 +--
- fs/nfsd/nfsfh.c                                    |  51 ++++++++-
- fs/nfsd/nfsfh.h                                    |  38 ++++++
- fs/nfsd/nfssvc.c                                   |   7 +-
- fs/nfsd/pnfs.h                                     |   5 +-
- fs/nfsd/state.h                                    |  16 ++-
- fs/nfsd/vfs.c                                      |  23 +++-
- fs/nfsd/vfs.h                                      |  33 ------
- fs/nfsd/xdr4.h                                     |  39 ++++++-
- include/linux/fs.h                                 |   1 +
- include/linux/nfslocalio.h                         |   1 -
- include/linux/sunrpc/svc_xprt.h                    |   6 +-
- include/linux/sunrpc/xdr.h                         |   4 +-
- net/sunrpc/Kconfig                                 |   3 +-
- net/sunrpc/auth_gss/svcauth_gss.c                  |   2 +-
- net/sunrpc/svc.c                                   |  18 ++-
- net/sunrpc/svc_xprt.c                              |  20 +++-
- net/sunrpc/svcsock.c                               |  25 ++--
- net/sunrpc/sysfs.c                                 |   2 +-
- .../C/typedef/decoder/fixed_length_opaque.j2       |   2 +-
- 44 files changed, 678 insertions(+), 340 deletions(-)
 
