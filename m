@@ -1,164 +1,163 @@
-Return-Path: <linux-kernel+bounces-842682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83A47BBD4B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 10:00:58 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 181D7BBD4C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 10:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B5291894288
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 08:01:21 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6983634952D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 08:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD0E194A44;
-	Mon,  6 Oct 2025 08:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900ACF9D6;
+	Mon,  6 Oct 2025 08:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="GSxlFAB2"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j+j1iz2V"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00AC520311
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 08:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069884A06;
+	Mon,  6 Oct 2025 08:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759737651; cv=none; b=tHQ1z8PqtguSolyQ8IL8Uj8+nm/1Qnz458obHtuIoHghoAhgCPu9e86+2+39KoQQdK67vim2+qY+Vm50rhVntE4QThSAQ7ompscUqrv4nf2f4rW5k3MUdblVhdsFT0Zq+OZ7m9aqMIX4f25+0CypfVuPkh/4qdSK/o8PRBYKb8k=
+	t=1759737839; cv=none; b=crqEz3HaOz/gsroCmZD0sO9+Y3wHf8tXcUkdLHtwMYScFbk2l1NiHMvWz+J1fRKqsFQJss+A2wdj53fdjbHd0pv8NLNlMx8iotLT95aZGCfAdy7T0Y7FY0BXkmib/glZj/i0aI454EnqG6L8OzLKgE5Nm0VXkoN4/tsyEzIP5hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759737651; c=relaxed/simple;
-	bh=2TRhewersXLQSe/faV+uP8FY2DQ0QQvMuw4x6eI2VMU=;
+	s=arc-20240116; t=1759737839; c=relaxed/simple;
+	bh=80jH30xUMQtCp7lqP5MtMRwN/G0fpsGgBjF1aC2HzvQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=No3mIR4mxacNQLpIl6deCU7PQ+g1hqOTJIEjHvWfZo+5Ivcv5f6e2UR8Q249rp1otRmyKh/7apsv+asNM6/7UxiAWjlx+oJDaa+qkeu7Qq30W3gqter1sCa19V3OrLoYoER33+p0kzbyJtcbksL9LQl3+cBTMKkUXcSojihnqEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=GSxlFAB2; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
-Message-ID: <017ff8df-511c-4da8-b3cf-edf2cb7f1a67@packett.cool>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
-	s=key1; t=1759737637;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s7dps9P76y2H58QBWu1IadoGY1ktF9fh7Xpe5B4p8lQ=;
-	b=GSxlFAB2fPvHLfTS3TqVVtRq7t0hYvtzYAvc0jy9NKhLH/+xb3wwVtZD4THRJESE2TE36G
-	yZi5hRot19A/C/5sUkDYKWLmgpm7nIBLVliTWrIUrkG6pfSazQ7GKxZ9juKHwHD1c7qZMd
-	WbnmOn9J785OQyWIfaDV8vXukBFB1tKES8o/JnU8N8fIMji/eOz2CFhZOSp0vNvEEfFAru
-	e5IvitysTkFh6xsQUSSeIw3IECLsrCqWwJAXk3bp5sVgd+hsR9dmlXLGKvtcp1h3jlArpS
-	2BNmiv/pgi3YW76KLlQz67X2MHXtX6ztXtAgmU1dgtBzGfj+3nz2npl7ocy4fA==
-Date: Mon, 6 Oct 2025 05:00:25 -0300
+	 In-Reply-To:Content-Type; b=pgtxfLCRSqvn1UaK+bLagbt6UVs3Rskdh7wxa8woFfaPOsyjzbQCGBp2Kp4E8YxLpB732VYgxgGy961fwKrEX9ITYBMUZILbT3FJO9pmA2ukyJuJXOlPN1Z7GD3GK1Va97Hend5KFfJBPa9LsyGMr5JZePYeo0jCWRIpA1bUQuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j+j1iz2V; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759737838; x=1791273838;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=80jH30xUMQtCp7lqP5MtMRwN/G0fpsGgBjF1aC2HzvQ=;
+  b=j+j1iz2VwT426IGKwui9dxN+XcW8kk6QvjZshpgUsjl33ViSrDv9NUD5
+   oIY1S6cehUgkiUhOctveuwtesz519E2StscnNjisNoK2VQXQ9q8+z773c
+   x1GSKU2EYrcDttXUe8EC3XRL6R81qVd/+5odwO53yb4PjxEdV0bkTivaK
+   4L06uDtcF6jFLH0ZZ0SqN86ZxjUp+3VbCrllbafVFLv3xyyDPX31D3k5C
+   4fmlLhPshCXlFo5zNJTCcpF3oLZU+0qbChKbL5zvxktI4iXeuMwKSAyOT
+   NbNw39ooPU0wAm0gA3wFMG/LlI/Dtb/rhaO2JUaURqy7yMfzmHvGHRIuk
+   g==;
+X-CSE-ConnectionGUID: edCVOkQLS3S9buT3IZ6j7A==
+X-CSE-MsgGUID: GDDAut1sRZq3VOfsXA723w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11573"; a="64526751"
+X-IronPort-AV: E=Sophos;i="6.18,319,1751266800"; 
+   d="scan'208";a="64526751"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 01:03:56 -0700
+X-CSE-ConnectionGUID: qE8Qkae9SWKxNyZ2Glm3fg==
+X-CSE-MsgGUID: qAHMFRpCSF6IAw2WKjLkBA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,319,1751266800"; 
+   d="scan'208";a="184106174"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.209]) ([10.124.232.209])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 01:03:51 -0700
+Message-ID: <4bb0537b-8b8e-48fd-b777-0787b23a3b41@linux.intel.com>
+Date: Mon, 6 Oct 2025 16:03:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/2] PCI: Setup bridge resources earlier
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- linux-kernel@vger.kernel.org
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>
-References: <20250924134228.1663-1-ilpo.jarvinen@linux.intel.com>
- <20250924134228.1663-2-ilpo.jarvinen@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v7 02/12] perf/x86/intel: Fix NULL event access and
+ potential PEBS record loss
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com,
+ Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>,
+ Dapeng Mi <dapeng1.mi@intel.com>
+References: <202509081646.d101cfb7-lkp@intel.com>
+ <e92a703d-6a92-474c-acba-b15176b97548@linux.intel.com>
+ <bd48852d-e5d3-4d58-9d71-891a4e31dd5b@linux.intel.com>
+ <aNtoZ3bJ5OmGAMT0@xsang-OptiPlex-9020>
+ <6c4a3b2b-d207-466e-bd58-05566f36e1a4@linux.intel.com>
+ <aN4lR1TG8Mdz5XoU@xsang-OptiPlex-9020>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Val Packett <val@packett.cool>
-In-Reply-To: <20250924134228.1663-2-ilpo.jarvinen@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <aN4lR1TG8Mdz5XoU@xsang-OptiPlex-9020>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Hi,
 
-On 9/24/25 10:42 AM, Ilpo Järvinen wrote:
-> Bridge windows are read twice from PCI Config Space, the first read is
-> made from pci_read_bridge_windows() which does not setup the device's
-> resources. It causes problems down the road as child resources of the
-> bridge cannot check whether they reside within the bridge window or
-> not.
+On 10/2/2025 3:09 PM, Oliver Sang wrote:
+> hi, Dapeng,
 >
-> Setup the bridge windows already in pci_read_bridge_windows().
+> On Tue, Sep 30, 2025 at 02:19:25PM +0800, Mi, Dapeng wrote:
+> [...]
 >
-> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+>> Oops, it looks previous fix was incomplete. :(
+>>
+>> Oliver, could you please verify the new attached patch (Please apply this
+>> patch on top of the whole patch series)? Thanks a lot for your effort. 
+> we confirmed the patch fixed the warning we reported.
+>
+> Tested-by: kernel test robot <oliver.sang@intel.com>
+>
+> =========================================================================================
+> compiler/cpufreq_governor/kconfig/option_a/rootfs/tbox_group/test/testcase:
+>   gcc-12/performance/x86_64-rhel-9.4/Socket Activity/debian-12-x86_64-phoronix/lkp-csl-2sp7/stress-ng-1.11.0/phoronix-test-suite
+>
+> commit:
+>   0c9567b36ae6f8 ("perf/x86: Remove redundant is_x86_event() prototype")
+>   a7138973beb1d1 ("perf/x86/intel: Fix NULL event access and potential PEBS record loss")
+>   81248d31dd384c ("perf/x86/intel: Add counter group support for arch-PEBS")
+>   54701e916f6782 ("Fixup: perf/x86/intel: Fix NULL event access waring from test robot")
+>
+> 0c9567b36ae6f83c a7138973beb1d124386472663cf 81248d31dd384c71c3b6a6af25a 54701e916f6782039c2ea8adb4b
+> ---------------- --------------------------- --------------------------- ---------------------------
+>        fail:runs  %reproduction    fail:runs  %reproduction    fail:runs  %reproduction    fail:runs
+>            |             |             |             |             |             |             |
+>            :6          100%           6:6          100%           6:6            0%            :20    dmesg.WARNING:at_arch/x86/events/intel/ds.c:#intel_pmu_drain_pebs_nhm
 
-Looks like this change has broken the WiFi (but not NVMe) on my 
-Snapdragon X1E laptop (Latitude 7455):
-
-qcom-pcie 1c08000.pci: PCI host bridge to bus 0004:00
-pci_bus 0004:00: root bus resource [bus 00-ff]
-pci_bus 0004:00: root bus resource [io  0x100000-0x1fffff] (bus address 
-[0x0000-0xfffff])
-pci_bus 0004:00: root bus resource [mem 0x7c300000-0x7dffffff]
-pci 0004:00:00.0: [17cb:0111] type 01 class 0x060400 PCIe Root Port
-pci 0004:00:00.0: BAR 0 [mem 0x00000000-0x00000fff]
-pci 0004:00:00.0: PCI bridge to [bus 01-ff]
-pci 0004:00:00.0:   bridge window [io  0x100000-0x100fff]
-pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
-pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
-pci 0004:00:00.0: PME# supported from D0 D3hot D3cold
-pci 0004:00:00.0: bridge window [mem 0x7c300000-0x7c3fffff]: assigned
-pci 0004:00:00.0: bridge window [mem 0x7c400000-0x7c4fffff 64bit pref]: 
-assigned
-pci 0004:00:00.0: BAR 0 [mem 0x7c500000-0x7c500fff]: assigned
-pci 0004:00:00.0: bridge window [io  0x100000-0x100fff]: assigned
-pci 0004:00:00.0: PCI bridge to [bus 01-ff]
-pci 0004:00:00.0:   bridge window [io  0x100000-0x100fff]
-pci 0004:00:00.0:   bridge window [mem 0x7c300000-0x7c3fffff]
-pci 0004:00:00.0:   bridge window [mem 0x7c400000-0x7c4fffff 64bit pref]
-pci_bus 0004:00: resource 4 [io  0x100000-0x1fffff]
-pci_bus 0004:00: resource 5 [mem 0x7c300000-0x7dffffff]
-pci_bus 0004:01: resource 0 [io  0x100000-0x100fff]
-pci_bus 0004:01: resource 1 [mem 0x7c300000-0x7c3fffff]
-pci_bus 0004:01: resource 2 [mem 0x7c400000-0x7c4fffff 64bit pref]
-pcieport 0004:00:00.0: PME: Signaling with IRQ 186
-pcieport 0004:00:00.0: AER: enabled with IRQ 186
-pci 0004:01:00.0: [17cb:1107] type 00 class 0x028000 PCIe Endpoint
-pci 0004:01:00.0: BAR 0 [mem 0x00000000-0x001fffff 64bit]
-pci 0004:01:00.0: PME# supported from D0 D3hot D3cold
-pci 0004:01:00.0: BAR 0 [mem size 0x00200000 64bit]: can't assign; no space
-pci 0004:01:00.0: BAR 0 [mem size 0x00200000 64bit]: failed to assign
-pci 0004:01:00.0: BAR 0 [mem size 0x00200000 64bit]: can't assign; no space
-pci 0004:01:00.0: BAR 0 [mem size 0x00200000 64bit]: failed to assign
-ath12k_pci 0004:01:00.0: BAR 0 [??? 0x00000000 flags 0x20000000]: can't 
-assign; bogus alignment
-ath12k_pci 0004:01:00.0: failed to assign pci resource: -22
-ath12k_pci 0004:01:00.0: failed to claim device: -22
-ath12k_pci 0004:01:00.0: probe with driver ath12k_pci failed with error -22
+Oliver, thanks a lot for confirm this. :)
 
 
-For comparison, with this change reverted it works again:
 
-qcom-pcie 1c08000.pci: PCI host bridge to bus 0004:00
-pci_bus 0004:00: root bus resource [bus 00-ff]
-pci_bus 0004:00: root bus resource [io  0x0000-0xfffff]
-pci_bus 0004:00: root bus resource [mem 0x7c300000-0x7dffffff]
-pci 0004:00:00.0: [17cb:0111] type 01 class 0x060400 PCIe Root Port
-pci 0004:00:00.0: BAR 0 [mem 0x00000000-0x00000fff]
-pci 0004:00:00.0: PCI bridge to [bus 01-ff]
-pci 0004:00:00.0:   bridge window [io  0x0000-0x0fff]
-pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
-pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
-pci 0004:00:00.0: PME# supported from D0 D3hot D3cold
-pci 0004:00:00.0: BAR 0 [mem 0x7c300000-0x7c300fff]: assigned
-pci 0004:00:00.0: PCI bridge to [bus 01-ff]
-pci_bus 0004:00: resource 4 [io  0x0000-0xfffff]
-pci_bus 0004:00: resource 5 [mem 0x7c300000-0x7dffffff]
-pcieport 0004:00:00.0: PME: Signaling with IRQ 195
-pcieport 0004:00:00.0: AER: enabled with IRQ 195
-pci 0004:01:00.0: [17cb:1107] type 00 class 0x028000 PCIe Endpoint
-pci 0004:01:00.0: BAR 0 [mem 0x00000000-0x001fffff 64bit]
-pci 0004:01:00.0: PME# supported from D0 D3hot D3cold
-pci 0004:01:00.0: ASPM: DT platform, enabling L0s-up L0s-dw L1 ASPM-L1.1 
-ASPM-L1.2 PCI-PM-L1.1 PCI-PM-L1.2
-pci 0004:01:00.0: ASPM: DT platform, enabling ClockPM
-pcieport 0004:00:00.0: bridge window [mem 0x7c400000-0x7c5fffff]: assigned
-pci 0004:01:00.0: BAR 0 [mem 0x7c400000-0x7c5fffff 64bit]: assigned
-ath12k_pci 0004:01:00.0: BAR 0 [mem 0x7c400000-0x7c5fffff 64bit]: assigned
-ath12k_pci 0004:01:00.0: enabling device (0000 -> 0002)
-ath12k_pci 0004:01:00.0: MSI vectors: 16
-ath12k_pci 0004:01:00.0: Hardware name: wcn7850 hw2.0
-
-Not quite sure what's going on with these windows..
-
-~val
-
+>
+>
+>> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+>> index 65908880f424..3dedf7a0acf6 100644
+>> --- a/arch/x86/events/intel/ds.c
+>> +++ b/arch/x86/events/intel/ds.c
+>> @@ -2781,9 +2781,11 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs
+>> *iregs, struct perf_sample_d
+>>  
+>>          /* PEBS v3 has more accurate status bits */
+>>          if (x86_pmu.intel_cap.pebs_format >= 3) {
+>> -            for_each_set_bit(bit, (unsigned long *)&pebs_status, size)
+>> +            for_each_set_bit(bit, (unsigned long *)&pebs_status, size) {
+>>                  counts[bit]++;
+>> -
+>> +                if (counts[bit] && !events[bit])
+>> +                    events[bit] = cpuc->events[bit];
+>> +            }
+>>              continue;
+>>          }
+>>  
+>> @@ -2821,8 +2823,11 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs
+>> *iregs, struct perf_sample_d
+>>           * If collision happened, the record will be dropped.
+>>           */
+>>          if (pebs_status != (1ULL << bit)) {
+>> -            for_each_set_bit(i, (unsigned long *)&pebs_status, size)
+>> +            for_each_set_bit(i, (unsigned long *)&pebs_status, size) {
+>>                  error[i]++;
+>> +                if (error[i] && !events[i])
+>> +                    events[i] = cpuc->events[i];
+>> +            }
+>>              continue;
+>>          }
+>>
 
