@@ -1,281 +1,271 @@
-Return-Path: <linux-kernel+bounces-843577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BC9DBBFC1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 01:14:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49E45BBFC25
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 01:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 21D9E4E96DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 23:14:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E25253BEE27
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 23:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2721FF1AD;
-	Mon,  6 Oct 2025 23:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26761A254E;
+	Mon,  6 Oct 2025 23:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BiIBGuKL"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011008.outbound.protection.outlook.com [52.101.52.8])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nF+BhiMO"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081C51FDA82
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 23:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759792445; cv=fail; b=KjdIjF4z9bEO2yoq03avnuQpeGHcexG+m5q1hMPuSYTGE4+hYah9qwIK4ZkfVZ47PlPfq9jPpluyAr3brp4swszgz8GZVkAxjFKL9wq9T+UvDrWBUUHYNuPMMOhhzagKQsysTruMNJZrPlhGR8+83HGBvmBT2B0GVZc6r7Zfdp8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759792445; c=relaxed/simple;
-	bh=POhnrhnYJVmsarT1bwjNnP11cF+1TbgJmg1LDxHTUfE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=X6lGUzDVQQBR5Sx2yCp5Hdio3cevT31dPJFnlPdfKu/Hi4Ln5JjE0ucikyF3h6vUZiEKDKYK/6ryKoSR7yAKq1/B7ZRQdVoM6xzDawbgCQxXmb18+x9iYj5BfsZhYkLBoTRkOh6ieiVznd163L4BzhssXtTv5l8uLWTjRdGvFCs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BiIBGuKL; arc=fail smtp.client-ip=52.101.52.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mUHZEoJBe7sAYeA7Q3e83/WjLiksT0xREdxJz615iedBHd+YCuJUIk7cPEwWxHqZtnvdXfYichFbYMbo8lUSC7B5pvVld1n4SWg+eESyOS+4gJTRBTmcqSpKXzpZwRvzOFBIaD4gXqQijdI/K2yp8ZYQE0BX6ssqa9pxvzFSI1+kwhpDAxQnzviqMj80HH+bhXl1ZIIQgw5D+sPq9s4sfJDBrNW9krhntocbHt2W03oZUkjVqypJDuqcmdLeuUSQM5JIWIjPRtdluJWtj6757BmwYDODKwMA385jgxuA/BYmzx5iLPvIMt8qyPYK3G0TyPcYMbU/XCn6VLdMRcgHvA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KXV4te1jwq7x3dRWAWUBjM5Vp7NUjZGsFVezgHldXD0=;
- b=pvhUWJR+PQcCE3kTcmZkJov3s50tqtMi9Dr2X+ebxWZS9PT+DbwxBwgjvnkqzX++CWn4zrvl6cIE2SedAWGngF6elscmHpfpUniVIbtxvnupmCuH+IiOh8vR5eafsm7CdSkD5UvQETteKnTnHbQDxVVu3j4J7v/YbTeQf7oU4EDCZto8Mr65xtsov3OLpd5lT7SXR2+zlw3dQ90pQVa78pGzpvOuHwxB03Qnvpq6cRCu7pP7q5QzDYdjFcPPba6HP7sFjIYzFbn0P1AIR+HT4+mvPb6mo8mmSl2woXeXlDSauABBLVTKX/IdYj6rSFan32lXdg9msAiOZq5dDloZ9w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KXV4te1jwq7x3dRWAWUBjM5Vp7NUjZGsFVezgHldXD0=;
- b=BiIBGuKL1eJA0fvAnWxbjD+GFNpDfGZgRAOJJRAAG20g1ckDZ9qGTG+/3JTqwHGEUiclcCyNQAnvht+6pT98X1W+8R7yLHIFhpeWHKpH8nDtb0892dA8xqNmZ5S5j2qc6td49o6qAfNM7w5Gmpkrjdz1E+s93GFBxOYA1+DjQYQ=
-Received: from SA1P222CA0062.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:2c1::13)
- by MN2PR12MB4440.namprd12.prod.outlook.com (2603:10b6:208:26e::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Mon, 6 Oct
- 2025 23:13:53 +0000
-Received: from SN1PEPF0002636A.namprd02.prod.outlook.com
- (2603:10b6:806:2c1:cafe::b3) by SA1P222CA0062.outlook.office365.com
- (2603:10b6:806:2c1::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.20 via Frontend Transport; Mon,
- 6 Oct 2025 23:13:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- SN1PEPF0002636A.mail.protection.outlook.com (10.167.241.135) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9203.9 via Frontend Transport; Mon, 6 Oct 2025 23:13:52 +0000
-Received: from bmoger-ubuntu.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 6 Oct
- 2025 16:13:50 -0700
-From: Babu Moger <babu.moger@amd.com>
-To: <babu.moger@amd.com>, <tony.luck@intel.com>, <reinette.chatre@intel.com>,
-	<Dave.Martin@arm.com>, <james.morse@arm.com>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>
-CC: <x86@kernel.org>, <hpa@zytor.com>, <linux-kernel@vger.kernel.org>,
-	<peternewman@google.com>, <eranian@google.com>, <gautham.shenoy@amd.com>
-Subject: [PATCH] x86/resctrl: Fix buggy overflow when reactivating previously Unavailable RMID
-Date: Mon, 6 Oct 2025 18:13:44 -0500
-Message-ID: <515a38328989e48d403ef5a7d6dd321ba3343a61.1759791957.git.babu.moger@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5AFB661
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 23:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759792597; cv=none; b=N8l7VfL4hXoGfgUPoAF3S07CJM26CVeVGi9zuWyFe+UnCrlqZccCTZw611u31dD6AjbwSq0d9QicPcRWTSQKDHcAHBWe052q5DwWiS8YtCQt2BRbt+c8RSonPD8LVIZm4J0hyrR75d6+QHPmXso978fjs/Inh3h1XIjhWs+D20U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759792597; c=relaxed/simple;
+	bh=HwjOM4gJ0l81Q2wE6wvK5BesqWuBejGV2tO8axg3mGs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WtLLG3ZjSjYgvcq0TslILGhy9O+QuECKG3wdv2gy296N7KwU4NhRcQYt6/i6VI/12IyAEYxSAD3Hrsn2Dx+eiDQ5DnsLcwi6Z6lvn6pWCVRypjxJfgKgeTY4lq8ZFtC+3rIWegh4focfLOA/6dMyLrtAEc1SbRxXrPBUNyOQxtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nF+BhiMO; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 6 Oct 2025 16:16:25 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759792592;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YAQqFRBgLjNWMysHHUTdJ9birnJGsiwpBAJwhsVCFOg=;
+	b=nF+BhiMOqJadidPnvsG16Wzer5kVYzDfO7ORmBZTFX9lkhuTKv4g3I2r2j5XzU/XsPVsd4
+	wV6tZYU3bCeNpCCTY7mVL/D1/ty6zvNghVe48V8Do81JIFyAa8Ub/YRpYyCEdkJw4fcWiP
+	IuzUXSZ9JV214J+uFpsku/o1xXlL1qE=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Qi Zheng <qi.zheng@linux.dev>
+Cc: hannes@cmpxchg.org, hughd@google.com, mhocko@suse.com, 
+	roman.gushchin@linux.dev, muchun.song@linux.dev, david@redhat.com, 
+	lorenzo.stoakes@oracle.com, ziy@nvidia.com, harry.yoo@oracle.com, 
+	baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com, 
+	dev.jain@arm.com, baohua@kernel.org, lance.yang@linux.dev, 
+	akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	cgroups@vger.kernel.org, Muchun Song <songmuchun@bytedance.com>, 
+	Qi Zheng <zhengqi.arch@bytedance.com>
+Subject: Re: [PATCH v4 3/4] mm: thp: use folio_batch to handle THP splitting
+ in deferred_split_scan()
+Message-ID: <x4d36plhxcbyp76q4gmesktnnh7yi7bfifx3amk3fwx2moqkk6@77umpnw6rkg3>
+References: <cover.1759510072.git.zhengqi.arch@bytedance.com>
+ <304df1ad1e8180e102c4d6931733bcc77774eb9e.1759510072.git.zhengqi.arch@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002636A:EE_|MN2PR12MB4440:EE_
-X-MS-Office365-Filtering-Correlation-Id: c2af85a4-cb8f-4745-7e72-08de052e03f0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|7416014|36860700013|1800799024|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YlRmQU5CUTFEdXkrNC9pY0F6S1lxSjE2VHNWYmZlbkp1d3F1bFdPaTRDbmdl?=
- =?utf-8?B?UzI3S1JtOTlMV2orK3ZFTDJaSnZPU01BNnZrYzBYK2Frc1MzamdwT0FNcXlp?=
- =?utf-8?B?dFZIdm5sT3NUcVJtdTU3NmhMYjRUV2M1RFp3dlJZd0JZZ2lwZENhcS9mZ3d6?=
- =?utf-8?B?Mk52Zk03alBrLzRLTTRmdkNKQ0tNZE9SZk9MSDdCV2NmaDFyaHBIeWxHd0cz?=
- =?utf-8?B?a3dQd3ltUG5yS0EzTzV4V2VWMmRrbWV3TkoxcU1lRU1yQUpRMkU4UE9GZG5k?=
- =?utf-8?B?bXdtUkNNZ2VDc2t1MFlUOHpiY2dvUy9Jd1RjNDBOeWRpRUY2VTNQeVNMNUho?=
- =?utf-8?B?QVVLbDRETFVyR3RqV0U3L1IrZjB1WDJoRDk4T0Z6UGUwVUlCaVF6ZjdiZ0Vi?=
- =?utf-8?B?V1ZsMVNKcFRra3NZUWNqVWQzb01MRm9IQkpGbzI3bVByLzAwSVFYbHdqTTZm?=
- =?utf-8?B?Qi9VNG5obEx0OWFTL3VTTGlnY1N2a3V6RWh0NmlqTHFqQTZldmJZVVVnUHZQ?=
- =?utf-8?B?V0ZHZTVORnJnTTNaQWorUmlLMzI1UUlBQnZnN0c5MHlCbFFWZ1BmZzdpSjQr?=
- =?utf-8?B?NE14eFZSZkRXYTVvREhEZDByUzVaYWxBNTdaTnB4ckwvY0pTSXNOZTc3cGgw?=
- =?utf-8?B?allpK1lTVGtMQUNnY3FEaEViUnVRL1FmdWN2TFVXbFRCU05WMFQvREorRHAr?=
- =?utf-8?B?WUEzS3o3K29nT3gydUJkUndKOGRxcmZ1aWI4Mk1zUlgyU2JhK0tMRTA4U1A4?=
- =?utf-8?B?YTJneWdBUUJNa1pmdFpkNmhTeFlHQkFuVnUwOXM5YitQb1hGdWluemFqUmdO?=
- =?utf-8?B?Y3UrcmNTSFE2NnkyNVF4TTdRRDdqUE5DY2E1eElsK1dJOUEyUnArb2dsQmxT?=
- =?utf-8?B?U3RhMUVqZ2VkOGNnbURqOG1sc3RMdTRZcGk1djVJdi92OUFPQWN4MEpBY0tC?=
- =?utf-8?B?VUtuZW1hVmVHcTB5T0c0NnBYNnpqeVZUU3VzMVNYU1YzNG54K3o2cDdBQkdU?=
- =?utf-8?B?VmxTdkhQc0JSczEyODJvc2w4cWJQc09qNTNrSWplN3pCZWlQK003T0R5cTkv?=
- =?utf-8?B?UFp6cUlFSVcyL29KT1F4R21RRVY1THlMTzAwc2Zxa3NVYW41bDA2QlFYUXZF?=
- =?utf-8?B?a052RDhEU2tVdmlMTVUxb2x3Si9ucmVSUWtZdDFhUmRab3h0ZDFlYktYU1Zm?=
- =?utf-8?B?WkhCMUFDZTZvZDg0N21TYSt5M3I4dEhBTHVUQ2grZU9vWnc4UXpqeEh6NENW?=
- =?utf-8?B?Q2lmdVovbVEvUFFJekN2eDJGbW5mdXg0cnMzYW4xVUdtV0lLZ1pQK1FHL3F6?=
- =?utf-8?B?S0NiZ0lTcmRhT0dsaU9BUk1YOWNBT0hXRnlyYzQzOHBYUzdrY3g1OTgrbHps?=
- =?utf-8?B?bk50cjkvaHR6S3hmRDQyeU95Zm9hdFpEMlVSSVR0bHRuZWJnTWZjS1JNRW9z?=
- =?utf-8?B?S3hLQmtyMkRpYnJNV3NoQlZ0ek1jdjlkSkNpYWFZZm5COS9VaEh1TjN4OXU2?=
- =?utf-8?B?a0dHYXpQRWllUTVzN3J5cnNEelpPVFUzWXVxODZ0SE5CMCtaRjcvd21wYkdY?=
- =?utf-8?B?NUN1OXFYSmxMeXNuZGNBTVpnQ3lFRTYzVTVaOFEyN0t3dkhsQVpYdk1hc2I4?=
- =?utf-8?B?eCsyc29LZWRkbXAwcUFiZVhsc1RUMW9EYXkvcUp6KzJETUVsWnZtR1o0WnA5?=
- =?utf-8?B?dWg2U1lIQ3ZrbjEzRVJJbFZvSDlLbHEyWjc4b3dVMTVOak1rWVVmK1hGd3Vl?=
- =?utf-8?B?UzY3UitoeXV6c1dxL1N5b3htSzRxWGQxMmR6UzI0L1RaV3VPdmlSVWM5b2Nw?=
- =?utf-8?B?MWZlcmVkajBiditzRldoS1IwSHVhaXhvcGdpNTI1ZUozRENJK21BTE15dG1o?=
- =?utf-8?B?VHZvekVXV2dIdFdGUitOc1JFdFo4NjRjeW9EeGFzY3FrTmtHMkNsZTk1QVBn?=
- =?utf-8?B?c2JYbTV1VlVyaEVEZnZVZHdnYWNIU2hNNVg0UlI0STFKbVhOR3RMYjUyNElP?=
- =?utf-8?B?NjVkQWNlRUU2aE8yM29BbWg5UWpJS2FCTGwzUFpLWmxMV3ZxTmp4MUJGNE5S?=
- =?utf-8?Q?lOMZYe?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(36860700013)(1800799024)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2025 23:13:52.5255
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c2af85a4-cb8f-4745-7e72-08de052e03f0
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002636A.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4440
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <304df1ad1e8180e102c4d6931733bcc77774eb9e.1759510072.git.zhengqi.arch@bytedance.com>
+X-Migadu-Flow: FLOW_OUT
 
-The issue was observed during testing on systems with multiple resctrl
-domains, where tasks were dynamically moved between domains.
+On Sat, Oct 04, 2025 at 12:53:17AM +0800, Qi Zheng wrote:
+> From: Muchun Song <songmuchun@bytedance.com>
+> 
+> The maintenance of the folio->_deferred_list is intricate because it's
+> reused in a local list.
+> 
+> Here are some peculiarities:
+> 
+>    1) When a folio is removed from its split queue and added to a local
+>       on-stack list in deferred_split_scan(), the ->split_queue_len isn't
+>       updated, leading to an inconsistency between it and the actual
+>       number of folios in the split queue.
+> 
+>    2) When the folio is split via split_folio() later, it's removed from
+>       the local list while holding the split queue lock. At this time,
+>       this lock protects the local list, not the split queue.
 
-Users can create as many monitoring groups as the number of RMIDs supported
-by the hardware. However, on AMD systems, only a limited number of RMIDs
-are guaranteed to be actively tracked by the hardware. RMIDs that exceed
-this limit are placed in an "Unavailable" state.
+I think the above text needs some massaging. Rather than saying lock
+protects the local list, I think, it would be better to say that the
+lock is not needed as it is not protecting anything.
 
-When an RMID transitions from "Unavailable" back to active, the hardware
-sets the IA32_QM_CTR.Unavailable (bit 62) on the first read from
-MSR_IA32_QM_CTR. This indicates that the RMID was not previously tracked.
-Once the hardware begins tracking the RMID, subsequent reads from that RMID
-will have the Unavailable bit cleared, as long as it remains tracked.
+> 
+>    3) To handle the race condition with a third-party freeing or migrating
+>       the preceding folio, we must ensure there's always one safe (with
+>       raised refcount) folio before by delaying its folio_put(). More
+>       details can be found in commit e66f3185fa04 ("mm/thp: fix deferred
+>       split queue not partially_mapped"). It's rather tricky.
+> 
+> We can use the folio_batch infrastructure to handle this clearly. In this
+> case, ->split_queue_len will be consistent with the real number of folios
+> in the split queue. If list_empty(&folio->_deferred_list) returns false,
+> it's clear the folio must be in its split queue (not in a local list
+> anymore).
+> 
+> In the future, we will reparent LRU folios during memcg offline to
+> eliminate dying memory cgroups, which requires reparenting the split queue
+> to its parent first. So this patch prepares for using
+> folio_split_queue_lock_irqsave() as the memcg may change then.
+> 
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+> Reviewed-by: Zi Yan <ziy@nvidia.com>
+> Acked-by: David Hildenbrand <david@redhat.com>
 
-Problem scenario:
-1. The resctrl filesystem is mounted, and a task is assigned to a
-   monitoring group.
+One nit below.
 
-   $mount -t resctrl resctr /sys/fs/resctrl
-   $mkdir /sys/fs/resctr/mon_groups/test1
-   $echo 1234 > /sys/fs/resctrl/mon_groups/test1/tasks
+Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
 
-   $cat /sys/fs/resctrl/mon_groups/test1/mon_data/l3_mon_*/mbm_total_bytes
-   21323            <- Total bytes on domain 0
-   "Unavailable"    <- Total bytes on domain 1
+> ---
+>  mm/huge_memory.c | 85 ++++++++++++++++++++++--------------------------
+>  1 file changed, 39 insertions(+), 46 deletions(-)
+> 
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 134666503440d..59ddebc9f3232 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -3782,21 +3782,22 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
+>  		struct lruvec *lruvec;
+>  		int expected_refs;
+>  
+> -		if (folio_order(folio) > 1 &&
+> -		    !list_empty(&folio->_deferred_list)) {
+> -			ds_queue->split_queue_len--;
+> +		if (folio_order(folio) > 1) {
+> +			if (!list_empty(&folio->_deferred_list)) {
+> +				ds_queue->split_queue_len--;
+> +				/*
+> +				 * Reinitialize page_deferred_list after removing the
+> +				 * page from the split_queue, otherwise a subsequent
+> +				 * split will see list corruption when checking the
+> +				 * page_deferred_list.
+> +				 */
+> +				list_del_init(&folio->_deferred_list);
+> +			}
+>  			if (folio_test_partially_mapped(folio)) {
+>  				folio_clear_partially_mapped(folio);
+>  				mod_mthp_stat(folio_order(folio),
+>  					      MTHP_STAT_NR_ANON_PARTIALLY_MAPPED, -1);
+>  			}
+> -			/*
+> -			 * Reinitialize page_deferred_list after removing the
+> -			 * page from the split_queue, otherwise a subsequent
+> -			 * split will see list corruption when checking the
+> -			 * page_deferred_list.
+> -			 */
+> -			list_del_init(&folio->_deferred_list);
+>  		}
+>  		split_queue_unlock(ds_queue);
+>  		if (mapping) {
+> @@ -4185,35 +4186,40 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
+>  {
+>  	struct deferred_split *ds_queue;
+>  	unsigned long flags;
+> -	LIST_HEAD(list);
+> -	struct folio *folio, *next, *prev = NULL;
+> -	int split = 0, removed = 0;
+> +	struct folio *folio, *next;
+> +	int split = 0, i;
+> +	struct folio_batch fbatch;
+>  
+> +	folio_batch_init(&fbatch);
+> +
+> +retry:
+>  	ds_queue = split_queue_lock_irqsave(sc->nid, sc->memcg, &flags);
+>  	/* Take pin on all head pages to avoid freeing them under us */
+>  	list_for_each_entry_safe(folio, next, &ds_queue->split_queue,
+>  							_deferred_list) {
+>  		if (folio_try_get(folio)) {
+> -			list_move(&folio->_deferred_list, &list);
+> -		} else {
+> +			folio_batch_add(&fbatch, folio);
+> +		} else if (folio_test_partially_mapped(folio)) {
+>  			/* We lost race with folio_put() */
+> -			if (folio_test_partially_mapped(folio)) {
+> -				folio_clear_partially_mapped(folio);
+> -				mod_mthp_stat(folio_order(folio),
+> -					      MTHP_STAT_NR_ANON_PARTIALLY_MAPPED, -1);
+> -			}
+> -			list_del_init(&folio->_deferred_list);
+> -			ds_queue->split_queue_len--;
+> +			folio_clear_partially_mapped(folio);
+> +			mod_mthp_stat(folio_order(folio),
+> +				      MTHP_STAT_NR_ANON_PARTIALLY_MAPPED, -1);
+>  		}
+> +		list_del_init(&folio->_deferred_list);
+> +		ds_queue->split_queue_len--;
+>  		if (!--sc->nr_to_scan)
+>  			break;
+> +		if (!folio_batch_space(&fbatch))
+> +			break;
+>  	}
+>  	split_queue_unlock_irqrestore(ds_queue, flags);
+>  
+> -	list_for_each_entry_safe(folio, next, &list, _deferred_list) {
+> +	for (i = 0; i < folio_batch_count(&fbatch); i++) {
+>  		bool did_split = false;
+>  		bool underused = false;
+> +		struct deferred_split *fqueue;
+>  
+> +		folio = fbatch.folios[i];
+>  		if (!folio_test_partially_mapped(folio)) {
+>  			/*
+>  			 * See try_to_map_unused_to_zeropage(): we cannot
+> @@ -4236,38 +4242,25 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
+>  		}
+>  		folio_unlock(folio);
+>  next:
+> +		if (did_split || !folio_test_partially_mapped(folio))
+> +			continue;
+>  		/*
+> -		 * split_folio() removes folio from list on success.
+>  		 * Only add back to the queue if folio is partially mapped.
+>  		 * If thp_underused returns false, or if split_folio fails
+>  		 * in the case it was underused, then consider it used and
+>  		 * don't add it back to split_queue.
+>  		 */
+> -		if (did_split) {
+> -			; /* folio already removed from list */
+> -		} else if (!folio_test_partially_mapped(folio)) {
+> -			list_del_init(&folio->_deferred_list);
+> -			removed++;
+> -		} else {
+> -			/*
+> -			 * That unlocked list_del_init() above would be unsafe,
+> -			 * unless its folio is separated from any earlier folios
+> -			 * left on the list (which may be concurrently unqueued)
+> -			 * by one safe folio with refcount still raised.
+> -			 */
+> -			swap(folio, prev);
+> +		fqueue = folio_split_queue_lock_irqsave(folio, &flags);
+> +		if (list_empty(&folio->_deferred_list)) {
+> +			list_add_tail(&folio->_deferred_list, &fqueue->split_queue);
+> +			fqueue->split_queue_len++;
+>  		}
+> -		if (folio)
+> -			folio_put(folio);
+> +		split_queue_unlock_irqrestore(fqueue, flags);
 
-   Task is running on domain 0. Counter on domain 1 is "Unavailable".
+Is it possible to move this lock/list_add/unlock code chunk out of loop
+and before the folios_put(). I think it would be possible if you tag the
+corresponding index or have a separate bool array. It is also reasonable
+to claim that the contention of this lock is not a concern for now.
 
-2. The task runs on domain 0 for a while and then moves to domain 1. The
-   counter starts incrementing on domain 1.
-
-   $cat /sys/fs/resctrl/mon_groups/mon_data/l3_mon_*/mbm_total_bytes
-   7345357          <- Total bytes on domain 0
-   4545             <- Total bytes on domain 1
-
-
-3. At some point, the RMID in domain 0 transitions to the "Unavailable"
-   state because the task is no longer executing in that domain.
-
-   $cat /sys/fs/resctrl/mon_groups/mon_data/l3_mon_*/mbm_total_bytes
-   "Unavailable"    <- Total bytes on domain 0
-   434341           <- Total bytes on domain 1
-
-4.  Since the task continues to migrate between domains, it may eventually
-    return to domain 0.
-
-    $cat /sys/fs/resctrl/mon_groups/mon_data/l3_mon_*/mbm_total_bytes
-    17592178699059  <- Overflow on domain 0
-    3232332         <- Total bytes on domain 1
-
-    Because the RMID transitions from the “Unavailable” state to the
-    active state, the first read sets IA32_QM_CTR.Unavailable (bit 62).
-    The following read starts counting from zero, which can be lower than
-    the previously saved MSR value (7345357). Consequently, the kernel’s
-    overflow logic is triggered—it compares the previous value (7345357)
-    with the new, smaller value and mistakenly interprets this as a counter
-    overflow, adding a large delta. In reality, this is a false positive:
-    the counter didn’t overflow but was simply reset when the RMID
-    transitioned from “Unavailable” back to active.
-
-Fix the issue by resetting the prev_msr value to zero when hardware
-returns IA32_QM_CTR.Unavailable (bit 62) when the RMID becomes active from
-"Unavailable".
-
-Here is the text from APM [1].
-
-"In PQOS Version 2.0 or higher, the MBM hardware will set the U bit on the
-first QM_CTR read when it begins tracking an RMID that it was not
-previously tracking. The U bit will be zero for all subsequent reads from
-that RMID while it is still tracked by the hardware. Therefore, a QM_CTR
-read with the U bit set when that RMID is in use by a processor can be
-considered 0 when calculating the difference with a subsequent read."
-
-The details are documented in APM [1] available from [2].
-[1] AMD64 Architecture Programmer's Manual Volume 2: System Programming
-Publication # 24593 Revision 3.41 section 19.3.3 Monitoring L3 Memory
-Bandwidth (MBM).
-
-Signed-off-by: Babu Moger <babu.moger@amd.com>
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537 # [2]
----
-
-Tested this on multiple AMD systems, but not on Intel systems.
-Need help with that. If everything goes well, this patch needs to
-go to all the stable kernels.
----
- arch/x86/kernel/cpu/resctrl/monitor.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-index c8945610d455..a685370dd160 100644
---- a/arch/x86/kernel/cpu/resctrl/monitor.c
-+++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-@@ -242,7 +242,9 @@ int resctrl_arch_rmid_read(struct rdt_resource *r, struct rdt_mon_domain *d,
- 			   u32 unused, u32 rmid, enum resctrl_event_id eventid,
- 			   u64 *val, void *ignored)
- {
-+	struct rdt_hw_mon_domain *hw_dom = resctrl_to_arch_mon_dom(d);
- 	int cpu = cpumask_any(&d->hdr.cpu_mask);
-+	struct arch_mbm_state *am;
- 	u64 msr_val;
- 	u32 prmid;
- 	int ret;
-@@ -251,12 +253,21 @@ int resctrl_arch_rmid_read(struct rdt_resource *r, struct rdt_mon_domain *d,
- 
- 	prmid = logical_rmid_to_physical_rmid(cpu, rmid);
- 	ret = __rmid_read_phys(prmid, eventid, &msr_val);
--	if (ret)
--		return ret;
- 
--	*val = get_corrected_val(r, d, rmid, eventid, msr_val);
-+	switch (ret) {
-+	case 0:
-+		*val = get_corrected_val(r, d, rmid, eventid, msr_val);
-+		break;
-+	case -EINVAL:
-+		am = get_arch_mbm_state(hw_dom, rmid, eventid);
-+		if (am)
-+			am->prev_msr = 0;
-+		break;
-+	default:
-+		break;
-+	}
- 
--	return 0;
-+	return ret;
- }
- 
- static int __cntr_id_read(u32 cntr_id, u64 *val)
--- 
-2.34.1
-
+>  	}
+> +	folios_put(&fbatch);
+>  
+> -	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
+> -	list_splice_tail(&list, &ds_queue->split_queue);
+> -	ds_queue->split_queue_len -= removed;
+> -	spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
+> -
+> -	if (prev)
+> -		folio_put(prev);
+> +	if (sc->nr_to_scan)
+> +		goto retry;
+>  
+>  	/*
+>  	 * Stop shrinker if we didn't split any page, but the queue is empty.
+> -- 
+> 2.20.1
+> 
 
