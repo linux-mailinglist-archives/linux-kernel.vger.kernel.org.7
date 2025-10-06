@@ -1,168 +1,164 @@
-Return-Path: <linux-kernel+bounces-842681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA57ABBD486
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 09:56:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83A47BBD4B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 10:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BE62B4E860D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 07:56:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B5291894288
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 08:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408F525A2BB;
-	Mon,  6 Oct 2025 07:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD0E194A44;
+	Mon,  6 Oct 2025 08:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="F4D8FWIX"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="GSxlFAB2"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AEC01339A4
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 07:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00AC520311
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 08:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759737372; cv=none; b=GqXxyDFPvXtOEs4JGjA3/pAO5+eFVk96gVYgsUHalbhcmwtz4bV3eGLdI7yXtaVfOqG9Q9CahOe3lJA0YCL9zrH6MFCjYiTubQM1BIX3jbZdYk0M0lFr8w/VOO2JgfmP5gTjpjaUeCF7LF8tJ0Fa6q7wdg/nfKRbRbd+4eLfGOk=
+	t=1759737651; cv=none; b=tHQ1z8PqtguSolyQ8IL8Uj8+nm/1Qnz458obHtuIoHghoAhgCPu9e86+2+39KoQQdK67vim2+qY+Vm50rhVntE4QThSAQ7ompscUqrv4nf2f4rW5k3MUdblVhdsFT0Zq+OZ7m9aqMIX4f25+0CypfVuPkh/4qdSK/o8PRBYKb8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759737372; c=relaxed/simple;
-	bh=FtIZ4ntxfc9NNJw+ZLAatKDq+b4NcVohslCudhSyBV0=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=lLxdn0FI0pTrqgd2Au2nbc+ndysfMjldb8S84M46rKW9GWx/qeQzmCtjIftQN1Qv0HTZY7ekZY46ClOXLsf0Imud/FsAp2+aeQNTzK+Ru5spoth/G9MXD6D/AfO6kFKsFbT9Zyo/vpecQKk+tOinCcBlyqM5XQjmU2n139F1IVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=F4D8FWIX; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20251006075605epoutp04ce7295324b40b7735378eabee74a27f6~r189te9CB2584625846epoutp04S
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 07:56:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20251006075605epoutp04ce7295324b40b7735378eabee74a27f6~r189te9CB2584625846epoutp04S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1759737365;
-	bh=y3jKOu9b+P0Ih93AICIcneY/oMkTMn7T+Krlp2E8KKA=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=F4D8FWIXj/ijjKU7Fj+GximToN7e4DiY0q0oKVkmyNh3sFfuzgBLg+3Fwv+21A/8g
-	 l3QSx0pmM3KxioyAccJ3TErPRfOO98ZbHkYNsdQP+2SSnkZNlnjjfqFwc9jMx9W2b/
-	 JWACmnEZu08FxzRSomen6pSfhzB+UlIKrNMSy6as=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20251006075604epcas5p2340605e3e9393140844ab163feb26c00~r189NvSTp1431114311epcas5p24;
-	Mon,  6 Oct 2025 07:56:04 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.94]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4cgBR75fF4z3hhT3; Mon,  6 Oct
-	2025 07:56:03 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20251006075603epcas5p1b56873cad2f305bcdee52ea7c550529f~r187tLzhK0791807918epcas5p1R;
-	Mon,  6 Oct 2025 07:56:03 +0000 (GMT)
-Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20251006075600epsmtip20e24c5f8001f5c1fad71053ea9c0d0e8~r1842CSE20799907999epsmtip2K;
-	Mon,  6 Oct 2025 07:55:59 +0000 (GMT)
-From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
-To: "'Alim Akhtar'" <alim.akhtar@samsung.com>, <vkoul@kernel.org>,
-	<kishon@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <andre.draszik@linaro.org>,
-	<peter.griffin@linaro.org>, <kauschluss@disroot.org>,
-	<ivo.ivanov.ivanov1@gmail.com>, <igor.belwon@mentallysanemainliners.org>,
-	<m.szyprowski@samsung.com>, <s.nawrocki@samsung.com>
-Cc: <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <rosa.pila@samsung.com>,
-	<dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
-	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
-In-Reply-To: <001301dc310c$b7a78550$26f68ff0$@samsung.com>
-Subject: RE: [PATCH v8 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 HS phy compatible
-Date: Mon, 6 Oct 2025 13:25:58 +0530
-Message-ID: <000001dc3696$a97bcf10$fc736d30$@samsung.com>
+	s=arc-20240116; t=1759737651; c=relaxed/simple;
+	bh=2TRhewersXLQSe/faV+uP8FY2DQ0QQvMuw4x6eI2VMU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=No3mIR4mxacNQLpIl6deCU7PQ+g1hqOTJIEjHvWfZo+5Ivcv5f6e2UR8Q249rp1otRmyKh/7apsv+asNM6/7UxiAWjlx+oJDaa+qkeu7Qq30W3gqter1sCa19V3OrLoYoER33+p0kzbyJtcbksL9LQl3+cBTMKkUXcSojihnqEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=GSxlFAB2; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
+Message-ID: <017ff8df-511c-4da8-b3cf-edf2cb7f1a67@packett.cool>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
+	s=key1; t=1759737637;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s7dps9P76y2H58QBWu1IadoGY1ktF9fh7Xpe5B4p8lQ=;
+	b=GSxlFAB2fPvHLfTS3TqVVtRq7t0hYvtzYAvc0jy9NKhLH/+xb3wwVtZD4THRJESE2TE36G
+	yZi5hRot19A/C/5sUkDYKWLmgpm7nIBLVliTWrIUrkG6pfSazQ7GKxZ9juKHwHD1c7qZMd
+	WbnmOn9J785OQyWIfaDV8vXukBFB1tKES8o/JnU8N8fIMji/eOz2CFhZOSp0vNvEEfFAru
+	e5IvitysTkFh6xsQUSSeIw3IECLsrCqWwJAXk3bp5sVgd+hsR9dmlXLGKvtcp1h3jlArpS
+	2BNmiv/pgi3YW76KLlQz67X2MHXtX6ztXtAgmU1dgtBzGfj+3nz2npl7ocy4fA==
+Date: Mon, 6 Oct 2025 05:00:25 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIRMOVGdWg5oRjNsRBgEjzIeIB8IgGabj6EAmTXuDcDLshEdrQRTsmg
-Content-Language: en-in
-X-CMS-MailID: 20251006075603epcas5p1b56873cad2f305bcdee52ea7c550529f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250903072936epcas5p4a28d0e63c7f0792b516b0cbc68bf3a8e
-References: <20250903073827.3015662-1-pritam.sutar@samsung.com>
-	<CGME20250903072936epcas5p4a28d0e63c7f0792b516b0cbc68bf3a8e@epcas5p4.samsung.com>
-	<20250903073827.3015662-2-pritam.sutar@samsung.com>
-	<001301dc310c$b7a78550$26f68ff0$@samsung.com>
+Subject: Re: [PATCH 1/2] PCI: Setup bridge resources earlier
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ linux-kernel@vger.kernel.org
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>
+References: <20250924134228.1663-1-ilpo.jarvinen@linux.intel.com>
+ <20250924134228.1663-2-ilpo.jarvinen@linux.intel.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Val Packett <val@packett.cool>
+In-Reply-To: <20250924134228.1663-2-ilpo.jarvinen@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
+
+Hi,
+
+On 9/24/25 10:42 AM, Ilpo Järvinen wrote:
+> Bridge windows are read twice from PCI Config Space, the first read is
+> made from pci_read_bridge_windows() which does not setup the device's
+> resources. It causes problems down the road as child resources of the
+> bridge cannot check whether they reside within the bridge window or
+> not.
+>
+> Setup the bridge windows already in pci_read_bridge_windows().
+>
+> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+
+Looks like this change has broken the WiFi (but not NVMe) on my 
+Snapdragon X1E laptop (Latitude 7455):
+
+qcom-pcie 1c08000.pci: PCI host bridge to bus 0004:00
+pci_bus 0004:00: root bus resource [bus 00-ff]
+pci_bus 0004:00: root bus resource [io  0x100000-0x1fffff] (bus address 
+[0x0000-0xfffff])
+pci_bus 0004:00: root bus resource [mem 0x7c300000-0x7dffffff]
+pci 0004:00:00.0: [17cb:0111] type 01 class 0x060400 PCIe Root Port
+pci 0004:00:00.0: BAR 0 [mem 0x00000000-0x00000fff]
+pci 0004:00:00.0: PCI bridge to [bus 01-ff]
+pci 0004:00:00.0:   bridge window [io  0x100000-0x100fff]
+pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
+pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
+pci 0004:00:00.0: PME# supported from D0 D3hot D3cold
+pci 0004:00:00.0: bridge window [mem 0x7c300000-0x7c3fffff]: assigned
+pci 0004:00:00.0: bridge window [mem 0x7c400000-0x7c4fffff 64bit pref]: 
+assigned
+pci 0004:00:00.0: BAR 0 [mem 0x7c500000-0x7c500fff]: assigned
+pci 0004:00:00.0: bridge window [io  0x100000-0x100fff]: assigned
+pci 0004:00:00.0: PCI bridge to [bus 01-ff]
+pci 0004:00:00.0:   bridge window [io  0x100000-0x100fff]
+pci 0004:00:00.0:   bridge window [mem 0x7c300000-0x7c3fffff]
+pci 0004:00:00.0:   bridge window [mem 0x7c400000-0x7c4fffff 64bit pref]
+pci_bus 0004:00: resource 4 [io  0x100000-0x1fffff]
+pci_bus 0004:00: resource 5 [mem 0x7c300000-0x7dffffff]
+pci_bus 0004:01: resource 0 [io  0x100000-0x100fff]
+pci_bus 0004:01: resource 1 [mem 0x7c300000-0x7c3fffff]
+pci_bus 0004:01: resource 2 [mem 0x7c400000-0x7c4fffff 64bit pref]
+pcieport 0004:00:00.0: PME: Signaling with IRQ 186
+pcieport 0004:00:00.0: AER: enabled with IRQ 186
+pci 0004:01:00.0: [17cb:1107] type 00 class 0x028000 PCIe Endpoint
+pci 0004:01:00.0: BAR 0 [mem 0x00000000-0x001fffff 64bit]
+pci 0004:01:00.0: PME# supported from D0 D3hot D3cold
+pci 0004:01:00.0: BAR 0 [mem size 0x00200000 64bit]: can't assign; no space
+pci 0004:01:00.0: BAR 0 [mem size 0x00200000 64bit]: failed to assign
+pci 0004:01:00.0: BAR 0 [mem size 0x00200000 64bit]: can't assign; no space
+pci 0004:01:00.0: BAR 0 [mem size 0x00200000 64bit]: failed to assign
+ath12k_pci 0004:01:00.0: BAR 0 [??? 0x00000000 flags 0x20000000]: can't 
+assign; bogus alignment
+ath12k_pci 0004:01:00.0: failed to assign pci resource: -22
+ath12k_pci 0004:01:00.0: failed to claim device: -22
+ath12k_pci 0004:01:00.0: probe with driver ath12k_pci failed with error -22
 
 
-=20
-> -----Original Message-----
-> From: Alim Akhtar <alim.akhtar=40samsung.com>
-> Sent: 29 September 2025 12:16 PM
-> To: 'Pritam Manohar Sutar' <pritam.sutar=40samsung.com>; vkoul=40kernel.o=
-rg;
-> kishon=40kernel.org; robh=40kernel.org; krzk+dt=40kernel.org;
-> conor+dt=40kernel.org; andre.draszik=40linaro.org; peter.griffin=40linaro=
-.org;
-> kauschluss=40disroot.org; ivo.ivanov.ivanov1=40gmail.com;
-> igor.belwon=40mentallysanemainliners.org; m.szyprowski=40samsung.com;
-> s.nawrocki=40samsung.com
-> Cc: linux-phy=40lists.infradead.org; devicetree=40vger.kernel.org; linux-
-> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-s=
-amsung-
-> soc=40vger.kernel.org; rosa.pila=40samsung.com; dev.tailor=40samsung.com;
-> faraz.ata=40samsung.com; muhammed.ali=40samsung.com;
-> selvarasu.g=40samsung.com
-> Subject: RE: =5BPATCH v8 1/6=5D dt-bindings: phy: samsung,usb3-drd-phy: a=
-dd
-> ExynosAutov920 HS phy compatible
->=20
-> Hi Pritam
->=20
-> > -----Original Message-----
-> > From: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
-> > Sent: Wednesday, September 3, 2025 1:08 PM
-> > To: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
-> > krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com;
-> > andre.draszik=40linaro.org; peter.griffin=40linaro.org;
-> > kauschluss=40disroot.org; ivo.ivanov.ivanov1=40gmail.com;
-> > igor.belwon=40mentallysanemainliners.org;
-> > m.szyprowski=40samsung.com; s.nawrocki=40samsung.com;
-> > pritam.sutar=40samsung.com
-> > Cc: linux-phy=40lists.infradead.org; devicetree=40vger.kernel.org; linu=
-x-
-> > kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux=
--
-> > samsung-soc=40vger.kernel.org; rosa.pila=40samsung.com;
-> > dev.tailor=40samsung.com; faraz.ata=40samsung.com;
-> > muhammed.ali=40samsung.com; selvarasu.g=40samsung.com
-> > Subject: =5BPATCH v8 1/6=5D dt-bindings: phy: samsung,usb3-drd-phy: add
-> > ExynosAutov920 HS phy compatible
-> >
-> > Document support for the USB20 phy found on the ExynosAutov920 SoC.
-> > The
-> > USB20 phy is functionally identical to that on the Exynos850 SoC, so
-> > no driver changes are needed to support this phy. However, add a
-> > dedicated compatible string for USB20 phy found in this SoC.
-> >
-> > Signed-off-by: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
-> > ---
-> Reviewed-by: Alim Akhtar <alim.akhtar=40samsung.com>
+For comparison, with this change reverted it works again:
 
-Hi Alim,
-Thank you for RB tag.
+qcom-pcie 1c08000.pci: PCI host bridge to bus 0004:00
+pci_bus 0004:00: root bus resource [bus 00-ff]
+pci_bus 0004:00: root bus resource [io  0x0000-0xfffff]
+pci_bus 0004:00: root bus resource [mem 0x7c300000-0x7dffffff]
+pci 0004:00:00.0: [17cb:0111] type 01 class 0x060400 PCIe Root Port
+pci 0004:00:00.0: BAR 0 [mem 0x00000000-0x00000fff]
+pci 0004:00:00.0: PCI bridge to [bus 01-ff]
+pci 0004:00:00.0:   bridge window [io  0x0000-0x0fff]
+pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
+pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
+pci 0004:00:00.0: PME# supported from D0 D3hot D3cold
+pci 0004:00:00.0: BAR 0 [mem 0x7c300000-0x7c300fff]: assigned
+pci 0004:00:00.0: PCI bridge to [bus 01-ff]
+pci_bus 0004:00: resource 4 [io  0x0000-0xfffff]
+pci_bus 0004:00: resource 5 [mem 0x7c300000-0x7dffffff]
+pcieport 0004:00:00.0: PME: Signaling with IRQ 195
+pcieport 0004:00:00.0: AER: enabled with IRQ 195
+pci 0004:01:00.0: [17cb:1107] type 00 class 0x028000 PCIe Endpoint
+pci 0004:01:00.0: BAR 0 [mem 0x00000000-0x001fffff 64bit]
+pci 0004:01:00.0: PME# supported from D0 D3hot D3cold
+pci 0004:01:00.0: ASPM: DT platform, enabling L0s-up L0s-dw L1 ASPM-L1.1 
+ASPM-L1.2 PCI-PM-L1.1 PCI-PM-L1.2
+pci 0004:01:00.0: ASPM: DT platform, enabling ClockPM
+pcieport 0004:00:00.0: bridge window [mem 0x7c400000-0x7c5fffff]: assigned
+pci 0004:01:00.0: BAR 0 [mem 0x7c400000-0x7c5fffff 64bit]: assigned
+ath12k_pci 0004:01:00.0: BAR 0 [mem 0x7c400000-0x7c5fffff 64bit]: assigned
+ath12k_pci 0004:01:00.0: enabling device (0000 -> 0002)
+ath12k_pci 0004:01:00.0: MSI vectors: 16
+ath12k_pci 0004:01:00.0: Hardware name: wcn7850 hw2.0
 
-Hi Vinod,=20
-Addressed comments on phy drivers those were given in patch-set v5.=20
-Can you please check and let me know if any other comments?=20
+Not quite sure what's going on with these windows..
 
-Hi Krzysztof,=20
-Please let me know if you want me send v9 by retaining  your RB on=20
-patch1 and patch3? Also do let me know if any other concerns need=20
-to be addressed?
-
-Regards,
-Pritam
+~val
 
 
