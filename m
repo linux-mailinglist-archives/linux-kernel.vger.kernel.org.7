@@ -1,192 +1,160 @@
-Return-Path: <linux-kernel+bounces-843170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88EF7BBE8E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:55:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57A92BBE8F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:55:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 495634E851C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:55:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 353D74E8C0F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720E02D8DC4;
-	Mon,  6 Oct 2025 15:55:22 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016BA2D9494;
+	Mon,  6 Oct 2025 15:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="llB2pjvr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664282D2488
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 15:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5535E2641C6;
+	Mon,  6 Oct 2025 15:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759766122; cv=none; b=i6Y0nAqTQYNrJt6sPks+mfqvtL/zOy5MgdOj799KIdoFw/n9DkCd0a2eZWII/cDrtLvgo41vUrmEBvLMEoRTt2+JqxDAV9Td+0/5npYIL6/r2Yj21qI13iBrWYLpdsqTB4WuYXolBxZb/iFqMrL6vU5zLVVDhk95MG0bqsPVGSY=
+	t=1759766150; cv=none; b=mvJBDslTaikZhvfTRe7ER3YbUZ2XAwcPzLVDGMD51S3xdKbTUqbbzZnMBMG7e32CA1IUrhpXqqaggDu7Sw1sy5yCYTMn1zQrwnx11YI0k2k2d+7oBaBnzzhuBXZTLrob2eDSyi5pO06eREjEOJKtbm+m4vDVBUJPyJ4xJShLfA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759766122; c=relaxed/simple;
-	bh=y6HUfXDXIGn7AC+u25PWmRV83hvC0ZHZo1HMmuPyFHE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uuCbktxKhIOv8/Nw/GF/I+GzuPoi/gLy4VyrshVnmkKEYFCOd6In8E4w5XYA57nH7YXY840wRcH/O84hKlgSka1HI5emb8U/KjUpCuzvAvIAnuBK2bvJjcYmO8wfVZUj27OS6RZDk3kScZtuneHn/wccTSsuNDuff6TjzbIIjwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v5nYI-0004ze-Ch; Mon, 06 Oct 2025 17:55:06 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v5nYH-002FtQ-1w;
-	Mon, 06 Oct 2025 17:55:05 +0200
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v5nYH-00000000Cha-2AUn;
-	Mon, 06 Oct 2025 17:55:05 +0200
-Message-ID: <e6a120d4ada6d032f69812f14a7e794ac1796a85.camel@pengutronix.de>
-Subject: Re: [PATCH 9/9] reset: gpio: use software nodes to setup the GPIO
- lookup
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij	
- <linus.walleij@linaro.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>,  Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus	
- <sakari.ailus@linux.intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki"	 <rafael@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>, Krzysztof Kozlowski	 <krzk@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, Bartosz Golaszewski
- <bartosz.golaszewski@linaro.org>
-Date: Mon, 06 Oct 2025 17:55:05 +0200
-In-Reply-To: <20251006-reset-gpios-swnodes-v1-9-6d3325b9af42@linaro.org>
-References: <20251006-reset-gpios-swnodes-v1-0-6d3325b9af42@linaro.org>
-	 <20251006-reset-gpios-swnodes-v1-9-6d3325b9af42@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1759766150; c=relaxed/simple;
+	bh=PNewJkNL6CSZlcvcVRzdF4vG0QntxYg8acRL1wWz8xQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e0g/qfGxwrah+d501jjk3NHYWLBqwCooPK/E4Oo6yUQ4FGlCtJm7mj1ol8Jg7UYEkHsx+luLPYyJz36sDH4jUbcauE30Rsf03Ol77Zq5ZlLa/KbRVvDA3f4sDKsO8NswF+YcTRnd6FDMfa83YMjxYzSoX3SbLgnhEbqrqtNqsLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=llB2pjvr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF5F2C4CEF5;
+	Mon,  6 Oct 2025 15:55:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759766149;
+	bh=PNewJkNL6CSZlcvcVRzdF4vG0QntxYg8acRL1wWz8xQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=llB2pjvrsfAQsrqHn6tONxtl59AYRr+QlQq0ELqOELOEZyntMxjcpFMmkvl4KBGSB
+	 7dvb5gB33pbJd9n3W7WBc12p+LFft9mgaeN9cz5ue6V6v2mZhiKxMRQNPDnFVZznCd
+	 I2mPvizxGNY/GOabl2Aq7QrrBeaqQdFkkcrsogpLWyFxg1ynh9AlJdO/Akalb08deV
+	 8gHGQf1MoH00M/m6l0xJ5ruejk27SCdDvq2GZRScYVk3C2JvKYQvdeTOfsaagkSVgl
+	 oZQvtjHABSDDctU2eG7cNU/i3mCxW3PbfdEiw2qGs0yECldiVnjAK1otZscPZKHcvj
+	 /Vd5kyZJKVisg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1v5nYx-0000000BtEa-23VH;
+	Mon, 06 Oct 2025 15:55:47 +0000
+Date: Mon, 06 Oct 2025 16:55:47 +0100
+Message-ID: <865xcsyqgs.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Maulik Shah <quic_mkshah@quicinc.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] arm64: smp: Implement cpus_has_pending_ipi()
+In-Reply-To: <20251003150251.520624-3-ulf.hansson@linaro.org>
+References: <20251003150251.520624-1-ulf.hansson@linaro.org>
+	<20251003150251.520624-3-ulf.hansson@linaro.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: ulf.hansson@linaro.org, rafael@kernel.org, catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com, tglx@linutronix.de, quic_mkshah@quicinc.com, sudeep.holla@arm.com, daniel.lezcano@linaro.org, vincent.guittot@linaro.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mo, 2025-10-06 at 15:00 +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->=20
-> GPIO machine lookup is a nice mechanism for associating GPIOs with
-> consumers if we don't know what kind of device the GPIO provider is or
-> when it will become available. However in the case of the reset-gpio, we
-> are already holding a reference to the device and so can reference its
-> firmware node. Let's setup a software node that references the relevant
-> GPIO and attach it to the auxiliary device we're creating.
->=20
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Fri, 03 Oct 2025 16:02:44 +0100,
+Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> 
+> To add support for keeping track of whether there may be a pending IPI
+> scheduled for a CPU or a group of CPUs, let's implement
+> cpus_has_pending_ipi() for arm64.
+> 
+> Note, the implementation is intentionally lightweight and doesn't use any
+> additional lock. This is good enough for cpuidle based decisions.
+> 
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 > ---
->  drivers/reset/core.c | 132 ++++++++++++++++++++++++++++++---------------=
-------
->  1 file changed, 78 insertions(+), 54 deletions(-)
->=20
-> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> index c9f13020ca3a7b9273488497a7d4240d0af762b0..b3e6ba7a9c3d756d2e30dc20e=
-dda9c02b624aefd 100644
-> --- a/drivers/reset/core.c
-> +++ b/drivers/reset/core.c
-[...]
-> @@ -849,52 +852,45 @@ static void __reset_control_put_internal(struct res=
-et_control *rstc)
->  	kref_put(&rstc->refcnt, __reset_control_release);
+>  arch/arm64/kernel/smp.c | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+> index 68cea3a4a35c..dd1acfa91d44 100644
+> --- a/arch/arm64/kernel/smp.c
+> +++ b/arch/arm64/kernel/smp.c
+> @@ -55,6 +55,8 @@
+>  
+>  #include <trace/events/ipi.h>
+>  
+> +static DEFINE_PER_CPU(bool, pending_ipi);
+> +
+>  /*
+>   * as from 2.5, kernels no longer have an init_tasks structure
+>   * so we need some other way of telling a new secondary core
+> @@ -1012,6 +1014,8 @@ static void do_handle_IPI(int ipinr)
+>  
+>  	if ((unsigned)ipinr < NR_IPI)
+>  		trace_ipi_exit(ipi_types[ipinr]);
+> +
+> +	per_cpu(pending_ipi, cpu) = false;
 >  }
-> =20
-> -static int __reset_add_reset_gpio_lookup(struct gpio_device *gdev, int i=
-d,
-> -					 struct device_node *np,
-> -					 unsigned int gpio,
-> -					 unsigned int of_flags)
-> +static void reset_aux_device_release(struct device *dev)
-
-static void reset_gpio_aux_device_release(struct device *dev)
-
-[...]
-> @@ -903,8 +899,10 @@ static int __reset_add_reset_gpio_lookup(struct gpio=
-_device *gdev, int id,
->  static int __reset_add_reset_gpio_device(const struct of_phandle_args *a=
-rgs)
+>  
+>  static irqreturn_t ipi_handler(int irq, void *data)
+> @@ -1024,10 +1028,26 @@ static irqreturn_t ipi_handler(int irq, void *data)
+>  
+>  static void smp_cross_call(const struct cpumask *target, unsigned int ipinr)
 >  {
->  	struct reset_gpio_lookup *rgpio_dev;
-> -	struct auxiliary_device *adev;
-> -	int id, ret;
-> +	struct property_entry properties[2];
-
-It would be nice if this could be initialized instead of the memset() +
-assignment below. Maybe splitting the function will make this more
-convenient.
-
-> +	unsigned int offset, of_flags;
-> +	struct device *parent;
-> +	int id, ret, lflags;
-
-Should this be unsigned int, or enum gpio_lookup_flags?
-
-> =20
->  	/*
->  	 * Currently only #gpio-cells=3D2 is supported with the meaning of:
-> @@ -915,11 +913,30 @@ static int __reset_add_reset_gpio_device(const stru=
-ct of_phandle_args *args)
->  	if (args->args_count !=3D 2)
->  		return -ENOENT;
-> =20
-> +	offset =3D args->args[0];
-> +	of_flags =3D args->args[1];
+> +	unsigned int cpu;
 > +
-> +	/*
-> +	 * Later we map GPIO flags between OF and Linux, however not all
-> +	 * constants from include/dt-bindings/gpio/gpio.h and
-> +	 * include/linux/gpio/machine.h match each other.
-> +	 *
-> +	 * FIXME: Find a better way of translating OF flags to GPIO lookup
-> +	 * flags.
-> +	 */
-> +	if (of_flags > GPIO_ACTIVE_LOW) {
-> +		pr_err("reset-gpio code does not support GPIO flags %u for GPIO %u\n",
-> +		       of_flags, offset);
-> +		return -EINVAL;
+> +	for_each_cpu(cpu, target)
+> +		per_cpu(pending_ipi, cpu) = true;
+> +
+
+Why isn't all of this part of the core IRQ management? We already
+track things like timers, I assume for similar reasons. If IPIs have
+to be singled out, I'd rather this is done in common code, and not on
+a per architecture basis.
+
+>  	trace_ipi_raise(target, ipi_types[ipinr]);
+>  	arm64_send_ipi(target, ipinr);
+>  }
+>  
+> +bool cpus_has_pending_ipi(const struct cpumask *mask)
+> +{
+> +	unsigned int cpu;
+> +
+> +	for_each_cpu(cpu, mask) {
+> +		if (per_cpu(pending_ipi, cpu))
+> +			return true;
 > +	}
+> +	return false;
+> +}
 > +
->  	struct gpio_device *gdev __free(gpio_device_put) =3D
->  		gpio_device_find_by_fwnode(of_fwnode_handle(args->np));
->  	if (!gdev)
->  		return -EPROBE_DEFER;
-> =20
-> +	parent =3D gpio_device_to_device(gdev);
-> +
->  	/*
->  	 * Registering reset-gpio device might cause immediate
->  	 * bind, resulting in its probe() registering new reset controller thus
-> @@ -936,6 +953,13 @@ static int __reset_add_reset_gpio_device(const struc=
-t of_phandle_args *args)
->  		}
->  	}
-> =20
-> +	lflags =3D GPIO_PERSISTENT | (of_flags & GPIO_ACTIVE_LOW);
 
-Could we get an of_flags_to_gpio_lookup_flags() kind of helper for
-this?
+The lack of memory barriers makes me wonder how reliable this is.
+Maybe this is relying on the IPIs themselves acting as such, but
+that's extremely racy no matter how you look at it.
 
-> +
-> +	memset(properties, 0, sizeof(properties));
-> +	properties[0] =3D PROPERTY_ENTRY_GPIO_FWNODE("reset-gpios",
-> +						   parent->fwnode,
-> +						   offset, lflags);
-> +
->  	id =3D ida_alloc(&reset_gpio_ida, GFP_KERNEL);
->  	if (id < 0)
->  		return id;
+	M.
 
-regards
-Philipp
+-- 
+Without deviation from the norm, progress is not possible.
 
