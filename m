@@ -1,240 +1,97 @@
-Return-Path: <linux-kernel+bounces-843344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9CB5BBEF9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:34:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2776EBBEFB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:35:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3E8004F1CBB
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:31:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A69D93C5AF5
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F56A2D9493;
-	Mon,  6 Oct 2025 18:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18EB2D5C95;
+	Mon,  6 Oct 2025 18:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="c2HHXXPt"
-Received: from mail-06.mail-europe.com (mail-06.mail-europe.com [85.9.210.45])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OYpddVwN"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703401D618C;
-	Mon,  6 Oct 2025 18:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.9.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A46283FE3
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 18:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759775494; cv=none; b=WQP/2CvcRQNU7Awniu1mvI1ZoaxIHR/MPipiL/5+ODVhUz4YRVLfztSa0qJ+9B7o9bBxOBPiJSXkU1J6nBuRRdVk8ErLTn/jmQWonvW2v7XALpEhvvv6oFdhB9ryNalAvj1wXOW3ueLm0XLiP6t32nFyfHAvSOWuhbR2mZuFrLI=
+	t=1759775532; cv=none; b=Q1uxLah8BBz4+xCK2zsn18/9mHrh5a1OeIy93Ua87+Jq8iWX6NGv1JQqzaQZSF1NUONI33YVKVVTLrpUfVYC+lk2sjsHDwssBdpNC+UJxbcA7sTkZe7C7oLAJCobUSeuBp5qPbfQStFd1H/rpLynG/V69csISH5alhDktPHSb2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759775494; c=relaxed/simple;
-	bh=LL1G7O8VUcD4wQVITwK1Fm4SqF5xB3ouLMy18HVPstc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i6LXKFLP/cQvXAAAuqWaBCr2jMLFHK0RIkJ+hnFcjrbmBIQjObA+BCz42BJsP3OHxifqgfCA/XiLOeDGnOEXCJ7G+jy1FqwqxbtqGCMScy/FZm7rpENJqBwNmC00wPJV01DC3xExwX4lH9Ph3fumSnbvjtYkPNeGaN/t2/8e3GI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=c2HHXXPt; arc=none smtp.client-ip=85.9.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1759775476; x=1760034676;
-	bh=Af3ZT38Ph2vI48UwFFuXqYGeDdiBpQbJJKF7ULiGeSk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=c2HHXXPtaJjOm5BGxw5p0pl6fXmIJ4D6XRbfdlwazPCmzqQ/XfAW+TBSfbWhQeHUD
-	 GOhlWDNCPD+hHwaZ9pU0kyRhNn+OApK1mhgTLOUG5pXsp3rSPxagdaC75TB0gK9owb
-	 JkRF8kqXv/3vNCedihvGGpcQxJ7iqX9dzMQGttOGpzkB7Cf7r2fGHDXj6BJ1SyKI6U
-	 b2j6HT2bHXA1jZ6MxBG2mYexEah8k3xPZJrwy6BS68KqqoK7XVGH4suyQ4f4FKYfJ7
-	 uzglgTfB2lx3xnafwAMjPvy5MZr7frVzQLB5Tw+8UO2MyCr5P6mErFbiWp7n5pA512
-	 l2S7vkfgooH1g==
-Date: Mon, 06 Oct 2025 18:31:10 +0000
-To: Ido Schimmel <idosch@idosch.org>
-From: Dmitry <demetriousz@proton.me>
-Cc: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, "demetriousz@proton.me" <demetriousz@proton.me>
-Subject: Re: [PATCH net-next] net: ipv6: respect route prfsrc and fill empty saddr before ECMP hash
-Message-ID: <MZruGuax8jyrCcZTXAVhH0AaAMOZ-2Gcj5VeZO8xy8wS9FqwA3EMhPFpHLZs67FAKCu6z3GpEVeArSX2qGdSUqsysI-0o13dKK1ZmUhK_l0=@proton.me>
-In-Reply-To: <aOPEYwnyGnMQCp-f@shredder>
-References: <20251005-ipv6-set-saddr-to-prefsrc-before-hash-to-stabilize-ecmp-v1-1-d43b6ef00035@proton.me> <aOPEYwnyGnMQCp-f@shredder>
-Feedback-ID: 162354254:user:proton
-X-Pm-Message-ID: acdde630fc2204899258cb235c8ae3f6bfa5a30e
+	s=arc-20240116; t=1759775532; c=relaxed/simple;
+	bh=AVECyVvVJT9MHSPO77txhpBax3GTs77J6kzt6LrtzWM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QXoB/2OkhIu5de8vk4D5QHUg3pw7Ei3po2UNFsj9gSLWXMHXii8fL6pKkKls/6Huzh1f8Vn66NuCcu0RbNRFSsVfm1VOKxxdQti1JA4jJHBtqwttDMUXu8JwOjNahQkUAUpmz6tbhWu/vMJeXOzVyT0bZOZtscuC1D/KGvfx4oU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OYpddVwN; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=uO3LfZeIvfpQMnzAlDj+jEBgIyA0tb9id+WZutQ73qM=; b=OYpddVwNDYlsqq3bTvjn0WeQJS
+	CuOB+uo0/Jibx79Z4offzhGGznMdVNDkY4u3lrIQdNVKk6f336iGzGSPtctrkcshK2+lkc7sXaADn
+	h6W1L97dntAOoDRNg7lGXfDU09T4Tj68Rnpswr7cEWDl0PbNAauzlVe570lYeTpN7wR3XWTOPh/qy
+	7v/zTv3ZppL9sgqZ9wq6U6mBs57PTsSjR3kR64vpUpIio/o1bbWmozqmcYG7SmW2oPNiHzFp7lR4P
+	sFp2MCCvDJzveHp8TGxMWMA/UQ8M2is2wQvk8wyLb6L6DmxoBaX7ZOGLIZzlUyvNCqZjWyr1kQLZN
+	BKzsU+FA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v5q08-0000000H5Rq-0KPJ;
+	Mon, 06 Oct 2025 18:32:01 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B2B65300212; Mon, 06 Oct 2025 20:31:59 +0200 (CEST)
+Date: Mon, 6 Oct 2025 20:31:59 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Waiman Long <longman@redhat.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Andrea Righi <righi.andrea@gmail.com>,
+	Julia Lawall <Julia.Lawall@inria.fr>,
+	"Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
+	Joseph Salisbury <joseph.salisbury@oracle.com>
+Subject: Re: [PATCH] sched: cgroup: Move task_can_attach() to cpuset.c
+Message-ID: <20251006183159.GW3245006@noisy.programming.kicks-ass.net>
+References: <20251003121421.0cf4372d@gandalf.local.home>
+ <aOBCQYxZp05lI6jA@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aOBCQYxZp05lI6jA@slm.duckdns.org>
 
-> Two more options (which I didn't test):
->
-> 3. Setting "IPQoS" in SSH config to a single value. It should prevent
-> OpenSSH from switching DSCP while the connection is alive. Switching
-> DSCP triggers a route lookup since commit 305e95bb893c ("net-ipv6:
-> changes to ->tclass (via IPV6_TCLASS) should sk_dst_reset()"). To be
-> clear, I don't think this commit is problematic as there are other
-> events that can invalidate cached dst entries.
+On Fri, Oct 03, 2025 at 11:38:09AM -1000, Tejun Heo wrote:
+> On Fri, Oct 03, 2025 at 12:14:21PM -0400, Steven Rostedt wrote:
+> > From: Steven Rostedt <rostedt@goodmis.org>
+> > 
+> > At our monthly stable meeting, we were talking about documenting non
+> > static functions and randomly picked a function to look at. That was
+> > task_can_attach(). It was then noticed that it's only used by
+> > cgroup/cpuset.c and nothing else. It's a simple function that doesn't
+> > reference anything unique to sched/core.c, hence there's no reason that
+> > function should be there.
+> > 
+> > Move it to cgroup/cpuset.c as that's the only place it is used. Also make
+> > it a static inline as it is so small.
+> > 
+> > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> 
+> Peter, if it looks good to you, I can route it through cgroup tree.
 
-I haven't tested this, but I assume it should work, since the IP header isn=
-'t
-changed during an active connection.
-
-> 4. Setting "BindAddress" in SSH config. It should make sure that the
-> same source address is used for all route lookups.
-
-Yes, I've tested this one, and it works. I was focused on finding a system-=
-level
-solution and didn't think about application-level settings.
-
-> As long as all the packets are sent with the same 5-tuple.
-
-The problem is that in the beginning the SADDR remains empty during hash
-computation. It appears to be filled later, once the outgoing interface (OI=
-F) is
-determined.
-
-Let's look at how to reproduce the issue:
-
-Test lab topology:
-
-+-----+   vlan=3D1        +-----+
-|     +---------------->|     |
-|HostA+---------------->|HostF|
-|     |...              |     |
-|     +---------------->|     |
-+-----+   vlan=3D99       +-----+
-
-HostA lo: 2001:db8:aaaa::
-HostF lo: 2001:db8:ffff::
-
-Host A has an ECMP route to 2001:db8:ffff:: with a specified source address
-2001:db8:aaaa::, distributed across all VLANs toward Host F. I run git fetc=
-h on
-Host A to transfer data from Host F.
-
-PCAP Without the fix:
-
-16:34:40.875734 52:54:00:05:66:74 > 52:54:00:8d:24:26, ethertype 802.1Q
-(0x8100), length 98: vlan 49, p 0, ethertype IPv6 (0x86dd), (class 0x48,
-flowlabel 0xfdf8e, hlim 64, next-header TCP (6) payload length: 40)
-2001:db8:aaaa::.44690 > 2001:db8:ffff::.22: Flags [S], cksum 0x064b (incorr=
-ect
--> 0x5490), seq 827400610, win 64800, options [mss 1440,sackOK,TS val 13036=
-83318
-ecr 0,nop,wscale 7], length 0
-
-<skipped>
-
-16:34:41.566130 52:54:00:05:66:74 > 52:54:00:8d:24:26, ethertype 802.1Q
-(0x8100), length 90: vlan 49, p 0, ethertype IPv6 (0x86dd), (class 0x48,
-flowlabel 0xfdf8e, hlim 64, next-header TCP (6) payload length: 32)
-2001:db8:aaaa::.44690 > 2001:db8:ffff::.22: Flags [.], cksum 0x0643 (incorr=
-ect
--> 0xd980), seq 3570, ack 4031, win 509, options [nop,nop,TS val 1303684009=
- ecr
-3265960348], length 0
-
-16:34:41.567338 52:54:00:05:66:74 > 52:54:00:8d:24:26, ethertype 802.1Q
-(0x8100), length 234: vlan 83, p 0, ethertype IPv6 (0x86dd), (class 0x20,
-flowlabel 0xfdf8e, hlim 64, next-header TCP (6) payload length: 176)
-2001:db8:aaaa::.44690 > 2001:db8:ffff::.22: Flags [P.], cksum 0x06d3 (incor=
-rect
--> 0xce55), seq 3570:3714, ack 4031, win 509, options [nop,nop,TS val 13036=
-84009
-ecr 3265960348], length 144
-
-As you can see, it sends packets through different interfaces =E2=80=94 thi=
-s is a
-symptom of the issue. In a real environment with multiple physical links (u=
-p to
-6=E2=80=938 interfaces), the same problem can be observed as well.
-
-I put some prints around ip6_multipath_hash_policy():
-
-PRINTS Without the fix:
-
-Oct 06 16:34:40 arch1 kernel: IPv6: fib6 ip6_multipath_hash_policy DEBUG:
-src=3D:: dst=3D2001:db8:ffff:: proto=3D6 hash=3D2109163277
-
-Oct 06 16:34:41 arch1 kernel: IPv6: fib6 ip6_multipath_hash_policy DEBUG:
-src=3D2001:db8:aaaa:: dst=3D2001:db8:ffff:: proto=3D6 hash=3D3559450110
-
-Oct 06 16:34:41 arch1 kernel: IPv6: fib6 ip6_multipath_hash_policy DEBUG:
-src=3D2001:db8:aaaa:: dst=3D2001:db8:ffff:: proto=3D6 hash=3D3559450110
-
-As you can see, the saddr field is empty at the beginning of the connection=
-,
-which causes the hash to be different initially.
-
-PCAP With the fix:
-
-16:42:27.624160 52:54:00:05:66:74 > 52:54:00:8d:24:26, ethertype 802.1Q
-(0x8100), length 98: vlan 70, p 0, ethertype IPv6 (0x86dd), (class 0x48,
-flowlabel 0xcff07, hlim 64, next-header TCP (6) payload length: 40)
-2001:db8:aaaa::.43660 > 2001:db8:ffff::.22: Flags [S], cksum 0x064b (incorr=
-ect
--> 0x174e), seq 1032224426, win 64800, options [mss 1440,sackOK,TS val
-3603754981 ecr 0,nop,wscale 10], length 0
-
-<skipped>
-
-16:42:28.328572 52:54:00:05:66:74 > 52:54:00:8d:24:26, ethertype 802.1Q
-(0x8100), length 90: vlan 70, p 0, ethertype IPv6 (0x86dd), (class 0x48,
-flowlabel 0xcff07, hlim 64, next-header TCP (6) payload length: 32)
-2001:db8:aaaa::.43660 > 2001:db8:ffff::.22: Flags [.], cksum 0x0643 (incorr=
-ect
--> 0xcd3f), seq 3570, ack 4031, win 66, options [nop,nop,TS val 3603755686 =
-ecr
-3266427110], length 0
-
-16:42:28.329511 52:54:00:05:66:74 > 52:54:00:8d:24:26, ethertype 802.1Q
-(0x8100), length 234: vlan 70, p 0, ethertype IPv6 (0x86dd), (class 0x20,
-flowlabel 0xcff07, hlim 64, next-header TCP (6) payload length: 176)
-2001:db8:aaaa::.43660 > 2001:db8:ffff::.22: Flags [P.], cksum 0x06d3 (incor=
-rect
--> 0x3fd6), seq 3570:3714, ack 4031, win 66, options [nop,nop,TS val 360375=
-5686
-ecr 3266427110], length 144
-
-As you can see here we have the same vlan.
-
-PRINTS With the fix:
-
-Oct 06 16:42:27 arch1 kernel: IPv6: fib6 ip6_multipath_hash_policy DEBUG:
-src=3D2001:db8:aaaa:: dst=3D2001:db8:ffff:: proto=3D6 hash=3D3025767165
-Oct 06 16:42:28 arch1 kernel: IPv6: fib6 ip6_multipath_hash_policy DEBUG:
-src=3D2001:db8:aaaa:: dst=3D2001:db8:ffff:: proto=3D6 hash=3D3025767165
-Oct 06 16:42:28 arch1 kernel: IPv6: fib6 ip6_multipath_hash_policy DEBUG:
-src=3D2001:db8:aaaa:: dst=3D2001:db8:ffff:: proto=3D6 hash=3D3025767165
-
-So, with the fix applied, we populate SADDR and calculate the hash correctl=
-y.  I
-think it's reasonable to respect the src field in the IPv6 route when compu=
-ting
-the hash.
-
-> I'm not convinced the problem is in the kernel. As long as all the
-> packets are sent with the same 5-tuple, it's up to the network to
-> deliver them correctly. I don't know how your topology looks like, but
-> in the general case packets belonging to the same flow can be routed via
-> different paths over time. If multiple servers can service incoming SSH
-> connections, then there should be a stateful load balancer between them
-> and the clients so that packets belonging to the same flow are always
-> delivered to the same server. ECMP cannot be relied on to do load
-> balancing alone as it's stateless.
-
-Well, it seems the current implementation doesn't properly respect the SRC =
-field
-and handles it inconsistently - it is ignored at the start of a session and=
- only
-taken into account once the session is established.
-
-> as long as all the packets are sent with the same 5-tuple, it=E2=80=99s u=
-p to the
-> network to deliver them correctly
-
-If the 5-tuple is not changed, then both the hash and the outgoing interfac=
-e
-(OIF) should remain consistent, which is not the case. Only with the fix do=
-es it
-respect the configured SRC and produce a consistent, correct 5-tuple with t=
-he
-proper hash.
-
-Therefore, in my opinion, this should be fixed.
+Yeah, I suppose so. But there were suggested changes to the Changelog
+and actual patch so perhaps wait for v2?
 
