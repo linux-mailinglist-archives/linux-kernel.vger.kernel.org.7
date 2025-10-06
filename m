@@ -1,83 +1,82 @@
-Return-Path: <linux-kernel+bounces-843385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 414B2BBF13E
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 21:14:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A916BBF144
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 21:14:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D71FD4ED3E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 19:14:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E473D189A583
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 19:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D772D5436;
-	Mon,  6 Oct 2025 19:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B47C2DECBA;
+	Mon,  6 Oct 2025 19:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jmoyugqr"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="krAb0S6F"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F6C2DEA83
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 19:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E409E2DECA8
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 19:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759778058; cv=none; b=TlFL2Gdrrv2agmnuboad65DbzBwsTSYKrPMFRb4ylZNG8CsZf/St8KSYDTuZGEuSyJaV/2zDVCiCpzWYCgJii2oSapTTxGFksStZWWALmJFgO2Wwbu00Pq7cia2irVrqrIeTQRdUsFVyBqXHKiLLedg4gZ+gImwM83HCirD9N08=
+	t=1759778062; cv=none; b=Cs8+LQbZu/4kjdP6WTO4bjl53vBvntNP7U7numr+QIs7OFaaQXGtHOVeL21IKebct5t6qq2IvPsBPLQntPVyzUinvTIBfseOA07MMj4e6u4yYcLN5T5YoyTCvsHZ2FWVr/Kigcb6+AX51el76WNc9IUXjLfWmI/1UiaZuydmQpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759778058; c=relaxed/simple;
-	bh=5ItGTF9EYZUxAeNOySOjfAhlMFY2cqvYZmvtzq8PvfE=;
+	s=arc-20240116; t=1759778062; c=relaxed/simple;
+	bh=i8+9CTLIUnAPtN1kxNYRakoqpP1sxfJc+oHYVyECw74=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cAo4+fIZiEp4UlAkRmwZK3dAWJIr6Un9a7Uh4W3TrnnOMGgA9AtFyx7Qi7Pms0b6/ti4HAc/DpVUp5zwD5E87cRKEMH+W6tQkMDP8KzCGpDF4gOhQsGg7dZA58ZOV1DITTjFIfdk4KZELLQSNsDJIwUKfiQlDrNTQdjrdEwULsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jmoyugqr; arc=none smtp.client-ip=209.85.221.46
+	 MIME-Version; b=t9sMVm6QyOubQgK7czCTqRoyRrqLnrRZVVc6PyeWAL0O9vpMBhyVKi/X9u+XUuKuN/Q8Wyen9tgZe681nzhAb89MdhHAxukxUO8FPCBAoAKOQzAEVLc7Cdqu557j5QblpzeieeAO+gVpI2x90BDUOyNNc4WCBNPBF4E5rLPspfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=krAb0S6F; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-421b93ee372so2516269f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 12:14:16 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3ee15505cdeso4220683f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 12:14:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759778054; x=1760382854; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759778059; x=1760382859; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1j0V90HxcPRVTKrhHkvxSsBjf2AtjVnHy6SmuJWd4uc=;
-        b=jmoyugqrmbCxfcM+AKWwoIflSiAkmp9VEi6EsPDRx6e4kRB+GDIBakI1K5NV1IpLp9
-         qU9nfH3sOQ5ulzRBi5I0jHbF9mnjiDtKYDXx+fC8EvdlzkTWDtvEuRmITueYII3Y0S0U
-         t0+H5KwoIf++pGbqFwqqEVD4R1xKWgykjVoqLO+xO/QMMgoO9rcpDWqYKqwVY+h9yOEu
-         EqnHpjS3byU0Mc9h5n9NmEjxyQ8I/WrV11OQaGSDVp72CNWtmfS8ECwGIN81mbEwP5ua
-         l9UiOA5YPfEkSskmW1bZchSge/L/+E7kCfppgRRVLftCaB1QtMW2YvK05OckoxOnZuWx
-         Xyxw==
+        bh=hAYO5exGw5pBpJwPfJWxaone+f+36yTg5sQQrnulw7c=;
+        b=krAb0S6FOVC1k0/eIllulsNYsKTEL74ggSHvtedWg2qDmQwv0Dl4hMk43f647Oz8kI
+         zEFtEHoq7PAjoUILW4EUoQbW7r/vBrkj6bfSxQMdFPvm6S44YhYkGdV7OTIeGToxardq
+         z7g7vYINL9MbsHiokmUNlWeX3oFsJvOZ+5RnapiGvj+BzJpu7OUyjtL6b1L4aq1QM7lw
+         fxVxjxGeKGFy1DZyVUn2w2MNiQaTKnx0QadpauROv2OeIZtgHtwYk6mfZ90l1fRdA1zP
+         VPwCdFkUQnUyrA8I6SsZdE3DYL8+7bNJ2kfa/EMzlKm5GUdF2jUJJ1NdQ9nxbH8yKw6h
+         68GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759778054; x=1760382854;
+        d=1e100.net; s=20230601; t=1759778059; x=1760382859;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1j0V90HxcPRVTKrhHkvxSsBjf2AtjVnHy6SmuJWd4uc=;
-        b=JaQE0kXrgF4kvulazE9hk3WCyNHRh/aXvnVEC7sX0QvJfVnZ8S9WXd9+xgsTj0kLtJ
-         NRvLSEYjkchVykLw5xkoUL6amOxUSAIxP9Uze2c6qO5Dn4JsgmYv7QEoM9ac7a4TTXkL
-         h1PdGKyUou+IISOjzMaC96f+77Q7cyomIfT88ZQ/PCfIL4y6WF1zCkyQs4m0UOApZT8L
-         dJ9Gi33VSsV8s4UKLA2K8PARkWy2UMOmCBx8rKaYz/rV/k3YRN/9MGn5LpnBPuojvqCK
-         +1nWw9RXp0/krKb6qv7P4eb2nXJiBnhB1K18Hp7WL6aZBEKNkcH1Z9rv+3D1Xm29DY5H
-         0vAg==
-X-Gm-Message-State: AOJu0YzI3A5eEHrsbgmY7amWQUdry4QQ42GMT47wmH2c2iCGkMdrTslD
-	aO5KsWlRGyS8s6/SoLmdSD4ZwRJKVN7ZBYB4oOFA0C6uXquH2IcgZSkfK+vMgg==
-X-Gm-Gg: ASbGncuAtS8YD9ULCqzwmHvOT2FPzk0bAWugoHb4TFKq4t7G1+BUUwphxiXCbWsQynt
-	oBa66wOliJG3iO8+TdZBk7/jWI/a9oDc/EdxuSlUbTdhS75+mVm0dSKH+YB6UUCuiuUZJfwx5Lw
-	K6aotNVcd5GQlITOqBHhRnXrPgxHuUKORTS+koHxSQFtX700xDs575QdqTTnaWj8Sz6AQfUPnFy
-	OoT1YUarENh2m+dxKAN2qoKUBg7zZJ+FvCJGVe3RJHApByhR4sMObXchxRQvdlEV7FD/K2WZvE7
-	65uZLH75oT0rvjU8N5Fsm78crP1qDJKBEVx+7PwsLZU9dRCpy3LpthjiiImjzqHxcZE1lOXWejG
-	tdiD780qk1oqDoT/RK5TvdY102OhCngkJROaAxzVZpRJViyKvInAtK9IWj1hhul6+PGgw6ME8i3
-	88JGE=
-X-Google-Smtp-Source: AGHT+IFUbfCqi9C93YR2bP5dtsE3l+2iS9CguomaGDGXJEXk2nSHZJBr5r0pl0Mosg68LCW/bIjt9A==
-X-Received: by 2002:a05:6000:1842:b0:3c8:7fbf:2d6d with SMTP id ffacd0b85a97d-425671b28ecmr7651955f8f.50.1759778054388;
-        Mon, 06 Oct 2025 12:14:14 -0700 (PDT)
+        bh=hAYO5exGw5pBpJwPfJWxaone+f+36yTg5sQQrnulw7c=;
+        b=LfOjILgIIKDMJ+SGpGY/MouN0wdYccOjFEsmERFzYVLIXFLAFKkIbp5C/gFF+aLxtV
+         gbfdwaDXTqpGf5WN+LjzvgnUHBkTBAAH+VqHE5BPcOMQgTI2XqKrcStriZSJISldqbyb
+         4Zp+vVFprIr46jkEgzCuPwtWPISVzE3H0mneKAJuMoucKS+ltOxDGNxtwdIV3AHGLET3
+         7KrPyDcfSYfyeDZTIqg0CW/4Xim4jAzcHHuJg1JEGeBK7FbsDvGJd7S4dOJQdVEXULet
+         1UosgK1aa9Zd+uvc9+XuLn6WyrGmGwPZHO3scHlYQ6sNiQuf+XHmp1oLmWfp5s9tJoIt
+         OXmg==
+X-Gm-Message-State: AOJu0YzwvO6V3qViB8oX+ShOblzr7jJGAmnaAp8PVpmgMjwbQ5/LEVRE
+	zMP//q2gwNSkdxgyN+j9+d+ipO7F/0wM9qvEQusbpUnxbDIYvbaY+uCe7mBl9Q==
+X-Gm-Gg: ASbGncvcJW8zYD5LwMIYJ2ipKDXxrF8NhYdKytCwcWpWeDaYTH0UZNl0BXWJiR0cw32
+	38q/QyDpJeogtiQuOwddchQOINpJoFeqG1F1KXi1U8pw/Lhg9oJlOBD3EAzzT0xwiDGAhZwOPbX
+	gbf+jVj1NRt9MnFEINuAq7dJVK32OhvukFGNJeTuBVFKmCz//MsK/R/exkrn6qwdcrrz0nkssAB
+	l4d/1ibB5+RIMdzDSMeeyfsOveu/5MFrBEXCB1bdVlSPz48vATqXzEBIDcfg/KUKn+qakXN+Eqf
+	fTiqWrvETyNhTTNAHkJeHfoWPjmzjK1xoPZfJhAtqHAd615mvvTpG/l/S/JZaY45N+ykULgoDEJ
+	5JRiapy6dL9XW9DVnSu825I9JNqQuot7SSWTuzYEwJQ7fvYcDKUPHwUfcJMfjIr8+BxaP
+X-Google-Smtp-Source: AGHT+IFgnvCVizHV0NE+PuzB7sBbTSTfTggo6zyJ+bMeG0+kpzGpMjfhHGaPgBdZXpGwvw+NuYnnuQ==
+X-Received: by 2002:a05:6000:1883:b0:3ec:42f9:952b with SMTP id ffacd0b85a97d-425829b61f3mr502699f8f.4.1759778058786;
+        Mon, 06 Oct 2025 12:14:18 -0700 (PDT)
 Received: from fedora ([154.182.208.105])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4256866060fsm16646435f8f.14.2025.10.06.12.14.12
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4256866060fsm16646435f8f.14.2025.10.06.12.14.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 12:14:13 -0700 (PDT)
+        Mon, 06 Oct 2025 12:14:18 -0700 (PDT)
 From: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org,
 	Mary Guillemard <mary@mary.zone>,
 	Faith Ekstrand <faith.ekstrand@collabora.com>,
-	Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>,
+	Ben Skeggs <bskeggs@nvidia.com>,
 	Lyude Paul <lyude@redhat.com>,
 	Danilo Krummrich <dakr@kernel.org>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -86,9 +85,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	David Airlie <airlied@gmail.com>,
 	Simona Vetter <simona@ffwll.ch>,
 	nouveau@lists.freedesktop.org
-Subject: [PATCH 2/5] drm/nouveau/uvmm: Allow larger pages
-Date: Mon,  6 Oct 2025 22:13:25 +0300
-Message-ID: <20251006191329.277485-3-mohamedahmedegypt2001@gmail.com>
+Subject: [PATCH 3/5] drm/nouveau/mmu/gp100: Remove unused/broken support for compression
+Date: Mon,  6 Oct 2025 22:13:26 +0300
+Message-ID: <20251006191329.277485-4-mohamedahmedegypt2001@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251006191329.277485-1-mohamedahmedegypt2001@gmail.com>
 References: <20251006191329.277485-1-mohamedahmedegypt2001@gmail.com>
@@ -100,102 +99,132 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Mary Guillemard <mary@mary.zone>
+From: Ben Skeggs <bskeggs@nvidia.com>
 
-Now that everything in UVMM knows about the variable page shift, we can
-select larger values.
+From GP100 onwards it's not possible to initialise comptag RAM without
+PMU firmware, which nouveau has no support for.
 
-The proposed approach rely on nouveau_bo::page unless it would cause
-alignment issues (in which case we fall back to searching an appropriate
-shift)
+As such, this code is essentially a no-op and will always revert to the
+equivalent non-compressed kind due to comptag allocation failure.  It's
+also broken for the needs of VM_BIND/Vulkan.
 
-Co-developed-by: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
-Signed-off-by: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
-Signed-off-by: Mary Guillemard <mary@mary.zone>
+Remove the code entirely to make way for supporting compression on GPUs
+that support GSM-RM.
+
+Signed-off-by: Ben Skeggs <bskeggs@nvidia.com>
 ---
- drivers/gpu/drm/nouveau/nouveau_uvmm.c | 55 +++++++++++++++++++++++++-
- 1 file changed, 53 insertions(+), 2 deletions(-)
+ .../drm/nouveau/nvkm/subdev/mmu/vmmgp100.c    | 39 ++-----------------
+ .../drm/nouveau/nvkm/subdev/mmu/vmmgp10b.c    |  4 +-
+ 2 files changed, 6 insertions(+), 37 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_uvmm.c b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-index a92c729600d6..c336a121e320 100644
---- a/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-@@ -454,6 +454,56 @@ op_unmap_prepare_unwind(struct drm_gpuva *va)
- 	drm_gpuva_insert(va->vm, va);
- }
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgp100.c b/drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgp100.c
+index 851fd847a2a9..ecff1096a1bb 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgp100.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgp100.c
+@@ -21,9 +21,7 @@
+  */
+ #include "vmm.h"
  
-+static bool
-+op_map_aligned_to_page_shift(const struct drm_gpuva_op_map *op, u8 page_shift)
-+{
-+	u64 page_size = 1ULL << page_shift;
-+
-+	return op->va.addr % page_size == 0 && op->va.range % page_size == 0 &&
-+		   op->gem.offset % page_size == 0;
-+}
-+
-+static u8
-+select_page_shift(struct nouveau_uvmm *uvmm, struct drm_gpuva_op_map *op)
-+{
-+	struct nouveau_bo *nvbo = nouveau_gem_object(op->gem.obj);
-+
-+	if (nvbo) {
-+		/* If the BO preferred page shift already fits, use it. */
-+		if (op_map_aligned_to_page_shift(op, nvbo->page))
-+			return nvbo->page;
-+
-+		struct nouveau_mem *mem = nouveau_mem(nvbo->bo.resource);
-+		struct nvif_vmm *vmm = &uvmm->vmm.vmm;
-+		int i;
-+
-+		/* Otherwise let's find a granuality that will fit. */
-+		for (i = 0; i < vmm->page_nr; i++) {
-+			/* Ignore anything that is bigger or identical to the BO preference. */
-+			if (vmm->page[i].shift >= nvbo->page)
-+				continue;
-+
-+			/* Skip incompatible domains. */
-+			if ((mem->mem.type & NVIF_MEM_VRAM) && !vmm->page[i].vram)
-+				continue;
-+			if ((mem->mem.type & NVIF_MEM_HOST) &&
-+			    (!vmm->page[i].host || vmm->page[i].shift > PAGE_SHIFT))
-+				continue;
-+
-+			/* If it fits, return the proposed shift. */
-+			if (op_map_aligned_to_page_shift(op, vmm->page[i].shift))
-+				return vmm->page[i].shift;
-+		}
-+
-+		/* If we get here then nothing can reconcile the requirements. This should never
-+		 * happen.
-+		 */
-+		WARN_ON(1);
-+	}
-+
-+	return PAGE_SHIFT;
-+}
-+
- static void
- nouveau_uvmm_sm_prepare_unwind(struct nouveau_uvmm *uvmm,
- 			       struct nouveau_uvma_prealloc *new,
-@@ -506,7 +556,7 @@ nouveau_uvmm_sm_prepare_unwind(struct nouveau_uvmm *uvmm,
- 			if (vmm_get_range)
- 				nouveau_uvmm_vmm_put(uvmm, vmm_get_start,
- 						     vmm_get_range,
--						     PAGE_SHIFT);
-+						     select_page_shift(uvmm, &op->map));
- 			break;
+-#include <core/client.h>
+ #include <subdev/fb.h>
+-#include <subdev/ltc.h>
+ #include <subdev/timer.h>
+ #include <engine/gr.h>
+ 
+@@ -117,8 +115,6 @@ gp100_vmm_pgt_pte(struct nvkm_vmm *vmm, struct nvkm_mmu_pt *pt,
+ {
+ 	u64 data = (addr >> 4) | map->type;
+ 
+-	map->type += ptes * map->ctag;
+-
+ 	while (ptes--) {
+ 		VMM_WO064(pt, vmm, ptei++ * 8, data);
+ 		data += map->next;
+@@ -142,7 +138,6 @@ gp100_vmm_pgt_dma(struct nvkm_vmm *vmm, struct nvkm_mmu_pt *pt,
+ 		while (ptes--) {
+ 			const u64 data = (*map->dma++ >> 4) | map->type;
+ 			VMM_WO064(pt, vmm, ptei++ * 8, data);
+-			map->type += map->ctag;
  		}
- 		case DRM_GPUVA_OP_REMAP: {
-@@ -636,7 +686,8 @@ nouveau_uvmm_sm_prepare(struct nouveau_uvmm *uvmm,
- 		case DRM_GPUVA_OP_MAP: {
- 			u64 vmm_get_range = vmm_get_end - vmm_get_start;
+ 		nvkm_done(pt->memory);
+ 		return;
+@@ -200,8 +195,6 @@ gp100_vmm_pd0_pte(struct nvkm_vmm *vmm, struct nvkm_mmu_pt *pt,
+ {
+ 	u64 data = (addr >> 4) | map->type;
  
--			ret = op_map_prepare(uvmm, &new->map, &op->map, args, PAGE_SHIFT);
-+			ret = op_map_prepare(uvmm, &new->map, &op->map, args,
-+					     select_page_shift(uvmm, &op->map));
- 			if (ret)
- 				goto unwind;
+-	map->type += ptes * map->ctag;
+-
+ 	while (ptes--) {
+ 		VMM_WO128(pt, vmm, ptei++ * 0x10, data, 0ULL);
+ 		data += map->next;
+@@ -411,8 +404,6 @@ gp100_vmm_valid(struct nvkm_vmm *vmm, void *argv, u32 argc,
+ 		struct gp100_vmm_map_vn vn;
+ 		struct gp100_vmm_map_v0 v0;
+ 	} *args = argv;
+-	struct nvkm_device *device = vmm->mmu->subdev.device;
+-	struct nvkm_memory *memory = map->memory;
+ 	u8  kind, kind_inv, priv, ro, vol;
+ 	int kindn, aper, ret = -ENOSYS;
+ 	const u8 *kindm;
+@@ -450,30 +441,8 @@ gp100_vmm_valid(struct nvkm_vmm *vmm, void *argv, u32 argc,
+ 	}
  
+ 	if (kindm[kind] != kind) {
+-		u64 tags = nvkm_memory_size(memory) >> 16;
+-		if (aper != 0 || !(page->type & NVKM_VMM_PAGE_COMP)) {
+-			VMM_DEBUG(vmm, "comp %d %02x", aper, page->type);
+-			return -EINVAL;
+-		}
+-
+-		if (!map->no_comp) {
+-			ret = nvkm_memory_tags_get(memory, device, tags,
+-						   nvkm_ltc_tags_clear,
+-						   &map->tags);
+-			if (ret) {
+-				VMM_DEBUG(vmm, "comp %d", ret);
+-				return ret;
+-			}
+-		}
+-
+-		if (!map->no_comp && map->tags->mn) {
+-			tags = map->tags->mn->offset + (map->offset >> 16);
+-			map->ctag |= ((1ULL << page->shift) >> 16) << 36;
+-			map->type |= tags << 36;
+-			map->next |= map->ctag;
+-		} else {
+-			kind = kindm[kind];
+-		}
++		/* Revert to non-compressed kind. */
++		kind = kindm[kind];
+ 	}
+ 
+ 	map->type |= BIT(0);
+@@ -592,8 +561,8 @@ gp100_vmm = {
+ 		{ 47, &gp100_vmm_desc_16[4], NVKM_VMM_PAGE_Sxxx },
+ 		{ 38, &gp100_vmm_desc_16[3], NVKM_VMM_PAGE_Sxxx },
+ 		{ 29, &gp100_vmm_desc_16[2], NVKM_VMM_PAGE_Sxxx },
+-		{ 21, &gp100_vmm_desc_16[1], NVKM_VMM_PAGE_SVxC },
+-		{ 16, &gp100_vmm_desc_16[0], NVKM_VMM_PAGE_SVxC },
++		{ 21, &gp100_vmm_desc_16[1], NVKM_VMM_PAGE_SVxx },
++		{ 16, &gp100_vmm_desc_16[0], NVKM_VMM_PAGE_SVxx },
+ 		{ 12, &gp100_vmm_desc_12[0], NVKM_VMM_PAGE_SVHx },
+ 		{}
+ 	}
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgp10b.c b/drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgp10b.c
+index e081239afe58..5791d134962b 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgp10b.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgp10b.c
+@@ -34,8 +34,8 @@ gp10b_vmm = {
+ 		{ 47, &gp100_vmm_desc_16[4], NVKM_VMM_PAGE_Sxxx },
+ 		{ 38, &gp100_vmm_desc_16[3], NVKM_VMM_PAGE_Sxxx },
+ 		{ 29, &gp100_vmm_desc_16[2], NVKM_VMM_PAGE_Sxxx },
+-		{ 21, &gp100_vmm_desc_16[1], NVKM_VMM_PAGE_SxHC },
+-		{ 16, &gp100_vmm_desc_16[0], NVKM_VMM_PAGE_SxHC },
++		{ 21, &gp100_vmm_desc_16[1], NVKM_VMM_PAGE_SxHx },
++		{ 16, &gp100_vmm_desc_16[0], NVKM_VMM_PAGE_SxHx },
+ 		{ 12, &gp100_vmm_desc_12[0], NVKM_VMM_PAGE_SxHx },
+ 		{}
+ 	}
 -- 
 2.51.0
 
