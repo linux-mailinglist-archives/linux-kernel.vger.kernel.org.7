@@ -1,246 +1,142 @@
-Return-Path: <linux-kernel+bounces-842644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C42BBD38D
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 09:34:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79790BBD396
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 09:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9BD474E7756
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 07:34:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 585E34E88FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 07:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35AD21DF271;
-	Mon,  6 Oct 2025 07:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PoQ/YiiM"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A90257820;
+	Mon,  6 Oct 2025 07:35:20 +0000 (UTC)
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C4A14F125
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 07:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594D41DE4C2
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 07:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759736094; cv=none; b=mDvGzZ+gK/4dzKq+LATgVjqhaIYyoN+yz9PiTEiZcBoqYpFgwexTxzeq84ARp7x3dpuKTIFa6dRNbZh5FncuWAINiGzi8647VT8oGqmpVbjB26TpwnSqJ8R6e/9hzxCmgOdRDJd+IFfN8YK/ZRDMiongR82eUksUhh+VciWUMbU=
+	t=1759736120; cv=none; b=PVHcs4klzKcpyXLYU7CVJXGzgaqj9nechSi7v41I9BIiP3agIcAvs7ZUftfU5RtShzV4nmIXwwz6mVGSPpbboS5oxjcbM5tjLrYyqhHn/LW1VX+gSHDwV/eIEeV2c1vUZqIIozhMYn6QdLv/FKDSALUTov2REQUK0F1pErZwxds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759736094; c=relaxed/simple;
-	bh=cyJ5srnHpafo4ER0mz30QQ3DiJ+SG1hcqAgPohc0gWQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ME2kww9ldI1je5D3cd5sQZj/Fmntebjeh2N777yPL2gryzzztUXB9iYdJxkjlCsXZkkQlCFyNzexp00fBxUoNiffvoHluWtOvDSKNb9PtarZKKlOR1aVxSdUV9Uj7SN0SVrGki4cQJInoZH/75ur2Jh96lkNY30qDIFjgEyduIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PoQ/YiiM; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759736090;
-	bh=cyJ5srnHpafo4ER0mz30QQ3DiJ+SG1hcqAgPohc0gWQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PoQ/YiiMvz9JD0Hb2DlORjF32GeBQwm7MmS6druJoNptw3EwNamn/Z0oO9tzIvLRv
-	 hLw+gK9eAYt4GxcA08aws73XWzFgJwl/UAQCVRHPiBHBzslqXRSVFCEq/vazN+TXzz
-	 DPHdwPkR1uqUBaTM5QzP1qHfx6lfuHEyh0jqTgU1BlWU1jZrigD//eidkOss/R+0O7
-	 yKngUsRiMKYisxTVLwNVxj7IcAbFrSceEmq9rPgtmqxwvkdjxrxMIquDI6Rfli1MFa
-	 NT/VB1RL0trcZaqMKJ6ZOhoTveHq+sHWPDIgcnZUcq+OXSwOxSJRCvv8X8Jita3C2c
-	 LE6T/vymqWWkQ==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9BCDB17E0B83;
-	Mon,  6 Oct 2025 09:34:49 +0200 (CEST)
-Date: Mon, 6 Oct 2025 09:34:46 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?TG/Dr2M=?= Molinari <loic.molinari@collabora.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jani Nikula
- <jani.nikula@linux.intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, Rob Herring <robh@kernel.org>,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Melissa Wen <mwen@igalia.com>, =?UTF-8?B?TWHDrXJh?= Canal
- <mcanal@igalia.com>, Hugh Dickins <hughd@google.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>,
- Al Viro <viro@zeniv.linux.org.uk>, =?UTF-8?B?TWlrb8WCYWo=?= Wasiak
- <mikolaj.wasiak@intel.com>, Christian Brauner <brauner@kernel.org>, Nitin
- Gote <nitin.r.gote@intel.com>, Andi Shyti <andi.shyti@linux.intel.com>,
- Christopher Healy <healych@amazon.com>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- linux-mm@kvack.org, kernel@collabora.com
-Subject: Re: [PATCH v3 07/10] drm/panthor: Introduce huge tmpfs mount point
- option
-Message-ID: <20251006093446.2e1fd0a8@fedora>
-In-Reply-To: <20251004093054.21388-8-loic.molinari@collabora.com>
-References: <20251004093054.21388-1-loic.molinari@collabora.com>
-	<20251004093054.21388-8-loic.molinari@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1759736120; c=relaxed/simple;
+	bh=Seg/zBB5psfsVpNwNUkdV6jEHpzqviCUZwoGlYe5ov8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gtFFnV0+rpDKKPILarRXjQXGLrKMPzUvqfWH0zsqQDxKsyPhXw/QTdw77YQcwPsF4J28bSKN+d2ofb/7hF6ch8KsUz7w3Pp5BaTSX2oBzK6IAJKDXfPwPBSLFR3j7vE6bAO9OBnchcJh2FbYyVwW1q5AaINd5fOclpGOD02Wkoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-54bbc2a8586so1600023e0c.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 00:35:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759736117; x=1760340917;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gi/dIonYfUmmwW2Vuh6lMeec+QtJMKdHIzm0Sdbs67c=;
+        b=pn5HGgU2k6VeJxWZM/mGw6J1nPJ1Mc4Pjvn+fqZglHoVBHI2Ni01ofIrh1bUQ/yydC
+         aYEbaSdBRfWN8mMW0ZUuzWIVqlZtcXZ2Yi7nu8p8BLkeMWtJ9W5ZfEeUHJFbtq+8LAkD
+         bKIHvsFH73nfFE1EF8zXjSf7H+eUtGT3vryc1xp5+9BvoctulKYi/t1T9IslgEvTihEt
+         QUkdBQSNVYRDtGlQHCM3WopSlt9K9LvGzlc7YBPtjqvNGA+Vaso3SzNbdIFD0mam2gBH
+         ljtiNTkusffrghI2ZKxUSFcIg5/J4JOw1WN+JN+X/92p8q/KELdu8iHAhkvdwmNDS2hs
+         3Mdg==
+X-Forwarded-Encrypted: i=1; AJvYcCWyLDeY4+OqGbhmI/qjzpMm4vlLEDHtEW7zyOBuwOFgQb5TihQHZi0XyfupYrzrF6gnrR+wdxA3SyWswyk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXrgFF/LsmNUEPcDLHsWOZ1QXfG591+f9bblvQX0Rn9PQslkj8
+	AK5Tlni8VGi+9lCEPF386ToO2wjLByDwmBaoHphSAcnqKtFTOaqgfGm4StUb6+2S
+X-Gm-Gg: ASbGnctaQUJum6D2b2yg4v7+94uFc2U07HDYn8Z2VVi3wjOvSXUiEK8Jo6+DIC0Lmm0
+	+EZ4oq7Ckv3pljqGwuqwsJAIiEeY7W/MVkoAqcIi7BQElCfjy0SLG4i5/NHNqqhptsRK4CUareX
+	ARMvJlyOTlPgtyQkMzgo2iyuQcHiiihjFdrwEvIxMkpydRyfzw3q77FOy1cw7e3nz2wLHvckGMl
+	nCy6yy7nfS7zS4dLvc7xriRWC3ziEQbfyQHSBq3cbvjSifKRaTMVeitkfuHLkxoHtSTcmn0wBIi
+	lgtmJKG6+rtodZWScNQtlEbwdu1PF1bmg2zvHaS4PcR7V9VGixPTucy3x/VG7RhmPFCpTct3gV5
+	zfTaJ/q5v1fPC2qHCfFHLxMktCFjbO/DaXU4MbV3RgBWgv65g7pgaOE1ozAXFzRi4czt/JWmszx
+	2UksdY5TMV
+X-Google-Smtp-Source: AGHT+IGT22HJo/eFHzRB2KxZJXzzbLBvPVw8h+TMajKOX8qceV4ldzr0EEvEvGrzvdQdpxFWen+UaQ==
+X-Received: by 2002:a05:6122:134b:b0:54a:a782:47c5 with SMTP id 71dfb90a1353d-5524eae7490mr3786156e0c.15.1759736116890;
+        Mon, 06 Oct 2025 00:35:16 -0700 (PDT)
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-554a3b98ca8sm43753e0c.18.2025.10.06.00.35.16
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Oct 2025 00:35:16 -0700 (PDT)
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-5c72dce3201so1904678137.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 00:35:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVrXapdn9F6zcaUSS9TJOmAA0UtDzsixNooJUtQKYc4wzuNw4x9t3tnXJu6ZeKklTdo5zi/ZmYk7AAJEb4=@vger.kernel.org
+X-Received: by 2002:a05:6102:3e2a:b0:528:d2ad:1f54 with SMTP id
+ ada2fe7eead31-5d41d0491aemr3884804137.8.1759736116168; Mon, 06 Oct 2025
+ 00:35:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <cover.1759485668.git.geert+renesas@glider.be> <98e13934d06116d5c116bd2b2187842ec3a8c11a.1759485668.git.geert+renesas@glider.be>
+ <CAL_JsqJACXgfgLBn4bpz9uG2zEsoH+FX+8wHmTSj2rLVV59=hg@mail.gmail.com>
+In-Reply-To: <CAL_JsqJACXgfgLBn4bpz9uG2zEsoH+FX+8wHmTSj2rLVV59=hg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 6 Oct 2025 09:35:04 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWBGzLmpNeYtSe7SW64X7EQ8chUxrjKQpfhBdz0tHTRdA@mail.gmail.com>
+X-Gm-Features: AS18NWCQxcI8Hk_xi-9INpQRnbcE9GVTQoTyTKCepWEClduajoLppt0iBQuvTmQ
+Message-ID: <CAMuHMdWBGzLmpNeYtSe7SW64X7EQ8chUxrjKQpfhBdz0tHTRdA@mail.gmail.com>
+Subject: Re: [PATCH/RFC 1/2] of/irq: Ignore interrupt parent for nodes without interrupts
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Samuel Holland <samuel@sholland.org>, Marc Zyngier <maz@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat,  4 Oct 2025 11:30:50 +0200
-Lo=C3=AFc Molinari <loic.molinari@collabora.com> wrote:
+Hi Rob,
 
-> Introduce the 'panthor.transparent_hugepage' boolean module parameter
-> (false by default). When the parameter is set to true, a new tmpfs
-> mount point is created and mounted using the 'huge=3Dwithin_size'
-> option. It's then used at GEM object creation instead of the default
-> 'shm_mnt' mount point in order to enable Transparent Hugepage (THP)
-> for the object (without having to rely on a system wide parameter).
->=20
-> v3:
-> - use huge tmpfs mountpoint in drm_device
->=20
-> Signed-off-by: Lo=C3=AFc Molinari <loic.molinari@collabora.com>
-> ---
->  drivers/gpu/drm/panthor/panthor_device.c |  3 +++
->  drivers/gpu/drm/panthor/panthor_drv.c    |  7 +++++++
->  drivers/gpu/drm/panthor/panthor_drv.h    | 11 +++++++++++
->  drivers/gpu/drm/panthor/panthor_gem.c    | 19 +++++++++++++++++++
->  drivers/gpu/drm/panthor/panthor_gem.h    |  2 ++
->  5 files changed, 42 insertions(+)
->  create mode 100644 drivers/gpu/drm/panthor/panthor_drv.h
->=20
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/p=
-anthor/panthor_device.c
-> index 81df49880bd8..3c0387156bb9 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.c
-> +++ b/drivers/gpu/drm/panthor/panthor_device.c
-> @@ -17,6 +17,7 @@
->  #include "panthor_devfreq.h"
->  #include "panthor_device.h"
->  #include "panthor_fw.h"
-> +#include "panthor_gem.h"
->  #include "panthor_gpu.h"
->  #include "panthor_hw.h"
->  #include "panthor_mmu.h"
-> @@ -269,6 +270,8 @@ int panthor_device_init(struct panthor_device *ptdev)
->  	if (ret)
->  		goto err_unplug_fw;
-> =20
-> +	panthor_gem_init(ptdev);
-> +
->  	/* ~3 frames */
->  	pm_runtime_set_autosuspend_delay(ptdev->base.dev, 50);
->  	pm_runtime_use_autosuspend(ptdev->base.dev);
-> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/pant=
-hor/panthor_drv.c
-> index fdbe89ef7f43..a2be3b904ca2 100644
-> --- a/drivers/gpu/drm/panthor/panthor_drv.c
-> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
-> @@ -1556,6 +1556,7 @@ static const struct file_operations panthor_drm_dri=
-ver_fops =3D {
->  	.read =3D drm_read,
->  	.llseek =3D noop_llseek,
->  	.mmap =3D panthor_mmap,
-> +	.get_unmapped_area =3D drm_gem_get_unmapped_area,
->  	.show_fdinfo =3D drm_show_fdinfo,
->  	.fop_flags =3D FOP_UNSIGNED_OFFSET,
->  };
-> @@ -1623,6 +1624,12 @@ static const struct drm_driver panthor_drm_driver =
-=3D {
->  #endif
->  };
-> =20
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +bool panthor_transparent_hugepage;
-> +module_param_named(transparent_hugepage, panthor_transparent_hugepage, b=
-ool, 0400);
-> +MODULE_PARM_DESC(transparent_hugepage, "Use a dedicated tmpfs mount poin=
-t with Transparent Hugepage enabled (false =3D default)");
-> +#endif
-> +
->  static int panthor_probe(struct platform_device *pdev)
->  {
->  	struct panthor_device *ptdev;
-> diff --git a/drivers/gpu/drm/panthor/panthor_drv.h b/drivers/gpu/drm/pant=
-hor/panthor_drv.h
-> new file mode 100644
-> index 000000000000..27fe9b6f77bd
-> --- /dev/null
-> +++ b/drivers/gpu/drm/panthor/panthor_drv.h
-> @@ -0,0 +1,11 @@
-> +// SPDX-License-Identifier: GPL-2.0 or MIT
-> +/* Copyright 2025 Amazon.com, Inc. or its affiliates */
-> +
-> +#ifndef __PANTHOR_DRV_H__
-> +#define __PANTHOR_DRV_H__
-> +
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +extern bool panthor_transparent_hugepage;
-> +#endif
-> +
-> +#endif
-> diff --git a/drivers/gpu/drm/panthor/panthor_gem.c b/drivers/gpu/drm/pant=
-hor/panthor_gem.c
-> index 156c7a0b62a2..49b7d288bfdf 100644
-> --- a/drivers/gpu/drm/panthor/panthor_gem.c
-> +++ b/drivers/gpu/drm/panthor/panthor_gem.c
-> @@ -1,6 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0 or MIT
->  /* Copyright 2019 Linaro, Ltd, Rob Herring <robh@kernel.org> */
->  /* Copyright 2023 Collabora ltd. */
-> +/* Copyright 2025 Amazon.com, Inc. or its affiliates */
-> =20
->  #include <linux/cleanup.h>
->  #include <linux/dma-buf.h>
-> @@ -11,10 +12,28 @@
->  #include <drm/panthor_drm.h>
-> =20
->  #include "panthor_device.h"
-> +#include "panthor_drv.h"
->  #include "panthor_fw.h"
->  #include "panthor_gem.h"
->  #include "panthor_mmu.h"
-> =20
-> +void panthor_gem_init(struct panthor_device *ptdev)
-> +{
-> +	int err;
-> +
-> +	if (!panthor_transparent_hugepage)
-> +		return;
-> +
-> +	err =3D drm_gem_huge_mnt_create(&ptdev->base, "within_size");
-> +	if (err && err !=3D -EEXIST) {
-> +		drm_warn(&ptdev->base, "Can't use Transparent Hugepage (%d)\n",
-> +			 -err);
-> +		return;
-> +	}
-> +
-> +	drm_info(&ptdev->base, "Using Transparent Hugepage\n");
+On Fri, 3 Oct 2025 at 15:33, Rob Herring <robh@kernel.org> wrote:
+> On Fri, Oct 3, 2025 at 5:08=E2=80=AFAM Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+> > The Devicetree Specification states:
+> >
+> >     The root of the interrupt tree is determined when traversal of the
+> >     interrupt tree reaches an interrupt controller node without an
+> >     interrupts property and thus no explicit interrupt parent.
+> >
+> > However, of_irq_init() gratuitously assumes that a node without
+> > interrupts has an actual interrupt parent if it finds an
+> > interrupt-parent property higher up in the device tree.  Hence when suc=
+h
+> > a property is present (e.g. in the root node), the root interrupt
+> > controller may not be detected as such, causing a panic:
+> >
+> >     OF: of_irq_init: children remain, but no parents
+> >     Kernel panic - not syncing: No interrupt controller found.
+> >
+> > Commit e91033621d56e055 ("of/irq: Use interrupts-extended to find
+> > parent") already fixed a first part, by checking for the presence of an
+> > interrupts-extended property.  Fix the second part by only calling
+> > of_irq_find_parent() when an interrupts property is present.
+>
+> Seems reasonable. Why the RFC tag?
 
-	if (err)
-		drm_warn(&ptdev->base, "Can't use Transparent Hugepage (err=3D%d)\n", err=
-);
-	else
-		drm_info(&ptdev->base, "Using Transparent Hugepage\n");
+Perhaps you might object to putting interrupt-parent in the root node
+if it does not point to the root interrupt controller, or if it does
+not help to simplify interrupts-extended to interrupts (like e.g. for
+ARM arch timer)?
 
-> +}
-> +
->  #ifdef CONFIG_DEBUG_FS
->  static void panthor_gem_debugfs_bo_init(struct panthor_gem_object *bo)
->  {
-> diff --git a/drivers/gpu/drm/panthor/panthor_gem.h b/drivers/gpu/drm/pant=
-hor/panthor_gem.h
-> index 80c6e24112d0..2eefe9104e5e 100644
-> --- a/drivers/gpu/drm/panthor/panthor_gem.h
-> +++ b/drivers/gpu/drm/panthor/panthor_gem.h
-> @@ -136,6 +136,8 @@ struct panthor_gem_object *to_panthor_bo(struct drm_g=
-em_object *obj)
->  	return container_of(to_drm_gem_shmem_obj(obj), struct panthor_gem_objec=
-t, base);
->  }
-> =20
-> +void panthor_gem_init(struct panthor_device *ptdev);
-> +
->  struct drm_gem_object *panthor_gem_create_object(struct drm_device *ddev=
-, size_t size);
-> =20
->  int
+Thanks!
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
