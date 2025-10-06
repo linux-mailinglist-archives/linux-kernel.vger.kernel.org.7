@@ -1,122 +1,151 @@
-Return-Path: <linux-kernel+bounces-842937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB8E4BBE027
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 14:20:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E08BBE03B
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 14:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C36734EB651
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 12:20:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8AA034E4849
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 12:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7AF27E04F;
-	Mon,  6 Oct 2025 12:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650AD7080D;
+	Mon,  6 Oct 2025 12:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hEVnoyUL"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tzVkgaso"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7709A6ADD
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 12:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2060E6ADD
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 12:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759753242; cv=none; b=hRgpWtWdMP0hduu6HP3LxW8cWM0CDpQBDHE1hplXjb64mwx3EhwJ/V4DXjwQPfTrgUbafNOyA+l3zkSrc6SZbPZlVXpue4imnGa24s2y+euojjIBN4Xc9bR07eV1sJ6BzJVBW4//qK8AR8sIdzEox1zRhME68p8CZn2qItvBmOI=
+	t=1759753407; cv=none; b=TR8/TOgyH7IW1wGrcrcXZYILftoeuIM9KkgT28sSNBJfvKdOXlr6jqcWV1vKKODSSrfbpXIo3uAFXMhXPUqwRjPQydoXQ4AFtyjF9Ce3u8z8hTjqcWudo4SgaU93Hv7R6JaUn8S/7a4oz3oaFmkhr808noXB8KGezEXaZhvBchc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759753242; c=relaxed/simple;
-	bh=UJp7RolsMUHZN7Q7qTulrrtFzCt5CPP5p/bQu247Voc=;
+	s=arc-20240116; t=1759753407; c=relaxed/simple;
+	bh=XhPKKZ+qLVDcEGkmaBKKeLZU4bI38h/0RXwXpIaRLSI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tWK0fOp/bfwr+MwOoSB7GQPUmELan0oYzXPedsYJMku/EFCrMMShBY9pNezl4vNSnBpKFRk4gpDKGBZ2VM1CqP66OHCI0HLxhcc1S+sxpEYeT7CrHUp/6yabL11pzd09Wm2/HhILyG8qi8tWkjUIEGih7OsGcUYOWMEUMhWcOkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hEVnoyUL; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-61feb87fe26so7299154a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 05:20:40 -0700 (PDT)
+	 To:Cc:Content-Type; b=X+FKxXDca8seHJn5JGxFZDzV81uJVn7NV40YIgGaQnWSb4e43n2kbFKOuNY1e+g5dgG2e1iXLugsjvLEQJ5zh2JhByejN7BdavHbkgUg/kL1k9Islt18O0CfpryxJyg++1sLB3dx7MJSuWD6y7IvgHDgryRl8iUYiWvC0K8dTF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tzVkgaso; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-71d60504bf8so48905137b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 05:23:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759753239; x=1760358039; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1759753405; x=1760358205; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZrL0phxbtwcYAWxQ3FOdLeN1W9DvB0MwUwXu+o2snlE=;
-        b=hEVnoyULNLmmVXusF98M4I7X2I5m/5GIVkpMiRL7P9fUBCFBAxuLEQcSj78QVpuWCB
-         twogFgZopoBJguQ4c+t2mR0A0Aghj77ZVWu+49diY3VV5p8JWdDcRlupTStq+Ofo8a2x
-         9sde0gAHsXB4p7DF+LR/MXs11gEMLYMCYlrq1Z4Pa+mtm30BkG8iH8rf1aIUQUWq4W8w
-         8n3soZOkvMZto4PnHm0qrEUVucE4CM29ACCDQk4tZgAYJEvNyCUQzgAC2eWT74AQEwMj
-         Wtfp5ExA1fJzHuJPMIPfCHZR06jY+jDqjQycXSk7avlD84U+p+t/hxFX5K+pBrnSKRQr
-         OL8A==
+        bh=Azz9O4mUwwwsxG7mSBpJ+zeBvEA2Nl0F6icaY3vg3+s=;
+        b=tzVkgasoeNABEGjycNgI13q+p20/nCUiBQkzgyC5nB1L98da+0KoGPABkI/eBpqupo
+         noNlVXskyPcdStqiOrSEOcXx+841/gYQlb7VGJH8BzUh9KtvNSKGp9N3BIrMsKOMdrgp
+         IWtfKZn6O2Vsyw5JTZt5ej5CcSjMB57bGKnkQVYhNCC8kVpDInMk9gaKaoBIwb7HD504
+         5ZVMrye10z2TkLxuErUVInsrUbLXsMP3yjJ0NCdmmtK/7RrPE0ghW3w3PLX7pmbRl6x0
+         P44Q0A8hGXl5W0HzDnExvQ9pr2JoRgxSBqXAxjtW/ZI/R6qnNb40xQtY/twcTtiJ+0Jc
+         CkrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759753239; x=1760358039;
+        d=1e100.net; s=20230601; t=1759753405; x=1760358205;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZrL0phxbtwcYAWxQ3FOdLeN1W9DvB0MwUwXu+o2snlE=;
-        b=W4Os57a8Sv9Nt+SJ8VcmBlnVE7XXFbTFSXwC7gXA8jIB0GT4svwxG9AxayvKzs9FBc
-         +TWXHNS1S+//Eo0ySonM8RP1H4wKwSYZjs3bqkazR0hjmf2h5WLoFOiEKCwQU6LIR0OH
-         vspXWpTYVvU5ykmFd0voKMpunSSfEYehYxZy6j+2YgL+JQwWNdtXHwa2Hw+s+JosuyKX
-         DqhPZ6OG/xZhd2KO1RxIUgWHyEQpH2kbt85OrMMNSEzqpXn6WXVIhWOaqGN4q8URpACh
-         JPZ2ET2pChzBsNQKXilc0bJ+gQomJ1WSiGpaSO4snKOtnKXJR0COR9I/sZLbiXBRJ1lm
-         jvbw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUZlpE483gkHlM/9DAA0CSYdBCZeMElWB8sijwbHnJsSNuuVA8tSj4Hkq9agzdlOiQgqrVWPp854FCAxs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJfK6qlBZTorydZ64nqVQ6udksBjhJg6Lffvs3Qtuqn+cOUDT3
-	z7sU+qeTVZMwkjAdGNjqvH3QdlqMj/qnwOX5K8Pwe4kI16iPgmJk21wDIOfZbgmDXSeDvR6Bgor
-	FnuridLocf3kYnMyLwfUI43k0ur3MDJs=
-X-Gm-Gg: ASbGnctER69uPVz6b5cmztYEyYC0SVNqKTafZiQnOHYAxIoUulmvqQs1eBdpqor4bEZ
-	Zo4NSBdIpuJKdXev9D8raW/eOGZZDk6ddsYVdfBv2SFO5zFc9+5vx/6t07vq5MshwchU3vfqkcS
-	gemqianyogm4/Jz7onMdBRmXtTqsjL6VszyCs3tlIfKFkZhLXi1igjg2ow/ozgJctU4ZW1ubGdg
-	2pj8KyBFEJ8xK8iCPkJSLBWlX2/grhpwg0jpf0td94kFyTlxa2epXiVxfz0ukQ0M5dRl7dCRA==
-X-Google-Smtp-Source: AGHT+IETWefcq8gw2n4ALL0l81SdRUuET/WJavOZT/5HdxcH+PJFJtXUks1IJxr2y8maVZe6XORVjN+hQxlMjpgZGOs=
-X-Received: by 2002:a17:907:7f0d:b0:b3e:9818:30e0 with SMTP id
- a640c23a62f3a-b49c2a59c15mr1591033066b.29.1759753238606; Mon, 06 Oct 2025
- 05:20:38 -0700 (PDT)
+        bh=Azz9O4mUwwwsxG7mSBpJ+zeBvEA2Nl0F6icaY3vg3+s=;
+        b=uXWXpzAIo/iEfqvYyeAMrM5HnbIK0HXF/togiJvHsBxllF/aWhL1/tWU1eZ+2Erjhn
+         DGqwk+npVGJc4lxNaVLGxmk+AewXFoY9t0gHZVPd8zkuKiS8duRGmZc9d68jND1a3dju
+         VbcKTnSXHST/BUUr/t5Bnvn/3lMpg8yFYIjEPvNUGreRtg0g62Dywz00G+jNTQvh3ytc
+         6F4jTTrSmm5JykNxNSEIik7j+uZJdewiQEKUGwiGv1Chb4yPbayG2EGcKqbm6s+HvMYM
+         jyxYXrD2ju0VbOfqrK7dkfzv1NDytmIxajx6zIlo+lQ0Z66hxkN8ZOs7it63rQ0cDBAU
+         gA7A==
+X-Forwarded-Encrypted: i=1; AJvYcCXCWhUZxIlgv/5cSCBZ1X1z1xrDBI1fT2bl5aOZHg5kC/AjenUgyqFAKWwBOuTCXo69NzmmWAFPizRKoV8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKfXqmaRjMuHCNr+SaYdAGHebZSjJSs2MeyOhz28e8qMpXDuvL
+	oFWCNfYmbwYFodxWMMEpczm6QrYE1UDFvechWI6k3FOleZmC7X3IsZaBrC6hKLBkPVF5APCn1Nl
+	GvX0LxMiVZJr4OgcCvL68kH/i+ATMJUNdjassUavRiA==
+X-Gm-Gg: ASbGncuPsHsqWvDePkc/Em5oWox1XhUcroIVpYw5zj23VGYLAVpd+eO2Ra38hT6JNgF
+	Y37jqFiMwixUptXmtPfXKbBJz7UxXWKoBXRx7DiYe+itVhsfi8dRcJwyq6NrpcoArST88gwwKWJ
+	2qpR5t3aoyiTPa51ZtacREnHP1fCwhc1VX0PyD2AP3pWrTDsOnIZT8bERIRQGWQ1vpynxodO/wm
+	HGKV9s8n6tNAoXIAbmTrbH29xefcZle/+shOM7h/f7/xw8=
+X-Google-Smtp-Source: AGHT+IH2DWL1rMufHJoRTaOEsDQX80kfcKh2Smoz9/7LaEmtgBq0ndRVK0/fgAr61uabtKnXzQgGo5LH2G/ebFNXG8o=
+X-Received: by 2002:a53:a006:0:b0:636:13d5:6968 with SMTP id
+ 956f58d0204a3-63b9a07802cmr9764799d50.15.1759753404956; Mon, 06 Oct 2025
+ 05:23:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251005231526.708061-1-mjguzik@gmail.com> <3ectwcds3gwiicciapcktvrmxhau3t7ans5ipzm5xkhpptc2fc@td2jicn5kd5s>
-In-Reply-To: <3ectwcds3gwiicciapcktvrmxhau3t7ans5ipzm5xkhpptc2fc@td2jicn5kd5s>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 6 Oct 2025 14:20:25 +0200
-X-Gm-Features: AS18NWCUHzufbDlED1IRCwWRQuPWlZsQxQKvzKtob8VW4zZ3AcPnNwifuCHrG5w
-Message-ID: <CAGudoHFU7F07kavPxpEo7dxF1aWofu2i1xK_FENFhCRawK0s4g@mail.gmail.com>
-Subject: Re: [PATCH] fs: add missing fences to I_NEW handling
-To: Jan Kara <jack@suse.cz>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
+References: <20251003150251.520624-1-ulf.hansson@linaro.org>
+ <20251003150251.520624-3-ulf.hansson@linaro.org> <20251006-manipulative-urban-antelope-31101f@sudeepholla>
+In-Reply-To: <20251006-manipulative-urban-antelope-31101f@sudeepholla>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 6 Oct 2025 14:22:49 +0200
+X-Gm-Features: AS18NWCQYiaPlcdiDQop43x4w0EDfpR_gEuiAFidF0pHvlZI8_2qX-prnyesMvw
+Message-ID: <CAPDyKFoz4P6cZWNA-omNtF3XqKKciC07aVXBTVQp8ueyyYxmxA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] arm64: smp: Implement cpus_has_pending_ipi()
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Maulik Shah <quic_mkshah@quicinc.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 6, 2025 at 2:15=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+On Mon, 6 Oct 2025 at 12:54, Sudeep Holla <sudeep.holla@arm.com> wrote:
 >
-> On Mon 06-10-25 01:15:26, Mateusz Guzik wrote:
-> > diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-> > index 22dd4adc5667..e1e1231a6830 100644
-> > --- a/include/linux/writeback.h
-> > +++ b/include/linux/writeback.h
-> > @@ -194,6 +194,10 @@ static inline void wait_on_inode(struct inode *ino=
-de)
-> >  {
-> >       wait_var_event(inode_state_wait_address(inode, __I_NEW),
-> >                      !(READ_ONCE(inode->i_state) & I_NEW));
-> > +     /*
-> > +      * Pairs with routines clearing I_NEW.
-> > +      */
-> > +     smp_rmb();
+> On Fri, Oct 03, 2025 at 05:02:44PM +0200, Ulf Hansson wrote:
+> > To add support for keeping track of whether there may be a pending IPI
+> > scheduled for a CPU or a group of CPUs, let's implement
+> > cpus_has_pending_ipi() for arm64.
+> >
+> > Note, the implementation is intentionally lightweight and doesn't use a=
+ny
+> > additional lock. This is good enough for cpuidle based decisions.
+> >
 >
-> ... smp_load_acquire() instead if READ_ONCE? That would seem like a more
-> "modern" way to fix this?
+> I=E2=80=99m not completely against this change, but I=E2=80=99d like to d=
+iscuss a few points
+> based on my understanding (which might also be incorrect):
 >
+> 1. For systems that don=E2=80=99t use PM domains for idle, wouldn=E2=80=
+=99t this be
+>    unnecessary? It might be worth making this conditional if we decide to
+>    proceed.
 
-Now that the merge window flurry has died down I'll be posting an
-updated i_state accessor patchset.
+For the non PM domain case, cpuidle_idle_call() calls need_resched()
+and bails out if it returns true. I think that does the job, for other
+more common cases.
 
-Then I would need to add inode_state_read_once_acquire() and
-inode_state_clear_release() to keep up with this.
+Making this conditional could make sense. Not sure how costly it is to
+update the per CPU variables.
 
-I figured I'll spare it for the time being, worst case can be added later.
+>
+> 2. I understand this is intended for the DragonBoard 410c, where the firm=
+ware
+>    can=E2=80=99t be updated. However, ideally, the PSCI firmware should h=
+andle checking
+>    for pending IPIs if that=E2=80=99s important for the platform. The fir=
+mware could
+>    perform this check at the CPU PPU/HW level and prevent entering the
+>    state if needed.
 
-That aside I have a wip patch to not require fences here and instead
-take advantage of the i_lock held earlier, so I expect this to go away
-anyway.
+I think this is exactly what is happening on Dragonboard 410c (see the
+stats I shared in the commit message in patch3).
+
+The PSCI FW refuses to enter the suggested idlestate and the call fails.
+
+>
+> 3. I=E2=80=99m not an expert, but on systems with a large number of CPUs,=
+ tracking
+>    this for idle (which may or may not be enabled) seems a bit excessive,
+>    especially under heavy load when the system isn=E2=80=99t really idlin=
+g.
+
+Right, making the tracking mechanism conditional sounds like worth
+exploring. I guess the trick is to find a good way to dynamically
+enable it.
+
+Kind regards
+Uffe
 
