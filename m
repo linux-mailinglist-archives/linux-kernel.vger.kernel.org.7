@@ -1,192 +1,217 @@
-Return-Path: <linux-kernel+bounces-843464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90F6FBBF891
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 23:02:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B795ABBF894
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 23:02:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5061B1885BC2
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A5C324F2203
 	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 21:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A632F261574;
-	Mon,  6 Oct 2025 21:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29782620D2;
+	Mon,  6 Oct 2025 21:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="TVpaynSK"
-Received: from pdx-out-012.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-012.esa.us-west-2.outbound.mail-perimeter.amazon.com [35.162.73.231])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R//hCR17"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A469A932
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 21:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.162.73.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466FAA932
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 21:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759784535; cv=none; b=pYahx+IilI5+CQ+b94EVa12ptBw2VkGwnIPhE/nDAXbRaoanxvJzXg72rrpRZDOBvCqm/qiB10i2GPREgl7Mik0TEZXTs2VBMGbqHtZbcK4gK3e8FuyE79SfjLiVGUWfZbxQVysv0kyKr8xi12Yr91F7z8T/gtQdpQlRCNMgOyw=
+	t=1759784561; cv=none; b=WoEZNth5D3cYr5LYe6cmhciHnfcGwEp4uKkclNk3DJQTOkUMoAfepgdgTFjNoL2NOA00iOamyMhqp/Vxk2wVGr8co7zuf0qgthbvPQ+U9qQo/BgnKa/TeGOnXbrcEzrUIZjwIIzgUPM1PR7X6xtmOU0jW35y1M/r22ln0olpBKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759784535; c=relaxed/simple;
-	bh=XvEt6Ubz2SfrZFWCUbgqDrN11uzP1Rb3/SaadQIypF4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Oq8oyX9wgVN0rHrxNiZQa0iKOAGS6m03+IYT8fx9uFWgWiFosYYGGEFFaD1gJSRIKO4Bz2dbuLwKDPFQt5+CgQhOhgWRCLCvMfndinFSu6QIDXO1FJNNArdyl6oma5t3fCB4sJjREW2gDNEEPmDmPsOnc5MNkrx8O0sl7DoYu5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=TVpaynSK; arc=none smtp.client-ip=35.162.73.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1759784533; x=1791320533;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=+HGVWrxAkg8mWbnk47FbeDyfZnbZtnHncdoKf7Bqyo8=;
-  b=TVpaynSK+F+Ek8TOqLggor3fA7OQpSe7PvUI3kXpaI2rCyY0laIEzsmB
-   u+2UL3bXiFS0M/eNaSm3A2K9ChUvLL0BGycH32e/1rMra9TKSJIobB4Vc
-   1ayhxx6eKQUjH2eHdwRb/g5tyeg2jhB496FeImxhyWMi1PVkwvc8WC/X9
-   /JWyHtS/QRPUCPjvpHYCek72i69UjvDIM4Ny5cc5u5jn/DF8aIcTtTZ1G
-   sTmYTPn3eA7rz5l4tE994ItfpBY0uNcctxsP0u2ru3AaHl9Zz1CuYt5nb
-   gOezSjD5Xm32Ewx7prKrax32+fgq7kvuUHc5x3SRVf69MupucWtam9/CR
-   Q==;
-X-CSE-ConnectionGUID: aGfvPIMmT0C9oeSHdw+dWA==
-X-CSE-MsgGUID: QwLFr7KzRROBNwjrgm9I+A==
-X-IronPort-AV: E=Sophos;i="6.18,320,1751241600"; 
-   d="scan'208";a="4213438"
-Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
-  by internal-pdx-out-012.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 21:02:12 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.7.35:54205]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.20.71:2525] with esmtp (Farcaster)
- id 6d952f63-38db-4a53-b686-451eb39197c1; Mon, 6 Oct 2025 21:02:12 +0000 (UTC)
-X-Farcaster-Flow-ID: 6d952f63-38db-4a53-b686-451eb39197c1
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Mon, 6 Oct 2025 21:02:12 +0000
-Received: from 80a9970eed1e.amazon.com (10.106.101.23) by
- EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Mon, 6 Oct 2025 21:02:11 +0000
-From: Justinien Bouron <jbouron@amazon.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Petr Mladek
-	<pmladek@suse.com>, Mario Limonciello <mario.limonciello@amd.com>, "John
- Ogness" <john.ogness@linutronix.de>, Marcos Paulo de Souza
-	<mpdesouza@suse.com>, Alexander Graf <graf@amazon.com>, Yan Zhao
-	<yan.y.zhao@intel.com>, Joel Granados <joel.granados@kernel.org>, Steven Chen
-	<chenste@linux.microsoft.com>, Justinien Bouron <jbouron@amazon.com>,
-	<kexec@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: Gunnar Kudrjavets <gunnarku@amazon.com>
-Subject: [PATCH v2 RESEND] kexec_core: Remove superfluous page offset handling in segment loading
-Date: Mon, 6 Oct 2025 14:02:05 -0700
-Message-ID: <20251006210205.72059-1-jbouron@amazon.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1759784561; c=relaxed/simple;
+	bh=a39DmeoIaMZW5g67bSS2EstB1zkyQkv+c1el+UMRssU=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X9UeXLRoTjsJPAAE1laDmMerw8dsBFqLNmoyuVS/7DgwZHmdYiDmKUV62H2Pec3ekqemW/++L/28LD0hgc413bSoW+qTFSVJS5p2RHCEz2NTYWx2sllZ4yLAakGSIHVr4NXInPYRI00Ao5iMe/yb5qO1bk7ASRE2I4b2iVmS1qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R//hCR17; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759784558;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ymk03Atrx/x0O99GjOXWpG6K/ZE8/FGkAGFxmtXS5cQ=;
+	b=R//hCR17jCyF5uUKX2ZV0QWM29yK3vvIkrg4Q6Xnz6GCkwZYyijJ6d5MW0iOPvrCe4gqcq
+	vzl/+QoDnQu1X2LcFoRfwuu48GPNvrhAOEc8G+FWwdK3eefQU1KwZ+vmsUjdDdJnYx87TK
+	uYWkYc9mbz2q+Uax1jW8Sm/mbeARl5Q=
+Received: from mail-ua1-f69.google.com (mail-ua1-f69.google.com
+ [209.85.222.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-691-8fcQkF7yNbSfCF6sFvkyag-1; Mon, 06 Oct 2025 17:02:36 -0400
+X-MC-Unique: 8fcQkF7yNbSfCF6sFvkyag-1
+X-Mimecast-MFC-AGG-ID: 8fcQkF7yNbSfCF6sFvkyag_1759784556
+Received: by mail-ua1-f69.google.com with SMTP id a1e0cc1a2514c-89018ea59e0so9436092241.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 14:02:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759784556; x=1760389356;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ymk03Atrx/x0O99GjOXWpG6K/ZE8/FGkAGFxmtXS5cQ=;
+        b=P4Y3AAI+BnmevXUvQVis5c8bQjIKNieNg6mW8KyeVSPtasx3Q9lsqLVxv1QcbXkrlS
+         wjsOAjMjEXltAbQMU5yxwyQL7PcCf/yq3VjUFkN0XYp6PI3g8qJxUJEOI2lFkmQHm5qH
+         ElxCn4A8k5baDimKtSs4x5dB4bNDxU5e/QRHjEUztS7eYLzIgqc1KqAufMD0wocPnd8W
+         Jn04jYNgp/kNEhuR7fVxiNc52kUcXROPYgQYoBfRZMe82UmGMT4WhhT+FKFNkjrzkGbj
+         1Iz3rkxFz+y0UU83jh5EyktwIGGZCD/+mZDuA0f7W5GFc9CLFuXIHyTuC4rK8i+UhF0d
+         YkLw==
+X-Forwarded-Encrypted: i=1; AJvYcCUAcES4Pv2AReWeOq/POwOEs3yDkOPtxUTkxJwbwuWqdxIelKT+Sb6Qle5CCa6fKXeQkW0TBATa9Mg1EkI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgSD9m5H0KiCEwFbu/HGN7xfNIY68XysJHyaGkRSGIMTKrueyy
+	OqGGrjugRgcBdaKfT7tMEspZWJcwZ6yqQ22Hanry4hHPD1E6SoyrW5oCepL/10ozJDUjOYPbbP+
+	8EdhmHigL62sqb0yK+3/1vUgfESxyLwrVQFtosWktpY1oLKD9C27pDpBMbeL13R+kTQ==
+X-Gm-Gg: ASbGnct3TRXE34wDsY8Ryc/wFnEzTvFfLd46UVuKQqQsv2Ez1c7YDa/mRxw0D2lV0/e
+	kj9act1ux7gKaRCRMWD+cBA4OQKMkisiJJA5b9Jq3e8VZptZc6k+Ako3EY2JJeqnpBB48yMJjJr
+	6o7YWYlH9dINu4/Ee7lwIy7LwduHO81qBH5FFrlrA0T089nqfX0haIHmwW5C7TRc4f7UmccvIVi
+	y9aieUDuWPznpITej2PstQhiBOeGODwRoGIRutjCjOtSXaKhF0ClbQ5T7HXFGK0Vb7VEH2oPbnU
+	hZ7i8OLzK9HVrDXQzDH9BIpNF9dlTvN57Em6fA==
+X-Received: by 2002:a05:6102:32c4:b0:519:f3b6:a1ae with SMTP id ada2fe7eead31-5d41d113720mr5161974137.22.1759784555822;
+        Mon, 06 Oct 2025 14:02:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGUIbyFy0bAXxq3hF6obawCdsm67GU+uNu9K0VYS4VwETotxyroLK2fz6RCNecsQisNvYCK5g==
+X-Received: by 2002:a05:6102:32c4:b0:519:f3b6:a1ae with SMTP id ada2fe7eead31-5d41d113720mr5161917137.22.1759784555258;
+        Mon, 06 Oct 2025 14:02:35 -0700 (PDT)
+Received: from x1.local ([142.188.210.50])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878bae60146sm130567276d6.11.2025.10.06.14.02.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 14:02:34 -0700 (PDT)
+Date: Mon, 6 Oct 2025 17:02:31 -0400
+From: Peter Xu <peterx@redhat.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	James Houghton <jthoughton@google.com>,
+	Nikita Kalyazin <kalyazin@amazon.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Ujwal Kundur <ujwal.kundur@gmail.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>, Hugh Dickins <hughd@google.com>,
+	Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v3 1/4] mm: Introduce vm_uffd_ops API
+Message-ID: <aOQuZy_Hpu1yyu29@x1.local>
+References: <20250926211650.525109-2-peterx@redhat.com>
+ <f1da3505-f17f-4829-80c1-696b1d99057d@redhat.com>
+ <aNwmE11LirPtEuGW@x1.local>
+ <f409cbe7-7865-45ab-af9a-6d5108bc5ad4@redhat.com>
+ <aNw_GrZsql_M04T0@x1.local>
+ <43d78ba7-8829-4a19-bdf3-d192a62cdac4@redhat.com>
+ <aN08NxRLz7Wx0Qh4@x1.local>
+ <ad124fb6-a712-4cf5-8a7e-2abacbc2e4be@redhat.com>
+ <aN_XZbQjuYx-OnFr@x1.local>
+ <cq3zcvnajs55zr7cplf5oxxjoh54fb7tvo23hehd5dmh4atvum@6274mneik6hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D035UWA004.ant.amazon.com (10.13.139.109) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <cq3zcvnajs55zr7cplf5oxxjoh54fb7tvo23hehd5dmh4atvum@6274mneik6hu>
 
-During kexec_segment loading, when copying the content of the segment
-(i.e. kexec_segment::kbuf or kexec_segment::buf) to its associated
-pages, kimage_load_{cma,normal,crash}_segment handle the case where the
-physical address of the segment is not page aligned, e.g. in
-kimage_load_normal_segment:
-```
-	page = kimage_alloc_page(image, GFP_HIGHUSER, maddr);
-	// ...
-	ptr = kmap_local_page(page);
-	// ...
-	ptr += maddr & ~PAGE_MASK;
-	mchunk = min_t(size_t, mbytes,
-		PAGE_SIZE - (maddr & ~PAGE_MASK));
-	// ^^^^ Non page-aligned segments handled here ^^^
-	// ...
-	if (image->file_mode)
-		memcpy(ptr, kbuf, uchunk);
-	else
-		result = copy_from_user(ptr, buf, uchunk);
-```
-(similar logic is present in kimage_load_{cma,crash}_segment).
+On Mon, Oct 06, 2025 at 03:06:39PM -0400, Liam R. Howlett wrote:
+> * Peter Xu <peterx@redhat.com> [251003 10:02]:
+> > On Wed, Oct 01, 2025 at 04:39:50PM +0200, David Hildenbrand wrote:
+> > > On 01.10.25 16:35, Peter Xu wrote:
+> > > > On Wed, Oct 01, 2025 at 03:58:14PM +0200, David Hildenbrand wrote:
+> > > > > > > > > I briefly wondered whether we could use actual UFFD_FEATURE_* here, but they
+> > > > > > > > > are rather unsuited for this case here (e.g., different feature flags for
+> > > > > > > > > hugetlb support/shmem support etc).
+> 
+> I think this supports the need for a code clean up before applying an
+> API that generalizes it?
+> 
+> I would expect the uffd code that needs the same uffd_feature would
+> logically have the same uffd flags for the uffd_ops, but that's not the
+> case here?
+> 
+> Is this because uffd_feature != UFFD_FEATURE_* ... or are the internal
+> UFFD_FEATURE_* not the same thing?
+> 
+> > > > > > > > > 
+> > > > > > > > > But reading "uffd_ioctls" below, can't we derive the suitable vma flags from
+> > > > > > > > > the supported ioctls?
+> > > > > > > > > 
+> > > > > > > > > _UFFDIO_COPY | _UFDIO_ZEROPAGE -> VM_UFFD_MISSING
+> > > > > > > > > _UFFDIO_WRITEPROTECT -> VM_UFFD_WP
+> > > > > > > > > _UFFDIO_CONTINUE -> VM_UFFD_MINOR
+> > > > > > > > 
+> > > > > > > > Yes we can deduce that, but it'll be unclear then when one stares at a
+> > > > > > > > bunch of ioctls and cannot easily digest the modes the memory type
+> > > > > > > > supports.  Here, the modes should be the most straightforward way to
+> > > > > > > > describe the capability of a memory type.
+> > > > > > > 
+> > > > > > > I rather dislike the current split approach between vm-flags and ioctls.
+> > > > > > > 
+> > > > > > > I briefly thought about abstracting it for internal purposes further and
+> > > > > > > just have some internal backend ("memory type") flags.
+> > > > > > > 
+> > > > > > > UFFD_BACKEND_FEAT_MISSING -> _UFFDIO_COPY and VM_UFFD_MISSING
+> > > > > > > UFFD_BACKEND_FEAT_ZEROPAGE -> _UFDIO_ZEROPAGE
+> > > > > > > UFFD_BACKEND_FEAT_WP -> _UFFDIO_WRITEPROTECT and VM_UFFD_WP
+> > > > > > > UFFD_BACKEND_FEAT_MINOR -> _UFFDIO_CONTINUE and VM_UFFD_MINOR
+> > > > > > > UFFD_BACKEND_FEAT_POISON -> _UFFDIO_POISON
+> > > > > > 
+> > > > > > This layer of mapping can be helpful to some, but maybe confusing to
+> > > > > > others.. who is familiar with existing userfaultfd definitions.
+> > > > > > 
+> > > > > 
+> > > > > Just wondering, is this confusing to you, and if so, which part?
+> > > > > 
+> > > > > To me it makes perfect sense and cleans up this API and not have to sets of
+> > > > > flags that are somehow interlinked.
+> > > > 
+> > > > It adds the extra layer of mapping that will only be used in vm_uffd_ops
+> > > > and the helper that will consume it.
+> > > 
+> > > Agreed, while making the API cleaner. I don't easily see what's confusing
+> > > about that, though.
+> > 
+> > It will introduce another set of userfaultfd features, making it hard to
+> > say what is the difference between the new set and UFFD_FEATURE_*.
+> 
+> If it's not using UFFD_FEATURE_ defines, then please don't use
+> uffd_feature for it in the uffd_ops.  That seems like a recipe for
+> confusion.
+> 
+> > 
+> > > 
+> > > I think it can be done with a handful of LOC and avoid having to use VM_
+> > > flags in this API.
+> > 
+> > I waited for a few days, unfortunately we didn't get a second opinion.
+> 
+> Sorry, been pretty busy here.
+> 
+> If we can avoid the flags/features, then I'd rather that (the derived
+> from uffd_ops == NULL for support).  We can always add something else
+> later.
+> 
+> If we have to have a feature/flag setting, then please avoid using
+> uffd_feature unless we use it with UFFD_FEATURE_ - which I think, we've
+> ruled out?
 
-This is actually not needed because, prior to their loading, all
-kexec_segments first go through a vetting step in
-`sanity_check_segment_list`, which rejects any segment that is not
-page-aligned:
-```
-	for (i = 0; i < nr_segments; i++) {
-		unsigned long mstart, mend;
-		mstart = image->segment[i].mem;
-		mend   = mstart + image->segment[i].memsz;
-		// ...
-		if ((mstart & ~PAGE_MASK) || (mend & ~PAGE_MASK))
-			return -EADDRNOTAVAIL;
-		// ...
-	}
-```
-In case `sanity_check_segment_list` finds a non-page aligned the whole
-kexec load is aborted and no segment is loaded.
+Yes, there was no plan to use UFFD_FEATURE_* in vm_uffd_ops.  It's because
+UFFD_FEATURE_* was introduced to almost let userapp have a way to probe the
+capability of the kernel, rather than the layer to describe what features
+userfaultfd has.
 
-This means that `kimage_load_{cma,normal,crash}_segment` never actually
-have to handle non page-aligned segments and `(maddr & ~PAGE_MASK) == 0`
-is always true no matter if the segment is coming from a file (i.e.
-`kexec_file_load` syscall), from a user-space buffer (i.e. `kexec_load`
-syscall) or created by the kernel through `kexec_add_buffer`. In the
-latter case, `kexec_add_buffer` actually enforces the page alignment:
-```
-	/* Ensure minimum alignment needed for segments. */
-	kbuf->memsz = ALIGN(kbuf->memsz, PAGE_SIZE);
-	kbuf->buf_align = max(kbuf->buf_align, PAGE_SIZE);
-```
+For example, we have UFFD_FEATURE_MISSING_SHMEM declaring that "the current
+kernel supports MISSING mode userfaultfd on shmem".  This feature flag is
+essentially of no use for any other memory types, hence not applicable to
+vm_uffd_ops.  OTOH, we don't have a feature flag to represent "userfaultfd
+MISSING mode".
 
-Signed-off-by: Justinien Bouron <jbouron@amazon.com>
-Reviewed-by: Gunnar Kudrjavets <gunnarku@amazon.com>
----
-Changes since v1:
-	- Reworked commit message as requested by Baoquan He
-	  <bhe@redhat.com>
-	- Removed accidental whitespace change
-	- v1 Link: https://lore.kernel.org/lkml/20250910163116.49148-1-jbouron@amazon.com/
----
- kernel/kexec_core.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+Thanks,
 
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index 31203f0bacaf..3b279d9e0d01 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -761,9 +761,7 @@ static int kimage_load_cma_segment(struct kimage *image, int idx)
- 	while (mbytes) {
- 		size_t uchunk, mchunk;
- 
--		ptr += maddr & ~PAGE_MASK;
--		mchunk = min_t(size_t, mbytes,
--				PAGE_SIZE - (maddr & ~PAGE_MASK));
-+		mchunk = min_t(size_t, mbytes, PAGE_SIZE);
- 		uchunk = min(ubytes, mchunk);
- 
- 		if (uchunk) {
-@@ -840,9 +838,7 @@ static int kimage_load_normal_segment(struct kimage *image, int idx)
- 		ptr = kmap_local_page(page);
- 		/* Start with a clear page */
- 		clear_page(ptr);
--		ptr += maddr & ~PAGE_MASK;
--		mchunk = min_t(size_t, mbytes,
--				PAGE_SIZE - (maddr & ~PAGE_MASK));
-+		mchunk = min_t(size_t, mbytes, PAGE_SIZE);
- 		uchunk = min(ubytes, mchunk);
- 
- 		if (uchunk) {
-@@ -905,9 +901,7 @@ static int kimage_load_crash_segment(struct kimage *image, int idx)
- 		}
- 		arch_kexec_post_alloc_pages(page_address(page), 1, 0);
- 		ptr = kmap_local_page(page);
--		ptr += maddr & ~PAGE_MASK;
--		mchunk = min_t(size_t, mbytes,
--				PAGE_SIZE - (maddr & ~PAGE_MASK));
-+		mchunk = min_t(size_t, mbytes, PAGE_SIZE);
- 		uchunk = min(ubytes, mchunk);
- 		if (mchunk > uchunk) {
- 			/* Zero the trailing part of the page */
 -- 
-2.43.0
+Peter Xu
 
 
