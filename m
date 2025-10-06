@@ -1,184 +1,227 @@
-Return-Path: <linux-kernel+bounces-843112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D485BBE6D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:01:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63364BBE6D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:03:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5D0D74EEC74
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:01:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 193A518899E3
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA402D640D;
-	Mon,  6 Oct 2025 15:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9C72D63F7;
+	Mon,  6 Oct 2025 15:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="S7DInRGp"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013046.outbound.protection.outlook.com [40.107.201.46])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Cu4RLiyc"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACF527F754
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 15:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759762898; cv=fail; b=Xsgd7iiZCSFH/0+NfY2Zxsf/ZquTHwp2lU9D14Fm3Vl7YCTq+DsQWwe6Clp8yFyQhIVDsQHAJnaT4sGwYtJvnyyl4W6ZDxqoqBMq7P7tSKmLwdIxI+VNcnAf07RsXAyM0hDiZrRFL6KvBnpq8dj2Hn/vPGulBvadBnCqayn6G3c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759762898; c=relaxed/simple;
-	bh=1UpGRSgXaZNw9/dikDuwCjI7IMxNO/fU2hMAkAr49nk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=eXeUSunxICZ5UQv7wGJ2xVh9vNvBG2ung++QsS6OyTfG6EhK5gE+FW+aFqSm0MSQZvR6O3gZEVd3Pqzt1RTBKUdOQfW2Vjy/uspCCQOaJ6lJ2G2tVAGrtP8rj/UZJqoQGpEHW+UYUYBixaeDXc8PFL1r5n2+/SeDzaVoaZi7UyY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=S7DInRGp; arc=fail smtp.client-ip=40.107.201.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rLdQJ4SgSdYZOo2G0zkQxJeN5EExhWN8+cw3H4kHcfBeTCsKZSGU/uqKDUrfvatBbaP/j+VbhlHybB9iT1iQU3Whquc6Z/3a1abap5Nk26JbJmufOCjVHYO9HWMN/0IFK/In6Jop6uZL5BRuCelZuL4lN+TKKSV3w3+8F2AS9jmeuN7WEA7PJlzoUC68dShx/4t2WeXbuv3VE6s5+aw8FFB0xJfxUjNRO/qyY+8KUv2wl4GbYM22SOEGJXeoCxvB6ttEcblNNBlUXrdne8yMhDGzgMgAUgEXZWnpe6x9YoB6w1Z+6v5QHyilBp0WfY+uXZRw4eK6lKl3/owRYP+2Mw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VxZhR/sT7xzje4hE37Fe4i9cMyEDu/51QIZYAHGnGq0=;
- b=zTIFwPWwNNOB8WwmLfify1r08dAzly9RnAN2nUABqs4fSFRm21xMemSF6bGc1PfhF4bm0IEq1SEFhNq4tXJ7051PnFA/xxFA87GnQ/R6QWsszpToIbBK3m1MvxdVJsvHJOBC9yp7UWh+nWKVg9Eesn1xdQ6zWg/Zjg7Nj7AbSeKoJ9KB4Oz6mIbczUBHiTeSKwj/0gZ8xC79tuXUFraormGSTzQlLPEI+tSKw9fA7liZKd68FYxID2vn6gS/4sI4cJVstzNL8tijE/mUtJwvTqdHxsTm3J/RvBQzSfKUOZumwpF6fTKjB+FdwftDZDI1KFOZRfrPxg3+7DGtHFb8Aw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VxZhR/sT7xzje4hE37Fe4i9cMyEDu/51QIZYAHGnGq0=;
- b=S7DInRGpa0Qy/OKhgzkIp7YYm/Q2ycaxsKS2bn1BmDOxrMeuXeottqX7TvEwjuej3wkPMZwR4QW2BcR8u8Zjz7PQz+q0r+hgJXXPduP1xA+naMSJ2xQSZlPuHjSUYozog0sZQoVPKid2CozHRw85lf1s+F4UVEYPFa5Q2tm+wdtI+F+Ate/CEQt7RtXODUdbvRa9xhE5Dewj/rQbGAc0dgA0e5Q9Djfw8X54kT3yvuQcZIUAZl3ERNJ5OLHoyZIm0tSIM7Tavm8FEJsiWy+FqzWQnzWO3l6QmjUt1kITwbKuOv3YHF/2nWqASWClSftlcTMPoXIB8CyV4bYeKpXXhw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
- by MN2PR12MB4319.namprd12.prod.outlook.com (2603:10b6:208:1dc::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.16; Mon, 6 Oct
- 2025 15:01:30 +0000
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9182.017; Mon, 6 Oct 2025
- 15:01:29 +0000
-Date: Mon, 6 Oct 2025 12:01:28 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-	linux-kernel@vger.kernel.org, robin.murphy@arm.com, will@kernel.org,
-	joro@8bytes.org, kevin.tian@intel.com, jsnitsel@redhat.com,
-	vasant.hegde@amd.com, iommu@lists.linux.dev, santosh.shukla@amd.com,
-	sairaj.arunkodilkar@amd.com, jon.grimm@amd.com,
-	prashanthpra@google.com, wvw@google.com, wnliu@google.com,
-	gptran@google.com, kpsingh@google.com, joao.m.martins@oracle.com,
-	alejandro.j.jimenez@oracle.com
-Subject: Re: [PATCH v2 12/12] iommu/amd: Introduce IOMMUFD vIOMMU support for
- AMD
-Message-ID: <20251006150128.GU3360665@nvidia.com>
-References: <20251001060954.5030-1-suravee.suthikulpanit@amd.com>
- <20251001060954.5030-13-suravee.suthikulpanit@amd.com>
- <aN7bDNTAadHI/+qn@Asurada-Nvidia>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aN7bDNTAadHI/+qn@Asurada-Nvidia>
-X-ClientProxiedBy: BN9P220CA0025.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:408:13e::30) To PH7PR12MB5757.namprd12.prod.outlook.com
- (2603:10b6:510:1d0::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A1718FDBD
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 15:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759762989; cv=none; b=rDUEeufFjlTCuVENvGAwIMQpVDiGLMAgvzYCAB+cNzXvSXhcmv5yXhV/GErUUbhGy7EJeYewELbKDEZ8FBYBJjJ0Lv6zCIMpo4F0jXW3UDhYyCXpfpTfM0LYTtZK5FE0X6HekRh0TrtSprsfdVJZ/CtleWJoh9ZpgDu/JJqE7uo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759762989; c=relaxed/simple;
+	bh=qGGGA57/Rn7oYdJ8UoDgD4VNrhOJbs7x390AeqM4HYw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EmXbIHWm7hqqNuG3NMsAQO2hwmj0fXCOUGn5vn9xrgZ+QVWmUOCrchja+7CH8wzuuiw3dy6kRHMNOB5qZ6liRdI2BWPlBrK69G/AaE2PFtmO5WO0VQYNPlYZMKLtuHwW7ZBPJ2NqFQypuWzXGbkkfw0hZqCiBAhPb05BDsaYDF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Cu4RLiyc; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <41dd848c-c27b-4373-9e89-3fda9e302cfb@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759762982;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ix6wMbpKpMLTaE8hkEfVLxl4w4AKwmdKBZJL6cnFg8Y=;
+	b=Cu4RLiycV7X4kV3vML/ileqDNEvrw2hsXNg/1S9vyn7Xy1i1UrRtN/Impbl/AXusa/AyIV
+	yfOv+WhPI3UvQadiG4aQs993wIuZ/h2KNvSRDk24Gf7y0NP09rLPkZpCrFtSLdWCkFz5R3
+	rRySMHJvN/JUsl83O+5PPZ/aBYRQOHQ=
+Date: Mon, 6 Oct 2025 23:02:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|MN2PR12MB4319:EE_
-X-MS-Office365-Filtering-Correlation-Id: ccbac97a-5ba5-4d12-a2b0-08de04e93aef
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?AIq4usR45V3Ws96TVR2L1PwcboLGqdgWtlA3Av6+Nz9HqWytqGyyKmHl6blB?=
- =?us-ascii?Q?4MEexyYSas5bak83R7HOH6C2arcglSmm9qsKzT9NYnVF4njVumIYhRYv1cwZ?=
- =?us-ascii?Q?QlfvfyPzHLWObrxyMtqOH19LUfGBWGI0m+2vj0aBsO1btdX54sSNcmionGus?=
- =?us-ascii?Q?VT0LVHncr+DGhEagHuUZDHYntBRR4xlweJ1DLsDSF8wCygMleboIUOs8llyA?=
- =?us-ascii?Q?X10fGWsCClSxOUdyXROpwxKqLhBulnjRlhfr3c/8NSux6PGr4zmViFDVvWu1?=
- =?us-ascii?Q?XjrWyJM7XORqrG09SCYU39ybrXCedfcjO+/ikZd9diWXcJ5TDJiRhNgvMpyU?=
- =?us-ascii?Q?1ypXkaqK5e6VFJcJj31XZy3y8uchhfv8uic7tazAZHSXu6/RorOrcxrQ/QjR?=
- =?us-ascii?Q?HeVTVuw6KL9Y7Mq7ZRHYx2FIy6pTRF9Awa6byDIB/hlsa2pzng4yRtlBIyBp?=
- =?us-ascii?Q?kkIu6bz49TmQRfVflcUmHLV5AVFxbuvA3n1R/9bIMn3qbaStrYqCK1CFf6qS?=
- =?us-ascii?Q?ep0KSBijAF220rrSIHQDNi/3RScMf5tpikLg+PFLMXvTJ37kT7UH4iOIwsY3?=
- =?us-ascii?Q?lnagfPKicA0ReZriuJMhkX1L8eP61IeRuZXHAX7wq+AzYq/ZIMF1e+qoDerH?=
- =?us-ascii?Q?EBooEm23MsF9wBDFx/7CRypREmPrRhtWxybiPcg8xTxoFTMKYwDOOaGR4yN9?=
- =?us-ascii?Q?ZcwcUMJvTZeuR6e8aV6CqWQtO1g5AWqmeqS9mZPVgOAgQhNvtf1ItMmV/nYz?=
- =?us-ascii?Q?Po1OUy91/9byhlDNv15uBiBH+4n0EUr8sYR/aiYltCVoV6opHRkF/oTGfWke?=
- =?us-ascii?Q?Wk/dk4IXCyKr9SeXDK/55om1ItDM3MY/rjuhLkTn6MUQzVLXMIe9YTUlfEkZ?=
- =?us-ascii?Q?ZbMm5H6PfhWphpsNJpmul1RmaBSptwKPR70aeSn7Cq+43kGY9EenjWIR1axD?=
- =?us-ascii?Q?SLT+XUUdc88ejv8saSB2PCwQbHjKYwofc+xRP11am22litnBNCHJH3mNfe96?=
- =?us-ascii?Q?Um+RIZyrbvQnAncHuVx2jXWVbNxABhQAfwdJG7r32lAVBAhgPGtEIPc9PBpM?=
- =?us-ascii?Q?6pTA+GaFXtY77LaRLOeAuLY1F1tGo3NxWzhvJex9CGEFI6MKiefyzInRCnIN?=
- =?us-ascii?Q?hfchgbRrG239dholVWagb2h3ZXhLZyfhuaAKWnJLWRRoZYoZGUeUdn4Y9K6x?=
- =?us-ascii?Q?nxmYLT60MFfgxfQkylBSG+s6rrTumbck+INsK5Q5+TeV87g3qITWl8AuHBeC?=
- =?us-ascii?Q?yi6tnmbMWKkGG4gtEC1wqYR8Sl7ipRYoqANTEtL374yVjtCC/QsjYxB9jAiP?=
- =?us-ascii?Q?zarhuhxeX/m7uHlf0kfmW9rLFyp7wMWrXyJV9l920i4EgACqkCZ53BEYv9LI?=
- =?us-ascii?Q?jPSXrVHHhgq6snrE1h7v2dA65wF9hsbsALwKFLq3mfx/tJsiWpM0JcZM56ml?=
- =?us-ascii?Q?ewKFb8Dm3CmyM7HAPZMi+ZQje3rXiid2?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?KUWIhez7eWY+cHuoZKmzmmzZzWOTyj6jpVshpd8mTbdtLUORt9ee3kXbbJXg?=
- =?us-ascii?Q?wsqHmlT1BRgZQz6IVBiYM1F3C3crsUclMZHGDZyBeTW6leLMT7cOZR3DrDSj?=
- =?us-ascii?Q?fH7jZ27qiT6hcNb/90Sc+5z9dy5yIiNR3Gye7ZBLln8ncvAgUyiuqCv6XJ0v?=
- =?us-ascii?Q?TnTFMIwj7hEl/gD1cYifE01MQ8kaDVVWdighAOSpDjZhw07E8QAJqE6gIVnl?=
- =?us-ascii?Q?/fIwx3YdwRvyIhaYjiTTrt3WP/s6/XZkRhy3FGCom5iz4+3XCskpiIiOhETF?=
- =?us-ascii?Q?hbW9oXqpI3qy2OqdRksG9YNZfls+UDhj7dChlsxXWSt92zjgIMZbiyLhkWSu?=
- =?us-ascii?Q?jfFg8Fiv54AoM/jSYdaCAxZaxBbm/9htGwgcXWCPOp7SPNURR8BjjhsyUX6U?=
- =?us-ascii?Q?w2m6WZ3ERNroQm/pdzkPOiOnGKPQHH0XEPsjHvAam+F0SLc5F64tg9/u6Pdw?=
- =?us-ascii?Q?boxA+fHlmQtgnh5EPLhXRLduaWr5myJcxO5ClDkFoRRnr50s5sziLWFUW6UO?=
- =?us-ascii?Q?Nkq7oRLgjD9w9orobhBbtF2rUf0j+zDoma2Cq3Fh8l3cmCTCA5N0jt/ht7W5?=
- =?us-ascii?Q?izUBICpuIAKA8cKub5uE2gAkPnWINVmXhlEw9QRsVr8z6p32UZE3LCSHQMMg?=
- =?us-ascii?Q?0i4cKmvCY8aebQ0Cl722Yluw2ZQjv+AfQVL/VEZdzP41EnRvhUckti8H+Ezp?=
- =?us-ascii?Q?JbqfXzwTI4JW3sVQYN7dAVsYeQJg3wBXfNpvxfAstpxqq7IBjg/1sjWn661W?=
- =?us-ascii?Q?bTXHRUMTRDLF15HnHen19shv4QA7jfj7iVKRasb5U5lPB1DoReQH/NYwoOF5?=
- =?us-ascii?Q?0Cm2xpjWesnspJTbn2N6CCLQVQH4D2yNP+suNL4ATsnUzLNI8CzSth0ScP+v?=
- =?us-ascii?Q?eEiejCcXwTntZdJ0Fcx22/22OE1P++05JGgs7Gkk8JfWOwOAh76wGzIvwyz5?=
- =?us-ascii?Q?KvICetVUUaaodUnLMigYbULR/YSJP0x4Q/BoYOaMCwJHd/DSl9tzclUN8pEL?=
- =?us-ascii?Q?dkkymWv5mpRWdwpZuJneo121ACZbiGt48Y90Vumlf7CqOPQcj2ftf3sBvcGF?=
- =?us-ascii?Q?YSRnHDEIsak+XkW7/RfcSFP68UC1sqA7ITcbcgJ3NxTW7LI+A276VSHQoRPe?=
- =?us-ascii?Q?jmAmecrkbq9MdXClE4LUvQ1pifKxj1eual3f9sayjiBBtyADEdC++qoZLQ+y?=
- =?us-ascii?Q?o8sKPeapdo8KXXJmKU0QdwdPkuj5d4ED+Xvo492ESqI+304L/nLf7qXyV36Y?=
- =?us-ascii?Q?qYZTCJw1rZ2+7Jl8kRTjSx1VtLAK0UFoBlZxhb6c8l95h+V5H98a4NfOlKfJ?=
- =?us-ascii?Q?WgNFfaMUdsImKIyy8FZ0PlAIJtjRynhIhwi+/mqSsmb1NX877EtVPsYFf+Q1?=
- =?us-ascii?Q?ZeHgrZ5FJ5IJDC2fZv2Y1mtGiXK50LqTra/8qAht1ogdzVCRlzLMEUcRIQpG?=
- =?us-ascii?Q?feS2uflzcA+fr2U4XH45nldiWOkjAmInIt19W14Gs1EtF9TjwuO/YC5P6PCy?=
- =?us-ascii?Q?YYvtOY59LVP5jjmw1f6HnbSCkofhYWZpxHJCSORncSjjymeFZhH4qyRyNFRY?=
- =?us-ascii?Q?gguCtJhC/o416Rp9pDg=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ccbac97a-5ba5-4d12-a2b0-08de04e93aef
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2025 15:01:29.8102
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Taxs/2k9y3r6xsKv4A1HCFyEjpmVFpocs8PmYklLFk5NRxQaawCZc4dX9KlmnZCr
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4319
+Subject: Re: [PATCH mm-new v2 1/1] mm/khugepaged: abort collapse scan on
+ non-swap entries
+Content-Language: en-US
+To: David Hildenbrand <david@redhat.com>, Wei Yang <richard.weiyang@gmail.com>
+Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, baohua@kernel.org,
+ baolin.wang@linux.alibaba.com, dev.jain@arm.com, hughd@google.com,
+ ioworker0@gmail.com, kirill@shutemov.name, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, mpenttil@redhat.com, npache@redhat.com,
+ ryan.roberts@arm.com, ziy@nvidia.com, akpm@linux-foundation.org
+References: <20251001032251.85888-1-lance.yang@linux.dev>
+ <20251001085425.5iq2mgfom6sqkbbx@master>
+ <1d09acbf-ccc9-4f06-9392-669c98e34661@linux.dev>
+ <20251005010511.ysek2nqojebqngf3@master>
+ <31c3f774-edb7-420a-a6a8-3e21f2abd776@linux.dev>
+ <09eaca7b-9988-41c7-8d6e-4802055b3f1e@redhat.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <09eaca7b-9988-41c7-8d6e-4802055b3f1e@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Oct 02, 2025 at 01:05:32PM -0700, Nicolin Chen wrote:
-> > +/*
-> > + * See include/linux/iommufd.h
-> > + * struct iommufd_viommu_ops - vIOMMU specific operations
-> > + */
-> > +const struct iommufd_viommu_ops amd_viommu_ops = {
-> > +	.alloc_domain_nested = amd_iommu_alloc_domain_nested,
-> > +};
+
+
+On 2025/10/6 22:18, David Hildenbrand wrote:
+> On 05.10.25 04:12, Lance Yang wrote:
+>>
+>>
+>> On 2025/10/5 09:05, Wei Yang wrote:
+>>> On Wed, Oct 01, 2025 at 06:05:57PM +0800, Lance Yang wrote:
+>>>>
+>>>>
+>>>> On 2025/10/1 16:54, Wei Yang wrote:
+>>>>> On Wed, Oct 01, 2025 at 11:22:51AM +0800, Lance Yang wrote:
+>>>>>> From: Lance Yang <lance.yang@linux.dev>
+>>>>>>
+>>>>>> Currently, special non-swap entries (like migration, hwpoison, or PTE
+>>>>>> markers) are not caught early in hpage_collapse_scan_pmd(), 
+>>>>>> leading to
+>>>>>> failures deep in the swap-in logic.
+>>>>>>
+>>>>>> hpage_collapse_scan_pmd()
+>>>>>> `- collapse_huge_page()
+>>>>>>        `- __collapse_huge_page_swapin() -> fails!
+>>>>>>
+>>>>>> As David suggested[1], this patch skips any such non-swap entries
+>>>>>> early. If any one is found, the scan is aborted immediately with the
+>>>>>> SCAN_PTE_NON_PRESENT result, as Lorenzo suggested[2], avoiding wasted
+>>>>>> work.
+>>>>>>
+>>>>>> [1] https://lore.kernel.org/linux-mm/7840f68e-7580-42cb- 
+>>>>>> a7c8-1ba64fd6df69@redhat.com
+>>>>>> [2] https://lore.kernel.org/linux-mm/7df49fe7-c6b7-426a-8680- 
+>>>>>> dcd55219c8bd@lucifer.local
+>>>>>>
+>>>>>> Suggested-by: David Hildenbrand <david@redhat.com>
+>>>>>> Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>>>>>> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+>>>>>> ---
+>>>>>> v1 -> v2:
+>>>>>> - Skip all non-present entries except swap entries (per David) 
+>>>>>> thanks!
+>>>>>> - https://lore.kernel.org/linux-mm/20250924100207.28332-1- 
+>>>>>> lance.yang@linux.dev/
+>>>>>>
+>>>>>> mm/khugepaged.c | 32 ++++++++++++++++++--------------
+>>>>>> 1 file changed, 18 insertions(+), 14 deletions(-)
+>>>>>>
+>>>>>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>>>>>> index 7ab2d1a42df3..d0957648db19 100644
+>>>>>> --- a/mm/khugepaged.c
+>>>>>> +++ b/mm/khugepaged.c
+>>>>>> @@ -1284,7 +1284,23 @@ static int hpage_collapse_scan_pmd(struct 
+>>>>>> mm_struct *mm,
+>>>>>>     for (addr = start_addr, _pte = pte; _pte < pte + HPAGE_PMD_NR;
+>>>>>>          _pte++, addr += PAGE_SIZE) {
+>>>>>>         pte_t pteval = ptep_get(_pte);
+>>>>>> -        if (is_swap_pte(pteval)) {
+>>>>>
+>>>>> It looks is_swap_pte() is mis-leading?
+>>>>
+>>>> Hmm.. not to me, IMO. is_swap_pte() just means:
+>>>>
+>>>> !pte_none(pte) && !pte_present(pte)
+>>>>
+>>>
+>>> Maybe it has some reason.
+>>>
+>>> I took another look into __collapse_huge_page_swapin(), which just check
+>>> is_swap_pte() before do_swap_page().
 > 
-> Unfortunately, a viommu_ops with alloc_domain_nested is incomplete,
-> IMHO. If this series gets merged alone, it declares that the kernel
-> now supports AMD IOMMU's virtualization, which actually won't work
-> without a cache invalidation op (SW) or hw_queue (HW-acceleration).
+> Thanks for pointing that out.
+> 
+> A function that is called __collapse_huge_page_swapin() and documented 
+> to "Bring missing pages in from swap" will handle other types as well.
+> 
+> Unbelievable horrible.
+> 
+> So let's think this through so we can document it in the changelog 
+> properly.
+> 
+> We could have currently ended up in do_swap_page() with
+> 
+> (1) Migration entries. We would have waited.
+> 
+> -> Maybe worth it to wait, maybe not. I suspect we don't stumble into
+>     that frequently such that we don't care. We could always unlock this
+>     separately later.
+> 
+> 
+> (2) Device-exclusive entries. We would have converted to non-exclusive.
+> 
+> -> See make_device_exclusive(), we cannot tolerate PMD entries and have
+>     to split them through FOLL_SPLIT_PMD. As popped up during a recent
+>     discussion, collapsing here is actually counter-productive, because
+>     the next conversion will PTE-map it again. (until recently, it would
+>     not have worked with large folios at all IIRC).
+> 
+> -> Ok to not collapse.
+> 
+> (3) Device-private entries. We would have migrated to RAM.
+> 
+> -> Device-private still does not support THPs, so collapsing right now 
+> just means that the next device access would split the folio again.
+> 
+> -> Ok to not collapse.
+> 
+> (4) HWPoison entries
+> 
+> -> Cannot collapse
+> 
+> (5) Markers
+> 
+> -> Cannot collapse
+> 
+> 
+> I suggest we add that in some form to the patch description, stating 
+> that we can unlock later what we really need, and not account it towards 
+> max_swap_ptes.
 
-Yeah, I'd move this patch to a series implementing viommu fully.
+Cool!
 
-I'm pretty sure this series is OK as is without it, but it would be
-good to at least share a sketch of the viommu support to be sure
-before merging it.
+I'll take a closer look and adjust the patch description accordingly ;)
 
-Jason
+Thanks a lot for the lesson!
+
+> 
+>>>
+>>> We have filtered non-swap entries in hpage_collapse_scan_pmd(), but 
+>>> we drop
+>>> mmap lock before isolation. This looks we may have a chance to get 
+>>> non-swap
+>>> entry.
+>>
+>> Thanks for pointing that out!
+>>
+>> Yep, there is a theoretical window between dropping the mmap lock
+>> after the initial scan and re-acquiring it for isolation.
+>>
+>>>
+>>> Do you think it is reasonable to add a non_swap_entry() check before
+>>> do_swap_page()?
+>>
+>> However, that seems unlikely in practice. IMHO, the early check in
+>> hpage_collapse_scan_pmd() is sufficient for now, so I'd prefer to
+>> keep it as-is :)
+> 
+> I think we really should add that check, as per reasoning above.
+> 
+> I was looking into some possible races with uffd-wp being set before we 
+> enter do_swap_page(), but I think it might be okay (although very 
+> confusing).
+
+Ah, I see ;p
+
+@Wei could you send a patch to add the non_swap_entry() check there?
 
