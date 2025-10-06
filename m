@@ -1,134 +1,173 @@
-Return-Path: <linux-kernel+bounces-843069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D1DABBE5A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:30:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B82EEBBE595
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:30:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47E5D3B14E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:30:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 310713BF42F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30872D5C92;
-	Mon,  6 Oct 2025 14:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082F12D063B;
+	Mon,  6 Oct 2025 14:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CyayRvWM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rBmeTHEd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383FB137923;
-	Mon,  6 Oct 2025 14:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5679E24B28;
+	Mon,  6 Oct 2025 14:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759761023; cv=none; b=fUUEoDFWjMph29akdWy3MDQulSxRraPXcvHWwSdRt7nHj1QgygO+fgrTvfSEmGMyJlYjWUw5NSOLtxBhk+M9xkoylJv+mrjQmVIudcLMtcTw+XBNzPAVnMmXx01xkgRGse1U3aOfpYbVxpTD0J8CSwJhmPijkaDFdG498YS2t/8=
+	t=1759761018; cv=none; b=CaY06M06uj34wLNAdDiWe2QWdYXbHa8h4+KNAsu+W37VyASAaE4hDzfDCh6tI6muMzP2q6mb4ZIQ11XHzVnlnAVEYHF7jP1qe9YqA2h6y5Scbt2RWZd/9NW4K1dJ5UpR5y6x/lawGSPKIRSAFUF+TvfTBHL8uJjhZjcu6k08y8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759761023; c=relaxed/simple;
-	bh=Z0Xk1zutYNK5fdV7Q90ItmYTFXFrXh0MnKPjPEQpcec=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=g3OKUAqKLoJGjxlTIe4Zykw2vf9sIGyqTigTcXzQS6gxsdBif2WKIafm/sWL/GXZo/mbUzwAMM7Jxksxn+fNTpWbj/SCyr8Fi7G6wKEIlXePsoi0yuYCCZgkX0gXzRu3IY22ayf/pqq3fOTcVdOtu+KKMs07cwbBGW+WkzE3UMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CyayRvWM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62E25C4CEF5;
-	Mon,  6 Oct 2025 14:30:13 +0000 (UTC)
+	s=arc-20240116; t=1759761018; c=relaxed/simple;
+	bh=voL61pr7tpXNE7UVtTh1JilvSM6+IA0wwZxpEOl0whI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qu9OGwgIurMqF0ICS4j+lk7sqjzJ9lNMko4MAZ+EPoy+jiwg63UUx6Sku6OYO9MlPlBWPNpJQiYW2Yo3BrXwiwnslCtetU4ABQk0EOzs9Ff4Dn7hZEK7Hu3lhgiNc+782b+Az1CQpxQtZwFqC1KuFc57hj/WASq5qM80Iu2ACo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rBmeTHEd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8871FC4CEF9;
+	Mon,  6 Oct 2025 14:30:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759761022;
-	bh=Z0Xk1zutYNK5fdV7Q90ItmYTFXFrXh0MnKPjPEQpcec=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=CyayRvWM7fCrhPL8SVjOSeWTov06Ps1dORhh0sl9klxAwOkyK7ONJ6lZE2eVvrvFl
-	 mgInnab3z3wKW99UU9pD8ZuQf2Bw0/9ib8mfYNQzjTW3DmCxEx1RFB6nGo4lOu7CzF
-	 hMtJn3RZ+OrtUP8mFaUi86/tZi35QjBlQuR8RYrgWneX3WVmBbg7jndHayNovJMUuC
-	 uWpOU/jICq82izj2NxgEyPAjvZkgJ46SG/GvvA3u4cxkkQStzdUHi0wkPwMa6lcX/i
-	 BRde4WsDzdeDSTTrafTTHcRA7U22BRlDcJusZ5J9SnjMbh+SfAH3bGkkt4WKFEKf5i
-	 HSZ5diknL9v6g==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org,  jasonmiu@google.com,  graf@amazon.com,
-  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
-  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
-  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
-  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
-  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
-  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
-  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
-  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
-  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com,
-  hughd@google.com,  skhawaja@google.com,  chrisl@kernel.org,
-  steven.sistare@oracle.com
-Subject: Re: [PATCH v4 03/30] kho: drop notifiers
-In-Reply-To: <20250929010321.3462457-4-pasha.tatashin@soleen.com> (Pasha
-	Tatashin's message of "Mon, 29 Sep 2025 01:02:54 +0000")
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
-	<20250929010321.3462457-4-pasha.tatashin@soleen.com>
-Date: Mon, 06 Oct 2025 16:30:12 +0200
-Message-ID: <mafs0bjmkp0gb.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=k20201202; t=1759761017;
+	bh=voL61pr7tpXNE7UVtTh1JilvSM6+IA0wwZxpEOl0whI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rBmeTHEd7NuFo1jgnvRcZSNaXhsnQPuQsbFDKS4E5H4u+AV+AO7kK/oQMGzwzMPof
+	 WTq77WOP2j38MKJ/kmKpqz0KJR7NPE7Na+7H4t1dHlmvZgIX4CqQziK8+inb+ZnN3H
+	 mBqOocfZFqf6zBB67g8v/8pwp6ZsWc0VSVwd3YKPWvsdaotK+5frbMF+7K0b0acfw2
+	 3mx5uCNUQw7dNvieGaRerKJmEZBp+l1nbguj0JKn9jXqs4i+hD93rXNnysIDdxCxCu
+	 DEzg3xyj22KDSnVosNGbPtECL6b2iSm5mCyXcm3pilxjuCCjM4rFtbyix6dli0KlKV
+	 WbtVmN8R44aGw==
+Date: Mon, 6 Oct 2025 17:30:14 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-v6.18
+Message-ID: <aOPSdstd1bk0pM3R@kernel.org>
+References: <aOKTFv1vh1cvvcLk@kernel.org>
+ <CAHk-=wiCWiDcLEE3YqQo78piVHpwY2iXFW--6FbmFAURtor2+w@mail.gmail.com>
+ <aOOu1f1QWQNtkl6c@kernel.org>
+ <aOPOZwp_inGui9Bx@kernel.org>
+ <aOPPpVK8rJUuDgWD@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aOPPpVK8rJUuDgWD@kernel.org>
 
-Hi Pasha,
+On Mon, Oct 06, 2025 at 05:18:13PM +0300, Jarkko Sakkinen wrote:
+> On Mon, Oct 06, 2025 at 05:13:02PM +0300, Jarkko Sakkinen wrote:
+> > On Mon, Oct 06, 2025 at 02:58:17PM +0300, Jarkko Sakkinen wrote:
+> > > On Sun, Oct 05, 2025 at 11:09:08AM -0700, Linus Torvalds wrote:
+> > > > On Sun, 5 Oct 2025 at 08:47, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> > > > >
+> > > > >      This pull request disables
+> > > > > TCG_TPM2_HMAC from the default configuration as it does not perform well
+> > > > > enough [1].
+> > > > >
+> > > > > [1] https://lore.kernel.org/linux-integrity/20250825203223.629515-1-jarkko@kernel.org/
+> > > > 
+> > > > This link is entirely useless, and doesn't explain what the problem
+> > > > was and *why* TPM2_TCG_HMAC shouldn't be on by default.
+> > > > 
+> > > > I think a much better link is
+> > > > 
+> > > >    https://lore.kernel.org/linux-integrity/20250814162252.3504279-1-cfenn@google.com/
+> > > > 
+> > > > which talks about the problems that TPM2_TCG_HMAC causes.
+> > > > 
+> > > > Which weren't just about "not performing well enough", but actually
+> > > > about how it breaks TPM entirely for some cases.
+> > > 
+> > > Fair enough. I'll also enumerate the issues, and also roadmap
+> > > to heal the feature.
+> > 
+> > So some of the arguments in Chris' email are debatable, such as
+> > this list:
+> > 
+> > - TPM_RH_NULL
+> > - TPM2_CreatePrimary
+> > - TPM2_ContextSave
+> > - ECDH-P256
+> > - AES-128-CFB
+> > 
+> > 
+> > We've never encountered a TPM chip without those TPM commands, and e.g.
+> > /dev/tpmrm0 heavily relies on TPM2_ContextSave, and has been in the
+> > mainline since 2017. And further, this has been the case on ARM too.
+> > 
+> > So using all of the arguments as rationale for the change that according
+> > to Chris' email are broken because I cannnot objectively on all of the
+> > arguments.
+> > 
+> > E.g. I have to assume to this day that all known TPM chips have those
+> > commands because no smoking gun exists. And if DID exist, then I'd
+> > assume someone would fixed /dev/tpmrm0 ages ago.
+> > 
+> > That said, I do agree on disabling the feature for the time being:
+> > we have consensus on actions but not really on stimulus tbh.
+> > And if there is stimulus I would postpone this patch to create
+> > fix also for /dev/tpmrm0.
+> > 
+> > Argument where I meet with Chris suggestion are:
+> > 
+> > 1. Performance. The key generation during boot is extremely bad
+> >    idea and depending on the deployment the encryption cost is
+> >    too much (e.g. with my laptop having fTPM it does not really
+> >    matter).
+> > 2. Null seed was extremely bad idea. The way I'm planning to actually
+> >    fix this is to parametrize the primary key to a persistent key handle
+> >    stored into nvram of the chip instead of genration. This will address
+> >    also ambiguity and can be linked directly to vendor ceritifcate
+> >    for e.g. to perfom remote attesttion.
+> > 
+> > Things don't go broken by saying that they are broken and nothing
+> > elsewhere in the mainline has supporting evidence that those commands
+> > would be optional. I cannot agree on argument which I have zero
+> > means to measure in any possible way.
+> > 
+> > This is exactly also the root reason why I wrote my own commit instead
+> > with the same change: I could have never signed off the commit that
+> > I don't believe is true in its storyline.
+> > 
+> > So if I write cover for the pull request where I use the subset of
+> > arguments with shared consensus would that be enough to get this
+> > through? As for primary key handle fix I rather do that with
+> > time and proper care.
+> 
+> I had to use few hours to remind why I did my commit instead of acking
+> the original and this is the root. We've never had e.g. a bug in the
+> wild that would /dev/tpmrm0 to be broken because ContextSave is not
+> available, and it is *widely* used device across all major platforms.
 
-On Mon, Sep 29 2025, Pasha Tatashin wrote:
+Here's mobile client profile:
 
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
->
-> The KHO framework uses a notifier chain as the mechanism for clients to
-> participate in the finalization process. While this works for a single,
-> central state machine, it is too restrictive for kernel-internal
-> components like pstore/reserve_mem or IMA. These components need a
-> simpler, direct way to register their state for preservation (e.g.,
-> during their initcall) without being part of a complex,
-> shutdown-time notifier sequence. The notifier model forces all
-> participants into a single finalization flow and makes direct
-> preservation from an arbitrary context difficult.
-> This patch refactors the client participation model by removing the
-> notifier chain and introducing a direct API for managing FDT subtrees.
->
-> The core kho_finalize() and kho_abort() state machine remains, but
-> clients now register their data with KHO beforehand.
->
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+https://trustedcomputinggroup.org/wp-content/uploads/TPM_2.0_Mobile_Common_Profile_v2r31_FINAL.pdf
 
-This patch breaks build of test_kho.c (under CONFIG_TEST_KEXEC_HANDOVER):
+Unless I missed a tidbit I see nothing in it saying that ContextSave
+would be optional. If there was even a known legit spec bringing some
+context to the claims, that would move things forward.
 
-	lib/test_kho.c:49:14: error: =E2=80=98KEXEC_KHO_ABORT=E2=80=99 undeclared =
-(first use in this function)
-	   49 |         case KEXEC_KHO_ABORT:
-	      |              ^~~~~~~~~~~~~~~
-	[...]
-	lib/test_kho.c:51:14: error: =E2=80=98KEXEC_KHO_FINALIZE=E2=80=99 undeclar=
-ed (first use in this function)
-	   51 |         case KEXEC_KHO_FINALIZE:
-	      |              ^~~~~~~~~~~~~~~~~~
-	[...]
+Section 2.3 states this about ContextSave:
 
-I think you need to update it as well to drop notifier usage.
+"The symmetric cipher mode TPM_ALG_CFB is REQUIRED by TCG TPM 2.0
+Library specification Part 1 [1] and is also necessary for
+implementation of TPM2_Create, TPM2_Load, TPM 2_ContextSave,
+TPM2_ContextLoad, and other TPM commands"
 
-[...]
+which actually claims that TPM_ALG_CFB is required where as Chris'
+patch claims 180 degrees opposite what the spec says.
 
---=20
-Regards,
-Pratyush Yadav
+Perhaps there's some other random TCG spec that I've missed, it's
+entirely possible...
+
+BR, Jarkko 
 
