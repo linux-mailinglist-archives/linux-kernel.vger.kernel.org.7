@@ -1,293 +1,324 @@
-Return-Path: <linux-kernel+bounces-843320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B4E1BBEF16
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:27:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AADC6BBEF34
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EF763C25FF
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:26:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9D573C30F5
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2512DFF18;
-	Mon,  6 Oct 2025 18:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1702DE719;
+	Mon,  6 Oct 2025 18:19:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MMks/9Hs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jCLVv/JW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CEFE246766;
-	Mon,  6 Oct 2025 18:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759774772; cv=none; b=NaP4DS1L08XUVJ1a6CWNSdN8k68Jwa+cQPG6J6wn7wnOD1UHOdDUT7Wr3zb4rCF5VFiXKNKEYPi/XOFZ3OSE/IrcPUWUqsYa5HWwGvAQlL0/yWJSZVVnf3udAI5M24z1Y3jKRCzWoefz6nLhd8FERsHpV9HRLfnl23PNA+HSBII=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759774772; c=relaxed/simple;
-	bh=CvfGgEBl25MOW5xHddb76nDW1uClv4FoaxzRoD4emQU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LQNE30f0+POBXe/dKaBgjvxvhUhdgdR/rlj/rXfuRaurkxDsNNXEj9y3x/fQoO7X6gGjfmMZrH/ds6Rqeog5B9/NJzCDJuswlG/S0ThTPIezMXfS/EaGUTupBTx5FfKxPTJS3P+Rm8cAjqdEagOQBMXYvl3jq/Hb1/ol4jwsAYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MMks/9Hs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44920C4CEF7;
-	Mon,  6 Oct 2025 18:19:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759774772;
-	bh=CvfGgEBl25MOW5xHddb76nDW1uClv4FoaxzRoD4emQU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MMks/9Hs6HhlqnzM9rZHCQaDxZnMJMV2r5FicJystjyBCJ7BmDFbjGF0vv2cHvLy1
-	 4+giO9PSCEKj0h/cOwj15zEwD5ta1o3pIgOlfZNwYgkxmeS/avGBFkl6SMaqqn37VM
-	 RoLQ/U1hX1qamWfM5ioNRJDy56hxKFYPuiLoTt6Dp2mEb0Vz4CiduqH0lLtgL3Mbgs
-	 /bLVjUzKzlsvshg1rNEaXo5fFMRh8j59fIS3fJgXjwy9I4KOsCl3ovGd+j2siLH1cd
-	 6dLWd6hD5fqUBJFYieA3loAJX2oCCuYuD8SHfWJ3t/yij2AN3zbasIViJ89oJhlXXb
-	 cH5eIaNJaq6Iw==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Aaron Lu <ziqianlu@bytedance.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Sasha Levin <sashal@kernel.org>,
-	mingo@redhat.com,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.17] sched/fair: update_cfs_group() for throttled cfs_rqs
-Date: Mon,  6 Oct 2025 14:17:54 -0400
-Message-ID: <20251006181835.1919496-22-sashal@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251006181835.1919496-1-sashal@kernel.org>
-References: <20251006181835.1919496-1-sashal@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B732D77FA
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 18:19:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759774784; cv=fail; b=Tyn9r8OLIgeOv+XNM9BWogYuRhHQJgiOZmiEnL0cnHR8drLGhuv5bPFzoIOTyzQl759DXpoXao0L8xXudOQn1XAL5g4/sw5mz26feko2gjQZfa/+ChxRvpYGeNBjzOIpQ4gMbcW39klyydbS1ArOWyROApcbrFI2jkKDaW/1XZk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759774784; c=relaxed/simple;
+	bh=C2caX8fQ9y/PnKREGUWmL5LlfPjmhRMvLwLoHFtWBmg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=SsQj2GhyaJTXiHrLed8uFMUv5FZ2j5EGh+xRg2o+7hj9FETiCxJMyoljLAtAYQzwzLd2ul+u1twW76v1BzhscjpNXLFHyzzar6d7glOXoyHpedld/hk8UOt1dp63HpOV6SKbBylVJ6/aJXhtrrLtR0LL/7SFkF/gohU6ADoyMhg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jCLVv/JW; arc=fail smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759774783; x=1791310783;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=C2caX8fQ9y/PnKREGUWmL5LlfPjmhRMvLwLoHFtWBmg=;
+  b=jCLVv/JWMyu99Uw8I0ZkO8CKlTYz4SYnsrbLaGtHbbMX6A/T/52ySt0+
+   sfzK8WYBGlglx3Yp0dqosVxEUylhIep55w4C+jRn/JT2OqP97bKrKeeQa
+   IlnUrI2UCHW/5e2Y50U27nAOMeLY/xAgkmqffSbfZ4t1pOJht0oc4pNeI
+   LuZS4CIpAgtUb8zdAmSV3pPL3og3+JgYlgSVJ4WoJEOfAApXw+YJv4yMp
+   Ru4d+W5Ac+Yl4l2IipY8r5Tbha+UkZRvlH0Ak7OaVjqeZpUIVGaDf9ch3
+   Nw2vH1iB20e6e1AbqC3m5lYVroN28vgMGv7PREL4Sm0FptB9cIFFL7Cnd
+   w==;
+X-CSE-ConnectionGUID: SOVEoK92R/yC7XW2OzKVXQ==
+X-CSE-MsgGUID: yPxO/fB1SBOxGcSQjpgGgA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11574"; a="60991141"
+X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
+   d="scan'208";a="60991141"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 11:19:42 -0700
+X-CSE-ConnectionGUID: GNZbOGHHTbauNUZZHHm8zg==
+X-CSE-MsgGUID: TwpoIf0YSieKuZhJ+C9Cxw==
+X-ExtLoop1: 1
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 11:19:42 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 6 Oct 2025 11:19:41 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Mon, 6 Oct 2025 11:19:41 -0700
+Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.12) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 6 Oct 2025 11:19:41 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gvLM33F8C90Xmq/avw4wy4q9Fn3U5p5B3/XQg/z09WAnZfIhxIOVh7uumSk3jRcyqhovwnNw8akQoOzUHYZN9vco6tVgx8vo1hFj32Pc5e+izY/uHRcbB6tuQTz3SN/RYHZvwN7aFDFY/OSHayhOYfONzy70oiYBN7bQ30FBLIOBRd0mUWstOURydobAr8CIT3YfdhMMHn61LqMivual4yx6U/xXRCOCJr9EoRmKbLOQyPKYDy4/w54BDrL78TE+BPTSgE+EBen5jZ3e01nheYtmd5Sd+XoBaFGTQ/KcMiCg+6uKn0/hOCZTQrMvnlubknPULrjkgZxUYO1JWYfxGg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tj0JuwZ5c+3vhKBHp6R2j3ucVtLjzozaJRO9s8+l9jE=;
+ b=PN0VH8gGwsZ43MSnqKKd/vaGdENwRRLIRIA57g2M7X0lYuE1MsKh9teaWUsW/HpO3KMrQFIl3ZVrawJegtmRAUcGPg7g3TKlTG1R++hnZkX5vAlWwrWIs/mtmQpdkjPt5AsH/ZqHv3CaMgKR8LpRPp34s95V+EA5eeXP7d9guCxBrQnJsQ8ZrJC5E95hqcD+/2ucNEeIhF/UBxR97sp+l+F7PSjT1tfCnu1n3CsW8Q361oE35Hy0y0xALm86jZBgdEMTe2WgxmThreOIWUC5XuHT5F4FCzbz94URBjYh12LzTK1Yo7ZNLtf51n2oULzp4coG2nXQfdhPMCBJeTWqGQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
+ by SJ0PR11MB5939.namprd11.prod.outlook.com (2603:10b6:a03:42e::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Mon, 6 Oct
+ 2025 18:19:32 +0000
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361%7]) with mapi id 15.20.9182.017; Mon, 6 Oct 2025
+ 18:19:32 +0000
+Date: Mon, 6 Oct 2025 11:19:29 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+CC: Fenghua Yu <fenghuay@nvidia.com>, Maciej Wieczor-Retman
+	<maciej.wieczor-retman@intel.com>, Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, "Drew
+ Fustini" <dfustini@baylibre.com>, Dave Martin <Dave.Martin@arm.com>, Chen Yu
+	<yu.c.chen@intel.com>, <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<patches@lists.linux.dev>
+Subject: Re: [PATCH v11 14/31] x86/resctrl: Discover hardware telemetry events
+Message-ID: <aOQIMQsgBOta0PRP@agluck-desk3>
+References: <20250925200328.64155-1-tony.luck@intel.com>
+ <20250925200328.64155-15-tony.luck@intel.com>
+ <08a35a50-480d-48ee-bc07-b7405274a487@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <08a35a50-480d-48ee-bc07-b7405274a487@intel.com>
+X-ClientProxiedBy: SJ0PR03CA0205.namprd03.prod.outlook.com
+ (2603:10b6:a03:2ef::30) To SJ1PR11MB6083.namprd11.prod.outlook.com
+ (2603:10b6:a03:48a::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.17.1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PR11MB6083:EE_|SJ0PR11MB5939:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3130dcc2-a448-42cc-a4dd-08de0504e55e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?QM6Y2JI0FJz8heAONhGCaxC/Yy2lRmFJZUQP6rq+iG8CDsvIOrrVIGPuTBbW?=
+ =?us-ascii?Q?WdA697YHv05F/AexqG7q552DlSptIjEehjaT6ra5efu9Th3DPZ4yn+jhFYBm?=
+ =?us-ascii?Q?82dgJdJ6cDFvaqIqHZwRJdJ4RMexnwip9h+NWmQgaP/qH+fShWidMbiidL5A?=
+ =?us-ascii?Q?yUs4XXGkTNlEUIBm8TlAC0ZTD8Q/Rfom/T4pRelrXtIgdsc3+P4RyeCMAtc3?=
+ =?us-ascii?Q?ZDb+RE3/H54zLcyMUVBJaBE0POIWlnTc+wnLZXpPhKYPg6zgI3irmqNTjSOn?=
+ =?us-ascii?Q?pt1ZLbDd7rbZ9e5UzGedXTOGM67JIg/LbTQD4VGENQ+QZatXdvWTeWDTwdQ4?=
+ =?us-ascii?Q?75GY+6tsrwO2GU7s6RbRhXH451MP3luKTe0EVaUIRgqS2RvLFhuusUtYml8j?=
+ =?us-ascii?Q?Dy/iiq5o83k8EJeyaP74A795K2KnvEkJRrTsUHWVbg6DNIjjkhDlrkQKOfkW?=
+ =?us-ascii?Q?l+vDIorHTK8vlLcommgIP6NPS9vJ2ofKG1NMoCMQYMXkbwWF9vr6Ne3lRu8e?=
+ =?us-ascii?Q?LuhbW/bXATtlq4Vjo0H3Ud+q878lZPAjLRumoaOTKSjgqKSyc7chNj6HmzJi?=
+ =?us-ascii?Q?vap384D7BSpj5fv+bXksfMBsTy2J4r3szuqIf+pRXcAfi0DNRWfwdx4V+8nL?=
+ =?us-ascii?Q?8dvocx4JOqZC+6T3p/y9ZaHLlCTBIcxVDaqwTSw6PBOb5rYfmyPnc4xNUViW?=
+ =?us-ascii?Q?LsHnhwvqjTllcGt/EvQy+0BWwqwsLGyZ/atDLB3j3SFq9/0QAiguhKZi7QxK?=
+ =?us-ascii?Q?gpoHS1BUed17HUVwBcjsoNTPyKUwQYvBkL1vbxC941LLb2rHDP+hUVwNSmam?=
+ =?us-ascii?Q?SGTplU58+hlih0NhGpP6ptbNCWwkJaC6/B2k3CLtvBIKpu5vRF0hStZ1BndN?=
+ =?us-ascii?Q?PrdH4/vYiKBfJ5uoAOPkfkcXPQmFDOWMr9thkrhmVy7FGepwNCDtDyOI2gay?=
+ =?us-ascii?Q?3Ja8mPGz/d0ExHkWa6DL7CL1oGjRUTR8tgk9vABLT8LXwfXLbTM42ttCdUJd?=
+ =?us-ascii?Q?5MBcKBj10YKQTySuUnXznh+6rck3z7Nsi6E+M17hFHsRAThN6pszKEmfbUbN?=
+ =?us-ascii?Q?ULE3KULbZslVSXHwhr01SmKEeRxl6CzXxpWk+j8a61mVSDpsOHzcqBYyvHKM?=
+ =?us-ascii?Q?usDRgp9GgMu1hLmvv3TBwgmjcH1H6zhh20CU+C2ml4/gdyJjxF6kXp4ewRON?=
+ =?us-ascii?Q?kVJhdqUknvqIJN49eldw+NS/S8JhB/I9zcaotR95UzV4N4JBhcXCpnvAC59z?=
+ =?us-ascii?Q?zPjzQbwsX9SkJDfimzvUh/ScjL0DsDc+08CnrVdAwItL47umQdEScrlHqe3O?=
+ =?us-ascii?Q?YBQe8+rxfRuBadMKofCm2UwDIzUslHdSD6o1u9N7yaiKyEjubDzy2k49KPG6?=
+ =?us-ascii?Q?/luKBSoCdzYnpWFsAZpjrGnNOzeP87dA3TttVUkhnWJrYwVYvRE0jTSmNvx8?=
+ =?us-ascii?Q?bO3zHqmWnWep/d5Vc+QF5bKnzy6orXLnU7Geg6EePKehKaBS0bARiw=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Qdi5eFcR5MMj8ukObZwFyhLBWO4qN6vX4G2dwPOqfE/de6V0KPp4uNBEO94s?=
+ =?us-ascii?Q?j9OeTTV4pFatG4pZZ7godxVQbvC480gPmQ/8AzvJJrtJklSsJI1558CqMwxS?=
+ =?us-ascii?Q?QGKuWR/FlwIQy0JIxLUqGOH7oqU5Q8iguVFK++BwW56asKij+EIiZPtjLDuX?=
+ =?us-ascii?Q?MmCSmLOpdx6y6jX1yoEk/9v7pPPvkrGBsfSBX5uZjAPKujOlU00O/JQ+YIA3?=
+ =?us-ascii?Q?ZfFXz72eIFp1t0vyYoIp5V1YnKWpeSHbBSywBuxItO8dz3FuIPY2EQuUz8O2?=
+ =?us-ascii?Q?FofoyD1lm0joe+accxyH6mDotHO85N92II5hAk5eO7i0Nndp+gS4ugb5GCeN?=
+ =?us-ascii?Q?UUPMdhzXIUOTKOAiGZGZX5IA3fpCzxEYA3GT6CAFvSgbieIPwxDvCSsWzNbu?=
+ =?us-ascii?Q?4xt6wOMcoHG+iDl0hRPzVdP8cbd6RLY1jB3quyjqRlNrcwOaHNjKcI4CFnuU?=
+ =?us-ascii?Q?J89NVf98sUnMbsZmI8I7ThTgbqgZfPnpm5LBNHXoSIHCr4OPiv9GEkQNxiEH?=
+ =?us-ascii?Q?/CFMaYpCMrQdQtDlFXcqEEL2SSOJTpb0ZKw69cBURenvHnvjVm1x+kkk6tpT?=
+ =?us-ascii?Q?ystyK4IfKbQdcFNXYKMsdBgI/fWXe94i8wEN0Teiq6oES926Nd/9Fsza+LfA?=
+ =?us-ascii?Q?9Zzv+oCQ74KFa8azZrx8600ZjdJ+r0vBqdXL/UFLRm+HXZTSmO9+/Tj9PZCX?=
+ =?us-ascii?Q?F6TFoxxbj6KYO56lSpUN1yw9Mde4yqb+v1Qs77jClVVRtIjQimCOlZmM3Y/A?=
+ =?us-ascii?Q?+ML/VIaVDSVKeNXBUrqIfsQ5qy4/mJK8UdT9X/ZD2pLkPTltiLEKovFnqvwe?=
+ =?us-ascii?Q?ItoHA9NCrEl0r6VKNKg4NnLOoiq4xwGKKYBOJsFaT2LKe+6VH01I7B+i9RBA?=
+ =?us-ascii?Q?Tuef5rcN5DxsZJoWqCe4N0ykJhDSpuzmmBysFspO9si3qTXtt6La1UYfCf+3?=
+ =?us-ascii?Q?0h7XAMDkdZh3JPT7AaCOYzCm+k5+mLe1VOXEfy4OsORg7fz6Ux/uDBOAXrlg?=
+ =?us-ascii?Q?5mER0+y7aeoCZ6JK+esiMEW+AIhUkXB+LcHGQdkaKr00rCKwuWOaBwsqZMlf?=
+ =?us-ascii?Q?72xeQqUDHksTIvI1t/YP3+DbWDaRCnmASymRetQ3tn1C0OoQIZ4hGUt7Whng?=
+ =?us-ascii?Q?1WQNXLsobG6CIQcCxr1aJSb11iY/vbFDGWmJ86mY/VZF+LAh9qaHcFns9gqn?=
+ =?us-ascii?Q?BOFc/zQTwtB59F6HwbS6UHuFHAnNspZ2bdy/DWWJkqUk38X009OATpDw/0eo?=
+ =?us-ascii?Q?mEOXeg6AVx7bk+vxVaQM7oIQpScRu12NWxiHafOqBmMfDb6E7IaB1YyL+pPf?=
+ =?us-ascii?Q?IfAgBuPl+Mbg3mRSsco/IrcrCMW6meDK7P6D2YOkqFNeloKQ9yCgPd4Nhj07?=
+ =?us-ascii?Q?4M9HchvMtrJODYgiBGTzFhi6Jg8Jz3UxBUt8sFZPBXEIfUidTaHiBD4d9V2C?=
+ =?us-ascii?Q?e6OV1OKZ3fevqh8YoXPUPIouc1uqN+uYE5R4ULCnSFMgsuvULKNF3WORUwQO?=
+ =?us-ascii?Q?1/jH+LSewZ0xcIKie3aMxjcafdx+GGBSLgU55lIeyShnuBU46j55rdTtt3Zk?=
+ =?us-ascii?Q?qiLAg7Chj9mnn4YjctCM3TfGuUwihiSXuvjgZCvt?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3130dcc2-a448-42cc-a4dd-08de0504e55e
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2025 18:19:32.3098
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DA42qEzC4ZUsUP7d8ZVYSyjDs0BpAEguosXjsVo26v51glQzk5TD8UVPD6Ps45dIUfpn4W7BxrSyu2RrCUAw7g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5939
+X-OriginatorOrg: intel.com
 
-From: Aaron Lu <ziqianlu@bytedance.com>
+On Fri, Oct 03, 2025 at 04:35:11PM -0700, Reinette Chatre wrote:
+> Hi Tony,
+> 
+> On 9/25/25 1:03 PM, Tony Luck wrote:
+> > Each CPU collects data for telemetry events that it sends to the nearest
+> > telemetry event aggregator either when the value of IA32_PQR_ASSOC.RMID
+> 
+> Please note that one of the "Touchups" done during merge of [1] was to
+> use full names for registers in descriptions. Considering this,
+> "IA32_PQR_ASSOC.RMID" -> "MSR_IA32_PQR_ASSOC.RMID
+> 
+> (also please make same change in cover letter)
 
-[ Upstream commit fcd394866e3db344cbe0bb485d7e3f741ac07245 ]
+Will do.
 
-With task based throttle model, tasks in a throttled hierarchy are
-allowed to continue to run if they are running in kernel mode. For this
-reason, PELT clock is not stopped for these cfs_rqs in throttled
-hierarchy when they still have tasks running or queued.
+> 
+> > changes, or when a two millisecond timer expires.
+> > 
+> 
+> ...
+> 
+> > +
+> > +/**
+> > + * struct event_group - All information about a group of telemetry events.
+> > + * @pfg:		Points to the aggregated telemetry space information
+> > + *			returned by the intel_pmt_get_regions_by_feature()
+> > + *			call to the INTEL_PMT_TELEMETRY driver that contains
+> > + *			data for all telemetry regions of a specific type.
+> > + *			Valid if the system supports the event group.
+> > + *			NULL otherwise.
+> > + * @guid:		Unique number per XML description file.
+> > + */
+> > +struct event_group {
+> > +	/* Data fields for additional structures to manage this group. */
+> > +	struct pmt_feature_group	*pfg;
+> > +
+> > +	/* Remaining fields initialized from XML file. */
+> > +	u32				guid;
+> > +};
+> 
+> 
+> ...
+> 
+> > +
+> > +/*
+> > + * Make a request to the INTEL_PMT_TELEMETRY driver for a copy of the
+> > + * pmt_feature_group for a specific feature. If there is one, the returned
+> > + * structure has an array of telemetry_region structures. Each describes
+> > + * one telemetry aggregator.
+> > + * Try to use every telemetry aggregator with a known guid.
+> 
+> The guid is associated with struct event_group and every telemetry region has
+> its own guid. It is not clear to me why the guid is not associated with pmt_feature_group.
+> To me this implies that a pmt_feature_group my contain telemetry regions that have
+> different guid.
+> 
+> This is not fully apparent in this patch but as this code evolves I do not think
+> the scenario where telemetry regions have different supported (by resctrl) guid is handled
+> by this enumeration.
+> If I understand correctly, all telemetry regions of a given pmt_feature_group will be
+> matched against a single supported guid at a time and all telemetry regions with that
+> guid will be considered usable and any other considered unusable without further processing
+> of that pmt_feature_group. If there are more than one matching guid supported by resctrl
+> then only events of the first one will be enumerated?
+> 
+> > + */
+> > +static bool get_pmt_feature(enum pmt_feature_id feature, struct event_group **evgs,
+> > +			    unsigned int num_evg)
+> > +{
+> > +	struct pmt_feature_group *p __free(intel_pmt_put_feature_group) = NULL;
+> > +	struct event_group **peg;
+> > +	bool ret;
+> > +
+> > +	p = intel_pmt_get_regions_by_feature(feature);
+> > +
+> > +	if (IS_ERR_OR_NULL(p))
+> > +		return false;
+> > +
+> > +	for (peg = evgs; peg < &evgs[num_evg]; peg++) {
+> > +		ret = enable_events(*peg, p);
+> > +		if (ret) {
+> > +			(*peg)->pfg = no_free_ptr(p);
+> > +			return true;
+> > +		}
+> > +	}
+> > +
+> > +	return false;
+> > +}
 
-Since PELT clock is not stopped, whether to allow update_cfs_group()
-doing its job for cfs_rqs which are in throttled hierarchy but still
-have tasks running/queued is a question.
+Perhaps David wants to cope with a future system that supports multiple
+guids?
 
-The good side is, continue to run update_cfs_group() can get these
-cfs_rq entities with an up2date weight and that up2date weight can be
-useful to derive an accurate load for the CPU as well as ensure fairness
-if multiple tasks of different cgroups are running on the same CPU.
-OTOH, as Benjamin Segall pointed: when unthrottle comes around the most
-likely correct distribution is the distribution we had at the time of
-throttle.
+You are right that my code will not handle this. It will just enable
+the first recognised guid and ignore any others.
 
-In reality, either way may not matter that much if tasks in throttled
-hierarchy don't run in kernel mode for too long. But in case that
-happens, let these cfs_rq entities have an up2date weight seems a good
-thing to do.
+How about this. Take an extra reference on any pmt_feature_group
+structures that include a known guid (to keep the accounting right
+when intel_aet_exit() is called). This simplifies the function so
+I don't need the __free() handler that confuses checkpatch.pl :-)
 
-Signed-off-by: Aaron Lu <ziqianlu@bytedance.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
 
-LLM Generated explanations, may be completely bogus:
+/*
+ * Make a request to the INTEL_PMT_TELEMETRY driver for a copy of the
+ * pmt_feature_group for a specific feature. If there is one, the returned
+ * structure has an array of telemetry_region structures, each element of
+ * the array describes one telemetry aggregator.
+ * A single pmt_feature_group may include multiple different guids.
+ * Try to use every telemetry aggregator with a known guid.
+ */
+static bool get_pmt_feature(enum pmt_feature_id feature, struct event_group **evgs,
+			    unsigned int num_evg)
+{
+	struct pmt_feature_group *p = intel_pmt_get_regions_by_feature(feature);
+	struct event_group **peg;
+	bool ret = false;
 
-## Backport Status: YES (with critical dependencies)
+	if (IS_ERR_OR_NULL(p))
+		return false;
 
-### Executive Summary
+	for (peg = evgs; peg < &evgs[num_evg]; peg++) {
+		if (enable_events(*peg, p)) {
+			kref_get(&p->kref);
+			(*peg)->pfg = no_free_ptr(p);
+			ret = true;
+		}
+	}
+	intel_pmt_put_feature_group(p);
 
-This commit **should be backported** to stable kernel trees, but **only
-as part of the complete task-based throttle model series**. In fact,
-this commit has **already been backported** to Linux 6.17 stable tree
-(commit 4ee521004f8ef) by stable maintainer Sasha Levin, which is strong
-evidence of its suitability for stable backporting.
+	return ret;
+}
 
-### Code Change Analysis
-
-The commit makes a minimal code change in `kernel/sched/fair.c`,
-removing 3 lines from `update_cfs_group()`:
-
-```c
-- if (throttled_hierarchy(gcfs_rq))
-- return;
--
-```
-
-This removal allows `update_cfs_group()` to continue updating group
-entity weights even for cgroups in throttled hierarchies. Previously,
-line 3960-3961 would cause an early return, preventing weight
-recalculation for any throttled cfs_rq.
-
-### Context and Dependencies
-
-**Critical Finding**: This commit is **NOT standalone**. It is part 5 of
-a 7-commit series implementing the task-based throttle model:
-
-1. **e1fad12dcb66b** - "Switch to task based throttle model" (341 line
-   change - the base)
-2. **eb962f251fbba** - "Task based throttle time accounting"
-3. **5b726e9bf9544** - "Get rid of throttled_lb_pair()"
-4. **fe8d238e646e1** - "Propagate load for throttled cfs_rq"
-5. **fcd394866e3db** - "update_cfs_group() for throttled cfs_rqs" ←
-   **This commit**
-6. **253b3f5872419** - "Do not special case tasks in throttled
-   hierarchy" (follow-up fix)
-7. **0d4eaf8caf8cd** - "Do not balance task to a throttled cfs_rq"
-   (follow-up performance fix)
-
-All 7 commits were backported together to Linux 6.17 stable tree.
-
-### Why This Change Is Necessary
-
-Under the **old throttle model**: When a cfs_rq was throttled, its
-entity was dequeued from the CPU's runqueue, preventing all tasks from
-running. The PELT clock stopped, so updating group weights was
-unnecessary and prevented by the `throttled_hierarchy()` check at line
-3960.
-
-Under the **new task-based throttle model** (introduced by commit
-e1fad12dcb66b):
-- Tasks in throttled hierarchies **continue running if in kernel mode**
-- PELT clock **remains active** while throttled tasks still run/queue
-- The `throttled_hierarchy()` check at line 3960 becomes **incorrect** -
-  it prevents weight updates even though PELT is still running
-
-**The fix**: Remove lines 3960-3961 to allow `calc_group_shares()` (line
-3963) and `reweight_entity()` (line 3965) to execute, giving throttled
-cfs_rq entities up-to-date weights for accurate CPU load calculation and
-cross-cgroup fairness.
-
-### Benefits and Trade-offs
-
-**Benefits** (from commit message):
-- Up-to-date weights enable accurate CPU load derivation
-- Ensures fairness when multiple tasks from different cgroups run on
-  same CPU
-- Prevents stale weight values during extended kernel-mode execution
-
-**Trade-offs** (acknowledged in commit):
-- As Benjamin Segall noted: "the most likely correct distribution is the
-  distribution we had at the time of throttle"
-- May not matter much if tasks don't run in kernel mode for long periods
-- Performance tuning was needed (see follow-up commit 0d4eaf8caf8cd
-  which addresses hackbench regression by preventing load balancing to
-  throttled cfs_rqs)
-
-### What Problems Does This Solve?
-
-The base task-based throttle model (e1fad12dcb66b) solves a **real
-bug**: With the old model, a task holding a percpu_rwsem as reader in a
-throttled cgroup couldn't run until the next period, causing:
-- Writers waiting longer
-- Reader build-up
-- **Task hung warnings**
-
-This specific commit ensures the new model works correctly by keeping
-weight calculations accurate during kernel-mode execution of throttled
-tasks.
-
-### Risk Assessment
-
-**Low to Medium Risk** for the following reasons:
-
-**Mitigating factors**:
-- Small code change (3 lines removed)
-- Already backported to 6.17 stable by experienced maintainer
-- Well-tested by multiple developers (Valentin Schneider, Chen Yu,
-  Matteo Martelli, K Prateek Nayak)
-- Part of thoroughly reviewed patch series linked at
-  https://lore.kernel.org/r/20250829081120.806-4-ziqianlu@bytedance.com
-
-**Risk factors**:
-- Modifies core scheduler behavior in subtle ways
-- Requires entire series (cannot be cherry-picked alone)
-- Follow-up performance fixes needed (commit 0d4eaf8caf8cd mentions AMD
-  Genoa performance degradation with hackbench that required additional
-  checks)
-- Affects PELT weight calculations during throttling edge cases
-
-**No evidence of**:
-- Reverts
-- CVE assignments
-- Major regression reports
-- Security implications
-
-### Backporting Requirements
-
-If backporting to stable trees **without** the task-based throttle
-model:
-
-**DO NOT BACKPORT** - This commit will break things. The
-`throttled_hierarchy()` check at line 3960 exists for a reason in the
-old throttle model where PELT clocks stop on throttle.
-
-If backporting to stable trees **with** the task-based throttle model:
-
-**MUST BACKPORT** as part of the complete series:
-1. Base commit e1fad12dcb66b (341 lines - major change)
-2. Commits eb962f251fbba, 5b726e9bf9544, fe8d238e646e1
-3. **This commit** (fcd394866e3db)
-4. **Follow-up fixes** 253b3f5872419 and 0d4eaf8caf8cd
-
-### Stable Tree Rules Compliance
-
-- ✅ **Fixes important bugs**: Yes (task hung due to percpu_rwsem
-  interactions)
-- ✅ **Relatively small change**: Yes for this commit (3 lines), but
-  series is large
-- ✅ **Minimal side effects**: When backported with complete series
-- ❌ **No major architectural changes**: No - this IS part of a major
-  architectural change
-- ✅ **Clear benefits**: Yes - prevents task hangs, improves fairness
-- ⚠️ **Explicit stable tag**: No "Cc: stable" tag, but manually selected
-  by stable maintainer
-- ✅ **Minimal regression risk**: When backported with complete series
-  and follow-ups
-
-### Recommendation
-
-**YES - Backport this commit**, with the following requirements:
-
-1. **MUST include the entire task-based throttle series** (commits 1-7
-   listed above)
-2. **MUST include follow-up performance fixes** (especially
-   0d4eaf8caf8cd)
-3. **Target kernel version**: 6.17+ (already done) or newer LTS versions
-   planning major scheduler updates
-4. **Not suitable for**: Older stable trees without appetite for the
-   341-line base architectural change
-
-The fact that Sasha Levin already backported this entire series to 6.17
-stable is the strongest indicator this is appropriate for stable
-backporting.
-
- kernel/sched/fair.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 8ce56a8d507f9..eea0b6571af5a 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -3957,9 +3957,6 @@ static void update_cfs_group(struct sched_entity *se)
- 	if (!gcfs_rq || !gcfs_rq->load.weight)
- 		return;
- 
--	if (throttled_hierarchy(gcfs_rq))
--		return;
--
- 	shares = calc_group_shares(gcfs_rq);
- 	if (unlikely(se->load.weight != shares))
- 		reweight_entity(cfs_rq_of(se), se, shares);
--- 
-2.51.0
-
+> Reinette
+> 
+> 
+> [1] https://lore.kernel.org/all/175793566119.709179.8448328033383658699.tip-bot2@tip-bot2/
 
