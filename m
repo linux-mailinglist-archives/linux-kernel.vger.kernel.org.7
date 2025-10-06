@@ -1,355 +1,433 @@
-Return-Path: <linux-kernel+bounces-843094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B6BCBBE658
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:48:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4581BBBE65B
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54854188B237
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:48:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 000D53B722F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B712D6E5C;
-	Mon,  6 Oct 2025 14:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343BA2D641F;
+	Mon,  6 Oct 2025 14:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JNNG7EgK"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gC7XqWLc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35A02D47E8;
-	Mon,  6 Oct 2025 14:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47AF2D5943
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 14:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759762093; cv=none; b=MkONOjOsPaF6J7whq+W3ECMSDKRKFy5TQdMkl5Wi603e+ULLFR9Mb4QTXUC948p5Qf2y64DvQURDUQG35xeNsBc3QqYRkpThsftxpKCR6+2dZQg0rIezC1KPLYfsexU9CkCSGeX13Pdr8z3Q0qbuD9BI77WVxrF+aei4/1MeqSc=
+	t=1759762100; cv=none; b=cUYQiV25O2xLtOjlL0aRJeo3WUg2YK7Jx/xAI7u8e/rYhQHWZITY3BZ1EIjDg3nhfXnTdyGgA3JKJ1LrCqIjMRJ+Y+RT9nJreZlhXQbOtVLI95nTHOeLFVDTWEuvj4A9TuCEOgBRDKx7E+XIWizFaFyMdGZJq1IgqfRnrjn8sr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759762093; c=relaxed/simple;
-	bh=cD0ujWbLg1KEkEWlo3yHOSzP9mTATdFXwtjOj/K9uSY=;
+	s=arc-20240116; t=1759762100; c=relaxed/simple;
+	bh=pWCgg2LcL9NNgI9UUQVYFvkwIr7NlLiPjECQBr/yPQg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e/eoDhskdy8sZnUJppas64n4MqN3JqAY+3ywSAJRmdY8SYMvsFTnOJDexddkQb9oeuYCPq29Fl9+aaa2DCJZx78WAbumjWITz8xiMi2JurANNXI2XhLQUoRlGOOx1qvNm5ZpgCcK6PLpsy+8+jKAcGgs3qsjGfaTl+mhyFS26Ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JNNG7EgK; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 8928CB0B;
-	Mon,  6 Oct 2025 16:46:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1759761993;
-	bh=cD0ujWbLg1KEkEWlo3yHOSzP9mTATdFXwtjOj/K9uSY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JNNG7EgKPvwrZEbQEvNyZ97+B9zPrgazZd0NrBsG7rzzaK1JAXp9Qvh2w5P06SEQV
-	 qDsxeWCxL+BKFdmdDiU86CuCubmbjRGwIMXPoqbi5N8fXqk8p3W2fv67AYBIuPlTxL
-	 x78+l818ATiIn9c+1vXCX94s3nW3oNvCvgyI7Nz8=
-Date: Mon, 6 Oct 2025 17:47:59 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Dan Scally <dan.scally@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Dafna Hirschfeld <dafna@fastmail.com>,
-	Keke Li <keke.li@amlogic.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Antoine Bouyer <antoine.bouyer@nxp.com>,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 1/8] media: uapi: Introduce V4L2 generic ISP types
-Message-ID: <20251006144759.GF5944@pendragon.ideasonboard.com>
-References: <20250915-extensible-parameters-validation-v5-0-e6db94468af3@ideasonboard.com>
- <20250915-extensible-parameters-validation-v5-1-e6db94468af3@ideasonboard.com>
- <20251005000602.GA13055@pendragon.ideasonboard.com>
- <badf4971-0916-45f9-952c-09963c6cb19a@ideasonboard.com>
- <20251006082751.GA16422@pendragon.ideasonboard.com>
- <246ae834-3077-4e38-b419-5c8773139e65@ideasonboard.com>
- <20251006090637.GA5944@pendragon.ideasonboard.com>
- <ecda9183-bd84-48fd-a1e0-e37b6dbacec6@ideasonboard.com>
- <20251006095850.GC5944@pendragon.ideasonboard.com>
- <71d2f967-7e7f-43d6-9f7e-28c7f438d03c@ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=R0ekJFCTg8oiOIiF9CDFflP4A4R0DSlvOZ+4NRaQsL1E0tIyPGzNc2FIEH5YIhiG0kuVA/cvVYNgL/uj/031PEE7AabwNDtEa9CqW7hNxpLDHtp/uUWpMl4QcR0k90/IxPJ2KhBHmZaBosp3cK5jU9EFOHVt/I3R8f2uIlYpLrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gC7XqWLc; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759762097; x=1791298097;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=pWCgg2LcL9NNgI9UUQVYFvkwIr7NlLiPjECQBr/yPQg=;
+  b=gC7XqWLccQMBW4DaPnJy0jz8xUnyeJYYT/B8yLpACn3+A8nNyJV71tNm
+   +kWG7h0HoI94zAc/geWlRNeTLclBNeytE4bWdUHq//QDEj+03PTAxXTlv
+   CMB9yMyoVAlYvctn6+AjkK2cz7NQsifDTBIU5Evpu0NipxGxe1EyjwRfn
+   DKo0fmPkjy+72Belpjwi1rsRMe0tDvXI1yk5P+xbtBgTmm9wO10RnInH5
+   oLKYQ3JN6Z3tBHQaY4oHnR+3KBcqzGerJ445C0tVEe59yPt2eQkcmLvLy
+   +MFvibaIxZBkukra3ord57TrTN8ViMbmLZ3yI+MIin/80rSe1ZEu0NawO
+   w==;
+X-CSE-ConnectionGUID: yo1h5F/7SmGgICPVjfd33A==
+X-CSE-MsgGUID: pDFDVTf6R3KuC78WajdLEA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11574"; a="61840171"
+X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
+   d="scan'208";a="61840171"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 07:48:12 -0700
+X-CSE-ConnectionGUID: DfbLrz5wTW6Jf58Fl3lB6w==
+X-CSE-MsgGUID: aiEvbrb4RROMh44Gjzu4Cg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
+   d="scan'208";a="184178171"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.80])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 07:48:09 -0700
+Date: Mon, 6 Oct 2025 17:48:05 +0300
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <siqueira@igalia.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/atomic: Change state pointers to a more meaningful
+ name
+Message-ID: <aOPWpV9bCoSTtBq-@intel.com>
+References: <20251006-drm-rename-state-v1-1-5b7c4154772b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <71d2f967-7e7f-43d6-9f7e-28c7f438d03c@ideasonboard.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251006-drm-rename-state-v1-1-5b7c4154772b@kernel.org>
+X-Patchwork-Hint: comment
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Oct 06, 2025 at 11:26:22AM +0100, Daniel Scally wrote:
-> On 06/10/2025 10:58, Laurent Pinchart wrote:
-> > On Mon, Oct 06, 2025 at 10:51:33AM +0100, Daniel Scally wrote:
-> >> On 06/10/2025 10:06, Laurent Pinchart wrote:
-> >>> On Mon, Oct 06, 2025 at 09:46:26AM +0100, Daniel Scally wrote:
-> >>>> On 06/10/2025 09:27, Laurent Pinchart wrote:
-> >>>>> On Mon, Oct 06, 2025 at 09:15:47AM +0100, Daniel Scally wrote:
-> >>>>>> On 05/10/2025 01:06, Laurent Pinchart wrote:
-> >>>>>>> On Mon, Sep 15, 2025 at 07:18:10PM +0200, Jacopo Mondi wrote:
-> >>>>>>>> Introduce v4l2-isp.h in the Linux kernel uAPI.
-> >>>>>>>>
-> >>>>>>>> The header includes types for generic ISP configuration parameters
-> >>>>>>>> and will be extended in future with support for generic ISP statistics
-> >>>>>>>
-> >>>>>>> s/in future/in the future/
-> >>>>>>>
-> >>>>>>> (and you can reflow the commit message)
-> >>>>>>>
-> >>>>>>>> formats.
-> >>>>>>>>
-> >>>>>>>> Generic ISP parameters support is provided by introducing two new
-> >>>>>>>> types that represent an extensible and versioned buffer of ISP
-> >>>>>>>> configuration parameters.
-> >>>>>>>>
-> >>>>>>>> The v4l2_params_block_header structure represents the header to be
-> >>>>>>>> prepend to each ISP configuration block and the v4l2_params_buffer type
-> >>>>>>>> represents the base type for the configuration parameters buffer.
-> >>>>>>>
-> >>>>>>> The second part of the sentence describes the same structure as the next
-> >>>>>>> paragraph.
-> >>>>>>>
-> >>>>>>>> The v4l2_params_buffer represents the container for the ISP
-> >>>>>>>> configuration data block. The generic type is defined with a 0-sized
-> >>>>>>>> data member that the ISP driver implementations shall properly size
-> >>>>>>>> according to their capabilities.
-> >>>>>>>
-> >>>>>>> This will be easier to understand if you describe v4l2_params_buffer
-> >>>>>>> first.
-> >>>>>>>
-> >>>>>>> The commit message would benefit from being rewritten.
-> >>>>>>>
-> >>>>>>>> [Add v4l2_params_buffer_size()]
-> >>>>>>>> Signed-off-by: Daniel Scally <dan.scally@ideasonboard.com>
-> >>>>>>>> Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
-> >>>>>>>> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> >>>>>>>> ---
-> >>>>>>>>      MAINTAINERS                         |   6 +++
-> >>>>>>>>      include/uapi/linux/media/v4l2-isp.h | 100 ++++++++++++++++++++++++++++++++++++
-> >>>>>>>>      2 files changed, 106 insertions(+)
-> >>>>>>>>
-> >>>>>>>> diff --git a/MAINTAINERS b/MAINTAINERS
-> >>>>>>>> index ee8cb2db483f6a5e96b62b6f2edd05b1427b69f5..e82c3d0758d6033fe8fcd56ffde2c03c4319fd11 100644
-> >>>>>>>> --- a/MAINTAINERS
-> >>>>>>>> +++ b/MAINTAINERS
-> >>>>>>>> @@ -26410,6 +26410,12 @@ F:	drivers/media/i2c/vd55g1.c
-> >>>>>>>>      F:	drivers/media/i2c/vd56g3.c
-> >>>>>>>>      F:	drivers/media/i2c/vgxy61.c
-> >>>>>>>>      
-> >>>>>>>> +V4L2 GENERIC ISP PARAMETERS AND STATISTIC FORMATS
-> >>>>>>>> +M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> >>>>>>>> +L:	linux-media@vger.kernel.org
-> >>>>>>>> +S:	Maintained
-> >>>>>>>> +F:	include/uapi/linux/media/v4l2-isp.h
-> >>>>>>>> +
-> >>>>>>>>      VF610 NAND DRIVER
-> >>>>>>>>      M:	Stefan Agner <stefan@agner.ch>
-> >>>>>>>>      L:	linux-mtd@lists.infradead.org
-> >>>>>>>> diff --git a/include/uapi/linux/media/v4l2-isp.h b/include/uapi/linux/media/v4l2-isp.h
-> >>>>>>>> new file mode 100644
-> >>>>>>>> index 0000000000000000000000000000000000000000..b838555dce2b290a14136ab09ea4d2dfdc95b26b
-> >>>>>>>> --- /dev/null
-> >>>>>>>> +++ b/include/uapi/linux/media/v4l2-isp.h
-> >>>>>>>> @@ -0,0 +1,100 @@
-> >>>>>>>> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> >>>>>>>> +/*
-> >>>>>>>> + * Video4Linux2 generic ISP parameters and statistics support
-> >>>>>>>> + *
-> >>>>>>>> + * Copyright (C) 2025 Ideas On Board Oy
-> >>>>>>>> + * Author: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> >>>>>>>> + */
-> >>>>>>>> +
-> >>>>>>>> +#ifndef _UAPI_V4L2_ISP_H_
-> >>>>>>>> +#define _UAPI_V4L2_ISP_H_
-> >>>>>>>> +
-> >>>>>>>> +#include <linux/stddef.h>
-> >>>>>>>> +#include <linux/types.h>
-> >>>>>>>> +
-> >>>>>>>> +#define V4L2_PARAMS_FL_BLOCK_DISABLE	(1U << 0)
-> >>>>>>>> +#define V4L2_PARAMS_FL_BLOCK_ENABLE	(1U << 1)
-> >>>>>>>> +
-> >>>>>>>> +/*
-> >>>>>>>> + * Reserve the first 8 bits for V4L2_PARAMS_FL_* flag.
-> >>>>>>>> + *
-> >>>>>>>> + * Driver-specific flags should be defined as:
-> >>>>>>>> + * #define PLATFORM_SPECIFIC_FLAG0     ((1U << V4L2_PARAMS_FL_DRIVER_FLAGS(0))
-> >>>>>>>
-> >>>>>>> s/PLATFORM/DRIVER/
-> >>>>>>>
-> >>>>>>>> + * #define PLATFORM_SPECIFIC_FLAG1     ((1U << V4L2_PARAMS_FL_DRIVER_FLAGS(1))
-> >>>>>>>> + */
-> >>>>>>>> +#define V4L2_PARAMS_FL_DRIVER_FLAGS(n)       ((n) + 8)
-> >>>>>>>> +
-> >>>>>>>> +/**
-> >>>>>>>> + * struct v4l2_params_block_header - V4L2 extensible parameters block header
-> >>>>>>>> + *
-> >>>>>>>> + * This structure represents the common part of all the ISP configuration
-> >>>>>>>> + * blocks. Each parameters block shall embed an instance of this structure type
-> >>>>>>>> + * as its first member, followed by the block-specific configuration data. The
-> >>>>>>>> + * driver inspects this common header to discern the block type and its size and
-> >>>>>>>> + * properly handle the block content.
-> >>>>>>>
-> >>>>>>> The last sentence is not relevant for the UAPI.
-> >>>>>>>
-> >>>>>>>> + *
-> >>>>>>>> + * The @type field is an ISP driver-specific value that identifies the block
-> >>>>>>>> + * type. The @size field specifies the size of the parameters block.
-> >>>>>>>> + *
-> >>>>>>>> + * The @flags field is a bitmask of per-block flags V4L2_PARAMS_FL_* and
-> >>>>>>>> + * driver-specific flags specified by the driver header.
-> >>>>>>>> + *
-> >>>>>>>> + * @type: The parameters block type (driver-specific)
-> >>>>>>>> + * @flags: A bitmask of block flags (driver-specific)
-> >>>>>>>> + * @size: Size (in bytes) of the parameters block, including this header
-> >>>>>>>
-> >>>>>>> I think the fields usually go right after the structure name, followed
-> >>>>>>> by the rest of the documentation.
-> >>>>>>>
-> >>>>>>>> + */
-> >>>>>>>> +struct v4l2_params_block_header {
-> >>>>>>>> +	__u16 type;
-> >>>>>>>> +	__u16 flags;
-> >>>>>>>> +	__u32 size;
-> >>>>>>>> +} __attribute__((aligned(8)));
-> >>>>>>>> +
-> >>>>>>>> +/**
-> >>>>>>>> + * v4l2_params_buffer_size - Calculate size of v4l2_params_buffer for a platform
-> >>>>>>>> + *
-> >>>>>>>> + * Users of the v4l2 extensible parameters will have differing sized data arrays
-> >>>>>>>> + * depending on their specific parameter buffers. Drivers and userspace will
-> >>>>>>>> + * need to be able to calculate the appropriate size of the struct to
-> >>>>>>>> + * accommodate all ISP configuration blocks provided by the platform.
-> >>>>>>>> + * This macro provides a convenient tool for the calculation.
-> >>>>>>>> + *
-> >>>>>>>> + * @max_params_size: The total size of the ISP configuration blocks
-> >>>>>>>> + */
-> >>>>>>>> +#define v4l2_params_buffer_size(max_params_size) \
-> >>>>>>>> +	(offsetof(struct v4l2_params_buffer, data) + (max_params_size))
-> >>>>>>>
-> >>>>>>> This isn't used in this series as far as I can tell, and neither is it
-> >>>>>>> used in your libcamera implementation. I'd drop the macro (as well as
-> >>>>>>> the mention in the commit message).
-> >>>>>>
-> >>>>>> This is because the rkisp1 and c3 ISP implementations are already merged with a custom parameters
-> >>>>>> buffer struct defined at [1] and [2]. There the array size is set to the max size macro. This series
-> >>>>>> just asserts that the header part is a size match for struct v4l2_params_buffer to guarantee
-> >>>>>> compatibility, so throughout those drivers they can use sizeof(struct c3_isp_params_cfg) or the
-> >>>>>> rkisp equivalent and it's fine.
-> >>>>>>
-> >>>>>> For new users that don't have a custom struct in their uAPI and are relying on struct
-> >>>>>> v4l2_params_buffer we can't just do sizeof(), so the idea was for this to provide a canonical way
-> >>>>>> for the size calculation to be done across both the kernel and userspace.
-> >>>>>>
-> >>>>>> If we decide that it's worth keeping but want a user in this series to justify its inclusion, it
-> >>>>>> could be used in patches 2 and 3 - I'll reply to patch 2 in a second to indicate where.
-> >>>>>
-> >>>>> Will it be used by userspace too for the Mali C55, or only by the kernel
-> >>>>
-> >>>> I have used it in userspace too.
-> >>>
-> >>> Any pointer to the code ?
-> >>
-> >> I didn't post my commits to adapt the mali-c55 IPA to the extensible parameters, but it's basically
-> >> the same as Jacopo's patch here:
-> >> https://lists.libcamera.org/pipermail/libcamera-devel/2025-October/053567.html
-> >>
-> >> And the change I made using the macro was in IPAMaliC55::fillParams():
+On Mon, Oct 06, 2025 at 03:22:26PM +0200, Maxime Ripard wrote:
+> The state pointer found in the struct drm_atomic_state internals for
+> most object is a bit ambiguous, and confusing when those internals also
+> have old state and new state.
 > 
-> Just for context, that function currently is:
+> After the recent cleanups, the state pointer only use is to point to the
+> state we need to free when destroying the atomic state.
 > 
-> void IPAMaliC55::fillParams(unsigned int request,
-> 			    [[maybe_unused]] uint32_t bufferId)
-> {
-> 	struct mali_c55_params_buffer *params;
-> 	IPAFrameContext &frameContext = context_.frameContexts.get(request);
-> 
-> 	params = reinterpret_cast<mali_c55_params_buffer *>(
-> 		buffers_.at(bufferId).planes()[0].data());
-> 	memset(params, 0, sizeof(mali_c55_params_buffer));
-> 
-> 	params->version = MALI_C55_PARAM_BUFFER_V1;
-> 
-> 	for (auto const &algo : algorithms()) {
-> 		algo->prepare(context_, request, frameContext, params);
-> 
-> 		ASSERT(params->total_size <= MALI_C55_PARAMS_MAX_SIZE);
-> 	}
-> 
-> 	size_t bytesused = offsetof(struct mali_c55_params_buffer, data) + params->total_size;
-> 	paramsComputed.emit(request, bytesused);
-> }
-> 
-> >>
-> >> -       memset(params, 0, sizeof(mali_c55_params_buffer));
-> >> +       memset(params, 0, v4l2_params_buffer_size(MALI_C55_PARAMS_MAX_SIZE));
-> > 
-> > Given that the buffer should be sized for the worst case, wouldn't it be
-> > better to memset .planes()[0].data().size() ?
-> 
-> Won't buffers_.at(bufferId).planes()[0].size() be the same as 
-> v4l2_params_buffer_size(MALI_C55_PARAMS_MAX_SIZE)? I am under the impression that that size will 
-> come ultimately from .queue_setup() which will be setting the sizes with:
-> 
-> sizes[0] = v4l2_params_buffer_size(MALI_C55_PARAMS_MAX_SIZE);
-> 
-> In that sense I suppose that that would remove the need for v4l2_params_buffer_size() to be used in 
-> userspace and we could just fallback to struct_size_t() within the kernel though.
+> We can thus rename it something less ambiguous, and hopefully more
+> meaningful.
 
-You're reading my mind :-)
+I would have perhaps just gone for '_state' to indicate to people
+that it's very private. But I guess we could have something a bit
+more verbose as well.
 
-> >>>>> driver ?
-> >>>>>
-> >>>>>> [1] https://elixir.bootlin.com/linux/v6.17/source/include/uapi/linux/rkisp1-config.h#L1675
-> >>>>>> [2] https://elixir.bootlin.com/linux/v6.17/source/include/uapi/linux/media/amlogic/c3-isp-config.h#L558>
-> >>>>>>
-> >>>>>>>> +
-> >>>>>>>> +/**
-> >>>>>>>> + * struct v4l2_params_buffer - V4L2 extensible parameters configuration
-> >>>>>>>> + *
-> >>>>>>>> + * This struct contains the configuration parameters of the ISP algorithms,
-> >>>>>>>
-> >>>>>>> s/struct/structure/
-> >>>>>>>
-> >>>>>>>> + * serialized by userspace into a data buffer. Each configuration parameter
-> >>>>>>>> + * block is represented by a block-specific structure which contains a
-> >>>>>>>> + * :c:type:`v4l2_params_block_header` entry as first member. Userspace populates
-> >>>>>>>> + * the @data buffer with configuration parameters for the blocks that it intends
-> >>>>>>>> + * to configure. As a consequence, the data buffer effective size changes
-> >>>>>>>> + * according to the number of ISP blocks that userspace intends to configure and
-> >>>>>>>> + * is set by userspace in the @data_size field.
-> >>>>>>>> + *
-> >>>>>>>> + * The parameters buffer is versioned by the @version field to allow modifying
-> >>>>>>>> + * and extending its definition. Userspace shall populate the @version field to
-> >>>>>>>> + * inform the driver about the version it intends to use. The driver will parse
-> >>>>>>>> + * and handle the @data buffer according to the data layout specific to the
-> >>>>>>>> + * indicated version and return an error if the desired version is not
-> >>>>>>>> + * supported.
-> >>>>>>>> + *
-> >>>>>>>> + * For each ISP block that userspace wants to configure, a block-specific
-> >>>>>>>> + * structure is appended to the @data buffer, one after the other without gaps
-> >>>>>>>> + * in between nor overlaps. Userspace shall populate the @data_size field with
-> >>>>>>>
-> >>>>>>> I think you can drop "nor overlaps", nobody in their right mind should
-> >>>>>>> think the blocks could be overlayed :-)
-> >>>>>>>
-> >>>>>>>> + * the effective size, in bytes, of the @data buffer.
-> >>>>>>>> + *
-> >>>>>>>> + * @version: The parameters buffer version (driver-specific)
-> >>>>>>>> + * @data_size: The configuration data effective size, excluding this header
-> >>>>>>>> + * @data: The configuration data
-> >>>>>>>
-> >>>>>>> Move the fields up just after the structure name.
-> >>>>>>>
-> >>>>>>> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> >>>>>>>
-> >>>>>>>> + */
-> >>>>>>>> +struct v4l2_params_buffer {
-> >>>>>>>> +	__u32 version;
-> >>>>>>>> +	__u32 data_size;
-> >>>>>>>> +	__u8 data[] __counted_by(data_size);
-> >>>>>>>> +};
-> >>>>>>>> +
-> >>>>>>>> +#endif /* _UAPI_V4L2_ISP_H_ */
+'freeable_state' doen't really give me the right vibes however.
+Maybe 'state_to_free' or 'state_to_destroy' or someting like that?
+
+> 
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> ---
+>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  4 ++--
+>  drivers/gpu/drm/drm_atomic.c                      | 24 +++++++++++------------
+>  drivers/gpu/drm/drm_atomic_helper.c               |  8 ++++----
+>  include/drm/drm_atomic.h                          | 16 +++++++--------
+>  4 files changed, 26 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> index 62defeccbb5ca09c89523fc4112d2085bbdbb0a9..b9036b59a671b2802fae28db623f020bbc535837 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> @@ -12335,22 +12335,22 @@ static int amdgpu_dm_atomic_check(struct drm_device *dev,
+>  
+>  			if (obj->funcs == adev->dm.atomic_obj.funcs) {
+>  				int j = state->num_private_objs-1;
+>  
+>  				dm_atomic_destroy_state(obj,
+> -						state->private_objs[i].state);
+> +						state->private_objs[i].freeable_state);
+>  
+>  				/* If i is not at the end of the array then the
+>  				 * last element needs to be moved to where i was
+>  				 * before the array can safely be truncated.
+>  				 */
+>  				if (i != j)
+>  					state->private_objs[i] =
+>  						state->private_objs[j];
+>  
+>  				state->private_objs[j].ptr = NULL;
+> -				state->private_objs[j].state = NULL;
+> +				state->private_objs[j].freeable_state = NULL;
+>  				state->private_objs[j].old_state = NULL;
+>  				state->private_objs[j].new_state = NULL;
+>  
+>  				state->num_private_objs = j;
+>  				break;
+> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+> index 0fda567c390057b10bce691d9ddc11308088d92e..f3e6a3fc0fdd0a7ad77209dcae1be59759e2a7c1 100644
+> --- a/drivers/gpu/drm/drm_atomic.c
+> +++ b/drivers/gpu/drm/drm_atomic.c
+> @@ -205,13 +205,13 @@ void drm_atomic_state_default_clear(struct drm_atomic_state *state)
+>  
+>  		if (!connector)
+>  			continue;
+>  
+>  		connector->funcs->atomic_destroy_state(connector,
+> -						       state->connectors[i].state);
+> +						       state->connectors[i].freeable_state);
+>  		state->connectors[i].ptr = NULL;
+> -		state->connectors[i].state = NULL;
+> +		state->connectors[i].freeable_state = NULL;
+>  		state->connectors[i].old_state = NULL;
+>  		state->connectors[i].new_state = NULL;
+>  		drm_connector_put(connector);
+>  	}
+>  
+> @@ -220,14 +220,14 @@ void drm_atomic_state_default_clear(struct drm_atomic_state *state)
+>  
+>  		if (!crtc)
+>  			continue;
+>  
+>  		crtc->funcs->atomic_destroy_state(crtc,
+> -						  state->crtcs[i].state);
+> +						  state->crtcs[i].freeable_state);
+>  
+>  		state->crtcs[i].ptr = NULL;
+> -		state->crtcs[i].state = NULL;
+> +		state->crtcs[i].freeable_state = NULL;
+>  		state->crtcs[i].old_state = NULL;
+>  		state->crtcs[i].new_state = NULL;
+>  
+>  		if (state->crtcs[i].commit) {
+>  			drm_crtc_commit_put(state->crtcs[i].commit);
+> @@ -240,24 +240,24 @@ void drm_atomic_state_default_clear(struct drm_atomic_state *state)
+>  
+>  		if (!plane)
+>  			continue;
+>  
+>  		plane->funcs->atomic_destroy_state(plane,
+> -						   state->planes[i].state);
+> +						   state->planes[i].freeable_state);
+>  		state->planes[i].ptr = NULL;
+> -		state->planes[i].state = NULL;
+> +		state->planes[i].freeable_state = NULL;
+>  		state->planes[i].old_state = NULL;
+>  		state->planes[i].new_state = NULL;
+>  	}
+>  
+>  	for (i = 0; i < state->num_private_objs; i++) {
+>  		struct drm_private_obj *obj = state->private_objs[i].ptr;
+>  
+>  		obj->funcs->atomic_destroy_state(obj,
+> -						 state->private_objs[i].state);
+> +						 state->private_objs[i].freeable_state);
+>  		state->private_objs[i].ptr = NULL;
+> -		state->private_objs[i].state = NULL;
+> +		state->private_objs[i].freeable_state = NULL;
+>  		state->private_objs[i].old_state = NULL;
+>  		state->private_objs[i].new_state = NULL;
+>  	}
+>  	state->num_private_objs = 0;
+>  
+> @@ -359,11 +359,11 @@ drm_atomic_get_crtc_state(struct drm_atomic_state *state,
+>  
+>  	crtc_state = crtc->funcs->atomic_duplicate_state(crtc);
+>  	if (!crtc_state)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> -	state->crtcs[index].state = crtc_state;
+> +	state->crtcs[index].freeable_state = crtc_state;
+>  	state->crtcs[index].old_state = crtc->state;
+>  	state->crtcs[index].new_state = crtc_state;
+>  	state->crtcs[index].ptr = crtc;
+>  	crtc_state->state = state;
+>  
+> @@ -544,11 +544,11 @@ drm_atomic_get_plane_state(struct drm_atomic_state *state,
+>  
+>  	plane_state = plane->funcs->atomic_duplicate_state(plane);
+>  	if (!plane_state)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> -	state->planes[index].state = plane_state;
+> +	state->planes[index].freeable_state = plane_state;
+>  	state->planes[index].ptr = plane;
+>  	state->planes[index].old_state = plane->state;
+>  	state->planes[index].new_state = plane_state;
+>  	plane_state->state = state;
+>  
+> @@ -856,11 +856,11 @@ drm_atomic_get_private_obj_state(struct drm_atomic_state *state,
+>  
+>  	obj_state = obj->funcs->atomic_duplicate_state(obj);
+>  	if (!obj_state)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> -	state->private_objs[index].state = obj_state;
+> +	state->private_objs[index].freeable_state = obj_state;
+>  	state->private_objs[index].old_state = obj->state;
+>  	state->private_objs[index].new_state = obj_state;
+>  	state->private_objs[index].ptr = obj;
+>  	obj_state->state = state;
+>  
+> @@ -1159,11 +1159,11 @@ drm_atomic_get_connector_state(struct drm_atomic_state *state,
+>  	connector_state = connector->funcs->atomic_duplicate_state(connector);
+>  	if (!connector_state)
+>  		return ERR_PTR(-ENOMEM);
+>  
+>  	drm_connector_get(connector);
+> -	state->connectors[index].state = connector_state;
+> +	state->connectors[index].freeable_state = connector_state;
+>  	state->connectors[index].old_state = connector->state;
+>  	state->connectors[index].new_state = connector_state;
+>  	state->connectors[index].ptr = connector;
+>  	connector_state->state = state;
+>  
+> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+> index d5ebe6ea0acbc5a08aef7fa41ecb9ed5d8fa8e80..7b9cee78f0969ee9bd66ac7f28cbe39c747f7ab2 100644
+> --- a/drivers/gpu/drm/drm_atomic_helper.c
+> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> @@ -3234,21 +3234,21 @@ int drm_atomic_helper_swap_state(struct drm_atomic_state *state,
+>  		WARN_ON(connector->state != old_conn_state);
+>  
+>  		old_conn_state->state = state;
+>  		new_conn_state->state = NULL;
+>  
+> -		state->connectors[i].state = old_conn_state;
+> +		state->connectors[i].freeable_state = old_conn_state;
+>  		connector->state = new_conn_state;
+>  	}
+>  
+>  	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state, new_crtc_state, i) {
+>  		WARN_ON(crtc->state != old_crtc_state);
+>  
+>  		old_crtc_state->state = state;
+>  		new_crtc_state->state = NULL;
+>  
+> -		state->crtcs[i].state = old_crtc_state;
+> +		state->crtcs[i].freeable_state = old_crtc_state;
+>  		crtc->state = new_crtc_state;
+>  
+>  		if (new_crtc_state->commit) {
+>  			spin_lock(&crtc->commit_lock);
+>  			list_add(&new_crtc_state->commit->commit_entry,
+> @@ -3264,22 +3264,22 @@ int drm_atomic_helper_swap_state(struct drm_atomic_state *state,
+>  		WARN_ON(plane->state != old_plane_state);
+>  
+>  		old_plane_state->state = state;
+>  		new_plane_state->state = NULL;
+>  
+> -		state->planes[i].state = old_plane_state;
+> +		state->planes[i].freeable_state = old_plane_state;
+>  		plane->state = new_plane_state;
+>  	}
+>  	drm_panic_unlock(state->dev, flags);
+>  
+>  	for_each_oldnew_private_obj_in_state(state, obj, old_obj_state, new_obj_state, i) {
+>  		WARN_ON(obj->state != old_obj_state);
+>  
+>  		old_obj_state->state = state;
+>  		new_obj_state->state = NULL;
+>  
+> -		state->private_objs[i].state = old_obj_state;
+> +		state->private_objs[i].freeable_state = old_obj_state;
+>  		obj->state = new_obj_state;
+>  	}
+>  
+>  	return 0;
+>  }
+> diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
+> index c8ab2163bf658cd06b12a8dabada7c088a328654..cdb76ed0bcc08b82b728747f915f064f1ddbcbf7 100644
+> --- a/include/drm/drm_atomic.h
+> +++ b/include/drm/drm_atomic.h
+> @@ -159,11 +159,11 @@ struct drm_crtc_commit {
+>  
+>  struct __drm_planes_state {
+>  	struct drm_plane *ptr;
+>  
+>  	/**
+> -	 * @state:
+> +	 * @freeable_state:
+>  	 *
+>  	 * Used to track the @drm_plane_state we will need to free when
+>  	 * tearing down the associated &drm_atomic_state in
+>  	 * $drm_mode_config_funcs.atomic_state_clear or
+>  	 * drm_atomic_state_default_clear().
+> @@ -171,20 +171,20 @@ struct __drm_planes_state {
+>  	 * Before a commit, and the call to
+>  	 * drm_atomic_helper_swap_state() in particular, it points to
+>  	 * the same state than @new_state. After a commit, it points to
+>  	 * the same state than @old_state.
+>  	 */
+> -	struct drm_plane_state *state;
+> +	struct drm_plane_state *freeable_state;
+>  
+>  	struct drm_plane_state *old_state, *new_state;
+>  };
+>  
+>  struct __drm_crtcs_state {
+>  	struct drm_crtc *ptr;
+>  
+>  	/**
+> -	 * @state:
+> +	 * @freeable_state:
+>  	 *
+>  	 * Used to track the @drm_crtc_state we will need to free when
+>  	 * tearing down the associated &drm_atomic_state in
+>  	 * $drm_mode_config_funcs.atomic_state_clear or
+>  	 * drm_atomic_state_default_clear().
+> @@ -192,11 +192,11 @@ struct __drm_crtcs_state {
+>  	 * Before a commit, and the call to
+>  	 * drm_atomic_helper_swap_state() in particular, it points to
+>  	 * the same state than @new_state. After a commit, it points to
+>  	 * the same state than @old_state.
+>  	 */
+> -	struct drm_crtc_state *state;
+> +	struct drm_crtc_state *freeable_state;
+>  
+>  	struct drm_crtc_state *old_state, *new_state;
+>  
+>  	/**
+>  	 * @commit:
+> @@ -214,11 +214,11 @@ struct __drm_crtcs_state {
+>  
+>  struct __drm_connnectors_state {
+>  	struct drm_connector *ptr;
+>  
+>  	/**
+> -	 * @state:
+> +	 * @freeable_state:
+>  	 *
+>  	 * Used to track the @drm_connector_state we will need to free
+>  	 * when tearing down the associated &drm_atomic_state in
+>  	 * $drm_mode_config_funcs.atomic_state_clear or
+>  	 * drm_atomic_state_default_clear().
+> @@ -226,11 +226,11 @@ struct __drm_connnectors_state {
+>  	 * Before a commit, and the call to
+>  	 * drm_atomic_helper_swap_state() in particular, it points to
+>  	 * the same state than @new_state. After a commit, it points to
+>  	 * the same state than @old_state.
+>  	 */
+> -	struct drm_connector_state *state;
+> +	struct drm_connector_state *freeable_state;
+>  
+>  	struct drm_connector_state *old_state, *new_state;
+>  
+>  	/**
+>  	 * @out_fence_ptr:
+> @@ -391,11 +391,11 @@ struct drm_private_state {
+>  
+>  struct __drm_private_objs_state {
+>  	struct drm_private_obj *ptr;
+>  
+>  	/**
+> -	 * @state:
+> +	 * @freeable_state:
+>  	 *
+>  	 * Used to track the @drm_private_state we will need to free
+>  	 * when tearing down the associated &drm_atomic_state in
+>  	 * $drm_mode_config_funcs.atomic_state_clear or
+>  	 * drm_atomic_state_default_clear().
+> @@ -403,11 +403,11 @@ struct __drm_private_objs_state {
+>  	 * Before a commit, and the call to
+>  	 * drm_atomic_helper_swap_state() in particular, it points to
+>  	 * the same state than @new_state. After a commit, it points to
+>  	 * the same state than @old_state.
+>  	 */
+> -	struct drm_private_state *state;
+> +	struct drm_private_state *freeable_state;
+>  
+>  	struct drm_private_state *old_state, *new_state;
+>  };
+>  
+>  /**
+> 
+> ---
+> base-commit: 7a031e8d3528ba0860d282ffd3c88fbda4bf8c4c
+> change-id: 20251006-drm-rename-state-b2b0fed05f82
+> 
+> Best regards,
+> -- 
+> Maxime Ripard <mripard@kernel.org>
 
 -- 
-Regards,
-
-Laurent Pinchart
+Ville Syrjälä
+Intel
 
