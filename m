@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-843479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B397FBBF8FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 23:22:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F36B4BBF900
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 23:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA6864F241A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 21:22:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56433189D15B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 21:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532362DF130;
-	Mon,  6 Oct 2025 21:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164B02DF3F9;
+	Mon,  6 Oct 2025 21:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dk+2ogom"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PsiCNB8P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A895D2DECB2;
-	Mon,  6 Oct 2025 21:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D96C2DF13C;
+	Mon,  6 Oct 2025 21:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759785714; cv=none; b=E7KFE8wLBwfFWdiWb/HEN7qR56Ux9DI4O4/dlfrFU+z+7ILxehKMWiITADQIEQCFzIrs0p2lxZ/RYxFpL61kS3mj0eDXTTca1FBLbSFtHfcyQVHv8amvPAqrM8nTGj/lSGdWZVyfTaj3T9FSPhaBttU0boFambNFgJg8uX2eOdM=
+	t=1759785715; cv=none; b=bclU4EVDsPxZOGTKzg/QiclqmYT1rKbhQbMhri5m83UN1oevtpZrjYDnJZHeBHChnve+qw7TLaFQwQ/xXh5WHnfLU9y9QMh7gQwclyz/DW/ZpYRTbCczksxKWhfCnkIhkQ16uM5Vg0aSgrOnAjuS1vYRHPErHEQU92VkmFfQF5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759785714; c=relaxed/simple;
-	bh=gNYHshhPBkImsXhFnyujnboGbeZdrhN0P9KOe+5Jyoo=;
+	s=arc-20240116; t=1759785715; c=relaxed/simple;
+	bh=VVc1pawzmxk/CiU4x01IQ8kCJVDTfOVXRKwQpCmltm0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NM5KrGlD8Nnm1g9ImhrOsX7wEWPPhIR3UwjPRQbXk0jnpGsk6cRgy4d1LR8HmiQ3qMyFpvHnAbW6y0vWwXLNKJ4flqE+fU8klMvocpmGj++cHQV1hBWrQXTVVUAdSr08xQcYjj/7t+gaAx8zhYUj0r8e4SHzQ1CQl1lOZS2MJ6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dk+2ogom; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CFF8C4CEF9;
-	Mon,  6 Oct 2025 21:21:53 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=C/85L1t8eTGl2RASbScbcPToqI6GcDF1GFsS60cT5IIiv7SCsE6Z1o8X0qrTU0KrJvDDdNQ8iglh2FYgNm4GV8Qfx30nQGxLCO25BP2vQNjhi+x1R6mTWmMjOfLHc2u6Du6+4HMhScnc6kcvcoRXrVxY2gl8xbrICVtTRRcY9dQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PsiCNB8P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 581C1C4CEF5;
+	Mon,  6 Oct 2025 21:21:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759785714;
-	bh=gNYHshhPBkImsXhFnyujnboGbeZdrhN0P9KOe+5Jyoo=;
+	s=k20201202; t=1759785715;
+	bh=VVc1pawzmxk/CiU4x01IQ8kCJVDTfOVXRKwQpCmltm0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Dk+2ogom/We9ws2EhoF0IVBKqHawSW2TzCmIOf45bhuE4NKjyHhtjJbRyvaOJVBLp
-	 DIpWF1HJlJKpEdHe7kas2LGVU5hgOWbMJe+uFLkQ1Zy449LaU+JNrEpJUb8FoI/WnU
-	 u1eS8eixwpBqN7F8t9JWVL05igOPJzaDNUVAV8wAgjhOXfyhGVE+6krlLTii8+PaSe
-	 QG0N6Lj/+LB6otH9uf3LWPvXA+6XdVXhdqyTERxG7UUvwu9+4k25OlbdNmHpkorFlM
-	 xTazwdieTjzqKdbEt9eWec01jeTD2KrDnYqtCmtZCTh3jT4bZOr2JnbvzI1Ec5iPA+
-	 Z4i4VoVj0EABw==
+	b=PsiCNB8P0AYTWQoh6lYN/mHpLXEu9+Lq6cqw74glTtAngNeIQXQI7jqW97XnQP689
+	 ySBq9eHqxs6mJDGrrbSR7SbXpU9U9syA+ZqkiZOvEE+WcFyCBRvJ92IFfl5/php2bO
+	 9CEjSIgwIC5YoVb6+0SyTlQj9SjGHpYql2hSy5eOXVtJqNTIn25H7wsaWgefxmgn4z
+	 lupUtZt7IO88RXFT9xN+XsCzxVVN9KQBxbMOFepBA3KxLbkL/e05zT9bEJXj1/hAV8
+	 OSdW0g34dnMHKOBjwSvqOMroeTsKRCVeP9GUAReoZ3uBnlSaZQ8btd8H70xGiCQtbm
+	 btHipG4lJx5Hg==
 From: Drew Fustini <fustini@kernel.org>
-Date: Mon, 06 Oct 2025 14:21:44 -0700
-Subject: [PATCH v2 4/8] dt-bindings: timers: Add Tenstorrent Blackhole
- compatible
+Date: Mon, 06 Oct 2025 14:21:45 -0700
+Subject: [PATCH v2 5/8] dt-bindings: interrupt-controller: Add Tenstorrent
+ Blackhole compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251006-tt-bh-dts-v2-4-ed90dc4b3e22@oss.tenstorrent.com>
+Message-Id: <20251006-tt-bh-dts-v2-5-ed90dc4b3e22@oss.tenstorrent.com>
 References: <20251006-tt-bh-dts-v2-0-ed90dc4b3e22@oss.tenstorrent.com>
 In-Reply-To: <20251006-tt-bh-dts-v2-0-ed90dc4b3e22@oss.tenstorrent.com>
 To: Paul Walmsley <paul.walmsley@sifive.com>, 
@@ -74,25 +74,25 @@ X-Mailer: b4 0.14.2
 
 From: Drew Fustini <dfustini@oss.tenstorrent.com>
 
-Document clint compatible for the Tenstorrent Blackhole SoC.
+Document compatible for the PLIC in the Tenstorrent Blackhole SoC.
 
 Signed-off-by: Drew Fustini <dfustini@oss.tenstorrent.com>
 ---
- Documentation/devicetree/bindings/timer/sifive,clint.yaml | 1 +
+ .../devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml      | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/timer/sifive,clint.yaml b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
-index d85a1a088b35dabc0aa202475b926302705c4cf1..0d3b8dc362ba7e8d0ca6d0cea692ceddc5e1f89e 100644
---- a/Documentation/devicetree/bindings/timer/sifive,clint.yaml
-+++ b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
-@@ -36,6 +36,7 @@ properties:
-               - starfive,jh7100-clint   # StarFive JH7100
-               - starfive,jh7110-clint   # StarFive JH7110
-               - starfive,jh8100-clint   # StarFive JH8100
-+              - tenstorrent,blackhole-clint # Tenstorrent Blackhole
-           - const: sifive,clint0        # SiFive CLINT v0 IP block
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+index 5b827bc243011cda1fd45d739d34eca95c6e1ee2..61bb9a98b1f5544efdf1460ee3873aad1433ac41 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+@@ -63,6 +63,7 @@ properties:
+               - spacemit,k1-plic
+               - starfive,jh7100-plic
+               - starfive,jh7110-plic
++              - tenstorrent,blackhole-plic
+           - const: sifive,plic-1.0.0
        - items:
-           - {}
+           - enum:
 
 -- 
 2.34.1
