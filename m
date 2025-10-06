@@ -1,179 +1,92 @@
-Return-Path: <linux-kernel+bounces-842883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A5D9BBDE16
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 13:36:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54176BBDE1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 13:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 503603B4275
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 11:36:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 804673BBCEA
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 11:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBCB26B2C8;
-	Mon,  6 Oct 2025 11:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B5426B2C8;
+	Mon,  6 Oct 2025 11:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZBW2G1ur"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b/PZnMcD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2E02561AE
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 11:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310EA2561AE;
+	Mon,  6 Oct 2025 11:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759750607; cv=none; b=FQrHNR6ZTvaLhm6Y4HLIUKpyvcJ4qvirGXpXQsiMNsuFO9Zr6KSsJjr+Mh6TeGm4Bwvn+XvSb16Qs2xa8wyXdXjRxU77kD8YD9OmqRxR1uGs6x0Qk1XTQ6MF/hZCUjXRbR2njhfZi9yKCApyucRqMmiKIljqfIcY9bYuRkGropc=
+	t=1759750621; cv=none; b=qyKOrIvtvaKiAGl7ta5GmkiimUHDW3h10r9oDP6F6bWhMiiAWPMX8wyke2MnJ3JKaSICpoPR0seTmKQUR3jGCOW0Xs6P5S6TvxacntjV+q0SXNUDdkPfZKQGn6QvM2Zth4BEMVoz39h0e0os5pW6LkkC93NOBUBnTDCXzxAtm7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759750607; c=relaxed/simple;
-	bh=jgFmOZy99XKs4DXZwQeTOTDa/EuMGBOdSdGACbwRi6M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oegXff2RGxH9qyU1BVWr6dOJzTRo5irk3jlh8z+SI6QhA213wu8IJodB+7eEHOkeFJZPifj2LRvBvqE+L3AVZo9Q+1gDVlE7R2uNAIFp8Z/kaYBXvVTzAN09CLk4WxRvTUYg0A1ueTeGGC6r7kXkwSjaeR1jfQCJ01Rk8Yc2uNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZBW2G1ur; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759750605;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vHN3zB+N3cficB6+biNHEOHdUuG5loOtVKEpUTZFgh4=;
-	b=ZBW2G1ur8tF9kzMGrnTy/+s03hSDUY+yUPHR8q5yZmP2nFR74+iFmuZXOqsZyL/Ackn8Kq
-	nsQq4LxXCqzAzdgw9KWwh5FxLWb9oHeFh35LlnwTTXnCqiIvZGrwpqAFHEZ2EnIsLTmLc/
-	OgVVhlrbANOOwGiZrLSqMDD5cspw5cY=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-284-mKpNX9FLPhecJ8xywyCIFQ-1; Mon, 06 Oct 2025 07:36:44 -0400
-X-MC-Unique: mKpNX9FLPhecJ8xywyCIFQ-1
-X-Mimecast-MFC-AGG-ID: mKpNX9FLPhecJ8xywyCIFQ_1759750603
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3f42b54d159so3858516f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 04:36:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759750603; x=1760355403;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vHN3zB+N3cficB6+biNHEOHdUuG5loOtVKEpUTZFgh4=;
-        b=llhWYl0mJNut2MvKTmcN+QehpEosqEOXsOD5NSWYhxcNAnuwxraBuIVGy5P36h3UPY
-         WmcsdCZbu0jjY0iAw7dD684aaxbn7ykEhVDLYubEpwmMmCMRa8OMmX7kOxRNX5QSLIUH
-         9o67TFRlaKOCEGyyvXqcXQY8iQbZc90SxAB+hfCScWSibFaNzbJsas4oqSmqN9keiGcq
-         xhc4aqL1LxZ/c9toL7kUhEnmmjWOb0bXuId8GB8lSn8L63ZRIKgYHKAM8NIj4NNkuahf
-         ZA+vzlCxl/TF4z9WN/swPsUxvA/Z3A8/MjPTwgB3zCUrgevgsamovJoIyy6raMdX1PBE
-         N0Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCVQr3sELPI9KArGbPHlhtiWuwxQqF6mcDgGOipFbSoo85v07GnKJXX5HDVxGXLr+2nyx3pRhy837SLVNoc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyqw4URh8LwwqpZG3Afeazt7/C2vb+AdF0jZq0SgK0Sw/EKUiQw
-	1F9jg8Q69icOTYtFmHREY93UvquyDSL58SZNpIoaKuTsbLmLZnMUS5rfxW4Q54TQimQiO/8ItxM
-	Jo6/6JU4pFxORzH2UzMgN1vKa5XqKs3hAqgogYpCTUobDpKHk/gpGLUt/fJZGiyLkUQ==
-X-Gm-Gg: ASbGncve8x6nZQh4AJK0Le61VgTbMqzpFyMWBTolSvVuEmGLkLp9/UMAR+udTE7R+Yt
-	LJ2oWSDMDONXheGlPCAcqIXZLM6gaD0bdS9cuz0mL60kWcXqtnhVYqiqE/7XhrejbRyhfL5D7ji
-	G4GP4w5WkNUBYgJt1TOZJMFQf7J98/mlOWi2Il3PYcl2TjmCC4mPzcnPCAksvgFabFcXSnTrYZy
-	AABC7Lf+t2+EUViVDKEhhjIcyyIDGsONJYRHEkFbvP/2PvL2z4XQ6UE+2F0WL7FURk80pKE3NNh
-	eO0GamYA8bsVJ8h4pk6Cd7cX56Mo0yNwO+MZy3v39vrKieg8TOtqTX762J5XpbmW+mDEb0XFWcT
-	O0qrAK7W7
-X-Received: by 2002:a5d:584b:0:b0:3ea:f4a1:f063 with SMTP id ffacd0b85a97d-425671c15f9mr7577067f8f.55.1759750602869;
-        Mon, 06 Oct 2025 04:36:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH4fa1egcyF8r1G1AFUJgPykSWMK+76QilbNO7Gb4q43iQveNh0omx+isa8IIngfIMXEURqYw==
-X-Received: by 2002:a5d:584b:0:b0:3ea:f4a1:f063 with SMTP id ffacd0b85a97d-425671c15f9mr7577044f8f.55.1759750602454;
-        Mon, 06 Oct 2025 04:36:42 -0700 (PDT)
-Received: from [192.168.3.141] (tmo-083-110.customers.d1-online.com. [80.187.83.110])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8ab8fdsm20309038f8f.15.2025.10.06.04.36.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Oct 2025 04:36:42 -0700 (PDT)
-Message-ID: <edc832b4-5f4c-4f26-a306-954d65ec2e85@redhat.com>
-Date: Mon, 6 Oct 2025 13:36:40 +0200
+	s=arc-20240116; t=1759750621; c=relaxed/simple;
+	bh=xj3imUq0uiwpSSqW131Kx0ylJoE4IO4LheKHnFFEkpc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IemUPLVHXWLlj5RcrohDdhnC3N9p+rJb8rb+i7n5g4FX4pSrQH5rcujDAU+BjoUb6P8ONSxeGJEzmw93IgKkFjK3bT1Nc0RXMOzBmvBFBIULAV1j2C9NOqfnW+MKzHDDrcCgQh2YjVscPDgFLODwXViiGrxvukQzldvBj0gspRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b/PZnMcD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33353C4CEF5;
+	Mon,  6 Oct 2025 11:36:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759750619;
+	bh=xj3imUq0uiwpSSqW131Kx0ylJoE4IO4LheKHnFFEkpc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=b/PZnMcD9T6qr/bM1P0ivloKxplhc02wco6MN+YSyi255bt/DnUCVJUDAw4JPv1tw
+	 sMASsVKSfRXQXPtgMnK+/6K5RUkJxyQtjoVAntnY573zITtH41fbeVizdMkNghhhvy
+	 Mz32xEpVWf6MmSjenTn3ZVqG+Eno/qVjRBoMEpltE2NEFx9Kvls2sk/zSRZ8ZRihCc
+	 /NKgD2LNZrA/9FnYGI6geRuVxdlfoE1TgscMPf2FieeHMEPQSfQPjQwmOXYPbzwcEs
+	 mA0jj3tKMP9tGtasjm94gyThBJ7Xif/OktqK9wsy6aKFsQvId9PvVYLGGRUhOmQ5Cp
+	 WZPCnNyQyz6xg==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: assert on ->i_count in iput_final()
+Date: Mon,  6 Oct 2025 13:36:54 +0200
+Message-ID: <20251006-schokolade-handpuppen-aeb639d3d4c6@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251001010010.9967-1-mjguzik@gmail.com>
+References: <20251001010010.9967-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] fsnotify: Pass correct offset to fsnotify_mmap_perm()
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Amir Goldstein <amir73il@gmail.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20251003155238.2147410-1-ryan.roberts@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20251003155238.2147410-1-ryan.roberts@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=995; i=brauner@kernel.org; h=from:subject:message-id; bh=xj3imUq0uiwpSSqW131Kx0ylJoE4IO4LheKHnFFEkpc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ8Xnm9hilhItMm1e/vpconKdz7NSPvEVvG0pzMc2ejt My+d7hGdJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEwkKIORoeHcFn85c6aPR5Jq In/dU6+1e7yiROqx15YdG8x3RSWf2s/I8HPyzEMuny68N0ya7VR5aUXagu/T/7+5vEfmQN/REze vHuMFAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On 03.10.25 17:52, Ryan Roberts wrote:
-> fsnotify_mmap_perm() requires a byte offset for the file about to be
-> mmap'ed. But it is called from vm_mmap_pgoff(), which has a page offset.
-> Previously the conversion was done incorrectly so let's fix it, being
-> careful not to overflow on 32-bit platforms.
+On Wed, 01 Oct 2025 03:00:10 +0200, Mateusz Guzik wrote:
+> Notably make sure the count is 0 after the return from ->drop_inode(),
+> provided we are going to drop.
 > 
-> Discovered during code review.
+> Inspired by suspicious games played by f2fs.
 > 
-> Cc: <stable@vger.kernel.org>
-> Fixes: 066e053fe208 ("fsnotify: add pre-content hooks on mmap()")
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> ---
-> Applies against today's mm-unstable (aa05a436eca8).
->
+> 
 
-Curious: is there some easy way to write a reproducer? Did you look into 
-that?
+Applied to the vfs-6.19.inode branch of the vfs/vfs.git tree.
+Patches in the vfs-6.19.inode branch should appear in linux-next soon.
 
-LGTM, thanks
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Acked-by: David Hildenbrand <david@redhat.com>
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
--- 
-Cheers
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-David / dhildenb
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.19.inode
 
+[1/1] fs: assert on ->i_count in iput_final()
+      https://git.kernel.org/vfs/vfs/c/655c4a4f00fc
 
