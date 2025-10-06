@@ -1,113 +1,143 @@
-Return-Path: <linux-kernel+bounces-843216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF41BBEA70
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:32:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72D5BBBEA67
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:31:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C2E54F0318
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:31:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACFA73B8D04
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC11F2DCC1F;
-	Mon,  6 Oct 2025 16:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0F321D00E;
+	Mon,  6 Oct 2025 16:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="G1ndKLox"
-Received: from forward100d.mail.yandex.net (forward100d.mail.yandex.net [178.154.239.211])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nmOzWz2S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9340921CC68;
-	Mon,  6 Oct 2025 16:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F8F20E03F;
+	Mon,  6 Oct 2025 16:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759768298; cv=none; b=bfUo3Ar3dWtqjW6vfke7WxUfWrqGoLd5gYLqryV6EuYvauZHdD9SEZOeLWcgoXTOypacJIGtUvKZ68C4ZKD7+x4X8u42gt5rvkEUYcqyPfC+l/qAoZysq+sogz+Uc3u0rZSojoTeSF7fXzmNJ4F4U4NiXm8B0UMuf/lQvyv193w=
+	t=1759768260; cv=none; b=SJQZUhTWurYpz/Qi6lDJqGPaOcHxAB3KxwqINd6pCaLQQCMKl8nwYvPAaoQsdfdgh0zqCjWWia83ooO1PkCesWw0tcB2LTCMvz35Mq0SOGrzNINLTNR3vqDPDPCeybvxhNdHOmQVPURP4fOJmz/YQ/6IEUzx/3igt5zotxMfR3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759768298; c=relaxed/simple;
-	bh=2uY5NoijnwdLmleoPPRrn2yh0v/tr1KGjdpZ1mjviHk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ofbE2RBFHBM0grYW96ciZDuZFWpkQhnG1v5qmXQgrka3ej9ptFuFEEl64b3YDJkIvDtpVyOxQ/Z6OveTv4DO/q40+2fotIVRBOoLSmRAk0p7TRUard6WFjK4vbS3Q/SGLEg9aJbAD21ff8aguPbn0BMDDrmGNgCNFzXYGVkwaVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=G1ndKLox; arc=none smtp.client-ip=178.154.239.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-80.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-80.klg.yp-c.yandex.net [IPv6:2a02:6b8:c43:4985:0:640:840f:0])
-	by forward100d.mail.yandex.net (Yandex) with ESMTPS id D9B68C005A;
-	Mon, 06 Oct 2025 19:31:27 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-80.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id QUnb3i1LqqM0-XVWqGg8c;
-	Mon, 06 Oct 2025 19:31:27 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1759768287;
-	bh=2uY5NoijnwdLmleoPPRrn2yh0v/tr1KGjdpZ1mjviHk=;
-	h=Cc:Message-ID:References:Date:In-Reply-To:Subject:To:From;
-	b=G1ndKLoxp0HthVEGilprHO0MELdxRUCDGzMNXK722hlgEHv2TlozqZcpu9fdxYum7
-	 WPvKhNCZARfJO19jqPqutmnoSaasoRsiTYrThQ1WipEFAqPUUTy918nZWPYchkG4rn
-	 DrExsazmvePLYvvRrY/m1vvoo791ckQBM/+nZdUQ=
-Authentication-Results: mail-nwsmtp-smtp-production-main-80.klg.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
-To: rust-for-linux@vger.kernel.org
-Cc: ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	lossin@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	dakr@kernel.org,
-	linux-kernel@vger.kernel.org,
-	acourbot@nvidia.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	corbet@lwn.net,
-	lyude@redhat.com,
-	linux-doc@vger.kernel.org,
-	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
-Subject: [PATCH 3/3] remove completed task from nova-core task list
-Date: Mon,  6 Oct 2025 19:30:24 +0300
-Message-ID: <20251006163024.18473-4-work@onurozkan.dev>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251006163024.18473-1-work@onurozkan.dev>
-References: <20251006163024.18473-1-work@onurozkan.dev>
+	s=arc-20240116; t=1759768260; c=relaxed/simple;
+	bh=yD0PjDQlf46RiJVrF/Aszb7CVdshcKm/wDonN3zBFKU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZTCZEr4tI5O6zdHJ5SJ4+BOF4b1RpGl5I/muHuePIMINQkg2ZedXLM1pSa9T+W4OAqNiU/OU6Lu8QH/FDzAW7Tt2zQ5Kt4vKMEqdWYnBjE+8mxmUBnxG3+HgkEIpwoURqFUlGrcJkjg95Klu2hdTP9crJfpF21ZebrDiAa5W4UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nmOzWz2S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E435C4CEF5;
+	Mon,  6 Oct 2025 16:30:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759768260;
+	bh=yD0PjDQlf46RiJVrF/Aszb7CVdshcKm/wDonN3zBFKU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=nmOzWz2SnthepQu0FPGRBR+aVkqF9ApmQ+zx91kTdSjpax06w+O1ocikxZUxhTvEl
+	 BkiQ/OdKVfDKPNQf3b8Cv0Vuv74aRdbYVmxzDhgVhHTLZyqhQenmnJj1HZ5JZctahT
+	 j3vRK2ho7EZrufPIHz0BSk+yB3W5zeHAxAMPQ9ODza2WiQAMGpi87FP23eg3+eWSU7
+	 xAwJMgbFq6blAZze7hA6lAChs0wcA40LSeN6YRe/c6r6npA76+nE84OWCU3cHivFdm
+	 /LXzBroGswAo/PYUtcx8R9abLLGBwJ9guZ+FWOq2tKSpMydDSnFGR03gTDNMfHe2Sb
+	 TGHeqGQZhy+0A==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org,  jasonmiu@google.com,  graf@amazon.com,
+  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
+  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
+  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
+  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
+  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
+  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
+  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
+  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
+  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
+  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
+  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com,
+  hughd@google.com,  skhawaja@google.com,  chrisl@kernel.org,
+  steven.sistare@oracle.com
+Subject: Re: [PATCH v4 02/30] kho: make debugfs interface optional
+In-Reply-To: <20250929010321.3462457-3-pasha.tatashin@soleen.com> (Pasha
+	Tatashin's message of "Mon, 29 Sep 2025 01:02:53 +0000")
+References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
+	<20250929010321.3462457-3-pasha.tatashin@soleen.com>
+Date: Mon, 06 Oct 2025 18:30:49 +0200
+Message-ID: <mafs07bx8ouva.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-The task is completed in this series.
+On Mon, Sep 29 2025, Pasha Tatashin wrote:
 
-Signed-off-by: Onur Özkan <work@onurozkan.dev>
----
- Documentation/gpu/nova/core/todo.rst | 8 --------
- 1 file changed, 8 deletions(-)
+> Currently, KHO is controlled via debugfs interface, but once LUO is
+> introduced, it can control KHO, and the debug interface becomes
+> optional.
+>
+> Add a separate config CONFIG_KEXEC_HANDOVER_DEBUG that enables
+> the debugfs interface, and allows to inspect the tree.
+>
+> Move all debugfs related code to a new file to keep the .c files
+> clear of ifdefs.
+>
+> Co-developed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> ---
+>  MAINTAINERS                      |   3 +-
+>  kernel/Kconfig.kexec             |  10 ++
+>  kernel/Makefile                  |   1 +
+>  kernel/kexec_handover.c          | 255 +++++--------------------------
+>  kernel/kexec_handover_debug.c    | 218 ++++++++++++++++++++++++++
+>  kernel/kexec_handover_internal.h |  44 ++++++
+>  6 files changed, 311 insertions(+), 220 deletions(-)
+>  create mode 100644 kernel/kexec_handover_debug.c
+>  create mode 100644 kernel/kexec_handover_internal.h
+>
+[...]
+> --- a/kernel/Kconfig.kexec
+> +++ b/kernel/Kconfig.kexec
+> @@ -109,6 +109,16 @@ config KEXEC_HANDOVER
+>  	  to keep data or state alive across the kexec. For this to work,
+>  	  both source and target kernels need to have this option enabled.
+>  
+> +config KEXEC_HANDOVER_DEBUG
 
-diff --git a/Documentation/gpu/nova/core/todo.rst b/Documentation/gpu/nova/core/todo.rst
-index 0972cb905f7a..de70a857fcfd 100644
---- a/Documentation/gpu/nova/core/todo.rst
-+++ b/Documentation/gpu/nova/core/todo.rst
-@@ -210,14 +210,6 @@ capability, MSI API abstractions.
+Nit: can we call it KEXEC_HANDOVER_DEBUGFS instead? I think we would
+like to add a KEXEC_HANDOVER_DEBUG at some point to control debug
+asserts for KHO, and the naming would get confusing. And renaming config
+symbols is kind of a pain.
 
- | Complexity: Beginner
+> +	bool "kexec handover debug interface"
+> +	depends on KEXEC_HANDOVER
+> +	depends on DEBUG_FS
+> +	help
+> +	  Allow to control kexec handover device tree via debugfs
+> +	  interface, i.e. finalize the state or aborting the finalization.
+> +	  Also, enables inspecting the KHO fdt trees with the debugfs binary
+> +	  blobs.
+> +
+[...]
 
--XArray bindings [XARR]
------------------------
--
--We need bindings for `xa_alloc`/`xa_alloc_cyclic` in order to generate the
--auxiliary device IDs.
--
--| Complexity: Intermediate
--
- Debugfs abstractions
- --------------------
-
---
-2.51.0
-
+-- 
+Regards,
+Pratyush Yadav
 
