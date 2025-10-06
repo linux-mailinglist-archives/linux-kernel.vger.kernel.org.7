@@ -1,149 +1,192 @@
-Return-Path: <linux-kernel+bounces-843169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FD1EBBE8E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:54:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88EF7BBE8E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E13D1189841D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:55:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 495634E851C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C94C2D6E71;
-	Mon,  6 Oct 2025 15:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fsq2iuNw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720E02D8DC4;
+	Mon,  6 Oct 2025 15:55:22 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409E23BB5A
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 15:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664282D2488
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 15:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759766091; cv=none; b=tLuFmAh0wM14seazM8TM1pj7X7jpb5yzvjkTipX1y4GDYirLU51Dc3i+6Zsw+czHjzERUbMkvRFv4vez8Y5HT9srmIwiHi3PMFIdzM4p4ukNJay+6CL2GjQX4w3Jr5Kvn7XLICt5yRMUahvAld3X++CIBwbVmfnHiSNFNPY+7hY=
+	t=1759766122; cv=none; b=i6Y0nAqTQYNrJt6sPks+mfqvtL/zOy5MgdOj799KIdoFw/n9DkCd0a2eZWII/cDrtLvgo41vUrmEBvLMEoRTt2+JqxDAV9Td+0/5npYIL6/r2Yj21qI13iBrWYLpdsqTB4WuYXolBxZb/iFqMrL6vU5zLVVDhk95MG0bqsPVGSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759766091; c=relaxed/simple;
-	bh=AfkNdgNia/Q46rjV4t/U5RcAXDsYoGIGx61PKRuU3dk=;
+	s=arc-20240116; t=1759766122; c=relaxed/simple;
+	bh=y6HUfXDXIGn7AC+u25PWmRV83hvC0ZHZo1HMmuPyFHE=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=vGDc3l/Du+Gx5IyFxk16h0gB/da6CvnWEtUgkFcX48DN/auQMMtFXKUgukNeAMQdD9MMLGB00qjnZglHiYE0C60xzlMAlxk611poyK11XDAwyRO4BUonZms2tiefOry/4A37s8Kq5cDtbOS/FxmRJvCrbPOd4egf1i0sJql/638=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fsq2iuNw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759766088;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O29nBnuJdm1Dd2mtkKVi5j87G2aDHgLgWODowi64nXE=;
-	b=Fsq2iuNwgWTjsebOF8p4HmjRr45WUfYidDPvIUqv6CwmN6oLImr8Cbr5rFFyxIbd27XwBK
-	JBFkVwv5xM2HItdDg+JHtD7xPaaYcSWQb0CG/A+gVVJlYz5pYKOkEa3IjWlmWT7quAbyiC
-	7+55lVBdeUJY4ionThSmhepvB+dcyGA=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-139-9i_nyFnGP5uCppL_FpVF5g-1; Mon, 06 Oct 2025 11:54:46 -0400
-X-MC-Unique: 9i_nyFnGP5uCppL_FpVF5g-1
-X-Mimecast-MFC-AGG-ID: 9i_nyFnGP5uCppL_FpVF5g_1759766086
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4e576157d54so81787231cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 08:54:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759766086; x=1760370886;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=O29nBnuJdm1Dd2mtkKVi5j87G2aDHgLgWODowi64nXE=;
-        b=uJHxveEuZwCxpg+kiWHyrH/ugJKCwRDJzXQDrZ/Xs4xp5/hPaVCmNaE4XrJONzBOF9
-         WlttfffMwkPvhvRv5h6qzh7/uOAXMZPLZVnFWSBIezIQD0xFAJt+v6XbgBkiTiyEa14W
-         WIiwc+FteqWnCVvHw4p8HBXVDJH3T4GuxjqMPCnI9i3HlmQv/rhp7K6BEG9opYd0jJGM
-         qwlb6TNim/eCGaHRiInp9PW2Io6bZNB2mEg6/Uno0l1GZ1IUcMz/8MTVSGjcStLX/Zqa
-         OyJIiTUrlDxcDBJpDPVvU4R3m/HXkR4d/faWgh9uTHW2f17/iu0XD794jnrBVwW6cdYw
-         svWg==
-X-Gm-Message-State: AOJu0YyXyI4r0oP/fNLGunRnzXhodfGchZ2wRxfisqFKsiaFYUiWTyrq
-	DKVDl0twBufvBxCoFZidD8IZaeZu5nmxdT6ECqVDx7YLvDbIf1psqkgCB8kNpKQdXGznaLygV6S
-	UCm3hp1pJ44alkMNQVqVJcN7Ro8BMHLKiwo6gYLuEqgZoc/XQLUISrxHljgMdVfDhHA==
-X-Gm-Gg: ASbGncuESEnFHdUCIdPK++3wWLl6Ffww6s+yFWb7U3ObiMQW24kzD277UDiwXgGP9GH
-	039cEgYFmi4K4J9VzpCH3BbJfqMpbhwEMFey7CM4EqcJHoQZiqk9MOnQaMxP4en4UvAdxLYzjA5
-	iHjJnIaXvPsxGt61rK3RT5Ss18l2u+xZp3QFrlBe2Vrb0L+VuDryvDwn5wjJWB6Qs5yCevBWbzQ
-	EQcmoZWvznXwkKELDzoJg2LIj/bhpNBZTSCJHMgSK5RFz18/tZYAJ1VFTTnb7xm4gh8c3bvyfxG
-	94kIchS7eUb9c5ezk1G/U9y72LcIYtLnLS7rs1dB1X+2E188iBUpNuZ0Hr8FG1XkxvKwYcCB4tR
-	cVg==
-X-Received: by 2002:a05:622a:4a14:b0:4de:e0:de78 with SMTP id d75a77b69052e-4e576b09856mr179817091cf.71.1759766085844;
-        Mon, 06 Oct 2025 08:54:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEIkw89j8ytLrtstbciVHTMITKqTFOIhKtXwbXqgefktZrwuyNarF/iEuUpfQ4eAp4zAHtsQQ==
-X-Received: by 2002:a05:622a:4a14:b0:4de:e0:de78 with SMTP id d75a77b69052e-4e576b09856mr179816741cf.71.1759766085398;
-        Mon, 06 Oct 2025 08:54:45 -0700 (PDT)
-Received: from crwood-thinkpadp16vgen1.minnmso.csb ([2601:447:c680:2b50:ee6f:85c2:7e3e:ee98])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-87771129478sm1234469985a.1.2025.10.06.08.54.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 08:54:45 -0700 (PDT)
-Message-ID: <7359e1e99d715e19db1b1c9e45d28f0c12f0f44e.camel@redhat.com>
-Subject: Re: [PATCH 2/2] rtla/tests: Extend action tests to 5s
-From: Crystal Wood <crwood@redhat.com>
-To: Tomas Glozar <tglozar@redhat.com>, Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel	
- <linux-trace-kernel@vger.kernel.org>, John Kacur <jkacur@redhat.com>, Luis
- Goncalves <lgoncalv@redhat.com>, Costa Shulyupin <costa.shul@redhat.com>,
- Wander Lairson Costa	 <wander@redhat.com>
-Date: Mon, 06 Oct 2025 10:54:43 -0500
-In-Reply-To: <20251006142616.136296-2-tglozar@redhat.com>
-References: <20251006142616.136296-1-tglozar@redhat.com>
-	 <20251006142616.136296-2-tglozar@redhat.com>
+	 Content-Type:MIME-Version; b=uuCbktxKhIOv8/Nw/GF/I+GzuPoi/gLy4VyrshVnmkKEYFCOd6In8E4w5XYA57nH7YXY840wRcH/O84hKlgSka1HI5emb8U/KjUpCuzvAvIAnuBK2bvJjcYmO8wfVZUj27OS6RZDk3kScZtuneHn/wccTSsuNDuff6TjzbIIjwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v5nYI-0004ze-Ch; Mon, 06 Oct 2025 17:55:06 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v5nYH-002FtQ-1w;
+	Mon, 06 Oct 2025 17:55:05 +0200
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v5nYH-00000000Cha-2AUn;
+	Mon, 06 Oct 2025 17:55:05 +0200
+Message-ID: <e6a120d4ada6d032f69812f14a7e794ac1796a85.camel@pengutronix.de>
+Subject: Re: [PATCH 9/9] reset: gpio: use software nodes to setup the GPIO
+ lookup
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij	
+ <linus.walleij@linaro.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>,  Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus	
+ <sakari.ailus@linux.intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki"	 <rafael@kernel.org>,
+ Danilo Krummrich <dakr@kernel.org>, Krzysztof Kozlowski	 <krzk@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, Bartosz Golaszewski
+ <bartosz.golaszewski@linaro.org>
+Date: Mon, 06 Oct 2025 17:55:05 +0200
+In-Reply-To: <20251006-reset-gpios-swnodes-v1-9-6d3325b9af42@linaro.org>
+References: <20251006-reset-gpios-swnodes-v1-0-6d3325b9af42@linaro.org>
+	 <20251006-reset-gpios-swnodes-v1-9-6d3325b9af42@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, 2025-10-06 at 16:26 +0200, Tomas Glozar wrote:
-> In non-BPF mode, it takes up to 1 second for RTLA to notice that tracing
-> has been stopped. That means that action tests cannot have a 1 second
-> duration, as the SIGALRM will be racing with the threshold overflow.
+On Mo, 2025-10-06 at 15:00 +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 >=20
-> Previously, non-BPF mode actions were buggy and always executed
-> the action, even when stopping on duration or SIGINT, preventing
-> this issue from manifesting. Now that this has been fixed, the tests
-> have become flaky, and this has to be adjusted.
+> GPIO machine lookup is a nice mechanism for associating GPIOs with
+> consumers if we don't know what kind of device the GPIO provider is or
+> when it will become available. However in the case of the reset-gpio, we
+> are already holding a reference to the device and so can reference its
+> firmware node. Let's setup a software node that references the relevant
+> GPIO and attach it to the auxiliary device we're creating.
 >=20
-> Fixes: 4e26f84abfb ("rtla/tests: Add tests for actions")
-> Fixes: 05b7e10687c ("tools/rtla: Add remaining support for osnoise action=
-s")
-> Signed-off-by: Tomas Glozar <tglozar@redhat.com>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > ---
->  tools/tracing/rtla/tests/osnoise.t  | 4 ++--
->  tools/tracing/rtla/tests/timerlat.t | 4 ++--
->  2 files changed, 4 insertions(+), 4 deletions(-)
+>  drivers/reset/core.c | 132 ++++++++++++++++++++++++++++++---------------=
+------
+>  1 file changed, 78 insertions(+), 54 deletions(-)
 >=20
-> diff --git a/tools/tracing/rtla/tests/osnoise.t b/tools/tracing/rtla/test=
-s/osnoise.t
-> index e3c89d45a6bb..08196443fef1 100644
-> --- a/tools/tracing/rtla/tests/osnoise.t
-> +++ b/tools/tracing/rtla/tests/osnoise.t
-> @@ -39,9 +39,9 @@ check "hist stop at failed action" \
->  check "top stop at failed action" \
->  	"timerlat top -T 2 --on-threshold shell,command=3D'echo -n abc; false' =
---on-threshold shell,command=3D'echo -n defgh'" 2 "^abc" "defgh"
->  check "hist with continue" \
-> -	"osnoise hist -S 2 -d 1s --on-threshold shell,command=3D'echo TestOutpu=
-t' --on-threshold continue" 0 "^TestOutput$"
-> +	"osnoise hist -S 2 -d 5s --on-threshold shell,command=3D'echo TestOutpu=
-t' --on-threshold continue" 0 "^TestOutput$"
->  check "top with continue" \
-> -	"osnoise top -q -S 2 -d 1s --on-threshold shell,command=3D'echo TestOut=
-put' --on-threshold continue" 0 "^TestOutput$"
-> +	"osnoise top -q -S 2 -d 5s --on-threshold shell,command=3D'echo TestOut=
-put' --on-threshold continue" 0 "^TestOutput$"
+> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+> index c9f13020ca3a7b9273488497a7d4240d0af762b0..b3e6ba7a9c3d756d2e30dc20e=
+dda9c02b624aefd 100644
+> --- a/drivers/reset/core.c
+> +++ b/drivers/reset/core.c
+[...]
+> @@ -849,52 +852,45 @@ static void __reset_control_put_internal(struct res=
+et_control *rstc)
+>  	kref_put(&rstc->refcnt, __reset_control_release);
+>  }
+> =20
+> -static int __reset_add_reset_gpio_lookup(struct gpio_device *gdev, int i=
+d,
+> -					 struct device_node *np,
+> -					 unsigned int gpio,
+> -					 unsigned int of_flags)
+> +static void reset_aux_device_release(struct device *dev)
 
-Not related to this patch other than noticing it via quoted context, but
-I spent about a minute trying to figure out why "top stop at failed
-action" uses -T instead of -S here, before noticing that it's also
-invoking timerlat. :-P
+static void reset_gpio_aux_device_release(struct device *dev)
 
--Crystal
+[...]
+> @@ -903,8 +899,10 @@ static int __reset_add_reset_gpio_lookup(struct gpio=
+_device *gdev, int id,
+>  static int __reset_add_reset_gpio_device(const struct of_phandle_args *a=
+rgs)
+>  {
+>  	struct reset_gpio_lookup *rgpio_dev;
+> -	struct auxiliary_device *adev;
+> -	int id, ret;
+> +	struct property_entry properties[2];
 
+It would be nice if this could be initialized instead of the memset() +
+assignment below. Maybe splitting the function will make this more
+convenient.
+
+> +	unsigned int offset, of_flags;
+> +	struct device *parent;
+> +	int id, ret, lflags;
+
+Should this be unsigned int, or enum gpio_lookup_flags?
+
+> =20
+>  	/*
+>  	 * Currently only #gpio-cells=3D2 is supported with the meaning of:
+> @@ -915,11 +913,30 @@ static int __reset_add_reset_gpio_device(const stru=
+ct of_phandle_args *args)
+>  	if (args->args_count !=3D 2)
+>  		return -ENOENT;
+> =20
+> +	offset =3D args->args[0];
+> +	of_flags =3D args->args[1];
+> +
+> +	/*
+> +	 * Later we map GPIO flags between OF and Linux, however not all
+> +	 * constants from include/dt-bindings/gpio/gpio.h and
+> +	 * include/linux/gpio/machine.h match each other.
+> +	 *
+> +	 * FIXME: Find a better way of translating OF flags to GPIO lookup
+> +	 * flags.
+> +	 */
+> +	if (of_flags > GPIO_ACTIVE_LOW) {
+> +		pr_err("reset-gpio code does not support GPIO flags %u for GPIO %u\n",
+> +		       of_flags, offset);
+> +		return -EINVAL;
+> +	}
+> +
+>  	struct gpio_device *gdev __free(gpio_device_put) =3D
+>  		gpio_device_find_by_fwnode(of_fwnode_handle(args->np));
+>  	if (!gdev)
+>  		return -EPROBE_DEFER;
+> =20
+> +	parent =3D gpio_device_to_device(gdev);
+> +
+>  	/*
+>  	 * Registering reset-gpio device might cause immediate
+>  	 * bind, resulting in its probe() registering new reset controller thus
+> @@ -936,6 +953,13 @@ static int __reset_add_reset_gpio_device(const struc=
+t of_phandle_args *args)
+>  		}
+>  	}
+> =20
+> +	lflags =3D GPIO_PERSISTENT | (of_flags & GPIO_ACTIVE_LOW);
+
+Could we get an of_flags_to_gpio_lookup_flags() kind of helper for
+this?
+
+> +
+> +	memset(properties, 0, sizeof(properties));
+> +	properties[0] =3D PROPERTY_ENTRY_GPIO_FWNODE("reset-gpios",
+> +						   parent->fwnode,
+> +						   offset, lflags);
+> +
+>  	id =3D ida_alloc(&reset_gpio_ida, GFP_KERNEL);
+>  	if (id < 0)
+>  		return id;
+
+regards
+Philipp
 
