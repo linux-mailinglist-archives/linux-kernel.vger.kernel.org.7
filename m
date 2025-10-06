@@ -1,64 +1,39 @@
-Return-Path: <linux-kernel+bounces-843185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6C98BBE962
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:06:38 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46FCBBBE970
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:07:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 759C04E7A92
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:06:37 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2FB60349FD4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8436626F2A7;
-	Mon,  6 Oct 2025 16:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AXJVgd+K"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A94171C9;
-	Mon,  6 Oct 2025 16:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757982D7DE3;
+	Mon,  6 Oct 2025 16:07:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF682D8DC2
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 16:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759766790; cv=none; b=XhiFKI2gLUoBpQTlZVfV+m2ikS4aeWqKTYePv4PVyO6maT7CrImBKFo9uL7l0LdvmppnhdgCjwc1phHQflnSLjE4PyH3N6yls0DS5dJXIdKHZaLx1RXlL0UIRQFwUISbG9KC4g7wyjwZW6qS1S204MqPfQoUsBw7TxWRVRtY52g=
+	t=1759766833; cv=none; b=CUUe0HMfvHMUeD1kJ2/VwZQvdOHfs63Sa95cBWPUZBZSIxu/gR7+6RgviEJY1pJswoJTwMlbKmxXxaVg0xwqa9oC+bQu5jWehb4XzKjzrs85phITDKAGG2L/VNYychvkDJWZb86gGhcMAlXUisl1DVzuQSwfzzDttKuURwJEloA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759766790; c=relaxed/simple;
-	bh=G7QG3+/2/Dyp16EoSQYPRrzMXelmXKhdN1+e9k61Mi4=;
+	s=arc-20240116; t=1759766833; c=relaxed/simple;
+	bh=u06vwWlbhYRmbDghVQZCfzW2x3lwkhJmjTal/yIbbAI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gnWOrWkIXXNn1DS+YMJ7V3Mby37euWDYJr8EeSyFg6Pukr8gMqxC+842GZb/D750lpOW9hnnlrv3jL0S9xB71Bify/pt+pC/USyLjQOPcegY5ygMcQwwMIRERShTWiBr3d+I/m3EBcvF4oUAQIXEeZUuBTdOnPOfIMyONdGLQLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AXJVgd+K; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759766789; x=1791302789;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=G7QG3+/2/Dyp16EoSQYPRrzMXelmXKhdN1+e9k61Mi4=;
-  b=AXJVgd+KdeyTJ61RQncg7xJN15Ef3VB92HHR/SOUArs81j4ndjbDCPPz
-   2vo4yGsRVz+Z9I6cwPu6ncbusiwjf/lJlpPQ2BHE9uGExf3SJMDGKsBwL
-   4BMoKpXhuZh68I3Lm2BBGcrpf76RAGjO4dp1ih76A3eTUd0EAhAO6YNqg
-   b367yyj1Ypkef5f5XgMgl6TPAPVF1ZD6IQRz9CwG9bJMZrGfwPxFJ8WTH
-   VQp0TeAGc1y+BBz3q+v6Lw204nsbDuOTC7+xAapvhRffuE7Sz1SVYegaY
-   0WtgFVxEDte9KxG1AOOdCmulJGMoaXSWkpmEZt833kXL+bSaqr018i92I
-   Q==;
-X-CSE-ConnectionGUID: 4pMwFwbKQbez/7RymTFo8w==
-X-CSE-MsgGUID: rmY6X2JXSU+fTlzyJ4zZjQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11574"; a="72557656"
-X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
-   d="scan'208";a="72557656"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 09:06:28 -0700
-X-CSE-ConnectionGUID: nC8Lj1xzS7+53cBp2yHTgA==
-X-CSE-MsgGUID: nW2tsgZRS5ekdpwj0aiglA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
-   d="scan'208";a="179732410"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.110.110]) ([10.125.110.110])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 09:06:27 -0700
-Message-ID: <6e893bd1-467a-4e9a-91ca-536afa6e4767@intel.com>
-Date: Mon, 6 Oct 2025 09:06:26 -0700
+	 In-Reply-To:Content-Type; b=svdUYOy+2aEVS+HYsRLQkeCw2JGuMkkqu70gUB6WpnykS/0TbEmKlLTDZfQmqIl+PA/0aLtqJj9qTaRl9hhkaWNILZbYCpY3IOZ/xOBD68ONuv0/17dIJ3pD0DAQ5/JfkIggkLavlurToIyxOrdwr6R47WMYn9+Iv8OnK3EUazk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 021FF1515;
+	Mon,  6 Oct 2025 09:07:02 -0700 (PDT)
+Received: from [10.57.34.189] (unknown [10.57.34.189])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0DBCD3F738;
+	Mon,  6 Oct 2025 09:07:07 -0700 (PDT)
+Message-ID: <f20a1595-d5a8-4f3c-8b08-f7c743ca37e9@arm.com>
+Date: Mon, 6 Oct 2025 17:07:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,156 +41,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 18/20] cxl/pmem_region: Prep patch to accommodate
- pmem_region attributes
-To: Neeraj Kumar <s.neeraj@samsung.com>
-Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
- linux-kernel@vger.kernel.org, gost.dev@samsung.com,
- a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
- cpgs@samsung.com
-References: <20250917134116.1623730-1-s.neeraj@samsung.com>
- <CGME20250917134209epcas5p1b7f861dbd8299ec874ae44cbf63ce87c@epcas5p1.samsung.com>
- <20250917134116.1623730-19-s.neeraj@samsung.com>
- <147c4f1a-b8f6-4a99-8469-382b897f326d@intel.com>
- <1279309678.121759726504330.JavaMail.epsvc@epcpadp1new>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <1279309678.121759726504330.JavaMail.epsvc@epcpadp1new>
+Subject: Re: [PATCH v4 03/10] drm/panfrost: Handle job HW submit errors
+To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
+ linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+ Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com,
+ Rob Herring <robh@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+References: <20251001022039.1215976-1-adrian.larumbe@collabora.com>
+ <20251001022039.1215976-4-adrian.larumbe@collabora.com>
+Content-Language: en-GB
+From: Steven Price <steven.price@arm.com>
+In-Reply-To: <20251001022039.1215976-4-adrian.larumbe@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+On 01/10/2025 03:20, Adrián Larumbe wrote:
+> Avoid waiting for the DRM scheduler job timedout handler, and instead, let
+> the DRM scheduler core signal the error fence immediately when HW job
+> submission fails.
+> 
+> That means we must also decrement the runtime-PM refcnt for the device,
+> because the job will never be enqueued or inflight.
+> 
+> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_job.c | 20 ++++++++++++++++----
+>  1 file changed, 16 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
+> index a0123d0a1b7d..3f60adc9b69d 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_job.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
+> @@ -196,7 +196,7 @@ panfrost_enqueue_job(struct panfrost_device *pfdev, int slot,
+>  	return 1;
+>  }
+>  
+> -static void panfrost_job_hw_submit(struct panfrost_job *job, int js)
+> +static int panfrost_job_hw_submit(struct panfrost_job *job, int js)
+>  {
+>  	struct panfrost_device *pfdev = job->pfdev;
+>  	unsigned int subslot;
+> @@ -208,10 +208,11 @@ static void panfrost_job_hw_submit(struct panfrost_job *job, int js)
+>  
+>  	ret = pm_runtime_get_sync(pfdev->base.dev);
+>  	if (ret < 0)
+> -		return;
+> +		goto err_hwsubmit;
+>  
+>  	if (WARN_ON(job_read(pfdev, JS_COMMAND_NEXT(js)))) {
+> -		return;
+> +		ret = -EINVAL;
+> +		goto err_hwsubmit;
+>  	}
+>  
+>  	cfg = panfrost_mmu_as_get(pfdev, job->mmu);
+> @@ -262,6 +263,12 @@ static void panfrost_job_hw_submit(struct panfrost_job *job, int js)
+>  			job, js, subslot, jc_head, cfg & 0xf);
+>  	}
+>  	spin_unlock(&pfdev->js->job_lock);
+> +
+> +	return 0;
+> +
+> +err_hwsubmit:
+> +	pm_runtime_put_autosuspend(pfdev->base.dev);
 
+I think you're missing something here. You've put a call to
+pm_runtime_put_autosuspend() here which matches the call to
+pm_runtime_get_sync() that we do earlier in the function. But there's no
+corresponding panfrost_devfreq_record_idle() (but the first thing this
+function does is panfrost_devfreq_record_busy()).
 
-On 9/29/25 6:57 AM, Neeraj Kumar wrote:
-> On 24/09/25 11:53AM, Dave Jiang wrote:
->>
->>
->> On 9/17/25 6:41 AM, Neeraj Kumar wrote:
->>> Created a separate file core/pmem_region.c along with CONFIG_PMEM_REGION
->>> Moved pmem_region related code from core/region.c to core/pmem_region.c
->>> For region label update, need to create device attribute, which calls
->>> nvdimm exported function thus making pmem_region dependent on libnvdimm.
->>> Because of this dependency of pmem region on libnvdimm, segregated pmem
->>> region related code from core/region.c
->>
->> We can minimize the churn in this patch by introduce the new core/pmem_region.c and related bits in the beginning instead of introduce new functions and then move them over from region.c.
-> 
-> Hi Dave,
-> 
-> As per LSA 2.1, during region creation we need to intract with nvdimmm
-> driver to write region label into LSA.
-> This dependency of libnvdimm is only for PMEM region, therefore I have
-> created a seperate file core/pmem_region.c and copied pmem related functions
-> present in core/region.c into core/pmem_region.c.
-> Because of this movemement of code we have churn introduced in this patch.
-> Can you please suggest optimized way to handle dependency on libnvdimm
-> with minimum code changes.
+So unless I'm missing something (very possible) then this is going to
+mess up the devfreq accounting. A simple fix would be just to move the
+panfrost_devfreq_record_busy() call down in the function.
 
-Hmm....maybe relegate the introduction of core/pmem_region.c new file and only the moving of the existing bits into the new file to a patch. And then your patch will be rid of the delete/add bits of the old code? Would that work?
+Thanks,
+Steve
 
-DJ
- 
-> 
->>
->>> diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
->>> index 48b7314afdb8..532eaa1bbdd6 100644
->>> --- a/drivers/cxl/Kconfig
->>> +++ b/drivers/cxl/Kconfig
->>> @@ -211,6 +211,20 @@ config CXL_REGION
->>>
->>>        If unsure say 'y'
->>>
->>> +config CXL_PMEM_REGION
->>> +    bool "CXL: Pmem Region Support"
->>> +    default CXL_BUS
->>> +    depends on CXL_REGION
->>
->>> +    depends on PHYS_ADDR_T_64BIT
->>> +    depends on BLK_DEV
->> These 2 deps are odd. What are the actual dependencies?
->>
-> 
-> We need to add these 2 deps to fix v2 0Day issue [1]
-> I have taken reference from bdf97013ced5f [2]
-> Seems, I also have to add depends on ARCH_HAS_PMEM_API. I will update it
-> in V3.
-> 
-> [1] https://lore.kernel.org/linux-cxl/202507311017.7ApKmtQc-lkp@intel.com/
-> [2] https://elixir.bootlin.com/linux/v6.13.7/source/drivers/acpi/nfit/Kconfig#L4
-> 
->>
->>> +    select LIBNVDIMM
->>> +    help
->>> +      Enable the CXL core to enumerate and provision CXL pmem regions.
->>> +      A CXL pmem region need to update region label into LSA. For LSA
->>> +      updation/deletion libnvdimm is required.
->>
->> s/updation/update/
->>
-> 
-> Sure, Will fix it
-> 
->>> +
->>> +      If unsure say 'y'
->>> +
->>>  config CXL_REGION_INVALIDATION_TEST
->>>      bool "CXL: Region Cache Management Bypass (TEST)"
->>>      depends on CXL_REGION
-> 
-> <snip>
-> 
->>> --- a/drivers/cxl/core/port.c
->>> +++ b/drivers/cxl/core/port.c
->>> @@ -53,7 +53,7 @@ static int cxl_device_id(const struct device *dev)
->>>          return CXL_DEVICE_NVDIMM_BRIDGE;
->>>      if (dev->type == &cxl_nvdimm_type)
->>>          return CXL_DEVICE_NVDIMM;
->>> -    if (dev->type == CXL_PMEM_REGION_TYPE())
->>> +    if (dev->type == CXL_PMEM_REGION_TYPE)
->>
->> Stray edit? I don't think anything changed in the declaration.
->>
-> 
-> Sure, Will fix it
-> 
->>>          return CXL_DEVICE_PMEM_REGION;
->>>      if (dev->type == CXL_DAX_REGION_TYPE())
->>>          return CXL_DEVICE_DAX_REGION;
-> 
-> <snip>
-> 
->>> @@ -2382,7 +2380,7 @@ bool is_cxl_region(struct device *dev)
->>>  }
->>>  EXPORT_SYMBOL_NS_GPL(is_cxl_region, "CXL");
->>>
->>> -static struct cxl_region *to_cxl_region(struct device *dev)
->>> +struct cxl_region *to_cxl_region(struct device *dev)
->>>  {
->>>      if (dev_WARN_ONCE(dev, dev->type != &cxl_region_type,
->>>                "not a cxl_region device\n"))
->>> @@ -2390,6 +2388,7 @@ static struct cxl_region *to_cxl_region(struct device *dev)
->>>
->>>      return container_of(dev, struct cxl_region, dev);
->>>  }
->>> +EXPORT_SYMBOL_NS_GPL(to_cxl_region, "CXL");
->>
->> Maybe just move this into the header file instead.
->>
->> DJ
-> 
-> Actually to_cxl_region() is internal to cxl/core and especially to core/region.c
-> So, Its better to compeletly remove EXPORT_SYMBOL_NS_GPL(to_cxl_region, "CXL")
-> 
-> Even EXPORT_SYMBOL_NS_GPL(is_cxl_region, "CXL") is internal to cxl/core/region.c
-> Should I also remove it?
-> 
-> Even we can remove declaration of is_cxl_region() and to_cxl_region()
-> from drivers/cxl/cxl.h as these functions are internal to cxl/core/region.c
-> 
-> 
-> Regards,
-> Neeraj
-> 
-> 
+> +	return ret;
+>  }
+>  
+>  static int panfrost_acquire_object_fences(struct drm_gem_object **bos,
+> @@ -384,6 +391,7 @@ static struct dma_fence *panfrost_job_run(struct drm_sched_job *sched_job)
+>  	struct panfrost_device *pfdev = job->pfdev;
+>  	int slot = panfrost_job_get_slot(job);
+>  	struct dma_fence *fence = NULL;
+> +	int ret;
+>  
+>  	if (job->ctx->destroyed)
+>  		return ERR_PTR(-ECANCELED);
+> @@ -405,7 +413,11 @@ static struct dma_fence *panfrost_job_run(struct drm_sched_job *sched_job)
+>  		dma_fence_put(job->done_fence);
+>  	job->done_fence = dma_fence_get(fence);
+>  
+> -	panfrost_job_hw_submit(job, slot);
+> +	ret = panfrost_job_hw_submit(job, slot);
+> +	if (ret) {
+> +		dma_fence_put(fence);
+> +		return ERR_PTR(ret);
+> +	}
+>  
+>  	return fence;
+>  }
 
 
