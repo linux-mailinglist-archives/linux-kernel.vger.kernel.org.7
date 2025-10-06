@@ -1,317 +1,349 @@
-Return-Path: <linux-kernel+bounces-843275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3606CBBED04
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 19:28:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26872BBECE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 19:26:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B03C3BF48B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 17:28:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D46084E3036
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 17:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0AD24293C;
-	Mon,  6 Oct 2025 17:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C86E23ABBF;
+	Mon,  6 Oct 2025 17:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PiWkv+HH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Q8u2rD2e"
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012039.outbound.protection.outlook.com [52.101.48.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D01323F42D;
-	Mon,  6 Oct 2025 17:28:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759771714; cv=none; b=APDqGNzkTI0FLMD0HiHxH+jAWf7TGRh4+AMyHc3M+3BvywoDr5+pKBolc7rNLydvvZICTnUA/eBZvHL7PGoyvqX9aVvxemXjG5eokO8flZy0bIhtpiGwuO+DamSNybraWcC5InLCpKnH2QLY3etgafkgkrz45s4LOKShyU9eYI4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759771714; c=relaxed/simple;
-	bh=KB/lwlRx83OoSAfOSb1yEtbijWQHkZuthuV9r/J09w8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dr5IwuWNKgq/MJ4bn+2Qk8VwpdbEBQwC1gsIZN1losdL9CWqY3qT/3g/aOR/ExS+Ghhq9DZSRjRaqJhBmYaVcXeujwlBV4mm0kFiuelyzUn8twRmfct0X8oHihyWYSOtkXi/T4B5PS3CdyNfLiMg9aOMTmKcOtul2kX1qasciB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PiWkv+HH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 879DEC4CEF5;
-	Mon,  6 Oct 2025 17:28:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759771713;
-	bh=KB/lwlRx83OoSAfOSb1yEtbijWQHkZuthuV9r/J09w8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=PiWkv+HHxSV3/ip+v3eFaX8RYKNvo7t+NTYSTBnxHDFF++GmlVZyd5tyd2jK1WaSA
-	 CJ6IYPQgSEbtVOjelVkIQRp05ZR68+u0uT/13ZFOcGePSfBhwvVplYDooaMUQM/334
-	 9w2L8T74uWY3iMeomE5cHclFm4PdTuW8SAypP2OE3P/euGTzBFGi1qyJkubxrKPZ4p
-	 lh+N6kLOQEivLdaq+Hk7sp3BxGZndik5j2ltFlDx/obMlDIwTP1KBzrQNvqd9JWSxU
-	 y1bi8vdh09q2d/x11WCpVI50MNf6dvF48N6hrer62ZLv51c8nBtbSz2xmoD8E+2rfZ
-	 Wm3gNVKhExr4A==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Joachim Vandersmissen <git@jvdsn.com>,
-	David Howells <dhowells@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH] lib/crypto: Add FIPS pre-operational self-test for SHA algorithms
-Date: Mon,  6 Oct 2025 10:26:12 -0700
-Message-ID: <20251006172612.75240-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F581C8630
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 17:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.39
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759771593; cv=fail; b=Kg6zBaDqWfaAZvOusCetmcTutNFsK9ktTQVSr2ydFlgoXq1uXOI7NBqvty83yp8AhnVTUxeqw5Ifxs7ujOUKz/Ny7v9fm/FDM18JZZXuyclSs62m9VmZBC1+sZTSSGfz+aQ1gFgS8zwq5uusOER8jFLT4oVJQ6xxuswx03nRsts=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759771593; c=relaxed/simple;
+	bh=o7TZB2/68eKXw2Tv51VBYz8sdskba9swhdYZOjw8Yns=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=q3GWtTT7p8H6Ym8KYbBX5W4uJilEsMB0/56ybf2JdRHw3ZKm3H60E8fAQtTGendrqzILI2Uvi2D2ZKBoRx6M6JTZQ96Mh4v+FdEXnYYuX37nmIuecK0VU+HtP9vmEwP9Y6v2PsLN/g0CvEzgbaZ0r6TJ9teMnm7gTlgjNjniS24=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Q8u2rD2e; arc=fail smtp.client-ip=52.101.48.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QDVM0PoCrBlDmVKm9GPJ3+kzpDba9Afmm+3oXDQTsZ2oUORhDJRJsCdY4ETrZ7fOwiS6d1fbNQAcycSwn2j7E9nll4mvTXlCWNSSAfw318Yu+LMtrs87G4UpzpnaCLqwYbWLP6Wreo39EeW23B//EDO/KvfAASCLT4/5DAVW38H5WTPCKbWL5bZ8s+PrXBt1nG7f8NJzAp83aI9m0aMahoSzQxu+mW/SGsKM+nlJnoZ4c6ME5tKAmpO+RiZfb1xArMSAeQugJzjl+5aH7LgaTs5P+8AgV4CsSvcpLwRUD2zQig1iWkSYM2HDwz2ghdujII6wPgGvC8xwmAJnrYQkRQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=B4ZXI67KCSOpcIDhz5NJU+mtmAkhTTMgJ9aVQ18cwnw=;
+ b=wFTbfkJYWzJ+xX2sEC0LEO6WySt77kLcbQnrCCCvL+T428nNTji0axp/aprFy2+hZ+aY25v60JStkkTQilOQ5k0SoMjH51rcOpnBtm1NFrADzGUT1NVv/FiOJ56rRa6EJU+VeF9ODY0qy4msqJuuH0PhkWq9qTD0yrnG4KrgNLu1RtJaPGZw+snIWE4EKzJXTJX24G5NTZAazLYqLUaIaNKfDiFaehPn8HJV+2ylyrlGZe/RiGVk9gIbN85LZpvZHmqK90l4DgiQ/jsjr4rLAQNU/YM/DQ3TsBizVodoWESJdBFqmLVyigAkhlJbDrL2P26D9/NHuqTNoFkEsY9aTA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=B4ZXI67KCSOpcIDhz5NJU+mtmAkhTTMgJ9aVQ18cwnw=;
+ b=Q8u2rD2e/ln0bbv8HZrRNogP5Q6mcXqVO2pwiX/5Uui79TAPGRcHCsF1Z3opqHgZfr2iqS+QgAQZ8oN7s3cmSfb03plUoVOXZndp3oezOqHJ9IzXMVw7qH7tAPDvhQwPp/Jr6r/jXA/0uqZgdPPHYIvpTR3HXKdpB5AfnAHMEzWpD5uyGngdLUiiEMGsXoBNhisoKbOTnQtLf6lilAzXl6pNJwh+y1/SiB/q48Cb2H+s4xIZ1JV9zKi9fo8oOh/wcUhX+/2WC0azuBx/iFMIkidl81jqp8T92Z88VkqKUom5s8dpb6q83b1rezpWTaTNjyqY6bKPkVjLLjzHaj94ew==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by SJ0PR12MB6808.namprd12.prod.outlook.com (2603:10b6:a03:47a::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Mon, 6 Oct
+ 2025 17:26:23 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9182.017; Mon, 6 Oct 2025
+ 17:26:23 +0000
+Date: Mon, 6 Oct 2025 19:26:15 +0200
+From: Andrea Righi <arighi@nvidia.com>
+To: Ryan Newton <rrnewton@gmail.com>
+Cc: linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev, tj@kernel.org,
+	newton@meta.com
+Subject: Re: [PATCH v3 1/2] sched_ext: Add lockless peek operation for DSQs
+Message-ID: <aOP7t_obZGikuo5J@gpd4>
+References: <20251006170403.3584204-1-rrnewton@gmail.com>
+ <20251006170403.3584204-2-rrnewton@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251006170403.3584204-2-rrnewton@gmail.com>
+X-ClientProxiedBy: MI0P293CA0009.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:44::6) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|SJ0PR12MB6808:EE_
+X-MS-Office365-Filtering-Correlation-Id: e84a35b4-b59d-4dc3-c7e3-08de04fd78bb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?KBsqBsgEm8hG8lG6jS26ervlGaeZCctXgetjsGNINfUJXe90yIgriNW7e+Dr?=
+ =?us-ascii?Q?74O7PZmnPrn2Vg8m816rJcz11awO1NSQbyLiJ9pPBot9wIaAxEhTVEaZgdmv?=
+ =?us-ascii?Q?ifhB9U01uvYum/Ittyv3usV9JTM8/8Ha+a6hARzYtbSpDElurr7tDOgA8ojA?=
+ =?us-ascii?Q?azZCBQXAWzxyXqo2dc+9owcFBysObpOXKyvWRfyp2Rxo8unnAtTRI9VxZv5c?=
+ =?us-ascii?Q?BDMP1eDLsDZjT2g5gqjD/ke3+QwkxMT3FCXJDG1ahPB0zhB5VQfqTPlRxxSU?=
+ =?us-ascii?Q?K/juVvgNp2dbBCo79FWAglY0JhfAz+gje9NNKmgcy/HHfj4C8go28hyX9Owx?=
+ =?us-ascii?Q?+YyMuM/QVCCifmA+7ZeX9sbH7Nhgx5B1hvRHx5zYuAaAXEbwVFE35mreoD9h?=
+ =?us-ascii?Q?cc0ICHC713tD8mjw9YFlbOF1V+qhIRErweWjVVn4GORsZlrCosYZb0DHwCtC?=
+ =?us-ascii?Q?f1MFaUJVuuneYDK0l/c30SN+wBksg28EYVVk8clLatco0KIgxpdAYIeaW0C5?=
+ =?us-ascii?Q?svNyqN/O4s8Vuza9uBk0chvxRZ+f0FlZGwIOa5Zc5YmbnzYqH2+LlRE8h0tG?=
+ =?us-ascii?Q?gbMr2AqTcra0Da5StQCqZ8JSW2z856USUVTOrltNFQQgT4FEGrmIKuZESeUQ?=
+ =?us-ascii?Q?YS4ELgPeVAc3lkWcms3m3B7qWQAFouX44zMREsuQ1gu0GeCoPnJnEeebiz6g?=
+ =?us-ascii?Q?yiR2bScNW30t6BcEVfibLaYlR6QKHKhmHTnycFgRA0zusfiNZHdfAk09jHQ4?=
+ =?us-ascii?Q?v/wA1MFmn0Xuo9qI8FgEscwN4dGbLQNQ+dscYlBDZSE3H7YIz9XLj3CHtk8w?=
+ =?us-ascii?Q?K44SAj70K6mQvH5wUAzCsrTkzJLO+vklOhREikacyBsyLnURFvnJRuA6OoSd?=
+ =?us-ascii?Q?FMk43aJwjUx091d1EP+wBdOyPQSjqHXSDXtyCZFsieAoqrqxby1PO4wrXg26?=
+ =?us-ascii?Q?U9pfxzuw1pTGF2SDbyIbsAepS+gxI7J9VaR0a5LBAR+bawx4FF0e384irnuq?=
+ =?us-ascii?Q?8vRw1Wl5nTu1p1y7xU2NsfXnTx8MdxaizcCY0Y5RBcIdjgOqB8vordKAMAB/?=
+ =?us-ascii?Q?Lvx1KfFXjGVa8GqnlWnUGjtf+kZ9NQtF3Cy2XFemvfFhyNmyBADbviXgkUh4?=
+ =?us-ascii?Q?4aU5icqcxpLRHh3IZzioeHKlJQ5qlOMR4wKtNIAkWRG8AsnEsf45lDxgNsPG?=
+ =?us-ascii?Q?okHtyuiU99dxXs+edsdxhck9egXPWueoeqgbUFPJL8lD8m2MJvXvwzMAoUU6?=
+ =?us-ascii?Q?CKqWT9GB973szEzvykR21sFNq4ewbn0eJcTOFh+1OjY03Z0uUuAbrPWy+xMc?=
+ =?us-ascii?Q?R7nQDwQ9cNotW2RAw39C7/BNBb086cBfde8OykI13cgIZSen2qOWj5CpaG5n?=
+ =?us-ascii?Q?5hQw8dLMb2f4pVYksU/j6MOf/NAmlHI4hzbrjHSigyuBMGE33lGQxIr0BA7W?=
+ =?us-ascii?Q?GSebejH3xBuAmxKoJZoPSktP3veO1fiz?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Kqy/wq+Ap+53aQwD4s5qJppVwQ+0eM76vB3hifLqDGmRd+/9woZSwekBSkjH?=
+ =?us-ascii?Q?GQg39ixnopTPY8DmHxdvYzxQcyvF6M0lfzo2aSIw8aSb2acH08WKAJ0c5W4h?=
+ =?us-ascii?Q?3MmPcda318YaLEkqzYvVGs7MU+/3p9fsyvsq+3CfZIcvYSVcuqsV/2njOjCz?=
+ =?us-ascii?Q?GvFF/UTkiZhAsl8HbSRTFO81NfVp2PDGhjMxoGTztPrADETzF21VLkQK+uzH?=
+ =?us-ascii?Q?rhhSzUm2VScJMtX5h7DQiJdUwk6DQoUT2x3aN3CnlNcBdSipSLWNZ47Bk4U1?=
+ =?us-ascii?Q?ICMDuU1A3PZnbUr6oGnnUuPsxiaG4ArsunjNlZ08myXZ1ipX6lEsqfY34Ntc?=
+ =?us-ascii?Q?PGLS5Pa5ZQGqiadznTDsuh0BsU0b7tPzAj5PD3jLsz15orIrT+GAVglV/q4h?=
+ =?us-ascii?Q?UjMtAETO0bNL4oU1lH/mrBnlIxZnEXCZliyHwXqrbioDUcKgsv5aJA0M4bhw?=
+ =?us-ascii?Q?Y4Fa/hdEeQ/OHvVByC0xh/TLyxZDxpRXme3UmfbeGsMYZsdCBNgTUt4Dgjuc?=
+ =?us-ascii?Q?fv53CCEHngLxaM9Unx7PRdpQVt2guOS3cwylrOYzwFmOwYEKhuZ+kvVuITO8?=
+ =?us-ascii?Q?Df49meVGc36At3Tz5S+6L7wiqX8sbmQDytToGF0hyWsi6V07AqrcYb4hWxlW?=
+ =?us-ascii?Q?eBtKie5/mI3u6sUktXFnRssZZz/WXBLpBRa5Dn/fjpAg1EpaE58GGvO/8vYB?=
+ =?us-ascii?Q?d5GecC0Up0MEaQaxA8GIYhDFbiAJTPL/Ns5kDctgi4lpBcneS/pRlouNl+qi?=
+ =?us-ascii?Q?KQUANKlYJjkICNWMp6tf6REOOfqAYjlK6LELWZZ99Fxg/PfxpUjiKn5E2JTE?=
+ =?us-ascii?Q?GIT0abtniPZcNjDKG+VsX96LaKq5lWXybB+yElPw01JTGwRnJeds+swG2vOu?=
+ =?us-ascii?Q?Z4OHQMbGK7OdY0TfoHnP+DqC+jdq4vLndWftwMXmeKgd46M2Kbhpksi/EMYu?=
+ =?us-ascii?Q?LWKIQ5v/mRnJeYpWsuM8rZ9yKZUENpNuyzkRdjz+35daDB5K64XhUxA6HVJY?=
+ =?us-ascii?Q?TVI/3QvnLF4oZiqap+NFVtbLfIRPLTste6Rzls6nu8G4J+6SoOhz7xKez43p?=
+ =?us-ascii?Q?rLUgcCQSOOM+4av6rQA3+xeNL3P2M8SJS3k5VkzU5QhZ1+z6uuOlx46neKLo?=
+ =?us-ascii?Q?8csa32y2zGW8GmBhAcYis+PHXl+2k5XS7KBD0zTpT6rprQHNgh0CIxa89Cr7?=
+ =?us-ascii?Q?P59A8GwfPgj4SqryF9jEJsS0AHVcgCkg4EsRZLhGynkpV7kZBBPITouNhfT+?=
+ =?us-ascii?Q?v5LhRqF6BLIwCOzFz9BwAgZk/7EkPfMDKjpBlKdhgWZ7cDJ+Q1GeUty9r0kr?=
+ =?us-ascii?Q?l0v8skqB2VcBBYXxfYkBnZbwA2S7jU2wz8hxgGT3X2UYOcfh76t4+ubMd0Sr?=
+ =?us-ascii?Q?x1Q6STrd99Badhbz6LUAWYEOCn1YblhECrZdLk1EWi+sZ1vj0fAIwZ7PJWU+?=
+ =?us-ascii?Q?qpzQUPmBmRg0wbSKlHDOQP3zSc8IdorBGEvf+4h0UKeZZ+HlS4JA/8sgpjp+?=
+ =?us-ascii?Q?dg+gqoCjkzCT2zhIoabwuyV9E/oKFCaYhMPlNWRsWGDRugLHzAZgE0VjzNXl?=
+ =?us-ascii?Q?1h3PVRrYSP537MK/eGqSL6iDGNgEPdH9sSqAfdpX?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e84a35b4-b59d-4dc3-c7e3-08de04fd78bb
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2025 17:26:23.3266
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AywB4khBi7g/AGhGGovJSxlYZizN03z2+RJFL222nyMqf8nZODBqKZKYbzX6gYSPJ7pYlu+be7sIa1Chx0MJ3g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6808
 
-Add FIPS pre-operational self-tests for all SHA-1 and SHA-2 algorithms.
-Following the "Implementation Guidance for FIPS 140-3" document, to
-achieve this it's sufficient to just test a single test vector for each
-of HMAC-SHA1, HMAC-SHA256, and HMAC-SHA512.
+Hi Ryan,
 
-Link: https://lore.kernel.org/linux-crypto/20250917184856.GA2560@quark/
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
+On Mon, Oct 06, 2025 at 01:04:02PM -0400, Ryan Newton wrote:
+> From: Ryan Newton <newton@meta.com>
+> 
+> The builtin DSQ queue data structures are meant to be used by a wide
+> range of different sched_ext schedulers with different demands on these
+> data structures. They might be per-cpu with low-contention, or
+> high-contention shared queues. Unfortunately, DSQs have a coarse-grained
+> lock around the whole data structure. Without going all the way to a
+> lock-free, more scalable implementation, a small step we can take to
+> reduce lock contention is to allow a lockless, small-fixed-cost peek at
+> the head of the queue.
+> 
+> This change allows certain custom SCX schedulers to cheaply peek at
+> queues, e.g. during load balancing, before locking them. But it
+> represents a few extra memory operations to update the pointer each
+> time the DSQ is modified, including a memory barrier on ARM so the write
+> appears correctly ordered.
+> 
+> This commit adds a first_task pointer field which is updated
+> atomically when the DSQ is modified, and allows any thread to peek at
+> the head of the queue without holding the lock.
+> 
+> Signed-off-by: Ryan Newton <newton@meta.com>
 
-Since there seemed to be more interest in complaining that these are
-missing than actually writing a patch, I decided to just do it.
+With the minor nit from PATCH 2/2 this looks good to me.
 
- lib/crypto/fips.h                   | 38 +++++++++++++++++++++++++++++
- lib/crypto/sha1.c                   | 19 ++++++++++++++-
- lib/crypto/sha256.c                 | 19 ++++++++++++++-
- lib/crypto/sha512.c                 | 19 ++++++++++++++-
- scripts/crypto/gen-fips-testvecs.py | 33 +++++++++++++++++++++++++
- 5 files changed, 125 insertions(+), 3 deletions(-)
- create mode 100644 lib/crypto/fips.h
- create mode 100755 scripts/crypto/gen-fips-testvecs.py
+Reviewed-by: Andrea Righi <arighi@nvidia.com>
 
-diff --git a/lib/crypto/fips.h b/lib/crypto/fips.h
-new file mode 100644
-index 0000000000000..78a1bdd33a151
---- /dev/null
-+++ b/lib/crypto/fips.h
-@@ -0,0 +1,38 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/* This file was generated by: gen-fips-testvecs.py */
-+
-+#include <linux/fips.h>
-+
-+static const u8 fips_test_data[] __initconst __maybe_unused = {
-+	0x66, 0x69, 0x70, 0x73, 0x20, 0x74, 0x65, 0x73,
-+	0x74, 0x20, 0x64, 0x61, 0x74, 0x61, 0x00, 0x00,
-+};
-+
-+static const u8 fips_test_key[] __initconst __maybe_unused = {
-+	0x66, 0x69, 0x70, 0x73, 0x20, 0x74, 0x65, 0x73,
-+	0x74, 0x20, 0x6b, 0x65, 0x79, 0x00, 0x00, 0x00,
-+};
-+
-+static const u8 fips_test_hmac_sha1_value[] __initconst __maybe_unused = {
-+	0x29, 0xa9, 0x88, 0xb8, 0x5c, 0xb4, 0xaf, 0x4b,
-+	0x97, 0x2a, 0xee, 0x87, 0x5b, 0x0a, 0x02, 0x55,
-+	0x99, 0xbf, 0x86, 0x78,
-+};
-+
-+static const u8 fips_test_hmac_sha256_value[] __initconst __maybe_unused = {
-+	0x59, 0x25, 0x85, 0xcc, 0x40, 0xe9, 0x64, 0x2f,
-+	0xe9, 0xbf, 0x82, 0xb7, 0xd3, 0x15, 0x3d, 0x43,
-+	0x22, 0x0b, 0x4c, 0x00, 0x90, 0x14, 0x25, 0xcf,
-+	0x9e, 0x13, 0x2b, 0xc2, 0x30, 0xe6, 0xe8, 0x93,
-+};
-+
-+static const u8 fips_test_hmac_sha512_value[] __initconst __maybe_unused = {
-+	0x6b, 0xea, 0x5d, 0x27, 0x49, 0x5b, 0x3f, 0xea,
-+	0xde, 0x2d, 0xfa, 0x32, 0x75, 0xdb, 0x77, 0xc8,
-+	0x26, 0xe9, 0x4e, 0x95, 0x4d, 0xad, 0x88, 0x02,
-+	0x87, 0xf9, 0x52, 0x0a, 0xd1, 0x92, 0x80, 0x1d,
-+	0x92, 0x7e, 0x3c, 0xbd, 0xb1, 0x3c, 0x49, 0x98,
-+	0x44, 0x9c, 0x8f, 0xee, 0x3f, 0x02, 0x71, 0x51,
-+	0x57, 0x0b, 0x15, 0x38, 0x95, 0xd8, 0xa3, 0x81,
-+	0xba, 0xb3, 0x15, 0x37, 0x5c, 0x6d, 0x57, 0x2b,
-+};
-diff --git a/lib/crypto/sha1.c b/lib/crypto/sha1.c
-index 5904e4ae85d24..001059cb0fce4 100644
---- a/lib/crypto/sha1.c
-+++ b/lib/crypto/sha1.c
-@@ -10,10 +10,11 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/string.h>
- #include <linux/unaligned.h>
- #include <linux/wordpart.h>
-+#include "fips.h"
- 
- static const struct sha1_block_state sha1_iv = {
- 	.h = { SHA1_H0, SHA1_H1, SHA1_H2, SHA1_H3, SHA1_H4 },
- };
- 
-@@ -328,14 +329,30 @@ void hmac_sha1_usingrawkey(const u8 *raw_key, size_t raw_key_len,
- 	hmac_sha1_update(&ctx, data, data_len);
- 	hmac_sha1_final(&ctx, out);
- }
- EXPORT_SYMBOL_GPL(hmac_sha1_usingrawkey);
- 
--#ifdef sha1_mod_init_arch
-+#if defined(sha1_mod_init_arch) || defined(CONFIG_CRYPTO_FIPS)
- static int __init sha1_mod_init(void)
- {
-+#ifdef sha1_mod_init_arch
- 	sha1_mod_init_arch();
-+#endif
-+	if (fips_enabled) {
-+		/*
-+		 * FIPS pre-operational self-test.  As per the FIPS
-+		 * Implementation Guidance, testing HMAC-SHA1 satisfies the test
-+		 * requirement for SHA-1 too.
-+		 */
-+		u8 mac[SHA1_DIGEST_SIZE];
-+
-+		hmac_sha1_usingrawkey(fips_test_key, sizeof(fips_test_key),
-+				      fips_test_data, sizeof(fips_test_data),
-+				      mac);
-+		if (memcmp(fips_test_hmac_sha1_value, mac, sizeof(mac)) != 0)
-+			panic("sha1: FIPS pre-operational self-test failed\n");
-+	}
- 	return 0;
- }
- subsys_initcall(sha1_mod_init);
- 
- static void __exit sha1_mod_exit(void)
-diff --git a/lib/crypto/sha256.c b/lib/crypto/sha256.c
-index 8fa15165d23e8..6b3cf105147ff 100644
---- a/lib/crypto/sha256.c
-+++ b/lib/crypto/sha256.c
-@@ -15,10 +15,11 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/string.h>
- #include <linux/unaligned.h>
- #include <linux/wordpart.h>
-+#include "fips.h"
- 
- static const struct sha256_block_state sha224_iv = {
- 	.h = {
- 		SHA224_H0, SHA224_H1, SHA224_H2, SHA224_H3,
- 		SHA224_H4, SHA224_H5, SHA224_H6, SHA224_H7,
-@@ -416,14 +417,30 @@ void hmac_sha256_usingrawkey(const u8 *raw_key, size_t raw_key_len,
- 	hmac_sha256_final(&ctx, out);
- }
- EXPORT_SYMBOL_GPL(hmac_sha256_usingrawkey);
- #endif /* !__DISABLE_EXPORTS */
- 
--#ifdef sha256_mod_init_arch
-+#if defined(sha256_mod_init_arch) || defined(CONFIG_CRYPTO_FIPS)
- static int __init sha256_mod_init(void)
- {
-+#ifdef sha256_mod_init_arch
- 	sha256_mod_init_arch();
-+#endif
-+	if (fips_enabled) {
-+		/*
-+		 * FIPS pre-operational self-test.  As per the FIPS
-+		 * Implementation Guidance, testing HMAC-SHA256 satisfies the
-+		 * test requirement for SHA-224, SHA-256, and HMAC-SHA224 too.
-+		 */
-+		u8 mac[SHA256_DIGEST_SIZE];
-+
-+		hmac_sha256_usingrawkey(fips_test_key, sizeof(fips_test_key),
-+					fips_test_data, sizeof(fips_test_data),
-+					mac);
-+		if (memcmp(fips_test_hmac_sha256_value, mac, sizeof(mac)) != 0)
-+			panic("sha256: FIPS pre-operational self-test failed\n");
-+	}
- 	return 0;
- }
- subsys_initcall(sha256_mod_init);
- 
- static void __exit sha256_mod_exit(void)
-diff --git a/lib/crypto/sha512.c b/lib/crypto/sha512.c
-index d8062188be98a..65447083c0456 100644
---- a/lib/crypto/sha512.c
-+++ b/lib/crypto/sha512.c
-@@ -15,10 +15,11 @@
- #include <linux/module.h>
- #include <linux/overflow.h>
- #include <linux/string.h>
- #include <linux/unaligned.h>
- #include <linux/wordpart.h>
-+#include "fips.h"
- 
- static const struct sha512_block_state sha384_iv = {
- 	.h = {
- 		SHA384_H0, SHA384_H1, SHA384_H2, SHA384_H3,
- 		SHA384_H4, SHA384_H5, SHA384_H6, SHA384_H7,
-@@ -403,14 +404,30 @@ void hmac_sha512_usingrawkey(const u8 *raw_key, size_t raw_key_len,
- 	hmac_sha512_update(&ctx, data, data_len);
- 	hmac_sha512_final(&ctx, out);
- }
- EXPORT_SYMBOL_GPL(hmac_sha512_usingrawkey);
- 
--#ifdef sha512_mod_init_arch
-+#if defined(sha512_mod_init_arch) || defined(CONFIG_CRYPTO_FIPS)
- static int __init sha512_mod_init(void)
- {
-+#ifdef sha512_mod_init_arch
- 	sha512_mod_init_arch();
-+#endif
-+	if (fips_enabled) {
-+		/*
-+		 * FIPS pre-operational self-test.  As per the FIPS
-+		 * Implementation Guidance, testing HMAC-SHA512 satisfies the
-+		 * test requirement for SHA-384, SHA-512, and HMAC-SHA384 too.
-+		 */
-+		u8 mac[SHA512_DIGEST_SIZE];
-+
-+		hmac_sha512_usingrawkey(fips_test_key, sizeof(fips_test_key),
-+					fips_test_data, sizeof(fips_test_data),
-+					mac);
-+		if (memcmp(fips_test_hmac_sha512_value, mac, sizeof(mac)) != 0)
-+			panic("sha512: FIPS pre-operational self-test failed\n");
-+	}
- 	return 0;
- }
- subsys_initcall(sha512_mod_init);
- 
- static void __exit sha512_mod_exit(void)
-diff --git a/scripts/crypto/gen-fips-testvecs.py b/scripts/crypto/gen-fips-testvecs.py
-new file mode 100755
-index 0000000000000..26e12397bceb2
---- /dev/null
-+++ b/scripts/crypto/gen-fips-testvecs.py
-@@ -0,0 +1,33 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+#
-+# Script that generates lib/crypto/fips.h
-+#
-+# Copyright 2025 Google LLC
-+
-+import hmac
-+
-+fips_test_data = b"fips test data\0\0"
-+fips_test_key = b"fips test key\0\0\0"
-+
-+def print_static_u8_array_definition(name, value):
-+    print('')
-+    print(f'static const u8 {name}[] __initconst __maybe_unused = {{')
-+    for i in range(0, len(value), 8):
-+        line = '\t' + ''.join(f'0x{b:02x}, ' for b in value[i:i+8])
-+        print(f'{line.rstrip()}')
-+    print('};')
-+
-+print('/* SPDX-License-Identifier: GPL-2.0-or-later */')
-+print(f'/* This file was generated by: gen-fips-testvecs.py */')
-+print()
-+print('#include <linux/fips.h>')
-+
-+print_static_u8_array_definition("fips_test_data", fips_test_data)
-+print_static_u8_array_definition("fips_test_key", fips_test_key)
-+
-+for alg in 'sha1', 'sha256', 'sha512':
-+    ctx = hmac.new(fips_test_key, digestmod=alg)
-+    ctx.update(fips_test_data)
-+    print_static_u8_array_definition(f'fips_test_hmac_{alg}_value', ctx.digest())
-+
+Thanks!
+-Andrea
 
-base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
--- 
-2.51.0
-
+> ---
+>  include/linux/sched/ext.h                |  1 +
+>  kernel/sched/ext.c                       | 54 +++++++++++++++++++++++-
+>  tools/sched_ext/include/scx/common.bpf.h |  1 +
+>  tools/sched_ext/include/scx/compat.bpf.h | 19 +++++++++
+>  4 files changed, 73 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/sched/ext.h b/include/linux/sched/ext.h
+> index d82b7a9b0658..81478d4ae782 100644
+> --- a/include/linux/sched/ext.h
+> +++ b/include/linux/sched/ext.h
+> @@ -58,6 +58,7 @@ enum scx_dsq_id_flags {
+>   */
+>  struct scx_dispatch_q {
+>  	raw_spinlock_t		lock;
+> +	struct task_struct __rcu *first_task; /* lockless peek at head */
+>  	struct list_head	list;	/* tasks in dispatch order */
+>  	struct rb_root		priq;	/* used to order by p->scx.dsq_vtime */
+>  	u32			nr;
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index 2b0e88206d07..6d3537e65001 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -944,8 +944,11 @@ static void dispatch_enqueue(struct scx_sched *sch, struct scx_dispatch_q *dsq,
+>  				container_of(rbp, struct task_struct,
+>  					     scx.dsq_priq);
+>  			list_add(&p->scx.dsq_list.node, &prev->scx.dsq_list.node);
+> +			/* first task unchanged - no update needed */
+>  		} else {
+>  			list_add(&p->scx.dsq_list.node, &dsq->list);
+> +			/* not builtin and new task is at head - use fastpath */
+> +			rcu_assign_pointer(dsq->first_task, p);
+>  		}
+>  	} else {
+>  		/* a FIFO DSQ shouldn't be using PRIQ enqueuing */
+> @@ -953,10 +956,19 @@ static void dispatch_enqueue(struct scx_sched *sch, struct scx_dispatch_q *dsq,
+>  			scx_error(sch, "DSQ ID 0x%016llx already had PRIQ-enqueued tasks",
+>  				  dsq->id);
+>  
+> -		if (enq_flags & (SCX_ENQ_HEAD | SCX_ENQ_PREEMPT))
+> +		if (enq_flags & (SCX_ENQ_HEAD | SCX_ENQ_PREEMPT)) {
+>  			list_add(&p->scx.dsq_list.node, &dsq->list);
+> -		else
+> +			/* new task inserted at head - use fastpath */
+> +			if (!(dsq->id & SCX_DSQ_FLAG_BUILTIN))
+> +				rcu_assign_pointer(dsq->first_task, p);
+> +		} else {
+> +			bool was_empty;
+> +
+> +			was_empty = list_empty(&dsq->list);
+>  			list_add_tail(&p->scx.dsq_list.node, &dsq->list);
+> +			if (was_empty && !(dsq->id & SCX_DSQ_FLAG_BUILTIN))
+> +				rcu_assign_pointer(dsq->first_task, p);
+> +		}
+>  	}
+>  
+>  	/* seq records the order tasks are queued, used by BPF DSQ iterator */
+> @@ -1011,6 +1023,13 @@ static void task_unlink_from_dsq(struct task_struct *p,
+>  		p->scx.dsq_flags &= ~SCX_TASK_DSQ_ON_PRIQ;
+>  	}
+>  
+> +	if (!(dsq->id & SCX_DSQ_FLAG_BUILTIN) && dsq->first_task == p) {
+> +		struct task_struct *first_task;
+> +
+> +		first_task = nldsq_next_task(dsq, NULL, false);
+> +		rcu_assign_pointer(dsq->first_task, first_task);
+> +	}
+> +
+>  	list_del_init(&p->scx.dsq_list.node);
+>  	dsq_mod_nr(dsq, -1);
+>  }
+> @@ -6084,6 +6103,36 @@ __bpf_kfunc void bpf_iter_scx_dsq_destroy(struct bpf_iter_scx_dsq *it)
+>  	kit->dsq = NULL;
+>  }
+>  
+> +/**
+> + * scx_bpf_dsq_peek - Lockless peek at the first element.
+> + * @dsq_id: DSQ to examine.
+> + *
+> + * Read the first element in the DSQ. This is semantically equivalent to using
+> + * the DSQ iterator, but is lockfree.
+> + *
+> + * Returns the pointer, or NULL indicates an empty queue OR internal error.
+> + */
+> +__bpf_kfunc struct task_struct *scx_bpf_dsq_peek(u64 dsq_id)
+> +{
+> +	struct scx_sched *sch;
+> +	struct scx_dispatch_q *dsq;
+> +
+> +	sch = rcu_dereference(scx_root);
+> +	if (unlikely(!sch))
+> +		return NULL;
+> +	if (unlikely(dsq_id & SCX_DSQ_FLAG_BUILTIN)) {
+> +		scx_error(sch, "peek disallowed on builtin DSQ 0x%llx", dsq_id);
+> +		return NULL;
+> +	}
+> +
+> +	dsq = find_user_dsq(sch, dsq_id);
+> +	if (unlikely(!dsq)) {
+> +		scx_error(sch, "peek on non-existent DSQ 0x%llx", dsq_id);
+> +		return NULL;
+> +	}
+> +	return rcu_dereference(dsq->first_task);
+> +}
+> +
+>  __bpf_kfunc_end_defs();
+>  
+>  static s32 __bstr_format(struct scx_sched *sch, u64 *data_buf, char *line_buf,
+> @@ -6641,6 +6690,7 @@ BTF_KFUNCS_START(scx_kfunc_ids_any)
+>  BTF_ID_FLAGS(func, scx_bpf_kick_cpu)
+>  BTF_ID_FLAGS(func, scx_bpf_dsq_nr_queued)
+>  BTF_ID_FLAGS(func, scx_bpf_destroy_dsq)
+> +BTF_ID_FLAGS(func, scx_bpf_dsq_peek, KF_RCU_PROTECTED | KF_RET_NULL)
+>  BTF_ID_FLAGS(func, bpf_iter_scx_dsq_new, KF_ITER_NEW | KF_RCU_PROTECTED)
+>  BTF_ID_FLAGS(func, bpf_iter_scx_dsq_next, KF_ITER_NEXT | KF_RET_NULL)
+>  BTF_ID_FLAGS(func, bpf_iter_scx_dsq_destroy, KF_ITER_DESTROY)
+> diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
+> index 06e2551033cb..fbf3e7f9526c 100644
+> --- a/tools/sched_ext/include/scx/common.bpf.h
+> +++ b/tools/sched_ext/include/scx/common.bpf.h
+> @@ -75,6 +75,7 @@ u32 scx_bpf_reenqueue_local(void) __ksym;
+>  void scx_bpf_kick_cpu(s32 cpu, u64 flags) __ksym;
+>  s32 scx_bpf_dsq_nr_queued(u64 dsq_id) __ksym;
+>  void scx_bpf_destroy_dsq(u64 dsq_id) __ksym;
+> +struct task_struct *scx_bpf_dsq_peek(u64 dsq_id) __ksym __weak;
+>  int bpf_iter_scx_dsq_new(struct bpf_iter_scx_dsq *it, u64 dsq_id, u64 flags) __ksym __weak;
+>  struct task_struct *bpf_iter_scx_dsq_next(struct bpf_iter_scx_dsq *it) __ksym __weak;
+>  void bpf_iter_scx_dsq_destroy(struct bpf_iter_scx_dsq *it) __ksym __weak;
+> diff --git a/tools/sched_ext/include/scx/compat.bpf.h b/tools/sched_ext/include/scx/compat.bpf.h
+> index dd9144624dc9..97b10c184b2c 100644
+> --- a/tools/sched_ext/include/scx/compat.bpf.h
+> +++ b/tools/sched_ext/include/scx/compat.bpf.h
+> @@ -130,6 +130,25 @@ int bpf_cpumask_populate(struct cpumask *dst, void *src, size_t src__sz) __ksym
+>  	false;									\
+>  })
+>  
+> +
+> +/*
+> + * v6.19: Introduce lockless peek API for user DSQs.
+> + *
+> + * Preserve the following macro until v6.21.
+> + */
+> +static inline struct task_struct *__COMPAT_scx_bpf_dsq_peek(u64 dsq_id)
+> +{
+> +	struct task_struct *p = NULL;
+> +	struct bpf_iter_scx_dsq it;
+> +
+> +	if (bpf_ksym_exists(scx_bpf_dsq_peek))
+> +		return scx_bpf_dsq_peek(dsq_id);
+> +	if (!bpf_iter_scx_dsq_new(&it, dsq_id, 0))
+> +		p = bpf_iter_scx_dsq_next(&it);
+> +	bpf_iter_scx_dsq_destroy(&it);
+> +	return p;
+> +}
+> +
+>  /**
+>   * __COMPAT_is_enq_cpu_selected - Test if SCX_ENQ_CPU_SELECTED is on
+>   * in a compatible way. We will preserve this __COMPAT helper until v6.16.
+> -- 
+> 2.51.0
+> 
 
