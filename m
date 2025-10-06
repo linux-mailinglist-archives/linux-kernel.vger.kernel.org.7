@@ -1,1149 +1,225 @@
-Return-Path: <linux-kernel+bounces-842931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B923BBDFFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 14:16:23 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FAB8BBDFDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 14:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3809C3AB8AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 12:15:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C4C0E4EA1CF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 12:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B8827B353;
-	Mon,  6 Oct 2025 12:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B1827BF7D;
+	Mon,  6 Oct 2025 12:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=newwheatzjz@zohomail.com header.b="SYqXxO25"
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wGLUQn4d";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sNGeUe4X";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wGLUQn4d";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sNGeUe4X"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0BA27E05F;
-	Mon,  6 Oct 2025 12:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759752929; cv=pass; b=idESzqIDxyrzlNKQ/HQCoDXbsU82JShzAQMCCh9RGhLGoYXTuHJ4+i8ewbBjonqyP3MI+hweYTVZ4MVaad1ylT43qixciFSGvAUhcySLWPwFnWfHw1Ewtl8y7CrT1Zcm1KWoUGjwygGpgNCPLNSTLFGRJ6Njlk5D6bgPi36yVms=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759752929; c=relaxed/simple;
-	bh=dORZz2suKBY5T57AypVEgHe6RmqbcFF69WmBLiQKmDg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SbBvfDOoidx8A341a2aiQXhyLynEscUaBvk1dFX4JDsq4AYB42zvjnQtcdlqrg38ojSVexhvOmV4pJ73UVJ9GNpa5s3psZgpKiSztfPDOckbgq2X8Mfl2vGocWha4Wfdp9UdEyRH2K9kAurKlHzDvRiGClqy6Py8Kx6AD0PMF7M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=newwheatzjz@zohomail.com header.b=SYqXxO25; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1759752920; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=YmeMbu/PHOJr1mmFylmrG2CEhkY9eqwW1G9nnD+lgSxL7dFU3D4svGknbuOhr9EMVh+fACDyUe9KkYoPCG1U8VHsGhxvBCkZXkdNMHI3Zv7axJwnOVzPqoYIfkp0SVrf267Jhyibyekt5jdd1AMbkx2RKhMQ6S8L6qebWRv6xkk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1759752920; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=up99qxzO4uBbGj4Dvhwf8sdbOh6eUULvzDPKwGk0gXw=; 
-	b=GOzxyELqJ87AL9zlkd4hSLbCYzcx8No0xRcEngD96M7dgSk8gVIzo0v4ISj/AjR/0/fpR3b8sm2Gr21JisGqYdQ1kakqhJmnhWsJjd04nK+EMRGchxjQmS9e8cNDuUDeEOkOMe1ghug+G5ZU0EZ5JQ6+LnOt2TbbiC5WxcqW6aM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=newwheatzjz@zohomail.com;
-	dmarc=pass header.from=<newwheatzjz@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759752920;
-	s=zm2022; d=zohomail.com; i=newwheatzjz@zohomail.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=up99qxzO4uBbGj4Dvhwf8sdbOh6eUULvzDPKwGk0gXw=;
-	b=SYqXxO25OSKGPox2B8Zob/oGCD4JW8npdAU/pkqWJZGN/ayGPFf4QsCDlfLgZR3p
-	6R+nz6lE155QXwlha3JktwoERz/xsXUCprWFHMkehGmz9XtQ1Ub/amb52EsLdyHYGam
-	viTTBbFyB/lYM8xn5QxicPeLsSIOkzyPOJLnJCgA=
-Received: by mx.zohomail.com with SMTPS id 1759752919162682.0322979043126;
-	Mon, 6 Oct 2025 05:15:19 -0700 (PDT)
-From: Jingzhou Zhu <newwheatzjz@zohomail.com>
-To: andersson@kernel.org,
-	konradybcio@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jingzhou Zhu <newwheatzjz@zohomail.com>
-Subject: [PATCH v4 2/2] arm64: dts: qcom: Add support for Huawei MateBook E 2019
-Date: Mon,  6 Oct 2025 20:14:55 +0800
-Message-ID: <20251006121456.26509-3-newwheatzjz@zohomail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251006121456.26509-1-newwheatzjz@zohomail.com>
-References: <20251006121456.26509-1-newwheatzjz@zohomail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4140127B34D
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 12:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759752913; cv=none; b=j9vTggpAArALbFxamgr3hEPcOphJ4o5K0y5YdBYYlRnZuL7Byi372NKauWwe4/5eXHpMV4WN2+UorvlwquolafMjxtqMZQEDIMRzZRRVJJJIYRP8LUSxaUdcsXxZZmWwrolFvY1qc5WmhR4/WvSLaQuof+J98gV1+vHcQ4Vmgxc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759752913; c=relaxed/simple;
+	bh=VuUz0roRHqMBrcSmQOKqhZEPcZpCrjppkJw1W0kd098=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T0Jvk+BP1Ve2h6U73eyvv4p9omDgZNck4l0Xc2n4O+sSLKIWUG6i+wKv8vQ1fMMCJlGERGhQBGY/cHn2VeUiBKQ0/23tb8pt8R2ruPH+8DC1kmdCS8IMMEwNZXWATVT6WXtHcn8p2hzHjYl5/bkOymUoliheSGkP7xfrb3zWqjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wGLUQn4d; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sNGeUe4X; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wGLUQn4d; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sNGeUe4X; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2F161336EF;
+	Mon,  6 Oct 2025 12:15:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759752910; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gvj7BWorJn/oDNT5FPNXzXRZiv+JubjdJcHoGaWcRjY=;
+	b=wGLUQn4dHucXat43jKz+SsShkSF9jl22ZA+2urB9mAgHz07G3sZgyLtTur/BUK7YZpjpX+
+	VQbKWlCgmmloMIEirWNLzRqjFURop8Ds67NNb6DsQj6sn03LQGsLMsudmdOg7Hno0jgbUG
+	2pCUqb53KtbLa46Md+J6VGlD/bFE8b4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759752910;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gvj7BWorJn/oDNT5FPNXzXRZiv+JubjdJcHoGaWcRjY=;
+	b=sNGeUe4XiFMOg9uUeyxUE8EjUu6YqnKvNZ0m8872y0P6j2L8GTTG9VXd88qgPSqtK+vxun
+	lcieWFJh+urr4QAw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=wGLUQn4d;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=sNGeUe4X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759752910; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gvj7BWorJn/oDNT5FPNXzXRZiv+JubjdJcHoGaWcRjY=;
+	b=wGLUQn4dHucXat43jKz+SsShkSF9jl22ZA+2urB9mAgHz07G3sZgyLtTur/BUK7YZpjpX+
+	VQbKWlCgmmloMIEirWNLzRqjFURop8Ds67NNb6DsQj6sn03LQGsLMsudmdOg7Hno0jgbUG
+	2pCUqb53KtbLa46Md+J6VGlD/bFE8b4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759752910;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gvj7BWorJn/oDNT5FPNXzXRZiv+JubjdJcHoGaWcRjY=;
+	b=sNGeUe4XiFMOg9uUeyxUE8EjUu6YqnKvNZ0m8872y0P6j2L8GTTG9VXd88qgPSqtK+vxun
+	lcieWFJh+urr4QAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2278513700;
+	Mon,  6 Oct 2025 12:15:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 6VVmCM6y42jlcQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 06 Oct 2025 12:15:10 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id BA1ADA0ABD; Mon,  6 Oct 2025 14:15:09 +0200 (CEST)
+Date: Mon, 6 Oct 2025 14:15:09 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: add missing fences to I_NEW handling
+Message-ID: <3ectwcds3gwiicciapcktvrmxhau3t7ans5ipzm5xkhpptc2fc@td2jicn5kd5s>
+References: <20251005231526.708061-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Feedback-ID: rr08011227f33339a3b8bb887f6f664897000045d192f010594f9340c504e0319b3402e48b2bc6789847b8cc:zu08011227410fdba52cfa1270a9a4c31a00003f63ec82f158cbb667817aa7bdf58de97013a3e94c6438cfec:rf080112260df2201f070c944843a2c90c00001f08938fd1aaa8e6d47669f5ba78645363ccad41a2e2bfe3:ZohoMail
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251005231526.708061-1-mjguzik@gmail.com>
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.cz:dkim];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 2F161336EF
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
 
-Add device tree for Huawei MateBook E 2019, which is a 2-in-1 tablet based
-on Qualcomm's sdm850 platform.
+On Mon 06-10-25 01:15:26, Mateusz Guzik wrote:
+> Suppose there are 2 CPUs racing inode hash lookup func (say ilookup5())
+> and unlock_new_inode().
+> 
+> In principle the latter can clear the I_NEW flag before prior stores
+> into the inode were made visible.
+> 
+> The former can in turn observe I_NEW is cleared and proceed to use the
+> inode, while possibly reading from not-yet-published areas.
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
+> 
+> I don't think this is a serious bug in the sense I doubt anyone ever ran
+> into it, but this is an issue on paper.
+> 
+> I'm doing some changes in the area and I figured I'll get this bit out
+> of the way.
 
-Supported features:
- - ADSP, CDSP and SLPI
- - Volume Key
- - Power Key
- - Tablet Mode Switching
- - Display
- - Touchscreen
- - Stylus
- - WiFi [1]
- - Bluetooth [2]
- - GPU
- - USB
- - Keyboard
- - Touchpad
- - UFS
- - SD Card
- - Audio (right internal mic and headphone mic not working)
- - Mobile Network
+Yeah, good spotting.
 
-[1] WiFi probing log:
-ath10k_snoc 18800000.wifi: Adding to iommu group 12
-ath10k_snoc 18800000.wifi: qmi chip_id 0x30214 chip_family 0x4001 board_id 0xff soc_id 0x40030001
-ath10k_snoc 18800000.wifi: qmi fw_version 0x2009856b fw_build_timestamp 2018-07-19 12:28 fw_build_id QC_IMAGE_VERSION_STRING=WLAN.HL.2.0-01387-QCAHLSWMTPLZ-1
-ath10k_snoc 18800000.wifi: wcn3990 hw1.0 target 0x00000008 chip_id 0x00000000 sub 0000:0000
-ath10k_snoc 18800000.wifi: kconfig debug 1 debugfs 1 tracing 1 dfs 0 testmode 0
-ath10k_snoc 18800000.wifi: firmware ver  api 5 features wowlan,mgmt-tx-by-reference,non-bmi crc32 b3d4b790
-ath10k_snoc 18800000.wifi: htt-ver 3.53 wmi-op 4 htt-op 3 cal file max-sta 32 raw 0 hwcrypto 1
-ath10k_snoc 18800000.wifi: invalid MAC address; choosing random
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -1981,6 +1981,10 @@ void d_instantiate_new(struct dentry *entry, struct inode *inode)
+>  	spin_lock(&inode->i_lock);
+>  	__d_instantiate(entry, inode);
+>  	WARN_ON(!(inode->i_state & I_NEW));
+> +	/*
+> +	 * Pairs with smp_rmb in wait_on_inode().
+> +	 */
+> +	smp_wmb();
+>  	inode->i_state &= ~I_NEW & ~I_CREATING;
 
-[2] Bluetooth probing log:
-Bluetooth: hci0: setting up wcn399x
-Bluetooth: hci0: QCA Product ID   :0x0000000a
-Bluetooth: hci0: QCA SOC Version  :0x40010214
-Bluetooth: hci0: QCA ROM Version  :0x00000201
-Bluetooth: hci0: QCA Patch Version:0x00000001
-Bluetooth: hci0: QCA controller version 0x02140201
-Bluetooth: hci0: QCA Downloading qca/crbtfw21.tlv
-Bluetooth: hci0: QCA Downloading qca/crnv21.bin
-Bluetooth: hci0: QCA setup on UART is completed
+Hum, why not smp_store_release() here (and below) and...
 
-Features not supported yet:
- - Panel Backlight
- - Lid Detection
- - Battery
- - EFI Variable Access
- - Cameras
+>  	/*
+>  	 * Pairs with the barrier in prepare_to_wait_event() to make sure
+> diff --git a/fs/inode.c b/fs/inode.c
+> index ec9339024ac3..842ee973c8b6 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -1181,6 +1181,10 @@ void unlock_new_inode(struct inode *inode)
+>  	lockdep_annotate_inode_mutex_key(inode);
+>  	spin_lock(&inode->i_lock);
+>  	WARN_ON(!(inode->i_state & I_NEW));
+> +	/*
+> +	 * Pairs with smp_rmb in wait_on_inode().
+> +	 */
+> +	smp_wmb();
+>  	inode->i_state &= ~I_NEW & ~I_CREATING;
+>  	/*
+>  	 * Pairs with the barrier in prepare_to_wait_event() to make sure
+> @@ -1198,6 +1202,10 @@ void discard_new_inode(struct inode *inode)
+>  	lockdep_annotate_inode_mutex_key(inode);
+>  	spin_lock(&inode->i_lock);
+>  	WARN_ON(!(inode->i_state & I_NEW));
+> +	/*
+> +	 * Pairs with smp_rmb in wait_on_inode().
+> +	 */
+> +	smp_wmb();
+>  	inode->i_state &= ~I_NEW;
+>  	/*
+>  	 * Pairs with the barrier in prepare_to_wait_event() to make sure
+> diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+> index 22dd4adc5667..e1e1231a6830 100644
+> --- a/include/linux/writeback.h
+> +++ b/include/linux/writeback.h
+> @@ -194,6 +194,10 @@ static inline void wait_on_inode(struct inode *inode)
+>  {
+>  	wait_var_event(inode_state_wait_address(inode, __I_NEW),
+>  		       !(READ_ONCE(inode->i_state) & I_NEW));
+> +	/*
+> +	 * Pairs with routines clearing I_NEW.
+> +	 */
+> +	smp_rmb();
 
-1. Panel backlight, lid detection and battery will be supported with the
-   EC driver upstreamed.
-2. EFI variables can only be read with the QSEECOM driver, and will be
-   enabled when the driver is fixed.
-3. Cameras are tested to work with modified downstream driver, and once
-   drivers for these camera modules are included in the tree, cameras can
-   be enabled.
+... smp_load_acquire() instead if READ_ONCE? That would seem like a more
+"modern" way to fix this?
 
-Features won't be supported:
- - External Display
- - Fingerprint
-
-1. To make external display work, more reverse engineering may be required,
-   but it's beyond my ability.
-2. Fingerprint is controlled by TrustZone, meaning direct access to it
-   isn't possible.
-
-Signed-off-by: Jingzhou Zhu <newwheatzjz@zohomail.com>
----
- arch/arm64/boot/dts/qcom/Makefile             |   1 +
- .../qcom/sdm850-huawei-matebook-e-2019.dts    | 975 ++++++++++++++++++
- 2 files changed, 976 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/sdm850-huawei-matebook-e-2019.dts
-
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 296688f7cb26..a6bcebe66dd7 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -258,6 +258,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-xiaomi-beryllium-ebbg.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-xiaomi-beryllium-tianma.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-xiaomi-polaris.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-shift-axolotl.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= sdm850-huawei-matebook-e-2019.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sdm850-lenovo-yoga-c630.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sdm850-samsung-w737.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sdx75-idp.dtb
-diff --git a/arch/arm64/boot/dts/qcom/sdm850-huawei-matebook-e-2019.dts b/arch/arm64/boot/dts/qcom/sdm850-huawei-matebook-e-2019.dts
-new file mode 100644
-index 000000000000..e6ca67c6456c
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/sdm850-huawei-matebook-e-2019.dts
-@@ -0,0 +1,975 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Huawei MateBook E 2019
-+ *
-+ * Copyright (c) 2025, Jingzhou Zhu <newwheatzjz@zohomail.com>
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/input/gpio-keys.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
-+#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-+#include <dt-bindings/sound/qcom,q6afe.h>
-+#include <dt-bindings/sound/qcom,q6asm.h>
-+#include <dt-bindings/sound/qcom,wcd934x.h>
-+#include "sdm850.dtsi"
-+#include "sdm845-wcd9340.dtsi"
-+#include "pm8998.dtsi"
-+
-+/*
-+ * Update following upstream (sdm845.dtsi) reserved
-+ * memory mappings for firmware loading to succeed
-+ * and enable the IPA device.
-+ */
-+/delete-node/ &tz_mem;
-+/delete-node/ &rmtfs_mem;
-+/delete-node/ &qseecom_mem;
-+/delete-node/ &ipa_fw_mem;
-+/delete-node/ &ipa_gsi_mem;
-+/delete-node/ &gpu_mem;
-+/delete-node/ &adsp_mem;
-+/delete-node/ &wlan_msa_mem;
-+/delete-node/ &slpi_mem;
-+
-+/ {
-+	model = "Huawei MateBook E 2019";
-+	compatible = "huawei,planck", "qcom,sdm845";
-+	chassis-type = "convertible";
-+
-+	aliases {
-+		serial0 = &uart9;
-+		serial1 = &uart6;
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-0 = <&volume_up_gpio &mode_pin_active>;
-+		pinctrl-names = "default";
-+
-+		key-vol-up {
-+			label = "Volume up";
-+			gpios = <&pm8998_gpios 6 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEUP>;
-+			debounce-interval = <15>;
-+			wakeup-source;
-+		};
-+
-+		switch-mode {
-+			label = "Tablet mode switch";
-+			gpios = <&tlmm 79 GPIO_ACTIVE_HIGH>;
-+			linux,input-type = <EV_SW>;
-+			linux,code = <SW_TABLET_MODE>;
-+			wakeup-source;
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		pinctrl-0 = <&cam_indicator_en>;
-+		pinctrl-names = "default";
-+
-+		led: led-camera-indicator {
-+			label = "white:camera-indicator";
-+			function = LED_FUNCTION_INDICATOR;
-+			color = <LED_COLOR_ID_WHITE>;
-+			gpios = <&tlmm 12 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "none";
-+			default-state = "off";
-+			/* Reuse as a panic indicator until we get a "camera on" trigger */
-+			panic-indicator;
-+		};
-+	};
-+
-+	sw_edp_1p2: regulator-edp-1p2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "sw_edp_1p2";
-+
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
-+
-+		pinctrl-0 = <&sw_edp_1p2_en>;
-+		pinctrl-names = "default";
-+
-+		gpio = <&pm8998_gpios 9 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		vin-supply = <&vreg_l2a_1p2>;
-+	};
-+
-+	vlcm_3v3: regulator-vlcm-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vlcm_3v3";
-+
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&tlmm 88 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		vin-supply = <&vph_pwr>;
-+	};
-+
-+	vph_pwr: regulator-vph-pwr {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vph_pwr";
-+
-+		regulator-min-microvolt = <3700000>;
-+		regulator-max-microvolt = <3700000>;
-+
-+		regulator-always-on;
-+	};
-+
-+	reserved-memory {
-+		cont_splash_mem: framebuffer@80100000 {
-+			reg = <0 0x80100000 0 0xd00000>;
-+			no-map;
-+		};
-+
-+		tz_mem: tz@86d00000 {
-+			reg = <0 0x86d00000 0 0x4600000>;
-+			no-map;
-+		};
-+
-+		qseecom_mem: qseecom@8b500000 {
-+			reg = <0 0x8b500000 0 0xa00000>;
-+			no-map;
-+		};
-+
-+		wlan_msa_mem: wlan-msa@8c400000 {
-+			reg = <0 0x8c400000 0 0x100000>;
-+			no-map;
-+		};
-+
-+		adsp_mem: adsp@8c500000 {
-+			reg = <0 0x8c500000 0 0x1a00000>;
-+			no-map;
-+		};
-+
-+		ipa_fw_mem: ipa-fw@8df00000 {
-+			reg = <0 0x8df00000 0 0x100000>;
-+			no-map;
-+		};
-+
-+		slpi_mem: slpi@96700000 {
-+			reg = <0 0x96700000 0 0x1200000>;
-+		};
-+
-+		gpu_mem: gpu@97900000 {
-+			reg = <0 0x97900000 0 0x5000>;
-+			no-map;
-+		};
-+
-+		rmtfs_mem: rmtfs@97c00000 {
-+			compatible = "qcom,rmtfs-mem";
-+			reg = <0 0x97c00000 0 0x200000>;
-+			no-map;
-+
-+			qcom,client-id = <1>;
-+			qcom,vmid = <QCOM_SCM_VMID_MSS_MSA>;
-+
-+		};
-+	};
-+
-+	sn65dsi86_refclk: sn65dsi86-refclk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+
-+		clock-frequency = <19200000>;
-+	};
-+};
-+
-+&adsp_pas {
-+	firmware-name = "qcom/sdm850/HUAWEI/AL09/qcadsp850.mbn";
-+
-+	status = "okay";
-+};
-+
-+&apps_rsc {
-+	regulators-0 {
-+		compatible = "qcom,pm8998-rpmh-regulators";
-+		qcom,pmic-id = "a";
-+
-+		vdd-s1-supply = <&vph_pwr>;
-+		vdd-s2-supply = <&vph_pwr>;
-+		vdd-s3-supply = <&vph_pwr>;
-+		vdd-s4-supply = <&vph_pwr>;
-+		vdd-s5-supply = <&vph_pwr>;
-+		vdd-s6-supply = <&vph_pwr>;
-+		vdd-s7-supply = <&vph_pwr>;
-+		vdd-s8-supply = <&vph_pwr>;
-+		vdd-s9-supply = <&vph_pwr>;
-+		vdd-s10-supply = <&vph_pwr>;
-+		vdd-s11-supply = <&vph_pwr>;
-+		vdd-s12-supply = <&vph_pwr>;
-+		vdd-s13-supply = <&vph_pwr>;
-+		vdd-l1-l27-supply = <&vreg_s7a_1p025>;
-+		vdd-l2-l8-l17-supply = <&vreg_s3a_1p35>;
-+		vdd-l3-l11-supply = <&vreg_s7a_1p025>;
-+		vdd-l4-l5-supply = <&vreg_s7a_1p025>;
-+		vdd-l6-supply = <&vph_pwr>;
-+		vdd-l7-l12-l14-l15-supply = <&vreg_s5a_2p04>;
-+		vdd-l26-supply = <&vreg_s3a_1p35>;
-+		vin-lvs-1-2-supply = <&vreg_s4a_1p8>;
-+
-+		vreg_s2a_1p125: smps2 {
-+		};
-+
-+		vreg_s3a_1p35: smps3 {
-+			regulator-min-microvolt = <1352000>;
-+			regulator-max-microvolt = <1352000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_s4a_1p8: smps4 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_s5a_2p04: smps5 {
-+			regulator-min-microvolt = <2040000>;
-+			regulator-max-microvolt = <2040000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_s6a_0p8: smps6 {
-+			regulator-min-microvolt = <800000>;
-+			regulator-max-microvolt = <800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_s7a_1p025: smps7 {
-+			regulator-min-microvolt = <1028000>;
-+			regulator-max-microvolt = <1028000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vdd_qusb_hs0:
-+		vdda_hp_pcie_core:
-+		vdda_mipi_csi0_0p9:
-+		vdda_mipi_csi1_0p9:
-+		vdda_mipi_csi2_0p9:
-+		vdda_mipi_dsi0_pll:
-+		vdda_mipi_dsi1_pll:
-+		vdda_qlink_lv:
-+		vdda_qlink_lv_ck:
-+		vdda_qrefs_0p875:
-+		vdda_pcie_core:
-+		vdda_pll_cc_ebi01:
-+		vdda_pll_cc_ebi23:
-+		vdda_sp_sensor:
-+		vdda_ufs1_core:
-+		vdda_ufs2_core:
-+		vdda_usb1_ss_core:
-+		vdda_usb2_ss_core:
-+		vreg_l1a_0p875: ldo1 {
-+			regulator-min-microvolt = <880000>;
-+			regulator-max-microvolt = <880000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vddpx_10:
-+		vreg_l2a_1p2: ldo2 {
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+			regulator-always-on;
-+		};
-+
-+		vreg_l3a_1p0: ldo3 {
-+		};
-+
-+		vdd_wcss_cx:
-+		vdd_wcss_mx:
-+		vdda_wcss_pll:
-+		vreg_l5a_0p8: ldo5 {
-+			regulator-min-microvolt = <800000>;
-+			regulator-max-microvolt = <800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vddpx_13:
-+		vreg_l6a_1p8: ldo6 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l7a_1p8: ldo7 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l8a_1p2: ldo8 {
-+		};
-+
-+		vreg_l9a_1p8: ldo9 {
-+		};
-+
-+		vreg_l10a_1p8: ldo10 {
-+		};
-+
-+		vreg_l11a_1p0: ldo11 {
-+		};
-+
-+		vdd_qfprom:
-+		vdd_qfprom_sp:
-+		vdda_apc1_cs_1p8:
-+		vdda_gfx_cs_1p8:
-+		vdda_qrefs_1p8:
-+		vdda_qusb_hs0_1p8:
-+		vddpx_11:
-+		vreg_l12a_1p8: ldo12 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vddpx_2:
-+		vreg_l13a_2p95: ldo13 {
-+			regulator-min-microvolt = <2960000>;
-+			regulator-max-microvolt = <2960000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l14a_1p88: ldo14 {
-+			regulator-min-microvolt = <1880000>;
-+			regulator-max-microvolt = <1880000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+			regulator-always-on;
-+		};
-+
-+		vreg_l15a_1p8: ldo15 {
-+		};
-+
-+		vreg_l16a_2p7: ldo16 {
-+		};
-+
-+		vreg_l17a_1p3: ldo17 {
-+			regulator-min-microvolt = <1304000>;
-+			regulator-max-microvolt = <1304000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l18a_2p7: ldo18 {
-+		};
-+
-+		vreg_l19a_3p0: ldo19 {
-+			regulator-min-microvolt = <3000000>;
-+			regulator-max-microvolt = <3000000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l20a_2p95: ldo20 {
-+			regulator-min-microvolt = <2960000>;
-+			regulator-max-microvolt = <2960000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l21a_2p95: ldo21 {
-+			regulator-min-microvolt = <2960000>;
-+			regulator-max-microvolt = <2960000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l22a_2p85: ldo22 {
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+
-+			regulator-always-on;
-+		};
-+
-+		vreg_l23a_3p3: ldo23 {
-+		};
-+
-+		vdda_qusb_hs0_3p1:
-+		vreg_l24a_3p075: ldo24 {
-+			/* 3075000 uV causes -ENOTRECOVERABLE error */
-+			regulator-min-microvolt = <3088000>;
-+			regulator-max-microvolt = <3088000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l25a_3p3: ldo25 {
-+			regulator-min-microvolt = <3104000>;
-+			regulator-max-microvolt = <3104000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vdda_hp_pcie_1p2:
-+		vdda_hv_ebi0:
-+		vdda_hv_ebi1:
-+		vdda_hv_ebi2:
-+		vdda_hv_ebi3:
-+		vdda_mipi_csi_1p25:
-+		vdda_mipi_dsi0_1p2:
-+		vdda_mipi_dsi1_1p2:
-+		vdda_pcie_1p2:
-+		vdda_ufs1_1p2:
-+		vdda_ufs2_1p2:
-+		vdda_usb1_ss_1p2:
-+		vdda_usb2_ss_1p2:
-+		vreg_l26a_1p2: ldo26 {
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l28a_3p0: ldo28 {
-+			/* 3300000 uV causes -ENOTRECOVERABLE error */
-+			regulator-min-microvolt = <2856000>;
-+			regulator-max-microvolt = <3008000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_lvs1a_1p8: lvs1 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		vreg_lvs2a_1p8: lvs2 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+	};
-+
-+	regulators-1 {
-+		compatible = "qcom,pm8005-rpmh-regulators";
-+		qcom,pmic-id = "c";
-+
-+		vdd-s1-supply = <&vph_pwr>;
-+		vdd-s2-supply = <&vph_pwr>;
-+		vdd-s3-supply = <&vph_pwr>;
-+		vdd-s4-supply = <&vph_pwr>;
-+
-+		vreg_s2c_0p752: smps2 {
-+			regulator-min-microvolt = <752000>;
-+			regulator-max-microvolt = <752000>;
-+		};
-+	};
-+};
-+
-+&cci_i2c0 {
-+	/* chipnext,cn3927e vcm@0xc */
-+	/* samsung,s5k3l6 camera@0x10 */
-+	/* eeprom@0x50 */
-+};
-+
-+&cci_i2c1 {
-+	/* galaxycore,gc5025 camera@0x36 */
-+	/* eeprom@0x50 */
-+};
-+
-+&cdsp_pas {
-+	firmware-name = "qcom/sdm850/HUAWEI/AL09/qccdsp850.mbn";
-+
-+	status = "okay";
-+};
-+
-+&crypto {
-+	/* FIXME: qce_start triggers an SError */
-+	status = "disabled";
-+};
-+
-+&gcc {
-+	protected-clocks = <GCC_QSPI_CORE_CLK>,
-+			   <GCC_QSPI_CORE_CLK_SRC>,
-+			   <GCC_QSPI_CNOC_PERIPH_AHB_CLK>,
-+			   <GCC_LPASS_Q6_AXI_CLK>,
-+			   <GCC_LPASS_SWAY_CLK>;
-+};
-+
-+&gpu {
-+	status = "okay";
-+
-+	zap-shader {
-+		memory-region = <&gpu_mem>;
-+		firmware-name = "qcom/sdm850/HUAWEI/AL09/qcdxkmsuc850.mbn";
-+	};
-+};
-+
-+&i2c5 {
-+	clock-frequency = <400000>;
-+
-+	status = "okay";
-+
-+	touchscreen: hid@5d {
-+		compatible = "hid-over-i2c";
-+		reg = <0x5d>;
-+		hid-descr-addr = <0x1>;
-+
-+		interrupts-extended = <&tlmm 125 IRQ_TYPE_LEVEL_LOW>;
-+
-+		pinctrl-0 = <&i2c5_hid_active>;
-+		pinctrl-names = "default";
-+
-+		wakeup-source;
-+	};
-+};
-+
-+&i2c7 {
-+	/* ec@0x76 */
-+};
-+
-+&i2c10 {
-+	clock-frequency = <400000>;
-+
-+	status = "okay";
-+
-+	sn65dsi86: bridge@2c {
-+		compatible = "ti,sn65dsi86";
-+		reg = <0x2c>;
-+
-+		pinctrl-0 = <&sn65dsi86_pin_active>;
-+		pinctrl-names = "default";
-+
-+		enable-gpios = <&tlmm 96 GPIO_ACTIVE_HIGH>;
-+
-+		vcca-supply = <&sw_edp_1p2>;
-+		vcc-supply = <&sw_edp_1p2>;
-+		vpll-supply = <&vreg_l14a_1p88>;
-+		vccio-supply = <&vreg_l14a_1p88>;
-+
-+		clocks = <&sn65dsi86_refclk>;
-+		clock-names = "refclk";
-+
-+		no-hpd;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				sn65dsi86_in: endpoint {
-+					remote-endpoint = <&mdss_dsi0_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				sn65dsi86_out: endpoint {
-+					remote-endpoint = <&panel_in_edp>;
-+				};
-+			};
-+		};
-+
-+		aux-bus {
-+			panel: panel {
-+				compatible = "innolux,p120zdg-bf1";
-+				power-supply = <&vlcm_3v3>;
-+
-+				port {
-+					panel_in_edp: endpoint {
-+						remote-endpoint = <&sn65dsi86_out>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&ipa {
-+	qcom,gsi-loader = "self";
-+	memory-region = <&ipa_fw_mem>;
-+	firmware-name = "qcom/sdm850/HUAWEI/AL09/ipa_fws.elf";
-+
-+	status = "okay";
-+};
-+
-+&mdss {
-+	status = "okay";
-+};
-+
-+&mdss_dsi0 {
-+	vdda-supply = <&vdda_mipi_dsi0_1p2>;
-+
-+	status = "okay";
-+};
-+
-+&mdss_dsi0_out {
-+	remote-endpoint = <&sn65dsi86_in>;
-+	data-lanes = <0 1 2 3>;
-+};
-+
-+&mdss_dsi0_phy {
-+	vdds-supply = <&vdda_mipi_dsi0_pll>;
-+
-+	status = "okay";
-+};
-+
-+&mss_pil {
-+	firmware-name = "qcom/sdm850/HUAWEI/AL09/qcdsp1v2850.mbn",
-+			"qcom/sdm850/HUAWEI/AL09/qcdsp2850.mbn";
-+
-+	status = "okay";
-+};
-+
-+&pm8998_gpios {
-+	sw_edp_1p2_en: sw-edp-1p2-en-state {
-+		pins = "gpio9";
-+		function = "normal";
-+
-+		bias-disable;
-+		qcom,drive-strength = <PMIC_GPIO_STRENGTH_NO>;
-+	};
-+
-+	volume_up_gpio: volume-up-gpio-state {
-+		pins = "gpio6";
-+		function = "normal";
-+
-+		input-enable;
-+		bias-pull-up;
-+		qcom,drive-strength = <PMIC_GPIO_STRENGTH_NO>;
-+	};
-+};
-+
-+&pm8998_pwrkey {
-+	status = "okay";
-+};
-+
-+&pm8998_resin {
-+	linux,code = <KEY_VOLUMEDOWN>;
-+
-+	status = "okay";
-+};
-+
-+&qupv3_id_0 {
-+	status = "okay";
-+};
-+
-+&qupv3_id_1 {
-+	status = "okay";
-+};
-+
-+&q6asmdai {
-+	dai@0 {
-+		reg = <MSM_FRONTEND_DAI_MULTIMEDIA1>;
-+	};
-+
-+	dai@1 {
-+		reg = <MSM_FRONTEND_DAI_MULTIMEDIA2>;
-+	};
-+
-+	dai@2 {
-+		reg = <MSM_FRONTEND_DAI_MULTIMEDIA3>;
-+	};
-+};
-+
-+&sdhc_2 {
-+	pinctrl-0 = <&sdc2_default_state &sdc2_card_det_n>;
-+	pinctrl-names = "default";
-+
-+	vmmc-supply = <&vreg_l21a_2p95>;
-+	vqmmc-supply = <&vddpx_2>;
-+
-+	bus-width = <4>;
-+	cd-gpios = <&tlmm 126 GPIO_ACTIVE_HIGH>;
-+
-+	status = "okay";
-+};
-+
-+&slpi_pas {
-+	firmware-name = "qcom/sdm850/HUAWEI/AL09/qcslpi850.mbn";
-+
-+	status = "okay";
-+};
-+
-+&sound {
-+	compatible = "lenovo,yoga-c630-sndcard", "qcom,sdm845-sndcard";
-+	model = "HUAWEI-PAK_AL09-M1040";
-+
-+	audio-routing = "RX_BIAS", "MCLK",
-+			"AMIC2", "MIC BIAS2",
-+			"DMIC0", "MCLK",
-+			"DMIC0", "MIC BIAS1",
-+			"DMIC2", "MCLK",
-+			"DMIC2", "MIC BIAS3",
-+			"SpkrLeft IN", "SPK1 OUT",
-+			"SpkrRight IN", "SPK2 OUT";
-+
-+	mm1-dai-link {
-+		link-name = "MultiMedia1";
-+		cpu {
-+			sound-dai = <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA1>;
-+		};
-+	};
-+
-+	mm2-dai-link {
-+		link-name = "MultiMedia2";
-+		cpu {
-+			sound-dai = <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA2>;
-+		};
-+	};
-+
-+	mm3-dai-link {
-+		link-name = "MultiMedia3";
-+		cpu {
-+			sound-dai = <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA3>;
-+		};
-+	};
-+
-+	slim-dai-link {
-+		link-name = "SLIM Playback";
-+		cpu {
-+			sound-dai = <&q6afedai SLIMBUS_0_RX>;
-+		};
-+
-+		platform {
-+			sound-dai = <&q6routing>;
-+		};
-+
-+		codec {
-+			sound-dai = <&left_spkr>, <&right_spkr>, <&swm 0>, <&wcd9340 AIF1_PB>;
-+		};
-+	};
-+
-+	slimcap-dai-link {
-+		link-name = "SLIM Capture";
-+		cpu {
-+			sound-dai = <&q6afedai SLIMBUS_0_TX>;
-+		};
-+
-+		platform {
-+			sound-dai = <&q6routing>;
-+		};
-+
-+		codec {
-+			sound-dai = <&wcd9340 AIF1_CAP>;
-+		};
-+	};
-+
-+	slim-wcd-dai-link {
-+		link-name = "SLIM WCD Playback";
-+		cpu {
-+			sound-dai = <&q6afedai SLIMBUS_1_RX>;
-+		};
-+
-+		platform {
-+			sound-dai = <&q6routing>;
-+		};
-+
-+		codec {
-+			sound-dai = <&wcd9340 AIF2_PB>;
-+		};
-+	};
-+};
-+
-+&tlmm {
-+	gpio-reserved-ranges = <0 4>, <81 4>;
-+
-+	cam_indicator_en: cam-indicator-en-state {
-+		pins = "gpio12";
-+		function = "gpio";
-+
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	i2c5_hid_active: i2c5-hid-active-state {
-+		pins = "gpio125";
-+		function = "gpio";
-+
-+		drive-strength = <2>;
-+		bias-pull-up;
-+	};
-+
-+	mode_pin_active: mode-pin-state {
-+		pins = "gpio79";
-+		function = "gpio";
-+
-+		bias-disable;
-+	};
-+
-+	sdc2_default_state: sdc2-default-state {
-+		clk-pins {
-+			pins = "sdc2_clk";
-+
-+			drive-strength = <16>;
-+			bias-disable;
-+		};
-+
-+		cmd-pins {
-+			pins = "sdc2_cmd";
-+
-+			drive-strength = <16>;
-+			bias-pull-up;
-+		};
-+
-+		data-pins {
-+			pins = "sdc2_data";
-+
-+			drive-strength = <16>;
-+			bias-pull-up;
-+		};
-+	};
-+
-+	sdc2_card_det_n: sd-card-det-n-state {
-+		pins = "gpio126";
-+		function = "gpio";
-+
-+		bias-pull-up;
-+	};
-+
-+	sn65dsi86_pin_active: sn65dsi86-enable-state {
-+		pins = "gpio96";
-+		function = "gpio";
-+
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+};
-+
-+&uart6 {
-+	pinctrl-0 = <&qup_uart6_4pin>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+
-+	bluetooth {
-+		compatible = "qcom,wcn3990-bt";
-+
-+		vddio-supply = <&vreg_s4a_1p8>;
-+		vddxo-supply = <&vreg_l7a_1p8>;
-+		vddrf-supply = <&vreg_l17a_1p3>;
-+		vddch0-supply = <&vreg_l25a_3p3>;
-+		vddch1-supply = <&vreg_l23a_3p3>;
-+		max-speed = <3200000>;
-+	};
-+};
-+
-+&uart9 {
-+	status = "okay";
-+};
-+
-+&ufs_mem_hc {
-+	reset-gpios = <&tlmm 150 GPIO_ACTIVE_LOW>;
-+
-+	vcc-supply = <&vreg_l20a_2p95>;
-+	vcc-max-microamp = <600000>;
-+
-+	status = "okay";
-+};
-+
-+&ufs_mem_phy {
-+	vdda-phy-supply = <&vdda_ufs1_core>;
-+	vdda-pll-supply = <&vdda_ufs1_1p2>;
-+
-+	status = "okay";
-+};
-+
-+&usb_1 {
-+	status = "okay";
-+};
-+
-+&usb_1_dwc3 {
-+	dr_mode = "host";
-+};
-+
-+&usb_1_hsphy {
-+	vdd-supply = <&vdda_usb1_ss_core>;
-+	vdda-pll-supply = <&vdda_qusb_hs0_1p8>;
-+	vdda-phy-dpdm-supply = <&vdda_qusb_hs0_3p1>;
-+
-+	qcom,imp-res-offset-value = <8>;
-+	qcom,hstx-trim-value = <QUSB2_V2_HSTX_TRIM_21_6_MA>;
-+	qcom,preemphasis-level = <QUSB2_V2_PREEMPHASIS_5_PERCENT>;
-+	qcom,preemphasis-width = <QUSB2_V2_PREEMPHASIS_WIDTH_HALF_BIT>;
-+
-+	status = "okay";
-+};
-+
-+&usb_1_qmpphy {
-+	vdda-phy-supply = <&vdda_usb1_ss_1p2>;
-+	vdda-pll-supply = <&vdda_usb1_ss_core>;
-+
-+	status = "okay";
-+};
-+
-+&usb_2 {
-+	status = "okay";
-+};
-+
-+&usb_2_dwc3 {
-+	dr_mode = "host";
-+};
-+
-+&usb_2_hsphy {
-+	vdd-supply = <&vdda_usb2_ss_core>;
-+	vdda-pll-supply = <&vdda_qusb_hs0_1p8>;
-+	vdda-phy-dpdm-supply = <&vdda_qusb_hs0_3p1>;
-+
-+	qcom,imp-res-offset-value = <8>;
-+	qcom,hstx-trim-value = <QUSB2_V2_HSTX_TRIM_22_8_MA>;
-+
-+	status = "okay";
-+};
-+
-+&usb_2_qmpphy {
-+	vdda-phy-supply = <&vdda_usb2_ss_1p2>;
-+	vdda-pll-supply = <&vdda_usb2_ss_core>;
-+
-+	status = "okay";
-+};
-+
-+&venus {
-+	firmware-name = "qcom/sdm850/HUAWEI/AL09/qcvss850.mbn";
-+
-+	status = "okay";
-+};
-+
-+&wcd9340 {
-+	reset-gpios = <&tlmm 64 GPIO_ACTIVE_HIGH>;
-+	vdd-buck-supply = <&vreg_s4a_1p8>;
-+	vdd-buck-sido-supply = <&vreg_s4a_1p8>;
-+	vdd-tx-supply = <&vreg_s4a_1p8>;
-+	vdd-rx-supply = <&vreg_s4a_1p8>;
-+	vdd-io-supply = <&vreg_s4a_1p8>;
-+	qcom,mbhc-buttons-vthreshold-microvolt = <75000 150000 237000 500000
-+						  500000 500000 500000 500000>;
-+	qcom,mbhc-headset-vthreshold-microvolt = <1700000>;
-+	qcom,mbhc-headphone-vthreshold-microvolt = <50000>;
-+	qcom,micbias1-microvolt = <1800000>;
-+	qcom,micbias2-microvolt = <2700000>;
-+	qcom,micbias3-microvolt = <1800000>;
-+
-+	swm: soundwire@c85 {
-+		left_spkr: speaker@0,3 {
-+			compatible = "sdw10217211000";
-+			reg = <0 3>;
-+			powerdown-gpios = <&wcdgpio 1 GPIO_ACTIVE_LOW>;
-+			#thermal-sensor-cells = <0>;
-+			sound-name-prefix = "SpkrLeft";
-+			#sound-dai-cells = <0>;
-+		};
-+
-+		right_spkr: speaker@0,4 {
-+			compatible = "sdw10217211000";
-+			reg = <0 4>;
-+			powerdown-gpios = <&wcdgpio 2 GPIO_ACTIVE_LOW>;
-+			#thermal-sensor-cells = <0>;
-+			sound-name-prefix = "SpkrRight";
-+			#sound-dai-cells = <0>;
-+		};
-+	};
-+};
-+
-+&wifi {
-+	vdd-0.8-cx-mx-supply = <&vreg_l5a_0p8>;
-+	vdd-1.8-xo-supply = <&vreg_l7a_1p8>;
-+	vdd-1.3-rfa-supply = <&vreg_l17a_1p3>;
-+	vdd-3.3-ch0-supply = <&vreg_l25a_3p3>;
-+	vdd-3.3-ch1-supply = <&vreg_l23a_3p3>;
-+
-+	qcom,snoc-host-cap-8bit-quirk;
-+	qcom,calibration-variant = "Huawei_Planck";
-+
-+	status = "okay";
-+};
+								Honza
 -- 
-2.47.3
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
