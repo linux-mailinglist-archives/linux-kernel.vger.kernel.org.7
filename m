@@ -1,201 +1,140 @@
-Return-Path: <linux-kernel+bounces-843601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B3D5BBFCCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 01:53:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33165BBFCD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 01:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BF35189CA60
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 23:54:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 228533A480C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 23:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4770A1F7098;
-	Mon,  6 Oct 2025 23:53:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699F320298D;
+	Mon,  6 Oct 2025 23:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JTidlyak"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="otE9iVgX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD3E1FF7C7
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 23:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4034C9D;
+	Mon,  6 Oct 2025 23:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759794819; cv=none; b=QrNgRx1ggkc1Bz7aOCpE5A5XgGJnnAyiSEC+k/SgeAqvmwJZGEMC+0iuSLzseoQon3HgsuMIdG0T8uvruGHZAsMKBfIXsytjdJtiMZi67aq+xTSNd62D0GnLoSwzhSOy9ta6EYqr8bZvJm0/beSaZKIYqVQtXDS6NU0wysUSpuc=
+	t=1759794919; cv=none; b=soXkmjIlbRWJoXMPuQFoWmMfuuCzJY0Cfs9fcK/jhWUcLkUbRZol5KcCv/r+W6za7TXQjEDW02LgDe6IKPjzAhZNSwYaOe/dUOABZHqkHPSV82/WXRoJKHd9m14oSQeXjs3WP7ravvktT4YGG+mVW/uAeMn737yqSvIvgQ/qA9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759794819; c=relaxed/simple;
-	bh=jVuo3THWV4QkJczNyiUkPMEJmDXaEIHUc+LF6qNuHUk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QHolSbK7UkxQXbeuL3Y/J7Hko/jc9a1l9sHz1r4mopEsfpG/RA4w6/A7ZAwPfhWo6s4xTS76xYNL0zbGahgNqLb6r7zy2BRMXeOAANVWkKvePkaGsZFntS7ncUmMRjtO26Nt9Tf4LqYq/wR7mf9QgkYfammbFPKXvHgqwRqoEAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JTidlyak; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53D5FC4CEFE
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 23:53:39 +0000 (UTC)
+	s=arc-20240116; t=1759794919; c=relaxed/simple;
+	bh=UE3HJepWaZiO781N0ENPL/OItkVbiJ9zTOOiuCs1kw4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qDNYIjSJjBTep0hvakapRpHG2UfQU770LOZmp509CECHOfhsX4kkf7X7wJGJN9+xKMfP/xPsoUuhD5yaGRQHOADPC1sJV/lo4h1RBZS9LcPJIWuZmQs3Q8tZq0JWzFd1sgPBMwqgE1NfwAfzW6MLgAKiZ7ua4l1Gchg6zI0R+VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=otE9iVgX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1A36BC4CEF5;
+	Mon,  6 Oct 2025 23:55:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759794819;
-	bh=jVuo3THWV4QkJczNyiUkPMEJmDXaEIHUc+LF6qNuHUk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=JTidlyaksUm+W+sbDJ/kdiaFfk4ZyjCQy/4dNGvFlaOxCmwdqKVVWSkdWuIYxi8Ks
-	 hN+WtrnI1IQZOipxQkOItBV4RCN1mN3G029ySrGc/UsJp4qZpWgkFA/X7ohsd9qHjp
-	 VPGPm5Kjo2crhTJ9ELu9r91NMbXptK6zTJuX8cQtYGnrqsEu8wVZngs6FO11xR5OoC
-	 x2fhXfHEfJX3txv/FAcnqn1oLX2++3gSLKo5BHGAxtKsfU39VuoMwbE+d50T5Zg/Ek
-	 jErdgPQtw09pc4vGGw4d7cht2bgsXNwO730eWsaayypO7QJ/K9C7ncEKzofso3QlHX
-	 KfWU5p4AiLGrQ==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-57e36125e8aso5139660e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 16:53:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUvcp7ss53L/LL99hkGHUacCoac+C8IXlFXiy2n4GbNLW59orn8EDazR5JF6Rk+1KpbdKIqVHud+8/3g3k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5EkdfBbqyK3zo3nyM9l084k9Hq1G0H+ePLCKOO7DCO3vNAstc
-	43w/RmPTNvT5bCdbi+kzVtxeAkWJGyGMpMGW3hHQKyKfSw3ePDZsR91G/eujlekx6omU1uh9x44
-	GGzArOjTJzitgMdK8odmPiRxn28Ko4yQ=
-X-Google-Smtp-Source: AGHT+IHL6d4rRUw0WYpBcrVhnwzxFUAZ6ygz+u9bfZ5D5UkyVyq4s54g2KSsXWDzNOV9qSR19JS2SZiA1+OXnjBOXBs=
-X-Received: by 2002:ac2:4bd4:0:b0:572:1f0b:5eeb with SMTP id
- 2adb3069b0e04-58cb9d1a96cmr4118324e87.18.1759794817670; Mon, 06 Oct 2025
- 16:53:37 -0700 (PDT)
+	s=k20201202; t=1759794919;
+	bh=UE3HJepWaZiO781N0ENPL/OItkVbiJ9zTOOiuCs1kw4=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=otE9iVgX0cIj2NcnYUyxbvUMttpYeEfoDT0LsrqFIvzsMuU1fpz8YvrFHERgiLkvv
+	 R3Ni26W+OhBWF2v5JKcLeIiFGKB0bgneTkgK+LD+Gbe2LZuBDPOSS/SMS2BIqx9Lbd
+	 Lnsh9KzoPPkkEQWOGCp+slAeo0erszjWqE0fLDoozBhw2fvYci/YilTqPpH4/XszLL
+	 zw7NfWe3/OukrE/nA7AdmE+AoDSAF7qCfSvP9lIoDgVA34VbAxpnYfx0VS9EH2ldAc
+	 BoPPCAHfhdtQJpkBI4KIwCLq8SFEiYP3Z1UICNCMV+9YXMpV9yDSJnTrlTsRztmWpw
+	 Qbg1YgG9+vTGQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0679FCAC5B8;
+	Mon,  6 Oct 2025 23:55:19 +0000 (UTC)
+From: Dmitry Safonov via B4 Relay <devnull+dima.arista.com@kernel.org>
+Date: Tue, 07 Oct 2025 00:55:03 +0100
+Subject: [PATCH RFC] gen_init_cpio: Do fsync() only on regular files
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251006172612.75240-1-ebiggers@kernel.org>
-In-Reply-To: <20251006172612.75240-1-ebiggers@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 7 Oct 2025 01:53:25 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFTbP9dGQmk9F-WFyoL_LjtfXHMCnGT0WUQwMnrn7DHCw@mail.gmail.com>
-X-Gm-Features: AS18NWASC592jbSAcXIbQVrd-kptZUbukpaKAG64lSGjP6BSE0v0avhPEnGhLIk
-Message-ID: <CAMj1kXFTbP9dGQmk9F-WFyoL_LjtfXHMCnGT0WUQwMnrn7DHCw@mail.gmail.com>
-Subject: Re: [PATCH] lib/crypto: Add FIPS pre-operational self-test for SHA algorithms
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"Jason A . Donenfeld" <Jason@zx2c4.com>, Vegard Nossum <vegard.nossum@oracle.com>, 
-	Joachim Vandersmissen <git@jvdsn.com>, David Howells <dhowells@redhat.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251007-gen_init_cpio-pipe-v1-1-d782674d4926@arista.com>
+X-B4-Tracking: v=1; b=H4sIANZW5GgC/x2MQQrCMBAAv1L2bDAtthWvgg/wKlK2ybZd0CTsh
+ iKU/t3ocQZmNlASJoVLtYHQysoxFKgPFbgFw0yGfWFobNPW1vZmpjBw4Dy4xNEkTmRa9Od+6uo
+ OTxZKmIQm/vynD7jfrvAsckQlMwoGt/x+OcqKL6/HN2omgX3/AvKrGOqLAAAA
+X-Change-ID: 20251007-gen_init_cpio-pipe-5ad87f616a40
+To: Nathan Chancellor <nathan@kernel.org>, 
+ Nicolas Schier <nicolas.schier@linux.dev>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ David Disseldorp <ddiss@suse.de>, Nicolas Schier <nsc@kernel.org>, 
+ Dmitry Safonov <dima@arista.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759794918; l=2046;
+ i=dima@arista.com; s=20250521; h=from:subject:message-id;
+ bh=NnRRrg2oTnEc3cpkMddM+o06vZ45lyz3lI5ZtwOioE0=;
+ b=7CUFMg8F4JYq/oh73XYptU6UhBaoMFT2saK+WgptF9bn89/p2Jz73kAcWmLlqtLDWFWSp+86n
+ 8IbocTtKPRfASAcG9f1dQSa2/W8H563HPQG9RF55RUqUP7GGkE1+tDn
+X-Developer-Key: i=dima@arista.com; a=ed25519;
+ pk=/z94x2T59rICwjRqYvDsBe0MkpbkkdYrSW2J1G2gIcU=
+X-Endpoint-Received: by B4 Relay for dima@arista.com/20250521 with
+ auth_id=405
+X-Original-From: Dmitry Safonov <dima@arista.com>
+Reply-To: dima@arista.com
 
-On Mon, 6 Oct 2025 at 19:28, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> Add FIPS pre-operational self-tests for all SHA-1 and SHA-2 algorithms.
-> Following the "Implementation Guidance for FIPS 140-3" document, to
-> achieve this it's sufficient to just test a single test vector for each
-> of HMAC-SHA1, HMAC-SHA256, and HMAC-SHA512.
->
-> Link: https://lore.kernel.org/linux-crypto/20250917184856.GA2560@quark/
-> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
-> ---
->
-> Since there seemed to be more interest in complaining that these are
-> missing than actually writing a patch, I decided to just do it.
->
->  lib/crypto/fips.h                   | 38 +++++++++++++++++++++++++++++
->  lib/crypto/sha1.c                   | 19 ++++++++++++++-
->  lib/crypto/sha256.c                 | 19 ++++++++++++++-
->  lib/crypto/sha512.c                 | 19 ++++++++++++++-
->  scripts/crypto/gen-fips-testvecs.py | 33 +++++++++++++++++++++++++
->  5 files changed, 125 insertions(+), 3 deletions(-)
->  create mode 100644 lib/crypto/fips.h
->  create mode 100755 scripts/crypto/gen-fips-testvecs.py
->
-> diff --git a/lib/crypto/fips.h b/lib/crypto/fips.h
-> new file mode 100644
-> index 0000000000000..78a1bdd33a151
-> --- /dev/null
-> +++ b/lib/crypto/fips.h
-> @@ -0,0 +1,38 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +/* This file was generated by: gen-fips-testvecs.py */
-> +
-> +#include <linux/fips.h>
-> +
-> +static const u8 fips_test_data[] __initconst __maybe_unused = {
-> +       0x66, 0x69, 0x70, 0x73, 0x20, 0x74, 0x65, 0x73,
-> +       0x74, 0x20, 0x64, 0x61, 0x74, 0x61, 0x00, 0x00,
-> +};
-> +
-> +static const u8 fips_test_key[] __initconst __maybe_unused = {
-> +       0x66, 0x69, 0x70, 0x73, 0x20, 0x74, 0x65, 0x73,
-> +       0x74, 0x20, 0x6b, 0x65, 0x79, 0x00, 0x00, 0x00,
-> +};
-> +
-> +static const u8 fips_test_hmac_sha1_value[] __initconst __maybe_unused = {
-> +       0x29, 0xa9, 0x88, 0xb8, 0x5c, 0xb4, 0xaf, 0x4b,
-> +       0x97, 0x2a, 0xee, 0x87, 0x5b, 0x0a, 0x02, 0x55,
-> +       0x99, 0xbf, 0x86, 0x78,
-> +};
-> +
-> +static const u8 fips_test_hmac_sha256_value[] __initconst __maybe_unused = {
-> +       0x59, 0x25, 0x85, 0xcc, 0x40, 0xe9, 0x64, 0x2f,
-> +       0xe9, 0xbf, 0x82, 0xb7, 0xd3, 0x15, 0x3d, 0x43,
-> +       0x22, 0x0b, 0x4c, 0x00, 0x90, 0x14, 0x25, 0xcf,
-> +       0x9e, 0x13, 0x2b, 0xc2, 0x30, 0xe6, 0xe8, 0x93,
-> +};
-> +
-> +static const u8 fips_test_hmac_sha512_value[] __initconst __maybe_unused = {
-> +       0x6b, 0xea, 0x5d, 0x27, 0x49, 0x5b, 0x3f, 0xea,
-> +       0xde, 0x2d, 0xfa, 0x32, 0x75, 0xdb, 0x77, 0xc8,
-> +       0x26, 0xe9, 0x4e, 0x95, 0x4d, 0xad, 0x88, 0x02,
-> +       0x87, 0xf9, 0x52, 0x0a, 0xd1, 0x92, 0x80, 0x1d,
-> +       0x92, 0x7e, 0x3c, 0xbd, 0xb1, 0x3c, 0x49, 0x98,
-> +       0x44, 0x9c, 0x8f, 0xee, 0x3f, 0x02, 0x71, 0x51,
-> +       0x57, 0x0b, 0x15, 0x38, 0x95, 0xd8, 0xa3, 0x81,
-> +       0xba, 0xb3, 0x15, 0x37, 0x5c, 0x6d, 0x57, 0x2b,
-> +};
-> diff --git a/lib/crypto/sha1.c b/lib/crypto/sha1.c
-> index 5904e4ae85d24..001059cb0fce4 100644
-> --- a/lib/crypto/sha1.c
-> +++ b/lib/crypto/sha1.c
-> @@ -10,10 +10,11 @@
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/string.h>
->  #include <linux/unaligned.h>
->  #include <linux/wordpart.h>
-> +#include "fips.h"
->
->  static const struct sha1_block_state sha1_iv = {
->         .h = { SHA1_H0, SHA1_H1, SHA1_H2, SHA1_H3, SHA1_H4 },
->  };
->
-> @@ -328,14 +329,30 @@ void hmac_sha1_usingrawkey(const u8 *raw_key, size_t raw_key_len,
->         hmac_sha1_update(&ctx, data, data_len);
->         hmac_sha1_final(&ctx, out);
->  }
->  EXPORT_SYMBOL_GPL(hmac_sha1_usingrawkey);
->
-> -#ifdef sha1_mod_init_arch
-> +#if defined(sha1_mod_init_arch) || defined(CONFIG_CRYPTO_FIPS)
->  static int __init sha1_mod_init(void)
->  {
-> +#ifdef sha1_mod_init_arch
->         sha1_mod_init_arch();
-> +#endif
-> +       if (fips_enabled) {
-> +               /*
-> +                * FIPS pre-operational self-test.  As per the FIPS
-> +                * Implementation Guidance, testing HMAC-SHA1 satisfies the test
-> +                * requirement for SHA-1 too.
-> +                */
-> +               u8 mac[SHA1_DIGEST_SIZE];
-> +
-> +               hmac_sha1_usingrawkey(fips_test_key, sizeof(fips_test_key),
-> +                                     fips_test_data, sizeof(fips_test_data),
-> +                                     mac);
-> +               if (memcmp(fips_test_hmac_sha1_value, mac, sizeof(mac)) != 0)
-> +                       panic("sha1: FIPS pre-operational self-test failed\n");
-> +       }
->         return 0;
->  }
->  subsys_initcall(sha1_mod_init);
->
+From: Dmitry Safonov <dima@arista.com>
 
-In the builtin case, couldn't this execute only after the first calls
-into the library? That would mean it does not quite fit the
-requirements of the pre-operational selftest.
+Here at Arista gen_init_cpio is used in testing in order to create
+an initramfs for specific tests. Most notably, there is a test that does
+essentially a fork-bomb in kdump/panic kernel, replacing build-time
+generated init script: instead of doing makedumpfile, it does call
+shell tests.
 
-So perhaps, we should wrap the fips test in a separate function, and
-in the builtin case, add a call to it to every exported library
-routine, conditional on some static key that gets set on success? With
-the right macro foo, it doesn't have to be that ugly, and it can just
-disappear entirely if FIPS support is disabled.
+In comparison to usr/Makefile, which creates an intermediate .cpio file,
+the Makefile that generates initrd for tests is a one-liner:
+> file lib/kdump ${src_dir}/oom-crashkernel 0644 0 0 | usr/gen_init_cpio /dev/stdin | xz -z -c -e -Ccrc32 > ${target_dir}/oom-crashkernel.initrd
 
-(For all I care, we don't bother with this at all, but if we add this
-it should be solid)
+As fsync() on a pipe fd returns -EINVAL, that stopped working.
+Check that outfd is a regular file descriptor before calling fsync().
+
+Sending this as RFC as these are local tests, rather than upstream ones,
+unfortunately. Yet, the fix is trivial and increases correctness of
+gen_init_cpio (and maybe saves some time for another person debugging
+it). A workaround to use temporary cpio file is also trivial, so not
+insisting on merging.
+
+Fixes: ae18b94099b0 ("gen_init_cpio: support -o <output_file> parameter")
+Cc: David Disseldorp <ddiss@suse.de>
+Cc: Nicolas Schier <nsc@kernel.org>
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+---
+ usr/gen_init_cpio.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/usr/gen_init_cpio.c b/usr/gen_init_cpio.c
+index 75e9561ba31392e12536e76a918245a8ea07f9b8..845e2d92f0e56b02ba5fc12ecd243ce99c53f552 100644
+--- a/usr/gen_init_cpio.c
++++ b/usr/gen_init_cpio.c
+@@ -6,6 +6,7 @@
+ #include <stdbool.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#include <sys/socket.h>
+ #include <string.h>
+ #include <unistd.h>
+ #include <time.h>
+@@ -112,6 +113,9 @@ static int cpio_trailer(void)
+ 	    push_pad(padlen(offset, 512)) < 0)
+ 		return -1;
+ 
++	if (!isfdtype(outfd, S_IFREG))
++		return 0;
++
+ 	return fsync(outfd);
+ }
+ 
+
+---
+base-commit: c746c3b5169831d7fb032a1051d8b45592ae8d78
+change-id: 20251007-gen_init_cpio-pipe-5ad87f616a40
+
+Best regards,
+-- 
+Dmitry Safonov <dima@arista.com>
+
+
 
