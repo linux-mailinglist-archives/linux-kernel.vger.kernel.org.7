@@ -1,102 +1,131 @@
-Return-Path: <linux-kernel+bounces-843373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AFAFBBF0BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 21:00:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0AA5BBF0C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 21:01:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 96ABE4F0A74
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 19:00:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C78623BA971
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 19:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5B51D5ACE;
-	Mon,  6 Oct 2025 19:00:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E152DE1F0;
+	Mon,  6 Oct 2025 19:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bBBw16W/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qUNJjqH4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E430E55A;
-	Mon,  6 Oct 2025 19:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E411938DD8;
+	Mon,  6 Oct 2025 19:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759777253; cv=none; b=YxvBa9IUAnLOB99NzjrCCMgvUuUTRNLWBMmTKWzZ5NKJS9GtZOl3+7kmDm3QzPgDG8Itxydkf1AfnQosSXnFd1p1j85LTJ+rcHgc8/vW7+gg3o8Dg8is27hBTUkm1DHEF/IqlxDkvtjSI6MACed8PViCsUgtn5e+BxD/YhaVoTw=
+	t=1759777261; cv=none; b=bsCGkCPwsnClyM3Z04uIu4vGilHggnpTi2E4WSKvPSgC7jRJtplAsim02jAYgnuKlqqp4nnJwl0Crvn63NTiy3voDwVPqid5UOsWbSr0sHkXC6xxHRzUBGKBWWuziB3C6clC0ESdH8+OCqihcp3Ws9cK6eIYikYXcnIvyJOT14I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759777253; c=relaxed/simple;
-	bh=3BUMvX+IdvW7t9dyhLFwKXgU4di0AS0UBwkRIIr3qNY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LCZAcKhO5gpMVaAbrL7Iw4aaOFwV0MH1YTDERa37YoGEmALrPMVnWBTeiworkOb7QmMXn98LpPCVFDueWOuHTc3YU+wMXaHlvCOeGyLejbQTMGEfSfhOvh/sgQmsK8xZYyGGmxoZyhlfFeiVgfGGFtXA1mtDkxdCKknguw48M9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bBBw16W/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C03DC4CEF5;
-	Mon,  6 Oct 2025 19:00:51 +0000 (UTC)
+	s=arc-20240116; t=1759777261; c=relaxed/simple;
+	bh=jix1ZaFWcTXD7lm+GUKe4K6AZ4bK5yet5vY9zFRPzwI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XYttjnB4JBNox3IxBz79BhQZhQjO4u9kg7TpldkWwt2w/ywJ92hv12vuePSVNfxcgoiK3qIHtVBAEOgbl0yxa+nBVculmvK84QSEP5Lx4n+U3/3CLFhWNCOSJTJdN5ofjkdj+YR7Ovlx/721e/Bnu0UUZqmt6+bu4/1awRIEy2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qUNJjqH4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C54AFC4CEF5;
+	Mon,  6 Oct 2025 19:00:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759777252;
-	bh=3BUMvX+IdvW7t9dyhLFwKXgU4di0AS0UBwkRIIr3qNY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bBBw16W/tITBYVWR049Fmwfe2xuofhH025Zx7wBw4blUnO81Bp2cEcTEUAH7FvbvP
-	 zE9ZPgK2ixK/mUN/iaHZZnt1Dm1y2YbDkPtsa43iEH8CBi38vjQdXM5/GtSfPELQhU
-	 oZIL3xo7+kG3t72iq792lkCBmGhDzMZX2LeQOoTcHJfrEE886To/vWYnqR4x/0tc4D
-	 DCl+sMP3avA8ZOHXsPtdQYvWqNStlHgez3YN2QF8yGaNRTVl+7Gt9VfXxDDl30wwux
-	 T9YYdhNcMfM/9a0pM2OMfeADBgHgpIPyl5B8c5wb0ysmrbSbqd655qkf/g2ItX+mfp
-	 7NVMiLcJBjIeQ==
-Date: Mon, 6 Oct 2025 12:00:48 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Nicolas Schier <nicolas.schier@linux.dev>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Nicolas Schier <nsc@kernel.org>
-Subject: Re: [PATCH v2 4/5] kbuild: uapi: upgrade check_sizetypes() warning
- to error
-Message-ID: <20251006190048.GA2395186@ax162>
-References: <20250813-kbuild-hdrtest-fixes-v2-0-8a7921ca3a03@linutronix.de>
- <20250813-kbuild-hdrtest-fixes-v2-4-8a7921ca3a03@linutronix.de>
+	s=k20201202; t=1759777260;
+	bh=jix1ZaFWcTXD7lm+GUKe4K6AZ4bK5yet5vY9zFRPzwI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qUNJjqH4G8IxIKW9WBWAojboqWM1VTccYLc8f/s4lRm/Eo6NRSVYrQTrZGggN0RED
+	 6BJkSrPU9f0aLZOvP79WdoI3O1d09h4+lB3MlNnhEc59lg1diUudd6sUNI6oc1drYF
+	 M6oa7GQDoP7YUmY3RVlTgBZdpQQYqsniOpXMWLFe9oLK1clB10POqgRPugSZ61dJJP
+	 kTK7wnoQrfoywTuHaDe+Q8w1/XS7E95DMmeMvdMGizjjam2ApHHc3/9dWKAKR24dRF
+	 DeL2fx5kk9cPQ8pK7oRuZU7KaV3VDAZ0HsI9fT7l2Ggk0hGH5KzikL5xcq3RE++v8U
+	 ycLiFCTmiJnSg==
+Message-ID: <866d28f8-616c-4a79-9030-2ebc971e73fd@kernel.org>
+Date: Mon, 6 Oct 2025 13:00:59 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250813-kbuild-hdrtest-fixes-v2-4-8a7921ca3a03@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: usb: lan78xx: Fix lost EEPROM write timeout
+ error(-ETIMEDOUT) in lan78xx_write_raw_eeprom
+To: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>,
+ Thangaraj Samynathan <Thangaraj.S@microchip.com>,
+ Rengarajan Sundararajan <Rengarajan.S@microchip.com>,
+ UNGLinuxDriver@microchip.com, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: linux-kernel-mentees@lists.linuxfoundation.org,
+ skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
+ netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251004040722.82882-1-bhanuseshukumar@gmail.com>
+Content-Language: en-US
+From: Khalid Aziz <khalid@kernel.org>
+In-Reply-To: <20251004040722.82882-1-bhanuseshukumar@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 13, 2025 at 08:16:59AM +0200, Thomas Weiﬂschuh wrote:
-> No problematic type usages exist anymore.
+On 10/3/25 10:07 PM, Bhanu Seshu Kumar Valluri wrote:
+> The function lan78xx_write_raw_eeprom failed to properly propagate EEPROM
+> write timeout errors (-ETIMEDOUT). In the timeout  fallthrough path, it first
+> attempted to restore the pin configuration for LED outputs and then
+> returned only the status of that restore operation, discarding the
+> original timeout error saved in ret.
 > 
-> Make sure it stays this way.
+> As a result, callers could mistakenly treat EEPROM write operation as
+> successful even though the EEPROM write had actually timed out with no
+> or partial data write.
 > 
-> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> Reviewed-by: Nicolas Schier <nsc@kernel.org>
+> To fix this, handle errors in restoring the LED pin configuration separately.
+> If the restore succeeds, return any prior EEPROM write timeout error saved
+> in ret to the caller.
+> 
+> Suggested-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Fixes: 8b1b2ca83b20 ("net: usb: lan78xx: Improve error handling in EEPROM and OTP operations")
+> Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
 > ---
->  usr/include/headers_check.pl | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>   Note:
+>   The patch is compiled and tested.
+>   The patch was suggested by Oleksij Rempel while reviewing a fix to a bug
+>   found by syzbot earlier.
+>   The review mail chain where this fix was suggested is given below.
+>   https://lore.kernel.org/all/aNzojoXK-m1Tn6Lc@pengutronix.de/
 > 
-> diff --git a/usr/include/headers_check.pl b/usr/include/headers_check.pl
-> index 36307a137cc1e109e3e1c253f66f3e5935499fc8..36349b21cef5d55241b68ca24dabe6a321b7ce27 100755
-> --- a/usr/include/headers_check.pl
-> +++ b/usr/include/headers_check.pl
-> @@ -159,7 +159,6 @@ sub check_sizetypes
->  		              "found __[us]{8,16,32,64} type " .
->  		              "without #include <linux/types.h>\n";
->  		$linux_types = 2;
-> -		# Warn until headers are all fixed
-> -		#$ret = 1;
-> +		$ret = 1;
->  	}
->  }
+>   drivers/net/usb/lan78xx.c | 11 +++++++----
+>   1 file changed, 7 insertions(+), 4 deletions(-)
 > 
-> -- 
-> 2.50.1
-> 
+> diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+> index d75502ebbc0d..5ccbe6ae2ebe 100644
+> --- a/drivers/net/usb/lan78xx.c
+> +++ b/drivers/net/usb/lan78xx.c
+> @@ -1174,10 +1174,13 @@ static int lan78xx_write_raw_eeprom(struct lan78xx_net *dev, u32 offset,
+>   	}
+>   
+>   write_raw_eeprom_done:
+> -	if (dev->chipid == ID_REV_CHIP_ID_7800_)
+> -		return lan78xx_write_reg(dev, HW_CFG, saved);
+> -
+> -	return 0;
+> +	if (dev->chipid == ID_REV_CHIP_ID_7800_) {
+> +		int rc = lan78xx_write_reg(dev, HW_CFG, saved);
+> +		/* If USB fails, there is nothing to do */
+> +		if (rc < 0)
+> +			return rc;
+> +	}
+> +	return ret;
+>   }
+>   
+>   static int lan78xx_read_raw_otp(struct lan78xx_net *dev, u32 offset,
 
-Geert's regression report and subsequent fix made me look a little
-closer at this check. Is it even useful to do this anymore now that we
-compile test the headers? If these types are found without the
-appropriate include, won't there just be an error? Or is this to avoid
-the case where a system header may transitively include types.h so the
-compile would succeed but the header is not as contained as it could be?
+You were able to test the change to read eeprom code by forcing a 
+timeout while doing probe on EVB-LAN7800LC. Were you able to test this 
+code change the same way just to make sure callers of the write function 
+handle the new ETIMEDOUT return value correctly?
 
-Cheers,
-Nathan
+Thanks,
+Khalid
 
