@@ -1,131 +1,193 @@
-Return-Path: <linux-kernel+bounces-843190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5620BBBE997
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:11:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 553F9BBE9AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1505E4ED4AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:11:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BD113BF25F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA3F2D9EE7;
-	Mon,  6 Oct 2025 16:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3366D2DAFBA;
+	Mon,  6 Oct 2025 16:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="VLrtECs6"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNmNtqIc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99372D94B3
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 16:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9232DA744;
+	Mon,  6 Oct 2025 16:13:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759767075; cv=none; b=luIx81i4vTklx+sfLRRpXuwBHIOTZA0tWsLfGEFhDKQ6l8HJtnDFuijqiub5yYwvu41RsG9mFS6NXci5zZOpC0jG2t6Zbo/7san1cOUy7I/MmT3jTS7Rs7YQU0QPOxVTRYi5mgyF6/Zoy68LipoBkvaIPyz6W3QTMugClN6Q2uA=
+	t=1759767229; cv=none; b=GeaENAT3YVBXZGjjnpi0mrEc6lrRnPEIE7FJVhlSUBvnxi9+cb/j98TxhFA4sjmCzFA1fe6LF6+otJUWex05h8qIn5xzUPRdFv8F8r0m7+ahOGwCXgXnapvlDkTdjHG1Q/ww5+aU99b1OdfHvrxI0RIVNb2alzDFdQxxagnpdfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759767075; c=relaxed/simple;
-	bh=bAAmP6Vor3+frUWo9VM5DAgXz95oSL+3FrW7uk1ufUM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C54AKwPhD4a1opc1OCAzYyRf1kud1heaTQNmL2ECc2t6qtN6Z5WNRiVoaSn/eehbcJ48VAbC4bA/sbWiv5wS1AgeODVlZsRVnq+Ir7I5TfUujB5dRVpJukEikdCdbHKzSss0aEA+y08W0a3S89/E+ZxXuoq3pyFkGDBWKUiOovY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=VLrtECs6; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-36527ac0750so48836911fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 09:11:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1759767071; x=1760371871; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bAAmP6Vor3+frUWo9VM5DAgXz95oSL+3FrW7uk1ufUM=;
-        b=VLrtECs6+aeEeZz+5cjvV6B/jGEJBVfEd/gTDAJD2K2FcF7e15k3LADejBcX6p7l0Y
-         KrHQ10WvOU1U3EUD5RcMEz1+TNFrUT96t6wuLEOm0yM9HD5ZeC+Qbnq/dP94FHbyrUGt
-         gfhhf9RCiTUsVzFIExZhtsKkDZl9osqBoiCb85qDZL2GVxeRfdDl7Q9rp9pjQAUsufYy
-         g0exd8nmbboKMV/CVUjzM8ohVf4ACv63d0TDNGV7PweeyWSwQtX3Bf4ec3v81SXKkEe7
-         OYNkWKFno8CxXi1kQuCtjz0uTO6mmN03TBYF2aBQjubIfGOmDZaZqLhIoW72Wc5q/mmL
-         0/GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759767071; x=1760371871;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bAAmP6Vor3+frUWo9VM5DAgXz95oSL+3FrW7uk1ufUM=;
-        b=FyQbx00Ng7OUvf0pr0jfU2dHmx0oVUjZC6IKXqsg8XriLn77YtRWdsrB8U8LmFiyo6
-         ggdrmh/DXFY032aRo9Ub394T3fE8OvwpUQOMNszxHb3xuhyO7IqVKEgDZrp/XCwa6Fu3
-         QeSzShl01NgMefiSyEmsslawx2Djkd6yA11vIXc/iPaaEMd4w4ooiRW/rt/zILs/QnGH
-         7qi9FzLpcGlSGUSc7NgS/dEzU+TV3/QhyqFrSBCmsgj4qZVukFzgjwTs30UT8Gbuln9s
-         4iQRXiBxir0ElzcAeV2Ba6xKmzusKy0/bB9DUl3c4+497Bt9tXBrisGQKexVj0qhV1xd
-         05aA==
-X-Forwarded-Encrypted: i=1; AJvYcCVE/o4sdFayPbm/SRmtQve4nSRwkVPxP9bTZ87zQ8GVpOzsNi+7X7nvFgTtbIuAfZnxNNDMiiqAi5MOP20=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlmBGmXS2LI/zAjQtEkQ7BZnD+JVBcWfAZ0lScn+A4TxMf/Nlq
-	PoCa3Hc1LP+LlzlxzRblxeVgEGDGemNnhMT2dkgHaBxbcWK66hf/quDAiKb2lC0+iALgtMW3aXV
-	++2hbajQi7TOHD0/mr+Duj71NMkwHP2MoxcWebqbY+g==
-X-Gm-Gg: ASbGncv6Worl3c/MtpsE84YgQE6kHV0Uns0/cS3kgFdo8N28vkeYKoe6KRUEdvex/jF
-	FrlUX/2ojEtkVV5W640Jd3MHtBNL2Mw2eTdaIzlVsvoJnfJrDET2NiffQ+JkcVKD+cWQt+61BY+
-	wdaTvtBiTfLLJldnj6y1VBD+VcbcNm55o0zfAjDlhemeZrxIOkYnbXzsgiZm7VjBydjswzXNlns
-	b0ftBc00Ye3m30oBtc6IdcWaeHHT6faidf13yNtsB5hl1MSM8xgYfOBt4O0iEM=
-X-Google-Smtp-Source: AGHT+IHQni+hoN/f23d0O8IX74fUFomrJ9gkJXQ0jq6YVPXYNOJtNrLGQEvHZJ8/WlypXR2ARa7kU4bjK03qJXmCeP8=
-X-Received: by 2002:a2e:bcc6:0:b0:36e:35c8:3dc4 with SMTP id
- 38308e7fff4ca-374c37fc6f8mr39619951fa.21.1759767070653; Mon, 06 Oct 2025
- 09:11:10 -0700 (PDT)
+	s=arc-20240116; t=1759767229; c=relaxed/simple;
+	bh=79Iw1IGb28pa+X0mtY+qGKGqGWEFqy8gLP5kuhDKQWU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ohr3klKQ6Brwb04pN4uIs6tIli1OcxPs5mk0ovGwxFCVRuKp6AlPYoc03WWe7+YHI4jTupOBcAy0+kObrWtJKGlWUZkraKzaCaknRktwUX+e4zgdqkb6ypJqC8cUEKV792+zs6GyqirKPtLijMmjOgu8wextqGjXze/qKqK7pR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNmNtqIc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6A71C4CEF5;
+	Mon,  6 Oct 2025 16:13:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759767229;
+	bh=79Iw1IGb28pa+X0mtY+qGKGqGWEFqy8gLP5kuhDKQWU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZNmNtqIcbr13jMX27xh+dTJH1O0p+PMtFaYKdE1woKpKwUqH0i/L5WxNRPpHjhjFw
+	 e3Fn5SIXVm5M/+vWdgDuaS16Bd+XajTG6rF1tCBMxSQ8VtIhHOKXlDFshYvEBfMr78
+	 6nnzNn49KLAad9q717CtdO9FzxkwYmWi7e2n2u2qYEIxW8cM3fqsn1JItPuAT+vdFi
+	 Zs1AlnjgcTVzZw7NxbiP/foLkClDCOiP0Y5rH5fbHSZV4iiUCnuAOYzi68OXOHFR3j
+	 iP6mdAcSWsham3UIEXmb5A3pzkiOKUMJEIUwTLDNKizWgKvQ10KVnbuSdao+CKKcnb
+	 bQ0UR5r59g4Pg==
+Date: Mon, 6 Oct 2025 09:12:25 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Vegard Nossum <vegard.nossum@oracle.com>
+Cc: Jiri Slaby <jirislaby@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+	Theodore Ts'o <tytso@mit.edu>, "nstange@suse.de" <nstange@suse.de>,
+	"Wang, Jay" <wanjay@amazon.com>
+Subject: Re: 6.17 crashes in ipv6 code when booted fips=1 [was: [GIT PULL]
+ Crypto Update for 6.17]
+Message-ID: <20251006161225.GC1637@sol>
+References: <aIirh_7k4SWzE-bF@gondor.apana.org.au>
+ <05b7ef65-37bb-4391-9ec9-c382d51bae4d@kernel.org>
+ <aN5GO1YLO_yXbMNH@gondor.apana.org.au>
+ <562363e8-ea90-4458-9f97-1b1cb433c863@kernel.org>
+ <8bb5a196-7d55-4bdb-b890-709f918abad0@kernel.org>
+ <1a71398e-637f-4aa5-b4c6-0d3502a62a0c@kernel.org>
+ <f31dbb22-0add-481c-aee0-e337a7731f8e@oracle.com>
+ <20251002172310.GC1697@sol>
+ <2981dc1d-287f-44fc-9f6f-a9357fb62dbf@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250924-gpio-shared-v1-0-775e7efeb1a3@linaro.org>
- <hyzzrjn7jzo3tt3oyg7azijouawe3zopfjzq6zfhoo6e6z2m4t@ssl5vl4g557e> <zk4ea5cibrkp4vttuy4evrqybf76b3nop5lnyck4ws4nyf2yc4@ghj2eyswsoow>
-In-Reply-To: <zk4ea5cibrkp4vttuy4evrqybf76b3nop5lnyck4ws4nyf2yc4@ghj2eyswsoow>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 6 Oct 2025 18:10:59 +0200
-X-Gm-Features: AS18NWDSntYY-tS0LWjCm4WwdgxQdqQ5RgzeqJofTletfEADJXVbDbVNAU36cIY
-Message-ID: <CAMRc=MdWmO4wvX6zpzN0-LZF1pF5Y2=sS8fBwr=CKMGWHg+shA@mail.gmail.com>
-Subject: Re: [PATCH RFC 0/9] gpio: improve support for shared GPIOs
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kees Cook <kees@kernel.org>, 
-	Mika Westerberg <westeri@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Andy Shevchenko <andy@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-hardening@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2981dc1d-287f-44fc-9f6f-a9357fb62dbf@oracle.com>
 
-On Mon, Oct 6, 2025 at 5:43=E2=80=AFPM Manivannan Sadhasivam <mani@kernel.o=
-rg> wrote:
->
-> On Wed, Sep 24, 2025 at 11:25:12AM -0700, Dmitry Torokhov wrote:
-> > Hi Bartosz,
-> >
-> > >
-> > > The practical use-case for this are the powerdown GPIOs shared by
-> > > speakers on Qualcomm db845c platform, however I have also extensively
-> > > tested it using gpio-virtuser on arm64 qemu with various DT
-> > > configurations.
-> >
-> > How is this different from the existing gpio-backed regulator/supply?
-> > IMO GPIOs are naturally exclusive-use resources (in cases when you need
-> > to control them, not simply read their state), and when there is a need
-> > to share them there are more appropriate abstractions that are built on
-> > top of GPIOs...
-> >
->
-> Not always... For something like shared reset line, consumers request the=
- line
-> as GPIO and expect gpiolib to do resource manangement.
->
+On Mon, Oct 06, 2025 at 01:53:21PM +0200, Vegard Nossum wrote:
+> On 02/10/2025 19:23, Eric Biggers wrote:
+> > On Thu, Oct 02, 2025 at 01:30:43PM +0200, Vegard Nossum wrote:
+> > > I'd like to raise a general question about FIPS compliance here,
+> > > especially to Eric and the crypto folks: If SHA-1/SHA-256/HMAC is being
+> > > made available outside of the crypto API and code around the kernel is
+> > > making direct use of it
+> > 
+> > lib/ has had SHA-1 support since 2005.  The recent changes just made the
+> > SHA-1 API more comprehensive and more widely used in the kernel.
+> 
+> Sure, it was available under lib/ but what matters is that there were no
+> users outside of the crypto API.
 
-They could use the reset API and it would implicitly create a virtual
-device that requests the reset GPIO and controls its enable count.
-Except that some devices also do a specific reset sequence with delays
-etc. That would require some additional logic in reset-gpio.
+That's incorrect.  The SHA-1 library was already used by
+kernel/bpf/core.c and net/ipv6/addrconf.c.  And also
+drivers/char/random.c prior to 5.17.
 
-Bart
+> Adding direct users presumably breaks the meaning of fips=1 -- which
+> is why I'd like us to work out (and explicitly document) what fips=1
+> actually means.
+
+Well, fips=1 has never had any documentation.  If anyone cares they
+should document it.
+
+But also, as I said, if certain kernel subsystem(s) mustn't use certain
+algorithms when fips=1, then the people who care about FIPS are welcome
+to add that logic to those subsystems.  It's trivial:
+
+    #include <linux/fips.h>
+
+    if (fips_enabled)
+            return -EOPNOTSUPP;
+
+Sure, it's 3 lines per subsystem, but compare that to the 50-200 that
+typically gets saved by switching to the library.  And the library
+solves a number of other problems too.  So it's still well worth it.
+
+I'll plan to add these checks to MD5 uses when doing MD5 conversions in
+6.19.  Yes, I didn't add them to SHA-1 uses when doing SHA-1 conversions
+in 6.18, but it's clear that disallowing SHA-1 is still a
+work-in-progress anyway.  I'll assume that you or someone else are going
+to finish the work for SHA-1 at some point.
+
+> > Still, for many years lib/ has had APIs for SHA-1 and various
+> > non-FIPS-approved crypto algorithms.  These are used even when
+> > fips_enabled=1.  So, if this was actually important, one would think
+> > these cases would have addressed already.  This is one of the reasons
+> > why I haven't been worrying about adding these checks myself.
+> 
+> I see some direct uses of lib/ algorithms outside the crypto API on
+> older kernels but at a glance they look mostly like specific drivers
+> that most distros probably don't even build, which might explain why it
+> hasn't been a problem in practice.
+
+Again, incorrect.  Core kernel functionality uses, and continues to use,
+non-FIPS-approved crypto algorithms.
+
+Maybe the FIPS people assessed each of those use cases and determined
+that they are not "security functions".  But I and other upstream kernel
+developers have no visibility into that.
+
+More likely IMO is that the FIPS people are just ignoring reality.
+
+> I'd assume most distributions that provide FIPS-certified kernels care.
+> As far as I can tell, they are all going to run into problems when they
+> start providing products based on v6.17. Maybe I'm wrong and it comes
+> down to an interpretation of FIPS requirements and what fips=1 is
+> intended to do -- again, why I'd like us to work this out and document
+> it so we have a clear and shared understanding and don't break mainline
+> FIPS support.
+> 
+> In the meantime, I think it would be good to stop converting more crypto
+> API users to lib/crypto/ users if it's not crystal clear that it's not a
+> "security function".
+
+You're welcome to be constructive instead of obstructive.
+
+> > > FIPS also has a bunch of requirements around algorithm testing, for
+> > > example that every algorithm shall pass tests before it can be used.
+> > > lib/crypto/ has kunit tests, but there is no interaction with
+> > > CONFIG_CRYPTO_FIPS or fips=1 as far as I can tell, and no enforcement
+> > > mechanism. This seems like a bad thing for all the distros that are
+> > > currently certifying their kernels for FIPS.
+> > 
+> > As I've said in another thread
+> > (https://lore.kernel.org/linux-crypto/20250917184856.GA2560@quark/,
+> > https://lore.kernel.org/linux-crypto/20250918155327.GA1422@quark/),
+> > small patches that add FIPS pre-operational self-tests would generally
+> > be fine, if they are shown to actually be needed and are narrowly scoped
+> > to what is actually needed.  These would be different from and much
+> > simpler than the KUnit tests, which are the real tests.
+> > 
+> > But again, it's up to someone who cares to send patches.  And again,
+> > lib/ has had SHA-1 since 2005, so this isn't actually new.
+> 
+> What's new is the direct user of lib/crypto/sha1.c outside the crypto
+> API since commit 095928e7d8018, which is very recent.
+
+Again: while that particular user is new, the SHA-1 library was already
+used by kernel/bpf/core.c and net/ipv6/addrconf.c.
+
+> I don't think it's a good idea to duplicate all the logic around
+> FIPS and algorithm testing that already exists in the crypto API for
+> this exact purpose.
+
+As I've said: if the pre-operational self-tests are actually needed in
+lib/ after all, then lib/ can just implement the minimum that FIPS
+requires, which is actually quite straightforward (typically just a
+single check for algorithm).
+
+I don't see it as duplicating the actual tests.  The way that
+crypto/testmgr.c conflates the FIPS pre-operational self-tests and the
+actual tests has always been really problematic.
+
+- Eric
 
