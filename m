@@ -1,104 +1,102 @@
-Return-Path: <linux-kernel+bounces-843005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D86BBBE2DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:26:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B33BBBE301
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:29:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5997D4E80F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:26:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D230B3ABB81
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:29:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573A02D063D;
-	Mon,  6 Oct 2025 13:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23ACE2D063C;
+	Mon,  6 Oct 2025 13:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Pj+bBsVa"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="e5FSunWt";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="udmEe+sy";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="e5FSunWt";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="udmEe+sy"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3992D061A
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 13:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67451296BC9
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 13:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759757177; cv=none; b=adQhhqAdhjoUMeLFxm6pS8gyEUkbEHvPXM7dz9tiSZuftc6oyqePb7uYEyVUHwKgnPNgJF/kLHNFbq/cM3AFyJSK+ghJ4On4eIsAbKPvzctC24QwUxZF32DBsEnfwYaQ1mnME3V6Z23SsaAhIEDl8cnfJYOwsrH8Tnfz0G+47g4=
+	t=1759757345; cv=none; b=jahQtNcrpb9VA4fHUXhFJ/jittYwZFRa2zMZuDmP42ckTMrb2Au+xhSxG5a4/Bm7nr+abHTKxsXklIsLDuSiaEm0ldrn+ceJq1sHxcO1tupW254ZSuAPKsPGI+PkoVO6VWpP6/qcB2zPt516ftuPpIrlfgfY9pMvVWxMGLZPxeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759757177; c=relaxed/simple;
-	bh=MT9skSBafU/OO6TyPXQDKc8LwQvb8rKcFgEGPquoaCw=;
+	s=arc-20240116; t=1759757345; c=relaxed/simple;
+	bh=/6FrrVCz4DgTsz5tcjhrj2pcVC3t7cYgtGxIFJtkqc8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=suibK5xOVlKGBThhKmJXcy1R9jqqVyf5h8VOfE/xIh8thPL9aaBre/MeWth1VNHtCsD9+T22XqQZctZGqUYZIbJB7ORcbjZSlF/Foyjtyh+trTcv1WO/4dxWjrhvFqDliP8vbI53qIuyiPy1fSEWpseccXr8EgLmNWmOFol36kY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Pj+bBsVa; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5962h2xD017143
-	for <linux-kernel@vger.kernel.org>; Mon, 6 Oct 2025 13:26:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=N6ypGwDaGlhrK6ZG0i30/Y0b
-	yq9GzIhyKl5ZGLSoyg8=; b=Pj+bBsVa5wdki1EC9M/Y/T2PXX2Nn0MrZz3/MJFP
-	8ODFOvriAzyVcNtwGjIvxQoANbtaKse6qUooemhy/RqvMcoUslVCM+t8L/OWc6Dk
-	mmnsnplzFmw0sOWgV8BcYhtuuft4mJSAZaa6UuYU64Cxo1tA+thDg10WuD5DYA+D
-	ShBBedvpkOc2BPIi+NeEohURSC9tA+lcQrRzqv9WMWeQSA/GX1NPpYKIgoy5uDD3
-	9vEPi4hAYBCtRuP+C68uS+05T6wlMtNON68nwFlDo3Oo+uHQAs2GTU/iRnvckP8N
-	Zc4rbShhk6MOqt5JINFdFsGlErCfHDN8WRItOpYM0WmWHA==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49k6bfk2v1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 13:26:14 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-28bd8b3fa67so42775805ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 06:26:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759757174; x=1760361974;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N6ypGwDaGlhrK6ZG0i30/Y0byq9GzIhyKl5ZGLSoyg8=;
-        b=E4EpyNISaqZ+dTFeLe4zAMtO5XIIFGFM2sBpTYcKNTEFmtmhsxHgenOk5gQM4qqeTJ
-         LgIV3nTtIFfYejWMCIb9aCZVy4AUb79Ogm5NDs9Yj7WHg43FfBrZSBVJkMi9nH+jRP55
-         SeNx/gdQH28zgdet3lTgcqPWI3f1OUqJtKJUNuGPq2U5XWh5oohevbkSri1FZp4elzKx
-         CRF9gRyQR1EyKD2BD/AYICD5vB/ZjHrVRuE7A0fihmynop2SU+5yrePXEa7MhqZyPjk7
-         xHrG9uZ3LNQQY3W3gGbyMMhQiVy9rHtbme3DwB9PUCsj8zVGIKB4AC+Vf3cUIHC6Qv1X
-         3DOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFeDoD0MZGZkXSSpwdUCcGy6z/RK/znrn3jW2X1LWRcU5pXr5wz/FTbc1tPqhBR8hdzTxBOAZowCeeTy0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+tXlqqeva/nQmv6ne0WbvAmgwUHLPe/aFB5Km3NZ/sS9qqE9G
-	oRdbmTVZy/br9If+v0RUGLMzzrg9t9JIXRfi6havRIcDReoDXy0wpZ59nrbzOqjd5dVGO3ng3pa
-	phVUQyDcn26z8/aCNU/o6JjoJ8J3CwCzY+dukZpYqscv6dl0VGmt6DY56OdGqXHyMslM=
-X-Gm-Gg: ASbGnctSMbQPipq9AIHSz5AOWctXaDfhOW/TYZNMvmCXpSZmgmHEQCOWq8+TYjJ3SUv
-	7JE2W4rGw58/cuxDSQktACt55HXuQN1xLgRbYQoM3D1WV6pcN/m/jbK61cEkct+Mgb0Od+816lt
-	FxcxIcj9pv+94Xqzh7gO5veB17dxYGpl8hNiXa5QNTOzcb0vAi+eNbq06vWdXUnZQWD0zQ+i1W7
-	So4cSV4MotEphK3hWwZ11tqqvwkIc5e2hrIVcZ6Gum0VcXVPia/Fpy5nhJjlWTutxNOgl25QGNH
-	/I73nFi9k8sW0LtWCQEzj9HIKex8OdE3d19cH5tyBkBfi/dmg0Cpxx+1qw19ENZavNh6YI8wfej
-	8eRE=
-X-Received: by 2002:a17:903:fa7:b0:26d:72f8:8d0a with SMTP id d9443c01a7336-28e9a546107mr157426345ad.12.1759757173863;
-        Mon, 06 Oct 2025 06:26:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFFCL9tEe0bUa/fsgaePc+hDb76CeL+9swiqptY7n40Bj6hjQm6jXL8R3obANVcrWL1Rq7DAw==
-X-Received: by 2002:a17:903:fa7:b0:26d:72f8:8d0a with SMTP id d9443c01a7336-28e9a546107mr157426005ad.12.1759757173382;
-        Mon, 06 Oct 2025 06:26:13 -0700 (PDT)
-Received: from hu-pkondeti-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d126ad9sm133655095ad.45.2025.10.06.06.26.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 06:26:13 -0700 (PDT)
-Date: Mon, 6 Oct 2025 18:56:06 +0530
-From: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>,
-        hrishabh.rajput@oss.qualcomm.com,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v2] watchdog: Add driver for Gunyah Watchdog
-Message-ID: <491de94c-e3c5-4f81-8e1a-82596413cede@quicinc.com>
-References: <20251006-gunyah_watchdog-v2-1-b99d41d45450@oss.qualcomm.com>
- <3b901f9d-dbfa-4f93-a8d2-3e89bd9783c9@kernel.org>
- <a7633abf-0005-423b-b152-e8c70aa5c27a@quicinc.com>
- <b94d8ca3-af58-4a78-9a5a-12e3db0bf75f@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dlbx3kqQdJ160QZxcQ1HnTfb1LMgx+p9Kl6PG8Tu+3T2jt42dHC56RCMuKbWEFR+Lnp/heUQ6+gryfCN38eYUhj+pOJEEZK+jTV4M2LJMq2Oxl/5pJBaJQULAfosUmGhrV0grUcxJW1nqlcC/E4TfZIXKBBJ7qyYm5pNOreGHuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=e5FSunWt; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=udmEe+sy; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=e5FSunWt; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=udmEe+sy; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6674B1F7C1;
+	Mon,  6 Oct 2025 13:29:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759757340; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nmQkrksLlt0Dju/XPbVmLnx0iwCrgY81znO3vDFEw2o=;
+	b=e5FSunWtnLxCK0NWpRn7i1aC8/XK3geJ4CKHRjTJateym0/L7RDOqwKK5e+6t5kmTCYRsB
+	EPRwzGfp5nBJfLOOJl8S/3BAgdEii0RQZtJlMcq3VapCT6B7fgBGIuSvndiTYmhsq8YfXS
+	LFed7MyVYYL2Eja14snDPJu82aLF4ko=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759757340;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nmQkrksLlt0Dju/XPbVmLnx0iwCrgY81znO3vDFEw2o=;
+	b=udmEe+syEUzPxvOpywR7StoUmtqqjRk58CQIRWj0dyNq58xlrCTv3cqtV620Mq2FpLegpz
+	2nF3jEdov6D6s3Cw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=e5FSunWt;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=udmEe+sy
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759757340; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nmQkrksLlt0Dju/XPbVmLnx0iwCrgY81znO3vDFEw2o=;
+	b=e5FSunWtnLxCK0NWpRn7i1aC8/XK3geJ4CKHRjTJateym0/L7RDOqwKK5e+6t5kmTCYRsB
+	EPRwzGfp5nBJfLOOJl8S/3BAgdEii0RQZtJlMcq3VapCT6B7fgBGIuSvndiTYmhsq8YfXS
+	LFed7MyVYYL2Eja14snDPJu82aLF4ko=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759757340;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nmQkrksLlt0Dju/XPbVmLnx0iwCrgY81znO3vDFEw2o=;
+	b=udmEe+syEUzPxvOpywR7StoUmtqqjRk58CQIRWj0dyNq58xlrCTv3cqtV620Mq2FpLegpz
+	2nF3jEdov6D6s3Cw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9CC9A13700;
+	Mon,  6 Oct 2025 13:28:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id yN+GIxvE42hUCwAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Mon, 06 Oct 2025 13:28:59 +0000
+Date: Mon, 6 Oct 2025 15:28:58 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Deepanshu Kartikey <kartikey406@gmail.com>
+Cc: muchun.song@linux.dev, david@redhat.com, akpm@linux-foundation.org,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+	rppt@kernel.org, surenb@google.com, mhocko@suse.com,
+	broonie@kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com
+Subject: Re: [PATCH v3] hugetlbfs: skip PMD unsharing when shareable lock
+ unavailable
+Message-ID: <aOPEGkWdbeY2htsH@localhost.localdomain>
+References: <20251003174553.3078839-1-kartikey406@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -107,119 +105,142 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b94d8ca3-af58-4a78-9a5a-12e3db0bf75f@kernel.org>
-X-Proofpoint-GUID: 3V8L3bH9NeFOfrf2YmeCvrK02k42-4_2
-X-Proofpoint-ORIG-GUID: 3V8L3bH9NeFOfrf2YmeCvrK02k42-4_2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDEzNSBTYWx0ZWRfX4r7LuHyl2Bbl
- n0+Ok1vn7NAvqxRGXKz4kak6t7DdanEIIlPnkDCvlMMvIsSVyEnxXpKRJoL0gbBEIUc64CoBfTu
- VJo8ugZatafe7A4du+FWxFi7oCeR5IHW+i65gEr5FzwmZCFkjt5vnCGrNvQX/gZKJjyPtq4m0Bq
- 5qxTjT/XXPLnpkd14ivSTlB1Vd6QP3VZXEKpFWDn8gkbaZc6J3aoRKWNSVGc7ul/ZO36blRJZ6s
- Z71qT16a9PrRlc0JV07HqJchWOjs8gPnYhww9/fJW0fGEX/Op7A6mqXV2KKRlw5qa/X6nMiLaW4
- gyH0tieylnaUBs2a9+I6oX91o2/EcDOYt8F7Q1V8b1pwXbC/8AQ+bk2zTFTBmp5m6b1ITDCzQSO
- 4pNwtcO4tCi86FqtabBVzyJAjzgFpA==
-X-Authority-Analysis: v=2.4 cv=Hr572kTS c=1 sm=1 tr=0 ts=68e3c377 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=Jc37b2qoeXC1bbEKzk4A:9
- a=CjuIK1q_8ugA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-06_04,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 lowpriorityscore=0 priorityscore=1501
- spamscore=0 bulkscore=0 impostorscore=0 phishscore=0 clxscore=1015
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2510040135
+In-Reply-To: <20251003174553.3078839-1-kartikey406@gmail.com>
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,appspotmail.com:email,localhost.localdomain:mid];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[f26d7c75c26ec19790e7];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,localhost.localdomain:mid,suse.de:dkim]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 6674B1F7C1
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
 
-On Mon, Oct 06, 2025 at 10:03:59PM +0900, Krzysztof Kozlowski wrote:
-> On 06/10/2025 19:03, Pavan Kondeti wrote:
-> > On Mon, Oct 06, 2025 at 05:56:42PM +0900, Krzysztof Kozlowski wrote:
-> >> On 06/10/2025 16:37, Hrishabh Rajput via B4 Relay wrote:
-> >>> +
-> >>> +static int __init gunyah_wdt_init(void)
-> >>> +{
-> >>> +	struct arm_smccc_res res;
-> >>> +	struct watchdog_device *wdd;
-> >>> +	struct device_node *np;
-> >>> +	int ret;
-> >>> +
-> >>> +	np = of_find_compatible_node(NULL, NULL, "qcom,kpss-wdt");
-> >>> +	if (np) {
-> >>> +		of_node_put(np);
-> >>> +		return -ENODEV;
-> >>> +	}
-> >>> +
-> >>> +	np = of_find_compatible_node(NULL, NULL, "arm,sbsa-gwdt");
-> >>> +	if (np) {
-> >>> +		of_node_put(np);
-> >>> +		return -ENODEV;
-> >>> +	}
-> >>> +
-> >>> +	ret = gunyah_wdt_call(GUNYAH_WDT_STATUS, 0, 0, &res);
-> >>> +	if (ret)
-> >>> +		return -ENODEV;
-> >>
-> >> No, your hypervisor driver (which you have) should start the module via
-> >> adding platform/aux/something devices. Now you are running this on every
-> >> machine, which is clearly wrong...
-> >>
-> > 
-> > This is a good point. Thanks for bringing it up. We don't have a
-> > hypervisor glue driver (yet!) that can add an aux device. Based on v1
-> > feedback, we would like to be a standalone module that can self discover
-> > gunyah hypercall interface.
-> > 
-> > Currently this driver depends on ARCH_QCOM || COMPILE_TEST. So,
-> > technically this can be built and loaded on all non-Qualcomm machines.
+On Fri, Oct 03, 2025 at 11:15:53PM +0530, Deepanshu Kartikey wrote:
+> When hugetlb_vmdelete_list() cannot acquire the shareable lock for a VMA,
+> the previous fix (dd83609b8898) skipped the entire VMA to avoid lock
+> assertions in huge_pmd_unshare(). However, this prevented pages from being
+> unmapped and freed, causing a regression in fallocate(PUNCH_HOLE) operations
+> where pages were not freed immediately, as reported by Mark Brown.
 > 
+> The issue occurs because:
+> 1. hugetlb_vmdelete_list() calls hugetlb_vma_trylock_write()
+> 2. For shareable VMAs, this attempts to acquire the shareable lock
+> 3. If successful, huge_pmd_unshare() expects the lock to be held
+> 4. huge_pmd_unshare() asserts the lock via hugetlb_vma_assert_locked()
 > 
-> Not technically, but practically. We do not make single-platform kernels
-> anymore, it's not 2010. Entire arm64 is multiarch.
+> The v2 fix avoided calling code that requires locks, but this prevented
+> page unmapping entirely, breaking the expected behavior where pages are
+> freed during punch hole operations.
+> 
+> This v3 fix takes a different approach: instead of skipping the entire VMA,
+> we skip only the PMD unsharing operation when we don't have the required
+> lock, while still proceeding with page unmapping. This is safe because:
+> 
+> - PMD unsharing is an optimization to reduce shared page table overhead
+> - Page unmapping can proceed safely with just the VMA write lock
+> - Pages get freed immediately as expected by PUNCH_HOLE operations
+> - The PMD metadata will be cleaned up when the VMA is destroyed
+> 
+> We introduce a new ZAP_FLAG_NO_UNSHARE flag that communicates to
+> __unmap_hugepage_range() that it should skip huge_pmd_unshare() while
+> still clearing page table entries and freeing pages.
+> 
+> Reported-by: syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com
+> Reported-by: Mark Brown <broonie@kernel.org>
+> Fixes: dd83609b8898 ("hugetlbfs: skip VMAs without shareable locks in hugetlb_vmdelete_list")
+> Tested-by: syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com
+> Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+> 
+> ---
+...
+> diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+> index 9c94ed8c3ab0..519497bc1045 100644
+> --- a/fs/hugetlbfs/inode.c
+> +++ b/fs/hugetlbfs/inode.c
+> @@ -474,29 +474,31 @@ hugetlb_vmdelete_list(struct rb_root_cached *root, pgoff_t start, pgoff_t end,
+>  	vma_interval_tree_foreach(vma, root, start, end ? end - 1 : ULONG_MAX) {
+>  		unsigned long v_start;
+>  		unsigned long v_end;
+> +		bool have_shareable_lock;
+> +		zap_flags_t local_flags = zap_flags;
+>  
+>  		if (!hugetlb_vma_trylock_write(vma))
+>  			continue;
+> -
+> +
+> +		have_shareable_lock = __vma_shareable_lock(vma);
+> +
+>  		/*
+> -		 * Skip VMAs without shareable locks. Per the design in commit
+> -		 * 40549ba8f8e0, these will be handled by remove_inode_hugepages()
+> -		 * called after this function with proper locking.
+> +		 * If we can't get the shareable lock, set ZAP_FLAG_NO_UNSHARE
+> +		 * to skip PMD unsharing. We still proceed with unmapping to
+> +		 * ensure pages are properly freed, which is critical for punch
+> +		 * hole operations that expect immediate page freeing.
+>  		 */
+> -		if (!__vma_shareable_lock(vma))
+> -			goto skip;
+> -
+> +		if (!have_shareable_lock)
+> +			local_flags |= ZAP_FLAG_NO_UNSHARE;
 
-Thanks, I understand that we build single kernel image that works across
-machines. However, I wonder do all modules built say from
-arch/arm64/configs/defconfig gets loaded? Usually, the modules
-corresponding to drivers for which devices are registered (modalias
-based) gets loaded, correct? In this case, we don't have a device, so
-there may be an explicit rule to load this module. I totally get your
-point on why it would be preferred to make this module active only on
-QCOM platform.
+This is quite a head-spinning thing.
 
-> 
-> > 
-> > We can make the STATUS SMCC before looking for the other watchdog
-> > devices and fail early.
-> > 
-> > Our Gunyah glue driver [1] do make SMCC call to establish that we
-> > are actually a guest under Gunyah. Since our intention here is to
-> > support watchdog on as many as platform as possible, it is better not to
-> > tie this with glue driver and make it a stand alone and self discovery
-> > module.
-> 
-> 
-> I think you should have only one driver pinging for Gunyah, so glue
-> driver or this. Not both. If you add such SMC here, then how do you
-> determine the platform in the glue driver? Via DT? Then DT supersedes this.
+First of all, as David pointed out, that comment is misleading as it looks like
+__vma_shareable_lock() performs a taking action which is not true, so that should
+reworded.
 
-The SMCC that this module would be using is specific to Gunyah watchdog
-interface. So there is no real dependency w/ Gunyah glue driver. I
-understand your point that there should not be two drivers probing the
-watchdog.
+Now, the thing is:
 
-> 
-> > 
-> > If this is not an acceptable solution (Please let us know), we can find other 
-> > ways to limit it to only work on Qualcomm machines. For ex: Socinfo
-> > platform device is added from SMEM driver which make it only probed on 
-> > Qualcomm machines. We can look into this. 
-> 
-> 
-> To me socinfo feels even better. That way only, really only qcom devices
-> will execute this SMC.
-> 
+- Prior to commit dd83609b8898("hugetlbfs: skip VMAs without shareable
+  locks in hugetlb_vmdelete_list"), we were unconditionally calling
+  huge_pmd_unshare(), which asserted the vma lock and we didn't hold it.
+  My question would be that Mike's vma-lock addition happened in 2022,
+  how's that we didn't see this sooner? It should be rather easy to
+  trigger? I'm a bit puzzled.
 
-Ok, we will look into this.
+- Ok, since there's nothing to unshare, we skip the vma here and
+  remove_inode_hugepages() should take care of it.
+  But that seems to be troublesome because on punch-hole operation pages
+  don't get freed.
 
-Thanks,
-Pavan
+- So instead, we just skip the unsharing operation and keep carrying
+  with the unmapping/freeing in __unmap_hugepage_range.
+
+I don't know but to me it seems that we're going to large extends to fix
+an assertion.
+So, the thing is, can't we check __vma_shareable_lock in
+__unmap_hugepage_range() and only call huge_pmd_unshare() if we need to?
+
+ 
+
+-- 
+Oscar Salvador
+SUSE Labs
 
