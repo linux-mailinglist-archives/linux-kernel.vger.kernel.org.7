@@ -1,80 +1,88 @@
-Return-Path: <linux-kernel+bounces-842956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68EF7BBE0EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 14:40:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93C0FBBE163
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 14:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 333C734A667
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 12:40:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0703C3BC317
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 12:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC25227BA4;
-	Mon,  6 Oct 2025 12:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b="NdJ7rVVi"
-Received: from greygoose-centos7.csh.rit.edu (greygoose-centos7.csh.rit.edu [129.21.49.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B998F28136B;
+	Mon,  6 Oct 2025 12:48:20 +0000 (UTC)
+Received: from mail-out.m-online.net (mail-out.m-online.net [212.18.0.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988A01F4CB3;
-	Mon,  6 Oct 2025 12:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.21.49.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DE01F8755;
+	Mon,  6 Oct 2025 12:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.18.0.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759754397; cv=none; b=kqasJy0Uvlpt9ljlSn0rj3kMWJksLELKUAvrklfgW1uGPFCs28ADIkZARqwz/UIYqpb5wyDB6MMmEK8mz1MT2+e0DpOJGo5JNBxjFaGUFEROyes4lluiLSzExD4D1Y44T9fg3rfk7Om/4jXTMm9/i32tzdsJfkt0nIxFI8zDcyw=
+	t=1759754900; cv=none; b=e2Y49cJqMtY1qF7ICCrBNU+IT3aFQK6W1bX6/i4wi3Ym1YyIfDOFTp5xJvpdJcXN5am/N8V0qfvvez/E/XlHqgpil7AQF36GjeN5BfUNcSyPbtfqKC+dzhnrXwcuq1wA50m5hZK/WmpmKyscMdHJhgC/Or/9aXWg23PesMiI5SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759754397; c=relaxed/simple;
-	bh=g187WBQgP/pezGUzIfSvKg2hYG86BrBURz5UnYid+bk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NWxRJcQHoKq0VddRBHRP/X/u3cKhX5mU/IMSL6no+qMAbBugWrfBf0ejFAnuocv6c5ptDCczHYZAO6L1kxvkSuCPK7gDEm9342FGbywB3P1P7TRHAW0lsXjIP58/dAOQuqUUJWusLrmpNA2RogFs3r5CFbbWGJ6JWLwUr+yFlEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu; spf=pass smtp.mailfrom=csh.rit.edu; dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b=NdJ7rVVi; arc=none smtp.client-ip=129.21.49.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csh.rit.edu
-Received: from localhost (localhost [127.0.0.1])
-	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id A5A16457363D;
-	Mon,  6 Oct 2025 08:39:54 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=csh.rit.edu; h=
-	in-reply-to:content-disposition:content-type:content-type
-	:mime-version:references:message-id:subject:subject:from:from
-	:date:date:received:received; s=mail; t=1759754390; x=
-	1761568791; bh=g187WBQgP/pezGUzIfSvKg2hYG86BrBURz5UnYid+bk=; b=N
-	dJ7rVViCjqf2vp+YYHD7pkNdcOm1dnWK3bXJkdT7RcMjpF5RCb6M9PXi4hgrBF3T
-	BXu9llf0aRAHxAZcBqxwp0pLTJzaE1fc+Oaxmp2jXpztnoC6fGgoJ9yEr8ur+Uhj
-	a86Nbokmwiu/AgL9ZLN/A82X+5s5H+6i/kB0q4YOSY=
-X-Virus-Scanned: amavisd-new at csh.rit.edu
-Received: from greygoose-centos7.csh.rit.edu ([127.0.0.1])
- by localhost (mail.csh.rit.edu [127.0.0.1]) (amavisd-new, port 10026)
- with ESMTP id O28dyEOaFzvr; Mon,  6 Oct 2025 08:39:50 -0400 (EDT)
-Received: from ada.csh.rit.edu (ada.csh.rit.edu [129.21.49.156])
-	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTPS id 0A010457328D;
-	Mon,  6 Oct 2025 08:39:50 -0400 (EDT)
-Date: Mon, 6 Oct 2025 08:39:49 -0400
-From: Mary Strodl <mstrodl@csh.rit.edu>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: linux-kernel@vger.kernel.org, tzungbi@kernel.org,
-	linus.walleij@linaro.org, brgl@bgdev.pl, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v4 3/4] gpio: mpsse: add quirk support
-Message-ID: <aOO4lSDUcLJuaNK3@ada.csh.rit.edu>
-References: <20251003195036.3935245-1-mstrodl@csh.rit.edu>
- <20251003195036.3935245-4-mstrodl@csh.rit.edu>
- <aOAyKI7hv36oLJkD@stanley.mountain>
+	s=arc-20240116; t=1759754900; c=relaxed/simple;
+	bh=yIv+Y6LFJ/1OHcFWks74RoSN8VfD9jS30sS4ckZ/d8Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AgeO8S7CnpRoboHMAIGlsfJJ78pJFG2IRPRamAWpX0IYKR/zm0W/IbDFSsWUy9j0RdV+2lc+acawd2bRkGHa9PWU/o7m1c0y3COd1+aeSl4EIFkg8v2LQCjgk2PZlIleXS7xAqtLPqbFe53moWqbqApiYHeJClQGbLJHRXSi6UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=212.18.0.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+	by mail-out.m-online.net (Postfix) with ESMTP id 4cgJln5gHVz1sBqm;
+	Mon,  6 Oct 2025 14:40:53 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.68])
+	by mail.m-online.net (Postfix) with ESMTP id 4cgJln4ljQz1qqlg;
+	Mon,  6 Oct 2025 14:40:53 +0200 (CEST)
+X-Virus-Scanned: amavis at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+ by localhost (dynscan1.mail.m-online.net [192.168.6.68]) (amavis, port 10024)
+ with ESMTP id Lo6ufq-sBmXT; Mon,  6 Oct 2025 14:40:44 +0200 (CEST)
+X-Auth-Info: fjqPRUDZ+D6alIMK+BgANJlB5OxNLA/TAqqPneisA9BfcE8wksM6zHXxzf/cqM2e
+Received: from hawking (unknown [81.95.8.245])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.mnet-online.de (Postfix) with ESMTPSA;
+	Mon,  6 Oct 2025 14:40:44 +0200 (CEST)
+From: Andreas Schwab <schwab@linux-m68k.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Nathan Chancellor <nathan@kernel.org>,  Nicolas Schier
+ <nicolas.schier@linux.dev>,  Thomas =?utf-8?Q?Wei=C3=9Fschuh?=
+ <thomas.weissschuh@linutronix.de>,  linux-kbuild@vger.kernel.org,
+  linux-m68k@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] kbuild: uapi: Strip comments before size type check
+In-Reply-To: <949f096337e28d50510e970ae3ba3ec9c1342ec0.1759753998.git.geert@linux-m68k.org>
+	(Geert Uytterhoeven's message of "Mon, 6 Oct 2025 14:33:42 +0200")
+References: <949f096337e28d50510e970ae3ba3ec9c1342ec0.1759753998.git.geert@linux-m68k.org>
+Date: Mon, 06 Oct 2025 14:40:43 +0200
+Message-ID: <mvm347wjj90.fsf@linux-m68k.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aOAyKI7hv36oLJkD@stanley.mountain>
+Content-Type: text/plain
 
-On Fri, Oct 03, 2025 at 11:29:28PM +0300, Dan Carpenter wrote:
-> Thanks!
-> 
-> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-> 
-> regards,
-> dan carpenter
+On Okt 06 2025, Geert Uytterhoeven wrote:
 
-Thank you!
+> diff --git a/usr/include/headers_check.pl b/usr/include/headers_check.pl
+> index 21c2fb9520e6af2d..16c238aadfebb061 100755
+> --- a/usr/include/headers_check.pl
+> +++ b/usr/include/headers_check.pl
+> @@ -155,6 +155,8 @@ sub check_sizetypes
+>  	if (my $included = ($line =~ /^\s*#\s*include\s+[<"](\S+)[>"]/)[0]) {
+>  		check_include_typesh($included);
+>  	}
+> +	# strip comments (single-line only)
+> +	$line =~ s@\/\*.*?\*\/@@;
+
+I don't think you need to quote the forward slashes in the regexp.
+
+-- 
+Andreas Schwab, schwab@linux-m68k.org
+GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
+"And now for something completely different."
 
