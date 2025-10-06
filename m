@@ -1,120 +1,96 @@
-Return-Path: <linux-kernel+bounces-843395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62C00BBF19F
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 21:31:59 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2963BBF1A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 21:33:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22D463AD0BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 19:31:58 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8FD0134B228
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 19:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DB422128A;
-	Mon,  6 Oct 2025 19:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC1A22128A;
+	Mon,  6 Oct 2025 19:33:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L96d9IEe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e2T1oOda"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7711D514E;
-	Mon,  6 Oct 2025 19:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F4478F43;
+	Mon,  6 Oct 2025 19:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759779109; cv=none; b=HN9rihmIId1izWBUjejz/OHMMS/aIjjKxhaaTBqlTA2RrF1ykDK2yC15innPwXlsBEoL4+mGzH5lf0GqAMUohiqoAbC4sMqcp2GQ2g5kkiiojLeU7rDWE+r02y5F6CQySQmYQGFhvZFzxssvkuYblLTji2jbB3k7ke+uZunp6T0=
+	t=1759779215; cv=none; b=rYIzduZ47rxWlp8QWR5i260MmFmJm1r1gLXI2lBNTCxAJd6sxlyTOCHj3RFJJalD3MV3AePKnYXoIgNLhZLKG3xDhZzbrM3FlGHxldh7P9SKAS9qzlSs6yMRTL26IIitzeCixwtQuIh64AdNB+lYjfVh6YFOREbYnTQOm5ZsBVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759779109; c=relaxed/simple;
-	bh=Ji52xsF15/vHiCy4wnHNwH55SFB6VzbKxJ6VsGQkCXE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=YWOj31muYmu2dLQZDTWNRGsUo541IXzxE6kvP5O+/GY76CGuZiANjS+vpQMHn6yquwz6qAlS/SUwG76L2epl45dpI9/4y0YAvih5se8A1rVy1iYmKs0cN7fCFMAKRTfIrjmYypoAYeJQElBMQsbJ6YuQQNuiGLungIxr4eYfpGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L96d9IEe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E020DC4CEF5;
-	Mon,  6 Oct 2025 19:31:44 +0000 (UTC)
+	s=arc-20240116; t=1759779215; c=relaxed/simple;
+	bh=8cCOiOCy0xsEJL2nKdqfeYkc4B6AdYbPHDiHhRIGpj4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=M/Kax9YQUtvZbplH9496fKJvKBqFYHUyw0PqhzgejNbTI21TRXju8ekK1/uWCJpnHdRR2ipAetH8uL2NyrTUvpI2Eb2MdJAZBr3IQdGA9fFKd0ZhTwiS5N0joSq22vvfYEoqLN5jMK1o6VHNYUQa+sGMLYcATSi6gTOJlGK16tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e2T1oOda; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 068EFC4CEF5;
+	Mon,  6 Oct 2025 19:33:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759779108;
-	bh=Ji52xsF15/vHiCy4wnHNwH55SFB6VzbKxJ6VsGQkCXE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L96d9IEeiMsFIYVG5seTMT7oh167tKdn6ccb/8I4UuOSLcz6FvWLk5Fvl49c5HxW3
-	 RSBBR2u0shiYY4YvCZIQXb+bd8kbB5d4bMLM2HH10kRnCYqguwi89+yltyyPXZrGJq
-	 B2IdCjaACy8K/DV0wjpW9PeUBBeINzA+cqP6AYVgKs8UHrb+E/IJpW454hg6g/dDQy
-	 3OuaZDcKHM45pIABvMRrk2+0yJ0BVt7UjNvPOk8JcwpMqJeRQ5VSAwUR0iMg3QcXqu
-	 +DF01xglIgfKwMTkP5fxqumDkfu8pL3PlD7rHIpltFGfi8lGR0v5bYjt091ILN0WHA
-	 SyUUbb7eCc6bA==
+	s=k20201202; t=1759779215;
+	bh=8cCOiOCy0xsEJL2nKdqfeYkc4B6AdYbPHDiHhRIGpj4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=e2T1oOdaGpUvqnuT8g8UoNM7nklUUIReD8DRtOulZXhe8Hq1YPVXIC42jahFXWVfh
+	 blZ7UJXRMvWXG9cqkFj0p1nm+mPSvcJ4ejGQ5ZMDdPdOk6XhZczoQ1X/SsDZXLaA/L
+	 2pW5T/H6nCgqDyWN6hO2T7rWoQOavd14N7PeSWTCIc+CmkMvvC7aMoseD71TgU2+Se
+	 ETA4yKGpPKYRB0tr4SmDRhftP72tB+E+HHM8uLBjSIrfJYdarGSnSttMrxzCsQk0ak
+	 VnCQ6Em76/aRwPq2QYm3zGZWstPdWM2PQB5A7iBFN79FeBEpB2DJU/0NscgH34NhwW
+	 H65ewjZkj4O7Q==
+Date: Mon, 6 Oct 2025 14:33:33 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] PCI/PM: Avoid redundant delays on D3hot->D3cold
+Message-ID: <20251006193333.GA537409@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 06 Oct 2025 21:31:43 +0200
-Message-Id: <DDBHMNEIU9HJ.68MGF28IF58I@kernel.org>
-From: "Benno Lossin" <lossin@kernel.org>
-To: =?utf-8?q?Onur_=C3=96zkan?= <work@onurozkan.dev>,
- <rust-for-linux@vger.kernel.org>
-Cc: <ojeda@kernel.org>, <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>,
- <gary@garyguo.net>, <bjorn3_gh@protonmail.com>, <aliceryhl@google.com>,
- <tmgross@umich.edu>, <dakr@kernel.org>, <linux-kernel@vger.kernel.org>,
- <acourbot@nvidia.com>, <airlied@gmail.com>, <simona@ffwll.ch>,
- <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
- <tzimmermann@suse.de>, <corbet@lwn.net>, <lyude@redhat.com>,
- <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH 1/3] rust: xarray: abstract `xa_alloc`
-X-Mailer: aerc 0.21.0
-References: <20251006163024.18473-1-work@onurozkan.dev>
- <20251006163024.18473-2-work@onurozkan.dev>
-In-Reply-To: <20251006163024.18473-2-work@onurozkan.dev>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aOQLRhot8-MtXeE3@google.com>
 
-On Mon Oct 6, 2025 at 6:30 PM CEST, Onur =C3=96zkan wrote:
-> Implements `alloc` function to `XArray<T>` that wraps
-> `xa_alloc` safely.
->
-> Resolves a task from the nova/core task list under the "XArray
-> bindings [XARR]" section in "Documentation/gpu/nova/core/todo.rst"
-> file.
->
-> Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
-> ---
->  rust/kernel/xarray.rs | 39 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
->
-> diff --git a/rust/kernel/xarray.rs b/rust/kernel/xarray.rs
-> index a49d6db28845..1b882cd2f58b 100644
-> --- a/rust/kernel/xarray.rs
-> +++ b/rust/kernel/xarray.rs
-> @@ -266,6 +266,45 @@ pub fn store(
->              Ok(unsafe { T::try_from_foreign(old) })
->          }
->      }
-> +
-> +    /// Allocates an empty slot within the given limit range and stores =
-`value` there.
-> +    ///
-> +    /// May drop the lock if needed to allocate memory, and then reacqui=
-re it afterwards.
-> +    ///
-> +    /// On success, returns the allocated id.
-> +    ///
-> +    /// On failure, returns the element which was attempted to be stored=
-.
-> +    pub fn alloc(
-> +        &mut self,
-> +        limit: bindings::xa_limit,
-> +        value: T,
-> +        gfp: alloc::Flags,
-> +    ) -> Result<u32, StoreError<T>> {
+On Mon, Oct 06, 2025 at 11:32:38AM -0700, Brian Norris wrote:
+> On Mon, Oct 06, 2025 at 03:52:22PM +0200, Mika Westerberg wrote:
+> > On Fri, Oct 03, 2025 at 03:40:09PM -0700, Brian Norris wrote:
+> > > From: Brian Norris <briannorris@google.com>
+> > > 
+> > > When transitioning to D3cold, __pci_set_power_state() will first
+> > > transition a device to D3hot. If the device was already in D3hot, this
+> > > will add excess work:
+> > > (a) read/modify/write PMCSR; and
+> > > (b) excess delay (pci_dev_d3_sleep()).
+> > 
+> > How come the device is already in D3hot when __pci_set_power_state() is
+> > called? IIRC PCI core will transition the device to low power state so that
+> > it passes there the deepest possible state, and at that point the device is
+> > still in D0. Then __pci_set_power_state() puts it into D3hot and then turns
+> > if the power resource -> D3cold.
+> > 
+> > What I'm missing here?
+> 
+> Some PCI drivers call pci_set_power_state(..., PCI_D3hot) on their own
+> when preparing for runtime or system suspend, so by the time they hit
+> pci_finish_runtime_suspend(), they're in D3hot. Then, pci_target_state()
+> may still pick a lower state (D3cold).
 
-I think it would be a good idea to make the id a newtype wrapper around
-u32. Maybe not even allow users to manually construct it or even inspect
-it if possible.
+We might need this change, but maybe this is also an opportunity to
+remove some of those pci_set_power_state(..., PCI_D3hot) calls from
+drivers.
 
----
-Cheers,
-Benno
-
-> +        build_assert!(
-> +            T::FOREIGN_ALIGN >=3D 4,
-> +            "pointers stored in XArray must be 4-byte aligned"
-> +        );
+I didn't look into any of them in detail, but I would jump at any
+chance to remove PCI details from driver suspend paths.  There are
+only ~20 calls from suspend functions, ~25 from shutdown, and a few
+from poweroff.  The fact that there are so few makes me think they
+might be leftovers that could be more fully converted to generic PM.
 
