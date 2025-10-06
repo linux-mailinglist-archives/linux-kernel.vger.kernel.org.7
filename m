@@ -1,45 +1,74 @@
-Return-Path: <linux-kernel+bounces-842996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302CABBE298
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:17:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89D3DBBE29B
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C97D94ED07B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:17:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4595E4ECAD1
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD292C2348;
-	Mon,  6 Oct 2025 13:17:46 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA9B2C2348;
+	Mon,  6 Oct 2025 13:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M1pvyMU2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1647267B9B
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 13:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B1829B795
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 13:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759756665; cv=none; b=K1LLBPLqp6vDoRfUM0ScpzhbutxIK9VZugWUY4GjJ3dY66ZfWJS36DVldQ/aLxq3DDmrSv8Bre+wk9tz7bUbAt9DDdA1NtlSZx9wiFemKWoh9AaOPWCT7tadB8sXZNo3k4YsxBeSAKiuWb0quj0JRvHEn3hYeM3wxKXntPiGV8s=
+	t=1759756680; cv=none; b=Aikw6OxMw50OSkoBYNilQkObouB0UhQxMylsbFELkTT5tbUFEIHx9fPiEvC72eitlDMqzzK4XqoCebFGaKfYgxyYZbOdsAvOzloOrmO/LZcLxvc0c7eQi0kGUvXdO9Ma++Q4aOU6JGSno30NY9BDIzBh3ukz8mRCXkauunWgGL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759756665; c=relaxed/simple;
-	bh=IA0d1+EnohBzsTOyaP7DDf08YVdAGq4ZezzPWuABl+o=;
+	s=arc-20240116; t=1759756680; c=relaxed/simple;
+	bh=vsSiQVrh3nzcSlfZWwB6HcISIunXtsgk8HCL7lkE0zQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ENaS3smGG9+W+gruyAmp2vP9B/yLx17fJb0oxxaHg+eFTfX9wn050U8YjiFDUUFGH2deOC48J3oQgFhMVvpYJaKmySZan5c9xwygL3Xk0GeaNQGeHJGSu8eLDURshjoGbmS//DheIzCpm0rT0qytzJimczn0DZKxK3CxL4XiTM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3348C4CEF5;
-	Mon,  6 Oct 2025 13:17:43 +0000 (UTC)
-Date: Mon, 6 Oct 2025 14:17:40 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: syzbot <syzbot+d1974fc28545a3e6218b@syzkaller.appspotmail.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, will@kernel.org,
-	Kefeng Wang <wangkefeng.wang@huawei.com>
-Subject: Re: [syzbot] [arm?] WARNING in copy_highpage
-Message-ID: <aOPBdNLJUdN4EAF0@arm.com>
-References: <68dda1ae.a00a0220.102ee.0065.GAE@google.com>
- <aOACSWYIOD3llWnj@arm.com>
- <7af02ceb-563a-4bad-84ee-620aaa513bed@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RbA2kQ4VFuUf2kI3/jo6IqGES+KYAdyFV7BcY1ZrCvCGVM+85qolwDtt4s4q0FZmm1I0Fa26ySo+4c9/mf3xpK0isBykFkLZubVSASThkT+tnq/jLaVosD/y+rfzw4a3LfXqJKY5EKtJAZRqRj9UiXBDgrpP/mcFHeGbLV0w3yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M1pvyMU2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759756677;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ri2DELPIwhaBKWXFIOC1/rmQDv00iRt2WIKKCb24pLE=;
+	b=M1pvyMU27Bg4j/bZCVCt3TC3GAm6K8iM28Qra+Z6zplMC5OpAfVgx5EFz92whvMryQv5uC
+	3kHQrAgZCMaBDIuOav3o1cDcqbrUkp35ITgmtKQp8RlAyZaQNVaDsev1uZ74uOdl3Q0+eK
+	ZOiHIepjmLpSz1sJx4peyDaFaM7azjM=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-359-d1HY6wbQNOOKqh6vD3C4TA-1; Mon,
+ 06 Oct 2025 09:17:52 -0400
+X-MC-Unique: d1HY6wbQNOOKqh6vD3C4TA-1
+X-Mimecast-MFC-AGG-ID: d1HY6wbQNOOKqh6vD3C4TA_1759756671
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C07F8180057A;
+	Mon,  6 Oct 2025 13:17:50 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.24])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 872961800446;
+	Mon,  6 Oct 2025 13:17:49 +0000 (UTC)
+Date: Mon, 6 Oct 2025 21:17:44 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH v3 09/10] mm/vmalloc: Update __vmalloc_node_range()
+ documentation
+Message-ID: <aOPBePFxNk5FP/ru@MiWiFi-R3L-srv>
+References: <20251001192647.195204-1-urezki@gmail.com>
+ <20251001192647.195204-10-urezki@gmail.com>
+ <aOCejd0aghFS8iSO@MiWiFi-R3L-srv>
+ <aOCqSrnazd2YwGbe@MiWiFi-R3L-srv>
+ <aOOUlW0SbBcPM6Mq@milan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,85 +77,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7af02ceb-563a-4bad-84ee-620aaa513bed@redhat.com>
+In-Reply-To: <aOOUlW0SbBcPM6Mq@milan>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Mon, Oct 06, 2025 at 09:55:27AM +0200, David Hildenbrand wrote:
-> > > Modules linked in:
-> > > CPU: 1 UID: 0 PID: 25189 Comm: syz.2.7336 Not tainted syzkaller #0 PREEMPT
-> > > Hardware name: linux,dummy-virt (DT)
-> > > pstate: 00402009 (nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > > pc : copy_highpage+0x150/0x334 arch/arm64/mm/copypage.c:55
-> > > lr : copy_highpage+0xb4/0x334 arch/arm64/mm/copypage.c:25
-> > > sp : ffff800088053940
-> > > x29: ffff800088053940 x28: ffffc1ffc0acf800 x27: ffff800088053b10
-> > > x26: ffffc1ffc0acf808 x25: ffffc1ffc037b1c0 x24: ffffc1ffc037b1c0
-> > > x23: ffffc1ffc0acf800 x22: ffffc1ffc0acf800 x21: fff000002b3e0000
-> > > x20: fff000000dec7000 x19: ffffc1ffc037b1c0 x18: 0000000000000000
-> > > x17: fff07ffffcffa000 x16: ffff800080008000 x15: 0000000000000001
-> > > x14: 0000000000000000 x13: 0000000000000003 x12: 000000000006d9ad
-> > > x11: 0000000000000000 x10: 0000000000000010 x9 : 0000000000000000
-> > > x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
-> > > x5 : ffff800088053b18 x4 : ffff80008032df94 x3 : 00000000ff000000
-> > > x2 : 01ffc00003000001 x1 : 01ffc00003000001 x0 : 01ffc00003000001
-> > > Call trace:
-> > >   try_page_mte_tagging arch/arm64/include/asm/mte.h:93 [inline] (P)
-> > >   copy_highpage+0x150/0x334 arch/arm64/mm/copypage.c:55 (P)
-> > >   copy_mc_highpage include/linux/highmem.h:383 [inline]
-> > >   folio_mc_copy+0x44/0x6c mm/util.c:740
-> > >   __migrate_folio.constprop.0+0xc4/0x23c mm/migrate.c:851
-> > >   migrate_folio+0x1c/0x2c mm/migrate.c:882
-> > >   move_to_new_folio+0x58/0x144 mm/migrate.c:1097
-> > >   migrate_folio_move mm/migrate.c:1370 [inline]
-> > >   migrate_folios_move mm/migrate.c:1719 [inline]
-> > >   migrate_pages_batch+0xaf4/0x1024 mm/migrate.c:1966
-> > >   migrate_pages_sync mm/migrate.c:2023 [inline]
-> > >   migrate_pages+0xb9c/0xcdc mm/migrate.c:2105
-> > >   do_mbind+0x20c/0x4a4 mm/mempolicy.c:1539
-> > >   kernel_mbind mm/mempolicy.c:1682 [inline]
-> > >   __do_sys_mbind mm/mempolicy.c:1756 [inline]
+On 10/06/25 at 12:06pm, Uladzislau Rezki wrote:
+> On Sat, Oct 04, 2025 at 01:02:02PM +0800, Baoquan He wrote:
+> > On 10/04/25 at 12:11pm, Baoquan He wrote:
+> > > On 10/01/25 at 09:26pm, Uladzislau Rezki (Sony) wrote:
+> > > > __vmalloc() function now supports non-blocking flags such as
+> > > > GFP_ATOMIC and GFP_NOWAIT. Update the documentation accordingly.
+> > > > 
+> > > > Acked-by: Michal Hocko <mhocko@suse.com>
+> > > > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> > > > ---
+> > > >  mm/vmalloc.c | 21 +++++++++++----------
+> > > >  1 file changed, 11 insertions(+), 10 deletions(-)
+> > > > 
+> > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > > index d7e7049e01f8..2b45cd4ce119 100644
+> > > > --- a/mm/vmalloc.c
+> > > > +++ b/mm/vmalloc.c
+> > > > @@ -3881,19 +3881,20 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+> > > >   * @caller:		  caller's return address
+> > > >   *
+> > > >   * Allocate enough pages to cover @size from the page level
+> > > > - * allocator with @gfp_mask flags. Please note that the full set of gfp
+> > > > - * flags are not supported. GFP_KERNEL, GFP_NOFS and GFP_NOIO are all
+> > > > - * supported.
+> > > > - * Zone modifiers are not supported. From the reclaim modifiers
+> > > > - * __GFP_DIRECT_RECLAIM is required (aka GFP_NOWAIT is not supported)
+> > > > - * and only __GFP_NOFAIL is supported (i.e. __GFP_NORETRY and
+> > > > - * __GFP_RETRY_MAYFAIL are not supported).
+> > > > + * allocator with @gfp_mask flags and map them into contiguous
+> > > > + * virtual range with protection @prot.
+> > > >   *
+> > > > - * __GFP_NOWARN can be used to suppress failures messages.
+> > > > + * Supported GFP classes: %GFP_KERNEL, %GFP_ATOMIC, %GFP_NOWAIT,
+> > > > + * %GFP_NOFS and %GFP_NOIO. Zone modifiers are not supported.
+> > > > + * Please note %GFP_ATOMIC and %GFP_NOWAIT are supported only
+> > > > + * by __vmalloc().
+> > > > +
+> > > > + * Retry modifiers: only %__GFP_NOFAIL is supported; %__GFP_NORETRY
+> > > > + * and %__GFP_RETRY_MAYFAIL are not supported.
+> > > 
+> > > Do we need to update the documentation of __vmalloc_node_noprof()
+> > > accordingly? I see it has below description about "Retry modifiers"
+> > > where gfp_mask is passed down to __vmalloc_node_range_noprof() directly
+> > > but have different description. Not sure if I missed anything.
+> > > 
+> > > ===
+> > >  * Retry modifiers: only %__GFP_NOFAIL is supported; %__GFP_NORETRY
+> > >  * and %__GFP_RETRY_MAYFAIL are not supported.
+> > > ===
 > > 
-> > I don't think we ever stressed MTE with mbind before. I have a suspicion
-> > this problem has been around for some time.
+> > Sorry, I copied the wrong sentences. Below is copied from documentation
+> > of __vmalloc_node_noprof().
+> > ====
+> >  * Reclaim modifiers in @gfp_mask - __GFP_NORETRY, __GFP_RETRY_MAYFAIL
+> >  * and __GFP_NOFAIL are not supported
+> > ====
 > > 
-> > My reading of do_mbind() is that it ends up allocating pages for
-> > migrating into via alloc_migration_target_by_mpol() ->
-> > folio_alloc_mpol(). Pages returned should be untagged and uninitialised
-> > unless the PG_* flags have not been cleared on a prior free. Or
-> > migrate_pages_batch() somehow reuses some pages instead of reallocating.
+> > 
+> > > 
+> > > >   *
+> > > > - * Map them into contiguous kernel virtual space, using a pagetable
+> > > > - * protection of @prot.
+> > > > + * %__GFP_NOWARN can be used to suppress failure messages.
+> > > >   *
+> > > > + * Can not be called from interrupt nor NMI contexts.
+> > > >   * Return: the address of the area or %NULL on failure
+> > > >   */
+> > > >  void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
+> > > > -- 
+> > > > 2.47.3
+> > > > 
+> > > 
+> > 
+> We need. But i am not sure it should be fully copy-pasted from the
+> __vmalloc_node_range_noprof(). At least __GFP_NOFAIL is supported
+> and thus stating that it is not - is wrong.
 > 
-> Staring at __migrate_folio(), I assume we can end up successfully calling
-> folio_mc_copy(), but then failing in __folio_migrate_mapping().
-> 
-> Seems to be as easy as failing the folio_ref_freeze() in
-> __folio_migrate_mapping().
-> 
-> We return -EAGAIN in that case, making the caller retry, stumbling into an
-> already-tagged page. (with the same source / destination parameters) IIRC)
-> 
-> So likely this is simply us re-doing the copy after a migration failed after
-> the copy.
-> 
-> Could it happen that we are calling it with a different source/destination
-> combination the second time? I don't think so, but I am not 100% sure.
+> It has to be fixed but not by this series because when __GFP_NOFAIL
+> support was introduced the doc. should have to be updated accordingly.
 
-Thanks David. I can now see how it would retry on the same pages without
-reallocating. At least we know it's not causing any side-effects, only
-messing up the MTE safety warnings.
+Maybe just remove the documentation for __vmalloc_node_noprof() since
+it's only a wrapper of __vmalloc_node_range_noprof()? Surely this should
+be done in another standalone patch later.
 
-> The most reliable way would be to un-tag in case folio_mc_copy succeeded but
-> __folio_migrate_mapping() failed.
-
-Clearing an MTE specific flag in the core code doesn't look great. Also
-going for some generic mask like PAGE_FLAGS_CHECK_AT_PREP may have
-side-effects as we don't know where the page is coming from (we have
-those get_new_folio()/put_new_folio() arguments passed on by higher up
-callers).
-
-I'm tempted to just drop the warning in the arm64 copy_highpage(),
-replace it with a comment about migration retrying on a potentially
-tagged page. It will have to override the tags each time (as it
-currently does but also warns).
-
--- 
-Catalin
 
