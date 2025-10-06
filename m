@@ -1,137 +1,150 @@
-Return-Path: <linux-kernel+bounces-843110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 117BCBBE6C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:00:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42C76BBE6CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 707DE1899814
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:01:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 70DCA4EE9D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5A82D738F;
-	Mon,  6 Oct 2025 15:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495B627F754;
+	Mon,  6 Oct 2025 15:01:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="OrXovkpA"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC522D6E59;
-	Mon,  6 Oct 2025 15:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ghD8fpiZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F61B1799F
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 15:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759762818; cv=none; b=DWuZa+EDNsT2UL5CBVca4nVAnhmEE5+vDu5wwXcWZD2RDmuVaBp5JRCYKxCwEjW12P6iWAAa2DLs/fHim7lEq1OF+j7BTMZSGLg04o6NenfchsKQhJHzPkyYEuHM2nWrWhRXCenEOV7Tc+wLDADLjhh8jS8BRn8O8FMLSnKWPSM=
+	t=1759762862; cv=none; b=TYMKvmKt7Yh1LkZ+SZ80Cov+aBXZ2IKskSbeRwEo2SarFrNUYkbVIH0QGpqjJ3ogZXKHK2SNVFL4m6rk+QbqkWfbqXZ8C/+n/hIumYwZVh08zdsiDh0MimqJ1azXNrzVzhmnej5IOJ1n4Ou1nBNbv39tT5PPNparJCUq6Z9Ke0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759762818; c=relaxed/simple;
-	bh=YrvVDm4++2peY3eEOwdvTaSPdF9i9+OfuFb0/EZ3rKI=;
+	s=arc-20240116; t=1759762862; c=relaxed/simple;
+	bh=PRg9QTHdBIQ2drBq4Jauhpal3A3q0Xroku6xft7iOEk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eTqUeV/7hmg3f0ezOMT2TyVWM2ay2IQKFBfO2h0I28Q9oBfcJ1ugCU+Ff2ZT5p8HPaBMevyGkp8wDhG6mL+ZSc6r3M7kLcBZO0EWtHfKWVV+dOGk5mz4q2t4lWUI1NdlhjJxe75agRzFIuR1ZOtTM5L0+27PRwUhN2YGZX5kAf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=OrXovkpA; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from skinsburskii.localdomain (unknown [20.236.10.120])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 3C71E211AF2F;
-	Mon,  6 Oct 2025 08:00:16 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3C71E211AF2F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1759762816;
-	bh=9PRAZqGEqsnKOBhJBvCf0MSlmktvmXX9+od7bbBWL5w=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=j/3oog1MfQNGPHnJk84HgCKXA50xILnR0rztXrPJ49eyrsSSAlDZ6VsP0Da2o19dUZSlQwXkJKxgdxqFbqtewn8q+EU4zLSKmuGSTkKdxmA5rxse559JHbXCc+YiDcaUJNb59I5tuED01o4XklW4WirJsUni/Jn1wD2EexBbtZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ghD8fpiZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E92EC4CEF5;
+	Mon,  6 Oct 2025 15:00:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759762862;
+	bh=PRg9QTHdBIQ2drBq4Jauhpal3A3q0Xroku6xft7iOEk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OrXovkpAfmKTFp8whd5dmrdQMgEde/DvBeo69JpwpJXWumEHohVEJ21R70Y6qRhrE
-	 qbTEJZ0Sp8/AIUrOsmvdF0xB364qhQfO3Ju6owPvyDWm8TQsbG2xZizRJ+/Q5HQ4bv
-	 UKF5VTfCPaFtSMl63XT9TsfdOiOg1xRxJ14Jhd74=
-Date: Mon, 6 Oct 2025 08:00:13 -0700
-From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: "kys@microsoft.com" <kys@microsoft.com>,
-	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"decui@microsoft.com" <decui@microsoft.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 3/5] Drivers: hv: Batch GPA unmap operations to
- improve large region performance
-Message-ID: <aOPZfZV6uLOePaZo@skinsburskii.localdomain>
-References: <175942263069.128138.16103948906881178993.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
- <175942296162.128138.15731950243504649929.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
- <SN6PR02MB415777407333F3EC40CC05B7D4E4A@SN6PR02MB4157.namprd02.prod.outlook.com>
- <aN__QWQZkXN8k1-V@skinsburskii.localdomain>
- <SN6PR02MB415777A957EF622587C54A35D4E4A@SN6PR02MB4157.namprd02.prod.outlook.com>
+	b=ghD8fpiZsoXXJu9uoHHp6SN+bVL1Vz+pFOosG1v3TxPaC8aN6TsjsZXQA/60mCtJ6
+	 XEcwlIVFTjDI/+5DzteTNePKVXs0L3MRU/dEYfN80EVa2uj85p9Pu0yX5vDS3NhnpX
+	 9txbpPWiJ1HBrN15Xi8AYwUi0Q7spUqFcG/j7kqctqPSx1Of8MHdENllihszCYIPPT
+	 3zEsxeu34QItDPb+izcWyc3wl375PUQcDQdFHREDx4Io84ucrxRYK6477xv3IYLMJh
+	 /XZjjkC54p/EytjpOioxbPtpMF+Zykm+GPVpW/kTNSU64CX6jSOOcmgLAPmSVUAaCz
+	 n2a8WrmSGTCIA==
+Date: Mon, 6 Oct 2025 17:00:56 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH] irqchip/gic-v5: Fix GIC CDEOI instruction encoding
+Message-ID: <aOPZqM2xGIrPJH/d@lpieralisi>
+References: <20251006100758.624934-1-lpieralisi@kernel.org>
+ <aOPEXEx-QRv7v9A5@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <SN6PR02MB415777A957EF622587C54A35D4E4A@SN6PR02MB4157.namprd02.prod.outlook.com>
+In-Reply-To: <aOPEXEx-QRv7v9A5@arm.com>
 
-On Fri, Oct 03, 2025 at 09:41:32PM +0000, Michael Kelley wrote:
-> From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com> Sent: Friday, October 3, 2025 9:52 AM
+On Mon, Oct 06, 2025 at 02:30:04PM +0100, Catalin Marinas wrote:
+> On Mon, Oct 06, 2025 at 12:07:58PM +0200, Lorenzo Pieralisi wrote:
+> > diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+> > index 6455db1b54fd..6cf8c46ddde5 100644
+> > --- a/arch/arm64/include/asm/sysreg.h
+> > +++ b/arch/arm64/include/asm/sysreg.h
+> > @@ -113,14 +113,14 @@
+> >  /* Register-based PAN access, for save/restore purposes */
+> >  #define SYS_PSTATE_PAN			sys_reg(3, 0, 4, 2, 3)
+> >  
+> > -#define __SYS_BARRIER_INSN(op0, op1, CRn, CRm, op2, Rt)			\
+> > +#define __SYS_INSN(op0, op1, CRn, CRm, op2, Rt)				\
+> >  	__emit_inst(0xd5000000					|	\
+> >  		    sys_insn((op0), (op1), (CRn), (CRm), (op2))	|	\
+> >  		    ((Rt) & 0x1f))
+> >  
+> > -#define SB_BARRIER_INSN			__SYS_BARRIER_INSN(0, 3, 3, 0, 7, 31)
+> > -#define GSB_SYS_BARRIER_INSN		__SYS_BARRIER_INSN(1, 0, 12, 0, 0, 31)
+> > -#define GSB_ACK_BARRIER_INSN		__SYS_BARRIER_INSN(1, 0, 12, 0, 1, 31)
+> > +#define SB_BARRIER_INSN			__SYS_INSN(0, 3, 3, 0, 7, 31)
+> > +#define GSB_SYS_BARRIER_INSN		__SYS_INSN(1, 0, 12, 0, 0, 31)
+> > +#define GSB_ACK_BARRIER_INSN		__SYS_INSN(1, 0, 12, 0, 1, 31)
+> >  
+> >  /* Data cache zero operations */
+> >  #define SYS_DC_ISW			sys_insn(1, 0, 7, 6, 2)
+> > @@ -1075,7 +1075,6 @@
+> >  #define GICV5_OP_GIC_CDDIS		sys_insn(1, 0, 12, 1, 0)
+> >  #define GICV5_OP_GIC_CDHM		sys_insn(1, 0, 12, 2, 1)
+> >  #define GICV5_OP_GIC_CDEN		sys_insn(1, 0, 12, 1, 1)
+> > -#define GICV5_OP_GIC_CDEOI		sys_insn(1, 0, 12, 1, 7)
+> >  #define GICV5_OP_GIC_CDPEND		sys_insn(1, 0, 12, 1, 4)
+> >  #define GICV5_OP_GIC_CDPRI		sys_insn(1, 0, 12, 1, 2)
+> >  #define GICV5_OP_GIC_CDRCFG		sys_insn(1, 0, 12, 1, 5)
+> > @@ -1129,6 +1128,17 @@
+> >  #define gicr_insn(insn)			read_sysreg_s(GICV5_OP_GICR_##insn)
+> >  #define gic_insn(v, insn)		write_sysreg_s(v, GICV5_OP_GIC_##insn)
+> >  
+> > +/*
+> > + * GIC CDEOI encoding requires Rt to be 0b11111.
+> > + * gic_insn() with an immediate value of 0 cannot be used to encode it
+> > + * because some compilers do not follow asm inline constraints in
+> > + * write_sysreg_s() to turn an immediate 0 value into an XZR as
+> > + * MSR source register.
+> > + * Use __SYS_INSN to specify its precise encoding explicitly.
+> > + */
+> > +#define GICV5_CDEOI_INSN		__SYS_INSN(1, 0, 12, 1, 7, 31)
+> > +#define gic_cdeoi()			asm volatile(GICV5_CDEOI_INSN)
 > 
-> > 
-> > On Fri, Oct 03, 2025 at 12:27:13AM +0000, Michael Kelley wrote:
-> > > From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com> Sent: Thursday, October 2, 2025 9:36 AM
-> > > >
-> > > > Reduce overhead when unmapping large memory regions by batching GPA unmap
-> > > > operations in 2MB-aligned chunks.
-> > > >
-> > > > Use a dedicated constant for batch size to improve code clarity and
-> > > > maintainability.
-> > > >
-> > > > Signed-off-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+> Would something like this work? Completely untested (and build still
+> going):
 
-<snip>
+I tested the GIC CDEOI code generated with GCC/LLVM and it works.
 
-> > > > +					MSHV_MAX_UNMAP_GPA_PAGES, unmap_flags);
-> > > > +
-> > > > +		page_offset += MSHV_MAX_UNMAP_GPA_PAGES - 1;
-> > >
-> > > This update to the page_offset doesn't take into account the effect of the
-> > > ALIGN (or ALIGN_DOWN) call.  With a change to ALIGN_DOWN(), it may
-> > > increment too far and perhaps cause the "for" loop to be exited prematurely,
-> > > which would fail to unmap some of the pages.
-> > >
-> > 
-> > I’m not sure I see the problem here.  If we align the offset by
-> > MSHV_MAX_UNMAP_GPA_PAGES and unmap the same number of pages, then we
-> > should increment the offset by that very same number, shouldn’t we?
-> 
-> Here's an example showing the problem I see (assuming ALIGN_DOWN
-> instead of ALIGN):
-> 
-> 1) For simplicity in the example, assume region->start_gfn is zero.
-> 2) Entries 0 thru 3 (i.e., 4 entries) in region->pages[] are zero.
-> 3) Entries 4 thru 515 (the next 512 entries) are non-zero.
-> 4) Entries 516 thru 1023 (the next 508 entries) are zero.
-> 5) Entries 1024 thru 1535 (the last 512 entries) are non-zero.
-> 
-> Upon entering the "for" loop for the first time, page_offset gets
-> incremented to 4 because of skipping entries 0 thru 3 that are zero.
-> On the next iteration where page_offset is 4, the hypercall is made,
-> passing 0 for the gfn (because of ALIGN_DOWN), with a count of
-> 512, so entries 0 thru 511 are unmapped. Entries 0 thru 3 are valid
-> entries, and the fact that they aren't mapped is presumably ignored
-> by the hypercall, so everything works.
-> 
-> Then page_offset is incremented by 511, so it will be 515. Continuing
-> the "for" loop increments page_offset to 516. The zero entries 516
-> thru 1023 increment page_offset to 1024. Finally the hypercall is made
-> again covering entries 1024 thru 1535, none of which are zero.
-> 
-> But notice that entries 512 thru 515 (which are non-zero) got skipped.
-> That's because the first invocation of the hypercall covered only through
-> entry 511, while page_offset was incremented to 515. page_offset
-> should have been set to 511, since that's the last entry processed by
-> the first invocation of the hypercall.
-> 
-> Michael
+My only remark there is that even as the code in mainline stands with
+GCC, it is not very clear that we rely on implicit XZR generation to
+make sure the instruction encoding generated is correct - it looks
+like a bit of a stretch to reuse a sysreg write with immediate value == 0
+to generate a system instruction write with Rt == 0b11111, it works
+but it is a bit opaque or at least not straighforward to grok.
 
-I see the problem now. Thank you.
-I'll fix it in the next revision.
+Obviously the patch below improves LLVM code generation too in the process.
 
-Thanks,
-Stanislav
+I don't know what's best - I admit I am on the fence on this one.
 
+Thanks !
+Lorenzo
+
+> diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+> index 6604fd6f33f4..7aa962f7bdd6 100644
+> --- a/arch/arm64/include/asm/sysreg.h
+> +++ b/arch/arm64/include/asm/sysreg.h
+> @@ -1234,7 +1234,10 @@
+>  #define write_sysreg_s(v, r) do {					\
+>  	u64 __val = (u64)(v);						\
+>  	u32 __maybe_unused __check_r = (u32)(r);			\
+> -	asm volatile(__msr_s(r, "%x0") : : "rZ" (__val));		\
+> +	if (__builtin_constant_p(__val) && __val == 0)			\
+> +		asm volatile(__msr_s(r, "xzr"));			\
+> +	else								\
+> +		asm volatile(__msr_s(r, "%x0") : : "r" (__val));	\
+>  } while (0)
+>  
+>  /*
+> 
+> -- 
+> Catalin
 
