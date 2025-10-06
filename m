@@ -1,159 +1,131 @@
-Return-Path: <linux-kernel+bounces-842714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34291BBD605
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 10:45:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21BACBBD611
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 10:46:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC0841894E29
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 08:45:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8525F1891DC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 08:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950CB25A34F;
-	Mon,  6 Oct 2025 08:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96BE2638AF;
+	Mon,  6 Oct 2025 08:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="W4W8E3MD"
-Received: from outbound.qs.icloud.com (p-east3-cluster2-host11-snip4-10.eps.apple.com [57.103.87.241])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LoMITu2p"
+Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFDF719FA8D
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 08:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.87.241
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741671DE885
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 08:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759740313; cv=none; b=SUiY8gZZsJmQeEa3uuNPCUGgQIs8wabZ+Jf9xonmLk9oPN5U/tArkA7rsB9KYNNgpHzTSN78fqWs8B3wlrL7o24ZftanFJ/mdUi1w+hOOHhEm2NVIS1L+q0ocH8g10ZIdLzUyFpIToq0+wTLoNjLL0M2WkMHZ1mNnuziTi9BNew=
+	t=1759740396; cv=none; b=F1pJ5aiSW6CyLznHnrUMJByzBBCIePH6dvNUg1pH2A2Qu25KkAdHv2cmSxTdhqGMtu+ZT/uRZsuB2r6ijibrndoVVGJEMNObgnihmT6Mdav3+ZlVeitTM020viwzWY/1utXKIMCyXESV3vWhHuydrZMqJUwxl5rQmnlU4q8YH9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759740313; c=relaxed/simple;
-	bh=0y/tJlB/QNLH4JSDNiH1J3b9lD764Sm6vYuI9bPdIJk=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=glqgfM1x7ko0Sb4Po2VNpyzyJl8O+fQ/mwJC9F//a03dpwckWmny2EE5p2wnpoyhoFxKUIfO4gSoZUp1EsVJEAZwzVlU0h/crvdWa/uvzTLN5GBeJRyHs96Z44wVUVE4ppVtKWbAoN4B1VMPo1vdr07Mnm3gwuyKsY7F8WqvwR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=pass smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=W4W8E3MD; arc=none smtp.client-ip=57.103.87.241
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ljones.dev
-Received: from outbound.qs.icloud.com (unknown [127.0.0.2])
-	by p00-icloudmta-asmtp-us-east-2d-60-percent-11 (Postfix) with ESMTPS id D10771800146;
-	Mon,  6 Oct 2025 08:45:05 +0000 (UTC)
-Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; s=sig1; bh=NmmJuRpnjEPHFy7rpKMyL+ir1ct/FIcWdYPmbJcFT1I=; h=Content-Type:Mime-Version:Subject:From:Date:Message-Id:To:x-icloud-hme; b=W4W8E3MDR+B0RW3BzZ72jAt2W8UJbELyEV8y3bPw0cm4H6HG6QBN9N12Hcg7KWK8AAIeJjg9L8sKDeuv7UA8ZfQF/QZ3tZtfTvXojf5BuVxnynYEze+IPgDYhg5i8xIKii3d4D1DzXblz4smE6/FfQ4nD8+ROgGmmZBMYEpryNePyWw6OVFf7N6GXOthyOky0dih6HgLwOUYYnOws5zfRkzSGVBSMsyOUYnlyx5I4A4hJCL/hQopbOwOTkWQMlh8bWt4WiI1I7V2US8fgBTXtFdUSag6pUaEyBT9wqnBzkYtn7BLVtw7M/I8WQ7MGalRhVhz8g+tRmvB+zcOJHNg+A==
-mail-alias-created-date: 1566896761000
-Received: from smtpclient.apple (unknown [17.57.155.37])
-	by p00-icloudmta-asmtp-us-east-2d-60-percent-11 (Postfix) with ESMTPSA id A27EF180017A;
-	Mon,  6 Oct 2025 08:45:03 +0000 (UTC)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1759740396; c=relaxed/simple;
+	bh=5XZ4gBTQ1QA04cVW1SVAYTbNiQpTM90AQRfQGyx5ag4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=XwR3Y/AOQnY+j9gCZA+nyxFdfEhsdydNb69cyPYSrr5HevRquJFIPhIC/EjC2lvD+jZl0ZcUPdstkN9ChkIkg1Or0hIGoI/bLeDYPoDHQ1F3beR2yAILIgbSykYGZLTPrfTQGtQH+q5D7CLw8R1tuLDB1pSnlJxsmPsbl3uYCpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jprusakowski.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LoMITu2p; arc=none smtp.client-ip=209.85.218.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jprusakowski.bounces.google.com
+Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-b4af88aba57so140843666b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 01:46:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759740393; x=1760345193; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=CJXxaJbkSA/3Xb5uNqWTj3oIOQXZmPEn5IRJe3cfIGg=;
+        b=LoMITu2p9a2jkaegbrI9PJ/M3gL/vffuxxHBnFn/IDromNU/f/oWcNHKtjcTBxT7al
+         I+oAHbmhVYe+N0TT92BZM8xO5thcbfme+P/dNttSHfB5XQ7/oGr0Gd6bVcEwqsRfQ7lk
+         lUQgs4IXX5mJ1XlB2t5/yp+ZTeyDruvHiQzkYIXN34OD858ydxAmdYv9+jYACi+2JmDb
+         lMI1VbJJeY/c65PFc51dfzYm7BfOkNuvuf1RkSfdVarnvc8yOOqOxhe0afocsn6JoORM
+         trKQUzzB9vesOSfFL9J1gA9Qw6WHTGxNTBE6oamFf8N1EZn+GFHjBUvVtJc/SKGcFAYG
+         bx/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759740393; x=1760345193;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CJXxaJbkSA/3Xb5uNqWTj3oIOQXZmPEn5IRJe3cfIGg=;
+        b=LjAdCzLB/sKq5yHzXbmybPrSA42z/YUZ2UR3vtIDSDQoE5J0sewSxDnK3m8OW2Wbg8
+         yOEpYip8H6gPE961+P9QltSoVVDaYmzqXquu0ivQUWpoHOphw6h/JdtbeoBvKM7ydXGm
+         +Ce5gt85dSnr3iigLSSEwZHYJP3Xy9cVhEGD50+KBwaIrx3sk8Yq23nL3ZlDX1wzVWKg
+         ZOqFZkmjwe/09JIilIFsGMl3G4xqhE1y9OnkIHkyvZ/3nYeodJPn8iTCCl/s94+dGoqg
+         DyBFJrPNKYV1aZqff+a8evI/hwvZPsBaocM0LA67yXY6M9Eg3KbWepwahuEiZRsAuByl
+         8Bvg==
+X-Forwarded-Encrypted: i=1; AJvYcCXEZgPaTVVEDn8EQpRRQDaK9BKMDP8WUCaGXbwAh+1x1PTyxP6pBQEYI5EgOArRKqmiy2zOv0uBitY+ldg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxl4A4DzERXNzhF3dZg0sQlqYEY7FCIKU4xddQ/wBKDCP32Ctcm
+	LYC0c/qL4DyrWkzuPWVsXafZjcTMgjUuFZY3C9GyIANUMcIilV6CiWEy9vocO2L5R+PsCkNgBQ1
+	NRYA1LMKa/CF46rERbWzNERiA6a7Jxw==
+X-Google-Smtp-Source: AGHT+IG3L0nTzCEE3SV4kT0ZjhvKBhiX0rWparm4WD7kJhXXQ2yTr43Zwy/HZZQHhpAowp7zp90/DyaNjwbO2AKpPho=
+X-Received: from ejdbw9.prod.google.com ([2002:a17:907:fd89:b0:b3f:de21:e9ef])
+ (user=jprusakowski job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:907:3e93:b0:b45:c0cc:2fe9 with SMTP id a640c23a62f3a-b49c393a5eemr1610665866b.46.1759740392721;
+ Mon, 06 Oct 2025 01:46:32 -0700 (PDT)
+Date: Mon,  6 Oct 2025 10:46:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.200.33\))
-Subject: Re: [PATCH] MAINTAINERS: add Denis Benato as maintainer for asus
- notebooks
-From: luke@ljones.dev
-In-Reply-To: <ebe38602-1832-391f-b043-cae0c10d7e30@linux.intel.com>
-Date: Mon, 6 Oct 2025 10:44:51 +0200
-Cc: "Mario Limonciello (AMD) (kernel.org)" <superm1@kernel.org>,
- Corentin Chary <corentin.chary@gmail.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Hans de Goede <hansg@kernel.org>,
- Denis Benato <benato.denis96@gmail.com>,
- LKML <linux-kernel@vger.kernel.org>,
- platform-driver-x86@vger.kernel.org,
- Armin Wolf <W_Armin@gmx.de>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <E7993E86-3805-4E93-A714-0D4A33FBA759@ljones.dev>
-References: <20251003184949.1083030-1-benato.denis96@gmail.com>
- <46762a7e-e8cb-45fb-8d62-062915133463@kernel.org>
- <36720829-6ba3-4178-952c-4236622edfa2@kernel.org>
- <ebe38602-1832-391f-b043-cae0c10d7e30@linux.intel.com>
-To: =?utf-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-X-Mailer: Apple Mail (2.3864.200.33)
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA2MDA2OSBTYWx0ZWRfX9Oc5lSQNey2f
- BEp9lPvBCGvD5GzEkVrIoNvhr6xSc2+o5GqBEA8If1HjVoGQgmJqu3NakWbh/ZpNYbCFhWyC3aV
- TTWMFr50uQMwJheImHd4QV3jWiK6v+c6h4SK67G/UCWXgFRqKoxRmIV0GlgsV+9syPbMdNHswA7
- p/bWTaRpDjumSv4FcSxMcr+iq5iit++4slFMhqUZRVISConi+j5OVoWqI+BMzv+9QQ/lc4O1Vb5
- Fef0Awx1p/dtpjmhewcrNwo0pf1XgtIVPXR9Fxx3rq//LddeUqAHo/sChez2xT8PparYEj5IM=
-X-Proofpoint-GUID: gf0Yb-eDMZe3BkoZtf2d74Ns211qwgiq
-X-Proofpoint-ORIG-GUID: gf0Yb-eDMZe3BkoZtf2d74Ns211qwgiq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-06_03,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0
- suspectscore=0 phishscore=0 spamscore=0 bulkscore=0 malwarescore=0 mlxscore=0
- mlxlogscore=999 clxscore=1030 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.22.0-2506270000 definitions=main-2510060069
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
+Message-ID: <20251006084615.2585252-1-jprusakowski@google.com>
+Subject: [PATCH] f2fs: ensure node page reads complete before f2fs_put_super() finishes
+From: Jan Prusakowski <jprusakowski@google.com>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	Jan Prusakowski <jprusakowski@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Xfstests generic/335, generic/336 sometimes crash with the following message:
 
+F2FS-fs (dm-0): detect filesystem reference count leak during umount, type: 9, count: 1
+------------[ cut here ]------------
+kernel BUG at fs/f2fs/super.c:1939!
+Oops: invalid opcode: 0000 [#1] SMP NOPTI
+CPU: 1 UID: 0 PID: 609351 Comm: umount Tainted: G        W           6.17.0-rc5-xfstests-g9dd1835ecda5 #1 PREEMPT(none)
+Tainted: [W]=WARN
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+RIP: 0010:f2fs_put_super+0x3b3/0x3c0
+Call Trace:
+ <TASK>
+ generic_shutdown_super+0x7e/0x190
+ kill_block_super+0x1a/0x40
+ kill_f2fs_super+0x9d/0x190
+ deactivate_locked_super+0x30/0xb0
+ cleanup_mnt+0xba/0x150
+ task_work_run+0x5c/0xa0
+ exit_to_user_mode_loop+0xb7/0xc0
+ do_syscall_64+0x1ae/0x1c0
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+ </TASK>
+---[ end trace 0000000000000000 ]---
 
-> On 6 Oct 2025, at 10:31, Ilpo J=C3=A4rvinen =
-<ilpo.jarvinen@linux.intel.com> wrote:
->=20
-> On Fri, 3 Oct 2025, Mario Limonciello (AMD) (kernel.org) wrote:
->> On 10/3/2025 1:58 PM, Hans de Goede wrote:
->>> On 3-Oct-25 8:49 PM, Denis Benato wrote:
->>>> Add myself as maintainer for "ASUS NOTEBOOKS AND EEEPC ACPI/WMI =
-EXTRAS
->>>> DRIVERS" as suggested by Hans de Goede and Armin Wolf.
->>>>=20
->>>> Signed-off-by: Denis Benato <benato.denis96@gmail.com>
->>>> Link:
->>>> =
-https://lore.kernel.org/all/8128cd6b-50e3-464c-90c2-781f61c3963e@gmail.com=
+It appears that sometimes it is possible that f2fs_put_super() is called before
+all node page reads are completed.
+Adding a call to f2fs_wait_on_all_pages() for F2FS_RD_NODE fixes the problem.
 
->>>=20
->>> Thanks, patch looks good to me:
->>>=20
->>> Reviewed-by: Hans de Goede <hansg@kernel.org>
->>>=20
->>> Regards,
->>>=20
->>> Hans
->>=20
->> Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
->>=20
->> Luke,
->>=20
->> You are planning to step down from maintainer too, right?  Can you =
-send a last
->> patch doing that too?  Or let Denis send one and Ack that?
+Fixes: bf22c3cc8ce7 ("f2fs: fix the panic in do_checkpoint()")
 
-I will eventually step down yes. Denis asked me to stay on for the =
-moment.
+Signed-off-by: Jan Prusakowski <jprusakowski@google.com>
+---
+ fs/f2fs/super.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->>=20
->>>=20
->>>=20
->>>=20
->>>> ---
->>>>  MAINTAINERS | 1 +
->>>>  1 file changed, 1 insertion(+)
->>>>=20
->>>> diff --git a/MAINTAINERS b/MAINTAINERS
->>>> index 156fa8eefa69..81bcb934748d 100644
->>>> --- a/MAINTAINERS
->>>> +++ b/MAINTAINERS
->>>> @@ -3841,6 +3841,7 @@ F: drivers/hwmon/asus-ec-sensors.c
->>>>  ASUS NOTEBOOKS AND EEEPC ACPI/WMI EXTRAS DRIVERS
->>>>  M: Corentin Chary <corentin.chary@gmail.com>
->>>>  M: Luke D. Jones <luke@ljones.dev>
->>>> +M: Denis Benato <benato.denis96@gmail.com>
->>>>  L: platform-driver-x86@vger.kernel.org
->>>>  S: Maintained
->>>>  W: https://asus-linux.org/
->=20
-> Hi all,
->=20
-> Unrelated to the patch itself, I'm more wondering if Corentin Chary=20
-> <corentin.chary@gmail.com> is still around as I don't recall ever =
-hearing=20
-> anything from that address in any context. The latest email from that=20=
-
-> address lore.kernel.org could find is from 2017.
->=20
-> Maybe we should remove that address from the maintainers list?
-
-I=E2=80=99d been wondering if that should be done. Though never was sure =
-of the process or if that was okay.
-
-
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 1e0678e37a30..5c94bc42b8a1 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1976,6 +1976,7 @@ static void f2fs_put_super(struct super_block *sb)
+ 	f2fs_flush_merged_writes(sbi);
+ 
+ 	f2fs_wait_on_all_pages(sbi, F2FS_WB_CP_DATA);
++	f2fs_wait_on_all_pages(sbi, F2FS_RD_NODE);
+ 
+ 	if (err || f2fs_cp_error(sbi)) {
+ 		truncate_inode_pages_final(NODE_MAPPING(sbi));
+-- 
+2.51.0.618.g983fd99d29-goog
 
 
