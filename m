@@ -1,121 +1,160 @@
-Return-Path: <linux-kernel+bounces-842717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84F00BBD61A
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 10:47:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 636DBBBD623
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 10:48:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B7E91894DC1
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 08:47:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1D833B8875
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 08:48:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A262261B99;
-	Mon,  6 Oct 2025 08:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C85F262FC2;
+	Mon,  6 Oct 2025 08:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="A0Mqpbu4"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CP6TKfjZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79451231829;
-	Mon,  6 Oct 2025 08:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE07E1DE885;
+	Mon,  6 Oct 2025 08:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759740437; cv=none; b=r7VRqc0bcXsttt5B4Kd7UjezoKYBr8Xc94kmEv8+sdz3lAcT9ppjZiSWssS7oZH+BQ/mzawFPt9EytdzFYHXDcqAw7bUlS8FtDEBcIvJ7EWA3HEcjrmnie2YV4iOHos2vOjeTEd6UJ8ljkOFIMfwg2lfFlPsqlzbH4abfFWsex8=
+	t=1759740498; cv=none; b=D4XV+cb6EOcAsgeGoPb1owIkOq/moNyCTBXYUPvtg3JIVOrBJ6D3nrJRLmoPVQjArXms/AJAragHV+QkAGzz1m0hpofnrcL/frQYlfSl4IuUy9FvPpS6D4vhR4NEjFu1QfdKT81kuEO7+CrAsDYN//o1geUD8zZAUQpeNGg0Pdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759740437; c=relaxed/simple;
-	bh=IzIhp5dUepY9MmY78wLvtgLm9Fvq7PK6A4cvqTgpA/g=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=b5dDKYI6HU3+r+NxNnSB9UOu9wrYsvNxO1U2pfPxNOjal37e/9khhIwJHVuJt1A/OM2yqHx2/dqltoJK8oYdMtijMOvcxwY7EjQ+D+lPdYmJ2TudI32P3NqcxbVTHPhZqQ/zEjoIcGUuLMpi81p7Qj6iX0xtSFaA+CEYhBdL36c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=A0Mqpbu4; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Cc
-	wnoxPqYyXU1wNy7MHuZsxfu9hybasnCZholcU269Q=; b=A0Mqpbu4Pjkt6ZmbpU
-	lBNruBx4xAXmmpEpid/hmvqdpT3jbpIWdDUJOPjKJ/LtmpthQf6z96vt7i+Gsr93
-	9bJKLi7x10xu2PWqrig3K80gJOjDcpteMi8qeKlRNLHYfVG+7X2ep2T9DMQgkmaf
-	AFfluPut7bzJvJ6ioc48widSY=
-Received: from 163.com (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wDHbzj4geNoWg8PCQ--.40488S2;
-	Mon, 06 Oct 2025 16:46:49 +0800 (CST)
-From: Chingbin Li <liqb365@163.com>
-To: pmenzel@molgen.mpg.de,
-	marcel@holtmann.org,
-	luiz.dentz@gmail.com,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] Bluetooth: btusb: Add new VID/PID 2b89/6275 for RTL8761BUV
-Date: Mon,  6 Oct 2025 16:46:47 +0800
-Message-ID: <20251006084647.19902-1-liqb365@163.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759740498; c=relaxed/simple;
+	bh=GKEbOZbwEXjdVAFvK6hxlcWv1tDFAdFRXoShaWXJn9A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EJCjEE+fYAU1wss4BdEn0dJMCeWDhqwbYIRRZGGE/GyxeXvjGfwdhXyyi7XcnLskZ/5ELC8m5nXn9eBzV3tyJjU7pjv528ApdUrQA8qjCtdynpHPGYd92In2NyeO34Ue9rMDMQSy9YJiJKMg77kqD7c+ZH1OU0FdxQcdaU1KtLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CP6TKfjZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99344C4CEF5;
+	Mon,  6 Oct 2025 08:48:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759740498;
+	bh=GKEbOZbwEXjdVAFvK6hxlcWv1tDFAdFRXoShaWXJn9A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CP6TKfjZ8pOh7KCNAnXmaSRmqG2Rx2jqNhoS0XNHUpTIa8IY0AQq3Z8pgFkuWOQkt
+	 nF1ulRyfXBMIsoNhMErrfqT+nUUs41NwrPZ5JJEOu3zayiUZsQbYRf8orCRwYkO+tu
+	 WED19impDHZjtNLWm7OsODefsxtue5Q4XxQcqFORVOumewcd2HgLCrBAEF9UY26jGR
+	 vmADUeCv+F124Os0ny7uGmgD3MyArgPRSFntNXdj3KO+qRFuWIgqFJbA4cRHOnSI5o
+	 JkyMasR1l6hBUW/aonVWIMSpRywf8kpIl+J+IoDKrw8ylKm8pY8E0EBGbWH5EWlu/f
+	 215vekh0NKQTg==
+Message-ID: <43ba93bd-0dba-415b-8a7e-cdc4d954f79d@kernel.org>
+Date: Mon, 6 Oct 2025 17:48:10 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDHbzj4geNoWg8PCQ--.40488S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uF47KF4xWF47ZFW5Xw43KFg_yoW8Kr4DpF
-	4UJ3ZxZF1fKF1UGr9IkF18CayrW34xu342g3ZrGw1fXFZ5Aan7J3WUAryfXrsayr4Sg3ZY
-	qFnrC3yFkr17JrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Ul_MfUUUUU=
-X-CM-SenderInfo: xoltujiwv6il2tof0z/1tbiURPecGjjdy3PvwAAsN
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 18/20] arm64: dts: qcom: kaanapali-mtp: Add audio support
+ (WSA8845, WCD9395, DMIC)
+To: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>,
+ Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+ trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com
+References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com>
+ <20250924-knp-dts-v1-18-3fdbc4b9e1b1@oss.qualcomm.com>
+ <CAJKOXPfY-CpE_aKd910PQ2+u9ux2EvuVEt9ArzhdVCJcTQJUQQ@mail.gmail.com>
+ <51637d37-aa5e-492a-851c-e5d6bfbe421e@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <51637d37-aa5e-492a-851c-e5d6bfbe421e@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add VID 2b89 & PID 6275 for Realtek RTL8761BUV USB Bluetooth chip.
+On 30/09/2025 21:06, Prasad Kumpatla wrote:
+> 
+> On 9/25/2025 6:56 PM, Krzysztof Kozlowski wrote:
+>> On Thu, 25 Sept 2025 at 09:18, Jingyi Wang <jingyi.wang@oss.qualcomm.com> wrote:
+>>> From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+>>>
+>>> Add support for audio on the Kaanapali MTP platform by introducing device
+>>> tree nodes for WSA8845 smart speaker amplifier for playback, DMIC
+>>> microphone for capture, and sound card routing. The WCD9395 codec is add
+>>> to supply MIC-BIAS, for enabling onboard microphone capture.
+>>>
+>>> Signed-off-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+>>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+>>> ---
+>>>   arch/arm64/boot/dts/qcom/kaanapali-mtp.dts | 226 +++++++++++++++++++++++++++++
+>>>   1 file changed, 226 insertions(+)
+>>>
+>> Audio is not a separate feature from USB.
+> 
+> I didn't understand this, Could you please help me to provide more 
+> context on it?
+> Is this regarding Audio over Type-c?
 
-The information in /sys/kernel/debug/usb/devices about the Bluetooth
-device is listed as the below.
+USB depends on ADSP, so your split of patches into separate audio commit
+is just incorrect.
 
-T:  Bus=01 Lev=01 Prnt=01 Port=02 Cnt=01 Dev#=  6 Spd=12   MxCh= 0
-D:  Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=2b89 ProdID=6275 Rev= 2.00
-S:  Manufacturer=Realtek
-S:  Product=Bluetooth Radio
-S:  SerialNumber=00E04C239987
-C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+> 
+>> It's simply incomplete
+>> picture which is wrong for case of submitting everything at once.
+>> Either you release early, release often (which I asked you many
+>> times), or you submit complete work.
 
-Signed-off-by: Chingbin Li <liqb365@163.com>
----
- drivers/bluetooth/btusb.c | 2 ++
- 1 file changed, 2 insertions(+)
+And here I explained why.
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 5e9ebf0c5312..3ca17d283d26 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -781,6 +781,8 @@ static const struct usb_device_id quirks_table[] = {
- 						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x2b89, 0x8761), .driver_info = BTUSB_REALTEK |
- 						     BTUSB_WIDEBAND_SPEECH },
-+	{ USB_DEVICE(0x2b89, 0x6275), .driver_info = BTUSB_REALTEK |
-+						     BTUSB_WIDEBAND_SPEECH },
- 
- 	/* Additional Realtek 8821AE Bluetooth devices */
- 	{ USB_DEVICE(0x0b05, 0x17dc), .driver_info = BTUSB_REALTEK },
--- 
-2.43.0
+> 
+> These patches enable usecase for Speaker playback and On-board-Mic
+> Capture. Do you consider is there is anything need to do to make it 
+> complete ?
 
+Yes, please squash patches.
+
+
+Best regards,
+Krzysztof
 
