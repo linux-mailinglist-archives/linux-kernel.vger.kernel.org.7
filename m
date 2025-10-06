@@ -1,132 +1,146 @@
-Return-Path: <linux-kernel+bounces-842603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43ADFBBD236
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 08:33:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 571FEBBD4CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 10:05:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38223189252A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 06:33:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1149B4E6697
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 08:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AEA224DFF4;
-	Mon,  6 Oct 2025 06:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85BF25B695;
+	Mon,  6 Oct 2025 08:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aKUhV9Wq"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="S8hZO2eW"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7741C07C4
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 06:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489AA1B4257
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 08:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759732408; cv=none; b=goGN90tREZYCSOdNm2yYH2D76CWYaE+vwutHyc7ro12F9SVa0LfYUlvVyf8CU9RbUJ0oQRun+gDMmvVMWWB9i+DP009v9z+Y/RWfF8iGZcquovxFjOqwS79dFNK3WqXS5rn3z50w+aeIab12+y5UlLBZSJHfjbWcAWiMjSj8IiA=
+	t=1759737933; cv=none; b=EpHQCi5BQmNtfK7IYqZe3r2dfqDh8mNRijE6WII2WIGRSNOXdDXIcBS4dJ1J2uvS2JRhbAvJGbQcLtmg7j7752ZfYAC5Q54Y4EJ1nKLS0yJHMp0vAjFtXHAHOkrwYseIuogdjCfuNGMw2GKf1ueMVzWCoVNIUs9z3Q+HBO9WcfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759732408; c=relaxed/simple;
-	bh=vwgN4pd1wlJ5mJCQPllmiwAEef2TsJydAXGY1owNoAg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lLiA22BQx/Hk5XTdvmLjnzGkkRaPuj1SGAzCANah6XKhvSS+KW6IPFzzjrFNKqaU5kqPCcGjS7V6tGYpBLO9MopnH85AQPeATTgRlRTVhRY4QjmnxgX9zo9KNlYHuv1dHFQUOtkk6/oex8dJNL8dSw/lckeUAZ3jvJvGMV6uroU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aKUhV9Wq; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-78af3fe5b17so3439371b3a.2
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 23:33:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759732406; x=1760337206; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=B89nSX8bjjMwsKo+3NImU4/R9N7KISOzbf8rIhnLQX0=;
-        b=aKUhV9WqgiG99ifBlPDiH+VTOcZAzl4B1hMZdtcEkJtfMz7v3d68H+8P9J7Nv3MNZz
-         rA7rfRZvh8QH0FOsw2OfnkQWxCoaB6+kg9soHOVl5gXssJdxVpTcqfWavKppVNfyntrP
-         zYTzeV9jSdAJWxwmg34ySzP2VWE6sTMUGt3FJmz0PItBDTQaFuUmk7wknnJ14BUH0H+s
-         lN8cIDrropiE944mzHkeXRyWqpAfbhahFjcuvWFQkRVRXGBIxNC5EixekttjrW9RZFnE
-         TTaQ1a7eIkm4Mxysdmj0ScpKe+aBSSvJWlTwwXo27R5dEgGJsa/puPU2qeg8JgzomBNt
-         HdXQ==
+	s=arc-20240116; t=1759737933; c=relaxed/simple;
+	bh=QA5XuDVb2r3T1rUhSUw2wU4hB4uJTsCr6nvMKYFQzzU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bO237n7kJZP0HceE8N/1Ja3dGsgR1BMCry76yjsejMiQHnIacf2NZNI+ov1LktjYE+PCFZTyxglCm5kl9NKY7dqz4PsG09vMPqXijWqZqpxW+1ybdhhqGv3lC0XgozhiFSXuEzt0Z7viRQsN2C2wV8PIeMh3mu29O+qxMK8Xubk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=S8hZO2eW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 595Mt2a1027377
+	for <linux-kernel@vger.kernel.org>; Mon, 6 Oct 2025 08:05:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YHQSGZR9GO7rC/pjCE3xxsdC8DURJ2+fIVFYs/vXeMQ=; b=S8hZO2eWAYjlF7yS
+	9sM+q5XzvCTMir+y2JSYydRu8Pb/Mus6Bnp9KV8wLl4RB20m203amqSyyA/7OsPH
+	X0BJTb8ZIPcWzK7u/Ro/UX6ABEGJTk0YCa0vh1DGIN9Pi8F5dr7DWCIwjiFHxxqx
+	PvTB7DwfR3isd9RAXoEcAT/UM1OYzq6lPrd3q+PAuTwZfiYyIZzlcYlbKM3W1hUD
+	pHQhZIAPDQGkXggZM60q0a1Yr4efU0Ppev8cYpI+7O7yNqK6P2o2O3n+cc3THgI6
+	uHdYMZHkPe6s53hXHcCRQ0HgMl3bPln5OLWRHHIaEo3lEccgYgJy9m/2l8TSR6Nf
+	ujuz7Q==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jrxn3hes-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 08:05:29 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-860fe46b4easo167554585a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 01:05:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759732406; x=1760337206;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B89nSX8bjjMwsKo+3NImU4/R9N7KISOzbf8rIhnLQX0=;
-        b=so96mbhzti8rxuX6HulWvOE+NgIBBP6KEwrwVovXlIOXP+2n6ip5qC8/LLpbNZc5Uc
-         LZj/SYz4gt3tK3bq65BhVpi83lUTMyJn3LqT/uNAdgiFHzpx1eoRJuKpX5Nqq2HhQk5Q
-         zC1k9WI8JdvgjvOTXG0mnRn3V2mx9zd6INO+dny/bHSBbeO+5RuUt0q00452l3kwMJI/
-         IwfkmPs70EjGgeUXZU2sZpABWAYQHonS3pAdcBTY8ZW7/FIX3MDuZJEXsHB5ceveecbu
-         7iSL+mBdsDF6fC6PRmPyxYONHDnp1lQ8jhyDxry0GmfZe1RAcXpUUn5wyURnF1X6vkIV
-         J8Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCW09FCBMyV6v8MHiECRBSbXlmodVJlYmvJZ8Bec/jPVFPWJbG9A7GCFrTZzf3/k6svY28I5y9kZILiQizA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUmXQA0UFeaWX4uQy1geRjos6wI8biPgkJSScOtO6/bVzUqIds
-	Fi9EulOCZp5mfi30P1YqoXv2VRwsv4d4lPOM9epblQV+3P5OB2DeaK+d
-X-Gm-Gg: ASbGncu9Gc1ZIXyV+VoGoA7+wmyDqB64SKYBL2LoEE6tUn0tdmNFF5PFIcyqSpZfCLb
-	egASaxWWvQpKWlWzn59f/JURGWtHA6Xe+p6UlpoJ6k/SoQk0Nd7Cp4HwQZIFda5NpTg5lGcu59R
-	QP3Pl8JN99CdrSEMkFs8xZtJN13BUCah1GxWSUDbZRX3k/x7oApoW6CSr0xXhFzzM2IkQ+hk8wk
-	6pDcSydoXoOOlGHfB0oxpoZEIV3wTakn/7LJ/jAu/e9mZdBi5Gjzih6K0366CLeBwPJMwMkAwfC
-	Pw5PhZDyrSV+qA4j5wU8GAV34MEkzcLdR9L6Z2VTQPY0v9159b14YSQopblhUFYZyM/y4dotkBl
-	zW/nXWGLrrwRfYgjpkU/sHe+nnhqJyGX4Mfvlcth6rJrNC8U2QqHnzlHyh9CiUAyd/w==
-X-Google-Smtp-Source: AGHT+IFu0jCCiRVEKF2vGYTKY0UmpfJP0HPhcbwvKc4WgpDQs1RP25o5SvejbRWdDVPcvkwLb5opvw==
-X-Received: by 2002:a05:6300:218e:b0:2d9:4afc:e1cf with SMTP id adf61e73a8af0-32b620ea86dmr13981515637.47.1759732406022;
-        Sun, 05 Oct 2025 23:33:26 -0700 (PDT)
-Received: from LilGuy ([2409:40c2:504c:58f0:9c58:4a8b:65a6:88b4])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-78b02074663sm11626212b3a.74.2025.10.05.23.33.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Oct 2025 23:33:25 -0700 (PDT)
-From: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
-To: Hu Haowen <2023002089@link.tyut.edu.cn>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"Mario Limonciello (AMD)" <superm1@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Qais Yousef <qyousef@layalina.io>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Jie Zhan <zhanjie9@hisilicon.com>,
-	Swaraj Gaikwad <swarajgaikwad1925@gmail.com>,
-	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
-	linux-kernel@vger.kernel.org (open list)
-Cc: skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com
-Subject: [PATCH] Documentation/zh_TW: fix malformed table in cpu-drivers.rst
-Date: Mon,  6 Oct 2025 12:01:50 +0000
-Message-ID: <20251006120154.18348-2-swarajgaikwad1925@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1759737928; x=1760342728;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YHQSGZR9GO7rC/pjCE3xxsdC8DURJ2+fIVFYs/vXeMQ=;
+        b=m6BBzILtOUiy0SJdiwxrBWwv8XeVE59Nqw9GtnSJzjzLvTyZo8I6/RL1jxz/VP87XE
+         tN0KwxmxIGv6EEb5W/cCiE3lwVJrNkDm1Hees8Omxrh0dmOX0PUE1QPsXpUXcNI47cJx
+         i3dXImw2TbTv/Jk/zf3IpVjXxoDhjR+smybbuAcLzprcUeyOpEcQ5meBMT+flZOqOg4i
+         USA9+NsO1B80QavRW0boyNAruqxVsM0HhEeGFhipbepbKo9q6KMKLVhuZw6P5s5Lpsyi
+         rqOOhdb66NLiYfooUXRVI7GTQe0knt58a+s5QEApAN0fJodowC/6ZmCDDnE0F2aeuQd8
+         UrAA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ2UC6f9vIIYunrkDCCNS/E4FDuin5BJU3xF6AANDCHhOeI707XrU7jMhncVpfeTLvX24Lz4VGM33iVT8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXrcQzKQ3wpRweRtn2ruC3P/yccoKMX8Ixod/YoOKZCwgLTeOZ
+	VpQvdvwQjqEBJdQHMeqSv+no+7cdV3bjEmwJ6dGUA3Bte8njSNvzPKY6zh6x0+5etMqofR1uH7P
+	zMoljC6kXvzc3DzTcWr1HlrIaEN0+sEX0+zKbvIHENmCUlipsUPsfL7NGgR3aF/eFsSg=
+X-Gm-Gg: ASbGncue4Zb1+1D3SOGbWxaRa/Zul14eoaG9sinRIz/eaXtF0vnO1J07hrfEws03//M
+	eH6gCkEfEHuSekAnMeI91tSy7HLfDpN5EBLCSOSBWbe4ej5thLHgNEviTSCk4BOvFiywX7avZyf
+	ZnRwbrHPHN7N1NDI0cBFoQRq5sGK87a/Re+XXZPWx3CtHGKxTAh+7xx8XKShu1QH2DcvQ5CU8+s
+	z9qv5VtHOUSqjSao07xmvPXuHF8xRflnuBivjJFQb/9gGxRRE5aVSM9LVfE8DQvAPzFI4HFdz6I
+	PqVGIO0G749IIOhQ/wEW42+U5dUZEj3+zitqTb4lTUKijILjS35GIXcIYMc8hGnh7BzSD1meWsY
+	sHGa1U02E1P2BRC5pJk2zv5MLmsU=
+X-Received: by 2002:a05:620a:1a1a:b0:864:1d18:499b with SMTP id af79cd13be357-87a36779e3emr986276685a.5.1759737928265;
+        Mon, 06 Oct 2025 01:05:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFiHABiaY7kNoovBaU7TywNPovpCiqTpnopBNDWVEUf2OLmzGt7ShaBnEXJHsNVZXcDkLZ+FA==
+X-Received: by 2002:a05:620a:1a1a:b0:864:1d18:499b with SMTP id af79cd13be357-87a36779e3emr986274285a.5.1759737927723;
+        Mon, 06 Oct 2025 01:05:27 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486970b2ffsm1099083366b.47.2025.10.06.01.05.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Oct 2025 01:05:27 -0700 (PDT)
+Message-ID: <b85df7d5-01a1-490b-b223-e968a862e9de@oss.qualcomm.com>
+Date: Mon, 6 Oct 2025 10:05:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: sdm630: fix gpu_speed_bin size
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: Konrad Dybcio <konradybcio@gmail.com>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251006-sdm630-fix-gpu-v1-1-44d69bdea59a@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251006-sdm630-fix-gpu-v1-1-44d69bdea59a@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAwMSBTYWx0ZWRfXyVbQrSLOzdMP
+ F7FSWROAzAIFhNKtI0Lv9k6Kjt4JKg15fzPWVll9H1j4+a7PHVsyNLt9qeMEgblTW/b1TccobHs
+ ceRfYRbP/grw0/NkQoSQKpFO/00Qtz/o9Z75xdd1l5TuC7Tj8DBJManhgqeQdVcCks+VLWFOseu
+ eoYOtuOc5ZBLLS7gfAbiy0PjTdFI4eDXy+RsT5T8dCwFNLwVJfVSdRhzje1DhPbta5djWnBixo/
+ 9tezo191npdYf3C+wJqX5egOrbOBip28GiJpy39wkh+PMEGz+1S4hDJSI8lzsOeF0HgBE1QuPO8
+ CuVfFwZ3OA8mPXvgBpbV6qT/7+cBf6LwxCC2meDexOCYjogv5IQqsvhuAwHSBKr/+MMPNkiY6x4
+ iMdVd7+cZ/RK0MTyXOy55E8M6+yIIA==
+X-Proofpoint-GUID: uGFkOokasNkJ7aEWPHb2VTuKugx539EN
+X-Proofpoint-ORIG-GUID: uGFkOokasNkJ7aEWPHb2VTuKugx539EN
+X-Authority-Analysis: v=2.4 cv=EqnfbCcA c=1 sm=1 tr=0 ts=68e37849 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=19hG_fmFdy9UMJMDlhIA:9
+ a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-06_02,2025-10-02_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 spamscore=0 lowpriorityscore=0 malwarescore=0
+ adultscore=0 suspectscore=0 bulkscore=0 impostorscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040001
 
-Fix a malformed table detected by Sphinx when building the Traditional
-Chinese translation of CPU frequency documentation.
+On 10/6/25 12:16 AM, Dmitry Baryshkov wrote:
+> Historically sdm630.dtsi has used 1 byte length for the gpu_speed_bin
+> cell, although it spans two bytes (offset 5, size 7 bits). It was being
+> accepted by the kernel because before the commit 7a06ef751077 ("nvmem:
+> core: fix bit offsets of more than one byte") the kernel didn't have
+> length check. After this commit nvmem core rejects QFPROM on sdm630 /
+> sdm660, making GPU and USB unusable on those platforms.
+> 
+> Set the size of the gpu_speed_bin cell to 2 bytes, fixing the parsing
+> error.
+> 
+> Fixes: b190fb010664 ("arm64: dts: qcom: sdm630: Add sdm630 dts file")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
 
-The issue was caused by misaligned column widths in the grid table at
-line 109. Adjusted spacing so that each row has consistent column
-widths, fixing the docutils "Malformed table" error.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Tested with:
-  make htmldocs SPHINXDIRS=translations/zh_TW/cpu-freq
-
-Based on commit 47a8d4b89844
-
-Signed-off-by: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
----
- Documentation/translations/zh_TW/cpu-freq/cpu-drivers.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/translations/zh_TW/cpu-freq/cpu-drivers.rst b/Documentation/translations/zh_TW/cpu-freq/cpu-drivers.rst
-index 5435c3928d4b..7f751a7add56 100644
---- a/Documentation/translations/zh_TW/cpu-freq/cpu-drivers.rst
-+++ b/Documentation/translations/zh_TW/cpu-freq/cpu-drivers.rst
-@@ -112,7 +112,7 @@ CPUfreq核心層註冊一個cpufreq_driver結構體。
- |                                   |                                      |
- +-----------------------------------+--------------------------------------+
- |policy->cpuinfo.transition_latency | CPU在兩個頻率之間切換所需的時間，以  |
--|                                   | 納秒爲單位                    |
-+|                                   | 納秒爲單位                           |
- |                                   |                                      |
- +-----------------------------------+--------------------------------------+
- |policy->cur                        | 該CPU當前的工作頻率(如適用)          |
--- 
-2.51.0
-
+Konrad
 
