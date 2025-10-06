@@ -1,76 +1,205 @@
-Return-Path: <linux-kernel+bounces-843010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C9D3BBE319
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:34:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA2FBBE322
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55523189332F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:34:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE69E1894841
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516D02D0C85;
-	Mon,  6 Oct 2025 13:34:08 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFF92D1932;
+	Mon,  6 Oct 2025 13:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="n6yFTlCi"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC532D0606
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 13:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03761244661;
+	Mon,  6 Oct 2025 13:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759757647; cv=none; b=YxGzefgtgFr1Crvoc8mk1ZNE3v4Eu7nxVdPtTqouKGCl/uUY/U5QDx8ggNtNiLDAqwwcdueLlUXOi79YMT3HvYJZRnrLaskqwRtTA228SGdIh75m5PmGxxmSYGkAXV9v9pEysOzZzL15lsA3gAXPX/8lKlAsa2AuaaVm76oKc2w=
+	t=1759757669; cv=none; b=mVGqlsjRhu7Cou6PIdCLTLO/M/oYxrOepZ7VLFsIu68sLeKrNoY/Erz4CsJIRTtPKtKLSxnGk6r+dWIJFObc6t3Gtc8bAVhtKemZBkjn8nt+iBC3+LxURcVDW9PAMIMWdufr4Zpni0mOuEAcVI3MtCjh2/ItqLbATaFipxzQGi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759757647; c=relaxed/simple;
-	bh=TL5jMOTAeFsRvHAwOtmEOLeCIjnhJJpPxhu6/rUezI4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=rItKxAR99cvmEjEFKL0LyB52yW9nnVgnR7JcjoCGNF7JYGP7Q1LKniTxfUpCnjIFqvpnJXWyae9as8F72ICp70rwPVefRFfBde359yaBxyNoYaK7GuVm5UAZQVg9b0ljNDn/a2PXPJxKft0LZhb9komCupv+WVxxfCpc77CC7sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8ea63b6f262so1009807339f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 06:34:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759757642; x=1760362442;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TL5jMOTAeFsRvHAwOtmEOLeCIjnhJJpPxhu6/rUezI4=;
-        b=j5VoEg8vDlWRsLyoK+UF7V4YeBfJXd9zthWp5//zBk0EtNYwl/N0h4lIJdvpSBdt4M
-         XBgC76WbvtG0ilcJXVrZ2MaIwy6c6zV+vX7zzfCNTK8Yf89Px6Qklhviet8cAofKB8lD
-         gmdfWyIsPMe0sKyD0J9y5p4ruyv+S+vE1mi3boPRFTN73xLLJP3SQ7CFuKq3+/YigK7h
-         pVQb7eWxD16aQvD2t6uhcIB0hdLL90cXMAoLU85v519t2YXxATuxfTA8NtBqcTJq1l4J
-         FZXrtaEtWcOkcszC5GF30hhVtLYKKVUL9sGmhk+hVY/EMP83vFVIiwQjachL54z6f9m4
-         mvPA==
-X-Gm-Message-State: AOJu0Yw3PohGYks0KMARAn99GCo96BIDYD2L3oUCjD4VAatXj7sXRSgc
-	zZeaMwpTsaIymdb75o97RuOsIps33UWbt/W3bexLcRkFJmkyxzX7K4xTTi4X0VjNMw2Fl31Xhd4
-	gXLiawm7o1lkG9dGmPGNY9uM9qgzocHn3vE6/2L12gKY2/hdbsUTFDydahuw=
-X-Google-Smtp-Source: AGHT+IGCUSuSmBAJEVX50qgKAJNt4+VcNyxwrjZ7J9gp2hf+lCTLn3kZPMvGaPuAtQnG20oTiH5ZLZukni59C6p2PDlLNGqN/MjY
+	s=arc-20240116; t=1759757669; c=relaxed/simple;
+	bh=/nIk+ETFaJzymOk3UsTFl1HIEE9ttd0YV9z8+/gtL4o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=shXpkHFqn+UxNMaK+cBa9fPE/8iYR/DbMWU6gD7k2QeN7kcDqrHEPEczfVndAQqyFX3InZkMzC1/qmaNIIv8UadUu01zSBr5G1JqZ5CGj1pyLvPIl7pmlbuD7nxuGrk8IpywGCMgzniV4HRMwcy4hdDgYrLd7sjx5WZSNc9AQ8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=n6yFTlCi; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=tx9LrM33NaI46YTL1Cn2+ml+IDlJje7NZ2NowEuRVQ0=; t=1759757666;
+	x=1760362466; b=n6yFTlCiCJB2GI34RAmvZ7z9GkvC7+RJvpyRhJwTtcgdFH7nO16uBnzlEYdpd
+	rlHQWcIByE76lryMJsU+yMvHZb4b1Clpe9yKomBaKEilIQXOdQPK+PPqkJMRGuSqyvh5feh2F/6VL
+	5uUWboAN8qkuNeeMAwGGmXGcqJqM9JyCP2IzJ5WfgKyJ7A2NbiDu2s2ZCy7JL4jxQkKLkgoBjY5g+
+	xN19i3e4DNv4tw8T4940em4l8tTbW6R8dEx41Dp+nypT0LiAKZbE7O20kX38z3XkyNF+2AU1g6m1f
+	bCqSQjAm5KwyBtmBlqHnnmMnJUkh1YR0Un3Fdvs0uwttI0Ggaw==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1v5lM7-00000000II1-24Qh; Mon, 06 Oct 2025 15:34:23 +0200
+Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1v5lM7-00000003AdQ-11l2; Mon, 06 Oct 2025 15:34:23 +0200
+Message-ID: <e6a7e68ff9e23aee448003ee1a279a4ab13192c0.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v2] Revert "sunvdc: Do not spin in an infinite loop when
+ vio_ldc_send() returns EAGAIN"
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: Andreas Larsson <andreas@gaisler.com>, Anthony Yznaga	
+ <anthony.yznaga@oracle.com>, Sam James <sam@gentoo.org>, "David S . Miller"
+	 <davem@davemloft.net>, Michael Karcher
+ <kernel@mkarcher.dialup.fu-berlin.de>, 	sparclinux@vger.kernel.org
+Date: Mon, 06 Oct 2025 15:34:22 +0200
+In-Reply-To: <a80a1c5f-da21-4437-b956-a9f659c355a4@kernel.dk>
+References: <20251006100226.4246-2-glaubitz@physik.fu-berlin.de>
+	 <d78a1704-31dc-4eaa-8189-e3aba51d3fe2@kernel.dk>
+	 <4e45e3182c4718cafad1166e9ef8dcca1c301651.camel@physik.fu-berlin.de>
+	 <a80a1c5f-da21-4437-b956-a9f659c355a4@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c244:0:b0:424:7633:9e72 with SMTP id
- e9e14a558f8ab-42e7aded691mr175835595ab.30.1759757642466; Mon, 06 Oct 2025
- 06:34:02 -0700 (PDT)
-Date: Mon, 06 Oct 2025 06:34:02 -0700
-In-Reply-To: <67afa060.050a0220.21dd3.0052.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e3c54a.a00a0220.298cc0.0462.GAE@google.com>
-Subject: Forwarded: UBSAN: shift-out-of-bounds in sg_build_indirect
-From: syzbot <syzbot+270f1c719ee7baab9941@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Hi Jens,
 
-***
+On Mon, 2025-10-06 at 07:19 -0600, Jens Axboe wrote:
+> > The problem is that giving up can lead to filesystem corruption which
+> > is problem that was never observed before the change from what I know.
+>=20
+> Yes, I get that.
+>=20
+> > We have deployed a kernel with the change reverted on several LDOMs tha=
+t
+> > are seeing heavy use such as cfarm202.cfarm.net and we have seen any sy=
+stem
+> > lock ups or similar.
+>=20
+> I believe you. I'm just wondering how long you generally need to spin,
+> as per the question above: how many times does it generally spin where
+> it would've failed before?
 
-Subject: UBSAN: shift-out-of-bounds in sg_build_indirect
-Author: kshitijvparanjape@gmail.com
+I don't have any data on that, unfortunately. All I can say that we have se=
+en
+filesystem corruption when installing Linux inside an LDOM and this particu=
+lar
+issue was eventually tracked down to this commit.
 
-#syz test
+> > > Not that it's _really_ that important as this is a pretty niche drive=
+r,
+> > > but still pretty ugly... Does it work reliably with a limit of 100
+> > > spins? If things get truly stuck, spinning forever in that loop is no=
+t
+> > > going to help. In any case, your patch should have
+> >=20
+> > Isn't it possible that the call to vio_ldc_send() will eventually succe=
+ed
+> > which is why there is no need to abort in __vdc_tx_trigger()?
+>=20
+> Of course. Is it also possible that some conditions will lead it to
+> never succeed?
+
+I would assume that this would require for the virtual disk server to not
+respond which should never happen since it's a virtualized environment.
+
+If hardware issues would cause vio_ldc_send() to never succeed, these would
+have to be handled by the virtualization environment, I guess.
+
+> The nicer approach would be to have sunvdc punt retries back up to the
+> block stack, which would at least avoid a busy spin for the condition.
+> Rather than return BLK_STS_IOERR which terminates the request and
+> bubbles back the -EIO as per your log. IOW, if we've already spent
+> 10.5ms in that busy loop as per the above rough calculation, perhaps
+> we'd be better off restarting the queue and hence this operation after a
+> small sleeping delay instead. That would seem a lot saner than hammering
+> on it.
+
+I generally agree with this remark. I just wonder whether this behavior sho=
+uld
+apply for a logical domain as well. I guess if a request doesn't succeed im=
+mediately,
+it's an urgent problem if the logical domain locks up, is it?
+
+I have to admit though that I'm absolutely not an expert on the block layer=
+.
+
+> > And unlike the change in adddc32d6fde ("sunvnet: Do not spin in an infi=
+nite
+> > loop when vio_ldc_send() returns EAGAIN"), we can't just drop data as t=
+his
+> > driver concerns a block device while the other driver concerns a networ=
+k
+> > device. Dropping network packages is expected, dropping bytes from a bl=
+ock
+> > device driver is not.
+>=20
+> Right, but we can sanely retry it rather than sit in a tight loop.
+> Something like the entirely untested below diff.
+>=20
+> diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
+> index db1fe9772a4d..aa49dffb1b53 100644
+> --- a/drivers/block/sunvdc.c
+> +++ b/drivers/block/sunvdc.c
+> @@ -539,6 +539,7 @@ static blk_status_t vdc_queue_rq(struct blk_mq_hw_ctx=
+ *hctx,
+>  	struct vdc_port *port =3D hctx->queue->queuedata;
+>  	struct vio_dring_state *dr;
+>  	unsigned long flags;
+> +	int ret;
+> =20
+>  	dr =3D &port->vio.drings[VIO_DRIVER_TX_RING];
+> =20
+> @@ -560,7 +561,13 @@ static blk_status_t vdc_queue_rq(struct blk_mq_hw_ct=
+x *hctx,
+>  		return BLK_STS_DEV_RESOURCE;
+>  	}
+> =20
+> -	if (__send_request(bd->rq) < 0) {
+> +	ret =3D __send_request(bd->rq);
+> +	if (ret =3D=3D -EAGAIN) {
+> +		spin_unlock_irqrestore(&port->vio.lock, flags);
+> +		/* already spun for 10msec, defer 10msec and retry */
+> +		blk_mq_delay_kick_requeue_list(hctx->queue, 10);
+> +		return BLK_STS_DEV_RESOURCE;
+> +	} else if (ret < 0) {
+>  		spin_unlock_irqrestore(&port->vio.lock, flags);
+>  		return BLK_STS_IOERR;
+>  	}
+
+We could add this particular change on top of mine after we have extensivel=
+y tested it.
+
+For now, I would propose to pick up my patch to revert the previous change.=
+ I can then
+pick up your proposed change and deploy it for extensive testing and see if=
+ it has any
+side effects.
+
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
