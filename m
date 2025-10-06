@@ -1,221 +1,106 @@
-Return-Path: <linux-kernel+bounces-843038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F238BBE45C
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:03:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5FF8BBE46B
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:05:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 218874E23E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:03:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B966E4ED1AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C80268C55;
-	Mon,  6 Oct 2025 14:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889892D29D6;
+	Mon,  6 Oct 2025 14:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="HzfwidL4"
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Y5BUz/Cu"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E693770B
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 14:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33AA3770B
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 14:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759759411; cv=none; b=HmY6VtQLTYlfwCzGcITZDobOi91FFGzy35TwNw6M9bdNL8XNqNEkmIkfdNqrxO0bE/nFqk6x52lsJT5ctZKQdJIet2PyzTHari8G8DMqDspXsOM/sqreYy4KcdgqDDvbIXjSkobjePT6v+q/86VAFqr7MHaVDj+2lIpjuvn1F7o=
+	t=1759759507; cv=none; b=I2/FVHdpNwtFBnU96rzxze4ApYhobrWk6t4fG8EbXasQuDnA15Hlmjsv0ZIGO2kIwytKAu17/UB/g+JM3nHT4LcF+XLas6x2B/SspQYMeplXjsp6dgOWXHxtRNd9mKIDwmVvyXRRXrB4ZEnglXPqhHkfaeKEyi1lJtXNMt6eDUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759759411; c=relaxed/simple;
-	bh=+yEfXF921uRRUVIU5eNoFwcMt8qXIPcVyxQRC2ripRc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gDInsO01JkA4E5Whral3hW8AzSld5rWLP2fhw/GVYaO3P4QF51R9jFyBkHVf6vsz3HHCCvBarVRmMryaAOgL1Yfqjd2G00wDl08mMvUIDxrCeff/rvqzr7HjuQeg4weFzyPATO5Kq1WqZ55ct8IwoqkIhmteVVOhIuMSJ/doVrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=HzfwidL4; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-91fbba9a8f5so407704039f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 07:03:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1759759407; x=1760364207; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=F7SQCp24RNvOTegVrAKR3/DTuZvaz1VTJ+woslYjIWw=;
-        b=HzfwidL4mWqTInADCg1KVuVqzZCjBn1m898zKtkI8bKFhlQiOeHatNnzTw2UPpZ/0h
-         v76Ni796NYIv9j6WkGZ+QX6nsaEXjuipqGSCdzxm/x5JYtiQsM6e94iksW9T5dkdkodK
-         GttAB3R0M7S6uV0f+jc0pU5EM47Yo74dA+geiXVRnpY2nPhyMyH9qEWyfWZv1HNPq9az
-         DKRR2yUSW8CcC9qwuzT0+lZmItakdh5Pk3lX3unXlrbmBYCfEWh845pRRIY3kz3QsLhN
-         fb5QilCsXj3khfzY2NSEbc2hyKuB6esSTkLl1hrh4GqYPBvJjxCTDnC7zoucLEKm6U/l
-         2BLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759759407; x=1760364207;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F7SQCp24RNvOTegVrAKR3/DTuZvaz1VTJ+woslYjIWw=;
-        b=NpUZu/1Nwi1nP+vzPgB4ZPGDYDyui52jQrpnpGdqLgmdJUSV3e7saWpFa1095yqUVs
-         OoQonE3yVO6Gq+JT/TXXIR1nsu/Zj7urUqj8eRcRw3foJyUCLAw91yFp0xqBQMysDg/x
-         vYcDYWwRwgwq4u0vdsIExTHZXpr1zkJZn1Saaceus4gt7UYOJSTRdZhQyX1Z6OH9Od1q
-         HtEveMCMvtiFGKnTXslfTRW7xNY9PoH4a4xCJV0zV+jss2wdx76ZzR6CTJtKOUh6bOH7
-         /3RVY/GsFyrOzZontry4wn8ZMdu6HHnWbg8r/9Rgv/bpqyclWdN7dylHQf5axVV4ZOdT
-         GSeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXCwl80/88GVKETVD7SArFQtRS5CZuZWdyfDMEgRllq4Q5JwWDDvqXxB7/tWcc/X3UxgJpe+7/wIsodAuE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwulLKgdiU9SAUl5lnWt2ntf9CXLhnJXwVjvLBkLRR/282cHTlX
-	vCkhPYtCA8KBzmnRFSsdoai+f7hL4omTonVo2AC0F8fj1cRc5XWLd950f6D6wl3TQHA=
-X-Gm-Gg: ASbGnctq2JtvL8tz7mc8lIE8A03Q5bBhgruKIfECL9ysgB9xBy/SOZU8htfSgieQnST
-	H+d7oT9vW8wLaxN9HBODPub179HBQOlmeuzJBuxBcNJBIB7VFXcaxG15301j6Nc9BSr+viUFLkT
-	UVJbU2WWYbfGAbBfB7ll2Ar8X4QJYdOuleji9XHwAnr7gP2zqP/jaU8VRKPGMM3VIE9JYADmA8f
-	b1oyfkb2x+/aleekEoX0BO3GJxENQv9xY7hFJaxLPr/3YvSBlpfOj94VldTz5N8JBWEN+uVwVI8
-	G9uTQq5lB+2YtuGvAZwCCv3DjwTR5aXfZCQRTz7We5srodIkbUnhLwY/Slfe0wmLHiKV3Gwa7fx
-	xoHw/6EzpI0Iv02h7qbfyoHNXC6MwGeJEqM5uca3kPcxhhdn5Y1TuUUE=
-X-Google-Smtp-Source: AGHT+IFHBexVu3+mYH51hQgPiGJhkCZp9Y+80XStbABQGIysYZxyv/J7bi+a6nL+jYlUhwyLSftMxg==
-X-Received: by 2002:a92:cda3:0:b0:42d:89b9:5d30 with SMTP id e9e14a558f8ab-42e7ad887d6mr177792435ab.19.1759759406381;
-        Mon, 06 Oct 2025 07:03:26 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-57b5ec5f51fsm4790440173.70.2025.10.06.07.03.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Oct 2025 07:03:24 -0700 (PDT)
-Message-ID: <ecb74c6c-8de6-4774-8159-2ec118437c57@kernel.dk>
-Date: Mon, 6 Oct 2025 08:03:23 -0600
+	s=arc-20240116; t=1759759507; c=relaxed/simple;
+	bh=i716bZB2jFOR9HAlMh2NO5FwyUYT/QsD8Kmp6pPTzig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Aan+zlC5aeeM8P21MesLJc/DlwcMbNhG9MVYKYImftYqpp+/bbbusmrL6UT4/s51Fy1G7Ed05+XynY85Z5nRlxtWLKdmI6thB/N7Qq3ksWTPPP5twwUYGVk36KeSwZ2hv5PeDwnydQ0hV95hU5aKOiKxy9mrjL/tyPLeKz5aeyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Y5BUz/Cu; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6CF8B40E0196;
+	Mon,  6 Oct 2025 14:05:03 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id mxoPHDFv_C_G; Mon,  6 Oct 2025 14:05:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1759759500; bh=7XTZZ2lgqEkjBqbmTJ9XvScwjjMvvl0+kRTdGHql5xI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y5BUz/CukPxXVlQmq+p/mMa9PSjjspM2fpSkiGVy0r+8qTOG6bp/VrqeC2hj0X42j
+	 BQaZaHlC4uynZ7wgEEnOOPCo9kWP7Zdvf2aFaobFAQwM4SVyeHOBjvFNqZR1x3CCs6
+	 Qm1pxSXFEMLuYYuL7JpAFiwd1pvfKJZ5awN4LmUpQzZdZt2qErdL5tM3k9xYCQxa1t
+	 iDRNoUBtJWfZv2n9Jnx+JeibxpgdJVHZ6MkQyd3WPPms9DYIZQGdJs4aAKjarrAtlO
+	 8cyh27OXJFFD5RSMCc7xmXtbl/Q2gBLyCMQJith6+lfaCirGYkMWY6lbdHrfL772ZL
+	 93M/z+JOfLzAtkYwiSmpVWvpMLYMG4J4/xroroCy+i3Ec8/2bSyAYCn4RNDHrTWXbo
+	 jQpxKowPoYBVCXxZe0Gf67MFxCnZf4herzex827Gr51jWK1pK2adYUlBNzGzITna5N
+	 H/I5VcMZfZvpbNDLLaiBxF/eNdv9r5rIzHE4md9o4mdc6W0D+Vi57zaAJR2Z1eglJo
+	 v4Um0g623+D3hGJBi1D4qvp7qKJBx2VUZRydai6ERykIftNjnjSFW+86R74v2aXKX0
+	 jSvBDZVzy5oe50ai+FoU8+17Mqc3BtBfFzNZq9ND+0fMwHDZdyQ0au1TAhTYPzf3Pb
+	 dnczJocSSnGoGrlOaZ4KzOUI=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id E1CC740E00DE;
+	Mon,  6 Oct 2025 14:04:48 +0000 (UTC)
+Date: Mon, 6 Oct 2025 16:04:42 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Klaus Kusche <klaus.kusche@computerix.info>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/bugs: Qualify RETBLEED_INTEL_MSG
+Message-ID: <20251006140442.GDaOPMemqB7SRJSHWL@fat_crate.local>
+References: <20251003171936.155391-1-david.kaplan@amd.com>
+ <20251006131126.GBaOO__iUbQHNR6QhW@fat_crate.local>
+ <LV3PR12MB9265B9AA81E01A539214764A94E3A@LV3PR12MB9265.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] Revert "sunvdc: Do not spin in an infinite loop when
- vio_ldc_send() returns EAGAIN"
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Andreas Larsson <andreas@gaisler.com>,
- Anthony Yznaga <anthony.yznaga@oracle.com>, Sam James <sam@gentoo.org>,
- "David S . Miller" <davem@davemloft.net>,
- Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>,
- sparclinux@vger.kernel.org
-References: <20251006100226.4246-2-glaubitz@physik.fu-berlin.de>
- <d78a1704-31dc-4eaa-8189-e3aba51d3fe2@kernel.dk>
- <4e45e3182c4718cafad1166e9ef8dcca1c301651.camel@physik.fu-berlin.de>
- <a80a1c5f-da21-4437-b956-a9f659c355a4@kernel.dk>
- <e6a7e68ff9e23aee448003ee1a279a4ab13192c0.camel@physik.fu-berlin.de>
- <cef07e8f-a919-4aa1-9904-84b16dfa8fe6@kernel.dk>
- <5b3caa0e218dd473c8871c1b1f09a8dc1c356f1e.camel@physik.fu-berlin.de>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <5b3caa0e218dd473c8871c1b1f09a8dc1c356f1e.camel@physik.fu-berlin.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <LV3PR12MB9265B9AA81E01A539214764A94E3A@LV3PR12MB9265.namprd12.prod.outlook.com>
 
-On 10/6/25 7:56 AM, John Paul Adrian Glaubitz wrote:
-> On Mon, 2025-10-06 at 07:46 -0600, Jens Axboe wrote:
->>
->>>> The nicer approach would be to have sunvdc punt retries back up to the
->>>> block stack, which would at least avoid a busy spin for the condition.
->>>> Rather than return BLK_STS_IOERR which terminates the request and
->>>> bubbles back the -EIO as per your log. IOW, if we've already spent
->>>> 10.5ms in that busy loop as per the above rough calculation, perhaps
->>>> we'd be better off restarting the queue and hence this operation after a
->>>> small sleeping delay instead. That would seem a lot saner than hammering
->>>> on it.
->>>
->>> I generally agree with this remark. I just wonder whether this
->>> behavior should apply for a logical domain as well. I guess if a
->>> request doesn't succeed immediately, it's an urgent problem if the
->>> logical domain locks up, is it?
->>
->> It's just bad behavior. Honestly most of this just looks like either a
->> bad implementation of the protocol as it's all based on busy looping, or
->> a badly designed protocol. And then the sunvdc usage of it just
->> proliferates that problem, rather than utilizing the tools that exist in
->> the block stack to take a breather rather than repeatedly hammering on
->> the hardware for conditions like this.
-> 
-> To be fair, the sunvdc driver is fairly old and I'm not sure whether these
-> tools already existed back then. FWIW, Oracle engineers did actually work
-> on the Linux for SPARC code for a while and it might be possible that their
-> UEK kernel tree [1] contains some improvements in this regard.
+On Mon, Oct 06, 2025 at 01:58:55PM +0000, Kaplan, David wrote:
+> Sounds rather yucky. 
 
-Requeueing and retry has always been available on the block side. It's
-not an uncommon thing for a driver to need, in case of resource
-starvation. And sometimes those resources can be unrelated to the IO, eg
-iommu shortages. Or this busy condition.
+I'll give it a try at some point and see how ugly it becomes...
 
-But that's fine, it's not uncommon for drivers to miss things like that,
-and then we fix them up when noticed. It was probably written by someone
-not super familiar with the IO stack.
+> What about just not calling cpu_select_mitigations() if
+> CONFIG_CPU_MITIGATIONS=n?  Then you won't get any print messages either I'd
+> think.
 
->>>>> And unlike the change in adddc32d6fde ("sunvnet: Do not spin in an infinite
->>>>> loop when vio_ldc_send() returns EAGAIN"), we can't just drop data as this
->>>>> driver concerns a block device while the other driver concerns a network
->>>>> device. Dropping network packages is expected, dropping bytes from a block
->>>>> device driver is not.
->>>>
->>>> Right, but we can sanely retry it rather than sit in a tight loop.
->>>> Something like the entirely untested below diff.
->>>>
->>>> diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
->>>> index db1fe9772a4d..aa49dffb1b53 100644
->>>> --- a/drivers/block/sunvdc.c
->>>> +++ b/drivers/block/sunvdc.c
->>>> @@ -539,6 +539,7 @@ static blk_status_t vdc_queue_rq(struct blk_mq_hw_ctx *hctx,
->>>>  	struct vdc_port *port = hctx->queue->queuedata;
->>>>  	struct vio_dring_state *dr;
->>>>  	unsigned long flags;
->>>> +	int ret;
->>>>  
->>>>  	dr = &port->vio.drings[VIO_DRIVER_TX_RING];
->>>>  
->>>> @@ -560,7 +561,13 @@ static blk_status_t vdc_queue_rq(struct blk_mq_hw_ctx *hctx,
->>>>  		return BLK_STS_DEV_RESOURCE;
->>>>  	}
->>>>  
->>>> -	if (__send_request(bd->rq) < 0) {
->>>> +	ret = __send_request(bd->rq);
->>>> +	if (ret == -EAGAIN) {
->>>> +		spin_unlock_irqrestore(&port->vio.lock, flags);
->>>> +		/* already spun for 10msec, defer 10msec and retry */
->>>> +		blk_mq_delay_kick_requeue_list(hctx->queue, 10);
->>>> +		return BLK_STS_DEV_RESOURCE;
->>>> +	} else if (ret < 0) {
->>>>  		spin_unlock_irqrestore(&port->vio.lock, flags);
->>>>  		return BLK_STS_IOERR;
->>>>  	}
->>>
->>> We could add this particular change on top of mine after we have
->>> extensively tested it.
->>
->> It doesn't really make sense on top of yours, as that removes the
->> limited looping that sunvdc would do...
-> 
-> Why not? From what I understood, you're moving the limited looping to a
-> different part of the driver where it can delegate the request back up
-> the stack meaning that the current place to implement the limitation is
-> not correct anyway, is it?
-
-Because your change never gives up, hence it'd never trigger the softer
-retry condition. It'll just keep busy looping.
-
->>> For now, I would propose to pick up my patch to revert the previous
->>> change. I can then pick up your proposed change and deploy it for
->>> extensive testing and see if it has any side effects.
->>
->> Why not just test this one and see if it works? As far as I can tell,
->> it's been 6.5 years since this change went in, I can't imagine there's a
->> huge sense of urgency to fix it up that can't wait for testing a more
->> proper patch rather than a work-around?
-> 
-> Well, the thing is that a lot of people have been running older kernels
-> on SPARC because of issues like these and I have started working on trying
-> to track down all of these issues now [2] for users to be able to run a
-> current kernel. So, the 6.5 years existence of this change shouldn't
-> be an argument I think.
-
-While I agree that the bug is unfortunate, it's also a chance to
-properly fix it rather than just go back to busy looping. How difficult
-is it to test an iteration of the patch? It'd be annoying to queue a
-bandaid only to have to revert that again for a real fix. If this was a
-regression from the last release or two then that'd be a different
-story, but the fact that this has persisted for 6.5 years and is only
-bubbling back up to mainstream now would seem to indicate that we should
-spend a bit of extra time to just get it right the first time.
+I want to not compile in that code at all if CPU_MITIGATIONS=off, actually.
 
 -- 
-Jens Axboe
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
