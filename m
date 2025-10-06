@@ -1,133 +1,167 @@
-Return-Path: <linux-kernel+bounces-843227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDCCBBBEAE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:40:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DF4FBBEAF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:42:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C379C4EEF6E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:40:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDAAB18946EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250902DCF57;
-	Mon,  6 Oct 2025 16:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7432E2DCF57;
+	Mon,  6 Oct 2025 16:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ehrut/i4"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hmhvIIDj"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE8B1E98F3
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 16:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5591E98F3
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 16:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759768835; cv=none; b=NiT4KEG3gdivr3uFUtez0MEFGCZMS6IoxRoJQI1nLALzx89AyQuq1BQxH+zPOnMM0lSD0PJ9aG32Vo7jpsrsPvaOHM05stYTma7gSnVqoK0JT60uyiBmMQWOCQGra8UnE+dTvpEihbYxVnRtfiJTklWhxq4siCEGfDnHDFBJChw=
+	t=1759768923; cv=none; b=cDfBtVpji8PCZ6IyVUWR0wbSiFwS/m+koI69F2iQOpJJgasT6YaVXY4vgAbBp2+X0aO+qxiJX1eZLvFKaUlDNbPook5bxQYk3In0//CxACJG3nPg303OZV9xpvInCWBI15nYxhNx/RvuK4aoyOijE4zNLqkKwxGaidJtpVEv5sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759768835; c=relaxed/simple;
-	bh=veOdlZZAnBK5isc9zicCFKD4YiH6nvr7JBqv75sEnMg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VIacGaA53COWHoTnrsKD0t+D4FwU8OnetXZXyfYtseW7guKAlFA9npClKXzOuXGqCqQjmIdjrVfUQueW2C1dcaB9WSZyyH6XO9yu06RnuhYh4JO/HQdKJjHz6Q0boW1fUT/O8pFg5LUAFW6jlr4gIc+ZiSOZ/16VcxdnFV8FwR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ehrut/i4; arc=none smtp.client-ip=209.85.214.181
+	s=arc-20240116; t=1759768923; c=relaxed/simple;
+	bh=C7FdrotOExkG/5eyy10xgPUDVdT72B01GXJ62Fs4G10=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jc6acWvrZQjSAXi9gRAYHyI5phXiF3OfBQ1k9gvILfQsrkRHj1Nfd+PYVqjwOnnStwoR7bYjfLtP/jknDwIDcSeqvXiGcM63Y2fyYdvczHl3PmHlZqQ1HcXehq33pjK6M5m0y1p6OZXLB3ei4Fs7qafse2L/aNkxGMP2849ofF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hmhvIIDj; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-269640c2d4bso7965525ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 09:40:33 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e6a6a5e42so26296205e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 09:42:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759768833; x=1760373633; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LBA6fOaVmQat7EDMxIX5UPGSZ7U9w/6YSIQNIRnUw64=;
-        b=Ehrut/i4r0bRwkjvO2cwH6tEuMQlvICJIDsNdYaEuXwWbYUQWgllbaEQsL+7BggVYV
-         PIKf9aiE027/2JEyjtcb9v7kHACYzf0QYfrMaRMkBEeSoz0yYMB6z0JdnBRXgVWY0r2g
-         SIAs7B/IdIQInY8h8yOwX2UNvMwDlZ+EfRTi078xAILFJ0I96x93DNpFSn5vN3NRNpQC
-         zr3ilO4A5ThUCyJEiB8XH+K0+7YSc5FaT3IWdDcpcrpXSnmCfqKvPP3oWI8df1H+tLU8
-         JeyutHRKKiZjxsuVRaEcoU2FaL+prMXYoeEPYC9FqjnLPkijYmPXx5GoAS7uvRZBZk0b
-         xxYg==
+        d=gmail.com; s=20230601; t=1759768920; x=1760373720; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=B1m3A2SK0UP4dwSyRm6Qf6w7bJhm1Ficb4+Tgp0EQaQ=;
+        b=hmhvIIDj11XsG1lWO95MdMBx3Gx5I8dCOJXPraTTmvsRRrggmx8Z3cQ/2eEeK/dq6R
+         dI086l4YLb11fuyHgc5mqYY7yLXSNRh1ugeLn672htOjDz//sGM2DZLm59miZqVqCztf
+         AalJlg8l7zrGiTw75Bz4hlJTpRRddBmGQKR4k6VZTGeioMq5EFZKcMqeir/NVkNtvPTV
+         ns2gKEdfcWfmRwV3BslWsl+WBMTvuxQ9lHPVoddTWtY8eZCE8G43rN3uNZhufw/kOZu5
+         CyQExYDXDY63XzowI7GzXorjnhw93GZTX3HtJ+rFt18rIn6yP2LD9ivA4m1rIXVRIB8E
+         Gf/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759768833; x=1760373633;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LBA6fOaVmQat7EDMxIX5UPGSZ7U9w/6YSIQNIRnUw64=;
-        b=iC6UEuZjMmDAYTnUu01SkzX3iVyTPpAe2vwagRV9DgHnJmH+YLMn6skzR3t0mSiO14
-         ziDDm5wLG6oxDshaeMl95aHgj90F1EjubkBvXPsfBaIegD5A5VPklIa6H1zxIO7Fm5TC
-         4B+GABfSj97/ZzPDCfuLrg3hu2ZEZMIF/BnhvxawDdV5qp7kORfROy925llf4RZ0UJio
-         onzmvMnKYJP2x48fmKc7XMLo52vDzSDBzQWuUFnJ4rPLfaSpOeU+oBZLXOyWL4V/kwgs
-         EoGTcrdgcyXrCRFDzGMVgjv86Ptz1Ye//i/DCNc/ZG6bamXgaHU3zErYMr5m8dRL1IpI
-         CfDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUYfq3pWBdv5rR7UjYxuo2F4uvV2sW4lG8b46IAEJIQY31w+JGQY3AuRqB6YCK9wG3VOxn05FzpAIo0bfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzr4N5a1JjOR7o6KaE1zokVegUia+xqDHVtQe2K79HB6QGZVBbC
-	Gcw1I2AOUJ2qWK7dz9RN7JgLO/YZ5K7AxOJjMRNNYjxuTsC+vVP/CZE8JHKa1fK1AymkcqqKl9f
-	zOmEGLI/7j8RRb03TtDj8QrXogZIvViM=
-X-Gm-Gg: ASbGncs30s0TofJpr/ZuLinBSk6LloGhaHbrVBqU6iQMYW9DgILCzSKAcBuOon/HGef
-	/HOenzfQvSywZ40nxauwsUyQGuRy+j5TdQ/vqlCx9Zl7X1lPgIzucINE/vDJMKeukMolSBoMb89
-	6vmPyVDa8L14Os0jghf0+FAOlxqU6+ur0Z8cI0xyoPBeA861bm+wHeX0kB8ooe0X8W5MT1kdgqi
-	BDRq4b/vRJJZdXx7SMXpMjCMkUye6gJd1VSf1NHq6sn08HORy6pOPWzQo974trOk7cHf0j51gbT
-	T9dwwmI3xaUIa3b8yPu2TQEbpSQ7+2QiZHdkP8boUlLKoGv5IX+D2ub9vIgz
-X-Google-Smtp-Source: AGHT+IED5q3x4DCSIrQmSNaI/hNM8JVZko4zCwH8pMSwHQyx8XQQtYie0DUOqb6XI3JebRYkGwAJqCnOXAShGoi26PE=
-X-Received: by 2002:a17:902:d4cb:b0:25c:b66e:9c2a with SMTP id
- d9443c01a7336-28e9a6d01b1mr103155035ad.6.1759768833343; Mon, 06 Oct 2025
- 09:40:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759768920; x=1760373720;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B1m3A2SK0UP4dwSyRm6Qf6w7bJhm1Ficb4+Tgp0EQaQ=;
+        b=pEouNy7jk7Qi0dijRFWpd3zjmafHkT3fjgHLuqN/9jX018h3+RZH+rssceZ+AuQRbH
+         at7HwSsEHAuIwHBLUT3VjNqPy+VTVvIG0d5dGtrdMPuX44hEUraYNu1gZj6hEfj8BECM
+         RJr+nM+5PdwdeMgg1H6VLl2URdl+EIVSn0Ynoo+Gs3kpWfZFx91f5D7iWD0vsWOp3eMA
+         dz0oRWhiQT9efV9zXO1bmB8bgjJcHl92yhZeyyhFPgFzIVczY+OWZ4FtwK0keZ4p+fjS
+         UeSl8ovO/6oVaFX6TIQl571hQHXvfetABsXJiZa5psnJq6f7OsKnmZvTun736XN5zd15
+         QYlw==
+X-Forwarded-Encrypted: i=1; AJvYcCXOApd6ytgd7KeBsbb4Cv+kxn2DsK75bF8i+nwB/WOQ0jCxzIJqxSFYN+xDteTcPdvN5JGy7Yp0R8uzCNg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgNUBZ7+4xXA+UJrSLO1UGU8Gp1HOzLyllXNkg7bvIuWiKJwz4
+	Bsj4Gkqacbh6wwImIwuOk/B1WriOoWmSm65SuWmR10s3YIboxqLzIoQj
+X-Gm-Gg: ASbGncu0o36EAcO+9PKFmYPKRVwGWIWjLbN23hLMg9kcVConYMRASG+G0IRJsGK6WYj
+	lznvnvKG0IESRO5Ikj7BjnD4/D9Ydv0OnuONS4vETxPfv7EU4tcJ138oLrR3QKeA9zgB744rq0p
+	1eXs4NStg8WnHPI8OJv9cSEq07RMCkFDHKQOcug4fIzLUzUFImBKNhxe/1+f4/MU2290WzSxEM4
+	jcuW6Mkt/JW2qxKCBkHR8m6v0sSynb+FdGNIoGXBXHR9J6ZXQ0LCIVRVq7WDnnG1R7nFmaZx/QF
+	SKLYAWFUHs9UHAdVw8pyR3YmRqm1hXXUL9ppgfaJn/XrD+FaYWpcH0r/83T+WJ96GcE1HqKTAHY
+	z4OtG2xtxOEyeNdQVcMzKPK49+CLPPEpLQSfx8cjlC8LdK45Aj5X06WjKnc4gQcA3gqUNWjCb05
+	9sxUKO2GVMk6AAcReEUVUPztoG
+X-Google-Smtp-Source: AGHT+IHm3Tu9iRyGiCt6V9SEZWDXWNqwJokz4bgw1HkknIkQ71kli9dOgCeRNWFNMzpZwV0p36UR6Q==
+X-Received: by 2002:a05:600c:628b:b0:46e:456e:ada5 with SMTP id 5b1f17b1804b1-46e71146994mr75585645e9.28.1759768920064;
+        Mon, 06 Oct 2025 09:42:00 -0700 (PDT)
+Received: from dell (117.red-81-33-123.dynamicip.rima-tde.net. [81.33.123.117])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e5b5f3015sm151246565e9.1.2025.10.06.09.41.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 09:41:59 -0700 (PDT)
+From: Javier Garcia <rampxxxx@gmail.com>
+To: deller@gmx.de,
+	u.kleine-koenig@baylibre.com,
+	tzimmermann@suse.de
+Cc: linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	shuah@kernel.org,
+	Javier Garcia <rampxxxx@gmail.com>
+Subject: [PATCH v2] fbdev: mb862xxfbdrv: Make CONFIG_FB_DEVICE optional
+Date: Mon,  6 Oct 2025 18:41:43 +0200
+Message-ID: <20251006164143.1187434-1-rampxxxx@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250930144537.3559207-1-joelagnelf@nvidia.com>
- <20250930144537.3559207-7-joelagnelf@nvidia.com> <DD7GCYCZU3P3.1KK174S7MQ5BW@nvidia.com>
- <81490b32-6ea2-400f-a97e-ad2e33e6daab@nvidia.com> <DD949OHGD5WP.1X9TCLIEKSHGB@nvidia.com>
- <4324469D-4C47-441E-9AD3-54CEE379537C@nvidia.com>
-In-Reply-To: <4324469D-4C47-441E-9AD3-54CEE379537C@nvidia.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 6 Oct 2025 18:40:20 +0200
-X-Gm-Features: AS18NWCxy-Hq0OsmWL4xZOPiIrqjK1XDIHFlDGJPGtRa1Eva01va6UDuU96QULw
-Message-ID: <CANiq72mC5pWz92KYtOhtgOcMuTeuzOeM9xrbkna+HkrwHAQqVw@mail.gmail.com>
-Subject: Re: [PATCH v5 6/9] rust: bitfield: Add KUNIT tests for bitfield
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "dakr@kernel.org" <dakr@kernel.org>, 
-	Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, "bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, 
-	"joel@joelfernandes.org" <joel@joelfernandes.org>, Elle Rhumsaa <elle@weathered-steel.dev>, 
-	Yury Norov <yury.norov@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Andrea Righi <arighi@nvidia.com>, 
-	"nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 4, 2025 at 6:14=E2=80=AFPM Joel Fernandes <joelagnelf@nvidia.co=
-m> wrote:
->
-> Well, it can be efficient. It really depends. I have been contributing up=
-stream for about 15 years if you see the git log, often when someone chats =
-privately with me like you did and they told me they are ok with a patch, I=
- save them the trouble and add their review tag especially after they alrea=
-dy added their tag to all my other patches. Surprisingly though this is pro=
-bably the first time anyone has been pissed off about it.  Anyway I will no=
-t add your tag henceforth unless you publicly reply (or you let me know oth=
-erwise by chat).
+This patch wraps the relevant code blocks with `IS_ENABLED(ifdef CONFIG_FB_DEVICE)`,
+allowing the driver to be built and used even if CONFIG_FB_DEVICE is not selected.
 
-If they just say they are OK with a patch, that would just mean an
-Acked-by, not a Reviewed-by.
+The sysfs only give access to show some controller and cursor registers so
+it's not needed to allow driver works correctly.
 
-In any case, the documentation states those tags cannot be added
-without permission -- if someone gives you a tag privately, it is best
-that you tell them to please send it in the mailing list instead. That
-way there is no confusion and others (including tooling, e.g.
-patchwork and b4) can see it.
+This align with Documentation/drm/todo.rst
+"Remove driver dependencies on FB_DEVICE"
 
-Thanks!
+Signed-off-by: Javier Garcia <rampxxxx@gmail.com>
+---
+v1 -> v2:
+      * Fix error and improvement , thanks Uwe Kleine-Koenig.
+      * v1 https://lore.kernel.org/lkml/20251005173812.1169436-1-rampxxxx@gmail.com
 
-Cheers,
-Miguel
+
+ drivers/video/fbdev/mb862xx/mb862xxfbdrv.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/video/fbdev/mb862xx/mb862xxfbdrv.c b/drivers/video/fbdev/mb862xx/mb862xxfbdrv.c
+index ade88e7bc760..dc99b8c9ff0f 100644
+--- a/drivers/video/fbdev/mb862xx/mb862xxfbdrv.c
++++ b/drivers/video/fbdev/mb862xx/mb862xxfbdrv.c
+@@ -17,6 +17,7 @@
+ #include <linux/module.h>
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
++#include "linux/kconfig.h"
+ #include <linux/pci.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+@@ -759,7 +760,7 @@ static int of_platform_mb862xx_probe(struct platform_device *ofdev)
+ 
+ 	dev_set_drvdata(dev, info);
+ 
+-	if (device_create_file(dev, &dev_attr_dispregs))
++	if (IS_ENABLED(CONFIG_FB_DEVICE) && device_create_file(dev, &dev_attr_dispregs))
+ 		dev_err(dev, "Can't create sysfs regdump file\n");
+ 	return 0;
+ 
+@@ -801,7 +802,8 @@ static void of_platform_mb862xx_remove(struct platform_device *ofdev)
+ 	free_irq(par->irq, (void *)par);
+ 	irq_dispose_mapping(par->irq);
+ 
+-	device_remove_file(&ofdev->dev, &dev_attr_dispregs);
++	if(IS_ENABLED(CONFIG_FB_DEVICE))
++		device_remove_file(&ofdev->dev, &dev_attr_dispregs);
+ 
+ 	unregister_framebuffer(fbi);
+ 	fb_dealloc_cmap(&fbi->cmap);
+@@ -1101,7 +1103,7 @@ static int mb862xx_pci_probe(struct pci_dev *pdev,
+ 
+ 	pci_set_drvdata(pdev, info);
+ 
+-	if (device_create_file(dev, &dev_attr_dispregs))
++	if (IS_ENABLED(CONFIG_FB_DEVICE) && device_create_file(dev, &dev_attr_dispregs))
+ 		dev_err(dev, "Can't create sysfs regdump file\n");
+ 
+ 	if (par->type == BT_CARMINE)
+@@ -1151,7 +1153,8 @@ static void mb862xx_pci_remove(struct pci_dev *pdev)
+ 
+ 	mb862xx_i2c_exit(par);
+ 
+-	device_remove_file(&pdev->dev, &dev_attr_dispregs);
++	if(IS_ENABLED(CONFIG_FB_DEVICE))
++		device_remove_file(&pdev->dev, &dev_attr_dispregs);
+ 
+ 	unregister_framebuffer(fbi);
+ 	fb_dealloc_cmap(&fbi->cmap);
+-- 
+2.50.1
+
 
