@@ -1,112 +1,99 @@
-Return-Path: <linux-kernel+bounces-843503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13DDBBBF9A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 23:48:41 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21611BBF9AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 23:48:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 364EF3C2E5B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 21:48:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C2CB434BCF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 21:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F0F1F3FE2;
-	Mon,  6 Oct 2025 21:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1C91F4615;
+	Mon,  6 Oct 2025 21:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pSkAmXjX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mdqDZ4zK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3076D8F4A;
-	Mon,  6 Oct 2025 21:48:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA0D7E0E4;
+	Mon,  6 Oct 2025 21:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759787312; cv=none; b=syJcOJ9/QLGQxR1SLZY4J/CWgHp6qspTK2AZntkIVLmOa8BLc01bzYYmCLz3ejxf8AeQ/YKnc+wBACRcPGkw/ymp4kDv7WnIQkKTkxgQUjeJ5h58uOnsjPSxCZa/hVXdNwqCG2iQL+IYdGmIqP86jKAcN5HDJV3nIgkBaLw/erU=
+	t=1759787332; cv=none; b=ewGWbaeGoXINOzkKnSBCjA/Z1A1ZIHGh/FTMvevXBvJ9NEV4/5RYtibY25SAohbcStsNk1TDNXUoQhVJ46GhuncUKOVGLMxN0r3C+8ESXMNSsB6PFb4EqI/4CRhxqu7f5X53TRGpav/HSo83pTeijO5fNc3k6TDcvkUQjVixj1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759787312; c=relaxed/simple;
-	bh=OpaSlgNgbG6LGQ9WKZLEg5SEp0sOr8exS4JYKgFQGjM=;
+	s=arc-20240116; t=1759787332; c=relaxed/simple;
+	bh=FhFXbAt5Tcrp873gzHLu0KNZO7CFL3/ohu5dfI2mcrI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LRaC3qSBj5T+WeVN/SBG7DeTM3gV5ADhuA0Ofc+VRCgnZRu91tmPiV5Vl5XWQCUK2FOUC3gbcZh1pCfWA4QYFjM+qQIIu+ISrCUDwOOLlCgX2AdZ2UiWtxI2p1f9Itd2OeqxAUyJb8TksgBbv/jzc5v0RWfFvuzPEoeQ9um+NYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pSkAmXjX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 757E2C4CEF5;
-	Mon,  6 Oct 2025 21:48:31 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=dEiosg1xea4xWtl+iJxdZMFt980HgVsjaKdRfztNXQsP2CZ9XoWJLgesoT3NUZzw7LxmHLnldG4XuYxjIpqDcLaZPrAeKZs8wWm0hAVKrfze8PTJrlc5GEZED87HplKXNPpRGxI5no+3zZL9s5S8wBfo8l4FmczhVhnNxahEpeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mdqDZ4zK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 634EDC4CEF5;
+	Mon,  6 Oct 2025 21:48:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759787311;
-	bh=OpaSlgNgbG6LGQ9WKZLEg5SEp0sOr8exS4JYKgFQGjM=;
+	s=k20201202; t=1759787332;
+	bh=FhFXbAt5Tcrp873gzHLu0KNZO7CFL3/ohu5dfI2mcrI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pSkAmXjXHg+U1pTbtnA1GTbUm+N8VigWWBlFWZC7/fkAo2wP2inbeV0Hnv6pNIKk9
-	 DeEv7BqPEUkLPhVke5T2sokJ9BjI/SBbQFQmzAmuS0qUWnkp2NUVz8Z78Q1eJFIXWh
-	 IVpxt6cVUz1rDA62F6x43EVhPsHrC8fy1iAd1Acszuj6oqLT6axu4Lf4HSovx5iB0d
-	 F1IwMwYd31zCgBu5AJ+nQ+SgosfEXX6Nh/0dhcCpg183bun5a/Xg6NSzGS6RF1IBKA
-	 IwyRX9j4JYS5bvmZOQTqs13CE8Sy5db2LOINSbFkzwEXDVR72zxe74evPUpXQ66iAM
-	 BlVlJIgTtkixA==
-Date: Mon, 6 Oct 2025 16:48:30 -0500
-From: Rob Herring <robh@kernel.org>
-To: Ram Prakash Gupta <quic_rampraka@quicinc.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com,
-	quic_pragalla@quicinc.com, quic_sayalil@quicinc.com,
-	quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com,
-	kernel@oss.qualcomm.com, Sachin Gupta <quic_sachgupt@quicinc.com>
-Subject: Re: [PATCH v4 1/4] dt-bindings: mmc: Add dll-hsr-list for HS400 and
- HS200 modes
-Message-ID: <20251006214830.GB625548-robh@kernel.org>
-References: <20250929113515.26752-1-quic_rampraka@quicinc.com>
- <20250929113515.26752-2-quic_rampraka@quicinc.com>
+	b=mdqDZ4zKVFTBCMWdOVe7baTqd3UTWp46I5Mo1h1tRN9BzY8iVZaz0dO4yojmiLEYW
+	 MxDZoNhZ5XvpCP6rs9px2qnvE3mILjBd1/aZh4/zflOh7UKqK1Zazg51Q4NE+2FqQM
+	 k8Dj4EaYBHL9vCTRt0IedbhA7DTO00Q2sNgOG4yNpq7bJckDa4GK3Ysprk8ygj/N85
+	 s7yRFUy1x+CWTlcIAbJZOnxkzZXOMOfaTxN8c7tCErq22ifn5xaTWltDoxkP86oULz
+	 LjpgSqteUgFdfxje/ENISip9InY9Fq7nWyhDibZaQ97Q4Ct8o+T440hgJLupBX3GD+
+	 Xy0nblr4SzKTA==
+Date: Mon, 6 Oct 2025 14:48:45 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Askar Safin <safinaskar@gmail.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+	Nicolas Schier <nsc@kernel.org>, a.hindborg@kernel.org,
+	alex.gaynor@gmail.com, aliceryhl@google.com,
+	bjorn3_gh@protonmail.com, boqun.feng@gmail.com, dakr@kernel.org,
+	gary@garyguo.net, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, lossin@kernel.org, ojeda@kernel.org,
+	rust-for-linux@vger.kernel.org, tmgross@umich.edu, sam@gentoo.org
+Subject: Re: [PATCH v2 6/6] kbuild: enable -Werror for hostprogs
+Message-ID: <20251006214845.GA3234160@ax162>
+References: <20250814-kbuild-werror-v2-6-c01e596309d2@linutronix.de>
+ <20251005011100.1035272-1-safinaskar@gmail.com>
+ <20251005205335.GA2561157@ax162>
+ <CANiq72kDT_uDpmvMyMEXodSXP3rsevjzW7G134H9A7Pmx6_7nA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250929113515.26752-2-quic_rampraka@quicinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72kDT_uDpmvMyMEXodSXP3rsevjzW7G134H9A7Pmx6_7nA@mail.gmail.com>
 
-On Mon, Sep 29, 2025 at 05:05:12PM +0530, Ram Prakash Gupta wrote:
-> From: Sachin Gupta <quic_sachgupt@quicinc.com>
+On Mon, Oct 06, 2025 at 01:27:33PM +0200, Miguel Ojeda wrote:
+> On Sun, Oct 5, 2025 at 10:53 PM Nathan Chancellor <nathan@kernel.org> wrote:
+> >
+> > Thomas and Nicolas, thoughts?
 > 
-> Document the 'dll-hsr-list' property for MMC device tree bindings.
-> The 'dll-hsr-list' property defines the DLL configurations for HS400
-> and HS200 modes.
+> I think it would be good to eventually split the hostprog flags into 2
+> sets: the ones that are used for bootstrapping, and the ones that go
+> after that.
 > 
-> QC SoCs can have 0 to 4 SDHCI instances, and each one may need
-> different tuning.
-> 
-> Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
-> Signed-off-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
-> ---
->  Documentation/devicetree/bindings/mmc/sdhci-msm.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
-> index 22d1f50c3fd1..a60222473990 100644
-> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
-> @@ -137,6 +137,11 @@ properties:
->      $ref: /schemas/types.yaml#/definitions/uint32
->      description: platform specific settings for DLL_CONFIG reg.
->  
-> +  qcom,dll-hsr-list:
+> That way, we can get the best of both worlds, if I understand correctly.
 
-'-list' doesn't add anything.
+Does that buy us much? We would not want -Werror applied to
+scripts/basic or scripts/kconfig without consent from the user. W=e
+could provide that at that stage of the build (with an adjustment of
+where scripts/Makefile.extrawarn was included) but CONFIG_WERROR would
+not be.
 
-What is 'hsr'?
+Given how frequently fixdep and kconfig are built, I am fairly confident
+that new warnings wtihin them would be reported quickly, even without
+-Werror, so I do not see it as too much of a loss. All other host
+programs should be covered by that diff.
 
-> +    maxItems: 10
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description: platform specific settings for DLL registers.
-> +
->    iommus:
->      minItems: 1
->      maxItems: 8
-> -- 
-> 2.34.1
-> 
+It may still be worth doing for other reasons but I would have to see
+what such a change would actually look like in practice before
+committing to it.
+
+Cheers,
+Nathan
 
