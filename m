@@ -1,356 +1,188 @@
-Return-Path: <linux-kernel+bounces-842990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B834BBE253
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:11:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC7DCBBE259
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0436A3B540D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:11:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2170F3BE0C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63AD829A9C9;
-	Mon,  6 Oct 2025 13:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB0E29AB02;
+	Mon,  6 Oct 2025 13:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vDER8XXL"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Zh3n3IrO"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776A228CF66
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 13:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885C6287268
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 13:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759756291; cv=none; b=KsRoz5ls8xXNJFpnGlbkuYEt/a7ZtUWgi9TxaVilTIUFERSLwTwLlH1zItmDhinuGOh8r7H4ehw3ieguNd+ZLNZohEuUJKyXdqpc4+w8ftrenQU8tDjyO4QQjCEjQoabHgPnuMyxc+FAZTp3fBpKciUrjutWfxswSVsbAEr8Z5g=
+	t=1759756322; cv=none; b=piy8tuvrSpuqjy0fDGTTgjTNpAl55fIB61aT0aOYkVolHgDKJ/1SvEHWVwElrt+kL/LV8ee5vFhaWEqvHnH9TBYfpWs6VaSOa3aGuRDq7GeaAhOMv9fKbScD9OmB1CMSU/7SlE9HiP/giQBtbeMKuQxXoFE8TTaFqYMb0EOx4nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759756291; c=relaxed/simple;
-	bh=//5X3czCc4GFayvi8y/0XC+L5+/dta7u7+Xr20bo8p8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WZA+dpkioYe8ypc8GqgBykFrM7JxJatcC+zHGKHWHaHPYR3KqXDbOYyguwVhTMRZ4U2vp0TpeBGG5I8kQVlxwRyIteVOZVxGjXxOI/82u1YYcARCWUeTyndV6ers4m0SHWeXfbVRE9hCFhkweauAcSwK/og8QOjPqgkDV9c8MmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vDER8XXL; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-42557c5cedcso2541732f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 06:11:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759756288; x=1760361088; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QWdZlOTz0hyU0moGCRMUBDgT03J3fo3JCAg6LcKFa4w=;
-        b=vDER8XXL6OKvpb0X7/YFMhK5CIr0h6PPiN9qdkfmCsn9UrkXQvwHxkeEsmJKDtzAwt
-         do1+YTW0fErIFSiIKPQsXnyxm5F7Dh4z0P/a2Zzjj/T88rjT4Rz2VZjGaGCY4JjoPqDT
-         Z+a8Yj8rbI4nWMhbjxzWVHP15Tqo97TjxHkdPmrZpCGCyatGUwa7Af/BmmQxjmmyCN7K
-         g3hfmRU9HKaIGtFUXsiIxWxGsOaH/aq8NYZZPCH0T/4Um3806WUuY8vOyLuvbd8R2gFh
-         sdTmMSuqDRV+xH4vWZXwDUvM9yFcnPwWQXnh5OJo6uPXOHb30aaXi+nZQWZUHEGDzTm8
-         gSRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759756288; x=1760361088;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QWdZlOTz0hyU0moGCRMUBDgT03J3fo3JCAg6LcKFa4w=;
-        b=NlAFE7Wjp7+HN0LOeETFCCJf4aT4kV/+Od1exW6rV6opsbLX9EQZqKc5gUPXOJ98Zd
-         hTCrd8FmB1nSt6fsD4FFSu+nVKm0rasrhzbCHGlKWB7E2QCzguYjIoKptId7QQFHw8bE
-         0AcaNwpgsmmnE00nnuIkdNhLCqIGZQGoCFjAFVRy4uJv8KUwDmutV/R1z7Oq4aoEAo84
-         IOldM9ZHE5geQMloiyeS0UGYQ3jGBjlt6mEddHe4QOLps2DJgmEzGjGms0v695Bxv526
-         I7xt/BzUYuE3IMuj0FKcc+8a8mEbgAankhX7gB9PYPh++oOrvKfuI426sz8zuF2vYCJ6
-         kauA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxkk8VXmfe9H5K6Xfs+3JVFz7b3nHdszzwW7p9J6rQ/GTUhCE3GkGEBEy0GB6PC9/veH7HgnnjZQC2bKs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUwjusTwXjvxbiPYzwHCkpz7tto3kkbAVhOu2ZHWJIN9+Zk30L
-	ged6mbXxjJelW2po+dcjmbYJLepMnOeKrzgzteVhEjNfsXB6d4up7Pyno9Uy1bncQRM=
-X-Gm-Gg: ASbGnctZaPjgxhyN5feAj/gCBUHRcmGwJTRJDWy1q6I/8T9nRAooHosu7cGNWgCJuGr
-	wFhJGzi0ugsBxvD1g2ChO7sGsKFHUY2ftQQGa7Gy6fnxnIVkwXbxGOFcFPYU+DpMAMU82gfALp2
-	zeMAszauXdIu6OmQovJ1U7ARYMmK+q/+X7C4iG7lTJyuwJJGo+OO417Kn6nseegTsO638nMa1aT
-	2rBDusSNVfqa4jdDT7Pak/wTvoQ3h6ASK1uBoox4gaBJAgAHD64DPy5WCuaQX+O836mbTXxw6xj
-	AqXnkUWX9ABz4s4yUzJTeOOvhd0u3lbyqeyfV9L3GBAXEBCg/5R8sALSgsulYDpUJwY5AwSoOfU
-	4b0fNXDuYhKGAvnp2RHugmuRkZWhFfUgwfN9aLPJf45gqBzqnycRPuRi2IuG4u2yR/FbPvrflil
-	9aThMXCA==
-X-Google-Smtp-Source: AGHT+IEb0/354XDjZL/3xqQvGmMufKoIFM6WNEwTK16lg8oM/ZM+OBF4dUnRkHGBbzVCAaFNAOCCZA==
-X-Received: by 2002:a5d:5f47:0:b0:415:7a6c:6a38 with SMTP id ffacd0b85a97d-425671c3bcdmr7790794f8f.59.1759756287634;
-        Mon, 06 Oct 2025 06:11:27 -0700 (PDT)
-Received: from ho-tower-lan.lan ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e723614c9sm156577245e9.14.2025.10.06.06.11.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 06:11:27 -0700 (PDT)
-From: James Clark <james.clark@linaro.org>
-Date: Mon, 06 Oct 2025 14:11:07 +0100
-Subject: [PATCH] perf tests: Don't retest sections in "Object code reading"
+	s=arc-20240116; t=1759756322; c=relaxed/simple;
+	bh=RCfHcCS49H0jPfTadDqu3/+iKK/RCfM1Fd8FXNY6sN0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gH9rExqF+Hh62KueKW8CHpQJHuoY3/SnhtxuVyRKlmkUg0VAThr8p1r4zQbeaa1n30KXY/fMDfZuyzNHpqfy0VTt34/AsFlZvkMsbNmCIfaqo6NiJA1sM4Po5Hub0bmSN48TbKWrHeo8bvVtzxYiZ756HZtxe7jiz9XDh6LsMuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Zh3n3IrO; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 26BC040E01CD;
+	Mon,  6 Oct 2025 13:11:57 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id HcjTYQawyWJL; Mon,  6 Oct 2025 13:11:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1759756312; bh=RuIz4e5yT2pXQBySS44ukbvJqhVAgwcMztPMxCNYMEI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Zh3n3IrOF7h/3v6jyb/c/vnhNSb6w6RYcrIMi0X6g2wsPah1JnZXs53yFSGjMYQQr
+	 f27LfgFVs8oay8wAgPoI+z3jo7Pj/rXRIXzB22UPmzFX9xrXRDINUrZTzO/k8JvPTb
+	 ThzDiqAPvhv1IacoFY3RHzXezGEUx3JxmKZSaeaonxk48L0WJYYw1KfWF/ZAbfvDxY
+	 4R2wh1J/3+epflKNcYjQmuqLZWzXVAUfD6Ncw/1noVooX1aBhVmy9LdylJ/2l6hQBz
+	 wcZ9XFTEMXNvYvT3mNAVUrSOI7+JgLawLezv3T1TLuHpNcCa/GkopFg4AS+EGEtByH
+	 5Lb/viacDfdQSkSLfUI79yx7A852ayod3z+TpclaAl9b4PZU+dSrGfBWATpcScI1Un
+	 BolF8TIforGEfCRacOZCInTej0TwI7padLQyYhkCbsSbym826g6y7e/qn4ncwluzm7
+	 oKh5ZQlaU4RbssLm07KRD/BqkdpXrP7lYg0pRGf4iRnXmpSjdbZJh3s+7KB0jYNLDo
+	 J+iV169WoDpqLYmcXKgQEBZh1r3SYwYikRKST3hLxxH7KwQ6tb3hL26UndcreZ3UHX
+	 gS63awTcu8AAC/sT/cp8J3Ijmh6AUU10E/NWxSNGBDqkyZrNjLu+psAj/nRRQp8nnV
+	 xijFId9qGN+HDwnBmlzG5t6Y=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 8D07340E00DE;
+	Mon,  6 Oct 2025 13:11:41 +0000 (UTC)
+Date: Mon, 6 Oct 2025 15:11:26 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: David Kaplan <david.kaplan@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Klaus Kusche <klaus.kusche@computerix.info>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/bugs: Qualify RETBLEED_INTEL_MSG
+Message-ID: <20251006131126.GBaOO__iUbQHNR6QhW@fat_crate.local>
+References: <20251003171936.155391-1-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251006-james-perf-object-code-reading-v1-1-acab2129747d@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAOq/42gC/x3NQQqDMBBG4avIrDsQxYTaq5QuYvJrR2giExFBv
- Luhy2/z3kkFKij0ak5S7FIkp4r20VD4+jSDJVZTZzrbGuN48T8UXqET53FB2DjkCFb4KGnmwfU
- O/dNFO1iqkVUxyfEfvD/XdQNdGnhTcAAAAA==
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
- Adrian Hunter <adrian.hunter@intel.com>, Leo Yan <leo.yan@arm.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
- James Clark <james.clark@linaro.org>
-X-Mailer: b4 0.14.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251003171936.155391-1-david.kaplan@amd.com>
 
-We already only test each kcore map once, but on slow systems
-(particularly with network filesystems) even the non-kcore maps are
-slow. The test can test the same objump output over and over which only
-wastes time. Generalize the skipping mechanism to track all DSOs and
-addresses so that each section is only tested once.
+On Fri, Oct 03, 2025 at 12:19:36PM -0500, David Kaplan wrote:
+> When retbleed mitigation is disabled, the kernel already prints an info
+> message that the system is vulnerable.  Recent code restructuring also
+> inadvertently led to RETBLEED_INTEL_MSG being printed as an error, which is
+> unnecessary as retbleed mitigation was already explicitly disabled (by
+> config option, cmdline, etc.).
+> 
+> Qualify this print statement so the warning is not printed unless an actual
+> retbleed mitigation was selected and is being disabled due to
+> incompatibility with spectre_v2.
+> 
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220624
+> Signed-off-by: David Kaplan <david.kaplan@amd.com>
+> ---
+>  arch/x86/kernel/cpu/bugs.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> index 6a526ae1fe99..e08de5b0d20b 100644
+> --- a/arch/x86/kernel/cpu/bugs.c
+> +++ b/arch/x86/kernel/cpu/bugs.c
+> @@ -1463,7 +1463,9 @@ static void __init retbleed_update_mitigation(void)
+>  			break;
+>  		default:
+>  			if (retbleed_mitigation != RETBLEED_MITIGATION_STUFF) {
+> -				pr_err(RETBLEED_INTEL_MSG);
+> +				if (retbleed_mitigation != RETBLEED_MITIGATION_NONE)
+> +					pr_err(RETBLEED_INTEL_MSG);
+> +
+>  				retbleed_mitigation = RETBLEED_MITIGATION_NONE;
+>  			}
+>  		}
 
-On a fully loaded Arm Juno (simulating a parallel Perf test run) with a
-network filesystem, the original runtime is:
+I guess we can do that for now...
 
-  real  1m51.126s
-  user  0m19.445s
-  sys   1m15.431s
+But even with it, my random guest says:
 
-And the new runtime is:
+[    0.420377] mitigations: Enabled attack vectors: SMT mitigations: off
+[    0.421355] Speculative Store Bypass: Vulnerable
+[    0.422234] Spectre V2 : Vulnerable
+[    0.422845] Speculative Return Stack Overflow: Vulnerable
+[    0.423759] Spectre V1 : Vulnerable: __user pointer sanitization and usercopy barriers only; no swapgs barriers
 
-  real  0m48.873s
-  user  0m8.031s
-  sys   0m32.353s
+during boot with
 
-Signed-off-by: James Clark <james.clark@linaro.org>
----
- tools/perf/tests/code-reading.c | 119 ++++++++++++++++++++++++++++------------
- 1 file changed, 85 insertions(+), 34 deletions(-)
+# CONFIG_CPU_MITIGATIONS is not set
 
-diff --git a/tools/perf/tests/code-reading.c b/tools/perf/tests/code-reading.c
-index 9c2091310191..4c9fbf6965c4 100644
---- a/tools/perf/tests/code-reading.c
-+++ b/tools/perf/tests/code-reading.c
-@@ -2,6 +2,7 @@
- #include <errno.h>
- #include <linux/kconfig.h>
- #include <linux/kernel.h>
-+#include <linux/rbtree.h>
- #include <linux/types.h>
- #include <inttypes.h>
- #include <stdlib.h>
-@@ -39,11 +40,64 @@
- #define BUFSZ	1024
- #define READLEN	128
- 
--struct state {
--	u64 done[1024];
--	size_t done_cnt;
-+struct tested_section {
-+	struct rb_node rb_node;
-+	u64 addr;
-+	char path[PATH_MAX];
- };
- 
-+static bool tested_code_insert_or_exists(const char *path, u64 addr,
-+					 struct rb_root *tested_sections)
-+{
-+	struct rb_node **node = &tested_sections->rb_node;
-+	struct rb_node *parent = NULL;
-+	struct tested_section *data;
-+
-+	while (*node) {
-+		int cmp;
-+
-+		parent = *node;
-+		data = rb_entry(*node, struct tested_section, rb_node);
-+		cmp = strcmp(path, data->path);
-+		if (!cmp) {
-+			if (addr < data->addr)
-+				cmp = -1;
-+			else if (addr > data->addr)
-+				cmp = 1;
-+			else
-+				return true; /* already tested */
-+		}
-+
-+		if (cmp < 0)
-+			node = &(*node)->rb_left;
-+		else
-+			node = &(*node)->rb_right;
-+	}
-+
-+	data = zalloc(sizeof(*data));
-+	if (!data)
-+		return true;
-+
-+	data->addr = addr;
-+	strlcpy(data->path, path, sizeof(data->path));
-+	rb_link_node(&data->rb_node, parent, node);
-+	rb_insert_color(&data->rb_node, tested_sections);
-+	return false;
-+}
-+
-+static void tested_sections__free(struct rb_root *root)
-+{
-+	while (!RB_EMPTY_ROOT(root)) {
-+		struct rb_node *node = rb_first(root);
-+		struct tested_section *ts = rb_entry(node,
-+						     struct tested_section,
-+						     rb_node);
-+
-+		rb_erase(node, root);
-+		free(ts);
-+	}
-+}
-+
- static size_t read_objdump_chunk(const char **line, unsigned char **buf,
- 				 size_t *buf_len)
- {
-@@ -316,13 +370,15 @@ static void dump_buf(unsigned char *buf, size_t len)
- }
- 
- static int read_object_code(u64 addr, size_t len, u8 cpumode,
--			    struct thread *thread, struct state *state)
-+			    struct thread *thread,
-+			    struct rb_root *tested_sections)
- {
- 	struct addr_location al;
- 	unsigned char buf1[BUFSZ] = {0};
- 	unsigned char buf2[BUFSZ] = {0};
- 	size_t ret_len;
- 	u64 objdump_addr;
-+	u64 skip_addr;
- 	const char *objdump_name;
- 	char decomp_name[KMOD_DECOMP_LEN];
- 	bool decomp = false;
-@@ -350,6 +406,18 @@ static int read_object_code(u64 addr, size_t len, u8 cpumode,
- 		goto out;
- 	}
- 
-+	/*
-+	 * Don't retest the same addresses. objdump struggles with kcore - try
-+	 * each map only once even if the address is different.
-+	 */
-+	skip_addr = dso__is_kcore(dso) ? map__start(al.map) : al.addr;
-+	if (tested_code_insert_or_exists(dso__long_name(dso), skip_addr,
-+					 tested_sections)) {
-+		pr_debug("Already tested %s @ %#"PRIx64" - skipping\n",
-+			 dso__long_name(dso), skip_addr);
-+		goto out;
-+	}
-+
- 	pr_debug("On file address is: %#"PRIx64"\n", al.addr);
- 
- 	if (len > BUFSZ)
-@@ -387,24 +455,6 @@ static int read_object_code(u64 addr, size_t len, u8 cpumode,
- 		goto out;
- 	}
- 
--	/* objdump struggles with kcore - try each map only once */
--	if (dso__is_kcore(dso)) {
--		size_t d;
--
--		for (d = 0; d < state->done_cnt; d++) {
--			if (state->done[d] == map__start(al.map)) {
--				pr_debug("kcore map tested already");
--				pr_debug(" - skipping\n");
--				goto out;
--			}
--		}
--		if (state->done_cnt >= ARRAY_SIZE(state->done)) {
--			pr_debug("Too many kcore maps - skipping\n");
--			goto out;
--		}
--		state->done[state->done_cnt++] = map__start(al.map);
--	}
--
- 	objdump_name = dso__long_name(dso);
- 	if (dso__needs_decompress(dso)) {
- 		if (dso__decompress_kmodule_path(dso, objdump_name,
-@@ -471,9 +521,9 @@ static int read_object_code(u64 addr, size_t len, u8 cpumode,
- 	return err;
- }
- 
--static int process_sample_event(struct machine *machine,
--				struct evlist *evlist,
--				union perf_event *event, struct state *state)
-+static int process_sample_event(struct machine *machine, struct evlist *evlist,
-+				union perf_event *event,
-+				struct rb_root *tested_sections)
- {
- 	struct perf_sample sample;
- 	struct thread *thread;
-@@ -494,7 +544,8 @@ static int process_sample_event(struct machine *machine,
- 		goto out;
- 	}
- 
--	ret = read_object_code(sample.ip, READLEN, sample.cpumode, thread, state);
-+	ret = read_object_code(sample.ip, READLEN, sample.cpumode, thread,
-+			       tested_sections);
- 	thread__put(thread);
- out:
- 	perf_sample__exit(&sample);
-@@ -502,10 +553,11 @@ static int process_sample_event(struct machine *machine,
- }
- 
- static int process_event(struct machine *machine, struct evlist *evlist,
--			 union perf_event *event, struct state *state)
-+			 union perf_event *event, struct rb_root *tested_sections)
- {
- 	if (event->header.type == PERF_RECORD_SAMPLE)
--		return process_sample_event(machine, evlist, event, state);
-+		return process_sample_event(machine, evlist, event,
-+					    tested_sections);
- 
- 	if (event->header.type == PERF_RECORD_THROTTLE ||
- 	    event->header.type == PERF_RECORD_UNTHROTTLE)
-@@ -525,7 +577,7 @@ static int process_event(struct machine *machine, struct evlist *evlist,
- }
- 
- static int process_events(struct machine *machine, struct evlist *evlist,
--			  struct state *state)
-+			  struct rb_root *tested_sections)
- {
- 	union perf_event *event;
- 	struct mmap *md;
-@@ -537,7 +589,7 @@ static int process_events(struct machine *machine, struct evlist *evlist,
- 			continue;
- 
- 		while ((event = perf_mmap__read_event(&md->core)) != NULL) {
--			ret = process_event(machine, evlist, event, state);
-+			ret = process_event(machine, evlist, event, tested_sections);
- 			perf_mmap__consume(&md->core);
- 			if (ret < 0)
- 				return ret;
-@@ -637,9 +689,7 @@ static int do_test_code_reading(bool try_kcore)
- 			.uses_mmap   = true,
- 		},
- 	};
--	struct state state = {
--		.done_cnt = 0,
--	};
-+	struct rb_root tested_sections = RB_ROOT;
- 	struct perf_thread_map *threads = NULL;
- 	struct perf_cpu_map *cpus = NULL;
- 	struct evlist *evlist = NULL;
-@@ -773,7 +823,7 @@ static int do_test_code_reading(bool try_kcore)
- 
- 	evlist__disable(evlist);
- 
--	ret = process_events(machine, evlist, &state);
-+	ret = process_events(machine, evlist, &tested_sections);
- 	if (ret < 0)
- 		goto out_put;
- 
-@@ -793,6 +843,7 @@ static int do_test_code_reading(bool try_kcore)
- 	perf_thread_map__put(threads);
- 	machine__delete(machine);
- 	perf_env__exit(&host_env);
-+	tested_sections__free(&tested_sections);
- 
- 	return err;
- }
+in its config. 
 
----
-base-commit: a22d167ed82505f770340c3a7c257c04ba24dac9
-change-id: 20251006-james-perf-object-code-reading-9646e486d595
+The "Enabled attack vectors" doesn't mean a whole lot if we've disabled
+mitigations. It probably is even a bit misleading.
 
-Best regards,
+The others are perhaps *technically* correct but then we're reporting only
+a subset of the mitigations and not all for which the machine is affected.
+
+But it ain't the right fix long term, AFAICT.
+
+Because we probably should do this instead:
+
+diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
+index 2f8a58ef690e..c789286a480b 100644
+--- a/arch/x86/kernel/cpu/Makefile
++++ b/arch/x86/kernel/cpu/Makefile
+@@ -22,7 +22,7 @@ obj-y                 += topology_common.o topology_ext.o topology_amd.o
+ obj-y                  += common.o
+ obj-y                  += rdrand.o
+ obj-y                  += match.o
+-obj-y                  += bugs.o
++obj-$(CONFIG_CPU_MITIGATIONS)          += bugs.o
+ obj-y                  += aperfmperf.o
+ obj-y                  += cpuid-deps.o cpuid_0x2_table.o
+ obj-y                  += umwait.o
+
+because off means off and there should be nothing in the boot log about any
+mitigations and no code should be built in. Which is done now - just the code
+is inactive which is not what we do with disabled code in the kernel.
+
+But that then causes at least this:
+
+ERROR: modpost: "cpu_buf_vm_clear" [arch/x86/kvm/kvm.ko] undefined!
+ERROR: modpost: "switch_vcpu_ibpb" [arch/x86/kvm/kvm.ko] undefined!
+ERROR: modpost: "gds_ucode_mitigated" [arch/x86/kvm/kvm.ko] undefined!
+ERROR: modpost: "l1tf_vmx_mitigation" [arch/x86/kvm/kvm.ko] undefined!
+ERROR: modpost: "x86_ibpb_exit_to_user" [arch/x86/kvm/kvm.ko] undefined!
+ERROR: modpost: "itlb_multihit_kvm_mitigation" [arch/x86/kvm/kvm.ko] undefined!
+ERROR: modpost: "x86_spec_ctrl_current" [arch/x86/kvm/kvm-amd.ko] undefined!
+ERROR: modpost: "x86_virt_spec_ctrl" [arch/x86/kvm/kvm-amd.ko] undefined!
+make[2]: *** [scripts/Makefile.modpost:147: Module.symvers] Error 1
+make[1]: *** [/mnt/k/kernel/r/11/linux/Makefile:1960: modpost] Error 2
+
+which means untangling from kvm... which means ugly ifdeffery...
+
+Sounds like a longer project...
+
+Thx.
+
 -- 
-James Clark <james.clark@linaro.org>
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
