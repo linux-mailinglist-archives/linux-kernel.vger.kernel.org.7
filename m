@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-843339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8576CBBEF7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:32:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 543BABBEF88
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:33:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5F2F3A680A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:30:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D93B3AC6E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6255A2DCF4C;
-	Mon,  6 Oct 2025 18:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF8D2DEA7E;
+	Mon,  6 Oct 2025 18:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cUA8JczQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WnCbxhJQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69A42D94A6;
-	Mon,  6 Oct 2025 18:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01EB2DE6F7;
+	Mon,  6 Oct 2025 18:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759775422; cv=none; b=Cf00D15aE+qNKwUQMuwjG8n4b/pRcY+TZaqrEb0ddfAvsZYcFecj4ifNXlU0idIiBLWN2YKOZ+DR+2yrnsrt2lcAqsHBEafVm5R5ki88esCGcEHLzk8nemI76I3KXL9vrPFGsU6T/WUldzXDQ6TsevaX92zqxnRHfCAKf9JR82M=
+	t=1759775424; cv=none; b=q10XWy7Ba8E54oiEDnwQ/K+ctifMJz2Kqga6PRl1khrl27qInGEf6VDGVFJrnhwwWMzSDoWZ/M64RHF7bXGjZ3NbFGhUBlY8aOF2Zfm9lcA0YmNLEk59sOlwy8+djgCGa8/aka4eJWT0ij8DNtuPydlrR2JA46Uql0/pjjLs/f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759775422; c=relaxed/simple;
-	bh=j2eRhgxCJOAHpbTNmGKai0ZDsCWyKYvg4XBaQCemYxE=;
+	s=arc-20240116; t=1759775424; c=relaxed/simple;
+	bh=bdk7u6K8PpMBTqlKEhIiVPBy/qfBI6iyt2n82Zac3hw=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=vDLHl6Cjv0vVaadXymhLWusS0G5zaMKxAjdF6XBnKhHuZR6/naQTQlzkpW8RpbAoXix/d6QipiTdFykUIdH0b9OWabZHoyUZWU+nqjsbyqQm/8pbTJ4AkDwnFjf4Nd0wGcOpFPwPGJ/9DDzb+mJ0OVGLYZwLahvPID7GhYmZ+AE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cUA8JczQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44F4DC4CEF7;
-	Mon,  6 Oct 2025 18:30:22 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=rhtYqkg0+bVDJ+5vmOV6TQl4qdqpx1WAa31lMH6GdV9mR8PWAXomY0vIE+Z7XGj9x7Z9Dj4LSZXNHXTsyQGhFaQGfHOx3wipbqG38hC3NMMuj8pNwzezDSVNWFcxH8eyJRwGatgD4YoqB2ca9UuIMOwDik5dQIr85ZmSpT7chJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WnCbxhJQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFC1EC4CEF5;
+	Mon,  6 Oct 2025 18:30:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759775422;
-	bh=j2eRhgxCJOAHpbTNmGKai0ZDsCWyKYvg4XBaQCemYxE=;
+	s=k20201202; t=1759775423;
+	bh=bdk7u6K8PpMBTqlKEhIiVPBy/qfBI6iyt2n82Zac3hw=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=cUA8JczQSUXMOgK9ESLnNt2nGL2h1Iw/ZQInC5dEYxMlufW2A+Kot1K1kcngE6xeZ
-	 2FD5tLDHv5cwuvWon/MDdmk+gQymEEOW2Q47kOruhzgRbVOvenB8OQLNOT2LSJGcL+
-	 xem2yXy0zLqv31zFqCHV7Ew/GASLySyQrnTZfp0ZHWIINceUMvmwI3kzgwdT/59WOY
-	 B7GghDOT5J3SBV3GPoU6W04LJtZzSN2xPgPd38yaDRgCoAHoQSmaJDO4fl5G08uhpF
-	 BRPT8vt/UQTXDKZVFMCQEUtqs7vDuPqihRTK8WG+Vv1kyidNHcDrd3FNpATjcR4ZPC
-	 r98yBzr5/TAsw==
+	b=WnCbxhJQxgIN989j5eMhLZsYC0DQ4mLrs8QXCYGWJSRn0mBxhNI3k1qcIdjc6Cy3x
+	 2A6T+GjQ1/lwdNnym3QbD3NQl+WaOinYX591o1vhC7SuNu7GTIxlz/laSrETaxbzLJ
+	 YDX6BevWHqbV8b229xX6XRkHKa1xmZaLfPz7UHoOAS7LrmtstYgRpaUuyyEpWSqtbH
+	 D4nAZ6qGQ+227vRj3wivbpKGazWVqgqhlbpZruTTaYXv4CQLlCrd96lmlVeFIyIEJL
+	 kI+yuM3EVTIff9YP+Elo9lV70JX7blGpc1OfO7q14ORtqRreln7vmnh4vvtAE84sqW
+	 chrfxcF/RisWQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D7839D0C1A;
-	Mon,  6 Oct 2025 18:30:13 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADDD739D0C1A;
+	Mon,  6 Oct 2025 18:30:14 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,64 +51,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v6] selftest:net:ovpn: Fix uninit return values
+Subject: Re: [PATCH v3] ice: ice_adapter: release xa entry on adapter
+ allocation
+ failure
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175977541174.1511446.5862875842120045644.git-patchwork-notify@kernel.org>
-Date: Mon, 06 Oct 2025 18:30:11 +0000
-References: <20251001123107.96244-2-sidharthseela@gmail.com>
-In-Reply-To: <20251001123107.96244-2-sidharthseela@gmail.com>
-To: Sidharth Seela <sidharthseela@gmail.com>
-Cc: antonio@openvpn.net, sd@queasysnail.net, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- shuah@kernel.org, david.hunter.linux@gmail.com, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+ <175977541325.1511446.4780577963402519047.git-patchwork-notify@kernel.org>
+Date: Mon, 06 Oct 2025 18:30:13 +0000
+References: <20251001115336.1707-1-vulab@iscas.ac.cn>
+In-Reply-To: <20251001115336.1707-1-vulab@iscas.ac.cn>
+To: Haotian Zhang <vulab@iscas.ac.cn>
+Cc: jacob.e.keller@intel.com, anthony.l.nguyen@intel.com,
+ przemyslaw.kitszel@intel.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Wed,  1 Oct 2025 18:01:08 +0530 you wrote:
-> Fix functions that return undefined values. These issues were caught by
-> running clang using LLVM=1 option.
+On Wed,  1 Oct 2025 19:53:36 +0800 you wrote:
+> When ice_adapter_new() fails, the reserved XArray entry created by
+> xa_insert() is not released. This causes subsequent insertions at
+> the same index to return -EBUSY, potentially leading to
+> NULL pointer dereferences.
 > 
-> Clang warnings are as follows:
-> ovpn-cli.c:1587:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
->  1587 |         if (!sock) {
->       |             ^~~~~
-> ovpn-cli.c:1635:9: note: uninitialized use occurs here
->  1635 |         return ret;
->       |                ^~~
-> ovpn-cli.c:1587:2: note: remove the 'if' if its condition is always false
->  1587 |         if (!sock) {
->       |         ^~~~~~~~~~~~
->  1588 |                 fprintf(stderr, "cannot allocate netlink socket\n");
->       |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->  1589 |                 goto err_free;
->       |                 ~~~~~~~~~~~~~~
->  1590 |         }
->       |         ~
-> ovpn-cli.c:1584:15: note: initialize the variable 'ret' to silence this warning
->  1584 |         int mcid, ret;
->       |                      ^
->       |                       = 0
-> ovpn-cli.c:2107:7: warning: variable 'ret' is used uninitialized whenever switch case is taken [-Wsometimes-uninitialized]
->  2107 |         case CMD_INVALID:
->       |              ^~~~~~~~~~~
-> ovpn-cli.c:2111:9: note: uninitialized use occurs here
->  2111 |         return ret;
->       |                ^~~
-> ovpn-cli.c:1939:12: note: initialize the variable 'ret' to silence this warning
->  1939 |         int n, ret;
->       |                   ^
->       |
+> Reorder the operations as suggested by Przemek Kitszel:
+> 1. Check if adapter already exists (xa_load)
+> 2. Reserve the XArray slot (xa_reserve)
+> 3. Allocate the adapter (ice_adapter_new)
+> 4. Store the adapter (xa_store)
 > 
 > [...]
 
 Here is the summary with links:
-  - [net,v6] selftest:net:ovpn: Fix uninit return values
-    https://git.kernel.org/netdev/net/c/7fc25c5a5ae6
+  - [v3] ice: ice_adapter: release xa entry on adapter allocation failure
+    https://git.kernel.org/netdev/net/c/2db687f3469d
 
 You are awesome, thank you!
 -- 
