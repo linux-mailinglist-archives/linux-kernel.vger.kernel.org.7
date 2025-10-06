@@ -1,189 +1,213 @@
-Return-Path: <linux-kernel+bounces-843079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BD12BBE5F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:38:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 419EEBBE60A
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:41:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DEAB34EEEBA
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:38:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 34BE64EF50B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBAE2D5C6E;
-	Mon,  6 Oct 2025 14:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54BF2D663B;
+	Mon,  6 Oct 2025 14:40:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="oNB3mnTX"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011060.outbound.protection.outlook.com [52.101.70.60])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="R1KrgpF/"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABC82D480F;
-	Mon,  6 Oct 2025 14:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759761501; cv=fail; b=klk+CmtSaFKel0EVKY/Xq1EH3OpQTlZBY5vBlj3GyBNvSqjVnrKAmiitejdvmolb8TqbSiDoIp1NpMzC5PRpHnAhLkvvViDqb6HWvdqY/3DbcsP+zOErIo6S1fEiSpKuuKq8L7PrLkilNyHIdWEZUDvAJvAwOK6AbvTWig69YeA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759761501; c=relaxed/simple;
-	bh=JLeSHQCP+ZUnstzoBJBNbrHjKJgn7+K+oQ5YkkaR/ks=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=nF1kl7CyESFDUB/L1mZIShX/KvJAS/MWGoHfzM3VRiZu3IVncmgX3m7eWl/GH4VBxcnl4yWdnebxIsvRvqYZ8Mu7kCismP2gL98maWCZgPcT/zdixEJgrAhQ6LspjpSfnbnvUn3qhTqQkiVeVKVzYrpQRIYDLvCbMeiQqjJbmQI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=oNB3mnTX; arc=fail smtp.client-ip=52.101.70.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=n9cBWI75ejPpTDplEo/a8ufnVm5aI2CBSHVqkLYtV772rxXqaFcmpypllAKgGUuRK7oZDVBcRtSuP6BslvtwjdzIxj5tEuNA+PH0tHtQGPyVSnJ25gyvfmDnKW7xAsIr99JidctZSkw8pJu41DA9j6lvw4IKgbLYrxm3XcUVcem8mzBi0PvTi4oHRf72DvOIPH6pqXU0/9m8G3VcV6xSMw3Cd1BBsroyQMyUxRPp9bft4ZElV79x70a3JvDokRjQJDX9diUqyKBXqok3TlAwHJO2123Xkal7023+Lo1eSgJYiDSEH2WHuq7OF2uBnNghnPXgtf6JT0DXoUArMwECXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ueF3YR/BGuDlSXldtbE6qqPf9DIpXetlVuV8iOPdaIs=;
- b=jHsRxmgJ+Bcw+QlUtOWzcQEf8ydrfU2cxuMRG3SBfpLXOJ5Gef/NWEazrH/Nj5pdJ/+GA5JL+yXYj9+jApVJ8UomnJVXF/vIou9F4GaxFwuZoozAVGCBnHVGqja5HqJ29gsL98cAxvB4ujWg0bknhwjTrEymjsEyPG5eEVW9OeYvof93xW4U0IJAivwsZAUy8huXxMJy4Y8GBd6+qUfF3VByQ1mwt6Q2dHJLwOzaZQ/y62FpMQ7dqYozB0JtAmYZIWleGID2xUgj58cgla3ebS24kB74j/gvGXtJtk+I87MqI9sbHi5oYy6mPLlB0LlGtl/NYT4DvU3JtskFAes9tA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ueF3YR/BGuDlSXldtbE6qqPf9DIpXetlVuV8iOPdaIs=;
- b=oNB3mnTXHIQrU5iyNY8izt/KwZxS1iMxumBgT0GhRnplqXQt+63W1SkZuHHJq2ZxQ+lUhcH4RJW1ZFew13B60TcpdZY3zd/mkyehGDs4nzzM65AP0VORL1ct9KF+IbQMDLTJGlla7AN1HdHhCCaBdt4dMDxuC+DcsOCU0AdTeA31u+x4toWuNOwAs3hmK+GNG68il3MAvCyumr733zVuRZc8JvWvzNpIqf3IiWVe6w7vPofci0e5MdPLambD1OUIQmDKueGb+trnHPgoZRjs38rSDK5JFp2jVkCoyYuzn8AZTuOwtsdhSrzmWsZfQMpDi9GE4wjs22Kf/kXT2Od8vQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by VI0PR04MB10495.eurprd04.prod.outlook.com (2603:10a6:800:235::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Mon, 6 Oct
- 2025 14:38:10 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9182.015; Mon, 6 Oct 2025
- 14:38:09 +0000
-Date: Mon, 6 Oct 2025 10:37:59 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: alexandre.belloni@bootlin.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: imx6q-evi: fix rtc compatible
-Message-ID: <aOPUR8UAVND5SDNy@lizhi-Precision-Tower-5810>
-References: <20251005215146.3804629-1-alexandre.belloni@bootlin.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251005215146.3804629-1-alexandre.belloni@bootlin.com>
-X-ClientProxiedBy: SJ0PR13CA0051.namprd13.prod.outlook.com
- (2603:10b6:a03:2c2::26) To PAXSPRMB0053.eurprd04.prod.outlook.com
- (2603:10a6:102:23f::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B401E2D594F;
+	Mon,  6 Oct 2025 14:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759761642; cv=none; b=iRyyNGMcOAooKuWm4X8l8CQpPQvpcdmJYMd6i17hpbvWc5M7lddp8EP1ABHnma+Xqd9adoWPAfcm5XY/fD3rao1pRjOsZM0nxkWMyVMPgyq7im7D4MmCklxIk+++cy1jrh9ACR1/8J6/6r4YlKb37eo6mf6tCVCqTc79uOj9BRM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759761642; c=relaxed/simple;
+	bh=ssMBs0Xff6jpWsw9MVlUeHDAVz2fC+L6zGBjNDN2ni4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BPuvTLHBk7qSzAyXwFL5g8kIp1dawfDWqtzynPIgk/e2ZSuGslnr+XCOb28Agxrkx/wn0a3+IAvOt31YcIO1slOvQg598TW0DhRzxlon4qURRTio5a0FViOfJWFAC40Y1WzCGtM+6gBQHeZvE1o1mfgf0U6G/fys/lsQ3Pg5sOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=R1KrgpF/; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 596EcFqJ4077801;
+	Mon, 6 Oct 2025 09:38:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1759761495;
+	bh=6MqGd4dGQEDc9B35okJhvbxyP0Rp/RpHorOynofVJnc=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=R1KrgpF/shgqXllPhZJn/0LOpFciTL6MxG/JLmDVRcjn2xYQwsrQ9d3DBH+zjTfLS
+	 xQ5hMGIA3orlHB0wHs0O1q42sFjL+9loFEz+3MXLx4Q9CUP05+l9PZr22hOQl2+k0F
+	 /QAyH6TZb8vhvWHFDbmJP44M08Rp030eAo0ESwzQ=
+Received: from DFLE210.ent.ti.com (dfle210.ent.ti.com [10.64.6.68])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 596EcF6Z2292605
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 6 Oct 2025 09:38:15 -0500
+Received: from DFLE207.ent.ti.com (10.64.6.65) by DFLE210.ent.ti.com
+ (10.64.6.68) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 6 Oct
+ 2025 09:38:14 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE207.ent.ti.com
+ (10.64.6.65) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Mon, 6 Oct 2025 09:38:14 -0500
+Received: from [10.249.130.74] ([10.249.130.74])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 596Ec8NT3823059;
+	Mon, 6 Oct 2025 09:38:09 -0500
+Message-ID: <44ed3d16-a8d2-49f3-a6b4-16d9a14d1cc6@ti.com>
+Date: Mon, 6 Oct 2025 20:08:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|VI0PR04MB10495:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4b10d957-41bf-4b46-18e5-08de04e5f873
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|19092799006|7416014|52116014|376014|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VYYEl+aWb8vJSGoTS7m9ajeArG7wlE43NxgYE4RuGhQzrQ/nRtj9xm7Ctdqr?=
- =?us-ascii?Q?HgUc72epWojDW5j5HYpPqa0+MoKk/ituhtQLgRuz/fpOscfbTut4jdIxASB7?=
- =?us-ascii?Q?1W6vJbeO6CASLD0AGdDlehify5Gtj3M5J36FXpPbv7xj5AkgNmlYjGCHRUP7?=
- =?us-ascii?Q?Ub9Qtm/gGUyyJYZvkb/HcvLj8P90s6zR9E6g7fBtm3uW+Oj1aN6ZZfsmhkq2?=
- =?us-ascii?Q?m+18vaNLqs5iXrwoYAL+l7ZxR2hTw3WKE3GvaI9UMTNmGmZHMmTo+h8sMVOT?=
- =?us-ascii?Q?deMPuaf2gc8hRnV1W1cVTVWrry55y18TaqOua6/mUI9oyFkSsiOcU1rfhwIu?=
- =?us-ascii?Q?XX1sJj0R2UXlaKnIkz85axvOWGlKg4kx5QdSj/36JMcgvjsPxL/TUBCu8jro?=
- =?us-ascii?Q?VLre9fy/9QF/74lQLYMdAI1BjQq1rwyWiknYiB9IXGixoCHXf2AJUcCiLn3U?=
- =?us-ascii?Q?bQpiRo5Ne+T94q8oZyDgUXEL7Ufb3gRXqG9i4j6K28JT9OCj8ynUq/y47tgU?=
- =?us-ascii?Q?9FB0hDsngAGVhZnvUh4wwBqmCGQ8sFjfg/heVNC/plDjvb8Sjgcw2Cl7Iagj?=
- =?us-ascii?Q?PqkH+yPMdqplgQq2JEmstEWTXmGN/jgh3p4agaNcPB8Qe7COfvGDXnm81CEd?=
- =?us-ascii?Q?Pn6dd7HhRVLP5QdVTe/Hh+o7rJkHWhl/loy/+VbSZYGgBpjn1+iC947hncvN?=
- =?us-ascii?Q?yK2KX+qxm/zgWZczMJz1znv7RIZEq+iaJ2DoSX/Z9IFurYDmmkwDSQAJHhc4?=
- =?us-ascii?Q?MqXw051LCLXNs2q75KbkQyaxjJOA2JLI66vj8Dy1kxYbqSBxN44HwtpK0hGi?=
- =?us-ascii?Q?v2/ouTBsn+dXzXgLvcdnd9Fh8tZXXusm9Fwfx0yITDZ39LyUTN8OylcAAch8?=
- =?us-ascii?Q?6h5Vr8crRSItIrAY7lF2kWB7VQPYlTC8EmvVEYNbl2rmldc5HOJJWwbGdNQy?=
- =?us-ascii?Q?I8zh6OO/Sj9fXAwAuci5er6PSiDjlNTGfZ3I1qP54mGJ0cIX/7s04rlzNX+F?=
- =?us-ascii?Q?BNFix2rinDKD3Xd83g/lyDlavJXQzYKb6G7U2JJxynHNCwJoYmOltya8K+cq?=
- =?us-ascii?Q?hIsBxF+b3YV1PTMBSfhR1RkqcALRHsszbZKbes9DPe8te3FfGp6o2Mj4BY4i?=
- =?us-ascii?Q?ZZO/phoTwwqyvq/8u5s4X/VIgKDxm3S82mf3Js0RejJCXZsqoDQrnqhzHcUt?=
- =?us-ascii?Q?93UA9B/F9yZQQog/Cjja9t7cH+YttReaB0EC4CUBrFUAPo541OpjMQaST9qz?=
- =?us-ascii?Q?KdRJBJTTNqPPtzLCVlhp18FQ0s0kBkCcWRG6gInnjIraFNsh4nSobu8Blk4y?=
- =?us-ascii?Q?V9UOSpVkxzniD7MBlZ/Pl97yq5GVtaFzHV8LtSgdO+jThDncfh9GnoJEyim1?=
- =?us-ascii?Q?cLp5jZOdovopJm6+38EH+LZuLa4zYQTPo7P3MZVGbTzdIAjz45fxMPSDxE4u?=
- =?us-ascii?Q?18dNzfT5xlukdKZ1vAd2lQmyQ2cRYbvzykfJyZLAJKL3WSKnsmFZoUfPeq5C?=
- =?us-ascii?Q?4Xc7K/lviaNBhIYMyfDgy7wVG5SMnCdo6Mmc?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(7416014)(52116014)(376014)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?PBmd403ZHsla23gJk7Ky4t32vkiVIJY863r60XADvIgNk3YN/ooVO7ZIR1UG?=
- =?us-ascii?Q?xGKslycdH5hxVFMq9oTNndj+SgGIdoMpmmPpdDo8+sKb56lvBXxmWf12H8av?=
- =?us-ascii?Q?YQppOAaDDZ/ba80SJHgZmOMoM0cTnKpVeCf1PDXUhhRAMikn3OLgF7EwBvE/?=
- =?us-ascii?Q?weDxYGoucvXot1epfmpM2Po5fHD0h74YL93f4E5dqcQyXvyrhOJMXOFKU+iM?=
- =?us-ascii?Q?nY/QGVSDool7ZF6JZGtIW9JFrTmwuily4yrWjtigu518fWiCtQFsDvj6Hk3u?=
- =?us-ascii?Q?c5guF36Fm45EfB+699GvG/SfHSPyOK6GaTwL7ro8ke6Sj92pR304q1585Br+?=
- =?us-ascii?Q?ZVJxhxUm21Sq41yuwpZRcPSnDzkk4k+jOmRw/DwZNs55/ubdy0/4Q0ein4vF?=
- =?us-ascii?Q?G8QHBucAueg9PeAkdhSlvXiR0JRjXtm7V5vFNC6cfPZZzJ+xLlyWaJJ9icDW?=
- =?us-ascii?Q?ThuoGkeH7oq1V2jh7fz3yWDaVTkUSuh9Ga/9Vf46846XsIECGEFEYz0MYQj5?=
- =?us-ascii?Q?tZbGzbFpwCWlyXSlgPDpKr0s5fmZe4baWHVqwgqDfs2XegWW1WsXpax4zk/L?=
- =?us-ascii?Q?FevVSq5XdF9xDNzRwO6dbelexl+a6Byd8TnZbSXhk+pzHV+5RHInZg9keL29?=
- =?us-ascii?Q?f+76qldaxDIEkQlDkNYK4EW3qXMgjjimcjTvvdXIzSqBLuWz8wS/X/FsYjKw?=
- =?us-ascii?Q?2S7dH0o5bi0GfrCuOJFz38wWVYMA7k1IpJujpyNVz9+clPAl3OA6izio+Zei?=
- =?us-ascii?Q?22J96FyOFuPh26PrS2TOSDswLnHmB7Sn702CGrSZcwO/Fc2Ve8brYtSMI/vj?=
- =?us-ascii?Q?I1vWU8NGIkTcZd2UJGFqoY62g0H/gBYqp0InRa2L4O8x3aCAEC7dvNUmdY9g?=
- =?us-ascii?Q?JpQfwI0akfPpy3eqSavZKFKkkGYSw/6setiX5MQqm3imDEZgi19mwGzQPWix?=
- =?us-ascii?Q?ggrtEpNlOL6rkt/x//HiAy9Os88P37wTb8C7qYGMkGxa6YWYDHPKU5Vm3aRP?=
- =?us-ascii?Q?WSL+gQV78UynVx4WFibu9Wyb6vVgzYtmmSN5PjY7xPjhps1XoM1JsX3FSgqf?=
- =?us-ascii?Q?Os0olJWvRf/cl0RIKfaCJefAR+5zw/JUZ9ZzjzTifjYqF2KTHfJzdq1y4c2S?=
- =?us-ascii?Q?Am/yGHr4xp5zmS4ai1VwtMeVwU5CP3rIo6yPL7Q+0IPbW4tnkS7RRH6ey7tc?=
- =?us-ascii?Q?O7/NdAN+0FmtiWL8lAEENgcwVpf6OzwwELQYs8JCfWlqVERpgF4I+7WPKpda?=
- =?us-ascii?Q?ul33iXTZVLZXLuLDLYJKWTN+DyJR7VQqAU1IS4og3WODb1+Ui/0U2UPBRJ+7?=
- =?us-ascii?Q?jmelXij6sScpBrirV9fNSGuKckYr1TI0LV4ucSAz0Ubi4T3lkTpvml4AtvIN?=
- =?us-ascii?Q?hHUHKCKZf0VSS010pbQ2AS3y4AZBAn677v3tsJFzQ5RrU5k2KBLy6WKlbrqA?=
- =?us-ascii?Q?nPSL5IJJbERfHYdlm1gbI31czXYu7X7b0AqIWNBNu6ZnLrywo4BM2puALBBI?=
- =?us-ascii?Q?d6+gf9IGgocdurv2NRNVNQ4BFnniV+XYjvxEQZmjN3nscBC3uxbOa6qiVwOv?=
- =?us-ascii?Q?LJqOc1EXro/C8TGamcWHW/vCzHY4jQxeRNTL2DO+?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b10d957-41bf-4b46-18e5-08de04e5f873
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2025 14:38:09.7952
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zt1x0ABinkPiBE9YeKKOqdJHtsRRLn0hm1+gExuDXklNge5w7JPUhd3ceL8IChEVYnnDVEDHk6TwcuWyFDuMtQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10495
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH net-next v2 3/3] net: ti: icssm-prueth: Adds support
+ for ICSSM RSTP switch
+To: Parvathi Pudi <parvathi@couthit.com>, <andrew+netdev@lunn.ch>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <danishanwar@ti.com>, <rogerq@kernel.org>,
+        <pmohan@couthit.com>, <basharath@couthit.com>, <afd@ti.com>
+CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <pratheesh@ti.com>,
+        <prajith@ti.com>, <vigneshr@ti.com>, <praneeth@ti.com>, <srk@ti.com>,
+        <rogerq@ti.com>, <krishna@couthit.com>, <mohan@couthit.com>
+References: <20251006104908.775891-1-parvathi@couthit.com>
+ <20251006104908.775891-4-parvathi@couthit.com>
+Content-Language: en-US
+From: "Anwar, Md Danish" <a0501179@ti.com>
+In-Reply-To: <20251006104908.775891-4-parvathi@couthit.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Sun, Oct 05, 2025 at 11:51:45PM +0200, alexandre.belloni@bootlin.com wrote:
-> From: Alexandre Belloni <alexandre.belloni@bootlin.com>
->
-> The correct compatible is nxp,pcf2123
->
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Hi Parvathi,
+
+On 10/6/2025 4:17 PM, Parvathi Pudi wrote:
+> From: Roger Quadros <rogerq@ti.com>
+> 
+> Adds support for RSTP switch mode by enhancing the existing ICSSM dual EMAC
+> driver with switchdev support.
+> 
+> With this patch, the PRU-ICSSM is now capable of operating in switch mode
+> with the 2 PRU ports acting as external ports and the host acting as an
+> internal port. Packets received from the PRU ports will be forwarded to
+> the host (store and forward mode) and also to the other PRU port (either
+> using store and forward mode or via cut-through mode). Packets coming
+> from the host will be transmitted either from one or both of the PRU ports
+> (depending on the FDB decision).
+> 
+> By default, the dual EMAC firmware will be loaded in the PRU-ICSS
+> subsystem. To configure the PRU-ICSS to operate as a switch, a different
+> firmware must to be loaded.
+> 
+> Reviewed-by: Mohan Reddy Putluru <pmohan@couthit.com>
+> Signed-off-by: Roger Quadros <rogerq@ti.com>
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> Signed-off-by: Basharath Hussain Khaja <basharath@couthit.com>
+> Signed-off-by: Parvathi Pudi <parvathi@couthit.com>
 > ---
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+[ ... ]>
+> +static void icssm_prueth_change_to_switch_mode(struct prueth *prueth)
+> +{
+> +	bool portstatus[PRUETH_NUM_MACS];
+> +	struct prueth_emac *emac;
+> +	struct net_device *ndev;
+> +	int i, ret;
+> +
+> +	for (i = 0; i < PRUETH_NUM_MACS; i++) {
+> +		emac = prueth->emac[i];
+> +		ndev = emac->ndev;
+> +
+> +		portstatus[i] = netif_running(ndev);
+> +		if (!portstatus[i])
+> +			continue;
+> +
+> +		ret = ndev->netdev_ops->ndo_stop(ndev);
+> +		if (ret < 0) {
+> +			netdev_err(ndev, "failed to stop: %d", ret);
+> +			return;
+> +		}
+> +	}
+> +
+> +	prueth->eth_type = PRUSS_ETHTYPE_SWITCH;
+> +
+> +	for (i = 0; i < PRUETH_NUM_MACS; i++) {
+> +		emac = prueth->emac[i];
+> +		ndev = emac->ndev;
+> +
+> +		if (!portstatus[i])
+> +			continue;
+> +
+> +		ret = ndev->netdev_ops->ndo_open(ndev);
+> +		if (ret < 0) {
+> +			netdev_err(ndev, "failed to start: %d", ret);
+> +			return;
+> +		}
+> +	}
+> +
+> +	dev_info(prueth->dev, "TI PRU ethernet now in Switch mode\n");
+> +}
+> +
+> +static void icssm_prueth_change_to_emac_mode(struct prueth *prueth)
+> +{
+> +	bool portstatus[PRUETH_NUM_MACS];
+> +	struct prueth_emac *emac;
+> +	struct net_device *ndev;
+> +	int i, ret;
+> +
+> +	for (i = 0; i < PRUETH_NUM_MACS; i++) {
+> +		emac = prueth->emac[i];
+> +		ndev = emac->ndev;
+> +
+> +		portstatus[i] = netif_running(ndev);
+> +		if (!portstatus[i])
+> +			continue;
+> +
+> +		ret = ndev->netdev_ops->ndo_stop(ndev);
+> +		if (ret < 0) {
+> +			netdev_err(ndev, "failed to stop: %d", ret);
+> +			return;
+> +		}
+> +	}
+> +
+> +	prueth->eth_type = PRUSS_ETHTYPE_EMAC;
+> +
+> +	for (i = 0; i < PRUETH_NUM_MACS; i++) {
+> +		emac = prueth->emac[i];
+> +		ndev = emac->ndev;
+> +
+> +		if (!portstatus[i])
+> +			continue;
+> +
+> +		ret = ndev->netdev_ops->ndo_open(ndev);
+> +		if (ret < 0) {
+> +			netdev_err(ndev, "failed to start: %d", ret);
+> +			return;
+> +		}
+> +	}
+> +
+> +	dev_info(prueth->dev, "TI PRU ethernet now in Dual EMAC mode\n");
+> +}
 
->  arch/arm/boot/dts/nxp/imx/imx6q-evi.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-evi.dts b/arch/arm/boot/dts/nxp/imx/imx6q-evi.dts
-> index 78d941fef5df..5da9631cb3ec 100644
-> --- a/arch/arm/boot/dts/nxp/imx/imx6q-evi.dts
-> +++ b/arch/arm/boot/dts/nxp/imx/imx6q-evi.dts
-> @@ -134,7 +134,7 @@ eeprom: m95m02@1 {
->  	};
->
->  	pb_rtc: rtc@3 {
-> -		compatible = "nxp,rtc-pcf2123";
-> +		compatible = "nxp,pcf2123";
->  		spi-max-frequency = <2450000>;
->  		spi-cs-high;
->  		reg = <3>;
-> --
-> 2.51.0
->
+
+The APIs icssm_prueth_change_to_emac_mode and
+icssm_prueth_change_to_switch_mode seems identical. Won't it be better
+to have one function to change modes and which mode to go to passed as
+function argument.
+
+	icssm_prueth_change_mode(prueth,mode);
+
+This will also work seemlessly if you add more modes in future. With
+current approach you will need to add new APIs
+icssm_prueth_change_to_xyz_mode()
+
+
+-- 
+Thanks and Regards,
+Md Danish Anwar
+
 
