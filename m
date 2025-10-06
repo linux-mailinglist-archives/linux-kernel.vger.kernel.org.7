@@ -1,191 +1,247 @@
-Return-Path: <linux-kernel+bounces-843485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B2CBBF918
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 23:24:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1D39BBF927
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 23:24:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7298F189DC2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 21:24:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB1524F2556
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 21:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212BD1C84C0;
-	Mon,  6 Oct 2025 21:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E91822A4E9;
+	Mon,  6 Oct 2025 21:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wismer.xyz header.i=@wismer.xyz header.b="AeoFJ9O7"
-Received: from out8.tophost.ch (out8.tophost.ch [46.232.182.217])
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="S93aLTOH"
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5302E25B31B;
-	Mon,  6 Oct 2025 21:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.232.182.217
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759785820; cv=none; b=bfavZgJEgU6rSUZQ0L3aH6oZAcyZ6Fu13bfH1DgFd1LHJ6aDEScMyDrn43NMRxYF8fD2neE57HCi/9dVsIieHKt0/OIUa/7wkslJcjH9HrsoZQRsceXr/SxjiC69z9h1CH0jZg5WYgE3/KAppr41ogIWQKeVeEMpKyNK2BzOl6s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759785820; c=relaxed/simple;
-	bh=GZgc4JOSb5TEtPwDyd3OBX08brdKWHfM92Ox8qh7Dm4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fgdgxJkZn73NyQk0g0dRTD4a9YATlo4pvbQhXr6FykR57TcAxbHHrUXepAyfq5WwPCxnlrzwV88kp4lC4MLY9mMAOV0dIEH6u7oVn6GczX4Q7EP3GDfkMIeGzxiCIN5V3Qsr7vNpXjCRMvBEypv1HMRtMT6nDmTSfXD2Td1z1vM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wismer.xyz; spf=pass smtp.mailfrom=wismer.xyz; dkim=pass (2048-bit key) header.d=wismer.xyz header.i=@wismer.xyz header.b=AeoFJ9O7; arc=none smtp.client-ip=46.232.182.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wismer.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wismer.xyz
-Received: from srv125.tophost.ch ([194.150.248.5])
-	by filter2.tophost.ch with esmtps  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <thomas@wismer.xyz>)
-	id 1v5sg3-007en1-Pr; Mon, 06 Oct 2025 23:23:30 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=wismer.xyz;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=0pZAPGrZ6v2KHOURbWDpcwwXqJAdIZc3pcZCHvS7/JU=; b=AeoFJ9O7vPQbufpHlE4i9vCZSA
-	WXdtsBOoFOuXN6OUrfXQUuPQ7OsVlmNLqlU3wHXwLLvIEPlRQsSqCqcWta324jME6QqCpCMSXLuXr
-	o5JEb7a2Np4ZlC8CKuER+0t4BnRrO+JrBfhy5VZzttAqV/WPapuokrrxC6pXsmWcUbc/F1xFUGGK3
-	9wVMpj20YAKJLRUmkqreD+RtvsTOgJDUzy3oETkliUExBUjBF4P+Hviuik3pBnyxGJ9silbuLU4VX
-	GcVw8G/fcm+nwhOGZESGa+5KiehPySzEx/xLSDKLYpAxnLsaEkI6U63gzOVGElRt9XXt163KGGXwF
-	G8itSswQ==;
-Received: from [213.55.237.208] (port=11683 helo=pavilion)
-	by srv125.tophost.ch with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <thomas@wismer.xyz>)
-	id 1v5sg1-0000000DFVY-2SW2;
-	Mon, 06 Oct 2025 23:23:25 +0200
-Date: Mon, 6 Oct 2025 23:23:18 +0200
-From: Thomas Wismer <thomas@wismer.xyz>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Thomas Wismer <thomas.wismer@scs.ch>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] net: pse-pd: tps23881: Add support for TPS23881B
-Message-ID: <20251006232318.214b69b7@pavilion>
-In-Reply-To: <20251006150505.643217e8@kmaincent-XPS-13-7390>
-References: <20251004180351.118779-2-thomas@wismer.xyz>
-	<20251004180351.118779-6-thomas@wismer.xyz>
-	<20251006150505.643217e8@kmaincent-XPS-13-7390>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72EEA226CE0
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 21:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.153.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759785879; cv=fail; b=A7PTbCPecmtgeKpI/x7y4DCE+TIHGyw0X4KY8U2AXYdBCZfd01V94Sq4qDOVlbBkQ2SR0sH/XUXKQ7gI4ADoRAUJuNA7V5Nc7enV6xyodMGLf5TUyTAf3OwDw6kaHut0LNwzOlC7vGUCkmcnw2MMnYOKfVGUSqvaSDA+Il0OydI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759785879; c=relaxed/simple;
+	bh=ESqH1zPoO7+/eSHJWDRnMhxHPbPYu+KUSivcGHNs5/w=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=BxHIGxcfvWSQoV3Wrt+a0OccfPRepGe2GfORPjcE+Ij1hgZg+UC127P/JFfkNd2pIFgSeCX+sjci3ZCm7J/Zz9wenPp4U9Wg8LStqJbhmOlNGrfia7DmdYPQJ3Y7Jthq8cyOfUKVfXPI+6lsmCBU/eH+yMJVD61pUXrtAA0p7g8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=S93aLTOH; arc=fail smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 596KqmrX031339;
+	Mon, 6 Oct 2025 14:24:07 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
+	 bh=MyQwARZ8lSLLYdkncPZjeJYAOFRiULeJnRULD5eII1Q=; b=S93aLTOH0Ui9
+	PKHR6IvZE0RJWtKeszDSQ1bKD7el8/2vaWPdJww3ckKlHcUoYHk+5qBABcuoPux7
+	RIzejYe7cCYUKgO71wtFAUo11nK/MctPvCsui0Pvi/hcS4kygrtiy0u1JcF14P/3
+	JMEETqysdHi5yt2je+cMacK2faSWf3iwCI0nqKtHbQfnpUTr/CKmkZU1VsCESJJ6
+	99jTDvkY+Lfb+RaRYjC+p4QijSy0EIXpYdtnJllIQ5wbO99XrJhLKWQvVrp3oFyq
+	q9NSBeOKHeDIGTGjDDBKC+POyG6djO3lLB747NXnMPOORhJbv2HcRflx/V3Ad84+
+	FMsrN65a1w==
+Received: from cy7pr03cu001.outbound.protection.outlook.com (mail-westcentralusazon11010006.outbound.protection.outlook.com [40.93.198.6])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 49mg0nbp6y-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Mon, 06 Oct 2025 14:24:07 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rNu8+pMrwr+cId3EEUaQgH3z2v/NKmLBcqzxR2O1mlRbxohbk54o1XPSN6PilM5wFftyf3CwV0AI9r4XLmHQfVHn3u7kyU7aYd4hWw4UwAwhM3gvFqpv2MRHiwt2imzBA8qfF1julurooa6+f3Qdw8ftd0as+qqQeq3oTST5Utlfhr3K/7eM9c9NHxZ50vm2TrMcnIqUnxey5GnVIzRSAp3Mk6usbu4T8/67HAYMO7QgiXarjNlP+eSQDcsXSYOHYXWTgybbVd1ZNiqxGT2+7PEzHiqdgMAsaAeoxEi+/FM0+Osc3ObyBGgdBA6Wg8E9YY+sVgBLyMwQrzdl6HygYA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MyQwARZ8lSLLYdkncPZjeJYAOFRiULeJnRULD5eII1Q=;
+ b=br7cuikdkVnQ5DDjSHvPU99WaDJdl6n6qhxxx6RcgH0eozTjU5pVy9W55Bg7LZeSs4khvaJpyK4zAWpOWqiX9aghGamFYVEWYuueAGTQl+e+iur6VIOmLmGnUDkpjfu8bV5q5UVHtFjiTTiP4o06mii3vBglwslnd1ts+dNdIP0CGrYivKLAQO/4I7zKiT2oHzthOfxqPLRf1LZsWgTjYbyrj9cdldtr/88NsL86Mfwf/gKHrupG3U1bBu5M9RJbB5AFYzyOmJtpVkMxjc+WRsw/HFYt4U3NyGf/oqpXiHOEIVald3JGC+Dr64GVWHQcxr+yLCJBkp4AAkA8bfAgqw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
+ dkim=pass header.d=meta.com; arc=none
+Received: from LV3PR15MB6455.namprd15.prod.outlook.com (2603:10b6:408:1ad::10)
+ by PH3PPFE77D02948.namprd15.prod.outlook.com (2603:10b6:518:1::4cf) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.15; Mon, 6 Oct
+ 2025 21:24:01 +0000
+Received: from LV3PR15MB6455.namprd15.prod.outlook.com
+ ([fe80::8102:bfca:2805:316e]) by LV3PR15MB6455.namprd15.prod.outlook.com
+ ([fe80::8102:bfca:2805:316e%5]) with mapi id 15.20.9182.017; Mon, 6 Oct 2025
+ 21:24:01 +0000
+Message-ID: <28340138-a00e-47bc-a36f-270a01ac83b4@meta.com>
+Date: Mon, 6 Oct 2025 17:23:46 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION][v6.17-rc1]sched/fair: Bump sd->max_newidle_lb_cost
+ when newidle balance fails
+To: Joseph Salisbury <joseph.salisbury@oracle.com>, clm@fb.com
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Juri Lelli <juri.lelli@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        dietmar.eggemann@arm.com, Steven Rostedt <rostedt@goodmis.org>,
+        bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+        LKML <linux-kernel@vger.kernel.org>
+References: <006c9df2-b691-47f1-82e6-e233c3f91faf@oracle.com>
+Content-Language: en-US
+From: Chris Mason <clm@meta.com>
+In-Reply-To: <006c9df2-b691-47f1-82e6-e233c3f91faf@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BN9PR03CA0491.namprd03.prod.outlook.com
+ (2603:10b6:408:130::16) To LV3PR15MB6455.namprd15.prod.outlook.com
+ (2603:10b6:408:1ad::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Get-Message-Sender-Via: srv125.tophost.ch: authenticated_id: thomas@wismer.xyz
-X-Authenticated-Sender: srv125.tophost.ch: thomas@wismer.xyz
-X-Spampanel-Domain: smtpout.tophost.ch
-X-Spampanel-Username: 194.150.248.5
-Authentication-Results: tophost.ch; auth=pass smtp.auth=194.150.248.5@smtpout.tophost.ch
-X-Spampanel-Outgoing-Class: ham
-X-Spampanel-Outgoing-Evidence: SB/global_tokens (0.00018193972707)
-X-Recommended-Action: accept
-X-Filter-ID: 9kzQTOBWQUFZTohSKvQbgI7ZDo5ubYELi59AwcWUnuU/y90qE66sSRnDMDr00bJ/5J7IB3qaE4L/
- wgWexjLiqyu2SmbhJN1U9FKs8X3+Nt208ASTx3o2OZ4zYnDmkLm5Mv/tafLC72ko3Lqe/Da7zBA+
- 4w86H9/QaYH/0wQ3416yXsfpoA8yRVY+nIJ7kGZoCtmoQhY2xrBb8C+tWUvqrqBKsSdhvd/J5sX5
- daZjkYsG4jVZi5Tfop5qjCZejidXzthz0vNkOX8Em4cj6D/wdR983ISMXlZYfkTQnVvsLb89W7vD
- 6C469DIPe8wH3iOJTcWsqU26dvDcYIYzaKVPzizNp/gleLRyr2ddmlcu+i1jPgDrl7KDWN+JeAU8
- 1aNgksp0UtIrN0U07614AkdB++MTbkn6z1fsm8NoMVdUr8MDPUrsZkS8fIjQg/OlnCq9era6RvWE
- xGjaMpBDSCziBywD4A8JEs8nAB07i3qQt2GCxqdhJ42egOXnLvBjaBHojvcdCFSGnAoJdmBrbnML
- ysTZI7fFfQwiuwD2LcLdqjNFmtMtCFuKzK3WYzvpld0/yccMnl06aHo07R+V2VbvDXc+galx1KGI
- Pp5jnkiI48S3blKfwQpggXpr4ijI5V97nizzgiBlcUwLhZK/ZHw1RdpNQJ37uqLsFt7+YGhJkDU9
- 4+PQCJgyeQ5hmX4W3XfjuZq3ey7jWD75mz2FgepuKE1QHL+v8HSjw4E9FZ48n35YGxLcRm31r7HJ
- L906rtNSlbyOZqJAl0NcWR3h5RCCpdhlI2FswyUM1YB4pb6NihzVEQJD0k3NJ3BxI7jJWMBode2U
- Svel4Ph4LtRWGzmVykX/svZHtlcv4/x61HBbxR8gr/U0flMcy2Vi/IcBgY4ane5tOXPRIqHUx6+W
- zGK5Hg6zly/hm7kTCa25PmFuNjYUvwsQEI5UkfpCg7AUhDMCozAGWaBw5toun3z41wwqu7ky126C
- 6EbUtvvf6B6B4ZRmzK1iYB13Bc9wKsgJWYDM7fs8i/Lg4VMmqeqQOhF8kMn3arb1xVlaLjgbxjTB
- gAHkgTtbIGX4Gktj7c2CONolFYbP7eetTUcNPZF8UuWWRQPHxHs4uWfEMXRAPK2SKfA9ZVlk6A0o
- BI++AftmkTovo3l38nh3FsWAjsNLvCvQNtXl1Kc2a+wlKs+ogYIxcMllcGL2FYQA/TYqr07UQr9N
- 8YzZ1OXdAJhrEGn8vjZdfatsJHAzgC46MYYXOcKJkR5mWDA3wLMqtkpqhq8QHjwHB17Mh03hOC2D
- 8X08bmfUo2hx63fUqSBCUpmH010fZI9bHEjTkiJxSPqFbdrqtFE8gK0UxPGon/0gulkiYXfVWWO3
- KRWMcR+Z5yTvtzkwsDU=
-X-Report-Abuse-To: spam@filter1.tophost.ch
-X-Complaints-To: abuse@filter1.tophost.ch
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR15MB6455:EE_|PH3PPFE77D02948:EE_
+X-MS-Office365-Filtering-Correlation-Id: 96a61bdb-6c26-4057-33af-08de051eab57
+X-FB-Source: Internal
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZGY3VlIrdUw3cWYzclQyYmlScGtucC92bEZqWUFvQ213ZFRDd2l0SGw5d3lD?=
+ =?utf-8?B?Uk5WWTNubjh0UVBkUGpSUjd3aXEyRWJvaythSVJHd2dCUFRCeEVMK0tBU1FP?=
+ =?utf-8?B?RktEVzZ5OGZFSXNTZEx0Zm02N2ZYTGFidThhaUt5cXdNd1daRjdqZE05NHV0?=
+ =?utf-8?B?UXNwazRtQ09xRlNDQVJtcjNCeWk4ZFlFc3VZN3JWZjkrdDRYOHdDRzdFSWs4?=
+ =?utf-8?B?d3JXeWdWUndYemMrTU94RGdZMXdZRFNHcC83Uy9lZ3hjRmhwN09uaDZuOFZC?=
+ =?utf-8?B?RUIxZnBoTEExU0JJWW1nb1cvbk51eGdKWVZqd2FuRE0xV3dPQ29CeUVxTFFp?=
+ =?utf-8?B?TjVqeDRQOWNsWkdxRGllalN6TVpvdEU3QVFKcEhHaTRXVHlaTDVRNnBFeE1X?=
+ =?utf-8?B?ZUd6OHpHUUNYVW8ySVVYeTNsVTJLRFQ2czFKSi9mY2YyN0NXWVJqenVRQmEv?=
+ =?utf-8?B?Y1ZtbjNxT2FGSHpSMEhQUWtyRVlDTGN5TjlsTEM4bngrcERjWXRJaG5heEp3?=
+ =?utf-8?B?UnUyR0F1c1d0cWxHSlRQemt3NGpuS3VhK3JyamRhVWcvenBFUitkOWpwNE5S?=
+ =?utf-8?B?RkczUlNRYkp0U1B2N3A1MXVWc2lsb2NMT2R1ZTRvTnVVbkprenl0RXY1VUZu?=
+ =?utf-8?B?M1VpUVdCckZEYnkrOG5TYlJNMk0yRitLM2ZHbTR4TmhHU3hXbGFQNVZFanNP?=
+ =?utf-8?B?aG1JQlRsNlpQN2JzZ0h0dlZnZlRHK0dIQlZIKzBZWWxnOUV5L1lJS2NhajhI?=
+ =?utf-8?B?MVdDKzEyRmtsV1RraXNNUkRhV21wUDNieGY2WFFzSUZBMnNneWovNWEyOVN6?=
+ =?utf-8?B?SzlkUkdhTUl5WHVBRmdyWHQ1UG00aXFVSWYyL1EzQmlYZU0yMjZGR3gvb0xw?=
+ =?utf-8?B?dE1JTlpwQXJDVkhVcTNpZmc4NFNMaVZUcHVPU2VKQkZYQ2liOXI2MEVJZDdX?=
+ =?utf-8?B?OVhqMHY1SXBjTjFBQm5ySzZVemVuU1E2eG1Yck1rNkZxa3N4NmdNREppWklE?=
+ =?utf-8?B?TnBFMU8wS3A0VmxOdy9QSlZ2UElkSTZ3ek5IVUVEVGpjdno1dzhGVms3OWQy?=
+ =?utf-8?B?VEhYYjhEYjQ1dTlQOHcxRmt6V2FZQjFIeEhNZjU3T1Z5ZHhqc0YyclB2SGg4?=
+ =?utf-8?B?eWFZdmNWdzVhcXlxaDVYZXYxaHJlTjRKQTlscDErNWVIYSt4aG1keWRiaXk2?=
+ =?utf-8?B?UFJiRWtxeUw2L3lnbHFBc0lGU2tmWHVTenAyWTNiR25SV2EzTHlzT2pNZVVu?=
+ =?utf-8?B?bmR3ZEpiSEx1WFIwSFFmMExJMDgvZmFiUFpzMmFHSVphbUczSXBWY0dBYXhO?=
+ =?utf-8?B?K05zS3lBdEVFMUJhUlNjR1RvWFNDeGJ0bXRsaXdZcldmdS90TFlVUXFFVWRy?=
+ =?utf-8?B?ZGs2RDFiL0pPdVlmVXFNdDVCY2l0SFhGUURZbTVwUm9NelZuY2p1RFNoQU1X?=
+ =?utf-8?B?N0JmTkpjVkJjUDlYYTRKUFdaTlJUdHRsVktsQ3BYVUpLVEs5TmdFV3BWaFRh?=
+ =?utf-8?B?NU93VTIvY09ob21veVRYY0U3VjJseG5oZUEvd1dHb3dabWVpM2E2QndsMHVQ?=
+ =?utf-8?B?cnNnVW9WOUtUY045L0NLaGQ1QU5ZYWkwdmlteVF5ZlZLUERpUXl4aW53TE1P?=
+ =?utf-8?B?TWYzZXRhcXZuY3dpUURSNHFHTE1kSElHcUU0K2Y4cCtIRWNkdXZxRjc4ZUVK?=
+ =?utf-8?B?L0ZFWUlGV3U3M041d2hvaVlWNHVEYkJ2ZUM4VXFjN0pETnZGQnJjTTNlT1lp?=
+ =?utf-8?B?ZWFPV3NhaGtaTzIzVHhXbEZmS3gwaHZQTHhYSDlLS2dWaElCRW5UMlRzbDk1?=
+ =?utf-8?B?aThCV0ZZRzcySDkxMTRkR1lIVjk1STdrR3BNZE1RSlEvdXUvK3pKQWFVRVZv?=
+ =?utf-8?B?ODZzSllOQUIrajB1S3J6VTdzK2hRTjZ5OFNSSVhXME9QWVFCOWFZV3B0L3Zy?=
+ =?utf-8?B?THlhU0luaVZOaWhza1BmMWZKRkpucXVZandTaWY3UHFQTG9ualp2b2ZDeUpT?=
+ =?utf-8?B?V2x4dUFvTkJBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR15MB6455.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Qm0yalUyODJVYnh2TGFpL2R1MkVUcFR0cC80bjJhdXorZnd6dHh0ZzNXQVdG?=
+ =?utf-8?B?VzlvdW0wVkZtTmpwWVV0YVNTU1ptbFE1Z0l2UFhaMEtVcnRjNTFLajdoazhs?=
+ =?utf-8?B?aTRrVk9ySkJOd1FuNGxDN2xHaU5vQXp5R2ZhRkpFcjRJL0QwWDdUUE1DdU5I?=
+ =?utf-8?B?UTh0aHNXdmplS3dXS2tXUTROZ0ZJaWdOcE9BTEFCZFpvcmxaaTFDaHJOeUFZ?=
+ =?utf-8?B?MytIeGsyQ2g4QW5LSi80aHBmcyt5byswVS8yTGVMRU1jTDVkcU55SURKUzFR?=
+ =?utf-8?B?andiL1BHelBCTmhqcW9kalBUYTBnOCtGK2huTzFybGdMQTRvQmxxMllRak53?=
+ =?utf-8?B?bkN1MGx3QUtSU3BRbXl3d0x0OS96UDVOdk0rRW9tZ2RVd0lWM3hJQjVZdk1B?=
+ =?utf-8?B?dGJpV3I0QXVlcnM3aWxCbHFsamttWUowV3NObEN0eno3UVFVWWxaRGViWXhK?=
+ =?utf-8?B?dVFKMzdtb3VveFdoTFJSTXNuQWs4eUJXU3NUeGFJNy9OUmxLU0FLSzQyRGFv?=
+ =?utf-8?B?RVZyR0pFcTJwcGZSMkpQVHVIUDVMZUZxaFNsVllCZTcvMjlNYnZYeEpwaWc5?=
+ =?utf-8?B?VmpKdFZhaG5LeWs2Zmh5Vm5NWkROMFJoMElGYS9LZ2Z0dU5NR3VKNUIweFVa?=
+ =?utf-8?B?ZkpzekFHMzFoZG1ybGF1ZUJKUlZrQXl3TU9JVTZPU0ZGa1ZjR3BaZi9nNUwr?=
+ =?utf-8?B?YmFnQ2h3K2pxVlhMNVdwL1JRYnlTcGdJeXh2TEFJM0w1cmlpYVhTdUJKYUlM?=
+ =?utf-8?B?NXRZOVBORDBmNGVPSVY0eWJQeE5hd2dBc2VNcFlhWXNjRVlXZk9NazJSekFY?=
+ =?utf-8?B?S3hzL3RaSStMS1NTZTVESi8ydloxNkg0eVBLQUpGc3FoTmQ1YWxRNHlZWXdL?=
+ =?utf-8?B?VjZmMUZMQllGM09WcWdBZWpnNEIwRXVWbi91ZjZnSVhyN2MwNUpJb0tEYU5J?=
+ =?utf-8?B?cVUyU3o5b2tFN1Q5bzVhanQ2SGE4NXFNcHBWeVNUTitPZWMzL1k5blhXakc2?=
+ =?utf-8?B?YndCQWlqQ2J1WVl6K3hWSnVYdEVwRHNVVUYzbVlXbGJKRUwzZEVmc05kcXlR?=
+ =?utf-8?B?ZkVCdmVsNFlsdSswOHVXNWw1eWtvYmtzZSswSHR4cjgyZkxFaGhsK2c1VWlK?=
+ =?utf-8?B?WkdaSW1mcmNCTWZMTjgxNldyRlJlNHcrZzFleS9idWE0YkN6U0ZpYmk4cmpm?=
+ =?utf-8?B?Mjk5cWtaeXlrVk1sOVYvZ2QzS283VzdvNlppclMvby9CRm5MVllzL2c5aEV6?=
+ =?utf-8?B?dXJBb2NBd0lpdDRsdkh6MGM1TnBGUTlQNUM2Lzc2bVdXdTVhdDhJZ1hjaXdi?=
+ =?utf-8?B?SmVIWUovNi8yb0FRZmdvSzRkeTNVbEpod2d6elluMGd5ZDVmcjVibnRFLzlS?=
+ =?utf-8?B?VGRHd1N4MXJxRzF5LytnWDlhcEtSSVpQSlBGc1J6OVZDYVQzSDg2Vi9CZDZZ?=
+ =?utf-8?B?K1RQOUtHR3lCU2lVNis5MXZ5b3pTTDBjOUZHSmp4UzZGaGFneEVEQis3T0xx?=
+ =?utf-8?B?L3RhRkFuRndnMHVTS2xrdDBhSUR3WmZIR0VrUDJlcy9NeitSUm9RSGVIandJ?=
+ =?utf-8?B?WXRUOHU0YTB4a1pRbFY3bTRIM3NMelhWaWhYYnBwRU1YTXpReHd3Nk41cU1y?=
+ =?utf-8?B?NkkwSlR3Vmg3VzA4NDBGOW5NUVB4Z1JDQm5wTFN4VHJ6cER3TCtFbTJpNkVs?=
+ =?utf-8?B?ZHZrcFQ0UWwyekN5K0x2Tlo5RDkrQ2oxY09XbXZHODhiM3cxWGhnM3JNZ0lH?=
+ =?utf-8?B?Qm9pZUZ6TmQxak1Ybkp0Wi9wbm4zOWV4ZVVrNWc4LzB0bmM0RGRSWTZYdkVZ?=
+ =?utf-8?B?TmV4NVJCdmNJOWRObDdWbUppRXJHSGVWUFM1NndiVTRra0JHbmE0dytPWWdJ?=
+ =?utf-8?B?T2lzTzh4VUdUQUxOeVBhNGhQR1dpRksxZGxxWEVBL0lSZHBYNGdiOS9yTnJT?=
+ =?utf-8?B?cFVRK0pBNWVWcWJHcXFGZlYyeENtdlNXNXBkelBUSzFzQWd6VFdRaHNsVHVx?=
+ =?utf-8?B?YU5hMnN5VXhRa0RWWjFxYzFGRC96blhZM1FJQmlrYjNRTGhNMDJDWkp1NzFT?=
+ =?utf-8?B?RTZpY2JJcVBiaWxTWmRUM0ZqYVVHUGZjMWVSVWhVeHdmTnR4b1pFRHMvc0ds?=
+ =?utf-8?Q?PW3xCprTgqEgaqFwbpdwxOgbH?=
+X-OriginatorOrg: meta.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 96a61bdb-6c26-4057-33af-08de051eab57
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR15MB6455.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2025 21:24:01.6533
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EkQjFbKoT4rEHDzVB2uZi1Ml02dPq2n0G+A19s1Kf1/iEk38LJgK7jmJmkwJPqi7
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH3PPFE77D02948
+X-Proofpoint-GUID: _-hEv8Z4HXpWRzWeQ7P-ZOAAh4wfp55P
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA2MDE2OCBTYWx0ZWRfX3T/0+VmtNgf6
+ chBSzeXmxc+TPc9hHnwpZfaXs5NyVx76E074J8TD9yDT1ZNoHWiIsW+ZxEoSwEFyQsxHhDsoJUT
+ rANKyZx6+MoO9Si16bWH54bvYxn4oK5ReOuKzdaTfcIJayf47XRy4hA/Rwa+3OH9A88cj6e5d1G
+ RRaas/3qEUAZv0704qMoPzefda90xHX7GonbZ41II7Nh4yYNqyCrRUurwtfMc3q8XXrOxYRnPV5
+ 0KsJB+fnShgESlvom7tl91DkD0+uZX2InTsaX/aZ1Zx+tEQ4vC8MYULPhPIAkkYeogT3PEVRFxD
+ Z8dDoaYNShtw4n7fKFgN96hw85yiQ0bQ2aZ2KKavK6t6FXwQ4GmdPGJUY1Dac6XxybVJOQS4cLC
+ gLiv/+FePti/U507Dib+MYGhvZ0rWQ==
+X-Proofpoint-ORIG-GUID: _-hEv8Z4HXpWRzWeQ7P-ZOAAh4wfp55P
+X-Authority-Analysis: v=2.4 cv=Hot72kTS c=1 sm=1 tr=0 ts=68e43377 cx=c_pps
+ a=RaQOCb/jdUlFsaPmnWcrog==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
+ a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8
+ a=VabnemYjAAAA:8 a=xGlJ8DNMdHyzvLC7U8AA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=gKebqoRLp9LExxC7YDUY:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-06_06,2025-10-06_01,2025-03-28_01
 
-Am Mon, 6 Oct 2025 15:05:05 +0200
-schrieb Kory Maincent <kory.maincent@bootlin.com>:
-
-> On Sat,  4 Oct 2025 20:03:51 +0200
-> Thomas Wismer <thomas@wismer.xyz> wrote:
+On 10/6/25 4:23 PM, Joseph Salisbury wrote:
+> Hi Chris,
 > 
-> > From: Thomas Wismer <thomas.wismer@scs.ch>
-> > 
-> > The TPS23881B device requires different firmware, but has a more
-> > recent ROM firmware. Since no updated firmware has been released
-> > yet, the firmware loading step must be skipped. The device runs
-> > from its ROM firmware.
-> > 
-> > Signed-off-by: Thomas Wismer <thomas.wismer@scs.ch>
-> > ---
-> >  drivers/net/pse-pd/tps23881.c | 65
-> > +++++++++++++++++++++++++++-------- 1 file changed, 51
-> > insertions(+), 14 deletions(-)
-> > 
-> > diff --git a/drivers/net/pse-pd/tps23881.c
-> > b/drivers/net/pse-pd/tps23881.c index b724b222ab44..f45c08759082
-> > 100644 --- a/drivers/net/pse-pd/tps23881.c
-> > +++ b/drivers/net/pse-pd/tps23881.c
-> > @@ -55,8 +55,6 @@
-> >  #define TPS23881_REG_TPON	BIT(0)
-> >  #define TPS23881_REG_FWREV	0x41
-> >  #define TPS23881_REG_DEVID	0x43
-> > -#define TPS23881_REG_DEVID_MASK	0xF0
-> > -#define TPS23881_DEVICE_ID	0x02
-> >  #define TPS23881_REG_CHAN1_CLASS	0x4c
-> >  #define TPS23881_REG_SRAM_CTRL	0x60
-> >  #define TPS23881_REG_SRAM_DATA	0x61
-> > @@ -1012,8 +1010,28 @@ static const struct pse_controller_ops
-> > tps23881_ops = { .pi_get_pw_req = tps23881_pi_get_pw_req,
-> >  };
-> >  
-> > -static const char fw_parity_name[] =
-> > "ti/tps23881/tps23881-parity-14.bin"; -static const char
-> > fw_sram_name[] = "ti/tps23881/tps23881-sram-14.bin"; +struct
-> > tps23881_info {
-> > +	u8 dev_id;	/* device ID and silicon revision */
-> > +	const char *fw_parity_name;	/* parity code firmware
-> > file name */
-> > +	const char *fw_sram_name;	/* SRAM code firmware
-> > file name */ +};
-> > +
-> > +enum tps23881_model {
-> > +	TPS23881,
-> > +	TPS23881B,
-> > +};
-> > +
-> > +static const struct tps23881_info tps23881_info[] = {
-> > +	[TPS23881] = {
-> > +		.dev_id = 0x22,
-> > +		.fw_parity_name =
-> > "ti/tps23881/tps23881-parity-14.bin",
-> > +		.fw_sram_name = "ti/tps23881/tps23881-sram-14.bin",
-> > +	},
-> > +	[TPS23881B] = {
-> > +		.dev_id = 0x24,
-> > +		/* skip SRAM load, ROM firmware already IEEE802.3bt
-> > compliant */
-> > +	},  
+> During testing, we are seeing a ~6% performance regression with the 
+> upstream stable v6.12.43 kernel (And Oracle UEK 
+> 6.12.0-104.43.4.el9uek.x86_64 kernel) when running the Phoronix 
+> pts/apache benchmark with 100 concurrent requests [0].  The regression 
+> is seen with the following hardware:
 > 
-> You are breaking Kyle's patch:
-> https://patchwork.kernel.org/project/netdevbpf/patch/20240731154152.4020668-1-kyle.swenson@est.tech/
+> PROCESSOR: Intel Xeon Platinum 8167M Core Count: 8 Thread Count: 16 
+> Extensions: SSE 4.2 + AVX512CD + AVX2 + AVX + RDRAND + FSGSBASE Cache 
+> Size: 16 MB Microcode: 0x1 Core Family: Cascade Lake
 > 
-> You should check only the device id and not the silicon id.
+> After performing a bisect, we found that the performance regression was 
+> introduced by the following commit:
+> 
+> Stable v6.12.43: fc4289233e4b ("sched/fair: Bump sd->max_newidle_lb_cost 
+> when newidle balance fails")
+> Mainline v6.17-rc1: 155213a2aed4 ("sched/fair: Bump 
+> sd->max_newidle_lb_cost when newidle balance fails")
+> 
+> Reverting this commit causes the performance regression to not exist.
+> 
+> I was hoping to get your feedback, since you are the patch author.  Do 
+> you think gathering any additional data will help diagnose this issue?
 
-On the TPS23881, the register "DEVICE ID" reads as 0x22 (Device ID number
-DID = 0010b, silicon revision number SR = 0010b). On the TPS23881B, 0x24
-(DID = 0010b, SR = 0100b) is returned. Both devices report the same
-device ID number DID and can only be distinguished by their silicon
-revision number SR.
+Hi everyone,
 
-Unfortunately, Kyle's assumption that the driver should work fine with
-any silicon revision proved to be wrong. The TPS23881 firmware is not
-compatible with the TPS23881B and must not be attempted to be loaded. As
-of today, the TPS23881B must be operated using the ROM firmware.
+Peter, we've had a collection of regression reports based on this
+change, so it sounds like we need to make it less aggressive, or maybe
+we need to make the degrading of the cost number more aggressive?
 
-> Regards,
+Joe (and everyone else who has hit this), can I talk you into trying the
+drgn from
+https://lore.kernel.org/lkml/2fbf24bc-e895-40de-9ff6-5c18b74b4300@meta.com/
 
+I'm curious if it degrades at all or just gets stuck up high.
+
+-chris
 
