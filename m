@@ -1,140 +1,118 @@
-Return-Path: <linux-kernel+bounces-843361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D5D7BBF045
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:49:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69CB7BBF04E
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:50:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62C43189BFB4
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:49:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F204189C056
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB29D2765D2;
-	Mon,  6 Oct 2025 18:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41DBE2D94B3;
+	Mon,  6 Oct 2025 18:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fk7bj3R/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="huyGJNgw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7DB1F7098;
-	Mon,  6 Oct 2025 18:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9538523A58E;
+	Mon,  6 Oct 2025 18:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759776535; cv=none; b=g6k+awgwVGjbOO6RMnDJbPej+bXJ/8BelYoNwncxlJZaryj45wJQyAErrnw2h1qLs5ti4zwFKwHwEAmLaVPuIzrI63do8DX9nWERsuIsn84KminTGlDXrdGizYOK+YT3/2JVVTebWmRN9qfMAcnNr+WjqtqgXMyckjB+vgvtgjw=
+	t=1759776615; cv=none; b=IwCHYSPmENPPAC4vZvEDJve7fLI+uBSKzGBDR4XUxzwBaX9g5zbswi/NGIg/hHr283THdSF6LibAliOy4pAcazkD+ezrvRFklfxMih6MYwZKlQm115c0aUOc0yB7RoXOAttkO6rErD3Crg8jMpgz81t9vFHwGHiZyecqeC+McaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759776535; c=relaxed/simple;
-	bh=rcIVOSltuO8gB9UARzera3hSNz+GSt4EaNpkP0kh+qg=;
+	s=arc-20240116; t=1759776615; c=relaxed/simple;
+	bh=oYXN7rLD3gtjZiRSYbxun0bwTVmxYxH26vAytle1D1g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uGzjo1nUZiOehIHMiRsAIAv71Gl8RpzS7odkQGEmjpeM5SPu8hNLeDhIE+ERDOz08raLAjCqiQ+FoRRGCCuJ+ByvhU6/okkPWFqfkhwC1hNzwn9rONFUvQISIdw33gFME4R/VSYL4E7rpkHpoVBL6i1seoKEAKREC4ZvHuTI3Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fk7bj3R/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B34EC4CEF5;
-	Mon,  6 Oct 2025 18:48:54 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=sQ1Zp4knQSlLZfET9fn5o/cVoVnj65GMMvTzR+GqRwAJVKUgIHHl0wfgEMtS5PKLF3ViqOH+04qPudHmR03EPbL+a0Zzp+W8yB2fa947Lyj6S7JoNj5107qR1SzZ5/qE/oYsyDwDnIXqMc2NZdpMZJOBQeDqGtpC2PjthYLYpEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=huyGJNgw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B82FBC4CEF5;
+	Mon,  6 Oct 2025 18:50:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759776534;
-	bh=rcIVOSltuO8gB9UARzera3hSNz+GSt4EaNpkP0kh+qg=;
+	s=k20201202; t=1759776615;
+	bh=oYXN7rLD3gtjZiRSYbxun0bwTVmxYxH26vAytle1D1g=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fk7bj3R/tUTYNz3QS0QZyAQjypJVsDgjgfnhTEDYgI3uMVu8xt4XumnktxefaHOwm
-	 lEdaKew/4XH5LzBMx4aj5O9n/xDzvU7wmnbHrc6uqty/sVHj14C6tjtRdxf5O8F+2h
-	 EQkobofuSnYb4+DM5ivSgDH8C/hBTYV0b3XoJ6rDaUZ7b3xS9huUV3mPe4rCcfDv9X
-	 aeUNRoUggJCX7xfQYUD9iimK5j+w3Gl2oMwdOyXitjfjpZwLMktaT/s9zJtEP/KpeF
-	 IDm3XgasEFWsyYky2SvPW29YOo/7f4vvMtjyRwFAFwKvpcOwoEfEZs/d5aHrpxMb1M
-	 Iw7SshajQScBA==
-Date: Mon, 6 Oct 2025 15:48:51 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Leo Yan <leo.yan@arm.com>, Namhyung Kim <namhyung@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	James Clark <james.clark@linaro.org>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, llvm@lists.linux.dev,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v3 4/9] perf build: Disable thread safety analysis for
- perl header
-Message-ID: <aOQPE33mYPVYnkl5@x1>
-References: <20251006-perf_build_android_ndk-v3-0-4305590795b2@arm.com>
- <20251006-perf_build_android_ndk-v3-4-4305590795b2@arm.com>
- <CAP-5=fUVs8Dn+kQDgPW08SNC=W5ZQKMFEETjjqkOJ_Mvbv22dw@mail.gmail.com>
+	b=huyGJNgwS8oUZZCDdWvf7PVife/G+HjSgd6ai1LBsd2Osf5gJGQ/gB12rsrybsFsf
+	 0I5C+BgmBwX6sPoHTs7o6NFkgvQUNyEx8rBLoDomWfZ0NnG0qbFrMkcAWoC+URt/TJ
+	 NI0E9BsCKEN0KkgYeGMv1RlKQbw9OOlRERv+9d5+ta+dX7eUpd5OnSsWiNPbj793qW
+	 YYml5oQqCGyzrznclN8BHHgcO2r6HQt7Et110KFrkprCX1OAOaUAVBiwknSuKjkssU
+	 OXtv6R3VXrINSd1AZalqqW/H5ziHwvNpuBZZVxFXjUfDKG0u5o8wS04V8pouhfy7MX
+	 G/usjs+XAjqjg==
+Date: Mon, 6 Oct 2025 21:50:11 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Jonathan McDowell <noodles@earth.li>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-v6.18
+Message-ID: <aOQPYwrGwZfP-GsV@kernel.org>
+References: <aOKTFv1vh1cvvcLk@kernel.org>
+ <CAHk-=wiCWiDcLEE3YqQo78piVHpwY2iXFW--6FbmFAURtor2+w@mail.gmail.com>
+ <aOOu1f1QWQNtkl6c@kernel.org>
+ <aOPOZwp_inGui9Bx@kernel.org>
+ <125ba81bb222cdffef05ef9868c68002efd61235.camel@HansenPartnership.com>
+ <aOPzovsBYlH3ojTR@kernel.org>
+ <aOP2DUj67yB0afUt@earth.li>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fUVs8Dn+kQDgPW08SNC=W5ZQKMFEETjjqkOJ_Mvbv22dw@mail.gmail.com>
+In-Reply-To: <aOP2DUj67yB0afUt@earth.li>
 
-On Mon, Oct 06, 2025 at 10:56:43AM -0700, Ian Rogers wrote:
-> On Mon, Oct 6, 2025 at 9:21 AM Leo Yan <leo.yan@arm.com> wrote:
-> >
-> > When build with perl5, it reports error:
-> >
-> >     In file included from /usr/lib/perl5/5.42.0/x86_64-linux-thread-multi/CORE/perl.h:7933:
-> >     /usr/lib/perl5/5.42.0/x86_64-linux-thread-multi/CORE/inline.h:298:5: error:
-> >           mutex 'PL_env_mutex.lock' is not held on every path through
-> >           here [-Werror,-Wthread-safety-analysis]
-> >       298 |     ENV_UNLOCK;
-> >           |     ^
-> >     /usr/lib/perl5/5.42.0/x86_64-linux-thread-multi/CORE/perl.h:7091:31: note:
-> >           expanded from macro 'ENV_UNLOCK'
-> >      7091 | #  define ENV_UNLOCK          PERL_REENTRANT_UNLOCK("env"...
-> >           |                               ^
-> >     /usr/lib/perl5/5.42.0/x86_64-linux-thread-multi/CORE/perl.h:6465:7: note:
-> >           expanded from macro 'PERL_REENTRANT_UNLOCK'
-> >      6465 |     } STMT_END
-> >           |       ^
-> >     /usr/lib/perl5/5.42.0/x86_64-linux-thread-multi/CORE/perl.h:865:28: note:
-> >           expanded from macro 'STMT_END'
-> >       865 | #   define STMT_END     while (0)
-> >           |                                ^
-> >
-> > The error is caused by perl header but not perf code, disable thread
-> > safety analysis if including the header.
-> >
-> > Though GCC does not support the thread safety analysis option, this
-> > negative warning flag is silently ignored by it.
-> >
-> > Signed-off-by: Leo Yan <leo.yan@arm.com>
-> > ---
-> >  tools/perf/scripts/perl/Perf-Trace-Util/Build | 2 +-
-> >  tools/perf/util/scripting-engines/Build       | 2 +-
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/tools/perf/scripts/perl/Perf-Trace-Util/Build b/tools/perf/scripts/perl/Perf-Trace-Util/Build
-> > index 9b0e5a8b5070f1a1640518fae75557f824ef21ee..01a1a0ed51aefd721b4bc7eba728c29a8ffcd551 100644
-> > --- a/tools/perf/scripts/perl/Perf-Trace-Util/Build
-> > +++ b/tools/perf/scripts/perl/Perf-Trace-Util/Build
-> > @@ -2,7 +2,7 @@ perf-util-y += Context.o
-> >
-> >  CFLAGS_Context.o += $(PERL_EMBED_CCOPTS) -Wno-redundant-decls -Wno-strict-prototypes -Wno-bad-function-cast -Wno-declaration-after-statement -Wno-switch-enum
-> >  CFLAGS_Context.o += -Wno-unused-parameter -Wno-nested-externs -Wno-undef
-> > -CFLAGS_Context.o += -Wno-switch-default -Wno-shadow
-> > +CFLAGS_Context.o += -Wno-switch-default -Wno-shadow -Wno-thread-safety-analysis
+On Mon, Oct 06, 2025 at 06:02:05PM +0100, Jonathan McDowell wrote:
+> On Mon, Oct 06, 2025 at 07:51:46PM +0300, Jarkko Sakkinen wrote:
+> > My main issue preventing sending a new pull request is that weird list
+> > of core TPM2 features that is claimed "not to be required" with zero
+> > references. Especially it is contraditory claim that TPM2_CreatePrimary
+> > would be optional feature as the whole chip standard is based on three
+> > random seeds from which primary keys are templated and used as root
+> > keys for other keys.
 > 
-> I wasn't able to reproduce this on Debian with perf-tools-next and:
-> make -C tools/perf O=/tmp/perf DEBUG=1 CC=clang CXX=clang++
-> HOSTCC=clang LIBPERL=1 clean all
-> but my libperl is 5.40. I'm a little concerned that the warning may
-> cause an unrecognized compiler option warning/error with GCC given
-> progress on thread-safety-analysis has ended there. Anyway, these
-> aren't blockers.
+> My understanding here is that the main specification about what's 
+> "required" for TPMs to implement is from the PC Client Platform TPM 
+> Profile. There's no specific server PTP (though there is talk about 
+> creating one), so _most_ vendors just implement the PC Client PTP. It 
+> doesn't mean a TPM that doesn't do so isn't TPM compliant, just not PC 
+> Client PTP compliant.
 > 
-> Reviewed-by: Ian Rogers <irogers@google.com>
+> Google have taken the approach in their Titan based TPM implementation 
+> to avoid implementing features they don't need, to reduce attack 
+> surface.
 
-I was a bit wary and saw this on only, IIRC Manjaro Linux, and since
-libperl support is opt-in, I left it in the backburner, but having it
-building there as well may help detecting some other stuff with things
-only enabled/present there, so thanks Leo and Ian, for the patch and the
-Reviewed-by, applying.
+If it is an internal product, it does not qualify for as an argument but
+good that you brought this detail out. I mean the action is the same
+and debate is really what are correct preconditions for taking any
+action.
 
-- Arnaldo
+So I'll cover the next trial for PR with:
+
+1. I'll retain my existing commit with no changes.
+2. In the cover letter I can address the details brough by Chris with
+   the clause that Titan specific arguments are not basis for any
+   decision making, as it is wrong and does not scale given that
+   any possible company in this planet can have their own random
+   incompatible partial TPM implementation (and most likely there
+   are at least few of such).
+3. I'll link Chris' message to the email. I.e. based on other
+   claims in that mail we can already fully justify the action
+   itself. I'm just knowingly ignoring that list of "incompatible"
+   features, and remark that so that the process is transparent.
+
+> 
+> I'm not aware of anyone else who has done this.
+> 
+> J.
+> 
+> -- 
+> ... You non-conformists are all alike.
+
+BR, Jarkko
 
