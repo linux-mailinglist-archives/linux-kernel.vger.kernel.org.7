@@ -1,233 +1,226 @@
-Return-Path: <linux-kernel+bounces-843014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FDC8BBE353
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:45:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26711BBE368
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:46:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B05EE3AA813
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:45:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C17E1892853
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA85B2D24AC;
-	Mon,  6 Oct 2025 13:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2642D29AC;
+	Mon,  6 Oct 2025 13:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yh5lXy4d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="TVe7Z3Od"
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0683B27EFEF;
-	Mon,  6 Oct 2025 13:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6CA223339
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 13:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759758332; cv=none; b=hqpLWA0+uov+XtqFGvWnqUXNaVKVYUElC/R+Q+S3X//z5nlXZpPgI2ovv01HvsOVPNGUu9S3EEXtARGOYu1P+3m4DFvxXw7ZDaqFeMGDB7PgUZDveu6fnf7JcBAXdjFHeTQcN02zoC9QW2ojZFJWAiTpOXRpmpU+F56jvf/8t1Y=
+	t=1759758388; cv=none; b=t5xi662rZDSL0dRmGDbX4QnoGzM7h7/JBI0UeL6GNRZ8NEVMEW8UJPZyejm74wVTDBIsSYi07WLPE6vC/zYcRCZzixo5FCB6Qos/CwYIve1fLstz0FAWhFs6zh2GsGXUuDlXc5Iv5SM9GY6bADHFe89qtR3YZenMWjrpTgCBpTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759758332; c=relaxed/simple;
-	bh=SX2ygkhw/OQ0Zoqp5Tpkx6/pqRhwo4i1bVnZXTz9i98=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UbSkEmvP8gUzXLTAdnGCUAQclsy1RSfoNG/2QPCXtx1rD4VGxWi1MkAhkZSVQUlgJxJgKWoDp8r5DKKejo7ovQ8JpCq9QAIi6OL/FyUqUKrhmPbu0MMGjD8RAv+PSHw69pghiTp8A3G3aR8dH/pgTL0kawoIcqHfJbN6+nn7V8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yh5lXy4d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 523D6C4CEFF;
-	Mon,  6 Oct 2025 13:45:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759758331;
-	bh=SX2ygkhw/OQ0Zoqp5Tpkx6/pqRhwo4i1bVnZXTz9i98=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Yh5lXy4djsm9iiOTnJJEO5UokrBtD2E0UKFWthi9jS+Xqn/+I2rQ08NZPiTk2URdd
-	 51AY/gqvxgJxNIJTt8z+AanAb3yUWVcwFx0eakygtlCTlhFErQJ3gVsJ+3kHin8EQX
-	 cwvyFtRHEGi6iOUlF5eU8C2WxvMdy1QwhDH98ww2gKWFc3XduMRnYVgT+3KhazED8h
-	 prLD/Yst6YLiNB8cvypOigSNG0X1z6rdPR5m8NX+CgQ532h8VmoIJ91skb3l91QvMI
-	 ntjvxH4T3OcDJX8GCZxAHDgo8rAgTLcr0394eoNQaa1FRs/v06TBqNHDDsGcYxTZpu
-	 LiQkIudF7hztg==
-Date: Mon, 6 Oct 2025 15:45:26 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Bhavik Sachdev <b.sachdev1904@gmail.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Aleksa Sarai <cyphar@cyphar.com>, Jan Kara <jack@suse.cz>, John Garry <john.g.garry@oracle.com>, 
-	Arnaldo Carvalho de Melo <acme@redhat.com>, "Darrick J . Wong" <djwong@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>, Andrei Vagin <avagin@gmail.com>, 
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Subject: Re: [PATCH 2/4] fs/namespace: add umounted mounts to umount_mnt_ns
-Message-ID: <20251006-erlesen-anlagen-9af59899a969@brauner>
-References: <20251002125422.203598-1-b.sachdev1904@gmail.com>
- <20251002125422.203598-3-b.sachdev1904@gmail.com>
- <20251002163427.GN39973@ZenIV>
- <7e4d9eb5-6dde-4c59-8ee3-358233f082d0@virtuozzo.com>
+	s=arc-20240116; t=1759758388; c=relaxed/simple;
+	bh=k8OGcIl6xM111ga3scVq8EniMirQnZBx7DtYgJnq1zE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TQIGuNu8r2E3fKjMOeKhfddgEAfpZDInvK/yH/LdYqgUeYc/03ORrcPeerZv2XN6i1jTGZgv47MMi2gDBRXbetoczuMJlUsx2oVgx06uv8cIrLd0fPya1xiTgg/qnUd/j5kViTx6UB2mxR5U0+EWzOSemFvxaEL+lNXK706IRPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=TVe7Z3Od; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-93b9022d037so187486739f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 06:46:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1759758384; x=1760363184; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Vl94wiObNp5v9aBc4+5g0hzUE6kvt1gCT0TmryQiUaI=;
+        b=TVe7Z3OdL59Pmms6Z1wP/zYRVsbszuwlzBO1SU687VfZWA2cnmJrkMth7P3w5LJVXE
+         AEQ4p1zTqVCCMNkP1CF523BnTLqNZMQhXfK5okjF4jhRQ6VMjAI19C5/kVLamvx4F7e9
+         Kxte5jdQa4FrUz7MoXviwkGyJb4a2suqJSipw6Mvz/RYaSHTjyNP8FUfizy2sFZTdwmX
+         KpO5HrlkEnqRNJk4s2DBFBvzBQzUS65UZRqE03L1FSOVlvLHq2WZYihsmR7VjsRPcLig
+         enrcXs9oZKISWA1uXn+LEmifHUHN21j5pKoKt/WKXyNLF+PeN59yizuwEN2E3yJL8F1/
+         8WCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759758384; x=1760363184;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vl94wiObNp5v9aBc4+5g0hzUE6kvt1gCT0TmryQiUaI=;
+        b=QHJ7F0PHJoO/e6/VPK7+eYzOZpRlonEQK/tMhne07ImFSD65XI0inIYzxeE7Vm/7L+
+         hf2p+h/A67K+o5scszkJeF30pfjQ2cgbvya0I4CZ3PblzqcYpo8Fy88P50A1G8yfHuNn
+         5wT/jdr/jUXUkghfUgzCwW9EfGwrCz3v8DxXK2Ae2pXSHtFWIq8nB1EaduBlg2/A9Y1t
+         sfE+mQDJL9wJJ5RP7Pf9MaVAVJoP6OWC05oX4BC+WucQ3kzeWijGEJVnhuSIA/WMWHRe
+         8vIHuiev7eK4FTA/rUNKgenuJxWx19FAMZFmu7osI1A02L1IaB4uCwzHApJUKawwkkM0
+         cq9w==
+X-Forwarded-Encrypted: i=1; AJvYcCXfqrJvtXhb4abqngOPSSfiiglNC8OthiMP7NQEj9dhglx0J29zQYAf2IUYoNApitSsuogpDTKSxKX8JW0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx73me+qUqRmjPOnDhIdod4PQRgWN4WGQicbEsDlxWjAtV8ARmW
+	hFu1LSVImqAyWHgchxF8XQpTOpdbXUAqjPH0WaVfgPlZ/yCP2D/BtQBVYkVn6NaPA+A=
+X-Gm-Gg: ASbGncvENMwwebgGG/IvhCQ7X/8fgMy9wazX60Y+fycBa0UM8RXljkmj6A4yw6wx7yj
+	Me2rPxwSMYeXuwMciD4vZYmJ24+gFN1Ku7WR3BeuoxBYcFbJ/WLBH79n0fPw3ropnF3nRcfBwh0
+	wyUUUJapySLSqVs5GO/XnMaOlBlbWdBSynqLmfm3RgwVJpCmfBl9jtrXFnMZAlr2y1KvRjx6tdC
+	BnRsCKrQgwnhJoefhEPrD6gP2ee+Q2/bbPklnOzn5/YhBgv0wnxwqiQSbgJShIspq5Sj+gYRQOA
+	auvojjYrV/KoSp4sh6WGDpbmyiq2IIVCGs1uJCFlpbVcVsofOUtmPc8LqsrGlJhNELhcFJXZlnf
+	OqnJEQciHDi40+HfcOPJnivL+ji44q4EalTshbNah9cjCRnfzaRSWalA=
+X-Google-Smtp-Source: AGHT+IHH8sxyQOMlbr4/OFDa1GITi3nK1zCJw09BsdehtgJxGsIR1A9r+x+AWjZd6uum6Rns+ryWnw==
+X-Received: by 2002:a05:6602:3c3:b0:922:6c20:45ef with SMTP id ca18e2360f4ac-93b96977bdcmr1954185739f.7.1759758384148;
+        Mon, 06 Oct 2025 06:46:24 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-93a88960692sm505123739f.20.2025.10.06.06.46.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Oct 2025 06:46:22 -0700 (PDT)
+Message-ID: <cef07e8f-a919-4aa1-9904-84b16dfa8fe6@kernel.dk>
+Date: Mon, 6 Oct 2025 07:46:21 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <7e4d9eb5-6dde-4c59-8ee3-358233f082d0@virtuozzo.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] Revert "sunvdc: Do not spin in an infinite loop when
+ vio_ldc_send() returns EAGAIN"
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Andreas Larsson <andreas@gaisler.com>,
+ Anthony Yznaga <anthony.yznaga@oracle.com>, Sam James <sam@gentoo.org>,
+ "David S . Miller" <davem@davemloft.net>,
+ Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>,
+ sparclinux@vger.kernel.org
+References: <20251006100226.4246-2-glaubitz@physik.fu-berlin.de>
+ <d78a1704-31dc-4eaa-8189-e3aba51d3fe2@kernel.dk>
+ <4e45e3182c4718cafad1166e9ef8dcca1c301651.camel@physik.fu-berlin.de>
+ <a80a1c5f-da21-4437-b956-a9f659c355a4@kernel.dk>
+ <e6a7e68ff9e23aee448003ee1a279a4ab13192c0.camel@physik.fu-berlin.de>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <e6a7e68ff9e23aee448003ee1a279a4ab13192c0.camel@physik.fu-berlin.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 03, 2025 at 01:03:46PM +0800, Pavel Tikhomirov wrote:
+On 10/6/25 7:34 AM, John Paul Adrian Glaubitz wrote:
+> Hi Jens,
 > 
+> On Mon, 2025-10-06 at 07:19 -0600, Jens Axboe wrote:
+>>> The problem is that giving up can lead to filesystem corruption which
+>>> is problem that was never observed before the change from what I know.
+>>
+>> Yes, I get that.
+>>
+>>> We have deployed a kernel with the change reverted on several LDOMs that
+>>> are seeing heavy use such as cfarm202.cfarm.net and we have seen any system
+>>> lock ups or similar.
+>>
+>> I believe you. I'm just wondering how long you generally need to spin,
+>> as per the question above: how many times does it generally spin where
+>> it would've failed before?
 > 
-> On 10/3/25 00:34, Al Viro wrote:
-> > On Thu, Oct 02, 2025 at 06:18:38PM +0530, Bhavik Sachdev wrote:
-> > 
-> > > @@ -1438,6 +1440,18 @@ static void mntput_no_expire(struct mount *mnt)
-> > >   	mnt->mnt.mnt_flags |= MNT_DOOMED;
-> > >   	rcu_read_unlock();
-> > > +	if (mnt_ns_attached(mnt)) {
-> > > +		struct mnt_namespace *ns;
-> > > +
-> > > +		move_from_ns(mnt);
-> > > +		ns = mnt->mnt_ns;
-> > > +		if (ns) {
-> > > +			ns->nr_mounts--;
-> > > +			__touch_mnt_namespace(ns);
-> > > +		}
-> > > +		mnt->mnt_ns = NULL;
-> > > +	}
-> > 
-> > Sorry, no.  You are introducing very special locking for one namespace's rbtree.
-> > Not gonna fly.
-> > 
-> > NAKed-by: Al Viro <viro@zeniv.linux.org.uk>
+> I don't have any data on that, unfortunately. All I can say that we
+> have seen filesystem corruption when installing Linux inside an LDOM
+> and this particular issue was eventually tracked down to this commit.
+
+Right, I would imagine that would need to be collected separately. But
+if we can get away from the busy looping, then I don't think it's too
+interesting.
+
+>>>> Not that it's _really_ that important as this is a pretty niche driver,
+>>>> but still pretty ugly... Does it work reliably with a limit of 100
+>>>> spins? If things get truly stuck, spinning forever in that loop is not
+>>>> going to help. In any case, your patch should have
+>>>
+>>> Isn't it possible that the call to vio_ldc_send() will eventually succeed
+>>> which is why there is no need to abort in __vdc_tx_trigger()?
+>>
+>> Of course. Is it also possible that some conditions will lead it to
+>> never succeed?
 > 
-> Thank you for looking into it.
+> I would assume that this would require for the virtual disk server to
+> not respond which should never happen since it's a virtualized
+> environment.
+
+Most likely, yes.
+
+> If hardware issues would cause vio_ldc_send() to never succeed, these
+> would have to be handled by the virtualization environment, I guess.
+
+Yep, it'd be a bug somewhere else.
+
+>> The nicer approach would be to have sunvdc punt retries back up to the
+>> block stack, which would at least avoid a busy spin for the condition.
+>> Rather than return BLK_STS_IOERR which terminates the request and
+>> bubbles back the -EIO as per your log. IOW, if we've already spent
+>> 10.5ms in that busy loop as per the above rough calculation, perhaps
+>> we'd be better off restarting the queue and hence this operation after a
+>> small sleeping delay instead. That would seem a lot saner than hammering
+>> on it.
 > 
-> Sorry, we didn't have any intent to break locking, we would like to
-> improve/rework the patch if we can.
+> I generally agree with this remark. I just wonder whether this
+> behavior should apply for a logical domain as well. I guess if a
+> request doesn't succeed immediately, it's an urgent problem if the
+> logical domain locks up, is it?
+
+It's just bad behavior. Honestly most of this just looks like either a
+bad implementation of the protocol as it's all based on busy looping, or
+a badly designed protocol. And then the sunvdc usage of it just
+proliferates that problem, rather than utilizing the tools that exist in
+the block stack to take a breather rather than repeatedly hammering on
+the hardware for conditions like this.
+
+>>> And unlike the change in adddc32d6fde ("sunvnet: Do not spin in an infinite
+>>> loop when vio_ldc_send() returns EAGAIN"), we can't just drop data as this
+>>> driver concerns a block device while the other driver concerns a network
+>>> device. Dropping network packages is expected, dropping bytes from a block
+>>> device driver is not.
+>>
+>> Right, but we can sanely retry it rather than sit in a tight loop.
+>> Something like the entirely untested below diff.
+>>
+>> diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
+>> index db1fe9772a4d..aa49dffb1b53 100644
+>> --- a/drivers/block/sunvdc.c
+>> +++ b/drivers/block/sunvdc.c
+>> @@ -539,6 +539,7 @@ static blk_status_t vdc_queue_rq(struct blk_mq_hw_ctx *hctx,
+>>  	struct vdc_port *port = hctx->queue->queuedata;
+>>  	struct vio_dring_state *dr;
+>>  	unsigned long flags;
+>> +	int ret;
+>>  
+>>  	dr = &port->vio.drings[VIO_DRIVER_TX_RING];
+>>  
+>> @@ -560,7 +561,13 @@ static blk_status_t vdc_queue_rq(struct blk_mq_hw_ctx *hctx,
+>>  		return BLK_STS_DEV_RESOURCE;
+>>  	}
+>>  
+>> -	if (__send_request(bd->rq) < 0) {
+>> +	ret = __send_request(bd->rq);
+>> +	if (ret == -EAGAIN) {
+>> +		spin_unlock_irqrestore(&port->vio.lock, flags);
+>> +		/* already spun for 10msec, defer 10msec and retry */
+>> +		blk_mq_delay_kick_requeue_list(hctx->queue, 10);
+>> +		return BLK_STS_DEV_RESOURCE;
+>> +	} else if (ret < 0) {
+>>  		spin_unlock_irqrestore(&port->vio.lock, flags);
+>>  		return BLK_STS_IOERR;
+>>  	}
 > 
-> 1) I see that I missed that __touch_mnt_namespace requires vfsmount lock
-> (according to it's comment) and we don't have it in this code path, so that
-> is one problem.
-> 
-> I also see that it sends wake up for mounts_poll() waiters, but since no-one
-> can join umount_mnt_ns, there is no point in sending wakeup as no-one can
-> poll on /proc/mounts for this namespace. So we can remove the use of
-> __touch_mnt_namespace seemingly safely and remove this incorrect locking
-> case.
-> 
-> 2) Another thing is, previously when we were at this point in code we were
-> already out of namespace rbtree strictly before the reference from namespace
-> was put (namespace_unlock()->mntput()). So no-one could've lookup-ed us, but
-> after this change one can lookup us from umount_mnt_ns rbtree while we are
-> in mntput_no_expire().
-> 
-> This one is a hard one, in this implementation at the minimum we can end up
-> using the mount after it was freed due to this.
-> 
-> Previously mount lookup was protected by namespace_sem, and now when I use
-> move_from_ns out of namespace_sem this protection is broken.
-> 
-> One stupid idea to fix it is to leave one reference to mount from detatched
-> mntns, and have an asynchronous mechanism which detects last reference (in
-> mntput_no_expire) and (under namespace_sem) first disconnects mount from
-> umount_mnt_ns and only then calls final mntput.
-> 
-> We will think more on this one, maybe we will come up with something
-> smarter.
-> 
-> 3) We had an alternative approach to make unmounted mounts mountinfo visible
-> for the user, by allowing fd-based statmount() https://github.com/bsach64/linux/commit/ac0c03d44fb1e6f0745aec81079fca075e75b354
-> 
-> But we also recognize a problem with it that it would require getting
-> mountinfo from fd which is not root dentry of the mount, but any dentry (as
-> we (CRIU) don't really have an option to choose which fd will be given to
-> us).
+> We could add this particular change on top of mine after we have
+> extensively tested it.
 
-The part about this just using an fd is - supresses gag reflex - fine.
-We do that with the mount namespaces for listmount() already via
-mnt_req->spare.
+It doesn't really make sense on top of yours, as that removes the
+limited looping that sunvdc would do...
 
-The part that I dislike is exactly the one you pointed out: using an
-arbitrary fd to retrieve information about the mount but it's probably
-something we can live with since the alternative is complicating the
-lifetime rules of the mount and namespace interaction.
+> For now, I would propose to pick up my patch to revert the previous
+> change. I can then pick up your proposed change and deploy it for
+> extensive testing and see if it has any side effects.
 
-I had thought about a way to tie the _internal_ lifetime of the
-namespace to the lifetime of unmounted mounts through the passive
-reference count by moving them to a separate rb_root unmounted in the
-namespace instance.
+Why not just test this one and see if it works? As far as I can tell,
+it's been 6.5 years since this change went in, I can't imagine there's a
+huge sense of urgency to fix it up that can't wait for testing a more
+proper patch rather than a work-around?
 
-This would mean we'd have the owning namespace information around and
-we'd also don't have to have any separate namespace around. The ->mnt_ns
-field could work exactly the same. But alongside the ->mnt_ns pointer
-we'd also have the ->mnt_ns_id of the container mount namespace stored.
-
-On umount we'd move the mount to the unmounted mount tree in the same
-namespace instance and take a passive reference to it. IOW, the
-unmounted mounts keep the namespace alive but only internally.
-
-So basically - handwaving - like this:
-
-diff --git a/fs/mount.h b/fs/mount.h
-index 97737051a8b9..4d3db03c8a82 100644
---- a/fs/mount.h
-+++ b/fs/mount.h
-@@ -14,6 +14,7 @@ struct mnt_namespace {
-                struct rb_root  mounts;          /* Protected by namespace_sem */
-                struct rb_node  *mnt_last_node;  /* last (rightmost) mount in the rbtree */
-                struct rb_node  *mnt_first_node; /* first (leftmost) mount in the rbtree */
-+               struct rb_root  unmounted;       /* unmounted mounts that are still active */
-        };
-        struct user_namespace   *user_ns;
-        struct ucounts          *ucounts;
-@@ -72,7 +73,10 @@ struct mount {
-        struct hlist_head mnt_slave_list;/* list of slave mounts */
-        struct hlist_node mnt_slave;    /* slave list entry */
-        struct mount *mnt_master;       /* slave is on master->mnt_slave_list */
--       struct mnt_namespace *mnt_ns;   /* containing namespace */
-+       struct {
-+               struct mnt_namespace *mnt_ns;   /* containing namespace */
-+               u64 mnt_ns_id;                  /* id of the containing mount namespace */
-+       }
-        struct mountpoint *mnt_mp;      /* where is it mounted */
-        union {
-                struct hlist_node mnt_mp_list;  /* list mounts with the same mountpoint */
-
-->mnt_ns NULL still means as before that this is unmounted. The
-containing namespace is alive (internally) and can still be looked up
-via mnt->mnt_ns_id in the namespace tree. I stopped thinking here
-because this has severe drawbacks:
-
-* The scope of the namespace semaphore has to be extended to cover these
-  mounts as well possibly even having to take it in cleanup_mnt() which
-  is ugly and probably performance sensitive as it increases the
-  codepaths that hammer on the semaphore.
-
-  Alternative is a separate locking scheme. And if it's one thing that
-  we don't need is another complex locking scheme in this code.
-
-* The passive lifetime of the namespace would have to cover unmounted
-  mounts which betrays the intent of the passive reference count. That's
-  not supposed to regulate lifetimes beyond the namespace struct itself
-  nor be bound to other objects in complex ways.
-
-  Possibly we'd also have to tie the lifetime of the owning userns to
-  the passive count so permission checking just works out of the box
-  (One could also put that on the plus side of things but meh.).
-
-* It's very weird to be able to statmount() unmounted mounts via the
-  mount id if the actual mount namespace is indeed already dead.
-
-  To put it another way: listmount() wouldn't surface the mount anymore
-  - and rightly so - because it's not tied to any mount namespace
-  anymore. But somehow we magically synthesize it into existence via
-  statmount().
-
-* While a mount is attached to a mount namespace said namespace is the
-  rightful owner of the mount. Once the mount is unmounted that
-  ownership is moved from the mount namespace and becomes inherently
-  bound to processes that hold an active reference to that mount via
-  file descriptors.
-
-  But statmount() and listmount() are inherently about the mount
-  namespace as the main container of the mount imho.
-
-  Allowing an fd is probably be fine though but it dilutes the concept a
-  bit which I'm not too fond of. Oh well.
-
-The list continues...
-
-So if you can make the fd-based statmount() work for your use-case then
-this is probably the thing we should do.
+-- 
+Jens Axboe
 
