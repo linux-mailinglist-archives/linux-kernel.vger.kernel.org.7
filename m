@@ -1,85 +1,140 @@
-Return-Path: <linux-kernel+bounces-843360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDFEBBBF042
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:47:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D5D7BBF045
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:49:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B96664EA7A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:47:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62C43189BFB4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9563D2D480E;
-	Mon,  6 Oct 2025 18:47:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB29D2765D2;
+	Mon,  6 Oct 2025 18:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OtHSBpbk"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fk7bj3R/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BEB1F7098
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 18:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7DB1F7098;
+	Mon,  6 Oct 2025 18:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759776440; cv=none; b=E/zxP9AcjTmNq7gu6oJLNVFM/+joNZD+3KEEp3tpkhVdYP4jR94mWknPjC0aP+ORUSbghTX2GQaOYwEY9EUFzwq0EH9omnE0nndGgGo5OLpZk1UOzs/Qyb0hOXmIJhf0mhTW8Ub9tfEafTqjbs0/0i4DpA4msZNDV9QCfBoasiE=
+	t=1759776535; cv=none; b=g6k+awgwVGjbOO6RMnDJbPej+bXJ/8BelYoNwncxlJZaryj45wJQyAErrnw2h1qLs5ti4zwFKwHwEAmLaVPuIzrI63do8DX9nWERsuIsn84KminTGlDXrdGizYOK+YT3/2JVVTebWmRN9qfMAcnNr+WjqtqgXMyckjB+vgvtgjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759776440; c=relaxed/simple;
-	bh=dz3EaTftM68WYDI5QUGLwUNFeWQJc6fMj7wKjs0g9Ro=;
+	s=arc-20240116; t=1759776535; c=relaxed/simple;
+	bh=rcIVOSltuO8gB9UARzera3hSNz+GSt4EaNpkP0kh+qg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=scrKDVVeKyoGflqMxoUBVrYnJ3l7hZiAODZ+NTG0/Akf/mgowDU/IVC6cqUZq6eovY/xYWrIsXQmpLdC6/gUHgCvCJhMoOAVnr132qZ9+jS+quVMiw1W0kFqvabPqLGSDbQchiq2xZbwTlnxBRGg+k1r5HoUSZPFhyNr3/aZRaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OtHSBpbk; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=+I2xLAYt2OoMeVLgx0KRyf7wDz88hABcrvYBUZYVCf0=; b=OtHSBpbk6v+Gi2YFRqHbneXhoq
-	7fbD2MwtByfjI0zDp/HT03z0Zgk9jcBQPG//p2iPeNgg+Z2YR750sU/UgEGKsT4SHTZOGxRLHOWda
-	7jxPOiJ4CCPKOCF7YGpCqZa6IPwcbvJxLzhd/3ooYKnQg/McyaUqmxytjVixcRlOT+uCMi0Z8bl3r
-	QuXScJmh2Q7snzjKywYRTY8ZwYC/i9SXxAHNOvZSN0IUHKy+VqKp4kVpapqxe5gJjtAy//AvZ6Ihp
-	9mErCrN+NomsrSYj3oLIBKn+SeHWubcv1vm0PiKn8FSdDjxU4Cmgrci+XzhPXjgzW8uAkSAXsbljp
-	QPstXGIg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v5qEp-0000000H792-1nnr;
-	Mon, 06 Oct 2025 18:47:11 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 72350300212; Mon, 06 Oct 2025 20:47:10 +0200 (CEST)
-Date: Mon, 6 Oct 2025 20:47:10 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Doug Berger <opendmb@gmail.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Florian Fainelli <florian.fainelli@broadcom.com>
-Subject: Re: [PATCH v2] sched/deadline: only set free_cpus for online
- runqueues
-Message-ID: <20251006184710.GX3245006@noisy.programming.kicks-ass.net>
-References: <20250815012236.4053467-1-opendmb@gmail.com>
- <aKMja4BvgQ5vFaNN@jlelli-thinkpadt14gen4.remote.csb>
- <20250903075436.GN3245006@noisy.programming.kicks-ass.net>
- <5bb8ad3a-9d05-4d07-8d4b-207be28cceb1@gmail.com>
- <88998fa9-b454-45c1-a8e2-164d2e2d94c0@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uGzjo1nUZiOehIHMiRsAIAv71Gl8RpzS7odkQGEmjpeM5SPu8hNLeDhIE+ERDOz08raLAjCqiQ+FoRRGCCuJ+ByvhU6/okkPWFqfkhwC1hNzwn9rONFUvQISIdw33gFME4R/VSYL4E7rpkHpoVBL6i1seoKEAKREC4ZvHuTI3Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fk7bj3R/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B34EC4CEF5;
+	Mon,  6 Oct 2025 18:48:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759776534;
+	bh=rcIVOSltuO8gB9UARzera3hSNz+GSt4EaNpkP0kh+qg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fk7bj3R/tUTYNz3QS0QZyAQjypJVsDgjgfnhTEDYgI3uMVu8xt4XumnktxefaHOwm
+	 lEdaKew/4XH5LzBMx4aj5O9n/xDzvU7wmnbHrc6uqty/sVHj14C6tjtRdxf5O8F+2h
+	 EQkobofuSnYb4+DM5ivSgDH8C/hBTYV0b3XoJ6rDaUZ7b3xS9huUV3mPe4rCcfDv9X
+	 aeUNRoUggJCX7xfQYUD9iimK5j+w3Gl2oMwdOyXitjfjpZwLMktaT/s9zJtEP/KpeF
+	 IDm3XgasEFWsyYky2SvPW29YOo/7f4vvMtjyRwFAFwKvpcOwoEfEZs/d5aHrpxMb1M
+	 Iw7SshajQScBA==
+Date: Mon, 6 Oct 2025 15:48:51 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Leo Yan <leo.yan@arm.com>, Namhyung Kim <namhyung@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	James Clark <james.clark@linaro.org>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, llvm@lists.linux.dev,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v3 4/9] perf build: Disable thread safety analysis for
+ perl header
+Message-ID: <aOQPE33mYPVYnkl5@x1>
+References: <20251006-perf_build_android_ndk-v3-0-4305590795b2@arm.com>
+ <20251006-perf_build_android_ndk-v3-4-4305590795b2@arm.com>
+ <CAP-5=fUVs8Dn+kQDgPW08SNC=W5ZQKMFEETjjqkOJ_Mvbv22dw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <88998fa9-b454-45c1-a8e2-164d2e2d94c0@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fUVs8Dn+kQDgPW08SNC=W5ZQKMFEETjjqkOJ_Mvbv22dw@mail.gmail.com>
 
-On Tue, Sep 23, 2025 at 11:03:18AM -0700, Doug Berger wrote:
-
+On Mon, Oct 06, 2025 at 10:56:43AM -0700, Ian Rogers wrote:
+> On Mon, Oct 6, 2025 at 9:21 AM Leo Yan <leo.yan@arm.com> wrote:
+> >
+> > When build with perl5, it reports error:
+> >
+> >     In file included from /usr/lib/perl5/5.42.0/x86_64-linux-thread-multi/CORE/perl.h:7933:
+> >     /usr/lib/perl5/5.42.0/x86_64-linux-thread-multi/CORE/inline.h:298:5: error:
+> >           mutex 'PL_env_mutex.lock' is not held on every path through
+> >           here [-Werror,-Wthread-safety-analysis]
+> >       298 |     ENV_UNLOCK;
+> >           |     ^
+> >     /usr/lib/perl5/5.42.0/x86_64-linux-thread-multi/CORE/perl.h:7091:31: note:
+> >           expanded from macro 'ENV_UNLOCK'
+> >      7091 | #  define ENV_UNLOCK          PERL_REENTRANT_UNLOCK("env"...
+> >           |                               ^
+> >     /usr/lib/perl5/5.42.0/x86_64-linux-thread-multi/CORE/perl.h:6465:7: note:
+> >           expanded from macro 'PERL_REENTRANT_UNLOCK'
+> >      6465 |     } STMT_END
+> >           |       ^
+> >     /usr/lib/perl5/5.42.0/x86_64-linux-thread-multi/CORE/perl.h:865:28: note:
+> >           expanded from macro 'STMT_END'
+> >       865 | #   define STMT_END     while (0)
+> >           |                                ^
+> >
+> > The error is caused by perl header but not perf code, disable thread
+> > safety analysis if including the header.
+> >
+> > Though GCC does not support the thread safety analysis option, this
+> > negative warning flag is silently ignored by it.
+> >
+> > Signed-off-by: Leo Yan <leo.yan@arm.com>
+> > ---
+> >  tools/perf/scripts/perl/Perf-Trace-Util/Build | 2 +-
+> >  tools/perf/util/scripting-engines/Build       | 2 +-
+> >  2 files changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/tools/perf/scripts/perl/Perf-Trace-Util/Build b/tools/perf/scripts/perl/Perf-Trace-Util/Build
+> > index 9b0e5a8b5070f1a1640518fae75557f824ef21ee..01a1a0ed51aefd721b4bc7eba728c29a8ffcd551 100644
+> > --- a/tools/perf/scripts/perl/Perf-Trace-Util/Build
+> > +++ b/tools/perf/scripts/perl/Perf-Trace-Util/Build
+> > @@ -2,7 +2,7 @@ perf-util-y += Context.o
+> >
+> >  CFLAGS_Context.o += $(PERL_EMBED_CCOPTS) -Wno-redundant-decls -Wno-strict-prototypes -Wno-bad-function-cast -Wno-declaration-after-statement -Wno-switch-enum
+> >  CFLAGS_Context.o += -Wno-unused-parameter -Wno-nested-externs -Wno-undef
+> > -CFLAGS_Context.o += -Wno-switch-default -Wno-shadow
+> > +CFLAGS_Context.o += -Wno-switch-default -Wno-shadow -Wno-thread-safety-analysis
 > 
-> Is there any way I can help to move this patch forward?
+> I wasn't able to reproduce this on Debian with perf-tools-next and:
+> make -C tools/perf O=/tmp/perf DEBUG=1 CC=clang CXX=clang++
+> HOSTCC=clang LIBPERL=1 clean all
+> but my libperl is 5.40. I'm a little concerned that the warning may
+> cause an unrecognized compiler option warning/error with GCC given
+> progress on thread-safety-analysis has ended there. Anyway, these
+> aren't blockers.
+> 
+> Reviewed-by: Ian Rogers <irogers@google.com>
 
-Let me just apply it before it gets lost again. Sorry; sometimes the
-amount of email is turning me into a goldfish with ADD :/
+I was a bit wary and saw this on only, IIRC Manjaro Linux, and since
+libperl support is opt-in, I left it in the backburner, but having it
+building there as well may help detecting some other stuff with things
+only enabled/present there, so thanks Leo and Ian, for the patch and the
+Reviewed-by, applying.
+
+- Arnaldo
 
