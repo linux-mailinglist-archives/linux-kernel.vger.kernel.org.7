@@ -1,120 +1,115 @@
-Return-Path: <linux-kernel+bounces-842769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BBDBBBD851
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 11:54:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1A7BBBD866
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 11:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7C2B3B9E28
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 09:54:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A65C18961CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 09:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2042116E7;
-	Mon,  6 Oct 2025 09:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OI4fnkCW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC9920E029
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 09:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6075C215F42;
+	Mon,  6 Oct 2025 09:54:57 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FA22135D7;
+	Mon,  6 Oct 2025 09:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759744442; cv=none; b=NcwutPL8DApjwkUw1KCZphU9vP42Lsai1/c/cpfE+RNXzWp8s1yrBktFEaNYsZ+9rwvksOPaLaYelJr7JaR/ffrsJpQd3zZ42kaYh3cS8GNG8nSQ5soYsKOpitq5bKTmkB0beEXz3ShImdrFFRLFDGJx4qJq56bsMfloBFOkowk=
+	t=1759744497; cv=none; b=rXgfv9BYcDFucb4TFLkXx12RLkda7fecU9EbBaD05o58iNiDLL4SLsJOBW8CUA3wJxfaOyae/k4OAG7fkKBMHsy96YyK+04bMkYu+3j3dCOYf6OVnXVfakeotQMz3XMdY0YTT+qo5e0VD6RFPIEp7PWtBzuODzL7FsuwS1Ooobg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759744442; c=relaxed/simple;
-	bh=mNEWSXxj2zHBwUiwtyBz49JKGFOAt9cDd66jiisBbwA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iXTZGvpAB3yISIVHtmGykFc5Kx2zAUcda/VwCQhHONGbSvZXz/8aSLQsdVbtblmnOaETSt/kOFb+HASYG21y4b1/mWSocXeEaUxPzAH+RXh1iN0Zqy0WL54eX1Ieav2QUhcIPXsvT7057gbOIlOpkMDlNQ9HCc1xXXmgK6fjQZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OI4fnkCW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64958C4CEF5;
-	Mon,  6 Oct 2025 09:54:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759744441;
-	bh=mNEWSXxj2zHBwUiwtyBz49JKGFOAt9cDd66jiisBbwA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OI4fnkCW+YXaIBwuEBjG2UnPHHqgGB6OuczCAItcjjz9364vJDe6dEXkZ2JhnmFV+
-	 Dok6QGxhxZ+zJXOth1cT60St8aOEbljwH7PNG7ZqzZbhwRn08JEL4sanY/q706vqFA
-	 tC18U9T9rJEweb+o1aVCM/1bemjgnMQy+ktUa2GQ=
-Date: Mon, 6 Oct 2025 11:53:59 +0200
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: Siddh Raman Pant <siddh.raman.pant@oracle.com>
-Cc: "cve@kernel.org" <cve@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: CVE-2025-39751: ALSA: hda/ca0132: Fix buffer overflow in
- add_tuning_control
-Message-ID: <2025100643-tarot-gender-4430@gregkh>
-References: <2025091142-CVE-2025-39751-c340@gregkh>
- <f24f4524894417954b9de4ccec69c2e17aae3d5f.camel@oracle.com>
- <2025100646-strategy-spindle-ae8a@gregkh>
- <b12d18b040c39eb361c0f5aabf290236e3d0da66.camel@oracle.com>
+	s=arc-20240116; t=1759744497; c=relaxed/simple;
+	bh=rMOOUFNn8ElC+MHoUq6IPchuYxisO0T6N2XlK3jRFLg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=MZBxtSRmui39o5mIyq5Oxjm760D+GsStxWUFGAu549C7F8XvlzKSc29RUloDB18Dd2P71gxgQTGuR6S4OBN146PT7bfM3I1J/qBbTPxRVtFcyL7Xmn9l65xYHxMGqh5dd1+v0fLWG7aX3eJrh3rximjfeD+iJiV30fGvpZLyyzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 835001515;
+	Mon,  6 Oct 2025 02:54:46 -0700 (PDT)
+Received: from [10.57.34.189] (unknown [10.57.34.189])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B6E7A3F59E;
+	Mon,  6 Oct 2025 02:54:50 -0700 (PDT)
+Message-ID: <2e6141f9-be76-41a4-a851-7ac1c31c101e@arm.com>
+Date: Mon, 6 Oct 2025 10:54:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b12d18b040c39eb361c0f5aabf290236e3d0da66.camel@oracle.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] drm/panthor: initial mt8196 support
+To: Chia-I Wu <olvaffe@gmail.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Liviu Dudau <liviu.dudau@arm.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20250913002155.1163908-1-olvaffe@gmail.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250913002155.1163908-1-olvaffe@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 06, 2025 at 09:19:42AM +0000, Siddh Raman Pant wrote:
-> On Mon, Oct 06 2025 at 13:44:23 +0530, gregkh@linuxfoundation.org
-> wrote:
-> > On Mon, Oct 06, 2025 at 07:07:00AM +0000, Siddh Raman Pant wrote:
-> > > On Thu, 11 Sep 2025 18:52:52 +0200, Greg Kroah-Hartman wrote:
-> > > > ALSA: hda/ca0132: Fix buffer overflow in add_tuning_control
-> > > > 
-> > > > The 'sprintf' call in 'add_tuning_control' may exceed the 44-byte
-> > > > buffer if either string argument is too long. This triggers a compiler
-> > > > warning.
-> > > > Replaced 'sprintf' with 'snprintf' to limit string lengths to prevent
-> > > > overflow.
-> > > > 
-> > > > The Linux kernel CVE team has assigned CVE-2025-39751 to this issue.
-> > > 
-> > > While the change is good for defensive reasons, there isn't actually
-> > > any buffer overflow as it is to "fix".
-> > > 
-> > > The largest string possible is "Wedge Angle Playback Volume", whose
-> > > length is less than 44.
-> > 
-> > Thanks for the info.  What was the compiler warning about then if it
-> > could detect just how big the string would always be as these are static
-> > values?
+On 13/09/2025 01:21, Chia-I Wu wrote:
+> MediaTek MT8196 has Mali-G925-Immortalis, for which panthor gained
+> support recently. But the soc also requires custom ASN hash to be
+> enabled. This series introduces panthor_soc_data for per-soc data and
+> uses it to enable custom ASN hash on MT8196.
 > 
-> Probably a false positive.
+> The clk/regulator provider on MT8196 is GPUEB, whose driver[1] needs to
+> be cleaned up and upstreamed separately.
 > 
-> GCC docs does say:
+> This initial support also lacks support for some hw configs. On some
+> configs, panthor is expected to query a mask from efuse to mask out
+> unavailable shader cores from ptdev->gpu_info.shader_present. This
+> requires extending panthor_soc_data with a callback to read the mask.
 > 
-> 	-Wformat-overflow
-> 	-Wformat-overflow=level
+> This is an RFC because the dependent drivers are not ready yet. But I
+> would like to gather opinions on having panthor_soc_data for
+> soc-specific data and having CONFIG_DRM_PANTHOR_SOC_MT8196 for
+> soc-specific code.
 > 
-> 	    Warn about calls to formatted input/output functions such 
-> 	    as sprintf and vsprintf that might overflow the
-> destination
-> 	    buffer. When the exact number of bytes written by a format
-> 	    directive cannot be determined at compile-time it is
-> 	    estimated based on heuristics that depend on the level
-> 	    argument and on optimization. While enabling optimization 
-> 	    will in most cases improve the accuracy of the warning, it
-> 	    may also result in false positives.
+> [1] https://gitlab.freedesktop.org/olv/kernel/-/commit/170d5fc90f817dc90bde54b32872c59cf5c77779
 
-I can't seem to duplicate this warning on a newer version of gcc than
-the original test used:
-	https://lore.kernel.org/oe-kbuild-all/202506100642.95jpuMY1-lkp@intel.com/
+Applied to drm-misc-next.
 
-But that value of "767" is very specific, which feels odd to me.
+Thanks,
+Steve
 
-> > Should this CVE be rejected?
 > 
-> Yes.
+> ---
+> v2:
+> 
+> - drop RFC as this series works with the downstream GPUEB driver, and
+>   should work with Nicolas's GPUEB driver posted to
+>   https://lore.kernel.org/lkml/20250912-mt8196-gpufreq-v2-0-779a8a3729d9@collabora.com/
+>   with no change.
+> - remove CONFIG_DRM_PANTHOR_SOC_MT8196 and panthor_soc*.[ch], as this
+>   initial support is just about ASN hash.
+> 
+> Chia-I Wu (2):
+>   dt-bindings: gpu: mali-valhall-csf: add MediaTek MT8196 compatible
+>   drm/panthor: add custom ASN_HASH support for mt8196
+> 
+>  .../bindings/gpu/arm,mali-valhall-csf.yaml    |  1 +
+>  drivers/gpu/drm/panthor/panthor_device.c      |  2 ++
+>  drivers/gpu/drm/panthor/panthor_device.h      | 14 +++++++++++
+>  drivers/gpu/drm/panthor/panthor_drv.c         |  6 +++++
+>  drivers/gpu/drm/panthor/panthor_gpu.c         | 25 ++++++++++++++++++-
+>  drivers/gpu/drm/panthor/panthor_regs.h        |  4 +++
+>  6 files changed, 51 insertions(+), 1 deletion(-)
+> 
 
-Ok, will do, but this still seems odd, you should patch your kernel just
-to be safe :)
-
-thanks,
-
-greg k-h
 
