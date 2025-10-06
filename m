@@ -1,184 +1,222 @@
-Return-Path: <linux-kernel+bounces-842797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12DE4BBDA1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:10:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E765EBBDA24
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:11:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6D5B534A391
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:10:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B56911896CEA
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14CB2222C8;
-	Mon,  6 Oct 2025 10:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0720B221FA8;
+	Mon,  6 Oct 2025 10:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NAtN7DHy"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FwpMWfyN";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oxf7pHXR"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2E5221FD0
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 10:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9120F21FF4C;
+	Mon,  6 Oct 2025 10:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759745417; cv=none; b=jyTV2Yjh0u6fPtJF9pcp2moqvQDrPnLzwKPUpQbbKGdMrloAXO5VobgWaVee+GNvjssAaBE3zI+ATwVdUa07T3PStLWXPg3uCUsBfqy04sxL5eN5reqcSm/8dG8Tw0QTQSPE06I4jKLa5Q3hn50HmagyLghnBIo6WTF6GZ9MgXM=
+	t=1759745453; cv=none; b=TYq1rTDVgGeDd6nkIK4jLBezvsVo5d7v7B11spJ2ql6nZ6kN/DJnZvKXUo/1YW3VRNfIfxcWvdnUnj45FFl58O2pepPdRIph1QOGtwUZeuO+quNobTdlV64qQqjuRenadT7GB9tCnPrSRMeMoJizhL+0ZqfrzxndjYpceRZhg1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759745417; c=relaxed/simple;
-	bh=U2IfsPJIglZbNLha2D9xYquVHVAKAm7qePp4wABBM4k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p6iy7P9oFIhLIDxvrvf+8cl5H78BR8zEiC0XOpy3Ycj+D3briEeHDMD1Gm3IGK/6C/+l+V8rPh1YsrZSn6d/JJt0fV+qK85NjqD3/XaiIq4ZTjBQaZmTlaJCNnZgnFvnUEvkVslWLlPRXmch7cfpFnCiYhzaeF0xOvOrEgR1/8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NAtN7DHy; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 595NM3Yt027568
-	for <linux-kernel@vger.kernel.org>; Mon, 6 Oct 2025 10:10:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YQ9JTnhy7/VFugNTC6R+z9mSCDzzqwGBYOtYIqduWzQ=; b=NAtN7DHyq3ZwfClP
-	4BcHB4FvWVWkddyQhEj1JSJQ1NI4EV/Xg5kV44rS7aNrWzfVxun8QvSl3tATi84o
-	nTeNbr4AXqu7YGel83kYMryezB3tUzENWb7p7o9Z1KRJ8LbE1UDKMI+5U4iFYLtz
-	nm5OELZyVYoQDuHh23ao29jFFhX048LzURZ6GEnuW/U2c0hiDL+KkIGqVhCed+aH
-	5Wuq20ccJqcby2ltn4U1YLD+j6tLYWjngzqxXZpCKHvIM2J5g8KCGfzHvL/YT17H
-	WWDVY/oKXA4cbVVNTGzEa0Sy8FC5xCZk/ClEUyGyEnE7sruPkDqgEyZWBoZAbyKO
-	vEWGmA==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jut1kg8q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 10:10:14 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4d6c3d10716so9054961cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 03:10:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759745410; x=1760350210;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YQ9JTnhy7/VFugNTC6R+z9mSCDzzqwGBYOtYIqduWzQ=;
-        b=TIeSa36waYQLp4XDc+WxRVZoexKqJ1wWd6x3vzhCGmNbFynOXuEVFpNETeTc023Lig
-         BvkzQsAdZByrTQ0eTHk7mC+MWEyqf+3pA4CPtdlXfP9djhdU14E3sgrf+wPUgUyjiMPX
-         /NrX0eFnJk2ACWgjklEldlTMX/+5k6WXxTsmgq6Ry+ypXYen1fbHOdGL6cV+d5cVfw+f
-         +GEkB4s+PKgBrPbZ1Aica9ZsG91GxX14g3C/Ivxu45x5hYbY3Ks/u+xrklkeclh1/Zu7
-         GJS10ysC6bVxHf+weRqtkkaX+cE+7EtcttvyWBk0Fxyr4abZxEiV5a0KHSJaT6mQY01w
-         atcA==
-X-Forwarded-Encrypted: i=1; AJvYcCWW4n3VezH6O/PiFqHOgzLDimX/ghXukqjwUhr+xN3/HU3Cdn6nm1Iejk2dF+7Ya7QyiyT1KRMWbqx9MDc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvA6v8hd3W01awdGGTR2Ycs74gxmHajTOdpM9IKnmcaDk9uGtx
-	Xsd9hA1H6sw4Rmbb03WzGKseuyyi6wsgoQ0c0DK3udcwaHMfcPmjwi9HDylZlWqZ3dK/itJfaYL
-	HE1I/sqsRITEFdxOTsnKspDom90FyDG9qrvYMXSLngzbI/pGa1B5r4iSV7z7I+Bh+NqY=
-X-Gm-Gg: ASbGncuRmEeGFBwFrQX2YiJeetU5SWmjxiLG0ZShaWbEaOXUspUlrLZkck4I4gYwZp/
-	5zbgsV8MF8BbCcKWO4GEShkZZZp5IFIsE27wtzzizMbBhGXgXlFuZRl200t4Sf0gh0tvlX88KJV
-	mUzfCQuud+qgEujj0BLl/YjlfYaLvZ2vOgTAP5cSdoGJEGQkHPjO027P3Ge62WulWp+7ms7gUug
-	yK5kcWJM98aPJRIKxTXEyXUbtTaZHU3cqovEIjoLFudxCf6a9edF4yZxMquJCLIWUR4p12K/TuB
-	hRRms8ixLyfwDqEi4gvCxiG/qEE9dgRcrEpKxq56Z3gwvpKbih6xibRw5FsspCZVTgRQYNRSQe5
-	32rDmO5GSYh8/ktbyjUMXiO5L54M=
-X-Received: by 2002:a05:622a:60e:b0:4d8:8b29:228a with SMTP id d75a77b69052e-4e58cca7939mr46373611cf.3.1759745410316;
-        Mon, 06 Oct 2025 03:10:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHkIaT5uOBugms5gwERrur4Q5H8ZrUny5IMG2QAlBQl/ctjJPOfhlmFXcEGWS3cXzuKqN18GA==
-X-Received: by 2002:a05:622a:60e:b0:4d8:8b29:228a with SMTP id d75a77b69052e-4e58cca7939mr46373061cf.3.1759745409696;
-        Mon, 06 Oct 2025 03:10:09 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486a174a6dsm1115628966b.90.2025.10.06.03.10.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Oct 2025 03:10:09 -0700 (PDT)
-Message-ID: <53aafa84-6d6a-4963-827e-c1600270662f@oss.qualcomm.com>
-Date: Mon, 6 Oct 2025 12:10:05 +0200
+	s=arc-20240116; t=1759745453; c=relaxed/simple;
+	bh=cYgTEj4pgntErqjqga5WxNM7XufefKDW784gXckyoWg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rw13NWFIQXvsS2M8ns3nc9T/6XWu7EIRgenNCJmuOPWvPQI0KnzRP9EKCOYGK1dNjz55J8i452YAaoMQinjTerstdpkm5LMl6U7GyvfznO8dPctv/7dXK/f6+l8A8GO6jGz8fgJ80koGCysj1bAsfoPz4pl/hNLC3LZ+HX8jb7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FwpMWfyN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oxf7pHXR; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 6 Oct 2025 12:10:49 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1759745449;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yQ9gw/5hlteQIY5HmNrmtZC5q8R7f1aOpxmrRciOsJY=;
+	b=FwpMWfyNRlQzfYOIO02y7hs3FfI7LSWvwyC/v1u/anjdzMEFu55DAtz24yWzBC5skZm1Tk
+	S+7vvho0s5fFJgINvLZdA0/uPm2OEfrH36ovMGFEZNw51l0eHk93HNuIBEqZcs4QfSsTlk
+	GKcCajZ2aEAso0tSqsj4xmh6J4lXcFZ4nPBT0fSmY4hZAoPu45WrgaMbW+eaJ+je6Muh6f
+	pCRDpQ/DQW+hQrNF3pf2EBYM3t7inzPZZlWr26VNTH/gPSOkmjaYIcVAiB1lIQOXdkzI/F
+	LK68QAyPHJyYnPiJd6HcpksDO/uNAIsCQjwzS3zErQK1DoVAAGSSQjRBjsOZSQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1759745449;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yQ9gw/5hlteQIY5HmNrmtZC5q8R7f1aOpxmrRciOsJY=;
+	b=oxf7pHXRl3CmOjq+vU+DQyHbbAbdC8leM7xC038jEyca3Znc+Pg2p25+PB7BDlB429JPNZ
+	cux6oWqEH/6IUcCQ==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: Nam Cao <namcao@linutronix.de>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH] rv: Add signal reactor
+Message-ID: <20251006115555-9822f5f1-fc9d-4d6a-9735-274b242e0eba@linutronix.de>
+References: <20250919-rv-reactor-signal-v1-1-fb0012034158@linutronix.de>
+ <d0aaaf1f47f0d948b60b0575e179564e3c024188.camel@redhat.com>
+ <20250922162900.eNwI7CS0@linutronix.de>
+ <ced1cdde298d105ba2d789e4e4704caac8dec518.camel@redhat.com>
+ <6a5fde33-b3e3-44e2-8ea5-5f4cf350cf35@linutronix.de>
+ <87ikgxqrna.fsf@yellow.woof>
+ <3c55441187b869b5bb07b74ef88c10bfd51f9fb1.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] drm/panel: Add Novatek NT36532 panel driver
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Junjie Cao <caojunjie650@gmail.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Rob Clark
- <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Antonino Maniscalco <antomani103@gmail.com>,
-        Jonathan Marek <jonathan@marek.ca>, Eugene Lepshy <fekz115@gmail.com>,
-        Jun Nie <jun.nie@linaro.org>, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
-References: <20251001135914.13754-1-caojunjie650@gmail.com>
- <20251001135914.13754-4-caojunjie650@gmail.com>
- <lfdhib6a7ct36nmj3of2setjft7ydrf6sfgtx7qued7qd56nhc@2xol3grm5re7>
- <e36572bf-4fb4-425e-8d10-c5efa5af97f3@oss.qualcomm.com>
- <rxm67cbwkp2qyxdlgqb3fz7fhiskmnhidhjvl4mhqn67iq2x4n@wfueruiiq7kp>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <rxm67cbwkp2qyxdlgqb3fz7fhiskmnhidhjvl4mhqn67iq2x4n@wfueruiiq7kp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 5s6gaJaDsZwGmu1Li6YMHz09qOdpAuzK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAyNyBTYWx0ZWRfXz0+jOhrCi3WM
- GIfO1TbTt9tZ3/VvgvqH4uu9riYp8dk1eeuqJVFomZ6cb6i4Bt6AaC6zoDhrT5GNmdjaiZjEpTr
- DPYIQKXpHIlbKOdBb+tSnTq+wuV/LKa3vDE0SifY7lyrF4x6ju9B/l2eNfrB2POvBRZwKd9uv3L
- bGRQxNRA0qWNBwClOzYgjBFlyAMFBQacEWu5cGFrx/dLgt6+Hd0tRazqMwm4tbMJ8wQq6mmjCjz
- tnk8YNp08+phhHcjxFn/N0Zr0t2jfk5BGFseyBNV4leRnBZY4Atz3v5Hzvah/lzy75mChqgEoIn
- TypJmbBW3q4/7M/YCsCGgi6A53SKtj4wV4q61ySDoMPByLIMmyv9NFLYh3wJfEr21tW25MIf9yM
- N+3VM77WiuUbtMDA4L0hQt8QnjTTNQ==
-X-Authority-Analysis: v=2.4 cv=Vqcuwu2n c=1 sm=1 tr=0 ts=68e39586 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=pGLkceISAAAA:8 a=0RrB5Ro-Ny3bBzvrWzsA:9
- a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-ORIG-GUID: 5s6gaJaDsZwGmu1Li6YMHz09qOdpAuzK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-06_03,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 adultscore=0 malwarescore=0 spamscore=0 priorityscore=1501
- suspectscore=0 bulkscore=0 clxscore=1015 impostorscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040027
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3c55441187b869b5bb07b74ef88c10bfd51f9fb1.camel@redhat.com>
 
-On 10/6/25 12:02 PM, Dmitry Baryshkov wrote:
-> On Mon, Oct 06, 2025 at 11:24:35AM +0200, Konrad Dybcio wrote:
->> On 10/2/25 4:04 AM, Dmitry Baryshkov wrote:
->>> On Wed, Oct 01, 2025 at 09:59:14PM +0800, Junjie Cao wrote:
->>>> Add a driver for panels using the Novatek NT36532 Display Driver IC,
->>>> including support for the CSOT PPC100HB1-1, found in the OnePlus Pad 2
->>>> tablets.
->>>>
->>>> Signed-off-by: Junjie Cao <caojunjie650@gmail.com>
->>>> ---
->>>>  MAINTAINERS                                   |   7 +
->>>>  drivers/gpu/drm/panel/Kconfig                 |  10 +
->>>>  drivers/gpu/drm/panel/Makefile                |   1 +
->>>>  drivers/gpu/drm/panel/panel-novatek-nt36532.c | 437 ++++++++++++++++++
->>>>  4 files changed, 455 insertions(+)
->>>>  create mode 100644 drivers/gpu/drm/panel/panel-novatek-nt36532.c
->>>>
->>>> +
->>>> +static const struct panel_info csot_panel_info = {
->>>> +	.width_mm = 250,
->>>> +	.height_mm = 177,
->>>> +	.lanes = 4,
->>>> +	.format = MIPI_DSI_FMT_RGB888,
->>>> +	.mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_CLOCK_NON_CONTINUOUS |
->>>> +		      MIPI_DSI_MODE_LPM,
->>>> +	.display_mode = csot_display_mode,
->>>> +	.dsc_slice_per_pkt = 2,
->>>
->>> As this is not a part of the standard, what if the DSI host doesn't
->>> support this feature?
->>
->> Shouldn't the core gracefully throw something like an -EINVAL?
+Hi Gabriele,
+
+On Fri, Oct 03, 2025 at 08:30:10AM +0200, Gabriele Monaco wrote:
+> 2025-10-02T14:56:23Z Nam Cao <namcao@linutronix.de>:
 > 
-> There is no 'core' here. Each DSI DRM host manages DSC on their own.
+> > Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de> writes:
+> >> I am wondering if it would make sense to add a new tracepoint that
+> >> fires in addition of the reactors. That would allow multiple
+> >> simultaneous consumers and also bespoke handlers in userspace.
+> >
+> > We do have tracepoints for each monitor in: kernel/trace/rv/rv_trace.h
+> >
+> > And yeah, I think it is a nice idea for all the consumers to use these
+> > tracepoints intead (that includes rtapp testing, and also the existing
+> > reactors). It would simplify things, as the monitors do not have to
+> > worry about the reactors, they only need to invoke tracepoints.
+> >
+> > But this also makes me think about the necessity of the existing
+> > reactors. What do they offer that tracepoints do not? Myself I almost
+> > never use the reactors, so I'm thinking about removing them. But maybe
+> > @Gabriele has objections?
+> 
+> Well, many use cases might be better off with tracepoints, but reactors do
+> things tracepoints cannot really do.
+> Printk is much faster (and perhaps more reliable) than the trace buffer for
+> printing, panic can be used to gather a kernel dump.
+> One may just attach to tracepoints via libtracefs/BPF and do most of the things
+> you'd want to do with a new reactor, but I see reactors much easier to use from
+> scripts, for instance.
+>
+> LTLs don't benefit as much as they don't print any additional information via
+> reactors, but DA/HA give hints on what's wrong.
+> 
+> I wouldn't get rid of reactors until they become a huge maintenance burden, but
+> probably we could think about it twice before extending or making them more
+> complex.
 
-drm_dsc_helper?
+The existing reactors could be implemented on top of the tracepoints.
+This should make the RV core a bit simpler.
 
-Konrad
+Note: The current interface between the RV core and the reactors is inflexible.
+Passing only opaque varargs requires all reactors to format the string from
+within the tracepoint handler, as they can not know how long the objects
+referenced by the varargs are valid. Passing the actual objects would allow
+for example the signal reactor to format its message as part of the task_work
+handler instead of the signal handler and avoid the allocation of a fixed size
+message buffer.
+
+> For instance, what's the exact use case of the signal reactor? Isn't it simpler
+> to do everything in BPF? Is the signal needed at all or something else (e.g.
+> perf) would do the job?
+
+The signal reactor is convenient to write automated tests. It can be used to
+validate the monitors by triggering known-bad systemcalls from a test
+executable and expect it to be killed with the reactor signal, see below for
+an example.
+On the other hand it can be used to validate that the kernel itself does not
+regress with respect to RV-validated properties. For example the test program
+can enable the rtapp monitor and run an example RT application using all kinds
+of known-good IPC mechanisms without it being killed.
+
+
+Thomas
+
+
+
+Example selftest to make sure rtapp/sleep monitors detect the invalid
+clock_nanosleep(CLOCK_REALTIME). I use this to also test my reactor:
+
+#include "kselftest.h"
+#include "test_utils.h" /* Provides
+
+#include <sched.h>
+#include <sys/wait.h>
+#include <time.h>
+#include <unistd.h>
+
+static void test_nanosleep(void)
+{
+	struct timespec sleep_time;
+	pid_t pid;
+	int ret;
+
+	pid = fork();
+	switch (pid) {
+	case -1:
+		ksft_test_result_fail("%s: failed to fork: %s\n", __func__, strerror(errno));
+		return;
+	case 0:
+		sleep_time.tv_sec = 2;
+		sleep_time.tv_nsec = 0;
+
+		ret = clock_nanosleep(CLOCK_REALTIME, 0, &sleep_time, NULL);
+		_exit(ret != 0);
+	default:
+		waitpid(pid, &ret, 0);
+		ksft_print_msg("ret 0x%x\n", ret);
+	}
+
+	ksft_test_result(ret == 0, "%s\n", __func__);
+}
+
+static void become_realtime(void)
+{
+	struct sched_param p = {
+		.sched_priority = 1,
+	};
+	int ret;
+
+	ret = sched_setscheduler(0, SCHED_FIFO, &p);
+	if (ret == -1) {
+		ksft_print_header();
+		ksft_set_plan(1);
+		ksft_test_result_fail("Failed to become realtime: %s\n", strerror(errno));
+		ksft_finished();
+	}
+}
+
+int main(void)
+{
+	int ret;
+
+	become_realtime();
+
+	ret = rtapp_enable();
+	if (ret) {
+		ksft_print_header();
+		ksft_set_plan(1);
+		ksft_test_result_fail("Failed to enable rtapp: %s\n", strerror(errno));
+		ksft_finished();
+	}
+
+	ksft_print_header();
+	ksft_set_plan(1);
+
+	test_nanosleep();
+
+	rtapp_disable();
+
+	ksft_finished();
+}
 
