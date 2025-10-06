@@ -1,393 +1,208 @@
-Return-Path: <linux-kernel+bounces-842865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA39DBBDD15
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:57:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7B85BBDC50
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:49:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4042F3BD124
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:57:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 932A63BC606
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875E626B2AD;
-	Mon,  6 Oct 2025 10:57:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76489264636;
+	Mon,  6 Oct 2025 10:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PvsGXnwS"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MQ42fFsB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A772638B2;
-	Mon,  6 Oct 2025 10:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A5724DFF4;
+	Mon,  6 Oct 2025 10:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759748232; cv=none; b=IJiST+WqlO82lMNIqLhCNbPCfavHxdCUB5qfv3A/kUp06Vw5V+4hussBzEPmuGEx48cUmn8GfGr1/YMsPTLWNjT2oJDYRJcvjo5y1Pm8qZlNRXweIX0nWgHFV5O8UQ8QN/7yaJ2Du9/qhvM3qH4tOtgwoR0/ZUZqCJkmOBhIelA=
+	t=1759747624; cv=none; b=ZBIBxI1IbgUtGykO6jYFF401UXNZQgX9C4hWm63luvOdrJkrlcNzGqhvGjQSBbI9JFQP4yHob3YLF+tQYkIBlySAcNbF7xnQlfLnEFtuFMha/JkYexESUbj5yGowzmzoRjmB+Gu6B6UL+CFCgPdyeconczaTBGTFWR1iYH6jj4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759748232; c=relaxed/simple;
-	bh=S305arjsIN8bedo8fDXrbc1tCTzW1OktXvsWEmzEPRo=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=q/erCwNIoaMK03fuE4XhPSOscLa1SQGDuGLxgDRVDcZRtSDt/pW97KntUqSjyR3LVPeToa1bKwRMsfq8kb4INk7WcJ7ZxRp3D87WqXD3EWLNXLMAzoY1OluKJGOu8WFVyRbNPheCC/q8ixF+YrvVNKuk8m5YfXfRoiUfgQalnHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PvsGXnwS; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
-	Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To;
-	bh=1C2VdFRZu2PsJI4zgJ4CUAg7pUvXeT6mj9c9BOfbZBQ=; b=PvsGXnwSuIuvPnhex3Fcy7SnW+
-	iRDUvtDDc1k9vMiyAYa8SL3ltAqjpcx/oBoc0b8XoSEwgaREn3rxpCKo4uxERTUVsSWKus83P7QHf
-	fJor25csZE8ktO0W4aUtL27yplW2gvkaUFwd8VS3kIwr6Y1ooiU4wE6RlIQ3K9hpboic/NRgWR5l2
-	Uqumcy+6UvlqUzz+uXfrj1M+yye5KXGhOSSHdojEAz9HBU7EhgYZdvt+oj2wXylViSR5uDsW4IuET
-	YAiTwiv0/JX1irYzOQjgjh2CQNx8DXwFSFnqq4f8+leaaO1Mx89YIFQQW1Aitmv7mWeP67G+1giOG
-	74s6Alrw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v5ito-0000000GrzG-3bk5;
-	Mon, 06 Oct 2025 10:57:01 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id 677D0300462; Mon, 06 Oct 2025 12:57:00 +0200 (CEST)
-Message-ID: <20251006105453.648473106@infradead.org>
-User-Agent: quilt/0.68
-Date: Mon, 06 Oct 2025 12:46:54 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: tj@kernel.org
-Cc: linux-kernel@vger.kernel.org,
- peterz@infradead.org,
- mingo@kernel.org,
- juri.lelli@redhat.com,
- vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com,
- rostedt@goodmis.org,
- bsegall@google.com,
- mgorman@suse.de,
- vschneid@redhat.com,
- longman@redhat.com,
- hannes@cmpxchg.org,
- mkoutny@suse.com,
- void@manifault.com,
- arighi@nvidia.com,
- changwoo@igalia.com,
- cgroups@vger.kernel.org,
- sched-ext@lists.linux.dev,
- liuwenfang@honor.com,
- tglx@linutronix.de,
- Joel Fernandes <joelagnelf@nvidia.com>
-Subject: [RFC][PATCH 2/3] sched: Add support to pick functions to take rf
-References: <20251006104652.630431579@infradead.org>
+	s=arc-20240116; t=1759747624; c=relaxed/simple;
+	bh=e4/nZdnV1UnOi2Img4tNapF9NXHl/ngFY8QE558FNJE=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=q+w6Ff8M1HFwPua/qY3lOYFsVNAG4oYCPryuV79qYJgg6tVyhzK8NWkWHcFYHZwSBe7b5zgef+nHvbjVaZP8UvR8uUqwAtbt6NcyJnFSP/k9kOka1ReICIpJISqtOF5YKICxZQFs9FF9+J3KqxEM54W/b0nWPj1gCi0yHDRXgvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MQ42fFsB; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759747623; x=1791283623;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=e4/nZdnV1UnOi2Img4tNapF9NXHl/ngFY8QE558FNJE=;
+  b=MQ42fFsB7s++CBuIgQNaJnPDNvO2sX92CDCkgas6t8Zs86gQ/nGju0CF
+   kWhIOgl8UBEyg+JQzUvSZ8y4EXeyFuFVE/Tv4+V2v9uKRvqhCGWFzOkYl
+   EhkBo52oIBlmVBF6S9OcaGydRAvLlD50UDx/CUx3k7girJyvH0x0bJ50r
+   k1VNDpVN5kGZJI54O1W91VzpYfC7ve5FXLjUBTWwYuYOi2umqtM5c/G9I
+   HlgoYcbY8LMzo9hbU/O2625YQvq5pQBFMoXeppdfcIPUw4ekQkOjyrFJp
+   azcOElU/1tRguO9cdpATComk2CeprfwvVyFgJMjirRCNU2s+blW3otY2w
+   Q==;
+X-CSE-ConnectionGUID: 1pIQWdDASkmbzyCT8zS9Aw==
+X-CSE-MsgGUID: uqWnIO4uTO2ECBb4vNL7Rg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11573"; a="84546449"
+X-IronPort-AV: E=Sophos;i="6.18,319,1751266800"; 
+   d="scan'208";a="84546449"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 03:47:01 -0700
+X-CSE-ConnectionGUID: uj71qlGYRhmsBbLiVzlkXA==
+X-CSE-MsgGUID: 0bwcgZAYS7ulmPuFdgtoBw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,319,1751266800"; 
+   d="scan'208";a="203589823"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.69])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 03:46:57 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 6 Oct 2025 13:46:54 +0300 (EEST)
+To: Val Packett <val@packett.cool>
+cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    Lucas De Marchi <lucas.demarchi@intel.com>
+Subject: Re: [PATCH 1/2] PCI: Setup bridge resources earlier
+In-Reply-To: <017ff8df-511c-4da8-b3cf-edf2cb7f1a67@packett.cool>
+Message-ID: <f5eb0360-55bd-723c-eca2-b0f7d8971848@linux.intel.com>
+References: <20250924134228.1663-1-ilpo.jarvinen@linux.intel.com> <20250924134228.1663-2-ilpo.jarvinen@linux.intel.com> <017ff8df-511c-4da8-b3cf-edf2cb7f1a67@packett.cool>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/mixed; BOUNDARY="8323328-482221089-1759745710=:943"
+Content-ID: <34f3730e-25d8-0310-db63-6599d5a18577@linux.intel.com>
 
-From: Joel Fernandes <joelagnelf@nvidia.com>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Some pick functions like the internal pick_next_task_fair() already take
-rf but some others dont. We need this for scx's server pick function.
-Prepare for this by having pick functions accept it.
+--8323328-482221089-1759745710=:943
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <517c50e8-9498-ff9c-b988-411a2626dd5b@linux.intel.com>
 
-[peterz: - added RETRY_TASK handling
-         - removed pick_next_task_fair indirection]
-Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
-SubmissionLink: https://lkml.kernel.org/r/20250809184800.129831-6-joelagnelf@nvidia.com
----
- include/linux/sched.h    |    7 ++-----
- kernel/sched/core.c      |   35 ++++++++++++++++++++++++++---------
- kernel/sched/deadline.c  |    8 ++++----
- kernel/sched/ext.c       |    2 +-
- kernel/sched/fair.c      |   16 ++++++----------
- kernel/sched/idle.c      |    2 +-
- kernel/sched/rt.c        |    2 +-
- kernel/sched/sched.h     |   10 ++++++----
- kernel/sched/stop_task.c |    2 +-
- 9 files changed, 48 insertions(+), 36 deletions(-)
+On Mon, 6 Oct 2025, Val Packett wrote:
+> On 9/24/25 10:42 AM, Ilpo J=E4rvinen wrote:
+> > Bridge windows are read twice from PCI Config Space, the first read is
+> > made from pci_read_bridge_windows() which does not setup the device's
+> > resources. It causes problems down the road as child resources of the
+> > bridge cannot check whether they reside within the bridge window or
+> > not.
+> >=20
+> > Setup the bridge windows already in pci_read_bridge_windows().
+> >=20
+> > Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+>=20
+> Looks like this change has broken the WiFi (but not NVMe) on my Snapdrago=
+n X1E
+> laptop (Latitude 7455):
 
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -637,8 +637,8 @@ struct sched_rt_entity {
- #endif
- } __randomize_layout;
- 
--typedef bool (*dl_server_has_tasks_f)(struct sched_dl_entity *);
--typedef struct task_struct *(*dl_server_pick_f)(struct sched_dl_entity *);
-+struct rq_flags;
-+typedef struct task_struct *(*dl_server_pick_f)(struct sched_dl_entity *, struct rq_flags *rf);
- 
- struct sched_dl_entity {
- 	struct rb_node			rb_node;
-@@ -730,9 +730,6 @@ struct sched_dl_entity {
- 	 * dl_server_update().
- 	 *
- 	 * @rq the runqueue this server is for
--	 *
--	 * @server_has_tasks() returns true if @server_pick return a
--	 * runnable task.
- 	 */
- 	struct rq			*rq;
- 	dl_server_pick_f		server_pick_task;
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5901,7 +5901,7 @@ __pick_next_task(struct rq *rq, struct t
- 
- 		/* Assume the next prioritized class is idle_sched_class */
- 		if (!p) {
--			p = pick_task_idle(rq);
-+			p = pick_task_idle(rq, rf);
- 			put_prev_set_next_task(rq, prev, p);
- 		}
- 
-@@ -5913,11 +5913,15 @@ __pick_next_task(struct rq *rq, struct t
- 
- 	for_each_active_class(class) {
- 		if (class->pick_next_task) {
--			p = class->pick_next_task(rq, prev);
-+			p = class->pick_next_task(rq, prev, rf);
-+			if (unlikely(p == RETRY_TASK))
-+				goto restart;
- 			if (p)
- 				return p;
- 		} else {
--			p = class->pick_task(rq);
-+			p = class->pick_task(rq, rf);
-+			if (unlikely(p == RETRY_TASK))
-+				goto restart;
- 			if (p) {
- 				put_prev_set_next_task(rq, prev, p);
- 				return p;
-@@ -5947,7 +5951,11 @@ static inline bool cookie_match(struct t
- 	return a->core_cookie == b->core_cookie;
- }
- 
--static inline struct task_struct *pick_task(struct rq *rq)
-+/*
-+ * Careful; this can return RETRY_TASK, it does not include the retry-loop
-+ * itself due to the whole SMT pick retry thing below.
-+ */
-+static inline struct task_struct *pick_task(struct rq *rq, struct rq_flags *rf)
- {
- 	const struct sched_class *class;
- 	struct task_struct *p;
-@@ -5955,7 +5963,7 @@ static inline struct task_struct *pick_t
- 	rq->dl_server = NULL;
- 
- 	for_each_active_class(class) {
--		p = class->pick_task(rq);
-+		p = class->pick_task(rq, rf);
- 		if (p)
- 			return p;
- 	}
-@@ -5970,7 +5978,7 @@ static void queue_core_balance(struct rq
- static struct task_struct *
- pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- {
--	struct task_struct *next, *p, *max = NULL;
-+	struct task_struct *next, *p, *max;
- 	const struct cpumask *smt_mask;
- 	bool fi_before = false;
- 	bool core_clock_updated = (rq == rq->core);
-@@ -6055,7 +6063,10 @@ pick_next_task(struct rq *rq, struct tas
- 	 * and there are no cookied tasks running on siblings.
- 	 */
- 	if (!need_sync) {
--		next = pick_task(rq);
-+restart_single:
-+		next = pick_task(rq, rf);
-+		if (unlikely(next == RETRY_TASK))
-+			goto restart_single;
- 		if (!next->core_cookie) {
- 			rq->core_pick = NULL;
- 			rq->core_dl_server = NULL;
-@@ -6075,6 +6086,8 @@ pick_next_task(struct rq *rq, struct tas
- 	 *
- 	 * Tie-break prio towards the current CPU
- 	 */
-+restart_multi:
-+	max = NULL;
- 	for_each_cpu_wrap(i, smt_mask, cpu) {
- 		rq_i = cpu_rq(i);
- 
-@@ -6086,7 +6099,11 @@ pick_next_task(struct rq *rq, struct tas
- 		if (i != cpu && (rq_i != rq->core || !core_clock_updated))
- 			update_rq_clock(rq_i);
- 
--		rq_i->core_pick = p = pick_task(rq_i);
-+		p = pick_task(rq_i, rf);
-+		if (unlikely(p == RETRY_TASK))
-+			goto restart_multi;
-+
-+		rq_i->core_pick = p;
- 		rq_i->core_dl_server = rq_i->dl_server;
- 
- 		if (!max || prio_less(max, p, fi_before))
-@@ -6108,7 +6125,7 @@ pick_next_task(struct rq *rq, struct tas
- 			if (cookie)
- 				p = sched_core_find(rq_i, cookie);
- 			if (!p)
--				p = idle_sched_class.pick_task(rq_i);
-+				p = idle_sched_class.pick_task(rq_i, rf);
- 		}
- 
- 		rq_i->core_pick = p;
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2352,7 +2352,7 @@ static struct sched_dl_entity *pick_next
-  * __pick_next_task_dl - Helper to pick the next -deadline task to run.
-  * @rq: The runqueue to pick the next task from.
-  */
--static struct task_struct *__pick_task_dl(struct rq *rq)
-+static struct task_struct *__pick_task_dl(struct rq *rq, struct rq_flags *rf)
- {
- 	struct sched_dl_entity *dl_se;
- 	struct dl_rq *dl_rq = &rq->dl;
-@@ -2366,7 +2366,7 @@ static struct task_struct *__pick_task_d
- 	WARN_ON_ONCE(!dl_se);
- 
- 	if (dl_server(dl_se)) {
--		p = dl_se->server_pick_task(dl_se);
-+		p = dl_se->server_pick_task(dl_se, rf);
- 		if (!p) {
- 			dl_server_stop(dl_se);
- 			goto again;
-@@ -2379,9 +2379,9 @@ static struct task_struct *__pick_task_d
- 	return p;
- }
- 
--static struct task_struct *pick_task_dl(struct rq *rq)
-+static struct task_struct *pick_task_dl(struct rq *rq, struct rq_flags *rf)
- {
--	return __pick_task_dl(rq);
-+	return __pick_task_dl(rq, rf);
- }
- 
- static void put_prev_task_dl(struct rq *rq, struct task_struct *p, struct task_struct *next)
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -2332,7 +2332,7 @@ static struct task_struct *first_local_t
- 					struct task_struct, scx.dsq_list.node);
- }
- 
--static struct task_struct *pick_task_scx(struct rq *rq)
-+static struct task_struct *pick_task_scx(struct rq *rq, struct rq_flags *rf)
- {
- 	struct task_struct *prev = rq->curr;
- 	struct task_struct *p;
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -8822,7 +8822,7 @@ static void check_preempt_wakeup_fair(st
- 	resched_curr_lazy(rq);
- }
- 
--static struct task_struct *pick_task_fair(struct rq *rq)
-+static struct task_struct *pick_task_fair(struct rq *rq, struct rq_flags *rf)
- {
- 	struct sched_entity *se;
- 	struct cfs_rq *cfs_rq;
-@@ -8866,7 +8866,7 @@ pick_next_task_fair(struct rq *rq, struc
- 	int new_tasks;
- 
- again:
--	p = pick_task_fair(rq);
-+	p = pick_task_fair(rq, rf);
- 	if (!p)
- 		goto idle;
- 	se = &p->se;
-@@ -8945,14 +8945,10 @@ pick_next_task_fair(struct rq *rq, struc
- 	return NULL;
- }
- 
--static struct task_struct *__pick_next_task_fair(struct rq *rq, struct task_struct *prev)
-+static struct task_struct *
-+fair_server_pick_task(struct sched_dl_entity *dl_se, struct rq_flags *rf)
- {
--	return pick_next_task_fair(rq, prev, NULL);
--}
--
--static struct task_struct *fair_server_pick_task(struct sched_dl_entity *dl_se)
--{
--	return pick_task_fair(dl_se->rq);
-+	return pick_task_fair(dl_se->rq, rf);
- }
- 
- void fair_server_init(struct rq *rq)
-@@ -13632,7 +13628,7 @@ DEFINE_SCHED_CLASS(fair) = {
- 	.wakeup_preempt		= check_preempt_wakeup_fair,
- 
- 	.pick_task		= pick_task_fair,
--	.pick_next_task		= __pick_next_task_fair,
-+	.pick_next_task		= pick_next_task_fair,
- 	.put_prev_task		= put_prev_task_fair,
- 	.set_next_task          = set_next_task_fair,
- 
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -466,7 +466,7 @@ static void set_next_task_idle(struct rq
- 	next->se.exec_start = rq_clock_task(rq);
- }
- 
--struct task_struct *pick_task_idle(struct rq *rq)
-+struct task_struct *pick_task_idle(struct rq *rq, struct rq_flags *rf)
- {
- 	scx_update_idle(rq, true, false);
- 	return rq->idle;
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1695,7 +1695,7 @@ static struct task_struct *_pick_next_ta
- 	return rt_task_of(rt_se);
- }
- 
--static struct task_struct *pick_task_rt(struct rq *rq)
-+static struct task_struct *pick_task_rt(struct rq *rq, struct rq_flags *rf)
- {
- 	struct task_struct *p;
- 
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2467,7 +2467,7 @@ struct sched_class {
- 	/*
- 	 * schedule/pick_next_task: rq->lock
- 	 */
--	struct task_struct *(*pick_task)(struct rq *rq);
-+	struct task_struct *(*pick_task)(struct rq *rq, struct rq_flags *rf);
- 	/*
- 	 * Optional! When implemented pick_next_task() should be equivalent to:
- 	 *
-@@ -2477,7 +2477,8 @@ struct sched_class {
- 	 *       set_next_task_first(next);
- 	 *   }
- 	 */
--	struct task_struct *(*pick_next_task)(struct rq *rq, struct task_struct *prev);
-+	struct task_struct *(*pick_next_task)(struct rq *rq, struct task_struct *prev,
-+					      struct rq_flags *rf);
- 
- 	/*
- 	 * sched_change:
-@@ -2690,8 +2691,9 @@ static inline bool sched_fair_runnable(s
- 	return rq->cfs.nr_queued > 0;
- }
- 
--extern struct task_struct *pick_next_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf);
--extern struct task_struct *pick_task_idle(struct rq *rq);
-+extern struct task_struct *pick_next_task_fair(struct rq *rq, struct task_struct *prev,
-+					       struct rq_flags *rf);
-+extern struct task_struct *pick_task_idle(struct rq *rq, struct rq_flags *rf);
- 
- #define SCA_CHECK		0x01
- #define SCA_MIGRATE_DISABLE	0x02
---- a/kernel/sched/stop_task.c
-+++ b/kernel/sched/stop_task.c
-@@ -32,7 +32,7 @@ static void set_next_task_stop(struct rq
- 	stop->se.exec_start = rq_clock_task(rq);
- }
- 
--static struct task_struct *pick_task_stop(struct rq *rq)
-+static struct task_struct *pick_task_stop(struct rq *rq, struct rq_flags *rf)
- {
- 	if (!sched_stop_runnable(rq))
- 		return NULL;
+Thanks for the report.
+
+> qcom-pcie 1c08000.pci: PCI host bridge to bus 0004:00
+> pci_bus 0004:00: root bus resource [bus 00-ff]
+> pci_bus 0004:00: root bus resource [io=A0 0x100000-0x1fffff] (bus address=
+ [0x0000-0xfffff])
+
+So this looks the first change visible in the fragment you've taken from=20
+the dmesg...
+
+> pci_bus 0004:00: root bus resource [mem 0x7c300000-0x7dffffff]
+> pci 0004:00:00.0: [17cb:0111] type 01 class 0x060400 PCIe Root Port
+> pci 0004:00:00.0: BAR 0 [mem 0x00000000-0x00000fff]
+> pci 0004:00:00.0: PCI bridge to [bus 01-ff]
+
+=2E..What I don't understand in these logs is how can the code changed in=
+=20
+pci_read_bridge_windows() affect the lines before this line as it is being=
+=20
+printed from pci_read_bridge_windows(). Maybe there are more 'PCI bridge=20
+to' lines above the quoted part of the dmesg?
+
+> pci 0004:00:00.0:=A0 =A0bridge window [io=A0 0x100000-0x100fff]
+> pci 0004:00:00.0:=A0 =A0bridge window [mem 0x00000000-0x000fffff]
+> pci 0004:00:00.0:=A0 =A0bridge window [mem 0x00000000-0x000fffff 64bit pr=
+ef]
+> pci 0004:00:00.0: PME# supported from D0 D3hot D3cold
+> pci 0004:00:00.0: bridge window [mem 0x7c300000-0x7c3fffff]: assigned
+> pci 0004:00:00.0: bridge window [mem 0x7c400000-0x7c4fffff 64bit pref]: a=
+ssigned
+> pci 0004:00:00.0: BAR 0 [mem 0x7c500000-0x7c500fff]: assigned
+> pci 0004:00:00.0: bridge window [io=A0 0x100000-0x100fff]: assigned
+> pci 0004:00:00.0: PCI bridge to [bus 01-ff]
+> pci 0004:00:00.0:=A0 =A0bridge window [io=A0 0x100000-0x100fff]
+> pci 0004:00:00.0:=A0 =A0bridge window [mem 0x7c300000-0x7c3fffff]
+> pci 0004:00:00.0:=A0 =A0bridge window [mem 0x7c400000-0x7c4fffff 64bit pr=
+ef]
+> pci_bus 0004:00: resource 4 [io=A0 0x100000-0x1fffff]
+> pci_bus 0004:00: resource 5 [mem 0x7c300000-0x7dffffff]
+> pci_bus 0004:01: resource 0 [io=A0 0x100000-0x100fff]
+> pci_bus 0004:01: resource 1 [mem 0x7c300000-0x7c3fffff]
+> pci_bus 0004:01: resource 2 [mem 0x7c400000-0x7c4fffff 64bit pref]
+> pcieport 0004:00:00.0: PME: Signaling with IRQ 186
+> pcieport 0004:00:00.0: AER: enabled with IRQ 186
+> pci 0004:01:00.0: [17cb:1107] type 00 class 0x028000 PCIe Endpoint
+> pci 0004:01:00.0: BAR 0 [mem 0x00000000-0x001fffff 64bit]
+> pci 0004:01:00.0: PME# supported from D0 D3hot D3cold
+> pci 0004:01:00.0: BAR 0 [mem size 0x00200000 64bit]: can't assign; no spa=
+ce
+> pci 0004:01:00.0: BAR 0 [mem size 0x00200000 64bit]: failed to assign
+> pci 0004:01:00.0: BAR 0 [mem size 0x00200000 64bit]: can't assign; no spa=
+ce
+> pci 0004:01:00.0: BAR 0 [mem size 0x00200000 64bit]: failed to assign
+> ath12k_pci 0004:01:00.0: BAR 0 [??? 0x00000000 flags 0x20000000]: can't
+> assign; bogus alignment
+> ath12k_pci 0004:01:00.0: failed to assign pci resource: -22
+> ath12k_pci 0004:01:00.0: failed to claim device: -22
+> ath12k_pci 0004:01:00.0: probe with driver ath12k_pci failed with error -=
+22
+>=20
+>=20
+> For comparison, with this change reverted it works again:
+>=20
+> qcom-pcie 1c08000.pci: PCI host bridge to bus 0004:00
+> pci_bus 0004:00: root bus resource [bus 00-ff]
+> pci_bus 0004:00: root bus resource [io=A0 0x0000-0xfffff]
+> pci_bus 0004:00: root bus resource [mem 0x7c300000-0x7dffffff]
+> pci 0004:00:00.0: [17cb:0111] type 01 class 0x060400 PCIe Root Port
+> pci 0004:00:00.0: BAR 0 [mem 0x00000000-0x00000fff]
+> pci 0004:00:00.0: PCI bridge to [bus 01-ff]
+> pci 0004:00:00.0:=A0 =A0bridge window [io=A0 0x0000-0x0fff]
+> pci 0004:00:00.0:=A0 =A0bridge window [mem 0x00000000-0x000fffff]
+> pci 0004:00:00.0:=A0 =A0bridge window [mem 0x00000000-0x000fffff 64bit pr=
+ef]
+> pci 0004:00:00.0: PME# supported from D0 D3hot D3cold
+> pci 0004:00:00.0: BAR 0 [mem 0x7c300000-0x7c300fff]: assigned
+> pci 0004:00:00.0: PCI bridge to [bus 01-ff]
+> pci_bus 0004:00: resource 4 [io=A0 0x0000-0xfffff]
+> pci_bus 0004:00: resource 5 [mem 0x7c300000-0x7dffffff]
+> pcieport 0004:00:00.0: PME: Signaling with IRQ 195
+> pcieport 0004:00:00.0: AER: enabled with IRQ 195
+> pci 0004:01:00.0: [17cb:1107] type 00 class 0x028000 PCIe Endpoint
+> pci 0004:01:00.0: BAR 0 [mem 0x00000000-0x001fffff 64bit]
+> pci 0004:01:00.0: PME# supported from D0 D3hot D3cold
+> pci 0004:01:00.0: ASPM: DT platform, enabling L0s-up L0s-dw L1 ASPM-L1.1
+> ASPM-L1.2 PCI-PM-L1.1 PCI-PM-L1.2
+> pci 0004:01:00.0: ASPM: DT platform, enabling ClockPM
+> pcieport 0004:00:00.0: bridge window [mem 0x7c400000-0x7c5fffff]: assigne=
+d
+> pci 0004:01:00.0: BAR 0 [mem 0x7c400000-0x7c5fffff 64bit]: assigned
+> ath12k_pci 0004:01:00.0: BAR 0 [mem 0x7c400000-0x7c5fffff 64bit]: assigne=
+d
+> ath12k_pci 0004:01:00.0: enabling device (0000 -> 0002)
+> ath12k_pci 0004:01:00.0: MSI vectors: 16
+> ath12k_pci 0004:01:00.0: Hardware name: wcn7850 hw2.0
+>=20
+> Not quite sure what's going on with these windows..
 
 
+
+--=20
+ i.
+--8323328-482221089-1759745710=:943--
 
