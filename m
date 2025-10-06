@@ -1,64 +1,39 @@
-Return-Path: <linux-kernel+bounces-843172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE71BBBE8F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:56:09 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55851BBE8FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A65603A4510
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:56:07 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0213C3493C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E982D979B;
-	Mon,  6 Oct 2025 15:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B3jkVGxu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E212641C6;
-	Mon,  6 Oct 2025 15:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6CB2D9494;
+	Mon,  6 Oct 2025 15:56:43 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F2A7296BA9;
+	Mon,  6 Oct 2025 15:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759766156; cv=none; b=WkkRWzEriTRGgu0qcNuv6f2GLUDzrrPs8Erh12u9/VGVJvTLVJBN/fkL8w27gC69kWYtvwhE6nuVwl5m6tmo1qOLqtuY9n7YZjwwX/dgUHcUmeQhyQZhNZRqmJx25+1IQopQNgqGUzIriHVx881kZUKa0w6MTNB56BmN6diLvCo=
+	t=1759766203; cv=none; b=B9R7W0/XAEED/SoQYBmTSPxilmHGvgkro24yYvmkXERwL+/7exL8jxgfFx/U00hQU00sfDaDtOr61Ef2LUD0AXm8uJaLDGEHzEwOvS2Q5mXRD/t+C7vtYwk8j9yM+UW6Hs9FOjjrOxe1BdxGn5W7JdqhhXetKegD7wDcag5NYuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759766156; c=relaxed/simple;
-	bh=bbY3CJftkec/YNYKO4Fm0HrwlOp58R/d8MGE465xN9g=;
+	s=arc-20240116; t=1759766203; c=relaxed/simple;
+	bh=mq4o+Iek00n4Z74NDlPOsqkGaxioXduQbo3moJx9Oyw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K+DEg3uIjJkU8DBEp8AnyKhdMmzzUw+8CETw8FFik/MumRIkABr6EdXzQfo0HnSnYL6XTTtOaSfxLRxtNNmb/dbdwCjwTDqt79NL/KRExuTSyY1y2e3j4wladhxnZ4yg9WibLT9mCf9YTnyqITbJxwjltkV8CqeB816UIEssUe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B3jkVGxu; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759766154; x=1791302154;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=bbY3CJftkec/YNYKO4Fm0HrwlOp58R/d8MGE465xN9g=;
-  b=B3jkVGxuJgKsdvHDpmUNzC6w3gcKTsdzq/NOGqEa8CUWUM+A+9h5Ptgh
-   e+K7iBFfnyqtop7xODOqQPSMqY+cNuvnvoNM/OF7GWjAhkuQmrfNCPA2u
-   IUFoD8yOXivYGTgUEZ1wiHphG099KCWsLMeTJvptGKNkHxjrvX65HCRh5
-   IYWIP/Q0VfhfbFk/d7LETwyBq738QgOGJHlNoOl9GAtgvZeNmWZFvoSJ4
-   nlm6sU9t/gexsRjoga3oMthRvXYFqXmzHs70uryQ0oRvSuo3Vb2YI6COI
-   9qFTV6E+mACpyKguQsqh/kXUDy73iFRpixsXFeBOsOgQw5rakWLNgPF0x
-   g==;
-X-CSE-ConnectionGUID: orTPhdYSRLWkMs+zlTWlfA==
-X-CSE-MsgGUID: On3YmYBgQEW8dpSckd8QtA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11574"; a="61974997"
-X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
-   d="scan'208";a="61974997"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 08:55:54 -0700
-X-CSE-ConnectionGUID: AX1pK7UCQ9CPvfrGsHWMSg==
-X-CSE-MsgGUID: KjdhSbBLRLixqHRNPExRfQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
-   d="scan'208";a="184194089"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.110.110]) ([10.125.110.110])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 08:55:53 -0700
-Message-ID: <361d0e84-9362-4389-a909-37878910b90f@intel.com>
-Date: Mon, 6 Oct 2025 08:55:52 -0700
+	 In-Reply-To:Content-Type; b=EMCUtlNBYn87vKmCRNL0a8IPMW7coXpjgpdjfcYD7pBOsBTgT0WBMk1ZQPZBkVHr6qrhJ6cgfyVvpLcDMdN+FUKW7t4t6nJTXBW1m1YaWynMtNphPgX630F8uUN2OT9EdcSC/IQ8bpUALR72OB0u48P/sysjPbQdm/7rlDB65bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D87DE1515;
+	Mon,  6 Oct 2025 08:56:32 -0700 (PDT)
+Received: from [10.1.197.69] (eglon.cambridge.arm.com [10.1.197.69])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B33D23F738;
+	Mon,  6 Oct 2025 08:56:35 -0700 (PDT)
+Message-ID: <0db211ba-d1b0-4394-b765-009192e67565@arm.com>
+Date: Mon, 6 Oct 2025 16:56:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,71 +41,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 13/20] cxl/mem: Refactor cxl pmem region
- auto-assembling
-To: Neeraj Kumar <s.neeraj@samsung.com>
-Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
- linux-kernel@vger.kernel.org, gost.dev@samsung.com,
- a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
- cpgs@samsung.com
-References: <20250917134116.1623730-1-s.neeraj@samsung.com>
- <CGME20250917134157epcas5p1b30306bc8596b7b50548ddf3683c3b97@epcas5p1.samsung.com>
- <20250917134116.1623730-14-s.neeraj@samsung.com>
- <c7b41eb6-b946-4ac0-9ddd-e75ba4ceb636@intel.com>
- <1296674576.21759726502325.JavaMail.epsvc@epcpadp1new>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <1296674576.21759726502325.JavaMail.epsvc@epcpadp1new>
+Subject: Re: [PATCH v2 22/29] arm_mpam: Add helpers to allocate monitors
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-acpi@vger.kernel.org,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ fenghuay@nvidia.com, baisheng.gao@unisoc.com, Rob Herring <robh@kernel.org>,
+ Rohit Mathew <rohit.mathew@arm.com>, Rafael Wysocki <rafael@kernel.org>,
+ Len Brown <lenb@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>, Ben Horgan <ben.horgan@arm.com>
+References: <20250910204309.20751-1-james.morse@arm.com>
+ <20250910204309.20751-23-james.morse@arm.com>
+ <20250912141123.000068e2@huawei.com>
+Content-Language: en-GB
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <20250912141123.000068e2@huawei.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
+Hi Jonathan,
 
-
-On 9/29/25 6:30 AM, Neeraj Kumar wrote:
-> On 23/09/25 03:37PM, Dave Jiang wrote:
->>
->>
->> On 9/17/25 6:41 AM, Neeraj Kumar wrote:
->>> In 84ec985944ef3, devm_cxl_add_nvdimm() sequence was changed and called
->>> before devm_cxl_add_endpoint(). It's because cxl pmem region auto-assembly
->>> used to get called at last in cxl_endpoint_port_probe(), which requires
->>> cxl_nvd presence.
->>>
->>> For cxl region persistency, region creation happens during nvdimm_probe
->>> which need the completion of endpoint probe.
->>>
->>> In order to accommodate both cxl pmem region auto-assembly and cxl region
->>> persistency, refactored following
->>>
->>> 1. Re-Sequence devm_cxl_add_nvdimm() after devm_cxl_add_endpoint(). This
->>>    will be called only after successful completion of endpoint probe.
->>>
->>> 2. Moved cxl pmem region auto-assembly from cxl_endpoint_port_probe() to
->>>    cxl_mem_probe() after devm_cxl_add_nvdimm(). It gurantees both the
->>>    completion of endpoint probe and cxl_nvd presence before its call.
->>
->> Given that we are going forward with this implementation [1] from Dan and drivers like the type2 enabling are going to be using it as well, can you please consider converting this change to Dan's mechanism instead of creating a whole new one?
->>
->> I think the region discovery can be done via the ops->probe() callback. Thanks.
->>
->> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git/commit/?h=for-6.18/cxl-probe-order&id=88aec5ea7a24da00dc92c7778df4851fe4fd3ec6
->>
->> DJ
->>
+On 12/09/2025 14:11, Jonathan Cameron wrote:
+> On Wed, 10 Sep 2025 20:43:02 +0000
+> James Morse <james.morse@arm.com> wrote:
 > 
-> Sure, Let me revisit this.
-> It seems [1] is there in seperate branch "for-6.18/cxl-probe-order", and not yet merged into next, right?
-
-Right. I believe Smita and Alejandro are using that as well. Depending on who gets there first. We can setup an immutable branch at some point.
-
-[1]: https://lore.kernel.org/linux-cxl/20250822034202.26896-1-Smita.KoralahalliChannabasappa@amd.com/T/#t
-
-DJ
-
+>> MPAM's MSC support a number of monitors, each of which supports
+>> bandwidth counters, or cache-storage-utilisation counters. To use
+>> a counter, a monitor needs to be configured. Add helpers to allocate
+>> and free CSU or MBWU monitors.
+>>
+>> Signed-off-by: James Morse <james.morse@arm.com>
+>> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
 > 
+> One minor requested change inline that will probably otherwise get picked
+> up by someone's cleanup script
 > 
-> Regards,
-> Neeraj
-> 
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
+Thanks!
+
+
+>> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
+>> index 326ba9114d70..81c4c2bfea3d 100644
+>> --- a/drivers/resctrl/mpam_internal.h
+>> +++ b/drivers/resctrl/mpam_internal.h
+
+>> +static inline int mpam_alloc_mbwu_mon(struct mpam_class *class)
+>> +{
+>> +	struct mpam_props *cprops = &class->props;
+>> +
+>> +	if (!mpam_has_feature(mpam_feat_msmon_mbwu, cprops))
+>> +		return -EOPNOTSUPP;
+>> +
+>> +	return ida_alloc_range(&class->ida_mbwu_mon, 0,
+>> +			       cprops->num_mbwu_mon - 1, GFP_KERNEL);
+> 
+> ida_alloc_max() - which is just a wrapper that sets the minimum to 0
+> but none the less perhaps conveys things slightly better.
+
+Sure - I didn't spot that when I did this.
+
+
+Thanks,
+
+James
 
