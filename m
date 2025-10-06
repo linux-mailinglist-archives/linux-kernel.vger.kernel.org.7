@@ -1,76 +1,92 @@
-Return-Path: <linux-kernel+bounces-843400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA01CBBF1BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 21:36:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88955BBF1C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 21:38:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB12C1898E29
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 19:37:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5015D189B091
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 19:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16F62343BE;
-	Mon,  6 Oct 2025 19:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1614825333F;
+	Mon,  6 Oct 2025 19:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="I+4ntqgo"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010017.outbound.protection.outlook.com [52.101.61.17])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Npdx9HxF"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010008.outbound.protection.outlook.com [52.101.61.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782431A5B9E
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 19:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AFA01E412A;
+	Mon,  6 Oct 2025 19:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.8
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759779392; cv=fail; b=eiZzJzfqWavy7SMwak8N26S3md73Lm2lQfLV80CXwQvY1bPPNodmBm0jEeGRzv1bnWHmywzY89eidMPZB1YkVcPEZXVoOF/fE2OXLcXEMal5TH/gCkmlOoq72vHsablgVjEKtDYWmQfwapjVDGY1YFA35a8F4FQcRcCYwQEAAWw=
+	t=1759779494; cv=fail; b=A4fZzDXl5z07n7fgMuIc4rlcR3DBmcv7s1rMR77GiMy0PEAbMu0NEQHaOeoMnMRY3vuJcSizq5D/im8aFaFxWxeeVQtGnZXYUjPctGNVIkEv5fdLtILnyZDZzV+Odlc1aPy0dqarQwpAwpqOeWJBIqb90KxdRvznXWBU/v1QUcw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759779392; c=relaxed/simple;
-	bh=j9ngZRuVv3yuDBVtL46nuywKCp8fDHFwcc846+eIrzc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=I6+60fRHSsja0GnLjYGBnF7toRdkdCvctj4SvO8Ed/KMiKeKCReWzevZu4sRBjvOCu52FV9H2wY//4hrsLaqNDErTtUaO+qWpNlzg+MDkO6z7Qw+Ntgy63ykxBZwe122eYmxnu4B3U2CXF1x0pOXFFdtYO4ORKFHlNrJ1hrLXoY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=I+4ntqgo; arc=fail smtp.client-ip=52.101.61.17
+	s=arc-20240116; t=1759779494; c=relaxed/simple;
+	bh=0McPPgLUqTCnT9JVWaKxF7MLnX32Ki/aJMicmVR7ZKQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Si+ZV4KTUFz8HXwVwRBvpr4+a51MAbUCJiRUPxV2NOLAWXx2EF81NlIRvDUl/3dLWyYqMExW1ClF04Q21HCmzFsANPYQuWr3+beGmJD97/R4Hy+5V1f/6jOcxTrjnMKh7Xfdd2WgazKx3vu4BFUle1yz5dt0OYjHRbulb9FZOHk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Npdx9HxF; arc=fail smtp.client-ip=52.101.61.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=L2QcUu9caCNgX16vTqMvvzLEnMiLLLtRPRbM8G36G5BGlkcvQ1aLESDgLIaLCnmk65yPEG5EL45x9p3TtggpSpU/OBCo9yzQA15zrApqsm1xZqsrNAXBQn++iHqZY4f3ldOg40TookpWZOfhEdwIj7r/iu/Dg7XzkIZHLW4KSwHQFZiOmPFAou8u75unFN8OPa8eZUcAydRK+Tvh5gHCWDKZV/BirD9tIZYNAXBZc5heQPeyWanCY/eM/KCPoUhAF5zbXkbq3Mya6inMYfykDSm99WZeFCyDHAQUCFx8xkItGYF//Zt8c/vhVv8c2XhNTIW20QtrF3g5dOoiJHo48A==
+ b=AGSkupLiXrEpWF9n2EBAmp8Q3UW4CsGYJSUVfjHzNwPP1ukZtPev1te6z5lGq9LKrrTg2MsVcrnMOdEVR1P8f4Ctb6Jx53IqbKrDKktfRZi96JjkKLFdKVxmPjusYYMvbYUv5I1d0rYJK1vQnKtXfeTM6+jFSD7nfL13tWOlQandVTZwilx5Tk/ANdm1gxSUT3VT+bWiIJ7YfEeik23NXWhM51Z2OKg42OYxtPBbskWDt75/Y78XfgEAFcEnPfleNYAWuZmyurZvGbeQuHP+ATRATXbpuli4eo0G8KaJt0Ax2I6jITQDxkjlS9irqDOuRo1jdJLGIwN6gpm5Hx8fOw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KmTCD0ez84LmPDP4OTxGKzIc6J7IDEdOBgXSOGxt1QQ=;
- b=yR4SqTWhvnKuxlx5G4MdkfjzhFyv2Dh3MzMTRojwNaKhTF/ouFEfCSDNKgdLr+UI7yOHrG68RwjVcUiF9+vSNgcIfZe6/uFnlYkTj6iSRHNV8ryR5MOYc4UXjJswnbcAjE712FC3Oc5DQvIXns2buRjuv8jba5NvPqKvjs4CZlJwxkkl0wwPVTy5++A7xV61W5KATStIBTKQAVOaeqyZemgLPboqzig6KSX+FuIS6Xyg/7QkcAuGAFTZAc2oOcNutUq6ZQEhApockLTcRTeLuZFo4+O2OLQQEeAKIpo1cCWcbXM+fIBvSwwpqrYXQBZyRTnpzMN2IUc/hVEMlTq6kw==
+ bh=7vyoT3W/Kgf2LE0PK5hz7jXQX8KauiOh7bKtATjWPJE=;
+ b=Y4hGAY8XMNnkc8+dphTbOGHqTIhVUPBkSj9R2GKxRSBQxyNOj6IA0/8kySjj16zwXopl382LyywMIGIyHq2DyC6Oe9jCiH72sJyzZaz/GqsRXiazhsS37EctmGG5ff9zJ3PzKji5PdL0diQO7JZksbsiRB7NGrVEZzPW8ygElBtcMMagoTKRI1gtEhjtLecwwnglwuGNpjT/MVSBe4ATBHBPlqIEa/JNEi6I1OyuA0Pnn4IwTdBdPEFVn2LKs2rmqkouWMhKMT0sKEKH3bv5eEfHo/FlpCf0drh2k4/Un5k5U+cmZQjjl/OYpwdWMm3+mYSgX7pCHgztjgfTWEQMEw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KmTCD0ez84LmPDP4OTxGKzIc6J7IDEdOBgXSOGxt1QQ=;
- b=I+4ntqgoTxPbD2Tnrkkd/r4NDJLjrBA2amr6O4XEVY1OijfviEzwSFsxjCfP6UzfhCbKZfpdJ4dA7neNSfm09cSoxk1unaqLRMZpyAzaBfPm806ztnbsnAXZ/996TUHv966atsM4QlXwAkpMa/xZpc6Zuq0v8PjaRZKNHA+vmF7AcnMaVL4xhgMdpynmgL1Fvh//KbWSlnkslqhqiYZ37aKIqto+m/XnsGHyA9TWale2K31OFFLMMicPFthbOJ/GMUS5+xIBixPkvDuvFKaVyI0NCke7ddQRD+2wWMzuWg6mvl4S+ttKSlfv6T3AOleUubj4Q/960gYMG1NriA+/AA==
+ bh=7vyoT3W/Kgf2LE0PK5hz7jXQX8KauiOh7bKtATjWPJE=;
+ b=Npdx9HxFrC1V1TTZsLY41m08/iymJkuKG7bJC3c8ErB4ZpfDI5iSnSQokZuiaOt043ZTLoadfoA6UMEngZd0PG1jnFTnWRZ6fe6j80aGy9pkW7xJu1/l1ST+9RcfbTwvclQdJ2Q7eI8eJvVaJWkskEQ9TWZmeV/OedwQRb8VuaSVMurzxGgfAmq4mLBVAmzfnI4dQwTnOJ7oF3vj1gbE8sIQ3V0cclIfVqMehIZmGj+UvmGYxzUXCv3lpGlgXpSrEw403BeV8am3Fowsk7IXy3y1F1/RWq4MVj3TumfZQ8VXZvC9PO5uoUaB/tE/fURucHBz+nPV0UzkNJcfsyGWTw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by DS7PR12MB9501.namprd12.prod.outlook.com (2603:10b6:8:250::17) with
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by PH7PR12MB7379.namprd12.prod.outlook.com (2603:10b6:510:20e::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Mon, 6 Oct
- 2025 19:36:21 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9182.017; Mon, 6 Oct 2025
- 19:36:21 +0000
-Date: Mon, 6 Oct 2025 21:36:11 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Ryan Newton <rrnewton@gmail.com>
-Cc: linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev, tj@kernel.org,
-	newton@meta.com
-Subject: Re: [PATCH v3 2/2] sched_ext: Add a selftest for scx_bpf_dsq_peek
-Message-ID: <aOQaK--p1-6TEun5@gpd4>
-References: <20251006170403.3584204-1-rrnewton@gmail.com>
- <20251006170403.3584204-3-rrnewton@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251006170403.3584204-3-rrnewton@gmail.com>
-X-ClientProxiedBy: MI2P293CA0012.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:45::10) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+ 2025 19:38:09 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9182.017; Mon, 6 Oct 2025
+ 19:38:09 +0000
+Message-ID: <6cc43cd3-5f67-49cf-bafb-67a0a22368cf@nvidia.com>
+Date: Mon, 6 Oct 2025 15:38:06 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 5/5] rust: bitfield: Add KUNIT tests for bitfield
+To: Alexandre Courbot <acourbot@nvidia.com>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ dakr@kernel.org
+Cc: Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
+ Yury Norov <yury.norov@gmail.com>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Andrea Righi <arighi@nvidia.com>, nouveau@lists.freedesktop.org
+References: <20251003154748.1687160-1-joelagnelf@nvidia.com>
+ <20251003154748.1687160-6-joelagnelf@nvidia.com>
+ <DDB69ONCWBEJ.1KGWC6H2VG2CE@nvidia.com>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <DDB69ONCWBEJ.1KGWC6H2VG2CE@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BL6PEPF00016411.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:22e:400:0:1004:0:9) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,484 +94,346 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|DS7PR12MB9501:EE_
-X-MS-Office365-Filtering-Correlation-Id: b008ba74-5642-4e7b-9e8f-08de050fa09c
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|PH7PR12MB7379:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4d428485-0b4e-4614-7bd5-08de050fe0c8
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Y4W/XbL9CI5lRksF2g/rW0AiWMz8Owj/R9dct3luynLd30QmAQvhjpOoVgB2?=
- =?us-ascii?Q?59sDbZkz7qsCHVEnAa6UenZCN1WIXkbEnG+6HH15qssogiMA4SOi/0nabOhP?=
- =?us-ascii?Q?HsWqSY89MR0WdUIlopPvkDZA0qvPNc6HS38mg4RFwdMLSo6pATd997gWxBjo?=
- =?us-ascii?Q?oe9Qx3tUxRXHwF8YaWs4Ey7C4MH9zrbJMhx2n3J1cEnCpmRIsqQVfxrAxM0M?=
- =?us-ascii?Q?5XMJ/wtdeh87rM0ZkOS64mgqHAQhBkeX21XZVABtB+mcy+ilUMs1uLgTAuy3?=
- =?us-ascii?Q?FPOiCQ0Lv0EXEoDyRzwWOqBlKZtJ4zGBsN2M5IMi2/y29ppu1tSbKL1IiK9v?=
- =?us-ascii?Q?tNlzUHitnBYwMiXkz//xYTltrYCE02VYE3y1hedTembBNTtHMT2ryeGo/DIg?=
- =?us-ascii?Q?Gmo0gqpOhNYrCo1nm/dpRcVBLLI+S6isC+Y1mQVubfnWpwkCQrNrpQc673/q?=
- =?us-ascii?Q?yOjBfIfBWeFQnkh3q6TDcyh0DEMGsHIoqyw2LwlVL6uIMKaceOdN9u2Yxzfm?=
- =?us-ascii?Q?beRJoQ+jK8CwIzUrEy+myfEf/uMSgRBidoJc3Dlk2kYiIoMj8KpKzL7KuSbF?=
- =?us-ascii?Q?sH7NS9r021woFrhjxW6vXAKA+QbyZGzebw23XedbiZwoRvWGTJr3xUpzZUR7?=
- =?us-ascii?Q?LQQ4ghUb4HKYKwAydwakDstmck9ChEnr0k5amvdRUDmlcF7SBaoQ4uf/Mdi/?=
- =?us-ascii?Q?ilE09LjDmNVeSI2CHE2yPwPdTr2xpHvtS4bnZJOkiER82GkZ8pcNpTDzwpte?=
- =?us-ascii?Q?Ps4PMG6hsFBvxx4NX0UZJfbeNiyqcqBnczjQxLUrVqxbjCmPaBucUMmMi+tu?=
- =?us-ascii?Q?ccUwMWt4+zwNtknFr7s2bjAk8FmbG6VCIe2c1RRm/mJU+b2B0u1l7Z2Uyhyf?=
- =?us-ascii?Q?6u7i4niiewgr3G8q62Bas1BDWqg4x6N3kck2k4ZQeG36o6YTWwZCfCapvq3n?=
- =?us-ascii?Q?cIGqRyCR5/VWJ4QG06w9XzUJ7PRPjC4lf0Ei2IBqyvG3VtSjuApiAQieoFFf?=
- =?us-ascii?Q?y2Gr+yRhfs9cdanOq7qVnpwW0T37v/uxdKU1CNsMprS6fzqGua0NEd6jRCfi?=
- =?us-ascii?Q?cmG0wt1sfPTltMsuPJioFNzUvJebcR5X9zmc9gKje204ExQeu7sbI3oRUi9O?=
- =?us-ascii?Q?SOavhi8RP7FUGjYHHTuQMaXWfieR/e+Frrw2VeWWDB3A4vo0Lqi6z7v3LDnh?=
- =?us-ascii?Q?TMymaRwjGnVrqvuBhangGt3KzDuLOf+puimq7bHlSv0DmguTwxGsSFo/7KC/?=
- =?us-ascii?Q?3HUCRJZ4sOfusWh+LFGfvpziFIbZE9xBSgXl+eGKLJYi/IwsIL35Kg4Iz7ME?=
- =?us-ascii?Q?cjVtOOubWQOlWCqg2t5QXx5Zm7jroxaWNjaEKOtp8yESVPUC53tukb+6rFSl?=
- =?us-ascii?Q?HFReNpdBGCETV7OpBikyTDxEW+RryDnREyj4ALXdBKDuMkDpCLwhuPMN3lKx?=
- =?us-ascii?Q?sxUq8EF5AK0ZKBq2d05n7/ClxO2+MZk9?=
+	=?utf-8?B?dGhzcUhUM3I2Sk9uSHg3T3ZHcnVsNUVJSDJZclNWd213VlAxWlptaE44MmFD?=
+ =?utf-8?B?ZXhLKzdETTFpWEVZclYrQ2VZd3Q1LzRlN2JtL0JMdi9lOW5NcjlKNTNua3RW?=
+ =?utf-8?B?ZFc5OGlJWEpLS0ZwYVU5eGZIQkE0TWVDNUtUY05hZ2NORXpsV05JUFRRbjN1?=
+ =?utf-8?B?aWZ4a1I1SUVyb2pzWHNKNk9CQktrZ3lOOVV4Z2JEckNzNk5TcU12OHBoUUtV?=
+ =?utf-8?B?eXBRTWRURU83bENpc3JqZm16bWdUcXByWExIY0VXQjJqeDRFcVBuUXZ5eThR?=
+ =?utf-8?B?TTdiaHpzdXlGU0VYNUh1eGFrSzN4SzVBUnVzMm5RU0hEd0hYSkN2Qk9vOXdQ?=
+ =?utf-8?B?VDBoRUpFa3ZTYU10dVJzSUF3YVlNWEd3UldjM05PQVJ4RFZiMnRxRWRzRzlU?=
+ =?utf-8?B?L1U2TmxuR1VDTXIzd1QzQXVDSlFGZG5ZQmxlTDE1VjlUYU1jaFBIbnRWZE5D?=
+ =?utf-8?B?aXRZSU5PVit1SEgwUzA0ZmZmOWlyYVdwcGwyR2ZmZ01UbzY2c0xBMzdrSU1S?=
+ =?utf-8?B?UFJlS1djQ0YvdEc0TTFiZFlSY1A4a2grYTFFZU1VamRGNjNzVHR4SlRWZ3Ju?=
+ =?utf-8?B?Y2xQMStzYXFzcVY4dy9ybWwwTGRzeDJzeFVCcWhJZWI1TjArdjROVzEzcFF0?=
+ =?utf-8?B?Y1l6b3RidDJOS2VRWnpRaCtqNWdueWdrWWFlc0o2WktWaXpSK2xjM1NDYjZH?=
+ =?utf-8?B?NjUyZWV4dExNd1AyOG9MbGx0WjBpd0ZKaElhWDVIRU9rbXBjSjFNaTc4dzhv?=
+ =?utf-8?B?QnowdGNBTG9RdFc1aFJXN21rc01lSnNVcVlDaWdzQjQ3UFJ4RTc1V2V1QXha?=
+ =?utf-8?B?M2VIVjFlWUZVODNZVzl6NFJGVzFjNWRCRW9pbEQ0QmpZWTN2V1JyZUxKNXVB?=
+ =?utf-8?B?UTgvcCtJcDhDODdqNnQreVF0T25KdU96TGZCRGcyZjUza09FRE1CR0dIRTE3?=
+ =?utf-8?B?ZTMxUW82bUpTMk03K0M2ajIwVXBUQThDVjlJWUtHa2NZRzFBT2d5Q3h4N0k2?=
+ =?utf-8?B?M1h3MGhYM3loNDFRS2VQSFFnQWdMQUlRM3JkcEY3aE9aUWJLODdLREcvaEVt?=
+ =?utf-8?B?YlJNd1FjQzNyQ2FLcmlGZGxrb3d2VVZPdmQzejVUSy96cWhxSEdrMjVJdHFn?=
+ =?utf-8?B?dTEycEJhZEI0YlJtQkZoMXJOajl3Vnl2RjJtbDdFSjVoZUlNdCtHdnM5UG03?=
+ =?utf-8?B?QUt4SjdUdDMwYjVuWEQ2dDFiYUR3ZG5Ja2F4WGNPcmhxRjBKVVZ6UDQ3YkFP?=
+ =?utf-8?B?cU9JbGk0MHNKd1FFTDFWUGxSNk5UWXc5eFprSXhUb25HWjRSNm1pL3RIZGZS?=
+ =?utf-8?B?enhpcXh1N3dKS1VabktJdHZjSklNL04vR3g0SFhmc3FCRFhnLzd5N3Bzc2dC?=
+ =?utf-8?B?UXZ6TjJGMGh4OXp2Q0xGbjhJU3NNU2xzYnVVaTg4aHVJZzBUZVQzcUNReWRN?=
+ =?utf-8?B?SVczZE1QWGw3NzArL3kvS0ozZlpNOUpIdTZSTEVRY29BQXIvMjJKVklyN2NK?=
+ =?utf-8?B?dU5OV3NTZ1FCcnk1bkdjd0wyTWljVHVnTVZPWEVUQjJ4TzdKVGpMSjArZEtF?=
+ =?utf-8?B?QXdMK1c4djlhSFVBUENIK2c4OUlieHU4ejlvUWtNK1ZFSDlRRE1XNkZ1cjNu?=
+ =?utf-8?B?SHFOTDdzZFN0K0lkb0RmamN4bVVWMEcvRCtVOHZQcnJMam8rZzZnajVDKzRu?=
+ =?utf-8?B?T2NYUkUzdjBVWVFlY3JLTW9VcmNrNGwyK3NabU9wRGI0TXREbjhqK1VmMTYx?=
+ =?utf-8?B?KzZpaDk4azlrMWkyS0hvbmtKZ1hnM3p1UG5OTFBEUzRlRTF2blYyYlNROXp3?=
+ =?utf-8?B?UHJROFA4OGErVFJoUW5zSWhka3Urakx0NUphaGRDYkFEZVdQcTJiVXl6WUhH?=
+ =?utf-8?B?OVhNL0R0TTh3UGpvZWZVaTRMNWwrUVg1ais0TVk1eEM3U1lxTFlmRkdYVzVL?=
+ =?utf-8?Q?kifbmfr0jw9NrX6LQ5VuhxN40dePQcqw?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?AA89lZPd9dM0frRpNodtrT3XnjK87371Cqb5+Fj+GteRjWKrTrc5puVlHvLR?=
- =?us-ascii?Q?iVYRLlf5PzdS0R1Uk7Os0p9zzmQ3n5yHEg0gZyoHdJlpMn5Gb4PiT/3+VDrF?=
- =?us-ascii?Q?wjicWS4u1iU67pnrF0I2hvyihzYzREtYl4jmMZKPNl3BJz/4DZ86XncHUvn5?=
- =?us-ascii?Q?WYuWA5b/YxQJoY9y2Ckr6A2j1Vt2460bd5HX/rYwWy+oKGxwZ0zCW2dJpx5t?=
- =?us-ascii?Q?/a6aLZl5N/2FC4sas1xdLA8I1YBtenrh4eqY2jAqSt8MlE1qHp0DrJpV5Q5j?=
- =?us-ascii?Q?bGQ/OqrQSrqwD9O6wEdhyfkgpZZ6njYf0yA00e/8RDbHznoApi79sp7FBxF5?=
- =?us-ascii?Q?WWN1ylIPeiFLS2m3t+3K9jdbCCWCHF01TypYAbZ4Lmset0Rp0ZBm0mRANFJR?=
- =?us-ascii?Q?jUHk0bgpqbGb+1r18iODK6eHOVQOjN7Wdf67799RgCJI5yfh28MU0KqhiCJM?=
- =?us-ascii?Q?mN5C4J7QpD7YG+QtkXsMWufuuglRFiP6a3DZJWS6UvjmJf41Whc3UHxljc3m?=
- =?us-ascii?Q?iMCOG0xHd1a45LsPN1OnicezRzXHxp09SJ2FSkORI0KfUTGgENW1rS0tuYvH?=
- =?us-ascii?Q?+bqCRTPEVxQwUWuCjqUcrRmNb9RwiiRwQSURIW+vqhk+uxQK569P2ETlJ3rj?=
- =?us-ascii?Q?52iCaqzXwRVuoFrZKAv//ZatOfn4LrjcdR8SjHbOzKbnjW2x4hrQST0xV1a0?=
- =?us-ascii?Q?zqfphuGhow0e889Vl6ItVo1PZYOXpdIJXhtTBTbzC20NX5HQgYuokQIDo+Zi?=
- =?us-ascii?Q?AfZEJL4Jkt5RR8chz0tJLzthYETafh2HP5IQwfq6nCRItROlNj0H3rpVsglb?=
- =?us-ascii?Q?lrSWiJ8721Somn+A/pLxrRuAIa0aZ1/NW+hYYX8AWhYKnkQnTH7tZK/31aor?=
- =?us-ascii?Q?XXr2qJHIKJUsFbKQKBS0v4dVookRH/tNDdClwAk3Zu7kitg6pEi6aQNK5f6l?=
- =?us-ascii?Q?7d76A24vg5RPbwQvVbU+T5DcrSUyxOEoctk3H3sVFkprP0XyuDp4Oq7XJAC0?=
- =?us-ascii?Q?HH4nsmKp+jcxmQWv7AvAcrlZrDnyCYXhAQGk1VG+ufSgc3jfwkGziqt/DK+z?=
- =?us-ascii?Q?WP6jb9Z79NBT+iMtNK9CEWHMPB9avrMgMFWINJ1hceoHzMlnYLrr6YMSFBKR?=
- =?us-ascii?Q?cGOXL6YPxWiI9n6/py4C/b+m28erM4Rqp7ktQvn8nDhkoNjowX49zLttv6AC?=
- =?us-ascii?Q?fNnqYzHW9Nrpco7z83esIPuzrr3OHCd+Yvnie0SFcmiTlsj/kPRxLB+/Wn/h?=
- =?us-ascii?Q?Q3L/eDTbk+eClFzyIp/0d84l0/3eGFJQDkdNVxWky/IGl1qTO4MjWOY7yxXs?=
- =?us-ascii?Q?fmJ0J9pdbeo2HCsgvDK/MQ3bqhgjoQ4lAdUzZYg8BlZJdNWPlBU/cpfyhedv?=
- =?us-ascii?Q?E610Cuq2Ckl/CCkZO+PksE4zfpUYU/3dWQJx/twT3hwl7gO/1GIhqrNCMT7p?=
- =?us-ascii?Q?VtkgZqn+J+ZT2yWb1+cZKn784kGmqqs3Lkto3okeogQEtOVMznYCzjIayoDM?=
- =?us-ascii?Q?GmQGxfXcbrJy0DDES/Nb8u7dgWKNvJPJ+q49+t+mokjbklCnnEyQlKXydfuj?=
- =?us-ascii?Q?mWrfMkcf2Qri2Tf9y/vPGr1zIQZR5jRihzp/pxoq?=
+	=?utf-8?B?bmFzUnhzalI2TFVSZDVBMkZkYUx1VTk2Z2lEZk1Vc1hQWndOZkZ6Nkhpd2RV?=
+ =?utf-8?B?bUFMd1I4ZGtDUU5lQXZ3UkFXamhzWXFDbmtvWEJ5MmRDVkNKL1JZNm1oZmVS?=
+ =?utf-8?B?Mm96UlVYUXZFRHNaM1FicHB0MjJlOVhDNUJzZ3J4N0xnVVRTZWd6T2RPZFc1?=
+ =?utf-8?B?YmczNjdVaDVLQ3haUTM3YkFiK3loK0xESlYwdlU2TnJ1cGNKVmRyV1FPeXNZ?=
+ =?utf-8?B?VEdTYU5vWEVwQ3ZYNjVJOTA5QXJoRHVpQVRkaWlldzJBcTlYWmMza0pjT3ZR?=
+ =?utf-8?B?WE45dDlWbDg5c3JiUHdsTmUvd2dJbTQ0K0EzcXdsdmxoOW4wVHFpUWlzMUgx?=
+ =?utf-8?B?OGp1UHYvS3F4ZVNUQ0NKRSt6TCt2MjU0YlhUdHFFOVBTRTRDak96Ny9JYUFj?=
+ =?utf-8?B?dVhyUUUxVGZkUGk1bjNHbGRxNWJiamtQcFFkb2RrOW5udXlUdU11MHJaM0lJ?=
+ =?utf-8?B?dXk1QjI1NmIzUlQ4eXpvQWRjQkN4L0JOU0Q1NkJrOWRMTFFJKzFJRXF3SmJP?=
+ =?utf-8?B?OVJOb0djOXJoMnlUVTc2VCt2VDNXUXVQc3hPV1hycGhtUTNBMmtycUpmQ3VQ?=
+ =?utf-8?B?ZEZKN1V2Z2FReHRiWmpYMkFNb3cza0l0R2JTZ0VFNjgvVGRkZ1dYMHlWTEtF?=
+ =?utf-8?B?ZFVMNDY2aGtORm5JNmw1SXBMS2xZZlhQY1Zqai9remIxOW1DREZKdmJkS09i?=
+ =?utf-8?B?akVpang0TXgrdTZXTnlwcS91cWRRdWdMalpnZDVwcmVDQWVROGhHVm5VR3l6?=
+ =?utf-8?B?Ri9sMkw4M0JwNk9qUVhaQ0RoNlFCZTRjMTFmK05iTDAyaTB3djVsZ0UxK0dY?=
+ =?utf-8?B?a1kxUENxdDFublNCRXRGOHF2dUJDVlo4b0FMd3RLaHhPd3VGUEtVMjFqa3N2?=
+ =?utf-8?B?Z2hIQTAySE11UEkrd3B3TUlJdmR6K3BsVTlCWDFrN0VuMnVINThnSHZ4eFRS?=
+ =?utf-8?B?bERsU0o4dko2QWZmbVVZa3RTdjdJcDdTTWxNWWYrZGtMQk5WNmNKczNFY2I5?=
+ =?utf-8?B?cWJ2YmFoUXhNNUVWT0FOSXVKOVZNLy9LaWVvT1k3TkNzUGV1Ni8xY1ZLbWtC?=
+ =?utf-8?B?RnJ2Yk9ZbUVqNlBTdkdIS3hCT0NyK1MwUlF5T1d0M2JMOUhWZGozNEZNd0hE?=
+ =?utf-8?B?WThMYXNndW4rUGtWRFJoUWpYNUE0UEk1dUZlL2dRRytoSzFWTXJkUlgzRzZh?=
+ =?utf-8?B?SXQrSW1pN0YzOEFCMDF5L1EwT29rTkh3UUZ1VEIzYk03TWpzUzhTSDNpMk8y?=
+ =?utf-8?B?cTdvY2tvbEo5UWpNVlVtVDZvcjh3d1BpZ1k1Qnh1NEN3NUZDT3BJb0xJV3lN?=
+ =?utf-8?B?Smk5ZmlxYjJkOE5JR2FqWU9vcFhzdzZCbFFmaVkvc1dCTEpJV2JRN0hIWGZU?=
+ =?utf-8?B?eUVobHdvWlFaMnRsMGdDSy9DMjhjQTNGTHNURFZtL0VrbU1rTE5ybUFTY1pl?=
+ =?utf-8?B?S3ZMdjhPMmlGeDZxY1M1Vmg4WlJodHNIelNKci9rSkFlL2lUZjBLcncwckdZ?=
+ =?utf-8?B?amNPVHBrU01LRGFXcWRURzRQZWw1U3pmL0J4SEJPaUpoVTlqc1VqbEJWVkFw?=
+ =?utf-8?B?b05vWmxmNHpKaVZXL09OWC9aMnUrRXhKdWZvUGE2VW5JM3VmRUQyNGxyQ3ha?=
+ =?utf-8?B?R1gxek81UVlDNGRXcHo3Y2dKZGY5N0xSV0ZzYU51Y3JzY04rQWNIcFRla1RE?=
+ =?utf-8?B?VkRtR2JxVUtYT2lrK3ZQVFVjNGFiZFVVaFhpa3dKS2VFV0ZqVFpjcm42T25R?=
+ =?utf-8?B?SmNEQjJKTlhxRUpvNktPWDZUdit0djFtWnBQdlpRMFU2MmIyOTNoRlpYalJr?=
+ =?utf-8?B?L0pxb0hRMnk2bWxVcWJheFdPY0ZsSE82NEh1UXErL2NweUtocEpiODk0OG1S?=
+ =?utf-8?B?WGwwUjkvUEQ2dUdjNVR3WVFiZlgxSDZPZVFNR1lPd1llNmdYRUNtUnZadFB4?=
+ =?utf-8?B?dC9rT05xZDZkenBQNXJEUDRweVRRa3hVNXJMK1NHL1I1WUJwUEdpVGhOQVJs?=
+ =?utf-8?B?SENJSHFOa0V0N2ZVVWFSbUhtOFVZR01NQXF0cUFBbVp2T0ZpTXVaMUlJdXV2?=
+ =?utf-8?B?QjlqUUlzMEd5M2kySlNObmF4emVvUFJCNUt5ZS9sdk9IZk9DbkZldWMzYlZQ?=
+ =?utf-8?Q?JWMXEfDIe717yNYLi1OUwnDDT?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b008ba74-5642-4e7b-9e8f-08de050fa09c
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4d428485-0b4e-4614-7bd5-08de050fe0c8
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2025 19:36:21.7003
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2025 19:38:08.9247
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fayTMWq5ZIbpr8gpCS3FL+4JpqCXMNZyev5SGj4umc163I2DWkpAFVRsSzfKjcJkSFktqKcQedFCObN2NEK8Hw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB9501
+X-MS-Exchange-CrossTenant-UserPrincipalName: ahr1kUFh8qnXeh9v6+YyhZ1iz4wrtPnuKa+tUEGKAPy8Zg1AtK7YUMkaP/uBzMYgZ5xOoTplOzPrJPUOz1UcVw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7379
 
-Hi Ryan,
 
-On Mon, Oct 06, 2025 at 01:04:03PM -0400, Ryan Newton wrote:
-> From: Ryan Newton <newton@meta.com>
+
+On 10/6/2025 6:37 AM, Alexandre Courbot wrote:
+> On Sat Oct 4, 2025 at 12:47 AM JST, Joel Fernandes wrote:
+>> Add KUNIT tests to make sure the macro is working correctly.
+>>
+>> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+>> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+>> ---
+>>  rust/kernel/bitfield.rs | 323 ++++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 323 insertions(+)
+>>
+>> diff --git a/rust/kernel/bitfield.rs b/rust/kernel/bitfield.rs
+>> index 09cd5741598c..f0e341a1a979 100644
+>> --- a/rust/kernel/bitfield.rs
+>> +++ b/rust/kernel/bitfield.rs
+>> @@ -329,3 +329,326 @@ fn default() -> Self {
+>>          }
+>>      };
+>>  }
+>> +
+>> +#[::kernel::macros::kunit_tests(kernel_bitfield)]
+>> +mod tests {
+>> +    use core::convert::TryFrom;
+>> +
+>> +    // Enum types for testing => and ?=> conversions
+>> +    #[derive(Debug, Default, Clone, Copy, PartialEq)]
+>> +    enum MemoryType {
+>> +        #[default]
+>> +        Unmapped = 0,
+>> +        Normal = 1,
+>> +        Device = 2,
+>> +        Reserved = 3,
+>> +    }
+>> +
+>> +    impl TryFrom<u8> for MemoryType {
+>> +        type Error = u8;
+>> +        fn try_from(value: u8) -> Result<Self, Self::Error> {
+>> +            match value {
+>> +                0 => Ok(MemoryType::Unmapped),
+>> +                1 => Ok(MemoryType::Normal),
+>> +                2 => Ok(MemoryType::Device),
+>> +                3 => Ok(MemoryType::Reserved),
+>> +                _ => Err(value),
+>> +            }
+>> +        }
+>> +    }
+>> +
+>> +    impl From<MemoryType> for u64 {
+>> +        fn from(mt: MemoryType) -> u64 {
+>> +            mt as u64
+>> +        }
+>> +    }
+>> +
+>> +    #[derive(Debug, Default, Clone, Copy, PartialEq)]
+>> +    enum Priority {
+>> +        #[default]
+>> +        Low = 0,
+>> +        Medium = 1,
+>> +        High = 2,
+>> +        Critical = 3,
+>> +    }
+>> +
+>> +    impl From<u8> for Priority {
+>> +        fn from(value: u8) -> Self {
+>> +            match value & 0x3 {
+>> +                0 => Priority::Low,
+>> +                1 => Priority::Medium,
+>> +                2 => Priority::High,
+>> +                _ => Priority::Critical,
+>> +            }
+>> +        }
+>> +    }
+>> +
+>> +    impl From<Priority> for u16 {
+>> +        fn from(p: Priority) -> u16 {
+>> +            p as u16
+>> +        }
+>> +    }
+>> +
+>> +    bitfield! {
+>> +        struct TestPageTableEntry(u64) {
+>> +            0:0       present     as bool;
+>> +            1:1       writable    as bool;
+>> +            11:9      available   as u8;
+>> +            13:12     mem_type    as u8 ?=> MemoryType;
+>> +            17:14     extended_type as u8 ?=> MemoryType;  // For testing failures
+>> +            51:12     pfn         as u64;
 > 
-> Perform the most basic unit test: make sure an empty queue peeks as
-> empty, and when we put one element in the queue, make sure peek returns
-> that element.
-> 
-> However, even this simple test is a little complicated by the different
-> behavior of scx_bpf_dsq_insert in different calling contexts:
->  - insert is for direct dispatch in enqueue
->  - insert is delayed when called from select_cpu
-> 
-> In this case we split the insert and the peek that verifies the
-> result between enqueue/dispatch. As a second phase, we stress test by
-> performing many peeks on an array of user DSQs.
-> 
-> Note: An alternative would be to call `scx_bpf_dsq_move_to_local` on an
-> empty queue, which in turn calls `flush_dispatch_buf`, in order to flush
-> the buffered insert. Unfortunately, this is not viable within the
-> enqueue path, as it attempts a voluntary context switch within an RCU
-> read-side critical section.
+> Is the overlap with `mem_type` and `extended_type` on purpose? 
 
-This test is a bit difficult to follow and it's completely hammering the VM
-where I'm running it. I think we should avoid adding selftests that are too
-heavy, as they might trigger false positives and lead distro maintainers to
-ignore or disable them in their CI/CD.
+Yes, here I was testing the failure mode of ?=> without having to introduce a
+new enum type. But I could just do so with mem_type by adding more bits to it,
+so I'll do that and remove extended_type.
 
-Maybe we should go with something simpler to test the basic functionality
-of this new API and validate the expected beavior.
+> It looks strange to me that the PFN also includes the memory type.
 
-For instance, most BPF schedulers using this API will likely implement
-something like the following in their ops.dispatch():
+I agree with this (even though these structs are just approximately accurate and
+for testing purposes). Since we're testing overlap already in later tests, I
+will just remove it from this test.
 
-	u64 min_vtime = ULLONG_MAX;
-	u64 dsq_id, target_dsq;
+Following is the new struct now, hope it looks ok:
 
-        bpf_for(dsq_id, 0, MAX_DSQ) {
-                struct task_struct *p = __COMPAT_scx_bpf_dsq_peek(dsq_id);
-
-                if (p && bpf_cpumask_test_cpu(from_cpu, p->cpus_ptr) &&
-                    p->scx.dsq_vtime < min_vtime) {
-                        min_vtime = p->scx.dsq_vtime;
-                        target_dsq = dsq_id;
-                }
+    bitfield! {
+        struct TestPageTableEntry(u64) {
+            0:0       present     as bool;
+            1:1       writable    as bool;
+            11:9      available   as u8;
+            15:12     mem_type    as u8 ?=> MemoryType;
+            51:16     pfn         as u64;
+            61:52     available2  as u16;
         }
+    }
 
-	if (min_vtime < ULLONG_MAX)
-		scx_bpf_dsq_move_to_local(min_cpu)
-
-I think this is the specific use case we want to make sure doesn't break in
-the future.
-
-A way to validate this could be to use a global counter (vtime_enq), every
-time a task is queued, increment vtime_enq and use the value with
-scx_dsq_insert_vtime() and insert the task to a DSQ from a pool of DSQs (up
-to MAX_DSQ).
-
-Then in ops.dispatch() we can always consume the task with the minimum
-vtime, using the logic above and verify that min_vtime is always
-incremented by one, or something similar.
-
-That said, we can go with your approach for now and improve the selftest
-later in the future, you don't have to completely rewrite the test. But I
-think we should make it a bit more lightweight at least, maybe reduce the
-workers or similar.
-
-Also, few minor comments below.
-
+>> +            51:12     pfn_overlap as u64;
 > 
-> Signed-off-by: Ryan Newton <newton@meta.com>
-...
-> diff --git a/tools/testing/selftests/sched_ext/peek_dsq.bpf.c b/tools/testing/selftests/sched_ext/peek_dsq.bpf.c
-> new file mode 100644
-> index 000000000000..8d179d4c7efb
-> --- /dev/null
-> +++ b/tools/testing/selftests/sched_ext/peek_dsq.bpf.c
-> @@ -0,0 +1,265 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * A BPF program for testing DSQ operations including create, destroy,
-> + * and peek operations. Uses a hybrid approach:
-> + * - Syscall program for DSQ lifecycle (create/destroy)
-> + * - Struct ops scheduler for task insertion/dequeue testing
-> + *
-> + * Copyright (c) 2025 Meta Platforms, Inc. and affiliates.
-> + * Copyright (c) 2025 Ryan Newton <ryan.newton@alum.mit.edu>
-> + */
-> +
-> +#include <scx/common.bpf.h>
-> +#include <scx/compat.bpf.h>
-> +
-> +char _license[] SEC("license") = "GPL";
-> +
-> +#define MAX_SAMPLES 100
-> +#define MAX_CPUS 512
-> +#define DSQ_POOL_SIZE 8
-> +int max_samples = MAX_SAMPLES;
-> +int max_cpus = MAX_CPUS;
-> +int dsq_pool_size = DSQ_POOL_SIZE;
-> +
-> +/* Global variables to store test results */
-> +int dsq_create_result = -1;
-> +int dsq_destroy_result = -1;
-> +int dsq_peek_result1 = -1;
-> +long dsq_inserted_pid = -1;
-> +int insert_test_cpu = -1; /* Set to the cpu that performs the test */
-> +long dsq_peek_result2 = -1;
-> +long dsq_peek_result2_pid = -1;
-> +long dsq_peek_result2_expected = -1;
-> +int test_dsq_id = 1234; /* Use a simple ID like create_dsq example */
-> +int real_dsq_id = 1235; /* DSQ for normal operation */
-> +int enqueue_count = -1;
-> +int dispatch_count = -1;
-> +int debug_ksym_exists = -1;
+> If `pfn` needs to be adjusted then I guess this one also needs to be.
+> 
+>> +            61:52     available2  as u16;
+>> +        }
+>> +    }
+>> +
+>> +    bitfield! {
+>> +        struct TestControlRegister(u16) {
+>> +            0:0       enable      as bool;
+>> +            3:1       mode        as u8;
+>> +            5:4       priority    as u8 => Priority;
+>> +            7:4       priority_nibble as u8;
+>> +            15:8      channel     as u8;
+>> +        }
+>> +    }
+>> +
+>> +    bitfield! {
+>> +        struct TestStatusRegister(u8) {
+>> +            0:0       ready       as bool;
+>> +            1:1       error       as bool;
+>> +            3:2       state       as u8;
+>> +            7:4       reserved    as u8;
+>> +            7:0       full_byte   as u8;  // For entire register
+>> +        }
+>> +    }
+>> +
+>> +    #[test]
+>> +    fn test_single_bits() {
+>> +        let mut pte = TestPageTableEntry::default();
+>> +
+>> +        assert!(!pte.present());
+>> +        assert!(!pte.writable());
+>> +        assert_eq!(u64::from(pte), 0x0);
+>> +
+>> +        pte = pte.set_present(true);
+>> +        assert!(pte.present());
+>> +        assert_eq!(u64::from(pte), 0x1);
+>> +
+>> +        pte = pte.set_writable(true);
+>> +        assert!(pte.writable());
+>> +        assert_eq!(u64::from(pte), 0x3);
+>> +
+>> +        pte = pte.set_writable(false);
+>> +        assert!(!pte.writable());
+>> +        assert_eq!(u64::from(pte), 0x1);
+>> +
+>> +        assert_eq!(pte.available(), 0);
+>> +        pte = pte.set_available(0x5);
+>> +        assert_eq!(pte.available(), 0x5);
+>> +        assert_eq!(u64::from(pte), 0xA01);
+>> +    }
+>> +
+>> +    #[test]
+>> +    fn test_range_fields() {
+>> +        let mut pte = TestPageTableEntry::default();
+>> +        assert_eq!(u64::from(pte), 0x0);
+>> +
+>> +        pte = pte.set_pfn(0x123456);
+>> +        assert_eq!(pte.pfn(), 0x123456);
+>> +        // Test overlapping field reads same value
+>> +        assert_eq!(pte.pfn_overlap(), 0x123456);
+>> +        assert_eq!(u64::from(pte), 0x123456000);
+>> +
+>> +        pte = pte.set_available(0x7);
+>> +        assert_eq!(pte.available(), 0x7);
+>> +        assert_eq!(u64::from(pte), 0x123456E00);
+>> +
+>> +        pte = pte.set_available2(0x3FF);
+>> +        assert_eq!(pte.available2(), 0x3FF);
+>> +        assert_eq!(u64::from(pte), 0x3FF0000123456E00);
+>> +
+>> +        // Test TryFrom with ?=> for MemoryType
+>> +        pte = pte.set_mem_type(MemoryType::Device);
+>> +        assert_eq!(pte.mem_type(), Ok(MemoryType::Device));
+>> +        assert_eq!(u64::from(pte), 0x3FF0000123456E00);
+>> +
+>> +        pte = pte.set_mem_type(MemoryType::Normal);
+>> +        assert_eq!(pte.mem_type(), Ok(MemoryType::Normal));
+>> +        assert_eq!(u64::from(pte), 0x3FF0000123455E00);
+>> +
+>> +        // Test all valid values for mem_type
+>> +        pte = pte.set_mem_type(MemoryType::Reserved);
+>> +        assert_eq!(pte.mem_type(), Ok(MemoryType::Reserved));
+>> +        assert_eq!(u64::from(pte), 0x3FF0000123457E00);
+>> +
+>> +        // Test failure case using extended_type field which has 4 bits (0-15)
+>> +        // MemoryType only handles 0-3, so values 4-15 should return Err
+>> +        let mut raw = pte.into();
+>> +        // Set bits 17:14 to 7 (invalid for MemoryType)
+>> +        raw = (raw & !::kernel::bits::genmask_u64(14..=17)) | (0x7 << 14);
+>> +        let invalid_pte = TestPageTableEntry(raw);
+>> +        // Should return Err with the invalid value
+>> +        assert_eq!(invalid_pte.extended_type(), Err(0x7));
+>> +
+>> +        // Test a valid value after testing invalid to ensure both cases work
+>> +        // Set bits 17:14 to 2 (valid: Device)
+>> +        raw = (raw & !::kernel::bits::genmask_u64(14..=17)) | (0x2 << 14);
+>> +        let valid_pte = TestPageTableEntry(raw);
+>> +        assert_eq!(valid_pte.extended_type(), Ok(MemoryType::Device));
+>> +
+>> +        let max_pfn = ::kernel::bits::genmask_u64(0..=39);
+>> +        pte = pte.set_pfn(max_pfn);
+>> +        assert_eq!(pte.pfn(), max_pfn);
+>> +        assert_eq!(pte.pfn_overlap(), max_pfn);
+>> +    }
+>> +
+>> +    #[test]
+>> +    fn test_builder_pattern() {
+>> +        let pte = TestPageTableEntry::default()
+>> +            .set_present(true)
+>> +            .set_writable(true)
+>> +            .set_available(0x7)
+>> +            .set_pfn(0xABCDEF)
+>> +            .set_mem_type(MemoryType::Reserved)
+>> +            .set_available2(0x3FF);
+>> +
+>> +        assert!(pte.present());
+>> +        assert!(pte.writable());
+>> +        assert_eq!(pte.available(), 0x7);
+>> +        assert_eq!(pte.pfn(), 0xABCDEF);
+>> +        assert_eq!(pte.pfn_overlap(), 0xABCDEF);
+>> +        assert_eq!(pte.mem_type(), Ok(MemoryType::Reserved));
+>> +        assert_eq!(pte.available2(), 0x3FF);
+> 
+> Maybe check the raw value here as well, although I guess the previous
+> test already covered this anyway.
+> 
+> With these points confirmed,
+> 
+> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Thanks! I will resend just this patch as a reply-to this patch (hope that's Ok).
 
-Maybe use a bool here.
+ - Joel
 
-> +
-> +/* DSQ pool for stress testing */
-> +int dsq_pool_base_id = 2000;
-> +int phase1_complete = -1;
-> +int total_peek_attempts = -1;
-> +int successful_peeks = -1;
-> +
-> +/* BPF map for sharing peek results with userspace */
-> +struct {
-> +	__uint(type, BPF_MAP_TYPE_ARRAY);
-> +	__uint(max_entries, MAX_SAMPLES);
-> +	__type(key, u32);
-> +	__type(value, long);
-> +} peek_results SEC(".maps");
-> +
-> +/* Test if we're actually using the native or compat version */
-> +int check_dsq_insert_ksym(void)
-> +{
-> +	return bpf_ksym_exists(scx_bpf_dsq_insert) ? 1 : 0;
-> +}
 
-This helper is unused, we can drop it.
-
-> +
-> +int check_dsq_peek_ksym(void)
-> +{
-> +	return bpf_ksym_exists(scx_bpf_dsq_peek) ? 1 : 0;
-> +}
-
-Do we need this helper? I think we can just do:
-
-  debug_ksym_exists = bpf_ksym_exists(scx_bpf_dsq_peek);
-
-And have debug_ksym_exists as bool.
-
-> +
-> +static inline int get_random_dsq_id(void)
-> +{
-> +	u64 time = bpf_ktime_get_ns();
-> +
-> +	return dsq_pool_base_id + (time % DSQ_POOL_SIZE);
-> +}
-> +
-> +static inline void record_peek_result(long pid)
-
-Does it really need to be inline? It's quite of a big function.
-
-> +{
-> +	u32 slot_key;
-> +	long *slot_pid_ptr;
-> +	int ix;
-> +
-> +	if (pid <= 0)
-> +		return;
-> +
-> +	/* Find an empty slot or one with the same PID */
-> +	bpf_for(ix, 0, 10) {
-> +		slot_key = (pid + ix) % MAX_SAMPLES;
-> +		slot_pid_ptr = bpf_map_lookup_elem(&peek_results, &slot_key);
-> +		if (!slot_pid_ptr)
-> +			continue;
-> +
-> +		if (*slot_pid_ptr == -1 || *slot_pid_ptr == pid) {
-> +			*slot_pid_ptr = pid;
-> +			break;
-> +		}
-> +	}
-> +}
-> +
-> +/* Scan all DSQs in the pool and try to move a task to local */
-> +static inline int scan_dsq_pool(void)
-
-This is also quite big, we can drop inline and let the compiler decide.
-
-> +{
-> +	struct task_struct *task;
-> +	int moved = 0;
-> +	int i;
-> +
-> +	bpf_for(i, 0, DSQ_POOL_SIZE) {
-> +		int dsq_id = dsq_pool_base_id + i;
-> +
-> +		total_peek_attempts++;
-> +
-> +		task = __COMPAT_scx_bpf_dsq_peek(dsq_id);
-> +		if (task) {
-> +			successful_peeks++;
-> +			record_peek_result(task->pid);
-> +
-> +			/* Try to move this task to local */
-> +			if (!moved && scx_bpf_dsq_move_to_local(dsq_id) == 0) {
-> +				moved = 1;
-> +				break;
-> +			}
-> +		}
-> +	}
-> +	return moved;
-> +}
-> +
-> +/* Struct_ops scheduler for testing DSQ peek operations */
-> +void BPF_STRUCT_OPS(peek_dsq_enqueue, struct task_struct *p, u64 enq_flags)
-> +{
-> +	struct task_struct *peek_result;
-> +	int last_insert_test_cpu, cpu;
-> +
-> +	enqueue_count++;
-> +	cpu = bpf_get_smp_processor_id();
-> +	last_insert_test_cpu = __sync_val_compare_and_swap(
-> +		&insert_test_cpu, -1, cpu);
-
-This can be in a single line.
-
-> +
-> +	/* Phase 1: Simple insert-then-peek test (only on first task) */
-> +	if (last_insert_test_cpu == -1) {
-> +		bpf_printk("peek_dsq_enqueue beginning phase 1 peek test on cpu %d\n", cpu);
-
-No need the "\n" when you use bpf_printk().
-
-> +
-> +		/* Test 1: Peek empty DSQ - should return NULL */
-> +		peek_result = __COMPAT_scx_bpf_dsq_peek(test_dsq_id);
-> +		dsq_peek_result1 = (long)peek_result; /* Should be 0 (NULL) */
-> +
-> +		/* Test 2: Insert task into test DSQ for testing in dispatch callback */
-> +		dsq_inserted_pid = p->pid;
-> +		scx_bpf_dsq_insert(p, test_dsq_id, 0, enq_flags);
-> +		dsq_peek_result2_expected = (long)p; /* Expected the task we just inserted */
-> +	} else if (!phase1_complete) {
-> +		/* Still in phase 1, use real DSQ */
-> +		scx_bpf_dsq_insert(p, real_dsq_id, 0, enq_flags);
-> +	} else {
-> +		/* Phase 2: Random DSQ insertion for stress testing */
-> +		int random_dsq_id = get_random_dsq_id();
-> +
-> +		scx_bpf_dsq_insert(p, random_dsq_id, 0, enq_flags);
-> +	}
-> +}
-> +
-> +void BPF_STRUCT_OPS(peek_dsq_dispatch, s32 cpu, struct task_struct *prev)
-> +{
-> +	dispatch_count++;
-> +
-> +	/* Phase 1: Complete the simple peek test if we inserted a task but
-> +	 * haven't tested peek yet
-> +	 */
-> +	if (insert_test_cpu == cpu && dsq_peek_result2 == -1) {
-> +		struct task_struct *peek_result;
-> +
-> +		bpf_printk("peek_dsq_dispatch completing phase 1 peek test on cpu %d\n", cpu);
-
-Ditto about "\n".
-
-> +
-> +		/* Test 3: Peek DSQ after insert - should return the task we inserted */
-> +		peek_result = __COMPAT_scx_bpf_dsq_peek(test_dsq_id);
-> +		/* Store the PID of the peeked task for comparison */
-> +		dsq_peek_result2 = (long)peek_result;
-> +		dsq_peek_result2_pid = peek_result ? peek_result->pid : -1;
-> +
-> +		/* Now consume the task since we've peeked at it */
-> +		scx_bpf_dsq_move_to_local(test_dsq_id);
-> +
-> +		/* Mark phase 1 as complete */
-> +		phase1_complete = 1;
-> +		bpf_printk("Phase 1 complete, starting phase 2 stress testing\n");
-
-Ditto.
-
-> +	} else if (!phase1_complete) {
-> +		/* Still in phase 1, use real DSQ */
-> +		scx_bpf_dsq_move_to_local(real_dsq_id);
-> +	} else {
-> +		/* Phase 2: Scan all DSQs in the pool and try to move a task */
-> +		if (!scan_dsq_pool()) {
-> +			/* No tasks found in DSQ pool, fall back to real DSQ */
-> +			scx_bpf_dsq_move_to_local(real_dsq_id);
-> +		}
-> +	}
-> +}
-> +
-> +s32 BPF_STRUCT_OPS_SLEEPABLE(peek_dsq_init)
-> +{
-> +	s32 err;
-> +	int i;
-> +
-> +	/* Always set debug values so we can see which version we're using */
-> +	debug_ksym_exists = check_dsq_peek_ksym();
-
-As mentioned above this one can be:
-
-	debug_ksym_exists = bpf_ksym_exists(scx_bpf_dsq_peek);
-
-> +
-> +	/* Initialize state first */
-> +	insert_test_cpu = -1;
-> +	enqueue_count = 0;
-> +	dispatch_count = 0;
-> +	phase1_complete = 0;
-> +	total_peek_attempts = 0;
-> +	successful_peeks = 0;
-> +	dsq_create_result = 0; /* Reset to 0 before attempting */
-> +
-> +	/* Create the test and real DSQs */
-> +	err = scx_bpf_create_dsq(test_dsq_id, -1);
-> +	if (!err)
-> +		err = scx_bpf_create_dsq(real_dsq_id, -1);
-> +	if (err) {
-> +		dsq_create_result = err;
-> +		scx_bpf_error("Failed to create primary DSQ %d: %d", test_dsq_id, err);
-> +		return err;
-> +	}
-
-How about:
-
-	err = scx_bpf_create_dsq(test_dsq_id, -1);
-	if (err) {
-		dsq_create_result = err;
-		scx_bpf_error("Failed to create DSQ %d: %d", test_dsq_id, err);
-		return err;
-	}
-	err = scx_bpf_create_dsq(real_dsq_id, -1);
-	if (err) {
-		dsq_create_result = err;
-		scx_bpf_error("Failed to create DSQ %d: %d", real_dsq_id, err);
-		return err;
-	}
-
-Also do we need to save the error in dsq_create_result (similar with the
-other error variables)?
-
-We could just use scx_bpf_erroro(), have UEI_RECORD(uei, ei) in ops.exit()
-and use SCX_EQ() in peek_dsq.c to catch error conditions and trigger a
-failure, see for example allowed_cpus[.bpf].c.
-
-> +
-> +	/* Create the DSQ pool for stress testing */
-> +	bpf_for(i, 0, DSQ_POOL_SIZE) {
-> +		int dsq_id = dsq_pool_base_id + i;
-> +
-> +		err = scx_bpf_create_dsq(dsq_id, -1);
-> +		if (err) {
-> +			dsq_create_result = err;
-> +			scx_bpf_error("Failed to create DSQ pool entry %d: %d", dsq_id, err);
-> +			return err;
-> +		}
-> +	}
-> +
-> +	dsq_create_result = 1; /* Success */
-> +
-> +	/* Initialize the peek results map */
-> +	bpf_for(i, 0, MAX_SAMPLES) {
-> +		u32 key = i;
-> +		long pid = -1;
-> +
-> +		bpf_map_update_elem(&peek_results, &key, &pid, BPF_ANY);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +void BPF_STRUCT_OPS(peek_dsq_exit, struct scx_exit_info *ei)
-> +{
-> +	int i;
-> +
-> +	scx_bpf_destroy_dsq(test_dsq_id);
-> +	scx_bpf_destroy_dsq(real_dsq_id);
-> +	bpf_for(i, 0, DSQ_POOL_SIZE) {
-> +		int dsq_id = dsq_pool_base_id + i;
-> +
-> +		scx_bpf_destroy_dsq(dsq_id);
-> +	}
-> +
-> +	dsq_destroy_result = 1;
-> +}
-> +
-> +SEC(".struct_ops.link")
-> +struct sched_ext_ops peek_dsq_ops = {
-> +	.enqueue = (void *)peek_dsq_enqueue,
-> +	.dispatch = (void *)peek_dsq_dispatch,
-> +	.init = (void *)peek_dsq_init,
-> +	.exit = (void *)peek_dsq_exit,
-> +	.name = "peek_dsq",
-> +};
-
-Thanks,
--Andrea
 
