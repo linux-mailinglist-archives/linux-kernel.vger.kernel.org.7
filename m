@@ -1,217 +1,116 @@
-Return-Path: <linux-kernel+bounces-842859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08022BBDCE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:55:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A463CBBDCE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D016B3B23E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:55:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84F09188DC8B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59212263889;
-	Mon,  6 Oct 2025 10:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9991F2620E5;
+	Mon,  6 Oct 2025 10:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Kh8CV2y9"
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010033.outbound.protection.outlook.com [52.101.46.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mcD9iO5S"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7941265281;
-	Mon,  6 Oct 2025 10:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.33
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759748099; cv=fail; b=Tiw/xcREANsIAjwDvvJb8cVHmfUYkoTPHNUch2crt2lW5TQbOIsHTM9JOtSrCQwdEVvVAmcNNskOgcuSP9zySM0SP7n2acnRClo1KE7uBL08hSJYoXsZQ0PKSiakeQgnhO7Vzn+IQiQVHrVvHMosd5gZ/8gLe7WsA22rUTjXJic=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759748099; c=relaxed/simple;
-	bh=JapsIq6usewSiAzwDSEdPq4iuiLsT1RLRsai4BPbCGk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=c+VUPcW6RD0KXklmHEW3CXrv+8XXoKlKA3VenA48Qr3DTWPqm+K0ZecWBvvrVg6w74aLxXS7OsBRzPv6yNXWpG0JlS3PgtcFWGkqTbfF7UYA8i1vfkrRwhLFNQgSCGi2tzXk9KtBxCgTIB2HmGTr3iIEYSgcFwMHHIZs+C05e/0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Kh8CV2y9; arc=fail smtp.client-ip=52.101.46.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=M++g1K4BwZ4s4ruWyfJ60ippfQ6J2m6wB4hCxu/R05JkW8oW2I34+CtCL7E/oNBktaE34ziXBNSAAcpIphfO6UqPm3ZPx9NvoKglJdauA0Vr4pF05Dd6yK6Ac9Zsru3HqA5jJiGqlyx3sRPP+2HhNtMUMgiSNAfUJqeSHJpPMa4R1YQByVZ+5R9i6Dqff/lDWbrlfBNXvSijEPveMW34PZ4wMJjvK3ANHAnyUiuryYAR9WztoXB09pd5EG2Lg4MhF0Ep/u4bn2PVgHurse1vYKJk3MxKtwGBswb9RmtRlCehCoe9BfQHJWV3PSBT1o6/1nt4QNIZMiCmxIphmUMAjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=s1nqjpc0kpf/wLPccBEP1Drj2WlkwJQmI2HUYoMN6q4=;
- b=pAeHjLfDnuT81drRK47sxCv2NDZ/TgwdAeGpn8/qaWreGTDBsAHFpJ2ADBStShusOBg6Q0MT9Vsh+HoGAbTZMgG1E9x1kbEXTaDnOttqmKGoV5uHawQIqZ2dOuVGuuev8HN0oA7VgXSeYlVd2pcGT6GkYBwp2icC0iID2OADjwRm8fCB23olRlvYUDcq/fSAoL/NFs/IitN803TN8AEn70hc75AkEzRDClfUXAbPyD84B8IMNbeDTg1tQ7smC+wq+iu0joAHpAWR/VwLn65yT08ENCSoEtc+pRZ3wA7agq2McMcE6r8Bk3t2faiFx1GH1uYR8D0Q7+9K7VVBTTsy5A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s1nqjpc0kpf/wLPccBEP1Drj2WlkwJQmI2HUYoMN6q4=;
- b=Kh8CV2y9eIHt3sRer+/E4Mrtntz7ZrodWs6JR9cQtQvv5vfkW0S3n1DC55CCiIX1tzzevOOfp4bc2FlKYXG3ZhjNShcEnVfkKH7y8V4mE1aoIg4iC/+1pJsVnDEb9BEgNuIQlNRaXKDk2xJ66YMIy1M7pBP/1Py7+jUFIFatSfA=
-Received: from BL1PR13CA0258.namprd13.prod.outlook.com (2603:10b6:208:2ba::23)
- by SA5PPFCB4F033D6.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8e2) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Mon, 6 Oct
- 2025 10:54:54 +0000
-Received: from BL02EPF0001A102.namprd05.prod.outlook.com
- (2603:10b6:208:2ba:cafe::30) by BL1PR13CA0258.outlook.office365.com
- (2603:10b6:208:2ba::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.9 via Frontend Transport; Mon, 6
- Oct 2025 10:54:54 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- BL02EPF0001A102.mail.protection.outlook.com (10.167.241.134) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9203.9 via Frontend Transport; Mon, 6 Oct 2025 10:54:54 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Mon, 6 Oct
- 2025 03:54:53 -0700
-Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 6 Oct
- 2025 05:54:53 -0500
-Received: from [10.252.82.201] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Mon, 6 Oct 2025 03:54:46 -0700
-Message-ID: <2f981591-4159-411c-b530-e884262d1a80@amd.com>
-Date: Mon, 6 Oct 2025 16:24:45 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED6F247DE1
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 10:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759748093; cv=none; b=pEHtAum0EhcRQxfiFCc1trIulrFJkF7x4QpvSjfmjmIcq3Y9QWKRGEOrU0NR/kfjvD2jQRHWmCl8PPFumUiaMhPiKxq9GYEA7gk8Pk3v0BZTgNzg3Rp7PlMpSOWzGOHkpcrMDQBhA2/97BTAiPv8NMlcm0kqVL4apBwy+ub9BCw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759748093; c=relaxed/simple;
+	bh=qXNXLA2jr121IED5txM/3X9BlnZFSO/JqrdDDHaU+08=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uvgwIiiA95WJCqT8FZJB54f5L1zp6p8ZCb+MhRQfvNNWMdtj2fo1pJ3qrbRBP/bpjMS5jDmutBbfxWJtmQI2G/2wqk0DMhifxENpEtOGZeIEjqtIzkLIvhlLa3OgkjtptPA66GJ7gcKo1vT/GrDd9rC+RbGoWXe1FCjqimR0nqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mcD9iO5S; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b40f11a1027so856284066b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 03:54:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759748090; x=1760352890; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qXNXLA2jr121IED5txM/3X9BlnZFSO/JqrdDDHaU+08=;
+        b=mcD9iO5SD00hbHWBr0Dhlc8KF+ra94YzesMKP3XXBwhNP8xToWwzubBEpzahu8QqUy
+         zI/WgdSEYkwezj0ymaSLJF3ewQVBsMUYg2oQicusBkCsLJH2HDUxs3HCQlfPuT46gZPX
+         FhYGtkldR1Pqq/d6t/vTl9yOPLBw9ldUUdRJXZ5F9wIJSXqdFaG+t8Gc99cJvBjgl7Tb
+         9TuVHFU+lWg1TH8U0pjU23c+I68ScA5DI3YfijN8X8Pq1RoALif0DICnL+iB8MBpiZmf
+         5fC4Ij8jbQH/lXFy11ZMr8IT6K1bysipUr8eWSdvZkpIni2AMIvq5KNtqaKPqxrd+guu
+         90Bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759748090; x=1760352890;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qXNXLA2jr121IED5txM/3X9BlnZFSO/JqrdDDHaU+08=;
+        b=AHMrwZFZZqz/OfS1ictSv3SzlTvZ2lnqSoRFB7gyBb4qx8GYW6ms8YKE9g2Gn2Z3ET
+         eUgzGKC+++4XOYg0kREZ1Ds4X/a70qb5+z89zF+k9Qz+QlsWiczZOM3j+3vSDAXNvwuC
+         XG8N/bjoQETtDyDPt4H4GycpHiC0Peb9FfffxOgS+7+6OwPSH/l+PuDte+FOuJVkIUTL
+         M+ZwjJeX+IWZf4tBse8rtxeV0ro/CxzmF+El2eqtRX/hr0zX/lVWJAbaAujqS3ECZe0s
+         A4EnE++yxB6AwIlNqOvu7oYdfw2opYEML6xRGFUbIVFIWg6H8fzVbDK1nWZ/foGMJqiJ
+         GS/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWQnT1yMIV6ojx4RyqQtPl3tJb/pQqnlmD23FO/swETkRRIJOt+9HQ2E1I4vj8xXLsGmu5CS8Mt16wRH5A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhqMI/Sx8bphYCRjP6V22nT++fzqw30a1Pao9dGtwLl9WB9vgM
+	w6ZnaUbIhGzbKtvoX3OEaV8LAthQe2r10DUTsj8HRrhL6YWIUdUQ61dK
+X-Gm-Gg: ASbGncvCsoB1C6RcWDNP7LsuRjCff2mckZPUR9ctk3XOP+gSuRuBTBVCACnAddDgAYx
+	sqr4sD7dXaKRuOkNEH53IQ/eIzdFX1m3jrAK8RC/uwMXO6fVIozJ1FJrYPGL3rKQBmHoKN2ZBJR
+	eyPyL5meYcPcdTy4IIqkLK/kj+D/IuTLvpML6/G16FwPdY797wwEnPGVz3Y11ovv4FP5L40YqzZ
+	WHOaSX7b6ihVrF2zEzjBesEonexbNji1+vaiUAtYpk2cgrd4X2mXGYArDWsfVK7wa1pxgpOxZNZ
+	s9TJptcsTqQCm7kd3AKiRFZ18o6b2Fo2MoBiBwpI7lZWW1jlwBizjHHaGyPMeDYPNOblcZIPm6R
+	KytwVlG9DEYKQii2rODggE4SniwWTKSH9WJEpaor0LvXMjzYv1g==
+X-Google-Smtp-Source: AGHT+IFsbJIMX046ZdbgwCO0LHE40l3aSoIKhdw9r12MAKMtV4NAk+2OeC5sVS+LTODNz1eBr36Z6A==
+X-Received: by 2002:a17:907:2d26:b0:b04:3302:d7a8 with SMTP id a640c23a62f3a-b49c4394dfbmr1406539366b.58.1759748089518;
+        Mon, 06 Oct 2025 03:54:49 -0700 (PDT)
+Received: from [10.176.235.211] ([137.201.254.43])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652ad839sm1117104566b.1.2025.10.06.03.54.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 03:54:49 -0700 (PDT)
+Message-ID: <41093b6af67db2073a141527e44e575d0811d55b.camel@gmail.com>
+Subject: Re: [PATCH v2 1/3] rpmb: move rpmb_frame struct and constants to
+ common header
+From: Bean Huo <huobean@gmail.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: avri.altman@wdc.com, bvanassche@acm.org, alim.akhtar@samsung.com, 
+	jejb@linux.ibm.com, martin.petersen@oracle.com, can.guo@oss.qualcomm.com, 
+	beanhuo@micron.com, jens.wiklander@linaro.org, linux-scsi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Mon, 06 Oct 2025 12:54:47 +0200
+In-Reply-To: <CAPDyKFpyh7Qag+ckCcPkr1RWh8YiST-4V2_Y7xvBU4LRLNC28A@mail.gmail.com>
+References: <20251001060805.26462-1-beanhuo@iokpp.de>
+	 <20251001060805.26462-2-beanhuo@iokpp.de>
+	 <CAPDyKFpyh7Qag+ckCcPkr1RWh8YiST-4V2_Y7xvBU4LRLNC28A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Ravi Bangoria <ravi.bangoria@amd.com>
-Subject: Re: [PATCH v5] perf tools c2c: Add annotation support to perf c2c
- report
-To: Tianyou Li <tianyou.li@intel.com>
-CC: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, "Ian
- Rogers" <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, "Kan
- Liang" <kan.liang@linux.intel.com>, <wangyang.guo@intel.com>,
-	<pan.deng@intel.com>, <zhiguo.zhou@intel.com>, <jiebin.sun@intel.com>,
-	<thomas.falcon@intel.com>, <dapeng1.mi@intel.com>,
-	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Ravi
- Bangoria" <ravi.bangoria@amd.com>
-References: <aNo-U0KquRbcJam9@google.com>
- <20250930123900.1445017-1-tianyou.li@intel.com> <aN9ZiPYyYtr332h_@google.com>
-Content-Language: en-US
-In-Reply-To: <aN9ZiPYyYtr332h_@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A102:EE_|SA5PPFCB4F033D6:EE_
-X-MS-Office365-Filtering-Correlation-Id: daf8288e-a1f3-4d20-d757-08de04c6c826
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|36860700013|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RVJrMVNqa3J5ai9ucVF6TkhaOVF1Y01peGU2a01NRXBncVRMSUxQNnBGWG03?=
- =?utf-8?B?RWUvK0FKU2E3MHdsQ0dQZ3R4VEdGNDhiQVV5M3hCd0dDZkZaMGY2YVVPbEM5?=
- =?utf-8?B?ZnlxVzZveDU4bkh1Q3lzRmpOc3ZhcHo1cXFBbUxXRmRsOEN5YjN5S1ozRGla?=
- =?utf-8?B?TkJ3ZkwvYlFmQXdtSGpISjJnaTFSNWtwenRmODd5ZlBlM0JVNjJneGdKWUp5?=
- =?utf-8?B?Z2k3bWhnQzVaV0JZRDdRVy96VFlxQ0t4NWJydHZLSnVVMGVHOWwrZ1Z3MlVz?=
- =?utf-8?B?d2RMZmVxeEJrQis2UHhSUHFONzFlZVVjckQrSjhVbzBTWkJEZGJVd1Awa0h6?=
- =?utf-8?B?UTFLTDhmWFlZL1JQNzEyeTh4Y1lTdHBXZEhBa3hwZERoK1I0SG0zWERMM2FV?=
- =?utf-8?B?eUtoWmxUcm9HeWpxN3I0M21aQ2JrS0t6MXA2bDA0VFJnQzhqR3VST3NwaEUy?=
- =?utf-8?B?U2ZITEdJVW4rR3RYaFlEQnRVM0hUSUU1UFpVdFRoVDJMSHY5NFNkdG4vRWph?=
- =?utf-8?B?MWJkYmV1SUludGRWM2NxSlVxb2ZRRVJseENYenlyc0ErdnphRjhhRmRsejgr?=
- =?utf-8?B?S2JvbUdtVWVlaUgxMzF2TDNMOEpwK0RtblNFVGYyNEVKbDdUSzNqRGp0SFZw?=
- =?utf-8?B?OGdKZklrSkZGVHVaQkNBdEIwaUYxQmJhNGJ5VVFUYjVsb0Q0Q3ZkNnNjMVFT?=
- =?utf-8?B?b2l1WnJWVTl5WmlhTEcreDNlTFU1dzY1WUl6MUFIaS9GWkVVTjVJWFVCTzcw?=
- =?utf-8?B?UzJNY0kwK214QktzVGh1NXRQUXV4UEd2MERzcFl0SEJPbGhQSjVVTUV0YjNh?=
- =?utf-8?B?WHJUNXRuam9Lb2M5cWkrRGpQQnNmZ3FGeElZZTg1NEYrOHcwL29xMTBUTTlE?=
- =?utf-8?B?LzhoTndWdUJCTEZlQ2JIU05WclprT3FNa2VtU0taaDZCUzZEeWU4Mm1OZDV1?=
- =?utf-8?B?ZnlYeGtmS21CbHdyaFVyb0QweXdEZm4ybjVpeHRLVjR3WldEQ3VBdGRTa0tG?=
- =?utf-8?B?S2F2RzBwL2YwbVo4ZVhNR2ZyWnhrSFVUWjlWQmg3U00yb3lFckdSTWN5cDRh?=
- =?utf-8?B?bTlsVUNFalBMd3J0dUpoN1A1V2RPTjArNEN6dVMyZ1NDKytyNnpHU1JJSUtp?=
- =?utf-8?B?d1pCTWhRWGo3MFZVU3F6d0FOajY1Zm83Q2VlWTc1ckpTUmhZNk1hcGpoalJh?=
- =?utf-8?B?UnRnd1lxN29wY2NXcnNSR0pYbkM5ZmQ2aWFOUnlDYWNZL0MvNTJLa1QxOEF2?=
- =?utf-8?B?bEZvbVpuZHA5M3pBbHh5SlU5SDBkSG1rMVhocDMvODg4Q3ZRaEhqS1BqSGs3?=
- =?utf-8?B?RERVYjhheFlmdlJFRlJGcHh6eTlTOXZyWjJBYjJ1dmJwd3pBbSt5OVZKZ3dj?=
- =?utf-8?B?b0lUaUVtK05LVWJ2eG5tTGl0VGpCZjdoN1ppZkk2UGJ1ZWxTQ3BpMW5lTDJn?=
- =?utf-8?B?U3UvVzdOaS92a0RxWWR4YzRDcDNCbGs3NWdUUi83U0F5MVc1b3dDNzl3Ykpn?=
- =?utf-8?B?bjNTaHExaWpyUHJVeWwyWHlBaTR4TThjbkY5ZFoxTk40UVkyeS9JYkFwSm5p?=
- =?utf-8?B?NWdaYVU5Vk5wSit5cE9JYnhzTkVVWXlwWUJIcE5HUjUvWjNTa0FwdzVIVGQ2?=
- =?utf-8?B?Q3RMTzBSRXUzRzRta1doSHZZRHh6YXQ0RVZRaE5sUG1LeDdxZStWdEJZdVB3?=
- =?utf-8?B?VEw1UDJhdFgyTmVLZHZGTFdobWtZaHFhNFA0QllSVEtZeGJ0R1FNWmhRZ0Vr?=
- =?utf-8?B?eFc0ZFRxU1F0TFhHK2RVdnl5SW5qVVpQUzVkOVV4bWF0SXVXVy9FdnlrVkRI?=
- =?utf-8?B?ODk1ZTJUek5rMSt6dDN2Z0lUci9nQ3JlV0c2cWNFNHNNMWd1d2w0M1RZYmVv?=
- =?utf-8?B?ZDRpVmI4WTFtRStCMDIvQVlqR25aWllNZks0b2YyOXpLa0hYSXBRZlA4QzlO?=
- =?utf-8?B?Skh3MG84UjB3cTJsY3QwQTRQYlZsTTdQaC9KbXFiT3NEcE1hcnUxK1pEVnl3?=
- =?utf-8?B?YTdOTnc4bFIvQlZMTFNObERPZXlXbTErSFhrUFhEQVRnYXZ4SzFaamp3R090?=
- =?utf-8?B?U3JIeGxNZkxVNHFEZGkvMFRiL0Q0Y1dVQTg3aGxGMXUrd3FMdlBlVWtZOVkz?=
- =?utf-8?Q?viPk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2025 10:54:54.0773
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: daf8288e-a1f3-4d20-d757-08de04c6c826
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF0001A102.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPFCB4F033D6
 
-Hi Tianyou,
+On Mon, 2025-10-06 at 12:21 +0200, Ulf Hansson wrote:
+> > Signed-off-by: Bean Huo <beanhuo@micron.com>
+>=20
+> I have queued this up via my mmc tree and plan to send a late
+> pull-request to Linus to get this included for 6.18-rc1.
+>=20
+> That should help to land the remaining pieces for ufs in the second
+> step without having to care about the mmc parts.
+>=20
+> Kind regards
+> Uffe
 
-I tested this on an AMD machine and it's working fine. Few minor issues
-I would suggest to address.
 
->> Perf c2c report currently specified the code address and source:line
->> information in the cacheline browser, while it is lack of annotation
->> support like perf report to directly show the disassembly code for
->> the particular symbol shared that same cacheline. This patches add
->> a key 'a' binding to the cacheline browser which reuse the annotation
->> browser to show the disassembly view for easier analysis of cacheline
->> contentions. By default, the 'TAB' key navigate to the code address
->> where the contentions detected.
+thanks Uffe,
 
-1. Annotate browser title always shows "Samples: 0", which is misleading:
-
-   Samples: 0  of event 'ibs_op//', 100000 Hz, Event count (approx.): 0
-            ^                                                         ^
-             `--- this                                                 `--- and this
-
-2. Comment from v3:
-
-   > In the annotation browser, we did not need to show the overhead of
-   > particular event type, or switch among events. The only selection
-   > was set to the ip addr where the hist entry indicated in the
-   > cacheline browser. The hist_entry was correctly initialized with
-   > .ms field by addr_location when the mem_info can be successfully
-   > resolved through addr_location.
-
-   It's ideal if we can show sample count/overhead along with the
-   instruction (because that's what users are used to seeing with
-   perf-report->annotate output). I haven't checked the code but is
-   it possible to highlight the instruction by default (Annotate+TAB
-   OR Set the font color to red etc.)? Waiting for user to press the
-   TAB seems counterintuitive esp when instructions are not tagged
-   with overhead.
-
-        |1340: > callq   0x10f0 <_init+0xf0>
-        |1345: v jmp     0x1376 <thread+0x12d>
-        |1347:   cmpl    $0x1, -0xb0(%rbp)
-        |134e: v jne     0x1364 <thread+0x11b>
-        |1350:   movq    0x2d29(%rip), %rax  # 0x4080 <data>   <=====  Highlight it by default
-        |1357:   addq    $0x1, %rax
-        |135b:   movq    %rax, 0x2d1e(%rip)  # 0x4080 <data>
-        |1362: v jmp     0x1376 <thread+0x12d>
-
-These are not blockers if Namhyung / Arnaldo are okay with current design.
-
-Thanks,
-Ravi
+Kind regards,
+Bean
 
