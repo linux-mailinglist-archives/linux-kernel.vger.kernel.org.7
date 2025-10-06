@@ -1,146 +1,141 @@
-Return-Path: <linux-kernel+bounces-843257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81337BBEC67
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 19:06:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FD8CBBEC6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 19:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 363C23BCE69
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 17:06:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 354CD4F00AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 17:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BEF221543;
-	Mon,  6 Oct 2025 17:06:41 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94CE92264B1;
+	Mon,  6 Oct 2025 17:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="o2D3HwRx"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48FB221FA0
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 17:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B128224B0D
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 17:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759770401; cv=none; b=jObJu1xl+iN0kZWDbwEvOFbNJXCFXbPNRGRPDaOmzmDnm61PymqaGbtK3T9F5xq6UTfyaiLN3LvAJ6Wxs9mDnIaSzBqmDrqs16A60hUlRB/8ccxH9BCjLdnMMRb1oiXvSytYA7oI1PnK/XBY5Zyxe1eyhaGVfPg6rG8C3BWAtIo=
+	t=1759770416; cv=none; b=oHVUNbHZTNJZn5FdSk2QEP9XnXNyY43a63Qms/FI5nePw6trfuGTAnjWGcIDksuSizwbBr/JPf2CxBl4bX834CMHSlw0oCx5YIsDVuT62KtrQJJGJVHqEEbGNw9LNToM2hf+iTt1G5I636CRr+InaAkpayE7he8pYFZrNSBIfOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759770401; c=relaxed/simple;
-	bh=a38ZD1cGESrwnzHb5XiH2nwhUEIyTa8y31XE4bDogVc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=m0PibsbNU/9AmWD2b/S3LRAt9QtGD0cK8K32yUhyni5VIrLWcVzURMdIPl9OPIUkKyA6YDRlYqAHsgJa5puk4R6J1IHV3ifHVTkxRdgMqfRl4pYOYlFV+4IE1S696DNH7azUpQwmEH7kWQYJCuaFRdPJDGnNsxMKyVgrbBAYu0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-93bbd28b4f3so109866839f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 10:06:39 -0700 (PDT)
+	s=arc-20240116; t=1759770416; c=relaxed/simple;
+	bh=i2EkJ/x08v/kmNFdCKaOvysl2VoRkIydM+svs0676Cs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BRpgd+toV65llPhVL2TjzhODnjFAEMBjbEvW3CwIDx1wOdP/kkO0OLuErvY8BM0Ef3X0FLyVVOPFYUOmtIKdLqwhUe0inmAKtIJlf+GaiTChIkjxQGwFrmPaWx3bBmx9141xuEgieSVVx+xlWYjI2mvZzeo+TOXBM41VTQm6li0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=o2D3HwRx; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-78eba712e89so48373196d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 10:06:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1759770413; x=1760375213; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QgG7Kj7F8Fvf8QdLk2gzxRzLGx7bPBlhHTO5oE1aqE0=;
+        b=o2D3HwRxacVbEpskCXv9LRuXjXX7derKEUWKhYiVbIdz4rBqfUJbyQNPW3SwD3/9a5
+         B8g5RDgTScRJjzYEYgXo2+n3bb2M+5GiUOiRUNU8Vs72Zh2Q/TCWTVlKh4QObme3kzDy
+         ve1gSaQTK1ykGwlMEcEfIsk2kXUTUN3LqNbFl9C2ZjylkwlvNqlaf6FfwdMewDp4Ly4O
+         toNdelTzjbL24MOljqWKDAmIzfODLP6TPk+MJrSeNuS/aRWOQQew1GgYfuEbAK/+N16m
+         cSTcOSGXcmUbg0jqc7OAWKnGmYZ+PG8ilAD/HfPK6pPqqSFSqh3CjKS9Auja4T44ER5m
+         r48Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759770399; x=1760375199;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=N4upw0LzDkCIV2/KoZH6/pMGhPVw8QDjxclh7G1MmS0=;
-        b=YYRCnYGsQZRO23dbLOucGWe5NJutodGdEgXIp1DBA7A3ptpOjmE51ZZjtkg8MsjOJP
-         4JOBi41pMRXuiShSYFMgSt1tf2g8YZ6u2HRh3p04AFTHpgNdoiZORnOgKXU2psjoEJ3f
-         un6TSDOQ6BVI+g+Su8v/H1cgVWsAgzUHMfBDCF0xDcK/YdtX7XAWbVjwoGsVgzRX1wZx
-         vlYWnWrY/JqHUYXiKrdDeSz+xNJF4sCXmw01GJh3nu5bzqC/J0fm9lHWq4oKDJqqikDI
-         ezvQnRo+2rkwvLmwdocI26jPp6cQ5lbcb094rvfwljIuZfEFVZ7mGFKIuUhBkHV337lg
-         fcyA==
-X-Forwarded-Encrypted: i=1; AJvYcCVTWESYzbYKx02SYZJeWpfcCFSRSV5SJAcFgTJBKZ/uDaSrMS8NjiwGeayk5puPoCjDvESMEmHQHlC79tc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgwjMSj6IENJ7JfjmMImCaq5w2wi3IBdfSD6G1EfaafYtsB8R7
-	dG485ona6ApDpbj7wfYqRLhrtp/YWhD+mY4I+OI2Jjq+ys7kmu0No6LE7zH82w1j2pic10u2voz
-	YCXZ7+IOTldxlglGlAvC6aT/15m8Gnrp+o7g6pL33pK6SAKtLJAaTOPRdXpk=
-X-Google-Smtp-Source: AGHT+IFopE9GSbNTifmJfN9G/acxuY7cnCA9Z5JbBQ4z/AVUaWy1wTuw/OTvV8LLfnCPUQgprU1qgayYKgKmyU5f4K4Af37Vur3l
+        d=1e100.net; s=20230601; t=1759770413; x=1760375213;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QgG7Kj7F8Fvf8QdLk2gzxRzLGx7bPBlhHTO5oE1aqE0=;
+        b=bDIDsZ4Cozgb2Yg98QGkWo8f65EZii+hG/eCqrOua0M31XXJIXYJxgh4M66WGV0bpb
+         lIiCgXAWSlhwrj94Wezp9ddrweS+gYY3gy4lvXBlRRzfzoUCVdHb5cbPwIcKVM5Um6I8
+         6NKn1JHY5gepMYIAkqC3OKb8WYbHj3H4mzBhBvJEIJUH8mCT3TkmuFE2gwXQjwsWJvZq
+         FeAUDCKtcPW2MVh4PhMBUE0LSUrYygmYb7Yq4kUe9dzFOnKgGO6lm+Z04uE9akUAesFp
+         19/L57nt6gL6Q/HO/+EYXrPVVA+fZgFY4UUiRBURUE2p0ufsTBKHOvT+T9JdWGlJziny
+         p9BA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6JVtZCPDbUFGn0hzKC4gE5WdYW9vw301PmyAUuUg5asm0KjAoVQ+JNLPakZD4ZN1NYkTR15YdXiXTqE8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKdDvhZLNDO+TCTe4Tx+ULAATJ1Jpk18Ak0laqa6dHgrpuNXsD
+	1mA32Kq4BBuKkKj8/oK/gLq1VpcbYKfC7/zDanmY8Vvgd5H/j7N+oZwSQg855nGJ4z0=
+X-Gm-Gg: ASbGnctAvH5PN37t1XHRlRSBuTz+Skz8O73blFw4cnKBE04y0vKP01sStr713YXL8sw
+	F/if0Ss+/nd8/qJWukJTITamqqQhDFvN7KlKzvRcmLqoLRQDzJNccTqfl66rgSE6n7LMBsIrMfL
+	3/hDWRgBss0bB6nIbk1uHjHwl11V9dJKDAhpgtyi3S8FQjHwN/eL/zhyjEjoI7MflLwnnZDiZA7
+	EKrX//C2xO7MHBy6HKUhTlW1W25d06xAe4ZS7FVX6lB7YsusZq3drjSKxVRqcm2NLR77jzT3VL0
+	mJsAMOZuElfIlF2rhyTAFUtsy/d2DkDscmSSj6l8dNBRm3vS37nEXJkM7DGijSkOunnIb14WSju
+	cMHr8Xxl8DofqwrQvHOvarqbn6VHZnwuWbWCXUPAWNiJ5Fjc2AUM0LX9iN8MCv4Z+fQd2D/b8w+
+	UkwYvEyDk+3kirQFWh5fXBvINY6kKL9gPtk4wgqd0J
+X-Google-Smtp-Source: AGHT+IG4ZEw+VCFdNsTXOlMFhE8o6tJ1XiGtSukmRId1ODIYJZ+HVRAvZr4LoRCUnsgOjWfcW+1egg==
+X-Received: by 2002:a05:6214:2524:b0:782:a877:bbd1 with SMTP id 6a1803df08f44-879dc856462mr164109016d6.48.1759770412800;
+        Mon, 06 Oct 2025 10:06:52 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878bb4465cesm123440686d6.17.2025.10.06.10.06.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 10:06:52 -0700 (PDT)
+Date: Mon, 6 Oct 2025 13:06:50 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Vishal Aslot <vaslot@nvidia.com>
+Cc: Dave Jiang <dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Li Ming <ming.li@zohomail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Zijun Hu <zijun.hu@oss.qualcomm.com>,
+	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] cxl/hdm: allow zero sized committed decoders
+Message-ID: <aOP3Kr3jHLWOydRp@gourry-fedora-PF4VCD3F>
+References: <SN7PR12MB81316C958DF0F4B10369B928BBE6A@SN7PR12MB8131.namprd12.prod.outlook.com>
+ <aN4SSEmaCaxbeiwJ@gourry-fedora-PF4VCD3F>
+ <02a4b5f1-ad29-4825-9040-ff96e328f674@intel.com>
+ <SN7PR12MB8131EE31375531673BCF0C62BBE4A@SN7PR12MB8131.namprd12.prod.outlook.com>
+ <aN_cUPzzwUy-s36n@gourry-fedora-PF4VCD3F>
+ <SN7PR12MB8131CDE3909B30FCE3E24B6BBBE5A@SN7PR12MB8131.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b0f:b0:424:1774:6915 with SMTP id
- e9e14a558f8ab-42e7ad0a71fmr167886625ab.8.1759770398860; Mon, 06 Oct 2025
- 10:06:38 -0700 (PDT)
-Date: Mon, 06 Oct 2025 10:06:38 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e3f71e.a00a0220.2a5ca.000c.GAE@google.com>
-Subject: [syzbot] [scsi?] upstream test error: KMSAN: use-after-free in scsi_get_vpd_buf
-From: syzbot <syzbot+f627b4ca9d1c5894ae1d@syzkaller.appspotmail.com>
-To: James.Bottomley@HansenPartnership.com, linux-kernel@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, martin.petersen@oracle.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN7PR12MB8131CDE3909B30FCE3E24B6BBBE5A@SN7PR12MB8131.namprd12.prod.outlook.com>
 
-Hello,
+On Sat, Oct 04, 2025 at 01:49:26PM +0000, Vishal Aslot wrote:
+> >>
+> >
+> > Ahhh, so are you saying that you will only ever observe the following
+> > (as an example)
+> >
+> > endpoint decoders...
+> > decoder2.0   ->  available and can be programmed
+> > decoder2.1   ->  size=0, locked
+> > ...
+> > decoder2.N   ->  size=0, locked
+> >
+> > or are you suggesting the following is valid:
+> >
+> > decoder2.0   ->  size=0, locked
+> > decoder2.1   ->  available and can be programmed
+> > ...
+> > decoder2.N   ->  available and can be programmed
+> >
+> > ~Gregory
+> 
+> The first case is what we've got. In our case, the HB has 4 decoders. The end point (a Montage card with single port) has two decoders. For both, we commit & lock all decoders and all decoders except decoder<port>.0 are zero-sized.
 
-syzbot found the following issue on:
+If the second case is not supported (I don't think it is), then it's
+worth spelling this out.
 
-HEAD commit:    fd94619c4336 Merge tag 'zonefs-6.18-rc1' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=169595cd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ad506767107aacda
-dashboard link: https://syzkaller.appspot.com/bug?extid=f627b4ca9d1c5894ae1d
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+I don't think either of these cases are relevant for scenarios outside
+of the scenario where the host pre-configures the decoders either -
+worth spelling that out as well.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f3f6ed23a50a/disk-fd94619c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e36679259d5c/vmlinux-fd94619c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c3e733ae21be/bzImage-fd94619c.xz
+Just in the commit log.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f627b4ca9d1c5894ae1d@syzkaller.appspotmail.com
-
-scsi 0:0:1:0: Direct-Access     Google   PersistentDisk   1    PQ: 0 ANSI: 6
-=====================================================
-BUG: KMSAN: use-after-free in scsi_vpd_inquiry drivers/scsi/scsi.c:323 [inline]
-BUG: KMSAN: use-after-free in scsi_get_vpd_buf+0x4cc/0x720 drivers/scsi/scsi.c:455
- scsi_vpd_inquiry drivers/scsi/scsi.c:323 [inline]
- scsi_get_vpd_buf+0x4cc/0x720 drivers/scsi/scsi.c:455
- scsi_update_vpd_page drivers/scsi/scsi.c:479 [inline]
- scsi_attach_vpd+0x7a8/0xe70 drivers/scsi/scsi.c:532
- scsi_add_lun drivers/scsi/scsi_scan.c:1110 [inline]
- scsi_probe_and_add_lun+0x6933/0x7f20 drivers/scsi/scsi_scan.c:1288
- __scsi_scan_target+0x2fb/0x2050 drivers/scsi/scsi_scan.c:1776
- scsi_scan_channel drivers/scsi/scsi_scan.c:1864 [inline]
- scsi_scan_host_selected+0x68f/0x9a0 drivers/scsi/scsi_scan.c:1893
- do_scsi_scan_host drivers/scsi/scsi_scan.c:2032 [inline]
- do_scan_async+0x1ad/0xdc0 drivers/scsi/scsi_scan.c:2042
- async_run_entry_fn+0x90/0x570 kernel/async.c:129
- process_one_work kernel/workqueue.c:3263 [inline]
- process_scheduled_works+0xb91/0x1d80 kernel/workqueue.c:3346
- worker_thread+0xedf/0x1590 kernel/workqueue.c:3427
- kthread+0xd59/0xf00 kernel/kthread.c:463
- ret_from_fork+0x230/0x380 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Uninit was created at:
- slab_free_hook mm/slub.c:2440 [inline]
- slab_free mm/slub.c:6566 [inline]
- kfree+0x254/0x1460 mm/slub.c:6773
- call_usermodehelper_freeinfo kernel/umh.c:43 [inline]
- umh_complete kernel/umh.c:57 [inline]
- call_usermodehelper_exec_async+0x666/0x6f0 kernel/umh.c:119
- ret_from_fork+0x230/0x380 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-CPU: 1 UID: 0 PID: 69 Comm: kworker/u8:4 Not tainted syzkaller #0 PREEMPT(none) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-Workqueue: async async_run_entry_fn
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+~Gregory
 
