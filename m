@@ -1,133 +1,202 @@
-Return-Path: <linux-kernel+bounces-843522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6928BBFA4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 00:12:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF5B8BBFA58
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 00:13:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CE0F189D966
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 22:13:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAB25189DAB0
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 22:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574CF1F09A8;
-	Mon,  6 Oct 2025 22:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C3B1F4C8B;
+	Mon,  6 Oct 2025 22:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y990LoQP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bOgZx/Uo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BC411713;
-	Mon,  6 Oct 2025 22:12:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849CE11713;
+	Mon,  6 Oct 2025 22:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759788763; cv=none; b=YwupQvMs6cjdw78rAz5wOJOHljQNR1/8h10cgktQyMLkFINXV7A3cD94dzNBIQSdAadfF7zyTAxRh68uJ1szn8ft8OWi67kA9sTSk03gCwpzi2RnBZl9khy8plaYQi7HWRVN5lcxbU2R4QaBIZ57F7CUD0ijmwKGnsjUWnQe9pc=
+	t=1759788789; cv=none; b=kutdEvaZ7CsF5NlWYZB78tjGZeeuSMqsylZaAkcpQRYHgZJbjawjSiph8g+T8EoyKBjFAPQFDVkz/kWl02pUXN/mmLJgcScgfIW0I4+N5oKihD4DX0CQxNB1OpEWR24SqsIawudyfpqkLGalAjfZl9HOp07TgfirCT0gQBrbIqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759788763; c=relaxed/simple;
-	bh=frN59PtaP2NnDY37GTjkkk5HaJHZi6o8TAEh204hsUw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=o7Xrkh5uWMtO5CYSgI/w4S2r7MzEeNjm4aKXKG7n9Q3irszXAtnyaxX9Pc160qJ1z5ATDierzNTEyQAa4Okt2bRJg+4h/KEuGhKgX7TvY+hPUWcH2qbAfN/HB1ROsrgXJ7x/nSqD+0V/00iHtkiBskvZAS5pfxJeLQ6dXfTZAU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y990LoQP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3B4E5C4CEF5;
-	Mon,  6 Oct 2025 22:12:43 +0000 (UTC)
+	s=arc-20240116; t=1759788789; c=relaxed/simple;
+	bh=lIZKgLMniEnisfyXutpns8WCcOXHJQ4ZpCkUFUyy4gQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XuZViZb3SV9v2EJmG6RRRM42453hhqY3fts1VvpQm6D8c/7qnLexD/GLDCmzM1RTSVavDaZ2oRCr5gctYvE9dSg6EhqTVBhnpj8QjCyYv2nyTQX/4/5BB7RXV8fJ4TkZMWQ+DoZYiJAUXgJAoHvBkH6YAYMDFLYehTFpeOXm1CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bOgZx/Uo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E24BC4CEF5;
+	Mon,  6 Oct 2025 22:13:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759788763;
-	bh=frN59PtaP2NnDY37GTjkkk5HaJHZi6o8TAEh204hsUw=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=Y990LoQPFXJep5tZcVNY1X9Hd8cChZMnMlx5TuuDQTTiBWY0EN2fa43UR8eP9lBFQ
-	 tFi8EFE9pkzG55PxKvDK4znwjfZIgkOv4tYx7cpCjp9M7eXIxD03OBKV145pu6jYiP
-	 RU37evp4JBS2qJ/t9HZXLfvlCX302REhA1DTENeJDAIEfm733lEyUDSAnDZ5IfMHIs
-	 vDeZsC9h6WHfGYYYbd62VdmMuw4BvvORGHe19TsIt0Loxjqez3AlxTFNrJrueanflE
-	 zN/bchdlMVAgYtOrtDdXk7aHPdGZS/fbj+GSjuwCU/XLZ2Symr4GWTf5hsKIslyt7x
-	 n3KQESdCio3fg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2790DCCA471;
-	Mon,  6 Oct 2025 22:12:43 +0000 (UTC)
-From: Valerio Setti via B4 Relay <devnull+vsetti.baylibre.com@kernel.org>
-Date: Tue, 07 Oct 2025 00:12:19 +0200
-Subject: [PATCH] ASoC: meson: aiu-encoder-i2s: fix bit clock polarity
+	s=k20201202; t=1759788789;
+	bh=lIZKgLMniEnisfyXutpns8WCcOXHJQ4ZpCkUFUyy4gQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bOgZx/Uo5U9Za44Jdifn+4OZRvhMXRfgiynKtMt0lfi97IF0Mtvj21TFBmYm+nl3C
+	 wRJq4U/ZmlNMAZssNRQWS7ofrqhAA6joUVIYhkiDiVeiTnG7Jj8AqOgOW0r+YYTNg/
+	 Bw/pWpjDGkcZdx052IpIumB0nGB7ohX3M/01f2AzEYodUBGY9PxE9lAKkMFEHUhLat
+	 lifbv9uKtfWiMa4OBffuqMQLrc2I+xa1LWw8E8mfjjm8PD4qoEtG/+hL9Aej8FHkKS
+	 IZd/JYW4/gLwhTKTVp1i77d996WDfAnwiooSqzKFBY+N3VuaBVjFk3GSJKNvaIrWE7
+	 KGXMSKmdlPTSg==
+Date: Mon, 6 Oct 2025 17:13:08 -0500
+From: Rob Herring <robh@kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Svyatoslav Ryhel <clamor95@gmail.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 1/8] dt-bindings: display: panel: properly document LG
+ LD070WX3 panel
+Message-ID: <20251006221308.GA653118-robh@kernel.org>
+References: <20250929142455.24883-1-clamor95@gmail.com>
+ <20250929142455.24883-2-clamor95@gmail.com>
+ <CAD=FV=Vd=muLeMJYszC2SqRBThN=Srm_bKXBEmjjqND7bqHo2g@mail.gmail.com>
+ <CAPVz0n23qNrnyP7ttchaCoLit=gBm_++7RX7B8MxR_nx+8LGHw@mail.gmail.com>
+ <CAD=FV=UCcQ1AweLwNucYP8kNHx+K1UF=VbEZdqE4hXN=bHqGuQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251007-fix-i2s-polarity-v1-1-86704d9cda10@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAMI+5GgC/x2MWwqAIBAArxL73YKt9qCrRB9SWy2EhkYU0t2TP
- gdmJkHkIByhLxIEviSKdxmqsoBps25llDkzkKK6UqrBRW4Uinj43QY5H5xbY7TuFkukIWdH4Oz
- 8y2F83w/n6ZUSYgAAAA==
-X-Change-ID: 20251006-fix-i2s-polarity-d744338fa223
-To: Jerome Brunet <jbrunet@baylibre.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Valerio Setti <vsetti@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1584;
- i=vsetti@baylibre.com; h=from:subject:message-id;
- bh=yhS4Hp8u/Or3vlCBo8NKBwUHK5bFZ95+lSDqT7ffm68=;
- b=owGbwMvMwCF2z3ty7kUrRgbG02pJDBlP7G7Vcrw8+WNXspbGklMbFI6a5LY+1/gg9v5pfgqHn
- ozu2umiHaUsDGIcDLJiiiws0+/9LihVe2iccLIAZg4rE8gQBi5OAZhIlAzDT0aRdVUTjRINNFhD
- Sg6cPrPmuFXCOu/OksauQpW5T2W/+zIy/FO7m1Wq8VTx9nf/GRt3bdV6nfajzTH9xteVf6afa9P
- azgAA
-X-Developer-Key: i=vsetti@baylibre.com; a=openpgp;
- fpr=0497DEFB707526E13360C970DE4B936DD13A0100
-X-Endpoint-Received: by B4 Relay for vsetti@baylibre.com/default with
- auth_id=515
-X-Original-From: Valerio Setti <vsetti@baylibre.com>
-Reply-To: vsetti@baylibre.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=UCcQ1AweLwNucYP8kNHx+K1UF=VbEZdqE4hXN=bHqGuQ@mail.gmail.com>
 
-From: Valerio Setti <vsetti@baylibre.com>
+On Thu, Oct 02, 2025 at 02:35:42PM -0700, Doug Anderson wrote:
+> Hi,
+> 
+> On Mon, Sep 29, 2025 at 10:03 PM Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+> >
+> > вт, 30 вер. 2025 р. о 06:12 Doug Anderson <dianders@chromium.org> пише:
+> > >
+> > > Hi,
+> > >
+> > > On Mon, Sep 29, 2025 at 7:25 AM Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+> > > >
+> > > > LG LD070WX3-SL01 was mistakenly documented as a simple DSI panel, which it
+> > > > clearly is not. Address this by adding the proper schema for this panel.
+> > > >
+> > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > ---
+> > > >  .../bindings/display/panel/lg,ld070wx3.yaml   | 60 +++++++++++++++++++
+> > > >  .../display/panel/panel-simple-dsi.yaml       |  2 -
+> > > >  2 files changed, 60 insertions(+), 2 deletions(-)
+> > > >  create mode 100644 Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml b/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml
+> > > > new file mode 100644
+> > > > index 000000000000..0a82cf311452
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml
+> > > > @@ -0,0 +1,60 @@
+> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: http://devicetree.org/schemas/display/panel/lg,ld070wx3.yaml#
+> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > +
+> > > > +title: LG Corporation 7" WXGA TFT LCD panel
+> > > > +
+> > > > +maintainers:
+> > > > +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > +
+> > > > +allOf:
+> > > > +  - $ref: panel-common.yaml#
+> > > > +
+> > > > +properties:
+> > > > +  compatible:
+> > > > +    items:
+> > > > +      - const: lg,ld070wx3-sl01
+> > > > +
+> > > > +  reg:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  vdd-supply: true
+> > > > +  vcc-supply: true
+> > > > +
+> > > > +  backlight: true
+> > > > +  port: true
+> > > > +
+> > > > +required:
+> > > > +  - compatible
+> > > > +  - vdd-supply
+> > > > +  - vcc-supply
+> > >
+> > > I suspect you'll get a NAK here because you're not preserving backward
+> > > compatibility for existing device trees. While there can sometimes be
+> > > reasons to do that, you'd need to provide a very strong justification.
+> > >
+> > >
+> > > It seems like instead of breaking compatibility you could just have
+> > > two supplies:
+> > >
+> > > * power-supply - The name for the "dvdd" supply.
+> > > * avdd-supply - The name for the "avdd" supply.
+> > >
+> > > ...and then you make both of them not "required". Maybe you'd add some
+> > > documentation saying that things might not work 100% correctly if they
+> > > weren't provided but that old device trees didn't specify them?
+> >
+> > Schema describes hardware. If it does not (and in this case it clearly
+> > DOES NOT), then such schema should be adjusted according to hardware.
 
-According to I2S specs audio data is sampled on the rising edge of the
-clock and it can change on the falling one. When operating in normal mode
-this SoC behaves the opposite so a clock polarity inversion is required
-in this case.
+The priority is:
 
-This was tested on an OdroidC2 (Amlogic S905 SoC) board.
+1) ABI
+2) describe h/w accurately
 
-Signed-off-by: Valerio Setti <vsetti@baylibre.com>
----
- sound/soc/meson/aiu-encoder-i2s.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+IMO, if there are 2 rails on the h/w and you have 2 supplies in the DT, 
+then you have described the h/w. names are less important.
 
-diff --git a/sound/soc/meson/aiu-encoder-i2s.c b/sound/soc/meson/aiu-encoder-i2s.c
-index a0dd914c8ed13616fbcbc0828e36418cfd255391..3b4061508c18047fe8d6f3f98061720f8ce238f2 100644
---- a/sound/soc/meson/aiu-encoder-i2s.c
-+++ b/sound/soc/meson/aiu-encoder-i2s.c
-@@ -236,8 +236,12 @@ static int aiu_encoder_i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
- 	    inv == SND_SOC_DAIFMT_IB_IF)
- 		val |= AIU_CLK_CTRL_LRCLK_INVERT;
- 
--	if (inv == SND_SOC_DAIFMT_IB_NF ||
--	    inv == SND_SOC_DAIFMT_IB_IF)
-+	/*
-+	 * The SoC changes data on the rising edge of the bitclock
-+	 * so an inversion of the bitclock is required in normal mode
-+	 */
-+	if (inv == SND_SOC_DAIFMT_NB_NF ||
-+	    inv == SND_SOC_DAIFMT_NB_IF)
- 		val |= AIU_CLK_CTRL_AOCLK_INVERT;
- 
- 	/* Signal skew */
-@@ -328,4 +332,3 @@ const struct snd_soc_dai_ops aiu_encoder_i2s_dai_ops = {
- 	.startup	= aiu_encoder_i2s_startup,
- 	.shutdown	= aiu_encoder_i2s_shutdown,
- };
--
+> > If there are any users of such binding, they should be adjusted too
+> > (third commit of this patchset does exactly that). Panel datasheet is
+> > explicit, panel has ONLY vdd supply and vcc supply, names are taken
+> > from there too.
+> 
+> I'm more than happy to defer to DT people on this, but the general
+> argument is that "device tree" is supposed to remain forever forward
+> compatible. In other words, someone could have taken a snapshot of the
+> "tegra114-tn7.dts" device tree at any point in time and then shipped
+> it in some BIOS. Presumably the old "tegra114-tn7.dts" (for some
+> reason) managed to init the panel properly in the past and the idea is
+> that there should still be a way to init the panel with the old device
+> tree now.
+> 
+> Obviously, that's an ideal version of the world and sometimes
+> hard/impossible to make a reality, but it's supposed to be what we
+> strive for.
+> 
+> >From a more practical standpoint, the dts changes and code changes
+> will go through different trees and so making them mutually depend on
+> each other can leave people broken if they happen to have one patch
+> but not the other.
+> 
+> I suppose one way to handle this (if DT people like it) is to keep the
+> bindings the way you have it but then add some layer of backward
+> compatibility in the driver. It will mean that anyone with the old DTS
+> would officially not "validate" properly against the new bindings, but
+> I think that could be OK as long as it was explicitly mentioned in the
+> commit message. Obviously, though, DT bindings reviewers would have
+> the last word there...
 
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20251006-fix-i2s-polarity-d744338fa223
+That's fine, but then I prefer we keep 'power-supply' as deprecated. 
+Then if we ever validate that drivers only use documented properties, 
+it would pass. We already check drivers use documented compatible 
+strings, so that wouldn't be too hard to do.
 
-Best regards,
--- 
-Valerio Setti <vsetti@baylibre.com>
-
-
+Rob
 
