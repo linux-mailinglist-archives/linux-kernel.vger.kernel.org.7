@@ -1,137 +1,127 @@
-Return-Path: <linux-kernel+bounces-843511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8E64BBF9E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 23:55:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BF9DBBF9F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 23:55:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB9A94F2D8B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 21:55:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 17DDA4F28FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 21:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9849A259C80;
-	Mon,  6 Oct 2025 21:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9DBB2638B2;
+	Mon,  6 Oct 2025 21:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hcVP81YW"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sDCMggo7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF60621C9FD
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 21:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C201F4615;
+	Mon,  6 Oct 2025 21:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759787698; cv=none; b=uZ4HCDAemD2+gCJ0y59vu9LixPFQSYOMNJZ7YCtjn59lDsMLZRZJ9trPcR/wPkZwAOs3YT98ZDGy/DisgSd8DtReo/MmTHRpu/r3p/aThfjomVy4654pOHE80NLP/tNn+q5Xy8y7zasiFXVvcYajbmpBaLbCzeBxNrgyh6QEecg=
+	t=1759787711; cv=none; b=KwGiY9twTRydEneKhZBl906J1/ogwQr/YZFt9I5j1FnwmNy9Z5DTPZDRq1N5lu9AxUqnIxxOrMnd2ei49iVMfG1Bjx9DD25n0gKIdFaOfrYae4QQeeG8EfwaDTuMuuTm8NmVdZUf05rB4vN5FkVfW20G/jZjfN+aHna4DZMpb28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759787698; c=relaxed/simple;
-	bh=TWxpUrysf16+ov9dpvsDDDOufpdomI5DiZFLgIza93w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BdAS0dgVhPOe1toVH88vnqmz9CY0+K2ivDbLFt79gLvw4gx19lUEA1J1C9cN0vS3XyMshkBkW1hrs9QH38h9gvKEN1IADaAwr8A3w3xDr3tGUw7SuOCUvTdfYNsK080Imd1YtZ3dq5DdMHjV/Oy+oUAkMEh5gp+CC/mvdN07o48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=hcVP81YW; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b3b27b50090so1017359066b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 14:54:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1759787695; x=1760392495; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=SDCKn2qbtodUcRBoRw+ujzLtuCdD/rFo1KUv4Z7GG4U=;
-        b=hcVP81YWcwMP5v9qflhqYXohel5Sxj8C0QeydzniX3m/wxiqBm1Dvvw4YgCI2yMEQP
-         DCBs/0obkzJGMSvQ60zncf6W2AzI+W+f+KsdV2dIAFmug2p+Sus/5QYcYU0qFKqpCevT
-         SZAKyLxyCwkPCHU7zhjYZijQuQKvPk6EC5mE4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759787695; x=1760392495;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SDCKn2qbtodUcRBoRw+ujzLtuCdD/rFo1KUv4Z7GG4U=;
-        b=sNRVoJGBSisPxWAPl5d0Geg5bcfX8ElrXpgeXW6fi9yrW6SNga7/MSfcV4TGkxL989
-         tNo3wgPnm5no9qbrK/asXU3KRbE2WCI6T0tXWLFrn63XISIShhgS4AKv//Vm3thoWk5m
-         6K20nng/u30t9BAtG8NaPHjtZgIX/z6XoWjkh3gN/ZPAZjnudgYktLVNXubAMQO/ZXGT
-         8u+/O1wySMwZ+idNuaul9di0WystKjBQOKutEOKPfvzrm78nulW3DBa3Nky1pUGhf6Z4
-         qL8tNciimIvEsKtIrFlkHgB8Gzlj8ZjW4tuzAALi4Ues/fGoXSiFh/SJTw129Rw3ARUy
-         WO2g==
-X-Forwarded-Encrypted: i=1; AJvYcCX8LT8SgzJ+TA0n0cKlGG0oQFN92Jar13PHgbVw4mRAvxEBVR+znFl82bcP5AtqttYzCWYSoYJazSw08TQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwdZ7lEw/o60j7NH8oR14Jsqv/moZVm6HiiiDKahRaPNMJa27X
-	Y7LZhu5tD9Fs/0W1iCyLQzGSTSBQzqYCDhxsVFJ0GP/4iSrnRiMWobX6Cr2Fw1sUanzLK/eun7w
-	o2zQ3EPc=
-X-Gm-Gg: ASbGncvhaPeuWjSpbLDApwFCDdZbm2nGk45+yqG52EHLVBKpi2AD0TCHdN3PNoVdHxD
-	ju45bNPD5An55Wt+fyJ71AsezizRafZZUll+2K94yO7jZe0bGVlDa8mQaxPotgZS5kQfgbuWtSo
-	IzmHec6GbknLvKc4myQyOscTpo2oKTw/cGjo3lJ3KqGzLeLg7WWOJ2aybcEMCoNudbrG2ELDV83
-	XIbL1kgJyK9l/t1TRjRtYcgbsaGZdEMURurZ6DIrFKP/lsa7QnEU/w5cL7/PgGP/q3CwV3qooAE
-	QrtiCXy+73g/aQxX3+5ZyYNHH5ZwIZS54Nv8xNvRmpYxybPZbPXpAvwmPa9+cvyjsfC8dZwx42p
-	HZDdACVcAkqBUOrdAph92oitFERUrHy0bXfK211DjmDe9ETqvmyhmIjy+kYulcKHgFrZZG4iEta
-	yN7E/M89PMoVNEl26aeC1RQKJWX36Bhdo=
-X-Google-Smtp-Source: AGHT+IEu5n7w4ShUoewWTiMMTuBi2YnKPZI6Fd/hOHe6Lw1QNcSxf1qaXc653e2FUF37dnMrlsymYQ==
-X-Received: by 2002:a17:906:1393:b0:b4e:d6e3:1670 with SMTP id a640c23a62f3a-b4ed6e31c41mr257619166b.11.1759787694820;
-        Mon, 06 Oct 2025 14:54:54 -0700 (PDT)
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b4869b4f1d1sm1218839566b.71.2025.10.06.14.54.53
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Oct 2025 14:54:53 -0700 (PDT)
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6399706fd3cso2946845a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 14:54:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWQMH9zWezU3rV+9nlOXoMzD6whEKg57aqmKw87k68s86u6w9DU2EXYYgO26sBvzHqG9u4RcgU3MfRe3Vk=@vger.kernel.org
-X-Received: by 2002:a05:6402:5191:b0:633:7017:fcbc with SMTP id
- 4fb4d7f45d1cf-639348f1c5emr14975075a12.15.1759787693294; Mon, 06 Oct 2025
- 14:54:53 -0700 (PDT)
+	s=arc-20240116; t=1759787711; c=relaxed/simple;
+	bh=2aJnYVaGf8XUqQHTpB1VtEpe3tVyvm1Pn5nKvnx2EKI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lGZgMto220LJWJc9EOnWtJ/EHakkbI+atzZJnxc448WMVIoBW6sKDbSrI4/s83mhIhcwgDKHY3CGYvCa8fWAZOjlLziE1f2pBwYf3OhG/LGKVnee8unqJC2Yc0f81KD6uFedp2TjB1amVd3rObjiEVOgKZrf36T5V+i73LjTktg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sDCMggo7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C649C4CEF9;
+	Mon,  6 Oct 2025 21:55:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759787710;
+	bh=2aJnYVaGf8XUqQHTpB1VtEpe3tVyvm1Pn5nKvnx2EKI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sDCMggo7LWAQ4bGGtpFw4mVsQnmJ8vYPGTBLFLD08OlFnkZ5rQvP8L7bOBcsCjeu1
+	 15MuEbCjbb/Ga3sQWrglz38c/riM+jyd6Iz/dNYD2DWgqF6f9mHNpuuNZE0LtcWbEi
+	 pgQ+20XL+LbqmKMBE5nLoUcnMFoYPsZ23MuOghofJ0wSyQDRs5jvm0mi73Z5jItlWG
+	 7u7abns/YhJzb9tB8844XHa6iXFxM2hbsPxuYjJzJfVduuOuDZQ/+g3Yy2VzCYvPc1
+	 iWldpKvf8ET82qOTJddDsXKtquQZ7yJ/dHAtGgWvvtthetXt1XADT4Xy+2CaEHA3dB
+	 nPzn4bwaSM6yw==
+Message-ID: <80347dcf-419b-489e-9b0e-d901fbacc71a@kernel.org>
+Date: Mon, 6 Oct 2025 22:55:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251006135010.2165-1-cel@kernel.org> <CAHk-=wiH4-v3YxzN9_obL8Z_d9+TiFOdXwiDAauHqO-1vymY-w@mail.gmail.com>
- <9636431303ae3a8b24c84b885cfadcb963124232.camel@sipsolutions.net>
-In-Reply-To: <9636431303ae3a8b24c84b885cfadcb963124232.camel@sipsolutions.net>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 6 Oct 2025 14:54:36 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgDNJjvBc3+nAH9jTd4NHwiCizaw+0ZN9VSCpzT5jRTHQ@mail.gmail.com>
-X-Gm-Features: AS18NWAGZxnn0FJ50TTFvawTEJndCY266DQLf5nNwVGofZLyRQSE7F8xjpkpYFs
-Message-ID: <CAHk-=wgDNJjvBc3+nAH9jTd4NHwiCizaw+0ZN9VSCpzT5jRTHQ@mail.gmail.com>
-Subject: Re: [GIT PULL] NFSD changes for v6.18
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Chuck Lever <cel@kernel.org>, Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
-	linux-um@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 0/9] gpio: improve support for shared GPIOs
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+ Srinivas Kandagatla <srini@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Saravana Kannan <saravanak@google.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Andy Shevchenko <andy@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20250924-gpio-shared-v1-0-775e7efeb1a3@linaro.org>
+ <0b402bba-0399-4f93-873e-890a78570ff7@kernel.org>
+ <CAMRc=MfwEHGV-HZQURR3JNg1HatAeWO17qbRmkWUXTSBWj5jSg@mail.gmail.com>
+Content-Language: en-US
+From: Srinivas Kandagatla <srini@kernel.org>
+In-Reply-To: <CAMRc=MfwEHGV-HZQURR3JNg1HatAeWO17qbRmkWUXTSBWj5jSg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 6 Oct 2025 at 14:20, Johannes Berg <johannes@sipsolutions.net> wrote:
->
-> That doesn't mean it's between the host and guest kernels, it's just
-> between code built for "userspace" and code built for "kernel", both of
-> which go into the UML linux "guest" binary. IOW, it's just for
-> communication between hostfs_kern.c and hostfs_user.c, which nobody else
-> needs to care about.
 
-I was worried about people having version mismatches between those two parts.
 
-But if that can't happen then that certainly simplifies things.
+On 10/6/25 12:55 PM, Bartosz Golaszewski wrote:
+> On Sat, Oct 4, 2025 at 3:32 PM Srinivas Kandagatla <srini@kernel.org> wrote:
+>> On 9/24/25 3:51 PM, Bartosz Golaszewski wrote:
+>>> Here's a functional RFC for improving the handling of shared GPIOs in
+>>> linux.
+>>>
+>>> Problem statement: GPIOs are implemented as a strictly exclusive
+>>> resource in the kernel but there are lots of platforms on which single
+>>> pin is shared by multiple devices which don't communicate so need some
+>>> way of properly sharing access to a GPIO. What we have now is the
+>>> GPIOD_FLAGS_BIT_NONEXCLUSIVE flag which was introduced as a hack and
+>>> doesn't do any locking or arbitration of access - it literally just hand
+>>> the same GPIO descriptor to all interested users.
+>>
+>> Isn't the main issue here is about not using a correct framework around
+>> to the gpios that driver uses. ex: the codec usecase that you are
+>> refering in this is using gpio to reset the line, instead of using a
+>> proper gpio-reset control. same with some of the gpio-muxes. the problem
+>> is fixed once such direct users of gpio are move their correct frameworks.
+>>
+> 
+> If they were called "reset-gpios" then we could (and should) use
+> Krzysztof's reset-gpio driver here, but we have many cases where
+> that's not the case and the names (and implied functions) are
+Yes, these codec drivers are due to be moved to use reset-gpios.
 
-> However ... it looks like hostfs_kern.c is using ATTR_* in some places,
-> and hostfs_user.c is using HOSTFS_ATTR_*, so it looks like right now
-> these *do* need to match. Given that, we should just generate them via
-> asm-offsets.h, like we do for other constants with the property of being
-> needed on both sides but defined in places that cannot be included into
-> user-side code, like this:
+--srini
+> arbitrary. In the case addressed in this series, the GPIOs are called
+> "powerdown". The second big user of nonexclusive GPIOs are fixed
+> regulators where the line isn't called "reset" either. There are also
+> various other uses sprinkled all over the kernel for which no good
+> abstraction exists or can even be designed in a generic way.
+> 
+>> Am not sure adding a abstraction with-in gpio framework is right
+>> solution, But I do agree that NONEXCLUSIVE flags should disappear and
+>> users that are using this should be moved to correct frameworks where
+>> they belong.
+>>
+> 
+> I'm open to suggestions but DT maintainers have not been particularly
+> fond of creating "virtual" devices to accommodate driver
+> implementations.
+> 
+> Bartosz
 
-Sounds good.
-
-> (that passes my usual tests, if you want you can apply it as is, or I
-> can resend it as a real patch, or I can also put it into uml-next for
-> later...)
-
-None of this is the least critical - the bits I actually reacted to
-aren't even used by hostfs so we also don't need to synchronize these
-(potential) updates with each other.
-
-So it does look like a good idea to remove the hardcoded "these bits
-must match" thing, but clearly this hasn't been causing huge problems
-in the many years they've been that way.
-
-IOW - I'll wait for a later pull request from you.
-
-            Linus
 
