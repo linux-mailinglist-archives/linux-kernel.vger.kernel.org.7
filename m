@@ -1,185 +1,122 @@
-Return-Path: <linux-kernel+bounces-843382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC963BBF126
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 21:13:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E60BBBF12C
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 21:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABCF618979EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 19:13:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5B9844E9E16
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 19:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52CDD2DAFDE;
-	Mon,  6 Oct 2025 19:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1532D8789;
+	Mon,  6 Oct 2025 19:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i4b5l3+E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SBXtTvZE"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B761D61A3;
-	Mon,  6 Oct 2025 19:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575D227E1C5
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 19:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759777998; cv=none; b=k1V8uKP7zU+HpHwvwEEJ5S85QNw1X2yL+l09WEcEPSJraF8YV1kRjOYfRiNroapjbxuxdVlrxH8VAcmcEa0Xg6BxFwlli4tEh0lzT2ZZQ657wPgZNKb+HqN9bvgi5dfrLo98O5fBsi03AoLLZjUynDWJ+nTUFAdKq5CRQ1f/PX0=
+	t=1759778030; cv=none; b=N1I2vsxRQpgIgLT6on39LbcUt4pTp582mMp5pEgjwwriY4mFoimHDuPQ9XqcpQkI0z8lJsZKFvqmXuT/4B/fsOSmqVEYrXDBbE8UW0KW5yeESu6oq2BaGU1BPOhbwPWr8tWQ5LN8zarwXAZvmxep3MQdorDbfe3xQMb6ynMc9wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759777998; c=relaxed/simple;
-	bh=WX4I856SyQQgA+v48ohOBFgoGksSXdNvKixB12S5V3A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hSQeBVy3Esag0Vfa/VIshMMYhwryb2N7HsbYpdAkCLjx2eH6y/ZHDmGadKJ+9TGmEfKfMqRKKmt5rq7uQWAqSQYsoeuGPFg+KMb6130BQ8hxBi8jW6jTi9SbcKX5Mi7lx5C3IoJGwRnBYP1kNypIdTN/coD5JOSRnkqpUL9q/Q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i4b5l3+E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D44F3C4CEF5;
-	Mon,  6 Oct 2025 19:13:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759777998;
-	bh=WX4I856SyQQgA+v48ohOBFgoGksSXdNvKixB12S5V3A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i4b5l3+EKs7M7NFHwB80xbPQeLfhlkOUr2K4X7cZRxECq8r2UA6KEnIsQ3V5eZbdv
-	 gKi6Enz9TZ/xwx5rzcTUc2Zvx0JyCWPDHao+a9FmOidBZbRY8zXBsFkyDB9qlX+FMc
-	 sghnYlJobdqWb2xJQ/AU3ZFMSNFcmCLPvdXfOrU7s/RLfdK6VSHdc/KKgIsYlynvQZ
-	 hjvMHeZHBUDBWHWJAOEX+3fTU+j36puNFYV1OyetnQ2y1YoumqniRtx6lXKNOoXP01
-	 MfHHNWJx9/T+4iXev+F6G1Kt7jhUg7RTHbk3yPAcGScJYCHVglAToFXmaQOadB6yFL
-	 3HgFX7VicL8YA==
-Date: Mon, 6 Oct 2025 12:13:14 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Nicolas Schier <nicolas.schier@linux.dev>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: Re: [PATCH 2/2] kbuild: userprogs: also inherit byte order and ABI
- from kernel
-Message-ID: <20251006191314.GA2706650@ax162>
-References: <20250813-kbuild-userprogs-bits-v1-0-2d9f7f411083@linutronix.de>
- <20250813-kbuild-userprogs-bits-v1-2-2d9f7f411083@linutronix.de>
- <20250827075334-3332c08d-66f3-427d-b0b2-4460e779f261@linutronix.de>
- <20250827224935.GB414199@ax162>
- <20250828083747-e819430a-986f-4f71-bbc8-e402e339c9a2@linutronix.de>
- <20250903223131.GA2264021@ax162>
- <20251002144850-4a498f99-418d-4888-80f9-0f24c6896318@linutronix.de>
+	s=arc-20240116; t=1759778030; c=relaxed/simple;
+	bh=hsSGQHlJQgA9xoqDSEerkDm8OlpIUb4MXP+dAWtmrVU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=idASOYwXcG5ayi96g8b/FIjL8OB7lh5vKd1R7FEoK6oVoX215Pb0gVvcKgN+crxQwapGIwue7kK0LmjCJVZVN6T+eujASCMKEh3sRy9/eQJdMB6m/LhfdtK6YZHQneeH83b+66fjXySC3J805ngZIMhZ949cEUWtky2h0bTYJmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SBXtTvZE; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3ee12a63af1so3404897f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 12:13:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759778025; x=1760382825; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RMcBBIOQ7oEULc7Z+X61tqPmJ8i34RpbaRVflxVnH4c=;
+        b=SBXtTvZEnJLg4a9FT/A7QlCMDzClQji0pjX4M4uylhNxZW+/Z0X0PMm90yGlrYQjmM
+         X6nEYd+fIKQrlAtTa936BzBIPRHMQS/Vu/nSXfM0tvY9z115qdKFcI90ouqrYV7bd3AB
+         A9M6AgxqfhtXvhKxERg7mlgs5su2hBjsh4d/7RloVonzP9UvYy26PbuSBNO1aHcZQfsK
+         mgBVV4K83odTXqzQYXy6IWw6eLKZ7gnOmFPJDOg7IU3K+XmdWLSdKqaZovslEcEfkGQ1
+         WGrbAth3TLVUHFztRSQLuv9KzMiC/ANLXBSJtINW5eZ5HfTcP1Objkaa6Nh1M5zWPWVe
+         zfVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759778025; x=1760382825;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RMcBBIOQ7oEULc7Z+X61tqPmJ8i34RpbaRVflxVnH4c=;
+        b=I6upW8OO0QaFyBetcXbweI0y4PC3pdEX5VhF2NLxkl6Weux36jxG3N4MczafD4/X7W
+         AQx2FevBrM7fw1JBKjAGpJe3FyzzVxHfMcd0UGsInP0RbXrL1og2y1bQ8w/FQCYFOGP/
+         n16EHxMr8BIhQVtBJAgJ1ALqOf0Og7biAp0Ef3J7lQifEVMRCB3gxTXwKyj7tq6SvE8P
+         EIgPHACCID8MSeQEKgFOLT5GoeJ0L4IUGMvcF4meXtueIRluNHNfMC1NjAYoWhjQrgG2
+         Wk6SMbDS3ULFh+cZODXrWY9c2GwrNWo22tFouMlK7q/zV761hx0k3M0+cAIPOZ2y7eZE
+         1XMg==
+X-Gm-Message-State: AOJu0Yz7W6Q2czTrHqXjbTwbACQjI5K+FSFVrijHZhVHPg2rHBGR3LYl
+	mRdenzc2JPIikEd8PIOBiA+9wL+mxDE07mSop3ZlHF8I+bMmKlMu6jAksV2fbw==
+X-Gm-Gg: ASbGncvmtn4XBCoJf6Oll5l1sjt5+m7fIAbhntkGUFH3oNH/vtEPRG5XY4I6OOxewLT
+	3chO9OvZ/yOnIQnI/iy6cKGLpelcLM9eWR4EOTb6ZNsTW12JLJUwQztt+DVmn0Xm/XrnIIkGujh
+	2F0tWIUuDr56osTBVH/AnQDH6zasWEiG64Vp+SAFWn48tnCpHO6SL5cSoab0V3Gxupd5hEGSf6a
+	Gui0ECiRL89hM2FdRepZuS8pOl0yDP6A+Vz7uuBjjCwBNk0S8Ddme9oTKQYY/MBwjf4RMRxIKjH
+	Cgzi0/IhqiBJC/RFXnM7k/9jTmUchJRh929hJ/O5xTqL2fnahvyx9UUhByT59tKJ6R9dzMsi6Fi
+	fi6NmyKjQ9Qsq0ijQ3bwaz4uVzGZJuSJuRgZBAGcbOrJ9rze5FXR8y49uODnuMP1/4nlC
+X-Google-Smtp-Source: AGHT+IHV/nfCCK0RCczv7rc5MaQoZEyJWv13YoEqaPNyFNBNdO0E4u+kR/nXuPC982b+no5YRADjmg==
+X-Received: by 2002:a05:6000:25c3:b0:3f1:ee44:8bf6 with SMTP id ffacd0b85a97d-425671b2af0mr8518969f8f.51.1759778025107;
+        Mon, 06 Oct 2025 12:13:45 -0700 (PDT)
+Received: from fedora ([154.182.208.105])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4256866060fsm16646435f8f.14.2025.10.06.12.13.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 12:13:44 -0700 (PDT)
+From: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+	Mary Guillemard <mary@mary.zone>,
+	Faith Ekstrand <faith.ekstrand@collabora.com>,
+	Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
+Subject: [PATCH 0/5] drm/nouveau: Enable variable page sizes and compression
+Date: Mon,  6 Oct 2025 22:13:23 +0300
+Message-ID: <20251006191329.277485-1-mohamedahmedegypt2001@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251002144850-4a498f99-418d-4888-80f9-0f24c6896318@linutronix.de>
 
-Hi Thomas,
+The new VM_BIND interface only supported 4K pages. This was problematic as
+it leaves performance on the table because GPUs don't have sophisticated
+TLB hardware. Additionally, this meant that we couldn't enable compression
+on the userspace side as the HW supports compression on larger page sizes
+only which was a major (>50% in some cases) performance loss.
 
-On Thu, Oct 02, 2025 at 03:23:08PM +0200, Thomas Weißschuh wrote:
-> I investigated this some more and didn't really like the end result. The
-> problem is that $(m32-flag) and $(m64-flag) will expand to nothing if the
-> compiler does not support -m32/-m64. So for architectures which use
-> different flags the current logic will just ignore the bitness. One way
-> around this would be a mapping from -m32/-m64 to architecture-specific
-> flags inside cc-can-link.sh, similar to what I already did before for
-> the mapping of -mlittle-endian to -EL on MIPS. But we'll end up with a
-> bunch of architecture-specific details hidden away in a non-generic
-> shellscript. And the interactions are very non-obvious and brittle.
-> Then I'd rather have the architecture-specific bits openly in proper
-> architecture code.
-> 
-> See my current proposal, using x86 as example below. It will require
-> code for each architecture, but there are not that many of them.
-> And the configuration matrix for each architecture only contains a
-> relative small set of actually supported configurations.
-> Unfortunately I don't see a generic way to deduplicate the flag values
-> between ARCH_CC_CAN_LINK ARCH_USERPROGS_CFLAGS. Each architecture can
-> use a macro if they so prefer.
-> 
-> When the "interesting" architectures are done we can also slim down the
-> generic implementation to not use any special arguments and that would
-> be enough for the simple architectures.
-> 
-> For the future I would like to introduce CC_CAN_LINK_STATIC again.
-> With the scheme from below this would mean to duplicate all the kconfig
-> symbols for each architecture again. One way around would be to change
-> ARCH_CC_CAN_LINK from bool to string. And then let cc-can-link.sh test
-> for both static and dynamic linking in one go and return either
-> "dynamic,static", "dynamic" or "static" which then can be mapped to
-> CC_CAN_LINK and CC_CAN_LINK_STATIC by generic logic.
-> 
-> What do you think?
+This patchset sets out to add support for larger page sizes and also
+enable compression when userspace binds with the corresponding PTE kinds
+and alignment.
 
-Yeah this seems like a reasonable direction to start heading. I would
-much prefer a little more verbosity for the sake of robustness and
-maintainability going forward, especially since these are static flags
-per architecture (i.e., once they are initially set, they should not
-change).
+Ben Skeggs (2):
+  drm/nouveau/mmu/gp100: Remove unused/broken support for compression
+  drm/nouveau/mmu/tu102: Add support for compressed kinds
 
-> diff --git a/Makefile b/Makefile
-> index d37dca7850b3..17123948a4fa 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1135,7 +1135,15 @@ LDFLAGS_vmlinux	+= --emit-relocs --discard-none
->  endif
->  
->  # Align the bit size of userspace programs with the kernel
-> -USERFLAGS_FROM_KERNEL := -m32 -m64 --target=%
-> +USERFLAGS_FROM_KERNEL := --target=%
-> +
-> +ifdef CONFIG_ARCH_USERPROGS_CFLAGS
-> +KBUILD_USERCFLAGS += $(CONFIG_ARCH_USERPROGS_CFLAGS)
-> +KBUILD_USERLDFLAGS += $(CONFIG_ARCH_USERPROGS_CFLAGS)
-> +else
-> +USERFLAGS_FROM_KERNEL += -m32 -m64
-> +endif
-> +
->  KBUILD_USERCFLAGS  += $(filter $(USERFLAGS_FROM_KERNEL), $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS))
->  KBUILD_USERLDFLAGS += $(filter $(USERFLAGS_FROM_KERNEL), $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS))
->  
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 75f3de70df51..162c71c117bc 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -332,6 +332,17 @@ config X86
->  	select SCHED_SMT			if SMP
->  	select ARCH_SUPPORTS_SCHED_CLUSTER	if SMP
->  	select ARCH_SUPPORTS_SCHED_MC		if SMP
-> +	select ARCH_HAS_CC_CAN_LINK
-> +
-> +config ARCH_CC_CAN_LINK
-> +	bool
-> +	default $(cc_can_link_user,-m64) if 64BIT
-> +	default $(cc_can_link_user,-m32) if !64BIT
-> +
-> +config ARCH_USERPROGS_CFLAGS
-> +	string
-> +	default "-m64" if 64BIT
-> +	default "-m32" if !64BIT
->  
->  config INSTRUCTION_DECODER
->  	def_bool y
-> diff --git a/init/Kconfig b/init/Kconfig
-> index f3b13463ec26..5ca2f3289020 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -82,8 +82,13 @@ config RUSTC_LLVM_VERSION
->  	int
->  	default $(rustc-llvm-version)
->  
-> +# Might be removed when all architectures are migrated
-> +config ARCH_HAS_CC_CAN_LINK
-> +	bool
-> +
->  config CC_CAN_LINK
->  	bool
-> +	default ARCH_CC_CAN_LINK if ARCH_HAS_CC_CAN_LINK
->  	default $(success,$(srctree)/scripts/cc-can-link.sh $(CC) $(CLANG_FLAGS) $(USERCFLAGS) $(USERLDFLAGS) $(m64-flag)) if 64BIT
->  	default $(success,$(srctree)/scripts/cc-can-link.sh $(CC) $(CLANG_FLAGS) $(USERCFLAGS) $(USERLDFLAGS) $(m32-flag))
->  
-> diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
-> index 33193ca6e803..0c8dbfbce415 100644
-> --- a/scripts/Kconfig.include
-> +++ b/scripts/Kconfig.include
-> @@ -75,3 +75,6 @@ rustc-llvm-version := $(shell,$(srctree)/scripts/rustc-llvm-version.sh $(RUSTC))
->  # If you are testing for unstable features, consider testing RUSTC_VERSION
->  # instead, as features may have different completeness while available.
->  rustc-option = $(success,trap "rm -rf .tmp_$$" EXIT; mkdir .tmp_$$; $(RUSTC) $(1) --crate-type=rlib /dev/null --out-dir=.tmp_$$ -o .tmp_$$/tmp.rlib)
-> +
-> +# Test whether the compiler can link userspace applications
-> +cc_can_link_user = $(success,$(srctree)/scripts/cc-can-link.sh $(CC) $(CLANG_FLAGS) $(USERCFLAGS) $(USERLDFLAGS) $(1))
+Mary Guillemard (2):
+  drm/nouveau/uvmm: Prepare for larger pages
+  drm/nouveau/uvmm: Allow larger pages
+
+Mohamed Ahmed (1):
+  drm/nouveau/drm: Bump the driver version to 1.4.1 to report new
+    features
+
+ drivers/gpu/drm/nouveau/nouveau_drv.h         |   4 +-
+ drivers/gpu/drm/nouveau/nouveau_uvmm.c        | 106 ++++++++++++++----
+ drivers/gpu/drm/nouveau/nouveau_uvmm.h        |   1 +
+ .../drm/nouveau/nvkm/subdev/mmu/vmmgp100.c    |  69 +++++++-----
+ .../drm/nouveau/nvkm/subdev/mmu/vmmgp10b.c    |   4 +-
+ 5 files changed, 131 insertions(+), 53 deletions(-)
+
+-- 
+2.51.0
+
 
