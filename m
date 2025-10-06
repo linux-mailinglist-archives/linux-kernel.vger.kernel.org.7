@@ -1,152 +1,134 @@
-Return-Path: <linux-kernel+bounces-843434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED91ABBF2CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 22:19:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48886BBF2D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 22:20:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85B44189BAEE
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 20:20:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 086643C1D30
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 20:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519732D5436;
-	Mon,  6 Oct 2025 20:19:35 +0000 (UTC)
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E5B257AFB;
+	Mon,  6 Oct 2025 20:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yW4oXocW"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9002638B2
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 20:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D86B227EA7
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 20:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759781974; cv=none; b=T8OMuRgih7UlRq1ONy5JBgwWxsH11coFu+NtFsZAP0UiwYzpfX5NwaMUYW9kSqp514bvDEAkLd7Ymg1flZoXDbR+L+c2c1lI0u6RRPteQeTeB4cX6IE0TlKraTO+kqDl/blxxjqCbl0SVOMFVY2K7zLK4dUlCUoXcBa0mBIta2c=
+	t=1759781996; cv=none; b=YWyYZplul5PXk9+4WDD8fyqNuGi/UxY3zrMM9fWaX6Bc31cMCLfDRAmoGxkQpotUOgjsyRcRK41R7QUKl+Iz3pq3vi6ZTo7/CluJyDonCgg2w3wEJgl4Qfjgeu19KUVjuimDVdypS6jexwiRL/6uxyy7cxnCP+p8gZi+umJDZI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759781974; c=relaxed/simple;
-	bh=8pUFWkCcsBhJoc8uPEjlLZ3fwdPT2JCj1o8+awA34WI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U/Gkc4w4Ed5nEp8HYCLPKyoT5F1sWXeyvT5RJj28YBJxjfFkNW2MRiVhTGlCXDG650N3pyLvMzHHqKZVJfxhIjGvuxDLplYIscV6ezwgCNSRd9duF5LpnChQVxiZvdndCQXgwe+qy1QJurDXf5/J5o+o40ClVnUTKhVkKh5sThE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org; spf=pass smtp.mailfrom=linuxtx.org; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxtx.org
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-42e7b22e007so16742785ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 13:19:32 -0700 (PDT)
+	s=arc-20240116; t=1759781996; c=relaxed/simple;
+	bh=/SYC2F5CivU54FwucLiYMKq6VGD4NHmrnyTKCQAvMpk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=nq/JcH8EtfiY/enlMY+4q6v8SlNspntoy3thu7DJJPGM3dZe3Wn/4H7eVg6904EfCDFMV54tQCsRHkpwcMPnEo3K8tS0YY4nJnEyhkLstI1u/OjFfvxWOM8w2JKXwRQ8b1qukGFX1L19yer6z7mG62TiVCviC8Jm3nJQk8NHp0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yW4oXocW; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-28d1747f23bso51101575ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 13:19:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759781994; x=1760386794; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9pN3I+qDlRm86RsLpONZsIyYY5NvfWVzalcxaJr2Pds=;
+        b=yW4oXocWW14Dg2vFl/jgQyfg4+dizJ1sxK1o7D3TCJCt+P1m0sbaavf5A1Ve3e3mQ1
+         cxJlYIBl61ursrpp8Wr4PhVn4KNy7qXLYnhwE6Z1PQuyXezDKaOwSHSPK2tOSLUigvty
+         zsuhNDKlm8anfz7ldVPOSU5RmVqa8CSlxlz7Cc3NFiqNPXtpHl4+jzOs7+Gqb8ir3S1/
+         I2wROZWTMon/AaEBwiKMRJuZmWZcjn/C5hsRDhXDVRww60ajFCBWITCeWMlGhwaX8njn
+         394LPrzrmIoRP2nkg/9kP2NFjOl/OdKVGMLXSfo7jHrIj62SFtXdB0cOQ+15dgKOBwd9
+         J00Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759781971; x=1760386771;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WMQ7AMWhdctXnD7KUrakUOl3r47iwY0bunSrG+xUVBs=;
-        b=V3yfcQejVqpRjchgyrZXjnHuRpoiVpB0Nj6iBNF2cmrvR8UzEkBf7PZXrXPtf8DIRA
-         2ck3XpzjrbgXh1smm0WdhjNMYaV/+RfN2aSpCIytdf9l+I2mlUluqb61QZ3UYwdKknXU
-         OHPiKvgvzhlQ+H8c231auOys6YFUnU+GiMGUQm+IvA7Sqvbiq4W+ZezzsZUBBTrwbw9Z
-         RBWOG5liMMS6VHQTr9Owgw1iLXLe8vpkz6zFo7WW716JYnBzRlN9rafNNAKDICqC3W4r
-         DKnFyhIUZiCTbZC1NpF3XtTGVL6VrqePKsqha+tZ+6/IkwGQGldPje35lnnwSuLzNFAQ
-         0Jww==
-X-Forwarded-Encrypted: i=1; AJvYcCWpwTfjrM1h5kIxg83Q6IlPRqHhCeS9ItxvaAI46vQhFt1IbnKTzN1Hk9e//8vIvy85A4RdbAHdVfDoiPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzluWsXLrCKr5HRgMtg09j3RLXHkM2+5tkqu/Ao4RSEiq4bwhoh
-	xEYxUmIB5zHx8d3A1uvOqWV9DAWNYVF7/SaV0jW7y3NAA+1eWvG8cGwPiww+2DWEb+C7xQcMMOY
-	M8XW2/yS5/op98ZrUnt82xA4JpXhQ1zDBHrGQWjzN
-X-Gm-Gg: ASbGnct/V4wUrYYGMSsJkkz/P9TWovGYVaNS4b7eTzTZ31reeGKgQ9h8Ost7V3cKDJS
-	fKTSQNlP4eaE1fNy7rkN6h8ITxNW4GWzvfIlZQrdHJsUN1As9KcYNHpM+dkCEqDRR+LOasJqGjV
-	0Tb6zAI5/M7jbHzNBUwA3xA5ngd8KbS2dsloWOmouLhm8nd3sZaRk0rHUSu1gvIm1216J783ztZ
-	ljEvRCgPBFPMwi6rDJmUe4t2gMaX5hFvw==
-X-Google-Smtp-Source: AGHT+IHRsp5f2Ku6tRb0jzYKixpe8eVlAjBgkS13HoHpwiJO4HW1LYKeuVIAV6O+Y2oX7uDDLHkb1J66/VTyrDNExLc=
-X-Received: by 2002:a05:6e02:178b:b0:42d:8a3f:ec8b with SMTP id
- e9e14a558f8ab-42e7ad01f91mr194991055ab.3.1759781971030; Mon, 06 Oct 2025
- 13:19:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759781994; x=1760386794;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9pN3I+qDlRm86RsLpONZsIyYY5NvfWVzalcxaJr2Pds=;
+        b=OWMaVJMt+xtFcDRE34oXECsEhJqe9rpJmRETe7SN+5RM0Mk8WNFMijjVUCSQK88QWC
+         anX4ty0kSWFQGRsVTiTPe/aP08NS8rUqarm+exgroSKZJts3gLXV6pwXwwooMuYxPdrN
+         y3HTZnfv4enULDedtSV2AGS0qt4YsQ+vVdRI5hP3cNgJcSm3vq7jXt+cwdcRRfMgax5+
+         bJvsxWWYXY+/PuWRcmV+PcU7Egz3Zb6S27BEIqrL8MXgabonZNHlonrCZuZXsxYdDcUv
+         wcKZtGUIVrH2qaN00xIgFEbPCAkE9X0VGEhUbJHUogmryENM/sOBZesa5eCkTr6Tj69T
+         fDaA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRGTmzMWV0CpIKSN6QOpu+b3HZq6OAoqWtg+soFgIPbvEVMkPr9wcVJ9RMh5+yOLxiAeEfyDzfLkUEyf0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsrzRkjG2VMovCwm8U29THxZT8VbstEcmwMLxvvrn/cYeBp2Iy
+	k2M67EH1Vd2y57VpcW0MO9JJtaJc038hftH0nz6bZ97EQWhWtlk+tt/nlLY4JVrjvutNhZsZroC
+	ju8CdlA==
+X-Google-Smtp-Source: AGHT+IG+dPypssAxxB1AhIyikjpakIZz2qhMM7F+pWzPuRCSHZx5xpLGrwjB3vBabj2YhH49dtdnSu/VJJM=
+X-Received: from pjxx8.prod.google.com ([2002:a17:90b:58c8:b0:31f:2a78:943])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:fc86:b0:267:f7bc:673c
+ with SMTP id d9443c01a7336-28e9a656997mr180158905ad.44.1759781994498; Mon, 06
+ Oct 2025 13:19:54 -0700 (PDT)
+Date: Mon, 6 Oct 2025 13:19:52 -0700
+In-Reply-To: <diqzplazet79.fsf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <cc6cdd116c3ad9d990df21f13c6d8e8a83815bbd.1758641374.git.jstancek@redhat.com>
-In-Reply-To: <cc6cdd116c3ad9d990df21f13c6d8e8a83815bbd.1758641374.git.jstancek@redhat.com>
-From: Justin Forbes <jforbes@fedoraproject.org>
-Date: Mon, 6 Oct 2025 14:19:20 -0600
-X-Gm-Features: AS18NWACojPXOJnwcNavqYHbaQyGIFY7GHsRyGCpNIUDTuuHWfnt5-IAZ7A22L4
-Message-ID: <CAFxkdApQVEqCjQMAUqy8cuKnMy8GY9j+brgPZBkxCpeGi5xHxA@mail.gmail.com>
-Subject: Re: [PATCH RESEND] powerpc/tools: drop `-o pipefail` in gcc check scripts
-To: Jan Stancek <jstancek@redhat.com>
-Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org, 
-	npiggin@gmail.com, christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org, 
-	joe.lawrence@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20251003232606.4070510-1-seanjc@google.com> <20251003232606.4070510-2-seanjc@google.com>
+ <diqzplazet79.fsf@google.com>
+Message-ID: <aOQkaJ05FjsZz7yn@google.com>
+Subject: Re: [PATCH v2 01/13] KVM: Rework KVM_CAP_GUEST_MEMFD_MMAP into KVM_CAP_GUEST_MEMFD_FLAGS
+From: Sean Christopherson <seanjc@google.com>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>, 
+	Fuad Tabba <tabba@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Sep 23, 2025 at 9:31=E2=80=AFAM Jan Stancek <jstancek@redhat.com> w=
-rote:
->
-> We've been observing rare non-deterministic kconfig failures during
-> olddefconfig, where ARCH_USING_PATCHABLE_FUNCTION_ENTRY was getting
-> disabled and with it number of other config options that depend on it.
->
-> The reason is that gcc-check-fpatchable-function-entry.sh can fail
-> if `grep -q` (or scripts/dummy-tools/gcc) is fast enough to exit while
-> there is still someone writing on other side of pipe. `pipefail`
-> propagates that error up to kconfig.
->
-> This can be seen for example with:
->   # (set -e; set -o pipefail; yes | grep -q y); echo $?
->   141
->
-> or by running the actual check script in loop extensively:
->   ----------------------------- 8< -------------------------------
->   function kconfig()
->   {
->     for i in `seq 1 100`; do
->       arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh \
->         ./scripts/dummy-tools/gcc -mlittle-endian \
->         || { echo "Oops"; exit 1; }
->     done
->   }
->
->   for ((i=3D0; i<$(nproc); i++)); do kconfig & done
->   wait; echo "Done"
->   ----------------------------- >8 -------------------------------
->
-> Fixes: 0f71dcfb4aef ("powerpc/ftrace: Add support for -fpatchable-functio=
-n-entry")
-> Fixes: b71c9ffb1405 ("powerpc: Add arch/powerpc/tools directory")
-> Reported-by: Joe Lawrence <joe.lawrence@redhat.com>
-> Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
-> Signed-off-by: Jan Stancek <jstancek@redhat.com>
-> ---
->  arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh | 1 -
->  arch/powerpc/tools/gcc-check-mprofile-kernel.sh           | 1 -
->  2 files changed, 2 deletions(-)
->
-> diff --git a/arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh b/=
-arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh
-> index 06706903503b..baed467a016b 100755
-> --- a/arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh
-> +++ b/arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh
-> @@ -2,7 +2,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->
->  set -e
-> -set -o pipefail
->
->  # To debug, uncomment the following line
->  # set -x
-> diff --git a/arch/powerpc/tools/gcc-check-mprofile-kernel.sh b/arch/power=
-pc/tools/gcc-check-mprofile-kernel.sh
-> index 73e331e7660e..6193b0ed0c77 100755
-> --- a/arch/powerpc/tools/gcc-check-mprofile-kernel.sh
-> +++ b/arch/powerpc/tools/gcc-check-mprofile-kernel.sh
-> @@ -2,7 +2,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->
->  set -e
-> -set -o pipefail
->
->  # To debug, uncomment the following line
->  # set -x
-> --
-> 2.47.1
+On Mon, Oct 06, 2025, Ackerley Tng wrote:
+> Sean Christopherson <seanjc@google.com> writes:
+> 
+> > Rework the not-yet-released KVM_CAP_GUEST_MEMFD_MMAP into a more generic
+> > KVM_CAP_GUEST_MEMFD_FLAGS capability so that adding new flags doesn't
+> > require a new capability, and so that developers aren't tempted to bundle
+> > multiple flags into a single capability.
+> >
+> > Note, kvm_vm_ioctl_check_extension_generic() can only return a 32-bit
+> > value, but that limitation can be easily circumvented by adding e.g.
+> > KVM_CAP_GUEST_MEMFD_FLAGS2 in the unlikely event guest_memfd supports more
+> > than 32 flags.
+> 
+> I know you suggested that guest_memfd's HugeTLB sizes shouldn't be
+> squashed into the flags. Just using that as an example, would those
+> kinds of flags (since they're using the upper bits, above the lower 32
+> bits) be awkward to represent in this new model?
 
-Would love to see this picked up, it fixes a problem we have run into
-with our CI.
+Are you asking specifically about flags that use bits 63:32?  If so, no, I don't
+see those as being awkward to deal with.  Hopefully we kill of 32-bit KVM and it's
+a complete non-issue, but even if we have to add KVM_CAP_GUEST_MEMFD_FLAGS2, I
+don't see it being all that awkward for userspace to do:
 
-Tested-by: Justin M. Forbes <jforbes@fedoraproject.org>
+  uint64_t supported_gmem_flags = kvm_check_extension(KVM_CAP_GUEST_MEMFD_FLAGS) |
+                                  (kvm_check_extension(KVM_CAP_GUEST_MEMFD_FLAGS2) << 32);
+
+We could even mimic what Intel did with 64-bit VMCS fields to handle 32-bit mode,
+and explicitly name the second one KVM_CAP_GUEST_MEMFD_FLAGS_HI:
+
+  uint64_t supported_gmem_flags = kvm_check_extension(KVM_CAP_GUEST_MEMFD_FLAGS) |
+                                  (kvm_check_extension(KVM_CAP_GUEST_MEMFD_FLAGS_HI) << 32);
+
+so that if KVM_CAP_GUEST_MEMFD_FLAGS_HI precedes 64-bit-only KVM, it could become
+fully redundant, i.e. where someday this would hold true:
+
+  kvm_check_extension(KVM_CAP_GUEST_MEMFD_FLAGS) == 
+  kvm_check_extension(KVM_CAP_GUEST_MEMFD_FLAGS) | kvm_check_extension(KVM_CAP_GUEST_MEMFD_FLAGS_HI) << 32
+
+> In this model, conditionally valid flags are always set, 
+
+I followed everything except this snippet.
+
+> but userspace won't be able to do a flags check against the returned 32-bit
+> value. Or do you think when this issue comes up, we'd put the flags in the
+> upper bits in KVM_CAP_GUEST_MEMFD_FLAGS2 and userspace would then check
+> against the OR-ed set of flags instead?
+
+As above, enumerate support for flags 63:32 in a separate capability.
 
