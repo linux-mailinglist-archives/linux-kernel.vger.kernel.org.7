@@ -1,132 +1,148 @@
-Return-Path: <linux-kernel+bounces-842816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E1A9BBDAC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:22:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90304BBDADB
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:25:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED2621892B64
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:23:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F76A3B88C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D1E22B594;
-	Mon,  6 Oct 2025 10:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F36223314B;
+	Mon,  6 Oct 2025 10:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="InQdX/pQ"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qRFwykh1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C34F22B8AB;
-	Mon,  6 Oct 2025 10:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC36C22FF22;
+	Mon,  6 Oct 2025 10:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759746157; cv=none; b=IksYwJjcSWN9nTRPC2o7ElH+7qKI37Hfo5/ittdlyz1+qw6X8zfURkGOG5nuQeSyCMGHFD6RzWcqeW6aYV5x4ey727jG/PYjOFLY9jYyYef0f2gl2nRuJmmzO1ulBgM20ByXvefpWr2vONGZFQ1B46GFipf48aaNpgvCtqNRUAc=
+	t=1759746297; cv=none; b=INxj9ZTI4agbRjBQylNqyL7YST+jNXh2iIo5H+UdIwT1Mk3bnxc54dBHCxUwKgsQ7s+u6E/CfMRuz0hvVd5TJhz5TcYwFcoIJRUli0aKftOr43bcfnjX1ABE/h+IuSIXNljmOo6dMuuxIkWmn/YH5Sw6aRCgQYGxtFoGvswisak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759746157; c=relaxed/simple;
-	bh=RWB8LdLzeKP9Rj8M796qQePt0MqCr8q+l9MZCniVCkE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=prmjNT8bmnHudsYhV7dCrqH24mAhRKPFaE+DAolg0aeriHHsCrrmTdg3eQtSLAemVkjYctAetdsM9TmzFS/vW2bAWtRHL3MCUeJ1WVoOH8p0Tqx84GpWihnebD/sVMOTsKKCf96KEn8XTi1peWlXaV3IHtYmdsSPOHt97kefjdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=InQdX/pQ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=SeCyiSXFpxhnjR3QB+ng4nXlKTTmpqXiFGZBf0t4NWI=; b=InQdX/pQ+ItKhGdnROX2jwBeL6
-	WUh8BnnvAV8uvo6jJQlXpL27GKvqHKjbVzOIjb/p4ETjEqd8/4gp71INIyCNGzEUuOF0wAM9+Rtme
-	+2kSlD9nRZ9SHijekYjOmpWHjhm2QjEhrP+Eu0DX8NTc+a7ioBn/tV3URslvLTR/s5fjJp1DbJgy0
-	nnzbnKxPl7zlmXx1lf4hhkIl7zyJvcVE1YFNIsxzSYYOKYKU355WY4xXYMEs7LG0oDyP5Xe2YTUR0
-	Dq6GaBgJcXQP89dewm3jNl+xgjvbuIjw1hBaNn2LATNhR0MHoqo+Pr/YIejP5ceBpeCY5pvJQWsq5
-	mjNnK2Kg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v5iMO-00000009bJH-38AL;
-	Mon, 06 Oct 2025 10:22:30 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A09E8300212; Mon, 06 Oct 2025 12:22:28 +0200 (CEST)
-Date: Mon, 6 Oct 2025 12:22:28 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Finn Thain <fthain@linux-m68k.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Will Deacon <will@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
-	Linux-Arch <linux-arch@vger.kernel.org>, linux-m68k@vger.kernel.org,
-	Lance Yang <lance.yang@linux.dev>
-Subject: Re: [RFC v2 2/3] atomic: Specify alignment for atomic_t and
- atomic64_t
-Message-ID: <20251006102228.GT3245006@noisy.programming.kicks-ass.net>
-References: <cover.1757810729.git.fthain@linux-m68k.org>
- <abf2bf114abfc171294895b63cd00af475350dba.1757810729.git.fthain@linux-m68k.org>
- <CAMuHMdUgkVYyUvc85_P9TyTM5f-=mC=+X=vtCWN45EMPqF7iMg@mail.gmail.com>
- <6c295a4e-4d18-a004-5db8-db2e57afc957@linux-m68k.org>
- <57ac401b-222b-4c85-b719-9e671a4617cf@app.fastmail.com>
- <86be5cf0-065e-d55d-fdb6-b9cf6655165e@linux-m68k.org>
- <ec2982e3-2996-918e-f406-32f67a0decfe@linux-m68k.org>
- <e02f861b-706c-4f6d-bded-002601da954a@app.fastmail.com>
- <257a045a-f39d-8565-608f-f01f7914be21@linux-m68k.org>
- <d9e3f41e-d152-4382-bb99-7b134ff9f26f@app.fastmail.com>
+	s=arc-20240116; t=1759746297; c=relaxed/simple;
+	bh=UXKQZUQTJP8VaZsvDlEXnuTYjYpH43X+zq6gU7FP8Gk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hXcc2/qZVUaE9/+DMfTryiUaG9BoMU/eQvOARME1m0cJEwJADZqj0Y8kc1rs5jfdIJqu/22PJhbC/FLWgykSl5E9oqLE0oZ4akNAzHE83EJ5DRDrSmAH4OG+2qAGlZKojt6QHcA6nAnb9GVfpGk4DJSZ4Bso8kMtmhgZ4bSQNGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qRFwykh1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4018EC4CEF5;
+	Mon,  6 Oct 2025 10:24:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759746297;
+	bh=UXKQZUQTJP8VaZsvDlEXnuTYjYpH43X+zq6gU7FP8Gk=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=qRFwykh1ap5+XvUCBoztho1dkyrQn+76N/k8HCAWS7craFRn28COUu/SYSEm0fK0L
+	 zRNPNMRYgeman9sxFxz6opIHs1W4j16ivMv5c8ydLZSaSAoyh8V+wXDfcTDZNDvXxa
+	 w0gLxsSNY0yaYYRAhkTBhxAQZrq4eR8q91OF9kLdphPMMIY3bOQkYkmwmEX4vfC8Hn
+	 mV0kXGvD7FTrQIbwDf1tfk4/mUq3CVwqFLMLItgSi1FZ5mPCi0gEXJSfIjRyjoaUHL
+	 6cIgb0Pv0W20aY+BP7vNxXBgKSNPbn58AcyFf29MQ1e1ThIhPKLjLsutJqDD2uq+7X
+	 nJkFf4t0H9mmg==
+Message-ID: <1b4979e5-0491-4f4c-8c0c-b7d519dbf54a@kernel.org>
+Date: Mon, 6 Oct 2025 19:24:51 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d9e3f41e-d152-4382-bb99-7b134ff9f26f@app.fastmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/20] dt-bindings: arm: qcom: Document Kaanapali SoC and
+ its reference boards
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+ tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+ yijie.yang@oss.qualcomm.com
+References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com>
+ <20250924-knp-dts-v1-1-3fdbc4b9e1b1@oss.qualcomm.com>
+ <c2112d37-c937-4132-b9e8-e46b1fcd0516@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <c2112d37-c937-4132-b9e8-e46b1fcd0516@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 06, 2025 at 12:07:24PM +0200, Arnd Bergmann wrote:
-
-> It looks like Mark Rutland fixed the try_cmpxchg() function this
-> way in commit ec570320b09f ("locking/atomic: Correct (cmp)xchg()
-> instrumentation"), but for some reason we still have the wrong
-> annotation on the atomic_try_cmpxchg() helpers.
-
-> Mark, I've tried to modify your script to produce that output,
-> the output looks correct to me, but it makes the script more
-> complex than I liked and I'm not sure that matching on
-> "${type}"="p" is the best way to check for this.
-
-I don't see anything wrong with this. The result looks good.
-
-> diff --git a/scripts/atomic/gen-atomic-instrumented.sh b/scripts/atomic/gen-atomic-instrumented.sh
-> index 592f3ec89b5f..9c1d53f81eb2 100755
-> --- a/scripts/atomic/gen-atomic-instrumented.sh
-> +++ b/scripts/atomic/gen-atomic-instrumented.sh
-> @@ -12,7 +12,7 @@ gen_param_check()
->  	local arg="$1"; shift
->  	local type="${arg%%:*}"
->  	local name="$(gen_param_name "${arg}")"
-> -	local rw="write"
-> +	local rw="atomic_write"
->  
->  	case "${type#c}" in
->  	i) return;;
-> @@ -20,14 +20,17 @@ gen_param_check()
->  
->  	if [ ${type#c} != ${type} ]; then
->  		# We don't write to constant parameters.
-> -		rw="read"
-> +		rw="atomic_read"
-> +	elif [ "${type}" = "p" ] ; then
-> +		# The "old" argument in try_cmpxchg() gets accessed non-atomically
-> +		rw="read_write"
->  	elif [ "${meta}" != "s" ]; then
->  		# An atomic RMW: if this parameter is not a constant, and this atomic is
->  		# not just a 's'tore, this parameter is both read from and written to.
-> -		rw="read_write"
-> +		rw="atomic_read_write"
->  	fi
->  
-> -	printf "\tinstrument_atomic_${rw}(${name}, sizeof(*${name}));\n"
-> +	printf "\tinstrument_${rw}(${name}, sizeof(*${name}));\n"
->  }
->  
->  #gen_params_checks(meta, arg...)
+On 06/10/2025 18:54, Krzysztof Kozlowski wrote:
+> On 25/09/2025 09:17, Jingyi Wang wrote:
+>> Document the Kaanapali SoC binding and the boards which use it.
+>>
+>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+>> ---
+>>  Documentation/devicetree/bindings/arm/qcom.yaml | 6 ++++++
+>>  1 file changed, 6 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+>> index 838e3d4bb24a..0e84220e835c 100644
+>> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
+>> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+>> @@ -321,6 +321,12 @@ properties:
+>>                - qcom,ipq9574-ap-al02-c9
+>>            - const: qcom,ipq9574
+>>  
+>> +      - items:
+>> +          - enum:
+>> +              - qcom,kaanapali-mtp
+>> +              - qcom,kaanapali-qrd
+>> +          - const: qcom,kaanapali
 > 
+> This will fail testing, just like Glymur did. I fixed up Glymur, but it
+> was rather one time.
+
+
+Ah, this will not fail testing because Qualcomm switched to code names
+from obvious model names, making existing patterns non-effective.
+
+Not sure if this can be reliably improved now, ehh....
+
+Best regards,
+Krzysztof
 
