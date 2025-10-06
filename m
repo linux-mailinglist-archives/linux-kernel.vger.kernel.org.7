@@ -1,161 +1,176 @@
-Return-Path: <linux-kernel+bounces-842516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EB03BBCE89
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 02:57:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23299BBCE95
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 02:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CF4C3B7512
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 00:57:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAD5A3B7545
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 00:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A989719EEC2;
-	Mon,  6 Oct 2025 00:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8440A1A2389;
+	Mon,  6 Oct 2025 00:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="NQZ7FKca"
-Received: from r3-17.sinamail.sina.com.cn (r3-17.sinamail.sina.com.cn [202.108.3.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YZbyDNjm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240374A33
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 00:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3F6181BB8;
+	Mon,  6 Oct 2025 00:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759712224; cv=none; b=OZYyiOd6SaPOzavfAJVTgsrwv7cnjuH6gNM+VBvBit74pPv9fsbs33ASSrnQPlCgUfy6gZfzIpUXZ2j/MomXQ1Pic9jRNYuGploMjVCUwhLkhFVr5bkVU95nP2kwC4GU/ePDHp4/Rn9+T5/2GNI0+EKDL83WVMLucSo5qcVdqhI=
+	t=1759712300; cv=none; b=Mekjk3AePtpe4MZcJrh7VrIheKH5SAqOfLaheLO0TPhpyB8itw9bYsgiHmBsT693ZbKylr7vswSoWMqPOZt7+Z5FMFWNKt7Z1RfyD5OWkwkbIPRM0cgy7Dr2jx2jXP9eiusHFvI3oAP3VSnfM9jhJjCQqrxh10m+EdrdeegT0BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759712224; c=relaxed/simple;
-	bh=2O3NyyGaKBnWbYzsQwff4aXc+mmZBKjctBs0ekpfgts=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uEOsIFgHdUnHZSPWbRh2ZtYdQuij3Tqh6Aj6318YFV4lwDLJvY/m+FKtAKkdRtwOAOFkx3dDHbcg10/2me505uqH/5t9WhTsfayuE7LfKJab3EEyNX97xiUvXiBKnpZ4r8fzkE+QN63OG/7KM+3b7VKpjvuZ6fRZBoNW4MiUpMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=NQZ7FKca; arc=none smtp.client-ip=202.108.3.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1759712220;
-	bh=J00JwTsYO3YQXzNOfnF8F12Qv4P6Je1eFHbJvWxJbqg=;
-	h=From:Subject:Date:Message-ID;
-	b=NQZ7FKcazadVQ/xMm4XvK0bo5ucUcdfwVuwUV7B5Iyj6/nQDBG6fYS7gixu5NrJdf
-	 gZmAG4dR5uZcvyP98d9kGaRzMTrxRT9RXMBx2bjvo2o92Ebd8vBIx79eEAdl8lMtIp
-	 YuuA7qOTUoIJ9aNXW6Gvp7byDJ2HyZuhyEU8FFuc=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.34) with ESMTP
-	id 68E313D100002138; Mon, 6 Oct 2025 08:56:51 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 3043326291957
-X-SMAIL-UIID: E4F6F21874004EDA9F93CC86EA06073A-20251006-085651-1
-From: Hillf Danton <hdanton@sina.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: add missing fences to I_NEW handling
-Date: Mon,  6 Oct 2025 08:56:41 +0800
-Message-ID: <20251006005642.8194-1-hdanton@sina.com>
-In-Reply-To: <20251005231526.708061-1-mjguzik@gmail.com>
-References: 
+	s=arc-20240116; t=1759712300; c=relaxed/simple;
+	bh=EcMDDLdW7ZJUGptFXlXKYTC6Z5rOAWfwRAkcrxXK2kA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rkVjHd9t+Wtb07jppbBxr06X7f2Qogxj8qV+jvBiDhOPX2hFaJjEmhbcDvcMRvan1awKOZD6q2+xeKqjD+8U8OHLemUCA6uXD+z9HlwxZJjPGEQIa4E9p6sUZzfuuKc8CxN0LofC2R47FFGehAduid733IZckbQ4oQLKQYLi0RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YZbyDNjm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DF87C4CEF4;
+	Mon,  6 Oct 2025 00:58:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759712300;
+	bh=EcMDDLdW7ZJUGptFXlXKYTC6Z5rOAWfwRAkcrxXK2kA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YZbyDNjmmCtMsu/JP1EcJrFJAGo1+z8fHFHFptutLOH4+1xvin8C5nAKZVe7RxUCW
+	 v641GOQFoBs+A3hN+O0nF9JEf2z7QFGXDh6nvpTJg8MHxX/pPT+Ewj7F12JY7y7Lsb
+	 HP9TIVL3kw+LlkUM43DSC24LcsweqSRBFc9bnSn99Tpi808gMqcUEGccPT8tLFYipI
+	 F7MFMnZAcQsTiYx8Qm9wWIZTYRVBQEQVnQ3YZhTF245nzMgGBhjDzfczg8qu5wmbd/
+	 1yVuVm8T0cc/dguVADTN29H6Lqj3uwDvV6BGKwLSdE4VGnVxbhSixRHzHf6aXHMOb7
+	 dWmYokK8o7w6Q==
+Message-ID: <524f67bf-f4df-41bf-bf1b-5cd0a79649eb@kernel.org>
+Date: Mon, 6 Oct 2025 09:58:17 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] Add manage_restart device attribute to scsi_disk
+To: Markus Probst <markus.probst@posteo.de>, Niklas Cassel
+ <cassel@kernel.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <8c3cb28c57462f9665b08fdaa022e6abc57fcd9e.camel@posteo.de>
+ <20251005190559.1472308-1-markus.probst@posteo.de>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20251005190559.1472308-1-markus.probst@posteo.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon,  6 Oct 2025 01:15:26 +0200 Mateusz Guzik wrote:
-> Suppose there are 2 CPUs racing inode hash lookup func (say ilookup5())
-> and unlock_new_inode().
+On 10/6/25 04:06, Markus Probst wrote:
+> there is already manage_shutdown, manage_system_start_stop and
+> manage_runtime_start_stop device attributes that allows the high-level
+> device driver (sd) manage the device power state, expect for the
+> system_state SYSTEM_RESTART. With this device attribute, it is possible to
+> let the high-level device driver (sd) manage the device power state for
+> SYSTEM_RESTART too.
 > 
-> In principle the latter can clear the I_NEW flag before prior stores
-> into the inode were made visible.
-> 
-Given difficulty following up here, could you specify why the current
-mem barrier [1] in unlock_new_inode() is not enough?
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/inode.c#n1190
-
-> The former can in turn observe I_NEW is cleared and proceed to use the
-> inode, while possibly reading from not-yet-published areas.
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> Signed-off-by: Markus Probst <markus.probst@posteo.de>
 > ---
+>  drivers/scsi/sd.c          | 35 ++++++++++++++++++++++++++++++++++-
+>  include/scsi/scsi_device.h |  6 ++++++
+>  2 files changed, 40 insertions(+), 1 deletion(-)
 > 
-> I don't think this is a serious bug in the sense I doubt anyone ever ran
-> into it, but this is an issue on paper.
-> 
-> I'm doing some changes in the area and I figured I'll get this bit out
-> of the way.
-> 
->  fs/dcache.c               | 4 ++++
->  fs/inode.c                | 8 ++++++++
->  include/linux/writeback.h | 4 ++++
->  3 files changed, 16 insertions(+)
-> 
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index a067fa0a965a..806d6a665124 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -1981,6 +1981,10 @@ void d_instantiate_new(struct dentry *entry, struct inode *inode)
->  	spin_lock(&inode->i_lock);
->  	__d_instantiate(entry, inode);
->  	WARN_ON(!(inode->i_state & I_NEW));
-> +	/*
-> +	 * Pairs with smp_rmb in wait_on_inode().
-> +	 */
-> +	smp_wmb();
->  	inode->i_state &= ~I_NEW & ~I_CREATING;
->  	/*
->  	 * Pairs with the barrier in prepare_to_wait_event() to make sure
-> diff --git a/fs/inode.c b/fs/inode.c
-> index ec9339024ac3..842ee973c8b6 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -1181,6 +1181,10 @@ void unlock_new_inode(struct inode *inode)
->  	lockdep_annotate_inode_mutex_key(inode);
->  	spin_lock(&inode->i_lock);
->  	WARN_ON(!(inode->i_state & I_NEW));
-> +	/*
-> +	 * Pairs with smp_rmb in wait_on_inode().
-> +	 */
-> +	smp_wmb();
->  	inode->i_state &= ~I_NEW & ~I_CREATING;
->  	/*
->  	 * Pairs with the barrier in prepare_to_wait_event() to make sure
-> @@ -1198,6 +1202,10 @@ void discard_new_inode(struct inode *inode)
->  	lockdep_annotate_inode_mutex_key(inode);
->  	spin_lock(&inode->i_lock);
->  	WARN_ON(!(inode->i_state & I_NEW));
-> +	/*
-> +	 * Pairs with smp_rmb in wait_on_inode().
-> +	 */
-> +	smp_wmb();
->  	inode->i_state &= ~I_NEW;
->  	/*
->  	 * Pairs with the barrier in prepare_to_wait_event() to make sure
-> diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-> index 22dd4adc5667..e1e1231a6830 100644
-> --- a/include/linux/writeback.h
-> +++ b/include/linux/writeback.h
-> @@ -194,6 +194,10 @@ static inline void wait_on_inode(struct inode *inode)
->  {
->  	wait_var_event(inode_state_wait_address(inode, __I_NEW),
->  		       !(READ_ONCE(inode->i_state) & I_NEW));
-> +	/*
-> +	 * Pairs with routines clearing I_NEW.
-> +	 */
-> +	smp_rmb();
+> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+> index 5b8668accf8e..a3e9c2e9d9f4 100644
+> --- a/drivers/scsi/sd.c
+> +++ b/drivers/scsi/sd.c
+> @@ -318,6 +318,36 @@ static ssize_t manage_shutdown_store(struct device *dev,
 >  }
-
-Why is this needed as nobody cares I_NEW after wait?
-
+>  static DEVICE_ATTR_RW(manage_shutdown);
 >  
->  #ifdef CONFIG_CGROUP_WRITEBACK
-> -- 
-> 2.34.1
+> +static ssize_t manage_restart_show(struct device *dev,
+> +				   struct device_attribute *attr, char *buf)
+> +{
+> +	struct scsi_disk *sdkp = to_scsi_disk(dev);
+> +	struct scsi_device *sdp = sdkp->device;
+
+sdp is not really needed.
+
+> +
+> +	return sysfs_emit(buf, "%u\n", sdp->manage_restart);
+> +}
+> +
+> +
+> +static ssize_t manage_restart_store(struct device *dev,
+> +				    struct device_attribute *attr,
+> +				    const char *buf, size_t count)
+> +{
+> +	struct scsi_disk *sdkp = to_scsi_disk(dev);
+> +	struct scsi_device *sdp = sdkp->device;
+
+Same here.
+
+> +	bool v;
+> +
+> +	if (!capable(CAP_SYS_ADMIN))
+> +		return -EACCES;
+> +
+> +	if (kstrtobool(buf, &v))
+> +		return -EINVAL;
+> +
+> +	sdp->manage_restart = v;
+> +
+> +	return count;
+> +}
+> +static DEVICE_ATTR_RW(manage_restart);
+> +
+>  static ssize_t
+>  allow_restart_show(struct device *dev, struct device_attribute *attr, char *buf)
+>  {
+> @@ -654,6 +684,7 @@ static struct attribute *sd_disk_attrs[] = {
+>  	&dev_attr_manage_system_start_stop.attr,
+>  	&dev_attr_manage_runtime_start_stop.attr,
+>  	&dev_attr_manage_shutdown.attr,
+> +	&dev_attr_manage_restart.attr,
+>  	&dev_attr_protection_type.attr,
+>  	&dev_attr_protection_mode.attr,
+>  	&dev_attr_app_tag_own.attr,
+> @@ -4175,7 +4206,9 @@ static void sd_shutdown(struct device *dev)
+>  	    (system_state == SYSTEM_POWER_OFF &&
+>  	     sdkp->device->manage_shutdown) ||
+>  	    (system_state == SYSTEM_RUNNING &&
+> -	     sdkp->device->manage_runtime_start_stop)) {
+> +	     sdkp->device->manage_runtime_start_stop) ||
+> +	    (system_state == SYSTEM_RESTART &&
+> +	     sdkp->device->manage_restart)) {
+>  		sd_printk(KERN_NOTICE, sdkp, "Stopping disk\n");
+>  		sd_start_stop_device(sdkp, 0);
+>  	}
+> diff --git a/include/scsi/scsi_device.h b/include/scsi/scsi_device.h
+> index 6d6500148c4b..c7e657ac8b6d 100644
+> --- a/include/scsi/scsi_device.h
+> +++ b/include/scsi/scsi_device.h
+> @@ -178,6 +178,12 @@ struct scsi_device {
+>  	 */
+>  	unsigned manage_shutdown:1;
+>  
+> +	/*
+> +	 * If true, let the high-level device driver (sd) manage the device
+> +	 * power state for system restart (reboot) operations.
+
+What about cold boot ? Same is needed, no ? The name "manage_restart" is a bit
+confusing since we already have manage_system_start_stop,
+manage_runtime_start_stop and manage_shutdown. I do not have a better suggestion
+though.
+
+> +	 */
+> +	unsigned manage_restart:1;
+> +
+>  	/*
+>  	 * If set and if the device is runtime suspended, ask the high-level
+>  	 * device driver (sd) to force a runtime resume of the device.
+
+
+-- 
+Damien Le Moal
+Western Digital Research
 
