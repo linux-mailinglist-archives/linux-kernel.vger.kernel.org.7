@@ -1,232 +1,182 @@
-Return-Path: <linux-kernel+bounces-842615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9B45BBD285
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 08:49:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14672BBD29A
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 08:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CBDE3B662E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 06:49:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BBE414E3AC6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 06:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3633444C63;
-	Mon,  6 Oct 2025 06:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EB725393E;
+	Mon,  6 Oct 2025 06:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PSuvjVNC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kXHwNrEB"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF42146A72
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 06:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F45E44C63
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 06:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759733341; cv=none; b=FcgqSYgbo7YgYy1hXvZTzsbf06/BRld6UvjQrUFGgEWZAhAdV5WxrpjzHS2LXvJsGgcTyZquL/OJ66U1sHKMG5sM+RduZ/Mhuf1Tu/bdOD708hjgAXVFIUoUHQZkY6LqFzh+hYg4SfR5HEXOSDDymW5rjMOgJDrJ+uSVeP7T2pw=
+	t=1759733565; cv=none; b=XcR2amIIQlv3ldB53bXx1lp6rcSiTiqjLtqtsHBcraizC+xkh2/M3N5RKwrqC0B/gClwte+dg2/hhJaGI3EVNptNN89F35fKUHr+GYh49/lsuvdNO46x6rZyVpqx7/2C3W2xgt8+XymIrlnomDN8Jt82eXhMHFG0XTwXWY2DLwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759733341; c=relaxed/simple;
-	bh=yTAZ+XReotE1tnBpSXOVt/G5ssUel+fR/M+ufDf6UyY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cmWJGRLAxg2zGX9mPm1tdIz2A5fyNpSxJ9Si9eN0DlV/TOQrgF3BN8pquhD9A1IvJfqveMnBf9VUUVvF+WC6AzqKeqQKHFMUqxgQu7uFsQn8Y+wnzu7X6wA3GucgxU++jIjJVqspy5tBDDPdYBrdoG5BzNaTvDe386vUTs1RMEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PSuvjVNC; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759733339; x=1791269339;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=yTAZ+XReotE1tnBpSXOVt/G5ssUel+fR/M+ufDf6UyY=;
-  b=PSuvjVNCAURlCcWu1xtIDSwYCiQX/8rYPHwMpDhdN3Bv3cr+vMZ4GYT0
-   ojACOrDPhhGDqmLRgyFryAEPRliczPqLBvY25PuE5tQI1Ke53dFG53uuI
-   S5/Xq6GExDZ8qLQEBElLgOTT3NKbOEfqRR5daKRTfqVnNJW/juyh1Fgh4
-   vtK0oFh9xnNIoFAt3KUSuYTqFJ8sG1qfhsYbiAfepleMXA2GTqoXWvR6r
-   cIve06apYrqQPkq9h6AYVDhT0n5UpIyqyM9WQuAoAHvMqHL2WVLgPNeT5
-   pHKtq4XoEUF78FPUpFO3Ut4YT1MMU9PLpWyB7MxEGFt8lWMd7YsAEx1Rf
-   A==;
-X-CSE-ConnectionGUID: nVlSNmZgSJCkEK9FN5YFaQ==
-X-CSE-MsgGUID: 4wlUcy/uSNe65dUE3WX1fg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11573"; a="61809483"
-X-IronPort-AV: E=Sophos;i="6.18,319,1751266800"; 
-   d="scan'208";a="61809483"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2025 23:48:58 -0700
-X-CSE-ConnectionGUID: /cfp81oKTjSynylQem+FLg==
-X-CSE-MsgGUID: R4aYeEG5QAqugmpaQTBOpQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,319,1751266800"; 
-   d="scan'208";a="179630933"
-Received: from krybak-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.162])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2025 23:48:54 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Francesco Valla <francesco@valla.it>, Jocelyn Falempe
- <jfalempe@redhat.com>, Javier Martinez Canillas <javierm@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Francesco
- Valla <francesco@valla.it>
-Subject: Re: [PATCH 1/3] drm/draw: add drm_draw_can_convert_from_xrgb8888
-In-Reply-To: <20251005-drm_draw_conv_check-v1-1-9c814d9362f6@valla.it>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20251005-drm_draw_conv_check-v1-0-9c814d9362f6@valla.it>
- <20251005-drm_draw_conv_check-v1-1-9c814d9362f6@valla.it>
-Date: Mon, 06 Oct 2025 09:48:51 +0300
-Message-ID: <a669b2ee89865e9150efd38e181cdc838c2ac522@intel.com>
+	s=arc-20240116; t=1759733565; c=relaxed/simple;
+	bh=HXmc7QpSTt9ZosNT5x1nSeoE8ULcpihYGG51Sy2vopY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=G3QUmuixpq8tUjwAYvP+8lbZSzS7oNnRmuzSi1gnN+08IygFYSqgx1qrZzf7JAUIAA8W05cXrzP4lpFTgwxtfx8trBlun8ggek5PD1m1A7THQk0RezPtIwr8jrjKrtxa2llzFGRULvZJFJkxHqMNok4euxqmi0kNsGNBNmBv7Qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kXHwNrEB; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6349e3578adso8098412a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 23:52:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759733562; x=1760338362; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=HXmc7QpSTt9ZosNT5x1nSeoE8ULcpihYGG51Sy2vopY=;
+        b=kXHwNrEBamhLVSJBRnPQ7KGz5OINhghCavCed1EbBkoIm4RVA7eFF9Aij7IxEGssxh
+         mgCguwfeb6I2xLrnnkAs8Ly2591QB6CMOYP20WmADzW7KwLqSJqJEFZxwzJC9BvLgRax
+         OO8XnJf95IizJPMMHJ4QrWvZUlaTCKOz8F5wWlFYexaTVBpM9FAs5CeEuEB0XXmGgd/w
+         LfZwg/3baUnzS6G7AsTEIpmFQcQUw1K0uX0aRlDjDd5efc7ou/2Bul3ngY2s9518P42V
+         nMtVE51KHtbE1nm60fjYyD1kVXdMN58ALPWEOO7TtN1IEkZ0EWzeq1VCHY2NH4cCQz+c
+         LvSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759733562; x=1760338362;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HXmc7QpSTt9ZosNT5x1nSeoE8ULcpihYGG51Sy2vopY=;
+        b=uZdyYzlUuCTSkNQ+vZkKH9alnNNWpnft7Fl46x1rHA8gK6bkwfMmEP4fyxduWHRh3b
+         xiHzCzSVDXDNSTDVC79PHO11QcZKskJeJkRR8dnHzZNZLQzcQIT1nALrw1tgHDsYjEIu
+         F5P+xTGf3UgDJguIuBSMGiR3ABtcchwxi3ZuEc9LLMf/u3GUYH4qhcwKCepE92EgYpVC
+         qMXI4RtjP5QzYLqDUrr/zRRWaw1zjlSCL/WPqV0Rwk+VOYsV2In8T/O9iaIMoOj/A2ZE
+         zJtgfiE7PSCZoFDai+jLds/aHTz0Qp53PtIrDzDQAilSin83dwE+rKRarB19LqaySKs0
+         QndQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUu0NlNYDsNqZJgePzGBe8tGYfqwZwEk7eM26+kHOqv/PQFdoN4jZXQ6EDbdHOEbrd78hk58r8pdtzQATA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSdMSjLLAUtsd6ZhB3qQ2HoBgCPKJlnv1t+aR73f9/i3Us2Jzo
+	Rrrl5eimJWzQeBNe9N25V1770h50F1hPovXY6TI8/XbAVA39BKnjUTSpe6aalXfkgSs=
+X-Gm-Gg: ASbGncuhypzcwkhXsPsYl5MoKlvl4gh+wmxcizsMvwHHf3GXu1RmsS6AuMCkb2TEFOc
+	/7RT9+cen61Cb7bndooTwuDFxgHCybIzrxBdQ/B0l2wElLxqkNW9wH4rKcdA/fr/YIElGcrHkWn
+	ewc4n/RXSlalbS8JvIlp1umK1HvL/5LmgkTTnWtnqdhZAek5VZRLnw+oEfPCzHAQid7WdBvlRD0
+	QFWvjwM41jgOKPbxFljdBXfuZ6gWbevPf+LvhnQNHBMlTJJciPgfJSQGPJz//qyuBU9qHoGQxZ1
+	BRnu7PAPvSYkCLTscPQGntTjbLCA6LUp22N0lAKCHhZVXsQG7ObRO5oonaDJttC0MmMnt7dO2c6
+	h4VBI0sCXP3Uwyvx7d4lVWtPF2NyloI3LqZkEddlxwpNs2nzq+se0fnYYHzSGvpQB
+X-Google-Smtp-Source: AGHT+IFH+Nm6t/KLP6g5tq5oQKi62aAAd8k2tFyYYm8tKkws1sxOeiOGOYBNadAisWD6RX0oCu0zaA==
+X-Received: by 2002:a17:907:3f0a:b0:b45:60ad:daff with SMTP id a640c23a62f3a-b49c214c03fmr1480542166b.28.1759733561787;
+        Sun, 05 Oct 2025 23:52:41 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486a173b03sm1058949066b.84.2025.10.05.23.52.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 Oct 2025 23:52:41 -0700 (PDT)
+Message-ID: <949da0fec08f09bd6b70b14f3361f4a4584b42c3.camel@linaro.org>
+Subject: Re: [PATCH 2/3] soc: samsung: exynos-pmu: move some gs101 related
+ code into new file
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>,  Peter Griffin <peter.griffin@linaro.org>, Tudor
+ Ambarus <tudor.ambarus@linaro.org>, Will McVicker	
+ <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Mon, 06 Oct 2025 07:52:40 +0100
+In-Reply-To: <CAPLW+4=+efttfgj9gMSGpv2sjhJQ7whtoCuitK+Ku4U7hzE+1A@mail.gmail.com>
+References: <20251002-gs101-pmu-regmap-tables-v1-0-1f96f0920eb3@linaro.org>
+	 <20251002-gs101-pmu-regmap-tables-v1-2-1f96f0920eb3@linaro.org>
+	 <CAPLW+4=+efttfgj9gMSGpv2sjhJQ7whtoCuitK+Ku4U7hzE+1A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
 
-On Sun, 05 Oct 2025, Francesco Valla <francesco@valla.it> wrote:
-> Add drm_draw_can_convert_from_xrgb8888() function that can be used to
-> determine if a XRGB8888 color can be converted to the specified format.
->
-> Signed-off-by: Francesco Valla <francesco@valla.it>
-> ---
->  drivers/gpu/drm/drm_draw.c          | 84 +++++++++++++++++++++++++++----------
->  drivers/gpu/drm/drm_draw_internal.h |  2 +
->  2 files changed, 63 insertions(+), 23 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_draw.c b/drivers/gpu/drm/drm_draw.c
-> index 9dc0408fbbeadbe8282a2d6b210e0bfb0672967f..2641026a103d3b28cab9f5d378604b0604520fe4 100644
-> --- a/drivers/gpu/drm/drm_draw.c
-> +++ b/drivers/gpu/drm/drm_draw.c
-> @@ -15,45 +15,83 @@
->  #include "drm_draw_internal.h"
->  #include "drm_format_internal.h"
->  
-> -/**
-> - * drm_draw_color_from_xrgb8888 - convert one pixel from xrgb8888 to the desired format
-> - * @color: input color, in xrgb8888 format
-> - * @format: output format
-> - *
-> - * Returns:
-> - * Color in the format specified, casted to u32.
-> - * Or 0 if the format is not supported.
-> - */
-> -u32 drm_draw_color_from_xrgb8888(u32 color, u32 format)
-> +static int __drm_draw_color_from_xrgb8888(u32 color, u32 format, u32 *out_color)
+Hi Sam,
 
-Is there any reason to change the return value of this function and
-return the result via out_color? It already returns 0 if the format is
-not supported. If there's a reason, it needs to be in the commit
-message.
+On Fri, 2025-10-03 at 12:55 -0500, Sam Protsenko wrote:
+> On Thu, Oct 2, 2025 at 5:33=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik@=
+linaro.org> wrote:
+> >=20
+> > To avoid cluttering common code, move most of the gs101 code into a new
+> > file, gs101-pmu.c
+> >=20
+> > More code is going to be added for gs101 - having it all in one file
+> > helps keeping the common code (file) more readable.
+> >=20
+>=20
+> Maybe add "no functional change" note for refactoring/cleanup patches lik=
+e this.
 
->  {
->  	switch (format) {
->  	case DRM_FORMAT_RGB565:
-> -		return drm_pixel_xrgb8888_to_rgb565(color);
-> +		*out_color = drm_pixel_xrgb8888_to_rgb565(color);
-> +		break;
->  	case DRM_FORMAT_RGBA5551:
-> -		return drm_pixel_xrgb8888_to_rgba5551(color);
-> +		*out_color = drm_pixel_xrgb8888_to_rgba5551(color);
-> +		break;
->  	case DRM_FORMAT_XRGB1555:
-> -		return drm_pixel_xrgb8888_to_xrgb1555(color);
-> +		*out_color = drm_pixel_xrgb8888_to_xrgb1555(color);
-> +		break;
->  	case DRM_FORMAT_ARGB1555:
-> -		return drm_pixel_xrgb8888_to_argb1555(color);
-> +		*out_color = drm_pixel_xrgb8888_to_argb1555(color);
-> +		break;
->  	case DRM_FORMAT_RGB888:
-> +		fallthrough;
+Sure
 
-That's not necessary for back to back case labels. Please don't add it.
 
->  	case DRM_FORMAT_XRGB8888:
-> -		return color;
-> +		*out_color = color;
-> +		break;
->  	case DRM_FORMAT_ARGB8888:
-> -		return drm_pixel_xrgb8888_to_argb8888(color);
-> +		*out_color = drm_pixel_xrgb8888_to_argb8888(color);
-> +		break;
->  	case DRM_FORMAT_XBGR8888:
-> -		return drm_pixel_xrgb8888_to_xbgr8888(color);
-> +		*out_color = drm_pixel_xrgb8888_to_xbgr8888(color);
-> +		break;
->  	case DRM_FORMAT_ABGR8888:
-> -		return drm_pixel_xrgb8888_to_abgr8888(color);
-> +		*out_color = drm_pixel_xrgb8888_to_abgr8888(color);
-> +		break;
->  	case DRM_FORMAT_XRGB2101010:
-> -		return drm_pixel_xrgb8888_to_xrgb2101010(color);
-> +		*out_color = drm_pixel_xrgb8888_to_xrgb2101010(color);
-> +		break;
->  	case DRM_FORMAT_ARGB2101010:
-> -		return drm_pixel_xrgb8888_to_argb2101010(color);
-> +		*out_color = drm_pixel_xrgb8888_to_argb2101010(color);
-> +		break;
->  	case DRM_FORMAT_ABGR2101010:
-> -		return drm_pixel_xrgb8888_to_abgr2101010(color);
-> +		*out_color = drm_pixel_xrgb8888_to_abgr2101010(color);
-> +		break;
->  	default:
-> -		WARN_ONCE(1, "Can't convert to %p4cc\n", &format);
-> -		return 0;
-> +		return -1;
+[...]
 
-Please don't use -1 as a generic error code. -1 is -EPERM.
+> >=20
+> > diff --git a/drivers/soc/samsung/exynos-pmu.h b/drivers/soc/samsung/exy=
+nos-pmu.h
+> > index 113149ed32c88a09b075be82050c26970e4c0620..fe11adc4f6ac8fc8bce228d=
+5852deaff7c438221 100644
+> > --- a/drivers/soc/samsung/exynos-pmu.h
+> > +++ b/drivers/soc/samsung/exynos-pmu.h
+> > @@ -44,7 +44,14 @@ extern const struct exynos_pmu_data exynos4412_pmu_d=
+ata;
+> > =C2=A0extern const struct exynos_pmu_data exynos5250_pmu_data;
+> > =C2=A0extern const struct exynos_pmu_data exynos5420_pmu_data;
+> > =C2=A0#endif
+> > +extern const struct exynos_pmu_data gs101_pmu_data;
+> >=20
+> > =C2=A0extern void pmu_raw_writel(u32 val, u32 offset);
+> > =C2=A0extern u32 pmu_raw_readl(u32 offset);
+> > +
+> > +int tensor_sec_reg_write(void *context, unsigned int reg, unsigned int=
+ val);
+> > +int tensor_sec_reg_read(void *context, unsigned int reg, unsigned int =
+*val);
+> > +int tensor_sec_update_bits(void *ctx, unsigned int reg, unsigned int m=
+ask,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 unsigned int val);
+>=20
+> Nitpick: just noticed the inconsistency between context/ctx wording
+> usage in above function arguments.
 
->  	}
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * drm_draw_can_convert_from_xrgb8888 - check if xrgb8888 can be converted to the desired format
-> + * @format: format
-> + *
-> + * Returns:
-> + * True if XRGB8888 can be converted to the specified format, false otherwise.
-> + */
-> +bool drm_draw_can_convert_from_xrgb8888(u32 format)
-> +{
-> +	u32 out_color;
-> +
-> +	return __drm_draw_color_from_xrgb8888(0, format, &out_color) == 0;
-> +}
-> +EXPORT_SYMBOL(drm_draw_can_convert_from_xrgb8888);
-> +
-> +/**
-> + * drm_draw_color_from_xrgb8888 - convert one pixel from xrgb8888 to the desired format
-> + * @color: input color, in xrgb8888 format
-> + * @format: output format
-> + *
-> + * Returns:
-> + * Color in the format specified, casted to u32.
-> + * Or 0 if the format is not supported.
-> + */
-> +u32 drm_draw_color_from_xrgb8888(u32 color, u32 format)
-> +{
-> +	u32 out_color = 0;
-> +
-> +	if (__drm_draw_color_from_xrgb8888(color, format, &out_color))
-> +		WARN_ONCE(1, "Can't convert to %p4cc\n", &format);
-> +
-> +	return out_color;
->  }
->  EXPORT_SYMBOL(drm_draw_color_from_xrgb8888);
->  
-> diff --git a/drivers/gpu/drm/drm_draw_internal.h b/drivers/gpu/drm/drm_draw_internal.h
-> index f121ee7339dc11537f677c833f0ee94fe0e799cd..2ab4cb341df94fc4173dd6f5e7a512bdcfa5e55c 100644
-> --- a/drivers/gpu/drm/drm_draw_internal.h
-> +++ b/drivers/gpu/drm/drm_draw_internal.h
-> @@ -24,6 +24,8 @@ static inline const u8 *drm_draw_get_char_bitmap(const struct font_desc *font,
->  	return font->data + (c * font->height) * font_pitch;
->  }
->  
-> +bool drm_draw_can_convert_from_xrgb8888(u32 format);
-> +
->  u32 drm_draw_color_from_xrgb8888(u32 color, u32 format);
->  
->  void drm_draw_blit16(struct iosys_map *dmap, unsigned int dpitch,
+Interesting... I'll fix it as part of the move.
 
--- 
-Jani Nikula, Intel
+>=20
+> > +
+> > =C2=A0#endif /* __EXYNOS_PMU_H */
+> > diff --git a/drivers/soc/samsung/gs101-pmu.c b/drivers/soc/samsung/gs10=
+1-pmu.c
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..b5a535822ec830b751e36a3=
+3121e2a03ef2ebcb2
+> > --- /dev/null
+> > +++ b/drivers/soc/samsung/gs101-pmu.c
+> > @@ -0,0 +1,141 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +//
+> > +// Copyright 2025 Linaro Ltd.
+> > +//
+> > +// GS101 PMU (Power Management Unit) support
+> > +
+>=20
+> AFAIR headers like these should be made using multi-line comments (not
+> talking about SPDX part). Or is it the latest fashion trends in
+> kernel?
+
+Depends on subsystem, but multi-line for most. Here I went with existing st=
+yle for
+the PMU-related files, though.
+
+Cheers,
+Andre'
 
