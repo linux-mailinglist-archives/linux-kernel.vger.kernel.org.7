@@ -1,176 +1,220 @@
-Return-Path: <linux-kernel+bounces-843407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AD21BBF1F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 21:46:57 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EED57BBF208
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 21:50:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2275234B6EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 19:46:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 77D784ECD1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 19:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E49E256C9B;
-	Mon,  6 Oct 2025 19:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E916B2DCBEB;
+	Mon,  6 Oct 2025 19:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hz879l2J"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dHAdTgi4"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010057.outbound.protection.outlook.com [52.101.85.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F5513BC0C
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 19:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759780010; cv=none; b=RmK2Qj+LrkJxYtdtOo27llAVLkAC+6ISP8IRpI9zSnB1jhRPCWIE38AFBM8Gvy25n75XvjdWi1tGxywvVfBtDuSdogrepOUerBgNlf2tSiHumrdg7OsQTQxldMNg30Q4EUNK+ziXzgW87+o2+49cAF2C/SeN/cXYdRL3jlqY/YE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759780010; c=relaxed/simple;
-	bh=RpzZsSQdr0hQNB60BVgDeuxT0TDaqlGHirWXIco0GKU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RoSLZeP0gC7PrnpaXWDzfNmzU6engWlU3ZFBLQrr4E5LlrP3jpUfGW3ydUaYtdIdVw5E6NMV1Lop7loOjm14y1xqwE7MJ0danDiXCo6463L5Mxbpy5gisxyLHF44lpBB3DZsBA5DF1zV2U3OClzHSsMeChwepFAecWTdr46qq34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hz879l2J; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759780007;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dEP4bvQgSEfzGRmi8Yd/uqvmJgEkoYKfsq3TYxXDi7E=;
-	b=hz879l2J0g0R4CJ9k3RV6qygzgvyyjxKSVdcMcxh7ERPejuHLC/KTm9U5avmHpeJjPJQ6l
-	dabghhjxOLjf3idCFOp5J4lQ7CilERswVO3yaykI0d3Kok5rp5zvFJ/leLKz/yMTrbJ86P
-	0f4UxWcb203WNV2xU+qRmW6jY964YFU=
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
- [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-180-6hF_eWB_O1y2oIWEDlHMVw-1; Mon, 06 Oct 2025 15:46:46 -0400
-X-MC-Unique: 6hF_eWB_O1y2oIWEDlHMVw-1
-X-Mimecast-MFC-AGG-ID: 6hF_eWB_O1y2oIWEDlHMVw_1759780005
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-9249b828549so90883939f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 12:46:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759780005; x=1760384805;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dEP4bvQgSEfzGRmi8Yd/uqvmJgEkoYKfsq3TYxXDi7E=;
-        b=CJ9udyuusZ9XC4JoMYGau0e51lqc/WvDAUTXdJitZp7QPjqbjApcSAi1jylTbxA0Mp
-         EJvqQrZlxaLhRR/2lWUVC6CUZU4Me/+uVWe3MtdUrf+8NkivqJorX+MYVtlY/Q3vOVI5
-         ZdIytp3s8hy5Xy++krBjfvkNIhaN4xd7+RTwCqjTl7Kpn60myaHOswUNW08R5Q53o00Z
-         SXSJ7gIpTzRVkalZ2x6GhW1oOFBVyS+w9sOmWdL5xL7rB9keeVd5i+f5YfzaicgnyycY
-         iGO0vmpuviWKZQVBSJe3WKCLnnviAVEeWw76FS1hbK51o6c088Kg0xKXTwOlaP+8b2Fg
-         FHJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsxzPfrkEG/Nx1KbpcyA5814ELDBCbyBMhreZqZFlq5OouOUJjKc8Okz3zzhOSukGogkzBSTQ+nuWjLaA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJHfA+dd+nms14VIy7Q8bFEY2lOfAV8XoWcKTHQxn8K3GaqSDJ
-	TdLCTWDReL9mTiWoKVhvnza0x3usiQxYnomKn+20B6yqkpErUJ8rZ3p9SzKd3NKJTa01rTprs6Z
-	EbJXu4zaOptrbcJqHRQps4FplC80Yz+42PZZo80kQ/eqGDgAG9WI+bjEYhpRJy8U9Dw==
-X-Gm-Gg: ASbGncvU1mIDTp0Fs30XM/+j3CE8Zn1SsmR0FvwkBR0RFth+5wD/qZ2oPlwTuzeIsoh
-	CNY8eBbBswheJygsap9QfaTvphIEkOJ2fWjp9RGYlavNEybVrRbqJsQnVGo3scX/VlP8kJDtoB6
-	KIftDGQtgS/DC0P7ym9G54URIHVg6oAB5S8QX7WBfB/DvPTcAW80hAi13E9/GxMt32y2SV3OPDy
-	Je5XiROwJ2ITkFloPWUuPWYnXp46I7V/3TAkcseiTgAIrNjHoNx8gPaD/kxxiV1ewCTb4BlawBp
-	XneBQ7ccpbWSOsfYepwnz9ffTLtjaVB06O5T0RtcJbpJ71Sd
-X-Received: by 2002:a05:6e02:1a81:b0:42d:89d2:bb with SMTP id e9e14a558f8ab-42e7ad894ebmr73562605ab.6.1759780005299;
-        Mon, 06 Oct 2025 12:46:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEifc22XtdKCJ76WuLXjkG/CH7GbrgaM1lNvaHoU49PuB2rEVRz9xNuIY1xjj+apJYv7FEpWA==
-X-Received: by 2002:a05:6e02:1a81:b0:42d:89d2:bb with SMTP id e9e14a558f8ab-42e7ad894ebmr73562395ab.6.1759780004792;
-        Mon, 06 Oct 2025 12:46:44 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-57b5e9ec393sm5228654173.14.2025.10.06.12.46.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 12:46:44 -0700 (PDT)
-Date: Mon, 6 Oct 2025 13:46:42 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: =?UTF-8?B?Q8OpZHJpYw==?= Le Goater <clg@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfio: Dump migration features under debugfs
-Message-ID: <20251006134642.4aee649a.alex.williamson@redhat.com>
-In-Reply-To: <20250918121928.1921871-1-clg@redhat.com>
-References: <20250918121928.1921871-1-clg@redhat.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF462199FAB;
+	Mon,  6 Oct 2025 19:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759780215; cv=fail; b=N4QYfSGI0YYVRcYj6cpCwFSgCYeyoQ9qw+/OUdsp41Ynl+JuAAPswKCgHLA75t9l5YZZ3pRd4YUeGG8ZBD/OudSVVPQ7o+5em0V53uYcByPUJiQdlL5t0wbDKKoKLViq4gpOz7OL6CIeGe/TNJaaYF8+JLzWKecOxbGDasKk0JU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759780215; c=relaxed/simple;
+	bh=B2swf/12/NEp0M4YuHi4rLRtbVnUhq1tWFvougsyPyY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=re+2AXK+f6JnyAp3ZracIG2oNIT5y2iV6PTMGBCxuOm4kptMv34sfF3ZzE+fL4XzJmgHmHOaKsbgIkXn43Za3bKA5yAsxG2J081Rxvcu9J2lYMnxgUAMPjr8smC/WBoNJWA9kH3FENNomaxENQG3fG7BqRBXuY5gdSFUfMuet1o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dHAdTgi4; arc=fail smtp.client-ip=52.101.85.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pA0WUyIYwZf3Bkfzxa2VXrCiH3cDZWmDZ0ZunDEpLc5O1MZ1CQT71Vn7FJl/X3skzOC4Ngnb7301gI8/GO80UO05DGDPeoPKCYxFGefMVAm50SDdM1CevsTEoTCVXzvuvp2DRG2/d6NfXo41ohXwYI55x2h8I264mGdofsZeUYGOyGUUfDBFmXvwswBGC75C+Pyaoru+lPDa8J1asw7JAIfZT9Ffx3jtsuR7mvISPdNxOe2K5e64M2SbvJAEuicRH6OmJIdb80DTksvI65b+1WXCW4u6yUHvxDVH1v5SEtyVLSSbNuJxbACD7SQilUqOkr1JLGpkW+02zlK/GhfNoA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Djx+IpAekWAx2jAAy8rg/Rkm9LxEwv6lQGiQ/4V3wcA=;
+ b=eVZfqg9rFmGw7oAOVrOnKHGD0ExW4r3WqHiqvv4U92aGbGrPT7IkRWgWwSOMuE/WkDIyM8zkValOCh1ellj6V0hzQ3jRGDkMgJlZbOYy7952OkySHUQMziZ+CYPGcmwXIrNuhRPf6ldcZa3CLZD5pvYhy06Z+fykw+LIQQSs90pQV+P16LwS4vixEuc43hk3KHro2A+T7sAfRZ8s2KPIEXbmU3t7J4EkZ9vxNPLJTN34q/vKhmf+4xwz09a7DAqrkR59Xwfg8apYTKquY6jE7WuH4bgCMog35OstHs+TkPqc0iXmpU5UiS5nJdlP2q9Cz9RAUi4xfJSSp2KUmO+0oA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Djx+IpAekWAx2jAAy8rg/Rkm9LxEwv6lQGiQ/4V3wcA=;
+ b=dHAdTgi4A+ygaEKYfaYqIzD7gsFfDbuupc9gnL5AlNfkuQOJh+E8w0APhvv8+pyGG84nGsTLI+0rWcgoVuVl3WDgi99eB/YGPLN82ODraw75dPtj+NexUqpm7kyDEcG3MPGDbRc5sqXnhbIIXOcva+K89TfBKqvmn49arOAtvfeSs8YcAsYJt4r4h20T/S7QfDfwhhL38WRRE6yRrGQsmJDP2XbTBbQ5CrikTG97Yo6++y3rTWrjAM4X158zfsJZ4fcgpYc+RskFQA3ilCMKcQiXrH82ksCVgxTJR8j23CsK4Fh7Z/EP7FPLXNWD+kvTpumDBlWBTUF8g1B7jz99Zg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by SA1PR12MB8164.namprd12.prod.outlook.com (2603:10b6:806:338::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Mon, 6 Oct
+ 2025 19:50:09 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9182.017; Mon, 6 Oct 2025
+ 19:50:09 +0000
+Message-ID: <cea9b90b-649b-4e84-92d1-188565450a98@nvidia.com>
+Date: Mon, 6 Oct 2025 15:50:07 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 6/9] rust: bitfield: Add KUNIT tests for bitfield
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Alexandre Courbot <acourbot@nvidia.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "dakr@kernel.org" <dakr@kernel.org>, Alistair Popple <apopple@nvidia.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ "bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ "joel@joelfernandes.org" <joel@joelfernandes.org>,
+ Elle Rhumsaa <elle@weathered-steel.dev>, Yury Norov <yury.norov@gmail.com>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Andrea Righi <arighi@nvidia.com>,
+ "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>
+References: <20250930144537.3559207-1-joelagnelf@nvidia.com>
+ <20250930144537.3559207-7-joelagnelf@nvidia.com>
+ <DD7GCYCZU3P3.1KK174S7MQ5BW@nvidia.com>
+ <81490b32-6ea2-400f-a97e-ad2e33e6daab@nvidia.com>
+ <DD949OHGD5WP.1X9TCLIEKSHGB@nvidia.com>
+ <4324469D-4C47-441E-9AD3-54CEE379537C@nvidia.com>
+ <CANiq72mC5pWz92KYtOhtgOcMuTeuzOeM9xrbkna+HkrwHAQqVw@mail.gmail.com>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <CANiq72mC5pWz92KYtOhtgOcMuTeuzOeM9xrbkna+HkrwHAQqVw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BN1PR10CA0002.namprd10.prod.outlook.com
+ (2603:10b6:408:e0::7) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|SA1PR12MB8164:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1019438b-6d7a-414f-0450-08de05118e7c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dWM1SC9IWVlWdU9KOUtseng2ZGpXNUlwa1NsU2FpeTVRemN4bWxzQ0hhdW44?=
+ =?utf-8?B?d2oyaWhibGIwYVgzZDFQcXNucHhSMUlGRGNMd0luL3U1UG13RkZ1RFI3N2ZM?=
+ =?utf-8?B?bTR6UFVBdmQ0TThrM2xqbWFoY24xMEFOTlU3WFpsWmQ2Tmt1bjFOZ3o5bGRn?=
+ =?utf-8?B?WTZwdWhLRHdwS3gvY1M3cnczaTJWaFoxa2pBVjhvR2IyTDBsNG51S1dBOXEv?=
+ =?utf-8?B?RjdwRW4rM3l4MEVNOENrSEpvVTBBcXJlZk5VNngxTjYyK1pMTGczbXdTeG1B?=
+ =?utf-8?B?QUljSUxxeVFMUmcySUZWNGNnQzlVN3QzQkI2d3lQN2dGRlZOaXRKRWtGaWRq?=
+ =?utf-8?B?dGhuZXRPdDhsMXRjMkc1Zk5wRlZhd0w1OEFNQjdYemozSitodDRrK1VpaERZ?=
+ =?utf-8?B?WTRzNkM4NTVEZEdBUEp1MzFpdklqa2FjQUVFYklSUU9oRElYNFJNdklRUlgw?=
+ =?utf-8?B?ZWdjak5hU1pFQkNUZjBzOFcvMWNmNEtCSmhNOGV0aW4yTXdvQUM1dHMrMCta?=
+ =?utf-8?B?Q01mVWRqUWx5VDd1T2xOQ25DWDk5NVI5Yi9BaURpbUpRWTg1TVpnREo4VFZH?=
+ =?utf-8?B?b2JCaU1LZjRKZk9EMHZHRlZPT0Z2Q2F2NU9XYklzeUpaM3JCTmZZbUtqenpj?=
+ =?utf-8?B?NHN6WVVGclp0UFM4eitFSmdoaEZ2a0dzOTkxTjkxRDdQczd1dW52MGVCbkpN?=
+ =?utf-8?B?S0wwUEc2MUpFN3IzcHlNN0syaS82d1g4Y2g5TlcrNWhkSHFIR2Qrd1BwLzN2?=
+ =?utf-8?B?bHZLdWJQeDBhS3o5WXRzRUtxQ0JqWTBzRzFlVmMxVFlPdHpXL3VFczZZN2tH?=
+ =?utf-8?B?dVYvc0FuVWhzUzlmV2dBV01ZQk1KVC9ZcUZTYUxxUnQ2aDkwdFArSWZxUHVw?=
+ =?utf-8?B?SU9RaTlFMHNXUW5sNzI1RHdJUlMyK0M2TUJ4WE0xYzkrZGpzMUZLV0VFSEg5?=
+ =?utf-8?B?ejJibkxvWDVZeEdXc2pVd29EUUVuL3hxZy9JN0lVeXo2bThUc3phaGdJTjFI?=
+ =?utf-8?B?OVhSenNHb2RBQVFYdGd1VnhIRlIxTkRDUkF0eW5rdlFWNFF3SGpRQjl4R24x?=
+ =?utf-8?B?ZjV2WkN5U2ZnLzlPNklNUzJjUXVHbGh0TE5tQnpCV1lKdTRDcXBNVmlDMFA5?=
+ =?utf-8?B?RC9IbjRaOGxYRnVJTkhCdFhlOXc1OWVYRDFuNzFBNlg1Vm1KY2VtWXJ0OWtG?=
+ =?utf-8?B?cEd6MCtoZElkcWo4cHgvb1pDYm5VeWV6ZUMwQXFjeHJtSmlZbG5sNlh1TG1L?=
+ =?utf-8?B?UzVneGFzcWhRTDdaN0pZUlhHSlovUkdRTDRaUng2QmNsNUlJenl2UkhVSTZ2?=
+ =?utf-8?B?anlNQkc3REVjV21BYkxrdmM0QkVYc0c3M013MEd0V3owUCtZdkpPb0FaNHBh?=
+ =?utf-8?B?NlFQKzJaTXkzKzh5K1NTUEI5cVExOFVFdWJLaFB0YkNxTXlyYnFBVytraWc4?=
+ =?utf-8?B?MjR0TEZKRUlKQ0t6NVJ0RGRQNVlCMWVobGhqbjNSbTBzMUM1TUlLV1FVcERE?=
+ =?utf-8?B?Qkk2aW5SQXorc0pubDFNNzVvdEdSQTllTmR6OW5qeENSanNRbzZyY01ZNjA5?=
+ =?utf-8?B?b05rTGNVNTNlc0k2Yk9ITjRtd0VNQitoNDZUM0Jld3BCcEc4K3JobVd3enhq?=
+ =?utf-8?B?M0VJaDl1ZGZ0S2FobzNhSW5Cc2pYenpXOGNyNldiMENlYkdrRlRxQTJqUStQ?=
+ =?utf-8?B?ZHB6QWN1S3JtRnlkOGsyMGk1am50Mjg3Zkp6aU9QSEJvczFIMXBrR3JDS25G?=
+ =?utf-8?B?M3kwMW53MGluVXJMUDBIMGhCUjlzdkVscG1oTEdmL2NOL0RITHduQmR3SDl5?=
+ =?utf-8?B?a1RlMTN2c1ZBQ21FaTVmUlNuUllWWHA1L3pFWlNSenN0OHJhQWVxRExEaGNk?=
+ =?utf-8?B?ejJWSTk1Z3RwTmJnaWVjZTJDS01wQmgwWGFuOTNpYnlRdXR6SjdEMzNUbVRT?=
+ =?utf-8?Q?9eb4Yug2WRWcHDFHcwKG/1V5XN9k60Xd?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TzZKQ3lEMWFQRzlCdEtZR2VNa1prRE5qaEUxbmh3TEdlaTl6VUFOUHY5OXBW?=
+ =?utf-8?B?NlRxMUw4bGx5MkVOYldpY3hUQlVUM1dWdGFmTkx4dkthNytFQ0x3M3lOYk9p?=
+ =?utf-8?B?U1R5ZWVRbEcrcVk1RFh5bTBnUTF5QXNqUWp2OXVPNmVocWlwMFRFVHp5emdB?=
+ =?utf-8?B?YjBsMmd0VHh4MWw1UW05cHN2RWhMdVFrRVBKSTVWNENUdjN1bHk3cXRSalNC?=
+ =?utf-8?B?Z3ZFdVVrOWZuYXdmK3ArRDJ4eERybzVObi9CMnFPeDJtSmpMUkZqK0NTOXBq?=
+ =?utf-8?B?MVZBL1BuT2JIa1Zwb0hMcjVZSXhaQlJxamZva1l3aTFJV2kxbU11dERiWVFy?=
+ =?utf-8?B?VWN6VThwTWFpK1d4L1NYOVRMNE5rSFBweUhCVDZGc3g0eXBZREdvSzdiTUFN?=
+ =?utf-8?B?UVZTNnlrQ2UrZW5xWStsU1hLTExBaGJxRGJLN2xYSGtzRjdYbjJadzhvNEFE?=
+ =?utf-8?B?QkNNTGhSK0xVZ2JhYnlZT0pWeXBmTjFjSDJiS3pDa0Z4QlVnMTFxMEo1R2tp?=
+ =?utf-8?B?Nk1LbVZUdU40dkFmOFo2RXRtYlowRmhUQndaZkJ6bWdjTVhxZnJzVFlzRXFY?=
+ =?utf-8?B?V0FGMDlTc2NJQ3VMQitWZm9KbDZXM3k0NTVpV0lMN3RKQmxBbnhkd0h3TUMw?=
+ =?utf-8?B?LzZJQ3Q1a3hYTjVxbExnaFdoRVNIazNqVkpQOWYrTFNZcUE1eno4eFlYemNH?=
+ =?utf-8?B?UVUyQ2trNS82VVluT0xyUUZyYlJlZGNseEVyUnh1NnpQOVNWNkhTZUdaMnBG?=
+ =?utf-8?B?L0FiV2JoWG8vUUZNcFllMlBDQkJEKzRXeHJ3VHFRMExjRm5RcjM5MXZMOGdC?=
+ =?utf-8?B?L1hWTXRFSS9VKzhCSW1HcTdEM2NvZHY5MWdtN1VkWkNNendUNi9RdGZmZnNz?=
+ =?utf-8?B?azBPSy9ybjBKSExJQU5WNlBSNTl3ZFhXQ2dzVXNyTEFaeU00aGhBM1ArNENS?=
+ =?utf-8?B?YndYRHY5Q1hQdTZlem40VXBBVHc5NFdDaWFFSkpvTDh3Z0hiN1JVaUdraDlq?=
+ =?utf-8?B?SlN1dURtRkdpSGsrNi9kdm82SGdRcjBiQlZ0dlNtNmV1UUluUU5pTmVSdFF4?=
+ =?utf-8?B?R0J4TFBaeVJtVXJHTjBaM1FPbkNrOFM0R0M3cUNuTmJRdjFxV1BDY2txejRa?=
+ =?utf-8?B?bEZuVm1UNTR5T0FoR2dPbVFKTFZxL1VXVlVoaXVIL1J3VGFNcnYzb2RhOU5F?=
+ =?utf-8?B?N2hFWnBZODIxRzB0cytDRFlSZi91TXpIN1hma0FXUEM3aDc3cnRNRFV0QUx1?=
+ =?utf-8?B?b0x1QTVrYXRHdmpueW1jWEoydU5XSkF2MXp1L20yRjVUYWZFVHhkRTVPYmVC?=
+ =?utf-8?B?N2hCeU1mdi8rd1lvdldydkZCVUNWaGFua0Ivb0hTekJ0OEJMd0xyQXUwdTho?=
+ =?utf-8?B?TTZYTGNsMWZFZWhrSW1wMGZGMXpuVUxnb2lCdi8xQ1RleTY3SEJQT2Q2alpo?=
+ =?utf-8?B?QXFxTFR2QUM0cjRZM0lROE1JSjY4RU5oN2FiUHNjTE9EallKcFpLNWtGdFVE?=
+ =?utf-8?B?WHNWRlVoM0FvM0NEc1pRTXIvVWNnUTBoMkZWK3cyNCtXZ1FtWTVrV2w0ZklO?=
+ =?utf-8?B?SWZBUjJLUFZJSG9iS1g0Yi8yakJ2Tjk4ZGlLdEFvbjhNbHVlTldaQzV4bzBj?=
+ =?utf-8?B?K0pRNUsvUnBQZ0FpRGtxMG5VVnBBMzJ5cTZwMW5BME52MHgrT2tKWWlwWVVL?=
+ =?utf-8?B?ZG1EZkRjTlprVllsNkFjRGtiSmt6ajBLalk1S3A4akxTa041N2ViZmxIbzl6?=
+ =?utf-8?B?bUhYaDN4aTlPNzNyZm1WVHZ1aFM4QnVhakhHa28zOXZmUHRzaVgzWW9hM2xC?=
+ =?utf-8?B?dEt5aDdtNUk5Mkcyc0pCU3N5bU9vKzV2ZHBOOFdURTFpVDZLQjU0N0Rwd3la?=
+ =?utf-8?B?N2N2aGxEMHFhK1F4RmplSlhGQ0h4WHlOelFxd05ESEgzRFFqaE05TDZLL215?=
+ =?utf-8?B?b2pPeU1UMjFmRHIvMkFaV3RIRExsWER4L2ZnZk1OdDRGbmRySG5FaXMwVldS?=
+ =?utf-8?B?RFp2NE84LzZpQkdYS1B1VWwrNnhtSW50aGMwYTloU1RoRmVNcldQQ2c3S0xv?=
+ =?utf-8?B?eEcxWW1SdXU2dkxCTXVFeUUyUUFtTE9TMjZmNmh2aC92WEl5YnhyeVNZK0kx?=
+ =?utf-8?Q?q3oPdotqB1zopkag32HxptP5j?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1019438b-6d7a-414f-0450-08de05118e7c
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2025 19:50:09.7637
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TmHabzZYL58Aw+l0J1sNd0Bwcn1rE56hjHB9UGvyqVk4W5AC8UZdLijvW3w+0f1x1NPR5z1sFu2gb/2dQzEAXw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8164
 
-On Thu, 18 Sep 2025 14:19:28 +0200
-C=C3=A9dric Le Goater <clg@redhat.com> wrote:
 
-> A debugfs directory was recently added for VFIO devices. Add a new
-> "features" file under the migration sub-directory to expose which
-> features the device supports.
->=20
-> Signed-off-by: C=C3=A9dric Le Goater <clg@redhat.com>
-> ---
->  drivers/vfio/debugfs.c                 | 19 +++++++++++++++++++
->  Documentation/ABI/testing/debugfs-vfio |  6 ++++++
->  2 files changed, 25 insertions(+)
 
-I think this was overlooked, but should have been considered for the
-v6.18 merge window.  Given the plan to get the DMA mapping
-optimizations in this merge window, I think we should pull this in too.
-Applied to the vfio next branch.  Thanks,
+On 10/6/2025 12:40 PM, Miguel Ojeda wrote:
+> On Sat, Oct 4, 2025 at 6:14 PM Joel Fernandes <joelagnelf@nvidia.com> wrote:
+>>
+>> Well, it can be efficient. It really depends. I have been contributing upstream for about 15 years if you see the git log, often when someone chats privately with me like you did and they told me they are ok with a patch, I save them the trouble and add their review tag especially after they already added their tag to all my other patches. Surprisingly though this is probably the first time anyone has been pissed off about it.  Anyway I will not add your tag henceforth unless you publicly reply (or you let me know otherwise by chat).
+> 
+> If they just say they are OK with a patch, that would just mean an
+> Acked-by, not a Reviewed-by.
+>> In any case, the documentation states those tags cannot be added
+> without permission -- if someone gives you a tag privately, it is best
+> that you tell them to please send it in the mailing list instead. That
+> way there is no confusion and others (including tooling, e.g.
+> patchwork and b4) can see it.
+Sure, certainly it goes against docs/guidelines to add a tag *without
+permission*. I don't think anyone disputed that? I don't think I was advocating
+adding RB tags randomly without consent at all - please don't get me wrong. :-)
 
-Alex
-=20
-> diff --git a/drivers/vfio/debugfs.c b/drivers/vfio/debugfs.c
-> index 298bd866f15766b50e342511d8a83f0621cb4f55..8b0ca7a09064072b3d489dab8=
-072dbb1a2871d10 100644
-> --- a/drivers/vfio/debugfs.c
-> +++ b/drivers/vfio/debugfs.c
-> @@ -58,6 +58,23 @@ static int vfio_device_state_read(struct seq_file *seq=
-, void *data)
->  	return 0;
->  }
-> =20
-> +static int vfio_device_features_read(struct seq_file *seq, void *data)
-> +{
-> +	struct device *vf_dev =3D seq->private;
-> +	struct vfio_device *vdev =3D container_of(vf_dev, struct vfio_device, d=
-evice);
-> +
-> +	if (vdev->migration_flags & VFIO_MIGRATION_STOP_COPY)
-> +		seq_puts(seq, "stop-copy\n");
-> +	if (vdev->migration_flags & VFIO_MIGRATION_P2P)
-> +		seq_puts(seq, "p2p\n");
-> +	if (vdev->migration_flags & VFIO_MIGRATION_PRE_COPY)
-> +		seq_puts(seq, "pre-copy\n");
-> +	if (vdev->log_ops)
-> +		seq_puts(seq, "dirty-tracking\n");
-> +
-> +	return 0;
-> +}
-> +
->  void vfio_device_debugfs_init(struct vfio_device *vdev)
->  {
->  	struct device *dev =3D &vdev->device;
-> @@ -72,6 +89,8 @@ void vfio_device_debugfs_init(struct vfio_device *vdev)
->  							vdev->debug_root);
->  		debugfs_create_devm_seqfile(dev, "state", vfio_dev_migration,
->  					    vfio_device_state_read);
-> +		debugfs_create_devm_seqfile(dev, "features", vfio_dev_migration,
-> +					    vfio_device_features_read);
->  	}
->  }
-> =20
-> diff --git a/Documentation/ABI/testing/debugfs-vfio b/Documentation/ABI/t=
-esting/debugfs-vfio
-> index 90f7c262f591306bdb99295ab4e857ca0e0b537a..70ec2d454686290e13380340d=
-fd6a5a67a642533 100644
-> --- a/Documentation/ABI/testing/debugfs-vfio
-> +++ b/Documentation/ABI/testing/debugfs-vfio
-> @@ -23,3 +23,9 @@ Contact:	Longfang Liu <liulongfang@huawei.com>
->  Description:	Read the live migration status of the vfio device.
->  		The contents of the state file reflects the migration state
->  		relative to those defined in the vfio_device_mig_state enum
-> +
-> +What:		/sys/kernel/debug/vfio/<device>/migration/features
-> +Date:		Oct 2025
-> +KernelVersion:	6.18
-> +Contact:	C=C3=A9dric Le Goater <clg@redhat.com>
-> +Description:	Read the migration features of the vfio device.
+And no doubts that publicly replying with RB tags is the best way.
+
+cheers,
+
+ - Joel
 
 
