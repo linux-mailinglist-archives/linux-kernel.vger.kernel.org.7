@@ -1,168 +1,133 @@
-Return-Path: <linux-kernel+bounces-843432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A3F7BBF2B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 22:19:05 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 356B4BBF2BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 22:19:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 434EE1898945
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 20:19:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C8784E990A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 20:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2D2221FA0;
-	Mon,  6 Oct 2025 20:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4384B2D7DF3;
+	Mon,  6 Oct 2025 20:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AtcKur9i"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aplaUWnk"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F051119AD89
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 20:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCB6C2D5436
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 20:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759781938; cv=none; b=GlbASgdxIuXWzojkgAy5b+rgdJg5U5g6uNtU6u9qneLW/VI1NrH7fiPmtoFvYSaruLqR93w+yzWilaqky2ep001tPSINMA0AFMAf4vqPzQWOcgxuiBNyITkiBEFRIgsz3LPvm3cJa0N03/jLWYgCDWuBFkBF5/4iXXx0SwhRb2Y=
+	t=1759781943; cv=none; b=Q6vbS21PxDdXN2nqkP31pk3T1A5Hg4LkgKDsnfJjZ1eFO6r8WimL3lVNuPuMsLAmJHe0xfjSXxH2olzYVRc66sV0BBwgFadMyIrWpEpqe36k0a4eipF4cw8kaTQCv5DBUm2qUJVl+L2GyDam8WzGylbnImnN9OCm7blKcEhY07k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759781938; c=relaxed/simple;
-	bh=5eQEIeNJ5EZYkPz01gAZjijISqu7bO+HYt1McJx8mUA=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=MK66VqRR5LUWBQTutJSAZ3/E/drOPQVI3zLaZL4Ac64xPJ9jhJjkLjJx6+84SdVp7Tmo3ZqbgX8KLI+faSkxSD+a1TWvp2MNwNq/DYLd45TQ15m0HONcYjtxvfD0bMqfPxbQlnWe4R2cXxg96rulZ6FbsWsdfoo7UZMe8tutfTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AtcKur9i; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759781935;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rRDjOk2UJBNY8OM4uijGV6YLvmoMX0A5enzMiF12TZI=;
-	b=AtcKur9ilgwSd9XJKCdARuQc6TkCezG3btHWhwv1O4xpnopdoByr4TuP9C+8OgKL++7HNh
-	ZJe3izFbLOVxsIF8WB5RStV62YrlBVPepZwUVPurDTcUNKLOI4FK5H+5gNukQ717CbCYRP
-	P2DovNWBx+8ukIbCXRrF1veVVyIzqug=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-60-YoQzrUW6NSKjrvUx4QaY1g-1; Mon, 06 Oct 2025 16:18:54 -0400
-X-MC-Unique: YoQzrUW6NSKjrvUx4QaY1g-1
-X-Mimecast-MFC-AGG-ID: YoQzrUW6NSKjrvUx4QaY1g_1759781934
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8635d47553dso955414985a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 13:18:54 -0700 (PDT)
+	s=arc-20240116; t=1759781943; c=relaxed/simple;
+	bh=1lolhe2GlbOVyjEMDHyRQEBf0AOekqw7TGvry2kixcI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ga+3qbQMRfOr9et77LOnt9gBacsdjjCuBK4WPF0iyp2mSA78ilbm+n7kH+guK2UPXg6VeNpkpq6mmol/nSOdgDtI3xdZOVcIrNbxWlLnVvwgVV3amTgiHGeEvpGKZfPh/0VRj5T2eFWkt5h19EsQ+GrDmt2uaw1cBQtE7GgVetg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aplaUWnk; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-77f1f29a551so6810797b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 13:19:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759781941; x=1760386741; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=s7c6FuDc/WooqLby8dYSXXZ/60kGmD2CeerU/6YhiHQ=;
+        b=aplaUWnkdMTfrn7RN6II1XU8RQbhR0mmpzWGyRSxT/sX5Jgq0LuHQ5yLl9woNWcWNt
+         skcCmGqExwMsxmRJ70skJjuzQ3PxCrfkRNjKTtrsP0iUTntd/ccu38ZyY3U1QZ64WSdk
+         Qb4vpRCJgR+t2tMkAG35zvNcaoKqE24ySBSuN14b/ORbc+TMMBFS4dDZ5TQAME4D+AD3
+         T+hPSM2t/0R+EzM2Y9UO1Rg55mtGVLp8ZZrxfjWlF9+A/xjASMGj1HqaEW22WKQJ+vZU
+         aFoPQF+B4izxF6j6yl9gwFqrHWFT+mdXpvEAp1IIE6aQL87+yWtHA7bzJD6ojK0NA+Os
+         b20g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759781933; x=1760386733;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rRDjOk2UJBNY8OM4uijGV6YLvmoMX0A5enzMiF12TZI=;
-        b=Ms40R1+TDve3rbxfu51qBNp7yaXgaeIzYO5Tj9a4zpBaZ0yPUFB10vOKtXam2GfpMc
-         9mIB8VXZas6qT00l26MW54HY5hU+/GA4A6VMXuHo6yXhecHTOwBpNu3Pqn8NyVzVRW5s
-         5eR0o27R8bRZIznQ26+1DOFfCQNuo+pf6KNKyys9CEQBSLu/6h2q6VZ8c9J74ncIt6eC
-         lr24gTwFUA8ZaDla9wZQ+A7SDIM1HmBXmYlsCD2xlxrKy1I755+4MVqy6LM9ZAEy5XLS
-         CcvhqqBXRMI8+81O5wzvMnkIxGUF0liGTYqZ42SIZeKLwYfrEdtum8IaNAUY8rfDZTIy
-         yCGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXRjaMXVvUA66+JvH093ItNCQI6PuQgwoT9MsgGbKUgWpzF6hyo4rCGgu1wUyl68T3yoqEmeejlrcvW0DU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywsq1iSVaGdJqPMQLe+iNeD0/m7s7SnntkFZZhMnyOthCAoFl9A
-	K4BzYPM8IANKhjMB+nFBIjp064/I66Kx4oX3z8Kfbl0pHM9REyOFRmwc7f/cTkruGY1l6t8BmQi
-	0URHaOYIMxWGQBuKQuWf1hTIhyYyYwAl3E4cOXkDox/RJx6tw72Dt0UcH1nYfBCmrrw==
-X-Gm-Gg: ASbGncsCFlukN0MyazMJoMxzQy0W7cKsdI74ymUlf1LwhlrmrNzLouhM3EBSC6qqDuw
-	aojetF5muuEjOlLJpPXUWF5rGy8phujARgaL8bxIVFHMIjv7ZFo57456gIvhmEAdoosgVGDE99b
-	yI4yyY4v+Hhvx0qqscmFa0PtR57B9HY3x0DyL6q03SjhodLq7jSTAOeaRG1c8tkmWZ5eKMGc5NO
-	/WyH5t/czvye2RMLmJ0qFhsXA1ozFmQe0PE5xWuYEc1/36zHh0CGUKmqLIN8mufBRuzAt+Yxpxq
-	vG9XbF0xSIt38BdmJb0/nZTKA4jkXHNQmP2aXX8nTc45gHq6nz4Ba4tqcz37xwt3yJxMCr1W760
-	/TRf1YjlT24Au+X4W
-X-Received: by 2002:a05:620a:1707:b0:84b:ebcf:56a3 with SMTP id af79cd13be357-87a34aa4516mr1588124785a.21.1759781932761;
-        Mon, 06 Oct 2025 13:18:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH1dgJjNLxpPDAd6SOq/4Amrbct/qwou5kIt8RniF4E527vSqzwcPOgDR30Aenfez80Nn+SaQ==
-X-Received: by 2002:a05:620a:1707:b0:84b:ebcf:56a3 with SMTP id af79cd13be357-87a34aa4516mr1588121585a.21.1759781932301;
-        Mon, 06 Oct 2025 13:18:52 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-877725550b3sm1380084485a.26.2025.10.06.13.18.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Oct 2025 13:18:51 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <0bfeee57-d0dd-4480-8539-0ae5d7d4ea04@redhat.com>
-Date: Mon, 6 Oct 2025 16:18:50 -0400
+        d=1e100.net; s=20230601; t=1759781941; x=1760386741;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s7c6FuDc/WooqLby8dYSXXZ/60kGmD2CeerU/6YhiHQ=;
+        b=WhCe4CdtdMmqnp5Qh4V4QDGKZ7g7JffeCj7nVuCcEfyfSFt1sw9LdBKUIFHAP5js54
+         UET/eSlg2MeWpevxbUF4o20TX5pgL+H/IU0clFTvt/Igj1zXum4IbDJelh8PayZKjYpK
+         KboTISAeKGDA0Ng2IzJBjFkitE1YhnHR049GQyKzW1KAcuRj8/gf8qDyBN+rDQOPnKKV
+         k7KH2g/DgCxZ/EcFWR5dFUtqRiAQydTuZgexjW3+CDAJQzn8Gcg1Ep6vyVsUVVf6iQyV
+         4gvTtJi8q/C05ttuE/E2E8uRWwhtedL3nTgxwEPNvguiSM/xMLV/QSXCqE+X3EvxQOqK
+         eZYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsXmXnw67IpQ98aBaWLGEa8DnSfovLuD5T+xnjFzJ6WcgeQnhbPWqIFXydcShoGsVpFe078bjvX2/fYMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBUwLxznW1zA3Fvchns7uBIIV6fAstNO+E625D0mVFf3toUYqM
+	quTE66AC/Rozz6A9evpg9rvuwP3s6zqFSYTwUDPrIPNyKkR+YHiQs6Q8
+X-Gm-Gg: ASbGncs/OmK0xB4iShfii4ypCYPrqo2zUw8mRHp+lSZL6Cy4wiodSNgTM348nB4VgMw
+	DpbWZns0yKKuWUdHlXbyzuUr9VaPKJXA5eg+hkLJYKM74QgHlYSrl5FZ1lgnXn71rsoJGwrAXXH
+	vaNvIampXWSH6NREtFfLI3I6EOnnUfbTbFNXHqa3oQ5PSmLVOgOhwNigwErDhYzve2q5npUXNiU
+	a08ewC7ngeQi4gE0Gt/09AdqbznP9VL9X7pZsHslS8ynCry7vG+clIw/oAfPPCzIoObCUBbtlbX
+	oRCtasRteeqrm4kJ0wH0aMiVr/Zkl2GuTkD/j8e+tn7eGEBYrfDeMcDphpTyORleHefGnyxPUnv
+	nXsaa23pmPsMV++TEdGAWvMzgLsamPSsbOe48w8Px9OLr0agusgx89Zs71Kw=
+X-Google-Smtp-Source: AGHT+IFFMC0XNc9aOxuuCWzW1QQR1mD2fC24W1q6bD/FpKoR+B7obAfk4abxLPewsoUXOgZOsL2/aA==
+X-Received: by 2002:a05:6a21:e083:b0:253:1e04:4e8 with SMTP id adf61e73a8af0-32b62107fcdmr18496026637.56.1759781940891;
+        Mon, 06 Oct 2025 13:19:00 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b62e121e0afsm9801971a12.25.2025.10.06.13.19.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 13:19:00 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+To: Corey Minyard <corey@minyard.net>
+Cc: openipmi-developer@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Guenter Roeck <linux@roeck-us.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Greg Thelen <gthelen@google.com>
+Subject: [PATCH] ipmi: Fix handling of messages with provided receive message pointer
+Date: Mon,  6 Oct 2025 13:18:57 -0700
+Message-ID: <20251006201857.3433837-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lockdep: Account for lockdep hardirq context in
- irq_forced_thread_fn under PREEMPT_RT
-To: Guangbo Cui <2407018371@qq.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-rt-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org
-References: <tencent_B5CE9A8654E8B2476383AEC85C25BDA7BD05@qq.com>
-Content-Language: en-US
-In-Reply-To: <tencent_B5CE9A8654E8B2476383AEC85C25BDA7BD05@qq.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/6/25 2:34 PM, Guangbo Cui wrote:
-> In PREEMPT_RT, IRQs are forced to run in threaded. However, lockdep did not correctly
-> account for this case, causing false-positive warnings about hardirq context violations
-> when analyzing lock acquisition in such threaded IRQs (see function `task_wait_context`).
->
-> This patch updates `irq_forced_thread_fn` to explicitly call `lockdep_hardirq_enter()`
-> and `lockdep_hardirq_exit()` when PREEMPT_RT is enabled, ensuring lockdep correctly
-> tracks the hardirq context even when the IRQ is executed in a forced thread.
->
-> This was discovered while testing PCIe AER error injection on an arm64 QEMU virtual machine:
->
-> ```
->    qemu-system-aarch64 \
->        -nographic \
->        -machine virt,highmem=off,gic-version=3 \
->        -cpu cortex-a72 \
->        -kernel arch/arm64/boot/Image \
->        -initrd initramfs.cpio.gz \
->        -append "console=ttyAMA0 root=/dev/ram rdinit=/linuxrc earlyprintk nokaslr" \
->        -m 2G \
->        -smp 1 \
->        -netdev user,id=net0,hostfwd=tcp::2223-:22 \
->        -device virtio-net-pci,netdev=net0 \
->        -device pcie-root-port,id=rp0,chassis=1,slot=0x0 \
->        -device pci-testdev -s -S
-> ```
->
-> Injecting a correctable PCIe error via /dev/aer_inject caused a BUG
-> report with "Invalid wait context" in the irq/PCIe thread.
->
-> ```
-> ~ # export HEX="00020000000000000100000000000000000000000000000000000000"
-> ~ # echo -n "$HEX" | xxd -r -p | tee /dev/aer_inject >/dev/null
-> [ 1850.947170] pcieport 0000:00:02.0: aer_inject: Injecting errors 00000001/00000000 into device 0000:00:02.0
-> [ 1850.949951]
-> [ 1850.950479] =============================
-> [ 1850.950780] [ BUG: Invalid wait context ]
-> [ 1850.951152] 6.17.0-11316-g7a405dbb0f03-dirty #7 Not tainted
-> [ 1850.951457] -----------------------------
-> [ 1850.951680] irq/16-PCIe PME/56 is trying to lock:
-> [ 1850.952004] ffff800082865238 (inject_lock){+.+.}-{3:3}, at: aer_inj_read_config+0x38/0x1dc
-> [ 1850.952731] other info that might help us debug this:
-> [ 1850.952997] context-{5:5}
-> [ 1850.953192] 5 locks held by irq/16-PCIe PME/56:
-> [ 1850.953415]  #0: ffff800082647390 (local_bh){.+.+}-{1:3}, at: __local_bh_disable_ip+0x30/0x268
-> [ 1850.953931]  #1: ffff8000826c6b38 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x48
-> [ 1850.954453]  #2: ffff000004bb6c58 (&data->lock){+...}-{3:3}, at: pcie_pme_irq+0x34/0xc4
-> [ 1850.954949]  #3: ffff8000826c6b38 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x48
-> [ 1850.955420]  #4: ffff800082863d10 (pci_lock){....}-{2:2}, at: pci_bus_read_config_dword+0x5c/0xd8
+Prior to commit b52da4054ee0 ("ipmi: Rework user message limit handling"),
+i_ipmi_request() used to increase the user reference counter if the receive
+message is provided by the caller of IPMI API functions. This is no longer
+the case. However, ipmi_free_recv_msg() is still called and decreases the
+reference counter. This results in the reference counter reaching zero,
+the user data pointer is released, and all kinds of interesting crashes are
+seen.
 
-data->lock is a rt_spin_lock and pci_lock is a raw_spinlock_t with irq 
-disabled. So the data->lock => pci_lock sequence is OK. However, 
-inject_lock is a rt_spin_lock again. So you can't acquire it with a 
-raw_spinlock held and interrupt disabled. It is something that needs to 
-be fixed not worked around as if it is OK. It is not a false positive.
+Fix the problem by increasing user reference counter if the receive message
+has been provided by the caller.
 
-Cheers,
-Longman
+Fixes: b52da4054ee0 ("ipmi: Rework user message limit handling")
+Reported-by: Eric Dumazet <edumazet@google.com>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Greg Thelen <gthelen@google.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+ drivers/char/ipmi/ipmi_msghandler.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+index a0b67a35a5f0..3700ab4eba3e 100644
+--- a/drivers/char/ipmi/ipmi_msghandler.c
++++ b/drivers/char/ipmi/ipmi_msghandler.c
+@@ -2301,8 +2301,11 @@ static int i_ipmi_request(struct ipmi_user     *user,
+ 	if (supplied_recv) {
+ 		recv_msg = supplied_recv;
+ 		recv_msg->user = user;
+-		if (user)
++		if (user) {
+ 			atomic_inc(&user->nr_msgs);
++			/* The put happens when the message is freed. */
++			kref_get(&user->refcount);
++		}
+ 	} else {
+ 		recv_msg = ipmi_alloc_recv_msg(user);
+ 		if (IS_ERR(recv_msg))
+-- 
+2.45.2
 
 
