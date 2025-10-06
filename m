@@ -1,245 +1,142 @@
-Return-Path: <linux-kernel+bounces-842921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 653EDBBDFBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 14:11:57 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD234BBDFBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 14:12:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D82D734B394
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 12:11:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 45EC04EB232
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 12:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED9427A93A;
-	Mon,  6 Oct 2025 12:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96B827A45C;
+	Mon,  6 Oct 2025 12:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="oT1aSPuj"
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Of76DJpu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F814262FC0
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 12:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FB7273803
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 12:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759752712; cv=none; b=vD37wJDbNxBQA5mQPgrIeaSMqnwuDmT4/0IKfGm6pFx/v9NeHPnL5trFQOFv+esv5DYMhWavA01J1rtdbvBbPn76eGqUWsvRRaWcHKTvbh+a/YA9v1UObxWJuAI8J6sL6GstnC1hsY+0suMS3JkKeGZa7KlSTn7tNewrbW7lypI=
+	t=1759752736; cv=none; b=M/iDp1k29KvgQN3pdqWWcwxTAZ0K1zMW1SFu5LAl7NeADptzclodO3k5xmBWOILpNsQbN0eVSEzZX/2sJpA2fMt6jA6jMsx8hoN1XvQiF+WxJ/BrB+7OywmRyOVxd1yzht4tP2VwgOx6nMqLKgtPz1mzr/3O8d5gtd0ky5ojnK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759752712; c=relaxed/simple;
-	bh=bEpFkBhMAl+Kyv9UshSYj++BncULeY9oVKP4ESd6Yqw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oBsHRpAPT/5XJpxl6PMfoKk5VgF5e/rJCgP8ZvUw5h/MIPrE5L9AP8XGJzSXY+NQRc5kfxNKeI78p9ynYY6F3/8Q/n3lK3av8mxsO7j/r5FqCp/jPozjAS2kO+YaNXXNvb4+ByU7Lz8FNHofPleXPDpQafoLZDaxe22ubfoiJyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=oT1aSPuj; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id 3D0EB240103
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 14:11:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
-	t=1759752707; bh=2zbnC8Z/CyeVECVYwsvs1oT4U41KTfZNklK696kKRTQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:
-	 Content-Transfer-Encoding:MIME-Version:Autocrypt:OpenPGP:From;
-	b=oT1aSPujWARqnkuEgI9skVSO1edRSQZdn5NVB8DdM4uIoq3hGsBtoMrJUUGfqLPra
-	 Vx6HBneQevsOvJBmw06KScau/6eW+tvKCgjFs84iMWrC6C4HCPceg49Y/R+gp/zf/w
-	 lZjSjo5MfTM6eNT5WH0blvlsJC5FzWtU+PBJAoaYxtqgJqv05XUs+va6KfgXlcoGHk
-	 4GslXLdPx32uB722r2lLIcDYZGt+dy3ZIuXZd5xzGNdADHFMEYa6OOyjOpzCs4vgjX
-	 zi2RD06L1WTePuZT/eHJANlUMdHmj/WnkfXf77+rjjPlr5NM1n8oyB/7UdvlX0Ok14
-	 8nli6YoJp2Pbw==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4cgJ696Q94z6v1b;
-	Mon,  6 Oct 2025 14:11:45 +0200 (CEST)
-Message-ID: <568ee07cc0155f3d05a868ae6dce102916b83566.camel@posteo.de>
-Subject: Re: [PATCH 1/2] Add manage_restart device attribute to scsi_disk
-From: Markus Probst <markus.probst@posteo.de>
-To: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, "Martin K.
- Petersen" <martin.petersen@oracle.com>
-Cc: linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 06 Oct 2025 12:11:46 +0000
-In-Reply-To: <524f67bf-f4df-41bf-bf1b-5cd0a79649eb@kernel.org>
-References: <8c3cb28c57462f9665b08fdaa022e6abc57fcd9e.camel@posteo.de>
-	 <20251005190559.1472308-1-markus.probst@posteo.de>
-	 <524f67bf-f4df-41bf-bf1b-5cd0a79649eb@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1759752736; c=relaxed/simple;
+	bh=yaoH4khG0DjlwqNkd7YX3jJb3GPLRkY1UKpAzntpYEo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BuyGTCPdHFlQRsFJbB+SrOzOnixHBezhSlkvASrg/NqPxoTohrLBpmKt8jFagT4v2qG2/rBeCUmDc0c+Pbvau2Vnob7VwuiF29LVej6lZtHlRS1DP8RiGXAbUxLYsyqNKZ9a7TXHp7iCEMrH1gxpv//+lgRgcs0m4tweOINAPIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Of76DJpu; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759752733;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Kw07H6x36aqx01kWk75/03VGfAQh2QY2hSk25YgF/CU=;
+	b=Of76DJpuK7tFHlT1q1FE5xY+ztDaUZKrfIKMEENKFjXVsWyfSs4lxZaVe1oc2iEhSuc6xw
+	x9K31OC1FMd6YNphiO3XzfgBgUzMUK3nNXHDpHaqQau4Oam2YSqFIT858hMP8bfNq9Xkbq
+	8Am0MU6Yyb5U086+YN/c6n7INuTq07c=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-635-dsWMr3kKNeyJIrY3Amuj_A-1; Mon, 06 Oct 2025 08:12:12 -0400
+X-MC-Unique: dsWMr3kKNeyJIrY3Amuj_A-1
+X-Mimecast-MFC-AGG-ID: dsWMr3kKNeyJIrY3Amuj_A_1759752731
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3f93db57449so2338228f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 05:12:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759752731; x=1760357531;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kw07H6x36aqx01kWk75/03VGfAQh2QY2hSk25YgF/CU=;
+        b=PK2ixBuksRPbYXst/pW/2Y8Lt/tRZ/k4YR2Jj1soW5rCEiC5qf1vMGcCltq0zBOJog
+         /o80gqTbiFZrbofqzF8RhQuqCyteFgUbA4IErT9jbGMz0omA2SZ+q4r4G9vDA9YjbH3p
+         xuACOZv9xzA9Lyof/9uSYSC83N4uegAEKMjbtfgdUOzTjtCAIjzR4qhFyOaSBXMXYjVK
+         Z7/b/6ZRvvN91cU70WiHB03TpOYk5hPGQ5wQq1j5Osqer2cciDTcumQGmlEXufvJcooC
+         zLcpRnVCYjvNdQDOfUs5fAqNlSqofV5uZYAr/quNRe69UQEJEzcyAAhltcnZ+/K4xrFK
+         EDyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVOe9fkGo+qWBCyiUXe4YFLNb/sVNuhvMEW0tkpqc13210zIWzr7GDTdOxhkt8nDhoFrHw/dkf+vAh8Z90=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywqwq5necsQz3yrkR8eQoovNuv/KJoiVJ6F+IRnROfT5ASgvR6x
+	TNEU6seZB8OdkG/Pl0yi/tgrbJFsi2AqmepWxZGTOILYXXEze912XjUqLYwKGn1aa8ivc2XzDgE
+	l3hiZRzZiHn9CU/zBP77RlRZJcwxlT6CYvRSinAupyfsPG8QXQiTL1gcyzZC96g4xuQ==
+X-Gm-Gg: ASbGncv9zpNfIG7vaPZCbVwzQi+R4+TcUpdDYigj5W8Q9B1JQFfURuGWQ/chsJokHNP
+	4ieq+G9Rjp6pZpBLhVLWT2+MBxcRTNadL1kpSH6EYEdDkSDEw9sr+x4JpQ2FJmZFdteDMQJTnq9
+	yIgzAJnTdIzvse8kxwf4UXmroh+wrwm0RfBmWCsBhvs6uz1d+tlu1l1oFYI4D1acxFQnFSmYiqB
+	ESVqotfuO9iDAYCIs8N+/HvDHAOdovCB/o43qVN7z3Aa/IMCbKFgSz7j+ujFsMywO/fycWOrnw/
+	+OKrhNdYKyiYUe5mEgLqxZMSdR0uxt4g4unJSU43k3nhojWU8TUw+h1q2GmaUKfZwzh4PJGUcLq
+	k
+X-Received: by 2002:a05:6000:26d2:b0:425:7e3f:f091 with SMTP id ffacd0b85a97d-4257e3ff147mr1236085f8f.37.1759752731201;
+        Mon, 06 Oct 2025 05:12:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFT3pE7QBaoXj//zl3PFIqhVe6yVrMgD9mgTKp6DhlLo/eugYakVmoXsI42kb9G7RQA3Ix11g==
+X-Received: by 2002:a05:6000:26d2:b0:425:7e3f:f091 with SMTP id ffacd0b85a97d-4257e3ff147mr1236065f8f.37.1759752730815;
+        Mon, 06 Oct 2025 05:12:10 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.70.210])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e61a020a3sm257170315e9.10.2025.10.06.05.12.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 05:12:09 -0700 (PDT)
+Date: Mon, 6 Oct 2025 14:12:07 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Pierre Gondois <pierre.gondois@arm.com>
+Cc: Pingfan Liu <piliu@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: Re: [PATCH] sched/deadline: Derive root domain from active cpu in
+ task's cpus_ptr
+Message-ID: <aOOyF3EvIG5HKEel@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250929133602.32462-1-piliu@redhat.com>
+ <20250929135347.GH3289052@noisy.programming.kicks-ass.net>
+ <CAF+s44Q4SDXPRfYc4Ms5TcJgRU07QJB5H5VOHvyrZ31x9z49nw@mail.gmail.com>
+ <aNuEpt8IkvtkH9na@jlelli-thinkpadt14gen4.remote.csb>
+ <20250930090441.GJ4067720@noisy.programming.kicks-ass.net>
+ <45e40d5e-f0b9-4c77-af1e-6ac915518acc@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
-  keydata=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
-  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
-OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <45e40d5e-f0b9-4c77-af1e-6ac915518acc@arm.com>
 
-On Mon, 2025-10-06 at 09:58 +0900, Damien Le Moal wrote:
-> On 10/6/25 04:06, Markus Probst wrote:
-> > there is already manage_shutdown, manage_system_start_stop and
-> > manage_runtime_start_stop device attributes that allows the high-
-> > level
-> > device driver (sd) manage the device power state, expect for the
-> > system_state SYSTEM_RESTART. With this device attribute, it is
-> > possible to
-> > let the high-level device driver (sd) manage the device power state
-> > for
-> > SYSTEM_RESTART too.
-> >=20
-> > Signed-off-by: Markus Probst <markus.probst@posteo.de>
-> > ---
-> > =C2=A0drivers/scsi/sd.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 | 35
-> > ++++++++++++++++++++++++++++++++++-
-> > =C2=A0include/scsi/scsi_device.h |=C2=A0 6 ++++++
-> > =C2=A02 files changed, 40 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-> > index 5b8668accf8e..a3e9c2e9d9f4 100644
-> > --- a/drivers/scsi/sd.c
-> > +++ b/drivers/scsi/sd.c
-> > @@ -318,6 +318,36 @@ static ssize_t manage_shutdown_store(struct
-> > device *dev,
-> > =C2=A0}
-> > =C2=A0static DEVICE_ATTR_RW(manage_shutdown);
-> > =C2=A0
-> > +static ssize_t manage_restart_show(struct device *dev,
-> > +				=C2=A0=C2=A0 struct device_attribute *attr,
-> > char *buf)
-> > +{
-> > +	struct scsi_disk *sdkp =3D to_scsi_disk(dev);
-> > +	struct scsi_device *sdp =3D sdkp->device;
->=20
-> sdp is not really needed.
+On 06/10/25 12:13, Pierre Gondois wrote:
+> 
+> On 9/30/25 11:04, Peter Zijlstra wrote:
+> > On Tue, Sep 30, 2025 at 08:20:06AM +0100, Juri Lelli wrote:
+> > 
+> > > I actually wonder if we shouldn't make cppc_fie a "special" DEADLINE
+> > > tasks (like schedutil [1]). IIUC that is how it is thought to behave
+> > > already [2], but, since it's missing the SCHED_FLAG_SUGOV flag(/hack),
+> > > it is not "transparent" from a bandwidth tracking point of view.
+> > > 
+> > > 1 -https://elixir.bootlin.com/linux/v6.17/source/kernel/sched/cpufreq_schedutil.c#L661
+> > > 2 -https://elixir.bootlin.com/linux/v6.17/source/drivers/cpufreq/cppc_cpufreq.c#L198
+> > Right, I remember that hack. Bit sad its spreading, but this CPPC thing
+> > is very much like the schedutil one, so might as well do that I suppose.
+> 
+> IIUC, the sugov thread was switched to deadline to allow frequency updates
+> when deadline tasks start to run. I.e. there should be no point updating the
+> freq. after the deadline task finished running, cf [1] and [2]
+> 
+> The CPPC FIE worker should not require to run that quickly as it seems to be
+> more like a freq. maintenance work (the call comes from the sched tick)
+> 
+> sched_tick()
+> \-arch_scale_freq_tick() / topology_scale_freq_tick()
+>   \-set_freq_scale() / cppc_scale_freq_tick()
+>     \-irq_work_queue()
 
-Then it would be inconsistent with manage_shutdown_*,
-manage_runtime_start_stop_*, manage_system_start_stop_*, there it has
-the sdp variable declared.
+OK, but how much bandwidth is enough for it (on different platforms)?
+Also, I am not sure the worker follows cpusets/root domain changes.
 
->=20
-> > +
-> > +	return sysfs_emit(buf, "%u\n", sdp->manage_restart);
-> > +}
-> > +
-> > +
-> > +static ssize_t manage_restart_store(struct device *dev,
-> > +				=C2=A0=C2=A0=C2=A0 struct device_attribute *attr,
-> > +				=C2=A0=C2=A0=C2=A0 const char *buf, size_t count)
-> > +{
-> > +	struct scsi_disk *sdkp =3D to_scsi_disk(dev);
-> > +	struct scsi_device *sdp =3D sdkp->device;
->=20
-> Same here.
->=20
-> > +	bool v;
-> > +
-> > +	if (!capable(CAP_SYS_ADMIN))
-> > +		return -EACCES;
-> > +
-> > +	if (kstrtobool(buf, &v))
-> > +		return -EINVAL;
-> > +
-> > +	sdp->manage_restart =3D v;
-> > +
-> > +	return count;
-> > +}
-> > +static DEVICE_ATTR_RW(manage_restart);
-> > +
-> > =C2=A0static ssize_t
-> > =C2=A0allow_restart_show(struct device *dev, struct device_attribute
-> > *attr, char *buf)
-> > =C2=A0{
-> > @@ -654,6 +684,7 @@ static struct attribute *sd_disk_attrs[] =3D {
-> > =C2=A0	&dev_attr_manage_system_start_stop.attr,
-> > =C2=A0	&dev_attr_manage_runtime_start_stop.attr,
-> > =C2=A0	&dev_attr_manage_shutdown.attr,
-> > +	&dev_attr_manage_restart.attr,
-> > =C2=A0	&dev_attr_protection_type.attr,
-> > =C2=A0	&dev_attr_protection_mode.attr,
-> > =C2=A0	&dev_attr_app_tag_own.attr,
-> > @@ -4175,7 +4206,9 @@ static void sd_shutdown(struct device *dev)
-> > =C2=A0	=C2=A0=C2=A0=C2=A0 (system_state =3D=3D SYSTEM_POWER_OFF &&
-> > =C2=A0	=C2=A0=C2=A0=C2=A0=C2=A0 sdkp->device->manage_shutdown) ||
-> > =C2=A0	=C2=A0=C2=A0=C2=A0 (system_state =3D=3D SYSTEM_RUNNING &&
-> > -	=C2=A0=C2=A0=C2=A0=C2=A0 sdkp->device->manage_runtime_start_stop)) {
-> > +	=C2=A0=C2=A0=C2=A0=C2=A0 sdkp->device->manage_runtime_start_stop) ||
-> > +	=C2=A0=C2=A0=C2=A0 (system_state =3D=3D SYSTEM_RESTART &&
-> > +	=C2=A0=C2=A0=C2=A0=C2=A0 sdkp->device->manage_restart)) {
-> > =C2=A0		sd_printk(KERN_NOTICE, sdkp, "Stopping disk\n");
-> > =C2=A0		sd_start_stop_device(sdkp, 0);
-> > =C2=A0	}
-> > diff --git a/include/scsi/scsi_device.h
-> > b/include/scsi/scsi_device.h
-> > index 6d6500148c4b..c7e657ac8b6d 100644
-> > --- a/include/scsi/scsi_device.h
-> > +++ b/include/scsi/scsi_device.h
-> > @@ -178,6 +178,12 @@ struct scsi_device {
-> > =C2=A0	 */
-> > =C2=A0	unsigned manage_shutdown:1;
-> > =C2=A0
-> > +	/*
-> > +	 * If true, let the high-level device driver (sd) manage
-> > the device
-> > +	 * power state for system restart (reboot) operations.
->=20
-> What about cold boot ? Same is needed, no ?
-Not sure what you mean with cold boot here.
-
-> The name "manage_restart" is a bit
-> confusing since we already have manage_system_start_stop,
-> manage_runtime_start_stop and manage_shutdown. I do not have a better
-> suggestion
-> though.
-In that case, we could remove the DEVICE_ATTR_RW(manage_restart), so it
-would not be exposed to userspace yet and can later by changed without
-breaking userspace?
->=20
-> > +	 */
-> > +	unsigned manage_restart:1;
-> > +
-> > =C2=A0	/*
-> > =C2=A0	 * If set and if the device is runtime suspended, ask the
-> > high-level
-> > =C2=A0	 * device driver (sd) to force a runtime resume of the
-> > device.
->=20
-
-Thanks
-- Markus Probst
 
