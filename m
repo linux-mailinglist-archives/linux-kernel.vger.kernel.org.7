@@ -1,147 +1,143 @@
-Return-Path: <linux-kernel+bounces-842909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF1FBBBDF3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 14:02:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE506BBE0F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 14:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C854A1897FE6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 12:03:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 471554EC20C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 12:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0FD279329;
-	Mon,  6 Oct 2025 12:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF72427FB2D;
+	Mon,  6 Oct 2025 12:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XrCExbDG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EDD10FD;
-	Mon,  6 Oct 2025 12:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (2048-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b="KkEA9hI0"
+Received: from www.linux-watchdog.org (www.linux-watchdog.org [185.87.125.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728011C69D;
+	Mon,  6 Oct 2025 12:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.87.125.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759752168; cv=none; b=QlERonl441m9+rSOEYkJpR8r8aVoTgqhyj49v6ry3HH5nM0LFb2QkvsWWDlX18Cco+DsWOdCpbQ0H5y9YGQEh5qOhwe59D0QGwLYRAd0gfJn5fl8Fxg9fzfZtoV1M3CNcxMaDQ3So5uGMua4M6oT2qWY/LbkuHCRGOGXoeCLe0g=
+	t=1759754440; cv=none; b=LW/oZy1QGsomA2fBrb5wHkdNXv4sdMR6eUKIvBo2YDqXO/X1XJ07Ky19cwICohA9wu8Gl/elllr8zd1ElZZgx/bb00XSAxhkADbRbIw0shVHTuXPiU1mUCcjZNpzC/TBJ6bIObpf7uz3enknerJLTJFel2FIgWHduW8lTxcRZbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759752168; c=relaxed/simple;
-	bh=cUe8CtrafWoQsXn9fWcPDQv7fF4kzWcQD9k5yUC/Uwg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LKJz7zaQiJkV6OrMvdjmY6zhERdhkahIu/nFBq+RjAIwjMW+Yz/7Y9WEkT++5yuzGIv1l5HiDyD6Zd9aX3nNe/37XI0W6jgQNIi4o8ybwhvRhlNxxC+hsUWBo7oRItT/RHK3TVl8bvfLLlVy4NvgUAffS53R1S3tazxvb6FWRmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XrCExbDG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB346C4CEF5;
-	Mon,  6 Oct 2025 12:02:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759752167;
-	bh=cUe8CtrafWoQsXn9fWcPDQv7fF4kzWcQD9k5yUC/Uwg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XrCExbDGUw0LYXohARq0wj5ixhBkiguFlV69LWhd/t5NkqihItIxVGgkJYVYebHeS
-	 bbGyaUuLZY+rwJSwZdtdSVGYP6I24TmlPhVDqN3Wu92pv+ho39wr+IsgKQ4bTbIXIF
-	 /rxkzb2rUvpt4jA4wBfhlKXw9LrjD5ZY3pm0GvalCYvKo8YZv0RDduhtmOOi5uTZcr
-	 5QGgim6xn/vbzvVz0I6jiD9IgFzb0QM0DR+KeRrjaciAgfDTBhDRWzcUBYkJdaez7v
-	 oj403k6Xyt+lqNwWRmPTY+GWjQCnvIg51e+wjQY/qGWc5qLIda+gQeEaowTaVrk0Rs
-	 AiZqBRuYNrzoQ==
-From: Maxime Ripard <mripard@kernel.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maxime Ripard <mripard@kernel.org>
-Cc: dri-devel@lists.freedesktop.org,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
-	Louis Chauvet <louis.chauvet@bootlin.com>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	Jyri Sarha <jyri.sarha@iki.fi>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	linux-mips@vger.kernel.org,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Manikandan Muralidharan <manikandan.m@microchip.com>,
-	Dharma Balasubiramani <dharma.b@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	linux-arm-kernel@lists.infradead.org,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	Liu Ying <victor.liu@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	imx@lists.linux.dev,
-	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-	Edmund Dea <edmund.j.dea@intel.com>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Sui Jingfeng <suijingfeng@loongson.cn>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	Sandy Huang <hjc@rock-chips.com>,
-	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	linux-rockchip@lists.infradead.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-sunxi@lists.linux.dev,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-tegra@vger.kernel.org,
-	Hans de Goede <hansg@kernel.org>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
-Subject: Re: [PATCH v5 00/39] drm/atomic: Get rid of existing states (not really)
-Date: Mon,  6 Oct 2025 14:02:42 +0200
-Message-ID: <175975215493.792368.2468724280200785252.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250930-drm-no-more-existing-state-v5-0-eeb9e1287907@kernel.org>
-References: <20250930-drm-no-more-existing-state-v5-0-eeb9e1287907@kernel.org>
+	s=arc-20240116; t=1759754440; c=relaxed/simple;
+	bh=u6MAwDPTW+DutUODWNAyTuUiMrElceEFAXo3cyLw9Ao=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Wr9tI7We3A0Ea8k1Y2HOYekqEDKPPRISO0mQImV4+ZJ9pEdHL4i6+/1ooFD6zSfzWiVBQ/WDVTt1yXA1bNLYVNAzo8Tphk6Fy0SywameQWReIA2iSuzN6JtTNDyOcTLA+Z6mraGKvOuDUy7zz+01rfS41xf9V2DECLL2poyXwTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org; spf=pass smtp.mailfrom=linux-watchdog.org; dkim=pass (2048-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b=KkEA9hI0; arc=none smtp.client-ip=185.87.125.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux-watchdog.org
+Received: by www.linux-watchdog.org (Postfix, from userid 500)
+	id 1344D409D1; Mon,  6 Oct 2025 13:46:34 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org 1344D409D1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
+	s=odk20250313; t=1759751194;
+	bh=u6MAwDPTW+DutUODWNAyTuUiMrElceEFAXo3cyLw9Ao=;
+	h=Date:From:To:Cc:Subject:From;
+	b=KkEA9hI0DzCpZLdQoPnjTYc5BHH6faqeMjT2/o+JTIZTZi08t7w7JNgRr1gIwneWB
+	 DKZF6hGXNGSExtn9SY/ML5Hct9wK8encG1t8AsF4Rq8Gbp4AM/KQeI9EmNmiuM64YW
+	 evOdA0o3s6Ho5rnufTBOowBLS1/cMXjLs1Il/sJV6BuaEzMQKGV+47mIpzNzZEmJxE
+	 QTJN3huqjvk9pCk0CLWNfzWRRXw2WN/zeiAsP6aDX/X+slRhdorBfNoSWDCp9ODin6
+	 r7OtzZbRiZ02+Z7F1DvxWsI3eMHhZ++Xz0/wgjWpO150U0knxTQaKoiGiuVlEb+oPn
+	 zbnPS0a9LkBsQ==
+Date: Mon, 6 Oct 2025 13:46:33 +0200
+From: Wim Van Sebroeck <wim@linux-watchdog.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Jerry Hoemann <jerry.hoemann@hpe.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Michael Walle <mwalle@kernel.org>,
+	Sangwook Shin <sw617.shin@samsung.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [GIT PULL REQUEST] watchdog - v6.18 release cycle.
+Message-ID: <20251006114633.GA23195@www.linux-watchdog.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.20 (2009-12-10)
 
-On Tue, 30 Sep 2025 12:59:15 +0200, Maxime Ripard wrote:
-> Here's a series to get rid of the drm_atomic_helper_get_existing_*_state
-> accessors.
-> 
-> The initial intent was to remove the __drm_*_state->state pointer to
-> only rely on old and new states, but we still need it now to know which
-> of the two we need to free: if a state has not been committed (either
-> dropped or checked only), then we need to free the new one, if it has
-> been committed we need to free the old state.
-> 
-> [...]
+Hi Linus,
 
-Applied to misc/kernel.git (drm-misc-next).
+Please pull following watchdog changes for the v6.18 release cycle.
 
-Thanks!
-Maxime
+This series contains:
+* renesas,wdt: Add support for RZ/T2H and RZ/N2H
+* add SMARC-sAM67 support
+* Several small fixes and improvements
+
+The output from git request-pull:
+----------------------------------------------------------------
+The following changes since commit f777d1112ee597d7f7dd3ca232220873a34ad0c8:
+
+  Merge tag 'vfs-6.17-rc6.fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs (2025-09-08 07:53:01 -0700)
+
+are available in the git repository at:
+
+  git://www.linux-watchdog.org/linux-watchdog.git tags/linux-watchdog-6.18-rc1
+
+for you to fetch changes up to c64c2a50cdd487e2270c875c1770cd55705d75ff:
+
+  watchdog/hpwdt New maintianer (2025-09-28 14:05:58 +0200)
+
+----------------------------------------------------------------
+linux-watchdog 6.18-rc1 tag
+
+----------------------------------------------------------------
+Christophe Leroy (1):
+      watchdog: mpc8xxx_wdt: Reload the watchdog timer when enabling the watchdog
+
+Guenter Roeck (1):
+      watchdog: intel_oc_wdt: Do not try to write into const memory
+
+Jerry Hoemann (1):
+      watchdog/hpwdt New maintianer
+
+Lad Prabhakar (6):
+      dt-bindings: watchdog: renesas,wdt: Add support for RZ/T2H and RZ/N2H
+      watchdog: rzv2h: Obtain clock-divider and timeout values from OF match data
+      watchdog: rzv2h: Make "oscclk" and reset controller optional
+      watchdog: rzv2h: Add support for configurable count clock source
+      watchdog: rzv2h: Add support for RZ/T2H
+      watchdog: rzv2h: Improve error strings and add newlines
+
+Michael Walle (1):
+      dt-bindings: watchdog: add SMARC-sAM67 support
+
+Sangwook Shin (5):
+      watchdog: s3c2410_wdt: Replace hardcoded values with macro definitions
+      watchdog: s3c2410_wdt: Fix max_timeout being calculated larger
+      watchdog: s3c2410_wdt: Increase max timeout value of watchdog
+      watchdog: s3c2410_wdt: exynosautov920: Enable QUIRK_HAS_32BIT_CNT
+      watchdog: s3c2410_wdt: exynosautov9: Enable supported features
+
+Wolfram Sang (3):
+      watchdog: rzg2l_wdt: don't print superfluous errors
+      watchdog: rzv2h_wdt: don't print superfluous errors
+      watchdog: visconti: don't print superfluous errors
+
+ .../bindings/watchdog/kontron,sl28cpld-wdt.yaml    |   7 +-
+ .../devicetree/bindings/watchdog/renesas,wdt.yaml  |  36 ++++-
+ MAINTAINERS                                        |   2 +-
+ drivers/watchdog/intel_oc_wdt.c                    |   8 +-
+ drivers/watchdog/mpc8xxx_wdt.c                     |   2 +
+ drivers/watchdog/rzg2l_wdt.c                       |   4 +-
+ drivers/watchdog/rzv2h_wdt.c                       | 150 ++++++++++++++++++---
+ drivers/watchdog/s3c2410_wdt.c                     |  46 +++++--
+ drivers/watchdog/visconti_wdt.c                    |   5 +-
+ 9 files changed, 212 insertions(+), 48 deletions(-)
+----------------------------------------------------------------
+
+Kind regards,
+Wim.
+
 
