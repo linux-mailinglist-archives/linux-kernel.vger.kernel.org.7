@@ -1,87 +1,184 @@
-Return-Path: <linux-kernel+bounces-843152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADC51BBE818
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:36:23 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 855A6BBE828
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:40:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 542624EF6E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:36:18 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D8487347BB1
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEE22D2387;
-	Mon,  6 Oct 2025 15:36:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CEA2D8396;
-	Mon,  6 Oct 2025 15:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC9972D838E;
+	Mon,  6 Oct 2025 15:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="j5sZlXBu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ofk75a3B";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="j5sZlXBu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ofk75a3B"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4431D2D77FE
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 15:39:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759764973; cv=none; b=Xc9746Qv/4Q574Ymvgq9s9bynpTjMTYJy1M+XeB2bndPZaTcLvk5YQIpFcrH80/Axhzf7PBgm3PcC37E2KAmc7WWlTW6YP3pkwHkUM80WEUPNTFv43GCbqh6+3spOsn9vSs/Enf1+ryF2WjUNSIzcom4gn6Tk7vzvJMcNCbzRUY=
+	t=1759765195; cv=none; b=pheL8WnrUvLb/VrFXpxg4RbXOBw6wtLyAEG6wdhvo+OTW02eOYeUtbD0a9bpCfzZmRpxT1NfOU8r5N/jI9gzGs2CBB/7en5EehHQ103Ce1fmT4obevV+6BwADs6ar73Z8xz5kTWDVYTUIysLKLBcf2CZgqQrU/WhGs5fyzIP/AY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759764973; c=relaxed/simple;
-	bh=44RVQaJnBFDnVRoOSLJmX0a1UZTl6kzUIy/IPi8csoU=;
+	s=arc-20240116; t=1759765195; c=relaxed/simple;
+	bh=ama3Wf+FzOOqL29SQs0q73QNhx/M/49ONwjiktce0FM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RlgxgmjDS2EtIc+orEgQ3T7mVoG/8/z0w8C7gmeh0EPwzu7MgfbAbzz4VbqX79IcGNoxz56UXl51u0QQxbkNJvEBFU0vCb2d8A2YxAVOKSWOv8tURZnI5ux5Eve1DrLYfxgifb3JAU+uhk+LsUA9+3gG4G8C9lOjjI97xo5bmrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D35B1515;
-	Mon,  6 Oct 2025 08:36:03 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC6803F66E;
-	Mon,  6 Oct 2025 08:36:08 -0700 (PDT)
-Date: Mon, 6 Oct 2025 16:36:06 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>, Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Maulik Shah <quic_mkshah@quicinc.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] pmdomain: Improve idlestate selection for CPUs
-Message-ID: <20251006-barnacle-of-pragmatic-faith-e6ca0d@sudeepholla>
-References: <20251003150251.520624-1-ulf.hansson@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TlBfuBFMU1vUkMlTg6xo2nPjJlFsIZjed17CMufu3C+As/9oKGTf+4YfX6pkTYaTkP5icKQLd1M4g5YOH0/u1fD+nurl7rwrhipwBLmhCUmMFaNBjLCG/88LKNLEl9vrc1aWnNgKiNBvuMuSwF/Mjl8dJzRoKBZtF+CKCvDbXvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=j5sZlXBu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ofk75a3B; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=j5sZlXBu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ofk75a3B; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8B08D33685;
+	Mon,  6 Oct 2025 15:39:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759765191; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V5cMrfe4Mswv5iwXTNR0nUU42XbqIMSeF700oVgdzRc=;
+	b=j5sZlXBuD6ENssugkER28jdA3cQMT/Eei5cvymv1Yj92NcY6u7ZIzPLPO27eDrePR9smTr
+	ePHuOVfMhhkPFmRjv+ruIXQBup4bQKmoJS9/U6mUN8aWHXHNcqPRSDtPo2fRKU0iJ1qWSq
+	s+dFB6JBO5DjU7kNQLuwq6d7sx63Y4w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759765191;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V5cMrfe4Mswv5iwXTNR0nUU42XbqIMSeF700oVgdzRc=;
+	b=ofk75a3BSTxpC0Uc3RKJT56aKe7FVin4gtK9DyKLxxi/Euw+xAkPV83GgZdZq7nkHA7t5x
+	H2XcbDgY9KOIdTBA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759765191; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V5cMrfe4Mswv5iwXTNR0nUU42XbqIMSeF700oVgdzRc=;
+	b=j5sZlXBuD6ENssugkER28jdA3cQMT/Eei5cvymv1Yj92NcY6u7ZIzPLPO27eDrePR9smTr
+	ePHuOVfMhhkPFmRjv+ruIXQBup4bQKmoJS9/U6mUN8aWHXHNcqPRSDtPo2fRKU0iJ1qWSq
+	s+dFB6JBO5DjU7kNQLuwq6d7sx63Y4w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759765191;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V5cMrfe4Mswv5iwXTNR0nUU42XbqIMSeF700oVgdzRc=;
+	b=ofk75a3BSTxpC0Uc3RKJT56aKe7FVin4gtK9DyKLxxi/Euw+xAkPV83GgZdZq7nkHA7t5x
+	H2XcbDgY9KOIdTBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 73B5113700;
+	Mon,  6 Oct 2025 15:39:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Cl08HMfi42h2MgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 06 Oct 2025 15:39:51 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 03E7EA0ABF; Mon,  6 Oct 2025 17:39:46 +0200 (CEST)
+Date: Mon, 6 Oct 2025 17:39:46 +0200
+From: Jan Kara <jack@suse.cz>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: Andrey Albershteyn <aalbersh@redhat.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	selinux@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
+Subject: Re: [PATCH v6 4/6] fs: make vfs_fileattr_[get|set] return -EOPNOSUPP
+Message-ID: <jp3vopwtpik7bj77aejuknaziecuml6x2l2dr3oe2xoats6tls@yskzvehakmkv>
+References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
+ <20250630-xattrat-syscall-v6-4-c4e3bc35227b@kernel.org>
+ <a622643f-1585-40b0-9441-cf7ece176e83@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251003150251.520624-1-ulf.hansson@linaro.org>
+In-Reply-To: <a622643f-1585-40b0-9441-cf7ece176e83@kernel.org>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	URIBL_BLOCKED(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[redhat.com,gmail.com,arndb.de,schaufler-ca.com,kernel.org,suse.cz,paul-moore.com,vger.kernel.org];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On Fri, Oct 03, 2025 at 05:02:42PM +0200, Ulf Hansson wrote:
-> Platforms using the genpd governor for CPUs are relying on it to find the most
-> optimal idlestate for a group of CPUs. Although, observations tells us that
-> there are some significant improvement that can be made around this.
+On Mon 06-10-25 13:09:05, Jiri Slaby wrote:
+> On 30. 06. 25, 18:20, Andrey Albershteyn wrote:
+> > Future patches will add new syscalls which use these functions. As
+> > this interface won't be used for ioctls only, the EOPNOSUPP is more
+> > appropriate return code.
+> > 
+> > This patch converts return code from ENOIOCTLCMD to EOPNOSUPP for
+> > vfs_fileattr_get and vfs_fileattr_set. To save old behavior translate
+> > EOPNOSUPP back for current users - overlayfs, encryptfs and fs/ioctl.c.
+> > 
+> > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> ...
+> > @@ -292,6 +294,8 @@ int ioctl_setflags(struct file *file, unsigned int __user *argp)
+> >   			fileattr_fill_flags(&fa, flags);
+> >   			err = vfs_fileattr_set(idmap, dentry, &fa);
+> >   			mnt_drop_write_file(file);
+> > +			if (err == -EOPNOTSUPP)
+> > +				err = -ENOIOCTLCMD;
 > 
-> These improvement are based upon allowing us to take pending IPIs into account
-> for the group of CPUs that the genpd governor is in control of. If there is
-> pending IPI for any of these CPUs, we should not request an idlestate that
-> affects the group, but rather pick a shallower state that affects only the CPU.
->
+> This breaks borg code (unit tests already) as it expects EOPNOTSUPP, not
+> ENOIOCTLCMD/ENOTTY:
+> https://github.com/borgbackup/borg/blob/1c6ef7a200c7f72f8d1204d727fea32168616ceb/src/borg/platform/linux.pyx#L147
+> 
+> I.e. setflags now returns ENOIOCTLCMD/ENOTTY for cases where 6.16 used to
+> return EOPNOTSUPP.
+> 
+> This minimal testcase program doing ioctl(fd2, FS_IOC_SETFLAGS,
+> &FS_NODUMP_FL):
+> https://github.com/jirislaby/collected_sources/tree/master/ioctl_setflags
+> 
+> dumps in 6.16:
+> sf: ioctl: Operation not supported
+> 
+> with the above patch:
+> sf: ioctl: Inappropriate ioctl for device
+> 
+> Is this expected?
 
-Thinking about this further, I’m not sure this issue is really specific to
-pmdomain. In my view, the proposed solution could apply equally well to
-platforms that don’t use pmdomain for cpuidle. Also, I don’t see why the
-solution needs to be architecture-specific.
+No, that's a bug and a clear userspace regression so we need to fix it. I
+think we need to revert this commit and instead convert ENOIOCTLCMD from
+vfs_fileattr_get/set() to EOPNOTSUPP in appropriate places. Andrey?
 
-Thoughts ?
-
-I understand it won’t handle all IPI cases, but generic helpers like
-local_softirq_pending() and irq_work_needs_cpu()
-should already cover some of them in a platform-independent way.
-
+								Honza
 -- 
-Regards,
-Sudeep
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
