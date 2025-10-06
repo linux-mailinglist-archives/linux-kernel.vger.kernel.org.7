@@ -1,102 +1,74 @@
-Return-Path: <linux-kernel+bounces-842570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17E59BBD0D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 06:48:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87F43BBD153
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 07:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C4704E44A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 04:48:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 105564E57C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 05:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6907424338F;
-	Mon,  6 Oct 2025 04:48:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2BED22ACEF
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 04:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C940024503B;
+	Mon,  6 Oct 2025 05:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="N1qcJEMG"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024971FECBA
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 05:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759726099; cv=none; b=DRzFwwYS0GMeblCoy7ItA0eUAzU/TjtPRJryVpdrqAUjcHRNsXEB7aOXN8loi4gY4gdsq8+FQBmR2mFYO0pmyrmRb781+0TSYE54mvjuIBsRaNyN5ZQdqlBZ0X4BEhuKVJRqcRban+L2iiq70je4anY8yLCH9TPuJW4zDgWdUso=
+	t=1759728490; cv=none; b=FTLUnK/g4ghoYX4pZ8tESNm8QIS8QLPVG437RI3bAjy8nuPrLYe60wXO9gSc1lur2HHp5nQxPb5Juxr5Vw8PRe9vUBPDOtOwlg9GdhLfWpiAgGk67dQsU9SMF8NKoakymM8DmDXASi6GWPJUqmT1AH/pZDdFEtbsXc5QAO6ISIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759726099; c=relaxed/simple;
-	bh=WR5z416GdyHVMtZv8PL/xhfJeDMKBMQyDzp3mXaNyaQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GlMC9Pd+1vviL13gPaP44inkCd/H07QJSRXTVMHw55JgB96sUmFA4uiQh8tDGJ9kcYHkeVbBZdC74vEEBz7fD5ntJzLdjODQaLLHXsPKFWHL/Fz9NXbgShZga0FBhtCEmj5JNmw01MyH/60kejNfpkDyPsHnETbLnGWSRsHwRDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 30E551516;
-	Sun,  5 Oct 2025 21:48:07 -0700 (PDT)
-Received: from [10.163.66.9] (unknown [10.163.66.9])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B81953F59E;
-	Sun,  5 Oct 2025 21:48:12 -0700 (PDT)
-Message-ID: <3c0169a4-78b3-4deb-b991-14733b5f0aff@arm.com>
-Date: Mon, 6 Oct 2025 10:18:08 +0530
+	s=arc-20240116; t=1759728490; c=relaxed/simple;
+	bh=PoHIi3dOP1TILPAciaJ79sDdTdT5zvfRtEnmvsLuLU8=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=uQAqWNRNTl87YNfa0U20SYkahnXwqvf4JKGaWw3PiajrOa7p2HEjnLPmlCghAj3lDtvBygfzF4KDL8UxC0X1kST+pwhZ7FQHKf2WXKmN84Z5HSiEdsqJFZuVbcjS/mRlmv+3r/o6EqaMYmT8kk4aqDSCdW7C/StNKU2l3JcnvEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=N1qcJEMG; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from mail.ispras.ru (unknown [83.149.199.84])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 2BCC1406C3E5;
+	Mon,  6 Oct 2025 05:27:56 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 2BCC1406C3E5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1759728476;
+	bh=YmM8TjayGWttRE8u6uRchrjtFyC7WTCG7hUYY1LzXbU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=N1qcJEMG1aw7sTgko8Kh4SHg7iFOjiucmgWTuDaNoq/i3+9pxr1JRRaL8Xl9y5d+E
+	 pETha5vRJzklJMtA1PfTAgCbDgMPulRx9iC3wCAHWVKImRTt8VJWKCgKDSenBVTW+J
+	 0ZGgbJAaXNcxSeDwoWe03v2MGCoowOOF4pZdUeiY=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: readahead: make thp readahead conditional to
- mmap_miss logic
-To: Roman Gushchin <roman.gushchin@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>, linux-mm@kvack.org
-References: <20251006015409.342697-1-roman.gushchin@linux.dev>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <20251006015409.342697-1-roman.gushchin@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Date: Mon, 06 Oct 2025 08:27:56 +0300
+From: matvey.kovalev@ispras.ru
+To: Doug Anderson <dianders@chromium.org>
+Cc: Jason Wessel <jason.wessel@windriver.com>, Daniel Thompson
+ <danielt@kernel.org>, kgdb-bugreport@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: Re: [PATCH] kdb: delete unexecuted if-block in kdb_get_kbd_char()
+In-Reply-To: <CAD=FV=V4hRA8WnvxYNgXsULrzOTCdXZ9JMHgZ=XxqpVZz5DNOQ@mail.gmail.com>
+References: <20251003151220.1580-1-matvey.kovalev@ispras.ru>
+ <CAD=FV=V4hRA8WnvxYNgXsULrzOTCdXZ9JMHgZ=XxqpVZz5DNOQ@mail.gmail.com>
+Message-ID: <d55cee5937d5b93cf5ddcd6cb3ec278a@ispras.ru>
+X-Sender: matvey.kovalev@ispras.ru
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
+Doug Anderson писал(а) 2025-10-03 19:39:
+> The same patch has already been sent and was landed:
+> 
+> https://lore.kernel.org/all/20250507104337.201695-1-colin.i.king@gmail.com/
+Тhanks for information!
 
-On 06/10/25 7:24 am, Roman Gushchin wrote:
-> Commit 4687fdbb805a ("mm/filemap: Support VM_HUGEPAGE for file mappings")
-> introduced a special handling for VM_HUGEPAGE mappings: even if the
-> readahead is disabled, 1 or 2 HPAGE_PMD_ORDER pages are
-> allocated.
->
-> This change causes a significant regression for containers with a
-> tight memory.max limit, if VM_HUGEPAGE is widely used. Prior to this
-> commit, mmap_miss logic would eventually lead to the readahead
-> disablement, effectively reducing the memory pressure in the
-> cgroup. With this change the kernel is trying to allocate 1-2 huge
-> pages for each fault, no matter if these pages are used or not
-> before being evicted, increasing the memory pressure multi-fold.
->
-> To fix the regression, let's make the new VM_HUGEPAGE conditional
-> to the mmap_miss check, but keep independent from the ra->ra_pages.
-> This way the main intention of commit 4687fdbb805a ("mm/filemap:
-> Support VM_HUGEPAGE for file mappings") stays intact, but the
-> regression is resolved.
->
-> The logic behind this changes is simple: even if a user explicitly
-> requests using huge pages to back the file mapping (using VM_HUGEPAGE
-> flag), under a very strong memory pressure it's better to fall back
-> to ordinary pages.
->
-> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Cc: Dev Jain <dev.jain@arm.com>
-> Cc: linux-mm@kvack.org
->
-> --
->
-> v2: fixed VM_SEQ_READ handling (by Dev Jain)
->
-
-As you said in a previous mail, we definitely need some other way of measuring
-memory pressure here. Since your workload is doing madvise(MADV_HUGEPAGE) (which
-means it expects to take advantage of the hugepage by accessing it frequently) and still
-getting lots of cache misses, I guess it must be due to swapping out due to
-tight memory.max. Anyways, the change looks correct to me.
-
-Reviewed-by: Dev Jain <dev.jain@arm.com>
-
+--
+Matvey Kovalev
 
