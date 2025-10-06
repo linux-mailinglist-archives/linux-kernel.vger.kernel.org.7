@@ -1,145 +1,155 @@
-Return-Path: <linux-kernel+bounces-843081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C23BBE5FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:40:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A710BBE604
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:40:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCCFA1899545
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:40:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0AEE84EE368
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10482D5C74;
-	Mon,  6 Oct 2025 14:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0942D63FF;
+	Mon,  6 Oct 2025 14:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="im4Ifywn"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="roLEddi7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919792D2486
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 14:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0B02D594F;
+	Mon,  6 Oct 2025 14:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759761618; cv=none; b=TUyQsmInVbQU9fq7FAhc6jm0u3Ipy0MMClHf7k8MW2jW0QB24s2Ww1bx7f/w19Wr1TI0HfDMaO6k0lkpy/zmKMQY+8FUa4qYxe+a07Fi4QRiGfB+achVf+1Pn4jA/QGWThOGqOcDT02MLROnQlPsAN8sqBL66WCsS4ke/JDabAg=
+	t=1759761635; cv=none; b=XqgS8XUlViP6NkI3pLP/Iz40g0x4fJ6lU+6xvYCInT+Cf/3NUqhspQ6YgqfkjC578hIm0bT/rkD9Vhx71hpH/PqgCVDGXAqyeNf/ps8Btv5FiipwuCf2VOQ9RkO0qUHQ7SkioFFildyiKB6fUygJRs9PPlUAfmVAKBh7iPs+0t0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759761618; c=relaxed/simple;
-	bh=EkR1H7X+TDjtCRI9KWYEwXGW5NBq3MyXaQ39Dh/nn3M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UsStZkpzpIPzQMmK7sGe+2UkbymNlfE2tzr1Nc09A+OYf1iYLknKDsPVreqAWag+8OSpHRNLMwP3AmOii62TsF/bMTyS7VxscXWbuCvalcW1qGUYUyDaVSRvMQuwDpH4f4AvmtLBqAHC4p66D9fxsubDTq8gyDqwfojJ82le0ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=im4Ifywn; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-637dbabdb32so9895547a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 07:40:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759761613; x=1760366413; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EkR1H7X+TDjtCRI9KWYEwXGW5NBq3MyXaQ39Dh/nn3M=;
-        b=im4IfywnSfxkP83dl8psGq2Rk2Z21zYb4jvP9nKF9vr9f3Nn2L6JqohFlgdCpyT4ui
-         SNFRCjB8yvFMI7CGKmJrS/VXB1bWBqMIfcJZvFZa4qnDartVwNwBa4dvznfG7eOUJ1HF
-         G2e2ITptWjR30EYsV02Yg1H2TFrHGR8XbQi4bC9NxRJveiRU75yQl8kSw1uObnrbT0gL
-         l3FSe1dS2uheXAxUp25AiVvk5wG/pXZVqk6Rk14JRX9GSF9Uy4mN4pSI+oWS04AF5HJ4
-         orYYatd8sXLkae2RL6M3y4FiUyhBU8oM39Kgc71VZqj5Hxpph6tb0+CvSu/njymjp636
-         yNTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759761613; x=1760366413;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EkR1H7X+TDjtCRI9KWYEwXGW5NBq3MyXaQ39Dh/nn3M=;
-        b=KvtAafGaJf9a4Jfya88FEwHc9Pfpvv7+rdzuNQeVMqLMXPDJG17cpd3tIQ6IiB6Liy
-         6EaaRqjyDPI8MGZhcwvuCJ6Kq5D+J51zBrYr1IrZqH9tbchdCnRfeP8xlqGVIQtAkHgU
-         0BdPCRsXqGJ+LXxc7MKWo2ndlGWgd67hKZE+OmFrhmqnAiQj7gGYt5LmQQ4FMriD76dF
-         u7314bKUVU2tesauZca1kugUplLo/atGN9lvvbv8Mx0iJD/lzE/6vpa4peoeCBp7Bqnx
-         SKfKRqpHrwRVXOIkgEdzR82T/JA27O6hym8vX23jPN9Ta4TCjlUg+/Z/SIPIWWeSReQ5
-         +z5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVHtPoXlX9oVbN3FlK2Ig+P1W1GX6hUWn6uYWAyl0zhrSnWG1IUpJ8KzRgn1hrsPHlKhhX1HLgcyS4l2KA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8oPLSjiB5H4cfxhMxZImPBwNPA+Z57K4TlRv32hVQ7OozfkDk
-	TMFMx381OsHAhxyTcBhDvXctmeETCeIcy1GwVpRS9yF5pBz1QanN0E8uvYmF0vnx5zN5RljzQ8Q
-	/DUmP4oDbZQ7RL9rAP1GB+5XQjhAM0yM=
-X-Gm-Gg: ASbGncsRiIxsqu//uW0WC5lcBcOaITkOowdS8H11kseEB2Ah2h5ZvdQYZbCSIlqzdfM
-	YlE+MFAsmT8YLuRXx0vLB19di28bKazyr1BTI1chsrYMFMuSMFoyoaMGYrqCjpogwsnQlp4pz7R
-	9doP6ShXssPm3vkP4YGagPUSMI1A0KpCPHc7F2rcGcfITUjMf9eBJKqVftVmsoANvrRulKiFzoz
-	ThsmIXlM+YMb3WMOhBjcmUdt/O/NdcvtH5/WxsTMABPGfj7LdV6FzpFFFeJ9yJSAU90ErSciC/0
-X-Google-Smtp-Source: AGHT+IG7l9FcW7nFH5wcnGqf94SKHFIJbD02eMTFgXIso7ems2/RZwPOGR76iL5Jz5L+CD+kbTGEfLyCiPawWH7oe0s=
-X-Received: by 2002:a05:6402:520e:b0:634:8c41:c299 with SMTP id
- 4fb4d7f45d1cf-6393491e788mr15011143a12.19.1759761612739; Mon, 06 Oct 2025
- 07:40:12 -0700 (PDT)
+	s=arc-20240116; t=1759761635; c=relaxed/simple;
+	bh=c0PWoYolg5duBcovpTIj3Rwkun3O8HUZHZZKlsp7TXg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qJJr2KIKELZx6qsSk5ty6HeLPSWtZEMWWV+CchpWXTGuXOBlifr6WuwEMi+6upwvkKb+dRL0bno4Jg1Pd8tBMNlunN8H7XF8V2WY3134fTDPEnkrwf7CUEXEUKKifFQ7BLU62epPkKWLsnTi5fu54nu9N6mF+5mnTnP4LKzS2MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=roLEddi7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97ED0C116B1;
+	Mon,  6 Oct 2025 14:40:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759761635;
+	bh=c0PWoYolg5duBcovpTIj3Rwkun3O8HUZHZZKlsp7TXg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=roLEddi7kbZUvYT0EfTVHH4CaTWHiadXLp9mcyRYAlyCB8w9FM9OSoab5MHqdmMcV
+	 bQACnekAZxfEeEYlY3oEkyAf4mhQS5coXZ5uJTcr5TK2nNyZcIoAqmJao3Qg90dixy
+	 XPYDCpg5fz9nddLENL1HSuHI5u3ClCg30gciTA17/fu6DId9gFbjQI+eawtL1eHl2Y
+	 jAkqZIhDu2ZaLVQy0PTdD0+bFBPt9XI+rZcJqdNbdAjdUvVPA7MBfEEeSLbtbG61RF
+	 WfcUHrWrc7dNskbf5kc+3VBDupz7J948LlMM9QoW6KrxsJfQXGNFhR66nbwwSVeDY3
+	 0Blx93ZjJhFrA==
+Message-ID: <a72b4f39-6ebf-4598-b0fa-ae5b9754de58@kernel.org>
+Date: Mon, 6 Oct 2025 23:40:26 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251003155238.2147410-1-ryan.roberts@arm.com>
- <edc832b4-5f4c-4f26-a306-954d65ec2e85@redhat.com> <66251c3e-4970-4cac-a1fc-46749d2a727a@arm.com>
- <989c49fc-1f6f-4674-96e7-9f987ec490db@redhat.com>
-In-Reply-To: <989c49fc-1f6f-4674-96e7-9f987ec490db@redhat.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 6 Oct 2025 16:40:00 +0200
-X-Gm-Features: AS18NWBuQFyxsQau3P8JL_AyINiEL_Ybt3_UNKcM6OGOrGzarzlxxcIDC21sR04
-Message-ID: <CAOQ4uxh+Mho71c93FNqcw=crw2H3yEs-uecWf4b6JMKYDTBCWQ@mail.gmail.com>
-Subject: Re: [PATCH v1] fsnotify: Pass correct offset to fsnotify_mmap_perm()
-To: David Hildenbrand <david@redhat.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org, Jan Kara <jack@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: iio: max30100: Add pulse-width property
+To: Shrikant Raskar <raskar.shree97@gmail.com>, jic23@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+ matt@ranostay.sg, skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
+References: <20251004015623.7019-1-raskar.shree97@gmail.com>
+ <20251004015623.7019-2-raskar.shree97@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251004015623.7019-2-raskar.shree97@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 6, 2025 at 3:53=E2=80=AFPM David Hildenbrand <david@redhat.com>=
- wrote:
->
-> On 06.10.25 14:14, Ryan Roberts wrote:
-> > On 06/10/2025 12:36, David Hildenbrand wrote:
-> >> On 03.10.25 17:52, Ryan Roberts wrote:
-> >>> fsnotify_mmap_perm() requires a byte offset for the file about to be
-> >>> mmap'ed. But it is called from vm_mmap_pgoff(), which has a page offs=
-et.
-> >>> Previously the conversion was done incorrectly so let's fix it, being
-> >>> careful not to overflow on 32-bit platforms.
-> >>>
-> >>> Discovered during code review.
-> >>>
-> >>> Cc: <stable@vger.kernel.org>
-> >>> Fixes: 066e053fe208 ("fsnotify: add pre-content hooks on mmap()")
-> >>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> >>> ---
-> >>> Applies against today's mm-unstable (aa05a436eca8).
-> >>>
-> >>
-> >> Curious: is there some easy way to write a reproducer? Did you look in=
-to that?
-> >
-> > I didn't; this was just a drive-by discovery.
-> >
-> > It looks like there are some fanotify tests in the filesystems selftest=
-s; I
-> > guess they could be extended to add a regression test?
-> >
-> > But FWIW, I think the kernel is just passing the ofset/length info off =
-to user
-> > space and isn't acting on it itself. So there is no kernel vulnerabilit=
-y here.
->
-> Right, I'm rather wondering if this could have been caught earlier and
-> how we could have caught it earlier :)
+On 04/10/2025 10:56, Shrikant Raskar wrote:
+> The MAX30100 sensor supports multiple LED pulse widths (200us, 400us,
+> 800us, 1600us). These settings affect measurement resolution and power
+> consumption. Until now, the driver always defaulted to 1600us.
+> 
+> Introduce a new device tree property `maxim,pulse-width` that allows
+> users to select the desired pulse width in microseconds from device
+> tree.
+> 
+> Valid values are: 200, 400, 800, 1600.
 
-Ha! you would have thought we either have no test for it or we test
-only mmap with offset 0.
+Don't describe the contents of patch. We see the contents from the diff.
+Above two paragraphs are completely redundant, drop.
 
-But we have LTP test fanotify24 which does mmap with offset page_sz*100
-and indeed it prints the info and info says offset 0, only we do not verify=
- the
-offset info in this test...
+> 
+> This prepares for driver changes that read this property and configure
+> the SPO2 register accordingly.
 
-Will be fixed.
+Drop, redundant. Not really relevant.
 
-Thanks Ryan for being alert!
-Amir.
+> 
+> Signed-off-by: Shrikant Raskar <raskar.shree97@gmail.com>
+> ---
+>  .../devicetree/bindings/iio/health/maxim,max30100.yaml      | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/health/maxim,max30100.yaml b/Documentation/devicetree/bindings/iio/health/maxim,max30100.yaml
+> index 967778fb0ce8..55aaf2ff919b 100644
+> --- a/Documentation/devicetree/bindings/iio/health/maxim,max30100.yaml
+> +++ b/Documentation/devicetree/bindings/iio/health/maxim,max30100.yaml
+> @@ -27,6 +27,11 @@ properties:
+>        LED current whilst the engine is running. First indexed value is
+>        the configuration for the RED LED, and second value is for the IR LED.
+>  
+> +  maxim,pulse-width:
+
+You miss unit suffix and testing, most likely.
+
+> +    maxItems: 1
+> +    description: Pulse width in microseconds
+> +    enum: [200, 400, 800, 1600]x
+
+
+Best regards,
+Krzysztof
 
