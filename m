@@ -1,120 +1,106 @@
-Return-Path: <linux-kernel+bounces-842822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1E14BBDB18
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:31:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F41AFBBDB33
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:35:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EC0364EB12E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:31:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D3273A5FAF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43FC523C8C7;
-	Mon,  6 Oct 2025 10:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72285241691;
+	Mon,  6 Oct 2025 10:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UI/4M3nl";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NtpGNc3M"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k0IIgcMu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E7B1B0F11;
-	Mon,  6 Oct 2025 10:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60A72153EA;
+	Mon,  6 Oct 2025 10:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759746685; cv=none; b=ipBdWE1dpf31JQPsEsxcNxH1TeC0UTSavlP3S/wvmOonLKoUgB/j4u92JhxbByHz7C/mq9ag6bLosNKfvB5fHxuI336KwxSdGmKcKXrwqO8ZjeG34dRtgS45bKjtuOUOUBRR7NdIvKGAp8g84yKWnWR8pU2OsmwvTaMjSSwmuic=
+	t=1759746896; cv=none; b=IDtVRrFaPhyUS53G85sU//d/DJvXDlpKQB+7uDhEsHOgoNEL0jZnk5tmjyf4liWWNI5KSbQrSxqxSwiL/AQ9CfsEC095O7CLL8ePXDrodWH+pXJBnFXiXIoUVTyuxgIti6kGuaqPh6WcEueKQnIAwFPrxbkQU4Dlv2t9dmeCxZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759746685; c=relaxed/simple;
-	bh=b+CNaA3oh8r6e/OAlITi9nu9rHrLqnEFHAYZxcvagNg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N21kCTZ5mdCpiOU2CR3B8EZ84WxoArA91iCidEneo9H8JhwgHPAjvmhaU/Owsy7IJtyiAezAzrraoV0fEPpigN9LA5UyHNkpTL4sj1a8z+ZSLkNq13xGIhon6gInnvN7vwsBALxnEe+lJslprfp3HTfQiYfUgdZhAchBDRcWUoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UI/4M3nl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NtpGNc3M; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 6 Oct 2025 12:31:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1759746682;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F9Vm+6SJzGBd5zjp+yPXjTWbX+rAQXleybVGXQfhq7o=;
-	b=UI/4M3nlqJnAYlqpT17Mseq7S2zJU8z1njhf96Gz7gEYUYXML597UuNBUEbJ6EM+DCIyEw
-	sFS2Z/dbJrkqtrs8DXwSv9eeeMjO/w0aZ+zPwpoMzQfiLdTPMVdZpQKtNwxIaTzSUFRU7w
-	AWa652iFBakQ6IHxGySS9Kei3DOTrUUuTowp6bF8n2HzVlHVwIidCb8pMTFmMdjHjoMwft
-	o6cIGM3Im05QeOcWv7kYmnw7zqv74fNX+0p6Y4DkEeWmJ4pv5p5pDmr+sXmbkBkjKFdZRt
-	fkcRooj+2vXghK3Br2p71oIUj1NKNlSPCViHT4ObCaZA615rn7nku8p8I7itIA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1759746682;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F9Vm+6SJzGBd5zjp+yPXjTWbX+rAQXleybVGXQfhq7o=;
-	b=NtpGNc3MOmhSzinQtDWvHhLii8O9bWFP0LRgQ0Q/2w77f7fPY0q7BmX4iHGfaRsHHkT5us
-	rh4qI44lVzvruvDg==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas.schier@linux.dev>, linux-kbuild@vger.kernel.org, linux-m68k@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kbuild: uapi: Strip comments before size type check
-Message-ID: <20251006122254-b3b3f96f-67e5-4223-a040-79c845097f6d@linutronix.de>
-References: <6e68ab921a728caea4f3f37bfae9b1896edfa97a.1759740354.git.geert@linux-m68k.org>
+	s=arc-20240116; t=1759746896; c=relaxed/simple;
+	bh=T1iv863cqpbYgIRCNRsUsJwO2QAocd0RGlh9y8gcaWE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=k3b7vD6XgdGC0NOFJKSIIOS0NQZa1JvEswmoIYrKhRC7eYzlYCW1/zOmpNWQcHA/mUYWp7dFPeEmqhQqvjeY6AeHbtpAGgcnLFDoOj7m0qDv0aW4LFuGu/aYzCwERTMc7KR04mrzFX0K8LMZsJm9JDCZmaqaJQANW/HNuzhvEOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k0IIgcMu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54744C4CEF5;
+	Mon,  6 Oct 2025 10:34:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759746896;
+	bh=T1iv863cqpbYgIRCNRsUsJwO2QAocd0RGlh9y8gcaWE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=k0IIgcMuU6KSBWOL9n/PFX7hjO8gADDVGnf1+1IfSiCjhBi89fDoM9roahXYZzx45
+	 +9QrrVSL3bWqg93q0lP7k0jRePhAZ0IiLK5tqlkvAQ5QQo7mmR1jFz0+G8Dz9Z2/Yw
+	 MG9Sct5UdV40PXJGKc5TbrFcu73qd2Fwi7VTwpP2xQroThCYfAQYFZ16xrcdOd125F
+	 hBVCTzExkexRPYKA+DtKCrAna7ZGoaRdw1SsAyEKjrTnOzNmY0zUA3Ijw7XVzI9hhW
+	 +i6R6T/Av5evceYg59bxT3k5UzJ3bX8obn1bLG9NQUwliwZ8KdoAzvvKhgL4hbwsq6
+	 gp8oxui97X/Jg==
+From: Christian Brauner <brauner@kernel.org>
+To: Tong Li <djfkvcing117@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v2] rust: file: add intra-doc link for 'EBADF'
+Date: Mon,  6 Oct 2025 12:34:44 +0200
+Message-ID: <20251006-leben-anfechtbar-f6862b1a35de@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20250930110258.23827-1-djfkvcing117@gmail.com>
+References: <20250930110258.23827-1-djfkvcing117@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1108; i=brauner@kernel.org; h=from:subject:message-id; bh=T1iv863cqpbYgIRCNRsUsJwO2QAocd0RGlh9y8gcaWE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ8nu1ZM4f9DmNYDZeFUPVN/x1/PdVvfDnot+DO8bKLP YIir5aFdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEykWYLhf/K3RrUTQU5CKdIl Dx3uvTp2t8TjvdT88NQGpRkfr81yl2P4n37n9PmdL347NvHwqRlmxgW6Htz2csNS3h2lDV952rP +MAAA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6e68ab921a728caea4f3f37bfae9b1896edfa97a.1759740354.git.geert@linux-m68k.org>
 
-On Mon, Oct 06, 2025 at 10:49:28AM +0200, Geert Uytterhoeven wrote:
-> On m68k, check_sizetypes in headers_check reports:
+On Tue, 30 Sep 2025 19:02:58 +0800, Tong Li wrote:
+> The `BadFdError` doc comment mentions the `EBADF` constant but does
+> not currently provide a navigation target for readers of the
+> generated docs. Turning the references into intra-doc links matches
+> the rest of the module and makes the documentation easier to
+> explore.
 > 
->     ./usr/include/asm/bootinfo-amiga.h:17: found __[us]{8,16,32,64} type without #include <linux/types.h>
 > 
-> This header file does not use any of the Linux-specific integer types,
-> but merely refers to them from comments, so this is a false positive.
-> As of commit c3a9d74ee413bdb3 ("kbuild: uapi: upgrade check_sizetypes()
-> warning to error"), this check was promoted to an error, breaking m68k
-> all{mod,yes}config builds.
+> [...]
 
-This commit has been in -next for some time. Any idea why the issue did
-not show up there?
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-> Fix this by stripping simple comments before looking for Linux-specific
-> integer types.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Reviewed-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-> ---
->  usr/include/headers_check.pl | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/usr/include/headers_check.pl b/usr/include/headers_check.pl
-> index 21c2fb9520e6af2d..75dfdce39e7f4610 100755
-> --- a/usr/include/headers_check.pl
-> +++ b/usr/include/headers_check.pl
-> @@ -155,6 +155,9 @@ sub check_sizetypes
->  	if (my $included = ($line =~ /^\s*#\s*include\s+[<"](\S+)[>"]/)[0]) {
->  		check_include_typesh($included);
->  	}
-> +	# strip comments (single-line and C99 only)
-> +	$line =~ s@\/\*.*?\*\/@@;
-> +	$line =~ s@\/\/.*$@@;
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-C99/C++ comments are rejected in UAPI headers, so this line can be dropped.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
 
->  	if ($line =~ m/__[us](8|16|32|64)\b/) {
->  		printf STDERR "$filename:$lineno: " .
->  		              "found __[us]{8,16,32,64} type " .
-> -- 
-> 2.43.0
-> 
+[1/1] rust: file: add intra-doc link for 'EBADF'
+      https://git.kernel.org/vfs/vfs/c/2b0b5bcc45a0
 
