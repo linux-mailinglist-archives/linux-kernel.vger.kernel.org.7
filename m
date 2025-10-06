@@ -1,189 +1,175 @@
-Return-Path: <linux-kernel+bounces-842611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49E1FBBD26A
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 08:45:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAFBBBBD26D
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 08:46:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB1243B2FAB
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 06:45:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9BFC24E623D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 06:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB0A25332E;
-	Mon,  6 Oct 2025 06:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0D525393E;
+	Mon,  6 Oct 2025 06:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kyIOCUMV"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PlmsdmuZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48256146A72
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 06:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171696FBF
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 06:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759733132; cv=none; b=lKb+rTKaYS6t+oZUMqL7cljNmcgmLrxJtmT0apcNtc8G/N5xZ4jI79aM4MUkTsmDR1ugmJenH14PlKVJPrFUwxpvnk55V+8DylJ0kJvffHdH58yNFnK5X+aLdiEcWHJafhrVQkhBufeUm7VK4clcgMjXDRQYJ9AhWivoiEyVedU=
+	t=1759733204; cv=none; b=Hzfov3D03Ed2unZmbG0SZYJYlmYElXV68DSWaVcqQl4YhoU8T1NYs3JWpOiWZZG9OxUtI0wdV51F7bYJkzE9DVebAvJ3tmaWxds2/uNp8w5KwHevLZ6A/vYfIlYsVakoO2S9+uCnvbLyTr01CCU+r1P6kTQv09XitQPFfrc8Reo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759733132; c=relaxed/simple;
-	bh=NMuoAimQl5z1QVIEkiLJdaqZSbw3bEnf0VXzo5Y71N4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nuOJaP1Ga9TbqY0UjNZJqqCRvrUrXvdk/fxRO1sDeVhsrM+E851AL3LGxFw9xmvfKke3DCgdtFbkKH1gz7YO6lI8jqbtgHNZGRliLa4s0KUzdfIvOMaoKLY+F3yjDzj/PfL2uc/hQAexey5XC64m1/Is2QnRySu5WTd5gx/5RGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kyIOCUMV; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b3e44f22f15so668748266b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 23:45:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759733129; x=1760337929; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=NMuoAimQl5z1QVIEkiLJdaqZSbw3bEnf0VXzo5Y71N4=;
-        b=kyIOCUMVMlzyQK6ZRfkZvaclJKM+X/VaOctz23CLMfsvKi82cRS3P06wzjQLeQkMWq
-         7+q8KeYYLM01yVMb8InxH9iRXUJhwo9AMmFTagEoRiK/NVbsN1smtclH0Ay8SlUOn5x3
-         nNqtGNAJK4MPmk3z8h2FmVhE+p2MxYX+WIcEloBlHDTJluWEDzmHrz3EjF40k9nzBnBH
-         Sc5gYRP3w3FdR4+8psdfAraAG2LPdpaf0tTzEABZtmr/Dw/0oo+KVsF+m5zqG3SVzbsQ
-         XFgXHdUq6rl2riFXceouzYrgZh/wQEtI+UKqQtLL7FsPDkN9lHQOThgoerU2rtTSq/V5
-         tGKw==
+	s=arc-20240116; t=1759733204; c=relaxed/simple;
+	bh=TQnTfFUs+Mg908nWMV0ruuhsFAVbVHKpN+hUC1L7tUo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P+YzLvzEyeEW483uyjmHml98U4cET7iyED7jwrwgzqwYX1Hsppe/bR1wUvT6+cboo9eqdnFGmEIqAxbXTzzvwhhnBqtxQrSntbFcQ3KxbamTfLpDXvDbYSlw48CQACxbKZ2xG6Y8DSF8SajL/bsa7hPhymEvlgVcmP4c2ot1Ng8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PlmsdmuZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759733201;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=4EVi3IC+VD9OTyIfuQoplPqPl1jhS5tZPWBqrRRN26A=;
+	b=PlmsdmuZxsk6kRG0fuUVLZ0mJvsnogAvG89tfI+GGbaezxSMQN6Np71UzD8UPRD2N3m/Lm
+	e0UixU+3EW6mjGLIjCtw7nHYjoH5ze158r56ZoWF5+EtK+4ddVTvCjELeEyfrPrRhewfdP
+	/ylQoPgsj6YKKT92APAMf1ZPjMGA5M8=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-648-m5Xe4Tj2OImWUa5MZ_jPNw-1; Mon, 06 Oct 2025 02:46:40 -0400
+X-MC-Unique: m5Xe4Tj2OImWUa5MZ_jPNw-1
+X-Mimecast-MFC-AGG-ID: m5Xe4Tj2OImWUa5MZ_jPNw_1759733199
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-46e44b9779eso15905975e9.1
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 23:46:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759733129; x=1760337929;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NMuoAimQl5z1QVIEkiLJdaqZSbw3bEnf0VXzo5Y71N4=;
-        b=mIaPZSteZ3Z+hHPeSixLNJSygtMwcQF3Duw1Nw3WP4QO2zW3A2/2N+Rngrz/5CeVQM
-         uzUg+ekQr92ro9/LbgLZBQmI3fR04StXsOSV2MQQcdCeUod1PdqLwtKC7VaJoXLiE6vp
-         mMAAPsnDBfHlG3feohCoYLo0LQjH9dTi3q0wE+nM3/xbdSG7WwpHJc5ZAMbmEVRspfnh
-         /UjBsRJDJQi3wQmJdJlWc3j4vhmKAXdP6eiVPm3ifWspLZGbMz0juPHByPwaVJBGVejz
-         WKIptX8718Wo8xGj241JtY66eLDrITXlrNEj2a4K6ptiU7TuI8kektriV6QsE8aBTYzM
-         mkbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXZFyOxqrCqXjmM/3fRucyK5OgDdXfI3hQeZrCmFdFwpLLv5u7pwzKffyTogLSG512mxdIS3mLqRFUFfM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq5MXeg9Hjq2w2qN9jhPf48T9l/z1OtGkkj42E1hp0fTANe7Lk
-	ulHGh6lO/PahASZo2oy3bd3dYuWO6pCJGBZ8GAa8ga/pp+7bNkJmSsiZ2qZ1E37B6XM=
-X-Gm-Gg: ASbGncvgj60ZjYEkXjSpNfpUkiMcBHSzQH8qjoAa4sj5hk2g+Yi+bNEG1M9reS24OXG
-	doS0Uyr6iKXGf7poTHnibu27h0vY0xtOyk+oiKeah6Cpo79iHrQkuKX0pCa5xmwEoZdUOC4c45X
-	CE8p4/Bl3SkTxMsvH3uN5jCr/izW2H2pTrmYXz9w/VMGQkk0TKP0qGKjUfGPxZVBGwZ2u9dTe2y
-	b9lgwtmnaZXEbq+0gqnsvfzBsOIiuhBuApCaHkRPcVHyQ1zIu8B9NotI5PVNkvcMv8gY/Z1mk2a
-	IE67LuXSh52jKK1Trn4WOtIRoN5u4hckgoljOLykBflZ9MNU/HjuQBU7jsXN12mqM8NApfxYq8t
-	+EbzkCdi/oXwhXbC6rk8SxHB5O0OmQQmPo9jpdXAxA5Iau3vhVYih3FC0pqONVaMS
-X-Google-Smtp-Source: AGHT+IGqbaxYVflPhQwlvzE4KWt9YOkvCpxShS92JNaxOYhBBBWeZkGh8ms2wjKFHVFGM9v06iNJOg==
-X-Received: by 2002:a17:907:608b:b0:b45:8370:eefd with SMTP id a640c23a62f3a-b49c146e6c8mr1381123966b.5.1759733128600;
-        Sun, 05 Oct 2025 23:45:28 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652a9f50sm1068769666b.9.2025.10.05.23.45.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Oct 2025 23:45:28 -0700 (PDT)
-Message-ID: <662c6a56055a295e3f9bd594b8751e405590abff.camel@linaro.org>
-Subject: Re: [PATCH 1/3] soc: samsung: exynos-pmu: allow specifying read &
- write access tables for secure regmap
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>,  Peter Griffin <peter.griffin@linaro.org>, Tudor
- Ambarus <tudor.ambarus@linaro.org>, Will McVicker	
- <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 06 Oct 2025 07:45:27 +0100
-In-Reply-To: <CAPLW+4=mVbXex9Sxm2oEq0j3RJ0_KtXRq2Ttt5cfQ_dxXTuhSA@mail.gmail.com>
-References: <20251002-gs101-pmu-regmap-tables-v1-0-1f96f0920eb3@linaro.org>
-	 <20251002-gs101-pmu-regmap-tables-v1-1-1f96f0920eb3@linaro.org>
-	 <CAPLW+4=mVbXex9Sxm2oEq0j3RJ0_KtXRq2Ttt5cfQ_dxXTuhSA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2 
+        d=1e100.net; s=20230601; t=1759733199; x=1760337999;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4EVi3IC+VD9OTyIfuQoplPqPl1jhS5tZPWBqrRRN26A=;
+        b=kBT59zRTfCakoKw0UaxpRKYTPDw8+J77++ljx8Et+t11XQDiEXsJRvhkHekWRoUqmA
+         cMrG+udFP4q6BdlfcwPJuRolDIxrXsxqRuA+rytJDwBYmjpJMAMI8AFArvHNTL3VOiVv
+         1cNgcZLzLX1xnkYbXCjs9cUyI9hte+zujsIWM3IUPYLerqb1K/24vopoDzapXYx2A7QS
+         HnZFi1nTt/aDcNsvrvbyiQgoliMufxxre2QAbsLfBluxF4cATgdtUGSdB5hrBxy9LfNH
+         2EwmQ3CTvm/vdjn7O3C2QOeV7ZkV3gieEbHoV5O+8aJmkwthteftLkaz6g5TcXMO7tN/
+         19BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVN3MBxRjvl+BFsnstDwosRUeJGdZTXgPMKwuCboiYw2rnYevsrvrwMzmp/x/ZIPS1uCoTSfVwvfgSAh0Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsKBBtTmhu1IVz7zUDwxNKsPKs/V773ipJovWaxa9+0rlkehKK
+	ulJJhsN78d8JsjODLAXQOYU9M/KcVlkiBO059pl+Rt6cVuUhbMc0ImDirC7im42JQw0/JtfKEZX
+	WXDRe3c6ZOzOrmxc8GRFkDvs/aUIbH67ZRJHnfOZa18lSI8+gOefUX4mQb0i0kZXc2Q==
+X-Gm-Gg: ASbGnctKD+mO8SHHucmvV/IRcmHiu9isZitXwwn3G98mHmueHbzs53J0j+mhPzkp819
+	J9vbSFephaDr/ZQPW+/jfStAI8a3cjU+OPc347zX9LjzbR55IU/76zrYWyNdzHRKLrQPU1oz2hN
+	py6O2WImPvH96kOdSyIbxcka517fopIbQWoOeegpy7h43q+VhC5q/2QJsWFBwjCzT3Xd2liQtdh
+	rtVCdOx9lK2X/Wn7ofpNONbIaybXO1lO8rM0kCsMPAYT5jh3JH5p9kvslX9WryEWLJODRPRhRg2
+	HxdRw3mLmaNTCzqG3BdoWxWrSV/1vS08oXhK8sj53wuAyymvU4IZ9UG1VwQ/kKD3Dp7XJnZgDNe
+	w+XL1R9mB
+X-Received: by 2002:a05:600c:8718:b0:46e:3193:fecb with SMTP id 5b1f17b1804b1-46e7114680dmr67606695e9.27.1759733199340;
+        Sun, 05 Oct 2025 23:46:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGvwz+OXGnsIlk+C8wzDZFDgyJpUrRBsLqCQT5ExdPtJxykmdjWSSQ3rfmlasZacEMy+dxtAw==
+X-Received: by 2002:a05:600c:8718:b0:46e:3193:fecb with SMTP id 5b1f17b1804b1-46e7114680dmr67606505e9.27.1759733198968;
+        Sun, 05 Oct 2025 23:46:38 -0700 (PDT)
+Received: from [192.168.3.141] (tmo-083-110.customers.d1-online.com. [80.187.83.110])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f011bsm19722250f8f.46.2025.10.05.23.46.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 05 Oct 2025 23:46:38 -0700 (PDT)
+Message-ID: <488a0640-9096-41d0-9a5f-34ba5f2a279c@redhat.com>
+Date: Mon, 6 Oct 2025 08:46:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/4] mm: thp: reparent the split queue during memcg
+ offline
+To: Qi Zheng <qi.zheng@linux.dev>, hannes@cmpxchg.org, hughd@google.com,
+ mhocko@suse.com, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+ muchun.song@linux.dev, lorenzo.stoakes@oracle.com, ziy@nvidia.com,
+ harry.yoo@oracle.com, baolin.wang@linux.alibaba.com,
+ Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
+ dev.jain@arm.com, baohua@kernel.org, lance.yang@linux.dev,
+ akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>
+References: <cover.1759510072.git.zhengqi.arch@bytedance.com>
+ <a01588414c9911f2bc912fa87f181aa5620d89d4.1759510072.git.zhengqi.arch@bytedance.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <a01588414c9911f2bc912fa87f181aa5620d89d4.1759510072.git.zhengqi.arch@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Sam,
+On 03.10.25 18:53, Qi Zheng wrote:
+> From: Qi Zheng <zhengqi.arch@bytedance.com>
+> 
+> Similar to list_lru, the split queue is relatively independent and does
+> not need to be reparented along with objcg and LRU folios (holding
+> objcg lock and lru lock). So let's apply the similar mechanism as list_lru
+> to reparent the split queue separately when memcg is offine.
+> 
+> This is also a preparation for reparenting LRU folios.
+> 
 
-On Fri, 2025-10-03 at 12:22 -0500, Sam Protsenko wrote:
-> On Thu, Oct 2, 2025 at 5:33=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik@=
-linaro.org> wrote:
->=20
+Much cleaner IMHO
 
-[...]
+Acked-by: David Hildenbrand <david@redhat.com>
 
-> >=20
-> > diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exy=
-nos-pmu.c
-> > index 22c50ca2aa79bf1945255ee6cc7443d7309b2573..9f416de03610b1727d8cc77=
-616e5c87e2525cc69 100644
-> > --- a/drivers/soc/samsung/exynos-pmu.c
-> > +++ b/drivers/soc/samsung/exynos-pmu.c
-> > @@ -635,6 +635,9 @@ static int exynos_pmu_probe(struct platform_device =
-*pdev)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 pmu_regmcfg =3D regmap_smccfg;
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 pmu_regmcfg.max_register =3D resource_size(res) -
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pmu_regmcfg.reg_stride;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 pmu_regmcfg.wr_table =3D pmu_context->pmu_data->wr_table;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 pmu_regmcfg.rd_table =3D pmu_context->pmu_data->rd_table;
-> > +
->=20
-> Seems like pmu_regmcfg declaration can be pulled under this "if" scope
-> -- just a thought for future.
+-- 
+Cheers
 
-Yes, there is room for improvement. It might be even better if a platform c=
-ould
-provide its own regmap, rather than just a flag and the code here copying a=
-nd
-updating pmu_regmcfg.
-I wanted to keep changes minimal at this stage, as there might be other con=
-siderations.
+David / dhildenb
 
->=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 /* Need physical address for SMC call */
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 regmap =3D devm_regmap_init(dev, NULL,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 (void *)(uintptr_t)res->start,
-> > diff --git a/drivers/soc/samsung/exynos-pmu.h b/drivers/soc/samsung/exy=
-nos-pmu.h
-> > index 0938bb4fe15f439e2d8bddeec51b6077e79a7e84..113149ed32c88a09b075be8=
-2050c26970e4c0620 100644
-> > --- a/drivers/soc/samsung/exynos-pmu.h
-> > +++ b/drivers/soc/samsung/exynos-pmu.h
-> > @@ -27,6 +27,10 @@ struct exynos_pmu_data {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 void (*pmu_init)(void);
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 void (*powerdown_conf)(enum =
-sys_powerdown);
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 void (*powerdown_conf_extra)=
-(enum sys_powerdown);
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* for the pmu_secure case */
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct regmap_access_table =
-*rd_table;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct regmap_access_table =
-*wr_table;
->=20
-> Maybe it's worth to add #include <linux/regmap.h> in this header, or
-> at least forward declaration struct regmap_access_table?
-
-Thanks! I'll add the forward declaration, as not all users of this header n=
-eed
-regmap.
-
-> Also, would be nice to have kernel-doc comment for struct
-> exynos_pmu_data at this point, but it might be out of scope for this
-> patch.
->=20
-> Other than those minor nitpicks -- LGTM:
-
-I'll add something for the next version.
-
-Cheers,
-Andre'
 
