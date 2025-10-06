@@ -1,115 +1,152 @@
-Return-Path: <linux-kernel+bounces-843119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9065BBE6FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:07:08 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E388BBE6FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:06:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6478134951C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:07:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 73CC34E10DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E882D5C8E;
-	Mon,  6 Oct 2025 15:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F992D77FE;
+	Mon,  6 Oct 2025 15:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EeP4oINb"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC7C2D77FA
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 15:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Tr0nt1xd"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370B32D6E74;
+	Mon,  6 Oct 2025 15:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759763192; cv=none; b=kj3n4Q41cOHbK1urmSipTJr83PvOUd6oeLgCiDaWH36xseuHhSB5R30+8cB2/oXwJT6cG1SSKVOMUV3s1xZ6crRnxV+6zB3Jqj4VhHwISG1FCTaGVWPmeGWsovaUuKpxg+pvaD3Admd9CbbjnZKYGVHVbSaaTXaXNk18jLrH3Qk=
+	t=1759763189; cv=none; b=ZphfFYGWNBVuwzb2Xscohx2HVF56nkZM+ehkpF+my5V+1wFVlK6LcRW3egJrTGMnYfZdpwvX6kY0i8dzsQnEfH0X2UI7wLEWuHi7TutQ8dr6K8pTvPNUH7mKhU6V4EjM/2M2ICv08ZhnUJQrdGvEtZ/7FOgyWfga8EKvLxVTCV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759763192; c=relaxed/simple;
-	bh=nuu73AmkdduGYHPVenLGjdjAoNdD3eifN2dVNslxPn8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KOPJ4WK53tUcUiS3/ypkSCNYC0r1uR/EAE/oF+EBNPQ9UVTDgFinycShiJ5Xoohr9z5bta9oIQSZJBaqXqJ0xJL5uEd6Xhvy+/TffoTstzqDECrj6sQg5aTHIKA0ukpEepA1guFBsmAxLV57etYhCvlFkY3qI+Vowz5FHW0a65M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EeP4oINb; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b456d2dc440so806368266b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 08:06:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759763188; x=1760367988; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JYHZUTt6+ctKIKekChRHoQ96BFtveVN/fubGr+gARRU=;
-        b=EeP4oINbJKhkwG7fjpofhPRRpEowB7j4MKSQ4FOdbg2QgWNkhe/knXmDa2m+CyKn4k
-         OByWEsxMnGg4B1j3XRQ3wxZZN/U57zlIDXiEjGaYiu1etgQyYdG2zOMTSkFtMG2P4Lpb
-         WoocncXv4jWtvHe8WTxeS6FSfKzUAbjQKWc6Vw3Jb2th392c+2r6DFB9AHQAH5Zhn5NT
-         gLoWXr+p1nhlzSD4DhaTdtjgE0Dv7Gokt2QVO4T8UhdhQlfXBKbizdzzG0FSJcyM+0ce
-         Q5yayvRC1Ow8RG6aA0Rqz6OyFAMuT2X/7C97LRN6F4twAuXvi3A578MM3itpi9/azSUr
-         PEfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759763188; x=1760367988;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JYHZUTt6+ctKIKekChRHoQ96BFtveVN/fubGr+gARRU=;
-        b=Y6WNyJJzk9lvkJFup+MIFV0pn7WCLH9Zs4MznFmmFw+AVERi++ywh2A/cD3BA9nOtd
-         euHZ3WfbhxkQ1eTJPqXiYWG/76Zf6fgq7BUgYAUooNR/NP6ghSD/G/WYXkOub8pDzjhv
-         UDaKpC09pv6Emh3F5fa7esdlqJ6BG4JMEHZb+ygL9kIBcENbvNff/qWZK8mRreW9nfi5
-         eokzHuYnaB1K6Yl1+Gvu1+fGfMbR6jAbbzsZ/kjGRhv0LcLePlpHlwF+53i43HuHYZtI
-         1qowYvltUZMl09UKc6uxtIneE/uV/Tk/krW1tQmYvAmoK377ap6/DEpCjJheXGpDAVAt
-         7UYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ8Jk0GmjgrXtKBhBbhpniU12178w6oimTYeJgi3oWngWsuy/qqfMuCQqu6qkvO3JzWCORyjO1AX1m0vg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2Xvk1OE27ogloe0nyI0C19oDHY1+tqK+d0F0qQV8WCUX1OduX
-	Kn8P0gLosXveWNS3m5Ere0RSR8SareDyFGNdsKLgyELpLOiraVasTsUJnKceC+oxlU1oGH4IiNq
-	dzmAo
-X-Gm-Gg: ASbGncs7z/BiR/qPGoU90YU0aqm1hDYNsEVT3wBo1Rvz275wQHmNXHhzcc7yzYGD4Dg
-	6Jl60/BmWEDutj2GNMHAKbCib/yYw4V/E5FjsJn060y4KvPbpdMLpqYUg4vV9QK/jJn6OG6mAFj
-	S056ztAtOEF30neeERl3qWIZXMWmC8s599gQ5CkaAPKfn6MSILIVmesjjFrt32SqNmUcPwL5QPq
-	XMkLHwwjm0fmc7UAe0o/wVOdaQms43oo7wJuiDH45mW7xNUSf4RpKkzOpWDIPKJaDVgOZxEyPKd
-	F7MOi75ft4x3Heh6BwSrJ4jXHBu6w/mncFqZHWRa5SiEXtawg0si0h2fc6OzjlFLsgqmIzUfqfv
-	npju7MhLFSCnMOfD/1+w+TeFWgyigaGl2iaT9ryKZr3J3pn0g9g==
-X-Google-Smtp-Source: AGHT+IH/3MPqJbppieMudTvZEu9xzGULFIuPv/bi1cJR24wUpq77ZE0vkayExKCPrrLGQLtftIVxPw==
-X-Received: by 2002:a17:907:3d42:b0:b3c:193:8218 with SMTP id a640c23a62f3a-b49c3936081mr1543747966b.34.1759763187618;
-        Mon, 06 Oct 2025 08:06:27 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48628a6d90sm1177696766b.0.2025.10.06.08.06.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 08:06:27 -0700 (PDT)
-Date: Mon, 6 Oct 2025 17:06:25 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Joel Granados <joel.granados@kernel.org>
-Cc: Daniel Xu <dlxu@meta.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] watchdog: move nmi_watchdog sysctl into .rodata
-Message-ID: <aOPa8RClyXaeyV6L@pathway.suse.cz>
-References: <20250929-jag-nmiwd_const-v1-1-92200d503b1f@kernel.org>
+	s=arc-20240116; t=1759763189; c=relaxed/simple;
+	bh=1XMtkoTRl0Lr4SPB5FSdH71J6FB9yWWNoi4hY7Hr/Jw=;
+	h=Subject:From:To:Cc:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ts7hO13FtC6qEEUYcUdZpmPnqb5BZqDYMrUd/oQW27zYiA7KmwzJQcKJrWWMDkHuI74o7EMvlclhi4dctZF4a6HXBxzXQgPfQlreUOBcyD/QLYtDD0f2LdgvMfnJU6rcoWntSX+VY3zV5/8Pey7pUJpuVoClw+tgkIZudgzH26Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Tr0nt1xd; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from skinsburskii-cloud-desktop.internal.cloudapp.net (unknown [4.155.116.186])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 0A697211CDF2;
+	Mon,  6 Oct 2025 08:06:27 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0A697211CDF2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1759763187;
+	bh=vjgKlRDDEjRw02GddRPB5NhZYwJEu4Ggc4Vsxdfe3wg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Tr0nt1xdUDxyyGZPmwmeyo4BKm5BxNi+ta41uIaX6+j7cwMy03eOC5xT3pox4gDUT
+	 f90ME7tPuXzcYrTtHU1uazzviWorTTJpLAHQBj8rb9JBrIOitOrdkfbaw6uS5Dbeqr
+	 mI8vv8DOyy7jUdbi5JEjPn9XDLuyrvOXkduTt1oI=
+Subject: [PATCH v4 3/5] Drivers: hv: Batch GPA unmap operations to improve
+ large region performance
+From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+To: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 06 Oct 2025 15:06:26 +0000
+Message-ID: 
+ <175976318688.16834.16198650808431263017.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+In-Reply-To: 
+ <175976284493.16834.4572937416426518745.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+References: 
+ <175976284493.16834.4572937416426518745.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250929-jag-nmiwd_const-v1-1-92200d503b1f@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon 2025-09-29 17:55:07, Joel Granados wrote:
-> Move nmi_watchdog into the watchdog_sysctls array to prevent it from
-> unnecessary modification. This move effectively moves it inside the
-> .rodata section.
-> 
-> Initially moved out into its own non-const array in commit 9ec272c586b0
-> ("watchdog/hardlockup: keep kernel.nmi_watchdog sysctl as 0444 if probe
-> fails"), which made it writable only when watchdog_hardlockup_available
-> was true. Moving it back to watchdog_sysctl keeps this behavior as
-> writing to nmi_watchdog still fails when watchdog_hardlockup_available
-> is false.
-> 
-> Signed-off-by: Joel Granados <joel.granados@kernel.org>
+Reduce overhead when unmapping large memory regions by batching GPA unmap
+operations in 2MB-aligned chunks.
 
-The patch looks good to me. Updating the access rights was nice to
-have. But it does not look not worth complicating the constification.
-And proc_nmi_watchdog() works correctly even when the access rights
-are always 0644.
+Use a dedicated constant for batch size to improve code clarity and
+maintainability.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+Signed-off-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+---
+ drivers/hv/mshv_root.h         |    2 ++
+ drivers/hv/mshv_root_hv_call.c |    2 +-
+ drivers/hv/mshv_root_main.c    |   28 +++++++++++++++++++++++++---
+ 3 files changed, 28 insertions(+), 4 deletions(-)
 
-Best Regards,
-Petr
+diff --git a/drivers/hv/mshv_root.h b/drivers/hv/mshv_root.h
+index e3931b0f12693..97e64d5341b6e 100644
+--- a/drivers/hv/mshv_root.h
++++ b/drivers/hv/mshv_root.h
+@@ -32,6 +32,8 @@ static_assert(HV_HYP_PAGE_SIZE == MSHV_HV_PAGE_SIZE);
+ 
+ #define MSHV_PIN_PAGES_BATCH_SIZE	(0x10000000ULL / HV_HYP_PAGE_SIZE)
+ 
++#define MSHV_MAX_UNMAP_GPA_PAGES	512
++
+ struct mshv_vp {
+ 	u32 vp_index;
+ 	struct mshv_partition *vp_partition;
+diff --git a/drivers/hv/mshv_root_hv_call.c b/drivers/hv/mshv_root_hv_call.c
+index c9c274f29c3c6..0696024ccfe31 100644
+--- a/drivers/hv/mshv_root_hv_call.c
++++ b/drivers/hv/mshv_root_hv_call.c
+@@ -17,7 +17,7 @@
+ /* Determined empirically */
+ #define HV_INIT_PARTITION_DEPOSIT_PAGES 208
+ #define HV_MAP_GPA_DEPOSIT_PAGES	256
+-#define HV_UMAP_GPA_PAGES		512
++#define HV_UMAP_GPA_PAGES		MSHV_MAX_UNMAP_GPA_PAGES
+ 
+ #define HV_PAGE_COUNT_2M_ALIGNED(pg_count) (!((pg_count) & (0x200 - 1)))
+ 
+diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+index 97e322f3c6b5e..b61bef6b9c132 100644
+--- a/drivers/hv/mshv_root_main.c
++++ b/drivers/hv/mshv_root_main.c
+@@ -1378,6 +1378,7 @@ mshv_map_user_memory(struct mshv_partition *partition,
+ static void mshv_partition_destroy_region(struct mshv_mem_region *region)
+ {
+ 	struct mshv_partition *partition = region->partition;
++	u64 gfn, gfn_count, start_gfn, end_gfn;
+ 	u32 unmap_flags = 0;
+ 	int ret;
+ 
+@@ -1396,9 +1397,30 @@ static void mshv_partition_destroy_region(struct mshv_mem_region *region)
+ 	if (region->flags.large_pages)
+ 		unmap_flags |= HV_UNMAP_GPA_LARGE_PAGE;
+ 
+-	/* ignore unmap failures and continue as process may be exiting */
+-	hv_call_unmap_gpa_pages(partition->pt_id, region->start_gfn,
+-				region->nr_pages, unmap_flags);
++	start_gfn = region->start_gfn;
++	end_gfn = region->start_gfn + region->nr_pages;
++
++	for (gfn = start_gfn; gfn < end_gfn; gfn += gfn_count) {
++		if (gfn % MSHV_MAX_UNMAP_GPA_PAGES)
++			gfn_count = ALIGN(gfn, MSHV_MAX_UNMAP_GPA_PAGES) - gfn;
++		else
++			gfn_count = MSHV_MAX_UNMAP_GPA_PAGES;
++
++		if (gfn + gfn_count > end_gfn)
++			gfn_count = end_gfn - gfn;
++
++		/* Skip if all pages in this range if none is mapped */
++		if (!memchr_inv(region->pages + (gfn - start_gfn), 0,
++				gfn_count * sizeof(struct page *)))
++			continue;
++
++		ret = hv_call_unmap_gpa_pages(partition->pt_id, gfn,
++					      gfn_count, unmap_flags);
++		if (ret)
++			pt_err(partition,
++			       "Failed to unmap GPA pages %#llx-%#llx: %d\n",
++			       gfn, gfn + gfn_count - 1, ret);
++	}
+ 
+ 	mshv_region_invalidate(region);
+ 
+
+
 
