@@ -1,267 +1,224 @@
-Return-Path: <linux-kernel+bounces-843267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1E40BBECBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 19:22:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37DC9BBECD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 19:22:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7422C3BEDA8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 17:22:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E983E4F00C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 17:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6637E23DEB6;
-	Mon,  6 Oct 2025 17:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03414225414;
+	Mon,  6 Oct 2025 17:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="Xt9CEQCE"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="uSfLYsp9"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010031.outbound.protection.outlook.com [52.101.193.31])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF4D225414
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 17:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759771323; cv=none; b=UYP484iRdrw/aUmn53M1o8Ph+JVgG2wTW0l1bIYBiwEIdIYXzRjthFb2P1IQRNa029Mc42EN9JFYhchHXHk8M+Wca836bgOw5ShTqQNmhyGSxIYxtnAL39YTpQ5G246sOFYmwn7Il7sTCacL2slh5k/T8tNpOSeJ4HeQtu4yQBY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759771323; c=relaxed/simple;
-	bh=74DlWy/wZvAW0vbF4XE00zl9RPY5mmo68zzZTKTBqRg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uNVUgQcfBYnuLsQoUYCWcE5zmRPTn7a1NSSsl/PeRrch+r8Io+PNjhA+WTZPPt9+dqQ02ESkDJOA57EtE/YydY+myi+0rrpamt5Qm1kCwqQpY668F84i7c03Uw6FEaiK8LvqTtOyvwUMOhYrshxEByS6+SpI1mLswjbrayuacVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=Xt9CEQCE; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4dc4afb9e1cso57272851cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 10:22:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1759771319; x=1760376119; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u3CFdIAZSOG3RFljBavldVx+w/X0FNVvOnGYJcNKBpQ=;
-        b=Xt9CEQCE3irO+7S8grd2U3oZ3qtW5ufHe3gACzEf2+rosm2fy+Qw9vftIU+I1xDJib
-         nwKnv+Z6DP60c/jvkkXpyv5OG+yj2RjzMUHSjVly34SMl8fJaopGrySxoBZ+gCJN4hL0
-         3ZRu47tgoqHzLvYVaA8sYr3/Oz/1xtEkRhVqvdC53iOMtpxPIOfVsZcK7iKs65Jn+7BT
-         bZi6hmsoZ0f/hWkeno9PVJsN6uhN2f4kQc6XkhJfUgnhSaGltKjiwtcua7wT0ZiGYo5u
-         DeLpst1wAvRuMi58k2BcLuKSLgrN9Mm5GVlWvGV0tcIMZnQmAKuxFIL/QGmQV9Yfz8NA
-         TK2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759771319; x=1760376119;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u3CFdIAZSOG3RFljBavldVx+w/X0FNVvOnGYJcNKBpQ=;
-        b=OMheFGF8ra4oymZkm0OlJYoPZhWrzQErsXPK+j6KK28y3M7LKWiCICivqn1bQjHwSY
-         /BgzysDMzo/2sb+5i3C8ChvP/jyvw2JqLfwHtgyN+ha2A8AZPtBujw56IxeEhjdHnhi9
-         3d+POqwcm/SEuY7cY/XHDgS266teKWRDzHR6VMLhzbNeEuXu9AXEXMw+ktxQeAUkAv30
-         Z0TygXW1fWqqLRJYrD/OB98t58OWhbfOY7y/2G9q0AR46/fQ3jjCHrgGv13feG6EH+SS
-         rxqNKasItu5pHSXyGRniz4HEc1F/D5zf4tSaiFXSlDlAhmZ8pOh7d/oE/yqrn4PT775z
-         aQqg==
-X-Forwarded-Encrypted: i=1; AJvYcCVurBR4jY0SYDkJ+6+jk1vX4ZL/EnmEPTncHG44N3bHMraJnWsMj27DvIYYXm/R9d0bnnPtVysED3e9rKU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwijUX7kkrHBDtNA/ZTzasdXUcbxPJ2ddx8tEEBrMGnAjuaVke5
-	Ui26kKjm32frPtYO/73Fge57BC88DLSCAtYdfmbe3O0inOXXgYq1xcknKJ/2UZeK4r8lxcCfpcT
-	t+JT5h4F4McAQbeVRW9cnoaFCh0TLrO9WyyXIXEfODQ==
-X-Gm-Gg: ASbGncuHtGsD9QYPqKDWXU2shYfNe+gU5caS/+CzFJHnsQJdgvhGwWik+c5NaVPlgKz
-	DqOHF/3jojo3c90rUAe+dbKXB+F41zcyLOACveDUnNXQmVN/sF6A4zGBN9TXzYmvRQJrGmjoxyl
-	x8hRbqBilN+S8qXFmTt9g1nMYeUl30ZuJicXe+lumVqYwhdk2s3mk+/SkbMmCI557UmkvzjXhGB
-	lrbm0snD0JQqtuvjBsWajNrrhI88bd8TpF1OjI=
-X-Google-Smtp-Source: AGHT+IFM2iasjSwevS/Ww6pNuFkpEMTxLK7Q2uZtw02+A+PsxcuVSjzuu+26bSPV3eDsAJn6N8sfkeveM0JOQLoCA2k=
-X-Received: by 2002:a05:622a:5815:b0:4df:3139:d204 with SMTP id
- d75a77b69052e-4e6de8027ebmr6622011cf.10.1759771319077; Mon, 06 Oct 2025
- 10:21:59 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB095221F1A
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 17:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.31
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759771365; cv=fail; b=SK20hYSb2DP5GJCHEapdS65EQU21UE5iHBccU3NROirJK+zMxfU/Ev7DcKeF9X1lavSAayLv78ByxXgG6DClVlZnJmnIVYfrlHJj2nnX4vjy+XR8dBYgajntsvVfF2jSYKsHyywofXx6RAchp7XFCFA4We+Papyv7X6c0PCZWkI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759771365; c=relaxed/simple;
+	bh=CyzlJzQeNKRuXLAwxv0R3/JF38ObiR+Mj5gC45xQm8g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=MTVHW0Xfs5bum4++2EPtG+LbZExhFCX9D1Q+a6n64eBH30rFjbq4gfYDEeGQx0Lkm0BcN4d+op8dW+Q/x6jM66vZUNoBben8PNonY511SrIGfUysXgY3npK+in3IASyxSP+lvRBjq8qE/mbea0U7waQUPeJEZSEZTWwVDwiErF4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=uSfLYsp9; arc=fail smtp.client-ip=52.101.193.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NzI/c90/t+1Ep6BgWRb++D6DnSXpyos5YFHpSsNOkoHyLwvZBzR7cdesT2ULzZh8kvlBF4PrduFThvYyonIAnhqq/dQ7/+DxMyACtVUp8B3jKqVjlYtPkADB0EYBAPC6CueTg8WxOQiwds5Gac7lIQEIzXoQGojo8fhTsTCJbEWT5Bdtex6Ufo9lG2lfVTtVZZume5axs4t0AtM43BUWBDKf1YA5eluOO6vJggtWncptu16vc4C71yL0wS0ZF0L4OaR38k2wv9YnCZDJuet4/7GQW26Zsz5wk/PS8UwVaRaMDLk4hO4CSfuQKZBEO5hvoZfoItvhJAsnaHjCdhfV6w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=chRXifS6PL0Zj5UjHQHqoec4XZha52JRABraogyGliY=;
+ b=sT2d4ukKRTHDajuc+qcm1g9L6GNnA4513GLaLW4MjG4bd7ButCxpOZW8Uha3OW9PJ12J9VHUmOJytO6RTd8bx0Ys2/AymqNAzIZ2S67517EULy5Bz311X/Bj0MFlcJjZc0tCPzz/Xo6zIBTzK2+uBoTh2ZsyQBXM/RiLRYZgt0o7BMY7KMKk6nvbnjgszWb8y7KWAw06GVdcLs5pu0C1Ujor5WbdSZPn6e7XJTj3FMDpuQHSVdP/cywQk89aiVHkyn7KHfxvrzkyNbZe1TuOnCyUqNWUO6+SRAyFZa39FLT80MIgI6TUIVeNOCuLSFQR7KbNeEzddM8pIu2trWW1mg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=chRXifS6PL0Zj5UjHQHqoec4XZha52JRABraogyGliY=;
+ b=uSfLYsp9NxyAGDrAIZKC5RvjTC3Vto5sttVtZrrp+MwZzfn3UVpattv/yuKCxt4CYthRQrb5BARg4xBrU0d9g1ieF9GfLIc4PuEWHqWKTJZpe6THIOSVRmJ9Z74xDVRUQpZBwnDKUd0VcgQ0OSZ+gMLkMqU6oK6FCc/ADLVhwR75+HRljFEzoQ7P8Kh+9ygGr/lqjUyxZvIDEx2xjbFRQnnBKHKjgXB/bxzD1qglOgYjgAx86AFla9jXxZj2/W4qkZdERg175QZ5ZS3YHbwhiixCMsMx+Kv2OHXMhZWARD+HekryoE8UgUV4tU4ngpAkmFsYSk4b48Y5AXWxJPtFUQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by IA0PR12MB8228.namprd12.prod.outlook.com (2603:10b6:208:402::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Mon, 6 Oct
+ 2025 17:22:38 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9182.017; Mon, 6 Oct 2025
+ 17:22:38 +0000
+Date: Mon, 6 Oct 2025 19:22:25 +0200
+From: Andrea Righi <arighi@nvidia.com>
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: Ryan Newton <rrnewton@gmail.com>, linux-kernel@vger.kernel.org,
+	sched-ext@lists.linux.dev, tj@kernel.org, newton@meta.com
+Subject: Re: [PATCH v3 2/2] sched_ext: Add a selftest for scx_bpf_dsq_peek
+Message-ID: <aOP60Wz6qBAYFmid@gpd4>
+References: <20251006170403.3584204-1-rrnewton@gmail.com>
+ <20251006170403.3584204-3-rrnewton@gmail.com>
+ <54151879-f2bd-4e87-b5b5-5e916ee1e743@arm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <54151879-f2bd-4e87-b5b5-5e916ee1e743@arm.com>
+X-ClientProxiedBy: MI1P293CA0030.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:3::17) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
- <20250929010321.3462457-4-pasha.tatashin@soleen.com> <mafs0tt0cnevi.fsf@kernel.org>
-In-Reply-To: <mafs0tt0cnevi.fsf@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Mon, 6 Oct 2025 13:21:20 -0400
-X-Gm-Features: AS18NWCA17JFqGpyH74v5IB7rQGOnAZUihEDBZQPUG896U4mqGpoALvEdvNdCBg
-Message-ID: <CA+CK2bA2qfLF1Mbyvnat+L9+5KAw6LnhYETXVoYcMGJxwTGahg@mail.gmail.com>
-Subject: Re: [PATCH v4 03/30] kho: drop notifiers
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: jasonmiu@google.com, graf@amazon.com, changyuanl@google.com, 
-	rppt@kernel.org, dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
-	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
-	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
-	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
-	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, leonro@nvidia.com, 
-	witu@nvidia.com, hughd@google.com, skhawaja@google.com, chrisl@kernel.org, 
-	steven.sistare@oracle.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|IA0PR12MB8228:EE_
+X-MS-Office365-Filtering-Correlation-Id: fa237762-9163-4f8b-a7f6-08de04fcf2b4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?mPtO+3Vd/Evo67eBl/glpWRm8RzEPXWaJZ5ii7v5PvCoDsGNZfjUO0fL8fDi?=
+ =?us-ascii?Q?smx4pcxO+B6hC7yyOhEOQQZ5KPN72M2ou/UTpEfVhE+LKJ0KFN61/rqnwaUN?=
+ =?us-ascii?Q?AzV9nqL6N8y+tD3T5u07YrQUvV/UDMa0owR12N6IrUlWoyBrCybuNsLbB0t0?=
+ =?us-ascii?Q?Dw1VAl4tIGCbC/TtKltXPWUYCM9LbT5JHGwXIh9/hMK0jqGFjdtwLDJ2hLNY?=
+ =?us-ascii?Q?LsFh9koHwtLkN/VSe8/T1Z1TQsiOhdpj5UIYWIiaaSkKGiwNRp0+xUcq2AcC?=
+ =?us-ascii?Q?dnlI5Xcy7HaQPqm3K3qKizKwD7vdQsyciV78YwEtWBYZI4wdtlAd7gp85Fer?=
+ =?us-ascii?Q?80LaCy2cHMkjrSwIHW3k6UFPyLxw4/JZHDHvXo9XhrUN4NIN2/zwcK9/Lmbv?=
+ =?us-ascii?Q?qyyL75a4/Ki6ngL64XcDaXg+MBnpKOfthygAr2DgXLbqDV2HuOEahenVfkyI?=
+ =?us-ascii?Q?9Fwidbmp2TV5uEMf/0LKbn3qhmQxqfkKtsrqyEv8frDk45PepqGQOi8/BWTd?=
+ =?us-ascii?Q?nUzXFU6trXi7WPMmS/QyKPkC7OGPyEWODskURJnjy0RbTXmQ/4Kw2LGxtCuk?=
+ =?us-ascii?Q?Z+9yKc/2KqlheZP0dSVT81I0+zwxO0jf6e5uxG5uJ3AmADGFzkUTxC1WoZgM?=
+ =?us-ascii?Q?mlYLeQNqjeCDsk1wuDXq81X8+O7m78h6U5yE0TzLtw75KT42CgaSE4nL+iNa?=
+ =?us-ascii?Q?6lUpqELEK5KWcWztUxKT0AoL6qp8/f2+buBTSH270eeYSZ3g5pp3KAcE+TgF?=
+ =?us-ascii?Q?mGEP5ff6gBCG3WAuShoe7KRxLFbQJq+Unr1Lj+CtaNYMeOLdAAa3mat8c3h2?=
+ =?us-ascii?Q?hPIUBj+E9bnRodWfExAJXJzSaglffBndgOqT34KxnFcikR6c+zUDGibfXjT1?=
+ =?us-ascii?Q?UBa01Iuys4Z+mtUlMogh8ACVoFfE/S4YbJ31iqBMhpeaU+yQs0v9n5Uhq67w?=
+ =?us-ascii?Q?jT/tgTk03aNR99aqvsxSXi4iC2r3ItjuBXy2VZqGw81bQzr+vL/rHE2rmk5e?=
+ =?us-ascii?Q?a4QMznTjUp4qwuJOfviAbqrKIvJFVjhhw2nseVIvDRcs2SAycq+lZaiiTfGm?=
+ =?us-ascii?Q?nE5xQNOWAP72Uy8gaLAGQ90fa4nVUaZJUVtdxCJo//bluURfVcjVcqr1otb9?=
+ =?us-ascii?Q?KmHmAnW8yQQS7uO86L08tHqobAOOzUcBk2AZouh1q3tMEkCiLKYGbcHjFksR?=
+ =?us-ascii?Q?vZlJeUtb04VAbQoF0fwIpknBtTyK3xPc8OesWZTFLPHZCaTeqEbiNPu7vSQy?=
+ =?us-ascii?Q?/ukPwvgbFedHJZvrfoIYFtifGuqz9gTDUmlwWudh4VgyxAWt8YIU8oyyIAt1?=
+ =?us-ascii?Q?xqHEJKGtyzLDVcQw5yWKD8srFMscvI5QCeLfGdrSU54ayWAkpCRr4B10VyIV?=
+ =?us-ascii?Q?56TAQ8w+HpnnbaScJtfgIcOahckhxeWuFLCgradOWEkhiyVOdxfLYtVy7M29?=
+ =?us-ascii?Q?V4JgwWM1yudw5j3DypARROskPAh3KdN9?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?gDuJXKHDdhyF5KZeY0f1usJGbD77oVWD4DQWHqt/MMqp9Lmbh90c5dfDXUSK?=
+ =?us-ascii?Q?QkLKixSEFQx0Ej2ie851GMvNP7Y54pov4J+5YkhyrjuD/9aRuhEiiohi/D2T?=
+ =?us-ascii?Q?296WgjSIze8qw0L+tePm7EMcusSoRO8z9FHKEurzPNqiEh38Y+K5sB/ib6oj?=
+ =?us-ascii?Q?JSilaxd0o7OBDp2AS6DG3gBc0T+Sx0HL0WVXe0Xo6krwAcd5BxGPijV3VTT7?=
+ =?us-ascii?Q?O1EOUkgLwYnuZ7eFMJPvdPLdJ8WnUuuYSNujjK5i8cgpjhfQR5Y9PEuRlnXm?=
+ =?us-ascii?Q?4O3X5Sr4WSNMbl48mr0b8oeIz9E6KiBnehMFNuYX9RIavABw7L6+gVdfMqs3?=
+ =?us-ascii?Q?sUEdu84Cz3CCt1+iAbIJSPuJkE8YYN/xw/tFGi9ixmOhbzPRXT5/VQ79pXA2?=
+ =?us-ascii?Q?jLqsiizSPA/iFgNrgym2PUOhafQeTGArmICQEJFx8YqlJIMyARmFGxgp6tdK?=
+ =?us-ascii?Q?E5aHBH9sQZyhLiAliLtQJiOXIrG1CJ784CqllSNRhyxVYgf3i0R/VdSkDdpH?=
+ =?us-ascii?Q?WWMxRshTKdrL6qZQsFSbFYUZDmn6L6udJsciUWZAOhsY2U8J9v6zi3gA+Gsu?=
+ =?us-ascii?Q?KnZZ2jYeCNNeZgqUvC+bnAQGp5awVxA2Bg4o0tQwqrobMyHVMBPv2sw6gjNQ?=
+ =?us-ascii?Q?gAcBvJ0ir+8kiuw2j+vK/laZr9zgHy2gpz0zm20VD/z0ZFjVmvnMxixlyFCX?=
+ =?us-ascii?Q?+Yw6Exc6hgfXNbbjNMiQcX4tm/8jVNO6pYTi9v7OIEpozcXsGODNpqnC85iJ?=
+ =?us-ascii?Q?d2b2LI1TJGidHa5X9fvLEPYeoy816rBZpCBMJbvTcbXWOF1ARmY2aXMsy7YG?=
+ =?us-ascii?Q?8gbVJid90PtfMHud4Z+v+k+I8dfQiEygnMksWG/Qcnf1d/xfbL/4BVPA377A?=
+ =?us-ascii?Q?DSgFBvN//o5gTE5s8VI8yX3QWaHAcYbf5wR0eDqBW/fObmZKw04zYdIRAE2x?=
+ =?us-ascii?Q?6ylT2q84ep2nIrkZEJo435oqZpakDFTsYe3nX+65jy2I6oriG3AVe9IoS/8f?=
+ =?us-ascii?Q?48T1rZ6fMXVbF0V0KWQmz/9wnBjs+CunhtLS5D5dgOYAzD94E+Fb4eeBJXN6?=
+ =?us-ascii?Q?6avsntMGI/tbcXiSTNL4GlqMt2DF4K5h3WMGvnQ2pcYhNj/asNob28sxrPGe?=
+ =?us-ascii?Q?2fIA6TMlcHzO24nsNtsHOZVOkvkuTn1THt3NZ2LVrQiHK2UGoApPlCSm1e+4?=
+ =?us-ascii?Q?AqpV96CWxq23kgZxtVD9CYye+Zv/I0CcdzjIKIQXIkqZiRO0xWo0Qj6SMVCs?=
+ =?us-ascii?Q?NiESiQSXKqVGjhafLXF0oa8DKwP/2psfbmQAZe/Klw+kE+49skvTg0p7ZbSc?=
+ =?us-ascii?Q?BiDDFpJ7SGDkzlvMqVM90vn1Q8z79qb7m12+8Kpgya0bSkUaKwGdUL/ALURT?=
+ =?us-ascii?Q?RqOeYdgAeHdM+TUSUj3BzkOTPHAFPcUCOZaqyB8RHAeZ5pyVrq9wEcP/jktA?=
+ =?us-ascii?Q?L6/aqlSdy0m7alx8ulkpymf+h5+sQHAEFb2te8YZEymcxp5jHaPg4/jb5jhM?=
+ =?us-ascii?Q?rb4LqICQpzEkh+37uKQqaVrSPvbNhxA2mWP5qzJ6S4sDgDz9mjI26JVVoniJ?=
+ =?us-ascii?Q?ToAUBzUt0LVJKYabg55l0PyjODZ1UYZPkGLZRCkz?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fa237762-9163-4f8b-a7f6-08de04fcf2b4
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2025 17:22:38.4898
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vAsxu0qR0dYMVOFUwG2DVy1QVqAW0ryogY8v6TjEfRA5esSmx1YrlLlNDhFcK2Jk/zvBxUjvLactVhlwQM+y1A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8228
 
-On Mon, Oct 6, 2025 at 1:01=E2=80=AFPM Pratyush Yadav <pratyush@kernel.org>=
- wrote:
->
-> On Mon, Sep 29 2025, Pasha Tatashin wrote:
->
-> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> >
-> > The KHO framework uses a notifier chain as the mechanism for clients to
-> > participate in the finalization process. While this works for a single,
-> > central state machine, it is too restrictive for kernel-internal
-> > components like pstore/reserve_mem or IMA. These components need a
-> > simpler, direct way to register their state for preservation (e.g.,
-> > during their initcall) without being part of a complex,
-> > shutdown-time notifier sequence. The notifier model forces all
-> > participants into a single finalization flow and makes direct
-> > preservation from an arbitrary context difficult.
-> > This patch refactors the client participation model by removing the
-> > notifier chain and introducing a direct API for managing FDT subtrees.
-> >
-> > The core kho_finalize() and kho_abort() state machine remains, but
-> > clients now register their data with KHO beforehand.
-> >
-> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> [...]
-> > diff --git a/mm/memblock.c b/mm/memblock.c
-> > index e23e16618e9b..c4b2d4e4c715 100644
-> > --- a/mm/memblock.c
-> > +++ b/mm/memblock.c
-> > @@ -2444,53 +2444,18 @@ int reserve_mem_release_by_name(const char *nam=
-e)
-> >  #define MEMBLOCK_KHO_FDT "memblock"
-> >  #define MEMBLOCK_KHO_NODE_COMPATIBLE "memblock-v1"
-> >  #define RESERVE_MEM_KHO_NODE_COMPATIBLE "reserve-mem-v1"
-> > -static struct page *kho_fdt;
-> > -
-> > -static int reserve_mem_kho_finalize(struct kho_serialization *ser)
-> > -{
-> > -     int err =3D 0, i;
-> > -
-> > -     for (i =3D 0; i < reserved_mem_count; i++) {
-> > -             struct reserve_mem_table *map =3D &reserved_mem_table[i];
-> > -             struct page *page =3D phys_to_page(map->start);
-> > -             unsigned int nr_pages =3D map->size >> PAGE_SHIFT;
-> > -
-> > -             err |=3D kho_preserve_pages(page, nr_pages);
-> > -     }
-> > -
-> > -     err |=3D kho_preserve_folio(page_folio(kho_fdt));
-> > -     err |=3D kho_add_subtree(ser, MEMBLOCK_KHO_FDT, page_to_virt(kho_=
-fdt));
-> > -
-> > -     return notifier_from_errno(err);
-> > -}
-> > -
-> > -static int reserve_mem_kho_notifier(struct notifier_block *self,
-> > -                                 unsigned long cmd, void *v)
-> > -{
-> > -     switch (cmd) {
-> > -     case KEXEC_KHO_FINALIZE:
-> > -             return reserve_mem_kho_finalize((struct kho_serialization=
- *)v);
-> > -     case KEXEC_KHO_ABORT:
-> > -             return NOTIFY_DONE;
-> > -     default:
-> > -             return NOTIFY_BAD;
-> > -     }
-> > -}
-> > -
-> > -static struct notifier_block reserve_mem_kho_nb =3D {
-> > -     .notifier_call =3D reserve_mem_kho_notifier,
-> > -};
-> >
-> >  static int __init prepare_kho_fdt(void)
-> >  {
-> >       int err =3D 0, i;
-> > +     struct page *fdt_page;
-> >       void *fdt;
-> >
-> > -     kho_fdt =3D alloc_page(GFP_KERNEL);
-> > -     if (!kho_fdt)
-> > +     fdt_page =3D alloc_page(GFP_KERNEL);
-> > +     if (!fdt_page)
-> >               return -ENOMEM;
-> >
-> > -     fdt =3D page_to_virt(kho_fdt);
-> > +     fdt =3D page_to_virt(fdt_page);
-> >
-> >       err |=3D fdt_create(fdt, PAGE_SIZE);
-> >       err |=3D fdt_finish_reservemap(fdt);
-> > @@ -2499,7 +2464,10 @@ static int __init prepare_kho_fdt(void)
-> >       err |=3D fdt_property_string(fdt, "compatible", MEMBLOCK_KHO_NODE=
-_COMPATIBLE);
-> >       for (i =3D 0; i < reserved_mem_count; i++) {
-> >               struct reserve_mem_table *map =3D &reserved_mem_table[i];
-> > +             struct page *page =3D phys_to_page(map->start);
-> > +             unsigned int nr_pages =3D map->size >> PAGE_SHIFT;
-> >
-> > +             err |=3D kho_preserve_pages(page, nr_pages);
-> >               err |=3D fdt_begin_node(fdt, map->name);
-> >               err |=3D fdt_property_string(fdt, "compatible", RESERVE_M=
-EM_KHO_NODE_COMPATIBLE);
-> >               err |=3D fdt_property(fdt, "start", &map->start, sizeof(m=
-ap->start));
-> > @@ -2507,13 +2475,14 @@ static int __init prepare_kho_fdt(void)
-> >               err |=3D fdt_end_node(fdt);
-> >       }
-> >       err |=3D fdt_end_node(fdt);
-> > -
-> >       err |=3D fdt_finish(fdt);
-> >
-> > +     err |=3D kho_preserve_folio(page_folio(fdt_page));
-> > +     err |=3D kho_add_subtree(MEMBLOCK_KHO_FDT, fdt);
+On Mon, Oct 06, 2025 at 06:17:50PM +0100, Christian Loehle wrote:
+> On 10/6/25 18:04, Ryan Newton wrote:
+> > From: Ryan Newton <newton@meta.com>
+> > 
+> > Perform the most basic unit test: make sure an empty queue peeks as
+> > empty, and when we put one element in the queue, make sure peek returns
+> > that element.
+> > 
+> > However, even this simple test is a little complicated by the different
+> > behavior of scx_bpf_dsq_insert in different calling contexts:
+> >  - insert is for direct dispatch in enqueue
+> >  - insert is delayed when called from select_cpu
+> > 
+> > In this case we split the insert and the peek that verifies the
+> > result between enqueue/dispatch. As a second phase, we stress test by
+> > performing many peeks on an array of user DSQs.
+> > 
+> > Note: An alternative would be to call `scx_bpf_dsq_move_to_local` on an
+> > empty queue, which in turn calls `flush_dispatch_buf`, in order to flush
+> > the buffered insert. Unfortunately, this is not viable within the
+> > enqueue path, as it attempts a voluntary context switch within an RCU
+> > read-side critical section.
+> > 
+> > Signed-off-by: Ryan Newton <newton@meta.com>
+> > ---
+> >  kernel/sched/ext.c                            |   2 +
+> >  tools/testing/selftests/sched_ext/Makefile    |   1 +
+> >  .../selftests/sched_ext/peek_dsq.bpf.c        | 265 ++++++++++++++++++
+> >  tools/testing/selftests/sched_ext/peek_dsq.c  | 230 +++++++++++++++
+> >  4 files changed, 498 insertions(+)
+> >  create mode 100644 tools/testing/selftests/sched_ext/peek_dsq.bpf.c
+> >  create mode 100644 tools/testing/selftests/sched_ext/peek_dsq.c
+> > 
+> > diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> > index 6d3537e65001..ec7e791cd4c8 100644
+> > --- a/kernel/sched/ext.c
+> > +++ b/kernel/sched/ext.c
+> > @@ -6120,6 +6120,7 @@ __bpf_kfunc struct task_struct *scx_bpf_dsq_peek(u64 dsq_id)
+> >  	sch = rcu_dereference(scx_root);
+> >  	if (unlikely(!sch))
+> >  		return NULL;
 > > +
-> >       if (err) {
-> >               pr_err("failed to prepare memblock FDT for KHO: %d\n", er=
-r);
-> > -             put_page(kho_fdt);
-> > -             kho_fdt =3D NULL;
-> > +             put_page(fdt_page);
->
-> This adds subtree to KHO even if the FDT might be invalid. And then
-> leaves a dangling reference in KHO to the FDT in case of an error. I
-> think you should either do this check after
-> kho_preserve_folio(page_folio(fdt_page)) and do a clean error check for
-> kho_add_subtree(), or call kho_remove_subtree() in the error block.
+> 
+> Accidental whitespace
 
-I agree, I do not like these err |=3D stuff, we should be checking
-errors cleanly, and do proper clean-ups.
+Yeah, this should go in the previous patch.
 
-> I prefer the former since if kho_add_subtree() is the one that fails,
-> there is little sense in removing a subtree that was never added.
->
-> >       }
-> >
-> >       return err;
-> > @@ -2529,13 +2498,6 @@ static int __init reserve_mem_init(void)
-> >       err =3D prepare_kho_fdt();
-> >       if (err)
-> >               return err;
-> > -
-> > -     err =3D register_kho_notifier(&reserve_mem_kho_nb);
-> > -     if (err) {
-> > -             put_page(kho_fdt);
-> > -             kho_fdt =3D NULL;
-> > -     }
-> > -
-> >       return err;
+> 
+> >  	if (unlikely(dsq_id & SCX_DSQ_FLAG_BUILTIN)) {
+> >  		scx_error(sch, "peek disallowed on builtin DSQ 0x%llx", dsq_id);
+> >  		return NULL;
+> > @@ -6130,6 +6131,7 @@ __bpf_kfunc struct task_struct *scx_bpf_dsq_peek(u64 dsq_id)
+> >  		scx_error(sch, "peek on non-existent DSQ 0x%llx", dsq_id);
+> >  		return NULL;
+> >  	}
+> > +
+> 
+> Accidental whitespace
+
+Ditto.
+
+> 
+> >  	return rcu_dereference(dsq->first_task);
 > >  }
-> >  late_initcall(reserve_mem_init);
->
-> --
-> Regards,
-> Pratyush Yadav
+> >  [snip]
+
+Thanks,
+-Andrea
 
