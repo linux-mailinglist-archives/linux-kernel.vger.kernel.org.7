@@ -1,154 +1,154 @@
-Return-Path: <linux-kernel+bounces-843033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F9B6BBE413
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:58:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E67ABBE416
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:58:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AA3A188ECB1
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:58:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DF0318897A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACF12D46CE;
-	Mon,  6 Oct 2025 13:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDA82D3756;
+	Mon,  6 Oct 2025 13:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BmEidpXe"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JnquPy/9"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297E12D46B4
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 13:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0972C326E
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 13:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759759072; cv=none; b=mf/dxdanXSzz/7KwXkK+U5K8Z8xwqqiIBBglq7CSIn6ephH7b019A7bqLHXDYZFXUfK4kp2ozLsbrYWfyeeEEKHtVDK9vQ7XMApyI0ds5BezozQgfB0MO6+Of9Z0ZuswRvxD3iHgTmhw/GwJoK82Ri7DNSYG6Z2IoQGHhVTyqzs=
+	t=1759759109; cv=none; b=akpm981lhlW3+m8BZZgNiYIKqLSHxKDe6SlkK6tfTRjWCqW33q99OS8fq30d/1jGEr5+22DUmi/komDQ+qpeMYZUoK6PA+7zeTBsr+ZtG+Sd8YVbIk+bzEKcu8fp/PIkDlXb1JRWcw38oGDAInG+rTr3EcUwlL/C4DyVyiEMP08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759759072; c=relaxed/simple;
-	bh=aoHPu3E0mvHoalx0FWQM3EH+lnlTpy4HtT99+90hPDc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=YGWfhmPGcreEdWgGS4o92tYcospn7nMKWLIwrKMmiYMgR59hze4QoiofmIOJtJ7ZLvtBGqfGascvOXjBEiL4uKsSnFZRNlWiEQIBGQGvIz8Vz/Csl1YFw+fBLUUMYb2gPWBbFBnVDiU0BLJ/pgZFykUn4QfiKskQ/Qca2aeihno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BmEidpXe; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759759070;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N38NCXKatF4Nc9lTi4kU9EIStYgT9YorHxjupIC+4LM=;
-	b=BmEidpXeRIMuK/tfySLjeQYOKX/+647oGr9GafDofUk8gtSPxzni6m+UHx5Czh8X3FVAbo
-	k7ZIETUoA609tH+8UP9GB/Gt3YUPv8lzXkhFlA50qNIMc32GDOTvvOYuG6tMqaYVUJTE5z
-	C/0Mqaxeq3m+MjWApf+HnShN4M3tFFE=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-256-KsQR8aHBNc6GRqbwJlvv1Q-1; Mon, 06 Oct 2025 09:57:42 -0400
-X-MC-Unique: KsQR8aHBNc6GRqbwJlvv1Q-1
-X-Mimecast-MFC-AGG-ID: KsQR8aHBNc6GRqbwJlvv1Q_1759759061
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3ee130237e1so1749513f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 06:57:42 -0700 (PDT)
+	s=arc-20240116; t=1759759109; c=relaxed/simple;
+	bh=jwM1rLikn2mT2EOzxJOL6CFwBUhDW+lzfDGZ1e9u9Cg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=odNjSHcjs52IoEsaCx06YvVf2TkMUT/p3+oYQ7jLnI0qUtbsPmoFRz+n+RKrfX9sqhtHTlHcQ1LVeN6kTdnDev2OYEJTcCP/i202C/GHKDMIvNrTifQslCdGHVautDMFTfo2SWNr8qjoIKw4VFQebx8oivqcBb/6zFzF+KOvlBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JnquPy/9; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b3e25a4bfd5so984746266b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 06:58:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1759759105; x=1760363905; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=t7FyJ6ZNCpZC3ZZiSi8rs4q34qq1Mtarm5I9fCpvcYs=;
+        b=JnquPy/9V1huRPuN1C6rMZ1grOhcIEj7+Ct4NYBisUcbQm1UT02DK08IgJuEB6jEQK
+         f86abwwaZ2VuyKPHxRwSBVCXT7drmJA6z9u/54060U/Tlx8KZoTzWlQVvEAcZd8LVWc0
+         jN4yFzhj9LzrIdPa8ULTRIGM5agOdl3A1XLrPHjIf2630WXuxcZ6JieJ2X0fcbT5IDyt
+         rfGFn+ooyZMStcJP8ZBY2hTTDK8heL4Ntl8p1sb10Q/m8+jRdT7myPmWeBmDbfzPsTAO
+         tiri+OsjG1xWL/DUBHYzLEXMmQkbPa1lOIfpBWNdI7ckZEOJtZArOKCCTXqGBXFGDe8M
+         x5mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759759061; x=1760363861;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N38NCXKatF4Nc9lTi4kU9EIStYgT9YorHxjupIC+4LM=;
-        b=LF7VscR0LyE+Ha0oXKUcr1WcYOwzunadajKsg7/nPbu4C6LsDnnSzTwCjv+qOKjgmc
-         iE7odbrnYhVdzB3G3sPzBFZvY85pX12v+a9nYEExc2BJW1qzWxLJIyVRSx/Kjn3G87Wh
-         VLvnPILW5wE0rsViIF+/4kwmlA/DDtEWnhoBJyKwSzrH3dAmw6IODBBpzF4GytgRioGn
-         zzR/NQHnT+rX+8oFVd23Z+N8Q8WBIAALxpICzmtQX0uiljpLXdaKjJXrawER5/uQvFi0
-         PYdfKgEZLHPrt/3m9e3RW5NvreWk6jb9p9I/IARR2IBLQHZlf47EskDI0Dy76z/mPcCe
-         sHAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfJVtxg6hds/uKC9k9A34bLBuwx6r2sHubvJpnxncnJi3uQlqvWins66f13z6GZmSZliB1+n9Hr0qHpBg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+llqelKgxZuHWXCBKSC2ibtROA1jnWmb3BXR6fnMG/XE9DW3n
-	4VByicv9KgC0Xdjhiz6vM+kwzuAFev+hqVvxIHWSkZWNg17Ryy9ffQXDE6xMqk9FSNzaJA18KB5
-	yeqqhOoYceFwQAoSYc8dXbWwnGKkXvODOjjn6RSRGx6Ic0P/V0VsurzFVR2UUCygUGA==
-X-Gm-Gg: ASbGnctk+D6VuOlQj1dAukHIRpM7FWzTPhessFiakjgFubqdk7RYyZMIQDPRJ/myqIp
-	hnmT/n8UsYAbiawz1r1H6Zgp7LxUE4N7HKMfW4Q5UBPp3r3G4Gy4iQAtw1PyNX2yyUOAVnCspqi
-	NBsZA6+ZUKC/4DAeZvzBSFDaUXtZ0c9T6HpWulYksnCSPCCaAaxvTE1bdTqY3y+yhxvUsg+b0aY
-	vYHOfuwMxXTH5XnSy1TVyTNxdO8IJiEO93IidCDsmUzeYGxdNpR1pg0IlQ3wXnCjVfiBNYwkqCH
-	WbzwMQUVltlOg9vcZJX6V2Gl88Pg5oinecRRIbrAfTsEGdJ1ygcYm1AstbqdbpslYBlsfpwYnmn
-	CwTIyJQ0y3SSczEfQPs4=
-X-Received: by 2002:a05:6000:24c8:b0:3e7:471c:1de3 with SMTP id ffacd0b85a97d-4256714c990mr8743318f8f.14.1759759061362;
-        Mon, 06 Oct 2025 06:57:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGSEXhNL5qt3C2EExsoRcqgHMQ8DFjBOOTUMJgsVGWdtBaHzjZoYrl+W+SOqr9EcfM/+bfqVw==
-X-Received: by 2002:a05:6000:24c8:b0:3e7:471c:1de3 with SMTP id ffacd0b85a97d-4256714c990mr8743277f8f.14.1759759060881;
-        Mon, 06 Oct 2025 06:57:40 -0700 (PDT)
-Received: from rh (p200300f6af131a0027bd20bfc18c447d.dip0.t-ipconnect.de. [2003:f6:af13:1a00:27bd:20bf:c18c:447d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8a6c54sm21356683f8f.11.2025.10.06.06.57.39
+        d=1e100.net; s=20230601; t=1759759105; x=1760363905;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t7FyJ6ZNCpZC3ZZiSi8rs4q34qq1Mtarm5I9fCpvcYs=;
+        b=f/nHuQid06VssDa9IhT6tVmwP8aN2R+RppxLOx7XojNpR61QzOyZTI0m4rCl7HnxhF
+         E93QjnF/z3yAyWZ//Wlintf9bFJFToztFezeVltmyoqmnId3mjcx6ByI/gubM9spk3ri
+         24/6Ipd5LCwS+Uf94hZUamrv8WBrbm3PoviEsS5qevFuDFiTdZxNcMgIDp9TIaps0xI6
+         4I/dQgVR8WMyQma9OLyoBchH7vnjG/ajXnmHlMh7IKzTDHXVtGEJzfquSUyIjuWW1fzW
+         kJ/x9RFI1S4CwouEFcCwZbfWoA60OPg+8m02xd/uBmLtZfPPjR4IdUiGIu4MYGDXFE92
+         acPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWpzhGoYc3o5kDxvCCmDmMhDqw5zlSXjQZzCvuAvyDPy79kCCmRgAbeojckRrcPozeMXlNpTdiu9L4VmBA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzf006QOkvu3bBBuDIuo5NcdwqynQs41Ytu1gnMhaC6Eout+8xH
+	OL7HWY76ZGSZCkOCnWH1QaGKbZ/J/FhPpQoODfy7vQE1rRLE4Gd+OA1xs31uu0lanHU=
+X-Gm-Gg: ASbGncsLBq56G4dzOjkl+tJL+Cs4bu5gjvqJ5VIBTN5ZIbxMvr7Gywm6g47sP009D79
+	LyLs3qIP5YzZVqNIvBd0V+X/vdDVEDanXqsehsg5pi31DU5TPhDeVNq46PtdCGJRNvmfpbEU1ig
+	vUJDSqK3djR+SULxTELoPsWo/wYmBpFNFy9v7ZfrTY8LY1MrcdOruvptK8o63oxx0X99HjJFA6J
+	N9jxXvLRd9QT1Y0Tw7Tqu+23FeOtbndYysJBTVAop4m+nE6o6V5CnwamFRP+JCd5H+MrgcLho22
+	Knbl0s5lfixXbapZJ7jNjA/1Y5g6tRA7ch5Itzq7xiBBfWE+iflZflxR8VG9gWvqTe4HQXjvYtd
+	fuLFIKrebVsg/4AacKmKFGVYVnPZWh/hmCQR/QYQUBw6pH+MTKEU0xyELUxMN
+X-Google-Smtp-Source: AGHT+IFV2SJ4kzBGN402SmNw/Wkg3HuCOd29mUk2xP3fAhXRSYMPNwRBZ0YPC6/b3KAmvr60S4ff+Q==
+X-Received: by 2002:a17:907:3d42:b0:b41:2fd0:2dd4 with SMTP id a640c23a62f3a-b49c449a697mr1576655566b.61.1759759104873;
+        Mon, 06 Oct 2025 06:58:24 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652aa040sm1145209266b.20.2025.10.06.06.58.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 06:57:40 -0700 (PDT)
-Date: Mon, 6 Oct 2025 15:57:38 +0200 (CEST)
-From: Sebastian Ott <sebott@redhat.com>
-To: Tariq Toukan <tariqt@nvidia.com>
-cc: Catalin Marinas <catalin.marinas@arm.com>, 
-    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-    Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-    "David S. Miller" <davem@davemloft.net>, 
-    Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, 
-    Mark Bloch <mbloch@nvidia.com>, netdev@vger.kernel.org, 
-    linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    Gal Pressman <gal@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>, 
-    Jason Gunthorpe <jgg@nvidia.com>, Michael Guralnik <michaelgur@nvidia.com>, 
-    Moshe Shemesh <moshe@nvidia.com>, Will Deacon <will@kernel.org>, 
-    Alexander Gordeev <agordeev@linux.ibm.com>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Christian Borntraeger <borntraeger@linux.ibm.com>, 
-    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-    Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
-    Vasily Gorbik <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, 
-    "H. Peter Anvin" <hpa@zytor.com>, Justin Stitt <justinstitt@google.com>, 
-    linux-s390@vger.kernel.org, llvm@lists.linux.dev, 
-    Ingo Molnar <mingo@redhat.com>, Bill Wendling <morbo@google.com>, 
-    Nathan Chancellor <nathan@kernel.org>, 
-    Nick Desaulniers <ndesaulniers@google.com>, 
-    Salil Mehta <salil.mehta@huawei.com>, Sven Schnelle <svens@linux.ibm.com>, 
-    Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org, 
-    Yisen Zhuang <yisen.zhuang@huawei.com>, Arnd Bergmann <arnd@arndb.de>, 
-    Leon Romanovsky <leonro@mellanox.com>, linux-arch@vger.kernel.org, 
-    linux-arm-kernel@lists.infradead.org, Mark Rutland <mark.rutland@arm.com>, 
-    Michael Guralnik <michaelgur@mellanox.com>, patches@lists.linux.dev, 
-    Niklas Schnelle <schnelle@linux.ibm.com>, 
-    Jijie Shao <shaojijie@huawei.com>, Simon Horman <horms@kernel.org>, 
-    Patrisious Haddad <phaddad@nvidia.com>
-Subject: Re: [PATCH net-next V6] net/mlx5: Improve write-combining test
- reliability for ARM64 Grace CPUs
-In-Reply-To: <1759093688-841357-1-git-send-email-tariqt@nvidia.com>
-Message-ID: <e77083c4-82ac-0c95-1cf1-5a13f15e7c58@redhat.com>
-References: <1759093688-841357-1-git-send-email-tariqt@nvidia.com>
+        Mon, 06 Oct 2025 06:58:24 -0700 (PDT)
+Date: Mon, 6 Oct 2025 15:58:22 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <danielt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
+Subject: Re: [PATCH v5 2/5] printk: nbcon: Introduce KDB helpers
+Message-ID: <aOPK_jgFJwM0TWTY@pathway.suse.cz>
+References: <20250930-nbcon-kgdboc-v5-0-8125893cfb4f@suse.com>
+ <20250930-nbcon-kgdboc-v5-2-8125893cfb4f@suse.com>
+ <84h5wihdqu.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <84h5wihdqu.fsf@jogness.linutronix.de>
 
-On Mon, 29 Sep 2025, Tariq Toukan wrote:
-> +static void mlx5_iowrite64_copy(struct mlx5_wc_sq *sq, __be32 mmio_wqe[16],
-> +				size_t mmio_wqe_size, unsigned int offset)
-> +{
-> +#if IS_ENABLED(CONFIG_KERNEL_MODE_NEON) && IS_ENABLED(CONFIG_ARM64)
-> +	if (cpu_has_neon()) {
-> +		kernel_neon_begin();
-> +		asm volatile
-> +		(".arch_extension simd;\n\t"
-> +		"ld1 {v0.16b, v1.16b, v2.16b, v3.16b}, [%0]\n\t"
-> +		"st1 {v0.16b, v1.16b, v2.16b, v3.16b}, [%1]"
-> +		:
-> +		: "r"(mmio_wqe), "r"(sq->bfreg.map + offset)
-> +		: "memory", "v0", "v1", "v2", "v3");
-> +		kernel_neon_end();
-> +		return;
-> +	}
-> +#endif
+On Wed 2025-10-01 17:02:41, John Ogness wrote:
+> On 2025-09-30, Marcos Paulo de Souza <mpdesouza@suse.com> wrote:
+> > diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+> > index 558ef31779760340ce42608294d91d5401239f1d..c23abed5933527cb7c6bcc42057fadbb44a43446 100644
+> > --- a/kernel/printk/nbcon.c
+> > +++ b/kernel/printk/nbcon.c
+> > +/**
+> > + * nbcon_kdb_release - Exit unsafe section and release the nbcon console
+> > + *
+> > + * @wctxt:	The nbcon write context initialized by a successful
+> > + *		nbcon_kdb_try_acquire()
+> > + *
+> > + * Context:	Under console_srcu_read_lock() for emiting a single kdb message
+> 
+>                                        emitting ---^^^^^^^
+> 
+> > + *		using the given con->write_atomic() callback. Can be called
+> > + *		only when the console is usable at the moment.
+> 
+> I do not think the "Context" is relevant. It must be called if
+> a previous call to nbcon_kdb_try_acquire() was successful.
 
-This one breaks the build for me:
-/tmp/cc2vw3CJ.s: Assembler messages:
-/tmp/cc2vw3CJ.s:391: Error: unknown architectural extension `simd;'
+Makes sense. I am fine with removing the "Context:" secion completely
+from nbcon_kdb_release().
 
-Removing the extra ";" after simd seems to fix it.
+Just to be sure. I think that we do not need to mention that it can
+be called only when nbcon_kdb_try_acquire() succeeded. It is kind
+of obvious.
 
-Regards,
-Sebastian
+Best Regards,
+Petr
 
+> > + */
+> > +void nbcon_kdb_release(struct nbcon_write_context *wctxt)
+> > +{
+> > +	struct nbcon_context *ctxt = &ACCESS_PRIVATE(wctxt, ctxt);
+> > +
+> > +	if (!nbcon_context_exit_unsafe(ctxt))
+> > +		return;
+> > +
+> > +	nbcon_context_release(ctxt);
+> > +
+> > +	/*
+> > +	 * Flush any new printk() messages added when the console was blocked.
+> > +	 * Only the console used by the given write context was	blocked.
+> > +	 * The console was locked only when the write_atomic() callback
+> > +	 * was usable.
+> > +	 */
+> > +	__nbcon_atomic_flush_pending_con(ctxt->console,
+> > +					 prb_next_reserve_seq(prb), false);
+> 
+> This can all be one line. 100 characters is the official limit for code.
+> 
+> > +}
 
