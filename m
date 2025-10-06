@@ -1,91 +1,102 @@
-Return-Path: <linux-kernel+bounces-842787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24BB0BBD9A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:06:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3F2CBBD9C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:07:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0CE4B34A0D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:06:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7587B4EA83E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF1821CC71;
-	Mon,  6 Oct 2025 10:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556C7223DE5;
+	Mon,  6 Oct 2025 10:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a9+yEDuy"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LbYuWolJ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633C53BB5A
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 10:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C17221721
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 10:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759745180; cv=none; b=mQyjOBGDVOPP4u3qU7nhgLLBl1SA4kDXTaYoJYaSFzCCxArEzkgZxxaEb6wDNEiXhxcenRt1qYrXD7sPYEIodhkEnfQCCei/k6al+NanDWSIC8IYUctr/EwY1pjX83HJ7tVogwNV7XP2IHrAH8GORg7gPH+75j6UiTBYPEBlurI=
+	t=1759745221; cv=none; b=SocPKZRhVzyOTqPmLzIL6bau+OmR416nqES5CvhzythqBFRFLwrO9MYaDI/fTSj0ARiolIHeLm5JdyRLRkmFXb/r5S4VajOfUJ3mGt8Tzrvjz9p7H6fZL/D4NjthPz/9EDMslUPTKuYnEmrNpCN97eyOoc9PO1pNwxDtBVPzI84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759745180; c=relaxed/simple;
-	bh=aga48O5DWLcOiiUnLC8nhPrJD9lPABPuCVOSpvvKuI0=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hIpRuPjuLVmtgBO8vVVYqxUbTJNiFTJO2L7/BJLw8py5PiFm+UgocWt6V47bLTjpB1WJUuSGjHJ9GjzSXtR3GDvdkDPgrLZmckXg3EtbF6XuqnLhMQezIJCvqptAHnJuAK+PlvjhXLZp90zgAKEZYbtMQnfFlmJ+o/5XZO15N5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a9+yEDuy; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-57b35e176dbso6165217e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 03:06:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759745176; x=1760349976; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qdL3Gjg4YnZQbKleKeTBCKkou2FNTLhQNiPxLrTgrlE=;
-        b=a9+yEDuyCEk0LkPZJHOxhmLlRjU8oQtGq+iwfY8ArjJa642WobwaxCYMZWcRptViCD
-         AMhBLzHjGavxbBm04Or0f88iQ56KM0mcPNd7BpUYgPmmeCmBDhxcOb2t6FIySlcZd55D
-         1qIWA0KtrV4+E7XIi56hQfqnFzc/caVrFgZZCoEDZgLjXThCWv0kwgtAktyKFzurTEeV
-         wmSWLFxPer8Y0fnwi+BfBTG7JwJ2O5d9/8iuB/Dwzh8MKru3FqpwsF4fV4cDo3fBT1YF
-         Kqb0Zgc9CD4x9i6PyNB0xI34Sm4wP+RnuTy1xUtPpNO+FaUhIUP7hb/0jGCaUVkgQLhw
-         xQGQ==
+	s=arc-20240116; t=1759745221; c=relaxed/simple;
+	bh=CvVyk63FV1Hh/uDxoHt5oihoELVg2e/crLKj5/XJtR8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dLNQwGXEdCcEFk2F80G0+GhhrOJwHNrWRL68FfXx7336fhLNZb3ZTMqMwN+ZpCWj+C+uzAmzs9H6+CkYpCEy5hJe0tLyvEhoV6cKiioCBuiRlBDiaCfKsLH48+dXP1EtMr2pgYzFOK20KQCHBUQAe2t/6HNUIucC1ozMQ3WZdj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LbYuWolJ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 595LNTmn022342
+	for <linux-kernel@vger.kernel.org>; Mon, 6 Oct 2025 10:06:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=HGxB3VffzX2B3tPfiQDIObxF
+	W8b4BEQXi9X0DSTOgU0=; b=LbYuWolJXZ4Ea3840k5mXG1qEJ9tIBuApey331ZV
+	v82jAjeZc/kdYJEoSAh5qLtrTMNRFa+APHDIvSP5n5GUUYOaKm4c6LMMz5m+auAV
+	rHihvfPlyZkShciUFF/GF1Xpen2Am7YoI5vZJ0ekcJDlg/BSDaFG1RHKm6P0fBbT
+	aqelUg2VxeRUmrmu73xUYW5taPIgmdUqXr64ylGv4W6e78dk2DmQmM1w1u+BuTpp
+	CtrSG9u+kmgI2xBtrI0Qeqjo+eWfuLd2fDAWl3CX2KOSqUd1t8oejrIMTnp69wsM
+	nRcOpe5VcL/BBozf3oqgQ/phngsh+0aJX0rj+2l0i3PUUA==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jthpun9h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 10:06:54 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4de801c1446so103754001cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 03:06:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759745176; x=1760349976;
+        d=1e100.net; s=20230601; t=1759745213; x=1760350013;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qdL3Gjg4YnZQbKleKeTBCKkou2FNTLhQNiPxLrTgrlE=;
-        b=FNHNiswx+SMeLMaWL9MZPmVG27gkHXfxLNwuGIIrPmsWgQxrloWsZ3m2FRRahqaFKx
-         zGjqpi+Ddouk9GiOOWHkuhPGsMdzT0AWtwRjN2XRcNjkaPfA9VAUq/Xl+YSF75icc5Yj
-         Oh5G6l++GtspKlGQyCZGo8OmhoFvxugzmJ49grHpN3+ELG0ZfFN0T7mlpCZs5HC+xesS
-         zalGStrK3oZwFkpwqHw6AduUkiTe0E+R89it67VMjyhoKZ5HnUpgljPzpBEhwM180khF
-         NluYD6UDh4LlLer61Di7C6LPyGnRpLOyhvAJ43rdbhOdvsjPETzkUUEg4kkTxz+ecmQQ
-         /Llg==
-X-Forwarded-Encrypted: i=1; AJvYcCXtv+Z6YLoze0PUDg27VN2sauGLg3IhZH6gg50Jzp7iGGNFQ/OvoWqX/qe4LWmdK6LsBIA0j10oxIp+59Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX2RnwLBcOHdLHfn9Y15AXNr6Gf8Tk0DWLS/5/5oh45U1S+z/q
-	FlypHAsSWdA2qzg9bvYvgJywqOXzLC85VTUiDlA3zQ3TTzEWOCSkbxXa
-X-Gm-Gg: ASbGncvdSWsnIOvNpnCip+rAo9vDHBBz35eCWQhe3PvDTNk/cZx4Qn2PKoXOxseoM4b
-	wVe12SCX41DRKTqO0OjQKeT2qk2noRHfVNj++ThWC9V7miBtrOtQ2xfzEjvInAZ9A9M58DmCYQI
-	syizZ2G0DoC/HLniuw+og/2hFs4tFGw/xUHgvE0Il9bVC+yi8x4P5RzNjj4Qua46bDcQWf8c643
-	OQAc/rIduf4fKZEhd3ArePgJQ/2na4VjCGTzYxHbYc3maiJ74z5u18AW5ePmYAhxse9Z8VAXrNw
-	xX5utleZP2t4AThhV/7bQy24jYFTa6Str3Z77HCprCJOp8/wfUkAVXpreUwNzi+Q49Bg54DOVdq
-	eJ1nWlBMCP5e2sQ==
-X-Google-Smtp-Source: AGHT+IGkGnHbLIn801xCGU82RWbYfOTtwD3A6j+paaPOoROSvLFCIITJYaZdYOz0jWnjfr9kA2bjBA==
-X-Received: by 2002:ac2:5684:0:b0:560:9702:4fe6 with SMTP id 2adb3069b0e04-58cb9f0b790mr4028661e87.24.1759745175951;
-        Mon, 06 Oct 2025 03:06:15 -0700 (PDT)
-Received: from milan ([2001:9b1:d5a0:a500::24b])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b0118d372sm4887469e87.87.2025.10.06.03.06.14
+        bh=HGxB3VffzX2B3tPfiQDIObxFW8b4BEQXi9X0DSTOgU0=;
+        b=S8IicztPP8DBG6WNVWpoQ4T0Oh0ZLAXZ+58Dqxdto1NR6wqxar/LpORClMhri3kQaz
+         9viP0/XtthvTC4xLArb2KFLbEpuX2iKplnjASR5BJQ+fdvvlaqer/uHqfwJhN91KfJWa
+         ZwqcyEDVJBJ9JjLFzb2BA9D+oV/S2j1znf6Op0gNHE5GdG7hONXuZxR7ZEXzxTDIzlpv
+         XlFLkyhPXhb6UvTcFigeziuOdjXC5N9esFiwVp55+y70sl4eGz2+pkRxC0SdJsTZqHkH
+         03dLuLZ214CP7QDMXx8GEops9CXfjYaOC04MJa4PZ0HSiSBCpFyXb9A6PwbNzk4zr3Xh
+         2gzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWk8qNTsTYms/31D5zk0biihXG1O2+PESwRrm17Vwx38qmgeLdVKZZmbV7qLvb3L10qTJxzYup5JZhOktw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+GVXG/YGwI5z0l4axZWAw+nPPw0A2Wb0s7D4C+Pmm9sLk2Jlh
+	eYMzR1eSKEdzN7z9PLQnF2zaWnJMtG4lMnT+O05LNUegXclcosvHfAwXrwIetHgM3I+04GAkSYH
+	TsnMGQfQUCNm65njYk/qLdIRh5UvmUW9uv7ex+WPlm/5P7usNuUQHpGOM7j8wQ3Q5ERo=
+X-Gm-Gg: ASbGncsJxZtuTaO6Obw309rAw6A5a/2E7Qm726g4bLhpZGBPGNaH5KgUSWtxBXC671A
+	NYurYlHO8CviPWTvaAIyUJneFrgc+sGJl3KCoH2YqdMeXE1Lj7XtF8kXdNXoLY8dAKsf4mBNdyz
+	HWGij5Ca26AsN9u3xId4APVueaAcewYuMpt1No1grXQAhlUNl0fCSM//u1cAxHIK7qRes2qYauo
+	e0SLRMmVZAu3Khpr4MbdkMjc3Ypaei2fT2jfKX9oOEvZrekE4FiF5aDMB8T+Ek3kxgGyMi+i1cr
+	6A7Mbnmvd1wM4eA6dlAPga4W6vw6gSMK2oKQ++uT/oKT5agBylsP35/mOBBxSjs5TinKTuF/hn6
+	C91cirQhbQ1a+PXex0QHnR2ERryDrbD5fEZMrZHmamvgpVLq82joH1eIGxA==
+X-Received: by 2002:ac8:5f4d:0:b0:4de:c683:441a with SMTP id d75a77b69052e-4e576b079c0mr176285491cf.58.1759745213369;
+        Mon, 06 Oct 2025 03:06:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE8lMXLpbpaW8qgeVwOmhaoJD2KaGNc3MogkehGsf1brzqQQ416JOW9/yzxpzpBq/+gSe98Zg==
+X-Received: by 2002:ac8:5f4d:0:b0:4de:c683:441a with SMTP id d75a77b69052e-4e576b079c0mr176284821cf.58.1759745212680;
+        Mon, 06 Oct 2025 03:06:52 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b0119ee99sm4898508e87.106.2025.10.06.03.06.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 03:06:15 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@milan>
-Date: Mon, 6 Oct 2025 12:06:13 +0200
-To: Baoquan He <bhe@redhat.com>
-Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH v3 09/10] mm/vmalloc: Update __vmalloc_node_range()
- documentation
-Message-ID: <aOOUlW0SbBcPM6Mq@milan>
-References: <20251001192647.195204-1-urezki@gmail.com>
- <20251001192647.195204-10-urezki@gmail.com>
- <aOCejd0aghFS8iSO@MiWiFi-R3L-srv>
- <aOCqSrnazd2YwGbe@MiWiFi-R3L-srv>
+        Mon, 06 Oct 2025 03:06:51 -0700 (PDT)
+Date: Mon, 6 Oct 2025 13:06:50 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Georgi Djakov <djakov@kernel.org>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: msm8996: add interconnect paths to
+ USB2 controller
+Message-ID: <jaepvhr3zwgiaievndntfpcopzinfp3psktd6anl5ovzxl7ekd@enamcy4e6puy>
+References: <20251002-fix-msm8996-icc-v1-0-a36a05d1f869@oss.qualcomm.com>
+ <20251002-fix-msm8996-icc-v1-2-a36a05d1f869@oss.qualcomm.com>
+ <7ef8ba74-4e9e-4b19-998e-40917d997ca8@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,87 +105,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aOCqSrnazd2YwGbe@MiWiFi-R3L-srv>
+In-Reply-To: <7ef8ba74-4e9e-4b19-998e-40917d997ca8@oss.qualcomm.com>
+X-Proofpoint-GUID: jIPBfm5o3UxwHu4LJtYxoXMNKfMxe1hc
+X-Authority-Analysis: v=2.4 cv=N5gk1m9B c=1 sm=1 tr=0 ts=68e394be cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=nBxtwQxsS3NGOZXr17YA:9
+ a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAxNiBTYWx0ZWRfX19fIZ7iIw/xA
+ QjJ15CmD4CPnN4Rhyd537LZbpgaXVSSaLSTXBoDbzvso7rrVToX3tpFjPZCs8EM2ft6CXY58uo+
+ BN9/ETSXuCOq9mc6Hp/T9DaTKVc2Z1xJsjmUsJVZt1T5bNmJcQ3mOEyK8HKVxw4rP0iTeuHPCCN
+ uGXDadg5E3SRW9Pmjk86K4rSaIuFCKIAoj0sAlwE4cvMT74lionUAa6L7C6WAU7/ELutobq6f6y
+ 80cOt8FM77qsE4hQ0LbRG+RsuiyGrO6ObyktjlrYDgI7wwL4lJXGYlCXfmXRB33O5rZOVwv4O/F
+ G+Mt+td0UNIj+stKAtlwUKvhtwDPu+6cpjxK2rMHDQnZclM35Sp0QUspIpGOWv/qwrzXNRMrq+C
+ 93fw4GUxA3yq0d3IdjrvFFCe2jEzEw==
+X-Proofpoint-ORIG-GUID: jIPBfm5o3UxwHu4LJtYxoXMNKfMxe1hc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-06_03,2025-10-02_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 malwarescore=0 clxscore=1015 suspectscore=0 adultscore=0
+ impostorscore=0 phishscore=0 priorityscore=1501 lowpriorityscore=0
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
+ definitions=main-2510040016
 
-On Sat, Oct 04, 2025 at 01:02:02PM +0800, Baoquan He wrote:
-> On 10/04/25 at 12:11pm, Baoquan He wrote:
-> > On 10/01/25 at 09:26pm, Uladzislau Rezki (Sony) wrote:
-> > > __vmalloc() function now supports non-blocking flags such as
-> > > GFP_ATOMIC and GFP_NOWAIT. Update the documentation accordingly.
-> > > 
-> > > Acked-by: Michal Hocko <mhocko@suse.com>
-> > > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> > > ---
-> > >  mm/vmalloc.c | 21 +++++++++++----------
-> > >  1 file changed, 11 insertions(+), 10 deletions(-)
-> > > 
-> > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > index d7e7049e01f8..2b45cd4ce119 100644
-> > > --- a/mm/vmalloc.c
-> > > +++ b/mm/vmalloc.c
-> > > @@ -3881,19 +3881,20 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
-> > >   * @caller:		  caller's return address
-> > >   *
-> > >   * Allocate enough pages to cover @size from the page level
-> > > - * allocator with @gfp_mask flags. Please note that the full set of gfp
-> > > - * flags are not supported. GFP_KERNEL, GFP_NOFS and GFP_NOIO are all
-> > > - * supported.
-> > > - * Zone modifiers are not supported. From the reclaim modifiers
-> > > - * __GFP_DIRECT_RECLAIM is required (aka GFP_NOWAIT is not supported)
-> > > - * and only __GFP_NOFAIL is supported (i.e. __GFP_NORETRY and
-> > > - * __GFP_RETRY_MAYFAIL are not supported).
-> > > + * allocator with @gfp_mask flags and map them into contiguous
-> > > + * virtual range with protection @prot.
-> > >   *
-> > > - * __GFP_NOWARN can be used to suppress failures messages.
-> > > + * Supported GFP classes: %GFP_KERNEL, %GFP_ATOMIC, %GFP_NOWAIT,
-> > > + * %GFP_NOFS and %GFP_NOIO. Zone modifiers are not supported.
-> > > + * Please note %GFP_ATOMIC and %GFP_NOWAIT are supported only
-> > > + * by __vmalloc().
-> > > +
-> > > + * Retry modifiers: only %__GFP_NOFAIL is supported; %__GFP_NORETRY
-> > > + * and %__GFP_RETRY_MAYFAIL are not supported.
+On Mon, Oct 06, 2025 at 11:30:52AM +0200, Konrad Dybcio wrote:
+> On 10/2/25 10:53 AM, Dmitry Baryshkov wrote:
+> > Add the missing interconnects to the USB2 host. The Fixes tag points to
+> > the commit which broke probing of the USB host on that platform.
 > > 
-> > Do we need to update the documentation of __vmalloc_node_noprof()
-> > accordingly? I see it has below description about "Retry modifiers"
-> > where gfp_mask is passed down to __vmalloc_node_range_noprof() directly
-> > but have different description. Not sure if I missed anything.
+> > Fixes: 130733a10079 ("interconnect: qcom: msm8996: Promote to core_initcall")
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 > > 
-> > ===
-> >  * Retry modifiers: only %__GFP_NOFAIL is supported; %__GFP_NORETRY
-> >  * and %__GFP_RETRY_MAYFAIL are not supported.
-> > ===
+> > ---
+> > Note: without the previous patch applying this one can result in the
+> > kernel stuck at booting because of the EPROBE_DEFER loop. I suggest
+> > applying them through the same tree in order to make sure that the tree
+> > is not broken (or using an immutable tag for the icc commit).
+> > ---
 > 
-> Sorry, I copied the wrong sentences. Below is copied from documentation
-> of __vmalloc_node_noprof().
-> ====
->  * Reclaim modifiers in @gfp_mask - __GFP_NORETRY, __GFP_RETRY_MAYFAIL
->  * and __GFP_NOFAIL are not supported
-> ====
-> 
-> 
-> > 
-> > >   *
-> > > - * Map them into contiguous kernel virtual space, using a pagetable
-> > > - * protection of @prot.
-> > > + * %__GFP_NOWARN can be used to suppress failure messages.
-> > >   *
-> > > + * Can not be called from interrupt nor NMI contexts.
-> > >   * Return: the address of the area or %NULL on failure
-> > >   */
-> > >  void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
-> > > -- 
-> > > 2.47.3
-> > > 
-> > 
-> 
-We need. But i am not sure it should be fully copy-pasted from the
-__vmalloc_node_range_noprof(). At least __GFP_NOFAIL is supported
-and thus stating that it is not - is wrong.
+> There seems to be syntax for this, at least for stable patches
+> (which we should probably either use or add +noautosel):
 
-It has to be fixed but not by this series because when __GFP_NOFAIL
-support was introduced the doc. should have to be updated accordingly.
+This syntax is for stable trees. At this point I'm more worried about
+those patches being picked up correctly. If the patches are picked up in
+a correct order, they can be a subject to autosel (provided that it
+maintains the order).
 
---
-Uladzislau Rezki
+> 
+> * Specify any additional patch prerequisites for cherry picking::
+> 
+>     xCxc: <stable@vger.kernel.org> # 3.3.x: a1f84a3: sched: Check for idle
+>     xCxc: <stable@vger.kernel.org> # 3.3.x: 1b9508f: sched: Rate-limit newidle
+>     xCxc: <stable@vger.kernel.org> # 3.3.x: fd21073: sched: Fix affinity logic
+>     xCxc: <stable@vger.kernel.org> # 3.3.x
+>     xSxixgxxnxexd-oxfxf-xbxy: Ingo Molnar <mingo@elte.hu>
+> 
+> (deliberatelly added a bunch of 'x'-es to not interrupt the maintainers'
+> b4 workflow)
+> 
+> (via https://www.kernel.org/doc/Documentation/process/stable-kernel-rules.rst)
+> 
+> Konrad
+
+-- 
+With best wishes
+Dmitry
 
