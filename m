@@ -1,143 +1,167 @@
-Return-Path: <linux-kernel+bounces-842725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85548BBD662
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 10:57:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE6AABBD681
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 11:05:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3735D4E9213
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 08:57:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 925264E1933
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 09:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70F4B264F96;
-	Mon,  6 Oct 2025 08:56:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64902641C6;
+	Mon,  6 Oct 2025 09:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P4+5u/ti"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J2hWO+UY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81531DC994;
-	Mon,  6 Oct 2025 08:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27AA170A11
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 09:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759741012; cv=none; b=HKEZVYa6Ln/9aILzpTjsRE0cLzAl9W7JFOm20kaKiohbwl3vCA8h+KlguOELVzDwJQc2jE2Pv8viaK1khM6oVD6EejIE1TxeuU6x2ltq8FratABWqcJIl7iYhxR717JgEKHFuxE2lyL2DwZmx0bZScMT5ADLYNShsCmViB5OSNI=
+	t=1759741509; cv=none; b=LmJ6eo44lDYxw8aredpTEcMYjKJQJ7IhmWza9ogYs6APZJj919QaEupeTjuFcBTjmEMA/cc8w3iaIoiKUdXeiwLqVZD+y+HMvWhI9lQpC3fjqYypv33ViJMUxssvZLUAgkv50kNXQGY5i+uMYgbe4EqQWjdzjYjh9dBSrRDNkcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759741012; c=relaxed/simple;
-	bh=H9ZDKqk5xipUWs7imbc65fCvKiH6bgzvQijINig06iE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Va3HLJuMpxwhcN9+EuYDhYHNf/Bx4yB0PBYinm9N0+E21x220e+urXCXKfDK6f9FvQbNDkI1sbzhdWNY4bExfVNMLVw4DlJj2sOBwWfRe2MX/Qt7oE1raFftr3hVofhh4HZGBnj7HtrW6h6t+yvgjG96tUt9YnSz1WRLj8ugIl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P4+5u/ti; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5FB3C4CEF5;
-	Mon,  6 Oct 2025 08:56:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759741012;
-	bh=H9ZDKqk5xipUWs7imbc65fCvKiH6bgzvQijINig06iE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=P4+5u/ti6e49HjWlQxRyLMff8roRl6nG4yZ1LLWZli8cnLPJT2xZUOls6ZrDRKKYq
-	 5ZnBkV8BNQ0DmD27ZRW1GCb7XeQZWKa7DsucjVMVJ6872ektMG+yddY91XkCyTCcBm
-	 a8HJMCLTZFaAwsHI2ypLNNrHyWjvaFf6+WYQ8oIFdpnPAgsonRWatni8hasHyNDXBl
-	 5GQpCWn0BSZpwvB7rmmv7wK7xqoaDXBSJ+gGKnNj40v7kbk/ziJIR0+YVtBpQb1YV9
-	 BYcq2a+Heei7N4uKras2BqNy600n39qjKyO2lqeY0xigcWoK3d0B3xyCSqS0JvqAej
-	 ZycGnjU+KpOBQ==
-Message-ID: <3b901f9d-dbfa-4f93-a8d2-3e89bd9783c9@kernel.org>
-Date: Mon, 6 Oct 2025 17:56:42 +0900
+	s=arc-20240116; t=1759741509; c=relaxed/simple;
+	bh=M7RY/jKXEGp1I0Cbhg+O8MbCIaKKQJ0d3+bkdHMZ+so=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jywqJY2FXFXgcBrOT9/VCK5LZhitQFi/SQvjnaeRHuSI7hmQY1+RamwnAXaJ9p9a3K7T8UX6yAiJjjUXB0Dq7UM/TpIeaWB7qU0TJbGDvV7TpQ7Ro9fxBpe64kzlAvnA0BndLVoqtHgpBJX+VQKj0pZmW8++UORHYsX1QgPIm4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J2hWO+UY; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759741507; x=1791277507;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=M7RY/jKXEGp1I0Cbhg+O8MbCIaKKQJ0d3+bkdHMZ+so=;
+  b=J2hWO+UYmlrM4eU8ZDPoL4ZFZxCwXFc5SGTopdJ5tre38i/5RuMifQmu
+   Ii2Z/GL81PE7ijKVDOz6boEx5EAW66XKCCNjyGcXnQWoj0/nJrQP4KMwX
+   yKdDqs7tQmkICU4Ql/nU/a+PNTIzLUmdfmqaUZHaGkEXypyQWkPUNI26M
+   MctwRXRuQgYQ6yNjRzG1gn0wvJ6XvX8zi2W4qpF2g1GxjxIimxoZI+V23
+   Z+zTxpWdUBJFUfaF85AvpTZFfYzIHllRkPc6AAddbpwIam7WB1lyZVwAM
+   kqyrMI7r7USKyiq6QPdl6toK5bM6sbVRc8CSRupZd2HGjTnbRaZDBdq15
+   g==;
+X-CSE-ConnectionGUID: tbWNRFrQT1C3SxFI7YYqIQ==
+X-CSE-MsgGUID: d/patFxhTEC6pzCT30FmAQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11573"; a="72163932"
+X-IronPort-AV: E=Sophos;i="6.18,319,1751266800"; 
+   d="scan'208";a="72163932"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 02:05:06 -0700
+X-CSE-ConnectionGUID: eKjp6VwDSmiuOlV6c3AQEw==
+X-CSE-MsgGUID: CprpgsMbQP2lu51Sw82TWQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,319,1751266800"; 
+   d="scan'208";a="179451494"
+Received: from krybak-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.162])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 02:05:03 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Jocelyn Falempe <jfalempe@redhat.com>, Francesco Valla
+ <francesco@valla.it>, Javier Martinez Canillas <javierm@redhat.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] drm/draw: add drm_draw_can_convert_from_xrgb8888
+In-Reply-To: <b026d815-dd6e-48a6-8efa-4631ed7cca9c@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20251005-drm_draw_conv_check-v1-0-9c814d9362f6@valla.it>
+ <20251005-drm_draw_conv_check-v1-1-9c814d9362f6@valla.it>
+ <a669b2ee89865e9150efd38e181cdc838c2ac522@intel.com>
+ <b026d815-dd6e-48a6-8efa-4631ed7cca9c@redhat.com>
+Date: Mon, 06 Oct 2025 12:05:00 +0300
+Message-ID: <1793a882aba06d4b770799633b4443439d978679@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] watchdog: Add driver for Gunyah Watchdog
-To: hrishabh.rajput@oss.qualcomm.com, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>,
- Neil Armstrong <neil.armstrong@linaro.org>
-References: <20251006-gunyah_watchdog-v2-1-b99d41d45450@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251006-gunyah_watchdog-v2-1-b99d41d45450@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 06/10/2025 16:37, Hrishabh Rajput via B4 Relay wrote:
-> +
-> +static int __init gunyah_wdt_init(void)
-> +{
-> +	struct arm_smccc_res res;
-> +	struct watchdog_device *wdd;
-> +	struct device_node *np;
-> +	int ret;
-> +
-> +	np = of_find_compatible_node(NULL, NULL, "qcom,kpss-wdt");
-> +	if (np) {
-> +		of_node_put(np);
-> +		return -ENODEV;
-> +	}
-> +
-> +	np = of_find_compatible_node(NULL, NULL, "arm,sbsa-gwdt");
-> +	if (np) {
-> +		of_node_put(np);
-> +		return -ENODEV;
-> +	}
-> +
-> +	ret = gunyah_wdt_call(GUNYAH_WDT_STATUS, 0, 0, &res);
-> +	if (ret)
-> +		return -ENODEV;
+On Mon, 06 Oct 2025, Jocelyn Falempe <jfalempe@redhat.com> wrote:
+> On 10/6/25 08:48, Jani Nikula wrote:
+>> On Sun, 05 Oct 2025, Francesco Valla <francesco@valla.it> wrote:
+>>> Add drm_draw_can_convert_from_xrgb8888() function that can be used to
+>>> determine if a XRGB8888 color can be converted to the specified format.
+>>>
+>>> Signed-off-by: Francesco Valla <francesco@valla.it>
+>>> ---
+>>>   drivers/gpu/drm/drm_draw.c          | 84 +++++++++++++++++++++++++++----------
+>>>   drivers/gpu/drm/drm_draw_internal.h |  2 +
+>>>   2 files changed, 63 insertions(+), 23 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/drm_draw.c b/drivers/gpu/drm/drm_draw.c
+>>> index 9dc0408fbbeadbe8282a2d6b210e0bfb0672967f..2641026a103d3b28cab9f5d378604b0604520fe4 100644
+>>> --- a/drivers/gpu/drm/drm_draw.c
+>>> +++ b/drivers/gpu/drm/drm_draw.c
+>>> @@ -15,45 +15,83 @@
+>>>   #include "drm_draw_internal.h"
+>>>   #include "drm_format_internal.h"
+>>>   
+>>> -/**
+>>> - * drm_draw_color_from_xrgb8888 - convert one pixel from xrgb8888 to the desired format
+>>> - * @color: input color, in xrgb8888 format
+>>> - * @format: output format
+>>> - *
+>>> - * Returns:
+>>> - * Color in the format specified, casted to u32.
+>>> - * Or 0 if the format is not supported.
+>>> - */
+>>> -u32 drm_draw_color_from_xrgb8888(u32 color, u32 format)
+>>> +static int __drm_draw_color_from_xrgb8888(u32 color, u32 format, u32 *out_color)
+>> 
+>> Is there any reason to change the return value of this function and
+>> return the result via out_color? It already returns 0 if the format is
+>> not supported. If there's a reason, it needs to be in the commit
+>> message.
+>
+> I think the problem is that 0, is also a valid color.
 
-No, your hypervisor driver (which you have) should start the module via
-adding platform/aux/something devices. Now you are running this on every
-machine, which is clearly wrong...
+Right, of course.
 
-Best regards,
-Krzysztof
+> Maybe it would be better to split it into 2 functions, and duplicate the 
+> switch case.
+>
+> ie:
+>
+> u32 drm_draw_color_from_xrgb8888(u32 color, u32 format)
+> {
+> 	switch(format) {
+> 	case DRM_FORMAT_RGB565:
+> 		return drm_pixel_xrgb8888_to_rgb565(color);
+>
+> ....
+>
+>
+> bool drm_draw_can_convert_from_xrgb8888(u32 format)
+> {
+>
+> 	switch(format) {
+> 	case DRM_FORMAT_RGB565:
+> 		return true;
+>
+> ....
+> 	default:
+> 		return false;
+>
+>
+> I didn't do it this way, because there is a risk to add a format to only 
+> one of the switch. But after more thinking, that would be simpler overall.
+
+The duplication is a bit annoying, but it might be simpler. Dunno.
+
+BR,
+Jani.
+
+
+
+
+>
+> Best regards,
+
+-- 
+Jani Nikula, Intel
 
