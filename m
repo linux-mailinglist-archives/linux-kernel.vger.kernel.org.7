@@ -1,98 +1,176 @@
-Return-Path: <linux-kernel+bounces-843305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92052BBEE04
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:02:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A93E6BBEE10
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 20:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 802DB1898EFC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:02:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 891024F089A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 18:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45FC241696;
-	Mon,  6 Oct 2025 18:02:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85EC27A444;
+	Mon,  6 Oct 2025 18:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxWeBSvT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="W7a5VY6q"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3F5846F;
-	Mon,  6 Oct 2025 18:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787A922A4DB
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 18:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759773727; cv=none; b=b9t8ws8bCnP/zjoigIksPyRUG/md1lk+1JtUJYCBUSjhMB1GKvLA8aD8OT2LoMBZnMVw7p5AmYqPbA+RqcGxSVyIRoH1CXpZDLv+JJ/sL+v7Xs2VgBtSMW+eHgAXLxtxtlvQ14xjiryB/AwoJIwfCi7NS+d+IYt3M9mTmxSHoyw=
+	t=1759773813; cv=none; b=bszJiu7La0X7we/IxBgARwQ9wLIhVTUZO6ltF5ZD2tGJTV63rgFDHTfdAWGa8d1rbziw8/2uXqaN/qZ0+x2hdrj9V3uGp/YL5IMa58PVwWV9ZOwvxVNMQXkR79cHNn281LCmaJGLKPsUE3wI1h1bxDFehfmNxZySWdO4fBdooDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759773727; c=relaxed/simple;
-	bh=xRbBXhONeXuzLwhSP5S43EWOn1rHmeX8RDcutwtUK/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PYrsnPxS7Be8fpLRXSlYJO5dtVhjvCzlaSSIk9M7qAoS/voXQG7SphawoV6gQQSBkxKmLRzPOxtOBMB/9suCvJoTTV18anWuoE4yLVPdVMHR7Eq838Ab+WU0PkBl6j9lYPiQsFRn2pT97M3pS+5V2h7cZzmP0RxVNqSw9gRQifE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxWeBSvT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C13CAC4CEF5;
-	Mon,  6 Oct 2025 18:02:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759773726;
-	bh=xRbBXhONeXuzLwhSP5S43EWOn1rHmeX8RDcutwtUK/g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BxWeBSvTz5Y9qZUjNI6jfe8R7SQRYNju0JOiEQjSNOQBLzbf9iammWAe7L+QOQ/UK
-	 ZRljYQlrt9C2dqjh5D5zcB8bqmzq6AVfJIn5lvG+V/CP2Ea/qcQ6yykUJktDIljm8H
-	 X/jRfGA7FUmJySL7C01+pJL3UzzPVJqTaPkpxajWxpwCB1G92l00ZfRjsUDovxhQIv
-	 6koETrWUjBOWaMuSFWrif1qqX2ykaxNru+hprQJy63uqz2qt/D8Eor8cbbJpl/u2HO
-	 iAmeCkCrlZJP0kZn/5u+6U5JhH/QI5ovVfBO/XNkrqI0ugh2rnnX9CnuGCFKNIzUu5
-	 /guXOIjlemaGg==
-Date: Mon, 6 Oct 2025 11:02:01 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Andreas Schwab <schwab@linux-m68k.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	linux-kbuild@vger.kernel.org, linux-m68k@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] kbuild: uapi: Strip comments before size type check
-Message-ID: <20251006180201.GA429708@ax162>
-References: <949f096337e28d50510e970ae3ba3ec9c1342ec0.1759753998.git.geert@linux-m68k.org>
- <mvm347wjj90.fsf@linux-m68k.org>
- <CAMuHMdXdeJ6Bq=zA7QcN82YNaZW3R8ebeXpGzqHus-KPkSj5XA@mail.gmail.com>
+	s=arc-20240116; t=1759773813; c=relaxed/simple;
+	bh=nnhISHTj1ZDAWXUArq33P4LkzFAO/KPeWhlsHhQTxlU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MkKVjCgeAb7C/2nnY5BJc55rqJohCs3Fzr81XTtmi8hDsuRl/DrZj6NqHDAw/kM76bhS0Ja40Fn0SwVbUTjgOOCuk71MVL+b9j8KBBZVd5uJAn20/3lahsyUYjNxtgSsNK9HQKvqYyO5qjKIPPWJjgm5zLEHcmLp7xl+Tv5yB+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=W7a5VY6q; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4de584653cfso82774091cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 11:03:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1759773810; x=1760378610; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LvwmvZY5I363zl2hxXSo3p16V2l855H51CmL0I5zxCc=;
+        b=W7a5VY6qoAqljL4CU8l1hlSOlRK9RJJjYHlJjVmnrYHkvvtuswCCrv3bCnqOFGSnb1
+         Q53ie3k4VeSmeefGBFmkgcX58NJTJkyTLDHyFlYV5mFWM3fsLZzN3arHU8f0wNAhjvf4
+         Io22Ukx7zEotqYP73n2Qdj/u4FPQgE+Co8OKdNzlZSNE87eAYS3QN5t4YPonfENfLFpP
+         QD3BcvR8zbWllOAtPjjzuFrPGtaG1sOA2hfIC6aFqnjmzs4fxtcjK6j5SuObhtyYd36b
+         idhr9wnUvlsRGJV2CDlOw29CfwcgaWxOG8pEheKX/KjZ3Pgts/H7zyjeeGf2sSaAHhYU
+         Hv/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759773810; x=1760378610;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LvwmvZY5I363zl2hxXSo3p16V2l855H51CmL0I5zxCc=;
+        b=SbzUwW+JyH+pvSzoWCeJP0wNbYzSJfD73R3PzwES5l2DM1YIrwtE7ErJOThGBuoD16
+         +GOQ+EM6pdjJiC1uk/3gSP9wq60o34PJNPpFSYa0YaX1ZlOkaIzffYggekICdZo+B43h
+         V+3qd0VkLR0seEXz4pMZLla7l7NoQL7w8BY8mXSMvqmwziU3qAQU8hZ+fY0JX+BKn3at
+         G5VhSJgsdcoDUMbykVLA5g9HaDztbOdR00otteZ3K9Tq/Fk/aH1auhqiZ+Tsib9pk/Y9
+         GGmuvUkkGy3fu85G84l5PU6jD0a3deAUhzpCc6ZPQEFbWEEZFoRxamtkWt2/M3IfFdLD
+         +7gA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJIaC3MhzHu64YTBahA0z2oyunbw74K8bwbBrZOxbCEFTcDMFa87vJboPgf20Wr47UklYbNOm5yRPYj7o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqejpIs7/NHJPAIS3R8vZwMdKzHEtm2Zf8P5uP7dvpsSuywV2k
+	uufmGo6jkG3UriyaV3DMsxmyjNiuMKAsC2f2rglPU/G8UxlStXGRYMILsKLyxasOA5OWxV9XNK1
+	BDRRrWTcKtsyNRbcO8kiaQ9pxM2z9OpJme+RARrQDDg==
+X-Gm-Gg: ASbGncvClwnPuUL0L1ZQM3pBjWN7Mf+UVNCR3fiH7ThUGWWVLBb80h94XsvpgKLgneh
+	QRMEX+vX1EKz0+PojU4F/vSutZJzTh4vOKQKGUGVdFt99auYQVOT6pgyRVO/teVkeWFCP6gp5ue
+	MfLdNioTGbwyn6mNpCD70YcQlmg6wb5CkJ/XS3IJvh8FIrUBWhQBahq6Y9bbbEXgBUXZhk15zRj
+	Rvo6h+iwfBRYX4EUE6Z+efOX/jggv3Ytz1Yu54=
+X-Google-Smtp-Source: AGHT+IEVZfCkL4v+Tnkl5nUWA3GDanDfXIyCKp31DpQy1v3t8oAJmzi9nP3PButZfFc5VJpBDaeo1ldCgKUCHIfwIPE=
+X-Received: by 2002:a05:622a:1a87:b0:4df:1196:f570 with SMTP id
+ d75a77b69052e-4e576b09389mr190614081cf.53.1759773810132; Mon, 06 Oct 2025
+ 11:03:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXdeJ6Bq=zA7QcN82YNaZW3R8ebeXpGzqHus-KPkSj5XA@mail.gmail.com>
+References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
+ <20250929010321.3462457-3-pasha.tatashin@soleen.com> <mafs07bx8ouva.fsf@kernel.org>
+In-Reply-To: <mafs07bx8ouva.fsf@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Mon, 6 Oct 2025 14:02:53 -0400
+X-Gm-Features: AS18NWCL5ohjgHwfiII61tAev4bzSNa8Vs80Sb--F-ZT325ugyMZfqAlQjXZbCY
+Message-ID: <CA+CK2bCN-__524n+2wti+m8K6JntCudsR1--cFH6cW9CTXnmiA@mail.gmail.com>
+Subject: Re: [PATCH v4 02/30] kho: make debugfs interface optional
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: jasonmiu@google.com, graf@amazon.com, changyuanl@google.com, 
+	rppt@kernel.org, dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
+	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
+	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
+	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
+	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, leonro@nvidia.com, 
+	witu@nvidia.com, hughd@google.com, skhawaja@google.com, chrisl@kernel.org, 
+	steven.sistare@oracle.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
-
-On Mon, Oct 06, 2025 at 03:20:52PM +0200, Geert Uytterhoeven wrote:
-> On Mon, 6 Oct 2025 at 14:40, Andreas Schwab <schwab@linux-m68k.org> wrote:
-> > On Okt 06 2025, Geert Uytterhoeven wrote:
-> > > --- a/usr/include/headers_check.pl
-> > > +++ b/usr/include/headers_check.pl
-> > > @@ -155,6 +155,8 @@ sub check_sizetypes
-> > >       if (my $included = ($line =~ /^\s*#\s*include\s+[<"](\S+)[>"]/)[0]) {
-> > >               check_include_typesh($included);
-> > >       }
-> > > +     # strip comments (single-line only)
-> > > +     $line =~ s@\/\*.*?\*\/@@;
+On Mon, Oct 6, 2025 at 12:31=E2=80=AFPM Pratyush Yadav <pratyush@kernel.org=
+> wrote:
+>
+> On Mon, Sep 29 2025, Pasha Tatashin wrote:
+>
+> > Currently, KHO is controlled via debugfs interface, but once LUO is
+> > introduced, it can control KHO, and the debug interface becomes
+> > optional.
 > >
-> > I don't think you need to quote the forward slashes in the regexp.
-> 
-> Thanks, you are right!
-> 
-> So far for not just following my instinct, but looking for similar functionality
-> in other scripts like scripts/kernel-doc.pl...
+> > Add a separate config CONFIG_KEXEC_HANDOVER_DEBUG that enables
+> > the debugfs interface, and allows to inspect the tree.
+> >
+> > Move all debugfs related code to a new file to keep the .c files
+> > clear of ifdefs.
+> >
+> > Co-developed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> > ---
+> >  MAINTAINERS                      |   3 +-
+> >  kernel/Kconfig.kexec             |  10 ++
+> >  kernel/Makefile                  |   1 +
+> >  kernel/kexec_handover.c          | 255 +++++--------------------------
+> >  kernel/kexec_handover_debug.c    | 218 ++++++++++++++++++++++++++
+> >  kernel/kexec_handover_internal.h |  44 ++++++
+> >  6 files changed, 311 insertions(+), 220 deletions(-)
+> >  create mode 100644 kernel/kexec_handover_debug.c
+> >  create mode 100644 kernel/kexec_handover_internal.h
+> >
+> [...]
+> > --- a/kernel/Kconfig.kexec
+> > +++ b/kernel/Kconfig.kexec
+> > @@ -109,6 +109,16 @@ config KEXEC_HANDOVER
+> >         to keep data or state alive across the kexec. For this to work,
+> >         both source and target kernels need to have this option enabled=
+.
+> >
+> > +config KEXEC_HANDOVER_DEBUG
+>
+> Nit: can we call it KEXEC_HANDOVER_DEBUGFS instead? I think we would
+> like to add a KEXEC_HANDOVER_DEBUG at some point to control debug
+> asserts for KHO, and the naming would get confusing. And renaming config
+> symbols is kind of a pain.
 
-I will fix this up when applying. I think I am going to adjust the
-comment to
+Done.
 
-  # strip single-line comments, as types may be referenced within them
-
-just to be a little more verbose about why it is being done.
-
-Sorry for the breakage!
-
-Cheers,
-Nathan
+>
+> > +     bool "kexec handover debug interface"
+> > +     depends on KEXEC_HANDOVER
+> > +     depends on DEBUG_FS
+> > +     help
+> > +       Allow to control kexec handover device tree via debugfs
+> > +       interface, i.e. finalize the state or aborting the finalization=
+.
+> > +       Also, enables inspecting the KHO fdt trees with the debugfs bin=
+ary
+> > +       blobs.
+> > +
+> [...]
+>
+> --
+> Regards,
+> Pratyush Yadav
 
