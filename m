@@ -1,151 +1,409 @@
-Return-Path: <linux-kernel+bounces-843281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 902A7BBED4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 19:41:03 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4476BBED58
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 19:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C79A3BDF7C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 17:41:02 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3012B34A097
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 17:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAACD246BB4;
-	Mon,  6 Oct 2025 17:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DED246BA4;
+	Mon,  6 Oct 2025 17:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="sOHxDoxR"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ieJzNkYt"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010015.outbound.protection.outlook.com [52.101.85.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641BA2417C2
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 17:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759772456; cv=none; b=q1Vdf6MwAjPOh1Ad/XlsSViUm7X2JZRfSdlCe+LkMFLXJehkueTn9JrO76BV7fGa6BeOjp5O2Y0JoqdY+dnEAbMVGi8F6UFXS+Et+vsxz3whiCU+4TQ3HZVM4+dt9RsVjA4/JokoMOkNjdD1m3VmgiIWjSDfbMeIkvMo0wv4Z/g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759772456; c=relaxed/simple;
-	bh=X3oGisebRlN7TGv9fnOE86D7EABh68RcxwSctp4usVA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pXQd9Y/u7XAUNBOgkhzdi6QYxyvLl/cKNGlAVUdOchISkUem0qLn0Szvr1ITIyk2YvoO5nPRKRvfnOVexW7+Blt5K3w45dQTay3Hu/PX/Txj4TtGBShGTIisl8O5HBN615cdRN85iP1Sv8tmfovkm5ujkUgBlG/19CERWaa4XBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=sOHxDoxR; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-86be8a110f5so55378006d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 10:40:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1759772453; x=1760377253; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=S6zbU8nkw6qlp1oRKT9kqkgJqrXveHjdID6Q3hkDONE=;
-        b=sOHxDoxRzP/MGNAS7cyvaa5yDvy3UQNZP4G5F2ZqvH0HyKUw6c4cZSsPC7VLh8j8cq
-         y6yLAyMFW+zb3gb1WFzSeLhnEM9Grii/MJNbqpaBKB7+f0GZC2vIYvsdhn5fHhjnrnKD
-         U94ulnK9JixQAufAmlP9+/ORWAiDDKIOY0rG5nzuuGqQ9hQD/Dc+MFBH7AO7dHWur5uk
-         7GeA53NO1LYYDpRaflILstXkuPNU/zcRnBmHDdjoy1O9jWplKihsGinCuXXl1Zxst7oE
-         bfLvd4CgINO3+6XYQSl5oZ0TQoB8uYk0nIcE20/7Ca9HWkGXFpqQJbElAXtioz864eDy
-         9jGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759772453; x=1760377253;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S6zbU8nkw6qlp1oRKT9kqkgJqrXveHjdID6Q3hkDONE=;
-        b=CYXABMk0+nJzPB1+IAk3Rh8VUxn8HjahCCWqMX01rP760Sr83FBSjQHMt/Slla3SCU
-         KcWe22qfJO82wgke0r8+iW51XmvUEqR9Jts27AMOZvyPFRm9k1wNR8e1b20F4ytp/egz
-         EqIqaJBZcg3i8Q6uLNpfq/SQCSBImICBNsXwFvNIDTS/octIBfNRs7L9Pxzf+Xc/c+pe
-         PWw1J/eohe/Np7DYgQpGJItjUJlCe510VKuM6RM4IfTNWP3u62bJGnEd5GojIL0sqB1H
-         V8cVchO6dyLE1sL7wWJs8+cbLVr37czflo1AFtuyEmIqUKvPuOx/BEqCuQwgj5wLXvrT
-         udSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFL6Q0T9rmqVNLv9qANWaHl043LJUrZYi3lWHugInvOPD25ByjRj33AWtRMV63toq25xiJg2r7hoBJ9WY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLZhRc10oyv29XMXhFTdiiHFPVsiypEtmTFlaWwmXriZTftCom
-	dou8Rp7vkJ9xc9U5jJjtM6nSkUxCTR0A0Kzr2cH9z8tbYLUjvWWnCI7KCARiBFte1Rk=
-X-Gm-Gg: ASbGncuQXp5WpJizfehPELdtW+J56WXGPF81G9ObQvu3ATFUwxyZCfMrfVNcKwqK9nw
-	VNgiA7R79Dlxnu0nW/tmYmAk32yDwhYsbiH6J/T5O/WZOJjPBpSDQKaJ8BXEJL+hJEArNIRw3q7
-	kPuE0lbob5Sq2Mh0B0dYIbG91mlz7pPuvRQh7Ix5mlGWjBDu6tiUQtRpe/2Cf/9LLEFgGr7sQcw
-	ck04C1swfWvFqjXn6QL3eyzSBGxZ9/RcQTgPS9IJamL2CPxtcgROaL2CNbZsYYmtPkfnf4fh8EK
-	EghiRY2InzIrKkAsSBcXa9pK4gDlQgTWbUx34hR/T2cx2PoVfoJFngF0Vp43smJ/bFvG8vOsV4L
-	NwvcRud83+bRboGvMNwMF12/OahWd3phDkQ8xJdu0Clzz/FeIgy+lT4ZCK+uRcrCfVaeiMjpvvi
-	K/Peyw0Bvl6j0ZXgInrjl02GsIEzy2xg==
-X-Google-Smtp-Source: AGHT+IHL82cO15eHplVrd1kOv7KiCQ0/gvt1t2zsTkhJijBzgWb2+lG9R/9BD16PD2C7Tq5jYtu/eA==
-X-Received: by 2002:a05:6214:5f81:b0:879:dcbc:8ce4 with SMTP id 6a1803df08f44-879dcbc8e21mr144530546d6.52.1759772453210;
-        Mon, 06 Oct 2025 10:40:53 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878be61fb91sm121659976d6.60.2025.10.06.10.40.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 10:40:52 -0700 (PDT)
-Date: Mon, 6 Oct 2025 13:40:50 -0400
-From: Gregory Price <gourry@gourry.net>
-To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-Cc: linux-cxl@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Robert Richter <rrichter@amd.com>,
-	Cheatham Benjamin <benjamin.cheatham@amd.com>
-Subject: Re: [PATCH 2/4 v5] cxl/core: Add helpers to detect Low Memory Holes
- on x86
-Message-ID: <aOP_IobeHXlUPnle@gourry-fedora-PF4VCD3F>
-References: <20251006155836.791418-1-fabio.m.de.francesco@linux.intel.com>
- <20251006155836.791418-3-fabio.m.de.francesco@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19611C84C0
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 17:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759772576; cv=fail; b=JRfKA+i848zNeeTfmgfl7+gieFTyTDMGEoV6heB8QYxVe2KRX7oAdIAkjfhznIhQBGHpzCjF0V1kUff9KMwsMQ0XxmcIZqcO/0eQzaILZz+K/v5b7397aMU+WvFueSvBJjpjGUnJ8+q/5LZWbpC4xeB+UsiGVZ1XSmTqI28jWGg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759772576; c=relaxed/simple;
+	bh=SXF6DcjJAB1G1dEx+UgzKoNiwn0Ayawb1q79GY+587Y=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=XP8GcqGRsdpiUDYJpxOKic0sReFmb9/rp5Ve4SzEX0wmQk3fbYCILLUU4UP7rlJrkJO7Mwb+aVX6ZL03M5YKo1OYI4TtNrGzKix4sUtMfm60Cn3lPxlW5semVR8AGX0/D3U8IFSJNdhfeHQPf37c0fVSpypHXlFMzrVii3RBkVM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ieJzNkYt; arc=fail smtp.client-ip=52.101.85.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MVcKs1AfQKl8x0Ws7SPhd/SznJSM6EdhltvsZEyRUvJr938If1RJGE6drIy3+j4Bh6Y61ozl9atPr58KUBCbrcHe7IKiDTn7kFqdToLPpI7E0bttHagunNLVAIRL1lKmgtb4+pG7Bp0OzNWo0F0jjcQeBKtSWvmktc0ZuWV3T5VYYTyrqP+mmlEvAkRRxoJV+1zkjRy9aYA9VaAjd5Bat4R3+DuQ7V4zAFnbL2I/PoEN6B3ATHh90MJOfI1dUr8XzZcm0l2LViY3tPWw7YD2g1AhJIRbLBtgT4avsIxVErj25sIDzYS4paPwG94/nCywHS5PaYYLgTV88nuUueylUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JQKk3+RhI16uDm1fxcKCp7YQg/1j+Z3a1egQaOsifoQ=;
+ b=azHfrEfQrMnGZYL484EkgUGOBXmdo8CPVH0dDkuiTCWiwt08FHcb6kfvgrVUZWS9N7Tw3eyroBWJX6jygbDBzSP5WgjAvNFLe0nsF7EperQJe5e6Di+Nj+E132gKwKczghNHXnfx0FOJBRT7aOK6g789YBfndsY4U38/rXEi3954h55CDNwNCrHlWUjICx7aBvS51Uaaxbr50APu79SEkDGFgHNb4YqJoQhXE3HNdPVX+JfXyiKCcZ2ZeVGOGE9Olz+cScvmXKh+IOiwPQ6LzguOqq6UK1SuzzbJ52gqHdUliP1UzX1n6uivqYujQd0wE9KHGyekzeqIjG9fvNPZrQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JQKk3+RhI16uDm1fxcKCp7YQg/1j+Z3a1egQaOsifoQ=;
+ b=ieJzNkYtMhuaKXDEyns+ViH0hMWpsafMv4beX+FRPvZTeZG1Yc8ePg6OnyJkkvRyZZVRhCIHAi3AcKH7z2u7btfcvNXRK9cElKgVspo5f5wQBbxdg1+RysHLBZHXsuyvuvRC2cGv3M5/0nmtKOgebgarnfBFw41noMMgFcq0QS0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by SJ0PR12MB6759.namprd12.prod.outlook.com (2603:10b6:a03:44b::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Mon, 6 Oct
+ 2025 17:42:48 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.9182.017; Mon, 6 Oct 2025
+ 17:42:47 +0000
+Message-ID: <5824c012-dcb2-4312-9b16-810656290831@amd.com>
+Date: Mon, 6 Oct 2025 19:42:38 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/amd/display: Fix unsafe uses of kernel mode FPU
+To: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, will@kernel.org,
+ catalin.marinas@arm.com, mark.rutland@arm.com, broonie@kernel.org,
+ Ard Biesheuvel <ardb@kernel.org>, Austin Zheng <austin.zheng@amd.com>,
+ Jun Lei <jun.lei@amd.com>, Harry Wentland <harry.wentland@amd.com>,
+ Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <siqueira@igalia.com>,
+ Alex Deucher <alexander.deucher@amd.com>, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org
+References: <20251002210044.1726731-2-ardb+git@google.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20251002210044.1726731-2-ardb+git@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BN9PR03CA0701.namprd03.prod.outlook.com
+ (2603:10b6:408:ef::16) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251006155836.791418-3-fabio.m.de.francesco@linux.intel.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|SJ0PR12MB6759:EE_
+X-MS-Office365-Filtering-Correlation-Id: ed5af9e5-2e65-4d29-46b4-08de04ffc362
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aWJ4YU1tbkRBWml3R2hSY3pLYk1yaVRCN25oVnZUMWRQQ2dGVlBRSmt1ZGZ3?=
+ =?utf-8?B?Z3Q2ekk2SHM1NGZOd1k4Y3V6RERGRGd1RkM1SUFOQkdlUEZKUFZhNlQ3SmJX?=
+ =?utf-8?B?YitzRGhFMWhaZUMxeGNIMEszQzhEN1VaZHpSS0xwMkhZR0ZjWS9HQ3NpYWFw?=
+ =?utf-8?B?Rzk2WUExSXJHelFvcldqeXBKbVcwUjRZV2tLKzJONGYzcjVZSzZYaE5xb2JK?=
+ =?utf-8?B?U1dORE1XSy9rb2t0UUFMcEVWMmZyd3JFcjZCZHQ5bTVDTVZPTG1DaXNxcjNV?=
+ =?utf-8?B?QjNIU2lsVFZSbVVveWxWeU5acHd3NldJZmFWR1YzSnc4YVZESlR3R0Z2czdw?=
+ =?utf-8?B?YWZSMjF1UjF4Z3FHMWV2dmlFWndlb1MvOTlCZDBTbmJBQmo2QkcyNGx1eUVa?=
+ =?utf-8?B?VC9YRlo1K0Q2bnExejhFU2hNNksxNmhyd3JpUmxhcjhyNnNlNWl0Z0c4V2wz?=
+ =?utf-8?B?MVRrb1Ywc2VCb3NqSHpLZnloN2lGR3NhLzBlb0taQlJGOHM3cjBFMGhRZ203?=
+ =?utf-8?B?d1lDVTZ6VFJFb20rK1ZTa1cwcGZDUlF4NWdnbmo5cXREZFROSXN3Y3BNMWVy?=
+ =?utf-8?B?MUNmdFJnbitiTjFYeExkWUFHQXBpUUZJMHBwNEd2a1BFb0hLdnJaZ25mNjhn?=
+ =?utf-8?B?ek5Xa3FhMHA5UFpuYjAyMnQxamw2cGh5TjZJbjVST3RCT1ZyWG5YNVZheXdz?=
+ =?utf-8?B?bTdvMEVYZG5XbmJnK1Fya041Um4rcGpacTZLd01EcEJWSmRrVzdhZEJPWUt6?=
+ =?utf-8?B?dXlxM202bHcxODNIZEh0QkpTSUZtcnFwTGRCVGRwQzEwTjMyUEl2TFFPL243?=
+ =?utf-8?B?aHVEcS9HTU5uYzhhZHNZM1QyMzFhZWpEdkdBZ1RoTGluSVpHOFNiMnRjV0Q5?=
+ =?utf-8?B?WTJ2TmVoOStaRHNJbU4zUkw4RW43eUE2UGtJWFRZK2JLbWNSeForM3VJR2t4?=
+ =?utf-8?B?bWN6TFRocDZpRngwSExhY0MyVEJBZ1VDdWJZem91Tm1xL2drL3hSVzhOUEtu?=
+ =?utf-8?B?TUVxeWw3U242Ny8rMHZOSVB3ZHJQZGFHQVMyK09oMVNrK2tLRldNNmRaR3dp?=
+ =?utf-8?B?blJZT3dyNXpQMnFPVmR2QXZGQiszYmY0cWt6WGNWK1NtSE1yaEZpUGlDd2xO?=
+ =?utf-8?B?cE5SWGxzUmVEcGRhOVlVTmMxN2VVcjJkTnlSazBmNldjaEhGWmVYcm1sbDE3?=
+ =?utf-8?B?S2VXTW9ZSHpmNXIzN0xkV2poQjNKcXlTdlZ4V1BCZnlBb2dCbndmeWJta3Q1?=
+ =?utf-8?B?OUFpY3lKSjhoV2YzS2ZaUm9tejZzQ3ZDRVU5VXBJWEFhRDIrVmNrTGF2cHJS?=
+ =?utf-8?B?WURNaTdaWUM1dnRpOUVXL1J1cXVYOTd2THdJWTd0U0hhZ1FiS1p5UHRybnVs?=
+ =?utf-8?B?MGxERWdvQlpzbTRuYWZLYy91cnFBQWZxUkhVbEtwNGtTV2hVN1lTaEYvS3l5?=
+ =?utf-8?B?SHlVa0hPSXJNTldXZU9yRm9UVG1ZYVA1c1hRb1VIbW11NmVBSFJ4a014dWcr?=
+ =?utf-8?B?T0RwRitXeFlQTURvcWJLSUdsd3p5Y0FkUFdCSGliT3dBQWs1RTZqRjNJWk9M?=
+ =?utf-8?B?bThyVG9lTzl3N3BRMW1CbEUzUjR3aUxlOGJBRUNFVmtRSnBIZStLVVpuUDdr?=
+ =?utf-8?B?bTB2V29NcG0vaDRyQXVncldkMElUYzUyZUpxWlBYUFladlE3MFB0OGQrRGNN?=
+ =?utf-8?B?Mll1ck1oOWtqMzN6UHBkaUNMSUpXdGdPb2YrN2dPcUpRMXdRSjhMM2JYWUQ3?=
+ =?utf-8?B?MGVsNmlWeUo2dVBuZlE5dUpEajdNZkdsdm5UWlNoWVVjUGRhODJwdSswQlk3?=
+ =?utf-8?B?ZTJ2RXovK0hVRk5PNVVtNHpFTE9jb3ZsM1llY0JPa0FoTFRaZlNSRHZvb2RH?=
+ =?utf-8?B?cm9RVGtTVVE4U1Rob1ZsRHZDR2ZwNTdrSEJDekxHTFY0cmhBd0dLdHpPeDJr?=
+ =?utf-8?Q?KD3albMZezpEt03uUyK6wtU06/HlwAzA?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VzBMblNFNXdPZ2gzck9ZVjBxNnJwcmFZVnVHem9reVFUM3RrTDF0NWdVQzV2?=
+ =?utf-8?B?RFZxODgwUFdFdDdWaWluRGduYVBkYnFCZFJpV3J4M1ZRbmNhdjg3NmhQQ2JP?=
+ =?utf-8?B?UjlrTWQxNUt6Y1pTallFWUtRZ0pnRDhKL2xiM29SQWFDTHA3djBxRDVReVZW?=
+ =?utf-8?B?aTRFakErZWJIbHJzZnJMZW9LeWVJcVlvR3BYL25UclJOTnVZcTREeTIyUjRQ?=
+ =?utf-8?B?UUR6S0FtSkJlbDBaNW5PSUQ3Y3JBMWFFZHJ0S0NoRFFhc3NhMk1sdFExQmVy?=
+ =?utf-8?B?dThaOHBKcXFMY3lFMmxpUFRNZzd6d1JIUWFlbkNaUTZJZzRnV01xVUZVOGov?=
+ =?utf-8?B?aDF2a0h1bStPaStDd0NrdjhwdUhkUmFDWGZIS0I4ZXVQM3BnK0xRSERXVkFB?=
+ =?utf-8?B?Z1lYN3FxcHUwS0FJRW4rOUJRRFJOY0xURmg3VUMzSnFYSmE5RllUWFRvRENB?=
+ =?utf-8?B?dElOcksrcVM1NXdjcW45T1ZDQzlSajl4QTk1MDNQc2syMkY0NXdaYU1Mb3ZC?=
+ =?utf-8?B?YkFnQ1Y5QTBodHpjMjlNcERsMEdWdmthaHlTSlZSWmV6T1dSdklod2lWYUZH?=
+ =?utf-8?B?c0Z2bmE2THIvT3NMbFF2d3NxWFgrem9Zb0Yvb25QMzNuREJMNngzU3UrOG9s?=
+ =?utf-8?B?dWZ2ZmQrT0hGTjVRa2NlNmlZZUN1WFpSSllWbU5lell5OXltR2MwVkxndUdH?=
+ =?utf-8?B?eGNNSzQzUEZlRlRzZ1NLTUVRdGp4bzhPNStPVHFFdlFGL1ByVEZBMjZkdjBZ?=
+ =?utf-8?B?N3prMnk5bnNGazJRN0MveTFBOHBHMEtKRWF1OUQ3MlhKNlpUN2tKNCtpamEx?=
+ =?utf-8?B?OVFrb3k5SnlHejI4QkFlYlpaenhWVzVCQzBpN3hSdDdlMENpR2hFL3QyYWxE?=
+ =?utf-8?B?T1ZodldDVzN0bjBHR1pXMUdCakpqK1VRWmxPYjhVRWIvM2FQenlTUnFkRVVB?=
+ =?utf-8?B?eC9pSWs5UUh5MzJTUUtDc1JCa0lWZ1VEdWJMM0luaGJ1cVZZZzRVeENYZnpJ?=
+ =?utf-8?B?MFp3eDcwckdCcU9haVlLTUgrUEdISW8vZGFJUS9leGxHWnZTM3lENWZIZUNV?=
+ =?utf-8?B?Z1UvV2QrR1k3L3hrZTRlNXdlZG1kY1FMZWtDeUxGZm53Vm43aktJWTFuUXZk?=
+ =?utf-8?B?ZTNjWC8vajBobGdXQ1EweExPbkZpR3RidVd6L1dDVE9PSjQ1a29kdzN5V0NG?=
+ =?utf-8?B?SytMTE5XUlV3UFMzb0pBT2hsckVDcWVsZTBBbkM1L1ZQMEpTblZheWpNcjFP?=
+ =?utf-8?B?VWMrZnBsdzc0VGltMHpyYW5nK21Oa1l5bVFyTjh6ZmJXYnJwMjIzRDJTbXdY?=
+ =?utf-8?B?RkUxVHBZenp1RjhPak5wRUI3dGJvNjcyc0ZNTWVZdldOTjNuNzBTbFVvRmJn?=
+ =?utf-8?B?TE00Yks5cXRycEJvOWRHZ3M1c2hhZWUyQWprYWcralQxTlYrdEJmWGRvTkMx?=
+ =?utf-8?B?UXhSaUtoRlNjU01xQWJjeGp4MDUvTEpGaHc0RVJXVS9wNU9nVXh3MlhmMG9t?=
+ =?utf-8?B?b1l4dnR0dkoycjZKbWw1Tk44OUV2MWxPU2ZGYjAyR0lUa0lvNjlvajJueUlF?=
+ =?utf-8?B?bzR3UVA0OXc3RkM4cmMzbTVHSExIL21wb2VyVy85SEhXSWpYM3BRU2Frdm9X?=
+ =?utf-8?B?dW14TG1RRllXVk1pVWhnN2M1L2pPNXZoQ2pJSk5CRkNHVysvcWxEaGFGLzZv?=
+ =?utf-8?B?Rzk0Mkt3TFF5YThGMjVyUm1aOFJQTVpQd0ZOWXNiaEM1N2dFRjZPYjBaNG1q?=
+ =?utf-8?B?MFlERXIyZ3ViMGJURjVqTjl5SnJlVSt4bS9PSDBmbDhWRE0vbHNRZlEreTBx?=
+ =?utf-8?B?RGZTQXp1K0xmWmpaYUdIc2xMcUd5ZkhwdG4zcFd6R1YrVVZYTDNIaEJScUQ5?=
+ =?utf-8?B?Q1JsY0Z6TEhQUU04eWszV2k3SFBlSDBNTVI1MUZyMUVabEV4SkEvVU9SdmZs?=
+ =?utf-8?B?NW5UaDVmOGdHSks3Q09FOE4yeWdBdXowTTFzZU9XTkdGRHBFdE0vUnVUa05W?=
+ =?utf-8?B?cjhSNjJoQWthZlJnZFFYWjU1NEEwbWJuMVY4b3lqUXBHZyswQVZENlE5TEw1?=
+ =?utf-8?B?RFg1RmwzRnBsdzIrSVJ1UHhJRjN3RFZXRzVrK25rTDlWL0dmVG9iK3FZSmVK?=
+ =?utf-8?Q?ey7hvfRZxGLLBW68qremFSi2r?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ed5af9e5-2e65-4d29-46b4-08de04ffc362
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2025 17:42:47.6729
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1z9UdfMsRycclGzcr+nAk/cwB5jHHze3OE+L5ibtdZ8t4kC3jLabxvDPHcAAJbsr
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6759
 
-On Mon, Oct 06, 2025 at 05:58:05PM +0200, Fabio M. De Francesco wrote:
-> On a x86 platform with a low memory hole (LHM), the BIOS may publish
-                                        ^^^ LMH ^^^
+On 02.10.25 23:00, Ard Biesheuvel wrote:
+> From: Ard Biesheuvel <ardb@kernel.org>
+> 
+> The point of isolating code that uses kernel mode FPU in separate
+> compilation units is to ensure that even implicit uses of, e.g., SIMD
+> registers for spilling occur only in a context where this is permitted,
+> i.e., from inside a kernel_fpu_begin/end block.
+> 
+> This is important on arm64, which uses -mgeneral-regs-only to build all
+> kernel code, with the exception of such compilation units where FP or
+> SIMD registers are expected to be used. Given that the compiler may
+> invent uses of FP/SIMD anywhere in such a unit, none of its code may be
+> accessible from outside a kernel_fpu_begin/end block.
+> 
+> This means that all callers into such compilation units must use the
+> DC_FP start/end macros, which must not occur there themselves. For
+> robustness, all functions with external linkage that reside there should
+> call dc_assert_fp_enabled() to assert that the FPU context was set up
+> correctly.
 
-> CFMWS that describes a system physical address (SPA) range that
-> typically is only a subset of the corresponding CXL intermediate switch
-> and endpoint decoder's host physical address (HPA) ranges. The CFMWS
-> range never intersects the LHM and so the driver instantiates a root
-> decoder whose HPA range size doesn't fully contain the matching switch
-> and endpoint decoders' HPA ranges.[1]
-> 
-> To construct regions and attach decoders, the driver needs to match root
-> decoders and regions with endpoint decoders. The process fails and
-> returns errors because the driver is not designed to deal with SPA
-> ranges which are smaller than the corresponding hardware decoders HPA
-> ranges.
-> 
-> Introduce two functions that indirectly detect the presence of x86 LMH
-> and allow the matching between a root decoder or an already constructed
-> region with a corresponding intermediate switch or endpoint decoder to
-> enable the construction of a region and the subsequent attachment of the
-> same decoders to that region.
-> 
-> These functions return true when SPA/HPA misalignments due to LMH's are
-> detected under specific conditions:
-> 
-> - Both the SPA and HPA ranges must start at LMH_CFMWS_RANGE_START (i.e.,
->   0x0 on x86 with LMH's).
-> - The SPA range's size is less than HPA's.
-> - The SPA range's size is less than 4G.
-> - The HPA range's size is aligned to the NIW * 256M rule.
-> 
-> Also introduce a function that adjusts the range end of a region to be
-> constructed and the DPA range's end of the endpoint decoders that will
-> be later attached to that region.
-> 
-> [1] commit 7a81173f3 ("cxl: Documentation/driver-api/cxl: Describe the x86 Low Memory Hole solution")
-> 
-> Cc: Alison Schofield <alison.schofield@intel.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Dave Jiang <dave.jiang@intel.com>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
+Thanks a lot for that, I've pointed out this restriction before as well.
 
-lgmt
+Since we had that issue multiple times now would it be somehow possible to automate rejecting new code getting this wrong?
 
-Reviewed-by: Gregory Price <gourry@gourry.net>
+E.g. adding something to the DC_FP_START()/DC_FP_END() or kernel_fpu_begin/end macros to make sure that they fail to compile on compolation units where FP use is enabled?
+
+Regards,
+Christian.
+
+> 
+> Fix this for the DCN35, DCN351 and DCN36 implementations.
+> 
+> Cc: Austin Zheng <austin.zheng@amd.com>
+> Cc: Jun Lei <jun.lei@amd.com>
+> Cc: Harry Wentland <harry.wentland@amd.com>
+> Cc: Leo Li <sunpeng.li@amd.com>
+> Cc: Rodrigo Siqueira <siqueira@igalia.com>
+> Cc: Alex Deucher <alexander.deucher@amd.com>
+> Cc: "Christian König" <christian.koenig@amd.com>
+> Cc: amd-gfx@lists.freedesktop.org
+> Cc: dri-devel@lists.freedesktop.org
+> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> ---
+>  .../drm/amd/display/dc/dml/dcn31/dcn31_fpu.c    |  4 ++++
+>  .../drm/amd/display/dc/dml/dcn35/dcn35_fpu.c    |  6 ++++--
+>  .../drm/amd/display/dc/dml/dcn351/dcn351_fpu.c  |  4 ++--
+>  .../display/dc/resource/dcn35/dcn35_resource.c  | 16 +++++++++++++++-
+>  .../dc/resource/dcn351/dcn351_resource.c        | 17 ++++++++++++++++-
+>  .../display/dc/resource/dcn36/dcn36_resource.c  | 16 +++++++++++++++-
+>  6 files changed, 56 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/display/dc/dml/dcn31/dcn31_fpu.c b/drivers/gpu/drm/amd/display/dc/dml/dcn31/dcn31_fpu.c
+> index 17a21bcbde17..1a28061bb9ff 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dml/dcn31/dcn31_fpu.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dml/dcn31/dcn31_fpu.c
+> @@ -808,6 +808,8 @@ void dcn316_update_bw_bounding_box(struct dc *dc, struct clk_bw_params *bw_param
+>  
+>  int dcn_get_max_non_odm_pix_rate_100hz(struct _vcs_dpi_soc_bounding_box_st *soc)
+>  {
+> +	dc_assert_fp_enabled();
+> +
+>  	return soc->clock_limits[0].dispclk_mhz * 10000.0 / (1.0 + soc->dcn_downspread_percent / 100.0);
+>  }
+>  
+> @@ -815,6 +817,8 @@ int dcn_get_approx_det_segs_required_for_pstate(
+>  		struct _vcs_dpi_soc_bounding_box_st *soc,
+>  		int pix_clk_100hz, int bpp, int seg_size_kb)
+>  {
+> +	dc_assert_fp_enabled();
+> +
+>  	/* Roughly calculate required crb to hide latency. In practice there is slightly
+>  	 * more buffer available for latency hiding
+>  	 */
+> diff --git a/drivers/gpu/drm/amd/display/dc/dml/dcn35/dcn35_fpu.c b/drivers/gpu/drm/amd/display/dc/dml/dcn35/dcn35_fpu.c
+> index 5d73efa2f0c9..15a1d77dfe36 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dml/dcn35/dcn35_fpu.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dml/dcn35/dcn35_fpu.c
+> @@ -445,6 +445,8 @@ int dcn35_populate_dml_pipes_from_context_fpu(struct dc *dc,
+>  	bool upscaled = false;
+>  	const unsigned int max_allowed_vblank_nom = 1023;
+>  
+> +	dc_assert_fp_enabled();
+> +
+>  	dcn31_populate_dml_pipes_from_context(dc, context, pipes,
+>  					      validate_mode);
+>  
+> @@ -498,9 +500,7 @@ int dcn35_populate_dml_pipes_from_context_fpu(struct dc *dc,
+>  
+>  		pipes[pipe_cnt].pipe.src.unbounded_req_mode = false;
+>  
+> -		DC_FP_START();
+>  		dcn31_zero_pipe_dcc_fraction(pipes, pipe_cnt);
+> -		DC_FP_END();
+>  
+>  		pipes[pipe_cnt].pipe.dest.vfront_porch = timing->v_front_porch;
+>  		pipes[pipe_cnt].pipe.src.dcc_rate = 3;
+> @@ -581,6 +581,8 @@ void dcn35_decide_zstate_support(struct dc *dc, struct dc_state *context)
+>  	unsigned int i, plane_count = 0;
+>  	DC_LOGGER_INIT(dc->ctx->logger);
+>  
+> +	dc_assert_fp_enabled();
+> +
+>  	for (i = 0; i < dc->res_pool->pipe_count; i++) {
+>  		if (context->res_ctx.pipe_ctx[i].plane_state)
+>  			plane_count++;
+> diff --git a/drivers/gpu/drm/amd/display/dc/dml/dcn351/dcn351_fpu.c b/drivers/gpu/drm/amd/display/dc/dml/dcn351/dcn351_fpu.c
+> index 6f516af82956..e5cfe73f640a 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dml/dcn351/dcn351_fpu.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dml/dcn351/dcn351_fpu.c
+> @@ -478,6 +478,8 @@ int dcn351_populate_dml_pipes_from_context_fpu(struct dc *dc,
+>  	bool upscaled = false;
+>  	const unsigned int max_allowed_vblank_nom = 1023;
+>  
+> +	dc_assert_fp_enabled();
+> +
+>  	dcn31_populate_dml_pipes_from_context(dc, context, pipes,
+>  					      validate_mode);
+>  
+> @@ -531,9 +533,7 @@ int dcn351_populate_dml_pipes_from_context_fpu(struct dc *dc,
+>  
+>  		pipes[pipe_cnt].pipe.src.unbounded_req_mode = false;
+>  
+> -		DC_FP_START();
+>  		dcn31_zero_pipe_dcc_fraction(pipes, pipe_cnt);
+> -		DC_FP_END();
+>  
+>  		pipes[pipe_cnt].pipe.dest.vfront_porch = timing->v_front_porch;
+>  		pipes[pipe_cnt].pipe.src.dcc_rate = 3;
+> diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn35/dcn35_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn35/dcn35_resource.c
+> index 8475c6eec547..32678b66c410 100644
+> --- a/drivers/gpu/drm/amd/display/dc/resource/dcn35/dcn35_resource.c
+> +++ b/drivers/gpu/drm/amd/display/dc/resource/dcn35/dcn35_resource.c
+> @@ -1760,6 +1760,20 @@ enum dc_status dcn35_patch_unknown_plane_state(struct dc_plane_state *plane_stat
+>  }
+>  
+>  
+> +static int populate_dml_pipes_from_context_fpu(struct dc *dc,
+> +					       struct dc_state *context,
+> +					       display_e2e_pipe_params_st *pipes,
+> +					       enum dc_validate_mode validate_mode)
+> +{
+> +	int ret;
+> +
+> +	DC_FP_START();
+> +	ret = dcn35_populate_dml_pipes_from_context_fpu(dc, context, pipes, validate_mode);
+> +	DC_FP_END();
+> +
+> +	return ret;
+> +}
+> +
+>  static struct resource_funcs dcn35_res_pool_funcs = {
+>  	.destroy = dcn35_destroy_resource_pool,
+>  	.link_enc_create = dcn35_link_encoder_create,
+> @@ -1770,7 +1784,7 @@ static struct resource_funcs dcn35_res_pool_funcs = {
+>  	.validate_bandwidth = dcn35_validate_bandwidth,
+>  	.calculate_wm_and_dlg = NULL,
+>  	.update_soc_for_wm_a = dcn31_update_soc_for_wm_a,
+> -	.populate_dml_pipes = dcn35_populate_dml_pipes_from_context_fpu,
+> +	.populate_dml_pipes = populate_dml_pipes_from_context_fpu,
+>  	.acquire_free_pipe_as_secondary_dpp_pipe = dcn20_acquire_free_pipe_for_layer,
+>  	.release_pipe = dcn20_release_pipe,
+>  	.add_stream_to_ctx = dcn30_add_stream_to_ctx,
+> diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn351/dcn351_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn351/dcn351_resource.c
+> index 0971c0f74186..677cee27589c 100644
+> --- a/drivers/gpu/drm/amd/display/dc/resource/dcn351/dcn351_resource.c
+> +++ b/drivers/gpu/drm/amd/display/dc/resource/dcn351/dcn351_resource.c
+> @@ -1732,6 +1732,21 @@ static enum dc_status dcn351_validate_bandwidth(struct dc *dc,
+>  	return out ? DC_OK : DC_FAIL_BANDWIDTH_VALIDATE;
+>  }
+>  
+> +static int populate_dml_pipes_from_context_fpu(struct dc *dc,
+> +					       struct dc_state *context,
+> +					       display_e2e_pipe_params_st *pipes,
+> +					       enum dc_validate_mode validate_mode)
+> +{
+> +	int ret;
+> +
+> +	DC_FP_START();
+> +	ret = dcn351_populate_dml_pipes_from_context_fpu(dc, context, pipes, validate_mode);
+> +	DC_FP_END();
+> +
+> +	return ret;
+> +
+> +}
+> +
+>  static struct resource_funcs dcn351_res_pool_funcs = {
+>  	.destroy = dcn351_destroy_resource_pool,
+>  	.link_enc_create = dcn35_link_encoder_create,
+> @@ -1742,7 +1757,7 @@ static struct resource_funcs dcn351_res_pool_funcs = {
+>  	.validate_bandwidth = dcn351_validate_bandwidth,
+>  	.calculate_wm_and_dlg = NULL,
+>  	.update_soc_for_wm_a = dcn31_update_soc_for_wm_a,
+> -	.populate_dml_pipes = dcn351_populate_dml_pipes_from_context_fpu,
+> +	.populate_dml_pipes = populate_dml_pipes_from_context_fpu,
+>  	.acquire_free_pipe_as_secondary_dpp_pipe = dcn20_acquire_free_pipe_for_layer,
+>  	.release_pipe = dcn20_release_pipe,
+>  	.add_stream_to_ctx = dcn30_add_stream_to_ctx,
+> diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn36/dcn36_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn36/dcn36_resource.c
+> index 8bae7fcedc22..d81540515e5c 100644
+> --- a/drivers/gpu/drm/amd/display/dc/resource/dcn36/dcn36_resource.c
+> +++ b/drivers/gpu/drm/amd/display/dc/resource/dcn36/dcn36_resource.c
+> @@ -1734,6 +1734,20 @@ static enum dc_status dcn35_validate_bandwidth(struct dc *dc,
+>  }
+>  
+>  
+> +static int populate_dml_pipes_from_context_fpu(struct dc *dc,
+> +					       struct dc_state *context,
+> +					       display_e2e_pipe_params_st *pipes,
+> +					       enum dc_validate_mode validate_mode)
+> +{
+> +	int ret;
+> +
+> +	DC_FP_START();
+> +	ret = dcn35_populate_dml_pipes_from_context_fpu(dc, context, pipes, validate_mode);
+> +	DC_FP_END();
+> +
+> +	return ret;
+> +}
+> +
+>  static struct resource_funcs dcn36_res_pool_funcs = {
+>  	.destroy = dcn36_destroy_resource_pool,
+>  	.link_enc_create = dcn35_link_encoder_create,
+> @@ -1744,7 +1758,7 @@ static struct resource_funcs dcn36_res_pool_funcs = {
+>  	.validate_bandwidth = dcn35_validate_bandwidth,
+>  	.calculate_wm_and_dlg = NULL,
+>  	.update_soc_for_wm_a = dcn31_update_soc_for_wm_a,
+> -	.populate_dml_pipes = dcn35_populate_dml_pipes_from_context_fpu,
+> +	.populate_dml_pipes = populate_dml_pipes_from_context_fpu,
+>  	.acquire_free_pipe_as_secondary_dpp_pipe = dcn20_acquire_free_pipe_for_layer,
+>  	.release_pipe = dcn20_release_pipe,
+>  	.add_stream_to_ctx = dcn30_add_stream_to_ctx,
 
 
