@@ -1,89 +1,91 @@
-Return-Path: <linux-kernel+bounces-843557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4420BBFB91
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 00:46:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93D69BBFB97
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 00:50:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C1E34EDC60
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 22:46:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ACAE189DD63
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 22:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B882317A2EB;
-	Mon,  6 Oct 2025 22:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636331A314D;
+	Mon,  6 Oct 2025 22:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jd+16SKy"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="BDZ4EHSg"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75BA4A00
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 22:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22220146D45
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 22:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759790808; cv=none; b=N9qp+D7qT8m3YD8e0htXv/rvlczg+HL3D3WXEh7lgrc5eL5zQ8aBCQiey1b+xtuplS4DgQtogft2Ajo6OVuvtzH18xv7xD6CayqL9SQMY5777mupdDMqCByUvkjVC/LMQ4KOaq92NRdssZa3zLyT3vFUSsCED6kl6CTWInX93lM=
+	t=1759791044; cv=none; b=QeCRrPGD9Sv6y3fYXwFNUR6JEmd+px/biY44kmXhuyQXxQe2k2AUr4Zx0XH5sxxSx/jPsXpR2WvXj4/mzJeWwio1lJYJLz1dOKIQnJErmg54V4O2VUNsLJytCIJ8NE+e5fINlZq7ZP4yo+P7vvKIndkS5jf1DfdL2lU3u+gSzE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759790808; c=relaxed/simple;
-	bh=x01P2TojjeuexsK+/nsZ7KQP13rOvknnLZt/XjUyHm4=;
+	s=arc-20240116; t=1759791044; c=relaxed/simple;
+	bh=j8RVgIHcecZ6vNuLBZhQD8XDmrwSGnwngJoxF/6sqdo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wh5HBvba/bdYqOZP+DCeIo7wHRkt+zdp0FytKDrPeMv8W5RhGleaA2PC9e0oMdxMGgmflJWkZ0vgBD0Nztxn/IG5DBIph1pppCyEQaSaD1tVrFz92GFBEGdtHx7j9J+GZSroTujcMY/tj06vOwhOWOUDRiayCwL0SEfy8mFeadQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jd+16SKy; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2731ff54949so32175ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 15:46:46 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=PJahZEeRbTwmCZi+OplCAJbhsUPrxhz0XxVbkbT23WiK6LwZ9HyvYjPC+tThd7L5zxW5tg3w06zTihtxChh7cLv3aedza94srCDg3yP8CZRVYKMEokFn4DgavNf8yjo8ygXp8bYKLDVDGUYtHHVLc6I0NEBtybKAtwiCqF/kF+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=BDZ4EHSg; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-7f7835f4478so37546636d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 15:50:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759790806; x=1760395606; darn=vger.kernel.org;
+        d=ziepe.ca; s=google; t=1759791042; x=1760395842; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xKwPq2tS6q2Pu8otpiOWgoNVnScGXOXV+vJd0saMBSQ=;
-        b=Jd+16SKyDVSunqwqGa+4t4ojHeZu2DH8Btc1W5U7HYANk1INJvQ1HIV47Pp+JESijs
-         gTQJW2Gwu6NnlAlHTpCApFtbh+EQhD6r0qeJjGVE40rkA25X+AYt+279BBf5XEj2hYbd
-         dI5XGjKP+MNhRE2gm2SQIK/crW7ijZmxj97jHVrDwifXYJY0aAxeyN8fcs6D73opAYl3
-         r4pkC4v9oP2LSuV8PNCKALVGwHYd4yUvdoqWqMl2TiJad6qK6Q/jtPJ55tXtOnn5Oni6
-         PUWUmA8B1udCt+ei/OZ5dghyBovsi3XkvrKsjE5XJQWJWCp64ttGJmtnJeG3EoY863Zm
-         j00g==
+        bh=t1+dP9kjoBak9iuGOU/j3R1WyEWlKUJiQn+oDzUnB/s=;
+        b=BDZ4EHSg5GzH1tetl7kQ3cZaQ9mXyBtsvsfVggmMC/04tf4tc/XZJERblzAqc78Pne
+         DWmmdgmk1FnkYJfO1YUeva8PSaIANVvDo70lXc0kmw68k9Qrb48kBasy93mRY+8Mn+JC
+         Cyu7R94047P4d6/2v3WKNNRFFNjEEqvJcRk0KKFjtLMwcvhSvtjEwhuIgcV/6qHXtJb6
+         BLoAP0hFAoa1FFtk/BOUfPy6T3JXGA0kdbPBpiJ/OxYvUu38HXb+0tj0PWcvEdVtoMb+
+         RPV27txRDPJGu6qvaxjCnSLu5bjZaFQjtnGPlRMfYTj5k5hSE6ZxZsQCDxF8efP/7T3b
+         iM3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759790806; x=1760395606;
+        d=1e100.net; s=20230601; t=1759791042; x=1760395842;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xKwPq2tS6q2Pu8otpiOWgoNVnScGXOXV+vJd0saMBSQ=;
-        b=Jt/M2D8pgRWyGS8gP06f6lTBc52xx8HxHSsVTi0c4ajACYDUqxv7WDT1aSSv/NEiAy
-         kuD68qTpNc/mz5x2eFU74mJgm2D6VhdM/5YSpDRxoC4GZZ04Y1r7LcdAUrtFIBOFayep
-         BJ9NRXuzf4gYA3xQ6u3mqLG601OWi5nuSqRX1AxQWua47TAGoAcB4nNlU+cTqC4V9JLN
-         XbXbQqzT9qKH5tE+O8eSjwsxjYc/zz+gB16y2T6UxrCQx6X+q5l+7dQ1eU5+bJhwfKeQ
-         9p/We+NveAktY9Yqv58CnSXPBbwzYLydGBxphCzE6+D6dUQeKewme+s5YS0LWWPQLgvz
-         F7GA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJabG1cKWQNtjvbFPWS1u9AB0gyPQyRxlRnagRSl5lyODImcwOZl+m2ihSRb4GVSB1wvXV9fu66pdcEPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2jx3yrGtS1PgaimGq9FHTExLjCTZNw8SLmJy8fO16gEdBcAXi
-	8T1VV0sLq8cH5dXi1hP11QO8bwMUKgy+cEpgwpD1NDkIWGkZUXe6mIEoe5bHaZWfIQ==
-X-Gm-Gg: ASbGncvI9AssDacbS4/jVP/PvGunM9iTSYIjYsGnSkYqtvfIPkpg8KP2MQb0X2Vysyn
-	9ZLsbTr4uTTz/LE+q/0zxFb4eXV2uhNqCpQ5zj2U4LgtxPeUE7vN3EWliHCcafqcbuPnpq8l/Z8
-	ndxLKouVrCNycTKQi8cTEm9oI5s+g4s7UFFft91Vhv56TqPgMOWlAItPm5ugh+CvCarQdZWgJVZ
-	zVhDVzN0dykvhWHSwOwBu6jnno3teqiDjnGSUVQsI5mdIelIqEQxcKnHnjUyiqakv4VyOFfUCFu
-	mJhVeKjRX29rRdcpaOp1xS9xFAL9AG/sd0McYk4/Slsu/d5TJ/eYPSG+ajeeubJ+P7T80ey7NZt
-	q/ryyeK2Ujo0DPJmFGoXOD3CWtsy83Nr9GX8F3SjBqzrXBHKcJXGcgR/QrgV6YDqh2IkA1stfTR
-	VTqxEdtECwKP7zwklwFRJgUZDKDJu/x5Mynf0L4HqJD9wyuaQrSF8XGB6jXToZHfo09n9+iqg5K
-	Q==
-X-Google-Smtp-Source: AGHT+IHqyt+4O5gJK6ew1kRjn8+Dq2ThanBWHG7BaaZgdscBo65q78ZeEiTTskU9WlxSAQBJZInbhw==
-X-Received: by 2002:a17:903:13c6:b0:248:dce7:40e1 with SMTP id d9443c01a7336-28ecb74e7c6mr739735ad.9.1759790805276;
-        Mon, 06 Oct 2025 15:46:45 -0700 (PDT)
-Received: from google.com (235.215.125.34.bc.googleusercontent.com. [34.125.215.235])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339c4a1a19csm11793942a91.7.2025.10.06.15.46.44
+        bh=t1+dP9kjoBak9iuGOU/j3R1WyEWlKUJiQn+oDzUnB/s=;
+        b=V2VOy3ZADWKB/yLenKjFrtpy2dqITEpu2fDM7ApfevrHhiad89bGJcStItMAzRTik7
+         l7UJN8yudnB4erFhpX2hIp8cTVuYZRjcvqv0Nd0fK0KmGjR/t9C0R7WuKVEH9cTb6CCU
+         jVOFoJTQbvqC8znXUE6RV8kdTab0U8AwIITJpRBT1kCzcBNnfa2WKts2QVrR+0WIdgac
+         Ug/dDY/jpdAmiIHgwaA1E34Yb0iXMHYD9mG/aOIGnXFZ3qm7N+ELFkV9XiAXrXGxpE6w
+         I/ghYA/RRnMt7PO5BH3XV8L0X5hU4EsQmwb3hNZ5ad01M4rxX2pFCzst08BmbpBH2mE0
+         LOqA==
+X-Forwarded-Encrypted: i=1; AJvYcCWEU4gU4RdC2qM8tHaAYBo5s1A6iKACkAArmBFIwV1c31lj8k3B5qY/5SAYfruMYh0RifDnYzW05dF2BD8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvPrllrbjn4+hNag6YJ09KbYn5lkl3055AndvUaCl72RHt4FGN
+	q/FcDO/wtH+7RNaDj8vB9iKef0du5CKKiPmLfmjOm2jTbdgZs4yo0kDPhdvXf9CpVGQ=
+X-Gm-Gg: ASbGncsDlO6L5YiWTQYmOSYdRG3+qrYf6FI+fj9YAYtzVollKJ+g1IdgZVOakIsDlE4
+	Yy2cMsUuYEzI0JILK+7YCm4uDfXxbb1eJkmKwy0PpcaEgMHigGkpQhbO1E2G62V+9Mqf0h+IZhS
+	ScXPLd9fjYlq/UnPeGbfqZo/osuuVFndcTAcU3kd7vhyzj+LdyZT5GhUq7hHlv3/zPURmA5B2ni
+	ZODAQWg3d10Gkje7hAQXg/+H5EkBxFyrnUpwMTZ9VwWtOpGJi4zTmRzBQLjsh07wyhxT1iq/Rch
+	i10KZWrgtkJyBLlnzl7HelByYoSin3hbPgqm3y9onOyStweabQ0LUKQaUXvk7p9do+tz03tq8X3
+	6DjZoswsgwqJ1snZC3Z1y
+X-Google-Smtp-Source: AGHT+IHzlobXG0MjkPJh2nGePMJSByfyR0QwUZj8yqsAUFGxRY2aOWeCzXWMnbZWCqE5GDBOCCvduQ==
+X-Received: by 2002:ad4:4ee4:0:b0:863:5c7a:728a with SMTP id 6a1803df08f44-879dc869b21mr181258646d6.37.1759791041935;
+        Mon, 06 Oct 2025 15:50:41 -0700 (PDT)
+Received: from ziepe.ca ([130.41.10.202])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878be61f6bcsm130119516d6.65.2025.10.06.15.50.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 15:46:44 -0700 (PDT)
-Date: Mon, 6 Oct 2025 22:46:40 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Kees Cook <kees@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	kernel-team@android.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools headers: kcfi: rename missed CONFIG_CFI_CLANG
-Message-ID: <aORG0J52p71WSJ20@google.com>
-References: <20251006184412.552339-1-cmllamas@google.com>
- <20251006220500.GC3234160@ax162>
+        Mon, 06 Oct 2025 15:50:41 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1v5u2R-0000000EUgB-3p8Y;
+	Mon, 06 Oct 2025 19:50:39 -0300
+Date: Mon, 6 Oct 2025 19:50:39 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Alex Mastro <amastro@fb.com>
+Cc: Alex Williamson <alex.williamson@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfio: fix VFIO_IOMMU_UNMAP_DMA when end of range would
+ overflow u64
+Message-ID: <20251006225039.GA3441843@ziepe.ca>
+References: <20251005-fix-unmap-v1-1-6687732ed44e@fb.com>
+ <20251006121618.GA3365647@ziepe.ca>
+ <aOPuU0O6PlOjd/Xs@devgpu015.cco6.facebook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,69 +94,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251006220500.GC3234160@ax162>
+In-Reply-To: <aOPuU0O6PlOjd/Xs@devgpu015.cco6.facebook.com>
 
-On Mon, Oct 06, 2025 at 03:05:00PM -0700, Nathan Chancellor wrote:
-> On Mon, Oct 06, 2025 at 06:43:57PM +0000, Carlos Llamas wrote:
-> > Commit 23ef9d439769 ("kcfi: Rename CONFIG_CFI_CLANG to CONFIG_CFI")
-> > missed one instance of CONFIG_CFI_CLANG. Rename it to match the original
-> 
-> Technically, this was correct when 23ef9d439769 committed:
-> 
->   $ git show 23ef9d439769:tools/include/linux/cfi_types.h | grep CONFIG_CFI
->   #ifdef CONFIG_CFI
->   #else /* CONFIG_CFI */
->   #endif /* CONFIG_CFI */
-> 
-> This is a cross tree collision, as
-> 
->   aa34642f6fc3 ("tools headers: Sync linux/cfi_types.h with the kernel source")
-> 
-> was merged in 6.17-rc4 via the perf tools tree but Kees's tree was based
-> on -rc2, so he did not have it. It only becomes a problem on the merge.
-> 
-
-Ha! Excellent detective skills. I totally missed this.
-
-> > kernel header. This addresses the following build warning:
+On Mon, Oct 06, 2025 at 09:29:07AM -0700, Alex Mastro wrote:
+> On Mon, Oct 06, 2025 at 09:16:18AM -0300, Jason Gunthorpe wrote:
+> > This doesn't seem complete though, if the range ends at the ULONG_MAX
+> > then these are not working either:
 > > 
-> >   Warning: Kernel ABI header differences:
-> >     diff -u tools/include/linux/cfi_types.h include/linux/cfi_types.h
+> > 		if (start < dma->iova + dma->size) {
 > > 
-> > Cc: Kees Cook <kees@kernel.org>
-> > Fixes: 23ef9d439769 ("kcfi: Rename CONFIG_CFI_CLANG to CONFIG_CFI")
+> > ?
+> > 
+> > And I see a few more instances like that eg in
+> > vfio_iova_dirty_bitmap(), vfio_dma_do_unmap(), vfio_iommu_replay()
 > 
-> With all that said, I think this fixes tag should really be:
-> 
-> Fixes: a5ba183bdeee ("Merge tag 'hardening-v6.18-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux")
+> You are right. There are several places which would need to be fixed to handle
+> mappings which lie against the end of the addressable range. At least these
+> would need to be vetted:
 
-I'll swap the fixes tag for v2 as suggested, thanks!
+Could we block right at the ioctl inputs that end at ULONG_MAX? Maybe
+that is a good enough fix?
 
-> 
-> > Signed-off-by: Carlos Llamas <cmllamas@google.com>
-> 
-> Regardless, I think the fix is obviously correct.
-> 
-> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-> 
-> > ---
-> >  tools/include/linux/cfi_types.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/tools/include/linux/cfi_types.h b/tools/include/linux/cfi_types.h
-> > index fb8d90bff92e..a86af9bc8bdc 100644
-> > --- a/tools/include/linux/cfi_types.h
-> > +++ b/tools/include/linux/cfi_types.h
-> > @@ -43,7 +43,7 @@
-> >  
-> >  #else /* __ASSEMBLY__ */
-> >  
-> > -#ifdef CONFIG_CFI_CLANG
-> > +#ifdef CONFIG_CFI
-> >  #define DEFINE_CFI_TYPE(name, func)						\
-> >  	/*									\
-> >  	 * Force a reference to the function so the compiler generates		\
-> > -- 
-> > 2.51.0.618.g983fd99d29-goog
-> > 
+Jason
 
