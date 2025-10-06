@@ -1,154 +1,219 @@
-Return-Path: <linux-kernel+bounces-843223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E5DEBBEAC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:36:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E526BBEACE
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:39:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12D523ABFEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:36:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F7F83ADE8B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533BA2DCF52;
-	Mon,  6 Oct 2025 16:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41D72DCF6C;
+	Mon,  6 Oct 2025 16:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="sXaTjoOA"
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AoCB4m1f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB972DA759
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 16:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F042DA779;
+	Mon,  6 Oct 2025 16:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759768589; cv=none; b=gKUKdNLL2fkPs4NXv9HrEpwC2lpdiTgEvyXFfhWtcX042BRkpIYiYOt5w3XyqukFXB/vlkMESWKmopirkMXgGm9F8g3L/l8NUQ7G98WtHLbkILyJjy54EAneyXiWtEw9BeF54qDzqazISqQkES4jk500i/gt6GiwI6xy1rRdHHI=
+	t=1759768736; cv=none; b=d5RqpTSb5tvuzxXpIrHAH+akq8KulaKmBvI2gl1fAoz1dsmyycfDmanK3gHrVtbE9k/1HyhEIWRI5cKCab7PMeOPHuFack+HT33wR/pcbdY9FTJfDI0reNQESKZFst8JYNpzf/nZyzpViUJH8/C2aO8gkfn1X+NySHlMsJtJP/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759768589; c=relaxed/simple;
-	bh=XupdU8p7RDNBPxkCkrppIhSp1IiOvpdpp1bberfEOrY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zc6jhXdHqnXqicaYNjjaZFSbAINIg0ZH/Zw+lqaKASiifoLs5DCDifkZ24STO+JFt6PvCPDnnpO1X3YKEo4BYEk/g7gCY6L4ErhG/jzSVYhy+Kj2nV7aXNGMkkkUR8IL7yboXjTx0cAIBUnFoRLrKpMIT/NrbSuX/olC0BC3d3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=sXaTjoOA; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7b4f7a856acso1795353a34.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 09:36:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1759768585; x=1760373385; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AbcfXyJqSZx7fTHy1yz/EONzLBPcuXMGSsDmeC55Fxk=;
-        b=sXaTjoOARxNqAWo4sVZA9X9GOXatwtec4DlhDddXDCiMn0z+Tq6sa1d+uDzMqYxIaD
-         /M4PC3DHA2p6dL2q1iD6u17rogcviqVZHe9rrPWrr+w3oRzuqBhvLbBikjN6438OxLjv
-         I/EEnEjuyZCzv6pOhn3ZwdYVL0cTn5eQPpPibcJnHdWi6jfa7HDt5wAqp8tRBTVMlb/U
-         c3llZYgCDjUhrkbN6hxGiVKQRyn22PJpLZiCokWk8Y/n6NMEVRJfAot/dMlL8s5ufTcW
-         OvnRAqcMX+2A2SHqbQiobgTRhUrHBxw+EcynPRP368PdiJFRuONzwoCOnmXx5qJ3Qz3V
-         wFdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759768585; x=1760373385;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AbcfXyJqSZx7fTHy1yz/EONzLBPcuXMGSsDmeC55Fxk=;
-        b=osJ9lPmw6f2M0vdSfmX7hqASdokea3lAQ9FTFWU0y15NdtW9HQ5hfFGTtzvjWOF55i
-         2Rp1RxwUZ9E+FCDxYSJwcnZCMcbBuTvklEmMyxFvxJHKxFh/r+kBkC/5SmyuWzY0ZzWa
-         jIekj66su9fW2cHvmIEA/KgjAjzYiPNLpDa8C8JVMVpvqBbWioNQAQZG0wKMbtv/5HND
-         uO8hKZnHK0PwSJ75aJQK/SpN7SRZk4nZcSO+QjhfDNhnxen0jt/7dZKw5WNgD+XY3yS/
-         H8ybimJ03+TRyPFPI5P+Ky6lj0GAat23WNlorFpnZ3DFIxNhTDLCpEaqZdiCOgBkB7ey
-         8ZxA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtl0Q16+7QcvD599isgIUorYv+p1wkkOjfmKBl9KVzqMlaL8qBbFnjBjvkjzcQqK7/w8U40xasafs8ryQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyS4cKyAvxp24fgQSl2C+jxS0pTmPd000Fq56hDo2yAhYYdg5Nz
-	kpCEQmZfqUvKYmWtYcwmGfyApT9GLbVTwWbvbMm85rmx42UM7LpexMZiezzTQe03ygUifdfNcek
-	V1cIVbs0=
-X-Gm-Gg: ASbGncsU8DTgvKh33OUj5dU4W+wIKUEzodCBsXCr9Cqmyex7ZnWBr+xCYUvXYgRJA7u
-	JLpawKCTdP29+PkXCzl5ViLoPQHwMWP1Jr/R4duDnyI8dOCrPg+nUIbz3XH4bzKT/p1slFvv35N
-	igC3NRuSKzn0agoMEglf7c+UK0Z2f2UIKBjsZzhDW2TTYOATpTKWPEQxkc2endcL3MXvBgYdOsC
-	PL9cY97xIwtkWLSdz56bKTGH92YzrPywRC+3CTs0U/MXH7pTekpYW+dHz09gKwXx1y9XqMkLCBc
-	nBzSHEyQWVVw0t1zHWqOYdgljqQVXtfOeZo91quD9ZiwUGxz576HHCKcX29W94GUap2H0OL4dlv
-	HwIU1aCrwAQMRMmAuszwT2lmO9p/z2aJByJ6YKzouYbmFhy++vlpvx65MPItpiCV+IRMFEUA0IS
-	VLfaazbm74IqEKLUlYMG6MlrBcW9MjEKG5DlQAKVwPBbIu
-X-Google-Smtp-Source: AGHT+IE+s66uq6txDkspOfSvOVKKS0M3qJTnSdw0NOGPySxvEJLlIa6shKJ7jyPKDkvJTaOBdI0yrw==
-X-Received: by 2002:a05:6808:2e48:b0:43f:7dee:469c with SMTP id 5614622812f47-43fc1798d8cmr6884069b6e.11.1759768585304;
-        Mon, 06 Oct 2025 09:36:25 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:a1fd:4fbd:e7a6:9246? ([2600:8803:e7e4:1d00:a1fd:4fbd:e7a6:9246])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-43fb25b991esm3008529b6e.26.2025.10.06.09.36.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Oct 2025 09:36:24 -0700 (PDT)
-Message-ID: <5e043789-75b4-4586-b9ea-a6cda8532431@baylibre.com>
-Date: Mon, 6 Oct 2025 11:36:23 -0500
+	s=arc-20240116; t=1759768736; c=relaxed/simple;
+	bh=sxyC+M2p7vPAPhVy3ZlJCaWWCXkjXzbjOcvF/s8+J38=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dY0m46j9WS/Qpgsb0HW+b9NOMArOn158iLb6e8AGBisRfv7FuwX1l+ubjPQfHFKn+v0fY4oltLmNSbWY8nc/y0ZexCpM0TY/OkClexNCkZsco1Pat/1iJXkI7XDqZEpym5QLwknJ0kfS6RsYfk89kC9FUCEdNX0FpXxnB7NIVrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AoCB4m1f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38A48C4CEF5;
+	Mon,  6 Oct 2025 16:38:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759768735;
+	bh=sxyC+M2p7vPAPhVy3ZlJCaWWCXkjXzbjOcvF/s8+J38=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=AoCB4m1fzQ5jyR7WTLfGlF6oqK6LGxGaJeYs0kb4rShKoKCiR+8kc5RLjvkQ2kWZl
+	 N+nqPUUgBVuyONwRKAxWStMysJgoomOb5mLrd+4i8baVJ84dhQOrNBRV+gUNqSUSx7
+	 lf0XasB4zMpfRUaKdi11jD9sFZj/ShqT7GhVRoE8tvqUqtX6qPd9vb2GuaN2Tqd1cC
+	 TM9y9rH3WkMkDQ3gesAR5Df8vVIqmGVhksS29tdZikWj37vi2ndjjIBUQtW4enue3G
+	 dPTW7LuVrQgQ6oUjaXudtwNXootEyhcQ/bM0q3UTbUg5I2ou5p9PYg2TwMjKKpFDrS
+	 vXTfikQeMJI9Q==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,  jasonmiu@google.com,
+  graf@amazon.com,  changyuanl@google.com,  rppt@kernel.org,
+  dmatlack@google.com,  rientjes@google.com,  corbet@lwn.net,
+  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
+  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
+  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
+  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
+  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
+  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
+  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
+  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
+  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com,
+  hughd@google.com,  skhawaja@google.com,  chrisl@kernel.org,
+  steven.sistare@oracle.com
+Subject: Re: [PATCH v4 03/30] kho: drop notifiers
+In-Reply-To: <mafs0bjmkp0gb.fsf@kernel.org> (Pratyush Yadav's message of "Mon,
+	06 Oct 2025 16:30:12 +0200")
+References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
+	<20250929010321.3462457-4-pasha.tatashin@soleen.com>
+	<mafs0bjmkp0gb.fsf@kernel.org>
+Date: Mon, 06 Oct 2025 18:38:45 +0200
+Message-ID: <mafs0347woui2.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12-1 3/3] iio: ABI: Add voltage mean raw attribute
-To: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: Kim Seer Paller <kimseer.paller@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
- Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
- Ceclan Dumitru <dumitru.ceclan@analog.com>,
- Jonathan Santos <Jonathan.Santos@analog.com>,
- Dragos Bogdan <dragos.bogdan@analog.com>
-References: <6106ee185045ade8e1938f87f9588733d6358844.1759123847.git.marilene.agarcia@gmail.com>
- <c9c3b7e67703313913a7fd411cb0cc152a288c82.1759123847.git.marilene.agarcia@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <c9c3b7e67703313913a7fd411cb0cc152a288c82.1759123847.git.marilene.agarcia@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 9/29/25 12:59 AM, Marilene Andrade Garcia wrote:
-> Add the missing in_voltageY_mean_raw attribute for the average of voltage
-> measurements.
-> 
-> Signed-off-by: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
-> ---
-> 
-> When I use _mean_raw (IIO_CHAN_INFO_AVERAGE_RAW), I get a file called 
-> in_voltageY_mean_raw, so I added it to the documentation. 
-> Thanks.
-> 
->  Documentation/ABI/testing/sysfs-bus-iio | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-> index 352ab7b8476c..3efaf91248ca 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-iio
-> +++ b/Documentation/ABI/testing/sysfs-bus-iio
-> @@ -422,6 +422,7 @@ Description:
->  		Scaled humidity measurement in milli percent.
->  
->  What:		/sys/bus/iio/devices/iio:deviceX/in_Y_mean_raw
-> +What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_mean_raw
->  KernelVersion:	3.5
->  Contact:	linux-iio@vger.kernel.org
->  Description:
+Hi,
 
-I did a search of the IIO subsystem for IIO_CHAN_INFO_AVERAGE_RAW and saw
-that it is also being used for temperature channels (both indexed and not)
-and indexed current and capacitance channels and also one indexed light
-channel.
+On Mon, Oct 06 2025, Pratyush Yadav wrote:
 
-So we could either delete the line with in_Y_mean_raw and add all of the
-ones that are actually being used or we could leave it as-is since I think
-in_Y_mean_raw is meant to be in_<any type>Y_mean_raw. This is the only
-attribute in the docs like that though, so making it more explicit like
-everything else seems like an improvement to me.
+> Hi Pasha,
+>
+> On Mon, Sep 29 2025, Pasha Tatashin wrote:
+>
+>> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+>>
+>> The KHO framework uses a notifier chain as the mechanism for clients to
+>> participate in the finalization process. While this works for a single,
+>> central state machine, it is too restrictive for kernel-internal
+>> components like pstore/reserve_mem or IMA. These components need a
+>> simpler, direct way to register their state for preservation (e.g.,
+>> during their initcall) without being part of a complex,
+>> shutdown-time notifier sequence. The notifier model forces all
+>> participants into a single finalization flow and makes direct
+>> preservation from an arbitrary context difficult.
+>> This patch refactors the client participation model by removing the
+>> notifier chain and introducing a direct API for managing FDT subtrees.
+>>
+>> The core kho_finalize() and kho_abort() state machine remains, but
+>> clients now register their data with KHO beforehand.
+>>
+>> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+>> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+>
+> This patch breaks build of test_kho.c (under CONFIG_TEST_KEXEC_HANDOVER):
+>
+> 	lib/test_kho.c:49:14: error: =E2=80=98KEXEC_KHO_ABORT=E2=80=99 undeclare=
+d (first use in this function)
+> 	   49 |         case KEXEC_KHO_ABORT:
+> 	      |              ^~~~~~~~~~~~~~~
+> 	[...]
+> 	lib/test_kho.c:51:14: error: =E2=80=98KEXEC_KHO_FINALIZE=E2=80=99 undecl=
+ared (first use in this function)
+> 	   51 |         case KEXEC_KHO_FINALIZE:
+> 	      |              ^~~~~~~~~~~~~~~~~~
+> 	[...]
+>
+> I think you need to update it as well to drop notifier usage.
 
-If we do change it, the change stands on it's own, so you can just start
-a new series for it rather than calling it v13-1. Just include a link to
-the previous discussion after the --- so we don't forget about it. And you
-can drop some of the folks from the Cc:, like the DT maintainers that don't
-need to be bothered with this.
+Here's the fix. Build passes now and the test succeeds under my qemu
+test setup.
 
+--- 8< ---
+From a8e6b5dfef38bfbcd41f3dd08598cb79a0701d7e Mon Sep 17 00:00:00 2001
+From: Pratyush Yadav <pratyush@kernel.org>
+Date: Mon, 6 Oct 2025 18:35:20 +0200
+Subject: [PATCH] fixup! kho: drop notifiers
+
+Update KHO test to drop the notifiers as well.
+
+Signed-off-by: Pratyush Yadav <pratyush@kernel.org>
+---
+ lib/test_kho.c | 32 +++-----------------------------
+ 1 file changed, 3 insertions(+), 29 deletions(-)
+
+diff --git a/lib/test_kho.c b/lib/test_kho.c
+index fe8504e3407b5..e9462a1e4b93b 100644
+--- a/lib/test_kho.c
++++ b/lib/test_kho.c
+@@ -38,33 +38,6 @@ struct kho_test_state {
+=20
+ static struct kho_test_state kho_test_state;
+=20
+-static int kho_test_notifier(struct notifier_block *self, unsigned long cm=
+d,
+-			     void *v)
+-{
+-	struct kho_test_state *state =3D &kho_test_state;
+-	struct kho_serialization *ser =3D v;
+-	int err =3D 0;
+-
+-	switch (cmd) {
+-	case KEXEC_KHO_ABORT:
+-		return NOTIFY_DONE;
+-	case KEXEC_KHO_FINALIZE:
+-		/* Handled below */
+-		break;
+-	default:
+-		return NOTIFY_BAD;
+-	}
+-
+-	err |=3D kho_preserve_folio(state->fdt);
+-	err |=3D kho_add_subtree(ser, KHO_TEST_FDT, folio_address(state->fdt));
+-
+-	return err ? NOTIFY_BAD : NOTIFY_DONE;
+-}
+-
+-static struct notifier_block kho_test_nb =3D {
+-	.notifier_call =3D kho_test_notifier,
+-};
+-
+ static int kho_test_save_data(struct kho_test_state *state, void *fdt)
+ {
+ 	phys_addr_t *folios_info;
+@@ -111,6 +84,7 @@ static int kho_test_prepare_fdt(struct kho_test_state *s=
+tate)
+=20
+ 	fdt =3D folio_address(state->fdt);
+=20
++	err |=3D kho_preserve_folio(state->fdt);
+ 	err |=3D fdt_create(fdt, fdt_size);
+ 	err |=3D fdt_finish_reservemap(fdt);
+=20
+@@ -194,7 +168,7 @@ static int kho_test_save(void)
+ 	if (err)
+ 		goto err_free_folios;
+=20
+-	err =3D register_kho_notifier(&kho_test_nb);
++	err =3D kho_add_subtree(KHO_TEST_FDT, folio_address(state->fdt));
+ 	if (err)
+ 		goto err_free_fdt;
+=20
+@@ -309,7 +283,7 @@ static void kho_test_cleanup(void)
+=20
+ static void __exit kho_test_exit(void)
+ {
+-	unregister_kho_notifier(&kho_test_nb);
++	kho_remove_subtree(folio_address(kho_test_state.fdt));
+ 	kho_test_cleanup();
+ }
+ module_exit(kho_test_exit);
+--=20
+Regards,
+Pratyush Yadav
 
