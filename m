@@ -1,79 +1,47 @@
-Return-Path: <linux-kernel+bounces-843062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E85ABBE55C
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:28:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFEA6BBE56B
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 49D364EE5A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:28:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FB8E3BF9DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:28:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E232D5941;
-	Mon,  6 Oct 2025 14:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032FF2D543A;
+	Mon,  6 Oct 2025 14:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="HQ+UF+gs"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZNhxYd4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8113244661
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 14:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE1A2D63FC;
+	Mon,  6 Oct 2025 14:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759760881; cv=none; b=kfCbIh78Bto3mrWVsBj86JTATDDX/Jr7rYOgmpJ0HLvdrBTaLQC/w/Fb+vYyyclKfvmZxzBgT62yP2nmSQFnqeA5cunGD0BOBKKRphvZMOX76cPwStOpYURuzoKcYe9L8G11vTGYWL9RlpGjI0VAkZV8n7baSIb4q0e/tbbj0Qo=
+	t=1759760890; cv=none; b=G5upnsF16iXUUxYdg3u0ZhfSU/OArleXe+cFXep0MNkBhwru/0GPEaRZ3P3TNVsu5/iqSk90mYB0aJgRlcVohWGhUVdP4XLpJJlHwoJb0wrzVuJYTNj8IqOvXPPzKy0ouDPuwLGacBmNnczJZAlnz9s2IYzf0opcsiC7HNND9SY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759760881; c=relaxed/simple;
-	bh=EHxWT32YymNsXpB9p3S6BjTZeoLPvi+pHdnXIyHTHFw=;
+	s=arc-20240116; t=1759760890; c=relaxed/simple;
+	bh=AqjhS0rTqq9czGDKq2WER6Po+UyLPhQ7dduvDwUQX88=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eZrlBFxLyLR4QM0XtbRS4EOIcPuB8PAszzHq2rSE+EIbLLsLcFc6qI4p51IsTTDiNRtbukt97LYoB6wNZ6Vu92f8GBtAiczdaUqVeRxNJrq6f1UerWiLRpLV70So22IoS1qbaPI1dxojcAMYIIYmLlIwaRzPnGKIUQ5mSByhZno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=HQ+UF+gs; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-91f6ccdbfc8so275581739f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 07:27:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1759760878; x=1760365678; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Qej3wWBL+FUIrH9L2ourIRG5geQ59K2a1PUZ1/C7pZs=;
-        b=HQ+UF+gs8ssJgQSNT2G7uL6VhAJhZv+vgtUW0DyO7jyEoez9NS7t6U/W/CGIOs1aC9
-         6MnfJJl62si5Czg4LDW/Mf6P/RpvW6dHCMnnxdZXhnfOdP+0SvHdkJoT+sCgWghUtUbE
-         WsdJj8EKYRmLEDC5fdbfFXYwufUXR+OB1KZhPA2HraaOt/cDl55v5oa+cFwdu8zqAAwP
-         V0PTiuYismL5lmiYz703Tmyui4Fj0UYapwDAIQYVHoK/IQUgQn8Xhcp+v5HZ2SJlIBfu
-         /fv9V6Mhk4rotU/gKz8u4zLxmfOJz6AI6R5+NjVfm3mT02o/ts8UVHWpgE8tZ526YRxa
-         Ns3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759760878; x=1760365678;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qej3wWBL+FUIrH9L2ourIRG5geQ59K2a1PUZ1/C7pZs=;
-        b=biurrj/C9F9YswD2im/jxzUDC9vQEu/naPaVhJsOri3Ts+xBdM5JZXbPn2M5DWSuJg
-         SieEGiFcvPkcs/QbdyqUwJohtMk4cJq5XW0OMkYP7+XKikXjU8OvhSLoeO9pwtF8nKcX
-         HGe0g04LVL2IP/q4XJYsUewMShjce2MDxdCF+5MG/sCdhUeaoTu2iYGVXJ78QrSfeokG
-         NPSEjoH0rI/nTN7m6Xs1iEu2UwRxu1slFs5Wi96Ewj7rDHD2SSvWQdBprZuNeaVoDfW1
-         9CVHHCJJBsHqc4LZIhHuiI7d1EAy0utuG6F+z8J4rQ7fU95r1qkU7whqv/uOYHKgCt9d
-         hRSw==
-X-Forwarded-Encrypted: i=1; AJvYcCXpECYQmhX/z9qtfTeVJhTWhf/vP0CnatgNkvjAtbXzzN0nQRYJ6ufjzxZQ7UHcx2bSoC2KnvAfEf9ApDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjM826aX/maVy9+819liWLA3lhRUcqX1i9T7EXViw88pV4bbRB
-	ySagPt+3R7RlPLW/cm2x7/J0apmWY+Dxdonpf+7rMPC8qgdRDKpC786c+/OwnHXGOq0=
-X-Gm-Gg: ASbGnctOJ5B0Ue2pc/fDO7y3C8XD3O401QpYvr3CRclelfU1ftmctVk1FwmH6pxEqjo
-	+SpbRBDHeQLGABAZPu9CimZz9LbJ9pDEFgVtWzBfUqYL1x+c7DICGjppP/Y3ExP1RINt8IJG4MS
-	q0qmCBL/Bs9JVsV1oBqIHjbL+mcbA2foCv4KAWaXZ1LKmJjbwkK/cumwAZ0tzYx/1gmtpbCHJID
-	OQjMql95TyvETaDISoaS8O8BKprayaUqRDyQogqE9Gb3l5hgDseVE1QCSRW6PstmRWqsEw3gquR
-	+R1BCn/SYiGr+atJFh9K129X++oa9WwvfouXaBfLcZR9x9OnWsT7ohQPJV3r74afLDCb6XPFTbt
-	oLNcQoT+R9Z6QOa99Qb446IcuPG9jopP/ATlThyAqlD4I
-X-Google-Smtp-Source: AGHT+IEWreHZclFRliJ16PSZcdV1rDGjySecvtqwp6tYvpa+GiYIMV7QH0kygTLh9fY3CyZCr8D8zQ==
-X-Received: by 2002:a05:6602:14d3:b0:90a:ce21:ae1e with SMTP id ca18e2360f4ac-93b9696026fmr1773971039f.5.1759760877800;
-        Mon, 06 Oct 2025 07:27:57 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-93a87cad2cesm480918539f.14.2025.10.06.07.27.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Oct 2025 07:27:56 -0700 (PDT)
-Message-ID: <d23fa119-c1df-4861-99e2-c35c1214baa1@kernel.dk>
-Date: Mon, 6 Oct 2025 08:27:55 -0600
+	 In-Reply-To:Content-Type; b=gcpq8UO1ZWCfWOj+Tvnc5L9G77j9DYYAHD8vOVtwyJQJniXp1hoeSo+3ZVVjk1OUQY8yM6UYRRDrlNF+fJHQWGS6D8YQo1PHgLTwnH8QEa4bkb7VFHeCtkOPNPJZH3NvuGAgk2o1OeyE2sO1Kd0zgYWMgg54WOtBesWca0lkhEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CZNhxYd4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5FC4C4CEF9;
+	Mon,  6 Oct 2025 14:28:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759760889;
+	bh=AqjhS0rTqq9czGDKq2WER6Po+UyLPhQ7dduvDwUQX88=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CZNhxYd444LnmYjCf0lqNL50mlXxQOdS/sENPE4V4/bSVkOi437q7sGA+r4dI/kK2
+	 4m1m300h7ltTpHsmnapuI71rC81qnUzaazyaXkiqsNv7zSsutEctvK5hSIuGrnb0YT
+	 4SlIX6s3eXXSNXjlzVJZFj2ybETq9rVUFUzwyvZENbNPUd0/iFV34/5uuj/mRfpG2m
+	 JLh0UY/83sHpYD5f9CLnKeCZE4zy+K6JbePEGz9+99dSX/UcyCGEsz4HIDu94s5j3W
+	 mnI0Wd92/V5zS4azA/f89gG86TtxE7UWN/bgxo/NUkTiEa/1bCcnUZVmx0gwc3g5Uw
+	 TocHQzT3kkTdA==
+Message-ID: <39852018-619b-4d40-a0dd-9d8737561228@kernel.org>
+Date: Mon, 6 Oct 2025 23:28:02 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,107 +49,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] Revert "sunvdc: Do not spin in an infinite loop when
- vio_ldc_send() returns EAGAIN"
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Andreas Larsson <andreas@gaisler.com>,
- Anthony Yznaga <anthony.yznaga@oracle.com>, Sam James <sam@gentoo.org>,
- "David S . Miller" <davem@davemloft.net>,
- Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>,
- sparclinux@vger.kernel.org
-References: <20251006100226.4246-2-glaubitz@physik.fu-berlin.de>
- <d78a1704-31dc-4eaa-8189-e3aba51d3fe2@kernel.dk>
- <4e45e3182c4718cafad1166e9ef8dcca1c301651.camel@physik.fu-berlin.de>
- <a80a1c5f-da21-4437-b956-a9f659c355a4@kernel.dk>
- <e6a7e68ff9e23aee448003ee1a279a4ab13192c0.camel@physik.fu-berlin.de>
- <cef07e8f-a919-4aa1-9904-84b16dfa8fe6@kernel.dk>
- <5b3caa0e218dd473c8871c1b1f09a8dc1c356f1e.camel@physik.fu-berlin.de>
- <ecb74c6c-8de6-4774-8159-2ec118437c57@kernel.dk>
- <6ed7112cb4f338ba02d9ab67c14e7a3af4afbca0.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH 16/24] arm64: boot: dts: glymur-crd: Add Volume down/up
+ keys support
+To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
+ <20250925-v3_glymur_introduction-v1-16-24b601bbecc0@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <6ed7112cb4f338ba02d9ab67c14e7a3af4afbca0.camel@physik.fu-berlin.de>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250925-v3_glymur_introduction-v1-16-24b601bbecc0@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/6/25 8:12 AM, John Paul Adrian Glaubitz wrote:
-> On Mon, 2025-10-06 at 08:03 -0600, Jens Axboe wrote:
->>> To be fair, the sunvdc driver is fairly old and I'm not sure whether these
->>> tools already existed back then. FWIW, Oracle engineers did actually work
->>> on the Linux for SPARC code for a while and it might be possible that their
->>> UEK kernel tree [1] contains some improvements in this regard.
->>
->> Requeueing and retry has always been available on the block side. It's
->> not an uncommon thing for a driver to need, in case of resource
->> starvation. And sometimes those resources can be unrelated to the IO, eg
->> iommu shortages. Or this busy condition.
+On 25/09/2025 15:32, Pankaj Patil wrote:
+> From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
 > 
-> I see. Makes sense.
+> Add Volume Down/Up keys for Glymur CRD.
 > 
->> But that's fine, it's not uncommon for drivers to miss things like that,
->> and then we fix them up when noticed. It was probably written by someone
->> not super familiar with the IO stack.
-> 
-> FWIW, Oracle engineers actually made some significant changes to the
-> driver that they never upstreamed, see:
-> 
-> https://github.com/oracle/linux-uek/commits/uek4/qu7/drivers/block/sunvdc.c
-> 
-> In particular, they added support for out-of-order execution:
-> 
-> https://github.com/oracle/linux-uek/commit/68f7c9c17fb80d29cbc1e5110f6c021f8da8d610
-> 
-> and they also changed the driver to use the BIO-based interface for
-> VDC I/O requests:
-> 
-> https://github.com/oracle/linux-uek/commit/4b725eb64cc10a4877f2af75ff3a776586f68eb7
-> 
-> Could you review these two changes and tell me whether these would
-> actually implement the changes you would want to see? I think the BIO
-> layer is a generic interface of the block layer in the kernel, isn't
-> it?
+> Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
 
-Moving lower down the stack to use a bio directly is not a good idea,
-it's in fact going the opposite direction of what we'd like to see in
-the storage stack. And it would then mean you'd need to implement your
-own internal requeueing and retrying.
+You cannot even get subjects right in this big patchset, because of this
+weird split of patches.
 
-These are the kind of changes that happen when development is done and
-changes aren't submitted upstream. It's unfortunate drift...
+Squash it.
 
->>>>> For now, I would propose to pick up my patch to revert the previous
->>>>> change. I can then pick up your proposed change and deploy it for
->>>>> extensive testing and see if it has any side effects.
->>>>
->>>> Why not just test this one and see if it works? As far as I can tell,
->>>> it's been 6.5 years since this change went in, I can't imagine there's a
->>>> huge sense of urgency to fix it up that can't wait for testing a more
->>>> proper patch rather than a work-around?
->>>
->>> Well, the thing is that a lot of people have been running older kernels
->>> on SPARC because of issues like these and I have started working on trying
->>> to track down all of these issues now [2] for users to be able to run a
->>> current kernel. So, the 6.5 years existence of this change shouldn't
->>> be an argument I think.
->>
->> While I agree that the bug is unfortunate, it's also a chance to
->> properly fix it rather than just go back to busy looping. How difficult
->> is it to test an iteration of the patch? It'd be annoying to queue a
->> bandaid only to have to revert that again for a real fix. If this was a
->> regression from the last release or two then that'd be a different
->> story, but the fact that this has persisted for 6.5 years and is only
->> bubbling back up to mainstream now would seem to indicate that we should
->> spend a bit of extra time to just get it right the first time.
-> 
-> We could do that for sure. But I would like to hear your opinion on
-> the changes contributed by Oracle engineers first. Maybe their
-> improvements are much better so that it might make sense to try to
-> upstream them.
-
-Won't help this case, and it's actively going the wrong direction
-imho...
-
--- 
-Jens Axboe
+Best regards,
+Krzysztof
 
