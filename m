@@ -1,47 +1,46 @@
-Return-Path: <linux-kernel+bounces-843059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73F2EBBE54A
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:27:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6E1DBBE550
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 16:27:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34F363B3C81
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:27:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A5CA1896EDF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 14:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE99D2D593B;
-	Mon,  6 Oct 2025 14:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236742D5921;
+	Mon,  6 Oct 2025 14:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jAFdmwGZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250E0244661;
-	Mon,  6 Oct 2025 14:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="FJIyrLP0"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B2D6ADD;
+	Mon,  6 Oct 2025 14:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759760832; cv=none; b=pqQxPd3yM++tv5R78DHVwMrVlf5/UnEaU3uzqHVLCm/5cxKFmKF2B95CnPL4dH+rOnjLnFtKoPA1gOOTgmCwGy7uN5w3McVrP1sMbx4U62seS+H5kU9Ri+WzRhTDQ5N6psuFxkm8cwhX60FO34hJ9b3yM7+Fs5vs7FWT7G7O95I=
+	t=1759760838; cv=none; b=ff/L9VdcS1sn8eYrZVCUTOG/yV4K4sevAKxnD1dUnvbjPWqwa/02m9IILEFClhzSJZHRFStotzTVCI2pVJ1yz83Tyj+txE1iy3ShaAl7RAeXK0C3KqOZaKARM/MD5CBVS9ewTIF/aw7bdxcaCtbwB7bBqGlDip+/2ve0uzcDdoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759760832; c=relaxed/simple;
-	bh=dSfwon9cD/VbYFbOD4/v+BFAFpxXV2Kj3WJiBDYlxL4=;
+	s=arc-20240116; t=1759760838; c=relaxed/simple;
+	bh=kCtH3vMewNuSBSsH4NokNQDU9pUiJEtjUtOUpV4rizQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L4mcsWY2ax75EeTIuzy5MjfizWvtVSTI8XMJNJ/cMpsn8HzYkjb/e+cxBFSJZadBddVb7I7LTxwLQ5yimY1hrlGV7KlCZGssOR3bT4C/RD2eqIrnVyBkXQuBLxJDp1zlf7wlYbQxDhJABySoyoffe3sduXH7f/OSzSeR56oUyLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jAFdmwGZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F877C4CEF5;
-	Mon,  6 Oct 2025 14:27:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759760832;
-	bh=dSfwon9cD/VbYFbOD4/v+BFAFpxXV2Kj3WJiBDYlxL4=;
+	 In-Reply-To:Content-Type; b=JNZFe1GAy9D9nkRD4AHdw8xTVfDBdN727GbGKdr21oihe2tFoIGNiGyjahOp9c8vDZ/tY/V22FxFArzGcGnUqUfMQ5RFCxHX0Jy1cOJ8oefS0AGcgEiwAReREKMM3HUhzoM6J+tUnXFcR5k+JuoA5jI2aCP70pts3Pw5hFYmyBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=FJIyrLP0; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.79.224.63] (unknown [4.194.122.170])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 935B3201C966;
+	Mon,  6 Oct 2025 07:27:10 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 935B3201C966
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1759760835;
+	bh=oZvNqVt/UnW4mUa+6djNmV+pqFnh7Du6W3gyJM8T90I=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jAFdmwGZzXyTqKIEMiSfYZc/8JWPQcvd9Q4nNmHu6KXK3C6uHjpXAzY2VZs0Ks6qW
-	 yt5zrbpYfLR3ixoiq19hLissMfaKNKNn+ucqEpRJryzOXGfPP4/R3dP0IioRme80jR
-	 sNljLLE7fhEH8XDk8DgPbdlI169GqVYaEvjtUZMbkz2FjgazzStkrbFJJu72j17PEi
-	 AC2oPdsQOh+WNYFT9kP46dbIXpRzOf00L5obVxKpJquXX9Uj5+AtzXKLwQUFC4YtIB
-	 7cI7sUcRdglWIWlgmhYpd/cmdJRJ0zi6LdxumwW2lF+/YbU3uMeKwcivbPXG79T+uK
-	 cNC2MYu/zlPFA==
-Message-ID: <d1946f54-b052-4185-9f1f-ba46f264423c@kernel.org>
-Date: Mon, 6 Oct 2025 23:27:05 +0900
+	b=FJIyrLP0tYLiRaYJoaKiJ2nbI5q+GJvF8eCb/uB8hU/FIvqv/78NmJdPsOPC7ooSn
+	 lCuPHDkSutVDmFVN8AAkbyDA5koviiJBiycGvVIrXZz9WBJ+ppirQ9yVgEckVeEEeY
+	 qaP3Yj75CnRzhIY6YXvEBzlEYfZHuoZjqex0knUY=
+Message-ID: <9a816666-9d5b-46a4-b35f-2f18c4587ab5@linux.microsoft.com>
+Date: Mon, 6 Oct 2025 19:57:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,94 +48,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/24] arm64: dts: qcom: glymur: Add SPMI PMIC arbiter
- device
-To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
- <20250925-v3_glymur_introduction-v1-10-24b601bbecc0@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] x86/hyperv: Export hv_hypercall_pg unconditionally
+To: Paolo Bonzini <pbonzini@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Sean Christopherson <seanjc@google.com>,
+ Roman Kisel <romank@linux.microsoft.com>,
+ "K . Y . Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H . Peter Anvin" <hpa@zytor.com>, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, mhklinux@outlook.com
+References: <20250825055208.238729-1-namjain@linux.microsoft.com>
+ <20250825094247.GU3245006@noisy.programming.kicks-ass.net>
+ <f154d997-f7a6-4379-b7e8-ac4ba990425c@linux.microsoft.com>
+ <20250826120752.GW4067720@noisy.programming.kicks-ass.net>
+ <efc06827-e938-42b5-bb45-705b880d11d9@linux.microsoft.com>
+ <27e50bb7-7f0e-48fb-bdbc-6c6d606e7113@redhat.com>
+ <aMl5ulY1K7cKcMfo@google.com>
+ <56521d85-1da5-4d25-b100-7dbe62e34d1d@linux.microsoft.com>
+ <20250918064713.GW3419281@noisy.programming.kicks-ass.net>
+ <9f8007a3-f810-4b60-8942-e721cd6a32c4@linux.microsoft.com>
+ <20251006111030.GU3245006@noisy.programming.kicks-ass.net>
+ <CABgObfZFgHY_ybfSnyzEF1dFr5c1s=_r+tAnHa6Q7rzFUUdt3g@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250925-v3_glymur_introduction-v1-10-24b601bbecc0@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <CABgObfZFgHY_ybfSnyzEF1dFr5c1s=_r+tAnHa6Q7rzFUUdt3g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 25/09/2025 15:32, Pankaj Patil wrote:
-> From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+
+
+On 10/6/2025 4:49 PM, Paolo Bonzini wrote:
+> On Mon, Oct 6, 2025 at 1:10 PM Peter Zijlstra <peterz@infradead.org> wrote:
+>>
+>> On Mon, Oct 06, 2025 at 04:20:03PM +0530, Naman Jain wrote:
+>>
+>>> I am facing issues in this approach, after moving the assembly code to a
+>>> separate file, using static calls, and making it noinstr.
+>>>
+>>> We need to make a call to STATIC_CALL_TRAMP_STR(hv_hypercall_pg + offset) in
+>>> the assembly code. This offset is populated at run time in the driver, so I
+>>> have to pass this offset to the assembly function via function parameters or
+>>> a shared variable. This leaves noinstr section and results in below warning:
+>>>
+>>> [1]: vmlinux.o: warning: objtool: __mshv_vtl_return_call+0x4f: call to
+>>> mshv_vtl_call_addr() leaves .noinstr.text section
+>>>
+>>>
+>>> To fix this, one of the ways was to avoid making indirect calls. So I used
+>>> EXPORT_STATIC_CALL to export the static call *trampoline and key* for the
+>>> static call we created in C driver. Then I figured, we could simply call
+>>> __SCT__<static_callname> in assembly code and it should work fine. But then
+>>> it leads to this error in objtool.
+>>
+>> Easiest solution is to create a second static_call and have
+>> hv_set_hypercall_pg() set that to +offset.
 > 
-> Add spmi-pmic-arb device for the SPMI PMIC arbiter found on
-> Glymur. It has three subnodes corresponding to the SPMI0,
-> SPMI1 & SPMI2 bus controllers.
+> Yes, my idea was to add +offset directly in the static_call_update, as
+> you sketched below. Sorry if that wasn't too clear. I didn't think of
+> using a static call also for the base of the page, since that's not
+> what the assembly code needs.
 > 
-> Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/glymur.dtsi | 62 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 62 insertions(+)
+> And I think we agree that you absolutely don't want indirect calls, as
+> that makes register usage much simpler. This way static calls end up
+> killing multiple birds with a stone.
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/glymur.dtsi b/arch/arm64/boot/dts/qcom/glymur.dtsi
-> index 2632ef381687c2392f8fad0294901e33887ac4d3..e6e001485747785fd29c606773cba7793bbd2a5c 100644
-> --- a/arch/arm64/boot/dts/qcom/glymur.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/glymur.dtsi
-> @@ -2600,6 +2600,68 @@ sram@c30f000 {
->  			reg = <0x0 0x0c30f000 0x0 0x400>;
->  		};
->  
-> +		pmic_arbiter: arbiter@c400000 {
 
-Two nods per patch? One more patch clearly wrongly split. This must be
-squashed.
+Actually I was implementing it in the same way by introducing a new 
+static call using hypercall_pg+offset. The problem was using it in asm 
+file. When I tried introducing a wrapper static call earlier, I did not 
+use ASM_CALL_CONSTRAINT, so objtool was asking me to save/restore 
+registers again. Since this was not possible, I thought it may not work.
 
-NAK
+With something similar to how its done in 
+arch/x86/include/asm/preempt.h, I was able to make it work, and remove 
+dependency on IBT config.
 
+Thanks a lot Peter and Paolo for helping on this.
 
-Best regards,
-Krzysztof
+Regards,
+Naman
+
+>> Also, what's actually in that hypercall page that is so magical and
+>> can't just be an ALTERNATIVE() ?
+> 
+> Do you mean an alternative for VMCALL vs. VMMCALL? If so, that's just
+> not guaranteed to work: "An attempt to invoke a hypercall by any other
+> means (for example, copying the code from the hypercall code page to
+> an alternate location and executing it from there) might result in an
+> undefined operation (#UD) exception" (or it might not).
+> 
+> Paolo
+> 
+
 
