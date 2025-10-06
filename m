@@ -1,130 +1,345 @@
-Return-Path: <linux-kernel+bounces-842934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34D0CBBE011
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 14:18:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 269C6BBE00E
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 14:17:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 00BA94EBC36
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 12:18:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3E4B14EC0CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 12:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DADD327CCF0;
-	Mon,  6 Oct 2025 12:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D522F26F2AA;
+	Mon,  6 Oct 2025 12:17:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YwqLiBN6"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="j8w2nfgu"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39326ADD
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 12:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759753121; cv=none; b=OqgxsFHhNgLIFO6H2YZ/KPr4dtku9UubgVz/CWVinbEY0O7b9uYonhqrnTwth2RH6RgZ76Tgl8ZcNrMICuTXxF2ei2Sjf3stDD0Ms5PL+5UzNpfm70ECvgNIdCbQRRcx/SIiKDcqzsudTfM5tb8aLGs4xyeK+GtN0FTPljrYaGo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759753121; c=relaxed/simple;
-	bh=KsehnIz3zhaIRQ7nBGds+hNWCCyU0OXicbw+mHAQcbw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JqHWNW6s/Um9/Qm+4oxC0LgS9+8xrJ5sUcWM2QZ7EKukqciu4fv79fXRlqVMBHlY5bUaVJ0iivXzX6i1skKfyUULchMlH7yZUpB/yzMpKHmfCyxFK00xM3cOR4UmtVRSzm3SsIxGiHHDnn0cacLVvWv7goKAfh2pBpbEV2TIFu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YwqLiBN6; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so4393032b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 05:18:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759753119; x=1760357919; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4JqL1nlgUvZ4Y+a9ncnNqpy2LNfdBYiZdaCXYGPWAqA=;
-        b=YwqLiBN6ytNx+5bQGnE5Nxxdv36MdKJW1leg1FMAvUPXNpaj7BEE30HRbnjlu4sYNz
-         GYgftPs/IjCBMDjed926XImxMfXOW+Ww34g16AWpZRI9qaqI18rwoW8h9AtA92AsiqjD
-         0SSnGugla40s685YKOcjocirCh3n52wd0CE1ypyCjVyANgRVJuRPzIe+MfN1WuKMMsWf
-         MysXzZRERq5NRMtACLJQ4KZqG7LWdrzWoV/lbSu/UswOukwkDODmUmVjwJh7BTbnFvMv
-         5i6SHRUP3dycqeMHn6iPWRT33wad7GAqoF7lIbv81jRJO2HjaFfN1txZq4CnB3c5u5oh
-         Vd7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759753119; x=1760357919;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4JqL1nlgUvZ4Y+a9ncnNqpy2LNfdBYiZdaCXYGPWAqA=;
-        b=HomD5VF3wGOz5+3kifrw7ZxKYug7lK6botaxj27YpkT5Pn5AvdSAjXCGWyE1yHuUv3
-         Ufj1m5TAVQRVzN3+V+iC6R63eTw3EFCtIImh/Eg13Y4LdWGkTeSiYGH1Z9gkQ6VqfmBa
-         8TNutH5g01xcXag65jnSSyBk0aeZSzWR2OaB05rR5l72zRwtjy1YrLOkBxUkzmpNqPR8
-         gomwzdtsfdV07TD7x9W2IMBZE2p4R0NPzswt1itoiiOWls8HM31zCs65hOUuc4N2VCHE
-         wLJTqo4tjWLBKPFqOV/znhDcGGJDc3N8efvJtp+IsF7WKv7/0U7fXK/IEwTJ4ClKXpjU
-         ciHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkVzjOWXCdhDD82C9UqXSv4idPWf779NTxFNU6iE69Q71WG0JMs6RqrOkcgWch20wnJsBdNVu74HLIB8Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJe12p3oWb5xUE+hwFSkXuyxXQ+4h1VUxfHYa082hTL1nO6EoT
-	IcS0dGkitOSz0u/QvMnVrYr7Dr3MrU3vRFb/tLnLrvz2gxWaKc1jpeJGDMuA2Q==
-X-Gm-Gg: ASbGncsYNI7dEizBgM7JG4eUFHdlemHZhUYY2yQx4ep+mEm20+5Yv31M69sFqlNfuVH
-	qbnaBA2ml1ae7o8O/NU+0jmk8b87XtI0DVBfKenOTGEcnE8kiCFk5ExyHgzpltUchez/qn8hOuC
-	ilBdwCzQTzNqt+Pg0MWfQK4+v2KTAqdxqG5+NnaWaWRt6mJqbzGPTgi7d0gCgjPWZRwiyv2KIb6
-	CNS1/azk+mwkG+zEMVKDvOu8KGcENSXCtu8JVqyG4HA5ypbmml33KDpGg28EdX9q7GfK77alb6u
-	5gKGzatBsGt9YSQL6xF/4K0Fwe1camIBS9JEZokByFV4UQdDvIIxCFd4z7va8lmMbz876BxOnRq
-	ZFyD/ABc49+O07GAvKW1GlhELT+bVWr37jrrI8EXTp0Gh9GjuO3UZ/zxpRQCC2oXOU6TWVcgJEW
-	JVpzzonu6GB8j/r2c=
-X-Google-Smtp-Source: AGHT+IEJlwikdDfuEqvB89md8pAfVXWDudGqoNcbE2zkbJKF7mMx2bYqTgGXO9agoUxrYeU07eF8fg==
-X-Received: by 2002:a05:6a00:2349:b0:781:52f:f13c with SMTP id d2e1a72fcca58-78c98dd92a4mr13864940b3a.25.1759753119149;
-        Mon, 06 Oct 2025 05:18:39 -0700 (PDT)
-Received: from localhost.localdomain ([2804:14d:4c64:81ec:fa6f:67e6:9404:f1b2])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b0206e809sm12540612b3a.71.2025.10.06.05.18.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 05:18:38 -0700 (PDT)
-From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: ~lkcamp/patches@lists.sr.ht,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8723bs: Remove commented ifdef CONFIG_WAPI_SUPPORT
-Date: Mon,  6 Oct 2025 09:15:41 -0300
-Message-ID: <20251006121825.8114-1-rodrigo.gobbi.7@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE096ADD;
+	Mon,  6 Oct 2025 12:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759753033; cv=pass; b=K1ESzBUM4fKmbpdRWroerS3TvixXHDHmdvvfeiaHR1Hm0iR3QQ45Gbs72P1xvZL32L8EjauXT3xi4H3qvunZiJd65GlH3kiKtOe2UeUzrqIdDEHqJNdsjQF3Bdqx2nxrKNsCJikbUSVqvC+/toa2nsbHkrbuVP8StcC5q2oh93A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759753033; c=relaxed/simple;
+	bh=2Zx+tXBSarxz3GdgnZjdxsuO/Mjn1dCc7LWfB1OweWQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m1J20h1ja/uMiw0mWUTJx9JV4MdJH1eXYqHRzvtHitIcPNZnVz8ApYHqYYZ4OlCe4iySYJSNmRlBSlun6yyxb9R4+NYYxeAjCmv6n5lehvy/mBjivtP7rt5OiuKaZSagjwHOziR0VriUAg6Tn8AVZZvltxDTyu5w3Sg6R8Oaur0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=j8w2nfgu; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1759752989; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=a6x7zuYkIf6pcWAp1t84saCIQagHj6w7SvYm40DB6O4vOCK8JkwoMBEhoa5dujrzLm8m9U7Z+fLMobrYy8+U4eG/X7kY+FfbYf5e5Q7n1PsUVwjlI1FHk3rj+78KYhqr6YJC1GUxrHqqwAZM4/qerIjywq1daQMIPEjGFWYm3eI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1759752989; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=xzolk6m0qZ/E++3QNlLoa9z0TzMad5MeklLKYrPsI5A=; 
+	b=he0euUpyZen3eJWtsT6mHoJlusD8TdcJDKTPrBRGnbQdJ5qJ61T0itmskwDXiRwD8xqJCQAoSizonffxlL6zA4uHF4xvS4gVZ81KyD34sBaCJ/5ZJ6Bi/ZyaOe3Vw8aBtQfPvTE4eU60Q4MudWKJ63qzAs9MHuIUdhJgCZsMgo0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759752989;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=xzolk6m0qZ/E++3QNlLoa9z0TzMad5MeklLKYrPsI5A=;
+	b=j8w2nfguUCjVtBHEGUD2kliwcNRekCVM/F3ivqwnqFGqeZ3cddCU2c5z1A8A6pIk
+	cFr4jPgQssRHCSaVxvRBr0J7RhL0Kav70tcQmvwt/ZHo0urjfuoShO2+G6U9j7qqhaf
+	aylj+KCZYezaEQMCzrp73IHudQHmOVnpp4eVDbmw=
+Received: by mx.zohomail.com with SMTPS id 1759752987761633.2600925458459;
+	Mon, 6 Oct 2025 05:16:27 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Chia-I Wu <olvaffe@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>,
+ Jassi Brar <jassisinghbrar@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-hardening@vger.kernel.org,
+ linux-pm@vger.kernel.org
+Subject: Re: [PATCH v6 7/7] pmdomain: mediatek: Add support for MFlexGraphics
+Date: Mon, 06 Oct 2025 14:16:16 +0200
+Message-ID: <4457422.ejJDZkT8p0@workhorse>
+In-Reply-To: <94866bc6-0fdb-4e6c-ba78-5ebd7138f193@collabora.com>
+References:
+ <20251003-mt8196-gpufreq-v6-0-76498ad61d9e@collabora.com>
+ <8586490.T7Z3S40VBb@workhorse>
+ <94866bc6-0fdb-4e6c-ba78-5ebd7138f193@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Remove ifdef CONFIG_WAPI_SUPPORT comment from rtw_ieee80211 since there
-is no way to enable or use it. Also, there is no documentation about the
-purpose of that config.
+On Monday, 6 October 2025 13:37:28 Central European Summer Time AngeloGioac=
+chino Del Regno wrote:
+> Il 06/10/25 12:58, Nicolas Frattaroli ha scritto:
+> > On Friday, 3 October 2025 23:41:16 Central European Summer Time Chia-I =
+Wu wrote:
+> >> On Fri, Oct 3, 2025 at 1:16=E2=80=AFPM Nicolas Frattaroli
+> >> <nicolas.frattaroli@collabora.com> wrote:
+> >>>
+> >>> Various MediaTek SoCs use GPU integration silicon named "MFlexGraphic=
+s"
+> >>> by MediaTek. On the MT8196 and MT6991 SoCs, interacting with this
+> >>> integration silicon is required to power on the GPU.
+> >>>
+> >>> This glue silicon is in the form of an embedded microcontroller runni=
+ng
+> >>> special-purpose firmware, which autonomously adjusts clocks and
+> >>> regulators.
+> >>>
+> >>> Implement a driver, modelled as a pmdomain driver with a
+> >>> set_performance_state operation, to support these SoCs.
+> >> I like this model a lot. Thanks!
+> >>
+> >> panthor might potentially need to interact with this driver beyond
+> >> what pmdomain provides. I am thinking about querying
+> >> GF_REG_SHADER_PRESENT. Not sure if we've heard back from the vendor.
+> >=20
+> > We did. The vendor confirmed this value is read by the EB firmware
+> > from an efuse, but considers the efuse address to be confidential.
+> > Consequently, we are not allowed to know the efuse address, or any
+> > of the other information required to read the efuse ourselves
+> > directly, such as what clocks and power domains it depends on.
+> >=20
+> > We therefore likely need to pass GF_REG_SHADER_PRESENT onward, but
+> > I do have an idea for that: struct generic_pm_domain has a member
+> > "cpumask_var_t cpus", which is there to communicate a mask of which
+> > CPUs are attached to a power domain if the power domain has the flag
+> > GENPD_FLAG_CPU_DOMAIN set. If the flag isn't set, the member is
+> > unused.
+>=20
+> cpumask_var_t is not going to be the right type for anything else that is
+> not a cpumask, as that is limited by NR_CPUS.
 
-Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
----
-I guess this stands for "Wireless Authentication and Privacy Infrastructure",
-but that config is not used anywhere inside rtl8723bs driver. It was first added
-at 2017 [1] in the same way, so there is no harm to remove it.
-Tks and regards.
+Hmmm, good point, I thought that would be done by the allocation
+but nope.
+=20
+> You'd have to declare a new bitmap, suitable for generic devices, which m=
+ay
+> get a little complicated on deciding how many bits would be enough... and
+> if we look at GPUs... AMD and nV have lots of cores, so that becomes a bit
+> unfeasible to put in a bitmap.
+>=20
+> Not sure then how generic that would be.
 
-[1] https://github.com/torvalds/linux/commit/554c0a3abf216c991c5ebddcdb2c08689ecd290b#diff-2f54b83e0bd9062cc10a53a0a6ac9193744cfb4cad1bca851127012003a6a816
----
- drivers/staging/rtl8723bs/core/rtw_ieee80211.c | 2 --
- 1 file changed, 2 deletions(-)
+Yeah, at this point I'm rapidly approaching "shove stuff into pmdomain
+for no obvious pmdomain reason" territory, because we're not really
+communicating that this pmdomain is only tied to these cores, but
+rather that only these cores are present. Subtle difference that
+could come bite us in the rear once some other chip has several power
+domains that tie to different GPU shader cores.
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
-index 53d4c113b19c..027b2dd0a4b9 100644
---- a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
-@@ -560,7 +560,6 @@ int rtw_parse_wpa2_ie(u8 *rsn_ie, int rsn_ie_len, int *group_cipher, int *pairwi
- 	return ret;
- }
- 
--/* ifdef CONFIG_WAPI_SUPPORT */
- int rtw_get_wapi_ie(u8 *in_ie, uint in_len, u8 *wapi_ie, u16 *wapi_len)
- {
- 	int len = 0;
-@@ -600,7 +599,6 @@ int rtw_get_wapi_ie(u8 *in_ie, uint in_len, u8 *wapi_ie, u16 *wapi_len)
- 
- 	return len;
- }
--/* endif */
- 
- void rtw_get_sec_ie(u8 *in_ie, uint in_len, u8 *rsn_ie, u16 *rsn_len, u8 *wpa_ie, u16 *wpa_len)
- {
--- 
-2.48.1
+>=20
+> >=20
+> > This means we could overload its meaning, e.g. with a new flag, to
+> > communicate such masks for other purposes, since it's already the
+> > right type and all. This would be quite a generic way for hardware
+> > other than cpus to communicate such core masks. I was planning to
+> > develop and send out an RFC series for this, to gauge how much Ulf
+> > Hansson hates that approach.
+> >=20
+> > A different solution could be that mtk-mfg-pmdomain could act as an
+> > nvmem provider, and then we integrate generic "shader_present is
+> > stored in nvmem" support in panthor, and adjust the DT binding for
+> > this.
+> >=20
+> > This approach would again be generic across vendors from panthor's
+> > perspective. It would, however, leak into DT the fact that we have
+> > to implement this in the gpufreq device, rather than having the
+> > efuse read directly.
+> >=20
+> >> Have you considered moving this to drivers/soc/mediatek such that we
+> >> can provide include/linux/mtk-mfg.h to panthor?
+> >=20
+> > Having panthor read data structures from mtk-mfg-pmdomain would be a
+> > last resort for me if none of the other approaches work out, as I'm
+> > not super keen on adding vendor-specific code paths to panthor
+> > itself. A new generic code path in panthor that is only used by one
+> > vendor for now is different in that it has the potential to be used
+> > by a different vendor's integration logic in the future as well.
+> >=20
+> > So for now I'd like to keep it out of public includes and panthor as
+> > much as possible, unless the two other approaches don't work out for
+> > us.
+> >=20
+>=20
+> I don't really like seeing more and more vendor specific APIs: MediaTek d=
+oes
+> suffer quite a lot from that, with cmdq being one of the examples - and t=
+he
+> fact that it's not just MediaTek having those, but also others like Qualc=
+omm,
+> Rockchip, etc, is not an excuse to keep adding new ones when there are ot=
+her
+> alternatives.
+>=20
+> Also another fact there is that I don't think that panthor should get any
+> vendor specific "things" added (I mean, that should be avoided as much as
+> possible).
+
+The big issue to me is that vendors will always prefer to shoehorn
+more vendor specific hacks into panthor, because the alternative is
+to tell us how the hardware actually works. Which they all hate
+doing. I definitely agree that we should work from the assumption
+that panthor can support a Mali implementation without adding too
+much special code for it, because in 10 years there will still be
+new devices that use panthor as a driver, but few people will still
+be testing MT8196 codepaths within panthor, which makes refactoring
+prone to subtle breakage.
+
+Not to mention that we don't want to rewrite all the vendor specific
+code for Tyr.
+
+> That said - what you will be trying to pass is really a value that is read
+> from eFuse, with the EB firmware being a wrapper over that: if we want, we
+> could see that yet-another-way of interfacing ourselves with reading nvmem
+> where, instead of a direct MMIO read, we're asking a firmware to give us a
+> readout.
+>=20
+> This leads me to think that one of the possible options could be to actua=
+lly
+> register (perhaps as a new platform device, because I'm not sure that it =
+could
+> be feasible to register a pmdomain driver as a nvmem provider, but ultima=
+tely
+> that is Ulf and Srinivas' call I guess) a nvmem driver that makes an IPI =
+call
+> to GPUEB and gives back the value to panthor through generic bindings.
+
+Lee Jones will probably tell me to use MFD instead and that I'm silly
+for not using MFD, so we might as well. Should I do that for v7 or
+should v7 be less disruptive? Also, would I fillet out the clock
+provider stuff into an MFD cell as well, or is that too much?
+
+Also, nb: there is no IPI call for getting the SHADER_PRESENT value
+that we know of. It's a location in the reserved shared memory
+populated by the EB during the shared mem init, which ideally isn't
+done multiple times by multiple drivers because that's dumb.
+
+On the other hand, I don't really know what we get out of splitting
+this up into several drivers, other than a more pleasing directory
+structure and get_maintainers picking up the right subsystem people.
+
+> >>>
+> >>> The driver also exposes the actual achieved clock rate, as read back
+> >>> from the MCU, as common clock framework clocks, by acting as a clock
+> >>> provider as well.
+> >>>
+> >>> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> >>> ---
+> >>>   drivers/pmdomain/mediatek/Kconfig            |   16 +
+> >>>   drivers/pmdomain/mediatek/Makefile           |    1 +
+> >>>   drivers/pmdomain/mediatek/mtk-mfg-pmdomain.c | 1027 +++++++++++++++=
++++++++++++
+> >>>   3 files changed, 1044 insertions(+)
+> >> [...]
+> >>> +static int mtk_mfg_init_shared_mem(struct mtk_mfg *mfg)
+> >>> +{
+> >>> +       struct device *dev =3D &mfg->pdev->dev;
+> >>> +       struct mtk_mfg_ipi_msg msg =3D {};
+> >>> +       int ret;
+> >>> +
+> >>> +       dev_dbg(dev, "clearing GPUEB shared memory, 0x%X bytes\n", mf=
+g->shared_mem_size);
+> >>> +       memset_io(mfg->shared_mem, 0, mfg->shared_mem_size);
+> >>> +
+> >>> +       msg.cmd =3D CMD_INIT_SHARED_MEM;
+> >>> +       msg.u.shared_mem.base =3D mfg->shared_mem_phys;
+> >>> +       msg.u.shared_mem.size =3D mfg->shared_mem_size;
+> >>> +
+> >>> +       ret =3D mtk_mfg_send_ipi(mfg, &msg);
+> >>> +       if (ret)
+> >>> +               return ret;
+> >>> +
+> >>> +       if (readl(mfg->shared_mem) !=3D GPUEB_MEM_MAGIC) {
+> >> Add the offset GF_REG_MAGIC, even though it is 0.
+> >=20
+> > Good catch, will do!
+> >=20
+> >>
+> >>> +               dev_err(dev, "EB did not initialise shared memory cor=
+rectly\n");
+> >>> +               return -EIO;
+> >>> +       }
+> >>> +
+> >>> +       return 0;
+> >>> +}
+> >> [...]
+> >>> +static int mtk_mfg_mt8196_init(struct mtk_mfg *mfg)
+> >>> +{
+> >>> +       void __iomem *e2_base;
+> >>> +
+> >>> +       e2_base =3D devm_platform_ioremap_resource_byname(mfg->pdev, =
+"hw-revision");
+> >>> +       if (IS_ERR(e2_base))
+> >>> +               return dev_err_probe(&mfg->pdev->dev, PTR_ERR(e2_base=
+),
+> >>> +                                    "Couldn't get hw-revision regist=
+er\n");
+> >>> +
+> >>> +       if (readl(e2_base) =3D=3D MFG_MT8196_E2_ID)
+> >>> +               mfg->ghpm_en_reg =3D RPC_DUMMY_REG_2;
+> >>> +       else
+> >>> +               mfg->ghpm_en_reg =3D RPC_GHPM_CFG0_CON;
+> >>> +
+> >>> +       return 0;
+> >>> +};
+> >> Extraneous semicolon.
+> >=20
+> > Good catch, will fix!
+> >=20
+> >>
+> >>> +static int mtk_mfg_init_mbox(struct mtk_mfg *mfg)
+> >>> +{
+> >>> +       struct device *dev =3D &mfg->pdev->dev;
+> >>> +       struct mtk_mfg_mbox *gf;
+> >>> +       struct mtk_mfg_mbox *slp;
+> >>> +
+> >>> +       gf =3D devm_kzalloc(dev, sizeof(*gf), GFP_KERNEL);
+> >>> +       if (!gf)
+> >>> +               return -ENOMEM;
+> >>> +
+> >>> +       gf->rx_data =3D devm_kzalloc(dev, GPUEB_MBOX_MAX_RX_SIZE, GFP=
+_KERNEL);
+> >> It looks like gfx->rx_data can simply be "struct mtk_mfg_ipi_msg rx_da=
+ta;".
+> >=20
+> > Hmmm, good point. I'll change it to that.
+> >=20
+>=20
+> Honestly, I prefer the current version. No strong opinions though.
+
+And I just realised you're sorta right in that; struct mtk_mfg_mbox is
+a type used by both the gpufreq mbox and the sleep mbox. The struct
+mtk_mfg_ipi_msg type is only the right type to use for the gpufreq
+mbox. By making rx_data a `struct mtk_mfg_ipi_msg` type, we're
+allocating it for both channels, and in the case of the sleep mailbox,
+it's the wrong type to boot (though not like sleep replies).
+
+So yeah I think I'll keep the current construct. If this driver grows
+another limb in the future that talks to yet another mailbox channel,
+we'll appreciate not having to untangle that.
+
+> [...]
+
+Kind regards,
+Nicolas Frattaroli
+
 
 
