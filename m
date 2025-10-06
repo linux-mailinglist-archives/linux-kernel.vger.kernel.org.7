@@ -1,201 +1,202 @@
-Return-Path: <linux-kernel+bounces-842519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A2E8BBCE9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 02:59:05 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9B71BBCEA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 03:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0FE034E49E0
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 00:59:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 94B884E5328
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 01:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E86199E94;
-	Mon,  6 Oct 2025 00:59:01 +0000 (UTC)
-Received: from LO2P265CU024.outbound.protection.outlook.com (mail-uksouthazon11021073.outbound.protection.outlook.com [52.101.95.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739B01A23B1;
+	Mon,  6 Oct 2025 01:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AmxuEYH8"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2590181BB8
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 00:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.95.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759712340; cv=fail; b=WyC4Ud2lgvUlHjAoS/ayPbBHZtgd86xRjYW8VosIlySmZ+Xswo0zxf1i97TDcDJRqrxYPxsrOiNduTPeeMVjIpjm/o5B+ftBjvmvmjp9vNzwmjqSHh1tJn77JcVzbSOOG0L4ZhbMiyLpMwsO1V/bFreae2bWNvX/mzJK3sc8slY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759712340; c=relaxed/simple;
-	bh=letTB1RN3mg+syy5Wc9Gx78ZnoMfZ68ieDjnzXahQlc=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=cMFyCsh+bzqyaVKMiT/7VgGPUyIa7QYrij2jku6GTyL0DlS0yTtaAU5jdSVLgXKyNiBcWbLBDJJ3c1+16BmFLRNWiRbMwpV0QhUVOxJa3gBHYthfOZYpmNG7k6hqrkU24RWo7/7ZR45tft7kzYd8ayt6dxgvjPCkKhcQEbuBb2c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com; spf=pass smtp.mailfrom=atomlin.com; arc=fail smtp.client-ip=52.101.95.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atomlin.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SV/5a6tlYfNdu51V/8fUY0Vt1BnxDQAFXDZdfpebcVFTVn8rrdJvysffEVKh9hPwbnTvgPmezLUe40UqH2L7o9QeupK1Sr26jjP0nFlQMS4kus5P2oMyuFvJaxwzG8+Ukk35DoQRwF+gc9tMjmlC8iq29yJ0ipFCChBJ62pYEFdkcH2EPWTYOC2IuAG2EwuboZU126QHp0TvmMDkGHtZeZqOOdXftRROdITp1qcpGPFe7QU3XojaMoZVzuiSKrbVvDWtkQI17BM+xKgMzlBji9Fc3zSy6EpqD5n3rf4C/5UJHC3PlddzuuSINhKaRB1+QKrNapkBLuaAVANAOLuovQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pLri74rinURHcJdQNudfqTy6UMW5DhmrkzVjt7Ysnws=;
- b=PIaMZBTjy+waQ3rIU7KBnr2QdVyqLKkGExmbU4ST6plBy/L+pOTDC6Mu72Vg5VMbpVLZDn9gzf7Hnz00R8Lx3qUKgm/k995IwztLLRSHQbu74uSSVfZ1HSF8c3t3T0QHe0oO91OgZawFEMQmkH6n8xRmzOqd3dzUPttQ0YhtlrjPXnXy6QQdW7/IktheUtjlMKNk2/ILW/hphGZw5T3qWUpcSQdAmsxMhh/cId75NMfAImpDjTJSfW12jcSoZ9ceKTLf8yloHA/A+xnW/QIkGtF5deEm0zP5oKPJTYSYhTbowje1OZAoMmM2l2kaOhYOqFRy9o8+kBwJ3ZRLxNZqEQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=atomlin.com; dmarc=pass action=none header.from=atomlin.com;
- dkim=pass header.d=atomlin.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=atomlin.com;
-Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:70::10)
- by LOAP123MB8392.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:438::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Mon, 6 Oct
- 2025 00:58:56 +0000
-Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- ([fe80::de8e:2e4f:6c6:f3bf]) by CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- ([fe80::de8e:2e4f:6c6:f3bf%5]) with mapi id 15.20.9182.017; Mon, 6 Oct 2025
- 00:58:56 +0000
-From: Aaron Tomlin <atomlin@atomlin.com>
-To: gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	dakr@kernel.org
-Cc: riel@surriel.com,
-	frederic@kernel.org,
-	atomlin@atomlin.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] tick/nohz: Expose housekeeping CPUs in sysfs
-Date: Sun,  5 Oct 2025 20:58:53 -0400
-Message-ID: <20251006005853.76335-1-atomlin@atomlin.com>
-X-Mailer: git-send-email 2.49.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BN8PR07CA0024.namprd07.prod.outlook.com
- (2603:10b6:408:ac::37) To CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:400:70::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073BE34BA37
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 01:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759712878; cv=none; b=rOqBDWRPp1BzsmewrSh6X6OgbOdw0n2IpmrWzFvlmcFP2ilVaPCI4R5gcQ6wYHP+op6zus9Wp65mQDIKMbFrlybyH7aXtQ5WvH21s/u/LcEEzXKSDB7MdIACjr0cv/9WJ7q5HHMWPQtQ8l6r6Bpto/lkaLCxHAxI/0RK5QXsPnk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759712878; c=relaxed/simple;
+	bh=QMiD1qwbeA5/neIsw+5PU2x945Tw5HB6WOm7BzeC7kI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oDv7e0RQQZyUpvtCWo/eBzk2K5aSMxZsAkJ85/cMNIrUFcZ6Nwqpet9o9Eprp9tII+jjy01Mz3/PmPXSqSrgHR0oqppEaZMtfpXdWkYbgubBH9dMuYSI8nW4oRtJoVgFs5xZzDQ+ceZZ0RvxnPvI/Q0uNT6zLUzbp3f0DvNqliM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AmxuEYH8; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3ee12807d97so3503339f8f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Oct 2025 18:07:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759712875; x=1760317675; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IKzui3wcQLHh7+MPWXRL+dASlXd9vfw32BfptGnQh+s=;
+        b=AmxuEYH8mtHhg764PBpSQ6HTVYmxjCBjoDzeHHxyPCF/XwnSBC/T7a4vsQ7Wndx35S
+         jyGVbluWr+YANaP1uS7kIdZyt+POHJpPTSR1gFd4f0sjNmqvgB479+7OZN3JyM6quXKt
+         H+5MFsahk6v2bNn/VxomK56TXTptMjBuRaSV3ZHpnpaw+/cRDJZhntC5FToyixX8wWhb
+         rSaE2NDHZr+/QvfQQj49ocUPSz1wSGsa6OTt7OeseCY5gdabU1AqAZcsqvw2p4Y1VjoY
+         r+MGcK0VWlydR8t7bF4Ulvi8pMPi8Nz4OeLbgACNmjxhuhhngT5TYPdPUQYwShV9IuJn
+         HoZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759712875; x=1760317675;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IKzui3wcQLHh7+MPWXRL+dASlXd9vfw32BfptGnQh+s=;
+        b=BUvTB7EVKLfn3N6fr6FijUyw4xYecH0ljYZLZXaM70cdDZT73nvt1Y/S5wIolpOtzl
+         l/+d2SJyo5WAGLgTXoDm9Xzc301hGZ50CksLWOXNbs/dLmcy1hcVthiu6nR9g9LOmN21
+         L/arhEpL4J8btBEiB0OOX7Q+Y1u4jxzfHlDnMisiJ1dVYj3Pc8aagKsgL0tqJscnBzd2
+         Sz3nnfr/KTb/50hCDP2mYOEX3HPz+Fz45e/NQ20iKJQW4j4ZbnnY4ukDBXv0aZI85x3a
+         kMV/dNiGeMZCbMQgJGcPKsVALVagOVgd/+kYmeejxY33p0FVSIXMY+OfMEJRMbL1FTNb
+         0FQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUquDwTDr/B+3Rx8d0gSzJzzQVS6D8lp0sssMcHUjpv7pT3qxYej8XqCCKxr+Abrfax2rwtW5BKgWdkDN8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzssOc5fl4v9QYp7JZLIy4bQobBhUb2JirZg6yOCJE1AJWx5IKh
+	Nx5vClyfvudxis+ByzHue6fQZum6IqL2YcDZ9zFWdO8wfsqqxGf063ZO
+X-Gm-Gg: ASbGncuYhuAX2T7iGTDGN4BiAawF7f4FkUXCg9COZZBQ35yWhVN1j17YPy25+IGfGaB
+	uFLd2b7GM675K/dcNJfzBjj0cw/cD0XEqSS3vkVYXgm6pJpz7mdW3JPHxGlMkHCsSVM3CqDrAIG
+	H/hVsphUppUnKfk0KTZk3zPfmDIuWWAQj3IIRtr/6epPHgujL8UP351B//+29bF/GhIEn3MpnPu
+	MlEZiDXCnjlUWabhhKlGw0R6dOvr9uPiWv6WWcN6bKoz6NWE7wMxzVxW0q6mcKACqoRpERxuFXq
+	XSJPkh/6GiWcCJhJuVHUOTVgAEsHBcu4sw0JyWjp6LZAzmmpvET3b9QsswkJSttMXgHfmwV9jVn
+	nE5btb0QuebPxmiGsvn3x+wFYX/0hJQIzoBzMjJq7lTp9rAQRxPxNLSu8lMHI0vE/aA==
+X-Google-Smtp-Source: AGHT+IG9KD2f/UKT2SVki942fc8VnC20C+WwkAXyuAMC1VIwXeBQI2mAMa3Bkd+fKKSoiTmjZxXPSw==
+X-Received: by 2002:a05:6000:4210:b0:407:7a7:1ca0 with SMTP id ffacd0b85a97d-425671463eemr7336334f8f.14.1759712875118;
+        Sun, 05 Oct 2025 18:07:55 -0700 (PDT)
+Received: from snakeroot ([109.175.243.94])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8e97fbsm18185933f8f.34.2025.10.05.18.07.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 Oct 2025 18:07:54 -0700 (PDT)
+From: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>
+To: Jiri Kosina <jikos@kernel.org>,
+	linux-input@vger.kernel.org
+Cc: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Bastien Nocera <hadess@hadess.net>,
+	=?UTF-8?q?Filipe=20La=C3=ADns?= <lains@riseup.net>
+Subject: [PATCH] HID: logitech-hidpp: Add HIDPP_QUIRK_RESET_HI_RES_SCROLL
+Date: Mon,  6 Oct 2025 02:05:49 +0100
+Message-ID: <20251006010726.189197-2-stuart.a.hayhurst@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CWLP123MB3523:EE_|LOAP123MB8392:EE_
-X-MS-Office365-Filtering-Correlation-Id: 35953a83-bc41-4c79-83b1-08de047386cf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?yfa5yHE8Xm2eXoAReZ9ao8oA/cTS8a3rjX4uCUC0ky1tdsbD32OZhYwJ0vmV?=
- =?us-ascii?Q?tNFVbJ40Z4iRzB4jaRZ69BepOlhWsB2FLC21J/YtILe47xWpRqZY4kDWZJ+V?=
- =?us-ascii?Q?juS6YirgN3PhVgB2vJQQlmerdDozhWlZEq6AxezZYpD5VJKxLVFJP+qO48U5?=
- =?us-ascii?Q?tBI7K/Nx5fUq0gV4wPXOkQXOXtYLixKZDRJyXrK3ygMW4lwx/JLv/sFZQTPc?=
- =?us-ascii?Q?XXRfHd99cPPwr+FXPvEkO7gqp6LpaZw1nL+VFI+Pn5CczZnEc4dnPgS1SryY?=
- =?us-ascii?Q?SmeQS0827s/gou8xi5rEllTrx1efX3/JxZy1iUjwizLbqoCUG9dJrkV6FoNN?=
- =?us-ascii?Q?6xKWJWeZ70c+QYOWAOhLrsyLoeIGGzCNagblWx1ALgtacoJuMWh/ySTe2NY0?=
- =?us-ascii?Q?tLZVBrXmuDZQIeg6UxmJF7Dyw6w2W5HVgKHjh0UVjPjNGjnCQ8zy6SZUtnxb?=
- =?us-ascii?Q?NCwPIUwkiMOGapEhStNb5Q0DMXZ3NWt/GPsqogBDahHPT+iX1RyXduSZpzYQ?=
- =?us-ascii?Q?w3Gk7pD0IzY0ReF8+nvZ5HJwHpakR2gKhrmxSRiagW/BOaJiJRNN8Ps20oC2?=
- =?us-ascii?Q?OV7mz18jwRdse0FPoZNa5sj3YDAlg6WEptieygRLpEHEIP2ZkNAGXyKIaGNs?=
- =?us-ascii?Q?I5kQAsPl6dNwK7akl2z/OAtmErYkOqWrr0G4yGiTchKSSOOX4df/GAJrIcCG?=
- =?us-ascii?Q?4s31t2BZkEy0YxgRM239qjnRQi5oI57Mu6zUpbUcSzJ/FX9MDsrNlZ7BazUA?=
- =?us-ascii?Q?DOLr21LK7IICdIfDq/xrrfmeAh0m48V9g8wA/UbgKbGMTXu/9RDK/QP72O+s?=
- =?us-ascii?Q?OaPG0Ur964U7GFgyxzfrwqwk9FM4t2s93+iPBj40AVwA0gyYxGYvKbY+70Xe?=
- =?us-ascii?Q?NnDDJNEO09AV0SIoXrcp0474ElCPm5Tk+HnhVTP29tjlrJUlYbTR3gv48y6k?=
- =?us-ascii?Q?9b9dShfjokBvS55cL+8VrhmsUy6O+ZH27kfUntQmH1shFYeYi30alpmL4HX2?=
- =?us-ascii?Q?AX3MvrTnR/NTXNgfQ4+mNBdz9RVOvEaZgZP9bwLxej7acG7tNLhBqWRjRDaT?=
- =?us-ascii?Q?s2Yft2uROjUjhmcrW6TMbfAGlIJl6371IHwaZzfFph2btXjWaIGaI4s3t1CY?=
- =?us-ascii?Q?J71PaVIUJDdw29xtLST/zZNmIx6306ZquHPVdaSyonUlJ6fapGG4UU63fT2x?=
- =?us-ascii?Q?8t3czaJN67MKnSUVMGYCX0r7UWFqZWl7sBYnZcpTxTnli0Ff+bSvEmSQByfB?=
- =?us-ascii?Q?ZcfePCYzc+IE/QbQtga303B5g7M4PRc+ubGg3/x0uP/l6nLxxYQdwBVe83wx?=
- =?us-ascii?Q?ntfVNbeZ3Rd0UpjTg8d3XL++RSJpdjsUhVY136ecl59xDe2AWTmtjVmXuT+q?=
- =?us-ascii?Q?i9voU2bPCya/i6Y7Y1xHmYMIX89mHvDzCu7ocETXR90jjNK761xut/CmQDDZ?=
- =?us-ascii?Q?5h83EhrVO8MuR++u0R3oVPXhpgBvn0LQ?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?v7JsdR2sGXzE4+3QJAP5NwY13SLIDxX474sxwi+oeE9aYPMRp7Clh3f36zRt?=
- =?us-ascii?Q?j76RAmXKkqi7KTiND8c7KUHK1fo/DSVBGCVCNdnq4MryBSP7a+urLv7KMgkT?=
- =?us-ascii?Q?Lp3NeN3dRGqcvudw7FVxnXfV+tvRKT0b7f9+LvQlWRJHvnFQoNTWeyQwpcL1?=
- =?us-ascii?Q?Z0QOXa5B6BfLOFrWKBBVAKCDHV5sQEQlismmOB3IV12ap9FWx5gNBbpdocZi?=
- =?us-ascii?Q?4P1fIfnRjxKuM0uYDciFYkiSYU4N1DRcu8DDZW4F2JVoOW5TFN8yHvgXmsNG?=
- =?us-ascii?Q?SH4QwOd63EEXzL8ZNnzNMcvk5PTFum8NRqLXHcJLrxsyMejvlEjNEw/EwIrQ?=
- =?us-ascii?Q?yg5f75fKKp/tDpOCvCCmrtXEvtT4A+X7E+t1aSB+WoyRtI9Oly84CJeks9Rr?=
- =?us-ascii?Q?RCDX+GKDLQTxRWPGVz+j+iwGMtwCyLCLSBlflqiUg+46AUxhIiTTHjXXflNj?=
- =?us-ascii?Q?voKi0gL/uheSL2WZSW5+RyANpVC+JWEhruH8F8Lb5fnJOPuSkIr3ar+D7v8O?=
- =?us-ascii?Q?UlI/XxkEFyrAjPMSY/KlnqtIq5hNfIwphfw6uwG9rw0CZn0srcxAoAG+BO8g?=
- =?us-ascii?Q?0eM9IrBtTNI7YAqTNQ+jDfDt51+YsMbYcwFuqa3avyZq7G4AsNEdksB5HzVx?=
- =?us-ascii?Q?A6dXHsZ2iCDZK3UY3PG1WyeM9iYSknyPjleJoniDTNgXu6W6tBLcnYO0YVlT?=
- =?us-ascii?Q?z6s1XybDJXhiMeJpUaQve1NIsnAgrKG+PyGss+IqEtvq5oDpVkWm5Vv5NVRB?=
- =?us-ascii?Q?W6tXrJuGTPl6xBKn0FPwPhCa7g39T3heiAiVczFnp7mW2oS6rtVPpXviYIIg?=
- =?us-ascii?Q?6brMZqA2dtOlgne3EkXrD4sY5vo+dMp6lFo33vrU4avejtpIChxtZSb6eRER?=
- =?us-ascii?Q?KV4F+ckLTosInngoGtNvbjsKiODAaYHNAX19PwXHhu4X3SFLb0tCPM7KEmXm?=
- =?us-ascii?Q?rAXIAiHXNOz3+yAIkm+gDtxG5BMo0B53ejtwBHJydJMCr26MNaqu0tjfBSy4?=
- =?us-ascii?Q?qavpUYlXcCWa2LhcAtZHV/Bsrpol7Sz9PExORpwPR7g4RtSC4Y2ffc3wthKo?=
- =?us-ascii?Q?7H2X1sjFgHK6O0LT8o9kEXkFiW/BINLRDb4olxGkxghJ8EGkcRiqV/SnWF5T?=
- =?us-ascii?Q?DmdV6xfjTn5tHHjw6ZIgISmI0SdCQ6uq+MINMBmdeK8pgFpgu7d7xKhb7D2w?=
- =?us-ascii?Q?Om3ipcnGZt7k14l7ppEtgqduqAQ5/vH7whjafjfyeVDQhTsUHkKr8xuUesP1?=
- =?us-ascii?Q?9dUgMHXCnmqrFP0CU74HUvAOZQ/SrCEcI4DYUxk8jOaHuDaFu/pE09/KbSEO?=
- =?us-ascii?Q?zYqM+dtZoWHv/g60LGO8C30YR4EvC/cKqaLjQnHFnJ/hMg5ixYEGyzXbQAJd?=
- =?us-ascii?Q?x2NAcUGhNe8vXadEzVeU0j290HKbw/lqjvWfoQASLf7pK+aILoc0hACvFIvc?=
- =?us-ascii?Q?R99QDsHviA0gIS0I9i4U0t84UlAKUWd2IPc00JzdA0TN6e+NGzPEO46y4inc?=
- =?us-ascii?Q?42psere/eE6fr20AGR2QkCPbAyBwjjczoDSTH8rLLAFv+WwlgpOW16qnRx8b?=
- =?us-ascii?Q?ErCf3Z5rRI1Lx4HupwegsFcIS30FAyb2X6y/bW9h?=
-X-OriginatorOrg: atomlin.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 35953a83-bc41-4c79-83b1-08de047386cf
-X-MS-Exchange-CrossTenant-AuthSource: CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2025 00:58:56.4143
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: e6a32402-7d7b-4830-9a2b-76945bbbcb57
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VAgBRkyT8ELFEkpN0IkX0B7cKqAbkK4MZrtlA0QLJLQi/yACR/PJlBf2z0Y9CNzhoPRlRJxtn5oPbfKs8eWNkA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LOAP123MB8392
+Content-Transfer-Encoding: 8bit
 
-Expose the current system-defined list of housekeeping CPUs in a new
-sysfs file: /sys/devices/system/cpu/housekeeping.
+The Logitech G502 Hero Wireless's high resolution scrolling resets after
+being unplugged without notifying the driver, causing extremely slow
+scrolling.
 
-This provides userspace performance tuning tools and resource managers
-with a canonical, reliable method to accurately identify the cores
-responsible for essential kernel maintenance workloads (RCU, timer
-callbacks, and unbound workqueues). Currently, tooling must manually
-calculate the housekeeping set by parsing complex kernel boot parameters
-(like isolcpus= and nohz_full=) and system topology, which is prone to
-error. This dedicated file simplifies the configuration of low-latency
-workloads.
+The only indication of this is a battery update packet, so add a quirk to
+detect when the device is unplugged and re-enable the scrolling.
 
-Signed-off-by: Aaron Tomlin <atomlin@atomlin.com>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=218037
+Signed-off-by: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>
 ---
- drivers/base/cpu.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
-index f694b4b24d6c..c6511658f6cd 100644
---- a/drivers/base/cpu.c
-+++ b/drivers/base/cpu.c
-@@ -300,6 +300,19 @@ static ssize_t print_cpus_isolated(struct device *dev,
- }
- static DEVICE_ATTR(isolated, 0444, print_cpus_isolated, NULL);
+I assume this affects more than just my mouse, but I don't have the hardware
+to find out which other mice need this too.
+
+---
+ drivers/hid/hid-logitech-hidpp.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
+index aaef405a717e..5e763de4b94f 100644
+--- a/drivers/hid/hid-logitech-hidpp.c
++++ b/drivers/hid/hid-logitech-hidpp.c
+@@ -75,6 +75,7 @@ MODULE_PARM_DESC(disable_tap_to_click,
+ #define HIDPP_QUIRK_HIDPP_CONSUMER_VENDOR_KEYS	BIT(27)
+ #define HIDPP_QUIRK_HI_RES_SCROLL_1P0		BIT(28)
+ #define HIDPP_QUIRK_WIRELESS_STATUS		BIT(29)
++#define HIDPP_QUIRK_RESET_HI_RES_SCROLL		BIT(30)
  
-+static ssize_t print_cpus_hk(struct device *dev,
-+			     struct device_attribute *attr, char *buf)
+ /* These are just aliases for now */
+ #define HIDPP_QUIRK_KBD_SCROLL_WHEEL HIDPP_QUIRK_HIDPP_WHEELS
+@@ -193,6 +194,7 @@ struct hidpp_device {
+ 	void *private_data;
+ 
+ 	struct work_struct work;
++	struct work_struct reset_hi_res_work;
+ 	struct kfifo delayed_work_fifo;
+ 	struct input_dev *delayed_input;
+ 
+@@ -3836,6 +3838,7 @@ static int hidpp_raw_hidpp_event(struct hidpp_device *hidpp, u8 *data,
+ 	struct hidpp_report *answer = hidpp->send_receive_buf;
+ 	struct hidpp_report *report = (struct hidpp_report *)data;
+ 	int ret;
++	int last_online;
+ 
+ 	/*
+ 	 * If the mutex is locked then we have a pending answer from a
+@@ -3877,6 +3880,7 @@ static int hidpp_raw_hidpp_event(struct hidpp_device *hidpp, u8 *data,
+ 			"See: https://gitlab.freedesktop.org/jwrdegoede/logitech-27mhz-keyboard-encryption-setup/\n");
+ 	}
+ 
++	last_online = hidpp->battery.online;
+ 	if (hidpp->capabilities & HIDPP_CAPABILITY_HIDPP20_BATTERY) {
+ 		ret = hidpp20_battery_event_1000(hidpp, data, size);
+ 		if (ret != 0)
+@@ -3901,6 +3905,11 @@ static int hidpp_raw_hidpp_event(struct hidpp_device *hidpp, u8 *data,
+ 			return ret;
+ 	}
+ 
++	if (hidpp->quirks & HIDPP_QUIRK_RESET_HI_RES_SCROLL) {
++		if (last_online == 0 && hidpp->battery.online == 1)
++			schedule_work(&hidpp->reset_hi_res_work);
++	}
++
+ 	if (hidpp->quirks & HIDPP_QUIRK_HIDPP_WHEELS) {
+ 		ret = hidpp10_wheel_raw_event(hidpp, data, size);
+ 		if (ret != 0)
+@@ -4274,6 +4283,13 @@ static void hidpp_connect_event(struct work_struct *work)
+ 	hidpp->delayed_input = input;
+ }
+ 
++static void hidpp_reset_hi_res_handler(struct work_struct *work)
 +{
-+	const struct cpumask *hk_mask;
++	struct hidpp_device *hidpp = container_of(work, struct hidpp_device, reset_hi_res_work);
 +
-+	hk_mask = housekeeping_cpumask(HK_TYPE_KERNEL_NOISE);
-+
-+	return housekeeping_enabled(HK_TYPE_KERNEL_NOISE) ?
-+		sysfs_emit(buf, "%*pbl\n", cpumask_pr_args(hk_mask)) :
-+		sysfs_emit(buf, "\n");
++	hi_res_scroll_enable(hidpp);
 +}
-+static DEVICE_ATTR(housekeeping, 0444, print_cpus_hk, NULL);
 +
- #ifdef CONFIG_NO_HZ_FULL
- static ssize_t print_cpus_nohz_full(struct device *dev,
- 				    struct device_attribute *attr, char *buf)
-@@ -507,6 +520,7 @@ static struct attribute *cpu_root_attrs[] = {
- 	&dev_attr_offline.attr,
- 	&dev_attr_enabled.attr,
- 	&dev_attr_isolated.attr,
-+	&dev_attr_housekeeping.attr,
- #ifdef CONFIG_NO_HZ_FULL
- 	&dev_attr_nohz_full.attr,
- #endif
+ static DEVICE_ATTR(builtin_power_supply, 0000, NULL, NULL);
+ 
+ static struct attribute *sysfs_attrs[] = {
+@@ -4404,6 +4420,7 @@ static int hidpp_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 	}
+ 
+ 	INIT_WORK(&hidpp->work, hidpp_connect_event);
++	INIT_WORK(&hidpp->reset_hi_res_work, hidpp_reset_hi_res_handler);
+ 	mutex_init(&hidpp->send_mutex);
+ 	init_waitqueue_head(&hidpp->wait);
+ 
+@@ -4499,6 +4516,7 @@ static void hidpp_remove(struct hid_device *hdev)
+ 
+ 	hid_hw_stop(hdev);
+ 	cancel_work_sync(&hidpp->work);
++	cancel_work_sync(&hidpp->reset_hi_res_work);
+ 	mutex_destroy(&hidpp->send_mutex);
+ }
+ 
+@@ -4546,6 +4564,9 @@ static const struct hid_device_id hidpp_devices[] = {
+ 	{ /* Keyboard MX5500 (Bluetooth-receiver in HID proxy mode) */
+ 	  LDJ_DEVICE(0xb30b),
+ 	  .driver_data = HIDPP_QUIRK_HIDPP_CONSUMER_VENDOR_KEYS },
++	{ /* Logitech G502 Lightspeed Wireless Gaming Mouse */
++	  LDJ_DEVICE(0x407f),
++	  .driver_data = HIDPP_QUIRK_RESET_HI_RES_SCROLL },
+ 
+ 	{ LDJ_DEVICE(HID_ANY_ID) },
+ 
 -- 
-2.49.0
+2.51.0
 
 
