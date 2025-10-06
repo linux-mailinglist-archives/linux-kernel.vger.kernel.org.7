@@ -1,134 +1,109 @@
-Return-Path: <linux-kernel+bounces-843435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48886BBF2D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 22:20:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E48DBBF2DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 22:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 086643C1D30
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 20:20:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1A4E3B113A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 20:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E5B257AFB;
-	Mon,  6 Oct 2025 20:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E314725A33A;
+	Mon,  6 Oct 2025 20:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yW4oXocW"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jDYgQ8MR"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D86B227EA7
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 20:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00D3227EA7
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 20:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759781996; cv=none; b=YWyYZplul5PXk9+4WDD8fyqNuGi/UxY3zrMM9fWaX6Bc31cMCLfDRAmoGxkQpotUOgjsyRcRK41R7QUKl+Iz3pq3vi6ZTo7/CluJyDonCgg2w3wEJgl4Qfjgeu19KUVjuimDVdypS6jexwiRL/6uxyy7cxnCP+p8gZi+umJDZI0=
+	t=1759782031; cv=none; b=OS1Dj4ZoAylTw1xXIQcvwBSBZGemIpQTzL156j9Mm9jjyrOwF+8FokLkP0vDkOvwXMHH2jrAZz+Pb+LANQADcz4XSIfWZjUCvNXF7/mpUUacpF1+hjx20ekHnGTmo4jfIaQ1kI9wrgB0CYLXs87tgj0BDvqXY0e/26YF63gc2Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759781996; c=relaxed/simple;
-	bh=/SYC2F5CivU54FwucLiYMKq6VGD4NHmrnyTKCQAvMpk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=nq/JcH8EtfiY/enlMY+4q6v8SlNspntoy3thu7DJJPGM3dZe3Wn/4H7eVg6904EfCDFMV54tQCsRHkpwcMPnEo3K8tS0YY4nJnEyhkLstI1u/OjFfvxWOM8w2JKXwRQ8b1qukGFX1L19yer6z7mG62TiVCviC8Jm3nJQk8NHp0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yW4oXocW; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-28d1747f23bso51101575ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 13:19:54 -0700 (PDT)
+	s=arc-20240116; t=1759782031; c=relaxed/simple;
+	bh=waJ+EtoVbt8cHBF6XzkKAOAkmHbwYz0y9N3nZLWS7u8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JfAN4rKYvTP3QZbLMx0OXuKzwavrvi5HSFipcNaz3rg4wB60ryyoL/6EQ2EgvWmLhchYfu5HraIBSDL+0pDVeOlSP/ZrBWe0ISEzl3+fpAIjQQ0BcbZAY0GiBUPFQhQNTrvo3fVzdORk79+Id7jtWxSRPD3Un6DSSyZHilnaXUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jDYgQ8MR; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-57b35e176dbso7039767e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 13:20:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759781994; x=1760386794; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9pN3I+qDlRm86RsLpONZsIyYY5NvfWVzalcxaJr2Pds=;
-        b=yW4oXocWW14Dg2vFl/jgQyfg4+dizJ1sxK1o7D3TCJCt+P1m0sbaavf5A1Ve3e3mQ1
-         cxJlYIBl61ursrpp8Wr4PhVn4KNy7qXLYnhwE6Z1PQuyXezDKaOwSHSPK2tOSLUigvty
-         zsuhNDKlm8anfz7ldVPOSU5RmVqa8CSlxlz7Cc3NFiqNPXtpHl4+jzOs7+Gqb8ir3S1/
-         I2wROZWTMon/AaEBwiKMRJuZmWZcjn/C5hsRDhXDVRww60ajFCBWITCeWMlGhwaX8njn
-         394LPrzrmIoRP2nkg/9kP2NFjOl/OdKVGMLXSfo7jHrIj62SFtXdB0cOQ+15dgKOBwd9
-         J00Q==
+        d=gmail.com; s=20230601; t=1759782028; x=1760386828; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=waJ+EtoVbt8cHBF6XzkKAOAkmHbwYz0y9N3nZLWS7u8=;
+        b=jDYgQ8MRb1IzRuyv5LHs5GqM5FY7yTaHwmH9KhxJuFwp3kVCaKJG7VOX/tkBKiPdsj
+         Y+SNHf2cp80qDjKpQ/5iESO6itOcB0Lg3WVgFU0zkHfKY8QVHURcEbLc6CI3uxGVGjYi
+         qSTmuCGdyXL6I8feAskIhJhOSxniNAj8LBPTPu2j+J5KfvdzArd4PSGXr56pY+kZai31
+         o8T+TwoHmft0DQ8Ak4uu1usl1Vdwopyj3juv/LPjzP2fBfWY8g+KsYWGZbvnLJpZs85/
+         GoUbT/8J2dCHfh+Nto/ObW/oO/ImsBSLz2N3Hv9r+0VpaWNEiJJd6OF0cG47bBj0bJA2
+         WB6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759781994; x=1760386794;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9pN3I+qDlRm86RsLpONZsIyYY5NvfWVzalcxaJr2Pds=;
-        b=OWMaVJMt+xtFcDRE34oXECsEhJqe9rpJmRETe7SN+5RM0Mk8WNFMijjVUCSQK88QWC
-         anX4ty0kSWFQGRsVTiTPe/aP08NS8rUqarm+exgroSKZJts3gLXV6pwXwwooMuYxPdrN
-         y3HTZnfv4enULDedtSV2AGS0qt4YsQ+vVdRI5hP3cNgJcSm3vq7jXt+cwdcRRfMgax5+
-         bJvsxWWYXY+/PuWRcmV+PcU7Egz3Zb6S27BEIqrL8MXgabonZNHlonrCZuZXsxYdDcUv
-         wcKZtGUIVrH2qaN00xIgFEbPCAkE9X0VGEhUbJHUogmryENM/sOBZesa5eCkTr6Tj69T
-         fDaA==
-X-Forwarded-Encrypted: i=1; AJvYcCVRGTmzMWV0CpIKSN6QOpu+b3HZq6OAoqWtg+soFgIPbvEVMkPr9wcVJ9RMh5+yOLxiAeEfyDzfLkUEyf0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsrzRkjG2VMovCwm8U29THxZT8VbstEcmwMLxvvrn/cYeBp2Iy
-	k2M67EH1Vd2y57VpcW0MO9JJtaJc038hftH0nz6bZ97EQWhWtlk+tt/nlLY4JVrjvutNhZsZroC
-	ju8CdlA==
-X-Google-Smtp-Source: AGHT+IG+dPypssAxxB1AhIyikjpakIZz2qhMM7F+pWzPuRCSHZx5xpLGrwjB3vBabj2YhH49dtdnSu/VJJM=
-X-Received: from pjxx8.prod.google.com ([2002:a17:90b:58c8:b0:31f:2a78:943])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:fc86:b0:267:f7bc:673c
- with SMTP id d9443c01a7336-28e9a656997mr180158905ad.44.1759781994498; Mon, 06
- Oct 2025 13:19:54 -0700 (PDT)
-Date: Mon, 6 Oct 2025 13:19:52 -0700
-In-Reply-To: <diqzplazet79.fsf@google.com>
+        d=1e100.net; s=20230601; t=1759782028; x=1760386828;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=waJ+EtoVbt8cHBF6XzkKAOAkmHbwYz0y9N3nZLWS7u8=;
+        b=hbNGg0JXsuH0rcIjVBEetmpwARL74ZlGTz/QieZktwYSvkXi/xQGfH6kX7ZCNDfzC4
+         5+veQCE/+z7g59rUFgaE/MfUcKCT89oryxYHxMPpZAYO+e/fOQYknWGKS1HfFDtTDLpq
+         WpcIkhYaWYubwoLmS0RabMeXPDKVGoKxk5D3dMJVH3LljMwcqZmf9gAUCXYyF2LKRd3f
+         MRYzjve4oR2NPNsdqlrHltqu6L9T9KSLT0scPSaleDgBnCZmtZo2qghMdj+ApXg+TqFS
+         +vMksSmdYQsvYJBLaOV38s6gtB7JRx7m3LdQ362pvebeBYG3NYIUm3QgAQyKBw8L9qg/
+         DqiA==
+X-Gm-Message-State: AOJu0Yxc58BlxZvTdbBR3sUgxQA6XroNKOe425KUtywU2VQmHCggA+Kt
+	Xl9+xFuykh7RguxO9XJ42/2CLJ3c0BOotNJ4yoKjogbwZi3OPinpE2R53ZxujfTeJ05uFxIwW9R
+	bNJEEhqCPXvZkoGTVLmtBUVH/FJt92To=
+X-Gm-Gg: ASbGncsqKY55IqtJv+VA2rF99CNpnGznmyb4QzhM4FkYfKvFZjtSue3FqVuyzO25p8a
+	Wqh+oY34CckwFpdrlZxBH0c8U971BN6/FbJChoZsCIqhPvX396a/t1t8Inpqn9lstR2DFKhm0hA
+	2IlT0TAyBQQwTaq59vFwmENeNcSvmwuFOGeUXkZnmzrEBpeYhlx7/VqhPF8gZ2yV2rFP6QGwc5E
+	tagJXGEuTpgvmK51I1qowjMp5nboHeW2eY8GNW/dXUp1VBRVpEHU1IAIlcHPZU=
+X-Google-Smtp-Source: AGHT+IHnd3YhCFuN7botyJFWdxxq9Z6XV4clt26xvTOPjjkip+ArH3kt6LfKx5P2Aigke/aWDuktuLfD9jlfAgSMtME=
+X-Received: by 2002:a05:6512:1326:b0:576:fbdc:e3de with SMTP id
+ 2adb3069b0e04-58cb956997dmr3918445e87.11.1759782027443; Mon, 06 Oct 2025
+ 13:20:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251003232606.4070510-1-seanjc@google.com> <20251003232606.4070510-2-seanjc@google.com>
- <diqzplazet79.fsf@google.com>
-Message-ID: <aOQkaJ05FjsZz7yn@google.com>
-Subject: Re: [PATCH v2 01/13] KVM: Rework KVM_CAP_GUEST_MEMFD_MMAP into KVM_CAP_GUEST_MEMFD_FLAGS
-From: Sean Christopherson <seanjc@google.com>
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>, 
-	Fuad Tabba <tabba@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <87v7l03pqe.fsf@osv.gnss.ru> <CAOMZO5DG=cQtqyzihrFarEq6=1AOAPAMkeXajjGxiW0yvFRa0Q@mail.gmail.com>
+ <CAOMZO5BtXsjFFWDbt=Zuy_sUS-HySkcjhrtAg3+k211VY8SMcw@mail.gmail.com> <87o6qjaiz7.fsf@osv.gnss.ru>
+In-Reply-To: <87o6qjaiz7.fsf@osv.gnss.ru>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Mon, 6 Oct 2025 17:20:16 -0300
+X-Gm-Features: AS18NWAzzK_qXM1IP78cLrCPYQAYSFfZ6oionausHKoRzSZwMCvAUFl5BuMtivE
+Message-ID: <CAOMZO5BwoAzf36-L0uCTdKriGaUHg1MqZoKg56Fvob6S4coMBQ@mail.gmail.com>
+Subject: Re: ARM iMX6sx board fails to boot with kernel 6.17
+To: Sergey Organov <sorganov@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Shawn Guo <shawnguo@kernel.org>, "Rob Herring (Arm)" <robh@kernel.org>, Anson Huang <Anson.Huang@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 06, 2025, Ackerley Tng wrote:
-> Sean Christopherson <seanjc@google.com> writes:
-> 
-> > Rework the not-yet-released KVM_CAP_GUEST_MEMFD_MMAP into a more generic
-> > KVM_CAP_GUEST_MEMFD_FLAGS capability so that adding new flags doesn't
-> > require a new capability, and so that developers aren't tempted to bundle
-> > multiple flags into a single capability.
-> >
-> > Note, kvm_vm_ioctl_check_extension_generic() can only return a 32-bit
-> > value, but that limitation can be easily circumvented by adding e.g.
-> > KVM_CAP_GUEST_MEMFD_FLAGS2 in the unlikely event guest_memfd supports more
-> > than 32 flags.
-> 
-> I know you suggested that guest_memfd's HugeTLB sizes shouldn't be
-> squashed into the flags. Just using that as an example, would those
-> kinds of flags (since they're using the upper bits, above the lower 32
-> bits) be awkward to represent in this new model?
+Hi Sergey,
 
-Are you asking specifically about flags that use bits 63:32?  If so, no, I don't
-see those as being awkward to deal with.  Hopefully we kill of 32-bit KVM and it's
-a complete non-issue, but even if we have to add KVM_CAP_GUEST_MEMFD_FLAGS2, I
-don't see it being all that awkward for userspace to do:
+On Mon, Oct 6, 2025 at 5:11=E2=80=AFPM Sergey Organov <sorganov@gmail.com> =
+wrote:
 
-  uint64_t supported_gmem_flags = kvm_check_extension(KVM_CAP_GUEST_MEMFD_FLAGS) |
-                                  (kvm_check_extension(KVM_CAP_GUEST_MEMFD_FLAGS2) << 32);
+> I've checked that I end-up with the same DTB as you sent me off-list for
+> this configuration, so at least this part seems to work fine on my side.
+>
+> I also tried the imx_v6_v7_defconfig - based kernel on my board
+> (obviously with my custom DTB), and the kernel still doesn't boot.
+>
+> Further, I've found that it's enough to disable CONFIG_REGULATOR_ANATOP
+> in my custom kernel config to get kernel to see eMMC card, and then
+> mount it as root file-system.
+>
+> I still fail to see what I do (or don't do) in my DTS (or kernel config)
+> to confuse the kernel, and how to figure that out. Any ideas?
 
-We could even mimic what Intel did with 64-bit VMCS fields to handle 32-bit mode,
-and explicitly name the second one KVM_CAP_GUEST_MEMFD_FLAGS_HI:
-
-  uint64_t supported_gmem_flags = kvm_check_extension(KVM_CAP_GUEST_MEMFD_FLAGS) |
-                                  (kvm_check_extension(KVM_CAP_GUEST_MEMFD_FLAGS_HI) << 32);
-
-so that if KVM_CAP_GUEST_MEMFD_FLAGS_HI precedes 64-bit-only KVM, it could become
-fully redundant, i.e. where someday this would hold true:
-
-  kvm_check_extension(KVM_CAP_GUEST_MEMFD_FLAGS) == 
-  kvm_check_extension(KVM_CAP_GUEST_MEMFD_FLAGS) | kvm_check_extension(KVM_CAP_GUEST_MEMFD_FLAGS_HI) << 32
-
-> In this model, conditionally valid flags are always set, 
-
-I followed everything except this snippet.
-
-> but userspace won't be able to do a flags check against the returned 32-bit
-> value. Or do you think when this issue comes up, we'd put the flags in the
-> upper bits in KVM_CAP_GUEST_MEMFD_FLAGS2 and userspace would then check
-> against the OR-ed set of flags instead?
-
-As above, enumerate support for flags 63:32 in a separate capability.
+Please share your dts so we can take a look.
 
