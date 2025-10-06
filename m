@@ -1,97 +1,159 @@
-Return-Path: <linux-kernel+bounces-843122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87544BBE712
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:08:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AD35BBE71E
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:08:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBD3B1892E52
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:08:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8743189A03D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD732D6E74;
-	Mon,  6 Oct 2025 15:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A752D6400;
+	Mon,  6 Oct 2025 15:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RnIomwKK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uql6FunW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD6A11713;
-	Mon,  6 Oct 2025 15:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7291288537
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 15:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759763251; cv=none; b=fHd4LZ6BRgktljPizqBoXX5grEaE9qbvo6RLpQGsMWtaZTxZzt8t1ZExUhGa9WGBAtWoVw7AGgkzARr1KrcgQsoQHccqxIL3SXh8g6Eyt9CYPeDDnj4Y3j3ZXNVgY2I5IiydSkyBo8ngAz4dQLtIxij4DHNwMNoqJkHSDN/rPxs=
+	t=1759763282; cv=none; b=SORM38TMlhZxbh9AEWSYNbJ8G5MQTqoY9R6epvFZzpfLHFuJ9Y8q6uk3Y9E+tzLuQy/hLWMw24Qkion4gsmPwTqMtpNr6Quupo0l8V/n0gNa0IX4X02mSpxs8LEJDy+vXcNCS3XJxsXAlQmDyOKS1uh7Up1cISeiZdjlSdk/mK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759763251; c=relaxed/simple;
-	bh=JRvEheTB2TE+SWSBWDqF6/XEPi6lt1LK1nf4IJ+PL7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uPkiXpgzgmpFMQaqUBAOxwlMqRj1yATmb+POL/V6DZjWOFWwv7g48xRlmKUyawR8v6eKg64+s0cox1/wDUnrn0mUU7T1ePQkeqIU0bUb+aSUlmhFymdpLdK7ibMJFBWokfhjhuOmcbfCeP9WTvV576vyOI28LSul6qREoIrKnXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RnIomwKK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0488DC4CEF5;
-	Mon,  6 Oct 2025 15:07:28 +0000 (UTC)
+	s=arc-20240116; t=1759763282; c=relaxed/simple;
+	bh=nYPTDmrNDEu3KfSiQqkxCYBNIeSmzmKckNcbg1yf1d8=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SnMsCTNeUMSdfHzOIki/3BSMWILJa4PJ3YOaBEQ99voy83axCHiTG9a3JKv04WlnN9T73lq8YMgeeheqR6sq3QXI/9796ru3OL445RHXg7a21o+T4Bzww98clHH6dI82vIsamNbpIFP2KzgogjuZTGpa9vh1SKWg04pXUnywv28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uql6FunW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E52CC4CEF5;
+	Mon,  6 Oct 2025 15:08:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759763250;
-	bh=JRvEheTB2TE+SWSBWDqF6/XEPi6lt1LK1nf4IJ+PL7Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RnIomwKKHD1eg4OR/A1VRiEvseOVy/bLYU7S9StzkRlYouF2BPWkcT8FSK5KUMmq2
-	 4+pDWQmadYosK5L9lBfDqGIvNFo253YGT0jkRaMHScOH0r1BTsKWzgbL2mFcG526qX
-	 KWIzkuhc4kOlj8xbM6+x8Sd6ZJ+kE1GGc9Wn0/rD9pvGY1u0SN06B45Gn9CWEF2UhZ
-	 vx5pAlH8VCq6hmKDqqYgaQRX1dPO0vWaGvwL+UnxQvu689nlCQntuAjUBtJVelyvvq
-	 eznbk/53+9sBtJck9zKjCOPHsuYobNnMqT0quWnFv0/06Frm5OXdqdDAbzM/MusrjD
-	 j5TvM+EKGCOLg==
-Date: Mon, 6 Oct 2025 17:07:26 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Markus Probst <markus.probst@posteo.de>
-Cc: Damien Le Moal <dlemoal@kernel.org>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] Power on ata ports defined in ACPI before probing
- ports
-Message-ID: <aOPbLlvbfFadVQsV@ryzen>
-References: <8c3cb28c57462f9665b08fdaa022e6abc57fcd9e.camel@posteo.de>
- <20251005190559.1472308-1-markus.probst@posteo.de>
- <20251005190559.1472308-2-markus.probst@posteo.de>
+	s=k20201202; t=1759763282;
+	bh=nYPTDmrNDEu3KfSiQqkxCYBNIeSmzmKckNcbg1yf1d8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Uql6FunWncz5Ggk3h2TdQerKADA5zAmMZUl9wR0y4STvsYC3+WeiA3k0pfrwWFqTr
+	 31hXVZ6iScjOINZYZ9hI44pPCB48NihEjVZjhOKdPCe5ic7vPU2ezf2O2HUA5XYW9s
+	 7LrlACqD1K2aKOrzMVLhaVdMUdiJS7xq4RGz4tPJD4YOldpDKw8CP1EYuhHliczLs0
+	 dDYfTG4MOt5CSx8lvujKN49RKSoqi6TGNS5KMfAhAOVH0ttqblgFOkVGpsAY5tyJhy
+	 L6JGQe7s1NtqNix1t78BLTx8nqTC/tFRkLz8wUmahwz1xeLPKqZALKa5E0Xn5SvG/a
+	 EgXYcVaNYBMDQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1v5moh-0000000Bsb4-3GNH;
+	Mon, 06 Oct 2025 15:07:59 +0000
+Date: Mon, 06 Oct 2025 16:07:59 +0100
+Message-ID: <867bx8ysog.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH] irqchip/gic-v5: Fix GIC CDEOI instruction encoding
+In-Reply-To: <aOPEXEx-QRv7v9A5@arm.com>
+References: <20251006100758.624934-1-lpieralisi@kernel.org>
+	<aOPEXEx-QRv7v9A5@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251005190559.1472308-2-markus.probst@posteo.de>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: catalin.marinas@arm.com, lpieralisi@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, sascha.bischoff@arm.com, will@kernel.org, tglx@linutronix.de, mark.rutland@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Sun, Oct 05, 2025 at 07:06:07PM +0000, Markus Probst wrote:
-> some devices (for example every synology nas with "deep sleep" support)
-
-Some devices?
-I assume you mean the HBA and not the devices connected to the HBA.
-
-
-> have the ability to power on and off each ata port individually. This
-> turns the specific port on, if power manageable in acpi, before probing
-> it.
+On Mon, 06 Oct 2025 14:30:04 +0100,
+Catalin Marinas <catalin.marinas@arm.com> wrote:
 > 
-> This can later be extended to power down the ata ports (removing power
-> from a disk) while the disk is spin down.
+> On Mon, Oct 06, 2025 at 12:07:58PM +0200, Lorenzo Pieralisi wrote:
+> > diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+> > index 6455db1b54fd..6cf8c46ddde5 100644
+> > --- a/arch/arm64/include/asm/sysreg.h
+> > +++ b/arch/arm64/include/asm/sysreg.h
+> > @@ -113,14 +113,14 @@
+> >  /* Register-based PAN access, for save/restore purposes */
+> >  #define SYS_PSTATE_PAN			sys_reg(3, 0, 4, 2, 3)
+> >  
+> > -#define __SYS_BARRIER_INSN(op0, op1, CRn, CRm, op2, Rt)			\
+> > +#define __SYS_INSN(op0, op1, CRn, CRm, op2, Rt)				\
+> >  	__emit_inst(0xd5000000					|	\
+> >  		    sys_insn((op0), (op1), (CRn), (CRm), (op2))	|	\
+> >  		    ((Rt) & 0x1f))
+> >  
+> > -#define SB_BARRIER_INSN			__SYS_BARRIER_INSN(0, 3, 3, 0, 7, 31)
+> > -#define GSB_SYS_BARRIER_INSN		__SYS_BARRIER_INSN(1, 0, 12, 0, 0, 31)
+> > -#define GSB_ACK_BARRIER_INSN		__SYS_BARRIER_INSN(1, 0, 12, 0, 1, 31)
+> > +#define SB_BARRIER_INSN			__SYS_INSN(0, 3, 3, 0, 7, 31)
+> > +#define GSB_SYS_BARRIER_INSN		__SYS_INSN(1, 0, 12, 0, 0, 31)
+> > +#define GSB_ACK_BARRIER_INSN		__SYS_INSN(1, 0, 12, 0, 1, 31)
+> >  
+> >  /* Data cache zero operations */
+> >  #define SYS_DC_ISW			sys_insn(1, 0, 7, 6, 2)
+> > @@ -1075,7 +1075,6 @@
+> >  #define GICV5_OP_GIC_CDDIS		sys_insn(1, 0, 12, 1, 0)
+> >  #define GICV5_OP_GIC_CDHM		sys_insn(1, 0, 12, 2, 1)
+> >  #define GICV5_OP_GIC_CDEN		sys_insn(1, 0, 12, 1, 1)
+> > -#define GICV5_OP_GIC_CDEOI		sys_insn(1, 0, 12, 1, 7)
+> >  #define GICV5_OP_GIC_CDPEND		sys_insn(1, 0, 12, 1, 4)
+> >  #define GICV5_OP_GIC_CDPRI		sys_insn(1, 0, 12, 1, 2)
+> >  #define GICV5_OP_GIC_CDRCFG		sys_insn(1, 0, 12, 1, 5)
+> > @@ -1129,6 +1128,17 @@
+> >  #define gicr_insn(insn)			read_sysreg_s(GICV5_OP_GICR_##insn)
+> >  #define gic_insn(v, insn)		write_sysreg_s(v, GICV5_OP_GIC_##insn)
+> >  
+> > +/*
+> > + * GIC CDEOI encoding requires Rt to be 0b11111.
+> > + * gic_insn() with an immediate value of 0 cannot be used to encode it
+> > + * because some compilers do not follow asm inline constraints in
+> > + * write_sysreg_s() to turn an immediate 0 value into an XZR as
+> > + * MSR source register.
+> > + * Use __SYS_INSN to specify its precise encoding explicitly.
+> > + */
+> > +#define GICV5_CDEOI_INSN		__SYS_INSN(1, 0, 12, 1, 7, 31)
+> > +#define gic_cdeoi()			asm volatile(GICV5_CDEOI_INSN)
+> 
+> Would something like this work? Completely untested (and build still
+> going):
+> 
+> diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+> index 6604fd6f33f4..7aa962f7bdd6 100644
+> --- a/arch/arm64/include/asm/sysreg.h
+> +++ b/arch/arm64/include/asm/sysreg.h
+> @@ -1234,7 +1234,10 @@
+>  #define write_sysreg_s(v, r) do {					\
+>  	u64 __val = (u64)(v);						\
+>  	u32 __maybe_unused __check_r = (u32)(r);			\
+> -	asm volatile(__msr_s(r, "%x0") : : "rZ" (__val));		\
+> +	if (__builtin_constant_p(__val) && __val == 0)			\
+> +		asm volatile(__msr_s(r, "xzr"));			\
+> +	else								\
+> +		asm volatile(__msr_s(r, "%x0") : : "r" (__val));	\
+>  } while (0)
 
-Spun down?
+Ah, looks much better, and keeps the crap localised. The only thing is
+that we lose the 'Z' constraint, and that reduces the incentive for
+LLVM to have a better codegen. Maybe add a comment for a good measure?
 
+Anyway, FWIW:
 
-Overall this commit message needs some serious improvement.
+Acked-by: Marc Zyngier <maz@kernel.org>
 
-I have no idea what Synology NAS with "deep sleep" support is.
+	M.
 
-We don't add support for vendor specific features.
-
-Please reference the proper ATA ACS / AHCI / SATA / ACPI specification,
-including the version of said specification and which section in that
-specification.
-
-
-Kind regards,
-Niklas
+-- 
+Without deviation from the norm, progress is not possible.
 
