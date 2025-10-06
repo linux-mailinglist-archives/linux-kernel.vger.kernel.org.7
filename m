@@ -1,277 +1,186 @@
-Return-Path: <linux-kernel+bounces-842760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84EFABBD7E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 11:48:05 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69CA6BBD7FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 11:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 316223B6EDC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 09:48:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E122E4EA5F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 09:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB41C207A32;
-	Mon,  6 Oct 2025 09:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3AB820C00C;
+	Mon,  6 Oct 2025 09:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pUyd3KOf"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eun9mhZr"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E14201033
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 09:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3281A200BAE
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 09:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759744076; cv=none; b=CSQKci+r5KtPmD+bnNHURp7nPqD30wUvcRkkMXd/lO4lbYJVb8bg7leT6Q/U77/x2WQQNLKP/64m2Dq9TyiHB/X+mYW9kcbMZu74EHmW9HH/bfESUXx3xw9kjNgz3QSHLFY6fZBFQNO8B3hhK9SRnLrzsQrI4fRmYEHBsMyLWAc=
+	t=1759744110; cv=none; b=szUb186d8+6OJjlPLkHL64rvBwjLqUP+iJ5P2Qw+hF7vVshYVX9ZA2NAXSfvuBYrkdVLRC+d0zjpWFAxn7wrEbLhQLBu3TI6037a+jh/oatOiqbpJnAzaGOJQFxKuB3u0IaUGg1igA9K3QQgWZxFKdfAiFV5DLBcLQ1Zf+yQVbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759744076; c=relaxed/simple;
-	bh=NVc36TGbNflxbPQDRRl0haz/TUVlsWdECo1JWukAVH8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ErBmgGU7kwZzoFzznfDb5dxFJ2CsW1hz+LsbBUdhDfKebd1bdPx9Y1sqMKFMNqsb+XSJJBlVGqrS2TgoniKySQFDbj1vwTMLurFy5cTaxDELIjYFw3tM4s+km5sPPTg17ftpQ7mViPMEPpfmv6hdOMIa90wQInzFlT4RFgVQTHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pUyd3KOf; arc=none smtp.client-ip=209.85.208.42
+	s=arc-20240116; t=1759744110; c=relaxed/simple;
+	bh=K7+0htyuoirxpSFu/xMi/nH7Dp6XDVMsELNSRKgsD6E=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=KIwUdbKn3A0s5EwjPnnnobg1/rvW1N2u5R40oeFVLgqPJ3UrvFO6sTlURB2T+AdfcZDbhQ3XIIHV/NkiOyC+3Yxo2ez3d7W3R2+UOc6HSNWNGHztEnR8jjYTGv+Myg/SLlGCq4i+5l8yUWsK2CB6oCkjNxR0g+9k6Kn62sf6IxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eun9mhZr; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-631df7b2dffso10862948a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 02:47:53 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e6a6a5e42so23463985e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 02:48:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759744072; x=1760348872; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=NVc36TGbNflxbPQDRRl0haz/TUVlsWdECo1JWukAVH8=;
-        b=pUyd3KOf/ViqPgLWXTuDX6y5+iT3/e1CzssaJt/0S5qJ7h0NuM+qMuOqhlmV2TceoV
-         PSYCTE/FTbbGNMmAnB3UAudtb27GqkvXy81HmaZ91PkbpedDA8WDLrWvjCnyWtasnVCi
-         JxbbTRUWzMDNvNQoHqvpHQ7xKCZpq3Q9NmYO76PGjQt+0e2Q5UlnJrGAYSZQqg0zeILK
-         QoHGOSOMhoivtPtL4WlxEckSC8On0qEScBVFsWqmQ7G+V1NRycsXUcXucJol6bpa8VM+
-         oCLcj72Xo6FXcORA0cxXDJAFSQSO9m0Vb/grqt9ir3Yz7fBj3LBzaAGeHpVzwIUtGbLM
-         8qRg==
+        d=linaro.org; s=google; t=1759744106; x=1760348906; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E9nCOIOWicslN4YZSsSssDCNnRYoc3KUcXalh/A1uR4=;
+        b=eun9mhZrr9gdbQYQPeCodrWHFfrZpnvyRi80m1Yzw+2Kkp8m+G4Ynr8ARJhxym8JV9
+         ryp8auXJj5a0NK+c/Ve0BBKX9e4lV66Q8Ulz9iGvC1Kigg1+jwxviAzC+jZPSRO6RtU8
+         yIe4ifpACdJuHunLL1UghAYQICp/NINj7rP0IuMTY+BhTIHQP8otFej9hi6WNRjdf4J+
+         oyqcaJzMDw9kWZpAexwJXMqxjoXfDHSaPAhn9rbGYtdN1OniXt1p24YV6lA9bfx2rqCP
+         gPOR3BZOOrzOuc2NdXpZoN92IOHHAE4qXc7IIJ3jI9rkyQ4ezbSGpwLThUrJYdLWPozi
+         7tHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759744072; x=1760348872;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NVc36TGbNflxbPQDRRl0haz/TUVlsWdECo1JWukAVH8=;
-        b=WNNmMepwVRvdy7FOuUj5ajn+h9g7ZH9up9s+41O36BguqBI/PAwWo0JyrR2G7iD4j+
-         l1zh9uJjoSAWS7yFqzai/HCRgbkYRqiQoIiTK0MGNwwA2NSYDUSbGOko+Oy5EGCi2FA6
-         7FWvAvS95AJ5pXM66j0sPIeBR4QQg1uAFRAjmydsXIOSm6Bo+U1skT7/txOnKkM2F9r1
-         tvdbAMtyU9ptNxO5paSR6DtWpMyV/W+jN9Cq6z8tK7B9S3mM0dvhNQcG5hv9PsGUmKvG
-         JoUT5sYAQsqfQbef0Cnw6SG6BpWmJtXy/FjDCPjeNYrfm68+dpENMjSRdqyHBarklbYe
-         oKOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVzv8Mq6pCtnB1b8keMG3fqBvFP78DRXnHEuB00B4p1qxAgu2Z+Fe3KzZolGyXB9lInTbExyt1ODRsfjz4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyC0Uloj6WR//0JHg4antNdWDW12UExZKG9YexkOriVkXdZIEO
-	3A7A/1evKn4EaugO6vMAGhxGoPQj321yQ5w13ksQsaHtI63/kJYL3Jvmz3JSQas1f90=
-X-Gm-Gg: ASbGncu2SiYYzdp2HZKv55EAea0dom9sjq6iT4pOp4obWzqsEiRg+5HuYy5v6voYEoc
-	jaX2AKHXA0jWvptHKuBrtH+TtMIOXDNzVYvti6zET/NvoOextHjsD1sQROcC/as0rcIjgHmJ+el
-	iPCl7k7LykiW8upH52sAXVgW+N4IobbdPr+NYxkxivLZdeszE5a4XTOMaSwRvNOBykdkWJsadxT
-	w8NEImsvV0cpqSV9UTndXJZBJyLdDmy/1+ZNOOFxqVAauVsKRR7rJfoFVtASKtc2PFv78gek6Db
-	tbo030618Wwn3BuSP6RSXYLp9YGJeA2Q4Pcmk7PperA9Tq+aOKf8cOb1amhxFZDXdclghrg35UM
-	oNXLbF3pr5MpqZz3NY2j1bCuK7KvqCvXDUg6YAra6tv400GO4oeTFvw==
-X-Google-Smtp-Source: AGHT+IFtzyuEM86nDZ1afipZ9gjtIoBXDJIw39RxT9KiIYyBACUqX8txUSjLeqwb6sRvJD4CXeYSfA==
-X-Received: by 2002:a05:6402:13d6:b0:636:6e11:2fd1 with SMTP id 4fb4d7f45d1cf-638fcb65499mr14959712a12.4.1759744072376;
-        Mon, 06 Oct 2025 02:47:52 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6378811f14bsm9884430a12.45.2025.10.06.02.47.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 02:47:51 -0700 (PDT)
-Message-ID: <a4834c957f518d9f172b5a2dd0b8cd34980c7653.camel@linaro.org>
-Subject: Re: [PATCH v2 02/17] regulator: dt-bindings: add s2mpg10-pmic
- regulators
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>,  Lee Jones <lee@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski	 <brgl@bgdev.pl>, Peter
- Griffin <peter.griffin@linaro.org>, Will McVicker	
- <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Date: Mon, 06 Oct 2025 10:47:50 +0100
-In-Reply-To: <20250611-statuesque-dolphin-of-felicity-6fbf54@kuoka>
-References: <20250606-s2mpg1x-regulators-v2-0-b03feffd2621@linaro.org>
-	 <20250606-s2mpg1x-regulators-v2-2-b03feffd2621@linaro.org>
-	 <20250611-statuesque-dolphin-of-felicity-6fbf54@kuoka>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2 
+        d=1e100.net; s=20230601; t=1759744106; x=1760348906;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=E9nCOIOWicslN4YZSsSssDCNnRYoc3KUcXalh/A1uR4=;
+        b=Ov58vJ4JIs6P2aHOhKcN48CNEx4tYPjcMv/TrhB0c9Yp+DxLQqu/exGfyki5pP8lLr
+         2M7nQ90GrAHwjVdB/18FGg9iUQ3FGxvwtshQSqO7AGjQ+ZOrBJ0UOZbFOv4qv7pSdLxF
+         j5URdNHrKN6J7aoA086ZqJpeuir0aQQl2ooNgwXnNyGRMbCrry0Zj0d7ODRwx83hyizC
+         bbRhYOeGy48P4aKviNZuH0XF28AXk1PsWB7KzjZYkg240GQzg0+5qMQfjysfOgYbAOWB
+         ksrxkLfR3fzJZTZ+klAmVa2GSFln6pc0M9YYsuUgt5iHrx/blnoFHKyJAqidBMobqKG4
+         iNhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6/HUATCYVmAuWK78OWiE9RnGF4EKrG1b//UeUmlvHa21wYfmIPyLMN/9dxLHj0ZPsEqzsngToczixovw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRjhetup9ui5lpG6RcEoeMa6xji1MRm/K5xN831UR/WkHigy7q
+	8zEYJrJSGaeH872scGUWRUnbvSKCT64nANv74gJyx/o73zhx9fbbrDgB4Cqlk8W4+ug=
+X-Gm-Gg: ASbGnctZiZrv8oVK3qX4eGKtxG5g7nn4Gb3PsWjTyC4AOTUhxGRmdNfRotSOaBDVciy
+	TfQ6nAy2adt3zQnf1BEXBNOKmgVfd+BsQRLRNsfHGm9vZxtTbfbrZkRisx62Pj3uSsQe54yUJYU
+	6MVQAOc53yrpG4ZKVQv00LY6srbME0V9e5CS6qJIzB0eSNg1u8g+iw4I2QrnxJ4L+vtmx/5wNDI
+	+7E3NQDpINOznMbPgbMkofIGd/Fhcrikuk/ubIpNrRnU9uFkf2ZTLTUcq7+x79ZPLs27ejREKoO
+	ReUmPMbwP2vjsBOE5HOr2VF04KhYhknq3STpdvLAVjZ4ugM3uqEkEmVR9AB8038vcvxwbZUxhFK
+	kNHVJECrsWi3jL+lafxj4it+YmZpNhRbe4qfkpe4SkyEdu53WZ8QKfZwY9DTcyN/P3QSLz/1mNS
+	bIdCrBj7MPfCsGW8JTxfUEjiG77Ww=
+X-Google-Smtp-Source: AGHT+IEtNxlbVFFWezzK/SaGtuPwKo272TEGVXiS0sDNJ1j0UC/5uBY5FceXCv8FXS6IrSRPjNnCpA==
+X-Received: by 2002:a05:600c:3b1f:b0:46e:3dc3:b645 with SMTP id 5b1f17b1804b1-46e710ffc1amr73835685e9.3.1759744106291;
+        Mon, 06 Oct 2025 02:48:26 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:2dd0:9118:d7f5:51d9? ([2a01:e0a:3d9:2080:2dd0:9118:d7f5:51d9])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8e96e0sm20168586f8f.33.2025.10.06.02.48.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Oct 2025 02:48:25 -0700 (PDT)
+Message-ID: <64ae6d27-d89b-401c-bf9e-027967e6b859@linaro.org>
+Date: Mon, 6 Oct 2025 11:48:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v4 1/3] dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp-phy:
+ Document lanes mapping when not using in USB-C complex
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Xilin Wu <sophon@radxa.com>, linux-arm-msm@vger.kernel.org,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250930-topic-x1e80100-hdmi-v4-0-86a14e8a34ac@linaro.org>
+ <20250930-topic-x1e80100-hdmi-v4-1-86a14e8a34ac@linaro.org>
+ <c8dca827-b089-48e0-9dc2-a5b6e3c5b88d@oss.qualcomm.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <c8dca827-b089-48e0-9dc2-a5b6e3c5b88d@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof,
+On 10/6/25 11:43, Konrad Dybcio wrote:
+> On 9/30/25 9:39 AM, Neil Armstrong wrote:
+>> The QMP USB3/DP Combo PHY hosts an USB3 phy and a DP PHY on top
+>> of a combo glue to route either lanes to the 4 shared physical lanes.
+>>
+>> The routing of the lanes can be:
+>> - 2 DP + 2 USB3
+>> - 4 DP
+>> - 2 USB3
+>>
+>> The layout of the lanes was designed to be mapped and swapped
+>> related to the USB-C Power Delivery negociation, so it supports
+>> a finite set of mappings inherited by the USB-C Altmode layouts.
+>>
+>> Nevertheless those QMP Comby PHY can be used to drive a DisplayPort
+>> connector, DP->HDMI bridge, USB3 A Connector, etc... without
+>> an USB-C connector and no PD events.
+>>
+>> Document the data-lanes on numbered port@0 out endpoints,
+>> allowing us to document the lanes mapping to DisplayPort
+>> and/or USB3 connectors/peripherals.
+>>
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> ---
+> 
+> [...]
+> 
+>> +          endpoint@1:
+>> +            $ref: /schemas/graph.yaml#/$defs/endpoint-base
+>> +            description: USB Output lanes of the PHY when used with static mapping.
+>> +			 The entry index is the USB3 lane in the order TX then RX, and the
+>> +			 number is the PHY signal in the order RX0, TX0, TX1, RX1.> +            unevaluatedProperties: false
+>> +
+>> +            properties:
+>> +              data-lanes:
+> 
+> Can this be described in a somewhat reasonable way to be non-compatible
+> with Type-C properties for more validation?
 
-On Wed, 2025-06-11 at 10:55 +0200, Krzysztof Kozlowski wrote:
-> On Fri, Jun 06, 2025 at 04:02:58PM GMT, Andr=C3=A9 Draszik wrote:
-> > The S2MPG10 PMIC is a Power Management IC for mobile applications with
-> > buck converters, various LDOs, power meters, RTC, clock outputs, and
-> > additional GPIO interfaces.
-> >=20
-> > It has 10 buck and 31 LDO rails. Several of these can either be
-> > controlled via software or via external signals, e.g. input pins
-> > connected to a main processor's GPIO pins.
-> >=20
-> > Add documentation related to the regulator (buck & ldo) parts like
-> > devicetree definitions, regulator naming patterns, and additional
-> > properties.
-> >=20
-> > S2MPG10 is typically used as the main-PMIC together with an S2MPG11
-> > PMIC in a main/sub configuration, hence the datasheet and the binding
-> > both suffix the rails with an 'm'.
-> >=20
-> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> >=20
-> > ---
-> > v2:
-> > - drop | (literal style mark) from samsung,ext-control-gpios
-> > =C2=A0 description
-> > ---
-> > =C2=A0.../regulator/samsung,s2mpg10-regulator.yaml=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 | 147 +++++++++++++++++++++
-> > =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
-> > =C2=A0.../regulator/samsung,s2mpg10-regulator.h=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 48 +++++++
-> > =C2=A03 files changed, 196 insertions(+)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mpg1=
-0-regulator.yaml
-> > b/Documentation/devicetree/bindings/regulator/samsung,s2mpg10-regulator=
-.yaml
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..82f2b06205e9bdb15cf90b1=
-e896fe52c335c52c4
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/regulator/samsung,s2mpg10-regul=
-ator.yaml
-> > @@ -0,0 +1,147 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/regulator/samsung,s2mpg10-regulator=
-.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Samsung S2MPG10 Power Management IC regulators
-> > +
-> > +maintainers:
-> > +=C2=A0 - Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> > +
-> > +description: |
-> > +=C2=A0 This is part of the device tree bindings for the S2MG10 Power M=
-anagement IC
-> > +=C2=A0 (PMIC).
-> > +
-> > +=C2=A0 The S2MPG10 PMIC provides 10 buck and 31 LDO regulators.
-> > +
-> > +=C2=A0 See also Documentation/devicetree/bindings/mfd/samsung,s2mps11.=
-yaml for
-> > +=C2=A0 additional information and example.
-> > +
-> > +definitions:
-> > +=C2=A0 s2mpg10-ext-control:
-> > +=C2=A0=C2=A0=C2=A0 properties:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 samsung,ext-control:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 description: |
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 These rails can=
- be controlled via one of several possible external
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (hardware) sign=
-als. If so, this property configures the signal the PMIC
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 should monitor.=
- For S2MPG10 rails where external control is possible other
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 than ldo20m, th=
-e following values generally corresponding to the
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 respective on-c=
-hip pin are valid:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 0=
- # S2MPG10_PCTRLSEL_ON - always on
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 1=
- # S2MPG10_PCTRLSEL_PWREN - PWREN pin
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 2=
- # S2MPG10_PCTRLSEL_PWREN_TRG - PWREN_TRG bit in MIMICKING_CTRL
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 3=
- # S2MPG10_PCTRLSEL_PWREN_MIF - PWREN_MIF pin
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 4=
- # S2MPG10_PCTRLSEL_PWREN_MIF_TRG - PWREN_MIF_TRG bit in MIMICKING_CTRL
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 5=
- # S2MPG10_PCTRLSEL_AP_ACTIVE_N - ~AP_ACTIVE_N pin
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 6=
- # S2MPG10_PCTRLSEL_AP_ACTIVE_N_TRG - ~AP_ACTIVE_N_TRG bit in MIMICKING_CTR=
-L
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 7=
- # S2MPG10_PCTRLSEL_CPUCL1_EN - CPUCL1_EN pin
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 8=
- # S2MPG10_PCTRLSEL_CPUCL1_EN2 - CPUCL1_EN & PWREN pins
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 9=
- # S2MPG10_PCTRLSEL_CPUCL2_EN - CPUCL2_EN pin
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 1=
-0 # S2MPG10_PCTRLSEL_CPUCL2_EN2 - CPUCL2_E2 & PWREN pins
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 1=
-1 # S2MPG10_PCTRLSEL_TPU_EN - TPU_EN pin
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 1=
-2 # S2MPG10_PCTRLSEL_TPU_EN2 - TPU_EN & ~AP_ACTIVE_N pins
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 1=
-3 # S2MPG10_PCTRLSEL_TCXO_ON - TCXO_ON pin
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 1=
-4 # S2MPG10_PCTRLSEL_TCXO_ON2 - TCXO_ON & ~AP_ACTIVE_N pins
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 For S2MPG10 ldo=
-20m, the following values are valid
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 0=
- # S2MPG10_PCTRLSEL_LDO20M_ON - always on
->=20
-> No, use standard regulator properties - regulator-always-on
->=20
->=20
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 1=
- # S2MPG10_PCTRLSEL_LDO20M_EN_SFR - VLDO20M_EN & LDO20M_SFR
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 2=
- # S2MPG10_PCTRLSEL_LDO20M_EN - VLDO20M_EN pin
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 3=
- # S2MPG10_PCTRLSEL_LDO20M_SFR - LDO20M_SFR in LDO_CTRL1 register
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 4=
- # S2MPG10_PCTRLSEL_LDO20M_OFF - disable
->=20
-> I don't think we allowed such property in the past.
+I tried, but failed. Let me try again !
 
-I've done some more investigation now - the reason we need to configure
-control of rails via signals (i.e. input pin on S2MPG1x) is that the PMU
-and power domains in particular control at least some of them.
+> 
+> If not, let's just maybe add a comment like
+> 
+> # Static lane mappings are mutually exclusive with typec-mux/orientation-mux
 
-As an example, power domain g3d disable toggles an output pin on GS101,
-which is connected to the G3D_EN pin on S2MPG1x on Pixel. The regulator
-driver needs to configure all the G3D-related-PMIC rails to react to this
-signal. There a) is a large amount of flexibility as to which rail should
-react to which signal, and b) the bootloader doesn't configure (all of)
-them.
+Ack
 
-Therefore, we need to be able to specify which rail should be controlled
-by which signal, both in DT and in the driver.
+Thanks,
+Neil
 
-The alternative would be do add explicit (driver-based) regulator control
-for each power domain, rather than having the PMU handle this. Such an
-approach appears suboptimal, because after all that's what the PMU is for.
+> 
+> Konrad
 
-Additionally, there are sequencing requirements on enabling/disabling rails
-and when using the signals, the PMIC will ensure they're followed, whereas
-a driver would have to duplicate that information and could get it a) wrong=
-,
-b) would use more CPU cycles due to additional code, and c) leave the rail
-on for longer than necessarily due to timer resolution.
-
-Also, it might not work in all cases, e.g. if the PMU disables the rail for
-the CPU, the Linux driver can not afterwards disable the PMIC rail anymore,
-leaving it unnecessarily enabled. Equally, the Linux driver can not disable
-the rail before turning off the power domain, as once the rail is off, the
-CPU/Linux can not execute any further code.
-
-
-Hope the above justifies the introduction of this property :-)
-
-
-Cheers,
-Andre'
 
