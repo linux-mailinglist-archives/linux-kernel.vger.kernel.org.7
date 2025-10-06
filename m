@@ -1,91 +1,194 @@
-Return-Path: <linux-kernel+bounces-842845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6746BBBDC4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:49:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C940BBDCA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 12:50:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 357734EC42A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:49:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4047C18988A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 10:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E35626463A;
-	Mon,  6 Oct 2025 10:47:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C0A2641EE;
+	Mon,  6 Oct 2025 10:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="qTmLZo0Y"
+Received: from server.couthit.com (server.couthit.com [162.240.164.96])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B34258CD9
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 10:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070792A1BB;
+	Mon,  6 Oct 2025 10:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759747625; cv=none; b=IH2idGVH2UaFo7ycZx9oAevBoCvOHuMfzaUpkjSJYK1XVjvK3vMudLKiAKG7DiUEVLuudQP9SsjfQmK+eAq2cabyNe3vpOOkmmpXUh9r+xTJ8XrvtJ5wosXq2AHQMJsrVCbjBiTKP3ij//IpiA97mLkYas7VEVS4UJ4t+ydbY2Y=
+	t=1759747775; cv=none; b=fo2qvi1EV6PqyIzXfD8u8L6HstDMygyMb6+eg445fzgQK0wKVwL3rpKDjWT2eL/gzLfAzpIDEj7rvjhoKECaMwJi0RGqVA9PNlg6qR2HoGNzRSjZVNmHoEX5csIDeOfljJDkORc89rK2cY8vWYKhMScWeLEEy0Q2kBc+xRK4FDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759747625; c=relaxed/simple;
-	bh=MRguVoH9xVXZ8xCke5EDKsRyE5O3HLuD7jYGE6bFqkM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=jjHnh9KV9CHX5WEXcBZDwXlU7v0VxolBEVioXsim8I1oe8kHsOPHLGLyxGGHr57fv0aXbK01RfaVOwfn+oTSBFycxV87UB02EA/E1Qh0c29JHTJ+R7mhRESysqdW9nEbhVDT2pmZFZvrFxCPAPuGkIU5wFFW9VvCoFfNNzHbMqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42f7b2cb176so91565ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 03:47:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759747622; x=1760352422;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YnhgHNmaKn33yO8Yk7hjkUq3ciy72gfjIkejk7N2DN8=;
-        b=FAziN8g1HmOS2SmhLgv6Pc+LQtdoDlM3WgIX1huavg/mTrePAsTghIN/v3w4afyAOJ
-         YwN5ldea+c2jF1jatusb20krX/UbgatE1K63+StArzBu0n54U4iVCMTtOb45j5YJrEXP
-         gcaFMRiTknDeKbwqDx9wwtz4PpJO0IumAoFYZt6Dh7V4FaI8IGmxcd3BhfeQ2g6ZmECj
-         ZuQsTGFouQYY7kJxBiLRty8VcrtRyxecjLPj0iRKwiq9Y9/AxIsK7+UVdwbpHOnjEd4m
-         mYPczhNE3LPoBEZiJRbUTMSFimEkgXAnWSGrZE5WqHlQGbRz+vEUuC8/1oBsEPRdezLC
-         GS3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWaQ1Pt3hHP1ws/R9Fg65YRQ5sJN0IvhItcz3S0zf9axWSzrceGnphuXHHmoSGvA2Ih2B54RujSUXjMKk4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpFdAWlPcJf1xdvfeXf0M5fGj7jWQd6ieY+/cdzvE1/DVrstwq
-	clrsLHI6tPLevf4fUlpX8qCrsO5rQBd8821FKuXv5TBmxFIgg9d6liZAWR66TdO4H4PR59AZIZT
-	uCYxn4hhmBigEBfJectnfu+Jt6AIfuqVubuGybC2cI84+7L6WElOu/s7liT4=
-X-Google-Smtp-Source: AGHT+IGlVMdpwvaBxkFYUgpvxCjgSFNJRiWa2s5eXLMCmT8Fnhtpp5bUCBQ+kY6C6sIk8Q9NZmshceROFLnHuDn3g/kQzY29Du8S
+	s=arc-20240116; t=1759747775; c=relaxed/simple;
+	bh=sIfdY7ew8O6jUsO4zyAccWMeyNOk8HlMPsW4f1J0v0E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HzveJ7Cy2KsZhLsoW5l6boQGcXIkKuV2pffQ32D1moUD8XOu4TM6iodCS0wXaz+NeIJbr3gu27uKhbrIN31s2Utr7kAqgeHM8CptA2QvwNvfpdgEjeuEQQtr9u5HpMZPf1gjhRVs1F5Aur3DDCbiWnULG4H+uP6dgogq9VEUocQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=qTmLZo0Y; arc=none smtp.client-ip=162.240.164.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject
+	:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=UGNMoIJskdOedG2YvGIgguiMcD0CqhcOzMSCPHtiZ4Q=; b=qTmLZo0YpjJG8SKcCxO45Ruov+
+	l5PuD8Oq2akTmxoLKPHTcUgA1ba1uzVTbgGnyVmbEmxYiOhg3maBr9kE4E40dQpxJep9o/zzQV8yd
+	O+YUmZcuhYUguSS3bJAuDa107vElhfDG59OkPikjuYBApGtmcypZNRCssIyz8mCsj6p83LjaFLpcW
+	c4tlMP7Aq27O8cnQiauSXQG+oOMy1zDD5DMj+sz+Fn4mWKeUrYqKSsEpu2u/+IVEcn1a2CfSMSdIS
+	kMjvSTTZhXiVc5nvMSpO5fHe4nhEjd9KRet/+gMsro0RQxxVL8KQRf56tkNQxcVwdweeEhp35PPha
+	UYHmHCag==;
+Received: from [122.175.9.182] (port=2645 helo=cypher.couthit.local)
+	by server.couthit.com with esmtpa (Exim 4.98.1)
+	(envelope-from <parvathi@couthit.com>)
+	id 1v5imS-0000000Fe4a-46QH;
+	Mon, 06 Oct 2025 06:49:25 -0400
+From: Parvathi Pudi <parvathi@couthit.com>
+To: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	danishanwar@ti.com,
+	parvathi@couthit.com,
+	rogerq@kernel.org,
+	pmohan@couthit.com,
+	basharath@couthit.com,
+	afd@ti.com
+Cc: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	pratheesh@ti.com,
+	prajith@ti.com,
+	vigneshr@ti.com,
+	praneeth@ti.com,
+	srk@ti.com,
+	rogerq@ti.com,
+	krishna@couthit.com,
+	mohan@couthit.com
+Subject: [RFC PATCH net-next v2 0/3] STP/RSTP SWITCH support for PRU-ICSSM Ethernet driver
+Date: Mon,  6 Oct 2025 16:17:16 +0530
+Message-ID: <20251006104908.775891-1-parvathi@couthit.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:174e:b0:424:fd76:2a2d with SMTP id
- e9e14a558f8ab-42e7ad8a126mr175026145ab.29.1759747622580; Mon, 06 Oct 2025
- 03:47:02 -0700 (PDT)
-Date: Mon, 06 Oct 2025 03:47:02 -0700
-In-Reply-To: <68e2ff91.050a0220.2c17c1.003a.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e39e26.a00a0220.2a5ca.000a.GAE@google.com>
-Subject: Re: [syzbot] [ntfs3?] WARNING in indx_insert_into_buffer (3)
-From: syzbot <syzbot+3a1878433bc1cb97b42a@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.couthit.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: parvathi@couthit.com
+X-Authenticated-Sender: server.couthit.com: parvathi@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-syzbot has bisected this issue to:
+Hi,
 
-commit acdbd67bf939577d6f9e3cf796a005c31cec52d8
-Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Date:   Fri Jun 28 15:27:46 2024 +0000
+The DUAL-EMAC patch series for Megabit Industrial Communication Sub-system
+(ICSSM), which provides the foundational support for Ethernet functionality
+over PRU-ICSS on the TI SOCs (AM335x, AM437x, and AM57x), was merged into
+net-next recently [1].
 
-    fs/ntfs3: Optimize large writes into sparse file
+This patch series enhances the PRU-ICSSM Ethernet driver to support bridge
+(STP/RSTP) SWITCH mode, which has been implemented using the "switchdev"
+framework and interacts with the "mstp daemon" for STP and RSTP management
+in userspace.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=147995cd980000
-start commit:   6093a688a07d Merge tag 'char-misc-6.18-rc1' of git://git.k..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=167995cd980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=127995cd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e654219ed2546322
-dashboard link: https://syzkaller.appspot.com/bug?extid=3a1878433bc1cb97b42a
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=104b692f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17962458580000
+When the  SWITCH mode is enabled, forwarding of Ethernet packets using
+either the traditional store-and-forward mechanism or via cut-through is
+offloaded to the two PRU based Ethernet interfaces available within the
+ICSSM. The firmware running on the PRU inspects the bridge port states and
+performs necessary checks before forwarding a packet. This improves the
+overall system performance and significantly reduces the packet forwarding
+latency.
 
-Reported-by: syzbot+3a1878433bc1cb97b42a@syzkaller.appspotmail.com
-Fixes: acdbd67bf939 ("fs/ntfs3: Optimize large writes into sparse file")
+Protocol switching from Dual-EMAC to bridge (STP/RSTP) SWITCH mode can be
+done as follows.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Assuming eth2 and eth3 are the two physical ports of the ICSS2 instance:
+
+>> brctl addbr br0
+>> ip maddr add 01:80:c2:00:00:00 dev br0
+>> ip link set dev br0 address $(cat /sys/class/net/eth2/address)
+>> brctl addif br0 eth2
+>> brctl addif br0 eth3
+>> mstpd
+>> brctl stp br0 on
+# STP to RSTP mode
+>> mstpctl setforcevers br0 rstp
+>> ip link set dev br0 up
+
+To revert back to the default dual EMAC mode, the steps are as follows:
+
+>> ip link set dev br0 down
+>> brctl delif br0 eth2
+>> brctl delif br0 eth3
+>> brctl delbr br0
+
+The patches presented in this series have gone through the patch verification
+tools and no warnings or errors are reported.
+
+Sample test logs obtained from AM33x, AM43x and AM57x verifying the
+functionality on Linux next kernel are available here:
+
+[Interface up Testing](https://gist.github.com/ParvathiPudi/e4c2363b049678f4e0c163e2ff4ec4ff)
+
+[Ping Testing](https://gist.github.com/ParvathiPudi/e27190fd30229b63f5bdf52263b38b52)
+
+[Iperf Testing](https://gist.github.com/ParvathiPudi/7cba8143640f7bd23f579ad72d74c81c)
+
+[1] https://lore.kernel.org/all/20250912104741.528721-1-parvathi@couthit.com/
+
+This is the v2 of the patch series [v1]. This version of the patchset
+addresses the comments made on [v1] of the series.
+
+Changes from v1 to v2 :
+
+*) Added RFC tag as net-next is closed now.
+*) Updated the cover letter of the series to generalize and indicate support for
+both STP and RSTP along with subject change as per Andrew Lunn's suggestion.
+*) Addressed the Andrew Lunn's comments on patch 1 of the series.
+*) Rebased the series on latest net-next.
+
+[v1] https://lore.kernel.org/all/20250925141246.3433603-1-parvathi@couthit.com/
+
+Thanks and Regards,
+Parvathi.
+
+Roger Quadros (3):
+  net: ti: icssm-prueth: Adds helper functions to configure and maintain
+    FDB
+  net: ti: icssm-prueth: Adds switchdev support for icssm_prueth driver
+  net: ti: icssm-prueth: Adds support for ICSSM RSTP switch
+
+ drivers/net/ethernet/ti/Makefile              |    2 +-
+ drivers/net/ethernet/ti/icssm/icssm_prueth.c  |  554 ++++++++-
+ drivers/net/ethernet/ti/icssm/icssm_prueth.h  |   27 +-
+ .../ethernet/ti/icssm/icssm_prueth_fdb_tbl.h  |   64 ++
+ .../ethernet/ti/icssm/icssm_prueth_switch.c   | 1004 +++++++++++++++++
+ .../ethernet/ti/icssm/icssm_prueth_switch.h   |   37 +
+ drivers/net/ethernet/ti/icssm/icssm_switch.h  |   82 ++
+ .../net/ethernet/ti/icssm/icssm_switchdev.c   |  332 ++++++
+ .../net/ethernet/ti/icssm/icssm_switchdev.h   |   13 +
+ .../ti/icssm/icssm_vlan_mcast_filter_mmap.h   |  120 ++
+ 10 files changed, 2212 insertions(+), 23 deletions(-)
+ create mode 100644 drivers/net/ethernet/ti/icssm/icssm_prueth_fdb_tbl.h
+ create mode 100644 drivers/net/ethernet/ti/icssm/icssm_prueth_switch.c
+ create mode 100644 drivers/net/ethernet/ti/icssm/icssm_prueth_switch.h
+ create mode 100644 drivers/net/ethernet/ti/icssm/icssm_switchdev.c
+ create mode 100644 drivers/net/ethernet/ti/icssm/icssm_switchdev.h
+ create mode 100644 drivers/net/ethernet/ti/icssm/icssm_vlan_mcast_filter_mmap.h
+
+-- 
+2.43.0
+
 
