@@ -1,179 +1,137 @@
-Return-Path: <linux-kernel+bounces-843158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA406BBE86A
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:44:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D4D3BBE885
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 17:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1083F3BF558
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:44:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3030E3BE32E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 15:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008BC2D9488;
-	Mon,  6 Oct 2025 15:43:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5EE2D879B;
-	Mon,  6 Oct 2025 15:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0490A2D8DA6;
+	Mon,  6 Oct 2025 15:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="jRDlOBgk";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="jRDlOBgk"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5731C2D061E
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 15:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759765433; cv=none; b=SZgbfyEHe0NIRyO0JOHpVJy7kcEEg9fyBCz3okETt5ITfduy774MLLksYMoXy5MLZhu/N+pC2ryiMnC0yl7Vnouy+/BOwsVv2G7nOdL+3OGtKEjOXeJah4wUkIrkDmIaOWGS68A3yIgXTvVJe2TaSm2pC26PImTaiqlwD4odUdQ=
+	t=1759765680; cv=none; b=ufCHCijOokfDvbNviYP889BmOaWIqDKoradoUDC11TEHQe/dYGL+1oUx4/Jx/vx1PPob7wMFYn21H2O/hHovjM2ET5YHXmdcFSoLvBaxOkVBwx9VbvYfYpjdwdFO8Cuxuo1UvDed6l9ssvM1jaFBBiqSqZU/8kTy9AxwwZQEFrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759765433; c=relaxed/simple;
-	bh=9TS8mvHfI1X9G76iPlEBCH6KiBzdkL1LBmUhaIltqjE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DY0Smf1PmIJApMbOS6xDMKURAxWXD9zelL6Si08kN76VrNEg5laNKNEYpyP4px6bZWKqexZKBWO/NW6VhHEVKnC8RpWLTgfOQboxnQwKE3gt5QESsHr2ka5Ik+2+hFcYwbpiwaKNUhWVZ2MPZYIVn5ebJZhXleoPyQBryAabCT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B54221515;
-	Mon,  6 Oct 2025 08:43:42 -0700 (PDT)
-Received: from [10.57.81.187] (unknown [10.57.81.187])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CE4953F66E;
-	Mon,  6 Oct 2025 08:43:48 -0700 (PDT)
-Message-ID: <2be75031-e7a6-44e8-a096-945947d73631@arm.com>
-Date: Mon, 6 Oct 2025 16:44:10 +0100
+	s=arc-20240116; t=1759765680; c=relaxed/simple;
+	bh=HN+nDCrFhsv8BG7LtrvF2kbTqt8nRNOB8Bt6++wEvd8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ram3MkztYwjdA00oLfAJspFgDCL8oQ012LW5qIVVpVYfY8k++MFbuvvqXd3YnfbwjmWlaTczuiX7Euib8N8ZUwrnVmuZfN0IFuIGKlpqRkllLw8NbceWTDZzBGYg4ILT399wVcTXNCeA0ErS3AH6sthJ1VyV4ek0NBOyIWbIDEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=jRDlOBgk; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=jRDlOBgk; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A5C631F451;
+	Mon,  6 Oct 2025 15:47:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1759765675; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=wKm7I/Sa0st0bjo6Se4lnhfhlbVutU6i0ITMuizxzx8=;
+	b=jRDlOBgk2l2QRYBZV/YKtIAqHWxfB37Mhp31E5a1qzOg/hHYr2btP0fSKodvSGSjSa9rUu
+	1CH0d5OS/40Uf8PGM4TUpSLcEG4Qm0Xa21D9wtvD0tWilh0Z8icy9H0e21ivO6qnti7bNP
+	bw+BDMScZs+ELXA3uf41511NDz7GWnM=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1759765675; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=wKm7I/Sa0st0bjo6Se4lnhfhlbVutU6i0ITMuizxzx8=;
+	b=jRDlOBgk2l2QRYBZV/YKtIAqHWxfB37Mhp31E5a1qzOg/hHYr2btP0fSKodvSGSjSa9rUu
+	1CH0d5OS/40Uf8PGM4TUpSLcEG4Qm0Xa21D9wtvD0tWilh0Z8icy9H0e21ivO6qnti7bNP
+	bw+BDMScZs+ELXA3uf41511NDz7GWnM=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9C7D413700;
+	Mon,  6 Oct 2025 15:47:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 7Hf0Javk42jnNAAAD6G6ig
+	(envelope-from <dsterba@suse.com>); Mon, 06 Oct 2025 15:47:55 +0000
+From: David Sterba <dsterba@suse.com>
+To: torvalds@linux-foundation.org
+Cc: David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Btrfs updates for 6.18, part 2
+Date: Mon,  6 Oct 2025 17:47:52 +0200
+Message-ID: <cover.1759762927.git.dsterba@suse.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v4 05/10] PM: EM: Add a skeleton code for netlink
- notification
-To: Changwoo Min <changwoo@igalia.com>
-Cc: christian.loehle@arm.com, tj@kernel.org, pavel@kernel.org,
- len.brown@intel.com, rafael@kernel.org, kernel-dev@igalia.com,
- linux-pm@vger.kernel.org, sched-ext@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250921031928.205869-1-changwoo@igalia.com>
- <20250921031928.205869-6-changwoo@igalia.com>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <20250921031928.205869-6-changwoo@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -2.80
 
+Hi,
 
+please pull two short fixes that would be good to have before rc1.
+Thanks.
 
-On 9/21/25 04:19, Changwoo Min wrote:
-> Add a boilerplate code for netlink notification to register the new
-> protocol family. Also, initialize and register the netlink during booting.
-> The initialization is called at the postcore level, which is late enough
-> after the generic netlink is initialized.
-> 
-> Finally, update MAINTAINERS to include new files.
-> 
-> Signed-off-by: Changwoo Min <changwoo@igalia.com>
-> ---
->   MAINTAINERS               |  2 +-
->   kernel/power/Makefile     |  5 ++++-
->   kernel/power/em_netlink.c | 35 +++++++++++++++++++++++++++++++++++
->   kernel/power/em_netlink.h | 16 ++++++++++++++++
->   4 files changed, 56 insertions(+), 2 deletions(-)
->   create mode 100644 kernel/power/em_netlink.c
->   create mode 100644 kernel/power/em_netlink.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 0992029d271d..ba528836eac1 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -9034,7 +9034,7 @@ F:	include/linux/energy_model.h
->   F:	Documentation/power/energy-model.rst
->   F:	Documentation/netlink/specs/em.yaml
->   F:	include/uapi/linux/energy_model.h
-> -F:	kernel/power/em_netlink_autogen.*
-> +F:	kernel/power/em_netlink*.*
->   
->   EPAPR HYPERVISOR BYTE CHANNEL DEVICE DRIVER
->   M:	Laurentiu Tudor <laurentiu.tudor@nxp.com>
-> diff --git a/kernel/power/Makefile b/kernel/power/Makefile
-> index 874ad834dc8d..284a760aade7 100644
-> --- a/kernel/power/Makefile
-> +++ b/kernel/power/Makefile
-> @@ -21,4 +21,7 @@ obj-$(CONFIG_PM_WAKELOCKS)	+= wakelock.o
->   
->   obj-$(CONFIG_MAGIC_SYSRQ)	+= poweroff.o
->   
-> -obj-$(CONFIG_ENERGY_MODEL)	+= energy_model.o
-> +obj-$(CONFIG_ENERGY_MODEL)	+= em.o
-> +em-y				:= energy_model.o
-> +em-$(CONFIG_NET)		+= em_netlink_autogen.o em_netlink.o
-> +
-> diff --git a/kernel/power/em_netlink.c b/kernel/power/em_netlink.c
-> new file mode 100644
-> index 000000000000..f3fbfeff29a4
-> --- /dev/null
-> +++ b/kernel/power/em_netlink.c
-> @@ -0,0 +1,35 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + *
-> + * Generic netlink for energy model.
-> + *
-> + * Copyright (c) 2025 Valve Corporation.
-> + * Author: Changwoo Min <changwoo@igalia.com>
-> + */
-> +
-> +#define pr_fmt(fmt) "energy_model: " fmt
-> +
-> +#include <linux/energy_model.h>
-> +#include <net/sock.h>
-> +#include <net/genetlink.h>
-> +#include <uapi/linux/energy_model.h>
-> +
-> +#include "em_netlink.h"
-> +#include "em_netlink_autogen.h"
-> +
-> +int em_nl_get_pds_doit(struct sk_buff *skb, struct genl_info *info)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +int em_nl_get_pd_table_doit(struct sk_buff *skb, struct genl_info *info)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static int __init em_netlink_init(void)
-> +{
-> +	return genl_register_family(&em_nl_family);
-> +}
-> +postcore_initcall(em_netlink_init);
-> +
-> diff --git a/kernel/power/em_netlink.h b/kernel/power/em_netlink.h
-> new file mode 100644
-> index 000000000000..acd186c92d6b
-> --- /dev/null
-> +++ b/kernel/power/em_netlink.h
-> @@ -0,0 +1,16 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + *
-> + * Generic netlink for energy model.
-> + *
-> + * Copyright (c) 2025 Valve Corporation.
-> + * Author: Changwoo Min <changwoo@igalia.com>
-> + */
-> +#ifndef _EM_NETLINK_H
-> +#define _EM_NETLINK_H
-> +
-> +#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_NET)
-> +#else
-> +#endif
-> +
-> +#endif /* _EM_NETLINK_H */
+- fix printk format warning on 32bit platforms
 
-Actually, those declarations of functions from patch 3/10 can
-live in this header. We would avoid creating more local headers
-in such case.
+- fix potential out-of-bounds access in callback encoding NFS handles
 
-Then the patch 3/10 would have to go after this patch when
-this header is introduced.
+----------------------------------------------------------------
+The following changes since commit 45c222468d33202c07c41c113301a4b9c8451b8f:
 
-Please ignore the comment in the patch 3/10 and try to
-use this header. It is also logically linked to the
-notifications, so belongs to such header IMHO.
+  btrfs: use smp_mb__after_atomic() when forcing COW in create_pending_snapshot() (2025-09-23 09:02:17 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.18-tag
+
+for you to fetch changes up to 4335c4496b1bcf8e85761af23550a180e937bac6:
+
+  btrfs: fix PAGE_SIZE format specifier in open_ctree() (2025-10-01 16:27:28 +0200)
+
+----------------------------------------------------------------
+Anderson Nascimento (1):
+      btrfs: avoid potential out-of-bounds in btrfs_encode_fh()
+
+Nathan Chancellor (1):
+      btrfs: fix PAGE_SIZE format specifier in open_ctree()
+
+ fs/btrfs/disk-io.c | 2 +-
+ fs/btrfs/export.c  | 8 +++++++-
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
