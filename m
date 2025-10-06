@@ -1,86 +1,129 @@
-Return-Path: <linux-kernel+bounces-843283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B8F5BBED5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 19:43:14 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82544BBED64
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 19:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 357A03C00F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 17:43:13 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2F2CC34A832
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 17:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0683624728F;
-	Mon,  6 Oct 2025 17:43:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689792652A6;
+	Mon,  6 Oct 2025 17:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GHKtrkyr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C591C84C0
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 17:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9BE4242D6F;
+	Mon,  6 Oct 2025 17:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759772585; cv=none; b=IK0kMoc/KH5QmwRlGzqrOuVmsuW7Q9A/KC780WSaUb4qt+7k2HU9+NacLv+skDRVfu5jx1a11ifADYBP3CKj/JmMSQIuNyLWaO7r2xnqatbOXKullWwQU0YTtHPcYMuKr1+rt8yS+FqeXY8m5g25sY5MAcBiOKgo557BV5ZRPCA=
+	t=1759772635; cv=none; b=a7lnpIn5XKqRTb0miZ6WAzE4Zgtzx5bbrsNy98nYT/JcF55IlJBX1N2YFxn92TJzqn4eCE/SFl4AZi6lvZSd7ayKACPSpsgcqqn+E+pC5ALSqDPcfNdLlVm7XJG14igh8xykT16YepD96T7L0g3if+24c6w+rKTqxEtXDTHh9CI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759772585; c=relaxed/simple;
-	bh=LXjjNR8YiT5sUysx1u6pVdFJ9nMoKSj0ksdzXCTj+AQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=idejYujwK0aJqJmpmKHNA4Y/wxmSazcgMmJ04i5H7ig2MFJmCQ9C6AHc7Q5AlfvKHpdiFDBIoVGdNY2VaWOSi19oJjMcsTaZ6J1y4wQJF0TD8u9c0Pl91bEhH4KZV59R+4lCid17Doo7xbtuT/cxvzHR0RnUftLuEShnMA5p4wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-42955823202so81801445ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 10:43:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759772583; x=1760377383;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nc5mddgG/7GKSnuUYngNJMFPRhvRMuy11+kqvkjDBTg=;
-        b=jdKen/7xecW8yhAxAiqjvaungnzK8nL2+7W/DZATuTPLQ0b/MlPZazzzsYUTquXP2Q
-         1yZBnqwzR6YA2o/qm2WLXFYpD6ixxmqMZvzd4tsuhQoK1zeJsNecLno83+ZUybVY/XWa
-         S8cp5G4uxgeDCov5xL22I3yKawdjXhqFeO3UM78nNXgGRNl9txHRw3mR4o9/BL17Lk0L
-         nqwBuUBJV/N3Ib63lE6pqgWSUnEy6tN25wQrLlXdoGKIPD3MPHsWBK7HugN2ZiT2Z95R
-         HYJopWa8PhDsJrPRWAOeykb95zzr46cpu7F9pBxzbas8PFJqYpthauO8cE4D2N3Snpge
-         BlVA==
-X-Gm-Message-State: AOJu0YxTGVd5j+VJES0zzRJtidfLJe9xX/WmN+Hgj2QI/MV9Bt8Zfixt
-	rwub/boX0tctIOm01epzvdnTHl/RgVQNmUHhVklN/MKcbdCRY+63JLtc1mB2x8Nj0JKfAeS+J1i
-	qvW5cCHPdd4qep0Xlssq0Kg7P9xK9i/D1tTtGzScnaV4zWWH6U1zZL1O8bfc=
-X-Google-Smtp-Source: AGHT+IHbK9EAR8pBAU45K8Co8r9b8itoLE1zLUQLE4JfCqQE9Ulr9MeP9Ume4PaqLudMPMHM/NWxyhED8QbDAF7661MSYu5Vt292
+	s=arc-20240116; t=1759772635; c=relaxed/simple;
+	bh=Y6uixzSgd1RpD1Qpsk4LEEaC4r3WAyx/6nNmZNF/E2c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CYG1noZWZJNRn+nn29Oo/UEZYDC212o998/vIjYuVJ1arLKz3Zp5yRtFxQK/pGv2PrxFx08SkEgFGaacO+lMub5ddZ1ZbP+sG+wBo/HYvWdzceSwHZxrTY5L8272Oi+M+Pv2jJHZSt1kQxGL4lP6XUnaRKHWNscuGFGwt48XBho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GHKtrkyr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C37EAC4CEF5;
+	Mon,  6 Oct 2025 17:43:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759772635;
+	bh=Y6uixzSgd1RpD1Qpsk4LEEaC4r3WAyx/6nNmZNF/E2c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GHKtrkyrOO9H9F6SQsYF6oGmNZ5jvPK81Un6DOPAkWMb+J/vb+M5p/5gfXu9wE/ym
+	 sFVgdbGrBfzHwzqK29ihMKQICHNz6QKbpLObSbnnQRqnaNtJsNlnc2U3NwoeGDmIPv
+	 Erwx47FkRSZLylNzBE0nXBnE8HutO4hG8bxJsfxJY9Znnah1QKCE40w/l5L+7FLUk5
+	 5RGP+22jbw8x07KUryToDF8FpkjdfXiH8NXQmEakBCnazAYuz2aflB8o/4sajdW2rT
+	 O+8ZZCbYiVz66N0NUG3zRsL+JrDlQHkGovr/WFP0aNseHZFaOM62y+cJO4s4vRbDO+
+	 qQWlSjQoGtAoQ==
+Date: Mon, 6 Oct 2025 10:43:53 -0700
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Victor Paul <vipoll@mainlining.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Lukas Wunner <lukas@wunner.de>, Greg KH <gregkh@linuxfoundation.org>, 
+	Daniel Martin <dmanlfc@gmail.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH] PCI: probe: fix typo: CONFIG_PCI_PWRCTRL ->
+ CONFIG_PCI_PWRCTL
+Message-ID: <32xgw5nop3xl4toudpskhqppzxa3swtsiueggot4kvrh7q3gn2@jslnan4pmwia>
+References: <20251006143714.18868-1-vipoll@mainlining.org>
+ <20251006161447.GA521686@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cdac:0:b0:405:d8c4:ab8f with SMTP id
- e9e14a558f8ab-42f7c3b2655mr6188655ab.14.1759772583236; Mon, 06 Oct 2025
- 10:43:03 -0700 (PDT)
-Date: Mon, 06 Oct 2025 10:43:03 -0700
-In-Reply-To: <CABGqKE2yvE91xXt0SeJJ+g_SpSXC5mE70grx9Cb+GreJOApf+w@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e3ffa7.a00a0220.298cc0.0466.GAE@google.com>
-Subject: Re: [syzbot] [cgroups?] WARNING in cgroup_freeze
-From: syzbot <syzbot+27a2519eb4dad86d0156@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, nirbhay.lkd@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251006161447.GA521686@bhelgaas>
 
-Hello,
+On Mon, Oct 06, 2025 at 11:14:47AM -0500, Bjorn Helgaas wrote:
+> On Mon, Oct 06, 2025 at 06:37:14PM +0400, Victor Paul wrote:
+> > The commit
+> > 	8c493cc91f3a ("PCI/pwrctrl: Create pwrctrl devices only when CONFIG_PCI_PWRCTRL is enabled")
+> > introduced a typo, it uses CONFIG_PCI_PWRCTRL while the correct symbol
+> > is CONFIG_PCI_PWRCTL. As reported by Daniel Martin, it causes device
+> > initialization failures on some arm boards.
+> > I encountered it on sm8250-xiaomi-pipa after rebasing from v6.15.8
+> > to v6.15.11, with the following error:
+> > [    6.035321] pcieport 0000:00:00.0: Failed to create device link (0x180) with supplier qca6390-pmu for /soc@0/pcie@1c00000/pcie@0/wifi@0
+> > 
+> > Fix the typo to use the correct CONFIG_PCI_PWRCTL symbol.
+> > 
+> > Fixes: 8c493cc91f3a ("PCI/pwrctrl: Create pwrctrl devices only when CONFIG_PCI_PWRCTRL is enabled")
+> > Cc: stable@vger.kernel.org
+> > Reported-by: Daniel Martin <dmanlfc@gmail.com>
+> > Closes: https://lore.kernel.org/linux-pci/2025081053-expectant-observant-6268@gregkh/
+> > Signed-off-by: Victor Paul <vipoll@mainlining.org>
+> 
+> Might this be a stale .config file?
+> 
+> I think 13bbf6a5f065 ("PCI/pwrctrl: Rename pwrctrl Kconfig symbols and
+> slot module") should have resolved this. 
+> 
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Looks like 13bbf6a5f065 was not backported to 6.15 (since it is not a fix), but
+8c493cc91f3a was (since it is a fix). But 6.15 is not LTS and the stable release
+has been stopped with 6.15.11, we can't backport any fixes now.
 
-Reported-by: syzbot+27a2519eb4dad86d0156@syzkaller.appspotmail.com
-Tested-by: syzbot+27a2519eb4dad86d0156@syzkaller.appspotmail.com
+So I think you should move on to 6.16 based kernel where the issue is not
+present, or carry the fix in your tree.
 
-Tested on:
+- Mani
 
-commit:         fd94619c Merge tag 'zonefs-6.18-rc1' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=158af942580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e2b03b8b7809165e
-dashboard link: https://syzkaller.appspot.com/bug?extid=27a2519eb4dad86d0156
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11e2f942580000
+> In the current upstream tree (fd94619c4336 ("Merge tag 'zonefs-6.18-rc1'
+> of git://git.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs"),
+> git grep "\<CONFIG_PCI_PWRCTL\>" finds nothing at all.
+> 
+> > ---
+> >  drivers/pci/probe.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> > index 19010c382864..7e97e33b3fb5 100644
+> > --- a/drivers/pci/probe.c
+> > +++ b/drivers/pci/probe.c
+> > @@ -2508,7 +2508,7 @@ bool pci_bus_read_dev_vendor_id(struct pci_bus *bus, int devfn, u32 *l,
+> >  }
+> >  EXPORT_SYMBOL(pci_bus_read_dev_vendor_id);
+> >  
+> > -#if IS_ENABLED(CONFIG_PCI_PWRCTRL)
+> > +#if IS_ENABLED(CONFIG_PCI_PWRCTL)
+> >  static struct platform_device *pci_pwrctrl_create_device(struct pci_bus *bus, int devfn)
+> >  {
+> >  	struct pci_host_bridge *host = pci_find_host_bridge(bus);
+> > -- 
+> > 2.51.0
+> > 
+> 
 
-Note: testing is done by a robot and is best-effort only.
+-- 
+மணிவண்ணன் சதாசிவம்
 
