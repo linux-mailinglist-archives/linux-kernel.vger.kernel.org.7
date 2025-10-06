@@ -1,76 +1,171 @@
-Return-Path: <linux-kernel+bounces-843442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99462BBF306
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 22:29:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7384BBF31B
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 22:32:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 760314EB9C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 20:29:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AF9B3BF815
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 20:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC9A25B1D2;
-	Mon,  6 Oct 2025 20:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0D42DCBFA;
+	Mon,  6 Oct 2025 20:31:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HSZF/EXw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jl/uolcw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1175DA932
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 20:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468D0136358;
+	Mon,  6 Oct 2025 20:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759782588; cv=none; b=K3sO7bGIBBPDj0byy/3RNr6duMQfUBNpgzj4G4+H6hdiyjPby1x395VQo8mKSGZXOHPLNoISPjZY3ARwpzHSz+mJYBrTd/G0tu6s6yajymEPfdg1RrRqkMHmuSgztuuXJSyISc2Q50Z/OKCQf4Ifwx7ZwKmPn+q9y5e2fwBas4A=
+	t=1759782710; cv=none; b=i/TbNdBIhKgpEUi7ARZulKEFEhASYIRfdzQoS85uck4ZjzlrKnZGYYWO6NEUnuFix+680rNHoMknMY3PixW/uBhzC+D0Mcv9EiBDcnJyCY+om7JANxpUzwCCDkpzIu3oXkn4mzG9G7YGzXkDRI+8nNxiTjuxItnh02pqF5ufkvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759782588; c=relaxed/simple;
-	bh=y/7OMzRn5Emn0tuB5k5g03xdsBv55C6TulHJkQ+VKnc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=usCGwdvEY5YlGq/SPFBV5bSnR2fTY+XnHXUVuRYcWXy6ojnaZzUM0MU2C5TvoPjhQ7JmI+CxhE/+gFD/Gz4iByHVeGM/9QGVYnom99YfGX64ngcnKrulNtzEZO3vmB+upCaQceMVlp2yYOBjKZblc6a4g1xMnsAQppI+l3yK9x0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HSZF/EXw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34F4DC4CEF5;
-	Mon,  6 Oct 2025 20:29:45 +0000 (UTC)
+	s=arc-20240116; t=1759782710; c=relaxed/simple;
+	bh=TlXHhMMgPTT/CKQuw+PRtgSXuw4hONNTSte45Q6CtDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mWdT8+vGzURafMxtTgQ3WmeIvB9FbH4zdYgRAxKI6Vt8fnewtbF+ZulAYt50FlUplxIacQ2QDHmg1TflYaQnd6tMASQMuq9lxkooSEcPCa1qOODZcvUhyS4XjVrHSICkOVybxI8MznD4UbhjVJz4U9D0WUwwhcJiUPlEnOjKW/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jl/uolcw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 901EEC4CEF5;
+	Mon,  6 Oct 2025 20:31:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759782587;
-	bh=y/7OMzRn5Emn0tuB5k5g03xdsBv55C6TulHJkQ+VKnc=;
-	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
-	b=HSZF/EXwPAWIcHSQ1nHZRon6QmHQEqH/Pf+/Sx2vBDBwHUcDIzDlfS+mp/ds83k4Z
-	 Bx7fnV+g96ZKAJH3GYD06SeCQucOx2jWGieNhrAftARr0ldoSWPPDDNZziJDjeVfXS
-	 gAA68TW89gVWVz1SJBNlHlZm4MlHiCEVaYZJpdY4FC30UCYVDIy2aKh4gHrWO6WqTc
-	 stPAlxvehTg8kdv6SAfDWCB7BIqbZG9q3uo7lBK1idVQi8MV4qGTcDc6vSyEewcsXw
-	 PZzE70Li4zIVDa0YzSSBT04RHp0gaVh5xXAZtAgmSGq0nNqlIg6YkJMRdzoetVPzfz
-	 VO/z275MhrKag==
+	s=k20201202; t=1759782709;
+	bh=TlXHhMMgPTT/CKQuw+PRtgSXuw4hONNTSte45Q6CtDQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jl/uolcwE8I788cHiBxoYwA1rpA2krrryILkEMUHy/ze/mxH9gdgxoFo9kQSY5bFz
+	 R5uH1VEClD37gc3mOORe+iwwQZAPhDyLnoDJ2V0jEG7owlCEMY3CwBa3D5Fr3kQ/Qn
+	 R+zzAFpshEF3aUoGJudHyfQQrXenGycAmUfYXIWPIicwuJdUH8s3OTkyqkwfYAtQiw
+	 5dTwNAPEgq3chztZJOyBiHPyoG3aJB5PN4kBxFaprkiHU3RFESC8TAdUczCPNQmTMA
+	 ROVbx5xw1EVO+pLKH+PJ7++IfWmv0eopWZT3UVxdKeMG7wYXA349SQE6Q/snHQHv96
+	 JeV21kd75K3Pg==
+Date: Mon, 6 Oct 2025 15:31:48 -0500
+From: Rob Herring <robh@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jonas =?iso-8859-1?Q?Schw=F6bel?= <jonasschwoebel@yahoo.de>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Charan Pedumuru <charan.pedumuru@gmail.com>,
+	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
+	Aaron Kling <webgeek1234@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH v3 20/22] dt-bindings: display: tegra: document Tegra20
+ and Tegra30 CSI
+Message-ID: <20251006203148.GA523657-robh@kernel.org>
+References: <20250925151648.79510-1-clamor95@gmail.com>
+ <20250925151648.79510-21-clamor95@gmail.com>
+ <20251002015244.GA2836647-robh@kernel.org>
+ <CAPVz0n1By+akzp0t+GfF9nRzZ27NwYEikXxQ+=M=W2NEGpLNFw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 06 Oct 2025 22:29:43 +0200
-Message-Id: <DDBIV2C6FH2L.3NH6D76Q26GYD@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>, "Mary
- Guillemard" <mary@mary.zone>, "Faith Ekstrand"
- <faith.ekstrand@collabora.com>, "Lyude Paul" <lyude@redhat.com>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
- <nouveau@lists.freedesktop.org>
-To: "Mohamed Ahmed" <mohamedahmedegypt2001@gmail.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH 5/5] drm/nouveau/drm: Bump the driver version to 1.4.1
- to report new features
-References: <20251006191329.277485-1-mohamedahmedegypt2001@gmail.com>
- <20251006191329.277485-6-mohamedahmedegypt2001@gmail.com>
-In-Reply-To: <20251006191329.277485-6-mohamedahmedegypt2001@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPVz0n1By+akzp0t+GfF9nRzZ27NwYEikXxQ+=M=W2NEGpLNFw@mail.gmail.com>
 
-On Mon Oct 6, 2025 at 9:13 PM CEST, Mohamed Ahmed wrote:
-> This is so that NVK can enable compression for kernels that support it an=
-d
-> avoid cases where an older kernel would MMU fault when a newer mesa would
-> try to use compression.
+On Thu, Oct 02, 2025 at 08:14:22AM +0300, Svyatoslav Ryhel wrote:
+> чт, 2 жовт. 2025 р. о 04:52 Rob Herring <robh@kernel.org> пише:
+> >
+> > On Thu, Sep 25, 2025 at 06:16:46PM +0300, Svyatoslav Ryhel wrote:
+> > > Document CSI HW block found in Tegra20 and Tegra30 SoC.
+> > >
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > ---
+> > >  .../display/tegra/nvidia,tegra20-csi.yaml     | 135 ++++++++++++++++++
+> > >  1 file changed, 135 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
+> > > new file mode 100644
+> > > index 000000000000..817b3097846b
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
+> > > @@ -0,0 +1,135 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-csi.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: NVIDIA Tegra20 CSI controller
+> > > +
+> > > +maintainers:
+> > > +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    enum:
+> > > +      - nvidia,tegra20-csi
+> > > +      - nvidia,tegra30-csi
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  clocks: true
+> > > +  clock-names: true
+> > > +
+> > > +  avdd-dsi-csi-supply:
+> > > +    description: DSI/CSI power supply. Must supply 1.2 V.
+> > > +
+> > > +  power-domains:
+> > > +    maxItems: 1
+> > > +
+> > > +  "#nvidia,mipi-calibrate-cells":
+> > > +    description:
+> > > +      The number of cells in a MIPI calibration specifier. Should be 1.
+> > > +      The single cell specifies an id of the pad that need to be
+> > > +      calibrated for a given device. Valid pad ids for receiver would be
+> > > +      0 for CSI-A; 1 for CSI-B; 2 for DSI-A and 3 for DSI-B.
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    const: 1
+> >
+> > Sorry I didn't bring this up before, but is this ever not 1? If it is
+> > fixed, then you don't really need the property. I prefer it just be
+> > fixed rather than getting a bunch of vendor specific #foo-cells.
+> >
+> 
+> This is not an introduction of property, such property already exists
+> in Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-mipi.yaml
+> and is used in multiple device trees. As I have told before, in case
+> of Tegra30 and Tegra20 CSI block combines mipi calibration function
+> and CSI function, in Tegra114+ mipi calibration got a dedicated
+> hardware block which is already supported. This property here is used
+> to align with mipi-calibration logic used by Tegra114+
 
-A slightly more detailed version of this would be great to see in a cover
-letter. :)
+Okay.
+
+You will have to continue to tell me again if my past questions are not 
+addressed in the commit message. A review only last week was 100+ 
+patches ago. Don't expect I'll remember nor go re-read prior versions. 
+
+Ideally, we don't define the type of a property more than once. So this 
+should really first be moved to its own shared schema that's referenced 
+here and in the original user. Then it is perfectly clear reading the 
+patches that this is not a new property.
+
+Rob
 
