@@ -1,311 +1,129 @@
-Return-Path: <linux-kernel+bounces-842765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E0B7BBD81E
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 11:52:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 856F7BBD821
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 11:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C41DE1895829
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 09:52:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F45A3B6FED
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 09:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E314212546;
-	Mon,  6 Oct 2025 09:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034622101AE;
+	Mon,  6 Oct 2025 09:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="cO81gOx+"
-Received: from mx-relay95-hz2.antispameurope.com (mx-relay95-hz2.antispameurope.com [94.100.136.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dq1RXggk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CCA020E029
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 09:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.136.195
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759744329; cv=pass; b=P7yz6xFItNE2hx8y7x4fPDFrTBh8EhxM/oknfX/Rd/JEd462UIqrKmrMNwMpUmgBiZo8eqeSCRBoxIDpIhH+f1J91nhWk7yOhvKvl/b2ykbJvDQEKseBi6HXiK2gkIcuiuN1Bf+fUCEtlYv2SqkKy4xX+5I6iz3/0vxqw/NPerk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759744329; c=relaxed/simple;
-	bh=j3WCsairq1WgCQgA3EtS8OrUwtY6E+K5lC9wJPKVWtE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AWYB2PsHiygH3tvyQCP2XkJtixf2Rdrgl7kvdbJgFv6/qDBaK4Qyw/vuRSSybp84BiS6sIXVlHK28pZOQBuOVgKXgBywHRn15exTQG3itY79r7oqi26kxdS65hkqi0dlcwYCNbY41VPXmWWz9rcpmcx2QKi/NYJfCFj0E/Q338Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=cO81gOx+; arc=pass smtp.client-ip=94.100.136.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-ARC-Authentication-Results: i=1; mx-gate95-hz2.hornetsecurity.com 1; spf=pass
- reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
- smtp.mailfrom=ew.tq-group.com smtp.helo=smtp-out01-hz1.hornetsecurity.com;
- dmarc=pass header.from=ew.tq-group.com orig.disposition=pass
-ARC-Message-Signature: a=rsa-sha256;
- bh=ZrFYIzPuk9rtzNXWXOQAERqhNp/BdwtufnfrutqIGq8=; c=relaxed/relaxed;
- d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
- t=1759744267;
- b=tYJM+b180EDN05jFxtJUWQQA6QpvNfgtwz1rIiSCs9rxurn2n6boE0Zh3RdDTbLYpXf6/5EL
- rjuPIcFHlwRI3cEMsD8awcV9FEbUDWS42hUcWvjiYriIxkoyumrpPJZtu+GHXmERuDbNUlGFnL0
- eiy9tzXz/5FaB6Gv2ZQuK7iL1Ta7ArWo7IN0ppL+wS/7iuEM0RkVQuK/0qTfEkYrAxYdwNZjxW1
- zgJblAuaqq8YNyDYcHGSX+MTlKvsFVtxm9pd8Oq0qYpqEjl/m6lBxpKyLbWAfhq3U7vE1fD0RVn
- lwJcj6pOcQegkwn5V4CoNr2vrqix2Scohe3fhnvwjfnlg==
-ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
- t=1759744267;
- b=CA3HIx173xeflG2FE0IRZwMgy+a9N2Qh3CsvVMgHWpycMWfNEDCBdMm6+BdxguBsoLppP4NI
- TvfZs+f9dM4kQugOb7pmTsiA7WzHBR3j97Ji2pBq3beIJLSYXJJMhLOWUqbojnxTpEYeMH3HhUx
- UCZh9TqmRUU95ApghjifbGsT5Zc32NvAFo3FMP4J53I0Ox3COKPcx0WN3oiLSqTlan7uuvjhSzx
- X4STB909fXLPtDmbsPDayEoYWnHS40X+5S9inBcA+UZUuyE/4EJsvUyTCAr4N3FVf4X5ZreQInb
- C9HEDMnFTR7tVjcurlTriz6YmncLD7us7Ml9Dxn4xei0w==
-Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay95-hz2.antispameurope.com;
- Mon, 06 Oct 2025 11:51:07 +0200
-Received: from schifferm-ubuntu.tq-net.de (host-82-135-125-110.customer.m-online.net [82.135.125.110])
-	(Authenticated sender: matthias.schiffer@ew.tq-group.com)
-	by smtp-out01-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 279CFA4070E;
-	Mon,  6 Oct 2025 11:50:57 +0200 (CEST)
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@ew.tq-group.com,
-	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Subject: [PATCH] arm64: dts: ti: k3-am642-tqma64xxl: add boot phase tags
-Date: Mon,  6 Oct 2025 11:50:36 +0200
-Message-ID: <20251006095036.16367-1-matthias.schiffer@ew.tq-group.com>
-X-Mailer: git-send-email 2.51.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E812620B80B
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 09:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759744384; cv=none; b=Asw3AHo8odyUD80nQ/mLD4atiCBmDjFzcPnuQpyexUduE0INCSbQm3Z4QMTCExQZm83mLeUTM/p5vMmyngnFaCUBJ/Rk1b1jJl/Pun6wunibhWxoxk7YJb9YJqhvPolb5YxQCo5hAgEJDgK9iv93YkPwdVJvvgkpsW0VJrWXXCQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759744384; c=relaxed/simple;
+	bh=bHqclwyLkUNjJLc1hzYctTC+iEb5fEGxWqRMdYUGqtI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DVxU5MJwmw8ZvgJ8E6UPl+ArvxE0MeinJby2KSYhCpKVXbLZmByPxU0j/6paNVI6Kn7WldNWXXBcGTDoU0FMu3mm0+pcspfc7FpqQxz4Uk5ttKWD3f3Tjm0J8T/a0NFwcNgkzLHNmS9tZBj2b1AJpbRUZ0ydA+7oKgkSdcPBL5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Dq1RXggk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759744381;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gxh9Z2NaPYtIW6LVb70fTOamcBkA8Vc9TSWtwP/uZlo=;
+	b=Dq1RXggkoQfNlRxC1eI83nwHYoFDGqmfw2+qfgcA0VxJHHcuA1pwzcJqU+IroaVStiZy/w
+	NTeOGTzsxc/MctShcgZ5aZZzZjM6XcP9LuVuzzlw7+TKcKuLg44B2OnEi59bIbC6FMd0Ok
+	IShzgbNSvj2DIWNz8qIEE1L3IjczDlk=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-659-9IN6v3kzPreJo_M8ZoHMHA-1; Mon, 06 Oct 2025 05:51:16 -0400
+X-MC-Unique: 9IN6v3kzPreJo_M8ZoHMHA-1
+X-Mimecast-MFC-AGG-ID: 9IN6v3kzPreJo_M8ZoHMHA_1759744275
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-afcb72a8816so378460966b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 02:51:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759744274; x=1760349074;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gxh9Z2NaPYtIW6LVb70fTOamcBkA8Vc9TSWtwP/uZlo=;
+        b=KboXH48ODcx4XEiefEBiKzCF0/VM4UpGm7KHYXIb9blBE5QGM7IP4fpvzLeuw39H59
+         DAHD3lKbWUcvBAGTSgngrjhv+C/ykr2CCA87GoUiFsAzjWsANDkxfHjIu4jppdsvifF5
+         migVA5kWS+l+Qr2qqRVY03V+/sqmwp1ZnEcBnfwvTRosXXNehCAuhHXCsihaPuXJI+0s
+         yQNcmo/iixcvUj/qxUF/Riq75Bu3FAdJMjvWMOn04ojeeN7XJUTWRE9YHsWIenXS4GM5
+         YosrmkkD24+8cZzcnqWlfdvStFAhfDwZGnNzISDQgzu8t7mchIzBPU0ltMxvTIrFzDt3
+         cVzg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQrtpTx8GDVay9AIQ43xo5GU/4rilG09EGoIb51QvJcox5+2dVVvEMHYwvHoDmcoIbPcWIZPok3ftWV/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5VzDdelTPKjTeD1O3V2uA8LXJvS9wxt3yki9+EmOrUBp9ndAY
+	QJZfByuM6FICLUsjzbh51YzTEo0083y6652rcoQlqA5Zl9otgFh38LRTDWiGPYr/zX4PU7e539C
+	+4t5WQn4in8h4Payo7lTeWhUWhNH1A9CNxSkcxeYsZHnO7hv3kfq/lpnLkgqlzLlnvQ8CV6Bah8
+	qbvt+p5FeaXn5Ywk0/M7TFwpikWuK7p/wTwxVwWN8MF/Eo8J/w
+X-Gm-Gg: ASbGncsVMqTgJJbcttlg9DG+aS38UZdaWbsXcra+gNH4z+YxJJlFxPKs5PW+BVCY+af
+	WUfjwVdz+6/Yx16QXWkHR3TsSU29/MD49b+yFv9UIwTx5PztRWerXSHntcHTV4xiF2ZuKmvWSHq
+	sfbF3LsuQrWwtmN970W1Li33wUztOYaUYPtqo7ll2Ps/WYKVHo9pnpCTRa1i0=
+X-Received: by 2002:a17:907:86ab:b0:b3f:ccac:af47 with SMTP id a640c23a62f3a-b49c3d753e9mr1594129966b.31.1759744274496;
+        Mon, 06 Oct 2025 02:51:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEUSD2bCGjfaLibGZkbwwbVrVW0T4OZZ8ueWgxk9+Jscatm7Wk4WTwtLGrqSVSARsQZzylgAei74Xb7PbDKJyI=
+X-Received: by 2002:a17:907:86ab:b0:b3f:ccac:af47 with SMTP id
+ a640c23a62f3a-b49c3d753e9mr1594128366b.31.1759744274122; Mon, 06 Oct 2025
+ 02:51:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-cloud-security-sender:matthias.schiffer@ew.tq-group.com
-X-cloud-security-recipient:linux-kernel@vger.kernel.org
-X-cloud-security-crypt: load encryption module
-X-cloud-security-Mailarchiv: E-Mail archived for: matthias.schiffer@ew.tq-group.com
-X-cloud-security-Mailarchivtype:outbound
-X-cloud-security-Virusscan:CLEAN
-X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay95-hz2.antispameurope.com with 4cgDzj62dxz2Dj9k
-X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
-X-cloud-security-Digest:a80b39d10b8b7722f74fa46e8949e3b1
-X-cloud-security:scantime:1.793
-DKIM-Signature: a=rsa-sha256;
- bh=ZrFYIzPuk9rtzNXWXOQAERqhNp/BdwtufnfrutqIGq8=; c=relaxed/relaxed;
- d=ew.tq-group.com;
- h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
- t=1759744267; v=1;
- b=cO81gOx+H6KRj+7k5PztZPs3fmZLaAAZbgsAcE20N+3855VCtM8VqzdEWKXolDG0iM60lNYr
- UXcKQ09otfbQaRWwXvKivti4Q6X5B3VwdBdKql0drhaK3KlZqAAJBY1wLHY7yCa3875sYGudAkG
- vcC5qUDj2iEoYXTpCHIHF5VUo2/My5khC9XM58sqX/uXewGzlhGTkkf8IBY6DnxW7eX0HIfi2Kt
- p7hu6Rz0Kjd+LomSTXA7MTXh/3cG5FmgVg0RRFXUUEmJHUMhwjhCqm856BQqJy9CRsqjuarw5/3
- 9+XyaRP/QKTUjm+iXHRnmobreAy5p09LRl+ikmc03JqTw==
+References: <20250904165919.3362000-1-rrobaina@redhat.com> <CAABTaaB7SxWZUH+VxyOwZWBi6uPERg-qkMosFA=MTst5Rbc6kw@mail.gmail.com>
+ <CAHC9VhSi68-i8om4VYbxRsrK7xpVL-NJy89e01qsa5WTT-hQFw@mail.gmail.com>
+In-Reply-To: <CAHC9VhSi68-i8om4VYbxRsrK7xpVL-NJy89e01qsa5WTT-hQFw@mail.gmail.com>
+From: Ricardo Robaina <rrobaina@redhat.com>
+Date: Mon, 6 Oct 2025 06:51:02 -0300
+X-Gm-Features: AS18NWAE2IYvrD6g_3gTlP4iL6cMvZ48OibF5PWMZ7lVDeVlaCGvMRgAbDQeWkA
+Message-ID: <CAABTaaAW_a7_8WD8hsJw5X0q6BKcy82pyigr0HJHCZn0==KPTQ@mail.gmail.com>
+Subject: Re: [PATCH v1] audit: merge loops in __audit_inode_child()
+To: Paul Moore <paul@paul-moore.com>
+Cc: audit@vger.kernel.org, linux-kernel@vger.kernel.org, eparis@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Similar to other AM64x-based boards, add boot phase tags to make the
-Device Trees usable for firmware/bootloaders without modification.
+Thanks, Paul!
 
-Supported boot devices are eMMC/SD card, SPI-NOR and USB (both mass
-storage and DFU). The I2C EEPROM is included to allow the firmware to
-select the correct RAM configuration for different TQMa64xxL variants.
-
-Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
----
- .../dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts     | 18 ++++++++++++++++++
- arch/arm64/boot/dts/ti/k3-am642-tqma64xxl.dtsi | 12 ++++++++++++
- 2 files changed, 30 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts b/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts
-index 8f64d6272b1ba..81e9e047281fd 100644
---- a/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts
-@@ -167,6 +167,7 @@ reg_pwm_fan: regulator-pwm-fan {
- 	};
- 
- 	reg_sd: regulator-sd {
-+		bootph-all;
- 		compatible = "regulator-fixed";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&main_mmc1_reg_pins>;
-@@ -245,6 +246,7 @@ icssg1_phy0c: ethernet-phy@c {
- 
- 
- &main_gpio0 {
-+	bootph-all;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&main_gpio0_digital_pins>,
- 		    <&main_gpio0_hog_pins>;
-@@ -263,6 +265,7 @@ &main_gpio0 {
- };
- 
- &main_gpio1 {
-+	bootph-all;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&main_gpio1_hog_pins>,
- 		    <&main_gpio1_pru_pins>;
-@@ -332,6 +335,7 @@ &main_spi0 {
- 
- /* UART/USB adapter port 1 */
- &main_uart0 {
-+	bootph-pre-ram;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&main_uart0_pins>;
- 	status = "okay";
-@@ -492,11 +496,17 @@ &mcu_uart1 {
- };
- 
- &serdes_ln_ctrl {
-+	bootph-all;
- 	idle-states = <AM64_SERDES0_LANE0_USB>;
- };
- 
-+&serdes_refclk {
-+	bootph-all;
-+};
-+
- &serdes0 {
- 	serdes0_usb_link: phy@0 {
-+		bootph-all;
- 		reg = <0>;
- 		#phy-cells = <0>;
- 		resets = <&serdes_wiz0 1>;
-@@ -506,6 +516,7 @@ serdes0_usb_link: phy@0 {
- };
- 
- &sdhci1 {
-+	bootph-all;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&main_mmc1_pins>;
- 	bus-width = <4>;
-@@ -524,6 +535,7 @@ adc {
- };
- 
- &usb0 {
-+	bootph-all;
- 	/*
- 	 * The CDNS USB driver currently doesn't support overcurrent GPIOs,
- 	 * so there is no overcurrent detection. The OC pin is configured
-@@ -538,6 +550,7 @@ &usb0 {
- };
- 
- &usbss0 {
-+	bootph-all;
- 	ti,vbus-divider;
- };
- 
-@@ -621,6 +634,7 @@ AM64X_IOPAD(0x00ac, PIN_INPUT, 7)
- 	};
- 
- 	main_gpio0_hog_pins: main-gpio0-hog-pins {
-+		bootph-all;
- 		pinctrl-single,pins = <
- 			/* (P19) GPMC0_CSn2.GPIO0_43 - MMC1_CTRL */
- 			AM64X_IOPAD(0x00b0, PIN_OUTPUT, 7)
-@@ -730,6 +744,7 @@ AM64X_IOPAD(0x0258, PIN_OUTPUT, 0)
- 	};
- 
- 	main_mmc1_pins: main-mmc1-pins {
-+		bootph-all;
- 		pinctrl-single,pins = <
- 			/* (J19) MMC1_CMD */
- 			AM64X_IOPAD(0x0294, PIN_INPUT, 0)
-@@ -751,6 +766,7 @@ AM64X_IOPAD(0x0290, PIN_INPUT, 0)
- 	};
- 
- 	main_mmc1_reg_pins: main-mmc1-reg-pins {
-+		bootph-all;
- 		pinctrl-single,pins = <
- 			/* (C13) SPI0_CS1.GPIO1_43 - MMC1_SD_EN */
- 			AM64X_IOPAD(0x020c, PIN_OUTPUT, 7)
-@@ -791,6 +807,7 @@ AM64X_IOPAD(0x026c, PIN_INPUT, 7)
- 	};
- 
- 	main_uart0_pins: main-uart0-pins {
-+		bootph-pre-ram;
- 		pinctrl-single,pins = <
- 			/* (D15) UART0_RXD */
- 			AM64X_IOPAD(0x0230, PIN_INPUT, 0)
-@@ -861,6 +878,7 @@ AM64X_IOPAD(0x0088, PIN_OUTPUT, 2)
- 	};
- 
- 	main_usb0_pins: main-usb0-pins {
-+		bootph-all;
- 		pinctrl-single,pins = <
- 			/* (E19) USB0_DRVVBUS */
- 			AM64X_IOPAD(0x02a8, PIN_OUTPUT, 0)
-diff --git a/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl.dtsi b/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl.dtsi
-index ff3b2e0b8dd45..a78297b9fa57e 100644
---- a/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl.dtsi
-@@ -14,6 +14,7 @@ aliases {
- 	};
- 
- 	memory@80000000 {
-+		bootph-pre-ram;
- 		device_type = "memory";
- 		/* 1G RAM - default variant */
- 		reg = <0x00000000 0x80000000 0x00000000 0x40000000>;
-@@ -54,7 +55,12 @@ reg_1v8: regulator-1v8 {
- 	};
- };
- 
-+&fss {
-+	bootph-all;
-+};
-+
- &main_i2c0 {
-+	bootph-pre-ram;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&main_i2c0_pins>;
- 	clock-frequency = <400000>;
-@@ -67,6 +73,7 @@ tmp1075: temperature-sensor@4a {
- 	};
- 
- 	eeprom0: eeprom@50 {
-+		bootph-pre-ram;
- 		compatible = "st,24c02", "atmel,24c02";
- 		reg = <0x50>;
- 		vcc-supply = <&reg_1v8>;
-@@ -89,11 +96,13 @@ eeprom1: eeprom@54 {
- };
- 
- &ospi0 {
-+	bootph-all;
- 	status = "okay";
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&ospi0_pins>;
- 
- 	flash@0 {
-+		bootph-all;
- 		compatible = "jedec,spi-nor";
- 		reg = <0>;
- 		spi-tx-bus-width = <8>;
-@@ -116,6 +125,7 @@ partitions {
- };
- 
- &sdhci0 {
-+	bootph-all;
- 	status = "okay";
- 	non-removable;
- 	disable-wp;
-@@ -126,6 +136,7 @@ &sdhci0 {
- 
- &main_pmx0 {
- 	main_i2c0_pins: main-i2c0-pins {
-+		bootph-pre-ram;
- 		pinctrl-single,pins = <
- 			/* (A18) I2C0_SCL */
- 			AM64X_IOPAD(0x0260, PIN_INPUT_PULLUP, 0)
-@@ -135,6 +146,7 @@ AM64X_IOPAD(0x0264, PIN_INPUT_PULLUP, 0)
- 	};
- 
- 	ospi0_pins: ospi0-pins {
-+		bootph-all;
- 		pinctrl-single,pins = <
- 			/* (N20) OSPI0_CLK */
- 			AM64X_IOPAD(0x0000, PIN_OUTPUT, 0)
--- 
-TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht München, HRB 105018
-Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-https://www.tq-group.com/
+On Mon, Oct 6, 2025 at 12:21=E2=80=AFAM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> On Fri, Oct 3, 2025 at 11:50=E2=80=AFAM Ricardo Robaina <rrobaina@redhat.=
+com> wrote:
+> >
+> > Hi Paul,
+> >
+> > I=E2=80=99m curious if you have any thoughts on this one.
+> > Please disregard this email if it=E2=80=99s already in your to-do list.=
+ It=E2=80=99s
+> > not my intention to rush you in any way.
+>
+> Hi Ricardo,
+>
+> Your patch was posted right before v6.17-rc5, and with only
+> approximately a week before the general feature cutoff for the v6.18
+> merge window, I didn't have a chance to properly review it before the
+> cutoff.  Rest assured, it is in the review queue, and with a little
+> bit of luck I should be able to start working through that this week.
+>
+> As a FYI, the doc below describes some of the basic process for the
+> audit tree which may be helpful.  If you lose the link, it is linked
+> off the audit section in MAINTAINERS.
+>
+> https://github.com/linux-audit/audit-kernel/blob/main/README.md
+>
+> --
+> paul-moore.com
+>
 
 
