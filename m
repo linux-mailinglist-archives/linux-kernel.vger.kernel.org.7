@@ -1,167 +1,141 @@
-Return-Path: <linux-kernel+bounces-843228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DF4FBBEAF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:42:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1AD8BBEB2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 18:43:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDAAB18946EC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:42:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6E821895993
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 16:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7432E2DCF57;
-	Mon,  6 Oct 2025 16:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079002DECDD;
+	Mon,  6 Oct 2025 16:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hmhvIIDj"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tMc9fMnW"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5591E98F3
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 16:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E9C2DC76D
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 16:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759768923; cv=none; b=cDfBtVpji8PCZ6IyVUWR0wbSiFwS/m+koI69F2iQOpJJgasT6YaVXY4vgAbBp2+X0aO+qxiJX1eZLvFKaUlDNbPook5bxQYk3In0//CxACJG3nPg303OZV9xpvInCWBI15nYxhNx/RvuK4aoyOijE4zNLqkKwxGaidJtpVEv5sY=
+	t=1759769013; cv=none; b=sYhSHUEI3IHa1onG9xvQzDseqIdI4pJhAJtN6DaVCbtKXZooTE92HD7VrIi+VplNqK9/265OWAX281ahyQe0ZGjfdl3VUKguFqm1AOKdHrcw6PmcqGJ5Wq++VhLQteMR/cunERZb79EP8lXDC8U0wv1RffPDaMTZAhnoW3Z77SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759768923; c=relaxed/simple;
-	bh=C7FdrotOExkG/5eyy10xgPUDVdT72B01GXJ62Fs4G10=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jc6acWvrZQjSAXi9gRAYHyI5phXiF3OfBQ1k9gvILfQsrkRHj1Nfd+PYVqjwOnnStwoR7bYjfLtP/jknDwIDcSeqvXiGcM63Y2fyYdvczHl3PmHlZqQ1HcXehq33pjK6M5m0y1p6OZXLB3ei4Fs7qafse2L/aNkxGMP2849ofF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hmhvIIDj; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e6a6a5e42so26296205e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 09:42:01 -0700 (PDT)
+	s=arc-20240116; t=1759769013; c=relaxed/simple;
+	bh=HMtcLDEIKjq6G2Zgr0JytIoIw9ewVlt1cHK9VF+l//w=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=l+/hLsOWhLbNK/vR7Vj0Tfkh4Znp4ulfG1yc6oH1RmEKsVbGtgJ3eZO6Gic0CXQVK0TU076wvGBxHKpc5o2qZqWDzHEvuIGaIZX2q3CreTxm0H1lOzcrQB4Wvf3uuBCxI36XxR53YMrB7pmSzS0BpHbu2lrA/Vn0Jk9JLyHYH5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tMc9fMnW; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b3d50882cc2so990520066b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 09:43:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759768920; x=1760373720; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=B1m3A2SK0UP4dwSyRm6Qf6w7bJhm1Ficb4+Tgp0EQaQ=;
-        b=hmhvIIDj11XsG1lWO95MdMBx3Gx5I8dCOJXPraTTmvsRRrggmx8Z3cQ/2eEeK/dq6R
-         dI086l4YLb11fuyHgc5mqYY7yLXSNRh1ugeLn672htOjDz//sGM2DZLm59miZqVqCztf
-         AalJlg8l7zrGiTw75Bz4hlJTpRRddBmGQKR4k6VZTGeioMq5EFZKcMqeir/NVkNtvPTV
-         ns2gKEdfcWfmRwV3BslWsl+WBMTvuxQ9lHPVoddTWtY8eZCE8G43rN3uNZhufw/kOZu5
-         CyQExYDXDY63XzowI7GzXorjnhw93GZTX3HtJ+rFt18rIn6yP2LD9ivA4m1rIXVRIB8E
-         Gf/Q==
+        d=linaro.org; s=google; t=1759769008; x=1760373808; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oKtphuJ/4di9yNIsz6yNlkrtQKgCMc1BLXd/ATWAWto=;
+        b=tMc9fMnWJiszVnxWCzpauPGyIxTsvBolcKNfpM2X6yK1w79upYCSF4SuOdm78GkLbl
+         8uTaAwDZziqJrKughTM1EUR7cR5ztBLGVBlcTT1iza5Tvt4l+ZC5ENf2pjHYvhqv3vub
+         7Iqcu3KhnuCzkLuDSf2s+lARm11qdCUgqY2AjXic4HhKgHeA4Y48MkQ/S68k3kMbFoCl
+         Ha042F+gF4iJ3wHFXtz2lMrFMWH38w+6JpSkqGIVYZTkrSwfK2+5h1dmqDUHA4E8Gudn
+         eE+a/972ST2e5F01hWkVBbZR75stysD1C33NDz+paYOYmFYzBZuRLz1W386bsZ79QmVl
+         7bZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759768920; x=1760373720;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1759769008; x=1760373808;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=B1m3A2SK0UP4dwSyRm6Qf6w7bJhm1Ficb4+Tgp0EQaQ=;
-        b=pEouNy7jk7Qi0dijRFWpd3zjmafHkT3fjgHLuqN/9jX018h3+RZH+rssceZ+AuQRbH
-         at7HwSsEHAuIwHBLUT3VjNqPy+VTVvIG0d5dGtrdMPuX44hEUraYNu1gZj6hEfj8BECM
-         RJr+nM+5PdwdeMgg1H6VLl2URdl+EIVSn0Ynoo+Gs3kpWfZFx91f5D7iWD0vsWOp3eMA
-         dz0oRWhiQT9efV9zXO1bmB8bgjJcHl92yhZeyyhFPgFzIVczY+OWZ4FtwK0keZ4p+fjS
-         UeSl8ovO/6oVaFX6TIQl571hQHXvfetABsXJiZa5psnJq6f7OsKnmZvTun736XN5zd15
-         QYlw==
-X-Forwarded-Encrypted: i=1; AJvYcCXOApd6ytgd7KeBsbb4Cv+kxn2DsK75bF8i+nwB/WOQ0jCxzIJqxSFYN+xDteTcPdvN5JGy7Yp0R8uzCNg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgNUBZ7+4xXA+UJrSLO1UGU8Gp1HOzLyllXNkg7bvIuWiKJwz4
-	Bsj4Gkqacbh6wwImIwuOk/B1WriOoWmSm65SuWmR10s3YIboxqLzIoQj
-X-Gm-Gg: ASbGncu0o36EAcO+9PKFmYPKRVwGWIWjLbN23hLMg9kcVConYMRASG+G0IRJsGK6WYj
-	lznvnvKG0IESRO5Ikj7BjnD4/D9Ydv0OnuONS4vETxPfv7EU4tcJ138oLrR3QKeA9zgB744rq0p
-	1eXs4NStg8WnHPI8OJv9cSEq07RMCkFDHKQOcug4fIzLUzUFImBKNhxe/1+f4/MU2290WzSxEM4
-	jcuW6Mkt/JW2qxKCBkHR8m6v0sSynb+FdGNIoGXBXHR9J6ZXQ0LCIVRVq7WDnnG1R7nFmaZx/QF
-	SKLYAWFUHs9UHAdVw8pyR3YmRqm1hXXUL9ppgfaJn/XrD+FaYWpcH0r/83T+WJ96GcE1HqKTAHY
-	z4OtG2xtxOEyeNdQVcMzKPK49+CLPPEpLQSfx8cjlC8LdK45Aj5X06WjKnc4gQcA3gqUNWjCb05
-	9sxUKO2GVMk6AAcReEUVUPztoG
-X-Google-Smtp-Source: AGHT+IHm3Tu9iRyGiCt6V9SEZWDXWNqwJokz4bgw1HkknIkQ71kli9dOgCeRNWFNMzpZwV0p36UR6Q==
-X-Received: by 2002:a05:600c:628b:b0:46e:456e:ada5 with SMTP id 5b1f17b1804b1-46e71146994mr75585645e9.28.1759768920064;
-        Mon, 06 Oct 2025 09:42:00 -0700 (PDT)
-Received: from dell (117.red-81-33-123.dynamicip.rima-tde.net. [81.33.123.117])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e5b5f3015sm151246565e9.1.2025.10.06.09.41.59
+        bh=oKtphuJ/4di9yNIsz6yNlkrtQKgCMc1BLXd/ATWAWto=;
+        b=bykPvhXWOg/QboPI6P1+s+15dMSk9oCBCFWBbuBMMdGLIGnN3nBdIVw+/ZR1MfRNO6
+         TOMiZlZchCpkAhLBLmn1bUIBFvKXYJY+FDLw83JcWuLOsoRoG7478S+j7cRdOuFgPSEJ
+         gUHp05gzhiugOTNR6D6FdO8oj1UMzwSqlTjMkYw4NIDgZMHN8ZYHX4vpfYbOS70pIoP2
+         KLIVTju3FPKcKXlJ1wwPjsI5eSfN5xeOepn99dke958AEhtYcPP1PTXNYT0GGHezaHYe
+         3Q+WmClX5vgMx7ZfFgNsAhzIIn7+POgZQ5Asr1032z/xQfJYUTRz7IKjoNPYM+FfHOvS
+         nbhw==
+X-Forwarded-Encrypted: i=1; AJvYcCXuQKlfd3sd0wYLAJkFLWd9BpCeQgnritxKUomFcw+ixDKReUE5+DbIk7O2ll0K1xURTF2hrnqFzPuVNws=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP1ZZZ6fTxBKMx4jtkS1Rbx0yE/Qd7jDux8nppYjtbmh3K+Os1
+	iW9oSHZk456RIh78/x28WaNqVDPzcmtVvOzK5Gea2s5/5uOSQ687H4UjTlmnizSk/QA=
+X-Gm-Gg: ASbGncv0gRMcnSW1XzKnlSs87tCSYPKhCuNXB2Z6XDoz81/cVw+pULl2/E36D9mQoeI
+	gIU3BuTVQwVS7ER8FqEALYG39cDzyOXTGqi1L0IKknfo2P0YkUz7FTyNRzR/5y34p9UMQfoP5TX
+	7VXXoF80GcF8wLYzZRcCjLQQZNW2saksZtSzPVmp7BTQcV12lQodFZptGjkjf3Yy05/8QLJm3XK
+	F4DcMUHAeLe4Eq2ZeP6wO+7VP74nEkTnvJSGg5ig2l4t/Q0+poznBdXv76yyCYj0tDzr/4tSjrD
+	jae/+wC8wim7vrABDF+E1rTdDK7hdq24RlSjxZT3f+111K1nh7GOC5EEc4ax+tz2G4XiULMseIj
+	uT4uOYRMBK/1hBzNJJIFB/nf+QHS6cbUiWpb3uTYa7B6EiC7gcSl/nQVZQuFPDUMRVCO4A+5E4X
+	2zK3z58kgS56JdFTKuTxKNQvq2Dg+4fGY/h/bpYhxRGGHaSK7ebqs=
+X-Google-Smtp-Source: AGHT+IEH9sBJd0VNAAJtz9rRu8u+k/yXhel69FaA4JYwSprBvbLGJFT33oMJuv5fmnK6KbnU7ExmwA==
+X-Received: by 2002:a17:906:7951:b0:b44:7c83:cd9 with SMTP id a640c23a62f3a-b49c47accbdmr1839696566b.40.1759769008357;
+        Mon, 06 Oct 2025 09:43:28 -0700 (PDT)
+Received: from puffmais2.c.googlers.com (224.138.204.35.bc.googleusercontent.com. [35.204.138.224])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652aa01esm1193841866b.2.2025.10.06.09.43.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 09:41:59 -0700 (PDT)
-From: Javier Garcia <rampxxxx@gmail.com>
-To: deller@gmx.de,
-	u.kleine-koenig@baylibre.com,
-	tzimmermann@suse.de
-Cc: linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	shuah@kernel.org,
-	Javier Garcia <rampxxxx@gmail.com>
-Subject: [PATCH v2] fbdev: mb862xxfbdrv: Make CONFIG_FB_DEVICE optional
-Date: Mon,  6 Oct 2025 18:41:43 +0200
-Message-ID: <20251006164143.1187434-1-rampxxxx@gmail.com>
-X-Mailer: git-send-email 2.50.1
+        Mon, 06 Oct 2025 09:43:28 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH 00/10] pmdomain: samsung: add supoort for Google GS101
+Date: Mon, 06 Oct 2025 17:43:26 +0100
+Message-Id: <20251006-gs101-pd-v1-0-f0cb0c01ea7b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAK7x42gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDAwND3fRiQyBZkKKbYpKSbGmeYm6QaGGiBFReUJSallkBNio6trYWAAe
+ OGYtaAAAA
+X-Change-ID: 20251001-gs101-pd-d4dc97d70a84
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.14.2
 
-This patch wraps the relevant code blocks with `IS_ENABLED(ifdef CONFIG_FB_DEVICE)`,
-allowing the driver to be built and used even if CONFIG_FB_DEVICE is not selected.
+Hi,
 
-The sysfs only give access to show some controller and cursor registers so
-it's not needed to allow driver works correctly.
+This series adds support for the power domains on Google GS101. It's
+fairly similar to SoCs already supported by this driver, except that
+register acces does not work via plain ioremap() / readl() / writel().
+Instead, the regmap created by the PMU driver must be used (which uses
+Arm SMCC calls under the hood).
 
-This align with Documentation/drm/todo.rst
-"Remove driver dependencies on FB_DEVICE"
+The DT update to add the new required properties on gs101 will be
+posted separately.
 
-Signed-off-by: Javier Garcia <rampxxxx@gmail.com>
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
-v1 -> v2:
-      * Fix error and improvement , thanks Uwe Kleine-Koenig.
-      * v1 https://lore.kernel.org/lkml/20251005173812.1169436-1-rampxxxx@gmail.com
+André Draszik (10):
+      dt-bindings: power: samsung: add google,gs101-pd
+      dt-bindings: soc: samsung: exynos-pmu: allow power domains as child on g101
+      pmdomain: samsung: use to devm_kstrdup_const() to simplify error handling
+      pmdomain: samsung: convert to using regmap
+      pmdomain: samsung: convert to regmap_read_poll_timeout()
+      pmdomain: samsung: don't hardcode offset for registers to 0 and 4
+      pmdomain: samsung: selectively handle enforced sync_state
+      pmdomain: samsung: try to get PMU (syscon) regmap
+      pmdomain: samsung: use dev_err() instead of pr_err()
+      pmdomain: samsung: add support for google,gs101-pd
 
+ .../devicetree/bindings/power/pd-samsung.yaml      |   1 +
+ .../bindings/soc/samsung/exynos-pmu.yaml           |  53 ++++++++-
+ drivers/pmdomain/samsung/exynos-pm-domains.c       | 126 +++++++++++++++------
+ 3 files changed, 145 insertions(+), 35 deletions(-)
+---
+base-commit: a5f97c90e75f09f24ece2dca34168722b140a798
+change-id: 20251001-gs101-pd-d4dc97d70a84
 
- drivers/video/fbdev/mb862xx/mb862xxfbdrv.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/video/fbdev/mb862xx/mb862xxfbdrv.c b/drivers/video/fbdev/mb862xx/mb862xxfbdrv.c
-index ade88e7bc760..dc99b8c9ff0f 100644
---- a/drivers/video/fbdev/mb862xx/mb862xxfbdrv.c
-+++ b/drivers/video/fbdev/mb862xx/mb862xxfbdrv.c
-@@ -17,6 +17,7 @@
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
-+#include "linux/kconfig.h"
- #include <linux/pci.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-@@ -759,7 +760,7 @@ static int of_platform_mb862xx_probe(struct platform_device *ofdev)
- 
- 	dev_set_drvdata(dev, info);
- 
--	if (device_create_file(dev, &dev_attr_dispregs))
-+	if (IS_ENABLED(CONFIG_FB_DEVICE) && device_create_file(dev, &dev_attr_dispregs))
- 		dev_err(dev, "Can't create sysfs regdump file\n");
- 	return 0;
- 
-@@ -801,7 +802,8 @@ static void of_platform_mb862xx_remove(struct platform_device *ofdev)
- 	free_irq(par->irq, (void *)par);
- 	irq_dispose_mapping(par->irq);
- 
--	device_remove_file(&ofdev->dev, &dev_attr_dispregs);
-+	if(IS_ENABLED(CONFIG_FB_DEVICE))
-+		device_remove_file(&ofdev->dev, &dev_attr_dispregs);
- 
- 	unregister_framebuffer(fbi);
- 	fb_dealloc_cmap(&fbi->cmap);
-@@ -1101,7 +1103,7 @@ static int mb862xx_pci_probe(struct pci_dev *pdev,
- 
- 	pci_set_drvdata(pdev, info);
- 
--	if (device_create_file(dev, &dev_attr_dispregs))
-+	if (IS_ENABLED(CONFIG_FB_DEVICE) && device_create_file(dev, &dev_attr_dispregs))
- 		dev_err(dev, "Can't create sysfs regdump file\n");
- 
- 	if (par->type == BT_CARMINE)
-@@ -1151,7 +1153,8 @@ static void mb862xx_pci_remove(struct pci_dev *pdev)
- 
- 	mb862xx_i2c_exit(par);
- 
--	device_remove_file(&pdev->dev, &dev_attr_dispregs);
-+	if(IS_ENABLED(CONFIG_FB_DEVICE))
-+		device_remove_file(&pdev->dev, &dev_attr_dispregs);
- 
- 	unregister_framebuffer(fbi);
- 	fb_dealloc_cmap(&fbi->cmap);
+Best regards,
 -- 
-2.50.1
+André Draszik <andre.draszik@linaro.org>
 
 
