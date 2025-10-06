@@ -1,87 +1,64 @@
-Return-Path: <linux-kernel+bounces-843588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94F30BBFC83
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 01:26:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4451CBBFC89
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 01:30:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D6963BEBD7
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 23:26:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99CEA3BCF78
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 23:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFA4F208994;
-	Mon,  6 Oct 2025 23:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C7E1FAC4B;
+	Mon,  6 Oct 2025 23:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SxoFQz1a"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BtbvvCPA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4041A2547
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 23:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940F5CA4B;
+	Mon,  6 Oct 2025 23:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759793175; cv=none; b=EaURVPd+gun/p5J2hdWYCfkLgYHtiwTOkbFRB4A3R6j1XH4SbU0Eb9iEQ+nUnZLjrMWHZq9cp410dKS9331Wl10MNLMgsNMDJnPDfvxvy9w51wCP5bPhAmDNFPn/jrF7bvLtbY68H5rkEDJxgIaFsvV85aKp+KbOwehOqr7t3ok=
+	t=1759793433; cv=none; b=nRjciaIVDQvtTdYt6t2ANk3rvs8se79HXcfHStgfdiwEkBUmXiB+ODdCVVCdQWZ7EGE1du7rnDzYCFDgGZg63rT+J08HD5vIxUl1OLB5rN3bIu0H4KY5WoIEV5Hrkwz+OjoEuG3HaKHOUFoHMGTGozANOV+3zcpEWsWPlqpK2mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759793175; c=relaxed/simple;
-	bh=cUxTi5HF8VOvBv7tRC5vMBxPjQKykV1ubt5L5qkzgiU=;
+	s=arc-20240116; t=1759793433; c=relaxed/simple;
+	bh=rsn6yKqy3+8U/13uNTmF9IAoQLBkh7dQqC4YtKLNNas=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OX8F4G+83hb+bcYlbymy8RSnEPk4pvyvBwZuPXgk10QwSYuwXnRzSVCM6XRtn40HfDYh1do26lT/uQkh6SvCu8uVf9LfyGVQg6X26h9A7zN+1Ojj5wp48UNz4+m2QHzVxGfmnR2B5D6P38jSKslS/f7ptT2hlCcwOuMw0JNbcAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SxoFQz1a; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759793171;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NyB/2Pk5wijagVYBD6/smx6bBOT8c4NVWW3i8n/rIkA=;
-	b=SxoFQz1aRlv7/99mogA+lNCh8OCkqOOf2oOeTJdcnxqBgTB0xQQy6VO9nL4E96UXFogbPX
-	KF9kNin9bFVVmcPYbuHCDJ7vj1RTvB33zR7Gu+jSB3skgBXhp7u94GflgT7Y0vf+rP9QhM
-	cIhQOVywQZF27QZuiKJrWdTTstJL3aI=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-262-jA42I1BwNpe9516Y5QqSfw-1; Mon, 06 Oct 2025 19:26:10 -0400
-X-MC-Unique: jA42I1BwNpe9516Y5QqSfw-1
-X-Mimecast-MFC-AGG-ID: jA42I1BwNpe9516Y5QqSfw_1759793168
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-32eb864fe90so7541053a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 16:26:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759793167; x=1760397967;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NyB/2Pk5wijagVYBD6/smx6bBOT8c4NVWW3i8n/rIkA=;
-        b=MHsq/BQDvmOiJiuvPVN5HCTnKYJa/x0T9VRIpGIWg3+cDzTo8IYPRIYZHm20eySrkc
-         haxo/unDZdOu9E8drMPwXiTr9NBLAzumaAT2EhAU+sumKO+s/VdwNjF0Od0dJ+oGIE3Y
-         8ZgqaYJ9XVbFT4Qe9giHvOE3DlqfSWyrTR4YKd/OovqjwVnl+g9Czk5bTHMJPAtjaaaq
-         dutDHdbOnNY3HhKuH3VWnZQY6b1j4AoWLegbMEAhGgZ52H6VbgpsiGk5/CUkC7iG25Nw
-         7ejzlBGwaMl94PkIWKJbknW23BCgDP9+zgBB9J60+fU/T7sv6eMgV6tzvS5UE2aXCoQv
-         G1IA==
-X-Forwarded-Encrypted: i=1; AJvYcCX47hUgccFWRZ0ROZcHsSyen+UNawkuiUtoG0eVebzaS4gIOQyw15F51RCyOOoajesvSlgj3wWuFfVrp9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOBguyGgL16YS8Q/BbxcnTcCx69FtwnsCrRdwGK1ix0jH9lex/
-	yRgwavr84+koGLPKjkWKHwwzy7qFQXxCWMYFgvRoR/r3I2hfucgTTBaTLslE6S6jj1+wd/Q5E+x
-	n5uxAatecLo8J0FYpThgQgzct/S5/XE52cRCQAzKFZmewS6jaiTi3yJ1ERli9ZcA1IHqXullcNw
-	==
-X-Gm-Gg: ASbGncvnWv3ChbVz7WLlTZxuPXWo2trfNgch35XzUcKr3EwyUOKaVsqY9HKYeYxluCe
-	ONllZHbLW6Xk1B30tFQ5fpWMBPo6UaCsB1U6msEXdbtrpGsBEWaZCEID4vMiAC+LsQJaG+3DkKX
-	ZYMqSBCw3nXYw/8y6QlG/sy90E7eVh5ONTAC0tiTojn708T4OMNhWI7Lv3AiawOzhcuaXb2Q7tU
-	wjbwlCZVz7TZ9MTdcX/jn5O7A1udd9RIg0cjWNPPQa+/jSdRkMqjB34kDrD2kHb+ok3WTtkWz0B
-	R/bhp29s3KEj/auuoNV8V7A8tV4MRPNqYUDU5NATWpZiTAqYX41A5p01fPMvjO6jmT92Qlxx/up
-	fsqQ9MoaApQ==
-X-Received: by 2002:a17:90b:4a8c:b0:32b:cb05:849a with SMTP id 98e67ed59e1d1-339c27bc475mr17899840a91.29.1759793167291;
-        Mon, 06 Oct 2025 16:26:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IERIFLl8GkviCDqbLVDIbfSKCg91e+HAkaXDPlbRbY5H7aG5yx3n7cRQWkYPRFuLdo2BGpp1g==
-X-Received: by 2002:a17:90b:4a8c:b0:32b:cb05:849a with SMTP id 98e67ed59e1d1-339c27bc475mr17899797a91.29.1759793166872;
-        Mon, 06 Oct 2025 16:26:06 -0700 (PDT)
-Received: from [192.168.68.51] (n175-34-62-5.mrk21.qld.optusnet.com.au. [175.34.62.5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339a6ff256dsm17874793a91.16.2025.10.06.16.25.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Oct 2025 16:26:06 -0700 (PDT)
-Message-ID: <92e05ef2-356b-4c1f-99c3-1e7482775cdc@redhat.com>
-Date: Tue, 7 Oct 2025 09:25:53 +1000
+	 In-Reply-To:Content-Type; b=DuLWLW0q19ZG8ZwVhei67lOTCUKlOE0pztmN+xb4gogJx4iWGCw/vEDT3Yo0pIxU55DaOHqnhhvKbkDsOK/lmJe7vVj+mrq76W0gMqNs+tzecSuwnV4BMsIzwzlQLC+lBmSR0W2L6awAnGm9swwMezSs3MSzZ1d50U3irP1GtwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BtbvvCPA; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759793432; x=1791329432;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=rsn6yKqy3+8U/13uNTmF9IAoQLBkh7dQqC4YtKLNNas=;
+  b=BtbvvCPAsQ4QF7BhUbaRpP5dFR9jbvOj+5kXpLJ+sZzkeFqkOC4WMtKv
+   fHWMhH/DW/Q/SL15jj9UNLSZF+ptZQrcljz9obdg3VQWzQcS7eUac937T
+   cgXg3jpmgQ7NWJR5w8Bx4uEm7QAVpZ4NR9dBz32geQCzaV23JZLod/0zE
+   GjpT3ko+a5dDrBMsBEguD8IbnmcTogeBt3dJZ6QCTUJRvOH28Rv6ZZdk+
+   qRfc2xNMZEuUZ9RJwDi5Ks8eGoIsN8OLw3UujgnrpJ0tRnsHNnvIEKQyF
+   Dfoj3GKsm0qlERgeZellvoIgDiygwQW4HWfkN7mgXoYh4oL6H1YRPBzNK
+   g==;
+X-CSE-ConnectionGUID: cdYkGsVLRgSHX1uWfjQC8A==
+X-CSE-MsgGUID: ocUqymGhS729Ht6ZSbNK0w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61892015"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="61892015"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 16:30:31 -0700
+X-CSE-ConnectionGUID: 9gdnYC0gTSik5EUrztzeIA==
+X-CSE-MsgGUID: QruypNSsRk679cBFC79VuQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
+   d="scan'208";a="203735195"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.110.110]) ([10.125.110.110])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 16:30:30 -0700
+Message-ID: <a8c5a482-c380-421d-bb89-914fc120a01b@intel.com>
+Date: Mon, 6 Oct 2025 16:30:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,117 +66,208 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/29] arm_mpam: Add MPAM MSC register layout
- definitions
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
-Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- fenghuay@nvidia.com, baisheng.gao@unisoc.com,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
- <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>, Ben Horgan <ben.horgan@arm.com>
-References: <20250910204309.20751-1-james.morse@arm.com>
- <20250910204309.20751-10-james.morse@arm.com>
+Subject: Re: [PATCH 1/4 v5] cxl/core: Change match_*_by_range() signatures
+To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+ linux-cxl@vger.kernel.org
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Gregory Price <gourry@gourry.net>, Robert Richter <rrichter@amd.com>,
+ Cheatham Benjamin <benjamin.cheatham@amd.com>
+References: <20251006155836.791418-1-fabio.m.de.francesco@linux.intel.com>
+ <20251006155836.791418-2-fabio.m.de.francesco@linux.intel.com>
 Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20250910204309.20751-10-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20251006155836.791418-2-fabio.m.de.francesco@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi James,
 
-On 9/11/25 6:42 AM, James Morse wrote:
-> Memory Partitioning and Monitoring (MPAM) has memory mapped devices
-> (MSCs) with an identity/configuration page.
+
+On 10/6/25 8:58 AM, Fabio M. De Francesco wrote:
+> Replace struct range parameter with struct cxl_endpoint_decoder of
+> which range is a member in the match_*_by_range() functions and rename
+> them according to their semantics.
 > 
-> Add the definitions for these registers as offset within the page(s).
+> This is in preparation for expanding these helpers to perform arch
+> specific Root Decoders and Region matchings with
+> cxl_endpoint_decoder(s).
 > 
-> Link: https://developer.arm.com/documentation/ihi0099/latest/
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
+> Cc: Alison Schofield <alison.schofield@intel.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
+
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+
 > ---
-> Changes since v1:
->   * Whitespace.
->   * Added constants for CASSOC and XCL.
->   * Merged FLT/CTL defines.
->   * Fixed MSMON_CFG_CSU_CTL_TYPE_CSU definition.
+>  drivers/cxl/core/region.c | 62 ++++++++++++++++++++++-----------------
+>  1 file changed, 35 insertions(+), 27 deletions(-)
 > 
-> Changes since RFC:
->   * Renamed MSMON_CFG_MBWU_CTL_TYPE_CSU as MSMON_CFG_CSU_CTL_TYPE_CSU
->   * Whitepsace churn.
->   * Cite a more recent document.
->   * Removed some stale feature, fixed some names etc.
-> ---
->   drivers/resctrl/mpam_internal.h | 267 ++++++++++++++++++++++++++++++++
->   1 file changed, 267 insertions(+)
-> 
-> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
-> index 02e9576ece6b..109f03df46c2 100644
-> --- a/drivers/resctrl/mpam_internal.h
-> +++ b/drivers/resctrl/mpam_internal.h
-> @@ -152,4 +152,271 @@ extern struct list_head mpam_classes;
->   int mpam_get_cpumask_from_cache_id(unsigned long cache_id, u32 cache_level,
->   				   cpumask_t *affinity);
->   
-> +/*
-> + * MPAM MSCs have the following register layout. See:
-> + * Arm Memory System Resource Partitioning and Monitoring (MPAM) System
-> + * Component Specification.
-> + * https://developer.arm.com/documentation/ihi0099/latest/
-> + */
-> +#define MPAM_ARCHITECTURE_V1    0x10
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index e14c1d305b22..43a854036202 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -1766,27 +1766,29 @@ static int cmp_interleave_pos(const void *a, const void *b)
+>  	return cxled_a->pos - cxled_b->pos;
+>  }
+>  
+> -static int match_switch_decoder_by_range(struct device *dev,
+> -					 const void *data)
+> +static int match_cxlsd_to_cxled_by_range(struct device *dev, const void *data)
+>  {
+> +	const struct cxl_endpoint_decoder *cxled = data;
+>  	struct cxl_switch_decoder *cxlsd;
+> -	const struct range *r1, *r2 = data;
+> -
+> +	const struct range *r1, *r2;
+>  
+>  	if (!is_switch_decoder(dev))
+>  		return 0;
+>  
+>  	cxlsd = to_cxl_switch_decoder(dev);
+>  	r1 = &cxlsd->cxld.hpa_range;
+> +	r2 = &cxled->cxld.hpa_range;
+>  
+>  	if (is_root_decoder(dev))
+>  		return range_contains(r1, r2);
+>  	return (r1->start == r2->start && r1->end == r2->end);
+>  }
+>  
+> -static int find_pos_and_ways(struct cxl_port *port, struct range *range,
+> -			     int *pos, int *ways)
+> +static int find_pos_and_ways(struct cxl_port *port,
+> +			     struct cxl_endpoint_decoder *cxled, int *pos,
+> +			     int *ways)
+>  {
+> +	struct range *range = &cxled->cxld.hpa_range;
+>  	struct cxl_switch_decoder *cxlsd;
+>  	struct cxl_port *parent;
+>  	struct device *dev;
+> @@ -1796,8 +1798,8 @@ static int find_pos_and_ways(struct cxl_port *port, struct range *range,
+>  	if (!parent)
+>  		return rc;
+>  
+> -	dev = device_find_child(&parent->dev, range,
+> -				match_switch_decoder_by_range);
+> +	dev = device_find_child(&parent->dev, cxled,
+> +				match_cxlsd_to_cxled_by_range);
+>  	if (!dev) {
+>  		dev_err(port->uport_dev,
+>  			"failed to find decoder mapping %#llx-%#llx\n",
+> @@ -1883,7 +1885,7 @@ static int cxl_calc_interleave_pos(struct cxl_endpoint_decoder *cxled)
+>  		if (is_cxl_root(iter))
+>  			break;
+>  
+> -		rc = find_pos_and_ways(iter, range, &parent_pos, &parent_ways);
+> +		rc = find_pos_and_ways(iter, cxled, &parent_pos, &parent_ways);
+>  		if (rc)
+>  			return rc;
+>  
+> @@ -3342,24 +3344,30 @@ static int devm_cxl_add_dax_region(struct cxl_region *cxlr)
+>  	return rc;
+>  }
+>  
+> -static int match_decoder_by_range(struct device *dev, const void *data)
+> +static int match_cxlrd_to_cxled_by_range(struct device *dev, const void *data)
+>  {
+> -	const struct range *r1, *r2 = data;
+> -	struct cxl_decoder *cxld;
+> +	const struct cxl_endpoint_decoder *cxled = data;
+> +	struct cxl_root_decoder *cxlrd;
+> +	const struct range *r1, *r2;
+>  
+> -	if (!is_switch_decoder(dev))
+> +	if (!is_root_decoder(dev))
+>  		return 0;
+>  
+> -	cxld = to_cxl_decoder(dev);
+> -	r1 = &cxld->hpa_range;
+> +	cxlrd = to_cxl_root_decoder(dev);
+> +	r1 = &cxlrd->cxlsd.cxld.hpa_range;
+> +	r2 = &cxled->cxld.hpa_range;
 > +
-> +/* Memory mapped control pages: */
-
-":" seems unnecessary.
-
-> +/* ID Register offsets in the memory mapped page */
-> +#define MPAMF_IDR		0x0000  /* features id register */
-> +#define MPAMF_MSMON_IDR		0x0080  /* performance monitoring features */
-> +#define MPAMF_IMPL_IDR		0x0028  /* imp-def partitioning */
-> +#define MPAMF_CPOR_IDR		0x0030  /* cache-portion partitioning */
-> +#define MPAMF_CCAP_IDR		0x0038  /* cache-capacity partitioning */
-> +#define MPAMF_MBW_IDR		0x0040  /* mem-bw partitioning */
-> +#define MPAMF_PRI_IDR		0x0048  /* priority partitioning */
-> +#define MPAMF_CSUMON_IDR	0x0088  /* cache-usage monitor */
-> +#define MPAMF_MBWUMON_IDR	0x0090  /* mem-bw usage monitor */
-> +#define MPAMF_PARTID_NRW_IDR	0x0050  /* partid-narrowing */
-> +#define MPAMF_IIDR		0x0018  /* implementer id register */
-> +#define MPAMF_AIDR		0x0020  /* architectural id register */
+>  	return range_contains(r1, r2);
+>  }
+>  
+>  static struct cxl_decoder *
+> -cxl_port_find_switch_decoder(struct cxl_port *port, struct range *hpa)
+> +cxl_port_find_root_decoder(struct cxl_port *port,
+> +			   struct cxl_endpoint_decoder *cxled)
+>  {
+> -	struct device *cxld_dev = device_find_child(&port->dev, hpa,
+> -						    match_decoder_by_range);
+> +	struct device *cxld_dev;
 > +
-> +/* Configuration and Status Register offsets in the memory mapped page */
-> +#define MPAMCFG_PART_SEL	0x0100  /* partid to configure: */
-
-":" seems unnecessary.
-
-> +#define MPAMCFG_CPBM		0x1000  /* cache-portion config */
-> +#define MPAMCFG_CMAX		0x0108  /* cache-capacity config */
-> +#define MPAMCFG_CMIN		0x0110  /* cache-capacity config */
-> +#define MPAMCFG_CASSOC		0x0118  /* cache-associativity config */
-> +#define MPAMCFG_MBW_MIN		0x0200  /* min mem-bw config */
-> +#define MPAMCFG_MBW_MAX		0x0208  /* max mem-bw config */
-> +#define MPAMCFG_MBW_WINWD	0x0220  /* mem-bw accounting window config */
-> +#define MPAMCFG_MBW_PBM		0x2000  /* mem-bw portion bitmap config */
-> +#define MPAMCFG_PRI		0x0400  /* priority partitioning config */
-> +#define MPAMCFG_MBW_PROP	0x0500  /* mem-bw stride config */
-> +#define MPAMCFG_INTPARTID	0x0600  /* partid-narrowing config */
-> +
-
-[...]
-
-Thanks,
-Gavin
+> +	cxld_dev = device_find_child(&port->dev, cxled,
+> +				     match_cxlrd_to_cxled_by_range);
+>  
+>  	return cxld_dev ? to_cxl_decoder(cxld_dev) : NULL;
+>  }
+> @@ -3371,9 +3379,8 @@ cxl_find_root_decoder(struct cxl_endpoint_decoder *cxled)
+>  	struct cxl_port *port = cxled_to_port(cxled);
+>  	struct cxl_root *cxl_root __free(put_cxl_root) = find_cxl_root(port);
+>  	struct cxl_decoder *root, *cxld = &cxled->cxld;
+> -	struct range *hpa = &cxld->hpa_range;
+>  
+> -	root = cxl_port_find_switch_decoder(&cxl_root->port, hpa);
+> +	root = cxl_port_find_root_decoder(&cxl_root->port, cxled);
+>  	if (!root) {
+>  		dev_err(cxlmd->dev.parent,
+>  			"%s:%s no CXL window for range %#llx:%#llx\n",
+> @@ -3385,11 +3392,12 @@ cxl_find_root_decoder(struct cxl_endpoint_decoder *cxled)
+>  	return to_cxl_root_decoder(&root->dev);
+>  }
+>  
+> -static int match_region_by_range(struct device *dev, const void *data)
+> +static int match_region_to_cxled_by_range(struct device *dev, const void *data)
+>  {
+> +	const struct cxl_endpoint_decoder *cxled = data;
+> +	const struct range *r = &cxled->cxld.hpa_range;
+>  	struct cxl_region_params *p;
+>  	struct cxl_region *cxlr;
+> -	const struct range *r = data;
+>  
+>  	if (!is_cxl_region(dev))
+>  		return 0;
+> @@ -3547,12 +3555,13 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
+>  }
+>  
+>  static struct cxl_region *
+> -cxl_find_region_by_range(struct cxl_root_decoder *cxlrd, struct range *hpa)
+> +cxl_find_region_by_range(struct cxl_root_decoder *cxlrd,
+> +			 struct cxl_endpoint_decoder *cxled)
+>  {
+>  	struct device *region_dev;
+>  
+> -	region_dev = device_find_child(&cxlrd->cxlsd.cxld.dev, hpa,
+> -				       match_region_by_range);
+> +	region_dev = device_find_child(&cxlrd->cxlsd.cxld.dev, cxled,
+> +				       match_region_to_cxled_by_range);
+>  	if (!region_dev)
+>  		return NULL;
+>  
+> @@ -3561,7 +3570,6 @@ cxl_find_region_by_range(struct cxl_root_decoder *cxlrd, struct range *hpa)
+>  
+>  int cxl_add_to_region(struct cxl_endpoint_decoder *cxled)
+>  {
+> -	struct range *hpa = &cxled->cxld.hpa_range;
+>  	struct cxl_region_params *p;
+>  	bool attach = false;
+>  	int rc;
+> @@ -3577,7 +3585,7 @@ int cxl_add_to_region(struct cxl_endpoint_decoder *cxled)
+>  	 */
+>  	mutex_lock(&cxlrd->range_lock);
+>  	struct cxl_region *cxlr __free(put_cxl_region) =
+> -		cxl_find_region_by_range(cxlrd, hpa);
+> +		cxl_find_region_by_range(cxlrd, cxled);
+>  	if (!cxlr)
+>  		cxlr = construct_region(cxlrd, cxled);
+>  	mutex_unlock(&cxlrd->range_lock);
 
 
