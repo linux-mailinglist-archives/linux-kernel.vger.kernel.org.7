@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-842975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31639BBE1BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:01:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3613CBBE1D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 15:01:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B084189725E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:01:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D97BC4EEAA7
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 13:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C01C2857E0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07D2285C8C;
 	Mon,  6 Oct 2025 13:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="2TEjaxP0"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="27ZSLKjA"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40F52848A6
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 13:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5FD285045
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 13:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759755640; cv=none; b=nSsTwedAyNsamaNO50FeujADMgqNPRdK4m/WUjmDwIqW5RaDRDtM2k7Caef/WIwxwxXIzQIOAmbS8OFnthwBzdkfRVqlKL1NmPJgvnl5k/hLOo8kBnM7itlFa+8lDiPS6TcYroRoIRYtfuojwigoPzY+uW0ojoq+qILZ9WpOFGw=
+	t=1759755641; cv=none; b=ghbZJ/KguRM+3LCL9JfHHvcx0QYvLSL3usk0CCjo4ayNuGCQqD5Qp6Plf7VtP8EuprBlJCa3Jn7/2Ft26QxLVFktkO9niQ7MIqedEB7JDW4srOejs96Yn1UZ6RDvNtEhBR3Mo9GdU7U+yJG20pXp24anAKL1QL8eLUrYv2wwW9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759755640; c=relaxed/simple;
-	bh=fQI/x1mfXGLwGHQU2jPShdqMN7mTN0xvuZeF3kl8J+U=;
+	s=arc-20240116; t=1759755641; c=relaxed/simple;
+	bh=7Jqk+0Rw48ZsZIR+qXKKV2mT1aS0h7swJqBj47Ge5oA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QFerwG1+HqvNkmSKNicqpHWDgg5gOjGd76ZGyM295uL/2vXJdRbRzb9A/eyiHQcP8UP/1HmWWeKU+afc/uoqqtNFfehuanz/bdpHwgLg57Ub1sEs6S+qCStuFhWP+dKL4W3hAoFI0DBeAwKv7y0iO64DAdRLU2uJhVRnrwxdGJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=2TEjaxP0; arc=none smtp.client-ip=209.85.128.42
+	 In-Reply-To:To:Cc; b=gUseDtkEmhjCk2EobCwtsRLPeVCepNwu/BfkZGcamiGsb9hV50jTBnOAlR5dchdx01onLnIlYo4LdxKayu4XecMQ635zWORbTXwKfPjb9gntwji/NGH284+OdPfIw3bfQ7x9pYF3fenahTxgvw/Fef1MgNA4VoRi3e42l2u2EBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=27ZSLKjA; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e491a5b96so28086475e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 06:00:37 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e52279279so32114515e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 06:00:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1759755636; x=1760360436; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1759755638; x=1760360438; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=uWNKnqg+rjVWS75Xku977zgkREPrPcBc6PcBPNb4lsk=;
-        b=2TEjaxP0buZCzXIOPLHjHvGj2aO/f1dR964eIX3cfAqq0y/tKpZQtprJRRRjww6opj
-         sllyxopZwc0n020VAvZluiQtZqjBR7bp3UL2aFFIwuXgxnAVuKOlJ83V7pW0YIJEGRJi
-         l+xiLFDBWLQ1hhg0yvNgVoJmhiFE//smj9SSEQL5qxUc7ciy7nchuy7s4dfHihYv58nC
-         wRIxIVNP8XblRKfH/Xa05qedDCsZ2eXbI4ljk++cs7jFa/2RlWAwby/PGzPCSm8CSKk3
-         JwxLn+xWbGxvnVPrDSEbTfnRZN7dESuNT0Wk3y9nDwI0a4g8IGm59LKhx/RHawrC1zrG
-         XvNQ==
+        bh=Ra6UJLsRCiTY4w5Dlw98xmE+EwKNUja03T9QbZDu+Z0=;
+        b=27ZSLKjABouIedOlIgPvxXPFf5g331lFoew8SRjeOhfFkbZ8fDVAgXBzUPYsnEqlkJ
+         BBwaCSbNHctnsZ6DdCV2D/Xn+lVPSaSH6tFh5VAGwXWq0XR2yJK8g/KuF8Uay10OXT8u
+         kBgP8j6h0+V69DFQZ/ost69Ie3O+p33cLItKVCpAM/Q7wYMC4EhWODvvCGhcNLG7hlej
+         8wY66uy/btdIjW9X7jrEeNscL2jJM4rtLEVcwHp1r/jlhV1+xfgXfoyoAwgyf+mlwt17
+         ioap7uwb6hXTem7Hrn199FeGzf9e8X8NPfsf/+ePFzZboxwdgg/CehEPa01CNXIwxzcC
+         Bt4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759755636; x=1760360436;
+        d=1e100.net; s=20230601; t=1759755638; x=1760360438;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uWNKnqg+rjVWS75Xku977zgkREPrPcBc6PcBPNb4lsk=;
-        b=vxLLSOEr2QNrICPEC2payCboGiCKI8uIDfbrrFFUcwjHU23bfTPdCoeQ/WHaRhnK0Z
-         8o9AyjShQY4OnGeRkmGrzEYABG2wqn4m41EhjCjhxEFkhIUSuvtMpaUmTh/mvMhYke4j
-         7h3zgIIK5BUggqa1bo1YdJFylR7Qx65bfaPkYB0c/A66tK8ek5kVhDHSLdwkV5iDBwbI
-         klRTtb76i8YSU8k/CoTq69+5GiOFdQ/Ng8xOGMjTs/ejJ5uHamsZe94wcivSL0JkaPfd
-         FUREDmN1brXFill+c9c0a8I5yCQ7WZ4f1flUSmUWrANEXaTAsVlaBWAusiS4fs4CEcJ8
-         PqWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXOrjUt/PW8wMZBDVjA84bu7vi/mfQDr9+rPPih8SiwoaWLbfdlk0xdKmvCcZnA8CvCLlR1YNm3wSB0DUY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQR/NAyA4z3QJH65+L/LuI/vCrvjf1ZtLUaH6ctwwJRvPAA0sw
-	IsreoV6emNOUvzLepqxoIdG78Anf5HmkMT6KLYwpj2JSyE3kNLfQdnX0aiXS2utNRww=
-X-Gm-Gg: ASbGnctOulnmdJLWmTGlY67h3NuVszK8w7dXEeOCyV1f5IsPpXDZ2CcDlhKx6xjSyfO
-	nMAcIVNkrEyXUm/yWRQz4PS+uHU9FIHmZyFuV+gRnoEmjRLINrw//LS+Cn2dk4D352qHRrJQKJ+
-	tieNzOPddnkwEga7cyRJr3cPwLkURC7vHI6W/0p41MDzGuS0dCaQOidrXf4eoZ7ecpYIMj1jA6B
-	3ieSdZEBBBV/Cx/u/+UFx1BXsqOlPmFR7jCxAhxWiuOz4bU0GOmyzfSoDMLvY3iPJ3k3In5RtYl
-	QjHDZ4kQoSF8q76i1NsjxRd0Nv7BhmEo391DIztYWf/7pR9QAbAqPHdDq5hGxQVVkwQggiLUQFQ
-	fJsJcaJLnBqIJ/qIKTaWhMge3XeSw0YAFc1IdjF4Uhw==
-X-Google-Smtp-Source: AGHT+IF8QYCtllO4mHewnOdNKwyg7VM7sonfF/iAif7DtVHOdnSxT2xKV7IG3D+F62nGaaXjHu14Rg==
-X-Received: by 2002:a05:600c:4447:b0:46e:3dad:31ea with SMTP id 5b1f17b1804b1-46e7113ceddmr102522015e9.17.1759755636178;
-        Mon, 06 Oct 2025 06:00:36 -0700 (PDT)
+        bh=Ra6UJLsRCiTY4w5Dlw98xmE+EwKNUja03T9QbZDu+Z0=;
+        b=qdEQnCelKDT7Sprxwpuxs507BNGFd3kWIKWGeC/5AGmFND/phqaY97GAElcXb6I+5w
+         0TqwVA12foUINgFcFo6J/bjMyQaVh+Kitk4e0Cb7ByNJIWSnOKEKB7E60OhB0NAuzIeX
+         QktlD+sRjhGImL/LtSfUZJyd9Xze/sW8kD1/B4j4Lue1SYJWZnwWZyE39c3J/QO93JmE
+         gw5Fq0OuhU3l0LeBpRPt7I8tl7NfuMdcbdnUpFbRNSWAo9uc8uCD2r/2beCH2XoRtWgC
+         49HZb+c3soeIzxL0SfiU6/qDWSdLwfzDx7NDvsIEsPdr3Rq/5xzrOYVnNLxab58+TM63
+         yLyw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzY857LyFyOrwmeSK3A1AL5tGo3HTIisFf8jjLJEvfZMePYX7ZdjDPNWzY9yLHPkkmr+qxezuDumMTDbk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwX3hU5w3zQpRodpAQop3rVsXnPgMtQ24WPBz5sbeuTAnUJLOhT
+	SKrKsKKyjNdolnazDTBPBXXLgOMtJ+Vl/m4FkWPgkpvVjAC8MF5VBgbyzC+FljaptyA=
+X-Gm-Gg: ASbGncvKUhivMyDd78qZDuLAu2GAJleOTnD4kqw9GvTE15NyIpWgwZjjF9kiCnY4NxL
+	71WIuHmBz/RM6jJaFy95+5D02c0A7Bp60lpUwo+3LxX8sk3YwmEPn8SaMDCKogPcP6pmZjaU0VS
+	VpVXUKU2i+rR2RuZlJCWYjdJjVDK5Ezu3LNiSmTp2dpZluJEIZVMB0BF35JGV8MZAroZim7spAp
+	2kidW2VUb9o0VGdQ1CX2dCA02D1hQXk9DCec+0BfXSzqkGtzLNzEpoJLzLNJIQ/TJNHlqgwcaCK
+	tPYULf96dll5/6TBjOaWFbishfwFA0lytoDCoqjck0MT0OOmMpJTzbHZc8GkqShsMPFn5xP7vFh
+	cvPmitw5wA5pyUcDXwGyPzlMNXG2/6aMAVYLrulq4ig==
+X-Google-Smtp-Source: AGHT+IFgLzIgY3pkjgFzcgT7VNRTa7prqsen/gecYHE31rP7DqfrVJpmATXrYOO7DsFU0yHLX2VQ4A==
+X-Received: by 2002:a05:600c:628b:b0:46e:4883:27d with SMTP id 5b1f17b1804b1-46e71147470mr88630675e9.30.1759755637657;
+        Mon, 06 Oct 2025 06:00:37 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:ed2b:276f:1a72:aac0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e619b86e1sm249725965e9.5.2025.10.06.06.00.34
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e619b86e1sm249725965e9.5.2025.10.06.06.00.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 06:00:35 -0700 (PDT)
+        Mon, 06 Oct 2025 06:00:36 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 06 Oct 2025 15:00:16 +0200
-Subject: [PATCH 1/9] software node: read the reference args via the fwnode
- API
+Date: Mon, 06 Oct 2025 15:00:17 +0200
+Subject: [PATCH 2/9] software node: increase the reference of the swnode by
+ its fwnode
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251006-reset-gpios-swnodes-v1-1-6d3325b9af42@linaro.org>
+Message-Id: <20251006-reset-gpios-swnodes-v1-2-6d3325b9af42@linaro.org>
 References: <20251006-reset-gpios-swnodes-v1-0-6d3325b9af42@linaro.org>
 In-Reply-To: <20251006-reset-gpios-swnodes-v1-0-6d3325b9af42@linaro.org>
 To: Linus Walleij <linus.walleij@linaro.org>, 
@@ -101,51 +101,48 @@ Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-acpi@vger.kernel.org, 
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1002;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=853;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=O2Bm8zK8myf8pkCc6yVByD6bQNfFHPINhpPFtP7hF18=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBo471v6m7oxteEZyESdFKLOSTziNaLss3w9jkI7
- CFUp3WLu7WJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaOO9bwAKCRARpy6gFHHX
- cuYDD/9ytGdRu/CtE4of0wQOC+lY5AA6NHbxW4y00dovav8+EestNKOrbwTfXvNs8TakPPw9pf8
- UmOs/1CbTbVGY3EcLdC6OgoI1JALLGd24bWbjibom89VSr//6m02QQrAp5Z+LfaHvLmPvpizNbn
- 4UMWZRgqiy/U+lZZQVigCatheQ7JxfW1BlVOergWWZByTEnzxrHzqAF9XkPbfUE7/Yx7z8+TGib
- GLs3y9t1tSz3EO12/yaJePTuFR9zXWXbcMcItgTTWZbqh2fOc0BEaoG1DPhFIyplT4prWrkuBax
- S3SBO4mh9TX0JymOXKxHkeyS0VCjdGs+S44B18z4EEfp/tiDBFoIGEBzJcQFeq8ctogQBCvBmgC
- Nb9aHZxZM/iQ0WacOk5hgeR+F7lN22T6EVBURTr+MSvLAchm62IIn5We/8SDFbE0yTqrGGQZ/LE
- wTqa8TH0aThr4XrmY0KYYwd2H7V+t82uP+S6ecYqn7Qq6qRSDzPobbx8T9W870xD3H0qKD/uYd/
- RYzbLfUF8DEkf7WkFhtCI68FrALzdeVKFloqtCOhXNmDF1IkWvMMxOSeuT0usFrJq/75lSSST4c
- uBOORRAIPyRoWVFh1wSgYAg2alqD4cULdktEOQLEHWF2as8qgqm4vaFCyH7hTB9eXOVoSTxsuAd
- IvNrQtd63c1UVag==
+ bh=sIF2HhSB+nj6SiXIxMNel4X3wr1KbNilnoWbpiOKTXI=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBo471vLK1Kim9deZ74HcxK7aZgD3whmeIXPRFm3
+ KMWG/Qweg6JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaOO9bwAKCRARpy6gFHHX
+ crY8D/4xCm2koNyAO0n6ZToGqSga0HZbAspeEHKSlOdzR+hLK7wgy3tiCpeIkn1vsGNDzZvfjG/
+ Iu/rHEbo4OFbPnDz9bPMBqP+xe6s+9GR9NZiP03Z7e/PMub6BMnZraYcjpy4QN6KvjcSncdVulD
+ a/tMUeKQ3gRwJEZV18YR/+o5zeZijpDqTJioG8hLg0Mp01pWBgogC/dz0AtWMFmjNjCdXX0IzXG
+ nku+rFzKnJryquTRkJyTNL4c2hT8wZvR0D4uuuarJfsZMkNIyGMSRmeOrQwycBpujl71Xto8rP/
+ YY6CojcJQ5/cZaU1SiU2j4OweLodeL5+WHPJXkLBMgvU4+n+CuTLhfw0kfFFWNst319LloP0iV8
+ 2NOAKcrmZ6A0ThSN6OfaP2gmSAMuU9ujuKazl0ppnYckr9F5ZA+IpYHpdbz9DB8Inic+U5BZigY
+ aoG3FPKSxEE1AXEHdZzLeVLiBv1/7TkR+2U/8QqxaSFdX+bZzIAl4J1Hj5hwsgykZ64ojbwnV4C
+ gJaslMY+7nrGc9VZTBj6Z0JPR7VVb4652BBj3ykkDjFKkpJiDb/+cLtOe2K7A0IexmhJxy5lADQ
+ GuPu4B4vaA+LXGKEw74D+/yYgfPc+VVFApB1Xl7dPlsUJCLoUbjkfDx0copwxMQC7hgqU0mM7tc
+ Gmrzs0jEt7n8Kdg==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Once we allow software nodes to reference all kinds of firmware nodes,
-the refnode here will no longer necessarily be a software node so read
-its proprties going through its fwnode implementation.
+Once we allow software nodes to reference other kinds of firmware nodes,
+the node in args will no longer necessarily be a software node so bump
+its reference count using its fwnode interface.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/base/swnode.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/base/swnode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
-index be1e9e61a7bf4d1301a3e109628517cfd9214704..cc48cff54d9c3d4d257095b6cb4a7869bf657373 100644
+index cc48cff54d9c3d4d257095b6cb4a7869bf657373..a60ba4327db8b967034b296b73c948aa5746a094 100644
 --- a/drivers/base/swnode.c
 +++ b/drivers/base/swnode.c
-@@ -540,9 +540,8 @@ software_node_get_reference_args(const struct fwnode_handle *fwnode,
- 		return -ENOENT;
+@@ -554,7 +554,7 @@ software_node_get_reference_args(const struct fwnode_handle *fwnode,
+ 	if (!args)
+ 		return 0;
  
- 	if (nargs_prop) {
--		error = property_entry_read_int_array(ref->node->properties,
--						      nargs_prop, sizeof(u32),
--						      &nargs_prop_val, 1);
-+		error = fwnode_property_read_u32_array(refnode, nargs_prop,
-+						       &nargs_prop_val, 1);
- 		if (error)
- 			return error;
+-	args->fwnode = software_node_get(refnode);
++	args->fwnode = fwnode_handle_get(refnode);
+ 	args->nargs = nargs;
  
+ 	for (i = 0; i < nargs; i++)
 
 -- 
 2.48.1
