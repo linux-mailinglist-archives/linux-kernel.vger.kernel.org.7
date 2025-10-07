@@ -1,301 +1,252 @@
-Return-Path: <linux-kernel+bounces-844509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B90E5BC21B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:23:22 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 681A8BC21BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:24:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ECA319A4858
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:23:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CDB4F3501D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888C92E7F3F;
-	Tue,  7 Oct 2025 16:23:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F3C2E7F0A;
+	Tue,  7 Oct 2025 16:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="TZ8ZwICL"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="By//YQvx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B145F13FEE;
-	Tue,  7 Oct 2025 16:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759854197; cv=none; b=KpFu3k/PyQr+Nl/bWawG4jK1X0qVG/vriZXRIfn7EApxR5FyztXFnt3z25C8WX7IIR8mcis1AFn9DbEptbRuOk4ZnBP1pfOj0nymCI+j6aNQAIMWUByaELfL2Mc3Zy9KHwm6EV1jYxjxsNsH6Tz4aa/Kp0gl/W3/eEP62pMZQhQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759854197; c=relaxed/simple;
-	bh=1u+DRj2qq4EJFBE9su1RLUR4e/nL+dw8v3qNPKJNM7U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=InmQk2U4WW1SbyQ0BRdGI7s07rGyFx85b6blscy+ZD6m5YXxHp3M6QllVtdovMDOGxVShLtatD1MGn7iKA6HFz2fxVwo5FLc9D2MlRTZIKqTt3EZGEM46SSm+6EqFHaQLeIaXicVu732R7fD2Ypqe/N712zQDs1eGvggX97KfBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=TZ8ZwICL; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=OzhfuRPl3cWsY88R0JG8sjwC2bLZ4eZCnz7e+4pOo8M=; b=TZ8ZwICL/6skD28FbzN0Qbtnik
-	FQ+clt1d+oS+/P9QJOhDh8YDSWD7/z93gWR/b9LfUcoq8shRTMctheSGFsgF7zKOS64nGBwtCyv6i
-	SMBhzbFZyEiI1+1aWgTC945y6TDBqZWRTMZ0ipFrcXsNqzh47C9ZW3cjN0daaaDpmBj5ZIVUdrQuB
-	KNd/o5I8OyKJ3GL5I4rYXk9NXOtLJs5N7MwknEUBiM0MEXRnCskbEuAxLruNJB6msdVW7HZfhYgpN
-	Ja4106gwycp6ouYdLNAcHyJNJsvlhRLeUtVu/MjdF4JbxlNVSHfq7BAkPP7rzAWsXvTg3KdaPc12v
-	LJewPk0g==;
-Received: from [58.29.143.236] (helo=[192.168.1.7])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1v6ASo-006GuK-9m; Tue, 07 Oct 2025 18:22:58 +0200
-Message-ID: <09b9a30a-06c8-4664-a484-7b37091782c4@igalia.com>
-Date: Wed, 8 Oct 2025 01:22:47 +0900
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9995F2E764C;
+	Tue,  7 Oct 2025 16:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759854234; cv=fail; b=lT/dZUtvFbvAU9XodfAVSWflETmPsTMDhGuKOnQGQqojChsUlYqMgsKmG7MFI9ieWTts97qJUa3u9ovxtKcHfsKbrGS8VAV9k2/C8fUfcM+VWIsNnwi9twwFH1ht23+T2+b3dsxMCiHrjByDBkR8RYSjo/tc79GBfak2uqn2JM0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759854234; c=relaxed/simple;
+	bh=rHwoBIbskLejSXW8OE5uCJoDZy47tOHHPNpjJYkXDRc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=IIWTKBi7UiYyhdlFy1TlpgIIr+SIX1weiTpsX2SpjlMnPC896NPcabI7MerOIfpUiQIhJzg/uBxGWzhffYuLh/AFUi57vUJ8Psv2KgvulIC+qB4GWllApDeP3RjuplY6yS8V5bToGrLmr47uPCQylyG/kSWJSLWymup2B0lc1GY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=By//YQvx; arc=fail smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759854232; x=1791390232;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=rHwoBIbskLejSXW8OE5uCJoDZy47tOHHPNpjJYkXDRc=;
+  b=By//YQvx6E0aRcZQPIdYLQWyiPYkK4xmKykqTS9jnba9WHDm/9t8lNpN
+   lqCUo5kEASxDc+hV6F9v8KMUNWDBrbQ9LnRE2u5rf+VXUF3GcAw3xb9fL
+   tGRZWuQ9IeN1nlDxKXZohaAKysVsJL7WizET0xKm2J4pb/Es3OLNhbG0S
+   vANjZ7W4mqClrusNYRDFuXgjpNrVh90kNGrE5MI5VEzj73DdhV4Q46xIB
+   8SOXJALXLUWf+O+M8eOFli1ghbNBcIqgcb4pLeK2rtfjzRZiyi7/2qrDs
+   pY16Cz9Sx+G1Z5OQQ0tEBe+22hBnOJ10zmMNQnZKs/hpbsFFG4hSYMhqa
+   A==;
+X-CSE-ConnectionGUID: q3ePtrJlTBijcGKvh+BbHw==
+X-CSE-MsgGUID: Q4BW12IpQ3KhtwD1Qnb0EQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11575"; a="87508918"
+X-IronPort-AV: E=Sophos;i="6.18,321,1751266800"; 
+   d="scan'208";a="87508918"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2025 09:23:51 -0700
+X-CSE-ConnectionGUID: raqqqEwAT+GfhSn8VbGPqA==
+X-CSE-MsgGUID: eDfJiL91TampRvkKNbh/ng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,321,1751266800"; 
+   d="scan'208";a="185346541"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2025 09:23:51 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Tue, 7 Oct 2025 09:23:51 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Tue, 7 Oct 2025 09:23:51 -0700
+Received: from DM1PR04CU001.outbound.protection.outlook.com (52.101.61.29) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Tue, 7 Oct 2025 09:23:51 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ioJjDGZvSnNKS4osXngVSaKuysof+ysIMwfRH7TmKpA3h5nwmrAur670wM4c1zeLod3qh/kaZND2usjvVX//kDkIuMgmYJkylMNw6iGiXs9S3UM0LtAobKrpn77zPM9IehqpFeXvGFk6MQJr78Tg6qIuxahUNe0/TEqki4tNC5RbmY8sXpA9fcMrGOv4kV4JDEldgiExRLLU92jPeSP/0fdqIBrSEXIpYMpsoBe9M2ePw4cRxVa53ozRO7H85Ky8AlrZEa0fxOEZOKHb/J2gJnXao4QPRdl6BdT98DwJ3nFONNy5+xQQMSKsn6r+BpljiggPy0ukkOsJh94LjVdqwQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rHwoBIbskLejSXW8OE5uCJoDZy47tOHHPNpjJYkXDRc=;
+ b=QKtgV5CLB9lGCxaQJwgZe1CDCfS8rFMzR7g+OCscTHhlpH60C5s1NrOUqx4M5wvn/wS8CKJkBuN3/8yYUJZVWQx+6EZA3kZv7YpZTMqntySecBXnlqw/fNFYwjDskYq47QiEXsdRc3DVGc1h+PMun7ihpttYI/UVgeH1rYWh9UX5TgwDlDu2SYdRKp5MNqU5F4WOPQ6MimH7LzQaXiKrbNV6b03uSQLlh0t5X2SjRkITvfJv3Zr2S+LtLK/MHFogwZn+HgYjUrLNbc3MBAenHYhjnng+lOhWT/z8klCDHTB36QpfSfVxjBhPUEu14keep2Mss+BjBCgHg9NjqoFdtA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
+ by DS7PR11MB9452.namprd11.prod.outlook.com (2603:10b6:8:263::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Tue, 7 Oct
+ 2025 16:23:45 +0000
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9%5]) with mapi id 15.20.9182.017; Tue, 7 Oct 2025
+ 16:23:45 +0000
+From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To: "Mehta, Sohil" <sohil.mehta@intel.com>, "tglx@linutronix.de"
+	<tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de"
+	<bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
+CC: "corbet@lwn.net" <corbet@lwn.net>, "ardb@kernel.org" <ardb@kernel.org>,
+	"david.laight.linux@gmail.com" <david.laight.linux@gmail.com>,
+	"luto@kernel.org" <luto@kernel.org>, "jpoimboe@kernel.org"
+	<jpoimboe@kernel.org>, "andrew.cooper3@citrix.com"
+	<andrew.cooper3@citrix.com>, "Luck, Tony" <tony.luck@intel.com>,
+	"alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
+	"kas@kernel.org" <kas@kernel.org>, "seanjc@google.com" <seanjc@google.com>,
+	"rdunlap@infradead.org" <rdunlap@infradead.org>, "dwmw@amazon.co.uk"
+	<dwmw@amazon.co.uk>, "vegard.nossum@oracle.com" <vegard.nossum@oracle.com>,
+	"xin@zytor.com" <xin@zytor.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "kees@kernel.org" <kees@kernel.org>,
+	"hpa@zytor.com" <hpa@zytor.com>, "peterz@infradead.org"
+	<peterz@infradead.org>, "linux-efi@vger.kernel.org"
+	<linux-efi@vger.kernel.org>, "geert@linux-m68k.org" <geert@linux-m68k.org>
+Subject: Re: [PATCH v10 00/15] x86: Enable Linear Address Space Separation
+ support
+Thread-Topic: [PATCH v10 00/15] x86: Enable Linear Address Space Separation
+ support
+Thread-Index: AQHcN1cvlSzrp3B090O1WN4mxd4LL7S23tEA
+Date: Tue, 7 Oct 2025 16:23:45 +0000
+Message-ID: <27fe1dedb151a606ae46ae3c2bccd80b9a64ff07.camel@intel.com>
+References: <20251007065119.148605-1-sohil.mehta@intel.com>
+In-Reply-To: <20251007065119.148605-1-sohil.mehta@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.44.4-0ubuntu2 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|DS7PR11MB9452:EE_
+x-ms-office365-filtering-correlation-id: c0acfc37-9bba-40c6-f851-08de05bde360
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700021;
+x-microsoft-antispam-message-info: =?utf-8?B?QXJZTVM2WTRaYUJtUVgvR3AxVHpNeWlYUDhwZTBlOTUwRVFoTTg3ZnBVSzM3?=
+ =?utf-8?B?WVAvY1N5QWRxN3NBQUg0TUk2Ynl2MCtLSDBOeVRIWmdXNGMzSG42OGZ2V2lG?=
+ =?utf-8?B?Q2Y4TDVkS3lqWkJQT3NhY1A4MnZRRk9tT2VMRldGM01iMDZ1alFxR1VrM05B?=
+ =?utf-8?B?RVpVNHN6UDZlRjBjM2xycW5JZUJZTnU2aWVTNWE2dnNMcXZYUEdBRTF2MjRy?=
+ =?utf-8?B?RERPYjN1N1hEbm5iN3Y3MEtYZnpScGQ5QVZ5WEdUOGdUd1hpRlRpTmozWmY4?=
+ =?utf-8?B?QllWMW94amkxQjUwbjRTaUFqeWsvZ0lRUzUxeGtLbGlKemppNnZuZkF5bmty?=
+ =?utf-8?B?aHJudkl5dVNOYXZLTTREWWNjSHE4YWFoeENRaDVmNHdxb1NGR0ZpMWM3VWxy?=
+ =?utf-8?B?YjBBK2ZWQ3ZhQWV4WFVaQ0pzYXhmOGt1OUxtVnRDWDhrK1JmdjRvNVNpS0Ir?=
+ =?utf-8?B?emVwT1VzQ1JvRUVoMll0LzQ0VjRCS0JNckFvU3d0Zm5NbWFuMzdKdjg2VVZm?=
+ =?utf-8?B?ZkU3TVJ5NEVzS3oyakh6UHJSZnI3aDg3UmFOalNXOGtDd1FZTERPaEs1U2ox?=
+ =?utf-8?B?M1ZGMmRHWURFL1FlTHI2S1dIWkJQbE9vVjU3cmlLKzJEWDBZeWh0MThZOVZm?=
+ =?utf-8?B?MGIzMTVWTkZCbWFiZitNR1drNThlVTRUdm9weTFsbjNKZ0R4UUFnemtvdno2?=
+ =?utf-8?B?Z29BYm4vWG5hcWpnZVMwQzNWU0NUMU1lWHY5aW90WjM1MG5lOFBpd2FWcUNC?=
+ =?utf-8?B?aXJKYllEZjRIaE1uR011aUdaM3R1UUMvMnlTRnNIanBzMjhnTU96WHRFUkl4?=
+ =?utf-8?B?b3daQXQzcTVjN3Y4R1VPKyttMGUxL3Y3d2F0S3lyekMvYkJybzRQQ3lsNTNO?=
+ =?utf-8?B?NXJVb2xsSzh2Qm5tV054TUJqVFJzdWpCNkw1TUJJekRGUUwxNXNuWUg5QUZM?=
+ =?utf-8?B?Ymg2TEJ6aDNjQ1RWTzBFemd3R3hXUkZiZVlHTVdLRFhrZm5BVUtYNkFrVnlL?=
+ =?utf-8?B?TmhGWi9KVVFicnpOMWxSQTkzUmpKYzMwT0p3bFJmaVYrcDBwNDErc1JYUmQx?=
+ =?utf-8?B?KzZ3YTh0YUROSlg5YnJmcTNzT29TSWR2engwVFFrN25BQXlPVGJqeHVGdWEx?=
+ =?utf-8?B?UVIwdS93dkY0K2dCc3JKV095SXpWUnJSbWU2Y0F1WUtuNE5QeCs2bFcvU1ZC?=
+ =?utf-8?B?eGRXQmFCcFM3S2ZDTjZBYlNCNzVQamlWVU1DcUNiTHlRZGtOVlBQU2VRY09N?=
+ =?utf-8?B?U3BFNlptL0J2ZzNjbXlXWSs3LyswSnpJUmRPeHM3VGo4M3JhbHRPWmxYMHN4?=
+ =?utf-8?B?eTVBSUplYWFGYWs4SUphSWg4eC8rLzNZVTB4RWw5QW93TnA1ajlVUDVWZkpj?=
+ =?utf-8?B?VitUdFBWNHZCUUg0L0EyY3gyUVlWa0laNmU2c3RRd21LSmpIa2lMYnFaM0xk?=
+ =?utf-8?B?Z0w0amlja3FEZHhnZlJldEZxeGVIMnMxZFhNRUdlMUtwdm1LQUFUd0Y1SVU3?=
+ =?utf-8?B?OGNoVDNaYXlEakhTUFd4QlkyUndoY2FySVlUdnl2QVl0RlhlN2JCcEhXZWt2?=
+ =?utf-8?B?TlpDdDkvMitZazN4enJxRFJVZWo3SXVYdkxJbE1JR1BNMFdodzZkWkVBK3gw?=
+ =?utf-8?B?QzcxZTk2eGxJMExVVEkxSXM3TVVqKzRZVjREZU15WkRqR1hvYnZTbHNzUG1Q?=
+ =?utf-8?B?ajhMZXY1K25BbkowZkJ0WHpNdWpiWDk5OHpGcjZIYmFsdlhLdndwMGVkK2lx?=
+ =?utf-8?B?WGlMZW4yL1FKdzdsRXgxUFZ0UnRYSDFHemw1bjF5UXhHTldjbk95UlcvQS9D?=
+ =?utf-8?B?U0JSSDVBc1NFdGlxYVlKcFEzaTRHcTVBY0xpZ0E0eVdGKzJBWnMvY0lNVnk5?=
+ =?utf-8?B?Tm1QTnBHVVY5emtxbDlhTUtSZXRJb0tUZDA3WjNiT3lRekVYdktMb1VXbWZE?=
+ =?utf-8?B?L0s2d2xSY1ByMHliNmRUTDU2UzlaQ2x0UXRCd3R1Ylg4Yi96YjM3ZEhpejRQ?=
+ =?utf-8?B?bFgzeDM4Y0FXOExvMktHejFxUk1jZFhpb08yWkpZTE4rUWJOR2ZqTUlZT2Rx?=
+ =?utf-8?Q?krt9EE?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?THVJY0FYdEJUU2F5SXdYOXVHbkJpcTZ3UUdyYW1sdVFCK2NXbkJXQWpaOWZp?=
+ =?utf-8?B?SVVBaWRiSEs1RWRCaFpYalRLbnVzcG9mamZKS3pYYmRMNTBacHdqV1BYUEpm?=
+ =?utf-8?B?NjNyanFxSzloM0RhYkJJek04aEZJTW1rU3IzTmQ4SEJOazRRc1BDejlTZGR2?=
+ =?utf-8?B?dkpWVjZEV2lGZXRkNFRlQXE4WVc3aXZxU01zYi80L3dLdkNIWHNTemNYK0xW?=
+ =?utf-8?B?b2lLbWp3dlhEcWRXckFySG8yVUY3dFRWVUNMZ01seVpsem1idDgzZUZ0QUEv?=
+ =?utf-8?B?Yng2Q01zdmsxR0JLaHBVWnFsVUNLRTdTZkcrZmEyWmRNVUJQTzFkQ3MveXVC?=
+ =?utf-8?B?dWFDZWdENkhrdmF3dzhielc4Z2szNnZwUXAxSGNRaWQxSnhNVlE2bjYyRmpa?=
+ =?utf-8?B?UWwrWDJNSURwaWFtNDJmM1dYb00zZXpwVzA2T2tNeEIrWnhNUTFyQ1F0c0hp?=
+ =?utf-8?B?bDZFZ0hGV0dYR3lOOGpMUUJvNmVBNXU5SW5vWnRZcDVaL3VpVm9oM0cwTUpa?=
+ =?utf-8?B?MjBXVDZnaDh0RGp2V0hMTFUzMzZZdFhDVFlJWWYway85VjhtUzhUWm9EenlK?=
+ =?utf-8?B?bFNYcG5zd3pnNGZSQnZaamNmbGxQOURYc3laZDN4cms3a245M1dPcS9jRFYv?=
+ =?utf-8?B?U2tad0szTDhVRlJmTDNNWlQ3ajZDclhJWHpMOXhZQ0p0MmhIYWFCMkI1Wk5u?=
+ =?utf-8?B?cHhOaTF6MTJlellDZzRyMEZYdjBTUU1jYnZjR1BHRVp6NzFCaVQxMzBSYlpD?=
+ =?utf-8?B?OHNhVFBDdmU4Vm1XVmVKU2lwdC9Tb1RUUDdzTVNUYm1UUFNQYW03eE8zZStO?=
+ =?utf-8?B?WmlDOGszOUJuTHR5ZENxcFkzY292cUxNRjBWVHM1Z3V2bjNvcjB6YkR4clVR?=
+ =?utf-8?B?S2V1Ujhjb1Babkg5V3ExdTRJUndOa1h1TkFyMUtuSWVLeGRBaEs1bHBHN1Jp?=
+ =?utf-8?B?Z0FlRG1GSEpVSldrRFMyWjVIWnQwZEQ2TmEyK3lPcG9MQnErNG5tY05XU2N5?=
+ =?utf-8?B?K2ZTa2g0SVZTTVBCRVhlSDk5bXNCczdWcVBsNytrMzdOZVgwU2RFbG1PRXM4?=
+ =?utf-8?B?U0JrdGdzMmFsamtrcndsK2RJR1FZOXpFWkhsd3UrM1FRWmp0bDE4ZVpFbzZT?=
+ =?utf-8?B?TmRjaGc1ZS90WkRYdmVLTEhMbS9NTFJDeEVFTUNlUlVrMkJCQ3dobXhRaUIz?=
+ =?utf-8?B?aWQ5SzJ4cm5FZ3dWUFJaaEdnc0tsdVlKcTR1UkZXelpIS0xISTVTOHZyQTNx?=
+ =?utf-8?B?bVpJM0RpUWxVWEViejc5K0xua0VOZmh3c1loQjdZczVDZThBSHhNWmhHcEVM?=
+ =?utf-8?B?N1NyT3FJbFJjMFE3eVM3b2YrQ1pOK3BtdmxJN0RUZzBpQTU5WjdIWFhENDFi?=
+ =?utf-8?B?WFJJWm9vUmt1Y3VRdHlUeHcvdHdneGpDckM0NysrNDl5Unl6RmhCN0cwanJY?=
+ =?utf-8?B?VUpUQiswS21NZlcvT3FSNHZwdlNCNDh4WjgzaWV5eUpBYmxpblpMOWVsTmxj?=
+ =?utf-8?B?ZWRIZFM1aG1zdVdUOEFQb0tDQS9yV0xacFduVlY1MW5DZS8yYnZpbUFjRVJx?=
+ =?utf-8?B?MFRZbG1kbmRGdUYzUHVtcjcvc3lSd0lUWTgyaEtkSEl2ZzlsYVlUanIyRkpO?=
+ =?utf-8?B?K3M3c2VVZXRVeFJPSWJ5d1Frc1h6V0IyMUcxNkFvRVpsdGZENVlVQ2lIUmJM?=
+ =?utf-8?B?WlZZRFF1SjIyWTYvcFM0N2lkN2lMSWNnSVVUdnFnbC8yajNUU3hzRzY3cU9N?=
+ =?utf-8?B?Q1hZYTZEci9tSGxsYnZYQ3l2NGJYUGZwWnZ0RnpaSVZFdTROYlI1dnhtZmpn?=
+ =?utf-8?B?V1J6azFna3BIU3hrU2IxTlNxQkpzMC9YOEkwUTc3cXpBbDdQT1R0WlYrRkgy?=
+ =?utf-8?B?RmRqSGRKWjNMZXh1MzRCOGFZRUJDZEplNTBWT2JYQmZJY2JMV3NOenN4bngx?=
+ =?utf-8?B?NGZYZEdRNXNjNFp2WXZhWVZvNHlvWkI2SnBWaDh0eXRPbFNSUjhDZmRsaTV3?=
+ =?utf-8?B?Y3daMDhLNWR5eThvZWdhYXdFQ3hYUE1uVm80RDhYZTR3dk5JUUltRHpWaFBr?=
+ =?utf-8?B?RVBlREN6bVJiUzdQMjVQNlJ1MzhrVHczdFI3alJUWXZEbGg4ZzFYUVhyR252?=
+ =?utf-8?B?S0NXbTFlUDg5RGV1UEQ0WkNOS1E4Sm0vMFl6WkE3TFAyMUUxWGFiNUppQXd1?=
+ =?utf-8?B?Y2c9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7922BDC8985DA744B66812CED031A0D4@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] tools/sched_ext: Strip compatibility macros for
- cgroup and dispatch APIs
-To: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
- Andrea Righi <arighi@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev
-References: <20251007015147.2496026-1-tj@kernel.org>
- <20251007015147.2496026-2-tj@kernel.org>
-From: Changwoo Min <changwoo@igalia.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <20251007015147.2496026-2-tj@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c0acfc37-9bba-40c6-f851-08de05bde360
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Oct 2025 16:23:45.4337
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: XVGaAW1FASqwLgnxWFsIpbEpiZRMl/EzWHi27TXzsxeCDqlA7ZfA1t1pnZa9kSnl0nWZRgxOiR3DDpDcFn6zvPk2wk6LzaYpaaC8lVJx4oM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB9452
+X-OriginatorOrg: intel.com
 
-
-
-On 10/7/25 10:51, Tejun Heo wrote:
-> Enough time has passed since the introduction of scx_bpf_task_cgroup() and
-> the scx_bpf_dispatch* -> scx_bpf_dsq* kfunc renaming. Strip the compatibility
-> macros.
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-
-Acked-by: Changwoo Min <changwoo@igalia.com>
-
-Thanks!
-Changwoo Min
-
-> ---
->   tools/sched_ext/include/scx/compat.bpf.h | 108 +----------------------
->   tools/sched_ext/scx_flatcg.bpf.c         |  10 +--
->   tools/sched_ext/scx_qmap.bpf.c           |  14 ++-
->   3 files changed, 12 insertions(+), 120 deletions(-)
-> 
-> diff --git a/tools/sched_ext/include/scx/compat.bpf.h b/tools/sched_ext/include/scx/compat.bpf.h
-> index dd9144624dc9..d979f16a3ae2 100644
-> --- a/tools/sched_ext/include/scx/compat.bpf.h
-> +++ b/tools/sched_ext/include/scx/compat.bpf.h
-> @@ -15,121 +15,17 @@
->   	__ret;									\
->   })
->   
-> -/* v6.12: 819513666966 ("sched_ext: Add cgroup support") */
-> -#define __COMPAT_scx_bpf_task_cgroup(p)						\
-> -	(bpf_ksym_exists(scx_bpf_task_cgroup) ?					\
-> -	 scx_bpf_task_cgroup((p)) : NULL)
-> -
->   /*
-> - * v6.13: The verb `dispatch` was too overloaded and confusing. kfuncs are
-> - * renamed to unload the verb.
-> - *
-> - * Build error is triggered if old names are used. New binaries work with both
-> - * new and old names. The compat macros will be removed on v6.15 release.
-> + * v6.15: 950ad93df2fc ("bpf: add kfunc for populating cpumask bits")
->    *
-> - * scx_bpf_dispatch_from_dsq() and friends were added during v6.12 by
-> - * 4c30f5ce4f7a ("sched_ext: Implement scx_bpf_dispatch[_vtime]_from_dsq()").
-> - * Preserve __COMPAT macros until v6.15.
-> + * Compat macro will be dropped on v6.19 release.
->    */
-> -void scx_bpf_dispatch___compat(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags) __ksym __weak;
-> -void scx_bpf_dispatch_vtime___compat(struct task_struct *p, u64 dsq_id, u64 slice, u64 vtime, u64 enq_flags) __ksym __weak;
-> -bool scx_bpf_consume___compat(u64 dsq_id) __ksym __weak;
-> -void scx_bpf_dispatch_from_dsq_set_slice___compat(struct bpf_iter_scx_dsq *it__iter, u64 slice) __ksym __weak;
-> -void scx_bpf_dispatch_from_dsq_set_vtime___compat(struct bpf_iter_scx_dsq *it__iter, u64 vtime) __ksym __weak;
-> -bool scx_bpf_dispatch_from_dsq___compat(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 enq_flags) __ksym __weak;
-> -bool scx_bpf_dispatch_vtime_from_dsq___compat(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 enq_flags) __ksym __weak;
->   int bpf_cpumask_populate(struct cpumask *dst, void *src, size_t src__sz) __ksym __weak;
->   
-> -#define scx_bpf_dsq_insert(p, dsq_id, slice, enq_flags)				\
-> -	(bpf_ksym_exists(scx_bpf_dsq_insert) ?					\
-> -	 scx_bpf_dsq_insert((p), (dsq_id), (slice), (enq_flags)) :		\
-> -	 scx_bpf_dispatch___compat((p), (dsq_id), (slice), (enq_flags)))
-> -
-> -#define scx_bpf_dsq_insert_vtime(p, dsq_id, slice, vtime, enq_flags)		\
-> -	(bpf_ksym_exists(scx_bpf_dsq_insert_vtime) ?				\
-> -	 scx_bpf_dsq_insert_vtime((p), (dsq_id), (slice), (vtime), (enq_flags)) : \
-> -	 scx_bpf_dispatch_vtime___compat((p), (dsq_id), (slice), (vtime), (enq_flags)))
-> -
-> -#define scx_bpf_dsq_move_to_local(dsq_id)					\
-> -	(bpf_ksym_exists(scx_bpf_dsq_move_to_local) ?				\
-> -	 scx_bpf_dsq_move_to_local((dsq_id)) :					\
-> -	 scx_bpf_consume___compat((dsq_id)))
-> -
-> -#define __COMPAT_scx_bpf_dsq_move_set_slice(it__iter, slice)			\
-> -	(bpf_ksym_exists(scx_bpf_dsq_move_set_slice) ?				\
-> -	 scx_bpf_dsq_move_set_slice((it__iter), (slice)) :			\
-> -	 (bpf_ksym_exists(scx_bpf_dispatch_from_dsq_set_slice___compat) ?	\
-> -	  scx_bpf_dispatch_from_dsq_set_slice___compat((it__iter), (slice)) :	\
-> -	  (void)0))
-> -
-> -#define __COMPAT_scx_bpf_dsq_move_set_vtime(it__iter, vtime)			\
-> -	(bpf_ksym_exists(scx_bpf_dsq_move_set_vtime) ?				\
-> -	 scx_bpf_dsq_move_set_vtime((it__iter), (vtime)) :			\
-> -	 (bpf_ksym_exists(scx_bpf_dispatch_from_dsq_set_vtime___compat) ?	\
-> -	  scx_bpf_dispatch_from_dsq_set_vtime___compat((it__iter), (vtime)) :	\
-> -	  (void) 0))
-> -
-> -#define __COMPAT_scx_bpf_dsq_move(it__iter, p, dsq_id, enq_flags)		\
-> -	(bpf_ksym_exists(scx_bpf_dsq_move) ?					\
-> -	 scx_bpf_dsq_move((it__iter), (p), (dsq_id), (enq_flags)) :		\
-> -	 (bpf_ksym_exists(scx_bpf_dispatch_from_dsq___compat) ?			\
-> -	  scx_bpf_dispatch_from_dsq___compat((it__iter), (p), (dsq_id), (enq_flags)) : \
-> -	  false))
-> -
-> -#define __COMPAT_scx_bpf_dsq_move_vtime(it__iter, p, dsq_id, enq_flags)		\
-> -	(bpf_ksym_exists(scx_bpf_dsq_move_vtime) ?				\
-> -	 scx_bpf_dsq_move_vtime((it__iter), (p), (dsq_id), (enq_flags)) :	\
-> -	 (bpf_ksym_exists(scx_bpf_dispatch_vtime_from_dsq___compat) ?		\
-> -	  scx_bpf_dispatch_vtime_from_dsq___compat((it__iter), (p), (dsq_id), (enq_flags)) : \
-> -	  false))
-> -
->   #define __COMPAT_bpf_cpumask_populate(cpumask, src, size__sz)		\
->   	(bpf_ksym_exists(bpf_cpumask_populate) ?			\
->   	 (bpf_cpumask_populate(cpumask, src, size__sz)) : -EOPNOTSUPP)
->   
-> -#define scx_bpf_dispatch(p, dsq_id, slice, enq_flags)				\
-> -	_Static_assert(false, "scx_bpf_dispatch() renamed to scx_bpf_dsq_insert()")
-> -
-> -#define scx_bpf_dispatch_vtime(p, dsq_id, slice, vtime, enq_flags)		\
-> -	_Static_assert(false, "scx_bpf_dispatch_vtime() renamed to scx_bpf_dsq_insert_vtime()")
-> -
-> -#define scx_bpf_consume(dsq_id) ({						\
-> -	_Static_assert(false, "scx_bpf_consume() renamed to scx_bpf_dsq_move_to_local()"); \
-> -	false;									\
-> -})
-> -
-> -#define scx_bpf_dispatch_from_dsq_set_slice(it__iter, slice)		\
-> -	_Static_assert(false, "scx_bpf_dispatch_from_dsq_set_slice() renamed to scx_bpf_dsq_move_set_slice()")
-> -
-> -#define scx_bpf_dispatch_from_dsq_set_vtime(it__iter, vtime)		\
-> -	_Static_assert(false, "scx_bpf_dispatch_from_dsq_set_vtime() renamed to scx_bpf_dsq_move_set_vtime()")
-> -
-> -#define scx_bpf_dispatch_from_dsq(it__iter, p, dsq_id, enq_flags) ({	\
-> -	_Static_assert(false, "scx_bpf_dispatch_from_dsq() renamed to scx_bpf_dsq_move()"); \
-> -	false;									\
-> -})
-> -
-> -#define scx_bpf_dispatch_vtime_from_dsq(it__iter, p, dsq_id, enq_flags) ({  \
-> -	_Static_assert(false, "scx_bpf_dispatch_vtime_from_dsq() renamed to scx_bpf_dsq_move_vtime()"); \
-> -	false;									\
-> -})
-> -
-> -#define __COMPAT_scx_bpf_dispatch_from_dsq_set_slice(it__iter, slice)		\
-> -	_Static_assert(false, "__COMPAT_scx_bpf_dispatch_from_dsq_set_slice() renamed to __COMPAT_scx_bpf_dsq_move_set_slice()")
-> -
-> -#define __COMPAT_scx_bpf_dispatch_from_dsq_set_vtime(it__iter, vtime)		\
-> -	_Static_assert(false, "__COMPAT_scx_bpf_dispatch_from_dsq_set_vtime() renamed to __COMPAT_scx_bpf_dsq_move_set_vtime()")
-> -
-> -#define __COMPAT_scx_bpf_dispatch_from_dsq(it__iter, p, dsq_id, enq_flags) ({	\
-> -	_Static_assert(false, "__COMPAT_scx_bpf_dispatch_from_dsq() renamed to __COMPAT_scx_bpf_dsq_move()"); \
-> -	false;									\
-> -})
-> -
-> -#define __COMPAT_scx_bpf_dispatch_vtime_from_dsq(it__iter, p, dsq_id, enq_flags) ({  \
-> -	_Static_assert(false, "__COMPAT_scx_bpf_dispatch_vtime_from_dsq() renamed to __COMPAT_scx_bpf_dsq_move_vtime()"); \
-> -	false;									\
-> -})
-> -
->   /**
->    * __COMPAT_is_enq_cpu_selected - Test if SCX_ENQ_CPU_SELECTED is on
->    * in a compatible way. We will preserve this __COMPAT helper until v6.16.
-> diff --git a/tools/sched_ext/scx_flatcg.bpf.c b/tools/sched_ext/scx_flatcg.bpf.c
-> index 2c720e3ecad5..43126858b8e4 100644
-> --- a/tools/sched_ext/scx_flatcg.bpf.c
-> +++ b/tools/sched_ext/scx_flatcg.bpf.c
-> @@ -382,7 +382,7 @@ void BPF_STRUCT_OPS(fcg_enqueue, struct task_struct *p, u64 enq_flags)
->   		return;
->   	}
->   
-> -	cgrp = __COMPAT_scx_bpf_task_cgroup(p);
-> +	cgrp = scx_bpf_task_cgroup(p);
->   	cgc = find_cgrp_ctx(cgrp);
->   	if (!cgc)
->   		goto out_release;
-> @@ -508,7 +508,7 @@ void BPF_STRUCT_OPS(fcg_runnable, struct task_struct *p, u64 enq_flags)
->   {
->   	struct cgroup *cgrp;
->   
-> -	cgrp = __COMPAT_scx_bpf_task_cgroup(p);
-> +	cgrp = scx_bpf_task_cgroup(p);
->   	update_active_weight_sums(cgrp, true);
->   	bpf_cgroup_release(cgrp);
->   }
-> @@ -521,7 +521,7 @@ void BPF_STRUCT_OPS(fcg_running, struct task_struct *p)
->   	if (fifo_sched)
->   		return;
->   
-> -	cgrp = __COMPAT_scx_bpf_task_cgroup(p);
-> +	cgrp = scx_bpf_task_cgroup(p);
->   	cgc = find_cgrp_ctx(cgrp);
->   	if (cgc) {
->   		/*
-> @@ -564,7 +564,7 @@ void BPF_STRUCT_OPS(fcg_stopping, struct task_struct *p, bool runnable)
->   	if (!taskc->bypassed_at)
->   		return;
->   
-> -	cgrp = __COMPAT_scx_bpf_task_cgroup(p);
-> +	cgrp = scx_bpf_task_cgroup(p);
->   	cgc = find_cgrp_ctx(cgrp);
->   	if (cgc) {
->   		__sync_fetch_and_add(&cgc->cvtime_delta,
-> @@ -578,7 +578,7 @@ void BPF_STRUCT_OPS(fcg_quiescent, struct task_struct *p, u64 deq_flags)
->   {
->   	struct cgroup *cgrp;
->   
-> -	cgrp = __COMPAT_scx_bpf_task_cgroup(p);
-> +	cgrp = scx_bpf_task_cgroup(p);
->   	update_active_weight_sums(cgrp, false);
->   	bpf_cgroup_release(cgrp);
->   }
-> diff --git a/tools/sched_ext/scx_qmap.bpf.c b/tools/sched_ext/scx_qmap.bpf.c
-> index 3072b593f898..c67dac78a4c6 100644
-> --- a/tools/sched_ext/scx_qmap.bpf.c
-> +++ b/tools/sched_ext/scx_qmap.bpf.c
-> @@ -320,12 +320,9 @@ static bool dispatch_highpri(bool from_timer)
->   
->   		if (tctx->highpri) {
->   			/* exercise the set_*() and vtime interface too */
-> -			__COMPAT_scx_bpf_dsq_move_set_slice(
-> -				BPF_FOR_EACH_ITER, slice_ns * 2);
-> -			__COMPAT_scx_bpf_dsq_move_set_vtime(
-> -				BPF_FOR_EACH_ITER, highpri_seq++);
-> -			__COMPAT_scx_bpf_dsq_move_vtime(
-> -				BPF_FOR_EACH_ITER, p, HIGHPRI_DSQ, 0);
-> +			scx_bpf_dsq_move_set_slice(BPF_FOR_EACH_ITER, slice_ns * 2);
-> +			scx_bpf_dsq_move_set_vtime(BPF_FOR_EACH_ITER, highpri_seq++);
-> +			scx_bpf_dsq_move_vtime(BPF_FOR_EACH_ITER, p, HIGHPRI_DSQ, 0);
->   		}
->   	}
->   
-> @@ -342,9 +339,8 @@ static bool dispatch_highpri(bool from_timer)
->   		else
->   			cpu = scx_bpf_pick_any_cpu(p->cpus_ptr, 0);
->   
-> -		if (__COMPAT_scx_bpf_dsq_move(BPF_FOR_EACH_ITER, p,
-> -					      SCX_DSQ_LOCAL_ON | cpu,
-> -					      SCX_ENQ_PREEMPT)) {
-> +		if (scx_bpf_dsq_move(BPF_FOR_EACH_ITER, p, SCX_DSQ_LOCAL_ON | cpu,
-> +				     SCX_ENQ_PREEMPT)) {
->   			if (cpu == this_cpu) {
->   				dispatched = true;
->   				__sync_fetch_and_add(&nr_expedited_local, 1);
-
+T24gTW9uLCAyMDI1LTEwLTA2IGF0IDIzOjUxIC0wNzAwLCBTb2hpbCBNZWh0YSB3cm90ZToNCj4g
+PiBVc2Vyc3BhY2UgYWNjZXNzZXMNCj4gPiAtLS0tLS0tLS0tLS0tLS0tLS0NCj4gPiBVc2Vyc3Bh
+Y2UgYXR0ZW1wdHMgdG8gYWNjZXNzIGFueSBrZXJuZWwgYWRkcmVzcyBnZW5lcmF0ZSBhICNHUCB3
+aGVuIExBU1MNCj4gPiBpcyBlbmFibGVkLiBVbmZvcnR1bmF0ZWx5LCBsZWdhY3kgdnN5c2NhbGwg
+ZnVuY3Rpb25zIGFyZSBsb2NhdGVkIGluIHRoZQ0KPiA+IGFkZHJlc3MgcmFuZ2UgMHhmZmZmZmZm
+ZmZmNjAwMDAwIC0gMHhmZmZmZmZmZmZmNjAxMDAwLiBQcmlvciB0byBMQVNTLA0KPiA+IGRlZmF1
+bHQgYWNjZXNzIChYT05MWSkgdG8gdGhlIHZzeXNjYWxsIHBhZ2Ugd291bGQgZ2VuZXJhdGUgYSBw
+YWdlIGZhdWx0DQo+ID4gYW5kIHRoZSBhY2Nlc3Mgd291bGQgYmUgZW11bGF0ZWQgaW4gdGhlIGtl
+cm5lbC4gVG8gYXZvaWQgYnJlYWtpbmcgdXNlcg0KPiA+IGFwcGxpY2F0aW9ucyB3aGVuIExBU1Mg
+aXMgZW5hYmxlZCwgdGhlIHBhdGNoZXMgZXh0ZW5kIHZzeXNjYWxsIGVtdWxhdGlvbg0KPiA+IGlu
+IFhPTkxZIG1vZGUgdG8gdGhlICNHUCBoYW5kbGVyLg0KPiA+IA0KPiA+IEluIGNvbnRyYXN0LCB0
+aGUgdnN5c2NhbGwgRU1VTEFURSBtb2RlIGlzIGRlcHJlY2F0ZWQgYW5kIG5vdCBleHBlY3RlZCB0
+bw0KPiA+IGJlIHVzZWQgYnkgYW55b25lLiBTdXBwb3J0aW5nIEVNVUxBVEUgbW9kZSB3aXRoIExB
+U1Mgd291bGQgcmVxdWlyZQ0KPiA+IGNvbXBsZXggaW5zdHJ1Y3Rpb24gZGVjb2RpbmcgaW4gdGhl
+ICNHUCBmYXVsdCBoYW5kbGVyLCB3aGljaCBpcyBwcm9iYWJseQ0KPiA+IG5vdCB3b3J0aCB0aGUg
+ZWZmb3J0LiBGb3Igbm93LCBMQVNTIGlzIGRpc2FibGVkIGluIHRoZSByYXJlIGNhc2Ugd2hlbg0K
+PiA+IHNvbWVvbmUgYWJzb2x1dGVseSBuZWVkcyB0byBlbmFibGUgdnN5c2NhbGw9ZW11bGF0ZSB2
+aWEgdGhlIGNvbW1hbmQNCj4gPiBsaW5lLg0KDQpUaGVyZSBpcyBhbHNvIGFuIGV4cGVjdGVkIGhh
+cm1sZXNzIFVBQkkgY2hhbmdlIGFyb3VuZCBTSUdfU0VHVi4gRm9yIGEgdXNlciBtb2RlDQprZXJu
+ZWwgYWRkcmVzcyByYW5nZSBhY2Nlc3MsIHRoZSBrZXJuZWwgY2FuIGRlbGl2ZXIgYSBzaWduYWwg
+dGhhdCBwcm92aWRlcyB0aGUNCmV4Y2VwdGlvbiB0eXBlIGFuZCB0aGUgYWRkcmVzcy4gQmVmb3Jl
+IGl0IHdhcyAjUEYsIG5vdyBhICNHUCB3aXRoIG5vIGFkZHJlc3MuDQoNCg==
 
