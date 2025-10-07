@@ -1,139 +1,105 @@
-Return-Path: <linux-kernel+bounces-844363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B338BBC1B0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:20:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45F82BC1B17
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E1D419A423F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:20:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 069AD4E595E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0974D2D94A0;
-	Tue,  7 Oct 2025 14:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634E02DC77E;
+	Tue,  7 Oct 2025 14:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HYz0w0oc"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="VnsfuAtE"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E821F0994
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 14:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164752D94A0;
+	Tue,  7 Oct 2025 14:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759846811; cv=none; b=QdbB12R7c9n2UbraiVNH5musEqrWpIHJTjW161+J3Tib01CC/+23Ip12AShgOeJI40slm+ak35/ikal0ARQriaT/zON2zE0hPcEK/qBxbo38l/abTwgURJIwkeg8C/K3ReU5ns0m1Yrx+NH3engJUl6gJDSkGxpU+9Ockv7Tm0Q=
+	t=1759846832; cv=none; b=O9f6IH2GGYXm1Ag7Z1xwHbfdPEpK1Kuy1h3PxxDEJooTK0zfomlRGsd4yGVhDD+25hgi22vXrXb2ZcRSrqjfPbFLtJT6G6h/CoBK/3wmOqsD55s3/2GdrYOCegCNR0vk/mVUXx0V4mwsYIl1xkEFR2TrU5ribmuwG9/bA18BtI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759846811; c=relaxed/simple;
-	bh=Qw/zGLAlS0WneNM+ATx3EXtlXvXA8Fs6JSI5NyYfX0o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zvj36GgdbMtxGv7hizhEFTxMvjsnZPh62QabPgla0AC3AxJR3d/t5w4Ba1yzAoBa/I8YUxJ25l5WZhs8R/QbrTfPApRmijngnT4nBev3hO5WpoFFTh0n95tlMPxPWs7Va9p21v7MOTTr+6J2+plcZzU7GF9IM1cuEXaZ0QO+5rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HYz0w0oc; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <4888cefa-e8be-4f0d-9d4a-c82f9ff6cda0@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759846806;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ngYQpH36569K++7CCAQsgIJKCzPaP0ImpmBI/4BGpek=;
-	b=HYz0w0ocj3aTEHZBOXPy4bsjjc6WbH9bd6NEk2nD/pGsK3BaVcHhRV7ggaCHI0sXHAp3gm
-	bIY2bUbzY8r4VuoZrfWcOpOsn2lEujFF7DoeqEOrbmbjMI3W8a7IltVhjgR/K3Hu+j3yp/
-	EKKvz/jrdSgaLy2uUnQgZ+j6QHlEn9Q=
-Date: Tue, 7 Oct 2025 10:20:01 -0400
+	s=arc-20240116; t=1759846832; c=relaxed/simple;
+	bh=gZcVRVTLPwM+bJdCp1dnSH4pB3y4UG3AzW5r8bJ0Tcg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AlKV4LKexbzEUR80rppBpqFodS0YArbXuauEclaxdA2g9Q1SsGBKq2sjWJ7NcNROzm/QsDPOkjPIMfhNVWnz86rte1xDTmP5lDkvoLHTIDbAnp6v/PzTuf+zaFVLbXxVJmfc4HihFv/K79Lxc7B6xN4Nbyncze1D8KZ964iApIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=VnsfuAtE; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=FsovRwnfcYyTlN5NPaIbZ7Ow+PuE+Xi6DcLbuQc67WQ=; b=VnsfuAtEhr3Y4oVu/wiDZ5pFhH
+	FOTTEHhGwrd193yPDCqqto1g4fNfCqyqvB/+yc6nxuB6GOT1nog815K1AOstj47IbgSokSjmaTm4X
+	eFHITeBO8fw6110ihvku+4Muq6qZtBze4xKOUKGSgZSPWAWNCCaF0yp/3oFP1nvVl+3c=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1v68Y9-00ANK7-BM; Tue, 07 Oct 2025 16:20:21 +0200
+Date: Tue, 7 Oct 2025 16:20:21 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: Peter Korsgaard <peter@korsgaard.com>,
+	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux@ew.tq-group.com
+Subject: Re: [PATCH 1/2] i2c: ocores: replace 1ms poll iteration timeout with
+ total transfer timeout
+Message-ID: <7470fb97-1991-4347-a084-11f24006b67f@lunn.ch>
+References: <1eb320b6b7d3a12e62785893ea68c4d16aa2560d.1759838476.git.matthias.schiffer@ew.tq-group.com>
+ <7dbefacc-3ce0-47ea-b521-102320f49420@lunn.ch>
+ <09aa8945c41cdc0c518bddedf8d3489c1e521661.camel@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] mtd: spi-nor: Enable locking for n25q00a
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
- Michael Walle <mwalle@kernel.org>, linux-mtd@lists.infradead.org,
- Richard Weinberger <richard@nod.at>, linux-kernel@vger.kernel.org,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Vignesh Raghavendra <vigneshr@ti.com>
-References: <20251006223409.3475001-1-sean.anderson@linux.dev>
- <mafs0ecreontu.fsf@kernel.org>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <mafs0ecreontu.fsf@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <09aa8945c41cdc0c518bddedf8d3489c1e521661.camel@ew.tq-group.com>
 
-On 10/7/25 09:15, Pratyush Yadav wrote:
-> On Mon, Oct 06 2025, Sean Anderson wrote:
+On Tue, Oct 07, 2025 at 04:06:36PM +0200, Matthias Schiffer wrote:
+> On Tue, 2025-10-07 at 14:34 +0200, Andrew Lunn wrote:
+> > On Tue, Oct 07, 2025 at 02:09:24PM +0200, Matthias Schiffer wrote:
+> > > When a target makes use of clock stretching, a timeout of 1ms may not be
+> > > enough. One extreme example is the NXP PTN3460 eDP to LVDS bridge, which
+> > > takes ~320ms to send its ACK after a flash command has been
+> > > submitted.
+> > > 
+> > > Replace the per-iteration timeout of 1ms with limiting the total
+> > > transfer time to the timeout set in struct i2c_adapter (defaulting to
+> > > 1s, configurable through the I2C_TIMEOUT ioctl). While we're at it, also
+> > > add a cpu_relax() to the busy poll loop.
+> > 
+> > 1s is a long time to spin. Maybe it would be better to keep with the
+> > current spin for 1ms, and then use one of the helpers from iopoll.h to
+> > do a sleeping wait? Say with 10ms sleeps, up to the 1s maximum?
+> > 
+> > 	Andrew
 > 
->> The datasheet for n25q00a shows that the status register has the same
->> layout as for n25q00, so use the same flags to enable locking support.
->> These flags should have been added back in commit 150ccc181588 ("mtd:
->> spi-nor: Enable locking for n25q128a11"), but they were removed by the
->> maintainer...
-> 
-> This makes it sound like the maintainer did something wrong, which is
-> not true. Tudor had a good reason for removing them.
+> Makes sense. I don't think I can use something from iopoll.h directly, as i2c-
+> ocores has its own ioreadX abstraction to deal with different register widths
+> and endianesses, but a combination of spin + sleep is probably the way to go.
 
-I disagree. The maintainer used his position of authority to make the
-submitter second-guess their correct patch.
+I think iopoll.h should work.
 
-These flashes have capacity of greater than the 8 MiB that can be
-protected using 3 BP bits. Micron (and ST before them?) addressed this
-by adding a fourth BP bit. This is consistent across every flash in this
-series, and is clearly documented in every datasheet. Defaulting to 3
-bits is buggy behavior: we should assume flashes behave per their
-datasheets until proven otherwise, especially for less-popular features
-that the original submitter may not have tested.
 
-The original patch was entirely correct, and the maintainer's
-justification for removing the second hunk is flawed.
+		u8 status = oc_getreg(i2c, reg);
 
-> Jungseung did not
-> have the flash at hand and Tudor didn't want to apply patches that
-> weren't tested. Both were in agreement for removing the n25q00a changes.
-> 
-> If you are going to mention that commit, then mention the full context,
-> and then also mention what has changed since that makes it possible to
-> add those changes back in. Having tested them on the real hardware for
-> example.
-> 
->>
->> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
->> ---
->> Tested with a mt25qu01gbbb, which shares the same flash ID.
-> 
-> Ughh, is this another case of flash ID reuse? Do mt25qu and n25q00a
-> flashes behave exactly the same and only have two names? If not, then
-> how do you know if n25q00a will also work with these changes?
+		if ((status & mask) == val)
+			break;
 
-I examined the datasheet for the n25q00a and determined that it has the
-same status register layout.
+This maps to
 
-In fact, every n25q and mt25q flash has the same status register layout,
-which (as noted above) is necessary to support capacities greater than 8
-MiB (and all flashes in this series have such capacity).
+u8 status;
+     
+ret = read_poll_timeout(oc_getreg, status, (status & mask) == val,
+                       10000, 1000000, false, i2c, reg);
 
---Sea
-
->>
->>  drivers/mtd/spi-nor/micron-st.c | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/mtd/spi-nor/micron-st.c b/drivers/mtd/spi-nor/micron-st.c
->> index 187239ccd549..17c7d6322508 100644
->> --- a/drivers/mtd/spi-nor/micron-st.c
->> +++ b/drivers/mtd/spi-nor/micron-st.c
->> @@ -486,6 +486,8 @@ static const struct flash_info st_nor_parts[] = {
->>  		.id = SNOR_ID(0x20, 0xbb, 0x21),
->>  		.name = "n25q00a",
->>  		.size = SZ_128M,
->> +		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB | SPI_NOR_4BIT_BP |
->> +			 SPI_NOR_BP3_SR_BIT6,
->>  		.no_sfdp_flags = SECT_4K | SPI_NOR_QUAD_READ,
->>  		.mfr_flags = USE_FSR,
->>  		.fixups = &n25q00_fixups,
-> 
+Andrew
 
