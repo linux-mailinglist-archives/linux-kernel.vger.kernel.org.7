@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-844012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEFF4BC0D41
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:13:45 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42AEBBC0D44
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:13:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 206B24EDBF9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:13:44 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E46B834D6BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E19C2D7806;
-	Tue,  7 Oct 2025 09:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F7E2D6E5C;
+	Tue,  7 Oct 2025 09:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WSq6OYIm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XcWC7FMD"
 Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21FE32D73AE
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 09:13:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 323412D7D35
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 09:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759828412; cv=none; b=q40G3GLr4H/kftU8AocjBsTdN5IpC6h9dnnoTa0AQrHKDFTmdZwJdVDMF4HJ32ZRXH9Eiw5kVDwjy0Rl+usNv/ZwlhpFiqAx+zKNIsElyrZsMBc1dKEo4jQCgZ0MChVQdnLStZ6hwAn2rGMegTp3yWRFFMFq97bsJsHhrBrPcyQ=
+	t=1759828415; cv=none; b=SUJOOjb//N4vR3j60wlrRCgAl/Tbq4QbPi/3P5FTBwh99wfLptgX9wpBREcVd06BY9pbJg/LQO9X5sX9cZLAZmn1vSQ8DkD+WmJd54jMundHwx9/Fd+Hia26DVS6AHTvuaZqmV3Y2aJPHvcgV7iaD50BqMSAMhL8mvCELLBspDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759828412; c=relaxed/simple;
-	bh=4jY+le6EasXP1TQgY1JwK4qzgMhVV14ctQrElh0wVbc=;
+	s=arc-20240116; t=1759828415; c=relaxed/simple;
+	bh=jkbLiLfCNgRMGiwrFTu8kZjFsk0J7OXvqhTO3tO5NXM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IwFS8UZ33mfMD6ilhk2yIMWGMPVlW5VrKKifoQueRtswiAyIkMBQtC0aFowuYVwU6ScGzDVv9t6nmVUSWbWEej46pPO4vOV111+Rov1tuUFgJivh5FAD3iUz/PzjU+29yCAzee7qTzhgijIMC/XAkhD1Hue/t0FGO4uQsJOjqtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WSq6OYIm; arc=none smtp.client-ip=209.85.210.169
+	 MIME-Version; b=tF/q8sv3/lco9tuzcQ/OuiplCc+0hba/2y6t6P4t4JQtdC64ZemCkK9zSZUHfNMhhWgElEyzcAefAf1+R5DcnE+ivQBcJebkMvlCSg8cqiNhHo5iGvbnQeqOlCrFtZ+gUsP04TBR78Ka5tNfX3pSj+wyZF+mgswtT1nko/wXMi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XcWC7FMD; arc=none smtp.client-ip=209.85.210.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7841da939deso5500437b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 02:13:30 -0700 (PDT)
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-780fc3b181aso3356022b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 02:13:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759828410; x=1760433210; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759828413; x=1760433213; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=he0x+ArGIfe9sei2xIwGpd89TEm+/O7WdTY5n8gdRlE=;
-        b=WSq6OYImgXSil9EIUQPFyTMVzlNG3W+1vF4GeItIzM/Q2q/XR6PyvHWSw9FTogdRGC
-         ETdkeGGwTqRsJ92sk4ex/OXNskUMr+NdwRy6572euod7TDJOuZuYjKWlUFnBwZtwiMS9
-         lQSh1w5KgBmu0Ykxgu3A3YF3TBk+k72scq1NfPj5Ztshf/PoDYNudJOeR0V0IEtkRy7H
-         LOoMuTVaZMXmLZVzTqLk0KcyYR1gVktMDEX+nsphrPWtIjavKzPaPdgSLrQBMKlSLCyX
-         jtWMCxuNSjJhAHRyGvoObeI4eh/5rDYVhk3Tza/QUrKT0s66O0YAK2dbts6B6G9Q9Yzq
-         346Q==
+        bh=RN9CCg/2ynTipVBwKKdllYQe5GOyUI4/kg2R9VILyuQ=;
+        b=XcWC7FMDZUgicucbNP2C4HaxetmCoylTVZDEtByRkYedIVdthUrAFGtIEtXo5wA/Xw
+         SHSV11vrbg59IiOIhapgR1tohivJ2m9IqJmUPLexA3Nc1ezdQxYseDFZ8IM0QpoVijYE
+         YxQRiPlvXSMvEIBBo/Zsq27m5UWiNOIJMmiZo4m6pI/yATtFIzBJyOiOiZ8yCGYvEiZZ
+         ffG8GdBKjI5+WzBcu4KD6FR0Z+dW7sFuolwDMylM6dOPPs27L8UjSPHu4u0BcYTxX37l
+         y9OJ58aN6zR94UwHZlVKLkmzS2/XmJRp4PZB1GSdhxGWBT0iXeLTX9mRqOpaZ8MU1apT
+         pr+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759828410; x=1760433210;
+        d=1e100.net; s=20230601; t=1759828413; x=1760433213;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=he0x+ArGIfe9sei2xIwGpd89TEm+/O7WdTY5n8gdRlE=;
-        b=aqvB+THiR9g4wNxl4K+1mpPeV7/ded8mJ1jAdhQ+I5hZzqG47GDrUH6zu4lH3khEJv
-         ZHyr9TBr6wiIZlFC4l/HGeoPDnrxButuyg8tFeQQWCHnsSQiA8Qxum39RIKvO4Yy8Sv2
-         krsPuBdG8pkAD3PlqeT8e8LbMocW/BBwUrl7c9/I4GhHt2uT6j62hzKKNkmSAKYEziv8
-         9EmYlhm3GamfMcDgiro5OjwSQmdDvsogeoyWu5lCfVtyeEL3w1QiR5pTyksan51Ywyt+
-         JM/hh2t3/NhdlMP9TrubhmHwLRCHl2R9wktwJF9AJckd0t8Pvk56fbgqdlZGcLQV4CJJ
-         elvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWdF8NAWrlk7NrmfTWSGN2sB7XjqM/3u5e3OzAZc79XyOD/cf17M9iYOxUJQgC/uWfCyvJ4NyrJSZKtuJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+mjhX9BEqypu7vEH2jYNZdmXmbU67NJKwIKZDg1NTjTZ3OJWp
-	Gbxol/9Eim6lyQVMmw+23bj9oOioySCfjiG7Wx+QiCdi1vjwSSTa85pvyA1RKOR0QFA=
-X-Gm-Gg: ASbGncvZeX9boTAAZ94ARyzM4l33JRyFajmgV/A2lw/C4HBiebGvzlgUVvJtpve1sZ5
-	VDQsbljg2dro3NvrHAkVJWmk0P3lePD9ktb+tsVS1MhedFpX5ZsdmGol0sG4CSFbB4sTjdRf7O2
-	fAYpds/Kh7S5ZqMqpFHPREWJkvd8NAb3Xm3nBK6Yrkjk8hPxgiZiIBB0UtPFU2UaQFpH8TpOTr3
-	vhJAB95LC71gOG/tVC7OdUIwEKVej/gr4lAypZY9yHCbCbCLgbrwv/Jqn3H3YaRdNGzl17j2/fA
-	3feNz+jVv3GNWiahQo6qPcuuGAp+envEfbRK6CZw1Ech2z9hX8KqjPBujw1y+sWYk0TyZmQtfsm
-	lEhwuAdhKDZgpZKC1fJFAL8Mp9Za01TReuaDjcLADEq9pAvi0Hk28daIE3feY
-X-Google-Smtp-Source: AGHT+IFIq2Xtg33AaO+XWR66x0UiKmUHmFMF8ff1XYtXgQsBRzi6FeDK5PoORmJG3qQgIC7vJngOzA==
-X-Received: by 2002:a05:6a00:8d3:b0:781:1e08:4459 with SMTP id d2e1a72fcca58-78c98cad8e6mr21721027b3a.18.1759828410250;
-        Tue, 07 Oct 2025 02:13:30 -0700 (PDT)
+        bh=RN9CCg/2ynTipVBwKKdllYQe5GOyUI4/kg2R9VILyuQ=;
+        b=UbJ7o1stPGNeyo0B0BLBWspOP7eTYfQmtwlGE2F+m04ljbkPSFhhohrst5Ddf5Yk2F
+         K9lHu+HSqO1oWikiOIFpOeHniun9CV2juYBGllZwI2VsQDGVN6YEUAVGHr9CwiVTNzYy
+         kvTlPjg+e1DKeN7uadJ6xUtSKubIxnE6/x1CLUUcu/PjyNdL1t+clf544v0PQem1Jkni
+         UvMTz52mZFlcY5L4ZcpYPEqj7TV+eutYF+RR5e1NM1B3YFOnAvWg/poCW2xIrJ0QLFvP
+         qRd/snCuKi8RbKcKr+ZzcBA+FPNKIqRqmcjwkS97mskci1DOfoGkNNfDkdTIGTfBYmXd
+         W1KA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBMzUDfRfIhRsNFfOkrawcAuJXE6j1cjuN0+2ZyrPET9OSHqVdTigQSpD4tcFmBpB44lpQlpRdlUisD0w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7JWDmlKKTmErDVXCRHaqVgy3118/5JiJgetSugeMliwJ6SZ4T
+	H0HPF+YGeY3vqfEJnDcqArv2eBJQLa8gqnznuAZTp+ccbofmV+xL0vB1
+X-Gm-Gg: ASbGncu1hsTfkJloRczsX+G6C47g5nrpsc9+KyAuqBe8WA/joymR78mbobaDskM9biU
+	QxRAaU102cuc1qXIQgHsdty8TBU78x0DupzYxpVUiqhrlJnvNslAyG8mPEuuFFckS8GvK3ja+0j
+	6/RThsVYfiQndvombQCFsMV/va7dKpRon0rxeSapfA7ZJESdn1OLBcriFY7pMcnm8C2s0RY/IdS
+	KMjj8NFfmjvlVNCRNLyvLlK1s6lJh6OcCQe74EgrG331IyzHELZp1lnKA2Tct5SqxdBKGedcl36
+	yGqYe/mj/vGsvL6C6tMJd0qxwfWoYREZwUKNUHPftmBEsGsyKON3JazLfv6/FSJ7ICGJhYb8YMK
+	gsYDE3CPi7rHyhqZku8vfBoYVjZb5xzhfE9oRKYOAkOl6krLLu9h2jsUi4/q2
+X-Google-Smtp-Source: AGHT+IEHlg7XaEwUGl2bAIFdJghjQoeR94dkaA/3M66hMtX76UtmSW2eUuCc7yY318TwiP+ey2zt6g==
+X-Received: by 2002:a05:6a00:2d12:b0:781:f0a9:a38 with SMTP id d2e1a72fcca58-78c98cc2757mr19962809b3a.24.1759828413431;
+        Tue, 07 Oct 2025 02:13:33 -0700 (PDT)
 Received: from Deathstar.anonymous ([172.56.42.228])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b01f9cda9sm14941784b3a.13.2025.10.07.02.13.29
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b01f9cda9sm14941784b3a.13.2025.10.07.02.13.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 02:13:30 -0700 (PDT)
+        Tue, 07 Oct 2025 02:13:33 -0700 (PDT)
 From: Rohan Tripathi <trohan2000@gmail.com>
 To: gregkh@linuxfoundation.org
 Cc: linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Rohan Tripathi <trohan2000@gmail.com>
-Subject: [PATCH v3 2/6] staging: rtl8723bs: add missing blank line in rtw_ap.c
-Date: Tue,  7 Oct 2025 05:12:59 -0400
-Message-ID: <20251007091303.491115-2-trohan2000@gmail.com>
+Subject: [PATCH v3 3/6] staging: rtl8723bs: remove dead code in rtw_ap.c
+Date: Tue,  7 Oct 2025 05:13:00 -0400
+Message-ID: <20251007091303.491115-3-trohan2000@gmail.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20251007091303.491115-1-trohan2000@gmail.com>
 References: <20251007091303.491115-1-trohan2000@gmail.com>
@@ -91,31 +91,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch adds a missing blank line after a function to improve readability
-and follow the Linux kernel coding style guidelines.
+This patch removes a commented-out assignment to
+psta->dot118021XPrivacy in rtw_ap.c. The comment indicates
+that the statement is no longer needed, so keeping it adds
+no value.
 
-This is a coding style cleanup only. No functional changes.
+Removing this line (and the superfluous blank line that
+remained with it) improves code readability and matches
+kernel coding style.
+
+This is a cleanup only. No functional changes.
 
 Signed-off-by: Rohan Tripathi <trohan2000@gmail.com>
 ---
-v3: blank line added as a new patch
-v2: previously addition and removal of blank lines in same patch
+v3: move dead code removal into a separate patch
+v2: previously only realigned the commented-out line
 ---
- drivers/staging/rtl8723bs/core/rtw_ap.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/staging/rtl8723bs/core/rtw_ap.c | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/drivers/staging/rtl8723bs/core/rtw_ap.c b/drivers/staging/rtl8723bs/core/rtw_ap.c
-index 373718cbd6b9..4bfae77a5fa4 100644
+index 4bfae77a5fa4..2faa1e14a039 100644
 --- a/drivers/staging/rtl8723bs/core/rtw_ap.c
 +++ b/drivers/staging/rtl8723bs/core/rtw_ap.c
-@@ -1991,6 +1991,7 @@ void ap_sta_info_defer_update(struct adapter *padapter, struct sta_info *psta)
- 		add_RATid(padapter, psta, 0);/* DM_RATR_STA_INIT */
- 	}
- }
-+
- /* restore hw setting from sw data structures */
- void rtw_ap_restore_network(struct adapter *padapter)
- {
+@@ -391,8 +391,6 @@ void update_bmc_sta(struct adapter *padapter)
+ 
+ 		memset((void *)&psta->sta_stats, 0, sizeof(struct stainfo_stats));
+ 
+-		/* psta->dot118021XPrivacy = _NO_PRIVACY_;//!!! remove it, because it has been set before this. */
+-
+ 		/* prepare for add_RATid */
+ 		supportRateNum = rtw_get_rateset_len((u8 *)&pcur_network->supported_rates);
+ 		network_type = rtw_check_network_type((u8 *)&pcur_network->supported_rates,
 -- 
 2.50.1
 
