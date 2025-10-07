@@ -1,149 +1,164 @@
-Return-Path: <linux-kernel+bounces-844487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BFC8BC20B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:09:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E49E3BC20BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:11:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAAB03B33A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:09:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 252983B928A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB281FDE09;
-	Tue,  7 Oct 2025 16:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B933A2E717B;
+	Tue,  7 Oct 2025 16:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nZYxYjVo"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V/dm62JI"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AEC2147E5
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FFB82147E5
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759853344; cv=none; b=agwXWHWPWwg2/viiDdoXahdhtYzMFK6p0EKFU55r1JA0h1dZYg6cThpF7RqffvQJWZoZZfAs1CVMx6VcJIKV//JXMfu1KWV3/0x1ncZTTX6vkujB45e5UToLtgG06y+qCZW9T2Pbx+1vNetwfTSMOliPyOQrMnSJtZenwUhTSvg=
+	t=1759853459; cv=none; b=LJk89NwLHr5C/cMDngYAZmzka0R5u2nINLr/jgFSPAv/qCghzJzT2MvsyLkJEUJ2vvg2HBeVT2i70uNPMh5zil7j540B2YStRwwSBWiMrtr4vMB0ZkiHwlbLgLqSEWrLXHmUWEcubztmpkXOiwgpBPgB+491B9CIUPBnwa95FAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759853344; c=relaxed/simple;
-	bh=DNrkTp8RX4EWI1fAzGGJws0mK3inDtIcz0wHqoLXV7w=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=gxad/XnmX+Yg1RyH2TrjD37RAbPraOQ6SymqRA4BucyDDh/XLjZCUWhmy3ZLSGwEuDLMkmZ/sapqkc0Gv2KMbXcbGCeF92QPcoF3BLFUI5VaYlBsWqiovlpa88OYKVaWzBgwndIrWhDkkdYa5OTcX2zYR9+jO8DrajOmBRXoPlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nZYxYjVo; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b5a013bc46dso4577991a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 09:09:02 -0700 (PDT)
+	s=arc-20240116; t=1759853459; c=relaxed/simple;
+	bh=23spyynB0cqNsHrBwAdRF5C6HK5JcUDPHhLhZJ27dIw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JTF6O2Xm8+ykcEmS9dhIN9dTy7+UzuE1XbfSbElAl7vcLXzRTAU4Dn/R92yFBdFRiPW+T078NP9qyY7vM/A/reQjR+DY1ws1Y1Q/NqdA0j0LzmLHVkSZ3draV4pgio0vo+QCOxikJs4/Ao8M216tybMJI7fwyunpGhFfpmedJfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V/dm62JI; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b593def09e3so4779635a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 09:10:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759853342; x=1760458142; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GJ0YWNcX4bsIgpSbsUgjSTbO0BQRfqHw10UQrW5qhyY=;
-        b=nZYxYjVo90OSPYfhlZevjObHoWfwLddvUzCRz56LPceftI2vHC0UUN6bH9X+ScGoHd
-         qd3MxXVhHxaXFUVpp5EBjLMnjowQkwroGpxqnpatEZetRhppOdEnWgGUZUDnx7suQr+R
-         P4rxo3WtsDUzatyQ4paG1HK5iEg/J6/BGoebt7wEKTEQCmzSrf8FTKkmsErUo+LgmTDv
-         8eyduH6nLsDRb0y2DI/9H7Ob8KnRXfpLr37Ebv/cnqjooTiLVndEDjVEAdV96BzG193r
-         hAz7HVPfm+xP9IkpSts5VhmigneaoKGj/xy38MagLN4jinStSvP7Kays8c1ofd5Gdz6T
-         Qkyg==
+        d=gmail.com; s=20230601; t=1759853457; x=1760458257; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ww5A9QLVLF9MHFrBjtfqLgeO9mCIYxCjgSA4ZPNH8dU=;
+        b=V/dm62JIxZfXT3/CKZ3NUX91jTzNnHZW2lUrzH+7HdBK+JvELhbgDxQOZmXRmCYw69
+         S3mPsqciSbOccJvEOSlWH6A9/eSAjk/oKaLLZwDLr5UgM32ou6Unu9udZhlPUIqhFVv3
+         z9ke4Gxk7oNN6RQlOScqm1rxzlpEFzaXuLknAhBhAFwOg0xO/xAs2HL0I8qP1P8rjabf
+         0BvmpBiv3dkWQH16FJUHpees+14hfFmWHYAnYQU0N2Noslm5jGHel7TtFYuJyNeiD1A1
+         1NbM9nBDWGcKogdICWe14kVoKVlo8c/ZWrgbhb3gL2q73Kx5sN/F7zhRDnq2v6ECo3XC
+         421w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759853342; x=1760458142;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GJ0YWNcX4bsIgpSbsUgjSTbO0BQRfqHw10UQrW5qhyY=;
-        b=NGkqgrkhmklDt4bV2WEVHFMNtEl5RtGAGKmc1KQvokNgNEwgon+sVZqMwK63Jf5vGD
-         z1Y/BPoZum3tmh+wHvQHbceeiSALJ6S9SLLC0HcBnIGFn+/YcJOmxaQz4J1UiTsyGHTN
-         wcgyAqvdryopnfcEbFlysjhCzNFpn9M+gwP3mDJT/5ehAXzAKC1pfPXD+77U2InvST4t
-         BoRSVi15FOu+Kkavqd927q90BEZNU4aVDJpsRjZbymQWeEHLUU7v8i11V86pYRrG0Dra
-         zsi3yO3MrIxfcdKB6dQZyGt/RtOC6kbXqT+b9B5Byx2ey2IukTBlHZWZPC7s8f4xnMn7
-         DaMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEDSA93AAxhute9QNGuHWIqnElOo/v6h/rn3WgECIsz6g9SHokxJqk/CGvoVJmcS9/RPlu54SPcHDLmNg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywh0fE+5AHsFZ8gXSHjqEnVfLRLCJenExzTwUnvlvxuPw2rHB3U
-	3Fb+XYeMyK+KmYaMbAUUW29ifW7R8D8Rm/AWqfLZkrwm3q3tYm97UaLvcAtpNrTPVj+ERJORxxP
-	klNIqKAZxPqLQEKmYDXRB3QgR0A==
-X-Google-Smtp-Source: AGHT+IEYnZENF0iYfPvW2pKAC0HwriPBAzHA71m0TIFC4/qk5L1ugLas6mZSYli5gIFzefd51lLPNWeTsm2sXC+1aA==
-X-Received: from pgac17.prod.google.com ([2002:a05:6a02:2951:b0:b58:7d6e:e9c3])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:7351:b0:2a2:850:5605 with SMTP id adf61e73a8af0-32da8130f75mr82710637.23.1759853342371;
- Tue, 07 Oct 2025 09:09:02 -0700 (PDT)
-Date: Tue, 07 Oct 2025 09:09:01 -0700
-In-Reply-To: <aOQkaJ05FjsZz7yn@google.com>
+        d=1e100.net; s=20230601; t=1759853457; x=1760458257;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ww5A9QLVLF9MHFrBjtfqLgeO9mCIYxCjgSA4ZPNH8dU=;
+        b=g2BaGl7NaS4fhIIIWRwSNSulPOcMJSGjbIbpBwP2S9KXCQL1rI4YDrjJKvNKDDIJSQ
+         Vq8M6x2V2XI/0luHHY3XsmktSiqSmczjU0EKxneWrSBz1BK23avf9JkDf9oqLsFQQN1x
+         fgOLy5FIpmkkn2EL+CA3uO12wSF2Py2KG9iqSNpN++ssFV4uk0Mbs6wk4HB1xmf+4uf9
+         g/RqYn7EN/WN5dVYedzGXicjZ2yJMMQyFB+/gLzqz/uyVwIF+Z5Al1Ea83wBAobg3WJC
+         u4PVAcsAeBuakvL6/7rz137rGrESOVcjIqiv3RjI7bcte32ePwY/ZnNF2TfRGV5RoBUi
+         6Y2w==
+X-Forwarded-Encrypted: i=1; AJvYcCUpEmqG/JVuxCauEABkw1JXFU1XDjP80apiiwn+4rtYtwTDh1YrvjCXE7p8cfafk4q9LDov9OfVRCcYU2E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTqCxc4NZIr+tt0gyktI+px6y1LUKGaBlWsPNvlQzdvC70trsB
+	VY/8KuX0eWGVcwQVacA34H7cEF1ewNZk9TDtNrCNJZAmC5CQxNvHAeuTYdqYW+8pfqh8ltv65rs
+	MivojXY9BcA0SERB2JmNHwuR/V/qbvPA=
+X-Gm-Gg: ASbGnctH9e229jdjwsBtkXL/O4x/k/JnAGzF/T9bf5VoZdqrk/AvLvY111iSbnhJeoj
+	BcyKgMQ/a5aQuZNZv2WM1JmKdEcEKQTXEEmRnFlfiNEkKWUjJU3vqIsbUn8c2ND6NB9Lj27XtRX
+	2i+L+kXc8EOUtFuxPvSgxs5ODBk5FlJz0hZOID8ABSW5mP3OdlIQjc5RTnhQ43A1GxpIVwzY2Ok
+	H92kmGpeq3ThUWKNz3dgTEWQJr6FHlgMaTL5bbFYjw=
+X-Google-Smtp-Source: AGHT+IGJJpzPBxcd6aeQej3XljQ3lxvUxspSqUl1LdUZeeFNyJ+K+vdK7I6p2lY3vune3YygMz/VZesA43Ks3Af09Ak=
+X-Received: by 2002:a17:90b:3b49:b0:330:a301:35f4 with SMTP id
+ 98e67ed59e1d1-33b513b4b46mr44952a91.20.1759853456576; Tue, 07 Oct 2025
+ 09:10:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251003232606.4070510-1-seanjc@google.com> <20251003232606.4070510-2-seanjc@google.com>
- <diqzplazet79.fsf@google.com> <aOQkaJ05FjsZz7yn@google.com>
-Message-ID: <diqzh5waelsy.fsf@google.com>
-Subject: Re: [PATCH v2 01/13] KVM: Rework KVM_CAP_GUEST_MEMFD_MMAP into KVM_CAP_GUEST_MEMFD_FLAGS
-From: Ackerley Tng <ackerleytng@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>, 
-	Fuad Tabba <tabba@google.com>
+MIME-Version: 1.0
+References: <20251007060218.57222-1-jckeep.cuiguangbo@gmail.com> <4ab58884-aad3-4c99-a5f9-b23e775a1514@redhat.com>
+In-Reply-To: <4ab58884-aad3-4c99-a5f9-b23e775a1514@redhat.com>
+From: guangbo cui <jckeep.cuiguangbo@gmail.com>
+Date: Wed, 8 Oct 2025 00:10:45 +0800
+X-Gm-Features: AS18NWCS1wxb3gY3lfJbMPL239E4u53x8rH8x6LyTql4zmMXKbknajNjC1YY13M
+Message-ID: <CAH6oFv+KYGZNzb7gySoyQAB3tn2CrH+H_-vi4E=4NS6pvTBHvw@mail.gmail.com>
+Subject: Re: [PATCH] pci/aer_inject: switching inject_lock to raw_spinlock_t
+To: Waiman Long <llong@redhat.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, linux-rt-devel@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Sean Christopherson <seanjc@google.com> writes:
+On Tue, Oct 07, 2025 at 11:13:33AM -0400, Waiman Long wrote:
+> On 10/7/25 2:02 AM, Guangbo Cui wrote:
+> > [ 1850.947170] pcieport 0000:00:02.0: aer_inject: Injecting errors 00000001/00000000 into device 0000:00:02.0
+> > [ 1850.949951]
+> > [ 1850.950479] =============================
+> > [ 1850.950780] [ BUG: Invalid wait context ]
+> > [ 1850.951152] 6.17.0-11316-g7a405dbb0f03-dirty #7 Not tainted
+> > [ 1850.951457] -----------------------------
+> > [ 1850.951680] irq/16-PCIe PME/56 is trying to lock:
+> > [ 1850.952004] ffff800082865238 (inject_lock){+.+.}-{3:3}, at: aer_inj_read_config+0x38/0x1dc
+> > [ 1850.952731] other info that might help us debug this:
+> > [ 1850.952997] context-{5:5}
+> > [ 1850.953192] 5 locks held by irq/16-PCIe PME/56:
+> > [ 1850.953415]  #0: ffff800082647390 (local_bh){.+.+}-{1:3}, at: __local_bh_disable_ip+0x30/0x268
+> > [ 1850.953931]  #1: ffff8000826c6b38 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x48
+> > [ 1850.954453]  #2: ffff000004bb6c58 (&data->lock){+...}-{3:3}, at: pcie_pme_irq+0x34/0xc4
+> > [ 1850.954949]  #3: ffff8000826c6b38 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x48
+> > [ 1850.955420]  #4: ffff800082863d10 (pci_lock){....}-{2:2}, at: pci_bus_read_config_dword+0x5c/0xd8
+> > [ 1850.955932] stack backtrace:
+> > [ 1850.956412] CPU: 0 UID: 0 PID: 56 Comm: irq/16-PCIe PME Not tainted 6.17.0-11316-g7a405dbb0f03-dirty #7 PREEMPT_{RT,(full)}
+> > [ 1850.957039] Hardware name: linux,dummy-virt (DT)
+> > [ 1850.957409] Call trace:
+> > [ 1850.957727]  show_stack+0x18/0x24 (C)
+> > [ 1850.958089]  dump_stack_lvl+0x40/0xbc
+> > [ 1850.958339]  dump_stack+0x18/0x24
+> > [ 1850.958586]  __lock_acquire+0xa84/0x3008
+> > [ 1850.958907]  lock_acquire+0x128/0x2a8
+> > [ 1850.959171]  rt_spin_lock+0x50/0x1b8
+> > [ 1850.959476]  aer_inj_read_config+0x38/0x1dc
+> > [ 1850.959821]  pci_bus_read_config_dword+0x80/0xd8
+> > [ 1850.960079]  pcie_capability_read_dword+0xac/0xd8
+> > [ 1850.960454]  pcie_pme_irq+0x44/0xc4
+> > [ 1850.960728]  irq_forced_thread_fn+0x30/0x94
+> > [ 1850.960984]  irq_thread+0x1ac/0x3a4
+> > [ 1850.961308]  kthread+0x1b4/0x208
+> > [ 1850.961557]  ret_from_fork+0x10/0x20
+> > [ 1850.963088] pcieport 0000:00:02.0: AER: Correctable error message received from 0000:00:02.0
+> > [ 1850.963330] pcieport 0000:00:02.0: PCIe Bus Error: severity=Correctable, type=Physical Layer, (Receiver ID)
+> > [ 1850.963351] pcieport 0000:00:02.0:   device [1b36:000c] error status/mask=00000001/0000e000
+> > [ 1850.963385] pcieport 0000:00:02.0:    [ 0] RxErr                  (First)
+>
+> Changing inject_lock into a raw_spinlock is the most obvious solution as
+> long as it meets the criteria that the lock hold time is deterministic and
+> relatively short and no other sleeping locks are being acquired down the
+> locking chain.
+>
+> I am afraid that the these criteria are not met. First of all in
+> aer_inject_exit(), inject_lock is acquired while iterating the a linked list
+> which can last for while depending on how many items are in the list. This
+> may be OK as long as it is guaranteed the list will not be long. Another
+> problem is that it call kfree() while holding the lock. kfree() will likely
+> acquire another rt_spin_lock which is a sleeping lock. You will have to
+> consider pulling kfree() out from the lock critical section.
 
-> On Mon, Oct 06, 2025, Ackerley Tng wrote:
->> Sean Christopherson <seanjc@google.com> writes:
->> 
->> > Rework the not-yet-released KVM_CAP_GUEST_MEMFD_MMAP into a more generic
->> > KVM_CAP_GUEST_MEMFD_FLAGS capability so that adding new flags doesn't
->> > require a new capability, and so that developers aren't tempted to bundle
->> > multiple flags into a single capability.
->> >
->> > Note, kvm_vm_ioctl_check_extension_generic() can only return a 32-bit
->> > value, but that limitation can be easily circumvented by adding e.g.
->> > KVM_CAP_GUEST_MEMFD_FLAGS2 in the unlikely event guest_memfd supports more
->> > than 32 flags.
->> 
->> I know you suggested that guest_memfd's HugeTLB sizes shouldn't be
->> squashed into the flags. Just using that as an example, would those
->> kinds of flags (since they're using the upper bits, above the lower 32
->> bits) be awkward to represent in this new model?
->
-> Are you asking specifically about flags that use bits 63:32?  If so, no, I don't
-> see those as being awkward to deal with.  Hopefully we kill of 32-bit KVM and it's
-> a complete non-issue, but even if we have to add KVM_CAP_GUEST_MEMFD_FLAGS2, I
-> don't see it being all that awkward for userspace to do:
->
->   uint64_t supported_gmem_flags = kvm_check_extension(KVM_CAP_GUEST_MEMFD_FLAGS) |
->                                   (kvm_check_extension(KVM_CAP_GUEST_MEMFD_FLAGS2) << 32);
->
-> We could even mimic what Intel did with 64-bit VMCS fields to handle 32-bit mode,
-> and explicitly name the second one KVM_CAP_GUEST_MEMFD_FLAGS_HI:
->
->   uint64_t supported_gmem_flags = kvm_check_extension(KVM_CAP_GUEST_MEMFD_FLAGS) |
->                                   (kvm_check_extension(KVM_CAP_GUEST_MEMFD_FLAGS_HI) << 32);
->
+The list length depends on how many error injections the user performs,
+which is typically small since this feature is mainly used for development
+and debugging purposes. So the list traversal time should be acceptable
+in practice.
 
-Had the same thing in mind, I guess having a precedent (and seeing it in
-code) makes it seem less awkward. Thanks!
+Yeah, pulling kfree() out from the lock critical section is right, I
+will fix it in the next version.
 
-> so that if KVM_CAP_GUEST_MEMFD_FLAGS_HI precedes 64-bit-only KVM, it could become
-> fully redundant, i.e. where someday this would hold true:
->
->   kvm_check_extension(KVM_CAP_GUEST_MEMFD_FLAGS) == 
->   kvm_check_extension(KVM_CAP_GUEST_MEMFD_FLAGS) | kvm_check_extension(KVM_CAP_GUEST_MEMFD_FLAGS_HI) << 32
->
->> In this model, conditionally valid flags are always set, 
->
-> I followed everything except this snippet.
->
+> Another function __find_aer_error() which does list iteration is called
+> while holding inject_lock. Again this may be a problem. If the linked list
+> can be long, you may have to consider breaking inject_lock into 2 or more
+> separate locks to guard different data.
 
-I meant "conditionally valid" as in if GUEST_MEMFD_FLAG_BAR was valid
-only when GUEST_MEMFD_FLAG_FOO is set, then with this model, when
-KVM_CAP_GUEST_MEMFD_FLAGS is queried, would KVM return
-GUEST_MEMFD_FLAG_MMAP | GUEST_MEMFD_FLAG_FOO | GUEST_MEMFD_FLAG_BAR,
-where GUEST_MEMFD_FLAG_BAR is the conditionally valid flag?
+As mentioned above, the list is usually short in typical use cases,
+since error injection is mainly used for debugging or development
+purposes. Perhaps we can also get some advice from the PCI folks.
 
->> but userspace won't be able to do a flags check against the returned 32-bit
->> value. Or do you think when this issue comes up, we'd put the flags in the
->> upper bits in KVM_CAP_GUEST_MEMFD_FLAGS2 and userspace would then check
->> against the OR-ed set of flags instead?
->
-> As above, enumerate support for flags 63:32 in a separate capability.
-
-Got it.
+Best regards,
+Guangbo
 
