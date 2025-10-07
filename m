@@ -1,123 +1,110 @@
-Return-Path: <linux-kernel+bounces-844190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00487BC1425
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:48:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33D15BC1428
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:48:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B1C74F51BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:48:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFB663BED0D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2191B2DBF78;
-	Tue,  7 Oct 2025 11:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1262DAFAA;
+	Tue,  7 Oct 2025 11:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Vfb8TQOV"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lOPdWDX0"
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9EC1A0728
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03961A9F8D
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759837694; cv=none; b=Cil6bJjrdyYC0t5YCdaWIHYVMe6q0VDOT3hJpVUKHZwXzgNjNNXoAZwlhooL4gaFKEE1WgGBOtVZI9CEcRkHcwLD4nEiqLOLsHHxRihqqraXBaVPQARf5nn42pCVXee4NOCOa4z1cbU+jS1wCcAGgh52iOq367g4y9zp8O+HZoE=
+	t=1759837704; cv=none; b=Mfx0Hl+OdhY2dtOL1NsZSI91rrU0D4/iNBYGOkYkWRCct2470BMXG28Qp20s4SSNNIpa7ukVMkEaratAk268+hc1hTCSwQTZIiUyYA9aZvyKtc3Fqp6S9QbsWt+wwVKjrcelY1B+/AYYLTKruxJadMLl/1iR6qEI7JptKfPbh+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759837694; c=relaxed/simple;
-	bh=Cfm0WYr8Ng4oruI3YpfhVZo2vD6dTrg04ktsJe+eN2w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BuFUslqR30wT99qbXlMLMnR//dzJLKNoIkiIxpmAYZrtS7gnsG4gAMi4lZzMuobSEZgTSwsBs8A7ZEh3Np/M8rkutfQBOfHnsOMcJ1ZY2BWaoZNmK/yEx85Y5TSBaOb/EtoLziY8mSlaeDxPWMVXKx67csLIfxBi0GngRws+EaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Vfb8TQOV; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-33067909400so4597010a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 04:48:11 -0700 (PDT)
+	s=arc-20240116; t=1759837704; c=relaxed/simple;
+	bh=qn1EW8XbpUEPfshguM1UXlEigOcP6JmSX5ffhupl2KI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XlvHQ5jA17UTuNRJN+Lsg7yfWGwC1xwbQ7wHTIYnm+NOX6TcftJzhaUByAhiOqUzMuft1xxBtgz/v8ZYIorMZqB3Er+/qJhTZcUxiV9mTFIx0meSbkoPEXCvHs6dRuIy+LulvMfiB+1Y3xhm4XLRvO+h+WCrP2R5YBcTLNhTnY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lOPdWDX0; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7a9a2b27c44so4260601a34.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 04:48:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1759837691; x=1760442491; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cfm0WYr8Ng4oruI3YpfhVZo2vD6dTrg04ktsJe+eN2w=;
-        b=Vfb8TQOVage4MS24aGtTxPUG4QSRvPzeLd+Xz5iys4JrsIqvEKwl4YRsbmlJf77vXT
-         D3ijBOUH9XgYMzHdzdZrQLZo5BesWwJ2NHgc/F0qczmb6aDQtGWfd8KSY/G3JTJPftF7
-         jf1RrSniemalWYxt2WJVA4rOLYXvec8UlvS1b3cpXqOekkvu0MI4OzEpbHngNOY2WW4l
-         ceSN2+1RYLM5VrqPfUO/dKPA4vSnm9r+svSBAjQl2/EwQ+Uq6vUZa3gg8KTjyRnj/VJp
-         H0H6flhFCqXaWIxmPOPN9C53Ru1DAAu3ytNRrfRWBXpxLbNZ0k4572/KuIj/LlLDJh2j
-         tyHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759837691; x=1760442491;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1759837702; x=1760442502; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Cfm0WYr8Ng4oruI3YpfhVZo2vD6dTrg04ktsJe+eN2w=;
-        b=dNZjplDMWZLGEwNMIpcwJKjxIefE1c2a4R1XTkzibYdoeaEo/gGlfrAnS2o0mUJtEh
-         q7RqEkP7Smtwz1+AubavbbtLlBZzyE5ryEeH8vfMOw5q/808+2hVQYw/mmimMJFfeWsB
-         Gowwt9S2SuJbMoo8I0rnQSJAuky/nigGSnjOGlBaLD9FBMOHFhJnp4KyR1WqAaWBRzM9
-         8i+bRvEPQwZOpkyT/Zgspw0wnl4BxNQLfo6ZgFLajmDHhWPQqGrV9JAk1/SJ+xr5LIU1
-         yQuE2lv/9l40+fm3vVIBwYiDS5P+ikyok1yJTaPEhskedkM3WXBi8T7RFPShEXcuimDk
-         yZHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXMSKht8MiiGc8DIzuMci3YbYCtzzdcN5IpntutSUj3IdjKCQihGumMGLMlAv8DvkJXXNlXLtOxuLQj3js=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJkhoXrycHECh3XpQrfM6nr1dz3StMD0/tC5O9qSq6DpJX9zew
-	MMJfkqzVbBVR41u75zFxV5jenwsL4GIM7AqstL5EcU7fN6emK9tj8M7I7uPX6hOace4=
-X-Gm-Gg: ASbGncuybIxGU2D5CI19E2GPU/Ufy0SRQYMIkRTJaPKLHG0YVooNzPvWganSskOkaMp
-	apljlQiNV1MkwPMwEvxy9icRTBDWcbOgUI9xA/LJPf7s9varj1xaHX1b/a3QxP0JyjRk6pN4ort
-	Ylys/nVcty8vGpgG6pPTfYjc34vdsljg5SXnp5hMMZf27Wyss/VYCLL+niY0Mtnj6kb2d3FV1N/
-	M50Hs2loYuIwgXAOBM0cdKn/7SNkYB55z+lwpPEeFhFKooFn8L9KVNV0zx1I+G/7BQmS6H1LyER
-	tk+hd3x+TzSbmqJUkbg4kIptYjtjrIeiDZPZ9jpaD2GHfZQYrudgDxAptosYkN+1HBMhN4dgBFH
-	NJvSUyYDClm+JOFerv/0C
-X-Google-Smtp-Source: AGHT+IH9C0ODecpmYcfGoFScv9nIiYXXP7Mcn3Pwmy09XE0SD778RhgDgy365QXsjNRHns1dfmApLA==
-X-Received: by 2002:a17:90b:4f4c:b0:32e:a54a:be53 with SMTP id 98e67ed59e1d1-339c27348f6mr20344760a91.16.1759837690580;
-        Tue, 07 Oct 2025 04:48:10 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6099f7ab4fsm14844825a12.44.2025.10.07.04.48.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 04:48:10 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1v66Aq-0000000EZWx-3Cfy;
-	Tue, 07 Oct 2025 08:48:08 -0300
-Date: Tue, 7 Oct 2025 08:48:08 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
-Cc: Alex Mastro <amastro@fb.com>,
-	Alex Williamson <alex.williamson@redhat.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfio: fix VFIO_IOMMU_UNMAP_DMA when end of range would
- overflow u64
-Message-ID: <20251007114808.GB3441843@ziepe.ca>
-References: <20251005-fix-unmap-v1-1-6687732ed44e@fb.com>
- <20251006121618.GA3365647@ziepe.ca>
- <aOPuU0O6PlOjd/Xs@devgpu015.cco6.facebook.com>
- <20251006225039.GA3441843@ziepe.ca>
- <aORhMMOU5p3j69ld@devgpu015.cco6.facebook.com>
- <68e18f2c-79ad-45ec-99b9-99ff68ba5438@oracle.com>
+        bh=qn1EW8XbpUEPfshguM1UXlEigOcP6JmSX5ffhupl2KI=;
+        b=lOPdWDX0WbtmgZyYR3ZAC442KRaJ9f8+XDHTX2q+Ds8wuJ1ZcmUOkcJUPsGL/9/yc5
+         o/np7vMmUxjrlHJ+VT1z4ar2sjlttndlxrxujz9eFuY9A9pUD9NQ7st95Ezhr7mrzafl
+         ZIfLfeemho2FLWHM5TiA8d4YIGeeF64G2DIEFRvlhggKWhscq1/6GZcOE2WgefRG9x39
+         3BsakDcyDfkrLE7m44CmWiwy8LAchcEN3wlECXLXXVxENIKaBM/40vfBMAkNkr48apTR
+         DC4pITnuedKG5WoJYfe1QqnC6WRavd3tedoyUX7ALEOekMRGQUOr4HtcPOwkQPPSJQ4Q
+         Zkkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759837702; x=1760442502;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qn1EW8XbpUEPfshguM1UXlEigOcP6JmSX5ffhupl2KI=;
+        b=ws2Njy27S3tPTotuM9RxjP2cSTJrYyVRcrwn78F7L3J4+H7oPwZYXg1zqKX9u3m76q
+         rYmwEMnzKX8xkudxYHEnpQo7xU7QDvjBs3OqMQQNUgXTTjV8G2vmOyHCNUCAuYf1b3y+
+         SyjN3rdv54eyBpGBKnle/6FQ0Qs/6+ALFGsxt+kXuTSmrPVDDuN6DG0OPRM8BolJygpb
+         gP9EW1EaadAM82pD4ZGnFlW+3E2e1vfE50AVk0T+2V7Ke8ID66dUis21VskPzCwI4XVV
+         6zj+kNBOQ42uBqkmuesP8svQs0lscgKBXSTaII8Gti6jRd1WSwgyFfYoztufdx/TU/jd
+         QckQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1z4KehSV/WG6TootuN8ws1Mx9xxz+OR5l6Pch5WeiClNwcYBKVAC0J728y3FfIw2Lw+1qj83e+armpoQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6MJ17lvIywkv824OzQ3dEYovqL+KF4LHseMhsJosC+T1k0zdq
+	7K0QlTRT3q7Gl1GRNUdGTof4K7BXOhMcWc5+U3q6kvWvSTGYyh/JIR+RwZwN7Kbzn3Rtwhez9fq
+	+YZ2Du291QAd0bwvZDYTt9nszSkSZR1c=
+X-Gm-Gg: ASbGncsMRJMCQbwEbJK7Md5tWv5VXD3Oo62U84VvQ6G0kzT0UO9gl7rccdhToG73WwZ
+	/uKIBda5TjDf9Z/K7Kp6yz9tixLhccxK5ryuwzjhlq3KS5MazZyAsY5jqx5Qy2Bzu7ulAk4ZaZF
+	4wnG7hawoqx+9CpfHq26x1gwI60e0OwpgJR828JdZoUsL3ZNKcy5fELrJZdyu6FANxop8LryWVQ
+	RkpmwWzXv3Se+8x9d9cfmh6ihgHvbY=
+X-Google-Smtp-Source: AGHT+IGzdzdpFSUrzKoYDyvEBwJHH32FA7vjyWVUyv8QE1FR5udDMdkDZFE6Jxz3jhiDr00fWFVT+sK+ST1PFVPIsB0=
+X-Received: by 2002:a05:6830:108e:b0:746:d097:9342 with SMTP id
+ 46e09a7af769-7c02af24fb7mr1222015a34.7.1759837702013; Tue, 07 Oct 2025
+ 04:48:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68e18f2c-79ad-45ec-99b9-99ff68ba5438@oracle.com>
+References: <20251003091304.3686-1-briansune@gmail.com> <20251007113305.1337-1-briansune@gmail.com>
+ <5a71fdac-f6cf-4557-9bc8-d416a033263e@sirena.org.uk>
+In-Reply-To: <5a71fdac-f6cf-4557-9bc8-d416a033263e@sirena.org.uk>
+From: Sune Brian <briansune@gmail.com>
+Date: Tue, 7 Oct 2025 19:48:11 +0800
+X-Gm-Features: AS18NWA55n0Y3VNYOKtA1T-Ox8UcdKZlQuYosvTxXbChdMgthbuz1HcL_8xi9YI
+Message-ID: <CAN7C2SCHirxurUA0n2VZKEEiYCt-NUKgspGFfZLNurHhACZkBQ@mail.gmail.com>
+Subject: Re: [PATCH v2] ASoC: wm8978: add missing BCLK divider setup
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 06, 2025 at 09:23:56PM -0400, Alejandro Jimenez wrote:
+Mark Brown <broonie@kernel.org> =E6=96=BC 2025=E5=B9=B410=E6=9C=887=E6=97=
+=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=887:44=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> On Tue, Oct 07, 2025 at 07:33:05PM +0800, Brian Sune wrote:
+> > The original WM8978 codec driver did not set the BCLK (bit clock)
+> > divider, which can cause audio clocks to be incorrect or unstable
+> > depending on the sample rate and word length.
+>
+> Please don't send new patches in reply to old patches or serieses, this
+> makes it harder for both people and tools to understand what is going
+> on - it can bury things in mailboxes and make it difficult to keep track
+> of what current patches are, both for the new patches and the old ones.
 
-> I mentioned this issue on the cover letter for:
-> https://lore.kernel.org/qemu-devel/20250919213515.917111-1-alejandro.j.jimenez@oracle.com/
+Sorry for this action. But this patch is just a title fixe according
+to previous comment.
+Patch body is fully aligned to previous revision.
 
-Use iommufd for this kind of work?
-
-> I mentioned in the notes for the patch above why I chose a slightly more
-> complex method than the '- 1' approach, since there is a chance that
-> iova+size could also go beyond the end of the address space and actually
-> wrap around.
-
-At the uapi boundary it should check that size != 0 and
-!check_add_overflow(iova+size). It is much easier to understand if the
-input from userspace is validated immediately at userspace.
-
-Then the rest of the code safely computes the last with 'iova+size-1'
-and does range logic based on last not end.
-
-Jason
+May I know what is the proper way to amend the title?
 
