@@ -1,65 +1,47 @@
-Return-Path: <linux-kernel+bounces-843718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB522BC0105
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 05:09:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70A07BC00E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 05:03:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A44C4EA89C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 03:09:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E78E3AFC9F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 03:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8525621255B;
-	Tue,  7 Oct 2025 03:09:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00DE61E25E3;
+	Tue,  7 Oct 2025 03:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="MFp3sdQv"
-Received: from out203-205-221-240.mail.qq.com (out203-205-221-240.mail.qq.com [203.205.221.240])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="psyBvlZU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB541E25E3;
-	Tue,  7 Oct 2025 03:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED2D1C27;
+	Tue,  7 Oct 2025 03:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759806540; cv=none; b=fRa+BBM4mPBqqsxvwCFh1JHEkn2U2pOJWS3e5dLxd+MDGCF8dWp9OorwGw1tkvdWdUQBENRGjtF9cqoGxXV4+y5tAswcUdRJLAw9XExuj++OipxLYLJRibp0fsG6dCSLJYGzJz3jWNZmJTCTp5rnN3jAvqQmO+XOHnXKeVBu8b8=
+	t=1759806190; cv=none; b=KqF7vJX6QG5qjXJPzL9N3fp+NabtWirt4Lnu30zAMRWbzOx5KzZfdf+qs6UiWAIgMgJ2FoYmPLudtoFIMIy5J8jNv5rLkeuCGaHFeaw0bAX/lGr9klHxmHpW9fbbIMSlPWXJYRxF5VE0eS/WmSgYfnTRiY/NbOeitvPSpEqls60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759806540; c=relaxed/simple;
-	bh=jgICUWtPzkeiKLbWfzEgymYTFHrYqtGhRfEkmbgrZGs=;
+	s=arc-20240116; t=1759806190; c=relaxed/simple;
+	bh=BoGndQA4BAfeJvTJqPB+wFLlE32HU9519m66T9GaIdQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=guOwZ2s24abzMfO8Ld1uXObdtN5iXgOxENrgqsNeem5PZTqD2Jr05w3+8XkqsFz7koxjJwgZJkmZGpbSoQJGKc585pADNXFdZI+92SAx8pEqUh05fHRZw9QbVMg8rF5wTbcGWxZivccrpxxdguRRlfu1fZgktJEB4dNVJAMeLOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=MFp3sdQv; arc=none smtp.client-ip=203.205.221.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1759806528;
-	bh=7VGcpBpEmd76FllPkLbkoZa3URr6bWYKVX4gHzg/Gfw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=MFp3sdQv4dgAzCkEkpFbKamubZ7AvzIbs6QyKc7+SIaZLDSZkkN9W7VSIy6FZ/SNb
-	 R0ZCX10WMwNyXhtY/4NGIRf0Tu4NOjemj+AqcZEHtvkFN+TiJudU+M8348d2Q9yrIB
-	 BBcNcatfQQ7oWQk67Mvdi4el6ihhao5bmZCp/L5U=
-Received: from [192.168.2.104] ([183.198.135.10])
-	by newxmesmtplogicsvrszb42-0.qq.com (NewEsmtp) with SMTP
-	id A228E81; Tue, 07 Oct 2025 11:02:34 +0800
-X-QQ-mid: xmsmtpt1759806154tl5lfwz36
-Message-ID: <tencent_F14B16E125884ADA6BE0E81BA295C181D006@qq.com>
-X-QQ-XMAILINFO: OKkKo7I1HxIeXrGXEHeCn20GAoDgtD4FkAjBcIn5BeXaCIBnUeChU3qRMS4hx9
-	 yL3TznmopCj0MGyBuALvabNBNIUISDk58YGEJW4Glw57jUUkPhXQUSkclaQXEmMNohUCgw+8KzwZ
-	 NJpx/4T6RO4micp0cITnCvlw1CVeJQyxh2pmT4X+ThxrkZ3HRmK3jV6KEtQ3Vck5tx6Czas/JWzb
-	 PRPWlMavD7U3mbbT0gqpJpfimeF5WLSuwn+0Vy6vreU4aX9ZKAumqtZv5dBrrke7Fbio5zC7vd3L
-	 yHJAblA0PXyeXj+PpQCdg5dDkvEya8kpUZ1olLjj/9tmh+FvClh5JeqJk/imS8cpPNmbpH/9irP4
-	 ukyYbNoOO9JCHW7St21ZUFnsektc3A60SE89kjH6N3RB3/IXec52BdS9G7uw2sd4F2oqdgIjRglT
-	 CLG4WKk1Q55BGXabAPqtXRZjZhdG/m9C59SvLO0jFPNQMND0z/VQdJd6YLR9Eck6INmb/sAxk4HR
-	 78FvsHoqLmod7mx5lC+gBYUSI99Ccl1BhwnKTd13jeh4JwUancdiKwu1m+s7RrkeIsNNHnXLZHsM
-	 PBsc063TGFnejH6xV7hveaFrQLQmMvyEHqVqp4DIoH65bCm1o/6b6/L6qRUz7mfmdQgiq5DCNGTb
-	 V/xPS9fnMbC2BFoh4nT38DfbvjSkuFiiYEV1kgHp3nFdnbcRbKIj32QLmsb2rwOqcUDmiDZq2RXU
-	 /SzVxa9dGPAS+31onGcFxENOcJdD77zyfTblyMMpj+ahRs0TjRIEtsZfLeL9y/tJnDkBzBv+y52S
-	 C+poPaW8uiK1THHfmls6PDXnQnyWD1kR89czHqUnG0IE6VkwB4yZakZpw+7oEK3ZUM+yqIKk2CWp
-	 S8NJhzaMiQCxI84jUPfMJIcMACb/kae3RPb2InpGegiYOk3dPoGLyeqmRRgAdNPpUkD2O9yWL+aD
-	 t9Ro+6xsJFPXnUNUvE/ZTiL/HGm2hrHcibgcYO2TeFdcpxnXLL/TG08Dgom7HxA0MWrlbHw3KfcY
-	 Sn7a8yWVgyQaugMC6xvpgQOF4KELtWldYAtpiaf2X43vTCRJh6nsLsGRsBlO3vrwzpY8QRWA==
-X-QQ-XMRINFO: NHo+0iP/cI22KKbm8YtzDH0=
-X-OQ-MSGID: <ddb3f2b6-524f-47a5-b1a6-f8d07c9f6de5@foxmail.com>
-Date: Tue, 7 Oct 2025 11:02:33 +0800
+	 In-Reply-To:Content-Type; b=Zl46vjyYs4ytSqWh7omabfeUEv66o4ij2vinMAw+P346sYR3Klqaq3pvNS5Er+Mi3XLasQlc+ZzqHFov87v6r8UlncMfUtdpwjmCwoz3HeHhyUEU2KK6wV/iduS00zm1BCeE0xZcDAzfaeVtvNH7ODUxUmhN3hCPxNdZEbdFYbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=psyBvlZU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E84BC4CEF5;
+	Tue,  7 Oct 2025 03:02:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759806189;
+	bh=BoGndQA4BAfeJvTJqPB+wFLlE32HU9519m66T9GaIdQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=psyBvlZUaJYfxTaG3WQtKUB3v1fujVH4/bZEmhMpTD1sf5pb9qTLM6i4/3+tpTpwJ
+	 kLk56n7SoA55qsi5dhfHHQDlWSgkiMBGA8nVTiTniKjoTYz4tFoTLgqAdPT2hhtJzO
+	 s4QvUPsSSJs3e3B6BbWFRENNdRglIhy0CF8ffLbrVzFC0/EZrjwPVT+Fp3oPvycJud
+	 cLG2pZyXWnjO5Fv5iOz+WMyVoQkGgxEAdxm8qJlZkoH8zksXI06kkb/oU+BErxUmZ6
+	 nPOgs78LWos1OE9kKRhPdYexOO7WZgwwqWfHH7tdHRG7dJcVA9XH3U/qjCIUe4spHU
+	 Aj5SlWRpzmC1g==
+Message-ID: <ca44af80-1fe4-4003-bd13-2ba26ade33b3@kernel.org>
+Date: Tue, 7 Oct 2025 12:02:56 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,81 +49,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v2 2/2] selftests/bpf: Test
- bpf_strcasestr,bpf_strncasestr kfuncs
-To: Eduard Zingerman <eddyz87@gmail.com>, vmalik@redhat.com, ast@kernel.org
-Cc: Rong Tao <rongtao@cestc.cn>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- "open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)"
- <bpf@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-References: <cover.1759588929.git.rongtao@cestc.cn>
- <tencent_FC91DA604BE83F2BE3524865EA956DB41A05@qq.com>
- <405da03e33853622da3a70ad88df3396c85926e4.camel@gmail.com>
+Subject: Re: [PATCH v2 6/8] riscv: dts: Add Tenstorrent Blackhole SoC PCIe
+ cards
+To: Joel Stanley <jms@tenstorrent.com>
+Cc: Drew Fustini <fustini@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Anup Patel <anup@brainfault.org>,
+ Arnd Bergmann <arnd@arndb.de>, Joel Stanley <joel@jms.id.au>,
+ Michael Neuling <mikey@neuling.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Michael Ellerman <mpe@kernel.org>, Andy Gross <agross@kernel.org>,
+ Anirudh Srinivasan <asrinivasan@tenstorrent.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, Drew Fustini <dfustini@oss.tenstorrent.com>
+References: <20251006-tt-bh-dts-v2-0-ed90dc4b3e22@oss.tenstorrent.com>
+ <20251006-tt-bh-dts-v2-6-ed90dc4b3e22@oss.tenstorrent.com>
+ <a05be32b-dc8f-444f-8c1c-2d49eb19536d@kernel.org>
+ <CAM3sHeBweq285Mwqzwd7no3zwzoosRgsHkunnVkYSgHyh37eAw@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: "rtoax@foxmail.com" <rtoax@foxmail.com>
-In-Reply-To: <405da03e33853622da3a70ad88df3396c85926e4.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CAM3sHeBweq285Mwqzwd7no3zwzoosRgsHkunnVkYSgHyh37eAw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+On 07/10/2025 11:56, Joel Stanley wrote:
+> On Tue, 7 Oct 2025 at 11:50, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> You should have at least serial or any other interface, otherwise I
+>> don't see how this can be used at this stage.
+> 
+> If you read the cover letter it explains how it is used:
 
-On 10/7/25 8:29 AM, Eduard Zingerman wrote:
-> On Sat, 2025-10-04 at 22:47 +0800, Rong Tao wrote:
->> From: Rong Tao <rongtao@cestc.cn>
->>
->> Add tests for new kfuncs bpf_strcasestr() and bpf_strncasestr().
->>
->> Signed-off-by: Rong Tao <rongtao@cestc.cn>
->> ---
-> Acked-by: Eduard Zingerman <eddyz87@gmail.com>
->
-> [...]
->
->> diff --git a/tools/testing/selftests/bpf/progs/string_kfuncs_success.c b/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
->> index 2e3498e37b9c..d21330b4cc3b 100644
->> --- a/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
->> +++ b/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
->> @@ -33,8 +33,12 @@ __test(11) int test_strnlen(void *ctx) { return bpf_strnlen(str, 12); }
->>   __test(5) int test_strspn(void *ctx) { return bpf_strspn(str, "ehlo"); }
->>   __test(2) int test_strcspn(void *ctx) { return bpf_strcspn(str, "lo"); }
->>   __test(6) int test_strstr_found(void *ctx) { return bpf_strstr(str, "world"); }
->> +__test(6) int test_strcasestr_found1(void *ctx) { return bpf_strcasestr(str, "world"); }
->> +__test(6) int test_strcasestr_found2(void *ctx) { return bpf_strcasestr(str, "WORLD"); }
-> Nit: I'd compress these two tests into one:
->       __test(6) int test_strcasestr_found1(void *ctx) { return bpf_strcasestr(str, "woRLD"); }
->       (and did the same for (str, "hello") variants below).
 
-I just submit v3, please review, thanks.
+We usually do not read cover letters, except when looking for
+changelog... Commits should stand on their own.
 
-Rong Tao
+> 
+>  > The HVC SBI console is sufficient for boot testing.
 
->
->>   __test(-ENOENT) int test_strstr_notfound(void *ctx) { return bpf_strstr(str, "hi"); }
->> +__test(-ENOENT) int test_strcasestr_notfound(void *ctx) { return bpf_strcasestr(str, "hi"); }
->>   __test(0) int test_strstr_empty(void *ctx) { return bpf_strstr(str, ""); }
->> +__test(0) int test_strcasestr_empty(void *ctx) { return bpf_strcasestr(str, ""); }
->>   __test(0) int test_strnstr_found1(void *ctx) { return bpf_strnstr("", "", 0); }
->>   __test(0) int test_strnstr_found2(void *ctx) { return bpf_strnstr(str, "hello", 5); }
->>   __test(0) int test_strnstr_found3(void *ctx) { return bpf_strnstr(str, "hello", 6); }
->> @@ -42,5 +46,14 @@ __test(-ENOENT) int test_strnstr_notfound1(void *ctx) { return bpf_strnstr(str,
->>   __test(-ENOENT) int test_strnstr_notfound2(void *ctx) { return bpf_strnstr(str, "hello", 4); }
->>   __test(-ENOENT) int test_strnstr_notfound3(void *ctx) { return bpf_strnstr("", "a", 0); }
->>   __test(0) int test_strnstr_empty(void *ctx) { return bpf_strnstr(str, "", 1); }
->> +__test(0) int test_strncasestr_found1(void *ctx) { return bpf_strncasestr("", "", 0); }
->> +__test(0) int test_strncasestr_found2(void *ctx) { return bpf_strncasestr(str, "hello", 5); }
->> +__test(0) int test_strncasestr_found3(void *ctx) { return bpf_strncasestr(str, "hello", 6); }
->> +__test(0) int test_strncasestr_found4(void *ctx) { return bpf_strncasestr(str, "HELLO", 5); }
->> +__test(0) int test_strncasestr_found5(void *ctx) { return bpf_strncasestr(str, "HELLO", 6); }
->> +__test(-ENOENT) int test_strncasestr_notfound1(void *ctx) { return bpf_strncasestr(str, "hi", 10); }
->> +__test(-ENOENT) int test_strncasestr_notfound2(void *ctx) { return bpf_strncasestr(str, "hello", 4); }
->> +__test(-ENOENT) int test_strncasestr_notfound3(void *ctx) { return bpf_strncasestr("", "a", 0); }
->> +__test(0) int test_strncasestr_empty(void *ctx) { return bpf_strncasestr(str, "", 1); }
->>   
->>   char _license[] SEC("license") = "GPL";
 
+Best regards,
+Krzysztof
 
