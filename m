@@ -1,147 +1,228 @@
-Return-Path: <linux-kernel+bounces-843993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F6EBBC0CAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:58:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C12ABC0CCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7D5C24F39F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:58:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BD8E64F3993
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5902D6409;
-	Tue,  7 Oct 2025 08:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A4D2D77E5;
+	Tue,  7 Oct 2025 08:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qEuSauHw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hwOzE82p";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MKjjC1m5";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hwOzE82p";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MKjjC1m5"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776662D5921
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 08:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545352D5412
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 08:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759827500; cv=none; b=ZSttcrZozwYthsZnKIfM8yfHa+GTk2VbsZIkG32NK/jF9kklDh2VKByHkr7tNgAQApBYWNC1PTRJ+Y1vtLbswOuuEqBWhtYLO0vR+KuTlYNgI+poLyhUY+wkz8jtgXGtVcC5eAdde3QYgrjRn2ZamDgWWonpp91/JDE12K++kTw=
+	t=1759827535; cv=none; b=Mjhxdn8p9vySlBv+UnxwxJTMFOhXMcWYxiLEnRlAvGxM5NZHIp9cm5M19jQuIy6Zs0pFMmM9vwkTNsqsmvIi/f2QYm6/0N1AN0VnUyX8uloqlCHooj6ZTAokJmzLyEyEavAFTAusxHOf6EnxNHjscyMpR8edWxDF00IWt/UF6TI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759827500; c=relaxed/simple;
-	bh=NT6pCgWJouBWI8k6FBlAG/a1lpdejxjoaWoToJyIVEw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FvCpewkoqMrhzgx1cV50sh1DI5AGhRSp0E19WgqzwhAiphdOYgMQaBOwKLvo3zsE2MBWh/1JQDdouX1mheQsSpgjGCZbN0D9IgHDNzuGiBQRCF3Nd/gL72tnUV/FC2kcbjxLNjMV74fyclKit8k2OAing8+ENzGn/XmVboiDOd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qEuSauHw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 141DBC4CEF7;
-	Tue,  7 Oct 2025 08:58:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759827499;
-	bh=NT6pCgWJouBWI8k6FBlAG/a1lpdejxjoaWoToJyIVEw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qEuSauHww9lo8O3TWII4agFp4kmEaLEWD3PpAYB02hcjb8nGi0wCjFvNnb170OkD8
-	 Vku+sPfDq6l5fsr/f7qE+gpKDGZGMatJcJ/vytTcWfwKHd4swKncAklYuw3wRYCvt1
-	 08a/78vUSW01VBkL93dRyWiVFHPalVOocLIL/Sp8r6g2/TjQnsclWnSjg3EpN1S480
-	 VnqjQu/jq1PFvrW/RS3g7375W+kKKnJPW+uOTwTnFLf7Mx0GXBVsakf+vuUrSQRUsM
-	 WZ7M79T8G+avXTUl8qMkJp3lf6h6SJYSQR2hRf3NNIHLf2oYTf11OhU+lssvjAxwT9
-	 vmc47MDbr1bZQ==
-Date: Tue, 7 Oct 2025 10:58:12 +0200
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Sascha Bischoff <sascha.bischoff@arm.com>,
-	Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH] irqchip/gic-v5: Fix GIC CDEOI instruction encoding
-Message-ID: <aOTWJBETJDY4xFUh@lpieralisi>
-References: <20251006100758.624934-1-lpieralisi@kernel.org>
- <aOPEXEx-QRv7v9A5@arm.com>
- <aOPZqM2xGIrPJH/d@lpieralisi>
- <aOPfIgrxZaqzu-7s@arm.com>
+	s=arc-20240116; t=1759827535; c=relaxed/simple;
+	bh=hTERFwkeWxd8Xx5GZCUnu8tH+p4FU6WG8t/7exj7S6E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LCcojqmeWCOkjGLXW83AC96zN0e8IjuijURxR9u4pjnYHIkUlqHE2pob2NLO2pcErr1pMITKkWb/PJ1M6YryWSTZW/OHAW3Usay1nCL+/Gp8kSkykGsfGSdETKn9YQSdbNgSE4hf9X6ia6+W+5rsNKaYU/JDTGjkGT7wUWG2GgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hwOzE82p; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MKjjC1m5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hwOzE82p; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MKjjC1m5; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7844B224E9;
+	Tue,  7 Oct 2025 08:58:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759827532; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=pVWDZ3aQOBqjBdBa7geF/0I0mRQxaxWEpypNj3U5CSI=;
+	b=hwOzE82pVqJsXjzWrqPoiVVHOkivvZskxjb9FbrqQw1dX+CD50gVVmrIQ4RDKM83bTeMMP
+	jmwC5loi3pnsr6f/ASxssKlIHQ0Eph4C3/B3VZbuOPMc8BUDodDOF5V5Bya+95TqnWujTW
+	mmyAy0MnWjeC3mYDWpB5qmBnqikxHA4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759827532;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=pVWDZ3aQOBqjBdBa7geF/0I0mRQxaxWEpypNj3U5CSI=;
+	b=MKjjC1m56v1OoxjPMiDT8OVTluHgiBBmz4gyrLs9iUbQ/kr34PnDy8fDFOG0uJOXz11mIs
+	QkQOjtkt//5QawCQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=hwOzE82p;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=MKjjC1m5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759827532; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=pVWDZ3aQOBqjBdBa7geF/0I0mRQxaxWEpypNj3U5CSI=;
+	b=hwOzE82pVqJsXjzWrqPoiVVHOkivvZskxjb9FbrqQw1dX+CD50gVVmrIQ4RDKM83bTeMMP
+	jmwC5loi3pnsr6f/ASxssKlIHQ0Eph4C3/B3VZbuOPMc8BUDodDOF5V5Bya+95TqnWujTW
+	mmyAy0MnWjeC3mYDWpB5qmBnqikxHA4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759827532;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=pVWDZ3aQOBqjBdBa7geF/0I0mRQxaxWEpypNj3U5CSI=;
+	b=MKjjC1m56v1OoxjPMiDT8OVTluHgiBBmz4gyrLs9iUbQ/kr34PnDy8fDFOG0uJOXz11mIs
+	QkQOjtkt//5QawCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D495613693;
+	Tue,  7 Oct 2025 08:58:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nJkPMkrW5GgXRgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Tue, 07 Oct 2025 08:58:50 +0000
+Message-ID: <bef19ef2-b22d-4adb-9513-b267d0e53330@suse.de>
+Date: Tue, 7 Oct 2025 10:58:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aOPfIgrxZaqzu-7s@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] drm/gud: Use kmalloc_array() instead of kmalloc()
+To: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
+ simona@ffwll.ch, mingo@kernel.org, tglx@linutronix.de, jfalempe@redhat.com
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org, david.hunter.linux@gmail.com, khalid@kernel.org,
+ rubenru09@aol.com, linux-kernel-mentees@lists.linuxfoundation.org
+References: <20251007083320.29018-1-mehdi.benhadjkhelifa@gmail.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20251007083320.29018-1-mehdi.benhadjkhelifa@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 7844B224E9
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com,linux.intel.com,kernel.org,ffwll.ch,linutronix.de,redhat.com];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[aol.com,gmail.com];
+	FREEMAIL_CC(0.00)[lists.freedesktop.org,vger.kernel.org,linuxfoundation.org,gmail.com,kernel.org,aol.com,lists.linuxfoundation.org];
+	RCVD_COUNT_TWO(0.00)[2];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.01
 
-On Mon, Oct 06, 2025 at 04:24:18PM +0100, Catalin Marinas wrote:
-> On Mon, Oct 06, 2025 at 05:00:56PM +0200, Lorenzo Pieralisi wrote:
-> > On Mon, Oct 06, 2025 at 02:30:04PM +0100, Catalin Marinas wrote:
-> > > On Mon, Oct 06, 2025 at 12:07:58PM +0200, Lorenzo Pieralisi wrote:
-> > > > diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
-> > > > index 6455db1b54fd..6cf8c46ddde5 100644
-> > > > --- a/arch/arm64/include/asm/sysreg.h
-> > > > +++ b/arch/arm64/include/asm/sysreg.h
-> > > > @@ -113,14 +113,14 @@
-> > > >  /* Register-based PAN access, for save/restore purposes */
-> > > >  #define SYS_PSTATE_PAN			sys_reg(3, 0, 4, 2, 3)
-> > > >  
-> > > > -#define __SYS_BARRIER_INSN(op0, op1, CRn, CRm, op2, Rt)			\
-> > > > +#define __SYS_INSN(op0, op1, CRn, CRm, op2, Rt)				\
-> > > >  	__emit_inst(0xd5000000					|	\
-> > > >  		    sys_insn((op0), (op1), (CRn), (CRm), (op2))	|	\
-> > > >  		    ((Rt) & 0x1f))
-> > > >  
-> > > > -#define SB_BARRIER_INSN			__SYS_BARRIER_INSN(0, 3, 3, 0, 7, 31)
-> > > > -#define GSB_SYS_BARRIER_INSN		__SYS_BARRIER_INSN(1, 0, 12, 0, 0, 31)
-> > > > -#define GSB_ACK_BARRIER_INSN		__SYS_BARRIER_INSN(1, 0, 12, 0, 1, 31)
-> > > > +#define SB_BARRIER_INSN			__SYS_INSN(0, 3, 3, 0, 7, 31)
-> > > > +#define GSB_SYS_BARRIER_INSN		__SYS_INSN(1, 0, 12, 0, 0, 31)
-> > > > +#define GSB_ACK_BARRIER_INSN		__SYS_INSN(1, 0, 12, 0, 1, 31)
-> > > >  
-> > > >  /* Data cache zero operations */
-> > > >  #define SYS_DC_ISW			sys_insn(1, 0, 7, 6, 2)
-> > > > @@ -1075,7 +1075,6 @@
-> > > >  #define GICV5_OP_GIC_CDDIS		sys_insn(1, 0, 12, 1, 0)
-> > > >  #define GICV5_OP_GIC_CDHM		sys_insn(1, 0, 12, 2, 1)
-> > > >  #define GICV5_OP_GIC_CDEN		sys_insn(1, 0, 12, 1, 1)
-> > > > -#define GICV5_OP_GIC_CDEOI		sys_insn(1, 0, 12, 1, 7)
-> > > >  #define GICV5_OP_GIC_CDPEND		sys_insn(1, 0, 12, 1, 4)
-> > > >  #define GICV5_OP_GIC_CDPRI		sys_insn(1, 0, 12, 1, 2)
-> > > >  #define GICV5_OP_GIC_CDRCFG		sys_insn(1, 0, 12, 1, 5)
-> > > > @@ -1129,6 +1128,17 @@
-> > > >  #define gicr_insn(insn)			read_sysreg_s(GICV5_OP_GICR_##insn)
-> > > >  #define gic_insn(v, insn)		write_sysreg_s(v, GICV5_OP_GIC_##insn)
-> > > >  
-> > > > +/*
-> > > > + * GIC CDEOI encoding requires Rt to be 0b11111.
-> > > > + * gic_insn() with an immediate value of 0 cannot be used to encode it
-> > > > + * because some compilers do not follow asm inline constraints in
-> > > > + * write_sysreg_s() to turn an immediate 0 value into an XZR as
-> > > > + * MSR source register.
-> > > > + * Use __SYS_INSN to specify its precise encoding explicitly.
-> > > > + */
-> > > > +#define GICV5_CDEOI_INSN		__SYS_INSN(1, 0, 12, 1, 7, 31)
-> > > > +#define gic_cdeoi()			asm volatile(GICV5_CDEOI_INSN)
-> > > 
-> > > Would something like this work? Completely untested (and build still
-> > > going):
-> > 
-> > I tested the GIC CDEOI code generated with GCC/LLVM and it works.
-> > 
-> > My only remark there is that even as the code in mainline stands with
-> > GCC, it is not very clear that we rely on implicit XZR generation to
-> > make sure the instruction encoding generated is correct - it looks
-> > like a bit of a stretch to reuse a sysreg write with immediate value == 0
-> > to generate a system instruction write with Rt == 0b11111, it works
-> > but it is a bit opaque or at least not straighforward to grok.
-> > 
-> > Obviously the patch below improves LLVM code generation too in the process.
-> > 
-> > I don't know what's best - I admit I am on the fence on this one.
-> 
-> My concern is other cases where we may rely on this, so we might as well
-> go with a generic approach than fixing each case individually. If that's
-> the only case, I'll leave it to you and Marc do decide whichever you
-> prefer.
+Hi
 
-I will take your patch - added comments and rewrote the log for v2, with
-your Suggested-by (did not give you authorship let me know if that's OK
-please).
+Am 07.10.25 um 10:32 schrieb Mehdi Ben Hadj Khelifa:
+> Replace kmalloc with kmalloc array in drm/gud/gud_pipe.c since the
+> calculation inside kmalloc is dynamic 'width * height'
+>
+> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
 
-One thing to mention, I added a Fixes: tag that goes back to the initial
-GICv5 commit, I don't know whether it is fixing more than that, it does
-not look like by a quick grep through kernel code but I am not sure.
+Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-Thanks,
-Lorenzo
+As Ruben already acked the previous patch, you should add such acks to 
+any later patches. But no need to resend a new iteration now. I'll add 
+Ruben's a-b when I merge the patch.
+
+Best regards
+Thomas
+
+> ---
+> Changelog:
+>
+> Changes since v2:
+> -Reversed width and height in parameter order.
+> Link:https://lore.kernel.org/all/20250923085144.22582-1-mehdi.benhadjkhelifa@gmail.com/
+> Changes since v1:
+> - Use of width as element count and height as size of element to
+> eliminate the mentionned calculation and overflow issues.
+> Link:https://lore.kernel.org/all/20250922174416.226203-1-mehdi.benhadjkhelifa@gmail.com/
+>   drivers/gpu/drm/gud/gud_pipe.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/gud/gud_pipe.c b/drivers/gpu/drm/gud/gud_pipe.c
+> index 8d548d08f127..c32a798ccadf 100644
+> --- a/drivers/gpu/drm/gud/gud_pipe.c
+> +++ b/drivers/gpu/drm/gud/gud_pipe.c
+> @@ -70,7 +70,7 @@ static size_t gud_xrgb8888_to_r124(u8 *dst, const struct drm_format_info *format
+>   	height = drm_rect_height(rect);
+>   	len = drm_format_info_min_pitch(format, 0, width) * height;
+>   
+> -	buf = kmalloc(width * height, GFP_KERNEL);
+> +	buf = kmalloc_array(height, width, GFP_KERNEL);
+>   	if (!buf)
+>   		return 0;
+>   
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
+
 
