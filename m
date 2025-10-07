@@ -1,82 +1,53 @@
-Return-Path: <linux-kernel+bounces-844464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 471F6BC1FBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 17:49:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53074BC1FE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 17:52:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C6803E1D85
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 15:49:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0604919A278C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 15:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFC52E6CA0;
-	Tue,  7 Oct 2025 15:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F762E62C5;
+	Tue,  7 Oct 2025 15:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZFInhnsO"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="K0oOn/ne"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E0D2E1EF8
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 15:48:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0BF92147E5;
+	Tue,  7 Oct 2025 15:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759852140; cv=none; b=SlurbNU8NWhmflHn6lIZcZVqizHZGPgjbND5p5lhVsPnV2+3nw/kBd06LXVvmTQ8Vl7sDvTXPSz3BbfqFxisBzm+9jHf0SRDQIv8/ECf0EQtZfoJAJBv12/MLF9lLkOQ+kQ5h2JOrZVlRsuCKtZNJUJwDO/Yj3r0TWrTtyvWpYM=
+	t=1759852365; cv=none; b=MPDKpYYhws/iqZcJzSzYbyOb0l8fTugpAsQ9YEeTsgiIXa4ZBVnxPNMq6SoLubJrnM6S2Ke8Cdg9LA6TnIOAAHeTvN3NIOOgAEVlDNlPaXmeGwDzK8vkG6ge6ZU9rxeGThH2ohbq4po0GeUuSnaq28vbQvn1OITfWJTYAZy1Ra8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759852140; c=relaxed/simple;
-	bh=idsLDC2Nv76ap5anKli8m472glzZKQst8172esv0100=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=txsCk6ylaSNfQpcgLiDuGXDtEnemVMhyGHrBsLv7zlNi4KzF8SbowUbTG10aUnZi444EcFcC/EBn7jhUrhiFB50mFOkmq/Wd4nmMN8jnIxSGgH5uZVUDQwXYiYvfERY5sHd+utdgXia5PmonTUouPdhX871Q5NgqJXaPhI8kU3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZFInhnsO; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3f0134ccc0cso3918670f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 08:48:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759852136; x=1760456936; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ujqZTrSIRL5Br3jVEaXKCPK1WTB5adLLumme0kdn1es=;
-        b=ZFInhnsO9qhM3O/HHfNTgrDRYv8gVabeM8l4nUyFUgIWCzqtulABXukRNPi7k9GtEN
-         ducrv5yeGokrvoM2TaIWAepIhkm2QT6AEDJAoxXEQ9lQIg7EtR3gIfsljhuFn/uLS0Qp
-         wfiQaREyKXSRwhPMs23C23ICE5H2zT+JBX2zlgxHwtA6eDinW/ujEX6zbX/l2Wv7gPNA
-         7SV4joVUFwhunB1aP+iD52MfiNvoKAYRn+N5tCfzoGxW5QHQ74B1ADGVsNhnl+FIvsnp
-         cIEtr/+QIBtp9cf0Vd+JQLJ5EL0qJMZKSW+VGJZDZHXhSl8GJ9W7DF1KaRkA9Dc4XKNM
-         OcLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759852136; x=1760456936;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ujqZTrSIRL5Br3jVEaXKCPK1WTB5adLLumme0kdn1es=;
-        b=xA76I32VVMWNN8GyU/3S6Npc8X1w8KR/0CDOst+oLYXSGSWgjyRWG91lqJ1y6SpMxq
-         HXIlsPW4n6SpZM/Pr0OjAw3PwPw4kzhobY+/tPD9rrqnrlRrhCnvsfO9OnaHY25WoSdG
-         tv8BNBdT536tk1qlzqOuJx1G7ALWM1D4PkSef1P7O/3Qghh8JiDzy5N0jrE8QOB+kOo7
-         88GzGJBH4dgeYPbZ1LTRLy3c3qJ5TiMxplSueOKsAMZprPRkwlXm7ayYZVZfm1EgvTYt
-         po5eXPZKyXj4zC5oG8RFzuYzew416dlnMkdEbqiV6yL+qI4iAx56Ea2hn/r5CMBOOZ+z
-         PXMw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnh5GmDlp/8xoOvlPjrAQZ49qRTvPoJr6aao4laEyRh3LoFNE6AW6dRE5vLordlcccR2S/EjOBBbXSuYo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybSig0Dok1PbL/A/ld9UjirJ/CgYx/rehPD8uPABe2eYsY6/TA
-	dIdH/MYMG+AS9N6aWLObofrvAl4OHhy4hB1aAqWBGdTFc7nuDTzXNHRnVfRbvvSi8rs=
-X-Gm-Gg: ASbGncs/7lB+ObO4rEeb1Z1/1jxyuvU0JeFz0SxpvVwb/J3VdusXVFPWlYUqmAg6T3P
-	DcGue+3bPb0tTLmMtT7axSbyhDETVaYozbmIPyY8s7cS1lG4ZR5NeHkL7WRL2IhKdT759L0OJLq
-	wTM4ZS9zRph4gnvce9Tpyr45PsfjkzFX5B40Ll4Y5smylSP3bRco8ERZ6ongxYn4euaqUuEVZlu
-	NQwIkQA/1KoZ2jOcqzXp87JJT5mOnmbrK+8FApw6sTjat6BBkwW0rHebm+hA++M9/cYPcPLm6rd
-	HFBk6qkxOhtXZ6+mpxwzhb6acN+4scyEElJibMZRUzrJZq4ZceQ3FO4HFEmHCdYpflb6eBQZizw
-	9BwkiRHGLPkMGILgMO8G0CIm5myJEc4KNC2RpHb8lupqyX0nmz3SbwE/aKZTHdeFu46vxhmGnF0
-	0BY5ElTpd/i8huWM8AoBx2r0PBm3Y=
-X-Google-Smtp-Source: AGHT+IGlCt3WNje/lItmY3GQsKoJPUs6M1EHh44EgkG7EO1ZdmP5CqynBnMwr5jKEwAuFYo6Szge1Q==
-X-Received: by 2002:a05:6000:1a8b:b0:3fb:6f9d:2704 with SMTP id ffacd0b85a97d-42567174a0cmr10730399f8f.28.1759852136117;
-        Tue, 07 Oct 2025 08:48:56 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:bd88:41d2:33ce:f74a? ([2a01:e0a:3d9:2080:bd88:41d2:33ce:f74a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f0170sm26770403f8f.49.2025.10.07.08.48.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Oct 2025 08:48:55 -0700 (PDT)
-Message-ID: <a5dfaf2a-d2c8-468a-9bbe-38d11b1214a8@linaro.org>
-Date: Tue, 7 Oct 2025 17:48:55 +0200
+	s=arc-20240116; t=1759852365; c=relaxed/simple;
+	bh=ONJWRhKAMFw51AyXu//nTUTkQbiZhRa5nroe7YxXcTI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=bAixes5mKpPNhnYzfTrRofgEwiLvdc+mlfSE0sAjEuMqKqyil/zNl3Icu/SL9oQbsheG6623dRtd8t79EOiTdDt1DsAQiUp0Lj6f76Fk6y9OT1P4MtgVaFHF0Kk6yBBnR9yrn8uycMb7FKiVwmYDNARgDVEi8lt4NUMuQ5hzDgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=K0oOn/ne; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1759852344; x=1760457144; i=markus.elfring@web.de;
+	bh=8P2Qj/3q4W4upRVJlyLhxsUesThb5N9DeEvK0H+Q3kM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=K0oOn/nektWc/ryHh+2veIN/2FVfcIXDI4OKQZB+r5F4ubtzgEOcurdmA1/b2W/y
+	 2gsY+nF4wx4y6IpxCqT+uqV0gwFpOwg3NZmxBHkLGwoxYbRRJ36l4ZFIUdZ5NQVYe
+	 M38v4bogufkVKzIAXalClOGBmXDi8Eonsk6jklsPz6jt9ZI2l0q7OcJyimCDz1Z04
+	 72EWr/p7vdX7TKGTcdFaNeU9hLxsFBuN4oQbtIZkAEM8HY3bzxA2RdM/YawpU4RnC
+	 R0BGw+7qn1qNRsv63X3OIBAdYPrz/cepnh2tEuIbq8SAQPBBovClR1ydVBEe/xHWm
+	 Zf+H17QWDW/X2330Zw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.202]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M8kEP-1vAGaH1bV3-004TOC; Tue, 07
+ Oct 2025 17:52:24 +0200
+Message-ID: <acc5a7d5-80a3-4c4d-8a43-c44bd962d008@web.de>
+Date: Tue, 7 Oct 2025 17:52:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,100 +55,154 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH RFC 3/6] ASoC: soc: qcom: sc8280xp: add support for I2S
- clocks
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20251006-topic-sm8x50-next-hdk-i2s-v1-0-184b15a87e0a@linaro.org>
- <20251006-topic-sm8x50-next-hdk-i2s-v1-3-184b15a87e0a@linaro.org>
- <6492e444-4196-4900-a741-a74a8c506a6d@kernel.org>
- <1eab5200-1292-4d39-bdf8-0c5084cfaab9@linaro.org>
- <f15ea346-43f7-49bc-bd5e-47510a48892d@oss.qualcomm.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <f15ea346-43f7-49bc-bd5e-47510a48892d@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Language: en-GB, de-DE
+To: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+ Bharath SM <bharathsm@microsoft.com>, Paulo Alcantara <pc@manguebit.org>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
+ Tom Talpey <tom@talpey.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] smb: client: Improve unlocking of a mutex in
+ cifs_get_swn_reg()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ruI1XnQJ2PvNsVkyIRapd/X6hUY/hcYGnfgnpsju/Fl6RaXXr6t
+ guYHUv6fb8SHRN+wCcXMp3RMsFhAc++z0sHCE0+kFzvVXQ5L6MKVs9hKRxtmWKLXxv+OzrT
+ +qBNJcBf2Xt02h/xjUjOmYZbgZK+DyW91io3WpaXZhof776wxwUz8XrTrqX2Vq4H1dN7iAB
+ n1FFkpAINRr1mcwytewcQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:PW1fBbNYUT4=;TFSdDTNm1iCTVpZS8ThJPidmc4f
+ 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
+ tK1oQNZNBnJye7fbXqOJRPHJpU=
 
-On 10/7/25 12:23, Konrad Dybcio wrote:
-> On 10/7/25 9:02 AM, Neil Armstrong wrote:
->> On 10/7/25 00:21, Srinivas Kandagatla wrote:
->>>
->>>
->>> On 10/6/25 7:37 PM, Neil Armstrong wrote:
->>>> Add support for getting the I2S clocks used for the MI2S
->>>> interfaces, and enable/disable the clocks on the PCM
->>>> startup and shutdown card callbacks.
->>>>
->>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->>>> ---
-> 
-> [...]
-> 
->>>> +static int sc8280xp_snd_startup(struct snd_pcm_substream *substream)
->>>> +{
->>>> +    unsigned int codec_dai_fmt = SND_SOC_DAIFMT_BC_FC | SND_SOC_DAIFMT_NB_NF | SND_SOC_DAIFMT_I2S;
->>>> +    struct snd_soc_pcm_runtime *rtd = substream->private_data;
->>>> +    struct sc8280xp_snd_data *pdata = snd_soc_card_get_drvdata(rtd->card);
->>>> +    struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
->>>> +    struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
->>>> +    int index;
->>>> +
->>>> +    switch (cpu_dai->id) {
->>>> +    case PRIMARY_MI2S_RX...QUATERNARY_MI2S_TX:
->>>> +    case QUINARY_MI2S_RX...QUINARY_MI2S_TX:
->>>> +        index = sc8280xp_snd_i2s_index(cpu_dai);
->>>
->>> What is the mclk and bitclk rate set here, we can not rely on the
->>> default rate.
->>
->> The default rates are set in DT:
->> +        assigned-clocks = <&q6prmcc LPASS_CLK_ID_PRI_MI2S_IBIT LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
->> +                  <&q6prmcc LPASS_CLK_ID_MCLK_1 LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
->> +        assigned-clock-rates = <1536000>,
->> +                       <24576000>;
-> 
-> Is there a way to infer these rates based on the DT audio
-> connection graph?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 7 Oct 2025 17:45:28 +0200
 
-Good question, it's not done for pre-audioreach. Let me investigate.
+Use two additional labels so that another bit of common code can be better
+reused at the end of this function implementation.
 
-Neil
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ fs/smb/client/cifs_swn.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-> 
-> Konrad
+diff --git a/fs/smb/client/cifs_swn.c b/fs/smb/client/cifs_swn.c
+index 7233c6a7e6d7..35a3e73c1958 100644
+=2D-- a/fs/smb/client/cifs_swn.c
++++ b/fs/smb/client/cifs_swn.c
+@@ -313,17 +313,15 @@ static struct cifs_swn_reg *cifs_get_swn_reg(struct =
+cifs_tcon *tcon)
+ 	reg =3D cifs_find_swn_reg(tcon);
+ 	if (!IS_ERR(reg)) {
+ 		kref_get(&reg->ref_count);
+-		mutex_unlock(&cifs_swnreg_idr_mutex);
+-		return reg;
++		goto unlock;
+ 	} else if (PTR_ERR(reg) !=3D -EEXIST) {
+-		mutex_unlock(&cifs_swnreg_idr_mutex);
+-		return reg;
++		goto unlock;
+ 	}
+=20
+ 	reg =3D kmalloc(sizeof(struct cifs_swn_reg), GFP_ATOMIC);
+ 	if (reg =3D=3D NULL) {
+-		mutex_unlock(&cifs_swnreg_idr_mutex);
+-		return ERR_PTR(-ENOMEM);
++		ret =3D -ENOMEM;
++		goto fail_unlock;
+ 	}
+=20
+ 	kref_init(&reg->ref_count);
+@@ -354,7 +352,7 @@ static struct cifs_swn_reg *cifs_get_swn_reg(struct ci=
+fs_tcon *tcon)
+ 	reg->ip_notify =3D (tcon->capabilities & SMB2_SHARE_CAP_SCALEOUT);
+=20
+ 	reg->tcon =3D tcon;
+-
++unlock:
+ 	mutex_unlock(&cifs_swnreg_idr_mutex);
+=20
+ 	return reg;
+@@ -365,6 +363,7 @@ static struct cifs_swn_reg *cifs_get_swn_reg(struct ci=
+fs_tcon *tcon)
+ 	idr_remove(&cifs_swnreg_idr, reg->id);
+ fail:
+ 	kfree(reg);
++fail_unlock:
+ 	mutex_unlock(&cifs_swnreg_idr_mutex);
+ 	return ERR_PTR(ret);
+ }
+=2D-=20
+2.51.0
 
 
