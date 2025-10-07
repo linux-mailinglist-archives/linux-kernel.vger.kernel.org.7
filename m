@@ -1,143 +1,192 @@
-Return-Path: <linux-kernel+bounces-843631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09E35BBFE00
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 02:46:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9A7BBBFE06
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 02:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3A3264EF15C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 00:46:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CFEB74E9B87
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 00:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 439A41DE3B7;
-	Tue,  7 Oct 2025 00:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F331C1D5AC0;
+	Tue,  7 Oct 2025 00:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKJ3jqD/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZCvpPNDf"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8817D34BA5C;
-	Tue,  7 Oct 2025 00:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A9434BA5C
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 00:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759797979; cv=none; b=V51U8cEaMMHCD0nHGEfU7GGfG8+XUntgMEORniGqvSy91K+5KpjaJjH/+Qegu9+WNpw6tAMsYK+cMRACqo8DPPUO/XVZryaYzGhWCiNRVGNXPa0Iq3iEo/rTzMc9earIDzWuIk0cXVas3D/eI0SiUkdxv6AYpvI4rq0bGc1RETE=
+	t=1759798072; cv=none; b=TKGpMbNf0+bfXn0KmM4GhoZsdOcgsomOA2fmH5dTAXhTmkNM2ROn1wZRPjc11r4aE4+uoybwhrSG4SAUrPz+sd773zp2p0gFEKAAD9h8ABT4HPl8m/ELxptEfFeU7exP07arLWXdXxo5RNRLH6GbmuADgsc04p82v2EfLX2CS2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759797979; c=relaxed/simple;
-	bh=J/zaUc12qRswCtMLNA9HDn+bfykmwATj9X6+LIzTD6E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pPSZZeiZ5m9ZD0hMtXUvzOLER6XXVSOkg/o6EVoiE2f0TWiH0GpbTGp3VaHR8Y0ynG2q17esuQCMt8gtZvBMLf+JYHfu1rU5Sj/pfAX/HEw5PbnPHKtmMLiZakkRCU45sUnLZixFPwLUF3O7YoslTHvSybbBvwKNTH1b7mQYJes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vKJ3jqD/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AC4AC4CEF5;
-	Tue,  7 Oct 2025 00:46:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759797979;
-	bh=J/zaUc12qRswCtMLNA9HDn+bfykmwATj9X6+LIzTD6E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vKJ3jqD/p4lLzzDaCCEILVXtHTXk9GXdoP3rZt8aDXRFXgb69S4RY3b33FL5IImzn
-	 S/uSw1hVO0AgvGXRX0VHgOBOurjONtPVO36NOJPiSNwtExbpkcyU3BVQS2ektaS6EI
-	 0UxyNCcSUBCa9KRdoIcHmYYsQg4pdw3+oLU1qOEeWXj/uYS8fME3nvQbKyXjiyDto3
-	 YXMgbAPP+LjY8BdDzJXbSP1aC4wmvaJciVFYx/isPH10UXpWqB2uweL6rLnz82T1Qj
-	 +4IN76JTGFQ1j9QzBEt9eBQx5j18UvCys3eX1ycYtIHn0ynWK/fIfkeC+JORKn/lLH
-	 3FlcbhHrU89eA==
-Message-ID: <5c2c298b-b0c3-4fa5-97aa-75b44084248b@kernel.org>
-Date: Tue, 7 Oct 2025 09:46:08 +0900
+	s=arc-20240116; t=1759798072; c=relaxed/simple;
+	bh=1XL2wNRN0F30fQxUtHkkK3QNV4GjsRj9jIuYs+uhi2k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nBqL1qQNJOrGTZtnZf5K1P7mkCpSh2YXP8x97BnmDIsuqxRAdPUmO6LIg6eJwg3REWh+SlHWt+QNL4SRu4qR21dXJ2gUFpYxSiW181o1SsmYcDoY2zSh9DothEQGa8sas1Nwv/Bq7izDYShiCAwflQ+tLwZdYCqz261thogJY2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZCvpPNDf; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b6271ea39f4so3327181a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 17:47:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759798070; x=1760402870; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2UxzPjq4bfBAqt8odMbxV/jMDGXYJds2ek2mqe8HYOw=;
+        b=ZCvpPNDfC7HZlb1rrGqqrT2d0kUTcKvN8H57HjPkFvDFr67jEeoI1Vuc1SVr0rP8ow
+         n49hoMd5Wgaug4pOxy5F+/DB4AjdBluzgYKT0QwBLOFvJkoREUBo9o5CaMnMDDztUnu5
+         gNRvJKVYUHY/suNk265B/YVMqkD8GwPtztMGDdaVw/F5Vs3144fJpPXqNne7xN29PAiC
+         YvZEY5BsP6of/Rmi9bny7SnXRj0df8nHz5y+mLLGyxVtpb7KW+wD4nrO+SXcV4qiM77A
+         PaKufkqqmJuyYnE2FuepiakHTDUH0Ips0cUBzptiTr+lGZAfkr7OH0XHu93f6haLwL31
+         5zGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759798070; x=1760402870;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2UxzPjq4bfBAqt8odMbxV/jMDGXYJds2ek2mqe8HYOw=;
+        b=wc4ToHrvKosaKmv2DDPzQS1OFTjwS5rFbdlvRnbn5iW/yf4NiKoR6Cyc+t4rp3ygwE
+         YGElteQf90HEF6QGOGw3UqVqqN7qAVKoNYzeTetYgzs5h+Lmc8cPzWaD/WEeLg7rtD7s
+         5Gd94FH6oARCSyZeIDg583OW0zv3rcZ6KT40UQ2Aw4xYzYcx3mUGS/7p9ddpLfUNb0Tz
+         hBDNEJVv8gs+zq8DEckbq8jShbU4JAK1gStVT0H/Y+6+afEmmIviyc0rkmVcLMV5SSt1
+         rN5Jyl8irD4p3R63xSyHj/2bqE9BEZUZ6L7g6dDjjLi0zfgiElue9LCiqOc8a19yiC+W
+         U1yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXGuovY8aCxls8mn7ouZPMlBoZ7Gm4e0A4ye31vfcH5wPI98qfoxaVd+QqsBW209o7/TYlT88CupU3Mu3o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXBAouHEtUub/gpHmnHrkOdEZo84nCgqmZgAQJzVZ7+58ahmfK
+	wJBSyFTt9Z6Qcdo2D7eop+lnKnEn3WmQc86ELwjCJOpLU+Dntv2vT8DP
+X-Gm-Gg: ASbGncvt0058dUJeUxTPlIpgnl+dfdYAgV2uDvYR25GNWmC9Wi/iqhVClaFFvUpELGh
+	v6PJuO1XjEJpKCvZmK5iu0VyyBIvwz6OyroFq9bS6sjdPkhoez6HNG63FI+YrHtDhyawNO+bTkW
+	K7/8CeOm2rFp12DmLFGEJMCy5/137o4foPLGy1R490WXllsCpuGXA9fZrSRWHUYCENwaO0qsVib
+	R0CM4u8ygfu1HqiPkbOkfcFLIMpBBitFuE0rO7wK01qD6CnEuLapJ/h2zOVnmn/rj/Ofh0QAp/c
+	cmtF6+5ZM3SK9curB2/66b5JLDp339gUoMPV2H7ZF+q+SOMVUa2+MFnFzxKX7kAijqg8T6UQHC0
+	CzlvnFS7lNeJiuvpCBVzlW5b7T2IdEuyazWlrt3OW+z3qQk/YbyFV+eg=
+X-Google-Smtp-Source: AGHT+IFMHyFATUeNe+Fl/tyGv+NYdpmbcD1fdDtkwTi3zmOMHIkIEROkuXuqnLBQ4I7USPiqifZxCg==
+X-Received: by 2002:a17:902:f54e:b0:24b:1625:5fa5 with SMTP id d9443c01a7336-28e9a54ed9dmr169316955ad.11.1759798070010;
+        Mon, 06 Oct 2025 17:47:50 -0700 (PDT)
+Received: from fedora ([159.196.5.243])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1ba19asm146468945ad.64.2025.10.06.17.47.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 17:47:49 -0700 (PDT)
+From: Wilfred Mallawa <wilfred.opensource@gmail.com>
+To: linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: Keith Busch <kbusch@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Sabrina Dubroca <sd@queasysnail.net>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Hannes Reinecke <hare@suse.de>,
+	Wilfred Mallawa <wilfred.mallawa@wdc.com>
+Subject: [PATCH] nvme/tcp: handle tls partially sent records in write_space()
+Date: Tue,  7 Oct 2025 10:46:35 +1000
+Message-ID: <20251007004634.38716-2-wilfred.opensource@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/4] usb: dwc3: Add Google SoC DWC3 glue driver
-To: Roy Luo <royluo@google.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-References: <20251006232125.1833979-1-royluo@google.com>
- <20251006232125.1833979-2-royluo@google.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251006232125.1833979-2-royluo@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 07/10/2025 08:21, Roy Luo wrote:
-> This patch adds support for the DWC3 USB controller found on Google
+From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
 
-Please read submitting patches, how this should be written.
+With TLS enabled, records that are encrypted and appended to TLS TX
+list can fail to see a retry if the underlying TCP socket is busy, for
+example, hitting an EAGAIN from tcp_sendmsg_locked(). This is not known
+to the NVMe TCP driver, as the TLS layer successfully generated a record.
 
-> Tensor SoCs. The controller features dual-role functionality and
-> hibernation.
+Typically, the TLS write_space() callback would ensure such records are
+retried, but in the NVMe TCP Host driver, write_space() invokes
+nvme_tcp_write_space(). This causes a partially sent record in the TLS TX
+list to timeout after not being retried.
 
+This patch aims to address the above by first publically exposing
+tls_is_partially_sent_record(), then, using this in the NVMe TCP host
+driver to invoke the TLS write_space() handler where appropriate.
 
+Signed-off-by: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+Fixes: be8e82caa685 ("nvme-tcp: enable TLS handshake upcall")
+---
+ drivers/nvme/host/tcp.c | 8 ++++++++
+ include/net/tls.h       | 5 +++++
+ net/tls/tls.h           | 5 -----
+ 3 files changed, 13 insertions(+), 5 deletions(-)
 
-> +
-> +static const struct dev_pm_ops dwc3_google_dev_pm_ops = {
-> +	SET_SYSTEM_SLEEP_PM_OPS(dwc3_google_pm_suspend, dwc3_google_pm_resume)
-> +	SET_RUNTIME_PM_OPS(dwc3_google_runtime_suspend, dwc3_google_runtime_resume,
-> +			   dwc3_google_runtime_idle)
-> +	.complete = dwc3_google_complete,
-> +	.prepare = dwc3_google_prepare,
-> +};
-> +
-> +static const struct of_device_id dwc3_google_of_match[] = {
-> +	{ .compatible = "google,snps-dwc3" },
+diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
+index 1413788ca7d5..e3d02c33243b 100644
+--- a/drivers/nvme/host/tcp.c
++++ b/drivers/nvme/host/tcp.c
+@@ -1076,11 +1076,18 @@ static void nvme_tcp_data_ready(struct sock *sk)
+ static void nvme_tcp_write_space(struct sock *sk)
+ {
+ 	struct nvme_tcp_queue *queue;
++	struct tls_context *ctx = tls_get_ctx(sk);
+ 
+ 	read_lock_bh(&sk->sk_callback_lock);
+ 	queue = sk->sk_user_data;
++
+ 	if (likely(queue && sk_stream_is_writeable(sk))) {
+ 		clear_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
++		/* Ensure pending TLS partial records are retried */
++		if (nvme_tcp_queue_tls(queue) &&
++		    tls_is_partially_sent_record(ctx))
++			queue->write_space(sk);
++
+ 		queue_work_on(queue->io_cpu, nvme_tcp_wq, &queue->io_work);
+ 	}
+ 	read_unlock_bh(&sk->sk_callback_lock);
+@@ -1306,6 +1313,7 @@ static int nvme_tcp_try_send_ddgst(struct nvme_tcp_request *req)
+ static int nvme_tcp_try_send(struct nvme_tcp_queue *queue)
+ {
+ 	struct nvme_tcp_request *req;
++	struct tls_context *ctx = tls_get_ctx(queue->sock->sk);
+ 	unsigned int noreclaim_flag;
+ 	int ret = 1;
+ 
+diff --git a/include/net/tls.h b/include/net/tls.h
+index 857340338b69..9c61a2de44bf 100644
+--- a/include/net/tls.h
++++ b/include/net/tls.h
+@@ -373,6 +373,11 @@ static inline struct tls_context *tls_get_ctx(const struct sock *sk)
+ 	return (__force void *)icsk->icsk_ulp_data;
+ }
+ 
++static inline bool tls_is_partially_sent_record(struct tls_context *ctx)
++{
++	return !!ctx->partially_sent_record;
++}
++
+ static inline struct tls_sw_context_rx *tls_sw_ctx_rx(
+ 		const struct tls_context *tls_ctx)
+ {
+diff --git a/net/tls/tls.h b/net/tls/tls.h
+index 2f86baeb71fc..7839a2effe31 100644
+--- a/net/tls/tls.h
++++ b/net/tls/tls.h
+@@ -271,11 +271,6 @@ int tls_push_partial_record(struct sock *sk, struct tls_context *ctx,
+ 			    int flags);
+ void tls_free_partial_record(struct sock *sk, struct tls_context *ctx);
+ 
+-static inline bool tls_is_partially_sent_record(struct tls_context *ctx)
+-{
+-	return !!ctx->partially_sent_record;
+-}
+-
+ static inline bool tls_is_pending_open_record(struct tls_context *tls_ctx)
+ {
+ 	return tls_ctx->pending_open_record_frags;
+-- 
+2.51.0
 
-You cannot use compatible before documenting it. Read submitting patches.
-
-Best regards,
-Krzysztof
 
