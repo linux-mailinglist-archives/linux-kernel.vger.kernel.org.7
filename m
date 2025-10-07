@@ -1,242 +1,301 @@
-Return-Path: <linux-kernel+bounces-844506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E77CBC21A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:22:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B90E5BC21B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B2C41882C0A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:22:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ECA319A4858
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76F42E8881;
-	Tue,  7 Oct 2025 16:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888C92E7F3F;
+	Tue,  7 Oct 2025 16:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RTO/FuVc"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="TZ8ZwICL"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33912E7BD4
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B145F13FEE;
+	Tue,  7 Oct 2025 16:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759854120; cv=none; b=lDZkSlhM+u8xkAzbmgnvv8NHCHZXohWymLthm3+NXPY9YSbbEc4TDM9MFMp3Uue4ETIyhGFNb5d2Ari/tP6WvFpEdUqEpGGdgGUxxHJZ6p7/p4g71iKlAfToaJGNgbqD6YBCY6CsA19MyD+Cz17l+CjCEqIdyXVfw+zc2E3ePY0=
+	t=1759854197; cv=none; b=KpFu3k/PyQr+Nl/bWawG4jK1X0qVG/vriZXRIfn7EApxR5FyztXFnt3z25C8WX7IIR8mcis1AFn9DbEptbRuOk4ZnBP1pfOj0nymCI+j6aNQAIMWUByaELfL2Mc3Zy9KHwm6EV1jYxjxsNsH6Tz4aa/Kp0gl/W3/eEP62pMZQhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759854120; c=relaxed/simple;
-	bh=lvPYZKSeQucFx2SgeOdYOtw4O2ksAxgo0FsweuBHcec=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=NEQPhqk4pQVFyTvu9jEbsrRfNW8glDMViwzosJkFQVQJp7mdDKntxOU+mVS6pjOvWnuHbTFW5xK3m56DoUhL5vddusAqRhx8msvZsG6sd7GQhGlwH3kBDS0FKtDjUVvXRRvxBZjQvwoX+ThLBcI1nCuVA4f5LdCmpVkUx7O6Xyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RTO/FuVc; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-46fa88b5760so874915e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 09:21:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759854115; x=1760458915; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JPke7s3EpbXC6ErmX/FPvC/unGHuc//hg1lOBj1qibA=;
-        b=RTO/FuVcWAZEL7PyaNzslaeUaM2MzZd2AkBd4aCwmY/eTVfp7SC7HJ1ssF0PXWT08e
-         maZManOa5G3BTLFmqySoNEw3vwwlVwoNXIAxXCNrsWAOjv3SOVw07aBFhUiFB77wXtz3
-         6nhD2+W0v88ruT10Aig3zmbiv0c0nFaQ6eTDlcToDuP9tb8F9SbODraysTlHVItw6RP1
-         A1XEvtCN3aEgO6ciA9e2aLZLR8rnAVxuHPyI5hzvTnpKt1VoigO81QBdrYn6xPUlMwTH
-         p6sxaNchGfarQYj6DmEzhcNtoeIkgaKzHbiY5wn8o3E3F16Zq4WvO4unMKqAYwhA9Ohx
-         ueJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759854115; x=1760458915;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JPke7s3EpbXC6ErmX/FPvC/unGHuc//hg1lOBj1qibA=;
-        b=kHTen0vEandVyhc3SH/VtrH7ShNZpZTZGNH3x4ofeAbGn0E+ACZOLro396TOWIHn0b
-         nS9y2uQ0uCb9os4dWAXN51kv4kMzJfI903cZ7rt5ATxyKeawfhRpmHjTfJ8SUQ7EPexs
-         oqTgbYuu57tYq1jeZxbwPgOj/yh2jkTej1sAiFlDMYWaSHDlN1oE797lmGejODJwl8DL
-         y4+wvlMFMtjR+0aWWAeTXkKyEBMXU8+5uLt9n4HAxSlKJ+K7MPdeuXSe+UGIpLZ3ygiP
-         spQ1mWnR69jtmRD/SQBRAf+XP+kwpdb1ASvNZRiKFW5FHz2+gvXLcZqfDyE9npfQ3fkK
-         M9NA==
-X-Forwarded-Encrypted: i=1; AJvYcCV634QUeoPdmHR5JqY+Me/CjSxTr7ojS0jasYNqIu8BiPwdtJrfQP9B9Qt5g4VYMnHJD/7SBdonSUmMqmk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9hq53AyfOh86n/X+knJL53MujT30vcCwy19ySoP0WocR4qdek
-	Bq5GkNB0+DH42xlYzhbPRdF/oAwgCri+D4DvV4IGcpA0a7ZiOBoEDUt3KEkkwiO00kheHGk2RQg
-	+jg0zlpXMq62LJBGJLw==
-X-Google-Smtp-Source: AGHT+IH9zRUnvVJnJ2rKg3ul1/L1v9CwXrOUbkfQHeRTwHBdeUKC3Y5EGru7TMDFalytr+scT+ACzRCj8l6otsM=
-X-Received: from wmri12-n1.prod.google.com ([2002:a05:600c:8a0c:10b0:46e:1110:d730])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1395:b0:46e:27fb:17f0 with SMTP id 5b1f17b1804b1-46fa9aa204cmr1824285e9.9.1759854115350;
- Tue, 07 Oct 2025 09:21:55 -0700 (PDT)
-Date: Tue,  7 Oct 2025 16:21:36 +0000
-In-Reply-To: <20251002075202.11306-1-acsjakub@amazon.de>
+	s=arc-20240116; t=1759854197; c=relaxed/simple;
+	bh=1u+DRj2qq4EJFBE9su1RLUR4e/nL+dw8v3qNPKJNM7U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=InmQk2U4WW1SbyQ0BRdGI7s07rGyFx85b6blscy+ZD6m5YXxHp3M6QllVtdovMDOGxVShLtatD1MGn7iKA6HFz2fxVwo5FLc9D2MlRTZIKqTt3EZGEM46SSm+6EqFHaQLeIaXicVu732R7fD2Ypqe/N712zQDs1eGvggX97KfBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=TZ8ZwICL; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=OzhfuRPl3cWsY88R0JG8sjwC2bLZ4eZCnz7e+4pOo8M=; b=TZ8ZwICL/6skD28FbzN0Qbtnik
+	FQ+clt1d+oS+/P9QJOhDh8YDSWD7/z93gWR/b9LfUcoq8shRTMctheSGFsgF7zKOS64nGBwtCyv6i
+	SMBhzbFZyEiI1+1aWgTC945y6TDBqZWRTMZ0ipFrcXsNqzh47C9ZW3cjN0daaaDpmBj5ZIVUdrQuB
+	KNd/o5I8OyKJ3GL5I4rYXk9NXOtLJs5N7MwknEUBiM0MEXRnCskbEuAxLruNJB6msdVW7HZfhYgpN
+	Ja4106gwycp6ouYdLNAcHyJNJsvlhRLeUtVu/MjdF4JbxlNVSHfq7BAkPP7rzAWsXvTg3KdaPc12v
+	LJewPk0g==;
+Received: from [58.29.143.236] (helo=[192.168.1.7])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1v6ASo-006GuK-9m; Tue, 07 Oct 2025 18:22:58 +0200
+Message-ID: <09b9a30a-06c8-4664-a484-7b37091782c4@igalia.com>
+Date: Wed, 8 Oct 2025 01:22:47 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251002075202.11306-1-acsjakub@amazon.de>
-X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
-Message-ID: <20251007162136.1885546-1-aliceryhl@google.com>
-Subject: [PATCH] mm: use enum for vm_flags
-From: Alice Ryhl <aliceryhl@google.com>
-To: acsjakub@amazon.de
-Cc: akpm@linux-foundation.org, axelrasmussen@google.com, 
-	chengming.zhou@linux.dev, david@redhat.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, peterx@redhat.com, 
-	xu.xin16@zte.com.cn, rust-for-linux@vger.kernel.org, 
-	Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] tools/sched_ext: Strip compatibility macros for
+ cgroup and dispatch APIs
+To: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+ Andrea Righi <arighi@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev
+References: <20251007015147.2496026-1-tj@kernel.org>
+ <20251007015147.2496026-2-tj@kernel.org>
+From: Changwoo Min <changwoo@igalia.com>
+Content-Language: en-US, ko-KR, en-US-large, ko
+In-Reply-To: <20251007015147.2496026-2-tj@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The bindgen tool is better able to handle BIT(_) declarations when used
-in an enum.
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
-Hi Jakub,
 
-what do you think about modifying the patch like this to use an enum? It
-resolves the issues brought up in
-	https://lore.kernel.org/all/CAH5fLghTu-Zcm9e3Hy07nNtvB_-hRjojAWDoq-hhBYGE7LPEbQ@mail.gmail.com/
+On 10/7/25 10:51, Tejun Heo wrote:
+> Enough time has passed since the introduction of scx_bpf_task_cgroup() and
+> the scx_bpf_dispatch* -> scx_bpf_dsq* kfunc renaming. Strip the compatibility
+> macros.
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
 
-Feel free to squash this patch into your patch.
+Acked-by: Changwoo Min <changwoo@igalia.com>
 
- include/linux/mm.h              | 90 +++++++++++++++++----------------
- rust/bindings/bindings_helper.h |  1 -
- 2 files changed, 46 insertions(+), 45 deletions(-)
+Thanks!
+Changwoo Min
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 7916d527f687..69da7ce13e50 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -273,57 +273,58 @@ extern unsigned int kobjsize(const void *objp);
-  * vm_flags in vm_area_struct, see mm_types.h.
-  * When changing, update also include/trace/events/mmflags.h
-  */
--#define VM_NONE		0
-+enum {
-+	VM_NONE		= 0,
- 
--#define VM_READ		BIT(0)		/* currently active flags */
--#define VM_WRITE	BIT(1)
--#define VM_EXEC		BIT(2)
--#define VM_SHARED	BIT(3)
-+	VM_READ		= BIT(0),		/* currently active flags */
-+	VM_WRITE	= BIT(1),
-+	VM_EXEC		= BIT(2),
-+	VM_SHARED	= BIT(3),
- 
- /* mprotect() hardcodes VM_MAYREAD >> 4 == VM_READ, and so for r/w/x bits. */
--#define VM_MAYREAD	BIT(4)		/* limits for mprotect() etc */
--#define VM_MAYWRITE	BIT(5)
--#define VM_MAYEXEC	BIT(6)
--#define VM_MAYSHARE	BIT(7)
-+	VM_MAYREAD	= BIT(4),		/* limits for mprotect() etc */
-+	VM_MAYWRITE	= BIT(5),
-+	VM_MAYEXEC	= BIT(6),
-+	VM_MAYSHARE	= BIT(7),
- 
--#define VM_GROWSDOWN	BIT(8)		/* general info on the segment */
-+	VM_GROWSDOWN	= BIT(8),		/* general info on the segment */
- #ifdef CONFIG_MMU
--#define VM_UFFD_MISSING	BIT(9)		/* missing pages tracking */
-+	VM_UFFD_MISSING	= BIT(9),		/* missing pages tracking */
- #else /* CONFIG_MMU */
--#define VM_MAYOVERLAY	BIT(9)		/* nommu: R/O MAP_PRIVATE mapping that might overlay a file mapping */
-+	VM_MAYOVERLAY	= BIT(9),		/* nommu: R/O MAP_PRIVATE mapping that might overlay a file mapping */
- #define VM_UFFD_MISSING	0
- #endif /* CONFIG_MMU */
--#define VM_PFNMAP	BIT(10)		/* Page-ranges managed without "struct page", just pure PFN */
--#define VM_UFFD_WP	BIT(12)		/* wrprotect pages tracking */
--
--#define VM_LOCKED	BIT(13)
--#define VM_IO           BIT(14)		/* Memory mapped I/O or similar */
--
--					/* Used by sys_madvise() */
--#define VM_SEQ_READ	BIT(15)		/* App will access data sequentially */
--#define VM_RAND_READ	BIT(16)		/* App will not benefit from clustered reads */
--
--#define VM_DONTCOPY	BIT(17)		/* Do not copy this vma on fork */
--#define VM_DONTEXPAND	BIT(18)		/* Cannot expand with mremap() */
--#define VM_LOCKONFAULT	BIT(19)		/* Lock the pages covered when they are faulted in */
--#define VM_ACCOUNT	BIT(20)		/* Is a VM accounted object */
--#define VM_NORESERVE	BIT(21)		/* should the VM suppress accounting */
--#define VM_HUGETLB	BIT(22)		/* Huge TLB Page VM */
--#define VM_SYNC		BIT(23)		/* Synchronous page faults */
--#define VM_ARCH_1	BIT(24)		/* Architecture-specific flag */
--#define VM_WIPEONFORK	BIT(25)		/* Wipe VMA contents in child. */
--#define VM_DONTDUMP	BIT(26)		/* Do not include in the core dump */
-+	VM_PFNMAP	= BIT(10),		/* Page-ranges managed without "struct page", just pure PFN */
-+	VM_UFFD_WP	= BIT(12),		/* wrprotect pages tracking */
-+
-+	VM_LOCKED	= BIT(13),
-+	VM_IO           = BIT(14),		/* Memory mapped I/O or similar */
-+
-+						/* Used by sys_madvise() */
-+	VM_SEQ_READ	= BIT(15),		/* App will access data sequentially */
-+	VM_RAND_READ	= BIT(16),		/* App will not benefit from clustered reads */
-+
-+	VM_DONTCOPY	= BIT(17),		/* Do not copy this vma on fork */
-+	VM_DONTEXPAND	= BIT(18),		/* Cannot expand with mremap() */
-+	VM_LOCKONFAULT	= BIT(19),		/* Lock the pages covered when they are faulted in */
-+	VM_ACCOUNT	= BIT(20),		/* Is a VM accounted object */
-+	VM_NORESERVE	= BIT(21),		/* should the VM suppress accounting */
-+	VM_HUGETLB	= BIT(22),		/* Huge TLB Page VM */
-+	VM_SYNC		= BIT(23),		/* Synchronous page faults */
-+	VM_ARCH_1	= BIT(24),		/* Architecture-specific flag */
-+	VM_WIPEONFORK	= BIT(25),		/* Wipe VMA contents in child. */
-+	VM_DONTDUMP	= BIT(26),		/* Do not include in the core dump */
- 
- #ifdef CONFIG_MEM_SOFT_DIRTY
--# define VM_SOFTDIRTY	BIT(27)		/* Not soft dirty clean area */
-+	VM_SOFTDIRTY	= BIT(27),		/* Not soft dirty clean area */
- #else
- # define VM_SOFTDIRTY	0
- #endif
- 
--#define VM_MIXEDMAP	BIT(28)		/* Can contain "struct page" and pure PFN pages */
--#define VM_HUGEPAGE	BIT(29)		/* MADV_HUGEPAGE marked this vma */
--#define VM_NOHUGEPAGE	BIT(30)		/* MADV_NOHUGEPAGE marked this vma */
--#define VM_MERGEABLE	BIT(31)		/* KSM may merge identical pages */
-+	VM_MIXEDMAP	= BIT(28),		/* Can contain "struct page" and pure PFN pages */
-+	VM_HUGEPAGE	= BIT(29),		/* MADV_HUGEPAGE marked this vma */
-+	VM_NOHUGEPAGE	= BIT(30),		/* MADV_NOHUGEPAGE marked this vma */
-+	VM_MERGEABLE	= BIT(31),		/* KSM may merge identical pages */
- 
- #ifdef CONFIG_ARCH_USES_HIGH_VMA_FLAGS
- #define VM_HIGH_ARCH_BIT_0	32	/* bit only usable on 64-bit architectures */
-@@ -333,14 +334,15 @@ extern unsigned int kobjsize(const void *objp);
- #define VM_HIGH_ARCH_BIT_4	36	/* bit only usable on 64-bit architectures */
- #define VM_HIGH_ARCH_BIT_5	37	/* bit only usable on 64-bit architectures */
- #define VM_HIGH_ARCH_BIT_6	38	/* bit only usable on 64-bit architectures */
--#define VM_HIGH_ARCH_0	BIT(VM_HIGH_ARCH_BIT_0)
--#define VM_HIGH_ARCH_1	BIT(VM_HIGH_ARCH_BIT_1)
--#define VM_HIGH_ARCH_2	BIT(VM_HIGH_ARCH_BIT_2)
--#define VM_HIGH_ARCH_3	BIT(VM_HIGH_ARCH_BIT_3)
--#define VM_HIGH_ARCH_4	BIT(VM_HIGH_ARCH_BIT_4)
--#define VM_HIGH_ARCH_5	BIT(VM_HIGH_ARCH_BIT_5)
--#define VM_HIGH_ARCH_6	BIT(VM_HIGH_ARCH_BIT_6)
-+	VM_HIGH_ARCH_0	= BIT(VM_HIGH_ARCH_BIT_0),
-+	VM_HIGH_ARCH_1	= BIT(VM_HIGH_ARCH_BIT_1),
-+	VM_HIGH_ARCH_2	= BIT(VM_HIGH_ARCH_BIT_2),
-+	VM_HIGH_ARCH_3	= BIT(VM_HIGH_ARCH_BIT_3),
-+	VM_HIGH_ARCH_4	= BIT(VM_HIGH_ARCH_BIT_4),
-+	VM_HIGH_ARCH_5	= BIT(VM_HIGH_ARCH_BIT_5),
-+	VM_HIGH_ARCH_6	= BIT(VM_HIGH_ARCH_BIT_6),
- #endif /* CONFIG_ARCH_USES_HIGH_VMA_FLAGS */
-+};
- 
- #ifdef CONFIG_ARCH_HAS_PKEYS
- # define VM_PKEY_SHIFT VM_HIGH_ARCH_BIT_0
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index 2e43c66635a2..04b75d4d01c3 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -108,7 +108,6 @@ const xa_mark_t RUST_CONST_HELPER_XA_PRESENT = XA_PRESENT;
- 
- const gfp_t RUST_CONST_HELPER_XA_FLAGS_ALLOC = XA_FLAGS_ALLOC;
- const gfp_t RUST_CONST_HELPER_XA_FLAGS_ALLOC1 = XA_FLAGS_ALLOC1;
--const vm_flags_t RUST_CONST_HELPER_VM_MERGEABLE = VM_MERGEABLE;
- 
- #if IS_ENABLED(CONFIG_ANDROID_BINDER_IPC_RUST)
- #include "../../drivers/android/binder/rust_binder.h"
--- 
-2.51.0.618.g983fd99d29-goog
+> ---
+>   tools/sched_ext/include/scx/compat.bpf.h | 108 +----------------------
+>   tools/sched_ext/scx_flatcg.bpf.c         |  10 +--
+>   tools/sched_ext/scx_qmap.bpf.c           |  14 ++-
+>   3 files changed, 12 insertions(+), 120 deletions(-)
+> 
+> diff --git a/tools/sched_ext/include/scx/compat.bpf.h b/tools/sched_ext/include/scx/compat.bpf.h
+> index dd9144624dc9..d979f16a3ae2 100644
+> --- a/tools/sched_ext/include/scx/compat.bpf.h
+> +++ b/tools/sched_ext/include/scx/compat.bpf.h
+> @@ -15,121 +15,17 @@
+>   	__ret;									\
+>   })
+>   
+> -/* v6.12: 819513666966 ("sched_ext: Add cgroup support") */
+> -#define __COMPAT_scx_bpf_task_cgroup(p)						\
+> -	(bpf_ksym_exists(scx_bpf_task_cgroup) ?					\
+> -	 scx_bpf_task_cgroup((p)) : NULL)
+> -
+>   /*
+> - * v6.13: The verb `dispatch` was too overloaded and confusing. kfuncs are
+> - * renamed to unload the verb.
+> - *
+> - * Build error is triggered if old names are used. New binaries work with both
+> - * new and old names. The compat macros will be removed on v6.15 release.
+> + * v6.15: 950ad93df2fc ("bpf: add kfunc for populating cpumask bits")
+>    *
+> - * scx_bpf_dispatch_from_dsq() and friends were added during v6.12 by
+> - * 4c30f5ce4f7a ("sched_ext: Implement scx_bpf_dispatch[_vtime]_from_dsq()").
+> - * Preserve __COMPAT macros until v6.15.
+> + * Compat macro will be dropped on v6.19 release.
+>    */
+> -void scx_bpf_dispatch___compat(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags) __ksym __weak;
+> -void scx_bpf_dispatch_vtime___compat(struct task_struct *p, u64 dsq_id, u64 slice, u64 vtime, u64 enq_flags) __ksym __weak;
+> -bool scx_bpf_consume___compat(u64 dsq_id) __ksym __weak;
+> -void scx_bpf_dispatch_from_dsq_set_slice___compat(struct bpf_iter_scx_dsq *it__iter, u64 slice) __ksym __weak;
+> -void scx_bpf_dispatch_from_dsq_set_vtime___compat(struct bpf_iter_scx_dsq *it__iter, u64 vtime) __ksym __weak;
+> -bool scx_bpf_dispatch_from_dsq___compat(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 enq_flags) __ksym __weak;
+> -bool scx_bpf_dispatch_vtime_from_dsq___compat(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 enq_flags) __ksym __weak;
+>   int bpf_cpumask_populate(struct cpumask *dst, void *src, size_t src__sz) __ksym __weak;
+>   
+> -#define scx_bpf_dsq_insert(p, dsq_id, slice, enq_flags)				\
+> -	(bpf_ksym_exists(scx_bpf_dsq_insert) ?					\
+> -	 scx_bpf_dsq_insert((p), (dsq_id), (slice), (enq_flags)) :		\
+> -	 scx_bpf_dispatch___compat((p), (dsq_id), (slice), (enq_flags)))
+> -
+> -#define scx_bpf_dsq_insert_vtime(p, dsq_id, slice, vtime, enq_flags)		\
+> -	(bpf_ksym_exists(scx_bpf_dsq_insert_vtime) ?				\
+> -	 scx_bpf_dsq_insert_vtime((p), (dsq_id), (slice), (vtime), (enq_flags)) : \
+> -	 scx_bpf_dispatch_vtime___compat((p), (dsq_id), (slice), (vtime), (enq_flags)))
+> -
+> -#define scx_bpf_dsq_move_to_local(dsq_id)					\
+> -	(bpf_ksym_exists(scx_bpf_dsq_move_to_local) ?				\
+> -	 scx_bpf_dsq_move_to_local((dsq_id)) :					\
+> -	 scx_bpf_consume___compat((dsq_id)))
+> -
+> -#define __COMPAT_scx_bpf_dsq_move_set_slice(it__iter, slice)			\
+> -	(bpf_ksym_exists(scx_bpf_dsq_move_set_slice) ?				\
+> -	 scx_bpf_dsq_move_set_slice((it__iter), (slice)) :			\
+> -	 (bpf_ksym_exists(scx_bpf_dispatch_from_dsq_set_slice___compat) ?	\
+> -	  scx_bpf_dispatch_from_dsq_set_slice___compat((it__iter), (slice)) :	\
+> -	  (void)0))
+> -
+> -#define __COMPAT_scx_bpf_dsq_move_set_vtime(it__iter, vtime)			\
+> -	(bpf_ksym_exists(scx_bpf_dsq_move_set_vtime) ?				\
+> -	 scx_bpf_dsq_move_set_vtime((it__iter), (vtime)) :			\
+> -	 (bpf_ksym_exists(scx_bpf_dispatch_from_dsq_set_vtime___compat) ?	\
+> -	  scx_bpf_dispatch_from_dsq_set_vtime___compat((it__iter), (vtime)) :	\
+> -	  (void) 0))
+> -
+> -#define __COMPAT_scx_bpf_dsq_move(it__iter, p, dsq_id, enq_flags)		\
+> -	(bpf_ksym_exists(scx_bpf_dsq_move) ?					\
+> -	 scx_bpf_dsq_move((it__iter), (p), (dsq_id), (enq_flags)) :		\
+> -	 (bpf_ksym_exists(scx_bpf_dispatch_from_dsq___compat) ?			\
+> -	  scx_bpf_dispatch_from_dsq___compat((it__iter), (p), (dsq_id), (enq_flags)) : \
+> -	  false))
+> -
+> -#define __COMPAT_scx_bpf_dsq_move_vtime(it__iter, p, dsq_id, enq_flags)		\
+> -	(bpf_ksym_exists(scx_bpf_dsq_move_vtime) ?				\
+> -	 scx_bpf_dsq_move_vtime((it__iter), (p), (dsq_id), (enq_flags)) :	\
+> -	 (bpf_ksym_exists(scx_bpf_dispatch_vtime_from_dsq___compat) ?		\
+> -	  scx_bpf_dispatch_vtime_from_dsq___compat((it__iter), (p), (dsq_id), (enq_flags)) : \
+> -	  false))
+> -
+>   #define __COMPAT_bpf_cpumask_populate(cpumask, src, size__sz)		\
+>   	(bpf_ksym_exists(bpf_cpumask_populate) ?			\
+>   	 (bpf_cpumask_populate(cpumask, src, size__sz)) : -EOPNOTSUPP)
+>   
+> -#define scx_bpf_dispatch(p, dsq_id, slice, enq_flags)				\
+> -	_Static_assert(false, "scx_bpf_dispatch() renamed to scx_bpf_dsq_insert()")
+> -
+> -#define scx_bpf_dispatch_vtime(p, dsq_id, slice, vtime, enq_flags)		\
+> -	_Static_assert(false, "scx_bpf_dispatch_vtime() renamed to scx_bpf_dsq_insert_vtime()")
+> -
+> -#define scx_bpf_consume(dsq_id) ({						\
+> -	_Static_assert(false, "scx_bpf_consume() renamed to scx_bpf_dsq_move_to_local()"); \
+> -	false;									\
+> -})
+> -
+> -#define scx_bpf_dispatch_from_dsq_set_slice(it__iter, slice)		\
+> -	_Static_assert(false, "scx_bpf_dispatch_from_dsq_set_slice() renamed to scx_bpf_dsq_move_set_slice()")
+> -
+> -#define scx_bpf_dispatch_from_dsq_set_vtime(it__iter, vtime)		\
+> -	_Static_assert(false, "scx_bpf_dispatch_from_dsq_set_vtime() renamed to scx_bpf_dsq_move_set_vtime()")
+> -
+> -#define scx_bpf_dispatch_from_dsq(it__iter, p, dsq_id, enq_flags) ({	\
+> -	_Static_assert(false, "scx_bpf_dispatch_from_dsq() renamed to scx_bpf_dsq_move()"); \
+> -	false;									\
+> -})
+> -
+> -#define scx_bpf_dispatch_vtime_from_dsq(it__iter, p, dsq_id, enq_flags) ({  \
+> -	_Static_assert(false, "scx_bpf_dispatch_vtime_from_dsq() renamed to scx_bpf_dsq_move_vtime()"); \
+> -	false;									\
+> -})
+> -
+> -#define __COMPAT_scx_bpf_dispatch_from_dsq_set_slice(it__iter, slice)		\
+> -	_Static_assert(false, "__COMPAT_scx_bpf_dispatch_from_dsq_set_slice() renamed to __COMPAT_scx_bpf_dsq_move_set_slice()")
+> -
+> -#define __COMPAT_scx_bpf_dispatch_from_dsq_set_vtime(it__iter, vtime)		\
+> -	_Static_assert(false, "__COMPAT_scx_bpf_dispatch_from_dsq_set_vtime() renamed to __COMPAT_scx_bpf_dsq_move_set_vtime()")
+> -
+> -#define __COMPAT_scx_bpf_dispatch_from_dsq(it__iter, p, dsq_id, enq_flags) ({	\
+> -	_Static_assert(false, "__COMPAT_scx_bpf_dispatch_from_dsq() renamed to __COMPAT_scx_bpf_dsq_move()"); \
+> -	false;									\
+> -})
+> -
+> -#define __COMPAT_scx_bpf_dispatch_vtime_from_dsq(it__iter, p, dsq_id, enq_flags) ({  \
+> -	_Static_assert(false, "__COMPAT_scx_bpf_dispatch_vtime_from_dsq() renamed to __COMPAT_scx_bpf_dsq_move_vtime()"); \
+> -	false;									\
+> -})
+> -
+>   /**
+>    * __COMPAT_is_enq_cpu_selected - Test if SCX_ENQ_CPU_SELECTED is on
+>    * in a compatible way. We will preserve this __COMPAT helper until v6.16.
+> diff --git a/tools/sched_ext/scx_flatcg.bpf.c b/tools/sched_ext/scx_flatcg.bpf.c
+> index 2c720e3ecad5..43126858b8e4 100644
+> --- a/tools/sched_ext/scx_flatcg.bpf.c
+> +++ b/tools/sched_ext/scx_flatcg.bpf.c
+> @@ -382,7 +382,7 @@ void BPF_STRUCT_OPS(fcg_enqueue, struct task_struct *p, u64 enq_flags)
+>   		return;
+>   	}
+>   
+> -	cgrp = __COMPAT_scx_bpf_task_cgroup(p);
+> +	cgrp = scx_bpf_task_cgroup(p);
+>   	cgc = find_cgrp_ctx(cgrp);
+>   	if (!cgc)
+>   		goto out_release;
+> @@ -508,7 +508,7 @@ void BPF_STRUCT_OPS(fcg_runnable, struct task_struct *p, u64 enq_flags)
+>   {
+>   	struct cgroup *cgrp;
+>   
+> -	cgrp = __COMPAT_scx_bpf_task_cgroup(p);
+> +	cgrp = scx_bpf_task_cgroup(p);
+>   	update_active_weight_sums(cgrp, true);
+>   	bpf_cgroup_release(cgrp);
+>   }
+> @@ -521,7 +521,7 @@ void BPF_STRUCT_OPS(fcg_running, struct task_struct *p)
+>   	if (fifo_sched)
+>   		return;
+>   
+> -	cgrp = __COMPAT_scx_bpf_task_cgroup(p);
+> +	cgrp = scx_bpf_task_cgroup(p);
+>   	cgc = find_cgrp_ctx(cgrp);
+>   	if (cgc) {
+>   		/*
+> @@ -564,7 +564,7 @@ void BPF_STRUCT_OPS(fcg_stopping, struct task_struct *p, bool runnable)
+>   	if (!taskc->bypassed_at)
+>   		return;
+>   
+> -	cgrp = __COMPAT_scx_bpf_task_cgroup(p);
+> +	cgrp = scx_bpf_task_cgroup(p);
+>   	cgc = find_cgrp_ctx(cgrp);
+>   	if (cgc) {
+>   		__sync_fetch_and_add(&cgc->cvtime_delta,
+> @@ -578,7 +578,7 @@ void BPF_STRUCT_OPS(fcg_quiescent, struct task_struct *p, u64 deq_flags)
+>   {
+>   	struct cgroup *cgrp;
+>   
+> -	cgrp = __COMPAT_scx_bpf_task_cgroup(p);
+> +	cgrp = scx_bpf_task_cgroup(p);
+>   	update_active_weight_sums(cgrp, false);
+>   	bpf_cgroup_release(cgrp);
+>   }
+> diff --git a/tools/sched_ext/scx_qmap.bpf.c b/tools/sched_ext/scx_qmap.bpf.c
+> index 3072b593f898..c67dac78a4c6 100644
+> --- a/tools/sched_ext/scx_qmap.bpf.c
+> +++ b/tools/sched_ext/scx_qmap.bpf.c
+> @@ -320,12 +320,9 @@ static bool dispatch_highpri(bool from_timer)
+>   
+>   		if (tctx->highpri) {
+>   			/* exercise the set_*() and vtime interface too */
+> -			__COMPAT_scx_bpf_dsq_move_set_slice(
+> -				BPF_FOR_EACH_ITER, slice_ns * 2);
+> -			__COMPAT_scx_bpf_dsq_move_set_vtime(
+> -				BPF_FOR_EACH_ITER, highpri_seq++);
+> -			__COMPAT_scx_bpf_dsq_move_vtime(
+> -				BPF_FOR_EACH_ITER, p, HIGHPRI_DSQ, 0);
+> +			scx_bpf_dsq_move_set_slice(BPF_FOR_EACH_ITER, slice_ns * 2);
+> +			scx_bpf_dsq_move_set_vtime(BPF_FOR_EACH_ITER, highpri_seq++);
+> +			scx_bpf_dsq_move_vtime(BPF_FOR_EACH_ITER, p, HIGHPRI_DSQ, 0);
+>   		}
+>   	}
+>   
+> @@ -342,9 +339,8 @@ static bool dispatch_highpri(bool from_timer)
+>   		else
+>   			cpu = scx_bpf_pick_any_cpu(p->cpus_ptr, 0);
+>   
+> -		if (__COMPAT_scx_bpf_dsq_move(BPF_FOR_EACH_ITER, p,
+> -					      SCX_DSQ_LOCAL_ON | cpu,
+> -					      SCX_ENQ_PREEMPT)) {
+> +		if (scx_bpf_dsq_move(BPF_FOR_EACH_ITER, p, SCX_DSQ_LOCAL_ON | cpu,
+> +				     SCX_ENQ_PREEMPT)) {
+>   			if (cpu == this_cpu) {
+>   				dispatched = true;
+>   				__sync_fetch_and_add(&nr_expedited_local, 1);
 
 
