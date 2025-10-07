@@ -1,276 +1,169 @@
-Return-Path: <linux-kernel+bounces-844654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 056F0BC26E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 20:47:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B201BC26F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 20:48:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BFAB19A172F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 18:48:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AACD719A1A03
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 18:48:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93C32E9753;
-	Tue,  7 Oct 2025 18:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F7E2E92DA;
+	Tue,  7 Oct 2025 18:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="K3bvBi1+"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DnVbjeq4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6EA1E521B
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 18:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC1221578D;
+	Tue,  7 Oct 2025 18:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759862865; cv=none; b=AlMpXqvyVs2lX9889nFFMVfaCjozz9euuNCWObLDUVsvQIvJ1ELJqLL+cfiY1QpUlumkpdaxta/Y8nKVyHacvlC6fXxu1yW7TroTM8phNgrXnRnAeu+V2HAhMilO2ZAjMUKHygR/2tLotsx7ygfVsMdP2QBZJtrXdeE0cOBw2Bs=
+	t=1759862891; cv=none; b=H7tugmEIiM2RJiqycRzA/Nl+JEB5Gy3biCYacElGC8bFGl/QBwwGGWMQRuXp2P0dZzFaFhLZlBA31kyEAl98D/6lv48ZdQaGUplID/trlP8Vx5TM1YnSKVwTR0r3lE27RPoX20spI9oFyPaqvzfXgV6RP+SuA8ztSj7UaiQEpL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759862865; c=relaxed/simple;
-	bh=GGtiJAlfcZTDjSiTu3CY2Jidx0+ml7dlf3+LKBL2U88=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cNkRqWZEnwtPGR0SJn0LIprF+HD9H0kKy0Xv6CpkFpw55sUXjh64ebaqSeZdz72AZ1Psx82JcQVKpi2Rs60eW0ue9oJrEfUC0gw7lZ3VfZTpNndGHHnNEfOrGmu9ja1Ghlsig0dtnPCXTeoE9yjYSMhU0m0X/vbl10pFnqGhmGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=K3bvBi1+; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-854cfde0ca2so906811985a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 11:47:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1759862861; x=1760467661; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
-         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=58+grWU1+fLQ3iYvFx1p0RHwupl8wNBxalqFpZYiDLA=;
-        b=K3bvBi1+sO8Ou/2uDvl67IrhUaz6KSNJiXLC4z2yqEw+52UCLcVUoIg+E1XTMC6lj2
-         OAM3yXstaKkam6C1V9uk9JCDHQY7j1m3naXpIhWVvyQXqebIGSDVro2v+JPjqn4y2hpk
-         0BqnRHCV2kJcSZoaxqobVrf6hd70cUhtxfvhoiuKBfdfssyBfZaFuiYKWExw2r8PU45i
-         0PmqyGlYQgB/0JSfxnkAhqThx8oX1G+jdJ2Ujz4xkZqylDcrXXIzbHHD0u7DZbkAt59Q
-         x+BhtDXTPhOFtopb9eYMT+/pCdp3L4i6CmN+cDe7i5KOTtHNVsVyoEtqPq6pkAmbdaaw
-         ml9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759862861; x=1760467661;
-        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
-         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=58+grWU1+fLQ3iYvFx1p0RHwupl8wNBxalqFpZYiDLA=;
-        b=CkwAJZluMEmn/PNcNhbiL9EDuCfpaSEDVrf9tdYwcImfoddH+j6yyee3hrTT44S3LL
-         CKnnelDy3GmbABL9knX58IaQ3rcvBDffFbFdC90L3f7vOlk0G2QohsVxhh8XSJudtb+U
-         kSvF6U/Vl6bEzE6987j1Db3IiPmhLYPMJ8sqHUSzV/31+Zz/xLbRdEeOf8Cd/zK0NL4P
-         PcIad8wLouZ3e5zH/Xtqdp9q3yagIeRtjN0FynJ1XHzORoX/BrOZ1WfntMpP4s26jF/O
-         6aeBRnevXiFSwJU0lqibiFy0mfwQ5/Hsq2q1nfN1F+h3sh+U4h1jy+Hm2+nl2awv2Vwz
-         Dokw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ+kvHQiMe9XsAnhpN1o3ispOexsEcppfN/rJuHOqaZ7C6M0Dx8lD4oncoz7flScEZ61zsytJsufsiIA4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj4BcmkYoQCdkfoDKJL2Rqn0elJeQy6cZ584XjyPg6cDpsdH6n
-	SFUaWzyUwtMMDWnm3ddlITbGqilMoFFYZsrN3MiSWcjsK+96+ndJY8hqtv1aoHcGEPU=
-X-Gm-Gg: ASbGncszhySTjWtkWsHO/8x8cyBRB27F/2LyhZXePwRJhLmKoyD9UMvnRhDsIYt343C
-	Jh50fnZOLn3yd9Feu1xYYoCTdcOjfvdWgaWlbRU7VroGr6l67rLMD8aFWYy1MfgMSUPYgSAC2Xd
-	fLynV2ecv7/FiaJBf+acnTtL0HKdXI1gbG6eudDzRXmCl+1mDcWTZHlvTVsfnJbWcacu9k1CmGm
-	SQcTIxS+UAOB8BbalYDS2nulu80oo7sLUE+cqxs3zZGb3dtk8qSxtgV5S9IoXanGVXbRmONgQ9e
-	e64r+SZNS8+P04BEKbakXCoFKcXm3+aCgUdz889wI/ohGmbHdTinBr585F4uaKM8jDH3FlKFZAE
-	UIpDlbrwaSmcrmjwKYJSS3PYJTswDXkw2Y+gGw2+ZtpG4K1qOtHHl
-X-Google-Smtp-Source: AGHT+IGM6WgG6OTQoMVXMZbYSPPE54NLk24Y0L7yLT6AonwvB7ilumFcgtdxb3bcVhP4gw7WgQL0Xw==
-X-Received: by 2002:a05:620a:ac0b:b0:883:7309:c0eb with SMTP id af79cd13be357-8837309d08bmr41017885a.41.1759862860945;
-        Tue, 07 Oct 2025 11:47:40 -0700 (PDT)
-Received: from ?IPv6:2606:6d00:17:ebd3::c41? ([2606:6d00:17:ebd3::c41])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-87772278098sm1596357385a.16.2025.10.07.11.47.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 11:47:40 -0700 (PDT)
-Message-ID: <a57669be1d58e71229dedcf4acbe6eda201e45ea.camel@ndufresne.ca>
-Subject: Re: [PATCH 12/16] media: rockchip: rga: handle error interrupt
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Sven =?ISO-8859-1?Q?P=FCschel?= <s.pueschel@pengutronix.de>, Jacob Chen
-	 <jacob-chen@iotwrt.com>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, 
- Mauro Carvalho Chehab
-	 <mchehab@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Rob Herring
-	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	 <conor+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, kernel@pengutronix.de
-Date: Tue, 07 Oct 2025 14:47:38 -0400
-In-Reply-To: <20251007-spu-rga3-v1-12-36ad85570402@pengutronix.de>
-References: <20251007-spu-rga3-v1-0-36ad85570402@pengutronix.de>
-	 <20251007-spu-rga3-v1-12-36ad85570402@pengutronix.de>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-9ssd6DUBbBvl6JPlwbl3"
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1759862891; c=relaxed/simple;
+	bh=lDcAs5bI1E33Ft/c7uruoO9Prwy85Va0TOrAMqFpMI8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AhYrFZQ9u96JAoR/sMtOrkR9HUjkx0A/HTXS4hOe8mN3gRKlI7xr3RRT3iqV1lkl8IUSIv3GYFJiUgPNE/3znR0hE3Q6gUnRi8vnSPYYiJ5o9Gh/1DDxuBR/V1kSNcHYLvSvVya4XwVT89EgXLsIXQVzIx7C+6FgoCvCkIcP8xA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DnVbjeq4; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759862890; x=1791398890;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=lDcAs5bI1E33Ft/c7uruoO9Prwy85Va0TOrAMqFpMI8=;
+  b=DnVbjeq4xtSnvzr5naSOALjQQ1neFYhcjIaGPmGoGLNYSQDdu9ruSV36
+   /1VeMJWuhjY0zKKaDMrFUYTibCPXt7XsGj193GIcjZUQ/z4wbDK4bvPQK
+   k5P3mr5OkGkqEQN63MNso1HS9CpN6HcHd1uLYLDCpjKMC/fahkF4xfSke
+   JxcE+ebjwlcivhH8R+qfT8iEhHPVJlTC46r0P/SdJHr14X/wGqaj1/46+
+   Y9Z5Nph0lrXUsA740vhtp+D6IZfzbzDjHR+2D9nnq3L0oex2WtoDNmHBp
+   gvdXGy0vC8yTWlUFdEiEtxhXPVyD7uZElDzwJUTO70nxo4pZMuIDRa+rq
+   w==;
+X-CSE-ConnectionGUID: By4Ky3XDSz2D/aQeV6Zfrw==
+X-CSE-MsgGUID: 7Ex86J7kTVGoHl0tqHMjlQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11575"; a="61258924"
+X-IronPort-AV: E=Sophos;i="6.18,321,1751266800"; 
+   d="scan'208";a="61258924"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2025 11:48:07 -0700
+X-CSE-ConnectionGUID: 4WynR91aR5GohqtgQa/ETw==
+X-CSE-MsgGUID: UxRcNtC8TuGHiU3D8z+/XQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,321,1751266800"; 
+   d="scan'208";a="180041553"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.110.162]) ([10.125.110.162])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2025 11:48:06 -0700
+Message-ID: <3e3d2426-6296-4a61-beae-4e3ff5d60f2c@intel.com>
+Date: Tue, 7 Oct 2025 11:48:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 08/15] x86/vsyscall: Reorganize the page fault
+ emulation code
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "Mehta, Sohil" <sohil.mehta@intel.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+ "x86@kernel.org" <x86@kernel.org>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
+Cc: "corbet@lwn.net" <corbet@lwn.net>, "ardb@kernel.org" <ardb@kernel.org>,
+ "david.laight.linux@gmail.com" <david.laight.linux@gmail.com>,
+ "luto@kernel.org" <luto@kernel.org>,
+ "jpoimboe@kernel.org" <jpoimboe@kernel.org>,
+ "andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
+ "Luck, Tony" <tony.luck@intel.com>,
+ "alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
+ "kas@kernel.org" <kas@kernel.org>, "seanjc@google.com" <seanjc@google.com>,
+ "rdunlap@infradead.org" <rdunlap@infradead.org>,
+ "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
+ "vegard.nossum@oracle.com" <vegard.nossum@oracle.com>,
+ "xin@zytor.com" <xin@zytor.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "kees@kernel.org" <kees@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+ "geert@linux-m68k.org" <geert@linux-m68k.org>
+References: <20251007065119.148605-1-sohil.mehta@intel.com>
+ <20251007065119.148605-9-sohil.mehta@intel.com>
+ <a33d59c7add98dd9ef352ac95178821dbcd0ce0e.camel@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <a33d59c7add98dd9ef352ac95178821dbcd0ce0e.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 10/7/25 11:37, Edgecombe, Rick P wrote:
+>>  	/*
+>>  	 * No point in checking CS -- the only way to get here is a user mode
+>>  	 * trap to a high address, which means that we're in 64-bit user code.
+> I don't know. Is this as true any more? We are now sometimes guessing based on
+> regs->ip of a #GP. What if the kernel accidentally tries to jump to the vsyscall
+> address? Then we are reading the kernel stack and strange things. Maybe it's
+> worth replacing the comment with a check? Feel free to call this paranoid.
 
---=-9ssd6DUBbBvl6JPlwbl3
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+The first check in emulate_vsyscall() is:
 
-Le mardi 07 octobre 2025 =C3=A0 10:32 +0200, Sven P=C3=BCschel a =C3=A9crit=
-=C2=A0:
-> Handle the error interrupt status in preparation of the RGA3 addition.
-> This allows the buffer to be marked as done, as it would otherwise
-> be stuck in the queue.
->=20
-> The RGA3 needs a soft reset to properly work after an error occurred,
-> as it would otherwise cease to deliver new interrupts. Also the soft
-> reset avoids additional error interrupts to be triggered, which are
-> currently not supported by the rga_isr function.
-> As it is unknown how the RGA2 behaves in the error case, no
-> error interrupt was enabled and handled.
->=20
-> Signed-off-by: Sven P=C3=BCschel <s.pueschel@pengutronix.de>
-> ---
-> =C2=A0drivers/media/platform/rockchip/rga/rga-hw.c |=C2=A0 6 ++++--
-> =C2=A0drivers/media/platform/rockchip/rga/rga.c=C2=A0=C2=A0=C2=A0 | 32 ++=
-+++++++++++++++----------
-> -
-> =C2=A0drivers/media/platform/rockchip/rga/rga.h=C2=A0=C2=A0=C2=A0 |=C2=A0=
- 8 ++++++-
-> =C2=A03 files changed, 31 insertions(+), 15 deletions(-)
->=20
-> diff --git a/drivers/media/platform/rockchip/rga/rga-hw.c
-> b/drivers/media/platform/rockchip/rga/rga-hw.c
-> index
-> d54183d224b3e9c42d5503acf172257f2e736f7b..93822b5b8b15e76862bd022759eaa5c=
-b9552
-> dd76 100644
-> --- a/drivers/media/platform/rockchip/rga/rga-hw.c
-> +++ b/drivers/media/platform/rockchip/rga/rga-hw.c
-> @@ -459,7 +459,7 @@ static void rga_hw_start(struct rockchip_rga *rga,
-> =C2=A0	rga_write(rga, RGA_CMD_CTRL, 0x1);
-> =C2=A0}
-> =C2=A0
-> -static bool rga_handle_irq(struct rockchip_rga *rga)
-> +static enum rga_irq_result rga_handle_irq(struct rockchip_rga *rga)
-> =C2=A0{
-> =C2=A0	int intr;
-> =C2=A0
-> @@ -467,7 +467,9 @@ static bool rga_handle_irq(struct rockchip_rga *rga)
-> =C2=A0
-> =C2=A0	rga_mod(rga, RGA_INT, intr << 4, 0xf << 4);
-> =C2=A0
-> -	return intr & 0x04;
-> +	if (intr & 0x04)
-> +		return RGA_IRQ_DONE;
+       /* Write faults or kernel-privilege faults never get fixed up. */
+       if ((error_code & (X86_PF_WRITE | X86_PF_USER)) != X86_PF_USER)
+               return false;
 
-Since you reuse an old driver, would be nice to create proper defines for
-RGA_INT bit 3 (current command finish interrupt flag).
+If the kernel jumped to the vsyscall page, it would end up there, return
+false, and never reach the code near the "No point in checking CS" comment.
 
-> +	return RGA_IRQ_IGNORE;
-> =C2=A0}
-> =C2=A0
-> =C2=A0static void rga_get_version(struct rockchip_rga *rga)
-> diff --git a/drivers/media/platform/rockchip/rga/rga.c
-> b/drivers/media/platform/rockchip/rga/rga.c
-> index
-> 0a725841b0cfa41bbc5b861b8f5ceac2452fc2b5..3b5d2eb8e109f44af76dd2240a239b1=
-fa8a7
-> 8cee 100644
-> --- a/drivers/media/platform/rockchip/rga/rga.c
-> +++ b/drivers/media/platform/rockchip/rga/rga.c
-> @@ -56,30 +56,38 @@ static void device_run(void *prv)
-> =C2=A0static irqreturn_t rga_isr(int irq, void *prv)
-> =C2=A0{
-> =C2=A0	struct rockchip_rga *rga =3D prv;
-> +	struct vb2_v4l2_buffer *src, *dst;
-> +	struct rga_ctx *ctx =3D rga->curr;
-> +	enum rga_irq_result result;
-> =C2=A0
-> -	if (rga->hw->handle_irq(rga)) {
-> -		struct vb2_v4l2_buffer *src, *dst;
-> -		struct rga_ctx *ctx =3D rga->curr;
-> +	result =3D rga->hw->handle_irq(rga);
-> +	if (result =3D=3D RGA_IRQ_IGNORE)
-> +		return IRQ_HANDLED;
-> =C2=A0
-> -		WARN_ON(!ctx);
-> +	WARN_ON(!ctx);
-> =C2=A0
-> -		rga->curr =3D NULL;
-> +	rga->curr =3D NULL;
-> =C2=A0
-> -		src =3D v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
-> -		dst =3D v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
-> +	src =3D v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
-> +	dst =3D v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
-> =C2=A0
-> -		WARN_ON(!src);
-> -		WARN_ON(!dst);
-> +	WARN_ON(!src);
-> +	WARN_ON(!dst);
-> =C2=A0
-> -		v4l2_m2m_buf_copy_metadata(src, dst, true);
-> +	v4l2_m2m_buf_copy_metadata(src, dst, true);
-> =C2=A0
-> -		dst->sequence =3D ctx->csequence++;
-> +	dst->sequence =3D ctx->csequence++;
-> =C2=A0
-> +	if (result =3D=3D RGA_IRQ_DONE) {
-> =C2=A0		v4l2_m2m_buf_done(src, VB2_BUF_STATE_DONE);
-> =C2=A0		v4l2_m2m_buf_done(dst, VB2_BUF_STATE_DONE);
-> -		v4l2_m2m_job_finish(rga->m2m_dev, ctx->fh.m2m_ctx);
-> +	} else {
-> +		v4l2_m2m_buf_done(src, VB2_BUF_STATE_ERROR);
-> +		v4l2_m2m_buf_done(dst, VB2_BUF_STATE_ERROR)
+Right? Or am I misunderstanding the scenario you're calling out?
 
-I'm not fan of assumption that its an error on else case. If often lead to
-multiple calls. Please use an explicit error return.
-
-> ;
-> =C2=A0	}
-> =C2=A0
-> +	v4l2_m2m_job_finish(rga->m2m_dev, ctx->fh.m2m_ctx);
-
-What if you get an IRQ and none of the flags are raised ? I did see that in=
- the
-past, and that least to bad things happening.
-
-> +
-> =C2=A0	return IRQ_HANDLED;
-> =C2=A0}
-> =C2=A0
-> diff --git a/drivers/media/platform/rockchip/rga/rga.h
-> b/drivers/media/platform/rockchip/rga/rga.h
-> index
-> e19c4c82aca5ae2056f52d525138093fbbb81af8..dc4bb85707d12f5378c4891098cd7ea=
-4a4d7
-> 5e2d 100644
-> --- a/drivers/media/platform/rockchip/rga/rga.h
-> +++ b/drivers/media/platform/rockchip/rga/rga.h
-> @@ -143,6 +143,12 @@ static inline void rga_mod(struct rockchip_rga *rga,=
- u32
-> reg, u32 val, u32 mask)
-> =C2=A0	rga_write(rga, reg, temp);
-> =C2=A0};
-> =C2=A0
-> +enum rga_irq_result {
-> +	RGA_IRQ_IGNORE,
-> +	RGA_IRQ_DONE,
-> +	RGA_IRQ_ERROR,
-> +};
-> +
-> =C2=A0struct rga_hw {
-> =C2=A0	const char *card_type;
-> =C2=A0	bool has_internal_iommu;
-> @@ -152,7 +158,7 @@ struct rga_hw {
-> =C2=A0
-> =C2=A0	void (*start)(struct rockchip_rga *rga,
-> =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct rga_vb_buffer *src, struct =
-rga_vb_buffer *dst);
-> -	bool (*handle_irq)(struct rockchip_rga *rga);
-> +	enum rga_irq_result (*handle_irq)(struct rockchip_rga *rga);
-> =C2=A0	void (*get_version)(struct rockchip_rga *rga);
-> =C2=A0	void *(*try_format)(u32 *fourcc, bool is_output);
-> =C2=A0	int (*enum_format)(struct v4l2_fmtdesc *f);
-
---=-9ssd6DUBbBvl6JPlwbl3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaOVgSgAKCRDZQZRRKWBy
-9P5qAP9AQJCTUQL4yGjLYO6fhiRHkYApeYjS3ILIAxwJZRgyoAEAuIsn+1r5gHyo
-fE4WQoTjedA/458KE+PcMg5FcVxZZA0=
-=4Ait
------END PGP SIGNATURE-----
-
---=-9ssd6DUBbBvl6JPlwbl3--
+If I'm understanding it right, I'd be a bit reluctant to add a CS check
+as well.
 
