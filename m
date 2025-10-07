@@ -1,212 +1,287 @@
-Return-Path: <linux-kernel+bounces-844315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA711BC18B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:41:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7938EBC18C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80A543A7D37
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:41:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77EA31889BED
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C822E11D2;
-	Tue,  7 Oct 2025 13:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97FFC2E11D5;
+	Tue,  7 Oct 2025 13:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bCdjMsf4"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TjjYNRaD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143B72E03EF
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 13:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB432E03EF;
+	Tue,  7 Oct 2025 13:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759844511; cv=none; b=rPUI6/MC1PkWipw8rV1tyh6j+rTyMBwDxgfFR3xsZncyiU27zJZXnYQu3HjOojI3KYj7rQM/oruWMTFVNtRnLtv9blagxftniMpMehmBJggYMti0TkhjI6XBw0KcjexdebGAy6GuvOt80JSVSFTPhYZyHzNeilc9oMxeyCvNFOU=
+	t=1759844554; cv=none; b=R1mSAZyibuIgMi+mzjLNpFmrxzJl7hInkuzule3akc4Z5kreboTj7Rl9LFjg7E+i3vvM9q3Bc1aDtpkcJh+kBINNxLB+CuMjfZcamfiWI2Z/r7GtIP5S5BnEblj//0bwLm+OfWzQgW/v+9Eh1pY+WvIeLy83YR2mrAY8xlkxg3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759844511; c=relaxed/simple;
-	bh=nkeOwih2wxnDJdpLI6Dz/78w4EhHeT1xmOgbx9n/oo8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZMxzNoE8WagbtdiafrWwmVnbA9aXCIlnmAFcHzoUR1ul/E1BqTnSodDU5w1vRj5DbTurmQYHey1zZOpHGVZHq5eKdjq5Z7hxMpFEFCStjR4lRhhNDcqeIEY7nU1RfA/gfUyjPTgARqMwAzPFjzonlmIu/oUDYHQYUDjsFln3KAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bCdjMsf4; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-78af3fe5b17so4840937b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 06:41:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759844509; x=1760449309; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=rnHeuaAxXkLy83WQ0FvFcsx02OTH0C9r7FOqh/BgxF0=;
-        b=bCdjMsf42+G+Iq+ji/1GArMqIcWj6oKTYVK5orzQHtLUCGvOtSAqA0dWkLF7sUP8sw
-         eX0k534hyD/mknL1wCoSQY3fh4bnndYZAM70huiMM1u1ZuwTEPzsO8AwOOhByerVfwLz
-         dlJyJ1pGXnFUBytFoyPKhqjp/oo/uHDN9YRmMqoETyy5iTXJWmadXhS5fvupeixoG85U
-         3/Jld1ZzIZkZ1GxAJrVRH4QK/jJ4QUVEnV01dgQfKxpyZKOFt2Vxgf/UxqS2gYydZJk7
-         /d2HK7FfobHLCQQDDDYpA+5J6aOYqaocVz38qWolaC7tV0yUpSTBNl7brMas23/uwshM
-         K0xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759844509; x=1760449309;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rnHeuaAxXkLy83WQ0FvFcsx02OTH0C9r7FOqh/BgxF0=;
-        b=X4ee4CCWR/reHriMrSpuvQSwuyOsu+FKiCvhumqjEfBW91hdllOy673Bv4vYWuL3e+
-         7R5ctVJJpUflJ5nVm+1q7doLRjMVFsV49D2Ihl+DlSZc0HQEWxlpULoeOt4C73Jz0dck
-         srWBBnmLYBSAhN6oW0/ogwY8lMFvXNaaKRkOyc2KTdS5pFrikKNvBvgb97VgsgYdk+qV
-         FX4NA8pkGkLVNtjAugF2SxBvyiAwBxcw32y5qGgw7FLfeo+ZSClj0vse8EDu9CKAc4ng
-         ORmmY5TftsHO6MZ1QdEaHds7zLgKvJasmioe11xNQd/g6JM8fV3p/DOwlGo3rT2vZSgE
-         lKew==
-X-Forwarded-Encrypted: i=1; AJvYcCUPqcBDxjf+qa+TMd8nNodBEDHMyyvzKXsRomtreKchDjGjcUuMm7LfYiB8NXSty1PPB/UBkTbsUQD0dRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtI8EpfC2c/6jXN2HJTxspTEUwsQRTkZMXqWe6kusac1nClscN
-	RaoyXcdZGqWscOb1RCZnblsqsq3hqM2ys2G6XekCmC0x4S/UEPBnr7bf
-X-Gm-Gg: ASbGncuxUmwc08r0tEo//q3VHSkJipSmqm2AfzWiDTrSlL2uPvTUUXo9ZiXQIrpaoKj
-	pGogu6hU3no8M677huWLjjKE9nFc/xXF1F0DqrUxyz3W3efq4lXOhzWEVgXbaJMEoZJriaF57oI
-	Wo077BHm40nchUb6zEz73Jjm4C3E7U044CQZ9GZcXrztbnwLkVwfiMjoM+IYpjjHvOt0KIxS8We
-	jK6K2yeTFUQXgYISyu4Jet4N3dMgEGGQTpXx8Zo3StOQXjTdOAF6S4D2VGVjIUNVF66WbGYr+O2
-	q1s8Gjn7xcngL1FLjBspYRa4/2ndookWZ59q80vlwUKJsOdj29qq5dMbsQWzxsX4CN4nCFDC+7b
-	1JPdCzZ9n/p2C5zz4SCgcfNiEtKkqwfksi5OZrFCVJSx3dOMSqqUg0UP9tWoV5/RWCn4LWzXlxx
-	adIwqvpheU7bdfhtKnvEg=
-X-Google-Smtp-Source: AGHT+IFVJf+JxdKIUBEal2NKbaOSA5Jm7ewMijN3A3/MHNXXdwLzwZQSOta0mANRwv7CKcqgs4HloQ==
-X-Received: by 2002:a05:6a00:2ea9:b0:77f:6971:c590 with SMTP id d2e1a72fcca58-78c98dd92bcmr19639116b3a.22.1759844509033;
-        Tue, 07 Oct 2025 06:41:49 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b01f9a364sm15776636b3a.6.2025.10.07.06.41.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Oct 2025 06:41:48 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <57d0775a-0450-4384-b4ab-b6f2d976499f@roeck-us.net>
-Date: Tue, 7 Oct 2025 06:41:46 -0700
+	s=arc-20240116; t=1759844554; c=relaxed/simple;
+	bh=YglmNLG9so1bTPsyxotMfL2Qw5hHoTH9HvOhn6Arfic=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rXaO/az1eWNvo2FZ5xdqbY7x9y3XK9beRuvo87Nm6tGj0x+G1ys5c+SRHyzKxdtfFnYjBe8kJMZo4PP91cpbsAo7tRXbPb5aBri06poouPBY0dR/3bqG6sRyouC1RwuFiz53QX+7qxyKUd2ZsxsNYrAZ7AwInpCCSG9cW/rzPNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TjjYNRaD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B17FCC4CEF1;
+	Tue,  7 Oct 2025 13:42:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759844554;
+	bh=YglmNLG9so1bTPsyxotMfL2Qw5hHoTH9HvOhn6Arfic=;
+	h=Subject:From:To:Date:In-Reply-To:References:From;
+	b=TjjYNRaDx42dllMuZ259ntYfzVVcmLiXg1eWKLtm+ID5zABsj49fETGleOa0xeEFO
+	 2FgvvklFPGMkdgoxQrvu1g/Ssx64Rbsw/NsUB1QRaIjgS+Y9HKUuzqdC82cxpqonOF
+	 9Cfu5B56e84IQI2+zelwL1mqNMi2rEV2l+jTJxySYn30DtUMcbtm69R4whRh8et/vH
+	 6ML4TFRH0ugfuwgaVtifPohdLLNDKMstksc1VEsMkNDdaC3/Q3wiI7S2rOwfXqaZ3l
+	 QtrZ2kELgRxOdR6DZ+QNjuWd5S2+DWopkbD5uitYvxZBsaqkcXy7BK9FQ3F8Ej4RpB
+	 xeS2inUVnXzag==
+Message-ID: <9a0401faa598ddaaf43312008469129fc66776f1.camel@kernel.org>
+Subject: Re: [syzbot] [nfs?] [io-uring?] WARNING in nfsd_file_cache_init
+From: Jeff Layton <jlayton@kernel.org>
+To: syzbot <syzbot+a6f4d69b9b23404bbabf@syzkaller.appspotmail.com>, 
+	Dai.Ngo@oracle.com, axboe@kernel.dk, chuck.lever@oracle.com, 
+	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, neil@brown.name, okorniev@redhat.com, 
+	syzkaller-bugs@googlegroups.com, tom@talpey.com
+Date: Tue, 07 Oct 2025 09:42:31 -0400
+In-Reply-To: <68e4a3d1.a00a0220.298cc0.0471.GAE@google.com>
+References: <68e4a3d1.a00a0220.298cc0.0471.GAE@google.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
+ n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
+ egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
+ T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
+ 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
+ YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
+ VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
+ cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
+ CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
+ LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
+ MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
+ gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
+ 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
+ R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
+ rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
+ ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
+ Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
+ lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
+ iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
+ QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
+ YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
+ wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
+ LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
+ 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
+ c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
+ LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
+ TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
+ 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
+ xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
+ +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
+ Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
+ BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
+ N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
+ naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
+ RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
+ FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
+ 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
+ P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
+ aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
+ T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
+ dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
+ 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
+ kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
+ uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
+ AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
+ FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
+ 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
+ sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
+ qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
+ sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
+ IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
+ UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
+ dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
+ EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
+ apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
+ M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
+ dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
+ 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
+ jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
+ flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
+ BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
+ AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
+ 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
+ HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
+ 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
+ uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
+ DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
+ CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
+ Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
+ AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
+ aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
+ f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] watchdog: Add driver for Gunyah Watchdog
-To: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>,
- Neil Armstrong <neil.armstrong@linaro.org>
-References: <20251006-gunyah_watchdog-v2-1-b99d41d45450@oss.qualcomm.com>
- <6e7eaac2-0859-4bfd-b76b-2f81e384a91c@roeck-us.net>
- <166a0b99-879c-43cd-b3c0-37eb04afca5a@oss.qualcomm.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <166a0b99-879c-43cd-b3c0-37eb04afca5a@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-On 10/6/25 23:52, Hrishabh Rajput wrote:
-> 
-> On 10/6/2025 7:48 PM, Guenter Roeck wrote:
->> On 10/6/25 00:37, Hrishabh Rajput via B4 Relay wrote:
->>> From: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
->>>
->>> On Qualcomm SoCs running under the Gunyah hypervisor, access to watchdog
->>> through MMIO is not available on all platforms. Depending on the
->>> hypervisor configuration, the watchdog is either fully emulated or
->>> exposed via ARM's SMC Calling Conventions (SMCCC) through the Vendor
->>> Specific Hypervisor Service Calls space.
->>>
->>> When Gunyah is not present or Gunyah emulates MMIO-based watchdog, we
->>> expect MMIO watchdog device to be present in the devicetree. If we
->>> detect this device node, we don't proceed ahead. Otherwise, we go ahead
->>> and invoke GUNYAH_WDT_STATUS SMC to initiate the discovery of the
->>> SMC-based watchdog.
->>>
->>> Add driver to support the SMC-based watchdog provided by the Gunyah
->>> Hypervisor. module_exit() is intentionally not implemented as this
->>> driver is intended to be a persistent module.
->>>
->>> Signed-off-by: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
->>> ---
->>> Gunyah is a Type-I hypervisor which was introduced in the patch series
->>> [1]. It is an open source hypervisor. The source repo is available at
->>> [2].
->>>
->>> The Gunyah Hypervisor doesn't allow its Virtual Machines to directly
->>> access the MMIO watchdog. It either provides the fully emulated MMIO
->>> based watchdog interface or the SMC-based watchdog interface depending
->>> on the hypervisor configuration.
->>> The SMC-based watchdog follows ARM's SMC Calling Convention (SMCCC)
->>> version 1.1 and uses Vendor Specific Hypervisor Service Calls space.
->>>
->>> This patch series adds support for the SMC-based watchdog interface
->>> provided by the Gunyah Hypervisor.
->>>
->>> This series is tested on SM8750 platform.
->>>
->>> [1]
->>> https://lore.kernel.org/all/20240222-gunyah-v17-0-1e9da6763d38@quicinc.com/
->>>
->>> [2]
->>> https://github.com/quic/gunyah-hypervisor
->>> ---
->>> Changes in v2:
->>> - Move away from platform driver model since the devicetree overlay does
->>>    not happen by default.
->>
->> This is just wrong. Platform drivers do not depend on devicetree. I am not even
->> going to review the rest of the driver. 
-> 
-> Thanks for pointing out the mistake here. Platform drivers are independent of devicetree. Therefore the line you've pointed to is wrong as it erroneously portrays that the platform drivers are dependent on devicetrees. It is a mistake and I would rephrase it to following to make the intent clearer:
-> 
-> "Do not depend on devicetree to discover (and probe) watchdog as devicetree overlay does not happen by default. Instead invoke GUNYAH_WDT_STATUS SMC Call to discover (and initialize) the watchdog."
-> 
+On Mon, 2025-10-06 at 22:23 -0700, syzbot wrote:
+> Hello,
+>=20
+> syzbot found the following issue on:
+>=20
+> HEAD commit:    d104e3d17f7b Merge tag 'cxl-for-6.18' of git://git.kernel=
+...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D116bb94258000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dccc18dddafa95=
+b97
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Da6f4d69b9b23404=
+bbabf
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b797=
+6-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1573b214580=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D12b515cd98000=
+0
+>=20
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/335d7c35cbbe/dis=
+k-d104e3d1.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/72dbd901415b/vmlinu=
+x-d104e3d1.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/3ff1353d0870/b=
+zImage-d104e3d1.xz
+>=20
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+a6f4d69b9b23404bbabf@syzkaller.appspotmail.com
+>=20
+> ------------[ cut here ]------------
+> WARNING: CPU: 1 PID: 6128 at kernel/locking/lockdep.c:6606 lockdep_unregi=
+ster_key+0x2ca/0x310 kernel/locking/lockdep.c:6606
+> Modules linked in:
+> CPU: 1 UID: 0 PID: 6128 Comm: syz.4.21 Not tainted syzkaller #0 PREEMPT_{=
+RT,(full)}=20
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 08/18/2025
+> RIP: 0010:lockdep_unregister_key+0x2ca/0x310 kernel/locking/lockdep.c:660=
+6
+> Code: 50 e4 0f 48 3b 44 24 10 0f 84 26 fe ff ff e8 bd cd 17 09 e8 e8 ce 1=
+7 09 41 f7 c7 00 02 00 00 74 bd fb 40 84 ed 75 bc eb cd 90 <0f> 0b 90 e9 19=
+ ff ff ff 90 0f 0b 90 e9 2a ff ff ff 48 c7 c7 d0 ac
+> RSP: 0018:ffffc90003e870d0 EFLAGS: 00010002
+> RAX: eb1525397f5bdf00 RBX: ffff88803c121148 RCX: 1ffff920007d0dfc
+> RDX: 0000000000000000 RSI: ffffffff8acb1500 RDI: ffffffff8b1dd0e0
+> RBP: 00000000ffffffea R08: ffffffff8eb5aa37 R09: 1ffffffff1d6b546
+> R10: dffffc0000000000 R11: fffffbfff1d6b547 R12: 0000000000000000
+> R13: ffff88814d1b8900 R14: 0000000000000000 R15: 0000000000000203
+> FS:  00007f773f75e6c0(0000) GS:ffff88812712f000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007ffdaea3af52 CR3: 000000003a5ca000 CR4: 00000000003526f0
+> Call Trace:
+>  <TASK>
+>  __kmem_cache_release+0xe3/0x1e0 mm/slub.c:7696
+>  do_kmem_cache_create+0x74e/0x790 mm/slub.c:8575
+>  create_cache mm/slab_common.c:242 [inline]
+>  __kmem_cache_create_args+0x1ce/0x330 mm/slab_common.c:340
+>  nfsd_file_cache_init+0x1d6/0x530 fs/nfsd/filecache.c:816
+>  nfsd_startup_generic fs/nfsd/nfssvc.c:282 [inline]
+>  nfsd_startup_net fs/nfsd/nfssvc.c:377 [inline]
+>  nfsd_svc+0x393/0x900 fs/nfsd/nfssvc.c:786
+>  nfsd_nl_threads_set_doit+0x84a/0x960 fs/nfsd/nfsctl.c:1639
+>  genl_family_rcv_msg_doit+0x212/0x300 net/netlink/genetlink.c:1115
+>  genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+>  genl_rcv_msg+0x60e/0x790 net/netlink/genetlink.c:1210
+>  netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
+>  genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+>  netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+>  netlink_unicast+0x846/0xa10 net/netlink/af_netlink.c:1346
+>  netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+>  sock_sendmsg_nosec net/socket.c:727 [inline]
+>  __sock_sendmsg+0x219/0x270 net/socket.c:742
+>  ____sys_sendmsg+0x508/0x820 net/socket.c:2630
+>  ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2684
+>  __sys_sendmsg net/socket.c:2716 [inline]
+>  __do_sys_sendmsg net/socket.c:2721 [inline]
+>  __se_sys_sendmsg net/socket.c:2719 [inline]
+>  __x64_sys_sendmsg+0x1a1/0x260 net/socket.c:2719
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f77400eeec9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f=
+7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
+ ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f773f75e038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+> RAX: ffffffffffffffda RBX: 00007f7740345fa0 RCX: 00007f77400eeec9
+> RDX: 0000000000008004 RSI: 0000200000000180 RDI: 0000000000000006
+> RBP: 00007f7740171f91 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007f7740346038 R14: 00007f7740345fa0 R15: 00007ffce616f8d8
+>  </TASK>
+>=20
+>=20
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>=20
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>=20
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>=20
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>=20
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>=20
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>=20
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-Let _me_ rephrase: A platform driver does not depend on devicetree.
-This can and should be a platform driver.
 
-Guenter
+This happened in the context of userland calling the (privileged)
+netlink operation to start the threads in the server. As part of that,
+the server allocates a slabcache for struct nfsd_file_mark:
 
+        nfsd_file_mark_slab =3D KMEM_CACHE(nfsd_file_mark, 0);
+        if (!nfsd_file_mark_slab) {
+                pr_err("nfsd: unable to create nfsd_file_mark_slab\n");
+                goto out_err;
+        }
+
+Allocating that slabcache failed, so do_kmem_cache_create() called
+__kmem_cache_release() on the way out. That triggered the lockdep
+warning which is this in lockdep_unregister_key():
+
+        WARN_ON_ONCE(!found && debug_locks);
+
+So it tried to tear down a lockdep key, but it didn't exist?
+
+This doesn't seem to be nfsd related either. I'll hand off to mm.
+
+#syz set subsystems: mm
+
+--=20
+Jeff Layton <jlayton@kernel.org>
 
