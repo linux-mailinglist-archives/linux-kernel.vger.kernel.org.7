@@ -1,86 +1,86 @@
-Return-Path: <linux-kernel+bounces-844116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE178BC10A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:44:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8205EBC10B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9BCE74E18D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:44:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 897FA3BE58F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D862D7DE3;
-	Tue,  7 Oct 2025 10:44:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B422D7DE0;
+	Tue,  7 Oct 2025 10:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="O7bOiguQ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B0ze6s0L"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25CD2D47F4
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 10:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E2B2D7DD2
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 10:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759833856; cv=none; b=Fh+jNYFwIFfsNMw7Ye7uzDUwcoceQL59G614zKCn+OzfJO1J+Ws82EUBxNzvTRWKHp9wWaHgjlVK7qPAigaC1HmQ/zO0FWzMSSaKdmfMvaU9kPtIxnyYSjXii7d6W4XAlbfEIayxlTDSyAa1SGnzPiCU0woAcWi+Iw9hjb0CZQw=
+	t=1759833973; cv=none; b=b12hgCUhg8J7EDpA9GiXwaSNZveOlhD150VZvPlujRbstQXhrC44+QHQKchfshEWDHCmIb+qUjboxbcQEC3dawHZgm3kEXy84dTMR6NSj1OWnB4tqsgIPKt1VwUrRWJ7V7Fd6fO6xWzhd7oHxWbR7u+1ZHCDcA0IrH2oAH8YJkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759833856; c=relaxed/simple;
-	bh=tEzTFYsfmTotpGOcroEfG2QRzOXRVRs9LS7dQ7SLeaA=;
+	s=arc-20240116; t=1759833973; c=relaxed/simple;
+	bh=Y0k0amP3nuDhEI8J1gHNZ81t5g8iY/ZgH1kXTCtwBZg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NRKHB6jmnatg7UU9jclA+Dvy3xC5xKJ+Tq0cUEmXuqVZH43IlxWMpPziyC3diYcgDmvzdmB995c2+kkB7o+4RM2ulzoWZicTDmpYsU5m7RRjGgVxYn/+hy8e+cHeGJvqhkqTeG1P1Ud68f0f8fPsbeneD1sHkCy5bx6LSN0q9Bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=O7bOiguQ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5973icjp011725
-	for <linux-kernel@vger.kernel.org>; Tue, 7 Oct 2025 10:44:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	tEzTFYsfmTotpGOcroEfG2QRzOXRVRs9LS7dQ7SLeaA=; b=O7bOiguQpSnuPcwT
-	avAAPUKB/lvfpUOQ2TLKv8IPlELrvfmQwS1DhcamUu317pX13KA8bujbt0GgU3o3
-	ue5Tw7uQxpuxZIyTVYHziWkkl212aN5X900YwTEGDPKjZy+ydMtm/duHyRb5yluk
-	KR4WWFLrhBa4yZeUzAh2117seG4+I2tY6c/2b/njJ7u7X+8iCuBiRbbdem3uiwoL
-	QPImyEimeTAcLGSY0e2Rfpx04A8Tu4HSo1QpGZhg81LE7WnS5hZHyJLW8wRPWnnR
-	CehReSTJ2S6dvU89aDUCze9zMMpxBzYCV+qrtd7l4BDN6kIGksWHyHYeCpy7t/Mx
-	y6E6Qw==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jtwgq046-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 10:44:13 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4e6d173e2a2so5678801cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 03:44:13 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=tHalFIvBIxXgaBVnKk+lYmSmS3UdjCQ079aguDHAH4Cu8v6Y3Nxp1zJk8VanKAuuk+mscMtCHnfs42oTq9p7ca+LCmy4297ZlAc4/W8hIZ6bmBV5LeW5UVPKYo/3AX5/cHJn7bcNfJ7fYMEgVrfQLMgfvIUaju4et9aj7kW5b9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B0ze6s0L; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759833969;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K9VU+jqnwVitkeTtQ8eX0acgMofsePeWo2o0ZHkAt40=;
+	b=B0ze6s0LFB+82cgHKqbbGxUhGQkdcCkmnHp6cUUwk4gYIv42VgiAM0OsES4GmKDs2+w4eO
+	sSMvNaO6a71q921/f9lqz+YYwnZ+jkamp3eDazeSSWVTxkH/MlXKc1JAeyJYcOf64lGjto
+	iSso2y9HMCFrUr62yALWskABwzv9rnQ=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-504-h2jXfJGFOQedtUcET-1awg-1; Tue, 07 Oct 2025 06:46:05 -0400
+X-MC-Unique: h2jXfJGFOQedtUcET-1awg-1
+X-Mimecast-MFC-AGG-ID: h2jXfJGFOQedtUcET-1awg_1759833964
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-4256fae4b46so1916139f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 03:46:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759833853; x=1760438653;
+        d=1e100.net; s=20230601; t=1759833964; x=1760438764;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tEzTFYsfmTotpGOcroEfG2QRzOXRVRs9LS7dQ7SLeaA=;
-        b=SNRiJb2/sLrs0mTZMV1aAt2rHTMLlb5UTxwoXL/2CbUdcMih6nH5LiLLXIX1yQS+01
-         42UeDDOO2Ody0/PvGxO69mep+76kmmDGbLXqYn3lhQVmxdpdg1w49+kIGqbNooOWe4iV
-         OfuRU6lhlSk/mArZPYNs3L0Q2Osvu/eQXbooys8QPVd9VBK3IhvGDZBvxYR7FwGtCY4B
-         fCpXWlYUkcQ4qY8rmMT6qamNDBFVYS61Ppr6yW8KZ7ZG5xLG+dDmf605s2t11PUOr3bJ
-         dF9cQ/yao5NbKtLPYYzBZU3WnHiLXF7kSLQMJwpKzN3yz93zK5a+BMeOmhyzI7J5Yu7I
-         /S0A==
-X-Gm-Message-State: AOJu0YzCpjwloEjUd0IDujeO0XAwh+k9PzqKemKBRFXchY1cbW2IDEYt
-	iBoCb/AZpTKYQGcp0DveF3dCb342utn8xnlinEOTY7NYwUAjjKevtvlRUS2tMCVmJEkMUqwr5Ri
-	RB0Z3hbYExlJJQ8wtLFOEJyhuHA0DiWXHMD/HN8CnlA23zfdlpgetK/25nHxd3OAQfwU=
-X-Gm-Gg: ASbGnctehRm0RL/e4cVDMZIFWqDx2FvICA4fIzWFol15zrRt3AbdpR/ukPVlbLds1Qk
-	0aZKYWHOhKwOFy2xJq+4oXilWt/dW8QKqFa4g0RtD9cyrssbTNi5apU4sICBVpT0X174ipfAThl
-	cYhIjRIq+dLGgFZeByod5UeT61nbokgvmabgGBta/dHTUNNJX+ikjN1Slj9hkizszNVxZr2v67c
-	NORe3VJ8gXYFEaxG8dXYjfUkhqK+2soR7w2oBCl1bNR37FWIx2uEiDgjwUA0sdcxPoeR6lywtpz
-	7Gqss5pcRBGsun+Vlb6BGv4JdBKHX5l2ISb47KMMDM2sGnKKPvlAN3utcktbekGQHQWKb5X6eYa
-	vTdXgvlu4mRFLQ6IKIspEuTilML0=
-X-Received: by 2002:a05:622a:10b:b0:4e0:3af:4e0e with SMTP id d75a77b69052e-4e576a82652mr142747751cf.5.1759833852826;
-        Tue, 07 Oct 2025 03:44:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEI56qcfMK4RSe4I5X9MhtuGJ6Iji7nF6p10dptreUulKjL5MYxLr5itidFjejQHJIj6jD+WA==
-X-Received: by 2002:a05:622a:10b:b0:4e0:3af:4e0e with SMTP id d75a77b69052e-4e576a82652mr142747461cf.5.1759833852225;
-        Tue, 07 Oct 2025 03:44:12 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6378811236csm12103474a12.42.2025.10.07.03.44.10
+        bh=K9VU+jqnwVitkeTtQ8eX0acgMofsePeWo2o0ZHkAt40=;
+        b=e7wHt3pSeS5SD2e6MdBFAX1d8CIYB9diUM4T/Gtpo4adDVkV86w7EbNt7EO2p8p4yZ
+         GNlRcb8aSgrFb/ZtPSM7a+3i6hLsE7LX3rKdcADmxSckdPy/kWj/fVq40nRdDCYLnDrR
+         aEzrGU6H5/Ydh7OOuo8aTh05Kkg/pyL7Q7KzFVsM6mj4tBmixShKNNtHoZcJ9YhukEPE
+         FlKLS6SsmG6/KOGvYM+tfxRTemu3VjgndFkY3Q9RfumnCCEoh3LtEZkFClKGkq4YtWuH
+         r1MF13pqox1KB5zXtQpvXXmE4uHPXUD93fmU0DOvQVuFvTNMAlpMtAadqxy+NMdlgdjU
+         a43g==
+X-Forwarded-Encrypted: i=1; AJvYcCX3p6H2PxXgSeWasvyJPyEaecMNA8ut7lY3oYSQmQVwLg8WgCcX+iRhzAv7Bi/T4p4U9FTj89ETiZcspbU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynICZLxhUcJ2qE4Z08MEdwTITODj8zSx+BpLJu4k6OA5G59ukt
+	uab6hecWO5cfN2EbMGzL1Fm8frepox0BOp19ZPHBck58cQvW72o5ZeE7MOGt71GpzkI064xvtqF
+	fGj9LUOPejptsLToEbiyI8C9N3W384azLW/fHXOYBiiDi0L8XeHDy8tAPF65Ab9mxMA==
+X-Gm-Gg: ASbGncvEYDbXQf5Ye+sGi09nDMUhuyZ2Nhae2yuZ3rPOAMwj6i4ascsBRhstRK+9iZM
+	9UkhZK2WDVLj3iCe5ksVyZKTILXnmqS0g7PM8L33BtsEybik5lDWIJZum4wWK9Wsf2lzr7zKDs8
+	OzCvFkKVNXIa0U6fV8lp1sWmhQuhuHRBgMcIsEGwYxCeWL+1/f1DIuCZsyl8Gd+1mu60k2Sen7K
+	cRFQUJj821fxTKPJw37CnVRIymRrB6zAf6mWm5JCwZvu+12s/av+q46UtK4CDeBqf/dtVP+RsJj
+	6435q9pdtsi8pvGvn8vW0ui6SRgKSM1V4AIhQo4Fm7bQqxCPSttb0v+U5bwd8ZZZ2yRfvEKzGpO
+	o6bcU9aZxiOddQ1bZNA==
+X-Received: by 2002:a05:6000:22ca:b0:425:8462:b72e with SMTP id ffacd0b85a97d-4258462bbfdmr1377573f8f.3.1759833964476;
+        Tue, 07 Oct 2025 03:46:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHBvJuFM0sqIDpEJ2XvBbC5K5crNEII49Po+HSOIfY3+6fboEgfBtuEHBtoVUPTDo55dxcAXg==
+X-Received: by 2002:a05:6000:22ca:b0:425:8462:b72e with SMTP id ffacd0b85a97d-4258462bbfdmr1377552f8f.3.1759833964096;
+        Tue, 07 Oct 2025 03:46:04 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e61a0204fsm301706355e9.14.2025.10.07.03.46.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Oct 2025 03:44:11 -0700 (PDT)
-Message-ID: <0b7e71eb-1143-412e-a76e-b6f146cb60ed@oss.qualcomm.com>
-Date: Tue, 7 Oct 2025 12:44:09 +0200
+        Tue, 07 Oct 2025 03:46:03 -0700 (PDT)
+Message-ID: <71dda358-c1f7-46ab-a241-dffc3c1c065d@redhat.com>
+Date: Tue, 7 Oct 2025 12:46:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,49 +88,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] media: qcom: camss: Add support for TPG common
-To: Wenmeng Liu <wenmeng.liu@oss.qualcomm.com>,
-        Robert Foss
- <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <20250925-camss_tpg-v4-0-d2eb099902c8@oss.qualcomm.com>
- <20250925-camss_tpg-v4-1-d2eb099902c8@oss.qualcomm.com>
+Subject: Re: [PATCH] drivers/net/wan/hdlc_ppp: fix potential null pointer in
+ ppp_cp_event logging
+To: =?UTF-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>
+Cc: Kriish Sharma <kriish.sharma2006@gmail.com>, khc@pm.waw.pl,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251002180541.1375151-1-kriish.sharma2006@gmail.com>
+ <m3o6qotrxi.fsf@t19.piap.pl>
+ <CAL4kbROGfCnLhYLCptND6Ni2PGJfgZzM+2kjtBhVcvy3jLHtfQ@mail.gmail.com>
+ <d8fb2384-66bb-473a-a020-1bd816b5766c@redhat.com>
+ <m37bx7t604.fsf@t19.piap.pl>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250925-camss_tpg-v4-1-d2eb099902c8@oss.qualcomm.com>
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <m37bx7t604.fsf@t19.piap.pl>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAxOSBTYWx0ZWRfXzHTMllcyyyDL
- M8qodiK1zOBh6HQzE7s3ryemi05bHE42r2BA6hCMTFm+RwsdejnHz6F11Vxx1xyh7IOWHJAZKaD
- +VrEXDW8xXCuumBUiyhWqKCZt6SyWUwCAu24GLhmzOVStgRFF/lqz3yX1tjpjkMr3xllELm8LYU
- qyc4cRT+1sWWFU+cU43cnhcRgjJ/VHbZhzeDOxig3XQFXsYJFNsh7pYC2W45ozBBmm98bSe8wl0
- bzRw9Hip00UXTd1rPX21Q0TjyDt7k/7BGBRrFZyVqDJ3eZ1llnjefJ5r5fyIvxQXwZ5cawWibUX
- zwnj+X5ShYxsZd4LHV0jZqX0ggCrIhM7BeE0eb+aqo0+mwy/ZcBkISSO45jDcEJjSQ5FgM6kSj/
- rb6kU9BMdo4uNHligwRUAl6FFVzPuA==
-X-Authority-Analysis: v=2.4 cv=B6O0EetM c=1 sm=1 tr=0 ts=68e4eefd cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=IOTsWFhAVgjdDaEP6ccA:9
- a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-GUID: 1OF_NLK30NUl4BFC2FdmYJ7IRGZ-wdcW
-X-Proofpoint-ORIG-GUID: 1OF_NLK30NUl4BFC2FdmYJ7IRGZ-wdcW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-06_07,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 lowpriorityscore=0 adultscore=0
- impostorscore=0 spamscore=0 bulkscore=0 phishscore=0 malwarescore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2510040019
+Content-Transfer-Encoding: 8bit
 
-On 9/25/25 2:31 AM, Wenmeng Liu wrote:
-> Add support for TPG common, unlike CSID TPG, this TPG can
+On 10/7/25 11:28 AM, Krzysztof Hałasa wrote:
+> Paolo Abeni <pabeni@redhat.com> writes:
+>> If v2 is not ready yet, I think it would be better returning "unknown"
+>> instead of "LCP" when the protocol id is actually unknown.
+>>
+>> In the current code base, such case is unexpected/impossible, but the
+>> compiler force us to handle it anyway. I think we should avoid hiding
+>> the unexpected event.
+>>
+>> Assuming all the code paths calling proto_name() ensure the pid is a
+>> valid one, you should possibly add a WARN_ONCE() on the default case.
+> 
+> Look, this is really simple code. Do we need additional bloat
+> everywhere?
+> 
+> The compiler doesn't force us to anything. We define that, as far as
+> get_proto() is concerned, PID_IPCP is "IPCP", PID_IPV6CP is "IPV6CP",
+> and all other values mean "LCP". Then we construct the switch statement
+> accordingly. Well, it seems I failed it slightly originally, most
+> probably due to copy & paste from get_proto(). Now Kriish has noticed it
+> and agreed to make it perfect.
+> 
+> Do you really think we should now change semantics of this 20 years old
+> code (most probably never working incorrectly), adding some "unknown"
+> (yet impossible) case, and WARNing about a condition which is excluded
+> at the start of the whole RX parser?
 
-Is "TPG common" the actual name of the IP?
+Note that the suggested change is not going to change any semantic, just
+make it clear for future changes that such case is not really expected.
 
-Konrad
+And that in turn is my point. If someone else is going to touch this
+code in the (not so near) future, such person will not have to read all
+the possible code paths leading to proto_name() to understand the
+assumption in the current code base.
+
+Cheers,
+
+Paolo
+
 
