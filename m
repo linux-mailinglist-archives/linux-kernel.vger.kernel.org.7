@@ -1,117 +1,107 @@
-Return-Path: <linux-kernel+bounces-844037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1097BC0E04
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:41:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9415CBC0E0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D339B4EB657
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:41:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 555773A380C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB0A2D3A6D;
-	Tue,  7 Oct 2025 09:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E7C2D781F;
+	Tue,  7 Oct 2025 09:41:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="alhuDt7s"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="quQL3+Wg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB270158874;
-	Tue,  7 Oct 2025 09:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6C1194137;
+	Tue,  7 Oct 2025 09:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759830078; cv=none; b=jV6B8xfc6xUAEBhvWdQg93/i2A/A1Z3OFCZKPcitU/JjPBhpCcmmpLSAeDpBZor8aBgNtOjJRXo8m0kVzllnFDSDu5ucCvhBnzmyJ51B1LbeMzcqJ9949Y4G9MZjSKy+np+UI1v5KpBYUU+PT5xNsdbAKKWSw2r5mPfr+JZSFD0=
+	t=1759830095; cv=none; b=tBsJy1dBydJMWsB2OkLcVwN8vIeEafk99mDCCjXrM1HJzssrMk3pMmjJ8rZEtDrXWFDMir3Rl7BgjeeHpSCn9FG/q+A8JjMf/ZjjzjSAFm8+IY2cgD9yMDac/AJNI4nYpDss9tSBJnu8+zSt0Q32EFLrDFEOiT1ayYlQthEhy2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759830078; c=relaxed/simple;
-	bh=Yl0b5wauRFDcVVfHTZ0ZzZ4C2ktVgGqGYjCXELOnT48=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dbGIb7wGXE3QpKRa29vy80ES4+QnAUJkF8kKNDGBVtLX5NgU82PgZWWcCDQn+rYd3nT+arAUOvXVQX/KS7QUz40HfmTIYgHSXZQwaiSErPqHz1ZeHeP9NhBfX5R+JBTsjvZejKlBhjx8CYdeR8dEr/+KgKrcrXQQCKOLbVASyxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=alhuDt7s; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=X13BoCz3JYAX7vIvmjbaXJVqzeYJjE6+iBmJX/F4R0M=; t=1759830075;
-	x=1760434875; b=alhuDt7sPMVPtfAANGwlazFLZmOtclQCT7HAgwx7o5BL9OboEqmR4V0Xve7nr
-	lvay+HIAIKn3EjSf6YY8Wby4ffRxseFnkB6Bk8UnyNkL06ptLCqES9liuroiQlKfGVnoCXt+pHuNL
-	C8Sy5zl7HdD22XY9iJ4CptUe22rl3Ae3xUreDkZuK3lPt8UCY6lwVzpJ0Bm5E0EE7fRTAXkxF8ehn
-	Tpq49PGE0a6FwH6MHwOdx78OZpTROFNkomVEQfUd02mUdy7P6neeRCT3wkKxHA9WTFnOq636zEVB2
-	+v8zoH98Q0x+AdedHjuysL5JcNU35dtqkJRS3aq59URXOwBBkg==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1v64C0-00000001yfz-0Fim; Tue, 07 Oct 2025 11:41:12 +0200
-Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1v64Bz-00000001VNO-3RwC; Tue, 07 Oct 2025 11:41:12 +0200
-Message-ID: <46382bc6cab2196a79780a946bee96dde402ae31.camel@physik.fu-berlin.de>
-Subject: Re: [RFC PATCH 3/5] m68k: amiga: Allow PCI
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Daniel Palmer
- <daniel@thingy.jp>
-Cc: linux-m68k@lists.linux-m68k.org, linux-pci@vger.kernel.org, 
+	s=arc-20240116; t=1759830095; c=relaxed/simple;
+	bh=FgrLW6bEKzltqWslwCLOsA3qHXCfdjnBglSNfQbawZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rngyQHY1ROaPQiQ/OfbdRgAubmDXOZCMMCeeDoBV132k0A8Xe8mrQBXJvsFXne895+ZptbUuct5DBRkAnll3HW5ilxE+4K88NUOamAYArM1JGQh+xu5JR+AtRxLPA6v8kvAnSK39Zmu3zcisEOiBKIE7n9+9zTHjFxZ0Ho+nT+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=quQL3+Wg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1F65C4CEF1;
+	Tue,  7 Oct 2025 09:41:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759830094;
+	bh=FgrLW6bEKzltqWslwCLOsA3qHXCfdjnBglSNfQbawZE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=quQL3+WgEN6zdXO19wv47c0eHt4guqj56XoppdjXAxkYsd/3TciPCMlrlXP5Gnb1b
+	 8iYZtAX934P/lvIFVFbPHo8/1PObbnluenytXWH7gpivurue70zhQknTrOxqxnv3wr
+	 5BmVfxyCohGTyK2GmRRnVZ46H8w3fWLio5UdoOMc/jcmEOmNIJkHIlKSJAitjDSmpJ
+	 5WJQG2RCLd19hMQ1fSmXqe54CIt8u6tSfb/bPsKA251Z2+DiQYr86YKkCD6yUl0sCK
+	 Qb7pAgPPywh6QD7huPk3WqVuetEbYsiZMgOVLizzPZT8YPoMLB9nMl8vXKsyuppL4v
+	 enzaXrDNbe7cA==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1v64CK-00000000310-1BkN;
+	Tue, 07 Oct 2025 11:41:32 +0200
+Date: Tue, 7 Oct 2025 11:41:32 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Sven Peter <sven@kernel.org>,
+	Janne Grunau <j@jannau.net>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Yong Wu <yong.wu@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Krishna Reddy <vdumpa@nvidia.com>, iommu@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Date: Tue, 07 Oct 2025 11:41:11 +0200
-In-Reply-To: <CAMuHMdWDfNgUUh-uU7ZFKmmAccEMqDdfDpwRXQYmwjMG6O_Trg@mail.gmail.com>
-References: <20251007092313.755856-1-daniel@thingy.jp>
-	 <20251007092313.755856-4-daniel@thingy.jp>
-	 <CAMuHMdWDfNgUUh-uU7ZFKmmAccEMqDdfDpwRXQYmwjMG6O_Trg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.0 
+Subject: Re: [PATCH 00/14] iommu: fix device leaks
+Message-ID: <aOTgTEAqDd4gyk6u@hovoldconsulting.com>
+References: <20250925122756.10910-1-johan@kernel.org>
+ <20250930182158.GS2695987@ziepe.ca>
+ <aNzxWZlWmQMokLd_@hovoldconsulting.com>
+ <20251001160132.GX2695987@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251001160132.GX2695987@ziepe.ca>
 
-Hi Geert,
+On Wed, Oct 01, 2025 at 01:01:32PM -0300, Jason Gunthorpe wrote:
+> On Wed, Oct 01, 2025 at 11:16:09AM +0200, Johan Hovold wrote:
+> 
+> > This seems to be more a case of developers not reading documentation and
+> > copying implementations from existing drivers.
+> 
+> IMHO the drivers are mis-using of_xlate, it shouldn't be looking up
+> drvdata at all.
 
-On Tue, 2025-10-07 at 11:37 +0200, Geert Uytterhoeven wrote:
-> Hi Daniel,
->=20
-> On Tue, 7 Oct 2025 at 11:33, Daniel Palmer <daniel@thingy.jp> wrote:
-> > The Amiga has various options for adding a PCI bus so select HAVE_PCI.
-> >=20
-> > Signed-off-by: Daniel Palmer <daniel@thingy.jp>
->=20
-> Thanks for your patch!
->=20
-> > --- a/arch/m68k/Kconfig.machine
-> > +++ b/arch/m68k/Kconfig.machine
-> > @@ -7,6 +7,7 @@ config AMIGA
-> >         bool "Amiga support"
-> >         depends on MMU
-> >         select LEGACY_TIMER_TICK
-> > +       select HAVE_PCI
-> >         help
-> >           This option enables support for the Amiga series of computers=
-. If
-> >           you plan to use this kernel on an Amiga, say Y here and brows=
-e the
->=20
-> This doesn't make much sense without upstream support for actual
-> PCI host bridge controllers.
+Ok, but that would in any case be a separate issue.
 
-Isn't this what patch 5 does?
+> > > IDK if it is worth fixing like this, or if more effort should be put
+> > > to make the drivers use of_xlate properly - the arm smmu drivers show
+> > > the only way to use it..
+> > 
+> > As Robin pointed out, those drivers just drop the reference as they
+> > should (even if I'd drop the reference after looking up the driver
+> > data).
+> 
+> So I wrote the series to clean this up and drop the calls to
+> of_find_device_by_node() and so on.
+> 
+> I left dart, exynos, msm and omap as-is, so I suggest you trim this
+> series to only those drivers and rely on my version to fix the rest.
 
-Adrian
+Looks like there's some room for unification and code reuse, but that
+can be done on top of these fixes.
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+Johan
 
