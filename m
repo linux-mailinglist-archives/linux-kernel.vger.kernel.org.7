@@ -1,207 +1,210 @@
-Return-Path: <linux-kernel+bounces-843760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55857BC02E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 07:13:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 235EEBC02D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 07:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B62A189D7EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 05:14:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7C043C3D36
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 05:13:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB961E832A;
-	Tue,  7 Oct 2025 05:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43831CCEE0;
+	Tue,  7 Oct 2025 05:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dxzAiwBk"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MLGgC25Z"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC4D4C6C;
-	Tue,  7 Oct 2025 05:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25886B67A
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 05:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759814011; cv=none; b=WeSUkJSMFEWOu6MKj6CbQwWHzwCqCe2R8G0QjgJl5QNmdYxjhYG2hbSL6NGQvzOgcYxxsl1o9RYmz6IouzUVp8ZUAoAKNeh228A/wc7CJKY7ELDGikC18Ga1YfJvnT1hCS9Oujw4B/7dcIs5Qn/fhLgO23Nn7Reo7OpAyG8y8NE=
+	t=1759814004; cv=none; b=o3iuAegtwD4JsiAEcGzzdvwwoR6tjf+nAm7/xg/wUrvxFrDcosKVowKt4xPKmmyTBFLq8FQrbHjc28OpFbAcm/g3b9Tlxv8vzwtk1uCR5aPodRM4DA710SipkiA9UZQnJHc4t/4v5DaRc4vmXpOtuXylcdb5jRUFCRzf1HOBiZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759814011; c=relaxed/simple;
-	bh=8jMOyjPcJW5s0EO4a4tzQbHaQlEKwAsbkBUuQ52Z2L8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V0DR0TEOv4WpLSNo57KL2k++mEDAr9Hb1bt3GD0m35oPKrU4HRU0Y8ErKz4A0LevvvXsS/gNL/iDp+t0u48mO8TAdR2CvtcntlBfVv+a7KECcTG4DwxgfmunU9VvEAlhSzn6GlmajoaR0sE4Ngwmb6QE4f+Y7tOYepm5Y5StRIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dxzAiwBk; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 596KJBxc002750;
-	Tue, 7 Oct 2025 05:12:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=XVq5AB
-	Kv33NUVY4bWap2D/BLFM1M8DnbRXmDWdd32HI=; b=dxzAiwBkqcA1o5kDRORsEL
-	Af6dP78M1li9Jc4I9YJKSI04DfkiWp/iiqKgkXaQ5QnCx53wMTJsHHxq9rT8TqQx
-	oHBoLldTak8PVZ5O3BSih/O8exfjLZLxvqTWwYS/MVqCH6lzmKMoel8Vo0020/33
-	CnQV8qCE1kUFh5KOQv2QOhCQADMRy9nmbPvfmo7qzAH3/hTNBRBJzoqZuLewwBJd
-	WGYne6BUnfWRzzx5V57JY/oEyy6qgaIyb3/xESooys7AruFjX8lSi6fWn5vSfENm
-	E27Tpcm2brcPjII68HxANAFx7oR214e+xDcNrfXcpR6dNBzUXPGEpXexyt0RA8uQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49js0scwx7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 Oct 2025 05:12:38 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59755rBY025638;
-	Tue, 7 Oct 2025 05:12:38 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49js0scwx5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 Oct 2025 05:12:38 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5974tc8C000882;
-	Tue, 7 Oct 2025 05:12:37 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49ke9y1s34-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 Oct 2025 05:12:37 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5975CZ7S45744420
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 7 Oct 2025 05:12:35 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5946320040;
-	Tue,  7 Oct 2025 05:12:35 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D04A220043;
-	Tue,  7 Oct 2025 05:12:30 +0000 (GMT)
-Received: from [9.39.21.122] (unknown [9.39.21.122])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  7 Oct 2025 05:12:30 +0000 (GMT)
-Message-ID: <2b37d74f-7a5d-486b-98df-679bd7e2b0c2@linux.ibm.com>
-Date: Tue, 7 Oct 2025 10:42:29 +0530
+	s=arc-20240116; t=1759814004; c=relaxed/simple;
+	bh=L5xoEIflpBS7wooM7axyy2VDNqgfrX6E93X+/MuiZN0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cvL0YBkwZCTbEFIt/hp3Ph4VMflDvEY/GCfsj3vhbSkCtQ6YhWcA1rzOI/16SFwNE+B/j+GGUXelphmvey/Q6IRFe//9u1dTm/w/2Q6NGYjdm6PIsGmm7+zvqCfNadf4V7LnNm32dfDa1n8uDzVO34MBmPkv4RIkBfDMew82oCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MLGgC25Z; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3ecde0be34eso3511053f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 22:13:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759814001; x=1760418801; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1pS3XDiQK8f8eyTQX//zdVzSc4GWTW1yqVKROF9NUcQ=;
+        b=MLGgC25ZXEXd9ObP61oNddbu5h/EVLR3ENPvBTbnxgpZJS685STfaphC6v5CRZl7Bx
+         z/qNT8m8A3XqZK9EpDa7BfvtnTl6LKZtDIc3oiz204PzJyoYJik8fVcAk2hgbuRR4HNx
+         MFJhJdFNUgnqXkBGMu5Lw8gwMcKDS9Cy67ujiNhYdmaDEFbdH/Z7M6hNSIlq/0g1sYe+
+         caVLBQrr6T+kUQE9mCk6MzyopBB9gUvDqDq1EoW4jCQxsOlm3WiCgEm3GPXuuJ7KnvIA
+         j2jdArDXBsTqUGYHXerFaryUyu1K7FpZ/w6UFT8ffbYRIa/aw//ICsE64kXkMv29iYXE
+         lsuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759814001; x=1760418801;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1pS3XDiQK8f8eyTQX//zdVzSc4GWTW1yqVKROF9NUcQ=;
+        b=AG+o+P2DYwF1ffTAu1uGdJm22hxXZ/BW47hWILtalxXF8lLo3+QEA+bJ9fnQHinTha
+         o4AelDbWf5JBb5KVDWN8XmjXEmWpCUeGIKp/eHMQZn6ga+CWbwfOmldwdx1R2VUWUlUC
+         zRDA7JPY5EOrMcKpmUzESV+EoaBTwZmstp6U45Nyw/hHJklIGIUrhzc/ePOMJ6MYIPUT
+         uw3dQWMqe4uvuLMlxEepUQi/BmO6clD06F+oGf3cWiA10qSOqjAUc8BOwsIqLzwMwcOj
+         8mgAxjjzYeGxTL+xZ1k0+H/YliaLnk7XDk0i6Vl0fnxgEA1GX+5TokwLQvVqJMdyO9dZ
+         JNow==
+X-Forwarded-Encrypted: i=1; AJvYcCV0hqp4+IBhgylk86ARSCbdy8lLO2XQNFaYmlFGSLrbMJm3961wG93svjeESGDursCCvNDRG3Y20Cqe+cw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5I0UsbXROq6kgMPVOcdDvoArjYcxWW0UjSKInaO+zB2kOwddP
+	DRb5D/BheAwaWO2TjLO4wmTCaO+Bt4TiVAWAMIYI4UL3Th0EPbffDev8Fl0cmjek6s9hp8ak6HZ
+	RbRTR7fqt0vyRk42/zS3PPbpOLYjsxv8=
+X-Gm-Gg: ASbGncvQFIxZxcNq3xI6AZzksvoHg/X40BFR1P+C0EZ2RVgc1QY0ATKtpDZz4bq/0pB
+	xnpvhA5V9X2kZU5yoPrEtyNRlU0HO2w5tEtLhEScQ752vkZ+19VyetgSsRhWfSnKRPZNMiwcBe+
+	crARJDf5+ctHZfqP6++3P+vkyLJq2MTO4w6trMXUqP7Od+UHQzAhunfERvLHOnzraC28AWso/RU
+	UE0hdSXr2aKf4qPZgCgw+ZyD0RTl9Aq
+X-Google-Smtp-Source: AGHT+IGV0xtcmM1zsg2OwGtKvJdRiIXrdxpv8K4QHttJAzVgt0D6HfXUccFjYZoOM3q6VTY6zRPYzZjolHquEvhvO7E=
+X-Received: by 2002:a05:6000:26d1:b0:3ec:db87:ff53 with SMTP id
+ ffacd0b85a97d-425829bf154mr1325418f8f.12.1759814001232; Mon, 06 Oct 2025
+ 22:13:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/14] sched: Employ sched_change guards
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
-        mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
-        changwoo@igalia.com, cgroups@vger.kernel.org,
-        sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de,
-        tj@kernel.org
-References: <20250910154409.446470175@infradead.org>
- <20250910155808.415580225@infradead.org>
- <fee0edd5-86d1-4dff-9e07-70fd2208b073@linux.ibm.com>
- <20251006181429.GV3245006@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-In-Reply-To: <20251006181429.GV3245006@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=EqnfbCcA c=1 sm=1 tr=0 ts=68e4a147 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=qX6ajofIpXMs4fIIw1kA:9
- a=QEXdDO2ut3YA:10 a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22
- a=xoEH_sTeL_Rfw54TyV31:22
-X-Proofpoint-GUID: cAqOOaCKutzRGHdSxvZApmpDB_dpjxLd
-X-Proofpoint-ORIG-GUID: euvDvoERsB13dXaex28twqgFbv7-s7Ba
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDAzMDIwMSBTYWx0ZWRfX32bytjmGzGCV
- UjpUqZMEWxRLOY1FL939p/tPFpycFWvvjDJDzsR4KycttyTHbQYa4OoMvsQMOs7zBuM9nitRwQs
- PT1t1OhhYoQzFgug9w9SWc6CaoCha8EBxdz0Cqf7tcSENBQJcR1kw/JujHtem1EkfKL/3XRQPCg
- kBRssF+nr52FI08nuAvCvqSfhz8UUwR9syE+4nUKmFGsGk9c0dBfSGDNbJUO7sEViryWf7bfeLL
- MsFssEmH07hcWNnkQivz/5j0xbRYossatwPrinkaHCl1y3dUyjv/C0SjnDq2QFYtIyF+W45GNvi
- BvcTr1RbeeNyI4UCFmkN2oerfX1fJ2ZwRIoqTGYm/JUq6ztlDUF9Y1AnKdPENmlZPK4U8Lh/x1o
- eE1uAA0HsB132IpaqyedhF9lRk5TMQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-06_07,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 malwarescore=0 impostorscore=0 adultscore=0 phishscore=0
- priorityscore=1501 bulkscore=0 clxscore=1015 spamscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510030201
+References: <20250925151648.79510-1-clamor95@gmail.com> <20250925151648.79510-21-clamor95@gmail.com>
+ <20251002015244.GA2836647-robh@kernel.org> <CAPVz0n1By+akzp0t+GfF9nRzZ27NwYEikXxQ+=M=W2NEGpLNFw@mail.gmail.com>
+ <20251006203148.GA523657-robh@kernel.org>
+In-Reply-To: <20251006203148.GA523657-robh@kernel.org>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Tue, 7 Oct 2025 08:13:10 +0300
+X-Gm-Features: AS18NWDkvx6agTucL7VNWr7MeuduCABFIlrIhwhvyaKckkFjZfLI9EvskSqNc_g
+Message-ID: <CAPVz0n3CZTa8eV=gsJdpQ=yQ9sFbVd_vHAEpESP=Y6pE1=cLUw@mail.gmail.com>
+Subject: Re: [PATCH v3 20/22] dt-bindings: display: tegra: document Tegra20
+ and Tegra30 CSI
+To: Rob Herring <robh@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	=?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
+	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, 
+	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, Aaron Kling <webgeek1234@gmail.com>, 
+	Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-staging@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+=D0=BF=D0=BD, 6 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 23:31=
+ Rob Herring <robh@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Thu, Oct 02, 2025 at 08:14:22AM +0300, Svyatoslav Ryhel wrote:
+> > =D1=87=D1=82, 2 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 0=
+4:52 Rob Herring <robh@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> > >
+> > > On Thu, Sep 25, 2025 at 06:16:46PM +0300, Svyatoslav Ryhel wrote:
+> > > > Document CSI HW block found in Tegra20 and Tegra30 SoC.
+> > > >
+> > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > ---
+> > > >  .../display/tegra/nvidia,tegra20-csi.yaml     | 135 ++++++++++++++=
+++++
+> > > >  1 file changed, 135 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/display/tegra=
+/nvidia,tegra20-csi.yaml
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia=
+,tegra20-csi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,=
+tegra20-csi.yaml
+> > > > new file mode 100644
+> > > > index 000000000000..817b3097846b
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra2=
+0-csi.yaml
+> > > > @@ -0,0 +1,135 @@
+> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-cs=
+i.yaml#
+> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > +
+> > > > +title: NVIDIA Tegra20 CSI controller
+> > > > +
+> > > > +maintainers:
+> > > > +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > +
+> > > > +properties:
+> > > > +  compatible:
+> > > > +    enum:
+> > > > +      - nvidia,tegra20-csi
+> > > > +      - nvidia,tegra30-csi
+> > > > +
+> > > > +  reg:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  clocks: true
+> > > > +  clock-names: true
+> > > > +
+> > > > +  avdd-dsi-csi-supply:
+> > > > +    description: DSI/CSI power supply. Must supply 1.2 V.
+> > > > +
+> > > > +  power-domains:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  "#nvidia,mipi-calibrate-cells":
+> > > > +    description:
+> > > > +      The number of cells in a MIPI calibration specifier. Should =
+be 1.
+> > > > +      The single cell specifies an id of the pad that need to be
+> > > > +      calibrated for a given device. Valid pad ids for receiver wo=
+uld be
+> > > > +      0 for CSI-A; 1 for CSI-B; 2 for DSI-A and 3 for DSI-B.
+> > > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > > +    const: 1
+> > >
+> > > Sorry I didn't bring this up before, but is this ever not 1? If it is
+> > > fixed, then you don't really need the property. I prefer it just be
+> > > fixed rather than getting a bunch of vendor specific #foo-cells.
+> > >
+> >
+> > This is not an introduction of property, such property already exists
+> > in Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-mipi=
+.yaml
+> > and is used in multiple device trees. As I have told before, in case
+> > of Tegra30 and Tegra20 CSI block combines mipi calibration function
+> > and CSI function, in Tegra114+ mipi calibration got a dedicated
+> > hardware block which is already supported. This property here is used
+> > to align with mipi-calibration logic used by Tegra114+
+>
+> Okay.
+>
+> You will have to continue to tell me again if my past questions are not
+> addressed in the commit message. A review only last week was 100+
+> patches ago. Don't expect I'll remember nor go re-read prior versions.
+>
 
+That is not a problem, I did not meant to offend you. I will add info
+into commit message.
 
-On 10/6/25 11:44 PM, Peter Zijlstra wrote:
-> On Mon, Oct 06, 2025 at 08:51:27PM +0530, Shrikanth Hegde wrote:
->>
->>
->> On 9/10/25 9:14 PM, Peter Zijlstra wrote:
->>> As proposed a long while ago -- and half done by scx -- wrap the
->>> scheduler's 'change' pattern in a guard helper.
->>>
->> [...]>   		put_task_struct(p);
->>> --- a/kernel/sched/sched.h
->>> +++ b/kernel/sched/sched.h
->>> @@ -3860,23 +3860,22 @@ extern void check_class_changed(struct r
->>>    extern struct balance_callback *splice_balance_callbacks(struct rq *rq);
->>>    extern void balance_callbacks(struct rq *rq, struct balance_callback *head);
->>> -#ifdef CONFIG_SCHED_CLASS_EXT
->>> -/*
->>> - * Used by SCX in the enable/disable paths to move tasks between sched_classes
->>> - * and establish invariants.
->>> - */
->>> -struct sched_enq_and_set_ctx {
->>> +struct sched_change_ctx {
->>>    	struct task_struct	*p;
->>> -	int			queue_flags;
->>> +	int			flags;
->>>    	bool			queued;
->>>    	bool			running;
->>>    };
->>> -void sched_deq_and_put_task(struct task_struct *p, int queue_flags,
->>> -			    struct sched_enq_and_set_ctx *ctx);
->>> -void sched_enq_and_set_task(struct sched_enq_and_set_ctx *ctx);
->>> +struct sched_change_ctx *sched_change_begin(struct task_struct *p, unsigned int flags);
->>> +void sched_change_end(struct sched_change_ctx *ctx);
->>> -#endif /* CONFIG_SCHED_CLASS_EXT */
->>> +DEFINE_CLASS(sched_change, struct sched_change_ctx *,
->>> +	     sched_change_end(_T),
->>> +	     sched_change_begin(p, flags),
->>> +	     struct task_struct *p, unsigned int flags)
->>> +
->>> +DEFINE_CLASS_IS_UNCONDITIONAL(sched_change)
->>>    #include "ext.h"
->> could you please add a comment on matching flags on dequeue/enqueue
->> here?
-> 
-> Would something like so be okay? This assumes at least the second patch
-> is applied as well.
-> 
-> ---
-> 
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -10783,6 +10783,12 @@ struct sched_change_ctx *sched_change_be
->   	struct sched_change_ctx *ctx = this_cpu_ptr(&sched_change_ctx);
->   	struct rq *rq = task_rq(p);
->   
-> +	/*
-> +	 * Must exclusively use matched flags since this is both dequeue and
-> +	 * enqueue.
-> +	 */
+> Ideally, we don't define the type of a property more than once. So this
+> should really first be moved to its own shared schema that's referenced
+> here and in the original user. Then it is perfectly clear reading the
+> patches that this is not a new property.
+>
 
-yes. Something like that. Unless callsites explicitly change the flags using
-the scope, enqueue will happen with matching flags.
+I am not sure that creating a dedicated shared schema for a single
+properly which is used by 2 schemas worth it, though, if it is
+preferred, may the refactoring be done in followups later?
 
-> +	WARN_ON_ONCE(flags & 0xFFFF0000);
-> +
-
-A mythical example:
-scope_guard(sched_change, p, DEQUEUE_THROTTLE)
-	scope->flags &= ~DEQUEUE_THROTTLE;
-	scope->flags |= ENQUEUE_HEAD;
-
-But, One could still do this right? for such users the warning may be wrong.
-
->   	lockdep_assert_rq_held(rq);
->   
->   	if (!(flags & DEQUEUE_NOCLOCK)) {
-
+> Rob
 
