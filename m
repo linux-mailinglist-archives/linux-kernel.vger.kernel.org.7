@@ -1,207 +1,191 @@
-Return-Path: <linux-kernel+bounces-843939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06416BC0A33
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:32:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6A99BC0A36
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:32:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7FFEA344334
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:32:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84768189EA99
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DFF2D4B40;
-	Tue,  7 Oct 2025 08:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0892566DD;
+	Tue,  7 Oct 2025 08:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XoU6ZAZO"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JA+t8WLI"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938612D4817
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 08:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51472D47F3
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 08:32:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759825960; cv=none; b=Uke0B8WbyN3TYkWab568qFp/uWc3rxHFZkkQEEsVNX42BWBDNwZtYJPPkBeM2k16CCkhsJxEWUxUvfy7085xhCyCaU7+pmuR/WWTUELBD/bJYX73UaziV3+RUYcyheC/cXIIiT2I4DNTd7HJLnajhtCD6TbtelWCCzvEPrq9N14=
+	t=1759825969; cv=none; b=KbRCKVeCaz/52U1FJDYfoAR9Tf9T7c9Pui2xMoXRoonEWR3IlqVWog/LgkPF3o2rAbmUntQcYhDtrwWggba4x9vyglWz1yOuo5KtUXpthbCZkApTZaJKLkDeYJr5Syzn0dPlXeGdLJTZy8gUS/tRbaE5wcsNLCk3XouRaNigZkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759825960; c=relaxed/simple;
-	bh=UyXS0YiulfoICjWKVbZLAuV+X0gt4aJvE3oK8qyJ30E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BjOvDuUETMi6YC91Cl1dEA5hxCvejdA3BFJe3o1gLlK+4Y+ghkNnTOo7X+z5ylEHjoqB4cZ0FP3wjIXxgEvcnJ7aNz9N86+YogNo5K04p8Rnw3CRxYSNpKzyVLgUrDEA04WKEDOC9FNjf7o9syfZYFkjT5KAg3xJGovfQwZhsg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XoU6ZAZO; arc=none smtp.client-ip=209.85.215.180
+	s=arc-20240116; t=1759825969; c=relaxed/simple;
+	bh=6YA48dRdMn98EKLf0B0E8UQI+JrUJv05ObeY5TJyDAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BznTVm5P8AIsO2hKtzopCIEVVEjxVN4dvbm9IOwNcrwg8LiSK3EszalEYsh0nn5qbfs7iaxV6Mct6HskZuOeLgGft5/AsrProCyVpfZUYiTdXczf6ieOjfcq/YPPQgVa2KKX6QoHghle31dzZyr/4/JIx3t5rsP3NGCDoc7v2t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JA+t8WLI; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b5526b7c54eso3936225a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 01:32:38 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-57edfeaa05aso7096219e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 01:32:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759825958; x=1760430758; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HprILVmlCINZEM+NQvrClrUcjHEMUlllXqO7BPuLx90=;
-        b=XoU6ZAZO2m49XN1+y/2A/M2ZAltddjpHTRHuEyzKt7SYujeDozV9R+lZtcXwivtS8Q
-         aYX5GdTtVj5TkneEpWtZ4N3eBl7Ph2zOndVvZEQ4FSYV4OCdNVdQu0w5Gr9s8ZdQI0cp
-         tpE15928EVab++85xjbhvN5da9Sx/rEavxisbqg5UyFGPI/pSG6W0suuxGlLOAZdoHGQ
-         pGL7OrfwMNRzz/bgTqACZkRC76pS7oE7jxi3gvkWSQp9w+8srbzykdDWs4aJu29VRZNE
-         MKcxunczgINFyogyfZRJySZFynh4YrV9PBRTW4agGAuHx1BCMS8zqh3eVud9E2ktXKvl
-         NxiA==
+        d=gmail.com; s=20230601; t=1759825966; x=1760430766; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z3IEuIwN+kSi/yp1WzBh4o8EnyjA8K4wg582tbfmoa4=;
+        b=JA+t8WLIHPQLSAG1PL4DAX6nUWh4aRzm0huisIDpot1hyxgIOHtf68MR/T8Uumzjqw
+         OOvNsz0NfA/V8vvqKOMayF09j8jzRXyjMad2nuem7uYuUjReD1VhdfXi96c3UuXqaMDE
+         HeQfHd7ksDedSbAngpgd1Mlg5tbfCC6FiZy/BGltqn4/WUv3s0UTxDoMzNfzfCe+dOvo
+         8I85F4uQDS1LI8v/dHPRKDxDT4Lum3nU93pzhRMUKcP5d8wLh/aWs4fAwsxiQytRPPFB
+         0Hjc9+T7L8GF2kKA7hUDTG72jFw8gZaX3epenYd6Z8b+u3S6G+ZgRV5YZtN+GVcHIoCZ
+         v9kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759825958; x=1760430758;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HprILVmlCINZEM+NQvrClrUcjHEMUlllXqO7BPuLx90=;
-        b=o/1E3ix5PXK3gYZSlYWxAbUtgmttxHWoOzrkx10jNf3648sZ5oFh+44nByPElSRLTB
-         aIaRo6EUatmFDNWVoLWRffIlMaVcoaX9TEH+V1pcTYdL0xbB/FxPbA0tXH1TEgwi3GjQ
-         hKHmtzxDzNLEgbCCrK2q9TQscRdHlFcfK7xEMz1gRVrGC3rd4O6kyP/verxy5IeUA8np
-         DHurvGOo3D+Rp5fqXhDzTMWC+2tenOkhfVWVK15l0sia+1zvEHdTwgoHiFazlzyg5+Z4
-         +9F+ZFqwMroG9bNPXkY9CVMDOzifw41IRGAsFh5rA5lR9sFeKfWsIHKQkVtEDzCTnlCf
-         jZEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWexrDN3vR/srBrfohpht/T78UFVDPOGz8HWxsavKI1zvEkxXwDjima0Rc5ZeDTpmpG7vce1UlHB4aTVN4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxlbl70lreNhVfbMuxOMRgotsRZsOILz83qvEA1n1izSb9ZqVT5
-	KDWQS2kVH83iyR/3Tn+7HXgGVa3FS9z4qb9lFrKA/3hrP9r+xKZbgV+H
-X-Gm-Gg: ASbGncvrH0S9Wv8yzWo3VJWyseSc28CXa/Dvh4F0hXIEbHJWmVQwU7ZYHzTw61GMsrw
-	eMSAUXXvQVnHjeAvTcK2xrwbijCkE6r/Itqeke7L1a2CogzWw/a5gWSt9tNANwnAL3CMQNEGTha
-	FWzUVam9k8xyZYsvmNYjdwzSf4W+NFzm7NduExJBPGavQoWu3fcswJFTyyZ6n9bPFmjMW8NDryf
-	WGE78oD6BZoUlfsGUSm91sFOktZhy4Mxmdqg11EYwonEB6ua4nzK+2dgC2VDlNghHh97TSORU1G
-	9ujrEKxQlfgSmmlDSOSK6+X3pKFAboApbhUUl6NKYu1JHWmsTWRRxMx0fVW71YJRE+oHvkZyNWy
-	vwtaJEexX/O0N7lH8CoILTK6In0/Mjj9PPnTa5szCxtym6CC8wXaYOpb3Dz4NH7wrlA==
-X-Google-Smtp-Source: AGHT+IEQinegNp0eryTjEE/PSB7WT+WxKJi2rEkoILL6p0tSCG8SZofKeGirNv90BH6Yz68RvHxRpw==
-X-Received: by 2002:a17:903:3c25:b0:28e:9427:68f6 with SMTP id d9443c01a7336-28e9a593d32mr183371865ad.27.1759825957801;
-        Tue, 07 Oct 2025 01:32:37 -0700 (PDT)
-Received: from kforge.gk.pfsense.com ([103.70.166.143])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1d24aesm157032525ad.118.2025.10.07.01.32.34
+        d=1e100.net; s=20230601; t=1759825966; x=1760430766;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z3IEuIwN+kSi/yp1WzBh4o8EnyjA8K4wg582tbfmoa4=;
+        b=LUfXZO5cHvxxR9N2IQph4nktqL9Mf/MX3PQ7W8l6uMjAQS/Qz6MnPctslP+mgJhBJL
+         IOLrOoKD261WYfV5C1h5VKP7kdZkH8caKhIf21NbrKBFp8ps3sJpOJMgVA0/4F7zG7vY
+         Ujd+y3RqXPElejZed8nEXUNC8bcNrMQF6eCq/+QgkNJo6yJi7C3N7AUlpJdPN6eRA/V5
+         OaF61JZFW6qI7k3fPhdDPPWGj5OMop57oklO4SFuMqhJrnJJ1rnBx6VvbJunEeIEdocr
+         Es6Za3k49h58x/MmGUd+L2U6sqJL8AY9JhR7PKlCH9GsCGQRRKftQ8pE2pUFJagtoOjx
+         TRCg==
+X-Forwarded-Encrypted: i=1; AJvYcCXY/x35mP4GACqGqJ5xEVdM76VaTH+tm3iz6WzPG4k3poeCr1/2Cq6BMh9k1nts0st2JGuWQzdczvI5iZ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrQ8Fd5RKuZJ4a9jjdepDK4+JvvtTwt7iROhk3IXXssZs/fnE7
+	HgYLBskV7aF1ge3blEfn33xzIND/XcFoKTVr/bME2gxU7HaagDG5dP+PW02+BAyn
+X-Gm-Gg: ASbGncs1nNno7fVxeOavOcfVta6/ZoKGLOMs6RSV+BV89Wc4hqXYSTFOc2NYo+tsnTZ
+	JMCROQtZE7FVfn1ktDN0hKhX4GZABplEN/4FfeNgYHej+95YhcuTpHVnWXYRXwJMmNmpc5T2Vx5
+	KHmOM/jSyf6TLYP/dJ3ZBhtusvDe6JygXWRaTOrzikN3AZolJM8jNoLjzKPJh3cH5o8KvChwt7X
+	2BaYNdWyToBBzxccNC8wkAvpfiqeSHCA3K/e5btRDaPwcKBgevAbjJupyj8D0Hn2uRfM1RaR7RZ
+	+q8ze+mbeRWMsIzgCjzzSni4jGDZwQbWruL1N/Z957jT/DRfPZ3o2+KgEV3cJp3KYOhmx5DhE0E
+	o3ulGFAFkrLp9qQC+5SQsxSZu5lZj1xEW+xUE6Au315vdEkWgFp9XLg==
+X-Google-Smtp-Source: AGHT+IHKnIR6bZ7zCgqGQnWqvEpoa2uWu0PJzc9KxMfoImMFOI43uHYL9VOuRoaIsbm62UKnLJwRzw==
+X-Received: by 2002:a2e:bcc9:0:b0:364:45a:5159 with SMTP id 38308e7fff4ca-374c3825faemr47972051fa.30.1759825965509;
+        Tue, 07 Oct 2025 01:32:45 -0700 (PDT)
+Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-375f3b63fffsm7785271fa.40.2025.10.07.01.32.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 01:32:37 -0700 (PDT)
-From: Gopi Krishna Menon <krishnagopi487@gmail.com>
-To: rostedt@goodmis.org,
-	corbet@lwn.net
-Cc: Gopi Krishna Menon <krishnagopi487@gmail.com>,
-	linux-trace-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	khalid@kernel.org,
-	linux-kernel-mentees@lists.linux.dev
-Subject: [PATCH] Documentation/rtla: fix htmldocs build error by renaming common_options.rst
-Date: Tue,  7 Oct 2025 14:02:26 +0530
-Message-ID: <20251007083228.17319-1-krishnagopi487@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Tue, 07 Oct 2025 01:32:43 -0700 (PDT)
+Date: Tue, 7 Oct 2025 11:32:38 +0300
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Andreas Kemnade <andreas@kemnade.info>, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [RFC PATCH 00/13] Support ROHM BD72720 PMIC
+Message-ID: <cover.1759824376.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="CSuc6sH3Hezd75HV"
+Content-Disposition: inline
 
-Running "make htmldocs" generates the following build errors for
-common_options.rst
 
-Documentation/tools/rtla/common_options.rst:58: ERROR: Undefined substitution referenced: "threshold".
-Documentation/tools/rtla/common_options.rst:88: ERROR: Undefined substitution referenced: "tool".
-Documentation/tools/rtla/common_options.rst:88: ERROR: Undefined substitution referenced: "thresharg".
-Documentation/tools/rtla/common_options.rst:88: ERROR: Undefined substitution referenced: "tracer".
-Documentation/tools/rtla/common_options.rst:92: ERROR: Undefined substitution referenced: "tracer".
-Documentation/tools/rtla/common_options.rst:98: ERROR: Undefined substitution referenced: "actionsperf".
-Documentation/tools/rtla/common_options.rst:113: ERROR: Undefined substitution referenced: "tool".
+--CSuc6sH3Hezd75HV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-common_options.rst is intended to be included by other rtla documents
-and is not meant to be built as a standalone document. It contains
-substitutions that are only resolved by other documents, so building it
-independently results in 'undefined substitution referenced' errors.
+The ROHM BD72720 is a new power management IC for portable, battery
+powered devices. It integrates 10 BUCKs and 11 LDOs, RTC, charger, LEDs,
+GPIOs and a clock gate. To me the BD72720 seems like a successor to the
+BD71828 and BD71815 PMICs.
 
-Rename common_options.rst to common_options.txt to prevent Sphinx from
-building it as a standalone document and update the include references
-accordingly.
+The reason for RFC status is the addition of VDR battery parameters in
+the device tree (patch 3) and the fact that BD72720 uses two different
+I2C slave addresses.
 
-Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
+This series depends on the series: "[PATCH v5 0/3] power: supply: add
+charger for BD71828":
+https://lore.kernel.org/all/20250918-bd71828-charger-v5-0-851164839c28@kemn=
+ade.info/
+sent by Andreas, which is not yet merged. I will rebase this on
+v6.18-rc1 when it is out, to see what dependencies are still missing.
+
 ---
 
-Note: reStructuredText substitutions -
-https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html#substitutions
+Matti Vaittinen (13):
+  dt-bindings: regulator: ROHM BD72720
+  dt-bindings: Add trickle-charge upper limit
+  dt-bindings: power: supply: BD72720 managed battery
+  dt-bindings: mfd: ROHM BD72720
+  dt-bindings: leds: bd72720: Add BD72720
+  mfd: bd71828: Support ROHM BD72720
+  regulator: bd71828: rename IC specific entities
+  regulator: bd71828: Support ROHM BD72720
+  gpio: Support ROHM BD72720 gpios
+  clk: clk-bd718x7: Support BD72720 clk gate
+  rtc: bd70528: Support BD72720 rtc
+  power: supply: bd71828-power: Support ROHM BD72720
+  MAINTAINERS: Add ROHM BD72720 PMIC
 
-Tested by running "make htmldocs" before and after the change,
-verifying that no substitution errors are generated and the 
-output renders correctly in browsers.
+ .../bindings/leds/rohm,bd71828-leds.yaml      |    7 +-
+ .../bindings/mfd/rohm,bd72720-pmic.yaml       |  269 +++++
+ .../bindings/power/supply/battery.yaml        |    3 +
+ .../power/supply/rohm,vdr-battery.yaml        |   78 ++
+ .../regulator/rohm,bd72720-regulator.yaml     |  153 +++
+ MAINTAINERS                                   |    2 +
+ drivers/clk/Kconfig                           |    4 +-
+ drivers/clk/clk-bd718x7.c                     |   10 +-
+ drivers/gpio/Kconfig                          |    9 +
+ drivers/gpio/Makefile                         |    1 +
+ drivers/gpio/gpio-bd72720.c                   |  281 +++++
+ drivers/mfd/Kconfig                           |   18 +-
+ drivers/mfd/rohm-bd71828.c                    |  429 ++++++-
+ drivers/power/supply/bd71828-power.c          |  172 ++-
+ drivers/regulator/Kconfig                     |    8 +-
+ drivers/regulator/bd71828-regulator.c         | 1025 ++++++++++++++++-
+ drivers/rtc/Kconfig                           |    3 +-
+ drivers/rtc/rtc-bd70528.c                     |   21 +-
+ include/linux/mfd/rohm-bd72720.h              |  632 ++++++++++
+ include/linux/mfd/rohm-generic.h              |    1 +
+ 20 files changed, 3064 insertions(+), 62 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic=
+=2Eyaml
+ create mode 100644 Documentation/devicetree/bindings/power/supply/rohm,vdr=
+-battery.yaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd7272=
+0-regulator.yaml
+ create mode 100644 drivers/gpio/gpio-bd72720.c
+ create mode 100644 include/linux/mfd/rohm-bd72720.h
 
- .../tools/rtla/{common_options.rst => common_options.txt}       | 0
- Documentation/tools/rtla/rtla-hwnoise.rst                       | 2 +-
- Documentation/tools/rtla/rtla-osnoise-hist.rst                  | 2 +-
- Documentation/tools/rtla/rtla-osnoise-top.rst                   | 2 +-
- Documentation/tools/rtla/rtla-timerlat-hist.rst                 | 2 +-
- Documentation/tools/rtla/rtla-timerlat-top.rst                  | 2 +-
- 6 files changed, 5 insertions(+), 5 deletions(-)
- rename Documentation/tools/rtla/{common_options.rst => common_options.txt} (100%)
+--=20
+2.51.0
 
-diff --git a/Documentation/tools/rtla/common_options.rst b/Documentation/tools/rtla/common_options.txt
-similarity index 100%
-rename from Documentation/tools/rtla/common_options.rst
-rename to Documentation/tools/rtla/common_options.txt
-diff --git a/Documentation/tools/rtla/rtla-hwnoise.rst b/Documentation/tools/rtla/rtla-hwnoise.rst
-index 3a7163c02ac8..cc2721315552 100644
---- a/Documentation/tools/rtla/rtla-hwnoise.rst
-+++ b/Documentation/tools/rtla/rtla-hwnoise.rst
-@@ -33,7 +33,7 @@ OPTIONS
- 
- .. include:: common_top_options.rst
- 
--.. include:: common_options.rst
-+.. include:: common_options.txt
- 
- EXAMPLE
- =======
-diff --git a/Documentation/tools/rtla/rtla-osnoise-hist.rst b/Documentation/tools/rtla/rtla-osnoise-hist.rst
-index 1fc60ef26106..a11c485f127a 100644
---- a/Documentation/tools/rtla/rtla-osnoise-hist.rst
-+++ b/Documentation/tools/rtla/rtla-osnoise-hist.rst
-@@ -28,7 +28,7 @@ OPTIONS
- 
- .. include:: common_hist_options.rst
- 
--.. include:: common_options.rst
-+.. include:: common_options.txt
- 
- EXAMPLE
- =======
-diff --git a/Documentation/tools/rtla/rtla-osnoise-top.rst b/Documentation/tools/rtla/rtla-osnoise-top.rst
-index b1cbd7bcd4ae..c7bc716b2899 100644
---- a/Documentation/tools/rtla/rtla-osnoise-top.rst
-+++ b/Documentation/tools/rtla/rtla-osnoise-top.rst
-@@ -30,7 +30,7 @@ OPTIONS
- 
- .. include:: common_top_options.rst
- 
--.. include:: common_options.rst
-+.. include:: common_options.txt
- 
- EXAMPLE
- =======
-diff --git a/Documentation/tools/rtla/rtla-timerlat-hist.rst b/Documentation/tools/rtla/rtla-timerlat-hist.rst
-index 4923a362129b..547dfc7ace58 100644
---- a/Documentation/tools/rtla/rtla-timerlat-hist.rst
-+++ b/Documentation/tools/rtla/rtla-timerlat-hist.rst
-@@ -29,7 +29,7 @@ OPTIONS
- 
- .. include:: common_hist_options.rst
- 
--.. include:: common_options.rst
-+.. include:: common_options.txt
- 
- .. include:: common_timerlat_aa.rst
- 
-diff --git a/Documentation/tools/rtla/rtla-timerlat-top.rst b/Documentation/tools/rtla/rtla-timerlat-top.rst
-index 50968cdd2095..3740fd386ea8 100644
---- a/Documentation/tools/rtla/rtla-timerlat-top.rst
-+++ b/Documentation/tools/rtla/rtla-timerlat-top.rst
-@@ -30,7 +30,7 @@ OPTIONS
- 
- .. include:: common_top_options.rst
- 
--.. include:: common_options.rst
-+.. include:: common_options.txt
- 
- .. include:: common_timerlat_aa.rst
- 
--- 
-2.43.0
 
+--CSuc6sH3Hezd75HV
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmjk0CIACgkQeFA3/03a
+ocXGRQf9Fg+ekH76K2Nj0JPhscKVrENn2YhQbC79mnV8FMFze1JrFm3tjv/gUV4e
+haaJ6oCOThcYJV5fW01BNO8cU1muXFK4cACorQIezuFCjrm+6eZuLHBLbCCFfeQf
+qPHVe3OtW5OM7s7uuyWdvnJb++lD2Ml1+RgwFpSJjZhnn0nqw2ajCpbdmqWGcvmz
++pMNZ3wlwOXy7dEGW7KfqfKnsJaBdT863auNwGVASr7drPrztw7l3G7RsZgzTLdb
+iUeKZFmHGo4//esuacjBO+IinTdL0Djr7MDrsGMHZGxLpVchVk4OLO0zMf1Tm4Dv
+5i0Bo2Z/qfyXp8zk9renVN2jjQ4Q0w==
+=nj0c
+-----END PGP SIGNATURE-----
+
+--CSuc6sH3Hezd75HV--
 
