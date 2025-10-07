@@ -1,157 +1,94 @@
-Return-Path: <linux-kernel+bounces-844790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50AAFBC2C85
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 23:43:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D5ABC2C70
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 23:41:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BF453A3835
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 21:43:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 604F21883A24
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 21:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9443D2561C2;
-	Tue,  7 Oct 2025 21:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="hJtnTpJL"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E8A2580F9;
+	Tue,  7 Oct 2025 21:40:23 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281151E3DCD;
-	Tue,  7 Oct 2025 21:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759873371; cv=pass; b=ngEQw4HbNaOxI5F4lvJVqktcjePa6MvdA7jxtKkDkgqTUaE3Mv5S4aS4GO4AnczHl7OUUoVMMzZ5zWTytsBl1VxkJP+aIA27lo5ddAP6ihAb44BO1b8W7hVFtQB51mcFp3/CKAolh58AzFaqwux9l/gum0kLS9TLZriaM60SGuk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759873371; c=relaxed/simple;
-	bh=n1UoTe1AZhGigHQGV0CdR2wm8Fae8Pl6fd/EfxVHScs=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=cCp3Vnja9B6bBqdKqS45D5QmR4VBhubXnYTwz4xSFOHWxStLc9p/hHspBFzb7HibTHi5UYhykgJa2p3/Vzwhe+PZf1Dq64KvBGqYI6lDq0hKKEvbofUilXcBSVvFPxa2Hx/ZM5jTfBtw+/PEoYNPtAGm1MABFkDOpXHA8i3yu/I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=hJtnTpJL; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1759873340; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Jst9tLl0g+DcTTlm/uVGfOB9ROwdCUi7usrrGGQVClyuDi4MQyJGwH6TaKFrdgm/gXJKrNbMvHS+zVDSqClilECD0vc0KVcJTXqP2YSuAb3JOjVyyeeWN3aSGdNn/tGFs6tGCam1/wgPkLrriBy/iBkMzaRlwlf0HfyRYBv8OXg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1759873340; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=n1UoTe1AZhGigHQGV0CdR2wm8Fae8Pl6fd/EfxVHScs=; 
-	b=HM6Ucj+Q+zpu/4kYaw4cbG8KHvY4QHDBeC2jrWIYvg893luy0+R3E0Lqnoi3c4eLe7koUZBTDJWOd9qXfP6baaBNhIyffGjVMwLehaBvv1PXRuBjmmXFK9NMsd1uRZGmpmtCNq74Yd6oqcL5ZArzAAtX+TPo2Lw4CVDI3tJ+B2k=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759873340;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=n1UoTe1AZhGigHQGV0CdR2wm8Fae8Pl6fd/EfxVHScs=;
-	b=hJtnTpJL+1bUSqKnHuxIApEBBKHhanxQbg9Kr9G8lvhe/+ZZUuni2inz/HCDHVbx
-	E00Ejbfke0hp6M/0Swy4+ZIweFIJxZ4W33s3OL5j7iOmMHZqLlnXZKChJ8XSanpj0x+
-	UMgsU6pRjTT33p/LJ2+Caao2sMivBq0cercIkMds=
-Received: by mx.zohomail.com with SMTPS id 1759873339080158.75028192472178;
-	Tue, 7 Oct 2025 14:42:19 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B562247295;
+	Tue,  7 Oct 2025 21:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759873223; cv=none; b=q8W2PgAB2fQSOpLqxWmOTqspBjZIo7qKUTGSPuoA4CwjaQtrCd4+Kk0kIJh4rJa42DP5MQ90vUolTXWYP1uIJpYQqDZBtkbRYy4izx8J2K+WlW9NcqT4EQOTMXYUyWKHoSZ7ZIiRjpmAd9odera4tcP9v45bf+HMWsfiDDhgFQU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759873223; c=relaxed/simple;
+	bh=CzucD7jQ8YWt4x3vL1rjjME2IB+shp9RtWxtDBoYYvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Xt/zaiD28QNCPJNmlkuU3JbJiNPsROtIJFEvTc1pGJEaGJ7iWrEmVXxX5qqQ83GFYfhXzLQkRWvfoEDdatX4pUhLAeFk7+jtVeWbt/vjf67RLgYSKjBWtzEpFenVyqXMkDQbC5bEDFBLAZfaCHqaeaLjnptjLDsJttqFgEa/VlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay10.hostedemail.com (Postfix) with ESMTP id DCB1AC02F5;
+	Tue,  7 Oct 2025 21:40:18 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf05.hostedemail.com (Postfix) with ESMTPA id B0AA02000E;
+	Tue,  7 Oct 2025 21:40:16 +0000 (UTC)
+Date: Tue, 7 Oct 2025 17:42:08 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Runping Lai <runpinglai@google.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Wattson CI <wattson-external@google.com>,
+ kernel-team@android.com, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Luo Gengkun
+ <luogengkun@huaweicloud.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v1] Revert "tracing: Fix tracing_marker may trigger page
+ fault during preempt_disable"
+Message-ID: <20251007174208.11fd02da@gandalf.local.home>
+In-Reply-To: <20251007163141.1034b120@gandalf.local.home>
+References: <20251007003417.3470979-2-runpinglai@google.com>
+	<20251006221043.07cdb0fd@gandalf.local.home>
+	<CABgk4RQwGsn4CdP0K+_7A0j7RVOiHNfoF1ESk17wEuzCea16pA@mail.gmail.com>
+	<20251007154308.5b158d04@gandalf.local.home>
+	<20251007163141.1034b120@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v6 0/5] Introduce bitfield and move register macro to
- rust/kernel/
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <aOU0joJQZiU61GBB@yury>
-Date: Tue, 7 Oct 2025 18:41:58 -0300
-Cc: Alexandre Courbot <acourbot@nvidia.com>,
- Joel Fernandes <joelagnelf@nvidia.com>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- dri-devel@lists.freedesktop.org,
- dakr@kernel.org,
- Alistair Popple <apopple@nvidia.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- bjorn3_gh@protonmail.com,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- John Hubbard <jhubbard@nvidia.com>,
- Timur Tabi <ttabi@nvidia.com>,
- joel@joelfernandes.org,
- Elle Rhumsaa <elle@weathered-steel.dev>,
- Andrea Righi <arighi@nvidia.com>,
- nouveau@lists.freedesktop.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <D421296D-FFF3-4998-B467-8E079AEB7499@collabora.com>
-References: <20251003154748.1687160-1-joelagnelf@nvidia.com>
- <aORCwckUwZspBMfv@yury> <DDC0VAHL5OCP.DROT6CPKE5H5@nvidia.com>
- <aOU0joJQZiU61GBB@yury>
-To: Yury Norov <yury.norov@gmail.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: fy8ymza4czow4bnymtr65w97txo45ky4
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: B0AA02000E
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/Fu5KlYDDHg/fNhQLS8qW+9kDPDsJw2ko=
+X-HE-Tag: 1759873216-528941
+X-HE-Meta: U2FsdGVkX1823vcATPkDRITYN0vsWbwiUJNgoRpB4Qu1WmZ/n1ec4gztb1oL9tnM5f++5R6QvgNTCkO5AfRhSjYff86PsYApboCBz0xvF+VIjJIAHEOm61Tm/pbgnJOX7J7DY23Ltj3HNbWBsmo/Ov29sqZnJAk2TKqAWec0qFzm3EnB1zF310I/K9OaJxnmwT1crwavydhPqOMFRYG8busuSkuBBxvMfUiahQIGCe2/1cCHqYWan4xCgP18BV/V7SECC7ymdcw9jHlTdgzTSDHHRduYwrIiyAqKAFAuersV2PA7+cJoIcodrYhY62q64bQStfAR2mqoyewt9agYse2t0rVr49pWHshqQ6eGeyFrx49vFLxOS6O4q5D7DP4J
 
-Hi,
+On Tue, 7 Oct 2025 16:31:41 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-First and foremost I=E2=80=99d like to say sorry for not having the =
-bandwidth to
-chime in here earlier. I=E2=80=99ve been pretty consumed by Tyr itself =
-lately.
+> +static void trace_user_fault_buffer_free(struct trace_user_buf_info *tinfo)
+> +{
+> +	char *buf;
+> +	int cpu;
+> +
+> +	for_each_possible_cpu(cpu) {
+> +		buf = per_cpu_ptr(tinfo->tbuf, cpu)->buf;
+> +		kfree(buf);
+> +	}
 
-> On 7 Oct 2025, at 12:41, Yury Norov <yury.norov@gmail.com> wrote:
->=20
-> On Tue, Oct 07, 2025 at 07:36:21PM +0900, Alexandre Courbot wrote:
->> Hi Yuri,
->>=20
->> On Tue Oct 7, 2025 at 7:29 AM JST, Yury Norov wrote:
->> <snip>
->>> Regardless, I don't think that this is the right path to move the
->>> bitfields into the core. The natural path for a feature that has
->>> been originally developed on driver side is to mature in there and
->>> get merged to core libraries after a while. Resctrl from Intel is =
-one
->>> recent example.
->>>=20
->>> With that said, I'm OK if you move the bitfields as a whole, like =
-you
->>> do in v5, and I'm also OK if you split out the part essential for =
-nova
->>> and take it into the driver. In that case the bitfields will stay in=20=
+Oops, missed:
 
->>> drivers and you'll be able to focus on the features that _you_ need,
->>> not on generic considerations.
->>>=20
->>> I'm not OK to move bitfields in their current (v6) incomplete form =
-in
->>> rust/kernel. We still have no solid understanding on the API and
->>> implementation that we've been all agreed on.
->>=20
->> Initially the plan was indeed to give this code some more time to =
-mature
->> in nova-core before moving it out.
->>=20
->> The reason for the early move is that we have another driver (Tyr) =
-who
->> wants to start using the register macro. Without it, they would be =
-left
->> with the option of either reinventing the wheel, or poking at =
-registers
->> the old-fashioned way, which I think we can agree is not going to be =
-any
->> safer than the current macro. :)
->>=20
+	free_percpu(tinfo->tbuf);
 
-Tyr could use both register!() and bitfield!() today FYI. If you move it =
-out, I can
-follow with an actual patch to do so.
+here.
 
-=E2=80=94 Daniel=
+-- Steve
+
+> +	kfree(tinfo);
+> +}
 
