@@ -1,202 +1,98 @@
-Return-Path: <linux-kernel+bounces-843874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA43BC0769
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 09:11:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A8FCBC076F
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 09:13:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E7D8934CC0D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 07:11:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42148188C1C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 07:14:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F24E22D4DC;
-	Tue,  7 Oct 2025 07:11:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2E22253EE
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 07:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A6522FE15;
+	Tue,  7 Oct 2025 07:13:42 +0000 (UTC)
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8750C2264CA;
+	Tue,  7 Oct 2025 07:13:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759821091; cv=none; b=QPyGQzrgeac1gotPDfXWVrEW2CIjATirFdnNJ5LQuR/shkD3SbmlqOmAhMBLm92A74LVYrlgnf5h3/piXonaVukB74MGagbvKscEKJHi8Wm1OcgHVW0MDkBg5/rTiiauMtjVOcQo6gzCedhzGVJ0KxifjAUAZgoyClFtnpynbh8=
+	t=1759821221; cv=none; b=l9cz03LKxe3+o89s4jGO6hNvEPyc2VPVHEB7l9j4LV4g1UErd+5jqZ3ntRKmBb/X/z9s9ikH7KBX9iLLDKY7iWLmGL4XxBd7F2ujCRS/Qa6TVIrhm3Py0zMcwOrCKIhgJr2WvB6ir9PpPTZXT0L0zpvRQtP0+WxJqff1mci5PG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759821091; c=relaxed/simple;
-	bh=LadauiYqFa0FVLNi6UteWLgji4+EmhJAL0p4QNPxgCE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KtSSyy96ImAPf7uvWDbQiIlGxpusNdBPKRvOlFYBhxOnyMnDJmYRRXDAptLbaT6tpCy6HpkxO6xIOahDMCMvruDbk3vFRsN8wCquxIvxdWP8+ElTwrlcJY8fWlhl6hE2UxFsdEtiHk0isszcraagA760JvyhVPnXclmxHop4rYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7A79914BF;
-	Tue,  7 Oct 2025 00:11:20 -0700 (PDT)
-Received: from [10.163.65.24] (unknown [10.163.65.24])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 76B623F66E;
-	Tue,  7 Oct 2025 00:11:26 -0700 (PDT)
-Message-ID: <584fea72-e564-4cf6-9435-ce4b03f2fd65@arm.com>
-Date: Tue, 7 Oct 2025 12:41:22 +0530
+	s=arc-20240116; t=1759821221; c=relaxed/simple;
+	bh=DlmRGi7TaTr4J0UZs8LZ+KmJd2GhVobyDsunWetiAns=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZnAt3lbqeF9BwXi4SCx4UlZziv7oldqs62NcLoH4CbuLbNFkUOx+JNWvz3RfIZRc2RdTVBg+7ggKymUxyTVDxVFkLvaZ7uQqXwegoEVlEILC9B5aiCj1rP5nLLO/Ypw0YnoJiKa5RSmmNTjEMWqwn+DqBBgwkLPojKhMvHo00CM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: Fushuai Wang <wangfushuai@baidu.com>
+To: <sfrench@samba.org>, <pc@manguebit.org>, <ronniesahlberg@gmail.com>,
+	<sprasad@microsoft.com>, <tom@talpey.com>, <bharathsm@microsoft.com>
+CC: <linux-cifs@vger.kernel.org>, <samba-technical@lists.samba.org>,
+	<linux-kernel@vger.kernel.org>, Fushuai Wang <wangfushuai@baidu.com>
+Subject: [PATCH v4] cifs: Fix copy_to_iter return value check
+Date: Tue, 7 Oct 2025 15:12:18 +0800
+Message-ID: <20251007071218.10949-1-wangfushuai@baidu.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: Replace READ_ONCE() with standard page table
- accessors
-To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-References: <20251007063100.2396936-1-anshuman.khandual@arm.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <20251007063100.2396936-1-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: bjhj-exc2.internal.baidu.com (172.31.3.12) To
+ bjkjy-exc17.internal.baidu.com (172.31.50.13)
+X-FEAS-Client-IP: 172.31.50.13
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
+The return value of copy_to_iter() function will never be negative,
+it is the number of bytes copied, or zero if nothing was copied.
+Update the check to treat 0 as an error, and return -1 in that case.
 
-On 07/10/25 12:01 pm, Anshuman Khandual wrote:
-> Replace all READ_ONCE() with a standard page table accessors i.e pxdp_get()
-> that defaults into READ_ONCE() in cases where platform does not override.
+Fixes: d08089f649a0 ("cifs: Change the I/O paths to use an iterator rather than a page list")
+Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
+---
+v4: no code changes, only add version description
+v3: use size_t type for (copied) and check for (copied == 0) as error.
+v2: use (!length) check for error condition.
+v1: use (length <= 0) check for error condition.
+---
+ fs/smb/client/smb2ops.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Does any platform override into something else currently? The way you write
-the description implies that.
+diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
+index 058050f744c0..ac8a5bd6aec4 100644
+--- a/fs/smb/client/smb2ops.c
++++ b/fs/smb/client/smb2ops.c
+@@ -4650,7 +4650,7 @@ handle_read_data(struct TCP_Server_Info *server, struct mid_q_entry *mid,
+ 	unsigned int pad_len;
+ 	struct cifs_io_subrequest *rdata = mid->callback_data;
+ 	struct smb2_hdr *shdr = (struct smb2_hdr *)buf;
+-	int length;
++	size_t copied;
+ 	bool use_rdma_mr = false;
+ 
+ 	if (shdr->Command != SMB2_READ) {
+@@ -4763,10 +4763,10 @@ handle_read_data(struct TCP_Server_Info *server, struct mid_q_entry *mid,
+ 	} else if (buf_len >= data_offset + data_len) {
+ 		/* read response payload is in buf */
+ 		WARN_ONCE(buffer, "read data can be either in buf or in buffer");
+-		length = copy_to_iter(buf + data_offset, data_len, &rdata->subreq.io_iter);
+-		if (length < 0)
+-			return length;
+-		rdata->got_bytes = data_len;
++		copied = copy_to_iter(buf + data_offset, data_len, &rdata->subreq.io_iter);
++		if (copied == 0)
++			return -1;
++		rdata->got_bytes = copied;
+ 	} else {
+ 		/* read response payload cannot be in both buf and pages */
+ 		WARN_ONCE(1, "buf can not contain only a part of read data");
+-- 
+2.36.1
 
->
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: linux-mm@kvack.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
->   mm/gup.c            | 10 +++++-----
->   mm/hmm.c            |  2 +-
->   mm/memory.c         |  4 ++--
->   mm/mprotect.c       |  2 +-
->   mm/sparse-vmemmap.c |  2 +-
->   mm/vmscan.c         |  2 +-
->   6 files changed, 11 insertions(+), 11 deletions(-)
->
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 0bc4d140fc07..37e2af5ed96d 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -964,7 +964,7 @@ static struct page *follow_pud_mask(struct vm_area_struct *vma,
->   	struct mm_struct *mm = vma->vm_mm;
->   
->   	pudp = pud_offset(p4dp, address);
-> -	pud = READ_ONCE(*pudp);
-> +	pud = pudp_get(pudp);
->   	if (!pud_present(pud))
->   		return no_page_table(vma, flags, address);
->   	if (pud_leaf(pud)) {
-> @@ -989,7 +989,7 @@ static struct page *follow_p4d_mask(struct vm_area_struct *vma,
->   	p4d_t *p4dp, p4d;
->   
->   	p4dp = p4d_offset(pgdp, address);
-> -	p4d = READ_ONCE(*p4dp);
-> +	p4d = p4dp_get(p4dp);
->   	BUILD_BUG_ON(p4d_leaf(p4d));
->   
->   	if (!p4d_present(p4d) || p4d_bad(p4d))
-> @@ -3080,7 +3080,7 @@ static int gup_fast_pud_range(p4d_t *p4dp, p4d_t p4d, unsigned long addr,
->   
->   	pudp = pud_offset_lockless(p4dp, p4d, addr);
->   	do {
-> -		pud_t pud = READ_ONCE(*pudp);
-> +		pud_t pud = pudp_get(pudp);
->   
->   		next = pud_addr_end(addr, end);
->   		if (unlikely(!pud_present(pud)))
-> @@ -3106,7 +3106,7 @@ static int gup_fast_p4d_range(pgd_t *pgdp, pgd_t pgd, unsigned long addr,
->   
->   	p4dp = p4d_offset_lockless(pgdp, pgd, addr);
->   	do {
-> -		p4d_t p4d = READ_ONCE(*p4dp);
-> +		p4d_t p4d = p4dp_get(p4dp);
->   
->   		next = p4d_addr_end(addr, end);
->   		if (!p4d_present(p4d))
-> @@ -3128,7 +3128,7 @@ static void gup_fast_pgd_range(unsigned long addr, unsigned long end,
->   
->   	pgdp = pgd_offset(current->mm, addr);
->   	do {
-> -		pgd_t pgd = READ_ONCE(*pgdp);
-> +		pgd_t pgd = pgdp_get(pgdp);
->   
->   		next = pgd_addr_end(addr, end);
->   		if (pgd_none(pgd))
-> diff --git a/mm/hmm.c b/mm/hmm.c
-> index d545e2494994..126c3f42e525 100644
-> --- a/mm/hmm.c
-> +++ b/mm/hmm.c
-> @@ -431,7 +431,7 @@ static int hmm_vma_walk_pud(pud_t *pudp, unsigned long start, unsigned long end,
->   	/* Normally we don't want to split the huge page */
->   	walk->action = ACTION_CONTINUE;
->   
-> -	pud = READ_ONCE(*pudp);
-> +	pud = pudp_get(pudp);
->   	if (!pud_present(pud)) {
->   		spin_unlock(ptl);
->   		return hmm_vma_walk_hole(start, end, -1, walk);
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 0ba4f6b71847..50f841ee6e84 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -6549,12 +6549,12 @@ int follow_pfnmap_start(struct follow_pfnmap_args *args)
->   		goto out;
->   
->   	p4dp = p4d_offset(pgdp, address);
-> -	p4d = READ_ONCE(*p4dp);
-> +	p4d = p4dp_get(p4dp);
->   	if (p4d_none(p4d) || unlikely(p4d_bad(p4d)))
->   		goto out;
->   
->   	pudp = pud_offset(p4dp, address);
-> -	pud = READ_ONCE(*pudp);
-> +	pud = pudp_get(pudp);
->   	if (pud_none(pud))
->   		goto out;
->   	if (pud_leaf(pud)) {
-> diff --git a/mm/mprotect.c b/mm/mprotect.c
-> index 113b48985834..988c366137d5 100644
-> --- a/mm/mprotect.c
-> +++ b/mm/mprotect.c
-> @@ -599,7 +599,7 @@ static inline long change_pud_range(struct mmu_gather *tlb,
->   			break;
->   		}
->   
-> -		pud = READ_ONCE(*pudp);
-> +		pud = pudp_get(pudp);
->   		if (pud_none(pud))
->   			continue;
->   
-> diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
-> index dbd8daccade2..37522d6cb398 100644
-> --- a/mm/sparse-vmemmap.c
-> +++ b/mm/sparse-vmemmap.c
-> @@ -439,7 +439,7 @@ int __meminit vmemmap_populate_hugepages(unsigned long start, unsigned long end,
->   			return -ENOMEM;
->   
->   		pmd = pmd_offset(pud, addr);
-> -		if (pmd_none(READ_ONCE(*pmd))) {
-> +		if (pmd_none(pmdp_get(pmd))) {
-
-I believe sparse-vmemmap is only for 64 bit arches so we are safe.
-
->   			void *p;
->   
->   			p = vmemmap_alloc_block_buf(PMD_SIZE, node, altmap);
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 674999999cd0..14c2722b955b 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -3772,7 +3772,7 @@ static int walk_pud_range(p4d_t *p4d, unsigned long start, unsigned long end,
->   	pud = pud_offset(p4d, start & P4D_MASK);
->   restart:
->   	for (i = pud_index(start), addr = start; addr != end; i++, addr = next) {
-> -		pud_t val = READ_ONCE(pud[i]);
-> +		pud_t val = pudp_get(pud + i);
->   
->   		next = pud_addr_end(addr, end);
->   
 
