@@ -1,317 +1,276 @@
-Return-Path: <linux-kernel+bounces-844653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A81F6BC26DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 20:47:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 056F0BC26E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 20:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89FB519A1443
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 18:47:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BFAB19A172F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 18:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD3B2E7F27;
-	Tue,  7 Oct 2025 18:47:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93C32E9753;
+	Tue,  7 Oct 2025 18:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="FD6uE13M";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="KBfRoZ0B"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="K3bvBi1+"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753781E50E
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 18:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759862838; cv=fail; b=ekQwvkD0XShtKzWHxIxIsvZepSX0Fp8eqdmZO+ei2/AjMwZ+3loJ33Ye2kPIwrTGbpFDEtzSCNR9JVD79KME+uRNHv+VlZU9XTOGFKb4GDFCd9Wt2hWQIGnsS63Uw86WgHW2gEfKZKqsinJMma4Up+UYIftv6VOzT/iUfnAwuOo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759862838; c=relaxed/simple;
-	bh=yJFPaerntBfJnvEE8+bYY3hGgsx2qmYR5QUVizs7MoE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=gSJAAfMelCKTmTL5G1GE7CWT1dKtZXeokr7CZm3sn5EogcBrEiUkR0Naql9roFArxK4SjtqHh9cpJs+Z/L4i47SfeXzDnTC6fZmbWhgY+ibtJ8BaZ/tbulQyQjSxvfjcvlN2pxQY5D2QJfsLwlmarswhFXQbAJVxkt3qUZf4w/g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=FD6uE13M; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=KBfRoZ0B; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 597IWhSs006929;
-	Tue, 7 Oct 2025 18:46:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=Strh90qUCmd16EIz1p
-	q+atC1aLzWsfq2txj74tmpnx4=; b=FD6uE13MWcpbKVVwK4yI9wkpPvDTDynGiN
-	qZvIyfl1izT8r2VEFmyvgMIfPy7SDd3tUL3jhLKy1ahvsGrR0VsNdlYKl2pEUGbk
-	nB04ZGf3TQPTQqkDoD8jSF5zbIr0fsubGs9b6ynEzMLIbkUQz/x5Yar5CGU7+sKY
-	v3N26LkrmcoidCPNCsGknVMrQkR/oEAneVu+obcSt1X8teXuhUjukP5ZBgpzmNue
-	V1n2iqSTYMS01rth3l7Ki0S35wXoKx7jLiBhQy12btJmAMljDp6+hnXbDQmWHcYH
-	0oXySW5GrjnYDy8DRb/fiZEUoqe5rNekhJymV7khjyZt5r/VzpIQ==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49n6yg064p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 07 Oct 2025 18:46:59 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 597I46NU035503;
-	Tue, 7 Oct 2025 18:46:58 GMT
-Received: from ph0pr06cu001.outbound.protection.outlook.com (mail-westus3azon11011021.outbound.protection.outlook.com [40.107.208.21])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49jt18mbg7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 07 Oct 2025 18:46:58 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qXzWVWjsgJM/l1LELmDzZ75OD6n/skY+hKymUmJTqf41ppFS7RZLCTGnnUK7Vhd4lllztq4mHd3rfFDSRPvKQE5GHyA4T+TgxU92zopf42b+OD6sOusOZyMPZbdHpCuX12p/XoWr1rA7IGvTYBRHMTNN5AupLhsgeLkZd/Ej9R7BgvZeJHQtPiVmryoHXEgCiy34pwBnSoNiRAtWWDTBYd2OkKoRE8gwm4GPp7jHd0K3K30NtoqpMAy3VfU8X5bIkF5LyShHFvoRp1vmYcZzjj30+bk0qRVc/2FqzP21KiMiz9oeTja0we40jA7k0+rKBiRrL4SHW9B746wImDiceQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Strh90qUCmd16EIz1pq+atC1aLzWsfq2txj74tmpnx4=;
- b=Tra+gQUnwuHFCWGOGv2ZrGweGJM+eZXJ50dB/v/4m5Kzm2VZXH6RBRCc9Q6aTn8nvuOSKwnYIxtNz7pYmvYnChExKcVbPmYllcCHgai9zrhMHwVTJHDvT/wL7GQ4PFaUXnPaAxKnoFebRxKeMKaXLzrP+w0NzoLso+orUkLRy0cjF6u0MqcI6sCJc0sSDtb2QnYCe3xHGVvhV/C4yB/o29bqsu7eBYfvV95qwee/6Uby3kkkRP+0uNRQIZLgqODi9F58C6pCfgv4Gvi2C97D/Go5VyNtsVNgqLCIq4P3p2dtwdQay/QaT43Hkzvkyl/VEZ4Mq+f6WyTjUafH8MEBfA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6EA1E521B
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 18:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759862865; cv=none; b=AlMpXqvyVs2lX9889nFFMVfaCjozz9euuNCWObLDUVsvQIvJ1ELJqLL+cfiY1QpUlumkpdaxta/Y8nKVyHacvlC6fXxu1yW7TroTM8phNgrXnRnAeu+V2HAhMilO2ZAjMUKHygR/2tLotsx7ygfVsMdP2QBZJtrXdeE0cOBw2Bs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759862865; c=relaxed/simple;
+	bh=GGtiJAlfcZTDjSiTu3CY2Jidx0+ml7dlf3+LKBL2U88=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=cNkRqWZEnwtPGR0SJn0LIprF+HD9H0kKy0Xv6CpkFpw55sUXjh64ebaqSeZdz72AZ1Psx82JcQVKpi2Rs60eW0ue9oJrEfUC0gw7lZ3VfZTpNndGHHnNEfOrGmu9ja1Ghlsig0dtnPCXTeoE9yjYSMhU0m0X/vbl10pFnqGhmGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=K3bvBi1+; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-854cfde0ca2so906811985a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 11:47:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Strh90qUCmd16EIz1pq+atC1aLzWsfq2txj74tmpnx4=;
- b=KBfRoZ0BL8TU1k6YhI/jLL3FC+kRIdRcNz30dRVC+PwPbT6Lleo07esUKjFFMNs4/M2hB6zA9wqOjViJEWPCEGRS6VxOsJbWuwJzSrUeCiQ5k7h30pZ1qRIkUxPLeGt2uwOfsuruZYbLfUOtPbNklrPK0YRNLfMaoyPR7OVoy9I=
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
- by BY5PR10MB4259.namprd10.prod.outlook.com (2603:10b6:a03:212::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Tue, 7 Oct
- 2025 18:46:51 +0000
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c%7]) with mapi id 15.20.9182.017; Tue, 7 Oct 2025
- 18:46:50 +0000
-Date: Tue, 7 Oct 2025 14:46:46 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Peter Xu <peterx@redhat.com>
-Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        James Houghton <jthoughton@google.com>,
-        Nikita Kalyazin <kalyazin@amazon.com>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        Ujwal Kundur <ujwal.kundur@gmail.com>, Mike Rapoport <rppt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>, Michal Hocko <mhocko@suse.com>,
-        Muchun Song <muchun.song@linux.dev>,
-        Oscar Salvador <osalvador@suse.de>, Hugh Dickins <hughd@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v3 1/4] mm: Introduce vm_uffd_ops API
-Message-ID: <6csw4pmymno4kdtlbzd74posr3dekamq4zkje2mfkmbg5q7xbx@y3o323tbm7h3>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Axel Rasmussen <axelrasmussen@google.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, James Houghton <jthoughton@google.com>, 
-	Nikita Kalyazin <kalyazin@amazon.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Ujwal Kundur <ujwal.kundur@gmail.com>, Mike Rapoport <rppt@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andrea Arcangeli <aarcange@redhat.com>, 
-	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>, 
-	Oscar Salvador <osalvador@suse.de>, Hugh Dickins <hughd@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>
-References: <aN08NxRLz7Wx0Qh4@x1.local>
- <ad124fb6-a712-4cf5-8a7e-2abacbc2e4be@redhat.com>
- <aN_XZbQjuYx-OnFr@x1.local>
- <cq3zcvnajs55zr7cplf5oxxjoh54fb7tvo23hehd5dmh4atvum@6274mneik6hu>
- <aOQuZy_Hpu1yyu29@x1.local>
- <akld3v2mtnjdqvs5dgwr4gnffdqf5dojwhmfylq3mkfzakjj7j@5oqqxsymkcbp>
- <aOUa8C8bhWvo5TbV@x1.local>
- <frnos5jtmlqvzpcrredcoummuzvllweku5dgp5ii5in6epwnw5@anu4dqsz6shy>
- <9089d994-262f-4941-8bed-f3c6ee05a769@redhat.com>
- <aOVEDii4HPB6outm@x1.local>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aOVEDii4HPB6outm@x1.local>
-User-Agent: NeoMutt/20250510
-X-ClientProxiedBy: MW4PR02CA0028.namprd02.prod.outlook.com
- (2603:10b6:303:16d::7) To PH0PR10MB5777.namprd10.prod.outlook.com
- (2603:10b6:510:128::16)
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1759862861; x=1760467661; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
+         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=58+grWU1+fLQ3iYvFx1p0RHwupl8wNBxalqFpZYiDLA=;
+        b=K3bvBi1+sO8Ou/2uDvl67IrhUaz6KSNJiXLC4z2yqEw+52UCLcVUoIg+E1XTMC6lj2
+         OAM3yXstaKkam6C1V9uk9JCDHQY7j1m3naXpIhWVvyQXqebIGSDVro2v+JPjqn4y2hpk
+         0BqnRHCV2kJcSZoaxqobVrf6hd70cUhtxfvhoiuKBfdfssyBfZaFuiYKWExw2r8PU45i
+         0PmqyGlYQgB/0JSfxnkAhqThx8oX1G+jdJ2Ujz4xkZqylDcrXXIzbHHD0u7DZbkAt59Q
+         x+BhtDXTPhOFtopb9eYMT+/pCdp3L4i6CmN+cDe7i5KOTtHNVsVyoEtqPq6pkAmbdaaw
+         ml9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759862861; x=1760467661;
+        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
+         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=58+grWU1+fLQ3iYvFx1p0RHwupl8wNBxalqFpZYiDLA=;
+        b=CkwAJZluMEmn/PNcNhbiL9EDuCfpaSEDVrf9tdYwcImfoddH+j6yyee3hrTT44S3LL
+         CKnnelDy3GmbABL9knX58IaQ3rcvBDffFbFdC90L3f7vOlk0G2QohsVxhh8XSJudtb+U
+         kSvF6U/Vl6bEzE6987j1Db3IiPmhLYPMJ8sqHUSzV/31+Zz/xLbRdEeOf8Cd/zK0NL4P
+         PcIad8wLouZ3e5zH/Xtqdp9q3yagIeRtjN0FynJ1XHzORoX/BrOZ1WfntMpP4s26jF/O
+         6aeBRnevXiFSwJU0lqibiFy0mfwQ5/Hsq2q1nfN1F+h3sh+U4h1jy+Hm2+nl2awv2Vwz
+         Dokw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ+kvHQiMe9XsAnhpN1o3ispOexsEcppfN/rJuHOqaZ7C6M0Dx8lD4oncoz7flScEZ61zsytJsufsiIA4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywj4BcmkYoQCdkfoDKJL2Rqn0elJeQy6cZ584XjyPg6cDpsdH6n
+	SFUaWzyUwtMMDWnm3ddlITbGqilMoFFYZsrN3MiSWcjsK+96+ndJY8hqtv1aoHcGEPU=
+X-Gm-Gg: ASbGncszhySTjWtkWsHO/8x8cyBRB27F/2LyhZXePwRJhLmKoyD9UMvnRhDsIYt343C
+	Jh50fnZOLn3yd9Feu1xYYoCTdcOjfvdWgaWlbRU7VroGr6l67rLMD8aFWYy1MfgMSUPYgSAC2Xd
+	fLynV2ecv7/FiaJBf+acnTtL0HKdXI1gbG6eudDzRXmCl+1mDcWTZHlvTVsfnJbWcacu9k1CmGm
+	SQcTIxS+UAOB8BbalYDS2nulu80oo7sLUE+cqxs3zZGb3dtk8qSxtgV5S9IoXanGVXbRmONgQ9e
+	e64r+SZNS8+P04BEKbakXCoFKcXm3+aCgUdz889wI/ohGmbHdTinBr585F4uaKM8jDH3FlKFZAE
+	UIpDlbrwaSmcrmjwKYJSS3PYJTswDXkw2Y+gGw2+ZtpG4K1qOtHHl
+X-Google-Smtp-Source: AGHT+IGM6WgG6OTQoMVXMZbYSPPE54NLk24Y0L7yLT6AonwvB7ilumFcgtdxb3bcVhP4gw7WgQL0Xw==
+X-Received: by 2002:a05:620a:ac0b:b0:883:7309:c0eb with SMTP id af79cd13be357-8837309d08bmr41017885a.41.1759862860945;
+        Tue, 07 Oct 2025 11:47:40 -0700 (PDT)
+Received: from ?IPv6:2606:6d00:17:ebd3::c41? ([2606:6d00:17:ebd3::c41])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-87772278098sm1596357385a.16.2025.10.07.11.47.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 11:47:40 -0700 (PDT)
+Message-ID: <a57669be1d58e71229dedcf4acbe6eda201e45ea.camel@ndufresne.ca>
+Subject: Re: [PATCH 12/16] media: rockchip: rga: handle error interrupt
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Sven =?ISO-8859-1?Q?P=FCschel?= <s.pueschel@pengutronix.de>, Jacob Chen
+	 <jacob-chen@iotwrt.com>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, 
+ Mauro Carvalho Chehab
+	 <mchehab@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Rob Herring
+	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	 <conor+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, kernel@pengutronix.de
+Date: Tue, 07 Oct 2025 14:47:38 -0400
+In-Reply-To: <20251007-spu-rga3-v1-12-36ad85570402@pengutronix.de>
+References: <20251007-spu-rga3-v1-0-36ad85570402@pengutronix.de>
+	 <20251007-spu-rga3-v1-12-36ad85570402@pengutronix.de>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-9ssd6DUBbBvl6JPlwbl3"
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|BY5PR10MB4259:EE_
-X-MS-Office365-Filtering-Correlation-Id: c669fb1b-aa4d-40fe-e153-08de05d1e065
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fw4o7egsl22MfuWq+fb/d02Ci/KoTQrkKl737AeJ9b40+x2F1G3ozynDpIln?=
- =?us-ascii?Q?ctBzkMGjCPPK0oGAhNuZ9LGSO7d1B/zPPNjgAQ7vbEKSAHB0AU2/NZDbb+cO?=
- =?us-ascii?Q?2lrJX+QC892/RuBos3Til66eTnvje5EjaWk9nOOLLpeaAzLS7+tLK3VHOxbt?=
- =?us-ascii?Q?auSnP7dZIckq8w2ektw9gYqzC1z+xYMlbLApcXVKggz3Zo5uq+ESlq9XvhM/?=
- =?us-ascii?Q?v54SYvJfHnh7IuspkbHeQdxKZqvQNct4NfWDNU2S7sOiM7Qel8R9Taf1JZf2?=
- =?us-ascii?Q?mI6KawFSVxppQDJJyhR7va9QVMu6qZqLBHWRo7jF/Z9lf/5KBHlsM4mrSN63?=
- =?us-ascii?Q?VPhKMX/NW9ScqP+ocAZAU/kNytzorPPwhYhc6MaUx7LXKmpJmjUgBIEbENop?=
- =?us-ascii?Q?P+yPqOJGzpu2aQKP++nxjmbAApoIXfApZwua6yXisHRp8295d8OEDShcdDJ1?=
- =?us-ascii?Q?vrnw55QLhzX5G7JDuNETCrdNcqwO8/hjO8kBiZlewmzfSucAsuYu8TxxYsMs?=
- =?us-ascii?Q?nwbCAc+o3S0mpxTPXjI7TFF8geKRIMJMeVKlMO05Y+aMJWLKivlloU1kyeYd?=
- =?us-ascii?Q?RX+tT8St0WjzLtpb+U5gPn9doFDVho7YiW/hp4kZ+oZEEWyn/3uh0oFxVrD9?=
- =?us-ascii?Q?C6xBoL79jR4/tcpkjqjBc/4DPu/YL6yLiKBq69pcwMT8Six2b8su3IJMtdTr?=
- =?us-ascii?Q?+4p4z94+IBL5QW8WJo90e1G9lvfw60zvqayJMburlW5VANbFzxJTfr80gpN5?=
- =?us-ascii?Q?xI4Y2NjEZkedvWpjJmEmaU/cldmLL0OebvHOGwWBXIscWhBVgiwq+ZcbGAY5?=
- =?us-ascii?Q?9TE04sESnzCwSGUlgNT1nVcG7UYqcJe1JrH+JYmYmQhj+9XtBNM94L0drjet?=
- =?us-ascii?Q?Bxzaj6W+yuiBsigpqZCPok4sksAfCH27/BAIniG4yTJDUrezgNzO+JhuKExA?=
- =?us-ascii?Q?2qUhdi1yR8jhC1qIJo8GZhNLfnu9FAIVJhXpROksFERY+soyDMvTODBcoAhr?=
- =?us-ascii?Q?fcDMLt+HvictPJmcJhKfm9B36ZXEOH4MoxpYMZgZbItg8mgDIhJR+B3464J/?=
- =?us-ascii?Q?4CnJzmq8zx+PsS9pxxpD8NT981DQVPMO72cMOtHHC6d3BPUvfCe2Tz2yX5xW?=
- =?us-ascii?Q?NSqfuxJZHZL4Aec0Fnl/uTRbguCgsKjjH+zYTSTPFhPfg8Ra9LPkV2MEnbB3?=
- =?us-ascii?Q?VcM/MOulWv49LMe2xcD1qq2+eGoCyY0nbihAW076wT1Dom0iiLIuyCRi50DL?=
- =?us-ascii?Q?vpTH5JSzy2l3KVi9BGcllIqT3sucPnga6v56o0UbGr0gQM4eQBctMcbgtHSo?=
- =?us-ascii?Q?1FOgzcOnHU9F19QdPD0OMuPo2gCqPxmoDytSI6dkJbdBjNkqlqIJ7NJbzxVI?=
- =?us-ascii?Q?yvaqA1KpToLvwikyfcRZckVNc1NuOIHXiGGnjmBQ05eO1ybFlEzSsNEsTFyC?=
- =?us-ascii?Q?KAgk/tWezc2+tEcqiTw036gFnr2rXi+PMcX52qRMrmrL7bDGfgyOZQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?qwj5ZqP8QAetfaTObY0OBRafZ9xtVwhBfDS2pvN8NjZ8fYTnvQP4Cw6AqDHJ?=
- =?us-ascii?Q?3IaWOX3Mbbt2BEkQqxsyk89L/RO54ZC/YjbfJaH4njMSk444uVdeOIqzTwi/?=
- =?us-ascii?Q?+pyKo77/cZr/v7BXd1y7uEQJy7P8m8eBiUjd+QsTF8WW7KyW4kwrdmQN1TTp?=
- =?us-ascii?Q?3LpwckqibEOvZSe3PvYtktfll1Kdi5aBGQMxYiEcneqLVzgYDS/b8KGLfUBh?=
- =?us-ascii?Q?oUrv9rJqss8Qmk2WVBOYevmQxOEP3gCAR02/QVxow6PYKkwu70boJdtrXz6D?=
- =?us-ascii?Q?TQPWKGK3VeTSpbs983vdpoevjA6veAtCPHWRklFZ0ptGF+fRZ/pZQeytP07L?=
- =?us-ascii?Q?A4XcwEJAYzozJO6VovWr3/pL/0mJGO2sx1P8M4g5wQ4vcPlussrZPtUmtrp5?=
- =?us-ascii?Q?8hf259zO9gdvMGxMkTXcA8Xe9c+C6ceWA2GJ93qSqjHSDEIk1LluH4I5ZjA9?=
- =?us-ascii?Q?a5kcwI8VdMyROtU2cs+q7ubx98nmT+hn8yoEa56eRuz+fdcr+RmzcXDtK4g4?=
- =?us-ascii?Q?HU5Xs0jm81D2T0J3sSDTCHd3V7iojrLtU4FFmjdhBxq1o28NtMNCco/TWpIv?=
- =?us-ascii?Q?GeomLmDNlSXdbg62mYY9LIw20N38BeZBQq6sZ6YCsdsUEq3CPfvkPHwR1RPq?=
- =?us-ascii?Q?oiOV1jxgiIIT6Hf3P7fZp7XWAQJXPGXaHrGiveLLjhcC/EBObdDOm4jHcjjk?=
- =?us-ascii?Q?pr3W871XmuC+4vxsev7xqSVatGSXC6LZxcBgPNzPiSXaxQ8zD5AmPvyNMq03?=
- =?us-ascii?Q?OyuCALq2dYbDZ/SpD5fWgwIAdX3f4YCeSkU2VjgSIZnqKsZ0TkoHl8/ChUVj?=
- =?us-ascii?Q?FOqfiN14m2+4VnxM3+J+qMvXKE0fgxeKPcPmBhdFz3xELHWLwn8cPXBILSNG?=
- =?us-ascii?Q?I2Z6ooF+AUbPmkaYFI8IquYvKEV113JzCKwhcqugYKiTqW0NvZtLhxojvv5O?=
- =?us-ascii?Q?qd2r5lyAAfDBn9HhIWnjgCSQWYvxqVHyRLlEPq91QPRn7+3lOToZJxYc3Q1m?=
- =?us-ascii?Q?piMrOPsO1hQPMuW30LDQOEMucubB6SrjrxDT2JzXbTaDm9xtJ2Y/we0eaPmA?=
- =?us-ascii?Q?cfpxzLyldUk243fB1R2ZyThAN5P9mia/LetnkHdic5IIGV8CyaUbDwj1FWtw?=
- =?us-ascii?Q?ry10DG6JYOllSMl7o5AONI1pd99BZ5BKBYNmKOPre9Dc/emW6eUWc8FcHSQw?=
- =?us-ascii?Q?HW0AaP5jFVIBcb+3tQMLNqcNZC3MsLblmpTb3nAYy2L782X1a2nos2dZNlsi?=
- =?us-ascii?Q?MNzVDGIe7X09/pJWBYpTUcYBAvacVRhd5+s+7dDlfBWOVYRB7okKxCirNl8D?=
- =?us-ascii?Q?PE37zSXwuwY6INztUaPyBb7ufoNzrMhOw6aMdAtASjUnlUt3h5Uzb/dWE03n?=
- =?us-ascii?Q?6wWFfaZkU3pbdoAIxnaD/PhNc9Fv6r62m2GpoPvqkstDvNqMIx06DRUQTLEC?=
- =?us-ascii?Q?++7GfXdGaMiEG2WQJzAyVGHafpgYBaqPLFCjNZb48XUBen7DkUAZ6eoJAiTI?=
- =?us-ascii?Q?SKwvbQtm1NLo1VQl7snZA5SZYicq48viAsrbP/vIYFXzDI0Y5OOnw8nUinvS?=
- =?us-ascii?Q?z3tsI87sDCG8cFaKCiHxRswe4ZdiWFOZyeW5pLyL?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	PYBlBGcBSR4yZ2OPzvWvczTwyMGvvOgdfyZbdyFxgQhwUZ2N/IdeEM2vu6kGrmLOlQM0v6FTyqlSF2EPpiSvmU5vZHhOD2oOGVjVbiwjKaocQ/ja81V41l3kbhFEta9DyAFjnRTzqbra74cS5HfwecQ3kwB0Jfa7h0u12mh0/XBvoCbUdtO3swWsxsPFZ/xtBYht0UcV/F8i7HXLXwLkB9nWLXuKvk0l8mjqkbclFQ0g1/xJVFDOqxbbDCxmse8f7Q1U8QiKBgyDY0Vn/RBaneVSvz8OkDMeIxwCNVYr6IYuxUe+ZtUL/P5sesurG1cpJ4czSYujiyGeAa+RdOQp2xa8ShvnWG1bTfZJhrcdljisnlf4+birUDSt2Wz8GdhCjhy0opFPJcMEeI043QJvQUln59DpGfMQGWS5CsJQ2qHj6SsS5F7ojqMlRJ7LO5xZ7AgupQenPVsPB+6BDpXgwoTH1MNtSbPL65P8YK/YUdBRLOMymcZiiGqkLasZZhPUMMXA6NUcLP3ipOpDzfes2NWRINzwOPFy8DyhqqMrEKhYtVE4MWNUWt37U+qPJUxYKrmFINnGLQdj3NVkSFEn2uQ3CdcxLuUBQVCpXnWT5qk=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c669fb1b-aa4d-40fe-e153-08de05d1e065
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2025 18:46:50.7001
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SdO4HtdFSqZLX3d+fVCDfWaLFy27YH5njqrwVjL1dvPtAzhcZEUukEYmxJG+6f5Zu9XlgOMhfBMTtAksHLhA6w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR10MB4259
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-07_02,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=602 spamscore=0
- phishscore=0 adultscore=0 bulkscore=0 malwarescore=0 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2509150000 definitions=main-2510070147
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA3MDEzNCBTYWx0ZWRfX98bnvQI/bd+T
- LceETjZ8Y22VhEZOhw4NvU0biQxX7nCaftLr+PjrfynLfQPqa4WHEdwjmfhBduEiIR9HmtTxAYy
- vZq6EWOHg1iOpGhdSoJFxSc8XB4w5r/pO6eRwHSy31GXjY1WClf4/6CV7FRSzMxeT3A220xqSw7
- P3vZbgyt8PVSuXH9QeRn3tGw0JT5QdMO3D0dAGK1SEbUtGs4KTTM7A7XVxiXjOtNAd1MW/nksc+
- 2r2KrFb+uk7s/O5BllKD/W3HZTlhgZwEsISMkO0M4pkZTdRo1e1jTKc5ir+T8S3T0bsvcrcbljk
- XB4dGXyXq4rvnIlPekUNP5fxPjyCfwGobJHv3QWbL/sIQAlKUY1AIHmdbxOT/ReHLsrUzOho3wW
- Y+cLfH0K7ElnjfC5+S+rxXaEOCXYfE25LW5CgBypIWj+gT3ZzwE=
-X-Authority-Analysis: v=2.4 cv=VpYuwu2n c=1 sm=1 tr=0 ts=68e56023 b=1 cx=c_pps
- a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8
- a=vggBfdFIAAAA:8 a=1THOcbknKnyru7S7G1EA:9 a=CjuIK1q_8ugA:10 cc=ntf
- awl=host:12091
-X-Proofpoint-GUID: emWSrAwLHFY5Zi5YYpyeNDIJTeykcL3J
-X-Proofpoint-ORIG-GUID: emWSrAwLHFY5Zi5YYpyeNDIJTeykcL3J
 
-* Peter Xu <peterx@redhat.com> [251007 12:47]:
 
-...
+--=-9ssd6DUBbBvl6JPlwbl3
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> > > 
-> > > This way is_vm_hugetlb_page() never really needs to be used because the
-> > > function pointer already makes that distinction.
-> > > 
-> > > Right now, we have checks for hugetlb through other functions that "pass
-> > > off to appropriate routine", and we end up translating the
-> > > ioctl_supports into the function call eventually, anyways.
-> > 
-> > Right, it would be great to get rid of that. I recall I asked for such a
-> > cleanup in RFC (or was it v1).
-> 
-> I didn't send RFC, likely you meant this reply in v1?
-> 
-> https://lore.kernel.org/all/0126fa5f-b5aa-4a17-80d6-d428105e45c7@redhat.com/
-> 
->         I agree that another special-purpose file (like implemented by
->         guest_memfd) would need that. But if we could get rid of
->         "hugetlb"/"shmem" special-casing in userfaultfd, it would be a
->         rasonable independent cleanup.
-> 
-> Get rid of hugetlbfs is still not my goal as of in this series.
+Le mardi 07 octobre 2025 =C3=A0 10:32 +0200, Sven P=C3=BCschel a =C3=A9crit=
+=C2=A0:
+> Handle the error interrupt status in preparation of the RGA3 addition.
+> This allows the buffer to be marked as done, as it would otherwise
+> be stuck in the queue.
+>=20
+> The RGA3 needs a soft reset to properly work after an error occurred,
+> as it would otherwise cease to deliver new interrupts. Also the soft
+> reset avoids additional error interrupts to be triggered, which are
+> currently not supported by the rga_isr function.
+> As it is unknown how the RGA2 behaves in the error case, no
+> error interrupt was enabled and handled.
+>=20
+> Signed-off-by: Sven P=C3=BCschel <s.pueschel@pengutronix.de>
+> ---
+> =C2=A0drivers/media/platform/rockchip/rga/rga-hw.c |=C2=A0 6 ++++--
+> =C2=A0drivers/media/platform/rockchip/rga/rga.c=C2=A0=C2=A0=C2=A0 | 32 ++=
++++++++++++++++----------
+> -
+> =C2=A0drivers/media/platform/rockchip/rga/rga.h=C2=A0=C2=A0=C2=A0 |=C2=A0=
+ 8 ++++++-
+> =C2=A03 files changed, 31 insertions(+), 15 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/rockchip/rga/rga-hw.c
+> b/drivers/media/platform/rockchip/rga/rga-hw.c
+> index
+> d54183d224b3e9c42d5503acf172257f2e736f7b..93822b5b8b15e76862bd022759eaa5c=
+b9552
+> dd76 100644
+> --- a/drivers/media/platform/rockchip/rga/rga-hw.c
+> +++ b/drivers/media/platform/rockchip/rga/rga-hw.c
+> @@ -459,7 +459,7 @@ static void rga_hw_start(struct rockchip_rga *rga,
+> =C2=A0	rga_write(rga, RGA_CMD_CTRL, 0x1);
+> =C2=A0}
+> =C2=A0
+> -static bool rga_handle_irq(struct rockchip_rga *rga)
+> +static enum rga_irq_result rga_handle_irq(struct rockchip_rga *rga)
+> =C2=A0{
+> =C2=A0	int intr;
+> =C2=A0
+> @@ -467,7 +467,9 @@ static bool rga_handle_irq(struct rockchip_rga *rga)
+> =C2=A0
+> =C2=A0	rga_mod(rga, RGA_INT, intr << 4, 0xf << 4);
+> =C2=A0
+> -	return intr & 0x04;
+> +	if (intr & 0x04)
+> +		return RGA_IRQ_DONE;
 
-My example picked hugetlbfs because it is the most special of the types
-of memory we have (so very special).  If the interface works for
-hugetlbfs, then the rest will use a subset of the features and be happy.
+Since you reuse an old driver, would be nice to create proper defines for
+RGA_INT bit 3 (current command finish interrupt flag).
 
-IOW, doing the hard thing first makes what follows easy.  Doing the easy
-thing first may mean rewriting the easy thing once you arrive at the
-more difficult part.
+> +	return RGA_IRQ_IGNORE;
+> =C2=A0}
+> =C2=A0
+> =C2=A0static void rga_get_version(struct rockchip_rga *rga)
+> diff --git a/drivers/media/platform/rockchip/rga/rga.c
+> b/drivers/media/platform/rockchip/rga/rga.c
+> index
+> 0a725841b0cfa41bbc5b861b8f5ceac2452fc2b5..3b5d2eb8e109f44af76dd2240a239b1=
+fa8a7
+> 8cee 100644
+> --- a/drivers/media/platform/rockchip/rga/rga.c
+> +++ b/drivers/media/platform/rockchip/rga/rga.c
+> @@ -56,30 +56,38 @@ static void device_run(void *prv)
+> =C2=A0static irqreturn_t rga_isr(int irq, void *prv)
+> =C2=A0{
+> =C2=A0	struct rockchip_rga *rga =3D prv;
+> +	struct vb2_v4l2_buffer *src, *dst;
+> +	struct rga_ctx *ctx =3D rga->curr;
+> +	enum rga_irq_result result;
+> =C2=A0
+> -	if (rga->hw->handle_irq(rga)) {
+> -		struct vb2_v4l2_buffer *src, *dst;
+> -		struct rga_ctx *ctx =3D rga->curr;
+> +	result =3D rga->hw->handle_irq(rga);
+> +	if (result =3D=3D RGA_IRQ_IGNORE)
+> +		return IRQ_HANDLED;
+> =C2=A0
+> -		WARN_ON(!ctx);
+> +	WARN_ON(!ctx);
+> =C2=A0
+> -		rga->curr =3D NULL;
+> +	rga->curr =3D NULL;
+> =C2=A0
+> -		src =3D v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
+> -		dst =3D v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
+> +	src =3D v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
+> +	dst =3D v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
+> =C2=A0
+> -		WARN_ON(!src);
+> -		WARN_ON(!dst);
+> +	WARN_ON(!src);
+> +	WARN_ON(!dst);
+> =C2=A0
+> -		v4l2_m2m_buf_copy_metadata(src, dst, true);
+> +	v4l2_m2m_buf_copy_metadata(src, dst, true);
+> =C2=A0
+> -		dst->sequence =3D ctx->csequence++;
+> +	dst->sequence =3D ctx->csequence++;
+> =C2=A0
+> +	if (result =3D=3D RGA_IRQ_DONE) {
+> =C2=A0		v4l2_m2m_buf_done(src, VB2_BUF_STATE_DONE);
+> =C2=A0		v4l2_m2m_buf_done(dst, VB2_BUF_STATE_DONE);
+> -		v4l2_m2m_job_finish(rga->m2m_dev, ctx->fh.m2m_ctx);
+> +	} else {
+> +		v4l2_m2m_buf_done(src, VB2_BUF_STATE_ERROR);
+> +		v4l2_m2m_buf_done(dst, VB2_BUF_STATE_ERROR)
 
-> 
-> OTOH, I generalized shmem and removed shmem.h header from userfaultfd, but
-> that was prior versions when with uffd_copy() and it was rejected.
-> 
-> What should I do now to move this series forward?  Could anyone provide a
-> solid answer?
+I'm not fan of assumption that its an error on else case. If often lead to
+multiple calls. Please use an explicit error return.
 
-My understanding is that we need an interface for memory types so they
-are modularised, with the short term goal of solving the faulting
-support for guest_memfd and the long term goal of code cleanup, or at
-least don't make things worse.
+> ;
+> =C2=A0	}
+> =C2=A0
+> +	v4l2_m2m_job_finish(rga->m2m_dev, ctx->fh.m2m_ctx);
 
-I think we all agree on that?
+What if you get an IRQ and none of the flags are raised ? I did see that in=
+ the
+past, and that least to bad things happening.
 
-I propose that we need to add the minimum amount of uffd_ops to support
-guest_memfd's specialness without creating an interface that makes
-things worse.
+> +
+> =C2=A0	return IRQ_HANDLED;
+> =C2=A0}
+> =C2=A0
+> diff --git a/drivers/media/platform/rockchip/rga/rga.h
+> b/drivers/media/platform/rockchip/rga/rga.h
+> index
+> e19c4c82aca5ae2056f52d525138093fbbb81af8..dc4bb85707d12f5378c4891098cd7ea=
+4a4d7
+> 5e2d 100644
+> --- a/drivers/media/platform/rockchip/rga/rga.h
+> +++ b/drivers/media/platform/rockchip/rga/rga.h
+> @@ -143,6 +143,12 @@ static inline void rga_mod(struct rockchip_rga *rga,=
+ u32
+> reg, u32 val, u32 mask)
+> =C2=A0	rga_write(rga, reg, temp);
+> =C2=A0};
+> =C2=A0
+> +enum rga_irq_result {
+> +	RGA_IRQ_IGNORE,
+> +	RGA_IRQ_DONE,
+> +	RGA_IRQ_ERROR,
+> +};
+> +
+> =C2=A0struct rga_hw {
+> =C2=A0	const char *card_type;
+> =C2=A0	bool has_internal_iommu;
+> @@ -152,7 +158,7 @@ struct rga_hw {
+> =C2=A0
+> =C2=A0	void (*start)(struct rockchip_rga *rga,
+> =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct rga_vb_buffer *src, struct =
+rga_vb_buffer *dst);
+> -	bool (*handle_irq)(struct rockchip_rga *rga);
+> +	enum rga_irq_result (*handle_irq)(struct rockchip_rga *rga);
+> =C2=A0	void (*get_version)(struct rockchip_rga *rga);
+> =C2=A0	void *(*try_format)(u32 *fourcc, bool is_output);
+> =C2=A0	int (*enum_format)(struct v4l2_fmtdesc *f);
 
-It is very difficult to see a reason to pass in two variables (modes and
-ioctls) to dispatch to the correct function in a struct that could
-simply point to the function in the first place.  If we can avoid that,
-then it would be good.
+--=-9ssd6DUBbBvl6JPlwbl3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
-Looking at the example you pointed to here [1], It appears the minimal
-viable product would need to implement this:
+-----BEGIN PGP SIGNATURE-----
 
-uffd_ops = {
-        .get_folio = <>,
-        .minor_fault = <>,
-        .atomic_fill_continue = <>,
-}
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaOVgSgAKCRDZQZRRKWBy
+9P5qAP9AQJCTUQL4yGjLYO6fhiRHkYApeYjS3ILIAxwJZRgyoAEAuIsn+1r5gHyo
+fE4WQoTjedA/458KE+PcMg5FcVxZZA0=
+=4Ait
+-----END PGP SIGNATURE-----
 
-Then shmem and hugetlb can define these and end up calling them in
-today's spaghetti, but we are free to append more uffd_ops to reduce the
-spaghetti later.
-
-If using new #defines to clears up translations of features/modes and
-ioctl codes, then please do that.  These should be removable once the
-uffd_ops grows to support all necessary calls.
-
-If there are places where you need to consult the modes/ioctls and a
-translation does not work, then you could add something to uffd_ops that
-is NULL for guest_memfd and use it to determine if the code path is
-valid.  But this code should already exist for the other memory types.
-
-What does everyone think?
-
-[1]. https://lore.kernel.org/all/114133f5-0282-463d-9d65-3143aa658806@amazon.com/
-
+--=-9ssd6DUBbBvl6JPlwbl3--
 
