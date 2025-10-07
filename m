@@ -1,299 +1,212 @@
-Return-Path: <linux-kernel+bounces-844314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9661BC18A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:41:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA711BC18B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9635B3C6020
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:41:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80A543A7D37
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08C42E172B;
-	Tue,  7 Oct 2025 13:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C822E11D2;
+	Tue,  7 Oct 2025 13:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="3JbK6vld"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bCdjMsf4"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C872DFA2B
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 13:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143B72E03EF
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 13:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759844458; cv=none; b=fGBen5XvSAX7Sp7VJqPYT1UOqYYI+KRKJNPdcTmhBRVmbQQhwMu79ssLn07pI5oQhaclwD7ouI8naBw9fR4TC5CnLlMhH+2bXrnCmqSt2ScfL70P49O8h8BaPljCe8QZRa/6mo47wyALG7L60eGooSTXx2VGxE+KREdKmuiL31c=
+	t=1759844511; cv=none; b=rPUI6/MC1PkWipw8rV1tyh6j+rTyMBwDxgfFR3xsZncyiU27zJZXnYQu3HjOojI3KYj7rQM/oruWMTFVNtRnLtv9blagxftniMpMehmBJggYMti0TkhjI6XBw0KcjexdebGAy6GuvOt80JSVSFTPhYZyHzNeilc9oMxeyCvNFOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759844458; c=relaxed/simple;
-	bh=maR5I0NRG+pVQzt1ZqXCzGrjCBiXFmvoqkdMd1ZLotw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LxK/ReCiggeu0dagGlV2NFyKtJ9i7+Bf9g8YpCvkX5QIe/E0+t8CIrbfqHKaMfu3i1f5XHm9pOEtOVZyuSL+qvWQWuBY7lCaFTqYu+Hz++fMbfdXN18IPCENLFDezHeU6Q3KZeCZkZSx4O0Te0SfEZazdRI02sGitfV2vQ6/4GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=3JbK6vld; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-33c9f2bcdceso42157781fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 06:40:56 -0700 (PDT)
+	s=arc-20240116; t=1759844511; c=relaxed/simple;
+	bh=nkeOwih2wxnDJdpLI6Dz/78w4EhHeT1xmOgbx9n/oo8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZMxzNoE8WagbtdiafrWwmVnbA9aXCIlnmAFcHzoUR1ul/E1BqTnSodDU5w1vRj5DbTurmQYHey1zZOpHGVZHq5eKdjq5Z7hxMpFEFCStjR4lRhhNDcqeIEY7nU1RfA/gfUyjPTgARqMwAzPFjzonlmIu/oUDYHQYUDjsFln3KAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bCdjMsf4; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-78af3fe5b17so4840937b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 06:41:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1759844455; x=1760449255; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xRBV/A+wYkc5dgFJj6Y8p0jl0ix5QJORnEw5CJQ5ixk=;
-        b=3JbK6vldew0Ih99+2O5z+sPBU1+pXLud6Z5ZFXgS8qonCHWcVHJVL/gMdEsJwJlvmT
-         bjuhhLadvVxU8Q5Tps/QHY5Pnmtfg5+njXNVwccNEasAKvw2k/XumkQf7QHGTAH/hMRe
-         WRMIlcbWyShAyEiwqlenIMrXhTHVHRhvjZmjRfu0KxGZuMHBIATZTJuP+gL4jRYNaKGe
-         sGvWS8/DjJu/mZY4ZRzpaHgHiSXG5UiEg3pr3EvsEflD8QtzQnLKgP/gIc7WbKRLdAuY
-         LIvMgUwh2HVvoYzI1vc+DsUrteMLPeSkQufo9fS4ByVDZ9VHvFNhknzF4OkLoe0xKy2l
-         YbCg==
+        d=gmail.com; s=20230601; t=1759844509; x=1760449309; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=rnHeuaAxXkLy83WQ0FvFcsx02OTH0C9r7FOqh/BgxF0=;
+        b=bCdjMsf42+G+Iq+ji/1GArMqIcWj6oKTYVK5orzQHtLUCGvOtSAqA0dWkLF7sUP8sw
+         eX0k534hyD/mknL1wCoSQY3fh4bnndYZAM70huiMM1u1ZuwTEPzsO8AwOOhByerVfwLz
+         dlJyJ1pGXnFUBytFoyPKhqjp/oo/uHDN9YRmMqoETyy5iTXJWmadXhS5fvupeixoG85U
+         3/Jld1ZzIZkZ1GxAJrVRH4QK/jJ4QUVEnV01dgQfKxpyZKOFt2Vxgf/UxqS2gYydZJk7
+         /d2HK7FfobHLCQQDDDYpA+5J6aOYqaocVz38qWolaC7tV0yUpSTBNl7brMas23/uwshM
+         K0xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759844455; x=1760449255;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xRBV/A+wYkc5dgFJj6Y8p0jl0ix5QJORnEw5CJQ5ixk=;
-        b=pjWhFpkS61sJ/ow54NzcC1QKDAAzx5y8verdLvUnO8AdDFk8iZUXL9xTYq9yo/dJI4
-         PWt4gG1O1cnjCHCvukHQvSpq9XqLdd7lJ7s+rpdKIDdkzUrK38zNAtp1pYuuQ7O2r6Rc
-         F4ki5fVTR0wrSNrCinqd7kfXB7JLzHb/9WEny1LLA1iwaWj8+hvBO4zb8roE2waUuAXl
-         lmUEjVBQJF6nBsqJnR/h3IFpW8Vz/+oT9UswWNawAmnYsinxsAawc0Op/vBrP+JiwAPu
-         4qO4HClnFrdZksSBKptAoKpzmFDCccsRkiz3PAQ6DakxKWbO2zA89tItCkok9T48viHH
-         I34w==
-X-Forwarded-Encrypted: i=1; AJvYcCXV55SyylZvCmVpi1vbkwEp+0e0xpLsjrwPipyVq/QeSeiUr+0IF8Ige8YXIO6G+0lV8su8NfUvR//KoeY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/layAa4thw71QDBsN1Nleft9ZwGTGtVAe1g/cQBkElweP0Yz/
-	vGNfvNcZs0HxxYmdQGjXR+QK++9YW6sjKU5UrPv+oQwdWyqaSzOZH6S2WU8Hs1MfEPs=
-X-Gm-Gg: ASbGncvJs7Bms43Jv/gurkYhblAdM+rfgnWPrqG00AGFPMr7i2ms/YP3Sz/n4sxlWh6
-	pHZ3MrcnryvvsTulrqL79U0oj4zULM35Q/yLy2oHe5jyFpBnFIdhx+QGZEC3t6+Xb9apaMReeQd
-	8l2j+iDW+X12yR2zUICTRzEycvZ7PLpovaHfAJMhI8FPrNO+Db8XPq6W8dNVWuCdI0QHKS/GWKa
-	LZXkUUP2gJXMOitT+3g7Ap1CUZEgvaStrct10NDSqnpd51snfJp7tKx95DGVNzN5hZcbvQjuxMe
-	6LXnuxq1fvFZuLNg8dJPmEDArFoiuD1+rSg0iOdGsHrhtleDZCwRL+Bmd5rLrRcMSuIf9jjmLEt
-	0BV3V+4+b7nDKAvuSL3qPqJc1tynfEk+fB6QPk9CXf3NNwfvbwIBvAteCE9M=
-X-Google-Smtp-Source: AGHT+IFHxO2m8T/MgbMT85edP7c603ruD5Ye6htT8rb/M8e+XOKBexOHQ+jUa0yBLYyuI5v4+gKA8w==
-X-Received: by 2002:a05:6512:1245:b0:58a:92cc:581d with SMTP id 2adb3069b0e04-58cbbbee331mr4524737e87.50.1759844454433;
-        Tue, 07 Oct 2025 06:40:54 -0700 (PDT)
-Received: from [10.78.74.174] ([212.248.24.216])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59067823d9esm350641e87.69.2025.10.07.06.40.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 06:40:53 -0700 (PDT)
-Message-ID: <6ec98658418f12b85e5161d28a59c48a68388b76.camel@dubeyko.com>
-Subject: Re: [PATCH] hfs: Validate CNIDs in hfs_read_inode
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: George Anthony Vernon <contact@gvernon.com>, Viacheslav Dubeyko
-	 <Slava.Dubeyko@ibm.com>
-Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>, 
- "frank.li@vivo.com"	 <frank.li@vivo.com>, "skhan@linuxfoundation.org"
- <skhan@linuxfoundation.org>,  "linux-fsdevel@vger.kernel.org"	
- <linux-fsdevel@vger.kernel.org>, "linux-kernel-mentees@lists.linux.dev"	
- <linux-kernel-mentees@lists.linux.dev>, 
- "syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com"	
- <syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com>, 
- "linux-kernel@vger.kernel.org"	 <linux-kernel@vger.kernel.org>
-Date: Tue, 07 Oct 2025 06:40:50 -0700
-In-Reply-To: <aOB3fME3Q4GfXu0O@Bertha>
-References: <20251003024544.477462-1-contact@gvernon.com>
-	 <405569eb2e0ec4ce2afa9c331eb791941d0cf726.camel@ibm.com>
-	 <aOB3fME3Q4GfXu0O@Bertha>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.0 (flatpak git) 
+        d=1e100.net; s=20230601; t=1759844509; x=1760449309;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rnHeuaAxXkLy83WQ0FvFcsx02OTH0C9r7FOqh/BgxF0=;
+        b=X4ee4CCWR/reHriMrSpuvQSwuyOsu+FKiCvhumqjEfBW91hdllOy673Bv4vYWuL3e+
+         7R5ctVJJpUflJ5nVm+1q7doLRjMVFsV49D2Ihl+DlSZc0HQEWxlpULoeOt4C73Jz0dck
+         srWBBnmLYBSAhN6oW0/ogwY8lMFvXNaaKRkOyc2KTdS5pFrikKNvBvgb97VgsgYdk+qV
+         FX4NA8pkGkLVNtjAugF2SxBvyiAwBxcw32y5qGgw7FLfeo+ZSClj0vse8EDu9CKAc4ng
+         ORmmY5TftsHO6MZ1QdEaHds7zLgKvJasmioe11xNQd/g6JM8fV3p/DOwlGo3rT2vZSgE
+         lKew==
+X-Forwarded-Encrypted: i=1; AJvYcCUPqcBDxjf+qa+TMd8nNodBEDHMyyvzKXsRomtreKchDjGjcUuMm7LfYiB8NXSty1PPB/UBkTbsUQD0dRk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtI8EpfC2c/6jXN2HJTxspTEUwsQRTkZMXqWe6kusac1nClscN
+	RaoyXcdZGqWscOb1RCZnblsqsq3hqM2ys2G6XekCmC0x4S/UEPBnr7bf
+X-Gm-Gg: ASbGncuxUmwc08r0tEo//q3VHSkJipSmqm2AfzWiDTrSlL2uPvTUUXo9ZiXQIrpaoKj
+	pGogu6hU3no8M677huWLjjKE9nFc/xXF1F0DqrUxyz3W3efq4lXOhzWEVgXbaJMEoZJriaF57oI
+	Wo077BHm40nchUb6zEz73Jjm4C3E7U044CQZ9GZcXrztbnwLkVwfiMjoM+IYpjjHvOt0KIxS8We
+	jK6K2yeTFUQXgYISyu4Jet4N3dMgEGGQTpXx8Zo3StOQXjTdOAF6S4D2VGVjIUNVF66WbGYr+O2
+	q1s8Gjn7xcngL1FLjBspYRa4/2ndookWZ59q80vlwUKJsOdj29qq5dMbsQWzxsX4CN4nCFDC+7b
+	1JPdCzZ9n/p2C5zz4SCgcfNiEtKkqwfksi5OZrFCVJSx3dOMSqqUg0UP9tWoV5/RWCn4LWzXlxx
+	adIwqvpheU7bdfhtKnvEg=
+X-Google-Smtp-Source: AGHT+IFVJf+JxdKIUBEal2NKbaOSA5Jm7ewMijN3A3/MHNXXdwLzwZQSOta0mANRwv7CKcqgs4HloQ==
+X-Received: by 2002:a05:6a00:2ea9:b0:77f:6971:c590 with SMTP id d2e1a72fcca58-78c98dd92bcmr19639116b3a.22.1759844509033;
+        Tue, 07 Oct 2025 06:41:49 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b01f9a364sm15776636b3a.6.2025.10.07.06.41.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Oct 2025 06:41:48 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <57d0775a-0450-4384-b4ab-b6f2d976499f@roeck-us.net>
+Date: Tue, 7 Oct 2025 06:41:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] watchdog: Add driver for Gunyah Watchdog
+To: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+References: <20251006-gunyah_watchdog-v2-1-b99d41d45450@oss.qualcomm.com>
+ <6e7eaac2-0859-4bfd-b76b-2f81e384a91c@roeck-us.net>
+ <166a0b99-879c-43cd-b3c0-37eb04afca5a@oss.qualcomm.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <166a0b99-879c-43cd-b3c0-37eb04afca5a@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, 2025-10-04 at 02:25 +0100, George Anthony Vernon wrote:
-> On Fri, Oct 03, 2025 at 10:40:16PM +0000, Viacheslav Dubeyko wrote:
-> > Let's pay respect to previous efforts. I am suggesting to add this
-> > line:
-> >=20
-> > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> >=20
-> > Are you OK with it?
-> I agree with paying respect to Tetsuo. The kernel docs indicate that
-> the SoB tag
-> isn't used like that. Would the Suggested-by: tag be more
-> appropriate?
->=20
+On 10/6/25 23:52, Hrishabh Rajput wrote:
+> 
+> On 10/6/2025 7:48 PM, Guenter Roeck wrote:
+>> On 10/6/25 00:37, Hrishabh Rajput via B4 Relay wrote:
+>>> From: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+>>>
+>>> On Qualcomm SoCs running under the Gunyah hypervisor, access to watchdog
+>>> through MMIO is not available on all platforms. Depending on the
+>>> hypervisor configuration, the watchdog is either fully emulated or
+>>> exposed via ARM's SMC Calling Conventions (SMCCC) through the Vendor
+>>> Specific Hypervisor Service Calls space.
+>>>
+>>> When Gunyah is not present or Gunyah emulates MMIO-based watchdog, we
+>>> expect MMIO watchdog device to be present in the devicetree. If we
+>>> detect this device node, we don't proceed ahead. Otherwise, we go ahead
+>>> and invoke GUNYAH_WDT_STATUS SMC to initiate the discovery of the
+>>> SMC-based watchdog.
+>>>
+>>> Add driver to support the SMC-based watchdog provided by the Gunyah
+>>> Hypervisor. module_exit() is intentionally not implemented as this
+>>> driver is intended to be a persistent module.
+>>>
+>>> Signed-off-by: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+>>> ---
+>>> Gunyah is a Type-I hypervisor which was introduced in the patch series
+>>> [1]. It is an open source hypervisor. The source repo is available at
+>>> [2].
+>>>
+>>> The Gunyah Hypervisor doesn't allow its Virtual Machines to directly
+>>> access the MMIO watchdog. It either provides the fully emulated MMIO
+>>> based watchdog interface or the SMC-based watchdog interface depending
+>>> on the hypervisor configuration.
+>>> The SMC-based watchdog follows ARM's SMC Calling Convention (SMCCC)
+>>> version 1.1 and uses Vendor Specific Hypervisor Service Calls space.
+>>>
+>>> This patch series adds support for the SMC-based watchdog interface
+>>> provided by the Gunyah Hypervisor.
+>>>
+>>> This series is tested on SM8750 platform.
+>>>
+>>> [1]
+>>> https://lore.kernel.org/all/20240222-gunyah-v17-0-1e9da6763d38@quicinc.com/
+>>>
+>>> [2]
+>>> https://github.com/quic/gunyah-hypervisor
+>>> ---
+>>> Changes in v2:
+>>> - Move away from platform driver model since the devicetree overlay does
+>>>    not happen by default.
+>>
+>> This is just wrong. Platform drivers do not depend on devicetree. I am not even
+>> going to review the rest of the driver. 
+> 
+> Thanks for pointing out the mistake here. Platform drivers are independent of devicetree. Therefore the line you've pointed to is wrong as it erroneously portrays that the platform drivers are dependent on devicetrees. It is a mistake and I would rephrase it to following to make the intent clearer:
+> 
+> "Do not depend on devicetree to discover (and probe) watchdog as devicetree overlay does not happen by default. Instead invoke GUNYAH_WDT_STATUS SMC Call to discover (and initialize) the watchdog."
+> 
 
-Frankly speaking, I don't see how Suggested-by is applicable here. :)
-My point was that if you mentioned the previous discussion, then it
-means that you read it. And it sounds to me that your patch is
-following to the points are discussed there. So, your code is
-inevitably based on the code is shared during that discussion. This is
-why I suggested the Signed-off-by. But if you think that it's not
-correct logic for you, then I am completely OK. :)
+Let _me_ rephrase: A platform driver does not depend on devicetree.
+This can and should be a platform driver.
 
-> > I think we can declare like this:
-> >=20
-> > static inline
-> > bool is_valid_cnid(unsigned long cnid, s8 type)
-> >=20
-> > Why cnid has unsigned long type? The u32 is pretty enough.
-> Because struct inode's inode number is an unsigned long.
+Guenter
 
-The Catalog Node ID (CNID) is identification number of item in Catalog
-File of HFS/HFS+ file system. And it hasn't direct relation with inode
-number. The Technical Note TN1150 [1] define it as:
-
-The catalog node ID is defined by the CatalogNodeID data type.
-
-typedef UInt32 HFSCatalogNodeID;
-
-The hfs.h declares CNID as __be32 always. Also, hfsplus_raw.h defines
-CNID as: typedef __be32 hfsplus_cnid;.
-
-So, it cannot be bigger than 32 bits. But unsigned long could be bigger
-than unsigned int. Potentially, unsigned long could be 64 bits on some
-platforms.
-
-> >=20
-> > Why type has signed type (s8)? We don't expect negative values
-> > here. Let's use
-> > u8 type.
-> Because the type field of struct hfs_cat_rec is an s8. Is there
-> anything to gain
-> by casting the s8 to a u8?
->=20
-
-I am not completely sure that s8 was correct declaration type in struct
-hfs_cat_rec and other ones. But if we will use s8 as input parameter,
-then we could have soon another syzbot report about crash because this
-framework has generated negative values as input parameter. And I would
-like to avoid such situation by using u8 data type. Especially,
-because, negative values don't make sense for type of object.
-
-> >=20
-> > > +{
-> > > +	if (likely(cnid >=3D HFS_FIRSTUSER_CNID))
-> > > +		return true;
-> > > +
-> > > +	switch (cnid) {
-> > > +	case HFS_POR_CNID:
-> > > +	case HFS_ROOT_CNID:
-> > > +		return type =3D=3D HFS_CDR_DIR;
-> > > +	case HFS_EXT_CNID:
-> > > +	case HFS_CAT_CNID:
-> > > +	case HFS_BAD_CNID:
-> > > +	case HFS_EXCH_CNID:
-> > > +		return type =3D=3D HFS_CDR_FIL;
-> > > +	default:
-> > > +		return false;
-> >=20
-> > We can simply have default that is doing nothing:
-> >=20
-> > default:
-> > =C2=A0=C2=A0=C2=A0 /* continue logic */
-> > =C2=A0=C2=A0=C2=A0 break;
-> >=20
-> > > +	}
-> >=20
-> > I believe that it will be better to return false by default here
-> > (after switch).
-> We can do that, but why would it be better, is it an optimisation? We
-> don't have
-> any logic to continue.
-
-We have this function flow:
-
-bool is_valid_cnid()
-{
-   if (condition)
-      return <something>;
-
-   switch () {
-   case 1:
-      return something;
-   }
-}
-
-Some compilers can treat this like function should return value but has
-no return by default. And it could generate warnings. So, this is why I
-suggested to have return at the end of function by default.
-
->=20
-> > > +			break;
-> > > +		}
-> > > =C2=A0		inode->i_size =3D be16_to_cpu(rec->dir.Val) + 2;
-> > > =C2=A0		HFS_I(inode)->fs_blocks =3D 0;
-> > > =C2=A0		inode->i_mode =3D S_IFDIR | (S_IRWXUGO & ~hsb-
-> > > >s_dir_umask);
-> >=20
-> > We have practically the same check for the case of
-> > hfs_write_inode():
-> >=20
-> > int hfs_write_inode(struct inode *inode, struct writeback_control
-> > *wbc)
-> > {
-> > 	struct inode *main_inode =3D inode;
-> > 	struct hfs_find_data fd;
-> > 	hfs_cat_rec rec;
-> > 	int res;
-> >=20
-> > 	hfs_dbg("ino %lu\n", inode->i_ino);
-> > 	res =3D hfs_ext_write_extent(inode);
-> > 	if (res)
-> > 		return res;
-> >=20
-> > 	if (inode->i_ino < HFS_FIRSTUSER_CNID) {
-> > 		switch (inode->i_ino) {
-> > 		case HFS_ROOT_CNID:
-> > 			break;
-> > 		case HFS_EXT_CNID:
-> > 			hfs_btree_write(HFS_SB(inode->i_sb)-
-> > >ext_tree);
-> > 			return 0;
-> > 		case HFS_CAT_CNID:
-> > 			hfs_btree_write(HFS_SB(inode->i_sb)-
-> > >cat_tree);
-> > 			return 0;
-> > 		default:
-> > 			BUG();
-> > 			return -EIO;
-> >=20
-> > I think we need to select something one here. :) I believe we need
-> > to remove
-> > BUG() and return -EIO, finally. What do you think?=20
->=20
-> I think that with validation of inodes in hfs_read_inode this code
-> path should
-> no longer be reachable by poking the kernel interface from userspace.
-> If it is
-> ever reached, it means kernel logic is broken, so it should be
-> treated as a bug.
->=20
-
-We already have multiple syzbot reports with kernel crashes for
-likewise BUG() statements in HFS/HFS+ code. From one point of view, it
-is better to return error instead of crashing kernel. From another
-point of view, the 'return -EIO' is never called because we have BUG()
-before. So, these two statements together don't make sense. This is why
-I am suggesting to rework this code.
-
-Thanks,
-Slava.
-
-> >=20
-> > 		}
-> > 	}
-> >=20
-> > <skipped>
-> > }
-> >=20
-> > What's about to use your check here too?
->=20
-> Let's do that, I'll include it in V2.
->=20
-> >=20
-> > Mostly, I like your approach but the patch needs some polishing
-> > yet. ;)
-> >=20
-> > Thanks,
-> > Slava.
->=20
-> Thank you for taking the time to give detailed feedback, I really
-> appreciate it.
->=20
-> George
-
-[1]
-https://dubeyko.com/development/FileSystems/HFSPLUS/tn1150.html#CatalogFile
 
