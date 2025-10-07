@@ -1,47 +1,86 @@
-Return-Path: <linux-kernel+bounces-843982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE6F8BC0C46
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:46:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D044BC0C4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F7C63A7916
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:42:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53C9B3AC691
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067D32D5C97;
-	Tue,  7 Oct 2025 08:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4AA62D6409;
+	Tue,  7 Oct 2025 08:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="szMxXXBo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BD0lMbSc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1762D5920;
-	Tue,  7 Oct 2025 08:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6C52D29CE
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 08:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759826474; cv=none; b=doRO1yJZwmt/HCaIRqiX2bJ8yaQrHrau8MT3iQlYrdr8lBAw5sf9C+hxvGOIOlTPWW89XVx1SjOVQLHCPXZc+IEZNkTNDdKdEeAjmsdPWrGos2tZaQSrVI8nA9AMuPkZfKkrFMMKw11TxUmzOLRkJ51hhKILpK6EcaPdkxpC0rE=
+	t=1759826513; cv=none; b=XVap4RTCCpioTpSksEvtp4foNONhl6jG8x2aw/3Lt/4scMrJzKzawu91hOqrlH7Hvm2BqlTEdi6uY/4u3ghvUDdON9g6LX9zeaAIiADA+qJS5+MZG1CYBqljCqykv1gHlGR1H6qecLRUFHAxj36VsqKV0YdGwBUvZ5X3ck7/dio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759826474; c=relaxed/simple;
-	bh=0+3FLzqMZDgy6F9S6NI89Z2GN5wDJOXCOV6GLppmymE=;
+	s=arc-20240116; t=1759826513; c=relaxed/simple;
+	bh=N7osgbXR/Nb02nCTiJ+ibSI+O2czeqyHA6JbTI2aH0c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bo3BRpH5zU0sqn6OVPhGB3L0vNQbTVQ+OWQEF56SeP2le9D/nmQorz2oQunvah2WvRTZna7VHi9l8dHROhe881wZ76R5lSesvSpSaDU0KciiY48lKOtM7B5jeay2ssGF+mtZ45bCP72dyuK6kYOcP560yGc0roAatN8jBsWf8as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=szMxXXBo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF125C4CEF7;
-	Tue,  7 Oct 2025 08:41:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759826472;
-	bh=0+3FLzqMZDgy6F9S6NI89Z2GN5wDJOXCOV6GLppmymE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=szMxXXBohi0P9bL4IrE30Xmzg0GXmSu2p8TasyXjCSAXP53Oo99Ot2BDbYbk2gNq5
-	 S+eINJ1R1WDwYhn90xTNEYFZBz4PEqW9wgyqktT5TI0p7Y0kZ4YuvpqO1BHYb/LP2k
-	 7Wg/wPZaxhMoBWpRV9wPnGqfCjRagYK8LRN44eYxPHcZV/ZBzQx7q1DoihxL8SRoXG
-	 xStyPVXMwXvz0gnphz06ArQ0eMjvHjNgMVMxmpk9S0zTl/5ijHBhdlW1luVb+6Qq/L
-	 CjX+VuSl0OYryzL0Y4zC3qbRbYbhv+kQmbVX200PQPoRtYDYryQys/5uaMftWznZM8
-	 S/bBjCHMVmdTQ==
-Message-ID: <342abe63-4062-4e37-9beb-4bfe8d55cd9b@kernel.org>
-Date: Tue, 7 Oct 2025 17:41:06 +0900
+	 In-Reply-To:Content-Type; b=U+skgKk96fFBXPEKwBie6GxW/upT2bAFQML2mDvf9OQqd3lCSgw3XBFpGIPumhV5b71TjjzhMI7o7R3mG1g7OxsF0zxyfY5JSxwYCExAlOi+/KNJLV8rAFHvOi39KQbI8Hi6e5U+Icgn9YCuCi6s1LfRlsxD1fAALAXkuLyzHoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BD0lMbSc; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759826510;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N7osgbXR/Nb02nCTiJ+ibSI+O2czeqyHA6JbTI2aH0c=;
+	b=BD0lMbScysGJBz0GrUafq96/xFv3l/JUid3Gm318KFJpnh9VtJOhY/6RF9Js7+Ean6tsKr
+	BaTF1fRONuulbTJcVRwDHxgHPDJLsZ7EVxZSnIPkuouK9RRLDNPTqO+ncxgfzdn4OqDrO8
+	nlvkEmYG+F2BrrrEXOQx/aThbpU2n+A=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-554-P7LlxTxmPDqOaycd2woISg-1; Tue, 07 Oct 2025 04:41:49 -0400
+X-MC-Unique: P7LlxTxmPDqOaycd2woISg-1
+X-Mimecast-MFC-AGG-ID: P7LlxTxmPDqOaycd2woISg_1759826508
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46b303f6c9cso39052105e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 01:41:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759826508; x=1760431308;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N7osgbXR/Nb02nCTiJ+ibSI+O2czeqyHA6JbTI2aH0c=;
+        b=HCarLC9BXYdH2J+yI2NjC8RMf3neHB/VZbDNQIu9PVVe+jwlZ0d1bi/rr0FgDdf1tp
+         n/gD9w6ExMwqcsjh/fhTszxVMhrXcZGuzuqEjNcWGmfG0ymm34X/gHPfeLbjmjrAOEmJ
+         W6auK23T/hEpLOaxvVl6XHSyhAooT/da0mM2tqMcFPXi+55WeI9XroIPaRgKmIYiHx5w
+         i0VEIGjYVOzti5zqeeRlHcm7Qxyfgwl+8s9O/+CkZ7VNU6CHpSsf5qfZKMOfrcpijNcT
+         o7FiHodWH/vwUUERearXYowbV1mLIDOKW+tfFP7d4hnrYwy7vYRbrXDikKvPBqLXvo1H
+         S2bA==
+X-Forwarded-Encrypted: i=1; AJvYcCUg0LVQLt+M7nDiaA5VEmaf8gW6AlfKG8OZiHgh71ytwJCIRchYwM3k8RevGZjrykWahfynUyCUP8vzsx0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzF43prx3DHK8vOmby627N9Dg/ZNC8tcRg25eBv2xC5ImT2BtV
+	2doSc7XQhd4rm6tuHLPxc3K56/GV/Na0otE2BVH1MSzr2idArOhFJei9Uj+LgRaYB4+3VZpWcOh
+	nN3JnIL9ICJZb+TcTBoDSeZg2b/1Y/B8O1nwP6exiV52odoEqKKL1Xk5TG/6wFDr4mg==
+X-Gm-Gg: ASbGncscVtkdcGxLeWufClaKmDcJdJZZDlDE72PLtqExtB1/M6nEA21mmN/2uCyQlCU
+	BlAxX7zZQS4E2o8S5XXcF+99NLlmJYUeN9np7DCtn732aHVF7x4HTJOWTjbb5xBA7lNq8g3LhAD
+	1bB0scUkfYafj7JEXULNnFIPV2MsHVtD45b5OUQuI0/lVnGdZu/muelLo9uXied24ePUfeFuuwD
+	kR3SpmAiIaiz3sA+FTIUv3sRh9Ja9FYV+vjLxcyFXbLXuhoakezSNqERUbklxKcT9SlV51iwsKq
+	+vcsR65cwuZwhVYBilqMOgnf2n+H54nLYR/R+OwfnOxBqgoZZkAC1ZmiXcdyzshbUjLuWfr3slS
+	c56x2xDkm1PXXw3orlQ==
+X-Received: by 2002:a05:6000:1884:b0:408:d453:e40c with SMTP id ffacd0b85a97d-4256714d755mr10312695f8f.25.1759826508114;
+        Tue, 07 Oct 2025 01:41:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHSxdfixPGpLhL9XW+jR32nQk9zCoNallfAtZ7SneV9aO6UUhophTTA8FHKS9scyKLuEpDDBg==
+X-Received: by 2002:a05:6000:1884:b0:408:d453:e40c with SMTP id ffacd0b85a97d-4256714d755mr10312680f8f.25.1759826507682;
+        Tue, 07 Oct 2025 01:41:47 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f0170sm25156532f8f.49.2025.10.07.01.41.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Oct 2025 01:41:46 -0700 (PDT)
+Message-ID: <d8fb2384-66bb-473a-a020-1bd816b5766c@redhat.com>
+Date: Tue, 7 Oct 2025 10:41:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,77 +88,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/4] arm64: dts: im8mp-phy{board,core}: update license
- and copyright
-To: Yannic Moog <y.moog@phytec.de>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- upstream@lists.phytec.de
-References: <20251007-imx8mp-pollux-display-overlays-v4-0-778c61a4495c@phytec.de>
- <20251007-imx8mp-pollux-display-overlays-v4-1-778c61a4495c@phytec.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] drivers/net/wan/hdlc_ppp: fix potential null pointer in
+ ppp_cp_event logging
+To: Kriish Sharma <kriish.sharma2006@gmail.com>,
+ =?UTF-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>
+Cc: khc@pm.waw.pl, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251002180541.1375151-1-kriish.sharma2006@gmail.com>
+ <m3o6qotrxi.fsf@t19.piap.pl>
+ <CAL4kbROGfCnLhYLCptND6Ni2PGJfgZzM+2kjtBhVcvy3jLHtfQ@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251007-imx8mp-pollux-display-overlays-v4-1-778c61a4495c@phytec.de>
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <CAL4kbROGfCnLhYLCptND6Ni2PGJfgZzM+2kjtBhVcvy3jLHtfQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/10/2025 17:13, Yannic Moog wrote:
-> Update Copyright year and change license from GPL-2.0 to
-> GPL-2.0-or-later OR MIT. Use syntax as defined in the SPDX standard.
-> Also remove individual authorship.
+On 10/3/25 8:43 AM, Kriish Sharma wrote:
+> Thanks for the clarification.
+> I can update proto_name() to return "LCP" by default instead of NULL,
+> which should silence the compiler without changing behavior.
+> I can send another patch for this if you'd like.
 
-You did not explain why. I see no reason (no explanation) to claim that
-you added copyrighted material for each of these individual dates.
+If v2 is not ready yet, I think it would be better returning "unknown"
+instead of "LCP" when the protocol id is actually unknown.
 
-Write complete changelogs explaining such details.
+In the current code base, such case is unexpected/impossible, but the
+compiler force us to handle it anyway. I think we should avoid hiding
+the unexpected event.
 
-Best regards,
-Krzysztof
+Assuming all the code paths calling proto_name() ensure the pid is a
+valid one, you should possibly add a WARN_ONCE() on the default case.
+
+Thanks,
+
+Paolo
+
 
