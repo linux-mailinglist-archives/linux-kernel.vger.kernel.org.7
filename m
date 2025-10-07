@@ -1,414 +1,256 @@
-Return-Path: <linux-kernel+bounces-844167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8CC1BC133F
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:26:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0367BC1252
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:18:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BFD21890F5D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:26:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7274B3E1811
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:17:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595EE2D9EE6;
-	Tue,  7 Oct 2025 11:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606142D9789;
+	Tue,  7 Oct 2025 11:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="XacK5I0j"
-Received: from sonic301-21.consmr.mail.gq1.yahoo.com (sonic301-21.consmr.mail.gq1.yahoo.com [98.137.64.147])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jVJpuVRJ"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E4B34BA2C
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.64.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9DE52D94BF
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759836377; cv=none; b=achbPint3aDlrCbMLfrkphN2DvwqixJx2R7+Cp9Xg7sVNpAzMfJgUkK7l94qtCpQ0MxJZlQ7kOthFcCGcsZ3Qq3ypfCd8Sy1rEwj1FuajS8oy5VjpeBfhxb5hYnZjvGkmmMHb0ziwsua2StqDY43JuC7Su+vbkfrFPRQhfDmaFw=
+	t=1759835843; cv=none; b=Au9YAz0nn6UF1L6xusiOzFt7SoheNsQfJz9TaXugNQP/2mQXaGz0LKfkM5BPemnmJ41IcCCDfTLBbxyqAI3cUyBBe3b9Ss7sIH28PhwGbeEzJqZTrPMs5C6BX1MX4FMPyZsiInK3wDnz58KU/K8NIJuvWJAgA21Z1AKgEE0oYLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759836377; c=relaxed/simple;
-	bh=0L9NNM0NVhWMlHX/x+1K5u80EJwp7B0dPFdt208cUoA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=rhqD5nYv2ICIA2aG31OV2lCqvsqO1ipqdQVApJN385c6pa0rStN2j5bSls8TCGrF5KpFqbRqJhfIyglwo2CLWLiB0iLLpsolNB4Z2yZBn9/xsnMXh/S+8HQez5fKl+Gws67U0T13oTankkMmSDYmWVZLC2FvT4m23LzmrFa5xXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=XacK5I0j; arc=none smtp.client-ip=98.137.64.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1759836369; bh=loXJVbjUe38Y/I++RJ3anYr8BxHmH9jKlc+9Jl5UhGg=; h=Subject:From:To:Cc:Date:In-Reply-To:References:From:Subject:Reply-To; b=XacK5I0jwkSo4nfNyoutw5X2mekqQsZNe2eB0kE+eBH2y4z9twY2yHGIqC71TVukwQ8JViw007xuuVoMvy7pfvS/rzc+Jtp1J8TzrRdjdLSZeeZ481VLxxWtMCno1jsbzFzRn/LOKKD2eDam/zLDaFsmq1dWrjO0LqHo7pn73xGRgmcms5Z67lix6cNSOcwpHA1LirWnpv1XfbgC3rSRmm1018WopCZyMBAVf587bfD9TukLNW+as9+J3WVkFj9FKqjy3ifwYF614SeMcqdEYDM00W1b/nkwi7LY+syVI8Ovd5Lo4nMEdG3GAYY0euA/zEniCGHwvqXB9sniek4eAQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1759836369; bh=vCE0Zt1FQYnTjYk7VP/kRDsAWOPtkkA7cfJH0OR1NT+=; h=X-Sonic-MF:Subject:From:To:Date:From:Subject; b=NgPCtmT4EK63l/hpyo4Vb5iwtltmC+QmBJZd8y3kKibCzqmWUuNTfbOJqQWUD8FtLufq/JPzJ4pMTxCNWA2Q3x3ssCtxDAxFxaX+6PnonFwPIkBlGs0xP63UK6y783LVU0uz9HYH+GWcptdu7vj4H4TUoAD+FDFZy/RAf6bZEWBse5P1PrLuRJ5h4HjZE95+bPPZzqEkg/rjr6LeL2zGvDAstqpPGCrAywyyjMUdP+A6/NHLuRV/gpLgWqTDA59e3K+aOoRDL56XNKxLnuEO1mZhAPkN8POpDaNxNr9+69pQ/Jp2uDMfRTO/u5vb4ivyA2pCxOAwtyrIgKsWcjq7Vg==
-X-YMail-OSG: qzY9QZYVM1l2eIfWu1ibb6DmPKRrOhDaGcIm7PvwfQ.9O_FEF75tOxIC7hCVNzF
- VMk3TMZt_9OE32h55p2kqVk4SDrwTZbNbGBr2ha_JM37vwC1Od_chxQvizYzLpd3vmwfo6lgx3.9
- blMdsP94ssX2FV2V8ezS7fi.8IbB9fM2UVYyfn6feV97Js1RfwMe.thCwL_lVI0LNIbi5Ubzk20v
- rbKtEV2FgF_xkllDjG.MkwkcFmt25dIukZ9dIK7KlFuYC3TGLFbE93ssymBRoI39HzmTv0xK031_
- NI_s9Z7twH700N8pNzE2uAb9ns1GH9nH2WbvAFDeY8zdvSODssavEVWb12FX1SE7Pm7euV41eIdA
- 0EOJnNL.puTXjwrPzIWfCHdzGSVPiaTTIjsFCGaTaePdtxHbz5pINLBrIIDjuh9qzsZvlY8S2mro
- pXly9XZi0TdgB_Vb4ygdtNqq4WMu.oX98SuqhER7bPFBGyHH6ZTYdDE7qYRmzIcCDfN6v_6wLeUK
- IZghnskS9fjvPzJrVkLu7kPgQKLpKePwwsvMQTxqXDinefWZW62atCsVzrIZY8xBkMs3rlc7pWEm
- TOCDrhXB3tG7wkUxKLJ2ikUWOJ8ntA31k57pS.iCqlxAg6EtfAyZ1GCIaPjAX2e4ktV.j_4lCKIg
- 8vX6ggFZxkp7go7mONBQ.a72AHJ5LyF5Xh6rNEvHInmusqzkAonY1y31Bn4vlC98g4mUhbZjmwjI
- 7IjxROBbmtW9.Z9dDE9XE00Ae.ATavkcJKBnI.q7llTbTS0x6DoYP7MAwA5Br.qPGMB31ypYMtaQ
- K7WzK6ZU9eA91PELfBmcIqt0sqtXL8pCMtF6PQ.LcYGQsOdvgpHEbi54Et850gYkKwT6QXXTj4vd
- 9a6FafHIXfN2RhYO2ou2NQFffujtRUH2_3dkam1lqgsBOMpWGJq_EDzvd1_BQy3H1sOrw1UN5Cs9
- a4MsxcBxjAsS.WoHhQncU8HvZfne2JXB60vAsLAOz.LmYACxTNoEi2rfFPp0.yxRDd7SfpEYSPzB
- _3bJbFhXtepMyQvkAelPSQg3wQbIUfIyiG6_pmeBZJl6kPRaxMugHiydPmxgH3OY7xoawbESNlgI
- NTygA7v_pPd3wOl5ezeoBMp3TyzP6pFdd.w9fUCKorRdy.vlgcdhGmJqcIGRXyS.apurnGnpOOBx
- R7azQ6CAZ421veZD8fIcIHtbZ9tMiKK95JOF5sVI1q8_hRr3nf571AeM1WBLXjsL8Lr6unLgXs5M
- et_WBebJkEzAx744T1aa_2Tgyu1LKME62ldK.IpmG6bsOKlmS7YW4k3xXn1gUBmvpcZpU9yZQcyc
- Xnjedhs2hshG0myWExQD2YMBnGt0AeqEmQ4_sd1tCAJZSivF42OIUE6JIYwCEcnSr7D22ASEqr0W
- cVOIGz_V2d_TslLIYToTg5mLKHv4fFYP9pKnfp01q8EQUNHp_JZDumQF8BGCfJHtmm81S_pnF5sk
- x3virBn_qLM.sLPmUIx47S28qQ3MX5xKQIJeAmYegRV2JPw5vmpPBwituJ7ELi2tj4ZaID_uOK0s
- KP8hl7RA4yEXHlggJwCkepLMuEQPNOo52.qHxaeV1kCr6PT686HxFF90F3rdXpiZY51uJxC3V9Pb
- dQJASC2pI9FWMidasyI8kRXVYzYB3ICirrIx7eWC5ptDUoTOCl2niHngIM73bWaS__wOD4iuFgj8
- h5P32kGvaAiUIrUwFFt44a5X2FgibhhOL68JVFKnGXgiHHmgBl409h3PiVtHLd5Tr_cWoDXVi2I9
- 9.IYa.BOLQ3w._buqm4XxBYsyt0fOym1KuG9yP5CITcZVJacO5bb9.NX6QS8zGU.0U3gQvOow649
- VGoKY2Y.RcqkXKrHJGcsD79AAJTglC5gv88qbnGn_jUXY9hVvK7SgnGeeaHHnzm38ys02Hrt4aLc
- FAmpITp8kV6T8.3HNcMKA_y4nHLr7xp4.WnsW7ZHFAScDNAHALiivp5p6k.Y5Xacf.L.0NBdJrhm
- oQHM8GXaviKTfl6S51Zdgx2vYBAss7VfyJA9GQ8QD3jZNa8.QG9WRxdGY6GPpAztFRgzM8hkc96i
- vFUgtPsCiZ93cICQiQQF65EM6Kb3MwTjEPpPYebI2xLl8xC2l6WQd8PAVBzs5.XetMuqfPBE9Ajd
- kZWVg6df6t_bnCojUml7R7mZqppOzb1fDZKd829tQf406YXfxgMgtGaVOM9FLEWDFFkOOotkbP4B
- 7DYbX_6HFrrGO4Awndgn.F7SKvGv2CX9EKO3YeYBrU0nD4b0TGNx8.t_U
-X-Sonic-MF: <rubenru09@aol.com>
-X-Sonic-ID: 8c16ec01-5935-4a4a-b641-8619e8cc0707
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.gq1.yahoo.com with HTTP; Tue, 7 Oct 2025 11:26:09 +0000
-Received: by hermes--production-ir2-ccdb4f9c8-gvlwm (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID f95b06441e85b3a40598eae3f533faba;
-          Tue, 07 Oct 2025 11:15:57 +0000 (UTC)
-Message-ID: <78e4daaa8a031b9e9a28da0e2366aad691708f6b.camel@aol.com>
-Subject: Re: [PATCH] drm/gud: move plane init to gud_pipe.c
-From: Ruben Wauters <rubenru09@aol.com>
-To: Thomas Zimmermann <tzimmermann@suse.de>, Maarten Lankhorst
-	 <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Date: Tue, 07 Oct 2025 12:15:55 +0100
-In-Reply-To: <02dc1df6-bdd7-4b6d-9668-9f700b33d97a@suse.de>
-References: <20251004175900.15235-2-rubenru09.ref@aol.com>
-	 <20251004175900.15235-2-rubenru09@aol.com>
-	 <e0d81b43-22cf-4004-936f-2a1dae9d8741@suse.de>
-	 <c1c282fd64521f1cc675a53084683af745070697.camel@aol.com>
-	 <02dc1df6-bdd7-4b6d-9668-9f700b33d97a@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1759835843; c=relaxed/simple;
+	bh=/PRiiqiF96PuWnwl9YA7Ti6MlqcyY9JOkSncfrz0x/4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Q2w9eOVtvIwkkNAHsDlYpThJ8tLA4L1mlXlv63SDp6MjjEpBzO2VPRDpkrzcx98jz525MjO7RB+WtxQtzkeo869lsmmoxIfbYjLfEJtD2aRYhCcztnJUI1u9/RxUjv2pyt/d3w/UWQTUJ5xKxacNR+Kj7EalIzmH7EEWxbI/WxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jVJpuVRJ; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-78115430134so3738733b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 04:17:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759835839; x=1760440639; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eNPG8g2C/MjBcgwcjFgR+4meO7GrmvtOu/w3NJ8raMs=;
+        b=jVJpuVRJVQBh3JJTbh+sGk+KdNmE6Iv3b1kMQdAvO1mtllRHvzkLw/y4Og8bUen34N
+         NVgAqIPYAxBs86O+itMo7ynxGznLDLsoz0nsTR7ItBBGLFtl/rqzarI1BmPTKbtsCKzw
+         db3sRj5vfaF5uFeS4zgoMuaj14tWMc7iDDRXURRllBhU4xgba0d3W/on5NF4c6SDdGDE
+         cWDAJxdJKDSEHdhQfio4nB+p7Q8AuwJVWhbUfk37DP1+O1hm9dskyRx64EFLJ262dOpW
+         k9FQLSG0JosZg36VTEQP4LQyMgxPerhN9HBcyj3ICrmLflFy6M4aQ/OmBKypI47rLpQy
+         zILQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759835839; x=1760440639;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eNPG8g2C/MjBcgwcjFgR+4meO7GrmvtOu/w3NJ8raMs=;
+        b=QaQg5Pu4Ntbv2f/PKWTyqUfyThfBr4Qc1pMTUfeArNlpX9/cx5v0EE/PpDccXaB38S
+         slY28lLEoREIAUEHN5lq4i2KrOvnaz4VXxTRDnCz2R8gEDdQLinKuCnl8OnYcrsdv7iY
+         Sf3++orEU7OcsAmf/WKxIOzM0MTQKJGSIdbp/7eELCxvXf6H4IqYuTi0hT0eEfuai/Bv
+         EDLQrVn8CWW8QzH7qvif/Oc3OQpwp8rOpb9VElv6BO3/4I/X66AOBLIKPT0MHTq2kc+9
+         S2rc/RL/mkDiK01mcpJEHPVsqB4Cn1PveaDXtfF0XgPVkqSiP80tZbUCFmXaKyDUCJi5
+         VdWA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDmGFG9esisCDZv9uzzEJL/oBcqy9x7YMMagLHZ7LbzRsFmI0lzDCrEzvyUig2atmRV+3J8bUPyloaN/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbaStmkgeb2meLerC2GF9mh9Y3xPduAYxZuF9kN5vU3MBcnsdp
+	gpOjQZeEApTBkKaAtVnnuXmz3IllY3uyW7IbgOcnm8aUjyZqei9M4qMW
+X-Gm-Gg: ASbGnctz55hYGUDMTEQw1G0cGwpCkoYaVEvgYgcVWHWkqYrv18DQl/mesD4q6Eqj6gt
+	CmlGlaJG7ishaABUiHdLXU9P6nF/+wZksOn/9aTxPjM5oPDt2FwMMXcWHM9A390a+qBbxs2hCoh
+	/dmOSdRNYqeEByKyDqoL0ccSoVH0Ft9CWovlAGbPK3FvjYoUjuZSocbyRBuWfsTDYPOkXhlZyac
+	bqriRFEu98ArWNRj7TkxXLZE/8unNrgePgd8v/93RbC++BMvIrEwxspmSdrclD45a6VO3rVsa+4
+	2WKA9qTqldta+KgoIKh3dsDQDAWy5NcOesi7wsjRwHhHD9ZB+Ra/RJRlFPT7gBpVdA0wT2B3Dce
+	L9vOWhRiy4xrFJksHDZJAihv5iyYQMQ9rmbIEWIiOm86yQGVQR+AKrJjYGrp+SZFOWVmrEYTtpH
+	3bDx49XCgBVV6+FqqZN9jz7E4t5mMIchzo2+uDv3YyhQ==
+X-Google-Smtp-Source: AGHT+IG/GlDlGMJXanFehOuQmiIBcouCj1tMidnpz7d4eBVLB7xu7Pq5DBctdYYycE/b48lWbFXOyw==
+X-Received: by 2002:a17:903:1a4c:b0:278:9051:8ea9 with SMTP id d9443c01a7336-28e9a61a8f3mr184307865ad.40.1759835838888;
+        Tue, 07 Oct 2025 04:17:18 -0700 (PDT)
+Received: from [192.168.2.3] (2403-580a-80ed-0-4835-5a07-49e7-f115.ip6.aussiebb.net. [2403:580a:80ed:0:4835:5a07:49e7:f115])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1d31bdsm162509045ad.94.2025.10.07.04.17.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 04:17:18 -0700 (PDT)
+From: James Calligeros <jcalligeros99@gmail.com>
+Subject: [PATCH v3 00/13] mfd: macsmc: add rtc, hwmon and hid subdevices
+Date: Tue, 07 Oct 2025 21:16:41 +1000
+Message-Id: <20251007-macsmc-subdevs-v3-0-d7d3bfd7ae02@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mailer: WebService/1.1.24562 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJn25GgC/2XM0QqCMBTG8VeRXbfYZnOuq94jurCzow6axk6NQ
+ nz3phBIXX4f/H8TI4weiR2LiUVMnvw45FHuCgZ9M3TIvcubKaG0qGXFQwMUgNPz6jARr40oFQh
+ pnACWo3vE1r9W8HzJu/f0GON79ZNc3i9lf6kkueDauLaCEnUr7akLjb/tYQxsoZLa5Mr85Srng
+ BqtdfoAqt7m8zx/AJTAT/XrAAAA
+X-Change-ID: 20250816-macsmc-subdevs-87032c017d0c
+To: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Jonathan Corbet <corbet@lwn.net>, 
+ James Calligeros <jcalligeros99@gmail.com>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-rtc@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+ linux-input@vger.kernel.org, linux-doc@vger.kernel.org, 
+ Mark Kettenis <kettenis@openbsd.org>, Hector Martin <marcan@marcan.st>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6425;
+ i=jcalligeros99@gmail.com; h=from:subject:message-id;
+ bh=/PRiiqiF96PuWnwl9YA7Ti6MlqcyY9JOkSncfrz0x/4=;
+ b=owGbwMvMwCV2xczoYuD3ygTG02pJDBlPvm35ovnV2Nm5cIfwTpOjJgdy6x+4ih/Z4q784hrnD
+ 8fr+pIdHaUsDGJcDLJiiiwbmoQ8Zhux3ewXqdwLM4eVCWQIAxenAEzkxFKGv6IrDrZfkpTacISn
+ deeNX1IahfWH9OaFvRNbep3hjkHdWwNGhoWNim96Xwb3XLneYhIfI94ulang8sMuTJQ1ZO1+/re
+ LmQA=
+X-Developer-Key: i=jcalligeros99@gmail.com; a=openpgp;
+ fpr=B08212489B3206D98F1479BDD43632D151F77960
 
-On Tue, 2025-10-07 at 12:56 +0200, Thomas Zimmermann wrote:
-> Hi
->=20
-> Am 07.10.25 um 11:52 schrieb Ruben Wauters:
-> > On Tue, 2025-10-07 at 11:17 +0200, Thomas Zimmermann wrote:
-> > > Hi Ruben,
-> > >=20
-> > > please see my comments below.
-> > >=20
-> > > Am 04.10.25 um 19:49 schrieb Ruben Wauters:
-> > > > gud_probe() currently is a quite large function that does a lot of
-> > > > different things, including USB detection, plane init, and several =
-other
-> > > > things.
-> > > >=20
-> > > > This patch moves the plane and crtc init into gud_plane_init() in
-> > > > gud_pipe.c, which is a more appropriate file for this. Associated
-> > > > variables and structs have also been moved to gud_pipe.c
-> > > >=20
-> > > > Signed-off-by: Ruben Wauters <rubenru09@aol.com>
-> > > > ---
-> > > > It was somewhat difficult to determine what exactly should be moved
-> > > > over, gud_probe() as a function quite a mess, so I need to figure o=
-ut
-> > > > exactly how to split this one up.
-> > > Agreed. The probe function looks really chaotic.
-> > >=20
-> > > I think that just moving CRTC and plane is a not enough. In ast and u=
-dl,
-> > > we have functions that init the whole display pipeline from
-> > > drmm_mode_config_init() to _reset(). See [1] and [2] for examples. Th=
-at
-> > > would likely be a good model for gud as well, but gud's probe functio=
-n
-> > > mixes up pipeline init with other code.
-> > >=20
-> > > [1]
-> > > https://elixir.bootlin.com/linux/v6.17.1/source/drivers/gpu/drm/ast/a=
-st_mode.c#L1005
-> > > [2]
-> > > https://elixir.bootlin.com/linux/v6.17.1/source/drivers/gpu/drm/udl/u=
-dl_modeset.c#L482
-> > >=20
-> > >=20
-> > > Looking over gud_probe, the following blocks are related to pipeline =
-init:
-> > >=20
-> > > - lines 466-469 [3]
-> > > - lines 486-489
-> > > - lines 558-565
-> > > - lines 590-599
-> > > - lines 610-623
-> > > - line 641
-> > >=20
-> > > [3]
-> > > https://gitlab.freedesktop.org/drm/misc/kernel/-/blob/drm-misc-next/d=
-rivers/gpu/drm/gud/gud_drv.c#L466
-> > >=20
-> > > I'd try to move these lines into a new helper that initializes the fu=
-ll
-> > > modesetting pipeline.
-> > >=20
-> > > The other code that happens in between is either preparation or clean=
- up
-> > > and should be done before or after creating the pipeline.
-> > These changes will probably required another patch/possibly even a
-> > patch series, so will be more extensive, as such they make take me
-> > longer to do as I consider the best way to go about it.
->=20
-> It's really just about moving code around and what you currently do=20
-> (moving CRTC init into plane-init code) is generally not advised.
+Hi all,
 
-Ahh, I understand, that will probably have to be split into a separate
-function then.
+This series adds support for the remaining SMC subdevices. These are the
+RTC, hwmon, and HID devices. They are being submitted together as the RTC
+and hwmon drivers both require changes to the SMC DT schema.
 
+The RTC driver is responsible for getting and setting the system clock,
+and requires an NVMEM cell. This series replaces Sven's original RTC driver
+submission [1].
 
-> Another step in the right direction would be to reorganize gud_probe()=
-=20
-> first. I mentioned the pipeline init, but anything that is between could=
-=20
-> either go before or after pipeline init. That could be done in a patch=
-=20
-> series or even individual patches at your preferred pace. In the end,=20
-> you'd have a block of pipeline-init code on the middle of gud_probe,=20
-> from where it can be moved into a helper easily. Would that work for you?
+The hwmon function is an interesting one. While each Apple Silicon device
+exposes pretty similar sets of sensors, these all seem to be paired to
+different SMC keys in the firmware interface. This is true even when the
+sensors are on the SoC. For example, an M1 MacBook Pro will use different
+keys to access the LITTLE core temperature sensors to an M1 Mac mini. This
+necessitates describing which keys correspond to which sensors for each
+device individually, and populating the hwmon structs at runtime. We do
+this with a node in the device tree. This series includes only the keys
+for sensors which we know to be common to all devices. The SMC is also
+responsible for monitoring and controlling fan speeds on systems with fans,
+which we expose via the hwmon driver.
 
-This might be a bit easier to do at least at first, I shall get working
-on that.
+The SMC also handles the hardware power button and lid switch. Power
+button presses and lid opening/closing are emitted as HID events, so we
+add an input subdevice to handle them.
 
-Ruben
-> Best regards
-> Thomas
->=20
->=20
-> >=20
-> > Ruben
-> > >=20
-> > > > As an aside, I noticed that the driver doesn't have a version macro=
- in
-> > > > gud_drv.c, and therefore is shown as 1.0.0. I was thinking of
-> > > > introducing a version, but I wanted to know how others generally de=
-al
-> > > > with driver versions. I'm not 100% sure if it's *necessary* for GUD=
- but
-> > > > it might be a good idea.
-> > > I wouldn't bother at all about module versions. AFAIK no one cares ab=
-out
-> > > it anyway.
-> > >=20
-> > > Best regards
-> > > Thomas
-> > >=20
-> > > > ---
-> > > >    drivers/gpu/drm/gud/gud_drv.c      | 48 +-----------------------
-> > > >    drivers/gpu/drm/gud/gud_internal.h |  1 +
-> > > >    drivers/gpu/drm/gud/gud_pipe.c     | 60 ++++++++++++++++++++++++=
-++++++
-> > > >    3 files changed, 62 insertions(+), 47 deletions(-)
-> > > >=20
-> > > > diff --git a/drivers/gpu/drm/gud/gud_drv.c b/drivers/gpu/drm/gud/gu=
-d_drv.c
-> > > > index b7345c8d823d..967c16479b5c 100644
-> > > > --- a/drivers/gpu/drm/gud/gud_drv.c
-> > > > +++ b/drivers/gpu/drm/gud/gud_drv.c
-> > > > @@ -16,7 +16,6 @@
-> > > >    #include <drm/clients/drm_client_setup.h>
-> > > >    #include <drm/drm_atomic_helper.h>
-> > > >    #include <drm/drm_blend.h>
-> > > > -#include <drm/drm_crtc_helper.h>
-> > > >    #include <drm/drm_damage_helper.h>
-> > > >    #include <drm/drm_debugfs.h>
-> > > >    #include <drm/drm_drv.h>
-> > > > @@ -338,43 +337,12 @@ static int gud_stats_debugfs(struct seq_file =
-*m, void *data)
-> > > >    	return 0;
-> > > >    }
-> > > >   =20
-> > > > -static const struct drm_crtc_helper_funcs gud_crtc_helper_funcs =
-=3D {
-> > > > -	.atomic_check =3D drm_crtc_helper_atomic_check
-> > > > -};
-> > > > -
-> > > > -static const struct drm_crtc_funcs gud_crtc_funcs =3D {
-> > > > -	.reset =3D drm_atomic_helper_crtc_reset,
-> > > > -	.destroy =3D drm_crtc_cleanup,
-> > > > -	.set_config =3D drm_atomic_helper_set_config,
-> > > > -	.page_flip =3D drm_atomic_helper_page_flip,
-> > > > -	.atomic_duplicate_state =3D drm_atomic_helper_crtc_duplicate_stat=
-e,
-> > > > -	.atomic_destroy_state =3D drm_atomic_helper_crtc_destroy_state,
-> > > > -};
-> > > > -
-> > > > -static const struct drm_plane_helper_funcs gud_plane_helper_funcs =
-=3D {
-> > > > -	DRM_GEM_SHADOW_PLANE_HELPER_FUNCS,
-> > > > -	.atomic_check =3D gud_plane_atomic_check,
-> > > > -	.atomic_update =3D gud_plane_atomic_update,
-> > > > -};
-> > > > -
-> > > > -static const struct drm_plane_funcs gud_plane_funcs =3D {
-> > > > -	.update_plane =3D drm_atomic_helper_update_plane,
-> > > > -	.disable_plane =3D drm_atomic_helper_disable_plane,
-> > > > -	.destroy =3D drm_plane_cleanup,
-> > > > -	DRM_GEM_SHADOW_PLANE_FUNCS,
-> > > > -};
-> > > > -
-> > > >    static const struct drm_mode_config_funcs gud_mode_config_funcs =
-=3D {
-> > > >    	.fb_create =3D drm_gem_fb_create_with_dirty,
-> > > >    	.atomic_check =3D drm_atomic_helper_check,
-> > > >    	.atomic_commit =3D drm_atomic_helper_commit,
-> > > >    };
-> > > >   =20
-> > > > -static const u64 gud_plane_modifiers[] =3D {
-> > > > -	DRM_FORMAT_MOD_LINEAR,
-> > > > -	DRM_FORMAT_MOD_INVALID
-> > > > -};
-> > > > -
-> > > >    DEFINE_DRM_GEM_FOPS(gud_fops);
-> > > >   =20
-> > > >    static const struct drm_driver gud_drm_driver =3D {
-> > > > @@ -587,17 +555,10 @@ static int gud_probe(struct usb_interface *in=
-tf, const struct usb_device_id *id)
-> > > >    			return -ENOMEM;
-> > > >    	}
-> > > >   =20
-> > > > -	ret =3D drm_universal_plane_init(drm, &gdrm->plane, 0,
-> > > > -				       &gud_plane_funcs,
-> > > > -				       formats, num_formats,
-> > > > -				       gud_plane_modifiers,
-> > > > -				       DRM_PLANE_TYPE_PRIMARY, NULL);
-> > > > +	ret =3D gud_plane_init(gdrm, formats, num_formats);
-> > > >    	if (ret)
-> > > >    		return ret;
-> > > >   =20
-> > > > -	drm_plane_helper_add(&gdrm->plane, &gud_plane_helper_funcs);
-> > > > -	drm_plane_enable_fb_damage_clips(&gdrm->plane);
-> > > > -
-> > > >    	devm_kfree(dev, formats);
-> > > >    	devm_kfree(dev, formats_dev);
-> > > >   =20
-> > > > @@ -607,13 +568,6 @@ static int gud_probe(struct usb_interface *int=
-f, const struct usb_device_id *id)
-> > > >    		return ret;
-> > > >    	}
-> > > >   =20
-> > > > -	ret =3D drm_crtc_init_with_planes(drm, &gdrm->crtc, &gdrm->plane,=
- NULL,
-> > > > -					&gud_crtc_funcs, NULL);
-> > > > -	if (ret)
-> > > > -		return ret;
-> > > > -
-> > > > -	drm_crtc_helper_add(&gdrm->crtc, &gud_crtc_helper_funcs);
-> > > > -
-> > > >    	ret =3D gud_get_connectors(gdrm);
-> > > >    	if (ret) {
-> > > >    		dev_err(dev, "Failed to get connectors (error=3D%d)\n", ret);
-> > > > diff --git a/drivers/gpu/drm/gud/gud_internal.h b/drivers/gpu/drm/g=
-ud/gud_internal.h
-> > > > index d27c31648341..4a91aae61e50 100644
-> > > > --- a/drivers/gpu/drm/gud/gud_internal.h
-> > > > +++ b/drivers/gpu/drm/gud/gud_internal.h
-> > > > @@ -69,6 +69,7 @@ void gud_plane_atomic_update(struct drm_plane *pl=
-ane,
-> > > >    int gud_connector_fill_properties(struct drm_connector_state *co=
-nnector_state,
-> > > >    				  struct gud_property_req *properties);
-> > > >    int gud_get_connectors(struct gud_device *gdrm);
-> > > > +int gud_plane_init(struct gud_device *gdrm, u32 *formats, unsigned=
- int num_formats);
-> > > >   =20
-> > > >    /* Driver internal fourcc transfer formats */
-> > > >    #define GUD_DRM_FORMAT_R1		0x00000122
-> > > > diff --git a/drivers/gpu/drm/gud/gud_pipe.c b/drivers/gpu/drm/gud/g=
-ud_pipe.c
-> > > > index 3a208e956dff..1f7af86b28fd 100644
-> > > > --- a/drivers/gpu/drm/gud/gud_pipe.c
-> > > > +++ b/drivers/gpu/drm/gud/gud_pipe.c
-> > > > @@ -10,6 +10,7 @@
-> > > >   =20
-> > > >    #include <drm/drm_atomic.h>
-> > > >    #include <drm/drm_connector.h>
-> > > > +#include <drm/drm_crtc_helper.h>
-> > > >    #include <drm/drm_damage_helper.h>
-> > > >    #include <drm/drm_drv.h>
-> > > >    #include <drm/drm_format_helper.h>
-> > > > @@ -450,6 +451,65 @@ static void gud_fb_handle_damage(struct gud_de=
-vice *gdrm, struct drm_framebuffer
-> > > >    	gud_flush_damage(gdrm, fb, src, !fb->obj[0]->import_attach, dam=
-age);
-> > > >    }
-> > > >   =20
-> > > > +static const struct drm_plane_funcs gud_plane_funcs =3D {
-> > > > +	.update_plane =3D drm_atomic_helper_update_plane,
-> > > > +	.disable_plane =3D drm_atomic_helper_disable_plane,
-> > > > +	.destroy =3D drm_plane_cleanup,
-> > > > +	DRM_GEM_SHADOW_PLANE_FUNCS,
-> > > > +};
-> > > > +
-> > > > +static const struct drm_plane_helper_funcs gud_plane_helper_funcs =
-=3D {
-> > > > +	DRM_GEM_SHADOW_PLANE_HELPER_FUNCS,
-> > > > +	.atomic_check =3D gud_plane_atomic_check,
-> > > > +	.atomic_update =3D gud_plane_atomic_update,
-> > > > +};
-> > > > +
-> > > > +static const struct drm_crtc_helper_funcs gud_crtc_helper_funcs =
-=3D {
-> > > > +	.atomic_check =3D drm_crtc_helper_atomic_check
-> > > > +};
-> > > > +
-> > > > +static const struct drm_crtc_funcs gud_crtc_funcs =3D {
-> > > > +	.reset =3D drm_atomic_helper_crtc_reset,
-> > > > +	.destroy =3D drm_crtc_cleanup,
-> > > > +	.set_config =3D drm_atomic_helper_set_config,
-> > > > +	.page_flip =3D drm_atomic_helper_page_flip,
-> > > > +	.atomic_duplicate_state =3D drm_atomic_helper_crtc_duplicate_stat=
-e,
-> > > > +	.atomic_destroy_state =3D drm_atomic_helper_crtc_destroy_state,
-> > > > +};
-> > > > +
-> > > > +static const u64 gud_plane_modifiers[] =3D {
-> > > > +	DRM_FORMAT_MOD_LINEAR,
-> > > > +	DRM_FORMAT_MOD_INVALID
-> > > > +};
-> > > > +
-> > > > +int gud_plane_init(struct gud_device *gdrm, u32 *formats, unsigned=
- int num_formats)
-> > > > +{
-> > > > +	struct drm_device *drm =3D &gdrm->drm;
-> > > > +	struct drm_plane *plane =3D &gdrm->plane;
-> > > > +	struct drm_crtc *crtc =3D &gdrm->crtc;
-> > > > +	int ret;
-> > > > +
-> > > > +	ret =3D drm_universal_plane_init(drm, plane, 0,
-> > > > +				       &gud_plane_funcs,
-> > > > +				       formats, num_formats,
-> > > > +				       gud_plane_modifiers,
-> > > > +				       DRM_PLANE_TYPE_PRIMARY, NULL);
-> > > > +	if (ret)
-> > > > +		return ret;
-> > > > +
-> > > > +	drm_plane_helper_add(plane, &gud_plane_helper_funcs);
-> > > > +	drm_plane_enable_fb_damage_clips(plane);
-> > > > +
-> > > > +	ret =3D drm_crtc_init_with_planes(drm, crtc, plane, NULL,
-> > > > +					&gud_crtc_funcs, NULL);
-> > > > +	if (ret)
-> > > > +		return ret;
-> > > > +
-> > > > +	drm_crtc_helper_add(crtc, &gud_crtc_helper_funcs);
-> > > > +
-> > > > +	return 0;
-> > > > +}
-> > > > +
-> > > >    int gud_plane_atomic_check(struct drm_plane *plane,
-> > > >    			   struct drm_atomic_state *state)
-> > > >    {
+This series originally cherry-picked three Devicetree commits to build
+cleanly, however these have now been merged and were dropped.
+
+Regards,
+
+James
+
+[1] https://lore.kernel.org/asahi/CAEg-Je84XxLWH7vznQmPRfjf6GxWOu75ZetwN7AdseAwfMLLrQ@mail.gmail.com/T/#t
+
+---
+Changes in v3:
+- Renamed macsmc-hid to macsmc-input
+- Switched to pm_wakeup_event in macsmc-input
+- macsmc-input now configures its capabilities before registering the device
+- Renamed macsmc_hwmon to macsmc-hwmon
+- Dropped module aliases in macsmc-input and macsmc_hwmon
+- Introduced new SMC FourCC macro to silence GCC errors
+- Condensed hwmon binding using $defs
+- Made label property optional for hwmon sensors
+- Fixed incorrect hwmon is_visible implementation
+- Dropped 64-bit math from SMC float ops
+- Fixed incorrect use of error numbers in hwmon driver
+- Replaced a number of non-fatal dev_errs with dev_dbgs in hwmon driver
+- Added hwmon driver documentation
+- Added hwmon subdevice directly to the DT SMC node
+- Included "common" hwmon sensors in SoC .dtsi files
+- Fixed typo in hwmon-common.dtsi
+- Added Neal's R-b to series
+- Added required nodes to t602x Devicetrees
+- Link to v2: https://lore.kernel.org/r/20250827-macsmc-subdevs-v2-0-ce5e99d54c28@gmail.com
+
+Changes in v2:
+- Added Rob's R-b tag to RTC DT binding
+- Removed redundant nesting from hwmon DT binding
+- Dedpulicated property definitions in hwmon DT schema
+- Made label a required property for hwmon DT nodes
+- Clarified semantics in hwmon DT schema definitions
+- Split mfd tree changes into separate commits
+- Fixed numerous style errors in hwmon driver
+- Removed log messages sysfs read/write functions in hwmon driver
+- Removed ignored errors from hwmon driver
+- Removed uses of dev_err for non-errors in hwmon driver
+- Made it more obvious that a number of hwmon fan properties are optional
+- Modified hwmon driver to reflect DT schema changes
+- Added compatible property to hwmon node
+- Link to v1: https://lore.kernel.org/r/20250819-macsmc-subdevs-v1-0-57df6c3e5f19@gmail.com
+
+---
+Hector Martin (2):
+      rtc: Add new rtc-macsmc driver for Apple Silicon Macs
+      input: macsmc-input: New driver to handle the Apple Mac SMC buttons/lid
+
+James Calligeros (9):
+      dt-bindings: hwmon: Add Apple System Management Controller hwmon schema
+      mfd: macsmc: Wire up Apple SMC RTC subdevice
+      mfd: macsmc: add new __SMC_KEY macro
+      hwmon: Add Apple Silicon SMC hwmon driver
+      mfd: macsmc: Wire up Apple SMC hwmon subdevice
+      mfd: macsmc: Wire up Apple SMC input subdevice
+      arm64: dts: apple: t8103, t8112, t60xx: add hwmon SMC subdevice
+      arm64: dts: apple: Add common hwmon sensors and fans
+      arm64: dts: apple: t8103, t60xx, t8112: Add common hwmon nodes to devices
+
+Sven Peter (2):
+      dt-bindings: rtc: Add Apple SMC RTC
+      arm64: dts: apple: t8103,t60xx,t8112: Add SMC RTC node
+
+ .../bindings/hwmon/apple,smc-hwmon.yaml  |  86 +++
+ .../bindings/mfd/apple,smc.yaml          |  45 ++
+ .../bindings/rtc/apple,smc-rtc.yaml      |  35 +
+ Documentation/hwmon/macsmc-hwmon.rst     |  71 +++
+ MAINTAINERS                              |   6 +
+ .../boot/dts/apple/hwmon-common.dtsi     |  33 +
+ .../boot/dts/apple/hwmon-fan-dual.dtsi   |  22 +
+ arch/arm64/boot/dts/apple/hwmon-fan.dtsi |  17 +
+ .../boot/dts/apple/hwmon-laptop.dtsi     |  33 +
+ .../boot/dts/apple/hwmon-mac-mini.dtsi   |  15 +
+ .../arm64/boot/dts/apple/t6001-j375c.dts |   2 +
+ arch/arm64/boot/dts/apple/t6001.dtsi     |   2 +
+ .../arm64/boot/dts/apple/t6002-j375d.dts |   2 +
+ .../arm64/boot/dts/apple/t600x-die0.dtsi |  10 +
+ .../boot/dts/apple/t600x-j314-j316.dtsi  |   3 +
+ .../arm64/boot/dts/apple/t602x-die0.dtsi |  10 +
+ arch/arm64/boot/dts/apple/t8103-j274.dts |   2 +
+ arch/arm64/boot/dts/apple/t8103-j293.dts |   3 +
+ arch/arm64/boot/dts/apple/t8103-j313.dts |   2 +
+ arch/arm64/boot/dts/apple/t8103-j456.dts |   2 +
+ arch/arm64/boot/dts/apple/t8103-j457.dts |   2 +
+ arch/arm64/boot/dts/apple/t8103.dtsi     |  11 +
+ arch/arm64/boot/dts/apple/t8112-j413.dts |   2 +
+ arch/arm64/boot/dts/apple/t8112-j473.dts |   2 +
+ arch/arm64/boot/dts/apple/t8112-j493.dts |   3 +
+ arch/arm64/boot/dts/apple/t8112.dtsi     |  11 +
+ drivers/hwmon/Kconfig                    |  12 +
+ drivers/hwmon/Makefile                   |   1 +
+ drivers/hwmon/macsmc-hwmon.c             | 850 +++++++++++++++++++++++++
+ drivers/input/misc/Kconfig               |  11 +
+ drivers/input/misc/Makefile              |   1 +
+ drivers/input/misc/macsmc-input.c        | 208 ++++++
+ drivers/mfd/macsmc.c                     |   3 +
+ drivers/rtc/Kconfig                      |  11 +
+ drivers/rtc/Makefile                     |   1 +
+ drivers/rtc/rtc-macsmc.c                 | 141 ++++
+ include/linux/mfd/macsmc.h               |   1 +
+ 37 files changed, 1672 insertions(+)
+---
+base-commit: c746c3b5169831d7fb032a1051d8b45592ae8d78
+change-id: 20250816-macsmc-subdevs-87032c017d0c
+
+Best regards,
+-- 
+James Calligeros <jcalligeros99@gmail.com>
+
 
