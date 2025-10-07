@@ -1,124 +1,109 @@
-Return-Path: <linux-kernel+bounces-843622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14FA1BBFDAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 02:35:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D457EBBFDBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 02:39:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0C201899D76
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 00:36:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D38DB189BE41
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 00:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2EAF1AF0BB;
-	Tue,  7 Oct 2025 00:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6221D6DB6;
+	Tue,  7 Oct 2025 00:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AMQVedbM"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="4mY+aOVE"
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3268249EB
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 00:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE661A9FB8
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 00:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759797343; cv=none; b=f6rQVDySMA72fUfSnjX9IEu4pHpK9u3XL9WLNR6QOeg3Qx4t5+am2a2Z5iuCZgG/g7ppvaFrtJHNGjwLVUhgulM2lig5reJsVV9D5Q/uQsLyDGgZYeK4pFKuSuyhx0/fX8hFN/QODAvMOkjSXJMmNLoBh0udKZx+73pSm4axd6g=
+	t=1759797573; cv=none; b=sVX7qpd2Rw0K9dc7Lm1FDP/7UaNEKbymfo6Tu5NKsm3rSAA2TZjRP90MH4VhsVbJE4yz2TzbL0ZhGxoTgAxdx1ODMm+CClsN7/tL43adQc9IXKG2RSPrnKTqGdPhdIzCq60P+Bc9k3gEJPou47mmQYG68lhhI3gkmxtML27K5i0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759797343; c=relaxed/simple;
-	bh=NJ02XtCBVUZhZ6rCf7V6WivB1JLbqCaihCOuQZnHr80=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G0KYQvWEaOL3x1BH5tFDy7Eu9+P4TLHataDbwpfoQKrZpSdFxoNv+j29MwwNpfIary27HKhwHmVWba1/P4t1Nig8srnkANPvzZljgqxmwWSCJUaKf3sptxEPWK8De7aakbx3+7b29gUHDueXxsggefxZUjotFhnVfcD5e4pAdvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AMQVedbM; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-637ef0137f7so9197525a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 17:35:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759797340; x=1760402140; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RmTEafLLz555+9PYYyX6aK2mRmjoUTzEwUNlTBIE748=;
-        b=AMQVedbM3zGDf2KZRmYuTTE7/pNjz6JvRlLU8aMmlDVDHeBKobtyr3FcDA9L8ECBgT
-         ZKdmGdaHLXmXbO7Rk3+h0ZuKZ3pnsk3LeWDmu2vpv+C3zAH4qq/9API5nkQV1VETOFkN
-         HfdlHnUFMle2xupLWJprS4UA2j/jTfFZHxEnysu79Fizl8avtZUJXtIVFemYPoEjh0s5
-         tT/VqT0WRo41HmxH3czlWhdXRMko24to1V4jS6rsBvgvy2MN92ppC7fHPRhxGDS7YdyO
-         0sJe/izDC6q5Q+2MSW0k/7OimyFG9jnoh5JIlQ7JuLzQ452i8FuyecQS4uk+L880C954
-         2uOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759797340; x=1760402140;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=RmTEafLLz555+9PYYyX6aK2mRmjoUTzEwUNlTBIE748=;
-        b=Eec20kiFPwj3mctYYs0v0dXvIAaPuA3BoGfABYz/lCgvcdbH6J2YsHfZ6a1SuQJZBa
-         RsZ3sxXjcU0SOd3N1BvrLRBoVo87QXU8DQwTZlWyamVQG7svt0v+0SVA55oJl0qc9f91
-         OHy181FgyrsqWl+Kc0MaiC6W5sH+YeD4WpM3AaVFspwMSY7h2IeHHmAWxrjhFpsGD55E
-         +qvxWmAaKhzijU4fzAcwN3xrhCawOosJhLtUzqilHRkAEexGegEOUno6dKsGoxmX2RKx
-         ST8wN3dMx6OSliKGMgpr16y+Bz6Ju/YiZBZ5DL7FMmEH9l/FwMd6B1gylBa71CxvF7Ph
-         HR3A==
-X-Forwarded-Encrypted: i=1; AJvYcCXlM1bqX6AKda7LdvTW+WMLFb1iHIFHzEgQLhlk0+oJKJMu0oBp8xgbUhn6Gj8Bicsv4bmcDoyLawYP2mA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxhy8otn621bx7qcXyC6bN6lIu5ZY1OmVDj/BjkksRHsE2hOy3h
-	EV4Mvfdwsv0FleusXYZhNkdJz8Cdl5aTT59O1XImBaEXUzZ1gglX2v4O
-X-Gm-Gg: ASbGncta/HVfgQgmwDcyRVRjPrEOQlYAuPrEW7fUTYpsgCuOHbWh8ciZzbteV28aeZQ
-	XlLHMu8+0kmVUoi1gJEzcAtt5P2POZ/VtO63lASo+IKk0LFBpEg05sdw+v3YhE+8BE30ygAAUXH
-	RSDdb5m0qjSEJh3Gkyt6SeIO3OSsCU+ZTeUcWLtjj4Oa3uBXmuE8/sVEF5kVtHGSx/N3PCrDFG6
-	tc2LbsIIotxtSspq2BBN4EQ+mXUIyoHUuW1GPaCp+D1lsUKcpzPcphtpQAc7wQnOgHCBwJ8u0h1
-	XCMSnPbdZp8z04UXGE4migC4TqaUD1lyQx4Xqy45uHpJtcosL9RkLKqttSxzIfWtgIXRpd29luv
-	r5RzIxyp3nSlalJOj6zHZwb69b/c85BqoVtu8YEMWsuIhmrgJuQ==
-X-Google-Smtp-Source: AGHT+IGTr+zz0fZdhcPlWyAVEVhw1eLda7v8W50j43hQzJxysrhCRGQQh3TjjtHlO7I8gMpDi0dgVQ==
-X-Received: by 2002:a17:907:9707:b0:b09:2331:f14d with SMTP id a640c23a62f3a-b49c429cf0dmr1613887466b.64.1759797339928;
-        Mon, 06 Oct 2025 17:35:39 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652a9f11sm1254464566b.4.2025.10.06.17.35.39
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 Oct 2025 17:35:39 -0700 (PDT)
-Date: Tue, 7 Oct 2025 00:35:39 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Lance Yang <lance.yang@linux.dev>
-Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
-	ziy@nvidia.com, baolin.wang@linux.alibaba.com,
-	Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
-	dev.jain@arm.com, baohua@kernel.org, ioworker0@gmail.com,
-	richard.weiyang@gmail.com, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH mm-new v2 2/3] mm/khugepaged: use VM_WARN_ON_FOLIO
- instead of VM_BUG_ON_FOLIO for non-anon folios
-Message-ID: <20251007003539.evunghgqxysojtr2@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20251006144338.96519-1-lance.yang@linux.dev>
- <20251006144338.96519-3-lance.yang@linux.dev>
+	s=arc-20240116; t=1759797573; c=relaxed/simple;
+	bh=kO3ODXqs9k7pwqkR/guQ/caM0qB7jAeOF091Dd7wRU0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=guzymn2QE0208yYsbRdKE8z10X2ct6H12aZ2PZ88wTclrA/kAM0wdkumhF+ShvX7oOEC0g7sFAmTA0MJwBPXtRyXXWXhrQ/3ffetWxEMlFE/1/qaUrLYdPi+GgeGjkeOwyq99q880gWc8Axt1pO7/6FGxsVCYA9vln5MN8PPth4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=4mY+aOVE; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 596NraQL3885881
+	for <linux-kernel@vger.kernel.org>; Mon, 6 Oct 2025 17:39:30 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=s2048-2025-q2; bh=kO3ODXqs9k7pwqkR/guQ
+	/caM0qB7jAeOF091Dd7wRU0=; b=4mY+aOVEe29vUt114OipFP8JGFE5URGXBbpB
+	cBAEjpOlVtLyJeu0Wn3NMoZUD5kykJulae3rDQQ69YT0HO480lMJt0k1AicQw9mq
+	qrg4NLGx3SewBINxQKLClclARbRTy+chEYrumWLDjUh3STpX/hmt8xrhNP4143bD
+	DEaqmNoGMkwvhpPMYiw8h5TrCwqxX7bOBE4KlzPx9maSZrWazrDjoA6rmFIAAWn7
+	iF9aNrZZE9CqS/rkcE7IXs1Wm1pMynGUsXhl9qp0Z/9V5efHZyl5FmrfGnP9Ehsr
+	kPuAxd+j87toHRzdio291pGeV0Zj9yMU/D5XZLqw7O/I68/7SQ==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 49mjnf2vc7-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 17:39:30 -0700 (PDT)
+Received: from twshared18070.28.prn2.facebook.com (2620:10d:c085:208::7cb7) by
+ mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.20; Tue, 7 Oct 2025 00:39:28 +0000
+Received: by devgpu015.cco6.facebook.com (Postfix, from userid 199522)
+	id 5602EC4B352; Mon,  6 Oct 2025 17:39:12 -0700 (PDT)
+Date: Mon, 6 Oct 2025 17:39:12 -0700
+From: Alex Mastro <amastro@fb.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+CC: Alex Williamson <alex.williamson@redhat.com>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] vfio: fix VFIO_IOMMU_UNMAP_DMA when end of range would
+ overflow u64
+Message-ID: <aORhMMOU5p3j69ld@devgpu015.cco6.facebook.com>
+References: <20251005-fix-unmap-v1-1-6687732ed44e@fb.com>
+ <20251006121618.GA3365647@ziepe.ca>
+ <aOPuU0O6PlOjd/Xs@devgpu015.cco6.facebook.com>
+ <20251006225039.GA3441843@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20251006144338.96519-3-lance.yang@linux.dev>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20251006225039.GA3441843@ziepe.ca>
+X-FB-Internal: Safe
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA3MDAwMyBTYWx0ZWRfX85yYjgHOk2l8
+ W2TdfDrMflRQLjcaXmPjL1JaKIb2t0sTfIEwcayJtMuJNCWQ281o5KXF5imHJD+3HGEilVr07rK
+ rMbELz0D50EKre9WI2aAPczIXDWEqh9FY+NM+pLft1YqA/vQYK5JhYdXG/VnDLqcI6Kgzf/XPh7
+ VuWY5dnU2+t39cOr3sICKSGI66VjbnY2rg19ugHJyGqLEZHSneZvtaiTdGzsvnyc4Kx4RYh19VB
+ HFKFeHcAVg53w9aB6zr+067c5qKf6LgO80owjNab7SkQpG7sWG/d8Ux0zp9lT5cQ/xFRUOXkmcN
+ 9/cU330xmfE+TpyVCJ1x4qTr1lPMqQ/2fVs1I8UHrYoB3lz2Q7UGLDSZovEclyjzuY1Xm9v+Eo4
+ 1erRbM+tsrXJ5+6a6cm8Gxxm9+o0Sw==
+X-Proofpoint-GUID: 0rgpzfj6Mz8_SpM81WynU_eyF5vB950c
+X-Authority-Analysis: v=2.4 cv=Zo3g6t7G c=1 sm=1 tr=0 ts=68e46142 cx=c_pps
+ a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=cnzby_Kikf3u7RrYEdwA:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: 0rgpzfj6Mz8_SpM81WynU_eyF5vB950c
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-06_07,2025-10-06_01,2025-03-28_01
 
-On Mon, Oct 06, 2025 at 10:43:37PM +0800, Lance Yang wrote:
->From: Lance Yang <lance.yang@linux.dev>
->
->As Zi pointed out, we should avoid crashing the kernel for conditions
->that can be handled gracefully. Encountering a non-anonymous folio in an
->anonymous VMA is a bug, but a warning is sufficient.
->
->This patch changes the VM_BUG_ON_FOLIO(!folio_test_anon(folio)) to a
->VM_WARN_ON_FOLIO() in both __collapse_huge_page_isolate() and
->hpage_collapse_scan_pmd(), and then aborts the scan with SCAN_PAGE_ANON.
->
->Making more of the scanning logic common between hpage_collapse_scan_pmd()
->and __collapse_huge_page_isolate(), as suggested by Dev.
->
->Suggested-by: Dev Jain <dev.jain@arm.com>
->Suggested-by: Zi Yan <ziy@nvidia.com>
->Signed-off-by: Lance Yang <lance.yang@linux.dev>
+On Mon, Oct 06, 2025 at 07:50:39PM -0300, Jason Gunthorpe wrote:
+> Could we block right at the ioctl inputs that end at ULONG_MAX? Maybe
+> that is a good enough fix?
 
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+That would be a simpler, and perhaps less risky fix than surgically fixing every
+affected place.
 
--- 
-Wei Yang
-Help you, Help me
+If we were to do that, I think VFIO_IOMMU_TYPE1_INFO_CAP_IOVA_RANGE should
+report coherent limits -- i.e. it should "lie" and say the last page (or
+whatever) of u64 addressable space is inaccessible so that the UAPI is coherent
+with itself. It should be legal to map/unmap iova ranges up to the limits it
+claims to support.
+
+I have doubts that anyone actually relies on MAP_DMA-ing such
+end-of-u64-mappings in practice, so perhaps it's OK?
 
