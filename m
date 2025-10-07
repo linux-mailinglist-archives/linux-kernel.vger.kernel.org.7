@@ -1,222 +1,227 @@
-Return-Path: <linux-kernel+bounces-844799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED9D2BC2CD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 23:53:26 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D83DDBC2CCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 23:52:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D3DF44E618A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 21:53:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5DAD934DFB7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 21:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26022550AF;
-	Tue,  7 Oct 2025 21:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2EBE257829;
+	Tue,  7 Oct 2025 21:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fVRFCfnD"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jSrD36xy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7136B20010A
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 21:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17FF248886;
+	Tue,  7 Oct 2025 21:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759873996; cv=none; b=CzKnBN6lgKfU97vp8/TbEP6YupbCZRqagATKOTqeSZ3YG9USAJXl2UqAjLOSsRKpZVi0AJDpVFSRer8ikLQYPAnxEK4+PYI5WOemI6PIpmh0GorZcVzVF8qfulg40dY3pH9w6PvuZaY/JmRIq9rSLQnk9BBqs6RBl/3diOURb+k=
+	t=1759873935; cv=none; b=M1pnCwccT53ZmT6iqVqv5Ruig0bWF5A9pmRh4ZEvMNPeE4NRS36wvrAAxnEKuB3M8iFphG79oGpH0xPdHfv8t6QkW1VgYV1C8z7uQpW9bgIKNq6K79fn8TgI9qt701+md5PJt8eRYTPQKRp33CDqgrYn+Nrr3lrdPNrGgEF2Eiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759873996; c=relaxed/simple;
-	bh=TjMBIpJuIncye64KaQHjQxNkiHmv0nM5WF2NYhgM1sA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EVLH3I11BrljxVbzbFjOClBK2jsQ/+/OWn+66dmz66rGqwKQYtkQDvv0oY+xzFjA+D542QcQUTxRRpcCTjwkcA6Y+ZBnxo0XMS6/MPQTPgwCQjJi3amWDXQql5BjCeoDy5aP6+YL5R5bAbLZnhdlu4q2n61a8fKv/JKDZCgbLBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fVRFCfnD; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-781010ff051so4784272b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 14:53:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759873994; x=1760478794; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UF4S4+6DAZK2WY4k347BiCLNNSJST0g53tyGQcJmqTg=;
-        b=fVRFCfnDqZIGLnU+2Cpkb63qKhdqkfFewNKgWFqh/mwIhIvlcOdjXm3VwuGhKidVyd
-         43iOkBoOfZeGWPxCyUkTJYrakAFhfTx1vbEROfVeK9o/1nkBsuZCJLsnHX2CjSJQH6m6
-         ezpCeRqHp7618tgZZQzfhjQZnIHtQmKHpVqNUjN6XDjbjCq+VxLmZKBeZoX1OdOCVGTm
-         tH61NFLM3On5VgK9BjxLSqyVrvcZIm3Cy6eyXyWcg0Oo5lw74k2ZB83Rlmta1FM2xgNM
-         5Jpr5FgHLCLjKxRGKBrH4EjbNzF2T6jPYcuh+vFzrf8TILy5WV9WCPFSaGFR5LThDbTZ
-         LI5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759873994; x=1760478794;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UF4S4+6DAZK2WY4k347BiCLNNSJST0g53tyGQcJmqTg=;
-        b=enH7gZhN/K1JLKNtjTx7hARfhpRc+sj0L/Mh26sS1BpU9ypJAt+0/HpzU69dtFVpgr
-         LnwnrtUEYScSuMOWuSlSO21xuWuTgzJr+kjO5OJGkVwjBgYt0a5Vd6ThD0I8/8o4kPMw
-         02ZMI9hnc8OfPCSBTEZzf/UkKjLhkU85ZXtbpmtprNmjCIN4GpuULt5vI8m/zs6jqrcp
-         4FSH3jvQGl1foMg+arauWocRobe4qhdnSLc+UD23YWdjn9mOR1IIQbkM5BNYYwSHTqdo
-         PZbybtQAT0UGvtFPzm5WgyfTytUAJM5eQ1g/7JxHYyRK3cV7jMjKPyAsSN3hXyA1Tgth
-         fKsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/JZ1PxkTwjsXzZLLz9NvAAGBsDMHlzZnyZ1RuytF/du4Vfl2zikxy+KPh62e41B4rz25j0d5PkaJPeXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIfp6DWZbLb30gwJFeA6qFdQrIc6TKRh4y9dHO606qpM9KS52/
-	tKfG1XMyoFk8QVYlnmC4jfVifhi9lEcTqOtvZcpC9cyU4BUwO9rj6imA
-X-Gm-Gg: ASbGncsFoSJczhCXFS1TTB0mB9iP+wGmnkytU3ggQ+Nyj5rd0KXa7qnxZRKRuiczD2s
-	+TM5Srbtdr9hHqVquytvxHM5ByQ7OP6QErqv+Uk2TLlVMTrjS+L5S5r6IXgjiWyXSfvT0baNDlF
-	SxtWusgpUvhrzDGtDeyT67PwjNuPhaKEmkXlk3pShjomhAF5C0XiBsqNeeWVqXntZR8ds3ER6q4
-	OzZ2IGRUtuv6QfjGXE3/H+lCUcpxsRxbSkiGZHuYHhr71g53kcEUzsXRJpor+0q1K8yD70XY7zn
-	mepVUuEF3kC2WhmpwU6Dsq5Ot/Zf8/PgqG/Ymc4ChAlngo5uwwC6JoQMz9G8LvYcMj4/1LyxzXU
-	7GkG2CR9rPLx5w0bRsglcbqQDVlIusQYzjtYTKWc+77ha
-X-Google-Smtp-Source: AGHT+IFYbxCcTc1tDhHXGe1RXgH8ceXy4oTaoEh00Tiq0z7+C2qi5X12WI3y1o8uxGTjgYA4NeNgDQ==
-X-Received: by 2002:a05:6a20:3ca7:b0:32b:6e08:e545 with SMTP id adf61e73a8af0-32da839f237mr1455108637.36.1759873993430;
-        Tue, 07 Oct 2025 14:53:13 -0700 (PDT)
-Received: from fedora ([2405:201:5501:4861:363c:cb7e:a622:4141])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b02053767sm16687579b3a.52.2025.10.07.14.53.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 14:53:12 -0700 (PDT)
-From: Ritvik Gupta <ritvikfoss@gmail.com>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: skhan@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: [PATCH v6] rust: kernel: introduce `unsafe_precondition_assert!` macro
-Date: Wed,  8 Oct 2025 03:20:28 +0530
-Message-ID: <20251007215034.213779-1-ritvikfoss@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759873935; c=relaxed/simple;
+	bh=TMwIds0fuxfKRBQzxd/ixcrte7vyYIAz+jX147CkLDA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SlN7FV9Q6+/2ug0wYKVTCeX5Vbd+SBz3niyQ8SO9wPBNTlXhS4C+4mzWN5lWD6mEX3Jh6IMUUnSbqbnXcIQ3LkeuIjtr4UoJk0jNFW4e5T1QD6stzZBmpFoznamHKplGrJOGrGQckN3Kl1Jc7j+Dut18YZDDdNm+iS5ER2b52ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jSrD36xy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF006C4CEF1;
+	Tue,  7 Oct 2025 21:52:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759873934;
+	bh=TMwIds0fuxfKRBQzxd/ixcrte7vyYIAz+jX147CkLDA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jSrD36xywBi7OfvFdz3w8RLfn5c4KIRcDrjkhhR9kT04IvayhOYLGrShtGwuLWAxp
+	 MI+/n4IBMV/qIS5/+icQSKEcixKWy71grk631y0bi8+/AmcI2TLlz+KhzRva8Ewp2+
+	 K452qQySI7NhoBDJ9TzH3tOvwP8uu2X31Ss2EkXDh8zUNFDKr5g7XImpxcMNgsz0Wk
+	 X1A7N2JA040KMLQ1b2g0VfVAmRdb1RhqyXsMcfcEoDhMWc6jue35/MmU8O4pJNrETB
+	 llYSOksomLxzc/4QmzRXHuiHGUZkiYaS/r2EzwKWFM7wmYG/g2QRZ06VRzx15Ci6R8
+	 GUX6kZhK7YqAg==
+Date: Tue, 7 Oct 2025 14:52:13 -0700
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 11/12] remoteproc: qcom: pas: Enable Secure PAS
+ support with IOMMU managed by Linux
+Message-ID: <fo6q3gl3dmcso5gcfp2taaao3qwazxw5uutkcwi6qg4aojt2av@tprjv3xhcs57>
+References: <20251007-kvm_rprocv4_next-20251007-v4-0-de841623af3c@oss.qualcomm.com>
+ <20251007-kvm_rprocv4_next-20251007-v4-11-de841623af3c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251007-kvm_rprocv4_next-20251007-v4-11-de841623af3c@oss.qualcomm.com>
 
-Introduce a new `safety` module containing `unsafe_precondition_assert!`
-macro. It is a wrapper around `debug_assert!`, intended for validating
-pre-conditions of unsafe function.
+On Tue, Oct 07, 2025 at 10:18:56PM +0530, Mukesh Ojha wrote:
+> Most Qualcomm platforms feature Gunyah hypervisor, which typically
+> handles IOMMU configuration. This includes mapping memory regions and
+> device memory resources for remote processors by intercepting
+> qcom_scm_pas_auth_and_reset() calls. These mappings are later removed
+> during teardown. Additionally, SHM bridge setup is required to enable
+> memory protection for both remoteproc metadata and its memory regions.
+> When the aforementioned hypervisor is absent, the operating system must
+> perform these configurations instead.
+> 
+> When Linux runs as the hypervisor (@ EL2) on a SoC, it will have its
+> own device tree overlay file that specifies the firmware stream ID now
+> managed by Linux for a particular remote processor. If the iommus
+> property is specified in the remoteproc device tree node, it indicates
+> that IOMMU configuration must be handled by Linux. In this case, the
+> has_iommu flag is set for the remote processor, which ensures that the
+> resource table, carveouts, and SHM bridge are properly configured before
+> memory is passed to TrustZone for authentication. Otherwise, the
+> has_iommu flag remains unset, which indicates default behavior.
+> 
+> Enables Secure PAS support for remote processors when IOMMU configuration
+> is managed by Linux.
+> 
+> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> ---
+>  drivers/remoteproc/qcom_q6v5_pas.c | 61 ++++++++++++++++++++++++++++++++++----
+>  1 file changed, 56 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index ed7bd931dfd5..940fd89d4fc4 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/delay.h>
+>  #include <linux/firmware.h>
+>  #include <linux/interrupt.h>
+> +#include <linux/iommu.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> @@ -255,6 +256,22 @@ static int qcom_pas_load(struct rproc *rproc, const struct firmware *fw)
+>  	return ret;
+>  }
+>  
+> +static void qcom_pas_unmap_carveout(struct rproc *rproc, phys_addr_t mem_phys, size_t size)
+> +{
+> +	if (rproc->has_iommu)
+> +		iommu_unmap(rproc->domain, mem_phys, size);
+> +}
+> +
+> +static int qcom_pas_map_carveout(struct rproc *rproc, phys_addr_t mem_phys, size_t size)
+> +{
+> +	int ret = 0;
+> +
+> +	if (rproc->has_iommu)
+> +		ret = iommu_map(rproc->domain, mem_phys, mem_phys, size,
+> +				IOMMU_READ | IOMMU_WRITE, GFP_KERNEL);
+> +	return ret;
+> +}
+> +
+>  static int qcom_pas_start(struct rproc *rproc)
+>  {
+>  	struct qcom_pas *pas = rproc->priv;
+> @@ -289,11 +306,15 @@ static int qcom_pas_start(struct rproc *rproc)
+>  	}
+>  
+>  	if (pas->dtb_pas_id) {
+> -		ret = qcom_scm_pas_auth_and_reset(pas->dtb_pas_id);
+> +		ret = qcom_pas_map_carveout(rproc, pas->dtb_mem_phys, pas->dtb_mem_size);
+> +		if (ret)
+> +			goto disable_px_supply;
+> +
+> +		ret = qcom_scm_pas_prepare_and_auth_reset(pas->dtb_pas_ctx);
+>  		if (ret) {
+>  			dev_err(pas->dev,
+>  				"failed to authenticate dtb image and release reset\n");
+> -			goto disable_px_supply;
+> +			goto unmap_dtb_carveout;
+>  		}
+>  	}
+>  
+> @@ -304,18 +325,22 @@ static int qcom_pas_start(struct rproc *rproc)
+>  
+>  	qcom_pil_info_store(pas->info_name, pas->mem_phys, pas->mem_size);
+>  
+> -	ret = qcom_scm_pas_auth_and_reset(pas->pas_id);
+> +	ret = qcom_pas_map_carveout(rproc, pas->mem_phys, pas->mem_size);
+> +	if (ret)
+> +		goto release_pas_metadata;
+> +
+> +	ret = qcom_scm_pas_prepare_and_auth_reset(pas->pas_ctx);
+>  	if (ret) {
+>  		dev_err(pas->dev,
+>  			"failed to authenticate image and release reset\n");
+> -		goto release_pas_metadata;
+> +		goto unmap_carveout;
+>  	}
+>  
+>  	ret = qcom_q6v5_wait_for_start(&pas->q6v5, msecs_to_jiffies(5000));
+>  	if (ret == -ETIMEDOUT) {
+>  		dev_err(pas->dev, "start timed out\n");
+>  		qcom_scm_pas_shutdown(pas->pas_id);
+> -		goto release_pas_metadata;
+> +		goto unmap_carveout;
+>  	}
+>  
+>  	qcom_scm_pas_metadata_release(pas->pas_ctx);
+> @@ -327,10 +352,16 @@ static int qcom_pas_start(struct rproc *rproc)
+>  
+>  	return 0;
+>  
+> +unmap_carveout:
+> +	qcom_pas_unmap_carveout(rproc, pas->mem_phys, pas->mem_size);
+>  release_pas_metadata:
+>  	qcom_scm_pas_metadata_release(pas->pas_ctx);
+>  	if (pas->dtb_pas_id)
+>  		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
+> +
+> +unmap_dtb_carveout:
+> +	if (pas->dtb_pas_id)
+> +		qcom_pas_unmap_carveout(rproc, pas->dtb_mem_phys, pas->dtb_mem_size);
+>  disable_px_supply:
+>  	if (pas->px_supply)
+>  		regulator_disable(pas->px_supply);
+> @@ -386,8 +417,12 @@ static int qcom_pas_stop(struct rproc *rproc)
+>  		ret = qcom_scm_pas_shutdown(pas->dtb_pas_id);
+>  		if (ret)
+>  			dev_err(pas->dev, "failed to shutdown dtb: %d\n", ret);
+> +
+> +		qcom_pas_unmap_carveout(rproc, pas->dtb_mem_phys, pas->dtb_mem_size);
+>  	}
+>  
+> +	qcom_pas_unmap_carveout(rproc, pas->mem_phys, pas->mem_size);
+> +
+>  	handover = qcom_q6v5_unprepare(&pas->q6v5);
+>  	if (handover)
+>  		qcom_pas_handover(&pas->q6v5);
+> @@ -757,6 +792,20 @@ static int qcom_pas_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  	}
+>  
+> +	if (of_property_present(pdev->dev.of_node, "iommus")) {
+> +		struct of_phandle_args args;
+> +
+> +		ret = of_parse_phandle_with_args(pdev->dev.of_node, "iommus",
+> +						 "#iommu-cells", 0, &args);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		rproc->has_iommu = true;
+> +		of_node_put(args.np);
+> +	} else {
+> +		rproc->has_iommu = false;
 
-When `CONFIG_RUST_DEBUG_ASSERTIONS` flag is enabled, this macro performs
-runtime checks to ensure that the preconditions for unsafe function hold.
-Otherwise, the macro is a no-op.
+Default value is false, is't it?
 
-Suggested-by: Miguel Ojeda <ojeda@kernel.org>
-Link: https://github.com/Rust-for-Linux/linux/issues/1162
-Link: https://rust-for-linux.zulipchat.com/#narrow/channel/291566-Library/topic/.60unsafe_precondition_assert.60.20macro/with/528457452
-Signed-off-by: Ritvik Gupta <ritvikfoss@gmail.com>
----
+- Mani
 
-Changes in v6:
- - Move variable names into format arguments in the doc example.
- - Move closing brace ('}') to new line in the macro.
- - Link to v5: https://lore.kernel.org/rust-for-linux/20250827060013.6874-1-ritvikfoss@gmail.com/
-
-Changes in v5:
- - Change doc example
- - Use re-exported `kernel::prelude::fmt!` instead of `core::format_args!`
- - Link to v4: https://lore.kernel.org/rust-for-linux/20250808192005.209188-1-ritvikfoss@gmail.com/
-
-Changes in v4:
- - Change doc example
- - Add `no_run` attribute to the doc example
- - Link to v3: https://lore.kernel.org/rust-for-linux/20250731111234.28602-1-ritvikfoss@gmail.com/
-
-Changes in v3:
- - Change doc example
- - Link to v2: https://lore.kernel.org/all/20250730181420.6979b4f1@eugeo/T/#m9cd35a8fc02a18bd03934c7ecdcffe8667b5fbbd
-
-Changes in v2:
- - Wrap `debug_assert!` internally instead of using `pr_err!` with `assert!` + `cfg!(debug_assertions)
- - Print “unsafe precondition(s) violated” only on assertion failure (no longer always printed)
- - Use `# Safety` section instead of comment in the example
- - Rename module-level doc
- - Link to v1: https://lore.kernel.org/rust-for-linux/20250716045957.39732-1-ritvikfoss@gmail.com/
-
----
- rust/kernel/lib.rs    |  1 +
- rust/kernel/safety.rs | 53 +++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 54 insertions(+)
- create mode 100644 rust/kernel/safety.rs
-
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 3dd7bebe7888..40c82d227314 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -124,6 +124,7 @@
- pub mod rbtree;
- pub mod regulator;
- pub mod revocable;
-+pub mod safety;
- pub mod scatterlist;
- pub mod security;
- pub mod seq_file;
-diff --git a/rust/kernel/safety.rs b/rust/kernel/safety.rs
-new file mode 100644
-index 000000000000..3ff78cef2e02
---- /dev/null
-+++ b/rust/kernel/safety.rs
-@@ -0,0 +1,53 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Safety related APIs.
-+
-+/// Checks that preconditions of an unsafe function are followed.
-+///
-+/// The check is enabled at runtime if debug assertions (`CONFIG_RUST_DEBUG_ASSERTIONS`)
-+/// are enabled. Otherwise, this macro is no-op.
-+///
-+/// # Examples
-+///
-+/// ```no_run
-+/// use kernel::unsafe_precondition_assert;
-+///
-+/// struct RawBuffer<T: Copy, const N: usize> {
-+///     data: [T; N],
-+/// }
-+///
-+/// impl<T: Copy, const N: usize> RawBuffer<T, N> {
-+///     /// # Safety
-+///     ///
-+///     /// The caller must ensure that `index` is less than `N`
-+///     unsafe fn set_unchecked(&mut self, index: usize, value: T) {
-+///         unsafe_precondition_assert!(
-+///             index < N,
-+///             "RawBuffer::set_unchecked requires index ({index}) < N ({N})"
-+///         );
-+///
-+///         // SAFETY: By the safety requirements of this function, `index` is valid
-+///         unsafe {
-+///             *self.data.get_unchecked_mut(index) = value;
-+///         }
-+///     }
-+/// }
-+/// ```
-+///
-+/// # Panics
-+///
-+/// Panics if the expression is evaluated to `false` at runtime.
-+#[macro_export]
-+macro_rules! unsafe_precondition_assert {
-+    ($cond:expr $(,)?) => {
-+        $crate::unsafe_precondition_assert!(@inner $cond, ::core::stringify!($cond))
-+    };
-+
-+    ($cond:expr, $($arg:tt)+) => {
-+        $crate::unsafe_precondition_assert!(@inner $cond, $crate::prelude::fmt!($($arg)+))
-+    };
-+
-+    (@inner $cond:expr, $msg:expr) => {
-+        ::core::debug_assert!($cond, "unsafe precondition(s) violated: {}", $msg)
-+    };
-+}
-
-base-commit: c746c3b5169831d7fb032a1051d8b45592ae8d78
 -- 
-2.51.0
-
+மணிவண்ணன் சதாசிவம்
 
