@@ -1,182 +1,222 @@
-Return-Path: <linux-kernel+bounces-843833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13792BC05CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:46:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7552BC05A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 04F6A4F0274
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:46:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D3FE189263F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990B3225760;
-	Tue,  7 Oct 2025 06:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1342253F2;
+	Tue,  7 Oct 2025 06:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="l+3F2tAj"
-Received: from mail1.manjaro.org (mail1.manjaro.org [142.132.176.110])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lJN4QDrn"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E0321FF45;
-	Tue,  7 Oct 2025 06:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=142.132.176.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44DA81DFE12
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 06:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759819583; cv=none; b=P+gL7fW4St+W/ccJFn0x5qxzmnhXgsT4q0pamv/R7fYc0fZ78ILI3Zu3qwZpABsRbSWlXw71f0NXewlUkjeT5U5bey9rrYPQODZOpVclQB4uhwGCok2okG6hTLIek8mMdg6wthA5IbWAYZj5O7ag5KcHgpif1k4WZk33V4QErT8=
+	t=1759819200; cv=none; b=i8jtk4vK7uGXd1ishedM3xHaXPEhfQ5a+bOewmaVpa5Zghr8mPeSQAu/0GRlOfSN2nZ4OCQgUBBC+5GrROG8FCFhquSFD0wnhcqIj5JlKaMau4NvCkNJGqUs8fIaTVxnF8bAdhlkUq7JYJKjgz+JxKapSz7sk4NJSVelAeT6qRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759819583; c=relaxed/simple;
-	bh=8MXcsHwutcf+qsZ/rNq6dfPMRguOGwRckvbM3PtJDW4=;
-	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
-	 Message-ID:Subject; b=J6ydvIAesgSy0dwFAA0Vbq9NGrQp9diOtbDap4dk02OHogZL3I2XzDPwyOXtIAJOkfcKEYrqly/VTjj4rCGAZSxXLqd8PDax0VP0KoNGkvFoWS/7HTNr3HLhx0fBXWZB/f7ybCprz/VmZ2mkJwMt9md2Vz8/N2MLkZYLXjqevns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=l+3F2tAj; arc=none smtp.client-ip=142.132.176.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPA id EECCF409F9;
-	Tue,  7 Oct 2025 08:39:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=dkim;
-	t=1759819170; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=DNAXiQNHZKvLPmuSvHGH4xfiW4QLvC5MPDpiztpmQtc=;
-	b=l+3F2tAjUyIOhktb/XyLvEnDUXX2dOrNO/bgw39WI2UIIax0uB4BvAQRK8p0JNEekq55gj
-	A8tyodsL5OdWkTXLCMkne4mq1+V0HhnwVQJlXbL52CfEfLq3xFmziVM7Qjvpkz2BXqtz2v
-	4UcbUmqyk7gdRdRfFYdsYbDqCeq1Q4WaJ5d6YVKyTcPGnPYdXPI2sNVg2dDQ/S9HRXCmGr
-	JdHqffjocrzlvo1F2j0iLaoWltxVKgON9Mmd0nYUVd0XQ2e4zFPBbhosWOLi0Cl6jXOmRd
-	9wELyLkk0duy1rwEenQ2a1BC8ITrgiwXbpb87Z/ODqSHfTsbPrjO1slgS2YYuA==
-From: "Dragan Simic" <dsimic@manjaro.org>
-In-Reply-To: <37f2603e-8c51-4f92-a7af-0e60cd577004@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-References: <20250921-ppp_light_accel_mag_vol-down-v3-0-7af6651f77e4@gmail.com>
- <53eabe34a310ea9c74315fa09a604e4a@manjaro.org>
- <b01ed528-8b29-4a6a-bdff-88f2e3b5dd2e@gmail.com>
- <115da845d9161e6ecfa67cf189b84aa8@manjaro.org> <37f2603e-8c51-4f92-a7af-0e60cd577004@gmail.com>
-Date: Tue, 07 Oct 2025 08:39:29 +0200
-Cc: "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Heiko Stuebner" <heiko@sntech.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, "Ondrej Jirman" <megi@xff.cz>, =?utf-8?q?Leonardo_G=2E_Trombetta?= <lgtrombetta@gmx.com>
-To: "Rudraksha Gupta" <guptarud@gmail.com>
+	s=arc-20240116; t=1759819200; c=relaxed/simple;
+	bh=MlmgKlgZw6bNBNDPZ4yL2xiVLmJkWvwQdwG0hDFUJWk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uag7GOEGfLmpLz5N4dTdUpKyUIlIK/DnFKMgGLZRQW5obUJ9krFMuUi6E9/lNQIpKCgqzzmf2mCd3TtKvl3FYLN8SQz0TCaiX/FS1ZGj/8AI75XNTw5ulxyT6m/Q2cRA6KC0+Xb1chNU3Ed+vaqXe4qUBkaIfS7aw1856zUjXgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lJN4QDrn; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-362acd22c78so55395421fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 23:39:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759819196; x=1760423996; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S0C4GwIKNXewQdfdWCoaJErCN+2dpt6b5L9PgeLMaFU=;
+        b=lJN4QDrnvR9CwZ7SpJSDivoNXJZQUN9cG1CmFmEaU/kaSAdEXivt6IvUybTKXfnBB+
+         MFvN+2YwOKtgVEERT8iosuGKEFtJijBoeDuaDJ7ZQEduyg7wiRvBkVFLl6EBRhyeRjkM
+         P31GyNILH65/WrKqdSXpUaOw9Ye6ofn4Z/zTwyKntT+bDFJ6BR8aSQsPkVMGz4qM5iGo
+         Yhi/Ipb1+LMb0DSZo0XMFvWCSbh4sHEogm6OhUVexUmo2CWPhvOlc4csmrMbqWw7jagp
+         MyfXk1JryYezHS/nA397lIi2BaPMxBry+8KwmoaEkS6PuF4tj3QvtsMgVl0Jrdu6QuFy
+         zWzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759819196; x=1760423996;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S0C4GwIKNXewQdfdWCoaJErCN+2dpt6b5L9PgeLMaFU=;
+        b=dVqKB19mMX2T06YvkZTwG4+mIuZlRzDr6gNz1nYk43p+Q+nVFnZSOaEGkIHxofOVla
+         /ec86ceXr6yb9L5mKvoQB50KrAF1r5v7vFAaxWxSWKZmJaoMqXtQ3m0ajq7GinwBOpjr
+         d1PSr1hLDPw192DCGY+8lRw+SeQ8TYxHo45TxuCXtRtqKufJVHt3W344XQ3XGNfaNJtv
+         fuHQ1+BZWOumMM2Yx4yIQLC9vCoN7zHOpwrdD8+WsTzkPi6SO/xYK9Q5lpa+DxILbd3v
+         SMRTOmcudFTdQKH3YtkfMizGJJiQQeAllSZlvxw6Gr22vWCCBJO3bjznnLL6sGFYD1DS
+         nLqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUG45fO9gyJe8oTnBEImUrzGWwyqrGBEKj8LrJJJvDWS5cxglrvNbQlq33bdrajSA39BQWUdPdUta5L+Zs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQDVaMxg8cCuPAt1e3dgHN9f6TLjYKrwUW5xAFtVR+kVXLrgSD
+	S36p3A23p5XTe3JgP9RdMw67LzEOpddJqSRlW5Fqp/UPzUlKIqUEJ3Tzy8Cy1VQ/xx9KOatQU5r
+	umNXyjSxLZ9sWyiKhdfvmqthbdh+Knsg=
+X-Gm-Gg: ASbGncuwjvope5mNFyaL6ssV4uigqHmvhniZHx/UJVeYLVogWk2WS93ycBN/+h3APGB
+	9gii++L2TrlEzTiR4Esn0auBaFrU9YuGnz7RWhUku8xz4fOLWqx8qf4DkrUgjezATs66jYgR5BT
+	dfpR77jTxMNy5p4LU5QeW3LXX+ha9BYHCumyZVRdkLDK6JEI/D4UjaLeLeIZHq2VmO2v5ov3aMk
+	WGdVL2epiR431ZdfcVkGutmLw5wASs=
+X-Google-Smtp-Source: AGHT+IGw2e5PJUM70ofjlrSrlE/TrJc1sbv/DAC3CPfjTqSP9CziUjjExiazULBlK6HV0Ait4DXZWb1MD8cvC0xI19E=
+X-Received: by 2002:a05:651c:1c9:b0:365:253e:535a with SMTP id
+ 38308e7fff4ca-374c3828d08mr40434751fa.41.1759819195890; Mon, 06 Oct 2025
+ 23:39:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <eae79f9b-7127-6808-6a46-57ebc079ca50@manjaro.org>
-Subject: =?utf-8?q?Re=3A?= [PATCH v3 0/5] Upstreaming Pinephone Pro Patches
-User-Agent: SOGoMail 5.12.3
+References: <20251002184120.495193-1-akshayaj.lkd@gmail.com>
+ <20251002184120.495193-2-akshayaj.lkd@gmail.com> <20251004135312.41858380@jic23-huawei>
+In-Reply-To: <20251004135312.41858380@jic23-huawei>
+From: Akshay Jindal <akshayaj.lkd@gmail.com>
+Date: Tue, 7 Oct 2025 12:09:43 +0530
+X-Gm-Features: AS18NWC4DBQPzOO43N_0Yc0srozIYyViGAOB23dtOFSiGEp-TJrRgHMm7rZ1qYM
+Message-ID: <CAE3SzaST=w7f0yM1C2iGfD9fw7smzMDven5kOoSQ0jMMZHMkWw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/5] iio: accel: bma400: Reorganize and rename register
+ and field macros
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: dan@dlrobertson.com, dlechner@baylibre.com, nuno.sa@analog.com, 
+	andy@kernel.org, shuah@kernel.org, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: None
 
-Hello Rudraksha,
+On Sat, Oct 4, 2025 at 6:23=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
+wrote:
+>This is much easier to review. Thanks for breaking it all up.
 
-On Sunday, October 05, 2025 06:55 CEST, Rudraksha Gupta <guptarud@gmail=
-.com> wrote:
-> > Thanks for improving the patch descriptions in the v4 of this serie=
-s.
-> > I just went quickly through the v4 and it looks much better.
-> >
-> > It could be said that the new patch descriptions are now a bit too
-> > verbose, in the sense that the test procedures and their results co=
-uld
-> > be summed up a bit better in prose, instead of providing the "raw"
-> > inputs and outputs.=C2=A0 However, it's still better to have those,=
- than
-> > not to have anything.=C2=A0 Writing good prose is a skill that usua=
-lly
-> > requires learning and practice.
->=20
-> Awesome! I was hoping that others would comment on the testing I've d=
-one=20
-> (especially for the accelerometer and magnetometer patches) as I can'=
-t=20
-> tell if userspace is wrong or if my testing/conclusion is wrong. Mobi=
-le=20
-> Linux is very early stages at the moment, and I suspect the Pinephone=20
-> and Pinephone Pro were used as reference devices with Megi's downstre=
-am=20
-> kernel. Wrong mount matrices in the downstream kernel might be affect=
-ing=20
-> userspace. This means that with the corrected mount matrices in this=20
-> patch series, userspace is slightly broken (eg. since I fixed the=20
-> accelerometer, the screen in Phosh and KDE Plasma are upside down. I=20
-> suspect KDE's Kompass and Leonardo's compass app might be the same if=20
-> I'm changing the mount matrix for the magnetometer). This is why I=20
-> decided to showcase the raw values in my testing. If my testing is=20
-> incorrect, please feel free to let me know.
->=20
-> I think I will leave my testing in the commits itself this time. If t=
-he=20
-> mount matrices are correct based on my testing, it will probably be=20
-> helpful in the future in identifying why downstream is slightly broke=
-n.
+Hi Jonathan,
+Thank you for the review.
+Keeping v3 feedback in mind, I have floated a v4 patch series.
+Have some follow-ups in some comments. Please read below
+for those.
 
-I'll prepare and send to the mailing list a couple of patches that
-will also adjust the mount-matrix values, so you might want to have
-a look at those patch descriptions I'll prepare, as an inspiration
-how could such information be presented in prose.
+Thanks,
+Akshay.
 
-I'll also review your patches, to make sure that the mount-matrix
-values are correct, hopefully around the end of this week, or next
-week.  I'm having some issues with email, which I must resolve first.
-(I'm actually hoping that this message won't come through as HTML,
-as a result of those issues).
+> >  #define BMA400_INT_STAT0_REG        0x0e
+> >  #define BMA400_INT_STAT1_REG        0x0f
+> >  #define BMA400_INT_STAT2_REG        0x10
+> > -#define BMA400_INT12_MAP_REG        0x23
+> > -#define BMA400_INT_ENG_OVRUN_MSK    BIT(4)
+> > +#define BMA400_ENG_OVRUN_INT_STAT_MASK               BIT(4)
+>
+> This is an odd field as it applies to all the INT_STATX registers
+> However  I would still try to make that connection with a name
+> such as BMA500_INT_STAT_OVRUN_MASK
+The connection is still there Jonathan.
+The name in the spec is Interrupt Engine Overrun.
+BMA400_ENG_OVRUN_INT_STAT_MASK can be read as
+Engine Overrun Interrupt Status Mask.
+Here for Interrupt Status fields, I have intentionally taken a little
+deviation from the naming convention established.
+Original convention:BMA400_<reg_name>_<field_name>_<suffix>
+Convention here: BMA400_<INT NAME>_<INT_STAT>_<suffix>
+so that it can be read as <INT_NAME> Interrupt Status mask.
 
-> > You haven't done anything technically wrong, but the way you submit=
-ted
-> > the v2 and v3 made them feel a bit like you picked those patches fr=
-om
-> > some random place and submitted them to the mailing list without re=
-ally
-> > understanding the subject matter.=C2=A0 In other words, it's the co=
-ntributor's
-> > job to convince everyone else that the submitted patches are fine t=
-o
-> > become accepted, and the v2 and v3 simply lacked that.
->=20
-> That's fair. I was under the assumption I had to keep the patches mos=
-tly=20
-> in its original form.
->=20
-> > I wonder how would some forge prevent "spamming"?=C2=A0 It isn't ab=
-out the
-> > possible "spamming", but about the act of submitting different vers=
-ions,
-> > which would be present regardless of the way they'd be submitted, a=
-nd
-> > the reviewers would need to be aware (i.e. "spammed") of them anywa=
-y.
->=20
-> At least with Gitlab & Codeberg, a lot of the notifications can be mu=
-ted=20
-> (I believe updates to pull requests is one of them) and pipelines can=
- be=20
-> created to ensure that formatting is correct and that the proper sub=20
-> maintainers are notified automagically. In my opinion, b4 just brings=20
-> some of the forge's functionalities into an email based workflow, but=20
-> will have to fight it's own problems such as:=20
-> https://social.kernel.org/notice/AypvdTWyAs5km0Gc3k. I don't mean to=20
-> detract from it; it is very commendable what Konstantin Ryabitsev is =
-doing.
+I would understand, if you want to adhere to original convention.
+Will make the change in next version.
 
-When it comes to submitting patches and their different versions,
-reviewers have to be notified about each and every version, which
-means that muting the notifications or ignoring some patch versions
-simply isn't an option.  Even fully ignoring the patches that one
-isn't interested in isn't a great option, despite sounding good,
-because leaving out such parts makes one less insightful about
-the subsystem they're contributing to.
+>
+> > +#define BMA400_STEP_INT_STAT_MASK            GENMASK(9, 8)
+>
+> This bit is a little odd.  We are treating INT_STAT0 and INT_STAT1
+> (but not 2) as a single 16 bit register. That makes it hard to
+> associate the field with the register name. I wonder if we shouldn't
+> break that and just handle it as a pair of u8 instead.
+The spec talks about doing a burst read for such multipart registers
+to avoid reading one, while the other one is being updated.
+Hence did not touch it.
 
-Of course, the associated level of interest depends on one being
-a "drive-by" contributor or being in for the long term, but for
-the former different options exist to help with their periodic
-contributions, such as the b4 or GitGitGadget.
+> >  /*
+> >   * Read-write configuration registers
+> >   */
+> > -#define BMA400_ACC_CONFIG0_REG      0x19
+> > -#define BMA400_ACC_CONFIG1_REG      0x1a
+> > +#define BMA400_ACC_CONFIG0_REG               0x19
+> > +#define BMA400_ACC_CONFIG0_LP_OSR_MASK               GENMASK(6, 5)
+> > +#define BMA400_LP_OSR_SHIFT          5
+> #
+> Should never need a explicit shift. Use FIELD_PREP() and FIELD_GET() to
+> allow the MASK to be used in all cases.
+>
+done
 
-You're right that the automagic features of forges may help with
-setting up the lists of recipients and whatnot, but that's just
-offloading of the complexity elsewhere, in hope that the automagic
-part will work flawlessly, which is hardly the case with highly
-complex projects, such as the Linux kernel. In other words, the
-mailing-list based workflow does have its deficiencies, but it
-leaves the contributors in full control, without relying on some
-automagic things to do everything perfectly instead.
+> > +#define BMA400_NP_OSR_SHIFT          4
+> Similarly on this shift.
+done
 
-When it comes to formatting and whatnot, I'm sure you know that
-there's already scripts/checkpatch.pl.
+> > +#define BMA400_ACC_CONFIG1_ACC_RANGE_MASK    GENMASK(7, 6)
+> > +#define BMA400_ACC_RANGE_SHIFT               6
+>
+> and this one.  Might be a good idea to switch away from using the shifts
+> as a precursor patch as it's really a different sort of change from
+> the rest of this.
+Added a separate patch for this.
 
+>
+> > -             osr =3D (val & BMA400_LP_OSR_MASK) >> BMA400_LP_OSR_SHIFT=
+;
+> > +             osr =3D (val & BMA400_ACC_CONFIG0_LP_OSR_MASK) >> BMA400_=
+LP_OSR_SHIFT;
+>
+> Here is one of those cases with the shift that could just be
+yes, fixed as stated above.
+
+
+> > -             osr =3D (val & BMA400_NP_OSR_MASK) >> BMA400_NP_OSR_SHIFT=
+;
+> > +             osr =3D (val & BMA400_ACC_CONFIG1_NP_OSR_MASK) >> BMA400_=
+NP_OSR_SHIFT;
+> her as well.
+yes, fixed.
+
+> >               ret =3D regmap_write(data->regmap, BMA400_ACC_CONFIG0_REG=
+,
+> > -                                (acc_config & ~BMA400_LP_OSR_MASK) |
+> > +                                (acc_config & ~BMA400_ACC_CONFIG0_LP_O=
+SR_MASK) |
+> >                                  (val << BMA400_LP_OSR_SHIFT));
+> FIELD_PREP for this one.
+fixed.
+
+> >               ret =3D regmap_write(data->regmap, BMA400_ACC_CONFIG1_REG=
+,
+> > -                                (acc_config & ~BMA400_NP_OSR_MASK) |
+> > +                                (acc_config & ~BMA400_ACC_CONFIG1_NP_O=
+SR_MASK) |
+> >                                  (val << BMA400_NP_OSR_SHIFT));
+> here as well.  Anyhow, from a quick look it appears that getting rid of t=
+he _SHIFT defines
+> should be easy.
+yes, fixed.
+
+
+> >       ret =3D regmap_update_bits(data->regmap, BMA400_INT_CONFIG1_REG,
+> > -                              BMA400_STEP_INT_MSK,
+> > -                              FIELD_PREP(BMA400_STEP_INT_MSK, val ? 1 =
+: 0));
+> > +                              BMA400_INT_CONFIG1_STEP_INT_MASK,
+> > +                              FIELD_PREP(BMA400_INT_CONFIG1_STEP_INT_M=
+ASK, val ? 1 : 0));
+>
+> Could use regmap_assign_bits() to simplify this a bit - but separate chan=
+ge
+> so different patch.
+regmap_assign_bits calls regmap_set_bits which itself uses
+regmap_update_bits_base similar to regmap_update_bits.
+Moreover adoption of regmap_assign_bits is not much in drivers.
+Hence would request to keep it as it is.
+
+Thanks,
+Akshay
 
