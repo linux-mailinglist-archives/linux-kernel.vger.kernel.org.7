@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-844054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BB79BC0E76
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:47:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71B60BC0E7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:47:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2791519A0426
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:47:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E16631883F7C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6016C2DC78E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B552D73A1;
 	Tue,  7 Oct 2025 09:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aY21KRx5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vHupJOz9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C002D876A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED3C2D8789;
 	Tue,  7 Oct 2025 09:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759830295; cv=none; b=QDL04w5FBjfR72XojIbzjsoVWTtY2F8wEVA13cIoKV8hC1IE6T89Y5VOiqAUvYQDkHDTLbHWgwz9sF/aZVuRZ7eQ6EgABb0gXoAET2HTmnWNY531k6jJ7cEPSgnHweleG8AYU+3ujAf0/hdWjj6ptrujqi/orzJzGxQn3o0q4/c=
+	t=1759830296; cv=none; b=AZ1sVpWnHQO4KjZdgaSNvsGzTB7odRy03h8+UQomo21CUHYzUTg54Vn3jfPurAFT9BRuM0U1DbcckQxDYmfAGw5R5uBR+yfG8HiF1JJJveuwlYHJBJtIUeLkS5FrqizkkdC1r5UdgLED3ZShp5xe4acdAetW9/lgc6/GxM8/PDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759830295; c=relaxed/simple;
-	bh=8MwwusWhD3Nfmd2dXw3awuzZtltqINN/xlTNNCP9H5c=;
+	s=arc-20240116; t=1759830296; c=relaxed/simple;
+	bh=XGze0MX6pPcBSBg10ExvQZidlcuv2+y5+RAOY6fdhVM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=enshbNKObTS8vCeWp8UEcVdd86eHp4faWr7yS96aqZqIoa7J0QKs1bIS2xZaOdUSQmd3pyNxQJe5NPBRiJ+A+4svndW3JA3TUa3bRe+YhMm6naPVRXVq24VyeZ9XvnVxiieOwchYlD9Za4HenBD9oaah170VdzQRXnXOwKn3JAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aY21KRx5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 863F9C16AAE;
+	 MIME-Version; b=jYzEKArDLW+B6nY1VZ9eK2V+GPuMllAkThjyik+aOSDgQLB8sC+dIu9kF8C1D6m+hUr8ka5wMbIzpiVUfq9aupeVVIAvtdUw4auaSni9Z9Z3xXMzUtpOdall9F5w4+2K/zmUOyTBzPUaUkYdV+6rQafNuiuqjZr1qymrEH0BjJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vHupJOz9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEBB5C4AF0D;
 	Tue,  7 Oct 2025 09:44:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1759830295;
-	bh=8MwwusWhD3Nfmd2dXw3awuzZtltqINN/xlTNNCP9H5c=;
+	bh=XGze0MX6pPcBSBg10ExvQZidlcuv2+y5+RAOY6fdhVM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aY21KRx58O5U13wwmk6sv9UeD9mKwuu3XBQorhZYo0IZC4Piedvkau94ZpgNos7fy
-	 FPfwDptQS+RJ3jfvclgEOA+vjKiNgxjbfsmVrWeg8w+vgDz2SVdFEXjSkVGrKBTrYr
-	 nHLA/V/+i4LGdRwW2zjlNl+wK66vqQWsfnkzjh2jzdbqmx1+CCwzVamzbTpjIlYgUs
-	 hShbmerU9ONo47h5ZkLnt1gvr0GgCI8Qd4DF7TCXqOVOUC+J5aK+3hk6gszpr6VDS+
-	 dQfy4yUCAsdx0Ncooeo4o8e2met6p3g3RfznvC2R7DZeQLQnfNaHloraXOybI9ZvrR
-	 U4164Qp/sIkmg==
+	b=vHupJOz9DB60p6nlsJmul5k+PmHQF2uqT7w8MOSPUSAvTPbOTnu+ME+eh8CHWcjMT
+	 wm5fsCTGtJs9qUJAs5Mwp02ru4hw3mZS98SDpepcRH0rcsO1OdAJ4axx7HpECWQbd2
+	 jdiQULvwXTBy/bv1D9z8wDSWhF2ju7rikZAcnBDqUR1KTZIX4WHeDADmvtioVCr55L
+	 1sKcmkjsm68XDFv/Mw9FQXP6cwNvZKsUfTFH/Evo77t0iXpvdfWU/hrnsKPzlVJcwN
+	 REM9+7VszFjm2WfuM0dCaxhEL1mooWess2tlBo4lJwhkexAGPP/HsdF6/Zmgo/n+Kk
+	 imB0viAR4lxiA==
 Received: from johan by xi.lan with local (Exim 4.98.2)
 	(envelope-from <johan@kernel.org>)
-	id 1v64FZ-00000000365-3VfD;
+	id 1v64FZ-00000000368-3q0p;
 	Tue, 07 Oct 2025 11:44:53 +0200
 From: Johan Hovold <johan@kernel.org>
 To: Joerg Roedel <joro@8bytes.org>,
@@ -60,10 +60,12 @@ Cc: Robin Murphy <robin.murphy@arm.com>,
 	Krishna Reddy <vdumpa@nvidia.com>,
 	iommu@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>
-Subject: [PATCH v2 12/14] iommu/omap: simplify probe_device() error handling
-Date: Tue,  7 Oct 2025 11:43:25 +0200
-Message-ID: <20251007094327.11734-13-johan@kernel.org>
+	Johan Hovold <johan@kernel.org>,
+	stable@vger.kernel.org,
+	Maxime Ripard <mripard@kernel.org>
+Subject: [PATCH v2 13/14] iommu/sun50i: fix device leak on of_xlate()
+Date: Tue,  7 Oct 2025 11:43:26 +0200
+Message-ID: <20251007094327.11734-14-johan@kernel.org>
 X-Mailer: git-send-email 2.49.1
 In-Reply-To: <20251007094327.11734-1-johan@kernel.org>
 References: <20251007094327.11734-1-johan@kernel.org>
@@ -75,44 +77,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Simplify the probe_device() error handling by dropping the iommu OF node
-reference sooner.
+Make sure to drop the reference taken to the iommu platform device when
+looking up its driver data during of_xlate().
 
+Fixes: 4100b8c229b3 ("iommu: Add Allwinner H6 IOMMU driver")
+Cc: stable@vger.kernel.org	# 5.8
+Cc: Maxime Ripard <mripard@kernel.org>
 Acked-by: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/iommu/omap-iommu.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/iommu/sun50i-iommu.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/iommu/omap-iommu.c b/drivers/iommu/omap-iommu.c
-index b87ce129fb1f..2e161d174b5a 100644
---- a/drivers/iommu/omap-iommu.c
-+++ b/drivers/iommu/omap-iommu.c
-@@ -1668,8 +1668,8 @@ static struct iommu_device *omap_iommu_probe_device(struct device *dev)
- 		}
+diff --git a/drivers/iommu/sun50i-iommu.c b/drivers/iommu/sun50i-iommu.c
+index de10b569d9a9..6306570d57db 100644
+--- a/drivers/iommu/sun50i-iommu.c
++++ b/drivers/iommu/sun50i-iommu.c
+@@ -839,6 +839,8 @@ static int sun50i_iommu_of_xlate(struct device *dev,
  
- 		pdev = of_find_device_by_node(np);
-+		of_node_put(np);
- 		if (!pdev) {
--			of_node_put(np);
- 			kfree(arch_data);
- 			return ERR_PTR(-ENODEV);
- 		}
-@@ -1677,14 +1677,11 @@ static struct iommu_device *omap_iommu_probe_device(struct device *dev)
- 		oiommu = platform_get_drvdata(pdev);
- 		put_device(&pdev->dev);
- 		if (!oiommu) {
--			of_node_put(np);
- 			kfree(arch_data);
- 			return ERR_PTR(-EINVAL);
- 		}
+ 	dev_iommu_priv_set(dev, platform_get_drvdata(iommu_pdev));
  
- 		tmp->iommu_dev = oiommu;
--
--		of_node_put(np);
- 	}
++	put_device(&iommu_pdev->dev);
++
+ 	return iommu_fwspec_add_ids(dev, &id, 1);
+ }
  
- 	dev_iommu_priv_set(dev, arch_data);
 -- 
 2.49.1
 
