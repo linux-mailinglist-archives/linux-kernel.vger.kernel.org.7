@@ -1,78 +1,144 @@
-Return-Path: <linux-kernel+bounces-844498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D588BC212B
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:14:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD828BC213A
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:16:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3A9DD4F1F80
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:14:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 600B73E0D75
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96712E7637;
-	Tue,  7 Oct 2025 16:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mNrp2alW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B559C2E7182;
+	Tue,  7 Oct 2025 16:16:38 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF292DE6F7;
-	Tue,  7 Oct 2025 16:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2212013FEE;
+	Tue,  7 Oct 2025 16:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759853664; cv=none; b=G4vcCUs87CJAbV2viXlPXcQLuABUS/hPJVdQyH+3ipuPh28NWlq8RIdLsWlWHecHN7bWNIyFn8Gzl6udIX3puPDyw4Cg/7HqSeUOYv7t8H2AT7S5psyL4YmsFz01rYjAYjeydkW2GPkpNM1FCxJrDb5qqmcVg4ZGiU66H3dNxMM=
+	t=1759853798; cv=none; b=sscJLI1+hdCRw7EzyRDunrYX0TK0jGfPLP4ZgBvSOzLPup9NbVSUvk6vuZQ3i7wcfztVJKbH+MDaDI7/WllgeAWRwh9MGFtX0Tla1DES1hBMeyAaAJdXNUrBKmwJ1De2QRC7uTmEdRw+zvfaLjGBkcJzibbSOhkXlV2OHskXsqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759853664; c=relaxed/simple;
-	bh=T/VjQgJ3pJtErZWaNfx9l24QStUaeCW92SmBEERxbrk=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=jackrHEXDguA4TfBHsZJLNaSf9QJiiGATQgK4SP3b/02O1M4urfdCuAZ9adnglyVcXmHmG1B633bRaX9McagWb9Apy3YUSmn/z/0EhQCjUhIpclhARKVz0FeYkcszHQiFhR88Jfs3k/3qNLEjgDQv6K+dE9DYj3C9tXKhk/uR9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mNrp2alW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E95DC4CEF1;
-	Tue,  7 Oct 2025 16:14:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759853664;
-	bh=T/VjQgJ3pJtErZWaNfx9l24QStUaeCW92SmBEERxbrk=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=mNrp2alWqhMorayE5LFoGDbq1azkwKssVwF5AhW1kLEOPiaLbgH+Z5MJBKtAHVFkV
-	 YIcfTZSNZ8LBQ8TPi6L8lwyKOR4Y/HflgG3JSfPU/TZdaX3fElf6IIu9AyVpIs8W80
-	 AWuwgDc4/KqpzlsPvOPMAjWAeh15G18H7WazGZeUq/o/huRGD2SN3sMOvXATf45HxC
-	 5HS95N/REwgkOay3MzTAvZ27DVovlVTiw2Fmk0p3jPY5vHUgWd+ApV0y6qz/2wT8Yy
-	 sqE4ZRfPFtIgu/QDBanC6m5d9Mb7BF3I4xRlBjpKOXW25BUq1nuQoY9DAxEY0uBvnZ
-	 UtGx9KjEqSxzA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 712D739EFA6D;
-	Tue,  7 Oct 2025 16:14:14 +0000 (UTC)
-Subject: Re: [GIT PULL] Hyper-V patches for 6.18
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20251007055546.GF2051323@liuwe-devbox-debian-v2.local>
-References: <20251007055546.GF2051323@liuwe-devbox-debian-v2.local>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20251007055546.GF2051323@liuwe-devbox-debian-v2.local>
-X-PR-Tracked-Remote: ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git tags/hyperv-next-signed-20251006
-X-PR-Tracked-Commit-Id: b595edcb24727e7f93e7962c3f6f971cc16dd29e
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 221533629550e920580ab428f13ffebf54063b95
-Message-Id: <175985365302.2684232.9980517307975036416.pr-tracker-bot@kernel.org>
-Date: Tue, 07 Oct 2025 16:14:13 +0000
-To: Wei Liu <wei.liu@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Wei Liu <wei.liu@kernel.org>, Linux Kernel List <linux-kernel@vger.kernel.org>, Linux on Hyper-V List <linux-hyperv@vger.kernel.org>, kys@microsoft.com, haiyangz@microsoft.com, decui@microsoft.com
+	s=arc-20240116; t=1759853798; c=relaxed/simple;
+	bh=RW3CmbJB3FsnKhjV2vpj9diarNh4oefsbTL08hP5j1o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T7pNGCOumDbk2QgAS1jjS/z5XU7qQLJSCTk7IiuGRjuGokZUBCq2mPpbTXZrC48yAtIbMuyeMjrdFTj2pQ/d3MldHsLR60VdZvNdpGnhSIUkHHuF3aFHqigpW+P5ziuNlF+cQRv3cwjUDwW8ZN06959iCXCDab3xJl6kzB/mLHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.5] (ip5f5af0e1.dynamic.kabel-deutschland.de [95.90.240.225])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 011E76028F369;
+	Tue, 07 Oct 2025 18:16:21 +0200 (CEST)
+Message-ID: <a91cf69c-e9d9-40b6-9bba-0308855c3014@molgen.mpg.de>
+Date: Tue, 7 Oct 2025 18:16:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] Bluetooth: btusb: Reclassify Qualcomm WCN6855
+ debug packets
+To: Pascal Giard <evilynux@gmail.com>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Pascal Giard <pascal.giard@etsmtl.ca>
+References: <20251007153315.72565-1-pascal.giard@etsmtl.ca>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20251007153315.72565-1-pascal.giard@etsmtl.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Tue, 7 Oct 2025 05:55:46 +0000:
+Dear Pascal,
 
-> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git tags/hyperv-next-signed-20251006
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/221533629550e920580ab428f13ffebf54063b95
+Thank you for your patch.
 
-Thank you!
+Am 07.10.25 um 17:33 schrieb Pascal Giard:
+> Some Qualcomm Bluetooth controllers, e.g., QCNFA765 with WCN6855
+> chip, send debug packets as ACL frames with header 0x2EDC.
+> The kernel misinterprets these as malformed ACL packets, causing
+> repeated errors:
+> 
+>    Bluetooth: hci0: ACL packet for unknown connection handle 3804
+> 
+> This can occur hundreds of times per minute, greatly cluttering logs.
+> On my computer, I am observing approximately 7 messages per second
+> when streaming audio to a speaker.
+> 
+> For Qualcomm controllers exchanging over UART, hci_qca.c already
+> filters out these debug packets. This patch is for controllers
+> not going through UART, but USB.
+> 
+> This patch uses the classify_pkt_type callback to reclassify the
+> packets with handle 0x2EDC as HCI_DIAG_PKT before they reach the
+> HCI layer. This change is only applied to Qualcomm devices marked
+> as BTUSB_QCA_WCN6855.
+> 
+> Tested on: Thinkpad T14 gen2 (AMD) with QCNFA765 (0489:E0D0)
+> Signed-off-by: Pascal Giard <pascal.giard@etsmtl.ca>
+> ---
+> Changes in v2:
+> - Address reviewer feedback about 0x2EDC being a valid HCI handle
+> - Use classify_pkt_type callback instead of filtering in recv_acl
+> - Only apply to devices with BTUSB_QCA_WCN6855 quirk
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Outstanding commit message!
+
+> ---
+>   drivers/bluetooth/btusb.c | 19 +++++++++++++++++++
+>   1 file changed, 19 insertions(+)
+> 
+> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> index 5e9ebf0c5312..256179ace853 100644
+> --- a/drivers/bluetooth/btusb.c
+> +++ b/drivers/bluetooth/btusb.c
+> @@ -1131,6 +1131,24 @@ static void btusb_qca_reset(struct hci_dev *hdev)
+>   	btusb_reset(hdev);
+>   }
+>   
+> +static u8 btusb_classify_qca_pkt_type(struct hci_dev *hdev, struct sk_buff *skb)
+> +{
+> +	/* Some Qualcomm controllers, e.g., QCNFA765 with WCN6855 chip, send debug
+> +	 * packets as ACL frames with connection handle 0x2EDC. These are not real
+> +	 * ACL packets and should be reclassified as HCI_DIAG_PKT to prevent
+> +	 * "ACL packet for unknown connection handle 3804" errors.
+> +	 */
+> +	if (skb->len >= 2) {
+> +		u16 handle = get_unaligned_le16(skb->data);
+> +
+> +		if (handle == 0x2EDC)
+> +			return HCI_DIAG_PKT;
+> +	}
+> +
+> +	/* Use default packet type for other packets */
+> +	return hci_skb_pkt_type(skb);
+> +}
+> +
+>   static inline void btusb_free_frags(struct btusb_data *data)
+>   {
+>   	unsigned long flags;
+> @@ -4201,6 +4219,7 @@ static int btusb_probe(struct usb_interface *intf,
+>   		data->recv_acl = btusb_recv_acl_qca;
+>   		hci_devcd_register(hdev, btusb_coredump_qca, btusb_dump_hdr_qca, NULL);
+>   		data->setup_on_usb = btusb_setup_qca;
+> +		hdev->classify_pkt_type = btusb_classify_qca_pkt_type;
+>   		hdev->shutdown = btusb_shutdown_qca;
+>   		hdev->set_bdaddr = btusb_set_bdaddr_wcn6855;
+>   		hdev->reset = btusb_qca_reset;
+
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+
+
+Kind regards,
+
+Paul
 
