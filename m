@@ -1,125 +1,162 @@
-Return-Path: <linux-kernel+bounces-843721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 121BDBC0120
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 05:12:59 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A57CEBC0126
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 05:13:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B150E3498F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 03:12:58 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 519EE34C3F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 03:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21F11F8ACA;
-	Tue,  7 Oct 2025 03:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D79D1FECAB;
+	Tue,  7 Oct 2025 03:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="awcmM1HL"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="YsdsMLFK"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B9EDDD2
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 03:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35CE1F3D58;
+	Tue,  7 Oct 2025 03:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759806774; cv=none; b=nE/POdT8/5omHFaXonK7EZ4ZKI2bsZV6qOyqCHs0kwbRQSDn0pPhURHzxZ2g1lC4Q6o7zvnLWLW62On1DwjyiEDW/Y8u1OGM76biIeLYRchp8Nf4KS/qXwIlskas+b7Br0MuQjfLMUMdBiHoyHJ2nJRoF+fUyeMkTsny1qcFN6w=
+	t=1759806806; cv=none; b=AIQomgQAiO0tnPoiPuePCs8eUUg+9a1lgvbIV7bXC1XZ8IWiB03XFmEJqW+x/hx7767bJuzkw55TR5v1FzLrHyb9STtt+Bb0nae2Wl1X/YK36cWZahSgvhyPyNFSBskfLYji4Tqf4uZ44Hmeb+Kkxi3yNbTdjKZIJ97pqHty16Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759806774; c=relaxed/simple;
-	bh=JqLQ9GdGACLiotBrHerO2CE3M2BFiKN6dTWGtZDXT7M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sxYQjNhRChzfbBLoRV//x3bDcxoPEA5wm2hG6BPIJ8+hKu+mxB3YU68cdGI6potTO4cTAPX2h2Vn+FcGhKJaNB2dei4eBSq4fH7sTX1JcF+uIGTqurbTXU2CqdmHkw/qNw/maBZ84KsYxiMcjw89wCSZro7UYrlRsG9wK9DDnAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=awcmM1HL; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759806759;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SOOyWl5/zCiHJcE5VliB1ZHnaBHVoLSMy7X8ybhVYo0=;
-	b=awcmM1HLg037zcr9XZM9dbzpijUINxme/NaPHHC860h/hIP64D7wUyKLG51zY1PohwEPIX
-	CoJ+Z8+Ue3PPLjdMxOum4KzGmQuZP43LcSjPs5rhQn8Gkg6FER3K0tcbZrGwep1uWu/xvO
-	M+LL8On1npCd6jKxF5OkP5i8RkZjzQk=
-From: Menglong Dong <menglong.dong@linux.dev>
-To: Steven Rostedt <rostedt@goodmis.org>,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Menglong Dong <menglong8.dong@gmail.com>,
- Thorsten Blum <thorsten.blum@linux.dev>,
- Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject:
- Re: [for-next PATCH v2] tracing: wprobe: Fix to use IS_ERR_PCPU() for per-cpu
- pointer
-Date: Tue, 07 Oct 2025 11:12:18 +0800
-Message-ID: <6198553.lOV4Wx5bFT@7950hx>
-In-Reply-To: <175979899246.1800846.1725245135731182727.stgit@devnote2>
-References: <175979899246.1800846.1725245135731182727.stgit@devnote2>
+	s=arc-20240116; t=1759806806; c=relaxed/simple;
+	bh=g7SBsgpEXa0bEbTMglrTg0VgIQmHDA8rbXlLwuk8S5w=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=tDM3YblKmj1VS5dPL3oAGvEcib+wkUkwhrT7UOBBQJcDWG+iw7EdpC6jAHEGm1Y18b3oRc2cnRTHiUhvOcXLvR38iXV0+0ZcmTu/WVA+Gy3C5ca3xw9M2ZYrCDCCj3iP3WonT/7BlRhu74yIcrLmMHk9WTyLiivuUkTE5u5jXvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=YsdsMLFK; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 5973D8q243438052, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1759806788; bh=lSh85/Q7itr2LXpqH53KzmVW4jEDAZPaB6WVCNkaCDQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=YsdsMLFKAxw3eNgEnKJwrVDMr+ghI6F8KD8fX2/O80+/N64voCB+pIUtv/88QBtca
+	 42g2jb9RCcjl040ZqLQJqcioaXOY1SgRUCbpbcTVoUV0NqFdVxLDzBGEOhiUEvEz/z
+	 M/ZeFkm9ErH2rqJNOQ16fQiN9ZOMcAX6HEoxaW8kdvwRYFYofojInwLy4xRQmp7R2I
+	 b0CFflDh23Bu7GLxiLk44Ov/k5gFYb0F7zeHmHNfFewY0QZ7FH9uxngUzgj0sePxZ5
+	 5ShUQmDVxtDcUu6v4ZCVNBsbuT/Gezgde+7lLb4vNC2LGOGYXOExV96Q0WOgJZfQ8H
+	 ZknEu/albQ9Xg==
+Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 5973D8q243438052
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 7 Oct 2025 11:13:08 +0800
+Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
+ RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Tue, 7 Oct 2025 11:13:08 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS05.realtek.com.tw (10.21.1.55) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Tue, 7 Oct 2025 11:13:08 +0800
+Received: from RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090]) by
+ RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090%10]) with mapi id
+ 15.02.1544.027; Tue, 7 Oct 2025 11:13:08 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Fedor Pchelkin <pchelkin@ispras.ru>,
+        Bitterblue Smith
+	<rtl8821cerfe2@gmail.com>
+CC: Zong-Zhe Yang <kevin_yang@realtek.com>,
+        Bernie Huang
+	<phhuang@realtek.com>,
+        "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "lvc-project@linuxtesting.org"
+	<lvc-project@linuxtesting.org>
+Subject: RE: [PATCH rtw-next v2 5/7] wifi: rtw89: implement C2H TX report handler
+Thread-Topic: [PATCH rtw-next v2 5/7] wifi: rtw89: implement C2H TX report
+ handler
+Thread-Index: AQHcM9ij/5zY6bpRKkiRJfxW79+fNLS2B9uQ
+Date: Tue, 7 Oct 2025 03:13:08 +0000
+Message-ID: <91083b4683fd457ab6363b135bfee6a3@realtek.com>
+References: <20251002200857.657747-1-pchelkin@ispras.ru>
+ <20251002200857.657747-6-pchelkin@ispras.ru>
+In-Reply-To: <20251002200857.657747-6-pchelkin@ispras.ru>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-Migadu-Flow: FLOW_OUT
 
-On 2025/10/7 09:03, Masami Hiramatsu (Google) wrote:
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-> Since wprobe uses IS_ERR() for per-cpu pointer, it failed to build.
-> 
-> /tmp/next/build/kernel/trace/trace_wprobe.c: In function '__register_trace_wprobe':
-> /tmp/next/build/kernel/trace/trace_wprobe.c:176:20: error: cast to generic address space pointer from disjoint '__seg_gs' address space pointer [-Werror]
->   176 |         if (IS_ERR((void * __force)tw->bp_event)) {
->       |                    ^
-> /tmp/next/build/kernel/trace/trace_wprobe.c:177:35: error: cast to generic address space pointer from disjoint '__seg_gs' address space pointer [-Werror]
->   177 |                 int ret = PTR_ERR((void * __force)tw->bp_event);
->       |                                   ^
-> 
-> Use IS_ERR_PCPU() instead.
-> 
-> Reported-by: Mark Brown <broonie@kernel.org>
-> Closes: https://lore.kernel.org/all/aN6fTmAjD7-SJsw2@sirena.org.uk/
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> ---
->  - Confirmed that `make allmodconfig && make` passed on x86_64 and arm64.
->  Changes in v2:
->  - Remove unneeded casting.
->  - Use PTR_ERR_PCPU() too.
-> ---
->  kernel/trace/trace_wprobe.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/trace/trace_wprobe.c b/kernel/trace/trace_wprobe.c
-> index 4b00a8e917c1..98605b207f43 100644
-> --- a/kernel/trace/trace_wprobe.c
-> +++ b/kernel/trace/trace_wprobe.c
-> @@ -173,8 +173,8 @@ static int __register_trace_wprobe(struct trace_wprobe *tw)
->  	attr.bp_type = tw->type;
->  
->  	tw->bp_event = register_wide_hw_breakpoint(&attr, wprobe_perf_handler, tw);
-> -	if (IS_ERR((void * __force)tw->bp_event)) {
-> -		int ret = PTR_ERR((void * __force)tw->bp_event);
-> +	if (IS_ERR_PCPU(tw->bp_event)) {
-> +		int ret = PTR_ERR_PCPU(tw->bp_event);
+Fedor Pchelkin <pchelkin@ispras.ru> wrote:
+> rtw89 has several ways of handling TX status report events.  The first on=
+e
+> is based on RPP feature which is used by PCIe HCI.  The other one depends
+> on firmware sending a corresponding C2H message, quite similar to what
+> rtw88 has.
+>=20
+> Toggle a bit in the TX descriptor and place skb in a queue to wait for a
+> message from the firmware.  rtw89 has an extra feature providing TX
+> reports for multiple retry transmission attempts.  When there is a failed
+> TX status reported by the firmware, the report is ignored until the limit
+> is reached or success status appears.  Do all this according to the vendo=
+r
+> driver for RTL8851BU.
+>=20
+> It seems the only way to implement TX status reporting for rtw89 USB.
+> This will allow handling TX wait skbs and the ones flagged with
+> IEEE80211_TX_CTL_REQ_TX_STATUS correctly.
+>=20
+> Found by Linux Verification Center (linuxtesting.org).
+>=20
+> Suggested-by: Bitterblue Smith <rtl8821cerfe2@gmail.com>
+> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
 
-This version LGTM.
+[...]
 
-Reviewed-by: Menglong Dong <menglong8.dong@gmail.com>
+> diff --git a/drivers/net/wireless/realtek/rtw89/mac.c b/drivers/net/wirel=
+ess/realtek/rtw89/mac.c
+> index fd11b8fb3c89..10c2a39e544b 100644
+> --- a/drivers/net/wireless/realtek/rtw89/mac.c
+> +++ b/drivers/net/wireless/realtek/rtw89/mac.c
+> @@ -5457,6 +5457,20 @@ rtw89_mac_c2h_mcc_status_rpt(struct rtw89_dev *rtw=
+dev, struct sk_buff *c2h, u32
+>         rtw89_complete_cond(&rtwdev->mcc.wait, cond, &data);
+>  }
+>=20
+> +static void
+> +rtw89_mac_c2h_tx_rpt(struct rtw89_dev *rtwdev, struct sk_buff *c2h, u32 =
+len)
+> +{
+> +       const struct rtw89_c2h_mac_tx_rpt *rpt =3D
+> +               (const struct rtw89_c2h_mac_tx_rpt *)c2h->data;
+> +       u8 sw_define =3D le32_get_bits(rpt->w2, RTW89_C2H_MAC_TX_RPT_W2_S=
+W_DEFINE);
+> +       u8 tx_status =3D le32_get_bits(rpt->w2, RTW89_C2H_MAC_TX_RPT_W2_T=
+X_STATE);
+> +       u8 data_txcnt =3D le32_get_bits(rpt->w5, RTW89_C2H_MAC_TX_RPT_W5_=
+DATA_TX_CNT);
 
->  
->  		tw->bp_event = NULL;
->  		return ret;
-> 
-> 
-> 
+Since we'd like reverse X'mas tree order, I'd like separate declarations an=
+d
+assignments. Like
 
+u8 sw_define, tx_status, data_txcnt;
 
+sw_define =3D le32_get_bits(rpt->w2, RTW89_C2H_MAC_TX_RPT_W2_SW_DEFINE);
+tx_status =3D le32_get_bits(rpt->w2, RTW89_C2H_MAC_TX_RPT_W2_TX_STATE);
+data_txcnt =3D le32_get_bits(rpt->w5, RTW89_C2H_MAC_TX_RPT_W5_DATA_TX_CNT);
 
+Otherwise, looks good to me.
+
+> +
+> +       rtw89_debug(rtwdev, RTW89_DBG_TXRX,
+> +                   "C2H TX RPT: sn %d, tx_status %d, data_txcnt %d\n",
+> +                   sw_define, tx_status, data_txcnt);
+> +}
+> +
+
+[...]
 
 
