@@ -1,127 +1,142 @@
-Return-Path: <linux-kernel+bounces-843737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15B51BC01C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 05:47:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF9A9BC01CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 05:50:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EAB384E2019
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 03:47:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 662C73C46E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 03:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54AA521578D;
-	Tue,  7 Oct 2025 03:47:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9667217F33;
+	Tue,  7 Oct 2025 03:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HC9vTyjc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sHtHr9+4"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85001A267;
-	Tue,  7 Oct 2025 03:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552C520322;
+	Tue,  7 Oct 2025 03:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759808821; cv=none; b=PVdl7HFazjY+QURMleVzV/yOEtXYrn599u1T0x+KxSTQX37akWTEVgSUU8CFiNV3OYFqCrq1e9lrl6Oik/SpDALzu6FeCOIhf83o9RS3SRIhovDN9+hAqQBj730O/Y3mCGEafxSa2D/mVh4bCyxNGuL4+zOWpJJqNF6bSmQ4PP8=
+	t=1759808999; cv=none; b=pS4VVmPE8xkTVWZrQ1nFY+yMJ1RNrw2PqVWoUrFNKjpv53aXpoC8MHV45Zq65OYTIKprOzE9EHb0paFpGP9s+jA3tSqnJ822Bu1+kGT+jKilRv8QJYTkbAbthKuO148SP/aQSNo/I7D6p3DEAuEyZHLejen0Bev/WOvFoYUUdgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759808821; c=relaxed/simple;
-	bh=jHWYuOq5rYdachqCH402zOZjxpCtATwDtliRdFtl7Mg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bkMJt0F+EXe9aoF+UWoq/+tGzB7HUlLDlrGrg/0KqqrFjAONVljO3UmtMaqVuy7G7RtwElkbLKt/dBEn7UbGlial2pZYhJ5UoYct3UMWa1nuIuRfC45p6A5CquRPnPf8F3DM8P0RzONXm0gcBEt2trailtgQ+bydAxKP53CVClk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HC9vTyjc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 09C15C4CEF1;
-	Tue,  7 Oct 2025 03:47:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759808820;
-	bh=jHWYuOq5rYdachqCH402zOZjxpCtATwDtliRdFtl7Mg=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=HC9vTyjcxFjp4SgxBcXlIVvVvwOKkXK6cnw7hZQQGk/APSJlxy87hQzMJJ0RWVpES
-	 sw+PRgEoPEhah9TqNfEdEC9J7qNDLpDkJmgCq0oJkCVn79NPikTTIEafqfVzsd4H8J
-	 v1iE0SL+tqzUotEIKS4SB0mHYYqHuY1nRVR/5G3zgW1cvus7g7VhsWlqN+YgX7upia
-	 2xT2hoZwpdr32Lv0xwXXolRw6dovAT0jYzSw7rFfHtpcxMBPOFmbHP678vO3ZCIRYk
-	 nCO4ndFJQVzj5ehMtaT8QwnARFpUomt4RRUIEqcD/YQZSpoIs7aw4XhGsFJZtRgi06
-	 MBvbLZ6XeXz6w==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9417CCA470;
-	Tue,  7 Oct 2025 03:46:59 +0000 (UTC)
-From: Dmitry Safonov via B4 Relay <devnull+dima.arista.com@kernel.org>
-Date: Tue, 07 Oct 2025 04:46:47 +0100
-Subject: [PATCH v2] gen_init_cpio: Ignore fsync() returning EINVAL on pipes
+	s=arc-20240116; t=1759808999; c=relaxed/simple;
+	bh=cNlI9bHI/ylXQMlNzU+Ogaqapl/G/HUfveqiYuJSf9w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Eo72pXW0AAGod40o9kL3Ent3G44I/oNog9TT9ZPdOEHpBLzDNgMZ8o3wk83kVQEC/PUXwRXZNcd89vRQ74wse8MMSmHhy5NLG6XfCp+frreT87+imLn4LGgbKguFoAZ+5Pvxpc3EVG5/GeW2geS0HJZfrPOnPSw9Yl1b8qFJn9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sHtHr9+4; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759808994;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4Hiokzts7PCRKt1OVuEkEGfOq4GhsmdPG6MMIx7taoM=;
+	b=sHtHr9+4cBBh32A4cQH2VvK5uHIQpnTYzLql6prkqaJLjI/AtwzFWxpGRZTH188yEsCX9e
+	fe7RzXPZ0LP/zmMJludJbuFqY8x/U2qXtxpqTaSgGuiFLKxT6OGYnGFHPY+Yx97OOjFqVU
+	/tv2iMaa4OYCXP5muCy+TCQcYvYIUho=
+From: Menglong Dong <menglong.dong@linux.dev>
+To: Fushuai Wang <wangfushuai@baidu.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, ast@kernel.org, martin.lau@kernel.org,
+ houtao1@huawei.com, jkangas@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Fushuai Wang <wangfushuai@baidu.com>,
+ bpf@vger.kernel.org
+Subject:
+ Re: [PATCH bpf-next] bpf: Use rcu_read_lock_dont_migrate() and and
+ rcu_read_unlock_migrate()
+Date: Tue, 07 Oct 2025 11:49:42 +0800
+Message-ID: <3379803.44csPzL39Z@7950hx>
+In-Reply-To: <20251005150816.38799-1-wangfushuai@baidu.com>
+References: <20251005150816.38799-1-wangfushuai@baidu.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251007-gen_init_cpio-pipe-v2-1-b098ab94b58a@arista.com>
-X-B4-Tracking: v=1; b=H4sIACaN5GgC/32OQQqDMBBFryJZN60Jmtiueo8iMppRB2oSEgkt4
- t0bPUCXb+C9PxuLGAgjexQbC5gokrMZ5KVgwwx2Qk4mM5OlrEVZaj6h7cjS2g2eHPfkkddgGj0
- qoaAqWRZ9wJE+Z/TVZu4hIu8D2GE+UqsLCd4m3haIK4bDmCnm6/f8IonD+zuYBBfc6EYqXZnqL
- tUTQi7AdXALa/d9/wGYg9IN1wAAAA==
-X-Change-ID: 20251007-gen_init_cpio-pipe-5ad87f616a40
-To: Nathan Chancellor <nathan@kernel.org>, 
- Nicolas Schier <nicolas.schier@linux.dev>, David Disseldorp <ddiss@suse.de>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Nicolas Schier <nsc@kernel.org>, Dmitry Safonov <dima@arista.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759808819; l=1432;
- i=dima@arista.com; s=20250521; h=from:subject:message-id;
- bh=pi6nAKJ620AnZApjddteEQX/ECee5WVBVllxGZBH+N8=;
- b=YzLgLfDoTx79sz7zGwGkOOFxyKp5dQ37Mq0qJ7q4IcdONwpPsrJ3tDd6zfJiEY37oA6O77kqI
- IuyCcC/DpAvBcyUYl18XUycPJas2PA6hmWCfh1F3i2+wZ8fUsHwSLgj
-X-Developer-Key: i=dima@arista.com; a=ed25519;
- pk=/z94x2T59rICwjRqYvDsBe0MkpbkkdYrSW2J1G2gIcU=
-X-Endpoint-Received: by B4 Relay for dima@arista.com/20250521 with
- auth_id=405
-X-Original-From: Dmitry Safonov <dima@arista.com>
-Reply-To: dima@arista.com
+X-Migadu-Flow: FLOW_OUT
 
-From: Dmitry Safonov <dima@arista.com>
+On 2025/10/5 23:08, Fushuai Wang wrote:
+> Replace the combination of migrate_disable()/migrate_enable() and rcu_read_lock()/rcu_read_unlock()
+> with rcu_read_lock_dont_migrate()/rcu_read_unlock_migrate() in bpf_sk_storage.c.
 
-The reproducer:
-echo | ./usr/gen_init_cpio /dev/stdin > /dev/null
+Hi, Fushuai. There are some nits in you patch:
 
-fsync() on a pipe fd returns -EINVAL, which makes gen_init_cpio fail.
-Ignore -EINVAL from fsync().
+1. The title is too fuzzy. It can be
+    "bpf: Use rcu_read_lock_dont_migrate in bpf_sk_storage.c"
+2. You can wrap the commit log and don't exceed 75 character per line.
+    This is not necessary, but it can stop the check_patch from
+    complaining.
 
-Fixes: ae18b94099b0 ("gen_init_cpio: support -o <output_file> parameter")
-Cc: David Disseldorp <ddiss@suse.de>
-Cc: Nicolas Schier <nsc@kernel.org>
-Signed-off-by: Dmitry Safonov <dima@arista.com>
-Reviewed-by: David Disseldorp <ddiss@suse.de>
----
-Changes in v2:
-- Instead of isfdtype() just ignore -EINVAL from fsync() (Suggested by David)
-- Add minimal reproducer and shrink the patch description (David)
-- Link to v1: https://lore.kernel.org/r/20251007-gen_init_cpio-pipe-v1-1-d782674d4926@arista.com
----
- usr/gen_init_cpio.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+And I think you shoud CC bpf@vger.kernel.org too. Before you
+send the patch, you can check it with ./scripts/checkpatch.pl to
+find potential problems.
 
-diff --git a/usr/gen_init_cpio.c b/usr/gen_init_cpio.c
-index 75e9561ba31392e12536e76a918245a8ea07f9b8..b7296edc6626fb0cf7c709082797d1e6a7376d6e 100644
---- a/usr/gen_init_cpio.c
-+++ b/usr/gen_init_cpio.c
-@@ -112,7 +112,10 @@ static int cpio_trailer(void)
- 	    push_pad(padlen(offset, 512)) < 0)
- 		return -1;
- 
--	return fsync(outfd);
-+	if (fsync(outfd) < 0 && errno != EINVAL)
-+		return -1;
-+
-+	return 0;
- }
- 
- static int cpio_mkslink(const char *name, const char *target,
+Thanks!
+Menglong Dong
 
----
-base-commit: c746c3b5169831d7fb032a1051d8b45592ae8d78
-change-id: 20251007-gen_init_cpio-pipe-5ad87f616a40
+> 
+> Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
+> ---
+>  net/core/bpf_sk_storage.c | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
+> 
+> diff --git a/net/core/bpf_sk_storage.c b/net/core/bpf_sk_storage.c
+> index 2e538399757f..bdb70cf89ae1 100644
+> --- a/net/core/bpf_sk_storage.c
+> +++ b/net/core/bpf_sk_storage.c
+> @@ -50,16 +50,14 @@ void bpf_sk_storage_free(struct sock *sk)
+>  {
+>  	struct bpf_local_storage *sk_storage;
+>  
+> -	migrate_disable();
+> -	rcu_read_lock();
+> +	rcu_read_lock_dont_migrate();
+>  	sk_storage = rcu_dereference(sk->sk_bpf_storage);
+>  	if (!sk_storage)
+>  		goto out;
+>  
+>  	bpf_local_storage_destroy(sk_storage);
+>  out:
+> -	rcu_read_unlock();
+> -	migrate_enable();
+> +	rcu_read_unlock_migrate();
+>  }
+>  
+>  static void bpf_sk_storage_map_free(struct bpf_map *map)
+> @@ -161,8 +159,7 @@ int bpf_sk_storage_clone(const struct sock *sk, struct sock *newsk)
+>  
+>  	RCU_INIT_POINTER(newsk->sk_bpf_storage, NULL);
+>  
+> -	migrate_disable();
+> -	rcu_read_lock();
+> +	rcu_read_lock_dont_migrate();
+>  	sk_storage = rcu_dereference(sk->sk_bpf_storage);
+>  
+>  	if (!sk_storage || hlist_empty(&sk_storage->list))
+> @@ -213,9 +210,8 @@ int bpf_sk_storage_clone(const struct sock *sk, struct sock *newsk)
+>  	}
+>  
+>  out:
+> -	rcu_read_unlock();
+> -	migrate_enable();
+>  
+> +	rcu_read_unlock_migrate();
+>  	/* In case of an error, don't free anything explicitly here, the
+>  	 * caller is responsible to call bpf_sk_storage_free.
+>  	 */
+> 
 
-Best regards,
--- 
-Dmitry Safonov <dima@arista.com>
+
 
 
 
