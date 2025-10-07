@@ -1,316 +1,240 @@
-Return-Path: <linux-kernel+bounces-844303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B995FBC17FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:32:01 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6A48BC1800
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94B0D3E1439
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:31:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8CCA84F1EE0
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD12D2E0B5A;
-	Tue,  7 Oct 2025 13:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F572E11D2;
+	Tue,  7 Oct 2025 13:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gb1ZmBAn"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="rhxlNvoZ"
+Received: from server.couthit.com (server.couthit.com [162.240.164.96])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0567225785
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 13:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D411A2E092E;
+	Tue,  7 Oct 2025 13:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759843907; cv=none; b=DdYy+y2688AlSZtUkg+IJ/6cr93CO5tP5F5XTlaYyjz0jQ1cGjnmvt0tuvL72h5yYI0GuqmrG379Od99g9SoFbBGEusdZsnztRk2WEsRsYS01C+dlIMlO/1QsCm66epuUJXnyOcgXT5yqX5TQ54PJjQUap9x6zWtfPmQ8fdJSNM=
+	t=1759843923; cv=none; b=kci0Vk5tOxMSLuNhVy4DizaV0LOpDJeSq4MEJVOuX3Jibu4A2wcOo5rBsm0QJv50PFqWLNJBUIZV3gBeP6ImeLsTDLDpZshuWxDsj+vGuUVXhL2ps096+jhKy4T9VD9dFbddIBmObs1tJd6WF2egkHjrDNobfOgmOTdsz9SONHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759843907; c=relaxed/simple;
-	bh=nmqHCCYLjv7UOISdWOVnZizfWfYHpPgRLbuQW0jXLas=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qXWswqYClgf6Duti2aKmNv/cjzDNfROr5dd7JvxGYaLIR6ydE2oeS+ThdRvLiW+mPbusdOBTHQ3UPB7it+O7nywC6mcCx4KrHuUVNKHSQRPbcCdvkc+Ih2RYcjWFEsnRHsEjsYmj0K++/h9W6tDgj4BoYf5t//p+9iW1BPCUkmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gb1ZmBAn; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3ee12332f3dso5511991f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 06:31:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759843904; x=1760448704; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=nmqHCCYLjv7UOISdWOVnZizfWfYHpPgRLbuQW0jXLas=;
-        b=gb1ZmBAnHhJ/N98arGaW5PdrmWKOF6nywyAji+CjzHBCH9ASIDuPzy5P3ou9aqfkBz
-         YUBdz/X9rBvkyo7U8kyEulLYwcViRGlqSoFHLRFKvUSpFN9zaj/sTLf0h6lHI0purtRn
-         n48cVjbtI9UdqaCvmx460AgYA1aZiEOYutUuN17uh7whPSyXXP9iVOmwi/bDNZizFu1M
-         dco2iWhkofP5242vf9J7jwe6e37Eh8rMAK11ulDYVWX4NIKHsSW3178/QdIDtDjaKnDE
-         h4UkNCcGxDpJvCwY5zeu83uQDSyfI1CCgJ23MbMrY6F0WdZfONKa6T4y83HibCdN1CcA
-         +WKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759843904; x=1760448704;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nmqHCCYLjv7UOISdWOVnZizfWfYHpPgRLbuQW0jXLas=;
-        b=DppWjz+1AdpkBYXP9HPQ36Z3fd9rJzCOI2kGWSu71fmfCkwswqkdErH6hSfQqqho4M
-         rOqn5dlZWFnd4i63Vp2aJDpsXNtU/7IBIJqpp3oCtOChRn9vdNI1FOH183e+G/25WBK+
-         SV4WUSnLmClTpk7f+2rKv3mMLduOg1/NZhBLWY9EMTG0TYXH1703TnhcwH9n8oYgD+On
-         oTUubgqJC/oL4vA9VYZITm1zwZwrJjExoAFOLJatFMeHOUAmALlXo/uBi1RneZWsNHEK
-         3HtToE+NTTemtSy0vFSRUrMttSBZam2xuSHpnbrOGkiNFUw4bLvYMNVT4DYoFMh1Q6dB
-         R5FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrzj0VmE6kM4FVnx7qT0C96tAiBuiOwrBaFKugOZE4cSd/lF381yuxPCsD3Md5hGj4M7Xze0b+3qHLdwI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu8+ZV1KeQMO3w8mrnN39Wcd6lnvlgffDrRHAS7LPnAFvgYq3Z
-	dhZqye08a2uTLOce/b2pLG14zP5BUrYeo4s4IiPseGOvySaKcrTMwvyv2oD9uyXjC2A=
-X-Gm-Gg: ASbGncv5n1T9Y4bB/bBGlXsIeMOw6ZSqIzJG2XsaIC6pOHJH15hwh3qZYE3tOAi/Fpl
-	cJh5bAZ4I7k7Ei12RXe2cB1t7zf4cP/zHLVciUJXmnpkcLILleACvDn4C3QHM1jjWvBmC+5K8P/
-	CWVt8WO3YNLf7wLCmUncVNBafmMzaOoWv1mUmUIETwoi/ejxGo0qxq4eVqz9aV+G4LDSu1qnUSd
-	/6DdXGlQ/hv/uVoeoB8WasNCjux76GiVnesFKb+3/wVNekUjpP3A1+KrOxr5vjgmtvGZ3tpJzYz
-	jXvbjbuGDpF09lhfV/WhcFVz7+KBXLt5wL0q9Sp6e+03xEeg6+n+RyFr6kpD8cIBQzW65IwhUA8
-	GJipcduzrPIRTiuqZ2f7vKANu0RaOo6yKsUGYjUIJffCQ3Nif8bG+n4dIrKZ3vWZnr7b1bG5WR7
-	xSYKqX68XNbrFG2QNKxqd8iTeODRmdD9G/DM5xaNWZGdRmRCT/Aed/DWXOlqGBeaqBTPjVc0rsN
-	C77g/Q=
-X-Google-Smtp-Source: AGHT+IGDBarKisTLZ3aOlvaz9TPlo6eBvhoC8Zr4diC92RrOmHD9/iLkB04bWjBNEXUlLD5vKyJOTw==
-X-Received: by 2002:a05:6000:2901:b0:3eb:4e88:585 with SMTP id ffacd0b85a97d-42567194b00mr9558612f8f.29.1759843903831;
-        Tue, 07 Oct 2025 06:31:43 -0700 (PDT)
-Received: from ?IPV6:2003:e5:873f:400:7b4f:e512:a417:5a86? (p200300e5873f04007b4fe512a4175a86.dip0.t-ipconnect.de. [2003:e5:873f:400:7b4f:e512:a417:5a86])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f0392sm25840968f8f.42.2025.10.07.06.31.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Oct 2025 06:31:43 -0700 (PDT)
-Message-ID: <5d792dc5-ea8e-46d2-8031-44f8e92b0188@suse.com>
-Date: Tue, 7 Oct 2025 15:31:42 +0200
+	s=arc-20240116; t=1759843923; c=relaxed/simple;
+	bh=FfvEKzZlnRJCxy/SdHzTPhF8mOYD17or0zzHr1su9Cc=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=pefPyAk0/SfMxSNWLPtKW6VSeBZSh2tN8PIXRNFmriOkDG+Mss8RQ+GxS8cXbFlBYlfM+b+e3JhvG38Wd47+AJMrHb+/UKxTUqbw37PEO5rEhr8EIvltuDxndPHBbwAOZNKJ8ZqwXHxSesPRcLTDZmERMH7lf7w7K9nUhxv76jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=rhxlNvoZ; arc=none smtp.client-ip=162.240.164.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
+	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=yA5XHJIh+uwK8m+cFLqO7xuw+2f8PC3Mm/yaRJEXFTs=; b=rhxlNvoZT0teHb0DCJY3mIC6El
+	5Qz1/3Y10Mju3b173o7WcTErbx60ZGETrwUzHkoho84Xkx7xAhqcSAnKgCg1d3DNkHtVwXDH8q5e/
+	pm+xMX7s6U8qBwOH5h/581byBmK/GTIMiedcf4EaOriOwwTc6D804/Jrm5u7Q02NyTQI892E3dX2/
+	uNWR+6kQZIMFhVBerJ3uPHAU5B7BLfi2wWlI3cpICh+nDSZif/lvmx6GrJHRWrkl3eivFibve/Gb7
+	xR/iaxEnvsbQedO1njoUc+nD6r2/n9OqoB6ApyZWtnFVpCaYnWOJ2vetwHpJFj9lZcAd8twP+Rcyv
+	xh1fWUEw==;
+Received: from [122.175.9.182] (port=40538 helo=zimbra.couthit.local)
+	by server.couthit.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <parvathi@couthit.com>)
+	id 1v67nF-0000000GaQC-0lW3;
+	Tue, 07 Oct 2025 09:31:53 -0400
+Received: from zimbra.couthit.local (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTPS id DCE311781E3F;
+	Tue,  7 Oct 2025 19:01:48 +0530 (IST)
+Received: from localhost (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTP id C05CD1784032;
+	Tue,  7 Oct 2025 19:01:48 +0530 (IST)
+Received: from zimbra.couthit.local ([127.0.0.1])
+	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id L5Rmm5XC9WVq; Tue,  7 Oct 2025 19:01:48 +0530 (IST)
+Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
+	by zimbra.couthit.local (Postfix) with ESMTP id 8F08E1781E3F;
+	Tue,  7 Oct 2025 19:01:48 +0530 (IST)
+Date: Tue, 7 Oct 2025 19:01:48 +0530 (IST)
+From: Parvathi Pudi <parvathi@couthit.com>
+To: Md Danish Anwar <a0501179@ti.com>
+Cc: parvathi <parvathi@couthit.com>, andrew+netdev <andrew+netdev@lunn.ch>, 
+	davem <davem@davemloft.net>, edumazet <edumazet@google.com>, 
+	kuba <kuba@kernel.org>, pabeni <pabeni@redhat.com>, 
+	danishanwar <danishanwar@ti.com>, rogerq <rogerq@kernel.org>, 
+	pmohan <pmohan@couthit.com>, basharath <basharath@couthit.com>, 
+	afd <afd@ti.com>, linux-kernel <linux-kernel@vger.kernel.org>, 
+	netdev <netdev@vger.kernel.org>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
+	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
+	krishna <krishna@couthit.com>, mohan <mohan@couthit.com>
+Message-ID: <1064562813.13523.1759843908228.JavaMail.zimbra@couthit.local>
+In-Reply-To: <44ed3d16-a8d2-49f3-a6b4-16d9a14d1cc6@ti.com>
+References: <20251006104908.775891-1-parvathi@couthit.com> <20251006104908.775891-4-parvathi@couthit.com> <44ed3d16-a8d2-49f3-a6b4-16d9a14d1cc6@ti.com>
+Subject: Re: [RFC PATCH net-next v2 3/3] net: ti: icssm-prueth: Adds support
+ for ICSSM RSTP switch
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] x86/kexec: Disable kexec/kdump on platforms with TDX
- partial write erratum
-To: Dave Hansen <dave.hansen@intel.com>,
- "Reshetova, Elena" <elena.reshetova@intel.com>,
- "Annapurve, Vishal" <vannapurve@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "bp@alien8.de" <bp@alien8.de>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "peterz@infradead.org" <peterz@infradead.org>,
- "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
- "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
- "x86@kernel.org" <x86@kernel.org>, "kas@kernel.org" <kas@kernel.org>,
- "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, "Huang, Kai" <kai.huang@intel.com>,
- "seanjc@google.com" <seanjc@google.com>,
- "Chatre, Reinette" <reinette.chatre@intel.com>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>,
- "Williams, Dan J" <dan.j.williams@intel.com>,
- "ashish.kalra@amd.com" <ashish.kalra@amd.com>,
- "nik.borisov@suse.com" <nik.borisov@suse.com>, "Gao, Chao"
- <chao.gao@intel.com>, "sagis@google.com" <sagis@google.com>,
- "Chen, Farrah" <farrah.chen@intel.com>, Binbin Wu <binbin.wu@linux.intel.com>
-References: <20250901160930.1785244-1-pbonzini@redhat.com>
- <20250901160930.1785244-5-pbonzini@redhat.com>
- <CAGtprH__G96uUmiDkK0iYM2miXb31vYje9aN+J=stJQqLUUXEg@mail.gmail.com>
- <74a390a1-42a7-4e6b-a76a-f88f49323c93@intel.com>
- <CAGtprH-mb0Cw+OzBj-gSWenA9kSJyu-xgXhsTjjzyY6Qi4E=aw@mail.gmail.com>
- <a2042a7b-2e12-4893-ac8d-50c0f77f26e9@intel.com>
- <CAGtprH_nTBdX-VtMQJM4-y8KcB_F4CnafqpDX7ktASwhO0sxAg@mail.gmail.com>
- <DM8PR11MB575071F87791817215355DD8E7E7A@DM8PR11MB5750.namprd11.prod.outlook.com>
- <27d19ea5-d078-405b-a963-91d19b4229c8@suse.com>
- <5b007887-d475-4970-b01d-008631621192@intel.com>
-Content-Language: en-US
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <5b007887-d475-4970-b01d-008631621192@intel.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------eh2kZetL0id6wh0cV6D67V5G"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - GC138 (Linux)/8.8.15_GA_3968)
+Thread-Topic: icssm-prueth: Adds support for ICSSM RSTP switch
+Thread-Index: l8mheEKSJM6Rv+qMUH11fPjpxyfFdQ==
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.couthit.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: smtp@couthit.com
+X-Authenticated-Sender: server.couthit.com: smtp@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------eh2kZetL0id6wh0cV6D67V5G
-Content-Type: multipart/mixed; boundary="------------SS3m9n9G0zIP5yb22DVC4Q10";
- protected-headers="v1"
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-To: Dave Hansen <dave.hansen@intel.com>,
- "Reshetova, Elena" <elena.reshetova@intel.com>,
- "Annapurve, Vishal" <vannapurve@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "bp@alien8.de" <bp@alien8.de>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "peterz@infradead.org" <peterz@infradead.org>,
- "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
- "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
- "x86@kernel.org" <x86@kernel.org>, "kas@kernel.org" <kas@kernel.org>,
- "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, "Huang, Kai" <kai.huang@intel.com>,
- "seanjc@google.com" <seanjc@google.com>,
- "Chatre, Reinette" <reinette.chatre@intel.com>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>,
- "Williams, Dan J" <dan.j.williams@intel.com>,
- "ashish.kalra@amd.com" <ashish.kalra@amd.com>,
- "nik.borisov@suse.com" <nik.borisov@suse.com>, "Gao, Chao"
- <chao.gao@intel.com>, "sagis@google.com" <sagis@google.com>,
- "Chen, Farrah" <farrah.chen@intel.com>, Binbin Wu <binbin.wu@linux.intel.com>
-Message-ID: <5d792dc5-ea8e-46d2-8031-44f8e92b0188@suse.com>
-Subject: Re: [PATCH 4/7] x86/kexec: Disable kexec/kdump on platforms with TDX
- partial write erratum
-References: <20250901160930.1785244-1-pbonzini@redhat.com>
- <20250901160930.1785244-5-pbonzini@redhat.com>
- <CAGtprH__G96uUmiDkK0iYM2miXb31vYje9aN+J=stJQqLUUXEg@mail.gmail.com>
- <74a390a1-42a7-4e6b-a76a-f88f49323c93@intel.com>
- <CAGtprH-mb0Cw+OzBj-gSWenA9kSJyu-xgXhsTjjzyY6Qi4E=aw@mail.gmail.com>
- <a2042a7b-2e12-4893-ac8d-50c0f77f26e9@intel.com>
- <CAGtprH_nTBdX-VtMQJM4-y8KcB_F4CnafqpDX7ktASwhO0sxAg@mail.gmail.com>
- <DM8PR11MB575071F87791817215355DD8E7E7A@DM8PR11MB5750.namprd11.prod.outlook.com>
- <27d19ea5-d078-405b-a963-91d19b4229c8@suse.com>
- <5b007887-d475-4970-b01d-008631621192@intel.com>
-In-Reply-To: <5b007887-d475-4970-b01d-008631621192@intel.com>
+Hi,
 
---------------SS3m9n9G0zIP5yb22DVC4Q10
-Content-Type: multipart/mixed; boundary="------------VKMwJJqlh6qjkFMGIZJ0kor4"
+> Hi Parvathi,
+> 
+> On 10/6/2025 4:17 PM, Parvathi Pudi wrote:
+>> From: Roger Quadros <rogerq@ti.com>
+>> 
+>> Adds support for RSTP switch mode by enhancing the existing ICSSM dual EMAC
+>> driver with switchdev support.
+>> 
+>> With this patch, the PRU-ICSSM is now capable of operating in switch mode
+>> with the 2 PRU ports acting as external ports and the host acting as an
+>> internal port. Packets received from the PRU ports will be forwarded to
+>> the host (store and forward mode) and also to the other PRU port (either
+>> using store and forward mode or via cut-through mode). Packets coming
+>> from the host will be transmitted either from one or both of the PRU ports
+>> (depending on the FDB decision).
+>> 
+>> By default, the dual EMAC firmware will be loaded in the PRU-ICSS
+>> subsystem. To configure the PRU-ICSS to operate as a switch, a different
+>> firmware must to be loaded.
+>> 
+>> Reviewed-by: Mohan Reddy Putluru <pmohan@couthit.com>
+>> Signed-off-by: Roger Quadros <rogerq@ti.com>
+>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+>> Signed-off-by: Basharath Hussain Khaja <basharath@couthit.com>
+>> Signed-off-by: Parvathi Pudi <parvathi@couthit.com>
+>> ---
+> 
+> [ ... ]>
+>> +static void icssm_prueth_change_to_switch_mode(struct prueth *prueth)
+>> +{
+>> +	bool portstatus[PRUETH_NUM_MACS];
+>> +	struct prueth_emac *emac;
+>> +	struct net_device *ndev;
+>> +	int i, ret;
+>> +
+>> +	for (i = 0; i < PRUETH_NUM_MACS; i++) {
+>> +		emac = prueth->emac[i];
+>> +		ndev = emac->ndev;
+>> +
+>> +		portstatus[i] = netif_running(ndev);
+>> +		if (!portstatus[i])
+>> +			continue;
+>> +
+>> +		ret = ndev->netdev_ops->ndo_stop(ndev);
+>> +		if (ret < 0) {
+>> +			netdev_err(ndev, "failed to stop: %d", ret);
+>> +			return;
+>> +		}
+>> +	}
+>> +
+>> +	prueth->eth_type = PRUSS_ETHTYPE_SWITCH;
+>> +
+>> +	for (i = 0; i < PRUETH_NUM_MACS; i++) {
+>> +		emac = prueth->emac[i];
+>> +		ndev = emac->ndev;
+>> +
+>> +		if (!portstatus[i])
+>> +			continue;
+>> +
+>> +		ret = ndev->netdev_ops->ndo_open(ndev);
+>> +		if (ret < 0) {
+>> +			netdev_err(ndev, "failed to start: %d", ret);
+>> +			return;
+>> +		}
+>> +	}
+>> +
+>> +	dev_info(prueth->dev, "TI PRU ethernet now in Switch mode\n");
+>> +}
+>> +
+>> +static void icssm_prueth_change_to_emac_mode(struct prueth *prueth)
+>> +{
+>> +	bool portstatus[PRUETH_NUM_MACS];
+>> +	struct prueth_emac *emac;
+>> +	struct net_device *ndev;
+>> +	int i, ret;
+>> +
+>> +	for (i = 0; i < PRUETH_NUM_MACS; i++) {
+>> +		emac = prueth->emac[i];
+>> +		ndev = emac->ndev;
+>> +
+>> +		portstatus[i] = netif_running(ndev);
+>> +		if (!portstatus[i])
+>> +			continue;
+>> +
+>> +		ret = ndev->netdev_ops->ndo_stop(ndev);
+>> +		if (ret < 0) {
+>> +			netdev_err(ndev, "failed to stop: %d", ret);
+>> +			return;
+>> +		}
+>> +	}
+>> +
+>> +	prueth->eth_type = PRUSS_ETHTYPE_EMAC;
+>> +
+>> +	for (i = 0; i < PRUETH_NUM_MACS; i++) {
+>> +		emac = prueth->emac[i];
+>> +		ndev = emac->ndev;
+>> +
+>> +		if (!portstatus[i])
+>> +			continue;
+>> +
+>> +		ret = ndev->netdev_ops->ndo_open(ndev);
+>> +		if (ret < 0) {
+>> +			netdev_err(ndev, "failed to start: %d", ret);
+>> +			return;
+>> +		}
+>> +	}
+>> +
+>> +	dev_info(prueth->dev, "TI PRU ethernet now in Dual EMAC mode\n");
+>> +}
+> 
+> 
+> The APIs icssm_prueth_change_to_emac_mode and
+> icssm_prueth_change_to_switch_mode seems identical. Won't it be better
+> to have one function to change modes and which mode to go to passed as
+> function argument.
+> 
+>	icssm_prueth_change_mode(prueth,mode);
+> 
+> This will also work seemlessly if you add more modes in future. With
+> current approach you will need to add new APIs
+> icssm_prueth_change_to_xyz_mode()
+> 
+> 
 
---------------VKMwJJqlh6qjkFMGIZJ0kor4
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Sure, we will check and modify the code to use a single API,
+icssm_prueth_change_mode() which will take the mode as an argument.
 
-T24gMDIuMTAuMjUgMTc6MDYsIERhdmUgSGFuc2VuIHdyb3RlOg0KPiBPbiAxMC8yLzI1IDAw
-OjQ2LCBKdWVyZ2VuIEdyb3NzIHdyb3RlOg0KPj4gU28gbGV0cyBjb21wYXJlIHRoZSAyIGNh
-c2VzIHdpdGgga2R1bXAgZW5hYmxlZCBhbmQgZGlzYWJsZWQgaW4geW91cg0KPj4gc2NlbmFy
-aW8gKGNyYXNoIG9mIHRoZSBob3N0IE9TKToNCj4+DQo+PiBrZHVtcCBlbmFibGVkOiBObyBk
-dW1wIGNhbiBiZSBwcm9kdWNlZCBkdWUgdG8gdGhlICNNQyBhbmQgc3lzdGVtIGlzDQo+PiBy
-ZWJvb3RlZC4NCj4+DQo+PiBrZHVtcCBkaXNhYmxlZDogTm8gZHVtcCBpcyBwcm9kdWNlZCBh
-bmQgc3lzdGVtIGlzIHJlYm9vdGVkIGFmdGVyIGNyYXNoLg0KPj4+IFdoYXQgaXMgdGhlIG1h
-aW4gY29uY2VybiB3aXRoIGtkdW1wIGVuYWJsZWQ/IEkgZG9uJ3Qgc2VlIGFueQ0KPj4gZGlz
-YWR2YW50YWdlIHdpdGggZW5hYmxpbmcgaXQsIGp1c3QgdGhlIGFkdmFudGFnZSB0aGF0IGlu
-IG1hbnkgY2FzZXMNCj4+IGEgZHVtcCB3aWxsIGJlIHdyaXR0ZW4uDQo+IFRoZSBkaXNhZHZh
-bnRhZ2UgaXMgdGhhdCBhIGtlcm5lbCBidWcgZnJvbSBsb25nIGFnbyByZXN1bHRzIGluIGEg
-bWFjaGluZQ0KPiBjaGVjay4gTWFjaGluZSBjaGVja3MgYXJlIGdlbmVyYWxseSBpbmRpY2F0
-aXZlIG9mIGJhZCBoYXJkd2FyZS4gU28gdGhlDQo+IGRpc2FkdmFudGFnZSBpcyB0aGF0IHNv
-bWVvbmUgbWlzdGFrZXMgdGhlIGxvbmcgYWdvIGtlcm5lbCBidWcgZm9yIGJhZA0KPiBoYXJk
-d2FyZS4NCj4gDQo+IFRoZXJlIGFyZSB0d28gd2F5cyBvZiBsb29raW5nIGF0IHRoaXM6DQo+
-IA0KPiAxLiBBIHRoZW9yZXRpY2FsbHkgZnJhZ2lsZSBrZHVtcCBpcyBiZXR0ZXIgdGhhbiBu
-byBrZHVtcCBhdCBhbGwuIEFsbCBvZg0KPiAgICAgdGhlIHN0YXJzIHdvdWxkIGhhdmUgdG8g
-YWxpZ24gZm9yIGtkdW1wIHRvIF9mYWlsXyBhbmQgd2UgZG9uJ3QgdGhpbmsNCj4gICAgIHRo
-YXQncyBnb2luZyB0byBoYXBwZW4gb2Z0ZW4gZW5vdWdoIHRvIG1hdHRlci4NCj4gMi4ga2R1
-bXAgaGFwcGVucyBhZnRlciBrZXJuZWwgYnVncy4gVGhlIG1hY2hpbmUgY2hlY2tzIGhhcHBl
-biBiZWNhdXNlIG9mDQo+ICAgICBrZXJuZWwgYnVncy4gSXQncyBub3QgYSBiaWcgc3RyZXRj
-aCB0byB0aGluayB0aGF0LCBhdCBzY2FsZSwga2R1bXAgaXMNCj4gICAgIGdvaW5nIHRvIHJ1
-biBpbiB0byB0aGVzZSAjTUNzIG9uIGEgcmVndWxhciBiYXNpcy4NCj4gDQo+IERvZXMgdGhh
-dCBjYXB0dXJlIHRoZSB0d28gcGVyc3BlY3RpdmVzIGZhaXJseT8NCg0KQmFzaWNhbGx5IHll
-cy4NCg0KSWYgd2UgY2FuJ3QgY29tZSB0byBhbiBhZ3JlZW1lbnQgdGhhdCBrZHVtcCBzaG91
-bGQgYmUgYWxsb3dlZCBpbiBzcGl0ZSBvZg0KYSBwb3RlbnRpYWwgI01DLCBtYXliZSB3ZSBj
-b3VsZCBkaXNhYmxlIGtkdW1wIG9ubHkgaWYgVERYIGd1ZXN0cyBoYXZlIGJlZW4NCmFjdGl2
-ZSBvbiB0aGUgbWFjaGluZSBiZWZvcmU/IERpc2FibGluZyBrZHVtcCBvbiBhIGRpc3RybyBr
-ZXJuZWwganVzdCBiZWNhdXNlDQpURFggd2FzIGVuYWJsZWQgYnV0IHdpdGhvdXQgYW55b25l
-IGhhdmluZyB1c2VkIFREWCB3b3VsZCBiZSBxdWl0ZSBoYXJkLg0KDQoNCkp1ZXJnZW4NCg==
+We will address this in the next version.
 
---------------VKMwJJqlh6qjkFMGIZJ0kor4
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+Thanks and Regards,
+Parvathi.
 
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
-
---------------VKMwJJqlh6qjkFMGIZJ0kor4--
-
---------------SS3m9n9G0zIP5yb22DVC4Q10--
-
---------------eh2kZetL0id6wh0cV6D67V5G
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmjlFj4FAwAAAAAACgkQsN6d1ii/Ey8p
-3QgAlcpsM1b65HZ+nYJ9qmO1fgoCaS6uqm8EKvecyh255Jo8fAoEZ0QSdojiEY4duquiYUYzysis
-yBqVWceul+ft46KPhSZZqaOH98FUzTBJ+WDucPEgDn//t5lv9RPj1CfExm1Uc9Cz7BphIAJqrkCR
-iz3jV47eFYnNu91PU1aCCm3YWI2rrInx5UL0hW9Y+lENUQwHcDkPLWtjaOLyOWHEY4La6eUhpRqv
-zgrlV+C+HWAYZjZOtBwKbUp1aE6pNsZY225/0TF7GnUeQWo7H4cjHWRE2XLB9akZVPLPDZvt/xNw
-FzjEvecvltRhgIexjtnHj3FoRV1MBABWxTNXpP/fMw==
-=roL9
------END PGP SIGNATURE-----
-
---------------eh2kZetL0id6wh0cV6D67V5G--
 
