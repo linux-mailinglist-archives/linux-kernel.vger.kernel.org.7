@@ -1,145 +1,114 @@
-Return-Path: <linux-kernel+bounces-844387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70565BC1C92
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:45:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2659DBC1C9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:46:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52FD919A472D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:45:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7C223BBCBD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A952E22A9;
-	Tue,  7 Oct 2025 14:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687042E22BD;
+	Tue,  7 Oct 2025 14:46:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dz+luGCk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="i9qmK07d"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2A82E1F08;
-	Tue,  7 Oct 2025 14:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038922D7DE0
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 14:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759848308; cv=none; b=TA5KP0aeBVzr/zLIwSezBGEj2XXdgvUU/WSclQR/QnINuRkhKOVFcaHCY354Pz2q6OLxu4jzkifXy/Jd9WmHIS8khTvAAusnlkm8GHoPN7ayZ6ge+qFuSW2KWFSAR8f2GMZNY0w6cpH2FwogqnDuVf8smOpfr6evP/c0uins4L4=
+	t=1759848365; cv=none; b=mNy5TwFWcaFsCB04rrW0vvrYMYrjvpMpuM9pCjYf8bkeGNthEy3PsXKar9k2vfJtZEzVeOqu3AKTbLfNCDHv+wg1M/g/UJfBqxhCPfNsxFDrehy4uXm/Ctagtr7TrcbAnuHc9WWuKXUKDIXZDRF+PfAm1cVl8NVAY/7BTx8qit4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759848308; c=relaxed/simple;
-	bh=stqZpe7AXYgm3Xi9RQkXPgRZUpHQuqJD3/Q7tWQN9eQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ATUhhoTHwlMnPcQNmO9q9Bec+IO4SDT+bn5WZXUriduPOkHzrqnD0FS/tX/48gTNQeMm7H+1+nzREDpYiASa4B0S0MjwpYVdW/q5cRR4zBme675CfSO7nJZBIXII5NASozHBi03eYsLz3rHkElYDsUxkrCOxRWCcdJi5DU5QiK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dz+luGCk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75BADC4CEF9;
-	Tue,  7 Oct 2025 14:45:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759848308;
-	bh=stqZpe7AXYgm3Xi9RQkXPgRZUpHQuqJD3/Q7tWQN9eQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Dz+luGCkU/q7b+lUovIWBdPR6tp/x+UDkUmG1jefOKvxEYtdIl3qRNaScxmSSqK9p
-	 /51G8JFeKYKPgzKEqefazI902TXbDeLL5/rHn2H4hcOxFEFAPzULk2sxfNCxPl4+4g
-	 kDBGqJFG9mSFeLZ4+jN+IALwMo2PcsWTv+efNHfzbnKjdkZdwlnjzAsckncdGFIMOc
-	 AvjNYcLoefyrOZnGZp+56QBDpVCduXAHGFf4XQu5o36cjizefLxp0YEOBn4Ady7ZXo
-	 00Ao3rdCyrF/afuMMwn0LIuQPkUNO5KZtY30UrgQHhZaMKpZHBpFDkqQSgbWgVXHnG
-	 740xO3o8jfHag==
-Message-ID: <aa7dedae-8f31-49f9-ad73-009cb8550b93@kernel.org>
-Date: Tue, 7 Oct 2025 16:44:59 +0200
+	s=arc-20240116; t=1759848365; c=relaxed/simple;
+	bh=WT64jMbxboNxF1xklb8UQhlFPb4NaVD0os9H5GA0bI8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=cn8PBgvnfN5vTuIe0Jk/RTtKmhpYK4PkhHwARo9nD/g03x5LAb9Et2b7WsbzjdyXtt2RKEC/3uZ4uFSYZ1Xi3D7vNfTOAaEZsNghuiSod6y7yIp8D/3ztADBKlZ3hrwiovPrMoByGRzaC2b+qbHD+MWcKSI4V1ICKZ08eP+V05Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=i9qmK07d; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251007144600euoutp013cdfbc1d8cc6aa962720bffe5e62498a~sPMKeymfN2145721457euoutp01W
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 14:46:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251007144600euoutp013cdfbc1d8cc6aa962720bffe5e62498a~sPMKeymfN2145721457euoutp01W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1759848361;
+	bh=1HZe7Sqk0ec7oEcOx8zABBkFNcLSTrCaMp8zzpZHjLE=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=i9qmK07dlrCNUNLQ+BUBBBx4HUJ3QIFAXCdeAZKssajhQNkw1qWGVSQfJBxUEo4yi
+	 hM6QyLeq/OP2ZNixe4zQKcZFFbZwJ+fLVd7x9h1tDWg16ZFYLq9gTuVymQ7k3ytdoS
+	 sHS2s++ddxpxXqi39hPUfWequObr8/7j1ePEXDg0=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251007144600eucas1p245415d2578628bca535155cf94679cc6~sPMJsp8mE1148311483eucas1p2f;
+	Tue,  7 Oct 2025 14:46:00 +0000 (GMT)
+Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251007144559eusmtip17208b5ff74f14525c83800f11e2b3ed3~sPMJNKhpD2554025540eusmtip1j;
+	Tue,  7 Oct 2025 14:45:59 +0000 (GMT)
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, Marek Szyprowski
+	<m.szyprowski@samsung.com>, Christoph Hellwig <hch@lst.de>, Robin Murphy
+	<robin.murphy@arm.com>, Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe
+	<jgg@nvidia.com>, Petr Tesarik <ptesarik@suse.com>, Shigeru Yoshida
+	<syoshida@redhat.com>
+Subject: [GIT PULL] more dma-mapping updates for Linux 6.18
+Date: Tue,  7 Oct 2025 16:45:45 +0200
+Message-Id: <20251007144545.2208636-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v8 00/21] DRM scheduling cgroup controller
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Philipp Stanner <phasta@mailbox.org>, phasta@kernel.org,
- Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, dri-devel@lists.freedesktop.org,
- amd-gfx@lists.freedesktop.org, kernel-dev@igalia.com,
- intel-xe@lists.freedesktop.org, cgroups@vger.kernel.org,
- linux-kernel@vger.kernel.org, =?UTF-8?Q?Christian_K=C3=B6nig?=
- <christian.koenig@amd.com>, Leo Liu <Leo.Liu@amd.com>,
- =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Matthew Brost <matthew.brost@intel.com>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>, =?UTF-8?Q?Michel_D=C3=A4nzer?=
- <michel.daenzer@mailbox.org>,
- Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
- Rob Clark <robdclark@gmail.com>, Tejun Heo <tj@kernel.org>,
- Alexandre Courbot <acourbot@nvidia.com>, Alistair Popple
- <apopple@nvidia.com>, John Hubbard <jhubbard@nvidia.com>,
- Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- Lucas De Marchi <lucas.demarchi@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Rob Herring <robh@kernel.org>,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqunf@netflix.com>,
- =?UTF-8?B?R3LDqWdvaXJlIFDDqWFu?= <gpean@netflix.com>,
- Simona Vetter <simona@ffwll.ch>, airlied@gmail.com
-References: <20250903152327.66002-1-tvrtko.ursulin@igalia.com>
- <DD5CCG4MIODH.1718JI1Z7GH8T@kernel.org>
- <4453e5989b38e99588efd53af674b69016b2c420.camel@mailbox.org>
- <20250930121229.4f265e0c@fedora> <DD62YFG2CJ36.1NFKRTR2ZKD6V@kernel.org>
- <20250930135736.02b69c65@fedora>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250930135736.02b69c65@fedora>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251007144600eucas1p245415d2578628bca535155cf94679cc6
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251007144600eucas1p245415d2578628bca535155cf94679cc6
+X-EPHeader: CA
+X-CMS-RootMailID: 20251007144600eucas1p245415d2578628bca535155cf94679cc6
+References: <CGME20251007144600eucas1p245415d2578628bca535155cf94679cc6@eucas1p2.samsung.com>
 
-On 9/30/25 1:57 PM, Boris Brezillon wrote:
-> Can you remind me what the problem is? I thought the lifetime issue was
-> coming from the fact the drm_sched ownership model was lax enough that
-> the job could be owned by both drm_gpu_scheduler and drm_sched_entity
-> at the same time.
+The following changes since commit ef3d979b3e270b6a41b6f306bfc442253c41a4cd:
 
-I don't think that's (directly) a thing from the perspective of the drm_sched
-design. A job should be either in the entity queue for the pending_list of the
-scheduler.
+  kmsan: fix missed kmsan_handle_dma() signature conversion (2025-09-17 14:42:36 +0200)
 
-However, different drivers do implement their own lifetime (and ownership) model
-on top of that, because they ultimately have to deal with jobs being either tied
-to the entity or the scheduler lifetime, which is everything else but strait
-forward in error cases and tear down paths.
+are available in the Git repository at:
 
-And the fundamental problem why drivers implement their own rules on top of this
-is because it is hard to deal with jobs being tied to entirely different
-lifetime model depending on their state.
+  https://git.kernel.org/pub/scm/linux/kernel/git/mszyprowski/linux.git tags/dma-mapping-6.18-2025-10-07
 
-So, what I'm saying is that from the perspective of the component itself it's
-probably fine, but for the application in drivers it's the root cause for a lot
-of the hacks we see on top of the scheduler in drivers.
+for you to fetch changes up to 16abbabc004bedeeaa702e11913da9d4fa70e63a:
 
-Some of those hacks even make their way into the scheduler [1].
+  dma-mapping: fix direction in dma_alloc direction traces (2025-10-03 08:45:09 +0200)
 
-[1]
-https://elixir.bootlin.com/linux/v6.17.1/source/drivers/gpu/drm/scheduler/sched_main.c#L1439
+----------------------------------------------------------------
+dma-mapping fixes for Linux 6.18:
 
->> Instead, I think the new Jobqueue should always own and always dispatch jobs
->> directly and provide some "control API" to be instructed by an external
->> component (orchestrator) on top of it when and to which ring to dispatch jobs.
-> 
-> Feels to me that we're getting back to a model where the JobQueue needs
-> to know about the upper-layer in charge of the scheduling. I mean, it
-> can work, but you're adding some complexity back to JobQueue, which I
-> was expecting to be a simple FIFO with a dep-tracking logic.
+- two small fixes for the recently performed code refactoring (Shigeru
+Yoshida) and missing handling of direction parameter in DMA debug code
+(Petr Tesarik)
 
-Yes, the Jobqueue would need an interface to the orchestrator. I rather have the
-complexity encapsulated in the Jobqueue, rather than pushing the complexity to
-drivers by having a more complex lifetime and ownership model that leaks into
-drivers as mentioned above.
+----------------------------------------------------------------
+Petr Tesarik (1):
+      dma-mapping: fix direction in dma_alloc direction traces
 
-> I have a hard time seeing how it can fully integrate in this
-> orchestrator model. We can hook ourselves in the JobQueue::run_job()
-> and schedule the group for execution when we queue a job to the
-> ringbuf, but the group scheduler would still be something on the side.
+Shigeru Yoshida (1):
+      kmsan: fix kmsan_handle_dma() to avoid false positives
 
-Can you please expand a bit more on the group model?
+ include/trace/events/dma.h | 1 +
+ mm/kmsan/hooks.c           | 3 +--
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+----------------------------------------------------------------
 
-My understanding is that you have a limited number of firmware rings (R) and
-each of those rings has N slots, where N is the number of queue types supported
-by the GPU.
+Thanks!
 
-So, you need something that can schedule "groups" of queues over all available
-firmware rings, because it would be pointless to schedule each individual queue
-independently, as a firmware ring has slots for each of those. Is that correct?
+Best regards
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
