@@ -1,123 +1,118 @@
-Return-Path: <linux-kernel+bounces-844113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B67D2BC107F
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:37:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6216BC1099
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:43:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F8663BEFE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:37:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC4C6189DFE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:43:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0080E2D73A1;
-	Tue,  7 Oct 2025 10:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D68242D7DD2;
+	Tue,  7 Oct 2025 10:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="r121afuA"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pw5qDQij"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094CA1FDE09;
-	Tue,  7 Oct 2025 10:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF41819E7E2
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 10:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759833463; cv=none; b=W/VOO/OhjiNXSb8ZqiW9qfSlRtkMM6CEvy4yOXT/GpKtCrARHGQ46C4kwD8Fi9Ll1ruRSWfcsuJD/XkBCgCIza0BcIWuzloRbL1byFz4RApIA4Pa2hN6xjHrAF3Xa2V2CrWX81BLlt4fcZIPqkYFHqlW+ElukZrF5qCSIOvlKhQ=
+	t=1759833776; cv=none; b=trtCuahs40YfV01+Ns1xktpu79uWPz3zroqdcT7BFegDSJ1mHi9N2+3FDramtC9c4Y7+a+3MnG8PD3I5SVR1F04QZajU0f16Wr3wWp1HH2OTEIbDcGsQ0Rc3MsXacvJawBNrUTbkRHZHW/ltqacxNCLVjePGQjWphuP8x+T75C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759833463; c=relaxed/simple;
-	bh=u3eolbqcm4MkoqUBG2SpCGS2vZqvsP4WebIFtx3BtnM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uA0UitHKpgQ2km8xUg4/P8GbonpnOaBzeKvhAclP5k5Dji2eMxi4j0/32xUIBVfFB4p+YPq70D0clk65TJTRJe/KyGe0dInaWi0zkORhV9IMSbJXeJibyzSdQbN/oKmY5KPcD6Cek2a5TMqBt8ulgv2F36NsQaFHJQaRX40PtAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=r121afuA; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 597AbJhs3742447;
-	Tue, 7 Oct 2025 05:37:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1759833439;
-	bh=4prdR7fIfal0vXWJwnCCGs7E2BiZ4igEPj5IHb6qEvc=;
-	h=From:To:CC:Subject:Date;
-	b=r121afuA0VJYaYkJhSVrTki9ZVCDitgnBKDu+jrni+zQGuygjA27nIMMUwOpfVfdY
-	 YKxqUQzIm4dlBgaJ5rnIuuJ/8Q7yH2HxVO4cS+7tUxll4V01PhSKkmi6o22T3+jJcL
-	 rLZb40FQaw66lkFYRY5qYAzZy5G+JDsvGuefI/1U=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 597AbIuA4008863
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 7 Oct 2025 05:37:18 -0500
-Received: from DLEE214.ent.ti.com (157.170.170.117) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 7
- Oct 2025 05:37:17 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE214.ent.ti.com
- (157.170.170.117) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 7 Oct 2025 05:37:18 -0500
-Received: from LT5CG31242FY.dhcp.ti.com ([10.250.163.61])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 597AbEuX754182;
-	Tue, 7 Oct 2025 05:37:14 -0500
-From: Shenghao Ding <shenghao-ding@ti.com>
-To: <tiwai@suse.de>
-CC: <broonie@kernel.org>, <andriy.shevchenko@linux.intel.com>,
-        <stable@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>, <baojun.xu@ti.com>,
-        <Baojun.Xu@fpt.com>, <13564923607@139.com>, <13916275206@139.com>,
-        Shenghao Ding
-	<shenghao-ding@ti.com>
-Subject: [PATCH v1] ALSA: hda/tas2781: Enable init_profile_id for device initialization
-Date: Tue, 7 Oct 2025 18:37:08 +0800
-Message-ID: <20251007103708.1663-1-shenghao-ding@ti.com>
-X-Mailer: git-send-email 2.33.0.windows.2
+	s=arc-20240116; t=1759833776; c=relaxed/simple;
+	bh=t48xr98QD61VaWXPvBpaZ2yaPisBwVUmg9uYlxv8ngk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ie5csAJN/Z37+VMZbQUP46cYKnpjoyvo7Szno4hbWjKhxEvnvupcAgP2StILw6hx6/FVvTXd09cu9qulsx2syPLRK0YZAJkOb6BgKjSriC1aOwtUejfWOAQCKrwtgMbN9iy78QjluC07HDFc1SIZ79EYl19NoPMASVfy6eHa7/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pw5qDQij; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2680ee37b21so9171825ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 03:42:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759833774; x=1760438574; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t48xr98QD61VaWXPvBpaZ2yaPisBwVUmg9uYlxv8ngk=;
+        b=Pw5qDQij8MARyxaJey5UfIJzutLT+inpNsHmY6VzuKFbvLpOE65FzWAXr6k9IPqlcE
+         UoQU3irYMW2e+/JjIhW5BS/2hUF34wijzBdvRIhPjYj6/UUI1ByiM+dgBLzrr70UFDxB
+         u9liFpXeVMvsxRmN6FgnJ6KYj2st/S4pu+aTXwrNf4T0eztrSC9L4qMjIqrRyjBzb6wW
+         T9+Fpm/tqYjDFBhQNU3K503QQwCb2bW2XnEtBqN5+fAKVdgYZp8SDFeP9rVjI8QEyhtv
+         O0yFBER6kX4HqljDxvJ1w6eWR+L1iqdb9/CAcyJNzceofePdx8AZTICTBTaBMCQ6ko2f
+         CdFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759833774; x=1760438574;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t48xr98QD61VaWXPvBpaZ2yaPisBwVUmg9uYlxv8ngk=;
+        b=FsKkLPWyVrUgsz0LiySLhH6QPcWWfKsR7TTPdohUXHYltA1ZEunJVTVIgedwb2uz11
+         OfK9roz6E2tpkHqhN3rMIejWdngtxwrRNsS0nCu1iOIlP+1BUyCu82XZ7B2/vHMjzqVZ
+         8Bsg/CXGKKS5iRxn3823LGQXFLsXP/I6Ssb33S0fKR9ZyxmKrrrP8H1yHMuOVhVGc83m
+         DsQ52tXAAx+7CYJs+GhbDtavpWBoNXOuPePP4SZYT0hDg8wbXu929oPRc8URexXoMnYn
+         gECHjKH/4Cgv8ItkwyMfYpyyIBCsxTwb9+w1q3Oxx7aw8HZa4jE8qF1penYpc7v/wuim
+         /7Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCW/Voe0Sr9ky/EH+ThppRcBtS6IM0h5sHuhuJsRWh0U0eyCpVVQkyIeEtbOZL/OC1fEjAu1VypHmCWZFVg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywoj5Addxt3qfhfVYfijIcyIxQLx3t6h3uPaHcHm40iaeJK+wsi
+	tCxUbzGmft4t/GRKD9kYQswLRlVxS7QiBAqumzDjaip/d17taNSdzzwfSavQl0fZm35MZbN8Ex8
+	TXF1H1tT5ESQJMAcju8cUi/DzjPl3rw4=
+X-Gm-Gg: ASbGncsXuTYjVe8tWXwmw5JUV6PZf/Sfs2WcICMydwXH4CnXH9QnNtHQYUIoH1swE7q
+	yCPr0c8GEOPmZFruT4UhnjxoN6Jy8T/1i8UMuVU+01vk4sDegQOUMboyd1JiYaZZEtdjCovtKvL
+	+jDPbP0MmuN9nYhprI4KFdZKUR1d8+Se61fOPBDWUJrhkFrIFVKTZwFy1iJLbprTSE21/Y+wePv
+	AdTs3u5qQPIXPUonPuINUhxgvZZl/xphnZPa63Z7nkVtitKYw9bxkb6dij7cH0Na7mgVYkq1A4F
+	n581d/3HuhgN8wMk/mOzjFSD+70U1VHQDLCFHGxKNjgwMjnmqw==
+X-Google-Smtp-Source: AGHT+IG/tceer4xDFHi1fbtvymQWQEX0cfdjfz7qa3VEV1S1lLa9ROogqCppnvlWvrXrppWg7CAeyI7raGFpenio+L4=
+X-Received: by 2002:a17:903:1a68:b0:272:2bf1:6a1f with SMTP id
+ d9443c01a7336-28e9a5a2ea2mr112471585ad.4.1759833774205; Tue, 07 Oct 2025
+ 03:42:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20251003154748.1687160-1-joelagnelf@nvidia.com>
+ <aORCwckUwZspBMfv@yury> <DDC0VAHL5OCP.DROT6CPKE5H5@nvidia.com>
+In-Reply-To: <DDC0VAHL5OCP.DROT6CPKE5H5@nvidia.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 7 Oct 2025 12:42:41 +0200
+X-Gm-Features: AS18NWDpvGktuowJke8BSxfgUaurFD3miGBpRkLVS9T4zoCecLy6NtllLzWGBNs
+Message-ID: <CANiq72m1eiGVJHNyym+JwM=tQ9bGnmoW0+OuKQ3Vxo_AQOy5dg@mail.gmail.com>
+Subject: Re: [PATCH v6 0/5] Introduce bitfield and move register macro to rust/kernel/
+To: Alexandre Courbot <acourbot@nvidia.com>, Yury Norov <yury.norov@gmail.com>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	dakr@kernel.org, Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, 
+	joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Andrea Righi <arighi@nvidia.com>, 
+	nouveau@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Optimize the time consumption of profile switching, init_profile saves
-the common settings of different profiles, such as the dsp coefficients,
-etc, which can greatly reduce the profile switching time comsumption and
-remove the repetitive settings.
+On Tue, Oct 7, 2025 at 12:36=E2=80=AFPM Alexandre Courbot <acourbot@nvidia.=
+com> wrote:
+>
+> We can assume maintainership of this of course, but is there a problem
+> if this falls under the core Rust umbrella? As this is a pretty core
+> functionality. Miguel and other core folks, WDYT?
 
-Fixes: e83dcd139e77 ("ASoC: tas2781: Add keyword "init" in profile section")
-Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
----
- sound/hda/codecs/side-codecs/tas2781_hda_i2c.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+I think what Yury may mean is that this should get an explicit
+`MAINTAINERS` subentry even if it falls under `rust/kernel/` -- I
+agree that is a good idea.
 
-diff --git a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
-index 4dea442d8c30..a126f04c3ed7 100644
---- a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
-+++ b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
-@@ -474,6 +474,12 @@ static void tasdevice_dspfw_init(void *context)
- 	if (tas_priv->fmw->nr_configurations > 0)
- 		tas_priv->cur_conf = 0;
- 
-+	/* Init common setting for different audio profiles */
-+	if (tas_priv->rcabin.init_profile_id >= 0)
-+		tasdevice_select_cfg_blk(tas_priv,
-+			tas_priv->rcabin.init_profile_id,
-+			TASDEVICE_BIN_BLK_PRE_POWER_UP);
-+
- 	/* If calibrated data occurs error, dsp will still works with default
- 	 * calibrated data inside algo.
- 	 */
-@@ -770,6 +776,12 @@ static int tas2781_system_resume(struct device *dev)
- 	tasdevice_reset(tas_hda->priv);
- 	tasdevice_prmg_load(tas_hda->priv, tas_hda->priv->cur_prog);
- 
-+	/* Init common setting for different audio profiles */
-+	if (tas_hda->priv->rcabin.init_profile_id >= 0)
-+		tasdevice_select_cfg_blk(tas_hda->priv,
-+			tas_hda->priv->rcabin.init_profile_id,
-+			TASDEVICE_BIN_BLK_PRE_POWER_UP);
-+
- 	if (tas_hda->priv->playback_started)
- 		tasdevice_tuning_switch(tas_hda->priv, 0);
- 
--- 
-2.43.0
+Thanks!
 
+Cheers,
+Miguel
 
