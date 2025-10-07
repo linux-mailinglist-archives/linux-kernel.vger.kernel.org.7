@@ -1,330 +1,128 @@
-Return-Path: <linux-kernel+bounces-843634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 342ADBBFE16
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 03:00:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E48A0BBFE21
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 03:02:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7440234BB48
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 01:00:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DDE404E390A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 01:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8051D61BB;
-	Tue,  7 Oct 2025 01:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96F11E0B9C;
+	Tue,  7 Oct 2025 01:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HlH8FiCQ"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sstW7MUX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAAB4F9C1
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 01:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AAAF9C1;
+	Tue,  7 Oct 2025 01:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759798825; cv=none; b=Ds6T5yF8raaGFGi6YorRxLApbovrfhGNjTSGC/Sd6Z9CwGQ21uPtlPZGZjCsbBPF447nYQg7LeLsGXC7zSRRTkATcbYnFX/RGxaMvuEVys8UGRqpR4CgJiCgvSPVEuy/PLpGj3ERqLqSN9SnyaRJE+DeKhuX8ZyAmcte1LNTTBk=
+	t=1759798944; cv=none; b=o7WnGQm9qdaIe7cc7kHZAb+iY4tHmYxz0peu62TJt9VEHZYNir3X4Va+kFuUdsoSlFcFiGeJMyhQYGxrcawzBDYUMJ2kNOko6RpY2ThnzotpszwS9w7lQD0C8UvES0om2t4ADnNP7gReJVqAEwsz2417mbu/AZNaH+T41iuC5k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759798825; c=relaxed/simple;
-	bh=hfCTUH5fhwUXuwcET/5y6JZBqUWUAPXoD5VFTZ/Rd8c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WbBrq4mVtU7GsWzcTfwZ9QWTM2zreCt2ZVAKxKJgqhnXitTreV7Q0LhViG4naRUxwVPOe/mN+cdq/77SHz+BsquaS2hYt5B3yYpEPe9PAnyZ4ntjYd6NTy2ryZML7Nl2rw64XLx3dHmXhTyPAbeLkdpXdT3hAvxV9lu0y3LiniA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HlH8FiCQ; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2731ff54949so48715ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 18:00:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759798823; x=1760403623; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k6mQHeLbc51hD/eXve78YPM4+TxG0628utfcdDhF6wI=;
-        b=HlH8FiCQ1u3nO4Qkx1jOkzUB98XMmG1c2ITSwdoWuQ25Ci+cU6zuNQnGmjWyRqffIN
-         9TuWXYte5QAS6mz6DEqQvSHHlbgiIJ9z2SGll+c8ECHiLqjOqGnV8iYwg+dMoQrQeNUU
-         93ECKLI+GlfBt/HpU0gUeUCoqg4MIHoddh69NU6Z9Y/zyrTZxHuTjpcyddvoP0zJzdao
-         WfcK3+wCL1K3RUW1CEy0WGhwDYkKKIUE81Au1zmVlKq72WeES7OSFfCBnlyafCr9qAEm
-         8tkt3I0Ka9uYH7317oMCGvFUtkqKF6yjYtQx7x6eKw0mupfnlWuEvM6OwKRYafYXomPl
-         rqxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759798823; x=1760403623;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k6mQHeLbc51hD/eXve78YPM4+TxG0628utfcdDhF6wI=;
-        b=HtW8sq6+Eho/1NCbSc+YRkXXLm57TIbrabPcKxrdL42pYS7cbs2X1nFbLfX80/v5ML
-         HxKbbZ4Kejg63mX0QAGstLJwb0GNfNJ1zJ1M+vf1v3hNlh8DXyHVpsU6Jy9tP/KSHVj0
-         AQ6O0iMoNM0k+LO5TpE51JJ+Im/s6krmr0pRKfH6sUfaDOURMZBeaDKNpgu/tNNip1Sz
-         XVGxn0M0vJCU4SYezmHWz6Xpa0qtdqBF1HKGB706Y0cZRjrmWKUl0SVzKpMpOUvhcG1o
-         +GnQ+B9SONPsrzcca1hpqoJLRG/cn393IU1DfLhkBuwyAbn8sqEUkTvyXFeyH7VEkv7E
-         0WXw==
-X-Forwarded-Encrypted: i=1; AJvYcCWksRtAMSKbfR13qhyYrJF2vPVjBII+x23nvOeegapoIRhbkz0F1ALm2G+3tYhswDjAgxOXYGw5165STpA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmYTSxLXFByi94CpcWGOY+Oqm5Yq+VD5UYJPSG77kA+k4+N1Hp
-	eizIAz17kREwsV480EVGf43Ic6IklaIznfXV+uB81uQnU2m5SFHY+J9H64JLUQhvyfLXWArwxZT
-	nHiYxxwcWSbe+lniM1DJ+F0WsUWhhTQlzKNDH6ylT
-X-Gm-Gg: ASbGncuiKqvQbHvfNUHWbSnlLRlFn0nSYNpZVznx7FbxGFnfGxZhDXv7sEglMGM/GKP
-	HFGt4CflZKGoGYzZ0DVn65u8fc/Hb8OrjsRtWSoKmFeoHkAuHY7mPqCIV/29KMRanfbTFWGeQRu
-	Zr6EF8noqLLprz9bSpD0QbZWEOI4Ce4IMMzw4fxxbPdnpyD4oybhNsF4tOWsJP9LoLSBr9QLNYr
-	5dK5V0N8PCau5VgxlN1b7O94eIuDKGXewOQHtkNIwY/c+xkimtnA5Q44+xnFQb0cXrAdR4=
-X-Google-Smtp-Source: AGHT+IGtKqlcr/X53YFNFTKkWMvGJGQM0ey7+a031TD49SZJiyKQEgCc9CJhuov2G46Tt8YqmZ9/Z/qPCT8m39Nszs0=
-X-Received: by 2002:a17:903:298d:b0:267:912b:2b4d with SMTP id
- d9443c01a7336-28ecb74c0e7mr1431545ad.7.1759798822443; Mon, 06 Oct 2025
- 18:00:22 -0700 (PDT)
+	s=arc-20240116; t=1759798944; c=relaxed/simple;
+	bh=lyieKP3LFc/zehqV6eoCt+HgQDwizBYqu5bhmkN47i4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u14a/eLkrCLCfjo/OQz+/oEE5pi85iR3SqwWQuAeprd8X8GYFdRCiu9VVQYcW7lquvqFz+EZLKBQJguvcFgVrgptWp+FQX5epSN0RPYX1BthCipOYCFf7qI1BhTfd9wAF5opEW5vsa+Yu+dwA6H2tlfMi6mwJd1sNMq7/2mHmsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sstW7MUX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0EB6C4CEF5;
+	Tue,  7 Oct 2025 01:02:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759798943;
+	bh=lyieKP3LFc/zehqV6eoCt+HgQDwizBYqu5bhmkN47i4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sstW7MUXAEMw1BMM6qBprABoKvaSzYj/BuFojCPDQWSoL/B1glvjVhoYBS8O59qMc
+	 qSO/8jp/tvkQkZjHfuD95m936F4G/GfLXr6vSD6ozfPO0TEpPa6GS7H4v9/fATSeT5
+	 KUE05zjvTp/aP1VzAqjokY8RkAFQ5sg6Z7Rvg9gSgaMkwQ8qObowU6Li2jLAV0CDWA
+	 kyGv7vODJldAGb4l/j4BGSnmE+opJU+UHLO2nL6cYTuROz8nvw6pX+DSo+Mw6B68V8
+	 331H7QwU9A9TIhr/ogOIC5BsyHtld/77sxAsh1QWW+dff1/OADkqqj1hMP8vDnB0r3
+	 HrvpyGL0v3Lzg==
+Message-ID: <a6690fbc-0b86-4725-99ca-6b4cc477b4ec@kernel.org>
+Date: Tue, 7 Oct 2025 10:02:11 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916145122.416128-1-wangjinchao600@gmail.com>
- <CAP-5=fWWOQ-6SWiNVBvb5mCofe0kZUURG_bm0PDsVFWqwDwrXg@mail.gmail.com>
- <aMoTOXIKBYVTj7PV@mdev> <CAP-5=fX7NJmBjd1v5y4xCa0Ce5rNZ8Dqg0LXd12gPrdEQCERVA@mail.gmail.com>
- <aMpIsqcgpOH1AObN@z2> <aMpRqlDXXOR5qYFd@mdev> <CAP-5=fV05++2Qvcxs=+tqhTdpGK8L9e5HzVu=y+xHxy9AqLMmg@mail.gmail.com>
- <CAD=FV=VNmjTVxcxgTQqjE7CTkK2NVGbRxFJSwv=yOHU8gj-urQ@mail.gmail.com>
-In-Reply-To: <CAD=FV=VNmjTVxcxgTQqjE7CTkK2NVGbRxFJSwv=yOHU8gj-urQ@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 6 Oct 2025 18:00:09 -0700
-X-Gm-Features: AS18NWDGLlvOhtxIZkpVyFf6Sm7S3dsd_RTNVJ4XYO9x6ozGHkZMxjn7T41Jhr4
-Message-ID: <CAP-5=fW64xHEW+4dKU_voNv7E67nUOFm27FFBuhtFii52NiQUQ@mail.gmail.com>
-Subject: Re: [RFC PATCH V1] watchdog: Add boot-time selection for hard lockup detector
-To: Doug Anderson <dianders@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jinchao Wang <wangjinchao600@gmail.com>, Namhyung Kim <namhyung@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>, 
-	Yunhui Cui <cuiyunhui@bytedance.com>, akpm@linux-foundation.org, 
-	catalin.marinas@arm.com, maddy@linux.ibm.com, mpe@ellerman.id.au, 
-	npiggin@gmail.com, christophe.leroy@csgroup.eu, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	acme@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
-	kees@kernel.org, masahiroy@kernel.org, aliceryhl@google.com, ojeda@kernel.org, 
-	thomas.weissschuh@linutronix.de, xur@google.com, ruanjinjie@huawei.com, 
-	gshan@redhat.com, maz@kernel.org, suzuki.poulose@arm.com, 
-	zhanjie9@hisilicon.com, yangyicong@hisilicon.com, gautam@linux.ibm.com, 
-	arnd@arndb.de, zhao.xichao@vivo.com, rppt@kernel.org, lihuafei1@huawei.com, 
-	coxu@redhat.com, jpoimboe@kernel.org, yaozhenguo1@gmail.com, 
-	luogengkun@huaweicloud.com, max.kellermann@ionos.com, tj@kernel.org, 
-	yury.norov@gmail.com, thorsten.blum@linux.dev, x86@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 00/10] Introduce Glymur USB support
+To: Wesley Cheng <wesley.cheng@oss.qualcomm.com>, krzk+dt@kernel.org,
+ conor+dt@kernel.org, konrad.dybcio@oss.qualcomm.com,
+ dmitry.baryshkov@oss.qualcomm.com, kishon@kernel.org, vkoul@kernel.org,
+ gregkh@linuxfoundation.org, robh@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251006222002.2182777-1-wesley.cheng@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251006222002.2182777-1-wesley.cheng@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 6, 2025 at 4:32=E2=80=AFPM Doug Anderson <dianders@chromium.org=
-> wrote:
->
-> Hi,
->
-> On Mon, Oct 6, 2025 at 2:30=E2=80=AFPM Ian Rogers <irogers@google.com> wr=
-ote:
-> >
-> > On Tue, Sep 16, 2025 at 11:14=E2=80=AFPM Jinchao Wang <wangjinchao600@g=
-mail.com> wrote:
-> > >
-> > > On Tue, Sep 16, 2025 at 10:35:46PM -0700, Namhyung Kim wrote:
-> > > > Hello,
-> > > >
-> > > > On Tue, Sep 16, 2025 at 10:13:12PM -0700, Ian Rogers wrote:
-> > > > > On Tue, Sep 16, 2025 at 6:47=E2=80=AFPM Jinchao Wang <wangjinchao=
-600@gmail.com> wrote:
-> > > > > >
-> > > > > > On Tue, Sep 16, 2025 at 05:03:48PM -0700, Ian Rogers wrote:
-> > > > > > > On Tue, Sep 16, 2025 at 7:51=E2=80=AFAM Jinchao Wang <wangjin=
-chao600@gmail.com> wrote:
-> > > > > > > >
-> > > > > > > > Currently, the hard lockup detector is selected at compile =
-time via
-> > > > > > > > Kconfig, which requires a kernel rebuild to switch implemen=
-tations.
-> > > > > > > > This is inflexible, especially on systems where a perf even=
-t may not
-> > > > > > > > be available or may be needed for other tasks.
-> > > > > > > >
-> > > > > > > > This commit refactors the hard lockup detector to replace a=
- rigid
-> > > > > > > > compile-time choice with a flexible build-time and boot-tim=
-e solution.
-> > > > > > > > The patch supports building the kernel with either detector
-> > > > > > > > independently, or with both. When both are built, a new boo=
-t parameter
-> > > > > > > > `hardlockup_detector=3D"perf|buddy"` allows the selection a=
-t boot time.
-> > > > > > > > This is a more robust and user-friendly design.
-> > > > > > > >
-> > > > > > > > This patch is a follow-up to the discussion on the kernel m=
-ailing list
-> > > > > > > > regarding the preference and future of the hard lockup dete=
-ctors. It
-> > > > > > > > implements a flexible solution that addresses the community=
-'s need to
-> > > > > > > > select an appropriate detector at boot time.
-> > > > > > > >
-> > > > > > > > The core changes are:
-> > > > > > > > - The `perf` and `buddy` watchdog implementations are separ=
-ated into
-> > > > > > > >   distinct functions (e.g., `watchdog_perf_hardlockup_enabl=
-e`).
-> > > > > > > > - Global function pointers are introduced (`watchdog_hardlo=
-ckup_enable_ptr`)
-> > > > > > > >   to serve as a single API for the entire feature.
-> > > > > > > > - A new `hardlockup_detector=3D` boot parameter is added to=
- allow the
-> > > > > > > >   user to select the desired detector at boot time.
-> > > > > > > > - The Kconfig options are simplified by removing the comple=
-x
-> > > > > > > >   `HARDLOCKUP_DETECTOR_PREFER_BUDDY` and allowing both dete=
-ctors to be
-> > > > > > > >   built without mutual exclusion.
-> > > > > > > > - The weak stubs are updated to call the new function point=
-ers,
-> > > > > > > >   centralizing the watchdog logic.
-> > > > > > >
-> > > > > > > What is the impact on  /proc/sys/kernel/nmi_watchdog ? Is tha=
-t
-> > > > > > > enabling and disabling whatever the boot time choice was? I'm=
- not sure
-> > > > > > > why this has to be a boot time option given the ability to co=
-nfigure
-> > > > > > > via /proc/sys/kernel/nmi_watchdog.
-> > > > > > The new hardlockup_detector boot parameter and the existing
-> > > > > > /proc/sys/kernel/nmi_watchdog file serve different purposes.
-> > > > > >
-> > > > > > The boot parameter selects the type of hard lockup detector (pe=
-rf or buddy).
-> > > > > > This choice is made once at boot.
-> > > > > >
-> > > > > >  /proc/sys/kernel/nmi_watchdog, on the other hand, is only a si=
-mple on/off
-> > > > > > switch for the currently selected detector. It does not change =
-the detector's
-> > > > > > type.
-> > > > >
-> > > > > So the name "nmi_watchdog" for the buddy watchdog is wrong for fa=
-irly
-> > > > > obvious naming reasons but also because we can't differentiate wh=
-en a
-> > > > > perf event has been taken or not - this impacts perf that is choo=
-sing
-> > > > > not to group events in metrics because of it, reducing the metric=
-'s
-> > > > > accuracy. We need an equivalent "buddy_watchdog" file to the
-> > > > > "nmi_watchdog" file. If we have such a file then if I did "echo 1=
- >
-> > > > > /proc/sys/kernel/nmi_watchdog" I'd expect the buddy watchdog to b=
-e
-> > > > > disabled and the perf event one to be enabled. Similarly, if I di=
-d
-> > > > > "echo 1 > /proc/sys/kernel/buddy_watchdog" then I would expect th=
-e
-> > > > > perf event watchdog to be disabled and the buddy one enabled. If =
-I did
-> > > > >  "echo 0 > /proc/sys/kernel/nmi_watchdog; echo 0 >
-> > > > > /proc/sys/kernel/buddy_watchdog" then I'd expect neither to be
-> > > > > enabled. I don't see why choosing the type of watchdog implementa=
-tion
-> > > > > at boot time is particularly desirable. It seems sensible to defa=
-ult
-> > > > > normal people to using the buddy watchdog (more perf events, powe=
-r...)
-> > > > > and  CONFIG_DEBUG_KERNEL type people to using the perf event one.=
- As
-> > > > > the "nmi_watchdog" file may be assumed to control the buddy watch=
-dog,
-> > > > > perhaps a compatibility option (where the "nmi_watchdog" file con=
-trols
-> > > > > the buddy watchdog) is needed so that user code has time to migra=
-te.
-> > > >
-> > > > Sounds good to me.  For perf tools, it'd be great if we can have a =
-run-
-> > > > time check which watchdog is selected.
-> > > Considering backward compatibility, I prefer to keep
-> > > /proc/sys/kernel/nmi_watchdog and introduce a new file called
-> > > /proc/sys/kernel/hardlockup_detector_type, which only shows the defau=
-lt string
-> > > or the boot parameter.
-> >
-> > Is there code using the buddy watchdog that cares about the
-> > /proc/sys/kernel/nmi_watchdog file? My assumption is that everything
-> > except Android is using the NMI watchdog, so a new
-> > /proc/sys/kernel/buddy_watchdog file doesn't impact them.
->
-> Buddy watchdog has been out there for a few years. At Google, I know
-> it's used by everything except Android. AKA I believe it is used in
-> Google's servers and also in ChromeOS. Both of those (presumably)
-> enable the buddy watchdog via calling it "nmi_watchdog". It's possible
-> that some Android phones are using the buddy watchdog too but I'm not
-> aware of it. I don't believe Pixel is using it, though that could
-> change in the future.
+On 07/10/2025 07:19, Wesley Cheng wrote:
+> This series enables the PHY level changes that are required to support
+> the type C based controllers and the multiport controller.  The typeC
+> ports utilize a usb43dp based QMP PHY for the SSUSB path, while using
+> the M31 eUSB2 PHY for the HSUSB path.  For the multiport controller,
+> it will utilize two QMP UNI PHYs for the SSUSB path, and two M31 eUSB2
+> PHYs for the HSUSB path.
+> 
+> -----
+> Changes in v5:
+> - Moved phy-qcom-qmp-usb43-pcs-v8.h into USB specific QMP driver
+> - Fixed DT bindings for clock properties for QMP combo PHY
+> 
 
-I thought what motivated the buddy watchdog was patches implementing
-this approach on Android for ARM that lacked an NMI based hard lockup
-detector?
-Anyway, while the buddy watchdog is in use by Google servers the
-nmi_watchdog file has an actively detrimental effect on that.
-Specifically the nmi_watchdog file having the value of "1" disables
-certain event groups for certain metrics in the perf tool as it is
-assumed there are too few performance counters due to the NMI watchdog
-stealing one. We want groups of events so that events are scheduled
-together and metrics are more accurate, we don't want groups that fail
-to schedule because of a lack of counters.
+Where are lore links? Why aren't you using b4?
 
-> IMO at this point "nmi watchdog" is simply a synonym for the
-> hardlockup detector. That was what it looked like in the code before I
-> started messing around and adding the buddy lockup detector and it's
-> how it is now. While it's unfortunate that there are two names for the
-> same thing, I don't personally think that should change at this point.
-> FWIW, even the "buddy" watchdog relies on NMIs to actually get stack
-> crawls on stuck cores, so NMI still means something even there.
-
-I think this is misguided. Currently the only use of nmi_watchdog I'm
-aware of is by perf where the buddy watchdog's use of it causes issues
-(as mentioned above).
-
-> If we want to tell between the perf detector or the buddy detector we
-> should add a separate file for it.
-
-We could with perf then having to read from two files rather than one.
-Presumably the lack of presence of one file will be sufficient to also
-avoid a kernel version check.
-
-> > On Android
-> > writing to /proc/sys/kernel/nmi_watchdog would switch from updating
-> > the buddy watchdog enable/disable to the NMI watchdog enable/disable,
-> > but it is a straightforward patch to make anything doing this update
-> > the buddy_watchdog file instead.
->
-> Straightforward, but you've got to go find everyone that you break by
-> doing this. That's not something I want responsibility for. If you
-> want to convince others this is something worthwhile and you've got
-> someone signed up to deal with the fallout (if any) then I won't
-> object, but it's not something I'd be in support of.
-
-Stuff like this happens, check out this thread:
-https://lore.kernel.org/lkml/2025020304-chip-trench-4e56@gregkh/
-Imo we shouldn't design in using an actively misleading file name and
-incurring extra overhead in perf. Having two files nmi_watchdog and
-buddy_watchdog is fine as the latter case currently isn't in
-mainstream distro use and people shouldn't care. It also maintains and
-correct's perf's behavior when the buddy and not nmi watchdog is in
-use.
-
-> > If we have to keep "nmi_watchdog" then we should deprecate it and
-> > create an equivalent file with a better name (ie without NMI in it).
-> > It'll be moderately annoying in perf to determine whether the NMI
-> > watchdog is enabled by having to read two files.
->
-> Again, up to you if you want to try to do this, but I'm not really in
-> support of it. It doesn't seem terribly hard to make a new file that
-> says which hardlockup detector is in use. If that file exists then
-> read it. If not then you fallback to what you have today.
-
-I don't mind a file that also says what kind of lockup detector is in
-use. I'd like the meaning of nmi_watchdog to keep meaning the kernel
-stole a perf counter as this is the behavior long assumed by perf
-which I think is the majority or only user of the file. I think the
-buddy watchdog being controlled by this file is less than intention
-revealing.
-
-Thanks,
-Ian
-
-> -Doug
+Best regards,
+Krzysztof
 
