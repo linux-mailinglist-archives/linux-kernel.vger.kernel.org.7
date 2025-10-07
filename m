@@ -1,163 +1,172 @@
-Return-Path: <linux-kernel+bounces-843864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 360D4BC06F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:57:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81AC9BC0716
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 09:01:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07864189237C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:58:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0FBC14F5298
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8681623278D;
-	Tue,  7 Oct 2025 06:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B74C2264CA;
+	Tue,  7 Oct 2025 06:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BTGwj1ew"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="GDm6T3/E"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B684322AE7F;
-	Tue,  7 Oct 2025 06:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C089D35959
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 06:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759820063; cv=none; b=NQg6Ne07mNfIvSFGqgbgGeY5U9KBXm8KC2aBuLmc/5PZRhRiEsJIOYM6f0ujoP0ybpT0frpd9DiEW6uOYv2x/ryCmbf2GG0OiRMbXL/SobPGUMNtV57/km6eBf08eYK0/H5w8/u8bOpYPSXQkfo1YBNl0T1u7WIh+KskBmLBoFA=
+	t=1759820245; cv=none; b=Jl85xVV8lNlyRrb33veoVM5YhvhgKZ8iEiZjKJrz+esrH5vZNNuf0Cyjr1k3i7AhPrkkAQyYi/aWh0PmUBQcaSvWNSX4GQXcGtOpkzV0TSdKdLmM6g9pwlezGpPYWxudYJmoJwcchfNNhfsUpLpVFe+Pps3BKFy8+NJmZfP3iTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759820063; c=relaxed/simple;
-	bh=Sq7ul6WNE6O5j4RCZio6JhjlWbzyNo4XrJcF6K7ASh4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=lKLxg+mHHYICWNp+BtUVzmoHe8SdRQXgn85CXXIWJlVtfPKt28/PE2GkslHrz7l8wFZNudwzjASJFfaBMQuase5QCRhuGNWnSrwm48W6edFfO3zfHH0triB+GnSLUl9Mv89dKcUk7jjD3/DsDzd4NEMRWAf53bxXIa9Pt6BrD6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BTGwj1ew; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1759820047; x=1760424847; i=markus.elfring@web.de;
-	bh=XiROOt7871cZmtqY+ugdQ1cxJsYnGnsZeHsV5fwekMs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=BTGwj1ewyKWZ/FYRoQ5M6NRx/4rrcwMCidXblRlEMpfeBnukyuM2vkf0Xv46/kd2
-	 i9CQautKvP3zTGy5mSQmm3NOg4Cu0+m0TBc7e/KLhw6bkzmk4BjFzw7T2PXSzp6Ef
-	 t+2zKEg1r0japltVM6syAQYxPaMNKqGpU1sQQp8io/htKjDfjjwxL58zDmgc/dR9O
-	 ENvlPNghl2lhdemlKrjjsXzwIvwAcAH2G2mXHMD4D6RUBr3JYrs6rhbf1KCxm0FbX
-	 anogUy17rR2P/q8ddTiK8+A1S9okK2Cvbed6nxkzfJ7rbdikLLpVAFC/miu8TU74a
-	 DPEacd6RrlCMfeBB3w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.202]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N8Vsr-1uAyzu1sTR-01874v; Tue, 07
- Oct 2025 08:54:07 +0200
-Message-ID: <8793adcc-b8cb-48db-bc2b-457c95e97b63@web.de>
-Date: Tue, 7 Oct 2025 08:54:04 +0200
+	s=arc-20240116; t=1759820245; c=relaxed/simple;
+	bh=pSXHczsOQ+O+qL7wzRP41/2qS+AEtN6NYQCYJaAcnXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qnouE+dSaCUnSPf/qWTM5IsPEH6aqVz0NaGvVufLPMD6WUghSAK2RgIhZKZTHyadsPzZHzrRgv9trLX6uSphZmFZhByzTvkN59sB0ED0bmAej1ZD+zPIchpFLP2gQ3Tz7OOzg+SCoZjA4cCoW8vQMnq0MUVKIV0d6PVqUqumc70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=GDm6T3/E; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-631787faf35so10629013a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 23:57:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1759820240; x=1760425040; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kQBr1iLVFNtqeaNs6yJ80+xGl4WT5Nt3T8RxbNCflzM=;
+        b=GDm6T3/EqEXNZNyqG3807ztDAdlLvZQnHWsMR5qsLoJeQLK9euGjMSXUg9Lpsa7DBH
+         Dxyqcr31TqScDpZYPqJLyy5dvIisAg9vc/XZCeptLfS8bJmVkN52uY26J2+cOWn7xRjf
+         TQ2MwQimmRYT9lLhdSq8TJrZJ55Izbx0Y1FpsphG9cC8pJIC6cAU3bp5AtNJgxLQVmo2
+         3nfPCVVrIG9euX44FYXi59aDxXx6+huMKqqM5MHloGeNkdstfzdVQd/cmVn5LGeGEsPq
+         exv63tkC9UsM8CECyqhYBzPopONIbldb3M8XK/xrBdkH/m+cbI8zPdFjYt07hN/Y1aMT
+         br9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759820240; x=1760425040;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kQBr1iLVFNtqeaNs6yJ80+xGl4WT5Nt3T8RxbNCflzM=;
+        b=vUvvK85uQjjXzy/co9SFJ91T7MGrBzpAm5huL7aExpG/sU/tX3QBsAHyK8wnJUOCtw
+         P3uW7IsriqKrX7/211GLWBpy6SeHU0o3ZFOsLzSRVcGHM/45HcpJyoxQbdDoqr+5MGHP
+         ZiECf/JNCAs731FP54mRKMVnAho7S9f6SGmdQ4g6n5qeBeY0Lhv5I8yOLaVEEntL0Vph
+         NT/tTi4iCVj33RmccfJlO8attl18cgZCx+1zGf7EdagGuq9x/RflRLmBi31mim6ATKww
+         HidTyBPnvPMgv6aQHuwZY5DF1NvChUExFXbg4zGxQPeMHcLi2LqHBsS3wWQnJrcB/tVv
+         7AqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXIDpxXsQPgOUnB9L2fA21jhU4vCun4MQ4+stE7AYHbwszE/tlaUDDaFjAIvLny0zmG9X7jtCVLHp4aoNI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsIoraUkPMbLm+7vycQrh2yOJJrdePpx1vs2KR2Qwzz8i770RP
+	58i9zp8YdPtpk7B2QfbtyomkUXT2ADv2Vrgtdcu8JImO6IXj2goaIWFEWAp69gzp0e1BvL2YdfJ
+	U/pZI
+X-Gm-Gg: ASbGncuKVzz1TZdAt0G+wKGJF3lTe8rhNUYG9otgEKi4vZ5/mFskgOKDNWLiNjKt9SN
+	BUkP6xZhw9mscgek1iRw1MX0yQ+oWZiTnZL7qfAaqz9K99tT5dT2j1WQ9mQvRWtz3igk21HAGG0
+	eQ9jIXOmVmPMvqrGU1MGJA/p70KFyQ1I40Q/3NjGdgFN5vCAL0b9KjN/J/te7m4ewykE2T+hW/+
+	NNnKA5eQef0ybZGO2LcBomyjcDxz1vbMGjYZvjFa+3Xr+xTWwnvW5piX5AAESpHg7f9fgj2v3sf
+	fOJ28AW1ivU9Zuu3Q/hts6WNbQVrHF8Mp71uVwNbw5LDoQPpqDV1kqezeont3I9w6WX7PutM65Y
+	lg1oEASZrQaLV9eY7qH9i9esxV8whC3HuBGRlFUnFokqvtCTrNk7yWlJr/O9FlTq1TOaRz2bybo
+	QlCzQxBkYzFLSPx3WIEqt9FHk=
+X-Google-Smtp-Source: AGHT+IH+x4rvNU4JaZu7YZXVaGBVLRKK1beKwvljFVhpKQF3G9mDqkXPfemHJ//E1ME4YBbm97oUxQ==
+X-Received: by 2002:a17:906:9fcf:b0:b41:e675:95e3 with SMTP id a640c23a62f3a-b49c20531d6mr2080358366b.16.1759820239882;
+        Mon, 06 Oct 2025 23:57:19 -0700 (PDT)
+Received: from localhost (p200300f65f06ab0400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f06:ab04::1b9])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b486970a60dsm1302323866b.63.2025.10.06.23.57.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 23:57:19 -0700 (PDT)
+Date: Tue, 7 Oct 2025 08:57:17 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Javier Garcia <rampxxxx@gmail.com>
+Cc: deller@gmx.de, tzimmermann@suse.de, linux-fbdev@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, shuah@kernel.org
+Subject: Re: [PATCH v2] fbdev: mb862xxfbdrv: Make CONFIG_FB_DEVICE optional
+Message-ID: <i63463tzmzyjwqvqgduwakdx26zzftj43yay5ytit6ll2hvg72@3azlq2glpmos>
+References: <20251006164143.1187434-1-rampxxxx@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Fushuai Wang <wangfushuai@baidu.com>, linux-cifs@vger.kernel.org,
- samba-technical@lists.samba.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Bharath SM
- <bharathsm@microsoft.com>, Paulo Alcantara <pc@manguebit.org>,
- Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
- Ronnie Sahlberg <ronniesahlberg@gmail.com>, Tom Talpey <tom@talpey.com>
-References: <20251007041209.99174-1-wangfushuai@baidu.com>
-Subject: Re: [PATCH v3] cifs: Fix copy_to_iter return value check
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20251007041209.99174-1-wangfushuai@baidu.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xmvirqnkodsp7h45"
+Content-Disposition: inline
+In-Reply-To: <20251006164143.1187434-1-rampxxxx@gmail.com>
+
+
+--xmvirqnkodsp7h45
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:em/FsB2gtab9+fXU9A3R/we1nPOxaVByxdES5UUzvZPc6aRcDho
- sRN2zhq/hzTsHTzJVX3/tZqfY5fWX/yymFLjHMdF6o3WFz7q8egA93nAJ2r9Q6RPy9Gd3Bs
- sftwTuNaGsFFL0PrSeH7KkjwGT10vi4fZNYun8oDLP4zCPR0KuxcRpSsLKtGX0Ne/n4Y4/G
- poaOlxCijTnBtmkmOWcbg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:wvx7OXpSs0g=;j9ewi7VLlOmq/zuBmyaY3zEFwpt
- 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
- sHDIg==
+Subject: Re: [PATCH v2] fbdev: mb862xxfbdrv: Make CONFIG_FB_DEVICE optional
+MIME-Version: 1.0
 
-=E2=80=A6
+On Mon, Oct 06, 2025 at 06:41:43PM +0200, Javier Garcia wrote:
+> This patch wraps the relevant code blocks with `IS_ENABLED(ifdef CONFIG_F=
+B_DEVICE)`,
+
+stray "ifdef "
+
+> allowing the driver to be built and used even if CONFIG_FB_DEVICE is not =
+selected.
+
+The driver built fine without FB_DEVICE already before, doesn't it?
+
+> The sysfs only give access to show some controller and cursor registers so
+> it's not needed to allow driver works correctly.
+>=20
+> This align with Documentation/drm/todo.rst
+> "Remove driver dependencies on FB_DEVICE"
+
+Given the above, I still don't understand that. (But maybe this can be
+fixed by Helge's request to improve the commit message.)
+
+> Signed-off-by: Javier Garcia <rampxxxx@gmail.com>
 > ---
->  fs/smb/client/smb2ops.c | 10 +++++-----
-=E2=80=A6
+> v1 -> v2:
+>       * Fix error and improvement , thanks Uwe Kleine-Koenig.
+>       * v1 https://lore.kernel.org/lkml/20251005173812.1169436-1-rampxxxx=
+@gmail.com
+>=20
+>=20
+>  drivers/video/fbdev/mb862xx/mb862xxfbdrv.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/video/fbdev/mb862xx/mb862xxfbdrv.c b/drivers/video/f=
+bdev/mb862xx/mb862xxfbdrv.c
+> index ade88e7bc760..dc99b8c9ff0f 100644
+> --- a/drivers/video/fbdev/mb862xx/mb862xxfbdrv.c
+> +++ b/drivers/video/fbdev/mb862xx/mb862xxfbdrv.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/module.h>
+>  #include <linux/init.h>
+>  #include <linux/interrupt.h>
+> +#include "linux/kconfig.h"
 
-Some contributors would appreciate patch version descriptions.
-https://lore.kernel.org/all/?q=3D%22This+looks+like+a+new+version+of+a+pre=
-viously+submitted+patch%22
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.17#n310
+I didn't need that during my build tests, also don't use "" here, but
+<>.
 
-Regards,
-Markus
+>  #include <linux/pci.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+> [...]
+
+Best regards
+Uwe
+
+--xmvirqnkodsp7h45
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjkucoACgkQj4D7WH0S
+/k4C1Af/WV9h/qgYbP/3+qXNhC1BXfM3TuwVm+Sff8RZnlO741v4wQpli3yGXbi9
+KcG2h9XY0lwvH/VMa67XES7Mndveqbrc129IdezMXfpXxskJpUgvhtSaEdpWf8wL
+QfjmYKi3YchT4zMmtqzr5rSePQpfqEbxXN+Bo/FRofoQkrKLIslEo9xYzbUExm0t
+WUMwiK4+Den2I8Km5fTZoCp4z5RXxARQ4yc+/8hCE4KQ912dNSoIde2pFzxo/25C
+vzuO/UINyYqPt4F1AHY/7tfrP5cgO3z3jbdtjLvEIk6m/UYCwnkfpJXsEteOVgJx
+kYSTrHFuIq1enwL31Vxj10PYMgEwcQ==
+=zm7i
+-----END PGP SIGNATURE-----
+
+--xmvirqnkodsp7h45--
 
