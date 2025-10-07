@@ -1,171 +1,257 @@
-Return-Path: <linux-kernel+bounces-843765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33086BC0315
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 07:23:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76771BC0321
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 07:24:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13E113C11FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 05:23:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 021DD4ED9D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 05:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9DA1F3FE9;
-	Tue,  7 Oct 2025 05:23:35 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC8D200BBC;
+	Tue,  7 Oct 2025 05:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TSBR0j+/"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754D04A1E
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 05:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631D51E7C23
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 05:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759814615; cv=none; b=JNwwFpBmgtR+ogooOYWMx6G99Xij8Jy249eToxHP/SmVTtij0++GpCgzJeSf4kKKBSvbmAaCJtEaMWQgRTXhYhqw6DlIEnJvZvK3tM+gPf4apK1sIuXECo9Hup8aKyMu+D/CbTWfjFp1zruPt9pzgTvuX98vwuOTUFykI/vUMhI=
+	t=1759814661; cv=none; b=expNhFM6OBejCgJHrDHyOztnK6xX5wH/UcuPvgJ9HVQNPaN9bvtTeNpPX+4e+TKV0DVaceoFyQore7fTS6g/+nTxjvAzxr/meMvnX1dHoeuGJ3j/SWebLTR2BmE6S2+PWCg9uK30W0f8N82vcxn8S6uHxOdgPe7R/OfgKRMVqcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759814615; c=relaxed/simple;
-	bh=hF/RTtCsIXYJfva7IJoml8ntiMvzO1XyrjLgq49Rz+A=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=mDcQHevDgdEHvOU0JQ91HeQEOxgufJLDouS3vlZmZc9tC2Ml2OpGPSw72E/nnNFIGTKPZC4wJ/5uMZGwvy4UTUnpA+X9uuspFZgilV1kwLdllVZebpNPzXDDrWWnlyuU6NB3R59YR2DuxHIYlXdplVLGWk58/VXkHEmBT7iOe9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-42f6e42c844so62358435ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 22:23:30 -0700 (PDT)
+	s=arc-20240116; t=1759814661; c=relaxed/simple;
+	bh=03ukawHLBBiuq3lXimxzPdIM3F7QbvULRv7gKC39Z/w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p/zHtbHsz05cBJeEB6OL7Sg9t9ZnRaY/StSlFbuNsZjzXTj0elSM/q+bEfVBicXcSwn7Ngec81Ctx+41dbEqgjX2OPcNajI+C96WNMCkkk5aZA+0pmmYgkNHyeT2IiHuy/XtjDJJHiPKZ/YELdrS3ZMp36+pxXzQEgk1tFRM2tA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TSBR0j+/; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3ecde0be34eso3514157f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 22:24:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759814658; x=1760419458; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sLnHbmNpMD4epIcKjnyPaJrpyCwbEXYNf6ehl6bEb60=;
+        b=TSBR0j+/M7cfPExgvPBQqJVH4ou6kac2FBJG4KDVhNfVkhbILOKx8wBRumLyrqFDEG
+         TOr3GNpr/qeWqiSrKpMonQoeNlou7eVqBLkmJc0xS4URvCpaYLstJRw/Ark5Eubqqvoj
+         AhnRQU5mqjbdOV+qlqSy111etQooFm3hHSEwB44UIm+CU9mKc2RucVyRxzscUyCKSK4M
+         C1rWH8Z93Lxwbw6KdJhqtdQMPBDwomNxxDhBOiE9VuCGanrQ4Cq20QRmk1EAcOT3wF2i
+         NZu0JDfZ6VY8FTJQ2xUIUNNt79yTtE29usrIPWZ+p+FP32eAsLMMlCzLmq4juHSJQ1zZ
+         DB7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759814609; x=1760419409;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nVHfrhw8p9Pa8xYIGQ9EljBv3N3ecAdNVnBD/usVWZs=;
-        b=VGCRz+p7P8ztu0YRa/jIt253UVaNpExtrxM+RG3fFFD6YocA8dI7e15VqXB8R0JTiK
-         ysl2oNRc/EC0JLuD58AfsvhcRYDcD6Dt/4PNTwwTtVSYt/4QCI+G3kPA7ZDAMQhLbqn3
-         rIevZxs6UaeowESp3eSrLBq59OakqdLQwwMForNlbE3Xl8mo+jE0JVtN3HgQMQhGN5yJ
-         fvku41D3O/CpjPtlWnHC+sW8Azy5ItqZ1mJaYelmCHTXPOQtEVDRTljk19sXkB57Lq45
-         bPh8LvyFlZJDvaYzDm4OP2VLz07u/A6UIChXaHUkOYyIpDm8ZsKXosHoPxJJ16pokV34
-         iCVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVCfnLQo8vxPcTlWNDjjC1UPvzFX314R53wMaTGPSPRX9q7DtInYcsDiHwhkKvAxGnweWG5W4V0lV4y2/4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqHJwmp26f4fDhvAut7BrfvJGWrateliM4VOvIVgUpsaQP4bCK
-	Tf4B6yNq9CTIySrUCf14DVEaMnyboP4bLK67pXuKokRT1LhomCYjy85KAyeH9TCegj+X43G64Gl
-	hb8d0UZUDecpMoxiaMuqWnZQwyT2rM0WBBG85BkXuP+pkb4Eo/lCRRiQm5RQ=
-X-Google-Smtp-Source: AGHT+IFQohCLUW9JVi6BCN8/njSlnTUl1RB9nqXey9XZZdZkOqOrsSglfemmEdZpzp1F1yCF8Ho8lPXmjcLO8SMiMpD1aLXZC5zs
+        d=1e100.net; s=20230601; t=1759814658; x=1760419458;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sLnHbmNpMD4epIcKjnyPaJrpyCwbEXYNf6ehl6bEb60=;
+        b=slsmHiol63gu5NcNW7uorPl9GsbBcPtWwBpAU+yVYWo14yQF8CO1kkkG5PO/AYpOPs
+         7qbul+hV7l1A/rjtey6TbsqsPUqtf1ibSVC6Ujvs+hFTINC0SL1JfndEzK3Hoj2RaqhP
+         loolLDLxTPssJslxXKtF+7UsdJuzt1mZuFil5ePrWy+ErYHq9+O23A1tcg7K15kwxEX9
+         MhaHPWwLz1+syj5gfS4eHvxQzDnPV/ItiBScNcixBy5env5IY93+i3pNuMMwkLJP7a8P
+         TDHlOgYq1n/7UBWY4LylDY5hXlRxemdLXKViuRWsj1LDrqyyzoIQl0lwdIdInd+LCQoN
+         3PAA==
+X-Forwarded-Encrypted: i=1; AJvYcCVTgVqlPvgHWK/n3FZsIgoOWHbYavNeQsklwMfqEMOxDvMPJBqSwzhRGHd+G0ufD4tzAyOqYhDQ65Cvius=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw29ofgAcibpJZP7qfC9HnzZbCAqN8pERLmMVPXZE/HRCsy5axJ
+	+FCra9JmY1V4aJCM14uIqq339qKLL+Ky6B7QoW1hM69yIf3quoH8GbvVy+aLQz+nfiWmaNAtrop
+	+o9fLEY1C/TuCtVt6pli30+JRYG0i4vk=
+X-Gm-Gg: ASbGnctNIptbEgczyJH+iQDz0dnt+idj4vRBmZcDADHiNwkG60cFFAnOKNAqoHaFfK6
+	GKn1mLp7OVrTeFd2FPk2nM4hxsX0b1tLLmdKlWZrcfaWo6HGWM5hI50ibWWt5bL+hvWqTdXDcTP
+	/SrO7p7DZo3RJVP/lrGF7B2EBUBqEn3k+nZvqmSyL1389oRWbWUAytEIFrMLd32DcoSJiMlI7VX
+	WvCIOpAMA7oRU9bjHxmwHlixT5zcHjJ
+X-Google-Smtp-Source: AGHT+IEqm1Cnm5JSU8P7+erEx9aLkQi3brzS+KjxKcgqGgPXKaswgBRSqgdDnMzPTqldRk/rKa7ILjK4DFwNEE+3/5s=
+X-Received: by 2002:a05:6000:24c4:b0:3f4:ad3f:7c35 with SMTP id
+ ffacd0b85a97d-42582a0534bmr1024206f8f.27.1759814657634; Mon, 06 Oct 2025
+ 22:24:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:168e:b0:424:14a4:5064 with SMTP id
- e9e14a558f8ab-42e7ac437a1mr189297915ab.0.1759814609600; Mon, 06 Oct 2025
- 22:23:29 -0700 (PDT)
-Date: Mon, 06 Oct 2025 22:23:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e4a3d1.a00a0220.298cc0.0471.GAE@google.com>
-Subject: [syzbot] [nfs?] [io-uring?] WARNING in nfsd_file_cache_init
-From: syzbot <syzbot+a6f4d69b9b23404bbabf@syzkaller.appspotmail.com>
-To: Dai.Ngo@oracle.com, axboe@kernel.dk, chuck.lever@oracle.com, 
-	io-uring@vger.kernel.org, jlayton@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, neil@brown.name, okorniev@redhat.com, 
-	syzkaller-bugs@googlegroups.com, tom@talpey.com
+References: <20250929142455.24883-1-clamor95@gmail.com> <20250929142455.24883-2-clamor95@gmail.com>
+ <CAD=FV=Vd=muLeMJYszC2SqRBThN=Srm_bKXBEmjjqND7bqHo2g@mail.gmail.com>
+ <CAPVz0n23qNrnyP7ttchaCoLit=gBm_++7RX7B8MxR_nx+8LGHw@mail.gmail.com>
+ <CAD=FV=UCcQ1AweLwNucYP8kNHx+K1UF=VbEZdqE4hXN=bHqGuQ@mail.gmail.com> <20251006221308.GA653118-robh@kernel.org>
+In-Reply-To: <20251006221308.GA653118-robh@kernel.org>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Tue, 7 Oct 2025 08:24:06 +0300
+X-Gm-Features: AS18NWDToXA58gus5hDUvN4FNyaQ6Lgn-00bI-Bbb3jdyK_JaChVX5A0PwIJW1E
+Message-ID: <CAPVz0n0VfjW_=E9oM0FAhjqzAQnPXaL40gDqOsz2mwBaaA_0Fg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/8] dt-bindings: display: panel: properly document LG
+ LD070WX3 panel
+To: Rob Herring <robh@kernel.org>
+Cc: Doug Anderson <dianders@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+=D0=B2=D1=82, 7 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 01:13=
+ Rob Herring <robh@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Thu, Oct 02, 2025 at 02:35:42PM -0700, Doug Anderson wrote:
+> > Hi,
+> >
+> > On Mon, Sep 29, 2025 at 10:03=E2=80=AFPM Svyatoslav Ryhel <clamor95@gma=
+il.com> wrote:
+> > >
+> > > =D0=B2=D1=82, 30 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 06:1=
+2 Doug Anderson <dianders@chromium.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> > > >
+> > > > Hi,
+> > > >
+> > > > On Mon, Sep 29, 2025 at 7:25=E2=80=AFAM Svyatoslav Ryhel <clamor95@=
+gmail.com> wrote:
+> > > > >
+> > > > > LG LD070WX3-SL01 was mistakenly documented as a simple DSI panel,=
+ which it
+> > > > > clearly is not. Address this by adding the proper schema for this=
+ panel.
+> > > > >
+> > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > > ---
+> > > > >  .../bindings/display/panel/lg,ld070wx3.yaml   | 60 +++++++++++++=
+++++++
+> > > > >  .../display/panel/panel-simple-dsi.yaml       |  2 -
+> > > > >  2 files changed, 60 insertions(+), 2 deletions(-)
+> > > > >  create mode 100644 Documentation/devicetree/bindings/display/pan=
+el/lg,ld070wx3.yaml
+> > > > >
+> > > > > diff --git a/Documentation/devicetree/bindings/display/panel/lg,l=
+d070wx3.yaml b/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.=
+yaml
+> > > > > new file mode 100644
+> > > > > index 000000000000..0a82cf311452
+> > > > > --- /dev/null
+> > > > > +++ b/Documentation/devicetree/bindings/display/panel/lg,ld070wx3=
+.yaml
+> > > > > @@ -0,0 +1,60 @@
+> > > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > > +%YAML 1.2
+> > > > > +---
+> > > > > +$id: http://devicetree.org/schemas/display/panel/lg,ld070wx3.yam=
+l#
+> > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > > +
+> > > > > +title: LG Corporation 7" WXGA TFT LCD panel
+> > > > > +
+> > > > > +maintainers:
+> > > > > +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > > +
+> > > > > +allOf:
+> > > > > +  - $ref: panel-common.yaml#
+> > > > > +
+> > > > > +properties:
+> > > > > +  compatible:
+> > > > > +    items:
+> > > > > +      - const: lg,ld070wx3-sl01
+> > > > > +
+> > > > > +  reg:
+> > > > > +    maxItems: 1
+> > > > > +
+> > > > > +  vdd-supply: true
+> > > > > +  vcc-supply: true
+> > > > > +
+> > > > > +  backlight: true
+> > > > > +  port: true
+> > > > > +
+> > > > > +required:
+> > > > > +  - compatible
+> > > > > +  - vdd-supply
+> > > > > +  - vcc-supply
+> > > >
+> > > > I suspect you'll get a NAK here because you're not preserving backw=
+ard
+> > > > compatibility for existing device trees. While there can sometimes =
+be
+> > > > reasons to do that, you'd need to provide a very strong justificati=
+on.
+> > > >
+> > > >
+> > > > It seems like instead of breaking compatibility you could just have
+> > > > two supplies:
+> > > >
+> > > > * power-supply - The name for the "dvdd" supply.
+> > > > * avdd-supply - The name for the "avdd" supply.
+> > > >
+> > > > ...and then you make both of them not "required". Maybe you'd add s=
+ome
+> > > > documentation saying that things might not work 100% correctly if t=
+hey
+> > > > weren't provided but that old device trees didn't specify them?
+> > >
+> > > Schema describes hardware. If it does not (and in this case it clearl=
+y
+> > > DOES NOT), then such schema should be adjusted according to hardware.
+>
+> The priority is:
+>
+> 1) ABI
+> 2) describe h/w accurately
+>
+> IMO, if there are 2 rails on the h/w and you have 2 supplies in the DT,
+> then you have described the h/w. names are less important.
+>
+> > > If there are any users of such binding, they should be adjusted too
+> > > (third commit of this patchset does exactly that). Panel datasheet is
+> > > explicit, panel has ONLY vdd supply and vcc supply, names are taken
+> > > from there too.
+> >
+> > I'm more than happy to defer to DT people on this, but the general
+> > argument is that "device tree" is supposed to remain forever forward
+> > compatible. In other words, someone could have taken a snapshot of the
+> > "tegra114-tn7.dts" device tree at any point in time and then shipped
+> > it in some BIOS. Presumably the old "tegra114-tn7.dts" (for some
+> > reason) managed to init the panel properly in the past and the idea is
+> > that there should still be a way to init the panel with the old device
+> > tree now.
+> >
+> > Obviously, that's an ideal version of the world and sometimes
+> > hard/impossible to make a reality, but it's supposed to be what we
+> > strive for.
+> >
+> > >From a more practical standpoint, the dts changes and code changes
+> > will go through different trees and so making them mutually depend on
+> > each other can leave people broken if they happen to have one patch
+> > but not the other.
+> >
+> > I suppose one way to handle this (if DT people like it) is to keep the
+> > bindings the way you have it but then add some layer of backward
+> > compatibility in the driver. It will mean that anyone with the old DTS
+> > would officially not "validate" properly against the new bindings, but
+> > I think that could be OK as long as it was explicitly mentioned in the
+> > commit message. Obviously, though, DT bindings reviewers would have
+> > the last word there...
+>
+> That's fine, but then I prefer we keep 'power-supply' as deprecated.
+> Then if we ever validate that drivers only use documented properties,
+> it would pass. We already check drivers use documented compatible
+> strings, so that wouldn't be too hard to do.
+>
 
-syzbot found the following issue on:
+Sure, but ATM there is only one user of this compatible in the
+mainline Linux kernel, which is Nvidia tablet Tegra Note 7 and:
 
-HEAD commit:    d104e3d17f7b Merge tag 'cxl-for-6.18' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=116bb942580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ccc18dddafa95b97
-dashboard link: https://syzkaller.appspot.com/bug?extid=a6f4d69b9b23404bbabf
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1573b214580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12b515cd980000
+1. Node used in its tree is addressed in the third commit of this patchset
+2. Its panel is broken anyway since it cannot init properly if
+bootloader does not leave a pre-inited panel, it cannot suspend
+properly and it has a loose regulator which relies on always-on
+property rather then being hooked to the panel.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/335d7c35cbbe/disk-d104e3d1.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/72dbd901415b/vmlinux-d104e3d1.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3ff1353d0870/bzImage-d104e3d1.xz
+I can assure you that besides me there seems to be no one interested
+in this tablet.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a6f4d69b9b23404bbabf@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6128 at kernel/locking/lockdep.c:6606 lockdep_unregister_key+0x2ca/0x310 kernel/locking/lockdep.c:6606
-Modules linked in:
-CPU: 1 UID: 0 PID: 6128 Comm: syz.4.21 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-RIP: 0010:lockdep_unregister_key+0x2ca/0x310 kernel/locking/lockdep.c:6606
-Code: 50 e4 0f 48 3b 44 24 10 0f 84 26 fe ff ff e8 bd cd 17 09 e8 e8 ce 17 09 41 f7 c7 00 02 00 00 74 bd fb 40 84 ed 75 bc eb cd 90 <0f> 0b 90 e9 19 ff ff ff 90 0f 0b 90 e9 2a ff ff ff 48 c7 c7 d0 ac
-RSP: 0018:ffffc90003e870d0 EFLAGS: 00010002
-RAX: eb1525397f5bdf00 RBX: ffff88803c121148 RCX: 1ffff920007d0dfc
-RDX: 0000000000000000 RSI: ffffffff8acb1500 RDI: ffffffff8b1dd0e0
-RBP: 00000000ffffffea R08: ffffffff8eb5aa37 R09: 1ffffffff1d6b546
-R10: dffffc0000000000 R11: fffffbfff1d6b547 R12: 0000000000000000
-R13: ffff88814d1b8900 R14: 0000000000000000 R15: 0000000000000203
-FS:  00007f773f75e6c0(0000) GS:ffff88812712f000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffdaea3af52 CR3: 000000003a5ca000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- __kmem_cache_release+0xe3/0x1e0 mm/slub.c:7696
- do_kmem_cache_create+0x74e/0x790 mm/slub.c:8575
- create_cache mm/slab_common.c:242 [inline]
- __kmem_cache_create_args+0x1ce/0x330 mm/slab_common.c:340
- nfsd_file_cache_init+0x1d6/0x530 fs/nfsd/filecache.c:816
- nfsd_startup_generic fs/nfsd/nfssvc.c:282 [inline]
- nfsd_startup_net fs/nfsd/nfssvc.c:377 [inline]
- nfsd_svc+0x393/0x900 fs/nfsd/nfssvc.c:786
- nfsd_nl_threads_set_doit+0x84a/0x960 fs/nfsd/nfsctl.c:1639
- genl_family_rcv_msg_doit+0x212/0x300 net/netlink/genetlink.c:1115
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0x60e/0x790 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x846/0xa10 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:727 [inline]
- __sock_sendmsg+0x219/0x270 net/socket.c:742
- ____sys_sendmsg+0x508/0x820 net/socket.c:2630
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2684
- __sys_sendmsg net/socket.c:2716 [inline]
- __do_sys_sendmsg net/socket.c:2721 [inline]
- __se_sys_sendmsg net/socket.c:2719 [inline]
- __x64_sys_sendmsg+0x1a1/0x260 net/socket.c:2719
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f77400eeec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f773f75e038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f7740345fa0 RCX: 00007f77400eeec9
-RDX: 0000000000008004 RSI: 0000200000000180 RDI: 0000000000000006
-RBP: 00007f7740171f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f7740346038 R14: 00007f7740345fa0 R15: 00007ffce616f8d8
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> Rob
 
