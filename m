@@ -1,143 +1,158 @@
-Return-Path: <linux-kernel+bounces-844840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B1ADBC2E48
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 00:45:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 276F5BC2E42
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 00:45:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2BDD3A8269
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 22:45:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1DCB14E7041
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 22:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4A725A2A2;
-	Tue,  7 Oct 2025 22:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2141F258EEA;
+	Tue,  7 Oct 2025 22:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O5+hXYg9"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gutkNNvr"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93741F63CD
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 22:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF3B259CAB
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 22:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759877121; cv=none; b=pY41aIbZEv+yS2WvEcdl5QJydXjOWwPWARZ+OcAcIzN7qY6apQs5wsHCg03Yoi5Xg/MeT+7WSz1FLauq/DUhJ5ICoubcgd183cPl2tx7yilkhWcOors09O5azUOEBzoCfBCmNtkjdah383W3izf9HtVelYXyyJ8wlvlU6WNNnSw=
+	t=1759877120; cv=none; b=dI7c+fK2UCfgzEgJdM4R/FpBFfYPs1Te0+u2yBc/cUBuop4ktOG0npR+B6RSXDsRjVcyaY4NPlbVKEYkGLNaZsPlphOpu2GY9azganIdN40AXojJR3i8sOBSUw8H9uBIGPwan05KQnxINKLDMYPiP5osWZd0VYdpvtyiRQtXRo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759877121; c=relaxed/simple;
-	bh=acoKweiE9t+Y6LeZfG/5kZSShYTLMPG+aiKwdlW1U+s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OqUsh9ZwxInwdA8PbMxLVvhWzkZwQ7U5ImjBegx1OViYaORnUpWnzvAmD/gWlaqT6s032cmWj0JaNNOR2FgfVLliNuvCTcHkS0R/s42qAuKUzCHD4N246e5ke+e3eM8TGZuMTkGohtxKr5cWkE/LypMPoOhT6NdhchTsEl2a7+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O5+hXYg9; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1759877120; c=relaxed/simple;
+	bh=eC9JReDks8Bh1ObFeTrelVJadmhwQypwM4JvFQpMPFs=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=cDz1CRLs1SaJ7NjN1cyDcIpghcG1iRFcXlHvTATMuUnEm1KUVxAwoLh62jASYnPofG8TgSeicZ8s2mpJNu/46RNQ3MKUu/spuFHunndNYQ/015BABhQJ4V6Wcm7ij8gLowmUhRcLszWPrybhh0ShxQhXgIRussAoIjeqbVUXV3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gutkNNvr; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-27eeafd4882so98295ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 15:45:19 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b5529da7771so4465886a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 15:45:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759877119; x=1760481919; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=acoKweiE9t+Y6LeZfG/5kZSShYTLMPG+aiKwdlW1U+s=;
-        b=O5+hXYg96ZewNH7mEoKYMlOyuVQuYOqlf3QyNFTRkQpAgQRFI1s43f53cW5AZtXGPh
-         57+/rhOr6NLob0Bjj1age8Wl3AO79UjHeDkAuQQF8dB8lGmLUZu3K1JMBQbAQ7aWbBCg
-         AF9K3m3PI9VvKIjvqzgrXw+gPJK48En4kqslMboZzDyHldVFnLTsKpdOkUkgf+rMWFDW
-         EPOfseR6Ms6B+0uePc42WVZzXlieCcTXXzmiYMgV/wVHLoXYR4/U98+b9IUxdC24Ega7
-         F5DCcjx7q0cUWxzCJflfIoRtScgugFCox0mrtZLBeR3ce/rvGHkBVsPaOovWQQ1I3Dbw
-         D2xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759877119; x=1760481919;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=google.com; s=20230601; t=1759877118; x=1760481918; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=acoKweiE9t+Y6LeZfG/5kZSShYTLMPG+aiKwdlW1U+s=;
-        b=CF2JuipnpP2BqJ/ezHQzXdpxYrjPdTgDNeY2fSw26N6gnDsGo9sp+BEWpmqAMevcu4
-         ELMqxuk1NwzR4WF+MQbLoSax2mCiuJu78clCZqL9eGzAutNGDXfTHwjMg07rMF3ONZwV
-         X6iWThimCxs/D0xiUfQyaqw3IJEBC369LfOf+WnEcXzR2WLfiP8aopzsnJtKZ4T+58fa
-         DCEvCajqsTEz9chNANxmSMpMXme/8xJy8n/rZjmPCSdLC4Wbsn983eyYPJgTsg+oDCRQ
-         bOdtCHlc9Jo0Ne2G4K+Vtjd9m0MvO+uY9U9WXXfjux4pdzfphV4egZSdYYZQhwz/nY7u
-         Fx6A==
-X-Forwarded-Encrypted: i=1; AJvYcCW+B6AdpKgQc92YEjGbsZeY6lQGh1tw0/OeMfwlC6b84AQA+SDX9ztru3u+uBzx2XO+0UVJheQYN+vseP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YychJfPl+8eo51iAm272EvMvo0ZbRO+HWbjPIvJPCxiy6MbpIRL
-	A223plf6FoqT0lqH7/mnNfnAp0yV0+iGSzjJxRHpIrLwMSkixBW3PwexyNj7KZzMj8JqN35bufZ
-	zCMZ5PJsuWf2D6TlG4bLmuxYl27BSU5hU/tjM0T/D
-X-Gm-Gg: ASbGnctamqULkFJ1bcPjUY3gdieCNdJu5ruBmuv3VSa20evJi3rtJAo+7eE9k2zk6ws
-	y7ZW/njfRtjso1eqOWayN6MWUuNjolDdyfVmN19u6q8P5Yov2TRqkefIx0AhRogX09g5hHt8tsG
-	Hdcowy9m70Bjv2Psco2T2sJ9V8omvTnVBFpu8z0QOtZV+cdCLGqanz4FW4Hy7H39+BQGVTxCSPK
-	xtZ/Wv8/u8pTBZzp327DRWm0hl7e7Lv68R64CdSzxUultoPiZIpVilg1ZQRuYlhYr+Sf3vIFDEs
-	0cg=
-X-Google-Smtp-Source: AGHT+IG7Au5xPNQ1Q+npLDoAk2/XxZWd9r/KEIJLvu4AItG4Zo6pTEhdDaHg6C23wmFiAa88C9hgJIStIMVh69InehM=
-X-Received: by 2002:a17:903:1b47:b0:25b:d970:fe45 with SMTP id
- d9443c01a7336-29027603504mr2664305ad.1.1759877118666; Tue, 07 Oct 2025
- 15:45:18 -0700 (PDT)
+        bh=GeTuGOZuqOzgsIuRkdvDy8a0bTpK5eYCrWELv8gOHrc=;
+        b=gutkNNvrBcXq3hjbRhPeQ5XAejdxFpTNFkzwypnz9VKNlpx0JwolA6OO91gO04x2Ih
+         db/gidWSo2fabVDUuKwyL5K3Nmz2qSCg9efawpubdkTR99AP6Kbra9UjzXbXKchsc8C6
+         WvDPShSWdOuHzKSvPTu/qehGsrHEaNa7DPfGXwjq2ko9j0t/fhLwdrpM8hJJ7dzZ8vYx
+         YIDU6fFY1wW5HpOemhEy9W3IRjDy2iJFXO3Zem00ZRClSeij7yo2njGH9XmUrlCh3CgS
+         A291QPFMS4XoeHdfJiCvCDQXioYM4qa8zW8BK6fJZNjWu77xDXwW3ZPF71pSMr6197NR
+         7ngg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759877118; x=1760481918;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GeTuGOZuqOzgsIuRkdvDy8a0bTpK5eYCrWELv8gOHrc=;
+        b=JaXVb9ix2q1aisR4vbGtYGlmqsCXGYfUBgkOI5FTgr8515XxB9ArHVDNp2ZdH4F7w/
+         Uflw9SxFgX/5EBioxVqYYZ3+ATqp+AmAYMq5B8i2unMEotZNEMLLa0lz6pZni1e4WcVo
+         9WQPW7ke64IXCUJBxWx0yAifMeLte/XEa0UzE2VXy4cxOqc5Jn1QmJMHijQ9Fy8HHluu
+         pvoD/yvpriykrtFv+fctd+XTVcOsD1Y5rpZF0Nt2ZP8S5anun0xLqBOhBPehw6fZE5u7
+         tNYAAqr1dDxHKKQCdBvhrBiCTkMm/EJ0Rzh5qrKJFJCcs9A7FnJOLV7FUDCGf635tAWY
+         nFLw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3nqoXn4eFteGqD4Zkf8eOpUJUN1TstUSTG48gcHm/1yI7WgbeIy30J40mmAXT7OR0OWcdJxnpCzUmR88=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYeCl4xo0BikH7usSampOo21CR0jnDH4QApe8PqkXIFqDbDuGz
+	aEbVCf2tUT5291eYruB1eeLmV2Cjdcbs1HS/8poPjnAvg4ddy1KbIQgoy04xfXTY4yiqI9xhU8m
+	AgHu2jw==
+X-Google-Smtp-Source: AGHT+IEZNteKaNr4z9Ryhu8t036SIAgvFyeU2oJCWflX22nsnzNhdVKwA0CcUPbt/5r8MAm+htSw5wx28xU=
+X-Received: from pjbfh9.prod.google.com ([2002:a17:90b:349:b0:329:ec3d:72ad])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:38c1:b0:32e:a54a:be5d
+ with SMTP id 98e67ed59e1d1-33b51124890mr1214710a91.2.1759877118188; Tue, 07
+ Oct 2025 15:45:18 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Tue,  7 Oct 2025 15:45:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250916145122.416128-1-wangjinchao600@gmail.com>
- <CAP-5=fWWOQ-6SWiNVBvb5mCofe0kZUURG_bm0PDsVFWqwDwrXg@mail.gmail.com>
- <aMoTOXIKBYVTj7PV@mdev> <CAP-5=fX7NJmBjd1v5y4xCa0Ce5rNZ8Dqg0LXd12gPrdEQCERVA@mail.gmail.com>
- <aMpIsqcgpOH1AObN@z2> <aMpRqlDXXOR5qYFd@mdev> <CAP-5=fV05++2Qvcxs=+tqhTdpGK8L9e5HzVu=y+xHxy9AqLMmg@mail.gmail.com>
- <CAD=FV=VNmjTVxcxgTQqjE7CTkK2NVGbRxFJSwv=yOHU8gj-urQ@mail.gmail.com>
- <CAP-5=fW64xHEW+4dKU_voNv7E67nUOFm27FFBuhtFii52NiQUQ@mail.gmail.com>
- <CAD=FV=U3ic707dLuUc+NfxtWF6-ZyRdE0OY2VA6TgvgWKCHUzg@mail.gmail.com>
- <CAP-5=fVkw6TLjVuR3UCNs+X1cwVmYk7UFABio4oDOwfshqoP_g@mail.gmail.com> <CAD=FV=UWkZx8xQD=jBkOO6h2f5tw_KCoqhHciw5hkEOYU=GM8A@mail.gmail.com>
-In-Reply-To: <CAD=FV=UWkZx8xQD=jBkOO6h2f5tw_KCoqhHciw5hkEOYU=GM8A@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 7 Oct 2025 15:45:07 -0700
-X-Gm-Features: AS18NWBRXn9S9wdPvMnsRPvu-pwDN6eIzlJlkT1nNcYocjJ91PnSFj4cTdTBrps
-Message-ID: <CAP-5=fXTFHcCE8pf5qgEf1AVODs2+r+_nDUOiWgdQeEgUBHzfA@mail.gmail.com>
-Subject: Re: [RFC PATCH V1] watchdog: Add boot-time selection for hard lockup detector
-To: Doug Anderson <dianders@chromium.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jinchao Wang <wangjinchao600@gmail.com>, 
-	Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Will Deacon <will@kernel.org>, Yunhui Cui <cuiyunhui@bytedance.com>, akpm@linux-foundation.org, 
-	catalin.marinas@arm.com, maddy@linux.ibm.com, mpe@ellerman.id.au, 
-	npiggin@gmail.com, christophe.leroy@csgroup.eu, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	acme@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
-	kees@kernel.org, masahiroy@kernel.org, aliceryhl@google.com, ojeda@kernel.org, 
-	thomas.weissschuh@linutronix.de, xur@google.com, ruanjinjie@huawei.com, 
-	gshan@redhat.com, maz@kernel.org, suzuki.poulose@arm.com, 
-	zhanjie9@hisilicon.com, yangyicong@hisilicon.com, gautam@linux.ibm.com, 
-	arnd@arndb.de, zhao.xichao@vivo.com, rppt@kernel.org, lihuafei1@huawei.com, 
-	coxu@redhat.com, jpoimboe@kernel.org, yaozhenguo1@gmail.com, 
-	luogengkun@huaweicloud.com, max.kellermann@ionos.com, tj@kernel.org, 
-	yury.norov@gmail.com, thorsten.blum@linux.dev, x86@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-perf-users@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.710.ga91ca5db03-goog
+Message-ID: <20251007224515.374516-1-seanjc@google.com>
+Subject: [PATCH] KVM: selftests: Use "gpa" and "gva" for local variable names
+ in pre-fault test
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yan Zhao <yan.y.zhao@intel.com>, Sean Christopherson <seanjc@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 7, 2025 at 2:43=E2=80=AFPM Doug Anderson <dianders@chromium.org=
-> wrote:
-...
-> The buddy watchdog was pretty much following the conventions that were
-> already in the code: that the hardlockup detector (whether backed by
-> perf or not) was essentially called the "nmi watchdog". There were a
-> number of people that were involved in reviews and I don't believe
-> suggesting creating a whole different mechanism for enabling /
-> disabling the buddy watchdog was never suggested.
+Rename guest_test_{phys,virt}_mem to g{p,v}a in the pre-fault memory test
+to shorten line lengths and to use standard terminology.
 
-I suspect they lacked the context that 1 in the nmi_watchdog is taken
-to mean there's a perf event in use by the kernel with implications on
-how group events behave. This behavior has been user
-visible/advertised for 9 years. I don't doubt that there were good
-intentions by PowerPC's watchdog and in the buddy watchdog patches in
-using the file, that use will lead to spurious warnings and behaviors
-by perf.
+No functional change intended.
 
-My points remain:
-1) using multiple files regresses perf's performance;
-2) the file name by its meaning is wrong;
-3) old perf tools on new kernels won't behave as expected wrt warnings
-and metrics because the meaning of the file has changed.
-Using a separate file for each watchdog resolves this. It seems that
-there wasn't enough critical mass for getting this right to have
-mattered before, but that doesn't mean we shouldn't get it right now.
+Cc: Yan Zhao <yan.y.zhao@intel.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ .../selftests/kvm/pre_fault_memory_test.c     | 27 +++++++++----------
+ 1 file changed, 12 insertions(+), 15 deletions(-)
 
-Thanks,
-Ian
+diff --git a/tools/testing/selftests/kvm/pre_fault_memory_test.c b/tools/testing/selftests/kvm/pre_fault_memory_test.c
+index f04768c1d2e4..6db75946a4f8 100644
+--- a/tools/testing/selftests/kvm/pre_fault_memory_test.c
++++ b/tools/testing/selftests/kvm/pre_fault_memory_test.c
+@@ -161,6 +161,7 @@ static void pre_fault_memory(struct kvm_vcpu *vcpu, u64 base_gpa, u64 offset,
+ 
+ static void __test_pre_fault_memory(unsigned long vm_type, bool private)
+ {
++	uint64_t gpa, gva, alignment, guest_page_size;
+ 	const struct vm_shape shape = {
+ 		.mode = VM_MODE_DEFAULT,
+ 		.type = vm_type,
+@@ -170,35 +171,31 @@ static void __test_pre_fault_memory(unsigned long vm_type, bool private)
+ 	struct kvm_vm *vm;
+ 	struct ucall uc;
+ 
+-	uint64_t guest_test_phys_mem;
+-	uint64_t guest_test_virt_mem;
+-	uint64_t alignment, guest_page_size;
+-
+ 	vm = vm_create_shape_with_one_vcpu(shape, &vcpu, guest_code);
+ 
+ 	alignment = guest_page_size = vm_guest_mode_params[VM_MODE_DEFAULT].page_size;
+-	guest_test_phys_mem = (vm->max_gfn - TEST_NPAGES) * guest_page_size;
++	gpa = (vm->max_gfn - TEST_NPAGES) * guest_page_size;
+ #ifdef __s390x__
+ 	alignment = max(0x100000UL, guest_page_size);
+ #else
+ 	alignment = SZ_2M;
+ #endif
+-	guest_test_phys_mem = align_down(guest_test_phys_mem, alignment);
+-	guest_test_virt_mem = guest_test_phys_mem & ((1ULL << (vm->va_bits - 1)) - 1);
++	gpa = align_down(gpa, alignment);
++	gva = gpa & ((1ULL << (vm->va_bits - 1)) - 1);
+ 
+-	vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS,
+-				    guest_test_phys_mem, TEST_SLOT, TEST_NPAGES,
++	vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS, gpa,
++				    TEST_SLOT, TEST_NPAGES,
+ 				    private ? KVM_MEM_GUEST_MEMFD : 0);
+-	virt_map(vm, guest_test_virt_mem, guest_test_phys_mem, TEST_NPAGES);
++	virt_map(vm, gva, gpa, TEST_NPAGES);
+ 
+ 	if (private)
+-		vm_mem_set_private(vm, guest_test_phys_mem, TEST_SIZE);
++		vm_mem_set_private(vm, gpa, TEST_SIZE);
+ 
+-	pre_fault_memory(vcpu, guest_test_phys_mem, 0, SZ_2M, 0, private);
+-	pre_fault_memory(vcpu, guest_test_phys_mem, SZ_2M, PAGE_SIZE * 2, PAGE_SIZE, private);
+-	pre_fault_memory(vcpu, guest_test_phys_mem, TEST_SIZE, PAGE_SIZE, PAGE_SIZE, private);
++	pre_fault_memory(vcpu, gpa, 0, SZ_2M, 0, private);
++	pre_fault_memory(vcpu, gpa, SZ_2M, PAGE_SIZE * 2, PAGE_SIZE, private);
++	pre_fault_memory(vcpu, gpa, TEST_SIZE, PAGE_SIZE, PAGE_SIZE, private);
+ 
+-	vcpu_args_set(vcpu, 1, guest_test_virt_mem);
++	vcpu_args_set(vcpu, 1, gva);
+ 	vcpu_run(vcpu);
+ 
+ 	run = vcpu->run;
+
+base-commit: efcebc8f7aeeba15feb1a5bde70af74d96bf1a76
+-- 
+2.51.0.710.ga91ca5db03-goog
+
 
