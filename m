@@ -1,79 +1,47 @@
-Return-Path: <linux-kernel+bounces-843677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 053C1BBFF98
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 03:42:23 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3118BBBFFAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 03:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CD3E24E16BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 01:42:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A00344E20C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 01:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31C31D5AC0;
-	Tue,  7 Oct 2025 01:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A761F1311;
+	Tue,  7 Oct 2025 01:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NcLReOUx"
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eC0zekMv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF291946DF
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 01:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADAD3208;
+	Tue,  7 Oct 2025 01:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759801334; cv=none; b=TT3l84JKpVvLXYqGQXvHgaihbiu7cMrlT9s/uqXm9MMTcRHlfZ9NR+yq7Dm6Lj0FxoFKTEVeMfm8NXiiNtQTyATApUgG31PC0XfjqQ/v0exGkcJV+oF+JxXaW7ircVoBzNX8k+lrq4nmH1JdBSdW+gE8Z87YV9QqkTdQgKVUyog=
+	t=1759801518; cv=none; b=JVg/aMe9+xpFfyOj2zMmnKEFCyaycXjhTWUd6fNtnagMeibATI/I+f96O/fOESNyBV820j1RaTJYOsTUt3Zb+sgH85D1BY+0wjpykJuMwXKwHfBgO7MHKblo1+swjRbnB9nWT3SXNvhHmJYFXX28jcVshkcQxbuFWWGMrslVnbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759801334; c=relaxed/simple;
-	bh=dTonZkeP2W8xwq64wKDM7p+9fYOwb5HtyFurNb6VBkA=;
+	s=arc-20240116; t=1759801518; c=relaxed/simple;
+	bh=leHRgOD3oVNkPwpAQZp02IIQm5ubQ1ORD7ayQw3UBxM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qvNvsJuC4MO5woBmGNDm2xJo1lzKb5m5DxrizhxLVxA6GDeh/DIir871wq8BmKaw3TRNrYtn5/3+S8QvEirII9fwfOzYrZCGUubZyxO3nmXMTV+3160wRE7DYii80xAf9pZF/Yv7vAOwdL6DMOx+xgiEwDE00l1PyVx/9kHBkXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NcLReOUx; arc=none smtp.client-ip=209.85.222.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-890190c7912so2397048241.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 18:42:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759801328; x=1760406128; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dTonZkeP2W8xwq64wKDM7p+9fYOwb5HtyFurNb6VBkA=;
-        b=NcLReOUxuAHcNn66evN/ubwrP1r+1H4oFCWI37nPALkuwrwJDY54nq+YvWG90SJ2th
-         fYeg0rwcPxJxdLcONBipO/zckjQCbmZbSDAOSo7/JTrGV6gi461Fn5g/kz1yYQIJYECS
-         /Q3Uy9aeYm3qSM1Fzgy5P4x2INprAcgbu6t2DrjE8+ZgB6jVu7T824l2rau0UEwVth8v
-         syHSuYFG+u5Q4z4C1bYT9ho97D0xOmDv/ogRRvlvYWZ6JkJaJIt2anT90LUPdG2otS3S
-         ev66T1hyJfcczE3XzldyuxKxQESQqL+kEFLLaNiMtH2xj32DJ+NgVBq6b42kxIHnUbXe
-         dDPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759801328; x=1760406128;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dTonZkeP2W8xwq64wKDM7p+9fYOwb5HtyFurNb6VBkA=;
-        b=byOVrjGSPTLuEAHU+dfbHQKrE5Ndte4oWgji7dnc6OCFt1PysunE4ktSATdmjP+p1q
-         +g+KrOO3xqGbQaYy5TMA+fN1ELMm7T3YtjrfLPFf2JY/9kjWLEK0dPSKeDVsNNBFNqhS
-         j/IhIycQLGYarRHjp2z69gzPhX2Qky1BAlfWuCLv4Vr2ih/y9QbT1W2gnOCVgn8gEjOY
-         wcLFuFViHCMzqnmenqJFEfahICLsOAeelQPJRId4XfD3il+vOuBGM0YS57tA1pFjG1OB
-         4rG0xLx9dwmnLY5xUShB2YriJxrcQ87l/K7VOa+KNJvji7jBov5C4ST+9+LszwOAy7kJ
-         OPyg==
-X-Forwarded-Encrypted: i=1; AJvYcCXtQa0y7mdj0c/mWZSjOhk0p969LlIr2EURum0aDbLROrUXuHjsrRN3Ndk9mAaAb1tj6Qf8P+UmTadwnjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmhMuJy0bJHNI+iAE1aM9lzOhhLrJOcqjKzP9HVO5nj3EYDj6g
-	Z1bHPg+gLa5Yfa7mk+SJEKBa3TLq8jlmiWTxq4B6atILT0T0u15acJ4a
-X-Gm-Gg: ASbGncsu18jqhNVsWl6yVAyeo2rI+Bw9k5zUWw7TX5ozMFS4zS6xAzNyCnKVbrxBjUP
-	unNg4zWD6RzGBtWVi3zNMdX1LVpSyYvW8StytJO1ikOvxqth3KNEh0fIREwG+ZSeByCvbxlV1OL
-	lrAbCQg/LjTe7qtTy9LcdaWpTXdygDVeEif/f3u5uuRb4Gmn2DcGOaEEQD2BDshRAVuIGVtCDJ+
-	4g4j3CN6o2CYlY6kbze2CcHMeOwSwW1YkGb+kaSgxmW3jfL5WscjskmTUxS4sPC7bbp3kvTEOqX
-	7j+IAh+HmgIltcJIGuCGcR8oTfbD5Cpvlrkyv9j26lzlpC2LL19n5qtfK9rD4gMzYkxNJtMErUt
-	sf+C9NnFdjyJ8pvUkF94eWhgz5e61wl5T+ibAMqsqp93QfpjYr6vbgeMUTLhHzpc=
-X-Google-Smtp-Source: AGHT+IG/CuZVAES3BSHynINML/GYB9ctain2pBZEnoUSZafLAz/JojezFxB/4HIhRy7e/u9iBABY0w==
-X-Received: by 2002:a05:6122:3bc9:b0:54a:a874:6e4e with SMTP id 71dfb90a1353d-5524e902014mr4641182e0c.8.1759801327865;
-        Mon, 06 Oct 2025 18:42:07 -0700 (PDT)
-Received: from [192.168.1.145] ([104.203.11.126])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5523cf64c29sm3436147e0c.20.2025.10.06.18.42.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Oct 2025 18:42:07 -0700 (PDT)
-Message-ID: <8135af96-528a-4aca-8e11-7cdf038f1454@gmail.com>
-Date: Mon, 6 Oct 2025 21:42:04 -0400
+	 In-Reply-To:Content-Type; b=eOLCnTGs5oxTZNuBm4egz8EUDOd/acHdFGGRtS34hbjuBMfmukDq/gC0RQ/OaSQ7wJWFsxmbo/jASXTWtWv/VFBmELW4p0SjOC7Ym6gGsd6+G8gQqPG/ZwoF0Hw8y3jup5iShecwUb43p6Pg2JOYC3K1vcsBLWqb+ZP0CeUmXz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eC0zekMv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF860C4CEF5;
+	Tue,  7 Oct 2025 01:45:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759801517;
+	bh=leHRgOD3oVNkPwpAQZp02IIQm5ubQ1ORD7ayQw3UBxM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eC0zekMv2KDBXWMDfERVUIGaeJgkWVaNG5DBi7e0kJRPXhKvnW8j/gNeMoY7Tnyc5
+	 ryImu1uVM1ZyG0NbL0FnfgascSKCg3milyMcrxKSMUpJtJmBEjO8nooN9QKUQpQU9C
+	 vUqkZZP8k/HbvSj1QUKomtX6U0Vx5vLEP2KVnUoDMkSIVzvnSQFVBpI7M2Meh8YvVv
+	 XP9DmKgdc2lhR2ZP6zavMxWjgLUHlhixaEtt4uA6A5smRhct+jHBXxRUl5GY4XhacM
+	 +OCFPLY30EzpW+l5XNOTPb0amhIvyg6rU/SrAgtdbWIHex5RP7WwGWm4zL0qaLZz97
+	 UI5kvfM7mK3Rw==
+Message-ID: <67e313d3-1f91-4205-8aec-fbbfa41004f2@kernel.org>
+Date: Tue, 7 Oct 2025 10:45:07 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,32 +49,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: fix shift out-of-bounds in sg_build_indirect The
- num variable is set to 0. The variable num gets its value from
- scatter_elem_sz. However the minimum value of scatter_elem_sz is PAGE_SHIFT.
- So setting num to PAGE_SIZE when num < PAGE_SIZE.
-To: Kshitij Paranjape <kshitijvparanjape@gmail.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: Doug Gilbert <dgilbert@interlog.com>,
- "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
- skhan@linuxfoundation.org, khalid@kernel.org, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
- stable@vger.kernel.org, syzbot+270f1c719ee7baab9941@syzkaller.appspotmail.com
-References: <20251006174658.217497-1-kshitijvparanjape@gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: sound: qcom,sm8250: add QRB2210 and RB1
+ soundcards
+To: Alexey Klimov <alexey.klimov@linaro.org>,
+ Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251007-qrb2210-qcm2290-sndcard-v1-0-8222141bca79@linaro.org>
+ <20251007-qrb2210-qcm2290-sndcard-v1-1-8222141bca79@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: David Hunter <david.hunter.linux@gmail.com>
-In-Reply-To: <20251006174658.217497-1-kshitijvparanjape@gmail.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251007-qrb2210-qcm2290-sndcard-v1-1-8222141bca79@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/6/25 13:46, Kshitij Paranjape wrote:
-> Cc: <stable@vger.kernel.org>
-> Reported-by: syzbot+270f1c719ee7baab9941@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=270f1c719ee7baab9941
-> Signed-off-by: Kshitij Paranjape <kshitijvparanjape@gmail.com>
+On 07/10/2025 10:26, Alexey Klimov wrote:
+> Add soundcard compatible for QRB2210 (QCM2290) platforms.
+> While at this, also add QRB2210 RB1 entry which is set to be
+> compatible with QRB2210 soundcard.
 
-Hey Kshitij,
 
-the formatting didn't quite work out the way you intended. For the next
-version, please try to send it to Shuah and I first.
+You explained here what you did, but you should explain why. I don't
+quite get why SoC sound card and RB1 sound card are both needed. I would
+just go with one.
+
+Please use subject prefixes matching the subsystem. For bindings, the
+preferred subjects are explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+
+> 
+
+
+Best regards,
+Krzysztof
 
