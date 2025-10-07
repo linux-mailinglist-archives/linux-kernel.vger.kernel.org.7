@@ -1,252 +1,203 @@
-Return-Path: <linux-kernel+bounces-843762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE67CBC02FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 07:19:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8871BBC0309
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 07:21:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DE643C40F9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 05:19:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FC8C3BB933
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 05:21:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A46C4A1E;
-	Tue,  7 Oct 2025 05:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B77F1E1DE7;
+	Tue,  7 Oct 2025 05:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jjqnFoXX";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JkWzDtG7";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VcUSFJBX";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LMBtUVYW"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="Ncs3+K94"
+Received: from va-2-37.ptr.blmpb.com (va-2-37.ptr.blmpb.com [209.127.231.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53413596B
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 05:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89731C6FF6
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 05:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.127.231.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759814378; cv=none; b=fxj22/XepplYI58lEVFuoB9Zjzqx0UKB1mdW/36otQph3mcoLXFon+mt5cW3JHUiD4sAtD7vQIiUm6oCU9v+/i+7rmYgeFM0eAWlyklHPXADmqHF231uHw9utDU392RgeZ2kD3BIuil5fTBx5IPYNnUlzvWPTqWXcgFrcJiGKEY=
+	t=1759814495; cv=none; b=fdIAgRrF4fMkj2d30ARqusNMeRtI0BQtdGJ786/EpCVVUwl3DWBmxFCJV5qRPWhqJ+Y5PDaFbyGIuj6mi/qWwqcLrgMndLT0Bwx7m0eXVqflUY0izazGCMp3i5xFrvOLejY0xNELNgRXjQRIFVI3wG25HcqD+T41QocgKKWaqFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759814378; c=relaxed/simple;
-	bh=6Nq3rUTgOBN3nQQ20+64/b8QJQxiIWn53LAlpcaIFZY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cg4MW1HoJyIZwmGRaNRVx6+fSCA/EgKGvEJMvjvPfnJF4AANQgGz6r4GWOEg8bImaUgVK3MktCU2tw+mv1olC286v/NILurZeoSK9U5316S1/Y5oK/Uss5su33tGJRuiFt4daBboGkl4VuQXGVX9daNWmZUntUJF158V/k3ksBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jjqnFoXX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JkWzDtG7; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VcUSFJBX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LMBtUVYW; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DB44033777;
-	Tue,  7 Oct 2025 05:19:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1759814374; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QbTdrNWNk7FaUtNBwf9W4q3p4EZ63J3H9dHdEMD1rVQ=;
-	b=jjqnFoXXPw1E6Os6S1erCCVqKzQNmZw1qEGgXZKQ27JlSMh3KBU9ho5jKZD3h5Gaejy7KY
-	DOLsfDqL5CxD5ADGkByIMbTTLv5dHKO6WxQdsdCz/Jbt+FhPu7qHCXpAXIBBfVSuV60ngD
-	DRu8Yiopy5K8YnrQLm1j6iYT7JapBVw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1759814374;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QbTdrNWNk7FaUtNBwf9W4q3p4EZ63J3H9dHdEMD1rVQ=;
-	b=JkWzDtG7IM2t2Z2wmEoIuMYoGxhrTuszeMJlrbmR81MuvBAX+kjd6E1hAO10wDD0lRM2w+
-	e3dZk6teusVoa8DA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1759814373; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QbTdrNWNk7FaUtNBwf9W4q3p4EZ63J3H9dHdEMD1rVQ=;
-	b=VcUSFJBXBNLO8mG8u17LzSDk+qoUvNwT4odR8HXmWFN8kgABj9ZLneF/D7tq/jmm1m+WR4
-	mRn/Pd8zm8aMrYolBSCLdvk7gaS8DYk88Smdvqsf8r03BnIDeuooVy8vVAKGMFjSkjYf2F
-	3BpKg2yJDanLNUDNLFTjDq0/7C/qYW8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1759814373;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QbTdrNWNk7FaUtNBwf9W4q3p4EZ63J3H9dHdEMD1rVQ=;
-	b=LMBtUVYWcvehjTsZT8b+pJXv5KzPvrAqitgDGM3MTcnlgCJHw47pqG6Hv6Y1tXrvsH5EEV
-	KbDoCMy2DvsO1IBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5EBBE13693;
-	Tue,  7 Oct 2025 05:19:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ABR5FeWi5Gg0BQAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 07 Oct 2025 05:19:33 +0000
-Message-ID: <0bf649d5-112f-42a8-bc8d-6ef2199ed19d@suse.de>
-Date: Tue, 7 Oct 2025 07:19:32 +0200
+	s=arc-20240116; t=1759814495; c=relaxed/simple;
+	bh=ioe1x/PmH1iPsnqnYGXKHAk9dJBXQEaoWR4Ps56hTtw=;
+	h=References:Subject:Date:Message-Id:Content-Disposition:
+	 In-Reply-To:Content-Type:To:Cc:From:Mime-Version; b=bw8yK+1Ro+cYj8L0cN7WO65BLl94u1a34RgbrvKtHO7b3FGspXBRUT9Nh3np0hhJvLrVncoc3nOPizvtPuwA81obwlG4y0wHZ6Dy1DRRYjBwePWof97RLakqvw1Xr5gtBONahh1zCdcDfpMaXCvQ+o4c5jGqNQ6vnzctBGw3zHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=fail smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=Ncs3+K94; arc=none smtp.client-ip=209.127.231.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fnnas.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1759814440;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=2OWP7OjahPFwqujua+9lES4WFVOxQRzRe9QjVYi71Cg=;
+ b=Ncs3+K940uj2/CpaLfEgpWG3kyT53JODffAquBIPUq20UnMUntoHzADYJk5t7eCdRusCu9
+ vzhNXjQcbfN2pFKqURXMJckurokOqOvoD360ucuagE2jw5TibIOO+OoU/6LvMrE4f54tBX
+ xYMTgmzS6bFL2728DvCI6DGiLvdlYNJFAn73QXmQdH6Afo6rqHWYtAw0QXZWo2S7D/FrvK
+ P44Us1ZJ4hoHNYO5z47+Xertaw1Gl/hnuCCVntbpbom7+L8v6I+jB2Y7cZhW5l3rXooFNz
+ 0IF9y4EyuPgFiss9Z/kv/ORaT46Kj9p1ujI6YLohg55/gcUM7nXnxe/Eq7Vx8Q==
+References: <20251006231845.3082485-2-robertpang@google.com>
+Subject: Re: [PATCH] bcache: add "clock" cache replacement policy
+Date: Tue, 7 Oct 2025 13:20:37 +0800
+Content-Transfer-Encoding: 7bit
+Message-Id: <744rdoputvsokkcgud6j7lrs5hlqnxy6oc2sjfxcvxancdinez@stncekhcbzzz>
+Received: from studio.lan ([120.245.64.214]) by smtp.feishu.cn with ESMTPS; Tue, 07 Oct 2025 13:20:37 +0800
+Content-Disposition: inline
+In-Reply-To: <20251006231845.3082485-2-robertpang@google.com>
+X-Lms-Return-Path: <lba+268e4a326+11928f+vger.kernel.org+colyli@fnnas.com>
+Content-Type: text/plain; charset=UTF-8
+X-Original-From: Coly Li <colyli@fnnas.com>
+To: "Robert Pang" <robertpang@google.com>
+Cc: "Kent Overstreet" <kent.overstreet@linux.dev>, 
+	<linux-bcache@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From: "Coly Li" <colyli@fnnas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvme/tcp: handle tls partially sent records in
- write_space()
-To: Wilfred Mallawa <wilfred.opensource@gmail.com>,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
-Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- John Fastabend <john.fastabend@gmail.com>, Jakub Kicinski <kuba@kernel.org>,
- Sabrina Dubroca <sd@queasysnail.net>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Wilfred Mallawa <wilfred.mallawa@wdc.com>
-References: <20251007004634.38716-2-wilfred.opensource@gmail.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20251007004634.38716-2-wilfred.opensource@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,kernel.dk,lst.de,grimberg.me,gmail.com,queasysnail.net,davemloft.net,google.com,redhat.com,wdc.com];
-	FREEMAIL_TO(0.00)[gmail.com,lists.infradead.org,vger.kernel.org];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
+Mime-Version: 1.0
 
-On 10/7/25 02:46, Wilfred Mallawa wrote:
-> From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+On Mon, Oct 06, 2025 at 04:18:46PM +0800, Robert Pang wrote:
+> This new policy extends the FIFO policy to approximate the classic clock policy
+> (O(n) time complexity) by considering bucket priority, similar to the LRU
+> policy.
 > 
-> With TLS enabled, records that are encrypted and appended to TLS TX
-> list can fail to see a retry if the underlying TCP socket is busy, for
-> example, hitting an EAGAIN from tcp_sendmsg_locked(). This is not known
-> to the NVMe TCP driver, as the TLS layer successfully generated a record.
+
+Current bcache GC is single thread, clock is good here. BTW, could you please
+also add the clock entry into bcache kernel document,
+- Documentation/admin-guide/bcache.rst
+- Documentation/ABI/testing/sysfs-block-bcache
+
+> This policy addresses the high IO latency (1-2 seconds) experienced on
+  ^^^^^^^^^^^-> I assume this policy means LRU, am I correct?
+
+> multi-terabyte cache devices when the free list is empty. The default LRU
+> policy's O(n log n) complexity for sorting priorities for the entire bucket
+> list causes this delay.
 > 
-> Typically, the TLS write_space() callback would ensure such records are
-> retried, but in the NVMe TCP Host driver, write_space() invokes
-> nvme_tcp_write_space(). This causes a partially sent record in the TLS TX
-> list to timeout after not being retried.
-> 
-> This patch aims to address the above by first publically exposing
-> tls_is_partially_sent_record(), then, using this in the NVMe TCP host
-> driver to invoke the TLS write_space() handler where appropriate.
-> 
-> Signed-off-by: Wilfred Mallawa <wilfred.mallawa@wdc.com>
-> Fixes: be8e82caa685 ("nvme-tcp: enable TLS handshake upcall")
+
+Can you provide performance numbers about lock replacement algorithm and add
+them into the commit log?
+
+Yes, for performance optimization, we always need to see the difference made
+by this improvement.
+
+Thanks.
+
+Coly Li
+
+
+
+> Signed-off-by: Robert Pang <robertpang@google.com>
 > ---
->   drivers/nvme/host/tcp.c | 8 ++++++++
->   include/net/tls.h       | 5 +++++
->   net/tls/tls.h           | 5 -----
->   3 files changed, 13 insertions(+), 5 deletions(-)
+>  drivers/md/bcache/alloc.c         | 34 +++++++++++++++++++++++++++----
+>  drivers/md/bcache/bcache_ondisk.h |  1 +
+>  drivers/md/bcache/sysfs.c         |  1 +
+>  3 files changed, 32 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-> index 1413788ca7d5..e3d02c33243b 100644
-> --- a/drivers/nvme/host/tcp.c
-> +++ b/drivers/nvme/host/tcp.c
-> @@ -1076,11 +1076,18 @@ static void nvme_tcp_data_ready(struct sock *sk)
->   static void nvme_tcp_write_space(struct sock *sk)
->   {
->   	struct nvme_tcp_queue *queue;
-> +	struct tls_context *ctx = tls_get_ctx(sk);
->   
->   	read_lock_bh(&sk->sk_callback_lock);
->   	queue = sk->sk_user_data;
+> diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
+> index 48ce750bf70a..c65c48eab169 100644
+> --- a/drivers/md/bcache/alloc.c
+> +++ b/drivers/md/bcache/alloc.c
+> @@ -69,7 +69,8 @@
+>  #include <linux/random.h>
+>  #include <trace/events/bcache.h>
+>  
+> -#define MAX_OPEN_BUCKETS 128
+> +#define MAX_OPEN_BUCKETS	128
+> +#define CHECK_PRIO_SLICES	16
+>  
+>  /* Bucket heap / gen */
+>  
+> @@ -211,19 +212,41 @@ static void invalidate_buckets_lru(struct cache *ca)
+>  	}
+>  }
+>  
+> -static void invalidate_buckets_fifo(struct cache *ca)
+> +/*
+> + * When check_prio is true, this FIFO policy examines the priority of the
+> + * buckets and invalidates only the ones below a threshold in the priority
+> + * ladder. As it goes, the threshold will be raised if not enough buckets are
+> + * invalidated. Empty buckets are also invalidated. This evaulation resembles
+> + * the LRU policy, and is used to approximate the classic clock-sweep cache
+> + * replacement algorithm.
+> + */
+> +static void invalidate_buckets_fifo(struct cache *ca, bool check_prio)
+>  {
+>  	struct bucket *b;
+>  	size_t checked = 0;
+> +	size_t check_quota = 0;
+> +	uint16_t prio_threshold = ca->set->min_prio;
+>  
+>  	while (!fifo_full(&ca->free_inc)) {
+>  		if (ca->fifo_last_bucket <  ca->sb.first_bucket ||
+>  		    ca->fifo_last_bucket >= ca->sb.nbuckets)
+>  			ca->fifo_last_bucket = ca->sb.first_bucket;
+>  
+> +		if (check_prio && checked >= check_quota) {
+> +			BUG_ON(ca->set->min_prio > INITIAL_PRIO);
+> +			prio_threshold +=
+> +				DIV_ROUND_UP(INITIAL_PRIO - ca->set->min_prio,
+> +					     CHECK_PRIO_SLICES);
+> +			check_quota += DIV_ROUND_UP(ca->sb.nbuckets,
+> +						    CHECK_PRIO_SLICES);
+> +		}
 > +
->   	if (likely(queue && sk_stream_is_writeable(sk))) {
->   		clear_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
-> +		/* Ensure pending TLS partial records are retried */
-> +		if (nvme_tcp_queue_tls(queue) &&
-> +		    tls_is_partially_sent_record(ctx))
-> +			queue->write_space(sk);
-> +
->   		queue_work_on(queue->io_cpu, nvme_tcp_wq, &queue->io_work);
->   	}
->   	read_unlock_bh(&sk->sk_callback_lock);
-
-I wonder: Do we really need to check for a partially assembled record,
-or wouldn't it be easier to call queue->write_space() every time here?
-We sure would end up with executing the callback more often, but if no
-data is present it shouldn't do any harm.
-
-IE just use
-
-if (nvme_tcp_queue_tls(queue)
-     queue->write_space(sk);
-
-> @@ -1306,6 +1313,7 @@ static int nvme_tcp_try_send_ddgst(struct nvme_tcp_request *req)
->   static int nvme_tcp_try_send(struct nvme_tcp_queue *queue)
->   {
->   	struct nvme_tcp_request *req;
-> +	struct tls_context *ctx = tls_get_ctx(queue->sock->sk);
->   	unsigned int noreclaim_flag;
->   	int ret = 1;
->   And we need this why?
-
-> diff --git a/include/net/tls.h b/include/net/tls.h
-> index 857340338b69..9c61a2de44bf 100644
-> --- a/include/net/tls.h
-> +++ b/include/net/tls.h
-> @@ -373,6 +373,11 @@ static inline struct tls_context *tls_get_ctx(const struct sock *sk)
->   	return (__force void *)icsk->icsk_ulp_data;
->   }
->   
-> +static inline bool tls_is_partially_sent_record(struct tls_context *ctx)
-> +{
-> +	return !!ctx->partially_sent_record;
-> +}
-> +
->   static inline struct tls_sw_context_rx *tls_sw_ctx_rx(
->   		const struct tls_context *tls_ctx)
->   {
-> diff --git a/net/tls/tls.h b/net/tls/tls.h
-> index 2f86baeb71fc..7839a2effe31 100644
-> --- a/net/tls/tls.h
-> +++ b/net/tls/tls.h
-> @@ -271,11 +271,6 @@ int tls_push_partial_record(struct sock *sk, struct tls_context *ctx,
->   			    int flags);
->   void tls_free_partial_record(struct sock *sk, struct tls_context *ctx);
->   
-> -static inline bool tls_is_partially_sent_record(struct tls_context *ctx)
-> -{
-> -	return !!ctx->partially_sent_record;
-> -}
-> -
->   static inline bool tls_is_pending_open_record(struct tls_context *tls_ctx)
->   {
->   	return tls_ctx->pending_open_record_frags;
-See above. If we were calling ->write_space unconditionally we 
-wouldn'teven need this export.Cheers,Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+>  		b = ca->buckets + ca->fifo_last_bucket++;
+>  
+> -		if (bch_can_invalidate_bucket(ca, b))
+> +		if (bch_can_invalidate_bucket(ca, b) &&
+> +		    (!check_prio ||
+> +		     b->prio <= prio_threshold ||
+> +		     !GC_SECTORS_USED(b)))
+>  			bch_invalidate_one_bucket(ca, b);
+>  
+>  		if (++checked >= ca->sb.nbuckets) {
+> @@ -269,11 +292,14 @@ static void invalidate_buckets(struct cache *ca)
+>  		invalidate_buckets_lru(ca);
+>  		break;
+>  	case CACHE_REPLACEMENT_FIFO:
+> -		invalidate_buckets_fifo(ca);
+> +		invalidate_buckets_fifo(ca, false);
+>  		break;
+>  	case CACHE_REPLACEMENT_RANDOM:
+>  		invalidate_buckets_random(ca);
+>  		break;
+> +	case CACHE_REPLACEMENT_CLOCK:
+> +		invalidate_buckets_fifo(ca, true);
+> +		break;
+>  	}
+>  }
+>  
+> diff --git a/drivers/md/bcache/bcache_ondisk.h b/drivers/md/bcache/bcache_ondisk.h
+> index 6620a7f8fffc..d45794e01fe1 100644
+> --- a/drivers/md/bcache/bcache_ondisk.h
+> +++ b/drivers/md/bcache/bcache_ondisk.h
+> @@ -288,6 +288,7 @@ BITMASK(CACHE_REPLACEMENT,		struct cache_sb, flags, 2, 3);
+>  #define CACHE_REPLACEMENT_LRU		0U
+>  #define CACHE_REPLACEMENT_FIFO		1U
+>  #define CACHE_REPLACEMENT_RANDOM	2U
+> +#define CACHE_REPLACEMENT_CLOCK		3U
+>  
+>  BITMASK(BDEV_CACHE_MODE,		struct cache_sb, flags, 0, 4);
+>  #define CACHE_MODE_WRITETHROUGH		0U
+> diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+> index 826b14cae4e5..c8617bad0648 100644
+> --- a/drivers/md/bcache/sysfs.c
+> +++ b/drivers/md/bcache/sysfs.c
+> @@ -45,6 +45,7 @@ static const char * const cache_replacement_policies[] = {
+>  	"lru",
+>  	"fifo",
+>  	"random",
+> +	"clock",
+>  	NULL
+>  };
+>  
+> -- 
+> 2.51.0.710.ga91ca5db03-goog
 
