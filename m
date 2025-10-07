@@ -1,205 +1,205 @@
-Return-Path: <linux-kernel+bounces-843643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FB39BBFE6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 03:07:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50057BBFE81
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 03:08:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A26C3AA192
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 01:07:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 719F73C4289
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 01:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C231E47C5;
-	Tue,  7 Oct 2025 01:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9B91E32D3;
+	Tue,  7 Oct 2025 01:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gHtQ0YFC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YnU+bf+S"
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011025.outbound.protection.outlook.com [40.93.194.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339FA2B9BA;
-	Tue,  7 Oct 2025 01:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759799272; cv=none; b=WdDq8vPyFDYzP5ffdGMJ/65m+stT5yr556rAM9pc3j9msmbQzQ8sITTStipRcTGPyV9Vc+sZAMCBuUSlhCuTDD8Z8Llzg7Qn5jyfTH+mRWh9LpNJXrKZmSoSRsI53UfUQPECSg01XJs+aWgPOQtRbJ5reQhdIeoqVYUnwmkFX0M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759799272; c=relaxed/simple;
-	bh=nK6IsY8XXOXC3iEsNBKq4APCgI7iwBgaZHbbITUoa78=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u1jbPqM0ITfKjH2WfVtCxXhDnDiigrhFVjcdiTCnch7GEXHG8faqI8l5KbMnZgeeTCO+OeGMSpGi6Yx+0U2rZ0EjnfMYyI959aM7tIRV1IRpU6kDMcrKCuAXzoCIF6fVY8BvdyPx1G39BZbUxR5VR/fWvISSHphqOWnCo5ZLZyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gHtQ0YFC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00B8EC4CEF5;
-	Tue,  7 Oct 2025 01:07:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759799271;
-	bh=nK6IsY8XXOXC3iEsNBKq4APCgI7iwBgaZHbbITUoa78=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gHtQ0YFCKBy1lf45EZWeJND8yeZrZBT7/7HNX2VpubpKWLuYidChVNlQy5SaMx8gt
-	 S6FPOb5yOqT0M1x0WJWiugPGWpVY7daM2YTvUp+edMThQIhMXqDl2erHhUkBd3gI9M
-	 GsSZywDM7qIq5Yz+5NapAO5ztQEVs6blHq7SlIW9qxk3Ef90x+YLiCVRhz5Co5aHk/
-	 AQFSKi1d9rFglmGmsozt5KJIksAEXHCYwWCi6Xf7Ilf07l5GifaKKrh2Vu9dOT8BcJ
-	 SRmRtsihag8qNibq0xZHDVaF32MeNC8x3pZS8UJSgKywkxwSmtMhG5ltlhtcBXZSeO
-	 2m27pKypuPTCA==
-Message-ID: <164411f7-7925-491c-a24f-30021cab3f99@kernel.org>
-Date: Tue, 7 Oct 2025 10:07:40 +0900
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6A12B9BA
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 01:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759799311; cv=fail; b=XRaCHfiPYvZ8hT1chmD9G6GNNQGUYWCmS0YgcvIKzYYIP4ypna4KDK+K8J+6bTUwzAEoVxYcYXPjzwdZVGT7wMlvwv9pwBkbrvD8c8LNry30ft++Z5InIY4IWcnomhVm3wMOUe0eqkPgKUEDdT8ysC54U7y66JVsFPk1T8dhlzY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759799311; c=relaxed/simple;
+	bh=M1U0rX/b+ig7JsVL6ADACjV2ie2zaffgB59cdMoSNB4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UD9rusGmge9phx2QH57D4Rp/Kpb+tONe9MRtUNT5Km8WtMv45chk+0X5vHAOLe163yJPbEiwuaLLnfCyH28QLwDW7d90HMd+fFLDByNVi+SKj7nmpdo0m3Gg7d0OBo08Odb9I97ucCpZ5SqJLfzjrDciiZ4wlvPGIPOjBo8yFB0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YnU+bf+S; arc=fail smtp.client-ip=40.93.194.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RQ7uqu12oZOKak8hfJKqnz2X4uW5gz3ofDHhjK0p9fYZtwqTEYSnFEdsacJggockIEFEYn8qqiUh8S316UezNoE8dmZLBeQAWxMAqGlKFQIaihqewTWoXNkWirkQg+OZ0N6JlPZYSx0U3/6+hmL3TJ+r9gvMTG/MBB5JLUoXUcMRkiTNUfDsh3DxUUDSgo6ZzLf2SadJwhN6ZAKaxOSjSKpvbVW2t/0nnaDDjCzF6aS78wPYzTejsNM+UyyP+3fHOhGPik8n72c8rWs9Ebp7DwtWpUO24mDru/AH33xVKPpRwhPjZbS4zn12d3gqJVCqjI68Zq3vFMFjiTVcI+E1RQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Pr0QFisNY2roYeraKNxtXOxFkvO9dt9PQj8Lhd6o/Ik=;
+ b=hmb73g0QVUza7kr0rBPAu1w8DtiAnUH3YD+UiVGnAWmDTUb9bJ2ntpy0Pf/Mjsy7BiBZRDWKKPoDtsrOvEHkp2oifFRDNaAAKo4fD9YV6F/ctRNJ8Tw9FTokxv/ENwcEPCevVD64T2z/sGOaUb+UgORENhws4RB9SDJpwJSqmmAlPEgGrn2nJ916UD2672otDm4T2iLEW5ucOsMwco8meZr5INqTUBEGX/hAIxl/PqfX5vrAIR1NP1gdJiXxRrxrzxJw2Tffu/6NCItEm2w380dGSphg1vKJOtrW3YYcZYY1Fi7U0oRk17xACQLXhbGskUyp5yAnsZNQAG8dA8yKDQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=linux.microsoft.com
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Pr0QFisNY2roYeraKNxtXOxFkvO9dt9PQj8Lhd6o/Ik=;
+ b=YnU+bf+S5lM1jA3pPGum9TF54KA4d57qqO9z2lcVbHrlVkalX+H5byuUcKpaLyvXP+h/QNq+qCewBl/+a0KNnii/RmoXck0qIc4g/b4GbXzT/bfZ0yvRnzsPtRYfrh7Kmjv9aUiFAI8ZDwYbwgkuPRFYc9e09dExx66RlzoHxIvldxU+eW5hSzurhR4Sj+ppBBv3MJXPypmHjiyetWYkvWGetMCyFlIFapBWVGYynXSI2+6poAy0VHdg0jaPLwyy+aheFlN2FXQglOWh7JQ/v3NCsu8VMaWgEnRvpHnMzVZAQ+QMRCcwYHackn+9rdgJoXdalhEVZi8ztujFgUmTrA==
+Received: from SN7PR04CA0214.namprd04.prod.outlook.com (2603:10b6:806:127::9)
+ by DS7PR12MB6191.namprd12.prod.outlook.com (2603:10b6:8:98::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Tue, 7 Oct
+ 2025 01:08:19 +0000
+Received: from SN1PEPF00026367.namprd02.prod.outlook.com
+ (2603:10b6:806:127:cafe::26) by SN7PR04CA0214.outlook.office365.com
+ (2603:10b6:806:127::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.20 via Frontend Transport; Tue,
+ 7 Oct 2025 01:08:19 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ SN1PEPF00026367.mail.protection.outlook.com (10.167.241.132) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9203.9 via Frontend Transport; Tue, 7 Oct 2025 01:08:19 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 6 Oct
+ 2025 18:08:16 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Mon, 6 Oct 2025 18:08:16 -0700
+Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.126.190.181)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Mon, 6 Oct 2025 18:08:15 -0700
+Date: Mon, 6 Oct 2025 18:08:14 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jacob Pan <jacob.pan@linux.microsoft.com>
+CC: <linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, Will Deacon <will@kernel.org>, Jason Gunthorpe
+	<jgg@nvidia.com>, Robin Murphy <robin.murphy@arm.com>, Zhang Yu
+	<zhangyu1@linux.microsoft.com>, Jean Philippe-Brucker
+	<jean-philippe@linaro.org>, Alexander Grest <Alexander.Grest@microsoft.com>
+Subject: Re: [PATCH 2/2] iommu/arm-smmu-v3: Improve CMDQ lock fairness and
+ efficiency
+Message-ID: <aORn/vKfVL88q05w@nvidia.com>
+References: <20250924175438.7450-1-jacob.pan@linux.microsoft.com>
+ <20250924175438.7450-3-jacob.pan@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 0/4] Add tegra264 audio device tree support
-To: "Sheetal ." <sheetal@nvidia.com>, "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>,
- linux-sound@vger.kernel.org, Mark Brown <broonie@kernel.org>,
- dmaengine@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Jonathan Hunter
- <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
- Thierry Reding <thierry.reding@gmail.com>, Marc Zyngier <maz@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
- Liam Girdwood <lgirdwood@gmail.com>
-References: <20250929105930.1767294-1-sheetal@nvidia.com>
- <175915953199.54406.1457670691076635405.robh@kernel.org>
- <4cc27ab8-4e59-45b9-9383-183f78da47a6@nvidia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <4cc27ab8-4e59-45b9-9383-183f78da47a6@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250924175438.7450-3-jacob.pan@linux.microsoft.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF00026367:EE_|DS7PR12MB6191:EE_
+X-MS-Office365-Filtering-Correlation-Id: cf50d9e3-ef01-4254-20c6-08de053e00d5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?k1r86ZeUBP3h6+nQBYnCvlW2F5W+Brkyki3Ly56aG8hf4fCgX0Cc25QiDN/E?=
+ =?us-ascii?Q?EZ1wBhWbhVapOVj1Hr7Z1dFeAjxwfoVxE45ObG9X+rENIwLV+RtogCgYgCnD?=
+ =?us-ascii?Q?oXteJrBVRrWndkIg0E1r3EEAzkzM8DwoXp2TikJPXknb3dDmAMgtzi5u2vjv?=
+ =?us-ascii?Q?CHEQW2O4YcScRCoALzYwy96kkAwNjUvvjg2kvFONMfJ4WKam7RrHOlhVBYFj?=
+ =?us-ascii?Q?ChhKr/VtAh15wJuh9kXDzdjDoQS0yLGj7f3C6CXrKWiq1+xE7WHzluRfNq9k?=
+ =?us-ascii?Q?ykxmKk4r017lthwrgCLKkAIpao5c++yIipb/vDXKepyo8A9zJ21ILVLOl0RX?=
+ =?us-ascii?Q?i8996eGa62eaZrGOEzx6AKaocBFws62fw3erRM1ubvw7Ip89x4p9ZrY6tQ5K?=
+ =?us-ascii?Q?g1ZND8IBWh1G+R1K7HOzoGGrUf75W7jsW6VeXRbGxAi9QNoQtp3vVon54AZ6?=
+ =?us-ascii?Q?fc0PYekmV0G7F6J6zyUNNachGdJaEM0E6i++bBqLmNj5VhhoXhXOQxaesPP2?=
+ =?us-ascii?Q?Y9RcoiXquZW209cLNkPQ7QCI/BjrfWta292cxwzuFfTSUQ7tQH4+QC0cfjRb?=
+ =?us-ascii?Q?Dz42z/0KIzLbCSbIn1SSzV+yqPS+2Q8D7q1xUwO+YXesfwVtbhxDelP6nZO6?=
+ =?us-ascii?Q?w/oof9ksF/bt/aDqG4gDG/xCucWOY0tNRGTIe0emg6UzaKo9nJ+HuFwbqpOY?=
+ =?us-ascii?Q?RabC9LbM+n0aYQ88VVyNV+VXVkmOm/LnI5zsyTDm7TzoAl3lgN3wBEHH62QI?=
+ =?us-ascii?Q?HksiXk0klJUPy+v9OD+ME22K+RzerfiM7e4+OEdBlIpgWtc9Kj5CswbevTo2?=
+ =?us-ascii?Q?NNLSfabZnohKuVjf2DnhvlWhMOMLYb6Uy0Z7tPpFeHBXqU8ksp6jS4WaUA+6?=
+ =?us-ascii?Q?r4w7bwpfWD0fFw5YfAWv8avs7Mur+VpDaXXSCzK2AHf6fPnnKWX0ubs9l+8C?=
+ =?us-ascii?Q?Vl2zK6cgPagLJChU5WpEvlxb6I1We/tk/Zf6C5NCNQlUScG0rp8ca2Gro1of?=
+ =?us-ascii?Q?6OOGTBPal8jwGXY+sFeBltlyCzMqF9SjVPQ8YL9ZSEQ1q38Z30s9toffWFa2?=
+ =?us-ascii?Q?Wfwi8uOysl18beT+mQoDns+GViCoBftuTw5ehciDcKNQJ9RcakinrH7UqUH6?=
+ =?us-ascii?Q?W7ndP06szZWs554qQptfJJf1gXIGD0+1sdmnZ5U8gilybRbGuQDgjIq7wWWU?=
+ =?us-ascii?Q?9cY6BhnKEMOApqV85QGcO/ZtgIp7LUq5La54JP/ZZoGcNC60rRqC5u63g5Lp?=
+ =?us-ascii?Q?x9lJ6RCacCYeZ7+CW5svKSPzbBPY/ABVBrWPm8KIJkeC42mHHmGHJA1Z9i4Q?=
+ =?us-ascii?Q?QCq9HCaIt6haEL6+tysxI4Oj34/jVaFzOsuM0+/UDvWkFPZ7brh9szDbbRoT?=
+ =?us-ascii?Q?1d0zDeAG8T4PLXaf7cuVhrU5AYi/vq0BVc/Txw63qDXmbuvJkcVhtFUNuyQV?=
+ =?us-ascii?Q?T47CxAoN7X/L6L3kWIuGmchN6IXqHrtaQesC8ZS8GtzU8GN+eLLUr9OfaOV1?=
+ =?us-ascii?Q?bhfet230UqinIY1h8Oig5oIAWnIcr24UUP/q7jVNnGIHZTlyY9I9BOrgcHdl?=
+ =?us-ascii?Q?aNqnByVFLdDJtBU2Ud0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2025 01:08:19.2321
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cf50d9e3-ef01-4254-20c6-08de053e00d5
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF00026367.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6191
 
-On 30/09/2025 15:24, Sheetal . wrote:
-> 
-> 
-> On 29-09-2025 20:58, Rob Herring (Arm) wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> On Mon, 29 Sep 2025 16:29:26 +0530, Sheetal . wrote:
->>> From: sheetal <sheetal@nvidia.com>
->>>
->>> Add device tree support for tegra264 audio subsystem including:
->>> - Binding update for
->>>    - 64-channel ADMA controller
->>>    - 32 RX/TX ADMAIF channels
->>>    - tegra264-agic binding for arm,gic
->>> - Add device tree nodes for
->>>    - APE subsystem (ACONNECT, AGIC, ADMA, AHUB and children (ADMAIF, I2S,
->>>      DMIC, DSPK, MVC, SFC, ASRC, AMX, ADX, OPE and Mixer) nodes
->>>    - HDA controller
->>>    - sound
->>>
->>> Note:
->>>   The change is dependent on https://patchwork.ozlabs.org/project/linux-tegra/patch/20250818135241.3407180-1-thierry.reding@gmail.com/
->>>
->>> ...
->>> Changes in V2:
->>>   - Update the allOf condition in Patch 2/4.
->>>
->>> sheetal (4):
->>>    dt-bindings: dma: Update ADMA bindings for tegra264
->>>    dt-bindings: sound: Update ADMAIF bindings for tegra264
->>>    dt-bindings: interrupt-controller: arm,gic: Add tegra264-agic
->>>    arm64: tegra: Add tegra264 audio support
->>>
->>>   .../bindings/dma/nvidia,tegra210-adma.yaml    |   15 +-
->>>   .../interrupt-controller/arm,gic.yaml         |    1 +
->>>   .../sound/nvidia,tegra210-admaif.yaml         |  106 +-
->>>   .../arm64/boot/dts/nvidia/tegra264-p3971.dtsi |  106 +
->>>   arch/arm64/boot/dts/nvidia/tegra264.dtsi      | 3190 +++++++++++++++++
->>>   5 files changed, 3377 insertions(+), 41 deletions(-)
->>>
->>> --
->>> 2.34.1
->>>
->>>
->>>
->>
->>
->> My bot found new DTB warnings on the .dts files added or changed in this
->> series.
->>
->> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
->> are fixed by another series. Ultimately, it is up to the platform
->> maintainer whether these warnings are acceptable or not. No need to reply
->> unless the platform maintainer has comments.
->>
->> If you already ran DT checks and didn't see these error(s), then
->> make sure dt-schema is up to date:
->>
->>    pip3 install dtschema --upgrade
->>
->>
->> This patch series was applied (using b4) to base:
->>   Base: attempting to guess base-commit...
->>   Base: tags/v6.17-rc1-57-g635ae6f0a3ad (exact match)
->>
->> If this is not the correct base, please add 'base-commit' tag
->> (or use b4 which does this automatically)
->>
->> New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/nvidia/' for 20250929105930.1767294-1-sheetal@nvidia.com:
->>
->> In file included from arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi:3,
->>                   from arch/arm64/boot/dts/nvidia/tegra264-p3834-0008.dtsi:3,
->>                   from arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dts:5:
->> arch/arm64/boot/dts/nvidia/tegra264.dtsi:8:10: fatal error: dt-bindings/power/nvidia,tegra264-powergate.h: No such file or directory
-> 
-> This error is expected.
-> "dt-bindings/power/nvidia,tegra264-powergate.h" file is being added in 
-> https://patchwork.ozlabs.org/project/linux-tegra/patch/20250818135241.3407180-1-thierry.reding@gmail.com/, 
-> in the cover letter it is mentioned as dependent of that change in the 
-> 'Note'.
-> 
-If you expect your patch not to be ignored after such feedback, explain
-briefly missing dependency in the patch changelog. Not cover letter.
+On Wed, Sep 24, 2025 at 10:54:38AM -0700, Jacob Pan wrote:
+>  static void arm_smmu_cmdq_shared_lock(struct arm_smmu_cmdq *cmdq)
+>  {
+> -	int val;
+> -
+>  	/*
+> -	 * We can try to avoid the cmpxchg() loop by simply incrementing the
+> -	 * lock counter. When held in exclusive state, the lock counter is set
+> -	 * to INT_MIN so these increments won't hurt as the value will remain
+> -	 * negative.
+> +	 * We can simply increment the lock counter. When held in exclusive
+> +	 * state, the lock counter is set to INT_MIN so these increments won't
+> +	 * hurt as the value will remain negative.
 
-You will get this report every time and maintainers might ignore your
-patch, due to unresolved reports from automation.
+It seems to me that the change at the first statement is not very
+necessary.
 
-Best regards,
-Krzysztof
+> This will also signal the
+> +	 * exclusive locker that there are shared waiters. Once the exclusive
+> +	 * locker releases the lock, the sign bit will be cleared and our
+> +	 * increment will make the lock counter positive, allowing us to
+> +	 * proceed.
+>  	 */
+>  	if (atomic_fetch_inc_relaxed(&cmdq->lock) >= 0)
+>  		return;
+>  
+> -	do {
+> -		val = atomic_cond_read_relaxed(&cmdq->lock, VAL >= 0);
+> -	} while (atomic_cmpxchg_relaxed(&cmdq->lock, val, val + 1) != val);
+> +	atomic_cond_read_relaxed(&cmdq->lock, VAL >= 0);
+
+The returned value is not captured for anything. Is this read()
+necessary? If so, a line of comments elaborating it?
+
+> +/*
+> + * Only clear the sign bit when releasing the exclusive lock this will
+> + * allow any shared_lock() waiters to proceed without the possibility
+> + * of entering the exclusive lock in a tight loop.
+> + */
+>  #define arm_smmu_cmdq_exclusive_unlock_irqrestore(cmdq, flags)		\
+>  ({									\
+> -	atomic_set_release(&cmdq->lock, 0);				\
+> +	atomic_fetch_and_release(~INT_MIN, &cmdq->lock);				\
+
+By a quick skim, the whole thing looks quite smart to me. But I
+need some time to revisit and perhaps test it as well.
+
+It's also important to get feedback from Will. Both patches are
+touching his writing that has been running for years already..
+
+Nicolin
 
