@@ -1,80 +1,77 @@
-Return-Path: <linux-kernel+bounces-844567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9392BBC23C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 19:17:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9472BC23D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 19:19:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4375F4EAE7C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 17:17:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD1EF19A3841
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 17:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1284D2E8B95;
-	Tue,  7 Oct 2025 17:17:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838122E8B95;
+	Tue,  7 Oct 2025 17:19:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iSh73hti"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DrjbR7Eb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DF834BA34;
-	Tue,  7 Oct 2025 17:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07912209F43
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 17:19:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759857459; cv=none; b=bVu2TicCaDZZcuLDbCkUfaZLKgBQ6AjS2XA/XFGuh2IOY5iTkXm+oCIXWmjnEjOCz1zOgg2G5w6NmhpVpV8AqMcPoO8P8FrvILby5STrdyuiu/pVd/hNNwZ44k4Y6NHaMvta7aN3fgWy9lh/AwZ+kgLqA3XWxIsK6+EAJPfbakQ=
+	t=1759857584; cv=none; b=P4ZFHwLuapkX0kQvZ++m9r9jN0XYIsLUfO5YfbeRe4g71CB06dxBffqBs9T5tvaShrOj7meaOhy2QOnvI9I3QTZjTAi1Tv9/E/s/t/uay+iAqwm56gE+FoNGnQBZoqkjOaB8bjLZ85g7jcKKe4VgzQ+BT/q3LARx1MPjDbKpet4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759857459; c=relaxed/simple;
-	bh=DAFgXC6SxWdL/cD7ojk7LsHsHwahqWWObauM/TTqz9A=;
+	s=arc-20240116; t=1759857584; c=relaxed/simple;
+	bh=04gTbKgCSHKZd3aBKRMj417uPit6Bz6/wDOB3rF1/jM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A1FVWPO/0Q1+26WyvwktMwoEq8NDS0RCgqr/sCCC0cXOh01MXpi/Be0m2Z/XqcVBKBR5KYWbvH35aHH9jswTIwA7Jm1uyjAQ9tlNftm0H9BxIbNdMv/0yUeHDnCaM6MN+IjJwDLmamVCD5Lp3JKyHaGfMN/VYrHDwz4c6gPwwlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iSh73hti; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2C66C4CEF1;
-	Tue,  7 Oct 2025 17:17:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759857458;
-	bh=DAFgXC6SxWdL/cD7ojk7LsHsHwahqWWObauM/TTqz9A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iSh73htibwbHo797aqyy0ATyVZ1v0pN8Yur3u3gy/4KFT7w4a+bkPaNjov2hdmA0/
-	 u8CaPUMV/QxXXeGWwUV2+RjmJzTxT1z20lKVtPGj7hrKe7mJpxepagf5Wfec89hrwe
-	 fv21GZ9GJR409dSph3W9pQDUIuGm2A0JeFHeyQrG9k6VfubpS+5BtMRf89QoBUT/mi
-	 mzCSAfdpcXMAKf2It86JU6JFMb43A7tMMcpqxBhe1SS0lYsdHswS/uy07jr27NmEuc
-	 PL0/ciQMuav2n19IxbfFAWo6vTud4fAd4veAji50d4My7Rh0N1pgu4fAIB0oqVBn0D
-	 PS8Ayw2IHr7Rw==
-Date: Tue, 7 Oct 2025 10:17:38 -0700
-From: Kees Cook <kees@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Jann Horn <jannh@google.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Marco Elver <elver@google.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=D27k+zSxES3D0x+LntF9e8JNmwCu5smPNRkDn63uETeOICYBy/57e3cEYISogM8F/owiojvPMezv8MjbQgZ/VUdBrRkjeC8HVV8mEwfiqca1vx/VqrKvQxpBm3W3lgawwSgB87U6nu6Y0OETgvPLz3inr1uOQzm+LFs5gQVmJy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DrjbR7Eb; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759857582;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jwJDP7d40VHHRzU3PU/T877OPeeWj4IAykDDFZsodqQ=;
+	b=DrjbR7EbkSmLtcAwMT0prcfLZnA7/P6TVBLc9gY2XdDdlRVuHUCmoWrUyOxUTVxYw0+Sbq
+	svqIh/bw9VfAX6pCr7tYnL6FEOfLI4lCYeHJwwbkBLNYPnA8i9yL7MBkQjT1TpI/eEzCP6
+	fGesx8HgPn5Nhyaj0GO5am7TRE0gio0=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-683-0WsfU-pcNciFzh1vLmiJog-1; Tue,
+ 07 Oct 2025 13:19:39 -0400
+X-MC-Unique: 0WsfU-pcNciFzh1vLmiJog-1
+X-Mimecast-MFC-AGG-ID: 0WsfU-pcNciFzh1vLmiJog_1759857577
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4ABA7195608D;
+	Tue,  7 Oct 2025 17:19:37 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.227.6])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id D5872180047F;
+	Tue,  7 Oct 2025 17:19:32 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue,  7 Oct 2025 19:18:16 +0200 (CEST)
+Date: Tue, 7 Oct 2025 19:18:10 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Waiman Long <llong@redhat.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+	Li RongQing <lirongqing@baidu.com>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>, Jakub Kicinski <kuba@kernel.org>,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Tony Ambardar <tony.ambardar@gmail.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Jan Hendrik Farr <kernel@jfarr.cc>,
-	Alexander Potapenko <glider@google.com>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	linux-doc@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v4 2/2] slab: Introduce kmalloc_obj() and family
-Message-ID: <202510071001.11497F6708@keescook>
-References: <20250315025852.it.568-kees@kernel.org>
- <20250315031550.473587-2-kees@kernel.org>
- <aOR15Xb6DfolYM0z@casper.infradead.org>
+	Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] seqlock: introduce scoped_seqlock_read() and
+ scoped_seqlock_read_irqsave()
+Message-ID: <20251007171810.GC12329@redhat.com>
+References: <20251007142113.GA17118@redhat.com>
+ <6e804e9b-ec73-4f2d-8e1f-c187ea5eb319@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,84 +80,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aOR15Xb6DfolYM0z@casper.infradead.org>
+In-Reply-To: <6e804e9b-ec73-4f2d-8e1f-c187ea5eb319@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Tue, Oct 07, 2025 at 03:07:33AM +0100, Matthew Wilcox wrote:
-> On Fri, Mar 14, 2025 at 08:15:45PM -0700, Kees Cook wrote:
-> > +Performing open-coded kmalloc()-family allocation assignments prevents
-> > +the kernel (and compiler) from being able to examine the type of the
-> > +variable being assigned, which limits any related introspection that
-> > +may help with alignment, wrap-around, or additional hardening. The
-> > +kmalloc_obj()-family of macros provide this introspection, which can be
-> > +used for the common code patterns for single, array, and flexible object
-> > +allocations. For example, these open coded assignments::
-> > +
-> > +	ptr = kmalloc(sizeof(*ptr), gfp);
-> > +	ptr = kmalloc(sizeof(struct the_type_of_ptr_obj), gfp);
-> > +	ptr = kzalloc(sizeof(*ptr), gfp);
-> > +	ptr = kmalloc_array(count, sizeof(*ptr), gfp);
-> > +	ptr = kcalloc(count, sizeof(*ptr), gfp);
-> > +	ptr = kmalloc(struct_size(ptr, flex_member, count), gfp);
-> > +
-> > +become, respectively::
-> > +
-> > +	kmalloc_obj(ptr, gfp);
-> > +	kzalloc_obj(ptr, gfp);
-> > +	kmalloc_objs(ptr, count, gfp);
-> > +	kzalloc_objs(ptr, count, gfp);
-> > +	kmalloc_flex(ptr, flex_member, count, gfp);
-> 
-> I'd like to propose a different approach for consideration.
-> 
-> The first two are obvious.  If we now believe that object type is the
-> important thing, well we have an API for that:
-> 
-> struct buffer_head { ... };
-> 
-> 	bh_cache = KMEM_CACHE(buffer_head, SLAB_RECLAIM_ACCOUNT);
-> ...
-> 	ptr = kmem_cache_alloc(bh_cache, GFP_KERNEL);
-> 
-> It's a little more verbose than what you're suggesting, but it does give
-> us the chance to specify SLAB_ flags.  It already does the alignment
-> optimisation you're suggesting.  Maybe we can use some macro sugar to
-> simplify this.
+On 10/07, Waiman Long wrote:
+>
+> On 10/7/25 10:21 AM, Oleg Nesterov wrote:
+> >+
+> >+/* internal helper for scoped_seqlock_read/scoped_seqlock_read_irqsave */
+> >+static inline int
+> >+scoped_seqlock_read_retry(seqlock_t *lock, int *seq, unsigned long *flags)
+> I would suggest adding the "__" prefix to indicate that this is an internal
+> helper that shouldn't be called directly.
 
-I just don't think this is remotely feasible. We have tens of thousands
-of kmalloc callers in the kernel and that's just not going to work. Also
-it's wildly redundant given that the type info is present already in
-the proposed series -- the point is ot make this something the allocator
-can use (if it wants to) and not depend on the user to do it.
-kmem_cache_alloc is just too inflexible.
+OK, I will add "__", but I thought that "internal helper" makes it clear that
+it shouldn't be called directly. Nevermind, will do.
 
-Doing the mechanical transformation of these callsites is also largely
-done already via a Coccinelle script I mentioned in earlier threads:
-https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/kmalloc_objs.cocci
+> >+#define __scoped_seqlock_read(lock, lockless, seq)	\
+> >+	for (int lockless = 1, seq = read_seqbegin(lock);		\
+> >+	     lockless || scoped_seqlock_read_retry(lock, &seq, NULL);	\
+> >+	     lockless = 0)
+>
+> I like Linus' suggestion of putting lockless and seq into a struct to make
+> it more consistent with __scoped_seqlock_read_irqsave().
 
-https://web.git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=dev/v6.14-rc2/alloc_obj/v4-treewide&id=106fd376feea1699868859e82416d5b7c50866ee
-7568 files changed, 16342 insertions, 18580 deletions
+Again, will do. See my reply to Linus.
 
-> The array ones are a little tougher.  Let's set them aside for the
-> moment and tackle the really hard one; kmalloc_flex.
-> 
-> Slab is fundamentally built on all objects in the slab being the same
-> size.  But maybe someone sufficiently enterprising could build a
-> "variable sized" slab variant?  If we're saying that object type is
-> more important a discriminator than object size, then perhaps grouping
-> objects of the same size together isn't nearly as useful as grouping
-> objects of the same type together, even if they're different sizes.
-> 
-> Might be a good GSoC/outreachy project?
+> >+/**
+> >+ * scoped_seqlock_read_irqsave(lock) - same as scoped_seqlock_read() but
+> >+ *                                     disables irqs on a locking pass
+> >+ * @lock: pointer to the seqlock_t protecting the data
+> Maybe we should we should add a comment saying that this API is similar to
+> scoped_seqlock_read() but with irqs disabled.
 
-I already did this (see kmem_buckets_create()) and expanded on it
-with the per-call-site series I proposed:
-https://lore.kernel.org/all/20240809073309.2134488-1-kees@kernel.org/
-https://lore.kernel.org/all/20240809073309.2134488-5-kees@kernel.org/
+Hmm... This is what the comment above tries to say... Do you think it can
+be improved?
 
-But all of that is orthogonal to just _having_ the type info available.
+Oleg.
 
--Kees
-
--- 
-Kees Cook
 
