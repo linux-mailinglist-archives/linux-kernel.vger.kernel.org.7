@@ -1,176 +1,354 @@
-Return-Path: <linux-kernel+bounces-844401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57591BC1D33
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:57:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AD80BC1D39
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:57:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 387A53A7328
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:57:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2E4AA4E7AB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD6A2E22B4;
-	Tue,  7 Oct 2025 14:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C972E228D;
+	Tue,  7 Oct 2025 14:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="e/UsEWNW"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010024.outbound.protection.outlook.com [52.101.85.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Z7O4r/VX"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23BB82E22AA;
-	Tue,  7 Oct 2025 14:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.24
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759849016; cv=fail; b=uduls5pe0TVP7aKwZj5HoODke7jfOXHInzp0Goxl2LAlum4KXJ2PyeUPVPaMrs3jbZlY5tAP41/2H368M7jw6b5aPYyISBnWkRzCG+KAm0j1uK9P8m+LjL/b3EkR+TpgRzSvTosu2qxXYgtebFXeDfC8F4xQ7Pbt3rORbOfO1oA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759849016; c=relaxed/simple;
-	bh=Ed76kk5R731pREMpXa6VVF/VRZY8TRblEznjGEO7PaI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=UbM2nxoBj0RnMFhVjzGZYhow+djW4EXgUkKAQZaueEy8anZEQETIStJids1y0THtNq12bojZ7q69SRo9FQZUA0S/fs6neR3hMI4+8rUYjxxVXWcjpRKKP+0/ZCCLKYaOJPbP5e259NNNN/bcGydCgfAi7SYivZ/D3RPplaONjbM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=e/UsEWNW; arc=fail smtp.client-ip=52.101.85.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YJ81VTErVa8tuZXlhc71qqEqU7M1cF/kfcYWiY7KKatonnvvbEzVCFoJ9qTwNtw2z9ZlvvS/19Lgsf4GouvwUrg4AYFrO0rKUm+QpKf7LGfHUNQQLzIyFkvl1NBT8nMP6Nq3IvUubHSHaPXBHOh/lCDL7DcihQatUEkpn8o//ppvfJKWnLXFgFg9k8xF97HNw6XhtDpHpXMT2bnM/VeSLYKXQsxy1TZfkzZ/izSgUTIMnHc3YW5urot4nAj+7BfbXvlQClwwWnhrhCi+E2dEkPgVtP1xXsu8ofZ9kMO7ISFDONQfs4RUdXKkULaib/GaGhaSFpQixApoQwves5CaZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SLVPWAeuI5Nyg17ntsYp6Twb0NjMMjTkyneNmYj4Qj0=;
- b=NnHiwu6c+Rc9NUhy2gD6gRH0H8wOIJDWekxBPOLaZWioJKThxwMoh7ZH8H4a/eGMM/1po/PJMUJ+9ZrcmpO70PRNAxtDJ6JZVTseFXTHdEinN43LCEYJmiGxtSYP1Cyxnwih4Xrkq21Fh1bivT3lHLhpNNuvQv9usfiGVrfIR639fN45/Y+b+iBe+5+rNTXrQTaQQUN75GslqnFAjYx6P/4f07eAet2Mt3e934FobcwVVit48bwJDQ1TXfTw/O72abaORKgA80h0xsYd9OL7/YTxz0XnL9Pk0vKM0JgfZa2SYqann55OLyFNBiSBnCms0dAEq0wXzWz3d6cnsoDe3A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SLVPWAeuI5Nyg17ntsYp6Twb0NjMMjTkyneNmYj4Qj0=;
- b=e/UsEWNWCVEYoZOnRPOw3vtjUQoTlsgGHbsOg0lFOyXE6pe7eKYLWSEo6hShmotMV+gMyZjK0UsJTVMTKTKLb9qjqUPwrTpwEDjlmgGuKCD3C7mbut2lBmQRVZF/5AmwxAPb/ykvmAo1VD1zGeHRJnWOhQjntVFElRJFxDf1kyc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CY5PR12MB6369.namprd12.prod.outlook.com (2603:10b6:930:21::10)
- by DS7PR12MB5863.namprd12.prod.outlook.com (2603:10b6:8:7a::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Tue, 7 Oct
- 2025 14:56:48 +0000
-Received: from CY5PR12MB6369.namprd12.prod.outlook.com
- ([fe80::d4c1:1fcc:3bff:eea6]) by CY5PR12MB6369.namprd12.prod.outlook.com
- ([fe80::d4c1:1fcc:3bff:eea6%4]) with mapi id 15.20.9182.017; Tue, 7 Oct 2025
- 14:56:48 +0000
-Date: Tue, 7 Oct 2025 10:56:44 -0400
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: tony.luck@intel.com, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, avadhut.naik@amd.com,
-	john.allen@amd.com
-Subject: Re: [PATCH] RAS/AMD/FMPM: Add option to ignore CEs
-Message-ID: <20251007145644.GB11984@yaz-khff2.amd.com>
-References: <20251006151731.1885098-1-yazen.ghannam@amd.com>
- <20251006213406.GJaOQ1zoXUKEk-7eCn@fat_crate.local>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251006213406.GJaOQ1zoXUKEk-7eCn@fat_crate.local>
-X-ClientProxiedBy: BN9PR03CA0555.namprd03.prod.outlook.com
- (2603:10b6:408:138::20) To CY5PR12MB6369.namprd12.prod.outlook.com
- (2603:10b6:930:21::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226402DF121
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 14:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759849051; cv=none; b=cuv6k9w3ZSvB5c6L/xIcomWcnZU+uv5Ri1+iLDMqwGbqmqPCm5AFl3OpRejQXhgQwaiv6OPV8QAcPNXyStcvLzzPchd4OSSNeDf9+ZKMIF/EpJeum3fawRl3p7wLI4EylCdnh7009orD3xdgmA5aXvGkvq7HQp86gSdT9ZaC74k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759849051; c=relaxed/simple;
+	bh=ZDE1e+KCG32IH950eEsaCHN21GX1TQqVJE/SIf5AWIc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VT9dZlB7iMZq9P4/rPNKxlivKkKm7Rw60jFVEnOO1jF7xuqhMFuFyzeBcREmY65tx+Kxip+RSzff5p1oEjsZZrr4QRmYAZKgKFCRp9yxSDwTbVKkHUDgcDfEkENFcsSKSepvsBqO1ZtMozpEPwwjxzFNQ6+Qk3xvlMxGHe+Gzzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Z7O4r/VX; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-333abc4394dso1125324a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 07:57:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1759849047; x=1760453847; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qVQVTdLz3JhO8K7IozwO/U1pe3WO/g/3ZfFjqGmOQ1A=;
+        b=Z7O4r/VXFoU9WNb2Wt5gnftYkldkEB27u2WrouCO5vAEoIxnI5NvXs43yOMiZe9rY9
+         4S3oPvnQZNHl9VZ8Tr87grDDZCS2hR4ghQahmJUF4r8FdFLyiWWb+vDOsmeTlpWOCIlz
+         +LqszBwAe25uw+ZkQeBaarsJ6loi5YBiT2c8zQBJJP1hi8nnzrCIMjnVyLJBacNCmwQ9
+         mTSUm1OmIJ+NeXhoKgI3BzNDdOZr7mqFKgvyM8UxIUcdJv6TF79/2JOxeixQMR6sMf1h
+         XVOvvvBenM6hbgcM2Ohmszk+Xa6gcIuDOup0OLm0UOPIpVWEf4ohOifvhtW9t3W7bk5r
+         +Ijg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759849047; x=1760453847;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qVQVTdLz3JhO8K7IozwO/U1pe3WO/g/3ZfFjqGmOQ1A=;
+        b=vqQSvU30HN8imsNha1tKzGuvVZ52aZ+2WosQWlftT5fUC3XsM+xbSOkEWvRWvJibzc
+         8th2Y/KF9p1PIw8/Nx1XzY93I1Zrm5BqES+yC80ft+76lWdr+nWPa8xxhFWS+RZGy/9M
+         Zh6IbXNGrlg+UoJYEL7LyrrycsthB8nP2SwhFRUeTk1JOveE32aix7ovQW79j5MBKDj5
+         L3iU233bm+OI0RDl+KB0qd62C5J7PYqto0YOM2Y0NskN/drNlCt9As1PJ0w/gAo5J54Y
+         P/49KL4iaq6vH/lneSKdkV1qOoDBmW2J5UbAMduhogXTpydJKU945vYhUnDIzcRBr6/f
+         mxPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXM3qe0ztf6QYhg7sQ5ubhk5nZIsEGh38qbW54guUGEgnVh+QYWvXcZufOfRWQRF8Gzu9D57llThR0Wsg0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzD7vkxaupZGN+oMDZdyPp6/COcYGuWz2juNG/Po+V/4fSRHeiM
+	oEBgw3q7qTVh8lw+0Mn4ugskgZor/774N/YY+TMzKlLTzNsyoJXqk+GgbOXyk9QBDB//NnsBH8y
+	OQUJbyH6rxQ+6dSdVPjsoTZr/1Ty4rDfCVnqUuIptzw==
+X-Gm-Gg: ASbGncsHBK+5TwEx/knUwS27SsXyMD8H+HmwAEBpzAhf8Oof9engyNe6d6TOllbC5tp
+	YGOcNg4wI3OcWlOeFLCouiTCtChM8BSofWb/dAJmnJqfvra4590IR6CAlUNzoRVDZ1VL+VwsluC
+	f5XPnhRFbV0L4t1xjGPN/Z3ugPjARH9o1o2MJfO+65oD3/JrNqXopzfdz8q1O1stBd3FCRPOTak
+	7rC2Puqz+dyxnB+OUQoDMIlzBCfD+PC7WFKL01RHjaAzojYdkHT5er1XREr2AbtdB0gB8+YPQ==
+X-Google-Smtp-Source: AGHT+IEYhWaq4b8LjsaTKtHCBOMQ6ujrAp6CxxaKz4k/uq34nEHmzVPTH9dqGuv8aLeFBZEOCRgXi4zPqI749dfPXeg=
+X-Received: by 2002:a17:90b:33c9:b0:330:944e:4814 with SMTP id
+ 98e67ed59e1d1-339c27b9669mr10779782a91.5.1759849047310; Tue, 07 Oct 2025
+ 07:57:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6369:EE_|DS7PR12MB5863:EE_
-X-MS-Office365-Filtering-Correlation-Id: 12db3e60-8fbd-4a91-fa1a-08de05b1bd8d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?tMGQxXOoCGmu3+xg4reUiM6MQiieWW0WP58Rftm4ir5qGDBURAOkQSk3Ny3M?=
- =?us-ascii?Q?qm/OilojHzMJL4b2nNh8sEHR2TEon++xiFp0pvRBlUnfKLoEZgqdHJNeaTGG?=
- =?us-ascii?Q?W6KEHsc8vS/VO5Yj3wuVtZ/oI+ZUo1wTGzoQhoHhez65gvbPMCh/1OCDAVWr?=
- =?us-ascii?Q?woqKuGy4yXzN0eX0T/8hhQEPiuuYKNShpjyeGyye+5EQ0aQyAs93L0GMKdOv?=
- =?us-ascii?Q?bLw9dSwVZ48YBPgz8apMuy33T4v4CH9iPncalZnzxqkpHRvgZFNqjqTDZHF1?=
- =?us-ascii?Q?ByiZCtxz/P4cKzIfEY6HsJ0Aest42PW9dVW/990+FIgOZAcBvRIQ+zDbWKal?=
- =?us-ascii?Q?/NVCU9756qSc0OSxdGpBmvWU3Xb4C5AtoiTrmvlvEQwm2vHqfv5/XuUZtvAQ?=
- =?us-ascii?Q?0ALMyMWoqqMlVCOwp2WHQ/+TOcFA5LitmiEsEfdJtXEx+bxog0tg3sTMKh4C?=
- =?us-ascii?Q?vg3ve3R776lFv8PnfKOLGcE5KT1BcoHz2s89Kc+IHrT86aEWJD9NEnrIGMZT?=
- =?us-ascii?Q?QyG3be1Z3+WPnz9lYUZwREi48TuKpl3gNnxUPXAdwQagwB1/D1Q71hEX8cTr?=
- =?us-ascii?Q?a44QKTSTF7ulFnOjDQnq8jJo5MjKzYBif5W7EvD6ebwHM3a+JHRk5Z/zpsZj?=
- =?us-ascii?Q?1YNjFDTjrsRK/nplMJfdTTcAW8bnA2mqCfA8KvaQwpQ2RJ85U8DHqwrGEoBL?=
- =?us-ascii?Q?qZ0BRqRgWAF7abR2Z66LpplcQd58M0vJibu+yJ/RTFeEaMc46ht3AOq06sYS?=
- =?us-ascii?Q?PGMPx4u4URE8w/X/k58Hmf+MYeQqVduordaI2jw0Gmx+D5u0SDr/vy8uR87Q?=
- =?us-ascii?Q?L2HD/AwK0LM1kx82A2AqdCir+YaUmjDMGV07coxmEMW0tSreQIcVesyyMzzy?=
- =?us-ascii?Q?EOkwmhFGvSJB5ux1WYPELoPq76YhbMK97YV9SR2o4qn3/Fe2s6sD2AAv/kS4?=
- =?us-ascii?Q?AuqQvkPfoKquZ8TGJ1WqZSTL5izkaQgyNjLHgemzk0j3kHBxU2BayW3cKN4h?=
- =?us-ascii?Q?TTFMQdmXn08yim1TL87luAouWILYBBBf/Jf1T5GE6k14FncBWXvR1/Vt5wj0?=
- =?us-ascii?Q?5rIHT6WpouUKnhpSakI8sPJprnG8sRGzm2xFyc8scAwHE/0nZ9e9y/00/CvX?=
- =?us-ascii?Q?WqpiEc0oTaVj+gSdyb15zEYfQMHJglH3K5xx3FodXAR/6ZRBTpnjdvvv5NFK?=
- =?us-ascii?Q?WfY4+2Qc0dKYPP3VMaY0wJQT7hdEkNIdB2qTgp86I3ZapixNL9FTchrn49pw?=
- =?us-ascii?Q?gR7svQCfdJfsThratciBqvFLN2GYT5n0wwn1rOOsifqmCJyX0Rut/HStNKWE?=
- =?us-ascii?Q?fo641x03TomYcEfWouey0f9bAMJA/MS3kNSOSejhDwHilcXh4bDHxVOBplMc?=
- =?us-ascii?Q?Q5llvEgbLUbQLk4Ca8Rn9H+s3Urs7/q0jOEzC9PPYIVLA3RzTfZ+f+M3or7h?=
- =?us-ascii?Q?PrfBXDa2PgiRL84asn6PGUYF6BlRvPjk?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6369.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6iA9wQBHtE+Q71FMdzD1G2A52YNJFtbFbIP3v3g2j5RtAXBAXJCwhTItlqwb?=
- =?us-ascii?Q?nYXZ7Fu/Sr+t3Vu259CtVK5wodWiXFdxEFFTH6RX20jTQDtLUfl4ZIwnDfsc?=
- =?us-ascii?Q?iSVUvRxz4LbJ3bSTOzUy5hJL2aJWOPfE8LBzlvLWdjEG8QCO/Uw16P5dQHNT?=
- =?us-ascii?Q?cYL/x8TMttxSHQK2c2ver3ExlTy18U2AFq5PI1oIu/qN3Kayn0WDc8ECX1WS?=
- =?us-ascii?Q?X8+T/J2zE9XDbx59agJkvzL7tfS7OkIjGdZ8qUDLBmySh+2y4ul9hTbeonnc?=
- =?us-ascii?Q?23wcqGzvnjkzbe2ulfEMZmTm6dvEBJFM+qjV8EAEMwM4s9G43NBsoYaVZDZ4?=
- =?us-ascii?Q?2LZN4njNaWMfR+8UJ4Wd7WPSdKLjU0HoCsd9t1FS+Zwymg6orBKDq/nSqIMG?=
- =?us-ascii?Q?YiIEuo638nL3XVKX5m9uzw3PQ02IfYyfFp5E43b8+5BL7KoJu5oHkICXNixK?=
- =?us-ascii?Q?DgGlgbdZ7QzRb3gRBRQS906mKdK10EfNNx6iV4nxqSQQLddzeaN0yx1Q1/0g?=
- =?us-ascii?Q?6K+e3lvgrdnAwayEp66Fe9mZRLGbVXpAqtYUg1v0K/RPh4fkSGgKu5XKn2w2?=
- =?us-ascii?Q?Tz85lvjiV9rvC1paI6zUfmEUb0QiDkSDlcvp6gHTy0zwsSbatVs/rIr9JD6z?=
- =?us-ascii?Q?5rE6DvIamsTpNQRyuFDjHAO6rZKZZFceOmnMWWoXlnYNBMkG5vWMjPiiEzXT?=
- =?us-ascii?Q?xlc2cxISWucolZoeTiHo5EN/uomZ5+LqupT+1dRzjzKMga0Ne6qR9iU79Zwy?=
- =?us-ascii?Q?c/N35gFomZJz0M7/5sZMZxVUWNoAoR4IJEM2AUWl+ixk+LUolbFIYbCk/4xJ?=
- =?us-ascii?Q?TD5innTZQAprgJhOy5hlPYt9eE75/eoFNU2YP5jgwF7ZuJTE9TDJmXk4rF9s?=
- =?us-ascii?Q?MuL4E51qvNGihF8It7u9QMt3CRFbPtbfdoA/ejA3apU6Mn/sKsYptgg+PJdy?=
- =?us-ascii?Q?/RBDrduZFkUqj5L5xWkeolEIBm7MY6fVY3qeF7L4dP7hi3sC8VlwpP9HtyKw?=
- =?us-ascii?Q?8KMAYAn7irbOiQefcRdmdAYn76azB83hZ5JgvWHr9YKYyYlnzt/GYc7KBdQW?=
- =?us-ascii?Q?7zWVprLZEbCR7c9mgoYC6Lk4JTs2zrd+mJlFMxLHQlFCcnhVnucMlbSgqNQR?=
- =?us-ascii?Q?pPqkg4mkxq6QWMupfvAdjj+Ydw1VUMRod8l5uorO8eLpmn6gh6EYMrSXRhia?=
- =?us-ascii?Q?yBMTfO0XiA54lc8Te7D2L5BLd27SEO3s+agDOvPw+VlwG6dLsrjJyWiA9Bz9?=
- =?us-ascii?Q?fNpS8ma8tgTP4uGVAHMKvbbuSSkck3Bu3O8iGBih5tA95ixZDPEHb8dEwc23?=
- =?us-ascii?Q?/hYFcdpnjO0bto9g3lQZU2XHipNBiUTN9VUHWo0Ppl4I0+Df2j6clmVEJGAT?=
- =?us-ascii?Q?O7/zU04J4XmySbb46l7rt+O1T/tIOtHNV/y/o+SA3izklQJY75/3NdNy6Sdk?=
- =?us-ascii?Q?mIDwQEKyzZ7NFgsg+vxWp3rKHlEZ0wsi+sCoYwwdGRBzHqw+b3sxgaOZWhwV?=
- =?us-ascii?Q?ZbHig9SkV1s0H4jvTGgmsMelgS72zvMdUYeuIpr/T49dSCIEap1TUq9NQwWn?=
- =?us-ascii?Q?wZN5RR3iD+5D9d1dIrRDf4G1EDBPALsQAKZ0Ithf?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12db3e60-8fbd-4a91-fa1a-08de05b1bd8d
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6369.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2025 14:56:48.2375
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hyFnP28Q5YPauT/xT3KLyrFutzG3plvg5QdM3ym7t9Ip9749GWglSDt1wHq0r4jJpKDwt1wu5/pUsscY3D1A0g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5863
+References: <20250926065235.13623-1-409411716@gms.tku.edu.tw>
+ <20250926065556.14250-1-409411716@gms.tku.edu.tw> <CADUfDZruZWyrsjRCs_Y5gjsbfU7dz_ALGG61pQ8qCM7K2_DjmA@mail.gmail.com>
+ <aNz/+xLDnc2mKsKo@wu-Pro-E500-G6-WS720T> <CADUfDZq4c3dRgWpevv3+29frvd6L8G9RRdoVFpFnyRsF3Eve1Q@mail.gmail.com>
+ <20251005181803.0ba6aee4@pumpkin> <aOTPMGQbUBfgdX4u@wu-Pro-E500-G6-WS720T>
+In-Reply-To: <aOTPMGQbUBfgdX4u@wu-Pro-E500-G6-WS720T>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Tue, 7 Oct 2025 07:57:16 -0700
+X-Gm-Features: AS18NWDbyq1DczXc9CALQ9HeJCtJn-7fS8_x4v7YcPrMpuNbLjPHQxFY5TzoCBQ
+Message-ID: <CADUfDZp6TA_S72+JDJRmObJgmovPgit=-Zf+-oC+r0wUsyg9Jg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/6] lib/base64: Optimize base64_decode() with reverse
+ lookup tables
+To: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+Cc: David Laight <david.laight.linux@gmail.com>, akpm@linux-foundation.org, 
+	axboe@kernel.dk, ceph-devel@vger.kernel.org, ebiggers@kernel.org, hch@lst.de, 
+	home7438072@gmail.com, idryomov@gmail.com, jaegeuk@kernel.org, 
+	kbusch@kernel.org, linux-fscrypt@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, 
+	sagi@grimberg.me, tytso@mit.edu, visitorckw@gmail.com, xiubli@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 06, 2025 at 11:34:06PM +0200, Borislav Petkov wrote:
-> On Mon, Oct 06, 2025 at 03:17:31PM +0000, Yazen Ghannam wrote:
-> > Generally, FMPM will handle all memory errors as it is expected that
-> > "upstream" entities, like hardware thresholding or other Linux notifier
-> > blocks, will filter out errors.
-> > 
-> > However, some users prefer that correctable errors are not filtered out
-> > but only that FMPM does not take action on them.
-> 
-> That's a pretty shallow use case if you ask me...
-> 
-> -- 
+On Tue, Oct 7, 2025 at 1:28=E2=80=AFAM Guan-Chun Wu <409411716@gms.tku.edu.=
+tw> wrote:
+>
+> On Sun, Oct 05, 2025 at 06:18:03PM +0100, David Laight wrote:
+> > On Wed, 1 Oct 2025 09:20:27 -0700
+> > Caleb Sander Mateos <csander@purestorage.com> wrote:
+> >
+> > > On Wed, Oct 1, 2025 at 3:18=E2=80=AFAM Guan-Chun Wu <409411716@gms.tk=
+u.edu.tw> wrote:
+> > > >
+> > > > On Fri, Sep 26, 2025 at 04:33:12PM -0700, Caleb Sander Mateos wrote=
+:
+> > > > > On Thu, Sep 25, 2025 at 11:59=E2=80=AFPM Guan-Chun Wu <409411716@=
+gms.tku.edu.tw> wrote:
+> > > > > >
+> > > > > > From: Kuan-Wei Chiu <visitorckw@gmail.com>
+> > > > > >
+> > > > > > Replace the use of strchr() in base64_decode() with precomputed=
+ reverse
+> > > > > > lookup tables for each variant. This avoids repeated string sca=
+ns and
+> > > > > > improves performance. Use -1 in the tables to mark invalid char=
+acters.
+> > > > > >
+> > > > > > Decode:
+> > > > > >   64B   ~1530ns  ->  ~75ns    (~20.4x)
+> > > > > >   1KB  ~27726ns  -> ~1165ns   (~23.8x)
+> > > > > >
+> > > > > > Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> > > > > > Co-developed-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+> > > > > > Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+> > > > > > ---
+> > > > > >  lib/base64.c | 66 ++++++++++++++++++++++++++++++++++++++++++++=
+++++----
+> > > > > >  1 file changed, 61 insertions(+), 5 deletions(-)
+> > > > > >
+> > > > > > diff --git a/lib/base64.c b/lib/base64.c
+> > > > > > index 1af557785..b20fdf168 100644
+> > > > > > --- a/lib/base64.c
+> > > > > > +++ b/lib/base64.c
+> > > > > > @@ -21,6 +21,63 @@ static const char base64_tables[][65] =3D {
+> > > > > >         [BASE64_IMAP] =3D "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghij=
+klmnopqrstuvwxyz0123456789+,",
+> > > > > >  };
+> > > > > >
+> > > > > > +static const s8 base64_rev_tables[][256] =3D {
+> > > > > > +       [BASE64_STD] =3D {
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ 62,  -1,  -1,  -1,  63,
+> > > > > > +        52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9, =
+ 10,  11,  12,  13,  14,
+> > > > > > +        15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35, =
+ 36,  37,  38,  39,  40,
+> > > > > > +        41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +       },
+> > > > > > +       [BASE64_URLSAFE] =3D {
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  62,  -1,  -1,
+> > > > > > +        52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9, =
+ 10,  11,  12,  13,  14,
+> > > > > > +        15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25, =
+ -1,  -1,  -1,  -1,  63,
+> > > > > > +        -1,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35, =
+ 36,  37,  38,  39,  40,
+> > > > > > +        41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +       },
+> > > > > > +       [BASE64_IMAP] =3D {
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ 62,  63,  -1,  -1,  -1,
+> > > > > > +        52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9, =
+ 10,  11,  12,  13,  14,
+> > > > > > +        15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35, =
+ 36,  37,  38,  39,  40,
+> > > > > > +        41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, =
+ -1,  -1,  -1,  -1,  -1,
+> > > > > > +       },
+> > > > >
+> > > > > Do we actually need 3 separate lookup tables? It looks like all 3
+> > > > > variants agree on the value of any characters they have in common=
+. So
+> > > > > we could combine them into a single lookup table that would work =
+for a
+> > > > > valid base64 string of any variant. The only downside I can see i=
+s
+> > > > > that base64 strings which are invalid in some variants might no l=
+onger
+> > > > > be rejected by base64_decode().
+> > > > >
+> > > >
+> > > > In addition to the approach David mentioned, maybe we can use a com=
+mon
+> > > > lookup table for A=E2=80=93Z, a=E2=80=93z, and 0=E2=80=939, and the=
+n handle the variant-specific
+> > > > symbols with a switch.
+> >
+> > It is certainly possible to generate the initialiser from a #define to
+> > avoid all the replicated source.
+> >
+> > > >
+> > > > For example:
+> > > >
+> > > > static const s8 base64_rev_common[256] =3D {
+> > > >     [0 ... 255] =3D -1,
+> > > >     ['A'] =3D 0, ['B'] =3D 1, /* ... */, ['Z'] =3D 25,
+> >
+> > If you assume ASCII (I doubt Linux runs on any EBCDIC systems) you
+> > can assume the characters are sequential and miss ['B'] =3D etc to
+> > reduce the the line lengths.
+> > (Even EBCDIC has A-I J-R S-Z and 0-9 as adjacent values)
+> >
+> > > >     ['a'] =3D 26, /* ... */, ['z'] =3D 51,
+> > > >     ['0'] =3D 52, /* ... */, ['9'] =3D 61,
+> > > > };
+> > > >
+> > > > static inline int base64_rev_lookup(u8 c, enum base64_variant varia=
+nt) {
+> > > >     s8 v =3D base64_rev_common[c];
+> > > >     if (v !=3D -1)
+> > > >         return v;
+> > > >
+> > > >     switch (variant) {
+> > > >     case BASE64_STD:
+> > > >         if (c =3D=3D '+') return 62;
+> > > >         if (c =3D=3D '/') return 63;
+> > > >         break;
+> > > >     case BASE64_IMAP:
+> > > >         if (c =3D=3D '+') return 62;
+> > > >         if (c =3D=3D ',') return 63;
+> > > >         break;
+> > > >     case BASE64_URLSAFE:
+> > > >         if (c =3D=3D '-') return 62;
+> > > >         if (c =3D=3D '_') return 63;
+> > > >         break;
+> > > >     }
+> > > >     return -1;
+> > > > }
+> > > >
+> > > > What do you think?
+> > >
+> > > That adds several branches in the hot loop, at least 2 of which are
+> > > unpredictable for valid base64 input of a given variant (v !=3D -1 as
+> > > well as the first c check in the applicable switch case).
+> >
+> > I'd certainly pass in the character values for 62 and 63 so they are
+> > determined well outside the inner loop.
+> > Possibly even going as far as #define BASE64_STD ('+' << 8 | '/').
+> >
+> > > That seems like it would hurt performance, no?
+> > > I think having 3 separate tables
+> > > would be preferable to making the hot loop more branchy.
+> >
+> > Depends how common you think 62 and 63 are...
+> > I guess 63 comes from 0xff bytes - so might be quite common.
+> >
+> > One thing I think you've missed is that the decode converts 4 character=
+s
+> > into 24 bits - which then need carefully writing into the output buffer=
+.
+> > There is no need to check whether each character is valid.
+> > After:
+> >       val_24 =3D t[b[0]] | t[b[1]] << 6 | t[b[2]] << 12 | t[b[3]] << 18=
+;
+> > val_24 will be negative iff one of b[0..3] is invalid.
+> > So you only need to check every 4 input characters, not for every one.
+> > That does require separate tables.
+> > (Or have a decoder that always maps "+-" to 62 and "/,_" to 63.)
+> >
+> >       David
+> >
+>
+> Thanks for the feedback.
+> For the next revision, we=E2=80=99ll use a single lookup table that maps =
+both +
+> and - to 62, and /, _, and , to 63.
+> Does this approach sound good to everyone?
 
-I think it's a common use case without FMPM.
+Sounds fine to me. Perhaps worth pointing out that the decision to
+accept any base64 variant in the decoder would likely be permanent,
+since users may come to depend on it. But I don't see any issue with
+it as long as all the base64 variants agree on the values of their
+common symbols.
 
-IOW, log correctable errors but don't offline memory because of them.
-
-Does that sounds better or about the same?
-
-Thanks,
-Yazen
+Best,
+Caleb
 
