@@ -1,130 +1,122 @@
-Return-Path: <linux-kernel+bounces-844530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A65DBC2240
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:43:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9243BC224C
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:46:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E0DDB4F682B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:43:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9107D19A4E43
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3452E7F11;
-	Tue,  7 Oct 2025 16:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C182E7BDC;
+	Tue,  7 Oct 2025 16:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rnp7i08F"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eoy37p15"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183AD2DCBEB
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A76E8F6F
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759855383; cv=none; b=alfy8GQ3fy6gonAPTi8ZI104W6a0pXLrAPHbIRXdmV1RDbsCsupa9CGn1Kf0KlsmmJOr4bj4GcCLURdXf6Xhzo+8njwdwnTag8U8RIacFy46Rv1GZ0KajYC6o0nRyTRNlFjHYT/T64LFfyugKX4oC5xK197URMB9MITpylkofwM=
+	t=1759855582; cv=none; b=BcK85L1Xo8v41IK1R6o8c9do21xUqFKbFsoLPF2IZf+cGckXOhXR+fciBqqbFgzVSgq2zlcJ2hErqzlW7bjvRBxZ8ltraz/Sp8Ha99X7ox5n0W7RYuVTgKCfHHQApzVHAEUc7vCJ7HscQ9PWkpTayLjLsYLJfwqMpwfUX2td/Ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759855383; c=relaxed/simple;
-	bh=1I3jSACvZj52dzAKxBDeApC+0iug0xrEx1kH0ZI8aYE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=trg30HeOcZ8Lhb/ugIA4ay72xEtBTOKVY7/g3JQJosf5SprtLHbAeMHTP0APo4VVuTeZxomWbwcqtFoGJWRRP31mE0kwtHgaEb1DqIUb61J3zga4wCcDdhk34rDr6MpTMaHHWKia59TqBzSv4j4vznKS0iw5yr4G9PhcKUKn17E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Rnp7i08F; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32ee62ed6beso10660442a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 09:43:01 -0700 (PDT)
+	s=arc-20240116; t=1759855582; c=relaxed/simple;
+	bh=wYijfx82w/i+5cLwyYwuMtQXPPURM8z5k55rzxEZFLo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rYZtN4VbEVygFSq8lE6FyW809ER/9tJUKOqe6tc5HjZrcXXp7l473ia3h0QIZ53JB23BqwTJT61oOAOWdeNFUq5mVk5TsH2r9zNo3vpSAMqkKaLKTh4lgGUKyHqkcJi3WPqubkyPdep7nlg0xHLurRMHhbgvuY+F2cyKCQow+t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eoy37p15; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-3327f8ed081so7388537a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 09:46:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759855381; x=1760460181; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Oz1jqWWg+SoU/ogJkFuXFKT4EoUpLm9W9ZKhzFV4aIM=;
-        b=Rnp7i08FH5hsPPSFGN/v6iRO/MXIEcLiJ4PmGA/w0+mVOCVNZ0AoAjPnk+frHepdtm
-         WVU7GRLTegLRsaUO3DZQ6Jl5A1doyoAAiUzMlLgyHqZW5ueheYEUcESmGTmGpBuEH6rw
-         waxNxezWH+ly+LPQ6f/Hl6OjCmu5iaGd6cL1U2H84RMUlCu81RLzpTumoVzHVYc3WNDR
-         Mi4+45d+B+rEepaFGeqYKlCE4iAdEipOUipqWk95C/dXi2Uc1Oyyjly70z/mRgiRT+xu
-         OGDSqdUHQhahzMLn3DkNjb2iSwu1cQAFZ3iHI2JfZcBEgpL/u1bZofqwlVQfVoHB1ZiC
-         k3pQ==
+        d=gmail.com; s=20230601; t=1759855580; x=1760460380; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oeG9oeMq3V/BRy9XfGgniPTDeM9j7ii3LAYxjxadWNg=;
+        b=eoy37p15qPD5q4/QG3gzafcbim8yKyAFPZKD252CXP45fiE28KJ4UqPJLhVGA9zDKs
+         eqYVAMuO44YHwHuBdaS9sHwxaGPKVrKItZ39zZpdhtg3pmfpjgPJpRLqw+4W0T2tD++5
+         Bgtze86FlCEgBHZaYDygrXTMIjWWI7+PRGQU+S6zEaIVF4AhCuWQcKs3glOmXJfoWTnS
+         C8XcD4cRDt0zk98ihHSgzoI4a/sfLoWVUnwCuE1t40CuHC1EvXFr93JpZMEi9gvdgB0o
+         w9n3n1EZqSgUoQp7j9aTAv8Jkb5dbYizwGzyOdW7xEOABEFTJHiCdDRKgFRLFg7nzd3E
+         kyoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759855381; x=1760460181;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Oz1jqWWg+SoU/ogJkFuXFKT4EoUpLm9W9ZKhzFV4aIM=;
-        b=BMX/65iyTSjAEpmOY+MN+g7+sKafZ6d0k07y9zMaoHaWBdVDgzRFqdqZVtJINCx8Rd
-         fW1Y/6Ohts6rRWmVjJB+oRZfkYQtH+HpjRouvFY6FlwWqC3YMDQWNlaLSkkHTIA5U6tz
-         hj8Z9ww6rB2qxc9fu1Y/YRwVf/DBjos7YcL7mgt5jl9C/jsHM8Jrh1cXxAYUynVPna3f
-         sKeJJ7KZpAhrXsquxoFo+PXWlqcYcF3TXjqzm/Kdjrg6b23MzMsQErtT9wFKBfqieWEG
-         FbplIRkCTdSkkHELZieKb5i+8XOxtLmZEG/u8ReyUzvNk0lIlzbKEGeodAWyxcl1vB5i
-         LTNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUaDlIzz4kU9/RBaeGoQDey0smIv3tA8+3HvxsDcj7ecjgi5TOUXLeg3Yo751pF2R/OwDFqvdGVR2JRoRA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywvc3lamkrQh5FWYE27hDjy7h5+ogA+zlddR2BSY43zPQbUmH0b
-	f10mjjfgV4lNg3lxCoHW3iz7JVRgjnxpjLaVQg7A8yUrW7UCWMkG1MmHOXNhQ2TJ7qzEE/z+zq9
-	eTRP4TQPLstTjh5tsFP1+ANP4Eg==
-X-Google-Smtp-Source: AGHT+IGb5pFhL/AY+MlAKGnk7BkcIMmIEce49PNrjagW8tb9GwlMHqoxNKHixhepMoCTL/8Y4mkXl0xkoJXBngxvww==
-X-Received: from pjbhk16.prod.google.com ([2002:a17:90b:2250:b0:32d:dbd4:5cf3])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:3846:b0:32e:87fa:d95f with SMTP id 98e67ed59e1d1-33b513eaae0mr109039a91.32.1759855381473;
- Tue, 07 Oct 2025 09:43:01 -0700 (PDT)
-Date: Tue, 07 Oct 2025 09:43:00 -0700
-In-Reply-To: <20251003232606.4070510-6-seanjc@google.com>
+        d=1e100.net; s=20230601; t=1759855580; x=1760460380;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oeG9oeMq3V/BRy9XfGgniPTDeM9j7ii3LAYxjxadWNg=;
+        b=JXC7SSwynxzjZZfESiwCUsV4haHpVITK5V801OWGTh4pvnUPgAf7xEYS4uv0xKCglu
+         KMoGjmQlAilAILCYa9rI3ImXy0QUwIjcOw51jlCXf+XCgSN+TYnEFf56eQ92+wpLmy5c
+         NMxlqWV2b7UJblLqs4HTXhNgW3CnRrxmlAR7wDz9xxVrUIrvbAY3TdtdXSFVUjPYXQ+k
+         VDKpN36cLY4koGCKge9OAXAiv++lgD5agluWVXUmsq3GXVby0VKxgvprDSDSATT4qmI4
+         kjcNNlzUoul+d5ssIaYSBzmu6OOZFHgXJ3zmBQ7drabMjuMbuN0cSSBZhlYw7EokLUKQ
+         TtAQ==
+X-Gm-Message-State: AOJu0Yy8msIw6uiKeVaYQ3se7AmhAUF9vr2wDwmRsnMIZUIwme03pPs6
+	3TfccCWjxJQe2AOn61psHak/MwEIsSZEkz1UZbpFDJNTlv5biuHOKsaVsNj3zw==
+X-Gm-Gg: ASbGncthT8pm9aXxyJTcpvOlpP2ekZD9KzLlc04AyQiXIdn7yBl4D/eRqN4ISWTnJ/e
+	BYmCzxlFzj+TkiTuSE6sQSU0Qsr708tRMlf7RJWteGOKwPHTIYnMJbDs+osD/zivZ6D7X7cMiDX
+	T6AWEMgFBbNRzT/K/0PYC5jxfcFN+2M6Nkp8aZ5CHw+fTjK9SPRCw33r4HB6wg9fUh34zXX3P0l
+	Ed0SOmgPZ0O3dsif1ouYOnQbELPTilEEzhs4+N2DNhMqsLFBAnxfD0e1hcc7o1kCv16p4z+f0y/
+	LtzXjJe/bmA26xnDvcnWKQKwkE6nT8cahNCjOBc1u9MhT1EHLLBsWCWKfPb5owqZxFZDqHucYA4
+	bn1AWKTONQvPPp++U/LRFjqir+e7U3RrOOOaKDG5DoWB4n0/u84BDvYl0cRzqdNebGcVGH9gFoK
+	Y43RGGvmJnlzfeo7POHjfTPR6Dake9MuyF14n7
+X-Google-Smtp-Source: AGHT+IGgdyL9Z/s6avlLrqCHpOmrQPCcVtMXKZ1vrT7JttZd3PpRzeNrKsvQMIUPfcpRZ3c+WWGGhw==
+X-Received: by 2002:a17:90b:3890:b0:338:3156:fc44 with SMTP id 98e67ed59e1d1-33b513758bbmr187306a91.18.1759855580227;
+        Tue, 07 Oct 2025 09:46:20 -0700 (PDT)
+Received: from daehojeong-desktop.mtv.corp.google.com ([2a00:79e0:2e7c:8:c285:14a:3e06:9c08])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6099ad9405sm15548751a12.10.2025.10.07.09.46.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 09:46:19 -0700 (PDT)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	kernel-team@android.com
+Cc: Daeho Jeong <daehojeong@google.com>
+Subject: [PATCH] f2fs: set default valid_thresh_ratio to 80 for zoned devices
+Date: Tue,  7 Oct 2025 09:46:14 -0700
+Message-ID: <20251007164614.3631594-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251003232606.4070510-1-seanjc@google.com> <20251003232606.4070510-6-seanjc@google.com>
-Message-ID: <diqz7bx6ek8b.fsf@google.com>
-Subject: Re: [PATCH v2 05/13] KVM: guest_memfd: Allow mmap() on guest_memfd
- for x86 VMs with private memory
-From: Ackerley Tng <ackerleytng@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Sean Christopherson <seanjc@google.com> writes:
+From: Daeho Jeong <daehojeong@google.com>
 
-> Allow mmap() on guest_memfd instances for x86 VMs with private memory as
-> the need to track private vs. shared state in the guest_memfd instance is
-> only pertinent to INIT_SHARED.  Doing mmap() on private memory isn't
-> terrible useful (yet!), but it's now possible, and will be desirable when
-> guest_memfd gains support for other VMA-based syscalls, e.g. mbind() to
-> set NUMA policy.
->
-> Lift the restriction now, before MMAP support is officially released, so
-> that KVM doesn't need to add another capability to enumerate support for
-> mmap() on private memory.
->
+Zoned storage devices provide marginal over-capacity space, typically
+around 10%, for filesystem level storage control.
 
-Also thought through this: before this series, CoCo VMs could not use
-mmap, but that's a tighter constraint, relaxed in this patch.
+By utilizing this extra capacity, we can safely reduce the default
+'valid_thresh_ratio' to 80. This action helps to significantly prevent
+excessive garbage collection (GC) and the resulting power consumption,
+as the filesystem becomes less aggressive about cleaning segments
+that still hold a high percentage of valid data.
 
-The actual restriction is that private memory must not be mapped to host
-userspace.
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+---
+ fs/f2fs/gc.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-In this patch series, guest_memfd's shared/private state is controlled
-only by the presence of INIT_SHARED. CoCo VMs cannot use INIT_SHARED,
-and hence cannot have guest_memfd memory that has shared status.
+diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
+index 24e8b1c27acc..6c4d4567571e 100644
+--- a/fs/f2fs/gc.h
++++ b/fs/f2fs/gc.h
+@@ -25,7 +25,7 @@
+ #define DEF_GC_THREAD_CANDIDATE_RATIO		20	/* select 20% oldest sections as candidates */
+ #define DEF_GC_THREAD_MAX_CANDIDATE_COUNT	10	/* select at most 10 sections as candidates */
+ #define DEF_GC_THREAD_AGE_WEIGHT		60	/* age weight */
+-#define DEF_GC_THREAD_VALID_THRESH_RATIO	95	/* do not GC over 95% valid block ratio for one time GC */
++#define DEF_GC_THREAD_VALID_THRESH_RATIO	80	/* do not GC over 80% valid block ratio for one time GC */
+ #define DEFAULT_ACCURACY_CLASS			10000	/* accuracy class */
+ 
+ #define LIMIT_INVALID_BLOCK	40 /* percentage over total user space */
+-- 
+2.51.0.618.g983fd99d29-goog
 
-CoCo VMs can only use guest_memfd memory with private status, private
-memory can't be mapped to host userspace, so we're good in terms of CoCo
-safety and keeping the original purpose of guest_memfd satisfied.
-
-> Fixes: 3d3a04fad25a ("KVM: Allow and advertise support for host mmap() on guest_memfd files")
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-
-Reviewed-by: Ackerley Tng <ackerleytng@google.com>
-Tested-by: Ackerley Tng <ackerleytng@google.com>
-
-> ---
->  arch/x86/kvm/x86.c       |  7 ++++---
->  include/linux/kvm_host.h | 12 +++++++++++-
->  virt/kvm/guest_memfd.c   |  9 ++-------
->  virt/kvm/kvm_main.c      |  6 +-----
->  4 files changed, 18 insertions(+), 16 deletions(-)
->
-> 
-> [...snip...]
-> 
 
