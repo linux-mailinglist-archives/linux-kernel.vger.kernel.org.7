@@ -1,180 +1,154 @@
-Return-Path: <linux-kernel+bounces-844083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6948BC0F53
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:04:23 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0594CBC0F47
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:04:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E7A124F4CE8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:04:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D52214F4626
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FB02D7DDB;
-	Tue,  7 Oct 2025 10:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E272D7DE0;
+	Tue,  7 Oct 2025 10:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="hYTmtSyd";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qNNEWXbb"
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Q5NCVgyw"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E485A13BC3F;
-	Tue,  7 Oct 2025 10:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE9D2D781F
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 10:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759831442; cv=none; b=RE4dKIb35zFBtx4r+3gaFEq+wzhoXtKbjFdkxr5z9xXeb6GPvyC7GorVah65B/9c+Ht9pWByV1mrZFemRvBWstFPrafozv9zVNFozeDbobxLB12j5Az9LOZoZj88i0XZcDneMwss85lccO98wYUtcv5c624Ti48YktqXKn4LHZY=
+	t=1759831432; cv=none; b=lIRDBgm70u86TiJdvURoNgvBiNoStQ4mKpQTsPJXZTWN8/LXnr61Q/E4H2TeW7rxa7ixCc30TYa/QeZhHBzc1b50ZphTaeJbH9J3vc1N505qj52GzGfWDVyq99HX2HhZrT7jUyCn2gQkVek+Btkl6sxhNpwvqsS/e3jy/OuJXak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759831442; c=relaxed/simple;
-	bh=00DXoBz5JZNAz74A9Adn+6ptz2K2oCfovcMeya5zDJM=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=M7N2VSNIvnHAjNgu/0lG4lgTqMJgIGKFciyFVzqVEFUIjNNgLGf/w/k0fCkPOUbX37Eb8XHPB78dv/hWOKNRbRKslJKWJwKafjh0Nq4yCOqNd3DNCe6wiYDcvRKdnVOlkg8dVhaFWFWGKOYmMlpqB9q3LZlwAElAI8B51BKdHlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=hYTmtSyd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qNNEWXbb; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 17C59140032F;
-	Tue,  7 Oct 2025 06:03:59 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Tue, 07 Oct 2025 06:03:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1759831439;
-	 x=1759917839; bh=tevLS1YEVLhzj9dfTyQDjMvXZjqzh6tuEAY2qUJdPv4=; b=
-	hYTmtSydKG9oPRfnCYKeZMB6gO9WimOjQqYj43y6uReWlAGrTS+mIJ2O/h+qzQ+G
-	7j9oWwx1RizoTZdsCfehKxRh8AoogNricEQDeIkY5996/TEu1Liv2fxHrmuL48sb
-	ijyUULwC65IXGp51z04uZogXukXhBpiHDKzM8HXkqkrEg40DZCaM4DqPOvNLiy2H
-	xOQLgEF4te25jxqIBncmTEXMJx1bVpYE+wcarmJvckw3cCEwaXNceTMwJGF3ANoF
-	OLd1Ir5hWS7U+W1piJHKoo8Y9ZIKglrAGc9dmDypEOy47AxJqGmt9mM8+anfSJeR
-	h0nj0v8i0BUvzV6jaVE5hA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759831439; x=
-	1759917839; bh=tevLS1YEVLhzj9dfTyQDjMvXZjqzh6tuEAY2qUJdPv4=; b=q
-	NNEWXbbtvojh2EjcUveN0Pp79hPHUbwVnMY/t/eOYsQJ2RYHQhTtdUEuRW9Iai7o
-	VR7Um1o6PH00eNaA2FMxKBbweFnS/YdLnO0Aj+ZoEiMxUyzh37UraoOBN72SNVZh
-	19kGquRVTIgoS8xbmr2nJ31nWmfNVzS8kb+jE3EpFo39S+y3LNtIypy6NwPUYdpK
-	q0PQm79soeE7wSqSrCYeyZwSSu26oS9sGrXBBgi6UaNf2KQCXkV5avInwa283yxO
-	i2u0PhjOy9cNRkJHfEnvVRX4StIcgW4TaXC45K8rQ0oqGaMdn2qp0bSa7D1T19wa
-	2kHohQTAa+c1/gj3aOGVQ==
-X-ME-Sender: <xms:juXkaNQl2VChS8VgVUTbmeeVE5BlNC1PTPwJg_G9IFbLI0VEsgsGvQ>
-    <xme:juXkaBlncBfMe1EM9l3okV5oKPT6AkbX_6RBrIfzX6JNyAMWtBiojsDH7f9Ug9bQh
-    rER_IIUaNL6oVQglgr0EEGnp1ZrgeOs2dwftz0Uiwyakqeqy8PU3w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutddtudefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdegjedvfeehtdeggeevheefleej
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopeifsedufihtrdgvuhdprhgtphhtthhopegtrghtrghlihhnrdhmrg
-    hrihhnrghssegrrhhmrdgtohhmpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    epfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhk
-    vghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlih
-    hnuhigqdgrphhisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhu
-    gidqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugi
-    dqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:juXkaJLBAfaTsVP6DfGIWR2H62aKN9OhGgV5wW9B-hbApI7DCXDM3Q>
-    <xmx:juXkaNRoP4zWrJXpVT1uZiXbEvnFfqEVeL3u05oyBHdxJBbZON8wsw>
-    <xmx:juXkaBMoN_Q1MqQMlkzQsY8yV9rWK70KtSXO8uCiI9zbeQwZuDPXfA>
-    <xmx:juXkaKWga0e4oEQke5h0TnUxuDmN8uDXPcPX_qIMdLb3zMX-DFmQdw>
-    <xmx:j-XkaHDaLY0T-iizkHCf0y8cj5SyWzawl5k0QvFI6iADNpvFlmPlf6r4>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id A19B0700063; Tue,  7 Oct 2025 06:03:58 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1759831432; c=relaxed/simple;
+	bh=deCSUNbIDe5KUDM9hMfp0pEEzG+kiG+b21ccg2slSwg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=foSb5Jp5XqLTZLouRX5udTVejZeKfCkpOKJ0GMYuF7hkfzinLtvnVM4dEL1YHbP1uNR4q0i3t1brNNOYuD33CcPt9zLisJc3Rc3lfw7PnfeRwWT0qK8uCJubB3jusZt/kKGDoYuF9fysp29WXFmcYYLwhA8VGkSV0eTTZsVfZ4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Q5NCVgyw; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59789YAT017906
+	for <linux-kernel@vger.kernel.org>; Tue, 7 Oct 2025 10:03:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	f/lg14/r475DGELb27M6yUVRo8Ql/TshF6yOFwLnhUg=; b=Q5NCVgywT30LklDy
+	PsufD/x4ImyMgiRyRIF4Kje/tRkngmJcULOZWAUlRyqbVaB4EHwo7LuYha0cs6kb
+	4WGJE2YBaIINdE9BC//R+CfAGNG0qPt9BQZPpriiYMKzpbWmIfGDroF5xXgo3q9F
+	OQoVxmu9wT6N1f4PEodHIa/4ZL5rJykwzRHjIiZpG7QaCf+PKMX88UK8T/2sTj5u
+	D2EIj21q9COYRf1sfT2ulpGin4SFh30KUJSWlzc+QtLouop3IggUNOJsqjiBPYcW
+	JNfFU8bpPJrFTmQZh4T99TN02x39FvQx/k6SdgAoHioKEsKDp6dARtpai9j1WkH6
+	hnSn8w==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49mnkpspnb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 10:03:48 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4d8c35f814eso13718541cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 03:03:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759831427; x=1760436227;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f/lg14/r475DGELb27M6yUVRo8Ql/TshF6yOFwLnhUg=;
+        b=uUFt8Vmvp3oDrYsPGroi/jXZSnEbXGPLAMzc27Cq2YULdiMydQTn1SL/WMObwwBGka
+         PZtAwgJfkk3un02TbNnhzPPF7luTN2zhCLsamtYK5G5zfIPIyPvrXwtjJZIC5nzfFZtw
+         Q9+pEI6zuKNAfUE81mnovn3xSSzzkF6LR0ULIzQex5fNqlNLKAqHBBIvlI+xrAFG7FaN
+         ykP8PHUQxHKtWQiqPLeIMDO55jcHwJKgpbqcwQg4Sh+LY1iZ9owVhdU7lJEyaFNEC5k6
+         FuQZHyAm4WoiZaa5I69zWOXcFNnAVffmH/zTVqgwqHBD6iZl++8DVDWOVq4AkecSTvAV
+         cETw==
+X-Forwarded-Encrypted: i=1; AJvYcCWarNGtAUQVnlLPUNv/ZiH4ymnh0WcWEh0vnNU8b0qTVr/lACdCjnJ5qu5c/Ovi8TEp6rTt/oQIgTeOPqI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqzA10I70eQakw4ERZwk0jFbXW8Dyr2UL7ciHODiv1nSUwSxE7
+	JruUyI8lwsWyPEDA0MLiDFSgJ1nP2USitYeFwqiFwxrIt1uzyMVKbcwlxzd3MjJiueS6Bkf6ajQ
+	LWu2OsyVS0DBBBJ/AQEkzw7476WreYSFQ2/SVMdtMYqrQ2DnsQOVoINlxWe781QxprEI=
+X-Gm-Gg: ASbGncuKJVinlAFHVV9l9ONnqQoLzjDL79Ui810B/WJPlL9xg8nBut/8G51+1BRdRZB
+	VJD8TAy7vGq+NHA8ELycXL452gEdNamz6bNotHAV4YSMbss9JM7ydCjfAaPFnqI4qL29ZvKPu+W
+	Ceq280LHyy6CaSYL+zs+Xh6/B13rPGVFPLlOEVM/IbjokQbaQ7KKSlx1qWIzrozJtZE12Otegu4
+	FN7cyK7uOKmT6omDYBf74NnIdA7QVOVjXe+a11QPcPrUKOVJJyNo+Z/o/KI76fHTTZsWRU5JMji
+	ISVT7H3araq4JnRsGzkfVGsCg7JkicjXda+7KH5+SgXz7DSa1MSdDPRMoQQTUWrizOr7vMchjHn
+	myZzOf6eW6LDi0bboB+G/mwTqa1E=
+X-Received: by 2002:ac8:5aca:0:b0:4d0:3985:e425 with SMTP id d75a77b69052e-4e576a98c02mr133841581cf.7.1759831427306;
+        Tue, 07 Oct 2025 03:03:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFhzCL5QidiG6adlmbwtbxC1CmvVbnE5VzUbfzHUGrlHgHy+0vWMRsnW7JAlRR88W32mvagWA==
+X-Received: by 2002:ac8:5aca:0:b0:4d0:3985:e425 with SMTP id d75a77b69052e-4e576a98c02mr133841321cf.7.1759831426898;
+        Tue, 07 Oct 2025 03:03:46 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b4869c4f314sm1340878266b.69.2025.10.07.03.03.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Oct 2025 03:03:46 -0700 (PDT)
+Message-ID: <99bfa340-2164-4df8-9953-e65f9cee7709@oss.qualcomm.com>
+Date: Tue, 7 Oct 2025 12:03:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AQeYErt0RC5c
-Date: Tue, 07 Oct 2025 12:03:37 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: "Willy Tarreau" <w@1wt.eu>, "Catalin Marinas" <catalin.marinas@arm.com>,
- "Will Deacon" <will@kernel.org>, shuah <shuah@kernel.org>,
- "Mark Brown" <broonie@kernel.org>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-api@vger.kernel.org
-Message-Id: <b554958d-1f38-4d61-8378-ce784c2bb188@app.fastmail.com>
-In-Reply-To: <a5b8344e-8214-4946-8344-f34e969d30b2@t-8ch.de>
-References: <20250821-nolibc-enosys-v1-0-4b63f2caaa89@weissschuh.net>
- <20250821-nolibc-enosys-v1-1-4b63f2caaa89@weissschuh.net>
- <cec27d94-c99d-4c57-9a12-275ea663dda8@app.fastmail.com>
- <a5b8344e-8214-4946-8344-f34e969d30b2@t-8ch.de>
-Subject: Re: [PATCH 1/7] tools/nolibc: remove __nolibc_enosys() fallback from
- time64-related functions
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] ARM: dts: qcom: msm8974pro-htc-m8: add NFC support
+To: alex@me.ssier.org, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: Luca Weiss <luca@lucaweiss.eu>, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        phone-devel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20251007-m8-dts-additions-v1-0-53d7ab3594e7@me.ssier.org>
+ <20251007-m8-dts-additions-v1-2-53d7ab3594e7@me.ssier.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251007-m8-dts-additions-v1-2-53d7ab3594e7@me.ssier.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: Oq4wbDMXxAApp9H4VLXFvkdfDnqAiUFC
+X-Proofpoint-ORIG-GUID: Oq4wbDMXxAApp9H4VLXFvkdfDnqAiUFC
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA2MDE2OCBTYWx0ZWRfX9L1shjUuvqcL
+ ei7QbxhMos60eG+OMx6V3hxUHL9ziF0H8sW27aV+8lACvXwGXwK18yeL85dTq1e37LrYnC1EbWy
+ 1addrmL7EVUKRYLVRkHkMLmcowoVXFEobQlTskGq9MUUDbYR2tIyOS26XHwZVSGvuj2wCC1mLMf
+ 5LxhNMtgNIke48jVxz7RX12tdzVEmY0fCDPNa9YXyRgkSqs6UyODx/p+v6v0EmiSLLOQWiV1A9s
+ hD3PdrG/GBf4fSqxzkNCJYaQr6hYzPp0RfV5La2Y3BPcQl7Xi8Q0vOYDjeCI2gAPS8/B0W+PkdB
+ xHQcFOqZ+fkWJHb6pOPDeRcX7BPNnI9Kjnb/2jFfN467TNEFc1jnyzvMqd8lECpH9o8kqyxbjlG
+ yhlGclK7dnQ/hUti9jtR6xlK1XnukA==
+X-Authority-Analysis: v=2.4 cv=BuCQAIX5 c=1 sm=1 tr=0 ts=68e4e584 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=8poMKPHdAAAA:8 a=2dNuJvzwNQBdB-WvFZIA:9
+ a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22 a=fyZPtLC9JlAwSkJ5-iUD:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-06_07,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501 phishscore=0
+ lowpriorityscore=0 clxscore=1015 spamscore=0 suspectscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510060168
 
-On Mon, Oct 6, 2025, at 22:14, Thomas Wei=C3=9Fschuh wrote:
-> On 2025-10-01 09:43:37+0200, Arnd Bergmann wrote:
->> On Thu, Aug 21, 2025, at 17:40, Thomas Wei=C3=9Fschuh wrote:
->>  - the old types are often too short, both for the y2038
->>    overflow and for the file system types.
->
-> So far this was not something we actively tried to support,
-> especially with the restriction mentioned below.
->
->> I suspect the problem is that the kernel's uapi/linux/time.h
->> still defines the old types as the default, and nolibc
->> historically just picks it up from there.
->
-> So far we have tried to keep nolibc compatible with the kernel UAPI wh=
-en
-> included in any order. This forced us to use 'struct timespec' from
-> uapi/linux/time.h. With the upcoming implementation of signals in noli=
-bc
-> this guideline is relaxed a bit, so we should be able to use our own
-> always-64-bit 'struct timespec'.
+On 10/7/25 7:55 AM, Alexandre Messier via B4 Relay wrote:
+> From: Alexandre Messier <alex@me.ssier.org>
+> 
+> Add the NFC chip used in the HTC One M8 to its device tree.
+> 
+> Signed-off-by: Alexandre Messier <alex@me.ssier.org>
+> ---
+>  arch/arm/boot/dts/qcom/qcom-msm8974pro-htc-m8.dts | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/qcom/qcom-msm8974pro-htc-m8.dts b/arch/arm/boot/dts/qcom/qcom-msm8974pro-htc-m8.dts
+> index 9c3859069aba..4026d6fedfbe 100644
+> --- a/arch/arm/boot/dts/qcom/qcom-msm8974pro-htc-m8.dts
+> +++ b/arch/arm/boot/dts/qcom/qcom-msm8974pro-htc-m8.dts
+> @@ -65,6 +65,22 @@ vreg_vph_pwr: vreg-vph-pwr {
+>  	};
+>  };
+>  
+> +&blsp1_i2c3 {
+> +	clock-frequency = <384000>;
 
-You can probably either "#define timespec __kernel_timespec" or
-"#define __kernel_timespec timespec" before including
-linux/time_types.h.
+This is not a valid I2C frequency
 
-Note that there is no time64 variant of "struct timeval", so
-any syscall that needs this has to be implemented in userspace
-as a wrapper around the timespec based one, e.g. gettimeofday()
-needs to call clock_gettime() on all 32-bit systems.
-
->> We should also consider drop the
->> legacy type definitions from uapi/linux/time.h and
->> require each libc to define their own.
->
-> Can we even just drop them? Or should they also get some backwards
-> compat guards?
-
-This is the big question, and we kind of left this one open
-to be decided later when we finished the actual binary interface.
-
-I think simply dropping the old definition is one of several
-options we have, because that does not change the ABI in an
-incompatible way and just requires the few user space sources
-that use this to either require old kernel headers or make
-simple source-level changes that they should have done for
-portability anyway.
-
-I see multiple decisions we have to make in that option space
-once we decide to do anything:
-
-- do we change the headers for both 32-bit and 64-bit userspace
-  for consistency, or only for 32-bit userspace to limit
-  the impact to those users that care about 32-bit?
-
-- do we remove only the type definitions (timespec, timeval,
-  itimerspec, itimerval, timex) or also the syscall macros
-  for the time32 syscalls using them?
-
-- What method (if any) would be used to choose between the
-  time32 definitions, the time64 definitions or none of them
-  when including the kernel headers?
-
-      Arnd
+Konrad
 
