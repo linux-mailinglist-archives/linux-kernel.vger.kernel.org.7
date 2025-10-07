@@ -1,138 +1,157 @@
-Return-Path: <linux-kernel+bounces-844803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C60AEBC2D0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 00:04:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DF35BC2E67
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 00:54:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3F5AD34FCED
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 22:04:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B50C83C8241
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 22:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF362580E1;
-	Tue,  7 Oct 2025 22:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F01F258EF6;
+	Tue,  7 Oct 2025 22:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="luB7v2dR"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="EES0uHao"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACB32561D9
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 22:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED5B3A1D2;
+	Tue,  7 Oct 2025 22:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759874686; cv=none; b=r5HWtHxi53q0n1mKrvwJ4LmaaKx7WuOgN//kYNOS7cw/jp9qagQ6uqVtj7y+jS6cVOtmqhM9KUxIk0MpC37NtTd9OytoYLkcRphQrNYEk7849dotQR3SL/g6q1R9GTXxdNVmYE9A0pRcwPABhVeJM854rzfZmJUJgRj2AfaPyAk=
+	t=1759877676; cv=none; b=X++W06Fa/4qYpDAQOoRcW+Hg/iwmGgoc2sehCy5VcqDDrUrCVkkSH3CBRyBTLeRTFAP+ZqKNin1tkN7jKbGXInhtKC1AelZE36AMz0Fn0SKJXm2Gw6sG1wZOwKXm1sgDUCDsBc8IpDMMpqN6SRdDn3Jzc0Ev2++BjrUNNOh7b7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759874686; c=relaxed/simple;
-	bh=FJt4EI9wXxHbFKaMznbVfVW3C3rxe/pQzuOTzQ8mQ3A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dLFwts/Ad26dnuuzLk5cfrIiEmSdalpyC0OMQAILl0oPmYNOZU84yF8wPzC87RPfXrRi8YK+yp+CgL5z5QsgTAtE4a0JquAGpcWaX+qQNkXAGnSH0c4qjtnzIzHo6jibyJY2VjMaKgYtEiwmlI1rmxYMSaMWgFQsVU0hAZpYuRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=luB7v2dR; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-362e291924aso54193721fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 15:04:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759874682; x=1760479482; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xjum81ajqp9zFhLXYrIJeHtvnzh+57SJTA8FzcN+ebE=;
-        b=luB7v2dR2gG7MW6zrmV3kr/NsM5hFg0mG4N8H5kNleAjoVeSd+CUd7MLrEHlMxFqsc
-         U23b26QrPF9VvY0oAENnQN0uyIRBGguJZtRIZuRFxL1CCCu48eEpnSsmh3xyyraJxiVB
-         QMQuGLe/jszqINJjuOj196XRvrlAeNMg8esa8ltDsuo4Cn3qUjV7/abqan8TiUjO1oYt
-         mIyY6D6xbUG1nmXi/7Y6kfU2GiZDc6B0+ZMaultQdazSuqVc249HKChe6i/v68xQ+Yno
-         i5xKwqBIa1QPw1dh9auNcOnt4llaXfotvF+stZxPZSJlMAvdfrQLpfTpyau/EJvSm790
-         mULQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759874682; x=1760479482;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xjum81ajqp9zFhLXYrIJeHtvnzh+57SJTA8FzcN+ebE=;
-        b=L6HwqMH9k+l1wblXbRuBoCausrt4x3X2k/l3ynSFxJzjnjexTk9MesT3L2QpAha2no
-         5HF5CnwWhp3jO3YMPbjjSuE2EstXeJv5FucAIEGMEVkoLyCFeM5UxlUCCjKC7FRf/PnE
-         ndKAo7DnpQ3r54yYz1zmUa8txMqDAuc44OoxTjOpFTesLgrPeh+btTbAJgMLa+SjJyZb
-         POhtYsAPtunckx6dFmrzmF9IhOwZHloKHaTCrVuw1+rCrbsuqewRc4TRmSfPzdR2CVGw
-         GrFGM1i+BLJyI7VSw4J84EvkAgXCNxvaaH57X058xmpMsaCFbsQFcHsajZKPfnsfjVUb
-         4Htg==
-X-Forwarded-Encrypted: i=1; AJvYcCWBiu/OeIPRaxak5LQi2LPJxULPv97T+GfnSjuqgeHRseIeCxaaVx6y2n4cILvi4R+3nqXgUEqRByZlZBc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywlj8bjW+/JjM3a5Mp22crw59nQytGc3Vy9trqL4k8Y/RFFIGID
-	An/lnHtCkZDO/G2tdl2VDRVN2RdiOjs1ZSIBXQiJCmtjQZJnV/bXMQCC+/49lWs9lvl6Tdg4rFR
-	VsUmO
-X-Gm-Gg: ASbGnct8gE+kd8Qcf32eOl7w3zn0mYPCwXvISDjK6S+XAA4YjnIwMw5zrCtTrswHGRx
-	KKoIKfvjjZ23SitJSzBFXtxqtzINWDiSRsxsqv8bOqFoF0NmvfPAwWYcZLHjLr//36UmY2nLARz
-	hda0HkJ9SY7fRnLqob/BspMQTUeQpTnJv5nTkzxrBEgBKj9FGMnoxXwsHIW7SeXrJLdhktLdYuD
-	6ItWJK4GfK9CdmN8kQ3Hnpu3BQoV6C+5CSlGufQQbO3AFHz6LTN4abud9vMyAGLgE1YEbRB03zU
-	9EGllyk0qnt+tGcF9I7YrrOibDmv+U8gydootZRrl+m+rWF0lPRfpEgsJTNtRHg1Hf74caaxWHi
-	p7ThcWu2oNvyFLBXLQvjtlko16S0oU82PlPfmmbnxDhqJiWT5A0hpbTmAfLAFhw==
-X-Google-Smtp-Source: AGHT+IH8rX/gMMA42zgSPTNKt5yRjpanc0fxdOzqseVcl9qz3bhoY4mAweQ8EVYqvQqqAu4V3QVl3Q==
-X-Received: by 2002:a2e:b8c1:0:b0:36c:c5d0:715 with SMTP id 38308e7fff4ca-37609ea7432mr2819001fa.29.1759874682233;
-        Tue, 07 Oct 2025 15:04:42 -0700 (PDT)
-Received: from [192.168.1.140] ([85.235.12.238])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-375f39d509bsm13903511fa.12.2025.10.07.15.04.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 15:04:41 -0700 (PDT)
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 08 Oct 2025 00:04:34 +0200
-Subject: [PATCH v2] mmc: sdhci: Stop advertising the driver in dmesg
+	s=arc-20240116; t=1759877676; c=relaxed/simple;
+	bh=9n9+el5uxGfJFE5RJ0pKeBUahXL3HLSEdWqB7UJO5J8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vEssJ1ksH/cGgGdQfJiuTXhP0KJV0lxcHyG0rm5vL1LdbD4NnSZHKyW6qaeMy7Ycb6PuvlFsz7OzQBMeseiRmiBksXVkyqU6qMurw7niqnjL2Mo2MBpeKKVdv45eSV611Cz6/X0F4aupqT5Bg3dicNIPQBEf3L2LO0TRCinsvOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=EES0uHao; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5007b.ext.cloudfilter.net ([10.0.29.167])
+	by cmsmtp with ESMTPS
+	id 6BdwvYijsSkcf6GZfvma8r; Tue, 07 Oct 2025 22:54:27 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id 6GZevRIW2FT7u6GZevn660; Tue, 07 Oct 2025 22:54:26 +0000
+X-Authority-Analysis: v=2.4 cv=Du5W+H/+ c=1 sm=1 tr=0 ts=68e59a22
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=4oHATN8Nx7vVUZJYxp75bA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=CpFGIHgWpZrg6UVlTl0A:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=YACEB57SMrwoDJ7rsRkpJbGOJ2CMq7ZJl+occjNF87I=; b=EES0uHaoNmy0Lay8IW3gefytaL
+	eAPc1doO45kiYQpbaNgtzCnQPXu2TPvu1OkL/KWdISXvQKSX9W0syvTUaHwvaKZTb+fJ3OJQ0sUFC
+	PMrbHqAIv1xYIznBBhM5vrobJeOx+cRVxhBOxC6rdRfSAfoVlvyELF++c0hzgxd1GBd9K/cI2KP7G
+	z1sDmnwc3s+KXjUn2qipEr/ZgYRDHk3mbDtDafHbyvt4qBVlZDbNuEm0+uOvbj1qJoPXSaefp1DHa
+	i+SfLpGraw8GJZ/W8R9/36nY+mguSWqNXylj+XGU+Et9lCJ10EBnA0C9KTizWhOwvHUTHHfM0yl8c
+	oJCpqpsA==;
+Received: from [185.134.146.81] (port=51714 helo=[10.21.53.44])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1v65AY-00000000KkB-06mO;
+	Tue, 07 Oct 2025 05:43:46 -0500
+Message-ID: <729db47f-ac08-4390-a6c2-f0bf01da64c0@embeddedor.com>
+Date: Tue, 7 Oct 2025 11:43:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] scsi: isci: Avoid -Wflex-array-member-not-at-end
+ warning
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <aM09bpl1xj9KZSZl@kspp>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <aM09bpl1xj9KZSZl@kspp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251008-mmc-no-advert-v2-1-45bc00006fb2@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAHGO5WgC/3XMQQqDMBCF4avIrDslCZpqV96juBAz6kBNykRCi
- +TuTd13+T943wGRhCnCvTpAKHHk4EuYSwXTOvqFkF1pMMo0WqkbbtuEPuDoEsmO7dzY2k517Zy
- F8nkJzfw+vcdQeuW4B/mcfNK/9Z+UNGpUpG3Xds60NPdP9qOEa5AFhpzzFzoLNNerAAAA
-X-Change-ID: 20251007-mmc-no-advert-8f5646c44dd6
-To: Adrian Hunter <adrian.hunter@intel.com>, 
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Linus Walleij <linus.walleij@linaro.org>
-X-Mailer: b4 0.14.2
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 185.134.146.81
+X-Source-L: No
+X-Exim-ID: 1v65AY-00000000KkB-06mO
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([10.21.53.44]) [185.134.146.81]:51714
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 0
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfCKUtZXcrPxeoBp2ykLjWU3vfs0vXhmEjDS+0otxmCxztWS4lfLo4k1mkiR5+SS2eTpKDLydo7AyEu3WUBZ+05pdvh51tcYR8iFop7gBgt1PL87JcF6e
+ WwcR/23avRyh63zh+IZT7xlsYrBgO6HqrfHv39S709kwlYMiFepPsy9yAXR5yhNuW9ySpxHWgEBC4RWTQp7Lk9nh4UI6KnoQLlUC6AcY36BiXqTAuEjjjjIM
+ BpwniEmePslq6iPMUVFoG128gYqX+WbvbYqFA9kZXUs/YNCbugYQLCzFLILA5LGzIMec1auO6nAY3CiuZtJ9Kw==
 
-As much as we have grown used to seeing this message on
-every kernel boot, it does not add any technical value.
+Hi all,
 
-Drop all messages from sdhci_drv_init().
+Friendly ping: who can take this, please?
 
-We need to keep the module_init/exit() calls to stub
-functions for the module to work according to
-<linux/module.h>.
+Thanks!
+-Gustavo
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-Changes in v2:
-- Drop all the messages instead of demoting.
-- Link to v1: https://lore.kernel.org/r/20251007-mmc-no-advert-v1-1-0e16989d28ef@linaro.org
----
- drivers/mmc/host/sdhci.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index ac7e11f37af71fa5a70eb579fd812227b9347f83..2025b33bd6bfb51fc3116148299807054179b2e2 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -4999,10 +4999,6 @@ EXPORT_SYMBOL_GPL(sdhci_remove_host);
- 
- static int __init sdhci_drv_init(void)
- {
--	pr_info(DRIVER_NAME
--		": Secure Digital Host Controller Interface driver\n");
--	pr_info(DRIVER_NAME ": Copyright(c) Pierre Ossman\n");
--
- 	return 0;
- }
- 
-
----
-base-commit: fd94619c43360eb44d28bd3ef326a4f85c600a07
-change-id: 20251007-mmc-no-advert-8f5646c44dd6
-
-Best regards,
--- 
-Linus Walleij <linus.walleij@linaro.org>
+On 9/19/25 12:24, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
+> 
+> Move the conflicting declaration (which happens to be in a union,
+> so we're moving the entire union) to the end of the corresponding
+> structure. Notice that `struct ssp_response_iu` is a flexible
+> structure, this is a structure that contains a flexible-array member.
+> 
+> With these changes fix the following warning:
+> 
+> drivers/scsi/isci/task.h:92:11: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+>   drivers/scsi/isci/task.h | 10 ++++++----
+>   1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/scsi/isci/task.h b/drivers/scsi/isci/task.h
+> index f96633fa6939..d05d09c1263d 100644
+> --- a/drivers/scsi/isci/task.h
+> +++ b/drivers/scsi/isci/task.h
+> @@ -85,15 +85,17 @@ struct isci_tmf {
+>   
+>   	struct completion *complete;
+>   	enum sas_protocol proto;
+> +	unsigned char lun[8];
+> +	u16 io_tag;
+> +	enum isci_tmf_function_codes tmf_code;
+> +	int status;
+> +
+> +	/* Must be last --ends in a flexible-array member. */
+>   	union {
+>   		struct ssp_response_iu resp_iu;
+>   		struct dev_to_host_fis d2h_fis;
+>   		u8 rsp_buf[SSP_RESP_IU_MAX_SIZE];
+>   	} resp;
+> -	unsigned char lun[8];
+> -	u16 io_tag;
+> -	enum isci_tmf_function_codes tmf_code;
+> -	int status;
+>   };
+>   
+>   static inline void isci_print_tmf(struct isci_host *ihost, struct isci_tmf *tmf)
 
 
