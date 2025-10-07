@@ -1,122 +1,126 @@
-Return-Path: <linux-kernel+bounces-843695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E2CDBC0041
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 04:09:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B1A4BC0051
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 04:18:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E20A83BAFA4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 02:09:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 344814EC6FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 02:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA10A1D63C5;
-	Tue,  7 Oct 2025 02:09:05 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A851A9FA3;
+	Tue,  7 Oct 2025 02:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fG6K30Qa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09EB4129A78;
-	Tue,  7 Oct 2025 02:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A77E20322;
+	Tue,  7 Oct 2025 02:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759802945; cv=none; b=VxZtUqNwgNbCEx5wntpAn01KCs/OQz/orjkBS3M0soGoPnsu+3kHV1Z6OqPdkaIswUxXjs6KAzF+pkqKVGpLsjMzU40EruiGIzpiPXttJyUyxYfvaH2IMd5xbJ2ypUofGmwwyw3w4cCkqTSp+qoBLykkfykL+ZFCCkLS/bDokCg=
+	t=1759803472; cv=none; b=U00RJQRwRh1T91uzdi2x6IU39dd+aoJ9RbC4freBTS1Gw3jndnUqV0f5WnglqtYDurrNv6YTK/0DDZJWbc3esBTXLPD5wTK5Fx37P9qxtnCV2I+PBXvqXCagDRNMDZNCyyupoXppzCApBUC7bIM29BHiBe/kCcTX4LIORIc8b3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759802945; c=relaxed/simple;
-	bh=nMpMItrL2HG0TDPtJtqYXUdrta3yzI7x+lHsxH9Llz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gt+l8Zs20N4H7LZqjgpIRdoBzDBX7NlUN84U7blMT3JA7cKTSE5QdhcYeBjCrpU1uHkNuBkSLl6oHjvrwBfdt7t9rWRvJAoUkfzd6YylEZ3FJDaFhHvyPtsXxRcKZF+t6Is1MdubrcDo/Baw3z2IezMbg+sH7xIeOeNbBQoAjZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id 6DDD811ACE1;
-	Tue,  7 Oct 2025 02:08:55 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id 591D120026;
-	Tue,  7 Oct 2025 02:08:53 +0000 (UTC)
-Date: Mon, 6 Oct 2025 22:10:43 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Runping Lai <runpinglai@google.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Wattson CI <wattson-external@google.com>,
- kernel-team@android.com, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, Luo Gengkun
- <luogengkun@huaweicloud.com>, Linus Torvalds
- <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v1] Revert "tracing: Fix tracing_marker may trigger page
- fault during preempt_disable"
-Message-ID: <20251006221043.07cdb0fd@gandalf.local.home>
-In-Reply-To: <20251007003417.3470979-2-runpinglai@google.com>
-References: <20251007003417.3470979-2-runpinglai@google.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759803472; c=relaxed/simple;
+	bh=uddpABuiHbr03suhnOevC3AI4BONAnP3KwUyPYXVCMY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iM7cU61WXBCLLvHiJhM7ERXsi1+U/AtvEZkwpq2BYzr2gIQs+mwaOkI/5FH8/XkYSBaESwApwEuwZLpghSriksM18kDsTdfYyZ+rUjbXJKfyKE7f38nx1rDvmcnQ9Mit09JYWS8iNqkiT8M4bRJaffKiUhiBoquiUc3Pui5etyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fG6K30Qa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ECB7C4CEF5;
+	Tue,  7 Oct 2025 02:17:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759803472;
+	bh=uddpABuiHbr03suhnOevC3AI4BONAnP3KwUyPYXVCMY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fG6K30QaW7iSyiVZ6QqRdOWNJmp+C7eKF3+cq4vnh4dU1Gxi9uRZNqkibczGo9iZw
+	 J1TPBtEWwzV4Yq0LOK9IU4ebo8xGp+VQkreUCsbxlP6jJFWS0MjbZnIE0TtSJokh4K
+	 Z2uNCEc8yqsUFNytNajyzkCT2IrAhqyVZ0Z2kJI2TE9racDLyXm41ssipJgG1FsNYB
+	 Ro4j11Ym1ZWM/0fcAeaPNIKrRzPw9N2IrCG4+bqwfwBC97kqSxNjHvhLWYtbBZHwJ6
+	 UcpK6cw35+VsuFb7rZj3kX/BepA/XN0uYbGgIFzApxQNzOUTrlt1ToqR8TB1rdPCyK
+	 sTEvf7E1mC6Ow==
+Message-ID: <4006bc10-1e29-44c1-b86b-4284842a29d2@kernel.org>
+Date: Tue, 7 Oct 2025 11:17:43 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 20/20] arm64: dts: qcom: kaanapali: Add iris video node
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+ tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+ yijie.yang@oss.qualcomm.com, Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com>
+ <20250924-knp-dts-v1-20-3fdbc4b9e1b1@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20250924-knp-dts-v1-20-3fdbc4b9e1b1@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 591D120026
-X-Stat-Signature: 5eawuzhhe4dgb5fok9g1c5rjcfifjcty
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19EGSY3o9iEDPH61isLQbRV4JTw4rtuOBY=
-X-HE-Tag: 1759802933-462618
-X-HE-Meta: U2FsdGVkX1+HNYfHciqVADBX6vACzPb9mv/l2DqON9sskKVeQTYE+MKv9DnV/ba3Who3kXjFtdVnX+3vanW1a6P/6gzbUhLwJVIZKj9AcCVviMfHAVwpRmoGOV3eu1+ehbOyWzqm0ABtGTti/3J4F/vM7vXhcxUvBXlmssPm0lPZqLCQ01zyZBHZDN9dsKAAzWAHXT7pvrGM6CP2uTEyYzVx9Db12FWxeYnW6Z0sqIAyibj7W6SsG75zIj2eP+OWTzuZl+96L1kZW+kpgcyilQTAEEnMBjTBk/nlGC+CIMGX/zhUkqXRS6qqIiTlEgp3jxfZjxhtKqIdnI9d6vE3oaYzgy3DPs7dMSxzNZVBD7Cpc39TapA0ad4jKvkInanG
 
-On Tue,  7 Oct 2025 00:34:17 +0000
-Runping Lai <runpinglai@google.com> wrote:
-
-> This reverts commit 3d62ab32df065e4a7797204a918f6489ddb8a237.
+On 25/09/2025 09:17, Jingyi Wang wrote:
+> Add DT node for the kaanapali iris video node.
 > 
-> It's observed on Pixel 6 that this commit causes a severe functional
-> regression: all user-space writes to trace_marker now fail. The write
-> does not goes through at all. The error is observed in the shell as
-> 'printf: write: Bad address'. This breaks a primary ftrace interface
-> for user-space debugging and profiling. In kernel trace file, it's
-> logged as 'tracing_mark_write: <faulted>'. After reverting this commit,
-> functionality is restored.
-
-This is very interesting. The copy is being done in an atomic context. If
-the fault had to do anything other than update a page table, it is likely
-not to do anything and return a fault.
-
-What preemption model is Pixel 6 running in? CONFIG_PREEMPT_NONE?
-
-The original code is buggy, but if this is causing a regression, then we
-likely need to do something else, like copy in a pre-allocated buffer?
-
--- Steve
-
-
+> Written with help from Taniya Das(added videocc node).
 > 
-> Signed-off-by: Runping Lai <runpinglai@google.com>
-> Reported-by: Wattson CI <wattson-external@google.com>
+> Signed-off-by: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
 > ---
->  kernel/trace/trace.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index 156e7e0bf559..bb9a6284a629 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -7213,7 +7213,7 @@ static ssize_t write_marker_to_buffer(struct trace_array *tr, const char __user
->  	entry = ring_buffer_event_data(event);
->  	entry->ip = ip;
->  
-> -	len = copy_from_user_nofault(&entry->buf, ubuf, cnt);
-> +	len = __copy_from_user_inatomic(&entry->buf, ubuf, cnt);
->  	if (len) {
->  		memcpy(&entry->buf, FAULTED_STR, FAULTED_SIZE);
->  		cnt = FAULTED_SIZE;
-> @@ -7310,7 +7310,7 @@ static ssize_t write_raw_marker_to_buffer(struct trace_array *tr,
->  
->  	entry = ring_buffer_event_data(event);
->  
-> -	len = copy_from_user_nofault(&entry->id, ubuf, cnt);
-> +	len = __copy_from_user_inatomic(&entry->id, ubuf, cnt);
->  	if (len) {
->  		entry->id = -1;
->  		memcpy(&entry->buf, FAULTED_STR, FAULTED_SIZE);
+>  arch/arm64/boot/dts/qcom/kaanapali.dtsi | 155 ++++++++++++++++++++++++++++++++
 
+That's not a separate patch. Squash it.
+
+Best regards,
+Krzysztof
 
