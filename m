@@ -1,134 +1,249 @@
-Return-Path: <linux-kernel+bounces-843938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6C99BC0A2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:32:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42976BC0A72
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:35:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFDBE18968FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:33:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5F8D3C65C6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274992D3228;
-	Tue,  7 Oct 2025 08:32:37 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C7E2D7DE2;
+	Tue,  7 Oct 2025 08:32:58 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393A9211706;
-	Tue,  7 Oct 2025 08:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705DC2D6E4B
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 08:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759825956; cv=none; b=U4pzwZb55pkyueUpwBjVGPhlmiVYdAIkclMobcznFO1K8Wp+j2Aq1Sj0muqZoSyb0qb2e0pJMBExHPtwXFU6+vGQrthV4FFQdjRYodt3J8owBIfWQdDrSNmjosdkS0ZQxoiOBB6lXG7ZnY/tVOQX5zS1W91phAICUm6e6MSLo+c=
+	t=1759825977; cv=none; b=DVegExtC3otpH2RzV8d5TJFVRQJQ0zBcSBErhfjrhyXCMMHzVygLwBUvqpkAUkguq/UnMPMaOdfuZ8aAISqQXT81KPckHPce0nPTsE/H05024yaGCoohjjRtafIzlXJzxWd2bb7T0QMDHCXhB/WMS1cdGeZLXjKarpXlFr/FHBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759825956; c=relaxed/simple;
-	bh=GTA73jv8m/vo1dgoT1LNKaajwDaXpmtTsy1zK71nQuM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=owduAnTxb11dIlZAhi+mU5S33ksjUJyNybi5/wmVSp3O2+ARkrdqK2riZHjKstwXxcxgCvYqAHdaqvwfgm3rcRAON6sgqP6mUGeFHmdPHoIiZEI8b29JkRmXAMaU5e/HD9CYCmi4BwTGpSNsfBJuIY5D2kI14nLeCNdtNTrjCQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [141.14.14.72] (v072.vpnx.molgen.mpg.de [141.14.14.72])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 3ACBF6028F374;
-	Tue, 07 Oct 2025 10:32:00 +0200 (CEST)
-Message-ID: <277a2c83-de30-41a2-bfe4-d48efeceb6a1@molgen.mpg.de>
-Date: Tue, 7 Oct 2025 10:31:59 +0200
+	s=arc-20240116; t=1759825977; c=relaxed/simple;
+	bh=mj/oZKEIMIIRflXaV/dGXLjzTSNUGtt3SsBnF1EElog=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=rxzTFCso5YnlV23h4ig6gWycK+03ZXDxHi7s7DUSqCeyGsVObTMbGWb2EUtZj6YNkf8BrdwZ648INICBJhcwZKrdX82juSynobeFMWZCZGAMCTBo9CVmniPasZaMtBnpkE/yOEUb/P+fwKuSpz32K7SDHDuoER8sX5Ccyjgmp7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=peter.mobile.pengutronix.de)
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <s.pueschel@pengutronix.de>)
+	id 1v637t-0002Hb-Ix; Tue, 07 Oct 2025 10:32:53 +0200
+From: =?utf-8?q?Sven_P=C3=BCschel?= <s.pueschel@pengutronix.de>
+Date: Tue, 07 Oct 2025 10:32:00 +0200
+Subject: [PATCH 07/16] media: rockchip: rga: support external iommus
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] hwmon: (peci/cputemp) add Intel Emerald Rapids
- support
-To: Ivan Mikhaylov <fr0st61te@gmail.com>
-Cc: Iwona Winiarska <iwona.winiarska@intel.com>,
- Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
-References: <20251006215321.5036-1-fr0st61te@gmail.com>
- <20251006215321.5036-4-fr0st61te@gmail.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20251006215321.5036-4-fr0st61te@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20251007-spu-rga3-v1-7-36ad85570402@pengutronix.de>
+References: <20251007-spu-rga3-v1-0-36ad85570402@pengutronix.de>
+In-Reply-To: <20251007-spu-rga3-v1-0-36ad85570402@pengutronix.de>
+To: Jacob Chen <jacob-chen@iotwrt.com>, 
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, kernel@pengutronix.de, 
+ =?utf-8?q?Sven_P=C3=BCschel?= <s.pueschel@pengutronix.de>
+X-Mailer: b4 0.14.2
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: s.pueschel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Dear Ivan,
+In preparation for the RGA3 add support for external iommus. This is a
+transition step to just disable the RGA2 specific mmu table setup code.
 
+Currently a simple rga_hw struct field is used to set the internal iommu.
+But to handle the case of more sophisticated detection mechanisms
+(e.g. check for an iommu property in the device tree), it is abstracted
+by an inline function.
 
-Thank you for your patch.
+Signed-off-by: Sven Püschel <s.pueschel@pengutronix.de>
+---
+ drivers/media/platform/rockchip/rga/rga-buf.c | 46 ++++++++++++++++-----------
+ drivers/media/platform/rockchip/rga/rga-hw.c  |  1 +
+ drivers/media/platform/rockchip/rga/rga.c     | 11 +++++--
+ drivers/media/platform/rockchip/rga/rga.h     |  6 ++++
+ 4 files changed, 43 insertions(+), 21 deletions(-)
 
-Am 06.10.25 um 23:53 schrieb Ivan Mikhaylov:
-> Add support to read DTS for reading Intel Emerald Rapids platform.
-> 
-> Signed-off-by: Ivan Mikhaylov <fr0st61te@gmail.com>
-> ---
->   drivers/hwmon/peci/cputemp.c | 18 ++++++++++++++++++
->   1 file changed, 18 insertions(+)
-> 
-> diff --git a/drivers/hwmon/peci/cputemp.c b/drivers/hwmon/peci/cputemp.c
-> index c7112dbf008b..b350c9a76894 100644
-> --- a/drivers/hwmon/peci/cputemp.c
-> +++ b/drivers/hwmon/peci/cputemp.c
-> @@ -364,6 +364,7 @@ static int init_core_mask(struct peci_cputemp *priv)
->   	case INTEL_ICELAKE_X:
->   	case INTEL_ICELAKE_D:
->   	case INTEL_SAPPHIRERAPIDS_X:
-> +	case INTEL_EMERALDRAPIDS_X:
->   		ret = peci_ep_pci_local_read(peci_dev, 0, reg->bus, reg->dev,
->   					     reg->func, reg->offset + 4, &data);
->   		if (ret)
-> @@ -539,6 +540,13 @@ static struct resolved_cores_reg resolved_cores_reg_spr = {
->   	.offset = 0x80,
->   };
->   
-> +static struct resolved_cores_reg resolved_cores_reg_emr = {
-> +	.bus = 31,
-> +	.dev = 30,
-> +	.func = 6,
-> +	.offset = 0x80,
-> +};
-> +
->   static const struct cpu_info cpu_hsx = {
->   	.reg		= &resolved_cores_reg_hsx,
->   	.min_peci_revision = 0x33,
-> @@ -563,6 +571,12 @@ static const struct cpu_info cpu_spr = {
->   	.thermal_margin_to_millidegree = &dts_ten_dot_six_to_millidegree,
->   };
->   
-> +static const struct cpu_info cpu_emr = {
-> +	.reg    = &resolved_cores_reg_emr,
+diff --git a/drivers/media/platform/rockchip/rga/rga-buf.c b/drivers/media/platform/rockchip/rga/rga-buf.c
+index 0d188b3176cf3e175e865db5cfa26d565bf846ec..26b66b0c7e008308c24433f061a738a3985484b6 100644
+--- a/drivers/media/platform/rockchip/rga/rga-buf.c
++++ b/drivers/media/platform/rockchip/rga/rga-buf.c
+@@ -12,6 +12,7 @@
+ #include <media/v4l2-ioctl.h>
+ #include <media/v4l2-mem2mem.h>
+ #include <media/videobuf2-dma-sg.h>
++#include <media/videobuf2-dma-contig.h>
+ #include <media/videobuf2-v4l2.h>
+ 
+ #include "rga.h"
+@@ -79,14 +80,16 @@ static int rga_buf_init(struct vb2_buffer *vb)
+ 	struct rga_frame *f = rga_get_frame(ctx, vb->vb2_queue->type);
+ 	size_t n_desc = 0;
+ 
+-	n_desc = DIV_ROUND_UP(f->size, PAGE_SIZE);
++	if (rga_has_internal_iommu(rga)) {
++		n_desc = DIV_ROUND_UP(f->size, PAGE_SIZE);
+ 
+-	rbuf->n_desc = n_desc;
+-	rbuf->dma_desc = dma_alloc_coherent(rga->dev,
+-					    rbuf->n_desc * sizeof(*rbuf->dma_desc),
+-					    &rbuf->dma_desc_pa, GFP_KERNEL);
+-	if (!rbuf->dma_desc)
+-		return -ENOMEM;
++		rbuf->n_desc = n_desc;
++		rbuf->dma_desc = dma_alloc_coherent(rga->dev,
++						    rbuf->n_desc * sizeof(*rbuf->dma_desc),
++						    &rbuf->dma_desc_pa, GFP_KERNEL);
++		if (!rbuf->dma_desc)
++			return -ENOMEM;
++	}
+ 
+ 	return 0;
+ }
+@@ -133,17 +136,21 @@ static int rga_buf_prepare(struct vb2_buffer *vb)
+ 	for (i = 0; i < vb->num_planes; i++) {
+ 		vb2_set_plane_payload(vb, i, f->pix.plane_fmt[i].sizeimage);
+ 
+-		/* Create local MMU table for RGA */
+-		n_desc = fill_descriptors(&rbuf->dma_desc[curr_desc],
+-					  rbuf->n_desc - curr_desc,
+-					  vb2_dma_sg_plane_desc(vb, i));
+-		if (n_desc < 0) {
+-			v4l2_err(&ctx->rga->v4l2_dev,
+-				 "Failed to map video buffer to RGA\n");
+-			return n_desc;
++		if (rga_has_internal_iommu(ctx->rga)) {
++			/* Create local MMU table for RGA */
++			n_desc = fill_descriptors(&rbuf->dma_desc[curr_desc],
++						  rbuf->n_desc - curr_desc,
++						  vb2_dma_sg_plane_desc(vb, i));
++			if (n_desc < 0) {
++				v4l2_err(&ctx->rga->v4l2_dev,
++					 "Failed to map video buffer to RGA\n");
++				return n_desc;
++			}
++			dma_addrs[i] = curr_desc << PAGE_SHIFT;
++			curr_desc += n_desc;
++		} else {
++			dma_addrs[i] = vb2_dma_contig_plane_dma_addr(vb, i);
+ 		}
+-		dma_addrs[i] = curr_desc << PAGE_SHIFT;
+-		curr_desc += n_desc;
+ 	}
+ 
+ 	/* Fill the remaining planes */
+@@ -173,8 +180,9 @@ static void rga_buf_cleanup(struct vb2_buffer *vb)
+ 	struct rga_ctx *ctx = vb2_get_drv_priv(vb->vb2_queue);
+ 	struct rockchip_rga *rga = ctx->rga;
+ 
+-	dma_free_coherent(rga->dev, rbuf->n_desc * sizeof(*rbuf->dma_desc),
+-			  rbuf->dma_desc, rbuf->dma_desc_pa);
++	if (rga_has_internal_iommu(rga))
++		dma_free_coherent(rga->dev, rbuf->n_desc * sizeof(*rbuf->dma_desc),
++				  rbuf->dma_desc, rbuf->dma_desc_pa);
+ }
+ 
+ static void rga_buf_return_buffers(struct vb2_queue *q,
+diff --git a/drivers/media/platform/rockchip/rga/rga-hw.c b/drivers/media/platform/rockchip/rga/rga-hw.c
+index f3aef0b5ce25870764bd59f4241e2bda332bbd1f..04d72ecce7cdd47df8457b97c5ec4cff9cd7430b 100644
+--- a/drivers/media/platform/rockchip/rga/rga-hw.c
++++ b/drivers/media/platform/rockchip/rga/rga-hw.c
+@@ -619,6 +619,7 @@ static struct rga_fmt formats[] = {
+ 
+ const struct rga_hw rga2_hw = {
+ 	.card_type = "rga2",
++	.has_internal_iommu = true,
+ 	.formats = formats,
+ 	.num_formats = ARRAY_SIZE(formats),
+ 	.cmdbuf_size = RGA_CMDBUF_SIZE,
+diff --git a/drivers/media/platform/rockchip/rga/rga.c b/drivers/media/platform/rockchip/rga/rga.c
+index ce55b48ef9fa8fbb2b265455cc559a4216609d4f..b8e4be3f9acd8a73a3d4e947aeeef9095543fb49 100644
+--- a/drivers/media/platform/rockchip/rga/rga.c
++++ b/drivers/media/platform/rockchip/rga/rga.c
+@@ -23,6 +23,7 @@
+ #include <media/v4l2-ioctl.h>
+ #include <media/v4l2-mem2mem.h>
+ #include <media/videobuf2-dma-sg.h>
++#include <media/videobuf2-dma-contig.h>
+ #include <media/videobuf2-v4l2.h>
+ 
+ #include "rga.h"
+@@ -95,13 +96,16 @@ queue_init(void *priv, struct vb2_queue *src_vq, struct vb2_queue *dst_vq)
+ 	src_vq->io_modes = VB2_MMAP | VB2_DMABUF;
+ 	src_vq->drv_priv = ctx;
+ 	src_vq->ops = &rga_qops;
+-	src_vq->mem_ops = &vb2_dma_sg_memops;
++	src_vq->mem_ops = &vb2_dma_contig_memops;
+ 	src_vq->gfp_flags = __GFP_DMA32;
+ 	src_vq->buf_struct_size = sizeof(struct rga_vb_buffer);
+ 	src_vq->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
+ 	src_vq->lock = &ctx->rga->mutex;
+ 	src_vq->dev = ctx->rga->v4l2_dev.dev;
+ 
++	if (rga_has_internal_iommu(ctx->rga))
++		src_vq->mem_ops = &vb2_dma_sg_memops;
++
+ 	ret = vb2_queue_init(src_vq);
+ 	if (ret)
+ 		return ret;
+@@ -110,13 +114,16 @@ queue_init(void *priv, struct vb2_queue *src_vq, struct vb2_queue *dst_vq)
+ 	dst_vq->io_modes = VB2_MMAP | VB2_DMABUF;
+ 	dst_vq->drv_priv = ctx;
+ 	dst_vq->ops = &rga_qops;
+-	dst_vq->mem_ops = &vb2_dma_sg_memops;
++	dst_vq->mem_ops = &vb2_dma_contig_memops;
+ 	dst_vq->gfp_flags = __GFP_DMA32;
+ 	dst_vq->buf_struct_size = sizeof(struct rga_vb_buffer);
+ 	dst_vq->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
+ 	dst_vq->lock = &ctx->rga->mutex;
+ 	dst_vq->dev = ctx->rga->v4l2_dev.dev;
+ 
++	if (rga_has_internal_iommu(ctx->rga))
++		dst_vq->mem_ops = &vb2_dma_sg_memops;
++
+ 	return vb2_queue_init(dst_vq);
+ }
+ 
+diff --git a/drivers/media/platform/rockchip/rga/rga.h b/drivers/media/platform/rockchip/rga/rga.h
+index fa47cb35f2623fc5226cb23d1d1d793d5dcd1dc7..82ead58719f3baadb77575896ca2d430aa8e3dc6 100644
+--- a/drivers/media/platform/rockchip/rga/rga.h
++++ b/drivers/media/platform/rockchip/rga/rga.h
+@@ -152,6 +152,7 @@ static inline void rga_mod(struct rockchip_rga *rga, u32 reg, u32 val, u32 mask)
+ 
+ struct rga_hw {
+ 	const char *card_type;
++	bool has_internal_iommu;
+ 	struct rga_fmt *formats;
+ 	u32 num_formats;
+ 	size_t cmdbuf_size;
+@@ -164,6 +165,11 @@ struct rga_hw {
+ 	void (*get_version)(struct rockchip_rga *rga);
+ };
+ 
++static inline bool rga_has_internal_iommu(const struct rockchip_rga *rga)
++{
++	return rga->hw->has_internal_iommu;
++}
++
+ extern const struct rga_hw rga2_hw;
+ 
+ #endif
 
-Only use one space before the =.
+-- 
+2.51.0
 
-> +	.min_peci_revision = 0x40,
-> +	.thermal_margin_to_millidegree = &dts_ten_dot_six_to_millidegree,
-> +};
-> +
->   static const struct auxiliary_device_id peci_cputemp_ids[] = {
->   	{
->   		.name = "peci_cpu.cputemp.hsx",
-> @@ -592,6 +606,10 @@ static const struct auxiliary_device_id peci_cputemp_ids[] = {
->   		.name = "peci_cpu.cputemp.spr",
->   		.driver_data = (kernel_ulong_t)&cpu_spr,
->   	},
-> +	{
-> +		.name = "peci_cpu.cputemp.emr",
-> +		.driver_data = (kernel_ulong_t)&cpu_emr,
-> +	},
->   	{ }
->   };
->   MODULE_DEVICE_TABLE(auxiliary, peci_cputemp_ids);
-
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
-
-
-Kind regards,
-
-Paul
 
