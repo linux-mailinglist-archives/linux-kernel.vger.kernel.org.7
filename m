@@ -1,188 +1,130 @@
-Return-Path: <linux-kernel+bounces-844430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5573FBC1E3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 17:19:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73D64BC1E5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 17:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5035F19A42EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 15:19:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7770E4F10EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 15:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6F42E3B08;
-	Tue,  7 Oct 2025 15:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE212E4247;
+	Tue,  7 Oct 2025 15:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="oa5rpOgd"
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010000.outbound.protection.outlook.com [52.101.46.0])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FXqgaKxo"
+Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com [74.125.224.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D382D73A1;
-	Tue,  7 Oct 2025 15:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.0
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759850349; cv=fail; b=DdwsGTvAuwvLjOgcJG86V8+0lwE2zx7BUkRZhmMcmB1nWl40oDT+ujLoAS0RYxgLJg/hrbZY2DBqEm41J+R8i4PbKD1syv8U0dp3Kafmhh+cBdl2tts+O6BCEgZc57/MBaCZhUsZo5U+ksUgCiZMnBIuaeAgYXCpie7lJovo1xI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759850349; c=relaxed/simple;
-	bh=4VK+6f/+RdO0eR4JCElKzBTYbc3kOZh1x6FtXSJ2Ic4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VWGe+6iSafMs3UCZPhKaAiyagoeo9rzi4g5VXHPSbKd5peDZhQAoEHsljGanZfMf/gvqn0FArrrk1VEIIhaus6boT6vh9g88/IJy8Bl4TJ16ewOSWc2i+HJLBdP28p4YBqxlwaM8G5616RaMYmkAx3nrLE/jW6tR2fWAGAwp7OE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=oa5rpOgd; arc=fail smtp.client-ip=52.101.46.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VWxUGeL8KSEUMlLAgghnLDqL5vtf8hxUGooSeARIRHV3u4JF4rZBc2pyLKsUy1Met6JFw1iH6uyxnrRmXMflfLJ00rib8CzQ08y5k+FSCXVIsGfuTQPelJmrmc86c2atqXZmnaR6mQKWXW/a01+aBSIr/eQGoChD/kqTdbKSuyYRWej641EE7JMTcuSYgiqArSm8LMyfaHmp7X8/ZfjlhZyLY/F5WBY9FPowyKGslxt+un7e6khK/TdLuFbe+BnLptI1glyoPMO0+g9c9oC33qSQ7lyhsIhi/B6+/ghIV2eYiP9ZgRMfWzlEJNVq+Y3gEqC5oh0MmT1K2h7ki3qT2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=h9bpMbOt2QZcivwxpQnb60o00Bb2wf/YgvINMX2AXwo=;
- b=uknfPt9ss1LsT0NCQtx3QwQd3u+FTL3OPQxo8DOS3Rdm3LN+oYdhAAD5SOMHLcof+0PpXjONzITU25BnDdaYqryqzRCNSdyswDoAXafpCZ15VFMKWaeDSttEt+Aq6oGZ4ejrQkSxd3Ei/h8RY8OZ0ACPevNggVAf+0m2ZYDDa/FiDgqq0VM2fv/KqLZFQwiPUZeLGk76oNZjqPzhGFS/DR/i92cCzisojFPgPj7BmS9JrvVbt03irNhQmLMunvKZ34UsGjJ2N77AcHA/OSmttHaTPVUzRf/I7Tz/arw9ji+sBFPlgt/p6b+Yd67q50/Mw9xcCV5w0WYC4I9EVgWR5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h9bpMbOt2QZcivwxpQnb60o00Bb2wf/YgvINMX2AXwo=;
- b=oa5rpOgdzSVs3D3Nco/GIx4eaevTA5GigTDhkBAglhwcCSh1cUwuDeRZA/aGrNRWOrEUmDDw/dGJMI/d11TBamvTGMV8T/TaYNPrDdFcGQz3p5a4tI/KS0+2qoKJvcne8fs09X9L1ZWhKinTMh4irgLo70a7sxvztsf6ujyix7Q=
-Received: from BYAPR08CA0026.namprd08.prod.outlook.com (2603:10b6:a03:100::39)
- by CY8PR12MB7266.namprd12.prod.outlook.com (2603:10b6:930:56::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Tue, 7 Oct
- 2025 15:19:00 +0000
-Received: from BY1PEPF0001AE1A.namprd04.prod.outlook.com
- (2603:10b6:a03:100:cafe::c4) by BYAPR08CA0026.outlook.office365.com
- (2603:10b6:a03:100::39) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.20 via Frontend Transport; Tue,
- 7 Oct 2025 15:19:00 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- BY1PEPF0001AE1A.mail.protection.outlook.com (10.167.242.102) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9203.9 via Frontend Transport; Tue, 7 Oct 2025 15:19:00 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 7 Oct
- 2025 08:18:59 -0700
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb09.amd.com
- (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 7 Oct
- 2025 08:18:58 -0700
-Received: from xsjtanmays50.xilinx.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Tue, 7 Oct 2025 08:18:58 -0700
-From: Tanmay Shah <tanmay.shah@amd.com>
-To: <jassisinghbrar@gmail.com>, <andersson@kernel.org>,
-	<mathieu.poirier@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>, Tanmay
- Shah <tanmay.shah@amd.com>
-Subject: [PATCH v2 2/2] remoteproc: xlnx: do not kick if mbox queue is full
-Date: Tue, 7 Oct 2025 08:18:28 -0700
-Message-ID: <20251007151828.1527105-3-tanmay.shah@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251007151828.1527105-1-tanmay.shah@amd.com>
-References: <20251007151828.1527105-1-tanmay.shah@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5A32E5400
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 15:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759850434; cv=none; b=UiHTr8VJSdaZb34WyousjTfSbfX4E93yUZqjoemSTKud93ckdR9P1v0+eVpiPpnqEmd0ZLK91GJsLFIFIoncroHGV+PrcVw3tDt0XUCHuOQmmay5dP3jEkajjx8krEsXVFlLB6winanUAyrris7v32W8H1Jw73nTxR2j7r/AiBE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759850434; c=relaxed/simple;
+	bh=98NzBJIQUrqXcK8lJa5ab/WRAaAi41rD2LPalLK9pYo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CWpHCoc04X04wJTaLVcf06Znnf4V6fyyiawzzCwq+XJN8YCVlyZYTF3hS+f0GHd/5KoQjAlBVawWkqqoJHF/r+ETqWbTQDPBVcxUcdwp1/HCgqw3SaPP7MxnHQZEjqT34xteVI9wiNcTrq0dpF1vlWA4Jynr60jU0sKD+ywFsBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FXqgaKxo; arc=none smtp.client-ip=74.125.224.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yx1-f47.google.com with SMTP id 956f58d0204a3-63605f6f926so5450391d50.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 08:20:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759850431; x=1760455231; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=98NzBJIQUrqXcK8lJa5ab/WRAaAi41rD2LPalLK9pYo=;
+        b=FXqgaKxoQiXTGOXt6jJXsfKyWgCvOStSpzJNNlWE3itGywRKqBKpeLJcNilbvtcuSe
+         KogGDid3gBr2B+NbsxsTnWMoAQn7PQsAgpoW1qCxwChRG1JgjMGdVw4uDg/ro+Hr915L
+         skeXhsYGDi6m98/nLeqR14ByVTgnHTydBd3gFB/RYKSK6jj6zqYWZgOEI1oKMz8m+On3
+         aMPWZCrq91mKg2IeJEIz26GWy45+RIegGmfS3VI1PiNpLLccX8Cgg4kY7Wyut4dly+FK
+         CJwTDm7ZyUR6ldok72HgJQzijtAQvo+B2VlWp3tVNT3u1nm1DWfNsCvJPPhTaryD/PrU
+         Hr7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759850431; x=1760455231;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=98NzBJIQUrqXcK8lJa5ab/WRAaAi41rD2LPalLK9pYo=;
+        b=kFIXknPEOMXw8MHRfQTNACrb80dZW+B6Mz8GihoLrfINODQnOFlnHM/XXOB300E9TY
+         dBg6KnxvHTvk5wy9kzMcGBQHU4sRvhaBrN4J4+RqbIQetKwyIU4pm0us6ui6f7/xpknE
+         dD6qHCiJFTiyYaiSnDrmUpPVTdZTafvrFV/5k0e5witPSDyErvz2NVDvwiRmqwWXCRp9
+         vI5NN0W5GKP8UBH6SZ/WhvsMdYnTVYlV8REtlo2oRyKJVgAXeCYE/JJliveTxaT2AsJ5
+         ckbvTSbY6PSciKaU6rYGhYeYXHTTBOQcOkL1wZFDEeLXf5uYj40sFjammiiuii3vvDX9
+         XVZg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6TgRRC47UeTXNqQRrGwuzoVSH5x2to9joJd4C/OEDlw7scf+Zch5evaLSQboWy7NbE61i0fypFDJ+Tcg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKMCiMAoHJEiAvJ5Xijfilf4pxC1d9oJuLgiNOjOztdBUwfw3g
+	eCDXPdJJfdnVJmGAuhMcQchlPrgx9nQujtFliQ/sX6wDoagyeL3rqchnsugmPABLhlndas5WS3A
+	887RJNWxCcubjXWE6OUbkzhUkJVnTnXBWXBvco2/wWw==
+X-Gm-Gg: ASbGncsXjDJJZcnaB2bt5kK6DbRihmcmAvV1tPDsWwbJWu7GNTMreTCKvw/g/8selWW
+	eyuDXFLKistjePUdOCavYuYz7yzIxqsjd/Bp0QXvOzjdHLj37qeeH5B/A7KBXIeL6HikcDiyplt
+	zJswzrqdEBtdB3H7H/2x31DqszmKSL8lptYftL8+Ek/oqOW97sS7MF51WNGCxfr+uCDTVDGsBqm
+	xWAp/Czu+EHwWyrGekggcU4mhRm/XoicugE
+X-Google-Smtp-Source: AGHT+IExaCGrfrgm8yI9pnsqPGC9yiuujr1Byb7jHbFjQN/nXS0MZII4VZvwZ+cfzBBjnOYd8YHW2NtRylZdMJMJIHI=
+X-Received: by 2002:a53:acc8:0:10b0:5fd:45a3:fe29 with SMTP id
+ 956f58d0204a3-63ccb8ebf56mr12948d50.24.1759850431574; Tue, 07 Oct 2025
+ 08:20:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY1PEPF0001AE1A:EE_|CY8PR12MB7266:EE_
-X-MS-Office365-Filtering-Correlation-Id: 23ab3cd5-a1ab-433b-ed01-08de05b4d7a9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?oErimFbyEfjSWH1LqBPgZDQxmDa9tjAjyhCKXDOYcuwDb4DAohLGBYyu/IbT?=
- =?us-ascii?Q?PxLstq2z4DJpi5uHlzPrXmjQsKfXxrONSb0CiZGz6aLOStoJ4e+gjLM+vLR7?=
- =?us-ascii?Q?m4kezRCuOPwU10KXJLrMN41iCPJSQOJ081aHwppL8ty56ZvhhsqeBTl5lzZ6?=
- =?us-ascii?Q?Grm+QD+rFjwE/NDsI08ce689MuWhyFOLOPxrTCqlycBbHJi8i6xAzunyTkKX?=
- =?us-ascii?Q?zM3wkYfVFQJ35KbDNU+ApNYckPRUPYTN/v+yyFwSix2N/3YqF8O6ibSj94T4?=
- =?us-ascii?Q?av2fuRyP8PPMs2rU5sjrz+mLptK9WczCDBlAPR8ZxJzVoZe6N3Nn8L1u1oIH?=
- =?us-ascii?Q?e1p6ROAhgrZWuXwcvnPKNebqm/HTF6nR78Qu5qofHQAIImKhBibMY3zdArqL?=
- =?us-ascii?Q?xS1QT8MwAp7j7ExiPHXEYnJxXSFUxO3omZWuxw3u5JPWgbEhiAt71aqh3gdj?=
- =?us-ascii?Q?WUCVq77d+IztEq719UyULTjnHRzWuhJiOsHzs1CvsQkxg/2bfivCsKHW7OLq?=
- =?us-ascii?Q?gsd72bmCEUoxFA5Cfc49DZesoXfaAfRp8YCTPZBPVskKzqWwz5SJhddg2/pn?=
- =?us-ascii?Q?yIvcqdLD7pcYjsVHhK7RZ1IWCsSEK/3dR4Hb9KAKzR7oCTBcFjtHZdfJkq+O?=
- =?us-ascii?Q?+khs1PJD1CQOLamVwQ6EIaoDDLcuIT383Y4wK1Qa6owfMJGdcLvY3T5hrI4D?=
- =?us-ascii?Q?j8tPtfn9hQJkADJHZXjgM4MnkLarK0IIACdYAwuvWgb44EBc57KbZlLcrRNY?=
- =?us-ascii?Q?3oTrmelbYtfSia/OW10rx8KXuHQQSJSK2MP1bTzjv45j8FeXAyqPFyWAd7H+?=
- =?us-ascii?Q?pr450BVKd4Hby5Gk1lfUoHTWCn6G1R9wsti7t1AmjfAq6Ww5NEm8z4RpsjFz?=
- =?us-ascii?Q?5XU+CuW+Ifd8b18u1+lSSlQDMHauL1RoVqaELnsyjk7Ls2mASZ2iLunX2HwY?=
- =?us-ascii?Q?LAiiwKO32xWLA+ozWcWlbvy3N7jS0E4k/MXLzsHu/GMoMbKiNPjkcm9UasS0?=
- =?us-ascii?Q?Y5705O+HnSdxu/m7PE3SaTcnLP0Y4P0EsnmhIIez/g2OUt3Yuznq19cSSIqd?=
- =?us-ascii?Q?uFBM7ctGU0kZy28dkb9v1OHw+qqpc3H9uKNuB3+zlhQL8ov3fWq2OB/ZAEqQ?=
- =?us-ascii?Q?/r75byq0nLbg4zlGeqDEV9tj18Bj5/xiNN2/219QMVdRPUP1i51FNa2+wxbB?=
- =?us-ascii?Q?7o9hJaWGqr9U2T705Wl0Shj4pVBQhtHsFWUb6mCczR3E3GTsYAls4Mu5CbY9?=
- =?us-ascii?Q?T23Q93EUg9kxCiDzA4uTfCiB6wuMwDPUJ+hgsF/PTJul199P1wlnhC/WQPmW?=
- =?us-ascii?Q?AE65Y1pdLf5Nf2Olr/bO5UL5a3iMQchRNfFUqujg2ns09Z9G3tI7HI6fvrKW?=
- =?us-ascii?Q?EeBXDO64Z2S6A9+j8gC6ZgZMojO4Xdy7oiM1OVsioagsDMdgxCF+TFa1Ceqk?=
- =?us-ascii?Q?yHwAG+OIYBJC5hl4jlChPpC1931abID8wLYaXAxI02r3tYspd/0l91f9jFPv?=
- =?us-ascii?Q?5FvfHxGO/dhsVQB93b/u1jT+hw9olo8Oml87SwASissfzYWtQ7eSD9DhAJ4T?=
- =?us-ascii?Q?o9/vMxmTlIm+MHAbe/8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2025 15:19:00.2334
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 23ab3cd5-a1ab-433b-ed01-08de05b4d7a9
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BY1PEPF0001AE1A.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7266
+References: <87v7l03pqe.fsf@osv.gnss.ru> <CAOMZO5DG=cQtqyzihrFarEq6=1AOAPAMkeXajjGxiW0yvFRa0Q@mail.gmail.com>
+ <CAOMZO5BtXsjFFWDbt=Zuy_sUS-HySkcjhrtAg3+k211VY8SMcw@mail.gmail.com>
+ <87o6qjaiz7.fsf@osv.gnss.ru> <CAOMZO5BwoAzf36-L0uCTdKriGaUHg1MqZoKg56Fvob6S4coMBQ@mail.gmail.com>
+ <87jz17afpb.fsf@osv.gnss.ru> <CAOMZO5Dvc9AhudPkEuM6BL7F4n=5S4M6d52jzomWnJvCOWVaaQ@mail.gmail.com>
+ <87ldlngd0n.fsf@osv.gnss.ru>
+In-Reply-To: <87ldlngd0n.fsf@osv.gnss.ru>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 7 Oct 2025 17:19:55 +0200
+X-Gm-Features: AS18NWDMwiiHt000mfybTztUreGkUxAcuNvaYGI5u2aZISHGO-P7FmOXjJbH9gM
+Message-ID: <CAPDyKFooV3zH+0egCQhefRxM_twG+MCkQdqWB=KaSkMXYNcD0Q@mail.gmail.com>
+Subject: Re: ARM iMX6sx board fails to boot with kernel 6.17
+To: Sergey Organov <sorganov@gmail.com>
+Cc: Fabio Estevam <festevam@gmail.com>, linux-kernel@vger.kernel.org, 
+	Shawn Guo <shawnguo@kernel.org>, "Rob Herring (Arm)" <robh@kernel.org>, Anson Huang <Anson.Huang@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If MBOX_TX_QUEUE_LEN number of kicks are pending, then no need to keep
-doing more kicks because it will fail anyway. Preventing further kicks
-is needed because it avoids printing false positive warning messages
-from mailbox framework. Functionally nothing changes from RPMsg or
-remoteproc point of view.
+On Tue, 7 Oct 2025 at 13:35, Sergey Organov <sorganov@gmail.com> wrote:
+>
+> Fabio Estevam <festevam@gmail.com> writes:
+>
+> > On Mon, Oct 6, 2025 at 6:22=E2=80=AFPM Sergey Organov <sorganov@gmail.c=
+om> wrote:
+> >
+> >> It is built form multiple .dtsi, so I figure I attach the one after
+> >> pre-processing stage. Please let me know if you'd prefer I rather
+> >> manually insert all the custom .dtsi into a single .dts, and send that
+> >> one instead.
+> >
+> > This format is hard to follow.
+> >
+> > To make things easier for debugging, you could create a minimal board
+> > dts file with only UART and eMMC nodes to reproduce the problem.
+> >
+> > It's not clear to me the relationship between the ANATOP regulators
+> > and the eMMC power on your board.
+>
+> Thanks, Fabio! OK, I'll do, re-check, and get back to you.
 
-Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
----
+FYI, we have had some strange issues cropping up in regards to the
+so-called ->sync_state() support in genpd, that was added in
+v6.17-rc1. Not sure if this could be related.
 
-v2:
-  - Use msg_slot_ro to know if single slot is available in msg queue or not.
- drivers/remoteproc/xlnx_r5_remoteproc.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Most of the problems pointed to commit: 0e789b491ba0 "pmdomain: core:
+Leave powered-on genpds on until sync_state".
 
-diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-index 0b7b173d0d26..d589f31f45b9 100644
---- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-+++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-@@ -9,6 +9,7 @@
- #include <linux/firmware/xlnx-zynqmp.h>
- #include <linux/kernel.h>
- #include <linux/mailbox_client.h>
-+#include <linux/mailbox_controller.h>
- #include <linux/mailbox/zynqmp-ipi-message.h>
- #include <linux/module.h>
- #include <linux/of_address.h>
-@@ -335,6 +336,10 @@ static void zynqmp_r5_rproc_kick(struct rproc *rproc, int vqid)
- 	if (!ipi)
- 		return;
- 
-+	/* Do not need new kick as already many kicks are pending. */
-+	if (ipi->tx_chan->msg_slot_ro == 0)
-+		return;
-+
- 	mb_msg = (struct zynqmp_ipi_message *)ipi->tx_mc_buf;
- 	memcpy(mb_msg->data, &vqid, sizeof(vqid));
- 	mb_msg->len = sizeof(vqid);
--- 
-2.34.1
+Although, it's not possible to make a plain revert of the above
+commit, one can opt-out from the new behavior in genpd, by setting
+GENPD_FLAG_NO_STAY_ON for the corresponding genpds that are registered
+with pm_genpd_init().
 
+Kind regards
+Uffe
 
