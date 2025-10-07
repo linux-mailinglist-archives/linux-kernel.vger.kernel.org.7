@@ -1,41 +1,40 @@
-Return-Path: <linux-kernel+bounces-843943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF32ABC0A54
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:33:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3074ABC0A48
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:33:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F6B23C6470
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:33:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EAAD189EF2E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E292B2D6607;
-	Tue,  7 Oct 2025 08:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5B02D47F5;
+	Tue,  7 Oct 2025 08:32:55 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1292D5408
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 08:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76922D5944
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 08:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759825974; cv=none; b=r/IRotMWWRMrgJWVOBtvHKk0eaQO5Jlbp3hIVog63y5C0+zi21trjMPO78HJp4Yh1F0+1gYMEtkTmA3maPOvWBTGAmJXqd/U6tjtzEF11yarNog96L7x5dPqSYDW5JUwll7nHHDX3gdTXoN0PurtA/ujihBHbnX/qTe11AfvJp4=
+	t=1759825975; cv=none; b=N2J6Na8VzbE8rujILVz7IhY9uuIn/FxCvsiF/BHYIHIF1AMepmxOgbTCERyXvi41V2hiEgJnAIAfVpd9t7/pT7RPsMdBhN7Mm/xXzvkj65PtMojPBKUmJKz1NN5qJxr0HoJtUWoy8zCFiiSBUIIj8/qQHwVA7Mp3zMhBSbWWLDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759825974; c=relaxed/simple;
-	bh=Bz5OwsUHnjn3p4WpBdtld1xIHeD+7KZpfsp68vDecvg=;
+	s=arc-20240116; t=1759825975; c=relaxed/simple;
+	bh=KVsgiZyiRmT5EtwxVArjMCYkxEe7fYqEDI4m3XHEGAU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nQ6zb1UGkEe1J3FtE+227uIbbSErtC7DQq0VGHMI5m4NSpsS5eWnAj/dFMQ499EHVISwaXdbdwZ3sqGz8kHpzk3NeUZ7M++YKPRuNxKHb1Ej5TRAssGO/Pzfm8nNsvIIqDnpO+Gaxy0ClYlG23mqvRB8tOd+753ark7dV685vIk=
+	 In-Reply-To:To:Cc; b=mo64W+s6z8BtJe+adGiEWr6WCp6ObinRYNW6YkmmJRr/4HbnI1E4weH0X0G8v5o6YKfDL7KT/mCMS1e0Gs0vBYyKU2SypGfzMq64pcC2Sv2FugMStErhr4iDGHi8exsZxDrOAbLmNbYoOMlzJgYZb9c7Kgv0yBCPxnEHtQITn8Y=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=peter.mobile.pengutronix.de)
 	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
 	(envelope-from <s.pueschel@pengutronix.de>)
-	id 1v637p-0002Hb-J6; Tue, 07 Oct 2025 10:32:49 +0200
+	id 1v637q-0002Hb-C9; Tue, 07 Oct 2025 10:32:50 +0200
 From: =?utf-8?q?Sven_P=C3=BCschel?= <s.pueschel@pengutronix.de>
-Date: Tue, 07 Oct 2025 10:31:55 +0200
-Subject: [PATCH 02/16] media: rockchip: rga: use stride for offset
- calculation
+Date: Tue, 07 Oct 2025 10:31:56 +0200
+Subject: [PATCH 03/16] media: rockchip: rga: align stride to 16 bytes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,7 +43,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251007-spu-rga3-v1-2-36ad85570402@pengutronix.de>
+Message-Id: <20251007-spu-rga3-v1-3-36ad85570402@pengutronix.de>
 References: <20251007-spu-rga3-v1-0-36ad85570402@pengutronix.de>
 In-Reply-To: <20251007-spu-rga3-v1-0-36ad85570402@pengutronix.de>
 To: Jacob Chen <jacob-chen@iotwrt.com>, 
@@ -63,63 +62,68 @@ X-SA-Exim-Mail-From: s.pueschel@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Use the stride instead of the width for the offset calculation. This
-ensures that the bytesperline value doesn't need to match the width
-value of the image.
+Align the stride to a multiple of 16 according to the RGA3 requirements
+mentioned in the datasheet. This also ensures that the stride of the RGA2
+is aligned to 4 bytes, as it needs to divide the value by 4 (one word)
+before storing it in the register.
 
-Furthermore this patch removes the dependency on the uv_factor property
-and instead reuses the v4l2_format_info to determine the correct
-division factor.
+Increasing the stride for the alignment also requires to increase the
+sizeimage value. This is usually handled by v4l2_fill_pixfmt_mp, but
+it doesn't allow to set a stride alignment. Therefore use the generated
+values to calculate the total number of lines to properly update the
+sizeimage value after the bytesperline has been aligned.
 
 Signed-off-by: Sven Püschel <s.pueschel@pengutronix.de>
 ---
- drivers/media/platform/rockchip/rga/rga-buf.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/media/platform/rockchip/rga/rga.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/drivers/media/platform/rockchip/rga/rga-buf.c b/drivers/media/platform/rockchip/rga/rga-buf.c
-index 730bdf98565a55704cef92345ccf9f486b99b06e..b5e6b1b527ca81721c64d96d984d5e981449c237 100644
---- a/drivers/media/platform/rockchip/rga/rga-buf.c
-+++ b/drivers/media/platform/rockchip/rga/rga-buf.c
-@@ -14,7 +14,6 @@
- #include <media/videobuf2-dma-sg.h>
- #include <media/videobuf2-v4l2.h>
- 
--#include "rga-hw.h"
- #include "rga.h"
- 
- static ssize_t fill_descriptors(struct rga_dma_desc *desc, size_t max_desc,
-@@ -92,14 +91,19 @@ static int rga_buf_init(struct vb2_buffer *vb)
+diff --git a/drivers/media/platform/rockchip/rga/rga.c b/drivers/media/platform/rockchip/rga/rga.c
+index 6438119a6c7aeff1e89e7aa95dcd5d2921fefa08..3cb7ce470c47e39d694e8176875a75fad2717f96 100644
+--- a/drivers/media/platform/rockchip/rga/rga.c
++++ b/drivers/media/platform/rockchip/rga/rga.c
+@@ -459,6 +459,25 @@ static int vidioc_enum_fmt(struct file *file, void *priv, struct v4l2_fmtdesc *f
  	return 0;
  }
  
--static int get_plane_offset(struct rga_frame *f, int plane)
-+static int get_plane_offset(struct rga_frame *f,
-+			    const struct v4l2_format_info *info,
-+			    int plane)
- {
-+	u32 stride = f->pix.plane_fmt[0].bytesperline;
++static void align_pixfmt(struct v4l2_pix_format_mplane *pix_fmt)
++{
++	int lines;
++	struct v4l2_plane_pix_format *fmt;
 +
- 	if (plane == 0)
- 		return 0;
- 	if (plane == 1)
--		return f->width * f->height;
-+		return stride * f->height;
- 	if (plane == 2)
--		return f->width * f->height + (f->width * f->height / f->fmt->uv_factor);
-+		return stride * f->height +
-+		       (stride * f->height / info->hdiv / info->vdiv);
++	/*
++	 * Align stride to 16 for the RGA3 (based on the datasheet)
++	 * To not dismiss the v4l2_fill_pixfmt_mp helper
++	 * (and manually write it again), we're approximating the new sizeimage
++	 */
++	for (fmt = pix_fmt->plane_fmt;
++	     fmt < pix_fmt->plane_fmt + pix_fmt->num_planes;
++	     fmt++) {
++		lines = DIV_ROUND_UP(fmt->sizeimage, fmt->bytesperline);
++		fmt->bytesperline = (fmt->bytesperline + 0xf) & ~0xf;
++		fmt->sizeimage = fmt->bytesperline * lines;
++	}
++}
++
+ static int vidioc_g_fmt(struct file *file, void *priv, struct v4l2_format *f)
+ {
+ 	struct v4l2_pix_format_mplane *pix_fmt = &f->fmt.pix_mp;
+@@ -474,6 +493,7 @@ static int vidioc_g_fmt(struct file *file, void *priv, struct v4l2_format *f)
+ 		return PTR_ERR(frm);
  
- 	return -EINVAL;
- }
-@@ -145,7 +149,7 @@ static int rga_buf_prepare(struct vb2_buffer *vb)
- 	/* Fill the remaining planes */
- 	info = v4l2_format_info(f->fmt->fourcc);
- 	for (i = info->mem_planes; i < info->comp_planes; i++)
--		offsets[i] = get_plane_offset(f, i);
-+		offsets[i] = get_plane_offset(f, info, i);
+ 	v4l2_fill_pixfmt_mp(pix_fmt, frm->fmt->fourcc, frm->width, frm->height);
++	align_pixfmt(pix_fmt);
  
- 	rbuf->offset.y_off = offsets[0];
- 	rbuf->offset.u_off = offsets[1];
+ 	pix_fmt->field = V4L2_FIELD_NONE;
+ 	pix_fmt->colorspace = frm->colorspace;
+@@ -496,6 +516,7 @@ static int vidioc_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
+ 				(u32)MIN_HEIGHT, (u32)MAX_HEIGHT);
+ 
+ 	v4l2_fill_pixfmt_mp(pix_fmt, fmt->fourcc, pix_fmt->width, pix_fmt->height);
++	align_pixfmt(pix_fmt);
+ 	pix_fmt->field = V4L2_FIELD_NONE;
+ 
+ 	return 0;
 
 -- 
 2.51.0
