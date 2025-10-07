@@ -1,47 +1,79 @@
-Return-Path: <linux-kernel+bounces-843654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B054CBBFED7
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 03:21:02 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13E5CBBFEE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 03:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9243C4F0B93
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 01:21:01 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 74D1C34C5A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 01:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61204192D97;
-	Tue,  7 Oct 2025 01:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E855B1A9FA8;
+	Tue,  7 Oct 2025 01:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RBAJOGog"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XncjnnSB"
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864C034BA44;
-	Tue,  7 Oct 2025 01:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28244129A78
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 01:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759800058; cv=none; b=fHt1XWGJRCTutVVHyUkJb0BqE/qxXg43PK8IweM4hPvjs0Bkw3RnhrO+V7TOSYM+Um/haJgB6vOsAI23KuPTuJjCAD04ESOmzTZPt+7sqYO++I9sO9BUHlreQspsdlBlj387mzd6Cjs15N7GgJG3Z/uEZf2Ahmca6GAruc0PRB8=
+	t=1759800143; cv=none; b=Yb0+5ySlRDeceKSzQ3ZI/lEM3RUcW10VjZw7OZeFSQDpHbvhfhe6581WKXOguqCFF/g/KcKSM+SjPx5bN/EGe4EZIYQlaL6/novvNV18x7nxaJ4lEOC4xQq65yeQAG3BR5OmXmRQ+km2ZbeieWw2IUv2ys39QCzSnu/Fq0LpURA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759800058; c=relaxed/simple;
-	bh=z2OIZVGrfNYJFBLxaviY6hKGuzZEUsZaV7GBFKxpQ+Y=;
+	s=arc-20240116; t=1759800143; c=relaxed/simple;
+	bh=H/Vde5fSyegTVrxDL779b0Ekl1TqghJb8VzoeMUW5sU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kZQs11Js8tF7KjjeXAEQacND4cwTci9eW62JJ8tY+/yxNPr6iKExjN32AVpj0+LYql+d2olufUWFYaO+0PGbaK0KD5iod0rF667dndg0Qzrq4lshawz9aLZXbkmCA9g/FiAPzGGyCmaxFAsmDfCrdu7DHtXrXAEPExd/kYCNONQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RBAJOGog; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CADCC4CEF5;
-	Tue,  7 Oct 2025 01:20:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759800058;
-	bh=z2OIZVGrfNYJFBLxaviY6hKGuzZEUsZaV7GBFKxpQ+Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RBAJOGogbZ3xnvquR7gtzxVmCQ4/WFAXOS+W7cbJJ6+BpgdAKQMm83B/vu3JRgg+t
-	 SvpklJY0bY/ip4cNjy/gnCt5kUA4tiyj0cjhBOFUQQUlwm0ztR5VOgeDid+NAd1cKt
-	 h6bgPf/Grx/A2QflsHE4ulmWw9CWV7v76zpMQM8WvT7lsTcDgkBjPZAQUqKu/Lxq7y
-	 REm39AmaRGoXVqQEdqUYknNluX82/CllOHhnMH86TAr0zAYSYNbT7hLTcqs2cFBkQH
-	 4Haa9M+Q4Y5+2m8zbBFaopoHebrkYOAEZA4TJzq/Gyo9Aa4tNM3sz5QkQqn4+R4q5V
-	 +fWuWcoIYpfzQ==
-Message-ID: <a05be32b-dc8f-444f-8c1c-2d49eb19536d@kernel.org>
-Date: Tue, 7 Oct 2025 10:20:43 +0900
+	 In-Reply-To:Content-Type; b=b6dmn/rEADW+PxLjjyH9eiCT5r5xmf+W91dwUu/QS5M5/vx28WlRnh8HnduUQZf6EptUfUF97gDrBNLlz6obBpUg+3vDNluTv7honLp1mQNEgjSXJEYCtpxmUEzH66m9Q797FiWGnsXDDm3F4CMlcl18zCCggHQY1+JZqX4SvNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XncjnnSB; arc=none smtp.client-ip=209.85.222.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-8e8163d94bbso4080520241.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 18:22:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759800137; x=1760404937; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oeZtd1lS2iAL5Eb5txNbBPZr6F+hk2iic2qSNfSBlxc=;
+        b=XncjnnSB2+L1F4/tJ8mSC8SG4h/oSIvs7toO039nd5FdscCP2C/rDKR1v0tEB/O20y
+         f2CjZ1M04v9k5A4pcEyHSWgtEfzTnJpaAmNI001gtaNQiPtq+I1WzaMPse6RtfkJLg+b
+         RW0ac9W6hRUw/b54tpR6IsZ7THsw6ol/d+tfv8tH8aU1aicHprE8jc1QyRbXo6g3Xdu/
+         3CcccBd+MVYtakcehaMCi0lBPSxHGBrd12eIfHwUc2+KtRXZlsXa4c5ceCGiphpe+mnT
+         hmA2oLhZ3Au9c/lvTlzhkdEB5yCZ5Sr2I6Qca9I3c7MAsgfsrTyDuvfDDkrHa2++7YRi
+         n3qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759800137; x=1760404937;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oeZtd1lS2iAL5Eb5txNbBPZr6F+hk2iic2qSNfSBlxc=;
+        b=po4qity6mwx02QsqdcXNgK/cSNyrEvTLOfaP33ufF+X8d1bfWS5EYvtQ81exygg99i
+         OJEognf8vya6zUsh8iV1j2jj+Ntgb0APqQxyivQjVBle6ozwa9mimjt0p4bbQDuZLxi+
+         1hIVR0F08ZteFLE95zDErXa8FKE9ZP+6bSsKXEg2XWIaJcwFjieVZMPkYsD8eH/XTtRz
+         o9H4+UQvFwVOeCIS0d8EDwz7U+F05YKKE2nl9yw7q/JxRIqe4u6F5rI6JfDtR3hYn2xu
+         tzZGq+ODpq646VMCm0QczlKvW5FDavcb29jAQSP8Stbhw7V0Vkv3suExp53gsIqhAhPp
+         ScBg==
+X-Forwarded-Encrypted: i=1; AJvYcCXjcAk0VIPxXw5rN/TClaNj+0I2G+BwMe7JFl82gPnZaogB3bCEH1Rd9FMiPiTq/Uk9/o94ayyrbnnU4K4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywrk1exSWDFo1Uja9siVEj6FIAuhqULeqAGlXt3lsVYfcnC6r4H
+	+6IB2EXqEpd3sTd+SCek2UodHWtCeMgU38bxhIDm1U7gEJpIdtYIYFGD
+X-Gm-Gg: ASbGnctKltBLfBkkt2gnbqPuj933TPD80+l1oP4uZ52GO0GmlIYKAf9NT7+VqPDfQGh
+	dwBfJ41cxTrBo7IXOXBcLMa2aDjOTDvJP8FKOpw3QUFukBh4m6QEP+aNgtZJFuVbb0ZyYuNdCeg
+	sBt3hdT/c76xS0gQFX67pyUsG1cYN+Wcu8YviPFmVcHbh7AE2PNDLmEEbOX5beKsCelcrmAkkUP
+	K3Pa9TD6YK7bzOpqlOkRTXOl0LenrCAwIAgRuMxVuV3iwfKwY6/GjNrMnvIsnsIYw0bLxmJzukO
+	6j9x9YwK2b7ygcLBkAzIBA7bJbK5D78UYkjtp5Qh6siQ4qxZmEvRRr+ANy4/baItpeHnT11hZcI
+	xtmuiuhiZMzQ8t0fYGxkhyfMcmkxqjIhi9JoStYq3pNF8nEuOQ4IBV55Igr4j93A=
+X-Google-Smtp-Source: AGHT+IFmBzhKhtg5t4PSLIdciapJfvhjo0L3FJBJCxbNlT3KY5aZygpXM3hCFzRlcEVz+ZGVmyRtfQ==
+X-Received: by 2002:a05:6122:514:b0:54b:bc60:93f8 with SMTP id 71dfb90a1353d-5524ea2517fmr5491547e0c.9.1759800137067;
+        Mon, 06 Oct 2025 18:22:17 -0700 (PDT)
+Received: from [192.168.1.145] ([104.203.11.126])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5523cf6558esm3444393e0c.22.2025.10.06.18.22.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Oct 2025 18:22:16 -0700 (PDT)
+Message-ID: <4124e1a5-fcd9-4ce3-9d97-5ebe8018207e@gmail.com>
+Date: Mon, 6 Oct 2025 21:22:12 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,205 +81,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/8] riscv: dts: Add Tenstorrent Blackhole SoC PCIe
- cards
-To: Drew Fustini <fustini@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Samuel Holland <samuel.holland@sifive.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, Anup Patel <anup@brainfault.org>,
- Arnd Bergmann <arnd@arndb.de>, Joel Stanley <jms@oss.tenstorrent.com>,
- Joel Stanley <joel@jms.id.au>, Michael Neuling <mikey@neuling.org>,
- Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@kernel.org>,
- Andy Gross <agross@kernel.org>,
- Anirudh Srinivasan <asrinivasan@tenstorrent.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, Drew Fustini <dfustini@oss.tenstorrent.com>
-References: <20251006-tt-bh-dts-v2-0-ed90dc4b3e22@oss.tenstorrent.com>
- <20251006-tt-bh-dts-v2-6-ed90dc4b3e22@oss.tenstorrent.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH net] net: usb: lan78xx: fix use of improperly initialized
+ dev->chipid in lan78xx_reset
+To: I Viswanath <viswanathiyyappan@gmail.com>, Thangaraj.S@microchip.com,
+ Rengarajan.S@microchip.com, UNGLinuxDriver@microchip.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com
+Cc: netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+ linux-kernel-mentees@lists.linux.dev
+References: <20251001131409.155650-1-viswanathiyyappan@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251006-tt-bh-dts-v2-6-ed90dc4b3e22@oss.tenstorrent.com>
+From: David Hunter <david.hunter.linux@gmail.com>
+In-Reply-To: <20251001131409.155650-1-viswanathiyyappan@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/10/2025 06:21, Drew Fustini wrote:
-> From: Drew Fustini <dfustini@oss.tenstorrent.com>
+On 10/1/25 09:14, I Viswanath wrote:
+> dev->chipid is used in lan78xx_init_mac_address before it's initialized:
 > 
-> Add device tree source describing the Tenstorrent Blackhole SoC and the
-> Blackhole P100 and P150 PCIe cards. There are no differences between
-> the P100 and P150 cards from the perspective of an OS kernel like Linux
-> running on the X280 cores.
+> lan78xx_reset() {
+>     lan78xx_init_mac_address()
+>         lan78xx_read_eeprom()
+>             lan78xx_read_raw_eeprom() <- dev->chipid is used here
 > 
-> Link: https://github.com/tenstorrent/tt-isa-documentation/blob/main/BlackholeA0/
-> Signed-off-by: Drew Fustini <dfustini@oss.tenstorrent.com>
-> ---
->  MAINTAINERS                                        |   1 +
->  arch/riscv/boot/dts/Makefile                       |   1 +
->  arch/riscv/boot/dts/tenstorrent/Makefile           |   2 +
->  arch/riscv/boot/dts/tenstorrent/blackhole-card.dts |  14 +++
->  arch/riscv/boot/dts/tenstorrent/blackhole.dtsi     | 104 +++++++++++++++++++++
->  5 files changed, 122 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 125b5498c3bf8e689adc665fc6e975b05a484abf..b3a2a347f835da952c33b0faf09d560eb1285c32 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -21748,6 +21748,7 @@ L:	linux-riscv@lists.infradead.org
->  S:	Maintained
->  T:	git https://github.com/tenstorrent/linux.git
->  F:	Documentation/devicetree/bindings/riscv/tenstorrent.yaml
-> +F:	arch/riscv/boot/dts/tenstorrent/
->  
->  RISC-V THEAD SoC SUPPORT
->  M:	Drew Fustini <fustini@kernel.org>
-> diff --git a/arch/riscv/boot/dts/Makefile b/arch/riscv/boot/dts/Makefile
-> index 3b99e91efa25be2d6ca5bc173342c24a72f87187..0624199867065dbb5eb62d660f950b4aa3a7abd7 100644
-> --- a/arch/riscv/boot/dts/Makefile
-> +++ b/arch/riscv/boot/dts/Makefile
-> @@ -8,4 +8,5 @@ subdir-y += sifive
->  subdir-y += sophgo
->  subdir-y += spacemit
->  subdir-y += starfive
-> +subdir-y += tenstorrent
->  subdir-y += thead
-> diff --git a/arch/riscv/boot/dts/tenstorrent/Makefile b/arch/riscv/boot/dts/tenstorrent/Makefile
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..2c81faaba46235821470b077392ebfebd37ef55a
-> --- /dev/null
-> +++ b/arch/riscv/boot/dts/tenstorrent/Makefile
-> @@ -0,0 +1,2 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +dtb-$(CONFIG_ARCH_TENSTORRENT) += blackhole-card.dtb
-> diff --git a/arch/riscv/boot/dts/tenstorrent/blackhole-card.dts b/arch/riscv/boot/dts/tenstorrent/blackhole-card.dts
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..c595f7eddcf860d18193d6b18eb4fd1c0c6c684d
-> --- /dev/null
-> +++ b/arch/riscv/boot/dts/tenstorrent/blackhole-card.dts
-> @@ -0,0 +1,14 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/dts-v1/;
-> +
-> +#include "blackhole.dtsi"
-> +
-> +/ {
-> +	model = "Tenstorrent Blackhole SoC PCIe card";
-> +	compatible = "tenstorrent,blackhole-card", "tenstorrent,blackhole";
-> +
-> +	memory@400030000000 {
-> +		device_type = "memory";
-> +		reg = <0x4000 0x30000000 0x1 0x00000000>;
-> +	};
-> +};
-> diff --git a/arch/riscv/boot/dts/tenstorrent/blackhole.dtsi b/arch/riscv/boot/dts/tenstorrent/blackhole.dtsi
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..dc6ac953c34b1efeec231b339251058fac5172d5
-> --- /dev/null
-> +++ b/arch/riscv/boot/dts/tenstorrent/blackhole.dtsi
-> @@ -0,0 +1,104 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +// Copyright 2025 Tenstorrent AI ULC
-> +/dts-v1/;
-> +
-> +/ {
-> +	compatible = "tenstorrent,blackhole";
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
-> +
-> +	cpus {
-> +		#address-cells = <0x1>;
-> +		#size-cells = <0x0>;
+>     dev->chipid = ... <- dev->chipid is initialized correctly here
+> }
 
-Cells are not hex. Please use decimal everywhere.
-
-> +		timebase-frequency = <50000000>;
-> +
-> +		cpu@0 {
-> +			compatible = "sifive,x280", "sifive,rocket0", "riscv";
-> +			device_type = "cpu";
-> +			reg = <0>;
-> +			mmu-type = "riscv,sv57";
-> +			riscv,isa-base = "rv64i";
-> +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicsr",
-> +					       "zifencei", "zfh", "zba", "zbb", "sscofpmf";
-
-Blank line
-
-> +			cpu0_intc: interrupt-controller {
-> +				compatible = "riscv,cpu-intc";
-> +				#interrupt-cells = <1>;
-> +				interrupt-controller;
-> +			};
-> +		};
-
-
-...
-
-> +
-> +		plic0: interrupt-controller@c000000 {
-> +			compatible = "tenstorrent,blackhole-plic", "sifive,plic-1.0.0";
-> +			reg = <0x0 0x0c000000 0x0 0x04000000>;
-> +			interrupts-extended = <&cpu0_intc 11>, <&cpu0_intc 9>,
-> +					      <&cpu1_intc 11>, <&cpu1_intc 9>,
-> +					      <&cpu2_intc 11>, <&cpu2_intc 9>,
-> +					      <&cpu3_intc 11>, <&cpu3_intc 9>;
-> +			interrupt-controller;
-> +			#interrupt-cells = <1>;
-> +			#address-cells = <0>;
-> +			riscv,ndev = <128>;
-
-
-
-You should have at least serial or any other interface, otherwise I
-don't see how this can be used at this stage.
-
-
-Best regards,
-Krzysztof
+Please describe the testing you performed.
 
