@@ -1,158 +1,260 @@
-Return-Path: <linux-kernel+bounces-844516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05664BC21DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:28:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB9A9BC21E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2F2D3AD3E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:28:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDE8F189B29B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E53F2E7F1C;
-	Tue,  7 Oct 2025 16:28:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5025E21ABDC;
+	Tue,  7 Oct 2025 16:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="cFw/JAVu"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TxZCZtrZ"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF55011712;
-	Tue,  7 Oct 2025 16:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A991DF759
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759854525; cv=none; b=fAEQDukv/eX6v8PCz+1K+KcbR/xdyAgpGDfys06eskdDY1eNFg+10crITVSqSrvDfQLN+HmjgRFCqSwGUU0Q3IONM56E82rDJYKuYg1Z1YXsn9TRX31X7vp1ANpqY7CplQmap6Jzh73+FD00B9a8+zBmYC/VPi/6yja0/jS7fT8=
+	t=1759854688; cv=none; b=l1XjmFaOKsSlvTb3SHj/uAl34T166wjRme7Aljyi49KvUOpyS+CoZpwYDa2mKIF+cvGUNXo+LZhPHAwXHQ8Vtg2h0SCcH9OD5X9dxc39EDlVW5kcYuzObIDxTLjFB7CorOUpuA6L5KPl8fp7vYn4gmzIWm/WxzjQKOGhhJN8a0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759854525; c=relaxed/simple;
-	bh=kEutHGL8JzmVi3dQ2UbN4yiTCki5tznW7ZmLxi+fP3c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vBlbM/ch0LO4Fbtjem5k1EQ5YTi354mlgeJDXYyTGwAIrJznOWcE+15MN3P1IiezldVzpCpmvEpV2HQ1HpFHbVWm4pXKPYYOlHjIuXtK8eYxXAqMChR0Adb2UR8trjRE91NndGCUKwT0G40KK1wHGkGHrdDwIjxN1WkqGrODhNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=cFw/JAVu; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ta4UZH7jWmaJh0s9qTr64RQ98ewcCcpeSGfpr9Lk/00=; b=cFw/JAVu9NrYgxn4FewF4VA99Y
-	7ZvlemE2fUSHf0OEoIGLDlN55vV2xdfeiTkHGScvN09zeWiEn5mp9ppr+68ug1kwQB3X5pgl3n6yX
-	W06bnTlag9j9TuTS9FCWPVDPlXebGvAugJMx+SHDPYQNOfPcWeWp3tG6X4/CKX0/N5Pz8w8FLu8cz
-	0/l2ApDg5zucCEb5SIh/4GXQ0MJKeRcsa5wK0wlMvWxer99pKM8AjvFnTdqw6CnMJi/UcFg8/p/62
-	nMftDIdTY6J9Qq+JqL1neJycC07vuLgmfh14vz3+sm9khmZTSk/T6xgG4HknRxNA3cK/9hxaoyecO
-	1bpYvN4A==;
-Received: from [58.29.143.236] (helo=[192.168.1.7])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1v6AYF-006H1f-DV; Tue, 07 Oct 2025 18:28:35 +0200
-Message-ID: <f841e330-d490-4912-b817-76c337cad6fe@igalia.com>
-Date: Wed, 8 Oct 2025 01:28:31 +0900
+	s=arc-20240116; t=1759854688; c=relaxed/simple;
+	bh=zRn9l5M3+J57K4Nf/MSyE1kact60dzbaTi+YViUvQEI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=EiOBt4apFlDCV3sR3kspSaF6IahqCVb7MSlQL8fuYwkuwxhGH6GUn+zLAFPvaSebCWhq2K8BaARG1hbiCZc8YUb5WDK844bx+FSfqgrKmb+0ExijJiZ6Gd1/Obg6azZtf4arQ8nl7JMMhGg8jnrVWLBHXB0qA3dB8kzqiNfrqGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TxZCZtrZ; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-339d5dbf58aso7406293a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 09:31:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759854686; x=1760459486; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DUfQZGdB8vnQ3BrO/9eKlA0A4GR0IweUUWX2EFRalJA=;
+        b=TxZCZtrZmPIMiH2jB1H2EB6QFXa1nnepz0E0xDH7weZTfOjxJqcmIRvdsgegYZsEZi
+         Q+IOutPCqcY0HOvYEZCCeJBqGNA6kpxWsZ95rR8ifrH2vzKAdTahg746pQB4PrDFY6tC
+         C0bfLvPoHKtf+de7jieD7GwalecwdeyX6Ni5JULfy0CgiMvpj5LDDGYfB5xQeIjGTgkP
+         7tZEb0f+qjF5+Lo4odTen5N9rxGw8hvtERqcfoZojDEHvdEou3zHolqsb4U2iyy0wYkU
+         Kszs+CB4liWrZZ/ONXeDaaYvowHlxc6+0XYLGtcJIHJX0g0Qf/ns314SU7GMff1WmsFr
+         D80A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759854686; x=1760459486;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DUfQZGdB8vnQ3BrO/9eKlA0A4GR0IweUUWX2EFRalJA=;
+        b=FlTnfjtYOSGFGP+IKJXP4+OBH9+6jVgjh//aMoJ/eRRGD0p0YX5mAFZLqBVMTmLttN
+         V4qVrl/7Y9y8mdbhJFo2wI/B3xZ0a4va5FQNUueEPLXWof7Avmv0seKDl3bXL1pdHiaw
+         ts7tK0LHRySIJtjUzxQNDTcBd5hHz/E+eindnzjUuugupHwdyZB/s+3ZupDvjbTEuvyy
+         ET3t37Yox2d6iziJCyBQ0rP7kz2nwvZNM0uci3IHC7evUVg4twRfk6saxBqF4yhoapir
+         pA7QHeibZMY03leqg0pPpOpDwQHnF/2K5W9/Cmil0Nw9Wu8qwxpHQFqpBYTFMds7GNCM
+         osNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWj5IxbrPgSpq5fpQcoJvn66kRXpesg7f5VZmwVhdK09gcJi0VCktuMzhwyZGz0shkdar0s4S1ZmsDithI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdOU0G+xymZJRUcaVkyKpLkAIgaJAiOoEvSEQQHM1mcJhxmjKq
+	NRHTUgMIA3unF8y8F+/T1UyXn5fvxRn/w/DsjZaHtLWD0iJfaUE5wZuZAUvVcWuCkqyVGNQWXpa
+	O8PAnr0Iao2eB1x5ypde/E8Q89g==
+X-Google-Smtp-Source: AGHT+IFhqcZFcRMhW8qlWIS/kR93SNJpodMaSdwu3z7otH1Ts8WLKOWU6DlQ64PJlD/ZZmNPqHVeCV0AVk821S0veA==
+X-Received: from pjbdj15.prod.google.com ([2002:a17:90a:d2cf:b0:330:793a:2e77])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:4a52:b0:332:84c1:31de with SMTP id 98e67ed59e1d1-33b513ced6emr119418a91.25.1759854686135;
+ Tue, 07 Oct 2025 09:31:26 -0700 (PDT)
+Date: Tue, 07 Oct 2025 09:31:24 -0700
+In-Reply-To: <20251003232606.4070510-4-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] sched_ext: Add scx_bpf_task_set_slice() and
- scx_bpf_task_set_dsq_vtime()
-To: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
- Andrea Righi <arighi@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev
-References: <20251007015147.2496026-1-tj@kernel.org>
- <20251007015147.2496026-3-tj@kernel.org>
-From: Changwoo Min <changwoo@igalia.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <20251007015147.2496026-3-tj@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20251003232606.4070510-1-seanjc@google.com> <20251003232606.4070510-4-seanjc@google.com>
+Message-ID: <diqzbjmiekrn.fsf@google.com>
+Subject: Re: [PATCH v2 03/13] KVM: guest_memfd: Invalidate SHARED GPAs if gmem
+ supports INIT_SHARED
+From: Ackerley Tng <ackerleytng@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Sean Christopherson <seanjc@google.com> writes:
 
-On 10/7/25 10:51, Tejun Heo wrote:
-> With the planned hierarchical scheduler support, sub-schedulers will need to
-> be verified for authority before being allowed to modify task->scx.slice and
-> task->scx.dsq_vtime. Add scx_bpf_task_set_slice() and
-> scx_bpf_task_set_dsq_vtime() which will perform the necessary permission
-> checks.
+> When invalidating gmem ranges, e.g. in response to PUNCH_HOLE, process all
+> possible range types (PRIVATE vs. SHARED) for the gmem instance.  Since
+> since guest_memfd doesn't yet support in-place conversions, simply pivot
+> on INIT_SHARED as a gmem instance can currently only have private or shared
+> memory, not both.
+>
+> Failure to mark shared GPAs for invalidation is benign in the current code
+> base, as only x86's TDX consumes KVM_FILTER_{PRIVATE,SHARED}, and TDX
+> doesn't yet support INIT_SHARED with guest_memfd.
 
-Is it necessary to distinguish between decreasing the slice and
-increasing the slice? A BPF scheduler (e.g., LAVD) sets the slice to
-zero for passive preemption.
+This is the correct fix, and I agree it is not a problem in current code
+since before this patch series and the introduction of INIT_SHARED,
+mmap() was only supported by non-CoCo, which doesn't interpret
+KVM_FILTER_{PRIVATE,SHARED} anyway.
 
-Regards,
-Changwoo Min
+Had something similar/related here [1]
 
-> 
-> Root schedulers can still directly write to these fields, so this doesn't
-> affect existing schedulers.
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
+[1] https://lore.kernel.org/all/d3832fd95a03aad562705872cbda5b3d248ca321.1747264138.git.ackerleytng@google.com/
+
+Reviewed-by: Ackerley Tng <ackerleytng@google.com>
+
+> However, invalidating
+> only private GPAs is conceptually wrong and a lurking bug, e.g. could
+> result in missed invalidations if ARM starts filtering invalidations based
+> on attributes.
+>
+> Fixes: 3d3a04fad25a ("KVM: Allow and advertise support for host mmap() on guest_memfd files")
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 > ---
->   kernel/sched/ext.c                       | 30 ++++++++++++++++++++++++
->   tools/sched_ext/include/scx/common.bpf.h |  2 ++
->   2 files changed, 32 insertions(+)
-> 
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index fc353b8d69f7..6d76efaaa9b2 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -5833,6 +5833,34 @@ static const struct btf_kfunc_id_set scx_kfunc_set_unlocked = {
->   
->   __bpf_kfunc_start_defs();
->   
-> +/**
-> + * scx_bpf_task_set_slice - Set task's time slice
-> + * @p: task of interest
-> + * @slice: time slice to set in nsecs
-> + *
-> + * Set @p's time slice to @slice. Returns %true on success, %false if the
-> + * calling scheduler doesn't have authority over @p.
-> + */
-> +__bpf_kfunc bool scx_bpf_task_set_slice(struct task_struct *p, u64 slice)
+>  virt/kvm/guest_memfd.c | 64 +++++++++++++++++++++++++++++-------------
+>  1 file changed, 44 insertions(+), 20 deletions(-)
+>
+> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+> index cf3afba23a6b..e10d2c71e78c 100644
+> --- a/virt/kvm/guest_memfd.c
+> +++ b/virt/kvm/guest_memfd.c
+> @@ -102,8 +102,17 @@ static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index)
+>  	return filemap_grab_folio(inode->i_mapping, index);
+>  }
+>  
+> -static void kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
+> -				      pgoff_t end)
+> +static enum kvm_gfn_range_filter kvm_gmem_get_invalidate_filter(struct inode *inode)
 > +{
-> +	p->scx.slice = slice;
-> +	return true;
+> +	if ((u64)inode->i_private & GUEST_MEMFD_FLAG_INIT_SHARED)
+> +		return KVM_FILTER_SHARED;
+> +
+> +	return KVM_FILTER_PRIVATE;
 > +}
 > +
-> +/**
-> + * scx_bpf_task_set_dsq_vtime - Set task's virtual time for DSQ ordering
-> + * @p: task of interest
-> + * @vtime: virtual time to set
-> + *
-> + * Set @p's virtual time to @vtime. Returns %true on success, %false if the
-> + * calling scheduler doesn't have authority over @p.
-> + */
-> +__bpf_kfunc bool scx_bpf_task_set_dsq_vtime(struct task_struct *p, u64 vtime)
+> +static void __kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
+> +					pgoff_t end,
+> +					enum kvm_gfn_range_filter attr_filter)
+>  {
+>  	bool flush = false, found_memslot = false;
+>  	struct kvm_memory_slot *slot;
+> @@ -118,8 +127,7 @@ static void kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
+>  			.end = slot->base_gfn + min(pgoff + slot->npages, end) - pgoff,
+>  			.slot = slot,
+>  			.may_block = true,
+> -			/* guest memfd is relevant to only private mappings. */
+> -			.attr_filter = KVM_FILTER_PRIVATE,
+> +			.attr_filter = attr_filter,
+>  		};
+>  
+>  		if (!found_memslot) {
+> @@ -139,8 +147,21 @@ static void kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
+>  		KVM_MMU_UNLOCK(kvm);
+>  }
+>  
+> -static void kvm_gmem_invalidate_end(struct kvm_gmem *gmem, pgoff_t start,
+> -				    pgoff_t end)
+> +static void kvm_gmem_invalidate_begin(struct inode *inode, pgoff_t start,
+> +				      pgoff_t end)
 > +{
-> +	p->scx.dsq_vtime = vtime;
-> +	return true;
+> +	struct list_head *gmem_list = &inode->i_mapping->i_private_list;
+> +	enum kvm_gfn_range_filter attr_filter;
+> +	struct kvm_gmem *gmem;
+> +
+> +	attr_filter = kvm_gmem_get_invalidate_filter(inode);
+> +
+> +	list_for_each_entry(gmem, gmem_list, entry)
+> +		__kvm_gmem_invalidate_begin(gmem, start, end, attr_filter);
 > +}
 > +
->   static void scx_kick_cpu(struct scx_sched *sch, s32 cpu, u64 flags)
->   {
->   	struct rq *this_rq;
-> @@ -6638,6 +6666,8 @@ __bpf_kfunc void scx_bpf_events(struct scx_event_stats *events,
->   __bpf_kfunc_end_defs();
->   
->   BTF_KFUNCS_START(scx_kfunc_ids_any)
-> +BTF_ID_FLAGS(func, scx_bpf_task_set_slice, KF_RCU);
-> +BTF_ID_FLAGS(func, scx_bpf_task_set_dsq_vtime, KF_RCU);
->   BTF_ID_FLAGS(func, scx_bpf_kick_cpu)
->   BTF_ID_FLAGS(func, scx_bpf_dsq_nr_queued)
->   BTF_ID_FLAGS(func, scx_bpf_destroy_dsq)
-> diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
-> index 06e2551033cb..505231b7b7ae 100644
-> --- a/tools/sched_ext/include/scx/common.bpf.h
-> +++ b/tools/sched_ext/include/scx/common.bpf.h
-> @@ -102,6 +102,8 @@ s32 scx_bpf_pick_any_cpu_node(const cpumask_t *cpus_allowed, int node, u64 flags
->   s32 scx_bpf_pick_any_cpu(const cpumask_t *cpus_allowed, u64 flags) __ksym;
->   bool scx_bpf_task_running(const struct task_struct *p) __ksym;
->   s32 scx_bpf_task_cpu(const struct task_struct *p) __ksym;
-> +bool scx_bpf_task_set_slice(struct task_struct *p, u64 slice) __ksym __weak;
-> +bool scx_bpf_task_set_dsq_vtime(struct task_struct *p, u64 vtime) __ksym __weak;
->   struct rq *scx_bpf_cpu_rq(s32 cpu) __ksym;
->   struct rq *scx_bpf_locked_rq(void) __ksym;
->   struct task_struct *scx_bpf_cpu_curr(s32 cpu) __ksym __weak;
-
+> +static void __kvm_gmem_invalidate_end(struct kvm_gmem *gmem, pgoff_t start,
+> +				      pgoff_t end)
+>  {
+>  	struct kvm *kvm = gmem->kvm;
+>  
+> @@ -151,12 +172,20 @@ static void kvm_gmem_invalidate_end(struct kvm_gmem *gmem, pgoff_t start,
+>  	}
+>  }
+>  
+> +static void kvm_gmem_invalidate_end(struct inode *inode, pgoff_t start,
+> +				    pgoff_t end)
+> +{
+> +	struct list_head *gmem_list = &inode->i_mapping->i_private_list;
+> +	struct kvm_gmem *gmem;
+> +
+> +	list_for_each_entry(gmem, gmem_list, entry)
+> +		__kvm_gmem_invalidate_end(gmem, start, end);
+> +}
+> +
+>  static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_t len)
+>  {
+> -	struct list_head *gmem_list = &inode->i_mapping->i_private_list;
+>  	pgoff_t start = offset >> PAGE_SHIFT;
+>  	pgoff_t end = (offset + len) >> PAGE_SHIFT;
+> -	struct kvm_gmem *gmem;
+>  
+>  	/*
+>  	 * Bindings must be stable across invalidation to ensure the start+end
+> @@ -164,13 +193,11 @@ static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_t len)
+>  	 */
+>  	filemap_invalidate_lock(inode->i_mapping);
+>  
+> -	list_for_each_entry(gmem, gmem_list, entry)
+> -		kvm_gmem_invalidate_begin(gmem, start, end);
+> +	kvm_gmem_invalidate_begin(inode, start, end);
+>  
+>  	truncate_inode_pages_range(inode->i_mapping, offset, offset + len - 1);
+>  
+> -	list_for_each_entry(gmem, gmem_list, entry)
+> -		kvm_gmem_invalidate_end(gmem, start, end);
+> +	kvm_gmem_invalidate_end(inode, start, end);
+>  
+>  	filemap_invalidate_unlock(inode->i_mapping);
+>  
+> @@ -280,8 +307,9 @@ static int kvm_gmem_release(struct inode *inode, struct file *file)
+>  	 * Zap all SPTEs pointed at by this file.  Do not free the backing
+>  	 * memory, as its lifetime is associated with the inode, not the file.
+>  	 */
+> -	kvm_gmem_invalidate_begin(gmem, 0, -1ul);
+> -	kvm_gmem_invalidate_end(gmem, 0, -1ul);
+> +	__kvm_gmem_invalidate_begin(gmem, 0, -1ul,
+> +				    kvm_gmem_get_invalidate_filter(inode));
+> +	__kvm_gmem_invalidate_end(gmem, 0, -1ul);
+>  
+>  	list_del(&gmem->entry);
+>  
+> @@ -403,8 +431,6 @@ static int kvm_gmem_migrate_folio(struct address_space *mapping,
+>  
+>  static int kvm_gmem_error_folio(struct address_space *mapping, struct folio *folio)
+>  {
+> -	struct list_head *gmem_list = &mapping->i_private_list;
+> -	struct kvm_gmem *gmem;
+>  	pgoff_t start, end;
+>  
+>  	filemap_invalidate_lock_shared(mapping);
+> @@ -412,8 +438,7 @@ static int kvm_gmem_error_folio(struct address_space *mapping, struct folio *fol
+>  	start = folio->index;
+>  	end = start + folio_nr_pages(folio);
+>  
+> -	list_for_each_entry(gmem, gmem_list, entry)
+> -		kvm_gmem_invalidate_begin(gmem, start, end);
+> +	kvm_gmem_invalidate_begin(mapping->host, start, end);
+>  
+>  	/*
+>  	 * Do not truncate the range, what action is taken in response to the
+> @@ -424,8 +449,7 @@ static int kvm_gmem_error_folio(struct address_space *mapping, struct folio *fol
+>  	 * error to userspace.
+>  	 */
+>  
+> -	list_for_each_entry(gmem, gmem_list, entry)
+> -		kvm_gmem_invalidate_end(gmem, start, end);
+> +	kvm_gmem_invalidate_end(mapping->host, start, end);
+>  
+>  	filemap_invalidate_unlock_shared(mapping);
+>  
+> -- 
+> 2.51.0.618.g983fd99d29-goog
 
