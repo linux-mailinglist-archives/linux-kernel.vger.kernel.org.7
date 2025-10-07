@@ -1,116 +1,163 @@
-Return-Path: <linux-kernel+bounces-843756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9C18BC02B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 07:00:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7B5CBC02CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 07:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 369D24E3D84
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 05:00:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED49F3B1610
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 05:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9961DED52;
-	Tue,  7 Oct 2025 05:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017151DE3B7;
+	Tue,  7 Oct 2025 05:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UIoOd3cq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="WDRxNZYP"
+Received: from forward500d.mail.yandex.net (forward500d.mail.yandex.net [178.154.239.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174FF1E511;
-	Tue,  7 Oct 2025 05:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761A6155C88;
+	Tue,  7 Oct 2025 05:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759813214; cv=none; b=jOHEal9kLsdEGINGW1MWEiDTixZ3n0G/eGiZDFBWFkPmavks7KgTrbNq55HugfmeYJ5x5+FYwr616p7+cJgzPSEUqbjWb9DSCGtCrhFFDvn7/MgBVsi3/+T+mjUhx1lREQNjgHJs1f99wleVNc7Qs3O5SSx6UDTwCLcYKI0MFF8=
+	t=1759813855; cv=none; b=gKxJHEa14osEU/TAMSTYRuxlrwRGkj5Ft7uXlmHMdXuSw6LaAoKohXIja3tGG+LvPRLgbbl4smbNCyakFJXgtOVga2UVM6sE5fbR8raogvqf/NAe+u/NSzFlvXUpft/WAshw8VzywDNfqATO1bsUeijsFNuZ7slMB3rkLE3Cu5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759813214; c=relaxed/simple;
-	bh=RRW8gejwszwXbYJMA5aGPaiY4+xT+oMnY+DLrP0mF6Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PMcCevRZrM9nZYUOFi+tOa345YqxEtXD9lL8wkrHZNVvc5nhtbsPHPBxLFQ3VeHVl7slzHw5S1xn+tJcG4QiOER9zcrhXifnfThg0ojacTy4jzRqJsh7ZrwUFlBtGnGx5Uq8kF4wX5cWcGUMSzSK6bGZNBfi8C4MrZy1Wr1N/+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UIoOd3cq; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759813213; x=1791349213;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RRW8gejwszwXbYJMA5aGPaiY4+xT+oMnY+DLrP0mF6Y=;
-  b=UIoOd3cqedFJMlfnrStr8smXb9h7clMyIkkF8Jt9VHZyM/BbcWwMmvYQ
-   UqsllNssmRyyu2wWSNb4qAJgqFu/UN92Ku/uIvIeBg/Wfm5gOFGJgrc6m
-   LpnmAOFXrtaRzcatctG8zZDTMRWRQpRKty/ZVIDpX6XgyQgS9C7p0IVDV
-   +wUuhDhhc5oDGd4SdTwVsCfWzAOgBuRCIjxwNh5jCpq0dqST8eKgAHkQB
-   U2jPuXsgcJvz2v7TUNjGa7A4OMeNqgaq3kjVXa3W1QC/9W60ljlkjGh5M
-   AcUAaZrAN/NIv4NGNyFUfywwMPSQaUIXmnjpdcz7NgjB5DL6z+MR+BnRi
-   g==;
-X-CSE-ConnectionGUID: UvoLs2iZQAyRaF/jQxqsfw==
-X-CSE-MsgGUID: NVLnnByhQ9y5Wdqno022UQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11574"; a="62035933"
-X-IronPort-AV: E=Sophos;i="6.18,321,1751266800"; 
-   d="scan'208";a="62035933"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 22:00:12 -0700
-X-CSE-ConnectionGUID: qCQmHVd3QD21jHU2ah0sTw==
-X-CSE-MsgGUID: m2t+dmmnT/yp6NfcUwn4LA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,321,1751266800"; 
-   d="scan'208";a="180105473"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa008.jf.intel.com with ESMTP; 06 Oct 2025 22:00:10 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id A048895; Tue, 07 Oct 2025 07:00:08 +0200 (CEST)
-Date: Tue, 7 Oct 2025 07:00:08 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] PCI/PM: Avoid redundant delays on D3hot->D3cold
-Message-ID: <20251007050008.GE2912318@black.igk.intel.com>
-References: <20251003154008.1.I7a21c240b30062c66471329567a96dceb6274358@changeid>
- <20251006135222.GD2912318@black.igk.intel.com>
- <aOQLRhot8-MtXeE3@google.com>
+	s=arc-20240116; t=1759813855; c=relaxed/simple;
+	bh=nyZubcmsOsfNGGwUDZTAtRoQQSIE49OuBwTMcrmEWHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sLMLVoQgN0vN0mVb/dMDCsJhNIqhrsMjtXaY3SsfPXQa52NWVnkxnxpB3ZfjclPgZKINZeVeujNhYR83dYaygp4mdn3WHHfoV2Xtrqy/2PJsiezRA9Y2Mj2dMgusNNxTN3U5WAL3yYsx3fTd9lxjS3P8mtLyVg/uWYO1P3qmf3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=WDRxNZYP; arc=none smtp.client-ip=178.154.239.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from mail-nwsmtp-smtp-production-main-81.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-81.klg.yp-c.yandex.net [IPv6:2a02:6b8:c43:4c01:0:640:9467:0])
+	by forward500d.mail.yandex.net (Yandex) with ESMTPS id 6676181889;
+	Tue, 07 Oct 2025 08:04:10 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-81.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 44dAxY5L5Os0-Umnz7TAb;
+	Tue, 07 Oct 2025 08:04:09 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1759813449;
+	bh=X7Bau1taqoDASnuTXeQJxMiBFaFYYp7svzSfKN8My3c=;
+	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
+	b=WDRxNZYPPjZ/Eell1GfkaTHr/ONis1vJp2C2ZKCJeLT00BXxvrwKB/d0m6t28S00P
+	 4GuNY2cdu0NOlwlzJwCqr5ZNHgV68NpFSw7FzUOGn4h8vRjPDiR+hXSZZz8GHGJZV0
+	 CZTqLDFNhxaTcme0OjW1R1Rsfud8VZIbIA3SPKgI=
+Authentication-Results: mail-nwsmtp-smtp-production-main-81.klg.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+Date: Tue, 7 Oct 2025 08:04:02 +0300
+From: Onur =?UTF-8?B?w5Z6a2Fu?= <work@onurozkan.dev>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
+ gary@garyguo.net, bjorn3_gh@protonmail.com, lossin@kernel.org,
+ aliceryhl@google.com, tmgross@umich.edu, dakr@kernel.org,
+ linux-kernel@vger.kernel.org, acourbot@nvidia.com, airlied@gmail.com,
+ simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, corbet@lwn.net, lyude@redhat.com,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/3] rust: xarray: abstract `xa_alloc`
+Message-ID: <20251007080402.1a6d19ea@nimda.home>
+In-Reply-To: <aORMNreduCPSIL82@tardis-2.local>
+References: <20251006163024.18473-1-work@onurozkan.dev>
+	<20251006163024.18473-2-work@onurozkan.dev>
+	<aORMNreduCPSIL82@tardis-2.local>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aOQLRhot8-MtXeE3@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, 6 Oct 2025 16:09:42 -0700
+Boqun Feng <boqun.feng@gmail.com> wrote:
 
-On Mon, Oct 06, 2025 at 11:32:38AM -0700, Brian Norris wrote:
-> Hi Mika,
-> 
-> On Mon, Oct 06, 2025 at 03:52:22PM +0200, Mika Westerberg wrote:
-> > On Fri, Oct 03, 2025 at 03:40:09PM -0700, Brian Norris wrote:
-> > > From: Brian Norris <briannorris@google.com>
-> > > 
-> > > When transitioning to D3cold, __pci_set_power_state() will first
-> > > transition a device to D3hot. If the device was already in D3hot, this
-> > > will add excess work:
-> > > (a) read/modify/write PMCSR; and
-> > > (b) excess delay (pci_dev_d3_sleep()).
-> > 
-> > How come the device is already in D3hot when __pci_set_power_state() is
-> > called? IIRC PCI core will transition the device to low power state so that
-> > it passes there the deepest possible state, and at that point the device is
-> > still in D0. Then __pci_set_power_state() puts it into D3hot and then turns
-> > if the power resource -> D3cold.
-> > 
-> > What I'm missing here?
-> 
-> Some PCI drivers call pci_set_power_state(..., PCI_D3hot) on their own
-> when preparing for runtime or system suspend, so by the time they hit
-> pci_finish_runtime_suspend(), they're in D3hot. Then, pci_target_state()
-> may still pick a lower state (D3cold).
+> HI Onur,
+>=20
+> On Mon, Oct 06, 2025 at 07:30:22PM +0300, Onur =C3=96zkan wrote:
+> > Implements `alloc` function to `XArray<T>` that wraps
+> > `xa_alloc` safely.
+> >=20
+> > Resolves a task from the nova/core task list under the "XArray
+> > bindings [XARR]" section in "Documentation/gpu/nova/core/todo.rst"
+> > file.
+> >=20
+>=20
+> Having this information is good, however I feel it's better if you
+> explain/expand what exact the usage will be on the XArray, otherwise,
+> it'll be hard for people to dig in the history and find out why we add
+> this. Thanks!
+>=20
 
-Ah, right. Thanks for clarification.
+Very true, thanks.
 
-Yeah, I agree with Bjorn and Mani that those calls should go away (PCI core
-does that already). That makes driver writes life simpler wrt. PCI PM.
+-Onur
+
+> Regards,
+> Boqun
+>=20
+> > Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
+> > ---
+> >  rust/kernel/xarray.rs | 39 +++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 39 insertions(+)
+> >=20
+> > diff --git a/rust/kernel/xarray.rs b/rust/kernel/xarray.rs
+> > index a49d6db28845..1b882cd2f58b 100644
+> > --- a/rust/kernel/xarray.rs
+> > +++ b/rust/kernel/xarray.rs
+> > @@ -266,6 +266,45 @@ pub fn store(
+> >              Ok(unsafe { T::try_from_foreign(old) })
+> >          }
+> >      }
+> > +
+> > +    /// Allocates an empty slot within the given limit range and
+> > stores `value` there.
+> > +    ///
+> > +    /// May drop the lock if needed to allocate memory, and then
+> > reacquire it afterwards.
+> > +    ///
+> > +    /// On success, returns the allocated id.
+> > +    ///
+> > +    /// On failure, returns the element which was attempted to be
+> > stored.
+> > +    pub fn alloc(
+> > +        &mut self,
+> > +        limit: bindings::xa_limit,
+> > +        value: T,
+> > +        gfp: alloc::Flags,
+> > +    ) -> Result<u32, StoreError<T>> {
+> > +        build_assert!(
+> > +            T::FOREIGN_ALIGN >=3D 4,
+> > +            "pointers stored in XArray must be 4-byte aligned"
+> > +        );
+> > +
+> > +        let new =3D value.into_foreign();
+> > +        let mut id: u32 =3D 0;
+> > +
+> > +        // SAFETY:
+> > +        // - `self.xa.xa` is valid by the type invariant.
+> > +        // - `new` came from `T::into_foreign`.
+> > +        let ret =3D
+> > +            unsafe { bindings::__xa_alloc(self.xa.xa.get(), &mut
+> > id, new, limit, gfp.as_raw()) }; +
+> > +        if ret < 0 {
+> > +            // SAFETY: `__xa_alloc` doesn't take ownership on
+> > error.
+> > +            let value =3D unsafe { T::from_foreign(new) };
+> > +            return Err(StoreError {
+> > +                value,
+> > +                error: Error::from_errno(ret),
+> > +            });
+> > +        }
+> > +
+> > +        Ok(id)
+> > +    }
+> >  }
+> >=20
+> >  // SAFETY: `XArray<T>` has no shared mutable state so it is `Send`
+> > iff `T` is `Send`. --
+> > 2.51.0
+> >=20
+
 
