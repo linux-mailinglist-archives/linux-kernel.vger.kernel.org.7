@@ -1,97 +1,130 @@
-Return-Path: <linux-kernel+bounces-844097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 230EEBC0FF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:21:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A729BC0FFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:22:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D559B3BBD9A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:21:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3F0C3C5B09
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFBA2D8385;
-	Tue,  7 Oct 2025 10:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mmsCdRxU"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A766B2D877C;
+	Tue,  7 Oct 2025 10:22:41 +0000 (UTC)
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E08E39ACF
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 10:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345562D6E6E
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 10:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759832512; cv=none; b=jcZE8f5V4W7djNhVyB0xIk3hnKEfUUxHewyj1wIiLpTby8tVCt7mctaYJDBBnjq0elWoWRp2sDx/MZmlU5K3NCiumuKpfV9JSmXoVMdOAaPYI5eDHA99ADvgbPirpsag/fKvhODMKGqRwTDPQYQseIv8kfDBcfpp6E9IMDsJzaU=
+	t=1759832561; cv=none; b=sKt18H13hpT2mJbcRQaOE/YeJsq/2b0N4+bzhCtOghxJJqzEWSeRZRAl1sgZrLzUfI2rtYU8dMHgn8umQX4+JhNlAYRWoIBJ9MDg9n8c+kEwFtjm0C/Dcc9suGCQAak24O92SyXKpcaPEDK907hISFq84O96RV0gIkmY2h/QvPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759832512; c=relaxed/simple;
-	bh=Lz154a2ZjwBDnXC6QTUowOmtduFQWvUmThHqog5LYEA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kbx+bi9UWd4g3c7lLom/Ikhu9LvNYGqVBQJoo6TSBmNjP0fSaHBfDrzcCoubXuM5icYL5c9ncpiD3d8NP6tbFWTeftR8BZB2ZpnMYfrlxBaJO3moUgSRUPL0lOmUfo3EjaWevuU2zgEswbZBQ8b6aOusJeby1BUGAYlrzgl8ROU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mmsCdRxU; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=vNHYGcYUWu+zhrNr0VX20BTV37QWlvHYYxUYXoY2euQ=; b=mmsCdRxUI345ERhSUGFHTcgxrE
-	YEZ5pJyxwFjtu8mofBBVuNfLELkZEeDY4xtRnova6yDNGRfy3PO2f5ZJt5fhXS4EXa7H/I93ZnRxl
-	KdZj8k432ZCmmibrZ4HzmNyYnT5X4GfZX/vtb+rZ7GADcumirEdb3pdbSje4L1lHZVs5E/qeUIqLH
-	AlQpU9tMhCwAdFg/0IxUhhHWmj4JMO9Nr2RSXRAhMaUlTBX7VZ7GLsx9YDmR4rU2ImWVeBPoQI2h6
-	E6s0OMqZklPR0pC/00tBhTg5qYvmR8s0GddYubu6n4+euFZcwYHTi1xydoKDDvkE0FiYfaeCxoHW3
-	Ruy16Hqg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v64oe-0000000DixI-40cP;
-	Tue, 07 Oct 2025 10:21:11 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 46331300220; Tue, 07 Oct 2025 12:21:06 +0200 (CEST)
-Date: Tue, 7 Oct 2025 12:21:06 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: =?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v3 15/21] x86/xen: Drop xen_irq_ops
-Message-ID: <20251007102106.GE3245006@noisy.programming.kicks-ass.net>
-References: <20251006074606.1266-1-jgross@suse.com>
- <20251006074606.1266-16-jgross@suse.com>
- <20251006185553.GY3245006@noisy.programming.kicks-ass.net>
- <c8b3c9ea-8c6c-4ec2-b01f-df3f8f487a8c@suse.com>
+	s=arc-20240116; t=1759832561; c=relaxed/simple;
+	bh=X08yRMXxYQpEQFN6+DWg0rBxqMjXg4JwaZTEUg+jC/A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a9+Jhy/Ybp8k2BBpVTBShYQeIMePdRX5qsgF0jQ/D9I6DW7flEriwjp5xxEj+tTFiq6Edjypco2SFE6vBXJ0QX6V5Tpbge/RKwfq/SL/tEttvK/o6VGxlWCp/2q/at+l5kO5qvcIUjV/VhBQZn+3qV2v3poa8I1iPqGU9PQ5bv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5523142df73so4356158e0c.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 03:22:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759832557; x=1760437357;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0UyUj3Qix+qDVReFl/Sm439a80dBofMDi/9/TOImgQQ=;
+        b=DExSzvkMs/AsfAQ+wOw534Iyk8xwjQBEAVNtRJ1gFMxboJShq9h5X+e7qnle8myCMu
+         2ebMU1//LHwUwswdpe5lTMpqSs2ZJenVEUWLVuN9G4XJ+EdzN8HyHS3Tz0F+wYZey7p/
+         Z3VTgB3++1MzEIqR9WH5epOx0nE56NCB1Z0WrDI4JWEleknCjKtctn4dvwDmvnKDRwCq
+         mKohdqnw6UAkWH1qD8UPzKOTHB91f4yeXiCZPvwdekizXYVRGirmBIyqqbzIKVW9DN+p
+         wgfCNJLWlxYBkPJZgYvNISQKzZ/1hWyx4hV07MO+izCF+rEYOKoxQPUh9gyuKkire1vN
+         BJcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXkqxq82exLvjNoXsHLXz8d3ituyoENQ7QLtHDCRB3Xw/32A/qpwjkN6CthhnhSJoZEVNQmYnw2BZyQnh0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0G3I7oY9nZgiBAcnbXFH1A2u4ia/fARIG8dkAzHJP+9f/XMRb
+	F8D64cBwovJWMve5Yo23hBCOSbSPZ9HexmBXrpJj3IHoI6QMeEQ0aEqJYC7QxLtM
+X-Gm-Gg: ASbGncv6B3w9tnFO31riTeU/nPIdjU1oPPGyp+YwU43VAcB3DPF6akQwF/FaBFTCdQ3
+	qIdXtAY2oNUEfNSlWLdle40dfOOoa0qxQkY9ownr5AV4S2icHacySnsa1wSNHmgxP9361p0y78y
+	hdezK8MGYC2SgOT9txfEr/asxsD+mUSHFBDE4zu5hQxhr9ZMDwa88pvlS1SrKpQHUlCZuwyxGAS
+	A7P8dJYEecRMLnAiKBOfpbO7vmJ8AW3lOxgHQByLrJFQwDxYuEIzgU61BIvMEDmblb9RMUjKMxn
+	g/kJbOYT/xTAEnxfep/cvOXP1FMsQm/6juPqlxDdsgcZyqzHXdZM9D/i3uLtUzAK2olstiMsyOR
+	xS7vL950YqA89Yom/D6TsDZFgRnw66BlMc8HxUJaQhFQ8DLT00wqjIrZiBwZC14s0Ik534kbXS0
+	cFeMsy8z/Sxmb2qcbbgbG7Uac=
+X-Google-Smtp-Source: AGHT+IE8cUd83lIyI/RNhrN9ZIOTg8BQ+8ERPq7pskuKuqGTr/cVjZ89sEfzAp/iN0ZHnjBLSNnz+w==
+X-Received: by 2002:a05:6102:14aa:b0:520:ec03:32e9 with SMTP id ada2fe7eead31-5d41cfb12ffmr6275694137.3.1759832556831;
+        Tue, 07 Oct 2025 03:22:36 -0700 (PDT)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5d5d39d180bsm646453137.13.2025.10.07.03.22.36
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Oct 2025 03:22:36 -0700 (PDT)
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-554a7e98e19so801145e0c.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 03:22:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUr+0KhMd0eOz/onWVAFCeaVgHy8AqQkeylRGI+3IA6nEM1NryG/xcJiwy3Mhsbi61gzrG+O56mnJiGtkA=@vger.kernel.org
+X-Received: by 2002:a05:6122:1e0d:b0:543:e262:ade2 with SMTP id
+ 71dfb90a1353d-5524ea6b0e4mr5683075e0c.12.1759832556074; Tue, 07 Oct 2025
+ 03:22:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <c8b3c9ea-8c6c-4ec2-b01f-df3f8f487a8c@suse.com>
+References: <20251007092313.755856-1-daniel@thingy.jp> <20251007092313.755856-4-daniel@thingy.jp>
+ <CAMuHMdWDfNgUUh-uU7ZFKmmAccEMqDdfDpwRXQYmwjMG6O_Trg@mail.gmail.com> <46382bc6cab2196a79780a946bee96dde402ae31.camel@physik.fu-berlin.de>
+In-Reply-To: <46382bc6cab2196a79780a946bee96dde402ae31.camel@physik.fu-berlin.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Oct 2025 12:22:25 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUUAEoN+KBnk=aY6UnkxXnFp8KY0BV8qQGfGip=nNtfaQ@mail.gmail.com>
+X-Gm-Features: AS18NWAPkggXOuJ8Zyug-B_6vXxzZFwJxIAhU-W5_YEhuf5bM649C2kMw_p5v_Y
+Message-ID: <CAMuHMdUUAEoN+KBnk=aY6UnkxXnFp8KY0BV8qQGfGip=nNtfaQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/5] m68k: amiga: Allow PCI
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: Daniel Palmer <daniel@thingy.jp>, linux-m68k@lists.linux-m68k.org, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 07, 2025 at 09:47:48AM +0200, J=FCrgen Gro=DF wrote:
-> On 06.10.25 20:55, Peter Zijlstra wrote:
-> > On Mon, Oct 06, 2025 at 09:46:00AM +0200, Juergen Gross wrote:
-> > > Instead of having a pre-filled array xen_irq_ops for Xen PV paravirt
-> > > functions, drop the array and assign each element individually.
-> >=20
-> > Same comment for the next few patches; this changelog is a little light
-> > on *why*. I mean, I don't mind the change, but supposedly we should
-> > justify things at least a little, right? :-)
->=20
-> Would you be fine with the following addition:
->=20
->   This is in preparation of reducing the paravirt include hell by
->   splitting paravirt.h into multiple more fine grained header files,
->   which will in turn require to split up the pv_ops vector as well.
->   Dropping the pre-filled array makes life easier for objtool to
->   detect missing initializers in multiple pv_ops_ arrays.
+Hi Adrian,
 
-Yes, that'll do. The latter being the main reason in this case, right?
+On Tue, 7 Oct 2025 at 11:41, John Paul Adrian Glaubitz
+<glaubitz@physik.fu-berlin.de> wrote:
+> On Tue, 2025-10-07 at 11:37 +0200, Geert Uytterhoeven wrote:
+> > On Tue, 7 Oct 2025 at 11:33, Daniel Palmer <daniel@thingy.jp> wrote:
+> > > The Amiga has various options for adding a PCI bus so select HAVE_PCI.
+> > >
+> > > Signed-off-by: Daniel Palmer <daniel@thingy.jp>
+> >
+> > Thanks for your patch!
+> >
+> > > --- a/arch/m68k/Kconfig.machine
+> > > +++ b/arch/m68k/Kconfig.machine
+> > > @@ -7,6 +7,7 @@ config AMIGA
+> > >         bool "Amiga support"
+> > >         depends on MMU
+> > >         select LEGACY_TIMER_TICK
+> > > +       select HAVE_PCI
+> > >         help
+> > >           This option enables support for the Amiga series of computers. If
+> > >           you plan to use this kernel on an Amiga, say Y here and browse the
+> >
+> > This doesn't make much sense without upstream support for actual
+> > PCI host bridge controllers.
+>
+> Isn't this what patch 5 does?
 
+Oops, sorry, I hadn't realized this is part of a series, as I somehow
+haven't received the other patches from the series yet...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
