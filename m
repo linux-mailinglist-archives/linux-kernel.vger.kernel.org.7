@@ -1,203 +1,158 @@
-Return-Path: <linux-kernel+bounces-844515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF98BC21D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:28:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05664BC21DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BD4EC4F6FF4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:28:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2F2D3AD3E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E4B2E8B6B;
-	Tue,  7 Oct 2025 16:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E53F2E7F1C;
+	Tue,  7 Oct 2025 16:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V6gLOwgn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="cFw/JAVu"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937CD11712;
-	Tue,  7 Oct 2025 16:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF55011712;
+	Tue,  7 Oct 2025 16:28:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759854498; cv=none; b=GD9euknB66oGhmLML3ObvWsyU+qbu54ywZT3KY1YzyNUxIB+oxtXslWM+5Ee0Qe5nyzgP18KbJllJVHhWuMuhj6begse5jjcpBnekUTktwH/CY55+ZQC6tZa27zT8VKQ/+PY43VWhX6kAAF+SO1wEJ7vmTbTlQ4EcatXAdmUHyE=
+	t=1759854525; cv=none; b=fAEQDukv/eX6v8PCz+1K+KcbR/xdyAgpGDfys06eskdDY1eNFg+10crITVSqSrvDfQLN+HmjgRFCqSwGUU0Q3IONM56E82rDJYKuYg1Z1YXsn9TRX31X7vp1ANpqY7CplQmap6Jzh73+FD00B9a8+zBmYC/VPi/6yja0/jS7fT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759854498; c=relaxed/simple;
-	bh=xYeA5nn/abbj5ed3ef1cNUU82SoHc8qkl+HZ9ylyjw0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K9PgkzPY/ohSTyDwc1iScqabgDsP95NbA8LcR0dMoF3zuxqRgfaQtEnDim9DwiA9D303/rFUOB4HYV0k/tJMTD+GerzQO0ZYmZpZni4RaKYcAahQGfHV1ioK5Bc3p7VeFXQFtEnoi0ydRZ5Hvb4+oT2Ul6c10QaiDiYJB83SRnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V6gLOwgn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35AEBC4CEF7;
-	Tue,  7 Oct 2025 16:28:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759854498;
-	bh=xYeA5nn/abbj5ed3ef1cNUU82SoHc8qkl+HZ9ylyjw0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V6gLOwgnvOxPmJz0LQMipMYO5vPDFV2CTcpBXKWlC2TaqSGT+mEm4K0D0NemSziR+
-	 a4L5Jd2D+bj64roEwzpceQowvn1wIf8vSepKeIwWp//LmKqlJarXByX8yBNEm0K9wT
-	 QB1ZUUIKRIHJE66kz3NZL3TUwuBF6yZcXvXc0fsz5fYo1vIIdIjgtL64vHPyF5V54T
-	 nk2QNw3WoblZcLttkdFD0oPGFd3IThCJcEgCoTjVRR3FAWogq8xYeFhE8tcpkXN4BS
-	 yapf08l++uGwkTeGLJagoTf86oBKBPUPxbfQKXJwnjS9kNhWRl1Lsnt2+URfaCWFtx
-	 Zth3UW0roW0uw==
-Date: Tue, 7 Oct 2025 17:28:12 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Sascha Bischoff <Sascha.Bischoff@arm.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, nd <nd@arm.com>,
-	Mark Rutland <Mark.Rutland@arm.com>,
-	Catalin Marinas <Catalin.Marinas@arm.com>,
-	"maz@kernel.org" <maz@kernel.org>,
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
-	Joey Gouly <Joey.Gouly@arm.com>,
-	Suzuki Poulose <Suzuki.Poulose@arm.com>,
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>
-Subject: Re: [PATCH 1/3] arm64/sysreg: Support feature-specific fields with
- 'Feat' descriptor
-Message-ID: <26d69b0d-3529-454f-9385-99a914bf1ebc@sirena.org.uk>
-References: <20251007153505.1606208-1-sascha.bischoff@arm.com>
- <20251007153505.1606208-2-sascha.bischoff@arm.com>
+	s=arc-20240116; t=1759854525; c=relaxed/simple;
+	bh=kEutHGL8JzmVi3dQ2UbN4yiTCki5tznW7ZmLxi+fP3c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vBlbM/ch0LO4Fbtjem5k1EQ5YTi354mlgeJDXYyTGwAIrJznOWcE+15MN3P1IiezldVzpCpmvEpV2HQ1HpFHbVWm4pXKPYYOlHjIuXtK8eYxXAqMChR0Adb2UR8trjRE91NndGCUKwT0G40KK1wHGkGHrdDwIjxN1WkqGrODhNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=cFw/JAVu; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ta4UZH7jWmaJh0s9qTr64RQ98ewcCcpeSGfpr9Lk/00=; b=cFw/JAVu9NrYgxn4FewF4VA99Y
+	7ZvlemE2fUSHf0OEoIGLDlN55vV2xdfeiTkHGScvN09zeWiEn5mp9ppr+68ug1kwQB3X5pgl3n6yX
+	W06bnTlag9j9TuTS9FCWPVDPlXebGvAugJMx+SHDPYQNOfPcWeWp3tG6X4/CKX0/N5Pz8w8FLu8cz
+	0/l2ApDg5zucCEb5SIh/4GXQ0MJKeRcsa5wK0wlMvWxer99pKM8AjvFnTdqw6CnMJi/UcFg8/p/62
+	nMftDIdTY6J9Qq+JqL1neJycC07vuLgmfh14vz3+sm9khmZTSk/T6xgG4HknRxNA3cK/9hxaoyecO
+	1bpYvN4A==;
+Received: from [58.29.143.236] (helo=[192.168.1.7])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1v6AYF-006H1f-DV; Tue, 07 Oct 2025 18:28:35 +0200
+Message-ID: <f841e330-d490-4912-b817-76c337cad6fe@igalia.com>
+Date: Wed, 8 Oct 2025 01:28:31 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2tSGI2X8sep9nY9m"
-Content-Disposition: inline
-In-Reply-To: <20251007153505.1606208-2-sascha.bischoff@arm.com>
-X-Cookie: Teachers have class.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] sched_ext: Add scx_bpf_task_set_slice() and
+ scx_bpf_task_set_dsq_vtime()
+To: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+ Andrea Righi <arighi@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev
+References: <20251007015147.2496026-1-tj@kernel.org>
+ <20251007015147.2496026-3-tj@kernel.org>
+From: Changwoo Min <changwoo@igalia.com>
+Content-Language: en-US, ko-KR, en-US-large, ko
+In-Reply-To: <20251007015147.2496026-3-tj@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---2tSGI2X8sep9nY9m
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 10/7/25 10:51, Tejun Heo wrote:
+> With the planned hierarchical scheduler support, sub-schedulers will need to
+> be verified for authority before being allowed to modify task->scx.slice and
+> task->scx.dsq_vtime. Add scx_bpf_task_set_slice() and
+> scx_bpf_task_set_dsq_vtime() which will perform the necessary permission
+> checks.
 
-On Tue, Oct 07, 2025 at 03:35:14PM +0000, Sascha Bischoff wrote:
+Is it necessary to distinguish between decreasing the slice and
+increasing the slice? A BPF scheduler (e.g., LAVD) sets the slice to
+zero for passive preemption.
 
-> Some system register field encodings change based on the available and
-> in-use architecture features. In order to support these different
-> field encodings, introduce the Feat descriptor (Feat, ElseFeat,
-> EndFeat) for describing such sysregs.
+Regards,
+Changwoo Min
 
-We have other system registers which change layouts based on things
-other than features, ESR_ELx is probably the most entertaining of these
-but there's others like PAR_EL1.  Ideally we should probably do the
-logic for generating the conditionals in a manner that's not tied to
-features with a layer on top that generates standard naming for common
-patterns like FEAT, but OTOH part of why that's not been done because
-it's got a bunch of nasty issues so perhaps just doing the simpler case
-is fine.
-
-> The Feat descriptor can be used in the following way (Feat acts as
-> both an if and an else-if):
-
->         Sysreg  EXAMPLE 0    1    2    3    4
->         Feat    FEAT_A
->         Field   63:0    Foo
->         Feat    FEAT_B
-
-This assumes that there will never be nesting of these conditions in the
-architecture.  I'm not sure I would want to assume that, even for plain
-features though I can't think of any examples where it's an issue.
-There are more serious issues with the implementation for practical
-patterns with nesting (see below) which mean we might not want to deal
-with that now but we should define the syntax for the file in a way that
-will cope so I'd prefer not to have the implicit elses.
-
-I'd also be inclined to say that something that's specificly for
-features shouldn't repeat the FEAT_ so:
-
-          Feat    A
-
-instead, but that's purely a taste question.
-
-> -	define("REG_" reg, "S" op0 "_" op1 "_C" crn "_C" crm "_" op2)
-> -	define("SYS_" reg, "sys_reg(" op0 ", " op1 ", " crn ", " crm ", " op2 "=
-)")
-> +	feat =3D null
+> 
+> Root schedulers can still directly write to these fields, so this doesn't
+> affect existing schedulers.
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> ---
+>   kernel/sched/ext.c                       | 30 ++++++++++++++++++++++++
+>   tools/sched_ext/include/scx/common.bpf.h |  2 ++
+>   2 files changed, 32 insertions(+)
+> 
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index fc353b8d69f7..6d76efaaa9b2 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -5833,6 +5833,34 @@ static const struct btf_kfunc_id_set scx_kfunc_set_unlocked = {
+>   
+>   __bpf_kfunc_start_defs();
+>   
+> +/**
+> + * scx_bpf_task_set_slice - Set task's time slice
+> + * @p: task of interest
+> + * @slice: time slice to set in nsecs
+> + *
+> + * Set @p's time slice to @slice. Returns %true on success, %false if the
+> + * calling scheduler doesn't have authority over @p.
+> + */
+> +__bpf_kfunc bool scx_bpf_task_set_slice(struct task_struct *p, u64 slice)
+> +{
+> +	p->scx.slice = slice;
+> +	return true;
+> +}
 > +
-> +	define(feat, "REG_" reg, "S" op0 "_" op1 "_C" crn "_C" crm "_" op2)
-> +	define(feat, "SYS_" reg, "sys_reg(" op0 ", " op1 ", " crn ", " crm ", "=
- op2 ")")
-> =20
-> -	define("SYS_" reg "_Op0", op0)
-> -	define("SYS_" reg "_Op1", op1)
-> -	define("SYS_" reg "_CRn", crn)
-> -	define("SYS_" reg "_CRm", crm)
-> -	define("SYS_" reg "_Op2", op2)
-> +	define(feat, "SYS_" reg "_Op0", op0)
-> +	define(feat, "SYS_" reg "_Op1", op1)
-> +	define(feat, "SYS_" reg "_CRn", crn)
-> +	define(feat, "SYS_" reg "_CRm", crm)
-> +	define(feat, "SYS_" reg "_Op2", op2)
-
-Possibly it's worth having a reg_define() or something given the number
-of things needing updating here?
-
-> @@ -201,6 +205,7 @@ $1 =3D=3D "EndSysreg" && block_current() =3D=3D "Sysr=
-eg" {
->  	res0 =3D null
->  	res1 =3D null
->  	unkn =3D null
-> +	feat =3D null
-> =20
->  	block_pop()
->  	next
-
-Probably worth complaining if we end a sysreg with a feature/prefix
-defined.
-
-> +$1 =3D=3D "Feat" && (block_current() =3D=3D "Sysreg" || block_current() =
-=3D=3D "SysregFields" || block_current() =3D=3D "Feat") {
-
-=2E..
-
-> +	next_bit =3D 63
+> +/**
+> + * scx_bpf_task_set_dsq_vtime - Set task's virtual time for DSQ ordering
+> + * @p: task of interest
+> + * @vtime: virtual time to set
+> + *
+> + * Set @p's virtual time to @vtime. Returns %true on success, %false if the
+> + * calling scheduler doesn't have authority over @p.
+> + */
+> +__bpf_kfunc bool scx_bpf_task_set_dsq_vtime(struct task_struct *p, u64 vtime)
+> +{
+> +	p->scx.dsq_vtime = vtime;
+> +	return true;
+> +}
 > +
-> +	res0 =3D "UL(0)"
-> +	res1 =3D "UL(0)"
-> +	unkn =3D "UL(0)"
+>   static void scx_kick_cpu(struct scx_sched *sch, s32 cpu, u64 flags)
+>   {
+>   	struct rq *this_rq;
+> @@ -6638,6 +6666,8 @@ __bpf_kfunc void scx_bpf_events(struct scx_event_stats *events,
+>   __bpf_kfunc_end_defs();
+>   
+>   BTF_KFUNCS_START(scx_kfunc_ids_any)
+> +BTF_ID_FLAGS(func, scx_bpf_task_set_slice, KF_RCU);
+> +BTF_ID_FLAGS(func, scx_bpf_task_set_dsq_vtime, KF_RCU);
+>   BTF_ID_FLAGS(func, scx_bpf_kick_cpu)
+>   BTF_ID_FLAGS(func, scx_bpf_dsq_nr_queued)
+>   BTF_ID_FLAGS(func, scx_bpf_destroy_dsq)
+> diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
+> index 06e2551033cb..505231b7b7ae 100644
+> --- a/tools/sched_ext/include/scx/common.bpf.h
+> +++ b/tools/sched_ext/include/scx/common.bpf.h
+> @@ -102,6 +102,8 @@ s32 scx_bpf_pick_any_cpu_node(const cpumask_t *cpus_allowed, int node, u64 flags
+>   s32 scx_bpf_pick_any_cpu(const cpumask_t *cpus_allowed, u64 flags) __ksym;
+>   bool scx_bpf_task_running(const struct task_struct *p) __ksym;
+>   s32 scx_bpf_task_cpu(const struct task_struct *p) __ksym;
+> +bool scx_bpf_task_set_slice(struct task_struct *p, u64 slice) __ksym __weak;
+> +bool scx_bpf_task_set_dsq_vtime(struct task_struct *p, u64 vtime) __ksym __weak;
+>   struct rq *scx_bpf_cpu_rq(s32 cpu) __ksym;
+>   struct rq *scx_bpf_locked_rq(void) __ksym;
+>   struct task_struct *scx_bpf_cpu_curr(s32 cpu) __ksym __weak;
 
-This is only going to work if the whole register is in a FEAT_ block, so
-you coudn't have:
-
-        Sysreg  EXAMPLE 0    1    2    3    4
-	Res0	63
-        Feat    FEAT_A
-        Field   62:1    Foo
-        Feat    FEAT_B
-        Field   62:32    Foo
-        Field   31:1     Bar
-	EndFeat
-	Res0	0
-	EndSysreg
-
-but then supporting partial registers does have entertaining
-consequences for handling Res0 and Res1.  If we're OK with that
-restriction then the program should complain if someone tries to=20
-define a smaller FEAT block.
-
---2tSGI2X8sep9nY9m
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjlP5sACgkQJNaLcl1U
-h9AY1Qf/csPwwhVqEVz16SFCiD4J+Z7duRX2w5NTCWs3V6z30u19pzao0zemleKD
-l0UdPz/T/LaiHj6hEdZqwuni6i84rlzgmbPfJ6XPXAfjmg7p4FeKBavOLU3Ablhz
-yiTGGyi4INGrTu4znpmuHVT1Vx2RIeaCWPpjkTcGdJ7aHWIErjKNPzpdJTl6cz7n
-f6ChusvOhN5nCKgD93MX5imL2oe+xULMuCBEhJ9EdjsWHCndFmIl/hoLv1gFJ0yJ
-ppwnKqdEiszW8Gx6VUhiCILY5lkuVl0yOwM7tsol+sGEv44msyJJouplCqw1JoYt
-7Rb48t0H3ra9N3XS6TOh7UQOYBKkDw==
-=QE7l
------END PGP SIGNATURE-----
-
---2tSGI2X8sep9nY9m--
 
