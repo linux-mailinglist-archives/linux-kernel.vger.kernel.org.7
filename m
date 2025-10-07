@@ -1,153 +1,142 @@
-Return-Path: <linux-kernel+bounces-843626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8A20BBFDCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 02:42:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B753BBFDD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 02:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C10B6189C8E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 00:42:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B909B189C8E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 00:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE021D63F7;
-	Tue,  7 Oct 2025 00:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 641651DE2BF;
+	Tue,  7 Oct 2025 00:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FYgek9SA"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eVxxxyZ7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B5134BA50
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 00:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9021D1AF0BB;
+	Tue,  7 Oct 2025 00:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759797734; cv=none; b=erZUjRa+cGXoEQU8u9d0Qp29+jQF4TQ1on5+UU9vgb6O/+K/Y6W1o9dsLPPkCAkzk3i0yHKr6dwlo8A3jSvBEsefs7oZ6AVrFqMCnotG8HaDoQg5ica965YmdHKtFDjBrJ46Wu0S+Yzg787UEmMr6yPu5VSQiOtViqHAqbrm1lE=
+	t=1759797756; cv=none; b=NCZ+e453wYrNPUTdC+lJPU4YUWfjd8QVN6fzWJ6F/wq6CXAl2Lmb4tccFZTTX1YQaVVaBrFy0j9eJQjMbErJBMseByeLB249qkRMZsTGt1ebLIj4TvpbLjDgoexUpR5Zj6win+lK0IoL/o0gNdW69TAPAIXBatDBE2Ak+gVdPDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759797734; c=relaxed/simple;
-	bh=mv3+xA9kD1I985ghdrUGEDO1hqGIeV/sS/Ttd+zrLjc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VHee/OcrxymYRDvrpzDHq0BM8ctQUmOmPwRhwUz+ItORMwUYYgF96VZvSZtJva8rZZr2eWWFgvmZ+TcexD91srZAVt4kkm9B/IQGr0bs71w3vSsK+JL/P/lLOhTgNQkjU0oOkICUn7PKUyfdHfkY168rqSXDXNxs/IrmXbmsXGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FYgek9SA; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759797720;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mv3+xA9kD1I985ghdrUGEDO1hqGIeV/sS/Ttd+zrLjc=;
-	b=FYgek9SAutdY9P9IZoaZxz3kLUJrlT4rgo6GJPU5sc+EYaxjQ+hsU7m65t3uU1p2wU1V5h
-	Tg+gjsHHq9uuA0CVNrKV2LJEhBu7ifbgCFvb4tfS7+8s1H7s3e3vCQvCWDx/ZTFMAqzZpm
-	pwM8Y9NRrjhqcHsARSu6Rk8RqOYqvo0=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Martin KaFai Lau <martin.lau@linux.dev>,  Alexei Starovoitov
- <alexei.starovoitov@gmail.com>,  Kumar Kartikeya Dwivedi
- <memxor@gmail.com>,  linux-mm <linux-mm@kvack.org>,  bpf
- <bpf@vger.kernel.org>,  Suren Baghdasaryan <surenb@google.com>,  Johannes
- Weiner <hannes@cmpxchg.org>,  Michal Hocko <mhocko@suse.com>,  David
- Rientjes <rientjes@google.com>,  Matt Bobrowski
- <mattbobrowski@google.com>,  Song Liu <song@kernel.org>,  Alexei
- Starovoitov <ast@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>,
-  LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 01/14] mm: introduce bpf struct ops for OOM handling
-In-Reply-To: <CAEf4BzaVvNwt18eqVpigKh8Ftm=KfO_EsB2Hoh+LQCDLsWxRwg@mail.gmail.com>
-	(Andrii Nakryiko's message of "Mon, 6 Oct 2025 16:57:22 -0700")
-References: <20250818170136.209169-1-roman.gushchin@linux.dev>
-	<20250818170136.209169-2-roman.gushchin@linux.dev>
-	<CAP01T76AUkN_v425s5DjCyOg_xxFGQ=P1jGBDv6XkbL5wwetHA@mail.gmail.com>
-	<87ms7tldwo.fsf@linux.dev>
-	<1f2711b1-d809-4063-804b-7b2a3c8d933e@linux.dev>
-	<87wm6rwd4d.fsf@linux.dev>
-	<ef890e96-5c2a-4023-bcb2-7ffd799155be@linux.dev>
-	<CAADnVQ+LGbXXHHTbBB9b-RjAXO4B6=3Z=G0=7ToZVuH61OONWA@mail.gmail.com>
-	<87iki0n4lm.fsf@linux.dev>
-	<a76ad1e9-07d5-4ba1-83e4-22fe36a32df0@linux.dev>
-	<877bxb77eh.fsf@linux.dev>
-	<CAEf4BzafXv-PstSAP6krers=S74ri1+zTB4Y2oT6f+33yznqsA@mail.gmail.com>
-	<871pnfk2px.fsf@linux.dev>
-	<CAEf4BzaVvNwt18eqVpigKh8Ftm=KfO_EsB2Hoh+LQCDLsWxRwg@mail.gmail.com>
-Date: Mon, 06 Oct 2025 17:41:52 -0700
-Message-ID: <87tt0bfsq7.fsf@linux.dev>
+	s=arc-20240116; t=1759797756; c=relaxed/simple;
+	bh=cgRSHlts17UojDBt2OucIf1/5WK81Z1KzVQEMgdRDBs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uXFWOm7xC0SFMMKpUkyFnJPmAIeF/OuSeBQzg3sovH4CVNxSDBKwgkVaInmpBtSqBgbNETW8uLh7BU1Quwhr99mPP5SBsY7xSYY6G9xLodn6QdIID6erF0kLW+hsVIMF4G9dNkOn2uK82/LxnE/3E/Gy/kCgx703pEndErn7Q3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eVxxxyZ7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D75DC4CEF5;
+	Tue,  7 Oct 2025 00:42:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759797756;
+	bh=cgRSHlts17UojDBt2OucIf1/5WK81Z1KzVQEMgdRDBs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eVxxxyZ7+RrUf6D0UUkCECZobgQxfzOSahdlM64oNN+vIzzldN/CUctvePN02fKe5
+	 Vj+W+ulRZu8pcsmpb3AFLB3ZhF3dU638Vb+UV7gWWB0tIg752fIw8VHCq0+BrcrrHB
+	 08jkf7R9kTKvEn+YxFTLNMaN3vzQ7ms3m1ToIu9HAYRAuNBeS4WrzFnHte+hHBtDhp
+	 EQdOTpBQvI+2DPNHiW5VfngAopxzOZxOsRtrLwU/XfHhIwRfK7FB3/oSrdI9ZsO/P5
+	 eHzxn/Oo4gwWKQnavBbqNXnjkJVx2LsgW97bsXSbyfkM/E/gJyP4BvRrEHUwH6DFHv
+	 EtjoPPWXJgGFw==
+Message-ID: <923aea1b-6a15-426f-9c32-954a1fb95d0a@kernel.org>
+Date: Tue, 7 Oct 2025 09:42:24 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/4] usb: dwc3: Add Google SoC USB PHY driver
+To: Roy Luo <royluo@google.com>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+References: <20251006232125.1833979-1-royluo@google.com>
+ <20251006232125.1833979-4-royluo@google.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251006232125.1833979-4-royluo@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
+On 07/10/2025 08:21, Roy Luo wrote:
+> Support the USB PHY found on Google Tensor SoCs.
+> This particular USB PHY supports both high-speed and super-speed
+> operations, and is paired with the SNPS DWC3 controller that's also
+> integrated on the SoCs.
+> This initial patch specifically adds functionality for high-speed.
+> 
+> Co-developed-by: Joy Chakraborty <joychakr@google.com>
+> Signed-off-by: Joy Chakraborty <joychakr@google.com>
+> Co-developed-by: Naveen Kumar <mnkumar@google.com>
+> Signed-off-by: Naveen Kumar <mnkumar@google.com>
+> Signed-off-by: Roy Luo <royluo@google.com>
+> ---
+>  drivers/phy/Kconfig                 |   1 +
+>  drivers/phy/Makefile                |   1 +
+>  drivers/phy/google/Kconfig          |  15 ++
+>  drivers/phy/google/Makefile         |   2 +
+>  drivers/phy/google/phy-google-usb.c | 286 ++++++++++++++++++++++++++++
 
-> On Mon, Oct 6, 2025 at 4:52=E2=80=AFPM Roman Gushchin <roman.gushchin@lin=
-ux.dev> wrote:
->>
->> Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
->>
->> > On Fri, Oct 3, 2025 at 7:01=E2=80=AFPM Roman Gushchin <roman.gushchin@=
-linux.dev> wrote:
->> >>
->> >> Martin KaFai Lau <martin.lau@linux.dev> writes:
->> >>
->> >> > On 9/2/25 10:31 AM, Roman Gushchin wrote:
->> >> >> Btw, what's the right way to attach struct ops to a cgroup, if the=
-re is
->> >> >> one? Add a cgroup_id field to the struct and use it in the .reg()
->> >> >
->> >> > Adding a cgroup id/fd field to the struct bpf_oom_ops will be hard =
-to
->> >> > attach the same bpf_oom_ops to multiple cgroups.
->> >> >
->> >> >> callback? Or there is something better?
->> >> >
->> >> > There is a link_create.target_fd in the "union bpf_attr". The
->> >> > cgroup_bpf_link_attach() is using it as cgroup fd. May be it can be
->> >> > used here also. This will limit it to link attach only. Meaning the
->> >> > SEC(".struct_ops.link") is supported but not the older
->> >> > SEC(".struct_ops"). I think this should be fine.
->> >>
->> >> I thought a bit more about it (sorry for the delay):
->> >> if we want to be able to attach a single struct ops to multiple cgrou=
-ps
->> >> (and potentially other objects, e.g. sockets), we can't really
->> >> use the existing struct ops's bpf_link.
->> >>
->> >> So I guess we need to add a new .attach() function beside .reg()
->> >> which will take the existing link and struct bpf_attr as arguments and
->> >> return a new bpf_link. And in libbpf we need a corresponding new
->> >> bpf_link__attach_cgroup().
->> >>
->> >> Does it sound right?
->> >>
->> >
->> > Not really, but I also might be missing some details (I haven't read
->> > the entire thread).
->> >
->> > But conceptually, what you describe is not how things work w.r.t. BPF
->> > links and attachment.
->> >
->> > You don't attach a link to some hook (e.g., cgroup). You attach either
->> > BPF program or (as in this case) BPF struct_ops map to a hook (i.e.,
->> > cgroup), and get back the BPF link. That BPF link describes that one
->> > attachment of prog/struct_ops to that hook. Each attachment gets its
->> > own BPF link FD.
->> >
->> > So, there cannot be bpf_link__attach_cgroup(), but there can be (at
->> > least conceptually) bpf_map__attach_cgroup(), where map is struct_ops
->> > map.
->>
->> I see...
->> So basically when a struct ops map is created we have a fd and then
->> we can attach it (theoretically multiple times) using BPF_LINK_CREATE.
->
-> Yes, exactly. "theoretically" part is true right now because of how
-> things are wired up internally, but this must be fixable
 
-Ok, one more question: do you think it's better to alter the existing
-bpf_struct_ops.reg() callback and add the bpf_attr parameter
-or add the new .attach() callback?
+No, you don't get a new directory and new driver. That's a Samsung part,
+AFAIK. Re-use existing code.
+
+Best regards,
+Krzysztof
 
