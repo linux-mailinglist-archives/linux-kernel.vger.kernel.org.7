@@ -1,94 +1,54 @@
-Return-Path: <linux-kernel+bounces-843888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB985BC07F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 09:35:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7C5DBC0800
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 09:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B2354EB7B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 07:35:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D6F71897C12
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 07:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C332F254849;
-	Tue,  7 Oct 2025 07:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866AA2550A3;
+	Tue,  7 Oct 2025 07:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="F3IAZa9V";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bfJwPtMS";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="F3IAZa9V";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bfJwPtMS"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="maSJV69L"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EBA91D5ABA
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 07:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D0B34BA47;
+	Tue,  7 Oct 2025 07:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759822506; cv=none; b=pynd1zNUR0EiXxL526KTzrlxJ2fSxRZp5F1QKZB15eD4OkcyIxkyGUj4E5W/Q+D+YWkwqQqAGu+L/fbadbmIPc3W+BN6gvdQ9wL8Y5k449/4+zoEfqrh2FeIkaiWdTNfmiqaUiiCaNNRj6N6fpPnFfss/EUNJsZNMhXcJV0Wh9o=
+	t=1759822613; cv=none; b=eRMJ2ZwcK0ZqZx5VJxHK03/kTMPqazXmJQSDhcmqEFEf7OLpZerCpDWoOYsMLmwhSWl89mwt0xChrTXnez3sCAfMtt1+itWTtoZAGVwiX7KoRdh2iIpE23xX8uDg1XJnnaAM+cAo1sePo7TcnHadop0ogw9D+x5+nN+NzowO/RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759822506; c=relaxed/simple;
-	bh=4RQoSJwyG0CBoyUz4X7AO1wBYwylVJf97i1JKIe8RsA=;
+	s=arc-20240116; t=1759822613; c=relaxed/simple;
+	bh=LTwbcNxTatK0DtSUOSCgV0jqks6Qi4GG4tijmgArRBA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TWKBiqnvJT80G3gD9j9YeX/0GsCe91u8VZbCGYZ7b5GfvY4Miyc1SPqN+bt55SIlQj8gKIJvRo+teOEEWDumzgcbLeGOs42FC/saUeLoAp809SO3kUSgwcOaD6q8acoXIRoyOxCR4kGr7c8bIj+vcmehLhtRaKGKm/arJv2ziWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=F3IAZa9V; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bfJwPtMS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=F3IAZa9V; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bfJwPtMS; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 In-Reply-To:Content-Type; b=L7wHaUwPD2rwWAjmQtiD7JrSSB+g8A24E4qj+qM/o5moGynCj0KEvd6YklH/Ym4G2QYPdMkIRL/SLhoBbLUFSakK9/eY/jxOpZlFFK5gdPfhGG59+KfQ6oSASU/Ymdtv2IRaAjQe3/SAs3VJA0XB+gx0Yww4TGJscWdeBHDTKTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=maSJV69L; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759822608;
+	bh=LTwbcNxTatK0DtSUOSCgV0jqks6Qi4GG4tijmgArRBA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=maSJV69LuPOFXUdiF44lQs299hntSCsAw/7LV6ZQZnlFXkDqcLvcxroWNKNWcosIa
+	 9XAXc1XMueNaTqRM0IKcay80bPSH59zL4USNLNvphn+fuao6d9qS5FTPvD3rzufH42
+	 q/vB+ghOkQnWoXWLYinDoQaM4Y4ckoVl/U8SwUUGZr72ukRgEH2yaC9YaPgfWSNZqk
+	 LFQ9Y3rwLHoC9HuHwzPUYT1LVtPu+cwyzQjfw8kltMTO5GKFu8X4TE5m85lqpPvh3J
+	 M1IAplgxaaA3jXzGCoyJ1U0hlciYRf10SBaFm4CdT5jhpyZbbUAYa9LB3M9PPjEl4s
+	 XuRdz3sFUEPHQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 76B601F78F;
-	Tue,  7 Oct 2025 07:35:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1759822502; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vvFbZ+0VV9H5Bhjv8F8h8LAAyhywyDVWF/24Dt4ofAg=;
-	b=F3IAZa9VIUy/qQm2ohx7x6Ru8MkalPUc8i8waVw8yXLf9r3OLlt0rS19AyFeZmg/DkMle1
-	sxB6b/C6cSkn8lBuKH12tGKfTCjXHXaKddrNl7kAOf3c62hCbbJUQcspmDULS8PBgo6xQn
-	TPjkiQ1yRiF/rOb7w1FqyixAWp0xN4A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1759822502;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vvFbZ+0VV9H5Bhjv8F8h8LAAyhywyDVWF/24Dt4ofAg=;
-	b=bfJwPtMSQuCiWwwtyBJ2Mo3R5A0vYuUWSXFpUin4M94ZjZB+tlXIOrV/nhXNFTkPxFANbO
-	h+rz6AIOPvqBZyDw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1759822502; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vvFbZ+0VV9H5Bhjv8F8h8LAAyhywyDVWF/24Dt4ofAg=;
-	b=F3IAZa9VIUy/qQm2ohx7x6Ru8MkalPUc8i8waVw8yXLf9r3OLlt0rS19AyFeZmg/DkMle1
-	sxB6b/C6cSkn8lBuKH12tGKfTCjXHXaKddrNl7kAOf3c62hCbbJUQcspmDULS8PBgo6xQn
-	TPjkiQ1yRiF/rOb7w1FqyixAWp0xN4A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1759822502;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vvFbZ+0VV9H5Bhjv8F8h8LAAyhywyDVWF/24Dt4ofAg=;
-	b=bfJwPtMSQuCiWwwtyBJ2Mo3R5A0vYuUWSXFpUin4M94ZjZB+tlXIOrV/nhXNFTkPxFANbO
-	h+rz6AIOPvqBZyDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0862913693;
-	Tue,  7 Oct 2025 07:35:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7s1TAKbC5GisKQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 07 Oct 2025 07:35:01 +0000
-Message-ID: <6b1f8366-7ec8-4c1f-9563-29e06a8060e2@suse.de>
-Date: Tue, 7 Oct 2025 09:35:01 +0200
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id BFCD917E0FDB;
+	Tue,  7 Oct 2025 09:36:47 +0200 (CEST)
+Message-ID: <fade146a-fe6a-47d3-8936-39b355e44216@collabora.com>
+Date: Tue, 7 Oct 2025 09:36:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,143 +56,395 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fbdev: udlfb: make CONFIG_FB_DEVICE optional
-To: Helge Deller <deller@gmx.de>, sukrut heroorkar <hsukrut3@gmail.com>,
- Mikulas Patocka <mpatocka@redhat.com>
-Cc: David Hunter <david.hunter.linux@gmail.com>,
- kernel test robot <lkp@intel.com>, Bernie Thompson <bernie@plugable.com>,
- Arnd Bergmann <arnd@arndb.de>, Randy Dunlap <rdunlap@infradead.org>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Zsolt Kajtar <soci@c64.rulez.org>,
- Gonzalo Silvalde Blanco <gonzalo.silvalde@gmail.com>,
- linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
- oe-kbuild-all@lists.linux.dev, skhan@linuxfoundation.org
-References: <20250924175743.6790-1-hsukrut3@gmail.com>
- <202509272320.3K8kdDCw-lkp@intel.com>
- <bb9d90ca-aa4d-4168-bdc5-543109c74493@gmail.com>
- <CAHCkknrZ-ieNKeg-aj3-NVqgGSk770jJpUpCvn_SuffkPu+ZrQ@mail.gmail.com>
- <edccab86-321b-4e6e-998f-3ce320ee0193@gmx.de>
- <41ef536d-2399-43f8-8041-c6b0e642aba2@suse.de>
- <CAHCkknrAKGxzAYE-R3QX20W4faR9Wfjgn37peyHRJcZ6PRLENA@mail.gmail.com>
- <c1d86274-44e2-4ceb-b887-5c4af45d8b37@gmx.de>
+Subject: Re: [PATCH 4/4] clk: mediatek: Add rpm clocks to clk-mt8196-mfg
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Guangjie Song <guangjie.song@mediatek.com>,
+ Laura Nao <laura.nao@collabora.com>,
+ =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Yassine Oudjana <y.oudjana@protonmail.com>
+Cc: kernel@collabora.com, Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20250929-mtk-pll-rpm-v1-0-49541777878d@collabora.com>
+ <748f1176-c73c-48af-a1af-0b63d088e834@collabora.com>
+ <6441788.lOV4Wx5bFT@workhorse> <2164240.KlZ2vcFHjT@workhorse>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <c1d86274-44e2-4ceb-b887-5c4af45d8b37@gmx.de>
+In-Reply-To: <2164240.KlZ2vcFHjT@workhorse>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,intel.com,plugable.com,arndb.de,infradead.org,linaro.org,c64.rulez.org,vger.kernel.org,lists.freedesktop.org,lists.linux.dev,linuxfoundation.org];
-	FREEMAIL_TO(0.00)[gmx.de,gmail.com,redhat.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -2.80
+Content-Transfer-Encoding: 7bit
 
-Hi
-
-Am 03.10.25 um 21:50 schrieb Helge Deller:
-> On 10/3/25 20:43, sukrut heroorkar wrote:
->> On Thu, Oct 2, 2025 at 8:52 AM Thomas Zimmermann 
->> <tzimmermann@suse.de> wrote:
->>> Am 02.10.25 um 08:41 schrieb Helge Deller:
->>>>>>> kernel test robot noticed the following build errors:
->>>>>>
->>>>>> Did you compile and test this code before submitting this patch?
->>>>>
->>>>> Yes, I had compiled & loaded the udlfb module with no errors. Please
->>>>> let me know how to proceed in this case.
->>>>
->>>> Look at the reported build error, which seems to happen in dev_dbg().
->>>> So, maybe in your testing you did not have debugging enabled?
->>>> The report contains the .config file with which you can test.
+Il 06/10/25 21:01, Nicolas Frattaroli ha scritto:
+> On Wednesday, 1 October 2025 15:17:13 Central European Summer Time Nicolas Frattaroli wrote:
+>> On Wednesday, 1 October 2025 13:49:54 Central European Summer Time AngeloGioacchino Del Regno wrote:
+>>> Il 29/09/25 14:13, Nicolas Frattaroli ha scritto:
+>>>> The mfgpll clocks on mt8196 require that the MFG's EB clock is on if
+>>>> their control registers are touched in any way at all.
 >>>
->>> Can we rather make an effort to remove the udlfb driver entirely? A few
->>> years back, there was one user who was still using it because of some
->>> problems with the DRM udl driver. But I think we've addressed them. The
->>> discussion is at [1].
->
-> Would be good to know if they issues/crashes really have been solved.
-> In [1] it seems the crashes still happened with DRM.
+>>> ....so, the MFGPLL clocks are children of EB?
+>>>
+>>> Why are you using such a convoluted way of adding a parent clock to the MFGPLL
+>>> instead of just
+>>> ---->   `.parent_name = "mfg_eb"`  <-----
+>>>
+>>> ???????
+>>
+>> They're not children. A child would mean that they derive their
+>> clock rate from the parent clock. This isn't the relationship here
+>> though, their clock signal is completely independent of mfg_eb,
+>> but the registers they access for clock control depend on mfg_eb to
+>> be on. This means that even if mfgpll is off, and something wants to
+>> check if they're on or not, the mfg_eb needs to be on for that
+>> register access to happen. Similarly, when reconfiguring the mfgpll
+>> rate, the clock rate of mfg_eb plays no role. It just needs to be on
+>> for the register access.
+>>
+>> mfg_eb here is a clock that drives a register, the register just
+>> happens to be part of a clock controller.
+> 
+> As a follow-up to this, I've done some experiments now, as Angelo
+> let me know that the only way we can know for sure is by observing
+> mfgpll working while mfg_eb is off.
+> 
+> With horrid hacks, I've managed to manufacture a scenario in which
+> EB was definitely off, the mfgplls were still on, the GPUEB didn't
+> try to ruin the party by fiddling with the mfgpll clock registers,
+> and what I got in return was panthor printing errors about its jobs
+> timing out, before an SError splat after several timeouts.
+> 
+> This makes me think that mfg_eb really is a parent of mfgpll, as
+> evidently mfgpll didn't seem to be ticking anymore and caused the
+> timeouts to happen before something touched unclocked registers
+> and caused an SError. Put in glmark2 terms, the horse was no longer
+> spinning around its axis, causing much grief.
+> 
+> The other possibility is, and I think this is quite likely: we are
+> modeling the mfgpll power up/down wrong anyway, and always rely on
+> the GPUEB to actually do this properly. I've diffed the mfgpll clock
+> registers with the GPUEB running and with it not running, here are
+> the results in addr u32 u32 u32 u32 format:
+> 
+> $ diff -u mfgplldump-not-running.txt mfgplldump-running.txt
+> --- mfgplldump-not-running.txt  2025-10-06 20:03:11.902125545 +0200
+> +++ mfgplldump-running.txt      2025-10-06 20:03:08.457020814 +0200
+> @@ -1,5 +1,5 @@
+> -4b810000  00000000 0001fc23  00084444 831a0000
+> -4b810010  001a0000 00000002  00000048 00000200
+> +4b810000  00000000 0001fc23  00084445 031a0000
+> +4b810010  001a0000 80000002  00000048 00000200
+>   4b810020  00000000 00000000  00000000 00000000
+>   4b810030  00000000 00000000  00000000 00000000
+>   4b810040  00018000 01ff1a00  00000000 00000000
+> @@ -62,8 +62,8 @@
+>   4b8103d0  00000000 00000000  00000000 00000000
+>   4b8103e0  00000000 00000000  00000000 00000000
+>   4b8103f0  00000000 00000000  00000000 00000000
+> -4b810400  00000000 0001fc23  00084444 831a0000
+> -4b810410  001a0000 00000002  00000048 00000200
+> +4b810400  00000000 0001fc23  00084445 031a0000
+> +4b810410  001a0000 80000002  00000048 00000200
+>   4b810420  00000000 00000000  00000000 00000000
+>   4b810430  00000000 00000000  00000000 00000000
+>   4b810440  00018000 01ff1a00  00000000 00000000
+> @@ -126,8 +126,8 @@
+>   4b8107d0  00000000 00000000  00000000 00000000
+>   4b8107e0  00000000 00000000  00000000 00000000
+>   4b8107f0  00000000 00000000  00000000 00000000
+> -4b810800  00000000 0001fc23  00084444 831a0000
+> -4b810810  001a0000 00000002  00000048 00000200
+> +4b810800  00000000 0001fc23  00084445 031a0000
+> +4b810810  001a0000 80000002  00000048 00000200
+>   4b810820  00000000 00000000  00000000 00000000
+>   4b810830  00000000 00000000  00000000 00000000
+>   4b810840  00018000 01ff1a00  00000000 00000000
+> 
+> Note how bit 31 of MFGPLL*CON3 gets flipped to 1 in the registers
+> when the GPUEB is running. Nothing in our code would model it to be
+> like this.
+> 
+> I'll rework the series to just model MFG_EB as a parent. I'll drop the
+> bindings patch, but will keep the refactor since it's still useful.
+> Then I'll drop the mfgpll RPM patch and make it a fixes patch to add
+> the EB parent instead.
+> 
+> However, I'm not happy about this, because I am quite certain that
+> the code here is not all that correct, but we do not have access to
+> the documentation to show us how it would be correct, and downstream
+> kernels are not of any help either.
+> 
+> I also can't just adjust the mfgpll stuff to fit the bit writes I
+> actually see happening from the EB, because powering off the EB so
+> it doesn't try to touch them and then setting those registers right
+> again will still leave a gap wherein the register is not correct
+> and who knows what happens. Ditto for the regulators. Similarly,
+> I can't just try disabling MFG_EB while the EB is running, because
+> it will touch the control registers of the clocks and depends on
+> MFG_EB for sure, and I can't observe whether MFGPLL is ticking in
+> any other way other than looking at whether the GPU is working. Or
+> maybe I can and there's some monitor register somewhere, but not
+> anywhere I have documentation for.
+> 
+> I've checked the remaining memory area of the mfgpll clock controllers,
+> and found no suspiciously changing values in there that could indicate
+> a monitor register that contains the actual pll frequency.
+> 
 
-The thread at [1] was the original removal attempt. And that was 5 years 
-ago. I think we could retry and take the reporter (Mikulas) into cc.
+It's possible that there is a specific mode for firmware-control for the PLL, which
+makes it "useless" without the EB parent being on - but then since that is not
+described in the datasheets we can't really reinvent the wheel here on hypotetical
+variations.
 
-Best regards
-Thomas
+This SoC has EB (as much as some other old ones like MT8188/92/95, but since there
+we never enabled the GPUEB, we don't really-really-really know) and from your test
+the EB is clearly a parent of the MFGPLL... so... like it or not, it is what it is.
 
->
->> Should I send a patch series to completely remove udlfb, 
->
-> No. (at least not yet)
->
->> since [1] echoed that DRM udl driver is good enough?
->>> [1] 
->>> https://lore.kernel.org/dri-devel/20201130125200.10416-1-tzimmermann@suse.de/
->
-> Well, some people who do *NOT* actively use fbdev with the old
-> cards say the DRM replacements are "good enough".
-> For tThose people who really depend on fbdev and the speed it has
-> over DRM, the DRM "basic-drivers" are simply a 
-> nice-to-have-but-not-really-useable
-> type of drivers.
-> So, unless the really affected people say the DRM replacement
-> is fully usable, we need to keep the fbdev driver.
->
-> Helge
+Btw, regarding the possibilty of powering on the MFGPLL in some wrong way...
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+No.
+
+The poweron sequence is correct - as per the datasheets (and matches with other MTK
+PLL on/off strategies).
+
+Thanks for doing this crazy test, and thanks for confirming my suspect!
+
+Cheers,
+Angelo
 
 
+>>>
+>>>> Failing to ensure
+>>>> this results in a pleasant SError interrupt if the EB clock happens to
+>>>> be off.
+>>>>
+>>>> To achieve this, leverage the CCF core's runtime power management
+>>>> support. Define the necessary suspend/resume callbacks, add the
+>>>> necessary code to get RPM clocks from the DT, and make sure RPM is
+>>>> enabled before clock registration happens.
+>>>>
+>>>> For the RPM callbacks to really make much sense at all, we change the
+>>>> drvdata from clk_data to a new private struct, as is common in drivers
+>>>> across the Linux kernel.
+>>>>
+>>>> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+>>>> ---
+>>>>    drivers/clk/mediatek/clk-mt8196-mfg.c | 104 +++++++++++++++++++++++++++-------
+>>>>    drivers/clk/mediatek/clk-pll.h        |   2 +
+>>>>    2 files changed, 87 insertions(+), 19 deletions(-)
+>>>>
+>>>> diff --git a/drivers/clk/mediatek/clk-mt8196-mfg.c b/drivers/clk/mediatek/clk-mt8196-mfg.c
+>>>> index 8e09c0f7b7548f8e286671cea2dac64530b8ce47..64cc0c037f62d7eab8d0e7fc00c05d122bf4130c 100644
+>>>> --- a/drivers/clk/mediatek/clk-mt8196-mfg.c
+>>>> +++ b/drivers/clk/mediatek/clk-mt8196-mfg.c
+>>>> @@ -13,6 +13,7 @@
+>>>>    #include <linux/of_address.h>
+>>>>    #include <linux/of_device.h>
+>>>>    #include <linux/platform_device.h>
+>>>> +#include <linux/pm_runtime.h>
+>>>>    
+>>>>    #include "clk-mtk.h"
+>>>>    #include "clk-pll.h"
+>>>> @@ -38,7 +39,7 @@
+>>>>    	    _flags, _rst_bar_mask,				\
+>>>>    	    _pd_reg, _pd_shift, _tuner_reg,			\
+>>>>    	    _tuner_en_reg, _tuner_en_bit,			\
+>>>> -	    _pcw_reg, _pcw_shift, _pcwbits) {			\
+>>>> +	    _pcw_reg, _pcw_shift, _pcwbits, _rpm_clks) {	\
+>>>>    		.id = _id,					\
+>>>>    		.name = _name,					\
+>>>>    		.reg = _reg,					\
+>>>> @@ -58,26 +59,60 @@
+>>>>    		.pcw_shift = _pcw_shift,			\
+>>>>    		.pcwbits = _pcwbits,				\
+>>>>    		.pcwibits = MT8196_INTEGER_BITS,		\
+>>>> +		.rpm_clk_names = _rpm_clks,			\
+>>>> +		.num_rpm_clks = ARRAY_SIZE(_rpm_clks),		\
+>>>>    	}
+>>>>    
+>>>> +static const char * const mfgpll_rpm_clk_names[] = {
+>>>> +	NULL
+>>>> +};
+>>>> +
+>>>>    static const struct mtk_pll_data mfg_ao_plls[] = {
+>>>>    	PLL(CLK_MFG_AO_MFGPLL, "mfgpll", MFGPLL_CON0, MFGPLL_CON0, 0, 0, 0,
+>>>> -	    BIT(0), MFGPLL_CON1, 24, 0, 0, 0,
+>>>> -	    MFGPLL_CON1, 0, 22),
+>>>> +	    BIT(0), MFGPLL_CON1, 24, 0, 0, 0, MFGPLL_CON1, 0, 22,
+>>>> +	    mfgpll_rpm_clk_names),
+>>>>    };
+>>>>    
+>>>>    static const struct mtk_pll_data mfgsc0_ao_plls[] = {
+>>>>    	PLL(CLK_MFGSC0_AO_MFGPLL_SC0, "mfgpll-sc0", MFGPLL_SC0_CON0,
+>>>>    	    MFGPLL_SC0_CON0, 0, 0, 0, BIT(0), MFGPLL_SC0_CON1, 24, 0, 0, 0,
+>>>> -	    MFGPLL_SC0_CON1, 0, 22),
+>>>> +	    MFGPLL_SC0_CON1, 0, 22, mfgpll_rpm_clk_names),
+>>>>    };
+>>>>    
+>>>>    static const struct mtk_pll_data mfgsc1_ao_plls[] = {
+>>>>    	PLL(CLK_MFGSC1_AO_MFGPLL_SC1, "mfgpll-sc1", MFGPLL_SC1_CON0,
+>>>>    	    MFGPLL_SC1_CON0, 0, 0, 0, BIT(0), MFGPLL_SC1_CON1, 24, 0, 0, 0,
+>>>> -	    MFGPLL_SC1_CON1, 0, 22),
+>>>> +	    MFGPLL_SC1_CON1, 0, 22, mfgpll_rpm_clk_names),
+>>>>    };
+>>>>    
+>>>> +struct clk_mt8196_mfg {
+>>>> +	struct clk_hw_onecell_data *clk_data;
+>>>> +	struct clk_bulk_data *rpm_clks;
+>>>> +	unsigned int num_rpm_clks;
+>>>> +};
+>>>> +
+>>>> +static int __maybe_unused clk_mt8196_mfg_resume(struct device *dev)
+>>>> +{
+>>>> +	struct clk_mt8196_mfg *clk_mfg = dev_get_drvdata(dev);
+>>>> +
+>>>> +	if (!clk_mfg || !clk_mfg->rpm_clks)
+>>>> +		return 0;
+>>>> +
+>>>> +	return clk_bulk_prepare_enable(clk_mfg->num_rpm_clks, clk_mfg->rpm_clks);
+>>>> +}
+>>>> +
+>>>> +static int __maybe_unused clk_mt8196_mfg_suspend(struct device *dev)
+>>>> +{
+>>>> +	struct clk_mt8196_mfg *clk_mfg = dev_get_drvdata(dev);
+>>>> +
+>>>> +	if (!clk_mfg || !clk_mfg->rpm_clks)
+>>>> +		return 0;
+>>>> +
+>>>> +	clk_bulk_disable_unprepare(clk_mfg->num_rpm_clks, clk_mfg->rpm_clks);
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>>    static const struct of_device_id of_match_clk_mt8196_mfg[] = {
+>>>>    	{ .compatible = "mediatek,mt8196-mfgpll-pll-ctrl",
+>>>>    	  .data = &mfg_ao_plls },
+>>>> @@ -92,35 +127,60 @@ MODULE_DEVICE_TABLE(of, of_match_clk_mt8196_mfg);
+>>>>    static int clk_mt8196_mfg_probe(struct platform_device *pdev)
+>>>>    {
+>>>>    	const struct mtk_pll_data *plls;
+>>>> -	struct clk_hw_onecell_data *clk_data;
+>>>> +	struct clk_mt8196_mfg *clk_mfg;
+>>>>    	struct device_node *node = pdev->dev.of_node;
+>>>> +	struct device *dev = &pdev->dev;
+>>>>    	const int num_plls = 1;
+>>>> -	int r;
+>>>> +	int r, i;
+>>>>    
+>>>> -	plls = of_device_get_match_data(&pdev->dev);
+>>>> +	plls = of_device_get_match_data(dev);
+>>>>    	if (!plls)
+>>>>    		return -EINVAL;
+>>>>    
+>>>> -	clk_data = mtk_alloc_clk_data(num_plls);
+>>>> -	if (!clk_data)
+>>>> +	clk_mfg = devm_kzalloc(dev, sizeof(*clk_mfg), GFP_KERNEL);
+>>>> +	if (!clk_mfg)
+>>>>    		return -ENOMEM;
+>>>>    
+>>>> -	r = mtk_clk_register_plls(&pdev->dev, plls, num_plls, clk_data);
+>>>> +	clk_mfg->num_rpm_clks = plls[0].num_rpm_clks;
+>>>> +
+>>>> +	if (clk_mfg->num_rpm_clks) {
+>>>> +		clk_mfg->rpm_clks = devm_kcalloc(dev, clk_mfg->num_rpm_clks,
+>>>> +						 sizeof(*clk_mfg->rpm_clks),
+>>>> +						 GFP_KERNEL);
+>>>> +		if (!clk_mfg->rpm_clks)
+>>>> +			return -ENOMEM;
+>>>> +
+>>>> +		for (i = 0; i < clk_mfg->num_rpm_clks; i++)
+>>>> +			clk_mfg->rpm_clks->id = plls[0].rpm_clk_names[i];
+>>>> +
+>>>> +		r = devm_clk_bulk_get(dev, clk_mfg->num_rpm_clks,
+>>>> +				      clk_mfg->rpm_clks);
+>>>> +		if (r)
+>>>> +			return r;
+>>>> +	}
+>>>> +
+>>>> +	clk_mfg->clk_data = mtk_alloc_clk_data(num_plls);
+>>>> +	if (!clk_mfg->clk_data)
+>>>> +		return -ENOMEM;
+>>>> +
+>>>> +	dev_set_drvdata(dev, clk_mfg);
+>>>> +	pm_runtime_enable(dev);
+>>>> +
+>>>> +	r = mtk_clk_register_plls(dev, plls, num_plls, clk_mfg->clk_data);
+>>>>    	if (r)
+>>>>    		goto free_clk_data;
+>>>>    
+>>>> -	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+>>>> +	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
+>>>> +				   clk_mfg->clk_data);
+>>>>    	if (r)
+>>>>    		goto unregister_plls;
+>>>>    
+>>>> -	platform_set_drvdata(pdev, clk_data);
+>>>> -
+>>>>    	return r;
+>>>>    
+>>>>    unregister_plls:
+>>>> -	mtk_clk_unregister_plls(plls, num_plls, clk_data);
+>>>> +	mtk_clk_unregister_plls(plls, num_plls, clk_mfg->clk_data);
+>>>>    free_clk_data:
+>>>> -	mtk_free_clk_data(clk_data);
+>>>> +	mtk_free_clk_data(clk_mfg->clk_data);
+>>>>    
+>>>>    	return r;
+>>>>    }
+>>>> @@ -128,20 +188,26 @@ static int clk_mt8196_mfg_probe(struct platform_device *pdev)
+>>>>    static void clk_mt8196_mfg_remove(struct platform_device *pdev)
+>>>>    {
+>>>>    	const struct mtk_pll_data *plls = of_device_get_match_data(&pdev->dev);
+>>>> -	struct clk_hw_onecell_data *clk_data = platform_get_drvdata(pdev);
+>>>> +	struct clk_mt8196_mfg *clk_mfg = dev_get_drvdata(&pdev->dev);
+>>>>    	struct device_node *node = pdev->dev.of_node;
+>>>>    
+>>>>    	of_clk_del_provider(node);
+>>>> -	mtk_clk_unregister_plls(plls, 1, clk_data);
+>>>> -	mtk_free_clk_data(clk_data);
+>>>> +	mtk_clk_unregister_plls(plls, 1, clk_mfg->clk_data);
+>>>> +	mtk_free_clk_data(clk_mfg->clk_data);
+>>>>    }
+>>>>    
+>>>> +static DEFINE_RUNTIME_DEV_PM_OPS(clk_mt8196_mfg_pm_ops,
+>>>> +				 clk_mt8196_mfg_suspend,
+>>>> +				 clk_mt8196_mfg_resume,
+>>>> +				 NULL);
+>>>> +
+>>>>    static struct platform_driver clk_mt8196_mfg_drv = {
+>>>>    	.probe = clk_mt8196_mfg_probe,
+>>>>    	.remove = clk_mt8196_mfg_remove,
+>>>>    	.driver = {
+>>>>    		.name = "clk-mt8196-mfg",
+>>>>    		.of_match_table = of_match_clk_mt8196_mfg,
+>>>> +		.pm = pm_ptr(&clk_mt8196_mfg_pm_ops),
+>>>>    	},
+>>>>    };
+>>>>    module_platform_driver(clk_mt8196_mfg_drv);
+>>>> diff --git a/drivers/clk/mediatek/clk-pll.h b/drivers/clk/mediatek/clk-pll.h
+>>>> index 0f2a1d19eea78b7390b221af47016eb9897f3596..82b86b849a67359d8f23d828f50422081c2747e3 100644
+>>>> --- a/drivers/clk/mediatek/clk-pll.h
+>>>> +++ b/drivers/clk/mediatek/clk-pll.h
+>>>> @@ -53,6 +53,8 @@ struct mtk_pll_data {
+>>>>    	u8 pll_en_bit; /* Assume 0, indicates BIT(0) by default */
+>>>>    	u8 pcw_chg_bit;
+>>>>    	u8 fenc_sta_bit;
+>>>> +	const char * const *rpm_clk_names;
+>>>> +	unsigned int num_rpm_clks;
+>>>>    };
+>>>>    
+>>>>    /*
+>>>>
+>>>
+>>>
+>>>
+>>
+>>
+> 
+> 
+> 
+> 
 
