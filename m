@@ -1,118 +1,132 @@
-Return-Path: <linux-kernel+bounces-844059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBCCABC0E82
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:47:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDFD9BC0E2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:44:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7A1119A06F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:47:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 491643A3EE4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3572DCBEC;
-	Tue,  7 Oct 2025 09:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hjUrxmX9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8CC02D7DDB;
+	Tue,  7 Oct 2025 09:44:32 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256082D9493;
-	Tue,  7 Oct 2025 09:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 261BB2D7DCE
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 09:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759830296; cv=none; b=fsx47jKJ6e3AkoYfV6zvod5KFRA5cHSs6HBr8eAT3Souj9eVaUuY9GuOp0/DfHgQRSO00YUPeWkMJmwyYSqFoOAo76ZETvWp8nKS5grB8XRjpD0I/MnlmRJXsxr4JyAv/hKV+UO6SI6rSOzD/zLSSkLgeawlJPJd5UoMIyoLIoo=
+	t=1759830272; cv=none; b=Kl8mBJ+HKrIDKJ7fJQAce3qmfrHO/MDYawllshSprgNIhPUb3SD3bj9WjFxS8yzQ+tMWxa1nEGqdgqUT4k6SnVjmYG7x/LNZtgKRynBSNo6YRvoapBY6zyQCiAcrWZ7aIvXJYJChd6RniGcPcGJjXvHV9NoeKfseDeZGNtyfxL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759830296; c=relaxed/simple;
-	bh=3CYEDmeqpw0NtuUPVCDXZwzN28sdvtl+wEi62S8DILA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qPd1Zj/H93K+a6kMw66a2YcnrNuFXe0Y2YXSFt1YPUmIQVzfrtVy2lKZy9ZO3Y8dfXum83nAPx3MpbJblIsUn6rRhYoj1+eifCgSInnnDQU1G3uv72ihrkWjI3axo6xHQiPoyuZXMbVvQ8JkXjQeJM7TPJ+u/BHMoMAvlTVkyz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hjUrxmX9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D61C1C4AF19;
-	Tue,  7 Oct 2025 09:44:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759830296;
-	bh=3CYEDmeqpw0NtuUPVCDXZwzN28sdvtl+wEi62S8DILA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hjUrxmX9BEsptsgn9iQczjrgFxbc8Bv4uZWbEkjQcsAviPpwLd52CLgzQOrKfCVKn
-	 MAOit3Foy97gHXz0CPFk8LnLvlM10mGyDaFVnHCVOsEQbnAWGsfXIuzl5/pTzZhSr+
-	 pfqE521Ra3KZui+LloInVmdIFJExMF+7WEKaPvmIu5iRKeQ6yrtfAlBJO8tkVRD397
-	 m/MKMTUXAQ0Ie76RFCbCt3UhdjVMvn+99yqlCLhc0jsQX9gGvqyvBXmoza1pEFWw1W
-	 IsUbudLdors9FZZcaT4cTftE2iSM2d3BgWAou9E38DX43gMyD0krWMY0y5sSD1Qkzc
-	 H/3z3VfWTmyHg==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1v64Fa-0000000036B-049n;
-	Tue, 07 Oct 2025 11:44:54 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>
-Cc: Robin Murphy <robin.murphy@arm.com>,
-	Sven Peter <sven@kernel.org>,
-	Janne Grunau <j@jannau.net>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Yong Wu <yong.wu@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Krishna Reddy <vdumpa@nvidia.com>,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>,
-	stable@vger.kernel.org,
-	Thierry Reding <treding@nvidia.com>,
-	Miaoqian Lin <linmq006@gmail.com>
-Subject: [PATCH v2 14/14] iommu/tegra: fix device leak on probe_device()
-Date: Tue,  7 Oct 2025 11:43:27 +0200
-Message-ID: <20251007094327.11734-15-johan@kernel.org>
-X-Mailer: git-send-email 2.49.1
-In-Reply-To: <20251007094327.11734-1-johan@kernel.org>
-References: <20251007094327.11734-1-johan@kernel.org>
+	s=arc-20240116; t=1759830272; c=relaxed/simple;
+	bh=asAxx4tyn5H1OOKqsxgfkLYzALx/7qKW/pZdrKFxEeg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PW3bgBwH8lZkbwt4X0W5uoA6CR+uqrbcyCa0IN6snYdLsJ5HJY5ayTIzVCgxmgsf0NOtRwNVeY7RfOtXbKrwVvyZJSbkbv/H2YN5nr4OHHME0b1YFioqOuPShUom2O6mdzHbutrBVDkCwcXoF7tl2HLCYErhD7FFZ6MbIu4FJQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v64Ep-0004ZM-CM; Tue, 07 Oct 2025 11:44:07 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v64Eo-002NZS-1A;
+	Tue, 07 Oct 2025 11:44:06 +0200
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v64Eo-000000003Jb-1BSq;
+	Tue, 07 Oct 2025 11:44:06 +0200
+Message-ID: <01fc3101ab2e3898932afeaaaf060a6676cdf323.camel@pengutronix.de>
+Subject: Re: [PATCH 04/18] reset: rzv2h-usb2phy: Set VBENCTL register for
+ OTG mode
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Biju Das <biju.das.jz@bp.renesas.com>, Tommaso Merciai	
+ <tommaso.merciai.xr@bp.renesas.com>, Tommaso Merciai
+ <tomm.merciai@gmail.com>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+  Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Vinod Koul
+ <vkoul@kernel.org>, Kishon Vijay Abraham I	 <kishon@kernel.org>, Geert
+ Uytterhoeven <geert+renesas@glider.be>,  "magnus.damm"
+ <magnus.damm@gmail.com>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ "linux-phy@lists.infradead.org"	 <linux-phy@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org"	 <linux-kernel@vger.kernel.org>
+Date: Tue, 07 Oct 2025 11:44:06 +0200
+In-Reply-To: <TY3PR01MB1134635745721CC005B35702286E0A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20251001212709.579080-1-tommaso.merciai.xr@bp.renesas.com>
+		 <20251001212709.579080-5-tommaso.merciai.xr@bp.renesas.com>
+	 <593eb851ae6ce0ec03ddeacf436180b6538fdd1e.camel@pengutronix.de>
+	 <TY3PR01MB1134635745721CC005B35702286E0A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Make sure to drop the reference taken to the iommu platform device when
-looking up its driver data during probe_device().
+Hi Biju,
 
-Note that commit 9826e393e4a8 ("iommu/tegra-smmu: Fix missing
-put_device() call in tegra_smmu_find") fixed the leak in an error path,
-but the reference is still leaking on success.
+On Di, 2025-10-07 at 04:02 +0000, Biju Das wrote:
+> Hi Philipp,
+>=20
+> Thanks for the feedback.
+>=20
+> > -----Original Message-----
+> > From: Philipp Zabel <p.zabel@pengutronix.de>
+> > Sent: 06 October 2025 17:32
+> > Subject: Re: [PATCH 04/18] reset: rzv2h-usb2phy: Set VBENCTL register f=
+or OTG mode
+> >=20
+> > On Mi, 2025-10-01 at 23:26 +0200, Tommaso Merciai wrote:
+> > > Add logic to set the VBENCTL register when the USB controller operate=
+s
+> > > in OTG mode. This is required to ensure proper USB transceiver
+> > > behavior when the device is configured as OTG.
+> > >=20
+> > > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> >=20
+> > I had reservations about this driver before, because of the opaque regi=
+ster initialization sequence, and
+> > I was told that no, this is a reset driver alright [1].
+>=20
+> The latest hardware manual document about VBENCTRL register which sets so=
+urce for VBUS selection.
+> s
 
-Fixes: 891846516317 ("memory: Add NVIDIA Tegra memory controller support")
-Cc: stable@vger.kernel.org	# 3.19: 9826e393e4a8
-Cc: Thierry Reding <treding@nvidia.com>
-Cc: Miaoqian Lin <linmq006@gmail.com>
-Acked-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/iommu/tegra-smmu.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+I still can't look at this, right? The USB2PHY control register space
+appears to be documented in the "RZ/V2H Group User's Manual: Hardware
+(Additional document)" (under NDA).
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 36cdd5fbab07..f6f26a072820 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -830,10 +830,9 @@ static struct tegra_smmu *tegra_smmu_find(struct device_node *np)
- 		return NULL;
- 
- 	mc = platform_get_drvdata(pdev);
--	if (!mc) {
--		put_device(&pdev->dev);
-+	put_device(&pdev->dev);
-+	if (!mc)
- 		return NULL;
--	}
- 
- 	return mc->smmu;
- }
--- 
-2.49.1
+> > Can you please try to find a proper abstraction for this, because drive=
+rs/reset is not the correct place
+> > for USB OTG mode handling.
+>=20
+> Sorry for the confusion. This driver is not handling USB OTG mode. It jus=
+t configures VBENCTRL(one time setting)
+> that selects the source for VBUS_SEL. Actual USB OTG mode handling is don=
+e USB PHY driver
+> which sets host/device mode based on ID detection.
 
+So this is a mux for the VBUS_SEL signal?
+
+Why don't the USB host controller drivers parse their "dr_mode"
+property themselves and control USB2PHY VBENCTRL via the mux API, for
+example?
+
+regards
+Philipp
 
