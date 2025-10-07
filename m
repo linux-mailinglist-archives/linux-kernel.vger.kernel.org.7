@@ -1,159 +1,260 @@
-Return-Path: <linux-kernel+bounces-844133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB579BC1183
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:09:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7144CBC117D
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:09:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E10C74F5013
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:08:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE1883C7C1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA2B2D7DCF;
-	Tue,  7 Oct 2025 11:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B982D94B4;
+	Tue,  7 Oct 2025 11:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YTc6VxMn"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Lz3rYTGZ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143D42D7DE0
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D641165F16;
+	Tue,  7 Oct 2025 11:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759835305; cv=none; b=MXE4hCKekUBpZyLeJy27RolG2PSNPwftlYmR/IoSo248CBKlp8y4T71iZMjtjAD3WGgFIzvzh+KDgEV6RP7dOgyUyt/C2AgC8DMOnTGVc5ybBB5gIUvFl6YR1eeJcwwM69lBdUHoRtgcm+Qr4KMTXYmv1o4m4zhWiublALg/rjk=
+	t=1759835349; cv=none; b=SCDVF84YVa0zaccc2rVg1SsN33qzSGSIfMn/pmXY9vIX3+7zbi0Ecfmbal247DnY0JZeMJ5qitQIdd/vxxmrMb/qrgaQGaX8f3syxkWDhaiUA8ztp2NcUcZOiU2kLjSEvic4+FN8S/5ks8/M42ZzSSIq5sf6BYo+QiKbAapzn9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759835305; c=relaxed/simple;
-	bh=UYjxP2t5m3TSDV72mhr1AaddvxDwKD3qqqOjv0SKlxI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WzVDlD05SgfGqszF8fbmQSRWs2wE9UdPrwbxqIrLFlI6kU5VnVyohDSMnRsuPyw4HZul4jC+OU7+N1ZYzF/WdiqtXRrN8d/i4/fyfWvgWB8QwSdpsNq7pEXBHtKtwTn37CEfE5CUQihmTGmJOScHWv1a/t0781gLwbuewZoF0Z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YTc6VxMn; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b48d8deafaeso1239133666b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 04:08:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759835302; x=1760440102; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UYjxP2t5m3TSDV72mhr1AaddvxDwKD3qqqOjv0SKlxI=;
-        b=YTc6VxMnrbOxAxg0dymgOMnAKNqjMIyuPLXBH6eEu6/JVt/86hfbdnVhS87c7bxKdf
-         ZAapAJKUDHw7nBE0p4fxdPzfII/LpqegteJ58dR4HuGAJaeSJtr4rIU2uUQyxX2Hk/0z
-         lme16YJPCk+/Pkrz8w/OIZ1NQG+mG0ZHJu1X4LyZNsF3nuiHF3VrmOq8eRA7mAc61a7K
-         2X19cVg+GMNJrmVt8yq9xI5u5zRSuq1ldT3/MdFipk1UraUfPatmutd10Q3VlynE91PJ
-         S+PgoTaHPN30XSYofAJ9N7f9O/+uzl016zS1il2OI3P/DCTbZgfhP4FdVwd3ZX5s4ahP
-         XFcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759835302; x=1760440102;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UYjxP2t5m3TSDV72mhr1AaddvxDwKD3qqqOjv0SKlxI=;
-        b=exFybkyADNWwHdCKjjmdNneAtYCngSgeyvj67W1L/CRIIX9tAliFC0Xm6cmO5JpmyJ
-         ebvHzJNcjCDALZdh1uqd81RUoXf4EX7fLx8Y4zZi9TiEPcxukTWb1+1IXJKCt1Ka5NhS
-         wLmR+tYSR9EBwSbTHhJPhtdd9nZliAAD6wLFZKfBNIRjQj1oosw6jwFOcNSJrRWtCOxY
-         UWYuNsMV1hd5PzxwD9QaBkXbvPJkvr4msH5S1GWT6Jm6mETBJxnIzVEAOqLXsjt41smh
-         P9t0fW1mnnnj68N60jJohYn3nEkpCONWw6zTVoiUTzvRkK1TkUDC8VmpKsp9q9FXHQOV
-         zMzg==
-X-Forwarded-Encrypted: i=1; AJvYcCW93d+ZvKaldooVAR90m0j/3fxtYbkTS73Rle1mRCCbUv7IU5epMqYdPB6v3TURnXXga0ZR4SKr+P2ZftM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxl4cSM5k5JcEDd3lQOJQLKCbR/IN29uuOvQdCvVNz/ay5wCDal
-	bUNh2gS1MfTFD8sUTs0LuYYae7/EcXsnbS0aQ3lvJnGSqUFprGY0A4YkPnDgOwSzvczi0KvrmDe
-	DR9tImdnOeXZiUvNBpknVYEVMWqtKGVA=
-X-Gm-Gg: ASbGncspYljvjvcHI3IpuOrCXLaHR5ByDGjXnq8BEcZsyMDKTWemfxORyWDnpICsQD1
-	nr9z3mcFZeGxtHTMxpceYTPf5+ekYVxeRW3zf+bJ+vG22hcvpyHiWbUo6Je3p/PBMK+BnKQF4he
-	i1HTEzE2y+dVd/lMssMXO9WgTqVTnNqoaKgbR3KJkTxOzVVinhxNB+nRLCULuNe8G3+7POeQkqU
-	JKCfAxPNnEmrHmeUHsbPVrUHXHsUkFZw1tP16+dwK1YWUcnf4gf+KoH7FDmHsYfzQ==
-X-Google-Smtp-Source: AGHT+IHTIee9up7m92yTA0Zsk+7eOEOmCuPn1i2HEpHrFMMVIsPmZ/Ha7QPfPMEmx8EgOfImzZOVCi5jgu6WcAE+r2M=
-X-Received: by 2002:a17:906:4fce:b0:b40:98b1:7457 with SMTP id
- a640c23a62f3a-b49c4cde268mr1621336566b.47.1759835301952; Tue, 07 Oct 2025
- 04:08:21 -0700 (PDT)
+	s=arc-20240116; t=1759835349; c=relaxed/simple;
+	bh=fhfzUMJL1SqNlzcr8LHjp5X1IhdG41Jx/unl4fKpMOU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fu+QwFQk1OOqukboB0bp5M8Kk/9/43Sueqq/shf/zG3fdc22zFv1z3KM1fxFd2mQILNGur2+866lZ7b/mn18GMLTGFARmvHN9X70K6HP7IsZAPhlNo1Tj93tcRhOSmfLgmOOBCHdBJCmz5oSvaAK80m4EePhKlTONLUImIIRBIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Lz3rYTGZ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5974V5hJ016331;
+	Tue, 7 Oct 2025 11:09:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	RNHvoTHoC6STGB5T7hO09OD+Iq9U/5MnfxHSDGuLxJE=; b=Lz3rYTGZFxNhLvtT
+	nwhT1v5/0482g2bpkGi5agV/S5QdTPy+/+2nPMl+jsZDuZWKn/6DoMH44hE2iBX4
+	vGigWiHiQNehFybgCnK1TxDc0tNgnczNGhHdRjMbEG5wnzrrkKGIRLuF/wY+nMhW
+	us9lNv+51MC06P5h9d1fW6XJs/GYU0TzXDD5/mk4ZHNRsCj1pt8Izz9Uyy4ZzCA2
+	kQe0G2OVBd7tUn75b4wwuwqf7MkS7aTgCx/3sTmllLK4cJaw72Y7tvdU/nqA8G1S
+	7c/iWTpoV4P5yOTF2fRIduU/oOt59ckMDErLFNb/8t7iRzmaM0mvHIgUiml2XAfK
+	bHleVQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jtk6y246-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 Oct 2025 11:08:59 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 597B8wtM003451
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 7 Oct 2025 11:08:58 GMT
+Received: from [10.217.216.18] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Tue, 7 Oct
+ 2025 04:08:53 -0700
+Message-ID: <5fc715ac-1e24-ee59-db24-cc0a5797c43e@quicinc.com>
+Date: Tue, 7 Oct 2025 16:38:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251003155238.2147410-1-ryan.roberts@arm.com>
- <edc832b4-5f4c-4f26-a306-954d65ec2e85@redhat.com> <66251c3e-4970-4cac-a1fc-46749d2a727a@arm.com>
- <989c49fc-1f6f-4674-96e7-9f987ec490db@redhat.com> <CAOQ4uxh+Mho71c93FNqcw=crw2H3yEs-uecWf4b6JMKYDTBCWQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxh+Mho71c93FNqcw=crw2H3yEs-uecWf4b6JMKYDTBCWQ@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 7 Oct 2025 13:08:10 +0200
-X-Gm-Features: AS18NWAe14dfNSbsR0j5kwg1mzZpCKRfTUR5zwp4QxEyNvIbDN-ZzhaGc85_2tM
-Message-ID: <CAOQ4uxh-FJMtpyDrZpRQcWV6ScranQWUia4yz+rb82yQSdjSUQ@mail.gmail.com>
-Subject: Re: [PATCH v1] fsnotify: Pass correct offset to fsnotify_mmap_perm()
-To: Jan Kara <jack@suse.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>, David Hildenbrand <david@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v4 3/4] mmc: sdhci-msm: Add Device tree parsing logic for
+ DLL settings
+Content-Language: en-US
+To: Rob Herring <robh@kernel.org>
+CC: Ulf Hansson <ulf.hansson@linaro.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Adrian Hunter
+	<adrian.hunter@intel.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>, <linux-mmc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dmitry.baryshkov@oss.qualcomm.com>,
+        <quic_pragalla@quicinc.com>, <quic_sayalil@quicinc.com>,
+        <quic_nitirawa@quicinc.com>, <quic_bhaskarv@quicinc.com>,
+        <kernel@oss.qualcomm.com>, Sachin Gupta <quic_sachgupt@quicinc.com>
+References: <20250929113515.26752-1-quic_rampraka@quicinc.com>
+ <20250929113515.26752-4-quic_rampraka@quicinc.com>
+ <20251006214432.GA625548-robh@kernel.org>
+From: Ram Prakash Gupta <quic_rampraka@quicinc.com>
+In-Reply-To: <20251006214432.GA625548-robh@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAxNyBTYWx0ZWRfX+SLHdyeCR9lL
+ TeLrh53DZj7gcM4urDYryl9TJOls2u2pz9CjOg7leQxE+nCXkEKxFBNdUMeeZxetS4Lqe7ccRE+
+ afOQDUB3b8ncHeCXxu0yc15xftXwEoyEPCQAiGQs6H6/b7Ti6ZzKylReSxXNFT7R17jZmxBV7TN
+ hRUhcVw9zKNg8ayO66rb1OzP8fxIvmMvC8U5QhKXJXmejw6g2JEmpD0QsX33eOCy7aeByLETg2L
+ XB3ajtIm2zI1SVcq2VV+MHVHFk7ur6O7JAastHAWVKj+idxXQBjtV60f5E+6KQ5Gqp7FzrcR0Hb
+ 0fEOfFflzqhekalzyUhW/191apfjiL4IToR8KOQAjQXY9njS3OumnriJFnHItHw5zDHRNIeQU4f
+ I8kgkAWc68v10tM4KNTPKG02jBADXA==
+X-Authority-Analysis: v=2.4 cv=do3Wylg4 c=1 sm=1 tr=0 ts=68e4f4cc cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=COk6AnOGAAAA:8
+ a=RsA-RdRemkjXYStCCQ0A:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: z8PmnhSOZPyxjv8C6nyjDL9CkS_mti8y
+X-Proofpoint-ORIG-GUID: z8PmnhSOZPyxjv8C6nyjDL9CkS_mti8y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-06_07,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 adultscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015
+ malwarescore=0 spamscore=0 impostorscore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040017
 
-On Mon, Oct 6, 2025 at 4:40=E2=80=AFPM Amir Goldstein <amir73il@gmail.com> =
-wrote:
+On 10/7/2025 3:14 AM, Rob Herring wrote:
+> On Mon, Sep 29, 2025 at 05:05:14PM +0530, Ram Prakash Gupta wrote:
+>> From: Sachin Gupta <quic_sachgupt@quicinc.com>
+>>
+>> This update introduces the capability to configure HS200
+>> and HS400 DLL settings via the device tree and parsing it.
+>>
+>> Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
+>> Signed-off-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
+>> ---
+>>  drivers/mmc/host/sdhci-msm.c | 91 ++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 91 insertions(+)
+>>
+>> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+>> index 36700735aa3e..d07f0105b733 100644
+>> --- a/drivers/mmc/host/sdhci-msm.c
+>> +++ b/drivers/mmc/host/sdhci-msm.c
+>> @@ -265,6 +265,19 @@ struct sdhci_msm_variant_info {
+>>  	const struct sdhci_msm_offset *offset;
+>>  };
+>>  
+>> +/*
+>> + * DLL registers which needs be programmed with HSR settings.
+>> + * Add any new register only at the end and don't change the
+>> + * sequence.
+>> + */
+>> +struct sdhci_msm_dll {
+>> +	u32 dll_config[2];
+>> +	u32 dll_config_2[2];
+>> +	u32 dll_config_3[2];
+>> +	u32 dll_usr_ctl[2];
+>> +	u32 ddr_config[2];
+>> +};
+>> +
+>>  struct sdhci_msm_host {
+>>  	struct platform_device *pdev;
+>>  	void __iomem *core_mem;	/* MSM SDCC mapped address */
+>> @@ -273,6 +286,7 @@ struct sdhci_msm_host {
+>>  	struct clk *xo_clk;	/* TCXO clk needed for FLL feature of cm_dll*/
+>>  	/* core, iface, cal and sleep clocks */
+>>  	struct clk_bulk_data bulk_clks[4];
+>> +	struct sdhci_msm_dll dll;
+>>  #ifdef CONFIG_MMC_CRYPTO
+>>  	struct qcom_ice *ice;
+>>  #endif
+>> @@ -301,6 +315,7 @@ struct sdhci_msm_host {
+>>  	u32 dll_config;
+>>  	u32 ddr_config;
+>>  	bool vqmmc_enabled;
+>> +	bool artanis_dll;
+>>  };
+>>  
+>>  static const struct sdhci_msm_offset *sdhci_priv_msm_offset(struct sdhci_host *host)
+>> @@ -2516,6 +2531,73 @@ static int sdhci_msm_gcc_reset(struct device *dev, struct sdhci_host *host)
+>>  	return ret;
+>>  }
+>>  
+>> +static int sdhci_msm_dt_get_array(struct device *dev, const char *prop_name,
+>> +				  u32 **dll_table, int *len)
+>> +{
+>> +	struct device_node *np = dev->of_node;
+>> +	u32 *arr = NULL;
+>> +	int ret = 0, sz = 0;
+>> +
+>> +	if (!np)
+>> +		return -ENODEV;
+>> +	if (!of_get_property(np, prop_name, &sz))
+> Don't add new users of of_get_property which adds untracked pointers to 
+> raw DT data.
+
+Adrian also checked and provided some suggestion, and with those I could
+get rid of this function, so it is no longer needed.
+
 >
-> On Mon, Oct 6, 2025 at 3:53=E2=80=AFPM David Hildenbrand <david@redhat.co=
-m> wrote:
-> >
-> > On 06.10.25 14:14, Ryan Roberts wrote:
-> > > On 06/10/2025 12:36, David Hildenbrand wrote:
-> > >> On 03.10.25 17:52, Ryan Roberts wrote:
-> > >>> fsnotify_mmap_perm() requires a byte offset for the file about to b=
-e
-> > >>> mmap'ed. But it is called from vm_mmap_pgoff(), which has a page of=
-fset.
-> > >>> Previously the conversion was done incorrectly so let's fix it, bei=
-ng
-> > >>> careful not to overflow on 32-bit platforms.
-> > >>>
-> > >>> Discovered during code review.
-> > >>>
-> > >>> Cc: <stable@vger.kernel.org>
-> > >>> Fixes: 066e053fe208 ("fsnotify: add pre-content hooks on mmap()")
-> > >>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> > >>> ---
-> > >>> Applies against today's mm-unstable (aa05a436eca8).
-> > >>>
-> > >>
-> > >> Curious: is there some easy way to write a reproducer? Did you look =
-into that?
-> > >
-> > > I didn't; this was just a drive-by discovery.
-> > >
-> > > It looks like there are some fanotify tests in the filesystems selfte=
-sts; I
-> > > guess they could be extended to add a regression test?
-> > >
-> > > But FWIW, I think the kernel is just passing the ofset/length info of=
-f to user
-> > > space and isn't acting on it itself. So there is no kernel vulnerabil=
-ity here.
-> >
-> > Right, I'm rather wondering if this could have been caught earlier and
-> > how we could have caught it earlier :)
+>> +		return -EINVAL;
+>> +
+>> +	sz = sz / sizeof(*arr);
+>> +	if (sz <= 0)
+>> +		return -EINVAL;
+>> +
+>> +	arr = kcalloc(sz,  sizeof(*arr), GFP_KERNEL);
+> Why do you need to count the length first when only 5 entries is valid?
+
+This line also would not be needed in needed in next patchset.
+
+>> +	if (!arr)
+>> +		return -ENOMEM;
+>> +
+>> +	ret = of_property_read_u32_array(np, prop_name, arr, sz);
+>> +	if (ret) {
+>> +		dev_err(dev, "%s failed reading array %d\n", prop_name, ret);
+>> +		*len = 0;
+>> +		return ret;
+>> +	}
+>> +
+>> +	*dll_table = arr;
+>> +	*len = sz;
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int sdhci_msm_dt_parse_dll_info(struct device *dev, struct sdhci_msm_host *msm_host)
+>> +{
+>> +	int dll_table_len, dll_reg_count;
+>> +	u32 *dll_table = NULL;
+>> +	int i, j;
+>> +
+>> +	msm_host->artanis_dll = false;
+>> +
+>> +	if (sdhci_msm_dt_get_array(dev, "qcom,dll-hsr-list",
+>> +				   &dll_table, &dll_table_len))
+>> +		return -EINVAL;
+>> +
+>> +	dll_reg_count = sizeof(struct sdhci_msm_dll) / sizeof(u32);
+>> +
+>> +	if (dll_table_len != dll_reg_count) {
+>> +		dev_err(dev, "Number of HSR entries are not matching\n");
+>> +		return -EINVAL;
+> You just leaked memory. devm_* functions are your friend.
+
+These changes would also be removed in next patchset, after addressing
+Adrian comment.
+
 >
-> Ha! you would have thought we either have no test for it or we test
-> only mmap with offset 0.
->
-> But we have LTP test fanotify24 which does mmap with offset page_sz*100
-> and indeed it prints the info and info says offset 0, only we do not veri=
-fy the
-> offset info in this test...
->
-> Will be fixed.
-
-Jan,
-
-FYI test enhanced and verified the bug and the fix:
-https://github.com/amir73il/ltp/commits/fsnotify-fixes/
-
-Will wait with posting the test until you merge the fix to make sure that t=
-he
-commit id is not changed.
-
-Thanks,
-Amir.
+>> +	}
+>> +
+>> +	for (i = 0, j = 0; j < 2; i = i + 5, j++) {
+>> +		msm_host->dll.dll_config[j] = dll_table[i];
+>> +		msm_host->dll.dll_config_2[j] = dll_table[i + 1];
+>> +		msm_host->dll.dll_config_3[j] = dll_table[i + 2];
+>> +		msm_host->dll.dll_usr_ctl[j] = dll_table[i + 3];
+>> +		msm_host->dll.ddr_config[j] = dll_table[i + 4];
+>> +	}
+>> +
+>> +	msm_host->artanis_dll = true;
+>> +
+>> +	kfree(dll_table);
+>> +
+>> +	return 0;
+>> +}
 
