@@ -1,141 +1,305 @@
-Return-Path: <linux-kernel+bounces-844714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBEEEBC2922
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 21:58:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE0CABC293E
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 22:01:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0136919A1310
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 19:59:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBE3E1899E4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 20:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF8C230BE9;
-	Tue,  7 Oct 2025 19:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C3322A7F2;
+	Tue,  7 Oct 2025 20:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J61NADb9"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lLmGfuz4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4245223816C
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 19:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC71B15C0;
+	Tue,  7 Oct 2025 20:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759867126; cv=none; b=u7E8XynsS5NA4WOlzEdFH1g4FAknASOF+QX+CqhUnwWuXPplqEsEfj10XD4FuNyCT0eX90+xJwLfnvBPGtIcoEiYA2gBuhKtVd119gM1a82aUxVM5XaF/LDnsBDAZBI5iNWFaDZKMZwnXrGvjT8UuVFaFSGuySVTXt48DRDmLxc=
+	t=1759867262; cv=none; b=L8+ZOt0h1EScEBnUiL2+mCXgqyGXDpKeJjn7bS89Ii+iu6/SuKT46iAfP0W/HPt6lVve/3MYKEY3Q2PdCl5WX4fRj7SCbDxiJkmyTG4AHD5Pc/9HKLrBb3us09fiEfCBxeGueAewCisR9+lR/ZbSG/nZqIlzDH0pU89TasNnJDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759867126; c=relaxed/simple;
-	bh=xYb0rDMNB5Kqj/n23Zh6oRZBeZ6LOsmWTGefleryl6A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aNLdBiKnqE8RTTYe/DcgQdy9n/k9smljwp9rKxv/YNTIBfrY8Kk2saTQfrCHErYs4zC97B4ZW4EG0TdR5FEv9MR99ufbSRTPqyKSVH0PoPvNyLyJJKafsuKeJj67K+12Dqn5rFSo1M9MsCbqvL74RadqXoI7AG84rf/3QgsEkZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J61NADb9; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-364bd7cce53so4897007fac.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 12:58:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759867124; x=1760471924; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9i+DaBHwLGUsHUY6K5jBAv25/GP5doDNsw2CwcVczb4=;
-        b=J61NADb9jfR4z8kYp7/TMjaZ/NtBV5IG49ddpJPzTslPoHTbmrHVtedigQ+Y8aF567
-         gaFCM5SQhXGxEteFvzdwPUbUug1ri+ryWbJjs0RfMc5XLeNgxPlYRcVl0z9EdCyyQcis
-         PCWxICl/wSKmRd+EepFSm9QgZLPtasuVkY8hz2QLXHCtCMGsfo0re019qIu/keNCUanF
-         Byehtd2PxtGYw61eWqO3OimoXDZe+Yae5seb+jH1cf2ci0S1XUVNSVa1GKwi0MoGwUJ6
-         Q/Hl7UOKKorxwVkIlNXqIF51BGxqNP8+ZPgBtnSDRKqJM4f2CGDcirMhfI1ATnHxqPUH
-         +vsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759867124; x=1760471924;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9i+DaBHwLGUsHUY6K5jBAv25/GP5doDNsw2CwcVczb4=;
-        b=Qdcc6zEPmTnYiH6zvwfpk0f4hOseBEEbhfQEd6nQqu5+CghSCyv5QdB53tFGRSAiQ8
-         MzuadAQDxc5FKmL9hruABoscIcTQVdbjS2ELMefdcaCpfAW4dgM3/c8L3sphEcCcOjMt
-         x8kqzT0EpAK34ym7gqK3PxueC5zmTki+hmF1oM1EhOfm9jYPz2afb5WqH/C4T9skC+Ml
-         R32XFDuN7ImUlvsM4X2wX38qaKXRj71bOpnCdbOxrQGhdKoZM0u2LRCofRwW0ZxHMWYu
-         xPx3U1LrLbaoDqLegvPP7IA/+9Vn0r6KT/WDz/ZhFC+nSU76lK0K/9QBmW2c1ogJ2Vzf
-         B5ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCX9+eur0IGaW6StwPyiwccl0AGhYdjFxucOWhLP43QdQyNuKUdt+UPIzMTmY4N4sbUroE5MywM5oqafouc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFePFIeOwIm0JTi2BFjuU4pQKNXMdDPpM5wANgwdOpTQQx/Mx7
-	di4rp+nokHLLhvlFQvp7wFzmd4oCma648S7SILcRDWWQtdtxZ8uqFFcdLzMnijNVd66WvoCBYL3
-	vPdqU0kzEGw0ureH9VVx4SnMUE4QRxm4UDoJk
-X-Gm-Gg: ASbGncvx5cZJc+S6Oifu+SOiVPH+GpF0hEBwH7SQQ0P39dBBFmAN1M0CSsbQMngtX7m
-	QDsT/EvlsDqTwScLB6bCATQYaxPP/IPXZfoEzntoQonab+F+X0tUSuZAgJu4fcEVV5IYui5eKu6
-	M/ewNYAqRUYx5J9Wi2nsHUIYdlaHrx6LkCmtaOhjlmFrgnBp0LPIvl0680jceS+WVCmG9FISeLl
-	ENg+6OU1GUqlevi3L4GM4x/H8ZlETKO
-X-Google-Smtp-Source: AGHT+IGhQKkdli6ChcrJrimzDRILIPBEJx1WIJJeyZJZFyHu1VPQ3s0BSJb0Cf6sOL/i1+AZT6DQ2HmJtJquPatajTU=
-X-Received: by 2002:a05:6808:1308:b0:43f:2b18:1612 with SMTP id
- 5614622812f47-4417b3455dfmr434630b6e.1.1759867124222; Tue, 07 Oct 2025
- 12:58:44 -0700 (PDT)
+	s=arc-20240116; t=1759867262; c=relaxed/simple;
+	bh=NK24BaQ9xWl+tVnNXQiE60htjjVsEiyaZFyhIAwv8Lk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QYHJYQZ9DpPUId9U8kqTxBkhqh6XlfnrNESUFpwMrcy0exn8muTVYtOZdtNJEhK3FBqB/KjLIQJL2Cn7EqOf3CSbfyFno4yoNklQcUrAZH6MKkqWjkQbU0s812+2DwtmRbAP1ZleheR5427t9/MqcnCIayeK3zt0nymNM67npgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lLmGfuz4; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759867260; x=1791403260;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NK24BaQ9xWl+tVnNXQiE60htjjVsEiyaZFyhIAwv8Lk=;
+  b=lLmGfuz4A52UYH/0apuAExXWg4lMTMRpNZBl/HiqXojKxbBrOctyi7Gs
+   K7VXxtd4U/37r3s+UYlYn7nAUT6Np3SnsRoGoa6axd2spUUi//E3HBzYr
+   +5yBJw1D8vZv1WnJFA1QAvPBrwB4anuNw9Ruc8Agc6/dzM9CfdIScAxMi
+   ji974XgR78f4bdzbQ7neya0qUUryMXGOJvznA69MPlcZmnPGwBNxn/RAc
+   oePMPe3npaUsPhsmMtY7MTl4RPGczz2YgRFEdKbL5keG15YRuXRnyJKxn
+   TOFzjR3Bg2oIcYiTEg9+OHjvD4hMHwnxjFm1+C2dGFPFLCfNtqPkRGxd6
+   Q==;
+X-CSE-ConnectionGUID: 5lhCTWZrRLWU/uDRgXIMmw==
+X-CSE-MsgGUID: MzXxcACCQ3izazBWDoOWRQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11575"; a="73482588"
+X-IronPort-AV: E=Sophos;i="6.18,321,1751266800"; 
+   d="scan'208";a="73482588"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2025 13:00:59 -0700
+X-CSE-ConnectionGUID: 9ETq42g/Trm9vsdAgEjDMg==
+X-CSE-MsgGUID: j6SYt8suQBCKkEB45Z0qlw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,321,1751266800"; 
+   d="scan'208";a="179917379"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.53])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2025 13:00:52 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id DA85011F8B0;
+	Tue, 07 Oct 2025 23:00:49 +0300 (EEST)
+Date: Tue, 7 Oct 2025 23:00:49 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: michael.riesch@collabora.com
+Cc: Mehdi Djait <mehdi.djait@linux.intel.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Gerald Loacker <gerald.loacker@wolfvision.net>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Markus Elfring <Markus.Elfring@web.de>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Collabora Kernel Team <kernel@collabora.com>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Alexander Shiyan <eagle.alexander923@gmail.com>,
+	Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Bryan O'Donoghue <bod@kernel.org>
+Subject: Re: [PATCH v11 05/17] media: dt-bindings: add rockchip rk3568 mipi
+ csi-2 receiver
+Message-ID: <aOVxcQV-8c9m6Stg@kekkonen.localdomain>
+References: <20240220-rk3568-vicap-v11-0-af0eada54e5d@collabora.com>
+ <20240220-rk3568-vicap-v11-5-af0eada54e5d@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007151828.1527105-1-tanmay.shah@amd.com> <20251007151828.1527105-2-tanmay.shah@amd.com>
-In-Reply-To: <20251007151828.1527105-2-tanmay.shah@amd.com>
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Tue, 7 Oct 2025 14:58:32 -0500
-X-Gm-Features: AS18NWDxvii-SmcMeBcWQyfvAXfhvWegr7D7dXo5LN4u6HIGbavoNq9Ctlx_6e0
-Message-ID: <CABb+yY0m_Whm1F7d2ub+vhn0eTb47UC9g=JvpLnWh-2E1oo52A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] mailbox: check mailbox queue is full or not
-To: Tanmay Shah <tanmay.shah@amd.com>
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org, 
-	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240220-rk3568-vicap-v11-5-af0eada54e5d@collabora.com>
 
-On Tue, Oct 7, 2025 at 10:19=E2=80=AFAM Tanmay Shah <tanmay.shah@amd.com> w=
-rote:
->
-> Sometimes clients need to know if mailbox queue is full or not before
-> posting new message via mailbox. If mailbox queue is full clients can
-> choose not to post new message. This doesn't mean current queue length
-> should be increased, but clients may want to wait till previous Tx is
-> done. Introduce variable per channel to track available msg slots.
-> Clients can check this variable and decide not to send new message if
-> it is 0. This  can help avoid false positive warning from mailbox
-> framework "Try increasing MBOX_TX_QUEUE_LEN".
->
-> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+Hi Michael,
+
+On Wed, Sep 17, 2025 at 05:38:45PM +0200, Michael Riesch via B4 Relay wrote:
+> From: Michael Riesch <michael.riesch@collabora.com>
+> 
+> Add documentation for the Rockchip RK3568 MIPI CSI-2 Receiver.
+> 
+> Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
+> Reviewed-by: Bryan O'Donoghue <bod@kernel.org>
+> Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
 > ---
->
-> v2:
->   - Separate patch for remoteproc subsystem.
->   - Change design and introduce msg_slot_ro field for each channel
->     instead of API. Clients can use this variable directly.
->   - Remove mbox_queue_full API
->
->  drivers/mailbox/mailbox.c          | 3 +++
->  include/linux/mailbox_controller.h | 2 ++
->  2 files changed, 5 insertions(+)
->
-> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-> index 5cd8ae222073..c2e187aa5d22 100644
-> --- a/drivers/mailbox/mailbox.c
-> +++ b/drivers/mailbox/mailbox.c
-> @@ -35,6 +35,7 @@ static int add_to_rbuf(struct mbox_chan *chan, void *ms=
-sg)
->         idx =3D chan->msg_free;
->         chan->msg_data[idx] =3D mssg;
->         chan->msg_count++;
-> +       chan->msg_slot_ro =3D (MBOX_TX_QUEUE_LEN - chan->msg_count);
->
->         if (idx =3D=3D MBOX_TX_QUEUE_LEN - 1)
->                 chan->msg_free =3D 0;
-> @@ -70,6 +71,7 @@ static void msg_submit(struct mbox_chan *chan)
->                 if (!err) {
->                         chan->active_req =3D data;
->                         chan->msg_count--;
-> +                       chan->msg_slot_ro =3D (MBOX_TX_QUEUE_LEN - chan->=
-msg_count);
->
-No, I had suggested adding this info in client structure.
-There is no point in carrying msg_count and msg_slot_ro in mbox_chan.
-The client needs this info but can/should not access the chan internals.
+>  .../bindings/media/rockchip,rk3568-mipi-csi.yaml   | 144 +++++++++++++++++++++
+>  MAINTAINERS                                        |   6 +
+>  2 files changed, 150 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/rockchip,rk3568-mipi-csi.yaml b/Documentation/devicetree/bindings/media/rockchip,rk3568-mipi-csi.yaml
+> new file mode 100644
+> index 000000000000..8cbab93b4b85
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/rockchip,rk3568-mipi-csi.yaml
+> @@ -0,0 +1,144 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/rockchip,rk3568-mipi-csi.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Rockchip RK3568 MIPI CSI-2 Receiver
+> +
+> +maintainers:
+> +  - Michael Riesch <michael.riesch@collabora.com>
+> +
+> +description:
+> +  The Rockchip RK3568 MIPI CSI-2 Receiver is a CSI-2 bridge with one input port
+> +  and one output port. It receives the data with the help of an external
+> +  MIPI PHY (C-PHY or D-PHY) and passes it to the Rockchip RK3568 Video Capture
+> +  (VICAP) block.
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - rockchip,rk3588-mipi-csi
+> +          - const: rockchip,rk3568-mipi-csi
+> +      - const: rockchip,rk3568-mipi-csi
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    items:
+> +      - description: Interrupt that signals changes in CSI2HOST_ERR1.
+> +      - description: Interrupt that signals changes in CSI2HOST_ERR2.
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: irq1
+> +      - const: irq2
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  phys:
+> +    maxItems: 1
+> +    description: MIPI C-PHY or D-PHY.
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description: Input port node. Connect to e.g., a MIPI CSI-2 image sensor.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              bus-type:
+> +                enum: [1, 4]
+> +
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - bus-type
+> +              - data-lanes
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: Output port connected to a RK3568 VICAP port.
 
-thanks
-jassi
+As the VICAP port appears to be a DVP/Bt.565 receiver, also this output can
+presumably be connected elsewhere, too.
+
+Either way, aren't signal polarity or sampling related properties relevant
+here, too, and perhaps more so for the VICAP bindings?
+
+See e.g.
+Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.yaml .
+
+> +
+> +    required:
+> +      - port@0
+> +      - port@1
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - phys
+> +  - ports
+> +  - power-domains
+> +  - resets
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/rk3568-cru.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/media/video-interfaces.h>
+> +    #include <dt-bindings/power/rk3568-power.h>
+> +
+> +    soc {
+> +        interrupt-parent = <&gic>;
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        csi: csi@fdfb0000 {
+> +            compatible = "rockchip,rk3568-mipi-csi";
+> +            reg = <0x0 0xfdfb0000 0x0 0x10000>;
+> +            interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
+> +                         <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> +            interrupt-names = "irq1", "irq2";
+> +            clocks = <&cru PCLK_CSI2HOST1>;
+> +            phys = <&csi_dphy>;
+> +            power-domains = <&power RK3568_PD_VI>;
+> +            resets = <&cru SRST_P_CSI2HOST1>;
+> +
+> +            ports {
+> +                #address-cells = <1>;
+> +                #size-cells = <0>;
+> +
+> +                csi_in: port@0 {
+> +                    reg = <0>;
+> +
+> +                    csi_input: endpoint {
+> +                        bus-type = <MEDIA_BUS_TYPE_CSI2_DPHY>;
+> +                        data-lanes = <1 2 3 4>;
+> +                        remote-endpoint = <&imx415_output>;
+> +                    };
+> +                };
+> +
+> +                csi_out: port@1 {
+> +                    reg = <1>;
+> +
+> +                    csi_output: endpoint {
+> +                        remote-endpoint = <&vicap_mipi_input>;
+> +                    };
+> +                };
+> +            };
+> +        };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 4c39b9fd80bb..2ac4b7a5b255 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -21797,6 +21797,12 @@ F:	Documentation/userspace-api/media/v4l/metafmt-rkisp1.rst
+>  F:	drivers/media/platform/rockchip/rkisp1
+>  F:	include/uapi/linux/rkisp1-config.h
+>  
+> +ROCKCHIP MIPI CSI-2 RECEIVER DRIVER
+> +M:	Michael Riesch <michael.riesch@collabora.com>
+> +L:	linux-media@vger.kernel.org
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/media/rockchip,rk3568-mipi-csi.yaml
+> +
+>  ROCKCHIP RK3568 RANDOM NUMBER GENERATOR SUPPORT
+>  M:	Daniel Golle <daniel@makrotopia.org>
+>  M:	Aurelien Jarno <aurelien@aurel32.net>
+> 
+
+-- 
+Kind regards,
+
+Sakari Ailus
 
