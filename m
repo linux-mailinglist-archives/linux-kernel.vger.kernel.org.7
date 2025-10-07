@@ -1,93 +1,87 @@
-Return-Path: <linux-kernel+bounces-843749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D54ECBC023B
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 06:13:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3897BC025A
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 06:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C04DC1899A39
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 04:14:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2D2A18967AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 04:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED0C21ABDC;
-	Tue,  7 Oct 2025 04:13:30 +0000 (UTC)
-Received: from baidu.com (mx24.baidu.com [111.206.215.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792084A1E;
-	Tue,  7 Oct 2025 04:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8FA821257E;
+	Tue,  7 Oct 2025 04:23:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED406EACE
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 04:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759810410; cv=none; b=Zgh6G8kNTrHMxOdKncxNOvolhlgN0JqU+wHAEFmVK1b6cuHdUhQIhfKL3k5lEEFrXahMepvzXXHxKSDIbpXLU1IILwB4bDXztvkB44K4+MVVElinqlBkVheU+PdzqkWNmJtNAs6FV2oFkqkOroM2E6nvOCBxIqLWRUswj9lhkYg=
+	t=1759811024; cv=none; b=eDFvmVObn6iq2KKUTp9xHTJnT2U2mqLyNm3LmKdPI61PwDQ5bq4hfhYBsmGfW8qMmGh+Y6IyTvdXladyF22oJfE0cnLJaNHIrzUt7ZJEJ1ta0TxDHevu4IvVOx62IRsxD7VP3GQ3NOHOi+m63eCNqxxFqB0D8/4+8WFRB6ykipI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759810410; c=relaxed/simple;
-	bh=f1vEoelvEyN2sJH2Sz1pFDZg2yhZJ1SL/e54WNSk89U=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H7wYLWYdkIE/HF+y081NAhNX7ledZPjdyxPPPorWLvgOPz1nduBTPwEMjXaHTj0vfv7PzTLNY2H7zji8G2Z/oVJsr6G6UvC021tzw2PTSzBpYTMkQr4An13C/Rfx6oD6SeDxIz0jM2uzjT020Bwx4dYJc725DFGJERpakC0iyQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: Fushuai Wang <wangfushuai@baidu.com>
-To: <sfrench@samba.org>, <pc@manguebit.org>, <ronniesahlberg@gmail.com>,
-	<sprasad@microsoft.com>, <tom@talpey.com>, <bharathsm@microsoft.com>
-CC: <linux-cifs@vger.kernel.org>, <samba-technical@lists.samba.org>,
-	<linux-kernel@vger.kernel.org>, Fushuai Wang <wangfushuai@baidu.com>
-Subject: [PATCH v3] cifs: Fix copy_to_iter return value check
-Date: Tue, 7 Oct 2025 12:12:09 +0800
-Message-ID: <20251007041209.99174-1-wangfushuai@baidu.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+	s=arc-20240116; t=1759811024; c=relaxed/simple;
+	bh=ApsfYwsXPkiFzpFdm7u/nWF08g+tsmnPdnK7NcZIR44=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GPYIzEmWrUDDR8al22KW4yuSMU4LBD7eVu1eUfpiL9nJwsM/9ZiLVG5E8kKaCwo0J32aXobgLSUb+TxLpXzecRfp9KXGAogit07hCZduGtjIa6uFtrbh74dJtHJhjhCgu8DDFN/we95UqwyA/+vYpzzDPZrcRGTcJTj76+ckyEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3549614BF;
+	Mon,  6 Oct 2025 21:23:34 -0700 (PDT)
+Received: from [10.164.18.47] (unknown [10.164.18.47])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A99393F59E;
+	Mon,  6 Oct 2025 21:23:40 -0700 (PDT)
+Message-ID: <78c79b17-6827-4679-aaef-4633eada9043@arm.com>
+Date: Tue, 7 Oct 2025 09:53:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: bjhj-exc5.internal.baidu.com (172.31.3.15) To
- bjkjy-exc17.internal.baidu.com (172.31.50.13)
-X-FEAS-Client-IP: 172.31.50.13
-X-FE-Policy-ID: 52:10:53:SYSTEM
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] (no cover subject)
+To: pratyush.brahma@oss.qualcomm.com,
+ Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250926-numa-emu-v1-0-714f2691bf8b@oss.qualcomm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20250926-numa-emu-v1-0-714f2691bf8b@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The return value of copy_to_iter() function will never be negative,
-it is the number of bytes copied, or zero if nothing was copied.
-Update the check to treat 0 as an error, and return -1 in that case.
+On 26/09/25 4:04 PM, pratyush.brahma@oss.qualcomm.com wrote:
+> mm/numa_emulation: Code refactoring to improve modularity and
+> readability
 
-Fixes: d08089f649a0 ("cifs: Change the I/O paths to use an iterator rather than a page list")
-Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
----
- fs/smb/client/smb2ops.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+This should have been the cover letter subject line.
+> 
+> This series intends to improve the code readability by using
+> existing macros instead of hardcoded values for size and improves
+> the modularity by moving the size calculation for emulated blocks
+> to a separate function.
+> 
+> Signed-off-by: Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
 
-diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-index 058050f744c0..ac8a5bd6aec4 100644
---- a/fs/smb/client/smb2ops.c
-+++ b/fs/smb/client/smb2ops.c
-@@ -4650,7 +4650,7 @@ handle_read_data(struct TCP_Server_Info *server, struct mid_q_entry *mid,
- 	unsigned int pad_len;
- 	struct cifs_io_subrequest *rdata = mid->callback_data;
- 	struct smb2_hdr *shdr = (struct smb2_hdr *)buf;
--	int length;
-+	size_t copied;
- 	bool use_rdma_mr = false;
- 
- 	if (shdr->Command != SMB2_READ) {
-@@ -4763,10 +4763,10 @@ handle_read_data(struct TCP_Server_Info *server, struct mid_q_entry *mid,
- 	} else if (buf_len >= data_offset + data_len) {
- 		/* read response payload is in buf */
- 		WARN_ONCE(buffer, "read data can be either in buf or in buffer");
--		length = copy_to_iter(buf + data_offset, data_len, &rdata->subreq.io_iter);
--		if (length < 0)
--			return length;
--		rdata->got_bytes = data_len;
-+		copied = copy_to_iter(buf + data_offset, data_len, &rdata->subreq.io_iter);
-+		if (copied == 0)
-+			return -1;
-+		rdata->got_bytes = copied;
- 	} else {
- 		/* read response payload cannot be in both buf and pages */
- 		WARN_ONCE(1, "buf can not contain only a part of read data");
--- 
-2.36.1
+In general, a signed of statement is not required for the cover letter.
+> ---
+> Pratyush Brahma (2):
+>       mm/numa_emulation: Refactor NUMA emulation size handling to use kernel macros
+>       mm/numa_emulation: Move the size calculation in split_nodes_interleave() to a separate function
+> 
+>  mm/numa_emulation.c | 47 ++++++++++++++++++++++++++++++-----------------
+>  1 file changed, 30 insertions(+), 17 deletions(-)
+> ---
+> base-commit: 4ff71af020ae59ae2d83b174646fc2ad9fcd4dc4
+> change-id: 20250926-numa-emu-6e6c27bd8f6f
+> 
+> Best regards,
+> --  
+> Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
 
+Ditto.
+
+Seems like portions of this cover letter has been all jumbled up.
 
