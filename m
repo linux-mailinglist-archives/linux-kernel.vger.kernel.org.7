@@ -1,228 +1,200 @@
-Return-Path: <linux-kernel+bounces-844775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD933BC2BE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 23:25:47 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C02D2BC2BC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 23:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 630C93AE768
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 21:25:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A1EE4E48D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 21:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6D1246BC6;
-	Tue,  7 Oct 2025 21:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26CF246BD7;
+	Tue,  7 Oct 2025 21:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C5xn7euk"
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tc1cRKtx";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aPxvBVdt";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tc1cRKtx";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aPxvBVdt"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28AE1487F6
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 21:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2007D246769
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 21:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759872338; cv=none; b=WveXbMSFFq9StVPOdDMHQfsSGru9qgzKr3+EdewEiLez3RKYecnjGQwL1uWk6IprOtcy5XcAYhCMltQxa49gJPaPNmy0Ns2aky8CYKSOinTk/nU0aKXsVK8W+3C7yUi9d7q0M0oiJ15zGgN8NHVNgzcJ3p0CLN1BDvlsdhGqARg=
+	t=1759872213; cv=none; b=MRd+96coruGul0dnC/dzj6tB6qVy7mQBKIoPH9QIXEyBHOue6+4+U1ImqchMu3EIH6vAskvkbI4Vm1XiQEv7zYK8R6DLtfwIJ39+TWczu6poM4+nLYnp7Dp9ITHhtuLSOj8uyr1cNh42ev60GqylSyWguw2NFESr0zpLkGCeSFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759872338; c=relaxed/simple;
-	bh=S1FEgML9qPG5AM0qstopvJ3G1GMqfZsPQL9p0u+C8Ig=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h9YUiBp1ebSfF9OgwsBUqtWA7QHsurwdyunZTGMqHsn5vBdTilfFwmCJYBoyaUVHV9t5gEvKkQDBPOJ3/Bhykx/h6ZF9ncEXN+Gvem9q0FfRVMYis9dxd97gUK7wF1HWwrYR3o4e9gG9rYv0RwvwZx0b8l/bE0VsxN8gQ4TqPxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C5xn7euk; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7b3e2a51678so200732a34.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 14:25:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759872336; x=1760477136; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kUquPAxZ7RNpS7S7i2SrAQtXSPkHjUEz/KSOyJfe4qQ=;
-        b=C5xn7eukzcwq8GdNRDdcFZSJR8b56CV1c3zSdTiTkmHFCLKxi6hJmMHKG/1wV02sDS
-         68j9bvXHrIvgzEsltBxTiBiaxk5Evkf6l6igFLOanMdM3KHqMwR0K6WMLs1EYx9t+B11
-         d2kKBjUwxMP8FGDcPWHZvj8M/87GB9SP8EW1upGkuM2cwFKon1jLStFNBls6Fkt1BUhE
-         +bcbP0VHxL/wFzRYCrKg0jL9JaI1b85Ph+MUtpb0XwY6+1qWNZW+mugTgxyQ3mpvHVpE
-         vcdyrWb4z+uOZRv9IzZye6RvbFQsFxTfi1bumYkzGfOYJUuHV9hUJU7IQLXwxdsZd0WN
-         d0qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759872336; x=1760477136;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kUquPAxZ7RNpS7S7i2SrAQtXSPkHjUEz/KSOyJfe4qQ=;
-        b=QssGOorO4DazEP5PAwUsKGRr1B6S9bt1xDuYXO1q6GPV957Pn+q0NoQBILFQJBGRm5
-         7VeIkyaG40+mzkT+s10mkgtGFeKijuUe/yHRQmJ5YUvVVZhIQ8aUFu/4VdzXUC3aWE8y
-         DVYrQEaFFMGP34d/L3y2NIP/M52NWEXKqf2Sc+x5EsMJPJ9hjcaZadUQLkEmcYjQPXNQ
-         H/Pd9V3xFey0v20vJoDq4YIprwkXTPcDWPj94ntrHwGWbRHhPm/58TCrtFbrLAXERqLN
-         HWW41rndJor/J+TL2RJIUrLBH6JBpd7Qz/tpKbXfr9eT5aGab+flbdzXXfh2icDO7d21
-         1Htw==
-X-Forwarded-Encrypted: i=1; AJvYcCVpMOArPLjAt1DnP5lZW5FERlAz80wDnyfgRNUDvwTMEb5t25F6DbqDStSTOtSSGgKo/oGCEtl6lo0VS8Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYywXd/p4thhqg7W0H0Xw3e0ta6IIN6Aqdxa0VjYmneztiMx0g
-	t0811wH2ONmGkiVwIKFfyBv1ZzKwnj+1OSbD+ESu22z1BoXjoxpes/44
-X-Gm-Gg: ASbGncvEQvG7CL+6UutHSV5qL3sZuo9XQmCCIUQ+yL1FCKCDeQ5aiHKHT9/lXDGAKh+
-	sFgFKHw4rFqS+Fwc9rm4gXNQ8fBNOsSmuuz2QUvEyVSt2NTxSmvsMyUXj0bcepk9LKxxPNzYyf0
-	WERbzvKpiJzqeTRAabDSenNXESaLrqR0MBH8BZ2rNpYLEdEdRSg9kAJLlNA4CH55Nid89pzWQ2G
-	JH7gGDCLaTAftLjqNrKe/y3mOsIRvWjSPb+hqguDNGkDZP8jCYQrAw2AP2KI6Fx5WYlYo0FRHzs
-	L16ge8yNJkoy6S+2NQ5K9nTaz9+lx3GDdQyLA+cunXowm53chFp1bWEYCmpmbFGZXv4nQdkZT/x
-	QHIkq+iQtfrJYOcHHse74oO2iqdsKhrvHOQX54nt1rwYU
-X-Google-Smtp-Source: AGHT+IGVpQmalLijAGU5vOAIIlvZRuDDP7hjcIQHqTx9MN+lNXCJVCuW2MsRZQXaL66/QVvXSBusuw==
-X-Received: by 2002:a05:6830:7188:b0:797:97d1:de29 with SMTP id 46e09a7af769-7c0dfef9314mr520698a34.13.1759872335719;
-        Tue, 07 Oct 2025 14:25:35 -0700 (PDT)
-Received: from localhost.localdomain ([2601:282:4300:19e0::7bc8])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7bf439d2aadsm5134465a34.36.2025.10.07.14.25.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 14:25:35 -0700 (PDT)
-From: Joshua Watt <jpewhacker@gmail.com>
-X-Google-Original-From: Joshua Watt <JPEWhacker@gmail.com>
-To: linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Joshua Watt <jpewhacker@gmail.com>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>
-Subject: [PATCH] NFS4: Apply delay_retrans to async operations
-Date: Tue,  7 Oct 2025 15:22:58 -0600
-Message-ID: <20251007212452.599683-1-JPEWhacker@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759872213; c=relaxed/simple;
+	bh=YyYA+OXDy55kJbYaMT/7VbmB31M8xsq4KEAxQ2YITcU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XSZQycV0fzwAenqECz8IlyfVUm4I9Sh4aInnP5ohHAxk7/M970R0OQZ+FBV/Zic92w0GoqqCaZrhyYJqvxwMPA/nIIlBmMZ2wCmutaw1lgtQEQlwAHAuXznDfXdZjm/gELn6UUhXwuWeGBfW890q79tkZc1I9DwJPntLVAcSAJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tc1cRKtx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aPxvBVdt; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tc1cRKtx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aPxvBVdt; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 33EE8336F1;
+	Tue,  7 Oct 2025 21:23:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759872209;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fSW6s0xFTBjNpOrglwzoHKOoMpDQchDWIDZB/oPFhRw=;
+	b=tc1cRKtx6tL8LoF7fN/wSJukiw0lfxeERLcCDxrpswbM6n5eqZgeEGbx0TF0kaPvqc8aIc
+	XwVUWX7E8vw0fqjUOnJq27K3lBZDRhnXqQgsLzf5WSIpSIb8ZtF+cKL+GN192kjgEWNuJm
+	Dq5Do2khlOOMj0jAAgCc6a1Jspg2b9M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759872209;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fSW6s0xFTBjNpOrglwzoHKOoMpDQchDWIDZB/oPFhRw=;
+	b=aPxvBVdtmPLMCzW5SW71b19JlqaStxWuHxcePDu/iU9wmbpeYwGvBrEJi2humL/HQz5OjL
+	PD1MpQPrpR0AetAg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759872209;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fSW6s0xFTBjNpOrglwzoHKOoMpDQchDWIDZB/oPFhRw=;
+	b=tc1cRKtx6tL8LoF7fN/wSJukiw0lfxeERLcCDxrpswbM6n5eqZgeEGbx0TF0kaPvqc8aIc
+	XwVUWX7E8vw0fqjUOnJq27K3lBZDRhnXqQgsLzf5WSIpSIb8ZtF+cKL+GN192kjgEWNuJm
+	Dq5Do2khlOOMj0jAAgCc6a1Jspg2b9M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759872209;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fSW6s0xFTBjNpOrglwzoHKOoMpDQchDWIDZB/oPFhRw=;
+	b=aPxvBVdtmPLMCzW5SW71b19JlqaStxWuHxcePDu/iU9wmbpeYwGvBrEJi2humL/HQz5OjL
+	PD1MpQPrpR0AetAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AB7DB13693;
+	Tue,  7 Oct 2025 21:23:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id wdEfHc+E5WhSNQAAD6G6ig
+	(envelope-from <pvorel@suse.cz>); Tue, 07 Oct 2025 21:23:27 +0000
+Date: Tue, 7 Oct 2025 23:23:25 +0200
+From: Petr Vorel <pvorel@suse.cz>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Alexandr Sapozhnkiov <alsp705@gmail.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: Re: [PATCH 5.10] gpu/i915: fix error return in mmap_offset_attach()
+Message-ID: <20251007212325.GA160168@pevik>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20251002084828.11-1-alsp705@gmail.com>
+ <ris5iw6gdn7squdjpo5kapdyd7jqwbzy3kbpnzspp7jhpm4tlj@osq47p45ydcv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ris5iw6gdn7squdjpo5kapdyd7jqwbzy3kbpnzspp7jhpm4tlj@osq47p45ydcv>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.50 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	HAS_REPLYTO(0.30)[pvorel@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,linux.intel.com,intel.com,ursulin.net,ffwll.ch,lists.freedesktop.org,vger.kernel.org,linuxtesting.org];
+	MISSING_XM_UA(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
+	REPLYTO_EQ_FROM(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -3.50
 
-From: Joshua Watt <jpewhacker@gmail.com>
+> Hi,
 
-The setting of delay_retrans is applied to synchronous RPC operations
-because the retransmit count is stored in same struct nfs4_exception
-that is passed each time an error is checked. However, for asynchronous
-operations (READ, WRITE, LOCKU, CLOSE, DELEGRETURN), a new struct
-nfs4_exception is made on the stack each time the task callback is
-invoked. This means that the retransmit count is always zero and thus
-delay_retrans never takes effect.
+> On Thu, Oct 02, 2025 at 11:48:26AM +0300, Alexandr Sapozhnkiov wrote:
+> > From: Alexandr Sapozhnikov <alsp705@gmail.com>
 
-Apply delay_retrans to these operations by tracking and updating their
-retransmit count.
+> > In the drm_vma_node_allow function, kmalloc may 
+> > return NULL, in which case the file element will not be 
+> > added to the mmo->vma_node list. It would be good to 
+> > not ignore this event, but at least log an error message.
 
-Change-Id: Ieb33e046c2b277cb979caa3faca7f52faf0568c9
-Signed-off-by: Joshua Watt <jpewhacker@gmail.com>
----
- fs/nfs/nfs4proc.c       | 13 +++++++++++++
- include/linux/nfs_xdr.h |  1 +
- 2 files changed, 14 insertions(+)
+> > Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index f58098417142..411776718494 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -3636,6 +3636,7 @@ struct nfs4_closedata {
- 	} lr;
- 	struct nfs_fattr fattr;
- 	unsigned long timestamp;
-+	unsigned short retrans;
- };
- 
- static void nfs4_free_closedata(void *data)
-@@ -3664,6 +3665,7 @@ static void nfs4_close_done(struct rpc_task *task, void *data)
- 		.state = state,
- 		.inode = calldata->inode,
- 		.stateid = &calldata->arg.stateid,
-+		.retrans = calldata->retrans,
- 	};
- 
- 	if (!nfs4_sequence_done(task, &calldata->res.seq_res))
-@@ -3711,6 +3713,7 @@ static void nfs4_close_done(struct rpc_task *task, void *data)
- 		default:
- 			task->tk_status = nfs4_async_handle_exception(task,
- 					server, task->tk_status, &exception);
-+			calldata->retrans = exception.retrans;
- 			if (exception.retry)
- 				goto out_restart;
- 	}
-@@ -5593,9 +5596,11 @@ static int nfs4_read_done_cb(struct rpc_task *task, struct nfs_pgio_header *hdr)
- 			.inode = hdr->inode,
- 			.state = hdr->args.context->state,
- 			.stateid = &hdr->args.stateid,
-+			.retrans = hdr->retrans,
- 		};
- 		task->tk_status = nfs4_async_handle_exception(task,
- 				server, task->tk_status, &exception);
-+		hdr->retrans = exception.retrans;
- 		if (exception.retry) {
- 			rpc_restart_call_prepare(task);
- 			return -EAGAIN;
-@@ -5709,10 +5714,12 @@ static int nfs4_write_done_cb(struct rpc_task *task,
- 			.inode = hdr->inode,
- 			.state = hdr->args.context->state,
- 			.stateid = &hdr->args.stateid,
-+			.retrans = hdr->retrans,
- 		};
- 		task->tk_status = nfs4_async_handle_exception(task,
- 				NFS_SERVER(inode), task->tk_status,
- 				&exception);
-+		hdr->retrans = exception.retrans;
- 		if (exception.retry) {
- 			rpc_restart_call_prepare(task);
- 			return -EAGAIN;
-@@ -6726,6 +6733,7 @@ struct nfs4_delegreturndata {
- 	struct nfs_fh fh;
- 	nfs4_stateid stateid;
- 	unsigned long timestamp;
-+	unsigned short retrans;
- 	struct {
- 		struct nfs4_layoutreturn_args arg;
- 		struct nfs4_layoutreturn_res res;
-@@ -6746,6 +6754,7 @@ static void nfs4_delegreturn_done(struct rpc_task *task, void *calldata)
- 		.inode = data->inode,
- 		.stateid = &data->stateid,
- 		.task_is_privileged = data->args.seq_args.sa_privileged,
-+		.retrans = data->retrans,
- 	};
- 
- 	if (!nfs4_sequence_done(task, &data->res.seq_res))
-@@ -6817,6 +6826,7 @@ static void nfs4_delegreturn_done(struct rpc_task *task, void *calldata)
- 		task->tk_status = nfs4_async_handle_exception(task,
- 				data->res.server, task->tk_status,
- 				&exception);
-+		data->retrans = exception.retrans;
- 		if (exception.retry)
- 			goto out_restart;
- 	}
-@@ -7093,6 +7103,7 @@ struct nfs4_unlockdata {
- 	struct file_lock fl;
- 	struct nfs_server *server;
- 	unsigned long timestamp;
-+	unsigned short retrans;
- };
- 
- static struct nfs4_unlockdata *nfs4_alloc_unlockdata(struct file_lock *fl,
-@@ -7147,6 +7158,7 @@ static void nfs4_locku_done(struct rpc_task *task, void *data)
- 	struct nfs4_exception exception = {
- 		.inode = calldata->lsp->ls_state->inode,
- 		.stateid = &calldata->arg.stateid,
-+		.retrans = calldata->retrans,
- 	};
- 
- 	if (!nfs4_sequence_done(task, &calldata->res.seq_res))
-@@ -7180,6 +7192,7 @@ static void nfs4_locku_done(struct rpc_task *task, void *data)
- 			task->tk_status = nfs4_async_handle_exception(task,
- 					calldata->server, task->tk_status,
- 					&exception);
-+			calldata->retrans = exception.retrans;
- 			if (exception.retry)
- 				rpc_restart_call_prepare(task);
- 	}
-diff --git a/include/linux/nfs_xdr.h b/include/linux/nfs_xdr.h
-index d56583572c98..31463286402f 100644
---- a/include/linux/nfs_xdr.h
-+++ b/include/linux/nfs_xdr.h
-@@ -1659,6 +1659,7 @@ struct nfs_pgio_header {
- 	void			*netfs;
- #endif
- 
-+	unsigned short		retrans;
- 	int			pnfs_error;
- 	int			error;		/* merge with pnfs_error */
- 	unsigned int		good_bytes;	/* boundary of good data */
--- 
-2.51.0
+> > Signed-off-by: Alexandr Sapozhnikov <alsp705@gmail.com>
+> > ---
+> >  drivers/gpu/drm/i915/gem/i915_gem_mman.c | 7 +++++--
+> >  1 file changed, 5 insertions(+), 2 deletions(-)
+
+> > diff --git a/drivers/gpu/drm/i915/gem/i915_gem_mman.c b/drivers/gpu/drm/i915/gem/i915_gem_mman.c
+> > index a2195e28b625..adaef8f09d59 100644
+> > --- a/drivers/gpu/drm/i915/gem/i915_gem_mman.c
+> > +++ b/drivers/gpu/drm/i915/gem/i915_gem_mman.c
+> > @@ -706,8 +706,11 @@ mmap_offset_attach(struct drm_i915_gem_object *obj,
+> >  	mmo = insert_mmo(obj, mmo);
+> >  	GEM_BUG_ON(lookup_mmo(obj, mmap_type) != mmo);
+> >  out:
+> > -	if (file)
+> > -		drm_vma_node_allow_once(&mmo->vma_node, file);
+> > +	if (file) {
+> > +		err = drm_vma_node_allow_once(&mmo->vma_node, file);
+> > +		if (err)
+> > +			goto err;
+> > +	}
+
+> NACK here! You have received several reviews on this patch and
+> didn't react to them. Please, read carefully the reviews you
+> received and send a second version of the patch.
+
+> Please do use versioning properly in your title and add a
+> changelog.
+
+> Before sending patches, please read the documentation[*].
+
+> Andi
+
+> [*] https://www.kernel.org/doc/html/v4.17/process/submitting-patches.html
+
+Maybe read the latest version.
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html
+
+Kind regards,
+Petr
+
+> >  	return mmo;
+
+> >  err:
+> > -- 
+> > 2.43.0
 
 
