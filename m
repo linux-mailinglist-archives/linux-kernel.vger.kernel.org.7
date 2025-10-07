@@ -1,122 +1,223 @@
-Return-Path: <linux-kernel+bounces-844531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9243BC224C
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:46:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4370FBC2255
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:47:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9107D19A4E43
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:46:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1946619A4EDE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C182E7BDC;
-	Tue,  7 Oct 2025 16:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC022E7186;
+	Tue,  7 Oct 2025 16:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eoy37p15"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VG9q3xUk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A76E8F6F
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1138F6F
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:47:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759855582; cv=none; b=BcK85L1Xo8v41IK1R6o8c9do21xUqFKbFsoLPF2IZf+cGckXOhXR+fciBqqbFgzVSgq2zlcJ2hErqzlW7bjvRBxZ8ltraz/Sp8Ha99X7ox5n0W7RYuVTgKCfHHQApzVHAEUc7vCJ7HscQ9PWkpTayLjLsYLJfwqMpwfUX2td/Ok=
+	t=1759855642; cv=none; b=TokuKLJN8J6RzZWul/ZDH9c+Vg7eF2myLrmxQkkd7bZuxbiatDCe1kvi2nJXLw/fWKBK2HcWQ6oiKpHVp2DIluLAY+OuGFGF7NdoT7xo5qpoGYFZjYDWVxX2ljsRX6lW9QhooT/4mJfaoljeMGB1CZ0cADFQE2L40feUC2fba/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759855582; c=relaxed/simple;
-	bh=wYijfx82w/i+5cLwyYwuMtQXPPURM8z5k55rzxEZFLo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rYZtN4VbEVygFSq8lE6FyW809ER/9tJUKOqe6tc5HjZrcXXp7l473ia3h0QIZ53JB23BqwTJT61oOAOWdeNFUq5mVk5TsH2r9zNo3vpSAMqkKaLKTh4lgGUKyHqkcJi3WPqubkyPdep7nlg0xHLurRMHhbgvuY+F2cyKCQow+t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eoy37p15; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-3327f8ed081so7388537a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 09:46:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759855580; x=1760460380; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oeG9oeMq3V/BRy9XfGgniPTDeM9j7ii3LAYxjxadWNg=;
-        b=eoy37p15qPD5q4/QG3gzafcbim8yKyAFPZKD252CXP45fiE28KJ4UqPJLhVGA9zDKs
-         eqYVAMuO44YHwHuBdaS9sHwxaGPKVrKItZ39zZpdhtg3pmfpjgPJpRLqw+4W0T2tD++5
-         Bgtze86FlCEgBHZaYDygrXTMIjWWI7+PRGQU+S6zEaIVF4AhCuWQcKs3glOmXJfoWTnS
-         C8XcD4cRDt0zk98ihHSgzoI4a/sfLoWVUnwCuE1t40CuHC1EvXFr93JpZMEi9gvdgB0o
-         w9n3n1EZqSgUoQp7j9aTAv8Jkb5dbYizwGzyOdW7xEOABEFTJHiCdDRKgFRLFg7nzd3E
-         kyoQ==
+	s=arc-20240116; t=1759855642; c=relaxed/simple;
+	bh=U4Cqlhfbpv/uCqPeNFXCL04OqHPbhrmByPIWnA8v0gk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RdMW7pfQmxUsM2e07c0MOTGf68QS3s8CWT/olWOlfEqnvw/LiOaOWqBKtcgSnIS3M7xEcvYn/l9zvSgvHOfQWmzYFWj3EIOw+Hpj34txeY+KBHdoGOMGsHFgF8qoB1ulHBXS1ioTCJtfwvuNLrGMjqfO7H/CTTgyN/cwiCAGzuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VG9q3xUk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759855639;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tTOFzWIRXXry9icZqnPg5XCEpLea61ztG7L2WQgFEsA=;
+	b=VG9q3xUk7Z3NH9EBOG4n3Qdnbiz98LKMTqnotA9e7fQyPKD4ThCfQarNzYmQqfISMF7D7k
+	TJBRQjLJ0es8Y4dhlGxKSeOIe4OI1zNzzRISfxGzoPsTkyZzUC13Hx5kVwWrQQ+APZT2WU
+	6bIEojxSc/ASfBhKLrycEc67hUsRvdQ=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-100-BALS8lHtNqewDTmHX5myYQ-1; Tue, 07 Oct 2025 12:47:16 -0400
+X-MC-Unique: BALS8lHtNqewDTmHX5myYQ-1
+X-Mimecast-MFC-AGG-ID: BALS8lHtNqewDTmHX5myYQ_1759855635
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4de801c1446so141219771cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 09:47:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759855580; x=1760460380;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oeG9oeMq3V/BRy9XfGgniPTDeM9j7ii3LAYxjxadWNg=;
-        b=JXC7SSwynxzjZZfESiwCUsV4haHpVITK5V801OWGTh4pvnUPgAf7xEYS4uv0xKCglu
-         KMoGjmQlAilAILCYa9rI3ImXy0QUwIjcOw51jlCXf+XCgSN+TYnEFf56eQ92+wpLmy5c
-         NMxlqWV2b7UJblLqs4HTXhNgW3CnRrxmlAR7wDz9xxVrUIrvbAY3TdtdXSFVUjPYXQ+k
-         VDKpN36cLY4koGCKge9OAXAiv++lgD5agluWVXUmsq3GXVby0VKxgvprDSDSATT4qmI4
-         kjcNNlzUoul+d5ssIaYSBzmu6OOZFHgXJ3zmBQ7drabMjuMbuN0cSSBZhlYw7EokLUKQ
-         TtAQ==
-X-Gm-Message-State: AOJu0Yy8msIw6uiKeVaYQ3se7AmhAUF9vr2wDwmRsnMIZUIwme03pPs6
-	3TfccCWjxJQe2AOn61psHak/MwEIsSZEkz1UZbpFDJNTlv5biuHOKsaVsNj3zw==
-X-Gm-Gg: ASbGncthT8pm9aXxyJTcpvOlpP2ekZD9KzLlc04AyQiXIdn7yBl4D/eRqN4ISWTnJ/e
-	BYmCzxlFzj+TkiTuSE6sQSU0Qsr708tRMlf7RJWteGOKwPHTIYnMJbDs+osD/zivZ6D7X7cMiDX
-	T6AWEMgFBbNRzT/K/0PYC5jxfcFN+2M6Nkp8aZ5CHw+fTjK9SPRCw33r4HB6wg9fUh34zXX3P0l
-	Ed0SOmgPZ0O3dsif1ouYOnQbELPTilEEzhs4+N2DNhMqsLFBAnxfD0e1hcc7o1kCv16p4z+f0y/
-	LtzXjJe/bmA26xnDvcnWKQKwkE6nT8cahNCjOBc1u9MhT1EHLLBsWCWKfPb5owqZxFZDqHucYA4
-	bn1AWKTONQvPPp++U/LRFjqir+e7U3RrOOOaKDG5DoWB4n0/u84BDvYl0cRzqdNebGcVGH9gFoK
-	Y43RGGvmJnlzfeo7POHjfTPR6Dake9MuyF14n7
-X-Google-Smtp-Source: AGHT+IGgdyL9Z/s6avlLrqCHpOmrQPCcVtMXKZ1vrT7JttZd3PpRzeNrKsvQMIUPfcpRZ3c+WWGGhw==
-X-Received: by 2002:a17:90b:3890:b0:338:3156:fc44 with SMTP id 98e67ed59e1d1-33b513758bbmr187306a91.18.1759855580227;
-        Tue, 07 Oct 2025 09:46:20 -0700 (PDT)
-Received: from daehojeong-desktop.mtv.corp.google.com ([2a00:79e0:2e7c:8:c285:14a:3e06:9c08])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6099ad9405sm15548751a12.10.2025.10.07.09.46.19
+        d=1e100.net; s=20230601; t=1759855635; x=1760460435;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tTOFzWIRXXry9icZqnPg5XCEpLea61ztG7L2WQgFEsA=;
+        b=ocr60iJXY3Ig6FI6HWqA92YufOMrn89rHc9pwrXDSBCSYVyhOnd2yRcvrR4RQiKbWP
+         XCgFJWXw3089ljcome6LHuOQdksqaGbTjlO9Rme6FkNtKTCookqsLNj7SeQS2wfgvypI
+         RSTRFRXnQSHzQd8TagKyjb6y03ijn/o7i7UaEEE0GLfyTrpeI3pgr8a6+Oyfyl1PQmqW
+         SQOKDRkvgRRvxrwKG73AlNLOxdYEpt3SWGZ5T+gRWxN8d2hUC2rNpRTGVtETIVhCOTTz
+         i/nLT825D7etnAnMx1jfpepsFWamKU9hCGdnOjjX91Pm4C0yV9QMPjiRz6nMs5SHVskL
+         LkRA==
+X-Forwarded-Encrypted: i=1; AJvYcCXXMDFgOgDWVrQLkdCWJCq4Yfw7dttXfTZoZL4O/H7orz/trYrJu8YMtZDH7fmBzUpniqXjavTw9D5ccIw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXu3Ifd8JinWkzRx9mU9yTUqIk3KvoaXnBehU30wHvwur2F0A5
+	q0gWFcYpslvSWKHyuvVCQ61lnHaaACZqUi5S3/G3pCLVzDgqBNvxl0y6Nzf4Ddw3n0XWEbLjONJ
+	Vb1apt1VcejieIM57z3XaiMniDH5JQijQ6srwpcET8SokB9DQrepXxYGkPKHyzOFol8N9h3VKHQ
+	==
+X-Gm-Gg: ASbGncscq6BYqJLCGbKjIBG1I89MT6tuRHTyJuygK47c1Cx8rMRVTc76aH4KEj7rr/E
+	oZPMurffKZihOsY7cP6+h00XXerK1FvXGZUP0qa53Ry99UZdSsA0oTol/Ha3E/2IUK8DccB711Y
+	WQG9UvTwW1raaAo/NudQYIimkipFQxyUPBO9Gertciy52seXkX+XID3LUkWzG9ydB++IclNtTBM
+	rSb/8+0ltXgq53UP3IYh9ZHXFBpO26iXOWMxzSoSTKFHw3s4n29mC9NhFOlnVRNqq42gMzDAZg9
+	BU/pl/ppX4FD8w1rvU0fbTx3K6NRIRGilGDa9g==
+X-Received: by 2002:a05:622a:107:b0:4b7:95da:b3c7 with SMTP id d75a77b69052e-4e6ead4b0eemr3307381cf.48.1759855634995;
+        Tue, 07 Oct 2025 09:47:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF8RX884Zg/mlMH86KuApH2VeuJdNzehLkNSygcZJ0HaGfZTFTmEttK1Cc2JLQhTCyVQ+bWvw==
+X-Received: by 2002:a05:622a:107:b0:4b7:95da:b3c7 with SMTP id d75a77b69052e-4e6ead4b0eemr3306771cf.48.1759855634461;
+        Tue, 07 Oct 2025 09:47:14 -0700 (PDT)
+Received: from x1.local ([142.188.210.50])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e55c9e78cfsm160745871cf.27.2025.10.07.09.47.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 09:46:19 -0700 (PDT)
-From: Daeho Jeong <daeho43@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	kernel-team@android.com
-Cc: Daeho Jeong <daehojeong@google.com>
-Subject: [PATCH] f2fs: set default valid_thresh_ratio to 80 for zoned devices
-Date: Tue,  7 Oct 2025 09:46:14 -0700
-Message-ID: <20251007164614.3631594-1-daeho43@gmail.com>
-X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
+        Tue, 07 Oct 2025 09:47:13 -0700 (PDT)
+Date: Tue, 7 Oct 2025 12:47:10 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	James Houghton <jthoughton@google.com>,
+	Nikita Kalyazin <kalyazin@amazon.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Ujwal Kundur <ujwal.kundur@gmail.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>, Hugh Dickins <hughd@google.com>,
+	Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v3 1/4] mm: Introduce vm_uffd_ops API
+Message-ID: <aOVEDii4HPB6outm@x1.local>
+References: <43d78ba7-8829-4a19-bdf3-d192a62cdac4@redhat.com>
+ <aN08NxRLz7Wx0Qh4@x1.local>
+ <ad124fb6-a712-4cf5-8a7e-2abacbc2e4be@redhat.com>
+ <aN_XZbQjuYx-OnFr@x1.local>
+ <cq3zcvnajs55zr7cplf5oxxjoh54fb7tvo23hehd5dmh4atvum@6274mneik6hu>
+ <aOQuZy_Hpu1yyu29@x1.local>
+ <akld3v2mtnjdqvs5dgwr4gnffdqf5dojwhmfylq3mkfzakjj7j@5oqqxsymkcbp>
+ <aOUa8C8bhWvo5TbV@x1.local>
+ <frnos5jtmlqvzpcrredcoummuzvllweku5dgp5ii5in6epwnw5@anu4dqsz6shy>
+ <9089d994-262f-4941-8bed-f3c6ee05a769@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <9089d994-262f-4941-8bed-f3c6ee05a769@redhat.com>
 
-From: Daeho Jeong <daehojeong@google.com>
+On Tue, Oct 07, 2025 at 06:14:01PM +0200, David Hildenbrand wrote:
+> > > If so, I'd prefer that rather than introducing feature-backend flags,
+> > > because I want to avoid introducing another different feature set to uffd.
+> > > 
+> > 
+> > I was talking about uffd_features.  I thought it was being renamed to
+> > flags, not modes_supported.  It was pretty late when I responded.
+> > 
+> > FWIU, David was saying we don't need both of modes and ioctl listed in
+> > the uffd_ops?
+> 
+> Right, I would have abstracted the features to clean it up and avoid using
+> VM_ flags in this interface.
+> 
+> > 
+> > I was thinking that we could just put the features directly as function
+> > pointers in the uffd_ops and check if they are NULL or not for
+> > 'support'.
+> > 
+> > ie:
+> > 
+> > struct vm_uffd_ops hugetlb_uffd_ops = {
+> >          .missing = hugetlb_handle_userfault,
 
-Zoned storage devices provide marginal over-capacity space, typically
-around 10%, for filesystem level storage control.
+This is not needed because the logic to handle userfault isn't very type
+sensitive. Hugetlb is the only one that differs very lightly, but again I
+think we should better take hugetlbfs as special always as of now, per all
+the previous discussions on hugetlb unifications.
 
-By utilizing this extra capacity, we can safely reduce the default
-'valid_thresh_ratio' to 80. This action helps to significantly prevent
-excessive garbage collection (GC) and the resulting power consumption,
-as the filesystem becomes less aggressive about cleaning segments
-that still hold a high percentage of valid data.
+> >          .write_protect = mwriteprotect_range,
 
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
----
- fs/f2fs/gc.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is not needed.  WP processing is the same.
 
-diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-index 24e8b1c27acc..6c4d4567571e 100644
---- a/fs/f2fs/gc.h
-+++ b/fs/f2fs/gc.h
-@@ -25,7 +25,7 @@
- #define DEF_GC_THREAD_CANDIDATE_RATIO		20	/* select 20% oldest sections as candidates */
- #define DEF_GC_THREAD_MAX_CANDIDATE_COUNT	10	/* select at most 10 sections as candidates */
- #define DEF_GC_THREAD_AGE_WEIGHT		60	/* age weight */
--#define DEF_GC_THREAD_VALID_THRESH_RATIO	95	/* do not GC over 95% valid block ratio for one time GC */
-+#define DEF_GC_THREAD_VALID_THRESH_RATIO	80	/* do not GC over 80% valid block ratio for one time GC */
- #define DEFAULT_ACCURACY_CLASS			10000	/* accuracy class */
- 
- #define LIMIT_INVALID_BLOCK	40 /* percentage over total user space */
+> >          .minor = hugetlb_handle_userfault_minor,
+
+We can do that, but ultimately we do almost exactly the same for all memory
+types except a fetch on the page cache.  IMHO this will make it awkward..
+because 99% of the minor hooks will do the same thing..  OTOH, it makes
+more sense to me that the hook is defined to cover what is different on the
+memory type.
+
+I'll stop commenting on the rest.
+
+> > 
+> >          .mfill_atomic = hugetlb_mfill_atomic_pte,
+> >          .mfill_atomic_continue = ...
+> >          .mfill_zeropage = ...
+> >          .mfill_poison = ...
+> >          .mfill_copy = NULL, /* For example */
+> > };
+> > 
+> > Then mfill_atomic_copy() becomes:
+> > {
+> >          /*
+> >           * Maybe some setup, used for all mfill operations from
+> >           * mfill_atomic()
+> >           */
+> > 
+> >           ...
+> > 
+> >          dst_vma = uffd_mfill_lock()
+> >          uffd_ops = vma_get_uffd_ops(vma);
+> >          if (!uffd_ops)
+> >                  return false;
+> > 
+> >          if (!uffd_ops->mfill_copy) /* unlikely? */
+> >                  return false;
+> > 
+> >          return uffd_ops->mfill_copy(dst_vma,..);
+> > }
+> > 
+> > This way is_vm_hugetlb_page() never really needs to be used because the
+> > function pointer already makes that distinction.
+> > 
+> > Right now, we have checks for hugetlb through other functions that "pass
+> > off to appropriate routine", and we end up translating the
+> > ioctl_supports into the function call eventually, anyways.
+> 
+> Right, it would be great to get rid of that. I recall I asked for such a
+> cleanup in RFC (or was it v1).
+
+I didn't send RFC, likely you meant this reply in v1?
+
+https://lore.kernel.org/all/0126fa5f-b5aa-4a17-80d6-d428105e45c7@redhat.com/
+
+        I agree that another special-purpose file (like implemented by
+        guest_memfd) would need that. But if we could get rid of
+        "hugetlb"/"shmem" special-casing in userfaultfd, it would be a
+        rasonable independent cleanup.
+
+Get rid of hugetlbfs is still not my goal as of in this series.
+
+OTOH, I generalized shmem and removed shmem.h header from userfaultfd, but
+that was prior versions when with uffd_copy() and it was rejected.
+
+What should I do now to move this series forward?  Could anyone provide a
+solid answer?
+
+Thanks,
+
 -- 
-2.51.0.618.g983fd99d29-goog
+Peter Xu
 
 
