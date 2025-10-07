@@ -1,113 +1,154 @@
-Return-Path: <linux-kernel+bounces-844207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DF09BC14CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 14:04:14 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B1E2BC14D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 14:04:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 54F644E3516
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 12:04:13 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D625934EA00
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 12:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE852D9ED8;
-	Tue,  7 Oct 2025 12:04:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF4902D9493;
+	Tue,  7 Oct 2025 12:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t6PncqxY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b="q9L7dDZA"
+Received: from mout-y-209.mailbox.org (mout-y-209.mailbox.org [91.198.250.237])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E841E0DE8;
-	Tue,  7 Oct 2025 12:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB922D949F;
+	Tue,  7 Oct 2025 12:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.237
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759838647; cv=none; b=GFNMs9/e6FsUWJF+ltNCA2IHKTUPa+ockx1xVYr25RJV6ICJTYOI7wDCWVi7UI0g6XIDgNCJ2OjnclwmvoUwFFWLo3gcxYLmcBX6Pne5FKjKeqiElkaeOM0Kpz6alKMy56MrODvZ7cKko9KfrxIxQVWSVDzFiTEZ3HFLOchFmDQ=
+	t=1759838668; cv=none; b=PqnLlHsfJdui3lrPqoNLGXAPZEWZdUN/UeQMQVWjWwWSWVqMAL7yX5ksvUKvynsgoBpMK9EUWfHNr8MGlYJJU1rpkf+lyGP7QN7S4+E2ktZPJVKEF/BTuroajKTt7CPX0slveOxhzWcNDQUWXHvuZkbBVPOalgPRHpYHFKnBL3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759838647; c=relaxed/simple;
-	bh=jTvdgiH3xvYCF18FbvU7N9h659rjZ7cuGOlxPiRbHRE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=aFL+ocM73z7Fz526QQY/onoaK9GYpUbXV6jX2z0oCrE9FbuvVgEzyPe84VM8eWjHdd71+eUOY7F9P0nbO/6U8c2aS60zrrtt9ZZtGH9WYsTdPTzqj0vB7/JLqWQD8AewlabTN580iwQOBdzndNLYd1CojSp+qzZ/g//IKMb4qyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t6PncqxY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D262BC4CEF9;
-	Tue,  7 Oct 2025 12:04:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759838646;
-	bh=jTvdgiH3xvYCF18FbvU7N9h659rjZ7cuGOlxPiRbHRE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=t6PncqxYdRRgNpz+aePj5keat+eeY3g3DDOYQBdRyhqUvV8wkscnClVoAM5JLVb1/
-	 CuitQQXCPzbkO8EC/MkDYab74RykW55fGYF23WuwGJHpA3EeYoChHdr4PVqQhdSkJZ
-	 Oe+DHgjlQk8+lMotOrdNG5Rry97K+GQRFlm5GzSzb58jHMmkISb0AI2ycrcRdKKbin
-	 0lmExu/sAFWXN8c9SHyae91MfFpWqJUg8W4ug+kKInEPtXtjVUMOM2q5cmAn2nIVRQ
-	 xK9h6Tlbt5qZ3I+sTjzk0qPYeEES6684Y97fEGPjfC1lq+V5ZZVFOR15IbANbOR/7x
-	 U1pqdOdjpSLXg==
-Date: Tue, 7 Oct 2025 13:04:03 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the mailbox tree
-Message-ID: <aOUBsxlznqQG5ooC@sirena.org.uk>
+	s=arc-20240116; t=1759838668; c=relaxed/simple;
+	bh=+dz9a2IwyWLjlZqvEV6ctOaoZknOVcL+aRqrYR8hBM4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tG9O/M/FLLu3bVMEqkyohnnRmSoduA0D/SP2F3wDGPdJc840Zy2GxyQS1VwyqM7/2r8fiE4ImKioqTcQsKpHf7IItEPwhmIaPb3nXQuWEKY7SbQNYGb4Rs7h59fMTP81g/9/4HhY6En953e7UPzW6FH1+wGlz92dBEpbCa+CQN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com; spf=fail smtp.mailfrom=mssola.com; dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b=q9L7dDZA; arc=none smtp.client-ip=91.198.250.237
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mssola.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-y-209.mailbox.org (Postfix) with ESMTPS id 4cgvv34Pw9zB0X9;
+	Tue,  7 Oct 2025 14:04:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mssola.com; s=MBO0001;
+	t=1759838655;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5zKYlRFV37yOcGcIPc9jYL9FBtysDx0CgiwRIZT16jk=;
+	b=q9L7dDZAkvFTxZx6NYMswcN96Ndzb50DOFsigc2JS58++ZI6y0yIY7n0Ci8Byn7K1WdG6B
+	Bwmxfd0ke70yX/gV3sjKz/NrCsH95QuC5w5FS6cOZKbFl5NkSXK0K/4w3w2YsATnC0/kU7
+	vMW4QROlGk3L+bWeZN6g76ZxZXJ2sguiWUnfuiLqrA4Hjwpa5VNtBexZ8AhxicFdRE5fyi
+	GYyPrK7WfYHVW9jOOm4Y0R5Ka9Jxc+CpGIsrA+V1Q4Ovwnxp9faGkcuaIm/UphgSo+/19k
+	AQKkrYup2Pfj/bTkinR2jzDKgs4ImFk2BksShZ5yCuv6NVtYGDSVpCrSLzVJzA==
+From: =?utf-8?Q?Miquel_Sabat=C3=A9_Sol=C3=A0?= <mssola@mssola.com>
+To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+Cc: "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+  "clm@fb.com" <clm@fb.com>,  "dsterba@suse.com" <dsterba@suse.com>,
+  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] btrfs: fix memory leak when rejecting a non SINGLE data
+ profile without an RST
+In-Reply-To: <0a87083a-cfef-4cf5-a73f-465797fa5759@wdc.com> (Johannes
+	Thumshirn's message of "Tue, 7 Oct 2025 11:21:27 +0000")
+References: <20251007055453.343450-1-mssola@mssola.com>
+	<e82bb44e-5f56-4ddc-976a-9ff268a5b705@wdc.com>
+	<0a87083a-cfef-4cf5-a73f-465797fa5759@wdc.com>
+Date: Tue, 07 Oct 2025 14:04:11 +0200
+Message-ID: <87y0pmj4uc.fsf@>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="74eNrnwD/SN0UCSJ"
-Content-Disposition: inline
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
---74eNrnwD/SN0UCSJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Johannes Thumshirn @ 2025-10-07 11:21 GMT:
 
-Hi all,
+> On 10/7/25 1:05 PM, Miquel Sabat=C3=A9 Sol=C3=A0 wrote:
+>
+>  Johannes Thumshirn @ 2025-10-07 10:13 GMT:
+>
+>
+>
+> Wouldn't it make more sense to only set "ret =3D -EINVAL" and run the rest
+> of the functions cleanup? I.e. with your patch the chunk_map isn't freed
+> as well.
+>
+>
+> The short answer is that I wanted to keep the patch as minimal as
+> possible while preserving the intent of the original code. From the
+> original code (see commit 5906333cc4af ("btrfs: zoned: don't skip block
+> group profile checks on conventional zones")), I get that the intent was
+> to return as early as possible, so to not go through all the if
+> statements below as they were not relevant on that case (that is, not
+> just the one you mention where the cache->physical_map is
+> freed). Falling through as you suggest would go into these if/else
+> blocks, which I don't think is what we want to do.
+>
+> But it still sounds good that we should probably also free the chunk map
+> as you say. Hence, maybe we could move the new "out_free:" label before
+> the `if (!ret)` block right above where I've put it now. This way we
+> ensure that the chunk map is freed, and we avoid going through the other
+> if/else blocks which the aforementioned commit wanted to avoid.
+>
+> No it really should only be ret =3D -EINVAL without any new labels AFAICS.
+>
+> 1)  the alloc_offset vs zone_capacity check is still usable
 
-After merging the mailbox tree, today's linux-next build (arm64
-defconfig) failed like this:
+I don't think so as the ret value will be changed from -EINVAL (as set
+from the previous if block) to -EIO. I believe that the intent from the
+aforementioned commit was to return an -EINVAL on this case.
 
-/tmp/next/build/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.c: In function 'mdp_probe':
-/tmp/next/build/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.c:297:41: error: implicit declaration of function 'cmdq_get_shift_pa' [-Wimplicit-function-declaration]
-  297 |                 mdp->cmdq_shift_pa[i] = cmdq_get_shift_pa(mdp->cmdq_clt[i]->chan);
-      |                                         ^~~~~~~~~~~~~~~~~
-make[8]: *** [/tmp/next/build/scripts/Makefile.build:287: drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.o] Error 1
-make[7]: *** [/tmp/next/build/scripts/Makefile.build:556: drivers/media/platform/mediatek/mdp3] Error 2
-make[7]: *** Waiting for unfinished jobs....
-make[6]: *** [/tmp/next/build/scripts/Makefile.build:556: drivers/media/platform/mediatek] Error 2
-make[6]: *** Waiting for unfinished jobs....
-make[5]: *** [/tmp/next/build/scripts/Makefile.build:556: drivers/media/platform] Error 2
-make[5]: *** Waiting for unfinished jobs....
-make[4]: *** [/tmp/next/build/scripts/Makefile.build:556: drivers/media] Error 2
-make[4]: *** Waiting for unfinished jobs....
-make[3]: *** [/tmp/next/build/scripts/Makefile.build:556: drivers] Error 2
-make[2]: *** [/tmp/next/build/Makefile:2011: .] Error 2
-make[1]: *** [/tmp/next/build/Makefile:248: __sub-make] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
-Command exited with non-zero status 2
-18.77user 674.76system 0:08.77elapsed 7908%CPU (0avgtext+0avgdata 173604maxresident)k
-0inputs+0outputs (6major+965196minor)pagefaults 0swaps
+Maybe the reviewers from commit 5906333cc4af ("btrfs: zoned: don't skip
+block group profile checks on conventional zones") can shed some light
+into this...
 
-Caused by commit
+>
+> 2) the check if we're post the WP is skipped as ret !=3D 0
+>
+> 3) we're hitting the else path and freeing the chunk map.
+>
+>  As a last note, maybe for v2 I should add:
+>
+> Fixes: 5906333cc4af ("btrfs: zoned: don't skip block group profile checks=
+ on conventional zones")
+>
+> Correct
 
-  58e172b23fe2f ("mailbox: mtk-cmdq: Remove unused cmdq_get_shift_pa()")
+My email client detected your email as an HTML one. Is that so? Just as
+a heads up for others as the reply format might look a bit funky :/
 
-I have used the version from 20251006 instead.
-
---74eNrnwD/SN0UCSJ
+--=-=-=
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjlAbIACgkQJNaLcl1U
-h9CC2wf+K7Q92tPqxwj7ZclMxcN4tx9ZQsUcSduZ5eVnfoSXiwieC2/UdOMaa0SW
-anTKPiWmg/XsIo/BvkgXtKaTFpA8ok5U/4f//EvzLMhqN1cN3brgM11DUmbI/Kzv
-p3PJzEM02C6pWjfCPrV5GyAdQ4MDAEVhcwxvuGeJMDW6rvyrLaysfomOxXKW3JF3
-sftB814Q1X2OdDUol5w5QMmhmMyKy5s2JiwbBDvMWJ4lgfWkv1wXNfAz5t7U5Jbx
-Ne7p2oJ+8TmgctFtxq8mxDqAl2pCelDwXawmvr7YlTwKUzmbZpc3GyDcQe7ZTaIV
-RC/9FtGygxYcci/t3sBNhbyEu8oZfg==
-=FGNC
+iQJiBAEBCgBMFiEEG6U8esk9yirP39qXlr6Mb9idZWUFAmjlAbsbFIAAAAAABAAO
+bWFudTIsMi41KzEuMTEsMiwyEhxtc3NvbGFAbXNzb2xhLmNvbQAKCRCWvoxv2J1l
+ZRfZD/wLVGcsyOBI+IU5nfxiiUp15IfAdhmjpC4dm7mHxakRCPR2oKuqGTonyZ8Y
+YVvZqi98JwOGIWOyx0/NBTB+6aL4dWknfFoEhSDZT8n45vDGxzmtYhjmhN7bGn1O
+UbcmbizJMddI2Ed3k29kPVy4ZL34xiCUqlE1xRVJlHhOUr7jHIWbzIhedwE1qZdh
+IloBAvX1lBzbpGKPR5WDgphxFrAq600qcMP/MI2c2PnHZbe6qXVAPiBFi7rFsDG9
+w40UW+KOzERFz4k5W6tP0IKlCbvbAdQrQA+JqaTjSQp2iLOofGOF6xutr5PVioRR
+pINEOtTLPSXMW399iUAzjsXKktCnwNVG5kelvMshCdq4vE2CR0b2yzQWvc/zn6CE
+2sag92LHXG+V9acyHdyEEnCzIqlxSaWemQtDD9xHyYYm0+jiOeC3yF9+tLMkG8x/
+eVjqhNh8VHdfTNtc4JpJCkdwc+lTo29cUw0ZftVRwxkM6pyB7G3XvZxDmc+4WTVC
+sV5+BB6fkPkSlZSi7iZa431jPYjvm7Km0V18Eu5bd8608CBB7Kxtx3JhfFj6v/aF
+8aC3dDFvxzl2iPgPOXoW1nk5WRb1cHgVo0w0bEil3WmlgJ8se9UvCYXiVI9Usrs/
+2HJNBAispq0ku/gxK7Z/X+PLkIQPXL3B3C9I44l3hpFhO/2d1g==
+=QkBE
 -----END PGP SIGNATURE-----
-
---74eNrnwD/SN0UCSJ--
+--=-=-=--
 
