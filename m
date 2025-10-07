@@ -1,138 +1,134 @@
-Return-Path: <linux-kernel+bounces-843913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBD15BC08F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:11:07 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE680BC0F78
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:08:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3858C3BBBCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:11:06 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 39CC434C1F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:08:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8E4256C8B;
-	Tue,  7 Oct 2025 08:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8A02D7DF6;
+	Tue,  7 Oct 2025 10:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KoP10Ygz"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bFkf4gje"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638D6253F1A
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 08:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510002D3727
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 10:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759824663; cv=none; b=rz9dfz8pBU6gKRIVWkguLkyoWP77XeeEgevkdvFyrriJYOJRyofsmNCJ7QPQezVwZMoumMgkyYQrjKxHaVvDbFSrcqWySL8IuuqgsxOkhvS+f7QFzsxZj60ra3TA6ZfrNlNzaiNfTUK/1i4cAY5nFWXDMNu9unGH0tO9biQrxIg=
+	t=1759831690; cv=none; b=dNPMExdkatG/NGvxZ2vpskQQeOxSvDmloWUw3DzkIB8D7ReTlLmKzhvboL4X2X6hhdGq6+7BdCq+scJIh6k1nzRtQFqcA2tI8x/IvSYbY/pP0mv7ovDCNp+o2MkkjhIszlAZyyh6I+RDuGTkrpFg0023aUkpVNb+whd8Y3rVuUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759824663; c=relaxed/simple;
-	bh=Ou9RbX5uqxCtGtynVkAROokYxmIljor33wkMogIURhI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n0LvutqpXZiOwx9smaf1mKCsZSvSmvJwJI6ZZoM2iP8slfb5zPc5CmQJvol8IpI0NZIg9NiZ5G203ubdlliKgQpr8QADTgMVHDvMmzgpNSB68hfVM2SA5qiGd7XBOvKmM3Ng4tiEYkO9OwRH6/QRDo0k2QR84Ds/kSm2EF48KnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KoP10Ygz; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-77f343231fcso3732664b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 01:11:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759824662; x=1760429462; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=M/D8wkb7OpnNtYTNHOq4pCL+v7kYN74Waroxt70FkiI=;
-        b=KoP10Ygzg3UBWnn0LcgmcS8g3LNXfYgro8OADjrna+dubsk5aCAEycKUH/E/ngDBiE
-         4itobOy3HgkcQY7NqayXlEEgm9n/oYIF7s6JQOmYe61hgj+GxS7tCV2ke+flZ230e3Nk
-         uXVnOKjTXZb9KpgyLbx8xRDVQYR9c4FCKWOlM+PN8Rm78gZYfED+FFFvlNwaaZg9t20K
-         463mQszIEDxh31rZtFN5yPtzojbr8yMpIqCu2dfN9mraG8Odi0TF8MfLzOffiLW3nCKu
-         9N/YNJa/EFcOpW3ZnJHSuzr84z5HMDHeSjcpDuhGHiTAwY3bqoxA52KIBXeGA09YQGp/
-         1O3A==
+	s=arc-20240116; t=1759831690; c=relaxed/simple;
+	bh=X1iciAMY8PqRMVBzYSqFJyHJLL4pQ951fQtXxmSzeas=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m6MWpMTfYonznR/pzbdVQwzkSs6Tb/YKCL9WuMOblhNsS0a86ukAma7ipgjXUnPMhvJVmT92J/fSVV/gWdXAYttnJuI2P9/q0q3GGFE3AcQLy2j15j6EhpbTba5xOHikCaUjSa8ZZRdu72vDg62VtGjYwOc8fDUEUvzwzi9vL2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bFkf4gje; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759831688;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+mtcU9rV2NIG8/Fsnv3bz5W3lOoU/FoKHUxf6Q1GCxg=;
+	b=bFkf4gjeBOdM8bIIO3o1zI93ozAqQNcNPfoXklkK579WKrAHdsvSGJqpvtf5VIzL2FaSt8
+	guRtzxkkXKYkGX0QGw0xbFfdmocmA0hdE4kJnvVcJRH8Gse4fymYnic0UOJBVRDZ0TnZ9D
+	nvMEjJqbe4q/XWb58VN48lJdQMvkiKk=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-395-qnFI_cveOV6PXneEVUjuyA-1; Tue, 07 Oct 2025 06:08:07 -0400
+X-MC-Unique: qnFI_cveOV6PXneEVUjuyA-1
+X-Mimecast-MFC-AGG-ID: qnFI_cveOV6PXneEVUjuyA_1759831686
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3ecdb10a612so3983039f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 03:08:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759824662; x=1760429462;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M/D8wkb7OpnNtYTNHOq4pCL+v7kYN74Waroxt70FkiI=;
-        b=W9GEwLcsdJU5Hg4havlJLCmEOved6efAIudLklCFb9S6oV7eFVgcu23U3QQxCZyjGs
-         qw5CiNaCyZsTyyLAhbiPOSFOlA2wElYBadw4JyBPGijRCDjDu1EhKDTsqL0CC7pZ7TaD
-         lJoRZHd/wjVIHd2IbHw2pfhmZuTxq5DG7kYvpbF0gZvoOko+9wzrTBtu243rwvzvHtgi
-         FbZpasy+aY4k842DqqcK3ciTq7MvFmE3t12tyM47icI5jjagScNriqG5uWLJgCaMIs9P
-         kqjM6zHXMoeI6We6yXnjkxT5v8ENA3b3UPaujgFHfEXAtatcTUH4vsRznoVkS1RzYH5w
-         W2MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXEdm7IOgBJ9OaAi2ibGAersU6p2zI8ngEpQdd+tcB+hN79VzPCLH+THvS0A6VUcIMdYpWxGpvH/NB2Vio=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1WWteT783lnfLg3KGJeuXL9IKnnKFazUqLCFUKiHDgZ/q2LmE
-	7hb+viwM4/wdSF7LHoKMoYLVnAD3TalA8kuf9LvInBUOXS9G5fkUoEZy
-X-Gm-Gg: ASbGncseqa4puGSEX/IApu2B77zD1iZvqDn104t6CoGZTg/vX5GfBXxsleT9XXgtS0H
-	0VsmGRR/xRYrbEn+/rmQ7/yktE/nMD5Y+LjgFws1KtvZwgEEb2XTLtiHB5uvrFJ9i6E8jroXitG
-	3Zk6wIN4r7mthKp2Uy6U5Hh/fyiJ2kbKsU0hltzivW7bsxBxNE+KaYZlGPJy4pSzvzowLBeFZvM
-	+cEf6G1cGgwFsRBD28SbPEQWIJjAPOpSJcjr7TrOOribCoTMOfYcOjGoXsOdxzdS+QqTfJXAwf2
-	gC7rDJfEcKd2QbQWIeoVlxCNDP2C2w1e29K6R2mwGhWvBhO9sYzag/tLVdXwAhyCAlZhKovnrlH
-	OokE4oZSai1WqssDZTlofe7/SHzbNWg9llaIMmgbBa0YdQYqBnfuUtw==
-X-Google-Smtp-Source: AGHT+IFtJDcZJJqDbhKbqGHc5CZCzc4ifM/PYLCIhIeNnxJMzG+HMs9lRz9oO9kaELRH8n44x51jlA==
-X-Received: by 2002:a05:6a20:a106:b0:2f9:dc8d:d2a1 with SMTP id adf61e73a8af0-32b61e661efmr20081578637.21.1759824661302;
-        Tue, 07 Oct 2025 01:11:01 -0700 (PDT)
-Received: from LilGuy ([2409:40c2:505d:3f1f:140f:568d:710e:1a82])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-78b01f9daffsm14736864b3a.17.2025.10.07.01.10.57
+        d=1e100.net; s=20230601; t=1759831686; x=1760436486;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+mtcU9rV2NIG8/Fsnv3bz5W3lOoU/FoKHUxf6Q1GCxg=;
+        b=aNvnXF6YZOnie7OdaipDTAEP4f0QGDBjA+MsxQ31k3UcrHxnNbFHtB99iGW/ofbf+i
+         hf1eTWi9foHyzni1f+5zdE6swx4m/MM/x7YxBKwCe0k7zA9idLN0xm1Zt4iP7IccOIgA
+         VH5Lpx5sj82Qn1+kZ2rB5h9y2uTiQ4vyDyhXacMqXsZW4m/Tf966oPAYFk4Q5K/kFNgb
+         Z3apgODlUN8anDy/9cEr4qzwnWG9PZ073CL2MBn0TtRwzxRDr7GrYXOsj9wPvv04Red2
+         2wnO0GxUMm4TKctlEtAsnxRrgfzseMUkRP0mg+7rs6dYOhRJmV88vvPivq9A0oJ0DMA5
+         D81A==
+X-Forwarded-Encrypted: i=1; AJvYcCVx5tzzrZtdBkWv5XmtxYafVFi/9oIvM4fNmYsPuVzERiApcyrp5gh1X3Y8/Boe2mprS2ThKLjwwoqwlG4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk29aygPrm76zpYygt1p8alZT+J6qFeo0U9qTbqKrer5ECddsF
+	3PPFCbiMTiPAAmIOdulH/ddo0himemUKgK+q54vF8ofSVMKhARN5u4IEF3tEZt3s7RQM4OH1PNU
+	i6hq3sLh8T3nCUOS/fwTSSVti21YxC2z4AGL0BVCj2wv8Ai/AvEscgptI8A46RI43LQ==
+X-Gm-Gg: ASbGncuLBVTKIwTAwnuwiyl/ATrtoxrtehgtzySggFRmmPP4UOS1k3+DrHuqr/7x7Ko
+	bVTXH3E2/vMJUlS/S0B3yg893L5omBIWFsmpze5l/9Qv1MxlFhEJtZIrB6NfRIiCVuEA72iAQdg
+	UeVS502XFdjOWRjnyJLTHmLf7QwHBcgxYk8+j7k7SIgf6rl0YIYjjo/b/1AkuttH4XTwDF0/NTz
+	tCg62MTxq+98sxDlp0ue0gqlT26MoL9YQJUh47RLTGEbMP4jxP5JDMWs2fSag90WLAacoHpD8Mu
+	F3eIWH8AmawCy9Egs7CFnV3C9zKGzCmO24FnX8Qs+KUz/cVf9V5fJXWAN39FsPyyhsb6khdGOfo
+	+Lg==
+X-Received: by 2002:a05:6000:2484:b0:3fa:87ad:8309 with SMTP id ffacd0b85a97d-425671c5e22mr12150992f8f.56.1759831685975;
+        Tue, 07 Oct 2025 03:08:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFoOnbt3zl/Z0zIFMaawiwiieruc6RIjDSa5Y4OtsLc9P/dDQ+rp/oPqBnApnJV75iKliXKtA==
+X-Received: by 2002:a05:6000:2484:b0:3fa:87ad:8309 with SMTP id ffacd0b85a97d-425671c5e22mr12150970f8f.56.1759831685538;
+        Tue, 07 Oct 2025 03:08:05 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.135.152])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8b0068sm24882138f8f.26.2025.10.07.03.08.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 01:11:00 -0700 (PDT)
-From: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
-To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	ntfs3@lists.linux.dev (open list:NTFS3 FILESYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Cc: skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	Swaraj Gaikwad <swarajgaikwad1925@gmail.com>,
-	syzbot+83c9dd5c0dcf6184fdbf@syzkaller.appspotmail.com
-Subject: [PATCH] fs/ntfs3: fix uninitialized memory in ni_create_attr_list()
-Date: Tue,  7 Oct 2025 13:40:07 +0000
-Message-ID: <20251007134008.144590-1-swarajgaikwad1925@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        Tue, 07 Oct 2025 03:08:05 -0700 (PDT)
+Date: Tue, 7 Oct 2025 12:08:03 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: tj@kernel.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
+	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
+	changwoo@igalia.com, cgroups@vger.kernel.org,
+	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
+Subject: Re: [RFC][PATCH 1/3] sched: Detect per-class runqueue changes
+Message-ID: <aOTmg90J1Tdggm5z@jlelli-thinkpadt14gen4.remote.csb>
+References: <20251006104652.630431579@infradead.org>
+ <20251006105453.522934521@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251006105453.522934521@infradead.org>
 
-KMSAN reported an "uninit-value" warning in attr_set_size(), which
-occurs when the NTFS attribute list buffer contains uninitialized
-trailing bytes.
+Hi Peter,
 
-In ni_create_attr_list(q), kmalloc() is used to allocate a buffer of
-size al_aligned(rs). However, the amount of data actually written into
-this buffer can be smaller than the allocated size, leaving the
-remaining bytes uninitialized. If those bytes are later accessed,
-KMSAN reports a read of uninitialized memory.
+On 06/10/25 12:46, Peter Zijlstra wrote:
+> Have enqueue/dequeue set a per-class bit in rq->queue_mask. This then
+> enables easy tracking of which runqueues are modified over a
+> lock-break.
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
 
-Replace kmalloc() with kzalloc() to ensure the entire buffer is
-zero-initialized, preventing future uninitialized memory accesses.
+Nice.
 
-This issue was reproduced and verified using the syzkaller-provided
-reproducer. The patch was tested by:
-  - Building the kernel to ensure the change does not affect the build
-    process.
-  - Running the provided repro to confirm that the
-    uninit-value warning no longer appears.
+> @@ -12887,8 +12888,8 @@ static int sched_balance_newidle(struct
+>  	if (this_rq->cfs.h_nr_queued && !pulled_task)
+>  		pulled_task = 1;
+>  
+> -	/* Is there a task of a high priority class? */
+> -	if (this_rq->nr_running != this_rq->cfs.h_nr_queued)
+> +	/* If a higher prio class was modified, restart the pick */
+> +	if (this_rq->queue_mask & ~((fair_sched_class.queue_mask << 1)-1))
+>  		pulled_task = -1;
 
-Based on commit: 9b0d551bcc05
-Reported-by: syzbot+83c9dd5c0dcf6184fdbf@syzkaller.appspotmail.com
-Tested-by: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
+Does this however want a self-documenting inline helper or macro to make
+it even more clear? If this is always going to be the only caller maybe
+not so much.
 
-Signed-off-by: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
----
- fs/ntfs3/frecord.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
-index 8f9fe1d7a690..4fe8da7fc034 100644
---- a/fs/ntfs3/frecord.c
-+++ b/fs/ntfs3/frecord.c
-@@ -767,7 +767,7 @@ int ni_create_attr_list(struct ntfs_inode *ni)
- 	 * Skip estimating exact memory requirement.
- 	 * Looks like one record_size is always enough.
- 	 */
--	le = kmalloc(al_aligned(rs), GFP_NOFS);
-+	le = kzalloc(al_aligned(rs), GFP_NOFS);
- 	if (!le)
- 		return -ENOMEM;
- 
--- 
-2.51.0
+Thanks,
+Juri
 
 
