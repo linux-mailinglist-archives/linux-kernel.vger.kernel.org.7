@@ -1,118 +1,186 @@
-Return-Path: <linux-kernel+bounces-844114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6216BC1099
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:43:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18EB3BC109E
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:43:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC4C6189DFE9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:43:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 106973BF62E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D68242D7DD2;
-	Tue,  7 Oct 2025 10:42:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B892D7DDB;
+	Tue,  7 Oct 2025 10:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pw5qDQij"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="xf6OrKI5"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF41819E7E2
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 10:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0CC92D6636
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 10:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759833776; cv=none; b=trtCuahs40YfV01+Ns1xktpu79uWPz3zroqdcT7BFegDSJ1mHi9N2+3FDramtC9c4Y7+a+3MnG8PD3I5SVR1F04QZajU0f16Wr3wWp1HH2OTEIbDcGsQ0Rc3MsXacvJawBNrUTbkRHZHW/ltqacxNCLVjePGQjWphuP8x+T75C0=
+	t=1759833805; cv=none; b=EhMRMLKdhwJqX9ih69Sw0cU6VCk/c6BNThMAXE7adoInmLBdl/IMgLid95YKXZYVoPs8lkqCcphKrI08vZbLp/hwdovpqyCE5PmvC7MaMDC+ceanW6AhQ1hBvbGbXO/hvMSMjO3c9ayNGjE4Ss4bjSAW3fy4SBFLscvUAzUbQ/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759833776; c=relaxed/simple;
-	bh=t48xr98QD61VaWXPvBpaZ2yaPisBwVUmg9uYlxv8ngk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ie5csAJN/Z37+VMZbQUP46cYKnpjoyvo7Szno4hbWjKhxEvnvupcAgP2StILw6hx6/FVvTXd09cu9qulsx2syPLRK0YZAJkOb6BgKjSriC1aOwtUejfWOAQCKrwtgMbN9iy78QjluC07HDFc1SIZ79EYl19NoPMASVfy6eHa7/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pw5qDQij; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2680ee37b21so9171825ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 03:42:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759833774; x=1760438574; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t48xr98QD61VaWXPvBpaZ2yaPisBwVUmg9uYlxv8ngk=;
-        b=Pw5qDQij8MARyxaJey5UfIJzutLT+inpNsHmY6VzuKFbvLpOE65FzWAXr6k9IPqlcE
-         UoQU3irYMW2e+/JjIhW5BS/2hUF34wijzBdvRIhPjYj6/UUI1ByiM+dgBLzrr70UFDxB
-         u9liFpXeVMvsxRmN6FgnJ6KYj2st/S4pu+aTXwrNf4T0eztrSC9L4qMjIqrRyjBzb6wW
-         T9+Fpm/tqYjDFBhQNU3K503QQwCb2bW2XnEtBqN5+fAKVdgYZp8SDFeP9rVjI8QEyhtv
-         O0yFBER6kX4HqljDxvJ1w6eWR+L1iqdb9/CAcyJNzceofePdx8AZTICTBTaBMCQ6ko2f
-         CdFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759833774; x=1760438574;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t48xr98QD61VaWXPvBpaZ2yaPisBwVUmg9uYlxv8ngk=;
-        b=FsKkLPWyVrUgsz0LiySLhH6QPcWWfKsR7TTPdohUXHYltA1ZEunJVTVIgedwb2uz11
-         OfK9roz6E2tpkHqhN3rMIejWdngtxwrRNsS0nCu1iOIlP+1BUyCu82XZ7B2/vHMjzqVZ
-         8Bsg/CXGKKS5iRxn3823LGQXFLsXP/I6Ssb33S0fKR9ZyxmKrrrP8H1yHMuOVhVGc83m
-         DsQ52tXAAx+7CYJs+GhbDtavpWBoNXOuPePP4SZYT0hDg8wbXu929oPRc8URexXoMnYn
-         gECHjKH/4Cgv8ItkwyMfYpyyIBCsxTwb9+w1q3Oxx7aw8HZa4jE8qF1penYpc7v/wuim
-         /7Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCW/Voe0Sr9ky/EH+ThppRcBtS6IM0h5sHuhuJsRWh0U0eyCpVVQkyIeEtbOZL/OC1fEjAu1VypHmCWZFVg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywoj5Addxt3qfhfVYfijIcyIxQLx3t6h3uPaHcHm40iaeJK+wsi
-	tCxUbzGmft4t/GRKD9kYQswLRlVxS7QiBAqumzDjaip/d17taNSdzzwfSavQl0fZm35MZbN8Ex8
-	TXF1H1tT5ESQJMAcju8cUi/DzjPl3rw4=
-X-Gm-Gg: ASbGncsXuTYjVe8tWXwmw5JUV6PZf/Sfs2WcICMydwXH4CnXH9QnNtHQYUIoH1swE7q
-	yCPr0c8GEOPmZFruT4UhnjxoN6Jy8T/1i8UMuVU+01vk4sDegQOUMboyd1JiYaZZEtdjCovtKvL
-	+jDPbP0MmuN9nYhprI4KFdZKUR1d8+Se61fOPBDWUJrhkFrIFVKTZwFy1iJLbprTSE21/Y+wePv
-	AdTs3u5qQPIXPUonPuINUhxgvZZl/xphnZPa63Z7nkVtitKYw9bxkb6dij7cH0Na7mgVYkq1A4F
-	n581d/3HuhgN8wMk/mOzjFSD+70U1VHQDLCFHGxKNjgwMjnmqw==
-X-Google-Smtp-Source: AGHT+IG/tceer4xDFHi1fbtvymQWQEX0cfdjfz7qa3VEV1S1lLa9ROogqCppnvlWvrXrppWg7CAeyI7raGFpenio+L4=
-X-Received: by 2002:a17:903:1a68:b0:272:2bf1:6a1f with SMTP id
- d9443c01a7336-28e9a5a2ea2mr112471585ad.4.1759833774205; Tue, 07 Oct 2025
- 03:42:54 -0700 (PDT)
+	s=arc-20240116; t=1759833805; c=relaxed/simple;
+	bh=cdt7ydO+dUgKG2KYyZ4WNjjRsfskQQuzfo9YuP87z9o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P7Nd42X1AlEMTkuqv48MuCQKHiwU7sgGDCCgd3MakxaPuFJSKv5sxfnIP8Iujc2kElPiA4WT4TAi8rERWxqFfjX3+5uHqBKuz+jqVfK1DVady9O9plOCGQ4Oc+7kpWEmdIP/BvosWcjLCjyyGOac6+oqB09j3rbq/K4sSHLm87U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=xf6OrKI5; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6001b.ext.cloudfilter.net ([10.0.30.143])
+	by cmsmtp with ESMTPS
+	id 64USvU36Bjzfw65A5vxsly; Tue, 07 Oct 2025 10:43:17 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id 65A4vi4TMDV6565A4v9Y7r; Tue, 07 Oct 2025 10:43:16 +0000
+X-Authority-Analysis: v=2.4 cv=dLammPZb c=1 sm=1 tr=0 ts=68e4eec4
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=4oHATN8Nx7vVUZJYxp75bA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=10s5MOYLZ7ui8ktsyOcA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=aqsW+NffsBgefKI+Dz5Fto8mtaX/RlzjncBWta8l+dA=; b=xf6OrKI5XBSIW+IWtzu+gFVTak
+	2u98wFgC9698uLi4K3y+m0nzSwpuc/AXbq9adOg6nfQMqJmpGvKSvd/+auE0W2vkmFINJck+lHyom
+	8ErKslUFGLk87K5fXkQP1c93bSWN+Xp1EagRMjh3LuPmITX+ilxqh2OhRiOvWVmMcp8YweroGLLFb
+	X5VQ3OyqLWT6fZEkloi0R88nIWZzEqG6HiDfGLEnLShAjBcVuChaLI8wyGZZniYDNX9Hf0o+Uir3Z
+	x3ydBwtkkjnb1/es74H0dhqc++b9Xs57ePZf93BIYV0nhDphFJp2Z4SuXbtjZOt84FC+aDij03zZD
+	mP4jOCFQ==;
+Received: from [185.134.146.81] (port=53914 helo=[10.21.53.44])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1v65A3-00000000KC2-2aWi;
+	Tue, 07 Oct 2025 05:43:15 -0500
+Message-ID: <3a80fd1d-5a05-4db3-9dda-3ad38bedfb38@embeddedor.com>
+Date: Tue, 7 Oct 2025 11:43:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251003154748.1687160-1-joelagnelf@nvidia.com>
- <aORCwckUwZspBMfv@yury> <DDC0VAHL5OCP.DROT6CPKE5H5@nvidia.com>
-In-Reply-To: <DDC0VAHL5OCP.DROT6CPKE5H5@nvidia.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 7 Oct 2025 12:42:41 +0200
-X-Gm-Features: AS18NWDpvGktuowJke8BSxfgUaurFD3miGBpRkLVS9T4zoCecLy6NtllLzWGBNs
-Message-ID: <CANiq72m1eiGVJHNyym+JwM=tQ9bGnmoW0+OuKQ3Vxo_AQOy5dg@mail.gmail.com>
-Subject: Re: [PATCH v6 0/5] Introduce bitfield and move register macro to rust/kernel/
-To: Alexandre Courbot <acourbot@nvidia.com>, Yury Norov <yury.norov@gmail.com>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	dakr@kernel.org, Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, 
-	joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, Andrea Righi <arighi@nvidia.com>, 
-	nouveau@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2][next] scsi: megaraid_sas: Avoid a couple
+ -Wflex-array-member-not-at-end warnings
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Kashyap Desai <kashyap.desai@broadcom.com>,
+ Sumit Saxena <sumit.saxena@broadcom.com>,
+ Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+ Chandrakanth patil <chandrakanth.patil@broadcom.com>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <aM1E7Xa8qYdZ598N@kspp>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <aM1E7Xa8qYdZ598N@kspp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 185.134.146.81
+X-Source-L: No
+X-Exim-ID: 1v65A3-00000000KC2-2aWi
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([10.21.53.44]) [185.134.146.81]:53914
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfHVa1ukNUiBvLOKH2paBRCVv2jwnsyfg0cNm8OFQTmza/0l+WVTL7ufnP92sMej0uwZQtH3/lyUvXSqJabhPE+b2yVM1v9DCM7Wr708zIGJ6vTehU/i+
+ NeP25GkQoKlONZ+6ihK1W3oc3O/poR7ArkEWO/V15D+YcskhZ2z3r0A4kZKr/oO+yL762e5CT04Yb+WeyrhcSHyFq4WlQpm6DW83/iPO+tcXl2szxP89v6RM
 
-On Tue, Oct 7, 2025 at 12:36=E2=80=AFPM Alexandre Courbot <acourbot@nvidia.=
-com> wrote:
->
-> We can assume maintainership of this of course, but is there a problem
-> if this falls under the core Rust umbrella? As this is a pretty core
-> functionality. Miguel and other core folks, WDYT?
+Hi all,
 
-I think what Yury may mean is that this should get an explicit
-`MAINTAINERS` subentry even if it falls under `rust/kernel/` -- I
-agree that is a good idea.
+Friendly ping: who can take this, please?
 
 Thanks!
+-Gustavo
 
-Cheers,
-Miguel
+On 9/19/25 12:56, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
+> 
+> Use the new TRAILING_OVERLAP() helper to fix the following warnings:
+> 
+> drivers/scsi/megaraid/megaraid_sas_fusion.h:1153:31: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/scsi/megaraid/megaraid_sas_fusion.h:1198:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> This helper creates a union between a flexible-array member (FAM)
+> and a set of MEMBERS that would otherwise follow it --in this case
+> `struct MR_LD_SPAN_MAP ldSpanMap[MAX_LOGICAL_DRIVES_DYN]` and
+> `struct MR_LD_SPAN_MAP ldSpanMap[MAX_LOGICAL_DRIVES]` in the
+> corresponding structures.
+> 
+> This overlays the trailing members onto the FAM (struct MR_LD_SPAN_MAP
+> ldSpanMap[];) while keeping the FAM and the start of MEMBERS aligned.
+> 
+> The static_assert() ensures this alignment remains, and it's intentionally
+> placed inmediately after the corresponding structures --no blank line in
+> between.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+> Changes in v2:
+>   - Update changelog text --remove reference to unrelated structure.
+> 
+> v1:
+>   - Link: https://lore.kernel.org/linux-hardening/aM1D4nPVH96DglfT@kspp/
+> 
+>   drivers/scsi/megaraid/megaraid_sas_fusion.h | 17 ++++++++++++-----
+>   1 file changed, 12 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.h b/drivers/scsi/megaraid/megaraid_sas_fusion.h
+> index b677d80e5874..ddeea0ee2834 100644
+> --- a/drivers/scsi/megaraid/megaraid_sas_fusion.h
+> +++ b/drivers/scsi/megaraid/megaraid_sas_fusion.h
+> @@ -1150,9 +1150,13 @@ typedef struct LOG_BLOCK_SPAN_INFO {
+>   } LD_SPAN_INFO, *PLD_SPAN_INFO;
+>   
+>   struct MR_FW_RAID_MAP_ALL {
+> -	struct MR_FW_RAID_MAP raidMap;
+> -	struct MR_LD_SPAN_MAP ldSpanMap[MAX_LOGICAL_DRIVES];
+> +	/* Must be last --ends in a flexible-array member. */
+> +	TRAILING_OVERLAP(struct MR_FW_RAID_MAP, raidMap, ldSpanMap,
+> +		struct MR_LD_SPAN_MAP ldSpanMap[MAX_LOGICAL_DRIVES];
+> +	);
+>   } __attribute__ ((packed));
+> +static_assert(offsetof(struct MR_FW_RAID_MAP_ALL, raidMap.ldSpanMap) ==
+> +	      offsetof(struct MR_FW_RAID_MAP_ALL, ldSpanMap));
+>   
+>   struct MR_DRV_RAID_MAP {
+>   	/* total size of this structure, including this field.
+> @@ -1194,10 +1198,13 @@ struct MR_DRV_RAID_MAP {
+>    * And it is mainly for code re-use purpose.
+>    */
+>   struct MR_DRV_RAID_MAP_ALL {
+> -
+> -	struct MR_DRV_RAID_MAP raidMap;
+> -	struct MR_LD_SPAN_MAP ldSpanMap[MAX_LOGICAL_DRIVES_DYN];
+> +	/* Must be last --ends in a flexible-array member. */
+> +	TRAILING_OVERLAP(struct MR_DRV_RAID_MAP, raidMap, ldSpanMap,
+> +		struct MR_LD_SPAN_MAP ldSpanMap[MAX_LOGICAL_DRIVES_DYN];
+> +	);
+>   } __packed;
+> +static_assert(offsetof(struct MR_DRV_RAID_MAP_ALL, raidMap.ldSpanMap) ==
+> +	      offsetof(struct MR_DRV_RAID_MAP_ALL, ldSpanMap));
+>   
+>   
+>   
+
 
