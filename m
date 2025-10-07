@@ -1,109 +1,152 @@
-Return-Path: <linux-kernel+bounces-843624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D457EBBFDBB
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 02:39:42 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29599BBFDC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 02:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D38DB189BE41
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 00:40:05 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8C37D34BB95
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 00:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6221D6DB6;
-	Tue,  7 Oct 2025 00:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7227D1C84B2;
+	Tue,  7 Oct 2025 00:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="4mY+aOVE"
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i1m+eAS1"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE661A9FB8
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 00:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6890F1A9FB8
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 00:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759797573; cv=none; b=sVX7qpd2Rw0K9dc7Lm1FDP/7UaNEKbymfo6Tu5NKsm3rSAA2TZjRP90MH4VhsVbJE4yz2TzbL0ZhGxoTgAxdx1ODMm+CClsN7/tL43adQc9IXKG2RSPrnKTqGdPhdIzCq60P+Bc9k3gEJPou47mmQYG68lhhI3gkmxtML27K5i0=
+	t=1759797648; cv=none; b=bLjtsnLxnMCUHmdxV5lofTf4Hh1GKq2Vr8f09xzTe6wNPy/hRBVqHGpnyhksvMmg2XDcPMXhKfkiBO6gtDUbIGds+ACJVk/h05A8pTPNdzSF5wpS4voj4HOk2bGsRqwoRIucNH6RqzdoVkfveqURCzXudl+eMDNdWbNizPzw1ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759797573; c=relaxed/simple;
-	bh=kO3ODXqs9k7pwqkR/guQ/caM0qB7jAeOF091Dd7wRU0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=guzymn2QE0208yYsbRdKE8z10X2ct6H12aZ2PZ88wTclrA/kAM0wdkumhF+ShvX7oOEC0g7sFAmTA0MJwBPXtRyXXWXhrQ/3ffetWxEMlFE/1/qaUrLYdPi+GgeGjkeOwyq99q880gWc8Axt1pO7/6FGxsVCYA9vln5MN8PPth4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=4mY+aOVE; arc=none smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 596NraQL3885881
-	for <linux-kernel@vger.kernel.org>; Mon, 6 Oct 2025 17:39:30 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=s2048-2025-q2; bh=kO3ODXqs9k7pwqkR/guQ
-	/caM0qB7jAeOF091Dd7wRU0=; b=4mY+aOVEe29vUt114OipFP8JGFE5URGXBbpB
-	cBAEjpOlVtLyJeu0Wn3NMoZUD5kykJulae3rDQQ69YT0HO480lMJt0k1AicQw9mq
-	qrg4NLGx3SewBINxQKLClclARbRTy+chEYrumWLDjUh3STpX/hmt8xrhNP4143bD
-	DEaqmNoGMkwvhpPMYiw8h5TrCwqxX7bOBE4KlzPx9maSZrWazrDjoA6rmFIAAWn7
-	iF9aNrZZE9CqS/rkcE7IXs1Wm1pMynGUsXhl9qp0Z/9V5efHZyl5FmrfGnP9Ehsr
-	kPuAxd+j87toHRzdio291pGeV0Zj9yMU/D5XZLqw7O/I68/7SQ==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 49mjnf2vc7-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 17:39:30 -0700 (PDT)
-Received: from twshared18070.28.prn2.facebook.com (2620:10d:c085:208::7cb7) by
- mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.20; Tue, 7 Oct 2025 00:39:28 +0000
-Received: by devgpu015.cco6.facebook.com (Postfix, from userid 199522)
-	id 5602EC4B352; Mon,  6 Oct 2025 17:39:12 -0700 (PDT)
-Date: Mon, 6 Oct 2025 17:39:12 -0700
-From: Alex Mastro <amastro@fb.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-CC: Alex Williamson <alex.williamson@redhat.com>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] vfio: fix VFIO_IOMMU_UNMAP_DMA when end of range would
- overflow u64
-Message-ID: <aORhMMOU5p3j69ld@devgpu015.cco6.facebook.com>
-References: <20251005-fix-unmap-v1-1-6687732ed44e@fb.com>
- <20251006121618.GA3365647@ziepe.ca>
- <aOPuU0O6PlOjd/Xs@devgpu015.cco6.facebook.com>
- <20251006225039.GA3441843@ziepe.ca>
+	s=arc-20240116; t=1759797648; c=relaxed/simple;
+	bh=GzUSOSJZ+eDMzzz+ixvlJiOEN2cRY2aCg4gyiQyGc+8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=HSs9m3vsNC2fBrcoWOc8DV2ynab6UVzTGFdt4E29Hx3BBFlDGSEGBeaLNjqcpcuIgIktdWj/1e+N0f4Wx1lyAXMHWu9aTK594rxNp9Z7AqyypzyeBrADuG30h7NseNk8EJ8Hh6m08EGNZTliHWKi74jckL/PT2/ZKP0V1fgPh/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i1m+eAS1; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2699ebc0319so52929155ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 17:40:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759797647; x=1760402447; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=W/DQArMjl2yBGMSdiHTTS+HBsWvNwcwKM6KZuhbPH/k=;
+        b=i1m+eAS1kMD6q6obRhdzg3QstEaTqqPDKPdu32tOgcPHEeM9lqosA/2WJ/J85oMYL4
+         TrptIWSMPBVZ/E0CviHK5df3DX70zj73svn1AgF83WxQJI0iYDCdYj1K2tl+7Ki1krlq
+         7WS8r27eueaLzmUoOgw0qRyVFU0v0wmIEs0/OznkZXLuxZtlNNP0ldbK2tBVgXw5CPf+
+         3wQTL1TUt9Vzy4MreHRuYnrLihVu5bd37wcPBQdT9/Y6py8mdjxFTnZbcgM6pZY+HLyt
+         MR2a9OVl8CCgCXsmLnzuLZOF0P7Kvo7fesfrQWrdwRaIbXUKFfUNCRpus3ShnJTYI5S3
+         Q+0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759797647; x=1760402447;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=W/DQArMjl2yBGMSdiHTTS+HBsWvNwcwKM6KZuhbPH/k=;
+        b=DaRJLx2pwnL777KHjY0e7YepbcmMY9J51eIVf5NIGuI+UnWkd95j7LVfVS8DmTQ71X
+         1RZL66j9YsRQuq7HgylxPqVrKFYMMbsHJ3d3Lozf5adFUe2n9K6k405pSH6s0jpvffSn
+         ugN4CO5QhwmMtW2DuMpGHwZZ3enw21dYcGCe1imw8m2zo1FkGDU3inQ2j8vocxzJB0n7
+         5k4OWXEA+kx7nej18GWBqV86+Ra51WjAwWVVr0R0ubyqKzdq/Vw8VSP18U7maNWuGE2a
+         gffvob4xMWKB4fRQRok6m0vKde+MmPyFccMsh/juMF7Dy2RlzqxSsHn9qs7Wr21c5ynf
+         Kc1w==
+X-Forwarded-Encrypted: i=1; AJvYcCVm9IYOP9xdWq7OUSk+geSSSmWiCnXUiwLRib6PLj3NJ+dZ7mMP1HXR43GgqiqbQn7Bekr9/stq9xjraBM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHlIyuWW0F/VLQav+QLeu5n5xnGtoEfeIgai8ua5J3I1DvQo3a
+	RpK6nkpDH5rThtSCgOF/uEdzs++B6m4uD9W23MIUO/KrtQKIpK3uxAdSzmEJbc55F6oNNK7UoAr
+	MvUV36A==
+X-Google-Smtp-Source: AGHT+IEY1y9c3Okn3yYddyarlZ6Ym/i6T63/pjjdt4P4J9z2U7i5GwzQfVHKsVapqjsTXkVksPfyo4YHfT4=
+X-Received: from plhy5.prod.google.com ([2002:a17:902:d645:b0:264:d7d1:2748])
+ (user=jthies job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ea0d:b0:267:ba53:8bd3
+ with SMTP id d9443c01a7336-28e9a61a74amr212561785ad.28.1759797646756; Mon, 06
+ Oct 2025 17:40:46 -0700 (PDT)
+Date: Tue,  7 Oct 2025 00:40:43 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251006225039.GA3441843@ziepe.ca>
-X-FB-Internal: Safe
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA3MDAwMyBTYWx0ZWRfX85yYjgHOk2l8
- W2TdfDrMflRQLjcaXmPjL1JaKIb2t0sTfIEwcayJtMuJNCWQ281o5KXF5imHJD+3HGEilVr07rK
- rMbELz0D50EKre9WI2aAPczIXDWEqh9FY+NM+pLft1YqA/vQYK5JhYdXG/VnDLqcI6Kgzf/XPh7
- VuWY5dnU2+t39cOr3sICKSGI66VjbnY2rg19ugHJyGqLEZHSneZvtaiTdGzsvnyc4Kx4RYh19VB
- HFKFeHcAVg53w9aB6zr+067c5qKf6LgO80owjNab7SkQpG7sWG/d8Ux0zp9lT5cQ/xFRUOXkmcN
- 9/cU330xmfE+TpyVCJ1x4qTr1lPMqQ/2fVs1I8UHrYoB3lz2Q7UGLDSZovEclyjzuY1Xm9v+Eo4
- 1erRbM+tsrXJ5+6a6cm8Gxxm9+o0Sw==
-X-Proofpoint-GUID: 0rgpzfj6Mz8_SpM81WynU_eyF5vB950c
-X-Authority-Analysis: v=2.4 cv=Zo3g6t7G c=1 sm=1 tr=0 ts=68e46142 cx=c_pps
- a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=cnzby_Kikf3u7RrYEdwA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: 0rgpzfj6Mz8_SpM81WynU_eyF5vB950c
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-06_07,2025-10-06_01,2025-03-28_01
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
+Message-ID: <20251007004043.4109957-1-jthies@google.com>
+Subject: [PATCH v2] platform/chrome: cros_usbpd_notify: defer probe when
+ parent EC driver isn't ready
+From: Jameson Thies <jthies@google.com>
+To: akuchynski@chromium.org, bleung@chromium.org, abhishekpandit@chromium.org, 
+	tzungbi@kernel.org
+Cc: jthies@google.com, chrome-platform@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 06, 2025 at 07:50:39PM -0300, Jason Gunthorpe wrote:
-> Could we block right at the ioctl inputs that end at ULONG_MAX? Maybe
-> that is a good enough fix?
+The cros-usbpd-notify-acpi probe currently does not exit when it fails
+to get a pointer to the ChromeOS EC device. It is expected behavior on
+older devices, where GOOG0004 is not a parent of GOOG0003.
 
-That would be a simpler, and perhaps less risky fix than surgically fixing every
-affected place.
+Update the cros-usbpd-notify-acpi probe to check for a GOOG0004 parent
+fwnode. If the device has correct device hierarchy and fails to get an
+EC device pointer, defer the probe function.
 
-If we were to do that, I think VFIO_IOMMU_TYPE1_INFO_CAP_IOVA_RANGE should
-report coherent limits -- i.e. it should "lie" and say the last page (or
-whatever) of u64 addressable space is inaccessible so that the UAPI is coherent
-with itself. It should be legal to map/unmap iova ranges up to the limits it
-claims to support.
+Signed-off-by: Jameson Thies <jthies@google.com>
+---
+ drivers/platform/chrome/cros_usbpd_notify.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-I have doubts that anyone actually relies on MAP_DMA-ing such
-end-of-u64-mappings in practice, so perhaps it's OK?
+diff --git a/drivers/platform/chrome/cros_usbpd_notify.c b/drivers/platform/chrome/cros_usbpd_notify.c
+index 313d2bcd577b..c90174360004 100644
+--- a/drivers/platform/chrome/cros_usbpd_notify.c
++++ b/drivers/platform/chrome/cros_usbpd_notify.c
+@@ -6,6 +6,7 @@
+  */
+ 
+ #include <linux/acpi.h>
++#include <linux/fwnode.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/platform_data/cros_ec_proto.h>
+@@ -15,6 +16,7 @@
+ #define DRV_NAME "cros-usbpd-notify"
+ #define DRV_NAME_PLAT_ACPI "cros-usbpd-notify-acpi"
+ #define ACPI_DRV_NAME "GOOG0003"
++#define CREC_DRV_NAME "GOOG0004"
+ 
+ static BLOCKING_NOTIFIER_HEAD(cros_usbpd_notifier_list);
+ 
+@@ -98,8 +100,9 @@ static int cros_usbpd_notify_probe_acpi(struct platform_device *pdev)
+ {
+ 	struct cros_usbpd_notify_data *pdnotify;
+ 	struct device *dev = &pdev->dev;
+-	struct acpi_device *adev;
++	struct acpi_device *adev, *parent_adev;
+ 	struct cros_ec_device *ec_dev;
++	struct fwnode_handle *parent_fwnode;
+ 	acpi_status status;
+ 
+ 	adev = ACPI_COMPANION(dev);
+@@ -114,8 +117,18 @@ static int cros_usbpd_notify_probe_acpi(struct platform_device *pdev)
+ 		/*
+ 		 * We continue even for older devices which don't have the
+ 		 * correct device heirarchy, namely, GOOG0003 is a child
+-		 * of GOOG0004.
++		 * of GOOG0004. If GOOG0003 is a child of GOOG0004 and we
++		 * can't get a pointer to the Chrome EC device, defer the
++		 * probe function.
+ 		 */
++		parent_fwnode = fwnode_get_parent(dev->fwnode);
++		if (parent_fwnode) {
++			parent_adev = to_acpi_device_node(parent_fwnode);
++			if (parent_adev &&
++			    acpi_dev_hid_match(parent_adev, CREC_DRV_NAME)) {
++				return -EPROBE_DEFER;
++			}
++		}
+ 		dev_warn(dev, "Couldn't get Chrome EC device pointer.\n");
+ 	}
+ 
+
+base-commit: 48633acccf38d706d7b368400647bb9db9caf1ae
+-- 
+2.51.0.618.g983fd99d29-goog
+
 
