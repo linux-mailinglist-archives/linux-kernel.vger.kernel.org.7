@@ -1,176 +1,192 @@
-Return-Path: <linux-kernel+bounces-843818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 566E3BC0563
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:30:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B44F5BC056C
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 36FA94F0863
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:30:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD6654F1A65
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED8A223DEC;
-	Tue,  7 Oct 2025 06:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b4njtDHJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A80221FA4;
-	Tue,  7 Oct 2025 06:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9A3219302;
+	Tue,  7 Oct 2025 06:31:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C7D1B2186
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 06:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759818602; cv=none; b=fawAZQ4PQCRZ9IT5wgZf4vUPphWnzcChp9ExcvDGa1xuf/zu40ffXBGiyZx+G00Hx7ZrYPKpgC/mvIfT5cm49oBdAhQ1C47klfPMJdMbi/h6VtvELLHlKSaEWqeHQHZvjvUl22o1YsyoRIxopaZgW9M6RkBLHDPB2Q63mYqBxrw=
+	t=1759818669; cv=none; b=MKmqVI5KzHSWtSA1E964sg6DPs80e0pZsfKU1GFflpRG1v+d/0ksSPHTNA1grWOwE24TgghETFr/b6/rb3XRpanxnrCgqp9Q4uPY4FuM82hRVyMDmU/ANiPs3ca0J0rUgJm0LXJNi7sS5lgKUJuqgLidNl4pbnM6GgZOaXfFk7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759818602; c=relaxed/simple;
-	bh=wZYlzoA9J8+rJqVeCe4Q2o14fIltYpD6LEF2ajXIVss=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cdt6JqnkijXEwV+52r9hbae/IurdFQhvFJ8wnJsTSLd8WUA4LZgIxyJW2NaT3urUUZoud0A5vWi7LQuJb3AaDqeMcaTgXkhuSy1ij86GddXj/2xoLdfzyxPC1nigaL9CymNHUfF6V1vOP5k0U2vaP68rACtv0fMlNKV88cLX1cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b4njtDHJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A778C4CEF1;
-	Tue,  7 Oct 2025 06:29:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759818601;
-	bh=wZYlzoA9J8+rJqVeCe4Q2o14fIltYpD6LEF2ajXIVss=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=b4njtDHJljGx4jj97mh0JBufnl4Z4jFHUt7eUxuxflsca4JW9bg/IVnFROaCE70vM
-	 Zertw3lUvmV1uMR7GUh6v8U49oQIYKPxsoXka2pV5PoiYSvAFVDKN6pYkLCeNR2e7c
-	 W/4hkXl+FApC6ZHisUoQiPQZEiYRrE1ZxkCj9N3GzNaq0LO5F5bBXurrA/jgBbPkQF
-	 6aFY3l5vR7UZyIz90r/+XLiCoOXSrc3p0JgjU2XFPVoe/R68FIk0Y/P0dscyx8CN3V
-	 P8pbTJk0csk0bzuhmVwuBxsqLse5H6O8UG4XBnBpaAqhFDa8IQNMQEZd0DcPQJYKzz
-	 vU2hhXKqnUk4Q==
-Message-ID: <649f8e90-d99b-401a-bb0f-ef0cf9c4fe7f@kernel.org>
-Date: Tue, 7 Oct 2025 15:29:54 +0900
+	s=arc-20240116; t=1759818669; c=relaxed/simple;
+	bh=86mtmsHV9KCOVXlETPaFOszfsui00cGAhiUOBYDW93g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FOtbzAXBUONNhYckzZIeheeOT/oUVZEVx0oibp+ojA1HXK05FHksLg1ocQ9vPN8/oE8mNnvlUw5ZlE5+C0e7hkFlYxR/3ESwNFuCBlQ4baOLKZ9rPM1swwIWLCLWEjoO4SwbxVQkh5uGT09H9AjqLQnMoAjm/mualT8MmqG3my8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E0FF714BF;
+	Mon,  6 Oct 2025 23:30:58 -0700 (PDT)
+Received: from ergosum.cambridge.arm.com (ergosum.cambridge.arm.com [10.1.196.45])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D75343F59E;
+	Mon,  6 Oct 2025 23:31:05 -0700 (PDT)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-mm@kvack.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mm: Replace READ_ONCE() with standard page table accessors
+Date: Tue,  7 Oct 2025 07:31:00 +0100
+Message-Id: <20251007063100.2396936-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] dt-bindings: phy: Add PCIe PHY support for
- ExynosAutov920 SoC
-To: Sanghoon Bae <sh86.bae@samsung.com>, robh@kernel.org,
- conor+dt@kernel.org, vkoul@kernel.org, alim.akhtar@samsung.com,
- kishon@kernel.org, m.szyprowski@samsung.com, jh80.chung@samsung.com,
- shradha.t@samsung.com
-Cc: krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-References: <20250926073921.1000866-1-sh86.bae@samsung.com>
- <CGME20250926074017epcas2p18fb2fc616b92dc04ad9e018151c2ba29@epcas2p1.samsung.com>
- <20250926073921.1000866-3-sh86.bae@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250926073921.1000866-3-sh86.bae@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 26/09/2025 16:39, Sanghoon Bae wrote:
-> Since the Exynosautov920 SoC uses the Samsung PCIe PHY, add support
-> for it in the Exynosautov920 PCIe PHY bindings.
-> 
-> The Exynosautov920 SoC includes two PHY instances: one for a 4-lane PHY
-> and another for a 2-lane PHY. Each PHY can be used by separate
-> controllers through the bifurcation option. Therefore, from 2 up to 4
-> PCIe controllers can be supported and connected with this PHY driver.
+Replace all READ_ONCE() with a standard page table accessors i.e pxdp_get()
+that defaults into READ_ONCE() in cases where platform does not override.
 
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+---
+ mm/gup.c            | 10 +++++-----
+ mm/hmm.c            |  2 +-
+ mm/memory.c         |  4 ++--
+ mm/mprotect.c       |  2 +-
+ mm/sparse-vmemmap.c |  2 +-
+ mm/vmscan.c         |  2 +-
+ 6 files changed, 11 insertions(+), 11 deletions(-)
 
-Describe hardware, not driver.
+diff --git a/mm/gup.c b/mm/gup.c
+index 0bc4d140fc07..37e2af5ed96d 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -964,7 +964,7 @@ static struct page *follow_pud_mask(struct vm_area_struct *vma,
+ 	struct mm_struct *mm = vma->vm_mm;
+ 
+ 	pudp = pud_offset(p4dp, address);
+-	pud = READ_ONCE(*pudp);
++	pud = pudp_get(pudp);
+ 	if (!pud_present(pud))
+ 		return no_page_table(vma, flags, address);
+ 	if (pud_leaf(pud)) {
+@@ -989,7 +989,7 @@ static struct page *follow_p4d_mask(struct vm_area_struct *vma,
+ 	p4d_t *p4dp, p4d;
+ 
+ 	p4dp = p4d_offset(pgdp, address);
+-	p4d = READ_ONCE(*p4dp);
++	p4d = p4dp_get(p4dp);
+ 	BUILD_BUG_ON(p4d_leaf(p4d));
+ 
+ 	if (!p4d_present(p4d) || p4d_bad(p4d))
+@@ -3080,7 +3080,7 @@ static int gup_fast_pud_range(p4d_t *p4dp, p4d_t p4d, unsigned long addr,
+ 
+ 	pudp = pud_offset_lockless(p4dp, p4d, addr);
+ 	do {
+-		pud_t pud = READ_ONCE(*pudp);
++		pud_t pud = pudp_get(pudp);
+ 
+ 		next = pud_addr_end(addr, end);
+ 		if (unlikely(!pud_present(pud)))
+@@ -3106,7 +3106,7 @@ static int gup_fast_p4d_range(pgd_t *pgdp, pgd_t pgd, unsigned long addr,
+ 
+ 	p4dp = p4d_offset_lockless(pgdp, pgd, addr);
+ 	do {
+-		p4d_t p4d = READ_ONCE(*p4dp);
++		p4d_t p4d = p4dp_get(p4dp);
+ 
+ 		next = p4d_addr_end(addr, end);
+ 		if (!p4d_present(p4d))
+@@ -3128,7 +3128,7 @@ static void gup_fast_pgd_range(unsigned long addr, unsigned long end,
+ 
+ 	pgdp = pgd_offset(current->mm, addr);
+ 	do {
+-		pgd_t pgd = READ_ONCE(*pgdp);
++		pgd_t pgd = pgdp_get(pgdp);
+ 
+ 		next = pgd_addr_end(addr, end);
+ 		if (pgd_none(pgd))
+diff --git a/mm/hmm.c b/mm/hmm.c
+index d545e2494994..126c3f42e525 100644
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -431,7 +431,7 @@ static int hmm_vma_walk_pud(pud_t *pudp, unsigned long start, unsigned long end,
+ 	/* Normally we don't want to split the huge page */
+ 	walk->action = ACTION_CONTINUE;
+ 
+-	pud = READ_ONCE(*pudp);
++	pud = pudp_get(pudp);
+ 	if (!pud_present(pud)) {
+ 		spin_unlock(ptl);
+ 		return hmm_vma_walk_hole(start, end, -1, walk);
+diff --git a/mm/memory.c b/mm/memory.c
+index 0ba4f6b71847..50f841ee6e84 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -6549,12 +6549,12 @@ int follow_pfnmap_start(struct follow_pfnmap_args *args)
+ 		goto out;
+ 
+ 	p4dp = p4d_offset(pgdp, address);
+-	p4d = READ_ONCE(*p4dp);
++	p4d = p4dp_get(p4dp);
+ 	if (p4d_none(p4d) || unlikely(p4d_bad(p4d)))
+ 		goto out;
+ 
+ 	pudp = pud_offset(p4dp, address);
+-	pud = READ_ONCE(*pudp);
++	pud = pudp_get(pudp);
+ 	if (pud_none(pud))
+ 		goto out;
+ 	if (pud_leaf(pud)) {
+diff --git a/mm/mprotect.c b/mm/mprotect.c
+index 113b48985834..988c366137d5 100644
+--- a/mm/mprotect.c
++++ b/mm/mprotect.c
+@@ -599,7 +599,7 @@ static inline long change_pud_range(struct mmu_gather *tlb,
+ 			break;
+ 		}
+ 
+-		pud = READ_ONCE(*pudp);
++		pud = pudp_get(pudp);
+ 		if (pud_none(pud))
+ 			continue;
+ 
+diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
+index dbd8daccade2..37522d6cb398 100644
+--- a/mm/sparse-vmemmap.c
++++ b/mm/sparse-vmemmap.c
+@@ -439,7 +439,7 @@ int __meminit vmemmap_populate_hugepages(unsigned long start, unsigned long end,
+ 			return -ENOMEM;
+ 
+ 		pmd = pmd_offset(pud, addr);
+-		if (pmd_none(READ_ONCE(*pmd))) {
++		if (pmd_none(pmdp_get(pmd))) {
+ 			void *p;
+ 
+ 			p = vmemmap_alloc_block_buf(PMD_SIZE, node, altmap);
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 674999999cd0..14c2722b955b 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -3772,7 +3772,7 @@ static int walk_pud_range(p4d_t *p4d, unsigned long start, unsigned long end,
+ 	pud = pud_offset(p4d, start & P4D_MASK);
+ restart:
+ 	for (i = pud_index(start), addr = start; addr != end; i++, addr = next) {
+-		pud_t val = READ_ONCE(pud[i]);
++		pud_t val = pudp_get(pud + i);
+ 
+ 		next = pud_addr_end(addr, end);
+ 
+-- 
+2.30.2
 
-> 
-> PCIe lane number is used to distinguish each PHY instance.
-> This is required since two PHY instances on ExynosAutov920 is not
-> identical.
-> On PHY driver code, need to check each instance and different settings.
-
-
-Describe hardware, not driver.
-
-> 
-> Signed-off-by: Sanghoon Bae <sh86.bae@samsung.com>
-> ---
->  .../bindings/phy/samsung,exynos-pcie-phy.yaml      | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
-> index 6295472696db..1e8b88d2cd56 100644
-> --- a/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
-> @@ -19,6 +19,7 @@ properties:
->        - samsung,exynos5433-pcie-phy
->        - tesla,fsd-pcie-phy0
->        - tesla,fsd-pcie-phy1
-> +      - samsung,exynosautov920-pcie-phy
-
-Messed order.
-
->  
->    reg:
->      minItems: 1
-> @@ -34,6 +35,10 @@ properties:
->      description: phandle for FSYS sysreg interface, used to control
->                   sysreg registers bits for PCIe PHY
->  
-> +  num-lanes:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [2, 4]
-> +
->  allOf:
->    - if:
->        properties:
-> @@ -42,6 +47,7 @@ allOf:
->              enum:
->                - tesla,fsd-pcie-phy0
->                - tesla,fsd-pcie-phy1
-> +              - samsung,exynosautov920-pcie-phy
-
-Messed order.
-
-Best regards,
-Krzysztof
 
