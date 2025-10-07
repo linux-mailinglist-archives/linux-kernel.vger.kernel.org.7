@@ -1,105 +1,104 @@
-Return-Path: <linux-kernel+bounces-843710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB1DBC00C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 04:54:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC925BC00CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 04:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 849743BE817
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 02:54:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 90C444E1FE6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 02:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412091F4C8B;
-	Tue,  7 Oct 2025 02:54:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8594F1F4CB3;
+	Tue,  7 Oct 2025 02:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="MhAJLGcu"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="hPlVM721"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8776A34BA3A;
-	Tue,  7 Oct 2025 02:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820DC1662E7
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 02:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759805692; cv=none; b=peRcYAZK1yZpiTVSdQevvmBbFdcdUObW1lfnX91RytyjePecaqEEGIJY++7z62KqH0wEuPg0aLkO86ou/C18+XNWm+ksr9j4EvUUbj1cjhy9KyHkg6+n+T03RpYiKUA7qURH/8eh/TpaJSuWSowvnlzYy2UoPeFvEYV9c87V6Wo=
+	t=1759805779; cv=none; b=A2FaSH93zWSAT/kf/L5wyb04TBFPPj22ZW1lbWscJl6VN9GKdBW/NeDqVd0uDzXrsHVmRe5hUK0BDPT1nis8wmXdvGswtiw4ir1gGQcALlOrE3gAMUeBAovPKV5TxJha7pCLA9/xTi+wc0gEYtbkNBPTtY8HjR7RAUXbS3SgHQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759805692; c=relaxed/simple;
-	bh=WcJXy/2FJ2h1H8JMNa6Dwt5GuKlmnshTmL15oQl7wjM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=I96AGtcPBsZPJzLh02zHHSlj/LLoVS2IAVSXY1A09rHKanIf46STu34tZjUty69UULn5LEB4cZRZt2nqazEHFDnY4OmIJzfgvwGx5nPch6u7rIWPH8QKyIu9M+9sY+MeH3fIdm0jl1dcE2K9XElF7MTq3FLumCsfmwNk9kkxJPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=MhAJLGcu; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 5972sYHg93416320, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1759805674; bh=LFm4O1fTLwWRWovV73MhrJLgzlPTFNPdGzXUNQeEKq8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=MhAJLGcuhZLtL8D3uv8ThdM/mxqKTstbtl2JP1pRhqo87EZuv9PPCMPhm2mTixDNV
-	 mgDabBGTwmAQcgUPhz/PfZqgM+MAVRT/i3d28WEv9+emgKNrlqI/Cg75raAmhwIYNr
-	 94K8h8SpeB79z/gYC9HhEBkw5Wa2SJF5lVFvzjQ2z3oLLoQA8mCXqCie0/qf8WpF3J
-	 k1EG9LzMqudM4LSMSCWD2ZKz4Ty3LeLLMfqQjfZxLcsL2uah85o2wkgZL3ao4a37Vp
-	 hqATDLLWPPMnI6bKcFOpwkvbPCY6xgGIsEB3e6HEXTlkB5zE30WHvSqZAPSjr4wT08
-	 L5Qb4blteYpQQ==
-Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 5972sYHg93416320
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 7 Oct 2025 10:54:34 +0800
-Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
- RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Tue, 7 Oct 2025 10:54:34 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS05.realtek.com.tw (10.21.1.55) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Tue, 7 Oct 2025 10:54:34 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090%10]) with mapi id
- 15.02.1544.027; Tue, 7 Oct 2025 10:54:34 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Fedor Pchelkin <pchelkin@ispras.ru>,
-        Bitterblue Smith
-	<rtl8821cerfe2@gmail.com>
-CC: Zong-Zhe Yang <kevin_yang@realtek.com>,
-        Bernie Huang
-	<phhuang@realtek.com>,
-        "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "lvc-project@linuxtesting.org"
-	<lvc-project@linuxtesting.org>
-Subject: RE: [PATCH rtw-next v2 4/7] wifi: rtw89: refine rtw89_core_tx_wait_complete()
-Thread-Topic: [PATCH rtw-next v2 4/7] wifi: rtw89: refine
- rtw89_core_tx_wait_complete()
-Thread-Index: AQHcM9iSxli3kaZlWUiko8DF/FrRYLS2A6GA
-Date: Tue, 7 Oct 2025 02:54:34 +0000
-Message-ID: <a26ecaf61a5d4c16aa7fb23b80cdaa79@realtek.com>
-References: <20251002200857.657747-1-pchelkin@ispras.ru>
- <20251002200857.657747-5-pchelkin@ispras.ru>
-In-Reply-To: <20251002200857.657747-5-pchelkin@ispras.ru>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1759805779; c=relaxed/simple;
+	bh=fuFAPKshWl//JiXRjMB35HbsTIfb2+26+cuu4EjKaKg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WQiW5MPvKK9AAcvF19Ln3bZkHL8HpZbOuIerL9a9lPPO8PADytmZeQie5N90muEGdPV0J7aDm9BBj0arR5FFdReAwfcBT38lxnOU08vivZ9uoE8vcKjUBZfgt+eXATQ9WyXVjHu4CgzZ/koKWU0U4uM6TWe/uOyRwOfJ/aw9+qE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=hPlVM721; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-77f947312a5so47674137b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 19:56:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tenstorrent.com; s=google; t=1759805777; x=1760410577; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fuFAPKshWl//JiXRjMB35HbsTIfb2+26+cuu4EjKaKg=;
+        b=hPlVM721TgeVjFwhVnKlXC1zv/TXS90X2HqbyhPOvSdpDAAsOASRBYlTJh8zJPd2gg
+         WZ8pe+JCtfzQACzcUjTidy91Vn/3XxL20lqPcaz1hbgqs8u8ymg7TbIci4ny7EZa4ZDK
+         zvTNUmfYDdf80yPUKoLkLC/F3h7PPLOBxJiaGQrXlqCfw6z8/C03zWqt7XM4TmrKrQlj
+         Xv7WzNHHYm8Tc9P7H5sysTLAic+k6ewQAfj/PdLjRHh9ZW7V1nmH6VMn+zqja0lceV/g
+         7m+U8dCaCKX5+sQcaqgx4YT1S5pw/KoxAcTNmseUdm8QjVv0hCY1V+aXT8t8v4UmTpYg
+         Xd3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759805777; x=1760410577;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fuFAPKshWl//JiXRjMB35HbsTIfb2+26+cuu4EjKaKg=;
+        b=gACo1fopxJfKi3YxoAwxKLKLCC2Z+5Ly9wEkhs2CALAfJwVQSXL4qJk5SzxCVvQ0MG
+         hEmo3ZLl0X9dmw2HnTFUETZrFefRUbl7zCKLpdDm4Tyk/F3hjgplnXRqiIUGuHalaWml
+         BjZW7cdsKBOXyJQEKGXCmNx1A2kcY+vBzJ9FbuJvWW8HHY3jobNUhaEOD/pfEtbAAkTL
+         xnjxzvEKunep75F31m9ez6KubCW7MP8tsi1+8xSy3wSQhaicExHIDjp5JP9defwChuPv
+         n0OxhgcTKOSAj5T7W2ukWx6+nsYRMsxCl7MbeTVnAG/JP4j1JCEOlkEhmF0poxGj4aKS
+         o+lA==
+X-Forwarded-Encrypted: i=1; AJvYcCVw4AZDYK8l2QAkbkkMhTUi9/aIK4oJ+Eefe5uOs4aq9onEQYYuoOJeVccCRLZyObPU65NU2q0Muz+iGAg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXutTZLYfZvCkaZCsDFOzLW06UNGGhDpVz/WZ5CuJOgJB1kPTQ
+	b5nKOzaOK9T2RTHo/f0y+P7d3fhFeR0lB2533rFvMdz+4qSorqPsQm6bZvCZ5YYpIpyvyt41JaC
+	Om+QQi7LCs2KHpGhM8XXRC5AjlK3BeLB0ku+/R8+Blg==
+X-Gm-Gg: ASbGncv4a6HG4VUFSYF7Go/WBmodGTCUeOBXbHp6xEDL+CZ8PwUDnNE8V0no5TaISws
+	iU52B6nnFoIQHGER611LAGgJ+xlqLiyJrF/9EjARwAA1PJmKVx2Y+8YMum/wE2cBCJp74b8gGq8
+	2bB17K09UCr8GnEc7Y6R62CMrOYx8BS9ZgM+XZGUWy9o1v8FCVDk908uS18dzPkLey6qGt4+Kks
+	+xEGjM3XKf95Tkj9GCS+EUWk59u0z4=
+X-Google-Smtp-Source: AGHT+IGiL5ZbUyw4GIm1wEiPzbvi0bFG0G6zf6Qg7uBuzVV7lluUj++swICMyX/mIRT04h7owb9dsBoqFDjT19u1Wdo=
+X-Received: by 2002:a53:a090:0:b0:635:4ecd:75a5 with SMTP id
+ 956f58d0204a3-63b9a107b85mr10946438d50.51.1759805777473; Mon, 06 Oct 2025
+ 19:56:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251006-tt-bh-dts-v2-0-ed90dc4b3e22@oss.tenstorrent.com>
+ <20251006-tt-bh-dts-v2-6-ed90dc4b3e22@oss.tenstorrent.com> <a05be32b-dc8f-444f-8c1c-2d49eb19536d@kernel.org>
+In-Reply-To: <a05be32b-dc8f-444f-8c1c-2d49eb19536d@kernel.org>
+From: Joel Stanley <jms@tenstorrent.com>
+Date: Tue, 7 Oct 2025 13:26:01 +1030
+X-Gm-Features: AS18NWDhncaNX_AgRBWrUJDmiFjfXWDY84NNzl_Nu5rdMYVHwC56fOAaV3Fa3Jw
+Message-ID: <CAM3sHeBweq285Mwqzwd7no3zwzoosRgsHkunnVkYSgHyh37eAw@mail.gmail.com>
+Subject: Re: [PATCH v2 6/8] riscv: dts: Add Tenstorrent Blackhole SoC PCIe cards
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Drew Fustini <fustini@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Samuel Holland <samuel.holland@sifive.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Anup Patel <anup@brainfault.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Joel Stanley <joel@jms.id.au>, Michael Neuling <mikey@neuling.org>, Nicholas Piggin <npiggin@gmail.com>, 
+	Michael Ellerman <mpe@kernel.org>, Andy Gross <agross@kernel.org>, 
+	Anirudh Srinivasan <asrinivasan@tenstorrent.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	Drew Fustini <dfustini@oss.tenstorrent.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Fedor Pchelkin <pchelkin@ispras.ru> wrote:
-> Pass TX status value directly into rtw89_core_tx_wait_complete().  This
-> will make it a bit in sync with further patches and will give flexibility
-> in future work.  Also use scope based RCU locking which simplifies the
-> code of the function.
->=20
-> Found by Linux Verification Center (linuxtesting.org).
->=20
-> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+On Tue, 7 Oct 2025 at 11:50, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> You should have at least serial or any other interface, otherwise I
+> don't see how this can be used at this stage.
 
-Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+If you read the cover letter it explains how it is used:
 
-
+ > The HVC SBI console is sufficient for boot testing.
 
