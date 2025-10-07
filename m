@@ -1,191 +1,162 @@
-Return-Path: <linux-kernel+bounces-844560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94141BC237E
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 19:10:13 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C8EEBC21EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:33:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EEB09350467
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 17:10:12 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BDDA3343C54
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A022E8B63;
-	Tue,  7 Oct 2025 17:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029E32DCBEB;
+	Tue,  7 Oct 2025 16:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="GGylM106"
-Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nKIKNQd/"
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012055.outbound.protection.outlook.com [40.107.200.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6791D2E62C6
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 17:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759857005; cv=none; b=nlmhGj2DIHxoCOhTtJ65eMKrdXEBs3D2ToMmKlfvbQXNGzA3L6bW1uEYmIoBZlIupMBnZ+OLyHE/DLEylwnQlZLs0uJrMf31tRZjNmPJOL7+RxIGizTcAw6nnv5DqqSivWb1bIU/M0PAxd5JOYol1CouKNubJ+IuE9KgMlriDJc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759857005; c=relaxed/simple;
-	bh=9CQDlGqQ1DeJCXfUip7WzPyujBvcKpQy7usX8ZZkk9I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RCpv7LcpmTkSHGslykmmwKzK+pdKk0wjNaHwAeT0L2o0kgWXTYrfi0r604fFVE3DrM/r2o1EN5eRLjiOzGlADLtAg3RZ21NwKuhJzEwufdGjjhz8PC/wq7GgALPVf58VZY3czAibuzKJDPRs9ZruRXC/Q+fngPC3Rlc9qxsoukU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=GGylM106; arc=none smtp.client-ip=148.163.143.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0148664.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 597F3tfO027793;
-	Tue, 7 Oct 2025 16:32:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
-	:content-type:date:from:message-id:mime-version:subject:to; s=
-	pps0720; bh=GyF4IwNNpoGh8pEPZkEQDFJ/EFxR2l4JrgBJLxoZfJk=; b=GGyl
-	M106XUPfFipua4w/wxf7+ELIL+nv10tIFlkVKFXOHKv8pW+xI6/J7VXVb0uEno7V
-	tP+oYY94xGePT2KMBwtKgQf/BcgBbMX5qNmluK5Wffu1mks2X9mvY3iHQz4LOztc
-	FWTIi/2ajDQAzC05Z68LcnnlX8ODa23ih9Sox55UF68TdvIf66jkn0XXh8i1deYI
-	AJuKi1ElJBjMCm5Z0KcuEVCX52gc2iXDvXqRFSoohwIuU4YcgInoO/sE6/WFPBJv
-	yHBEmc7HgiiN87oqNW/sw5j0i92g491gCo7IpWWk5aEeJ30ochIEp+S4Cm45WR51
-	yL4ReD/CgQfu5xq44Q==
-Received: from p1lg14881.it.hpe.com (p1lg14881.it.hpe.com [16.230.97.202])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 49n55w0t5s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 Oct 2025 16:32:31 +0000 (GMT)
-Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14881.it.hpe.com (Postfix) with ESMTPS id 7870B8059E2;
-	Tue,  7 Oct 2025 16:32:24 +0000 (UTC)
-Received: from hpe.com (unknown [16.231.227.36])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTPS id 077F3811A79;
-	Tue,  7 Oct 2025 16:32:19 +0000 (UTC)
-Date: Tue, 7 Oct 2025 11:32:17 -0500
-From: Dimitri Sivanich <sivanich@hpe.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Jiri Wiesner <jwiesner@suse.de>, Steve Wahl <steve.wahl@hpe.com>,
-        Justin Ernst <justin.ernst@hpe.com>, Kyle Meyer <kyle.meyer@hpe.com>,
-        Russ Anderson <russ.anderson@hpe.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-        Marco Elver <elver@google.com>,
-        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        Nikunj A Dadhania <nikunj@amd.com>, "Xin Li (Intel)" <xin@zytor.com>,
-        Dimitri Sivanich <dimitri.sivanich@hpe.com>
-Subject: [PATCH v3] x86/tsc: Disable clocksource watchdog for TSC on recent UV
-Message-ID: <aOVAkYWjk+aWcM3F@hpe.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B3E1E521B
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759854778; cv=fail; b=L33PaSmhVDCvZ5anPaXyravT11NDCM5V/udHvlVK+Nb10CB/foJ4oImHUj1FIVS74joHq8jts4iIHa5iTA6TRNaF9WiiHVDxUGYKm08dQMy6n35wp078b+H4+7GKBB9EIhuX+ddb4/exAxePd2Mdk6r9i7wg/GDvo3/ZExx1vQw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759854778; c=relaxed/simple;
+	bh=KEzw6VQUyy3fwyHAuP6fgJylQnVvDGFByQgeZcpq0zY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zu914eZAA81y0HL3GmGTr3Ym73PdDxFG5M1RGJggsw/cSGF0B/eEKMadPeCm8ecdft0mpdCDmIQs7U3Ogg+mtj/jSBwAs5uqdL/KlZ2X+/tkeFazmIlQFStpoRBKOwCRyM3pgVNDFmBZlmdhfcJlR7Tl+JlcP9dpsZLViPMR/Pw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nKIKNQd/; arc=fail smtp.client-ip=40.107.200.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qCnRi4kNj8DjZBO5TqsAsYPkHZ63EKrTZxeViSSICLjel/s/camvPBY0jWsYkDASAD8h8tBPZJRxQjo8NQ5/bDqeNsmpvz1sB1aYbwNkZWyXOGPew00o3XAgcUWCniKYBSBVui59cLJ3TzS7DJ3iAzOG6+nD+NY7ptv1siDp0d3h7XdFv2nHqMpo4yk9I3XNdQLwsSpStzUWisPZC8QuGCdhyZPbivzBVIvhwz0cJYGyNamhVsu0MuXq+IdASSKnt7nfQ6EhV4JG2s+e0EkWZBu+TepNNJPDWHZ9s4EoL0HD4MI3Wnmoh/IxybJ16FccQ+EqGBExSveHCGJmNpXkrA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KEzw6VQUyy3fwyHAuP6fgJylQnVvDGFByQgeZcpq0zY=;
+ b=wIw1Czm49prMHVerKYrvgqduq7NLDpS/X+P2f2KW5OqUFTO4lWBXqrJccvJdiRD+cdMFxkibdpuIWW0XYi0CPUPVql9ozdR7lCYocgcQ53gfMbVIruImGIMirz/GNL3DmT2vqyIm1jJZDz/jPGuONOApcQiNcbzjjZ7Ph1HA3ebybKmPKAMfTf9dkS/qixTx97tbUCvUTGwB0RoFsB2Efqgjr+fOroaFLHDxo9gDZxTy4dEm4wnCedc2GOeDkIx7w7c+mLJVdEjizH/WCc3AYeVROCfbqoCEojpVJU5nxvwawXljFrrmhBHNmnlAzV3hcGv4fa29UCNEjW37cg7mDA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=linux.microsoft.com
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KEzw6VQUyy3fwyHAuP6fgJylQnVvDGFByQgeZcpq0zY=;
+ b=nKIKNQd/XsAxg/L3TBrDqicE37iFCh/UBP82ErG2xMSVL6INtSv4kHecWMeEBshKcgWbT8T/cY+rSUYRjA+d78dCoplF8+YuttOMARoQ7q1cb7ykpKdrAordLlruMDFiDBxSkRifWjNNtlcZgrNmqWyMudBgu/XiLHvzLQhspPfBZ2e2LXBQ9m50Dgo5PhkDHmzhEMrwYYIITTOoo33Vzl2+62B1uR3+ETPPRFxjFQeGefuvQBqj2XdLQywBtbnZPWsuzzi6OTbueam+chSGkwcIm2TynbYRwiqP9W2nFaxi2LiQDqVVlaG0LpsWYuTkK3aUT9lzRwntql9wPNOGYQ==
+Received: from SN6PR05CA0018.namprd05.prod.outlook.com (2603:10b6:805:de::31)
+ by IA0PR12MB8374.namprd12.prod.outlook.com (2603:10b6:208:40e::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Tue, 7 Oct
+ 2025 16:32:50 +0000
+Received: from SN1PEPF00036F42.namprd05.prod.outlook.com
+ (2603:10b6:805:de:cafe::bc) by SN6PR05CA0018.outlook.office365.com
+ (2603:10b6:805:de::31) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.9 via Frontend Transport; Tue, 7
+ Oct 2025 16:32:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SN1PEPF00036F42.mail.protection.outlook.com (10.167.248.26) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9203.9 via Frontend Transport; Tue, 7 Oct 2025 16:32:49 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 7 Oct
+ 2025 09:32:38 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Tue, 7 Oct 2025 09:32:38 -0700
+Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.126.190.182)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 7 Oct 2025 09:32:38 -0700
+Date: Tue, 7 Oct 2025 09:32:36 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jacob Pan <jacob.pan@linux.microsoft.com>
+CC: <linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, Will Deacon <will@kernel.org>, Jason Gunthorpe
+	<jgg@nvidia.com>, Robin Murphy <robin.murphy@arm.com>, Zhang Yu
+	<zhangyu1@linux.microsoft.com>, Jean Philippe-Brucker
+	<jean-philippe@linaro.org>, Alexander Grest <Alexander.Grest@microsoft.com>
+Subject: Re: [PATCH 1/2] iommu/arm-smmu-v3: Fix CMDQ timeout warning
+Message-ID: <aOVApKmiaaqWp89A@Asurada-Nvidia>
+References: <20250924175438.7450-1-jacob.pan@linux.microsoft.com>
+ <20250924175438.7450-2-jacob.pan@linux.microsoft.com>
+ <aORieLYckU9YLdVF@nvidia.com>
+ <20251007091220.00003a44@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-X-Proofpoint-GUID: rfve1WSySip-0_F_qWfLdWRUaVZAfR5d
-X-Authority-Analysis: v=2.4 cv=LpufC3dc c=1 sm=1 tr=0 ts=68e5409f cx=c_pps
- a=FAnPgvRYq/vnBSvlTDCQOQ==:117 a=FAnPgvRYq/vnBSvlTDCQOQ==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=MvuuwTCpAAAA:8 a=yP0fn3opPpjc5lNOb08A:9
- a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA3MDExOCBTYWx0ZWRfX+R+aIrXb6F2t
- KyHjdmzdCChTzSgfdC4/PVOqR8kAkJaN5R2tqplYdbWtSq/UGOhWaEdfH01/vPLaIFETpU/ns2/
- Nc/kqPH7am8lg1MP4zEnLSXtMPMyA45zlOL1YEcnkdZRS1M6XAztHYEVaiAjbzqLNgeCO+VX8Sh
- SHGg5qmuEhoCvJE+I8uT22O04ZaFI/pp0VIITzx4uVrliWYNjRKlyZn1ceFYXauD0Floul5kscZ
- KpPREn63MUHVWCBGkM4Kt+vq7l4pdFzFQAd9mbcfKX1oQcdkAOp9ztInJuP3oyLRBjao9SZ2bTr
- r+fdhWMVAlh2nAcB7C7eB8/Qox0RrIYPWkwcMrYrvVq3RLVf/iBYNXSuE1a1rtXw/mFOntNNM5h
- AQbA/oQV20VS6Dv6RN5SAxxPcW/2Zw==
-X-Proofpoint-ORIG-GUID: rfve1WSySip-0_F_qWfLdWRUaVZAfR5d
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-07_02,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1011 impostorscore=0 priorityscore=1501
- malwarescore=0 adultscore=0 lowpriorityscore=0 phishscore=0 bulkscore=0
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2510070118
+In-Reply-To: <20251007091220.00003a44@linux.microsoft.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF00036F42:EE_|IA0PR12MB8374:EE_
+X-MS-Office365-Filtering-Correlation-Id: eb97e74c-b331-4a9d-9c32-08de05bf27a8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?MIF5czATQvv2qrutK3TR839jQ9TdWKdISIbeW0UF2fBipxRI9ipDo4SG9C6g?=
+ =?us-ascii?Q?VQ2TWqGW+WHK/pupR/ZbIWgUV7JopN9Md1tpJUcgW24pSm+VGJ8wtEFNsvuX?=
+ =?us-ascii?Q?pdpM27DeSS5G6ugO32nJiDmNp2wCZsolCWy8a69zkt4iax8f0ST124tRvMbC?=
+ =?us-ascii?Q?hni/hsP4ZfLXV1zuPvdI9NNnoB7A7+Ih5xUPy8ClNZssz162KbbXyLUgq9wq?=
+ =?us-ascii?Q?4hx6njjkBSItrtzFGsZeAIXX9+8YstAz+pSct5Pp4lpmX1gWwupzr58GGGvQ?=
+ =?us-ascii?Q?guz37G/EsjTeNxkEfeUqIA97+V+TGL21fmo7iQRyUawyF/yeLeqVZ9qFyDLo?=
+ =?us-ascii?Q?wG5uz10vBNp6nwkxb+J42doSil7XERLSz+JhFyqBZ5kcC7Cq85QOEvuB1iFk?=
+ =?us-ascii?Q?7ZwJjQeXYGO4lyaiN2cWSjwEDQyGzmHQ5h1UNu042ZTJw6vK+uHvHRDnZ5nY?=
+ =?us-ascii?Q?0KS+hEUIU7vy/6cghQU+O10+ve9HmQG/He5Vorry32EeJzGE7VAc3eksQts6?=
+ =?us-ascii?Q?GjA3ZPVbEcr2y7IvjkqLa4b5iUuwlG2wtwwAL3xOVVsKhQtnr42bqdIymBZQ?=
+ =?us-ascii?Q?YTyoUQEgAv5LvKDeq9i6uHBYBnnkQT3dZNU78FI0sf18zJrpdzURSJ0Qvve7?=
+ =?us-ascii?Q?C1F98fbaBvZZaHVij7eiQ2ms6TdolKD+wyIRPRv+Pqu84RQflVMlfeDJuSsh?=
+ =?us-ascii?Q?MgtgoCxAoHFI5QJ/8b7H3UdxP3CItpaL2D4fpHz09mvI9woA8eN9awHjUSwu?=
+ =?us-ascii?Q?TMteEnibFK3lCYFwVqbXAbIXsKYKWjO9VP+MyMlnto3hUxDEdtEUuQRCbtbg?=
+ =?us-ascii?Q?gO0+qJYIxyNV13fi9Snf+8odEHz/KuqmhTxi3styI/H9LwOCmZWohI3UsH48?=
+ =?us-ascii?Q?AsSQbar+pE/2w0FV/HMGjRGfREuMygKqer3gC+7WGjd6icLBoGhON0DWTgRX?=
+ =?us-ascii?Q?HtVNbY5/zF0o6hnfp8shL99zieC1q4op8dQMxFmT6da2FEdm5hJBGIMYUd8P?=
+ =?us-ascii?Q?PFhmoDgbmZZW6C07d7l6n/Gl+KGvydEVyvKWsXUV9mzSt+qwFn8LOZ+Bz6rv?=
+ =?us-ascii?Q?9wyI9CHdgNkjfoehm6Dn/vszBC6UeRWK2LpK+KScxbK0SYtFfHejIoXUnt5R?=
+ =?us-ascii?Q?lQOOh4vtmof1zD7TdQNxuTCisi04eY6AF3Clmj1H0xlrW/PEMnuG9nVxER9a?=
+ =?us-ascii?Q?cVJ1hb3IbdGCI19FQ/nGr4hbVo7R7K/68F+WZx093CVVe+uGh7K0UTjD/vvW?=
+ =?us-ascii?Q?i4HTUxGXZWB4zEIi3L1Pr1CynvVi+VbC6k7EBJErn1ssSmwXtgKVPJ0IqaZA?=
+ =?us-ascii?Q?5NpsWpNJXbEbN97q5CCQ/DtHb1LS7ROa8p9uXYFRRWTte1EyTg9M+mRFioWy?=
+ =?us-ascii?Q?RmOg7Lsu3201YP0A+J/w0+/f2wGW1N0GddzQEiqjg77dHx4FGZwna8ZZbAHj?=
+ =?us-ascii?Q?3OfmQMMLt08TdVaGpQQ7Zbdsn4KMaE5sPbvu+oZsykfTBN/9wb9qGHbLQE0E?=
+ =?us-ascii?Q?Sua8QU0HcB77PQANx/Nw5Q69q3/6S1lS5AB8vNDPrSSCMRIdLVik/k7lWz3d?=
+ =?us-ascii?Q?yVpXtjgtRHZXD9N9pKc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2025 16:32:49.4167
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: eb97e74c-b331-4a9d-9c32-08de05bf27a8
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF00036F42.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8374
 
-Disable clocksource watchdog checking on recent and future UV platforms
-to avoid false positives.
+On Tue, Oct 07, 2025 at 09:12:20AM -0700, Jacob Pan wrote:
+> But I am not following what you mean by "replacing
+> arm_smmu_cmdq_exclusive_unlock_irqrestore()", could you elaborate?
 
-Commits 'b50db7095fe0 ("x86/tsc: Disable clocksource watchdog for TSC on
-qualified platforms")' and '233756a640be ("Extend watchdog check exemption
-to 4-Sockets platform")' were introduced to avoid an issue where the TSC
-is falsely declared unstable by exempting qualified platforms of up to
-4-sockets from TSC clocksource watchdog checking.  Extend that exemption
-to include recent and future UV platforms.
+Oh, "replacing arm_smmu_cmdq_poll_until_not_full()" I meant.
 
-Signed-off-by: Dimitri Sivanich <sivanich@hpe.com>
----
-
-Version 3:  Fixes a build error in the X86 32-bit build.
-
-Version 2:  Fixes a build error that occurs when UV is not configured.
-
- arch/x86/include/asm/uv/uv.h     | 3 +++
- arch/x86/include/asm/uv/uv_hub.h | 2 ++
- arch/x86/kernel/tsc.c            | 3 ++-
- 3 files changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/uv/uv.h b/arch/x86/include/asm/uv/uv.h
-index 648eb23fe7f0..f1aebdf85e68 100644
---- a/arch/x86/include/asm/uv/uv.h
-+++ b/arch/x86/include/asm/uv/uv.h
-@@ -38,6 +38,9 @@ static inline int is_uv_system(void)	{ return 0; }
- static inline int is_uv_hubbed(int uv)	{ return 0; }
- static inline void uv_cpu_init(void)	{ }
- static inline void uv_system_init(void)	{ }
-+static inline int is_uvx_hub(void) { return 0; }
-+static inline int is_uvy_hub(void) { return 0; }
-+static inline int is_uv_hub(void) { return 0; }
- 
- #endif	/* X86_UV */
- 
-diff --git a/arch/x86/include/asm/uv/uv_hub.h b/arch/x86/include/asm/uv/uv_hub.h
-index ea877fd83114..6e085ce8fc02 100644
---- a/arch/x86/include/asm/uv/uv_hub.h
-+++ b/arch/x86/include/asm/uv/uv_hub.h
-@@ -246,6 +246,7 @@ static inline int is_uv5_hub(void) { return is_uv(UV5); }
-  * then test if is UV4.
-  */
- 
-+#ifdef CONFIG_X86_UV
- /* UVX class: UV2,3,4 */
- static inline int is_uvx_hub(void) { return is_uv(UVX); }
- 
-@@ -254,6 +255,7 @@ static inline int is_uvy_hub(void) { return is_uv(UVY); }
- 
- /* Any UV Hubbed System */
- static inline int is_uv_hub(void) { return is_uv(UV_ANY); }
-+#endif
- 
- union uvh_apicid {
-     unsigned long       v;
-diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-index 87e749106dda..a9f97d423ab0 100644
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -32,6 +32,7 @@
- #include <asm/msr.h>
- #include <asm/topology.h>
- #include <asm/uv/uv.h>
-+#include <asm/uv/uv_hub.h>
- #include <asm/sev.h>
- 
- unsigned int __read_mostly cpu_khz;	/* TSC clocks / usec, not used here */
-@@ -1261,7 +1262,7 @@ static void __init check_system_tsc_reliable(void)
- 	if (boot_cpu_has(X86_FEATURE_CONSTANT_TSC) &&
- 	    boot_cpu_has(X86_FEATURE_NONSTOP_TSC) &&
- 	    boot_cpu_has(X86_FEATURE_TSC_ADJUST) &&
--	    topology_max_packages() <= 4)
-+	    (topology_max_packages() <= 4 || is_uvy_hub()))
- 		tsc_disable_clocksource_watchdog();
- }
- 
--- 
-2.43.0
-
+Nicolin
 
