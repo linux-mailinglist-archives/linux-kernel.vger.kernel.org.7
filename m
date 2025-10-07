@@ -1,120 +1,311 @@
-Return-Path: <linux-kernel+bounces-843648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D984EBBFEA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 03:16:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25AE0BBFEBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 03:18:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 938AD3B8D4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 01:16:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 742FC4F2071
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 01:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5751A314D;
-	Tue,  7 Oct 2025 01:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51EB51EB5FD;
+	Tue,  7 Oct 2025 01:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ErQo/FqH"
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JX7ESfr9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A121F129A78
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 01:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3561D31B9
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 01:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759799797; cv=none; b=T+m4qYfCDfSsfriIAstfqdJRG+gA4DkX7jDKVW+BPGRUjprm/JoBDxIEGN2DRuNLNCwAknmNx1nr/DZawrJMshXQOVFPVvrIfczArhLefN5XOw3tcvfeoqnZauPyzkaBAmROju4mIEUgu8+A+3agMJE3ocCwcehTSHtZr+4eQHA=
+	t=1759799832; cv=none; b=JXCj9NEOvCv4Sq4yJsmKECUSy59fsMJ10m0Uz0RlcwIHhyJ3HC08tFpxed2Qr6vAlXc3XrLk/GWOZJrJkD3qgWtTnwjJzcnhbE+VLU4WXyWPda5HCVEKkviD1oFQMrl+AqrLUQZgjxEG7oPVFu9csLmcAxjZCvzawebpAubj8vE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759799797; c=relaxed/simple;
-	bh=6X3DsoXCXLXwSW6LHDG0N+geOJvq7dJh0/ciZA8oLKs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NbTNOv7ABW4tGO63ziDmWgwc+G5V0AJYoxY1SETyNFJMBkYpqgdOk0AuoHc8BnSpacYmPqvI+rQPgCn1aEm8Wx2cvXAMuHS1PkyL3YtDhO6wAjgai0Ehy0Sjwzeth3rysryITtqNRSJz2VcIPo0Gd/Me4PTqGVZt2KBqFW9vJTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ErQo/FqH; arc=none smtp.client-ip=209.85.217.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-5b59694136bso3720017137.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 18:16:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759799790; x=1760404590; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ghdf9TZNa228GXUapeik3l8BFyhmMAug+7tiKuSEW3w=;
-        b=ErQo/FqH7+i48DhJx3rzDqaiFbPUfikgFFMgJLsb+kFM1dHWp9NJIZSrNPs7U30gCd
-         l+9UBegU66SnEd3r1eG0omCSCut5nbBSOohIJi00BEJsCh5DdRJVclbof2QHd/6qMlOa
-         hwgnZH/Sa6LMIrIxeswE6+ZgTX5H6YOy4PMtrpBs42ujRG3BfsskZ2pb7MTFK38BYPTK
-         X/s6/Rg+APgILxm6p/oRWjEczpC+wW1/46gNwvXHGs+UU9wVO14jFN/QrbW1eT1RjRu8
-         eKsgIPSFzkW5o2i+XJf9MfQfZC9aS2cCpdLv89Nxfux/VpTfSEi2goMn7zfBT/lKnx6O
-         +XiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759799790; x=1760404590;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ghdf9TZNa228GXUapeik3l8BFyhmMAug+7tiKuSEW3w=;
-        b=bOuw8dj2EB0Q/H+2UMl1joKrNuKNM1lYdvT3BC0s3nTg5OuUfd6UMFAUt6ojzDcFx0
-         jwJcGCRuTgyS0iYouu2DlFHrYYPppiTJS5Cl4/xON8P+qpp6FTSY8/8fc8qtUYRV+xqq
-         AtAIf8Dy2LhLWk5Rqw7NF5ms/5cyuRDlWjVgJvGB1q4leXshEESh7vEZUPbWupSk1Yau
-         EC5jZnAbOrr4xMfXqNut/0JF8gOn3HQH0vb6ytPvKnDpHggnIbPuDma87p2S3RVSGu+V
-         BX/Vbi8u1BD0+6T2sDTSv9knijYcdQucBxf1rufWOjMv9Oj60kyfavnhzQs8Gn/Jqrm+
-         vlsw==
-X-Forwarded-Encrypted: i=1; AJvYcCVcHTToub/AbyKB+LV7wOruN//ajq37+w/ji6qi/AiU2nQJvWd2DhUHFMCurPdb1SA+l8UWDy5diQdgXjI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywc+KBJTs+KaoHzhOAGxOkuwPtw6ag2iCKRZw745PNLIwvIvZTH
-	dHGbe8VcH/Vli2UBt9fitV/NrgeE+ntMPPEMMDUyPpVoBPjOBSVqbbTMHoVW6g==
-X-Gm-Gg: ASbGncthljh2V5riyfEdSXKwl92r+eOS/jBJeU1NCEjOPWKrbmom62ywz3pexQn7RAH
-	ytQUDa8iI0wIbWusyy/TA15tTy9/ci5Om7L7pcFbN2H7PLAFQwfreJF0/ilsjvmRi1a0GgyfBtw
-	/ZuU53uzlfjeCexjJtdsZUB6chLh9KRMO/vjU+T6qG7WJ/zsHGLq0VYb5IQbjZht2XqEMafPbYV
-	8j2JTrvR4+0VdYaxgyE8/Hyl6K1bNn/y3/19B/jvSR1M7F/xbQOXD1WQJzSZYSBBZJAr1uVyAKN
-	Aa/u4z06x+pDXMpFsqXRxFE92X19WFMKFCQSnaVQKM2JkSb+F3qfPId7EfGk/8PDUn8f3eQ1Voo
-	JW0QUuwNq3iCFHeZP4zkgMp0hA4rrMCHSUVmh2edL00vUJoU8hc3B+pqiIAJM1ps=
-X-Google-Smtp-Source: AGHT+IFQImR3Vj1kzGx2R+BGfWd215YKxySg4FhZPdn723hBKbycZMLDWwE88sLjbEEJGhlPaL5osg==
-X-Received: by 2002:a05:6102:1606:b0:523:712d:44a1 with SMTP id ada2fe7eead31-5d41d10db13mr4412399137.19.1759799790449;
-        Mon, 06 Oct 2025 18:16:30 -0700 (PDT)
-Received: from [192.168.1.145] ([104.203.11.126])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5d5d39f1a2dsm435417137.15.2025.10.06.18.16.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Oct 2025 18:16:29 -0700 (PDT)
-Message-ID: <8fea55a9-54f8-405b-9844-ee67b5e43ba3@gmail.com>
-Date: Mon, 6 Oct 2025 21:16:26 -0400
+	s=arc-20240116; t=1759799832; c=relaxed/simple;
+	bh=ZoCuQIGKECVz2Og4x5nmupKDmXLNha8Nv8LewmenEmc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Lz5r0J73N2h86ygIKL1gWe1Xtjx9N1PnaaDWNSWJ6p4XKa/naVQDldENMsZgQtt8vPO6jc+Rdt+qpIwgaoKoJq1REUfl2TIiMQuiR1AIWADubas2v/2f4Io97hBGGWlFPanC5uKcoaVVqba3v4kPbdAU6u1YxLIA/O6aKT5Cb+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JX7ESfr9; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759799829;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EpRMfKm9o1/F18kIBfBg6L03Iz4uKtsAej9zDsxfaLk=;
+	b=JX7ESfr9uPMAEVYDwsbN0+lI9juMm4yxR2xUSUziGpczLAcLelh2bidfkKu/Hr7VL+SkJ/
+	vwrRVUSAoxsgJA2URV4YohpXm0ppvsnlL1R1jvcU+iyj2A7jUMfe2bnyKtnF7Hc23uyXsa
+	167LVu7/I73qXLlHjFGJWJe5+Ra+/Yo=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-635-6M4nBPQVP42ztCl4msuiYw-1; Mon,
+ 06 Oct 2025 21:17:05 -0400
+X-MC-Unique: 6M4nBPQVP42ztCl4msuiYw-1
+X-Mimecast-MFC-AGG-ID: 6M4nBPQVP42ztCl4msuiYw_1759799823
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 04ED4180034F;
+	Tue,  7 Oct 2025 01:17:03 +0000 (UTC)
+Received: from cmirabil.lan (unknown [10.22.64.13])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EB5E41800452;
+	Tue,  7 Oct 2025 01:16:59 +0000 (UTC)
+From: Charles Mirabile <cmirabil@redhat.com>
+To: legion@kernel.org
+Cc: da.gomez@samsung.com,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org,
+	masahiroy@kernel.org,
+	mcgrof@kernel.org,
+	nathan@kernel.org,
+	nicolas.schier@linux.dev,
+	petr.pavlu@suse.com,
+	samitolvanen@google.com,
+	sfr@canb.auug.org.au
+Subject: Re: [PATCH v8 7/8] modpost: Create modalias for builtin modules
+Date: Mon,  6 Oct 2025 21:16:37 -0400
+Message-ID: <20251007011637.2512413-1-cmirabil@redhat.com>
+In-Reply-To: <28d4da3b0e3fc8474142746bcf469e03752c3208.1758182101.git.legion@kernel.org>
+References: <28d4da3b0e3fc8474142746bcf469e03752c3208.1758182101.git.legion@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: serial: fix: trainling statements `break` should be
- on next line
-To: vivekyadav1207731111@gmail.com, johan@kernel.org,
- gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
-References: <20251004080123.98285-1-vivekyadav1207731111@gmail.com>
-Content-Language: en-US
-From: David Hunter <david.hunter.linux@gmail.com>
-In-Reply-To: <20251004080123.98285-1-vivekyadav1207731111@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On 10/4/25 04:01, vivekyadav1207731111@gmail.com wrote:
+On Thu, Sep 18, 2025 at 10:05:51AM +0200, Alexey Gladkov wrote:
+> For some modules, modalias is generated using the modpost utility and
+> the section is added to the module file.
+> 
+> When a module is added inside vmlinux, modpost does not generate
+> modalias for such modules and the information is lost.
+> 
+> As a result kmod (which uses modules.builtin.modinfo in userspace)
+> cannot determine that modalias is handled by a builtin kernel module.
+> 
+> $ cat /sys/devices/pci0000:00/0000:00:14.0/modalias
+> pci:v00008086d0000A36Dsv00001043sd00008694bc0Csc03i30
+> 
+> $ modinfo xhci_pci
+> name:           xhci_pci
+> filename:       (builtin)
+> license:        GPL
+> file:           drivers/usb/host/xhci-pci
+> description:    xHCI PCI Host Controller Driver
+> 
+> Missing modalias "pci:v*d*sv*sd*bc0Csc03i30*" which will be generated by
+> modpost if the module is built separately.
+> 
+> To fix this it is necessary to generate the same modalias for vmlinux as
+> for the individual modules. Fortunately '.vmlinux.export.o' is already
+> generated from which '.modinfo' can be extracted in the same way as for
+> vmlinux.o.
 
-> +		case 300:
-> +		case 600:
-> +		case 1200:
-> +		case 2400:
-> +		case 4800:
-> +		case 9600:
-> +		case 19200:
-> +		case 38400:
-> +		case 57600:
-> +		case 115200:
-> +			break;
+Hi -
 
-It is generally considered best practice to use the breaks after each
-case. Here is a good article on this:
+This patch broke RISC-V builds for me. During the final objcopy where the new
+symbols are supposed to be stripped, an error occurs producing lots of error
+messages similar to this one:
 
-https://lwn.net/Articles/794944/
+riscv64-linux-gnu-objcopy: not stripping symbol `__mod_device_table__...'
+because it is named in a relocation
 
+It does not occur using defconfig, but I was able to bisect my way to this
+commit and then reduce my config delta w.r.t defconfig until I landed on:
 
-Also, same here. no top-posting:
+cat > .config <<'EOF'
+CONFIG_RELOCATABLE=y
+CONFIG_KASAN=y
+EOF
+ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- make olddefconfig
+ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- make -j $(nproc)
+...
+  LD      vmlinux.unstripped
+  NM      System.map
+  SORTTAB vmlinux.unstripped
+  CHKREL  vmlinux.unstripped
+  OBJCOPY vmlinux
+  OBJCOPY modules.builtin.modinfo
+  GEN     modules.builtin
+riscv64-linux-gnu-objcopy: not stripping symbol `<long symbol name>'
+because it is named in a relocation
+<repeats with different symbol names about a dozen times>
+make[3]: *** [scripts/Makefile.vmlinux:97: vmlinux] Error 1
+make[3]: *** Deleting file 'vmlinux'
+make[2]: *** [Makefile:1242: vmlinux] Error 2
+make[1]: *** [/tmp/linux/Makefile:369: __build_one_by_one] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
 
-https://en.wikipedia.org/wiki/Posting_style#Interleaved_style
+I confirmed that reverting this commit fixes the issue.
+
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> Signed-off-by: Alexey Gladkov <legion@kernel.org>
+> Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  include/linux/module.h   |  4 ----
+>  scripts/Makefile.vmlinux |  4 +++-
+>  scripts/mksysmap         |  3 +++
+>  scripts/mod/file2alias.c | 19 ++++++++++++++++++-
+>  scripts/mod/modpost.c    | 15 +++++++++++++++
+>  scripts/mod/modpost.h    |  2 ++
+>  6 files changed, 41 insertions(+), 6 deletions(-)
+> 
+> diff --git a/include/linux/module.h b/include/linux/module.h
+> index e31ee29fac6b7..e135cc79aceea 100644
+> --- a/include/linux/module.h
+> +++ b/include/linux/module.h
+> @@ -256,14 +256,10 @@ struct module_kobject *lookup_or_create_module_kobject(const char *name);
+>  	__PASTE(type,			\
+>  	__PASTE(__, name)))))
+>  
+> -#ifdef MODULE
+>  /* Creates an alias so file2alias.c can find device table. */
+>  #define MODULE_DEVICE_TABLE(type, name)					\
+>  static typeof(name) __mod_device_table(type, name)			\
+>    __attribute__ ((used, alias(__stringify(name))))
+> -#else  /* !MODULE */
+> -#define MODULE_DEVICE_TABLE(type, name)
+> -#endif
+>  
+>  /* Version of form [<epoch>:]<version>[-<extra-version>].
+>   * Or for CVS/RCS ID version, everything but the number is stripped.
+> diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
+> index ce79461714979..1e5e37aadcd05 100644
+> --- a/scripts/Makefile.vmlinux
+> +++ b/scripts/Makefile.vmlinux
+> @@ -89,11 +89,13 @@ endif
+>  remove-section-y                                   := .modinfo
+>  remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
+>  
+> +remove-symbols := -w --strip-symbol='__mod_device_table__*'
+> +
+>  # To avoid warnings: "empty loadable segment detected at ..." from GNU objcopy,
+>  # it is necessary to remove the PT_LOAD flag from the segment.
+>  quiet_cmd_strip_relocs = OBJCOPY $@
+>        cmd_strip_relocs = $(OBJCOPY) $(patsubst %,--set-section-flags %=noload,$(remove-section-y)) $< $@; \
+> -                         $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) $@
+> +                         $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) $(remove-symbols) $@
+>  
+>  targets += vmlinux
+>  vmlinux: vmlinux.unstripped FORCE
+> diff --git a/scripts/mksysmap b/scripts/mksysmap
+> index a607a0059d119..c4531eacde202 100755
+> --- a/scripts/mksysmap
+> +++ b/scripts/mksysmap
+> @@ -59,6 +59,9 @@
+>  # EXPORT_SYMBOL (namespace)
+>  / __kstrtabns_/d
+>  
+> +# MODULE_DEVICE_TABLE (symbol name)
+> +/ __mod_device_table__/d
+> +
+>  # ---------------------------------------------------------------------------
+>  # Ignored suffixes
+>  #  (do not forget '$' after each pattern)
+> diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
+> index 1260bc2287fba..7da9735e7ab3e 100644
+> --- a/scripts/mod/file2alias.c
+> +++ b/scripts/mod/file2alias.c
+> @@ -1477,7 +1477,7 @@ void handle_moddevtable(struct module *mod, struct elf_info *info,
+>  	void *symval;
+>  	char *zeros = NULL;
+>  	const char *type, *name, *modname;
+> -	size_t typelen;
+> +	size_t typelen, modnamelen;
+>  	static const char *prefix = "__mod_device_table__";
+>  
+>  	/* We're looking for a section relative symbol */
+> @@ -1500,6 +1500,7 @@ void handle_moddevtable(struct module *mod, struct elf_info *info,
+>  	type = strstr(modname, "__");
+>  	if (!type)
+>  		return;
+> +	modnamelen = type - modname;
+>  	type += strlen("__");
+>  
+>  	name = strstr(type, "__");
+> @@ -1526,5 +1527,21 @@ void handle_moddevtable(struct module *mod, struct elf_info *info,
+>  		}
+>  	}
+>  
+> +	if (mod->is_vmlinux) {
+> +		struct module_alias *alias;
+> +
+> +		/*
+> +		 * If this is vmlinux, record the name of the builtin module.
+> +		 * Traverse the linked list in the reverse order, and set the
+> +		 * builtin_modname unless it has already been set in the
+> +		 * previous call.
+> +		 */
+> +		list_for_each_entry_reverse(alias, &mod->aliases, node) {
+> +			if (alias->builtin_modname)
+> +				break;
+> +			alias->builtin_modname = xstrndup(modname, modnamelen);
+> +		}
+> +	}
+> +
+>  	free(zeros);
+>  }
+> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> index 5ca7c268294eb..47c8aa2a69392 100644
+> --- a/scripts/mod/modpost.c
+> +++ b/scripts/mod/modpost.c
+> @@ -2067,11 +2067,26 @@ static void write_if_changed(struct buffer *b, const char *fname)
+>  static void write_vmlinux_export_c_file(struct module *mod)
+>  {
+>  	struct buffer buf = { };
+> +	struct module_alias *alias, *next;
+>  
+>  	buf_printf(&buf,
+>  		   "#include <linux/export-internal.h>\n");
+>  
+>  	add_exported_symbols(&buf, mod);
+> +
+> +	buf_printf(&buf,
+> +		   "#include <linux/module.h>\n"
+> +		   "#undef __MODULE_INFO_PREFIX\n"
+> +		   "#define __MODULE_INFO_PREFIX\n");
+> +
+> +	list_for_each_entry_safe(alias, next, &mod->aliases, node) {
+> +		buf_printf(&buf, "MODULE_INFO(%s.alias, \"%s\");\n",
+> +			   alias->builtin_modname, alias->str);
+> +		list_del(&alias->node);
+> +		free(alias->builtin_modname);
+> +		free(alias);
+> +	}
+> +
+>  	write_if_changed(&buf, ".vmlinux.export.c");
+>  	free(buf.p);
+>  }
+> diff --git a/scripts/mod/modpost.h b/scripts/mod/modpost.h
+> index 9133e4c3803f0..2aecb8f25c87e 100644
+> --- a/scripts/mod/modpost.h
+> +++ b/scripts/mod/modpost.h
+> @@ -99,10 +99,12 @@ buf_write(struct buffer *buf, const char *s, int len);
+>   * struct module_alias - auto-generated MODULE_ALIAS()
+>   *
+>   * @node: linked to module::aliases
+> + * @modname: name of the builtin module (only for vmlinux)
+>   * @str: a string for MODULE_ALIAS()
+>   */
+>  struct module_alias {
+>  	struct list_head node;
+> +	char *builtin_modname;
+>  	char str[];
+>  };
+>  
+> -- 
+> 2.51.0
+> 
+
 
