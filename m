@@ -1,146 +1,128 @@
-Return-Path: <linux-kernel+bounces-844185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C24BC1407
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:46:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2672BC140E
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:46:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C1103B3712
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:46:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 401543BE3CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B326D22256B;
-	Tue,  7 Oct 2025 11:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D27F2DAFC4;
+	Tue,  7 Oct 2025 11:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="f85HYiqS"
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SUz95jFY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882FA849C
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513CD849C;
+	Tue,  7 Oct 2025 11:46:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759837565; cv=none; b=Na5F1vdlnCmg6YdLzWiijej+hAveKyyUdYk/VvOR2rwmqPpw7eyA6kh2GilBQrfxevBH+koNwExz+MiNLzYttvB2JDctykBgoDR2tI2urbdUauxGjN9uMiQOZtgTXmamcsci0/zvMUyGTI+RFKfLOvBQgEJwV8xDRP5lGoNrWrc=
+	t=1759837611; cv=none; b=BAomrjW5oL8fRj6h0cCRXnSv2MxK+/QRDRtfRHJhU4ZGu6eWOR8V8vKCY3JcB40I2fwAfGqy+GQeaZaAgb8sIOFVyB0XEGoEB8vcZ4+0M+WqcNdkODZ0VWtPAp5NEH4Hvah2ZM4Rb4oKi0Ch79dp7/FlKCmKsAuSdeGmNotBMZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759837565; c=relaxed/simple;
-	bh=p7dHS+AB1QjkqobcDf4KXopDx306eI7bI3rZgSY9+ss=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Igp0/Z0MtGuHZrH0k6pioWo3r7wJlL3BZxl+bR0dq9Ev8CsQJYV0gHxm9YEv5QNJFpWtDxIiPG2t/oJARhxSML89RMIXTtLZGUNrZGv2SCfQ5V9Ye6VTMnum6ry8sdRg5U1WyK/+H63ltXd+4aSa/ZdMpeLq7ogj4gogiy81mPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=f85HYiqS; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7bc147fd11bso3795192a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 04:46:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1759837561; x=1760442361; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KEMaxv3BxiBCDuohapV59T47+AmE8saqxvqjqkQ5Wcs=;
-        b=f85HYiqSfLsLN04iziitvl0+dnduuvw8yZo1zX3wwGOHS7SvtMOHrEvLvCtm/epqaq
-         mu4uuewGmUtE1DC4imNTx00AgWgrADWiFl+t8iAXtousk6GBtdPcxrYwnwACBIb3Zs/3
-         akDX/4y8Cs9mrjw5wxN4/Nr1jvmbktrx8Fn1YMD3/U0up1wAWHr7Y/h61aZdaS20Mrav
-         eQIX17H+FWM1A5L1ifBiS7uuNyulcXJWnKKpirpLDRSs0F6Mm7u+KJupZ+IB+MviKbNW
-         z+1fxFgoTNQE/kOUDnnbK22lKXorm+btO/hEFtkne62CqfdeggiF8DA0xITL2niZXtut
-         e30Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759837561; x=1760442361;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KEMaxv3BxiBCDuohapV59T47+AmE8saqxvqjqkQ5Wcs=;
-        b=f0efX4g0KTy9phoDPFTL7C5s8ESy8M6EFV/3BvemiXMjTdUS7lTW95plWfXP8y2Dyi
-         w++eTJug3foP9otccbwhhoHpDC4Zr1HFohhhypbAULWEqDeiO9QAhkYicGLw6R0PO0v2
-         UI/mdZFeJfzzs9WRtu2Bu1yDDbPnxBXzuOaCzd5i1pW64rWSJ/mr5mH4HDU2CVB3I0bO
-         35eISshBLHiw0NIHEDYDTbG7Fw3wV7DDQFpsOf9dzAS+KyWMSZv87uPRdvBq1HpJad41
-         Is8NLy2HA2ohyxo1PQrTtFfBEYFkg8TRlE3Jzscwq5LT79DkgLyqxogp3E+qcq+j/kKk
-         hZXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTR+x3Gs4YdWAU7Ayy4UsyK8fnqxSjvJJpQDV3VGcdsVVg9TjK/rmagn8jo6RoS3MzhvNNzxdssWnG4wk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF97zxWLHcF4zq5cA1Q1nBRnq4RHutU5i6uz2A5Qv5GodhQKYO
-	SoIrZQv2ncEbgoittvqsE83SvCW/HdIAdHC1jQ9uEvRCyRuQm6XApzgg7F8cSF0/d5g=
-X-Gm-Gg: ASbGnct06O4yzgkQMwZW+r/7LTSH7nHDy4mZLBLKVml6BtAdyMKi9SpEuXftiGWBQJr
-	qsiYQtjnPdwlZDrPJ28MiLIAHQpyyXU2BeX1gy2gfNF15IGuf8XUGRnXGBVAQWfyCA+4p0ritzx
-	TaoAo2WNVJEE47WsNz1poCsW3FcBCIJv1SYxi1j8rIAVv7qBPsJ6EUG7jqdrVaYuza8+CmjiMiw
-	wU01uQEQufOMDPFqAv61bIUUWnNkWx8Wt8T5YgmW9qeJOa/EoeEdJdLUAe3/bp7QLWEXAh+miYE
-	1Ncsm2gma+cdEFhAzQJn59I/b+g5dIrh2prn2ZhLosbN+sX/P7Zcp/lN7lCKdUxmJkTL+S271xZ
-	59do8trOEAg907cDr43nQ1sj4YMnfyOiexhnr/ck8GH9huW/EYw==
-X-Google-Smtp-Source: AGHT+IEJYj2mzM7UxghzpnE7ZizpCtChcl1w+w9JZOnMjgORq5FS20KxP3V46mcECRKJiHPODwX4tA==
-X-Received: by 2002:a05:6830:2b1f:b0:790:710f:60e3 with SMTP id 46e09a7af769-7bf772bd7fbmr8108560a34.23.1759837561330;
-        Tue, 07 Oct 2025 04:46:01 -0700 (PDT)
-Received: from mail.minyard.net ([2001:470:b8f6:1b:52ef:e8e2:6979:b8d1])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7bf43028a10sm4538093a34.22.2025.10.07.04.45.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 04:45:59 -0700 (PDT)
-Date: Tue, 7 Oct 2025 06:45:55 -0500
-From: Corey Minyard <corey@minyard.net>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1759837611; c=relaxed/simple;
+	bh=8pLnvnpocOAdClJwUURQKyQYxaw0xZVCv1VjIpDfUng=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LV6SjLfCVXsBsNIe1Cmjgfw5RMU37cx/BKnYUrFg/qPSVz+KzGcxC9aCmFEsg/Ll2WqdwICcBvlohQhCDJsREzM/Mg/aK2AfrF43NsGZeDf2cqUNk0t5EWvjnHiL4X7pdGOkCQ0V17TzDF1zp7+qUDCzi7iaKVcDvjaB+V1ECYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SUz95jFY; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759837611; x=1791373611;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=8pLnvnpocOAdClJwUURQKyQYxaw0xZVCv1VjIpDfUng=;
+  b=SUz95jFY4nloJF7qx7SW3SISuBmUOA2UlkdnUcxozfN0d0RTXRX32pQe
+   q3wPgLkDj0coZ4D7ZWyw4KNPTSxykeLoZLeIoD0TdkSCpkr+pXJrskwQS
+   hPCt1bjNdMgft1ZWQbxLNNwnddlznPkVNYahdl7giO+6CGXdak1payzU+
+   /oXyD0YK378kKqQQgldOKGoKnd9ROU6qLBzHmekqoorwagtOlrX/CEPoh
+   2yJn2diIfaFR1ISRNomBZ2Y3QS/o5ipiYjrEeA8x2G3SC75O23ZEeD32k
+   shMO+ZfjafCn7lgs0ZYtPb1LI+3dY7iVr/WKA01qoDVxeNdcRxej9o6kn
+   g==;
+X-CSE-ConnectionGUID: hkXd2OzlTpu4A73PSvAwng==
+X-CSE-MsgGUID: O9fSXcEyS9eTqenF8fJfnw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11574"; a="61051702"
+X-IronPort-AV: E=Sophos;i="6.18,321,1751266800"; 
+   d="scan'208";a="61051702"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2025 04:46:50 -0700
+X-CSE-ConnectionGUID: wHswlvNBTRmdap7II1wjmA==
+X-CSE-MsgGUID: C22g09TOQGm85xoIVeYbtw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,321,1751266800"; 
+   d="scan'208";a="180546026"
+Received: from irvmail002.ir.intel.com ([10.43.11.120])
+  by fmviesa008.fm.intel.com with ESMTP; 07 Oct 2025 04:46:46 -0700
+Received: from mglak.igk.intel.com (mglak.igk.intel.com [10.237.112.146])
+	by irvmail002.ir.intel.com (Postfix) with ESMTP id 28F492879A;
+	Tue,  7 Oct 2025 12:46:45 +0100 (IST)
+From: Larysa Zaremba <larysa.zaremba@intel.com>
+To: intel-wired-lan@lists.osuosl.org,
+	Tony Nguyen <anthony.l.nguyen@intel.com>
+Cc: Larysa Zaremba <larysa.zaremba@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
-	Greg Thelen <gthelen@google.com>
-Subject: Re: [PATCH] ipmi: Fix handling of messages with provided receive
- message pointer
-Message-ID: <aOT9c1ULJolUHPSA@mail.minyard.net>
-Reply-To: corey@minyard.net
-References: <20251006201857.3433837-1-linux@roeck-us.net>
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Joshua Hay <joshua.a.hay@intel.com>,
+	Chittim Madhu <madhu.chittim@intel.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Emil Tantilov <emil.s.tantilov@intel.com>,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+	Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+Subject: [PATCH iwl-net] idpf: fix LAN memory regions command on some NVMs
+Date: Tue,  7 Oct 2025 13:46:22 +0200
+Message-ID: <20251007114624.9594-1-larysa.zaremba@intel.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251006201857.3433837-1-linux@roeck-us.net>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 06, 2025 at 01:18:57PM -0700, Guenter Roeck wrote:
-> Prior to commit b52da4054ee0 ("ipmi: Rework user message limit handling"),
-> i_ipmi_request() used to increase the user reference counter if the receive
-> message is provided by the caller of IPMI API functions. This is no longer
-> the case. However, ipmi_free_recv_msg() is still called and decreases the
-> reference counter. This results in the reference counter reaching zero,
-> the user data pointer is released, and all kinds of interesting crashes are
-> seen.
-> 
-> Fix the problem by increasing user reference counter if the receive message
-> has been provided by the caller.
+IPU SDK versions 1.9 through 2.0.5 require send buffer to contain a single
+empty memory region. Set number of regions to 1 and use appropriate send
+buffer size to satisfy this requirement.
 
-Yes, the only interface that uses this that would matter is the watchdog
-timer, which my tests don't currently cover.  I guess I need to add some
-tests.
+Suggested-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
+---
+ drivers/net/ethernet/intel/idpf/idpf_virtchnl.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Sorry, and thanks for the fix.  It's queued for next release.
+diff --git a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+index fa3ce1e4f6ac..af8b3ebee4d4 100644
+--- a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
++++ b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+@@ -1016,6 +1016,9 @@ static int idpf_send_get_lan_memory_regions(struct idpf_adapter *adapter)
+ 	struct idpf_vc_xn_params xn_params = {
+ 		.vc_op = VIRTCHNL2_OP_GET_LAN_MEMORY_REGIONS,
+ 		.recv_buf.iov_len = IDPF_CTLQ_MAX_BUF_LEN,
++		.send_buf.iov_len =
++			sizeof(struct virtchnl2_get_lan_memory_regions) +
++			sizeof(struct virtchnl2_mem_region),
+ 		.timeout_ms = IDPF_VC_XN_DEFAULT_TIMEOUT_MSEC,
+ 	};
+ 	int num_regions, size;
+@@ -1028,6 +1031,8 @@ static int idpf_send_get_lan_memory_regions(struct idpf_adapter *adapter)
+ 		return -ENOMEM;
+ 
+ 	xn_params.recv_buf.iov_base = rcvd_regions;
++	rcvd_regions->num_memory_regions = cpu_to_le16(1);
++	xn_params.send_buf.iov_base = rcvd_regions;
+ 	reply_sz = idpf_vc_xn_exec(adapter, &xn_params);
+ 	if (reply_sz < 0)
+ 		return reply_sz;
+-- 
+2.47.0
 
--corey
-
-> 
-> Fixes: b52da4054ee0 ("ipmi: Rework user message limit handling")
-> Reported-by: Eric Dumazet <edumazet@google.com>
-> Cc: Eric Dumazet <edumazet@google.com>
-> Cc: Greg Thelen <gthelen@google.com>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
->  drivers/char/ipmi/ipmi_msghandler.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-> index a0b67a35a5f0..3700ab4eba3e 100644
-> --- a/drivers/char/ipmi/ipmi_msghandler.c
-> +++ b/drivers/char/ipmi/ipmi_msghandler.c
-> @@ -2301,8 +2301,11 @@ static int i_ipmi_request(struct ipmi_user     *user,
->  	if (supplied_recv) {
->  		recv_msg = supplied_recv;
->  		recv_msg->user = user;
-> -		if (user)
-> +		if (user) {
->  			atomic_inc(&user->nr_msgs);
-> +			/* The put happens when the message is freed. */
-> +			kref_get(&user->refcount);
-> +		}
->  	} else {
->  		recv_msg = ipmi_alloc_recv_msg(user);
->  		if (IS_ERR(recv_msg))
-> -- 
-> 2.45.2
-> 
 
