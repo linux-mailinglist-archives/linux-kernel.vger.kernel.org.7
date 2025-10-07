@@ -1,86 +1,69 @@
-Return-Path: <linux-kernel+bounces-844171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E91BBC1378
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:30:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03FEBBC1384
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DDA21892ED4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:30:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BD091893EFF
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1AB1E5201;
-	Tue,  7 Oct 2025 11:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A2619E7F9;
+	Tue,  7 Oct 2025 11:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S21xZcvf"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="in8sbfq3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5056F1D54FE
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F4178F3A
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759836621; cv=none; b=UrCrNGRbazycqlCCzkISY7Oo9OjuaZAS0GQxJgHatulBtPcz7kbErT8Lc4uMpHDLu6JB/xIB5VY43qDqkv+kA6V7zE43M58FRwtBzK474HKNTGNZnKAwyS4kA2r+L4hyhrKmUttjOAARWAwdqlfIg/oRZDZWcA8r1IQnnrm9+fc=
+	t=1759836737; cv=none; b=ElTP4j9JayXPmKqNyHn7pYB2K99qsK5KSPxg6zUCYaLxCLZW1YqtLQh8mGIAPPF1b+mUUBXxOp+P6AhotwcpwupCF9+uzu8MWL2pASsFjkKfz3qFp9XPlBDOGYhx9m//q8EdFOR5PAs8Erp715bFExJ4P6Uzb+2g0I56c1JcqZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759836621; c=relaxed/simple;
-	bh=EsLib4jKtsQhcE5lGFvp6K+ONcTD+59xsfIRVcTeGzM=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=WVz4faBaozNTHBJqcD15FEimzcT3PQKD2JtNpizaO06UBD7k94l0VwhfwcMREe7wPax/0ePf5cWWA9b6AyHcpp9BrsVqt9Z42zmPWb1vG3AnV/xg+rMkxfkTXDrSa3XpZh91L+c7My7+WT7HrzFYjdU8OaASFeIvV+op+yZe6yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S21xZcvf; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-43f86ddb3f4so2460219b6e.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 04:30:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759836618; x=1760441418; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gjcwVwugsbZr5dwcPHgqy1+P2gVP3IIdmSv12HxlkUs=;
-        b=S21xZcvft3lafu37qWyw2QmunnpxH4uEtIm+MSiTQtaVdKOWVcTkKnuZcdSgErrUh1
-         B0NUgN9S7ioZhGjH6HE0AsqtqO4nLoLcZGU7+wrMn0c0mqn6N1YAEDiK3bVYS8Vjubew
-         Y2hlpcQ+0gxkBlvGDhgJSQBCenVE7KYmYsZh+D6PNlE91/7EWL/+zpkZ+0DHVv05+SzJ
-         6SNFFudaLTNpeO/j38+dkq7X+aj47Ig1LawPO9xH4uVfSYoowGT8igmxZmdBLcjBS1dV
-         Wk/Umg6lcrqBjmy8QhEEktJnuawtanyOG0utb2XiUNQNhGJGcZ6L/yArSZP90YOsn8RY
-         YecA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759836618; x=1760441418;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gjcwVwugsbZr5dwcPHgqy1+P2gVP3IIdmSv12HxlkUs=;
-        b=rCiRR+0sq/jiAUqPy0sloqCZ3W9S/3wuRzuC0q/Wz2XNogA1t3+QvjWsMOOQNjsreu
-         N/YqqpBRLxPIJNlEZNlbJ7YPAdXoMbwzdyaDvfq3sCphm0B/vF2PrD2T0yjCN5bn038b
-         1jgZzQ5QNRGs3wOyr+43T4PUrrZrpByfRr8aFZC0tKx85mWgDXkh/IBL+4vASFiXXSXZ
-         6avN13JQrzHVkCXE6qRxqCoZPzPXrI7s7JT+X3JG42qz1dVaOLC9WliL5gqim+sclEEp
-         nGibvcn+okQBSSrsm3gBWa4XMKfqVz7n2Uk0NWg8nIGEcheMrY9TDurG+Ru0KJw/UbUX
-         m6JA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxhQAExHoC9C41Yd18vBtTIOZnORIvZ2d3ZWcsHYoWALjoDs0/FjxMNIHbc22N3xw+OwKgwtFedPvhCM0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6NICRKAFkTlwh+RWeyI86lnXDgulDl7/dnjKmq8VOG+47lugH
-	MyCbGMZ/T//QNGrcD1rOph7NbFChjbH+DOIR+UkascTvY6ZUB+mqJ0ITmPdSLzMc4YucP1cHhS4
-	fZaZLvuWJjF9aMkTAeZ8vkZMPqtJsaKU=
-X-Gm-Gg: ASbGncs190wi+R9igtceuLqNOVBXYWhpBUdhzEYXog/ti0ZlKHnf/5BKaYmSmNyvp0Z
-	cRmQVx/56VaVW4Ym533fUXJ2h57cCKjh81Lnfm3NwK455CeoVIBMpl/wqM8ToUvi1Ia0t7OThJh
-	tt0SOxJ7ZEqljMkeqXEKcFWVqZeCrAPg7jYzMXPAxlbnKnW6rjrPpxJt6D6rxJFmUbPTpSzO/nb
-	d3vxmPJs9IK1Nc0vj71qg+nY7IJ
-X-Google-Smtp-Source: AGHT+IFp5L4DFeud5EQuTne829gmDtDXw+y5eMnOv46v4L88QxCcbfZ8j3cuFqfCxtLwVYXsJ7RLy3udC7MYGJPErQE=
-X-Received: by 2002:a05:6808:18a1:b0:439:b9b3:af44 with SMTP id
- 5614622812f47-43fc179fbb6mr8638021b6e.19.1759836617959; Tue, 07 Oct 2025
- 04:30:17 -0700 (PDT)
+	s=arc-20240116; t=1759836737; c=relaxed/simple;
+	bh=K2SLCERJg8GATRL03Frwnf95lX+xUj/t+ur2Sjhkbkg=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=L2PEh/OusWbRU2X28HxUbUv363gYcqqyi02mrRE0vKDKhiqlaGtZ1W0rw85DM2sUZJOvNJm3fHGFkUroNVGDV+Sgyjn4QyKJUrV9J/V40QJ3mlNeZv+ucXyECYYP9dzN5vjD7ubPe3LeDJu1KuO9mZqJqSMGZnV9Equ+w/h6qZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=in8sbfq3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D77D7C4CEF1
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:32:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759836736;
+	bh=K2SLCERJg8GATRL03Frwnf95lX+xUj/t+ur2Sjhkbkg=;
+	h=From:Date:Subject:To:Cc:From;
+	b=in8sbfq3NgkuPT15ONH9uKN/ThZHjPiyAC7Uli3QjqYeNSJMEzSO9EPoj47LHn8y6
+	 KyZheDnaTXPXMkgOLvNNtPNzerzP8lXFj/o7bnJ2wwfLSzN0qnzHlN0M4EUXdi5otH
+	 Ph+HTs9tjGr9dE9HG3Q0T3D8hXSqyc8rixGM7AftXhi7siKJ2ptNhNFmo5l9L/EA3a
+	 ReKMMQZ2TagRut+CSCbbw1J/OcUZr23lsUBYxIne1C/IpEfS+Es/th6OgdozeYlIhH
+	 5OL4ehcQlb6qJSbm82AXsVB8Yc6bNXq3qCJZxn3TG00HlkQK0vSQU0qMbbqKOef1ci
+	 SXHz5BkseLDyg==
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-43f935f7d14so2421049b6e.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 04:32:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUBfu2Qbe2q2xLHkBljqXdU8JI3NkwYSWDZ55XkMgS8Ia5EQc1PCmHCXG4bAPD3gF/kpioux0IfpL+mfRU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhGtD30MRYI3c+Ovy0/9eIHh+vZcEV98NiRDjnvxDu1/lz9MX2
+	78Mf4VT6QYKMxka2IgZphIRgdCN0dRHLDSUl7LIpt5N/2Lfp5npf6PpvjaoY15CJoD7LLEKm3AF
+	fRfLaIznubde1+GOyWEKoQCHB8RNRAhI=
+X-Google-Smtp-Source: AGHT+IEXfQbSOAk2h/cZkQqJyZZCOIDMY2QXaQX4f5p5CvC466b9POcQG0v+QahF1fEkfQDoN0s+eX8ym/qatiQ4w9w=
+X-Received: by 2002:a05:6808:144b:b0:43f:6f82:e16f with SMTP id
+ 5614622812f47-43fc178f8bamr8548033b6e.12.1759836736225; Tue, 07 Oct 2025
+ 04:32:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: =?UTF-8?Q?Rafa=C5=82_Wysocki?= <rjwysocki@gmail.com>
-Date: Tue, 7 Oct 2025 13:30:06 +0200
-X-Gm-Features: AS18NWA7NSJgJMBP_QWz-F0G79n56ApPJJhOJtEnRapI7ODshjLeIEP1EiHU95s
-Message-ID: <CAJZ5v0i7H832neTnZtHwHBD0gwQSJ_8Tyxc49K2NoO5n4=1eKQ@mail.gmail.com>
-Subject: [GIT PULL] More power management updates for v6.18-rc1
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 7 Oct 2025 13:32:03 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gb7Rvd_nOd5Z2r95WsenmWb-YZOSLW804+Nif0o+mZJA@mail.gmail.com>
+X-Gm-Features: AS18NWDeJ8lC0jPNWuHr6YiSuK8oeCnM7YWSWNSelq2FFOjpj_2GKDMfKyghaH4
+Message-ID: <CAJZ5v0gb7Rvd_nOd5Z2r95WsenmWb-YZOSLW804+Nif0o+mZJA@mail.gmail.com>
+Subject: [GIT PULL] More ACPI support updates for v6.18-rc1
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux PCI <linux-pci@vger.kernel.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
 Hi Linus,
@@ -88,135 +71,57 @@ Hi Linus,
 Please pull from the tag
 
  git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- pm-6.18-rc1-2
+ acpi-6.18-rc1-2
 
-with top-most commit 53d4d315d4f7f17882ef11db49b06ca6b0be8ff7
+with top-most commit dd68fd72e516d57e7f2e502113c9345a3bc277db
 
- Merge branch 'pm-cpufreq'
+ Merge branches 'acpi-x86', 'acpi-battery', 'acpi-apei' and 'acpi-property'
 
-on top of commit 991053178e08fb4d1f80398367db05c2cc4f20b4
+on top of commit 679a16399af08088a83e1d30e01c31832f055ae7
 
- Merge tag 'pm-6.18-rc1' of
+ Merge tag 'acpi-6.18-rc1' of
 git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
 
-to receive more power management updates for 6.18-rc1.
+to receive more ACPI support updates for 6.18-rc1.
 
-These are cpufreq fixes and cleanups on top of the material merged
-previously, a power management core code fix and updates of the
-runtime PM framework including unit tests, documentation updates and
-introduction of auto-cleanup macros for runtime PM "resume and get"
-and "get without resuming" operations.
+These fix a driver bug, clean up two pieces of code and improve the
+fwnode API consistency:
 
-Specifics:
+ - Add missing synchronization between interface updates in the ACPI
+   battery driver (Rafael Wysocki)
 
- - Make cpufreq drivers setting the default CPU transition latency to
-   CPUFREQ_ETERNAL specify a proper default transition latency value
-   instead which addresses a regression introduced during the 6.6 cycle
-   that broke CPUFREQ_ETERNAL handling (Rafael Wysocki)
+ - Remove open coded check for cpu_feature_enabled() from
+   acpi_processor_power_init_bm_check() (Mario Limonciello)
 
- - Make the cpufreq CPPC driver use a proper transition delay value
-   when CPUFREQ_ETERNAL is returned by cppc_get_transition_latency() to
-   indicate an error condition (Rafael Wysocki)
+ - Remove redundant rcu_read_lock/unlock() under spinlock from
+   ghes_notify_hed() in the ACPI APEI support code (pengdonglin)
 
- - Make cppc_get_transition_latency() return a negative error code to
-   indicate error conditions instead of using CPUFREQ_ETERNAL for this
-   purpose and drop CPUFREQ_ETERNAL that has no other users (Rafael
-   Wysocki, Gopi Krishna Menon)
-
- - Fix device leak in the mediatek cpufreq driver (Johan Hovold)
-
- - Set target frequency on all CPUs sharing a policy during frequency
-   updates in the tegra186 cpufreq driver and make it initialize all
-   cores to max frequencies (Aaron Kling)
-
- - Rust cpufreq helper cleanup (Thorsten Blum)
-
- - Make pm_runtime_put*() family of functions return 1 when the
-   given device is already suspended which is consistent with the
-   documentation (Brian Norris)
-
- - Add basic kunit tests for runtime PM API contracts and update return
-   values in kerneldoc comments for the runtime PM API (Brian Norris,
-   Dan Carpenter)
-
- - Add auto-cleanup macros for runtime PM "resume and get" and "get
-   without resume" operations, use one of them in the PCI core and
-   drop the existing "free" macro introduced for similar purpose, but
-   somewhat cumbersome to use (Rafael Wysocki)
-
- - Make the core power management code avoid waiting on device links
-   marked as SYNC_STATE_ONLY which is consistent with the handling of
-   those device links elsewhere (Pin-yen Lin)
+ - Make the .get_next_child_node() callback in the ACPI fwnode backend
+   skip ACPI devices that are not present for consistency with the
+   analogous callback in the OF fwnode backend (Sakari Ailus)
 
 Thanks!
 
 
 ---------------
 
-Aaron Kling (2):
-      cpufreq: tegra186: Set target frequency for all cpus in policy
-      cpufreq: tegra186: Initialize all cores to max frequencies
+Mario Limonciello (AMD) (1):
+      x86/acpi/cstate: Remove open coded check for cpu_feature_enabled()
 
-Brian Norris (3):
-      PM: runtime: Add basic kunit tests for API contracts
-      PM: runtime: Make put{,_sync}() return 1 when already suspended
-      PM: runtime: Update kerneldoc return codes
+Rafael J. Wysocki (1):
+      ACPI: battery: Add synchronization between interface updates
 
-Dan Carpenter (1):
-      PM: runtime: Fix error checking for kunit_device_register()
+Sakari Ailus (1):
+      ACPI: property: Return present device nodes only on fwnode interface
 
-Gopi Krishna Menon (2):
-      docs/zh_TW: Fix malformed table
-      docs/zh_CN: Fix malformed table
-
-Johan Hovold (1):
-      cpufreq: mediatek: fix device leak on probe failure
-
-Pin-yen Lin (1):
-      PM: sleep: Do not wait on SYNC_STATE_ONLY device links
-
-Rafael J. Wysocki (8):
-      PM: runtime: Add auto-cleanup macros for "resume and get" operations
-      PCI/sysfs: Use runtime PM guard macro for auto-cleanup
-      PM: runtime: Drop DEFINE_FREE() for pm_runtime_put()
-      cpufreq: Make drivers using CPUFREQ_ETERNAL specify transition latency
-      cpufreq: CPPC: Avoid using CPUFREQ_ETERNAL as transition delay
-      ACPI: CPPC: Do not use CPUFREQ_ETERNAL as an error value
-      cpufreq: Drop unused symbol CPUFREQ_ETERNAL
-      PM: runtime: Introduce one more usage counter guard
-
-Thorsten Blum (1):
-      rust: cpufreq: streamline find_supply_names
+pengdonglin (1):
+      ACPI: APEI: Remove redundant rcu_read_lock/unlock() under spinlock
 
 ---------------
 
- Documentation/admin-guide/pm/cpufreq.rst           |   4 -
- Documentation/cpu-freq/cpu-drivers.rst             |   3 +-
- .../translations/zh_CN/cpu-freq/cpu-drivers.rst    |   3 +-
- .../translations/zh_TW/cpu-freq/cpu-drivers.rst    |   3 +-
- drivers/acpi/cppc_acpi.c                           |  16 +-
- drivers/base/Kconfig                               |   6 +
- drivers/base/base.h                                |   1 +
- drivers/base/core.c                                |   2 +-
- drivers/base/power/Makefile                        |   1 +
- drivers/base/power/main.c                          |   6 +-
- drivers/base/power/runtime-test.c                  | 253 +++++++++++++++++++++
- drivers/base/power/runtime.c                       |   5 +
- drivers/cpufreq/amd-pstate.c                       |   8 +-
- drivers/cpufreq/cppc_cpufreq.c                     |  14 +-
- drivers/cpufreq/cpufreq-dt.c                       |   2 +-
- drivers/cpufreq/imx6q-cpufreq.c                    |   2 +-
- drivers/cpufreq/mediatek-cpufreq-hw.c              |   2 +-
- drivers/cpufreq/mediatek-cpufreq.c                 |  14 +-
- drivers/cpufreq/rcpufreq_dt.rs                     |  12 +-
- drivers/cpufreq/scmi-cpufreq.c                     |   2 +-
- drivers/cpufreq/scpi-cpufreq.c                     |   2 +-
- drivers/cpufreq/spear-cpufreq.c                    |   2 +-
- drivers/cpufreq/tegra186-cpufreq.c                 |  35 ++-
- drivers/pci/pci-sysfs.c                            |   5 +-
- include/acpi/cppc_acpi.h                           |   6 +-
- include/linux/cpufreq.h                            |   6 +-
- include/linux/pm_runtime.h                         | 105 ++++++---
- rust/kernel/cpufreq.rs                             |   7 +-
- 28 files changed, 426 insertions(+), 101 deletions(-)
+ arch/x86/kernel/acpi/cstate.c |  2 +-
+ drivers/acpi/apei/ghes.c      |  2 --
+ drivers/acpi/battery.c        | 43 +++++++++++++++++++++++++++++--------------
+ drivers/acpi/property.c       | 24 +++++++++++++++++++++++-
+ 4 files changed, 53 insertions(+), 18 deletions(-)
 
