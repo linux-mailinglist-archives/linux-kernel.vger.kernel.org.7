@@ -1,107 +1,274 @@
-Return-Path: <linux-kernel+bounces-844629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E609BC25FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 20:23:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA3A4BC2610
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 20:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 080283BF91D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 18:23:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64D3D3C74C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 18:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E662E7BDF;
-	Tue,  7 Oct 2025 18:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 887772E92D4;
+	Tue,  7 Oct 2025 18:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MBpN8GEl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lDe6rU3e"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A352B661
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 18:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42012E92B2
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 18:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759861387; cv=none; b=ZlCvpkd+5Q21LBFGGFKJP1WXtCUwYXK7qOL+d5Ie94KKoMGjJavM6rdmmQsDh97qlOZiFkqy+wcsLAglKMOB2hPCibWyyiuW3xaeA38Z6Weu89yS07oUn5sVhgplQg4zpaAMEIuzUvLQakji/hXjem1XGLYrSYNFlTHQMAT3WUA=
+	t=1759861465; cv=none; b=b1zXdK3+DLm9d5gj0RHGAV4eBYsEZTOKWk4ufOQMBBO+6/rgXOB1906Wqcm0YGBugcsXNToZ6AaSETUey/O1wSx8rLgLOxi5j5TZ537d/LbuGhThmIkFezEvYEsVK4kPl5L5CWSwyhMH/2h4rp5uIyj9e615fvSEZpRX51DdBNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759861387; c=relaxed/simple;
-	bh=lxcxiGcnSQhOw8q03P3pElZ1Cb5DunYGWxewnXa2vaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OcX7djRQtFE4M3WahgeLRjE6aHnfjjAgAzLiRDJ539hDzYPbChvq485PUD6Qze0sOFCP4FlmtVdOWBOaRV1kL/Y/pznEQgA/ft8HKWU82f8SNXA1o/E9fkvb9mtYl7HOlN+rZntaeI1pXGXorAuwFl/SXd6pJPRazo7n/1VwnHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MBpN8GEl; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759861385; x=1791397385;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lxcxiGcnSQhOw8q03P3pElZ1Cb5DunYGWxewnXa2vaM=;
-  b=MBpN8GElGQAzxI3Zjx0EIgaRdpFbcFMU+q1w1gFX/fj30YgyFPffzdif
-   /YvQ29VMzQiEu9esifzw9P8BuK7PJRdaT5K8TNV6hmvfty/uTmn/hR+kP
-   xIjE78j2hESlgDLZi2HpBTcliISADUP6hWtSvUDcf5Su63bClk9ljHxrf
-   AKO+GozEUz+AwOYLesSZigYtFY4ZrGn2xl0DgITVIpdSfUPi2iCKjdAMH
-   LRmu2yRBC0R2K+F8IcZsF1QrvI7JIx/eVOxsBKHbKOCnw4MnDuIHRa0sj
-   TKgTcz6eT+h9Eqh/q32JY9BBv7aH9y6nWvbWFs6A15VZccfYBy83SbaXz
-   A==;
-X-CSE-ConnectionGUID: OShHspBwS7u4my7+l/sJnQ==
-X-CSE-MsgGUID: qvLi9QPsSeCw7FHHI1XZtw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11575"; a="84672028"
-X-IronPort-AV: E=Sophos;i="6.18,321,1751266800"; 
-   d="scan'208";a="84672028"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2025 11:23:04 -0700
-X-CSE-ConnectionGUID: QfymVmV3RqyMzqeo7g+8Rg==
-X-CSE-MsgGUID: V5GmDUPsTaKpxLpp9bKntg==
-X-ExtLoop1: 1
-Received: from jdoman-mobl3.amr.corp.intel.com (HELO desk) ([10.124.220.94])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2025 11:23:03 -0700
-Date: Tue, 7 Oct 2025 11:22:57 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: "Kaplan, David" <David.Kaplan@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Klaus Kusche <klaus.kusche@computerix.info>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/bugs: Qualify RETBLEED_INTEL_MSG
-Message-ID: <20251007182257.ywrqrrhgrtrviila@desk>
-References: <20251003171936.155391-1-david.kaplan@amd.com>
- <20251006131126.GBaOO__iUbQHNR6QhW@fat_crate.local>
- <LV3PR12MB9265B9AA81E01A539214764A94E3A@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20251006140442.GDaOPMemqB7SRJSHWL@fat_crate.local>
+	s=arc-20240116; t=1759861465; c=relaxed/simple;
+	bh=Xa09G7kAEtQpxw4yOJ2reBncMLpC8/fWQifv/+f3CTY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jcjS8hy4QzBjid0gHrc3tt/m9Svx2JGi6yapAZT4NbOj4P1nbIXox7fEb876ob5vK2WCcT3KDRp+6tDIlJQAwgTKyjzbR2qYuNVpcR6tkIB6vOVoAZ2arg5FrLx+nvbas/Xa81jI6dIZgP/VLWGMnqqES634hprQw6oWqwnpvjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lDe6rU3e; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e326e4e99so879815e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 11:24:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759861462; x=1760466262; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eQmS4iGCIsqFscOYPI2pMSI5i8ARz15f5xJppXklNTg=;
+        b=lDe6rU3eBNwmbFmjWhGDJuyiheMj39MAUWVbIJkwfW5raOHZrbRiGTUT7RHLqRGAZ/
+         C4DsCCO1i8JmuQMSRB8QdBllKh9KP8khtjSTj9vdwjAWB19RTHcVZU/4y7QNVTQvG1tH
+         +1iXqlMEyjjBVp68LluKyrU9s7O5QGL417ikM6+kuUBGUgPca31hbpy0j4QzykH6WaId
+         rDDUfwC/b37DDfLA5es1OiEFncG++ktNolGwKUT1K9JisfrwXPjN7kUmdPkGBka/tIvu
+         icRjCUuxqDNMB/3SpQ3QuQVKZ4oHmqh6YskN8W4vXVe2cdm17PnEra2j35tirywEZd03
+         +n8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759861462; x=1760466262;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eQmS4iGCIsqFscOYPI2pMSI5i8ARz15f5xJppXklNTg=;
+        b=izUaI7vj9f/yQhPtcqpSzE19aDpdWN7r61VLJJIW09PvRqtYYbjXodluS5Z5D7388E
+         CwOiqP1f0sbimfK26M0pwuY6GuIZTliEfm/wGWQgJc/qjF+QBQ2PWwAigSxmELYTJmbG
+         OQ6voWPhzjO1A8z7mHMwY6fIj7u3r72paDtsP44boWQGH6xWq1SePIdNVhOR1Wmgmlyz
+         5XQmaslIUb5KT6Bfe1Etd5UOAFCn1L8yre+8HC8e70dwpT4KLBqX9/ac+QGmGFrq7SJg
+         N2ago/WeucOCWItrSn98AEtivOaZyag68Vxhxv/7kMTvlLcqupvQbJMa7i3bJ/nw+6MC
+         FL1w==
+X-Forwarded-Encrypted: i=1; AJvYcCW1JoSa5tpcB9grUp3lrDbCRoPcDLyNHqXnJiNKQBK2v6HFDovzWVDmf14WzeOGss9y++vgEP4DInL7Tsc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywkxlr/t4FjJx8mc9wsdKkIZRzXL6E+EZPmGVv/NHvgJwCi4Pql
+	AZq5S2c0NAXofqK984lXAqCOSEkNssAgzakW6punwPfDeUDp5smkMmlU
+X-Gm-Gg: ASbGnctGEpmhZ1K6Qp/x5kwbxo5HxIwMFjYtIiLmSdbrUqkg1o/WvMlJ0wtRK/SAWcS
+	n1CBIOdU+JL0WK+CGcvc6xog4l3LgDeHhLvl9BCGPrsz8hqdmrKam5AH78TWbB1JtevHiCvxsMc
+	MVFtay74LgMAAkido3Y6OuoKF8p+dlRkxZlZMX4Dq51Csndbl0sYOQjWMFNtfESvI2jsTXFETgs
+	9hk1kXGK8C+ym3RdxpaGGLx+ztukomvI0OW5GF2i7X8rBUiGlYnPHESRhYti6rN7SJkD+G/Aasc
+	bynUo1QIiXiBi6C17uf+pz1li5qxs0q0+AdXZQR+bgNh9jr0YKVD1IujXZvOZw7MHKcMPR7pE7s
+	8eZJYJVRKsGmAeVjlJ5e1J3+ItRKUth0PtTvnbDHCBGvxYadqal2pHTS1CkmXjvnuRtiirhCujk
+	byg5PXtDa5u9dT
+X-Google-Smtp-Source: AGHT+IGj/aZ4dREFNGfXsKOVw/xQDfcBe5qfV06LY9YeLiL2xFcvZXfiVKVcLJWLZMfSJ7R2lbSN1Q==
+X-Received: by 2002:a05:600c:458b:b0:45d:5c71:769d with SMTP id 5b1f17b1804b1-46fa9e9a2e5mr2597245e9.8.1759861461807;
+        Tue, 07 Oct 2025 11:24:21 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fa9d6269asm3998165e9.15.2025.10.07.11.24.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 11:24:21 -0700 (PDT)
+Date: Tue, 7 Oct 2025 19:23:27 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Guan-Chun Wu <409411716@gms.tku.edu.tw>, akpm@linux-foundation.org,
+ axboe@kernel.dk, ceph-devel@vger.kernel.org, ebiggers@kernel.org,
+ hch@lst.de, home7438072@gmail.com, idryomov@gmail.com, jaegeuk@kernel.org,
+ kbusch@kernel.org, linux-fscrypt@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+ sagi@grimberg.me, tytso@mit.edu, visitorckw@gmail.com, xiubli@redhat.com
+Subject: Re: [PATCH v3 2/6] lib/base64: Optimize base64_decode() with
+ reverse lookup tables
+Message-ID: <20251007192327.57f00588@pumpkin>
+In-Reply-To: <CADUfDZp6TA_S72+JDJRmObJgmovPgit=-Zf+-oC+r0wUsyg9Jg@mail.gmail.com>
+References: <20250926065235.13623-1-409411716@gms.tku.edu.tw>
+	<20250926065556.14250-1-409411716@gms.tku.edu.tw>
+	<CADUfDZruZWyrsjRCs_Y5gjsbfU7dz_ALGG61pQ8qCM7K2_DjmA@mail.gmail.com>
+	<aNz/+xLDnc2mKsKo@wu-Pro-E500-G6-WS720T>
+	<CADUfDZq4c3dRgWpevv3+29frvd6L8G9RRdoVFpFnyRsF3Eve1Q@mail.gmail.com>
+	<20251005181803.0ba6aee4@pumpkin>
+	<aOTPMGQbUBfgdX4u@wu-Pro-E500-G6-WS720T>
+	<CADUfDZp6TA_S72+JDJRmObJgmovPgit=-Zf+-oC+r0wUsyg9Jg@mail.gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251006140442.GDaOPMemqB7SRJSHWL@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 06, 2025 at 04:04:42PM +0200, Borislav Petkov wrote:
-> On Mon, Oct 06, 2025 at 01:58:55PM +0000, Kaplan, David wrote:
-> > Sounds rather yucky. 
-> 
-> I'll give it a try at some point and see how ugly it becomes...
-> 
-> > What about just not calling cpu_select_mitigations() if
-> > CONFIG_CPU_MITIGATIONS=n?  Then you won't get any print messages either I'd
-> > think.
-> 
-> I want to not compile in that code at all if CPU_MITIGATIONS=off, actually.
+On Tue, 7 Oct 2025 07:57:16 -0700
+Caleb Sander Mateos <csander@purestorage.com> wrote:
 
-Even when CPU mitigations are disabled there is still some handling
-required for mitigations like GDS that requires a write to MSR to ensure
-correct behavior. So not all of bugs.c can be compiled out easily.
+> On Tue, Oct 7, 2025 at 1:28=E2=80=AFAM Guan-Chun Wu <409411716@gms.tku.ed=
+u.tw> wrote:
+> >
+> > On Sun, Oct 05, 2025 at 06:18:03PM +0100, David Laight wrote: =20
+> > > On Wed, 1 Oct 2025 09:20:27 -0700
+> > > Caleb Sander Mateos <csander@purestorage.com> wrote:
+> > > =20
+> > > > On Wed, Oct 1, 2025 at 3:18=E2=80=AFAM Guan-Chun Wu <409411716@gms.=
+tku.edu.tw> wrote: =20
+> > > > >
+> > > > > On Fri, Sep 26, 2025 at 04:33:12PM -0700, Caleb Sander Mateos wro=
+te: =20
+> > > > > > On Thu, Sep 25, 2025 at 11:59=E2=80=AFPM Guan-Chun Wu <40941171=
+6@gms.tku.edu.tw> wrote: =20
+> > > > > > >
+> > > > > > > From: Kuan-Wei Chiu <visitorckw@gmail.com>
+> > > > > > >
+> > > > > > > Replace the use of strchr() in base64_decode() with precomput=
+ed reverse
+> > > > > > > lookup tables for each variant. This avoids repeated string s=
+cans and
+> > > > > > > improves performance. Use -1 in the tables to mark invalid ch=
+aracters.
+> > > > > > >
+> > > > > > > Decode:
+> > > > > > >   64B   ~1530ns  ->  ~75ns    (~20.4x)
+> > > > > > >   1KB  ~27726ns  -> ~1165ns   (~23.8x)
+> > > > > > >
+> > > > > > > Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> > > > > > > Co-developed-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+> > > > > > > Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+> > > > > > > ---
+> > > > > > >  lib/base64.c | 66 ++++++++++++++++++++++++++++++++++++++++++=
+++++++----
+> > > > > > >  1 file changed, 61 insertions(+), 5 deletions(-)
+> > > > > > >
+> > > > > > > diff --git a/lib/base64.c b/lib/base64.c
+> > > > > > > index 1af557785..b20fdf168 100644
+> > > > > > > --- a/lib/base64.c
+> > > > > > > +++ b/lib/base64.c
+> > > > > > > @@ -21,6 +21,63 @@ static const char base64_tables[][65] =3D {
+> > > > > > >         [BASE64_IMAP] =3D "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgh=
+ijklmnopqrstuvwxyz0123456789+,",
+> > > > > > >  };
+> > > > > > >
+> > > > > > > +static const s8 base64_rev_tables[][256] =3D {
+...
+> > > > > > Do we actually need 3 separate lookup tables? It looks like all=
+ 3
+> > > > > > variants agree on the value of any characters they have in comm=
+on. So
+> > > > > > we could combine them into a single lookup table that would wor=
+k for a
+> > > > > > valid base64 string of any variant. The only downside I can see=
+ is
+> > > > > > that base64 strings which are invalid in some variants might no=
+ longer
+> > > > > > be rejected by base64_decode().
+> > > > > > =20
+> > > > >
+> > > > > In addition to the approach David mentioned, maybe we can use a c=
+ommon
+> > > > > lookup table for A=E2=80=93Z, a=E2=80=93z, and 0=E2=80=939, and t=
+hen handle the variant-specific
+> > > > > symbols with a switch. =20
+> > >
+> > > It is certainly possible to generate the initialiser from a #define to
+> > > avoid all the replicated source.
+> > > =20
+> > > > >
+> > > > > For example:
+> > > > >
+> > > > > static const s8 base64_rev_common[256] =3D {
+> > > > >     [0 ... 255] =3D -1,
+> > > > >     ['A'] =3D 0, ['B'] =3D 1, /* ... */, ['Z'] =3D 25, =20
+> > >
+> > > If you assume ASCII (I doubt Linux runs on any EBCDIC systems) you
+> > > can assume the characters are sequential and miss ['B'] =3D etc to
+> > > reduce the the line lengths.
+> > > (Even EBCDIC has A-I J-R S-Z and 0-9 as adjacent values)
+> > > =20
+> > > > >     ['a'] =3D 26, /* ... */, ['z'] =3D 51,
+> > > > >     ['0'] =3D 52, /* ... */, ['9'] =3D 61,
+> > > > > };
+> > > > >
+> > > > > static inline int base64_rev_lookup(u8 c, enum base64_variant var=
+iant) {
+> > > > >     s8 v =3D base64_rev_common[c];
+> > > > >     if (v !=3D -1)
+> > > > >         return v;
+> > > > >
+> > > > >     switch (variant) {
+> > > > >     case BASE64_STD:
+> > > > >         if (c =3D=3D '+') return 62;
+> > > > >         if (c =3D=3D '/') return 63;
+> > > > >         break;
+> > > > >     case BASE64_IMAP:
+> > > > >         if (c =3D=3D '+') return 62;
+> > > > >         if (c =3D=3D ',') return 63;
+> > > > >         break;
+> > > > >     case BASE64_URLSAFE:
+> > > > >         if (c =3D=3D '-') return 62;
+> > > > >         if (c =3D=3D '_') return 63;
+> > > > >         break;
+> > > > >     }
+> > > > >     return -1;
+> > > > > }
+> > > > >
+> > > > > What do you think? =20
+> > > >
+> > > > That adds several branches in the hot loop, at least 2 of which are
+> > > > unpredictable for valid base64 input of a given variant (v !=3D -1 =
+as
+> > > > well as the first c check in the applicable switch case). =20
+> > >
+> > > I'd certainly pass in the character values for 62 and 63 so they are
+> > > determined well outside the inner loop.
+> > > Possibly even going as far as #define BASE64_STD ('+' << 8 | '/').
+> > > =20
+> > > > That seems like it would hurt performance, no?
+> > > > I think having 3 separate tables
+> > > > would be preferable to making the hot loop more branchy. =20
+> > >
+> > > Depends how common you think 62 and 63 are...
+> > > I guess 63 comes from 0xff bytes - so might be quite common.
+> > >
+> > > One thing I think you've missed is that the decode converts 4 charact=
+ers
+> > > into 24 bits - which then need carefully writing into the output buff=
+er.
+> > > There is no need to check whether each character is valid.
+> > > After:
+> > >       val_24 =3D t[b[0]] | t[b[1]] << 6 | t[b[2]] << 12 | t[b[3]] << =
+18;
+> > > val_24 will be negative iff one of b[0..3] is invalid.
+> > > So you only need to check every 4 input characters, not for every one.
+> > > That does require separate tables.
+> > > (Or have a decoder that always maps "+-" to 62 and "/,_" to 63.)
+> > >
+> > >       David
+> > > =20
+> >
+> > Thanks for the feedback.
+> > For the next revision, we=E2=80=99ll use a single lookup table that map=
+s both +
+> > and - to 62, and /, _, and , to 63.
+> > Does this approach sound good to everyone? =20
+>=20
+> Sounds fine to me. Perhaps worth pointing out that the decision to
+> accept any base64 variant in the decoder would likely be permanent,
+> since users may come to depend on it. But I don't see any issue with
+> it as long as all the base64 variants agree on the values of their
+> common symbols.
 
-IMO, rather than targeting the mitigation enabling code it might make more
-sense to compile out the actual mitigations scattered accross the kernel.
-This may also improve performance by reducing the code footprint, and can
-also help getting a cleaner disassembly.
+If an incompatible version comes along it'll need a different function
+(or similar). But there is no point over-engineering it now.
+
+	David
+
+
+>=20
+> Best,
+> Caleb
+
 
