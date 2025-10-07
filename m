@@ -1,237 +1,207 @@
-Return-Path: <linux-kernel+bounces-844591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27B51BC24CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 19:51:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFC6FBC24D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 19:52:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A4CC3B9368
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 17:51:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DCF619A383D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 17:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665BB2E8DF4;
-	Tue,  7 Oct 2025 17:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4EB2E7BBC;
+	Tue,  7 Oct 2025 17:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="UCHfvNLL"
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013051.outbound.protection.outlook.com [40.93.196.51])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FiN4Z1Fz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D128C1BD9F0;
-	Tue,  7 Oct 2025 17:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759859451; cv=fail; b=oqVMnV81T3Suh5fC6j7pRWDxvhUTcRu5iJ/pU3umSOy2ihxodg1OWFJB0z1R0mzoBKhTyilf0b0ysbEWAxxOFjaJ7NIopCrCRywmb5KbE79D4FX43iFOMnoLdoMXtpHCPj1HdIOEolrGwCp+iuA7YxTCN5bgVb4fgNkSuqBeTC4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759859451; c=relaxed/simple;
-	bh=Y2h+pVLNAmgtc8ICZm6yAKox8ZbCKJkMe5XrYzrBwsY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jknduRLYeDv/in666//TRfimZANPsTbBRq/bJuDejegAw0ENTOwFY8nHIXaU0ewZM4BpxRuFxBewPzzGP44EB1WNqLA9+9YxUT64qctDZPfktLX+cJEq4BcBoW2mKW9wwVEJJYTrZnnN0VReL904DAmcORRE4log7a1ut9uLPR4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=UCHfvNLL; arc=fail smtp.client-ip=40.93.196.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BGPaMZHDWn4AhylH8nvyPS8WIsgXetvWptxqSDqFMRtX/NbqaI/OOlE05Wt9KaATsuhWLp9qOcOWAOTaVqaEC5an8MVXH99CuFDaFVjqGPl0TTcSLH30/waFXZg+/EXvZoT/zLhqXB+7eYZr/R2knXMOej7D4jiAWbmr4lbnhYVU3trqKe+w2ZEwL9na+XYf370l1g4RsFoGGfD9QnLdTFMCET3BMegrXy5Yx+O7eB0VacHQ3VB0rS/qBsClegruNvQ6kPTI6jvgLfyw4UBHrwSFIvgTSWA2Is9HEUqOM4NCXsGcZ+yKWgdVWHCU0QVllydsLvz3OJDZFdmlt71Kag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xA5qxHVl7roq/nsAFtS9I+tsBRwoXQdPMH+1A6Xk6Xc=;
- b=YZUbok7O61hfk7gXnfOlP5KGyLuVPd6x1wLWcYWcpfGZMtJK0O+ZYvueIVuVjeSBgipofGcz+9KlU5nssMKXuR6XbGF1n5gajlxojyqpnfrvCzYQ/HeM6glsAE+BaYU91fnobifTGLOC/Ph2nqj5hnLOf+r6glhblzJqXFW3103pj7BP9/oBBq3QcKIevm26XG/rUPHjtcZqfbaqImmzxaCFNhXyfW1w/SpGT52Ee0/yk4vRWeHXz58EWZySDB1tS8frJHNiZ2K/LYmoTc6itV7CIcQ/04XljG91EEGktocnRkTZy5BC15rW/OLpJDglr9zhZKYosNaqS+L8YWu9Eg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xA5qxHVl7roq/nsAFtS9I+tsBRwoXQdPMH+1A6Xk6Xc=;
- b=UCHfvNLLhJvP984O1iN5AVkXFvMxb4ySToB4EnwTK7BSTOy6eO2+lOOerVLkbuedx3IHbU93EaIdMvXO1TTkgpKqTv32UsN4B4D5FmtDN/B57SRMcaSIQhwqdn6/U0GxyDkjHNofSZKTLZoHyX2xVdLRVJaMzypWYjc8dydjFpvnRUBEYrUIOitKaAobceZMvQDaw+AKCDTs+wxIcl1MO1NbO7DMccPVXRj9YDH11srwYvftUjB36wnflwAj3y++QUyWV/EGS9O15x2dCz9goM9P46EuSlPG2bM+Uzq/rjsCZe1tUG9ohYGst6gcBsvFCU2tc4mIa/PQBylKNHDAuQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
- by DS7PR12MB6190.namprd12.prod.outlook.com (2603:10b6:8:99::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Tue, 7 Oct
- 2025 17:50:40 +0000
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9182.017; Tue, 7 Oct 2025
- 17:50:39 +0000
-Date: Tue, 7 Oct 2025 14:50:38 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
-	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com,
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org,
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com,
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org,
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr,
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
-	vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
-	linux@weissschuh.net, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org,
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
-	brauner@kernel.org, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
-	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com,
-	witu@nvidia.com, hughd@google.com, skhawaja@google.com,
-	chrisl@kernel.org, steven.sistare@oracle.com
-Subject: Re: [PATCH v4 00/30] Live Update Orchestrator
-Message-ID: <20251007175038.GB3474167@nvidia.com>
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
- <CA+CK2bB+RdapsozPHe84MP4NVSPLo6vje5hji5MKSg8L6ViAbw@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+CK2bB+RdapsozPHe84MP4NVSPLo6vje5hji5MKSg8L6ViAbw@mail.gmail.com>
-X-ClientProxiedBy: BL1PR13CA0444.namprd13.prod.outlook.com
- (2603:10b6:208:2c3::29) To MN2PR12MB3613.namprd12.prod.outlook.com
- (2603:10b6:208:c1::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D6A2D3EDF
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 17:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759859541; cv=none; b=P06X3BSjZbmMC/E22yIo4f6eFFv+fZhtQ1Pts+VByOC+C8WBhBkPbnna/7gLc7OxapR+d37e63VaWEMbfIXeBExNgbBhgU4jIyIZn3fw0qqdKbmDAOEoY9abxwWianDZNZyq9ZzXjCJg1QGbjP2fVOaQklzWRpxTjEilbVmb0XM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759859541; c=relaxed/simple;
+	bh=1dzITc0msTixzwZngkIAM0+kMjxc7Sjk7Svpl/USKvE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kIUDaFM38UtVrkZiMNRrdA7VqJ2OziN3vG+I5+hi7tRfwH3PTFvrFefEid/Dj170OkoldhNIxPST9wk8b66PW5DcGJmSaOluwdP9BrQQUZ56+Y8sy8YuHganRvmb/AuWhkVDdWqsgewC65rFlWWlipGfB1QbtPbG+/1+dG1RaHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FiN4Z1Fz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C6F2C113D0
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 17:52:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759859541;
+	bh=1dzITc0msTixzwZngkIAM0+kMjxc7Sjk7Svpl/USKvE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FiN4Z1FzegMnpIdXu/henNP7ZUJcNBLMMmrHvvzP5C+mGOTUN6+kclR+Lx00tijfF
+	 t/d/YbuqpvH4lv85TMLYPoFTYdU4D4rGAD2SgXtz/zsirQzF3NpkGKM+aQmd65Gncd
+	 /pEKD2T9lve8GELdYQ3xAiYRTz+HMMQmwYziX5LxhfUSrpm4oiZ+poyg41hxLfSXVs
+	 /6wdbN3FVdrE6tGfxJ5EX8UJzjhDz8XX9RqcsKXDDWszJ/4HDNHxGN2Oo9aAexdlpz
+	 Jx53c+jF+IKMnXS277WPVGzb8P3hYdQnODqh+7wqjIjoNXABLLw/3gtRGP7arGAFyj
+	 7nwIc6Wy9b1IA==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-3635bd94f3eso56481951fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 10:52:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXThn0fF9J7bJkK+Ts50QH9DfB6nGKPJkL75yNqxgNXRhsaTxG/tnuf3rgRq7SV46Yvf7TsRDRpqFn6ywM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlhxyX3WM7gwAd2ac2AitCLFsSO6nWgrfmY1r9bd11z8f9HJ4K
+	3oIJ1L7ieIS7zao/p9KTMo+Dtuw5FEd69/CHLMkr/EQKHpBeNANZ2HJa2WyuT4Q+FazLXILD2+s
+	q8vMjjO0bRmYGGbvprGaligK3uHpEywY=
+X-Google-Smtp-Source: AGHT+IGmT4ZXu0FIyWwOvLIp9E5AG1zHlsLdLMdm3sCt/oKNhuNYMmRFgZ+17usOiWCpsTsbb2hliWIukTOoogfQj3c=
+X-Received: by 2002:a2e:be0c:0:b0:36e:9e8f:ba4d with SMTP id
+ 38308e7fff4ca-37609d40fc1mr773271fa.14.1759859539625; Tue, 07 Oct 2025
+ 10:52:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|DS7PR12MB6190:EE_
-X-MS-Office365-Filtering-Correlation-Id: 491d8759-74ff-4093-848c-08de05ca0737
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?26Y0iQXTYKCm91ui7VsawlPXFY/zPbApLH+S8fHH1+bQp5j/mKKP0qWSKsl/?=
- =?us-ascii?Q?Yr/Dmmk1F/+i9UbwZy/mhs2HJJp0I6j8qwhNdg+UCsn0vNo/EFcuU/aSu86m?=
- =?us-ascii?Q?fcCzyJLDVI5m1AmZN3ZG5pFSzQ8S5gs6ev1WSeHKmDfgavv75YYkhRP62Vjf?=
- =?us-ascii?Q?EDrDCeybadsTukX/nUGyWu7GSGUuhXNTCCjK5VtGP7UJ1ja1+ExdZbtJ2H3g?=
- =?us-ascii?Q?4mI5mlL6MbtA2dPbbP0Q2vTGuLyahU/NCZi6RMsnCIoSo19wyWLV2o3YgShX?=
- =?us-ascii?Q?DWVCKvNgwgNkEOTxLWLIVr5kEx7Q+FdPlGZc6IZooyetO5XL0D6lPGJUjp0p?=
- =?us-ascii?Q?EPSP9ba5UaHsrJilJ1hXM+ekAhvRIUbkxMl8Thbq/tktWcfUOc3ngQW5kzg+?=
- =?us-ascii?Q?AVqBAu4pBmaWgv5WdPenSZYAQ77fWL1b6UePU3NowFeE+WUJei7STb5sK0rX?=
- =?us-ascii?Q?67fzzlGAYhx49KwhjuZcxbwhwRGl1WzUEsOUrR5FBc6U1nQEEimCURyAj27M?=
- =?us-ascii?Q?2j1nAi2cAMi45LqwWwaa3GElSAsdqFfZxSFMgBnieeHjkujPK+hfVQuCVdIm?=
- =?us-ascii?Q?UJDLXpwRgB1dSLfdVqrZcu8fEBLYJcUceHEyRlnkofLIvAzd/lcrbK2q6Nmu?=
- =?us-ascii?Q?te6AojZF9JnOZ2S6ywt0d7t/jyUL9ichjYz/1ktKmYbIQtJr44+ZanU72U/+?=
- =?us-ascii?Q?iWAfhW610hzl7TmVXw3IKDjIMvSCHjYdnsWO5KkcJjTQyvyWDgZQ3Edkhhlw?=
- =?us-ascii?Q?gbKFXLfQxR0QB4rzhiBwObtZATl9ZN0TJxQk46pgcSnoWSr5mSR1yhhEDQ6z?=
- =?us-ascii?Q?kohSSxEA5LnEh7Ub4jJIxY5K0JXQucJ2DYSZW3JLcuTNew2jkpwbcl+5Z4Ny?=
- =?us-ascii?Q?NKWG7bP/FkodxS6M2qX2W59RssR5cajVLuKjM3dPaVkD5C6GByIfqYaPLSIg?=
- =?us-ascii?Q?8cLIKEZZh0IAl9377jg/IlO/XvE7A2rD3xKGUAlHoRm3Gw4F7EfC4+bvvVSo?=
- =?us-ascii?Q?wfcY387icmh0EBmTr78zqevCI4ZcPXuax45jFfba2B69VgbSQbcOnq9Mg9TF?=
- =?us-ascii?Q?I1klUC93VPQl/NMYnnIHaR74s/GXnhZWO7RuGxgkhCAXmi52f6tstvJll+m1?=
- =?us-ascii?Q?b/raG5aNkWv4JEl3q5a+7OGumqdSJeCwfxzVJ02mL4uxDKPEM4L5SFVvV/ZE?=
- =?us-ascii?Q?wwUL+1CfUyLagPE1YoHAsfS0q4hwnstEz3kONW7q6vq/psT5aBptXxmw15qb?=
- =?us-ascii?Q?IlkQdq3x6ybzHjeH+VmSb1kMHUgNJ8k/1tOngcrpU/DWQtghQLqiOjUWKNZi?=
- =?us-ascii?Q?94JrZJsrqBp1QTdeICCoLKoqG41y+dYFkpI5tJGRCVW4m0OcQdqp/lwEehgx?=
- =?us-ascii?Q?/cWZkyTYyt/AelMrA5WoIuvBWSRN0PjAMkJ/z0zb092Wi+XOTn3ysJCYbCv0?=
- =?us-ascii?Q?8lVH4E1JqzmysKwB6xiauCEt2/Jn01Nn?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?194rzCorbHCnJW/tsKiKqLhvWuAR9OBX+JTMDVsWL/NIAxmQaJp+R6TqehDF?=
- =?us-ascii?Q?FBglgf+FdihXKM1I1VDiyxDTqC907jAZ1cJQMV330s4kbAXldr3RojWwnMsk?=
- =?us-ascii?Q?HimWmxsEPcoXtLWdeJKOXsMx8B68t3+M2IT/SXcBtRFjv8MJj0LL+T06QzpF?=
- =?us-ascii?Q?QZ22o4TdR8TxI28qI99Nx2HmB7GwgBZ/Z6TVoy9hDS1yRTFiFWYt5LvbB79+?=
- =?us-ascii?Q?wSthBlFlaxFYTveQICnELKlIcNXJVjHiIuxXDCElsoUv0K0k5VYU7/qpLjuR?=
- =?us-ascii?Q?OkX7IrPmxm1QeXRKAOYJfzemOPYjIeUVy0+psBtsqGD+utbY9TyRDjA6f0nw?=
- =?us-ascii?Q?IczzYRntuOvDbyUpenRsFNpISZrRKS0TwgbdQAdnn6Od2HSrOkgJNnqq5qSH?=
- =?us-ascii?Q?JKe4mjR8JmcTH+1kTRwb14oCbJp8sRDhJYoCoIQALd2Lx6wQ2lNsbmNEeYMP?=
- =?us-ascii?Q?xqCnFAhs8EtlxXJUJAh8deqtuGDpJ3TJVwWzS8GjWAk/zIz9u8q/+M3zWhc6?=
- =?us-ascii?Q?lMi/s/SwY8tlHh9x6iyzXBKk/++xKvRjGTb4Qe0qImaToCKCUEj6mx7Q6Pko?=
- =?us-ascii?Q?b1+w8V/5VVyzcWI6fe1w2wBzqkXTirMxCA7wj76ncwPBpGVHr2Uig/tGr26S?=
- =?us-ascii?Q?69OwG77TRUVCfXsVp7TxatL7lNZ6NffNU6Ab93LHNm5GghwZuoUdpKboRHcI?=
- =?us-ascii?Q?zskW96wyZB6r0kYmhbzhsO6Ws2NyMle+trUNhRlWf6Nwe3V+5mZTpagWiUBO?=
- =?us-ascii?Q?Q9AoWti70XlhZHf3Q7CD6PGJult3Ii/XdkTafBrCxKNxoUiEmfJw+eEUfGYB?=
- =?us-ascii?Q?g84t5TwB9k6/4Mxh1rA/w8ecq50HO70gxaEZWhUtH7JXTGbJVB1rxd2iBkh9?=
- =?us-ascii?Q?3jMB3JS2kHzWHwy0ma10ADIYfuWjvCBD6Kk0s1+gM/I5D3eFajUIuzyNS2OZ?=
- =?us-ascii?Q?C4JHItv7osNfLrO3aYYbPNd2i0uzn4tV5HN8jD0sgUZ8BLj5PyDeiAQ34qxa?=
- =?us-ascii?Q?yEGQvsQIhMHpfRMsIr7xSmKLtxDBuqokoKwZ+pqGkzdiAW/u1gpSUaVJFp53?=
- =?us-ascii?Q?im74OWc4Hx8tfUGThBhpRYNi2af+fjJ8Km1y0B0UT94fXSryDHMheBciGFes?=
- =?us-ascii?Q?UKEcHY0/bgGuJpnYW/bGySfNxjOxX1K8BMCu8oKugc3r1k22NIo6rdJAECDl?=
- =?us-ascii?Q?ooYyJStH/ZizkEjgU/EgOL5BZORPx1T1KXxhpeL2eb0FAR5EMjMrKAzHRMC/?=
- =?us-ascii?Q?S1+XKutymoT+d/MuBpU/wEkw76IScLlSGPVgjBqPqAdpy36/SbgviJ4V4San?=
- =?us-ascii?Q?J4dMrY47bS7KAJqx7dNXdahLyime6/LRZZY1NiK+kMwjfUFHz3ZxgSj8dpX3?=
- =?us-ascii?Q?a4aFb90YJecNpRGyFXK5JIPP7b5o3b/vat96dk1fd0XBmPRm41baC0lX1/8g?=
- =?us-ascii?Q?b/dxvoOuTKtJWxcKAhDhM69IPV1X73a2+a0nK7DtFATfwCs91dUttoLwJwqu?=
- =?us-ascii?Q?lQ3ap4GIrC2knU6AFwq4N7S2IeGg24fqpDtr3c9FGAvJhIbePZrBi8rHuXMQ?=
- =?us-ascii?Q?bCoUFVSQED71vHI89co=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 491d8759-74ff-4093-848c-08de05ca0737
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2025 17:50:39.7585
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TT/Hn3tb0Jss0oKGEYUlQOXl+5foHgI0I9QqJrGAjclvf73FXWNveKG0x+ZyB47C
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6190
+References: <20251006172612.75240-1-ebiggers@kernel.org> <CAMj1kXFTbP9dGQmk9F-WFyoL_LjtfXHMCnGT0WUQwMnrn7DHCw@mail.gmail.com>
+ <20251007011142.GA77681@sol>
+In-Reply-To: <20251007011142.GA77681@sol>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 7 Oct 2025 10:52:06 -0700
+X-Gmail-Original-Message-ID: <CAMj1kXFFCgAqefvDLgCzU_wtSAS-aPzRLMBt1qPNw2hcXtQiGQ@mail.gmail.com>
+X-Gm-Features: AS18NWDbe0Y3rDs4kMdLZ1kGNB-J3m7IwGG8MiiQtstVfSyZemTGskbaT0Ajn5g
+Message-ID: <CAMj1kXFFCgAqefvDLgCzU_wtSAS-aPzRLMBt1qPNw2hcXtQiGQ@mail.gmail.com>
+Subject: Re: [PATCH] lib/crypto: Add FIPS pre-operational self-test for SHA algorithms
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"Jason A . Donenfeld" <Jason@zx2c4.com>, Vegard Nossum <vegard.nossum@oracle.com>, 
+	Joachim Vandersmissen <git@jvdsn.com>, David Howells <dhowells@redhat.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 07, 2025 at 01:10:30PM -0400, Pasha Tatashin wrote:
-> 
-> 1. Add three more callbacks to liveupdate_file_ops:
-> /*
->  * Optional. Called by LUO during first get global state call.
->  * The handler should allocate/KHO preserve its global state object and return a
->  * pointer to it via 'obj'. It must also provide a u64 handle (e.g., a physical
->  * address of preserved memory) via 'data_handle' that LUO will save.
->  * Return: 0 on success.
->  */
-> int (*global_state_create)(struct liveupdate_file_handler *h,
->                            void **obj, u64 *data_handle);
-> 
-> /*
->  * Optional. Called by LUO in the new kernel
->  * before the first access to the global state. The handler receives
->  * the preserved u64 data_handle and should use it to reconstruct its
->  * global state object, returning a pointer to it via 'obj'.
->  * Return: 0 on success.
->  */
-> int (*global_state_restore)(struct liveupdate_file_handler *h,
->                             u64 data_handle, void **obj);
+On Mon, 6 Oct 2025 at 18:13, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> On Tue, Oct 07, 2025 at 01:53:25AM +0200, Ard Biesheuvel wrote:
+> > On Mon, 6 Oct 2025 at 19:28, Eric Biggers <ebiggers@kernel.org> wrote:
+> > >
+> > > Add FIPS pre-operational self-tests for all SHA-1 and SHA-2 algorithms.
+> > > Following the "Implementation Guidance for FIPS 140-3" document, to
+> > > achieve this it's sufficient to just test a single test vector for each
+> > > of HMAC-SHA1, HMAC-SHA256, and HMAC-SHA512.
+> > >
+> > > Link: https://lore.kernel.org/linux-crypto/20250917184856.GA2560@quark/
+> > > Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+> > > ---
+> > >
+> > > Since there seemed to be more interest in complaining that these are
+> > > missing than actually writing a patch, I decided to just do it.
+> > >
+> > >  lib/crypto/fips.h                   | 38 +++++++++++++++++++++++++++++
+> > >  lib/crypto/sha1.c                   | 19 ++++++++++++++-
+> > >  lib/crypto/sha256.c                 | 19 ++++++++++++++-
+> > >  lib/crypto/sha512.c                 | 19 ++++++++++++++-
+> > >  scripts/crypto/gen-fips-testvecs.py | 33 +++++++++++++++++++++++++
+> > >  5 files changed, 125 insertions(+), 3 deletions(-)
+> > >  create mode 100644 lib/crypto/fips.h
+> > >  create mode 100755 scripts/crypto/gen-fips-testvecs.py
+> > >
+> > > diff --git a/lib/crypto/fips.h b/lib/crypto/fips.h
+> > > new file mode 100644
+> > > index 0000000000000..78a1bdd33a151
+> > > --- /dev/null
+> > > +++ b/lib/crypto/fips.h
+> > > @@ -0,0 +1,38 @@
+> > > +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> > > +/* This file was generated by: gen-fips-testvecs.py */
+> > > +
+> > > +#include <linux/fips.h>
+> > > +
+> > > +static const u8 fips_test_data[] __initconst __maybe_unused = {
+> > > +       0x66, 0x69, 0x70, 0x73, 0x20, 0x74, 0x65, 0x73,
+> > > +       0x74, 0x20, 0x64, 0x61, 0x74, 0x61, 0x00, 0x00,
+> > > +};
+> > > +
+> > > +static const u8 fips_test_key[] __initconst __maybe_unused = {
+> > > +       0x66, 0x69, 0x70, 0x73, 0x20, 0x74, 0x65, 0x73,
+> > > +       0x74, 0x20, 0x6b, 0x65, 0x79, 0x00, 0x00, 0x00,
+> > > +};
+> > > +
+> > > +static const u8 fips_test_hmac_sha1_value[] __initconst __maybe_unused = {
+> > > +       0x29, 0xa9, 0x88, 0xb8, 0x5c, 0xb4, 0xaf, 0x4b,
+> > > +       0x97, 0x2a, 0xee, 0x87, 0x5b, 0x0a, 0x02, 0x55,
+> > > +       0x99, 0xbf, 0x86, 0x78,
+> > > +};
+> > > +
+> > > +static const u8 fips_test_hmac_sha256_value[] __initconst __maybe_unused = {
+> > > +       0x59, 0x25, 0x85, 0xcc, 0x40, 0xe9, 0x64, 0x2f,
+> > > +       0xe9, 0xbf, 0x82, 0xb7, 0xd3, 0x15, 0x3d, 0x43,
+> > > +       0x22, 0x0b, 0x4c, 0x00, 0x90, 0x14, 0x25, 0xcf,
+> > > +       0x9e, 0x13, 0x2b, 0xc2, 0x30, 0xe6, 0xe8, 0x93,
+> > > +};
+> > > +
+> > > +static const u8 fips_test_hmac_sha512_value[] __initconst __maybe_unused = {
+> > > +       0x6b, 0xea, 0x5d, 0x27, 0x49, 0x5b, 0x3f, 0xea,
+> > > +       0xde, 0x2d, 0xfa, 0x32, 0x75, 0xdb, 0x77, 0xc8,
+> > > +       0x26, 0xe9, 0x4e, 0x95, 0x4d, 0xad, 0x88, 0x02,
+> > > +       0x87, 0xf9, 0x52, 0x0a, 0xd1, 0x92, 0x80, 0x1d,
+> > > +       0x92, 0x7e, 0x3c, 0xbd, 0xb1, 0x3c, 0x49, 0x98,
+> > > +       0x44, 0x9c, 0x8f, 0xee, 0x3f, 0x02, 0x71, 0x51,
+> > > +       0x57, 0x0b, 0x15, 0x38, 0x95, 0xd8, 0xa3, 0x81,
+> > > +       0xba, 0xb3, 0x15, 0x37, 0x5c, 0x6d, 0x57, 0x2b,
+> > > +};
+> > > diff --git a/lib/crypto/sha1.c b/lib/crypto/sha1.c
+> > > index 5904e4ae85d24..001059cb0fce4 100644
+> > > --- a/lib/crypto/sha1.c
+> > > +++ b/lib/crypto/sha1.c
+> > > @@ -10,10 +10,11 @@
+> > >  #include <linux/kernel.h>
+> > >  #include <linux/module.h>
+> > >  #include <linux/string.h>
+> > >  #include <linux/unaligned.h>
+> > >  #include <linux/wordpart.h>
+> > > +#include "fips.h"
+> > >
+> > >  static const struct sha1_block_state sha1_iv = {
+> > >         .h = { SHA1_H0, SHA1_H1, SHA1_H2, SHA1_H3, SHA1_H4 },
+> > >  };
+> > >
+> > > @@ -328,14 +329,30 @@ void hmac_sha1_usingrawkey(const u8 *raw_key, size_t raw_key_len,
+> > >         hmac_sha1_update(&ctx, data, data_len);
+> > >         hmac_sha1_final(&ctx, out);
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(hmac_sha1_usingrawkey);
+> > >
+> > > -#ifdef sha1_mod_init_arch
+> > > +#if defined(sha1_mod_init_arch) || defined(CONFIG_CRYPTO_FIPS)
+> > >  static int __init sha1_mod_init(void)
+> > >  {
+> > > +#ifdef sha1_mod_init_arch
+> > >         sha1_mod_init_arch();
+> > > +#endif
+> > > +       if (fips_enabled) {
+> > > +               /*
+> > > +                * FIPS pre-operational self-test.  As per the FIPS
+> > > +                * Implementation Guidance, testing HMAC-SHA1 satisfies the test
+> > > +                * requirement for SHA-1 too.
+> > > +                */
+> > > +               u8 mac[SHA1_DIGEST_SIZE];
+> > > +
+> > > +               hmac_sha1_usingrawkey(fips_test_key, sizeof(fips_test_key),
+> > > +                                     fips_test_data, sizeof(fips_test_data),
+> > > +                                     mac);
+> > > +               if (memcmp(fips_test_hmac_sha1_value, mac, sizeof(mac)) != 0)
+> > > +                       panic("sha1: FIPS pre-operational self-test failed\n");
+> > > +       }
+> > >         return 0;
+> > >  }
+> > >  subsys_initcall(sha1_mod_init);
+> > >
+> >
+> > In the builtin case, couldn't this execute only after the first calls
+> > into the library? That would mean it does not quite fit the
+> > requirements of the pre-operational selftest.
+>
+> Only if other builtin code in the kernel actually calls it before
+> subsys_initcall, i.e. during very early boot long before userspace
+> starts.  Such calls can occur only from within the FIPS module (i.e. the
+> kernel) itself, so arbitrary external users need not be considered here.
+>
 
-It shouldn't be a "push" like this. Everything has a certain logical point
-when it will need the luo data, it should be coded to 'pull' the data
-right at that point.
-
-
-> /*
->  * Optional. Called by LUO after the last
->  * file for this handler is unpreserved or finished. The handler
->  * must free its global state object and any associated resources.
->  */
-> void (*global_state_destroy)(struct liveupdate_file_handler *h, void *obj);
-
-I'm not sure a callback here is a good idea, the users are synchronous
-at early boot, they should get their data and immediately process it
-within the context of the caller. A 'unpack' callback does not seem so
-useful to me.
-
-> The get/put global state data:
-> 
-> /* Get and lock the data with file_handler scoped lock */
-> int liveupdate_fh_global_state_get(struct liveupdate_file_handler *h,
->                                    void **obj);
-> 
-> /* Unlock the data */
-> void liveupdate_fh_global_state_put(struct liveupdate_file_handler *h);
-
-Maybe lock/unlock if it is locking.
-
-It seems like a good direction overall. Really need to see how it
-works with some examples
-
-Jason
+Good point. We should probably document this, i.e., the fact that this
+is before storage and network etc are even accessible and so panicking
+at that point is sufficient even in the presence of even earlier
+callers.
 
