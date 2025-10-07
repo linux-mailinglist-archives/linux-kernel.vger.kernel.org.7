@@ -1,192 +1,117 @@
-Return-Path: <linux-kernel+bounces-843904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2368FBC0877
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 09:54:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13BCEBC088A
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 09:57:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7FED04EDCEA
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 07:54:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00554189B844
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 07:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B79255F31;
-	Tue,  7 Oct 2025 07:54:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6354021FF2E
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 07:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87782571B9;
+	Tue,  7 Oct 2025 07:57:16 +0000 (UTC)
+Received: from mail.simonwunderlich.de (mail.simonwunderlich.de [23.88.38.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0913B7A8;
+	Tue,  7 Oct 2025 07:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.88.38.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759823681; cv=none; b=raOddw0/PvYLA9/TgrB8KZ05lkpFuFKSJUr7RUkT93NxTHHdd6djaVUW5KDx5x2+lCynib2jEVkX+GtSj3gbR6rfIbZodhmQb9pxWNouzNtwFslJh55SWbX9EPZ7rLkkonG2h7kjrIG1eJKf/9+8Mjm4sMIUvxlvuhKZpqrFTrM=
+	t=1759823836; cv=none; b=c6Qea7NbShmETyW1CK+5MTBKynVbnM9su/r1wd4WcnSVYpAdKLxlPwyuOeuuPp28XMOxuUZiszob1Iit2TQkA3JoBeR/F19CnFzKVoAEbL2Ihff4rtPtiwDTq6htVDh3M5X+l7W61kHvw/GNkeAfHj/hLjpaavBSwZqqlrr5EM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759823681; c=relaxed/simple;
-	bh=4/1fWiv/p0rL76g6QuTXoZIqua+poPsDUh68duoO/eY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aBY/L0DWRZI4ru1XtT1Yt5lzKzg87BbvSZKWh+V9+nWICXmq4UWPP/p/d9y0ujlvyAfxwX0SVjpGNQyDQ+fgzLKtXfOdbM4D0nzh0B3JRz5Qjuq5G8+/KKk61lv+j7nj+Wn5ZjbS+7VHOhLv0SdIsljtGnFifOw5t4pGiRaSz/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5098514BF;
-	Tue,  7 Oct 2025 00:54:30 -0700 (PDT)
-Received: from [10.164.18.47] (unknown [10.164.18.47])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C305B3F59E;
-	Tue,  7 Oct 2025 00:54:36 -0700 (PDT)
-Message-ID: <627da4d5-5c6b-4bf4-9544-9021062d378e@arm.com>
-Date: Tue, 7 Oct 2025 13:24:33 +0530
+	s=arc-20240116; t=1759823836; c=relaxed/simple;
+	bh=eueMaZ1ri+Vb2tspf/000Tqi4rwNtAegiV17jxC05rQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Bqfjh/fZv3iNiKqZzvV6fBdLDO1Moe13CR5h+sN1y0eg7d1xd5x3DvwH8oCdINF4lg6Xg0K/OMQNPUWwiaBUIkYLtk2G11/vKoubWn8qAdl/jwjKv/ZpSvZHCvVn1z8IzSvdG49Tk/4XEJ/Atf0GttSZPwO8vVNQv01P489pVSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=simonwunderlich.de; spf=pass smtp.mailfrom=simonwunderlich.de; arc=none smtp.client-ip=23.88.38.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=simonwunderlich.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=simonwunderlich.de
+Received: from ripper.localnet (p200300c597021AE00000000000000C00.dip0.t-ipconnect.de [IPv6:2003:c5:9702:1ae0::c00])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.simonwunderlich.de (Postfix) with ESMTPSA id 0692EFA12C;
+	Tue,  7 Oct 2025 09:57:03 +0200 (CEST)
+From: Sven Eckelmann <se@simonwunderlich.de>
+To: Rob Herring <robh@kernel.org>, Johannes Berg <johannes@sipsolutions.net>
+Cc: Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>,
+ Ryder Lee <ryder.lee@mediatek.com>, Shayne Chen <shayne.chen@mediatek.com>,
+ Sean Wang <sean.wang@mediatek.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com, devicetree@vger.kernel.org
+Subject:
+ Re: [PATCH mt76 v2 1/3] dt-bindings: net: wireless: mt76: Document
+ power-limits country property
+Date: Tue, 07 Oct 2025 09:56:58 +0200
+Message-ID: <1839711.VLH7GnMWUR@ripper>
+In-Reply-To: <1697b64e2b64682dbf83186f17f42c50ecf88fa8.camel@sipsolutions.net>
+References:
+ <20250926-backoff-table-support-v2-0-16d3726646c4@simonwunderlich.de>
+ <20251006204529.GA549972-robh@kernel.org>
+ <1697b64e2b64682dbf83186f17f42c50ecf88fa8.camel@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: Replace READ_ONCE() with standard page table
- accessors
-To: Dev Jain <dev.jain@arm.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-References: <20251007063100.2396936-1-anshuman.khandual@arm.com>
- <584fea72-e564-4cf6-9435-ce4b03f2fd65@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <584fea72-e564-4cf6-9435-ce4b03f2fd65@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="nextPart8631237.NyiUUSuA9g";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
+
+--nextPart8631237.NyiUUSuA9g
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Sven Eckelmann <se@simonwunderlich.de>
+Date: Tue, 07 Oct 2025 09:56:58 +0200
+Message-ID: <1839711.VLH7GnMWUR@ripper>
+MIME-Version: 1.0
+
+On Monday, 6 October 2025 22:48:15 CEST Johannes Berg wrote:
+> On Mon, 2025-10-06 at 15:45 -0500, Rob Herring wrote:
+> > 
+> > > +          country:
+> > > +            $ref: /schemas/types.yaml#/definitions/string
+> > > +            description:
+> > > +              ISO 3166-1 alpha-2 country code for power limits
+> > 
+> > This would be constrained to something like this?:
+> > 
+> > pattern: '^[A-Z]{2}$'
+> 
+> There's a "00" special case for "world roaming", so maybe that would
+> have to be '^([A-Z]{2}|00)$'? Not sure you'd ever want to specify that
+> though. We also use '99' internally for even more special cases, but I'm
+> pretty sure that shouldn't be specified externally.
+
+Good point. I would say that 00 is already handled by the "fallback" limit 
+code. If it finds neither a country nor a regdomain, it just marks this entry 
+as "fallback".
+
+Regards,
+	Sven
+--nextPart8631237.NyiUUSuA9g
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS81G/PswftH/OW8cVND3cr0xT1ywUCaOTHygAKCRBND3cr0xT1
+ywhZAP4s8bEDQwSmJy8BeB8DNxkjVbJ4TMzkk1jlnOud1CgbZQEAsezHw+N0eJXn
+R256VuIFrw6VaIWcPQe0BI7De6ceaAM=
+=jlgT
+-----END PGP SIGNATURE-----
+
+--nextPart8631237.NyiUUSuA9g--
 
 
-
-On 07/10/25 12:41 PM, Dev Jain wrote:
-> 
-> On 07/10/25 12:01 pm, Anshuman Khandual wrote:
->> Replace all READ_ONCE() with a standard page table accessors i.e pxdp_get()
->> that defaults into READ_ONCE() in cases where platform does not override.
-> 
-> Does any platform override into something else currently? The way you write
-> the description implies that.
-
-That's how the callbacks have been designed to be overridden when required.
-> 
->>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: David Hildenbrand <david@redhat.com>
->> Cc: linux-mm@kvack.org
->> Cc: linux-kernel@vger.kernel.org
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->>   mm/gup.c            | 10 +++++-----
->>   mm/hmm.c            |  2 +-
->>   mm/memory.c         |  4 ++--
->>   mm/mprotect.c       |  2 +-
->>   mm/sparse-vmemmap.c |  2 +-
->>   mm/vmscan.c         |  2 +-
->>   6 files changed, 11 insertions(+), 11 deletions(-)
->>
->> diff --git a/mm/gup.c b/mm/gup.c
->> index 0bc4d140fc07..37e2af5ed96d 100644
->> --- a/mm/gup.c
->> +++ b/mm/gup.c
->> @@ -964,7 +964,7 @@ static struct page *follow_pud_mask(struct vm_area_struct *vma,
->>       struct mm_struct *mm = vma->vm_mm;
->>         pudp = pud_offset(p4dp, address);
->> -    pud = READ_ONCE(*pudp);
->> +    pud = pudp_get(pudp);
->>       if (!pud_present(pud))
->>           return no_page_table(vma, flags, address);
->>       if (pud_leaf(pud)) {
->> @@ -989,7 +989,7 @@ static struct page *follow_p4d_mask(struct vm_area_struct *vma,
->>       p4d_t *p4dp, p4d;
->>         p4dp = p4d_offset(pgdp, address);
->> -    p4d = READ_ONCE(*p4dp);
->> +    p4d = p4dp_get(p4dp);
->>       BUILD_BUG_ON(p4d_leaf(p4d));
->>         if (!p4d_present(p4d) || p4d_bad(p4d))
->> @@ -3080,7 +3080,7 @@ static int gup_fast_pud_range(p4d_t *p4dp, p4d_t p4d, unsigned long addr,
->>         pudp = pud_offset_lockless(p4dp, p4d, addr);
->>       do {
->> -        pud_t pud = READ_ONCE(*pudp);
->> +        pud_t pud = pudp_get(pudp);
->>             next = pud_addr_end(addr, end);
->>           if (unlikely(!pud_present(pud)))
->> @@ -3106,7 +3106,7 @@ static int gup_fast_p4d_range(pgd_t *pgdp, pgd_t pgd, unsigned long addr,
->>         p4dp = p4d_offset_lockless(pgdp, pgd, addr);
->>       do {
->> -        p4d_t p4d = READ_ONCE(*p4dp);
->> +        p4d_t p4d = p4dp_get(p4dp);
->>             next = p4d_addr_end(addr, end);
->>           if (!p4d_present(p4d))
->> @@ -3128,7 +3128,7 @@ static void gup_fast_pgd_range(unsigned long addr, unsigned long end,
->>         pgdp = pgd_offset(current->mm, addr);
->>       do {
->> -        pgd_t pgd = READ_ONCE(*pgdp);
->> +        pgd_t pgd = pgdp_get(pgdp);
->>             next = pgd_addr_end(addr, end);
->>           if (pgd_none(pgd))
->> diff --git a/mm/hmm.c b/mm/hmm.c
->> index d545e2494994..126c3f42e525 100644
->> --- a/mm/hmm.c
->> +++ b/mm/hmm.c
->> @@ -431,7 +431,7 @@ static int hmm_vma_walk_pud(pud_t *pudp, unsigned long start, unsigned long end,
->>       /* Normally we don't want to split the huge page */
->>       walk->action = ACTION_CONTINUE;
->>   -    pud = READ_ONCE(*pudp);
->> +    pud = pudp_get(pudp);
->>       if (!pud_present(pud)) {
->>           spin_unlock(ptl);
->>           return hmm_vma_walk_hole(start, end, -1, walk);
->> diff --git a/mm/memory.c b/mm/memory.c
->> index 0ba4f6b71847..50f841ee6e84 100644
->> --- a/mm/memory.c
->> +++ b/mm/memory.c
->> @@ -6549,12 +6549,12 @@ int follow_pfnmap_start(struct follow_pfnmap_args *args)
->>           goto out;
->>         p4dp = p4d_offset(pgdp, address);
->> -    p4d = READ_ONCE(*p4dp);
->> +    p4d = p4dp_get(p4dp);
->>       if (p4d_none(p4d) || unlikely(p4d_bad(p4d)))
->>           goto out;
->>         pudp = pud_offset(p4dp, address);
->> -    pud = READ_ONCE(*pudp);
->> +    pud = pudp_get(pudp);
->>       if (pud_none(pud))
->>           goto out;
->>       if (pud_leaf(pud)) {
->> diff --git a/mm/mprotect.c b/mm/mprotect.c
->> index 113b48985834..988c366137d5 100644
->> --- a/mm/mprotect.c
->> +++ b/mm/mprotect.c
->> @@ -599,7 +599,7 @@ static inline long change_pud_range(struct mmu_gather *tlb,
->>               break;
->>           }
->>   -        pud = READ_ONCE(*pudp);
->> +        pud = pudp_get(pudp);
->>           if (pud_none(pud))
->>               continue;
->>   diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
->> index dbd8daccade2..37522d6cb398 100644
->> --- a/mm/sparse-vmemmap.c
->> +++ b/mm/sparse-vmemmap.c
->> @@ -439,7 +439,7 @@ int __meminit vmemmap_populate_hugepages(unsigned long start, unsigned long end,
->>               return -ENOMEM;
->>             pmd = pmd_offset(pud, addr);
->> -        if (pmd_none(READ_ONCE(*pmd))) {
->> +        if (pmd_none(pmdp_get(pmd))) {
-> 
-> I believe sparse-vmemmap is only for 64 bit arches so we are safe.
-> 
->>               void *p;
->>                 p = vmemmap_alloc_block_buf(PMD_SIZE, node, altmap);
->> diff --git a/mm/vmscan.c b/mm/vmscan.c
->> index 674999999cd0..14c2722b955b 100644
->> --- a/mm/vmscan.c
->> +++ b/mm/vmscan.c
->> @@ -3772,7 +3772,7 @@ static int walk_pud_range(p4d_t *p4d, unsigned long start, unsigned long end,
->>       pud = pud_offset(p4d, start & P4D_MASK);
->>   restart:
->>       for (i = pud_index(start), addr = start; addr != end; i++, addr = next) {
->> -        pud_t val = READ_ONCE(pud[i]);
->> +        pud_t val = pudp_get(pud + i);
->>             next = pud_addr_end(addr, end);
->>   
 
 
