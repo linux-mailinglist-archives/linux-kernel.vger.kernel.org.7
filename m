@@ -1,207 +1,171 @@
-Return-Path: <linux-kernel+bounces-844188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43007BC1416
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:47:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B66D5BC141F
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:47:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 629413BE8BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:47:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7A2874E6D73
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:47:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1B81A9F8D;
-	Tue,  7 Oct 2025 11:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221842DAFDB;
+	Tue,  7 Oct 2025 11:47:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FALJvdlw"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q5X7+xpQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239962DAFAA
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0832D8396;
+	Tue,  7 Oct 2025 11:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759837641; cv=none; b=uLL73Kty2JucJZcAU8vmuE28Zvir7Fcm9eBozsFBPFM3g5jwWCKESiNUSlWY1WNpycgHRVEMT8ksii3CNLwz3UzaBnEF71UfIS7eDIhI3UThTCoFQ1rKy4gEi/W4IVPNP7zyYk6fg5+rYJNBHG9wdwXg32eHwhrDHyIBM3eY/O4=
+	t=1759837661; cv=none; b=VpJ6KkNaRte78Sq+eqjZ0NNFsnLS6N/jSiJA2TMKl+QfCa3cNQVtQUmhiRJ38MBiXJl/e5QzpPh8++c03Tcn1LohsECZkKlZlFyTqvqdcPy6IB1b5UUwskkKJDy+eumAznV+7UdOBXe+1kop9y84hXNMlGzrcap02Bk4USIPJAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759837641; c=relaxed/simple;
-	bh=tHybA+sPs/+b+P0zGrwAATn7fve3huRWbNvhgJc3ask=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HQUyHGGUkxW3m59CyyT8h4YEg67g4TETBjsDWD9KJ2WgET7EPfhkvH/CfPEDkrMuxGqGzBYMKmWurHLjof7fMJogPSgZ6tsupeWBEOoDAt/Ygi3SqSzx1SDxTqpzKKqk7j274ppIgbQ8atwdjz2XFElTWlVMgwocDoKIZ2dc4Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FALJvdlw; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-78118e163e5so5633685b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 04:47:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759837639; x=1760442439; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CpCgxhORN6lEa4s+DNPc1Y/IXSmA220J4nQ7qgIWmeM=;
-        b=FALJvdlw0f6fzKMr7jGOs52hp5cx3iDizPSBm+MFhbWxTyGAtKKWoUBJ3vOl+XSlt+
-         FLEWhGCrxqFQAMK3Kf5M9njSA29MACI4m6OPcJ8upInIkLMsJd4ZN4VyOpYMpz+rptD8
-         ensBm8xczJrCLErPMhVUOXKyGiyrGML1q+8X4uSXJYr3Sl6BWLCf7Z4fL5Nq8bJBGmBD
-         vqIK35NOHrPLbf4AldCLcFdVXM1yumgz+y3hyn9mw1985uLxa/45PHAIoe5C7VgV1Ewc
-         FExDBn9o/NrdAWpsMktsvupJ6oXCOpwTzhujb2XcxLpyqq4osTiVOkVv1oBdc9AiUkv9
-         s6tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759837639; x=1760442439;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CpCgxhORN6lEa4s+DNPc1Y/IXSmA220J4nQ7qgIWmeM=;
-        b=KnLyqIWeWd6XU/mwjEOPtFCTTwKakbCrpWC3rRNvmnZqRAV3oRKXVCg1EjEMwz1HFb
-         LtzaSFwSXlwhqBmEJqP1f6CT7MBvvZmUXTMM7n9LxhnsceLeLmm+0WykA8ZP+PReD9HU
-         a1UMlLE9zQ9HzJfVGsDtpiBZJYLy2KXZBCzgkNuvbt20YAHM0HK/IC8svsVwVCaporGJ
-         QrCicJ4WFu/CBavUVn79uQ5u0tH+Las3xbviwAASQ6DPs6y/C2A5u/74qpWcVsuhN+xM
-         9BdHO2Hb2ONkoOa/buej1AXDx7OWV4bD5jXlwFfnlNeTDbc8QnmE1ohyxCVO53aGCdXQ
-         OKCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXcv3Dkk0aKhTE6e1qjpqxO1dQ1VOvssY/z3LG0Cf4Dv3SDwHdMekOmAw7s5eh/KhLbWRuo8ubLphlA37Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7O/GdQeeCb9Xgg/GBvD9ZGu6i6ycYpIfO2pOA54qgkIHSBGOq
-	adAW1PJadzXyMbB8Ex0y1V+7aTutrZiINEnpR0E0y/foPSKCqB58WCkz
-X-Gm-Gg: ASbGncvjCfHVjrqeH8UzERULCsNizXTbeggyWwRixvJj1ygfI1xwvlz+8mJrOOXJJE5
-	2Uj5TRloWLztzn5uyq7HJcoxIaOIj1K8+isMA3oQUVo8AkPKK8WkL4w4osiX/D64/eQcw7ABSC2
-	CeR0NG2ITbSmI+VBa2eYYlBk+udXf6BghkKlK/z6vn8bNlzpLDBJWuOinMa4yDFwYjjj/hZklsC
-	Btuzbc8JcLMMRmQYvzzoo+EzPopqodmtfayZwi3VMZWorljZ7xt8uOm+tpkoLbkfixfEjV+PH5B
-	xJsGEwguACzpdhNwkR7lwKKew5QG+R3vtEGsc+3pnft9fQaJvnbyNSKy42rhXmZlS4bc3Z89/0z
-	JsQfCdWHpUJakopKq7Wu0Fkw0YvZhOb7vC3TyuWjizuu6480Exg==
-X-Google-Smtp-Source: AGHT+IH44vhk9d17Lw4GXZ5yzA6My6EceoSjc9zLI8SRcAEeP+70+Ts8xj+ACG9aEOYyI9bijbzveA==
-X-Received: by 2002:a17:902:ce0a:b0:26b:3cb5:a906 with SMTP id d9443c01a7336-28ec9c97565mr36083695ad.16.1759837639170;
-        Tue, 07 Oct 2025 04:47:19 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d12608fsm164155715ad.33.2025.10.07.04.47.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 04:47:18 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 865214233431; Tue, 07 Oct 2025 18:47:15 +0700 (WIB)
-Date: Tue, 7 Oct 2025 18:47:14 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Gopi Krishna Menon <krishnagopi487@gmail.com>, rostedt@goodmis.org,
-	corbet@lwn.net
-Cc: linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com, khalid@kernel.org,
-	linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH] Documentation/rtla: fix htmldocs build error by renaming
- common_options.rst
-Message-ID: <aOT9wttB8cQvFDdj@archie.me>
-References: <20251007083228.17319-1-krishnagopi487@gmail.com>
+	s=arc-20240116; t=1759837661; c=relaxed/simple;
+	bh=nSCI9ZAehi47Q/8P7y4MkR0JAApcsG3VuIqehLJN5Do=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bNfhAJFFQF4yN2T9mOfymviWX62WVVS0mIN5E9TjhIGwutqLCkrXyEtpvAGLaPAgjDjz4qn2f1QJfOK2GDptH7oaccQylu73jty7ZnT7g4vWaxpHw52zu7r5Vjx3+R/6hp9n6/3JYKsDBwT37FzlVfo0yrtrnJg3bVhOQNHEvkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q5X7+xpQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 677C2C4CEF1;
+	Tue,  7 Oct 2025 11:47:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759837660;
+	bh=nSCI9ZAehi47Q/8P7y4MkR0JAApcsG3VuIqehLJN5Do=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Q5X7+xpQxKjjsdRb4kYWet2IJTzbULqTz2ubnMwgTJW7Bgslj2hmrHVrlRUJPW20c
+	 D6xttweqhYofkLtA4Fze7KrR1+ORD+Iy1MsbSKADfki877C+zw/ajefMt/2MEw2asr
+	 yRqAsQjtyVho9zVDmiLIi5LRhGro+CAr3S3KViky5hU+1t4BueA0bw9frvR4eSlM8C
+	 IIZ+H0QrdtUwV1BxAzhUm0e6ucwsy1SHXY4yT7I8A/SUBAltBJcTFoi5SEa/lTXAuv
+	 NK0atIcDtCrbxIZwYSz1sjOnNCrccgN1sQi6hbu90WsyE/+E3woraKtCArbusYKhG+
+	 DM+mrr6LysTfg==
+Message-ID: <39f56bc6833c6e25ac94cce6eba8eec3267ab5f6.camel@kernel.org>
+Subject: Re: [GIT PULL] NFSD changes for v6.18
+From: Jeff Layton <jlayton@kernel.org>
+To: Christian Brauner <brauner@kernel.org>, Chuck Lever <cel@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Johannes Berg
+	 <johannes@sipsolutions.net>, linux-kernel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org
+Date: Tue, 07 Oct 2025 07:47:39 -0400
+In-Reply-To: <20251007-zoodirektor-widder-27776d2e7228@brauner>
+References: <20251006135010.2165-1-cel@kernel.org>
+	 <CAHk-=wiH4-v3YxzN9_obL8Z_d9+TiFOdXwiDAauHqO-1vymY-w@mail.gmail.com>
+	 <26c34ef2-8309-4625-9bee-bb3e5c056568@kernel.org>
+	 <20251007-zoodirektor-widder-27776d2e7228@brauner>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="YjlEHS0UDQisqRua"
-Content-Disposition: inline
-In-Reply-To: <20251007083228.17319-1-krishnagopi487@gmail.com>
 
+On Tue, 2025-10-07 at 13:26 +0200, Christian Brauner wrote:
+> On Mon, Oct 06, 2025 at 04:58:22PM -0400, Chuck Lever wrote:
+> > On 10/6/25 4:51 PM, Linus Torvalds wrote:
+> > > On Mon, 6 Oct 2025 at 06:50, Chuck Lever <cel@kernel.org> wrote:
+> > > >=20
+> > > > One potential merge conflict has been reported for nfsd-6.18.
+> > >=20
+> > > No problem, this is the simple kind of explicit conflict (famous last
+> > > words before I mess one of those things up).
+> > >=20
+> > > Anyway, the reason I'm replying is actually that I notice that you
+> > > added that ATTR_CTIME_SET flag in <linux/fs.h> in commit afc5b36e29b9
+> > > ("vfs: add ATTR_CTIME_SET flag").
+> > >=20
+> > > No complaints about it, but it looks a bit odd with ATTR_{A,M}TIME_SE=
+T
+> > > in bits 7 and 8, and then the new ATTR_CTIME_SET is in bit 10 with th=
+e
+> > > entirely unrelated ATTR_FORCE in between them all.
+> >=20
+> > Oof. We should have gotten Acks for "vfs: add ATTR_CTIME_SET flag". My
+> > bad.
+>=20
+> Yes, indeed. I wondered why I hadn't seen this patch.
+>=20
 
---YjlEHS0UDQisqRua
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Oct 07, 2025 at 02:02:26PM +0530, Gopi Krishna Menon wrote:
-> diff --git a/Documentation/tools/rtla/common_options.rst b/Documentation/=
-tools/rtla/common_options.txt
-> similarity index 100%
-> rename from Documentation/tools/rtla/common_options.rst
-> rename to Documentation/tools/rtla/common_options.txt
-> diff --git a/Documentation/tools/rtla/rtla-hwnoise.rst b/Documentation/to=
-ols/rtla/rtla-hwnoise.rst
-> index 3a7163c02ac8..cc2721315552 100644
-> --- a/Documentation/tools/rtla/rtla-hwnoise.rst
-> +++ b/Documentation/tools/rtla/rtla-hwnoise.rst
-> @@ -33,7 +33,7 @@ OPTIONS
-> =20
->  .. include:: common_top_options.rst
-> =20
-> -.. include:: common_options.rst
-> +.. include:: common_options.txt
-> =20
->  EXAMPLE
->  =3D=3D=3D=3D=3D=3D=3D
-> diff --git a/Documentation/tools/rtla/rtla-osnoise-hist.rst b/Documentati=
-on/tools/rtla/rtla-osnoise-hist.rst
-> index 1fc60ef26106..a11c485f127a 100644
-> --- a/Documentation/tools/rtla/rtla-osnoise-hist.rst
-> +++ b/Documentation/tools/rtla/rtla-osnoise-hist.rst
-> @@ -28,7 +28,7 @@ OPTIONS
-> =20
->  .. include:: common_hist_options.rst
-> =20
-> -.. include:: common_options.rst
-> +.. include:: common_options.txt
-
-For consistency, though, you may want (in separate patches) also rename
-other common_*.rst files.
-
-> =20
->  EXAMPLE
->  =3D=3D=3D=3D=3D=3D=3D
-> diff --git a/Documentation/tools/rtla/rtla-osnoise-top.rst b/Documentatio=
-n/tools/rtla/rtla-osnoise-top.rst
-> index b1cbd7bcd4ae..c7bc716b2899 100644
-> --- a/Documentation/tools/rtla/rtla-osnoise-top.rst
-> +++ b/Documentation/tools/rtla/rtla-osnoise-top.rst
-> @@ -30,7 +30,7 @@ OPTIONS
-> =20
->  .. include:: common_top_options.rst
-> =20
-> -.. include:: common_options.rst
-> +.. include:: common_options.txt
-> =20
->  EXAMPLE
->  =3D=3D=3D=3D=3D=3D=3D
-> diff --git a/Documentation/tools/rtla/rtla-timerlat-hist.rst b/Documentat=
-ion/tools/rtla/rtla-timerlat-hist.rst
-> index 4923a362129b..547dfc7ace58 100644
-> --- a/Documentation/tools/rtla/rtla-timerlat-hist.rst
-> +++ b/Documentation/tools/rtla/rtla-timerlat-hist.rst
-> @@ -29,7 +29,7 @@ OPTIONS
-> =20
->  .. include:: common_hist_options.rst
-> =20
-> -.. include:: common_options.rst
-> +.. include:: common_options.txt
-> =20
->  .. include:: common_timerlat_aa.rst
-> =20
-> diff --git a/Documentation/tools/rtla/rtla-timerlat-top.rst b/Documentati=
-on/tools/rtla/rtla-timerlat-top.rst
-> index 50968cdd2095..3740fd386ea8 100644
-> --- a/Documentation/tools/rtla/rtla-timerlat-top.rst
-> +++ b/Documentation/tools/rtla/rtla-timerlat-top.rst
-> @@ -30,7 +30,7 @@ OPTIONS
-> =20
->  .. include:: common_top_options.rst
-> =20
-> -.. include:: common_options.rst
-> +.. include:: common_options.txt
-> =20
->  .. include:: common_timerlat_aa.rst
-> =20
-
-For this patch's scope, LGTM.
-
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-
-Thanks.
-
+I did send it to fsdevel, but you may have missed it in the deluge. Mea
+culpa from me too -- I should have noticed that you guys hadn't acked
+this yet. Any objection?
 --=20
-An old man doll... just what I always wanted! - Clara
-
---YjlEHS0UDQisqRua
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaOT9uwAKCRD2uYlJVVFO
-o26DAPwO4e7EjANEwcmc6zau/qLSOmqV1xhe8ihZQO2SN2a7QgEA2X3LzAtWqe1I
-Kid1Ufu3MBRc5B/abDTix3q8NM7L6Q8=
-=FDcR
------END PGP SIGNATURE-----
-
---YjlEHS0UDQisqRua--
+Jeff Layton <jlayton@kernel.org>
 
