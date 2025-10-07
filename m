@@ -1,87 +1,86 @@
-Return-Path: <linux-kernel+bounces-843901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B21E2BC086C
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 09:53:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49FCEBC0871
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 09:53:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC5631892976
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 07:54:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 155263B9F71
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 07:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736852571BD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DC12571BC;
 	Tue,  7 Oct 2025 07:53:39 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAA9255F31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861F825392C
 	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 07:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759823619; cv=none; b=JZBC0ZnfhTZW3ieqYdnPTVZgbIVnaJLpZir3aC+VHuJrEsGx9NELX+wsVqrdrPSXQicyKQO+chAxKX3Zc8f6D8HdaT+NevpRn9i1xo020ilTBEw9PggA32E+OnV5JZFcq+aF9rS7tEmY7BIlgAcQow1yCys12qXtQD15t4leHMI=
+	t=1759823619; cv=none; b=HPWrL22WAzvah/OB57fjJ0gPumT3foIdMCxjorGdvuVfanzbgpB/EPntX6ebDlXdCgnnE4vhYYkNdzfR0rFpQnejEtkUm5LglD5BTsy31y8+lDBmmeC2GRbhAYmtxqQouX5+tLIhz/Y7rMy3mYk17759JXYEHQRlPsrBQhYT+/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1759823619; c=relaxed/simple;
-	bh=SYV0VzaXmVcdrymls2gZqsHHMs4sDQM9FFCVeTA5+Bo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=r7mN4VgAvhFuB1Vdh2Md7I5/LV2GPos2qf6tZPU/Zo5h8whUnyFM+maqe4Gj4fzUJYSo/KMTahE8ZJ7xPyuikVHR4qMskkQsMNQOtUdXIbSivs1Bs9k9I/UzipBDZp26qC4G9bxOt6JDQBOzrlyJ6tOj5wtI2UjJ+5JOl2s58xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+	bh=kGNFLG/ckhmeT9Zw+cAPniPYNQw6NxNwSlONzeCIgeE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bifxWIrWthLKTsqrcw1EXLnh65rlJfaQV4jl33XXBFkwhV5vuz/AzE651cM7uV3KRPa1g7qfLCELQNI6HgslzPXDwDZxcxNQ3OqWEGlElFwpRp4vZMvyUsUiOGLc0TvPr8HGbAyvDpFlm+CsuC5pD84X4YSlADZ1ffrP1lg6rYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42f610046d9so108991915ab.3
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-92108823369so1316794439f.1
         for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 00:53:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759823616; x=1760428416;
+        d=1e100.net; s=20230601; t=1759823617; x=1760428417;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=xlL8Ccl5bRpb3O8T+vMias4aOm48j71+Au75LzIRuyw=;
-        b=Y6QRtq1cJLqW2WM6t6t92fTpMaxBP9bA2GM20s2gu/F6+k5u6gmtebiPnCEu2tBIGW
-         53OjmRBRFCA3p4vXDP5ZvyOmVEwgVvdOu1jVPCWv4ZV6z8g96+eNOQ+x9tU0oIJTctKZ
-         BNtcE6DgjE6FSfS2/JImYBruxqXvbdQQExnj+DmvlcDd2IPhDstwjN51pVpDoj6uhsS7
-         e1RKiIrWY5IFHDLZR8DBPE1MCUtWw9H1bg0ggD2YCkZn30msVdj8Hz3W4lkrKJGQjZ09
-         wx9MhX7qJGMiS5LUIOKg7e4G/HtXsvuKKnNq8RlpTl5g3p6dAxEtAV1uUbRbB/e0IaC2
-         32cg==
-X-Forwarded-Encrypted: i=1; AJvYcCXVE7BDCcR5++fL8ATTv7kJrf8ANfVW8Da/mqWbNLPk5Qtn/F96NzDf4Rwl4aScDm8sMxTKCaStLbGpYZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEyudmaIIeoakzBBup4HQm4Wij08EsF/bRC1XndgVQpmutGm2q
-	UAQge6xEFrxljuTislvDevYYhKpjKlzNgpVt6qlSsFTmXKtXbpJktA8XPWRyfeng4Djy5I5uQ2U
-	F0xEo+DXp8RIvzg81+st0mWC6e6X4GSgQBsQfrdg+jVvN2jdRG+CxgKTmmQI=
-X-Google-Smtp-Source: AGHT+IHQWuTSZu22Hq6Tt7NvdHRh/KvDDARAleqyZs60XatDiMEIcIfLfkMudhU4ZnCPBaoXL/QYUzbzTXDQ3aPmCaTX+ujv7jY3
+        bh=61IV87ebMWT3tuw0sCB9VZ9YEKpJ4A25JtBbRgLMD4A=;
+        b=HhL7RuFh+pTFKeXAJylmFfZHTs8H1z8K9bfDW6vIvai5StpCD2OR2v1DVCI3gEfytV
+         vJU70WIq8z6FVuyqfhNgklMdUQKGcwxbLXIcBx+HuUB/qeBoWI875s+Ny7P9HNqQlPEG
+         c6Uzdkf63MmsAM+gmbwmE23lKXAQLEAZoBVhSLDEG+tF5Ya7z4d+PZUWWAkMEz0v1dnA
+         QZs3pPv0jr+GPzlWr1DPs2ahitn9q7ejXH985vxKB8MRBb66TKcXsnVPgR1BDq1e2RNB
+         /i0E/ASmiMPv0QkSX6h4bfmiecfgNsVcgJqiwDfuU9hUSbppqTGSs97Ma9VSTnsqvX2B
+         Nalw==
+X-Gm-Message-State: AOJu0YyeGfDPyZhlktzxwSiFVgIdveFOFvv8jPva63HTWLproa6Kj0qv
+	yNSmTrSDmTH4yIlyYrAxcb+OLEwRCCKfG/fqKGY3R+P0e8fK1W2B7TGSK1q7lWMgtJhsjYvK3/H
+	IcLWd7zslU5/Dk+KDQLOiIYo+9mEAB9CqQH5pMSN59Lr+34VgSBMXQPwinEc=
+X-Google-Smtp-Source: AGHT+IF5CbHZbgEg71CfwTv9mdrwsygLHnnQacv3F+QT1dFBjw++OTUzPvbvvmSG99wk/G4TfiQmk6gAC/FA+GcxirC7nFjpDR8z
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3e02:b0:42d:5d48:acb9 with SMTP id
- e9e14a558f8ab-42e7ad0501dmr188680595ab.7.1759823616593; Tue, 07 Oct 2025
+X-Received: by 2002:a05:6e02:1c2e:b0:424:a3e:d79 with SMTP id
+ e9e14a558f8ab-42e7ad8876emr203529215ab.21.1759823616777; Tue, 07 Oct 2025
  00:53:36 -0700 (PDT)
 Date: Tue, 07 Oct 2025 00:53:36 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e4c700.a00a0220.298cc0.0475.GAE@google.com>
-Subject: [syzbot] Monthly cgroups report (Oct 2025)
-From: syzbot <syzbot+list377db4cd6f4eb8386b35@syzkaller.appspotmail.com>
-To: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+Message-ID: <68e4c700.a00a0220.298cc0.0476.GAE@google.com>
+Subject: [syzbot] Monthly pm report (Oct 2025)
+From: syzbot <syzbot+listf6d325d85dce60330781@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
 	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello cgroups maintainers/developers,
+Hello pm maintainers/developers,
 
-This is a 31-day syzbot report for the cgroups subsystem.
+This is a 31-day syzbot report for the pm subsystem.
 All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/cgroups
+https://syzkaller.appspot.com/upstream/s/pm
 
-During the period, 2 new issues were detected and 0 were fixed.
-In total, 9 issues are still open and 39 have already been fixed.
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 4 issues are still open and 10 have already been fixed.
 
 Some of the still happening issues:
 
 Ref Crashes Repro Title
-<1> 3957    Yes   possible deadlock in task_rq_lock
-                  https://syzkaller.appspot.com/bug?extid=ca14b36a46a8c541b509
-<2> 584     Yes   possible deadlock in console_flush_all (4)
-                  https://syzkaller.appspot.com/bug?extid=d10e9d53059eb8aed654
-<3> 2       No    possible deadlock in cgroup_procs_write_start
-                  https://syzkaller.appspot.com/bug?extid=1e5645cf2f3764308787
+<1> 955     Yes   WARNING in enable_work
+                  https://syzkaller.appspot.com/bug?extid=7053fbd8757fecbbe492
+<2> 9       Yes   possible deadlock in dpm_for_each_dev
+                  https://syzkaller.appspot.com/bug?extid=2a03726f1d4eff48b278
+<3> 2       No    KASAN: slab-use-after-free Read in rpm_suspend
+                  https://syzkaller.appspot.com/bug?extid=6c905ab800f20cf4086c
 
 ---
 This report is generated by a bot. It may contain errors.
