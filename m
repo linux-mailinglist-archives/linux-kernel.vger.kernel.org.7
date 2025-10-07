@@ -1,47 +1,65 @@
-Return-Path: <linux-kernel+bounces-844359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C78FBC1AEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:18:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AFCDBC1AED
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:18:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A46441892714
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:18:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0AA5B4F690F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C75B2DECD6;
-	Tue,  7 Oct 2025 14:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BA81FBEB0;
+	Tue,  7 Oct 2025 14:18:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VLEBgklu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="SgXeFwx1"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAEE374EA;
-	Tue,  7 Oct 2025 14:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642BF8488
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 14:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759846696; cv=none; b=fM4fmnBXB1kk7qUBPZy2AAhW4+plB8BOhmhQQE4LMgApOX5/RGsR8WsdS39z7wQEgnjVLjD5fGsftJNUlmgFLwOBXWb0g9+nH7Vyc6f4ckYpNTLehmkInxZQnCU2Gl8ItFgwpHUht9iGmniHSrBPQNoO9AN+dXrXlBqSol5n2Y8=
+	t=1759846715; cv=none; b=mYSHtQZ8EN8/gInvhXLo0OtIYB+7/osDmlCC6ITFDjzpxnKF0EyD3LtLGI8TmunnIOyInOr1HXI59rusZkxRajJ+kXAEXS9QQLafgSpGsGwkrDfGDzj8wbcFXbrFocHlh6ka3xdyDyTdWc+Nx2Wx2qhF+C2zn+xgKgB5Hsk7kio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759846696; c=relaxed/simple;
-	bh=G/NshkMJ1GZbtO3UIa9SqYi+nufWNB4mZlO3zufyam0=;
+	s=arc-20240116; t=1759846715; c=relaxed/simple;
+	bh=DJtZSdCijPbQbaB6CVjS9lgp06ac4tI/pgBmbGCdqLg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RUXvIQHwbgnmtbf46RpJIL+u4dCa1sTU2JILIKmX6FF9n9LOLB9GG+ggCkgrGQ7GSxvHILHfBEEi2uGoVtBTIW12qnmem2r65ULlyZdCXD7PJXr36qnaWD1+HXR752vUrb53TR60WxnOjgEprCoakaeA0VPsnvSxtHnyIj6Bz5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VLEBgklu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FCD1C4CEF9;
-	Tue,  7 Oct 2025 14:18:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759846696;
-	bh=G/NshkMJ1GZbtO3UIa9SqYi+nufWNB4mZlO3zufyam0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VLEBgkluXeahLBiq1Q8q74aSbv9sUk8S4cduCCxdRDeAUEmAGnpgT2dd+ksDo9KZp
-	 TPcksti+HsUH8pFCU61wkEbT/aYAaPpHRA+y6NTCHqP4xPH9SG397h9kS32wIqs24s
-	 h44CpSGxzl9ePGWUWhOWW0kb3oAphuENyakg/QfeoPzuPIGh/Mzf9mUhmNsfi58zNj
-	 Be3k2bbXybJQvjBHxrSobLIrxkG3l+2U+rKsvU0OWna64yWtAl8pECHgqRcOo8fBc4
-	 MtJ1mNa8tuXV+8tIXqt8l2v/2d8Sc5OUh3ac4tc1vGBQ5kXqT4AZQ5EiAf//4c1t+e
-	 YJ8MxK/7lqJ/w==
-Message-ID: <d592eb91-84e9-4bdc-8363-1d0bfd47c17c@kernel.org>
-Date: Tue, 7 Oct 2025 23:18:04 +0900
+	 In-Reply-To:Content-Type; b=D4PSgp/U519SP15/VV1+jFStO7xn108E7y7XTnoNl2/ht8xP8AHE4liFmOqFKMqWJeRqcMKBBSDPfmsfWvF/bofyo58s7iTrxl7FwoJMCQY2qUuIRmTVhfGATa1We0zaKewk1xVgaFmJmxyA0EYPywjo4B5erk/9YoswaF2AHOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=SgXeFwx1; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6003b.ext.cloudfilter.net ([10.0.30.175])
+	by cmsmtp with ESMTPS
+	id 66MZvUc5Qjzfw68WOv0CUw; Tue, 07 Oct 2025 14:18:32 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id 68WNv257ut4eL68WNvGhqJ; Tue, 07 Oct 2025 14:18:32 +0000
+X-Authority-Analysis: v=2.4 cv=FN0bx/os c=1 sm=1 tr=0 ts=68e52138
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=4oHATN8Nx7vVUZJYxp75bA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7T7KSl7uo7wA:10
+ a=vrm2DYtl0a66eygLWCQA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=k/RQCbk5TNZtW25tKPudmPz+XPlOL4k+2HIoGg8Wmrs=; b=SgXeFwx1/TNoyhrIv/+05jHO4j
+	JOfaWjWYUSCsNofzRqCxyS3IYzkVypY3V3ulpnWUYXYsK2KanWd/Acl3t+NpMAT8nxuhHKpk0z7sZ
+	BlGiKkXpY/88lFgkadHkLp9gnkHBhISlVVu7E3xb/PeQtNaur/moLzBgBcSGb7ju1ScpKgJWS3V5g
+	Uh4JGuNBot+whOESBVoKTByOCZHPvChXQX8ta0qC0Kay6ucy366slpWUZKAeXivAS6mkb8FZdWvqw
+	5HTLoZ1zdi2WnyrNpTmeJ4ilmZil8uoapxbNpJu+8KtK+c/NBLzzlPi2OFZw9qhukr2/U5LwgXDey
+	hH+WW4Tg==;
+Received: from [185.134.146.81] (port=39130 helo=[10.21.53.44])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1v68WM-00000004Ij5-3a69;
+	Tue, 07 Oct 2025 09:18:31 -0500
+Message-ID: <5b23ae5a-bd47-49c7-bca7-7019abc631f7@embeddedor.com>
+Date: Tue, 7 Oct 2025 15:18:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,154 +67,121 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/4] dt-bindings: usb: dwc3: Add Google SoC DWC3 USB
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: Roy Luo <royluo@google.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-References: <20251006232125.1833979-1-royluo@google.com>
- <20251006232125.1833979-3-royluo@google.com>
- <8ca61364-df47-41f2-b0d1-f2a8a74ec728@kernel.org>
- <CADrjBPr7Jp_ZyGv2Krv6iLG0avgFWpcWJEO-Z=cEkhwEY-+z5Q@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2][next] scsi: megaraid_sas: Avoid a couple
+ -Wflex-array-member-not-at-end warnings
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Kashyap Desai <kashyap.desai@broadcom.com>,
+ Sumit Saxena <sumit.saxena@broadcom.com>,
+ Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+ Chandrakanth patil <chandrakanth.patil@broadcom.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <aM1E7Xa8qYdZ598N@kspp>
+ <3a80fd1d-5a05-4db3-9dda-3ad38bedfb38@embeddedor.com>
+ <4cf727c56c4fda8d28df920214b3824c9739bc8f.camel@HansenPartnership.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CADrjBPr7Jp_ZyGv2Krv6iLG0avgFWpcWJEO-Z=cEkhwEY-+z5Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <4cf727c56c4fda8d28df920214b3824c9739bc8f.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-
-On 07/10/2025 18:09, Peter Griffin wrote:
-> Hi Krzysztof & Roy,
-> 
-> Firstly thanks Roy for your patches, it's great to see more Tensor
-> support being posted upstream!
-> 
-> On Tue, 7 Oct 2025 at 01:44, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 07/10/2025 08:21, Roy Luo wrote:
->>> Document the DWC3 USB bindings for Google Tensor SoCs.
->>>
->>> Signed-off-by: Roy Luo <royluo@google.com>
->>> ---
->>>  .../bindings/usb/google,snps-dwc3.yaml        | 144 ++++++++++++++++++
->>>  1 file changed, 144 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/usb/google,snps-dwc3.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/usb/google,snps-dwc3.yaml b/Documentation/devicetree/bindings/usb/google,snps-dwc3.yaml
->>> new file mode 100644
->>> index 000000000000..3e8bcc0c2cef
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/usb/google,snps-dwc3.yaml
->>> @@ -0,0 +1,144 @@
->>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->>> +# Copyright (c) 2025, Google LLC
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/usb/google,snps-dwc3.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Google DWC3 USB SoC Controller
->>> +
->>> +maintainers:
->>> +  - Roy Luo <royluo@google.com>
->>> +
->>> +description:
->>> +  Describes the Google DWC3 USB block, based on Synopsys DWC3 IP.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    items:
->>> +      - enum:
->>> +          - google,lga-dwc3
->>> +      - const: google,snps-dwc3
->>
->>
->> There is no such soc as snps, so you grossly misuse other company name
->> as name of SoC. Neither lga. Otherwise please point me to the top-level
->> bindings describing that SoC.
->>
->> You need to better describe the hardware here - why this is something
->> completely different than GS which. Or switch to existing bindings and
->> existing drivers. Did you align this with Peter Griffin?
-> 
-> I think (from what I've seen at least) this is the first submission
-> for drivers in the Tensor G5 SoC used in Pixel 10 devices (which as I
-> understand it isn't based on any Samsung IP). Hence the new drivers,
-> bindings etc.
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 185.134.146.81
+X-Source-L: No
+X-Exim-ID: 1v68WM-00000004Ij5-3a69
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([10.21.53.44]) [185.134.146.81]:39130
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfLyrH3xMyulKRfV0Q7d0LLxBICLY7QzKx7h057Nc7gzQucrE9YFaZn7WNWWNiZVtZ2AC7QnxI3mMyuL8eKfdwLmtEL6uzS8srs+/c3gWaZNe4GqU7TfR
+ C7hCxXuTc/Mu+H03/1KqDfGKcu860+DIY+Ig0qa89+ESE+HH3G0k0e3p+BFqKV8sck3N8K/2qT++pR0zXqikjnz0oON8lMvSCLn6ESaRLeyOAdzVj8cwPU8E
 
 
-That could explain a lot. I would be happy to see background of hardware
-in the bindings commit msg and the cover letter.
+
+On 10/7/25 12:59, James Bottomley wrote:
+> On Tue, 2025-10-07 at 11:43 +0100, Gustavo A. R. Silva wrote:
+>> Hi all,
+>>
+>> Friendly ping: who can take this, please?
+> 
+> After what happened with the qla2xxx driver, everyone is a bit wary of
+> these changes, particularly when they affect structures shared with the
+> hardware. Megaraid is a broadcom acquisition so although maintained it
+> might take them a while to check this.
+
+I've been in constant communication with the people involved. So far,
+none of them has expressed any concerns about this to me. However, I
+appreciate your feedback.
+
+In any case, I promptly submitted a bugfix minutes after getting the
+report.
 
 > 
-> However the issue is that none of the other base SoC drivers on which
-> this driver depends currently exist upstream (like clocks, reset
-> driver, power domains, pinctrl etc). So it's very hard to reason about
-> the correctness or otherwise of this submission. It is also likely
-> that when those drivers are upstreamed things could change in the
-> review process, to how it looks today in the downstream kernel.
+> However, you could help us with this: as I understand it (there is a
+> bit of a no documentation problem here), the TRAILING_OVERLAP formalism
+> merely gets the compiler not to warn about the situation rather than
+> actually changing anything in the layout of the structure?  In which
+> case you should be able to demonstrate the binary produced before and
+> after this patch is the same, which would very much reduce the risk of
+> taking it.
+
+This is quite simple. Here you go the pahole output before and after
+changes.
+
+BEFORE CHANGES:
+
+pahole -C MR_FW_RAID_MAP_ALL drivers/scsi/megaraid/megaraid_sas_fp.o
+struct MR_FW_RAID_MAP_ALL {
+         struct MR_FW_RAID_MAP      raidMap;              /*     0 10408 */
+         /* --- cacheline 162 boundary (10368 bytes) was 40 bytes ago --- */
+         struct MR_LD_SPAN_MAP      ldSpanMap[64];        /* 10408 161792 */
+
+         /* size: 172200, cachelines: 2691, members: 2 */
+         /* last cacheline: 40 bytes */
+};
+
+AFTER CHANGES:
+
+pahole -C MR_FW_RAID_MAP_ALL drivers/scsi/megaraid/megaraid_sas_fp.o
+struct MR_FW_RAID_MAP_ALL {
+         union {
+                 struct MR_FW_RAID_MAP raidMap;           /*     0 10408 */
+                 struct {
+                         unsigned char __offset_to_FAM[10408]; /*     0 10408 */
+                         /* --- cacheline 162 boundary (10368 bytes) was 40 bytes ago --- */
+                         struct MR_LD_SPAN_MAP ldSpanMap[64]; /* 10408 161792 */
+                 };                                       /*     0 172200 */
+         };                                               /*     0 172200 */
+
+         /* size: 172200, cachelines: 2691, members: 1 */
+         /* last cacheline: 40 bytes */
+};
+
+As you can see, the size is exactly the same, as are the offsets for both
+members raidMap and ldSpanMap. The trick is that, thanks to the union and
+__offset_to_FAM, the flexible-array member raidMap.ldSpanMap[] now appears
+as the last member instead of somewhere in the middle.
+
+So both ldSpanMap and raidMap.ldSpanMap[] now cleanly overlap, as seems to
+have been intended.
+
+(Exactly the same applies for struct MR_DRV_RAID_MAP_ALL)
+
+I can include this explanation to the changelog text if you'd like.
+
+Thanks
+-Gustavo
 
 
-Bindings and drivers can be contributed without core SoC support, but
-then please describe the hardware (SoC) here. Having core support posted
-earlier is of course preferred, but I think not a requirement.
-
-Anyway, compatibles and all commit messages in this patchset are too
-generic and need to reflect this actual SoC, not "Tensor" because we
-already have a Tensor with USB. So basically based on existing support
-all this patchset would be redundant, right? :)
-
-Best regards,
-Krzysztof
 
