@@ -1,159 +1,212 @@
-Return-Path: <linux-kernel+bounces-844674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87392BC2784
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 21:05:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0077BC278A
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 21:07:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B699189D775
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 19:05:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 499CD4EE108
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 19:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F148223DD1;
-	Tue,  7 Oct 2025 19:05:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7101E223715;
+	Tue,  7 Oct 2025 19:07:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iQTAky3R"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VynVlLQz"
+Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com [74.125.224.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EAC841AAC
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 19:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD29945C0B
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 19:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759863906; cv=none; b=UmI1AxkIBTt5g2SdgblbW1GyS5lJLhIQ6s7r0nhdzQD2kaZa+UzJFeH02Ak08nMjUYIOyRL1b8xNV6+KYQtLpVQFDr2C3FS6VKQ2tWF3iPYpMEHiJG1wUeZdDXdI9ijuWX9iSCY5oSbGO9X89tO6ePzlGry9tyfacsV5BBPw6rM=
+	t=1759864028; cv=none; b=fbShI8F29PhiRTWwrzwufwFeU80HnNl/rrvnXJYCUI4mx6CL2e8sOuvrz86Y7EHognetYkTZo5DAsGL68/zPnlBiv7iMjsIXMO9GH7+kY+tgXK5bEbZdOXTgIySLeSutkIFMXMNdWuSTKI2NqzZh4QteWv3yGcSqZACrJz9iFQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759863906; c=relaxed/simple;
-	bh=kO8M2sUwBSg9QsJQN+wxcXT5Cr0LRxFkDBem1zTMtMM=;
+	s=arc-20240116; t=1759864028; c=relaxed/simple;
+	bh=oW4P1sn0WRvjSmxNJBgf4iF9/kJoF6IXu574tDnahP4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jsU9Q6JLhrFnBfXcylPoxTEGRAc8iWUIuCKa1mVHWLyBdqAeX96xPzCftV2XY2fzSU0LeLO5DRCeal0vDxEpkpnV+rSOXxa+3Wh5jEzhpQET2iBNACdiLDMnS05KXrKrR3XvviBdQ02whBZw8e8HD26NCaqWcoo10/0nVIkmPOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iQTAky3R; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-70ba7aa131fso71993446d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 12:05:03 -0700 (PDT)
+	 To:Cc:Content-Type; b=dOMv/Bv/asOO+05RHb6DpavaDaIbWPmWQKjc1e9jWzWKBpBK22CwtHYLncG/t3oGuxgUuIfSuFUeKDGZgfrfhiCKKEzmzQmam3CUThT4EyTnFMAXsIH3b/3ZDlKooZP6AmWdD5aHHtcXsGadJn6VYV9gfP71ZIni1sxXRR48X4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VynVlLQz; arc=none smtp.client-ip=74.125.224.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yx1-f47.google.com with SMTP id 956f58d0204a3-6353ff1a78dso6307810d50.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 12:07:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759863903; x=1760468703; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1759864026; x=1760468826; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sfYcdfacXGl7fDg4hKzg8AXQsGo845Ky08ZG+mHHCa8=;
-        b=iQTAky3R610ZXX9mUIQrAeh5AKAhDv5eDuJafG7gN+PPdUeDtRlxzLEhcZXDdkOfhe
-         dJ4OrlDvWiIvyiNs7n+mcqtofHEU+TEBrygH20afQiHcs4QA7PjTW2IzULeSWnPZ6m29
-         FoFYHNkh7sQn60EhEoEz6QkuU+fsCa0TLjFdJ0Dja67cdUfKYzmCikzIBTiC5zHbVz0J
-         w0DmbTi+bsGEj9UCpFFDpWPBSgA5z1lkgsKx0nIjrolO/OejlbnUeFqaxybTOjWwCawP
-         4SPmPr20LdUOsekbgx6Y5P4RVLm8l34wp4ndPjmK9sYlrRNBkr1f5ayKVDuzSqQ5uTJC
-         SqNg==
+        bh=7iUti3RModmlHi7jtpIcdt26BPjskgCGc5piTAZQzxA=;
+        b=VynVlLQztGZVyIckPrhuQJ++lotTVbgQFIvI1wrUd18F61wEJ1s1HChMnFKOJAdl9f
+         XZmUCUJS64DSwV2wBstrKLf9ckM+78R6kXVjvhQ+if9bDs51iW6u9xs8/3eskZc45Vxt
+         PGYzi6dekcFrcDKUef1zdOXn4IdExMTnj4/N5MP9bI2KLjftrGpYxwLs3ScPEGMNJlp+
+         pZGIvQP+QGhsRuVroF46sjVTd4mOdCdwjUO/hc1BiH7+mlJ75D84tnxIJTAr5/7AIeSK
+         V/YgG+SlxFifFkDLjb+x9tmklqbGw+G+cjU/E5N7x1QkPhbc5p9QmnOl21uuUTNri/0x
+         tp/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759863903; x=1760468703;
+        d=1e100.net; s=20230601; t=1759864026; x=1760468826;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sfYcdfacXGl7fDg4hKzg8AXQsGo845Ky08ZG+mHHCa8=;
-        b=Ndbk8Q0BU84KrIkYaNPnjqJshKNuzkQ8vFHk1ok0AiPJdr340uj64HGrw4fPtj7ZWL
-         /H1mWfhE0SvFeYV8YWZHWW01txacEReunUILrsnVk3lm8jZbT+RvcNSbufQm5B7nfwAu
-         3+8RjbErYIcpo3dMRTvkM+WSAhFLB508XMlBJyKe0ZA8I1I1puZiIe67HLj/s5dzFu73
-         Fqn10FF9MIZBN9NER6PVFXnOzpKcxbMyulTF9xvnqO7R9boILtAxol7LmwFW0rLd/G6h
-         MjbQ/AKeeoXc3ij3PGLOLPA8LruFq9W2jpuBnlDYAX0TJG1E0ZBbaW9cy9oJjDFpP0eI
-         H7oA==
-X-Forwarded-Encrypted: i=1; AJvYcCWz7pybusus9ieUbArJ+TPNZ3NTFsD/Q7YD2iuELxqRiJhWbrp61rizRNGs39UtBeXxw4LubLtCFUcsZ5c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyI7yxVeIcFhIRXF4lG0MUtiibvgf9oXgrvfFjaFOsOU3x3MOSI
-	lf+qArzJ2J1z6jkRHYgb0lXklX739Jm41qw2H7wXLAgX5QEr8ctK3wd8R1li9WBH5vNxq02iIPD
-	7zIQNwG6/XC8uaCG3fI0UzMfn12nNYGYVwTqbKY2K
-X-Gm-Gg: ASbGncvAdA8GiJu4nSEtiaQ/S+Xc6uZoJEnw5jYcUvq3SnCwg//r8DnyURwCTWVfJb9
-	byLkAqw3HOIPxjzBQDDHGLsIL+NrW7qxqcpEpSJVhXjUWoLlC6S3cP4hG0nK0ati+SQWfpQ2J25
-	zR4WOn/PFfRd7Kxjo/GBmIMe9fZCxqz4fEepNdH8Sskm/Nm2z6x68b0B3BahlYYpM/6b+mirYhb
-	Cfq64rqPs8X+sHUPx+6AzYxby6JYsZAcwTES85EUZ9wDN1uCQN8M8N+VXiule1kohyC
-X-Google-Smtp-Source: AGHT+IESFakXnW6Fg7wLYTYS/Mk7KjZzZUlAj2VCFe5Uoi1p/a2ZlnMdRcd1vHRmazVrtj5+BAM5Fv3D9UEy9BjEHP0=
-X-Received: by 2002:ad4:5c62:0:b0:879:eb26:dafc with SMTP id
- 6a1803df08f44-87b2efdbb1dmr8896926d6.54.1759863902406; Tue, 07 Oct 2025
- 12:05:02 -0700 (PDT)
+        bh=7iUti3RModmlHi7jtpIcdt26BPjskgCGc5piTAZQzxA=;
+        b=a2nxOEVbeeju7b+5+WsJb/pXecto3YmOJk5AwXSASshNtcdPVUQ0SvY2IanlWvTT+x
+         4b09m64l9TNS99+I3GjlpO3a2lhM7pADLVOR5LPJQmZ+MbCK3YhxCuqL3Qb7ihT+VaOW
+         HfB9kM6cu8sUaHHtj7qZMkcW7IDGHNzO19xsca3jO0uA7aeMLGngRazFKz0TmxcHU4KE
+         IoRf6qJoUjLVB0pz0W1grAlcteQjyrPH21SxcBjMYibcfdYfriQ/TCdehwSL7hjoewyh
+         nIwCFjFqbcWYV1WNbINark2O1YZZ8CAPJs35deD7mC8AmXEytjjWEduMTnEH0MsaZ/jJ
+         XNtw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTcWRDsc9hFiZH+idWuuDJ3Wi7MO2Yh4WGu0+ijvF9QBOXpUPN82giNAvgBBz58r/GYccWErTb60GR7vI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8TOLN6ukt97AS28HX28WHZXw2ztKmAKiWJiiGsrNMxNtALMmC
+	QKUaa+ZSzJRX2wmlkSenP+wH8Wlvy0a1MFaChskOQpwnV2Esr5k5qcgVEIm58o/QTk+U2vKNBrm
+	w2VJ55BOXe/SBL/t0kV1288HoOb/eeWp5aHIEiGAcFA==
+X-Gm-Gg: ASbGncuD0WJTNartD93epiD9Lc3mLCEtm/JyUAWsY3g3d38dafT5NksGC9Qh8gzG/vJ
+	WhbNuy/M1XHzbTGP39FAzgLYCvFcncCccX6yHkxJTwtUnIEt050cU9FsrsWKXtgQRg6SWMJyMoB
+	js54cnIVLBrQNFxwM4pxE0jmVEZaQOauf1VOukLryZiKdfVv0QoU7WYTJSh30x3ZPc+psBG56MY
+	VwOsxMMW0GhpIG+lXlt7qjJzYEsAbah4g==
+X-Google-Smtp-Source: AGHT+IHGabCWkJ+CSgQuNpDDGJm5CBq1o8eRFzjGkU0N7AFW1WICocRBQKTnUVXzNlv6ZZDS/IDRlDvAToOZJFwsXgE=
+X-Received: by 2002:a53:c64b:0:b0:629:ec90:c446 with SMTP id
+ 956f58d0204a3-63ccb8240e3mr675987d50.12.1759864025589; Tue, 07 Oct 2025
+ 12:07:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251006232125.1833979-1-royluo@google.com> <20251006232125.1833979-5-royluo@google.com>
- <c9ac3ada-d527-40b6-a45a-41572ae1cc9b@kernel.org>
-In-Reply-To: <c9ac3ada-d527-40b6-a45a-41572ae1cc9b@kernel.org>
-From: Roy Luo <royluo@google.com>
-Date: Tue, 7 Oct 2025 12:04:25 -0700
-X-Gm-Features: AS18NWBx0Fa1NrpP4hD_qvt4PklaMmDusw8GBylg6_1boLk-co7d-M-x80eszUI
-Message-ID: <CA+zupgyjFnNjVjv0hzOMyt50aPHZCK-p2wkj-oka7J4wtv+WUQ@mail.gmail.com>
-Subject: Re: [PATCH v1 4/4] dt-bindings: phy: google: Add Google SoC USB PHY
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
-	Naveen Kumar <mnkumar@google.com>, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
+References: <20251002-gs101-pmu-regmap-tables-v1-0-1f96f0920eb3@linaro.org>
+ <20251002-gs101-pmu-regmap-tables-v1-3-1f96f0920eb3@linaro.org>
+ <CAPLW+4nvuGd8AoDKK1VdF2pabCHzjgYHRJkYrcncRt4s=qt8Dw@mail.gmail.com> <2c36d66dc3eaf8f0f9778dd6a1d45806e7d9bcdd.camel@linaro.org>
+In-Reply-To: <2c36d66dc3eaf8f0f9778dd6a1d45806e7d9bcdd.camel@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Tue, 7 Oct 2025 14:06:54 -0500
+X-Gm-Features: AS18NWBO7FvM4SL8eDmLZftkdQk-t8hGwCLxZkF8ye__N3jbcGABazPA6EkFfAk
+Message-ID: <CAPLW+4mmbtFvdyijMQ+xG1S_FQeZyHt+cYJgycWTmpsnNNmamg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] soc: samsung: gs101-pmu: implement access tables for
+ read and write
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 6, 2025 at 5:45=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
+On Mon, Oct 6, 2025 at 2:06=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik@li=
+naro.org> wrote:
 >
-> On 07/10/2025 08:21, Roy Luo wrote:
-> > Document the USB PHY bindings for Google Tensor SoCs.
+> On Fri, 2025-10-03 at 13:24 -0500, Sam Protsenko wrote:
+> > On Thu, Oct 2, 2025 at 5:33=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszi=
+k@linaro.org> wrote:
+> > >
+> > > Accessing non-existent PMU registers causes an SError, halting the
+> > > system.
+> > >
+> > > Implement read and write access tables for the gs101-PMU to specify
+> > > which registers are read- and/or writable to avoid that SError.
+> > >
+> > > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 > >
-> > Signed-off-by: Roy Luo <royluo@google.com>
-> > ---
-> >  .../bindings/phy/google,usb-phy.yaml          | 91 +++++++++++++++++++
-> >  1 file changed, 91 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/phy/google,usb-ph=
-y.yaml
+> > I think having "Fixes:" tag would be justified here?
+>
+> I decided against, because IMHO it's not a bug fix as such, it's a new fe=
+ature.
 > >
-> > diff --git a/Documentation/devicetree/bindings/phy/google,usb-phy.yaml =
-b/Documentation/devicetree/bindings/phy/google,usb-phy.yaml
-> > new file mode 100644
-> > index 000000000000..5552696edfff
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/phy/google,usb-phy.yaml
-> > @@ -0,0 +1,91 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +# Copyright (C) 2025, Google LLC
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/phy/google,usb-phy.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Google USB PHY
-> > +
-> > +maintainers:
-> > +  - Roy Luo <royluo@google.com>
-> > +
-> > +description:
-> > +  Describes the USB PHY block on Google Tensor SoCs.
 >
-> Which ones? You need to be VERY specific here.
-
-This USB PHY is specific to Tensor G5 SoC (and future generations) and thus
-necessitates new drivers and new bindings. Will update the description and
-commit message in the next patchset.
-
+> > > ---
+> > > Note there are checkpatch warnings 'Macros with complex values should
+> > > be enclosed in parentheses' and 'Macro argument reuse' for macros lik=
+e
+> > > CLUSTER_CPU_RANGE(). Since they are used in an initialiser, the only
+> > > way to get rid of the warnings is to avoid the macros and duplicate a=
+ll
+> > > the related register ranges I believe, which I'd rather not due to th=
+e
+> > > sheer amount of similar blocks.
+> > > ---
+> > >  drivers/soc/samsung/gs101-pmu.c             | 306 ++++++++++++++++++=
+++++++-
+> > >  include/linux/soc/samsung/exynos-regs-pmu.h | 343 ++++++++++++++++++=
++++++++++-
+> > >  2 files changed, 640 insertions(+), 9 deletions(-)
+> > >
+> > > diff --git a/drivers/soc/samsung/gs101-pmu.c b/drivers/soc/samsung/gs=
+101-pmu.c
+> > > index b5a535822ec830b751e36a33121e2a03ef2ebcb2..5be1cbfa58c95e466bbdf=
+954923f324f74460783 100644
+> > > --- a/drivers/soc/samsung/gs101-pmu.c
+> > > +++ b/drivers/soc/samsung/gs101-pmu.c
+> > > @@ -8,6 +8,7 @@
+> > >  #include <linux/array_size.h>
+> > >  #include <linux/soc/samsung/exynos-pmu.h>
+> > >  #include <linux/soc/samsung/exynos-regs-pmu.h>
+> > > +#include <linux/regmap.h>
+> >
+> > If you decide to add this line to exynos-pmu.h (as I commented in the
+> > preceding patch), it can then be omitted here.
+> >
+> > >
+> > >  #include "exynos-pmu.h"
+> > >
+> > > @@ -19,9 +20,312 @@
+> > >  #define TENSOR_PMUREG_WRITE            1
+> > >  #define TENSOR_PMUREG_RMW              2
 >
-> > +
-> > +properties:
-> > +  compatible:
-> > +    items:
-> > +      - enum:
-> > +          - google,lga-usb-phy
-> > +      - const: google,usb-phy
+> [...]
 >
-> Please read carefully  bindings. You cannot have generic compatible.
-> Plus you are duplicating existing Samsung bindings.
+> > > +#define CLUSTER_NONCPU_RANGE(cl)                                    =
+   \
+> > > +       regmap_reg_range(GS101_CLUSTER_NONCPU_IN(cl),                =
+   \
+> > > +                        GS101_CLUSTER_NONCPU_IN(cl)),               =
+   \
+> > > +       regmap_reg_range(GS101_CLUSTER_NONCPU_INT_IN(cl),            =
+   \
+> > > +                        GS101_CLUSTER_NONCPU_INT_IN(cl)),           =
+   \
+> > > +       regmap_reg_range(GS101_CLUSTER_NONCPU_DUALRAIL_CTRL_IN(cl),  =
+   \
+> > > +                        GS101_CLUSTER_NONCPU_DUALRAIL_CTRL_IN(cl))
+> > > +
+> > > +       CLUSTER_NONCPU_RANGE(0),
+> > > +       CLUSTER_NONCPU_RANGE(1),
+> > > +       CLUSTER_NONCPU_RANGE(2),
+> > > +       regmap_reg_range(GS101_CLUSTER_NONCPU_INT_EN(2),
+> > > +                        GS101_CLUSTER_NONCPU_INT_DIR(2)),
+> > > +#undef CLUSTER_NONCPU_RANGE
+> > > +
+> > > +#define SUBBLK_RANGE(blk)                                           =
+   \
+> >
+> > Reusing the same names for different macros seems a bit confusing. But
+> > that might be just a matter of my taste, so no strong opinion.
 >
-> Best regards,
-> Krzysztof
+> And I OTOH explicitly picked the same name because it's the same block, j=
+ust
+> for r/o instead of r/w :-)
+>
+> [...]
+>
+> >
+> > That's quite an extensive list of registers! Does this PMU driver
+> > really have to cover all of those?
+>
+> That's what all Samsung PMU drivers do, it's the PMU region after all. Al=
+so,
+> in the gs101 case, only the PMU driver knows how to do the secure access:=
+ Various
+> other drivers have references to this PMU regmap, e.g. phy drivers for is=
+olation
+> (USB & UFS) and upcoming PD driver will do too. We don't want to reimplem=
+ent
+> secure access in all of those.
+>
 
-Will refrain from using generic compatible in the next patchset.
+Ok, thanks for explaining this.
 
-Thanks,
-Roy Luo
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+
+> Cheers,
+> Andre'
 
