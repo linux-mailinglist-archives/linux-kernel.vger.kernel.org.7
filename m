@@ -1,70 +1,144 @@
-Return-Path: <linux-kernel+bounces-844471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45FEDBC2019
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 17:58:30 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57656BC202C
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:00:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0B6F44F6976
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 15:58:21 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 052F634FEB7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6BB2E6CDA;
-	Tue,  7 Oct 2025 15:58:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7A142A8B;
+	Tue,  7 Oct 2025 16:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZkuOSpol"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j2SmfgKB"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34AD2E6CC5;
-	Tue,  7 Oct 2025 15:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B5A28F5
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759852682; cv=none; b=s+7rkxK4iPelau5SbhIZcyn0V8Ha27n6MLDZwhVgTP2eyv/V21Quf09zUY5qLz+ffkrmGHxMxfqcbbo/ZmGD2c7fc8n3fu9OyD3xQ/X8DFpUUh1R/iJjrDUqxZHcPMIS2mn+x+ZMud8bb9X/GAfHlDSAMbbVewYgqdI23+iRdxI=
+	t=1759852819; cv=none; b=n7yiY3tKrsnPgJ0n6aYTzSZg4R8r5DD/RVyYvUYxxsJUVxj+IPgDCjwoqRHiCTM2DMFdOmBK/baqqdT7siYdZXvVIH1nxuI1x4yz+8tI1Ptq8FypK3JJ0KPJD8Y/lbKSjN5NpVbjsGo/q410Ft55XwQKuDZBbGWUoSh4+4u2Rqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759852682; c=relaxed/simple;
-	bh=tUkwYE+WYXPDcA/1EEWqrHvj+3U8dasHlajHmfxDfAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iyy6h/3l3OKwVvRFSI491DsVKNCfGZ2SD9q1ZFy8mmwZmymdh+w9wo888O/i6zw8RPS3RNwOkkM7Rpx3rngeRRa6/YWYfEDWrmjOa4DqPgY9fIyo1KRjwkvNBWjQ6phZ0whRycIlvKbXcw3vXf+we/2oVksK68BjgO5b2ljN0Nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZkuOSpol; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13047C4CEF1;
-	Tue,  7 Oct 2025 15:58:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759852682;
-	bh=tUkwYE+WYXPDcA/1EEWqrHvj+3U8dasHlajHmfxDfAQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZkuOSpolfQ4JsOEjbh+GBVjoOlAkC1xvNpzNOkYpIhlveaeSbVDhOJNaY0m4/TMGh
-	 aeBhhCqopBG5UgCDJaU/jn1A/5IvPmk5suuHdQJoFNmaoJ++flz+wnQ2SchAh/E9/4
-	 kc9H6Tif+O+FLX/ETZhsaqGcVlvfsw1XK0sApt6c=
-Date: Tue, 7 Oct 2025 11:58:01 -0400
-From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Akira Yokosawa <akiyks@gmail.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools/docs: sphinx-build-wrapper: -q is a boolean, not
- an integer
-Message-ID: <20251007-thankful-badger-of-fame-0bbc65@lemur>
-References: <cafa10cddce3e5342a66c73f3f51a17fb6c7f5d3.1759851791.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1759852819; c=relaxed/simple;
+	bh=tOuaE0yzBvzmDNmWiObqpdAyTNJjwYPBrd8+TZV3+Ko=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XitfAlsTxXX1HGBArp+JPsFmrKU7sF0NETts578vbzXGJlzFzvS8+F6vIgvnGG2Nq5qzutf1gPjR+2IkVoS2mXnd/F9i7D+2rW2ctFlQUWBNjN2vxa0Y7laBQ9On2KTt8aTey7tBkc2COk6CFdTDEc+UXEqsJ9WhRSY1WPMm50w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j2SmfgKB; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b550a522a49so5544791a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 09:00:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759852817; x=1760457617; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lUu2Hbw6HPA09/pxIefcvSfqvI47HFpD83KFx9cFtbk=;
+        b=j2SmfgKB5iDmWmDue0DVxhAS7BEawG7V1vQJZhEBct4yMlBluubrYuMwTYgssWvftz
+         whrDnMuPlIs1hWamgtcprSQEGa+YhMvO8C3CUqYjKJX2/tW771aQsUFHoDZJ4pQQyntj
+         TtB8IyPFnKfSfBrzczSMK2pWSSaolfDdPTyfSmT2NEWf+gxR6xoML289OQV5S2F/zGq9
+         B9RfzNLC1LWnG3oYisP2MHezLa0FqSw5RwnGGkI4ILZvGFCeT5bRqHfkqXcPAzC6b9wn
+         z4eI43ewBuAVvFYtkcb3d483jqobLzM9gd0j3uqL2C76jtNFrpr+pg1WYDcEusf+z9gv
+         WWEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759852817; x=1760457617;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lUu2Hbw6HPA09/pxIefcvSfqvI47HFpD83KFx9cFtbk=;
+        b=C9y0UUXfdxy7GZ5T+5VaZBVIk+Xyl25yog3hXyH6o+EqAI4hBa27RyQ4nYo1FeeXLw
+         AKhHCKh+69wMJdf3m1gwhWnHSy8P7CfV3yNbOLK5AaVucxn9zM4yiv96TyGMUNUWh4uW
+         H8OpQl9EGFOH+soYapV98IJ/fbs3DXJI8rxGRj+tWhQOXEhURBPbziEIrhztMOqhM+n1
+         5d7v+fOJiD8LIZfr+P8cNzrxB9FhzKwQ05kqXA0fs57S7LJatnZy3drK27LA1QrDM3od
+         7tf7el1wNObo4+fzCQaar6Z25cQ9XiGqXsquuI6vG6B0qoUZaBrG18yrWb2EWROLwov/
+         JbjA==
+X-Forwarded-Encrypted: i=1; AJvYcCXXznf7erIrSpgG895SxDGLvh/F49YgJbVNqcqw8F9+r8GyuxCv7FftivBIcJPASYO/BIlmm5IOfZXWiWo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6QkhrYVm0oMGkiZcHWuXUTg8ipKdg26C+NgupRz1S3NhwIyxu
+	KQa/6QLL09z88xrXtn+1YPA3t9wkwUjDXbjN/Uv+8a2aGw/jIq+mW+Pq
+X-Gm-Gg: ASbGncvV3fNxoPGPneZQ7vojaXwlEHjp2bwyxm2pfC2v+Wr5KktoD/60syjayyf2wPd
+	xi1s9+AyXgfXjPYOc72OMTiT2jnsSWiARihKuYZznmUmSQYtCmMw5MHEmpMe0jJWjK08xnD98Px
+	L/fiO2DSYkITETp+dSr0H3Rdt8jKq415T8DvXbSDXLjFubYR6h1vs+BYlOsNKQHd9I3zAi1HJM3
+	KPFEsOuX88Ivenzt9bRM7iA3nYT+OAX4Qcno1md+NT2O1HHt1I1LCzgfkPUyzdfgZlNMRJIEB72
+	rFrEFsz3XHlG4nwenumr4Uvm5AivACIPxVNNet+CoBnCmBmph09tI2PlMgVR5nGKZzPs1NYY8CT
+	VqFq2A4VatJMgQw2tt5aXZOFuH+GmbfqEe5mTrD+TYzEQibKE2E/KWvswxP1zHiQ+NcYtecnU4Q
+	==
+X-Google-Smtp-Source: AGHT+IGIvTWVj2P/7XIHmNkAV3Zuukq0q/OPVkyOHkHLW/63pwLaZLQx4P6CvcJZq0ImF/R8zQy05A==
+X-Received: by 2002:a17:903:1ac8:b0:26f:f489:bba6 with SMTP id d9443c01a7336-290272f5913mr3577945ad.50.1759852817107;
+        Tue, 07 Oct 2025 09:00:17 -0700 (PDT)
+Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d125ed2sm169568165ad.35.2025.10.07.09.00.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 09:00:16 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: stable@vger.kernel.org
+Cc: Takashi Iwai <tiwai@suse.de>,
+	syzbot+d8f72178ab6783a7daea@syzkaller.appspotmail.com,
+	Clemens Ladisch <clemens@ladisch.de>,
+	Jaroslav Kysela <perex@perex.cz>,
+	alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH 6.12.y 6.6.y 6.1.y 5.15.y 5.10.y 5.4.y] ALSA: usb-audio: Kill timer properly at removal
+Date: Wed,  8 Oct 2025 00:58:08 +0900
+Message-Id: <20251007155808.438441-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cafa10cddce3e5342a66c73f3f51a17fb6c7f5d3.1759851791.git.mchehab+huawei@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 07, 2025 at 05:43:12PM +0200, Mauro Carvalho Chehab wrote:
-> As reported by Konstantin, sphinx-build -q is a boolean, not an integer.
-> 
-> Fix the code.
-> 
-> Reported-by: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+From: Takashi Iwai <tiwai@suse.de>
 
-Reviewed-by: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+[ Upstream commit 0718a78f6a9f04b88d0dc9616cc216b31c5f3cf1 ]
 
--K
+The USB-audio MIDI code initializes the timer, but in a rare case, the
+driver might be freed without the disconnect call.  This leaves the
+timer in an active state while the assigned object is released via
+snd_usbmidi_free(), which ends up with a kernel warning when the debug
+configuration is enabled, as spotted by fuzzer.
+
+For avoiding the problem, put timer_shutdown_sync() at
+snd_usbmidi_free(), so that the timer can be killed properly.
+While we're at it, replace the existing timer_delete_sync() at the
+disconnect callback with timer_shutdown_sync(), too.
+
+Reported-by: syzbot+d8f72178ab6783a7daea@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/681c70d7.050a0220.a19a9.00c6.GAE@google.com
+Cc: <stable@vger.kernel.org>
+Link: https://patch.msgid.link/20250519212031.14436-1-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+[ del_timer vs timer_delete differences ]
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+ sound/usb/midi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/sound/usb/midi.c b/sound/usb/midi.c
+index a792ada18863..c3de2b137435 100644
+--- a/sound/usb/midi.c
++++ b/sound/usb/midi.c
+@@ -1530,6 +1530,7 @@ static void snd_usbmidi_free(struct snd_usb_midi *umidi)
+ 			snd_usbmidi_in_endpoint_delete(ep->in);
+ 	}
+ 	mutex_destroy(&umidi->mutex);
++	timer_shutdown_sync(&umidi->error_timer);
+ 	kfree(umidi);
+ }
+ 
+@@ -1553,7 +1554,7 @@ void snd_usbmidi_disconnect(struct list_head *p)
+ 	spin_unlock_irq(&umidi->disc_lock);
+ 	up_write(&umidi->disc_rwsem);
+ 
+-	del_timer_sync(&umidi->error_timer);
++	timer_shutdown_sync(&umidi->error_timer);
+ 
+ 	for (i = 0; i < MIDI_MAX_ENDPOINTS; ++i) {
+ 		struct snd_usb_midi_endpoint *ep = &umidi->endpoints[i];
+--
 
