@@ -1,96 +1,119 @@
-Return-Path: <linux-kernel+bounces-844126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCFE6BC110E
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:01:02 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC3AABC1111
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:01:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D66C3B1FFD
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:00:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2343D4F24F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7442D9497;
-	Tue,  7 Oct 2025 11:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C532D97AB;
+	Tue,  7 Oct 2025 11:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JoSJY2BP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UiHeVisf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D482D8DD9;
-	Tue,  7 Oct 2025 11:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74622D94B6;
+	Tue,  7 Oct 2025 11:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759834818; cv=none; b=TX043WcImMLTA+Ff59eGRpsL9XnXS47nlptWTvGvHBv86oV8gy9xzQYFJzzfnpt4V43J4+gXZVuxcqgiGzi45I3XXZTCwzpTpC84LxAg+SJu9BBJTA4+SOLmn0fOn6d6pTaqM1H5LDQvIQDEWpr1s8qGJNHAkYNnNplcIAyAwjg=
+	t=1759834817; cv=none; b=hpHHG7LscRc76doT5sp2IuXnwjAhQ3hCrSspEsDcmuuuBFycjK6AropXT7aDkIWnULdCGTiFFeIh/ZFheriUy5IzxX0mn+gVBPUPur4AlU+JOt73oW0eIoC3JvZ2fMwdw5laATg7dZsJ33imVX2R2RxXHrQtBeNXPXxrUynMNbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759834818; c=relaxed/simple;
-	bh=L0EASbLxfy7UVVW6XZd46Nm7s/gz7JlIjB+KddnqWKE=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ItomjVlgZcJd/NNxpi06+XU410Hmh/nn/PzJsTYvadWghxI6gaipbt55tFiITlNU+usd3NsbCiFK7UOeNajvq1HUKAhH1uuTw/+cL8ypIqMZumx1Mo1BwUVldzOTaaQ+u/i2dR8oQX1ft+e9hPtOXCWfsE/d9v0zBiJr8/rMzvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JoSJY2BP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE63FC4CEF9;
-	Tue,  7 Oct 2025 11:00:17 +0000 (UTC)
+	s=arc-20240116; t=1759834817; c=relaxed/simple;
+	bh=/2VIdMWbboXqCq5v9dnulh2ZyDJ42EWteyguSk+LUQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jn2tNGJaE6EoDjBGolixuF906ftuemsAAhcFNqMujY2UX5wCdi7fDwHwEUv/3JSomyKRqQejxJ6P7jnSjGNOacXJSOuO/mQOD7QDKVIRZQhtVdCNL/buu8SWERFJE4GcmNAfAwkes16uzkF/z+wLK/WSyXjWiUeCaVVilPnkp2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UiHeVisf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6DB3C4CEF1;
+	Tue,  7 Oct 2025 11:00:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759834818;
-	bh=L0EASbLxfy7UVVW6XZd46Nm7s/gz7JlIjB+KddnqWKE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=JoSJY2BP4p3Y/LtAaKTXT6D8R61bKg75jJFlxV7nS08O8zKPY6VpiAj8PdtJQ4Wnq
-	 nx1V2lELczNdimO7Rxs/Dx7lr9BgW/DqPG6hQfwICE3J0u64h/OvjU6ZKa5uHc4Nmm
-	 l/U4oepSP3oDxb0gDY6qbroe6t516Tkx0wEg0ip9l8q6ZilzSz6BSDxjBxuqLuae4k
-	 Vcfdl32nHW1CCkqsqmuGcxjxrArSdw86nD4klz+/SY2Jy96cAzcXBbZDyDciyxfhZc
-	 /kn0AMT/Lk1uZKPlfTwbaXCqdZ4J/OzRua1/yoHTF+7SOBwgzFPh037wnpAFQfPUVq
-	 u4y5G7a6twvyg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70ED739EFA5E;
-	Tue,  7 Oct 2025 11:00:08 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1759834816;
+	bh=/2VIdMWbboXqCq5v9dnulh2ZyDJ42EWteyguSk+LUQo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UiHeVisfkY334uI4HpUo6w2kkokFLO6eSqGtCgtKtpTrQ+8Qcwb2HUCCyG1VcHWbn
+	 mvj5HtNTiOXq4RTVkUbodi7e35ozsWpNgcx2q+Oc+dp+LWgLlrHwCjAjcuYdPa9Xie
+	 knl+V7fA7fUvrZsEDkeUBLuIxI3kctX2Fex4gEmvDYd5iM5RyN1ImrksR3BzcLCP/y
+	 7bPAcDjDkoUotQ4nsmGZ5OgSwIHycWfbJVEfNdPUgQvEhMu8/88FC8Q357QXyyvX3j
+	 vEghprV6rvHauu2CYpxbLEzWok6pi4g4km6NDIFc3yybMfUD/Z4WQ4/MlqD3DxV9bi
+	 X3hevpycblFfA==
+Date: Tue, 7 Oct 2025 13:00:11 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: Jan Kara <jack@suse.cz>, Jiri Slaby <jirislaby@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
+	Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, selinux@vger.kernel.org, 
+	Andrey Albershteyn <aalbersh@kernel.org>
+Subject: Re: [PATCH v6 4/6] fs: make vfs_fileattr_[get|set] return -EOPNOSUPP
+Message-ID: <20251007-talent-extern-cda07dfddd11@brauner>
+References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
+ <20250630-xattrat-syscall-v6-4-c4e3bc35227b@kernel.org>
+ <a622643f-1585-40b0-9441-cf7ece176e83@kernel.org>
+ <jp3vopwtpik7bj77aejuknaziecuml6x2l2dr3oe2xoats6tls@yskzvehakmkv>
+ <eyl6bzyi33tn6uys2ba5xjluvw7yjempqnla3jaih76mtgxgxq@i6xe2nquwqaf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v3 1/1] net: usb: asix: hold PM usage ref to avoid
- PM/MDIO
- + RTNL deadlock
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175983480727.1851569.17231630495661577078.git-patchwork-notify@kernel.org>
-Date: Tue, 07 Oct 2025 11:00:07 +0000
-References: <20251005081203.3067982-1-o.rempel@pengutronix.de>
-In-Reply-To: <20251005081203.3067982-1-o.rempel@pengutronix.de>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, hubert.wisniewski.25632@gmail.com,
- m.szyprowski@samsung.com, stable@vger.kernel.org, kernel@pengutronix.de,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, lukas@wunner.de,
- linux@armlinux.org.uk, xu.yang_2@nxp.com, linux-usb@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <eyl6bzyi33tn6uys2ba5xjluvw7yjempqnla3jaih76mtgxgxq@i6xe2nquwqaf>
 
-Hello:
+On Mon, Oct 06, 2025 at 08:52:32PM +0200, Andrey Albershteyn wrote:
+> On 2025-10-06 17:39:46, Jan Kara wrote:
+> > On Mon 06-10-25 13:09:05, Jiri Slaby wrote:
+> > > On 30. 06. 25, 18:20, Andrey Albershteyn wrote:
+> > > > Future patches will add new syscalls which use these functions. As
+> > > > this interface won't be used for ioctls only, the EOPNOSUPP is more
+> > > > appropriate return code.
+> > > > 
+> > > > This patch converts return code from ENOIOCTLCMD to EOPNOSUPP for
+> > > > vfs_fileattr_get and vfs_fileattr_set. To save old behavior translate
+> > > > EOPNOSUPP back for current users - overlayfs, encryptfs and fs/ioctl.c.
+> > > > 
+> > > > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> > > ...
+> > > > @@ -292,6 +294,8 @@ int ioctl_setflags(struct file *file, unsigned int __user *argp)
+> > > >   			fileattr_fill_flags(&fa, flags);
+> > > >   			err = vfs_fileattr_set(idmap, dentry, &fa);
+> > > >   			mnt_drop_write_file(file);
+> > > > +			if (err == -EOPNOTSUPP)
+> > > > +				err = -ENOIOCTLCMD;
+> > > 
+> > > This breaks borg code (unit tests already) as it expects EOPNOTSUPP, not
+> > > ENOIOCTLCMD/ENOTTY:
+> > > https://github.com/borgbackup/borg/blob/1c6ef7a200c7f72f8d1204d727fea32168616ceb/src/borg/platform/linux.pyx#L147
+> > > 
+> > > I.e. setflags now returns ENOIOCTLCMD/ENOTTY for cases where 6.16 used to
+> > > return EOPNOTSUPP.
+> > > 
+> > > This minimal testcase program doing ioctl(fd2, FS_IOC_SETFLAGS,
+> > > &FS_NODUMP_FL):
+> > > https://github.com/jirislaby/collected_sources/tree/master/ioctl_setflags
+> > > 
+> > > dumps in 6.16:
+> > > sf: ioctl: Operation not supported
+> > > 
+> > > with the above patch:
+> > > sf: ioctl: Inappropriate ioctl for device
+> > > 
+> > > Is this expected?
 
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+Nope, unintentional regression as Arnd noted.
 
-On Sun,  5 Oct 2025 10:12:03 +0200 you wrote:
-> Prevent USB runtime PM (autosuspend) for AX88772* in bind.
+> > 
+> > No, that's a bug and a clear userspace regression so we need to fix it. I
+> > think we need to revert this commit and instead convert ENOIOCTLCMD from
+> > vfs_fileattr_get/set() to EOPNOTSUPP in appropriate places. Andrey?
 > 
-> usbnet enables runtime PM (autosuspend) by default, so disabling it via
-> the usb_driver flag is ineffective. On AX88772B, autosuspend shows no
-> measurable power saving with current driver (no link partner, admin
-> up/down). The ~0.453 W -> ~0.248 W drop on v6.1 comes from phylib powering
-> the PHY off on admin-down, not from USB autosuspend.
-> 
-> [...]
+> I will prepare a patch soon
 
-Here is the summary with links:
-  - [net,v3,1/1] net: usb: asix: hold PM usage ref to avoid PM/MDIO + RTNL deadlock
-    https://git.kernel.org/netdev/net/c/3d3c4cd5c62f
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Thanks!
 
