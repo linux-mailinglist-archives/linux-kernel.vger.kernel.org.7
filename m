@@ -1,103 +1,176 @@
-Return-Path: <linux-kernel+bounces-844262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7947BC1676
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 14:47:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C541BC1679
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 14:49:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E9D864F5F43
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 12:47:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C98273C013B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 12:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2064521FF48;
-	Tue,  7 Oct 2025 12:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="QokZM0qJ"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0442DF3DA;
+	Tue,  7 Oct 2025 12:48:51 +0000 (UTC)
+Received: from baidu.com (mx24.baidu.com [111.206.215.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4082AD2F
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 12:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50FF2AD2F;
+	Tue,  7 Oct 2025 12:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759841245; cv=none; b=MFVAkdLicqhqCNyk49DByjO3zzpwlaoIEYCIU5nHjmpTwOLvzr2CdojGr2nRuFFqOleucZOovibUn3jldTIPb4bEtNAbzhet8UnpLvlL7pZ1QQinvZ3Abug73YH78UYt5TC72y9ZmA64zChPNptjU32BibrktLgfrpY3341Gvlc=
+	t=1759841331; cv=none; b=V1jb7e6kXhirIlGasa6isON410eAZxR7MFMJeNP5KiAXNqSENuYCYmYIyQReATdJ0pLZtNKbyGbbBwp7otXmbRaIzD5b5ti0VVhfnBQhowLCl53L7cPbcNZTRZ+Za1ThexVKRtypkzMGB5Riw7iEBOgX5pPjP9o3RFBTK+riqto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759841245; c=relaxed/simple;
-	bh=RQN/2lDlhzCHpCJtTDLlN1RlhI45f3qz73uJwycfNyE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=EQDvZ+qXwzKcLN/2Cjjccb54Zx6PxiIXeKQ6RY1asQagVWPklId54CfGQ8yBPLDOJWHWGHM7vfxfoEzMgvRYx+w9Fm5SiPGAv1GvH6AQnhf73QhsX0HZNRQ/Rmcmp0swjcY64iD7dX7uZrR7Si+tB9h+gK2toP45Q1fHb/NLlpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=QokZM0qJ; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-42f5e9e4314so45003615ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 05:47:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1759841242; x=1760446042; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=CJuDLqWRo4Zntrd7FLhRCTIWZVZXh1mD+BCXSb25DVE=;
-        b=QokZM0qJdV5QIxYrua/bpJ22oY2BnV9GPTZEEql/b5va0Gh3BNTQKKYGIREgbV1d/B
-         oWHbaZCunLe5AfACdWoBEyXaOFa0kGEj+H8qKVzVinuTg0UKhMOsRNUlbEOiVmwLuCYs
-         CPvoDpyfM69NZG+gkOI/1Kdiqh31iDopmAC40VYjY/D2bG1jUCFVKpgMakYSzMJQP8LZ
-         cs75sNpUE8wnYZk9sUO50MgN6C71GNoxnYomQA08wxhBItUeDBENOF/g4jVCo4+SAjKe
-         zXPb/E5HhRG73yC/NzhchCsPrXJb9rpFRXOLjbEWD+gm1KJjC4hQ47+CNciyEWYE2iKi
-         Q4nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759841242; x=1760446042;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CJuDLqWRo4Zntrd7FLhRCTIWZVZXh1mD+BCXSb25DVE=;
-        b=PFraOFLUgk1w1RJXe5aiLprk518xu974NnF+WRDbLj+8rr2uemWi8ow3pLpamRVcTa
-         pr5MgWbde+c0mcVfPgdBjhp5W5sT58yCaOhNrwxdYuf19WGu1rj28b2TLrUTzMf9ZIeH
-         2e30QnKou7nm8GYFJ2q+97ZpLf9Qzm+D5Im+LRd9zmSr19IrSEciFtpzzOhmbd8TybYA
-         bwmesSJy55gSMwKta5d3kvQvfXsUQnGmvxDq8Yurte9MH8nxOfq14XD0/i0xuaTYPrHD
-         Sckpoa3v/kaU/7t9l97oD8itSL8BXHQb7mlFRRv8lI12W5bfv+9pnNSYqppiQtUNDTwB
-         jYYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWmSvXoGbHg1rqx0wcfYVgYglMqj2UPTHWceiDchtyv+qJUmScRYkYX2x9uEI2Pr9sDxZOysGSObZxO4Bo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7hqMEgp+j91woJs4K3rQRfh4RVEGFpvmks2gNRYhsIDCf+TNG
-	xTAKZD1A+lO5kvi3Lqf/csqgWXZppxHAmSb0wGqyruxV3YeXjKEk0q1zpMaQ/zAWBTU=
-X-Gm-Gg: ASbGncsTOuRgryVg2ZCGymLsJvwEP7YBr/RSi6rfpqD6HnF4Z90OnR7kd+HRN31OeJ+
-	l+rCMzhrxyY1iz7SAkAE3B4L9UrvB65AajGtMY9zk6LxhaTl8TWtPpxHGJjOoak/FOj1m+G56uf
-	EpvzD2URqmlt9V04i/pzgN7dv3+SVQkeEJ2jIuROq0dDlPhzyRiZj5F8WM38T51xwSvbfjTZeKB
-	7EO9Mc4s3EJWkVGRrRnswv6zHGPrBJP+2rTr2wX/c8Cf7lbT2cmDIqfoAKJR7ThgT5d5yIDU7cp
-	9e4u8BKRaQ12WiBO7USfRBUoGFbAhYleujl4IyCECfLR0v2fFZaFWlXKSpgET+0zNbFi0yDZw6Y
-	JTAkimdbpX3zHHGZHuLJw7BThy7IPRlZupWR/3xeOp8eOVNWIqvHqSqU=
-X-Google-Smtp-Source: AGHT+IEhjV+rQNakagoyRfFs8Cw5QyuLbDFd/MmJxW09tmaws68gZlvukb/j2kPTZy0RgCpUbBD3iQ==
-X-Received: by 2002:a05:6e02:1d89:b0:42e:38d1:7c61 with SMTP id e9e14a558f8ab-42e7ad8447dmr208356865ab.22.1759841242260;
-        Tue, 07 Oct 2025 05:47:22 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-57b5ea3a5basm6128505173.23.2025.10.07.05.47.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Oct 2025 05:47:21 -0700 (PDT)
-Message-ID: <a2cb114a-e31a-46d3-8c27-35149bed668f@kernel.dk>
-Date: Tue, 7 Oct 2025 06:47:20 -0600
+	s=arc-20240116; t=1759841331; c=relaxed/simple;
+	bh=/+lawd4CjpTfUD3/n0BGr4AZmlHdIk7S/ZqLXTelGDg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I/QwgKg3451nqu54racj5wr9H9v0oZS0YK2GzmQ2FA654z6NUCatZytP/k+LeEY6U0teOiFGp8zfb2NIQR+1kWkepHREpwQwd8aq16bVESqLEBr2bbPEJokQVwtcWF4r5uYnAfQ8cQvV1hyVjZKo3OuI2Fqp2l88ydSr20VEMHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: lirongqing <lirongqing@baidu.com>
+To: <seanjc@google.com>, <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Li RongQing <lirongqing@baidu.com>
+Subject: [PATCH] KVM: use call_rcu instead of synchronize_srcu_expedited() for MMIO unregistration
+Date: Tue, 7 Oct 2025 20:48:29 +0800
+Message-ID: <20251007124829.2051-1-lirongqing@baidu.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [nfs?] [io-uring?] WARNING in nfsd_file_cache_init
-To: syzbot <syzbot+a6f4d69b9b23404bbabf@syzkaller.appspotmail.com>,
- Dai.Ngo@oracle.com, chuck.lever@oracle.com, io-uring@vger.kernel.org,
- jlayton@kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
- neil@brown.name, okorniev@redhat.com, syzkaller-bugs@googlegroups.com,
- tom@talpey.com
-References: <68e4a3d1.a00a0220.298cc0.0471.GAE@google.com>
-From: Jens Axboe <axboe@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <68e4a3d1.a00a0220.298cc0.0471.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ClientProxiedBy: bjkjy-exc13.internal.baidu.com (172.31.51.13) To
+ bjkjy-exc3.internal.baidu.com (172.31.50.47)
+X-FEAS-Client-IP: 172.31.50.47
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-Doesn't look like it's io_uring related:
+From: Li RongQing <lirongqing@baidu.com>
 
-#syz set subsystems: nfs
+During VM reboot/shutdown, device MMIO unregistration maybe occurs
+frequently. The current use of synchronize_srcu_expedited() introduces
+measurable latency in these operations. Replace with call_rcu to defer
+cleanup asynchronously, speed up VM reboot/shutdown.
 
+Add a 'dev' field to struct kvm_io_bus to hold the device being
+unregistered for the RCU callback. Adjust related code to ensure
+proper list management before unregistration.
+
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+---
+ include/linux/kvm_host.h  |  1 +
+ virt/kvm/coalesced_mmio.c |  2 +-
+ virt/kvm/eventfd.c        |  2 +-
+ virt/kvm/kvm_main.c       | 13 ++++++++-----
+ 4 files changed, 11 insertions(+), 7 deletions(-)
+
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index 19b8c4b..38498d9 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -208,6 +208,7 @@ struct kvm_io_bus {
+ 	int dev_count;
+ 	int ioeventfd_count;
+ 	struct rcu_head rcu;
++	struct kvm_io_device *dev;
+ 	struct kvm_io_range range[];
+ };
+ 
+diff --git a/virt/kvm/coalesced_mmio.c b/virt/kvm/coalesced_mmio.c
+index 375d628..0db6af2 100644
+--- a/virt/kvm/coalesced_mmio.c
++++ b/virt/kvm/coalesced_mmio.c
+@@ -82,7 +82,6 @@ static void coalesced_mmio_destructor(struct kvm_io_device *this)
+ {
+ 	struct kvm_coalesced_mmio_dev *dev = to_mmio(this);
+ 
+-	list_del(&dev->list);
+ 
+ 	kfree(dev);
+ }
+@@ -169,6 +168,7 @@ int kvm_vm_ioctl_unregister_coalesced_mmio(struct kvm *kvm,
+ 	list_for_each_entry_safe(dev, tmp, &kvm->coalesced_zones, list) {
+ 		if (zone->pio == dev->zone.pio &&
+ 		    coalesced_mmio_in_range(dev, zone->addr, zone->size)) {
++			list_del(&dev->list);
+ 			r = kvm_io_bus_unregister_dev(kvm,
+ 				zone->pio ? KVM_PIO_BUS : KVM_MMIO_BUS, &dev->dev);
+ 			/*
+diff --git a/virt/kvm/eventfd.c b/virt/kvm/eventfd.c
+index 6b1133a..8a2f0e0 100644
+--- a/virt/kvm/eventfd.c
++++ b/virt/kvm/eventfd.c
+@@ -750,7 +750,6 @@ static void
+ ioeventfd_release(struct _ioeventfd *p)
+ {
+ 	eventfd_ctx_put(p->eventfd);
+-	list_del(&p->list);
+ 	kfree(p);
+ }
+ 
+@@ -949,6 +948,7 @@ kvm_deassign_ioeventfd_idx(struct kvm *kvm, enum kvm_bus bus_idx,
+ 		if (!p->wildcard && p->datamatch != args->datamatch)
+ 			continue;
+ 
++		list_del(&p->list);
+ 		kvm_io_bus_unregister_dev(kvm, bus_idx, &p->dev);
+ 		bus = kvm_get_bus(kvm, bus_idx);
+ 		if (bus)
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index f2e77eb..3ddad34 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -5955,10 +5955,12 @@ int kvm_io_bus_read(struct kvm_vcpu *vcpu, enum kvm_bus bus_idx, gpa_t addr,
+ }
+ EXPORT_SYMBOL_GPL(kvm_io_bus_read);
+ 
+-static void __free_bus(struct rcu_head *rcu)
++static void __free_bus_dev(struct rcu_head *rcu)
+ {
+ 	struct kvm_io_bus *bus = container_of(rcu, struct kvm_io_bus, rcu);
+ 
++	if (bus->dev)
++		kvm_iodevice_destructor(bus->dev);
+ 	kfree(bus);
+ }
+ 
+@@ -6000,7 +6002,8 @@ int kvm_io_bus_register_dev(struct kvm *kvm, enum kvm_bus bus_idx, gpa_t addr,
+ 	memcpy(new_bus->range + i + 1, bus->range + i,
+ 		(bus->dev_count - i) * sizeof(struct kvm_io_range));
+ 	rcu_assign_pointer(kvm->buses[bus_idx], new_bus);
+-	call_srcu(&kvm->srcu, &bus->rcu, __free_bus);
++	bus->dev = NULL;
++	call_srcu(&kvm->srcu, &bus->rcu, __free_bus_dev);
+ 
+ 	return 0;
+ }
+@@ -6036,20 +6039,20 @@ int kvm_io_bus_unregister_dev(struct kvm *kvm, enum kvm_bus bus_idx,
+ 	}
+ 
+ 	rcu_assign_pointer(kvm->buses[bus_idx], new_bus);
+-	synchronize_srcu_expedited(&kvm->srcu);
+ 
+ 	/*
+ 	 * If NULL bus is installed, destroy the old bus, including all the
+ 	 * attached devices. Otherwise, destroy the caller's device only.
+ 	 */
+ 	if (!new_bus) {
++		synchronize_srcu_expedited(&kvm->srcu);
+ 		pr_err("kvm: failed to shrink bus, removing it completely\n");
+ 		kvm_io_bus_destroy(bus);
+ 		return -ENOMEM;
+ 	}
+ 
+-	kvm_iodevice_destructor(dev);
+-	kfree(bus);
++	bus->dev = dev;
++	call_srcu(&kvm->srcu, &bus->rcu, __free_bus_dev);
+ 	return 0;
+ }
+ 
 -- 
-Jens Axboe
+2.9.4
+
 
