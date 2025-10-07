@@ -1,187 +1,100 @@
-Return-Path: <linux-kernel+bounces-844360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AFCDBC1AED
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:18:39 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 320F7BC1B05
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:19:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0AA5B4F690F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:18:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D392634FAA0
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:19:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BA81FBEB0;
-	Tue,  7 Oct 2025 14:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951B9213E7A;
+	Tue,  7 Oct 2025 14:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="SgXeFwx1"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AealL7oq"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642BF8488
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 14:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423D1189BB0
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 14:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759846715; cv=none; b=mYSHtQZ8EN8/gInvhXLo0OtIYB+7/osDmlCC6ITFDjzpxnKF0EyD3LtLGI8TmunnIOyInOr1HXI59rusZkxRajJ+kXAEXS9QQLafgSpGsGwkrDfGDzj8wbcFXbrFocHlh6ka3xdyDyTdWc+Nx2Wx2qhF+C2zn+xgKgB5Hsk7kio=
+	t=1759846791; cv=none; b=ZGKDo8dASJ8NONT7TEz9h+olMink04W6d+wbe/PijjwD2Vgsb3dLuN+I/XNhDaS3bkawaMrSAODkAO2aIFuSmRMOBsaCr74pywJI7NgUlnhYxslD2/7icsTav+qCBzY/BjXbbHqAF4lOrfC9T+mj/rwR4FizufffTH/KD0xPjoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759846715; c=relaxed/simple;
-	bh=DJtZSdCijPbQbaB6CVjS9lgp06ac4tI/pgBmbGCdqLg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D4PSgp/U519SP15/VV1+jFStO7xn108E7y7XTnoNl2/ht8xP8AHE4liFmOqFKMqWJeRqcMKBBSDPfmsfWvF/bofyo58s7iTrxl7FwoJMCQY2qUuIRmTVhfGATa1We0zaKewk1xVgaFmJmxyA0EYPywjo4B5erk/9YoswaF2AHOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=SgXeFwx1; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6003b.ext.cloudfilter.net ([10.0.30.175])
-	by cmsmtp with ESMTPS
-	id 66MZvUc5Qjzfw68WOv0CUw; Tue, 07 Oct 2025 14:18:32 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id 68WNv257ut4eL68WNvGhqJ; Tue, 07 Oct 2025 14:18:32 +0000
-X-Authority-Analysis: v=2.4 cv=FN0bx/os c=1 sm=1 tr=0 ts=68e52138
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=4oHATN8Nx7vVUZJYxp75bA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7T7KSl7uo7wA:10
- a=vrm2DYtl0a66eygLWCQA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=k/RQCbk5TNZtW25tKPudmPz+XPlOL4k+2HIoGg8Wmrs=; b=SgXeFwx1/TNoyhrIv/+05jHO4j
-	JOfaWjWYUSCsNofzRqCxyS3IYzkVypY3V3ulpnWUYXYsK2KanWd/Acl3t+NpMAT8nxuhHKpk0z7sZ
-	BlGiKkXpY/88lFgkadHkLp9gnkHBhISlVVu7E3xb/PeQtNaur/moLzBgBcSGb7ju1ScpKgJWS3V5g
-	Uh4JGuNBot+whOESBVoKTByOCZHPvChXQX8ta0qC0Kay6ucy366slpWUZKAeXivAS6mkb8FZdWvqw
-	5HTLoZ1zdi2WnyrNpTmeJ4ilmZil8uoapxbNpJu+8KtK+c/NBLzzlPi2OFZw9qhukr2/U5LwgXDey
-	hH+WW4Tg==;
-Received: from [185.134.146.81] (port=39130 helo=[10.21.53.44])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1v68WM-00000004Ij5-3a69;
-	Tue, 07 Oct 2025 09:18:31 -0500
-Message-ID: <5b23ae5a-bd47-49c7-bca7-7019abc631f7@embeddedor.com>
-Date: Tue, 7 Oct 2025 15:18:22 +0100
+	s=arc-20240116; t=1759846791; c=relaxed/simple;
+	bh=qb9S6p6BSPuPyiWGx9zNnwR1agJIZ18Pok86vtrLQHM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ERZGFGvEV/xCLbv0QWwnTs4QyRapzL/iQGK69kOkDojnkSMqeg+/ovXUaIHMwoF+sUmeclacEkpffX9RApENxPkEGBeut2gu9SoeDogDioSEomMl3HFhz5Ch8pGeCSkOL/UV4bZMRBVoWSHbldGu+QPqdk4pvRp5ODyZltmfrCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AealL7oq; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759846785;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6suQz5WzIz9+U9FFWaCDcwSjFxvIbWZ0QfKfsFShpSU=;
+	b=AealL7oqMOOr90eO+hFWynNR0ox46KU+M9uJ2Af+XYQWffpuzjdLVjFFCtphYNKIKLT3iq
+	/271N/jwNLwdecc7tJ94H+hChLaC2Us2gzM+2qLaA5X6rKV/dKc99oMuaSQtMih6bq8JVB
+	yHJsEBHXy5XzDtO7J0cLDXc3Z3y8Ay0=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] lib/vsprintf: Improve vsprintf + sprintf function comments
+Date: Tue,  7 Oct 2025 16:19:06 +0200
+Message-ID: <20251007141905.202067-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2][next] scsi: megaraid_sas: Avoid a couple
- -Wflex-array-member-not-at-end warnings
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Kashyap Desai <kashyap.desai@broadcom.com>,
- Sumit Saxena <sumit.saxena@broadcom.com>,
- Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
- Chandrakanth patil <chandrakanth.patil@broadcom.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <aM1E7Xa8qYdZ598N@kspp>
- <3a80fd1d-5a05-4db3-9dda-3ad38bedfb38@embeddedor.com>
- <4cf727c56c4fda8d28df920214b3824c9739bc8f.camel@HansenPartnership.com>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <4cf727c56c4fda8d28df920214b3824c9739bc8f.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 185.134.146.81
-X-Source-L: No
-X-Exim-ID: 1v68WM-00000004Ij5-3a69
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([10.21.53.44]) [185.134.146.81]:39130
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfLyrH3xMyulKRfV0Q7d0LLxBICLY7QzKx7h057Nc7gzQucrE9YFaZn7WNWWNiZVtZ2AC7QnxI3mMyuL8eKfdwLmtEL6uzS8srs+/c3gWaZNe4GqU7TfR
- C7hCxXuTc/Mu+H03/1KqDfGKcu860+DIY+Ig0qa89+ESE+HH3G0k0e3p+BFqKV8sck3N8K/2qT++pR0zXqikjnz0oON8lMvSCLn6ESaRLeyOAdzVj8cwPU8E
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+Clarify that the return values of vsprintf() and sprintf() exclude the
+trailing NUL character.
 
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ lib/vsprintf.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-On 10/7/25 12:59, James Bottomley wrote:
-> On Tue, 2025-10-07 at 11:43 +0100, Gustavo A. R. Silva wrote:
->> Hi all,
->>
->> Friendly ping: who can take this, please?
-> 
-> After what happened with the qla2xxx driver, everyone is a bit wary of
-> these changes, particularly when they affect structures shared with the
-> hardware. Megaraid is a broadcom acquisition so although maintained it
-> might take them a while to check this.
-
-I've been in constant communication with the people involved. So far,
-none of them has expressed any concerns about this to me. However, I
-appreciate your feedback.
-
-In any case, I promptly submitted a bugfix minutes after getting the
-report.
-
-> 
-> However, you could help us with this: as I understand it (there is a
-> bit of a no documentation problem here), the TRAILING_OVERLAP formalism
-> merely gets the compiler not to warn about the situation rather than
-> actually changing anything in the layout of the structure?  In which
-> case you should be able to demonstrate the binary produced before and
-> after this patch is the same, which would very much reduce the risk of
-> taking it.
-
-This is quite simple. Here you go the pahole output before and after
-changes.
-
-BEFORE CHANGES:
-
-pahole -C MR_FW_RAID_MAP_ALL drivers/scsi/megaraid/megaraid_sas_fp.o
-struct MR_FW_RAID_MAP_ALL {
-         struct MR_FW_RAID_MAP      raidMap;              /*     0 10408 */
-         /* --- cacheline 162 boundary (10368 bytes) was 40 bytes ago --- */
-         struct MR_LD_SPAN_MAP      ldSpanMap[64];        /* 10408 161792 */
-
-         /* size: 172200, cachelines: 2691, members: 2 */
-         /* last cacheline: 40 bytes */
-};
-
-AFTER CHANGES:
-
-pahole -C MR_FW_RAID_MAP_ALL drivers/scsi/megaraid/megaraid_sas_fp.o
-struct MR_FW_RAID_MAP_ALL {
-         union {
-                 struct MR_FW_RAID_MAP raidMap;           /*     0 10408 */
-                 struct {
-                         unsigned char __offset_to_FAM[10408]; /*     0 10408 */
-                         /* --- cacheline 162 boundary (10368 bytes) was 40 bytes ago --- */
-                         struct MR_LD_SPAN_MAP ldSpanMap[64]; /* 10408 161792 */
-                 };                                       /*     0 172200 */
-         };                                               /*     0 172200 */
-
-         /* size: 172200, cachelines: 2691, members: 1 */
-         /* last cacheline: 40 bytes */
-};
-
-As you can see, the size is exactly the same, as are the offsets for both
-members raidMap and ldSpanMap. The trick is that, thanks to the union and
-__offset_to_FAM, the flexible-array member raidMap.ldSpanMap[] now appears
-as the last member instead of somewhere in the middle.
-
-So both ldSpanMap and raidMap.ldSpanMap[] now cleanly overlap, as seems to
-have been intended.
-
-(Exactly the same applies for struct MR_DRV_RAID_MAP_ALL)
-
-I can include this explanation to the changelog text if you'd like.
-
-Thanks
--Gustavo
-
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index eb0cb11d0d12..e49f350ee549 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -3054,8 +3054,8 @@ EXPORT_SYMBOL(scnprintf);
+  * @fmt: The format string to use
+  * @args: Arguments for the format string
+  *
+- * The function returns the number of characters written
+- * into @buf. Use vsnprintf() or vscnprintf() in order to avoid
++ * The return value is the number of characters written into @buf not including
++ * the trailing '\0'. Use vsnprintf() or vscnprintf() in order to avoid
+  * buffer overflows.
+  *
+  * If you're not already dealing with a va_list consider using sprintf().
+@@ -3074,8 +3074,8 @@ EXPORT_SYMBOL(vsprintf);
+  * @fmt: The format string to use
+  * @...: Arguments for the format string
+  *
+- * The function returns the number of characters written
+- * into @buf. Use snprintf() or scnprintf() in order to avoid
++ * The return value is the number of characters written into @buf not including
++ * the trailing '\0'. Use snprintf() or scnprintf() in order to avoid
+  * buffer overflows.
+  *
+  * See the vsnprintf() documentation for format string extensions over C99.
+-- 
+2.51.0
 
 
