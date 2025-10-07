@@ -1,121 +1,256 @@
-Return-Path: <linux-kernel+bounces-844300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32174BC17D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:24:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74F5FBC17F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFA5F19A2FCA
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:25:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46C9F19A311A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366462E0B60;
-	Tue,  7 Oct 2025 13:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770972E0B6E;
+	Tue,  7 Oct 2025 13:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Eab+htxr"
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jfq10qwA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3EF242D9F
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 13:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C8AC8E6;
+	Tue,  7 Oct 2025 13:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759843476; cv=none; b=CPoku1PM/cfDB/1P5Vv4f5UmC61p/3+vAIa+y5M1J9dHD9ady97kBzisM8WGdF2sdLZAZKcYS+uJwQrEIRkfLpeQsOjNvd8LN984kEbgakKW/AUFGvl4obINxvH2E7PtyQRlLKKBWQN1sZ42hPNLaF1dspmfkt5993Q2vVnWPL4=
+	t=1759843824; cv=none; b=sFqMozaSIgs9Qk9ToAkj+5HzjLFLH30PIpcm7wVme1Le+U4OZkXtn4MRNtjKqpr0cXuun+U0BahGrYcSDF1sBrHbu+YlD9BVeDADZb/QM0v36lN+DepfNZuGwH1XxVLKYsSDVj/a3ACMcOoCo8M50eS9xS+vjG8gql0BAlxyP60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759843476; c=relaxed/simple;
-	bh=bghomkZ/Mo0/sVWF2FY7OF/9Z+YYexGj4hCWn+ZCfag=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
-	 In-Reply-To:Content-Type; b=UWDeUwfCJfreWScLx1HW2D56izNzV/M9iocEPW3aiJx0YpyyiIaCn2oKZGWT6jyR17n7vuRUFmeb3O5KKDVFDN68nGZUShWKSG+P0+c2P38h68F/NPXBTL1AgJ/TufQ1uAjqseNu+QRyiTqhor7d2hXIzpUer+4oXCaTEIzMPM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Eab+htxr; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-911afafcc20so249298639f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 06:24:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1759843473; x=1760448273; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:subject:from:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2WweNkwNQjd8/1NMfLt34sTeCfWxi9H3dopa5H7gJ+Y=;
-        b=Eab+htxrZZcD49PvCXlUSDYx9pLRRzSg6ctYn3uN4ZbRo04ptYBZ83cSQEcpshXD7e
-         9xb4/fN7yxNeXN6LVtCdg6E4U0l+/xJY+ih8Y4EHQ9YCdPFl+/SnK9KrTrH/eOTp/SKM
-         siWoE+P46eOTct0DPsDpz2XlSUqLMu9MArH/wH19xn+owuQYIRlE2UimMT3WIn1uC+4f
-         nDJKBSxdWPsoCBGmRQTv2kK9YGQn3pauh5PuzLMd0rOJQ5EneVKVV0QowfkHAIlifB7o
-         jh+h5qxp0TTuZDjbdhB0s2Ajz6HA2mDAP6UsrVHoG/4eo1q4j/ysgyzTa0IpLuHWnetf
-         Yv+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759843473; x=1760448273;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2WweNkwNQjd8/1NMfLt34sTeCfWxi9H3dopa5H7gJ+Y=;
-        b=mrJblgJzlJPCMcfMTY6aD3yTx/67yScxv/v1AdhO9VfIi28CnWL6Lk5Ni+Ep+wngWY
-         pHVZ5qwAWJVzwfbAM8NRtlqiobnktLDt1oEpS8SnI57rVf4/96Vb8x+W/f6tzchIN9YL
-         gab0YzCyeCrr4EC5o/dXIw/zPW0F0/pbw778PzPYlwcp8eTzG0fr9TJSyWDDfbV1RxBx
-         BkVdhn7XG+cmrV9Ra1nIYLrCg8/OS4MYzHEetrqfANYJOs4qvKKFjrq3taAq5a47IK2e
-         jdz+c1aqJdp7EJa3V5/p16Ozd2ySk9kZJgOZTkWpu2lbr5A+dtkO5tydjn+oUaCKFRvj
-         fvGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVfz+jRKuazCTlaBj9U9MubzsZ+8oUCztMt+Lb25+sxPjBa7GSFD7aLVDYEjgu+yXygUHuLBvo3DYYSkm8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv8ee/n5HPAPRux/TUi0vEs9cADBu8fOnFwjhxKPJahK+agCcX
-	ZZSyuDKHxFDij3F8f9McYDdrCpLSr8cdKfdWTtnFywZmxJBrlrzIlyUXXbd8BrgdjYg=
-X-Gm-Gg: ASbGnct4IRBI4nYd3i6cXyUTlsw0O3oVf5KWljGdVPrd2clZ23t2M5FnNf5yXYz24gL
-	z2aEmDpdA9Fs3hey70TmAbBvVU19MwSQwQvM41jjaFkkNAecjoFf43h2+bOX4iCLEhRM656iJfK
-	G+R/zm5AzwEzeW5rn0YjuQZLNcYW4GGBIkEz3ZY7rUALrtEy2kleQZicBcU/7aYAzNYRuQUj1QM
-	ZBE/wtUp2tB/wzHK/p7ZTLhtgaS8Q27rjk6KM8T7wIfwUr5xNGpWQftoMO8lSTSvJHaIZ3qhqZH
-	gtKFiPdDxPHJL+jV2FmPwnP0hrUS3jTj6cnQID7acvrvjluuhUBaNn+4bNLN6t/cK41QyKvr4lp
-	vTgea6POC+stg6CJZ0OijyNeGgaVg5/DJpim7bP26c11/83F2nFWZRoo=
-X-Google-Smtp-Source: AGHT+IHcWl2NGaXs3tOeNLLuo2dAOE0d8f54gCIAKh8ZkAGoBlURwFGuC+CeUxZJtomkNZLSqS0sfw==
-X-Received: by 2002:a05:6e02:1a8a:b0:42d:7e2c:78b8 with SMTP id e9e14a558f8ab-42e7aced6e7mr209520135ab.2.1759843473392;
-        Tue, 07 Oct 2025 06:24:33 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-57b5ea3132fsm6092368173.26.2025.10.07.06.24.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Oct 2025 06:24:32 -0700 (PDT)
-Message-ID: <747c4bf7-49bb-478d-a8f1-c7092ceaaa81@kernel.dk>
-Date: Tue, 7 Oct 2025 07:24:32 -0600
+	s=arc-20240116; t=1759843824; c=relaxed/simple;
+	bh=a+hLMRZ89lMMfohnZj5rrKyndKWksZlfn0//bNtRnv4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jHft47049a6RP88NlVEwrSNMSAtDqI7cGGfvcXWAxZl39PbCgIcGnxMvyieHPxA1zJWcr//6DSL1GDAL5vdVJqagKnPsFtBh7zU/djQ0WEIh9kT6Kj80Ci2XvkccaIHkh4tGCoEam7Do6u9ffXMqKC4rza3RAMDr8uiO8jm017s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jfq10qwA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92074C4CEF1;
+	Tue,  7 Oct 2025 13:30:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759843824;
+	bh=a+hLMRZ89lMMfohnZj5rrKyndKWksZlfn0//bNtRnv4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=jfq10qwAPMrOKPp2UWn6SkGdeFAYE0GUabtMligJY3wVU7Aq8Vpaig+nucTfu4Ajc
+	 2ZCWUllTifw2PXGTtyHvi0afbUzDzKw/xEMI/Q8cFAwORA+B8jPmQ9V7pxjNOq9ctl
+	 5JPz7CoVYIKtFXHWaamduBxbDeVM1quhrxSUpII69Yno07vmItODHPdyJ7qSIdWWHs
+	 SILxDRyD+XXt0fsILH398D4Gz7J+B0xg4U7oABmaICYhXnaroMvkJQGGd6lY22XFQn
+	 JzXBXN9OevTrIdhHUH1Bhdhv5w8wAKiTNGOxeYy9nUDUor5zr1ITtH9MlNKTsS0c6d
+	 psfRTjxGAHJ6g==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>,  jasonmiu@google.com,
+  graf@amazon.com,  changyuanl@google.com,  rppt@kernel.org,
+  dmatlack@google.com,  rientjes@google.com,  corbet@lwn.net,
+  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
+  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
+  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
+  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
+  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
+  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
+  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
+  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
+  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com,
+  hughd@google.com,  skhawaja@google.com,  chrisl@kernel.org,
+  steven.sistare@oracle.com
+Subject: Re: [PATCH v4 03/30] kho: drop notifiers
+In-Reply-To: <CA+CK2bCFsPZQQQ0JFErnYt=dbzBx=ZJdV+eNXYWyNUE+xk7=yA@mail.gmail.com>
+	(Pasha Tatashin's message of "Tue, 7 Oct 2025 09:16:24 -0400")
+References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
+	<20250929010321.3462457-4-pasha.tatashin@soleen.com>
+	<mafs0tt0cnevi.fsf@kernel.org>
+	<CA+CK2bA2qfLF1Mbyvnat+L9+5KAw6LnhYETXVoYcMGJxwTGahg@mail.gmail.com>
+	<mafs0playoqui.fsf@kernel.org>
+	<CA+CK2bCFsPZQQQ0JFErnYt=dbzBx=ZJdV+eNXYWyNUE+xk7=yA@mail.gmail.com>
+Date: Tue, 07 Oct 2025 15:30:13 +0200
+Message-ID: <mafs0a522on4q.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: [syzbot] [io-uring?] KASAN: slab-use-after-free Read in
- io_waitid_wait
-To: syzbot <syzbot+b9e83021d9c642a33d8c@syzkaller.appspotmail.com>,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
-References: <68e50af2.a00a0220.298cc0.0479.GAE@google.com>
-Content-Language: en-US
-In-Reply-To: <68e50af2.a00a0220.298cc0.0479.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git master
+On Tue, Oct 07 2025, Pasha Tatashin wrote:
 
-diff --git a/io_uring/waitid.c b/io_uring/waitid.c
-index 26c118f3918d..f25110fb1b12 100644
---- a/io_uring/waitid.c
-+++ b/io_uring/waitid.c
-@@ -230,13 +230,14 @@ static int io_waitid_wait(struct wait_queue_entry *wait, unsigned mode,
- 	if (!pid_child_should_wake(wo, p))
- 		return 0;
- 
-+	list_del_init(&wait->entry);
-+
- 	/* cancel is in progress */
- 	if (atomic_fetch_inc(&iw->refs) & IO_WAITID_REF_MASK)
- 		return 1;
- 
- 	req->io_task_work.func = io_waitid_cb;
- 	io_req_task_work_add(req);
--	list_del_init(&wait->entry);
- 	return 1;
- }
- 
+> On Tue, Oct 7, 2025 at 8:10=E2=80=AFAM Pratyush Yadav <pratyush@kernel.or=
+g> wrote:
+>>
+>> On Mon, Oct 06 2025, Pasha Tatashin wrote:
+>>
+>> > On Mon, Oct 6, 2025 at 1:01=E2=80=AFPM Pratyush Yadav <pratyush@kernel=
+.org> wrote:
+>> >>
+>> >> On Mon, Sep 29 2025, Pasha Tatashin wrote:
+>> >>
+>> >> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+>> >> >
+>> >> > The KHO framework uses a notifier chain as the mechanism for client=
+s to
+>> >> > participate in the finalization process. While this works for a sin=
+gle,
+>> >> > central state machine, it is too restrictive for kernel-internal
+>> >> > components like pstore/reserve_mem or IMA. These components need a
+>> >> > simpler, direct way to register their state for preservation (e.g.,
+>> >> > during their initcall) without being part of a complex,
+>> >> > shutdown-time notifier sequence. The notifier model forces all
+>> >> > participants into a single finalization flow and makes direct
+>> >> > preservation from an arbitrary context difficult.
+>> >> > This patch refactors the client participation model by removing the
+>> >> > notifier chain and introducing a direct API for managing FDT subtre=
+es.
+>> >> >
+>> >> > The core kho_finalize() and kho_abort() state machine remains, but
+>> >> > clients now register their data with KHO beforehand.
+>> >> >
+>> >> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+>> >> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+>> >> [...]
+>> >> > diff --git a/mm/memblock.c b/mm/memblock.c
+>> >> > index e23e16618e9b..c4b2d4e4c715 100644
+>> >> > --- a/mm/memblock.c
+>> >> > +++ b/mm/memblock.c
+>> >> > @@ -2444,53 +2444,18 @@ int reserve_mem_release_by_name(const char =
+*name)
+>> >> >  #define MEMBLOCK_KHO_FDT "memblock"
+>> >> >  #define MEMBLOCK_KHO_NODE_COMPATIBLE "memblock-v1"
+>> >> >  #define RESERVE_MEM_KHO_NODE_COMPATIBLE "reserve-mem-v1"
+>> >> > -static struct page *kho_fdt;
+>> >> > -
+>> >> > -static int reserve_mem_kho_finalize(struct kho_serialization *ser)
+>> >> > -{
+>> >> > -     int err =3D 0, i;
+>> >> > -
+>> >> > -     for (i =3D 0; i < reserved_mem_count; i++) {
+>> >> > -             struct reserve_mem_table *map =3D &reserved_mem_table=
+[i];
+>> >> > -             struct page *page =3D phys_to_page(map->start);
+>> >> > -             unsigned int nr_pages =3D map->size >> PAGE_SHIFT;
+>> >> > -
+>> >> > -             err |=3D kho_preserve_pages(page, nr_pages);
+>> >> > -     }
+>> >> > -
+>> >> > -     err |=3D kho_preserve_folio(page_folio(kho_fdt));
+>> >> > -     err |=3D kho_add_subtree(ser, MEMBLOCK_KHO_FDT, page_to_virt(=
+kho_fdt));
+>> >> > -
+>> >> > -     return notifier_from_errno(err);
+>> >> > -}
+>> >> > -
+>> >> > -static int reserve_mem_kho_notifier(struct notifier_block *self,
+>> >> > -                                 unsigned long cmd, void *v)
+>> >> > -{
+>> >> > -     switch (cmd) {
+>> >> > -     case KEXEC_KHO_FINALIZE:
+>> >> > -             return reserve_mem_kho_finalize((struct kho_serializa=
+tion *)v);
+>> >> > -     case KEXEC_KHO_ABORT:
+>> >> > -             return NOTIFY_DONE;
+>> >> > -     default:
+>> >> > -             return NOTIFY_BAD;
+>> >> > -     }
+>> >> > -}
+>> >> > -
+>> >> > -static struct notifier_block reserve_mem_kho_nb =3D {
+>> >> > -     .notifier_call =3D reserve_mem_kho_notifier,
+>> >> > -};
+>> >> >
+>> >> >  static int __init prepare_kho_fdt(void)
+>> >> >  {
+>> >> >       int err =3D 0, i;
+>> >> > +     struct page *fdt_page;
+>> >> >       void *fdt;
+>> >> >
+>> >> > -     kho_fdt =3D alloc_page(GFP_KERNEL);
+>> >> > -     if (!kho_fdt)
+>> >> > +     fdt_page =3D alloc_page(GFP_KERNEL);
+>> >> > +     if (!fdt_page)
+>> >> >               return -ENOMEM;
+>> >> >
+>> >> > -     fdt =3D page_to_virt(kho_fdt);
+>> >> > +     fdt =3D page_to_virt(fdt_page);
+>> >> >
+>> >> >       err |=3D fdt_create(fdt, PAGE_SIZE);
+>> >> >       err |=3D fdt_finish_reservemap(fdt);
+>> >> > @@ -2499,7 +2464,10 @@ static int __init prepare_kho_fdt(void)
+>> >> >       err |=3D fdt_property_string(fdt, "compatible", MEMBLOCK_KHO_=
+NODE_COMPATIBLE);
+>> >> >       for (i =3D 0; i < reserved_mem_count; i++) {
+>> >> >               struct reserve_mem_table *map =3D &reserved_mem_table=
+[i];
+>> >> > +             struct page *page =3D phys_to_page(map->start);
+>> >> > +             unsigned int nr_pages =3D map->size >> PAGE_SHIFT;
+>> >> >
+>> >> > +             err |=3D kho_preserve_pages(page, nr_pages);
+>> >> >               err |=3D fdt_begin_node(fdt, map->name);
+>> >> >               err |=3D fdt_property_string(fdt, "compatible", RESER=
+VE_MEM_KHO_NODE_COMPATIBLE);
+>> >> >               err |=3D fdt_property(fdt, "start", &map->start, size=
+of(map->start));
+>> >> > @@ -2507,13 +2475,14 @@ static int __init prepare_kho_fdt(void)
+>> >> >               err |=3D fdt_end_node(fdt);
+>> >> >       }
+>> >> >       err |=3D fdt_end_node(fdt);
+>> >> > -
+>> >> >       err |=3D fdt_finish(fdt);
+>> >> >
+>> >> > +     err |=3D kho_preserve_folio(page_folio(fdt_page));
+>> >> > +     err |=3D kho_add_subtree(MEMBLOCK_KHO_FDT, fdt);
+>> >> > +
+>> >> >       if (err) {
+>> >> >               pr_err("failed to prepare memblock FDT for KHO: %d\n"=
+, err);
+>> >> > -             put_page(kho_fdt);
+>> >> > -             kho_fdt =3D NULL;
+>> >> > +             put_page(fdt_page);
+>> >>
+>> >> This adds subtree to KHO even if the FDT might be invalid. And then
+>> >> leaves a dangling reference in KHO to the FDT in case of an error. I
+>> >> think you should either do this check after
+>> >> kho_preserve_folio(page_folio(fdt_page)) and do a clean error check f=
+or
+>> >> kho_add_subtree(), or call kho_remove_subtree() in the error block.
+>> >
+>> > I agree, I do not like these err |=3D stuff, we should be checking
+>> > errors cleanly, and do proper clean-ups.
+>>
+>> Yeah, this is mainly a byproduct of using FDTs. Getting and setting
+>> simple properties also needs error checking and that can get tedious
+>> real quick. Which is why this pattern has shown up I suppose.
+>
+> Exactly. This is also why it's important to replace FDT with something
+> more sensible for general-purpose live update purposes.
+>
+> By the way, I forgot to address this comment in the v5 of the KHO
+> series I sent out yesterday. Could you please take another look? If
+> everything else is good, I will refresh that series so we can ask
+> Andrew to take in the KHO patches. That would simplify the LUO series.
 
--- 
-Jens Axboe
+Good idea. Will take a look.
+
+[...]
+
+--=20
+Regards,
+Pratyush Yadav
 
