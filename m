@@ -1,277 +1,255 @@
-Return-Path: <linux-kernel+bounces-844533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18AB3BC225B
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:47:56 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E836BC2267
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:49:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1517F3E0A25
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:47:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D8414F1096
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF912E7BDC;
-	Tue,  7 Oct 2025 16:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478CD2E0410;
+	Tue,  7 Oct 2025 16:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="P82dITe/"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YhPEHR/e"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA564316E;
-	Tue,  7 Oct 2025 16:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD6A1DF759
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759855671; cv=none; b=BVP4CEPLZK3zyGmvDURC1U/sRo0Gq1CkusqxtJt+z1fkluSif1WUbN0OuR33aYPXKZdj+9ulOMh2qJntXU2AvBJgfQMOcCwVfwjq9J1jOGqsMXTwCkSujhlWsfsCuzznXaOteDacyCRFfuRj3aySTbhiEYSro83WSlUiDEyCMLo=
+	t=1759855760; cv=none; b=SbEYOovNJYCEo28jbiWqAOuItQLFwmkz6i2YztQATQAkiOeJJanuE0bh7CfI7rSWDsEKUrCP4v5Fn6K0yX0f1lH4BWXWc2BixSZIIdiHZ4yCfQp/nXIN5GYYSpjyDf+o71Ueiv40mCD6RedWDGBat4Xv/+Rw9NR4rlFho+6/oK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759855671; c=relaxed/simple;
-	bh=AnQPvORkMfFIrLtm1OwQcGJ4F1LisjXo4BbSMM2PHG0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A4/TE6mehR+iLeOM3SUZEfDMVaI9mT1qZzlqKqtjyvT1VCKUOuLLVfUtQ6V0UlIGzzqCg/ZzTwOC73WaZF5At1A1x9XXw6Th3KLcV38xFSNYXkvz2yQTfPps4H8TONzCUJs2KTdv104OYPDgD7rp2k+yojPmATh14Yio1cx7qBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=P82dITe/; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=+Q6kuk1BSWKuld3b7wnE+3xvam0vxOKcqnOWNWJle5I=; b=P82dITe/i8/v/fY7qNgH9OgwIg
-	39RFEZQreiQ5sqgESBWN4TdCa3PIuQB9MF/bDiZ8ySyOuLsNgR0TJjUWQtv2Y83+wjoxtuHKnQfxC
-	JlRAznTnqQrqEhW7bpIciohif4JTny8z8FjgHKd9niD+yLcMAHgBhCv2Eh713t45RJClNIbhgRQ+s
-	nhvkqsJDUdPErrYKdmq7XLu9TF8dLfD+6T4W0bFF2d+QFLVOm3k5+n0OJO3rIDWAh3yvhNQD38Yf+
-	c24Lk46GFGkM/M8WH/anmh3xpHEfVOtPjlPvx755WNiLRWFYJE2RVgdhq94czwuS7JCYR0oIpeDEy
-	G8H0r79g==;
-Received: from [58.29.143.236] (helo=[192.168.1.7])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1v6Aqj-006HNs-TR; Tue, 07 Oct 2025 18:47:42 +0200
-Message-ID: <4b91c6f0-8325-4eee-9a7a-e3f78f0d550a@igalia.com>
-Date: Wed, 8 Oct 2025 01:47:37 +0900
+	s=arc-20240116; t=1759855760; c=relaxed/simple;
+	bh=ORACqGs0noVFjkqRIzC7mgkhXoMvVcz9xFF8BLGfL4k=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kjBN+QjrV/LYSjj43aT8jd+AwCpu26OmBBgwtKn6B2uQLiqwFtb4DiunMNw2Z7O9MYFlj2rC2Y0ID5ZLX3OKTPqMLS/SvdMEPvwEXEnMc2vqo2TcBibGJs0U+R9WT8mgX9Jd64UHoQetoAPZWbcU0hwNFON2vVA9l99cKzcuqA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YhPEHR/e; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 597ET60a026578
+	for <linux-kernel@vger.kernel.org>; Tue, 7 Oct 2025 16:49:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=3SsHbrRlk80DtQuFub/knm
+	jcStfwYscfjlXoW0LXl4Y=; b=YhPEHR/eZWjAqdlHzZX80N8CU3LYt8w/qDDmOq
+	y7+veEl4xOSQcSt/XOStjB7GqAJDc/FPwT1Zfzgrn/ef9FjSVdvSUj2zlN9eF9Wt
+	AYn5cY0llFiPJjUCHjV46Gv/47uCfNrsHNf/kadenwP3nd4nm7kqjq33I9WRUMpL
+	RsCkl9OfLPmQUSstdP+HYumV65MEklPFncDRMwOUFkaSEaU5HghsJqcPPQOzQkvi
+	qWeGWi8ZFRqo6pxgrIvQGYmrSSFzsH/iwIc1XKI1s62clRPKchqxU/8Yuy8DTBdR
+	QG5IylgGjc88i9TpzBvBaeJ7qbbGlt2ieNNi+663QkGEbREA==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49mgd0kq2w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 16:49:17 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2698b5fbe5bso77343645ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 09:49:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759855756; x=1760460556;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3SsHbrRlk80DtQuFub/knmjcStfwYscfjlXoW0LXl4Y=;
+        b=UklPC3vmIeL9F5WMY66lOLkqrIAgqx1S/MheJ9azWCznAI1gSXX3Re1vql47V5tdtC
+         9Asvn00NGZkag9m3HJYg+lUnCoHShRdF2EXJEU+1B2zADw3k7HFcKwBzPpw26N0zyQy6
+         KyukqSM6lRlbXE+DrbXn4Zk/ATEeSUUuSrm6O8M6VdVuD44JqMzgJKYQYjIsehifpgIm
+         YRLSc+ZPRw3UwddR02Kt/+4/bbS2rXrrI7VsZmTXcijnpFNbyaeBB6NbLl5ZdbdfBNuv
+         +wXicXh8iKkqcliTm8G1tmFhsWwucIEw9uEgBUemnUEGx2SKCiK/UnrMHfNmg1pBH6HO
+         22iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUH0UqtwfwYQcmfueZ6qrJLIIjIgzNzWsYOyiPlcb8TWDYQbGzta1A8QbGX1KtrBv/qChAs6adwZiCy6kM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt1oMDqwirq5ZUbxvuPOqP7cK0mmCPD87xe05mhhTQap1KQscq
+	G5fXRlfNs26zYgmdn/y2Z/Hpj9qVzddB/1K2M2juqsz6Jk8MzO6KJZe8j8zKGwWhXCVmihuZxzo
+	4yC004dmTjr5N+dZ9r162d0L1KD1m3ELKy7YIxcGWrmB7BuzVu3Ub+qS9ivyqPR59nx8=
+X-Gm-Gg: ASbGncsMHDjeBuHUIpHRhTwVOQuJinDcssc+Obvs8RWbCttkCA7N1/WmyTEhYfZk3ut
+	/YpIWfStrvKCbzssADA1nws41WY+plBB4b4lIi/7FvZaJh+5HzrPQZPGARXVnVGUByq1qehxVA4
+	ne7aq5CmaRGfEekKIDLlNFh23uHkim+ulemwHG474EKY1ptnbmJbugztSzszqgmcVDEGO3xjdJf
+	6TH/Uzj3D8EyTO3rJvHq6Y+m5vakey7vEHJC1TNuqW+GxGlAjNqPmuUNOuGnEHo1rOAYBIeSfDj
+	MSobpSgaCTYTphJ7Y75qZA6aoihxEgDXJp7UUaDyW9R63seeNUANMYRWut0i3UZhXUbq1Nks
+X-Received: by 2002:a17:902:ce0e:b0:275:6baa:d9 with SMTP id d9443c01a7336-290272e38b6mr5347505ad.40.1759855755538;
+        Tue, 07 Oct 2025 09:49:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG7Cwbjhk9Ln1a/sV6MFv28g8oouuSH+rzC3RmgYPdyZOA+8Ox7HF5JQoYQkIi8mUXs7Kz7ng==
+X-Received: by 2002:a17:902:ce0e:b0:275:6baa:d9 with SMTP id d9443c01a7336-290272e38b6mr5347105ad.40.1759855754854;
+        Tue, 07 Oct 2025 09:49:14 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1261e2sm171990825ad.38.2025.10.07.09.49.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 09:49:14 -0700 (PDT)
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Subject: [PATCH v4 00/12] Peripheral Image Loader support for Qualcomm SoCs
+ running Linux host at EL2
+Date: Tue, 07 Oct 2025 22:18:45 +0530
+Message-Id: <20251007-kvm_rprocv4_next-20251007-v4-0-de841623af3c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] sched_ext: Make scx_bpf_dsq_insert*() return bool
-To: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
- Andrea Righi <arighi@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev
-References: <20251007015147.2496026-1-tj@kernel.org>
- <20251007015147.2496026-5-tj@kernel.org>
-From: Changwoo Min <changwoo@igalia.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <20251007015147.2496026-5-tj@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAG1E5WgC/z2MWwqAIBAAryL7nWCi9LhKhEhttUQWa0gQ3T3po
+ 89hmLkhIhNGaMUNjIki7SGDKQQMiw8zShozg1balkpVck2b44P3IRkX8Drlbywa9NY3VT16yP3
+ BONH1vbv+eV7Qlr5WawAAAA==
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+X-Mailer: b4 0.14-dev-f7c49
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759855750; l=6187;
+ i=mukesh.ojha@oss.qualcomm.com; s=20250708; h=from:subject:message-id;
+ bh=ORACqGs0noVFjkqRIzC7mgkhXoMvVcz9xFF8BLGfL4k=;
+ b=FJqyngBWGKTeiZeXciyek46l96eCRS9NYAMZ38KvI8TMJG6MvVWs2QREhJ9UaJOTJ8MVnSYTK
+ zPgA8mw6Q4CD4+y3/wwQsfKHno/fCxtZ3hGllPfip4+Omdg9mKvE/i1
+X-Developer-Key: i=mukesh.ojha@oss.qualcomm.com; a=ed25519;
+ pk=eX8dr/7d4HJz/HEXZIpe3c+Ukopa/wZmxH+5YV3gdNc=
+X-Proofpoint-GUID: SPLYINjYDzkacOu13od1VYCS5N9gdbax
+X-Authority-Analysis: v=2.4 cv=T8aBjvKQ c=1 sm=1 tr=0 ts=68e5448d cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=KKAkSRfTAAAA:8 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=49n8dk0KqV-O-Ing9ysA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22 a=cvBusfyB2V15izCimMoJ:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: SPLYINjYDzkacOu13od1VYCS5N9gdbax
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA2MDEyMyBTYWx0ZWRfXwtOnzsXB4KPo
+ dMJ0LXN7gosU37STlTuu0XOPqn301Qq0rD0A3NW0P1/nu8XtToOnALbxtMNvwW/vWCedbddVec1
+ 7q2QnIuWNxhT+A9C9q/E8ROSAWeWFsw7Ao3QzjFzMk8EoEAJE6ia0gQtPAymcwPRPJbf21/bp6P
+ mAjDsCe+7GmzUqSUg/Yb6xJaDEHhyfpl5mkjOFu3/2iyNwLq3AP2/pCNSyJGBpdlrh8/Z/v9QAF
+ 3VSMBSmg9yxyKFJBVB8v5P50pU/Wl5WFxMtpqH256Y1d88YwHg+mUI7oETI+uB3jYl4xEiMBbOw
+ 0NFt5NsyamIsNKYCHYJNgyQhgalcszLPcr2UOizual4xuzgO+k87J8y4p3dPaqL1JojzQyrEWmK
+ nVxIzptNYojBKyI1wIiS3EHoTbJY4A==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-07_02,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 phishscore=0 clxscore=1015 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 suspectscore=0 bulkscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510060123
 
+A few months ago, we discussed the challenges at Linaro Connect 2025 [1] 
+related to Secure PAS remoteproc enablement when Linux is running at EL2.
 
+[1] https://resources.linaro.org/en/resource/sF8jXifdb9V1mUefdbfafa
 
-On 10/7/25 10:51, Tejun Heo wrote:
-> In preparation for hierarchical schedulers, change scx_bpf_dsq_insert() and
-> scx_bpf_dsq_insert_vtime() to return bool instead of void. With
-> sub-schedulers, there will be no reliable way to guarantee a task is still
-> owned by the sub-scheduler at insertion time (e.g., the task may have been
-> migrated to another scheduler). The bool return value will enable
-> sub-schedulers to detect and gracefully handle insertion failures.
-> 
-> For the root scheduler, insertion failures will continue to trigger scheduler
-> abort via scx_error(), so existing code doesn't need to check the return
-> value. Backward compatibility is maintained through compat wrappers.
-> 
-> Also update scx_bpf_dsq_move() documentation to clarify that it can return
-> false for sub-schedulers when @dsq_id points to a disallowed local DSQ.
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
+Below, is the summary of the discussion.
 
-Looks good to me.
+Qualcomm is working to enable remote processors on the SA8775p SoC with
+a Linux host running at EL2. In doing so, it has encountered several
+challenges related to how the remoteproc framework is handled when Linux
+runs at EL1.
 
-Reviewed-by: Changwoo Min <changwoo@igalia.com>
+One of the main challenges arises from differences in how IOMMU
+translation is currently managed on SoCs running the Qualcomm EL2
+hypervisor (QHEE), where IOMMU translation for any device is entirely
+owned by the hypervisor. Additionally, the firmware for remote
+processors does not contain a resource table, which would typically
+include the necessary IOMMU configuration settings.
 
-Regards,
-Changwoo Min
+Qualcomm SoCs running with QHEE (EL2) have been utilizing the Peripheral
+Authentication Service (PAS) from TrustZone (TZ) firmware to securely
+authenticate and reset remote processors via a single SMC call,
+_auth_and_reset_. This call is first trapped by QHEE, which then invokes
+TZ for authentication. Once authentication is complete, the call returns
+to QHEE, which sets up the IOMMU translation scheme for the remote
+processors and subsequently brings them out of reset. The design of the
+Qualcomm EL2 hypervisor dictates that the Linux host OS running at EL1
+is not permitted to configure IOMMU translation for remote processors,
+and only a single-stage translation is configured.
 
+To make the remote processor bring-up (PAS) sequence
+hypervisor-independent, the auth_and_reset SMC call is now handled
+entirely by TZ. However, the issue of IOMMU configuration remains
+unresolved, for example a scenario, when KVM host at EL2 has no
+knowledge of the remote processors’ IOMMU settings.  This is being
+addressed by overlaying the IOMMU properties when the SoC runs a Linux
+host at EL2. SMC call is being provided from the TrustZone firmware to
+retrieve the resource table for a given subsystem.
 
-> ---
->   kernel/sched/ext.c                       | 45 ++++++++++++++++++------
->   tools/sched_ext/include/scx/common.bpf.h |  3 +-
->   tools/sched_ext/include/scx/compat.bpf.h | 23 ++++++++++--
->   3 files changed, 56 insertions(+), 15 deletions(-)
-> 
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index a34e731229de..399e53c8939c 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -5323,8 +5323,12 @@ __bpf_kfunc_start_defs();
->    * exhaustion. If zero, the current residual slice is maintained. If
->    * %SCX_SLICE_INF, @p never expires and the BPF scheduler must kick the CPU with
->    * scx_bpf_kick_cpu() to trigger scheduling.
-> + *
-> + * Returns %true on successful insertion, %false on failure. On the root
-> + * scheduler, %false return triggers scheduler abort and the caller doesn't need
-> + * to check the return value.
->    */
-> -__bpf_kfunc void scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id, u64 slice,
-> +__bpf_kfunc bool scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id, u64 slice,
->   				    u64 enq_flags)
->   {
->   	struct scx_sched *sch;
-> @@ -5332,10 +5336,10 @@ __bpf_kfunc void scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id, u64 slice
->   	guard(rcu)();
->   	sch = rcu_dereference(scx_root);
->   	if (unlikely(!sch))
-> -		return;
-> +		return false;
->   
->   	if (!scx_dsq_insert_preamble(sch, p, enq_flags))
-> -		return;
-> +		return false;
->   
->   	if (slice)
->   		p->scx.slice = slice;
-> @@ -5343,13 +5347,24 @@ __bpf_kfunc void scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id, u64 slice
->   		p->scx.slice = p->scx.slice ?: 1;
->   
->   	scx_dsq_insert_commit(sch, p, dsq_id, enq_flags);
-> +
-> +	return true;
-> +}
-> +
-> +/*
-> + * COMPAT: Will be removed in v6.23.
-> + */
-> +__bpf_kfunc void scx_bpf_dsq_insert___compat(struct task_struct *p, u64 dsq_id,
-> +					     u64 slice, u64 enq_flags)
-> +{
-> +	scx_bpf_dsq_insert(p, dsq_id, slice, enq_flags);
->   }
->   
-> -static void scx_dsq_insert_vtime(struct scx_sched *sch, struct task_struct *p,
-> +static bool scx_dsq_insert_vtime(struct scx_sched *sch, struct task_struct *p,
->   				 u64 dsq_id, u64 slice, u64 vtime, u64 enq_flags)
->   {
->   	if (!scx_dsq_insert_preamble(sch, p, enq_flags))
-> -		return;
-> +		return false;
->   
->   	if (slice)
->   		p->scx.slice = slice;
-> @@ -5359,6 +5374,8 @@ static void scx_dsq_insert_vtime(struct scx_sched *sch, struct task_struct *p,
->   	p->scx.dsq_vtime = vtime;
->   
->   	scx_dsq_insert_commit(sch, p, dsq_id, enq_flags | SCX_ENQ_DSQ_PRIQ);
-> +
-> +	return true;
->   }
->   
->   struct scx_bpf_dsq_insert_vtime_args {
-> @@ -5394,8 +5411,12 @@ struct scx_bpf_dsq_insert_vtime_args {
->    * function must not be called on a DSQ which already has one or more FIFO tasks
->    * queued and vice-versa. Also, the built-in DSQs (SCX_DSQ_LOCAL and
->    * SCX_DSQ_GLOBAL) cannot be used as priority queues.
-> + *
-> + * Returns %true on successful insertion, %false on failure. On the root
-> + * scheduler, %false return triggers scheduler abort and the caller doesn't need
-> + * to check the return value.
->    */
-> -__bpf_kfunc void
-> +__bpf_kfunc bool
->   __scx_bpf_dsq_insert_vtime(struct task_struct *p,
->   			   struct scx_bpf_dsq_insert_vtime_args *args)
->   {
-> @@ -5405,10 +5426,10 @@ __scx_bpf_dsq_insert_vtime(struct task_struct *p,
->   
->   	sch = rcu_dereference(scx_root);
->   	if (unlikely(!sch))
-> -		return;
-> +		return false;
->   
-> -	scx_dsq_insert_vtime(sch, p, args->dsq_id, args->slice, args->vtime,
-> -			     args->enq_flags);
-> +	return scx_dsq_insert_vtime(sch, p, args->dsq_id, args->slice,
-> +				    args->vtime, args->enq_flags);
->   }
->   
->   /*
-> @@ -5432,6 +5453,7 @@ __bpf_kfunc_end_defs();
->   
->   BTF_KFUNCS_START(scx_kfunc_ids_enqueue_dispatch)
->   BTF_ID_FLAGS(func, scx_bpf_dsq_insert, KF_RCU)
-> +BTF_ID_FLAGS(func, scx_bpf_dsq_insert___compat, KF_RCU)
->   BTF_ID_FLAGS(func, __scx_bpf_dsq_insert_vtime, KF_RCU)
->   BTF_ID_FLAGS(func, scx_bpf_dsq_insert_vtime, KF_RCU)
->   BTF_KFUNCS_END(scx_kfunc_ids_enqueue_dispatch)
-> @@ -5686,8 +5708,9 @@ __bpf_kfunc void scx_bpf_dsq_move_set_vtime(struct bpf_iter_scx_dsq *it__iter,
->    * Can be called from ops.dispatch() or any BPF context which doesn't hold a rq
->    * lock (e.g. BPF timers or SYSCALL programs).
->    *
-> - * Returns %true if @p has been consumed, %false if @p had already been consumed
-> - * or dequeued.
-> + * Returns %true if @p has been consumed, %false if @p had already been
-> + * consumed, dequeued, or, for sub-scheds, @dsq_id points to a disallowed local
-> + * DSQ.
->    */
->   __bpf_kfunc bool scx_bpf_dsq_move(struct bpf_iter_scx_dsq *it__iter,
->   				  struct task_struct *p, u64 dsq_id,
-> diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
-> index b1c2a0dde76e..522c90d0ced2 100644
-> --- a/tools/sched_ext/include/scx/common.bpf.h
-> +++ b/tools/sched_ext/include/scx/common.bpf.h
-> @@ -62,8 +62,7 @@ s32 scx_bpf_create_dsq(u64 dsq_id, s32 node) __ksym;
->   s32 scx_bpf_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags, bool *is_idle) __ksym;
->   s32 __scx_bpf_select_cpu_and(struct task_struct *p, const struct cpumask *cpus_allowed,
->   			     struct scx_bpf_select_cpu_and_args *args) __ksym __weak;
-> -void scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags) __ksym __weak;
-> -void __scx_bpf_dsq_insert_vtime(struct task_struct *p, struct scx_bpf_dsq_insert_vtime_args *args) __ksym __weak;
-> +bool __scx_bpf_dsq_insert_vtime(struct task_struct *p, struct scx_bpf_dsq_insert_vtime_args *args) __ksym __weak;
->   u32 scx_bpf_dispatch_nr_slots(void) __ksym;
->   void scx_bpf_dispatch_cancel(void) __ksym;
->   bool scx_bpf_dsq_move_to_local(u64 dsq_id) __ksym __weak;
-> diff --git a/tools/sched_ext/include/scx/compat.bpf.h b/tools/sched_ext/include/scx/compat.bpf.h
-> index e172de696f99..33c26928f4e9 100644
-> --- a/tools/sched_ext/include/scx/compat.bpf.h
-> +++ b/tools/sched_ext/include/scx/compat.bpf.h
-> @@ -196,7 +196,7 @@ scx_bpf_select_cpu_and(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
->    * Inline wrapper that packs scalar arguments into a struct and calls
->    * __scx_bpf_dsq_insert_vtime(). See __scx_bpf_dsq_insert_vtime() for details.
->    */
-> -static inline void
-> +static inline bool
->   scx_bpf_dsq_insert_vtime(struct task_struct *p, u64 dsq_id, u64 slice, u64 vtime,
->   			 u64 enq_flags)
->   {
-> @@ -208,10 +208,29 @@ scx_bpf_dsq_insert_vtime(struct task_struct *p, u64 dsq_id, u64 slice, u64 vtime
->   			.enq_flags = enq_flags,
->   		};
->   
-> -		__scx_bpf_dsq_insert_vtime(p, &args);
-> +		return __scx_bpf_dsq_insert_vtime(p, &args);
->   	} else {
->   		scx_bpf_dsq_insert_vtime___compat(p, dsq_id, slice, vtime,
->   						  enq_flags);
-> +		return true;
-> +	}
-> +}
-> +
-> +/*
-> + * v6.19: scx_bpf_dsq_insert() now returns bool instead of void. Move
-> + * scx_bpf_dsq_insert() decl to common.bpf.h and drop compat helper after v6.22.
-> + */
-> +bool scx_bpf_dsq_insert___new(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags) __ksym __weak;
-> +void scx_bpf_dsq_insert___compat(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags) __ksym __weak;
-> +
-> +static inline bool
-> +scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags)
-> +{
-> +	if (bpf_ksym_exists(scx_bpf_dsq_insert___new)) {
-> +		return scx_bpf_dsq_insert___new(p, dsq_id, slice, enq_flags);
-> +	} else {
-> +		scx_bpf_dsq_insert___compat(p, dsq_id, slice, enq_flags);
-> +		return true;
->   	}
->   }
->   
+There are also remote processors such as those for video, camera, and
+graphics that do not use the remoteproc framework to manage their
+lifecycle. Instead, they rely on the Qualcomm PAS service to
+authenticate their firmware. These processors also need to be brought
+out of reset when Linux is running at EL2. The client drivers for these
+processors use the MDT loader function to load and authenticate
+firmware. Similar to the Qualcomm remoteproc PAS driver, they also need
+to retrieve the resource table, create a shared memory bridge
+(shmbridge), and map the resources before bringing the processors out of
+reset.
+
+It is based on next-20251007 and tested on SA8775p which is now called
+ Lemans IOT platform and does not addresses DMA problem discussed at
+[1] which is future scope of the series.
+
+Changes in v4: https://lore.kernel.org/lkml/20250921-kvm_rproc_pas-v3-0-458f09647920@oss.qualcomm.com/
+ - Fixed kernel robot warning/errors.
+ - Reworded some of the commit log, code comment as per suggestion from Bryan.
+ - Added support of gpdsp0 and gpdsp1 and disabled iris node.
+ - Add R-b tag to some of the reviewed patches.
+ - Rename struct qcom_scm_pas_cxt to qcom_scm_pas_context.
+
+Changes in v3: https://lore.kernel.org/lkml/20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com/
+ - Dropped video subsystem enablement for now, could add it in future
+   or on a separate series.
+ - Addressed most of the suggestion from Stephen and Bryan like some
+   remoteproc code checking resource table presence or right error
+   code propagation above the layer.
+ - Added leman-el2 overlay file.
+ - Added missed iommus binding which was missed last series.
+ - Separated qcom_mdt_pas_load() patch and its usage.
+ - Patch numbering got changed compared to last version
+
+Changes in v2: https://lore.kernel.org/lkml/20241004212359.2263502-1-quic_mojha@quicinc.com/
+ - A lot has changed from the V1 and a fresh look would be preferred.
+ - Removed approach where device tree contain devmem resources in
+   remoteproc node.
+ - SHMbridge need to created for both carveout and metadata memory
+   shared to TZ in a new way.
+ - Now, resource table would be given by SMC call which need to mapped
+   along with carveout before triggering _auth_and_reset_.
+ - IOMMU properties need to be added to firmware devices tree node when Linux
+   control IOMMU.
+
+---
+Mukesh Ojha (12):
+      dt-bindings: remoteproc: qcom,pas: Add iommus property
+      firmware: qcom_scm: Rename peripheral as pas_id
+      firmware: qcom_scm: Introduce PAS context initialization and destroy helper
+      soc: qcom: mdtloader: Add PAS context aware qcom_mdt_pas_load() function
+      remoteproc: pas: Replace metadata context with PAS context structure
+      firmware: qcom_scm: Add a prep version of auth_and_reset function
+      firmware: qcom_scm: Simplify qcom_scm_pas_init_image()
+      firmware: qcom_scm: Add SHM bridge handling for PAS when running without QHEE
+      firmware: qcom_scm: Add qcom_scm_pas_get_rsc_table() to get resource table
+      remoteproc: pas: Extend parse_fw callback to fetch resources via SMC call
+      remoteproc: qcom: pas: Enable Secure PAS support with IOMMU managed by Linux
+      arm64: dts: qcom: Add EL2 overlay for Lemans
+
+ .../bindings/remoteproc/qcom,pas-common.yaml       |   3 +
+ arch/arm64/boot/dts/qcom/Makefile                  |   7 +-
+ arch/arm64/boot/dts/qcom/lemans-el2.dtso           |  41 ++
+ drivers/firmware/qcom/qcom_scm.c                   | 415 ++++++++++++++++++---
+ drivers/firmware/qcom/qcom_scm.h                   |   1 +
+ drivers/remoteproc/qcom_q6v5_pas.c                 | 187 ++++++++--
+ drivers/soc/qcom/mdt_loader.c                      |  32 +-
+ include/linux/firmware/qcom/qcom_scm.h             |  36 +-
+ include/linux/soc/qcom/mdt_loader.h                |  16 +-
+ 9 files changed, 635 insertions(+), 103 deletions(-)
+---
+base-commit: 68842969e138d9ad3e3aa2bbd65d514df1581b5c
+change-id: 20251007-kvm_rprocv4_next-20251007-5e4ea5a978da
+
+Best regards,
+-- 
+-Mukesh Ojha
 
 
