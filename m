@@ -1,102 +1,127 @@
-Return-Path: <linux-kernel+bounces-843736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8FBCBC01BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 05:42:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15B51BC01C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 05:47:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7DD9189DF0C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 03:43:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EAB384E2019
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 03:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F224E216E24;
-	Tue,  7 Oct 2025 03:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54AA521578D;
+	Tue,  7 Oct 2025 03:47:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jvdsn.com header.i=@jvdsn.com header.b="V9Z0us7k"
-Received: from smtp.jvdsn.com (smtp.jvdsn.com [129.153.194.31])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HC9vTyjc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB90196C7C;
-	Tue,  7 Oct 2025 03:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.153.194.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85001A267;
+	Tue,  7 Oct 2025 03:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759808567; cv=none; b=Lc5J5KtTeMv5pEV9PJMTTCDOX66Xe/xmMwNT/zeXsnZt19ItEa9+9ZBQZGmKNLKBtGQM4leNcZ8Y4kSua8/7tUDGWrR7LYKMHnc67t7X/xr8zqAa1ur+EoxBNxTJP7hA2Fjl9kusnszbt6ihZHD/m+dDSStBFlVHHRgh3Vr+/Z4=
+	t=1759808821; cv=none; b=PVdl7HFazjY+QURMleVzV/yOEtXYrn599u1T0x+KxSTQX37akWTEVgSUU8CFiNV3OYFqCrq1e9lrl6Oik/SpDALzu6FeCOIhf83o9RS3SRIhovDN9+hAqQBj730O/Y3mCGEafxSa2D/mVh4bCyxNGuL4+zOWpJJqNF6bSmQ4PP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759808567; c=relaxed/simple;
-	bh=2ffhrjPipteAJONKOPVl7XKbWoSHlNmXIa/ZaTKNl0c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T3bls9N4zrCWw1BjFm08A+S/XrEArC90ynn9tPCYjKSoWl/IQw1UTA0by6YbMvJvQRswZZNawtazjlJkkA//nESoJOTrqoNJHTzr/9qz+1O5wdot0imCgOFpiJAlQITp1emfKX5DWBSQJosuvCoI52Q4OkSABlX71xqqJ6U/Z5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=jvdsn.com; spf=pass smtp.mailfrom=jvdsn.com; dkim=pass (2048-bit key) header.d=jvdsn.com header.i=@jvdsn.com header.b=V9Z0us7k; arc=none smtp.client-ip=129.153.194.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=jvdsn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jvdsn.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=jvdsn.com; s=mail;
-	t=1759808565; bh=2ffhrjPipteAJONKOPVl7XKbWoSHlNmXIa/ZaTKNl0c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=V9Z0us7ktQqB+gCZ1TJFKeuHc7wW46JYI945BSahqwOQ9kppTajHIojGuvdmnlSDI
-	 Aqf18RGN9VH9dbFSN/pevz3iHW6Fk0HCdnYbqlT6Jbi7KETQq9AxIhjUNIXFFJIK6Z
-	 obvSo6vpGsjBtdC4h2xShKvRzskBkjiNIZ1s+/weFt2isBhInISQmD+n4r5Vi1x9Zg
-	 VmkitefpVrfs0zXHbkCECxHtblk6L1/1Upf072NPrpwlBJEmkSkvrK1Vrrygxkch4y
-	 H0f50HBgDVaSnddFIPQ3bUzUjqAbfBDeokgUh2bxrmi5u5TcDhy4N/wNB1nZhet4fV
-	 CF9RbVEOEPV8A==
-Message-ID: <87c17942-4c5b-45d6-b25d-089440b3d69b@jvdsn.com>
-Date: Mon, 6 Oct 2025 22:42:44 -0500
+	s=arc-20240116; t=1759808821; c=relaxed/simple;
+	bh=jHWYuOq5rYdachqCH402zOZjxpCtATwDtliRdFtl7Mg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bkMJt0F+EXe9aoF+UWoq/+tGzB7HUlLDlrGrg/0KqqrFjAONVljO3UmtMaqVuy7G7RtwElkbLKt/dBEn7UbGlial2pZYhJ5UoYct3UMWa1nuIuRfC45p6A5CquRPnPf8F3DM8P0RzONXm0gcBEt2trailtgQ+bydAxKP53CVClk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HC9vTyjc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 09C15C4CEF1;
+	Tue,  7 Oct 2025 03:47:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759808820;
+	bh=jHWYuOq5rYdachqCH402zOZjxpCtATwDtliRdFtl7Mg=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=HC9vTyjcxFjp4SgxBcXlIVvVvwOKkXK6cnw7hZQQGk/APSJlxy87hQzMJJ0RWVpES
+	 sw+PRgEoPEhah9TqNfEdEC9J7qNDLpDkJmgCq0oJkCVn79NPikTTIEafqfVzsd4H8J
+	 v1iE0SL+tqzUotEIKS4SB0mHYYqHuY1nRVR/5G3zgW1cvus7g7VhsWlqN+YgX7upia
+	 2xT2hoZwpdr32Lv0xwXXolRw6dovAT0jYzSw7rFfHtpcxMBPOFmbHP678vO3ZCIRYk
+	 nCO4ndFJQVzj5ehMtaT8QwnARFpUomt4RRUIEqcD/YQZSpoIs7aw4XhGsFJZtRgi06
+	 MBvbLZ6XeXz6w==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9417CCA470;
+	Tue,  7 Oct 2025 03:46:59 +0000 (UTC)
+From: Dmitry Safonov via B4 Relay <devnull+dima.arista.com@kernel.org>
+Date: Tue, 07 Oct 2025 04:46:47 +0100
+Subject: [PATCH v2] gen_init_cpio: Ignore fsync() returning EINVAL on pipes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] lib/crypto: Add FIPS pre-operational self-test for SHA
- algorithms
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ard Biesheuvel <ardb@kernel.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>,
- Vegard Nossum <vegard.nossum@oracle.com>, David Howells
- <dhowells@redhat.com>, Linus Torvalds <torvalds@linux-foundation.org>
-References: <20251006172612.75240-1-ebiggers@kernel.org>
- <38ca063d-521a-4fc4-8398-5e77625533c4@jvdsn.com> <20251007032706.GB77681@sol>
-From: Joachim Vandersmissen <git@jvdsn.com>
-Content-Language: en-US
-In-Reply-To: <20251007032706.GB77681@sol>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20251007-gen_init_cpio-pipe-v2-1-b098ab94b58a@arista.com>
+X-B4-Tracking: v=1; b=H4sIACaN5GgC/32OQQqDMBBFryJZN60Jmtiueo8iMppRB2oSEgkt4
+ t0bPUCXb+C9PxuLGAgjexQbC5gokrMZ5KVgwwx2Qk4mM5OlrEVZaj6h7cjS2g2eHPfkkddgGj0
+ qoaAqWRZ9wJE+Z/TVZu4hIu8D2GE+UqsLCd4m3haIK4bDmCnm6/f8IonD+zuYBBfc6EYqXZnqL
+ tUTQi7AdXALa/d9/wGYg9IN1wAAAA==
+X-Change-ID: 20251007-gen_init_cpio-pipe-5ad87f616a40
+To: Nathan Chancellor <nathan@kernel.org>, 
+ Nicolas Schier <nicolas.schier@linux.dev>, David Disseldorp <ddiss@suse.de>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Nicolas Schier <nsc@kernel.org>, Dmitry Safonov <dima@arista.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759808819; l=1432;
+ i=dima@arista.com; s=20250521; h=from:subject:message-id;
+ bh=pi6nAKJ620AnZApjddteEQX/ECee5WVBVllxGZBH+N8=;
+ b=YzLgLfDoTx79sz7zGwGkOOFxyKp5dQ37Mq0qJ7q4IcdONwpPsrJ3tDd6zfJiEY37oA6O77kqI
+ IuyCcC/DpAvBcyUYl18XUycPJas2PA6hmWCfh1F3i2+wZ8fUsHwSLgj
+X-Developer-Key: i=dima@arista.com; a=ed25519;
+ pk=/z94x2T59rICwjRqYvDsBe0MkpbkkdYrSW2J1G2gIcU=
+X-Endpoint-Received: by B4 Relay for dima@arista.com/20250521 with
+ auth_id=405
+X-Original-From: Dmitry Safonov <dima@arista.com>
+Reply-To: dima@arista.com
 
-Hi Eric,
+From: Dmitry Safonov <dima@arista.com>
 
-FIPS 140-3 always classifies Cryptographic Algorithm Self-Tests (CASTs) 
-as conditional, even if they are executed on start-up. The condition 
-would then be "start-up" or "initialization" or something similar. IG 
-10.3.A explains it relatively well in the background section. For 
-example, the Security Policy for 
-https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5036 
-shows the CASTs in Table 21.
+The reproducer:
+echo | ./usr/gen_init_cpio /dev/stdin > /dev/null
 
-In any case the name doesn't matter too much, even if you keep it the 
-way it is, it wouldn't really impact a validation.
+fsync() on a pipe fd returns -EINVAL, which makes gen_init_cpio fail.
+Ignore -EINVAL from fsync().
 
-Kind regards,
-Joachim
+Fixes: ae18b94099b0 ("gen_init_cpio: support -o <output_file> parameter")
+Cc: David Disseldorp <ddiss@suse.de>
+Cc: Nicolas Schier <nsc@kernel.org>
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+Reviewed-by: David Disseldorp <ddiss@suse.de>
+---
+Changes in v2:
+- Instead of isfdtype() just ignore -EINVAL from fsync() (Suggested by David)
+- Add minimal reproducer and shrink the patch description (David)
+- Link to v1: https://lore.kernel.org/r/20251007-gen_init_cpio-pipe-v1-1-d782674d4926@arista.com
+---
+ usr/gen_init_cpio.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-On 10/6/25 10:27 PM, Eric Biggers wrote:
-> On Mon, Oct 06, 2025 at 10:03:44PM -0500, Joachim Vandersmissen wrote:
->> Hi Eric,
->>
->> It's a very minor change but I suggest not using "pre-operational
->> self-test". That term specifically refers to a different type of self-test
->> in FIPS 140-3 and it could lead to some confusion here. "cryptographic
->> algorithm self-test" may be better (if you want to be formal), or just
->> "self-test" or "known-answer test".
->>
-> I don't think that's quite correct.  FIPS 140-3 divides self-tests into
-> two categories, pre-operational (executed unconditionally at start-up
-> time) and conditional (executed only when conditions are met, such as an
-> algorithm being used for the first time).  This patch chooses the first
-> option, pre-operational.
->
-> We could just call them algorithm self-tests if we don't want to be
-> specific as to what time they run at, though.
->
-> - Eric
->
+diff --git a/usr/gen_init_cpio.c b/usr/gen_init_cpio.c
+index 75e9561ba31392e12536e76a918245a8ea07f9b8..b7296edc6626fb0cf7c709082797d1e6a7376d6e 100644
+--- a/usr/gen_init_cpio.c
++++ b/usr/gen_init_cpio.c
+@@ -112,7 +112,10 @@ static int cpio_trailer(void)
+ 	    push_pad(padlen(offset, 512)) < 0)
+ 		return -1;
+ 
+-	return fsync(outfd);
++	if (fsync(outfd) < 0 && errno != EINVAL)
++		return -1;
++
++	return 0;
+ }
+ 
+ static int cpio_mkslink(const char *name, const char *target,
+
+---
+base-commit: c746c3b5169831d7fb032a1051d8b45592ae8d78
+change-id: 20251007-gen_init_cpio-pipe-5ad87f616a40
+
+Best regards,
+-- 
+Dmitry Safonov <dima@arista.com>
+
+
 
