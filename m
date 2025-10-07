@@ -1,134 +1,122 @@
-Return-Path: <linux-kernel+bounces-843697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 486A8BC005D
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 04:23:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A61BEBC0066
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 04:26:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9BA1E4F15A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 02:23:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 665633B4923
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 02:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89EB71C84BB;
-	Tue,  7 Oct 2025 02:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D261C700B;
+	Tue,  7 Oct 2025 02:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dsUbabb6"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jwnVEiY+"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916241A23AC
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 02:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1E47464
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 02:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759803797; cv=none; b=PTUTnK1eM3vcYwMPaack/jyqa8ugC8MNRt4ZkUY/RcF44GeSyCv0Am3AoZXF9Vwhm6NrrzEUe0Is+Bm9kn4XWfo0eJumUVM65nUL2AaoMHgVEw3axMcqi+DOZvnptgN3HafhQxtkR/qKYwVZewEhhHw0MjOnQxySEEe06NhK9W0=
+	t=1759803960; cv=none; b=qFKmEms3KNRB6MUW1KYs7cIR1K7YwRjznXI9rbqJC3C0tnuXlUk7NzSnq205jhv3uEa41lIPmh/LpU0bp2pTfQETWjpX7TDxpMOvK4JNLXGFeg+poVytj3Bs83SQke23qdbaT/Nuieioz1cTsIp5zDqbZg7aVMDFyutRfoy0uyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759803797; c=relaxed/simple;
-	bh=VFmeDcTP2xUAQewFWw/R0BKl+XcGbbncNDnV2L/OXN0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E6ZeJ4v6X6xwvHqcEcrCDEx2MxHsekhlDkqIjqLIkVcRr/dCFZiOUU4tCK0bTHz8LxNDdN5DZuQa1jz7AntukaX5Z1x/BmPmscmk6VPTYafpjWITlV1iRa77M88J2oPaNmqpcar+2o7mccW2I06XnaM2beKDc5M0sPIHmiaorIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dsUbabb6; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3324fdfd54cso6608554a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 19:23:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759803795; x=1760408595; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VFmeDcTP2xUAQewFWw/R0BKl+XcGbbncNDnV2L/OXN0=;
-        b=dsUbabb6l06KJXGCdPtZiVMtWdwnBLSbSQsM1Rk5pumQuR/OkOgFCKVg4GQxwFDGMS
-         mBWrQKCqrj0pK+6jFR6HWD52gXGSAgL2LOl6TDduNamn6NH8S18yyAaYDZlfizrvjU40
-         1xSrp3nibSL+PF29vEbKn8tRaB6MQRLYzBXZaUZz1JKRwySPFYH3wOY1HAD/NOUrRXdc
-         tpcpSns+N2l7Ky5dPi8MQldx1qpyQPsF1Aql9UOrjo8B6MIvnlIKSsQ36tKBuhNNvxms
-         tV1r9M+Mh8Z4wY90kX54phHFNpUHHHKv9WPb2eSucGx312kuwHLTT/pBGA8a8q7p13g/
-         OR+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759803795; x=1760408595;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VFmeDcTP2xUAQewFWw/R0BKl+XcGbbncNDnV2L/OXN0=;
-        b=a693PLTYGdqN0pRj5QE45C5+xsVNKPtT96yVr/ZPL28dmHn411cj3V40F3bmhO2ksx
-         QkkgTD5n4qhavy4CT8fRtr0arkgjs0Oa/FAh/+DJpwQLP9lonkEDyrV5vXMjGNgxQnIR
-         /YXlInzv0Xz/FmVC6FuAP8DFrRde7ryU8D1wqrBO3vG5Uiun9JgJHteWJJICbZ5XzZJ1
-         xFY+YTtSQT8B6O/t0l1hfwj2M0hUUODtGp0tSitNE0c44DDwt4e6qINfCvJGJ22Ov4V+
-         qCJZFl9hnNiOyNVG3gekh9qHqpL1EtQMkEpJQWHipb3QxG6cbMZ/SsSZlNICBEVZ0e2i
-         rj5g==
-X-Forwarded-Encrypted: i=1; AJvYcCWs2FWj/CD2L2VX4ERS30rUEn0/Y4e8Bko/Ucf60sYx1imGpsGBo9MrK+6s1/3H8vqd9h91j79KO4gyDUQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyqpnu7b/xG6p7wpCfV56StPihLdp9rk/vCe3AsZWPdu8M+wOs8
-	I3t5/F6xgoT6SLlyKmBbjsqPRn7e/EL6TmNu+qHovFFd7VgireldDHw/
-X-Gm-Gg: ASbGnctHp3AdsST3b1PBYFLUGidWk/Mlz/6Wiconikt1O5qJjeD0p8b4MkEjePVv7E3
-	zWWX07NIvfIfg3Z21jctKd0uJtIlLgdylRd7hZ1nMBr0NbwyRw0wWdl0ES0vcv/V85apbFoaMlF
-	Eut/V4LLZCBo+iwpmkHn+jO0sGCs8eYJJz8QjYP4MBPbuvlqTelMDBmm6m5CF/sE5JWkvDBp8lf
-	XMx3k90n1ie792vfV4gYDA0KVKONIgJwPZfJ2+hnSMMEKwjsjFy51gR6HUjO0PCzz23F9lNR/JL
-	R9Lf7d9DO9pLBW/BPs0KKsPd9MVYqJHSgiQX4BG0oH3UiCTq0cK2UaAppeISLIT6WgAIxmtd3aW
-	QZMX5/CssjHX0vYNMZNNM/xUG4Lpn2ctHOjEUplE47KHPmik8pQ==
-X-Google-Smtp-Source: AGHT+IFOWjODpkm0RXk0UNQxPxlDwgwSSLwVcoAanx1LQC/FF/GVJT5hQh4wQ4RD5szE0at/zJ+BUA==
-X-Received: by 2002:a17:90b:4a84:b0:32b:ab04:291e with SMTP id 98e67ed59e1d1-339c279971dmr17239314a91.25.1759803794482;
-        Mon, 06 Oct 2025 19:23:14 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339a6ff26f8sm18166635a91.13.2025.10.06.19.23.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 19:23:13 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 8DC154233432; Tue, 07 Oct 2025 09:23:10 +0700 (WIB)
-Date: Tue, 7 Oct 2025 09:23:10 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Roman Kisel <romank@linux.microsoft.com>, arnd@arndb.de, bp@alien8.de,
-	corbet@lwn.net, dave.hansen@linux.intel.com, decui@microsoft.com,
-	haiyangz@microsoft.com, hpa@zytor.com, kys@microsoft.com,
-	mikelley@microsoft.com, mingo@redhat.com, tglx@linutronix.de,
-	Tianyu.Lan@microsoft.com, wei.liu@kernel.org, x86@kernel.org,
-	linux-hyperv@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Cc: benhill@microsoft.com, bperkins@microsoft.com, sunilmut@microsoft.com
-Subject: Re: [PATCH hyperv-next v6 01/17] Documentation: hyperv: Confidential
- VMBus
-Message-ID: <aOR5juzHnsK2E40z@archie.me>
-References: <20251003222710.6257-1-romank@linux.microsoft.com>
- <20251003222710.6257-2-romank@linux.microsoft.com>
+	s=arc-20240116; t=1759803960; c=relaxed/simple;
+	bh=hhMvCBnaVyEEhyRYwwYYg2TEyPmktd3es3/wlZqMFNw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pyO2HzpmvdnM0DCnVFWH3zOBeyDziwZb8QRTnHfo/q6NtJwVFTHB+u6NqvoXwQ4fWoB6BsWihN8rNnvzNT8OxHyJDCgPvAc3/I4d+EYeIQ2UuEVU1Yz2Kmhdao4nzRMBEtoKJMsmlgsPVu0u5vJK4h5eMaok3RsQXUE8dHjtTpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jwnVEiY+; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <8726ab79-73f5-46c9-839a-d3abf6f301f4@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759803946;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/MKPrETeCuyyOYuVdodsDdiZ6BmGFxYMMYFjYABmB/E=;
+	b=jwnVEiY+lQvyrdA2Bf1cDFGtM/Wg/zb3zEORYQVzkoph90jCCxJpGDM7JAltMeK9M7gaXK
+	S1C5GtB42Tynfz8K3GBngRpbfbnfBY3IkgfeiXf3hAwnbyxcW2AfoNQqPkmHB14NiVxnbs
+	dMex8vxR6PyXIZmZuIr7y5KxzCVBtEU=
+Date: Mon, 6 Oct 2025 19:25:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="BxWMTnibnAgGT5v9"
-Content-Disposition: inline
-In-Reply-To: <20251003222710.6257-2-romank@linux.microsoft.com>
+Subject: Re: [PATCH v1 01/14] mm: introduce bpf struct ops for OOM handling
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Kumar Kartikeya Dwivedi <memxor@gmail.com>, linux-mm <linux-mm@kvack.org>,
+ bpf <bpf@vger.kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>,
+ David Rientjes <rientjes@google.com>,
+ Matt Bobrowski <mattbobrowski@google.com>, Song Liu <song@kernel.org>,
+ Alexei Starovoitov <ast@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20250818170136.209169-1-roman.gushchin@linux.dev>
+ <20250818170136.209169-2-roman.gushchin@linux.dev>
+ <CAP01T76AUkN_v425s5DjCyOg_xxFGQ=P1jGBDv6XkbL5wwetHA@mail.gmail.com>
+ <87ms7tldwo.fsf@linux.dev> <1f2711b1-d809-4063-804b-7b2a3c8d933e@linux.dev>
+ <87wm6rwd4d.fsf@linux.dev> <ef890e96-5c2a-4023-bcb2-7ffd799155be@linux.dev>
+ <CAADnVQ+LGbXXHHTbBB9b-RjAXO4B6=3Z=G0=7ToZVuH61OONWA@mail.gmail.com>
+ <87iki0n4lm.fsf@linux.dev> <a76ad1e9-07d5-4ba1-83e4-22fe36a32df0@linux.dev>
+ <877bxb77eh.fsf@linux.dev>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+Content-Language: en-US
+In-Reply-To: <877bxb77eh.fsf@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
+On 10/3/25 7:00 PM, Roman Gushchin wrote:
+> Martin KaFai Lau <martin.lau@linux.dev> writes:
+> 
+>> On 9/2/25 10:31 AM, Roman Gushchin wrote:
+>>> Btw, what's the right way to attach struct ops to a cgroup, if there is
+>>> one? Add a cgroup_id field to the struct and use it in the .reg()
+>>
+>> Adding a cgroup id/fd field to the struct bpf_oom_ops will be hard to
+>> attach the same bpf_oom_ops to multiple cgroups.
+>>
+>>> callback? Or there is something better?
+>>
+>> There is a link_create.target_fd in the "union bpf_attr". The
+>> cgroup_bpf_link_attach() is using it as cgroup fd. May be it can be
+>> used here also. This will limit it to link attach only. Meaning the
+>> SEC(".struct_ops.link") is supported but not the older
+>> SEC(".struct_ops"). I think this should be fine.
+> 
+> I thought a bit more about it (sorry for the delay):
+> if we want to be able to attach a single struct ops to multiple cgroups
+> (and potentially other objects, e.g. sockets), we can't really
+> use the existing struct ops's bpf_link.
 
---BxWMTnibnAgGT5v9
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The existing 'struct bpf_struct_ops_link'? yeah, I think it needs to be extended.
 
-On Fri, Oct 03, 2025 at 03:26:54PM -0700, Roman Kisel wrote:
-> +The data is transferred directly between the VM and a vPCI device (a.k.a.
-> +a PCI pass-thru device, see :doc:`vpci`) that is directly assigned to VT=
-L2
-> +and that supports encrypted memory. In such a case, neither the host par=
-tition
+> 
+> So I guess we need to add a new .attach() function beside .reg()
+> which will take the existing link and struct bpf_attr as arguments and
+> return a new bpf_link. And in libbpf we need a corresponding new
+> bpf_link__attach_cgroup().
 
-Nit: You can also write the cross-reference simply as vpci.rst.
+The target_fd (or cgroup_fd) is in attr. I think it is why the bpf_attr is 
+needed during link_create (which calls .reg).
 
-Thanks.
+Other than link_create, the link_detach and link_update also need to know the 
+cgroup but the cgroup_fd will not be in the attr. Only link_fd is available.
 
---=20
-An old man doll... just what I always wanted! - Clara
+The cgroup probably needs to be stored in the link. The struct_ops has its 
+'struct bpf_struct_ops_link'. Potentially a future struct_ops can be attached to 
+non-cgroup also (e.g. attach to a netns), so maybe adding a 'void *target;' to 
+the 'struct bpf_struct_ops_link' and pass the attr to .reg(). Note that the link 
+pointer has already passed to .reg(). Then the subsystem (oom handling here) can 
+initialize the 'void *target;'.
 
---BxWMTnibnAgGT5v9
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaOR5fQAKCRD2uYlJVVFO
-o7mVAP9gyGXv/aQVGaS5iH1wf6rUETBzEy69Mg8TYKRf5l2JsQEA5cnv0cPiT81i
-pUA3Vos9PED8kntZHhKYkra64woP1wo=
-=xXE5
------END PGP SIGNATURE-----
-
---BxWMTnibnAgGT5v9--
 
