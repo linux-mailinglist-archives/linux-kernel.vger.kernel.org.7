@@ -1,225 +1,101 @@
-Return-Path: <linux-kernel+bounces-843781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7031BBC0423
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 07:48:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCBFABC042C
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 07:51:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B587B3B163F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 05:47:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9E6718976DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 05:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1875E21D3EC;
-	Tue,  7 Oct 2025 05:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0AA21FF38;
+	Tue,  7 Oct 2025 05:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W9zHb1Zc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JAJlWI1h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE2F1DE4FB;
-	Tue,  7 Oct 2025 05:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A371747F;
+	Tue,  7 Oct 2025 05:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759816017; cv=none; b=cJZ63NXhSva59891Zg2Kegv8ijJ+MaDkFBSqMlO5wc4manxcxvwvAXhMPu7y/2uPT69s5QC6wvHdh+FujAMtj4u3RAaaOxQeoyBTQwi1+Ex2RYgVnjtivq3/2QcdtLqP5/hPvCYVGWsol9xYdAXm/ofBLTC3fJ28NUODy6rlkp4=
+	t=1759816290; cv=none; b=gVfyGrn1gzuQosz7QG+plN7f96r0+u2UxbGcZmDdvu3KnhE6ArvD5rNLSjTHt7FksRhDhJ5rZwFUZq7q8IJXXWgQn7LZMc01vbxgp+0VvIxHPNm003I8mvczNq3Tf+mP5MYU/CznGWBcIRGWB0iYzw93mRS/ONd0/R4uB0V6udA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759816017; c=relaxed/simple;
-	bh=VydNOjyseS0AAg3IdgPtqcN1byO42D8hOB5Ca8L/H5Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AhzcTdX606uQ+nO++ooG3ItvtPMjh9oo64XowHoDZ3AeGCNgzgDxVIjtHGUhK/eGjIahjk2yAgGckr2c2lCb/K+Vj6o0qOcCweFjJRpyzH+NkDrDL/DpppobngMwat7z0He3sGUtfzTv8fYVl5/fGulvjaqTvw4UjwP01Eh8pRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W9zHb1Zc; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759816016; x=1791352016;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=VydNOjyseS0AAg3IdgPtqcN1byO42D8hOB5Ca8L/H5Q=;
-  b=W9zHb1Zcaopifkdm6aeHOAyMwQmt9I/UqZ3PRELrnRw0HouMFZSK6Amq
-   CX4+HiIT9C4v7+cZ0vMd+jl9RmYNrEJ4eSCtImz737RwI/nTyRjOd8q0w
-   dNSHTZlXqOWumqc/h8FOdlLWt4fZdsSwg8wLQitoR76DJA5Zci7spd31G
-   r/lmqiyvJGlHOWmEDeVUeR1nLdwQg2A5c+8LajMJZpFuCMCRkFUbkjguS
-   SY+jXtRvZhYyNA31daVIzEHNpAX01hrQ+2wUoBOWqQCPEF9iEwweX021r
-   VRBG7FXNaxSyIu9In27GVVI3/tpe2pGZMLwtnYvTyzbVF4hb9soU5Lcqv
-   A==;
-X-CSE-ConnectionGUID: X4H+yIoGRZ6aTaExKt3Ktg==
-X-CSE-MsgGUID: Fo1mm3VhS3SXtcp/fODX0A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11574"; a="61028032"
-X-IronPort-AV: E=Sophos;i="6.18,321,1751266800"; 
-   d="scan'208";a="61028032"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 22:46:55 -0700
-X-CSE-ConnectionGUID: 2HAavQysRB6s6oKX2u5jbw==
-X-CSE-MsgGUID: Pw5eqCkfQdKS7LkRUA+Fpg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,321,1751266800"; 
-   d="scan'208";a="180479548"
-Received: from kandpal-x299-ud4-pro.iind.intel.com ([10.190.239.10])
-  by fmviesa008.fm.intel.com with ESMTP; 06 Oct 2025 22:46:46 -0700
-From: Suraj Kandpal <suraj.kandpal@intel.com>
-To: linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	kernel-list@raspberrypi.com,
-	amd-gfx@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Cc: dmitry.baryshkov@oss.qualcomm.com,
-	ankit.k.nautiyal@intel.com,
-	arun.r.murthy@intel.com,
-	uma.shankar@intel.com,
-	jani.nikula@intel.com,
-	harry.wentland@amd.com,
-	siqueira@igalia.com,
-	alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	liviu.dudau@arm.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	robin.clark@oss.qualcomm.com,
-	abhinav.kumar@linux.dev,
-	tzimmermann@suse.de,
-	jessica.zhang@oss.qualcomm.com,
-	sean@poorly.run,
-	marijn.suijten@somainline.org,
-	laurent.pinchart+renesas@ideasonboard.com,
-	mcanal@igalia.com,
-	dave.stevenson@raspberrypi.com,
-	tomi.valkeinen+renesas@ideasonboard.com,
-	kieran.bingham+renesas@ideasonboard.com,
-	louis.chauvet@bootlin.com,
-	Suraj Kandpal <suraj.kandpal@intel.com>
-Subject: [PATCH v2 7/7] drm/connector: Modify cleanup_writeback_job helper
-Date: Tue,  7 Oct 2025 11:15:29 +0530
-Message-Id: <20251007054528.2900905-8-suraj.kandpal@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251007054528.2900905-1-suraj.kandpal@intel.com>
-References: <20251007054528.2900905-1-suraj.kandpal@intel.com>
+	s=arc-20240116; t=1759816290; c=relaxed/simple;
+	bh=LPQQPlIwuR2+Qcdx0QIWLHqlQNGepDAbb03LkBRGWUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d0kEsFH/w8myI/5faQDJ2yBbgelCUR+cly+NDYVV4qncNvWcKPEXdqv6JfupNLv/uwBVOc4DNylLBCK4M7fV9+tH5gWOcFbRjbjgjsr2UDnEGTPbjoAekSxdjLojaf20PaQpjO5tXTfXIyBLxWRDqfJ164RG6eYofo1P5a1YiEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JAJlWI1h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 384EAC4CEF1;
+	Tue,  7 Oct 2025 05:51:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1759816289;
+	bh=LPQQPlIwuR2+Qcdx0QIWLHqlQNGepDAbb03LkBRGWUE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JAJlWI1h8cZeELmkitk9Hz2GVuULYk1cHI3gCRt/ZfSKrGohI+U9rVFP8ZXwFrSa9
+	 DW/iLS9KT0KU+6L0wk+LFrZMaDdcd0RIeAbBO49gFGrHqZu2RNnBuGI2/+9phU+GhB
+	 Y9c1+pAR4MLaUzmZetibux383gBX/aA7BoudcwkM=
+Date: Tue, 7 Oct 2025 07:51:27 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Roy Luo <royluo@google.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Joy Chakraborty <joychakr@google.com>,
+	Naveen Kumar <mnkumar@google.com>, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v1 3/4] usb: dwc3: Add Google SoC USB PHY driver
+Message-ID: <2025100735-gulf-error-2ce2@gregkh>
+References: <20251006232125.1833979-1-royluo@google.com>
+ <20251006232125.1833979-4-royluo@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251006232125.1833979-4-royluo@google.com>
 
-Pass drm_connector to prepare_writeback_job since
-drm_writeback_connector now resides within drm_connector.
-It also makes it uniform with params passed to other
-drm_connector_helper_funcs.
+On Mon, Oct 06, 2025 at 11:21:24PM +0000, Roy Luo wrote:
+> Support the USB PHY found on Google Tensor SoCs.
 
-Signed-off-by: Suraj Kandpal <suraj.kandpal@intel.com>
----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c | 4 ++--
- drivers/gpu/drm/drm_writeback.c                      | 2 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c        | 4 +---
- drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c  | 6 ++----
- drivers/gpu/drm/vkms/vkms_writeback.c                | 5 +----
- include/drm/drm_modeset_helper_vtables.h             | 2 +-
- 6 files changed, 8 insertions(+), 15 deletions(-)
+That's great, but that's not what your subject line says (it says "usb:
+dwc3")
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
-index d02f5d20f3b1..bf1ecf5d3027 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
-@@ -144,8 +144,8 @@ static int amdgpu_dm_wb_prepare_job(struct drm_connector *connector,
- 	return r;
- }
- 
--static void amdgpu_dm_wb_cleanup_job(struct drm_writeback_connector *connector,
--				struct drm_writeback_job *job)
-+static void amdgpu_dm_wb_cleanup_job(struct drm_connector *connector,
-+				     struct drm_writeback_job *job)
- {
- 	struct amdgpu_bo *rbo;
- 	int r;
-diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
-index 62a11252b05f..e071ae71973c 100644
---- a/drivers/gpu/drm/drm_writeback.c
-+++ b/drivers/gpu/drm/drm_writeback.c
-@@ -448,7 +448,7 @@ void drm_writeback_cleanup_job(struct drm_writeback_job *job)
- 		connector->helper_private;
- 
- 	if (job->prepared && funcs->cleanup_writeback_job)
--		funcs->cleanup_writeback_job(wb_connector, job);
-+		funcs->cleanup_writeback_job(connector, job);
- 
- 	if (job->fb)
- 		drm_framebuffer_put(job->fb);
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c
-index 26a93c3cc454..03e63b6c5351 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c
-@@ -96,11 +96,9 @@ static int dpu_wb_conn_prepare_job(struct drm_connector *connector,
- 	return 0;
- }
- 
--static void dpu_wb_conn_cleanup_job(struct drm_writeback_connector *wb_connector,
-+static void dpu_wb_conn_cleanup_job(struct drm_connector *connector,
- 		struct drm_writeback_job *job)
- {
--	struct drm_connector *connector =
--		container_of(wb_connector, struct drm_connector, writeback);
- 	struct dpu_wb_connector *dpu_wb_conn = to_dpu_wb_conn(connector);
- 
- 	if (!job->fb)
-diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c
-index 725981cc1d0c..e3aab132ded1 100644
---- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c
-+++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c
-@@ -72,12 +72,10 @@ static int rcar_du_wb_prepare_job(struct drm_connector *connector,
- 	return 0;
- }
- 
--static void rcar_du_wb_cleanup_job(struct drm_writeback_connector *connector,
-+static void rcar_du_wb_cleanup_job(struct drm_connector *connector,
- 				   struct drm_writeback_job *job)
- {
--	struct drm_connector *conn =
--		drm_writeback_to_connector(connector);
--	struct rcar_du_crtc *rcrtc = wb_to_rcar_crtc(conn);
-+	struct rcar_du_crtc *rcrtc = wb_to_rcar_crtc(connector);
- 	struct rcar_du_wb_job *rjob = job->priv;
- 
- 	if (!job->fb)
-diff --git a/drivers/gpu/drm/vkms/vkms_writeback.c b/drivers/gpu/drm/vkms/vkms_writeback.c
-index 032896fb5c5b..320d553f5f1f 100644
---- a/drivers/gpu/drm/vkms/vkms_writeback.c
-+++ b/drivers/gpu/drm/vkms/vkms_writeback.c
-@@ -102,13 +102,10 @@ static int vkms_wb_prepare_job(struct drm_connector *connector,
- 	return ret;
- }
- 
--static void vkms_wb_cleanup_job(struct drm_writeback_connector *wb_conn,
-+static void vkms_wb_cleanup_job(struct drm_connector *connector,
- 				struct drm_writeback_job *job)
- {
- 	struct vkms_writeback_job *vkmsjob = job->priv;
--	struct drm_connector *connector = container_of(wb_conn,
--						       struct drm_connector,
--						       writeback);
- 	struct vkms_output *vkms_output = container_of(connector,
- 						       struct vkms_output,
- 						       wb_connector);
-diff --git a/include/drm/drm_modeset_helper_vtables.h b/include/drm/drm_modeset_helper_vtables.h
-index 806230129ad9..4ac568bac083 100644
---- a/include/drm/drm_modeset_helper_vtables.h
-+++ b/include/drm/drm_modeset_helper_vtables.h
-@@ -1157,7 +1157,7 @@ struct drm_connector_helper_funcs {
- 	 *
- 	 * This callback is used by the atomic modeset helpers.
- 	 */
--	void (*cleanup_writeback_job)(struct drm_writeback_connector *connector,
-+	void (*cleanup_writeback_job)(struct drm_connector *connector,
- 				      struct drm_writeback_job *job);
- 
- 	/**
--- 
-2.34.1
+> This particular USB PHY supports both high-speed and super-speed
+> operations, and is paired with the SNPS DWC3 controller that's also
+> integrated on the SoCs.
+> This initial patch specifically adds functionality for high-speed.
+> 
+> Co-developed-by: Joy Chakraborty <joychakr@google.com>
+> Signed-off-by: Joy Chakraborty <joychakr@google.com>
+> Co-developed-by: Naveen Kumar <mnkumar@google.com>
+> Signed-off-by: Naveen Kumar <mnkumar@google.com>
+> Signed-off-by: Roy Luo <royluo@google.com>
+> ---
+>  drivers/phy/Kconfig                 |   1 +
+>  drivers/phy/Makefile                |   1 +
+>  drivers/phy/google/Kconfig          |  15 ++
+>  drivers/phy/google/Makefile         |   2 +
+>  drivers/phy/google/phy-google-usb.c | 286 ++++++++++++++++++++++++++++
 
+And as others said, you don't need a whole new directory for one single
+.c file.
+
+thanks,
+
+greg k-h
 
