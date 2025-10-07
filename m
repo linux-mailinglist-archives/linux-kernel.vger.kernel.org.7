@@ -1,96 +1,152 @@
-Return-Path: <linux-kernel+bounces-844000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E716BC0CD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:00:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AADBDBC0CDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:00:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 458AE189F6BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:00:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B2F64E818E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA20D2D6621;
-	Tue,  7 Oct 2025 09:00:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65AB22248A4;
+	Tue,  7 Oct 2025 09:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i+kmPj8Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LE2u6By2"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21EA525FA0A;
-	Tue,  7 Oct 2025 09:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158F2EACE
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 09:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759827617; cv=none; b=AL7fh+PVs9g4iMRyeHYlGc56q4/+EbSDQ6GdO3EU7Iadb3MyE5VS6T/Pf0bLWBfseYdMEp52Q/asa8UOKRUGQLVOJBY91rp1nDOSbSyoQCUQuQyYG31HS4wJx8AoMZdPOndsSceLm2R4qft7yXY3A2xcRtcxbrmfKK3G3Hz5q10=
+	t=1759827645; cv=none; b=q42nKq4RrKgdZLYsWqLOciMScBHSnWEfSl1Jrg9C3giafbHNecyUx54JFOebi+2ddri5KMLDftnMhPAXnEpjI8FwovCZr7h5oFj09elScmmTxQPxTz6SPLJqtxPExv2gx3npGEe/wTYKwJAzESde/MDYrwH8K/b0TQZ7ispFMV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759827617; c=relaxed/simple;
-	bh=3bEjxxbLlRz2SL9DcgL5La+6IXRtFYGl8rSV52XWn3s=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=glGhMLhSptrIiaNrC+IFpcxmg+CRh6m8BBsa3Kjt59yp+V7RmfgyWi2vCZAXOon9c5v30Hxtb8s8DvXsI9PjL+ZlkIlzPChMQV2UkPZyWYXe2YoyFvVSeG/1lvFLAhBIH2Y5GGWMS27GAYc6QIMvHvBxVTWNjkV9NJykVPT2hf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i+kmPj8Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5BE7C4CEF1;
-	Tue,  7 Oct 2025 09:00:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759827616;
-	bh=3bEjxxbLlRz2SL9DcgL5La+6IXRtFYGl8rSV52XWn3s=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=i+kmPj8QuUNfHD0j7GTVYkyYTntHx03rFuYsSViTNzU6ZrWHBmdZt4gth/T7sRugQ
-	 utAZAAb4zLt0GmNc3MmqKB3g/p1zuGTHOxI3fMNkbvC+LMqCQzpS6IoEbTUQxTSOxi
-	 YxOMeKWCH+0DPlgnip4JDLocClq7FULDEkaL2tlRp9C5HntWZyXWpyp7HVT+/ZqF2j
-	 rBJeAaMnO/HzTDwNcpSxdpXMHToU/e8pMwMCZfqL+QHeSp/Jfige6RIPmbynrsEWK2
-	 HymOkY22psuvhKz93tquryJr1qzht2nuOECLV8Sl2mmMwFcn3uYRIcxh/1YOyInxr5
-	 MaFBgL92oKNlA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33FED39EFA5B;
-	Tue,  7 Oct 2025 09:00:07 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1759827645; c=relaxed/simple;
+	bh=z/GtfcwCMRIYf28FfY/V57DZjTDHU5TCWA1AXextCVM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E8R+yhE8Bj5S9UWqHNiEH5DB183lFEpCGikCZQEUgmMTl3j0rvlMiiIHKk++xsafFlHEQ9k9Z6kde/CYR+6vvf0mrz38uwQ+NFDX+fck7oMAujnrbxs2MUPXxxDDU2kEMP4f+dOxG+2xDZxYVMHe7sTNuHiB7/fM218vT5e7eV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LE2u6By2; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3edaa784f6dso288708f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 02:00:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759827642; x=1760432442; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1Xa6ifE/xlQHISGLdoOjoC3GElKqUAHWHKf7zodIGK0=;
+        b=LE2u6By2KQ3KmynwTAldZ+1U6voP5RVZjTVHjoSybQpUz0HTfbBIKyp4reMygKmtFJ
+         ZqfUCW3apGttiL5yaGbw/wk6GWbxdGopA9au8L037qf8OkPBLhFBXS/rrNOxKLr5LiOz
+         BVXz8/5ddARn+PTtfcitmQ9GDm8AZ6fnjWcttNoqgE9X5frRKCGf2YoEwahNKOsU6Y4V
+         QBRLn3sW6zKoae7rNkcceTTwz3Rlgwj4FCMUC18Rwjxo49oFu1IVTRPkIy5Dy9I41+Ny
+         oXTst3nMrNQ4eIQKKpo0U80Uk1ePsaLG5H96TAFSqcLckyOE0wO5wPv/pL0276FoSJOa
+         cMVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759827642; x=1760432442;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1Xa6ifE/xlQHISGLdoOjoC3GElKqUAHWHKf7zodIGK0=;
+        b=G7wjV+UIXxhDHekv74CGD+NYL6YGW8eBmoOuTpC3gnn9mzeorBJPQYOpzVtYLU+NEq
+         VVKTRyE3rrvQMy8ArqmKhWrEA1sRdh2NVAMaseKBOm/a3xQ0evx5AZ10fqTiYM1C5gKb
+         gDcsAzMHx9rhSyraEeHWRQno74RrDpnGpZvrjZs1dooHYZ4MqoOJqQQm+AQStr4yrOdl
+         87mXhsyC7aCYq2+Hf5nu7QDZbL/QHkwhzpAgz8O4USASAUf8Qjt9IYc9tQZDauz4Nneq
+         TBABW6Gifs+C0MVxDRYqrIv7uQ0wZxq95JsYufIBa0Nkqdf/+ExllNFeTOBdE0V13cmc
+         kTVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAtRFebaHTzG0AOHobCc4tWau4aRUr8978Tczk+ICOFafMOQpwyQtlxgWT0X29lqPEXSW8TgfOMS82QnI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx052Q+U4Ft02Zv0eAoV1dgFq0ebtogWtOqMIBa9EbAhHfgmyTO
+	HwNqtvHOI2j3e+5gzQK9zOWS6m+vCDzmDl1tPQdw2Y1jCX8wD4WigBhl0doylGUw
+X-Gm-Gg: ASbGnctXcRh9KuXIm0GX9LakSyNTztMW4oyyHxQqunUWvtTPu05bzz5DOHdKzh/Z89U
+	/AQXTmw48hswNk66ftzUJtCTYxNRcTSNBp/XYl88NR6SR7SEhA7gS6RF3WG4eZU9t1e+LMfOpkn
+	L92Iniu2ckXY+391+Pr8eaBkS4hOktFWxNhcfRpy9l5+Q+IGRIpfX7XHmB/507YubX+DXzA+aBo
+	RHsWE7YkIS6bFHazrCCc9rC+czJGvIKhcs4zhL02ZCy/RWMKhR87Wk53UxFuMaIDk5eYg6DXIBX
+	oCGOyrdDwRXZbEDwxJAjOQmetpl5lVQOGMc/8Fhw0Yc8PjjZVVa4ocWUUlru3hOT7hPi0xYGhGa
+	yBmlVDLcUPEQUaOpLr84qyX0bWozvJz6deGCKmbvnrepVBNoJ+H6PGqGSJR+NZTyWAr49Gw==
+X-Google-Smtp-Source: AGHT+IHdxxupVPmhNAdLsdEEwrhmyDrL1qTVyuXmX4U9HVJoLYW50xyIBDHuslFTZC4TvnRMs+w1nw==
+X-Received: by 2002:a5d:584b:0:b0:3ec:7ff4:23bf with SMTP id ffacd0b85a97d-425671c195amr4899519f8f.9.1759827642182;
+        Tue, 07 Oct 2025 02:00:42 -0700 (PDT)
+Received: from [172.16.134.209] ([41.229.125.2])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8abe9bsm24792358f8f.22.2025.10.07.02.00.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Oct 2025 02:00:41 -0700 (PDT)
+Message-ID: <d087a2c8-05f6-4fc1-924a-c3a84eae119c@gmail.com>
+Date: Tue, 7 Oct 2025 10:00:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] drm/gud: Use kmalloc_array() instead of kmalloc()
+To: Thomas Zimmermann <tzimmermann@suse.de>,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
+ simona@ffwll.ch, mingo@kernel.org, tglx@linutronix.de, jfalempe@redhat.com
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org, david.hunter.linux@gmail.com, khalid@kernel.org,
+ rubenru09@aol.com, linux-kernel-mentees@lists.linuxfoundation.org
+References: <20251007083320.29018-1-mehdi.benhadjkhelifa@gmail.com>
+ <bef19ef2-b22d-4adb-9513-b267d0e53330@suse.de>
+Content-Language: en-US
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+In-Reply-To: <bef19ef2-b22d-4adb-9513-b267d0e53330@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: mdio: mdio-i2c: Hold the i2c bus lock during
- smbus
- transactions
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175982760601.1816219.15728598756858423622.git-patchwork-notify@kernel.org>
-Date: Tue, 07 Oct 2025 09:00:06 +0000
-References: <20251003070311.861135-1-maxime.chevallier@bootlin.com>
-In-Reply-To: <20251003070311.861135-1-maxime.chevallier@bootlin.com>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, andrew@lunn.ch, kuba@kernel.org, edumazet@google.com,
- pabeni@redhat.com, linux@armlinux.org.uk, hkallweit1@gmail.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, f.fainelli@gmail.com,
- kory.maincent@bootlin.com, horms@kernel.org, romain.gantois@bootlin.com,
- kabel@kernel.org
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Fri,  3 Oct 2025 09:03:06 +0200 you wrote:
-> When accessing an MDIO register using single-byte smbus accesses, we have to
-> perform 2 consecutive operations targeting the same address,
-> first accessing the MSB then the LSB of the 16 bit register:
+On 10/7/25 9:58 AM, Thomas Zimmermann wrote:
+> Hi
 > 
->   read_1_byte(addr); <- returns MSB of register at address 'addr'
->   read_1_byte(addr); <- returns LSB
+> Am 07.10.25 um 10:32 schrieb Mehdi Ben Hadj Khelifa:
+>> Replace kmalloc with kmalloc array in drm/gud/gud_pipe.c since the
+>> calculation inside kmalloc is dynamic 'width * height'
+>>
+>> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
 > 
-> [...]
+> Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+> 
+> As Ruben already acked the previous patch, you should add such acks to 
+> any later patches. But no need to resend a new iteration now. I'll add 
+> Ruben's a-b when I merge the patch.
 
-Here is the summary with links:
-  - [net] net: mdio: mdio-i2c: Hold the i2c bus lock during smbus transactions
-    https://git.kernel.org/netdev/net/c/4dc8b26a3ac2
+ack,I forgot about that. Thanks for the heads-up.We'll do next time!
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> Best regards
+> Thomas
 
+Best Regards,
+Mehdi Ben Hadj Khelifa
+
+>> ---
+>> Changelog:
+>>
+>> Changes since v2:
+>> -Reversed width and height in parameter order.
+>> Link:https://lore.kernel.org/all/20250923085144.22582-1- 
+>> mehdi.benhadjkhelifa@gmail.com/
+>> Changes since v1:
+>> - Use of width as element count and height as size of element to
+>> eliminate the mentionned calculation and overflow issues.
+>> Link:https://lore.kernel.org/all/20250922174416.226203-1- 
+>> mehdi.benhadjkhelifa@gmail.com/
+>>   drivers/gpu/drm/gud/gud_pipe.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/gud/gud_pipe.c b/drivers/gpu/drm/gud/ 
+>> gud_pipe.c
+>> index 8d548d08f127..c32a798ccadf 100644
+>> --- a/drivers/gpu/drm/gud/gud_pipe.c
+>> +++ b/drivers/gpu/drm/gud/gud_pipe.c
+>> @@ -70,7 +70,7 @@ static size_t gud_xrgb8888_to_r124(u8 *dst, const 
+>> struct drm_format_info *format
+>>       height = drm_rect_height(rect);
+>>       len = drm_format_info_min_pitch(format, 0, width) * height;
+>> -    buf = kmalloc(width * height, GFP_KERNEL);
+>> +    buf = kmalloc_array(height, width, GFP_KERNEL);
+>>       if (!buf)
+>>           return 0;
+> 
 
 
