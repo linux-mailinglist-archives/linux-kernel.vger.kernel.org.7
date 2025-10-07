@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-843895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADB89BC0839
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 09:48:02 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04485BC0851
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 09:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A105E4E79E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 07:48:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D799D4F247C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 07:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6502B25393E;
-	Tue,  7 Oct 2025 07:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A65255F57;
+	Tue,  7 Oct 2025 07:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NJhVnOhJ"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hFFMpyxN"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9FE20330
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 07:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85339A945
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 07:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759823274; cv=none; b=L4cppVW55sGc6oUkUM1u6XVphVbhIXzUa+eW78sGITqccnfaOupx02ymA2cMaBQcsB8RVAe3sbNR9DarEwg+EfVE9eXz+bh2K9rH3BLQSGohbnxGGGviUHS957bX9xosO1bE6sNNnTOyHOZ/Gr5FuZFuxrR6b/r0yldBbsD1L5s=
+	t=1759823462; cv=none; b=LJE2KjZW/eW0WnXQqdgMa+INgEXtPpDRPVgHnXhHHR8NLIcePAtOUgzxN8AfK0tJzOgWuyzDUXhDHTmuM8Rt6ILlnWWoAycfb7J8X/Q3peMCi2iPM5bjM5GWcPcLKKWiEY+Fn1ieoq0yRUsSDNFjfvVKKVI0usJawUhijlAIUVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759823274; c=relaxed/simple;
-	bh=k/p5ADZ2lv1Ra1rAUAPzE5QTwOBMFVb5bRE4x81ZObQ=;
+	s=arc-20240116; t=1759823462; c=relaxed/simple;
+	bh=t9rTZeOl3b0hJSNTstwqkYNyfDQjcs77PoAC8U9PfCY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mxIgQoWHAHLtnxnUvzxSlyvA+9oo0V7MT5wLJKMu8KTLlnfVEnwtHw034jqjUxPxg88yhjWeGNIlBW0bbT69bHJsX3EZNqZhRCI+i/o0ZT2fQocJlUGFaLUrWtEgy/2xTDm8PB9EjAOMXGsJj1K1uwQlBbeNK2e7tqxs/s8W6SA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NJhVnOhJ; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3ee12332f3dso5132843f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 00:47:52 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=mlSURjSLifoo4X6Cmbz5tY3ufmUbJDS/FpgnchBV3np+tcCjD/42syOVCmR8/lWfAXOwq2bl7C7CNoH+ugdXd5OCcMc5SMhwQApH4npzJXqOi16oEAJ6sSNij+XXF54cbkiPGKlrj/r5rmH23uQWAVWrD3Z/DYjN/NEs3OGNik8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hFFMpyxN; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-33067909400so4416896a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 00:51:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759823271; x=1760428071; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=k/p5ADZ2lv1Ra1rAUAPzE5QTwOBMFVb5bRE4x81ZObQ=;
-        b=NJhVnOhJHA5+T5Agk+hb/uQMnnd9r6NBUqwhl7gqsMZ+5fZrs592bM3oAlm6hfBESh
-         TzwW2Y/l1fxC898fh4O7dGBlK+w8wmBXZPmNE5x2WjRjC0631U6y2kSzKvWFncqNW5vx
-         a8/EF3dapefoX7YTXrzXI+o3supkSj2Q0Txx+60MnoF0uaRGZ8Y/fAuiPaTBFCUUn+O1
-         RrSyafmYhYc7U+JsTnt9QCSjaVHjVMRTCmSYZpGIFaiG2atAJ6USTGQWw2Ry6THCZwnA
-         ATrAJ9DKRd2FFqfVvlNigfoebMpnEMkQ+SA3ay4WBXemon76NlAcxpni1p7Jgukf4Ey2
-         NrTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759823271; x=1760428071;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
+        d=gmail.com; s=20230601; t=1759823460; x=1760428260; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=k/p5ADZ2lv1Ra1rAUAPzE5QTwOBMFVb5bRE4x81ZObQ=;
-        b=e9YiO4zY/dI0dBSGjnrn3XO7fgLwYGyAtr8wbqks/pOvuSRvBM0gw7AtfFj6QG/Gga
-         w3XnXv/6qTKW5tq7PaZftErXlcLEQgz6LE6FkL93hOXzMq8XwO4wxMZ44DSN6LHL9dte
-         sS7cL2yc40OPM/+oTIJVGQHPe/RLgZOZVbxMS02eygamG5Ski1hDJnj2W6RXWnLTHyHL
-         xjcE3RqVw68ex4svyVlJ4Mv0/X5IwsZSYwLSwVTWhGACu4U+PduPXzIflTiziUukpBeC
-         gwgFq7oAasFEtbyHD76bkULr2SJhiHsfJUzPx2JEoQdLVBwum4KgWwlmjFUtj6edrJSU
-         fn8g==
-X-Gm-Message-State: AOJu0YzbIIAzFRczpiOqdrH3/noW6QJbY9z7IQ+K2xwEk1piEpkr6SBv
-	nIsnW4PmF/5by+rC+Lt4+GMTrF68Q91638y0geVoEL5Zbd3Yacq4DKMSMdBHLoKjCl0=
-X-Gm-Gg: ASbGncs8v1HcG2kSMXseFf/9rr7y/S+1n56JiAiy6J2JL4WUqbovYYxuIzunfiSjW8f
-	wtwyrfDcChti2l+oL2LLlj5JeKytjNp9H1DwkTbDl37xgOy0bagBolm3VdZmcb3w361+CmsirPQ
-	IzisDf/rrgUq86ZcqjY8FdKlJ6WslFI+bWK1bZaLTe0ahtfJ79dxPV33wVmPZ68GDtYQQPeXXcV
-	k/ulR0LDXceVlXK3u/7/HsJYld1+h2pwGZOsU92jnkwM7gdvavydeGE4yqSy6iW2jOc1Q8pArHX
-	ZsDMvzgrrw3kVz7RnfN0aMHpqXHDmkhVOyhDPAiqCTzAdCl87RcUhV21zqZvieL2jTDqwYIU4QW
-	wP0CaYMAwHQe0/Sr6N4stTOXe0TuLaQbL/9NvoFBpTZ9RkUkvJbVJpOM+nNntQabnw2s0BI6+c+
-	BWI+jG6gXoNwz3QW3EJ96HFbrahrzcvvWCQe6B6RetlMx0C9rBf1uXD40gwVjhcQjkRrac
-X-Google-Smtp-Source: AGHT+IF7j7vgadOKluBSN0/KXTiMPvXegbfquXD7I/Hv3CcEjCs6Sc9oBKKDinDjZBC8ijVyIMq0Yg==
-X-Received: by 2002:a05:6000:310d:b0:3eb:a237:a051 with SMTP id ffacd0b85a97d-425671c1ba2mr9319409f8f.58.1759823270615;
-        Tue, 07 Oct 2025 00:47:50 -0700 (PDT)
-Received: from ?IPV6:2003:e5:873f:400:7b4f:e512:a417:5a86? (p200300e5873f04007b4fe512a4175a86.dip0.t-ipconnect.de. [2003:e5:873f:400:7b4f:e512:a417:5a86])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f02a8sm24679373f8f.39.2025.10.07.00.47.49
+        bh=dhnA09TQ8hNY3ByOHoJEkbXhSQQgNq2Hl9f2lCZ+3kA=;
+        b=hFFMpyxNJ+6lcOZRCHva+CyIExX+3cyfAtAXI9topEHDloH25wGq0GEu+vvB9MZ5BN
+         AkRLvUaeIIi6+L5/jHSj0myFEkye8JUS8mRvroNikoJOZ6Jp4wTzCAdMsMW+OxN9PSmL
+         KwfL+qhejl8YcSLColDx3SDrZ7UhNFUikAAePQUWjqyfM+qpNB2hfecMa0uNk/P0tGIG
+         BmvWgv/Ru3OolF0yknEn6+8pgiOPu0QJ/hzD+d48RtCiuBlq+AnCS4VCKjW+SrHxFey3
+         9PQZd5YWmgFXtCVLPED3mQJYoiWwMz0SCTfvCKct2EGvPW6C+q3B33NFZ+v8sFh3PO6O
+         99zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759823460; x=1760428260;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dhnA09TQ8hNY3ByOHoJEkbXhSQQgNq2Hl9f2lCZ+3kA=;
+        b=OP8DiigRDBr9TWFmbGaKwR073sS2mnyw3d89l5fea+/Rf4utQlTtCQI+2tUJz7Cov0
+         fos9yGkIeX7IphBKUt6j4tVBvumTqK4mIOyHlU6xdDiZYI/kupF6KcGQ7w6VW5oHx15k
+         A9opyn9V8xNwdrw+khupVGBD0iqO1FRk/2nzLiTKGFbhq6BKr50843P9ST0oC0CFIy7+
+         7RhgNQm1Nmew9x0VyLOPcoFrLUog8aSuatM/j4ZQTyYVsPuzjDMwdJ+cRfEY+h9R7S3Y
+         Y1px1beb7tpCBPHHHLQzGSF+3WKKnORYzxmMwuDT5qxL52ToAyvpjaD8QRWC9fDQRn8l
+         APAw==
+X-Forwarded-Encrypted: i=1; AJvYcCWtpayJxNdYYloFRvoZqXMXG0tfDd43vsKFvzH0gmvCRumSwv5PbX2mFpioWHTi3+JVgHm/MGIjYVMkHUA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO72eI6JPC3PnOb9N9gn39gyQIn0XyBegGzDglB2h0gYae1Yz3
+	LHiTDybLkm2ZuwFQQ6ji5R2vBHRLiQEACS5Oo/7uSZBlO4beIHdDJ73p
+X-Gm-Gg: ASbGncuxaya774DHHYQYhmx5LUaYibNZTg4GedSGkzmO16iMI4tQpRZJuEFfQZ6qL2a
+	+UD/5/nbLGzUQbKEjzDt/iFEkKdssOB4JSICbL38VbQTjFuUX4B14m+QDnOdMBHj6pSAMWvyZI5
+	7jR2ZPc6HtTt4017LKAGRgb/U1fT6Ap5ZdAJ5IzDex+PttTW6W/POuviUyyZIwM8QpgHVfvsTHk
+	2dguVv0cpsI0OSkLdW6O3CqtaXFKkbWCnsVr6/bE0n0Q/BpiJpgS0OZlcsGZqs8CJ/oj7TyT185
+	BEvVPEt5JVbhXDfwX0LxIUPXdDwM/nLjx2+2tB4n2HOPI4oI2tuwRp83ZOwnAXS0FHjECLXZyuq
+	cuCyDbDgcH7my1+ZAvuqpqdtUC5N8WMyzxN94LdKrou6hKdnr
+X-Google-Smtp-Source: AGHT+IG905MGBQ32Ub4ShnX9AGf28crwYHhnuKiGoa/Yd7ia0xUTqXMWebVlHOFKhP/du1dc9C6gAw==
+X-Received: by 2002:a17:90b:1f89:b0:32e:96b1:fb70 with SMTP id 98e67ed59e1d1-339c2720c9fmr21575430a91.12.1759823459801;
+        Tue, 07 Oct 2025 00:50:59 -0700 (PDT)
+Received: from [192.168.0.13] ([172.92.174.155])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339c4a68deasm13196357a91.25.2025.10.07.00.50.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Oct 2025 00:47:50 -0700 (PDT)
-Message-ID: <c8b3c9ea-8c6c-4ec2-b01f-df3f8f487a8c@suse.com>
-Date: Tue, 7 Oct 2025 09:47:48 +0200
+        Tue, 07 Oct 2025 00:50:59 -0700 (PDT)
+Message-ID: <9422ba89-a6ba-4168-98a1-6d4275698430@gmail.com>
+Date: Tue, 7 Oct 2025 00:49:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,175 +81,285 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 15/21] x86/xen: Drop xen_irq_ops
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- xen-devel@lists.xenproject.org
-References: <20251006074606.1266-1-jgross@suse.com>
- <20251006074606.1266-16-jgross@suse.com>
- <20251006185553.GY3245006@noisy.programming.kicks-ass.net>
+Subject: Re: [PATCH 07/11] rvtrace: Add trace ramsink driver
+To: Anup Patel <apatel@ventanamicro.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Greg KH <gregkh@linuxfoundation.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Ian Rogers <irogers@google.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+ Alexandre Ghiti <alex@ghiti.fr>, Atish Patra <atish.patra@linux.dev>,
+ Peter Zijlstra <peterz@infradead.org>, Anup Patel <anup@brainfault.org>,
+ Adrian Hunter <adrian.hunter@intel.com>, linux-kernel@vger.kernel.org,
+ Mayuresh Chitale <mchitale@ventanamicro.com>, Ingo Molnar
+ <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+ Mayuresh Chitale <mchitale@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
+ linux-riscv@lists.infradead.org, Andrew Jones <ajones@ventanamicro.com>,
+ Liang Kan <kan.liang@linux.intel.com>
+References: <20251002060732.100213-1-apatel@ventanamicro.com>
+ <20251002060732.100213-8-apatel@ventanamicro.com>
 Content-Language: en-US
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <20251006185553.GY3245006@noisy.programming.kicks-ass.net>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------kV0mAlugWKvTu66dwLdSIAs6"
-
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------kV0mAlugWKvTu66dwLdSIAs6
-Content-Type: multipart/mixed; boundary="------------ZACIU0EGJTA0jVCHyCq5ivyT";
- protected-headers="v1"
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- xen-devel@lists.xenproject.org
-Message-ID: <c8b3c9ea-8c6c-4ec2-b01f-df3f8f487a8c@suse.com>
-Subject: Re: [PATCH v3 15/21] x86/xen: Drop xen_irq_ops
-References: <20251006074606.1266-1-jgross@suse.com>
- <20251006074606.1266-16-jgross@suse.com>
- <20251006185553.GY3245006@noisy.programming.kicks-ass.net>
-In-Reply-To: <20251006185553.GY3245006@noisy.programming.kicks-ass.net>
-
---------------ZACIU0EGJTA0jVCHyCq5ivyT
-Content-Type: multipart/mixed; boundary="------------XyJh0KFbIzewTUdUA9FxJ1fL"
-
---------------XyJh0KFbIzewTUdUA9FxJ1fL
+From: Bo Gan <ganboing@gmail.com>
+In-Reply-To: <20251002060732.100213-8-apatel@ventanamicro.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 7bit
 
-T24gMDYuMTAuMjUgMjA6NTUsIFBldGVyIFppamxzdHJhIHdyb3RlOg0KPiBPbiBNb24sIE9j
-dCAwNiwgMjAyNSBhdCAwOTo0NjowMEFNICswMjAwLCBKdWVyZ2VuIEdyb3NzIHdyb3RlOg0K
-Pj4gSW5zdGVhZCBvZiBoYXZpbmcgYSBwcmUtZmlsbGVkIGFycmF5IHhlbl9pcnFfb3BzIGZv
-ciBYZW4gUFYgcGFyYXZpcnQNCj4+IGZ1bmN0aW9ucywgZHJvcCB0aGUgYXJyYXkgYW5kIGFz
-c2lnbiBlYWNoIGVsZW1lbnQgaW5kaXZpZHVhbGx5Lg0KPiANCj4gU2FtZSBjb21tZW50IGZv
-ciB0aGUgbmV4dCBmZXcgcGF0Y2hlczsgdGhpcyBjaGFuZ2Vsb2cgaXMgYSBsaXR0bGUgbGln
-aHQNCj4gb24gKndoeSouIEkgbWVhbiwgSSBkb24ndCBtaW5kIHRoZSBjaGFuZ2UsIGJ1dCBz
-dXBwb3NlZGx5IHdlIHNob3VsZA0KPiBqdXN0aWZ5IHRoaW5ncyBhdCBsZWFzdCBhIGxpdHRs
-ZSwgcmlnaHQ/IDotKQ0KDQpXb3VsZCB5b3UgYmUgZmluZSB3aXRoIHRoZSBmb2xsb3dpbmcg
-YWRkaXRpb246DQoNCiAgIFRoaXMgaXMgaW4gcHJlcGFyYXRpb24gb2YgcmVkdWNpbmcgdGhl
-IHBhcmF2aXJ0IGluY2x1ZGUgaGVsbCBieQ0KICAgc3BsaXR0aW5nIHBhcmF2aXJ0LmggaW50
-byBtdWx0aXBsZSBtb3JlIGZpbmUgZ3JhaW5lZCBoZWFkZXIgZmlsZXMsDQogICB3aGljaCB3
-aWxsIGluIHR1cm4gcmVxdWlyZSB0byBzcGxpdCB1cCB0aGUgcHZfb3BzIHZlY3RvciBhcyB3
-ZWxsLg0KICAgRHJvcHBpbmcgdGhlIHByZS1maWxsZWQgYXJyYXkgbWFrZXMgbGlmZSBlYXNp
-ZXIgZm9yIG9ianRvb2wgdG8NCiAgIGRldGVjdCBtaXNzaW5nIGluaXRpYWxpemVycyBpbiBt
-dWx0aXBsZSBwdl9vcHNfIGFycmF5cy4NCg0KDQpKdWVyZ2VuDQo=
---------------XyJh0KFbIzewTUdUA9FxJ1fL
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+On 10/1/25 23:07, Anup Patel wrote:
+> From: Mayuresh Chitale <mchitale@ventanamicro.com>
+> 
+> Add initial implementation of RISC-V trace ramsink driver. The ramsink
+> is defined in the RISC-V Trace Control Interface specification.
+> 
+> Co-developed-by: Anup Patel <apatel@ventanamicro.com>
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> Signed-off-by: Mayuresh Chitale <mchitale@ventanamicro.com>
+> ---
+>   drivers/hwtracing/rvtrace/Kconfig           |   8 +
+>   drivers/hwtracing/rvtrace/Makefile          |   1 +
+>   drivers/hwtracing/rvtrace/rvtrace-ramsink.c | 198 ++++++++++++++++++++
+>   3 files changed, 207 insertions(+)
+>   create mode 100644 drivers/hwtracing/rvtrace/rvtrace-ramsink.c
+> 
+> diff --git a/drivers/hwtracing/rvtrace/Kconfig b/drivers/hwtracing/rvtrace/Kconfig
+> index ba35c05f3f54..aef7e9989165 100644
+> --- a/drivers/hwtracing/rvtrace/Kconfig
+> +++ b/drivers/hwtracing/rvtrace/Kconfig
+> @@ -21,3 +21,11 @@ config RVTRACE_ENCODER
+>   	default y
+>   	help
+>   	  This driver provides support for RISC-V Trace Encoder component.
+> +
+> +config RVTRACE_RAMSINK
+> +	tristate "RISC-V Trace Ramsink driver"
+> +	depends on RVTRACE
+> +	default y
+> +	help
+> +	  This driver provides support for Risc-V E-Trace Ramsink
+> +	  component.
+> diff --git a/drivers/hwtracing/rvtrace/Makefile b/drivers/hwtracing/rvtrace/Makefile
+> index f320693a1fc5..122e575da9fb 100644
+> --- a/drivers/hwtracing/rvtrace/Makefile
+> +++ b/drivers/hwtracing/rvtrace/Makefile
+> @@ -3,3 +3,4 @@
+>   obj-$(CONFIG_RVTRACE) += rvtrace.o
+>   rvtrace-y := rvtrace-core.o rvtrace-platform.o
+>   obj-$(CONFIG_RVTRACE_ENCODER) += rvtrace-encoder.o
+> +obj-$(CONFIG_RVTRACE_RAMSINK) += rvtrace-ramsink.o
+> diff --git a/drivers/hwtracing/rvtrace/rvtrace-ramsink.c b/drivers/hwtracing/rvtrace/rvtrace-ramsink.c
+> new file mode 100644
+> index 000000000000..7bd0cf1e4dfd
+> --- /dev/null
+> +++ b/drivers/hwtracing/rvtrace/rvtrace-ramsink.c
+> @@ -0,0 +1,198 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2025 Ventana Micro Systems Inc.
+> + */
+> +
+> +#include <linux/device.h>
+> +#include <linux/io.h>
+> +#include <linux/of.h>
+> +#include <linux/of_graph.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/property.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/rvtrace.h>
+> +#include <linux/types.h>
+> +#include <linux/sizes.h>
+> +
+> +#define RVTRACE_RAMSINK_STARTLOW_OFF		0x010
+> +#define RVTRACE_RAMSINK_STARTHIGH_OFF		0x014
+> +#define RVTRACE_RAMSINK_LIMITLOW_OFF		0x018
+> +#define RVTRACE_RAMSINK_LIMITHIGH_OFF		0x01c
+> +#define RVTRACE_RAMSINK_WPLOW_OFF		0x020
+> +#define RVTRACE_RAMSINK_WPHIGH_OFF		0x024
+> +#define RVTRACE_RAMSINK_RPLOW_OFF		0x028
+> +#define RVTRACE_RAMSINK_RPHIGH_OFF		0x02c
+> +
+> +struct rvtrace_ramsink_priv {
+> +	size_t size;
+> +	void *va;
+> +	dma_addr_t start;
+> +	dma_addr_t end;
+> +	/* WP from prev iteration */
+> +	dma_addr_t prev_head;
+> +};
+> +
+> +struct trace_buf {
+> +	void *base;
+> +	size_t size;
+> +	int cur, len;
+> +};
+> +
+> +static void tbuf_to_pbuf_copy(struct trace_buf *src, struct trace_buf *dst)
+> +{
+> +	int bytes_dst, bytes_src, bytes;
+> +	void *dst_addr, *src_addr;
+> +
+> +	while (src->size) {
+> +		src_addr = src->base + src->cur;
+> +		dst_addr = dst->base + dst->cur;
+> +
+> +		if (dst->len - dst->cur < src->size)
+> +			bytes_dst = dst->len - dst->cur;
+> +		else
+> +			bytes_dst = src->size;
+> +		if (src->len - src->cur < src->size)
+> +			bytes_src = src->len - src->cur;
+> +		else
+> +			bytes_src = src->size;
+> +		bytes = bytes_dst < bytes_src ? bytes_dst : bytes_src;
+> +		memcpy(dst_addr, src_addr, bytes);
+> +		dst->cur = (dst->cur + bytes) % dst->len;
+> +		src->cur = (src->cur + bytes) % src->len;
+> +		src->size -= bytes;
+> +	}
+> +}
+> +
+> +static size_t rvtrace_ramsink_copyto_auxbuf(struct rvtrace_component *comp,
+> +					    struct rvtrace_perf_auxbuf *buf)
+> +{
+> +	struct rvtrace_ramsink_priv *priv = dev_get_drvdata(&comp->dev);
+> +	struct trace_buf src, dst;
+> +	u32 wp_low, wp_high;
+> +	u64 buf_cur_head;
+> +	size_t size;
+> +
+> +	wp_low = rvtrace_read32(comp->pdata, RVTRACE_RAMSINK_WPLOW_OFF);
+> +	wp_high = rvtrace_read32(comp->pdata, RVTRACE_RAMSINK_WPHIGH_OFF);
+> +	buf_cur_head = (u64)(wp_high) << 32 | wp_low;
+> +
+> +	if (buf_cur_head == priv->prev_head)
+> +		return 0;
+> +
+> +	dst.base = buf->base;
+> +	dst.len = buf->length;
+> +	dst.cur = buf->pos;
+> +	dst.size = 0;
+> +
+> +	src.base = priv->va;
+> +	src.len = priv->end - priv->start;
+> +	if (buf_cur_head > priv->prev_head) {
+> +		src.size = buf_cur_head - priv->prev_head;
+> +	} else {
+> +		src.size = priv->end - priv->prev_head;
+> +		src.size += buf_cur_head - priv->start;
+> +	}
+> +
+> +	src.cur = buf_cur_head - priv->start;
+> +	size = src.size;
+> +	tbuf_to_pbuf_copy(&src, &dst);
+> +	buf->pos = dst.cur;
+> +	priv->prev_head = buf_cur_head;
+> +
+> +	return size;
+> +}
+> +
+> +static int rvtrace_ramsink_setup(struct rvtrace_component *comp)
+> +{
+> +	struct rvtrace_ramsink_priv *priv;
+> +
+> +	priv = devm_kzalloc(&comp->dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +	dev_set_drvdata(&comp->dev, priv);
+> +
+> +	priv->size = SZ_4M;
+Can we make this size dynamically determined? 4M seems inadequate. This is
+exceedingly so if the RAM sink is linked to a funnel, where you can have
+many harts dumping traces into this sink.
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+> +	priv->va = dma_alloc_coherent(&comp->dev, priv->size, &priv->start, GFP_KERNEL);
+> +	if (!priv->va)
+> +		return -ENOMEM;
+> +	priv->end = priv->start + priv->size;
+> +	priv->prev_head = priv->start;
+> +
+> +	/* Setup ram sink addresses */
+> +	rvtrace_write32(comp->pdata, lower_32_bits(priv->start), RVTRACE_RAMSINK_STARTLOW_OFF);
+> +	rvtrace_write32(comp->pdata, upper_32_bits(priv->start), RVTRACE_RAMSINK_STARTHIGH_OFF);
+> +	rvtrace_write32(comp->pdata, lower_32_bits(priv->start), RVTRACE_RAMSINK_WPLOW_OFF);
+> +	rvtrace_write32(comp->pdata, upper_32_bits(priv->start), RVTRACE_RAMSINK_WPHIGH_OFF);
+> +	/* Limit address needs to be set to end - 4 so that HW doesn't cause an overflow. */> +	rvtrace_write32(comp->pdata, lower_32_bits(priv->end - 0x4), RVTRACE_RAMSINK_LIMITLOW_OFF);
+Should not hardcode 4 as the trace write width. Control Interface Spec
+chapter 7.1 has the proper instruction on how to probe for this width:
 
-xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjri
-oyspZKOBycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2
-kaV2KL9650I1SJvedYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i
-1TXkH09XSSI8mEQ/ouNcMvIJNwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/B
-BLUVbDa4+gmzDC9ezlZkTZG2t14zWPvxXP3FAp2pkW0xqG7/377qptDmrk42GlSK
-N4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEBAAHNHEp1ZXJnZW4gR3Jvc3Mg
-PGpnQHBmdXBmLm5ldD7CwHkEEwECACMFAlOMcBYCGwMHCwkIBwMCAQYVCAIJCgsE
-FgIDAQIeAQIXgAAKCRCw3p3WKL8TL0KdB/93FcIZ3GCNwFU0u3EjNbNjmXBKDY4F
-UGNQH2lvWAUy+dnyThpwdtF/jQ6j9RwE8VP0+NXcYpGJDWlNb9/JmYqLiX2Q3Tye
-vpB0CA3dbBQp0OW0fgCetToGIQrg0MbD1C/sEOv8Mr4NAfbauXjZlvTj30H2jO0u
-+6WGM6nHwbh2l5O8ZiHkH32iaSTfN7Eu5RnNVUJbvoPHZ8SlM4KWm8rG+lIkGurq
-qu5gu8q8ZMKdsdGC4bBxdQKDKHEFExLJK/nRPFmAuGlId1E3fe10v5QL+qHI3EIP
-tyfE7i9Hz6rVwi7lWKgh7pe0ZvatAudZ+JNIlBKptb64FaiIOAWDCx1SzR9KdWVy
-Z2VuIEdyb3NzIDxqZ3Jvc3NAc3VzZS5jb20+wsB5BBMBAgAjBQJTjHCvAhsDBwsJ
-CAcDAgEGFQgCCQoLBBYCAwECHgECF4AACgkQsN6d1ii/Ey/HmQf/RtI7kv5A2PS4
-RF7HoZhPVPogNVbC4YA6lW7DrWf0teC0RR3MzXfy6pJ+7KLgkqMlrAbN/8Dvjoz7
-8X+5vhH/rDLa9BuZQlhFmvcGtCF8eR0T1v0nC/nuAFVGy+67q2DH8As3KPu0344T
-BDpAvr2uYM4tSqxK4DURx5INz4ZZ0WNFHcqsfvlGJALDeE0LhITTd9jLzdDad1pQ
-SToCnLl6SBJZjDOX9QQcyUigZFtCXFst4dlsvddrxyqT1f17+2cFSdu7+ynLmXBK
-7abQ3rwJY8SbRO2iRulogc5vr/RLMMlscDAiDkaFQWLoqHHOdfO9rURssHNN8WkM
-nQfvUewRz80hSnVlcmdlbiBHcm9zcyA8amdyb3NzQG5vdmVsbC5jb20+wsB5BBMB
-AgAjBQJTjHDXAhsDBwsJCAcDAgEGFQgCCQoLBBYCAwECHgECF4AACgkQsN6d1ii/
-Ey8PUQf/ehmgCI9jB9hlgexLvgOtf7PJnFOXgMLdBQgBlVPO3/D9R8LtF9DBAFPN
-hlrsfIG/SqICoRCqUcJ96Pn3P7UUinFG/I0ECGF4EvTE1jnDkfJZr6jrbjgyoZHi
-w/4BNwSTL9rWASyLgqlA8u1mf+c2yUwcGhgkRAd1gOwungxcwzwqgljf0N51N5Jf
-VRHRtyfwq/ge+YEkDGcTU6Y0sPOuj4Dyfm8fJzdfHNQsWq3PnczLVELStJNdapwP
-OoE+lotufe3AM2vAEYJ9rTz3Cki4JFUsgLkHFqGZarrPGi1eyQcXeluldO3m91NK
-/1xMI3/+8jbO0tsn1tqSEUGIJi7ox80eSnVlcmdlbiBHcm9zcyA8amdyb3NzQHN1
-c2UuZGU+wsB5BBMBAgAjBQJTjHDrAhsDBwsJCAcDAgEGFQgCCQoLBBYCAwECHgEC
-F4AACgkQsN6d1ii/Ey+LhQf9GL45eU5vOowA2u5N3g3OZUEBmDHVVbqMtzwlmNC4
-k9Kx39r5s2vcFl4tXqW7g9/ViXYuiDXb0RfUpZiIUW89siKrkzmQ5dM7wRqzgJpJ
-wK8Bn2MIxAKArekWpiCKvBOB/Cc+3EXE78XdlxLyOi/NrmSGRIov0karw2RzMNOu
-5D+jLRZQd1Sv27AR+IP3I8U4aqnhLpwhK7MEy9oCILlgZ1QZe49kpcumcZKORmzB
-TNh30FVKK1EvmV2xAKDoaEOgQB4iFQLhJCdP1I5aSgM5IVFdn7v5YgEYuJYx37Io
-N1EblHI//x/e2AaIHpzK5h88NEawQsaNRpNSrcfbFmAg987ATQRTjHAWAQgAyzH6
-AOODMBjgfWE9VeCgsrwH3exNAU32gLq2xvjpWnHIs98ndPUDpnoxWQugJ6MpMncr
-0xSwFmHEgnSEjK/PAjppgmyc57BwKII3sV4on+gDVFJR6Y8ZRwgnBC5mVM6JjQ5x
-Dk8WRXljExRfUX9pNhdE5eBOZJrDRoLUmmjDtKzWaDhIg/+1Hzz93X4fCQkNVbVF
-LELU9bMaLPBG/x5q4iYZ2k2ex6d47YE1ZFdMm6YBYMOljGkZKwYde5ldM9mo45mm
-we0icXKLkpEdIXKTZeKDO+Hdv1aqFuAcccTg9RXDQjmwhC3yEmrmcfl0+rPghO0I
-v3OOImwTEe4co3c1mwARAQABwsBfBBgBAgAJBQJTjHAWAhsMAAoJELDendYovxMv
-Q/gH/1ha96vm4P/L+bQpJwrZ/dneZcmEwTbe8YFsw2V/Buv6Z4Mysln3nQK5ZadD
-534CF7TDVft7fC4tU4PONxF5D+/tvgkPfDAfF77zy2AH1vJzQ1fOU8lYFpZXTXIH
-b+559UqvIB8AdgR3SAJGHHt4RKA0F7f5ipYBBrC6cyXJyyoprT10EMvU8VGiwXvT
-yJz3fjoYsdFzpWPlJEBRMedCot60g5dmbdrZ5DWClAr0yau47zpWj3enf1tLWaqc
-suylWsviuGjKGw7KHQd3bxALOknAp4dN3QwBYCKuZ7AddY9yjynVaD5X7nF9nO5B
-jR/i1DG86lem3iBDXzXsZDn8R3/CwO0EGAEIACAWIQSFEmdy6PYElKXQl/ew3p3W
-KL8TLwUCWt3w0AIbAgCBCRCw3p3WKL8TL3YgBBkWCAAdFiEEUy2wekH2OPMeOLge
-gFxhu0/YY74FAlrd8NAACgkQgFxhu0/YY75NiwD/fQf/RXpyv9ZX4n8UJrKDq422
-bcwkujisT6jix2mOOwYBAKiip9+mAD6W5NPXdhk1XraECcIspcf2ff5kCAlG0DIN
-aTUH/RIwNWzXDG58yQoLdD/UPcFgi8GWtNUp0Fhc/GeBxGipXYnvuWxwS+Qs1Qay
-7/Nbal/v4/eZZaWs8wl2VtrHTS96/IF6q2o0qMey0dq2AxnZbQIULiEndgR625EF
-RFg+IbO4ldSkB3trsF2ypYLij4ZObm2casLIP7iB8NKmQ5PndL8Y07TtiQ+Sb/wn
-g4GgV+BJoKdDWLPCAlCMilwbZ88Ijb+HF/aipc9hsqvW/hnXC2GajJSAY3Qs9Mib
-4Hm91jzbAjmp7243pQ4bJMfYHemFFBRaoLC7ayqQjcsttN2ufINlqLFPZPR/i3IX
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
+"Not every value may be settable in trRamStart/Limit registers. Value
+  written may be trimmed (for example aligned on a particular 2^N boundary)
+  and a trace tool should verify values being written"
 
---------------XyJh0KFbIzewTUdUA9FxJ1fL--
+> +	rvtrace_write32(comp->pdata, upper_32_bits(priv->end), RVTRACE_RAMSINK_LIMITHIGH_OFF);
+> +
+> +	return 0;
+> +}
+> +
+> +static void rvtrace_ramsink_cleanup(struct rvtrace_component *comp)
+> +{
+> +	struct rvtrace_ramsink_priv *priv = dev_get_drvdata(&comp->dev);
+> +
+> +	dma_free_coherent(&comp->dev, priv->size, priv->va, priv->start);
+> +}
+> +
+> +static int rvtrace_ramsink_probe(struct rvtrace_component *comp)
+> +{
+> +	int ret;
+> +
+> +	ret = rvtrace_ramsink_setup(comp);
+> +	if (ret)
+> +		return dev_err_probe(&comp->dev, ret, "failed to setup ramsink.\n");
+> +
+> +	ret = rvtrace_enable_component(comp);
+> +	if (ret)
+> +		return dev_err_probe(&comp->dev, ret, "failed to enable ramsink.\n");
+> +
+> +	return ret;
+> +}
+> +
+> +static void rvtrace_ramsink_remove(struct rvtrace_component *comp)
+> +{
+> +	int ret;
+> +
+> +	ret = rvtrace_disable_component(comp);
+> +	if (ret)
+> +		dev_err(&comp->dev, "failed to disable ramsink.\n");
+> +
+> +	rvtrace_ramsink_cleanup(comp);
+> +}
+> +
+> +static struct rvtrace_component_id rvtrace_ramsink_ids[] = {
+> +	{ .type = RVTRACE_COMPONENT_TYPE_RAMSINK,
+> +	  .version = rvtrace_component_mkversion(1, 0), },
+> +	{},
+> +};
+> +
+> +static struct rvtrace_driver rvtrace_ramsink_driver = {
+> +	.id_table = rvtrace_ramsink_ids,
+> +	.copyto_auxbuf = rvtrace_ramsink_copyto_auxbuf,
+> +	.probe = rvtrace_ramsink_probe,
+> +	.remove = rvtrace_ramsink_remove,
+> +	.driver = {
+> +		.name = "rvtrace-ramsink",
+> +	},
+> +};
+> +
+> +static int __init rvtrace_ramsink_init(void)
+> +{
+> +	return rvtrace_register_driver(&rvtrace_ramsink_driver);
+> +}
+> +
+> +static void __exit rvtrace_ramsink_exit(void)
+> +{
+> +	rvtrace_unregister_driver(&rvtrace_ramsink_driver);
+> +}
+> +
+> +module_init(rvtrace_ramsink_init);
+> +module_exit(rvtrace_ramsink_exit);
+> +
+> +/* Module information */
+> +MODULE_AUTHOR("Mayuresh Chitale <mchitale@ventanamicro.com>");
+> +MODULE_DESCRIPTION("RISC-V Trace Ramsink Driver");
+> +MODULE_LICENSE("GPL");
 
---------------ZACIU0EGJTA0jVCHyCq5ivyT--
-
---------------kV0mAlugWKvTu66dwLdSIAs6
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmjkxaUFAwAAAAAACgkQsN6d1ii/Ey8E
-Cwf9Gcgfd1x4B7+Mo8ZdGuhc8lobyDPfpsiiCxXV+e8HlqHCwlRpw7VCHX10o6HhZJ9pdozRxQLh
-FADvUd1bszJv8JAcGdyHv3c7TrX0MPni1OrYMBP9qez7n4UP0UHoo0lnlEkiAWxvfA2jepD2ffRY
-E1/0uyIf0HXFoYuchbP7msyGdX0vXdT7kQ7diYRzKK7v9SbMP3rEGnMgMs9MlCfz+PglDqtr6ugF
-pcPZC7EBnvqy/BRIs0RU17uSl6n/Tk6B+bi/Ds7iQSbdgG6kp6AQiX00okJ6wVxkKbC5QYor3QsU
-hF7Fw0gqJugqiYIPBs9lTnZcafQQZta9753tkHgJyw==
-=FFyy
------END PGP SIGNATURE-----
-
---------------kV0mAlugWKvTu66dwLdSIAs6--
+Bo
 
