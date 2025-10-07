@@ -1,140 +1,206 @@
-Return-Path: <linux-kernel+bounces-844687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6CA8BC280B
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 21:25:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2B2BBC2808
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 21:25:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C970C19A2EB0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 19:25:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB7D54001C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 19:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C740231842;
-	Tue,  7 Oct 2025 19:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF15233727;
+	Tue,  7 Oct 2025 19:24:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mcBXaI58"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JU7R4HXg"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B6E2236F2
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 19:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4751B2236F2
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 19:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759865102; cv=none; b=uSZOyQ8cSDNaPToNIzs/24z4IxMeQ0rNO03kDtMrET8l1gnpzuWDGZbN5tZ+cMfI+yrjg/HNJl4JtjraFrtJFOw6LJ6Eda2zdQGQ/J47cdxtVKcv5CJIIv/e4NK5u5KW62hYjXua64lIA5J52j5c01eDsJFLO3aBeT74tOnEUDk=
+	t=1759865096; cv=none; b=XaQ3feMH3UH7Jo0POoT0Zc0Wk96qDbLHbPhr5zLjI7mZ+K7AFOyYD/ifGgwKu3GBpYuezCZtmAzzpwQjD194bfRNZnRs2oDmhX2xle2UOG4TVfmlUZtOBsdPsFvsqqkpOmramzBjw5R78BYEP891wzoFMDbL7Xl8c9zBN9sdGzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759865102; c=relaxed/simple;
-	bh=liSEly5qVQa8OlgORhHC4vbdfnKfkA3258Y55R80fYY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oyavpvwFfiBERZLBQTwk05k4PEhk66F3mM1Bhs/nWziQo9g75J7Z10Ylemn5TrIQkaE4f16SVzHvXurPcIYdq056ZFwYGWZwPhojOiX97ak/um3SE2AMRW3YvLMCZNrijrCku5J9givPt2+Qr82b1zqc6Bj9/s9IZ42K7J50sNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mcBXaI58; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b5538e4343fso105976a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 12:25:00 -0700 (PDT)
+	s=arc-20240116; t=1759865096; c=relaxed/simple;
+	bh=dD0JZH8qQiXuX7vo0YlEQxSWSwH2d/FXSZejAOfRdM8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YznF3XzXza2t0Su+pAiS9xjzJv2ZRim0GajP5YMa9o2bhciWqhLO0r1J42wJcUOYTYaV+GmEQxdLqikCfjLjUCx4ef28QIu/ECHwtQV0tmspdFTJ4NqiQM03siAAmWekUSzoRXKpGrizUpiNbEW1ePly5rmryqOQcmOFtrW3dzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JU7R4HXg; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-27ee41e074dso72950685ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 12:24:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759865099; x=1760469899; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9+iej964gqYmw3EStGTseOsB/VJ0n3f1dmiT9VwkheM=;
-        b=mcBXaI58uL2/XTfvqOWeWULDQaOY0b044WDX/04EG4F/alVW2uzMpaVoF/loUzLGAZ
-         HGC2bqlns9G2SQRaxLHKHtxOfGrLV/tv2Dwaq765TLAUmqrWO9VWaDjwbaFN9k65kqgt
-         Msx6C8GHhwFmQ+sLbh/rstwdSfnDAUZXQSFe5IiRFeRhKUpD+NnqTMespVe37yiSgul2
-         iSN2kolKmfDuMu3MnYkMCe8B0Y9ixTqtNUFV0DFYe5gdH2z45tyhJgJ0UhpDBEDyvtsc
-         AESOGiYaB8rmPa0XiGGiNDoxsTdsRdPxT4Kz7ui/X24/g7IP5+xHC9kFhI+3dOB0GwW8
-         ZEXQ==
+        d=google.com; s=20230601; t=1759865094; x=1760469894; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NQ9KABoIGHmAAq7lJx8BVSL+/smAc9YPHctbNZgG1VU=;
+        b=JU7R4HXgf05XIezp6ZrlweehIItY/8JeSdOKWkjVTISixJTydulEozf7mvg/iJFql0
+         Rv8VehZjrA2Ni4j5MmW+R5ovu1Ypl5dmiegFha97tHWRPG1cOjmCzXuUbW8RxfS3G4eD
+         7pGUiWuORcygTqgaB7JsCK2YHKt7vb665dYPsHaKxStJcNXNRx8eHngj4KRkP4URZCkj
+         rPz6prpdSw8LT2xtgsYLCTxfzJNRB/mSMXP/LW/fP7DNEsC8zlN1xjB+d+q7Yrhw6c/Q
+         ++M7oOal26VasqqvaJr0WvRZtsGwu+gRenYRjr/v0ZmhQeeUI5A/Z+M7bt11A03Uo5LW
+         dugA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759865099; x=1760469899;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9+iej964gqYmw3EStGTseOsB/VJ0n3f1dmiT9VwkheM=;
-        b=rmS+hYdo+cTTEw2Phc5l1bEyxmL8iJeJObz6YV/ISzD7ud9RYBvS/seHb2+BWQImoH
-         x7spiF3ZYlSRlYUwjgGDj1CHBsw+ZYSprRVXqksSRPfP9zfTSYCcJnNPEJiMOlizMp5a
-         ZYNGQdi9VBgRRHJD+EfG8NRax3oF07r5lvvDHO66SRaAWR7qCVOqGg2l0UNQ+BwxLBL1
-         2j1EqUS5vFOEMe13sHDo4M64avnO6qhaPxjq6eIZxGnHWcBsK43rTu2s8zWgIPnk+wIF
-         HgQl4cNuGXRMaHPsEz86ItpoM3IYngkfSQzi3o29b7jxpMbA98Mh4WOeT97MAao4PXG4
-         YhQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1VTB6BrPeuvT8L/G3IymPtuNbIyw15qNtL34MQCOuJY3FGVz+qkqUW/9WI3NJYXLKnMVhtV+x6YBTBKU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxueDP6myD5bUMmF9HGzB1XToC8kS8YPo4ZIvyee9cVnvFhD60N
-	qE+CMRQLjiSl62oPHRjgwySzp92VwPwPFL3I02ovmTSgm1e8Wp9CENounBbqGKQMFFxIWP0kQP7
-	O9a0pGabXBvXBRqh+INVGxaTy/u8PPTQ=
-X-Gm-Gg: ASbGnct4qgmtLa4AtpG6tdJj3lvDA521FStzFZeNFafY3HzUW3pUoYxnTD+ZZkGVed8
-	FuWIKzLROtChYJfvPIKcMxHZxT12wSKzDU1Uvhs4TGBIFLJgRavDbUKSXrDgRP4XsBSQEUeQVUJ
-	GpCZ6lkRnBuc2J7n9kd+LzT8Q8AvKJFUvakGanjy8GX2+I7Ce4lCBvmV9x1KddcIi1cJn+btg09
-	v5t/1GgXRBoMcwlMEJvOF0b/JY+h8GUQN7nothqrnsozRkVKXaQPx2nN6iLHevyY6JLJ7oX6JRD
-	vYquO/QzggIfxTBaRIJfao3XMLDwKOiWiM7VAoeQ3UfMamPMsw==
-X-Google-Smtp-Source: AGHT+IHRFimerlEMqF3boAdKkBiNG8MkW5f1eh9EAmm670Jbl+52qtss8zZiJX+57J7MzfxLc/d3NZ0jQ1LQJ9RjfUM=
-X-Received: by 2002:a17:902:ea07:b0:264:cda8:7fd3 with SMTP id
- d9443c01a7336-2902743e550mr5868445ad.6.1759865099543; Tue, 07 Oct 2025
- 12:24:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759865094; x=1760469894;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NQ9KABoIGHmAAq7lJx8BVSL+/smAc9YPHctbNZgG1VU=;
+        b=uh8HYnTcvMrZ4S8wfpzJp+JG1glKdxDYZFaAJX/05EDSs4kjDnpfjYOq4Dv/dCABEs
+         Z0+eCgviDLzBBR4FHMJ/6xKsaAFoSxjq9QEBHmtQebxO7gUN/Sf9+ulsjhn0SexAsvUW
+         ozdy+yaRVQXD9YV17+qK7R75DvzXxPJCXaX3o/qO7AWrSKwAX8dJyXqkNaAmDUFJ8WhM
+         vZv8y+XbXvZyjvMuNmKAR6vPFb0tgo5bgtnZITLrohOi5U5qkRsDKpp8yHpTbzVqKIN9
+         1aE9Z12MZu/E7PHCtfG15gbf9VnovyXhvBwc/lJ3T78fS7esoui5Nw+vCvljCGFtVDWS
+         eI0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVdZek7kIJqbmpCNK/7xKWWNvaoQmbDee8mU+B5rus8QqfNmi6zecQ+d0jemAAZAEGS1rABsaMG1/AZHso=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpV1hgn3YU1+aVXZdXTACYowNDCo6sJ0C+r35F4CXfzlN2HlSE
+	RCmCqXn25Vg2zHqstbwL2GXL27GAk7Lrrk+3ZjlH5Lte30wM01L8QJaikI0IXVGNoA==
+X-Gm-Gg: ASbGncv2DfUShthxg1KdspTLF99GCR9hWVBMqYp+T+p1UMxY24mH7x2N4/+XkpPGd9Q
+	nyh4QCP6oow/aA7s4qrkFXZ8WQe3FV11Q6784Tm2tHH0BMxxGdYe9hqweSxhPp1AKF5quUxOajG
+	mPLQ+I6ElzaSmaoq5O4UpBkT+rNpRzOcu6Nx20lepbC5hQ86202wL3YsoY1uIwv50q70fr4iVnC
+	o0ZfbuTupaCmMWvbouCMXktONECOxD7bMAONkGqXW3Ic/LVbpXV8CYB2Q92k0P/XN7EE6nMsQAP
+	up5UWkY56qydOlC+kh8dZV1CPqFswGB2dSPvtv/aQhBu0j1MMdBBb8lG+fCvrMroYRay1NRMLFQ
+	Nu1QDbdL8WJWzqIjv/xmL9LInAnuUMcgFE5Ygw1Owe/80Lh2MCbkhd08fGqwstltxY49P9ML+q+
+	u9A2v0P/XJtw84Y5mieVVZ
+X-Google-Smtp-Source: AGHT+IH4bjNuCX7ZdvPaK3cW5l8x1vte/cfxRiFYzrrFsjftCuyV/+FzdaN9VlSY6ubV6FYziu7+FQ==
+X-Received: by 2002:a17:903:fa7:b0:267:a8d0:7ab3 with SMTP id d9443c01a7336-29027321dbcmr9907575ad.61.1759865093972;
+        Tue, 07 Oct 2025 12:24:53 -0700 (PDT)
+Received: from google.com (232.92.83.34.bc.googleusercontent.com. [34.83.92.232])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1b8796sm173717855ad.77.2025.10.07.12.24.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 12:24:52 -0700 (PDT)
+Date: Tue, 7 Oct 2025 19:24:49 +0000
+From: Benson Leung <bleung@google.com>
+To: Jameson Thies <jthies@google.com>
+Cc: akuchynski@chromium.org, abhishekpandit@chromium.org,
+	krzk+dt@kernel.org, robh@kernel.org, bleung@chromium.org,
+	heikki.krogerus@linux.intel.com, ukaszb@chromium.org,
+	tzungbi@kernel.org, devicetree@vger.kernel.org,
+	chrome-platform@lists.linux.dev, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] usb: typec: cros_ec_ucsi: Load driver from OF and
+ ACPI definitions
+Message-ID: <aOVpAb3Cd5u-D6I3@google.com>
+References: <20251001193346.1724998-1-jthies@google.com>
+ <20251001193346.1724998-3-jthies@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPM=9tzYUBfz+YmifRDgdBsuTL=FpBxQVfxu23it48kGRzJNPQ@mail.gmail.com>
- <CANiq72kq5YHovH=_a9c0JQgfrAx9gRsQvVo1VfHd-FaupOp7rQ@mail.gmail.com>
- <bd004ac5-9e51-4e90-a3a4-025d74941a38@nvidia.com> <3771775.lGaqSPkdTl@hyperion>
- <CAHk-=wj4_zaYJ9ieazt9dnL69R+SL1PEfJtquGVOqsNCVt_rDA@mail.gmail.com>
- <CANiq72kDB1cX1XXX7sc3yQvnaUUYB8q1wVKNxykv8=OV-=rWuQ@mail.gmail.com> <CAHk-=whe8NLsT-TnBxzzW8sCL_X3BN7zv5ELVufy6=sZ_k=uGw@mail.gmail.com>
-In-Reply-To: <CAHk-=whe8NLsT-TnBxzzW8sCL_X3BN7zv5ELVufy6=sZ_k=uGw@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 7 Oct 2025 21:24:47 +0200
-X-Gm-Features: AS18NWCFJirSOJNc7E5--qS2zoXHw3wCzCsVJLxEt1b3tIkqnjp9hJnURlrXm5E
-Message-ID: <CANiq72nwosJkFp8PyqY=XLt6ZMS2rnsTHaN-arzQUemR5cuqRg@mail.gmail.com>
-Subject: Re: [git pull] drm for 6.18-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Maarten ter Huurne <maarten@treewalker.org>, John Hubbard <jhubbard@nvidia.com>, 
-	Dave Airlie <airlied@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Sima Vetter <sima@ffwll.ch>, 
-	dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="A+Gspdh5QmYIfiJs"
+Content-Disposition: inline
+In-Reply-To: <20251001193346.1724998-3-jthies@google.com>
+
+
+--A+Gspdh5QmYIfiJs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 7, 2025 at 8:35=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Although that example actually made me go "WTF?" regardless of the
-> changes involved.
->
-> I clearly do not understand the sorting rules either. Why are the
-> "device::" entries not sorted?
+On Wed, Oct 01, 2025 at 07:33:42PM +0000, Jameson Thies wrote:
+> Add support for cros_ec_ucsi to load based on "google,cros-ec-ucsi"
+> compatible devices and "GOOG0021" ACPI nodes.
+>=20
+> Signed-off-by: Jameson Thies <jthies@google.com>
 
-Essentially, `self` (a special case) is placed first, then it puts
-things like modules (i.e. `lower_case`), then things like types (i.e.
-`CamelCase`), and then things like constants (i.e. `UPPERCASE`):
+Reviewed-by: Benson Leung <bleung@chromium.org>
 
-    use crate::{
-        self, myitem1,
-        myitem1::{myitem2, MyItem2, MYITEM2},
-        myitem3, MyItem1,
-        MyItem1::{myitem2, MyItem2, MYITEM2},
-        MyItem3, MYITEM1,
-        MYITEM1::{myitem2, MyItem2, MYITEM2},
-        MYITEM3,
-    };
 
-This got substantially changed for the next edition (2024), though --
-they decided to just do version sorting (I added a 256 to show that
-too):
+> ---
+>  drivers/usb/typec/ucsi/cros_ec_ucsi.c | 25 +++++++++++++++++++++++--
+>  1 file changed, 23 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/usb/typec/ucsi/cros_ec_ucsi.c b/drivers/usb/typec/uc=
+si/cros_ec_ucsi.c
+> index eed2a7d0ebc6..3d19560bbaa7 100644
+> --- a/drivers/usb/typec/ucsi/cros_ec_ucsi.c
+> +++ b/drivers/usb/typec/ucsi/cros_ec_ucsi.c
+> @@ -5,11 +5,13 @@
+>   * Copyright 2024 Google LLC.
+>   */
+> =20
+> +#include <linux/acpi.h>
+>  #include <linux/container_of.h>
+>  #include <linux/dev_printk.h>
+>  #include <linux/jiffies.h>
+>  #include <linux/mod_devicetable.h>
+>  #include <linux/module.h>
+> +#include <linux/of.h>
+>  #include <linux/platform_data/cros_ec_commands.h>
+>  #include <linux/platform_data/cros_usbpd_notify.h>
+>  #include <linux/platform_data/cros_ec_proto.h>
+> @@ -235,7 +237,7 @@ static void cros_ucsi_destroy(struct cros_ucsi_data *=
+udata)
+>  static int cros_ucsi_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev =3D &pdev->dev;
+> -	struct cros_ec_dev *ec_data =3D dev_get_drvdata(dev->parent);
+> +	struct cros_ec_dev *ec_data;
+>  	struct cros_ucsi_data *udata;
+>  	int ret;
+> =20
+> @@ -244,8 +246,13 @@ static int cros_ucsi_probe(struct platform_device *p=
+dev)
+>  		return -ENOMEM;
+> =20
+>  	udata->dev =3D dev;
+> +	if (is_acpi_device_node(dev->fwnode) || is_of_node(dev->fwnode)) {
+> +		udata->ec =3D dev_get_drvdata(pdev->dev.parent);
+> +	} else {
+> +		ec_data =3D dev_get_drvdata(dev->parent);
+> +		udata->ec =3D ec_data->ec_dev;
+> +	}
+> =20
+> -	udata->ec =3D ec_data->ec_dev;
+>  	if (!udata->ec)
+>  		return dev_err_probe(dev, -ENODEV, "couldn't find parent EC device\n");
+> =20
+> @@ -326,10 +333,24 @@ static const struct platform_device_id cros_ucsi_id=
+[] =3D {
+>  };
+>  MODULE_DEVICE_TABLE(platform, cros_ucsi_id);
+> =20
+> +static const struct acpi_device_id cros_ec_ucsi_acpi_device_ids[] =3D {
+> +	{ "GOOG0021", 0 },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(acpi, cros_ec_ucsi_acpi_device_ids);
+> +
+> +static const struct of_device_id cros_ucsi_of_match[] =3D {
+> +	{ .compatible =3D "google,cros-ec-ucsi", },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, cros_ucsi_of_match);
+> +
+>  static struct platform_driver cros_ucsi_driver =3D {
+>  	.driver =3D {
+>  		.name =3D KBUILD_MODNAME,
+>  		.pm =3D &cros_ucsi_pm_ops,
+> +		.acpi_match_table =3D cros_ec_ucsi_acpi_device_ids,
+> +		.of_match_table =3D cros_ucsi_of_match,
+>  	},
+>  	.id_table =3D cros_ucsi_id,
+>  	.probe =3D cros_ucsi_probe,
+> --=20
+> 2.51.0.618.g983fd99d29-goog
+>=20
 
-    use crate::{
-        self, MYITEM1,
-        MYITEM1::{MYITEM2, MyItem2, myitem2},
-        MYITEM3, MyItem1,
-        MyItem1::{MYITEM2, MyItem2, myitem2},
-        MyItem3, myitem1,
-        myitem1::{MYITEM2, MyItem2, myitem2},
-        myitem3, myitem256,
-    };
+--A+Gspdh5QmYIfiJs
+Content-Type: application/pgp-signature; name="signature.asc"
 
-https://github.com/rust-lang/rust/issues/123800
+-----BEGIN PGP SIGNATURE-----
 
-You can play with the new one in Compiler Explorer (right-click ->
-Format Document).
+iHUEABYKAB0WIQQCtZK6p/AktxXfkOlzbaomhzOwwgUCaOVpAQAKCRBzbaomhzOw
+wtlBAP4vEF/xKiUvUfs4+ARveJWRsFz4t8iYVw+Koi4pU1PHPAD+IawlbfoNt1Pf
+mV1uQAwlPekA9rhkiai1x3r/epmHaQM=
+=fbBI
+-----END PGP SIGNATURE-----
 
-Cheers,
-Miguel
+--A+Gspdh5QmYIfiJs--
 
