@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-843811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEC88BC051B
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:22:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 562BBBC052B
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:24:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82A22189A129
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:22:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 327B1189CD22
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA85221FA8;
-	Tue,  7 Oct 2025 06:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FDB220F29;
+	Tue,  7 Oct 2025 06:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="abjo5rzD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJ1brEeQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA0934BA4B;
-	Tue,  7 Oct 2025 06:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCE81B2186;
+	Tue,  7 Oct 2025 06:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759818123; cv=none; b=RbvAnvON778Cz9jixWFPY7LfIU8poB/eZthz1ubmbvdsyHXp+ysiJ0DPGKXjCMfiUuJX3aQrE279fR8LR/m/vo7pSXNJGrEoyJuG+Ivmu2umXhVJG+tRLneS2jIro9tZYvApyU9F1IQQRBcSu5pFroFP6YVq7/z7XZeeMLMapu8=
+	t=1759818238; cv=none; b=SnZQuvnTLSpPJUuYFt6Oucqf+tcYcCd3BUKBLFWes2aOfAe1FgzWBCrzfJTw+6kHS1N6DX5oqUk47ooka1fek9a5F3g0n7NcrE7D2SCH5fUB0PxZlydr9L+euUirMPE50WOFqjobP5uM8RsefvyTwLvBOf9cQ33aWpTz8R+O3Ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759818123; c=relaxed/simple;
-	bh=m9l0GR2ClUtN+ciiYusPN4tTbjjNy3iFq1z02WpEF1I=;
+	s=arc-20240116; t=1759818238; c=relaxed/simple;
+	bh=Ja59a957iBMaRAqpZPsZafADwu4TF7aqs2SwJJevMMM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c8+3YszynwPBLXy/zzo7twHeJSgbDH+Vowa8pJYjQ65ezI4iEAURr9V/EFenEZdrkXqMqGJANX6aJnmNyMjW37bLzJ/Fslg03FKbDicOMgdxgcjlUrrRrm0FfBjRnkMLslnIYip4TN84XLK46CxVibqEqX8DlVlc+QBXAyFXvCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=abjo5rzD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFF23C4CEF1;
-	Tue,  7 Oct 2025 06:21:56 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=m7+PR2qkbMgauEcNWD4rt/bdVKZIicmLLf75ZuWl39GiaGWi9upmIkvJhP0IvUpRdrGDiLqzo8kkaOUvMLammxYi0yWi9leoQbJ5DzsWrQCf0PNshluAw928RgLvkkBZgjd9bX5mUoWu1odp/ucYPB0O1tufhj2QbDXA4RAV96o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJ1brEeQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73FD0C4CEF9;
+	Tue,  7 Oct 2025 06:23:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759818122;
-	bh=m9l0GR2ClUtN+ciiYusPN4tTbjjNy3iFq1z02WpEF1I=;
+	s=k20201202; t=1759818237;
+	bh=Ja59a957iBMaRAqpZPsZafADwu4TF7aqs2SwJJevMMM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=abjo5rzDXeCd294Zg+iSQe5/I9Bq95Y6MEc5VEeFGc2NwtAlUWop/7nZpdk9mLR5p
-	 Fm1zBEQ7tw+KuITElHfBr6J6wtlXJVjiygbFgvv/5i76dsMk32xbl+qpTAFRomhNbR
-	 FUX2Lkav/a7XJNNiR6JBT8Nnk/HhKii0H/mcLnCB4AMwmzmPXe0Xe6m0qkye4UL1L9
-	 xTJmamK5ON3lgECZ3QWOTTQ4e3Ptsuj4Ek+4dewQ/e+2Ev58QZbQp7mvOiWcVscWuP
-	 +fffNhZ1qHdrACOy13QITaY02r4OhXeKwTtcGMMewoHf2bXGGJQJ1p9r5riVmC2PKU
-	 332zR9eT/zfmw==
-Message-ID: <e2511655-1907-42db-bed5-8943a8c835c2@kernel.org>
-Date: Tue, 7 Oct 2025 15:21:53 +0900
+	b=fJ1brEeQD2obBuLpaLfbrBymik23ZetXBLtGIk8z3+ltZMufR0/kM7v6z8CdSfh9d
+	 zijTTHBiv8kQbfw/Og52EE3NWbPMQUpiJRCxJqX3WWwdIBk/kHjXcbH15d6HV4LH1l
+	 PJaPN8vbUiM65wzrEhM7izL9emODRhRgDvy4P8Um1Q0G2NXX4jl+JfDCSf/a7DR/n4
+	 YcdK2yiIHzgO2d+21DUMVIc5lceaOmhU/Gcz/u7AjTPdjqftUl/ALOrEbooO2Yxul/
+	 B5fNnlJTp6nlI/AHH/0LPLN0ZVO5gFunne88I5dZdflbdqLF999mLtpe07ZtC62+RA
+	 2hXKSyxiZdHgQ==
+Message-ID: <808d166a-b615-49c6-b0f5-bf5101721381@kernel.org>
+Date: Tue, 7 Oct 2025 15:23:46 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,31 +49,26 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/6] dt-bindings: display: mediatek: disp-tdshp: Add
- support for MT8196
-To: =?UTF-8?B?SmF5IExpdSAo5YiY5Y2aKQ==?= <Jay.Liu@mediatek.com>
-Cc: "linux-mediatek@lists.infradead.org"
- <linux-mediatek@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>,
- "simona@ffwll.ch" <simona@ffwll.ch>, "mripard@kernel.org"
- <mripard@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "airlied@gmail.com" <airlied@gmail.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-References: <20250808125512.9788-1-jay.liu@mediatek.com>
- <20250808125512.9788-5-jay.liu@mediatek.com>
- <20250811-boisterous-skinny-ammonite-a4ca7b@kuoka>
- <ee7b16097fbc7c5cc6b8c3163447d48ead0d44f5.camel@mediatek.com>
+Subject: Re: [PATCH v8 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 HS phy compatible
+To: Pritam Manohar Sutar <pritam.sutar@samsung.com>, vkoul@kernel.org,
+ kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ alim.akhtar@samsung.com, andre.draszik@linaro.org, peter.griffin@linaro.org,
+ kauschluss@disroot.org, ivo.ivanov.ivanov1@gmail.com,
+ igor.belwon@mentallysanemainliners.org, m.szyprowski@samsung.com,
+ s.nawrocki@samsung.com
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
+ dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
+ selvarasu.g@samsung.com
+References: <20250903073827.3015662-1-pritam.sutar@samsung.com>
+ <CGME20250903072936epcas5p4a28d0e63c7f0792b516b0cbc68bf3a8e@epcas5p4.samsung.com>
+ <20250903073827.3015662-2-pritam.sutar@samsung.com>
+ <0df74c2b-31b9-4f29-97d3-b778c8e3eaf1@kernel.org>
+ <007801dc2893$18ed4a20$4ac7de60$@samsung.com>
+ <02ef5180-ad56-45f0-a56f-87f442bf6793@kernel.org>
+ <007f01dc2b81$84ef19b0$8ecd4d10$@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -119,40 +114,27 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <ee7b16097fbc7c5cc6b8c3163447d48ead0d44f5.camel@mediatek.com>
+In-Reply-To: <007f01dc2b81$84ef19b0$8ecd4d10$@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 21/09/2025 13:39, Jay Liu (刘博) wrote:
->>> +
->>> +maintainers:
->>> +  - Chun-Kuang Hu <chunkuang.hu@kernel.org>
->>> +  - Philipp Zabel <p.zabel@pengutronix.de>
->>> +
->>> +description: |
->>> +  MediaTek display 2D sharpness processor, namely TDSHP, provides
->>> a
->>> +  operation used to adjust sharpness in display system.
->>> +  TDSHP device node must be siblings to the central MMSYS_CONFIG
->>> node.
->>
->> Heh? Why would this have to be a sibling? This is really odd, because
->> you cannto actually rely on that.
->>
-> hi Krzysztof,
-> disp-tdshp is one of components of display pipeline. just like OVL,
-> color, etc. MMSYS_CONFIG controls the clock of display pipeline,
-
-
-Read feedback again.
-
-Unfortunately Mediatek produces way too many poor quality patches and
-review has so many obstacles like not addressing the comments. Example
-above. You need to pay more attention and invest more time, before
-pinging or replying to maintainers.
-
+On 22/09/2025 14:26, Pritam Manohar Sutar wrote:
+> This phy needs 0.75v, 0.18v and 3.3v supplies for its internal 
+> functionally. Power Supply's names are as per phy's User Data-Book.
+> These names, (dvdd, vdd18 and vdd33), are considered  for 0.75v, 1.8v 
+> and 3.3v respectively.  
+> "
 > 
->> You just added unverifiable unusual ABI with no explanation.
+>>
+>> I still cannot find constraints for the rest of properties, though.
+> 
+> Sorry I didn't get it completely. Can you please elaborate on the same? 
+
+
+Writing bindings and introductory talks elaborate on that. You add
+properties without constraints. That's not what we want. We want
+constraints.
+
 
 Best regards,
 Krzysztof
