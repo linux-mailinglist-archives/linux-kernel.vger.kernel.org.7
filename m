@@ -1,100 +1,139 @@
-Return-Path: <linux-kernel+bounces-844362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 320F7BC1B05
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:19:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B338BBC1B0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D392634FAA0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:19:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E1D419A423F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951B9213E7A;
-	Tue,  7 Oct 2025 14:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0974D2D94A0;
+	Tue,  7 Oct 2025 14:20:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AealL7oq"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HYz0w0oc"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423D1189BB0
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 14:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E821F0994
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 14:20:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759846791; cv=none; b=ZGKDo8dASJ8NONT7TEz9h+olMink04W6d+wbe/PijjwD2Vgsb3dLuN+I/XNhDaS3bkawaMrSAODkAO2aIFuSmRMOBsaCr74pywJI7NgUlnhYxslD2/7icsTav+qCBzY/BjXbbHqAF4lOrfC9T+mj/rwR4FizufffTH/KD0xPjoc=
+	t=1759846811; cv=none; b=QdbB12R7c9n2UbraiVNH5musEqrWpIHJTjW161+J3Tib01CC/+23Ip12AShgOeJI40slm+ak35/ikal0ARQriaT/zON2zE0hPcEK/qBxbo38l/abTwgURJIwkeg8C/K3ReU5ns0m1Yrx+NH3engJUl6gJDSkGxpU+9Ockv7Tm0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759846791; c=relaxed/simple;
-	bh=qb9S6p6BSPuPyiWGx9zNnwR1agJIZ18Pok86vtrLQHM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ERZGFGvEV/xCLbv0QWwnTs4QyRapzL/iQGK69kOkDojnkSMqeg+/ovXUaIHMwoF+sUmeclacEkpffX9RApENxPkEGBeut2gu9SoeDogDioSEomMl3HFhz5Ch8pGeCSkOL/UV4bZMRBVoWSHbldGu+QPqdk4pvRp5ODyZltmfrCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AealL7oq; arc=none smtp.client-ip=95.215.58.172
+	s=arc-20240116; t=1759846811; c=relaxed/simple;
+	bh=Qw/zGLAlS0WneNM+ATx3EXtlXvXA8Fs6JSI5NyYfX0o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zvj36GgdbMtxGv7hizhEFTxMvjsnZPh62QabPgla0AC3AxJR3d/t5w4Ba1yzAoBa/I8YUxJ25l5WZhs8R/QbrTfPApRmijngnT4nBev3hO5WpoFFTh0n95tlMPxPWs7Va9p21v7MOTTr+6J2+plcZzU7GF9IM1cuEXaZ0QO+5rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HYz0w0oc; arc=none smtp.client-ip=91.218.175.189
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+Message-ID: <4888cefa-e8be-4f0d-9d4a-c82f9ff6cda0@linux.dev>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759846785;
+	t=1759846806;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=6suQz5WzIz9+U9FFWaCDcwSjFxvIbWZ0QfKfsFShpSU=;
-	b=AealL7oqMOOr90eO+hFWynNR0ox46KU+M9uJ2Af+XYQWffpuzjdLVjFFCtphYNKIKLT3iq
-	/271N/jwNLwdecc7tJ94H+hChLaC2Us2gzM+2qLaA5X6rKV/dKc99oMuaSQtMih6bq8JVB
-	yHJsEBHXy5XzDtO7J0cLDXc3Z3y8Ay0=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] lib/vsprintf: Improve vsprintf + sprintf function comments
-Date: Tue,  7 Oct 2025 16:19:06 +0200
-Message-ID: <20251007141905.202067-2-thorsten.blum@linux.dev>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ngYQpH36569K++7CCAQsgIJKCzPaP0ImpmBI/4BGpek=;
+	b=HYz0w0ocj3aTEHZBOXPy4bsjjc6WbH9bd6NEk2nD/pGsK3BaVcHhRV7ggaCHI0sXHAp3gm
+	bIY2bUbzY8r4VuoZrfWcOpOsn2lEujFF7DoeqEOrbmbjMI3W8a7IltVhjgR/K3Hu+j3yp/
+	EKKvz/jrdSgaLy2uUnQgZ+j6QHlEn9Q=
+Date: Tue, 7 Oct 2025 10:20:01 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] mtd: spi-nor: Enable locking for n25q00a
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Michael Walle <mwalle@kernel.org>, linux-mtd@lists.infradead.org,
+ Richard Weinberger <richard@nod.at>, linux-kernel@vger.kernel.org,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>
+References: <20251006223409.3475001-1-sean.anderson@linux.dev>
+ <mafs0ecreontu.fsf@kernel.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <mafs0ecreontu.fsf@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Migadu-Flow: FLOW_OUT
 
-Clarify that the return values of vsprintf() and sprintf() exclude the
-trailing NUL character.
+On 10/7/25 09:15, Pratyush Yadav wrote:
+> On Mon, Oct 06 2025, Sean Anderson wrote:
+> 
+>> The datasheet for n25q00a shows that the status register has the same
+>> layout as for n25q00, so use the same flags to enable locking support.
+>> These flags should have been added back in commit 150ccc181588 ("mtd:
+>> spi-nor: Enable locking for n25q128a11"), but they were removed by the
+>> maintainer...
+> 
+> This makes it sound like the maintainer did something wrong, which is
+> not true. Tudor had a good reason for removing them.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- lib/vsprintf.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+I disagree. The maintainer used his position of authority to make the
+submitter second-guess their correct patch.
 
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index eb0cb11d0d12..e49f350ee549 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -3054,8 +3054,8 @@ EXPORT_SYMBOL(scnprintf);
-  * @fmt: The format string to use
-  * @args: Arguments for the format string
-  *
-- * The function returns the number of characters written
-- * into @buf. Use vsnprintf() or vscnprintf() in order to avoid
-+ * The return value is the number of characters written into @buf not including
-+ * the trailing '\0'. Use vsnprintf() or vscnprintf() in order to avoid
-  * buffer overflows.
-  *
-  * If you're not already dealing with a va_list consider using sprintf().
-@@ -3074,8 +3074,8 @@ EXPORT_SYMBOL(vsprintf);
-  * @fmt: The format string to use
-  * @...: Arguments for the format string
-  *
-- * The function returns the number of characters written
-- * into @buf. Use snprintf() or scnprintf() in order to avoid
-+ * The return value is the number of characters written into @buf not including
-+ * the trailing '\0'. Use snprintf() or scnprintf() in order to avoid
-  * buffer overflows.
-  *
-  * See the vsnprintf() documentation for format string extensions over C99.
--- 
-2.51.0
+These flashes have capacity of greater than the 8 MiB that can be
+protected using 3 BP bits. Micron (and ST before them?) addressed this
+by adding a fourth BP bit. This is consistent across every flash in this
+series, and is clearly documented in every datasheet. Defaulting to 3
+bits is buggy behavior: we should assume flashes behave per their
+datasheets until proven otherwise, especially for less-popular features
+that the original submitter may not have tested.
 
+The original patch was entirely correct, and the maintainer's
+justification for removing the second hunk is flawed.
+
+> Jungseung did not
+> have the flash at hand and Tudor didn't want to apply patches that
+> weren't tested. Both were in agreement for removing the n25q00a changes.
+> 
+> If you are going to mention that commit, then mention the full context,
+> and then also mention what has changed since that makes it possible to
+> add those changes back in. Having tested them on the real hardware for
+> example.
+> 
+>>
+>> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+>> ---
+>> Tested with a mt25qu01gbbb, which shares the same flash ID.
+> 
+> Ughh, is this another case of flash ID reuse? Do mt25qu and n25q00a
+> flashes behave exactly the same and only have two names? If not, then
+> how do you know if n25q00a will also work with these changes?
+
+I examined the datasheet for the n25q00a and determined that it has the
+same status register layout.
+
+In fact, every n25q and mt25q flash has the same status register layout,
+which (as noted above) is necessary to support capacities greater than 8
+MiB (and all flashes in this series have such capacity).
+
+--Sea
+
+>>
+>>  drivers/mtd/spi-nor/micron-st.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/mtd/spi-nor/micron-st.c b/drivers/mtd/spi-nor/micron-st.c
+>> index 187239ccd549..17c7d6322508 100644
+>> --- a/drivers/mtd/spi-nor/micron-st.c
+>> +++ b/drivers/mtd/spi-nor/micron-st.c
+>> @@ -486,6 +486,8 @@ static const struct flash_info st_nor_parts[] = {
+>>  		.id = SNOR_ID(0x20, 0xbb, 0x21),
+>>  		.name = "n25q00a",
+>>  		.size = SZ_128M,
+>> +		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB | SPI_NOR_4BIT_BP |
+>> +			 SPI_NOR_BP3_SR_BIT6,
+>>  		.no_sfdp_flags = SECT_4K | SPI_NOR_QUAD_READ,
+>>  		.mfr_flags = USE_FSR,
+>>  		.fixups = &n25q00_fixups,
+> 
 
