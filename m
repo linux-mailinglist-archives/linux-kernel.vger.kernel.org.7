@@ -1,87 +1,165 @@
-Return-Path: <linux-kernel+bounces-843724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69DBCBC0162
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 05:28:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03308BC016F
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 05:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49A76189746A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 03:29:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A00554E4DCB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 03:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE91821255E;
-	Tue,  7 Oct 2025 03:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666AA19F115;
+	Tue,  7 Oct 2025 03:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uE3WAYpu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="WTL6iwSp"
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0DE1FECAB;
-	Tue,  7 Oct 2025 03:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BDD3C33
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 03:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759807712; cv=none; b=ai3S8W1ukc38GX5QEcrEnia7iymQtR6xepAfu+HsvNNVe9JhG8WwzpEIGnzX9ttXIjsn1HPxXUaiRMYHp3C/qbDV/GywBnxqIxTUKbqkBiCvRFwmMkneOdkDzTSv2NHk+sF/utXeVbhC5vc/DoJ3xJzK++xg/Q56YurClP0oqNU=
+	t=1759807869; cv=none; b=tpR0Jtcjs5Xu7UqqK6sN23ZtSqZO8PvCIbShWF4e83sy7/Pam6FxTVeuTBDQcgor7LXzw85CzeqVXVXHy15OgIV7HaYL/i1ohrbGhRc1t432GZe+U37pCFywKEm+6gmQ7cPkDTQgIYSHSMxRP13SoeJJLTSdQ0V7Q8mSkwO2+wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759807712; c=relaxed/simple;
-	bh=IGPz1eOHjVYs2b15YS8k4jnXq6lIC6xCUXEPiP3J5Tw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TDdZkvcBLMByVFeXIUbVZJ9JeHZMQue5aF+n+WG1GMGYiwq90Fal53lRAR3TCgbJLxDMq7gIwlfMMcsN5oc5HT9aXznSCiPpCCRcvEFWR58wy3DAxyPxQl3dujt5x7GmFmF8bLKLdmXOVpdjgVJueP9TxL6Woith9oa/FgJgNZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uE3WAYpu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88306C4CEF1;
-	Tue,  7 Oct 2025 03:28:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759807711;
-	bh=IGPz1eOHjVYs2b15YS8k4jnXq6lIC6xCUXEPiP3J5Tw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uE3WAYpu8Pl5O8tQpUl5RWgoF1uZ4dmo9fVEVnXY1UldgBdhbpqVlsEaD4P4evweY
-	 Gp4/Sf1rydIjKCJ4H9909WB+3F1fPiRY2cUnQm1SGvoFWCxUZPALF7r1eihyePgn+7
-	 RoNLsbPpmSRoRo1mY0ir4OZdrvnXZ3OoT5GA43Mp5UMDuvPg+m4NKy0w0nslDoejAI
-	 DYq9QYYKVVkXLq8nSkmJQETcjnq2Hktc2bZ63ECdzElidvP0ZBdAWU0RO95dBppNgZ
-	 jJElObdFBM631j3NvK1/gKQp16/AcWh/nYRi7NIBO9ipbwR02iaZa1l3kC8mF0xTB+
-	 wlMt9QUdgGiyQ==
-Date: Mon, 6 Oct 2025 20:27:06 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Joachim Vandersmissen <git@jvdsn.com>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	David Howells <dhowells@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] lib/crypto: Add FIPS pre-operational self-test for SHA
- algorithms
-Message-ID: <20251007032706.GB77681@sol>
-References: <20251006172612.75240-1-ebiggers@kernel.org>
- <38ca063d-521a-4fc4-8398-5e77625533c4@jvdsn.com>
+	s=arc-20240116; t=1759807869; c=relaxed/simple;
+	bh=MhQ6oJejU6PDuMID1wCmHAiUGwf2Bfqf9rncwjrHPQw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=jrHqiD5lzGQnLWrEL87GWE2xhOOkcpWffhSX0yy5auzjeA/HmcRgyEf6QrYIOoGgJb2QK3uAmCkotks/wmQ0QB1RdTFUbvfFP/BHwI386WNJB7ePWLFuaf/UZnKnw7iw3mMotMYFghayAspsM8HVFKOjTZk/6kq+UoEmMweUi90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=WTL6iwSp; arc=none smtp.client-ip=209.85.217.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-5c7fda918feso6197356137.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 20:31:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1759807866; x=1760412666; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rjctk86pjCIgeyP/NdtThstP3+9eB+EELMA59nxuFWo=;
+        b=WTL6iwSpS69VOe17zYnHhBqm+nkBidSvzd7Pj9gEFDXZyR/uouifYQAWiIJrY7DA41
+         nEZGvUwiXISWhc4jYz8F1H3Gfa/qqXBUufc1nGrbZFhZmH7o90c8dzogGfQ5BRDPwWmX
+         ytkgC+UpAhvWm54gvhCQxDjVCMWNnpPqbUlThUEA5D4icp2FyvMRi2ZcPKhDqwsKLnrt
+         a4eYlkUaQDPE+EAcLgPRA9dd7vnBVdI+8B/ij9TH0F0TW750nFoWKskZTNLTk+klEfUk
+         x5j3IT49IDd2gnewq/NUcjtFqLB5+Y3batYxFzkzYE8RZkm7ZFen3ME7uDwSU67INgBi
+         RMYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759807866; x=1760412666;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rjctk86pjCIgeyP/NdtThstP3+9eB+EELMA59nxuFWo=;
+        b=TjXW7/G0OPhkrr66OFhtBHjw3BX9IjY4WZzDte//Sr1TcgPjiis6sYlSBuV/0zXm10
+         p9hv7MQ0iB5TTAUT+v2Vh+KuFhZgKSvDtmN6Z9Ys47W6ePoqJRsWad36qt52qfDlyITO
+         A6fINwarfANv/nnoKX8PYW+Xvgo+lf9l39Sxelkieg2sOciooCVNSfW70qybGukiUoOB
+         9APhqtH1vUUpGeLx0srFQgEjESXiQHEHqS2KoSwmQLr6gXJ2/M/eAralLANcmbo3dI3+
+         tHwmVhVCJvSaEN1XuVWaVSQ7CSd1WWb2iXBAt2oj/cjL78dhKsZZEjsmF0U0wQPsBqgl
+         p5rg==
+X-Forwarded-Encrypted: i=1; AJvYcCWY7trPp8ifbEzccJZcg5bO/xbMKkav196TBKt8lSgvBxyZsn3y7rR4p4qiIh666DKTd7XYa9+kAG5tpgM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkAvggNn273QYBqCpKvccG8OdsgPeQ28ZuNCvJ4TAwP9CQa1mj
+	SP5iP2eIEW4ZDOjQovjmw67pYEkBxTgUTsC0MM65x2zRKVuL50ka3WmIuyMzf4Z1Yng=
+X-Gm-Gg: ASbGncvtuhgag6vAjtKdsaXmbi/bmXZde4GWnFqvdU7/sqsVcnl8X3SoHXbCgIE+70N
+	N5Ybsuch36JCp844bgp7aTXFC4zvBUI6D7FDaWihSdsHPBHBOk97NHSTVtJ3iuw1RPgoiCMpdI1
+	g8fH+X3LIveWgYTwIFChtSEm+Y80hb9/2MpAMJHFKaeFbGCLqlCrEoKUuDp+I3WHj1GPIufnRfl
+	jYJnnVTsifienf44HoU5s9fjzIIK5Zl0byoUVCxmfJzfE3Kc8eirVgCf284iZh8JRbvufdhrKMK
+	DEWsp0N91kppjGGdj53tm9+nBcMPvgwWecvkQ7CeWlQrueTk+oKAMGwcylYXa/D0hLoaoLsMyGU
+	QjQFRchecJq4gWv79xBmnTtfP7Y4sl0O+WIbu972DgwbGnUqWNiPsm9dHHqUllGveplqUqkVmCP
+	ODNxAvSdDaXE0yVHSl7YT9b6YM0rdj91w=
+X-Google-Smtp-Source: AGHT+IGKRy0UP3vTkTlJTpx5s9AazpWHtvbvNx1lS1PdbgNpyNUKLM1G0yemMh+rckd5h8dVv5lWbg==
+X-Received: by 2002:a05:6102:5347:b0:59c:93df:4fe with SMTP id ada2fe7eead31-5d41cff3341mr5630492137.9.1759807865789;
+        Mon, 06 Oct 2025 20:31:05 -0700 (PDT)
+Received: from soleen.c.googlers.com.com (53.47.86.34.bc.googleusercontent.com. [34.86.47.53])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-552ea335f07sm2446030e0c.15.2025.10.06.20.31.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 20:31:05 -0700 (PDT)
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+To: akpm@linux-foundation.org,
+	brauner@kernel.org,
+	corbet@lwn.net,
+	graf@amazon.com,
+	jgg@ziepe.ca,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org,
+	masahiroy@kernel.org,
+	ojeda@kernel.org,
+	pasha.tatashin@soleen.com,
+	pratyush@kernel.org,
+	rdunlap@infradead.org,
+	rppt@kernel.org,
+	tj@kernel.org
+Subject: [PATCH v5 0/7] liveupdate: Rework KHO for in-kernel users
+Date: Tue,  7 Oct 2025 03:30:53 +0000
+Message-ID: <20251007033100.836886-1-pasha.tatashin@soleen.com>
+X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <38ca063d-521a-4fc4-8398-5e77625533c4@jvdsn.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 06, 2025 at 10:03:44PM -0500, Joachim Vandersmissen wrote:
-> Hi Eric,
-> 
-> It's a very minor change but I suggest not using "pre-operational
-> self-test". That term specifically refers to a different type of self-test
-> in FIPS 140-3 and it could lead to some confusion here. "cryptographic
-> algorithm self-test" may be better (if you want to be formal), or just
-> "self-test" or "known-answer test".
-> 
+These patches are taken from the LUOv4 series [1] and address recent
+comments from Pratyush.
 
-I don't think that's quite correct.  FIPS 140-3 divides self-tests into
-two categories, pre-operational (executed unconditionally at start-up
-time) and conditional (executed only when conditions are met, such as an
-algorithm being used for the first time).  This patch chooses the first
-option, pre-operational.
+This series refactors the KHO framework to better support in-kernel
+users like the upcoming LUO. The current design, which relies on a
+notifier chain and debugfs for control, is too restrictive for direct
+programmatic use.
 
-We could just call them algorithm self-tests if we don't want to be
-specific as to what time they run at, though.
+The core of this rework is the removal of the notifier chain in favor of
+a direct registration API. This decouples clients from the shutdown-time
+finalization sequence, allowing them to manage their preserved state
+more flexibly and at any time.
 
-- Eric
+In support of this new model, this series also:
+ - Exports kho_finalize() and kho_abort() for programmatic control.
+ - Makes the debugfs interface optional.
+ - Introduces APIs to unpreserve memory and fixes a bug in the abort
+   path where client state was being incorrectly discarded. Note that
+   this is an interim step, as a more comprehensive fix is planned as
+   part of the stateless KHO work [2].
+ - Moves all KHO code into a new kernel/liveupdate/ directory to
+   consolidate live update components.
+
+[1] https://lore.kernel.org/all/20250929010321.3462457-1-pasha.tatashin@soleen.com
+[2] https://lore.kernel.org/all/20251001011941.1513050-1-jasonmiu@google.com
+
+Mike Rapoport (Microsoft) (1):
+  kho: drop notifiers
+
+Pasha Tatashin (6):
+  kho: allow to drive kho from within kernel
+  kho: make debugfs interface optional
+  kho: add interfaces to unpreserve folios and page ranes
+  kho: don't unpreserve memory during abort
+  liveupdate: kho: move to kernel/liveupdate
+  kho: move kho debugfs directory to liveupdate
+
+ Documentation/core-api/kho/concepts.rst     |   2 +-
+ MAINTAINERS                                 |   3 +-
+ include/linux/kexec_handover.h              |  53 +-
+ init/Kconfig                                |   2 +
+ kernel/Kconfig.kexec                        |  15 -
+ kernel/Makefile                             |   2 +-
+ kernel/liveupdate/Kconfig                   |  30 ++
+ kernel/liveupdate/Makefile                  |   4 +
+ kernel/{ => liveupdate}/kexec_handover.c    | 515 ++++++++------------
+ kernel/liveupdate/kexec_handover_debug.c    | 216 ++++++++
+ kernel/liveupdate/kexec_handover_internal.h |  47 ++
+ lib/test_kho.c                              |  30 +-
+ mm/memblock.c                               |  60 +--
+ tools/testing/selftests/kho/init.c          |   2 +-
+ tools/testing/selftests/kho/vmtest.sh       |   1 +
+ 15 files changed, 553 insertions(+), 429 deletions(-)
+ create mode 100644 kernel/liveupdate/Kconfig
+ create mode 100644 kernel/liveupdate/Makefile
+ rename kernel/{ => liveupdate}/kexec_handover.c (79%)
+ create mode 100644 kernel/liveupdate/kexec_handover_debug.c
+ create mode 100644 kernel/liveupdate/kexec_handover_internal.h
+
+
+base-commit: 4a71531471926e3c391665ee9c42f4e0295a4585
+-- 
+2.51.0.618.g983fd99d29-goog
+
 
