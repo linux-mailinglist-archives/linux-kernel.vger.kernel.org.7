@@ -1,163 +1,143 @@
-Return-Path: <linux-kernel+bounces-844708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E16BBC28E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 21:52:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6850BBC28EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 21:53:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E36B34F2F85
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 19:52:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 578604F2F7F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 19:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9069C228CBC;
-	Tue,  7 Oct 2025 19:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F34228CBC;
+	Tue,  7 Oct 2025 19:53:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qoL0TY5Q";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ug7Cvqmm";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qoL0TY5Q";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ug7Cvqmm"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cEhjVh0Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4485015B971
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 19:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0C515B971
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 19:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759866759; cv=none; b=jpbOk9JAmKfjAAkpy4f9bWI3aXsYb76i6P/Z/G9/0dq0uRkOdeR1kLdIHTy05reABOO5TEdgx3sv4vr0fAOHUzIXM5gXdDE3UpVzb/aWtBeupYm9lyyA/3fHH9SpeS/kAL4LlFOSaMXoSqO2O+s+s8UFgrTYnd4DEhLM8hHwqYg=
+	t=1759866799; cv=none; b=jQzgJJ3rVuCNrcxIwnr0fISrMeF7Iz28mfU6EtK/w7MS8Ct/DtAGWrTHliUvIovk+PDEij5r0ZaniOIVKKY1anR+ce/affzpjeWj3aAKe6lnq4o3nyMCLGNt0jcRA6VS6WQqUtwEtPBX56LdfiYSr1XkCi+Pn9XJt+SG+9KwjpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759866759; c=relaxed/simple;
-	bh=W8mfpTTTobhHAMBtX3V8fhqKx02V3ANQOh/eqTqD+xI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ot1nvrUT1reep7I5vZXsBR4LWjymk5IRDlkEuXi33NrAlY/QG85HiWRa7PBDOQDiiIaaVubEhjpqYGPMTP5XKnk5CteuObQ7XYsXKfOOt1saZqsMfcBgCFQQ0/24ordY6arjweAvkpu7tRqacWuikrEtsSwrH6TvRranNU4Oubc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qoL0TY5Q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ug7Cvqmm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qoL0TY5Q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ug7Cvqmm; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 45FAF1F38F;
-	Tue,  7 Oct 2025 19:52:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759866755;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1/6ycznNAaNzZ2Kw9ftZKFBuaKypa6S9AHLf5Pa9sGA=;
-	b=qoL0TY5QaSPvWiJtSGufq7eVuQcA/6LWen9M/JjYE0PQLkdqjbT0q/t5xPLEn9JLdtJLjP
-	csMO4ZWFoaACo7fT9RVozt8IRKXPO1BOwII8NlEbU+RMaNI7h+VpgvLYhJ3WW8urVno5K+
-	jGaIBHOamiKF9hoXxwZmSwGghVvsusA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759866755;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1/6ycznNAaNzZ2Kw9ftZKFBuaKypa6S9AHLf5Pa9sGA=;
-	b=ug7CvqmmbG8EyqlF1hrah6xb1bGpKOI+y+g3FuaeJ+e5F8328EAaQjvt0HS7aHtoiG+NH1
-	CTRIpSuOwcd9JRBA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759866755;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1/6ycznNAaNzZ2Kw9ftZKFBuaKypa6S9AHLf5Pa9sGA=;
-	b=qoL0TY5QaSPvWiJtSGufq7eVuQcA/6LWen9M/JjYE0PQLkdqjbT0q/t5xPLEn9JLdtJLjP
-	csMO4ZWFoaACo7fT9RVozt8IRKXPO1BOwII8NlEbU+RMaNI7h+VpgvLYhJ3WW8urVno5K+
-	jGaIBHOamiKF9hoXxwZmSwGghVvsusA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759866755;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1/6ycznNAaNzZ2Kw9ftZKFBuaKypa6S9AHLf5Pa9sGA=;
-	b=ug7CvqmmbG8EyqlF1hrah6xb1bGpKOI+y+g3FuaeJ+e5F8328EAaQjvt0HS7aHtoiG+NH1
-	CTRIpSuOwcd9JRBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C100F13693;
-	Tue,  7 Oct 2025 19:52:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gzQ6K4Jv5WiIHAAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Tue, 07 Oct 2025 19:52:34 +0000
-Date: Tue, 7 Oct 2025 21:52:33 +0200
-From: Petr Vorel <pvorel@suse.cz>
-To: Shuhao Fu <sfual@cse.ust.hk>
-Cc: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
-	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, Ben Skeggs <bskeggs@nvidia.com>
-Subject: Re: [PATCH] drm/nouveau: fix bad ret code in nouveau_bo_move_prep
-Message-ID: <20251007195233.GA154142@pevik>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <aOU9BXjYDNoPRQmf@homelab>
+	s=arc-20240116; t=1759866799; c=relaxed/simple;
+	bh=TlsTiDVO/Guhxne2Ydgp1Bn723sJW0361/Ifv3FYjss=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=jsFeuEDzxOGVuzPUJcaReDp24fo/7CzgPvLFHLvFfknY17F+4YMRO/uZSMeurLXg6LXN2BwfBzCGs/h7gv7orR3oAmugJSUc4AXaCGRA3edA7S+SXjSphe8cd+n9CSmoZk2hSuX/E3SVnSa1nF0J8sWUh1fN8Rzk6WsF3qVPo+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cEhjVh0Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4331DC4CEF1;
+	Tue,  7 Oct 2025 19:53:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759866797;
+	bh=TlsTiDVO/Guhxne2Ydgp1Bn723sJW0361/Ifv3FYjss=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=cEhjVh0YsbpLOi8WHiyuxtBPjRZMoSs7xhsLwEzgcVJOxtgto2NDAtauq7manHzU4
+	 8/QMXrRPlg5vkVy43RD4dhqHRiSRMzCSLCEDhz4S3u32kb73sT7nd4Eb/T+ASgQJ0a
+	 WhvXokVvXBiGfC82rsKidkxXK9L34WxcoJ43o0wWCHtUKss9va2mNR3JKlv+sidtzQ
+	 05sb8QH8oRUxCgOffc5Tzh4E5Udszp8VUOgftw5ccrwz3nRFKNHbL8YoipiFCnhSCs
+	 HDeIyHXjB1eoYEM+ZG+lVdp/k58Iadhz70nmj7ubBO9qGTMEmcfnvY3Hp0asehlAsg
+	 ub6XD9tx/C3PQ==
+From: SeongJae Park <sj@kernel.org>
+To: Dmitry Ilvokhin <d@ilvokhin.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Kairui Song <kasong@tencent.com>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Baoquan He <bhe@redhat.com>,
+	Barry Song <baohua@kernel.org>,
+	Chris Li <chrisl@kernel.org>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Yuanchu Xie <yuanchu@google.com>,
+	Wei Xu <weixugc@google.com>,
+	Kiryl Shutsemau <kas@kernel.org>,
+	Usama Arif <usamaarif642@gmail.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH v2] mm: skip folio_activate() for mlocked folios
+Date: Tue,  7 Oct 2025 12:53:13 -0700
+Message-Id: <20251007195313.7336-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <aOPDRmk2Zd20qxfk@shell.ilvokhin.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aOU9BXjYDNoPRQmf@homelab>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.50 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	HAS_REPLYTO(0.30)[pvorel@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_EQ_FROM(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -3.50
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On Mon, 6 Oct 2025 13:25:26 +0000 Dmitry Ilvokhin <d@ilvokhin.com> wrote:
 
-[ Cc Ben ]
+> __mlock_folio() does not move folio to unevicable LRU, when
+> folio_activate() removes folio from LRU.
 
-> In `nouveau_bo_move_prep`, if `nouveau_mem_map` fails, an error code
-> should be returned. Currently, it returns zero even if vmm addr is not
-> correctly mapped.
+A trivial opinion.  So the user-visible issue is the incorrect meminfo, right?
 
-> Signed-off-by: Shuhao Fu <sfual@cse.ust.hk>
-> Fixes: 9ce523cc3bf2 ("drm/nouveau: separate buffer object backing memory from nvkm structures")
+I read your changelog below saying you changed this message from v1 to frame on
+unevictable LRU rather than stat accounting, and I think that's nice to
+understand the detail.  But I think further describing the resulting
+user-visible issue can be helpful at better understanding the motivation of
+this nice patch.
+
+> 
+> To prevent this case also check for folio_test_mlocked() in
+> folio_mark_accessed(). If folio is not yet marked as unevictable, but
+> already marked as mlocked, then skip folio_activate() call to allow
+> __mlock_folio() to make all necessary updates. It should be safe to skip
+> folio_activate() here, because mlocked folio should end up in
+> unevictable LRU eventually anyway.
+> 
+> To observe the problem mmap() and mlock() big file and check Unevictable
+> and Mlocked values from /proc/meminfo. On freshly booted system without
+> any other mlocked memory we expect them to match or be quite close.
+> 
+> See below for more detailed reproduction steps. Source code of stat.c is
+> available at [1].
+> 
+>   $ head -c 8G < /dev/urandom > /tmp/random.bin
+> 
+>   $ cc -pedantic -Wall -std=c99 stat.c -O3 -o /tmp/stat
+>   $ /tmp/stat
+>   Unevictable:     8389668 kB
+>   Mlocked:         8389700 kB
+> 
+>   Need to run binary twice. Problem does not reproduce on the first run,
+>   but always reproduces on the second run.
+> 
+>   $ /tmp/stat
+>   Unevictable:     5374676 kB
+>   Mlocked:         8389332 kB
+> 
+> [1]: https://gist.github.com/ilvokhin/e50c3d2ff5d9f70dcbb378c6695386dd
+> 
+> Co-developed-by: Kiryl Shutsemau <kas@kernel.org>
+> Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
+> Signed-off-by: Dmitry Ilvokhin <d@ilvokhin.com>
+> Acked-by: Usama Arif <usamaarif642@gmail.com>
+
+Because this is a fix of a user-visible issue, I'm wondering if this deserves
+Fixes: and Cc: stable@.
+
+Anyway my comments are only trivial ones, and I think the change is good.
+
+Reviewed-by: SeongJae Park <sj@kernel.org>
+
 > ---
->  drivers/gpu/drm/nouveau/nouveau_bo.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Changes in v2:
+>   - Rephrase commit message: frame it in terms of unevicable LRU, not stat
+>     accounting.
 
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.c b/drivers/gpu/drm/nouveau/nouveau_bo.c
-> index b96f0555ca14..f26562eafffc 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_bo.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
-> @@ -929,7 +929,7 @@ nouveau_bo_move_prep(struct nouveau_drm *drm, struct ttm_buffer_object *bo,
->  		nvif_vmm_put(vmm, &old_mem->vma[1]);
->  		nvif_vmm_put(vmm, &old_mem->vma[0]);
->  	}
-> -	return 0;
-> +	return ret;
+Yet another trivial and personal opinion.  Adding a link to the previous
+version could be helpful for reviewers like me.
 
-LGTM.
-Reviewed-by: Petr Vorel <pvorel@suse.cz>
+Thanks,
+SJ
 
-Kind regards,
-Petr
+[...]
 
