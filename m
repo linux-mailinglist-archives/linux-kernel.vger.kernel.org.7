@@ -1,197 +1,136 @@
-Return-Path: <linux-kernel+bounces-844478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7208BC2065
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:03:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76185BC2074
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8C0B19A2E56
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:03:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 367CB4F714F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E2C2E764C;
-	Tue,  7 Oct 2025 16:03:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899A52E7186;
+	Tue,  7 Oct 2025 16:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DPKhSKtQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jFCCekN9"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E517A2E7193
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DAF52E1C7A
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759852979; cv=none; b=BFq6QX3YWNTE9ztvnE9NWPMwtQlsnj22T5alrct1eBpIb4Ud7YSAtbb3j4XpWgKtNfmHSDwmnTi0L17XP0xBhHjOZkWHz7q6+Fl0Yfg8JnaZ+V/N0Gp7BtpcxMQ0/WBNoINfihP3S0Ppuea6+F5iNI+emAr7Hgi5Ynd7NW2d4aA=
+	t=1759852995; cv=none; b=FpOc3X8HgdZOaGcLFGlzNSQyWBgQkoYp+lhX9ttPjjCotNkk/QFmQYhEdd2kZm2FZoPFzPrefg6wS7gqw4v0NzGh5uVd4jkXeQaQ9b6j57ctM+b7e80ECP2YZ48oC4FYmL+J5sRHLzEnyMfZ8oxcqbJgCsi5nZCJqvvc+P66CVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759852979; c=relaxed/simple;
-	bh=eZnjY/1uRorpVUA11zHcJ2APdx2Vku/TYD0GLCz90q4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I+J2O/cBr1S+A9ggOXcqZ/9o29Uk5+cnpxfvSJ/t5aWdlWjLQdPATWrMIAAUz90DU1Maztf4F0tga7dYtcX1VnvyUtKe6FU9e4AZC3dIY23g+pExVsZcOhC3vHrHwiphgP8pQ/fZcK9C1hAZF2RBaVkBExrFZ/Zu/GbQX+1NIFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DPKhSKtQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759852976;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=D02vIogCWcywjjMvcCY1S+8ke4T1mD4/y69uYsSn6EI=;
-	b=DPKhSKtQpYPp7Di4JWW4OMcMpfD2ri6cBhfEOTemg/Ytk2KqAyG4eohGnjqXWHmhvbMBfw
-	lB6Fg1q6qEhQ0m0sCwuWvEOKSHJdobKDr9JBUbKaOqqRafgWofb4xZ4UvhYGR0f9nybzsQ
-	M+pyOsZOBKGVF/21hyv7DluIq5BdWNE=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-67-Xj2TKSWmP-awt8j7KJ-PHQ-1; Tue, 07 Oct 2025 12:02:55 -0400
-X-MC-Unique: Xj2TKSWmP-awt8j7KJ-PHQ-1
-X-Mimecast-MFC-AGG-ID: Xj2TKSWmP-awt8j7KJ-PHQ_1759852974
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46e473e577eso33682655e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 09:02:55 -0700 (PDT)
+	s=arc-20240116; t=1759852995; c=relaxed/simple;
+	bh=fJ72ZMhavTt/zW71hZxTnZ2SN+OoyfXQg3BT41sI8Lw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jqJ4hE629O4lJAF+ccA4bSGCmgOSUPEpiVvGnM85jOLkW/XoGigIxvKQaHX4AqwDg1ZFMTviDfAqhez0fYZksuhJHcW4rrrwDkOOD9nxwSnmjmOqOeuk/1OL8m7Dz8Wp0MccP1rThJXbcQ3FcWemfj5MDH9DKAfxXHaxLVSbzAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jFCCekN9; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b3e44f22f15so960246066b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 09:03:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759852992; x=1760457792; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7Cm5Dko9olaR4ZjBSYSeJvT1TaV6qKnd54YvU1t3L9I=;
+        b=jFCCekN9RwyDqx0qwWloiB2wwjxnod2enfPpmNxf62IebJoXUXrWni7d1z3/EnGHfy
+         aNjUnnfzdXYBXMN24SVO9QzcPUDwdeih3LIjXUTaLo5rLJQyZ9VQml+fPbGzSgoT5Ybd
+         loMdf0h4Qra0w/hNiQD++yk8JcJ7wz5QLH7DqqYa9/F+5XzltCrB49IxTZpEzjz9pyDG
+         BIoqsvlqBbcvI/GJM/sLpM8IMlgP1FTh7bH075VpkQ2xYaw60YQMBJ2X2YJ7JBqSl/6u
+         CUNvszkf+5wJEVfvKbnhLSm202BycDdQPadAoVY4BUgX+4BMlnGVCjNbKk6CqM3paVHe
+         Zj5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759852974; x=1760457774;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1759852992; x=1760457792;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=D02vIogCWcywjjMvcCY1S+8ke4T1mD4/y69uYsSn6EI=;
-        b=RY4uaL+MWtS4EQeW6x2+6u3CT/Ieu5t3OEkaITSpdEe9eGHcuun//Eoz5JZRJ8XRTO
-         IFgmIwlO0PkRyp1bnnDR5UqezzgVHxECYrQELXKbVmT708DKHelKBw0fDPbD6XO9n0/d
-         3tK4GoDTSHEmCcrkdeuHC78AQi3PkUIwiKC+h37kmaUDbaxjKwYRm46MKpmOP42z3vYx
-         uqetHfZTPE4gJmcLkMImV2gExQAnAoGfljZdm0Y9ewwRMcgNxtoXd/CWtdPi4TdQNQCL
-         OEPPQQhYBnPhZuBYpmki6s/Gha6JSGhM7y12Ot7zZ4k7LUbYrxR090QlsSi6gFOpnBsa
-         WveQ==
-X-Gm-Message-State: AOJu0Yzb75UH5aqHkwN79z2ecac8G0Bu+qy4jY/ayVtPQglxfGI6yQRj
-	Df04kZu0SGhFx8SJKoWDFo9XIphlGNrdKojrhJqL81LjSGFxsFVbmZpKDItcNDlJdE6kmqk1W8v
-	Dj/CtEOa2kVxq3cKXdMpRv2dVS9hscqH1YY2Ik6ff0OE8/mXbNob+LPq7E7tzAsMoCA==
-X-Gm-Gg: ASbGncvLg9sw2hzki3VFXfTVMbLx2bP58LkG0uIxCrngul97pGMUsNf/m5KJUirWRrF
-	Z6muZorU0cB7mG3uPtxkDOniuujmd4ifNEq0fm5wjyFoRZNwfykXztsQ4jcnahRN+jSkuoqmktc
-	NSVsUHyBjqaeyihmGDklKRvMCX4aH0iloL6i9c1eNyTjXS2WSdMgO/ctPdeP6IefrDbdKdhNXet
-	eBh6le+bff35FRvuhX9XMXYifbL2As01b5tuFHsg9nSfX5BtY7imRfYfjLzD5CMBb2FNCLczVt7
-	sTR1IymeF8W/kl7yshJ4Qy77Pt+PNzDPs8vCByZl75LTZdGj9TTqo0ZZaRS+CZfj/PTP7kbw/4C
-	pgGvZR1uJ
-X-Received: by 2002:a05:600c:46cf:b0:46e:35a0:3587 with SMTP id 5b1f17b1804b1-46fa9b02cebmr918055e9.27.1759852974076;
-        Tue, 07 Oct 2025 09:02:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGOCwhrXnFdPlPojqY5siU8KpIQ2/rmE8ldqFTs7bhEaF0DysabXEfVeEe2qCO04cRNTkizwg==
-X-Received: by 2002:a05:600c:46cf:b0:46e:35a0:3587 with SMTP id 5b1f17b1804b1-46fa9b02cebmr917695e9.27.1759852973646;
-        Tue, 07 Oct 2025 09:02:53 -0700 (PDT)
-Received: from [192.168.3.141] (tmo-083-110.customers.d1-online.com. [80.187.83.110])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d869d50sm26841834f8f.0.2025.10.07.09.02.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Oct 2025 09:02:53 -0700 (PDT)
-Message-ID: <0daf151e-d126-4e7b-adb6-5d6b745f4ad2@redhat.com>
-Date: Tue, 7 Oct 2025 18:02:51 +0200
+        bh=7Cm5Dko9olaR4ZjBSYSeJvT1TaV6qKnd54YvU1t3L9I=;
+        b=Zh29yFR1BZXcUfrQ0jYpj7McY+878n9jb8GOjOB76+Fa00zPiQZLULDBepdvI7H20r
+         HQZZWoHOwAqZJ3NJ8jh9gRW+ftioRJFyOQqqYZ7ZQ3DS7Yg0uQ/kQ8a0qFSMxvB1okc1
+         fyzw4a7nxXtqTGp+1qCyyGkPPG5blCa4SuoWFGezgjLJgoHsqoeI9b5DfqaPtn8UttcA
+         mkLFU5XalNTpxNoEG05+6QvdczbRM6yMop7GlFIhnrw1usrdL+20hw3YWERahxZWJFZL
+         QVJdW6PZ180nYAlYoRHWTKkBQ+yN6Dwd9+iiJZU5SbCOl4ynkzCoEjcn1ghO//oerDg2
+         ZIAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVD1TZEUsqGsPOHl/+X4TkuAKLPVSL8oYR8Babr09TvgQuCCG3Gn/p/KGFPv8rEE+FBnYrEXqdo3kqjBCY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfdDEIZu2TT6iB+e7+0aOPHRtd+qIgMU0fwJjlDsaPjmEIxqZt
+	nDRrc9ni5ig0znngqENHyk97Gf+sVbWTfovSbg6IDY2SHFyn2leLxV/4n8E0ovByuxg=
+X-Gm-Gg: ASbGncuQobqrbMhKVbhQEy2WfqCHgO69ht9lDnMQe5VO72E5dAWc86coddheHOS6dQP
+	Q0I6NyXmBOmhGqGY3vItc8GNukoy/hVr9FWFiXpXg7u//9QdSE0COsSy9jjeeOZZ4KVxig8t+e/
+	OWFES9Xb2s804+a7++vJQiW16PjTHgvaMzx+ygu78gn0t0UnthM1QwpEGDpOv7Vy005W3Qcho1N
+	/0/PNZzhhFHIOJt+fVyCPXHIw0cdE0+XPBUgdHa2t/dJ+DtTuoxFh+OISNsfWqdXe5A/4E5ns1S
+	5ZfMGTWRtMlSgdsEBABT8oWYrkDmvqO6zDW5/6k5o/MTb/15v/WkHi83L0GwR1xmCuYXrnYNVyA
+	mc6ZDAF5qkayethdX7PPmBdjogZOW77zS/NVNygPUwBjNpXRnYP6nyajPmTyj0jhQBbSdYRIu7j
+	Rb5Br/Uk8xJ4eTX5Av1Au/nFgsNsTUZmAeaPNVOmci
+X-Google-Smtp-Source: AGHT+IGcHy/Jl0g2LAmEkVEntCtICg9hZqb+cVzIJexCEPogdkyReymHfPrFtWwic4ednSokiuHGag==
+X-Received: by 2002:a17:907:807:b0:b41:f729:77b0 with SMTP id a640c23a62f3a-b50aa1869bfmr22271266b.21.1759852991654;
+        Tue, 07 Oct 2025 09:03:11 -0700 (PDT)
+Received: from puffmais2.c.googlers.com (224.138.204.35.bc.googleusercontent.com. [35.204.138.224])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652aa637sm1399772566b.12.2025.10.07.09.03.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 09:03:11 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Tue, 07 Oct 2025 17:03:10 +0100
+Subject: [PATCH] dt-bindings: clock: google,gs101-clock: add power-domains
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] Support dynamic (de)configuration of memory
-To: Sumanth Korikkar <sumanthk@linux.ibm.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- linux-s390 <linux-s390@vger.kernel.org>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>
-References: <20250926131527.3260733-1-sumanthk@linux.ibm.com>
- <aOUj_RE8z9OiIIfN@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <aOUj_RE8z9OiIIfN@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20251007-power-domains-clock-google-gs101-clock-v1-1-1ee73c453ba8@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAL055WgC/y2NQQrCQAwAv1JyNpCsqK1fkR7qblyDdVM2oELp3
+ 13E48xhZgWXquJw7lao8lJXKw1410G8TyULamoMgcKBiU642FsqJntOWhzjbPGB2SzPgtmZ+K/
+ 2gforD0dKQw8ttlS56ec3uozb9gU0JNMieAAAAA==
+X-Change-ID: 20251007-power-domains-clock-google-gs101-clock-3208b1960d98
+To: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.14.2
 
-On 07.10.25 16:30, Sumanth Korikkar wrote:
-> On Fri, Sep 26, 2025 at 03:15:23PM +0200, Sumanth Korikkar wrote:
->> Hi,
->>
->> Patchset provides a new interface for dynamic configuration and
->> deconfiguration of hotplug memory on s390, allowing with/without
->> memmap_on_memory support. It is a follow up on the discussion with David
->> when introducing memmap_on_memory support for s390 and support dynamic
->> (de)configuration of memory:
->> https://lore.kernel.org/all/ee492da8-74b4-4a97-8b24-73e07257f01d@redhat.com/
->> https://lore.kernel.org/all/20241202082732.3959803-1-sumanthk@linux.ibm.com/
->>
->> The original motivation for introducing memmap_on_memory on s390 was to
->> avoid using online memory to store struct pages metadata, particularly
->> for standby memory blocks. This became critical in cases where there was
->> an imbalance between standby and online memory, potentially leading to
->> boot failures due to insufficient memory for metadata allocation.
->>
->> To address this, memmap_on_memory was utilized on s390. However, in its
->> current form, it adds struct pages metadata at the start of each memory
->> block at the time of addition (only standby memory), and this
->> configuration is static. It cannot be changed at runtime  (When the user
->> needs continuous physical memory).
->>
->> Inorder to provide more flexibility to the user and overcome the above
->> limitation, add an option to dynamically configure and deconfigure
->> hotpluggable memory block with/without memmap_on_memory.
->>
->> With the new interface, s390 will not add all possible hotplug memory in
->> advance, like before, to make it visible in sysfs for online/offline
->> actions. Instead, before memory block can be set online, it has to be
->> configured via a new interface in /sys/firmware/memory/memoryX/config,
->> which makes s390 similar to others.  i.e. Adding of hotpluggable memory is
->> controlled by the user instead of adding it at boottime.
-> 
-> Hi David,
-> 
-> Looking forward to your feedback to proceed further.
+The CMU can be part of a power domain, so we need to allow the relevant
+property 'power-domains'.
 
-Thanks for bumping it up in my inbox, will comment today :)
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+ Documentation/devicetree/bindings/clock/google,gs101-clock.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+index caf442ead24bda57e531420d8a7d8de8713032ae..31e106ef913dead9a038b3b6d8b43b950587f6aa 100644
+--- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+@@ -46,6 +46,9 @@ properties:
+   "#clock-cells":
+     const: 1
+ 
++  power-domains:
++    maxItems: 1
++
+   reg:
+     maxItems: 1
+ 
+
+---
+base-commit: 3b9b1f8df454caa453c7fb07689064edb2eda90a
+change-id: 20251007-power-domains-clock-google-gs101-clock-3208b1960d98
+
+Best regards,
 -- 
-Cheers
-
-David / dhildenb
+André Draszik <andre.draszik@linaro.org>
 
 
