@@ -1,142 +1,122 @@
-Return-Path: <linux-kernel+bounces-843694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E95ABC003E
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 04:08:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E2CDBC0041
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 04:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D852188E173
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 02:08:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E20A83BAFA4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 02:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB5B1DFD96;
-	Tue,  7 Oct 2025 02:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZpMvRr7h"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA10A1D63C5;
+	Tue,  7 Oct 2025 02:09:05 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668B08488;
-	Tue,  7 Oct 2025 02:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09EB4129A78;
+	Tue,  7 Oct 2025 02:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759802874; cv=none; b=oGBxv+2U+2CaJqt76uEDlX8VxhcJNDPdr8stJKTCwnb+59UAbr5y01dQeGbidhZC0rp4RCYj4wQYTZrGYN2WzF0sv/9pUqNQWNxplYRshlUoUPifkPlb9gN0sScuwr6FPuQ4G445st2/nxyTWuboVfjd5qCFBmr4UXlbBnZqEHs=
+	t=1759802945; cv=none; b=VxZtUqNwgNbCEx5wntpAn01KCs/OQz/orjkBS3M0soGoPnsu+3kHV1Z6OqPdkaIswUxXjs6KAzF+pkqKVGpLsjMzU40EruiGIzpiPXttJyUyxYfvaH2IMd5xbJ2ypUofGmwwyw3w4cCkqTSp+qoBLykkfykL+ZFCCkLS/bDokCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759802874; c=relaxed/simple;
-	bh=vTd9S+B7Dx3MAbsT6utemI9fOi3cMISlPTKvVv3lPkI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p14/joS6DYUkqyH98NFOayCzb88OsHPMbH3ExhBQx5x62Ix9D00K2WvhOx7CI0RTbvarIjCVcobuzy0FaKfbcU8XkPehPTvnZH2aYfAnSQQvshVGVzJJg4aJyfqsdR7MgLPsNGtJ1MJnxaoJTXbjxf3dVoU26WdOqzP7Do/eorA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZpMvRr7h; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=OuPt71NmMidGtdlQykkoZsTnnRr+qx1jmb+5gKzLx+E=; b=ZpMvRr7hgj3fyfMUpCnXiyu4/D
-	x8r4JH14RaG1qEJLKdCABLMvvriTI+vQZvT5ij04S8iZT3GXt0L+XG651Fx7LpsVASxDcivvVTbP8
-	YX9Cd1yMkPPdqfzGKv90q2waA3MdXdYYC2ATriV8XHbSuvclbebqTngcLex2LHUHWOHy6CSmvUOFm
-	0d/crWkbRhEPGKh5fDOkBr2JTAlMceA6torGF2cCLlbXjYDen9/ou0pjW7rN0ak8yjCPBMeH/Dtx1
-	iEE2mcdzJN+h5wq3kqEUV6aW5JT77oyVCeSSdkyH9qvkLNn7oSK9yxanWKz6teiXupLlwMdiwh00B
-	cKrtDQKA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v5x6z-000000064Za-34GJ;
-	Tue, 07 Oct 2025 02:07:34 +0000
-Date: Tue, 7 Oct 2025 03:07:33 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Jann Horn <jannh@google.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Marco Elver <elver@google.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>, Jakub Kicinski <kuba@kernel.org>,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Tony Ambardar <tony.ambardar@gmail.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Jan Hendrik Farr <kernel@jfarr.cc>,
-	Alexander Potapenko <glider@google.com>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	linux-doc@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v4 2/2] slab: Introduce kmalloc_obj() and family
-Message-ID: <aOR15Xb6DfolYM0z@casper.infradead.org>
-References: <20250315025852.it.568-kees@kernel.org>
- <20250315031550.473587-2-kees@kernel.org>
+	s=arc-20240116; t=1759802945; c=relaxed/simple;
+	bh=nMpMItrL2HG0TDPtJtqYXUdrta3yzI7x+lHsxH9Llz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gt+l8Zs20N4H7LZqjgpIRdoBzDBX7NlUN84U7blMT3JA7cKTSE5QdhcYeBjCrpU1uHkNuBkSLl6oHjvrwBfdt7t9rWRvJAoUkfzd6YylEZ3FJDaFhHvyPtsXxRcKZF+t6Is1MdubrcDo/Baw3z2IezMbg+sH7xIeOeNbBQoAjZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id 6DDD811ACE1;
+	Tue,  7 Oct 2025 02:08:55 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id 591D120026;
+	Tue,  7 Oct 2025 02:08:53 +0000 (UTC)
+Date: Mon, 6 Oct 2025 22:10:43 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Runping Lai <runpinglai@google.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Wattson CI <wattson-external@google.com>,
+ kernel-team@android.com, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Luo Gengkun
+ <luogengkun@huaweicloud.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v1] Revert "tracing: Fix tracing_marker may trigger page
+ fault during preempt_disable"
+Message-ID: <20251006221043.07cdb0fd@gandalf.local.home>
+In-Reply-To: <20251007003417.3470979-2-runpinglai@google.com>
+References: <20251007003417.3470979-2-runpinglai@google.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250315031550.473587-2-kees@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 591D120026
+X-Stat-Signature: 5eawuzhhe4dgb5fok9g1c5rjcfifjcty
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19EGSY3o9iEDPH61isLQbRV4JTw4rtuOBY=
+X-HE-Tag: 1759802933-462618
+X-HE-Meta: U2FsdGVkX1+HNYfHciqVADBX6vACzPb9mv/l2DqON9sskKVeQTYE+MKv9DnV/ba3Who3kXjFtdVnX+3vanW1a6P/6gzbUhLwJVIZKj9AcCVviMfHAVwpRmoGOV3eu1+ehbOyWzqm0ABtGTti/3J4F/vM7vXhcxUvBXlmssPm0lPZqLCQ01zyZBHZDN9dsKAAzWAHXT7pvrGM6CP2uTEyYzVx9Db12FWxeYnW6Z0sqIAyibj7W6SsG75zIj2eP+OWTzuZl+96L1kZW+kpgcyilQTAEEnMBjTBk/nlGC+CIMGX/zhUkqXRS6qqIiTlEgp3jxfZjxhtKqIdnI9d6vE3oaYzgy3DPs7dMSxzNZVBD7Cpc39TapA0ad4jKvkInanG
 
-On Fri, Mar 14, 2025 at 08:15:45PM -0700, Kees Cook wrote:
-> +Performing open-coded kmalloc()-family allocation assignments prevents
-> +the kernel (and compiler) from being able to examine the type of the
-> +variable being assigned, which limits any related introspection that
-> +may help with alignment, wrap-around, or additional hardening. The
-> +kmalloc_obj()-family of macros provide this introspection, which can be
-> +used for the common code patterns for single, array, and flexible object
-> +allocations. For example, these open coded assignments::
-> +
-> +	ptr = kmalloc(sizeof(*ptr), gfp);
-> +	ptr = kmalloc(sizeof(struct the_type_of_ptr_obj), gfp);
-> +	ptr = kzalloc(sizeof(*ptr), gfp);
-> +	ptr = kmalloc_array(count, sizeof(*ptr), gfp);
-> +	ptr = kcalloc(count, sizeof(*ptr), gfp);
-> +	ptr = kmalloc(struct_size(ptr, flex_member, count), gfp);
-> +
-> +become, respectively::
-> +
-> +	kmalloc_obj(ptr, gfp);
-> +	kzalloc_obj(ptr, gfp);
-> +	kmalloc_objs(ptr, count, gfp);
-> +	kzalloc_objs(ptr, count, gfp);
-> +	kmalloc_flex(ptr, flex_member, count, gfp);
+On Tue,  7 Oct 2025 00:34:17 +0000
+Runping Lai <runpinglai@google.com> wrote:
 
-I'd like to propose a different approach for consideration.
+> This reverts commit 3d62ab32df065e4a7797204a918f6489ddb8a237.
+> 
+> It's observed on Pixel 6 that this commit causes a severe functional
+> regression: all user-space writes to trace_marker now fail. The write
+> does not goes through at all. The error is observed in the shell as
+> 'printf: write: Bad address'. This breaks a primary ftrace interface
+> for user-space debugging and profiling. In kernel trace file, it's
+> logged as 'tracing_mark_write: <faulted>'. After reverting this commit,
+> functionality is restored.
 
-The first two are obvious.  If we now believe that object type is the
-important thing, well we have an API for that:
+This is very interesting. The copy is being done in an atomic context. If
+the fault had to do anything other than update a page table, it is likely
+not to do anything and return a fault.
 
-struct buffer_head { ... };
+What preemption model is Pixel 6 running in? CONFIG_PREEMPT_NONE?
 
-	bh_cache = KMEM_CACHE(buffer_head, SLAB_RECLAIM_ACCOUNT);
-...
-	ptr = kmem_cache_alloc(bh_cache, GFP_KERNEL);
+The original code is buggy, but if this is causing a regression, then we
+likely need to do something else, like copy in a pre-allocated buffer?
 
-It's a little more verbose than what you're suggesting, but it does give
-us the chance to specify SLAB_ flags.  It already does the alignment
-optimisation you're suggesting.  Maybe we can use some macro sugar to
-simplify this.
+-- Steve
 
-The array ones are a little tougher.  Let's set them aside for the
-moment and tackle the really hard one; kmalloc_flex.
 
-Slab is fundamentally built on all objects in the slab being the same
-size.  But maybe someone sufficiently enterprising could build a
-"variable sized" slab variant?  If we're saying that object type is
-more important a discriminator than object size, then perhaps grouping
-objects of the same size together isn't nearly as useful as grouping
-objects of the same type together, even if they're different sizes.
-
-Might be a good GSoC/outreachy project?
+> 
+> Signed-off-by: Runping Lai <runpinglai@google.com>
+> Reported-by: Wattson CI <wattson-external@google.com>
+> ---
+>  kernel/trace/trace.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index 156e7e0bf559..bb9a6284a629 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -7213,7 +7213,7 @@ static ssize_t write_marker_to_buffer(struct trace_array *tr, const char __user
+>  	entry = ring_buffer_event_data(event);
+>  	entry->ip = ip;
+>  
+> -	len = copy_from_user_nofault(&entry->buf, ubuf, cnt);
+> +	len = __copy_from_user_inatomic(&entry->buf, ubuf, cnt);
+>  	if (len) {
+>  		memcpy(&entry->buf, FAULTED_STR, FAULTED_SIZE);
+>  		cnt = FAULTED_SIZE;
+> @@ -7310,7 +7310,7 @@ static ssize_t write_raw_marker_to_buffer(struct trace_array *tr,
+>  
+>  	entry = ring_buffer_event_data(event);
+>  
+> -	len = copy_from_user_nofault(&entry->id, ubuf, cnt);
+> +	len = __copy_from_user_inatomic(&entry->id, ubuf, cnt);
+>  	if (len) {
+>  		entry->id = -1;
+>  		memcpy(&entry->buf, FAULTED_STR, FAULTED_SIZE);
 
 
