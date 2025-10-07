@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-844386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECF1BBC1C88
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:44:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70565BC1C92
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:45:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 990664F69CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:44:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52FD919A472D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C092E1F13;
-	Tue,  7 Oct 2025 14:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A952E22A9;
+	Tue,  7 Oct 2025 14:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LCsEOOVW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dz+luGCk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6FE3165F16;
-	Tue,  7 Oct 2025 14:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2A82E1F08;
+	Tue,  7 Oct 2025 14:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759848282; cv=none; b=AI+w7nGqOUJPs8gz8Shk0LHqB60iYDvJ70bnq0CQ0EjGQDNrdMWEuNsP8ztC7NqWDeiGfkxGmQpRltsbp+8E3K9K0OuDQGwlcz792KURrGxZAjQ3ES/sEW9QZsyriDWgtRoW3cu9atRDcAQlrm2WHKu/sSkiyB8FGTQrbZv/GsI=
+	t=1759848308; cv=none; b=TA5KP0aeBVzr/zLIwSezBGEj2XXdgvUU/WSclQR/QnINuRkhKOVFcaHCY354Pz2q6OLxu4jzkifXy/Jd9WmHIS8khTvAAusnlkm8GHoPN7ayZ6ge+qFuSW2KWFSAR8f2GMZNY0w6cpH2FwogqnDuVf8smOpfr6evP/c0uins4L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759848282; c=relaxed/simple;
-	bh=LwQYuhhiVaegoG9vOuiMz+raxiZiOmxfQCdb3HkNFE0=;
+	s=arc-20240116; t=1759848308; c=relaxed/simple;
+	bh=stqZpe7AXYgm3Xi9RQkXPgRZUpHQuqJD3/Q7tWQN9eQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tp8hIDKisVajbBr5R6XncJO5N+s3aclUcXsWX3xialSmlj6UMB8XnW9M8zYokInhl67Tmbc4ZDNzz7D3nuovgf60G/3iGayx+3V5j+DXKZJWj9uvDxKunOrd/8F9cKV0q8411xUwCstbgpxQyIKYWtucLCNH+L6STo3thRFh6oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LCsEOOVW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ADB8C4CEF1;
-	Tue,  7 Oct 2025 14:44:38 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=ATUhhoTHwlMnPcQNmO9q9Bec+IO4SDT+bn5WZXUriduPOkHzrqnD0FS/tX/48gTNQeMm7H+1+nzREDpYiASa4B0S0MjwpYVdW/q5cRR4zBme675CfSO7nJZBIXII5NASozHBi03eYsLz3rHkElYDsUxkrCOxRWCcdJi5DU5QiK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dz+luGCk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75BADC4CEF9;
+	Tue,  7 Oct 2025 14:45:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759848282;
-	bh=LwQYuhhiVaegoG9vOuiMz+raxiZiOmxfQCdb3HkNFE0=;
+	s=k20201202; t=1759848308;
+	bh=stqZpe7AXYgm3Xi9RQkXPgRZUpHQuqJD3/Q7tWQN9eQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LCsEOOVWi8R6gUxoaF9qP0eTMus/R1DsFIgTZ4f/GRkSzh8Xep50Z/bAwilT6rTrQ
-	 Dlhed0FlgNCH2kAs0Ga7/eF1WG3H3nEoYZI0iTF6j0EcayN3J8zS5hIZ+QTup2jHPN
-	 J60QrAw9RxVXQseRJXoNTKrX7IynUM2XoMUQ68WnjG8ihvJRHm5xvAz0gdPipqqsbz
-	 BuPwG7QDUBv1p168BPacbDVYmtv3vl7rZFAU6FEFelCPjXDBbKalLp62vhJV6vE4md
-	 DDHN+M7oSY0+az8w+l0wrkmj6P6cCr3nJ2bfSC+yjbSXXKA8k24IvS7TJEz7hE7m+K
-	 Flkv9Nv3sPLbw==
-Message-ID: <4cb4a92d-2f20-47c7-881e-aadcc6f83aa0@kernel.org>
-Date: Tue, 7 Oct 2025 15:44:36 +0100
+	b=Dz+luGCkU/q7b+lUovIWBdPR6tp/x+UDkUmG1jefOKvxEYtdIl3qRNaScxmSSqK9p
+	 /51G8JFeKYKPgzKEqefazI902TXbDeLL5/rHn2H4hcOxFEFAPzULk2sxfNCxPl4+4g
+	 kDBGqJFG9mSFeLZ4+jN+IALwMo2PcsWTv+efNHfzbnKjdkZdwlnjzAsckncdGFIMOc
+	 AvjNYcLoefyrOZnGZp+56QBDpVCduXAHGFf4XQu5o36cjizefLxp0YEOBn4Ady7ZXo
+	 00Ao3rdCyrF/afuMMwn0LIuQPkUNO5KZtY30UrgQHhZaMKpZHBpFDkqQSgbWgVXHnG
+	 740xO3o8jfHag==
+Message-ID: <aa7dedae-8f31-49f9-ad73-009cb8550b93@kernel.org>
+Date: Tue, 7 Oct 2025 16:44:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,76 +49,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/5] Introduce "non-pixel" sub node within iris video
- node
-To: Bryan O'Donoghue <bod.linux@nxsw.ie>,
- Charan Teja Kalla <charan.kalla@oss.qualcomm.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <7b6db4fa-2f73-376d-4eb3-64c1c7e6cda3@quicinc.com>
- <5qsgbqml367yq6g5vb4lotrzulojqhi5zlwwribze373a63qrn@rxi4kwyt66m2>
- <4f38058d-a2f1-4ac5-b234-228cfb2e85ff@kernel.org>
- <1ad2ca1e-1d57-4ad8-a057-ab0d804f1d49@oss.qualcomm.com>
- <7da769b4-88e9-401f-bb21-0ff123818b9c@kernel.org>
- <6840d462-8269-4359-a6e5-d154842b62db@oss.qualcomm.com>
- <af0da28c-3ca0-41dc-aaa4-572723ea74bf@linaro.org>
- <klhvgzizub33f46buqsog54wqksqp24a5tijwyv355l2ao2imo@wdkojfebc6s2>
- <e1a6e75a-2a5d-44a2-8bbc-140eb86d1806@linaro.org>
- <2hh3zkdwgqbdurpr4tibr3gjat6arwl3dd3gxakdaagafwjdrm@aj5em4tbsjen>
- <Ujyoj3HGLVFhS2b0XzcYAMjSiCAuO-lSJ8PMEQLOaaX83tk_0D5zjrL0VDyZAmD3i4zLB3ElKSZBltISb5jJHA==@protonmail.internalid>
- <4a32bbec-2baf-4210-a7c1-1ddcd45d30c8@oss.qualcomm.com>
- <SuwJuCIcLVJwN3YeN1il6tB9wO9OH6bYcnbRpxpuI9Dl7piYLN-hVdnyv0Mal6N-W5pi2aCZI8MxHZDEkoE63A==@protonmail.internalid>
- <4d87d1ca-55b2-426e-aa73-e3fd8c6fe7bd@kernel.org>
- <10a8ccda-4e27-4b06-9a0e-608d6ade5354@nxsw.ie>
-From: Bryan O'Donoghue <bod@kernel.org>
+Subject: Re: [RFC v8 00/21] DRM scheduling cgroup controller
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Philipp Stanner <phasta@mailbox.org>, phasta@kernel.org,
+ Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, dri-devel@lists.freedesktop.org,
+ amd-gfx@lists.freedesktop.org, kernel-dev@igalia.com,
+ intel-xe@lists.freedesktop.org, cgroups@vger.kernel.org,
+ linux-kernel@vger.kernel.org, =?UTF-8?Q?Christian_K=C3=B6nig?=
+ <christian.koenig@amd.com>, Leo Liu <Leo.Liu@amd.com>,
+ =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Matthew Brost <matthew.brost@intel.com>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>, =?UTF-8?Q?Michel_D=C3=A4nzer?=
+ <michel.daenzer@mailbox.org>,
+ Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
+ Rob Clark <robdclark@gmail.com>, Tejun Heo <tj@kernel.org>,
+ Alexandre Courbot <acourbot@nvidia.com>, Alistair Popple
+ <apopple@nvidia.com>, John Hubbard <jhubbard@nvidia.com>,
+ Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ Lucas De Marchi <lucas.demarchi@intel.com>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Rob Herring <robh@kernel.org>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqunf@netflix.com>,
+ =?UTF-8?B?R3LDqWdvaXJlIFDDqWFu?= <gpean@netflix.com>,
+ Simona Vetter <simona@ffwll.ch>, airlied@gmail.com
+References: <20250903152327.66002-1-tvrtko.ursulin@igalia.com>
+ <DD5CCG4MIODH.1718JI1Z7GH8T@kernel.org>
+ <4453e5989b38e99588efd53af674b69016b2c420.camel@mailbox.org>
+ <20250930121229.4f265e0c@fedora> <DD62YFG2CJ36.1NFKRTR2ZKD6V@kernel.org>
+ <20250930135736.02b69c65@fedora>
+From: Danilo Krummrich <dakr@kernel.org>
 Content-Language: en-US
-In-Reply-To: <10a8ccda-4e27-4b06-9a0e-608d6ade5354@nxsw.ie>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <20250930135736.02b69c65@fedora>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/10/2025 15:29, Bryan O'Donoghue wrote:
-> On 07/10/2025 15:25, Bryan O'Donoghue wrote:
->> Rob suggested using an implicit index for function id
->>
->> https://lore.kernel.org/all/CAL_JsqK9waZK=i+ov0jV- 
->> PonWSfddwHvE94Q+pks4zAEtKc+yg@mail.gmail.com/
->>
->> Couldn't we list the entire set of iommus - then detach - subsequently
->> re-attaching in our platform code with FUNCTION_IDs we keep listed in
->> our drivers ?
->>
->> That way the DT is complete and correct, we have a compliant upstream DT
->> but we also find a way to make the FUNCTION_ID specific setup we need.
+On 9/30/25 1:57 PM, Boris Brezillon wrote:
+> Can you remind me what the problem is? I thought the lifetime issue was
+> coming from the fact the drm_sched ownership model was lax enough that
+> the job could be owned by both drm_gpu_scheduler and drm_sched_entity
+> at the same time.
+
+I don't think that's (directly) a thing from the perspective of the drm_sched
+design. A job should be either in the entity queue for the pending_list of the
+scheduler.
+
+However, different drivers do implement their own lifetime (and ownership) model
+on top of that, because they ultimately have to deal with jobs being either tied
+to the entity or the scheduler lifetime, which is everything else but strait
+forward in error cases and tear down paths.
+
+And the fundamental problem why drivers implement their own rules on top of this
+is because it is hard to deal with jobs being tied to entirely different
+lifetime model depending on their state.
+
+So, what I'm saying is that from the perspective of the component itself it's
+probably fine, but for the application in drivers it's the root cause for a lot
+of the hacks we see on top of the scheduler in drivers.
+
+Some of those hacks even make their way into the scheduler [1].
+
+[1]
+https://elixir.bootlin.com/linux/v6.17.1/source/drivers/gpu/drm/scheduler/sched_main.c#L1439
+
+>> Instead, I think the new Jobqueue should always own and always dispatch jobs
+>> directly and provide some "control API" to be instructed by an external
+>> component (orchestrator) on top of it when and to which ring to dispatch jobs.
 > 
-> i.e. you can keep the FUNCTION_ID "metadata" in the driver and associate 
-> specific iommu indexes with the FUNCTION_ID you want in there.
-> 
-> That way you could have multiple FUNCTION_ID smmu entries in the DT and 
-> just associate the DT indexes locally in drivers/platform/qcom/ 
-> iris_metadata_goes_here.c
-> 
-> ---
-> bod
+> Feels to me that we're getting back to a model where the JobQueue needs
+> to know about the upper-layer in charge of the scheduling. I mean, it
+> can work, but you're adding some complexity back to JobQueue, which I
+> was expecting to be a simple FIFO with a dep-tracking logic.
 
-Actually why can't we specify FUNCTION_ID in the iommus = <entries>
+Yes, the Jobqueue would need an interface to the orchestrator. I rather have the
+complexity encapsulated in the Jobqueue, rather than pushing the complexity to
+drivers by having a more complex lifetime and ownership model that leaks into
+drivers as mentioned above.
 
-Surely we could do
+> I have a hard time seeing how it can fully integrate in this
+> orchestrator model. We can hook ourselves in the JobQueue::run_job()
+> and schedule the group for execution when we queue a job to the
+> ringbuf, but the group scheduler would still be something on the side.
 
-     #iommu-cells = <4>;
-     iommus = <&apps_smmu 0x420 0x2 FUNCTION_ID>;
+Can you please expand a bit more on the group model?
 
-and encode the real data we need directly in the iommus list...
+My understanding is that you have a limited number of firmware rings (R) and
+each of those rings has N slots, where N is the number of queue types supported
+by the GPU.
 
----
-bod
+So, you need something that can schedule "groups" of queues over all available
+firmware rings, because it would be pointless to schedule each individual queue
+independently, as a firmware ring has slots for each of those. Is that correct?
 
