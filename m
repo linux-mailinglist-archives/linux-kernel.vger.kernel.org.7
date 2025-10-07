@@ -1,166 +1,76 @@
-Return-Path: <linux-kernel+bounces-844823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 299F5BC2DB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 00:20:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ADF9BC2DAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 00:20:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EB3414E6D6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 22:20:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C08A14E6B71
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 22:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3AC2472B0;
-	Tue,  7 Oct 2025 22:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="hSqn9pR+"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83888221FBB;
+	Tue,  7 Oct 2025 22:19:57 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F721F63FF;
-	Tue,  7 Oct 2025 22:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01392745E
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 22:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759875607; cv=none; b=c8J8yqH0R/K7xwErnUdn6iZ5TgVKlQCfs45vlRp6XXMWAf4FwXbV432kHEhAgRUV5qypz5MZ6FXYMre8LWJ2DZ0RLmOBAFo6Tpeb90QficN7n1UeqCbYvfqzKdTLGwLmls10s9l0EdbarazwwRIASlWcZ8g3E49vOzW2F8M4PiM=
+	t=1759875597; cv=none; b=YHFfc89uvgp6yE4HFMbatDpQIb9O00knD0FAjb9Zx/Yl94i+2wv8pbGwMxVLfdcDTxzmo4mG6gh1IiYn4oDWiADm32nfwUXHvy/i2+E+TTVWrom8AFyLnU7d6v6EIGLCK6YpYYTAAjlHmE16mNWn9I50Av48i2xQP2uNvUptdaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759875607; c=relaxed/simple;
-	bh=1RtDq0A1RZWwZjHU/cddoxGAZzdiIWeIfbGDh4YzFq4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ON+F4qXtF075dVlFOnXznWSyajCXDJ43VNCtrqmWeEdEBTW8Cttcur4Jkw7luo++fOCftTDU/LZPY8S5Zwr8tzi5bL3+tMxUZaKl6tJ1h0YdTDrqF0xRQ11fveIfrye+2pPtWRzRzTZZ/3FMepcgeUwymADIo9l7U4T9p48kGwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=hSqn9pR+; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 597IUbpj010572;
-	Tue, 7 Oct 2025 18:19:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=DKIM; bh=5bylmLC2D9Sq8ZZnNilvP3JpPRe
-	J0dKy7HvUGEtpDsI=; b=hSqn9pR+WMbsm3D8tGlsSOBHtBSO2jtYM2msplrP0ud
-	arv0Vyk9JlWvK2TVh/wC4El5nvcLWWRLPBDqAXpt1kQ/NC/1MaYZJNVcLy0ufzUm
-	JYdAqMxIXy4pbjpNxJI2ejaF9wQApxXHYztXQsxxIACM4aLXtrBZVBXxEeh3F+PW
-	CTLdwPp6lbhKzG6PAhThLHl/AKNb48vcgnjKmZ60T/JSpx1Es6MOHAX4827fC5PM
-	dYJQpAN8PZUSi+NcR4hQBXv5Bjrmz2h2s3OE0aIexe4VIPInRfWKxmXL/UKGsVPQ
-	nzRT/2Rp+jaKyBLf1CY2Q8dBwuHLmQr2Xuv4tQqX7vQ==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 49jwe22pcj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 Oct 2025 18:19:50 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 597MJmH5049657
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 7 Oct 2025 18:19:48 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.37; Tue, 7 Oct
- 2025 18:19:48 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.37 via Frontend
- Transport; Tue, 7 Oct 2025 18:19:48 -0400
-Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 597MJcTP020093;
-	Tue, 7 Oct 2025 18:19:41 -0400
-From: Marcelo Schmitt <marcelo.schmitt@analog.com>
-To: <linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <ukleinek@kernel.org>, <jic23@kernel.org>, <marcelo.schmitt1@gmail.com>,
-        kernel test robot <lkp@intel.com>
-Subject: [PATCH] pwm: Declare waveform stubs for when PWM is not reachable
-Date: Tue, 7 Oct 2025 19:19:38 -0300
-Message-ID: <1ac0fc529e02744aacfcb9140ed597ff60886f39.1759873890.git.marcelo.schmitt@analog.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1759875597; c=relaxed/simple;
+	bh=T0OMHUQed6KSEdn+x3mQlYhzyWL9U6kVcjOF24s/Btw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=a7V+FLrCmWtsdP1I4kGBsvhhTBXUh0XkeiRwpFlcKRMnocz2wKZy3TCl4t+WJn+IDe72+KQLSr2VOPbHyUPvDf+jx3sW2c40PT99HCX9PMkRduHdVhVuiL1Q7qRN5bWObbkT454JzC9Bo/rVHz4R++0l/1wZ2hBl5yP0oCthbIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-4257e203f14so217879575ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 15:19:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759875595; x=1760480395;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T0OMHUQed6KSEdn+x3mQlYhzyWL9U6kVcjOF24s/Btw=;
+        b=DhIs24rVm990+8YMVtEbjk5c0idThRx4qHxCdIclOQroZwQviJclA03sWQoBY4F9Vb
+         1+dGVqxgiyAKyxWzKTkjBUxDLy30V/UjUtzGMyJT9scI9QllZqG2TcEBZvwPKHnWOSoR
+         sDDGesxpyE+qIQ53l0Q/2n8A7vroY91eWqizrvkBpjWEnvKlX7wAxwe+YFd0qOKQWxaR
+         KrZycOGoekPMqDNwuOdbRAEKYyobFCijmVWV6/fS/byik5100ycHvVEIwYDlsBvxu7lv
+         CUXqh26wIB4/Up0ErjZx7X8fhSZqK84jscdxL6KrkkWyee8Q2fX5Fasqa9sBMD+DSa0f
+         BLtQ==
+X-Gm-Message-State: AOJu0YxAjLr5kqPqq/7+s/+XwcORkacj65t8+KrrTxJFfi41SVi3Lf2s
+	7GTHmhKpuQS1RN2p2B8570SizeFNkOFJe7G+TIO9iCkDiHYTc1WYDMDx5seHzyV9wv6wiRYCUoW
+	eR1vVYqgXAj5z/2aPHOHV3I1ID5ApEcOXvTo+DWsnayGOpLIk0QEnSc0vOiQ=
+X-Google-Smtp-Source: AGHT+IFx3Aa9SWYztgfKWJPB2KRAOz3FToY0OuXhMlpYGjzeXFt7SEj+sH5g7mPLHQ7ez5CwL+I45k2YGpKRz4RntXZcDP9EWRoo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Authority-Analysis: v=2.4 cv=Y7n1cxeN c=1 sm=1 tr=0 ts=68e59206 cx=c_pps
- a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
- a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8 a=gAnH3GRIAAAA:8
- a=umOawDddDieID1hGUK0A:9 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: Nw-7FBRIa7Sn_OZS7Y_NPGODW2hMG3pr
-X-Proofpoint-ORIG-GUID: Nw-7FBRIa7Sn_OZS7Y_NPGODW2hMG3pr
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDA0MyBTYWx0ZWRfX+M8Z4c3DG243
- 35MMGlQGbYldZTx26B3epmnZVa2KoLPWdsXwhzza8/NeRUO/zYlecf0PebG51faJRwqgKrNub0K
- bPN3QYkNICiF4JmSZ927+JNd55SN/JhyTZPX8Ivd5iJLwhI6WM2TW011z9fAMRiwe9n4ZueK9IZ
- YRtYmb3Nm2x+sjigc6O+Tqb39gzVoPp8fBsB5R2rEo8MBSTNbOUDcLyoupoxCbC0zoFUtOYuqEg
- OquKQJkutlrRYtBJjOp9EYQ09cJ9dnkj0T0jp1XZlr+ZAa5Fa5GjZD12MJbFEczV7slbPK70soJ
- SRooWLlOaF3VHlJ0YDmoL18JsYVm31mv6oCerBdDYkd6QhgnuOW/kU2f4586CvlR8I61c0MoIJ/
- bSL3ZV1yWPgbPAFi0mMXEgi7DCpgtg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-07_02,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 adultscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
- phishscore=0 impostorscore=0 malwarescore=0 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040043
+X-Received: by 2002:a05:6e02:1987:b0:428:e543:1b2 with SMTP id
+ e9e14a558f8ab-42f8734708emr9387635ab.1.1759875594699; Tue, 07 Oct 2025
+ 15:19:54 -0700 (PDT)
+Date: Tue, 07 Oct 2025 15:19:54 -0700
+In-Reply-To: <68c58bfa.050a0220.3c6139.04d2.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e5920a.050a0220.256323.0029.GAE@google.com>
+Subject: Forwarded: kernel BUG in ext4_write_inline_data
+From: syzbot <syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Previously, the PWM waveform consumer API would not be declared if
-CONFIG_PWM was not reachable. That caused kernel builds to fail if a
-consumer driver was enabled but PWM disabled. Add stubs for PWM waveform
-functions so client drivers that use, but don't depend on PWM, can build if
-PWM is disabled.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Fixes: 6c5126c6406d ("pwm: Provide new consumer API functions for waveforms")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202509272028.0zLNiR5w-lkp@intel.com/
-Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
----
-Cc: Jonathan Cameron <jic23@kernel.org>
-Hi Uwe,
+***
 
-This is a fix based on a report from 0-day bot [1].
-We need this for a sophisticated IIO device that makes direct use of a PWM
-waveform (in addition to indirect use of PWM through SPI_OFFLOAD_TRIGGER_PWM). 
-I'm not very familiar with the details of how it works for series of
-patches that update multiple subsystems. Documentation says such sets may go
-through the -mm tree. Though, this is a small change and the consumer driver set
-depends on it. Would it be okay if this gets picked up through Jonathan's IIO tree?
+Subject: kernel BUG in ext4_write_inline_data
+Author: eraykrdg1@gmail.com
 
-[1]: https://lore.kernel.org/linux-iio/202509272028.0zLNiR5w-lkp@intel.com/
-
-Thanks,
-Marcelo
-
- include/linux/pwm.h | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index 549ac4aaad59..a20ddc40a32a 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -504,6 +504,25 @@ struct pwm_device *devm_fwnode_pwm_get(struct device *dev,
- 				       struct fwnode_handle *fwnode,
- 				       const char *con_id);
- #else
-+static inline int pwm_round_waveform_might_sleep(struct pwm_device *pwm, struct pwm_waveform *wf)
-+{
-+	might_sleep();
-+	return -EOPNOTSUPP;
-+}
-+
-+static inline int pwm_get_waveform_might_sleep(struct pwm_device *pwm, struct pwm_waveform *wf)
-+{
-+	might_sleep();
-+	return -EOPNOTSUPP;
-+}
-+
-+static inline int pwm_set_waveform_might_sleep(struct pwm_device *pwm,
-+					       const struct pwm_waveform *wf, bool exact)
-+{
-+	might_sleep();
-+	return -EOPNOTSUPP;
-+}
-+
- static inline bool pwm_might_sleep(struct pwm_device *pwm)
- {
- 	return true;
-
-base-commit: 8f2689f194b8d1bff41150ae316abdfccf191309
--- 
-2.39.2
-
+#syz test
 
