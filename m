@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-844815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 763F5BC2D67
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 00:16:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BE07BC2D7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 00:17:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA4763E027E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 22:16:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BF6CF4F0FBB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 22:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05C826F296;
-	Tue,  7 Oct 2025 22:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC592727F2;
+	Tue,  7 Oct 2025 22:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hfXdHTBv"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dfcjkn+F"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579E326B2AD
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 22:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B2C26D4EA
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 22:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759875291; cv=none; b=gdkYu/bPaM/v0fsdyQdjTTrvePaISVza72ALes+xZRztazOeVHmqXqo0Iqw+q45JHAY7xJtW4B8Jo7FUU1EYWoBCoRZmhelpAkO5RCkVXj+DfFzsZGrHibnOpT+s4NlwaOuIeXGr2tX+LKc0hqXDLwKvgfOnWeyuvEEhqFQQ0FE=
+	t=1759875293; cv=none; b=uSiSseuFCP6h+gFBDAWUxsI2BtLpxKFLW4WfztGBeo+FAIDPbSVNw7sz84ow3OIoFA8GPca3+6qVALj4cKWJT05L7WB7qKTvNydzp+0gAn5/f2IJ/F1Nq7UB/kHBd+h71+adfbUUQf8wJsu4g/v0SpwPpqESeBrT14Qcy8FCYUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759875291; c=relaxed/simple;
-	bh=DQgULNgEfY1Jt0H2/OfuNvBsjc9CKm5CpMZ3jXWuIWw=;
+	s=arc-20240116; t=1759875293; c=relaxed/simple;
+	bh=5cUK2vsz2aeKXQeo1630DELsLZCEu5/ef8gHUAuGDsQ=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hXnasWvE/kAzYbMJKlOUS/e2w6y7rtALwPJIkl0qSmA1UAgOD/FRAFBzlVJ22UEGtm9x3I/q1PKcQr3jRInEVsau/BohD8Wfq3x5y8AR+ImjT/9zsC1LeG6r3qqa+JX48rtayMNKxdTHMRhbncAluoi5c5dHOG3pyTrxVybAtRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hfXdHTBv; arc=none smtp.client-ip=209.85.210.202
+	 To:Cc:Content-Type; b=VBkmRqXJ8ukPdyL58Ln7nQ/s90gJ+MF/6IpLegA7vlTboQU2v6v3YiL8Wlb2boUSvAXMJpGA2wY3r6ccIVeyamjMClR1v8AOyEweBkOfMpB8avvolos9mwMHJtigBbYRZotQjn6/iMOQguoheKJ9hlGNh0agBNDPZEFu8Mp/mI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dfcjkn+F; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-792722e4ebeso1501356b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 15:14:50 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7810af03a63so11561613b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 15:14:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759875290; x=1760480090; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1759875291; x=1760480091; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZRjLOkLi9BSY1X/Dn5kuYV5Nji5pDR3uoMZxLkUFt2o=;
-        b=hfXdHTBv15rANbphNVIFd1wb+x+WpzC/F+r+BCt9D9MdWv1N3c1n7RO/njPl1bq64P
-         w0l+cWXfUg1RCpwt1EEzrfU1OHPuXjZFztPnSytFuAjWEQTfC648fwPrWWa/sWIWgrN0
-         FcY0GLBqV6nx+pKlyZA0lmMAjuCUwJhjv2FOPWaIhnuaIMV+SOx9pFQ2IjIUdC2K2nvn
-         rVW7yUPZPOVJx74TZ9C0RoR+1CTLK6d1b4pgTKopTBm0C+kteDsURXDvExAHEG91bbzk
-         dA1YHeB1FT83zZJdrd7b26Jv1N/nNcURkAXOFhJ2tYbPKiVCxBkPITKG/ksNmRgnxIwn
-         7CRA==
+        bh=rE2tP6gNwSGYC+ytU0WdagFGaT6zZ0FH31dgxqOixoc=;
+        b=dfcjkn+F7j6cCOfVolJ5HJ7VuCv3sVn70G4xOjfEE1+rkNQxt0D7v9CoQftuhFiG3j
+         cN6QsPA0HlNc4Uz74tcP+qomSGRfAF+F5HrTNfcTn9V57CgBqG3E2NuEHUrDUctYNAG2
+         /ZPFDg5BYR3mBDh9C6nwBDn8hSsRrZdSjLSvh3cncdulbmE/zAKBKDaYVoPAfm/w/ucD
+         5Kh3LsZ/LhJQAERUd1NUDY3Zf/UPgKYou+7xOBjrZ/uwAkIXfa5r8gybpupa+0ix21DE
+         vPSjT2AcSn5GQpbColTUyVhkdvb0gzY+FozzOHutpOjb1Qipas4XxILBf8Xd6oCaEelW
+         3qDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759875290; x=1760480090;
+        d=1e100.net; s=20230601; t=1759875291; x=1760480091;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ZRjLOkLi9BSY1X/Dn5kuYV5Nji5pDR3uoMZxLkUFt2o=;
-        b=WiXPxeN6YcoM7b/+LjP+pDS+0/nYkTnSXUh756yuKwjVZCHwrAnuZYyPyI9f3CfsQO
-         VxnlXs9NmDnHsB3mTDzLEpSQ/In6xPVj+zT/mu+hk4w9KeITNpazkKfMAFF77fIjU4RX
-         /+gSM/HFuflGGVAXBmG1zKV2wxkILI/cg9kRtPzClPsee9JBHavvPPmoxdML6xu3HO+/
-         JnxEiKJOEOa8CIiIpn+83gxmbkDtA55BXqrP8GGGpNjtYr7XQOWGqw8Ijbmxm2zliA11
-         oEEFf5VsBqkrnWVfdpo6nRPZvMHn+4AMtiJNNv8tcpbuFtpzXZpXLiXLnGhe0vm8Rij5
-         kgUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBhCgTE764n2WLTk7K6dRzY9/xuzEsy1LzOngP9g2kLozVLb8EWinJmfmw7BTK4qHfcXyfSksNeeGMYV4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzt/VwVL9q+xqmYoQv9jrJdLRBgFfaegbmJSo+vjL8DiFpeZTDt
-	5/fxpnwKch4pUsFSvA5vvq0NOeX7P6Z/iTf+hBb4HzKHhP3wsxKEVhfOEntn+3tgChZHMn19OxI
-	/3ELyMA==
-X-Google-Smtp-Source: AGHT+IEms4qpmxT3+KnDpQ4qOyqPi3vhEOg4w0WfOhks0tfRQIlFpS+IHju/WYm3RYsFn35p+Bdpiaz8XEQ=
-X-Received: from pfbig5.prod.google.com ([2002:a05:6a00:8b85:b0:77f:33ea:96e9])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:3cce:b0:77e:5c9f:f85a
- with SMTP id d2e1a72fcca58-79385ce1122mr1342534b3a.14.1759875289698; Tue, 07
- Oct 2025 15:14:49 -0700 (PDT)
+        bh=rE2tP6gNwSGYC+ytU0WdagFGaT6zZ0FH31dgxqOixoc=;
+        b=wfz50V8Ur/PyWmysZtJPRwBW17FfaxindzeaBH6TNr5NTczecQFlgRPtoAMCjqVhbn
+         6McDlIntLHMTSmZKDJerb7I+HIqfM0T50YdZ7yQYPCu1K2gef98lw7oRZFlN49pxGYIh
+         o3nZyxMQGYgV8Ef8AtheVz3yTGcCT53p8Q3CDGF87S0wIr7f2u25Qkvd6sCYecINDxMi
+         cwfhXhy8EZuxRdb1qKesGDID/y+8lHURtifMXPtWlM3bUvl/hCRTProslpR4Y2UbIv9G
+         JiiO6AKfmTK2V85OHt3a66xiQgLyc0FIteFHkWNC1hLKWYiTvu/hKJ694w0iSRwWUlwz
+         paqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXG4TVnR8f2ObbEWLGFqP4l6lYOv5T7X5IHFoOgQH0hEPoSwH1mkAuKLNgR+HCGrqJviYLTwHn8GAwZ1i0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxmh9kqhr3Hn51bD+JzePSKjkidUYtdsEa7SU7nl15TS+flZKxP
+	A8g7OxU7iIrK9dQn1bdUihFrDI5vk81C+DJ5EAViNQ+Uv5nT3OUoPGKZxhV1dBT0T8xIZNtM8on
+	L7LO46A==
+X-Google-Smtp-Source: AGHT+IHT/CfaeIxGRmxefyc3Lic0lFv3xjNb/u7y6hJFRFl3s3gaiIHFCNdvEBNOqVG5LYVtjeYwLccHX/o=
+X-Received: from pgkh14.prod.google.com ([2002:a63:e14e:0:b0:b4e:4eb5:3895])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:914c:b0:32b:7220:8536
+ with SMTP id adf61e73a8af0-32da8138b18mr1530904637.16.1759875291520; Tue, 07
+ Oct 2025 15:14:51 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue,  7 Oct 2025 15:14:15 -0700
+Date: Tue,  7 Oct 2025 15:14:16 -0700
 In-Reply-To: <20251007221420.344669-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251007221420.344669-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.710.ga91ca5db03-goog
-Message-ID: <20251007221420.344669-8-seanjc@google.com>
-Subject: [PATCH v12 07/12] KVM: selftests: Report stacktraces SIGBUS, SIGSEGV,
- SIGILL, and SIGFPE by default
+Message-ID: <20251007221420.344669-9-seanjc@google.com>
+Subject: [PATCH v12 08/12] KVM: selftests: Add additional equivalents to
+ libnuma APIs in KVM's numaif.h
 From: Sean Christopherson <seanjc@google.com>
 To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
 	Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
@@ -88,60 +88,91 @@ Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
 	Ashish Kalra <ashish.kalra@amd.com>, Vlastimil Babka <vbabka@suse.cz>
 Content-Type: text/plain; charset="UTF-8"
 
-Register handlers for signals for all selftests that are likely happen due
-to test (or kernel) bugs, and explicitly fail tests on unexpected signals
-so that users get a stack trace, i.e. don't have to go spelunking to do
-basic triage.
-
-Register the handlers as early as possible, to catch as many unexpected
-signals as possible, and also so that the common code doesn't clobber a
-handler that's installed by test (or arch) code.
+Add APIs for all syscalls defined in the kernel's mm/mempolicy.c to match
+those that would be provided by linking to libnuma.  Opportunistically use
+the recently inroduced KVM_SYSCALL_DEFINE() builders to take care of the
+boilderplate, and to fix a flaw where the two existing wrappers would
+generate multiple symbols if numaif.h were to be included multiple times.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- tools/testing/selftests/kvm/lib/kvm_util.c | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ tools/testing/selftests/kvm/include/numaif.h  | 36 +++++++++++--------
+ .../selftests/kvm/x86/xapic_ipi_test.c        |  5 ++-
+ 2 files changed, 23 insertions(+), 18 deletions(-)
 
-diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-index 8b60b767224b..0c3a6a40d1a9 100644
---- a/tools/testing/selftests/kvm/lib/kvm_util.c
-+++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-@@ -2290,11 +2290,35 @@ __weak void kvm_selftest_arch_init(void)
- {
- }
+diff --git a/tools/testing/selftests/kvm/include/numaif.h b/tools/testing/selftests/kvm/include/numaif.h
+index b020547403fd..aaa4ac174890 100644
+--- a/tools/testing/selftests/kvm/include/numaif.h
++++ b/tools/testing/selftests/kvm/include/numaif.h
+@@ -13,23 +13,29 @@
+ #ifndef SELFTEST_KVM_NUMAIF_H
+ #define SELFTEST_KVM_NUMAIF_H
  
-+static void report_unexpected_signal(int signum)
-+{
-+#define KVM_CASE_SIGNUM(sig)					\
-+	case sig: TEST_FAIL("Unexpected " #sig " (%d)\n", signum)
-+
-+	switch (signum) {
-+	KVM_CASE_SIGNUM(SIGBUS);
-+	KVM_CASE_SIGNUM(SIGSEGV);
-+	KVM_CASE_SIGNUM(SIGILL);
-+	KVM_CASE_SIGNUM(SIGFPE);
-+	default:
-+		TEST_FAIL("Unexpected signal %d\n", signum);
-+	}
-+}
-+
- void __attribute((constructor)) kvm_selftest_init(void)
- {
-+	struct sigaction sig_sa = {
-+		.sa_handler = report_unexpected_signal,
-+	};
-+
- 	/* Tell stdout not to buffer its content. */
- 	setbuf(stdout, NULL);
+-#define __NR_get_mempolicy 239
+-#define __NR_migrate_pages 256
++#include <linux/mempolicy.h>
  
-+	sigaction(SIGBUS, &sig_sa, NULL);
-+	sigaction(SIGSEGV, &sig_sa, NULL);
-+	sigaction(SIGILL, &sig_sa, NULL);
-+	sigaction(SIGFPE, &sig_sa, NULL);
-+
- 	guest_random_seed = last_guest_seed = random();
- 	pr_info("Random seed: 0x%x\n", guest_random_seed);
+-/* System calls */
+-long get_mempolicy(int *policy, const unsigned long *nmask,
+-		   unsigned long maxnode, void *addr, int flags)
+-{
+-	return syscall(__NR_get_mempolicy, policy, nmask,
+-		       maxnode, addr, flags);
+-}
++#include "kvm_syscalls.h"
  
+-long migrate_pages(int pid, unsigned long maxnode,
+-		   const unsigned long *frommask,
+-		   const unsigned long *tomask)
+-{
+-	return syscall(__NR_migrate_pages, pid, maxnode, frommask, tomask);
+-}
++KVM_SYSCALL_DEFINE(get_mempolicy, 5, int *, policy, const unsigned long *, nmask,
++		   unsigned long, maxnode, void *, addr, int, flags);
++
++KVM_SYSCALL_DEFINE(set_mempolicy, 3, int, mode, const unsigned long *, nmask,
++		   unsigned long, maxnode);
++
++KVM_SYSCALL_DEFINE(set_mempolicy_home_node, 4, unsigned long, start,
++		   unsigned long, len, unsigned long, home_node,
++		   unsigned long, flags);
++
++KVM_SYSCALL_DEFINE(migrate_pages, 4, int, pid, unsigned long, maxnode,
++		   const unsigned long *, frommask, const unsigned long *, tomask);
++
++KVM_SYSCALL_DEFINE(move_pages, 6, int, pid, unsigned long, count, void *, pages,
++		   const int *, nodes, int *, status, int, flags);
++
++KVM_SYSCALL_DEFINE(mbind, 6, void *, addr, unsigned long, size, int, mode,
++		   const unsigned long *, nodemask, unsigned long, maxnode,
++		   unsigned int, flags);
+ 
+ /* Policies */
+ #define MPOL_DEFAULT	 0
+diff --git a/tools/testing/selftests/kvm/x86/xapic_ipi_test.c b/tools/testing/selftests/kvm/x86/xapic_ipi_test.c
+index 35cb9de54a82..ae4a4b6c05ca 100644
+--- a/tools/testing/selftests/kvm/x86/xapic_ipi_test.c
++++ b/tools/testing/selftests/kvm/x86/xapic_ipi_test.c
+@@ -256,7 +256,7 @@ void do_migrations(struct test_data_page *data, int run_secs, int delay_usecs,
+ 	int nodes = 0;
+ 	time_t start_time, last_update, now;
+ 	time_t interval_secs = 1;
+-	int i, r;
++	int i;
+ 	int from, to;
+ 	unsigned long bit;
+ 	uint64_t hlt_count;
+@@ -267,9 +267,8 @@ void do_migrations(struct test_data_page *data, int run_secs, int delay_usecs,
+ 		delay_usecs);
+ 
+ 	/* Get set of first 64 numa nodes available */
+-	r = get_mempolicy(NULL, &nodemask, sizeof(nodemask) * 8,
++	kvm_get_mempolicy(NULL, &nodemask, sizeof(nodemask) * 8,
+ 			  0, MPOL_F_MEMS_ALLOWED);
+-	TEST_ASSERT(r == 0, "get_mempolicy failed errno=%d", errno);
+ 
+ 	fprintf(stderr, "Numa nodes found amongst first %lu possible nodes "
+ 		"(each 1-bit indicates node is present): %#lx\n",
 -- 
 2.51.0.710.ga91ca5db03-goog
 
