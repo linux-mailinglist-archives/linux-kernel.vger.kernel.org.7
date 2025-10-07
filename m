@@ -1,176 +1,380 @@
-Return-Path: <linux-kernel+bounces-843807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8E17BC04E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:14:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 850E7BC04FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C07A9189966E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:15:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1153A4EC984
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C58221FD2;
-	Tue,  7 Oct 2025 06:14:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46A822173A;
+	Tue,  7 Oct 2025 06:18:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="v/AxOXC8"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nzNovzh5";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="hGCyGE2/"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D9021CC4F
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 06:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759817690; cv=none; b=idVVV3G7YvSrz+75CLnjeZV4uyPIRFmJcowb4Y2N6DP3DYGNep1L7BDHlVwRaeEOk0w5ydXo9Sfln3a907Mu8k1xoIm8QtMm+j8WVQX1PBfL3NWy4FC6sIxuvDp4cDl8fP3hc/grOCVb5WfRGf9q2pVJNl2HuIyxoxtVNqQnJ5A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759817690; c=relaxed/simple;
-	bh=F1u4iWMm+qcDMG+vr/1mGk7YuWuqcxw34EH+k+It1tI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Iz3TGVqd42aFRlEUViTvZpY5gkoU4KAv7C1YhPbwzi/ORJOX7IZDgbPPa8i9m5eVRC1rB0Vc11CZNFeCkKUYEIF612SQ3zTNd2Btlv9DI2Uf6bS4z+EllJQdS2si5NKT61Rosqbw4ssnuap5BiSKuVAy3rhOhMPhfdsiA/KCx7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=v/AxOXC8; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759817685;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9krF6e/yQ7masYGUY5rb2IPLnZ63vNRajRMzQDojwQ0=;
-	b=v/AxOXC8xspU3EfvKkn8iOi7lVKw5gbna3dK8IanDYZbKs+Rd2FTYbXsD7zNPOXkN9VMOG
-	Ev598DhJZ67GFBZbP/xqoKCRZv+Is0PgTQ68R+1ZE5QMtwwXr+vn0LBnLvR7JoS3CmHI8o
-	jeiQGc9GU25B7N8WuCn6oqUjJVz7Piw=
-From: Menglong Dong <menglong.dong@linux.dev>
-To: Menglong Dong <menglong8.dong@gmail.com>,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, jiang.biao@linux.dev
-Subject: Re: [PATCH RFC bpf-next 1/3] bpf: report probe fault to BPF stderr
-Date: Tue, 07 Oct 2025 14:14:35 +0800
-Message-ID: <3571660.QJadu78ljV@7950hx>
-In-Reply-To:
- <CAADnVQJAdAxEOWT6avzwq6ZrXhEdovhx3yibgA6T8wnMEnnAjg@mail.gmail.com>
-References:
- <20250927061210.194502-1-menglong.dong@linux.dev>
- <20250927061210.194502-2-menglong.dong@linux.dev>
- <CAADnVQJAdAxEOWT6avzwq6ZrXhEdovhx3yibgA6T8wnMEnnAjg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBEDA366
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 06:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759817915; cv=fail; b=N8TaURgND3YfENLLm+31BXY8ngBi/6btjO14xIF0FQ+urALPyFmSr7nzExgy7l5xrSMhfTU9deTQwTQuaj7SASktCW8Fam6RItFgMIXU36gpYjZBy4OPn0UbMQxlNo4ZC5v6zITzujucydItNWdZu4ky9wugW225KOV17Qnc4Ns=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759817915; c=relaxed/simple;
+	bh=PBMbY7oGss2syNCWCH9iTlQQiKMKv0HI7DpBeEmX+eU=;
+	h=References:From:To:Cc:Subject:In-reply-to:Date:Message-ID:
+	 Content-Type:MIME-Version; b=XH+UyDQ8O/814Kx9VzHWcYLWHPISUTlC7npYz3A/664Lc6VhtY1cNECm1sDMVpc+3npl/oy5FKFOFCc6sb2sW0fw5NxvkYFQunCEB30zXBHOetc0mN3ePinJogSog3cJ6CSRb/ARiM4hJa4367gWg9vxRugB188kThIPUrh281k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nzNovzh5; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=hGCyGE2/; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5975dXJj025867;
+	Tue, 7 Oct 2025 06:16:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=Ex9zjkK4vRV7XVyY3E
+	hAgjim3QV2BZGHFmT4o1drYzA=; b=nzNovzh5RIei91DQJrm5+tIpMX/oPN7NG5
+	/804QXVZ3+/BrxGMUPoZslWx36iuU4GkAMR3oVcdafhSH953bneem0OT30v5fWGS
+	ozGl2kLHYKaRnIVQ0V9wVWKCCfUXl4sr3/WEwGF5e0HfHeD8WyOcylKCIUh2HQzV
+	aj2pwv3ULyHkRP7UaLy2PyBGXyMISoR9gCKZkF5hEKoKbk+OUwL4huJXIf9wTcFZ
+	uxG+sPyXysL3SUOY4/rq522SkJ1/QgVsy9MTALk5LcS0RwRaKe37ZRnohIQanbyr
+	Yl85pKaHPtCUPqgh37QQp99VMlz/NYP3urArVcbkZvMHw7Q4TG8g==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49mvwf01xr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 07 Oct 2025 06:16:01 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59755XEm028646;
+	Tue, 7 Oct 2025 06:16:00 GMT
+Received: from ph7pr06cu001.outbound.protection.outlook.com (mail-westus3azon11010061.outbound.protection.outlook.com [52.101.201.61])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49jt17sbg8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 07 Oct 2025 06:16:00 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pjmEErZg76jYjB3lasAVMkAXirmp2XrdaOsSRa+spqX9y9JwIyNDtsTBbVLUgG2Fry67f/bO1nfqL1X4GUt1kGx78bnLtagLq222dGzu7gslb9HoJYI9WysNE45hLaoQnZO8KhMOzh0cP3hpwwNbdw9dr3qg8soHonQBqiWS663S2yoLI69B7KMmH0J8fcgn/Qah8kVsOprjZCfdwvlycvAuoOfcJCuphps0ciRmFgRG381loDWlst/1OqnCFfe5MV+xWuhvZwhy8LDTOM8Z41uWOUBktJ1hn/wvf+qH427lIk3ipQPVPFJKoG6/6n79w94NGJfc25pKkhF+7boTcg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ex9zjkK4vRV7XVyY3EhAgjim3QV2BZGHFmT4o1drYzA=;
+ b=rzhfnRjqdF6KZZKP907XR5T/8fQ2skJSrAI0cNYMcJzNPTSz1vhr9v5ET/XGgFR1N39j9TJq7t98jklcLz5rzVAw+dCpHd7phw6jMyihYQ09bjzoZGhNq9mCUJRvHC9XLxeV3q+V6bfUUwLap3/LAlN0QI1AlzurcnMjVedRokYh8D9rYJSvjf98BFaY51NeG3l40RcRnYPJI0KpHNnkTvAat6Fgy57DJpEHSSzPmleoSus96HSckdm/wHML2vprkfdBr3A41sn0NIvqb6r1FwRRfm92LGVgbtnDq3/+qrF4dTaSo2mDWCD7+HV+QszjeDhsUmbiVZUKNVnlK2kqhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ex9zjkK4vRV7XVyY3EhAgjim3QV2BZGHFmT4o1drYzA=;
+ b=hGCyGE2/sELTBBPL9BKZBVDvz+5ASuXhgfbtQK1vKQq1ildumj1GaQK2tLgLvsUUjbaRA5wQ6y2j8WnSC34mqMOpos+HQvXOktHOsruqJGQN56oNsYTLBRLh9DIuntMZnqbj66NFVhshNYMDo7iBbHn8OLbmcBoneMlL6cgbYdM=
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com (2603:10b6:5:357::14)
+ by DS7PR10MB4975.namprd10.prod.outlook.com (2603:10b6:5:3b1::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Tue, 7 Oct
+ 2025 06:15:52 +0000
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::3c92:21f3:96a:b574]) by CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::3c92:21f3:96a:b574%4]) with mapi id 15.20.9160.015; Tue, 7 Oct 2025
+ 06:15:52 +0000
+References: <20250917152418.4077386-1-ankur.a.arora@oracle.com>
+ <20250923062935.2416128-1-raghavendra.kt@amd.com>
+User-agent: mu4e 1.4.10; emacs 27.2
+From: Ankur Arora <ankur.a.arora@oracle.com>
+To: Raghavendra K T <raghavendra.kt@amd.com>
+Cc: ankur.a.arora@oracle.com, acme@kernel.org, akpm@linux-foundation.org,
+        boris.ostrovsky@oracle.com, bp@alien8.de, dave.hansen@linux.intel.com,
+        david@redhat.com, hpa@zytor.com, konrad.wilk@oracle.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, luto@kernel.org,
+        mingo@redhat.com, mjguzik@gmail.com, namhyung@kernel.org,
+        peterz@infradead.org, tglx@linutronix.de, willy@infradead.org,
+        x86@kernel.org
+Subject: Re: [PATCH v7 00/16] mm: folio_zero_user: clear contiguous pages
+In-reply-to: <20250923062935.2416128-1-raghavendra.kt@amd.com>
+Date: Mon, 06 Oct 2025 23:15:51 -0700
+Message-ID: <877bx7gru0.fsf@oracle.com>
+Content-Type: text/plain
+X-ClientProxiedBy: MW4PR03CA0334.namprd03.prod.outlook.com
+ (2603:10b6:303:dc::9) To CO6PR10MB5409.namprd10.prod.outlook.com
+ (2603:10b6:5:357::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-Migadu-Flow: FLOW_OUT
-
-On 2025/10/2 10:03, Alexei Starovoitov wrote:
-> On Fri, Sep 26, 2025 at 11:12=E2=80=AFPM Menglong Dong <menglong8.dong@gm=
-ail.com> wrote:
-> >
-> > Introduce the function bpf_prog_report_probe_violation(), which is used
-> > to report the memory probe fault to the user by the BPF stderr.
-> >
-> > Signed-off-by: Menglong Dong <menglong.dong@linux.dev>
-> > ---
-> >  include/linux/bpf.h      |  1 +
-> >  kernel/trace/bpf_trace.c | 18 ++++++++++++++++++
-> >  2 files changed, 19 insertions(+)
-> >
-> > diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> > index 6338e54a9b1f..a31c5ce56c32 100644
-> > --- a/include/linux/bpf.h
-> > +++ b/include/linux/bpf.h
-> > @@ -2902,6 +2902,7 @@ void bpf_dynptr_init(struct bpf_dynptr_kern *ptr,=
- void *data,
-> >  void bpf_dynptr_set_null(struct bpf_dynptr_kern *ptr);
-> >  void bpf_dynptr_set_rdonly(struct bpf_dynptr_kern *ptr);
-> >  void bpf_prog_report_arena_violation(bool write, unsigned long addr, u=
-nsigned long fault_ip);
-> > +void bpf_prog_report_probe_violation(bool write, unsigned long fault_i=
-p);
-> >
-> >  #else /* !CONFIG_BPF_SYSCALL */
-> >  static inline struct bpf_prog *bpf_prog_get(u32 ufd)
-> > diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> > index 8f23f5273bab..9bd03a9f53db 100644
-> > --- a/kernel/trace/bpf_trace.c
-> > +++ b/kernel/trace/bpf_trace.c
-> > @@ -2055,6 +2055,24 @@ void bpf_put_raw_tracepoint(struct bpf_raw_event=
-_map *btp)
-> >         module_put(mod);
-> >  }
-> >
-> > +void bpf_prog_report_probe_violation(bool write, unsigned long fault_i=
-p)
-> > +{
-> > +       struct bpf_stream_stage ss;
-> > +       struct bpf_prog *prog;
-> > +
-> > +       rcu_read_lock();
-> > +       prog =3D bpf_prog_ksym_find(fault_ip);
-> > +       rcu_read_unlock();
-> > +       if (!prog)
-> > +               return;
-> > +
-> > +       bpf_stream_stage(ss, prog, BPF_STDERR, ({
-> > +               bpf_stream_printk(ss, "ERROR: Probe %s access faule, in=
-sn=3D0x%lx\n",
-> > +                                 write ? "WRITE" : "READ", fault_ip);
-> > +               bpf_stream_dump_stack(ss);
-> > +       }));
->=20
-> Interesting idea, but the above message is not helpful.
-> Users cannot decipher a fault_ip within a bpf prog.
-> It's just a random number.
-
-Yeah, I have noticed this too. What useful is the
-bpf_stream_dump_stack(), which will print the code
-line that trigger the fault.
-
-> But stepping back... just faults are common in tracing.
-> If we start printing them we will just fill the stream to the max,
-> but users won't know that the message is there, since no one
-
-You are right, we definitely can't output this message
-to STDERR directly. We can add an extra flag for it, as you
-said below.
-
-Or, maybe we can introduce a enum stream_type, and
-the users can subscribe what kind of messages they
-want to receive.
-
-> expects it. arena and lock errors are rare and arena faults
-> were specifically requested by folks who develop progs that use arena.
-> This one is different. These faults have been around for a long time
-> and I don't recall people asking for more verbosity.
-> We can add them with an extra flag specified at prog load time,
-> but even then. Doesn't feel that useful.
-
-Generally speaking, users can do invalid checking before
-they do the memory reading, such as NULL checking. And
-the pointer in function arguments that we hook is initialized
-in most case. So the fault is someting that can be prevented.
-
-I have a BPF tools which is writed for 4.X kernel and kprobe
-based BPF is used. Now I'm planing to migrate it to 6.X kernel
-and replace bpf_probe_read_kernel() with bpf_core_cast() to
-obtain better performance. Then I find that I can't check if the
-memory reading is success, which can lead to potential risk.
-So my tool will be happy to get such fault event :)
-
-Leon suggested to add a global errno for each BPF programs,
-and I haven't dig deeply on this idea yet.
-
-Thanks!
-Menglong Dong
-
->=20
->=20
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR10MB5409:EE_|DS7PR10MB4975:EE_
+X-MS-Office365-Filtering-Correlation-Id: cdebb86c-6736-48a6-6f93-08de0568f7be
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?DranV6A6+tMUHSDMBiWkiDodRDxwqBLI7/gk8xGtGd6opFOSP1CSPu6XqYUc?=
+ =?us-ascii?Q?S1XXrg/g3oV7Z1VhpJOQlF2Lcht1VtgVkNuLrlKk66AN8GOz7Ncubs9xNAJF?=
+ =?us-ascii?Q?O7NtA1T2zzv+v7ht1Tq9IMbjiUTKgNzKNBaMSdI8l5pHwuNnggAw9JE4CMHL?=
+ =?us-ascii?Q?Jobv32/BTdv8GtruK1vfU81JrKPN27bnaaQ+TDUvk8G4H/CegKMvomINKu11?=
+ =?us-ascii?Q?s+z3+4oiQH40OdwguAkBCrJ5fzwXqzDM4/eWHvVr2sM1exOmLMDjfOYbpbGU?=
+ =?us-ascii?Q?M3+fIAeJeRkqj06hKdiPrrT/x2CYAZsoKsJ/otYLBDm20epOZTYC1trG/OXS?=
+ =?us-ascii?Q?Nd7Ep2SSMpG/5b5DGYv15BAHBKPGvSw8H2v6nMdnJkX2/Fi7BueVm92qwcQY?=
+ =?us-ascii?Q?Tkep/ntO/TOBAk7H5+f/FX/UdkS165vBkY0NyKbQL3gQ1/J77pLcfoscA3QR?=
+ =?us-ascii?Q?CGzwUMeP0C9lWCP+qCLnQaKIrAdPE50Cbs3yGMZtwOMZ4VaxkTwKwHAn/U7U?=
+ =?us-ascii?Q?yfYjPTGp2Pd08jnIh/dOxZosCxzqWLzkjPH9IWqLKJqmTDPOAbX89hkPiSuN?=
+ =?us-ascii?Q?9U05MIRgZK62O+ursU5whdexaqvLEuqZaKW3mSgpz32babMOoIs0KPJx57BT?=
+ =?us-ascii?Q?VPUnZDlXKGVQO7MDeI19ErQlXD7VL12isk5hpkVqY0XnJbayikyWUnhG/Q1c?=
+ =?us-ascii?Q?rc2B8QCUSFgUUCxZpp2YZzWbdwE6f4fIJ/EBlucG71zJvuM9rRwdhEyS+FAI?=
+ =?us-ascii?Q?aDaNiuAx1rGS9GLh2aGr/PDmj+uuEdBK/gExSKj9QWC8+9ZiwQobXHhIdpht?=
+ =?us-ascii?Q?GzlQ0jv37m0Yr6rvxl9whelM7cAxqS+3ocUMsVJdzcPQ5l/LpLiv0HCxXGrt?=
+ =?us-ascii?Q?XqskQewjoz2mx7sTxJkFr7GQs+GCAn+4vnueXPyBKZ5WbGbqLpV+cFHYKc/z?=
+ =?us-ascii?Q?xUBa15MjZMsJmFbke/33eVkQjZ9FnXX6e49L+iNvVaR7iA6vXZ+4RzEObEZt?=
+ =?us-ascii?Q?n15vNJouJV+w0uMCRgeVenZlXK/2odaqRgh738AaGTO6pjmT0Zh/xwdBVe0R?=
+ =?us-ascii?Q?EUgKzM6B04E++YygcT5hqOzXI0NMRRcOUICOunMmnmaFjUBY7GJYrrI7bJ/i?=
+ =?us-ascii?Q?Ub3Y2ev2gWzOtiMMlQF12TbUaYFaAQFfmd/eayOIEHTgRgjSlLZZ/8dC8q3n?=
+ =?us-ascii?Q?4ugcvk9m4qLJBZChuwSPpv3PO9Wv03EfWPBlx3B0IVtpM9VNkFwLHFAS90su?=
+ =?us-ascii?Q?7CvkmYeyrzBX3xm0Waj7k3KcrIRdLIleJpML5aQcUWMRidycMtM3uShqmNBf?=
+ =?us-ascii?Q?9sq/lxjvZrRG/ggaRAfNapGD+PBk3ZgEBZpxMLpuQRLbQymo2Iu/asST9uKW?=
+ =?us-ascii?Q?IA/6okDTAUMAViuGeOU5NKrUkRUHnknAm/b/JuenDAWVlTcN+5MqHo0MoQB2?=
+ =?us-ascii?Q?+fHHYl9oR9gihtiYw3ixwLdz3QKx9bJF?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR10MB5409.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?4xnm5w+is+//5x2huC1cv6wyZVfSYDTu0Vo6nxn2oYhrpXPyY7wgZdxLsWxa?=
+ =?us-ascii?Q?Ot44MJk55rYEls5dC14ZHulY2NUd+23oZxHqIjAX5iuunBYJOVCNqz+bOtDB?=
+ =?us-ascii?Q?w+TxrAvAmGLWic2w5azULoIrqWhj/soBNhq1bOFaI2j0vRI+bWy+0Kcoa6w2?=
+ =?us-ascii?Q?R8K6o/JKXMxs1fr4dEIIvYf0FDhHn47PiArG5SocUk9PQlaCaFRiovNa3CoF?=
+ =?us-ascii?Q?aX6m+kcGOnHzoFwErRFwIw1t4Azi1qpn54YPTHhhpa0fTX0arEC90+68PZpq?=
+ =?us-ascii?Q?PZ++hg+msupVEQOLE/J779PPov3kTVh3iyXl05m0lR6BYt4yQuwWFnSNXrfA?=
+ =?us-ascii?Q?LOLnR7qoiHsBGjvjY5TxSCULHB2Cz9+ipF86/9VbcaS7WxNjZtrQwPwdUVQK?=
+ =?us-ascii?Q?DcP+LbdYCnRb+qgTAF15JPxb5cdz5LfwisIWyT3a4XpDZ/xI3AdRbs5ZNoqN?=
+ =?us-ascii?Q?z6kyHQ4tWKDDoQZCZjlgcTUpZLNXY/sJBWEsvEtGVdAxnZjZ0WIjJBeMS4RA?=
+ =?us-ascii?Q?+pxMvAMm32GQ+I3ZfFAaTTU4pzAe8OS0WiAtGx+q22xkDLHJA1RKBaNKEHEB?=
+ =?us-ascii?Q?6LPBgofzpLMPDyfCBe1Vvqr/Av+3XNPB/Rt/KeHGM94lNYHiCtcOLuatvYNZ?=
+ =?us-ascii?Q?EMu0MaEPxMRDo1fJ7uJFrKdta8DCjVKXzokmzdYYRUnSPIJt6xiPiTBARlXp?=
+ =?us-ascii?Q?VBiNoVpjZga9+0BcEr+DXmXfuZ08dcJcEt5y7UryJQ0zWOf7T/kPvgUwzdlc?=
+ =?us-ascii?Q?1eUAeE3FDwKEibdvN3+yLnUFFl2JoR9zbQMVHhEdzjypETiUKLlAzWAYJFlO?=
+ =?us-ascii?Q?SmA0ekGlsxvKOq3EdQCQf1WmOpk8iJBDv77HHBP/cytJp8l8UaZcr5z3Hejv?=
+ =?us-ascii?Q?jszmu0MzEj178CmiUbOTSZ0o6vo7w6iJfEweTspMJPs+Ic3BXe2zB6dNLEGS?=
+ =?us-ascii?Q?IuAV53GmPy730lq2xbyPzIbyfgy7lDBSpEfpO7Ai682k+F+w56RSOlTt4hrn?=
+ =?us-ascii?Q?gfoTA4xROj7WZSDCDq7+cgeHOKcQJvhqRcxtcpOGkJV/N3ApC/PUgaLzT0iJ?=
+ =?us-ascii?Q?ZGpMaB6v89cGP8BONryPkwNQ+2DYa9SkTZ2tjXq4GYAunqpm4s6D8H+uTbqU?=
+ =?us-ascii?Q?/gNaxLaQ/ABTYo0CAMY1uIMqMdGxROHoIQaoTcxAKX1z/3KxwFfr7MECM7j0?=
+ =?us-ascii?Q?JWZa4nUvllBczOC206x7uLqsO/jJGn0kcRvVkvmtB47ovqtWgokqTwPRBckT?=
+ =?us-ascii?Q?WGzL7EQASkRTvFuJrBQ28GxISC0uwlaGyLyNajn4vQM0So6SJeMab3R2oSnN?=
+ =?us-ascii?Q?cvJ1Nw6XaomNymH1isXWmtVIgqjgfhiexRZjDZALTxQKT6baIqTKBNRGoRkQ?=
+ =?us-ascii?Q?j87GVb680YZcbUpSgPi/iI66rW9yOKnNo9ObIiiRHRRK/6L0cXj1IAauTgd2?=
+ =?us-ascii?Q?SHPyshtl9XS/nVczWjFsnoSAdCgn4dfgv6r9Ib/OoQRDIiSMs1t3iaNiVtif?=
+ =?us-ascii?Q?R78FJ8EMtybRCv6QMUOXFF00oPMUVSH3hl4G90HhfdYpdQtqSrQXdZogGCmj?=
+ =?us-ascii?Q?+4SseovnfB9sbak3tKzRLAqNfISMi4U26KYC626NaA/Ko7fe+z1rSMOsHFf7?=
+ =?us-ascii?Q?Zg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	E0ZVI4Q63GOqdoyrw9Utm5NAYPH2fFMvbSVg3lHPxET9UG/RGOreI9DhfwfPN1Ksgipma34Ud+vfqemVJx40ezIssoHg/4YFRNyuQFzu5tdIXn7IEtrLhpTRXYrB27OLYiNRdPmYBpPOJqqXTw02xL8G4xRgvqHbYRw8HiIt45vQ8SMMEYiFU58bq1t8ie93hPt5sqOZ5ZCaO4ExiVjX/dCagEiNv63B1yaPDZDXCPGKildzYPAAfLDb6SRcC/26GmFlWbFsPysrq6MvRhWnIdhEu5xSV9ooYc8nHMvUETqsYz/VEwwJf9lQHH1x7zJPvFUzrR2yVh126yew1kiKqzmmH+EO360/GbeCWJ7yhARDURtP4vypZy58brDP+hC5n4B9sRVIUO0iBCDyhzYEGwxEFri8X8gTCPDPR2PNtaW1KZh1pevu0vFm2wEmEz37PtmILWrL3uvzVz0AecGqPf+b4tVpSqvfJCRNIA+So44XY2nA5Jc8nLYJ/VR4o7hVmS3+rTwir5FG1YTSd6/zz7mpfC35cmhrUqHcJzUBCJJzWon1gbKZqUdpqqT76RYjgbF2YP93Kag84Sd0ql30t8kDhG2QZlz13rujaW8aEsc=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cdebb86c-6736-48a6-6f93-08de0568f7be
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR10MB5409.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2025 06:15:52.7788
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dY8sbdJ4xqwZrFNqrCqdvNJF618BMuHWJK9s1k6xyVQOyJWHH4LzVV5mtZk88Eb6Ff9q2+V372jqltIKprxiI3Lrw6V5qK/4CRjZKngirsY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB4975
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-06_07,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0
+ phishscore=0 mlxscore=0 suspectscore=0 bulkscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2509150000 definitions=main-2510070048
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA3MDA0MyBTYWx0ZWRfXyNCRiDOcLNv/
+ sqCptPb0MwP9y9+a4o75tkcx9Uvz14qVzppsNHSyYebkull8BZ2KYw22y79C2yZs3HZ7Of8ivrF
+ d7ukXgNX5XoCaQnrWbmXQ4mCKrbj5nXnx2Jn2jCQ5LzuTBKHVeSbfTKWdMp/ns60bqwE4Xo0IDZ
+ w/LtjZWVRuDz3rZyE61f9dS8r9OY9WLsal/5mCiZi4uDwbv46C65LoBezOyepcmYmkcOo4iClIg
+ dpLC+HsT5+cIgAYNhSjmj3DPCMBnyDf7a3m/2J1Bi0mscmHDVp11RBD028AhP13L9jMur9boZUp
+ kDhmLcU25q4wbrMcVHq3nm6VwyAqjerAPvNV6jfypjXDi5CHILwpCrDiawB1aJrbjIf26UEMp8g
+ +SK+5EKMD7sOQOlouuFUkbk194I1wB4HZ2+P9H/wS8XMHV40x+c=
+X-Proofpoint-ORIG-GUID: VmxlQN8RHikxefF0msbnfgg8IOrD8EfF
+X-Proofpoint-GUID: VmxlQN8RHikxefF0msbnfgg8IOrD8EfF
+X-Authority-Analysis: v=2.4 cv=PMcCOPqC c=1 sm=1 tr=0 ts=68e4b021 b=1 cx=c_pps
+ a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=x6icFKpwvdMA:10
+ a=GoEa3M9JfhUA:10 a=zd2uoN0lAAAA:8 a=n-WBVzomqE2Cf-J3H8IA:9 cc=ntf
+ awl=host:13625
 
 
+Raghavendra K T <raghavendra.kt@amd.com> writes:
+
+> On 9/17/2025 8:54 PM, Ankur Arora wrote:
+>> This series adds clearing of contiguous page ranges for hugepages,
+>> improving on the current page-at-a-time approach in two ways:
+>>
+>>   - amortizes the per-page setup cost over a larger extent
+>>
+>>   - when using string instructions, exposes the real region size
+>>     to the processor.
+>>
+>> A processor could use a knowledge of the extent to optimize the
+>> clearing. AMD Zen uarchs, as an example, elide allocation of
+>> cachelines for regions larger than L3-size.
+> [...]
+>
+> Hello,
+>
+> Feel free to add
+>
+> Tested-by: Raghavendra K T <raghavendra.kt@amd.com>
+
+Great. Thanks Raghu.
+
+> for whole series.
+>
+> [ I do understand that there may be minor tweeks to clear page patches
+> to convert nth_page once David's changes are in]
+
+Yeah and a few other changes based on Andrew and David's comments.
+
+> SUT: AMD Zen5
+>
+> I also did a quick hack to unconditionally use CLZERO/MOVNT on top of
+> Ankur's series to test how much additional benefits can architectural
+> enhancements bring in. [ Inline with second part of Ankur's old series before
+> preempt lazy changes ]. Please note that it is only for testing ideally
+> for lower sizes we would want rep stosb only. and threshold at which
+> we need to do non-temporal copy should be a function of L3 and / OR L2 size
+> perhaps.
+>
+> Results:
+> base      : 6.17-rc6 + perf bench patches
+> clearpage : 6.17-rc6 + whole series from Ankur
+> clzero    : 6.17-rc6 + Ankur's series +  clzero (below patch)
+> movnt     : 6.17-rc6 + Ankur's series +  movnt (below patch)
+>
+> Command run: ./perf bench mem mmap -p 2MB -f demand -s 64GB -l 10
+>
+> Higher = better
+>
+>                    preempt = lazy (GB/sec)  preempt = voluntary (GB/sec)
+>
+> base               20.655559                19.712500
+> clearpage          35.060572                34.533414
+> clzero             66.948422                66.067265
+> movnt              51.593506                51.403765
+
+The CLZERO number with page-size=2MB is pretty impressive. But as you
+said that non temporal instructions need more thinking related to
+thresholds etc.
+
+> CLZERO/MOVNT experimental patch. Hope I have not missed anything here :)
+
+Looks good to me :).
+
+> -- >8 --
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 52c8910ba2ef..26cef2b187b9 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -3170,6 +3170,8 @@ config HAVE_ATOMIC_IOMAP
+>  	def_bool y
+>  	depends on X86_32
+>
+> +source "arch/x86/Kconfig.cpy"
+> +
+>  source "arch/x86/kvm/Kconfig"
+>
+>  source "arch/x86/Kconfig.cpufeatures"
+> diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.h
+> index 2361066d175e..aa2e62bbfa62 100644
+> --- a/arch/x86/include/asm/page_64.h
+> +++ b/arch/x86/include/asm/page_64.h
+> @@ -84,11 +84,23 @@ static inline void clear_pages(void *addr, unsigned int npages)
+>  	 */
+>  	kmsan_unpoison_memory(addr, len);
+>  	asm volatile(ALTERNATIVE_2("call memzero_page_aligned_unrolled",
+> -				   "shrq $3, %%rcx; rep stosq", X86_FEATURE_REP_GOOD,
+> -				   "rep stosb", X86_FEATURE_ERMS)
+> -			: "+c" (len), "+D" (addr), ASM_CALL_CONSTRAINT
+> -			: "a" (0)
+> -			: "cc", "memory");
+> +				"shrq $3, %%rcx; rep stosq", X86_FEATURE_REP_GOOD,
+> +#if defined(CONFIG_CLEARPAGE_CLZERO)
+> +		"call clear_pages_clzero", X86_FEATURE_CLZERO)
+> +		: "+c" (len), "+D" (addr), ASM_CALL_CONSTRAINT
+> +		: "a" (0)
+> +		: "cc", "memory");
+> +#elif defined(CONFIG_CLEARPAGE_MOVNT)
+> +		"call clear_pages_movnt", X86_FEATURE_XMM2)
+> +		: "+c" (len), "+D" (addr), ASM_CALL_CONSTRAINT
+> +		: "a" (0)
+> +		: "cc", "memory");
+> +#else
+> +		"rep stosb", X86_FEATURE_ERMS)
+> +		: "+c" (len), "+D" (addr), ASM_CALL_CONSTRAINT
+> +		: "a" (0)
+> +		: "cc", "memory");
+> +#endif
+>  }
+>  #define clear_pages clear_pages
+>
+> diff --git a/arch/x86/lib/clear_page_64.S b/arch/x86/lib/clear_page_64.S
+> index 27debe0c018c..0848287446dd 100644
+> --- a/arch/x86/lib/clear_page_64.S
+> +++ b/arch/x86/lib/clear_page_64.S
+> @@ -4,6 +4,7 @@
+>  #include <linux/cfi_types.h>
+>  #include <linux/objtool.h>
+>  #include <asm/asm.h>
+> +#include <asm/page_types.h>
+>
+>  /*
+>   * Zero page aligned region.
+> @@ -119,3 +120,40 @@ SYM_FUNC_START(rep_stos_alternative)
+>  	_ASM_EXTABLE_UA(17b, .Lclear_user_tail)
+>  SYM_FUNC_END(rep_stos_alternative)
+>  EXPORT_SYMBOL(rep_stos_alternative)
+> +
+> +SYM_FUNC_START(clear_pages_movnt)
+> +	.p2align 4
+> +.Lstart:
+> +	movnti  %rax, 0x00(%rdi)
+> +	movnti  %rax, 0x08(%rdi)
+> +	movnti  %rax, 0x10(%rdi)
+> +	movnti  %rax, 0x18(%rdi)
+> +	movnti  %rax, 0x20(%rdi)
+> +	movnti  %rax, 0x28(%rdi)
+> +	movnti  %rax, 0x30(%rdi)
+> +	movnti  %rax, 0x38(%rdi)
+> +	addq    $0x40, %rdi
+> +	subl    $0x40, %ecx
+> +	ja      .Lstart
+> +	RET
+> +SYM_FUNC_END(clear_pages_movnt)
+> +EXPORT_SYMBOL_GPL(clear_pages_movnt)
+> +
+> +/*
+> + * Zero a page using clzero (On AMD, with CPU_FEATURE_CLZERO.)
+> + *
+> + * Caller needs to issue a sfence at the end.
+> + */
+> +
+> +SYM_FUNC_START(clear_pages_clzero)
+> +	movq	%rdi,%rax
+> +	.p2align 4
+> +.Liter:
+> +	clzero
+> +	addq    $0x40, %rax
+> +	subl    $0x40, %ecx
+> +	ja      .Liter
+> +	sfence
+> +	RET
+> +SYM_FUNC_END(clear_pages_clzero)
+> +EXPORT_SYMBOL_GPL(clear_pages_clzero)
 
 
+--
+ankur
 
