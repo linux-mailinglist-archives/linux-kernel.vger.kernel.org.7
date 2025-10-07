@@ -1,49 +1,65 @@
-Return-Path: <linux-kernel+bounces-844229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBF33BC1582
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 14:19:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B9AFBC1591
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 14:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A240A1884AD2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 12:19:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E5C9188DC08
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 12:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00A4F2DC789;
-	Tue,  7 Oct 2025 12:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD182DECA7;
+	Tue,  7 Oct 2025 12:19:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZwUNGnen"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Y2/8exEl"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1930D2D97A4;
-	Tue,  7 Oct 2025 12:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27732DC330;
+	Tue,  7 Oct 2025 12:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759839531; cv=none; b=rCTkYADzMSOztNfh4yzfyGK3VCnx4KgrmX2J/xBuQ7uJDB26xkN/odNZEqhEvizy3k1q/YPS+/DYjdzWWwrcsIJRpTWxDS6bqTZKJWhrKuWUcMxtcrWnRLdx/HpF/RJvFXFDrqHP2FsTjUHaCJQGg71PHJe9O0cK0aD5urTsj5E=
+	t=1759839541; cv=none; b=rclS6iE3eI8wd7LyXq8CYW1mfxbcMoEYaO1QAq1hmeJrFKBmQj8XGgHaf0vxCzWXK3zb8bp9L+M0H9SUrOLrEhaan7Pe/zt5+/96Gfvqbm5VYIisEAN4othhp1SdAMQK3b0P6xn/wdU5tdtthI/WVxm50UeIoYqbL5guB5cX480=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759839531; c=relaxed/simple;
-	bh=8Yu4vCPgZd0CN6i2wCLIeemidiBvWf6cKWMxtI3H7+4=;
+	s=arc-20240116; t=1759839541; c=relaxed/simple;
+	bh=bZHluZBNV11Zf3vbOrys+ScLVNV5qSrBfiC1kacumGs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oipVN+qBtnXvg8jHAWJNaOSDk+MOm6QecLBcmZf0546kNoHUrZEFsfqNgI2QlJ+mZXTRWMNvk6wF7n391zvLF3e5iceYPiBiZBzE9K+0g4RH3fMFkhfGtAD4xfpFaIe/FrPSjYeMIIOsWKrg4uW6rXt4qRtCaVfGtva4qslJSXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZwUNGnen; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4372CC4CEF9;
-	Tue,  7 Oct 2025 12:18:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759839530;
-	bh=8Yu4vCPgZd0CN6i2wCLIeemidiBvWf6cKWMxtI3H7+4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZwUNGnenAxuvik3eFbl9RCaC2YIrBgaPfIa+tkt6LbJ/6Uk511sWR0Mu1U+EpDrSt
-	 zf+ZZKCxrwg2KN5F7bbiLZAciXJVdl8dBIzJotW4p5/Q4nJsGbfSm9DXkN/d5BJ8YK
-	 yok7WCQ6e6xDL+M5mJXaY99uym56vxtSBaHhxVUM=
-Date: Tue, 7 Oct 2025 14:18:47 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Murad Sadigov <sdgvmrd@gmail.com>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: axis-fifo: fix integer overflow in write()
-Message-ID: <2025100757-proximity-unlighted-6ad4@gregkh>
-References: <CAEuvNs2b-_Q=dazKjhUwJoZ5XUpjRsf-FrCOTR_j24T+EG-f=g@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YKR20da6Qjw13uxmsiJLn6nPVl+hoLF5oKHg7AEXngtlOeaXhrOUo8CwKUZ2Nj0S30Fbq/uUcj23DYmQtUkrWoVRBaz9SwG8HR98eQfK8z1hqH6patU3JOS+xpS1AuckBePqo+B0YHRGvHE5wDV+71ctdt5uUdaMb52E6ajQ1xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Y2/8exEl; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=AhQrHnwyOhDOXQIAuypnMzei7NY5hbIJrqPdUv7/8jM=; b=Y2/8exEllfLEHpA5WTArpPHWTZ
+	sMw+ILUuC+Bqlfe5jyqeB6ja2vulvhvPkSPZw9hp1VAQkBFpviEoTF4govHa1mrvYL3lPoyEKVoeU
+	BmHurfwh47cFYRr/C1Jh/npibUcHe/wgh9RG7E1evbCOlo9pz76UfmAG17cpYSf+mcq0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1v66eZ-00AMew-KR; Tue, 07 Oct 2025 14:18:51 +0200
+Date: Tue, 7 Oct 2025 14:18:51 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: Rob Herring <robh@kernel.org>,
+	Ariel D'Alessandro <ariel.dalessandro@collabora.com>,
+	andrew+netdev@lunn.ch, conor+dt@kernel.org, kernel@collabora.com,
+	krzk+dt@kernel.org, angelogioacchino.delregno@collabora.com,
+	kuba@kernel.org, devicetree@vger.kernel.org,
+	linux-bluetooth@vger.kernel.org, davem@davemloft.net,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	pabeni@redhat.com, edumazet@google.com
+Subject: Re: [PATCH v3] dt-bindings: net: Convert Marvell 8897/8997 bindings
+ to DT schema
+Message-ID: <89bb83ec-200c-4ed6-bfd8-ac55375e4ee1@lunn.ch>
+References: <20251001183320.83221-1-ariel.dalessandro@collabora.com>
+ <175943240204.235529.17735630695826458855.robh@kernel.org>
+ <CABBYNZKSFCes1ag0oiEptKpifb=gqLt1LQ+mdvF8tYRj8uDDuQ@mail.gmail.com>
+ <CAL_Jsq+Y6uuyiRo+UV-nz+TyjQzxx4H12auHHy6RdsLtThefhA@mail.gmail.com>
+ <CABBYNZKxGNXS2m7_VAf1d_Ci3uW4xG2NamXZ0UVaHvKvHi07Jg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,66 +68,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAEuvNs2b-_Q=dazKjhUwJoZ5XUpjRsf-FrCOTR_j24T+EG-f=g@mail.gmail.com>
+In-Reply-To: <CABBYNZKxGNXS2m7_VAf1d_Ci3uW4xG2NamXZ0UVaHvKvHi07Jg@mail.gmail.com>
 
-On Tue, Oct 07, 2025 at 03:58:13PM +0400, Murad Sadigov wrote:
-> Fix integer overflow in axis_fifo_write() that allows local users
-> to bypass buffer validation, potentially causing hardware FIFO
-> buffer overflow and system denial of service.
+> > > > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> > > >
+> > > > You'll probably have to resend this after rc1.
+> > >
+> > > In that case I'd like to have a Fixes tag so I can remember to send it
+> > > as rc1 is tagged.
+> >
+> > A Fixes tag is not appropriate for a conversion to DT schema.
 > 
-> The axis_fifo_write() function converts user-controlled size_t 'len'
-> (64-bit) to unsigned int 'words_to_write' (32-bit) without overflow
-> checking at line 322:
-> 
->     words_to_write = len / sizeof(u32);
-> 
-> On 64-bit systems, when len equals 0x400000000 (16 GiB):
->   - Division: 0x400000000 / 4 = 0x100000000 (requires 33 bits)
->   - Truncation: Result stored in 32-bit variable = 0 (overflow)
->   - Validation bypass: if (0 > fifo_depth) evaluates to false
->   - Impact: Hardware FIFO overflow, system crash
-> 
-> This allows unprivileged local users with access to /dev/axis_fifo*
-> to trigger denial of service.
-> 
-> The fix adds overflow check before type conversion to ensure len
-> does not exceed the maximum safe value (UINT_MAX * sizeof(u32)).
-> 
-> Affected systems include embedded devices using Xilinx FPGA with
-> AXI-Stream FIFO IP cores.
-> 
-> Signed-off-by: Murad Sadigov <sdgvmrd@gmail.com>
-> ---
->  drivers/staging/axis-fifo/axis-fifo.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/staging/axis-fifo/axis-fifo.c
-> b/drivers/staging/axis-fifo/axis-fifo.c
-> index 1234567890ab..abcdef123456 100644
-> --- a/drivers/staging/axis-fifo/axis-fifo.c
-> +++ b/drivers/staging/axis-fifo/axis-fifo.c
-> @@ -319,6 +319,13 @@ static ssize_t axis_fifo_write(struct file *f,
-> const char __user *buf,
->   return -EINVAL;
->   }
-> 
-> + /* Prevent integer overflow in words calculation */
-> + if (len > (size_t)UINT_MAX * sizeof(u32)) {
-> + dev_err(fifo->dt_device,
-> + "write length %zu exceeds maximum %zu bytes\n",
-> + len, (size_t)UINT_MAX * sizeof(u32));
-> + return -EINVAL;
-> + }
-> +
+> Ok, but then how do you justify merging it for an RC? Or I'm
+> misunderstanding and that should just be merged to bluetooth-next and
+> wait for the next merge window? In that case I can just merge it right
+> away.
 
-Something went wrong here, your email client dropped all of the leading
-spaces :(
+Most subsystems don't accept new patches during the merge window
+because they will need to do a rebase when -rc1 is pushed. And
+rebasing of patches is frowned upon.
 
-Also, you do not want to allow userspace to cause a DoS on the kernel
-log, so don't log this information, just return an error, no need to
-print anything.
+By requesting the developers to repost after -rc1 is out, and the
+subsystem tree has been updated to -rc1, the Maintainers avoids the
+rebase, and pushes the work to the developer to rebase and retest,
+leaving the Maintainers to do more useful work.
 
-thanks,
-
-greg k-h
+	Andrew
 
