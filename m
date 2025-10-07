@@ -1,153 +1,140 @@
-Return-Path: <linux-kernel+bounces-844405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6333BBC1D4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:58:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C999BC1D66
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 17:02:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 10B5434FA2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:58:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1986E19A18FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 15:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583572E267D;
-	Tue,  7 Oct 2025 14:58:31 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87EBA1E32B7;
+	Tue,  7 Oct 2025 15:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="Ro9yLJ/2"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD462E228D
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 14:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759849110; cv=none; b=KCdOkod+y09jl+DXtkJjJo4LC0C5OqAK9sRS1bdZieDmqenqLNpHX/iUOmmHkFvJ1rT0XgLDKRXNpjJqWyuxKw7mNoOTgUYkFIgSHNEdtosTAPe4vE/4Kp9xLUbgB5A2H5QcXVCn8XJOWszYDZwZAKjSrPbtTt5Z6DPnNU/DF48=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759849110; c=relaxed/simple;
-	bh=gcMNWwZ/e3DRKSodF++OXdvUX8M3nnifxAsMK8KggFE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=lcVEsieSbfpBXbd8mYfQCKYrkQwDvNheSqA/yGKk4T7xNFzpynZZNVtWNpoYpRHet7rZCSUR/aRGsT+hCxsz6zon3plphTgEs82D0GFRHuSbzYVBQyn08Ie8VprzzIHaVnZlvQZL86VGe9804j0tx81aS9VKR3wXXSVDGAr4GCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-90e388db4bdso234313239f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 07:58:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759849108; x=1760453908;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sq0etGHr3tuVSJmhaHs7TSQonXu7G5oQewLRYeJ0qig=;
-        b=Y1jFI8+iZIdfQ8qCCui1HJRX+eXUyfEaOnzJst3qiqLPxRn9FA0VrE7HldMHjG2O9Q
-         wFDE7I39Gc5AHYObTC6iA8zson4lVHmVgyBAJnSuQD4LQ5X+Mp5rMiJvkncE06kE7jgb
-         5xWZTzjsBa3SSxs81mJHVEOiBDayf0Dbe+GvJN7fbokTU8trqSA58YYcdSSMAQF9jox5
-         ne21QsOdQuOOFF4lFGyaAYbXZQu9rlSH3+lzX0Qo6fnLCyuTjabWOmkOQ3RAhb1rxT7W
-         8wJbvSZ0LHXbye4FoxTz/UDiZNn61KzlUMqEnZDN6b9t+Q/cuy69xwzg+HygMtzYi3yh
-         EI8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUE7thIl6I40i1Vp/rwuAFi7cX3h1Q9psCDhvHdyjFWCYyj2GNo4VLyB192NcU+wOKATGhSArmAe5569e4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyI3lbKWKGHjZa3LaE1R2y50HuzZ8Od+PUlCDu0r9CvB3G6HEsv
-	69orjrNaQtUJ7qsPU0G0/QODBC62DokoWfe2GJnYdK5DNZ3sRNZK82VB3Krti/aZFYoMAKtf6E8
-	zHc13S6MvPMxB+wXHRk1VfyHn1BRjrkwakucfu6tKiLk64ZLTlgk/OkBbESY=
-X-Google-Smtp-Source: AGHT+IFAMXk9B3RkaqHBAZ9jULTRRaMTcn/LZjHSjolC/THXWawUebW7OQ8BUHk5WzPiu2EzGdyyq+m8EWNNHfhtsBXcN1kTUepQ
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7BB78BEC
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 15:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759849370; cv=pass; b=hPWjrWF/MnZ48Sk192IjZbJ0RDRj5ar3ozjKaIiqFelG4BCQRovpnP4vcDkV4KUNJLI1JnL52SWX+yLdoP/qZfR7whmCQxxw1uGUwFdPU/gHdP6MTsnD8BPW8HKEQ8MFwyXgQ/Avv224+WDGuV2ndmLn8yp/ig0u+xol3FRZzos=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759849370; c=relaxed/simple;
+	bh=sfqFXEOQGJ6lvXzzDaLUOqIhq+iZxbTvHVI0Cr4zzL4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lIgSEUM1vfnYsldYHpibz6kSTlQh8WEr1zWnVYLbe1vNn7MFhZWJHegfh2G5gN3lQ1WKHmY2w3iMG5szFfkMUwveGF62nxuvhYVmluNlH0zUakWHG9JfEGyoQW+oM4oezQ5GCIHryx0iKMzBcOY4JGvOGMKZcwvGrEk7hcwcOP0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=Ro9yLJ/2; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1759849360; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=M50HM7e4rrY4ttTqgW4yR3p1dKwc4ucsxPdWmEZQc23nLhIYdCayBcEuL8Km097DqTD0ysrRORoTdxYHlNvdw6UYddM66xN8DZPu6q70Yhqr8KohXzg3fPNf63ZNpdFgKHnXR9gOf/f644Kcxv7siLC9yN7iRpADHX+EKoOWWwQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1759849360; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=g+HW6MfkUt7E20j/Xt2mgSDYhDTXOKhdIRu4lYcnmRo=; 
+	b=f2mhktMbRD5kq/IbjjcKz5aHDdD7pojtxWEjeQoR6opmeHjpK8HIwhkGTlrqbxlT/70i7PDi482OkVLcDvX8XP3Tcc2oaMFhN4oPrHXJ0QF3SBgqRW41cV61sNsrWzPOZebFTrLUkNV/Z+5TuJFN6+VC2Zj+Bc4KS0ysQb7Vk8E=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759849360;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=g+HW6MfkUt7E20j/Xt2mgSDYhDTXOKhdIRu4lYcnmRo=;
+	b=Ro9yLJ/2gdTFF3KDEriH4YCzhVMIMQ9wkHjmqnzVQATVQScB1aZqTNcfhznj1vng
+	niRBUQ70q0zZnvBphWuF52qJ33HtH5jvSQ3zQN54Hb82VddBvjD36en8fEcquilI1fT
+	UKNXJvH4ONp29rueqM/PJTPEdsCpVI63P1XyAgTA=
+Received: by mx.zohomail.com with SMTPS id 1759849357913151.85939094255968;
+	Tue, 7 Oct 2025 08:02:37 -0700 (PDT)
+From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+	Steven Price <steven.price@arm.com>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	kernel@collabora.com,
+	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
+Subject: [PATCH v5 00/12] Some Panfrost fixes and improvements
+Date: Tue,  7 Oct 2025 16:01:42 +0100
+Message-ID: <20251007150216.254250-1-adrian.larumbe@collabora.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:174a:b0:427:5e1d:4200 with SMTP id
- e9e14a558f8ab-42e7ad995a0mr242929655ab.29.1759849108180; Tue, 07 Oct 2025
- 07:58:28 -0700 (PDT)
-Date: Tue, 07 Oct 2025 07:58:28 -0700
-In-Reply-To: <68e243a2.050a0220.1696c6.007d.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e52a94.a00a0220.298cc0.047c.GAE@google.com>
-Subject: Re: [syzbot] [bpf?] KASAN: invalid-access Write in do_bad_area
-From: syzbot <syzbot+997752115a851cb0cf36@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
-	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
-	linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me, 
-	song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-syzbot has found a reproducer for the following issue on:
+This is v5 of https://lore.kernel.org/dri-devel/20251001022039.1215976-1-adrian.larumbe@collabora.com/
 
-HEAD commit:    c746c3b51698 Merge tag 'for-6.18-tag' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=149b5a7c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f49b7d923ce867a
-dashboard link: https://syzkaller.appspot.com/bug?extid=997752115a851cb0cf36
-compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17ee792f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=163955cd980000
+This patch series is a collection of minor fixes and improvements I came up
+with while working on driver related stuff.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/fa3fbcfdac58/non_bootable_disk-c746c3b5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/85796940f78d/vmlinux-c746c3b5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1d82d6550867/Image-c746c3b5.gz.xz
+Changelog:
+ v5:
+ - Move devfreq record keeping further down job submission function to
+ keep busy count balanced in case of an early bail-out.
+ - In MMU page fault ISR, bail out when sgt for 2MiB page is not assigned,
+ rather than when the page array is populated. Add new commit for this.
+ - Add commit with myself as a new Panfrost maintainer
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+997752115a851cb0cf36@syzkaller.appspotmail.com
+ v4:
+  - Rebased older patch series onto latest drm-misc-next
+  - Added patch for renaming JM functions to reflect their actual role
+  - Fixed treatment of error code in perfcnt when enabling sample buffer AS
 
-==================================================================
-BUG: KASAN: invalid-access in __memcpy+0xc/0x54 arch/arm64/lib/memcpy.S:250
-Write at addr f0ff800083d6d268 by task syz.2.17/3596
-Pointer tag: [f0], memory tag: [fe]
+ v3:
+  - Minor convenience fixes to patches 3 and 4 in the series
+  - Move unmapping of maped range of BO to the function's error path
+  in case of BO mapping failure, also for putting BO's pages
+  - Split patch 6/8 into two: one makes sure the Job IRQ enablement mask
+  isn't recalculated at every device reset and uses the same expression
+  everywhere in the driver, and another one that breaks the enablement
+  function into two stages.
 
-CPU: 1 UID: 0 PID: 3596 Comm: syz.2.17 Not tainted syzkaller #0 PREEMPT 
-Hardware name: linux,dummy-virt (DT)
-Call trace:
- show_stack+0x18/0x24 arch/arm64/kernel/stacktrace.c:499 (C)
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x78/0x90 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0x108/0x61c mm/kasan/report.c:482
- kasan_report+0x88/0xac mm/kasan/report.c:595
- report_tag_fault arch/arm64/mm/fault.c:326 [inline]
- do_tag_recovery arch/arm64/mm/fault.c:338 [inline]
- __do_kernel_fault+0x170/0x1c8 arch/arm64/mm/fault.c:380
- do_bad_area+0x68/0x78 arch/arm64/mm/fault.c:480
- do_tag_check_fault+0x34/0x44 arch/arm64/mm/fault.c:853
- do_mem_abort+0x44/0x94 arch/arm64/mm/fault.c:929
- el1_abort+0x44/0x68 arch/arm64/kernel/entry-common.c:325
- el1h_64_sync_handler+0x50/0xac arch/arm64/kernel/entry-common.c:459
- el1h_64_sync+0x6c/0x70 arch/arm64/kernel/entry.S:591
- __memcpy+0xc/0x54 arch/arm64/lib/memcpy.S:250 (P)
- do_misc_fixups+0x174/0x1aac kernel/bpf/verifier.c:22553
- bpf_check+0x1348/0x2a24 kernel/bpf/verifier.c:24686
- bpf_prog_load+0x63c/0xcd4 kernel/bpf/syscall.c:3062
- __sys_bpf+0x2e0/0x1a88 kernel/bpf/syscall.c:6134
- __do_sys_bpf kernel/bpf/syscall.c:6244 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:6242 [inline]
- __arm64_sys_bpf+0x24/0x34 kernel/bpf/syscall.c:6242
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x48/0x110 arch/arm64/kernel/syscall.c:49
- el0_svc_common.constprop.0+0x40/0xe0 arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x1c/0x28 arch/arm64/kernel/syscall.c:151
- el0_svc+0x34/0x10c arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0xa0/0xe4 arch/arm64/kernel/entry-common.c:763
- el0t_64_sync+0x1a4/0x1a8 arch/arm64/kernel/entry.S:596
+ v2:
+  - Removed commit that provided an explicit fence cleanup function
+  - Added commit for removing unused Panfrost device structure member
+  - Refactored how optional job interrupt reenabling during reset is handled
+  - Make the way errors and successful return values are delivered from inside
+   panfrost_mmu_as_get more according to standard.
+  - Simplify unmapping of already mapped area when mapping the pages of a BO
+  - Fixing management of runtime-PM reference counts when failing HW job submission.
 
-The buggy address belongs to a 1-page vmalloc region starting at 0xf0ff800083d6d000 allocated at bpf_check+0x8c/0x2a24 kernel/bpf/verifier.c:24529
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x544b2
-flags: 0x1fffc0000000000(node=0|zone=0|lastcpupid=0x7ff|kasantag=0xf)
-raw: 01fffc0000000000 0000000000000000 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
+Adrián Larumbe (12):
+  drm/panfrost: Replace DRM driver allocation method with newer one
+  drm/panfrost: Handle inexistent GPU during probe
+  drm/panfrost: Handle job HW submit errors
+  drm/panfrost: Handle error when allocating AS number
+  drm/panfrost: Check sgt to know whether pages are already mapped
+  drm/panfrost: Handle page mapping failure
+  drm/panfrost: Don't rework job IRQ enable mask in the enable path
+  drm/panfrost: Make re-enabling job interrupts at device reset optional
+  drm/panfrost: Add forward declaration and types header
+  drm/panfrost: Remove unused device property
+  drm/panfrost: Rename panfrost_job functions to reflect real role
+  MAINTAINERS: Add Adrian Larumbe as Panfrost driver maintainer
 
-Memory state around the buggy address:
- ffff800083d6d000: f0 f0 f0 f0 f0 f0 f0 f0 f0 f0 f0 f0 f0 f0 f0 f0
- ffff800083d6d100: f0 f0 f0 f0 f0 f0 f0 f0 f0 f0 f0 f0 fe fe fe fe
->ffff800083d6d200: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-                                     ^
- ffff800083d6d300: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
- ffff800083d6d400: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-==================================================================
+ MAINTAINERS                                   |   1 +
+ drivers/gpu/drm/panfrost/panfrost_devfreq.c   |   4 +-
+ drivers/gpu/drm/panfrost/panfrost_device.c    |  68 +++++----
+ drivers/gpu/drm/panfrost/panfrost_device.h    |  13 +-
+ drivers/gpu/drm/panfrost/panfrost_drv.c       |  78 ++++------
+ drivers/gpu/drm/panfrost/panfrost_dump.c      |   8 +-
+ drivers/gpu/drm/panfrost/panfrost_gem.c       |   8 +-
+ .../gpu/drm/panfrost/panfrost_gem_shrinker.c  |   4 +-
+ drivers/gpu/drm/panfrost/panfrost_gpu.c       |  64 ++++----
+ drivers/gpu/drm/panfrost/panfrost_job.c       | 139 ++++++++---------
+ drivers/gpu/drm/panfrost/panfrost_job.h       |  15 +-
+ drivers/gpu/drm/panfrost/panfrost_mmu.c       | 142 ++++++++++++------
+ drivers/gpu/drm/panfrost/panfrost_mmu.h       |   3 +-
+ drivers/gpu/drm/panfrost/panfrost_perfcnt.c   |  27 ++--
+ 14 files changed, 320 insertions(+), 254 deletions(-)
 
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+--
+2.51.0
 
