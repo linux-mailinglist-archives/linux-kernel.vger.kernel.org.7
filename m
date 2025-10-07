@@ -1,86 +1,47 @@
-Return-Path: <linux-kernel+bounces-844092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55725BC0FCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:15:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D221BC0FCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:16:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 028F834DC40
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:15:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAC28188EAD1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:16:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A71B2D6E64;
-	Tue,  7 Oct 2025 10:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ymihRhD6"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7664C2D7DF6;
+	Tue,  7 Oct 2025 10:16:08 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC50A25A324
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 10:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1489525A324
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 10:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759832136; cv=none; b=Z5S1/FHaDSJ/l0OKl6seG60vG+lGdTlKvhXMuP16iMIhk75PsMNU2kzIC5llqAlVkX2Wg3t9QNAR+B7Zc4uyqiGPBavBN+Xh049TFt3RaInJ18ObSpXw2Ca0ajNu9YRPiKSfQCtTKM201BFIHyN1z2NK2NIVcWO6vI8y7cB+v8M=
+	t=1759832168; cv=none; b=ek66rf/oRVSSeGM+knoSkWLCsci6ILC/JxZmqtll2JIcFs1xTvjPyaKrIoLbnH2Q5CtNKZvkMUzvkmAM8CVFqbi9fHO9tetaGxqlw34H0NgGl+99jWlaHXYga5J+VF+cVp50qSBxv1VF5ui1ThHZfdlJyHnRimQxUU5yBPqiAIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759832136; c=relaxed/simple;
-	bh=A8Tf+OjdCf5lVPFHR2KREf1VuWMLVEm4o6QLanOAcuE=;
+	s=arc-20240116; t=1759832168; c=relaxed/simple;
+	bh=EVYc896DRIPSIudKMi9q1kUcyR3baEWsSFshUnToE0Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QgDj9OvDbebw8dwKTa9y4T0ZPNTOGmjQZNGeuj+H/4hnWqkMBR31srx6VdSNE31ss/no6mprljszARW0Vb7XF0I7NVchOH0Pl97Uohs/tyfz76CuqAQz3Asgh/oE/k4KOipMJ5sEMkmIOfwpO5B02K3LtCxcTLCiSSGwJazRG18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ymihRhD6; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3f1aff41e7eso4573153f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 03:15:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759832133; x=1760436933; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0yXg9AcgYPyqp7prkWmLpT+mSUIgyHjgb+sEzlSemMY=;
-        b=ymihRhD69m51FzgakkdExKqJg6otUyION7gPUVcObiIOlod4Y7j2LTytTg/9Rs7qBj
-         IJJNDZT2z9f/8zoEMMWqumdZlf3Vh5TvTNn4EHc3t/x+gDw/bQiPEBqyKumyBNtn+8DS
-         e3VO3a0Ewu6s7aJGBXDsjERSxbqC1BDAjP60E0WQerx9MBQvLngdI9B4v+F8Ms9Zf6HH
-         LxkXZzM8ctSc9jFJq+LvXXUZ7UZnfQNl9wMdXnpb3SuEuNTEYKPnuKAi1xANT3ZJfDig
-         HIZi55xHdvcFOmQFFvTfOCLudOSbnA8LvoPo6Pkq/rVKcV6ivhYFvbEsHUf2KAVDZdSk
-         9e8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759832133; x=1760436933;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0yXg9AcgYPyqp7prkWmLpT+mSUIgyHjgb+sEzlSemMY=;
-        b=cvPOpXer0+rVNPOFR/S87kUe6cOj4qqfehIg19S8Yexov1i8/SSYF8wIWDPIlIBgm5
-         /R6VTQbqN5BO7IiK0UhY6UVl81XLvwDNDIkOws300qzYfdM8j87gM4wyJHUASsyOyC0J
-         o/pRis5t6kMDYQXE0arStubqpin1UCXI3AeWrqYz3x2nZvtnMGRHxTRQMWtrM8uu6y2Z
-         9LIf8N/tLmIHdqAhwtgn//fCPAY9vn6iBTL3jvLuY5/jCu6lD2AaGjDq6C+rsY4SrPds
-         bTmgZua1JcYlEkqs60Pl0B62bPV0eACGI0rJsXu9rbWFm2ju63u3lEBs4M4LMK9gh5Oo
-         iMQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTqiEkKerGaznp6C1VLuxTAUjAJlzuojwvQ9wmRnG4LhozHY/ksVk3Vx52YaTd3xEtrHGBOnpLYQN934k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHgua8r6Y/YN6R+JiLuy0AJZeA5BZdfCT8RxRxkNBj2pumJOho
-	blEtTiaHd8nxD5hlo4IduqcQqglbGPQepFqxCGOCvSq5tqSiW23xJn4eGLkQ+emKYReRqdz3jSB
-	rWplQ
-X-Gm-Gg: ASbGncssLrTf7N3/d4m3HDMENYXviyWazcatjZxHejWJEO+mRX4NBMAsE85MoP7SGGr
-	R4xmJhIx+/7uSjT2torgUq9T4zt/N4K8Kgh51Zo5zp8hMhUrMd8x0Js/KvoEo4rvsyqTCbRFu4M
-	Mvs9aRb4MNfsu5d5RnemuVCcYXqzIk9k6aoNy63JdjDaDyvXSwxhvbeMUndKaiDEgGuHHIP4Iij
-	kn4gZzgj/9pUneIMVmt5ShMSMn4w/ZTfCtAPt+joZSan0xekfcoLjgYlo+BUCLEk0Uqzn8X6cfz
-	JbL9AlPSafUZt9xvfsXglgOHU6NnxZcSTbHyGydQ3etoV0p5++73IunGdMi5cBT3eLhvCNUGzf4
-	p4f+D7+Hbh+pqniJScQMIE9ZxcIX7kI9BLE455WFUgHJEHIfX/Ir3dDXg
-X-Google-Smtp-Source: AGHT+IEiT5FN1FKAizEpcgIVkRix673kPGjQ2cVd4EsFoPr5sDZw5EWuiYpkdxhZ49rGiJDXGIO3fw==
-X-Received: by 2002:a05:6000:26cb:b0:425:8c06:b78a with SMTP id ffacd0b85a97d-4258c06b7fdmr80060f8f.59.1759832132912;
-        Tue, 07 Oct 2025 03:15:32 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4255d8a6bb2sm24248577f8f.10.2025.10.07.03.15.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 03:15:32 -0700 (PDT)
-Date: Tue, 7 Oct 2025 13:15:29 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Rohan Tripathi <trohan2000@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/6] staging: rtl8723bs: remove unnecessary blank
- lines in rtw_ap.c
-Message-ID: <aOToQUMOqkG8EDII@stanley.mountain>
-References: <20251007091303.491115-1-trohan2000@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hgho9aoDMCLwZWD/eCgyDSlH9fK7ekRHTvC3TBNcq8SdaH3bhVvlShKMi64+TWbjW+W000XLTTVzu472Hr3Np7jHgi6wexrOJ/sqvvB5CFTdGLYuH1Gp9f4QX9RTiZhwOMv+v83N+pzgt3SoK0cYvkcE1V4cLzLA+dUSkMxHvaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DCDDC4CEF1;
+	Tue,  7 Oct 2025 10:16:05 +0000 (UTC)
+Date: Tue, 7 Oct 2025 11:16:03 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH] irqchip/gic-v5: Fix GIC CDEOI instruction encoding
+Message-ID: <aOToY8dF07zPe9Bt@arm.com>
+References: <20251006100758.624934-1-lpieralisi@kernel.org>
+ <aOPEXEx-QRv7v9A5@arm.com>
+ <aOPZqM2xGIrPJH/d@lpieralisi>
+ <aOPfIgrxZaqzu-7s@arm.com>
+ <aOTWJBETJDY4xFUh@lpieralisi>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,13 +50,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251007091303.491115-1-trohan2000@gmail.com>
+In-Reply-To: <aOTWJBETJDY4xFUh@lpieralisi>
 
-There you go.  Looks good now.  Thanks!
+On Tue, Oct 07, 2025 at 10:58:12AM +0200, Lorenzo Pieralisi wrote:
+> On Mon, Oct 06, 2025 at 04:24:18PM +0100, Catalin Marinas wrote:
+> > On Mon, Oct 06, 2025 at 05:00:56PM +0200, Lorenzo Pieralisi wrote:
+> > > My only remark there is that even as the code in mainline stands with
+> > > GCC, it is not very clear that we rely on implicit XZR generation to
+> > > make sure the instruction encoding generated is correct - it looks
+> > > like a bit of a stretch to reuse a sysreg write with immediate value == 0
+> > > to generate a system instruction write with Rt == 0b11111, it works
+> > > but it is a bit opaque or at least not straighforward to grok.
+> > > 
+> > > Obviously the patch below improves LLVM code generation too in the process.
+> > > 
+> > > I don't know what's best - I admit I am on the fence on this one.
+> > 
+> > My concern is other cases where we may rely on this, so we might as well
+> > go with a generic approach than fixing each case individually. If that's
+> > the only case, I'll leave it to you and Marc do decide whichever you
+> > prefer.
+> 
+> I will take your patch - added comments and rewrote the log for v2, with
+> your Suggested-by (did not give you authorship let me know if that's OK
+> please).
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+That's absolutely fine.
 
-regards,
-dan carpenter
+> One thing to mention, I added a Fixes: tag that goes back to the initial
+> GICv5 commit, I don't know whether it is fixing more than that, it does
+> not look like by a quick grep through kernel code but I am not sure.
 
+This would do. If we find other problems, we'll backport it.
+
+-- 
+Catalin
 
