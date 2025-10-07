@@ -1,80 +1,118 @@
-Return-Path: <linux-kernel+bounces-844247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35BB6BC15F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 14:34:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B767BC15FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 14:34:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA1ED3B6103
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 12:34:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B8213B82CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 12:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9BF2DD5E2;
-	Tue,  7 Oct 2025 12:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496962DEA7B;
+	Tue,  7 Oct 2025 12:34:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="eUqWWGrZ"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="smD3zNuQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD4A2D979F;
-	Tue,  7 Oct 2025 12:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996762DD5E2;
+	Tue,  7 Oct 2025 12:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759840471; cv=none; b=HdATcyjFJb8u6pWPd1pUEVm9pfHICriNeDkyvOBOm7pPgdR/ui136wi88lZ14DYGhIQJytP7sSEmDVDMUuBpOirkVD94/xJPf3mZqauX1++0iOhiUCydTFiLixblgr/7CZpR/OjKOr9II/lV46Xgaw2uSFxpgGsdV+Haa8LlUaw=
+	t=1759840493; cv=none; b=ohghZ2a0AS05wem8HzVqZKDfWqg8n10h927FtwtVXV7X80rcGaXwvNbuHtMcE3Z0fpdljlH3hLmyvDCGiA1xn1ml+Gxov67bHok6ZKow25qS/EZQjpTPqI8aeNUVEGgT8mhfstiZp7FEj82yHOUcEfpeRVCcNqYoHNeFLUPsLEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759840471; c=relaxed/simple;
-	bh=Q+x/tyllQSCVP1N45CGsf/4/VXsOzjtdlTK7trEnYDM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BJngu0rBNF3iOk0zegq0FSkIC0Ie7FWOresCCyzWxWaf754pP/Kvu8VASJVJoavFL5OH72FrNBgPHR3qP3O/2302wibcBNBBdFdu7gyzEkH2LOqFDlNeq+t1K9WISa94fOa6f/NWXft5gWDg3BpphebT3h1xdDZjpdEVOm18Cm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=eUqWWGrZ; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=CeR/nNVfj2ruH5KoFVbRCO4/42mMYrtwrDmRcpDO6cs=; b=eUqWWGrZExXmyV2Ncbg6pOFbXA
-	g14WbrUbS88ZpBPuKEVVoOLVScCaem2C6Jnf91E7C6K6rqaTvz8vhktmm+JeNSpMtPGGS5qsxLTk/
-	D6eFR5thMF66QxW+E9swrITHXkDWjQrweJkA5dHG7/VBbd8PDsf9OOI97Bkp5TXRzBfk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1v66td-00AMkH-BM; Tue, 07 Oct 2025 14:34:25 +0200
-Date: Tue, 7 Oct 2025 14:34:25 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc: Peter Korsgaard <peter@korsgaard.com>,
-	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux@ew.tq-group.com
-Subject: Re: [PATCH 1/2] i2c: ocores: replace 1ms poll iteration timeout with
- total transfer timeout
-Message-ID: <7dbefacc-3ce0-47ea-b521-102320f49420@lunn.ch>
-References: <1eb320b6b7d3a12e62785893ea68c4d16aa2560d.1759838476.git.matthias.schiffer@ew.tq-group.com>
+	s=arc-20240116; t=1759840493; c=relaxed/simple;
+	bh=/gA2vXXADC0P2DO9PBeH/QWjg5FYuxfk1woaBqc5pHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Z5ZOP+xxXB/4Lb7YfLHF4ekk7omuLaRJ5xunD3mwL8nhz7t6b87iKJf0w9EM83TrR8Ni2RskxdCOCwKCh1Gi9+IueEMUXrtgU5VsFSXF8zWKHYxxCZOIe7lQyxYMQux+BfqwnvwS4c/8e/pKIBOjLnnJcidKFUmbY75kJ1I0mZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=smD3zNuQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF235C4CEF1;
+	Tue,  7 Oct 2025 12:34:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759840493;
+	bh=/gA2vXXADC0P2DO9PBeH/QWjg5FYuxfk1woaBqc5pHM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=smD3zNuQsvbnvKUBlqEraNMCOmlHf5ZqFh3D8I+is2XJSEVmtVUmBd3U/x4u/wg8w
+	 tKjmOiTTHzsDJHxh7tDkCvTFCZ8p2UMXtApFoE9n2UUGL5/1v+zgDlg99IKclCZvjF
+	 MpLB+inmE4asNzxoj/DxExIsl2N8eNyZ9aq9NEaerLss2KG/Qq5UKeWs/cCCxUuSj+
+	 mfnH3xt0zvvB06dAqhXq4FbWclNtfrCkDf2CEQg5yULP6BdFmqfZDNIOSOA6Ew0S25
+	 gjnF2kcFJKmmDa+rVD/QKIHjC/Gntmts7UUH/XDS+aj2nuTONSDemVf/blJQYHOUmm
+	 VHx6PU1UZaWIA==
+Date: Tue, 7 Oct 2025 13:34:49 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Oct 7
+Message-ID: <aOUI6esdF-mwJib6@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bjLYY9IEYe109sMt"
+Content-Disposition: inline
+
+
+--bjLYY9IEYe109sMt
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1eb320b6b7d3a12e62785893ea68c4d16aa2560d.1759838476.git.matthias.schiffer@ew.tq-group.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 07, 2025 at 02:09:24PM +0200, Matthias Schiffer wrote:
-> When a target makes use of clock stretching, a timeout of 1ms may not be
-> enough. One extreme example is the NXP PTN3460 eDP to LVDS bridge, which
-> takes ~320ms to send its ACK after a flash command has been
-> submitted.
-> 
-> Replace the per-iteration timeout of 1ms with limiting the total
-> transfer time to the timeout set in struct i2c_adapter (defaulting to
-> 1s, configurable through the I2C_TIMEOUT ioctl). While we're at it, also
-> add a cpu_relax() to the busy poll loop.
+Hi all,
 
-1s is a long time to spin. Maybe it would be better to keep with the
-current spin for 1ms, and then use one of the helpers from iopoll.h to
-do a sleeping wait? Say with 10ms sleeps, up to the 1s maximum?
+Changes since 20251006:
 
-	Andrew
+The mailbox tree gained a build failure, I used the version from
+20251006 instead.
+
+Non-merge commits (relative to Linus' tree): 1189
+ 1444 files changed, 61523 insertions(+), 29086 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with an arm64
+defconfig, an allmodconfig for x86_64, a multi_v7_defconfig for arm and
+a native build of tools/perf.=20
+
+Below is a summary of the state of the merge.
+
+I am currently merging 407 trees (counting Linus' and 406 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
+Gortmaker for triage and bug fixes.
+
+--bjLYY9IEYe109sMt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjlCOkACgkQJNaLcl1U
+h9BxXwf+IEH5TVkJsZTKvQ2v2Ab8fPfHLoMs1noXC4EVD4q50hUK0kKkwbB+MdLH
+CXFl2hFQ6WlpF9WUWtH5Fui08EEvRo894qKrzqvmYmVivo3ZzwgYA7GFQBlUL93d
+kXL2MfkwerhM8QpyKCC0pu6uW38uJpe/2lquNAajgdrGqnBAv5rc9mOgII/6JkcZ
+974bjDJTaf/aHrXtHulEk7kAL3+auybwqQI/g6KLeXMVPJi3h5vfagjNe/Kw8NDs
+dFI4M+h0ZhyLoZfl7F4CaChFnmvImilB82NCwfeH0+lvub3e00U/W5Tc5QxH1Pj1
+dKkWc16Vn9yG7wI25p3swSXNwwhT2Q==
+=vEQR
+-----END PGP SIGNATURE-----
+
+--bjLYY9IEYe109sMt--
 
