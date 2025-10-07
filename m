@@ -1,143 +1,239 @@
-Return-Path: <linux-kernel+bounces-844558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 102F6BC2369
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 19:04:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4C44BC237B
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 19:08:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B815918991F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 17:04:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D7174E3170
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 17:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080B62E8B76;
-	Tue,  7 Oct 2025 17:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="xh7gM6Q6"
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053662E8B78;
+	Tue,  7 Oct 2025 17:08:41 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751D22DF130;
-	Tue,  7 Oct 2025 17:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A301A2E764B
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 17:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759856648; cv=none; b=fufuZF68veXn5Fzi4zrZYgFGojFv0nY5TV4D3Kz/XG8sCGF9ppniADOcuTkxz8EOCIbMthV2bQe5vDQ/G+4INapfeu1UQQuyIpVi/LZCySmlCAYW6f8wqm3NBzGESHrs0paIj/u6KSINwCzGsJdszp7bI5GUdcJ95PufCQ34xdA=
+	t=1759856920; cv=none; b=n/pvNYLI/bfNUwbxr/heIpiP4tJvuZ7vgIp4tCMxBRuD1A0g2ZEtZO166MkomsIdhbokaMr87Ejg6UEujAQWagwQg4wm9+fcpOFkPlYCj4ycor+Flz75UrIFprvLpuaW74bMnKeRoXm0XFsMNeAzRZ6hgLhRlgDo5tQeG2vvOJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759856648; c=relaxed/simple;
-	bh=TmecqJ+5qwk2sM9mRz944u6sKOHgNyAjItlrrCFK1Zk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KDu06F276BsqLFOXtslBWg1gI56uFuosCpX/HUA8YT9w9dW+LnzBgxR9Xx6Lv4l04eU/h5W1IQzLFqPHGaibpRflvtsUjb1DxLhFtReWR6nxOM2dDbVVF+NqWUHQBqTFNo6O+xzPgA2pnyLBNxSMpxCfMfKZStwMRZS+EfArHk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=xh7gM6Q6; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfout.phl.internal (Postfix) with ESMTP id 65B74EC032F;
-	Tue,  7 Oct 2025 13:04:05 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Tue, 07 Oct 2025 13:04:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1759856645; x=1759943045; bh=yQkaBhKJ2SJ4QYCh3VzMHRHO23fODnHWxAa
-	UeH65jcc=; b=xh7gM6Q6ZwfKs/4QtlLtvRHBRkX9F50eqQwvpqbq1CdFwevs5IM
-	rRSEm5hgfrRLqjnpXUMNqi+yGtzb2DDDaDS88kIyMF4YYYEAE3/+JzN94CaSaDi1
-	2bRPHZSc1ZOjyWNpZiOHqtSC96VN4FRQbvWtFptS/Y41dis663koel+cZgY3gNdN
-	nCoHf6EQphA95trhDWDJ57pBN8pQYcdh98PQNIEsu6hvb21+SRuNhNcbkoQccb40
-	EGiePpnoZ3k9OvLdv6ly8ZgSej34tVtrIu/w9qabgrYAg1f5xaW4/25IRBI5XBR0
-	Vby+9+Ued1XbLZkaNQqKK3Vmp5N0LBUO4QQ==
-X-ME-Sender: <xms:BUjlaDyagWRNFGGu3nDQpPtAbnAyk1sKH8hU6t1zR8FE-pAs8dgGQw>
-    <xme:BUjlaOWUhaPrWPPu2XLYaO5qzeD30G9zKICfBCTHgnQp4pKqSYvMzZ1a4kKFkVIUI
-    Abn-90s_-jomFFmQY9x7A7Hi-eBCwtBhEhYiz6NIB-7DL-uYw>
-X-ME-Received: <xmr:BUjlaH_739i5izQvXBI8ccUefZMoTStMlZMmUpr4nS7sx6WuWJ2FplIAy-nVJvDqppg6k-6S6ykJiu6V2Jm9Y0Ru>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutddtleejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepkfguohcuufgt
-    hhhimhhmvghluceoihguohhstghhsehiughoshgthhdrohhrgheqnecuggftrfgrthhtvg
-    hrnhephefhtdejvdeiffefudduvdffgeetieeigeeugfduffdvffdtfeehieejtdfhjeek
-    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpehiughoshgthhesihguohhstghhrdhorhhgpdhn
-    sggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggvmh
-    gvthhrihhouhhsiiesphhrohhtohhnrdhmvgdprhgtphhtthhopeifihhllhgvmhguvggs
-    rhhuihhjnhdrkhgvrhhnvghlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepuggrvhgvmh
-    esuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegushgrhhgvrhhnsehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtg
-    hpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihes
-    rhgvughhrghtrdgtohhmpdhrtghpthhtohephhhorhhmsheskhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:BUjlaJumaGeVRqaOnzlQnCz0WPrlwsNtNH9H4LCmA0PWawHhmyysjQ>
-    <xmx:BUjlaP2a4qFbzTUghm0rgfQ6JOBXGHi6ZSje1y37GnBlGAg16vnldg>
-    <xmx:BUjlaGRcaY75CuUivNPiEh67vXCgwBcMCJ3uSapErPpamCFkmSAACA>
-    <xmx:BUjlaLfwiLm6XZFMXudeucZyZ4eYJS1e3OnLWoDojrH4I-yLcpb4JA>
-    <xmx:BUjlaAabPBhwIDuUh4TsEPfRnyvEmWH2Fyj5JwdQDrPRl2LUvozNXM_o>
-Feedback-ID: i494840e7:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 7 Oct 2025 13:04:04 -0400 (EDT)
-Date: Tue, 7 Oct 2025 20:04:01 +0300
-From: Ido Schimmel <idosch@idosch.org>
-To: Dmitry <demetriousz@proton.me>, willemdebruijn.kernel@gmail.com
-Cc: "David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: ipv6: respect route prfsrc and fill empty
- saddr before ECMP hash
-Message-ID: <aOVIAWAxpWto8ETd@shredder>
-References: <20251005-ipv6-set-saddr-to-prefsrc-before-hash-to-stabilize-ecmp-v1-1-d43b6ef00035@proton.me>
- <aOPEYwnyGnMQCp-f@shredder>
- <MZruGuax8jyrCcZTXAVhH0AaAMOZ-2Gcj5VeZO8xy8wS9FqwA3EMhPFpHLZs67FAKCu6z3GpEVeArSX2qGdSUqsysI-0o13dKK1ZmUhK_l0=@proton.me>
+	s=arc-20240116; t=1759856920; c=relaxed/simple;
+	bh=mHg/lcZAg4bzBvAsvRX//PP45eEWLaRFZOv7QncEwsA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=EaFzChysMiviueoi9WzkOhSaZ2Geiu/vjrnLGN5BLavdwRUt6BTwfGj6HLl179WRKofKm4txy/ju8zdJbGJrntW067m0bTJPbj7i90gNvMgb/F97Meumd9Tn4B9UEkmG7SLu+syUNRwZRoPpx122aRcTvazfZvwaewQzd6CyamQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-4256ef4eea3so74275025ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 10:08:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759856918; x=1760461718;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BwaF+8wKesGhhLt3G48mndVQcMV9tkM5le1+HU/JbcA=;
+        b=npZFQtLWgDneL/8hKbI5jmOuujnbF3ZBlf8WzYxT1IXHCxMKeI6t6rOSEllalso7C6
+         AzduLx3xXmIzp5/9nrxAdbuPT7s/Nuj/jAKaUSCNc6wcE428ws3BPvl/cMFpqdIx6D6A
+         eeJXDqKXiGWmKza+jgjelizzjMqSk15n7Vm8SREbqTBnqqlL7+R4SwnYzGlAAjv8cu+F
+         P48ae3sXm+NqmSK0zUowgwRM15tRzFS5gYr5sXRU3kozzgVATMCs+V9w22uN3+0TUUQx
+         D3fzpRAruukTTCto/XpsqBfCINjp3QDMbFlKuCpwMuoUJvZKcHhlqbuRDfbChnMAesv8
+         BrRA==
+X-Forwarded-Encrypted: i=1; AJvYcCXpcBqFBNgO0RiMHpl5c9BcC6QtkDddN2GmiabaaoJxKi5hZ4Du3+DJ1MjAElDK4t/pppTIw/Hf7TDzKds=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKQGohD3GN0bloqcZs+32L9KpXhWrgt7BRuO0WeXYSZOKv9XWX
+	xApEt9vYse4NiaFuI9Y/nA18FxXFCy7y/fMZYMRPk/nuSxsv3ZKpHgbARNkQ6aFohDwDprAOxhe
+	oz7ebwWJpiMObVzAZG82gxfx+B/GjD0AeT7epE/RIyTqgnJAvTitT33cX8TI=
+X-Google-Smtp-Source: AGHT+IGKGADES496kPG8zXKUj/TDnmWONV9xl4qZNsngOapTD95ggxb+DmOPtYvK4j1mzIr7rD8U2KI4LYQ4sERHbplE99f+QKeV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <MZruGuax8jyrCcZTXAVhH0AaAMOZ-2Gcj5VeZO8xy8wS9FqwA3EMhPFpHLZs67FAKCu6z3GpEVeArSX2qGdSUqsysI-0o13dKK1ZmUhK_l0=@proton.me>
+X-Received: by 2002:a05:6e02:2704:b0:42e:712e:528c with SMTP id
+ e9e14a558f8ab-42f873df5bamr852345ab.19.1759856917663; Tue, 07 Oct 2025
+ 10:08:37 -0700 (PDT)
+Date: Tue, 07 Oct 2025 10:08:37 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e54915.a00a0220.298cc0.0480.GAE@google.com>
+Subject: [syzbot] [keyrings?] [lsm?] possible deadlock in keyring_clear (3)
+From: syzbot <syzbot+f55b043dacf43776b50c@syzkaller.appspotmail.com>
+To: dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org, 
+	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 06, 2025 at 06:31:10PM +0000, Dmitry wrote:
-> If the 5-tuple is not changed, then both the hash and the outgoing interface
-> (OIF) should remain consistent, which is not the case. Only with the fix does it
-> respect the configured SRC and produce a consistent, correct 5-tuple with the
-> proper hash.
-> 
-> Therefore, in my opinion, this should be fixed.
+Hello,
 
-Note that even if the hash is consistent throughout the lifetime of the
-socket, it is still possible for packets to be routed out of different
-interfaces. This can happen, for example, if one of the nexthop devices
-loses its carrier. This will change the hash thresholds in the ECMP
-group and can cause packets to egress a different interface even if the
-current one is not the one that went down. Obviously packets can also
-change paths due to changes in other routers between you and the
-destination. A network design that results in connections being severed
-every time a flow is routed differently seems fragile to me.
+syzbot found the following issue on:
 
-If you still want to address the issue, then I believe that the correct
-way to do it would be to align tcp_v6_connect() with tcp_v4_connect().
-I'm not sure why they differ, but the IPv4 version will first do a route
-lookup to determine the source address, then allocate a source port and
-only when all the parameters are known it will do a final route lookup
-and cache the result in the socket. IPv6 on the other hand, does a
-single route lookup with an unknown source address and an unknown source
-port.
+HEAD commit:    cbf33b8e0b36 Merge tag 'bpf-fixes' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1036c458580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1b4263e12240e6e1
+dashboard link: https://syzkaller.appspot.com/bug?extid=f55b043dacf43776b50c
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-This is explained in the comment above ip_route_connect_init() and
-Willem also explained it here:
+Unfortunately, I don't have any reproducer for this issue yet.
 
-https://lore.kernel.org/all/20250424143549.669426-2-willemdebruijn.kernel@gmail.com/
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-cbf33b8e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/54786e46ef23/vmlinux-cbf33b8e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/dd6f88ce083b/bzImage-cbf33b8e.xz
 
-Willem, do you happen to know why tcp_v6_connect() only performs a
-single route lookup?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f55b043dacf43776b50c@syzkaller.appspotmail.com
 
-Link to the original patch:
+======================================================
+WARNING: possible circular locking dependency detected
+syzkaller #0 Not tainted
+------------------------------------------------------
+kswapd0/74 is trying to acquire lock:
+ffff8880420f4098 (&type->lock_class){+.+.}-{4:4}, at: keyring_clear+0xaf/0x240 security/keys/keyring.c:1658
 
-https://lore.kernel.org/netdev/20251005-ipv6-set-saddr-to-prefsrc-before-hash-to-stabilize-ecmp-v1-1-d43b6ef00035@proton.me/
+but task is already holding lock:
+ffffffff8de44f40 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:7015 [inline]
+ffffffff8de44f40 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0x951/0x2800 mm/vmscan.c:7389
 
-Thanks
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (fs_reclaim){+.+.}-{0:0}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       __fs_reclaim_acquire mm/page_alloc.c:4269 [inline]
+       fs_reclaim_acquire+0x72/0x100 mm/page_alloc.c:4283
+       might_alloc include/linux/sched/mm.h:318 [inline]
+       slab_pre_alloc_hook mm/slub.c:4897 [inline]
+       slab_alloc_node mm/slub.c:5221 [inline]
+       __kmalloc_cache_noprof+0x40/0x6f0 mm/slub.c:5719
+       kmalloc_noprof include/linux/slab.h:957 [inline]
+       kzalloc_noprof include/linux/slab.h:1094 [inline]
+       assoc_array_insert+0x92/0x2f90 lib/assoc_array.c:980
+       __key_link_begin+0xd6/0x1f0 security/keys/keyring.c:1317
+       __key_create_or_update+0x41a/0xa30 security/keys/key.c:877
+       key_create_or_update+0x42/0x60 security/keys/key.c:1021
+       x509_load_certificate_list+0x145/0x280 crypto/asymmetric_keys/x509_loader.c:31
+       do_one_initcall+0x233/0x820 init/main.c:1283
+       do_initcall_level+0x104/0x190 init/main.c:1345
+       do_initcalls+0x59/0xa0 init/main.c:1361
+       kernel_init_freeable+0x334/0x4b0 init/main.c:1593
+       kernel_init+0x1d/0x1d0 init/main.c:1483
+       ret_from_fork+0x436/0x7d0 arch/x86/kernel/process.c:148
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+-> #0 (&type->lock_class){+.+.}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3165 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       down_write+0x96/0x1f0 kernel/locking/rwsem.c:1590
+       keyring_clear+0xaf/0x240 security/keys/keyring.c:1658
+       fscrypt_put_master_key+0xca/0x190 fs/crypto/keyring.c:80
+       put_crypt_info+0x26d/0x310 fs/crypto/keysetup.c:573
+       fscrypt_put_encryption_info+0xf6/0x140 fs/crypto/keysetup.c:787
+       ext4_clear_inode+0x170/0x2f0 fs/ext4/super.c:1527
+       ext4_evict_inode+0xa67/0xee0 fs/ext4/inode.c:321
+       evict+0x504/0x9c0 fs/inode.c:810
+       dispose_list fs/inode.c:852 [inline]
+       prune_icache_sb+0x21b/0x2c0 fs/inode.c:1000
+       super_cache_scan+0x39b/0x4b0 fs/super.c:224
+       do_shrink_slab+0x6ef/0x1110 mm/shrinker.c:437
+       shrink_slab_memcg mm/shrinker.c:550 [inline]
+       shrink_slab+0x7ef/0x10d0 mm/shrinker.c:628
+       shrink_one+0x28a/0x7c0 mm/vmscan.c:4955
+       shrink_many mm/vmscan.c:5016 [inline]
+       lru_gen_shrink_node mm/vmscan.c:5094 [inline]
+       shrink_node+0x315d/0x3780 mm/vmscan.c:6081
+       kswapd_shrink_node mm/vmscan.c:6941 [inline]
+       balance_pgdat mm/vmscan.c:7124 [inline]
+       kswapd+0x147c/0x2800 mm/vmscan.c:7389
+       kthread+0x70e/0x8a0 kernel/kthread.c:463
+       ret_from_fork+0x436/0x7d0 arch/x86/kernel/process.c:148
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(fs_reclaim);
+                               lock(&type->lock_class);
+                               lock(fs_reclaim);
+  lock(&type->lock_class);
+
+ *** DEADLOCK ***
+
+2 locks held by kswapd0/74:
+ #0: ffffffff8de44f40 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:7015 [inline]
+ #0: ffffffff8de44f40 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0x951/0x2800 mm/vmscan.c:7389
+ #1: ffff8880115840e0 (&type->s_umount_key#31){++++}-{4:4}, at: super_trylock_shared fs/super.c:562 [inline]
+ #1: ffff8880115840e0 (&type->s_umount_key#31){++++}-{4:4}, at: super_cache_scan+0x91/0x4b0 fs/super.c:197
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 74 Comm: kswapd0 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2043
+ check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2175
+ check_prev_add kernel/locking/lockdep.c:3165 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+ validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+ __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+ lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+ down_write+0x96/0x1f0 kernel/locking/rwsem.c:1590
+ keyring_clear+0xaf/0x240 security/keys/keyring.c:1658
+ fscrypt_put_master_key+0xca/0x190 fs/crypto/keyring.c:80
+ put_crypt_info+0x26d/0x310 fs/crypto/keysetup.c:573
+ fscrypt_put_encryption_info+0xf6/0x140 fs/crypto/keysetup.c:787
+ ext4_clear_inode+0x170/0x2f0 fs/ext4/super.c:1527
+ ext4_evict_inode+0xa67/0xee0 fs/ext4/inode.c:321
+ evict+0x504/0x9c0 fs/inode.c:810
+ dispose_list fs/inode.c:852 [inline]
+ prune_icache_sb+0x21b/0x2c0 fs/inode.c:1000
+ super_cache_scan+0x39b/0x4b0 fs/super.c:224
+ do_shrink_slab+0x6ef/0x1110 mm/shrinker.c:437
+ shrink_slab_memcg mm/shrinker.c:550 [inline]
+ shrink_slab+0x7ef/0x10d0 mm/shrinker.c:628
+ shrink_one+0x28a/0x7c0 mm/vmscan.c:4955
+ shrink_many mm/vmscan.c:5016 [inline]
+ lru_gen_shrink_node mm/vmscan.c:5094 [inline]
+ shrink_node+0x315d/0x3780 mm/vmscan.c:6081
+ kswapd_shrink_node mm/vmscan.c:6941 [inline]
+ balance_pgdat mm/vmscan.c:7124 [inline]
+ kswapd+0x147c/0x2800 mm/vmscan.c:7389
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x436/0x7d0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
