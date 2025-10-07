@@ -1,172 +1,152 @@
-Return-Path: <linux-kernel+bounces-844340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23D16BC1A02
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:03:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19CACBC1AFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D87AC19A0F11
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:03:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC0E03B8D7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:19:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9566244685;
-	Tue,  7 Oct 2025 14:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEAC72D94A0;
+	Tue,  7 Oct 2025 14:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dz8Uq/Z4"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qCZoxs9o"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BFE157480
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 14:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31170189BB0;
+	Tue,  7 Oct 2025 14:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759845798; cv=none; b=e0KAgqlC9849KRaipNJX+2/csAViAquUQgbDyJReinjFbdm0O9tXJbLu1cXVSsdSBLar7lIfmay3d8wQrMEarV2aEX2btKEm6pu8+9Y4M6Dq8tFOSD5bt5J2QPwvvgbCINIPfsw9F3xvwQbdGy3qwlKH45tW7tBYQYrNyqghKIs=
+	t=1759846780; cv=none; b=iwwbcu2PrW0fmKIRrAW5BeqeeWUgwjbK3EZRjw53ImUxxDttcnRX7VCmcypgdG7pm63BBzwASQEOOIBkYjcbckL6iaPZBcDPFwrhMZUWY1hKZZFnRuXrvgoDUme8D23cK/na7qWZGSMmV7la1+srt9OVqqy30qByfvEhynPBiR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759845798; c=relaxed/simple;
-	bh=QHDIZMz1ZEUlUwjyGTP5lM42aZbO1UP11CwVCrgZLNc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=QIjmhxpGvSJXNVD9wUzjzGHOxj4T3kaGfwFBFfhC28leWHilmNPL0cQv7s1ZPCU77MI1FRiXum30lLVFWvtUNw++ze8O/1N3iPUwYQXStyn+5RsJOkVTGH0FalFJsK+QsQcXaCncSH4fKBnpfh98SajplYNdwVf/Dljt51xdZBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dz8Uq/Z4; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 5F1DDC085F3;
-	Tue,  7 Oct 2025 14:02:53 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 981D1606C8;
-	Tue,  7 Oct 2025 14:03:11 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A6836102F214F;
-	Tue,  7 Oct 2025 16:02:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759845790; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=WSi/XXu9M7yK9fXAosnzu7bOzMYxwvxWn1n9XpuR2TI=;
-	b=dz8Uq/Z4RT1Q24psyJ+UYiqxP6P7O7iYVkn0rWcGNH1An7qnWq8bUTZI81YQ9PUZgZbugT
-	6n0zCKB1oy+oP6bBEoznuSj40VWNVdNBVNEoZtKGCPtrIlwrEzy8sSnCNQf4gBkhpSvolX
-	jGzLYCJfH8nyXS3JXvPj68CsekeNbY80o1UkGASYQHa2w3ANAAoFG9fLAsub05y8RgG1Iy
-	GndbDWYRZpjDW4TVeFiL7E6kpqigcruvuL2RyzdJCIlNwCk/nl+3W9JtPc0sCC0QfyXFLz
-	fSi2qqZ0w+jq2YkCTYcfXLkzjZ/thlagQSjJPM0OD2mUVrDHGGw4MZb24TUAlA==
+	s=arc-20240116; t=1759846780; c=relaxed/simple;
+	bh=CQPcQZEASX+8lu3nBu6CjRRon21/AdfPWUtGb7+8Vps=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YMiv+QoZuvzvaABfrtVMI5r55tUC1Ldxi1jjkHDxc8x8jhAkn8pGUjoz9AsvbaguDk4gnB8cXj8JfDmIEDlfhFa/e2Qm4v/cAjTt40Zwuoy/Hkc4ifb64s7py9eerocwX46ga7R1KofKvO+U7KOklItERNjXPJ3sbsfSPmoP7zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qCZoxs9o; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 597EJQxM3839955;
+	Tue, 7 Oct 2025 09:19:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1759846766;
+	bh=jLhm0wjkT3Ix64UN23GOIgK9LAgdlOztBdjVxrwqHz4=;
+	h=From:To:CC:Subject:Date;
+	b=qCZoxs9omyQHyUSAMXPJ+La3C2pkfkd1SrTiKvDAFd9TLyszqk3W6G3LX+gmtHe1R
+	 FQVquVEnqVpGWLEG79egcv+q3l/sL5kY8jo5rbay3KbZwktMQD1BC1EZLnwVd40AKz
+	 1EFUKSq6w6ORcPINY2r52m08Ry1lfWZwwFMU4ep0=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 597EJQdM3032191
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 7 Oct 2025 09:19:26 -0500
+Received: from DFLE201.ent.ti.com (10.64.6.59) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 7
+ Oct 2025 09:19:25 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE201.ent.ti.com
+ (10.64.6.59) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 7 Oct 2025 09:19:25 -0500
+Received: from pratham-Workstation-PC (pratham-workstation-pc.dhcp.ti.com [10.24.69.191])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 597EJOCR1003759;
+	Tue, 7 Oct 2025 09:19:24 -0500
+From: T Pratham <t-pratham@ti.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller"
+	<davem@davemloft.net>
+CC: T Pratham <t-pratham@ti.com>, Manorit Chawdhry <m-chawdhry@ti.com>,
+        Kamlesh Gurudasani <kamlesh@ti.com>,
+        Shiva Tripathi <s-tripathi1@ti.com>,
+        Kavitha Malarvizhi <k-malarvizhi@ti.com>,
+        Vishal Mahaveer <vishalm@ti.com>, Praneeth Bajjuri <praneeth@ti.com>,
+        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] crypto: api - fix reqsize handling for skciphers and aeads
+Date: Tue, 7 Oct 2025 19:27:51 +0530
+Message-ID: <20251007141852.726540-1-t-pratham@ti.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 07 Oct 2025 16:02:47 +0200
-Message-Id: <DDC59CH6JUWR.GRJ77V41K2DC@bootlin.com>
-Cc: "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Andrzej
- Hajda" <andrzej.hajda@intel.com>, "Neil Armstrong"
- <neil.armstrong@linaro.org>, "Robert Foss" <rfoss@kernel.org>, "Laurent
- Pinchart" <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman"
- <jonas@kwiboo.se>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Hui Pu"
- <Hui.Pu@gehealthcare.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/7] drm/encoder: add mutex to protect the bridge
- chain
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-To: "Luca Ceresoli" <luca.ceresoli@bootlin.com>, "Dmitry Baryshkov"
- <dmitry.baryshkov@oss.qualcomm.com>
-X-Mailer: aerc 0.20.1
-References: <20251003-drm-bridge-alloc-encoder-chain-mutex-v2-0-78bf61580a06@bootlin.com> <20251003-drm-bridge-alloc-encoder-chain-mutex-v2-1-78bf61580a06@bootlin.com> <2ksmq6ytj3zabxuexzjuqovalik6memy33vrba2aihfld7b7so@lhqhmaargucp> <DDBZS1BBBKSN.ZHCLP3O5T1HI@bootlin.com>
-In-Reply-To: <DDBZS1BBBKSN.ZHCLP3O5T1HI@bootlin.com>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Dmitry,
+Commit afddce13ce81d ("crypto: api - Add reqsize to crypto_alg")
+introduced cra_reqsize field in crypto_alg struct to replace type
+specific reqsize fields. It looks like this was introduced specifically
+for ahash and acomp from the commit description as subsequent commits
+add necessary changes in these alg frameworks.
 
-On Tue Oct 7, 2025 at 11:45 AM CEST, Luca Ceresoli wrote:
-> Hi Dmitry,
->
-> On Sat Oct 4, 2025 at 11:47 AM CEST, Dmitry Baryshkov wrote:
->
->>> @@ -319,6 +323,41 @@ static inline struct drm_encoder *drm_encoder_find=
-(struct drm_device *dev,
->>>  	return mo ? obj_to_encoder(mo) : NULL;
->>>  }
->>> =20
->>> +/**
->>> + * drm_encoder_chain_lock - lock the encoder bridge chain
->>> + * @encoder: encoder whose bridge chain must be locked
->>> + *
->>> + * Locks the mutex protecting the bridge chain from concurrent access.
->>> + * To be called by code modifying ot iterating over the bridge chain t=
-o
->>> + * prevent the list from changing while iterating over it.
->>> + * Call drm_encoder_chain_unlock() when done to unlock the mutex.
->>> + *
->>> + * Returns:
->>> + * Pointer to @encoder. Useful to lock the chain and then operate on t=
-he
->>> + * in the same statement, e.g.:
->>> + * list_first_entry_or_null(&drm_encoder_chain_lock(encoder)->bridge_c=
-hain)
->>> + */
->>> +static inline struct drm_encoder *drm_encoder_chain_lock(struct drm_en=
-coder *encoder)
->>
->> What is the use case for these wrappers? I'm asking especially since
->> you almost never use the return value of the _lock() one. I think with
->> scoped_guard you can get the same kind of code without needing extra API
->> or extra wrappers.
->
-> For two reasons.
->
-> One is to avoid drm_encoder users to need to access internal fields
-> (encapsulation, in object-oriented jargon). But if I read correctly betwe=
-en
-> the lines of your question, it is not worth because drm_bridge and
-> drm_encoder are already interdependent?
->
-> The second is that the C language spec sets tight constraints to the
-> drm_for_each_bridge_in_chain_scoped(). The macro must look like:
->
->   #define drm_for_each_bridge_in_chain_scoped(encoder, bridge) \
->           for (struct drm_bridge *bridge =3D <FOO>; clause-2; clause-3)
-> 	       '----------- clause-1 ----------'
->
-> clause-1 must:
->
->  * declare a 'struct drm_bridge *' variable (the loop cursor)
->  * initialize it via <FOO> which thus must be a rvalue of type
->    'struct drm_bridge *' (<FOO> must be a function or a macro, as a
->    variable with the correct value is not available)
->  * use the struct drm_encoder * as its sole input
->  * lock the encoder chain mutex
->  * get a reference to the bridge (as Maxime requested)
->  * ensure the bridge reference is put and the mutex is released on break
->    and return (clause-3 can't do that)
->
-> Given the above, we still need a function that locks the encoder chain
-> mutex and returns the encoder (bullets 3 and 4), like
-> drm_encoder_chain_lock(). I'm OK with removing drm_encoder_chain_lock() a=
-nd
-> replace it with an internal macro or function in drm_bridge.h though.
->
-> However I'm not sure how to use scoped_guard here because it doesn't retu=
-rn
-> a pointer that can then be passed further. Basically we are constrained t=
-o
-> have a chain of function or macro calls, each eating the result of the
-> inner one, with the outer one returning a bridge pointer for the loop
-> cursor variable. There might be some macro magic I'm missing, in such cas=
-e
-> don't hesitate to mention that.
+However, this is being recommended for use in all crypto algs [1]
+instead of setting reqsize using crypto_*_set_reqsize(). Using
+cra_reqsize in skcipher and aead algorithms, hence, causes memory
+corruptions and crashes as the underlying functions in the algorithm
+framework have not been updated to set the reqsize properly from
+cra_reqsize. [2]
 
-I realized I was not fully clear, sorry about that. The inability to use
-scoped_guard refers to the drm_for_each_bridge_in_chain_scoped()
-implementation, being a macro defining a for loop. However scoped_guard can
-be used in normal locking code such as the changes in patches 3, 6 and 7.
+Add proper set_reqsize calls in the skcipher and aead init functions to
+properly initialize reqsize for these algorithms in the framework.
 
-Luca
+[1]: https://lore.kernel.org/linux-crypto/aCL8BxpHr5OpT04k@gondor.apana.org.au/
+[2]: https://gist.github.com/Pratham-T/24247446f1faf4b7843e4014d5089f6b
 
---=20
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Fixes: afddce13ce81d ("crypto: api - Add reqsize to crypto_alg")
+Signed-off-by: T Pratham <t-pratham@ti.com>
+---
+
+Found this while developing TI DTHEv2 crypto driver. I narrowed that
+these crashes in [2] are due to some upstream change and not my code as
+the same driver is working fine in our internal 6.12 LTS version (with
+daily CI builds not showing any regression from crypto subsystem). The
+*only* change is replacing crypto_skcipher_set_reqsize() with
+cra_reqsize in algorithms as this patch was introduced after 6.12.
+
+Now, these crashes were not caught earlier because [3] split the
+in-kernel self-tests into two configs (CRYPTO_SELFTESTS and
+CRYPTO_SELFTESTS_FULL) which went unnoticed in my local development flow
+and the CRYPTO_SELFTESTS_FULL config was not enabled till recently. [2]
+shows after applying this patch, the driver passes all selftests
+succssfully with CRYPTO_SELFTESTS_FULL=y.
+
+[3]: https://lore.kernel.org/linux-crypto/20250612174709.26990-1-ebiggers@kernel.org/
+---
+ crypto/aead.c     | 1 +
+ crypto/skcipher.c | 2 ++
+ 2 files changed, 3 insertions(+)
+
+diff --git a/crypto/aead.c b/crypto/aead.c
+index 5d14b775036ee..51ab3af691af2 100644
+--- a/crypto/aead.c
++++ b/crypto/aead.c
+@@ -120,6 +120,7 @@ static int crypto_aead_init_tfm(struct crypto_tfm *tfm)
+ 	struct aead_alg *alg = crypto_aead_alg(aead);
+ 
+ 	crypto_aead_set_flags(aead, CRYPTO_TFM_NEED_KEY);
++	crypto_aead_set_reqsize(aead, crypto_tfm_alg_reqsize(tfm));
+ 
+ 	aead->authsize = alg->maxauthsize;
+ 
+diff --git a/crypto/skcipher.c b/crypto/skcipher.c
+index de5fc91bba267..8fa5d9686d085 100644
+--- a/crypto/skcipher.c
++++ b/crypto/skcipher.c
+@@ -294,6 +294,8 @@ static int crypto_skcipher_init_tfm(struct crypto_tfm *tfm)
+ 		return crypto_init_lskcipher_ops_sg(tfm);
+ 	}
+ 
++	crypto_skcipher_set_reqsize(skcipher, crypto_tfm_alg_reqsize(tfm));
++
+ 	if (alg->exit)
+ 		skcipher->base.exit = crypto_skcipher_exit_tfm;
+ 
+-- 
+2.43.0
 
 
