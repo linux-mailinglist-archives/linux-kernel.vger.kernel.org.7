@@ -1,143 +1,138 @@
-Return-Path: <linux-kernel+bounces-844119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D0E8BC10D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:51:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E51BC10DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:54:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89FF93C0E1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:51:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 544423C1079
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CE82D7D2A;
-	Tue,  7 Oct 2025 10:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A812D879B;
+	Tue,  7 Oct 2025 10:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HEdi4wZI"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JDPukr/S"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015582620D2
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 10:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BABA02D6E6E;
+	Tue,  7 Oct 2025 10:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759834311; cv=none; b=I556RD7HIY3WXC4E6VwUYHmSBD1Y8niwTCMfDVTR61UiLqeMfubQJFyu8qYA9q33Efd5GCQn6L904DpNaqsJQaOefa1Q0qd1NoEBaq5gS8sTaoERcfRbUsqNBQMg/NLd1wMapCF/z05h2DtLmFfKomu5OHKfzRjxxpKEeIkReK4=
+	t=1759834482; cv=none; b=UzDWT5Dt9z0Fxzxv1nEE03kkjPE66Tn90a2DCaECPeQCNsmWBgs1j682WNeymZFqXKOPaG6n7V+X54L+ga3YxzDsRU6L1Hd7lk4Tb9OTuzu4xiYyLad3F2dpwN2E/Ebnvm2qiqMTMcxsnpuXsO+20ROWyxFVW47R6vb26KhP0Ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759834311; c=relaxed/simple;
-	bh=CepWaTGCEFBPcBnIFRW1vXwnc8/n1GmZ/NWMhFgI4LQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ROWj2xjki4vgxU1cdUXXSorTvgbbukMr1XBtgkl4srSda6+KHWmgc5gqj8/lLPCCiiuaIV5SXOGVX4cQLksABshJWVvWoPutEvQFs3N8Mgac1QSkdIn6ncs0bhtqEW6ShDMJv/C+18dGARDzw69IQP7e3PoRUbE9ycuAcNRTRx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HEdi4wZI; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-77f605f22easo5124226b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 03:51:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759834306; x=1760439106; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ERaGQ9yaIxATr8iiR27EbRVx7ElSWO0RKNhQEdswlB8=;
-        b=HEdi4wZIo1aYE5nKriglQpQ1zNQisxlOyZHDsFbvfgSe7mBh1ODydPXj4urcI1Yv6/
-         Hj1Vc03s+tteT1aJcjacDr5RgsjxhcaDzU56VQg6ONFfD6ejpWkZR9xsHXgb3opvH1HP
-         fcjPYtFwssm59hr+eC4uMPrf+bC1CXUVs8dPvoKeeHcsgYC8uHKQULF0+iL4aGawPs0w
-         /tI5wJMTXBV2467M5h3j9F8/dWocdFBBfQKNqI6vmYrqbMV2fbnRtgyh/bBYpqisbHml
-         67kJG5cvdwe6PqnePUJ9mWza2Sm2m51SF+pnaH6cZ07VKHnBdD341HRwFIb8zU+7+OBj
-         6bHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759834306; x=1760439106;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ERaGQ9yaIxATr8iiR27EbRVx7ElSWO0RKNhQEdswlB8=;
-        b=auuINo3YFXk/8lp3HfeTipweUAyOZ4DXCUcLpOxf1Gmc/cG5sSw5MkMdbu1gZJ/2ym
-         9PozryUCtSsAGfFkkT6TfDW/cH6zQ14pZL/mhuf5qb8yeCa65f9Cu8F67cAglXP8Y7qo
-         WZ1SgbPaaVLFjzRBUN6+RTuQ14w7dadmLEw1MNoyXXiyXv/e0kw+qv4Xz0tLS9JxBBIl
-         3ntUYhN/QvG2FKeRdlwGPTLoWyVhvWiWncLAhQqd3w0NOR7f1iW7/WKqQznpAtwsGRRt
-         qVnp/SWyjyFDh7EDlDe8sp4+D3FZZMlep09fYaXPlek0wEy1CDsw9kYJ4W+QUQV2KX5d
-         7ocg==
-X-Forwarded-Encrypted: i=1; AJvYcCU78cO1Cps94jHKAga8f3k0WT4BTqkv5N+ULOJZYftT04IDr51Wl95m8utolO0WxFz5eJI3jAY9/V1sk/k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzE6Xt0SSE6/4JLgLFgbVqHpbZsq1QRcHWcBK8DXwUUN8JjrUR+
-	DCAlxZPsRVA8qo4suRqu3LMwnnx7UdvtZZS/7NtKEtSYPEBbUVgFEhPikpvTJ74ukwgkEsubmMt
-	BNy74zULAdPFg1RTc8Tw/cH1JAf66Kjw=
-X-Gm-Gg: ASbGncszYDnYE8z52a7hZJSXJ8vVK5I9i0djHtTCQ52goYwmWogD9/4fzkIeMa4muud
-	xz0+0Vf1RWvuRkpIqj6nhqMIxURXIag1D0auZ7CBfygRb47j9NosT2wg3II3i7VSldF9Kd3EybN
-	ADdujviWaprYoPLzNuziP2jkrqizNqxcw0dZymGsAdFPqCfCtd3ReBGCehIXYqOBdVMaCq3R3QQ
-	k5q7WgrzKSLTRVcy4VVTP8laOrqOB/JZl9g4OR85t+kDBhwzQRbVLGckO5lyJhej5svHlvDB/Da
-	xNE+5eDTR2Me2Shm6TCQjD1B7sHC
-X-Google-Smtp-Source: AGHT+IHd4zGkj8r8eX1uXnoNZwLblBsh2kU8FR1292Wn++vUByrkdWyStrHKXbzebA9hvSEeVl0scLTbBp83jB2APSE=
-X-Received: by 2002:a05:6a00:2406:b0:77e:325b:f614 with SMTP id
- d2e1a72fcca58-78c98d42c3emr18728701b3a.12.1759834306125; Tue, 07 Oct 2025
- 03:51:46 -0700 (PDT)
+	s=arc-20240116; t=1759834482; c=relaxed/simple;
+	bh=u++xuxmfY7yUa0CDs/pPu9JMySam+ko+Di/CayzFiOc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BMjrOeABlZWUiRCiGe6Ld6o+wIl5IeY/QUe1TW4va9duvTfEzbhsmncKvV77k9a1kCmgK6nr4Z5KIquyKGhX2pwqdlS3/tGl99x2qt5A7qx6E4TsXOtGGK8B6xHJnusnkRWjlaJrpoPEGjkKL1BMshu/ZV6OjEZbinbFuyY9ODw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JDPukr/S; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 597As0eU064331;
+	Tue, 7 Oct 2025 05:54:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1759834440;
+	bh=qRXHLbRBDsuSDZ3JRGY2OvYgbs7ujLbpdTE0+o8E2EQ=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=JDPukr/S3NeMkpra/lCjbMz4mDcIOWzuywKysPN7YsCQ6JU30an5ju1YxNeEH45mC
+	 Fn8taa/iuxbGpNEqXUSmEQ4f57QTZspHNQcuENHNttHulSwir2Fym2WI0w0DpvbfLy
+	 7d/akc9AOvjLTpa784veuIY4izGJUiPzqaC++MiY=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 597As0XT2923797
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 7 Oct 2025 05:54:00 -0500
+Received: from DLEE200.ent.ti.com (157.170.170.75) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 7
+ Oct 2025 05:54:00 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE200.ent.ti.com
+ (157.170.170.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 7 Oct 2025 05:54:00 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 597ArwX71007621;
+	Tue, 7 Oct 2025 05:53:59 -0500
+Date: Tue, 7 Oct 2025 16:23:58 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+CC: Saravana Kannan <saravanak@google.com>,
+        "Rafael J . Wysocki"
+	<rafael@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-pm@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
+        Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+        Heiko Stuebner
+	<heiko@sntech.de>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Sebin
+ Francis <sebin.francis@ti.com>,
+        Diederik de Haas <didi.debian@cknow.org>,
+        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+        Jon Hunter
+	<jonathanh@nvidia.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] driver core: fw_devlink: Don't warn about
+ sync_state() pending
+Message-ID: <20251007105358.6jgn25jnwjxafz6r@lcpd911>
+References: <20251007094312.590819-1-ulf.hansson@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250928054913.7871-1-opensource206@gmail.com>
-In-Reply-To: <20250928054913.7871-1-opensource206@gmail.com>
-From: opensource india <opensource206@gmail.com>
-Date: Tue, 7 Oct 2025 16:21:34 +0530
-X-Gm-Features: AS18NWAMfEoLWOWgvXjGrgouycSgLmjfzvSwhjaSRxD-4Nl9jKScURjrqBIQrkY
-Message-ID: <CAKPKb8_8uQdzNevB4wVpXcRrBr0-rjfvBR=oNNyCCA4yASgK-g@mail.gmail.com>
-Subject: Re: [PATCH] drm/vmwgfx: Replace schedule() with schedule_hrtimeout()
- in fallback wait
-To: zack.rusin@broadcom.com, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
-Cc: bcm-kernel-feedback-list@broadcom.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251007094312.590819-1-ulf.hansson@linaro.org>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Sun, Sep 28, 2025 at 11:19=E2=80=AFAM Pavan Bobba <opensource206@gmail.c=
-om> wrote:
->
-> Replace the open-coded polling with schedule() in vmw_fallback_wait()
-> by schedule_hrtimeout(). The old code wakes up at jiffy granularity and
-> leads to unnecessary CPU wakeups during fence waits.
->
-> schedule_hrtimeout() provides high-resolution sleep with finer control,
-> reducing CPU utilization without affecting fence correctness. For the
-> non-interruptible case, use schedule_timeout_uninterruptible().
->
-> Signed-off-by: Pavan Bobba <opensource206@gmail.com>
+On Oct 07, 2025 at 11:43:12 +0200, Ulf Hansson wrote:
+> Due to the wider deployment of the ->sync_state() support, for PM domains
+> for example, we are receiving reports about the sync_state() pending
+> message that is being logged in fw_devlink_dev_sync_state(). In particular
+> as it's printed at the warning level, which is questionable.
+> 
+> Even if it certainly is useful to know that the ->sync_state() condition
+> could not be met, there may be nothing wrong with it. For example, a driver
+> may be built as module and are still waiting to be initialized/probed. For
+> this reason let's move to the info level for now.
+> 
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Reported-by: Sebin Francis <sebin.francis@ti.com>
+> Reported-by: Diederik de Haas <didi.debian@cknow.org>
+> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 > ---
->  drivers/gpu/drm/vmwgfx/vmwgfx_irq.c | 16 ++++++----------
->  1 file changed, 6 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_irq.c b/drivers/gpu/drm/vmwgfx=
-/vmwgfx_irq.c
-> index 05773eb394d3..64045b0efafc 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_irq.c
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_irq.c
-> @@ -202,16 +202,12 @@ int vmw_fallback_wait(struct vmw_private *dev_priv,
->                 if (lazy)
->                         schedule_timeout(1);
->                 else if ((++count & 0x0F) =3D=3D 0) {
-> -                       /**
-> -                        * FIXME: Use schedule_hr_timeout here for
-> -                        * newer kernels and lower CPU utilization.
-> -                        */
-> -
-> -                       __set_current_state(TASK_RUNNING);
-> -                       schedule();
-> -                       __set_current_state((interruptible) ?
-> -                                           TASK_INTERRUPTIBLE :
-> -                                           TASK_UNINTERRUPTIBLE);
-> +                       ktime_t delta =3D ktime_set(0, NSEC_PER_MSEC);
-> +
-> +                       if (interruptible)
-> +                               schedule_hrtimeout(&delta, HRTIMER_MODE_R=
-EL);
-> +                       else
-> +                               schedule_timeout_uninterruptible(delta);
->                 }
->                 if (interruptible && signal_pending(current)) {
->                         ret =3D -ERESTARTSYS;
-> --
-> 2.43.0
->
+> 
+> Changes in v2:
+> 	- Due to discussions on v1 and because the default Kconfig is to use the
+> 	FW_DEVLINK_SYNC_STATE_STRICT, I suggest that for now it may be best to
+> 	keep the warning level for the "Timed out.." print and only change the
+> 	"sync_state pending..." message.
+> 
+> ---
+>  drivers/base/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index d22d6b23e758..c62e428b95b0 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -1784,7 +1784,7 @@ static int fw_devlink_dev_sync_state(struct device *dev, void *data)
+>  		return 0;
+>  
+>  	if (fw_devlink_sync_state == FW_DEVLINK_SYNC_STATE_STRICT) {
+> -		dev_warn(sup, "sync_state() pending due to %s\n",
+> +		dev_info(sup, "sync_state() pending due to %s\n",
 
-anyone please review this patch
+Reviewed-by: Dhruva Gole <d-gole@ti.com>
+
+-- 
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
