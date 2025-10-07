@@ -1,169 +1,193 @@
-Return-Path: <linux-kernel+bounces-844145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A575FBC11E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:17:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23AA5BC12AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2BEF534E3B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:17:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7ED019A064C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13F72D97B8;
-	Tue,  7 Oct 2025 11:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5DD52DCBEE;
+	Tue,  7 Oct 2025 11:18:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="f3cQ3vX3"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pw1ycah2"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FADD22B8AB;
-	Tue,  7 Oct 2025 11:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC94D2DC790
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759835830; cv=none; b=CS4R+6Og5VwhwudCW9/Zh50b0CyPK62l26N0K/IlH3nZ0FTYxgs98aDEsbUM1S/rr6/fOsD4J9lFtBtWj9QBU3vFHLPBI2D0aqMRoAkXdmD5AOHhXmhj54cRyU9+wxrzaWefHSf/Ltq/BparwT4yz02Bc6EJvunjIhzFrsBv420=
+	t=1759835925; cv=none; b=jT9rxlReW9lbgkAbzYHl0C4PxKM4RzGnZf8cn8ZvoCWaGwAb/CH1aiLxRZlvGfaHPjbqlf+/XJIi6SV1FYrJKX428/ZMG7rl9wNxhF1K9fI7poJo8O1jNUotxJWePuf0OwuO/P+LwMx4SSDO1ISDT0waxH4F/irPFl3Df38x3no=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759835830; c=relaxed/simple;
-	bh=dTlWqI9MDbTPXjNObomXrRjydpXiYIqN1Xq05lAl5jE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VBzj1pexHSUpfaDf4hzIwJ/XLrTpE1cOvlKw9sCmWvtZTIASSJficgDQqXwbzkml31w6isAtH/ov97QkgVq3VW6++yjyJdqgfWNNnf18XDH18wo12F/NWhWd6Tui8FdWSzqFlne+OznyzyjkGM/etXoW7Ftc9Sg4OGMQfhlxPz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=f3cQ3vX3; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5973m764004958;
-	Tue, 7 Oct 2025 11:17:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	AzwZV3lhbGPsR0uXeFxUfkE+5WX8Kk287FDa3Qgag1g=; b=f3cQ3vX3TpiQm/ZE
-	m8ZiTtsGJ++drn1xl0m5Se2ZEM3sK39iG2FG2f1d7SG9MJ7cl9/1xd2UOzqBZGd1
-	J8DsWzfsESWUFv2ey2w8iEbJBoxqeq/s/DKFRHgAA80ZSs2WDzOpj2ERkT2KyySD
-	sLIrZRyi/uALeQVh2TOp2UkE/5Tof4MpkSuoyyhL2+BabMd2LPc52oap9INXL3b1
-	+2WSjuGgQx+BirkiHsO2uxhlMTLqdNnWrfmUr8BjNG/7tFtl2OzdGVdqQW5BC4G9
-	mY4OSc2z092eoAvfRZfygOy6LWTTjgG7GBd5l6v3Vl4/A6Hxc7NBE6T723xmns+0
-	qjU1QQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jvrhpu3p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 Oct 2025 11:17:01 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 597BH0uV009622
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 7 Oct 2025 11:17:00 GMT
-Received: from [10.217.216.18] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Tue, 7 Oct
- 2025 04:16:55 -0700
-Message-ID: <817f02aa-dfb8-a134-2fd4-fbdf8e8a714e@quicinc.com>
-Date: Tue, 7 Oct 2025 16:46:52 +0530
+	s=arc-20240116; t=1759835925; c=relaxed/simple;
+	bh=l1N1qUSs7aNQur915ZEPIIc8ybGkzYfyM4nn88B18eA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=lAoBP+IHWEovnE9kgFq/x8447g/79mHbuVbDG0uil4a1cf9NK/bs6scjmKdDbc3qSWcb/r7MXBYn1/uTgJ338ppN8sD+sOR/iePzk/kmg9U9+K3HS5MewEA6jWvLSHwv+K6UCsFNhHu4LZFK9Rm8N2lTcoPDNo/IdDXMUaZF8x8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pw1ycah2; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b5506b28c98so4313290a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 04:18:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759835922; x=1760440722; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5xSjj3Iwg14xHIfiMziIXjcapcCofRPyKMdiFHmwd9k=;
+        b=Pw1ycah20Hc6dyibu10Bo6Df40KVcFkHwtBDcZkDyV7NB3mKcBt5WgEpPfn6BP1u8I
+         Ae1O7D1Bpo2el/z4y4rOygtWBu3E5NJFohoYOJjdLUlGK1mUOHz25AIJk3zIVWBxydLA
+         1xJB/Dw2j0iRIvWrGGMAwJ2thTJP8/N2MF5J/G2KV30eQXcDqRXUXLntZ4wsTK7g2nzw
+         t9VrElW8Ie9HfHNYsJE8kmI+b3sLSdIDXgE8k0tTKM0L7J/l8SKwJr/IzmyqqSDv85ss
+         lC4IDoIxMm1PRy9sd+JrOtNLsttEbe2ze7kJyL9e71z2AjvA/23TncWIbTrWLOTKOj/Y
+         WRMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759835922; x=1760440722;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5xSjj3Iwg14xHIfiMziIXjcapcCofRPyKMdiFHmwd9k=;
+        b=F/LBWCPpsBa/Ovm7mXDYXRS8xcFT2qRQu740RO67AKef8pV08/nYyX2JJrqlk9Cd/0
+         V3Amt8XGQNZtrzfiQVenWMOtOQG4yzAEAdVRHvY1QPKI4Cp1Y8CuKgMT1alLtyx4RmDN
+         NhmrPgu0RWYSjV82AaS8VChjRWc18/YVPgbKT4/C9SjGXsafUpxmYFJpVFGdDDij01WB
+         YoAkgp5+IHfcTXm/27tSXCK433RIAYCQ0kFP5FuzmAX1fgCGiO/IjSdIk3k2yl+/nT/+
+         qlriQClz+FcVZrSkAzcuRS7lE+Sgppvzshy6nLj/JJ9OtryF8dL43u2ZMxnh572ksb4o
+         XcFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVsj5+OuC9gQfkSAUZXAGfzoLZHAIUCr2qdUeswYtpzIRSWb+4wa2UUGDLFNcMA9vFqLHRajltBcN4CLzc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLUH2oY++czdzg+x51lIUe/kz1QRu8Sk/+ilQxj60hi+jXxXas
+	UhDU9QyG9fZWsMS/raXjM86aV9hDkF/5Dk0DdmyG4ktzAEQ2BJyskN74
+X-Gm-Gg: ASbGncsviJkFOokAT8IlfpQt7xWLgXEJmsGH7vh97Sxk3+d9v86/zAyMig6YnagLtME
+	v3QO6ffRFwgoKVucW58BfuZbyysMXYyrE3YdXyRApvoo334MUyeAwiijk5y6m9meB1G2xuvWCgk
+	3pA/x2dmNft9DjT9CbYzxY+8v2rTyw9NWCOazdpXBKCSpGqiFZruK6HPkfvTbvQ/a/b4PGWSNaL
+	gV6oIMcmAsf4rxFhZRihfTRZLx54aBjseomkBoZJrCat0bsxcpoIa9ktWWoc9sLnLgbXc+HfDeF
+	YR3415ggFglM7PqC7Px5lbQD5WIfQBk2Qd7gup1q9JEpNCwOxlAU9vGJASWV5qgJwsTljdmvfrq
+	gethHMf1sQKIrI9g61zwCY9Rg6FLIax7QnieRxeTNpLY1qxRzdpSCQBKVI9VQlHwJ4qziaAWP+v
+	LvdKK0tS0YBaMIp3dKi0bWGBRlNVWNNY2PMngafGeUqA==
+X-Google-Smtp-Source: AGHT+IHQhWG4at6c4CSv92k3Kc2ZO7qLCe+WK+3iGElAPZoi7Z/HUsioUEndvALrS7T+2HHEi3fTMQ==
+X-Received: by 2002:a17:903:2409:b0:27e:e96a:4c3 with SMTP id d9443c01a7336-28e9a54423bmr206134295ad.14.1759835921894;
+        Tue, 07 Oct 2025 04:18:41 -0700 (PDT)
+Received: from [192.168.2.3] (2403-580a-80ed-0-4835-5a07-49e7-f115.ip6.aussiebb.net. [2403:580a:80ed:0:4835:5a07:49e7:f115])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1d31bdsm162509045ad.94.2025.10.07.04.18.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 04:18:41 -0700 (PDT)
+From: James Calligeros <jcalligeros99@gmail.com>
+Date: Tue, 07 Oct 2025 21:16:52 +1000
+Subject: [PATCH v3 11/13] arm64: dts: apple: t8103, t8112, t60xx: add hwmon
+ SMC subdevice
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v4 1/4] dt-bindings: mmc: Add dll-hsr-list for HS400 and
- HS200 modes
-Content-Language: en-US
-To: Rob Herring <robh@kernel.org>
-CC: Ulf Hansson <ulf.hansson@linaro.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Adrian Hunter
-	<adrian.hunter@intel.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>, <linux-mmc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dmitry.baryshkov@oss.qualcomm.com>,
-        <quic_pragalla@quicinc.com>, <quic_sayalil@quicinc.com>,
-        <quic_nitirawa@quicinc.com>, <quic_bhaskarv@quicinc.com>,
-        <kernel@oss.qualcomm.com>, Sachin Gupta <quic_sachgupt@quicinc.com>
-References: <20250929113515.26752-1-quic_rampraka@quicinc.com>
- <20250929113515.26752-2-quic_rampraka@quicinc.com>
- <20251006214830.GB625548-robh@kernel.org>
-From: Ram Prakash Gupta <quic_rampraka@quicinc.com>
-In-Reply-To: <20251006214830.GB625548-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAzNiBTYWx0ZWRfX6RQ0kTSZW4R5
- bwjSohAl9l2XlwT+RN1dyIUocTTLwtHh/q1L9lfwE4HcP5LlYFCuNC3s87HNKVRODwuB24hOqdz
- Ck2d92lMIYwiIKfCfYfjd/30Ot/WJiREcVG8pchgA8IyUs+rPSMxS0ix7xlSuQXS7KAed7+QqDz
- LZtj6SdL+xR+RxRnqipACI1b1h9L6GtIOfO8wKe2rbuvY63b7a4FolIEuXyaYnmTxf8n0h0JIEr
- k1/TUDkCOwFaDSQh/sMDuAv0jt40hCpiIJhWEUr+wVlMYsbEdlASikUqCxvu59Mt5yyhvNlyZtQ
- rAB83D4Yg/kR64DZd29Hb1tD00Bw+gelTOwXBBuzSGI54dlvdALQlgmt4v8v82ksUl6M1PlFMI2
- 9mQ4tOaeOyn3X9eV/exuM2xHeBsD1A==
-X-Proofpoint-GUID: bjPfjbwXZxMNLvL4xrxliimPWRKEvptK
-X-Authority-Analysis: v=2.4 cv=XIQ9iAhE c=1 sm=1 tr=0 ts=68e4f6ad cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=COk6AnOGAAAA:8
- a=bBXPjYvAnMgFlPrjOloA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: bjPfjbwXZxMNLvL4xrxliimPWRKEvptK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-06_07,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 suspectscore=0 lowpriorityscore=0 impostorscore=0 phishscore=0
- clxscore=1015 adultscore=0 spamscore=0 priorityscore=1501 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040036
+Message-Id: <20251007-macsmc-subdevs-v3-11-d7d3bfd7ae02@gmail.com>
+References: <20251007-macsmc-subdevs-v3-0-d7d3bfd7ae02@gmail.com>
+In-Reply-To: <20251007-macsmc-subdevs-v3-0-d7d3bfd7ae02@gmail.com>
+To: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Jonathan Corbet <corbet@lwn.net>, 
+ James Calligeros <jcalligeros99@gmail.com>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-rtc@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+ linux-input@vger.kernel.org, linux-doc@vger.kernel.org
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2496;
+ i=jcalligeros99@gmail.com; h=from:subject:message-id;
+ bh=l1N1qUSs7aNQur915ZEPIIc8ybGkzYfyM4nn88B18eA=;
+ b=owGbwMvMwCV2xczoYuD3ygTG02pJDBlPvm1b4qq69Uht7n7+Jkm98m/LRPVem4gxb5O6ar954
+ s7df7ZydpSyMIhxMciKKbJsaBLymG3EdrNfpHIvzBxWJpAhDFycAjCRqZ8Y/mmfN0l8cGTT+/aj
+ HGrv5p1WYI5+xXPz5b3Eb+qv5wRNCpvLyNB8WqqikeUrk3D9m6SOk5mMvzVf6f3cW964bnHO3/P
+ 2XiwA
+X-Developer-Key: i=jcalligeros99@gmail.com; a=openpgp;
+ fpr=B08212489B3206D98F1479BDD43632D151F77960
 
+Apple's System Management Controller integrates numerous sensors
+that can be exposed via hwmon. Add the subdevice and compatible
+in preparation for the sensors that need to be described
+for each device.
 
-On 10/7/2025 3:18 AM, Rob Herring wrote:
-> On Mon, Sep 29, 2025 at 05:05:12PM +0530, Ram Prakash Gupta wrote:
->> From: Sachin Gupta <quic_sachgupt@quicinc.com>
->>
->> Document the 'dll-hsr-list' property for MMC device tree bindings.
->> The 'dll-hsr-list' property defines the DLL configurations for HS400
->> and HS200 modes.
->>
->> QC SoCs can have 0 to 4 SDHCI instances, and each one may need
->> different tuning.
->>
->> Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
->> Signed-off-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
->> ---
->>  Documentation/devicetree/bindings/mmc/sdhci-msm.yaml | 5 +++++
->>  1 file changed, 5 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
->> index 22d1f50c3fd1..a60222473990 100644
->> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
->> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
->> @@ -137,6 +137,11 @@ properties:
->>      $ref: /schemas/types.yaml#/definitions/uint32
->>      description: platform specific settings for DLL_CONFIG reg.
->>  
->> +  qcom,dll-hsr-list:
-> '-list' doesn't add anything.
+Signed-off-by: James Calligeros <jcalligeros99@gmail.com>
+---
+ .../arm64/boot/dts/apple/t600x-die0.dtsi | 4 ++++
+ .../arm64/boot/dts/apple/t602x-die0.dtsi | 4 ++++
+ arch/arm64/boot/dts/apple/t8103.dtsi     | 4 ++++
+ arch/arm64/boot/dts/apple/t8112.dtsi     | 4 ++++
+ 4 files changed, 16 insertions(+)
 
-list was used as there are 5 dll register, but '-list' can be
-dropped, and it can be renamed to qcom,dll-hsr, I will update in
-next patchset.
+diff --git a/arch/arm64/boot/dts/apple/t600x-die0.dtsi b/arch/arm64/boot/dts/apple/t600x-die0.dtsi
+index f715b19efd16..e6647c1a9173 100644
+--- a/arch/arm64/boot/dts/apple/t600x-die0.dtsi
++++ b/arch/arm64/boot/dts/apple/t600x-die0.dtsi
+@@ -37,6 +37,10 @@ smc_gpio: gpio {
+ 			#gpio-cells = <2>;
+ 		};
+ 
++		smc_hwmon: hwmon {
++			compatible = "apple,smc-hwmon";
++		};
++
+ 		smc_reboot: reboot {
+ 			compatible = "apple,smc-reboot";
+ 			nvmem-cells = <&shutdown_flag>, <&boot_stage>,
+diff --git a/arch/arm64/boot/dts/apple/t602x-die0.dtsi b/arch/arm64/boot/dts/apple/t602x-die0.dtsi
+index 8622ddea7b44..680c103c1c0f 100644
+--- a/arch/arm64/boot/dts/apple/t602x-die0.dtsi
++++ b/arch/arm64/boot/dts/apple/t602x-die0.dtsi
+@@ -114,6 +114,10 @@ smc_gpio: gpio {
+ 			#gpio-cells = <2>;
+ 		};
+ 
++		smc_hwmon: hwmon {
++			compatible = "apple,smc-hwmon";
++		};
++
+ 		smc_reboot: reboot {
+ 			compatible = "apple,smc-reboot";
+ 			nvmem-cells = <&shutdown_flag>, <&boot_stage>,
+diff --git a/arch/arm64/boot/dts/apple/t8103.dtsi b/arch/arm64/boot/dts/apple/t8103.dtsi
+index 59f2678639cf..78eb931d6fb7 100644
+--- a/arch/arm64/boot/dts/apple/t8103.dtsi
++++ b/arch/arm64/boot/dts/apple/t8103.dtsi
+@@ -909,6 +909,10 @@ smc_gpio: gpio {
+ 				#gpio-cells = <2>;
+ 			};
+ 
++			smc_hwmon: hwmon {
++				compatible = "apple,smc-hwmon";
++			};
++
+ 			smc_reboot: reboot {
+ 				compatible = "apple,smc-reboot";
+ 				nvmem-cells = <&shutdown_flag>, <&boot_stage>,
+diff --git a/arch/arm64/boot/dts/apple/t8112.dtsi b/arch/arm64/boot/dts/apple/t8112.dtsi
+index 6bc3f58b06f7..5a8fa6daa00a 100644
+--- a/arch/arm64/boot/dts/apple/t8112.dtsi
++++ b/arch/arm64/boot/dts/apple/t8112.dtsi
+@@ -912,6 +912,10 @@ smc_gpio: gpio {
+ 				#gpio-cells = <2>;
+ 			};
+ 
++			smc_hwmon: hwmon {
++				compatible = "apple,smc-hwmon";
++			};
++
+ 			smc_reboot: reboot {
+ 				compatible = "apple,smc-reboot";
+ 				nvmem-cells = <&shutdown_flag>, <&boot_stage>,
 
->
-> What is 'hsr'?
+-- 
+2.51.0
 
-Hardware Settings Reference
-
->
->> +    maxItems: 10
->> +    $ref: /schemas/types.yaml#/definitions/uint32-array
->> +    description: platform specific settings for DLL registers.
->> +
->>    iommus:
->>      minItems: 1
->>      maxItems: 8
->> -- 
->> 2.34.1
->>
 
