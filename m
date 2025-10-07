@@ -1,126 +1,311 @@
-Return-Path: <linux-kernel+bounces-844090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AA51BC0FBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:14:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 873D8BC0FC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:15:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D23218981E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:15:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8C4974EE97A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947892D8399;
-	Tue,  7 Oct 2025 10:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D392D7DF5;
+	Tue,  7 Oct 2025 10:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="coVJS50V"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a+Yre29R"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8ADD2D46C0;
-	Tue,  7 Oct 2025 10:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189E2192D68;
+	Tue,  7 Oct 2025 10:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759832089; cv=none; b=Yf76STJZm/4/FHPur7Ao6mCR8A4xCIzJ7yvJmZ6Ht4iwIpj296dsBHlViyuPJJDhuTpfUwp17dWdRl+jGd5Fo837aTtvmWAxwrKd4N3FCx4/38CjZDpOZ+C+Ra+cn4Ep6lUhe+0peIId0dfaE7BYgoxjcLgKrCXYruCHcXMvms4=
+	t=1759832128; cv=none; b=iSOzE90cgmitK4HVlLl6rv0TTtTGs8EiqL2kyK2rqcX9I3d+9js7i9hdhGYuAouEeyxFxk2b4LItWodPZeO6f5EkyH2bw7HeSIQ0Ejk8MXd7wXaLLYtrTWioCxoruKxT+fmZbvQzRCc08k+qkra9uo9ySS8p4Cqqmm2burccqYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759832089; c=relaxed/simple;
-	bh=Ju8nRdH0aqsvJyBikVF6BTkTxsWPAUsD1kJPBH9jKMI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=d+Z7rUwC+7BK1vvBrtWt1/UKQTUZbdlDURETJmQNRwWpOA/et4TYebvWGBxRJ/BRajggiuunNSJqn95KWbH9DnNK1djl7uzTrsgcfPj7T6hyqIT9Bz5d4UQ4rfjsTBMcUQxQSdrHwCj/Blg1imbFZuvUBO0L7dc1Iq2hD9CqeBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=coVJS50V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91C2CC4CEF1;
-	Tue,  7 Oct 2025 10:14:44 +0000 (UTC)
+	s=arc-20240116; t=1759832128; c=relaxed/simple;
+	bh=9Yjtn8JfsbCjw77cR+hBU+JzC4/lFWaRHwDiPA/St4c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DXz18qd8Z6NFd4gySsa3O5S5TbAfDW554kxiFXPNWsYKyRpgYS9eNL3MvO/cJ1sZOtlP/FLQ2T6eNNrdJBgETlC+3Gl00RoXGulBvUuTf3a0GpsOvPR8m81Czp/nwWFVgGBpBIr2UJWAx/Zzoi6SY907NEznQY/FjSnXvuvaX90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a+Yre29R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04A1EC4CEF9;
+	Tue,  7 Oct 2025 10:15:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759832089;
-	bh=Ju8nRdH0aqsvJyBikVF6BTkTxsWPAUsD1kJPBH9jKMI=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=coVJS50VC5DdgdFrzMctuKfI1jM4biaLANzzCd6NZGDn2h+6DSADWSF5xTGb2Om6P
-	 4ZlcxbeDB8Us2HWYQ9fzV96fbmcYuIDtHexC1rMhRax7Wnyjk1OO+/ztARKcDEpNN+
-	 xX3J56OFoWZ80iGc4bqhDj/Gkn5YiCalk9EIarkYSMxC790kDET80jnVnNDk2f8fn2
-	 /GRpcmRhxUUy68agWtK0rFr4UBiedswkMhz0GFmIUlQ9E8G4oBGpDpJ/KHgY/WBwAo
-	 Mp4llS+zLw8oVM7+n4+G8PM4kXFvPalhLBMcahKodaY3RPKCXnKoAhE4sJc2WaUesJ
-	 aUuRiolcXc/Xw==
+	s=k20201202; t=1759832127;
+	bh=9Yjtn8JfsbCjw77cR+hBU+JzC4/lFWaRHwDiPA/St4c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a+Yre29RL7+d+0Vb6/1hn/zF2swItcSins9WHEY2lpw/XTOPPoUAwl6vf7fQKTkV4
+	 fEo1l5GZvv3nfthnsXmjONUSbJQLM/9ID2PwjSwznHlOCw1pR2tAWA4okHEsZPACUX
+	 q2Tfkj3G/YaAc/4VkWbtBwxUC5DGxaJtZUP3RWlv9RfRnjOmEWneYm9+R9ee6nq10F
+	 lEidSWK8Wkp46F0/5rNhASgtmd4clpjTAZLLHmhYdvQZqak0FjlPT4yZ9tqg79o7Qz
+	 aWa4faXywKGfvBXx2f1g5jiEMAUi73JbXK0cFSrfC7d2Kzc9NOenqfHO6WDpb8oXCe
+	 Y0txQBCa/t+4w==
+Date: Tue, 7 Oct 2025 12:15:21 +0200
+From: Alexey Gladkov <legion@kernel.org>
+To: Charles Mirabile <cmirabil@redhat.com>
+Cc: da.gomez@samsung.com, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+	masahiroy@kernel.org, mcgrof@kernel.org, nathan@kernel.org,
+	nicolas.schier@linux.dev, petr.pavlu@suse.com,
+	samitolvanen@google.com, sfr@canb.auug.org.au
+Subject: Re: [PATCH v8 7/8] modpost: Create modalias for builtin modules
+Message-ID: <aOToOeNGiaFVM0Ds@example.org>
+References: <28d4da3b0e3fc8474142746bcf469e03752c3208.1758182101.git.legion@kernel.org>
+ <20251007011637.2512413-1-cmirabil@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 07 Oct 2025 12:14:42 +0200
-Message-Id: <DDC0EQ0793TC.2W132ZB3J9LPK@kernel.org>
-Subject: Re: [PATCH 0/2] rust: pci: expose is_virtfn() and reject VFs in
- nova-core
-Cc: "Jason Gunthorpe" <jgg@nvidia.com>, "John Hubbard"
- <jhubbard@nvidia.com>, "Alexandre Courbot" <acourbot@nvidia.com>, "Joel
- Fernandes" <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- "Alistair Popple" <apopple@nvidia.com>, "Surath Mitra" <smitra@nvidia.com>,
- "David Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
- "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>, "LKML"
- <linux-kernel@vger.kernel.org>, "Alex Williamson"
- <alex.williamson@redhat.com>, "Neo Jia" <cjia@nvidia.com>
-To: "Zhi Wang" <zhiw@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <fb5c2be5-b104-4314-a1f5-728317d0ca53@nvidia.com>
- <DD6LORTLMF02.6M7ZD36XOLJP@nvidia.com>
- <12076511-7113-4c53-83e8-92c5ea0eb125@nvidia.com>
- <5da095e6-040d-4531-91f9-cd3cf4f4c80d@nvidia.com>
- <20251001144814.GB3024065@nvidia.com>
- <c56bd720-d935-4b51-b507-d794df3f66f4@nvidia.com>
- <20251002115851.GB3195801@nvidia.com>
- <ea82af0d-663f-4038-b8c9-cf1eba5bc4df@nvidia.com>
- <20251002134221.GA3266220@nvidia.com>
- <0c94b94b-68a7-47e2-acde-0a2082ed36bf@nvidia.com>
- <20251002143116.GA3268803@nvidia.com>
- <75316915-fbae-487a-b710-ce01f088a2ed@nvidia.com>
-In-Reply-To: <75316915-fbae-487a-b710-ce01f088a2ed@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251007011637.2512413-1-cmirabil@redhat.com>
 
-On Tue Oct 7, 2025 at 8:51 AM CEST, Zhi Wang wrote:
-> From the device vendor=E2=80=99s perspective, we have no support or use c=
-ase for
-> a bare-metal VF model, not now and not in the foreseeable future.
+On Mon, Oct 06, 2025 at 09:16:37PM -0400, Charles Mirabile wrote:
+> On Thu, Sep 18, 2025 at 10:05:51AM +0200, Alexey Gladkov wrote:
+> > For some modules, modalias is generated using the modpost utility and
+> > the section is added to the module file.
+> > 
+> > When a module is added inside vmlinux, modpost does not generate
+> > modalias for such modules and the information is lost.
+> > 
+> > As a result kmod (which uses modules.builtin.modinfo in userspace)
+> > cannot determine that modalias is handled by a builtin kernel module.
+> > 
+> > $ cat /sys/devices/pci0000:00/0000:00:14.0/modalias
+> > pci:v00008086d0000A36Dsv00001043sd00008694bc0Csc03i30
+> > 
+> > $ modinfo xhci_pci
+> > name:           xhci_pci
+> > filename:       (builtin)
+> > license:        GPL
+> > file:           drivers/usb/host/xhci-pci
+> > description:    xHCI PCI Host Controller Driver
+> > 
+> > Missing modalias "pci:v*d*sv*sd*bc0Csc03i30*" which will be generated by
+> > modpost if the module is built separately.
+> > 
+> > To fix this it is necessary to generate the same modalias for vmlinux as
+> > for the individual modules. Fortunately '.vmlinux.export.o' is already
+> > generated from which '.modinfo' can be extracted in the same way as for
+> > vmlinux.o.
+> 
+> Hi -
+> 
+> This patch broke RISC-V builds for me. During the final objcopy where the new
+> symbols are supposed to be stripped, an error occurs producing lots of error
+> messages similar to this one:
+> 
+> riscv64-linux-gnu-objcopy: not stripping symbol `__mod_device_table__...'
+> because it is named in a relocation
+> 
+> It does not occur using defconfig, but I was able to bisect my way to this
+> commit and then reduce my config delta w.r.t defconfig until I landed on:
+> 
+> cat > .config <<'EOF'
+> CONFIG_RELOCATABLE=y
+> CONFIG_KASAN=y
+> EOF
+> ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- make olddefconfig
+> ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- make -j $(nproc)
+> ...
+>   LD      vmlinux.unstripped
+>   NM      System.map
+>   SORTTAB vmlinux.unstripped
+>   CHKREL  vmlinux.unstripped
+>   OBJCOPY vmlinux
+>   OBJCOPY modules.builtin.modinfo
+>   GEN     modules.builtin
+> riscv64-linux-gnu-objcopy: not stripping symbol `<long symbol name>'
+> because it is named in a relocation
+> <repeats with different symbol names about a dozen times>
+> make[3]: *** [scripts/Makefile.vmlinux:97: vmlinux] Error 1
+> make[3]: *** Deleting file 'vmlinux'
+> make[2]: *** [Makefile:1242: vmlinux] Error 2
+> make[1]: *** [/tmp/linux/Makefile:369: __build_one_by_one] Error 2
+> make: *** [Makefile:248: __sub-make] Error 2
+> 
+> I confirmed that reverting this commit fixes the issue.
 
-Who is we? I think there'd be a ton of users that do see such use-cases.
+Hm. Indeed. I haven't found a good solution yet, but you can use the
+following patch to unlock compilation. It won't solve the problem, it will
+only hide it.
 
-What does "no support" mean? Are there technical limitation that prevent an
-implementation (I haven't seen any so far)?
+--- a/scripts/Makefile.vmlinux
++++ b/scripts/Makefile.vmlinux
+@@ -84,7 +84,7 @@ endif
+ remove-section-y                                   := .modinfo
+ remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
 
-> Even
-> hypothetically, such support would not come from nova-core.ko, since
-> that would defeat the purpose of maintaining a trimmed-down kernel
-> module where minimizing the attack surface and preserving strict
-> security boundaries are primary design goals.
+-remove-symbols := -w --strip-symbol='__mod_device_table__*'
++remove-symbols := -w --strip-unneeded-symbol='__mod_device_table__*'
 
-I wouldn't say the *primary* design goal is to be as trimmed-down as possib=
-le.
+ # To avoid warnings: "empty loadable segment detected at ..." from GNU objcopy,
+ # it is necessary to remove the PT_LOAD flag from the segment.
 
-The primary design goals are rather proper firmware abstraction, addressing
-design incompatibilities with modern graphics and compute APIs, memory safe=
-ty
-concerns and general maintainability.
+> > 
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > Signed-off-by: Alexey Gladkov <legion@kernel.org>
+> > Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > ---
+> >  include/linux/module.h   |  4 ----
+> >  scripts/Makefile.vmlinux |  4 +++-
+> >  scripts/mksysmap         |  3 +++
+> >  scripts/mod/file2alias.c | 19 ++++++++++++++++++-
+> >  scripts/mod/modpost.c    | 15 +++++++++++++++
+> >  scripts/mod/modpost.h    |  2 ++
+> >  6 files changed, 41 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/include/linux/module.h b/include/linux/module.h
+> > index e31ee29fac6b7..e135cc79aceea 100644
+> > --- a/include/linux/module.h
+> > +++ b/include/linux/module.h
+> > @@ -256,14 +256,10 @@ struct module_kobject *lookup_or_create_module_kobject(const char *name);
+> >  	__PASTE(type,			\
+> >  	__PASTE(__, name)))))
+> >  
+> > -#ifdef MODULE
+> >  /* Creates an alias so file2alias.c can find device table. */
+> >  #define MODULE_DEVICE_TABLE(type, name)					\
+> >  static typeof(name) __mod_device_table(type, name)			\
+> >    __attribute__ ((used, alias(__stringify(name))))
+> > -#else  /* !MODULE */
+> > -#define MODULE_DEVICE_TABLE(type, name)
+> > -#endif
+> >  
+> >  /* Version of form [<epoch>:]<version>[-<extra-version>].
+> >   * Or for CVS/RCS ID version, everything but the number is stripped.
+> > diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
+> > index ce79461714979..1e5e37aadcd05 100644
+> > --- a/scripts/Makefile.vmlinux
+> > +++ b/scripts/Makefile.vmlinux
+> > @@ -89,11 +89,13 @@ endif
+> >  remove-section-y                                   := .modinfo
+> >  remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
+> >  
+> > +remove-symbols := -w --strip-symbol='__mod_device_table__*'
+> > +
+> >  # To avoid warnings: "empty loadable segment detected at ..." from GNU objcopy,
+> >  # it is necessary to remove the PT_LOAD flag from the segment.
+> >  quiet_cmd_strip_relocs = OBJCOPY $@
+> >        cmd_strip_relocs = $(OBJCOPY) $(patsubst %,--set-section-flags %=noload,$(remove-section-y)) $< $@; \
+> > -                         $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) $@
+> > +                         $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) $(remove-symbols) $@
+> >  
+> >  targets += vmlinux
+> >  vmlinux: vmlinux.unstripped FORCE
+> > diff --git a/scripts/mksysmap b/scripts/mksysmap
+> > index a607a0059d119..c4531eacde202 100755
+> > --- a/scripts/mksysmap
+> > +++ b/scripts/mksysmap
+> > @@ -59,6 +59,9 @@
+> >  # EXPORT_SYMBOL (namespace)
+> >  / __kstrtabns_/d
+> >  
+> > +# MODULE_DEVICE_TABLE (symbol name)
+> > +/ __mod_device_table__/d
+> > +
+> >  # ---------------------------------------------------------------------------
+> >  # Ignored suffixes
+> >  #  (do not forget '$' after each pattern)
+> > diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
+> > index 1260bc2287fba..7da9735e7ab3e 100644
+> > --- a/scripts/mod/file2alias.c
+> > +++ b/scripts/mod/file2alias.c
+> > @@ -1477,7 +1477,7 @@ void handle_moddevtable(struct module *mod, struct elf_info *info,
+> >  	void *symval;
+> >  	char *zeros = NULL;
+> >  	const char *type, *name, *modname;
+> > -	size_t typelen;
+> > +	size_t typelen, modnamelen;
+> >  	static const char *prefix = "__mod_device_table__";
+> >  
+> >  	/* We're looking for a section relative symbol */
+> > @@ -1500,6 +1500,7 @@ void handle_moddevtable(struct module *mod, struct elf_info *info,
+> >  	type = strstr(modname, "__");
+> >  	if (!type)
+> >  		return;
+> > +	modnamelen = type - modname;
+> >  	type += strlen("__");
+> >  
+> >  	name = strstr(type, "__");
+> > @@ -1526,5 +1527,21 @@ void handle_moddevtable(struct module *mod, struct elf_info *info,
+> >  		}
+> >  	}
+> >  
+> > +	if (mod->is_vmlinux) {
+> > +		struct module_alias *alias;
+> > +
+> > +		/*
+> > +		 * If this is vmlinux, record the name of the builtin module.
+> > +		 * Traverse the linked list in the reverse order, and set the
+> > +		 * builtin_modname unless it has already been set in the
+> > +		 * previous call.
+> > +		 */
+> > +		list_for_each_entry_reverse(alias, &mod->aliases, node) {
+> > +			if (alias->builtin_modname)
+> > +				break;
+> > +			alias->builtin_modname = xstrndup(modname, modnamelen);
+> > +		}
+> > +	}
+> > +
+> >  	free(zeros);
+> >  }
+> > diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> > index 5ca7c268294eb..47c8aa2a69392 100644
+> > --- a/scripts/mod/modpost.c
+> > +++ b/scripts/mod/modpost.c
+> > @@ -2067,11 +2067,26 @@ static void write_if_changed(struct buffer *b, const char *fname)
+> >  static void write_vmlinux_export_c_file(struct module *mod)
+> >  {
+> >  	struct buffer buf = { };
+> > +	struct module_alias *alias, *next;
+> >  
+> >  	buf_printf(&buf,
+> >  		   "#include <linux/export-internal.h>\n");
+> >  
+> >  	add_exported_symbols(&buf, mod);
+> > +
+> > +	buf_printf(&buf,
+> > +		   "#include <linux/module.h>\n"
+> > +		   "#undef __MODULE_INFO_PREFIX\n"
+> > +		   "#define __MODULE_INFO_PREFIX\n");
+> > +
+> > +	list_for_each_entry_safe(alias, next, &mod->aliases, node) {
+> > +		buf_printf(&buf, "MODULE_INFO(%s.alias, \"%s\");\n",
+> > +			   alias->builtin_modname, alias->str);
+> > +		list_del(&alias->node);
+> > +		free(alias->builtin_modname);
+> > +		free(alias);
+> > +	}
+> > +
+> >  	write_if_changed(&buf, ".vmlinux.export.c");
+> >  	free(buf.p);
+> >  }
+> > diff --git a/scripts/mod/modpost.h b/scripts/mod/modpost.h
+> > index 9133e4c3803f0..2aecb8f25c87e 100644
+> > --- a/scripts/mod/modpost.h
+> > +++ b/scripts/mod/modpost.h
+> > @@ -99,10 +99,12 @@ buf_write(struct buffer *buf, const char *s, int len);
+> >   * struct module_alias - auto-generated MODULE_ALIAS()
+> >   *
+> >   * @node: linked to module::aliases
+> > + * @modname: name of the builtin module (only for vmlinux)
+> >   * @str: a string for MODULE_ALIAS()
+> >   */
+> >  struct module_alias {
+> >  	struct list_head node;
+> > +	char *builtin_modname;
+> >  	char str[];
+> >  };
+> >  
+> > -- 
+> > 2.51.0
+> > 
+> 
 
-It does make sense to not run the vGPU use-case on top of all the additiona=
-l DRM
-stuff that will go into nova-drm, since this is clearly not needed in the v=
-GPU
-use-case. But, it doesn't mean that we have to keep everything out of nova-=
-core
-for this purpose.
+-- 
+Rgrds, legion
 
-I think the bare-metal VF model is a very interesting use-case and if it is
-technically feasable we should support it. And I think it should be in
-nova-core. The difference between nova-core running on a bare metal VF and
-nova-core running on the same VF in a VM shouldn't be that different anyway=
-s,
-no?
 
