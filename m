@@ -1,321 +1,346 @@
-Return-Path: <linux-kernel+bounces-843925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1EC8BC09A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:21:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4820EBC09D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9FAD1889C7B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:21:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29F6D3C5479
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9CFD2D3EDC;
-	Tue,  7 Oct 2025 08:21:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D93F2D4806;
+	Tue,  7 Oct 2025 08:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GX336C+G"
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010031.outbound.protection.outlook.com [52.101.46.31])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E4zC6E71"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7832D29D6;
-	Tue,  7 Oct 2025 08:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.31
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759825270; cv=fail; b=dEkiNkNCjEwa14GXal29neyoeSjrmSpHp2rlwUTBaZxcDHw9pDaNXdOv88XtGUFKV+bJd/szDChN2sOtBgSuCbtoEONEwbxrzRZVxgPUA6xXw8KDd8wD88S4+R804WQPQ9NRqXa/QZg5c9XUqKWn781oWVPxdOGex1paInBrB/k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759825270; c=relaxed/simple;
-	bh=30f2xpNAVp/4hNQPXrITQVqqQqICWTQAuWKSSO+lIVs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=hU31X92jkoyIQ+A7tT4JKz3SRublmDZ/ytjRP/j7DEuDw6kuEQmQ+nbOfnqjMd8HrdD+e1Z/W6xnWIRzbK8Teqc7tN8qkpVHGZJsqYQKY8lRqTSkAz445Iyb2frrC6tcfOcAFL6iv15ps1g/KBqI6GkxBwfUU8aH4XcZUyGpqIQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GX336C+G; arc=fail smtp.client-ip=52.101.46.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Mt+EwwKquCLZiiue78POI+Tl24AtN02/fkUCkkCmOB2+uObmMLodmyNvd61hWfbbZWOm4nf3ADnFezz+t2QodVnrI4nlEMcrHR9bjiHunUK4RW8fovX2bvZyZqcx/tDfRqTWj9QMPSgE/KjYW+4DXK4nYQIcTupoJi4jnEzhvk48dBWyck4NSRefPfecHHAGlL8NWJcRewMgmx/1KSNy2Y//afgqj9WJU61gwnzfiMXJKfw9ooOOPZVEzXWmGkr50TI1Ail6XxTfzl201lenyxb1/nkQM9BNvV32odO584xVyLt5ze823nLEawJILpDPOUmOQDUS0Avu8uj9noG9ug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AdTRSb8Vs+X1dFIvoA016rlVXnbXM+FvgX4qnV7yoZo=;
- b=uHoOZeGgo/+GtFqg5a8Ou0YgAhXlBclTVqDnLmOFjnnyp8K7hBEtk/dxryxQC7Ix7Hm6/tP5kGtmLyaBN3YeLyuVYVl5xzx6MpDcFU3zI8uZE7NaR5PxTokO2ESMqy0lDxCkrOKyhRstuvMByWqeSjY9w/ePNxhKhAju9NyOlnFfuZKzN0mLt36rt6FwrdTXz9ZMq1TC3niaKuSkgBrKSCEYo0nKfzjboo79Uvb4fHstXChRq7faYGR7c5z+5XZMsRw5qf729BvaxH/19uj+qexYcI7QUkHcFCzR7Mp2wb7ccvlHs0+mOuwV7opy+lTIy6R8QaiiY1VN72UaeKvwEQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AdTRSb8Vs+X1dFIvoA016rlVXnbXM+FvgX4qnV7yoZo=;
- b=GX336C+GAbtV7XjQQ/xm5l7uYArzCcuzEPsp5fJf8AHBe62RkKbceB1PZ2LmrM0nUwcUN5LBqWDStuStk1h3tlc/ULo41z6buyqkXnwccdszD6FO40tlLbRMre7BhS3YfXet9Azdknzw+L43fKkK3AbzezZ6x78nco2BsCwLqFgo6sozUMewh86Eom+IjmP97mmrwDf70wvrNR4ZXDsv2hKVgq6jdeJpZhZVk8GVq1QV2tuOmfqG1qqOlTXjYXIKU+BAd6rScZaMU+MZEz8zgt0bgwJIrnOWK6yZIwD/gWxpU19MotFdwUSM1pd6jUUNeHtm6ZZDwcXDtZnL9uik5A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by SJ0PR12MB6783.namprd12.prod.outlook.com (2603:10b6:a03:44e::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.16; Tue, 7 Oct
- 2025 08:21:00 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9182.017; Tue, 7 Oct 2025
- 08:21:00 +0000
-Date: Tue, 7 Oct 2025 10:20:44 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: tj@kernel.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, longman@redhat.com,
-	hannes@cmpxchg.org, mkoutny@suse.com, void@manifault.com,
-	changwoo@igalia.com, cgroups@vger.kernel.org,
-	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
-Subject: Re: [PATCH 01/12] sched: Employ sched_change guards
-Message-ID: <aOTNXPTyk4zth-1C@gpd4>
-References: <20251006104402.946760805@infradead.org>
- <20251006104526.613879143@infradead.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251006104526.613879143@infradead.org>
-X-ClientProxiedBy: ZR0P278CA0150.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:41::14) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FF52D46AF;
+	Tue,  7 Oct 2025 08:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759825431; cv=none; b=Hyhnnzvm/AzKxmudXKaS6hGgkW0NVAwNuZxoIkDTq57jPzcd7ZFZ4Y7IQepjO24lt9oWvdez9mQJ8U1OUhqUsja/RWsPfrx6pHvZ21Gqo8ng7ZsY7CtQqXzr2BJok0wuXP/cu7GJRfEx+PEhwwtLhnMG3ndnJv7nU6VRdcDH4wY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759825431; c=relaxed/simple;
+	bh=nPGzjYBI1HjlIWcBgfQv0Umh/q+J1rjt1HgU7kvSewI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C7oxE0fDLML1lCgK0Wt+JQtA9udTPKH5FdRwclmqkXfD+m7481wa9DwIzC7BV8oQjR/PhTlh194yDRzlqCY/TSTJf1m2KldhXoYNfimOv2nKUVafjQDMF8vUQr7u5KsaqD49FAuyqfLbG5S+HxCpBkRTtu8cJ3SAtUoQTZPny+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E4zC6E71; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37877C4CEF7;
+	Tue,  7 Oct 2025 08:23:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759825430;
+	bh=nPGzjYBI1HjlIWcBgfQv0Umh/q+J1rjt1HgU7kvSewI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E4zC6E713AyTg3y04gXQe+GQT9jdo/x6VzJnk6o0NPrSfip+Bzovi2OA0kdP0YY2S
+	 A56cCu2uGhGzfa9rw7EGvxLjjN6hij/jO1k292mG95gx20t0IP6JNyp1ab0twGsco2
+	 CyYNU+UZWaW2V8mBRcwF6jT0RtQmvF6rtwWHEWWLPjh+xJcuxfafq0eWXvnqCn50p5
+	 S0K0yCVKUpRAncTKFMU9Yefj6Gwg08QrPYWzKQ3qqPPEkJdlkFDodRqLlzwa3ogHvB
+	 /daO5l6Twrxlfr6GWI9wYnegE/wPDuPsl/cohyj/NLPRft+NaQHAglVoRWQdbgfypi
+	 RotR6tnKNDNJQ==
+Date: Tue, 7 Oct 2025 17:23:45 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: "Li, Tianyou" <tianyou.li@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>, wangyang.guo@intel.com,
+	pan.deng@intel.com, zhiguo.zhou@intel.com, jiebin.sun@intel.com,
+	thomas.falcon@intel.com, dapeng1.mi@intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] perf tools c2c: Add annotation support to perf c2c
+ report
+Message-ID: <aOTOEcNOiUiEJ9tz@google.com>
+References: <aNo-U0KquRbcJam9@google.com>
+ <20250930123900.1445017-1-tianyou.li@intel.com>
+ <aN9ZiPYyYtr332h_@google.com>
+ <9fd778d2-8383-4675-b07d-4d8bdd5cf674@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|SJ0PR12MB6783:EE_
-X-MS-Office365-Filtering-Correlation-Id: e9816338-ab14-4a93-ee5f-08de057a72d1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?OQDR9e/0TlZQiAIt2a4ZOWyhZQuJiqGL/fu10tAp8ZqcNMgDtryA0a4prbsU?=
- =?us-ascii?Q?uiglEw/CVztjMhoc9wgDT9JSwZKFCO3hrUAXQc9sekEunH5C/pN36H4BZrOH?=
- =?us-ascii?Q?5jvsD96cjuM/gRcokGySgHjrQstLe7x+eg9cPiZEBZx5+N4EAs5XTjL1vLxJ?=
- =?us-ascii?Q?Xi+WVLqFNeOdmeArJ+ptnAzATlDNH6PmY2ARHxFEwNElbmJUnzj4PdFZoZvL?=
- =?us-ascii?Q?RBSpma3gmDFpX9SXFQ59jlFGb39SaZgOBtq6o78tY7D+HkqQV4PeTKO/C+1q?=
- =?us-ascii?Q?y6gFDlmxBos8kxegLQC2dLuihP1IJXSFnFbattl1bcqupYGWmebgBT1wZ7Rd?=
- =?us-ascii?Q?IYIoAe/5SGnUwTQk+0tP3HX4o0y6GkZjgs3HDG9ji4k9+A4hKs9MRV1DCFj/?=
- =?us-ascii?Q?Jzvu4rzwit54Bf3lMQTu+FG4O6trWdIFaUstEWjN3uhCVRD1FRNBoM26xGUa?=
- =?us-ascii?Q?dx/GR4bfmAc8BWzjsPME/szq0rwE4lIzI2LEk6n8leyjZIs/kjgnv5VPOW5M?=
- =?us-ascii?Q?CgQyrCetuQzeYd56S8vM/WiOQTbByszuokdezWt30n+9CviVCVeGKv7EojyG?=
- =?us-ascii?Q?AvfyBELWMiGUy6Mtzu0xZS8tdAhDB/Dw6VHk+3z+M7mw5pdEbCTOdFtpX08R?=
- =?us-ascii?Q?Uy+I/SnghFPJ8MNIEaHqcdm2SMjNQYj/m44Y7OtqvVpc4SHIXeFVaq7SUoZS?=
- =?us-ascii?Q?Xnx8fpeIhsU3A/Ru71eAtMCFWli96MfnVTumVW2LHxLhbrjRfj64+3WheBa5?=
- =?us-ascii?Q?vaRvKPovqeJIxZVXkc1cUE5nM9odyFNFOxmgdIRAvXrRrQK1b59xqc4PJptc?=
- =?us-ascii?Q?nZmGx5ZsB0AX6or1jd7VfANBouqORDElNZpDcQuFb1YcMn1lOoteKrrDcQIk?=
- =?us-ascii?Q?mlaD6/6YxRkJwlvxk3NXWqlEfMtrBqnHvkb/bJFSOhMA3xz+xgGqjt2bOdrl?=
- =?us-ascii?Q?N37PTKdq385hQnZ9uLIXuIvtA4gnQptrANZ7bQnz+C0PcOCd2Db636vWG/1J?=
- =?us-ascii?Q?D0Pf8WVRIgCqSyblbxTwHuBlSWx1vf6GPv2bTp6uINgmi2IZ4D1ZcUzxGvHi?=
- =?us-ascii?Q?MeG6k/Pi9ttQeNHQIb7br4SRWYtnyRiZblzLll6AoOvUl1gfWaEC29ci29v/?=
- =?us-ascii?Q?vq7eDTYpONJdld/qLZx2u8/iB19smXfKeu3fTOI/WyjVyLMqwyNOczOySQEC?=
- =?us-ascii?Q?F7/0wejs4IALssovPKXS6oAbZwt0IShqnWEA0bSzTgFNdqW/VjVMw/lNu1kt?=
- =?us-ascii?Q?F0quhvvZd7d1l9kHSEzE5Tl3OlOQwGsnMiwG0M473u04kwupJT547Xx6EM8Q?=
- =?us-ascii?Q?X8CGPWcVc8vpnpXaNY8moL50rChRr4csdJQuYNunho23HsPLpLPwtIrrBoQ1?=
- =?us-ascii?Q?lq6ikFpZOxHYnn4SMAO69+VbYvmjiu59r4wSVyS4UBMey6XQwrIi0m44NMPx?=
- =?us-ascii?Q?zOGEMa8VFiLCQwguVY9FlnxF9jm/38+i?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ZZelJSGYLJmHOeDsCFuE5GldHaNhE7hwMhqOP6Qu4pOJ7+8BaViJ/+rfEvx9?=
- =?us-ascii?Q?wLRM0L8Ab5v/kZgDv9vP6bKYmT1VGZE9kG9L+br02/bA1Pa6hQQqxpeYx+2Q?=
- =?us-ascii?Q?yfLM0rMgSphlUkc85YugIk9MI0LZTmky2+PB+gsOxENNw/i/iAF59SyOvxmd?=
- =?us-ascii?Q?V5qTlXSNtrwCkzHQGed534x24AVqG8de8dEcGZ5is0MxVedw53Ih6oUN7Nem?=
- =?us-ascii?Q?3lJRielBkAxZhPfxpz0h4n0Z5cLnuS1Qu9xBDT4iD29FM/CG5Isc1LmSzXpy?=
- =?us-ascii?Q?bk9oSRB/i+2IMTvzfWO+hNkftiP3qhM+bNAiPRPz0Bk3wgPO8MF5GJNZYCMI?=
- =?us-ascii?Q?ZOTvCNAn42Q2CL/MLmbtFBnJQsT6uxilNy+Q0IjvC+nH1IX2MeWQLpD0wIxV?=
- =?us-ascii?Q?BoeI0u+8CW7JQtNWKzOHsIG1uIa5luqmiIb1QiQQkEC7cZ9r/MlNIP6l+pgE?=
- =?us-ascii?Q?/EUL/nHM/Mf/Csgv7b+X87n2TKZrkuhO4tRK4bFEOVpmXwEUTHHjXW9hQkwh?=
- =?us-ascii?Q?r0ZuDH7Q1dvogy9ah1ZL/dwM/1YSN5nWuzAY5PTp+CM9QvgxyH3oy5salHVY?=
- =?us-ascii?Q?lkQqCHcBdwqRDisoHsDyjpq2oUyfAm4Q6zPRl7EAdyNhmaOYB8Yka5GrTOUF?=
- =?us-ascii?Q?mRUNcR12SwwC5GwZIT7iCe7MogO/2NKB3UIboyDZlOhXlN3GthfbG8oflEqZ?=
- =?us-ascii?Q?wWiKVAWtCH+JJzUi/rVY+TVw/jHmPxyMxMI4iz7kyqJFCQobvUdfHyB8E5Jn?=
- =?us-ascii?Q?NAZjXc5WzGIdB1ppoobR3RM2toVXO/vqWuzxY2XJXb1LQaQSzt6C15mY5xtr?=
- =?us-ascii?Q?HSri8AXyswd2Yh7ZJcAZkrEqXC2Y2wk6Wl5Foy4coeCduUOjJQwYxQqYTjMN?=
- =?us-ascii?Q?laJnCcYpWZVy0O7AY/F1GkxHJug3FeFDUB6OPUD3tqYr3a5q4EKiYabJFwPt?=
- =?us-ascii?Q?M5QoaO5jNGV0kaKLsgDUx567eSAeyAr89Om5K2vv8Se5TmjcljgNFqMWA+Ns?=
- =?us-ascii?Q?9AyMVacBuCMIhgGV7AboxmTf9Ka8khC+Q5wJvcX7eQdbfkBWmBUEcWSM8X8b?=
- =?us-ascii?Q?uGvP+Cb3PgPrR58gL1dzVy3S6sQItbK6SjcCv7kLA3V0J8cERisIRGjnsTCU?=
- =?us-ascii?Q?tlZaymJ9l8jAZ3FlT10CWBnQsdlqpR6uRjgBrwr7zO51yD3SlNsh13o16D5E?=
- =?us-ascii?Q?Ip4LZpNv4Sc3Ju5VN30E4lacDyBIcaZ6Q3NK2zu9GUkf5VrrzCsK3i/rLgFB?=
- =?us-ascii?Q?UEFQVIyF1bVaDCHGYdupEgaKJZnlIMAeTURJWXUk1jFxPT8Lb8eq9xIGa07h?=
- =?us-ascii?Q?zZqJsHZGj6pLkJ55sbpP11qjbFdzzN/cE/aVGc1lmqfv4AUESp2l7AuIEfft?=
- =?us-ascii?Q?VAvr4pNKyhhd0J1ztmaW4VlxU+fK4F2+3w5LLxCmwLSdEZB17ZwMr7Wa7x0Q?=
- =?us-ascii?Q?rJEQ4KHWpVd0q+9Fdpq15+aSmqjsVsWbYN5jb0pu5zlscNUhR3EUjJrepQ2m?=
- =?us-ascii?Q?E9JyxBthe79TmNRqTap6ykIms7qettIpy3qVxfrym24Lj/7bx2G01/qR7UHv?=
- =?us-ascii?Q?Qdo8P4LfXRx9j1gdx06v60sDTnFtgcIEAyfIGBc2?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e9816338-ab14-4a93-ee5f-08de057a72d1
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2025 08:21:00.5333
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2qs6NhTMuRmiC1tHvySF1Z7OlmwRtjtxKZaet4/pr7hfLICn3/EGPuDGhKkbEZnCQ4K0PL1i0j/V8ANa/Uxicg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6783
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9fd778d2-8383-4675-b07d-4d8bdd5cf674@intel.com>
 
-Hi Peter,
+Hello,
 
-On Mon, Oct 06, 2025 at 12:44:03PM +0200, Peter Zijlstra wrote:
-> As proposed a long while ago -- and half done by scx -- wrap the
-> scheduler's 'change' pattern in a guard helper.
+On Fri, Oct 03, 2025 at 07:44:34PM +0800, Li, Tianyou wrote:
+> Hi Namhyung,
 > 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Acked-by: Tejun Heo <tj@kernel.org>
-> ---
-...
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -3885,23 +3885,22 @@ extern void check_class_changed(struct r
->  extern struct balance_callback *splice_balance_callbacks(struct rq *rq);
->  extern void balance_callbacks(struct rq *rq, struct balance_callback *head);
->  
-> -#ifdef CONFIG_SCHED_CLASS_EXT
-> -/*
-> - * Used by SCX in the enable/disable paths to move tasks between sched_classes
-> - * and establish invariants.
-> - */
-> -struct sched_enq_and_set_ctx {
-
-Not necessarily for this patch, we can add it later, but I kinda liked the
-comment that briefly explained how the context is used. Maybe having
-something along these lines could be helpful?
-
-/*
- * Used to ensure the correct sequence of task state transitions, such as
- * switching between sched_classes, changing CPU affinity, priority, or
- * updating the queued/running state.
- */
-
-> +struct sched_change_ctx {
->  	struct task_struct	*p;
-> -	int			queue_flags;
-> +	int			flags;
->  	bool			queued;
->  	bool			running;
->  };
->  
-> -void sched_deq_and_put_task(struct task_struct *p, int queue_flags,
-> -			    struct sched_enq_and_set_ctx *ctx);
-> -void sched_enq_and_set_task(struct sched_enq_and_set_ctx *ctx);
-> +struct sched_change_ctx *sched_change_begin(struct task_struct *p, unsigned int flags);
-> +void sched_change_end(struct sched_change_ctx *ctx);
->  
-> -#endif /* CONFIG_SCHED_CLASS_EXT */
-> +DEFINE_CLASS(sched_change, struct sched_change_ctx *,
-> +	     sched_change_end(_T),
-> +	     sched_change_begin(p, flags),
-> +	     struct task_struct *p, unsigned int flags)
-> +
-> +DEFINE_CLASS_IS_UNCONDITIONAL(sched_change)
->  
->  #include "ext.h"
->  
-> --- a/kernel/sched/syscalls.c
-> +++ b/kernel/sched/syscalls.c
-> @@ -64,7 +64,6 @@ static int effective_prio(struct task_st
->  
->  void set_user_nice(struct task_struct *p, long nice)
->  {
-> -	bool queued, running;
->  	struct rq *rq;
->  	int old_prio;
->  
-> @@ -90,22 +89,12 @@ void set_user_nice(struct task_struct *p
->  		return;
->  	}
->  
-> -	queued = task_on_rq_queued(p);
-> -	running = task_current_donor(rq, p);
-> -	if (queued)
-> -		dequeue_task(rq, p, DEQUEUE_SAVE | DEQUEUE_NOCLOCK);
-> -	if (running)
-> -		put_prev_task(rq, p);
-> -
-> -	p->static_prio = NICE_TO_PRIO(nice);
-> -	set_load_weight(p, true);
-> -	old_prio = p->prio;
-> -	p->prio = effective_prio(p);
-> -
-> -	if (queued)
-> -		enqueue_task(rq, p, ENQUEUE_RESTORE | ENQUEUE_NOCLOCK);
-> -	if (running)
-> -		set_next_task(rq, p);
-> +	scoped_guard (sched_change, p, DEQUEUE_SAVE | DEQUEUE_NOCLOCK) {
-> +		p->static_prio = NICE_TO_PRIO(nice);
-> +		set_load_weight(p, true);
-> +		old_prio = p->prio;
-> +		p->prio = effective_prio(p);
-> +	}
->  
->  	/*
->  	 * If the task increased its priority or is running and
-> @@ -515,7 +504,7 @@ int __sched_setscheduler(struct task_str
->  			 bool user, bool pi)
->  {
->  	int oldpolicy = -1, policy = attr->sched_policy;
-> -	int retval, oldprio, newprio, queued, running;
-> +	int retval, oldprio, newprio;
->  	const struct sched_class *prev_class, *next_class;
->  	struct balance_callback *head;
->  	struct rq_flags rf;
-> @@ -698,33 +687,25 @@ int __sched_setscheduler(struct task_str
->  	if (prev_class != next_class && p->se.sched_delayed)
->  		dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED | DEQUEUE_NOCLOCK);
->  
-> -	queued = task_on_rq_queued(p);
-> -	running = task_current_donor(rq, p);
-> -	if (queued)
-> -		dequeue_task(rq, p, queue_flags);
-> -	if (running)
-> -		put_prev_task(rq, p);
-> -
-> -	if (!(attr->sched_flags & SCHED_FLAG_KEEP_PARAMS)) {
-> -		__setscheduler_params(p, attr);
-> -		p->sched_class = next_class;
-> -		p->prio = newprio;
-> -	}
-> -	__setscheduler_uclamp(p, attr);
-> -	check_class_changing(rq, p, prev_class);
-> +	scoped_guard (sched_change, p, queue_flags) {
->  
-> -	if (queued) {
-> -		/*
-> -		 * We enqueue to tail when the priority of a task is
-> -		 * increased (user space view).
-> -		 */
-> -		if (oldprio < p->prio)
-> -			queue_flags |= ENQUEUE_HEAD;
-> +		if (!(attr->sched_flags & SCHED_FLAG_KEEP_PARAMS)) {
-> +			__setscheduler_params(p, attr);
-> +			p->sched_class = next_class;
-> +			p->prio = newprio;
-> +		}
-> +		__setscheduler_uclamp(p, attr);
-> +		check_class_changing(rq, p, prev_class);
->  
-> -		enqueue_task(rq, p, queue_flags);
-> +		if (scope->queued) {
-> +			/*
-> +			 * We enqueue to tail when the priority of a task is
-> +			 * increased (user space view).
-> +			 */
-> +			if (oldprio < p->prio)
-> +				scope->flags |= ENQUEUE_HEAD;
-> +		}
->  	}
-> -	if (running)
-> -		set_next_task(rq, p);
->  
->  	check_class_changed(rq, p, prev_class, oldprio);
->  
+> Appreciated for your review comments. Sorry for the delayed response. I am
+> on National Holiday so check email late. My response inlined for your
+> consideration.
+> 
+> Regards,
+> 
+> Tianyou
 > 
 > 
+> On 10/3/2025 1:05 PM, Namhyung Kim wrote:
+> > Hello,
+> > 
+> > On Tue, Sep 30, 2025 at 08:39:00PM +0800, Tianyou Li wrote:
+> > > Perf c2c report currently specified the code address and source:line
+> > > information in the cacheline browser, while it is lack of annotation
+> > > support like perf report to directly show the disassembly code for
+> > > the particular symbol shared that same cacheline. This patches add
+> > > a key 'a' binding to the cacheline browser which reuse the annotation
+> > > browser to show the disassembly view for easier analysis of cacheline
+> > > contentions. By default, the 'TAB' key navigate to the code address
+> > > where the contentions detected.
+> > > 
+> > > Signed-off-by: Tianyou Li <tianyou.li@intel.com>
+> > > Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> > > Reviewed-by: Thomas Falcon <thomas.falcon@intel.com>
+> > > Reviewed-by: Jiebin Sun <jiebin.sun@intel.com>
+> > > Reviewed-by: Pan Deng <pan.deng@intel.com>
+> > > Reviewed-by: Zhiguo Zhou <zhiguo.zhou@intel.com>
+> > > Reviewed-by: Wangyang Guo <wangyang.guo@intel.com>
+> > > ---
+[SNIP]
+> > > @@ -2980,7 +3056,8 @@ static int setup_coalesce(const char *coalesce, bool no_source)
+> > >   	else if (c2c.display == DISPLAY_SNP_PEER)
+> > >   		sort_str = "tot_peer";
+> > > -	if (asprintf(&c2c.cl_resort, "offset,%s", sort_str) < 0)
+> > > +	/* add 'symbol' sort key to make sure hpp_list->sym get updated */
+> > > +	if (asprintf(&c2c.cl_resort, "offset,%s,symbol", sort_str) < 0)
+> > I think it's better to just process the input rather than enforcing it.
+> > It seems the default value will have 'iaddr' and so 'symbol as well.
+> 
+> 
+> Sorry I am not so clear about 'so symbol as well'. Did you mean we can check
+> the 'dim == &dim_iaddr' instead of 'dim == &dim_symbol' to make sure
+> hpp_list->sym = 1? If so, do we need to check the coalesce set to default
+> 'iaddr' or not, otherwise we need to append the 'iaddr' in addition to the
+> user specific one?
 
-Thanks,
--Andrea
+I meant you have 'iaddr' in the default sort keys and it will include
+'symbol' in the output.  So annotation will be enabled by default.
+
+> 
+> 
+> > 
+> > >   		return -ENOMEM;
+> > >   	pr_debug("coalesce sort   fields: %s\n", c2c.cl_sort);
+> > > @@ -3006,6 +3083,7 @@ static int perf_c2c__report(int argc, const char **argv)
+> > >   	const char *display = NULL;
+> > >   	const char *coalesce = NULL;
+> > >   	bool no_source = false;
+> > > +	const char *disassembler_style = NULL, *objdump_path = NULL, *addr2line_path = NULL;
+> > >   	const struct option options[] = {
+> > >   	OPT_STRING('k', "vmlinux", &symbol_conf.vmlinux_name,
+> > >   		   "file", "vmlinux pathname"),
+> > > @@ -3033,6 +3111,12 @@ static int perf_c2c__report(int argc, const char **argv)
+> > >   	OPT_BOOLEAN(0, "stitch-lbr", &c2c.stitch_lbr,
+> > >   		    "Enable LBR callgraph stitching approach"),
+> > >   	OPT_BOOLEAN(0, "double-cl", &chk_double_cl, "Detect adjacent cacheline false sharing"),
+> > > +	OPT_STRING('M', "disassembler-style", &disassembler_style, "disassembler style",
+> > > +		   "Specify disassembler style (e.g. -M intel for intel syntax)"),
+> > > +	OPT_STRING(0, "objdump", &objdump_path, "path",
+> > > +		   "objdump binary to use for disassembly and annotations"),
+> > Please update documentation with the new options.
+> 
+> 
+> Noted, will do in patch v6.
+> 
+> 
+> > 
+> > > +	OPT_STRING(0, "addr2line", &addr2line_path, "path",
+> > > +		   "addr2line binary to use for line numbers"),
+> > Do you really need this?
+> 
+> 
+> In my use scenarios of c2c tool, I did not use this addr2line tool. If this
+> was not quite necessary, I will remove it from patch v6.
+
+Yes, please.
+
+> 
+> 
+> > 
+> > >   	OPT_PARENT(c2c_options),
+> > >   	OPT_END()
+> > >   	};
+> > > @@ -3040,6 +3124,12 @@ static int perf_c2c__report(int argc, const char **argv)
+> > >   	const char *output_str, *sort_str = NULL;
+> > >   	struct perf_env *env;
+> > > +	annotation_options__init();
+> > > +
+> > > +	err = hists__init();
+> > > +	if (err < 0)
+> > > +		goto out;
+> > > +
+> > >   	argc = parse_options(argc, argv, options, report_c2c_usage,
+> > >   			     PARSE_OPT_STOP_AT_NON_OPTION);
+> > >   	if (argc)
+> > > @@ -3052,6 +3142,36 @@ static int perf_c2c__report(int argc, const char **argv)
+> > >   	if (c2c.stats_only)
+> > >   		c2c.use_stdio = true;
+> > > +	/**
+> > > +	 * Annotation related options
+> > > +	 * disassembler_style, objdump_path, addr2line_path
+> > > +	 * are set in the c2c_options, so we can use them here.
+> > > +	 */
+> > > +	if (disassembler_style) {
+> > > +		annotate_opts.disassembler_style = strdup(disassembler_style);
+> > > +		if (!annotate_opts.disassembler_style) {
+> > > +			err = -ENOMEM;
+> > > +			pr_err("Failed to allocate memory for annotation options\n");
+> > > +			goto out;
+> > > +		}
+> > > +	}
+> > > +	if (objdump_path) {
+> > > +		annotate_opts.objdump_path = strdup(objdump_path);
+> > > +		if (!annotate_opts.objdump_path) {
+> > > +			err = -ENOMEM;
+> > > +			pr_err("Failed to allocate memory for annotation options\n");
+> > > +			goto out;
+> > > +		}
+> > > +	}
+> > > +	if (addr2line_path) {
+> > > +		symbol_conf.addr2line_path = strdup(addr2line_path);
+> > > +		if (!symbol_conf.addr2line_path) {
+> > > +			err = -ENOMEM;
+> > > +			pr_err("Failed to allocate memory for annotation options\n");
+> > > +			goto out;
+> > > +		}
+> > > +	}
+> > > +
+> > >   	err = symbol__validate_sym_arguments();
+> > >   	if (err)
+> > >   		goto out;
+> > > @@ -3126,6 +3246,38 @@ static int perf_c2c__report(int argc, const char **argv)
+> > >   	if (err)
+> > >   		goto out_mem2node;
+> > > +	if (c2c.use_stdio)
+> > > +		use_browser = 0;
+> > > +	else
+> > > +		use_browser = 1;
+> > > +
+> > > +	/*
+> > > +	 * Only in the TUI browser we are doing integrated annotation,
+> > > +	 * so don't allocate extra space that won't be used in the stdio
+> > > +	 * implementation.
+> > > +	 */
+> > > +	if (perf_c2c__has_annotation(NULL)) {
+> > > +		int ret = symbol__annotation_init();
+> > > +
+> > > +		if (ret < 0)
+> > > +			goto out_mem2node;
+> > > +		/*
+> > > +		 * For searching by name on the "Browse map details".
+> > > +		 * providing it only in verbose mode not to bloat too
+> > > +		 * much struct symbol.
+> > > +		 */
+> > > +		if (verbose > 0) {
+> > > +			/*
+> > > +			 * XXX: Need to provide a less kludgy way to ask for
+> > > +			 * more space per symbol, the u32 is for the index on
+> > > +			 * the ui browser.
+> > > +			 * See symbol__browser_index.
+> > > +			 */
+> > > +			symbol_conf.priv_size += sizeof(u32);
+> > > +		}
+> > > +		annotation_config__init();
+> > > +	}
+> > > +
+> > >   	if (symbol__init(env) < 0)
+> > >   		goto out_mem2node;
+> > > @@ -3135,11 +3287,6 @@ static int perf_c2c__report(int argc, const char **argv)
+> > >   		goto out_mem2node;
+> > >   	}
+> > > -	if (c2c.use_stdio)
+> > > -		use_browser = 0;
+> > > -	else
+> > > -		use_browser = 1;
+> > > -
+> > >   	setup_browser(false);
+> > >   	err = perf_session__process_events(session);
+> > > @@ -3210,6 +3357,7 @@ static int perf_c2c__report(int argc, const char **argv)
+> > >   out_session:
+> > >   	perf_session__delete(session);
+> > >   out:
+> > > +	annotation_options__exit();
+> > >   	return err;
+> > >   }
+> > > diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
+> > > index 8fe699f98542..a9d56e67454d 100644
+> > > --- a/tools/perf/ui/browsers/annotate.c
+> > > +++ b/tools/perf/ui/browsers/annotate.c
+> > > @@ -605,7 +605,7 @@ static bool annotate_browser__callq(struct annotate_browser *browser,
+> > >   	target_ms.map = ms->map;
+> > >   	target_ms.sym = dl->ops.target.sym;
+> > >   	annotation__unlock(notes);
+> > > -	__hist_entry__tui_annotate(browser->he, &target_ms, evsel, hbt);
+> > > +	__hist_entry__tui_annotate(browser->he, &target_ms, evsel, hbt, NO_INITIAL_AL_ADDR);
+> > >   	/*
+> > >   	 * The annotate_browser above changed the title with the target function
+> > > @@ -864,6 +864,7 @@ static int annotate_browser__run(struct annotate_browser *browser,
+> > >   	const char *help = "Press 'h' for help on key bindings";
+> > >   	int delay_secs = hbt ? hbt->refresh : 0;
+> > >   	char *br_cntr_text = NULL;
+> > > +	u64 init_al_addr = NO_INITIAL_AL_ADDR;
+> > >   	char title[256];
+> > >   	int key;
+> > > @@ -873,6 +874,13 @@ static int annotate_browser__run(struct annotate_browser *browser,
+> > >   	annotate_browser__calc_percent(browser, evsel);
+> > > +	/* the selection are intentionally even not from the sample percentage */
+> > > +	if (browser->entries.rb_node == NULL && browser->selection) {
+> > > +		init_al_addr = sym->start + browser->selection->offset;
+> > > +		disasm_rb_tree__insert(browser, browser->selection);
+> > > +		browser->curr_hot = rb_last(&browser->entries);
+> > > +	}
+> > > +
+> > >   	if (browser->curr_hot) {
+> > >   		annotate_browser__set_rb_top(browser, browser->curr_hot);
+> > >   		browser->b.navkeypressed = false;
+> > > @@ -973,6 +981,18 @@ static int annotate_browser__run(struct annotate_browser *browser,
+> > >   				ui_helpline__puts(help);
+> > >   			annotate__scnprintf_title(hists, title, sizeof(title));
+> > >   			annotate_browser__show(browser, title, help);
+> > > +			/* Previous RB tree may not valid, need refresh according to new entries*/
+> > > +			if (init_al_addr != NO_INITIAL_AL_ADDR) {
+> > > +				struct disasm_line *dl = find_disasm_line(sym, init_al_addr, true);
+> > > +
+> > > +				browser->curr_hot = NULL;
+> > > +				browser->entries.rb_node = NULL;
+> > > +				if (dl != NULL) {
+> > > +					disasm_rb_tree__insert(browser, &dl->al);
+> > > +					browser->curr_hot = rb_last(&browser->entries);
+> > > +				}
+> > > +				nd = browser->curr_hot;
+> > > +			}
+> > Can you please split annotate changes from c2c change?  I think you can
+> > start with annotation support in c2c.  And add INITIAL_ADDR later so
+> > that we can discuss the issue separately.  Maybe we don't need the ADDR
+> > change.  Do you have any concrete usecase where default annotate is not
+> > enough for c2c?
+> 
+> 
+> Sure, I will split the patch into 2 patches. I use c2c extensively for my
+> day-to-day performance work, the INITIAL_ADDR would be very helpful to
+> located to the code where the iaddr was indicated in the cacheline browser.
+> Otherwise, probably I need to copy the iaddr from the cacheline browser, get
+> into the annotation browser, press 'o' to show the view with addresses in
+> disassemble view, and manually find the iaddr match since the search only
+> match string for disassembly code. The code highlight with INITIAL_ADDR
+> would quickly allow me to navigate the contended lines of code from
+> different functions showed in the cacheline browser, plus with  's' and 'T',
+> I can get to the point more conveniently.
+> 
+> 
+> Agreed to discuss it separately, looking forward to hearing your thoughts.
+
+Thanks for your understanding!
+Namhyung
+
 
