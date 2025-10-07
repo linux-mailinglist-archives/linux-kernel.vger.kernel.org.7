@@ -1,311 +1,199 @@
-Return-Path: <linux-kernel+bounces-843651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25AE0BBFEBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 03:18:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0422BBFEB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 03:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 742FC4F2071
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 01:18:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4BD964EDEAB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 01:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51EB51EB5FD;
-	Tue,  7 Oct 2025 01:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8751FBEB0;
+	Tue,  7 Oct 2025 01:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JX7ESfr9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GvH0Po/+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3561D31B9
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 01:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4B01F4C92;
+	Tue,  7 Oct 2025 01:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759799832; cv=none; b=JXCj9NEOvCv4Sq4yJsmKECUSy59fsMJ10m0Uz0RlcwIHhyJ3HC08tFpxed2Qr6vAlXc3XrLk/GWOZJrJkD3qgWtTnwjJzcnhbE+VLU4WXyWPda5HCVEKkviD1oFQMrl+AqrLUQZgjxEG7oPVFu9csLmcAxjZCvzawebpAubj8vE=
+	t=1759799811; cv=none; b=fkVZxYO7x6r/9PcqgvB6XlAJocybRe1gXT/HYwzbx2TS6xyn4vGMG4gwzNRryYd82oRqxOrSYh7FU8w81A0fmzYpzc2m068e1iOi1okr1chv8H6qzsZ/unl/rUVt25I6IMTyVnJS/yRVyWynuNTPmGlvugQ7vGomjbhTKFU+ChI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759799832; c=relaxed/simple;
-	bh=ZoCuQIGKECVz2Og4x5nmupKDmXLNha8Nv8LewmenEmc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Lz5r0J73N2h86ygIKL1gWe1Xtjx9N1PnaaDWNSWJ6p4XKa/naVQDldENMsZgQtt8vPO6jc+Rdt+qpIwgaoKoJq1REUfl2TIiMQuiR1AIWADubas2v/2f4Io97hBGGWlFPanC5uKcoaVVqba3v4kPbdAU6u1YxLIA/O6aKT5Cb+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JX7ESfr9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759799829;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EpRMfKm9o1/F18kIBfBg6L03Iz4uKtsAej9zDsxfaLk=;
-	b=JX7ESfr9uPMAEVYDwsbN0+lI9juMm4yxR2xUSUziGpczLAcLelh2bidfkKu/Hr7VL+SkJ/
-	vwrRVUSAoxsgJA2URV4YohpXm0ppvsnlL1R1jvcU+iyj2A7jUMfe2bnyKtnF7Hc23uyXsa
-	167LVu7/I73qXLlHjFGJWJe5+Ra+/Yo=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-635-6M4nBPQVP42ztCl4msuiYw-1; Mon,
- 06 Oct 2025 21:17:05 -0400
-X-MC-Unique: 6M4nBPQVP42ztCl4msuiYw-1
-X-Mimecast-MFC-AGG-ID: 6M4nBPQVP42ztCl4msuiYw_1759799823
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 04ED4180034F;
-	Tue,  7 Oct 2025 01:17:03 +0000 (UTC)
-Received: from cmirabil.lan (unknown [10.22.64.13])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EB5E41800452;
-	Tue,  7 Oct 2025 01:16:59 +0000 (UTC)
-From: Charles Mirabile <cmirabil@redhat.com>
-To: legion@kernel.org
-Cc: da.gomez@samsung.com,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org,
-	masahiroy@kernel.org,
-	mcgrof@kernel.org,
-	nathan@kernel.org,
-	nicolas.schier@linux.dev,
-	petr.pavlu@suse.com,
-	samitolvanen@google.com,
-	sfr@canb.auug.org.au
-Subject: Re: [PATCH v8 7/8] modpost: Create modalias for builtin modules
-Date: Mon,  6 Oct 2025 21:16:37 -0400
-Message-ID: <20251007011637.2512413-1-cmirabil@redhat.com>
-In-Reply-To: <28d4da3b0e3fc8474142746bcf469e03752c3208.1758182101.git.legion@kernel.org>
-References: <28d4da3b0e3fc8474142746bcf469e03752c3208.1758182101.git.legion@kernel.org>
+	s=arc-20240116; t=1759799811; c=relaxed/simple;
+	bh=VkYVtLFgQexQtimeL6NDgPce5j2dOZq1WRCxOFF/sYw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iDkLmCtvXW3qyV9Onhs3mO+4oEravBZA0wDn97v4yIg7nsFnOS7X1/yx0Ju6AmpE5mFhPlDvtITQJKsHC2gX2chJfyGCdQe1R8XMYjX0s7fYwXT5Y671tvgCSljr4al5OiT+/77n9cGDJ9aS3gUN0iX/nXaaFXRWYa+M6s39Y8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GvH0Po/+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59E3BC4CEFF;
+	Tue,  7 Oct 2025 01:16:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759799810;
+	bh=VkYVtLFgQexQtimeL6NDgPce5j2dOZq1WRCxOFF/sYw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GvH0Po/++UegnyFFL583yXrXD7wUBY1ICMvd/rBNHzMWAq0U8K1wJqrWbvPoNCJhh
+	 KXM0kuD+pCG+M92ZdcogrD4PrKSPAYrerddUW4DaWD1uN6ukrjIKk/kQ4SyHw98oFq
+	 EEJZUrPRoLYtpVfA2pbeqJJUQqFoFD8pm9aQ5lvEsHvNlMxMVPFfjC2A0Rnr4zWIqX
+	 n/h46PQfqI9JL4zWgeb/Xe6JBE6QT4szIfKJ2pgYrK6ueMtHgcuNsyfpe3NlUM3elR
+	 DBH3K/mC2t3ozVA8GIbRXGKwYbDaMq6z7uGeaNPrwAu2Wmhc14MlixdY607J77W5J9
+	 bMRzox0shQ4sQ==
+Date: Mon, 6 Oct 2025 20:16:49 -0500
+From: Rob Herring <robh@kernel.org>
+To: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
+Cc: neil.armstrong@linaro.org, jessica.zhang@oss.qualcomm.com,
+	airlied@gmail.com, simona@ffwll.ch,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, krzk+dt@kernel.org, conor+dt@kernel.org,
+	dianders@chromium.org, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: display: panel: Add Tianma
+ TL121BVMS07-00 panel
+Message-ID: <20251007011649.GA706748-robh@kernel.org>
+References: <20250930075044.1368134-1-yelangyan@huaqin.corp-partner.google.com>
+ <20250930075044.1368134-2-yelangyan@huaqin.corp-partner.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250930075044.1368134-2-yelangyan@huaqin.corp-partner.google.com>
 
-On Thu, Sep 18, 2025 at 10:05:51AM +0200, Alexey Gladkov wrote:
-> For some modules, modalias is generated using the modpost utility and
-> the section is added to the module file.
+On Tue, Sep 30, 2025 at 03:50:43PM +0800, Langyan Ye wrote:
+> Add device tree bindings for the Tianma TL121BVMS07-00 12.1"
+> MIPI-DSI TFT LCD panel.
 > 
-> When a module is added inside vmlinux, modpost does not generate
-> modalias for such modules and the information is lost.
-> 
-> As a result kmod (which uses modules.builtin.modinfo in userspace)
-> cannot determine that modalias is handled by a builtin kernel module.
-> 
-> $ cat /sys/devices/pci0000:00/0000:00:14.0/modalias
-> pci:v00008086d0000A36Dsv00001043sd00008694bc0Csc03i30
-> 
-> $ modinfo xhci_pci
-> name:           xhci_pci
-> filename:       (builtin)
-> license:        GPL
-> file:           drivers/usb/host/xhci-pci
-> description:    xHCI PCI Host Controller Driver
-> 
-> Missing modalias "pci:v*d*sv*sd*bc0Csc03i30*" which will be generated by
-> modpost if the module is built separately.
-> 
-> To fix this it is necessary to generate the same modalias for vmlinux as
-> for the individual modules. Fortunately '.vmlinux.export.o' is already
-> generated from which '.modinfo' can be extracted in the same way as for
-> vmlinux.o.
-
-Hi -
-
-This patch broke RISC-V builds for me. During the final objcopy where the new
-symbols are supposed to be stripped, an error occurs producing lots of error
-messages similar to this one:
-
-riscv64-linux-gnu-objcopy: not stripping symbol `__mod_device_table__...'
-because it is named in a relocation
-
-It does not occur using defconfig, but I was able to bisect my way to this
-commit and then reduce my config delta w.r.t defconfig until I landed on:
-
-cat > .config <<'EOF'
-CONFIG_RELOCATABLE=y
-CONFIG_KASAN=y
-EOF
-ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- make olddefconfig
-ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- make -j $(nproc)
-...
-  LD      vmlinux.unstripped
-  NM      System.map
-  SORTTAB vmlinux.unstripped
-  CHKREL  vmlinux.unstripped
-  OBJCOPY vmlinux
-  OBJCOPY modules.builtin.modinfo
-  GEN     modules.builtin
-riscv64-linux-gnu-objcopy: not stripping symbol `<long symbol name>'
-because it is named in a relocation
-<repeats with different symbol names about a dozen times>
-make[3]: *** [scripts/Makefile.vmlinux:97: vmlinux] Error 1
-make[3]: *** Deleting file 'vmlinux'
-make[2]: *** [Makefile:1242: vmlinux] Error 2
-make[1]: *** [/tmp/linux/Makefile:369: __build_one_by_one] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
-
-I confirmed that reverting this commit fixes the issue.
-
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> Signed-off-by: Alexey Gladkov <legion@kernel.org>
-> Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
 > ---
->  include/linux/module.h   |  4 ----
->  scripts/Makefile.vmlinux |  4 +++-
->  scripts/mksysmap         |  3 +++
->  scripts/mod/file2alias.c | 19 ++++++++++++++++++-
->  scripts/mod/modpost.c    | 15 +++++++++++++++
->  scripts/mod/modpost.h    |  2 ++
->  6 files changed, 41 insertions(+), 6 deletions(-)
+>  .../display/panel/tianma,tl121bvms07-00.yaml  | 85 +++++++++++++++++++
+>  1 file changed, 85 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/tianma,tl121bvms07-00.yaml
 > 
-> diff --git a/include/linux/module.h b/include/linux/module.h
-> index e31ee29fac6b7..e135cc79aceea 100644
-> --- a/include/linux/module.h
-> +++ b/include/linux/module.h
-> @@ -256,14 +256,10 @@ struct module_kobject *lookup_or_create_module_kobject(const char *name);
->  	__PASTE(type,			\
->  	__PASTE(__, name)))))
->  
-> -#ifdef MODULE
->  /* Creates an alias so file2alias.c can find device table. */
->  #define MODULE_DEVICE_TABLE(type, name)					\
->  static typeof(name) __mod_device_table(type, name)			\
->    __attribute__ ((used, alias(__stringify(name))))
-> -#else  /* !MODULE */
-> -#define MODULE_DEVICE_TABLE(type, name)
-> -#endif
->  
->  /* Version of form [<epoch>:]<version>[-<extra-version>].
->   * Or for CVS/RCS ID version, everything but the number is stripped.
-> diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
-> index ce79461714979..1e5e37aadcd05 100644
-> --- a/scripts/Makefile.vmlinux
-> +++ b/scripts/Makefile.vmlinux
-> @@ -89,11 +89,13 @@ endif
->  remove-section-y                                   := .modinfo
->  remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
->  
-> +remove-symbols := -w --strip-symbol='__mod_device_table__*'
+> diff --git a/Documentation/devicetree/bindings/display/panel/tianma,tl121bvms07-00.yaml b/Documentation/devicetree/bindings/display/panel/tianma,tl121bvms07-00.yaml
+> new file mode 100644
+> index 000000000000..e654b86782e6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/panel/tianma,tl121bvms07-00.yaml
+> @@ -0,0 +1,85 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/panel/tianma,tl121bvms07-00.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
->  # To avoid warnings: "empty loadable segment detected at ..." from GNU objcopy,
->  # it is necessary to remove the PT_LOAD flag from the segment.
->  quiet_cmd_strip_relocs = OBJCOPY $@
->        cmd_strip_relocs = $(OBJCOPY) $(patsubst %,--set-section-flags %=noload,$(remove-section-y)) $< $@; \
-> -                         $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) $@
-> +                         $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) $(remove-symbols) $@
->  
->  targets += vmlinux
->  vmlinux: vmlinux.unstripped FORCE
-> diff --git a/scripts/mksysmap b/scripts/mksysmap
-> index a607a0059d119..c4531eacde202 100755
-> --- a/scripts/mksysmap
-> +++ b/scripts/mksysmap
-> @@ -59,6 +59,9 @@
->  # EXPORT_SYMBOL (namespace)
->  / __kstrtabns_/d
->  
-> +# MODULE_DEVICE_TABLE (symbol name)
-> +/ __mod_device_table__/d
+> +title: Tianma TL121BVMS07-00 12.1" MIPI-DSI TFT LCD Panel
 > +
->  # ---------------------------------------------------------------------------
->  # Ignored suffixes
->  #  (do not forget '$' after each pattern)
-> diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
-> index 1260bc2287fba..7da9735e7ab3e 100644
-> --- a/scripts/mod/file2alias.c
-> +++ b/scripts/mod/file2alias.c
-> @@ -1477,7 +1477,7 @@ void handle_moddevtable(struct module *mod, struct elf_info *info,
->  	void *symval;
->  	char *zeros = NULL;
->  	const char *type, *name, *modname;
-> -	size_t typelen;
-> +	size_t typelen, modnamelen;
->  	static const char *prefix = "__mod_device_table__";
->  
->  	/* We're looking for a section relative symbol */
-> @@ -1500,6 +1500,7 @@ void handle_moddevtable(struct module *mod, struct elf_info *info,
->  	type = strstr(modname, "__");
->  	if (!type)
->  		return;
-> +	modnamelen = type - modname;
->  	type += strlen("__");
->  
->  	name = strstr(type, "__");
-> @@ -1526,5 +1527,21 @@ void handle_moddevtable(struct module *mod, struct elf_info *info,
->  		}
->  	}
->  
-> +	if (mod->is_vmlinux) {
-> +		struct module_alias *alias;
+> +maintainers:
+> +  - Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
 > +
-> +		/*
-> +		 * If this is vmlinux, record the name of the builtin module.
-> +		 * Traverse the linked list in the reverse order, and set the
-> +		 * builtin_modname unless it has already been set in the
-> +		 * previous call.
-> +		 */
-> +		list_for_each_entry_reverse(alias, &mod->aliases, node) {
-> +			if (alias->builtin_modname)
-> +				break;
-> +			alias->builtin_modname = xstrndup(modname, modnamelen);
-> +		}
-> +	}
-> +
->  	free(zeros);
->  }
-> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> index 5ca7c268294eb..47c8aa2a69392 100644
-> --- a/scripts/mod/modpost.c
-> +++ b/scripts/mod/modpost.c
-> @@ -2067,11 +2067,26 @@ static void write_if_changed(struct buffer *b, const char *fname)
->  static void write_vmlinux_export_c_file(struct module *mod)
->  {
->  	struct buffer buf = { };
-> +	struct module_alias *alias, *next;
->  
->  	buf_printf(&buf,
->  		   "#include <linux/export-internal.h>\n");
->  
->  	add_exported_symbols(&buf, mod);
-> +
-> +	buf_printf(&buf,
-> +		   "#include <linux/module.h>\n"
-> +		   "#undef __MODULE_INFO_PREFIX\n"
-> +		   "#define __MODULE_INFO_PREFIX\n");
-> +
-> +	list_for_each_entry_safe(alias, next, &mod->aliases, node) {
-> +		buf_printf(&buf, "MODULE_INFO(%s.alias, \"%s\");\n",
-> +			   alias->builtin_modname, alias->str);
-> +		list_del(&alias->node);
-> +		free(alias->builtin_modname);
-> +		free(alias);
-> +	}
-> +
->  	write_if_changed(&buf, ".vmlinux.export.c");
->  	free(buf.p);
->  }
-> diff --git a/scripts/mod/modpost.h b/scripts/mod/modpost.h
-> index 9133e4c3803f0..2aecb8f25c87e 100644
-> --- a/scripts/mod/modpost.h
-> +++ b/scripts/mod/modpost.h
-> @@ -99,10 +99,12 @@ buf_write(struct buffer *buf, const char *s, int len);
->   * struct module_alias - auto-generated MODULE_ALIAS()
->   *
->   * @node: linked to module::aliases
-> + * @modname: name of the builtin module (only for vmlinux)
->   * @str: a string for MODULE_ALIAS()
->   */
->  struct module_alias {
->  	struct list_head node;
-> +	char *builtin_modname;
->  	char str[];
->  };
->  
-> -- 
-> 2.51.0
-> 
+> +description: |
 
+Don't need '|' if no formatting to preserve.
+
+> +  The Tianma TL121BVMS07-00 is a 12.1-inch MIPI-DSI TFT LCD panel.
+> +  It requires multiple regulators (AVDD, AVEE, and 1.8V logic)
+> +  and an enable GPIO. Optional properties such as backlight and
+> +  rotation are inherited from panel-common.yaml.
+
+Wrap lines at 80 char. The last sentence can be dropped as it says what 
+the schema do.
+
+> +
+> +allOf:
+> +  - $ref: panel-common.yaml#
+
+
+> +
+> +properties:
+> +  compatible:
+> +    const: tianma,tl121bvms07-00
+> +
+> +  reg:
+> +    description: DSI virtual channel number
+> +    minimum: 0
+> +    maximum: 3
+
+Just 'reg: true'. dsi-controller.yaml already has these constraints.
+
+
+> +
+> +  enable-gpios:
+> +    maxItems: 1
+> +    description: GPIO specifier for the enable pin
+> +
+> +  avdd-supply:
+> +    description: phandle of the regulator that provides positive voltage
+> +
+> +  avee-supply:
+> +    description: phandle of the regulator that provides negative voltage
+> +
+> +  pp1800-supply:
+> +    description: core voltage supply
+> +
+> +  backlight:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+
+Already has a type in panel-common.yaml. Drop.
+
+> +    description: Phandle to the backlight device.
+> +
+> +  port:
+> +    $ref: /schemas/graph.yaml#/properties/port
+> +    description: Input port of the panel, connected to the DSI host.
+
+Already in panel-common.yaml.
+
+Either just 'true' for both of these or drop and use 
+'unevaluatedProperties' instead of 'additionalProperties'.
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - enable-gpios
+> +  - avdd-supply
+> +  - avee-supply
+> +  - pp1800-supply
+> +  - port
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    dsi0 {
+
+dsi {
+
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      mipi_panel: panel@0 {
+
+drop unused labels.
+
+> +        compatible = "tianma,tl121bvms07-00";
+> +        reg = <0>;
+> +        enable-gpios = <&pio 25 0>;
+> +        avdd-supply = <&en_pp5800_mipi_disp>;
+> +        avee-supply = <&en_pp5800_mipi_disp>;
+> +        pp1800-supply = <&mt6359_vcn18_ldo_reg>;
+> +        backlight = <&backlight>;
+> +
+> +        port {
+> +          panel_in: endpoint {
+> +            remote-endpoint = <&dsi_out>;
+> +          };
+> +        };
+> +      };
+> +    };
+> +
+> +...
+> -- 
+> 2.34.1
+> 
 
