@@ -1,365 +1,167 @@
-Return-Path: <linux-kernel+bounces-843898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04485BC0851
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 09:51:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BDF1BC084B
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 09:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D799D4F247C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 07:51:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE4FA189BB36
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 07:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A65255F57;
-	Tue,  7 Oct 2025 07:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338AD2288EE;
+	Tue,  7 Oct 2025 07:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hFFMpyxN"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="U4ZEzLNx"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85339A945
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 07:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B518A3B7A8
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 07:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759823462; cv=none; b=LJE2KjZW/eW0WnXQqdgMa+INgEXtPpDRPVgHnXhHHR8NLIcePAtOUgzxN8AfK0tJzOgWuyzDUXhDHTmuM8Rt6ILlnWWoAycfb7J8X/Q3peMCi2iPM5bjM5GWcPcLKKWiEY+Fn1ieoq0yRUsSDNFjfvVKKVI0usJawUhijlAIUVw=
+	t=1759823413; cv=none; b=qjfVODwyT1CNkxIHzELOvAUmM5XaLnL1ivChyRd0F0LGTbs4xNYM+8ZnuS0iP5wo59Iz4lFBWSvMtHjDe/qCKL5LDAfVfqF0+bq4u2x+ibDQgqf1Ckz55ncQj7DTBAsi4viaKUbIJVpvjno7QBky9i7bZJRxYz4WChfrCVdoXbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759823462; c=relaxed/simple;
-	bh=t9rTZeOl3b0hJSNTstwqkYNyfDQjcs77PoAC8U9PfCY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mlSURjSLifoo4X6Cmbz5tY3ufmUbJDS/FpgnchBV3np+tcCjD/42syOVCmR8/lWfAXOwq2bl7C7CNoH+ugdXd5OCcMc5SMhwQApH4npzJXqOi16oEAJ6sSNij+XXF54cbkiPGKlrj/r5rmH23uQWAVWrD3Z/DYjN/NEs3OGNik8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hFFMpyxN; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-33067909400so4416896a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 00:51:00 -0700 (PDT)
+	s=arc-20240116; t=1759823413; c=relaxed/simple;
+	bh=a2Ge5Lhi4YcoqF14Ybp8SwpB/Wf87PchuFaUeETOnqk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ynjm1o3nGL5x8OrmCy6Vrh5KVqyD4OqCiRolUKyYQSoYBX6HK2SD1uWBAZARQJa+CLkAK3XJP7N2/985/c5KevimsUy4HByTEPEeVlv+zER9+bLx2dlM7xQH8BhqjfZqcl9MTtNdndG2R4F9cUvEi6x80lgZFDpBBxL122JctJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=U4ZEzLNx; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-3717780ea70so64373731fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 00:50:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759823460; x=1760428260; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dhnA09TQ8hNY3ByOHoJEkbXhSQQgNq2Hl9f2lCZ+3kA=;
-        b=hFFMpyxNJ+6lcOZRCHva+CyIExX+3cyfAtAXI9topEHDloH25wGq0GEu+vvB9MZ5BN
-         AkRLvUaeIIi6+L5/jHSj0myFEkye8JUS8mRvroNikoJOZ6Jp4wTzCAdMsMW+OxN9PSmL
-         KwfL+qhejl8YcSLColDx3SDrZ7UhNFUikAAePQUWjqyfM+qpNB2hfecMa0uNk/P0tGIG
-         BmvWgv/Ru3OolF0yknEn6+8pgiOPu0QJ/hzD+d48RtCiuBlq+AnCS4VCKjW+SrHxFey3
-         9PQZd5YWmgFXtCVLPED3mQJYoiWwMz0SCTfvCKct2EGvPW6C+q3B33NFZ+v8sFh3PO6O
-         99zQ==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1759823410; x=1760428210; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=09w9lHrEEbOO/PmdN1FWlSfVU4b3SlEK2hQlHNLV0MA=;
+        b=U4ZEzLNxMioFmDOe9MNYCYAQG6zLptbxlKKFLt0nBzG4Rjcr7JRQ4dATONEGEstHFU
+         oglte4ZKjDxg1gg52kCUhgSxCserMddc+P5rae/SJkjMzJN4k4m/+F9Yr2ScepfX+kAY
+         cCH7WqRtVZQ4/yq+FOWnUS21/3nOWX+zwU8VbdR9oL6gLVgFjtS+BbQtwmdBkCIk3qSD
+         /ceYKTs/p2u61bPfBPV66p/TqHvFCboZ6VXZoHSEbSq0jgZaX8/ecauekSnDtYSTdKwS
+         kHr4+3wyj9Yoq2DuiC8QtQd5logmrfyLOarAkZYfyajQh23Ga6fp53e5ME0qrF0XXAVW
+         1Wew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759823460; x=1760428260;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dhnA09TQ8hNY3ByOHoJEkbXhSQQgNq2Hl9f2lCZ+3kA=;
-        b=OP8DiigRDBr9TWFmbGaKwR073sS2mnyw3d89l5fea+/Rf4utQlTtCQI+2tUJz7Cov0
-         fos9yGkIeX7IphBKUt6j4tVBvumTqK4mIOyHlU6xdDiZYI/kupF6KcGQ7w6VW5oHx15k
-         A9opyn9V8xNwdrw+khupVGBD0iqO1FRk/2nzLiTKGFbhq6BKr50843P9ST0oC0CFIy7+
-         7RhgNQm1Nmew9x0VyLOPcoFrLUog8aSuatM/j4ZQTyYVsPuzjDMwdJ+cRfEY+h9R7S3Y
-         Y1px1beb7tpCBPHHHLQzGSF+3WKKnORYzxmMwuDT5qxL52ToAyvpjaD8QRWC9fDQRn8l
-         APAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtpayJxNdYYloFRvoZqXMXG0tfDd43vsKFvzH0gmvCRumSwv5PbX2mFpioWHTi3+JVgHm/MGIjYVMkHUA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO72eI6JPC3PnOb9N9gn39gyQIn0XyBegGzDglB2h0gYae1Yz3
-	LHiTDybLkm2ZuwFQQ6ji5R2vBHRLiQEACS5Oo/7uSZBlO4beIHdDJ73p
-X-Gm-Gg: ASbGncuxaya774DHHYQYhmx5LUaYibNZTg4GedSGkzmO16iMI4tQpRZJuEFfQZ6qL2a
-	+UD/5/nbLGzUQbKEjzDt/iFEkKdssOB4JSICbL38VbQTjFuUX4B14m+QDnOdMBHj6pSAMWvyZI5
-	7jR2ZPc6HtTt4017LKAGRgb/U1fT6Ap5ZdAJ5IzDex+PttTW6W/POuviUyyZIwM8QpgHVfvsTHk
-	2dguVv0cpsI0OSkLdW6O3CqtaXFKkbWCnsVr6/bE0n0Q/BpiJpgS0OZlcsGZqs8CJ/oj7TyT185
-	BEvVPEt5JVbhXDfwX0LxIUPXdDwM/nLjx2+2tB4n2HOPI4oI2tuwRp83ZOwnAXS0FHjECLXZyuq
-	cuCyDbDgcH7my1+ZAvuqpqdtUC5N8WMyzxN94LdKrou6hKdnr
-X-Google-Smtp-Source: AGHT+IG905MGBQ32Ub4ShnX9AGf28crwYHhnuKiGoa/Yd7ia0xUTqXMWebVlHOFKhP/du1dc9C6gAw==
-X-Received: by 2002:a17:90b:1f89:b0:32e:96b1:fb70 with SMTP id 98e67ed59e1d1-339c2720c9fmr21575430a91.12.1759823459801;
-        Tue, 07 Oct 2025 00:50:59 -0700 (PDT)
-Received: from [192.168.0.13] ([172.92.174.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339c4a68deasm13196357a91.25.2025.10.07.00.50.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Oct 2025 00:50:59 -0700 (PDT)
-Message-ID: <9422ba89-a6ba-4168-98a1-6d4275698430@gmail.com>
-Date: Tue, 7 Oct 2025 00:49:42 -0700
+        d=1e100.net; s=20230601; t=1759823410; x=1760428210;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=09w9lHrEEbOO/PmdN1FWlSfVU4b3SlEK2hQlHNLV0MA=;
+        b=jAYEgfHN8mG1fFW5VkXrfN/NQlt5Hm0fiwWP0fAvLFpc1XeT3GMcdn/pVVYuyiPqWT
+         /gSgMr9ofWCTmGHYBkQA/uvLvbY/wrizfAEvNA/7r67xIyh4FT49RowXL5IQ377xW3V8
+         m/ReyEXlwPi22rutjpL0XV48GEStJXMN960T6XFYh6q0xk7TAOaSOF34FcxWSIVJunRL
+         GjiwHxRuNXo9D+kn3GhxrmnOn94cUSNRvYHgVNJwThFXdgghDaVU+VXaIeoWYTkNK837
+         qMXmcGJfKX9CgWR4tHE/j5wBV2Y0Y5MAzgqGj7yEDRI1Si7Em3eM2mmvvWdyinYaDwfA
+         N/xg==
+X-Forwarded-Encrypted: i=1; AJvYcCWSkk/s9Q6LLpmPKSIc4qwq8NqZ5pJ71DfAf7JpcpJeYW+QrOigbjG/9vkIP4x4+OIG6oozSQ+2jAljWS4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3UW+5O8u8DeKKGnpGZO4/E1Mum6IcVX0iGN+UAabNtSrcUbjK
+	GElwGLCU7V98V/K8Bb9hWp297y1hMBlvgeHocyik2qJe77jl5SSxAgmbc3i6Jj3P2FzxpXwP7nP
+	P6TxKrz9zNm3okwypo+YTpm4npMtFchYHgJQ7S7xmuQ==
+X-Gm-Gg: ASbGncsphXuNheMSz7P22NWiJ7tsv1QZRNDir+++GLeSudDnxOg4F1LTk44kVhdkPXu
+	3U/DsL9iQXL00B6bxsMBKflaEaM07oxo08Kml7akXZV4ozJxx7YuhK+EdYiYHRgGIDsqnKjjTGg
+	Fu4/+aIr3xrjQIIHjCXTkR0Or85z+ykTA/YsIgZZyH858xcnFJMUx2aoBOvzmI/xqjDV3SufgKP
+	WIgisprI8MqtSeqn0qhdftkz7iO4CSJX6AaaFmHCHoAb8T0UViM3C5IQMLl5w8=
+X-Google-Smtp-Source: AGHT+IG1iwnLS+Xz6hSGduCNv+VOXrS0Gbd6FPZubNKIBwDOzy3rzHZKHe4qtSL3OM33jVl3ZvQhoSCG64+6cignEoQ=
+X-Received: by 2002:a2e:b888:0:b0:36c:7a86:1a96 with SMTP id
+ 38308e7fff4ca-374c37956d3mr39282561fa.24.1759823408293; Tue, 07 Oct 2025
+ 00:50:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/11] rvtrace: Add trace ramsink driver
-To: Anup Patel <apatel@ventanamicro.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Greg KH <gregkh@linuxfoundation.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Ian Rogers <irogers@google.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
- Alexandre Ghiti <alex@ghiti.fr>, Atish Patra <atish.patra@linux.dev>,
- Peter Zijlstra <peterz@infradead.org>, Anup Patel <anup@brainfault.org>,
- Adrian Hunter <adrian.hunter@intel.com>, linux-kernel@vger.kernel.org,
- Mayuresh Chitale <mchitale@ventanamicro.com>, Ingo Molnar
- <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
- Mayuresh Chitale <mchitale@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
- linux-riscv@lists.infradead.org, Andrew Jones <ajones@ventanamicro.com>,
- Liang Kan <kan.liang@linux.intel.com>
-References: <20251002060732.100213-1-apatel@ventanamicro.com>
- <20251002060732.100213-8-apatel@ventanamicro.com>
-Content-Language: en-US
-From: Bo Gan <ganboing@gmail.com>
-In-Reply-To: <20251002060732.100213-8-apatel@ventanamicro.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251002215759.1836706-1-markus.probst@posteo.de>
+ <CAMRc=Me3VLbmRksbrHmOdw8NxN7sxXjeuNFb9=6DzE=uLn0oAA@mail.gmail.com>
+ <7f4057f25594ac3b50993a739af76b7b1430ee6a.camel@posteo.de>
+ <CAMRc=McioBjF3WCBu0ezzuL+JJTiEpF2fz1YpbToRpijpHfAEg@mail.gmail.com> <64dd0bab-6036-4e06-aff5-b0f86a167ada@kernel.org>
+In-Reply-To: <64dd0bab-6036-4e06-aff5-b0f86a167ada@kernel.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 7 Oct 2025 09:49:56 +0200
+X-Gm-Features: AS18NWD5EqN4rrNs8G973j5WQFuPIUrgbs26tgW5OlAv2yasQW7dQIDGVk6UKTA
+Message-ID: <CAMRc=Medke+Dr7ti6OpMW6j=RDU0AO19pJUmPa_cvSXyW16OPw@mail.gmail.com>
+Subject: Re: [PATCH] gpio: of: make it possible to reference gpios probed in
+ acpi in device tree
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Markus Probst <markus.probst@posteo.de>, Linus Walleij <linus.walleij@linaro.org>, 
+	Mika Westerberg <westeri@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/1/25 23:07, Anup Patel wrote:
-> From: Mayuresh Chitale <mchitale@ventanamicro.com>
-> 
-> Add initial implementation of RISC-V trace ramsink driver. The ramsink
-> is defined in the RISC-V Trace Control Interface specification.
-> 
-> Co-developed-by: Anup Patel <apatel@ventanamicro.com>
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> Signed-off-by: Mayuresh Chitale <mchitale@ventanamicro.com>
-> ---
->   drivers/hwtracing/rvtrace/Kconfig           |   8 +
->   drivers/hwtracing/rvtrace/Makefile          |   1 +
->   drivers/hwtracing/rvtrace/rvtrace-ramsink.c | 198 ++++++++++++++++++++
->   3 files changed, 207 insertions(+)
->   create mode 100644 drivers/hwtracing/rvtrace/rvtrace-ramsink.c
-> 
-> diff --git a/drivers/hwtracing/rvtrace/Kconfig b/drivers/hwtracing/rvtrace/Kconfig
-> index ba35c05f3f54..aef7e9989165 100644
-> --- a/drivers/hwtracing/rvtrace/Kconfig
-> +++ b/drivers/hwtracing/rvtrace/Kconfig
-> @@ -21,3 +21,11 @@ config RVTRACE_ENCODER
->   	default y
->   	help
->   	  This driver provides support for RISC-V Trace Encoder component.
-> +
-> +config RVTRACE_RAMSINK
-> +	tristate "RISC-V Trace Ramsink driver"
-> +	depends on RVTRACE
-> +	default y
-> +	help
-> +	  This driver provides support for Risc-V E-Trace Ramsink
-> +	  component.
-> diff --git a/drivers/hwtracing/rvtrace/Makefile b/drivers/hwtracing/rvtrace/Makefile
-> index f320693a1fc5..122e575da9fb 100644
-> --- a/drivers/hwtracing/rvtrace/Makefile
-> +++ b/drivers/hwtracing/rvtrace/Makefile
-> @@ -3,3 +3,4 @@
->   obj-$(CONFIG_RVTRACE) += rvtrace.o
->   rvtrace-y := rvtrace-core.o rvtrace-platform.o
->   obj-$(CONFIG_RVTRACE_ENCODER) += rvtrace-encoder.o
-> +obj-$(CONFIG_RVTRACE_RAMSINK) += rvtrace-ramsink.o
-> diff --git a/drivers/hwtracing/rvtrace/rvtrace-ramsink.c b/drivers/hwtracing/rvtrace/rvtrace-ramsink.c
-> new file mode 100644
-> index 000000000000..7bd0cf1e4dfd
-> --- /dev/null
-> +++ b/drivers/hwtracing/rvtrace/rvtrace-ramsink.c
-> @@ -0,0 +1,198 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2025 Ventana Micro Systems Inc.
-> + */
-> +
-> +#include <linux/device.h>
-> +#include <linux/io.h>
-> +#include <linux/of.h>
-> +#include <linux/of_graph.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/property.h>
-> +#include <linux/dma-mapping.h>
-> +#include <linux/rvtrace.h>
-> +#include <linux/types.h>
-> +#include <linux/sizes.h>
-> +
-> +#define RVTRACE_RAMSINK_STARTLOW_OFF		0x010
-> +#define RVTRACE_RAMSINK_STARTHIGH_OFF		0x014
-> +#define RVTRACE_RAMSINK_LIMITLOW_OFF		0x018
-> +#define RVTRACE_RAMSINK_LIMITHIGH_OFF		0x01c
-> +#define RVTRACE_RAMSINK_WPLOW_OFF		0x020
-> +#define RVTRACE_RAMSINK_WPHIGH_OFF		0x024
-> +#define RVTRACE_RAMSINK_RPLOW_OFF		0x028
-> +#define RVTRACE_RAMSINK_RPHIGH_OFF		0x02c
-> +
-> +struct rvtrace_ramsink_priv {
-> +	size_t size;
-> +	void *va;
-> +	dma_addr_t start;
-> +	dma_addr_t end;
-> +	/* WP from prev iteration */
-> +	dma_addr_t prev_head;
-> +};
-> +
-> +struct trace_buf {
-> +	void *base;
-> +	size_t size;
-> +	int cur, len;
-> +};
-> +
-> +static void tbuf_to_pbuf_copy(struct trace_buf *src, struct trace_buf *dst)
-> +{
-> +	int bytes_dst, bytes_src, bytes;
-> +	void *dst_addr, *src_addr;
-> +
-> +	while (src->size) {
-> +		src_addr = src->base + src->cur;
-> +		dst_addr = dst->base + dst->cur;
-> +
-> +		if (dst->len - dst->cur < src->size)
-> +			bytes_dst = dst->len - dst->cur;
-> +		else
-> +			bytes_dst = src->size;
-> +		if (src->len - src->cur < src->size)
-> +			bytes_src = src->len - src->cur;
-> +		else
-> +			bytes_src = src->size;
-> +		bytes = bytes_dst < bytes_src ? bytes_dst : bytes_src;
-> +		memcpy(dst_addr, src_addr, bytes);
-> +		dst->cur = (dst->cur + bytes) % dst->len;
-> +		src->cur = (src->cur + bytes) % src->len;
-> +		src->size -= bytes;
-> +	}
-> +}
-> +
-> +static size_t rvtrace_ramsink_copyto_auxbuf(struct rvtrace_component *comp,
-> +					    struct rvtrace_perf_auxbuf *buf)
-> +{
-> +	struct rvtrace_ramsink_priv *priv = dev_get_drvdata(&comp->dev);
-> +	struct trace_buf src, dst;
-> +	u32 wp_low, wp_high;
-> +	u64 buf_cur_head;
-> +	size_t size;
-> +
-> +	wp_low = rvtrace_read32(comp->pdata, RVTRACE_RAMSINK_WPLOW_OFF);
-> +	wp_high = rvtrace_read32(comp->pdata, RVTRACE_RAMSINK_WPHIGH_OFF);
-> +	buf_cur_head = (u64)(wp_high) << 32 | wp_low;
-> +
-> +	if (buf_cur_head == priv->prev_head)
-> +		return 0;
-> +
-> +	dst.base = buf->base;
-> +	dst.len = buf->length;
-> +	dst.cur = buf->pos;
-> +	dst.size = 0;
-> +
-> +	src.base = priv->va;
-> +	src.len = priv->end - priv->start;
-> +	if (buf_cur_head > priv->prev_head) {
-> +		src.size = buf_cur_head - priv->prev_head;
-> +	} else {
-> +		src.size = priv->end - priv->prev_head;
-> +		src.size += buf_cur_head - priv->start;
-> +	}
-> +
-> +	src.cur = buf_cur_head - priv->start;
-> +	size = src.size;
-> +	tbuf_to_pbuf_copy(&src, &dst);
-> +	buf->pos = dst.cur;
-> +	priv->prev_head = buf_cur_head;
-> +
-> +	return size;
-> +}
-> +
-> +static int rvtrace_ramsink_setup(struct rvtrace_component *comp)
-> +{
-> +	struct rvtrace_ramsink_priv *priv;
-> +
-> +	priv = devm_kzalloc(&comp->dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +	dev_set_drvdata(&comp->dev, priv);
-> +
-> +	priv->size = SZ_4M;
-Can we make this size dynamically determined? 4M seems inadequate. This is
-exceedingly so if the RAM sink is linked to a funnel, where you can have
-many harts dumping traces into this sink.
+On Tue, Oct 7, 2025 at 3:14=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+>
+> On 03/10/2025 17:51, Bartosz Golaszewski wrote:
+> > On Fri, Oct 3, 2025 at 10:40=E2=80=AFAM Markus Probst <markus.probst@po=
+steo.de> wrote:
+> >>
+> >> On Fri, 2025-10-03 at 10:03 +0200, Bartosz Golaszewski wrote:
+> >>> On Thu, Oct 2, 2025 at 11:58=E2=80=AFPM Markus Probst
+> >>> <markus.probst@posteo.de> wrote:
+> >>>>
+> >>>> sometimes it is necessary to use both acpi and device tree to
+> >>>> declare
+> >>>
+> >>> This is a rather controversial change so "sometimes" is not
+> >>> convincing
+> >>> me. I would like to see a user of this added in upstream to consider
+> >>> it.
+> >>>
+> >>>> devices. Not every gpio device driver which has an acpi_match_table
+> >>>> has
+> >>>> an of_match table (e.g. amd-pinctrl). Furthermore gpio is an device
+> >>>> which
+> >>>
+> >>> What is the use-case here because I'm unable to wrap my head around
+> >>> it? Referencing devices described in ACPI from DT? How would the
+> >>> associated DT source look like?
+> >> In my specific usecase for the Synology DS923+, there are gpios for
+> >> powering the usb vbus on (powered down by default), also for powering
+> >> on sata disks. An example for a regulator defined in DT using a gpio i=
+n
+> >> ACPI (in this case controlling the power of on of the usb ports):
+> >>
+> >>         gpio: gpio-controller@fed81500 {
+> >>                 acpi-path =3D "\\_SB_.GPIO";
+> >>                 #gpio-cells =3D <2>;
+> >>         };
+> >>
+> >>         vbus1_regulator: fixedregulator@0 {
+> >>                 compatible =3D "regulator-fixed";
+> >>                 regulator-name =3D "vbus1_regulator";
+> >>                 regulator-min-microvolt =3D <5000000>;
+> >>                 regulator-max-microvolt =3D <5000000>;
+> >>                 gpio =3D <&gpio 0x2a 0x01>;
+> >>         };
+> >>
+> >> - Markus Probst
+> >>>
+> >
+> > Krzysztof: Could you please look at this and chime in? Does this make a=
+ny sense?
+>
+>
+> There is no such property as acpi-path and I don't see here any ABI
+> being documented. Nothing in dtschema, either. Nothing in DT spec. I
+> also did not receive this patch. Actually - nothing from
+> markus.probst@posteo.de in mail mailbox.
+>
+> So no clue what is this about, but if you want to use undocumented
+> property then obviously no.
+>
 
-> +	priv->va = dma_alloc_coherent(&comp->dev, priv->size, &priv->start, GFP_KERNEL);
-> +	if (!priv->va)
-> +		return -ENOMEM;
-> +	priv->end = priv->start + priv->size;
-> +	priv->prev_head = priv->start;
-> +
-> +	/* Setup ram sink addresses */
-> +	rvtrace_write32(comp->pdata, lower_32_bits(priv->start), RVTRACE_RAMSINK_STARTLOW_OFF);
-> +	rvtrace_write32(comp->pdata, upper_32_bits(priv->start), RVTRACE_RAMSINK_STARTHIGH_OFF);
-> +	rvtrace_write32(comp->pdata, lower_32_bits(priv->start), RVTRACE_RAMSINK_WPLOW_OFF);
-> +	rvtrace_write32(comp->pdata, upper_32_bits(priv->start), RVTRACE_RAMSINK_WPHIGH_OFF);
-> +	/* Limit address needs to be set to end - 4 so that HW doesn't cause an overflow. */> +	rvtrace_write32(comp->pdata, lower_32_bits(priv->end - 0x4), RVTRACE_RAMSINK_LIMITLOW_OFF);
-Should not hardcode 4 as the trace write width. Control Interface Spec
-chapter 7.1 has the proper instruction on how to probe for this width:
+I interpret this as a vague proposal of adding a way of referencing
+ACPI nodes from DT source and this is my question: does this make any
+sense? It doesn't to me at first glance but we do sometimes describe
+firmware details in DT so I figured I'd ask you.
 
-"Not every value may be settable in trRamStart/Limit registers. Value
-  written may be trimmed (for example aligned on a particular 2^N boundary)
-  and a trace tool should verify values being written"
+It seems like Markus found a different solution in the end so it may
+not even be important anymore.
 
-> +	rvtrace_write32(comp->pdata, upper_32_bits(priv->end), RVTRACE_RAMSINK_LIMITHIGH_OFF);
-> +
-> +	return 0;
-> +}
-> +
-> +static void rvtrace_ramsink_cleanup(struct rvtrace_component *comp)
-> +{
-> +	struct rvtrace_ramsink_priv *priv = dev_get_drvdata(&comp->dev);
-> +
-> +	dma_free_coherent(&comp->dev, priv->size, priv->va, priv->start);
-> +}
-> +
-> +static int rvtrace_ramsink_probe(struct rvtrace_component *comp)
-> +{
-> +	int ret;
-> +
-> +	ret = rvtrace_ramsink_setup(comp);
-> +	if (ret)
-> +		return dev_err_probe(&comp->dev, ret, "failed to setup ramsink.\n");
-> +
-> +	ret = rvtrace_enable_component(comp);
-> +	if (ret)
-> +		return dev_err_probe(&comp->dev, ret, "failed to enable ramsink.\n");
-> +
-> +	return ret;
-> +}
-> +
-> +static void rvtrace_ramsink_remove(struct rvtrace_component *comp)
-> +{
-> +	int ret;
-> +
-> +	ret = rvtrace_disable_component(comp);
-> +	if (ret)
-> +		dev_err(&comp->dev, "failed to disable ramsink.\n");
-> +
-> +	rvtrace_ramsink_cleanup(comp);
-> +}
-> +
-> +static struct rvtrace_component_id rvtrace_ramsink_ids[] = {
-> +	{ .type = RVTRACE_COMPONENT_TYPE_RAMSINK,
-> +	  .version = rvtrace_component_mkversion(1, 0), },
-> +	{},
-> +};
-> +
-> +static struct rvtrace_driver rvtrace_ramsink_driver = {
-> +	.id_table = rvtrace_ramsink_ids,
-> +	.copyto_auxbuf = rvtrace_ramsink_copyto_auxbuf,
-> +	.probe = rvtrace_ramsink_probe,
-> +	.remove = rvtrace_ramsink_remove,
-> +	.driver = {
-> +		.name = "rvtrace-ramsink",
-> +	},
-> +};
-> +
-> +static int __init rvtrace_ramsink_init(void)
-> +{
-> +	return rvtrace_register_driver(&rvtrace_ramsink_driver);
-> +}
-> +
-> +static void __exit rvtrace_ramsink_exit(void)
-> +{
-> +	rvtrace_unregister_driver(&rvtrace_ramsink_driver);
-> +}
-> +
-> +module_init(rvtrace_ramsink_init);
-> +module_exit(rvtrace_ramsink_exit);
-> +
-> +/* Module information */
-> +MODULE_AUTHOR("Mayuresh Chitale <mchitale@ventanamicro.com>");
-> +MODULE_DESCRIPTION("RISC-V Trace Ramsink Driver");
-> +MODULE_LICENSE("GPL");
-
-Bo
+Bartosz
 
