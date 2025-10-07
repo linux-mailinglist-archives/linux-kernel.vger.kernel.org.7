@@ -1,76 +1,83 @@
-Return-Path: <linux-kernel+bounces-844822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ADF9BC2DAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 00:20:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1629BC2DB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 00:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C08A14E6B71
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 22:20:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5FD319A3222
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 22:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83888221FBB;
-	Tue,  7 Oct 2025 22:19:57 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649D4246BA8;
+	Tue,  7 Oct 2025 22:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="dKlpeR4t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01392745E
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 22:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BB31F63FF;
+	Tue,  7 Oct 2025 22:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759875597; cv=none; b=YHFfc89uvgp6yE4HFMbatDpQIb9O00knD0FAjb9Zx/Yl94i+2wv8pbGwMxVLfdcDTxzmo4mG6gh1IiYn4oDWiADm32nfwUXHvy/i2+E+TTVWrom8AFyLnU7d6v6EIGLCK6YpYYTAAjlHmE16mNWn9I50Av48i2xQP2uNvUptdaw=
+	t=1759875637; cv=none; b=PZr05RN4+aWF+XScaprbjVNQyZNoCmcVQESVTe5xpOHGlk9YfdSlF2vlfC0B8egP0TgNfgQZLTrOtS2uhHNcs1XSsfnzR7+vBVarjWoOqwPYXx8opXUbdefDmMKRMjn6Bw+LonDjKqlF9OYQB1ZRD+QrmtQUQkHhBjcXVHWhvSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759875597; c=relaxed/simple;
-	bh=T0OMHUQed6KSEdn+x3mQlYhzyWL9U6kVcjOF24s/Btw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=a7V+FLrCmWtsdP1I4kGBsvhhTBXUh0XkeiRwpFlcKRMnocz2wKZy3TCl4t+WJn+IDe72+KQLSr2VOPbHyUPvDf+jx3sW2c40PT99HCX9PMkRduHdVhVuiL1Q7qRN5bWObbkT454JzC9Bo/rVHz4R++0l/1wZ2hBl5yP0oCthbIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-4257e203f14so217879575ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 15:19:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759875595; x=1760480395;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T0OMHUQed6KSEdn+x3mQlYhzyWL9U6kVcjOF24s/Btw=;
-        b=DhIs24rVm990+8YMVtEbjk5c0idThRx4qHxCdIclOQroZwQviJclA03sWQoBY4F9Vb
-         1+dGVqxgiyAKyxWzKTkjBUxDLy30V/UjUtzGMyJT9scI9QllZqG2TcEBZvwPKHnWOSoR
-         sDDGesxpyE+qIQ53l0Q/2n8A7vroY91eWqizrvkBpjWEnvKlX7wAxwe+YFd0qOKQWxaR
-         KrZycOGoekPMqDNwuOdbRAEKYyobFCijmVWV6/fS/byik5100ycHvVEIwYDlsBvxu7lv
-         CUXqh26wIB4/Up0ErjZx7X8fhSZqK84jscdxL6KrkkWyee8Q2fX5Fasqa9sBMD+DSa0f
-         BLtQ==
-X-Gm-Message-State: AOJu0YxAjLr5kqPqq/7+s/+XwcORkacj65t8+KrrTxJFfi41SVi3Lf2s
-	7GTHmhKpuQS1RN2p2B8570SizeFNkOFJe7G+TIO9iCkDiHYTc1WYDMDx5seHzyV9wv6wiRYCUoW
-	eR1vVYqgXAj5z/2aPHOHV3I1ID5ApEcOXvTo+DWsnayGOpLIk0QEnSc0vOiQ=
-X-Google-Smtp-Source: AGHT+IFx3Aa9SWYztgfKWJPB2KRAOz3FToY0OuXhMlpYGjzeXFt7SEj+sH5g7mPLHQ7ez5CwL+I45k2YGpKRz4RntXZcDP9EWRoo
+	s=arc-20240116; t=1759875637; c=relaxed/simple;
+	bh=ejqxn+rROfDejbjt7kGS4MM5j0UztDEA1dWFkPHb7eU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=mBTp7oOz/tbqLCATOU89A5iMywyilQ4oGvRyTsPgu+WANy7VMbp/8gv0H6qmjaFcQMcBuSUPUCGlmagakCxtBIaZMSXvTJJbEIAinRvdUKYAsyEa0Vay/7JU5OQ3WQhagNI4BLTrMbj871LVP0IWPG4z6CPjGBEmKKa0SJw1JCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=dKlpeR4t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E19A5C4CEF1;
+	Tue,  7 Oct 2025 22:20:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1759875637;
+	bh=ejqxn+rROfDejbjt7kGS4MM5j0UztDEA1dWFkPHb7eU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dKlpeR4ttNe0GHtMivevZDFXOzfWLOpqNCrqVdWGYwAs2uNWQ0+g4RGP7XPdg7z6T
+	 r+DnAqFDbPLKpCLvA45VdLLiFfpPLvcgTMOHbyRSf2023g9+u6UmyaVEtgbO+SuPfb
+	 iz2ejQlf0NHo+U0nuXs9ouZ/vb5fxYGZ8C+y5dbM=
+Date: Tue, 7 Oct 2025 15:20:36 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Kairui Song <ryncsn@gmail.com>
+Cc: linux-mm@kvack.org, Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song
+ <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>, Baoquan He
+ <bhe@redhat.com>, Barry Song <baohua@kernel.org>, Chris Li
+ <chrisl@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>, David
+ Hildenbrand <david@redhat.com>, "Matthew Wilcox (Oracle)"
+ <willy@infradead.org>, Ying Huang <ying.huang@linux.alibaba.com>,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 0/4] mm, swap: misc cleanup and bugfix
+Message-Id: <20251007152036.cfbd572d706c40ed79d75642@linux-foundation.org>
+In-Reply-To: <20251007-swap-clean-after-swap-table-p1-v1-0-74860ef8ba74@tencent.com>
+References: <20251007-swap-clean-after-swap-table-p1-v1-0-74860ef8ba74@tencent.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1987:b0:428:e543:1b2 with SMTP id
- e9e14a558f8ab-42f8734708emr9387635ab.1.1759875594699; Tue, 07 Oct 2025
- 15:19:54 -0700 (PDT)
-Date: Tue, 07 Oct 2025 15:19:54 -0700
-In-Reply-To: <68c58bfa.050a0220.3c6139.04d2.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e5920a.050a0220.256323.0029.GAE@google.com>
-Subject: Forwarded: kernel BUG in ext4_write_inline_data
-From: syzbot <syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Tue, 07 Oct 2025 04:02:32 +0800 Kairui Song <ryncsn@gmail.com> wrote:
 
-***
+> A few cleanups and a bugfix that are either suitable after the swap
+> table phase I or found during code review.
+> 
+> Patch 1 is a bugfix and needs to be included in the stable branch,
+> the rest have no behavior change.
 
-Subject: kernel BUG in ext4_write_inline_data
-Author: eraykrdg1@gmail.com
+fyi, the presentation of the series suggests that [1/4] is not a hotfix
+- that it won't hit mainline (and then -stable) until after 6.19-rc1.
 
-#syz test
+Which sounds OK given this:
+
+> So far, no issues have been observed or reported with typical SSD setups
+> under months of high pressure. This issue was found during my code
+> review. But by hacking the kernel a bit: adding a mdelay(100) in the
+> async discard path, this issue will be observable with WARNING triggered
+> by the wrong GFP and cond_resched in the bio layer.
+
 
