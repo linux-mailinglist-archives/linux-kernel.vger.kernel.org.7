@@ -1,130 +1,119 @@
-Return-Path: <linux-kernel+bounces-844098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A729BC0FFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:22:47 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82AFFBC1059
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3F0C3C5B09
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:22:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6BE7C4F4846
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A766B2D877C;
-	Tue,  7 Oct 2025 10:22:41 +0000 (UTC)
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25F026057A;
+	Tue,  7 Oct 2025 10:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RITgyV6F"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345562D6E6E
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 10:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DB33C17;
+	Tue,  7 Oct 2025 10:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759832561; cv=none; b=sKt18H13hpT2mJbcRQaOE/YeJsq/2b0N4+bzhCtOghxJJqzEWSeRZRAl1sgZrLzUfI2rtYU8dMHgn8umQX4+JhNlAYRWoIBJ9MDg9n8c+kEwFtjm0C/Dcc9suGCQAak24O92SyXKpcaPEDK907hISFq84O96RV0gIkmY2h/QvPc=
+	t=1759833110; cv=none; b=LmtYFobEMf8KJACD4JtQAi+ccFLM0W1zcRUWJFtxBGOQSe/4HpU2HAagJ+4MNCHypRJ1HYp3TnTFbB4KBbOQQLqP+/6oYLEsATn5UviiZwXcRakqKDL+CWcECK3mE1VDB7ii5WKXVmN5oaqd+SXagy3KzlLgaRJF8BssDWQe7KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759832561; c=relaxed/simple;
-	bh=X08yRMXxYQpEQFN6+DWg0rBxqMjXg4JwaZTEUg+jC/A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a9+Jhy/Ybp8k2BBpVTBShYQeIMePdRX5qsgF0jQ/D9I6DW7flEriwjp5xxEj+tTFiq6Edjypco2SFE6vBXJ0QX6V5Tpbge/RKwfq/SL/tEttvK/o6VGxlWCp/2q/at+l5kO5qvcIUjV/VhBQZn+3qV2v3poa8I1iPqGU9PQ5bv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5523142df73so4356158e0c.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 03:22:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759832557; x=1760437357;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0UyUj3Qix+qDVReFl/Sm439a80dBofMDi/9/TOImgQQ=;
-        b=DExSzvkMs/AsfAQ+wOw534Iyk8xwjQBEAVNtRJ1gFMxboJShq9h5X+e7qnle8myCMu
-         2ebMU1//LHwUwswdpe5lTMpqSs2ZJenVEUWLVuN9G4XJ+EdzN8HyHS3Tz0F+wYZey7p/
-         Z3VTgB3++1MzEIqR9WH5epOx0nE56NCB1Z0WrDI4JWEleknCjKtctn4dvwDmvnKDRwCq
-         mKohdqnw6UAkWH1qD8UPzKOTHB91f4yeXiCZPvwdekizXYVRGirmBIyqqbzIKVW9DN+p
-         wgfCNJLWlxYBkPJZgYvNISQKzZ/1hWyx4hV07MO+izCF+rEYOKoxQPUh9gyuKkire1vN
-         BJcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXkqxq82exLvjNoXsHLXz8d3ituyoENQ7QLtHDCRB3Xw/32A/qpwjkN6CthhnhSJoZEVNQmYnw2BZyQnh0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0G3I7oY9nZgiBAcnbXFH1A2u4ia/fARIG8dkAzHJP+9f/XMRb
-	F8D64cBwovJWMve5Yo23hBCOSbSPZ9HexmBXrpJj3IHoI6QMeEQ0aEqJYC7QxLtM
-X-Gm-Gg: ASbGncv6B3w9tnFO31riTeU/nPIdjU1oPPGyp+YwU43VAcB3DPF6akQwF/FaBFTCdQ3
-	qIdXtAY2oNUEfNSlWLdle40dfOOoa0qxQkY9ownr5AV4S2icHacySnsa1wSNHmgxP9361p0y78y
-	hdezK8MGYC2SgOT9txfEr/asxsD+mUSHFBDE4zu5hQxhr9ZMDwa88pvlS1SrKpQHUlCZuwyxGAS
-	A7P8dJYEecRMLnAiKBOfpbO7vmJ8AW3lOxgHQByLrJFQwDxYuEIzgU61BIvMEDmblb9RMUjKMxn
-	g/kJbOYT/xTAEnxfep/cvOXP1FMsQm/6juPqlxDdsgcZyqzHXdZM9D/i3uLtUzAK2olstiMsyOR
-	xS7vL950YqA89Yom/D6TsDZFgRnw66BlMc8HxUJaQhFQ8DLT00wqjIrZiBwZC14s0Ik534kbXS0
-	cFeMsy8z/Sxmb2qcbbgbG7Uac=
-X-Google-Smtp-Source: AGHT+IE8cUd83lIyI/RNhrN9ZIOTg8BQ+8ERPq7pskuKuqGTr/cVjZ89sEfzAp/iN0ZHnjBLSNnz+w==
-X-Received: by 2002:a05:6102:14aa:b0:520:ec03:32e9 with SMTP id ada2fe7eead31-5d41cfb12ffmr6275694137.3.1759832556831;
-        Tue, 07 Oct 2025 03:22:36 -0700 (PDT)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5d5d39d180bsm646453137.13.2025.10.07.03.22.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Oct 2025 03:22:36 -0700 (PDT)
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-554a7e98e19so801145e0c.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 03:22:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUr+0KhMd0eOz/onWVAFCeaVgHy8AqQkeylRGI+3IA6nEM1NryG/xcJiwy3Mhsbi61gzrG+O56mnJiGtkA=@vger.kernel.org
-X-Received: by 2002:a05:6122:1e0d:b0:543:e262:ade2 with SMTP id
- 71dfb90a1353d-5524ea6b0e4mr5683075e0c.12.1759832556074; Tue, 07 Oct 2025
- 03:22:36 -0700 (PDT)
+	s=arc-20240116; t=1759833110; c=relaxed/simple;
+	bh=kTsNWkhrY3zXeGA6RbFGAE2kGwCNe4vQnT6IaUFot5U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cn8svg6gTWdgNAWBnueiAmgOdrSI3sw4cxckW/RKMPQpwjYZ/hqiZ7Adbe1nARkhpFjXhxYIMjQEmq0kz2go5jYQz+qa0jKxZZ1rlOCmCqj1GY07Agrfc+x4niLQqFYM8keptQDfcuN7E9oxwGLqdwRR6HCiETjV8ck6H2tQiz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RITgyV6F; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759833105;
+	bh=kTsNWkhrY3zXeGA6RbFGAE2kGwCNe4vQnT6IaUFot5U=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RITgyV6FWYDKbtg2VXbNZwpQGekbex2OP4MZ5vHnaTgEkL1bsPDTsE8RpSSIPzzNq
+	 RHnTChzUx3ZBfvmjUWAAUM6aL6TeKX+QwwSfxOoCpmKJMs4l40MsoTJbQOFr1ryHRR
+	 hMwzWfdH5kgkbtDzGV1sypG3YhuBwNLUGEj/Z16Y7An1Z95yTbWAAYflZU0RGLCYdv
+	 l+kz8ceAMkSQi2F3ZyqUO5LWlLxsXr0ir5vZ6NWF0rGSkAh3R5/atO8BZlYtGWbzBh
+	 UuEbBMCem/3/7Pg02NUbQySI2OUSajr4c5niY3jREUkCqVP09KTc7JmxTSXHaX2mSE
+	 Se3HxV8L0wbPw==
+Received: from pan.localdomain (unknown [IPv6:2a00:23c6:c338:be00:61ad:9488:9583:2010])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: martyn)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id E38B917E12C6;
+	Tue,  7 Oct 2025 12:31:44 +0200 (CEST)
+From: Martyn Welch <martyn.welch@collabora.com>
+To: Hans de Goede <hansg@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: kernel@collabora.com,
+	Martyn Welch <martyn.welch@collabora.com>,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] input: goodix: Remove setting of RST pin to input
+Date: Tue,  7 Oct 2025 11:23:04 +0100
+Message-ID: <20251007102305.445515-1-martyn.welch@collabora.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007092313.755856-1-daniel@thingy.jp> <20251007092313.755856-4-daniel@thingy.jp>
- <CAMuHMdWDfNgUUh-uU7ZFKmmAccEMqDdfDpwRXQYmwjMG6O_Trg@mail.gmail.com> <46382bc6cab2196a79780a946bee96dde402ae31.camel@physik.fu-berlin.de>
-In-Reply-To: <46382bc6cab2196a79780a946bee96dde402ae31.camel@physik.fu-berlin.de>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 7 Oct 2025 12:22:25 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUUAEoN+KBnk=aY6UnkxXnFp8KY0BV8qQGfGip=nNtfaQ@mail.gmail.com>
-X-Gm-Features: AS18NWAPkggXOuJ8Zyug-B_6vXxzZFwJxIAhU-W5_YEhuf5bM649C2kMw_p5v_Y
-Message-ID: <CAMuHMdUUAEoN+KBnk=aY6UnkxXnFp8KY0BV8qQGfGip=nNtfaQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/5] m68k: amiga: Allow PCI
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: Daniel Palmer <daniel@thingy.jp>, linux-m68k@lists.linux-m68k.org, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Adrian,
+The reset line is being set to input on non-ACPI devices apparently to
+save power. This isn't being done on ACPI devices as it's been found
+that some ACPI devices don't have a pull-up resistor fitted. This can
+also be the case for non-ACPI devices, resulting in:
 
-On Tue, 7 Oct 2025 at 11:41, John Paul Adrian Glaubitz
-<glaubitz@physik.fu-berlin.de> wrote:
-> On Tue, 2025-10-07 at 11:37 +0200, Geert Uytterhoeven wrote:
-> > On Tue, 7 Oct 2025 at 11:33, Daniel Palmer <daniel@thingy.jp> wrote:
-> > > The Amiga has various options for adding a PCI bus so select HAVE_PCI.
-> > >
-> > > Signed-off-by: Daniel Palmer <daniel@thingy.jp>
-> >
-> > Thanks for your patch!
-> >
-> > > --- a/arch/m68k/Kconfig.machine
-> > > +++ b/arch/m68k/Kconfig.machine
-> > > @@ -7,6 +7,7 @@ config AMIGA
-> > >         bool "Amiga support"
-> > >         depends on MMU
-> > >         select LEGACY_TIMER_TICK
-> > > +       select HAVE_PCI
-> > >         help
-> > >           This option enables support for the Amiga series of computers. If
-> > >           you plan to use this kernel on an Amiga, say Y here and browse the
-> >
-> > This doesn't make much sense without upstream support for actual
-> > PCI host bridge controllers.
->
-> Isn't this what patch 5 does?
+[  941.672207] Goodix-TS 1-0014: Error reading 10 bytes from 0x814e: -110
+[  942.696168] Goodix-TS 1-0014: Error reading 10 bytes from 0x814e: -110
+[  945.832208] Goodix-TS 1-0014: Error reading 10 bytes from 0x814e: -110
 
-Oops, sorry, I hadn't realized this is part of a series, as I somehow
-haven't received the other patches from the series yet...
+This behaviour appears to have been initially introduced in ec6e1b4082d9.
+This doesn't seem to be based on information in either the GT911 or GT9271
+datasheets cited as sources of information for this change. Thus it seems
+likely that it is based on functionality in the Android driver which it
+also lists. This behaviour may be viable in very specific instances where
+the hardware is known to have a pull-up fitted, but seems unwise in the
+upstream kernel where such hardware requirements can't be guaranteed.
 
-Gr{oetje,eeting}s,
+Remove this over optimisation to improve reliability on non-ACPI
+devices.
 
-                        Geert
+Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
 
+---
+ drivers/input/touchscreen/goodix.c | 11 -----------
+ 1 file changed, 11 deletions(-)
+
+diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
+index 252dcae039f8..e7ef744011ad 100644
+--- a/drivers/input/touchscreen/goodix.c
++++ b/drivers/input/touchscreen/goodix.c
+@@ -796,17 +796,6 @@ int goodix_reset_no_int_sync(struct goodix_ts_data *ts)
+ 
+ 	usleep_range(6000, 10000);		/* T4: > 5ms */
+ 
+-	/*
+-	 * Put the reset pin back in to input / high-impedance mode to save
+-	 * power. Only do this in the non ACPI case since some ACPI boards
+-	 * don't have a pull-up, so there the reset pin must stay active-high.
+-	 */
+-	if (ts->irq_pin_access_method == IRQ_PIN_ACCESS_GPIO) {
+-		error = gpiod_direction_input(ts->gpiod_rst);
+-		if (error)
+-			goto error;
+-	}
+-
+ 	return 0;
+ 
+ error:
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.39.5
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
