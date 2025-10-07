@@ -1,50 +1,50 @@
-Return-Path: <linux-kernel+bounces-844278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2ED5BC1703
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:08:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DB5BBC1706
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADB731893029
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:09:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 466094E0EC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0BE2E03F2;
-	Tue,  7 Oct 2025 13:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81042E03F3;
+	Tue,  7 Oct 2025 13:09:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="z+aJZ8Pa"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="lTGdHFT4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56D8288529;
-	Tue,  7 Oct 2025 13:08:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D7D288529;
+	Tue,  7 Oct 2025 13:09:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759842519; cv=none; b=AeoBxCGjAL7uXlbVVaoETzODvCUOOyhFgAdS1l07DVq8u0EeQ6tspJnQ7lFlUA2wQRW9ZnS3x8BmcJrN3HBWPAGv3j917PDNBdaMYgulep0xVTvj+3oQUoQ1/60EElDFl6VQ2aCksuouy2DrT+Xo02zOTQrd1qCfXOSQ8BwneMo=
+	t=1759842541; cv=none; b=sM3SxpDnKlxZDxeztbwt6iWDpPHG/qB7NfMqGfOPeaVntBvGLTfJTE1yx01BSPIpcSzNe22BaHGl+OJyR3FNwlYy2WgboJZtE00+V7MbZ+qcLkUPbruXHyKkGVbWvHMH08Z0AqFf3XOj1evZ7lcSX7vnw5C3odkeB3giq2sdyLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759842519; c=relaxed/simple;
-	bh=TcHuqH1KdIrgcCEyXUFKbMB0wj8WIcso01Iu0HH2zTM=;
+	s=arc-20240116; t=1759842541; c=relaxed/simple;
+	bh=dnXJrhA1Du/5HdpoGQzTQcx+O1dHLx0aLKCzq5hkRIw=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=agEeXL13+9hB2wUz+ejkQPGbwomyxDXtsmD49NohKhaMOuIW48zo7uHRTqtR4tkj/COjIXhy8wOez2EBjcbLpMBDu/E3PjFEv/8r1xbaAZ2FaVzA9OwDtjO+jZWQ4p2COgP67xVwYDlmz8MbK/5E/hvj6Os/0s/iEjD1qWmOyxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=z+aJZ8Pa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBAC9C4CEF1;
-	Tue,  7 Oct 2025 13:08:38 +0000 (UTC)
+	 Content-Disposition; b=dCWran0GMEdw4n3ZIDjOjHfng26QIiUNBK9+sL359V3E1PWAwP8yqKCngT6FoiSOE9qmAQ3l+UKQp7T1jY0MbUPm4AI3aQWd8H2cD3zDqdQ5st2v9HWhdLn/MHJSgKhpIaL1wjY8H+aJcinewNr1R4yKP4fRjDynPCPZ1Yvh4L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=lTGdHFT4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C38DC4CEF1;
+	Tue,  7 Oct 2025 13:09:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759842519;
-	bh=TcHuqH1KdIrgcCEyXUFKbMB0wj8WIcso01Iu0HH2zTM=;
+	s=korg; t=1759842540;
+	bh=dnXJrhA1Du/5HdpoGQzTQcx+O1dHLx0aLKCzq5hkRIw=;
 	h=Date:From:To:Cc:Subject:From;
-	b=z+aJZ8PaprOtDY19CIJbjMh48KsaBM8w4POAPVK+j2r04XM+vCNQTqYZZAPeWZ+Sw
-	 siqnm2SSK/s8RbqCVu0Pv3520F2G0p9rZdWJjEgour55QtnG+zuPSJdmh3HjZsCvJD
-	 ER6cPKL4eBPYHGLYBsIgXgV4fwebCu010LAxnxuM=
-Date: Tue, 7 Oct 2025 15:08:36 +0200
+	b=lTGdHFT4zaeGiG2J+Oo8pvjlmQQKl2llvQcgtuevRSFcINtjQTef8OnU/NfDri0sq
+	 Fy7h5yleV5k0i9koGkawdGEnIBU7OezNwc1vRkIlBA6csIZLxSGvg9XKddujk2vbr2
+	 T6VZZEL7KM8bbfCUPxOmGVJ4JOIzT7Mc0ofvCJKs=
+Date: Tue, 7 Oct 2025 15:08:57 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Slaby <jslaby@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>,
+To: Linus Torvalds <torvalds@linux-foundation.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: [GIT PULL] TTY / Serial driver fix for 6.18-rc1
-Message-ID: <aOUQ1CdKRQ2mSN1f@kroah.com>
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: [GIT PULL] Staging driver fixes for 6.18-rc1
+Message-ID: <aOUQ6d4me_xFTEwJ@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,36 +54,37 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-The following changes since commit f83ec76bf285bea5727f478a68b894f5543ca76e:
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-  Linux 6.17-rc6 (2025-09-14 14:21:14 -0700)
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-6.18-rc1
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git tags/staging-6.18-rc1-2
 
-for you to fetch changes up to a699213d4e6ef4286348c6439837990f121e0c03:
+for you to fetch changes up to 82a051e2553b9e297cba82a975d9c538b882c79e:
 
-  serial: qcom-geni: Fix blocked task (2025-09-17 13:12:17 +0200)
+  staging: axis-fifo: flush RX FIFO on read errors (2025-09-12 16:21:46 +0200)
 
 ----------------------------------------------------------------
-TTY driver fix for 6.18-rc1
+Staging driver fixes for 6.18-rc1
 
-Here is a single driver fix for the qcom_geni_serial driver for
-6.18-rc1.  It has been in my tree for weeks, but missed being sent to
-you for 6.17-final due to travel on my side.
+Here are some staging driver fixes that missed 6.17-final due to my
+travel schedule.  They fix a number of reported issues in the axis-fifo
+driver, one of which was just independently discovered by someone else
+today so someone is looking at this code.
 
-This fixes a reported regression for this driver that prevents 6.17 from
-working properly on this platform.
-
-It has been in linux-next for many weeks with no reported issues.
+All of these fixes have been in linux-next for many weeks with no
+reported issues.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Krzysztof Kozlowski (1):
-      serial: qcom-geni: Fix blocked task
+Ovidiu Panait (3):
+      staging: axis-fifo: fix maximum TX packet length check
+      staging: axis-fifo: fix TX handling on copy_from_user() failure
+      staging: axis-fifo: flush RX FIFO on read errors
 
- drivers/tty/serial/qcom_geni_serial.c | 176 ++++------------------------------
- 1 file changed, 16 insertions(+), 160 deletions(-)
+ drivers/staging/axis-fifo/axis-fifo.c | 68 ++++++++++++++++-------------------
+ 1 file changed, 31 insertions(+), 37 deletions(-)
 
