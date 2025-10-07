@@ -1,328 +1,121 @@
-Return-Path: <linux-kernel+bounces-843606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99B19BBFCF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 02:00:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86D47BBFCFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 02:00:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7294B4F2A99
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 00:00:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 181514E48E0
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 00:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1471DB958;
-	Tue,  7 Oct 2025 00:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA73121765B;
+	Tue,  7 Oct 2025 00:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="foV5uJK6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="edCKTMf0"
+Received: from mail-ot1-f73.google.com (mail-ot1-f73.google.com [209.85.210.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F92F214801;
-	Tue,  7 Oct 2025 00:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7755CA4E
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 00:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759795206; cv=none; b=ZZJ8berq65Q2V7Cc/kAwTORsvLWKoyBMmrPtFBlsGrQvBTcA6Pc/XNJF8PNu88074YWxfpE5+pWUmZ2W+UNCAKkA9Dy5kmtkc0wZbllMTwAYtfiwzKCP9MQLM+bU8zPJmEFqbWfYyPCULYdZdyM6xnfjrVgR5BnNCYRYIxJ319M=
+	t=1759795218; cv=none; b=r9Dra8V13uNb/7ArmOsyHVU21VyWfyQKCSYjSZFy70tx+t+1x0rF6MI1ZVYT56JVA0wghRGvNJ4xXkSEapLgmJGGSWHJnG1FGsbWenrqocN3WZQeRX8e+70IkgBULB8jN2dOVAPrgoHhiXpJj8Ba481o0Iuaeoz30E+cHtUD3v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759795206; c=relaxed/simple;
-	bh=SU5UP21g7EwOktpqthWNy1sml2nqa/xVCZaEdXNDVss=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RcY2y8tINQaUfc5KJyeY8YRc2pREgga8mW4Q7M0hKhl7xar7oIaK/hnCe70tdU5Ke5ViggY84nS8IzpyCy0R4n4brcMeDuxzUxMgQyJU/iRytT7fd2xHnE4H9FCy9oSAlHohnBueu2DJgF5onqUJhzooV9Si3oAo+IU62XSKcA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=foV5uJK6; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759795204; x=1791331204;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=SU5UP21g7EwOktpqthWNy1sml2nqa/xVCZaEdXNDVss=;
-  b=foV5uJK6TWWgK9AZMsBBevbikPWGITcI4vI25ASxuwSXpDARb8ocF6ks
-   4chipk5WPK7KiBx1/0CQuQW1SyuYqGAmjpYe7lzjxNlUvmSNuvtplqev7
-   qvxc3GRWKT6bOhW9AXODiR1d3F6dTplN3yzwmGyr+QBticrpRerZrJtDA
-   +lWjrSs5DCzKk3vcFDt6d2ZDKSe5Cm0AjA+G3SxLqu6WNPJ4C2LqRwq2a
-   lurXRiDiTGF78EbXdmfi04H1g/+vhgTo9W9dpC/GMy0dpvsuHti6h9/Fj
-   J4PzR5Xihy+a3u5ipW7OpZ7ENrhgbnzdI/o22Aq9srE9G25r6PDGBPZx9
-   Q==;
-X-CSE-ConnectionGUID: gi4e4NtDT7KhJQHZxVmM1Q==
-X-CSE-MsgGUID: O+QgKZXWRT24D9q76okC9g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11574"; a="64593793"
-X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
-   d="scan'208";a="64593793"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 17:00:02 -0700
-X-CSE-ConnectionGUID: NChxBT7BRoKCqAAg/SaVvQ==
-X-CSE-MsgGUID: JGf3fGrUSZWlcGmi3roQHg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,320,1751266800"; 
-   d="scan'208";a="184379585"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.110.110]) ([10.125.110.110])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 17:00:01 -0700
-Message-ID: <11544820-6228-4930-8849-2121c6b0a3b7@intel.com>
-Date: Mon, 6 Oct 2025 17:00:00 -0700
+	s=arc-20240116; t=1759795218; c=relaxed/simple;
+	bh=to8ZWOjc1qRZt8n0R8qXpM+PoKIHqL7arvS09ExzgFw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qoxiIo9N+KAOrtq5Uc1tVjvgsiBgp3VNrKob3CEU5ZX1i0OTMXGvfJx9Y8LKnQLsepiNqu1K1lL1qksHLrSx7xKaxbpRDHGp+H1noV6Su1l8vTQiBP/nYZ9veYc5JRHqPVkwYbdTlNbaP8HOEqvDMqzNDhyfpvw/d3XdUzRx08w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=edCKTMf0; arc=none smtp.client-ip=209.85.210.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com
+Received: by mail-ot1-f73.google.com with SMTP id 46e09a7af769-7a3877d9fa9so2993048a34.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 17:00:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759795216; x=1760400016; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VdUfU2fJjBvhSwhaS5KHCRYOzfyetIIk6dhbjwg8+94=;
+        b=edCKTMf0Qy0V25pa6/c0PiJ9u9c3u0nSkEOaq2a1YWvP5HXaoZEBJenAeYLF1iBG6h
+         f1bKMYvXe8kYw4GbyGxgwgy9PX1zebMz7omyTJzYqyC4SzqMWRTxDlpxdMuR92Jm9BC8
+         mIg8YgPz5Vn2V0wuHM5Jfq+PezXpFYkO2hzFmz9b6g2VMY399vInSda0YFS0VciiK6sJ
+         YIPShrNMJSki9IrGNs9hzjBAxMfq/LtFNPMHBtagpHDf1eKZtClhGP72jTP4Ai8pi9UJ
+         Wl54+UttB1+RW1pmgffxrZrxAIAEa887S9lHr59wKQxY45IoddF9bieUyem506SYd+XU
+         XZaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759795216; x=1760400016;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VdUfU2fJjBvhSwhaS5KHCRYOzfyetIIk6dhbjwg8+94=;
+        b=P0vJF9QxMEeljDAjGW6y8nzDpOHXc0Zau4xnl5wGLNfkEejK8/dOdYQMQtACAXDX16
+         R7LwWfb2+7aGGHu7sv73XZQ5AGlTbwGRt53U/qtuQs5qZg++lbXQIvmKueoKshbjT+g3
+         Sph1K6qNHvoaGUXEKTJOHtYEs76fYRzmOUNBKH63zYJj77mA3L9MyJVr0CTW/Rht2YV1
+         APorbgLj1afRBj0jj6Wk/ihXAoBhKYDVgS1nT8t/715N7zm2J4mfUImUewNC6nSNRaEI
+         jzmuCBfrIYKlOcoptMfmmcdE4Pwmf+VhtGSzUhUtbLUzJsqsc7g0psXxnBvSWuGH35ef
+         MoOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUiywNybI/S95Ls/R1DPg82+7OLLszi75rYuoqoj8kvYgDJJ6Ay8R9j55OJb/covy3uph3bM1c7/Kvp+g0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2dStZIIYsBGXFqVEpRgTVFRaNC1ac8M4l4hefeIqqLeLP+oEl
+	B1vM7RGbxI3zUnqem7+yT2//6t76cVrw2wX3/2Dw+rLTFTNUTryuI1KfrMnOjsn+lP3XemRAANu
+	DmpBxjg==
+X-Google-Smtp-Source: AGHT+IHYTY6i4NJKEU6ncAOcwWLhE/UwFop1zK10OHZEI577ZI6tq5DlnfgX5+BnVTSvZd0L+fjUk7r1wHA=
+X-Received: from oanw9.prod.google.com ([2002:a05:6871:609:b0:327:5a14:f7f2])
+ (user=jthies job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6870:2393:b0:332:ea8d:b4d2
+ with SMTP id 586e51a60fabf-3b0f49f5aa9mr6400301fac.11.1759795215703; Mon, 06
+ Oct 2025 17:00:15 -0700 (PDT)
+Date: Tue,  7 Oct 2025 00:00:01 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4 v5] cxl/core: Add helpers to detect Low Memory Holes
- on x86
-To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- linux-cxl@vger.kernel.org
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gregory Price <gourry@gourry.net>, Robert Richter <rrichter@amd.com>,
- Cheatham Benjamin <benjamin.cheatham@amd.com>
-References: <20251006155836.791418-1-fabio.m.de.francesco@linux.intel.com>
- <20251006155836.791418-3-fabio.m.de.francesco@linux.intel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20251006155836.791418-3-fabio.m.de.francesco@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
+Message-ID: <20251007000007.3724229-1-jthies@google.com>
+Subject: [PATCH 0/6] UCSI Power Supply Updates and Bug Fixes
+From: Jameson Thies <jthies@google.com>
+To: heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: jthies@google.com, dmitry.baryshkov@oss.qualcomm.com, bleung@chromium.org, 
+	gregkh@linuxfoundation.org, akuchynski@chromium.org, 
+	abhishekpandit@chromium.org, sebastian.reichel@collabora.com, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+
+This series includes the following minor changes to power supply
+handling by the UCSI driver.
+
+1) Adds the "Status" property to power supplies registered by the UCSI
+driver.
+2) Reports power supply USB type as "DRP" when the port partner is a
+DRP.
+3) Updates ucsi.c to report a power supply change all power opmode
+changes. Currently this only gets reported when opmode is PD.
+4) Updates ucsi.c to report a power supply change when the PPM signals
+a sink path change.
+5) Set max current to 0 when no device is connected. Currently this
+defaults to 0.1A.
+6) Updates connector status after initiating a PR swap. Following the
+UCSI spec, there is no reported change following a successful SET_PDR
+command. This results in the stored connector status being outdated.
+
+Abhishek Pandit-Subedi (1):
+  usb: typec: ucsi: pr_swap should check connector_status
+
+Jameson Thies (5):
+  usb: typec: ucsi: psy: Add power supply status
+  usb: typec: ucsi: psy: Add support for DRP USB type
+  usb: typec: ucsi: Report power supply changes on power opmode changes
+  usb: typec: ucsi: Report power supply change on sink path change
+  usb: typec: ucsi: psy: Set max current to zero when disconnected
+
+ drivers/usb/typec/ucsi/psy.c  | 41 ++++++++++++++++++++++++++++++++++-
+ drivers/usb/typec/ucsi/ucsi.c | 35 +++++++++++++++++++++++++-----
+ drivers/usb/typec/ucsi/ucsi.h |  4 ++++
+ 3 files changed, 73 insertions(+), 7 deletions(-)
 
 
-
-On 10/6/25 8:58 AM, Fabio M. De Francesco wrote:
-> On a x86 platform with a low memory hole (LHM), the BIOS may publish
-> CFMWS that describes a system physical address (SPA) range that
-> typically is only a subset of the corresponding CXL intermediate switch
-> and endpoint decoder's host physical address (HPA) ranges. The CFMWS
-> range never intersects the LHM and so the driver instantiates a root
-> decoder whose HPA range size doesn't fully contain the matching switch
-> and endpoint decoders' HPA ranges.[1]
-> 
-> To construct regions and attach decoders, the driver needs to match root
-> decoders and regions with endpoint decoders. The process fails and
-> returns errors because the driver is not designed to deal with SPA
-> ranges which are smaller than the corresponding hardware decoders HPA
-> ranges.
-> 
-> Introduce two functions that indirectly detect the presence of x86 LMH
-> and allow the matching between a root decoder or an already constructed
-> region with a corresponding intermediate switch or endpoint decoder to
-> enable the construction of a region and the subsequent attachment of the
-> same decoders to that region.
-> 
-> These functions return true when SPA/HPA misalignments due to LMH's are
-> detected under specific conditions:
-> 
-> - Both the SPA and HPA ranges must start at LMH_CFMWS_RANGE_START (i.e.,
->   0x0 on x86 with LMH's).
-> - The SPA range's size is less than HPA's.
-> - The SPA range's size is less than 4G.
-> - The HPA range's size is aligned to the NIW * 256M rule.
-> 
-> Also introduce a function that adjusts the range end of a region to be
-> constructed and the DPA range's end of the endpoint decoders that will
-> be later attached to that region.
-> 
-> [1] commit 7a81173f3 ("cxl: Documentation/driver-api/cxl: Describe the x86 Low Memory Hole solution")
-
-I don't think this is the right hash.
-c5dca38633da ("cxl: Documentation/driver-api/cxl: Describe the x86 Low Memory Hole solution")
-
-> 
-> Cc: Alison Schofield <alison.schofield@intel.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Dave Jiang <dave.jiang@intel.com>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
-> ---
->  drivers/cxl/Kconfig                |  4 ++
->  drivers/cxl/core/Makefile          |  1 +
->  drivers/cxl/core/platform_quirks.c | 99 ++++++++++++++++++++++++++++++
->  drivers/cxl/core/platform_quirks.h | 33 ++++++++++
->  4 files changed, 137 insertions(+)
->  create mode 100644 drivers/cxl/core/platform_quirks.c
->  create mode 100644 drivers/cxl/core/platform_quirks.h
-> 
-> diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
-> index 48b7314afdb8..03c0583bc9a3 100644
-> --- a/drivers/cxl/Kconfig
-> +++ b/drivers/cxl/Kconfig
-> @@ -211,6 +211,10 @@ config CXL_REGION
->  
->  	  If unsure say 'y'
->  
-> +config CXL_PLATFORM_QUIRKS
-> +	def_bool y
-> +	depends on CXL_REGION
-> +
->  config CXL_REGION_INVALIDATION_TEST
->  	bool "CXL: Region Cache Management Bypass (TEST)"
->  	depends on CXL_REGION
-> diff --git a/drivers/cxl/core/Makefile b/drivers/cxl/core/Makefile
-> index 5ad8fef210b5..1684e46b8709 100644
-> --- a/drivers/cxl/core/Makefile
-> +++ b/drivers/cxl/core/Makefile
-> @@ -17,6 +17,7 @@ cxl_core-y += cdat.o
->  cxl_core-y += ras.o
->  cxl_core-$(CONFIG_TRACING) += trace.o
->  cxl_core-$(CONFIG_CXL_REGION) += region.o
-> +cxl_core-$(CONFIG_CXL_PLATFORM_QUIRKS) += platform_quirks.o
->  cxl_core-$(CONFIG_CXL_MCE) += mce.o
->  cxl_core-$(CONFIG_CXL_FEATURES) += features.o
->  cxl_core-$(CONFIG_CXL_EDAC_MEM_FEATURES) += edac.o
-> diff --git a/drivers/cxl/core/platform_quirks.c b/drivers/cxl/core/platform_quirks.c
-> new file mode 100644
-> index 000000000000..7e76e392b1ae
-> --- /dev/null
-> +++ b/drivers/cxl/core/platform_quirks.c
-> @@ -0,0 +1,99 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +
-> +#include <linux/range.h>
-> +#include "platform_quirks.h"
-> +#include "cxlmem.h"
-> +#include "core.h"
-> +
-> +/* Start of CFMWS range that end before x86 Low Memory Holes */
-> +#define LMH_CFMWS_RANGE_START 0x0ULL
-> +
-> +/**
-> + * platform_cxlrd_matches_cxled() - Platform quirk to match CXL Root and
-> + * Endpoint Decoders. It allows matching on platforms with LMH's.
-> + * @cxlrd: The Root Decoder against which @cxled is tested for matching.
-> + * @cxled: The Endpoint Decoder to be tested for matching @cxlrd.
-> + *
-> + * platform_cxlrd_matches_cxled() is typically called from the
-> + * match_*_by_range() functions in region.c. It checks if an endpoint decoder
-> + * matches a given root decoder and returns true to allow the driver to succeed
-> + * in the construction of regions where it would otherwise fail for the presence
-> + * of a Low Memory Hole (see Documentation/driver-api/cxl/conventions.rst).
-> + *
-> + * In x86 platforms with LMH's, the CFMWS ranges never intersect the LMH, the
-> + * endpoint decoder's HPA range size is always guaranteed aligned to NIW*256MB
-> + * and also typically larger than the matching root decoder's, and the root
-> + * decoder's range end is at an address that is necessarily less than SZ_4G
-> + * (i.e., the Hole is in Low Memory - this function doesn't deal with other
-> + * kinds of holes).
-> + *
-> + * Return: true if an endpoint matches a root decoder, else false.
-> + */
-> +bool platform_cxlrd_matches_cxled(const struct cxl_root_decoder *cxlrd,
-> +				  const struct cxl_endpoint_decoder *cxled)
-> +{
-> +	const struct range *rd_r, *sd_r;
-> +	int align;
-> +
-> +	rd_r = &cxlrd->cxlsd.cxld.hpa_range;
-> +	sd_r = &cxled->cxld.hpa_range;
-> +	align = cxled->cxld.interleave_ways * SZ_256M;
-> +
-> +	if (rd_r->start == LMH_CFMWS_RANGE_START &&
-> +	    rd_r->start == sd_r->start && rd_r->end < sd_r->end &&
-
-Break this into 2 lines to make it more readable
-
-> +	    rd_r->end < (LMH_CFMWS_RANGE_START + SZ_4G) &&
-> +	    IS_ALIGNED(range_len(sd_r), align))
-> +		return true;
-> +
-> +	return false;
-> +}
-> +
-> +/**
-> + * platform_region_matches_cxld() - Platform quirk to match a CXL Region and a
-> + * Switch or Endpoint Decoder. It allows matching on platforms with LMH's.
-> + * @p: Region Params against which @cxled is matched.
-> + * @cxld: Switch or Endpoint Decoder to be tested for matching @p.
-> + *
-> + * Similar to platform_cxlrd_matches_cxled(), it matches regions and
-> + * decoders on platforms with LMH's.
-> + *
-> + * Return: true if a Decoder matches a Region, else false.
-> + */
-> +bool platform_region_matches_cxld(const struct cxl_region_params *p,
-> +				  const struct cxl_decoder *cxld)
-> +{
-> +	const struct range *r = &cxld->hpa_range;
-> +	const struct resource *res = p->res;
-> +	int align = cxld->interleave_ways * SZ_256M;
-> +
-> +	if (res->start == LMH_CFMWS_RANGE_START && res->start == r->start &&
-> +	    res->end < r->end && res->end < (LMH_CFMWS_RANGE_START + SZ_4G) &&
-
-Break the first and this line into 2 lines each with a single compare to make it more readable
-
-> +	    IS_ALIGNED(range_len(r), align))
-> +		return true;
-> +
-> +	return false;
-> +}
-> +
-> +void platform_res_adjust(struct resource *res,
-> +			 struct cxl_endpoint_decoder *cxled,
-> +			 const struct cxl_root_decoder *cxlrd)
-> +{
-> +	if (!platform_cxlrd_matches_cxled(cxlrd, cxled))
-> +		return;
-> +
-> +	guard(rwsem_write)(&cxl_rwsem.dpa);
-> +	dev_dbg(cxled_to_memdev(cxled)->dev.parent,
-> +		"Low Memory Hole detected. Resources were (%s: %pr, %pr)\n",
-> +		dev_name(&cxled->cxld.dev), res, cxled->dpa_res);
-> +	if (res) {
-> +		/* Trim region resource overlap with LMH */
-> +		res->end = cxlrd->res->end;
-> +	}
-> +	/* Match endpoint decoder's DPA resource to root decoder's */
-> +	cxled->dpa_res->end =
-> +		cxled->dpa_res->start +
-
-this can be on the same line as the first
-
-DJ
-
-> +		resource_size(cxlrd->res) / cxled->cxld.interleave_ways - 1;
-> +	dev_info(cxled_to_memdev(cxled)->dev.parent,
-> +		 "Resources have been adjusted for LMH (%s: %pr, %pr)\n",
-> +		 dev_name(&cxled->cxld.dev), res, cxled->dpa_res);
-> +}
-> diff --git a/drivers/cxl/core/platform_quirks.h b/drivers/cxl/core/platform_quirks.h
-> new file mode 100644
-> index 000000000000..a15592b4e90e
-> --- /dev/null
-> +++ b/drivers/cxl/core/platform_quirks.h
-> @@ -0,0 +1,33 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +
-> +#include "cxl.h"
-> +
-> +#ifdef CONFIG_CXL_PLATFORM_QUIRKS
-> +bool platform_cxlrd_matches_cxled(const struct cxl_root_decoder *cxlrd,
-> +				  const struct cxl_endpoint_decoder *cxled);
-> +bool platform_region_matches_cxld(const struct cxl_region_params *p,
-> +				  const struct cxl_decoder *cxld);
-> +void platform_res_adjust(struct resource *res,
-> +			 struct cxl_endpoint_decoder *cxled,
-> +			 const struct cxl_root_decoder *cxlrd);
-> +#else
-> +static inline bool
-> +platform_root_decoder_contains(const struct cxl_root_decoder *cxlrd,
-> +			       const struct cxl_endpoint_decoder *cxled)
-> +{
-> +	return false;
-> +}
-> +
-> +static inline bool
-> +platform_region_matches_cxld(const struct cxl_region_params *p,
-> +			     const struct cxl_decoder *cxld)
-> +{
-> +	return false;
-> +}
-> +
-> +inline void platform_res_adjust(struct resource *res,
-> +				struct cxl_endpoint_decoder *cxled,
-> +				const struct cxl_root_decoder *cxlrd)
-> +{
-> +}
-> +#endif /* CONFIG_CXL_PLATFORM_QUIRKS */
+base-commit: e40b984b6c4ce3f80814f39f86f87b2a48f2e662
+-- 
+2.51.0.618.g983fd99d29-goog
 
 
