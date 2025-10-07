@@ -1,164 +1,320 @@
-Return-Path: <linux-kernel+bounces-844488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E49E3BC20BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:11:08 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 458D8BC20C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:11:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 252983B928A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:11:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 247424F02E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B933A2E717B;
-	Tue,  7 Oct 2025 16:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E61F2E6CD8;
+	Tue,  7 Oct 2025 16:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V/dm62JI"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BC7WI6mo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FFB82147E5
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24122E1F08
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759853459; cv=none; b=LJk89NwLHr5C/cMDngYAZmzka0R5u2nINLr/jgFSPAv/qCghzJzT2MvsyLkJEUJ2vvg2HBeVT2i70uNPMh5zil7j540B2YStRwwSBWiMrtr4vMB0ZkiHwlbLgLqSEWrLXHmUWEcubztmpkXOiwgpBPgB+491B9CIUPBnwa95FAk=
+	t=1759853483; cv=none; b=J0eNfl+uzmUk2x1wTG09TpUa30KyCgwNfJiO1Y39SdphwviMSEks5vu17xYqxh0ww8bhRjIBUMk/FpnJ8C37NClgxR0JtVGj6iPGXhD7yhCstjDxHTSUr9vACVyVpek2iR0dMsSVV1Y/wEvUkBBQnieakK43oWsNAI4DFiSZ76o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759853459; c=relaxed/simple;
-	bh=23spyynB0cqNsHrBwAdRF5C6HK5JcUDPHhLhZJ27dIw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JTF6O2Xm8+ykcEmS9dhIN9dTy7+UzuE1XbfSbElAl7vcLXzRTAU4Dn/R92yFBdFRiPW+T078NP9qyY7vM/A/reQjR+DY1ws1Y1Q/NqdA0j0LzmLHVkSZ3draV4pgio0vo+QCOxikJs4/Ao8M216tybMJI7fwyunpGhFfpmedJfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V/dm62JI; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b593def09e3so4779635a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 09:10:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759853457; x=1760458257; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ww5A9QLVLF9MHFrBjtfqLgeO9mCIYxCjgSA4ZPNH8dU=;
-        b=V/dm62JIxZfXT3/CKZ3NUX91jTzNnHZW2lUrzH+7HdBK+JvELhbgDxQOZmXRmCYw69
-         S3mPsqciSbOccJvEOSlWH6A9/eSAjk/oKaLLZwDLr5UgM32ou6Unu9udZhlPUIqhFVv3
-         z9ke4Gxk7oNN6RQlOScqm1rxzlpEFzaXuLknAhBhAFwOg0xO/xAs2HL0I8qP1P8rjabf
-         0BvmpBiv3dkWQH16FJUHpees+14hfFmWHYAnYQU0N2Noslm5jGHel7TtFYuJyNeiD1A1
-         1NbM9nBDWGcKogdICWe14kVoKVlo8c/ZWrgbhb3gL2q73Kx5sN/F7zhRDnq2v6ECo3XC
-         421w==
+	s=arc-20240116; t=1759853483; c=relaxed/simple;
+	bh=AiOrPIJwttq3xRREeRU1YWy7Kn6StknJmn8+55UXyVM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LrheJTeGOeHpD8fbmknde1oEROljzl3tuevDbJA3rzDK6MP3eS3KCQgU1mCNZ07jm4V+MJAmCN6aTTBki4cRgJxy5EaeKbGLB2J1Wti6iCC/+78FQMNM7NBhZGeg9xypK0KXx7z2/k/LqV8ps140kTU+g2EzFXSy2s82jhKkXBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BC7WI6mo; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759853480;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=l1TG7fNWBYED87Irl/Zr2hY86eg+AQbf2b3fSmJLhsM=;
+	b=BC7WI6mou2OSCHBztVg8FRr0/omkEnNPvN80u+8lm3Y0hHPKvWq/ukfC3YmoZBnh/utUyQ
+	Z0SmvjfCxFGUEpbkVZ8n6xmo+AEWm5tBQZL5DzO3raeqAb2LASAPslM8nYEGCu94LRdhrT
+	cbpAjaz1GhuXP1V6RV2Nk5pF2kH4IqQ=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-427-WKqy_T6sN5CSbQYf5aDf7g-1; Tue, 07 Oct 2025 12:11:19 -0400
+X-MC-Unique: WKqy_T6sN5CSbQYf5aDf7g-1
+X-Mimecast-MFC-AGG-ID: WKqy_T6sN5CSbQYf5aDf7g_1759853478
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46e31191379so38366465e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 09:11:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759853457; x=1760458257;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1759853478; x=1760458278;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ww5A9QLVLF9MHFrBjtfqLgeO9mCIYxCjgSA4ZPNH8dU=;
-        b=g2BaGl7NaS4fhIIIWRwSNSulPOcMJSGjbIbpBwP2S9KXCQL1rI4YDrjJKvNKDDIJSQ
-         Vq8M6x2V2XI/0luHHY3XsmktSiqSmczjU0EKxneWrSBz1BK23avf9JkDf9oqLsFQQN1x
-         fgOLy5FIpmkkn2EL+CA3uO12wSF2Py2KG9iqSNpN++ssFV4uk0Mbs6wk4HB1xmf+4uf9
-         g/RqYn7EN/WN5dVYedzGXicjZ2yJMMQyFB+/gLzqz/uyVwIF+Z5Al1Ea83wBAobg3WJC
-         u4PVAcsAeBuakvL6/7rz137rGrESOVcjIqiv3RjI7bcte32ePwY/ZnNF2TfRGV5RoBUi
-         6Y2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUpEmqG/JVuxCauEABkw1JXFU1XDjP80apiiwn+4rtYtwTDh1YrvjCXE7p8cfafk4q9LDov9OfVRCcYU2E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTqCxc4NZIr+tt0gyktI+px6y1LUKGaBlWsPNvlQzdvC70trsB
-	VY/8KuX0eWGVcwQVacA34H7cEF1ewNZk9TDtNrCNJZAmC5CQxNvHAeuTYdqYW+8pfqh8ltv65rs
-	MivojXY9BcA0SERB2JmNHwuR/V/qbvPA=
-X-Gm-Gg: ASbGnctH9e229jdjwsBtkXL/O4x/k/JnAGzF/T9bf5VoZdqrk/AvLvY111iSbnhJeoj
-	BcyKgMQ/a5aQuZNZv2WM1JmKdEcEKQTXEEmRnFlfiNEkKWUjJU3vqIsbUn8c2ND6NB9Lj27XtRX
-	2i+L+kXc8EOUtFuxPvSgxs5ODBk5FlJz0hZOID8ABSW5mP3OdlIQjc5RTnhQ43A1GxpIVwzY2Ok
-	H92kmGpeq3ThUWKNz3dgTEWQJr6FHlgMaTL5bbFYjw=
-X-Google-Smtp-Source: AGHT+IGJJpzPBxcd6aeQej3XljQ3lxvUxspSqUl1LdUZeeFNyJ+K+vdK7I6p2lY3vune3YygMz/VZesA43Ks3Af09Ak=
-X-Received: by 2002:a17:90b:3b49:b0:330:a301:35f4 with SMTP id
- 98e67ed59e1d1-33b513b4b46mr44952a91.20.1759853456576; Tue, 07 Oct 2025
- 09:10:56 -0700 (PDT)
+        bh=l1TG7fNWBYED87Irl/Zr2hY86eg+AQbf2b3fSmJLhsM=;
+        b=RIQxDOTUPGtJlkSoOWlyzOCH6OaZ1YQZfQLZFC2Egye4ic5idmmP3jHLc6VWt/ZvZR
+         vfVeNMsMV89PPKJu3d9iBl3PTo3Icn0TMDtjUaF9ovgJ/M7gL7v7r4P+76VX47cpjnQv
+         op7VLIm/WLNjXT9JRo3kbMcYbc17qP0O4IUqe9V+ENSYxbtnAqWsHqrMKByvYRGoZyZL
+         R17h3QehucdVvzdXPEg1YXDsnhhXXi+rXireGOUoIZ/EkE0JeJNDpIdOhrgMmO4a5Ufq
+         ZqfFtJXneNeOzHLG7QitKQUpXzat2S1poM0u1kSF/c0/1BBceJFiG+cgj4PErQLFFtej
+         R6BA==
+X-Gm-Message-State: AOJu0Yzr2iozcA4yANOnGZFPvo+EXtudvdFu21okN0RTcVOUxoH+k6pY
+	Gjg4MWKwMs3vzx8/L3LtMmRZRcmhbCp10syG335nAW+Wz6gpRP9MecvjF4qAcQA9RRBBFGLol+0
+	9xT8BAs/MmdQLDBWdf3JHQl9VZPNeUyp4rLp7AzFFosXhyf/2wWFSJapyXHrCV5VqxA==
+X-Gm-Gg: ASbGncuK+0DBl5PzY//oM6caQKUGcaGVYfTsXfBtrxiJS3PZ+mi2NylsZRo8fNDgoy9
+	0dUxeiUNodpROcgqCdh37TNtHMdwE2MdTA2mMZsodYoYmkRuDOefVKgw4vloWmWFTOBTAMTmifU
+	qmUzuk7mVTcH8cXyombaEtMR6772//m/fHurJB54Xb722FQDFeR/Kk7PuC+CEZzi8AUT0pBsuDt
+	4sXmQnx4KuKLrGXPeuNXep1cYrnSd7CAdROXxg4RhndAED8vw+lSxiqWNNgcITxuWKrBWxHKJHR
+	On02sDlUubCgbRxZYHW5FI9qDZKBfP5taL+M+S10JzZExqs3J3bobAJoeGXo/mHSeUmLU90kCwm
+	8ktP+MOgI
+X-Received: by 2002:a05:600c:468e:b0:46e:4b79:551 with SMTP id 5b1f17b1804b1-46fa9b092femr1336595e9.31.1759853478061;
+        Tue, 07 Oct 2025 09:11:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH7kxIG94axeHuIA4cL4kYLnzrOyY3qxXsr5H8R4EofA01FREwYYzGLEMnYegBwXYAIBqinkA==
+X-Received: by 2002:a05:600c:468e:b0:46e:4b79:551 with SMTP id 5b1f17b1804b1-46fa9b092femr1336305e9.31.1759853477513;
+        Tue, 07 Oct 2025 09:11:17 -0700 (PDT)
+Received: from [192.168.3.141] (tmo-083-110.customers.d1-online.com. [80.187.83.110])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8acc4csm25683339f8f.16.2025.10.07.09.11.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Oct 2025 09:11:17 -0700 (PDT)
+Message-ID: <ab366c03-8c78-449d-bfc4-2d155212d9d7@redhat.com>
+Date: Tue, 7 Oct 2025 18:11:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007060218.57222-1-jckeep.cuiguangbo@gmail.com> <4ab58884-aad3-4c99-a5f9-b23e775a1514@redhat.com>
-In-Reply-To: <4ab58884-aad3-4c99-a5f9-b23e775a1514@redhat.com>
-From: guangbo cui <jckeep.cuiguangbo@gmail.com>
-Date: Wed, 8 Oct 2025 00:10:45 +0800
-X-Gm-Features: AS18NWCS1wxb3gY3lfJbMPL239E4u53x8rH8x6LyTql4zmMXKbknajNjC1YY13M
-Message-ID: <CAH6oFv+KYGZNzb7gySoyQAB3tn2CrH+H_-vi4E=4NS6pvTBHvw@mail.gmail.com>
-Subject: Re: [PATCH] pci/aer_inject: switching inject_lock to raw_spinlock_t
-To: Waiman Long <llong@redhat.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, linux-rt-devel@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] Support dynamic (de)configuration of memory
+To: Sumanth Korikkar <sumanthk@linux.ibm.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ linux-s390 <linux-s390@vger.kernel.org>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>
+References: <20250926131527.3260733-1-sumanthk@linux.ibm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250926131527.3260733-1-sumanthk@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 07, 2025 at 11:13:33AM -0400, Waiman Long wrote:
-> On 10/7/25 2:02 AM, Guangbo Cui wrote:
-> > [ 1850.947170] pcieport 0000:00:02.0: aer_inject: Injecting errors 00000001/00000000 into device 0000:00:02.0
-> > [ 1850.949951]
-> > [ 1850.950479] =============================
-> > [ 1850.950780] [ BUG: Invalid wait context ]
-> > [ 1850.951152] 6.17.0-11316-g7a405dbb0f03-dirty #7 Not tainted
-> > [ 1850.951457] -----------------------------
-> > [ 1850.951680] irq/16-PCIe PME/56 is trying to lock:
-> > [ 1850.952004] ffff800082865238 (inject_lock){+.+.}-{3:3}, at: aer_inj_read_config+0x38/0x1dc
-> > [ 1850.952731] other info that might help us debug this:
-> > [ 1850.952997] context-{5:5}
-> > [ 1850.953192] 5 locks held by irq/16-PCIe PME/56:
-> > [ 1850.953415]  #0: ffff800082647390 (local_bh){.+.+}-{1:3}, at: __local_bh_disable_ip+0x30/0x268
-> > [ 1850.953931]  #1: ffff8000826c6b38 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x48
-> > [ 1850.954453]  #2: ffff000004bb6c58 (&data->lock){+...}-{3:3}, at: pcie_pme_irq+0x34/0xc4
-> > [ 1850.954949]  #3: ffff8000826c6b38 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x48
-> > [ 1850.955420]  #4: ffff800082863d10 (pci_lock){....}-{2:2}, at: pci_bus_read_config_dword+0x5c/0xd8
-> > [ 1850.955932] stack backtrace:
-> > [ 1850.956412] CPU: 0 UID: 0 PID: 56 Comm: irq/16-PCIe PME Not tainted 6.17.0-11316-g7a405dbb0f03-dirty #7 PREEMPT_{RT,(full)}
-> > [ 1850.957039] Hardware name: linux,dummy-virt (DT)
-> > [ 1850.957409] Call trace:
-> > [ 1850.957727]  show_stack+0x18/0x24 (C)
-> > [ 1850.958089]  dump_stack_lvl+0x40/0xbc
-> > [ 1850.958339]  dump_stack+0x18/0x24
-> > [ 1850.958586]  __lock_acquire+0xa84/0x3008
-> > [ 1850.958907]  lock_acquire+0x128/0x2a8
-> > [ 1850.959171]  rt_spin_lock+0x50/0x1b8
-> > [ 1850.959476]  aer_inj_read_config+0x38/0x1dc
-> > [ 1850.959821]  pci_bus_read_config_dword+0x80/0xd8
-> > [ 1850.960079]  pcie_capability_read_dword+0xac/0xd8
-> > [ 1850.960454]  pcie_pme_irq+0x44/0xc4
-> > [ 1850.960728]  irq_forced_thread_fn+0x30/0x94
-> > [ 1850.960984]  irq_thread+0x1ac/0x3a4
-> > [ 1850.961308]  kthread+0x1b4/0x208
-> > [ 1850.961557]  ret_from_fork+0x10/0x20
-> > [ 1850.963088] pcieport 0000:00:02.0: AER: Correctable error message received from 0000:00:02.0
-> > [ 1850.963330] pcieport 0000:00:02.0: PCIe Bus Error: severity=Correctable, type=Physical Layer, (Receiver ID)
-> > [ 1850.963351] pcieport 0000:00:02.0:   device [1b36:000c] error status/mask=00000001/0000e000
-> > [ 1850.963385] pcieport 0000:00:02.0:    [ 0] RxErr                  (First)
->
-> Changing inject_lock into a raw_spinlock is the most obvious solution as
-> long as it meets the criteria that the lock hold time is deterministic and
-> relatively short and no other sleeping locks are being acquired down the
-> locking chain.
->
-> I am afraid that the these criteria are not met. First of all in
-> aer_inject_exit(), inject_lock is acquired while iterating the a linked list
-> which can last for while depending on how many items are in the list. This
-> may be OK as long as it is guaranteed the list will not be long. Another
-> problem is that it call kfree() while holding the lock. kfree() will likely
-> acquire another rt_spin_lock which is a sleeping lock. You will have to
-> consider pulling kfree() out from the lock critical section.
+On 26.09.25 15:15, Sumanth Korikkar wrote:
+> Hi,
 
-The list length depends on how many error injections the user performs,
-which is typically small since this feature is mainly used for development
-and debugging purposes. So the list traversal time should be acceptable
-in practice.
+Hi,
 
-Yeah, pulling kfree() out from the lock critical section is right, I
-will fix it in the next version.
+> 
+> Patchset provides a new interface for dynamic configuration and
+> deconfiguration of hotplug memory on s390, allowing with/without
+> memmap_on_memory support. It is a follow up on the discussion with David
+> when introducing memmap_on_memory support for s390 and support dynamic
+> (de)configuration of memory:
+> https://lore.kernel.org/all/ee492da8-74b4-4a97-8b24-73e07257f01d@redhat.com/
+> https://lore.kernel.org/all/20241202082732.3959803-1-sumanthk@linux.ibm.com/
+> 
+> The original motivation for introducing memmap_on_memory on s390 was to
+> avoid using online memory to store struct pages metadata, particularly
+> for standby memory blocks. This became critical in cases where there was
+> an imbalance between standby and online memory, potentially leading to
+> boot failures due to insufficient memory for metadata allocation.
+> 
+> To address this, memmap_on_memory was utilized on s390. However, in its
+> current form, it adds struct pages metadata at the start of each memory
+> block at the time of addition (only standby memory), and this
+> configuration is static. It cannot be changed at runtime  (When the user
+> needs continuous physical memory).
+> 
+> Inorder to provide more flexibility to the user and overcome the above
+> limitation, add an option to dynamically configure and deconfigure
+> hotpluggable memory block with/without memmap_on_memory.
 
-> Another function __find_aer_error() which does list iteration is called
-> while holding inject_lock. Again this may be a problem. If the linked list
-> can be long, you may have to consider breaking inject_lock into 2 or more
-> separate locks to guard different data.
+This will cleanly add/remove the memory, including the directmap and 
+other tracking data, so I like it.
 
-As mentioned above, the list is usually short in typical use cases,
-since error injection is mainly used for debugging or development
-purposes. Perhaps we can also get some advice from the PCI folks.
+> 
+> With the new interface, s390 will not add all possible hotplug memory in
+> advance, like before, to make it visible in sysfs for online/offline
+> actions. Instead, before memory block can be set online, it has to be
+> configured via a new interface in /sys/firmware/memory/memoryX/config,
+> which makes s390 similar to others.  i.e. Adding of hotpluggable memory is
+> controlled by the user instead of adding it at boottime.
 
-Best regards,
-Guangbo
+Before I dig into the details, will onlining/offling still trigger 
+hypervisor action, or does that now really happen when memory is 
+added/removed?
+
+That would be really nice, because it would remove the whole need for 
+"standby" memory, and having to treat hotplugged memory differently 
+under LPAR/z/VM than anywhere else (-> keep it offline).
+
+> 
+> s390 kernel sysfs interface to configure/deconfigure memory with
+> memmap_on_memory (with upcoming lsmem changes):
+>      
+> * Initial memory layout:
+> lsmem -o RANGE,SIZE,STATE,BLOCK,CONFIGURED,MEMMAP_ON_MEMORY
+> RANGE                 SIZE   STATE BLOCK CONFIGURED MEMMAP_ON_MEMORY
+> 0x00000000-0x7fffffff   2G  online 0-15  yes        no
+> 0x80000000-0xffffffff   2G offline 16-31 no         yes
+
+Could we instead modify "STATE" to reflect that it is "not added" / "not 
+configured" / "disabled" etc?
+
+Like
+
+lsmem -o RANGE,SIZE,STATE,BLOCK,MEMMAP_ON_MEMORY
+RANGE                 SIZE    STATE BLOCK
+0x00000000-0x7fffffff   2G   online 0-15
+0x80000000-0xffffffff   2G disabled 16-31
+
+Or is that an attempt to maintain backwards compatibility?
+
+> 
+> * Configure memory
+> echo 1 > /sys/firmware/memory/memory16/config
+
+The granularity here is also memory_block_size_bytes(), correct?
+
+> lsmem -o RANGE,SIZE,STATE,BLOCK,CONFIGURED,MEMMAP_ON_MEMORY
+> RANGE                  SIZE  STATE   BLOCK CONFIGURED MEMMAP_ON_MEMORY
+> 0x00000000-0x7fffffff    2G  online  0-15  yes        no
+> 0x80000000-0x87ffffff  128M offline    16  yes        yes
+> 0x88000000-0xffffffff  1.9G offline 17-31  no         yes
+> 
+> * Deconfigure memory
+> echo 0 > /sys/firmware/memory/memory16/config
+> lsmem -o RANGE,SIZE,STATE,BLOCK,CONFIGURED,MEMMAP_ON_MEMORY
+> RANGE                 SIZE   STATE BLOCK CONFIGURED MEMMAP_ON_MEMORY
+> 0x00000000-0x7fffffff   2G  online 0-15  yes        no
+> 0x80000000-0xffffffff   2G offline 16-31 no         yes
+> 
+> * Enable memmap_on_memory and online it.
+> (Deconfigure first)
+> echo 0 > /sys/devices/system/memory/memory5/online
+> echo 0 > /sys/firmware/memory/memory5/config
+> 
+> lsmem -o RANGE,SIZE,STATE,BLOCK,CONFIGURED,MEMMAP_ON_MEMORY
+> RANGE                  SIZE  STATE  BLOCK CONFIGURED MEMMAP_ON_MEMORY
+> 0x00000000-0x27ffffff  640M  online 0-4   yes        no
+> 0x28000000-0x2fffffff  128M offline 5     no         no
+> 0x30000000-0x7fffffff  1.3G  online 6-15  yes        no
+> 0x80000000-0xffffffff    2G offline 16-31 no         yes
+> 
+> (Enable memmap_on_memory and online it)
+> echo 1 > /sys/firmware/memory/memory5/memmap_on_memory
+> echo 1 > /sys/firmware/memory/memory5/config
+> echo 1 > /sys/devices/system/memory/memory5/online
+
+I guess the use for memmap_on_memory would now be limited to making 
+hotplug more likely to succeed in OOM scenarios.
+
+> 
+> lsmem -o RANGE,SIZE,STATE,BLOCK,CONFIGURED,MEMMAP_ON_MEMORY
+> RANGE                  SIZE  STATE   BLOCK CONFIGURED MEMMAP_ON_MEMORY
+> 0x00000000-0x27ffffff  640M  online  0-4   yes        no
+> 0x28000000-0x2fffffff  128M  online  5     yes        yes
+> 0x30000000-0x7fffffff  1.3G  online  6-15  yes        no
+> 0x80000000-0xffffffff    2G  offline 16-31 no         yes
+> 
+> * Disable memmap_on_memory and online it.
+> (Deconfigure first)
+> echo 0 > /sys/devices/system/memory/memory5/online
+> echo 0 > /sys/firmware/memory/memory5/config
+> 
+> lsmem -o RANGE,SIZE,STATE,BLOCK,CONFIGURED,MEMMAP_ON_MEMORY
+> RANGE                  SIZE  STATE  BLOCK CONFIGURED MEMMAP_ON_MEMORY
+> 0x00000000-0x27ffffff  640M  online 0-4   yes        no
+> 0x28000000-0x2fffffff  128M offline 5     no         yes
+> 0x30000000-0x7fffffff  1.3G  online 6-15  yes        no
+> 0x80000000-0xffffffff    2G offline 16-31 no         yes
+> 
+> (Disable memmap_on_memory and online it)
+> echo 0 > /sys/firmware/memory/memory5/memmap_on_memory
+> echo 1 > /sys/firmware/memory/memory5/config
+> echo 1 > /sys/devices/system/memory/memory5/online
+> 
+> lsmem -o RANGE,SIZE,STATE,BLOCK,CONFIGURED,MEMMAP_ON_MEMORY
+> RANGE                  SIZE  STATE   BLOCK CONFIGURED MEMMAP_ON_MEMORY
+> 0x00000000-0x7fffffff  2G    online  0-15  yes        no
+> 0x80000000-0xffffffff  2G    offline 16-31 no         yes
+> 
+> * Userspace changes:
+> lsmem/chmem tool is also changed to use the new interface. I will send
+> it to util-linux soon.
+> 
+> Patch 1 adds support for removal of boot-allocated memory blocks.
+> 
+> Patch 2 provides option to dynamically configure and deconfigure memory
+> with/without memmap_on_memory.
+> 
+> Patch 3 removes MHP_OFFLINE_INACCESSIBLE from s390. The mhp flag was
+> used to mark memory as not accessible until memory hotplug online phase
+> begins.  However, with patch 2, it is no longer essential. Memory can be
+> brought to accessible state before adding memory, as the memory is added
+> during runttime now instead of boottime.
+
+Nice.
+
+> 
+> Patch 4 removes the MEM_PREPARE_ONLINE/MEM_FINISH_OFFLINE notifiers. It
+> is no longer needed.  Memory can be brought to accessible state before
+> adding memory now, with runtime (de)configuration of memory.
+
+Nice.
+
+
+-- 
+Cheers
+
+David / dhildenb
+
 
