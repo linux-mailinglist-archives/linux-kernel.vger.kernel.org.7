@@ -1,138 +1,154 @@
-Return-Path: <linux-kernel+bounces-844896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3136BC3031
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 01:53:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09F30BC3037
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 01:55:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6A0D34F0AF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 23:53:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01A4319E0043
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 23:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615812777E4;
-	Tue,  7 Oct 2025 23:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6BC21D58B;
+	Tue,  7 Oct 2025 23:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WjprLjm3"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tLKpnfz3"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED9A2773E5
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 23:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB4F26F296
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 23:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759881178; cv=none; b=Q9Lcbt4/k8LpAI3P+cZQaGBfGgSUfVrAqRx/SQCt330Yo2XP2pE2g5ScdujTOOE/rcmLfJIFEVP4FkGAdFy65VeXADLpwQj3V2YJbDVidV3gwHB2p91xgVK9zxCaKixwEDSk9Ow6HO/oaSgSn1DhlaG4EpuW6tWUjmPfA0M0Yhg=
+	t=1759881319; cv=none; b=GCGQaiaaY2A+jmLMWlUrjDWqwr4LgNDQ0b8MxRT0BPRxRfxN94yzzuwpIka1toJYOhF6qhwTcxMBWA04ctn3K0Ze+EYP3TnUkQxsXy3DuAlHl4RMNhoU/4jHA+55gDPR4eEs/PUi/80UuGHedl0pey4aWzHOEHun4oqzpY2s2Co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759881178; c=relaxed/simple;
-	bh=kS74sY1O+BpSAvJrceTnPc0y9keMpb6Ghrsoi+xe+ks=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jNeN5AMKQ3fuFiJHfu9rVBrZIEeqlxv76zG+dRm3Z6bvCJByklnItl5h1ARUqIh/mr3kfuMDu0iE1MmUyHT7iItgZxUaXN4moTkW5j6NslcmOzKgT63nuf8+iCc5wvgQPbCGwsJAtL7/wnjxxFo9V3RDBYJYE9YuMpufpeh4pCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WjprLjm3; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-42e7b22e007so22029705ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 16:52:57 -0700 (PDT)
+	s=arc-20240116; t=1759881319; c=relaxed/simple;
+	bh=aueIMlR5mVedWi0fjNVCibzll+DI67XEJP+YBMNLg9g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sid5DFV2qmSar6oTmQdwbi4/V9oAU/ONkNV0oekkUhxf6JCvaCwvihKU7Oh9Nq5uNFtBp7aGLAGDGvU9UhmiQLIgPOgy6BrmU4ot81qgKr8oXqj7ouXw20cL1hmF1BiENWhj5OrdsrrY9HUbdJa18xlIeOPzWFc28bX5FWCpqDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tLKpnfz3; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-33274fcf5c1so7354761a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 16:55:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759881176; x=1760485976; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kS74sY1O+BpSAvJrceTnPc0y9keMpb6Ghrsoi+xe+ks=;
-        b=WjprLjm3ohppBH7urHjLb2jMKSvMRXR+15+Xtpw3XwXu3dUp/BjZSYP1z4oRP88Nhv
-         za9MrJ2BlJK/NvuI617+FeSOijD/oiXtxFlaqstbMy+QD9qxLVeAooGg60ceFQUV2/RQ
-         laZT5hKgu8eoTyQsQAEJwDkTCF42nKCK8YcY/kww5Rf1r07gJgsjhUma0suxYS14R2ts
-         Sf05/hAFxmDpwPWe34CGqH4Vl/mIJnScqvKJQe5IWbx2SxGzCIAkccTopFnf134L5ykf
-         X2QviKJIH4g/zThpADR2a/ZHnQrNDr+ojTJR1BlC2IUkjktE6buhda8iSxaX04mqBB4p
-         FHkg==
+        d=google.com; s=20230601; t=1759881317; x=1760486117; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RoPS4zG7i/w1UUCX0a6YHqijn613l2SV4IiIRvG6TwA=;
+        b=tLKpnfz36siqnmt5Uw2nZd3fFoWRm5pBZ5fOxthddgdaAssFNt4V4x608tGwWgXnO6
+         CAZJ55OiYVeWeXWH7sl6z9wWVEos5P3elARtTbDdFcCRsqJBe1RWo7u88RirxlpXmQpv
+         88vYKDQVIr0WWtJBo1aWffmhpduypSb1TOecRxSW5y4r1Sv33kasv93YzOklncw45cZ5
+         1WD5ggtlkf34oQ2DbkTpUY4/3Zdm3LpGbrBiNk8ixRmTBieb8a7XMQjdCGcQ7t/nmImz
+         VZHEey/mtPBOSmX7JbzIqFMcjURK7lP4Y7jnUns3kUFADsCOkJBkR3cmumHM9VDD1K+3
+         +slg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759881176; x=1760485976;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kS74sY1O+BpSAvJrceTnPc0y9keMpb6Ghrsoi+xe+ks=;
-        b=ChL4WCsVGPw2xDX/w109KhTz8loUDgUS9/9tok6fYyyZAxwQF9jr4IKVQzRLxSw8SO
-         gx1R2U9Q1AorCglPmYrh7/yIh8AhoybMx7AqsMcIWQ+TcwwP53rhGVG7fYNwmIH8MPoY
-         2jtbCk1QceuTPnk1FvbKhM83K8jTgEJmTCE0ooqNpx0o9w3m+X9fmPL/c9XTyehTo7GI
-         P80x+T4sO6jwd5484TrsvaxtB8NaTZp0ITwtKGKvAehGsVt6CCcO0m7hlIhCqJYy/nxa
-         Qy92Df779qhpxRbwFclKjcgMsqZkHqaVFYFtQIQJZdZweusptIowpVWUXKT+WH05xePm
-         uSwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjci+jdHwrP0COW19eGZiweywh5M6mEr1DzhvHzKjTybUXWygnsuIGDjtTKx3AavWM20juY98eEI//6Jo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzi3fiQyPmNmfTvYz6kVQpF+9jGYKs11NP8e09CWUFZMhQ23WtF
-	doTnRtVt7UcNWyQB8HfVNsy6/M1s9dqbqDOjslCU5sRLbzrRHtLmodL+9TD3hIjFoymEpXCIdWx
-	CoPyJYMLdIIU8C+hSRFG61Nn+abr4QxE=
-X-Gm-Gg: ASbGncvJqkpIN3cQRI6PZVRT8KxugYMYOV1HfByN5O/+3lwGTYwior0T8Em6UWnElnZ
-	LrUuL8AbUAQ5A9Y0zx03QkT6YPk5b63UmIJKK34gf5MiYyDEbMD5qdTGLu2boK4p5zxcM9+EMHL
-	rb7ABgI6hoas4u7mapsUEnIbABQ7Iw5MXgehXKbboCATFuy5dTUXtVbDg3rbmFnozR9Df1qrzO2
-	P6Ru+/ukAIKTZr4X3KP9xnvutvXdzqvdb1+Fj1c+IRItNU=
-X-Google-Smtp-Source: AGHT+IGhorzk2+W/xTGL2848aOlY3Nx+slQICiBj8FIH8pICQTD8gFOQKQ61znfWdK6mZ45eCBiZxnfzCGeIUtkRXco=
-X-Received: by 2002:a05:6e02:1a8f:b0:427:b642:235 with SMTP id
- e9e14a558f8ab-42f87374f3bmr12991435ab.10.1759881176249; Tue, 07 Oct 2025
- 16:52:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759881317; x=1760486117;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RoPS4zG7i/w1UUCX0a6YHqijn613l2SV4IiIRvG6TwA=;
+        b=IlsmngA5++yEBGQ67f9PN6AmyeCL82PDNelp6vC3HP1jXcC/3KYDfRgoWKk+8aAuBA
+         J7iAHan9kCbujhmA5MNUxiLSmooQoajQ+dQ2QLKP4VK3h246IrEL2u7jivpHq+p2vrXI
+         r7rK6YVAbDj6ObysXie/h8jKkrcATd8MkK5PXsb0OMI8ow28qULIzymeNYB8Kj2svhYT
+         8y3LSgSCmzCDGWQoFJbSAXCAgR+5Rod8nvHfJJ3Da9O8zztGMS859ps3zhUlxLMstY6F
+         sOPh/3VD/7nWslnAyvRn+e70ows3BHlKpbSxGpau/Ubpkvt3DNm9f6ZgikBL29TMPM3D
+         ve9w==
+X-Forwarded-Encrypted: i=1; AJvYcCUw5vaBc6yVmn2HDMGAFI6gcsD/ZHg+XVidN3y/lu+MxNjposop5wrai304GoA1nA+g7ILrRFCZQdkISko=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpRsI8vcc9krvAbU0xX3t9PkWEBpgmNQkSmBlKfSoTSHaPCXol
+	snMA0OiPwm9nK1ydYdKwYC2j4PG90E5J12TTW21hC1ic/wNyJ+gLeWD40zqkS3V1fg==
+X-Gm-Gg: ASbGnctgehGhbXGbv2b42gwOKBPI2UO+qyugB/MMqo5ziWYib73fxqslwYstlCELEZ6
+	W5ZM7aYLt7uV8k0CYrAOn5L8XAzxMlFTkVpz6Hc+9/M6BprHv2dxm4C9IWGVsTkAw/e3kSr3BrN
+	k+AfsFX9Nekfzg2E8uapeksW8tP0lhRiy3LQXdkZswElYs76IlPWTE1i57K9HAK+Zz2xkygQTyV
+	h+mUpOZH3pBZ/TU/4TitM9t7ga9Y6Vf3eQYK36p3UdnSoMEWrcesiAubHkzwqfgB+3jWQbitceV
+	CGYpIXbvuAJ0dDZHiUyBp5dmYSw2Na/pYA89SHQsTf3qa8HXrQm8Bx5i3AFJyBe9MjxU6WOJDa1
+	7FsYd5srsFPA4el2HXQ9y385n/jz1nvZBHko6GNEqHQzP2CcgOG3D9EBsfzWsOWWXdHQNYl6kN/
+	cMiKp8m2b1aqoQtRbHIlp6
+X-Google-Smtp-Source: AGHT+IFyYA4phHap66RvdBt2TrgOq56Z64xSXysMkk6/t4JddY43lUaDViy2aDcxIzhYwOjo1UQo3g==
+X-Received: by 2002:a17:90b:3882:b0:32e:7270:94a1 with SMTP id 98e67ed59e1d1-33b51375992mr1682915a91.17.1759881316103;
+        Tue, 07 Oct 2025 16:55:16 -0700 (PDT)
+Received: from google.com (232.92.83.34.bc.googleusercontent.com. [34.83.92.232])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6099d4d324sm16922776a12.27.2025.10.07.16.55.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 16:55:14 -0700 (PDT)
+Date: Tue, 7 Oct 2025 23:55:11 +0000
+From: Benson Leung <bleung@google.com>
+To: Jameson Thies <jthies@google.com>
+Cc: heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com,
+	bleung@chromium.org, gregkh@linuxfoundation.org,
+	akuchynski@chromium.org, abhishekpandit@chromium.org,
+	sebastian.reichel@collabora.com, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 5/6] usb: typec: ucsi: psy: Set max current to zero when
+ disconnected
+Message-ID: <aOWoX4cqg3fN-pN1@google.com>
+References: <20251007000007.3724229-1-jthies@google.com>
+ <20251007000007.3724229-6-jthies@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007-swap-clean-after-swap-table-p1-v1-0-74860ef8ba74@tencent.com>
- <20251007-swap-clean-after-swap-table-p1-v1-1-74860ef8ba74@tencent.com>
-In-Reply-To: <20251007-swap-clean-after-swap-table-p1-v1-1-74860ef8ba74@tencent.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Tue, 7 Oct 2025 16:52:43 -0700
-X-Gm-Features: AS18NWAzI3OkoEtAtDpIuyhsnz4mBz4te4CIYqMQaeNGgBOGQrrb52ocbOBCeHw
-Message-ID: <CAKEwX=PisWyb-Gt=n7ZBPNTNjbRNM5F5j4LE4NoRgTUB+2ZV-w@mail.gmail.com>
-Subject: Re: [PATCH 1/4] mm, swap: do not perform synchronous discard during allocation
-To: Kairui Song <ryncsn@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, 
-	Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, Chris Li <chrisl@kernel.org>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, David Hildenbrand <david@redhat.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Ying Huang <ying.huang@linux.alibaba.com>, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fUC004gocSAkhC+0"
+Content-Disposition: inline
+In-Reply-To: <20251007000007.3724229-6-jthies@google.com>
+
+
+--fUC004gocSAkhC+0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 6, 2025 at 1:03=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wrote=
-:
->
-> From: Kairui Song <kasong@tencent.com>
->
-> Since commit 1b7e90020eb77 ("mm, swap: use percpu cluster as allocation
-> fast path"), swap allocation is protected by a local lock, which means
-> we can't do any sleeping calls during allocation.
->
-> However, the discard routine is not taken well care of. When the swap
-> allocator failed to find any usable cluster, it would look at the
-> pending discard cluster and try to issue some blocking discards. It may
-> not necessarily sleep, but the cond_resched at the bio layer indicates
-> this is wrong when combined with a local lock. And the bio GFP flag used
-> for discard bio is also wrong (not atomic).
->
-> It's arguable whether this synchronous discard is helpful at all. In
-> most cases, the async discard is good enough. And the swap allocator is
-> doing very differently at organizing the clusters since the recent
-> change, so it is very rare to see discard clusters piling up.
->
-> So far, no issues have been observed or reported with typical SSD setups
-> under months of high pressure. This issue was found during my code
-> review. But by hacking the kernel a bit: adding a mdelay(100) in the
-> async discard path, this issue will be observable with WARNING triggered
-> by the wrong GFP and cond_resched in the bio layer.
->
-> So let's fix this issue in a safe way: remove the synchronous discard in
-> the swap allocation path. And when order 0 is failing with all cluster
-> list drained on all swap devices, try to do a discard following the swap
-> device priority list. If any discards released some cluster, try the
-> allocation again. This way, we can still avoid OOM due to swap failure
-> if the hardware is very slow and memory pressure is extremely high.
->
-> Cc: <stable@vger.kernel.org>
-> Fixes: 1b7e90020eb77 ("mm, swap: use percpu cluster as allocation fast pa=
-th")
-> Signed-off-by: Kairui Song <kasong@tencent.com>
+On Tue, Oct 07, 2025 at 12:00:06AM +0000, Jameson Thies wrote:
+> The ucsi_psy_get_current_max function defaults to 0.1A when it is not
+> clear how much current the partner device can support. But this does
+> not check the port is connected, and will report 0.1A max current when
+> nothing is connected. Update ucsi_psy_get_current_max to report 0A when
+> there is no connection.
+>=20
+> Signed-off-by: Jameson Thies <jthies@google.com>
+
+Reviewed-by: Benson Leung <bleung@chromium.org>
+
+
 > ---
+>  drivers/usb/typec/ucsi/psy.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>=20
+> diff --git a/drivers/usb/typec/ucsi/psy.c b/drivers/usb/typec/ucsi/psy.c
+> index 985a90d3f898..3a209de55c14 100644
+> --- a/drivers/usb/typec/ucsi/psy.c
+> +++ b/drivers/usb/typec/ucsi/psy.c
+> @@ -169,6 +169,11 @@ static int ucsi_psy_get_current_max(struct ucsi_conn=
+ector *con,
+>  {
+>  	u32 pdo;
+> =20
+> +	if (!UCSI_CONSTAT(con, CONNECTED)) {
+> +		val->intval =3D 0;
+> +		return 0;
+> +	}
+> +
+>  	switch (UCSI_CONSTAT(con, PWR_OPMODE)) {
+>  	case UCSI_CONSTAT_PWR_OPMODE_PD:
+>  		if (con->num_pdos > 0) {
+> --=20
+> 2.51.0.618.g983fd99d29-goog
+>=20
 
-Seems reasonable to me.
+--fUC004gocSAkhC+0
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Acked-by: Nhat Pham <nphamcs@gmail.com>
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQQCtZK6p/AktxXfkOlzbaomhzOwwgUCaOWoXwAKCRBzbaomhzOw
+wm9jAQDyn4DTkW9BlmrjPEHHrT83cCw7VhufXQoU38YBUFUiXwEAvyLumfxm0ovV
+6bf7rx+85yCgcDBJOgUpY3k5KoXtGAY=
+=UKip
+-----END PGP SIGNATURE-----
+
+--fUC004gocSAkhC+0--
 
