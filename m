@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-843949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B61D1BC0A75
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:35:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4430BC0A57
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:34:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FE5A3C6A04
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:34:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9F2824F3D5D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6B32D7DFB;
-	Tue,  7 Oct 2025 08:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A412D876B;
+	Tue,  7 Oct 2025 08:32:59 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C452571DA
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 08:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6232D77FF
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 08:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759825978; cv=none; b=WbIKWorLd08ZDSgboPccBXaYx/yRA+155yuScfvDDt3EtSO0S2hkInegULT7+XGkLBlYEjIP+7bXyV5vZn4Z20mDnkzP1jvh885oGHa6V7ju5OLn+z0fudOa1bfsHJMXN3w7VZuO0yIcVExX+WFxe+D+IaOTGeeW9uVnTAIJtEw=
+	t=1759825979; cv=none; b=fCfpduOQG3gmDBH3OOHJjdQijSGzu9hgJhpmQYJzodIZbjLJGc25n8ulfSf3fmUsePmcXFbryXcgizTSwfywX6ca+UldDuDpuG2LHddyU4gXM2sCNqDIc5j+M3VAtuH+m/z9SEkYGG3jmVUechIdYoHUxMR9vsvgifXdxIGHXZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759825978; c=relaxed/simple;
-	bh=/HFgI/+FFPzyNEIkAXoxPZ3fGijgiQ34KN89cXoqjAQ=;
+	s=arc-20240116; t=1759825979; c=relaxed/simple;
+	bh=uvBMgTCFe4PduWSyenflQ21dSqz1Y+X/m+6gHFwcchY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=I1nTGIHzls8FMuVJQZsVi6oTU2mNB3f4pMTZj0IpRJ+iM/8QTLT0hxmJNSKte+0VpctSp29dUYDBRDAWoK0XO/xJ8COfRTrZ731mbqUSaEovO40+bHaY7yN+bV6E7v7BkrVSRX4k6MiFkzpscBzHiysjKoGpk2aCc6LjkidkaA4=
+	 In-Reply-To:To:Cc; b=u2RWrsOzENsQFdSgkx6RABGCjBQKSsSydIEiQnpTyzXF4dsGfgOpGKamFPGXnAzcNVV9nUFy1+x/GK1EstP/QdCDAW3Bqi5GDLP30xv0sb9RY//1QRXUupO3Muj6TQefefu0PA5LPHg9fomzFTBobLpqQWDTEOh1bwDE4WeXVQs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=peter.mobile.pengutronix.de)
 	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
 	(envelope-from <s.pueschel@pengutronix.de>)
-	id 1v637u-0002Hb-C4; Tue, 07 Oct 2025 10:32:54 +0200
+	id 1v637v-0002Hb-8G; Tue, 07 Oct 2025 10:32:55 +0200
 From: =?utf-8?q?Sven_P=C3=BCschel?= <s.pueschel@pengutronix.de>
-Date: Tue, 07 Oct 2025 10:32:01 +0200
-Subject: [PATCH 08/16] media: rockchip: rga: remove size from rga_frame
+Date: Tue, 07 Oct 2025 10:32:02 +0200
+Subject: [PATCH 09/16] media: rockchip: rga: remove stride from rga_frame
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -43,7 +43,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251007-spu-rga3-v1-8-36ad85570402@pengutronix.de>
+Message-Id: <20251007-spu-rga3-v1-9-36ad85570402@pengutronix.de>
 References: <20251007-spu-rga3-v1-0-36ad85570402@pengutronix.de>
 In-Reply-To: <20251007-spu-rga3-v1-0-36ad85570402@pengutronix.de>
 To: Jacob Chen <jacob-chen@iotwrt.com>, 
@@ -62,81 +62,120 @@ X-SA-Exim-Mail-From: s.pueschel@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The size member is only used for the mmu page table mapping.
-Therefore avoid storing the value and instead only calculate it
-in place. This also avoids the calculation entirely when an external
-iommu is used.
+Remove the stride variable from rga_frame. Despite the comment it
+didn't involve any calculation and is just a copy of the
+plane_fmt[0].bytesperline value. Therefore avoid this struct member
+and use the bytesperline value directly in the places where it is
+required.
 
 Signed-off-by: Sven Püschel <s.pueschel@pengutronix.de>
 ---
- drivers/media/platform/rockchip/rga/rga-buf.c | 6 +++++-
- drivers/media/platform/rockchip/rga/rga.c     | 8 ++------
- drivers/media/platform/rockchip/rga/rga.h     | 1 -
- 3 files changed, 7 insertions(+), 8 deletions(-)
+ drivers/media/platform/rockchip/rga/rga-hw.c | 20 ++++++++++++--------
+ drivers/media/platform/rockchip/rga/rga.c    |  5 +----
+ drivers/media/platform/rockchip/rga/rga.h    |  3 ---
+ 3 files changed, 13 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/media/platform/rockchip/rga/rga-buf.c b/drivers/media/platform/rockchip/rga/rga-buf.c
-index 26b66b0c7e008308c24433f061a738a3985484b6..e44fe870fb9e34aa93404b7a60022fe441adf8f9 100644
---- a/drivers/media/platform/rockchip/rga/rga-buf.c
-+++ b/drivers/media/platform/rockchip/rga/rga-buf.c
-@@ -79,9 +79,13 @@ static int rga_buf_init(struct vb2_buffer *vb)
- 	struct rockchip_rga *rga = ctx->rga;
- 	struct rga_frame *f = rga_get_frame(ctx, vb->vb2_queue->type);
- 	size_t n_desc = 0;
-+	u32 size = 0;
-+	u8 i;
+diff --git a/drivers/media/platform/rockchip/rga/rga-hw.c b/drivers/media/platform/rockchip/rga/rga-hw.c
+index 04d72ecce7cdd47df8457b97c5ec4cff9cd7430b..66b23c4a4cf1488ce42a7ab1901daaaa55b28fe0 100644
+--- a/drivers/media/platform/rockchip/rga/rga-hw.c
++++ b/drivers/media/platform/rockchip/rga/rga-hw.c
+@@ -43,7 +43,7 @@ rga_get_corner_addrs(struct rga_frame *frm, struct rga_addrs *addrs,
+ 	struct rga_corners_addrs corner_addrs;
+ 	struct rga_addrs *lt, *lb, *rt, *rb;
+ 	unsigned int x_div = 0,
+-		     y_div = 0, uv_stride = 0, pixel_width = 0;
++		     y_div = 0, y_stride = 0, uv_stride = 0, pixel_width = 0;
  
- 	if (rga_has_internal_iommu(rga)) {
--		n_desc = DIV_ROUND_UP(f->size, PAGE_SIZE);
-+		for (i = 0; i < f->pix.num_planes; i++)
-+			size += f->pix.plane_fmt[i].sizeimage;
-+		n_desc = DIV_ROUND_UP(size, PAGE_SIZE);
+ 	lt = &corner_addrs.left_top;
+ 	lb = &corner_addrs.left_bottom;
+@@ -52,14 +52,15 @@ rga_get_corner_addrs(struct rga_frame *frm, struct rga_addrs *addrs,
  
- 		rbuf->n_desc = n_desc;
- 		rbuf->dma_desc = dma_alloc_coherent(rga->dev,
+ 	x_div = frm->fmt->x_div;
+ 	y_div = frm->fmt->y_div;
+-	uv_stride = frm->stride / x_div;
+-	pixel_width = frm->stride / frm->width;
++	y_stride = frm->pix.plane_fmt[0].bytesperline;
++	uv_stride = y_stride / x_div;
++	pixel_width = y_stride / frm->width;
+ 
+-	lt->y_addr = addrs->y_addr + y * frm->stride + x * pixel_width;
++	lt->y_addr = addrs->y_addr + y * y_stride + x * pixel_width;
+ 	lt->u_addr = addrs->u_addr + (y / y_div) * uv_stride + x / x_div;
+ 	lt->v_addr = addrs->v_addr + (y / y_div) * uv_stride + x / x_div;
+ 
+-	lb->y_addr = lt->y_addr + (h - 1) * frm->stride;
++	lb->y_addr = lt->y_addr + (h - 1) * y_stride;
+ 	lb->u_addr = lt->u_addr + (h / y_div - 1) * uv_stride;
+ 	lb->v_addr = lt->v_addr + (h / y_div - 1) * uv_stride;
+ 
+@@ -163,6 +164,7 @@ static void rga_cmd_set_trans_info(struct rga_ctx *ctx)
+ 	union rga_src_act_info src_act_info;
+ 	union rga_dst_vir_info dst_vir_info;
+ 	union rga_dst_act_info dst_act_info;
++	u32 in_stride, out_stride;
+ 
+ 	src_h = ctx->in.crop.height;
+ 	src_w = ctx->in.crop.width;
+@@ -285,13 +287,15 @@ static void rga_cmd_set_trans_info(struct rga_ctx *ctx)
+ 	 * Calculate the framebuffer virtual strides and active size,
+ 	 * note that the step of vir_stride / vir_width is 4 byte words
+ 	 */
+-	src_vir_info.data.vir_stride = ctx->in.stride >> 2;
+-	src_vir_info.data.vir_width = ctx->in.stride >> 2;
++	in_stride = ctx->in.pix.plane_fmt[0].bytesperline;
++	src_vir_info.data.vir_stride = in_stride >> 2;
++	src_vir_info.data.vir_width = in_stride >> 2;
+ 
+ 	src_act_info.data.act_height = src_h - 1;
+ 	src_act_info.data.act_width = src_w - 1;
+ 
+-	dst_vir_info.data.vir_stride = ctx->out.stride >> 2;
++	out_stride = ctx->out.pix.plane_fmt[0].bytesperline;
++	dst_vir_info.data.vir_stride = out_stride >> 2;
+ 	dst_act_info.data.act_height = dst_h - 1;
+ 	dst_act_info.data.act_width = dst_w - 1;
+ 
 diff --git a/drivers/media/platform/rockchip/rga/rga.c b/drivers/media/platform/rockchip/rga/rga.c
-index b8e4be3f9acd8a73a3d4e947aeeef9095543fb49..c5f25869d0cd08a794330954ec414f0428b647d8 100644
+index c5f25869d0cd08a794330954ec414f0428b647d8..6e1a4a6dc6309a6d6d9a3aac0fe982e7200c96de 100644
 --- a/drivers/media/platform/rockchip/rga/rga.c
 +++ b/drivers/media/platform/rockchip/rga/rga.c
-@@ -222,7 +222,6 @@ static int rga_open(struct file *file)
+@@ -221,8 +221,6 @@ static int rga_open(struct file *file)
+ 		.fmt = &rga->hw->formats[0],
  	};
  
- 	def_frame.stride = (def_frame.width * def_frame.fmt->depth) >> 3;
--	def_frame.size = def_frame.stride * def_frame.height;
- 
+-	def_frame.stride = (def_frame.width * def_frame.fmt->depth) >> 3;
+-
  	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
  	if (!ctx)
-@@ -407,9 +406,6 @@ static int vidioc_s_fmt(struct file *file, void *priv, struct v4l2_format *f)
- 		return PTR_ERR(frm);
+ 		return -ENOMEM;
+@@ -407,7 +405,6 @@ static int vidioc_s_fmt(struct file *file, void *priv, struct v4l2_format *f)
  	frm->width = pix_fmt->width;
  	frm->height = pix_fmt->height;
--	frm->size = 0;
--	for (i = 0; i < pix_fmt->num_planes; i++)
--		frm->size += pix_fmt->plane_fmt[i].sizeimage;
  	frm->fmt = rga_fmt_find(rga, pix_fmt->pixelformat);
- 	frm->stride = pix_fmt->plane_fmt[0].bytesperline;
+-	frm->stride = pix_fmt->plane_fmt[0].bytesperline;
  	frm->colorspace = pix_fmt->colorspace;
-@@ -423,10 +419,10 @@ static int vidioc_s_fmt(struct file *file, void *priv, struct v4l2_format *f)
- 	frm->pix = *pix_fmt;
  
- 	v4l2_dbg(debug, 1, &rga->v4l2_dev,
--		 "[%s] fmt - %p4cc %dx%d (stride %d, sizeimage %d)\n",
-+		 "[%s] fmt - %p4cc %dx%d (stride %d)\n",
+ 	/* Reset crop settings */
+@@ -422,7 +419,7 @@ static int vidioc_s_fmt(struct file *file, void *priv, struct v4l2_format *f)
+ 		 "[%s] fmt - %p4cc %dx%d (stride %d)\n",
  		  V4L2_TYPE_IS_OUTPUT(f->type) ? "OUTPUT" : "CAPTURE",
  		  &frm->fmt->fourcc, frm->width, frm->height,
--		  frm->stride, frm->size);
-+		  frm->stride);
+-		  frm->stride);
++		  pix_fmt->plane_fmt[0].bytesperline);
  
  	for (i = 0; i < pix_fmt->num_planes; i++) {
  		v4l2_dbg(debug, 1, &rga->v4l2_dev,
 diff --git a/drivers/media/platform/rockchip/rga/rga.h b/drivers/media/platform/rockchip/rga/rga.h
-index 82ead58719f3baadb77575896ca2d430aa8e3dc6..5aedda2f187e4bfef42c8755c4fc4b1ee5453e8e 100644
+index 5aedda2f187e4bfef42c8755c4fc4b1ee5453e8e..d5ec873adc280bc2238b227d2f0c649ca345b836 100644
 --- a/drivers/media/platform/rockchip/rga/rga.h
 +++ b/drivers/media/platform/rockchip/rga/rga.h
-@@ -42,7 +42,6 @@ struct rga_frame {
- 
- 	/* Variables that can calculated once and reused */
- 	u32 stride;
--	u32 size;
+@@ -39,9 +39,6 @@ struct rga_frame {
+ 	/* Image format */
+ 	struct rga_fmt *fmt;
+ 	struct v4l2_pix_format_mplane pix;
+-
+-	/* Variables that can calculated once and reused */
+-	u32 stride;
  };
  
  struct rga_dma_desc {
