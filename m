@@ -1,95 +1,157 @@
-Return-Path: <linux-kernel+bounces-843674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14B7DBBFF7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 03:35:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2638CBBFF80
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 03:35:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 76C1D34C7AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 01:35:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EC9754E4A00
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 01:35:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A6A82866;
-	Tue,  7 Oct 2025 01:35:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177ED82866;
+	Tue,  7 Oct 2025 01:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aKqv6xA8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VzcTr2ud"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA661367;
-	Tue,  7 Oct 2025 01:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6FC1CCEE0
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 01:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759800937; cv=none; b=SIjwRlyzO1MrDPGokK+lbDwVEeLTjPwvmW65oSoRls0NwfG34OHX/4sf2wFtte0W2dagX0KCqwoqxT+gBOK1uga7SaNiASsvpjwTjy8kEqyimj8yMPfbeyvUC7Hn1UY/D8y7jdNLJ53NoAjd3xNCFId9PeUmAWoJpxafdic/lGY=
+	t=1759800944; cv=none; b=bP/D6octLOM4Z+Y246DcxND27TvTS8D/0JHmag0xQlbcTOuppwtibZ1LSfT6Qi0iMbiX76mGcmfAjtUjwPyhGrusNrImdgwJOCh6k8f61svNA11GT/+1AUv32YsQxUWNT/8oNIG5Q8BGbLwMC8H3vujbkTLRBbSuzsJ2Rn9j3FE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759800937; c=relaxed/simple;
-	bh=ileuy0IaoeO61GW7aMtdBSEnYkwa7h2G1NJwl2NTd28=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AP+glDeNGyM2X6gJcoMJ3daGH5mU88PA5OEFRQ96z5RNimCCCXUfX2w1bmUfiiGqXD6OcWTy/orxPDij3QDdziyOyKe3noDw8LEFgxe34kyB+0OANz3OkadxNUNHCzeuWh21PveOE6S4kW5fPbqInP7FBmUoGwF+Ui+uyShWT6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aKqv6xA8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A800C4CEF5;
-	Tue,  7 Oct 2025 01:35:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759800937;
-	bh=ileuy0IaoeO61GW7aMtdBSEnYkwa7h2G1NJwl2NTd28=;
-	h=Date:From:To:Cc:Subject:From;
-	b=aKqv6xA89wr+e14VoDgAn0ENOfpf1pGJlmlS0KFK61prwxDJ9DUo/cbBaugHut/ld
-	 7+2HijUlkGvFOdXyG3GRcoUGgscSOxZS/yKO289BWxAVkOhgDTr9gBGBvuYPvGjXho
-	 43z2dWNaFaNZH0SCV/Jx5oJAL883newTFhShPv0b6foa+fcV0ZisioOf2ftIZ6JMCJ
-	 as4xtJbZzbFquQJQUK9kjfwDyIlDC/i5KHgHZd+1HY0TZcpSXpds4xJTApiCCgq5Mu
-	 ltAWW8HPshpc8OkCIomcsRV7nEbgf8ghVTR6PRMBlrfwa5f/IFXbkn3tb3lP/tYADg
-	 6RYC+5mwR92Rw==
-Date: Mon, 6 Oct 2025 15:35:36 -1000
-From: Tejun Heo <tj@kernel.org>
-To: David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: sched-ext@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: [PATCH sched_ext/for-6.18-fixes] sched_ext: Mark
- scx_bpf_dsq_move_set_[slice|vtime]() with KF_RCU
-Message-ID: <aORuaIXJftQDMBIA@slm.duckdns.org>
+	s=arc-20240116; t=1759800944; c=relaxed/simple;
+	bh=dSFf1E/J7CDTNdjk+dI/Pn6eRQ1aAq+eFCYCegQhb+0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=sZxOJllzf4KDZA1uCZ1j9tg6r3d5ZEPlt03SSho2/uoz5r29C52OHOKakD8tkdjtiZ5lnuCO7CV+AcSJ2uT3VetrJ6wGD3f5EOMSQoMU4zOqOhje2X1RbJCf5z+MkKqDEGO+th+oPlhuJT9ywqqRtQTcUjIx8wVXFByGkpG0GZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VzcTr2ud; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46e34052bb7so61447695e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 18:35:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759800941; x=1760405741; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ji+JD5QBQH6eDTa+kxfbkvWxEhikk+fAOwvZw23zzwY=;
+        b=VzcTr2udTjA3MDdRH+KJrmifXi4DBDEqU3uQoIzZ9b0yX/+8GSbuOtiORwWHrYXRHM
+         XZcZvbnXy/22Y4MKQ6Kw2fluzLqM0hBXpTvjTBmslNa/h4UEb9sw/jddKdhmFiceuPRM
+         bVRx73bHpWJmltQ2jTU1mwqHxZ0sB1AjbHRbTSLMCqzeJCLQxY8qt/G2k6y0nOp2aUTJ
+         3i9CVwbp55vsRVViHMYGRcesI4Ypa7tfu9KIsVCdpwC9Fag84TMLjZS25UJThDX8GD4k
+         Dbw0+QyBbbNVUJywR0R4HLjxaD7aa6HpVBJrQbELiFozIN0mjujYF9d2ETa4RvrImji9
+         C3Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759800941; x=1760405741;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ji+JD5QBQH6eDTa+kxfbkvWxEhikk+fAOwvZw23zzwY=;
+        b=jlefCHzKBnSboDn9u3zUJBu7Mb3jy/jO5FTGNxq+OWFnCqBbanfzKbD4s6raDWNsvn
+         lhWkb8Y+1BtAj0O6+kgIOo7hkZl3d3ZEX107t2c86er0UucG+hkHWaIslgLxXxPLNEio
+         fXP+WHdIJfGgyVJSAGb3sUca6lsGiMGHW9APXUThlR/fqiGqGVkzkRLdypkD4JcRNYAb
+         EGXK2e2+5r4wfewJJ/cVMD+92ZLV8JYy3CbuU5OkOn84HYx59fDHmDRJQAIox2EyAcF8
+         1+1BBpoG0J3JYogoKgZQ4oLc9OXUo4jqdLLgOdpn8COVs1LFboo0tu2/TMOw694nrSzo
+         uGeg==
+X-Forwarded-Encrypted: i=1; AJvYcCXzZ2BwK1QIYHQ23pckbdnHY6qcFSN9gyn3wp1ad30VHCFME9+yOvG+yjJwwZKK0SSpbWzWGtl6xCOGeJI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsTnGp+voork0XBcbvn5ZdHmdkMMGgSKfgduhKrDavroXlxsAi
+	wS/DCppDIoECB0Wlio3dIsrid0GrgmQRr04ki2Z9Cxg/ZA2KWxOMddyQBvN01Nrc5jc=
+X-Gm-Gg: ASbGncswxzGrHAMPIBpGOSJZQtUOrhLCgfrEu1NG3ORKNwMgk+Zs7UyUmvyG90+eRWo
+	tG4JtAUkdbrn/+DmrR+KzMk8Ci8Vsqdnlx2VPK4KCZtcx+xuCkTrsfR7SVhulGLf0QVaFDfjuX2
+	OO6Od5x0YCEposS87wlHsvBsZEN7XOoErkdrn2xueUZvF4YSwTPlT1SJPYR9f5v7LQNX+/ij1rv
+	m+qwk1k5Bl2dYZpgJ5GK1vs45cPhpRVaPkynqZV3sCSVKvIzAQrtLSIzMMvKdaU3vBCR+am/78Z
+	GwwuiN26X2D35Lrvwj5ojaOBr7FHqXX+zuetrctGwrayDaqNzg1h5BF8/jxziQ8WeNHeyIErIXI
+	A7YYKsny6/GS4VLRKnXZheE09ruDVKVGTUISCFFD2GVbhtJxBeUHNxBiKz58BlOezOw==
+X-Google-Smtp-Source: AGHT+IGxegk5zS/vcDYXOHgkLn6TGJ/oSEBKxXzqmzD05DR2WTUPLYfCcOojl3EbamxexC7GUdL3oA==
+X-Received: by 2002:a05:600c:8b6e:b0:46e:4499:ba30 with SMTP id 5b1f17b1804b1-46e71153ad0mr112226515e9.30.1759800940679;
+        Mon, 06 Oct 2025 18:35:40 -0700 (PDT)
+Received: from localhost ([2a02:c7c:7259:a00:22ae:baa0:7d1a:8c1f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fa2d5bd52sm7679105e9.2.2025.10.06.18.35.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Oct 2025 18:35:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 07 Oct 2025 02:35:38 +0100
+Message-Id: <DDBPDACTUFEW.1VVHN1P0PC6YO@linaro.org>
+Cc: "Srinivas Kandagatla" <srini@kernel.org>, "Liam Girdwood"
+ <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>, "Jaroslav Kysela"
+ <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Bjorn Andersson" <andersson@kernel.org>,
+ "Konrad Dybcio" <konradybcio@kernel.org>, <linux-sound@vger.kernel.org>,
+ <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <devicetree@vger.kernel.org>
+Subject: Re: [PATCH RFC 3/6] ASoC: soc: qcom: sc8280xp: add support for I2S
+ clocks
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Neil Armstrong" <neil.armstrong@linaro.org>
+X-Mailer: aerc 0.20.0
+References: <20251006-topic-sm8x50-next-hdk-i2s-v1-0-184b15a87e0a@linaro.org> <20251006-topic-sm8x50-next-hdk-i2s-v1-3-184b15a87e0a@linaro.org>
+In-Reply-To: <20251006-topic-sm8x50-next-hdk-i2s-v1-3-184b15a87e0a@linaro.org>
 
-scx_bpf_dsq_move_set_slice() and scx_bpf_dsq_move_set_vtime() take a DSQ
-iterator argument which has to be valid. Mark them with KF_RCU.
+On Mon Oct 6, 2025 at 7:37 PM BST, Neil Armstrong wrote:
+> Add support for getting the I2S clocks used for the MI2S
+> interfaces, and enable/disable the clocks on the PCM
+> startup and shutdown card callbacks.
+>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  sound/soc/qcom/sc8280xp.c | 104 ++++++++++++++++++++++++++++++++++++++++=
++++++-
+>  1 file changed, 103 insertions(+), 1 deletion(-)
+>
+> diff --git a/sound/soc/qcom/sc8280xp.c b/sound/soc/qcom/sc8280xp.c
+> index 78e327bc2f07767b1032f09af7f45b947e7eb67a..ad4ee5c6fab8994f18de57284=
+2f3dab6f4f5397e 100644
+> --- a/sound/soc/qcom/sc8280xp.c
+> +++ b/sound/soc/qcom/sc8280xp.c
+> @@ -4,6 +4,8 @@
+>  #include <dt-bindings/sound/qcom,q6afe.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/clk.h>
+> +#include <linux/of_clk.h>
 
-Fixes: 4c30f5ce4f7a ("sched_ext: Implement scx_bpf_dispatch[_vtime]_from_dsq()")
-Cc: stable@vger.kernel.org # v6.12+
-Signed-off-by: Tejun Heo <tj@kernel.org>
----
- kernel/sched/ext.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+^^
 
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -5688,8 +5688,8 @@ BTF_KFUNCS_START(scx_kfunc_ids_dispatch)
- BTF_ID_FLAGS(func, scx_bpf_dispatch_nr_slots)
- BTF_ID_FLAGS(func, scx_bpf_dispatch_cancel)
- BTF_ID_FLAGS(func, scx_bpf_dsq_move_to_local)
--BTF_ID_FLAGS(func, scx_bpf_dsq_move_set_slice)
--BTF_ID_FLAGS(func, scx_bpf_dsq_move_set_vtime)
-+BTF_ID_FLAGS(func, scx_bpf_dsq_move_set_slice, KF_RCU)
-+BTF_ID_FLAGS(func, scx_bpf_dsq_move_set_vtime, KF_RCU)
- BTF_ID_FLAGS(func, scx_bpf_dsq_move, KF_RCU)
- BTF_ID_FLAGS(func, scx_bpf_dsq_move_vtime, KF_RCU)
- BTF_KFUNCS_END(scx_kfunc_ids_dispatch)
-@@ -5820,8 +5820,8 @@ __bpf_kfunc_end_defs();
- 
- BTF_KFUNCS_START(scx_kfunc_ids_unlocked)
- BTF_ID_FLAGS(func, scx_bpf_create_dsq, KF_SLEEPABLE)
--BTF_ID_FLAGS(func, scx_bpf_dsq_move_set_slice)
--BTF_ID_FLAGS(func, scx_bpf_dsq_move_set_vtime)
-+BTF_ID_FLAGS(func, scx_bpf_dsq_move_set_slice, KF_RCU)
-+BTF_ID_FLAGS(func, scx_bpf_dsq_move_set_vtime, KF_RCU)
- BTF_ID_FLAGS(func, scx_bpf_dsq_move, KF_RCU)
- BTF_ID_FLAGS(func, scx_bpf_dsq_move_vtime, KF_RCU)
- BTF_KFUNCS_END(scx_kfunc_ids_unlocked)
+[..]
 
+>  static const struct snd_soc_ops sc8280xp_be_ops =3D {
+> -	.startup =3D qcom_snd_sdw_startup,
+> +	.startup =3D sc8280xp_snd_startup,
+>  	.shutdown =3D sc8280xp_snd_shutdown,
+>  	.hw_params =3D sc8280xp_snd_hw_params,
+>  	.hw_free =3D sc8280xp_snd_hw_free,
+> @@ -162,6 +222,44 @@ static void sc8280xp_add_be_ops(struct snd_soc_card =
+*card)
+>  	}
+>  }
+> =20
+> +static const char * const i2s_bus_names[I2S_MAX_CLKS] =3D {
+> +	"primary",
+> +	"secondary",
+> +	"tertiary",
+> +	"quaternary",
+> +	"quinary",
+> +};
+> +
+> +static int sc8280xp_get_i2c_clocks(struct platform_device *pdev,
+> +				   struct sc8280xp_snd_data *data)
+> +{
+
+Could you please confirm that this should be _i2c_ clocks?
+
+[..]
+
+Best regards,
+Alexey
 
