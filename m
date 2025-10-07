@@ -1,125 +1,113 @@
-Return-Path: <linux-kernel+bounces-844281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 843B3BC1727
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:13:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A289BC172D
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CCEF18965EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:14:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9D2134F19D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407DA2E0910;
-	Tue,  7 Oct 2025 13:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65ED72D6636;
+	Tue,  7 Oct 2025 13:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="OpkeMj9c"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nXe+CRfu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7172DFF19
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 13:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18A01DF982
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 13:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759842825; cv=none; b=ik1NE87SbbueV8lOp//9QCvcE5NGRHH0PQ6tkfsCeIRNvGtyEyD5MVzlzpfckaJw12bc4mtP6SBNXQooc621ddQTbnlroip10lLNiBlzPNxr7WaqVEw3EQmRy210ykgWJPdvozSKtSjzHxi4r2gmIk//3eH5IFiegkPdyPhJRgk=
+	t=1759842912; cv=none; b=UDtSmWaxnkBMNtrrbScSJUvklS9scMUuCkCEeWNzIosRT8gxLvMTBf5iul+KlddxG5dPEcOIHRTiK+QqZnMX2XH0QjEsMtX5MHCMlb7MDmwjQF0+Yt1dX8dmpXrHwWV0uK+6BQH4w6Cc/TQHRUxqpVcbaz5OjCmaGnMlUQCbsvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759842825; c=relaxed/simple;
-	bh=t0N+x/VGNAQttY2sxorx9dZNMTxHZKG1OWxQ7z8PFso=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=edu08al1YjEULR/HreqRDyd99b/5pCxf0Anc/7pW+4d0/1zlzYH+MSEGXwzGJH15epM9+SvSxUhXVIiUWZWbTRuEofDwExlNZswY/TeDtaPdv46kYQcqe+nWY4vY/3peaBCQot6oa8geHZf2932NCUJNqR3PF498HJtWpCTeFS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=OpkeMj9c; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-36ba647ac9fso50165761fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 06:13:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1759842822; x=1760447622; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t0N+x/VGNAQttY2sxorx9dZNMTxHZKG1OWxQ7z8PFso=;
-        b=OpkeMj9cbEuqd2iTllQwOT9yVdO2fmEEfS/m+hUM0tUHgN48mBoIkT9BLHmLCL7Wlb
-         1I4Wl4IqdVR7OrwMlzUdgd2raaJAlK+p0VBkNvpOODbVkbOslgiYx7G5jMQzGM9jdWKF
-         FiVgfSs/g3PoEGlT4PO2KF5C0QOpj3sXe4xDurS7S/SlJpbZ9vXXC5lihfFxMDyriyy1
-         ooeiOGOPQDcAchF5JGqJzFx0H/4WFsylmkV0hcQnJCR5bOxvJcFA1UxD7SrZ0u+87u90
-         ODudjpiY1i3XQEsYtgz7Hog3C8bUp0VzKEpfQJUtinC2s6OpzK6JOSILBD8EsvgMkr74
-         dTwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759842822; x=1760447622;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t0N+x/VGNAQttY2sxorx9dZNMTxHZKG1OWxQ7z8PFso=;
-        b=pcLjVMhheQLhtp6HrywjLcGpaygyDbiEyherALktkr1prb950hu758KxTMDd9Y8M7O
-         NnnBv+LC5h5Z3vWpS/QWzFA4ue69c1qQ8RiEh3Vp77TiLH28vLPbQ6QJoVZFgOQzjCp6
-         igTpW5jy/ufbDwxRTUSjnmqiBaTAAB7iiJkJG1EbPYvS44LdIoylO6Zj0/NzIk0wB0i8
-         4uozhiSB5Mxqwyl4+IcogRvAK6pJ4zxfBMFazfrFQtfa+ztcptrohbQpFeMk5zQkkc0U
-         DoKZcS1Qv0tzhQs7vTmE4MO8Qm1DQWXSRptnPHbWlG9RGEUlEw3+V4F3jAG7QTexiDHR
-         6spQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWGt1wrtRxxakzu8k/wDR69it82MqnwQ3W4mEIrGSn2zGmpOf+9QsfYgNPBtHIXzpnHH89cgjB3m5M1oNQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzbv6EL/Roltc9f/53BCnPVAQQbiqmiGXO8WA5LZ7zQSRK2GAn4
-	WKHgKqkAqRSwl8nPo1DD0G3q5mq+AuRmb5PdNdjfyP5xiVqkAh9FzYIXzRYL7LuVJbCtXNplO9n
-	nQHWjgz4EC0331ziB9f/VOgzhZBefQr2E+EDaDs0ojg==
-X-Gm-Gg: ASbGnctWKyksExhsKFAQW7tAylBYlLNr3bKha8GeJm0uvw456ijGakTFOs+bynqcR2+
-	N7T0GPoj+iMalTzu1zkU6o+wsMLiUijLGW5W0IdGr8e+UyZjnyh/2/b6tj39oDi2gJO4EIKFljZ
-	HulGtCEa031lruEdLIf8j3p6bInpfaTqpBot/5aSSa09qUCFFVZ8cbFEaqK8LUDGqgXzcoJ6cJa
-	jY1EI1K/Klv+pDYjmO3BFV4OlULwVhG934VU90FNnMQKNKIHX3ii3BKUlIAozQ=
-X-Google-Smtp-Source: AGHT+IG7P5Lsywws5bBPOT8E7JIpupmd0eu9fkYQI1gC/FvLSNAcnVdx2QxXsM+KX1p4mn8AU407934CqwjnV4QazxU=
-X-Received: by 2002:a2e:9a14:0:b0:36e:21a0:f212 with SMTP id
- 38308e7fff4ca-374c38477a4mr56218171fa.29.1759842821852; Tue, 07 Oct 2025
- 06:13:41 -0700 (PDT)
+	s=arc-20240116; t=1759842912; c=relaxed/simple;
+	bh=EqKw66Y+OkmjBtMmmweWlpeBccSxmjMZ3RwUW5S5fbg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FPUzj/mbua0N6OYFzLf95vRtu2xjqO8gJ0J8+knynUVbqDVCIVgGvqmFI6/zut5ZW4hiYwy1h/whPPM2VSUCeaDBgC1N+aws9dLpQL9QafW6B26MpGGJ1U7KSUUm84NToLQSda6niGI2KemJyti44nKkISIzhWZz7hocm9G2tQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nXe+CRfu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C175BC4CEF1;
+	Tue,  7 Oct 2025 13:15:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759842912;
+	bh=EqKw66Y+OkmjBtMmmweWlpeBccSxmjMZ3RwUW5S5fbg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=nXe+CRfutLD+QDcbN8smikpxLCcGjxIp65qqxNzbOJ4agn93Ry+CFbBLjI/JOsTzl
+	 ZFBgOroqW0LfnFeKMOQXsFSqcC4DWGfCLN3i12ZizuhWxnE+8Uy0KA/0l2I/YOmEUu
+	 rT3N+VWoNPR+aVkNoV5lrOCEi6K/uu1LRx+RZKx1Eiw7snQvdVnmuXLg+fxguRJUX2
+	 jnNHRT/BH2notgREqt7XteEuYBYMJlJ+mHQpgYxuyV6SD23lVPdgSBOvXcPfuLsf59
+	 RkNyc/lpRGu13hAVgHxitDGN67mPhYpTjruFilzPnNiDmsvIgVDd3Do37dScBX1wo0
+	 zZxRKucoSibfQ==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,  Pratyush Yadav
+ <pratyush@kernel.org>,  Michael Walle <mwalle@kernel.org>,
+  linux-mtd@lists.infradead.org,  Richard Weinberger <richard@nod.at>,
+  linux-kernel@vger.kernel.org,  Miquel Raynal <miquel.raynal@bootlin.com>,
+  Vignesh Raghavendra <vigneshr@ti.com>
+Subject: Re: [PATCH] mtd: spi-nor: Enable locking for n25q00a
+In-Reply-To: <20251006223409.3475001-1-sean.anderson@linux.dev> (Sean
+	Anderson's message of "Mon, 6 Oct 2025 18:34:09 -0400")
+References: <20251006223409.3475001-1-sean.anderson@linux.dev>
+Date: Tue, 07 Oct 2025 15:15:09 +0200
+Message-ID: <mafs0ecreontu.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250924-gpio-shared-v1-0-775e7efeb1a3@linaro.org>
- <0b402bba-0399-4f93-873e-890a78570ff7@kernel.org> <CAMRc=MfwEHGV-HZQURR3JNg1HatAeWO17qbRmkWUXTSBWj5jSg@mail.gmail.com>
- <80347dcf-419b-489e-9b0e-d901fbacc71a@kernel.org>
-In-Reply-To: <80347dcf-419b-489e-9b0e-d901fbacc71a@kernel.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 7 Oct 2025 15:13:29 +0200
-X-Gm-Features: AS18NWAq4ASQRRUa58ojinY89n-hm2wwAP_Re2fgpRgz7dBtx-tBmKEba_o3nR0
-Message-ID: <CAMRc=McaZV=tUkzDGMYxXqkuEYw_KasKcv8QGdjw709UYZuGhg@mail.gmail.com>
-Subject: Re: [PATCH RFC 0/9] gpio: improve support for shared GPIOs
-To: Srinivas Kandagatla <srini@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Andy Shevchenko <andy@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-hardening@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Mon, Oct 6, 2025 at 11:55=E2=80=AFPM Srinivas Kandagatla <srini@kernel.o=
-rg> wrote:
->
-> >
-> > If they were called "reset-gpios" then we could (and should) use
-> > Krzysztof's reset-gpio driver here, but we have many cases where
-> > that's not the case and the names (and implied functions) are
->
-> Yes, these codec drivers are due to be moved to use reset-gpios.
->
+On Mon, Oct 06 2025, Sean Anderson wrote:
 
-You will still need to keep support for the current "powerdown-gpios"
-property in existing device tree sources so that doesn't change
-anything. And what about shared pins other than reset? 'dc-gpios' for
-display, other 'powerdown' instances, 'enable-gpios', all kinds of
-uncommon names like: `dlg,cs`, `wlf,ldo2ena`, `speaker-enable`,
-`maxim,enable`? It's not likely we will create a separate abstraction
-for each of them. What I'm proposing is a sane, catch-all mechanism
-for shared GPIOs that right now use a rather wonky hack. Also: the
-drivers have no business knowing that they request GPIOs that can be
-shared. This is why I want to hide it inside GPIOLIB.
+> The datasheet for n25q00a shows that the status register has the same
+> layout as for n25q00, so use the same flags to enable locking support.
+> These flags should have been added back in commit 150ccc181588 ("mtd:
+> spi-nor: Enable locking for n25q128a11"), but they were removed by the
+> maintainer...
 
-Bartosz
+This makes it sound like the maintainer did something wrong, which is
+not true. Tudor had a good reason for removing them. Jungseung did not
+have the flash at hand and Tudor didn't want to apply patches that
+weren't tested. Both were in agreement for removing the n25q00a changes.
+
+If you are going to mention that commit, then mention the full context,
+and then also mention what has changed since that makes it possible to
+add those changes back in. Having tested them on the real hardware for
+example.
+
+>
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> ---
+> Tested with a mt25qu01gbbb, which shares the same flash ID.
+
+Ughh, is this another case of flash ID reuse? Do mt25qu and n25q00a
+flashes behave exactly the same and only have two names? If not, then
+how do you know if n25q00a will also work with these changes?
+
+>
+>  drivers/mtd/spi-nor/micron-st.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/mtd/spi-nor/micron-st.c b/drivers/mtd/spi-nor/micron-st.c
+> index 187239ccd549..17c7d6322508 100644
+> --- a/drivers/mtd/spi-nor/micron-st.c
+> +++ b/drivers/mtd/spi-nor/micron-st.c
+> @@ -486,6 +486,8 @@ static const struct flash_info st_nor_parts[] = {
+>  		.id = SNOR_ID(0x20, 0xbb, 0x21),
+>  		.name = "n25q00a",
+>  		.size = SZ_128M,
+> +		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB | SPI_NOR_4BIT_BP |
+> +			 SPI_NOR_BP3_SR_BIT6,
+>  		.no_sfdp_flags = SECT_4K | SPI_NOR_QUAD_READ,
+>  		.mfr_flags = USE_FSR,
+>  		.fixups = &n25q00_fixups,
+
+-- 
+Regards,
+Pratyush Yadav
 
