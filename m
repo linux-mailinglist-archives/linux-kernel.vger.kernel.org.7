@@ -1,144 +1,95 @@
-Return-Path: <linux-kernel+bounces-844499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD828BC213A
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:16:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE4F2BC2153
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:18:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 600B73E0D75
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:16:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD6D64F6158
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B559C2E7182;
-	Tue,  7 Oct 2025 16:16:38 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19A02E6CD8;
+	Tue,  7 Oct 2025 16:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b="38CGOve4"
+Received: from cse.ust.hk (cssvr7.cse.ust.hk [143.89.41.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2212013FEE;
-	Tue,  7 Oct 2025 16:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759853798; cv=none; b=sscJLI1+hdCRw7EzyRDunrYX0TK0jGfPLP4ZgBvSOzLPup9NbVSUvk6vuZQ3i7wcfztVJKbH+MDaDI7/WllgeAWRwh9MGFtX0Tla1DES1hBMeyAaAJdXNUrBKmwJ1De2QRC7uTmEdRw+zvfaLjGBkcJzibbSOhkXlV2OHskXsqo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759853798; c=relaxed/simple;
-	bh=RW3CmbJB3FsnKhjV2vpj9diarNh4oefsbTL08hP5j1o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T7pNGCOumDbk2QgAS1jjS/z5XU7qQLJSCTk7IiuGRjuGokZUBCq2mPpbTXZrC48yAtIbMuyeMjrdFTj2pQ/d3MldHsLR60VdZvNdpGnhSIUkHHuF3aFHqigpW+P5ziuNlF+cQRv3cwjUDwW8ZN06959iCXCDab3xJl6kzB/mLHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.5] (ip5f5af0e1.dynamic.kabel-deutschland.de [95.90.240.225])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 011E76028F369;
-	Tue, 07 Oct 2025 18:16:21 +0200 (CEST)
-Message-ID: <a91cf69c-e9d9-40b6-9bba-0308855c3014@molgen.mpg.de>
-Date: Tue, 7 Oct 2025 18:16:19 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78D42E6CB3
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=143.89.41.157
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759853880; cv=pass; b=WDHuinkvJBDTQw+NaxkZtk9sx8IarEOy8+WK138i0z7qB6GhZxRA/eETUap2+jEStJGB67eVnOQ4IgOwID65ZZ6c+IYNHZLl42k/bFCh8cR8qWf2/3zmKscUnjeYsXtQG+tra6t78MoFZd0wMkKQUrWlaZNn7Qt1q26NvXxYbGA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759853880; c=relaxed/simple;
+	bh=WMCk5RuxBxkKL/bKWsjH32epCgRUaYFkq8qpxUg/rT4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=IIiC99EZVGMPfDJis1l6aqJihAnuoBt9xlcb+mwuziOko2wG1Yle086WMXPMWABMCluDtjK6D0WiVaK8MwWze3nbmF97P9AIz5mX6trj4juDtKl+UPpywYCwLDZl4yXQe2dZxibzSyBDACm5xgUEzOA6QgSFB+C8PBfOB50YMDw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk; spf=pass smtp.mailfrom=cse.ust.hk; dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b=38CGOve4; arc=pass smtp.client-ip=143.89.41.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cse.ust.hk
+Received: from homelab ([58.82.196.128])
+	(authenticated bits=0)
+	by cse.ust.hk (8.18.1/8.12.5) with ESMTPSA id 597GHFhK1883936
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 8 Oct 2025 00:17:24 +0800
+ARC-Seal: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse; t=1759853845; cv=none;
+	b=g2O6RbwQmczahLkXKrHwGibNRFNhUAf9LaW8iLX+jepb/f/Z4lrGcP5uXHBqnmqo9efL+ZdsGMkqAZQDzdg2TSxpf9g3jVUE9qHHYhue3Jmx9NLJ6aEHJVTlM/7RJQZMjbjfOFMMXJEu3QkVJHKKBYsy2asALT8BiDpetNTPijw=
+ARC-Message-Signature: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse;
+	t=1759853845; c=relaxed/relaxed;
+	bh=24DsaxGYM2c65pUUHqLrjY0RrgMH0pttOAS/k9JF3RU=;
+	h=DKIM-Signature:Date:From:To:Subject:Message-ID:MIME-Version; b=jmgP7+3Qp3OQ+DiOfFK8nbhMxMfT7kVfeHrR2f39rqcNbGfYsgzUCqANmUbr/6OYnRUzbFqgOGpYInwbYljKP0jMbJ9DxmgngBY6Few6oyh6T1HNkYBNViX1Ys7E31Jfwtmc3HxUK5nqpbV8JhI7ZyWC702KVNqGPTnTVkzxQC4=
+ARC-Authentication-Results: i=1; cse.ust.hk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cse.ust.hk;
+	s=cseusthk; t=1759853845;
+	bh=24DsaxGYM2c65pUUHqLrjY0RrgMH0pttOAS/k9JF3RU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=38CGOve42jDY+Z9Qk/jeA3D4UncmB8zjjVtZeIOcGI2bjkuoLEhq56o6D9LV7tvZq
+	 OEtW++LVhGF8E+4L8ra9vuX50JV/g5ZGjCVH1vVy6uFUBDZqhTZRH//r6muHOXDoya
+	 PFnHumP/aKdMZ6FCLres6BSyvCTtGUYOotPNYI/I=
+Date: Wed, 8 Oct 2025 00:17:09 +0800
+From: Shuhao Fu <sfual@cse.ust.hk>
+To: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/nouveau: fix bad ret code in nouveau_bo_move_prep
+Message-ID: <aOU9BXjYDNoPRQmf@homelab>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] Bluetooth: btusb: Reclassify Qualcomm WCN6855
- debug packets
-To: Pascal Giard <evilynux@gmail.com>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- Pascal Giard <pascal.giard@etsmtl.ca>
-References: <20251007153315.72565-1-pascal.giard@etsmtl.ca>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20251007153315.72565-1-pascal.giard@etsmtl.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Env-From: sfual
 
-Dear Pascal,
+In `nouveau_bo_move_prep`, if `nouveau_mem_map` fails, an error code
+should be returned. Currently, it returns zero even if vmm addr is not
+correctly mapped.
 
+Signed-off-by: Shuhao Fu <sfual@cse.ust.hk>
+Fixes: 9ce523cc3bf2 ("drm/nouveau: separate buffer object backing memory from nvkm structures")
+---
+ drivers/gpu/drm/nouveau/nouveau_bo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thank you for your patch.
+diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.c b/drivers/gpu/drm/nouveau/nouveau_bo.c
+index b96f0555ca14..f26562eafffc 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_bo.c
++++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
+@@ -929,7 +929,7 @@ nouveau_bo_move_prep(struct nouveau_drm *drm, struct ttm_buffer_object *bo,
+ 		nvif_vmm_put(vmm, &old_mem->vma[1]);
+ 		nvif_vmm_put(vmm, &old_mem->vma[0]);
+ 	}
+-	return 0;
++	return ret;
+ }
+ 
+ static int
+-- 
+2.39.5
 
-Am 07.10.25 um 17:33 schrieb Pascal Giard:
-> Some Qualcomm Bluetooth controllers, e.g., QCNFA765 with WCN6855
-> chip, send debug packets as ACL frames with header 0x2EDC.
-> The kernel misinterprets these as malformed ACL packets, causing
-> repeated errors:
-> 
->    Bluetooth: hci0: ACL packet for unknown connection handle 3804
-> 
-> This can occur hundreds of times per minute, greatly cluttering logs.
-> On my computer, I am observing approximately 7 messages per second
-> when streaming audio to a speaker.
-> 
-> For Qualcomm controllers exchanging over UART, hci_qca.c already
-> filters out these debug packets. This patch is for controllers
-> not going through UART, but USB.
-> 
-> This patch uses the classify_pkt_type callback to reclassify the
-> packets with handle 0x2EDC as HCI_DIAG_PKT before they reach the
-> HCI layer. This change is only applied to Qualcomm devices marked
-> as BTUSB_QCA_WCN6855.
-> 
-> Tested on: Thinkpad T14 gen2 (AMD) with QCNFA765 (0489:E0D0)
-> Signed-off-by: Pascal Giard <pascal.giard@etsmtl.ca>
-> ---
-> Changes in v2:
-> - Address reviewer feedback about 0x2EDC being a valid HCI handle
-> - Use classify_pkt_type callback instead of filtering in recv_acl
-> - Only apply to devices with BTUSB_QCA_WCN6855 quirk
-
-Outstanding commit message!
-
-> ---
->   drivers/bluetooth/btusb.c | 19 +++++++++++++++++++
->   1 file changed, 19 insertions(+)
-> 
-> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> index 5e9ebf0c5312..256179ace853 100644
-> --- a/drivers/bluetooth/btusb.c
-> +++ b/drivers/bluetooth/btusb.c
-> @@ -1131,6 +1131,24 @@ static void btusb_qca_reset(struct hci_dev *hdev)
->   	btusb_reset(hdev);
->   }
->   
-> +static u8 btusb_classify_qca_pkt_type(struct hci_dev *hdev, struct sk_buff *skb)
-> +{
-> +	/* Some Qualcomm controllers, e.g., QCNFA765 with WCN6855 chip, send debug
-> +	 * packets as ACL frames with connection handle 0x2EDC. These are not real
-> +	 * ACL packets and should be reclassified as HCI_DIAG_PKT to prevent
-> +	 * "ACL packet for unknown connection handle 3804" errors.
-> +	 */
-> +	if (skb->len >= 2) {
-> +		u16 handle = get_unaligned_le16(skb->data);
-> +
-> +		if (handle == 0x2EDC)
-> +			return HCI_DIAG_PKT;
-> +	}
-> +
-> +	/* Use default packet type for other packets */
-> +	return hci_skb_pkt_type(skb);
-> +}
-> +
->   static inline void btusb_free_frags(struct btusb_data *data)
->   {
->   	unsigned long flags;
-> @@ -4201,6 +4219,7 @@ static int btusb_probe(struct usb_interface *intf,
->   		data->recv_acl = btusb_recv_acl_qca;
->   		hci_devcd_register(hdev, btusb_coredump_qca, btusb_dump_hdr_qca, NULL);
->   		data->setup_on_usb = btusb_setup_qca;
-> +		hdev->classify_pkt_type = btusb_classify_qca_pkt_type;
->   		hdev->shutdown = btusb_shutdown_qca;
->   		hdev->set_bdaddr = btusb_set_bdaddr_wcn6855;
->   		hdev->reset = btusb_qca_reset;
-
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
-
-
-Kind regards,
-
-Paul
 
