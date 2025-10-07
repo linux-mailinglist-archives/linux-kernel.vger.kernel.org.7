@@ -1,422 +1,467 @@
-Return-Path: <linux-kernel+bounces-844480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67BFFBC207D
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:04:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B3AEBC21B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4D2914E037C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:04:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E286F4F6C98
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3E62E6CD5;
-	Tue,  7 Oct 2025 16:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="C1MfuDqy";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="e4Uzc9du"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA342E2DE4
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759853057; cv=fail; b=BWjbltQ0osuFLYsmTHxiFF2od3CzTx0s9ORUK0axjqh44cWxTv315KwCQY95TINRm5q6dZOehsL/aQeeNpQ8JT1xTCKbCj757ZZhs2kvYpVo7BCUpttm5oC98icWkILw3Yrn1z9g4bSkfdSskIqCegb3/Vl6k8thREH6wJSmdRI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759853057; c=relaxed/simple;
-	bh=G+PI8KR7td2GgsTZP2Gtph+zPUQHdPG+y2gW6EQFSFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Pg/gRT/ujXZ8GwhpP+8b6ei8PewL3+v1zBONrh1j0E92RBpfUOXeCdVSiRCwI8hpqSwq27eAD3gyAwj4QG0523hlSpZIyzKhfqSrSHb0zWxqZ4s2sOluxVAtKwkX1YQAV+Gx5cFwXDPDhXZbfKF3Ta4T7l2OIi7UziUXiZ/lH90=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=C1MfuDqy; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=e4Uzc9du; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 597FsYnQ025181;
-	Tue, 7 Oct 2025 16:03:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=l0/S9g5HFThouDIsDv
-	EUCVu/6WtMsNuSUaop3dC9khw=; b=C1MfuDqy8P/lRZ2cSBXh2k9AlCl7c4KI/F
-	ec2wRqF4VDGfYwsZev67KOg1Uw+uN8v6hdxAiPJScyw5EFv4FAi5WxBwFH1RR9x9
-	rozXczcqetGdAAJTNwqRFaQfs1lgnemqevurD6IrXDzJdpu2lBosqjbQMZeBd/If
-	HbiL1QhjD60JjUQpnsOKIZzXv4TBmdEdoQNiMXiLvaIxcZrJFoWaCnUNvyA4erMB
-	mpCyDpGNWiuAt5vZWqmAESrD85FKpQWEcXQmhbeLeSfZOw8bzyFcyJfZ192Yd9Ex
-	QNLvkEwdMUgGU+spSZtOTcVRbkEuiqdw1eqraDtVSY+ssvsiWsig==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49n5wqr0kh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 07 Oct 2025 16:03:45 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 597G0Cuo028727;
-	Tue, 7 Oct 2025 16:03:45 GMT
-Received: from cy3pr05cu001.outbound.protection.outlook.com (mail-westcentralusazon11013022.outbound.protection.outlook.com [40.93.201.22])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49jt18dw33-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 07 Oct 2025 16:03:45 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ATtf3so4jTD/OSzBzfC5RRSjM/uHC78zRSCu4NZt6f+Bv792w+5Z9hHDOaBXXx31lor5HpPX40sUbkGlLEsjSjRRjmiFgjZuV8qjZJz36vnm+ArtFMVfxLlFOg96120yIg33XmkFmored4nk/EyEJQBhfdyKCOeVpY65xglqwtUg6lpGH3uLS5p7ggAx6QwWQEIZpHV9IQ3RRbBfe5QIYmQjYXRscGHQYazu1hL0gSwY3q1+5P7NN2VFOp0yxEMQdNTP6//NIn2e3ZcbMSA6WQvOyQFIG/2Ed4DoPxyJxR3zs58SOCEq6yJ7lHfBYpawHvPctUvuUKuBuBYVq7ji2Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=l0/S9g5HFThouDIsDvEUCVu/6WtMsNuSUaop3dC9khw=;
- b=sqA2IMy68yNIdyXfXqrUS3mj3TFcTy0T8eEk+2/0Hkbt/Pioi/ECXWuQkK/kxHqckIhSfirmS+XmYZLb7mQg/CATpT0MC9bpQIDJhrBXC79xOR9NJk7nJyRyaNXSfwE0Ud+QZtSiL7o0DqQPdqfQ18OHL64wBWOdE9u48IExA4oAPJFeELfIu7OwpjvnjlSs9f6wLMSPpl7GLNLdYFZi9LL/g4XwWecL+Ceb0HIwZhxztRLHTE96VWdqF4WzZMtvFrWBg4V0ufCGcrdQuQSX31ZQbcczWWNK2otYNesveuniDaApfBZ+fIfaxA+StbAS17pO2MvkRKKgrKXdq3bYFg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l0/S9g5HFThouDIsDvEUCVu/6WtMsNuSUaop3dC9khw=;
- b=e4Uzc9dupRQxM0fMDqI6Qi5vR//VTnShWjWRysN3jcOUNgiYK+Pj6Ne4gr1NEFeUHhFFKJVKXgppLOjjuTwaLdc+fJosFeO4FSbrr+5aQdqzwbtwjYUm+vOPzYAD95H9biXiByuF5FM/rYPwdnytzt5IB5jhKl9LgG++7M9te+k=
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
- by CH2PR10MB4231.namprd10.prod.outlook.com (2603:10b6:610:ac::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Tue, 7 Oct
- 2025 16:03:41 +0000
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c%7]) with mapi id 15.20.9182.017; Tue, 7 Oct 2025
- 16:03:41 +0000
-Date: Tue, 7 Oct 2025 12:03:37 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Peter Xu <peterx@redhat.com>
-Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        James Houghton <jthoughton@google.com>,
-        Nikita Kalyazin <kalyazin@amazon.com>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        Ujwal Kundur <ujwal.kundur@gmail.com>, Mike Rapoport <rppt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>, Michal Hocko <mhocko@suse.com>,
-        Muchun Song <muchun.song@linux.dev>,
-        Oscar Salvador <osalvador@suse.de>, Hugh Dickins <hughd@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v3 1/4] mm: Introduce vm_uffd_ops API
-Message-ID: <frnos5jtmlqvzpcrredcoummuzvllweku5dgp5ii5in6epwnw5@anu4dqsz6shy>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Axel Rasmussen <axelrasmussen@google.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, James Houghton <jthoughton@google.com>, 
-	Nikita Kalyazin <kalyazin@amazon.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Ujwal Kundur <ujwal.kundur@gmail.com>, Mike Rapoport <rppt@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andrea Arcangeli <aarcange@redhat.com>, 
-	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>, 
-	Oscar Salvador <osalvador@suse.de>, Hugh Dickins <hughd@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>
-References: <f409cbe7-7865-45ab-af9a-6d5108bc5ad4@redhat.com>
- <aNw_GrZsql_M04T0@x1.local>
- <43d78ba7-8829-4a19-bdf3-d192a62cdac4@redhat.com>
- <aN08NxRLz7Wx0Qh4@x1.local>
- <ad124fb6-a712-4cf5-8a7e-2abacbc2e4be@redhat.com>
- <aN_XZbQjuYx-OnFr@x1.local>
- <cq3zcvnajs55zr7cplf5oxxjoh54fb7tvo23hehd5dmh4atvum@6274mneik6hu>
- <aOQuZy_Hpu1yyu29@x1.local>
- <akld3v2mtnjdqvs5dgwr4gnffdqf5dojwhmfylq3mkfzakjj7j@5oqqxsymkcbp>
- <aOUa8C8bhWvo5TbV@x1.local>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aOUa8C8bhWvo5TbV@x1.local>
-User-Agent: NeoMutt/20250510
-X-ClientProxiedBy: YT4P288CA0052.CANP288.PROD.OUTLOOK.COM
- (2603:10b6:b01:d2::7) To PH0PR10MB5777.namprd10.prod.outlook.com
- (2603:10b6:510:128::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417DC2E7F27;
+	Tue,  7 Oct 2025 16:22:54 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9032E7F0D;
+	Tue,  7 Oct 2025 16:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759854173; cv=none; b=MUrt9sZsU/0u00rXGrse9HrhrROYq8NX/dMZWFbVyqatL7XDqmU0qYNBeGscZvMYTCFZt96Z6yYS3hGthOGiufOuoKguvrfrp0T+y5S1TKsEmhgL+NtGHLbRd7wRA0dnezi4NNYNbBE849LaCIVWD7lHkzOGwLO+wPMIvyAIaPw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759854173; c=relaxed/simple;
+	bh=FxtD5IGXeq7MCAvR+IxCPdcBc032QcgvLySh7UVr4uU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=AqA5VF4qmzViv/MzI5G7XaVHzIyiZVXGfHHfyx2AUjhmy+CtUH3shsibn9J0OoBF+siIsnBqNzXoTf+uxzAFrU/dPcU68U/Q3dPfd0fsFqV+A/D6gbHu/0+VxN9MmOd/gpQzuE6cj8ex4A48s4hjF1fMqKQsnGKkQ5YIY6MUmjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4ch16R56SFz9sSC;
+	Tue,  7 Oct 2025 17:59:27 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id osQ9mmBknqDa; Tue,  7 Oct 2025 17:59:27 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4ch16R41Z2z9sRy;
+	Tue,  7 Oct 2025 17:59:27 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 799A68B770;
+	Tue,  7 Oct 2025 17:59:27 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id z2pXmbf4wtaa; Tue,  7 Oct 2025 17:59:27 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id D16208B76E;
+	Tue,  7 Oct 2025 17:59:26 +0200 (CEST)
+Message-ID: <feadc4f6-839b-4c04-b6df-dedf279fb315@csgroup.eu>
+Date: Tue, 7 Oct 2025 17:59:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|CH2PR10MB4231:EE_
-X-MS-Office365-Filtering-Correlation-Id: f4ddc0ab-a532-4fc1-6b17-08de05bb1587
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?rr6gkXI0DhPEiYJQ1KwUsW/ldOMLBH1cCRocnG01cmMDA40kra/H9K19dzg/?=
- =?us-ascii?Q?UO14+9Oujnz7QPi5tdE12WIK+4cb6MmijpJQV49kU/C0JkBkXxsJGCa+JdcV?=
- =?us-ascii?Q?O4g39tCqUbHYiKI/KGct0risAibMO7/zgIzopqFElsOpedr+3RP8Q0yZocLQ?=
- =?us-ascii?Q?ilfrR0fAZ2OF6NAL5IirBkJFx1DNna41NPP98WMExeHr38d+fk3LPRoqjx79?=
- =?us-ascii?Q?ioTQbHln9ocRX8ByKneEa9j2RK5RV2BlizjfXq9zPAp3W6BgqsoQG2c0sX6Y?=
- =?us-ascii?Q?7dMygFjc3INm9XOx80E4ekxwcTLvBRVe5JgX/IQuLYPrjgFr5yR/teTD4Bhl?=
- =?us-ascii?Q?Mr0TN+rb2Oy4mI4l2H23V6IRsgvWUM0157pAK/OTwexWNHzPN9WTunRvo3li?=
- =?us-ascii?Q?vM6Ro3p0iiupoorqnLJmS/PjTb3D0n2FF2Y6weqVC/gVsx9FaMU6aTahpoK/?=
- =?us-ascii?Q?CaTkT7bUFFhQP4xVwT6lHq9sCJ3Hb4BvEA8YzV8WpX+ZjEaqnMvabz1nqTtz?=
- =?us-ascii?Q?yFf15Q3cwYCe3cDdf8UzG/kyD1OYT0FPARBs2iUARrr7qu+rVpqTJhfTAANC?=
- =?us-ascii?Q?W6ajXwbBPpaVtxQHDVXCo1AYZjqmYBaLVWfnYN4r3KbzsYAv0cM6rsfPsYnc?=
- =?us-ascii?Q?lSjr5o0CZPe8Qgef7i6HejDJAPNJ97vprw0Lf6uFE5WrNzSdb9NBnjm7bj2t?=
- =?us-ascii?Q?/fUOzRur9L+G6LeY86K2H+XYCgSALECOCI1tqILwdskwDswzKXszWQToFche?=
- =?us-ascii?Q?O264AJjjL7lnpkOrMigaJrdX1tIMv1om4HFmDfn2PeFRxjUYDBLhM3qOJjwX?=
- =?us-ascii?Q?eoIZv51vd+voAmdOGz3jMbb3sIq72DvXKnE1ZK7aVo38vs3o2gD2/dEKxsGh?=
- =?us-ascii?Q?wdTO+vW3kqJjQx3QRKOvT8IXAxFVhpCTSblWnWqg0o+wqzuf/H1cl7OqiD+y?=
- =?us-ascii?Q?m4THRxht2NxwgrQAGfEhbS139W0PzDQWDIs7F35YDdeF/PeFIVgtksqDu3B+?=
- =?us-ascii?Q?9T6hcUJaiyIZR38gOngCzuxtJSyzUmuQ4udfDkWNIQ93MlOBTP9fVH2DS0rE?=
- =?us-ascii?Q?brLYQn/A2NnxzYv8Dye4MtJSzZNZLK5ck+7VCeTmqWlXs6EcVQOE8gj+KFuA?=
- =?us-ascii?Q?XDm4nv7tg0VOb7M1aXU3uLaILpiNY1W4OIfqg0iaUUNyLZUc58H/Rr8zcjQ6?=
- =?us-ascii?Q?mXwLmaS/ECQ5ccE9nNnOJdEGROLOSPwzKFUee053Roel/jIuHcobX7lMNxPC?=
- =?us-ascii?Q?8jadxwvEDka3CFvShHCZwG7GJr5egu9Dt4b01xLG9E4RnZYLvfwNZka+RqLN?=
- =?us-ascii?Q?VxoQT0wUEnebfxp3OFW08+ujIqt2EhVM0Px45XGJXS5/w9TEt2JSb40yeQ3Q?=
- =?us-ascii?Q?bFczeG0yPGFRbQoBiK6x/cjVIOHvo/BlPTE3BXtOBXy9utRMYmp0fj7SKveH?=
- =?us-ascii?Q?+ywsR3EhTvU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Z9rXzInTQRNVRCUmEF0W8YiqvdIujz5fMXMWN4Mko5oMsQGpi6/Pt+8ugTEV?=
- =?us-ascii?Q?OgekyCA+DG4kVB+FemfXtOJBiId3XJn7kmbDyKlGLMjym5Esb0rh+lTSl7JR?=
- =?us-ascii?Q?Zao2Zr2HbHCujzSniL1F1Q+l2DlJfClkrZRJx53y5mrO1bCEJfZv40aNT2k8?=
- =?us-ascii?Q?vC+cQWH9WT5yEi0VS/QW8gAxAvBxbJSUzXjVc1VuHpuGgKaXUAM+ZOP/Vde2?=
- =?us-ascii?Q?14JO8ut21z8c/md7rdgaVjX87Tye9S6pnFt4Ww1p4K5zo6OLcMYZh127kFAJ?=
- =?us-ascii?Q?xocL0IYoSB/SLhtBNq/lA6Qlukx7Fnd3b6vQvY3StnCscMeqohSAGQd5ReT2?=
- =?us-ascii?Q?Od5oS6+2RZQrIpiQUnT3bEnWaKmowjFO29XeX1v/Cxgzc6w7/QVpuxnP6nL1?=
- =?us-ascii?Q?KczBq5nNCz1MGdayKHvz1ZQ/OED7ukMJ+/09nUebhKuhAWHUtfIQauoQa4sK?=
- =?us-ascii?Q?pH4jVHcpWrXS5ZAtVq8uO0Sw6WQAVE+rcI5XiA+hHwEseWiDxiAqZAWU0Hn5?=
- =?us-ascii?Q?T5cetliIPSYmXO0kphMSWicQ/6jDS4YD6QObVqDJtG7Sx9woXJul6NoQWVXq?=
- =?us-ascii?Q?qRTJTI6ec7CcaK1v6alzSGjiEueguH7tOsU5857EN9AWOMx2t/+P3ofACaZu?=
- =?us-ascii?Q?08EvUKf9nydbcQ48952mydJmSxS4zVhTY680GmkwFNeVxWKw19Lpvwza7HmB?=
- =?us-ascii?Q?o4nYrtLeGGD7QqmXpK6LBtW8P+/9uo7uVpnUDBK9pHa9Ul6OMCvbOqiTUiR6?=
- =?us-ascii?Q?giqvGSwBP9qlE4eXUdieVjxbnC0NsvRWl06+gTCz33ro63SEFKCYWVGdYwfk?=
- =?us-ascii?Q?4dH70ZEbzmYQKCElnWinUTe1qTUU5GCT3jPjEp5mcHhRtYi0gcyk+3xxErEu?=
- =?us-ascii?Q?rFI1i5vDFoIr3jMEKL9wU0fITkS8t1PnnU996pz5SOU3EaB6NCJqMcrF66uV?=
- =?us-ascii?Q?1d00P0sO92IeZcbncxlnKXX9VtaY9gHM3Zr5XfDZ2mzHyypMZIBbReaivGsx?=
- =?us-ascii?Q?kzpIUmSXSGszNASVWRXSFWSQ4Byp3UyxvCNKs2P1wKXJZ705kmVo5Mr71fh4?=
- =?us-ascii?Q?B8IoeCjYWEg3cEKC+CFLl+NHJhxYDpClh301y2GJY763FXqlm2tVKLHw9RCz?=
- =?us-ascii?Q?Scz7XDGBRulUiQLZJymsjOu8k7TAHw8dIBJJNGxdfuDg9FDgqDsW7wD8HCDe?=
- =?us-ascii?Q?x3bgAHiYbCR/Qlye5uGW77zRWMuVEsm0OULybEot3FrhjtiACANkTWzYFDfl?=
- =?us-ascii?Q?yCW35PPdOmL/D1uQGJnaJgw+pIqF/2AogWgsSyVyOVM496lFFmVdM17QWir5?=
- =?us-ascii?Q?GhhJpJX4kZx81R4kUT47WT1xYJ+XvDgQnBvkdNxnsEd9qQzGnW7gpZNU9oEM?=
- =?us-ascii?Q?t/5/WzqnDXwtaWuN9jq/z/Hf+bMHuAHgBiHoQ6q/mvA0qow9urQIGk8u2IaN?=
- =?us-ascii?Q?mIYX0BhYzqCEN/slQ+Awo5ayN7LM9iNDczW4dANWbIyUWREd254zcM42MoKk?=
- =?us-ascii?Q?Xr7NTQRrmyyZlatfuWwi1s7Hq2sJQ7mxyEbX3XsdsEVp5WZidtZQ3MDX7zzp?=
- =?us-ascii?Q?t/1uJFiyf+jhRbPqFAypyu/c23UZKl6PK8LPhg6Y?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	/EQs3yQ5PWQl41xzF31JASY5YIt6fSEjUcyWXEJuugzbtEUZoAQS7rdi9j2lLBHIWVwC4Q6CsDFVroe63uFBoAOsZbYk306vm/vm1Y3YoEUYUrvGoHnJbTzIEwc1L0LsAwvCGgN6APBK/QGL0ouwXKha3REs+2Dgvn3/8ayfhJetk+04BPTbSWiCHX/HhIrfh0thmDmIh2IKC1Z8Xins0sqabm4zy9UG2Gcwn7pcdiYM5oGcyfU475a7fnJtUMB70JLW61DcJ3LYbjscJX6KCOgR97CSVk3kCtHERc62dYbPLyrFmL90kv7KCOH4vyLIqPaAkb3g8J0dy/Wi90Hsp2QvuAVvohgtrTRtiy+v/Jg7k59VWRZRYg8aiCSbELWXBBdzKugDG8lfXh5hwYOesYYGiMKOLeIrfBpwg04h/IcE0VBD3mjzVvxCeVkc/BqA1MgvRFfaIUOhmvb29ZIQTOy5FkkhqOHTLeTAWBlAla7Uo1Tz2BNk08tARUBJ+n3aulsKyiEydhFfjTWVWiOqs6kOfolvPUhOfuN4fsOwbETvdAKX3ia7VRDdNwFDMY5DdR/OAHLZTDjyyl4eDkGBYtYgIIrJxyXZB0JbAOuk7Xg=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f4ddc0ab-a532-4fc1-6b17-08de05bb1587
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2025 16:03:41.3899
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: was7lA6u7ddmFSiQ0nTWwlDYhHu/dqFD3zsMTjeCpyRmgGgio6gITWPFMkvdMha29a5UfRNcji8k68THvOMhqQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB4231
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-07_02,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=979 spamscore=0
- phishscore=0 mlxscore=0 suspectscore=0 bulkscore=0 adultscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2509150000 definitions=main-2510070126
-X-Proofpoint-ORIG-GUID: jirInTa9R2qEL18GaxRNvBT_MaoInIY3
-X-Authority-Analysis: v=2.4 cv=JuH8bc4C c=1 sm=1 tr=0 ts=68e539e2 b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=JfrnYn6hAAAA:8
- a=P-IC7800AAAA:8 a=20KFwNOVAAAA:8 a=ykrQMbOU440fKEU08KoA:9 a=CjuIK1q_8ugA:10
- a=1CNFftbPRP8L7MoqJWF3:22 a=d3PnA9EDa4IxuAV0gXij:22 cc=ntf awl=host:13625
-X-Proofpoint-GUID: jirInTa9R2qEL18GaxRNvBT_MaoInIY3
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA3MDEyNiBTYWx0ZWRfX6KYZHywGlaO4
- /ghJyxmHElu4zrVjJT2dvqYdGg0ES9uF+vsSnwJ6++raCKPIQ4oiEXoDlxvraX+HBpXMBgY9UNX
- tscVaPEOIUjQv9AgIbnWnhAO2gK5H8CPrRq6MOTQCb6Ur4QBnNegUijxFaU5KqREHHJqjUTduRf
- BGurM0s1N50mewh1ZXc3pmagN4y3eXM4+JsoFB3+eFIeoBNoLCV7qA12QmOc2ShzR8meS8DHSZj
- jkn/1NbC2LYsrgCx7X3FEFzpgKzjJWRC5bsY4aqxaGtkbTbaGyPR9HBZvqfAREr6pIN0TgLMB4X
- HSpDDJovLgEBkitRH+rFQJJMlbGrf2QbNr+Rxcy5DjMTu7agu4LRbhot+LJQgJwpTVVqGDjncf7
- OjykBdA2+maiX451eJIJ80Cv8kT/j7CXkx4VBxtUPUXl8iZf94c=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [bisected][linux-next20251003] tmp2 selftests resulting in Kernel
+ OOPs
+To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
+ LKML <linux-kernel@vger.kernel.org>,
+ linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>, linux-kselftest@vger.kernel.org,
+ daleksan@redhat.com, jstancek@redhat.com, jarkko@kernel.org,
+ pmenzel@molgen.mpg.de
+References: <88f1df7e-8347-45f7-a2a1-e321e72e4009@linux.ibm.com>
+ <3d7a5f70-7ece-48ba-92bd-8b6473fd8b6c@linux.ibm.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <3d7a5f70-7ece-48ba-92bd-8b6473fd8b6c@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-* Peter Xu <peterx@redhat.com> [251007 09:52]:
-> On Mon, Oct 06, 2025 at 11:31:19PM -0400, Liam R. Howlett wrote:
-> > * Peter Xu <peterx@redhat.com> [251006 17:02]:
-> > > On Mon, Oct 06, 2025 at 03:06:39PM -0400, Liam R. Howlett wrote:
-> > > > * Peter Xu <peterx@redhat.com> [251003 10:02]:
-> > > > > On Wed, Oct 01, 2025 at 04:39:50PM +0200, David Hildenbrand wrote:
-> > > > > > On 01.10.25 16:35, Peter Xu wrote:
-> > > > > > > On Wed, Oct 01, 2025 at 03:58:14PM +0200, David Hildenbrand wrote:
-> > > > > > > > > > > > I briefly wondered whether we could use actual UFFD_FEATURE_* here, but they
-> > > > > > > > > > > > are rather unsuited for this case here (e.g., different feature flags for
-> > > > > > > > > > > > hugetlb support/shmem support etc).
-> > > > 
-> > > > I think this supports the need for a code clean up before applying an
-> > > > API that generalizes it?
-> > > > 
-> > > > I would expect the uffd code that needs the same uffd_feature would
-> > > > logically have the same uffd flags for the uffd_ops, but that's not the
-> > > > case here?
-> > > > 
-> > > > Is this because uffd_feature != UFFD_FEATURE_* ... or are the internal
-> > > > UFFD_FEATURE_* not the same thing?
-> > > > 
-> > > > > > > > > > > > 
-> > > > > > > > > > > > But reading "uffd_ioctls" below, can't we derive the suitable vma flags from
-> > > > > > > > > > > > the supported ioctls?
-> > > > > > > > > > > > 
-> > > > > > > > > > > > _UFFDIO_COPY | _UFDIO_ZEROPAGE -> VM_UFFD_MISSING
-> > > > > > > > > > > > _UFFDIO_WRITEPROTECT -> VM_UFFD_WP
-> > > > > > > > > > > > _UFFDIO_CONTINUE -> VM_UFFD_MINOR
-> > > > > > > > > > > 
-> > > > > > > > > > > Yes we can deduce that, but it'll be unclear then when one stares at a
-> > > > > > > > > > > bunch of ioctls and cannot easily digest the modes the memory type
-> > > > > > > > > > > supports.  Here, the modes should be the most straightforward way to
-> > > > > > > > > > > describe the capability of a memory type.
-> > > > > > > > > > 
-> > > > > > > > > > I rather dislike the current split approach between vm-flags and ioctls.
-> > > > > > > > > > 
-> > > > > > > > > > I briefly thought about abstracting it for internal purposes further and
-> > > > > > > > > > just have some internal backend ("memory type") flags.
-> > > > > > > > > > 
-> > > > > > > > > > UFFD_BACKEND_FEAT_MISSING -> _UFFDIO_COPY and VM_UFFD_MISSING
-> > > > > > > > > > UFFD_BACKEND_FEAT_ZEROPAGE -> _UFDIO_ZEROPAGE
-> > > > > > > > > > UFFD_BACKEND_FEAT_WP -> _UFFDIO_WRITEPROTECT and VM_UFFD_WP
-> > > > > > > > > > UFFD_BACKEND_FEAT_MINOR -> _UFFDIO_CONTINUE and VM_UFFD_MINOR
-> > > > > > > > > > UFFD_BACKEND_FEAT_POISON -> _UFFDIO_POISON
-> > > > > > > > > 
-> > > > > > > > > This layer of mapping can be helpful to some, but maybe confusing to
-> > > > > > > > > others.. who is familiar with existing userfaultfd definitions.
-> > > > > > > > > 
-> > > > > > > > 
-> > > > > > > > Just wondering, is this confusing to you, and if so, which part?
-> > > > > > > > 
-> > > > > > > > To me it makes perfect sense and cleans up this API and not have to sets of
-> > > > > > > > flags that are somehow interlinked.
-> > > > > > > 
-> > > > > > > It adds the extra layer of mapping that will only be used in vm_uffd_ops
-> > > > > > > and the helper that will consume it.
-> > > > > > 
-> > > > > > Agreed, while making the API cleaner. I don't easily see what's confusing
-> > > > > > about that, though.
-> > > > > 
-> > > > > It will introduce another set of userfaultfd features, making it hard to
-> > > > > say what is the difference between the new set and UFFD_FEATURE_*.
-> > > > 
-> > > > If it's not using UFFD_FEATURE_ defines, then please don't use
-> > > > uffd_feature for it in the uffd_ops.  That seems like a recipe for
-> > > > confusion.
-> > > > 
-> > > > > 
-> > > > > > 
-> > > > > > I think it can be done with a handful of LOC and avoid having to use VM_
-> > > > > > flags in this API.
-> > > > > 
-> > > > > I waited for a few days, unfortunately we didn't get a second opinion.
-> > > > 
-> > > > Sorry, been pretty busy here.
-> > > > 
-> > > > If we can avoid the flags/features, then I'd rather that (the derived
-> > > > from uffd_ops == NULL for support).  We can always add something else
-> > > > later.
-> > > > 
-> > > > If we have to have a feature/flag setting, then please avoid using
-> > > > uffd_feature unless we use it with UFFD_FEATURE_ - which I think, we've
-> > > > ruled out?
-> > > 
-> > > Yes, there was no plan to use UFFD_FEATURE_* in vm_uffd_ops.  It's because
-> > > UFFD_FEATURE_* was introduced to almost let userapp have a way to probe the
-> > > capability of the kernel, rather than the layer to describe what features
-> > > userfaultfd has.
-> > > 
-> > > For example, we have UFFD_FEATURE_MISSING_SHMEM declaring that "the current
-> > > kernel supports MISSING mode userfaultfd on shmem".  This feature flag is
-> > > essentially of no use for any other memory types, hence not applicable to
-> > > vm_uffd_ops.  OTOH, we don't have a feature flag to represent "userfaultfd
-> > > MISSING mode".
-> > > 
-> > 
-> > hehe, the overloaded terms here are numerous, but I think I get what you
-> > are saying.  It's funny that FEATURE_MISSING isn't a check for a missing
-> > feature, but really to check if the register mode missing is available.
-> > 
-> > I'd also rather not have ioctls and features/flags.  It seems reasonable
-> > to drop the ioctl, like David said.
-> > 
-> > I assume there is some future plan for flags, or is this for versioning?
-> > 
-> > I'd like to one day even remove the suggested backend types and instead
-> > use handlers in the uffd_ops directly, although it is difficult to know
-> > if this is reasonable today.
+
+
+Le 07/10/2025 à 17:08, Venkat Rao Bagalkote a écrit :
 > 
-> The current proposal will be two fields (modes_supported,
-> ioctls_supported).  If we add yet another feature-backend flags, that will
-> only be used to map to the two fields but using one flag.
+> On 07/10/25 10:59 am, Venkat Rao Bagalkote wrote:
+>> Greetings!!!
+>>
+>>
+>> IBM CI has reported a kernel OOPs while running TPM2selftests on IBM 
+>> Power11 system with linux-next20251002 kernel.
+>>
+>>
+>> Test Case:
+>>
+>> make run_tests
+>> TAP version 13
+>> 1..3
+>> # timeout set to 600
+>> # selftests: tpm2: test_smoke.sh
+>> # test_read_partial_overwrite (tpm2_tests.SmokeTest) ... ok
+>> # test_read_partial_resp (tpm2_tests.SmokeTest) ... ok
+>> # test_seal_with_auth (tpm2_tests.SmokeTest) ... ok
+>> # test_seal_with_policy (tpm2_tests.SmokeTest) ... ok
+>> # test_seal_with_too_long_auth (tpm2_tests.SmokeTest) ... ok
+>> # test_send_two_cmds (tpm2_tests.SmokeTest) ... ok
+>> # test_too_short_cmd (tpm2_tests.SmokeTest) ... ok
+>> # test_unseal_with_wrong_auth (tpm2_tests.SmokeTest) ... ok
+>> # test_unseal_with_wrong_policy (tpm2_tests.SmokeTest) ... ERROR
+>> #
+>> # ======================================================================
+>> # ERROR: test_unseal_with_wrong_policy (tpm2_tests.SmokeTest)
+>> # -----------------------------------------------------
+>>
+>>
+>> Traces:
+>>
+>>
+>> [  452.604333] BUG: KASAN: slab-use-after-free in tpmrm_release+0x78/0xa8
+>> [  452.604345] Read of size 8 at addr c00000001c650000 by task 
+>> python3/1856
+>> [  452.604353]
+>> [  452.604358] CPU: 24 UID: 0 PID: 1856 Comm: python3 Kdump: loaded 
+>> Not tainted 6.17.0-next-20251003 #1 VOLUNTARY
+>> [  452.604364] Hardware name: IBM,9080-HEX Power11 (architected) 
+>> 0x820200 0xf000007 of:IBM,FW1110.01 (NH1110_069) hv:phyp pSeries
+>> [  452.604368] Call Trace:
+>> [  452.604370] [c0000000c1867840] [c00000000187ea4c] 
+>> dump_stack_lvl+0x84/0xe8 (unreliable)
+>> [  452.604380] [c0000000c1867870] [c000000000803754] 
+>> print_address_description.constprop.0+0x11c/0x56c
+>> [  452.604388] [c0000000c1867910] [c000000000803c84] 
+>> print_report+0xe0/0x358
+>> [  452.604394] [c0000000c18679e0] [c000000000804124] 
+>> kasan_report+0x128/0x1f4
+>> [  452.604400] [c0000000c1867af0] [c0000000008062b4] 
+>> __asan_load8+0xa8/0xe0
+>> [  452.604406] [c0000000c1867b10] [c000000000f2ec18] 
+>> tpmrm_release+0x78/0xa8
+>> [  452.604412] [c0000000c1867b40] [c0000000008b6a2c] __fput+0x21c/0x60c
+>> [  452.604417] [c0000000c1867bc0] [c0000000008ada70] sys_close+0x74/0xd0
+>> [  452.604424] [c0000000c1867bf0] [c000000000039270] 
+>> system_call_exception+0x1e0/0x460
+>> [  452.604431] [c0000000c1867e50] [c00000000000d05c] 
+>> system_call_vectored_common+0x15c/0x2ec
+>> [  452.604438] ---- interrupt: 3000 at 0x7fffb7534ab4
+>> [  452.604443] NIP:  00007fffb7534ab4 LR: 00007fffb7534ab4 CTR: 
+>> 0000000000000000
+>> [  452.604446] REGS: c0000000c1867e80 TRAP: 3000   Not tainted 
+>> (6.17.0-next-20251003)
+>> [  452.604449] MSR:  800000000280f033 
+>> <SF,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 44284422  XER: 00000000
+>> [  452.604466] IRQMASK: 0
+>> [  452.604466] GPR00: 0000000000000006 00007ffff65d76b0 
+>> 00007fffb7c17700 0000000000000006
+>> [  452.604466] GPR04: 0000000000000000 0000000000000000 
+>> 0000000000000000 0000000000000004
+>> [  452.604466] GPR08: 0000000000000000 0000000000000000 
+>> 0000000000000000 0000000000000000
+>> [  452.604466] GPR12: 0000000000000000 00007fffb7e6b8e0 
+>> 00000000000000a1 00007fffb67acec0
+>> [  452.604466] GPR16: 0000000164032ad0 00007fffb67aceb0 
+>> 00007fffb76f6a90 0000000000000000
+>> [  452.604466] GPR20: 00007fffb6f21850 0000000000000000 
+>> 00007fffb71062c0 0000000164034490
+>> [  452.604466] GPR24: 00007fffb6f2fea0 00007fffb67acea8 
+>> 0000000164032b18 00007fffb7c45b32
+>> [  452.604466] GPR28: 00007fffb7c678e0 00007fffb67aceb8 
+>> 0000000000000006 0000000164034490
+>> [  452.604510] NIP [00007fffb7534ab4] 0x7fffb7534ab4
+>> [  452.604513] LR [00007fffb7534ab4] 0x7fffb7534ab4
+>> [  452.604516] ---- interrupt: 3000
+>> [  452.604518]
+>> [  452.604601] Allocated by task 1856:
+>> [  452.604607]  kasan_save_stack+0x34/0x64
+>> [  452.604614]  kasan_save_track+0x2c/0x50
+>> [  452.604621]  kasan_save_alloc_info+0x58/0x74
+>> [  452.604628]  __kasan_kmalloc+0x12c/0x168
+>> [  452.604635]  __kmalloc_cache_noprof+0x1d8/0x71c
+>> [  452.604643]  tpmrm_open+0x88/0x168
+>> [  452.604649]  chrdev_open+0x1f4/0x484
+>> [  452.604656]  do_dentry_open+0x578/0x9cc
+>> [  452.604663]  vfs_open+0x68/0x23c
+>> [  452.604670]  do_open+0x514/0x74c
+>> [  452.604676]  path_openat+0x16c/0x380
+>> [  452.604682]  do_filp_open+0x104/0x230
+>> [  452.604689]  do_sys_openat2+0xb8/0x154
+>> [  452.604696]  sys_openat+0xcc/0x130
+>> [  452.604703]  system_call_exception+0x1e0/0x460
+>> [  452.604710]  system_call_vectored_common+0x15c/0x2ec
+>> [  452.604718]
+>> [  452.604722] Freed by task 1856:
+>> [  452.604726]  kasan_save_stack+0x34/0x64
+>> [  452.604733]  kasan_save_track+0x2c/0x50
+>> [  452.604739]  __kasan_save_free_info+0x64/0x110
+>> [  452.604747]  __kasan_slab_free+0xb0/0x10c
+>> [  452.604753]  kfree+0x220/0x624
+>> [  452.604760]  tpmrm_release+0x6c/0xa8
+>> [  452.604766]  __fput+0x21c/0x60c
+>> [  452.604772]  sys_close+0x74/0xd0
+>> [  452.604779]  system_call_exception+0x1e0/0x460
+>> [  452.604786]  system_call_vectored_common+0x15c/0x2ec
+>> [  452.604794]
+>> [  452.604797] The buggy address belongs to the object at 
+>> c00000001c650000
+>> [  452.604797]  which belongs to the cache kmalloc-8k of size 8192
+>> [  452.604806] The buggy address is located 0 bytes inside of
+>> [  452.604806]  freed 8192-byte region [c00000001c650000, 
+>> c00000001c652000)
+>> [  452.604815]
+>> [  452.604818] The buggy address belongs to the physical page:
+>> [  452.604824] page: refcount:0 mapcount:0 mapping:0000000000000000 
+>> index:0xc00000001c644000 pfn:0x1c60
+>> [  452.604833] head: order:3 mapcount:0 entire_mapcount:0 
+>> nr_pages_mapped:0 pincount:0
+>> [  452.604840] flags: 0x3ffffe00000040(head|node=0|zone=0| 
+>> lastcpupid=0x1fffff)
+>> [  452.604849] page_type: f5(slab)
+>> [  452.604856] raw: 003ffffe00000040 c000000007012300 5deadbeef0000122 
+>> 0000000000000000
+>> [  452.604864] raw: c00000001c644000 000000008020001e 00000000f5000000 
+>> 0000000000000000
+>> [  452.604872] head: 003ffffe00000040 c000000007012300 
+>> 5deadbeef0000122 0000000000000000
+>> [  452.604879] head: c00000001c644000 000000008020001e 
+>> 00000000f5000000 0000000000000000
+>> [  452.604887] head: 003ffffe00000003 c00c000000071801 
+>> 00000000ffffffff 00000000ffffffff
+>> [  452.604894] head: ffffffffffffffff 0000000000000000 
+>> 00000000ffffffff 0000000000000008
+>> [  452.604900] page dumped because: kasan: bad access detected
+>> [  452.604905]
+>> [  452.604908] Memory state around the buggy address:
+>> [  452.604914]  c00000001c64ff00: fc fc fc fc fc fc fc fc fc fc fc fc 
+>> fc fc fc fc
+>> [  452.604920]  c00000001c64ff80: fc fc fc fc fc fc fc fc fc fc fc fc 
+>> fc fc fc fc
+>> [  452.604927] >c00000001c650000: fa fb fb fb fb fb fb fb fb fb fb fb 
+>> fb fb fb fb
+>> [  452.604933]                    ^
+>> [  452.604937]  c00000001c650080: fb fb fb fb fb fb fb fb fb fb fb fb 
+>> fb fb fb fb
+>> [  452.604944]  c00000001c650100: fb fb fb fb fb fb fb fb fb fb fb fb 
+>> fb fb fb fb
+>> [  452.604950] 
+>> ==================================================================
+>> [  452.604955] Disabling lock debugging due to kernel taint
+>> [  452.604961] Kernel attempted to read user page (770) - exploit 
+>> attempt? (uid: 0)
+>> [  452.604969] BUG: Kernel NULL pointer dereference on read at 0x00000770
+>> [  452.604975] Faulting instruction address: 0xc0000000002b2e0c
+>> [  452.604982] Oops: Kernel access of bad area, sig: 11 [#1]
+>> [  452.604987] LE PAGE_SIZE=64K MMU=Radix  SMP NR_CPUS=8192 NUMA pSeries
+>> [  452.604996] Modules linked in: nft_fib_inet nft_fib_ipv4 
+>> nft_fib_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 
+>> nft_reject nft_ct nft_chain_nat nf_nat bonding nf_conntrack tls 
+>> nf_defrag_ipv6 nf_defrag_ipv4 rfkill ip_set nf_tables nfnetlink sunrpc 
+>> pseries_rng vmx_crypto fuse ext4 crc16 mbcache jbd2 sd_mod sg ibmvscsi 
+>> ibmveth scsi_transport_srp pseries_wdt
+>> [  452.605073] CPU: 24 UID: 0 PID: 1856 Comm: python3 Kdump: loaded 
+>> Tainted: G    B               6.17.0-next-20251003 #1 VOLUNTARY
+>> [  452.605084] Tainted: [B]=BAD_PAGE
+>> [  452.605089] Hardware name: IBM,9080-HEX Power11 (architected) 
+>> 0x820200 0xf000007 of:IBM,FW1110.01 (NH1110_069) hv:phyp pSeries
+>> [  452.605096] NIP:  c0000000002b2e0c LR: c0000000002b2e08 CTR: 
+>> 0000000000000000
+>> [  452.605103] REGS: c0000000c1867820 TRAP: 0300   Tainted: G B       
+>> (6.17.0-next-20251003)
+>> [  452.605110] MSR:  8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 
+>> 28284420  XER: 0000000d
+>> [  452.605132] CFAR: c000000000807920 DAR: 0000000000000770 DSISR: 
+>> 40000000 IRQMASK: 0
+>> [  452.605132] GPR00: c0000000002b2e08 c0000000c1867ac0 
+>> c00000000234a500 0000000000000001
+>> [  452.605132] GPR04: 0000000000000008 0000000000000000 
+>> c0000000002b2e08 0000000000000001
+>> [  452.605132] GPR08: 0000000000000020 0000000000000001 
+>> 0000000000000001 a80e000000000000
+>> [  452.605132] GPR12: c00e0000009b1c8c c000000d0ddeb700 
+>> 0000000000000000 0000000000000000
+>> [  452.605132] GPR16: 0000000000000000 0000000000000000 
+>> 0000000000000000 0000000000000000
+>> [  452.605132] GPR20: 0000000000000008 0000000000000000 
+>> c000000008202f00 c00000007b9ff620
+>> [  452.605132] GPR24: c00000008a76cb20 c00000008a76cb40 
+>> c00000008a76cb08 c000000002201e80
+>> [  452.605132] GPR28: c000000061569248 0000000000000770 
+>> c00000008a76cb00 0000000000000768
+>> [  452.605227] NIP [c0000000002b2e0c] up_read+0x50/0x17c
+>> [  452.605237] LR [c0000000002b2e08] up_read+0x4c/0x17c
+>> [  452.605245] Call Trace:
+>> [  452.605249] [c0000000c1867ac0] [c0000000002b2e08] 
+>> up_read+0x4c/0x17c (unreliable)
+>> [  452.605261] [c0000000c1867b10] [c000000000f2ec28] 
+>> tpmrm_release+0x88/0xa8
+>> [  452.605271] [c0000000c1867b40] [c0000000008b6a2c] __fput+0x21c/0x60c
+>> [  452.605280] [c0000000c1867bc0] [c0000000008ada70] sys_close+0x74/0xd0
+>> [  452.605291] [c0000000c1867bf0] [c000000000039270] 
+>> system_call_exception+0x1e0/0x460
+>> [  452.605301] [c0000000c1867e50] [c00000000000d05c] 
+>> system_call_vectored_common+0x15c/0x2ec
+>> [  452.605312] ---- interrupt: 3000 at 0x7fffb7534ab4
+>> [  452.605319] NIP:  00007fffb7534ab4 LR: 00007fffb7534ab4 CTR: 
+>> 0000000000000000
+>> [  452.605326] REGS: c0000000c1867e80 TRAP: 3000   Tainted: G B       
+>> (6.17.0-next-20251003)
+>> [  452.605333] MSR:  800000000280f033 
+>> <SF,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 44284422  XER: 00000000
+>> [  452.605362] IRQMASK: 0
+>> [  452.605362] GPR00: 0000000000000006 00007ffff65d76b0 
+>> 00007fffb7c17700 0000000000000006
+>> [  452.605362] GPR04: 0000000000000000 0000000000000000 
+>> 0000000000000000 0000000000000004
+>> [  452.605362] GPR08: 0000000000000000 0000000000000000 
+>> 0000000000000000 0000000000000000
+>> [  452.605362] GPR12: 0000000000000000 00007fffb7e6b8e0 
+>> 00000000000000a1 00007fffb67acec0
+>> [  452.605362] GPR16: 0000000164032ad0 00007fffb67aceb0 
+>> 00007fffb76f6a90 0000000000000000
+>> [  452.605362] GPR20: 00007fffb6f21850 0000000000000000 
+>> 00007fffb71062c0 0000000164034490
+>> [  452.605362] GPR24: 00007fffb6f2fea0 00007fffb67acea8 
+>> 0000000164032b18 00007fffb7c45b32
+>> [  452.605362] GPR28: 00007fffb7c678e0 00007fffb67aceb8 
+>> 0000000000000006 0000000164034490
+>> [  452.605450] NIP [00007fffb7534ab4] 0x7fffb7534ab4
+>> [  452.605456] LR [00007fffb7534ab4] 0x7fffb7534ab4
+>> [  452.605462] ---- interrupt: 3000
+>> [  452.605467] Code: fbc1fff0 7c7f1b78 f8010010 f821ffb1 e92d0c78 
+>> f9210028 39200000 3ba30008 38800008 7fa3eb78 48554af5 60000000 
+>> <ebdf0008> eb8d0908 7bc90764 fbc10020
+>> [  452.605501] ---[ end trace 0000000000000000 ]---
+>> [  452.613685] pstore: backend (nvram) writing error (-1)
+>> [  452.613691]
+>>
+>>
 > 
-> Could you elaborate what's the handler you described?  Is that one handler
-> returning both of the fields?
+> Git bisect is pointing to eb28a2adba0654878bcfd909b429bf567b35922b as 
+> first bad commit.
+
+Should be fixed by the following change ?
+
+diff --git a/drivers/char/tpm/tpmrm-dev.c b/drivers/char/tpm/tpmrm-dev.c
+index 13322dd9ac9e0..334b3ec2b36a5 100644
+--- a/drivers/char/tpm/tpmrm-dev.c
++++ b/drivers/char/tpm/tpmrm-dev.c
+@@ -54,8 +54,8 @@ static int tpmrm_release(struct inode *inode, struct 
+file *file)
+
+  	tpm_common_release(file, fpriv);
+  	tpm2_del_space(fpriv->chip, &priv->space);
+-	kfree(priv);
+  	up_read(&fpriv->chip->open_lock);
++	kfree(priv);
+
+  	return 0;
+  }
+
+
 > 
-> If so, I'd prefer that rather than introducing feature-backend flags,
-> because I want to avoid introducing another different feature set to uffd.
 > 
-
-I was talking about uffd_features.  I thought it was being renamed to
-flags, not modes_supported.  It was pretty late when I responded.
-
-FWIU, David was saying we don't need both of modes and ioctl listed in
-the uffd_ops?
-
-I was thinking that we could just put the features directly as function
-pointers in the uffd_ops and check if they are NULL or not for
-'support'.
-
-ie:
-
-struct vm_uffd_ops hugetlb_uffd_ops = {
-        .missing = hugetlb_handle_userfault,
-        .write_protect = mwriteprotect_range,
-        .minor = hugetlb_handle_userfault_minor,
-
-        .mfill_atomic = hugetlb_mfill_atomic_pte,
-        .mfill_atomic_continue = ...
-        .mfill_zeropage = ...
-        .mfill_poison = ...
-        .mfill_copy = NULL, /* For example */
-};
-
-Then mfill_atomic_copy() becomes:
-{
-        /*
-         * Maybe some setup, used for all mfill operations from
-         * mfill_atomic()
-         */
-
-         ...
-
-        dst_vma = uffd_mfill_lock()
-        uffd_ops = vma_get_uffd_ops(vma);
-        if (!uffd_ops)
-                return false;
-
-        if (!uffd_ops->mfill_copy) /* unlikely? */
-                return false;
-
-        return uffd_ops->mfill_copy(dst_vma,..);
-}
-
-This way is_vm_hugetlb_page() never really needs to be used because the
-function pointer already makes that distinction.
-
-Right now, we have checks for hugetlb through other functions that "pass
-off to appropriate routine", and we end up translating the
-ioctl_supports into the function call eventually, anyways.
-
-We also seem to call all the mfill options with a static uffd flag,
-which then gets validated against that ioctl_supports.  So we already
-know at the call site where we want to go, but we're doing it in a
-round-about way.
-
-I think this is what Matthew was saying about a middle-layer [1].
-
-If you had dispatched to a fault handler, then all the hugetlbfs checks
-in here [2] will hopefully go away, for example.
-
-Thanks,
-Liam
-
-[1]. https://lore.kernel.org/kvm/Z0DOdTRAaK3whZKW@casper.infradead.org/
-[2]. https://elixir.bootlin.com/linux/v6.17.1/source/fs/userfaultfd.c#L476
+> eb28a2adba0654878bcfd909b429bf567b35922b is the first bad commit
+> commit eb28a2adba0654878bcfd909b429bf567b35922b
+> Author: Jonathan McDowell <noodles@meta.com>
+> Date:   Tue Sep 23 18:10:00 2025 +0100
+> 
+>      tpm: Ensure exclusive userspace access when using /dev/tpm<n>
+> 
+>      There is an is_open lock on /dev/tpm<n> that dates back to at least
+>      2013, but it only prevents multiple accesses via *this* interface. 
+> It is
+>      perfectly possible for userspace to use /dev/tpmrm<n>, or the 
+> kernel to
+>      use the internal interfaces, to access the TPM. For tooling expecting
+>      exclusive access, such as firmware updates, this can cause issues.
+> 
+>      Close the userspace loophole by changing the simple bit lock to a full
+>      read/write mutex. Direct /dev/tpm<n> access needs an exclusive write
+>      lock, the resource broker continues to allow concurrent access 
+> *except*
+>      when /dev/tpm<n> is open.
+> 
+>      Signed-off-by: Jonathan McDowell <noodles@meta.com>
+>      Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+>      Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+>   drivers/char/tpm/tpm-chip.c  |  1 +
+>   drivers/char/tpm/tpm-dev.c   | 14 ++++++++------
+>   drivers/char/tpm/tpmrm-dev.c | 20 ++++++++++++++++++--
+>   include/linux/tpm.h          |  3 ++-
+>   4 files changed, 29 insertions(+), 9 deletions(-)
+> 
+> 
+> 
+> Git bisect log:
+> 
+> 
+> git bisect log
+> git bisect start
+> # status: waiting for both good and bad commits
+> # good: [e5f0a698b34ed76002dc5cff3804a61c80233a7a] Linux 6.17
+> git bisect good e5f0a698b34ed76002dc5cff3804a61c80233a7a
+> # status: waiting for bad commit, 1 good commit known
+> # bad: [47a8d4b89844f5974f634b4189a39d5ccbacd81c] Add linux-next 
+> specific files for 20251003
+> git bisect bad 47a8d4b89844f5974f634b4189a39d5ccbacd81c
+> # good: [f79e772258df311c2cb21594ca0996318e720d28] Merge tag 'media/ 
+> v6.18-1' of git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux- 
+> media
+> git bisect good f79e772258df311c2cb21594ca0996318e720d28
+> # good: [6bda5a67f6a2ae4c0153e693e96bd408d054c732] Merge branch 'xtensa- 
+> for-next' of https://eur01.safelinks.protection.outlook.com/? 
+> url=https%3A%2F%2Fgithub.com%2Fjcmvbkbc%2Flinux- 
+> xtensa.git&data=05%7C02%7Cchristophe.leroy2%40cs- 
+> soprasteria.com%7C18e20b6baa664009b66c08de05b37367%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638954465485179363%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=0Y%2BuK%2B%2BkZRoXNH%2FK4Ni4hd3RVZJmX8c2SqoLd40qq2Q%3D&reserved=0
+> git bisect good 6bda5a67f6a2ae4c0153e693e96bd408d054c732
+> # bad: [09026363ffabf7bb33e0ce000d8bff3e41b0c3de] Merge branch 'next' of 
+> https://eur01.safelinks.protection.outlook.com/? 
+> url=https%3A%2F%2Fgit.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fpcmoore%2Faudit.git&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7C18e20b6baa664009b66c08de05b37367%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638954465485205361%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=XuvSxtgtEAPPm3jl6X02nRyTfSh0EXMCUorpI21Y6Cs%3D&reserved=0
+> git bisect bad 09026363ffabf7bb33e0ce000d8bff3e41b0c3de
+> # good: [c32d529ea3e39ba4918f3865ef90ef6bddaa498c] Merge branch 'for- 
+> next' of https://eur01.safelinks.protection.outlook.com/? 
+> url=https%3A%2F%2Fgit.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fhid%2Fhid.git&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7C18e20b6baa664009b66c08de05b37367%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638954465485215132%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=eOflHx6SriPsE%2FEwEURKIEzRciXVlmsDJ7F%2F1tTJVtk%3D&reserved=0
+> git bisect good c32d529ea3e39ba4918f3865ef90ef6bddaa498c
+> # good: [3fa51882336f09d1a8a03edf107ef43e3b872fc1] Merge branch 'next' 
+> of https://eur01.safelinks.protection.outlook.com/? 
+> url=https%3A%2F%2Fgit.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fiwlwifi%2Fiwlwifi-next.git&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7C18e20b6baa664009b66c08de05b37367%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638954465485223439%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=kf7T2nWCNZ3zKqCl%2FFyIMWoWDqerBMMJJmwEDC3dldo%3D&reserved=0
+> git bisect good 3fa51882336f09d1a8a03edf107ef43e3b872fc1
+> # good: [acc26ceeebaa1880ceb70379abb3fac92d1007d5] Merge branch 'drm-xe- 
+> next' of https://eur01.safelinks.protection.outlook.com/? 
+> url=https%3A%2F%2Fgitlab.freedesktop.org%2Fdrm%2Fxe%2Fkernel.git&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7C18e20b6baa664009b66c08de05b37367%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638954465485231891%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=rAhIU15LaLZVLiCngMMd%2FD8WZFNbBbxlqb95l4ZqN3E%3D&reserved=0
+> git bisect good acc26ceeebaa1880ceb70379abb3fac92d1007d5
+> # good: [3e06c10cef8079782836155d66c2a91798600cfc] Merge branch 'for- 
+> next' of https://eur01.safelinks.protection.outlook.com/? 
+> url=https%3A%2F%2Fgit.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fdevice-mapper%2Flinux-dm.git&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7C18e20b6baa664009b66c08de05b37367%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638954465485239888%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=96H7h%2FqU8AOA6BMX3gRIqFvbwree0RrwBKFiyAbbWqw%3D&reserved=0
+> git bisect good 3e06c10cef8079782836155d66c2a91798600cfc
+> # bad: [cf305bb4070bef42cea469a6c4e751a63f5cacf2] Merge branch 'next' of 
+> https://eur01.safelinks.protection.outlook.com/? 
+> url=https%3A%2F%2Fgit.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fjarkko%2Flinux-tpmdd.git&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7C18e20b6baa664009b66c08de05b37367%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638954465485248529%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=aYTIA07yF9iCvHBin54NcH7%2Bhcn4wpuUR1%2BCGncndKQ%3D&reserved=0
+> git bisect bad cf305bb4070bef42cea469a6c4e751a63f5cacf2
+> # good: [19766d4984c39d75393d22cbdad14974cb7f9366] Merge branch 'next' 
+> of https://eur01.safelinks.protection.outlook.com/? 
+> url=https%3A%2F%2Fgithub.com%2Fcschaufler%2Fsmack- 
+> next&data=05%7C02%7Cchristophe.leroy2%40cs- 
+> soprasteria.com%7C18e20b6baa664009b66c08de05b37367%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638954465485256294%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=SAfMhKzF9h2YURPEqPu6ze2oIUJ87TNyRIFC%2B1JjWGE%3D&reserved=0
+> git bisect good 19766d4984c39d75393d22cbdad14974cb7f9366
+> # good: [4e349e68974e71da13d4b34988f795f4cfe29650] tpm: use a map for 
+> tpm2_calc_ordinal_duration()
+> git bisect good 4e349e68974e71da13d4b34988f795f4cfe29650
+> # bad: [b6889908d493fe03a1db28aa9afdade6bceda158] tpm: Allow for 
+> exclusive TPM access when using /dev/tpm<n>
+> git bisect bad b6889908d493fe03a1db28aa9afdade6bceda158
+> # bad: [eb28a2adba0654878bcfd909b429bf567b35922b] tpm: Ensure exclusive 
+> userspace access when using /dev/tpm<n>
+> git bisect bad eb28a2adba0654878bcfd909b429bf567b35922b
+> # good: [11baa7201b1baefd281e5a7faf7de5b7e407364c] tpm: Prevent local 
+> DOS via tpm/tpm0/ppi/*operations
+> git bisect good 11baa7201b1baefd281e5a7faf7de5b7e407364c
+> # first bad commit: [eb28a2adba0654878bcfd909b429bf567b35922b] tpm: 
+> Ensure exclusive userspace access when using /dev/tpm<n>
+> 
+>>
+>> If you happen to fix this, please add below tag.
+>>
+>>
+>> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+>>
+>>
+>> Regards,
+>>
+>> Venkat.
+>>
+> 
 
 
