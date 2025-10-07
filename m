@@ -1,56 +1,66 @@
-Return-Path: <linux-kernel+bounces-844689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73AFBBC2814
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 21:25:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13975BC2643
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 20:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68AAD19A2E3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 19:26:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB7594EAD6B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 18:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0A920E31C;
-	Tue,  7 Oct 2025 19:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3562E92D9;
+	Tue,  7 Oct 2025 18:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aB2uGtQi"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qof3P//d"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5402622D4C3
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 19:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F631F92E;
+	Tue,  7 Oct 2025 18:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759865136; cv=none; b=s47fhvCcRO2+MrInHDLX85g5qP4+XvxnnFNcFI/IvYqBHYz/U1HWZaURhGAZxzviu5TW702hA6OZil5IU0uqKmKDhb9BH8lsl2whslaJCfQhjyPo4fgadZqf3jugiBPXP6Q5I7q6oXTfYxaz43TSbWP2AT6gAUNRu9pM8EPSrZA=
+	t=1759861989; cv=none; b=WXPixFosoW9FkD3+z9FfQzBMDsWfJG36tso3sl/RhrHRIcOXkBECTqT/5D81tZYh7wXmmkuUTYyRDiXzB0UiP0ekF28/aaMuFQXTEurX6FUKPD2yzPsqC2GE/ErpHHvDMej0IkrXVoLekrpusqSpB7+EzQekgft9kQJvMYPJyYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759865136; c=relaxed/simple;
-	bh=EDgHwoAJzqvcFv+vwg/QTb+53s/c4vVsjUdQ6WejS8A=;
+	s=arc-20240116; t=1759861989; c=relaxed/simple;
+	bh=mM2kP8wD0XEPbcLgnihTUxv/eJjqODbwCasIdYyIc8A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sV45WwLULrReSyOgT3Iy16Y+OtjAn52RTe+2wyS7cAJl10eDBxFSBG+ql+2IoeySkRMub+ih6IMSd8/qj2kSqIDX76ah9A6iw/8wv2v+EDPcfgweZm0SmEuCr1KkxYgM/NldCIAMe3luxJK5g09d2V29ciadgQW39yCfVtkMoSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aB2uGtQi; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 7 Oct 2025 11:31:45 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759865122;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MGuyQHKKKk5kaFnYuhxhE4b42paZhXgBeZT5hWvt874=;
-	b=aB2uGtQixcZ8bSr2I9L34mScrQ9EMhFP/TKRKR2UDidJ2WNbGf16h1lI1ROwOwjItLfQyF
-	A+3iMUiL6K6ryXgFbkzh7Akpe1haY8MYhH3afkhXVf9KxXv0rw1jqPFcKtAIEev+/X02z5
-	STF0zp5wF586aMzKids38/SPamJVS4Y=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: maz@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org,
-	alexandru.elisei@arm.com, linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: Check cpu_has_spe() before initializing
- PMSCR_EL1 in VHE
-Message-ID: <aOVckTSJET5ORY1n@linux.dev>
-References: <20251007182356.2813920-1-mukesh.ojha@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fTjCfL7kX3o5E2KqYQyiuIX6Qxh2REP6EGOKj7DpvbHe926rqd2qUGIU6PfIwWFY4PlU1lxgqAZeIOmWd/BJ0B/lNMcVx7GXybLE9f2/cs3pxJX7FGdIQIwPQUfJMpdu/TP3MjGteX1abzoMMwI/HonCKoZxCIxj/F76kXCo7E4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qof3P//d; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=nXZFtFTkE8xIC71M/N7hUPoMl0yiOIyLa6hKguyz/kw=; b=qof3P//dbmF0+Sf4x0+XNpMlD+
+	aqzn3EyLNptQS4jZTQexx5yJhGVp3UvvsjWMDbogW0HAuOrsn/yq36ha83A29PFp6sW87mn7YzoB0
+	mxPsp0dhFyxQyrV8WXV+fdDNAhtxmUDIrM/EyV/sy69XAJGsCr525eLcAS0g9e1V7YBY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1v6CUP-00AO3J-AP; Tue, 07 Oct 2025 20:32:45 +0200
+Date: Tue, 7 Oct 2025 20:32:45 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: jjm2473 <jjm2473@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	heiko@sntech.de, quentin.schulz@cherry.de,
+	kever.yang@rock-chips.com, naoki@radxa.com, honyuenkwun@gmail.com,
+	inindev@gmail.com, ivan8215145640@gmail.com,
+	neil.armstrong@linaro.org, mani@kernel.org, dsimic@manjaro.org,
+	pbrobinson@gmail.com, alchark@gmail.com, didi.debian@cknow.org,
+	jbx6244@gmail.com, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] arm64: dts: rockchip: add LinkEase EasePi R1
+Message-ID: <a0501abe-d86d-4f3a-9d55-c842bfafc190@lunn.ch>
+References: <20250929065714.27741-1-jjm2473@gmail.com>
+ <20250929065714.27741-4-jjm2473@gmail.com>
+ <d8ad476c-d0c7-4e97-9e76-540a539ffb52@lunn.ch>
+ <CAP_9mL4ofig-X-w9wx1A5D_eVXROo6AVFBSwp4mh=kj7webpPA@mail.gmail.com>
+ <7e219aef-88a0-4184-9553-30dcbc8dbd79@lunn.ch>
+ <CAP_9mL6utQjN_2EZ4vs3K8jzcxHxvKWNTNEXZ9fAx4HuA=DNXA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,35 +69,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251007182356.2813920-1-mukesh.ojha@oss.qualcomm.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <CAP_9mL6utQjN_2EZ4vs3K8jzcxHxvKWNTNEXZ9fAx4HuA=DNXA@mail.gmail.com>
 
-Hi Mukesh,
+> I also notice that you suggest use {tx|rx}-internal-delay-ps instead
+> of  {tx|rx}_delay in
+> https://lore.kernel.org/all/e4d3127b-c879-4931-9ea0-de7449bc508c@lunn.ch/ ,
+> but I think this depends on stmmac driver.
 
-I find it a bit odd to refer to cpu_has_spe() in the shortlog, which
-doesn't exist prior to this patch.
+It depends on the driver implementing those standard properties. But
+as pointed out elsewhere, tx|rx-delay are magic, nobody knows what
+they do, so it is hard to implement the standard properties to replace
+them.
 
-On Tue, Oct 07, 2025 at 11:53:56PM +0530, Mukesh Ojha wrote:
-> commit efad60e46057 ("KVM: arm64: Initialize PMSCR_EL1 when in VHE")
-> initializes PMSCR_EL1 to 0 which is making the boot up stuck when KVM
-> runs in VHE mode and reverting the change is fixing the issue.
-> 
-> [    2.967447] RPC: Registered tcp NFSv4.1 backchannel transport module.
-> [    2.974061] PCI: CLS 0 bytes, default 64
-> [    2.978171] Unpacking initramfs...
-> [    2.982889] kvm [1]: nv: 568 coarse grained trap handlers
-> [    2.988573] kvm [1]: IPA Size Limit: 40 bits
-> 
-> Lets guard the change with cpu_has_spe() check so that it only affects
-> the cpu which has SPE feature supported.
-
-This could benefit from being spelled out a bit more. In both cases we
-check for the presence of FEAT_SPE, however I believe the issue you
-observe is EL3 hasn't delegated ownership of the Profiling Buffer to
-Non-secure nor does it reinject an UNDEF in response to the sysreg trap.
-
-I agree that the change is correct but the rationale needs to be clear.
-
-Thanks,
-Oliver
+     Andrew
 
