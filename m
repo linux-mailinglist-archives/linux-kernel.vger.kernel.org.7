@@ -1,472 +1,298 @@
-Return-Path: <linux-kernel+bounces-844422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B004BC1DE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 17:09:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C439BC1DF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 17:09:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 08FE34E85DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 15:09:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0A4319A440D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 15:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E872E11C8;
-	Tue,  7 Oct 2025 15:09:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8006E2E092B;
+	Tue,  7 Oct 2025 15:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FAtVv0fj"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RVrh9jHF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BB18BEC;
-	Tue,  7 Oct 2025 15:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999DF8BEC
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 15:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759849751; cv=none; b=PDcMtW/HSCm/0/9z4dGU7E1Pb10s4psQeKXkmby22VYk+qQDxMciP5QTffikvw2NVn/srmNhxyzSShRsQfimGfOOeUuXnYAqpXILN7FmlbW/kFBYJHqaYzUYROy3Bn/EbeTJ3qafMZpDgvFjUP+CscZI5BQKCZWBU8h2buc/DaY=
+	t=1759849790; cv=none; b=dzOGSy9B144NqAwnSzPTc9fyoww38GE0entYz1bCYYKpyz5BVdrPku/kkcJisfnZ52NYsRwlJLJyc6GQ1qK6VO3nIG2n10pWb5bTXvqFYKReikRKoDsppV+eoasXnNVa35Jl5RlarLevemYVUyVB7h0N7Je1EbPZmaqpvAqd8Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759849751; c=relaxed/simple;
-	bh=7PAS7PZ7qxJVepgv/GcStRNvmReWiPU+KMC2kWZ4Vg4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=aumzK2t0JwTUkQ/nREV6SwTupyGhs2IKBw1SRjrmFghRaFQGNzkQNb27I0JPvRyci+WohlHGFcTxvQYQfSvJrw2nsHOeqWxwwCyb06uutAaCUiIGizquovORRm/MONOap4qxt6+B/YgHMVZVdgAg9xJeaD631iWRF7445gOOv6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FAtVv0fj; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5977VeUT018174;
-	Tue, 7 Oct 2025 15:08:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=P1aGgL
-	il8YKKy7HVudoB/lcx62u8dhwRwy0fceLIEDc=; b=FAtVv0fjg8t0sxOJiRIYgD
-	EhcsGf1gGLEkFAzQYNXEzyiq0y0R67XkEA9/SFaM1BsxZuBIJjdk0ZI+cW2cvJIQ
-	m3ITt0fHuXJx3w9p42JchCh7B4nZmGrVgUGgjUzidMHNXGEbs113HM3EHZkl0Cqw
-	T91Ue8dhqWJVJCL9+TJ4AyYVEQTJDCIfm2U8lSmlRu9w1AKPeH0HeXSALY8kDy1r
-	FDKHyg++VLT0T0PfyoCSyL1mA5Cei31i6DZMrljTobGrgfryPK5T3ctOdf7IY50V
-	T0+1KjN+tvRFjAZXEuJR6/eY5kd+NvcWgqdeJjvnffBg6zacVbWinpaOAlQQJx0g
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49jua97v0q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 Oct 2025 15:08:47 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 597DdbMS013198;
-	Tue, 7 Oct 2025 15:08:46 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49kg4jkp47-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 Oct 2025 15:08:46 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 597F8jvf11010592
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 7 Oct 2025 15:08:45 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3ADE75805A;
-	Tue,  7 Oct 2025 15:08:45 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C904258060;
-	Tue,  7 Oct 2025 15:08:40 +0000 (GMT)
-Received: from [9.61.248.147] (unknown [9.61.248.147])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  7 Oct 2025 15:08:40 +0000 (GMT)
-Message-ID: <3d7a5f70-7ece-48ba-92bd-8b6473fd8b6c@linux.ibm.com>
-Date: Tue, 7 Oct 2025 20:38:38 +0530
+	s=arc-20240116; t=1759849790; c=relaxed/simple;
+	bh=avOyeg1m+eplsvWMyciACAxlCd32fi+x94S5/Z9UVN4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KWtIk0DdSY3NRZIlcWJyufsbWkUsEwYw38rkR0/PNJSrj0vNra1ZVRUDnbNTCLt1y7HPNyOmJLG0JNNWzc/tkdH1zPSkJf2SlsfAiWls0F/RfdIv883uGTMYaR5n4F4KU9G0sGRoGPBz8Jbmr64SSci/AXJxEojd0TBCcp6jmx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RVrh9jHF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC617C4CEF1;
+	Tue,  7 Oct 2025 15:09:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759849790;
+	bh=avOyeg1m+eplsvWMyciACAxlCd32fi+x94S5/Z9UVN4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RVrh9jHFPfdLBsiPJQ0DVbGFd0bFhl0kL25RjT4KVUiC/mwwwZGAJ3e9REDz2yoFb
+	 q4ZsiqzbzGTecaS8xG0nlBuXMjZQnWa9zLKmtgLZcZAv7EQfkodz4LW3No5iwGjyCi
+	 vGDqzJ2oNF6hRWdOgxRVRRB21NClGHVTmBFqY4pjVyADf3ly1TKBEl7ZdCMqB0w6Zi
+	 HBlrF/8Mpv0R0l+sphmFOKii+9/58bktSpNKh5ZSWbv/LwXpn3EyMJwjlXtevlZQ+z
+	 3dBdZFKJbr/2WL08a2VUCL2xcm+G3rIS83eoHeHAL/uGjx1CO+b99T9KWfuVHcQusN
+	 lroJ6WZtCScdA==
+Date: Tue, 7 Oct 2025 17:09:46 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Hui Pu <Hui.Pu@gehealthcare.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Dmitry Baryshkov <lumag@kernel.org>
+Subject: Re: [PATCH 2/2] drm/bridge: ti-sn65dsi83: protect device resources
+ on unplug
+Message-ID: <20251007-charming-successful-foxhound-1ca192@penduick>
+References: <20250808-drm-bridge-atomic-vs-remove-v1-0-a52e933b08a8@bootlin.com>
+ <20250808-drm-bridge-atomic-vs-remove-v1-2-a52e933b08a8@bootlin.com>
+ <l2orbpdoh3cqqgqudbnbdlogo3bd57uu4nv3ax74uoahknzjgr@gbxxuky3huw6>
+ <20250820131302.6a2da5ef@booty>
+ <20250827-charming-arcane-stingray-cfb8b6@houat>
+ <20250908154906.16693078@booty>
+ <20250910-glittering-serval-of-piety-b32844@houat>
+ <20250910184752.6c42f004@booty>
+ <20250915-benign-rare-marmot-9fbb96@penduick>
+ <20250915165156.35378299@booty>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [bisected][linux-next20251003] tmp2 selftests resulting in Kernel
- OOPs
-Content-Language: en-GB
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-To: LKML <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        linux-kselftest@vger.kernel.org, daleksan@redhat.com,
-        jstancek@redhat.com, jarkko@kernel.org, pmenzel@molgen.mpg.de
-References: <88f1df7e-8347-45f7-a2a1-e321e72e4009@linux.ibm.com>
-In-Reply-To: <88f1df7e-8347-45f7-a2a1-e321e72e4009@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: IvopuptQEqgjbeevQNfryIHn6rd8vPCq
-X-Proofpoint-ORIG-GUID: IvopuptQEqgjbeevQNfryIHn6rd8vPCq
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAyMiBTYWx0ZWRfX9iVgLna3Wndc
- vXhoKKH1qxMSF/Lt8GV8jrPpwLgSNhBtpCdlIlVeC6PcAjtr8MlzlIZXTUmZ/1Scbq53yFJtdDe
- MAWVieX/vGGjc4M1ws6myC/WdqkIS5tTXrPqIWvIteLxf0RLWrFznuCd3wTSlaoS4sbq2AKTABt
- nPA0GQm/z3eEGvGshP09QQdw+QtxkCDKcpzxU906vlKSvvHRCerh9PkMO/IloKHfDI+0bLu5jj3
- mqI3BXcledHzj3v6DHPOzPsNvwDfhzL+zSFsHXMF4NZd6srqv4X6MW18016k22f0/nGIcaW0Aps
- FOxxvqt4TjumIXdtRhTiWh64uyeVJ2Dav2cIMl3bPPc8dSqFOSyykUBReH8faIftozqJWCrnJa5
- onnA9+BnGIQMk7l5P/6Ym3NSG9ooNQ==
-X-Authority-Analysis: v=2.4 cv=QdBrf8bv c=1 sm=1 tr=0 ts=68e52cff cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8
- a=e5mUnYsNAAAA:8 a=VabnemYjAAAA:8 a=VnNF1IyMAAAA:8 a=ccF2-Am6D2ODSy8KwUwA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=Vxmtnl_E_bksehYqCbjh:22
- a=gKebqoRLp9LExxC7YDUY:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-07_01,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 clxscore=1011 suspectscore=0 adultscore=0
- malwarescore=0 bulkscore=0 spamscore=0 lowpriorityscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040022
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="s65hntyyqmm23soq"
+Content-Disposition: inline
+In-Reply-To: <20250915165156.35378299@booty>
 
 
-On 07/10/25 10:59 am, Venkat Rao Bagalkote wrote:
-> Greetings!!!
->
->
-> IBM CI has reported a kernel OOPs while running TPM2selftests on IBM 
-> Power11 system with linux-next20251002 kernel.
->
->
-> Test Case:
->
-> make run_tests
-> TAP version 13
-> 1..3
-> # timeout set to 600
-> # selftests: tpm2: test_smoke.sh
-> # test_read_partial_overwrite (tpm2_tests.SmokeTest) ... ok
-> # test_read_partial_resp (tpm2_tests.SmokeTest) ... ok
-> # test_seal_with_auth (tpm2_tests.SmokeTest) ... ok
-> # test_seal_with_policy (tpm2_tests.SmokeTest) ... ok
-> # test_seal_with_too_long_auth (tpm2_tests.SmokeTest) ... ok
-> # test_send_two_cmds (tpm2_tests.SmokeTest) ... ok
-> # test_too_short_cmd (tpm2_tests.SmokeTest) ... ok
-> # test_unseal_with_wrong_auth (tpm2_tests.SmokeTest) ... ok
-> # test_unseal_with_wrong_policy (tpm2_tests.SmokeTest) ... ERROR
-> #
-> # ======================================================================
-> # ERROR: test_unseal_with_wrong_policy (tpm2_tests.SmokeTest)
-> # -----------------------------------------------------
->
->
-> Traces:
->
->
-> [  452.604333] BUG: KASAN: slab-use-after-free in tpmrm_release+0x78/0xa8
-> [  452.604345] Read of size 8 at addr c00000001c650000 by task 
-> python3/1856
-> [  452.604353]
-> [  452.604358] CPU: 24 UID: 0 PID: 1856 Comm: python3 Kdump: loaded 
-> Not tainted 6.17.0-next-20251003 #1 VOLUNTARY
-> [  452.604364] Hardware name: IBM,9080-HEX Power11 (architected) 
-> 0x820200 0xf000007 of:IBM,FW1110.01 (NH1110_069) hv:phyp pSeries
-> [  452.604368] Call Trace:
-> [  452.604370] [c0000000c1867840] [c00000000187ea4c] 
-> dump_stack_lvl+0x84/0xe8 (unreliable)
-> [  452.604380] [c0000000c1867870] [c000000000803754] 
-> print_address_description.constprop.0+0x11c/0x56c
-> [  452.604388] [c0000000c1867910] [c000000000803c84] 
-> print_report+0xe0/0x358
-> [  452.604394] [c0000000c18679e0] [c000000000804124] 
-> kasan_report+0x128/0x1f4
-> [  452.604400] [c0000000c1867af0] [c0000000008062b4] 
-> __asan_load8+0xa8/0xe0
-> [  452.604406] [c0000000c1867b10] [c000000000f2ec18] 
-> tpmrm_release+0x78/0xa8
-> [  452.604412] [c0000000c1867b40] [c0000000008b6a2c] __fput+0x21c/0x60c
-> [  452.604417] [c0000000c1867bc0] [c0000000008ada70] sys_close+0x74/0xd0
-> [  452.604424] [c0000000c1867bf0] [c000000000039270] 
-> system_call_exception+0x1e0/0x460
-> [  452.604431] [c0000000c1867e50] [c00000000000d05c] 
-> system_call_vectored_common+0x15c/0x2ec
-> [  452.604438] ---- interrupt: 3000 at 0x7fffb7534ab4
-> [  452.604443] NIP:  00007fffb7534ab4 LR: 00007fffb7534ab4 CTR: 
-> 0000000000000000
-> [  452.604446] REGS: c0000000c1867e80 TRAP: 3000   Not tainted 
-> (6.17.0-next-20251003)
-> [  452.604449] MSR:  800000000280f033 
-> <SF,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 44284422  XER: 00000000
-> [  452.604466] IRQMASK: 0
-> [  452.604466] GPR00: 0000000000000006 00007ffff65d76b0 
-> 00007fffb7c17700 0000000000000006
-> [  452.604466] GPR04: 0000000000000000 0000000000000000 
-> 0000000000000000 0000000000000004
-> [  452.604466] GPR08: 0000000000000000 0000000000000000 
-> 0000000000000000 0000000000000000
-> [  452.604466] GPR12: 0000000000000000 00007fffb7e6b8e0 
-> 00000000000000a1 00007fffb67acec0
-> [  452.604466] GPR16: 0000000164032ad0 00007fffb67aceb0 
-> 00007fffb76f6a90 0000000000000000
-> [  452.604466] GPR20: 00007fffb6f21850 0000000000000000 
-> 00007fffb71062c0 0000000164034490
-> [  452.604466] GPR24: 00007fffb6f2fea0 00007fffb67acea8 
-> 0000000164032b18 00007fffb7c45b32
-> [  452.604466] GPR28: 00007fffb7c678e0 00007fffb67aceb8 
-> 0000000000000006 0000000164034490
-> [  452.604510] NIP [00007fffb7534ab4] 0x7fffb7534ab4
-> [  452.604513] LR [00007fffb7534ab4] 0x7fffb7534ab4
-> [  452.604516] ---- interrupt: 3000
-> [  452.604518]
-> [  452.604601] Allocated by task 1856:
-> [  452.604607]  kasan_save_stack+0x34/0x64
-> [  452.604614]  kasan_save_track+0x2c/0x50
-> [  452.604621]  kasan_save_alloc_info+0x58/0x74
-> [  452.604628]  __kasan_kmalloc+0x12c/0x168
-> [  452.604635]  __kmalloc_cache_noprof+0x1d8/0x71c
-> [  452.604643]  tpmrm_open+0x88/0x168
-> [  452.604649]  chrdev_open+0x1f4/0x484
-> [  452.604656]  do_dentry_open+0x578/0x9cc
-> [  452.604663]  vfs_open+0x68/0x23c
-> [  452.604670]  do_open+0x514/0x74c
-> [  452.604676]  path_openat+0x16c/0x380
-> [  452.604682]  do_filp_open+0x104/0x230
-> [  452.604689]  do_sys_openat2+0xb8/0x154
-> [  452.604696]  sys_openat+0xcc/0x130
-> [  452.604703]  system_call_exception+0x1e0/0x460
-> [  452.604710]  system_call_vectored_common+0x15c/0x2ec
-> [  452.604718]
-> [  452.604722] Freed by task 1856:
-> [  452.604726]  kasan_save_stack+0x34/0x64
-> [  452.604733]  kasan_save_track+0x2c/0x50
-> [  452.604739]  __kasan_save_free_info+0x64/0x110
-> [  452.604747]  __kasan_slab_free+0xb0/0x10c
-> [  452.604753]  kfree+0x220/0x624
-> [  452.604760]  tpmrm_release+0x6c/0xa8
-> [  452.604766]  __fput+0x21c/0x60c
-> [  452.604772]  sys_close+0x74/0xd0
-> [  452.604779]  system_call_exception+0x1e0/0x460
-> [  452.604786]  system_call_vectored_common+0x15c/0x2ec
-> [  452.604794]
-> [  452.604797] The buggy address belongs to the object at 
-> c00000001c650000
-> [  452.604797]  which belongs to the cache kmalloc-8k of size 8192
-> [  452.604806] The buggy address is located 0 bytes inside of
-> [  452.604806]  freed 8192-byte region [c00000001c650000, 
-> c00000001c652000)
-> [  452.604815]
-> [  452.604818] The buggy address belongs to the physical page:
-> [  452.604824] page: refcount:0 mapcount:0 mapping:0000000000000000 
-> index:0xc00000001c644000 pfn:0x1c60
-> [  452.604833] head: order:3 mapcount:0 entire_mapcount:0 
-> nr_pages_mapped:0 pincount:0
-> [  452.604840] flags: 
-> 0x3ffffe00000040(head|node=0|zone=0|lastcpupid=0x1fffff)
-> [  452.604849] page_type: f5(slab)
-> [  452.604856] raw: 003ffffe00000040 c000000007012300 5deadbeef0000122 
-> 0000000000000000
-> [  452.604864] raw: c00000001c644000 000000008020001e 00000000f5000000 
-> 0000000000000000
-> [  452.604872] head: 003ffffe00000040 c000000007012300 
-> 5deadbeef0000122 0000000000000000
-> [  452.604879] head: c00000001c644000 000000008020001e 
-> 00000000f5000000 0000000000000000
-> [  452.604887] head: 003ffffe00000003 c00c000000071801 
-> 00000000ffffffff 00000000ffffffff
-> [  452.604894] head: ffffffffffffffff 0000000000000000 
-> 00000000ffffffff 0000000000000008
-> [  452.604900] page dumped because: kasan: bad access detected
-> [  452.604905]
-> [  452.604908] Memory state around the buggy address:
-> [  452.604914]  c00000001c64ff00: fc fc fc fc fc fc fc fc fc fc fc fc 
-> fc fc fc fc
-> [  452.604920]  c00000001c64ff80: fc fc fc fc fc fc fc fc fc fc fc fc 
-> fc fc fc fc
-> [  452.604927] >c00000001c650000: fa fb fb fb fb fb fb fb fb fb fb fb 
-> fb fb fb fb
-> [  452.604933]                    ^
-> [  452.604937]  c00000001c650080: fb fb fb fb fb fb fb fb fb fb fb fb 
-> fb fb fb fb
-> [  452.604944]  c00000001c650100: fb fb fb fb fb fb fb fb fb fb fb fb 
-> fb fb fb fb
-> [  452.604950] 
-> ==================================================================
-> [  452.604955] Disabling lock debugging due to kernel taint
-> [  452.604961] Kernel attempted to read user page (770) - exploit 
-> attempt? (uid: 0)
-> [  452.604969] BUG: Kernel NULL pointer dereference on read at 0x00000770
-> [  452.604975] Faulting instruction address: 0xc0000000002b2e0c
-> [  452.604982] Oops: Kernel access of bad area, sig: 11 [#1]
-> [  452.604987] LE PAGE_SIZE=64K MMU=Radix  SMP NR_CPUS=8192 NUMA pSeries
-> [  452.604996] Modules linked in: nft_fib_inet nft_fib_ipv4 
-> nft_fib_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 
-> nft_reject nft_ct nft_chain_nat nf_nat bonding nf_conntrack tls 
-> nf_defrag_ipv6 nf_defrag_ipv4 rfkill ip_set nf_tables nfnetlink sunrpc 
-> pseries_rng vmx_crypto fuse ext4 crc16 mbcache jbd2 sd_mod sg ibmvscsi 
-> ibmveth scsi_transport_srp pseries_wdt
-> [  452.605073] CPU: 24 UID: 0 PID: 1856 Comm: python3 Kdump: loaded 
-> Tainted: G    B               6.17.0-next-20251003 #1 VOLUNTARY
-> [  452.605084] Tainted: [B]=BAD_PAGE
-> [  452.605089] Hardware name: IBM,9080-HEX Power11 (architected) 
-> 0x820200 0xf000007 of:IBM,FW1110.01 (NH1110_069) hv:phyp pSeries
-> [  452.605096] NIP:  c0000000002b2e0c LR: c0000000002b2e08 CTR: 
-> 0000000000000000
-> [  452.605103] REGS: c0000000c1867820 TRAP: 0300   Tainted: G B       
->       (6.17.0-next-20251003)
-> [  452.605110] MSR:  8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 
-> 28284420  XER: 0000000d
-> [  452.605132] CFAR: c000000000807920 DAR: 0000000000000770 DSISR: 
-> 40000000 IRQMASK: 0
-> [  452.605132] GPR00: c0000000002b2e08 c0000000c1867ac0 
-> c00000000234a500 0000000000000001
-> [  452.605132] GPR04: 0000000000000008 0000000000000000 
-> c0000000002b2e08 0000000000000001
-> [  452.605132] GPR08: 0000000000000020 0000000000000001 
-> 0000000000000001 a80e000000000000
-> [  452.605132] GPR12: c00e0000009b1c8c c000000d0ddeb700 
-> 0000000000000000 0000000000000000
-> [  452.605132] GPR16: 0000000000000000 0000000000000000 
-> 0000000000000000 0000000000000000
-> [  452.605132] GPR20: 0000000000000008 0000000000000000 
-> c000000008202f00 c00000007b9ff620
-> [  452.605132] GPR24: c00000008a76cb20 c00000008a76cb40 
-> c00000008a76cb08 c000000002201e80
-> [  452.605132] GPR28: c000000061569248 0000000000000770 
-> c00000008a76cb00 0000000000000768
-> [  452.605227] NIP [c0000000002b2e0c] up_read+0x50/0x17c
-> [  452.605237] LR [c0000000002b2e08] up_read+0x4c/0x17c
-> [  452.605245] Call Trace:
-> [  452.605249] [c0000000c1867ac0] [c0000000002b2e08] 
-> up_read+0x4c/0x17c (unreliable)
-> [  452.605261] [c0000000c1867b10] [c000000000f2ec28] 
-> tpmrm_release+0x88/0xa8
-> [  452.605271] [c0000000c1867b40] [c0000000008b6a2c] __fput+0x21c/0x60c
-> [  452.605280] [c0000000c1867bc0] [c0000000008ada70] sys_close+0x74/0xd0
-> [  452.605291] [c0000000c1867bf0] [c000000000039270] 
-> system_call_exception+0x1e0/0x460
-> [  452.605301] [c0000000c1867e50] [c00000000000d05c] 
-> system_call_vectored_common+0x15c/0x2ec
-> [  452.605312] ---- interrupt: 3000 at 0x7fffb7534ab4
-> [  452.605319] NIP:  00007fffb7534ab4 LR: 00007fffb7534ab4 CTR: 
-> 0000000000000000
-> [  452.605326] REGS: c0000000c1867e80 TRAP: 3000   Tainted: G B       
->       (6.17.0-next-20251003)
-> [  452.605333] MSR:  800000000280f033 
-> <SF,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 44284422  XER: 00000000
-> [  452.605362] IRQMASK: 0
-> [  452.605362] GPR00: 0000000000000006 00007ffff65d76b0 
-> 00007fffb7c17700 0000000000000006
-> [  452.605362] GPR04: 0000000000000000 0000000000000000 
-> 0000000000000000 0000000000000004
-> [  452.605362] GPR08: 0000000000000000 0000000000000000 
-> 0000000000000000 0000000000000000
-> [  452.605362] GPR12: 0000000000000000 00007fffb7e6b8e0 
-> 00000000000000a1 00007fffb67acec0
-> [  452.605362] GPR16: 0000000164032ad0 00007fffb67aceb0 
-> 00007fffb76f6a90 0000000000000000
-> [  452.605362] GPR20: 00007fffb6f21850 0000000000000000 
-> 00007fffb71062c0 0000000164034490
-> [  452.605362] GPR24: 00007fffb6f2fea0 00007fffb67acea8 
-> 0000000164032b18 00007fffb7c45b32
-> [  452.605362] GPR28: 00007fffb7c678e0 00007fffb67aceb8 
-> 0000000000000006 0000000164034490
-> [  452.605450] NIP [00007fffb7534ab4] 0x7fffb7534ab4
-> [  452.605456] LR [00007fffb7534ab4] 0x7fffb7534ab4
-> [  452.605462] ---- interrupt: 3000
-> [  452.605467] Code: fbc1fff0 7c7f1b78 f8010010 f821ffb1 e92d0c78 
-> f9210028 39200000 3ba30008 38800008 7fa3eb78 48554af5 60000000 
-> <ebdf0008> eb8d0908 7bc90764 fbc10020
-> [  452.605501] ---[ end trace 0000000000000000 ]---
-> [  452.613685] pstore: backend (nvram) writing error (-1)
-> [  452.613691]
->
->
+--s65hntyyqmm23soq
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 2/2] drm/bridge: ti-sn65dsi83: protect device resources
+ on unplug
+MIME-Version: 1.0
 
-Git bisect is pointing to eb28a2adba0654878bcfd909b429bf567b35922b as 
-first bad commit.
+On Mon, Sep 15, 2025 at 04:51:56PM +0200, Luca Ceresoli wrote:
+> Hi Maxime,
+>=20
+> thanks for the feedback, this discussion is getting very interesting!
+>=20
+> On Mon, 15 Sep 2025 14:03:17 +0200
+> Maxime Ripard <mripard@kernel.org> wrote:
+>=20
+> > > > I'm still confused why it's so important than in your example
+> > > > xyz_disable must be called after drm_bridge_unplug. =20
+> > >=20
+> > > Let me clarify with an example.
+> > >=20
+> > > As I wrote in another reply, I have moved from a flag
+> > > (disable_resources_needed) to a devres action as you had suggested, b=
+ut
+> > > the example here is based on the old flag because it is more explicit,
+> > > code would be executed in the same order anyway, and, well, because I
+> > > had written the example before the devres action conversion.
+> > >=20
+> > > Take these two functions (stripped versions of the actual ones):
+> > >=20
+> > > /* Same as proposed, but with _unplug moved at the end */
+> > > static void sn65dsi83_remove()
+> > > {
+> > > 	struct sn65dsi83 *ctx =3D i2c_get_clientdata(client);
+> > >=20
+> > > 	drm_bridge_remove(&ctx->bridge);
+> > > =09
+> > > 	/*=20
+> > > 	 * I moved the following code to a devm action, but keeping it
+> > > 	 * explicit here for the discussion
+> > > 	 */
+> > > 	if (ctx->disable_resources_needed) {
+> > > 		sn65dsi83_monitor_stop(ctx);
+> > > 		regulator_disable(ctx->vcc);
+> > > 	}
+> > > =09
+> > > 	drm_bridge_unplug(&ctx->bridge);     // At the end!
+> > > } =20
+> >=20
+> > First off, why do we need to have drm_bridge_unplug and
+> > drm_bridge_remove separate?
+> >=20
+> > If we were to mirror drm_dev_enter and drm_dev_unplug, drm_dev_unplug
+> > calls drm_dev_unregister itself, and I can't find a reason where we
+> > might want to split the two.
+>=20
+> I think it could make sense and I'm definitely open to it.
+>=20
+> After a quick analysis I have mostly one concern. Calls
+> to drm_bridge_add() and drm_bridge_remove() are balanced in current
+> code and that's very intuitive. If drm_bridge_unplug() were to call
+> drm_bridge_remove(), that symmetry would disappear. Some drivers would
+> still need to call drm_bridge_remove() directly (e.g. the DSI host
+> drivers which _add/remove() in the DSI attach/detach callbacks), while
+> other wouldn't because drm_bridge_unplug() would do that.
+>=20
+> What do you think about this?
 
+Which DSI host do you have in mind there? Because it's really not what
+we document.
 
-eb28a2adba0654878bcfd909b429bf567b35922b is the first bad commit
-commit eb28a2adba0654878bcfd909b429bf567b35922b
-Author: Jonathan McDowell <noodles@meta.com>
-Date:   Tue Sep 23 18:10:00 2025 +0100
+> Another concern I initially had is about drivers whose usage of
+> drm_bridge is more complex than the average. Most simple drivers just
+> call drm_bridge_remove() in their .remove callback and that's
+> straightforward. I was suspicious about drivers such as
+> imx8qxp-pixel-combiner which instantiate multiple bridges, and whether
+> they need do all the drm_bridge_unplug()s before all the
+> drm_bridge_remove()s. However I don't think that's a real need because,
+> except for probe and removal, operations on bridges happen on a
+> per-bridge basis, so each bridge is independent from others, at least
+> for the driver I mentioned.
 
-     tpm: Ensure exclusive userspace access when using /dev/tpm<n>
+In this particular case, they would be unplugged all at the same time,
+right? In which case, we would disable all the bridges starting from the
+one in the chain that just got removed, and then we just have to remove
+all of them.
 
-     There is an is_open lock on /dev/tpm<n> that dates back to at least
-     2013, but it only prevents multiple accesses via *this* interface. 
-It is
-     perfectly possible for userspace to use /dev/tpmrm<n>, or the kernel to
-     use the internal interfaces, to access the TPM. For tooling expecting
-     exclusive access, such as firmware updates, this can cause issues.
+All in all, I think it's ok to somewhat break things here: all this was
+broken before. If we want to bring some consistency, we will have to
+reduce what bridges are allowed to do. Let's figure out something that
+works for all reasonable cases (straightforward, component framework,
+DSI device, DSI host, and DSI device on another bus), and the hacky
+drivers will move eventually.
 
-     Close the userspace loophole by changing the simple bit lock to a full
-     read/write mutex. Direct /dev/tpm<n> access needs an exclusive write
-     lock, the resource broker continues to allow concurrent access *except*
-     when /dev/tpm<n> is open.
+That's pretty easy to solve with a documentation update :)
 
-     Signed-off-by: Jonathan McDowell <noodles@meta.com>
-     Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-     Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+We can just further restrict the order in which
 
-  drivers/char/tpm/tpm-chip.c  |  1 +
-  drivers/char/tpm/tpm-dev.c   | 14 ++++++++------
-  drivers/char/tpm/tpmrm-dev.c | 20 ++++++++++++++++++--
-  include/linux/tpm.h          |  3 ++-
-  4 files changed, 29 insertions(+), 9 deletions(-)
+> > > static void sn65dsi83_atomic_disable()
+> > > {
+> > > 	if (!drm_bridge_enter(bridge, &idx))
+> > > 		return;
+> > >=20
+> > > 	/* These 3 lines will be replaced by devm_release_action() */
+> > > 	ctx->disable_resources_needed =3D false;
+> > > 	sn65dsi83_monitor_stop(ctx);
+> > > 	regulator_disable(ctx->vcc);
+> > >=20
+> > > 	drm_bridge_exit(idx);
+> > > }
+> > >=20
+> > > Here the xyz_disable() in my pseudocode is the sn65dsi83_monitor_stop=
+()
+> > > + regulator_disable().
+> > >=20
+> > > If sn65dsi83_remove() and sn65dsi83_atomic_disable() were to happen
+> > > concurrently, this sequence of events could happen:
+> > >=20
+> > > 1. atomic_disable:  drm_bridge_enter() -> OK, can go
+> > > 2. remove:          drm_bridge_remove()
+> > > 3. remove:          sn65dsi83_monitor_stop()
+> > > 4. remove:          regulator_disable()
+> > > 5. remove:          drm_bridge_unplug() -- too late to stop atomic_di=
+sable =20
+> >=20
+> > drm_dev_unplug would also get delayed until drm_dev_exit is called,
+> > mitigating your issue here.
+>=20
+> I don't think I got what you mean. With the above code the regulator
+> would still be subject to an en/disable imbalance.
 
+My point was that drm_bridge_remove wouldn't be allowed to execute until
+after atomic_disable has called drm_bridge_exit. So we wouldn't have the
+sequence of events you described. atomic_disable would disable the
+bridge, and then drm_bridge_remove wouln't have anything to disable
+anymore by the time it runs.
 
+> However I realized the problem does not exist when using devres,
+> because devres itself takes care of executing each release function only
+> once, by means of a spinlock.
+>=20
+> I think using devres actually solves my concerns about removal during
+> atomic[_post]_disable, but also for the atomic[_pre]_enable and other
+> call paths. Also, I think it makes the question of which goes first
+> (drm_bridge_unplug() or _remove()) way less relevant.
+>=20
+> The concern is probably still valid for drivers which don't use devres.
+> However the concern is irrelevant until there is a need for a bridge to
+> become hot-pluggable. At that point a driver needs to either move to
+> devres or take other actions to avoid incurring in the same issue.
 
-Git bisect log:
+I disagree with that statement. We never considered !devres as outdated,
+and thus we need to support both. Especially if it's about races we know
+about in a code path we might never run.
 
+> I'm going to send soon a v2 with my devres changes so we can continue
+> this discussion on actual code.
+>=20
+> > > 6. atomic_disable:  ctx->disable_resources_needed =3D false -- too la=
+te to stop .remove
+> > > 7. atomic_disable:  sn65dsi83_monitor_stop() -- twice, maybe no probl=
+em
+> > > 8. atomic_disable:  regulator_disable() -- Twice, en/disable imbalanc=
+e!
+> > >=20
+> > > So there is an excess regulator disable, which is an error. I don't s=
+ee
+> > > how this can be avoided if the drm_bridge_unplug() is called after the
+> > > regulator_disable().
+> > >=20
+> > > Let me know whether this clarifies the need to _unplug at the beginni=
+ng
+> > > of the .remove function. =20
+> >=20
+> > Another thing that just crossed my mind is why we don't call
+> > atomic_disable when we're tearing down the bridge too. We're doing it
+> > for the main DRM devices, it would make sense to me to disable the
+> > encoder -> bridge -> connector (and possibly CRTC) chain if we remove a
+> > bridge automatically.
+>=20
+> Uh, interesting idea.
+>=20
+> Do you mean something like:
+>=20
+> void drm_bridge_unplug(struct drm_bridge *bridge)
+> {
+>     bridge->unplugged =3D true;
+>     synchronize_srcu(&drm_bridge_unplug_srcu);
+>=20
+>     drm_bridge_remove(bridge); // as per discussion above
+>=20
+>     drm_atomic_helper_shutdown(bridge->dev);
+> }
+>=20
+> ?
+>=20
+> I'm not sure which is the right call to tear down the pipeline though.
 
-git bisect log
-git bisect start
-# status: waiting for both good and bad commits
-# good: [e5f0a698b34ed76002dc5cff3804a61c80233a7a] Linux 6.17
-git bisect good e5f0a698b34ed76002dc5cff3804a61c80233a7a
-# status: waiting for bad commit, 1 good commit known
-# bad: [47a8d4b89844f5974f634b4189a39d5ccbacd81c] Add linux-next 
-specific files for 20251003
-git bisect bad 47a8d4b89844f5974f634b4189a39d5ccbacd81c
-# good: [f79e772258df311c2cb21594ca0996318e720d28] Merge tag 
-'media/v6.18-1' of 
-git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media
-git bisect good f79e772258df311c2cb21594ca0996318e720d28
-# good: [6bda5a67f6a2ae4c0153e693e96bd408d054c732] Merge branch 
-'xtensa-for-next' of https://github.com/jcmvbkbc/linux-xtensa.git
-git bisect good 6bda5a67f6a2ae4c0153e693e96bd408d054c732
-# bad: [09026363ffabf7bb33e0ce000d8bff3e41b0c3de] Merge branch 'next' of 
-https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git
-git bisect bad 09026363ffabf7bb33e0ce000d8bff3e41b0c3de
-# good: [c32d529ea3e39ba4918f3865ef90ef6bddaa498c] Merge branch 
-'for-next' of https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git
-git bisect good c32d529ea3e39ba4918f3865ef90ef6bddaa498c
-# good: [3fa51882336f09d1a8a03edf107ef43e3b872fc1] Merge branch 'next' 
-of https://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/iwlwifi-next.git
-git bisect good 3fa51882336f09d1a8a03edf107ef43e3b872fc1
-# good: [acc26ceeebaa1880ceb70379abb3fac92d1007d5] Merge branch 
-'drm-xe-next' of https://gitlab.freedesktop.org/drm/xe/kernel.git
-git bisect good acc26ceeebaa1880ceb70379abb3fac92d1007d5
-# good: [3e06c10cef8079782836155d66c2a91798600cfc] Merge branch 
-'for-next' of 
-https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git
-git bisect good 3e06c10cef8079782836155d66c2a91798600cfc
-# bad: [cf305bb4070bef42cea469a6c4e751a63f5cacf2] Merge branch 'next' of 
-https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git
-git bisect bad cf305bb4070bef42cea469a6c4e751a63f5cacf2
-# good: [19766d4984c39d75393d22cbdad14974cb7f9366] Merge branch 'next' 
-of https://github.com/cschaufler/smack-next
-git bisect good 19766d4984c39d75393d22cbdad14974cb7f9366
-# good: [4e349e68974e71da13d4b34988f795f4cfe29650] tpm: use a map for 
-tpm2_calc_ordinal_duration()
-git bisect good 4e349e68974e71da13d4b34988f795f4cfe29650
-# bad: [b6889908d493fe03a1db28aa9afdade6bceda158] tpm: Allow for 
-exclusive TPM access when using /dev/tpm<n>
-git bisect bad b6889908d493fe03a1db28aa9afdade6bceda158
-# bad: [eb28a2adba0654878bcfd909b429bf567b35922b] tpm: Ensure exclusive 
-userspace access when using /dev/tpm<n>
-git bisect bad eb28a2adba0654878bcfd909b429bf567b35922b
-# good: [11baa7201b1baefd281e5a7faf7de5b7e407364c] tpm: Prevent local 
-DOS via tpm/tpm0/ppi/*operations
-git bisect good 11baa7201b1baefd281e5a7faf7de5b7e407364c
-# first bad commit: [eb28a2adba0654878bcfd909b429bf567b35922b] tpm: 
-Ensure exclusive userspace access when using /dev/tpm<n>
+No, the shutdown needs to happen before marking the bridge unplugged,
+otherwise you'll never run the disable callbacks.
 
->
-> If you happen to fix this, please add below tag.
->
->
-> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
->
->
-> Regards,
->
-> Venkat.
->
+And we probably shouldn't disable the whole device, just everything from
+the CRTC that feeds the bridge.
+
+Maxime
+
+--s65hntyyqmm23soq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaOUtNgAKCRAnX84Zoj2+
+dh1oAX983qrqMiiWRa9MAkz8E/6TsqVVBWd5TC7XBazrUxZ7ACLJurGc7eSK+pTD
+/COsRzUBf3jo9cN4xwZzPMQuhuM5dbWy8dI1RF4xyOnNtCLzrEkzZPsODVW9wIBK
+QMJvqTNupQ==
+=96M8
+-----END PGP SIGNATURE-----
+
+--s65hntyyqmm23soq--
 
