@@ -1,108 +1,171 @@
-Return-Path: <linux-kernel+bounces-843741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27C30BC01E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 05:53:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4DECBC01EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 05:55:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E69CD4E6FD6
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 03:53:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 484E14E6F7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 03:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A101217F24;
-	Tue,  7 Oct 2025 03:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PzFhcbwm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67054216E24;
+	Tue,  7 Oct 2025 03:55:34 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE0E20322;
-	Tue,  7 Oct 2025 03:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48CB334BA3A
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 03:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759809225; cv=none; b=p9XuySZS0cRlipR+rh2vHysikEncScQtKE/6uoQNPCWCyOu2lgSoD2VjU9wP9qZBFGXHcVv8kG5uK0L1ncy4kRLAEPppF5PoafI68mZnzXEqFuznhH5u+LOxF8c+8g2X26IYiJsk7IJP5RRNFJx5is0s75sgu7DYKHmaami8jyE=
+	t=1759809333; cv=none; b=gda3+ihftV0FlpZ/hU91okOoFWo5aZEaS9jqQBABToHp7qNauWzN4Pwmv8ZnjZ8YwssyaAWPwqZY0mgaWrBVmspR8Xu9w19uokwslNdUhxItUNZ9RNNxzOy3/6JrhQdfON0rgZeZ5Udiia6p6R+zwM4IXDh5rnrPvqPtPoy1peM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759809225; c=relaxed/simple;
-	bh=h6Jczh/Fz0AUxzV1CKO9gaYdchSp5gAD7ftbxcwDyUg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ujFQ//wpcyMlO9MXytD6/prO0Gs9qH8EtF405dXAVostIV9yg8vBFQ67OVyIENuWxz/PrrmbMjPzOwH2CXqpF9tWMigpNehfE/uEtIUEZPyqPNmk8XYXmEn2wPN03MQTgf08FZWtTiZb6oZvDyCoT599+vwAoEugVVDQQ0WZibA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PzFhcbwm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 122C1C4CEF1;
-	Tue,  7 Oct 2025 03:53:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759809225;
-	bh=h6Jczh/Fz0AUxzV1CKO9gaYdchSp5gAD7ftbxcwDyUg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=PzFhcbwmmInvQaN42CgurB0j8XEH+v3cidshNWYZ4JAIdaIBPibAuFlo4m1fCXZ08
-	 XjDdk7mH4pti7Ro0oNMX+jrD1RIF3TroxgtuVRaoqhgQPVNVeCxqA/qVEzfiMtpNlL
-	 ZrC4QPwFUpIWkUfzsqUHSF68vWi4hI2G+Xezo0DZpW0P5eU/ZQ7A2y4R/CbqZhBnoO
-	 M59W99HS6wSGK3vJGngL60qnYy5RPcuUIsHIzquaB2OvNxps2pRr+qNJj/ylm5vfYk
-	 8mBZgXj/3a2Q9qnqat63q64mg6F+HgWhHeTe+6fK8qw/eAvY+Ajq3Z9+fx3TkUIbbT
-	 sX9PGjWlttJAQ==
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] f2fs: fix wrong block mapping for multi-devices
-Date: Tue,  7 Oct 2025 03:53:43 +0000
-Message-ID: <20251007035343.806273-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.51.0.710.ga91ca5db03-goog
+	s=arc-20240116; t=1759809333; c=relaxed/simple;
+	bh=r6KU3UA7XOv6EJeOIp+g0o8Vscx9ypTrEEVxiFrzMrQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=iOtRMSynZAo9cGu/xvYGQMQvZ9YRkaZw2TPGvCXy3nDfkNUjDh8yWg98dfQ6bbywWuusM1upc1FTX0DM3ad4Vq/3tNfWa3ExmcPeQhZN3f4yZROs9IZy2epevk83Zoe7J3Sc2lhUhZ/i74y8kkr4UkZAlwC5fnyWifkvQ278N7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-930db3a16c0so1362854939f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 20:55:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759809331; x=1760414131;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cXe/si0AdIFfWRGG0Lyp1Myvzf+B3lva4QTre8L89+Q=;
+        b=iA4DVCBaxeVVSCUpHmxDxClbcQadidJkuDfbkElDoppOJ1w/fgI5NVlNjcjwgrRGf2
+         eYrUqadCcLEoLCzf8w/rNpM0cipgQASV+DWEbhHUzmFKZ47zOoOgDr5PM/GI9BQ744K8
+         bnc/oQ0s7TVDS4FXTIOrdSKA/oWLTVqqskQFJ0L/NuLzXH1gNMPEAdyCGKI8Tzl548vo
+         Y1eezxUpdJHDCgwk0dKaYzNcoJ6c4kvzZGLnBpFkZ0ItwqBetdOp4YohgQMUw+CUGEaS
+         VV3qPAFT7v+D3ytHYLW0NfTvAobPXTDecTST5hKdR1E4MOIYKW+eF0GJVccKWBHf1lXD
+         6dVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVyi8wuFRO94Q4wv42pNbhAhWeE/RWuu4Qh4pIGZas6mkESWSuLQcpxG+gTVh1Su3tSUvSUg9HlhhEerAc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4ZtAQZb21sm9OBiTh4Y3xawcS/zk1o5zRGk7f9WiSlnHeiPmL
+	uIUOAO+RnK+ahl8fKJrufY1/bnG8ED+8H8n2wui7fKU0lVdgNIwe318BpEhws/Upy5AzV587SBc
+	pwbztyXhG2U0bjxRueSPpfYzU579Xnpm15DSldGn+6AKR/eeJVLI30go18eo=
+X-Google-Smtp-Source: AGHT+IGmHerphZMAS+CUcAorXHw9/E9e9vz/nLzhHxAmi8JMEfVfDNcNFEC6cSkUDqQrcyIMe+f2E9i7OriDblkLXxgzsWUMFCfq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:15ca:b0:936:7fd5:b8be with SMTP id
+ ca18e2360f4ac-93b96a9338fmr1920091239f.13.1759809331558; Mon, 06 Oct 2025
+ 20:55:31 -0700 (PDT)
+Date: Mon, 06 Oct 2025 20:55:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e48f33.a00a0220.298cc0.046e.GAE@google.com>
+Subject: [syzbot] [ocfs2?] kernel BUG in __ocfs2_move_extent
+From: syzbot <syzbot+727d161855d11d81e411@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Assuming the disk layout as below,
+Hello,
 
-disk0: 0            --- 0x00035abfff
-disk1: 0x00035ac000 --- 0x00037abfff
-disk2: 0x00037ac000 --- 0x00037ebfff
+syzbot found the following issue on:
 
-and we want to read data from offset=13568 having len=128 across the block
-devices, we can illustrate the block addresses like below.
+HEAD commit:    e406d57be7bd Merge tag 'mm-nonmm-stable-2025-10-02-15-29' ..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17739214580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=84e81c4d0c0e900a
+dashboard link: https://syzkaller.appspot.com/bug?extid=727d161855d11d81e411
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15fc5334580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=156a9ee2580000
 
-0 .. 0x00037ac000 ------------------- 0x00037ebfff, 0x00037ec000 -------
-          |          ^            ^                                ^
-          |   fofs   0            13568                            13568+128
-          |       ------------------------------------------------------
-          |   LBA    0x37e8aa9    0x37ebfa9                        0x37ec029
-          --- map    0x3caa9      0x3ffa9
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-e406d57b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ed88be2e6138/vmlinux-e406d57b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/bdedb017e44c/bzImage-e406d57b.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/dc258190d4b3/mount_0.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=17a54458580000)
 
-In this example, we should give the relative map of the target block device
-ranging from 0x3caa9 to 0x3ffa9 where the length should be calculated by
-0x37ebfff + 1 - 0x37ebfa9.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+727d161855d11d81e411@syzkaller.appspotmail.com
 
-In the below equation, however, map->m_pblk was supposed to be the original
-address instead of the one from the target block address.
+         option from the mount to silence this warning.
+=======================================================
+ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
+------------[ cut here ]------------
+kernel BUG at fs/ocfs2/move_extents.c:101!
+Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5497 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__ocfs2_move_extent+0xccf/0xce0 fs/ocfs2/move_extents.c:101
+Code: ff 44 89 e1 80 e1 07 80 c1 03 38 c1 0f 8c f0 fd ff ff 4c 89 e7 e8 01 d5 7b fe 48 8b 7c 24 08 e9 de fd ff ff e8 72 a9 14 fe 90 <0f> 0b 66 66 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90
+RSP: 0018:ffffc9000cb4f320 EFLAGS: 00010293
+RAX: ffffffff83a9e4ce RBX: 0000000000000000 RCX: ffff888000332480
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000002
+RBP: ffffc9000cb4f488 R08: ffff888000332480 R09: 0000000000000006
+R10: 00000000fffffffc R11: 0000000000000000 R12: 0000000000002550
+R13: 0000000000000002 R14: dffffc0000000000 R15: 0000000000000000
+FS:  000055556197a500(0000) GS:ffff88808d98a000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000020000000b000 CR3: 00000000591c9000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ ocfs2_move_extent fs/ocfs2/move_extents.c:672 [inline]
+ __ocfs2_move_extents_range+0x2116/0x3380 fs/ocfs2/move_extents.c:859
+ ocfs2_move_extents+0x378/0x960 fs/ocfs2/move_extents.c:926
+ ocfs2_ioctl_move_extents+0x53e/0x710 fs/ocfs2/move_extents.c:1052
+ ocfs2_ioctl+0x191/0x750 fs/ocfs2/ioctl.c:942
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:597 [inline]
+ __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:583
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f57bad8eec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd42f1aff8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f57bafe5fa0 RCX: 00007f57bad8eec9
+RDX: 00002000000000c0 RSI: 0000000040406f06 RDI: 0000000000000004
+RBP: 00007f57bae11f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f57bafe5fa0 R14: 00007f57bafe5fa0 R15: 0000000000000003
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__ocfs2_move_extent+0xccf/0xce0 fs/ocfs2/move_extents.c:101
+Code: ff 44 89 e1 80 e1 07 80 c1 03 38 c1 0f 8c f0 fd ff ff 4c 89 e7 e8 01 d5 7b fe 48 8b 7c 24 08 e9 de fd ff ff e8 72 a9 14 fe 90 <0f> 0b 66 66 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90
+RSP: 0018:ffffc9000cb4f320 EFLAGS: 00010293
+RAX: ffffffff83a9e4ce RBX: 0000000000000000 RCX: ffff888000332480
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000002
+RBP: ffffc9000cb4f488 R08: ffff888000332480 R09: 0000000000000006
+R10: 00000000fffffffc R11: 0000000000000000 R12: 0000000000002550
+R13: 0000000000000002 R14: dffffc0000000000 R15: 0000000000000000
+FS:  000055556197a500(0000) GS:ffff88808d98a000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000020000000b000 CR3: 00000000591c9000 CR4: 0000000000352ef0
 
- - map->m_len = min(map->m_len, dev->end_blk + 1 - map->m_pblk);
 
-Cc: stable@vger.kernel.org
-Fixes: 71f2c8206202 ("f2fs: multidevice: support direct IO")
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/data.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index ef38e62cda8f..775aa4f63aa3 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1497,8 +1497,8 @@ static bool f2fs_map_blocks_cached(struct inode *inode,
- 		struct f2fs_dev_info *dev = &sbi->devs[bidx];
- 
- 		map->m_bdev = dev->bdev;
--		map->m_pblk -= dev->start_blk;
- 		map->m_len = min(map->m_len, dev->end_blk + 1 - map->m_pblk);
-+		map->m_pblk -= dev->start_blk;
- 	} else {
- 		map->m_bdev = inode->i_sb->s_bdev;
- 	}
--- 
-2.51.0.710.ga91ca5db03-goog
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
