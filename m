@@ -1,266 +1,225 @@
-Return-Path: <linux-kernel+bounces-844392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC5A3BC1CBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:47:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 453F0BC1CD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:49:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E1A514F7048
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:47:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B9964EF3AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6932E228C;
-	Tue,  7 Oct 2025 14:47:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2412E229E;
+	Tue,  7 Oct 2025 14:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="I/D8j+tj";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ocLkwm8R"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="C8fN+aKS"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DDF534BA33;
-	Tue,  7 Oct 2025 14:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759848429; cv=fail; b=KWs54J7F5srn8cYHshRpHGE3Nj4R1T/jwvpHMgYQzHHbqmhVLWB+n/PN5pb9ivH5MypFRfnPZtCn7eSTjgZWVePGuJs8eoHTQ4Hlk4XKDH2yGDtNC6uQn9lnS9ssDpLRMOo8OIE4pkesz/wTkvNyV7Hg5o8M5gN6tF1sJwvAAa0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759848429; c=relaxed/simple;
-	bh=8Kg8qeYmqLJ6oWZy0YqZuanMTpJDxFBBcYrdl/FRj1A=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=o4OEGT9EIi7FBblCiXENJ5SlrgjIKMgqOFuRjYkUcO7NqqCgg4FyXvuBqfVhnh3v9ZRHAss/Fd4nOiOS5DERxqJFkcyYri7ZKq9ObDNef9AnfgVzOLxtk7GtwzUGxyT+TE61OdikHJ7fDqXr+K3CeNeGhRzvTheIntjceRtcGmU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=I/D8j+tj; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ocLkwm8R; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 597ECFoF001705;
-	Tue, 7 Oct 2025 14:47:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=iUzVcy4LabHo6Rij8oRa7EfmP/xbFmj5LyXh0IUVH6M=; b=
-	I/D8j+tjt9+MmzP21jc8So8vrowve7BQIVExtJMaO0Ef7SIIIAzw/lRaoVBGjvwS
-	ptP1n/hC1qASUb/+5qYGrM5Q6m0b4GbklJ/yDraWva4GZLRKy39whtZ3EEkwq6lU
-	H2ZWQoNhwwHHvoTesNWSTvdLoQP/+9gIBvRgn28Nv1Bl5dM671eD2OliNVqklYWQ
-	zKZiWOSPp6f3K3zCBGIuIeMv8WRvkqHGMyfdAcxrx7J1GbSacXUmIkyNblj9Mtky
-	MazqwZfvNwGtA/X5vdzsURDtciRXUVF5Qt51XJVdFy3BosDiB0HEYkbawJBgzfyS
-	D820EU7I9eQRo5w7dG8lCw==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49n47u84fw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 07 Oct 2025 14:47:04 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 597E7ub9035137;
-	Tue, 7 Oct 2025 14:47:03 GMT
-Received: from ch1pr05cu001.outbound.protection.outlook.com (mail-northcentralusazon11010016.outbound.protection.outlook.com [52.101.193.16])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49kdp4y603-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 07 Oct 2025 14:47:03 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tTnSH44RCPADuSk1kV7hC26u7Zw/uhU+wLrsbLLFhTr8Q9KGlTYiwzsqFqnD3vGFroh6xoy2hJABL26qBWw3PD0zW3TrClm5Tmb7oe0f82lQfOUh8Ki09G39xg8ca1KctzQfpEnL+vsihZpYR/wwSYKCjSIAISUtDNqH/rw9WBg34YFTw6joFblXznVazS41HlhqmyG25sYbo/Tc0XoVtOfistqvOGJFiXQMxGwiXwwRuREnLGueNO0sNuJ5Fe0wOCkzHO3npJqge9e6NbOcak1W9OXTRZ9dJtHOznDI2NouLbi/+13PhJZkeXgA5IPvEPm4pA2trR285xMtcdnLcA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iUzVcy4LabHo6Rij8oRa7EfmP/xbFmj5LyXh0IUVH6M=;
- b=HBja7cVhLsBef1Ns522TzJsO5MZl2Z07FpJjoJVDRzfC8agR+oPynK0i90yQyYqLyfpZhtc9sj4peQO/IDvIr97iThSHO/BYYK0LT77izI3ZYDCfhQiftDpx2lzGW9U+pWMfFbNtswgdC5jGF+jPn9YFyKVrWK20VrhaBb+YdjXcj7fKP+Hjt22MnxnlixOuD0/xn6ZAiZ/2g7J2ro9CgxFM9PG5QLABNj1z6GxINaB2dakgARJl99ik3wwfKyATarUJeRWstsRLPxQeAqyfLhKJgS/iKRHZ/DARiGPTGRcutYNJXAeL+u67OWp/Y70bNyyuIK/9NCeSZVkUdeNkvQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iUzVcy4LabHo6Rij8oRa7EfmP/xbFmj5LyXh0IUVH6M=;
- b=ocLkwm8Rm0PktWazTxVyKfR9Edx2onBygEb2fPRZv0COYd0khu7azSaSYk+u1YRQkeE6VwjGNlE4ZhRwxV3bJw7uCBAR5JnmU9A2kyIOf/iHm5H4zM0pXYsv6utQtJ9K6uel5dnk82GjPTYqMdfJm5AFuIFHSqE1pItH0YzR4JI=
-Received: from BLAPR10MB5041.namprd10.prod.outlook.com (2603:10b6:208:30e::6)
- by CO1PR10MB4420.namprd10.prod.outlook.com (2603:10b6:303:97::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Tue, 7 Oct
- 2025 14:46:56 +0000
-Received: from BLAPR10MB5041.namprd10.prod.outlook.com
- ([fe80::2c19:641c:14b9:b1b4]) by BLAPR10MB5041.namprd10.prod.outlook.com
- ([fe80::2c19:641c:14b9:b1b4%4]) with mapi id 15.20.9182.017; Tue, 7 Oct 2025
- 14:46:55 +0000
-Message-ID: <96398096-ef62-4873-bf60-5b54026c5760@oracle.com>
-Date: Tue, 7 Oct 2025 10:46:52 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] vfio: fix VFIO_IOMMU_UNMAP_DMA when end of range would
- overflow u64
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Alex Mastro <amastro@fb.com>,
-        Alex Williamson
- <alex.williamson@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251005-fix-unmap-v1-1-6687732ed44e@fb.com>
- <20251006121618.GA3365647@ziepe.ca>
- <aOPuU0O6PlOjd/Xs@devgpu015.cco6.facebook.com>
- <20251006225039.GA3441843@ziepe.ca>
- <aORhMMOU5p3j69ld@devgpu015.cco6.facebook.com>
- <68e18f2c-79ad-45ec-99b9-99ff68ba5438@oracle.com>
- <20251007114808.GB3441843@ziepe.ca>
-Content-Language: en-US
-From: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
-In-Reply-To: <20251007114808.GB3441843@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PH0PR07CA0031.namprd07.prod.outlook.com
- (2603:10b6:510:e::6) To BLAPR10MB5041.namprd10.prod.outlook.com
- (2603:10b6:208:30e::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCAA2DFA2B;
+	Tue,  7 Oct 2025 14:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759848532; cv=none; b=k0mdQzwooLzd4+/KJaJlkKug0sWFzCju9itwu660YpEhNwPSfSXnNyM82Bqzr5i/v/RYrL5n/B6PzV7BNIC755maLa0nnJUWmMOKbweVG/KEu2r8KoOeDvK4/jEU0LWZ75fWZYNfgh80PQe2JrQnZP5W2nfSUmFpyLm0h45yiBY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759848532; c=relaxed/simple;
+	bh=z5HmmgPSnRAHY03Khmg/L4NBt5sSkrUdWDBcy72dlIo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RiMOpzisp+dISagX0cgB/+dUkwhvyCXLNDWs6WYiKKuCqxXi5lr6MTeLdl85ZQolmrfhTqxbuVN2I8e01d3Uq7pIBGgfgL0HhcvUzbhq5oL9Vxdi5w0eh8b/mYqTsuBn3wIgh7Yye85Hy6me/FIp7ozeqepOuTpuZ3RkCWELBcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=C8fN+aKS; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59775qAm007914;
+	Tue, 7 Oct 2025 14:48:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=9OeCrfT7+te8QI0hZM2PY0LLpqc1e1Cpvi/YOWkra
+	Ac=; b=C8fN+aKSI0wW1Xiwn9SybcMR6H/NY8NtWxn08Acq4NnoJU/K5cAhMU8iC
+	1gpBLsI79X3ZbpkVUlRxRZxvjjjak5H9krT7t6JO5YzlTmE40NUtN9czta9mOLpG
+	nblR8DZOYje9gZgQPLJ3sX6NK9RlHg3P8Np9clj/2KxK4eLQREwlvm4TfJBlNIJA
+	on5n8As8oDo4PZfdkbbwLfO1wUR4Xuov+5pc2KON0X8Z8lXgm4L/zKwNOOMwII0P
+	4Etdp73YOdSCpkh7n2HzcD1e9QIOYEqSNVL7cbI+L65Yka0Ilbj5BxWppuenkO0m
+	UcTx6u5AyNHJXY/MxlsGjh803cgwg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49jt0pfawb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 Oct 2025 14:48:32 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 597Eh7HO025642;
+	Tue, 7 Oct 2025 14:48:31 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49jt0pfaw8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 Oct 2025 14:48:31 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 597EbcPU021251;
+	Tue, 7 Oct 2025 14:48:30 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49kgm1bfne-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 Oct 2025 14:48:30 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 597EmRoP52756784
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 7 Oct 2025 14:48:27 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EEA3E20043;
+	Tue,  7 Oct 2025 14:48:26 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A576E20040;
+	Tue,  7 Oct 2025 14:48:26 +0000 (GMT)
+Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  7 Oct 2025 14:48:26 +0000 (GMT)
+From: Gerd Bayer <gbayer@linux.ibm.com>
+To: Tariq Toukan <tariqt@nvidia.com>, Saeed Mahameed <saeedm@nvidia.com>,
+        Leon Romanovsky <leon@kernel.org>, Shay Drori <shayd@nvidia.com>,
+        Mark Bloch <mbloch@nvidia.com>
+Cc: Gerd Bayer <gbayer@linux.ibm.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Alex Vesker <valex@mellanox.com>,
+        Feras Daoud <ferasda@mellanox.com>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Niklas Schnelle <schnelle@linux.ibm.com>, linux-s390@vger.kernel.org
+Subject: [PATCH net v2] net/mlx5: Avoid deadlock between PCI error recovery and health reporter
+Date: Tue,  7 Oct 2025 16:48:26 +0200
+Message-ID: <20251007144826.2825134-1-gbayer@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BLAPR10MB5041:EE_|CO1PR10MB4420:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7a0ce1e8-f45c-4de9-392c-08de05b05c64
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RXFaOHVWdTVrMlJONnBSVjV4ZWJDdHRLUmViSWNNR0gvbk1tTmNvWFQ4N0tC?=
- =?utf-8?B?c3REZ3hMREZqL1krMnduaGxVOWZyblhKaVNpdGlyelZvdi9VU3E3YXJ4MzY0?=
- =?utf-8?B?S210WTJMeFRjR2htamk2dmQ2SFFqTDJrYmRQaFF2cXA5cTBORnkrM0paNWNH?=
- =?utf-8?B?c2JzbzdGY2MxQlAwQ3krV3pzRjNYUUFwTUcwM1RRa2luVUdpcUNOTVhWb0wv?=
- =?utf-8?B?VEt4bGRkU3A3bWc0QzhhSCtuckJ2QVRPcjBhcGFiNmFjaEdyTjc1VFVRd21u?=
- =?utf-8?B?amhpOTUzNit4OCsrdTBxZ2t6VVpWeWpySWtuZXl1cjFuaHNLd2lHRnpEMDNi?=
- =?utf-8?B?YnpraG8zaWJabmlRdFFpS2tvNjRuU3JuZ2Y4dXB2SWNmUXZ6bElZOUc2Uk53?=
- =?utf-8?B?T2tFTzllMUtTQ1VxcUN5NVAvUU9hN0kxWTduWTJvWHFWUjhrRWMyaDliSUlM?=
- =?utf-8?B?Y1p3Tjk2ZEVsdWVTdUVjaFgwVHNuZXRrS1dZSTVpNXdiOXNoQUtScGRGTEd6?=
- =?utf-8?B?UmNrZXBlTWw1N0g3N1pPUzBGSGFPY00xcVFQMG1KdWxZY2ZWckMzNFV3QStz?=
- =?utf-8?B?cGpmTU1XSlE4Qm5tOHdVYWtmanV0NWtsZFhoQlNJVVNZNkNmZ0FtK2Frb1pR?=
- =?utf-8?B?REcrOW93YkJxVk9sNWdlbk9kNk9DQjBoMmlkb1B4cy9pSms0UFFwWWpZWkVT?=
- =?utf-8?B?MSszcWhTOWdLNElyUENZUUs2ZFBQaWdZUVhQM3N4M1B6T0FFWXh0NW1sSEhu?=
- =?utf-8?B?MHlURFZ1bGdOeHFxczZYd05nbHo5NTNRM1RkYkltem1ISFgxMDJqRnVyalZF?=
- =?utf-8?B?WmE3YmRQZWYySVNzS3pvQTlCVXkyY3U3alAvNHhPSjJBYnE5T3JoYit0cjZs?=
- =?utf-8?B?eE1mcGhwUVdxaTU3REJqUExtbGx6cXM3MDlZNFZNdStCbVk3c1pFVGlseVZB?=
- =?utf-8?B?T0txSVpWVm5mQUI3RTFwVk1obzZtbWcwTlp6RkhURUVpRU9RMFhTZUxiamcx?=
- =?utf-8?B?ZlIrZnBjSDJYV3lnVkI3aU56Y1BOTlZScG1GbXZrZmlpUk42cFVTUmlnVHUx?=
- =?utf-8?B?bXVTWTdUZ1ltTUxteFM4SEZZS3c2ZjJQbC9PU2t2TWs5RFZyV2ZvamxjTGlk?=
- =?utf-8?B?VTRJS0x5bEhtYWNuVTRnTVpXcUF3Si82QmpKZ0hKWUJMeFZDZnNWOHdzZ0pV?=
- =?utf-8?B?b0xBdytCRk5lUHN0cDdzOGtVTDVWdmd4blNiU0RSdmlLeFhyZGd0bjREREFn?=
- =?utf-8?B?eXdIc3d3K2xhTXYxeHdqNmt1TlhhRjNpRGtUY1JaTnhySG11L0RReklsK1J0?=
- =?utf-8?B?Q0xxM0k0UWFNZkdiMVdPMzMzU2h6Mi83NG1WT0JqbzhxcGJMWDQrTnYwekZt?=
- =?utf-8?B?YWRRL1F0eXh0amY4Q1BKVmhBeW8yRHdZYllPNDdmcVJHZnFpVHdLbWdHVElr?=
- =?utf-8?B?QTRtVUNHMjBoVXhxMTFlVlB4OStidjVuMkRpaEZWYXJBQ3AxQ0tHRzdhblFy?=
- =?utf-8?B?R2MxUlllTExnQ3kwTnJTc1JHZHBuM2t1M2hPTkdKaXp3ODBrWXZ0bzdPMUk4?=
- =?utf-8?B?VnByUzNud0xoL08wdytRR2dJUFlmU1BFYkdIQlhWWGhRLzZVWG9pSTE4N0Fv?=
- =?utf-8?B?OXVuVEtCalJzRnV1SGhUblE4SU1kT1V1SnpkejYvU0JvakUwdTczeW9BZnBO?=
- =?utf-8?B?ZGlFanQ0bnNGR3o1WjJSVjBpK2g4QVJGV3AxMzQxbVRsYTExU0lyelptUHhi?=
- =?utf-8?B?dU9EL0FyU3hBdmo1Z0ZZaGM2TGRSVzhodHdiMDF4dytZcmI5UHo4emVlYTlJ?=
- =?utf-8?B?VjhoYTZTN2pBOEtOVTVnckhRZ2R2TmhwYkEyRmMwZ1Z2ME9qL2FROFdoYStz?=
- =?utf-8?B?dUlORm5NSDRXSzV2dzN2b2ZaaVV0ZkJZM3l3ajhOaWhWVUpWS2NXN2Z6TlZa?=
- =?utf-8?B?OTVjeWpCSFhIRm9BZ2tabXZONmlENElsZ0wzbVo4N083YzhpZnJCL3E0NFBX?=
- =?utf-8?B?a2hka0FqZ2JBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BLAPR10MB5041.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?V2hqek5Mcno2US9Dek16Z1htZUJRcWRFVDJkc2NBK3VHdjdVb3J1UkNLbCtG?=
- =?utf-8?B?MExjbkpZaXBhcEZoN295UW45aDBPbUtXNUtuZzU3S1NHQVkzMC82R0ZrTlZO?=
- =?utf-8?B?bGplNkNTbDYxSTJRdXdxMmtlbTVzRk0vV21PSzgrdVdIbWdIam1uSDRZNnZK?=
- =?utf-8?B?NkdGUFBFQmVOcE9GYjFLSEU3VFhvNmdwblFOejhXMi9tWXF6dVpBSFFCdlpl?=
- =?utf-8?B?ZGY1a2dGMlZ1dGVFVHdVd3N3eDJPQ2NDVnJNb1RnTThabFo5NkY3NWFGVy9R?=
- =?utf-8?B?TDNYVEx0c21iSTM3Y1pXWnZuakhqbE11QzZoYmpJemM2QWdCZkJ2NVZCaStN?=
- =?utf-8?B?Zmo3UEF1YTVNRzJhQm51c1pwaHczNlNMZHByQ0hMRUN0Y3NFc0JZMDN3VDJv?=
- =?utf-8?B?a2FrSzJEbTZ3dUhaL1NYckkrUE9qbCtadDlvdk1QangvTGpzV1JJUTk5aW14?=
- =?utf-8?B?Y09yMC8rbi9Jei9HV0J5b1VHUFpCS0h3L3g3MDNPU29UeEFoMjZsOUxZaWVl?=
- =?utf-8?B?RFBaRzlBSnZ3VnJqS0lCWHo0REhmK2FSZFBPVVhMbzhXWVgxSExTWXR3Y2p6?=
- =?utf-8?B?b0svdFc0Sk5qRUduVGVoaUcvTEZDeFpUR2hGUDJuYWlMUU85a0pBTmM5Rjdm?=
- =?utf-8?B?S2lldm9IeGVGc2QzSTM3Sk5seHdzVXpBY01TSzhGd0VYaUVtcmNqTHZSZTJB?=
- =?utf-8?B?SCtpTXRycmE3Y1kvR09KTWdpaDlRc2F3N1o4aGVWa3J1WkpXNU9QR0lqRkVR?=
- =?utf-8?B?R2p0LzZ1TDJjM21uNitzcmE5VFYxZURWYmk4dzl6NnRSWmwrckZLWkU2U3lJ?=
- =?utf-8?B?bktKSTNIN3F3R3RTQ0NXZWNraUR4RFZoU2ZxUnQ1ZUZ3Vkc4M0E1cmt0Ym9m?=
- =?utf-8?B?dG9UYmhxZS9la1A4RkpOS0k2OU1GQ3R0Tkt0TzhvT2g5Rk1rak5Ib3RFNlVp?=
- =?utf-8?B?U0VrMHhxb2p2SmlsbXZZN2JLVXh1aGEyUGZWY1FDZnJkS0Z0SCtmKzBDdEhP?=
- =?utf-8?B?NGtwNllwc2pvSXF5MEFCaHpZTVNFRkpMbU9Pd0FiUElCSjBDL3Z4ZmpLWXMv?=
- =?utf-8?B?aDR1UCtHUCtPR2g1a1JuVWw0N1grYVIra1dKR0xzS3dTZTlJTUNRZ0dxeldP?=
- =?utf-8?B?ZHVFc1FZR2t5Rm5jRkNhRXdhbHNXcGRJYXg3TVliSmtsbmZRSHJtRDFGMUxF?=
- =?utf-8?B?TVZNOE5JTWw1VWdQWnhWVU1xRFdRZGNZbEZQbEYvNngycklmTWg5cE8wRCtX?=
- =?utf-8?B?M0lIbjdSZTl1c1pHVTdOejV6bnVQbFFWdEtWLzF3YTRjRTNNRFlialR2NFl0?=
- =?utf-8?B?UDdxWlR2V0Y3RXNaUHk3Z0JDNlBjMWlXNzN0YW04MytGSEZ4b3pDTm1pZzlo?=
- =?utf-8?B?YVVXemtSU1JKU0YwZ1dBMWlqc0hlcHNrUytrNzUxYi9TTnV3NVZpZmpOdkRC?=
- =?utf-8?B?NUpvN21pdnYvZ2xHTlF0VDh5RXBTT3dCQkNjeWhTbHNHZjkyNHpUMG5SOVF1?=
- =?utf-8?B?QUZuVHg1d3pNZm43RFJjWWd1dk1qU2VabGdNOXpVdzhUeUtJMXI4aTZCVEpR?=
- =?utf-8?B?NGkwTXhYZDZSYTRIK0tHVU9IRjBVdWNhUmdXa2VYaHhxdHUwSW1Id0lsWFhB?=
- =?utf-8?B?d2RvT1Z2UVJYWFNpTXM1RmZRTkhGTFhXUHpkTFNTSkdZRU01WWZ2c0xnN1ps?=
- =?utf-8?B?VEJpeUl2WTdyQ3owam1nZjZwOHZtZyt6TEhIc0xiRWJrd3dYRVpJdTVNSlRV?=
- =?utf-8?B?VUFsYXJZUjZlcERqeHptclYrYXNxY1lOMHdaa0hCSldtSGhsbGFVTVlRbDJ4?=
- =?utf-8?B?cXBWbkVGTURRbzdqdXQ3TXRQVkpvejJGeEI0OTYrL1hNaWp4VUZBNHlVeFlu?=
- =?utf-8?B?S2RUT3p3MmRsQnlpL1BTUlJKcmw1TXk4QzdFWUUwZkw0V29UV0FNSEtpeDRv?=
- =?utf-8?B?eUkrMmVlekE5M1dyY1FmV1RoOWhIbmllSUJhM3N6UG1xckRieWdHK28wTWRa?=
- =?utf-8?B?OGFmUWZwclhKZHdQVFE2VVBoMlUvanNxWEVjNXdoNy9jMERZODk5RVlacnB0?=
- =?utf-8?B?YWlZbWZKQnRTaVNnbW1KYkVjUzcyZEJVK0ZkT2I3VEhLQlROR2Zib2ZnZjF6?=
- =?utf-8?B?djRoeEZxbFNzYlpkNFNMdHdVMnFYdk5sMS9QUG84NXFmNzZLUjB0UFYyZkFy?=
- =?utf-8?Q?9lPms7md27zW4RTw8uvMpNo=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	JhHGVlWf0VSuzOrtd1Q1heWbekCe2z1b5VhAvdYbS7f20lqMuatlYQgzbAhysw5XUZ5MMjR0n3fNlM80JPd1Z9dfqnEk2cuCZ7a5l7u+do4FunDagUof7zP9kB/C9M5WLTjnfAZMHk8B13twsIiMAbB4sxOiETUhJr30gvLPxJRA+PX+3YfMz+lQX84UD8KTc+YS3lqMVW8Y3ef8ZYkXH4Y6SIMGJmnKtIb18sq4EGdPIQWjcJBqkOBeRblOpKMvd1ezKBREjplDo45ykkeBQRR56T+3CLFEjNQ+3ore5FapYppeSS3NL9wV1iuz3proiurY/nRU7nBU1nR/WXrdc3XnDN1S+UMvs/xD+N4t/O+Oi042v4GtW8eKaYHBCqyLMwDuodhwq06kL3raWZB+jrJmHYPSZHaw44571T1qnbW3ADeF1Fo4o4nT34KJ6+iCUz4iX+JnfsYDDhuy2hkD3os2sEt2tmgdlv7Aqqv3et0JxATh5a0r6+aiRtZNrB+SGZEgDl/GjTJTT5RkTcTFhUXmiaKIAULH0mJuiqvU7AcjJIPm3emT+FfL8rYSj/RJK6n2HOHi2/TCTy7VhD1d0tDV/QT3T1byyp4PNkcyIA8=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a0ce1e8-f45c-4de9-392c-08de05b05c64
-X-MS-Exchange-CrossTenant-AuthSource: BLAPR10MB5041.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2025 14:46:55.7560
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bu0f0qqMOIf/xSM+3GxRr17dp671Nr/kuy6LkfqIRctSuwNVeIg8nFM3t8ki+m1c6mzsaKTyWkHnlGLJxzMFBbWi09jp7tnnWvyahE5LQms=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4420
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=XvT3+FF9 c=1 sm=1 tr=0 ts=68e52840 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=x6icFKpwvdMA:10 a=sWKEhP36mHoA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
+ a=_69atRxAefIsapZGGosA:9 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: 3ZoUPiVvIgFsDPfY5UT_l0KEZREjcV77
+X-Proofpoint-GUID: 35fo2wBLflfgKKVPIECL0i4FqqLQSy3Y
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAwOSBTYWx0ZWRfXzPSpuHAmWTJy
+ dDNc64Q1Q72geC3T9so5xRBqqNrE7wUh4yJAOfky/qoyv1uqVo9855Sc8IhXTQepAKFQRoe9YhS
+ s4M1ac2jMHdr0XANzsY/9XaMvHPrCDpSoF5hE6KpZZs2n4CnAhmuRkHVV1Ygi3kMLVfLs1BD7jj
+ K5NQ0CZFfrLENgSHH0Dd8iYyfiux1AfrHC8E+nXKxPHPYl3vgSZQduixOP+Kr0ejgecc4QZYIRT
+ mjeF/T33kgkW09VbA+CAXDjZk9AE1h1LHHMDEHa329B2yHi88TpG5tMHdjodazVM1iZuSApx4Ev
+ pkilGvBZ3KYKLKQKgSiBI50COdQF2yTO5yYIvqvIZnhdx8399B7b3960HsFbYsZxayItsXCsYnD
+ NOjH9A2vfGW/rD9W9k1u0M5H47J88Q==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-07_01,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
- adultscore=0 mlxscore=0 spamscore=0 phishscore=0 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2509150000 definitions=main-2510070117
-X-Proofpoint-ORIG-GUID: wOJO3s9KO7mTn45vuBoHPw0AhykfMdaP
-X-Proofpoint-GUID: wOJO3s9KO7mTn45vuBoHPw0AhykfMdaP
-X-Authority-Analysis: v=2.4 cv=Qr5THFyd c=1 sm=1 tr=0 ts=68e527e8 b=1 cx=c_pps
- a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8
- a=hD8lW_uMcabd4xOpsLEA:9 a=QEXdDO2ut3YA:10 cc=ntf awl=host:12092
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA3MDExMSBTYWx0ZWRfXyEpP9Ye3YhtL
- NvhdaFRk3UfLszQNPRJCSSMX7doK3fZKn8vjoBp4jiHXD5qVc5SMGQ90/q7ImhixbBhOlp8Y4oh
- ex4aG92wO1mun7RgpgYkcg1aSpqfuQ4pqvK36X169ZAACKSok6z+xEroxwPF3snhtCpCZj5YLGj
- 6oMpA9TOAL0TThncpI573r0tTqQPi/XFF4Ctjpkv212UCHAkYB9YmZ0zIA5s48TGFr9QVWSLMLy
- muwpg8yQfCZeGgi9xqgx6BHfZZi4i+vpWrwg4SQrCYXvxORb9RHRRzpfa/u5F7bMXja980b3mtG
- 2Dml89g+OHX8arDjjBeaqFDHA7dQ7KiYVqu8J1U7zW+sSgdu26hCJNxSIYKgoXvRBgj1nLGEPf5
- DttLMjPGf3bejBu4S9/0L0VC+gHBOu7pNyRM/RNpwHNE7X3Rai0=
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 spamscore=0 lowpriorityscore=0 suspectscore=0
+ phishscore=0 priorityscore=1501 clxscore=1011 adultscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040009
 
+Try to block further PCI config accesses just once when trying to acquire
+the VSC GW lock. PCI error recovery on s390 may be blocking accesses
+while trying to acquire the devlink lock that mlx5_crdump_collect is
+holding already. In effect, this sacrifices the crdump if there is
+contention with other tasks about PCI config accesses.
 
+During error recovery testing a pair of tasks was reported to be hung:
 
-On 10/7/25 7:48 AM, Jason Gunthorpe wrote:
-> On Mon, Oct 06, 2025 at 09:23:56PM -0400, Alejandro Jimenez wrote:
-> 
->> I mentioned this issue on the cover letter for:
->> https://lore.kernel.org/qemu-devel/20250919213515.917111-1-alejandro.j.jimenez@oracle.com/
-> 
-> Use iommufd for this kind of work?
-> 
+[10144.859042] mlx5_core 0000:00:00.1: mlx5_health_try_recover:338:(pid 5553): health recovery flow aborted, PCI reads still not working
+[10320.359160] INFO: task kmcheck:72 blocked for more than 122 seconds.
+[10320.359169]       Not tainted 5.14.0-570.12.1.bringup7.el9.s390x #1
+[10320.359171] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[10320.359172] task:kmcheck         state:D stack:0     pid:72    tgid:72    ppid:2      flags:0x00000000
+[10320.359176] Call Trace:
+[10320.359178]  [<000000065256f030>] __schedule+0x2a0/0x590
+[10320.359187]  [<000000065256f356>] schedule+0x36/0xe0
+[10320.359189]  [<000000065256f572>] schedule_preempt_disabled+0x22/0x30
+[10320.359192]  [<0000000652570a94>] __mutex_lock.constprop.0+0x484/0x8a8
+[10320.359194]  [<000003ff800673a4>] mlx5_unload_one+0x34/0x58 [mlx5_core]
+[10320.359360]  [<000003ff8006745c>] mlx5_pci_err_detected+0x94/0x140 [mlx5_core]
+[10320.359400]  [<0000000652556c5a>] zpci_event_attempt_error_recovery+0xf2/0x398
+[10320.359406]  [<0000000651b9184a>] __zpci_event_error+0x23a/0x2c0
+[10320.359411]  [<00000006522b3958>] chsc_process_event_information.constprop.0+0x1c8/0x1e8
+[10320.359416]  [<00000006522baf1a>] crw_collect_info+0x272/0x338
+[10320.359418]  [<0000000651bc9de0>] kthread+0x108/0x110
+[10320.359422]  [<0000000651b42ea4>] __ret_from_fork+0x3c/0x58
+[10320.359425]  [<0000000652576642>] ret_from_fork+0xa/0x30
+[10320.359440] INFO: task kworker/u1664:6:1514 blocked for more than 122 seconds.
+[10320.359441]       Not tainted 5.14.0-570.12.1.bringup7.el9.s390x #1
+[10320.359442] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[10320.359443] task:kworker/u1664:6 state:D stack:0     pid:1514  tgid:1514  ppid:2      flags:0x00000000
+[10320.359447] Workqueue: mlx5_health0000:00:00.0 mlx5_fw_fatal_reporter_err_work [mlx5_core]
+[10320.359492] Call Trace:
+[10320.359521]  [<000000065256f030>] __schedule+0x2a0/0x590
+[10320.359524]  [<000000065256f356>] schedule+0x36/0xe0
+[10320.359526]  [<0000000652172e28>] pci_wait_cfg+0x80/0xe8
+[10320.359532]  [<0000000652172f94>] pci_cfg_access_lock+0x74/0x88
+[10320.359534]  [<000003ff800916b6>] mlx5_vsc_gw_lock+0x36/0x178 [mlx5_core]
+[10320.359585]  [<000003ff80098824>] mlx5_crdump_collect+0x34/0x1c8 [mlx5_core]
+[10320.359637]  [<000003ff80074b62>] mlx5_fw_fatal_reporter_dump+0x6a/0xe8 [mlx5_core]
+[10320.359680]  [<0000000652512242>] devlink_health_do_dump.part.0+0x82/0x168
+[10320.359683]  [<0000000652513212>] devlink_health_report+0x19a/0x230
+[10320.359685]  [<000003ff80075a12>] mlx5_fw_fatal_reporter_err_work+0xba/0x1b0 [mlx5_core]
+[10320.359728]  [<0000000651bbf852>] process_one_work+0x1c2/0x458
+[10320.359733]  [<0000000651bc073e>] worker_thread+0x3ce/0x528
+[10320.359735]  [<0000000651bc9de0>] kthread+0x108/0x110
+[10320.359737]  [<0000000651b42ea4>] __ret_from_fork+0x3c/0x58
+[10320.359739]  [<0000000652576642>] ret_from_fork+0xa/0x30
 
-ACK, need to test with iommufd as well.
+No kernel log of the exact same error with an upstream kernel is
+available - but the very same deadlock situation can be constructed there,
+too:
 
->> I mentioned in the notes for the patch above why I chose a slightly more
->> complex method than the '- 1' approach, since there is a chance that
->> iova+size could also go beyond the end of the address space and actually
->> wrap around.
-> 
-> At the uapi boundary it should check that size != 0 and
-> !check_add_overflow(iova+size). It is much easier to understand if the
-> input from userspace is validated immediately at userspace.
-> 
-> Then the rest of the code safely computes the last with 'iova+size-1'
-> and does range logic based on last not end.
-> 
+- task: kmcheck
+  mlx5_unload_one() tries to acquire devlink lock while the PCI error
+  recovery code has set pdev->block_cfg_access by way of
+  pci_cfg_access_lock()
+- task: kworker
+  mlx5_crdump_collect() tries to set block_cfg_access through
+  pci_cfg_access_lock() while devlink_health_report() had acquired
+  the devlink lock.
 
-Makes sense, just thought adding overflow detection/resiliency in the 
-rest of the code is not that complex and provides an additional safety.
+A similar deadlock situation can be reproduced by requesting a
+crdump with
+  > devlink health dump show pci/<BDF> reporter fw_fatal
 
-Thank you,
-Alejandro
+while PCI error recovery is executed on the same <BDF> physical function
+by mlx5_core's pci_error_handlers. On s390 this can be injected with
+  > zpcictl --reset-fw <BDF>
 
-> Jason
+Extensive tests with the same setup that showed the original dead-lock
+didn't reproduce, nor did the second deadlock situation hit with
+this patch applied.
+
+Fixes: b25bbc2f24dc ("net/mlx5: Add Vendor Specific Capability access gateway")
+Signed-off-by: Gerd Bayer <gbayer@linux.ibm.com>
+
+---
+
+v1:
+Attempted to fix this differently, but still had potential for deadlocks
+and the second inject reproduced it quite regularly, still
+https://lore.kernel.org/netdev/20250807131130.4056349-1-gbayer@linux.ibm.com/
+---
+ drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c
+index 432c98f2626d..f668237b6bb0 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c
+@@ -73,7 +73,9 @@ int mlx5_vsc_gw_lock(struct mlx5_core_dev *dev)
+ 	u32 lock_val;
+ 	int ret;
+ 
+-	pci_cfg_access_lock(dev->pdev);
++	if (!pci_cfg_access_trylock(dev->pdev))
++		return -EBUSY;
++
+ 	do {
+ 		if (retries > VSC_MAX_RETRIES) {
+ 			ret = -EBUSY;
+-- 
+2.48.1
 
 
