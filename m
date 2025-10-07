@@ -1,151 +1,311 @@
-Return-Path: <linux-kernel+bounces-843910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA7D9BC08CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:06:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A3B9BC08D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:08:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 937234EEF8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:06:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E10293C4DBC
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:07:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0CA238145;
-	Tue,  7 Oct 2025 08:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D31256C8B;
+	Tue,  7 Oct 2025 08:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ghwOfKNl"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="J84tE/sC"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86415218AB4
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 08:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFED288AD;
+	Tue,  7 Oct 2025 08:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759824412; cv=none; b=LO0TKq8r5pnC42r647Jf2SHGIg4/7M+EUkod7nC90wuRN6mWy0hBtnsQDj8BBn1wxZKkVx696K4npJXwFqRaT/GtD0bxHNraOn5QkhaMHCiGmO+tsrc9b9luvvvAHoiWLscWbj9/JLDmk7QUKLLQJyhLFyYJ4Kys3C9Pplcbz6A=
+	t=1759824464; cv=none; b=CHqOSpW87NotLGjpZ1LfCWwKwg3izZL1isZIfsiPEjiNeeduML4hZIn6ZNssx9si0jpt11ijhYXhRBkqnUU4pl02IvBFUEnpiUp+sYw9ytbCOggD0erAo/dju3RMx6n/s8zoemCKkC4NluEWYBTJiXaS2YWoLTvtUTRsnBGSxww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759824412; c=relaxed/simple;
-	bh=0nuVQOkwJzeH7k9ho0X0QYWBaSW1FiKlHuDOyl8At9I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=nih/naiDtYnLkpfqc7I9CLcAwa1Dgfxryc/mb63t9utW1z9S6waH61A5iAAFJRFza8ge9VaIbI78/K8wu3k+nTZg5Ju40zpjHF/MjytUCuVukiww+7rl3A22WcS2r3FmvBqFdZAI3DqSmKPkIhlDvX8ewe1wVE9NtNspYa7b/DY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ghwOfKNl; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e2cfbf764so7271625e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 01:06:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759824408; x=1760429208; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=+DemagZ3lwdnPbdAD7J+Cx+hPerc6FDpVY4UH1BSMao=;
-        b=ghwOfKNlAxJnl/QpK+Tx4wr6ORYXHno92o3YfmUZqzquMrncQ7vPHwEaBZGRkPjMFC
-         tBsLwTCJyEgD9MQrgwRW2UOmTzBELWH13fbydMrdMuztvMdV0h8HwhlmHBqG4mXislYk
-         jeCgS4RRU0Mi/KojdEYXVZSUsmyvPHweARJ4Wsa3VAO7iWzn4P89x2X0zqWpRPxsgJJI
-         kuVblAsWGQSRUA5n4k+8nJgj3zcfvHlXWh5JO3UaGXkXUK59BsrbtovkTHuMPB6BarqU
-         RxsuaOuHyQzLWg2Hf8y9vHAQ87kJR5qhRXzm2ja2fL1iZKuSg1/jv6UvV3FyZcOES8nD
-         J0YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759824408; x=1760429208;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+DemagZ3lwdnPbdAD7J+Cx+hPerc6FDpVY4UH1BSMao=;
-        b=jD9CP5Dtl17VB4XNTQQHvh+sPL6OW2dSMpMBuAR3TEmshQ3sDI0kuKUVxzug0lq1aC
-         T641ubcIpAjw88FX3hRI5MS0QC9BIJtsIzDwcNkR/rIUMnLSZ5lNkKFWm54EymQ+0SGM
-         uNwMsuzyqGQVsynCl75Nx0OSkzILH35l299m0HQ1j40aZc/epNSH0zhnpmGd9+sFUtjk
-         OVxmwfvrA2UJe8W2nGD4VbY+T2dnvVXgVRSpBzcsHQCUzcNFUNpf11W8gZqIajugBduu
-         wt8d/BdEUGAnSlx6YwRn1MqvABoDecqUd4lfx9uFpc5WKI/TWQNZ+CeypRnf9LF8+h9q
-         RNvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWfd7ov9pINVEQNUoJC9jrEEINEYeQlmQU5v6vwHQy4w9HveKjwUNP9wNn7w5y+PK5Axj89jfwLYjWwIB8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRInlsOQ1czFzwLRCPN4AEZNbVXHcgM2leL7I/p7RcTJzDXaBJ
-	thAEvFXXp8haQ8RURZvFWW9Jr2ZpoACyzS/3lU6GkCAp/TPVUTh7o0bY
-X-Gm-Gg: ASbGnctqBc2AzFOnHWIdEAWqkAdREgKtOLDVqnDkbduITVLYCzVrDaLEbY+G2fkJwTp
-	pf8YMwArN3XG2lL54zHDpr5OPKVcV/IBe0rnhSQz9kuz6ujAzWrsKT67BX84jmwfMUMIZmbB3wy
-	U8SQVEOdfatL6xFcu+lOO4qCGKsRxgGxO32y6fCTIS68fWumQy3TuRncoG3IOig166q9du7RCJi
-	fbETEoUNTMGa7MhsB83aiuPRorwIakkFKHZ/zv+pByEgenZtAEpnTCfU/BzUMETiJSA9rZ8qy/w
-	QRpVR8VLxShS5N3wyPUxAsBRF7WF29ytXTG4J7m80tZ9ZLtIXOHkzKhdVkj2jA7vaP3yNz+ydlK
-	7ebcQn87V84SuYj7DChU1L7vpS76r/pJ/1fQZ8vtP1AD6sDNrJ+CLYPWRt616JRT7g61t7ON/gt
-	s=
-X-Google-Smtp-Source: AGHT+IG7W8TdSh7hajTVSLVxdSS/RLt63cBB9lWB3+Jv1QSy+dF+pbB9sKZOf60r/31B0nPg2XLA7Q==
-X-Received: by 2002:a05:600c:3510:b0:45d:f7df:270b with SMTP id 5b1f17b1804b1-46e710b22c1mr53224255e9.0.1759824407277;
-        Tue, 07 Oct 2025 01:06:47 -0700 (PDT)
-Received: from [192.168.174.116] ([102.155.185.183])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8e9780sm24118374f8f.29.2025.10.07.01.06.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Oct 2025 01:06:46 -0700 (PDT)
-Message-ID: <20f049cc-41f4-4b23-b4a7-5d41dca7c7e5@gmail.com>
-Date: Tue, 7 Oct 2025 09:07:01 +0100
+	s=arc-20240116; t=1759824464; c=relaxed/simple;
+	bh=pIxhPGLBhnFaiVzsjXy4P0p2fuzC5L0HB8TGi0u2Ssg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=RvTwkXP6xeyznLZ3Ig6lTX39lEq6MrM5IsrTqDKRmwrBFWa6Cah+ViwT/MrpVIcnMROiRSMG06bdTPFTS/RuF9/tub1sLUrs2YBBTcp7t58yT/oyxqWpZMa5wOVbN2qo8el9nlg1zva9K79eB52TEXywYgws7nFqFX3xbmD6i4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=J84tE/sC; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 59787J2V03747530, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1759824439; bh=uuHdzx6LzwNzZ4/Av2MKPj89yJkkQruxKP7LWFT7yxM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=J84tE/sC0Qdj1BZvG51K5CFrWRT4dVtkdQZaqaZFisiNCBueYBMoeYUZOkdxVKf33
+	 /36SgWw7EgjRuI2HvxAXgf4D806S8/UBkcjODr8jJ7Fb2xAqPj+LF9z9lTPNdqy66r
+	 BgaZu6nSgKY01IuvF9ASREKGqJu5BRs59d7EXgfI1Gd9rJBSJmi5cIFcb11t7W3FTb
+	 0oQlz3iA39iRvMcQpqOVfb55Ps0AxDuhqcXVaJ02R4tghUmwE5Z0/78C3Jms/Pbhdp
+	 8gwdZD+gTl6Oew2MZORY10Ztvpq9QprJ/HZfVdMkLMC2c8j/iOxEgNqpPc3trznkTw
+	 J8uBJ2aMJKI6Q==
+Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 59787J2V03747530
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 7 Oct 2025 16:07:19 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Tue, 7 Oct 2025 16:07:19 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS06.realtek.com.tw (10.21.1.56) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Tue, 7 Oct 2025 16:07:18 +0800
+Received: from RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090]) by
+ RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090%10]) with mapi id
+ 15.02.1544.027; Tue, 7 Oct 2025 16:07:18 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Fedor Pchelkin <pchelkin@ispras.ru>,
+        Bitterblue Smith
+	<rtl8821cerfe2@gmail.com>
+CC: Zong-Zhe Yang <kevin_yang@realtek.com>,
+        Bernie Huang
+	<phhuang@realtek.com>,
+        "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "lvc-project@linuxtesting.org"
+	<lvc-project@linuxtesting.org>
+Subject: RE: [PATCH rtw-next v2 7/7] wifi: rtw89: process TX wait skbs for USB via C2H handler
+Thread-Topic: [PATCH rtw-next v2 7/7] wifi: rtw89: process TX wait skbs for
+ USB via C2H handler
+Thread-Index: AQHcM9il/GZvLLVcMUW99DlZMhOcmbS2QTFA
+Date: Tue, 7 Oct 2025 08:07:18 +0000
+Message-ID: <d72c6bf8618b4245939fd73cd9e24acd@realtek.com>
+References: <20251002200857.657747-1-pchelkin@ispras.ru>
+ <20251002200857.657747-8-pchelkin@ispras.ru>
+In-Reply-To: <20251002200857.657747-8-pchelkin@ispras.ru>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/gud: Use kmalloc_array() instead of kmalloc()
-To: Thomas Zimmermann <tzimmermann@suse.de>,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
- simona@ffwll.ch, mingo@kernel.org, tglx@linutronix.de, jfalempe@redhat.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org,
- david.hunter.linux@gmail.com, rubenru09@aol.com
-References: <20250923085144.22582-1-mehdi.benhadjkhelifa@gmail.com>
- <26036ff3-2374-40a9-8597-271b93130a7e@suse.de>
-Content-Language: en-US
-From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-In-Reply-To: <26036ff3-2374-40a9-8597-271b93130a7e@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-On 10/7/25 8:45 AM, Thomas Zimmermann wrote:
-> Hi
-> 
-> Am 23.09.25 um 10:51 schrieb Mehdi Ben Hadj Khelifa:
->> Replace kmalloc with kmalloc array in drm/gud/gud_pipe.c since the
->> calculation inside kmalloc is dynamic 'width * height' to avoid
->> overflow.
->>
->> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
->> ---
->> Changelog:
->>
->> Changes since v1:
->> - Use of width as element count and height as size of element to
->> eliminate the mentionned calculation and overflow issues.
->>
->>   drivers/gpu/drm/gud/gud_pipe.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/gud/gud_pipe.c b/drivers/gpu/drm/gud/ 
->> gud_pipe.c
->> index 8d548d08f127..8898dc9393fb 100644
->> --- a/drivers/gpu/drm/gud/gud_pipe.c
->> +++ b/drivers/gpu/drm/gud/gud_pipe.c
->> @@ -70,7 +70,7 @@ static size_t gud_xrgb8888_to_r124(u8 *dst, const 
->> struct drm_format_info *format
->>       height = drm_rect_height(rect);
->>       len = drm_format_info_min_pitch(format, 0, width) * height;
->> -    buf = kmalloc(width * height, GFP_KERNEL);
->> +    buf = kmalloc_array(width, height, GFP_KERNEL);
-> 
-> One nitpick here: the first parameter is the number of elements and the 
-> second parameter is the size of an individual element. [1] So the 
-> arguments 'width' and 'height' should be reversed.  Please resubmit.
-> 
-Understood,I will be sending v3 shortly.
+Fedor Pchelkin <pchelkin@ispras.ru> wrote:
+> TX wait skbs need to be completed when they are done.  PCIe part does thi=
+s
+> inside rtw89_pci_tx_status() during RPP processing.  Other HCIs use a
+> mechanism based on C2H firmware messages.
+>=20
+> Store TX wait skbs inside TX report queue so that it'll be possible to
+> identify completed items inside C2H handler via private driver data of
+> skb.
+>=20
+> Found by Linux Verification Center (linuxtesting.org).
+>=20
+> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+> ---
+>=20
+> v2: store TX wait skbs in tx_rpt_queue (Ping-Ke)
+>=20
+>  drivers/net/wireless/realtek/rtw89/core.c |  6 ++++--
+>  drivers/net/wireless/realtek/rtw89/core.h | 15 +++++++++++++++
+>  drivers/net/wireless/realtek/rtw89/mac.c  |  3 ++-
+>  drivers/net/wireless/realtek/rtw89/mac.h  | 15 +++++++++++++--
+>  drivers/net/wireless/realtek/rtw89/usb.c  |  3 ++-
+>  5 files changed, 36 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/net/wireless/realtek/rtw89/core.c b/drivers/net/wire=
+less/realtek/rtw89/core.c
+> index 214924f8bee0..1457a5fe7320 100644
+> --- a/drivers/net/wireless/realtek/rtw89/core.c
+> +++ b/drivers/net/wireless/realtek/rtw89/core.c
+> @@ -1108,7 +1108,7 @@ rtw89_core_tx_update_desc_info(struct rtw89_dev *rt=
+wdev,
+>                 if (addr_cam->valid && desc_info->mlo)
+>                         upd_wlan_hdr =3D true;
+>=20
+> -               if (info->flags & IEEE80211_TX_CTL_REQ_TX_STATUS)
+> +               if (tx_req->wait || (info->flags & IEEE80211_TX_CTL_REQ_T=
+X_STATUS))
+>                         rtw89_tx_rpt_enable(rtwdev, tx_req);
+>         }
+>         is_bmc =3D (is_broadcast_ether_addr(hdr->addr1) ||
+> @@ -1173,7 +1173,8 @@ int rtw89_core_tx_kick_off_and_wait(struct rtw89_de=
+v *rtwdev, struct sk_buff *sk
+>=20
+>         if (time_left =3D=3D 0) {
+>                 ret =3D -ETIMEDOUT;
+> -               list_add_tail(&wait->list, &rtwdev->tx_waits);
+> +               if (!rtwdev->hci.tx_rpt_enable)
+> +                       list_add_tail(&wait->list, &rtwdev->tx_waits);
 
-> Best regards
-> Thomas
-> 
+Oh. You avoid using rtwdev->tx_waits for USB. But I'd like to have the same
+behavior as PCIE.
 
-Best Regards,
-Mehdi
+        rtw89_pci_release_txwd_skb() -->
+            rtw89_pci_tx_status() -->
+		        rtw89_core_tx_wait_complete()
+		        ieee80211_tx_status_ni()
 
-> [1] https://elixir.bootlin.com/linux/v6.17.1/source/tools/include/linux/ 
-> slab.h#L15
-> 
->>       if (!buf)
->>           return 0;
-> 
+    rtw89_usb_write_port_complete() (rtwdev->tx_rpt_queue) -->
+        rtw89_mac_c2h_tx_rpt() -->
+            rtw89_tx_rpt_tx_status() -->
+                rtw89_core_tx_wait_complete()
+                ieee80211_tx_status_irqsafe()
+
+
+As noted by Zong-Zhe before, an important point is that rtwdev->hci.ops->re=
+set()
+must release all TX packets (rtwdev->tx_rpt_queue), and then it will be saf=
+e
+to call rtw89_tx_wait_list_clear().
+
+>                 wiphy_delayed_work_queue(rtwdev->hw->wiphy, &rtwdev->tx_w=
+ait_work,
+>                                          RTW89_TX_WAIT_WORK_TIMEOUT);
+>         } else {
+> @@ -1242,6 +1243,7 @@ static int rtw89_core_tx_write_link(struct rtw89_de=
+v *rtwdev,
+>         tx_req.skb =3D skb;
+>         tx_req.vif =3D vif;
+>         tx_req.sta =3D sta;
+> +       tx_req.wait =3D wait;
+
+Can we move ' rcu_assign_pointer(skb_data->wait, wait);' here, and
+callee use rtw89_core_is_tx_wait()? Then, no need rtw89_core_tx_request::wa=
+it.
+
+
+>         tx_req.rtwvif_link =3D rtwvif_link;
+>         tx_req.rtwsta_link =3D rtwsta_link;
+>         tx_req.desc_info.sw_mld =3D sw_mld;
+> diff --git a/drivers/net/wireless/realtek/rtw89/core.h b/drivers/net/wire=
+less/realtek/rtw89/core.h
+> index 3940e54353d3..c13465e2730a 100644
+> --- a/drivers/net/wireless/realtek/rtw89/core.h
+> +++ b/drivers/net/wireless/realtek/rtw89/core.h
+> @@ -1201,6 +1201,7 @@ struct rtw89_core_tx_request {
+>         struct sk_buff *skb;
+>         struct ieee80211_vif *vif;
+>         struct ieee80211_sta *sta;
+> +       struct rtw89_tx_wait_info *wait;
+>         struct rtw89_vif_link *rtwvif_link;
+>         struct rtw89_sta_link *rtwsta_link;
+>         struct rtw89_tx_desc_info desc_info;
+> @@ -7387,6 +7388,20 @@ static inline struct sk_buff *rtw89_alloc_skb_for_=
+rx(struct rtw89_dev *rtwdev,
+>         return dev_alloc_skb(length);
+>  }
+>=20
+> +static inline bool rtw89_core_is_tx_wait(struct rtw89_dev *rtwdev,
+> +                                        struct rtw89_tx_skb_data *skb_da=
+ta)
+> +{
+> +       struct rtw89_tx_wait_info *wait;
+> +
+> +       guard(rcu)();
+> +
+> +       wait =3D rcu_dereference(skb_data->wait);
+> +       if (!wait)
+> +               return false;
+> +
+> +       return true;
+> +}
+> +
+>  static inline bool rtw89_core_tx_wait_complete(struct rtw89_dev *rtwdev,
+>                                                struct rtw89_tx_skb_data *=
+skb_data,
+>                                                u8 tx_status)
+> diff --git a/drivers/net/wireless/realtek/rtw89/mac.c b/drivers/net/wirel=
+ess/realtek/rtw89/mac.c
+> index 75d9efac452b..3406c8b01eb8 100644
+> --- a/drivers/net/wireless/realtek/rtw89/mac.c
+> +++ b/drivers/net/wireless/realtek/rtw89/mac.c
+> @@ -5484,7 +5484,8 @@ rtw89_mac_c2h_tx_rpt(struct rtw89_dev *rtwdev, stru=
+ct sk_buff *c2h, u32 len)
+>                         continue;
+>=20
+>                 __skb_unlink(cur, &rtwdev->tx_rpt_queue);
+> -               rtw89_tx_rpt_tx_status(rtwdev, cur, tx_status);
+> +               if (!rtw89_core_tx_wait_complete(rtwdev, skb_data, tx_sta=
+tus))
+> +                       rtw89_tx_rpt_tx_status(rtwdev, cur, tx_status);
+
+Can't we use the same style as PCIE?
+
+rtw89_pci_tx_status()
+{
+	if (rtw89_core_tx_wait_complete(rtwdev, skb_data, tx_status))
+		return;
+
+   ...
+}
+
+>                 break;
+>         }
+>         spin_unlock_irqrestore(&rtwdev->tx_rpt_queue.lock, flags);
+> diff --git a/drivers/net/wireless/realtek/rtw89/mac.h b/drivers/net/wirel=
+ess/realtek/rtw89/mac.h
+> index 1f7d3734d15f..2d647d3b0852 100644
+> --- a/drivers/net/wireless/realtek/rtw89/mac.h
+> +++ b/drivers/net/wireless/realtek/rtw89/mac.h
+> @@ -1647,16 +1647,27 @@ void rtw89_tx_rpt_tx_status(struct rtw89_dev *rtw=
+dev, struct sk_buff *skb, u8 tx
+>  static inline
+>  void rtw89_tx_rpt_queue_purge(struct rtw89_dev *rtwdev)
+>  {
+> +       struct rtw89_tx_skb_data *skb_data;
+> +       struct rtw89_tx_wait_info *wait;
+>         struct sk_buff_head q;
+>         struct sk_buff *skb;
+>         unsigned long flags;
+>=20
+> +       lockdep_assert_wiphy(rtwdev->hw->wiphy);
+> +
+>         __skb_queue_head_init(&q);
+>         spin_lock_irqsave(&rtwdev->tx_rpt_queue.lock, flags);
+>         skb_queue_splice_init(&rtwdev->tx_rpt_queue, &q);
+>         spin_unlock_irqrestore(&rtwdev->tx_rpt_queue.lock, flags);
+>=20
+> -       while ((skb =3D __skb_dequeue(&q)))
+> -               rtw89_tx_rpt_tx_status(rtwdev, skb, RTW89_TX_MACID_DROP);
+> +       while ((skb =3D __skb_dequeue(&q))) {
+> +               skb_data =3D RTW89_TX_SKB_CB(skb);
+> +               wait =3D wiphy_dereference(rtwdev->hw->wiphy, skb_data->w=
+ait);
+> +
+> +               if (wait)
+> +                       rtw89_tx_wait_release(wait);
+
+As mentioned above, can we just use the same flow as PCIE. Here only call
+rtw89_tx_rpt_tx_status(), and callers or rtwdev->tx_wait_work call
+rtw89_tx_wait_release().
+
+> +               else
+> +                       rtw89_tx_rpt_tx_status(rtwdev, skb, RTW89_TX_MACI=
+D_DROP);
+> +       }
+>  }
+>  #endif
+> diff --git a/drivers/net/wireless/realtek/rtw89/usb.c b/drivers/net/wirel=
+ess/realtek/rtw89/usb.c
+> index f53ab676e9a8..adbadb2783f0 100644
+> --- a/drivers/net/wireless/realtek/rtw89/usb.c
+> +++ b/drivers/net/wireless/realtek/rtw89/usb.c
+> @@ -216,7 +216,8 @@ static void rtw89_usb_write_port_complete(struct urb =
+*urb)
+>                 skb_pull(skb, txdesc_size);
+>=20
+>                 info =3D IEEE80211_SKB_CB(skb);
+> -               if (info->flags & IEEE80211_TX_CTL_REQ_TX_STATUS) {
+> +               if (rtw89_core_is_tx_wait(rtwdev, RTW89_TX_SKB_CB(skb)) |=
+|
+> +                   (info->flags & IEEE80211_TX_CTL_REQ_TX_STATUS)) {
+>                         /* sn is passed to rtw89_mac_c2h_tx_rpt() via dri=
+ver data */
+>                         skb_queue_tail(&rtwdev->tx_rpt_queue, skb);
+>                         wiphy_delayed_work_queue(rtwdev->hw->wiphy,
+> --
+> 2.51.0
+>=20
 
 
