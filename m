@@ -1,130 +1,100 @@
-Return-Path: <linux-kernel+bounces-844244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0B15BC15DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 14:29:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB2AEBC15E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 14:31:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E83431896B53
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 12:29:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89C0B3E06C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 12:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963252DEA73;
-	Tue,  7 Oct 2025 12:29:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B9D2DEA6E;
+	Tue,  7 Oct 2025 12:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Va0jLv3R"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rRdHhZUd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145132DCF4D
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 12:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9768255E27;
+	Tue,  7 Oct 2025 12:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759840168; cv=none; b=fr9mpzlozL40NvMXSnMKpCpNrLD/Tfvsll14dpb9L1K8TKQcDBDRtWXM/h4Bwlf0vZ97nB8NK/DfAk0Kawp/3DRjIZfgn0lESOZPLOkcXJ0uS85waZ0u+Y8CImpxsBec/WM2LzfHTxRRI4xZJH7O5ZY8FaeVJtpSeCWZOrHakT8=
+	t=1759840259; cv=none; b=mEzf04l2dBxHVeUTUH3uVPvW2Z5NfH2270gTYgzyiJ9AyXebNLRqI8ReiWFuKuvdQ1AUVA1lFQi+R8+uhmIejSvwWyQmBNqZbwf6/3Zl3BKDWM+O/ZI/r2dMwhM/uyVavIiZU21JaPmni3IbgprcLK3+X3/1vcwL8B79Tc2y2aQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759840168; c=relaxed/simple;
-	bh=4AeJcVPDa0sg5qKqpF+5IQXElkRRd+FP7pzj5t56lUQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iVUJ6an02L4+Xj46dQd8xk0O4fskeGOKYBRJFu/fi/lwj9XUU2zojxLrIpNQbJfoQF+bxbqzsNqLtRngm0bceHxFj9u7rafW8V16Bgf1ZT5ptKMtTg6mp6W2vuHetxVXWTRMGn0s6dNUTDI5+/ykNZ7d0R19CA7VimDhHmXs+H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Va0jLv3R; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759840165;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=U70LBBgdyC3NFcpovpC3/d5OK4NT2RlLPzxWtrv5Hxg=;
-	b=Va0jLv3RcgZJblH0hI0Vx/cuuy3T/rPVwSJZ6l8Nwln80Y6DFPrDe144unaOUrumj5oHEl
-	arvyOT/inWVBSz7DoYDuW/D/a63E86bqg/mNvi31SU0Xn+XAuAOrRL3jod0SjOqsJUMXY+
-	G6pgqKwsAxjmXIlU7i46Bdx/9zMd2kQ=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-306-um6Lk8c8MDOXg7-Bgoa7kQ-1; Tue,
- 07 Oct 2025 08:29:17 -0400
-X-MC-Unique: um6Lk8c8MDOXg7-Bgoa7kQ-1
-X-Mimecast-MFC-AGG-ID: um6Lk8c8MDOXg7-Bgoa7kQ_1759840157
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 40BC018005B2;
-	Tue,  7 Oct 2025 12:29:13 +0000 (UTC)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb (unknown [10.45.226.70])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A63EC180141D;
-	Tue,  7 Oct 2025 12:29:09 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Gabriele Monaco <gmonaco@redhat.com>,
-	Clark Williams <williams@redhat.com>
-Subject: [RFC PATCH] sched/deadline: Avoid dl_server boosting with expired deadline
-Date: Tue,  7 Oct 2025 14:29:04 +0200
-Message-ID: <20251007122904.31611-1-gmonaco@redhat.com>
+	s=arc-20240116; t=1759840259; c=relaxed/simple;
+	bh=RbLhlvKA5Ngibkwp7hM9KX5IK2NMt/q3BkT8M5uf7H4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ia2sS66fFWaOGmRVr/CxPBBPCvvBCwttWMlj6I3UGOODcVtvHqEtnYlUi0k0AkYOdA7VeOvvbiXdq3Z47Oydstk+Y7G0wmlXEV5wVwcLaUOtDNxC1RRG5Uz/e+NaQt8fNAwTnXOmYpsIlmPq5Dr80v5zW6z8bSOWs2wkJ7BN5Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rRdHhZUd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11BD5C4CEF1;
+	Tue,  7 Oct 2025 12:30:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759840259;
+	bh=RbLhlvKA5Ngibkwp7hM9KX5IK2NMt/q3BkT8M5uf7H4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rRdHhZUdKpwlgssrdBBdpnoHIpl4W+lDP2f9V/6l3utftT0Zr3tPdbZwjvyg4o+/4
+	 fz3RteghVI4Xf018zNu2icR6+0mgfhd9h/g7r/iLtlwhpyrscUENuhYyw0UYRNwCcu
+	 BREKQPd7aWds4zxZwLgGu026ceE8uDTlJUCS3W0Wdr3Rb++c/oJooY3g8GcbDc9Z+W
+	 yf79Qhiklp2jLlljtDUK3tOa93Iy05ysH1PcvjVT84McwVH2QcvroaJ+uaUHkfEExq
+	 fkegq9LOeZcQY6vTQC/AIxCI/Pkcuw87zj4na/kqUmZzvJ6EnysWUHB6NAdd/mt6RV
+	 Y4wpVuqOfN5Gw==
+Date: Tue, 7 Oct 2025 13:30:55 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Sune Brian <briansune@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sound/soc/codecs/wm8978: add missing BCLK divider setup
+Message-ID: <a8d1438d-02b7-4e08-ad4c-17467562a753@sirena.org.uk>
+References: <20251003091304.3686-1-briansune@gmail.com>
+ <aOTrsYllMst3oR03@opensource.cirrus.com>
+ <CAN7C2SB5Re35yGYsqr14hGXde3nTKLX2Aa3ZbuJ9xuT0m07uxg@mail.gmail.com>
+ <aOUDbF/i4+9PXc1j@opensource.cirrus.com>
+ <e507ace6-90af-4763-a1e9-08e02f9e63f1@sirena.org.uk>
+ <aOUHDJW5aJzD7Ku7@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="YNyh4LC9Ic9WDXSJ"
+Content-Disposition: inline
+In-Reply-To: <aOUHDJW5aJzD7Ku7@opensource.cirrus.com>
+X-Cookie: Teachers have class.
 
-Recent changes to the deadline server leave it running when the system
-is idle. If the system is idle for longer than the dl_server period and
-the first scheduling occurs after a fair task wakes up, the algorithm
-picks the server as the earliest deadline (in the past) and that boosts
-the fair task that just woke up while:
- * the deadline is in the past
- * the server consumed all its runtime (in background)
- * there is no starvation (idle for about a period)
 
-Prevent the server from boosting a task when the deadline is in the
-past. Instead, replenish a new period and start the server as deferred.
+--YNyh4LC9Ic9WDXSJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Fixes: 4ae8d9aa9f9d ("sched/deadline: Fix dl_server getting stuck")
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Clark Williams <williams@redhat.com>
-Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
----
+On Tue, Oct 07, 2025 at 01:26:52PM +0100, Charles Keepax wrote:
 
-This behaviour was observed using the RV monitors in [1] and the patch
-was validated on an adapted version of the models. The models are not
-exhaustively validating the dl_server behaviour.
+> I don't see any current users for the manual divider configuration
+> at least in mainline, so we could probably just drop the manual
+> stuff. I don't think I have a strong opinion between that
+> and blocking the automatic configuration if it was previously
+> set manually, but we should do one of them to keep things clear.
 
-[1] - https://lore.kernel.org/lkml/20250919140954.104920-21-gmonaco@redhat.com
+Yes, definitely.
 
- kernel/sched/deadline.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+--YNyh4LC9Ic9WDXSJ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 72c1f72463c7..b3e3d506a18d 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2371,6 +2371,17 @@ static struct task_struct *__pick_task_dl(struct rq *rq)
- 			dl_server_stop(dl_se);
- 			goto again;
- 		}
-+		/*
-+		 * If the CPU was idle for long enough time and wakes up
-+		 * because of a fair task, the dl_server may run after its
-+		 * period elapsed. Replenish a new period as deferred, since we
-+		 * are clearly not handling starvation here.
-+		 */
-+		if (dl_time_before(dl_se->deadline, rq_clock(rq))) {
-+			dl_se->dl_defer_running = 0;
-+			replenish_dl_new_period(dl_se, rq);
-+			goto again;
-+		}
- 		rq->dl_server = dl_se;
- 	} else {
- 		p = dl_task_of(dl_se);
+-----BEGIN PGP SIGNATURE-----
 
-base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
--- 
-2.51.0
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjlB/4ACgkQJNaLcl1U
+h9Af/Qf+LLyF+jFb/8iXF00memqPJ0+GNu2bGzKG6MOHi97D37OrUomgJnJE5rOz
+AEA/AkTQy2TSW4KcrGeY9NXQx5F2r6Y1rbTRj+3VmgePANiFHQa4i3I3Dofg8STQ
+3BsMOtl7k32ufWadFZxscOGbDcIYIXzKCjY2GnY8J3+/IM2k1xj0q0ZPSPPxIBYr
+H/VwCQd0U1zgbroockFkO9PvuS/SwnftN25/+bebhV31ELo/P7Du87OvHMx1vHE+
+zxPPd6INUdPLQfB7O4io6aKf35B24OTz8b5lpABYcvCnQ/W0Y+TQEZLhTpVSQr1o
+3LGzN6q2ihLck9FhIinCYVd25mLwAQ==
+=Dauy
+-----END PGP SIGNATURE-----
 
+--YNyh4LC9Ic9WDXSJ--
 
