@@ -1,152 +1,163 @@
-Return-Path: <linux-kernel+bounces-844660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 370ACBC271C
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 20:53:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2587CBC272A
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 20:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3BC63C7201
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 18:53:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3DE23C7F40
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 18:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968D5205E25;
-	Tue,  7 Oct 2025 18:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8DF02E9EA7;
+	Tue,  7 Oct 2025 18:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GFtCGwrh"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="kzchrdik"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AFC120E31C
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 18:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF11F2E7F27
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 18:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759863229; cv=none; b=QYEo0XDZAg7mQk0w+nrZGAJxc28cvdep+uApGYBrqCcsKEHPEBByxRTUeRKihFrwacc9kgsPW8VoMg8b+wBLOF0xA8oR7xhwZe5X4jMWE929bVC5WxF8VKQuXC6PrFefQ5aEWRjiGIcRfoS03U8bGDtEW+FmKpGh4dwKxLvClCo=
+	t=1759863269; cv=none; b=d3Df92J1I5dp+Y+goCq7q2mnqyAZ9pCIV6mushg5CbQvELqWrxOnbvpHWmAErAc67S4/0iVvIH63s2lWUvOIkkkfAhuERp26MkkkQ8iceWLR5+Sz1Y2RdSyxePthPfibNpbJsxbv8s5PuZL8fJSycH+S9QGQISdAAQRMLbWVZjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759863229; c=relaxed/simple;
-	bh=Op+QTRcfwfbsxIix4ouiAegGQuvQEcmggnJefJxWt30=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gLf9z1j/a7D4cy14HYWFdDZE8/y/y/pmD2Gfg2MO/OXCesnWUd0eFGYGJ9gJ5suM4ViqOtET/iCLCM1tHdZjcfnqbFm3uFs2p2K7o7fvrq8BbiIJDjV8oaqFZbAwD/b22o5pFRP5/Q4mYUhGNSaNYLdjgg+S1hYEdYplmOvYuk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GFtCGwrh; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-46e48d6b95fso57310495e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 11:53:47 -0700 (PDT)
+	s=arc-20240116; t=1759863269; c=relaxed/simple;
+	bh=fyqYBk39edhoU3hvwcDq4RniKRvu8ih3vY+jGbKyhzg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=cfUeib2Oh1ADUe1C+t+UdQK/yc+tQp9TMlqANT6EcZidYCw+4WAfYmbJvjkM7+LAGh8VbfBpu6ewGsQi1noZffgQ1JwSqGr7WGIxIvBuoDgOFMchXls4lt7KCCWeC3PnGYYr0v+gTRjG44QtmDWAjGrt1W6ItqPCwk9iJXsSqcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=kzchrdik; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-78f30dac856so62403966d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 11:54:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759863226; x=1760468026; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1B8FMEvRCjdBduWbBN4BHAuWdLmc7inqVvHYEcRSHj8=;
-        b=GFtCGwrhkdsYQssycM8owoQtcjBxYxvPimzMEppIZXwkGysbaUiKbz4o9P7whVkDpP
-         CEt9by12pLtniK+RV7vOonDINzTZtmzZKuY+pwKxcZ/TwAlZzF4ZzjHf2flZoCSTknvL
-         yQ1N4KLPoTJXhuXiB9BLefeBKEh3YWRERUt+bfKPxneY3ERs/ma2e7Tw4VYCmda65fxJ
-         GWQaHbRO4NYcdaRSRV7btDjVw1NfEKCY+o1KCuRyaC5BokHeWVzUUGRhHM2FvrrKLaT2
-         z4WNlDo1lKoREAjzWGMuOmzgRnzFx1TJ0jzyfw7+c1yltXDdTVEnjqgvtHl9xEb4YJvR
-         Bc2A==
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1759863266; x=1760468066; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
+         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=fyqYBk39edhoU3hvwcDq4RniKRvu8ih3vY+jGbKyhzg=;
+        b=kzchrdikhUv21qCVt4IxSIPMLRVM4SC76uhM2gu6HjFUkhkzfBNFt29NdwLE8K6k34
+         Ml2dBZGS1Blztn4jaW/LGIku4raD5T78ksaC3qXXWuuJ0JzfqTaBFrMlsCNXzItRsc5R
+         33yZ1igkFNMfeyHfTp8b5avbMKs+n0GVRSUSBMlsk4ciF/MGq0JcJMcSuhpwTqiuhZf/
+         zAQzUE4DvbUW+H1sLQT2HJ9r9Y6jDoyqd1fad1d3ZIWlEVmAreM3KSS+bponKXUgFH4J
+         TGlfHQyHMP3eLdkA6Dehqjv3SYOFih9Q3XCIMdiENYA390nFQpYiLWP5BjlkWYWXcz8c
+         mSnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759863226; x=1760468026;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1B8FMEvRCjdBduWbBN4BHAuWdLmc7inqVvHYEcRSHj8=;
-        b=k410dNMa/t80IMyEQt/Yhd6lvKYpExr9kiMuDjl5QV5UYbC/cNxxcNTR+KMJHbU05t
-         mb1+rAhqsuKWvDuY7b6obCID63LQlqOPuPjtw7RHUwNCulE8Oi7999zEVwehVPo69hFW
-         wWpuBtN0jJuy7UgKNgsQXz+N/SRuO7eDv9iSmHHThZHdY0J8FAp3eQbN9+BNFSNzp8lX
-         DaDO8+wCh4GJAHAKV2bU/wm+LvraNRBxP6JFlMhWq8j5ZVSdeR2shupURRDdLD3eB+Yd
-         /ddTDay3ZfBtgTc4KQYYOG2HIOewpmwn3BkbJpEkc57RgT+wVqEMbCTcCNzbZHZl/8eF
-         8jIw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0bGeTJqkr4YBT7cFCLp3uiNwI5Mr+X7umW2GsF+eFu05HIlYBbkv9oYdTrd4nEFkHsRXiZTHh6YQIn+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPTweo3r6hdbnq9RYrqG1/6/1fmCf8q03jXthBpeFnC0sz9Kz4
-	hQd35I/iVQa5kU/571i6UAWWWxdDertE+HnPl702n3GfL9iNRf3J3fFcWpi5vmarT08=
-X-Gm-Gg: ASbGncth38ou6qyc26IgDyL+9l6EdioiRm8dsA991ng7/lNSOHezcV4WYHurQB2BwzN
-	D4hy9223Bh/nS82X1fB5CX3OzSzdoKMZrRfBsLR7fJ+CmoDjSPOJAqkBJcEZSjPELynDx3Cm8pl
-	ZA7wlr9k/rRM9gLWedVJmT+3GOYKJsHyggIRzt/plupzD2jayIC/H9H18XrFQeiFV3f9tim9ros
-	/BIm5z/PKK3MOr8yeXce7PlwK/f3rEtFhtrsRMky83I0AV2Fin7XGv0Abr2+AWcxqeC2oZMUzOo
-	xFH/im1zYGhayyNJc+DNL8+qIxDlbF7gXQHre0aGhVp4ZtmWAANisPCX09JDGrZC+0rq7IN1HQj
-	53gm4nON1Fw2GwJAD392hK3LEddxkRVG8KhAnlNsMsRmKPmWvsSuB3bbfQmlP27piI8V2l/k=
-X-Google-Smtp-Source: AGHT+IH5zHVLrizZeH0JOY25vGwDqk7lqwvYB2VQUuAGyhwLO96qot3/7SYhbnr39uYNrtvz3cFCdw==
-X-Received: by 2002:a05:600c:4745:b0:46d:cfc9:1d0f with SMTP id 5b1f17b1804b1-46fa9af30e5mr5064635e9.19.1759863226080;
-        Tue, 07 Oct 2025 11:53:46 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f01absm26399548f8f.44.2025.10.07.11.53.45
+        d=1e100.net; s=20230601; t=1759863266; x=1760468066;
+        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
+         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fyqYBk39edhoU3hvwcDq4RniKRvu8ih3vY+jGbKyhzg=;
+        b=FxQ86B/82VJ3s3ToFxIeEYMa+rGHoFdKZXDje9Yi/+1EneB/Oe2m6aNx0dU9XS+Ild
+         1VP6XXkqudxJDHDAMKDvEG1/p7k7Soyb2V4wx/jw1/7pcByf7Ak4aGkioPpT8l9BSMcj
+         vXJADucLiH15H29hxpd4wa6PY0cc7NyJ1GydHQPyxgNG3n3skoj0LeLa9+v8PoIezrGf
+         N4xOsL/10+zlwxmSopL3606EPqE3GFe04CjiDStP0sqG4nwJ7UlvvJbb+osXDRtyvrSF
+         3+art0BMrZCd871BU53j4B4zJEXlqYVeMueOcY0Ww2n5iFf2IrgtcIxOpzOlSpulYUW2
+         cl6w==
+X-Forwarded-Encrypted: i=1; AJvYcCW7oKsfxkyWVkl1U67mX7kALS+LBOtdW0p+Tml4KAGrFwfp9Q4D2K2KotJI3tvHMRgwpVKjl+Vs41vsff0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdAouI3T+1V17NMuK1XiLpWHtpuqj5wQQ8otPeQJ5XrxS4N6bU
+	uoTqUyOsGC2VmqFPT45GpKhJOCbXyDLN5bL346eHc9oYRmTZ421nPbgIvqCc/6UdOwo=
+X-Gm-Gg: ASbGncsqYPjNugb8JKEFKZOxmonGApocdSh2pMU6xt400J4uXWiWGIxdahUwmY/W5b+
+	eAMX20xFYDAecdedNa+ES1Ixv9X0huXoqM+LjC5DAoEoW1tvF45PcZ0aXiDul9xE/pOdszvFbP0
+	5w/Q8g0jXh6320eJ07kM6zjRwkHQVkBioo/6/2zWgnr/bsONvyg8iIwm9UAW7k6Yh6qRLLJa7Zu
+	o3MT0k9/Trg9Lw7u1TkjeEJwCCTFHchOn5DbKxXWRh3r+rDFofzlatZDAi/AGJjTNe9jz919FBf
+	P/SZkb4QHlsVjpVa5SLAmnDvZaTNwR+PS5ceT+enPAaRHPuVu5As4OWiDlByPOD1gutTVD6WRB6
+	Bu7Syy67q3mVT7HIL+hyPs2Li/anp4Yx2Osiv7Qd56A74mOU/n177
+X-Google-Smtp-Source: AGHT+IEixUIOgl0MCHeaJ3U9YoVpppcjNIJi8FhlBiYJXzIZViLBMX0i5qQwH5C+bK/YoahAmV9Giw==
+X-Received: by 2002:a05:6214:5012:b0:879:db53:df0 with SMTP id 6a1803df08f44-87b2efe7106mr6252686d6.46.1759863266399;
+        Tue, 07 Oct 2025 11:54:26 -0700 (PDT)
+Received: from ?IPv6:2606:6d00:17:ebd3::c41? ([2606:6d00:17:ebd3::c41])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878be61f6bcsm146805896d6.65.2025.10.07.11.54.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 11:53:45 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Tue, 07 Oct 2025 20:53:44 +0200
-Subject: [PATCH] arm64: dts: qcom: sm8650: set ufs as dma coherent
+        Tue, 07 Oct 2025 11:54:25 -0700 (PDT)
+Message-ID: <46a1915e81b027d1c344eed0477683dd3a68d810.camel@ndufresne.ca>
+Subject: Re: [PATCH 16/16] media: rockchip: rga: add rga3 support
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Sven =?ISO-8859-1?Q?P=FCschel?=	
+ <s.pueschel@pengutronix.de>, Jacob Chen <jacob-chen@iotwrt.com>, Ezequiel
+ Garcia <ezequiel@vanguardiasur.com.ar>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
+ <conor+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, kernel@pengutronix.de
+Date: Tue, 07 Oct 2025 14:54:24 -0400
+In-Reply-To: <bf989d9f-9e8e-4acc-b502-1674ce215318@kernel.org>
+References: <20251007-spu-rga3-v1-0-36ad85570402@pengutronix.de>
+	 <20251007-spu-rga3-v1-16-36ad85570402@pengutronix.de>
+	 <bf989d9f-9e8e-4acc-b502-1674ce215318@kernel.org>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-I9QXmLgSnsRRCh9PPEnb"
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251007-topic-sm8650-upstream-ufs-dma-coherent-v1-1-f3cfeaee04ce@linaro.org>
-X-B4-Tracking: v=1; b=H4sIALdh5WgC/x3NTQoCMQxA4asMWRtoB1rFq4iL2qZOFv0h6Ygwz
- N0tLr/NewcoCZPCfTlA6MPKrU7YywJxC/VNyGkaVrM6a8wVR+scUcvNO4N71yEUCu5ZMZWAsW0
- kVAf6aFJwmV5kPcxYF8r8/Y8ez/P8AbXTiht4AAAA
-X-Change-ID: 20251007-topic-sm8650-upstream-ufs-dma-coherent-6c0da5febe16
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1376;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=Op+QTRcfwfbsxIix4ouiAegGQuvQEcmggnJefJxWt30=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBo5WG5oSqx1X3ytDB+hQonl1G38RphNXIieR2OJJ/J
- QgykVcqJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaOVhuQAKCRB33NvayMhJ0RdoEA
- DQdY3TtihKd6kF3vihFn8DFB4XXmIepTKeJbn5X+wHti6bMmXrMtOmqtClmF/y4xetCM46ktSNh2eE
- AGoWxAh0+0dhaTrNUfOhZHGkeUB2SiwGOpiaiMZIT16w2rFz8pBQHbNMTELtja6E7e/zkQ6aHMSoo+
- 3vDJgllxAZa7bV8NaopaMKGHUeoUi1Y76kdn8BbcMM2+Hh0XQ/1kt5+oETiAOmJ4WJNdSHQzqXo6Ls
- 0tDUVNqokvRigiIT0uz7/8vfBKqzm9s0WJdm2vlykhZkC4sr+oUj16T7OK9vyIGV7xp9ENub1KACX3
- DBaNLRU333kT5/yworEhF8ziXWjFhIMLTDA6eS9RCC54mLCMOSsKco+T8L3aXa/RPSx/DkLXQGr+vf
- pSoD8P6qRadJCtoMHML6egLtYmWb6mTE6CosbyFZsp6vfbYNiX41KADZPyF1wgiclloUPiR+B2xu5f
- MdJee3v1ZGGncxNUJ3kColvabHJYAzT0sFU3h8VvvHG/eDqHB/DKKTzmi6hn+FzxwwJ4ypShF+4xhU
- US1WEg7rdcVV5an1Ea030YXXbrqitgNOAN2N037WZwENcAZI8HoGrBJ0wtqOq7Lmcx84o9KO6ez7pd
- Y2G810bN8csB0kuz/MWhBGYSGbOciCA3sF/VfDDutdpjDMd4+MZXIjEDnTBQ==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-The UFS device is ovbiously dma coherent like the other IOMMU devices
-like usb, mmc, ... let's fix this by adding the flag.
 
-To be sure an extensive test has been performed to be sure it's
-safe, as downstream uses this flag for UFS as well.
+--=-I9QXmLgSnsRRCh9PPEnb
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-As an experiment, I checked how the dma-coherent could impact
-the UFS bandwidth, and it happens the max bandwidth on cached
-write is slighly highter (up to 10%) while using less cpu time
-since cache sync/flush is skipped.
+Hi Krzysztof,
 
-Fixes: 10e024671295 ("arm64: dts: qcom: sm8650: add interconnect dependent device nodes")
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- arch/arm64/boot/dts/qcom/sm8650.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+Le mardi 07 octobre 2025 =C3=A0 17:39 +0900, Krzysztof Kozlowski a =C3=A9cr=
+it=C2=A0:
+> On 07/10/2025 17:32, Sven P=C3=BCschel wrote:
+> > Add support for the RGA3 unit contained in the RK3588.
+> >=20
+> > Only a basic feature set consisting of scaling and color conversion is
+> > implemented. Advanced features like rotation and cropping will just be
+> > ignored. Also the BT601F color space conversion is currently hard coded=
+.
+> >=20
+> > The register address defines were copied from the
+> > vendor Rockchip kernel sources and slightly adjusted to not start at 0
+> > again for the cmd registers.
+> >=20
+> > Signed-off-by: Sven P=C3=BCschel <s.pueschel@pengutronix.de>
+> > ---
+> > =C2=A0drivers/media/platform/rockchip/rga/Makefile=C2=A0 |=C2=A0=C2=A0 =
+2 +-
+> > =C2=A0drivers/media/platform/rockchip/rga/rga.c=C2=A0=C2=A0=C2=A0=C2=A0=
+ |=C2=A0=C2=A0 4 +
+> > =C2=A0drivers/media/platform/rockchip/rga/rga.h=C2=A0=C2=A0=C2=A0=C2=A0=
+ |=C2=A0=C2=A0 2 +-
+> > =C2=A0drivers/media/platform/rockchip/rga/rga3-hw.c | 490
+> > ++++++++++++++++++++++++++
+> > =C2=A0drivers/media/platform/rockchip/rga/rga3-hw.h | 186 ++++++++++
+> > =C2=A05 files changed, 682 insertions(+), 2 deletions(-)
+>=20
+> Your order of patches is a mess. DTS cannot be in the middle. In fact,
+> DTS should not be even in this patchset, because you are targeting media.
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-index e14d3d778b71bbbd0c8fcc851eebc9df9ac09c31..d7ed45027ff453a2d7988678c9e9568837a1c086 100644
---- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-@@ -4020,6 +4020,8 @@ &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
- 
- 			iommus = <&apps_smmu 0x60 0>;
- 
-+			dma-coherent;
-+
- 			lanes-per-direction = <2>;
- 			qcom,ice = <&ice>;
- 
+Indeed, order is broken, though I do appreciate having the DTS as part of t=
+he
+submission, this way I don't have to chase for them when testing. That bein=
+g
+said, a link or message ID in the cover later would be as good.
 
----
-base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
-change-id: 20251007-topic-sm8650-upstream-ufs-dma-coherent-6c0da5febe16
+Nicolas
 
-Best regards,
--- 
-Neil Armstrong <neil.armstrong@linaro.org>
+>=20
+> Best regards,
+> Krzysztof
 
+--=-I9QXmLgSnsRRCh9PPEnb
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaOVh4AAKCRDZQZRRKWBy
+9O1JAQCgbiRyx2yEWIDJARh2LE+kwcz/R5TwyiD48kcAsBRc3gEAj9DcD7rTLpzu
+68L0DpQYyIRrsE94HVozLhgCExOv9gk=
+=P0io
+-----END PGP SIGNATURE-----
+
+--=-I9QXmLgSnsRRCh9PPEnb--
 
