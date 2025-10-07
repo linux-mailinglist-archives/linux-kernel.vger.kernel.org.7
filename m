@@ -1,105 +1,102 @@
-Return-Path: <linux-kernel+bounces-844323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6F78BC18F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:48:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27A7ABC190B
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:50:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 678903C46B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:48:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D685C3A62DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127882E0B5D;
-	Tue,  7 Oct 2025 13:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732CD2E11C7;
+	Tue,  7 Oct 2025 13:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WeNNZsp+"
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="TLH71oMD"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F87A2E06EF
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 13:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759844906; cv=none; b=HfLkQAgje94aX8/la43Gn6SogqoOkfvRZHiBDbtE/tx1m2dYehGGUPr+aAj00O3s/6ncj9+ih9TTpJnjylVdpefMN4lmkx/ZzVBT9I9XcVLYm5nyqBem/4FZZf5q4oCy+7aXqnEr0UXEqjQ+cVJcGdW401f5NeaYP4gcrubXdKw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759844906; c=relaxed/simple;
-	bh=rsARsWWtlGU4XyQksyiHzqbzUOCSEtmZNn2PlInaawY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rPPOMP8z9b7zyfxwPT02ku9wSqwDiFKVyU+YpR1LQKFcw2/2RIQYPfytizhdiypHH876p3F5WOI2ZCcAXmZxxvAiaZiRdl6Tgwsk7F1WmbsAFVeup+rFjIjbexNb/uYhuXKOyDllSK+E0Srj1JSrjFtiWcvfH0pFINytzL91ZNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WeNNZsp+; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-74c7d98935eso2313343a34.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 06:48:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759844904; x=1760449704; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mFY1uUNizKMiaaPFdu2T3xmpk7VyNh1kZqPZtyxqkW8=;
-        b=WeNNZsp+hcKklqPPz0kENmunDlBOv7VsTP4DKUeNLnGQV0xVboPZETSu/7HuSMRhmM
-         QGBcKHoCIxN8XApxVD9Jg2mMkOhtN/6nTtjSZIfmgaYnDhYU+KGSvYQfxt6UZud4tfND
-         9V2eAd7/FdNnyC6uqe97lKPL22uyz/EXM2wwtPQkuFfocfnmlJdoRwH8ACJTWxdLbtKO
-         lPzWkhSRveSteeTZXcjiWTgFcj8KPqb8N3lMMum/Hr6KxUsCtnfwVq0FwsjPSQbyfhXi
-         /BMpJsdMflEeFMfgU02OjlKlUGIZjIakxOLO32168DalWZ9Lu9BK05nrDOmG6vgm0RRJ
-         v/mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759844904; x=1760449704;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mFY1uUNizKMiaaPFdu2T3xmpk7VyNh1kZqPZtyxqkW8=;
-        b=nvmlb8+EyWSrrPjuEIW2F3esp5fRKXHTjssrjaoPJwci2AB0VBtJC64369sWEf2atI
-         CFOKGjP3kmYK41eC+r5uqoJd7ZmWEh9czC9xbzTVSLvMoFvrfHtlMaBnQJOuUjODEoN0
-         AkuJJ4eZmvV3jgzcW8BRBofiwYIrxi5/ttgncc9ztvSI8pnk2Vv1V0zi0I82NzRefT9S
-         4xpj3acfHCBktUgTszQGrTXVJBc7W+EkHIY2n5JzziqSCy2a2b0dcFaOScaM/j/FQyLb
-         wh9uSWvLFIiu31Et/cUkGcpDt+p/RTzyaJReUurk3o1xdOZBUPhsELRNeN2CI/IKLX1D
-         EtpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU00Aw2ooWVnxLxdpi8SpH9KxJXv3Cshm0sNBWZH8HymaM13p2YCgzvoyjZxmzHZKw8UpeyohZXb8DQKzg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+AkUrYdnfGvOz6Gr7G8y+RdLgSxX7+iMwfeviIfrlzIITZS1Q
-	xvO0wyWhiprYIA4zfJFJtR7ZE2H7pQGU8y5fs8fBZrgBIRRdNqEkuHWa59YZhVez5MwXExhfU5r
-	PMUudA3M0dL5twfGxyQWZKDlHpl/HoSw=
-X-Gm-Gg: ASbGncsuKVJs826f97w7ZQ9pbUZxSdl18zAxnzO7z2tMVqPBQX+7VovkUR4DKBbP994
-	jRHD6Lf6411FYr+0ZJsz4MehZrkRUK1s+zJi01Gf2f5H5vTcA/XohDP/P3Lu3TW5ZgwX6SLQLf2
-	qs05YlPvGjVye8UifXx3SffSNi2d6zBXPZoZMgeVNj+L3IRAH872BrJkj8QtdadbvRwXqeiHHrW
-	jnU4cBwA+6l7fAVCD6dmsRgpuvcCV0=
-X-Google-Smtp-Source: AGHT+IH2OCYyjWdyJ9wdIBU+t7KzCDmW3XtaulzyT2fBtb2ExHxKBeX9LBNJfVyerS1qt1ZstGFV9V//J5FkbSG6MxQ=
-X-Received: by 2002:a9d:7754:0:b0:7bd:8995:843a with SMTP id
- 46e09a7af769-7bf772a5df2mr6783128a34.21.1759844903863; Tue, 07 Oct 2025
- 06:48:23 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CFB7EACD;
+	Tue,  7 Oct 2025 13:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759845023; cv=pass; b=WDCl6CFHBvWuvO9pkcAJUfHGZFTFZ5wF4U2FO34Fh6Qxm+0vkxROkFZVpBray9tBsdkb8X+pn9dL9nJEDZDn4cZe7XPw42pAs6N6FB+zYyXgzA99OPVoEnnOWeB7S4hLxgCkas4m7iKZFAeFv+3dR7KJRN9wcVkssUeeW4omkbc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759845023; c=relaxed/simple;
+	bh=OkNFH/nqsePn3oGUhalsEdhdzNYGtezdFARJ7qWpmiQ=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Y88g5f56grwKWeUy2OygdgIFJeBvXE0rshMiL6XyxbEB70Ix9fFfZ3SZm096YMy75kqEBbqV8E10/6sdRRZ3dK/VlQq/aplW8khoQU5lEdTE9LkpsyieGzV4IDMwdsNMk8jJ4Yxnn8ujahD6yjfaYTWogru6fmtdGSNIZ28rWtI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=TLH71oMD; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1759845006; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=YUAk5pH7fqHpxxZPWCDbJNvNzDA7XFQeFI/B4fv9FdnyxN2TBfjsDClJDsk0Aumdn8yQbUNx6dLDBIAZJv/zBzUQXdKYrAldYK/ob/AUhs7WeZJYw0TFWlJ9h2Xau+bV3eE1F16vby14Lbu1JFkQWle1Sc4E9Uw+qZ4TzGYXpjY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1759845006; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=OkNFH/nqsePn3oGUhalsEdhdzNYGtezdFARJ7qWpmiQ=; 
+	b=fkCRkfrvrCSOl+AEdfr1ON8F9LFSY8mAJtVAjrQX8goSr1qp85RyFaKHPIA/zc4GIk2Q5Dj5v4O4KU7GiD0dYqLx+lNQFApmwvTJRAfD13ypO5e27BOKUtlp30/67E9mpGH1xXVvicI1lGGDfVSM82zFNmoSuMXrVPk4X+HUAbI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759845006;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=OkNFH/nqsePn3oGUhalsEdhdzNYGtezdFARJ7qWpmiQ=;
+	b=TLH71oMDqOA/C8JhxPCRufR2o//Y3Dzy4vyHemzX+egJeX/F/aE79yVoSSg1a3Rp
+	Bvvoz6NIZEo3LVLr7WvtfyZzo30OenQKr5yOdnS7Q0e0dTJhAEhDIdD65P16GvGWzH1
+	sckq5Hfp/rGCrLfC+wJmazo11c4GeuBVIM0+Ur0c=
+Received: by mx.zohomail.com with SMTPS id 1759845003566468.8128170090872;
+	Tue, 7 Oct 2025 06:50:03 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251003091304.3686-1-briansune@gmail.com> <20251007113305.1337-1-briansune@gmail.com>
- <5a71fdac-f6cf-4557-9bc8-d416a033263e@sirena.org.uk> <CAN7C2SCHirxurUA0n2VZKEEiYCt-NUKgspGFfZLNurHhACZkBQ@mail.gmail.com>
- <3266559a-8403-4a26-bbd9-c54e27fc59f8@sirena.org.uk> <CAN7C2SC96jZYYGP=DFrSKgtEfxy+MYpM7=-iW8YKhDG81ufw+Q@mail.gmail.com>
- <6963ab04-d0d2-42ee-9fc3-19f9c298849b@sirena.org.uk> <CAN7C2SBAPMG1-0huf+3NcUAULZmHTM4idcytShNDs-iiseZm5g@mail.gmail.com>
- <200e3d65-ffa5-40d1-86a9-974fbaae24d5@sirena.org.uk>
-In-Reply-To: <200e3d65-ffa5-40d1-86a9-974fbaae24d5@sirena.org.uk>
-From: Sune Brian <briansune@gmail.com>
-Date: Tue, 7 Oct 2025 21:48:12 +0800
-X-Gm-Features: AS18NWCTeDg9-o5Vg5Ezxcumq6wgIbm12pCTthF8BsvCcSZjH71LOkvmYzUw3d0
-Message-ID: <CAN7C2SA8PQY_XgCav+FgZPpogeCYBVT-KU9-EWTPcaRADG42qA@mail.gmail.com>
-Subject: Re: [PATCH v2] ASoC: wm8978: add missing BCLK divider setup
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Charles Keepax <ckeepax@opensource.cirrus.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v3] media: v4l2-ctrls: add full AV1 profile validation in
+ validate_av1_sequence()
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <CAKPKb88VHwGp-iLMa=zZy3Czq8S8wUd9Zzkicvd4er9OiLg6UQ@mail.gmail.com>
+Date: Tue, 7 Oct 2025 10:49:45 -0300
+Cc: mchehab@kernel.org,
+ hverkuil@kernel.org,
+ ribalda@chromium.org,
+ laurent.pinchart@ideasonboard.com,
+ yunkec@google.com,
+ sakari.ailus@linux.intel.com,
+ james.cowgill@blaize.com,
+ hansg@kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <8AB96B5A-1A80-4A8F-AE8B-787FF71C5A75@collabora.com>
+References: <20250913105252.26886-1-opensource206@gmail.com>
+ <CAKPKb882DgYB2fZXRDU_y1Xqz6GtFEErvzzET9eOAm=db0ns1g@mail.gmail.com>
+ <873C85C5-2BCB-4631-BA18-919CE448A7CE@collabora.com>
+ <CAKPKb88VHwGp-iLMa=zZy3Czq8S8wUd9Zzkicvd4er9OiLg6UQ@mail.gmail.com>
+To: opensource india <opensource206@gmail.com>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-Mark Brown <broonie@kernel.org> =E6=96=BC 2025=E5=B9=B410=E6=9C=887=E6=97=
-=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=889:15=E5=AF=AB=E9=81=93=EF=BC=9A
-> Please don't top post, reply in line with needed context.  This allows
-> readers to readily follow the flow of conversation and understand what
-> you are talking about and also helps ensure that everything in the
-> discussion is being addressed.
 
-Understood crop previous reply to the content that this is mail replying.
-Will soon repatch another version on Charles comments.
-Thank you
+
+> On 7 Oct 2025, at 07:50, opensource india <opensource206@gmail.com> =
+wrote:
+>=20
+> On Sat, Sep 27, 2025 at 2:27=E2=80=AFPM Daniel Almeida
+> <daniel.almeida@collabora.com> wrote:
+>>=20
+>> Hi, I=E2=80=99ll review this in the coming weeks.
+>=20
+> Hi Daneil, did you get a chance to review this?
+>=20
+
+Not yet.
+
+=E2=80=94 Daniel=
 
