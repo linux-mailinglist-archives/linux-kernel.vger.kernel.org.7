@@ -1,143 +1,181 @@
-Return-Path: <linux-kernel+bounces-844025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87788BC0DAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:25:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00943BC0DA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 26E1D4F538E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:24:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF3B3189F8D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 776022D8363;
-	Tue,  7 Oct 2025 09:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06722D77FE;
+	Tue,  7 Oct 2025 09:25:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SS4qpDwa"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CoCW7V4b"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFB42D6E64;
-	Tue,  7 Oct 2025 09:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E602253F13
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 09:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759829041; cv=none; b=qr+gpUrXx++4XOLbhW01LplzzmlzD8X110SpfGUGMhmzr1+4V8bwn7JNlU4QDezPqcENyoFU3KjXce6OX3cIej1huj3eKQkvrabGu0fLJu8DNiSdVMgVMeqAWDAdcfofzUSUmSTSvBmg6SPfGJlcaUFRNM9wgSXE/pqTGAM7IcQ=
+	t=1759829102; cv=none; b=iy0zYNLNP31oaQfQTEQeSWbJeEyUJtvhRVIOTYZeZd0xI7fq2ffE3qK1B6Dbr9yTFCGJ2Ly07vHYig51PbHNKr2lRsvB5FXqGFXw7LcEowi5kebtnl8QR/qn0mMIaN1NfwyvPCl57/t0P8bb6UjXW2j5icWlMfW8JbzrPUX5EA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759829041; c=relaxed/simple;
-	bh=C0Rmi9/ZF8JQ+C/kj+5uenpyVL0bJN5L8jlcLnWGOC0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=evsPZgk890yf4Krmbf2CTJ+kHp8+XEFJiJN6NCWyASzVjlc9g32CiOpsV4HGPPKXO37Zy8JTMjuodtFF9otXxVfhb07PcKJnBVKd9h7fP0CoBWowr/yD1bwPVdLYY4G2CEOLQb+6/akfTqN7TBXaEFnWKAE83++/nGW27AnukKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SS4qpDwa; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5979No2W3731660;
-	Tue, 7 Oct 2025 04:23:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1759829030;
-	bh=nfNXuTjguVwiBFAaPC3Z8FUDucM5kSOhplVJ5WEiNQ8=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=SS4qpDwayst7hg/H3eGubBAD4GyGfBUBKO6zKsqGVTOjvKf5ZF9wUK1+RSRfJm69R
-	 PTARQRPOqh5jeVzbaBwNRT4akZKR0KYX/f4W9S4038nncnCNWWxg/2zKQS8WQD3KLF
-	 raeJWT3CtdqBrNoGAyCo4F89s6laSpJuiMqPNVRU=
-Received: from DFLE206.ent.ti.com (dfle206.ent.ti.com [10.64.6.64])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5979No34591270
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 7 Oct 2025 04:23:50 -0500
-Received: from DFLE205.ent.ti.com (10.64.6.63) by DFLE206.ent.ti.com
- (10.64.6.64) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 7 Oct
- 2025 04:23:50 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE205.ent.ti.com
- (10.64.6.63) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 7 Oct 2025 04:23:50 -0500
-Received: from [172.24.233.150] (a0507176-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [172.24.233.150])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5979Nk56904969;
-	Tue, 7 Oct 2025 04:23:47 -0500
-Message-ID: <2de3151b-eedc-4209-8b20-53473cafacef@ti.com>
-Date: Tue, 7 Oct 2025 14:53:46 +0530
+	s=arc-20240116; t=1759829102; c=relaxed/simple;
+	bh=XUinQ1L61nBOAHFeMuRDRMw/mgz6gA51sfVWDIjlO6Y=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Exe17WTGwg5YwNBxO8O09OTwKX/nR0obnxALal4N4ZlkPLOFQUr0QPgP+mPtMRt65NAps6YWOh8eJz6N6SsEtWkHvVkudN3aMgv8yEKkhxr9Tcm1q9tq0d1Le6Pgcj88hSnZ22RL+kaZ+Jh4iCU1t7vk46jhj0w5lOGePGJZXDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CoCW7V4b; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b55517e74e3so7002284a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 02:25:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759829100; x=1760433900; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=LXAk2vNpOi2a4GZEEdq+/3BrMz7MdeYNSazlKM1phvE=;
+        b=CoCW7V4bbcDWEbVJ9+RpETuCuHhi+TSnr2qIiLw/LBn+Bg7BoDiVd9iZJRMo5Uf/ba
+         wEOPEgtXthfXG8txesqUqrPQJm+oEFseJVJzxt3be6X4bIfZSOjhtUxDH+1S1qvLjVuB
+         2JSaJ+cMVjZQda/xCLy2FNAcORrF585mVuJENNxO48BActdNNQmpPpetm1C5cuqz8qUL
+         b87T7adscz2aKVyb3Rnsv08Ap+jMnEDuUzOOG8tg/Zt3RQSdQdvG53UDDZrs8OfrKpQ+
+         GU1J4zEmJ+dUEMD3etbdg5nj9V1GLSPRUebBv+KMUectS0Ev5tokRUsHIDpxK/2Hiily
+         kRgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759829100; x=1760433900;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LXAk2vNpOi2a4GZEEdq+/3BrMz7MdeYNSazlKM1phvE=;
+        b=t2lOjph/VQai6NVtQVU77i5hx4dY2tlLBdKqLHcxcrFQdXgLQbEJ2Z9Gjc92BwaI71
+         BDRHSLF2hpmavpf5M1G4afv2of44/cwICU+CjMZOZ4fZX4BOh8iTX4+KaMrfTU1o4+HV
+         HF/HM1HBgXfEs/JOCGpnp9Kc/WFNfYcfZ9+GWM0uda17WqqUeJWkM5wK5mqRyii9o4s5
+         eSq+YD9lGE0itslMl8LQVGawA3HJdymyhAbJq1eAUWLApaENY+bziehW/Xr+RKbVXLn4
+         b8PZ8sM03DHrtPR79yFXpGBZuKaP7Cqq1blX9tDQo5QEmvLz3RUTJAqRAgWALHf8cUv1
+         m5fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXw/47ihVjrTslCEg+CLyy/JnmBRCmiteZWuozIMWKLVzLw7GL47mAI+aMeXiNk/ikmWqJ3urvgO8l5DeY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJiV39zPYcXt87oMRnDzi8oPV8cMXruik1ElABA4tK8xuie8no
+	cVkr7U484bfFpFVJZa7jTXD4BWn4YNjGTGH0EQj4OKiCi4gQAMI7qFd1SNm4hh7e
+X-Gm-Gg: ASbGncsgB2UaswTU/hN8CAWXrgrN5M62RBAfeRtrMcbIuhpkWqb+TTDeOofU22uWwR1
+	ErcIeQPPSATQWE3BegzkU6b+x10Ar08H559R743OAgcQzvl+1cokrJxf8Wda/kUDGtMP0lutqSB
+	V3KrRwRzBToSx6jhaNRu2bcvTWvJw02+/O3W2Uug3rUrYNG3WHh5ignSnMX/7ICmcEEjKYWEEda
+	JNFDhYtpM99QC4j2kcuc6MD69QfbAf3bU4gR5f1Bk22kU4I74i0jXvoAx+3HZ9TdL6TL99DlS+h
+	OpT84hqUY4VB7eehWiZLDIqf1fk2HIiWD57oVAGof7bZrkw+7EW860i8HOf4a0dsluwQ6WfJ6uQ
+	urDk8+xlMrvxa1YRliKLkTvhl9kr8lUJgFPgSpJ6EEqFQ4zk14t6w0PE3waqiAGUAmLZVKPkehc
+	vZ
+X-Google-Smtp-Source: AGHT+IH8IaODEbFJZ73jU5YNNWrbKeRhGSBDhqmPEMfJXu/w4VpklqvjWqqlypiPmg3Qz+KDVUviRw==
+X-Received: by 2002:a17:902:ce01:b0:24c:e6fa:2a38 with SMTP id d9443c01a7336-28e9a606f2amr222264685ad.25.1759829099825;
+        Tue, 07 Oct 2025 02:24:59 -0700 (PDT)
+Received: from [192.168.0.69] ([159.196.5.243])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28ec57a2dd6sm33737055ad.67.2025.10.07.02.24.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 02:24:59 -0700 (PDT)
+Message-ID: <339cbb66fbcd78d639d0d8463a3a67daf089f40d.camel@gmail.com>
+Subject: Re: [PATCH] nvme/tcp: handle tls partially sent records in
+ write_space()
+From: Wilfred Mallawa <wilfred.opensource@gmail.com>
+To: Hannes Reinecke <hare@suse.de>, linux-nvme@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph
+ Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, John Fastabend
+ <john.fastabend@gmail.com>,  Jakub Kicinski	 <kuba@kernel.org>, Sabrina
+ Dubroca <sd@queasysnail.net>, "David S . Miller"	 <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni	 <pabeni@redhat.com>, Simon
+ Horman <horms@kernel.org>
+Date: Tue, 07 Oct 2025 19:24:53 +1000
+In-Reply-To: <0bf649d5-112f-42a8-bc8d-6ef2199ed19d@suse.de>
+References: <20251007004634.38716-2-wilfred.opensource@gmail.com>
+	 <0bf649d5-112f-42a8-bc8d-6ef2199ed19d@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: counter: Add new ti,omap-dmtimer-cap
- compatible
-To: Krzysztof Kozlowski <krzk@kernel.org>, <j-keerthy@ti.com>,
-        <vigneshr@ti.com>, <wbg@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <devicetree@vger.kernel.org>
-CC: <u-kumar1@ti.com>, <n-francis@ti.com>
-References: <20250909080042.36127-1-g-praveen@ti.com>
- <20250909080042.36127-2-g-praveen@ti.com>
- <6faff5b1-65b1-41ee-aba8-8c06a2bc6f58@kernel.org>
- <9653740a-44fe-46bb-92c8-f7fc26cbe5ee@ti.com>
- <30101fb9-e2eb-4050-896a-7be629ced44d@kernel.org>
-Content-Language: en-US
-From: Gokul Praveen <g-praveen@ti.com>
-In-Reply-To: <30101fb9-e2eb-4050-896a-7be629ced44d@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Krzysztof,
+On Tue, 2025-10-07 at 07:19 +0200, Hannes Reinecke wrote:
+> On 10/7/25 02:46, Wilfred Mallawa wrote:
+> > From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+> >=20
+>=20
+[...]
+> I wonder: Do we really need to check for a partially assembled
+> record,
+> or wouldn't it be easier to call queue->write_space() every time
+> here?
+> We sure would end up with executing the callback more often, but if
+> no
+> data is present it shouldn't do any harm.
+>=20
+> IE just use
+>=20
+> if (nvme_tcp_queue_tls(queue)
+> =C2=A0=C2=A0=C2=A0=C2=A0 queue->write_space(sk);
 
+Hey Hannes,
 
-On 07/10/25 12:05, Krzysztof Kozlowski wrote:
-> On 26/09/2025 18:06, Gokul Praveen wrote:
->>>
->>>> +
->>>> +  ti,timers:
->>>> +    description: Timer instance phandle for the Capture
->>>
->>> So the only resource is phandle? That's completely fake device then. NAK.
->>>
->>
->>
->> The OMAP Timer IP can operate in 3 modes: Timer, PWM mode or capture
->> (mutually exclusive).
->> The timer/ti,timer-dm.yaml file describes the timer mode of operation.
->> It encapsulates base IP block and reg property is also part the same
->> binding.
->>
->> This node represents the capture mode with phandle reference to the
->> timer DT node. This is modeled all the same lines as how PWM
->> functionality is implemented in pwm/ti,omap-dmtimer-pwm.yaml
-> 
-> Different modes do not have their own device nodes. It is still one
-> device, so one device node.
-> 
->>
->> Now, if this needs to change, please suggest alternate.
->>
->> One solution is perhaps to add a new property to ti,timer-dm.yaml itself
->> to indicate the mode of IP?
-> 
-> Not sure, depends what this really is and how it is used. I can also
-> imagine that consumer defines the mod of operation.
-> 
+This was my initial approach, but I figured using
+tls_is_partially_sent_record() might be slightly more efficient. But if
+we think that's negligible, happy to go with this approach (omitting
+the partial record check).
 
-For a timer operating in capture mode, there are no consumers actually 
-and the only way we use it is through sysfs.
+Wilfred
 
-Would it be good enough if I have a separate "mode" property for the 
-dmtimer device node just like how it is done for USB as follows where 
-the usb device node has a "dr_mode" property to decide on whether the 
-usb should act in host, device or otg mode.
-
-&usb0 {
-	status = "okay";
-	dr_mode = "host";
-};
-
-
-> Or mode of operation could be even configured runtime, thus not suitable
-> for DT at all.
-> 
-> Best regards,
-> Krzysztof
-
+>=20
+> > @@ -1306,6 +1313,7 @@ static int nvme_tcp_try_send_ddgst(struct
+> > nvme_tcp_request *req)
+> > =C2=A0 static int nvme_tcp_try_send(struct nvme_tcp_queue *queue)
+> > =C2=A0 {
+> > =C2=A0=C2=A0	struct nvme_tcp_request *req;
+> > +	struct tls_context *ctx =3D tls_get_ctx(queue->sock->sk);
+> > =C2=A0=C2=A0	unsigned int noreclaim_flag;
+> > =C2=A0=C2=A0	int ret =3D 1;
+> > =C2=A0 And we need this why?
+>=20
+> > diff --git a/include/net/tls.h b/include/net/tls.h
+> > index 857340338b69..9c61a2de44bf 100644
+> > --- a/include/net/tls.h
+> > +++ b/include/net/tls.h
+> > @@ -373,6 +373,11 @@ static inline struct tls_context
+> > *tls_get_ctx(const struct sock *sk)
+> > =C2=A0=C2=A0	return (__force void *)icsk->icsk_ulp_data;
+> > =C2=A0 }
+> > =C2=A0=20
+> > +static inline bool tls_is_partially_sent_record(struct tls_context
+> > *ctx)
+> > +{
+> > +	return !!ctx->partially_sent_record;
+> > +}
+> > +
+> > =C2=A0 static inline struct tls_sw_context_rx *tls_sw_ctx_rx(
+> > =C2=A0=C2=A0		const struct tls_context *tls_ctx)
+> > =C2=A0 {
+> > diff --git a/net/tls/tls.h b/net/tls/tls.h
+> > index 2f86baeb71fc..7839a2effe31 100644
+> > --- a/net/tls/tls.h
+> > +++ b/net/tls/tls.h
+> > @@ -271,11 +271,6 @@ int tls_push_partial_record(struct sock *sk,
+> > struct tls_context *ctx,
+> > =C2=A0=C2=A0			=C2=A0=C2=A0=C2=A0 int flags);
+> > =C2=A0 void tls_free_partial_record(struct sock *sk, struct tls_context
+> > *ctx);
+> > =C2=A0=20
+> > -static inline bool tls_is_partially_sent_record(struct tls_context
+> > *ctx)
+> > -{
+> > -	return !!ctx->partially_sent_record;
+> > -}
+> > -
+> > =C2=A0 static inline bool tls_is_pending_open_record(struct tls_context
+> > *tls_ctx)
+> > =C2=A0 {
+> > =C2=A0=C2=A0	return tls_ctx->pending_open_record_frags;
+> See above. If we were calling ->write_space unconditionally we=20
+> wouldn'teven need this export.Cheers,Hannes
 
