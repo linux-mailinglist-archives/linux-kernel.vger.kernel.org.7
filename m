@@ -1,155 +1,270 @@
-Return-Path: <linux-kernel+bounces-844255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEAE9BC162F
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 14:40:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24FDBBC1641
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 14:43:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3042F34ED84
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 12:40:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 23A784EF949
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 12:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41752DF131;
-	Tue,  7 Oct 2025 12:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="C5nDRzhd"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCA82DF3E7;
+	Tue,  7 Oct 2025 12:43:34 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A26F2D9494
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 12:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E8A216E1B
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 12:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759840846; cv=none; b=cdUr7bgC7+48adD8tvi/0Fxr478BgN/N4iw+Wo/P9foC4bHyNy8t8SDNp5Iu9INQ45TjStSehLePqp24W2fGrUfIH6faghNdSJrcVsW6FSiG02cTrBgKszvI8L7sfQimTIneOCT9NJr6uGpzUl9iNmUtC2eaojL3HziFHmINkIk=
+	t=1759841013; cv=none; b=H47hQe4C6tj+SE6WEUPfsgwZuC1ZrO3V6Oo82GQ8nPMSdL6lNuEgjUboV8S3iODHfjBIuMrrglrXlf3j/93GPf0EOzgsU5z/pci02ymU8WrEb68oQHWAeOwDhOGbrIvAZoOjD3SGTYi+wcIaydPW1CTzckuQWhvIsu8buQUqJc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759840846; c=relaxed/simple;
-	bh=ZI62aSMICRCSh6leiVS9+me5WC3NyTpFwWRnOdmHTNM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IcSS1aVN/DK9JG+30veu7aQH9lEHTGL9A5RqcwQS+2qMSz2fUKWPxUU+5KWImV6O/fqxdQOLgfKt5F5rCw1inY+9dspOISivUlhuhZ1xEOvHOx6OBrIAYmil+/iUQ/NKeWWmCJReZ2GZN/X8QGNhbyF28TE65FblSlaaxPfuEKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=C5nDRzhd; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-afcb7a16441so1010196766b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 05:40:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759840842; x=1760445642; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=LTrQ7nd2uqnYTWAuME7Z1la3KV1LzKeN4unCYN5xPjo=;
-        b=C5nDRzhd3MYMOB05kXldKxoe6FrbnHssHrmBnygiI/wyAVFE3IRWL4x9WkHcebXjpZ
-         eYdrv16af4GrXsYlCQahiwog2vrtPc9fUVOuj3N3g4HtSVb8Y/5hQV6c0B77HJZWFMuU
-         /97IId43KAt1rH9IqslXv0ORc3h5ScWmwkPjoe0pWNtD/8pMmgqH/VwpLwY3sIlDuVsZ
-         SfhmG/Xtvf4bHb2lfuCXvCplrZO55JtzfjQBxzGeUEu+nkLcNyi3REKtd8lJ63uDMmRh
-         KSuq1Kwh9nTj6hyc88OHWrV9Sxid9n0ZGSV/2Ict5OSzOJs0IkBqeczNEKkGiFTUML88
-         VQDA==
+	s=arc-20240116; t=1759841013; c=relaxed/simple;
+	bh=Xrx4wKA2+CjRkqRrbTiCZhWv5vIN5nkQDI4tDuzDfOc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OgjpPYlQcP92CzNjErXw6blMSjyoTeuf+nMa8NRkTq7TN6MBM2zoBqywIOX+h+NjA6DXIIQRYgmgC2a4A98DLx9l2MjiO82KBB534oIYGchOb1dA1V0jbDIrCzkK7qWEWGDTukUkL6hxh6z0sZVoaU1F6cZejbranVXfkXDqPiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-886e347d26bso747985539f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 05:43:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759840842; x=1760445642;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LTrQ7nd2uqnYTWAuME7Z1la3KV1LzKeN4unCYN5xPjo=;
-        b=u6q84qK1p0bG6Fy47W5wHTpCzbBFY6fT8hfp10IoqUskHDHzTC+0EjF8II11t5933R
-         6su+a0QGpYC+Fx8XoUhuwb1VhZXUpPfp9H1faNskikTFSod6pM5Z7vpH5ru+K07jseNW
-         T9vTVNqL0fbFwJVKMzWXR3rGCSZ+cvqL/KgnonfWtyGn1AHVrL9Q+patfvJqF9tNfGRw
-         l0d+GezJH4EbbzY8Wg7NE94zbF5SKEusk0qXLqEJYnBS5B4wDTETcVNZXFAq2FjIN0gf
-         oG2bNA9RLNH7DbkQghj08xqRCYfmvcScGanv8HKZJEN4LcXGK5HlOD/YFD0iMQnOoOb8
-         qvCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWMYXc4zgj+pTTXdRFelO7VqPIs8EdarErTHO8N/u9EbwaiyGX4Qv6SCruWwxAAMFzyWDW2a7rCNStshPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4JPNxP8hJBQ6hsKoz/SDMaLK+MwcIHVh6yDVhDPwgNfLjQGhd
-	8duDG3HZUH+gnX2Za4GhRgYou1x/tYM4klL8sxSs76NekhoKh7JhJBAo2Xfc9/n6aBY=
-X-Gm-Gg: ASbGncurtfj0E9oqaBhb4/lGfHb6A7V6oWf/Eg1dliiG2at10RXKu4Zdo7kJVw4qugB
-	7NGpXObErRX/HstHUkvs1q5MwX7mr3bZP44e4LrMRKX87qYgrAJHHdfcpod5qBvfXNNQM6DPKF7
-	lO9ePKs5aOMG+2XgMtaaPXp1Tv4P6v6AgA6hC1m/l/XDQL0+7PfvKbe5LnfRYaPm2tLxhQfPED0
-	DAvaWZtKikhHYxeUCTASdMQxgmHvSGqAfCUJYWV/PbgICNZMWZ6jZ0a1TtcmoOcivz3AChyb+61
-	Mqp6FZ6DoLZbAFxLux4+jWx7Ea/Smaq41gLLXF+Rf2r68CrKhQolGqvgzguEM510sPQNAoro6s1
-	Kjd5ERmzgjCWd06r8mVHzYBX7QeOYv6gsvIcwdRvkcUV0EeT9+sh8ChVrFNV+Z8WGJP3TMw==
-X-Google-Smtp-Source: AGHT+IFKiqjADNUa/d45jLbBQZuzBChgqGDLbIgB6YDNfgCy+x0vApmqahwWJauuwxlToVqj6Xa20A==
-X-Received: by 2002:a17:907:c0f:b0:b3b:9931:3aaf with SMTP id a640c23a62f3a-b49c275549bmr2150089066b.28.1759840842346;
-        Tue, 07 Oct 2025 05:40:42 -0700 (PDT)
-Received: from [10.20.0.214] (ivokam.ddns.nbis.net. [109.121.139.111])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b4fd7112dd8sm122559166b.30.2025.10.07.05.40.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Oct 2025 05:40:42 -0700 (PDT)
-Message-ID: <e6af2a23-e54e-440d-91fd-6669f5bfdc58@suse.com>
-Date: Tue, 7 Oct 2025 15:40:40 +0300
+        d=1e100.net; s=20230601; t=1759841010; x=1760445810;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ngkTLBuQWHCVGDOFb/GBzhurIyZJMzJMTLQp+SNhqdo=;
+        b=g1p+Jt3i2lxkr1S8Ml/DLA9/7YQh+ZrHzAeeTyJnhgRKPPrmUjrvW9B15XUjFEfwDL
+         6Fh55Qdx+myF5yIAN2djX/knjgpmvaqRWSukaOsPPrBu/EMkFq1Ks8acToPzT8QqsvlO
+         GwTXPU1SgrKHRXSgI/KsdAGahvjvzV0JBD8ZPuyCHJwsH66dof4ZrYHCS2yxtsFRMBeH
+         K9UHkxJYbI59fdQaSuZ8UiDedEUkbW1Diw7cLBpWeySkwqpwRlSrEQBOzXI3/2+zd3pz
+         e92SdpFBXtfZpghmiOIK/FIxQ3AxOg6SEJi2KM1Lw19fw+neH5QJk+ZOhp0nidB27vn7
+         nVyA==
+X-Forwarded-Encrypted: i=1; AJvYcCXpjaq61yul9JvvTt1MARDoz21j8/qzaOV+FSWydqsUAjadgvikLNbA76P2nmxDulMInsaUjpt5j920bdI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoqrZnlZKLuNFDQilIyLuJzeYnH/++EyMpvy7Y2CCVK2CFzZ/o
+	L3g7w557a7KUtymys+YbIFnzHgMfPAN6wUbxlD4SQbiwhAGX+0bMiEG9/fYjHXfXHN+iTlwXr0D
+	yb2BOOAREklCDF8sYIl9uHXDyd4t0zSLOmO2ju5NM7kNziBl0arzhYOKyqro=
+X-Google-Smtp-Source: AGHT+IFuZEdHsoGHjvrPQD3ghM9pPE6I1IwSKPxkIYytTtG+JfsjUkERwDpLutRC+haRKqDGqoKxVy/1o6LrXT51CW6EAbdqo9CX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] x86/tsx: Make tsx_ctrl_state static
-To: Petr Tesarik <ptesarik@suse.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
- "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>
-References: <cover.1758906115.git.ptesarik@suse.com>
- <8b7d5f2baf55334a06da558afc7e12f3a78ae7ef.1758906115.git.ptesarik@suse.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-Autocrypt: addr=nik.borisov@suse.com; keydata=
- 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
-In-Reply-To: <8b7d5f2baf55334a06da558afc7e12f3a78ae7ef.1758906115.git.ptesarik@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:1d0a:b0:88c:3918:76fe with SMTP id
+ ca18e2360f4ac-93bc4118117mr358839939f.4.1759841010472; Tue, 07 Oct 2025
+ 05:43:30 -0700 (PDT)
+Date: Tue, 07 Oct 2025 05:43:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e50af2.a00a0220.298cc0.0479.GAE@google.com>
+Subject: [syzbot] [io-uring?] KASAN: slab-use-after-free Read in io_waitid_wait
+From: syzbot <syzbot+b9e83021d9c642a33d8c@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    6a74422b9710 Merge tag 'mips_6.18' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=124fdee2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8f142ebe84501b0b
+dashboard link: https://syzkaller.appspot.com/bug?extid=b9e83021d9c642a33d8c
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1437c304580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=118b3334580000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-6a74422b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fc46a17eb520/vmlinux-6a74422b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a9132caa46a1/bzImage-6a74422b.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b9e83021d9c642a33d8c@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-use-after-free in __list_del_entry_valid_or_report+0x1ba/0x200 lib/list_debug.c:49
+Read of size 8 at addr ffff888051712d50 by task syz.0.17/6127
+
+CPU: 0 UID: 0 PID: 6127 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xcd/0x630 mm/kasan/report.c:482
+ kasan_report+0xe0/0x110 mm/kasan/report.c:595
+ __list_del_entry_valid_or_report+0x1ba/0x200 lib/list_debug.c:49
+ __list_del_entry_valid include/linux/list.h:132 [inline]
+ __list_del_entry include/linux/list.h:223 [inline]
+ list_del_init include/linux/list.h:295 [inline]
+ io_waitid_wait+0xf7/0x230 io_uring/waitid.c:239
+ __wake_up_common+0x132/0x1f0 kernel/sched/wait.c:108
+ __wake_up_common_lock kernel/sched/wait.c:125 [inline]
+ __wake_up_sync_key+0x36/0x50 kernel/sched/wait.c:192
+ do_notify_parent_cldstop+0x540/0xb50 kernel/signal.c:2333
+ ptrace_stop.part.0+0x7e1/0x950 kernel/signal.c:2437
+ ptrace_stop kernel/signal.c:2376 [inline]
+ ptrace_signal kernel/signal.c:2743 [inline]
+ get_signal+0x13d5/0x26d0 kernel/signal.c:2921
+ arch_do_signal_or_restart+0x8f/0x7c0 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:40 [inline]
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ irqentry_exit_to_user_mode+0x141/0x2b0 kernel/entry/common.c:73
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+RIP: 0033:0x7fc598db6c60
+Code: 6e c7 89 13 48 8b 50 08 0f 16 40 50 0f 11 00 48 89 50 50 48 8b 50 10 48 89 78 10 48 89 50 40 48 89 d7 eb b2 66 0f 1f 44 00 00 <64> 48 8b 0c 25 10 00 00 00 8b 91 08 03 00 00 48 8d b9 08 03 00 00
+RSP: 002b:00007ffccd0733d8 EFLAGS: 00010202
+RAX: 00000000fffffffa RBX: 00007fc598fe5fa0 RCX: 0000000000000000
+RDX: 00007ffccd073420 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 00007fc598e11f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fc598fe5fa0 R14: 00007fc598fe5fa0 R15: 0000000000000006
+ </TASK>
+
+Allocated by task 6123:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:56
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:77
+ poison_kmalloc_redzone mm/kasan/common.c:400 [inline]
+ __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:417
+ kasan_kmalloc include/linux/kasan.h:262 [inline]
+ __do_kmalloc_node mm/slub.c:5603 [inline]
+ __kmalloc_noprof+0x32f/0x880 mm/slub.c:5615
+ kmalloc_noprof include/linux/slab.h:961 [inline]
+ io_uring_alloc_async_data io_uring/io_uring.h:328 [inline]
+ io_waitid_prep+0x1aa/0x470 io_uring/waitid.c:251
+ io_init_req io_uring/io_uring.c:2248 [inline]
+ io_submit_sqe io_uring/io_uring.c:2295 [inline]
+ io_submit_sqes+0x855/0x2710 io_uring/io_uring.c:2447
+ __do_sys_io_uring_enter+0xd69/0x1630 io_uring/io_uring.c:3514
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 6123:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:56
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:77
+ __kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:587
+ kasan_save_free_info mm/kasan/kasan.h:406 [inline]
+ poison_slab_object mm/kasan/common.c:252 [inline]
+ __kasan_slab_free+0x5f/0x80 mm/kasan/common.c:284
+ kasan_slab_free include/linux/kasan.h:234 [inline]
+ slab_free_hook mm/slub.c:2514 [inline]
+ slab_free mm/slub.c:6566 [inline]
+ kfree+0x2b8/0x6d0 mm/slub.c:6773
+ io_req_async_data_free io_uring/io_uring.h:349 [inline]
+ io_waitid_free io_uring/waitid.c:40 [inline]
+ io_waitid_finish io_uring/waitid.c:108 [inline]
+ io_waitid_complete+0x249/0x5e0 io_uring/waitid.c:123
+ io_waitid_cb+0xe4/0x3a0 io_uring/waitid.c:217
+ io_handle_tw_list+0x483/0x500 io_uring/io_uring.c:1151
+ tctx_task_work_run+0xac/0x380 io_uring/io_uring.c:1216
+ tctx_task_work+0x7a/0xd0 io_uring/io_uring.c:1234
+ task_work_run+0x150/0x240 kernel/task_work.c:227
+ get_signal+0x1d0/0x26d0 kernel/signal.c:2807
+ arch_do_signal_or_restart+0x8f/0x7c0 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:40 [inline]
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ irqentry_exit_to_user_mode+0x141/0x2b0 kernel/entry/common.c:73
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+
+The buggy address belongs to the object at ffff888051712d00
+ which belongs to the cache kmalloc-96 of size 96
+The buggy address is located 80 bytes inside of
+ freed 96-byte region [ffff888051712d00, ffff888051712d60)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x51712
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000000 ffff88801b042280 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000080200020 00000000f5000000 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 6123, tgid 6123 (syz.0.17), ts 124233232510, free_ts 119982111762
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1c0/0x230 mm/page_alloc.c:1850
+ prep_new_page mm/page_alloc.c:1858 [inline]
+ get_page_from_freelist+0x10a3/0x3a30 mm/page_alloc.c:3884
+ __alloc_frozen_pages_noprof+0x25f/0x2470 mm/page_alloc.c:5183
+ alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2416
+ alloc_slab_page mm/slub.c:3030 [inline]
+ allocate_slab mm/slub.c:3203 [inline]
+ new_slab+0x24a/0x360 mm/slub.c:3257
+ ___slab_alloc+0xdc4/0x1ae0 mm/slub.c:4627
+ __slab_alloc.constprop.0+0x63/0x110 mm/slub.c:4746
+ __slab_alloc_node mm/slub.c:4822 [inline]
+ slab_alloc_node mm/slub.c:5233 [inline]
+ __do_kmalloc_node mm/slub.c:5602 [inline]
+ __kmalloc_noprof+0x501/0x880 mm/slub.c:5615
+ kmalloc_noprof include/linux/slab.h:961 [inline]
+ io_uring_alloc_async_data io_uring/io_uring.h:328 [inline]
+ io_waitid_prep+0x1aa/0x470 io_uring/waitid.c:251
+ io_init_req io_uring/io_uring.c:2248 [inline]
+ io_submit_sqe io_uring/io_uring.c:2295 [inline]
+ io_submit_sqes+0x855/0x2710 io_uring/io_uring.c:2447
+ __do_sys_io_uring_enter+0xd69/0x1630 io_uring/io_uring.c:3514
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page last free pid 6077 tgid 6077 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1394 [inline]
+ __free_frozen_pages+0x7df/0x1160 mm/page_alloc.c:2906
+ vfree+0x1fd/0xb50 mm/vmalloc.c:3440
+ kcov_put kernel/kcov.c:439 [inline]
+ kcov_put kernel/kcov.c:435 [inline]
+ kcov_close+0x34/0x60 kernel/kcov.c:535
+ __fput+0x402/0xb70 fs/file_table.c:468
+ task_work_run+0x150/0x240 kernel/task_work.c:227
+ exit_task_work include/linux/task_work.h:40 [inline]
+ do_exit+0x86f/0x2bf0 kernel/exit.c:966
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1107
+ get_signal+0x2671/0x26d0 kernel/signal.c:3034
+ arch_do_signal_or_restart+0x8f/0x7c0 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop+0x85/0x130 kernel/entry/common.c:40
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x419/0x4e0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff888051712c00: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
+ ffff888051712c80: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
+>ffff888051712d00: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+                                                 ^
+ ffff888051712d80: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
+ ffff888051712e00: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
+==================================================================
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 26.09.25 г. 21:01 ч., Petr Tesarik wrote:
-> Move all definitions related to tsx_ctrl_state to tsx.c. They are
-> never referenced outside this file.
-> 
-> No functional change.
-> 
-> Signed-off-by: Petr Tesarik <ptesarik@suse.com>
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
