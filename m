@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-844053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E359BC0E71
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:47:08 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98B34BC0E66
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D4ED3C4BFB
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:46:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 42E8B34D773
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5694A2DC789;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6009F2DC78D;
 	Tue,  7 Oct 2025 09:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Seh52KZa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b5TWRQM/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C54D2D7DE1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5DEF2D8771;
 	Tue,  7 Oct 2025 09:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759830295; cv=none; b=W3RmJ0MdALSMQQAml37WDJRIzUXTE2aDiIUd0ybIkeK9RDpS5GucJZA5nHQqa1ckPI2Af+ZyB8sV++9MaZ8AQDfEBr1A7EisoF4oeXx16KtGZ/Wd3gJ2UTHsQgvm6CtO6RqJVh3ujVIwjhW+i5UKZWYO995rFocIDNKeH113hRw=
+	t=1759830295; cv=none; b=cmy/j5aOpXjAA6BFWo+0WJNA3eRZysrlJhV5brZZJNuVhA3Y9D+FfPEWipaQb+SHAuAXx7A28oZMDsLSP1pT09hRJDXw8ZiGsshEU8z2hyB1RqExw/Lo1sV4zP8mu9TssTDt7S8nYFuZUlQK2Z5tOX3kxymyV4OUdrurp+u2hkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1759830295; c=relaxed/simple;
-	bh=9ziipJ8QVhUYl7FNrii/r8Of1QWBSla3JzJXj5jEDSw=;
+	bh=9esiiaNsIjLJT9q+6kigJzz3FXDUJEcBF8kGxPcFTEY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=f9cENwavobUBYOAcHW4UsmvqZfTB4EahSQKTsAOtrZXbYnWi61E1V7FFvSZbH4gStfjTYQkA3L8a44s1jniKch/wZtpizADUXqLn0lQWvJkVycAYs8YbwH/jZ8HrCgvmIyBg2BEzknQwWqOuExMmo2JgcbmCWGLhD/MTqxdRjTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Seh52KZa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A15BC113D0;
+	 MIME-Version; b=toRehJk429IA3SzJR9BdUtYhof5zjs+7ZXRCnUH1tknhdRoVvAwIDFf93ElzmH/GOPzsf72j+4HO3vmgqE6jmyz9Kvv0y3/c5xm1fP3K9URtM9Ge9PqqlwaOEiNrN+ktQ0LEg4zEb7sek8DfLyKZv7BcCllOYa9tsBDxmQ1bAew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b5TWRQM/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88176C4AF0B;
 	Tue,  7 Oct 2025 09:44:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1759830295;
-	bh=9ziipJ8QVhUYl7FNrii/r8Of1QWBSla3JzJXj5jEDSw=;
+	bh=9esiiaNsIjLJT9q+6kigJzz3FXDUJEcBF8kGxPcFTEY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Seh52KZapGgBNv6ZL64OcFd52RIRCpmMwMMXK5xKW5E2BXJvTmqAPm3oOgO+62FuM
-	 zMenW9mjUVCzNaMreSsf3ziEiihxrE3PGW24UzqdNQuFY8q4f8StFFll/UoqfGt3UR
-	 Bcg5PapxghkaLj47JFwxkPItBrMvmD8DxJyGZkwetrBsCMNyTNNQmx59FJiykSuzFR
-	 x9XzDw17QU3/vk9sU4Sf+w6ckhpY0+EJX+ZTkUC0TD71D9qk/4zSZ1Wdx2Ze8aJot3
-	 hZyigUZTiQ7+ygIcZe7tU/zTLf9wUwnYIFB40i5TdPn9ZeqD4GlrEK/ygMl+v2rzAi
-	 Nhn+fzizPzJNA==
+	b=b5TWRQM/fHVWyhLveNUH9G4xZYVgaU+KEcUXv9cLFEtknQuEiYqcCPDaL2tRVLp6P
+	 eEC/TQvK+e1fGy9eUx/21vIZG130lOcDHG5wIUQPg5zs57fCM0lBv6gcY6LdKcLAxP
+	 6lSkGSi091k8415SKN0WK/clAhuXw/L9PIGs+bMKnjmHUGHSB6geUTpeyJrolZPD+3
+	 RqjCsoYhgmMqhFlrpoY34dbrCPKltuV9YIkdufB4pcQvv5KnqbXQ/wTysPZ5+z4xMC
+	 xCg4/FTg2byz7vadt5x8jU2vkU+QTHW/BGwnz+IVYFdSPOiwxGg+Zp7WpQ15uONK9W
+	 IM8UUyIHjtP8Q==
 Received: from johan by xi.lan with local (Exim 4.98.2)
 	(envelope-from <johan@kernel.org>)
-	id 1v64FZ-00000000360-2r37;
+	id 1v64FZ-00000000363-3BhL;
 	Tue, 07 Oct 2025 11:44:53 +0200
 From: Johan Hovold <johan@kernel.org>
 To: Joerg Roedel <joro@8bytes.org>,
@@ -60,10 +60,12 @@ Cc: Robin Murphy <robin.murphy@arm.com>,
 	Krishna Reddy <vdumpa@nvidia.com>,
 	iommu@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>
-Subject: [PATCH v2 10/14] iommu/mediatek-v1: add missing larb count sanity check
-Date: Tue,  7 Oct 2025 11:43:23 +0200
-Message-ID: <20251007094327.11734-11-johan@kernel.org>
+	Johan Hovold <johan@kernel.org>,
+	stable@vger.kernel.org,
+	Suman Anna <s-anna@ti.com>
+Subject: [PATCH v2 11/14] iommu/omap: fix device leaks on probe_device()
+Date: Tue,  7 Oct 2025 11:43:24 +0200
+Message-ID: <20251007094327.11734-12-johan@kernel.org>
 X-Mailer: git-send-email 2.49.1
 In-Reply-To: <20251007094327.11734-1-johan@kernel.org>
 References: <20251007094327.11734-1-johan@kernel.org>
@@ -75,29 +77,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the missing larb count sanity check to avoid writing beyond a fixed
-sized array in case of a malformed devicetree.
+Make sure to drop the references taken to the iommu platform devices
+when looking up their driver data during probe_device().
 
+Note that the arch data device pointer added by commit 604629bcb505
+("iommu/omap: add support for late attachment of iommu devices") has
+never been used. Remove it to underline that the references are not
+needed.
+
+Fixes: 9d5018deec86 ("iommu/omap: Add support to program multiple iommus")
+Fixes: 7d6827748d54 ("iommu/omap: Fix iommu archdata name for DT-based devices")
+Cc: stable@vger.kernel.org	# 3.18
+Cc: Suman Anna <s-anna@ti.com>
 Acked-by: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/iommu/mtk_iommu_v1.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/iommu/omap-iommu.c | 2 +-
+ drivers/iommu/omap-iommu.h | 2 --
+ 2 files changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/iommu/mtk_iommu_v1.c b/drivers/iommu/mtk_iommu_v1.c
-index 44b965a2db92..55d6615a41a9 100644
---- a/drivers/iommu/mtk_iommu_v1.c
-+++ b/drivers/iommu/mtk_iommu_v1.c
-@@ -643,6 +643,9 @@ static int mtk_iommu_v1_probe(struct platform_device *pdev)
- 	if (larb_nr < 0)
- 		return larb_nr;
+diff --git a/drivers/iommu/omap-iommu.c b/drivers/iommu/omap-iommu.c
+index 6fb93927bdb9..b87ce129fb1f 100644
+--- a/drivers/iommu/omap-iommu.c
++++ b/drivers/iommu/omap-iommu.c
+@@ -1675,6 +1675,7 @@ static struct iommu_device *omap_iommu_probe_device(struct device *dev)
+ 		}
  
-+	if (larb_nr > MTK_LARB_NR_MAX)
-+		return -EINVAL;
-+
- 	for (i = 0; i < larb_nr; i++) {
- 		struct device_node *larbnode;
- 		struct platform_device *plarbdev;
+ 		oiommu = platform_get_drvdata(pdev);
++		put_device(&pdev->dev);
+ 		if (!oiommu) {
+ 			of_node_put(np);
+ 			kfree(arch_data);
+@@ -1682,7 +1683,6 @@ static struct iommu_device *omap_iommu_probe_device(struct device *dev)
+ 		}
+ 
+ 		tmp->iommu_dev = oiommu;
+-		tmp->dev = &pdev->dev;
+ 
+ 		of_node_put(np);
+ 	}
+diff --git a/drivers/iommu/omap-iommu.h b/drivers/iommu/omap-iommu.h
+index 27697109ec79..50b39be61abc 100644
+--- a/drivers/iommu/omap-iommu.h
++++ b/drivers/iommu/omap-iommu.h
+@@ -88,7 +88,6 @@ struct omap_iommu {
+ /**
+  * struct omap_iommu_arch_data - omap iommu private data
+  * @iommu_dev: handle of the OMAP iommu device
+- * @dev: handle of the iommu device
+  *
+  * This is an omap iommu private data object, which binds an iommu user
+  * to its iommu device. This object should be placed at the iommu user's
+@@ -97,7 +96,6 @@ struct omap_iommu {
+  */
+ struct omap_iommu_arch_data {
+ 	struct omap_iommu *iommu_dev;
+-	struct device *dev;
+ };
+ 
+ struct cr_regs {
 -- 
 2.49.1
 
