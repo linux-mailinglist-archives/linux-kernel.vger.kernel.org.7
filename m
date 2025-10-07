@@ -1,231 +1,277 @@
-Return-Path: <linux-kernel+bounces-843841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FD68BC063B
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:53:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9297BBC0668
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BB25B341915
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:53:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D7B43C36CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:54:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C99242D65;
-	Tue,  7 Oct 2025 06:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2491735959;
+	Tue,  7 Oct 2025 06:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="O8fkMZJ9"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OY5BKxwt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6218523D7EB;
-	Tue,  7 Oct 2025 06:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9F02264A7;
+	Tue,  7 Oct 2025 06:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759819880; cv=none; b=ACS3z4TEY8mPTkCBbY3u55Pnw95RKVr86Yui1Bq8pE3cin2H0zo7upSkpdi2lvMlxYvvZFAqH1+EzMxOW2BRGKGsI7S5uQGUzS9esnOdlSAVlHtaFOCkb1+ZnHtqBpDVCCQjsbJSbPodYssWEC4gpw7JWiwlKtvF8AAT+ZNInrY=
+	t=1759820039; cv=none; b=OvB1HnZAzZLID+vLJae5ju5mR5vdHU38OubFhNbIRTlpuZ4cblPY8zp5lqP32t21PBqpGe7krpmjFzsgaOAvUQRjdedGcInNtwjWce0Hl5OimQlU22n9FRhVevW1UvVYqXj3Ob80WgPQaIOj+N/191CaXRG2sFlZZbxHikH5nLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759819880; c=relaxed/simple;
-	bh=GtbhvKiArLsYQIx3MfRsDS+EuExg22K9a2ED8U/fIoE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=O3ab9JT9CohxaJouONd5InU7+70cPwnEIZ1ZVpL8nlfgdsnheeuPNYIGUQGVAj3vtt4a24MZ9dSUUq5nqgyDx42cRnoBLaUKxbyP/IAeeEDUQ0g2hnPXSSOGNPMiovZ9Xk1xW3Nfvm1p9V93QRRPBsBSolgq4cD0cVLCryv504g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=O8fkMZJ9; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1759819832; x=1760424632; i=spasswolf@web.de;
-	bh=hMv2KA500eT5A2cLBEJygRRyPv5VC2X953xjqw/qJNg=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=O8fkMZJ9iKSTLRbKEjVrQJYeyqxGIZG/OkmsO4QTCNmzIczsdh8pYQ5jsaZd90v9
-	 O+73Yu5QME1Bft9jEUqifhgN6QMdZ8FbJ01K3rZc23YcKgDzAyTApnYs7G/Arifmc
-	 txmD09y/UoL4GX/wCY/8ZfOa/j6aofbcCBcFgYR1T1krj/lprCkeONiG0nuP8+LT+
-	 1e2WgdpZaCQHaREo+pLQLan+UePvUt+aNmhVXE64Df5JzgkHnM0EU+vArWDAFZsdq
-	 3qXRU6XjuluvZbEInTGY0J1/yGZ7j2qQOdZS/WoGcYU1kaE+xUVwA1lBdivVeQLX+
-	 D+UpsLS4dk/WXzRHUw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.0.101] ([95.223.134.88]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MXGKA-1ulgqU07l0-00VCMN; Tue, 07
- Oct 2025 08:50:32 +0200
-Message-ID: <93d21bb6887310d331fa67a3766e47af9669dfc3.camel@web.de>
-Subject: Re: [REGRESSION 00/04] Crash during resume of pcie bridge
-From: Bert Karwatzki <spasswolf@web.de>
-To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, 
-	linux-kernel@vger.kernel.org
-Cc: linux-next@vger.kernel.org, regressions@lists.linux.dev, 
-	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, Mario Limonciello
-	 <superm1@kernel.org>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, 
-	spasswolf@web.de
-Date: Tue, 07 Oct 2025 08:50:30 +0200
-In-Reply-To: <e60d2cf59666b6f670996bac80cb948acb1d7b5c.camel@web.de>
-References: <20251006120944.7880-1-spasswolf@web.de>
-		 <232324a9-e82d-40b3-b88b-538947411a24@amd.com>
-	 <e60d2cf59666b6f670996bac80cb948acb1d7b5c.camel@web.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1759820039; c=relaxed/simple;
+	bh=sTuEIszWf1hpGyfoffKw9He+rRHF8efyzJJwSZqEKho=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UIG7kjd8UScVSFV2Ih47/4pIBva+W07iXpiUm8ITdSar6w/4qvmZZE3bYLVJqb2Ry+haLk2V7cmVE9xFFmt9oDlyzNmc/MrMKYJCy4GbD3tpoR3pnPrRa5KkcgAfljPcFZ2wI5yre3rVvYKn/shPtBF7P9xs3X7OtdUFYAkIX7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OY5BKxwt; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759820036; x=1791356036;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=sTuEIszWf1hpGyfoffKw9He+rRHF8efyzJJwSZqEKho=;
+  b=OY5BKxwtc/dzpR12IXWaXLk9jZ3fQ8guoeSwV2SksDtq6HbyaxoCOuZ1
+   /RniI0BZTPspwEdZe56sOVa6a5455nYV8Wprj9FHIP1ymwPtHyVxwSepD
+   lwfAIrLbkSwodv8Rll3vqtxAriKq9NvrsBbbry05A7ANm+9Jo2BuxsFLK
+   TfVx31dnvaPEbMYCss2Ywg71ZZKewFvapVP0QBErfe0BCAUEKVcATJNZc
+   vW2i6zu2+bsNvqXq+KBUwbd1zfmVH743HsSj7IJNSQWAQAnO5UpE26gTE
+   peXn+lhLvEnJgOKdUe98uCYlFuyjqDsU3PQFV/I+QwciSqUgRLBNCbQ8W
+   w==;
+X-CSE-ConnectionGUID: 5bgibybKTeSvFZvdNsocOQ==
+X-CSE-MsgGUID: e7SOklfCRqqc552f2UKqVw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11574"; a="72254371"
+X-IronPort-AV: E=Sophos;i="6.18,321,1751266800"; 
+   d="scan'208";a="72254371"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2025 23:53:55 -0700
+X-CSE-ConnectionGUID: LEqFsFcfShWaWb+MH/3Qrw==
+X-CSE-MsgGUID: BdQ+Id4lQk2UAG6g1DUMQQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,321,1751266800"; 
+   d="scan'208";a="184354450"
+Received: from sohilmeh.sc.intel.com ([172.25.103.65])
+  by orviesa004.jf.intel.com with ESMTP; 06 Oct 2025 23:53:55 -0700
+From: Sohil Mehta <sohil.mehta@intel.com>
+To: x86@kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Kirill A . Shutemov" <kas@kernel.org>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Xin Li <xin@zytor.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Sean Christopherson <seanjc@google.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	David Laight <david.laight.linux@gmail.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Kees Cook <kees@kernel.org>,
+	Tony Luck <tony.luck@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org
+Subject: [PATCH v10 00/15] x86: Enable Linear Address Space Separation support
+Date: Mon,  6 Oct 2025 23:51:04 -0700
+Message-ID: <20251007065119.148605-1-sohil.mehta@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:P2lTxUYjpSJLpmPegmqbkcyB6sbH+UfSUmWzVDV9JBVg0nVP1n/
- 4H6Fk4fTK58n9InB522qyqur+nTI1XA/dDROjtVjyqHKcqj8W+3D2Jyfm0mLVFiCZSUjI5A
- Dq8UH/Fz5BPV5irPojc8TuSv5pS3OWW2fNpyUx1MCzPUMsninR4iLgSGs++3WrCQ5iy8Ccr
- rU1NZuRNoGfd26MWYN/VQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Dpnenm5dL5I=;6Bd1JKSW2d9/a+Z1liuNly437rD
- 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
+Content-Transfer-Encoding: 8bit
 
-Am Montag, dem 06.10.2025 um 18:22 +0200 schrieb Bert Karwatzki:
->=20
-> >=20
-> Even versions that did crash can be stable for 24h of uptime so I think =
-this=C2=A0
-> will take too long.
-> I think I've already chased down the crash to this part of rpm_resume()
-> (I'm currently doing a testrun with more dev_info()s in this part):
->=20
->  skip_parent:
->=20
-> 	if (!strcmp(dev_name(dev), "0000:00:01.1"))
-> 		dev_info(dev, "%s %d\n", __func__, __LINE__); // this is the last repo=
-rted line in netconsole
-> 	if (dev->power.no_callbacks)
-> 		goto no_callback;	/* Assume success. */
->=20
-> 	__update_runtime_status(dev, RPM_RESUMING);
->=20
-> 	callback =3D RPM_GET_CALLBACK(dev, runtime_resume);
->=20
-> 	dev_pm_disable_wake_irq_check(dev, false);
-> 	retval =3D rpm_callback(callback, dev);
-> 	if (retval) {
-> 		__update_runtime_status(dev, RPM_SUSPENDED);
-> 		pm_runtime_cancel_pending(dev);
-> 		dev_pm_enable_wake_irq_check(dev, false);
-> 	} else {
->  no_callback:
->=20
->=20
-> Bert Karwatzki
+Linear Address Space Separation (LASS) is a security feature [1] that
+works pre-paging to prevent a class of side-channel attacks that rely on
+speculative access across the user/kernel boundary.
 
-The testrun is already finished the crash occured after 10h and ~700 GPP0 =
-notifies,
-the part of rpm_resume() above was monitored like this:
+Change of personnel
+-------------------
+I am picking up this series from Kiryl. The patches have switched hands
+multiple times over the last couple of years. I have refreshed the
+commit tags since most of the patches have gone around a full circle.
 
- skip_parent:
+Many thanks to Kiryl and Alex for taking these patches forward. Would
+highly appreciate your reviews tags on the updated series.
 
-	if (!strcmp(dev_name(dev), "0000:00:01.1"))
-		dev_info(dev, "%s %d\n", __func__, __LINE__);
-	if (dev->power.no_callbacks)
-		goto no_callback;	/* Assume success. */
+Changes in v10
+--------------
+- Use the simplified versions of inline memcpy/memset (patch 2)
+- New patch to fix an issue during Kexec relocate kernel (patch 7)
+- Dropped the LAM re-enabling patch (will post separately)
+- Reworded some of the commit messages
+- Minor updates to code formatting and code comments
 
-	if (!strcmp(dev_name(dev), "0000:00:01.1"))
-		dev_info(dev, "%s %d\n", __func__, __LINE__);
-	__update_runtime_status(dev, RPM_RESUMING);
+v9: https://lore.kernel.org/lkml/20250707080317.3791624-1-kirill.shutemov@linux.intel.com/
 
-	if (!strcmp(dev_name(dev), "0000:00:01.1"))
-		dev_info(dev, "%s %d\n", __func__, __LINE__);
-	callback =3D RPM_GET_CALLBACK(dev, runtime_resume);
+Patch structure
+---------------
+Patch     1: Enumerate LASS
+Patch   2-3: Update text poking
+Patch   4-5: CR pinning changes
+Patch   6-7: Update EFI and kexec flows
+Patch  8-11: Vsyscall impact
+Patch 12-14: LASS hints during #GP and #SS
+Patch    15: Enable LASS
 
-	if (!strcmp(dev_name(dev), "0000:00:01.1"))
-		dev_info(dev, "%s %d callback =3D %px\n", __func__, __LINE__, (void *) c=
-allback);
-	dev_pm_disable_wake_irq_check(dev, false);
-	if (!strcmp(dev_name(dev), "0000:00:01.1"))
-		dev_info(dev, "%s %d\n", __func__, __LINE__);   // This is the last repo=
-rted line!
-	retval =3D rpm_callback(callback, dev);
-	if (!strcmp(dev_name(dev), "0000:00:01.1"))
-		dev_info(dev, "%s %d\n", __func__, __LINE__);
-	if (retval) {
-		if (!strcmp(dev_name(dev), "0000:00:01.1"))
-			dev_info(dev, "%s %d\n", __func__, __LINE__);
-		__update_runtime_status(dev, RPM_SUSPENDED);
-		pm_runtime_cancel_pending(dev);
-		dev_pm_enable_wake_irq_check(dev, false);
-	} else {
- no_callback:
+The series is maturing, as reflected by the limited incremental changes.
+Please consider providing review tags/acks for patches that seem ready.
 
-The result is that in the case of the crash rpm_callback() didn't return, =
-so
-I'll continue the investigation in rpm_callback().
+Background
+----------
+Privilege mode based access protection already exists today with paging
+and features such as SMEP and SMAP. However, to enforce these
+protections, the processor must traverse the paging structures in
+memory.  An attacker can use timing information resulting from this
+traversal to determine details about the paging structures, and to
+determine the layout of the kernel memory.
 
-The whole calltrace is:
-acpiphp_check_bridge()->pm_runtime_get_sync()->__pm_runtime_resume()->rpm_=
-resume()->rpm_callback()
+The LASS mechanism provides the same mode-based protections as paging,
+but without traversing the paging structures. Because the protections
+enforced by LASS are applied before paging, an attacker will not be able
+to derive timing information from the various caching structures such as
+the TLBs, mid-level caches, page walkers, data caches, etc. LASS can
+prevent probing using double page faults, TLB flush and reload, and
+software prefetch instructions. See [2], [3], and [4] for research
+on the related attack vectors.
 
-Bert Karwatzki
+Though LASS was developed in response to Meltdown, in hindsight, it
+alone could have mitigated Meltdown had it been available. In addition,
+LASS prevents an attack vector targeting Linear Address Masking (LAM)
+described in the Spectre LAM (SLAM) whitepaper [5].
+
+LASS enforcement relies on the typical kernel implementation dividing
+the 64-bit virtual address space into two halves:
+  Addr[63]=0 -> User address space
+  Addr[63]=1 -> Kernel address space
+Any data access or code execution across address spaces typically
+results in a #GP, with an #SS generated in some rare cases.
+
+Kernel accesses
+---------------
+When there are valid reasons for the kernel to access memory in the user
+half, it can temporarily suspend LASS enforcement by toggling the
+RFLAGS.AC bit. Most of these cases are already covered today through the
+stac()/clac() pairs, which avoid SMAP violations. However, there are
+kernel usages, such as text poking, that access mappings (!_PAGE_USER)
+in the lower half of the address space. LASS-specific AC bit toggling is
+added for these cases.
+
+There are a couple of cases where instruction fetches are done from a
+lower address. Toggling the AC bit is not sufficient here because it
+only manages data accesses. Therefore, CR4.LASS is modified in the case
+of EFI set_virtual_address_map() and kexec relocate_kernel() to avoid
+LASS violations. To let EFI modify CR4 during boot, CR pinning
+enforcement is deferred until late_initcall().
+
+Exception handling
+------------------
+With LASS enabled, NULL pointer dereferences generate a #GP instead of a
+#PF. Due to the limited error information available during #GP, some of
+the helpful hints would no longer be printed. The patches enchance the
+#GP address decoding logic to identify LASS violations and NULL pointer
+exceptions.
+
+For example, two invalid userspace accesses would generate:
+#PF (without LASS):
+  BUG: kernel NULL pointer dereference, address: 0000000000000000
+  BUG: unable to handle page fault for address: 0000000000100000
+
+#GP (with LASS):
+  Oops: general protection fault, kernel NULL pointer dereference 0x0: 0000
+  Oops: general protection fault, probably LASS violation for address 0x100000: 0000
+
+Similar debug hints are added for the #SS handling as well.
+
+Userspace accesses
+------------------
+Userspace attempts to access any kernel address generate a #GP when LASS
+is enabled. Unfortunately, legacy vsyscall functions are located in the
+address range 0xffffffffff600000 - 0xffffffffff601000. Prior to LASS,
+default access (XONLY) to the vsyscall page would generate a page fault
+and the access would be emulated in the kernel. To avoid breaking user
+applications when LASS is enabled, the patches extend vsyscall emulation
+in XONLY mode to the #GP handler.
+
+In contrast, the vsyscall EMULATE mode is deprecated and not expected to
+be used by anyone. Supporting EMULATE mode with LASS would require
+complex instruction decoding in the #GP fault handler, which is probably
+not worth the effort. For now, LASS is disabled in the rare case when
+someone absolutely needs to enable vsyscall=emulate via the command
+line.
+
+Links
+-----
+[1]: "Linear-Address Pre-Processing", Intel SDM (June 2025), Vol 3, Chapter 4.
+[2]: "Practical Timing Side Channel Attacks against Kernel Space ASLR", https://www.ieee-security.org/TC/SP2013/papers/4977a191.pdf
+[3]: "Prefetch Side-Channel Attacks: Bypassing SMAP and Kernel ASLR", http://doi.acm.org/10.1145/2976749.2978356
+[4]: "Harmful prefetch on Intel", https://ioactive.com/harmful-prefetch-on-intel/ (H/T Anders)
+[5]: "Spectre LAM", https://download.vusec.net/papers/slam_sp24.pdf
+
+
+Alexander Shishkin (2):
+  x86/efi: Disable LASS while mapping the EFI runtime services
+  x86/traps: Communicate a LASS violation in #GP message
+
+Kirill A. Shutemov (2):
+  x86/traps: Generalize #GP address decode and hint code
+  x86/traps: Provide additional hints for a kernel stack segment fault
+
+Peter Zijlstra (Intel) (1):
+  x86/asm: Introduce inline memcpy and memset
+
+Sohil Mehta (9):
+  x86/cpu: Enumerate the LASS feature bits
+  x86/alternatives: Disable LASS when patching kernel alternatives
+  x86/cpu: Defer CR pinning enforcement until late_initcall()
+  x86/kexec: Disable LASS during relocate kernel
+  x86/vsyscall: Reorganize the page fault emulation code
+  x86/traps: Consolidate user fixups in exc_general_protection()
+  x86/vsyscall: Add vsyscall emulation for #GP
+  x86/vsyscall: Disable LASS if vsyscall mode is set to EMULATE
+  x86/cpu: Enable LASS by default during CPU initialization
+
+Yian Chen (1):
+  x86/cpu: Set LASS CR4 bit as pinning sensitive
+
+ .../admin-guide/kernel-parameters.txt         |   4 +-
+ arch/x86/Kconfig.cpufeatures                  |   4 +
+ arch/x86/entry/vsyscall/vsyscall_64.c         |  83 +++++++-----
+ arch/x86/include/asm/cpufeatures.h            |   1 +
+ arch/x86/include/asm/smap.h                   |  35 ++++-
+ arch/x86/include/asm/string.h                 |  26 ++++
+ arch/x86/include/asm/vsyscall.h               |  13 +-
+ arch/x86/include/uapi/asm/processor-flags.h   |   2 +
+ arch/x86/kernel/alternative.c                 |  18 ++-
+ arch/x86/kernel/cpu/common.c                  |  30 ++--
+ arch/x86/kernel/cpu/cpuid-deps.c              |   1 +
+ arch/x86/kernel/dumpstack.c                   |   6 +-
+ arch/x86/kernel/relocate_kernel_64.S          |   7 +-
+ arch/x86/kernel/traps.c                       | 128 +++++++++++++-----
+ arch/x86/kernel/umip.c                        |   3 +
+ arch/x86/mm/fault.c                           |   2 +-
+ arch/x86/platform/efi/efi.c                   |  14 +-
+ 17 files changed, 284 insertions(+), 93 deletions(-)
+
+
+base-commit: fd94619c43360eb44d28bd3ef326a4f85c600a07
+-- 
+2.43.0
+
 
