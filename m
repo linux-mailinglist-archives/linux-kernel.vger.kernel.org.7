@@ -1,154 +1,133 @@
-Return-Path: <linux-kernel+bounces-844767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4EDBBC2B6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 22:57:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58CB6BC2B8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 23:06:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EF36189030D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 20:58:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B98203C0146
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 21:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184C223F422;
-	Tue,  7 Oct 2025 20:57:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9AC22D795;
+	Tue,  7 Oct 2025 21:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IHIrygQd"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Qhq4wB7+"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839C323D290
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 20:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACF8226CF7
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 21:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759870647; cv=none; b=bUxcdmgC6pjYrkIPPPQBsqQKBBscVxaa/wDd5RVg5cp9ERo9pU+uaBPd099RX0Eb9+PV8dtxXkGF/bGwGVzbvki6hlhBLvyrZGzTxvkEpyb4ag81tb6ZJomF9Myq/pgwEdaFbwhaiZt/BTYima3h+YHjC/19XP/pUc/bRC+Xdos=
+	t=1759871172; cv=none; b=R3Ihc9vp/4VXRxb3SKMMdK2ymDqmM5xqZtxcDUn8dKyDEtvvgSNvpdz9joPFs2A3v50IQiXAoGdhmcf7ygokeNvoUC+gMb1Ae7VKM6LIMXqx6NO3+HUlVctxB17NfKrRn6qqd7yumJ+q2S2MHiX90wMrjQgHwebQXtDdkYkJmgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759870647; c=relaxed/simple;
-	bh=lo+bODTqhbR+va341uGZBQme+L9mjBJdDdog2Ba/nBk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jogEtmRpE2EdDWol3i27jvDfkJ+3Bu7zqHnyl7mQRQ1bYYh0270PUu8jQdT0xWP4MaUBrlYHAqNmLyKlWul9ntrvNFGXyu7kyRIb0H1AYNDqBRyDkD3QHZpZ7ugPbM6yxgQy1CYbhdfCjoGZpGS9gbcHERxp328xRU+51JWQ04I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IHIrygQd; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-57a59124323so1873011e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 13:57:25 -0700 (PDT)
+	s=arc-20240116; t=1759871172; c=relaxed/simple;
+	bh=TS9Ms/0nVBXQq/XqEcRsNa3oajKBYOCo7nWDKz2HJI8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k3igG6Du5w5YcF//f9JCN/kwQgNOIAFkjJT0C5cdZ2dV+lSrCIn3EPhj7KUuZC9t7eU6U/3vhfVKYbBUiluNSE39hjsEHbV78IasL0qzdElG+NSwfBK07ih/dT01dg8HZAHFOXJPOqo8kRewgL3idh7UV2JRgY6fp927v88ICI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Qhq4wB7+; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-91179e3fe34so14558339f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 14:06:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759870644; x=1760475444; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g03JkHUsqdzLl3r9exUSIw17r9a2Np//6olnzHZA6Y4=;
-        b=IHIrygQdeDczRh0ogILlLdPkfzITe9CfMZQerLdPOAwKX7FApneP06kpxGmnM3bjlf
-         Br2JBFzy0z5G1uiSYkkCBEmtKEJ7oHeLdlNrtIFeXGHWFmNNbBl1hE5+pJfdoo4X3UqF
-         piOIRpP0TL5pVBhc/w7A8enWukHIL9/XFZLxfmsu10fTCYWUSJ9J0Ihg0yPpLz8Gvi8z
-         mZ9XKDmE5RliFOVieeAhJ0AlU4FLlPmcpFq6qdKzhk1yNOi4rn8zXRd8P71UKOR5NFR1
-         ch9oNSAt7HBFP5FS7SInlJ+00nYytGqlNhO887fPSn0wfnnhVuiSaaeAKjergSbvc8r7
-         qoGg==
+        d=linuxfoundation.org; s=google; t=1759871170; x=1760475970; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hDJssHW/G49N1bctBMwaYMSUbzS9ng1oTayUPFPGvKw=;
+        b=Qhq4wB7+rgCQZFRu83X4RoxsEzYv0iSftIIGtAb8b+OtUfRMEkJxsT/kdvnwC7JqLq
+         fOb019meCBe8RgcqQktkhqyIUGZh+8rfFnSLz5Pz3kDbD7C/fwcc5o57Tp2CRRCK6t1S
+         Kfd+S4E9YIZlKqtr3pvTKrUWv0ccMznVqeA98=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759870644; x=1760475444;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g03JkHUsqdzLl3r9exUSIw17r9a2Np//6olnzHZA6Y4=;
-        b=TEwBFjjQUKSjWiL4VwXJqiv61PLpa4mNZOdKfTdCTZTB3Hx3rW79rkdLAD3JLX8hbW
-         boPRRSXGdlPpifVq47hVrpIA4BpxTp+LQHcBpGy5L5Sz2eDhzqfFC9jRre38a10mDvGs
-         k9biSE5E11qOEzpHa1gwgUqdatylokTH6xPMOjtVzdV37TmLl6GnGxNogAq3Ikqe/YNF
-         PTSZwkX5/Y9etaLWPfQjRCDjq9Wam1cwSUlBkVIndJ+/WZfVI9DopKbFI8FTLq8gYHfF
-         kVdVR5UZBgY2BZQ0EAmcgBfEiPhiiguBYlV+PAlf4xWKsG/c35XMEOMkBFs6dSBiUCUc
-         1oXw==
-X-Forwarded-Encrypted: i=1; AJvYcCXMnJsdZgRJX9uKDc2dV/drh6LH43kGhwupf+J1SMvLz6oytSUusmavgF5vJGDz+mV7XcNFBoX5cRf8rT4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyoBsr8wrdHlAkBgKCIJKFm4Jod2kbCkUgzcxG/pUGlELzvurE
-	8N24ZMrAIDjbZ5/+VwUy+T4LN6ONwN3pOzZ0pqknluPo8xv6krKIzAuN
-X-Gm-Gg: ASbGncvf+WKdUxP+uybcoYJrPM1OQlYV5yHTj1vWXSMxSefvVBUThIe4t43AYWNre9Q
-	mrLXny8m73Bz1WL9SWfCZH/43kjJba2D0cXuIKqZReje+afdVeBtMVHncDsEYWWubJpla3o5Du4
-	7Oqra4Gg+Pu6wKAaeEQEJfi65f+1thcKls1EChHojXJjZRlYJfVcPIxFDw3ZaOZaB/08+1o69qh
-	x8t9an5YW2GcHGbFCk37HH7eM7YWU+sR0fiTtXioDPPHH+DCkEMjagusI1QyaXGu1OvxHqE2tz0
-	SiSwYHkHVZqhyHs0mxDMzXnkeDNcuKSKkKLqMjwEmSvqUcHM0SFE1Vb1OolCw7Aq8Kz+d7UBw8n
-	kmo7GwxsSer8QJoTMal1YicG/o/edH1oNbfQjoW+fcMLOR9B/uMi7g8t2WtA=
-X-Google-Smtp-Source: AGHT+IE3t6erqilqr2vkNvErtfsN1Weu9WLJEnPCNGwz7Ro11VdzfSyM+y127Q8YciWZY6HpkBzUsQ==
-X-Received: by 2002:a05:6512:398c:b0:57e:4998:95ce with SMTP id 2adb3069b0e04-5906d8ed6famr305072e87.35.1759870643322;
-        Tue, 07 Oct 2025 13:57:23 -0700 (PDT)
-Received: from foxbook (bff184.neoplus.adsl.tpnet.pl. [83.28.43.184])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b0112462esm6473271e87.3.2025.10.07.13.57.22
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Tue, 07 Oct 2025 13:57:22 -0700 (PDT)
-Date: Tue, 7 Oct 2025 22:57:18 +0200
-From: Michal Pecio <michal.pecio@gmail.com>
-To: guhuinan <guhuinan@xiaomi.com>
-Cc: Oliver Neukum <oneukum@suse.com>, Alan Stern
- <stern@rowland.harvard.edu>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
- <linux-scsi@vger.kernel.org>, <usb-storage@lists.one-eyed-alien.net>,
- <linux-kernel@vger.kernel.org>, "Yu Chen" <chenyu45@xiaomi.com>
-Subject: Re: [PATCH] fix urb unmapping issue when the uas device is remove
- during ongoing data transfer
-Message-ID: <20251007225718.3c8b2cd8.michal.pecio@gmail.com>
-In-Reply-To: <20250930045309.21588-1-guhuinan@xiaomi.com>
-References: <20250930045309.21588-1-guhuinan@xiaomi.com>
+        d=1e100.net; s=20230601; t=1759871170; x=1760475970;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hDJssHW/G49N1bctBMwaYMSUbzS9ng1oTayUPFPGvKw=;
+        b=quHjA4Rwre6gWNBGj8IcPlV8Tz+WvYzdgK2O6XKdDGUUhDrvHozRoJOKVXdFqosnpK
+         duahD2/0nkSbg9jT8ya80kTYjsc3r5sWojLv/Wn7WKee4f2NixE2rGtAza0gada8rm6D
+         SrTZEPW0U24pNzyfR43ORdedmRxbTGUsgTHX5sfHoQ/R2IndSkYIRX9nJwrihfx0PQzv
+         J6jVwI59tqStqCwhBynfvmdC4XlYNWlv1dm2ikpRzuSlzmYIYjYiDUNqzKymTidLPNbw
+         R0Lazrcik05SHN+PmMNOowCjRthiP2eV0rjN7KCV6uVApB5g/j/UY3IGqijmfridOE+Z
+         4BgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVvMSqVLUQQDMWbHGdEE7K2lkaeR5lt9KDZcJ+WT2a+vwwJpMnwCL9FDnKFdvmQ0ChpcZaom3aR8qh/f5k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRb+lJJXpaGxCs6pds1TrOPFYKSZzTvwnMiBeJFb0gWgmItm+i
+	Ti4jpvrniSTR9c/NBrhSrUfw2i2dsfgEWE3k4yD0Vxy/cEgEKnBFNro8vEE1SuqOsxI=
+X-Gm-Gg: ASbGnctV+jHWd7Mg+Lst7bx4RHdiMMgcSg8pvvr0rx/Pue9a5eDlI6mEm/K2jXjw7g4
+	ZMOu19WWWVsXXX7Br84YVL5HlAVXSyFfWZ22GfX8DpdZ2daz7qVE5anc8PwOUkgRfu4GyonSFLC
+	1TTD3cV24nus2IjFT2FOJ0ZbmjaCWihyrjtT28L8m2QAHaDeOuKt1ruqI43VN7q8JCFKyyjBiuv
+	x3xLEW+w55kvbTbw/hBmDwkDhZmwjAg52aVPfvP0OWGQYDz2jrBmnjSgGi4llsoDlrvCMyxZk3I
+	iJvWwjokWCUO4KGG9riF5EZr/RWnza4FIlGlEN5w6tKlHJER5K88nrMmsFIjdTx53zYw9QDJGXH
+	aF5iOGOhbIWIZzvFrsM5son7G6RVlYqOLxKsZdm9tSblh+e6KZp31Xker+OCMGA7uhsFCuA==
+X-Google-Smtp-Source: AGHT+IHJS9tRfCPlCMJwh844fS5buPRYb19l+/WQy1lMrZF9u3+w3MuGpV9DibTiaEiM0xpOHSxg7g==
+X-Received: by 2002:a05:6e02:17cb:b0:425:8134:bcaa with SMTP id e9e14a558f8ab-42f7c2d49a8mr65232375ab.0.1759871169924;
+        Tue, 07 Oct 2025 14:06:09 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.187.108])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-42e8a0bb405sm55081635ab.12.2025.10.07.14.06.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Oct 2025 14:06:09 -0700 (PDT)
+Message-ID: <c87d45dc-d545-4359-9e2f-11e43a45859f@linuxfoundation.org>
+Date: Tue, 7 Oct 2025 15:06:08 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] clk: at91: sam9x7: Use kmalloc_array() instead of
+ kmalloc()
+To: Sidharth Seela <sidharthseela@gmail.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, nicolas.ferre@microchip.com,
+ alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
+ varshini.rajendran@microchip.com
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, david.hunter.linux@gmail.com,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20250924145552.55058-1-sidharthseela@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250924145552.55058-1-sidharthseela@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Tue, 30 Sep 2025 12:53:08 +0800, guhuinan wrote:
-> From: Owen Gu <guhuinan@xiaomi.com>
+On 9/24/25 08:55, Sidharth Seela wrote:
+> Replace kmalloc with kmalloc array in clk/at91/sam9x7.c. Refactor to new
+> API, for cases with dynamic size calculations inside kmalloc().
 > 
-> When a UAS device is unplugged during data transfer, there is
-> a probability of a system panic occurring. The root cause is
-> an access to an invalid memory address during URB callback handling.
-> Specifically, this happens when the dma_direct_unmap_sg() function
-> is called within the usb_hcd_unmap_urb_for_dma() interface, but the
-> sg->dma_address field is 0 and the sg data structure has already been
-> freed.
+
+This following line doesn't belong in commit log.
+
+Can you add details on how you tested this patch and also how
+you found the problem to begin with.
+
+> Resend is to correct previously sent patches mailing address.
+
+
 > 
-> The SCSI driver sends transfer commands by invoking uas_queuecommand_lck()
-> in uas.c, using the uas_submit_urbs() function to submit requests to USB.
-> Within the uas_submit_urbs() implementation, three URBs (sense_urb,
-> data_urb, and cmd_urb) are sequentially submitted. Device removal may
-> occur at any point during uas_submit_urbs execution, which may result
-> in URB submission failure. However, some URBs might have been successfully
-> submitted before the failure, and uas_submit_urbs will return the -ENODEV
-> error code in this case. The current error handling directly calls
-> scsi_done(). In the SCSI driver, this eventually triggers scsi_complete()
-> to invoke scsi_end_request() for releasing the sgtable. The successfully
-> submitted URBs, when being completed (giveback), call
-> usb_hcd_unmap_urb_for_dma() in hcd.c, leading to exceptions during sg
-> unmapping operations since the sg data structure has already been freed.
-> 
-> This patch modifies the error condition check in the uas_submit_urbs()
-> function. When a UAS device is removed but one or more URBs have already
-> been successfully submitted to USB, it avoids immediately invoking
-> scsi_done(). Instead, it waits for the successfully submitted URBs to
-> complete , and then triggers the scsi_done() function call within
-> uas_try_complete() after all pending URB operations are finalized.
-> 
-> Signed-off-by: Yu Chen <chenyu45@xiaomi.com>
-> Signed-off-by: Owen Gu <guhuinan@xiaomi.com>
+> Signed-off-by: Sidharth Seela <sidharthseela@gmail.com>
+> ---
+> diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
+> index ffab32b047a0..0c0a746a183d 100644
+> --- a/drivers/clk/at91/sam9x7.c
+> +++ b/drivers/clk/at91/sam9x7.c
+> @@ -748,9 +748,9 @@ static void __init sam9x7_pmc_setup(struct device_node *np)
+>   	if (!sam9x7_pmc)
+>   		return;
+>   
+> -	clk_mux_buffer = kmalloc(sizeof(void *) *
+> -				 (ARRAY_SIZE(sam9x7_gck)),
+> -				 GFP_KERNEL);
+> +	clk_mux_buffer = kmalloc_array(ARRAY_SIZE(sam9x7_gck),
+> +					sizeof(void *),
+> +					GFP_KERNEL);
+>   	if (!clk_mux_buffer)
+>   		goto err_free;
+>   
 
-Hi,
-
-Was this situation seen in the wild and/or reproduced, or only
-predicted theoretically? Was the patch tested?
-
-I wonder what happens to the submitted URBs when scsi_done() is
-not called. Since the command URB was not submitted (or else we
-wouldn't be here I guess?) the device shouldn't have selected this
-stream before disconnection and it seems that the xHC won't try
-to move data on those URBs, so they won't complete with -EPROTO.
-
-Will they sit there stuck until SCSI core times out and aborts
-the command? That's poor UX, speaking from experience here.
-
-Maybe it would make sense to unlink them? Unlinking Streams URBs
-is a sensitive topic because it's forbidden if they can become
-the Current Stream, but in this case it looks like they can't.
-
-Or am I missing something?
-
-Regards,
-Michal
+thanks,
+-- Shuah
 
