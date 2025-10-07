@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-843753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02796BC028B
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 06:34:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D3B8BC0291
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 06:39:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B9BAE4E279A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 04:34:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2D1E44E6352
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 04:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6C617A318;
-	Tue,  7 Oct 2025 04:34:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EE31917D6;
+	Tue,  7 Oct 2025 04:39:35 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365AC5FDA7
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 04:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BFB5FDA7
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 04:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759811642; cv=none; b=MSVzEFA8MUh8Vq7FDyKeKiQ2Tab9pPe4Wo5MjgGp6QUjGWtNBraHVEymmrtubR58AG3cM8SR/z2NOP7BeK+e3zMN++OauFBXw92fxqTIyD289svuA4QQzmpGO8+0p29d8z93WMMenfpGK21yR7a5B9gpdz995bzyCI2Bp73H8yk=
+	t=1759811974; cv=none; b=AvE0zsJECLRRK967JPPeCfteilRnWxeegaS+93CR4gN5TWiB09HE8Eul159cFNX+EG6rDRLYY/DgVZFIX2oybnR1yiJ3P+mkqRFV2PpR2gLmwJOz18tGWsMlx2Wasvsee3LZFSlEoB6X9vzGM7uMWWTNYocmD2eKKflpBbud3oE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759811642; c=relaxed/simple;
-	bh=j8a+WlOKy5w+rhX+YaYErlrkNmdaBK3A51lmsxhWUcs=;
+	s=arc-20240116; t=1759811974; c=relaxed/simple;
+	bh=ZEjwKV7KCaCqaG6CV2M/Yiahp9JEm8AkBNAcW4fQQgo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sQTtrMiSkpIHm1nss5Lw645R9S9yzHdPWQmUYqgu8KQ+vQACjncNbO5uUQwX48BXgh9v1nSjNQEVv4lAAfM1iizPnBYeU+thwOPZgtY6CB3hnAAVFLRnkQDrqBDbc4kuHkfUxEPdd/BMvgSx/it6zkUDWj4DkX+1ZlSSrkzSJZE=
+	 In-Reply-To:Content-Type; b=RnAo8gYFV/w3hRP3vZ7Y3t7VKeABsN+A/Lv+wn9lza3dGNSg7219eFBm7G5lDt2hDF8k/w00JU6x2FE5U4iLsa7YvEhqqeWDPJBeXn+ve8wv4F4eITJf0SglGvomKzFMsSr5l8tSBRRcIwgPSKSyvBj5dS5TBsIa7lmwWmfedJI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3801214BF;
-	Mon,  6 Oct 2025 21:33:45 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3B1FE14BF;
+	Mon,  6 Oct 2025 21:39:24 -0700 (PDT)
 Received: from [10.163.65.24] (unknown [10.163.65.24])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CF6B93F59E;
-	Mon,  6 Oct 2025 21:33:50 -0700 (PDT)
-Message-ID: <5053378f-8cf7-4cb6-bbab-f0c2f14db677@arm.com>
-Date: Tue, 7 Oct 2025 10:03:47 +0530
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A8FF63F59E;
+	Mon,  6 Oct 2025 21:39:26 -0700 (PDT)
+Message-ID: <0d1bcfdc-031f-4841-b0f3-15ae1d1ffb8e@arm.com>
+Date: Tue, 7 Oct 2025 10:09:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,60 +41,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] mm: readahead: make thp readahead conditional to
- mmap_miss logic
-To: Roman Gushchin <roman.gushchin@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>, Jan Kara <jack@suse.cz>,
- linux-mm@kvack.org
-References: <20251006175106.377411-1-roman.gushchin@linux.dev>
+Subject: Re: [PATCH mm-new v2 2/3] mm/khugepaged: use VM_WARN_ON_FOLIO instead
+ of VM_BUG_ON_FOLIO for non-anon folios
+To: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org,
+ david@redhat.com, lorenzo.stoakes@oracle.com
+Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
+ npache@redhat.com, ryan.roberts@arm.com, baohua@kernel.org,
+ ioworker0@gmail.com, richard.weiyang@gmail.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20251006144338.96519-1-lance.yang@linux.dev>
+ <20251006144338.96519-3-lance.yang@linux.dev>
 Content-Language: en-US
 From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <20251006175106.377411-1-roman.gushchin@linux.dev>
+In-Reply-To: <20251006144338.96519-3-lance.yang@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
-On 06/10/25 11:21 pm, Roman Gushchin wrote:
-> Commit 4687fdbb805a ("mm/filemap: Support VM_HUGEPAGE for file mappings")
-> introduced a special handling for VM_HUGEPAGE mappings: even if the
-> readahead is disabled, 1 or 2 HPAGE_PMD_ORDER pages are
-> allocated.
+On 06/10/25 8:13 pm, Lance Yang wrote:
+> From: Lance Yang <lance.yang@linux.dev>
 >
-> This change causes a significant regression for containers with a
-> tight memory.max limit, if VM_HUGEPAGE is widely used. Prior to this
-> commit, mmap_miss logic would eventually lead to the readahead
-> disablement, effectively reducing the memory pressure in the
-> cgroup. With this change the kernel is trying to allocate 1-2 huge
-> pages for each fault, no matter if these pages are used or not
-> before being evicted, increasing the memory pressure multi-fold.
+> As Zi pointed out, we should avoid crashing the kernel for conditions
+> that can be handled gracefully. Encountering a non-anonymous folio in an
+> anonymous VMA is a bug, but a warning is sufficient.
 >
-> To fix the regression, let's make the new VM_HUGEPAGE conditional
-> to the mmap_miss check, but keep independent from the ra->ra_pages.
-> This way the main intention of commit 4687fdbb805a ("mm/filemap:
-> Support VM_HUGEPAGE for file mappings") stays intact, but the
-> regression is resolved.
+> This patch changes the VM_BUG_ON_FOLIO(!folio_test_anon(folio)) to a
+> VM_WARN_ON_FOLIO() in both __collapse_huge_page_isolate() and
+> hpage_collapse_scan_pmd(), and then aborts the scan with SCAN_PAGE_ANON.
 >
-> The logic behind this changes is simple: even if a user explicitly
-> requests using huge pages to back the file mapping (using VM_HUGEPAGE
-> flag), under a very strong memory pressure it's better to fall back
-> to ordinary pages.
+> Making more of the scanning logic common between hpage_collapse_scan_pmd()
+> and __collapse_huge_page_isolate(), as suggested by Dev.
 >
-> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
-> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Dev Jain <dev.jain@arm.com>
-> Cc: linux-mm@kvack.org
->
-> --
->
-> v3: fixed VM_SEQ_READ handling for the THP case (by Jan Kara)
-> v2: fixed VM_SEQ_READ handling (by Dev Jain)
->
+> Suggested-by: Dev Jain <dev.jain@arm.com>
+> Suggested-by: Zi Yan <ziy@nvidia.com>
+> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+> ---
 >   
-
-LGTM
 
 Reviewed-by: Dev Jain <dev.jain@arm.com>
 
