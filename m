@@ -1,301 +1,156 @@
-Return-Path: <linux-kernel+bounces-844782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26538BC2C2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 23:36:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57C0ABC2C3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 23:37:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2F9A19A1550
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 21:37:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F3B694E5337
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 21:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A28424C06A;
-	Tue,  7 Oct 2025 21:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57592550BA;
+	Tue,  7 Oct 2025 21:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jNAIyc/Y"
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WluchkVM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4FA253950
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 21:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7EA24676C;
+	Tue,  7 Oct 2025 21:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759873007; cv=none; b=QEKO+ayYkNp7hJL4hwXylX6gq9Z2T+FnQvOlwkGEQNjGw8JGB5UbGDW7VdHcYyWEOXpY8R07td2J7IgQKLNndAOA3ZB/xSHc3vsruhe8HTX4NSq5nSGGDZnpXids3KTYYfDw83FxXQpk5w6Bjs/P084QX8Gntp7z3mTu0V/DQFM=
+	t=1759873062; cv=none; b=PDH6Uuee4R+rYsYqn+fnp8GEcC/Up4g04sA2RSRR/lVUCF51Jg8hiAiV4Fkiv1H0DW3kNexQYrJ3XqcIRldGg5zk8ybVrQ2WiAWw6tVxNUiL/tkety6qb1j29d5kf8c+Gg/6zyDbOmfInzgVcEncifl3kfA8xsiJx54wftznzS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759873007; c=relaxed/simple;
-	bh=bNBY2xF5L7YuBDKUBoZQ1i/tIKCd61h6ZBKkzuOC+fE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lNZFoRw7XtAOWOkoB01L1d6tsuNN9SIOzMS6OsqLCO2Wh262zSvRuSGnVo3SWZkqKGA7iw+sRg9e8ljepxqIEo1idHmyCvGL2l3IxKSnGryMM+yjWMSD3IhjeSHVUEk2AhwML++1OS5647yBWavhA/OJd7p0fM3QTRWEiIEdyQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jNAIyc/Y; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-5d3fb34ba53so5622830137.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 14:36:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759873004; x=1760477804; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/xQm9H5Jh49DcHPsr4D1tJwbXwJWx+yyuVuQXuRecGQ=;
-        b=jNAIyc/Y3Ji/KMjQ1CqiZkLliZevfZE4eG0nJFPP7EDNPFgg5MB0GBOKENi+2M+ZKq
-         cse7bDhGgDdeGe3ccmuvo6Hnq4oc+1wbFX2pMUML4IAS8xWts8tUT4In9brBxVU5+idD
-         CDWxLCQgdaOKKEJZXHcGFqqE+7G5BylVmpjSdmTvd6UMew3DW51vulcJ8FFzbaJvQ6Hw
-         1ra5RpqGQnEU6QOgzYz8PE1+tGbnnCyPVuU8mgbOlHNhG26f1m0heYS9YutOtxQIsSMu
-         0jqIwm00xWmBrBuZb5TNyPOLNbothtL1+lo+GfSzCfbrSx/76HPFa/I9OdEq0uSkNCJK
-         JOZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759873004; x=1760477804;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/xQm9H5Jh49DcHPsr4D1tJwbXwJWx+yyuVuQXuRecGQ=;
-        b=Id1s2Rlh+ju7WuZzTgAQXLaMOHtN/rYU3UH0q3QcNwbsqmtT/iT41Z3wHxOCpzIjlC
-         yez1HtzOcAyE9ZBew1SYtgDs3bN0qVb1HcO8Gfvjz+tFdyF2kxQUPyEBIxTVHv/PdN3Y
-         Q8+G+hlHpKdwrZNjSnAD1QBGyoW0+0oBbAFneu90VroLVM6I7aMm2wZMqUDR1AacM0DS
-         BUz4mKG2aNwehsT/los6cEZXeRwZ52Rz903np24VYgYAThRLrSYRdd6eMLa7haVIQ5IK
-         XVb+nLIw8KM1aNerNEWI/XG3yEfquK/M5Kafn9dK8foEjJBa+hR28wANflplh02o+6dU
-         Fdyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVGhV9Tiq4KEemYBxYsyBEF87FPgiNY/oGuU0QYEsVRo4rJxp27a99XMRGI7KfvPilC77Jf3LHrITA4wfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZM8JNrgXYqFHWjaK04/clCGVvN1H67jT/TR+Nr6+A4bP5FlUV
-	SxD90dp+gccQD1AxLIJOtU742+m0I3uv9RmNKPY0jLxScaZxRuMBk8+IxMRz0HZROFAg32jHpor
-	SJtf1fyPIFZ6ziqTdzYoMrcaqCDE0YdE=
-X-Gm-Gg: ASbGncszgVblkcqNcVFAgzupZEy4Tp1i67a4CVzREgqcR2bW3BKh0rXNzneC3ppCzZm
-	Jwou229Zqp7yCYMxxz52C3WfzOal1USP0wO1bo+gzsXSxq5c1IHeZ05F3Oftx/Wq/DQcxXggZty
-	IonW6ta/frtvdBZRRxigtlQCotwBo+d1JqI/5sQsCWQIk6vEJt2EAXQ0O4x2Yh+4ZceEbtgzNaz
-	ZY/fSUDZXIZYUSh6fzv4CYpqLsWjpiFWOmgk/7PUWiC
-X-Google-Smtp-Source: AGHT+IEQY0n4i1j9yeWTWQnks09NoqAyZT4ylH9okEwr3Jw4UNa6e2VWeMTPuD/XW35Mr9gxCH6SVqx7KjiwNeZAvlc=
-X-Received: by 2002:a05:6102:3909:b0:5a4:8e70:be75 with SMTP id
- ada2fe7eead31-5d5e21d6a91mr545468137.7.1759873004264; Tue, 07 Oct 2025
- 14:36:44 -0700 (PDT)
+	s=arc-20240116; t=1759873062; c=relaxed/simple;
+	bh=mVzY1I+ol36+2mhFwo0Zu60YnowWxzQUdxoPsbySwr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XM6qqUFy+qAySWaQ5svoZaOdjIH3B/ybBF1NbX391ob9hOEESqqXdQ4Vqb+qtxPB4CgVBXT0jmkqrLRVkcg8XRwycLDBcmgvoTKGPzC9HB7jI1YV+JlL4OrJVUBKDUfjJqdRseV+klaoNeAJ30nrTcbNLfbgO3KAwiFu0r0n/Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WluchkVM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 093A4C4CEF1;
+	Tue,  7 Oct 2025 21:37:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759873061;
+	bh=mVzY1I+ol36+2mhFwo0Zu60YnowWxzQUdxoPsbySwr8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WluchkVMNWSDwxHbEqVjWBtDz9GvgHQ8P6JaSBI5bpHIq/fN2nW5zZnE5WP/Zu163
+	 Uxv6Qe0jSRwz8cBeAWTebGhcxOEroJc2X6/fjI4Kxl0LSIGMxgCUotRneUWHYqw9FH
+	 yBak66pPhEmExfAlxcgHGEaOpobTtg6YxEGwNdyWh2Tgc+mfTUR2Azl2Wvj7IYCwY4
+	 2aZGknKujayuJp8PpiFv8f78TSbDMzcjnxQzPgezYyag1w0qmee1C0OAzBOXXEOwKR
+	 B2CtdKwk/V8bhiK5d8FbBkU+9uOQyj2yMdCr/j/bi6eIwtmeGy0dpoHgwAH3O5uQGB
+	 hbc8iadhv2jtg==
+Date: Tue, 7 Oct 2025 14:37:40 -0700
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 06/12] firmware: qcom_scm: Add a prep version of
+ auth_and_reset function
+Message-ID: <juirzpdb7ltx32fdiu37q3fd543fctvtssnro5qv4satninz2z@3bxup227lvvy>
+References: <20251007-kvm_rprocv4_next-20251007-v4-0-de841623af3c@oss.qualcomm.com>
+ <20251007-kvm_rprocv4_next-20251007-v4-6-de841623af3c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250713155321.2064856-1-guoren@kernel.org> <20250713155321.2064856-3-guoren@kernel.org>
- <1cfdf6c1-a384-43ad-9588-284335d073f7@ghiti.fr>
-In-Reply-To: <1cfdf6c1-a384-43ad-9588-284335d073f7@ghiti.fr>
-From: Han Gao <rabenda.cn@gmail.com>
-Date: Wed, 8 Oct 2025 05:36:30 +0800
-X-Gm-Features: AS18NWCxXsPyJwGLgGNRNquERcHKe8sZ8VhiFTGIGQJDzKskj5XNWG3A1XF57L8
-Message-ID: <CAAT7Ki9_Vm0+v9RHpa2w-Bg3agJy2Tp4d6+tcPJ=M7XX3GV-7Q@mail.gmail.com>
-Subject: Re: [PATCH V2 2/2] riscv: errata: Add ERRATA_THEAD_WRITE_ONCE fixup
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: guoren@kernel.org, palmer@dabbelt.com, conor@kernel.org, 
-	alexghiti@rivosinc.com, paul.walmsley@sifive.com, bjorn@rivosinc.com, 
-	eobras@redhat.com, corbet@lwn.net, peterlin@andestech.com, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Leonardo Bras <leobras@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251007-kvm_rprocv4_next-20251007-v4-6-de841623af3c@oss.qualcomm.com>
 
-Hi Alex
-     This patch is included in the 6.17 merge window but not in the
-6.18 merge window.
-     Is it possible that the patch was missed?
+On Tue, Oct 07, 2025 at 10:18:51PM +0530, Mukesh Ojha wrote:
+> For memory passed to TrustZone (TZ), it must either be part of a pool
+> registered with TZ or explicitly registered via SHMbridge SMC calls.
+> When Gunyah hypervisor is present, PAS SMC calls from Linux running at
+> EL1 are trapped by Gunyah running @ EL2, which handles SHMbridge
+> creation for both metadata and remoteproc carveout memory before
+> invoking the calls to TZ.
+> 
+> On SoCs running with a non-Gunyah-based hypervisor, Linux must take
+> responsibility for creating the SHM bridge before invoking PAS SMC
+> calls. For the auth_and_reset() call, the remoteproc carveout memory
+> must first be registered with TZ via a SHMbridge SMC call and once
+> authentication and reset are complete, the SHMbridge memory can be
+> deregistered.
+> 
+> Introduce qcom_scm_pas_prepare_and_auth_reset(), which sets up the SHM
+> bridge over the remoteproc carveout memory when Linux operates at EL2.
+> This behavior is indicated by a new field added to the PAS context data
+> structure. The function then invokes the auth_and_reset SMC call.
+> 
+> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> ---
+>  drivers/firmware/qcom/qcom_scm.c       | 48 ++++++++++++++++++++++++++++++++++
+>  include/linux/firmware/qcom/qcom_scm.h |  2 ++
+>  2 files changed, 50 insertions(+)
+> 
+> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+> index 7b4ff3cb26ed..ab2543d44097 100644
+> --- a/drivers/firmware/qcom/qcom_scm.c
+> +++ b/drivers/firmware/qcom/qcom_scm.c
+> @@ -791,6 +791,54 @@ int qcom_scm_pas_auth_and_reset(u32 pas_id)
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_scm_pas_auth_and_reset);
+>  
+> +/**
+> + * qcom_scm_pas_prepare_and_auth_reset() - Prepare, authenticate, and reset the
+> + *					   remote processor
+> + *
+> + * @ctx:	Context saved during call to qcom_scm_pas_context_init()
+> + *
+> + * This function performs the necessary steps to prepare a PAS subsystem,
+> + * authenticate it using the provided metadata, and initiate a reset sequence.
+> + *
+> + * It should be used when Linux is in control setting up the IOMMU hardware
+> + * for remote subsystem during secure firmware loading processes. The preparation
+> + * step sets up a shmbridge over the firmware memory before TrustZone accesses the
+> + * firmware memory region for authentication. The authentication step verifies
+> + * the integrity and authenticity of the firmware or configuration using secure
+> + * metadata. Finally, the reset step ensures the subsystem starts in a clean and
+> + * sane state.
+> + *
+> + * Return: 0 on success, negative errno on failure.
+> + */
+> +int qcom_scm_pas_prepare_and_auth_reset(struct qcom_scm_pas_context *ctx)
+> +{
+> +	u64 handle;
+> +	int ret;
+> +
+> +	if (!ctx->has_iommu)
+> +		return qcom_scm_pas_auth_and_reset(ctx->pas_id);
+> +
+> +	/*
+> +	 * When Linux running @ EL1, Gunyah hypervisor running @ EL2 traps the
+> +	 * auth_and_reset call and create an shmbridge on the remote subsystem
+> +	 * memory region and then invokes a call to TrustZone to authenticate.
+> +	 * When Linux runs @ EL2 Linux must create the shmbridge itself and then
+> +	 * subsequently call TrustZone for authenticate and reset.
+> +	 */
+> +	ret = qcom_tzmem_shm_bridge_create(ctx->mem_phys, ctx->mem_size, &handle);
+> +	if (ret) {
+> +		dev_err(__scm->dev, "Failed to create shmbridge ret=%d %u\n",
 
-On Thu, Jul 17, 2025 at 4:22=E2=80=AFPM Alexandre Ghiti <alex@ghiti.fr> wro=
-te:
->
-> On 7/13/25 17:53, guoren@kernel.org wrote:
-> > From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
-> >
-> > The early version of XuanTie C910 core has a store merge buffer
-> > delay problem. The store merge buffer could improve the store queue
-> > performance by merging multi-store requests, but when there are not
-> > continued store requests, the prior single store request would be
-> > waiting in the store queue for a long time. That would cause
-> > significant problems for communication between multi-cores. This
-> > problem was found on sg2042 & th1520 platforms with the qspinlock
-> > lock torture test.
-> >
-> > So appending a fence w.o could immediately flush the store merge
-> > buffer and let other cores see the write result.
-> >
-> > This will apply the WRITE_ONCE errata to handle the non-standard
-> > behavior via appending a fence w.o instruction for WRITE_ONCE().
-> >
-> > This problem is only observed on the sg2042 hardware platform by
-> > running the lock_torture test program for half an hour. The problem
-> > was not found in the user space application, because interrupt can
-> > break the livelock.
-> >
-> > Reviewed-by: Leonardo Bras <leobras@redhat.com>
-> > Signed-off-by: Guo Ren (Alibaba DAMO Academy) <guoren@kernel.org>
-> > ---
-> >   arch/riscv/Kconfig.errata                    | 17 ++++++++++
-> >   arch/riscv/errata/thead/errata.c             | 20 ++++++++++++
-> >   arch/riscv/include/asm/errata_list_vendors.h |  3 +-
-> >   arch/riscv/include/asm/rwonce.h              | 34 +++++++++++++++++++=
-+
-> >   include/asm-generic/rwonce.h                 |  2 ++
-> >   5 files changed, 75 insertions(+), 1 deletion(-)
-> >   create mode 100644 arch/riscv/include/asm/rwonce.h
-> >
-> > diff --git a/arch/riscv/Kconfig.errata b/arch/riscv/Kconfig.errata
-> > index e318119d570d..d2c982ba5373 100644
-> > --- a/arch/riscv/Kconfig.errata
-> > +++ b/arch/riscv/Kconfig.errata
-> > @@ -130,4 +130,21 @@ config ERRATA_THEAD_GHOSTWRITE
-> >
-> >         If you don't know what to do here, say "Y".
-> >
-> > +config ERRATA_THEAD_WRITE_ONCE
-> > +     bool "Apply T-Head WRITE_ONCE errata"
-> > +     depends on ERRATA_THEAD
-> > +     default y
-> > +     help
-> > +       The early version of T-Head C9xx cores of sg2042 & th1520 have =
-a store
-> > +       merge buffer delay problem. The store merge buffer could improv=
-e the
-> > +       store queue performance by merging multi-store requests, but wh=
-en there
-> > +       are no continued store requests, the prior single store request=
- would be
-> > +       waiting in the store queue for a long time. That would cause si=
-gnifi-
-> > +       cant problems for communication between multi-cores. Appending =
-a
-> > +       fence w.o could immediately flush the store merge buffer and le=
-t other
-> > +       cores see the write result.
-> > +
-> > +       This will apply the WRITE_ONCE errata to handle the non-standar=
-d beh-
-> > +       avior via appending a fence w.o instruction for WRITE_ONCE().
-> > +
-> >   endmenu # "CPU errata selection"
-> > diff --git a/arch/riscv/errata/thead/errata.c b/arch/riscv/errata/thead=
-/errata.c
-> > index 0b942183f708..fbe46f2fa8fb 100644
-> > --- a/arch/riscv/errata/thead/errata.c
-> > +++ b/arch/riscv/errata/thead/errata.c
-> > @@ -168,6 +168,23 @@ static bool errata_probe_ghostwrite(unsigned int s=
-tage,
-> >       return true;
-> >   }
-> >
-> > +static bool errata_probe_write_once(unsigned int stage,
-> > +                                 unsigned long arch_id, unsigned long =
-impid)
-> > +{
-> > +     if (!IS_ENABLED(CONFIG_ERRATA_THEAD_WRITE_ONCE))
-> > +             return false;
-> > +
-> > +     /* target-c9xx cores report arch_id and impid as 0 */
-> > +     if (arch_id !=3D 0 || impid !=3D 0)
-> > +             return false;
-> > +
-> > +     if (stage =3D=3D RISCV_ALTERNATIVES_BOOT ||
-> > +         stage =3D=3D RISCV_ALTERNATIVES_MODULE)
-> > +             return true;
-> > +
-> > +     return false;
-> > +}
-> > +
-> >   static u32 thead_errata_probe(unsigned int stage,
-> >                             unsigned long archid, unsigned long impid)
-> >   {
-> > @@ -183,6 +200,9 @@ static u32 thead_errata_probe(unsigned int stage,
-> >
-> >       errata_probe_ghostwrite(stage, archid, impid);
-> >
-> > +     if (errata_probe_write_once(stage, archid, impid))
-> > +             cpu_req_errata |=3D BIT(ERRATA_THEAD_WRITE_ONCE);
-> > +
-> >       return cpu_req_errata;
-> >   }
-> >
-> > diff --git a/arch/riscv/include/asm/errata_list_vendors.h b/arch/riscv/=
-include/asm/errata_list_vendors.h
-> > index a37d1558f39f..a7473cb8874d 100644
-> > --- a/arch/riscv/include/asm/errata_list_vendors.h
-> > +++ b/arch/riscv/include/asm/errata_list_vendors.h
-> > @@ -18,7 +18,8 @@
-> >   #define     ERRATA_THEAD_MAE 0
-> >   #define     ERRATA_THEAD_PMU 1
-> >   #define     ERRATA_THEAD_GHOSTWRITE 2
-> > -#define      ERRATA_THEAD_NUMBER 3
-> > +#define      ERRATA_THEAD_WRITE_ONCE 3
-> > +#define      ERRATA_THEAD_NUMBER 4
-> >   #endif
-> >
-> >   #endif
-> > diff --git a/arch/riscv/include/asm/rwonce.h b/arch/riscv/include/asm/r=
-wonce.h
-> > new file mode 100644
-> > index 000000000000..081793d4d772
-> > --- /dev/null
-> > +++ b/arch/riscv/include/asm/rwonce.h
-> > @@ -0,0 +1,34 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +
-> > +#ifndef __ASM_RWONCE_H
-> > +#define __ASM_RWONCE_H
-> > +
-> > +#include <linux/compiler_types.h>
-> > +#include <asm/alternative-macros.h>
-> > +#include <asm/vendorid_list.h>
-> > +#include <asm/errata_list_vendors.h>
-> > +
-> > +#if defined(CONFIG_ERRATA_THEAD_WRITE_ONCE) && !defined(NO_ALTERNATIVE=
-)
-> > +
-> > +#define write_once_fence()                           \
-> > +do {                                                 \
-> > +     asm volatile(ALTERNATIVE(                       \
-> > +             "nop",                                  \
-> > +             "fence w, o",                           \
-> > +             THEAD_VENDOR_ID,                        \
-> > +             ERRATA_THEAD_WRITE_ONCE,                \
-> > +             CONFIG_ERRATA_THEAD_WRITE_ONCE)         \
-> > +             : : : "memory");                        \
-> > +} while (0)
-> > +
-> > +#define __WRITE_ONCE(x, val)                         \
-> > +do {                                                 \
-> > +     *(volatile typeof(x) *)&(x) =3D (val);            \
-> > +     write_once_fence();                             \
-> > +} while (0)
-> > +
-> > +#endif /* defined(CONFIG_ERRATA_THEAD_WRITE_ONCE) && !defined(NO_ALTER=
-NATIVE) */
-> > +
-> > +#include <asm-generic/rwonce.h>
-> > +
-> > +#endif       /* __ASM_RWONCE_H */
-> > diff --git a/include/asm-generic/rwonce.h b/include/asm-generic/rwonce.=
-h
-> > index 52b969c7cef9..4e2d941f15a1 100644
-> > --- a/include/asm-generic/rwonce.h
-> > +++ b/include/asm-generic/rwonce.h
-> > @@ -50,10 +50,12 @@
-> >       __READ_ONCE(x);                                                 \
-> >   })
-> >
-> > +#ifndef __WRITE_ONCE
-> >   #define __WRITE_ONCE(x, val)                                         =
-       \
-> >   do {                                                                 =
-       \
-> >       *(volatile typeof(x) *)&(x) =3D (val);                           =
- \
-> >   } while (0)
-> > +#endif
-> >
-> >   #define WRITE_ONCE(x, val)                                          \
-> >   do {                                                                 =
-       \
->
-> I'll send this patchset in my next PR for 6.17:
->
-> Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
->
-> Thanks,
->
-> Alex
->
+	"Failed to create shmbridge for PAS ID (%u): %d\n"
+
+> +			ret, ctx->pas_id);
+> +		return ret;
+> +	}
+> +
+> +	ret = qcom_scm_pas_auth_and_reset(ctx->pas_id);
+> +	qcom_tzmem_shm_bridge_delete(handle);
+> +
+> +	return ret;
+
+	return 0;
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
