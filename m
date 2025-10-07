@@ -1,485 +1,389 @@
-Return-Path: <linux-kernel+bounces-843968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6363ABC0B6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:39:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AD52BC0B50
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:39:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF6554F4C7C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:39:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CB0D19A0A55
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6835F2D949F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDE72E229A;
 	Tue,  7 Oct 2025 08:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZKOGJKpy"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="vRD1lfta"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105172D8390
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 08:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5218F2D8DB5
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 08:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759826080; cv=none; b=boCr54CKsOChgZ5PTtVj46rS6HSQA91rLIHXciC4whdIrN5Xn7A+qY/IwEVez42d+9JGafe5SZSc04RKv2ebbzfHIf4/PRes0pA/NliWeY0Sm4p1ji7Io6rg7TAGQoo0xstHtyHc/d/1hdan2XTMdO/cSK4+wOPpxheTRYrRguU=
+	t=1759826080; cv=none; b=oFjBgyAh0rdajQHshXpz69xt+Kh0RrUwJsLKbTKlRTzPCTaD4V5SCALSuIYKBIjwDEVDfH6YjQqC6Qz3VDqgcxEvrN/HT7q7oLhuu9AHYe9Xdz7Kpop9Orbj4q7Gp+C1US2YXWJy5Ygz6yMAIzyJGk3r3LIlJg1kcu89OE0IOpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1759826080; c=relaxed/simple;
-	bh=R8clJqIWgxqfvV6jstEVcRU6Y5M+f9dOjXk/4CdXbEc=;
+	bh=pdTwjOm0vpFq+a+kN6s7hTsZhY51AQgE7JhmI/mwkZE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=slNCLkNYjQT/gtI2CY2npsukcyaWKYSJ+Uw8QZpLBu8OG3gTw5VHXXNQejUQSVmxNfI+0caHd5CTXImOACiRCwyFYqeYk0mVg9NncJmMTxmOCQFRqbclRzJVxh7tZcSdLhLxrrcnSE+80lHtPZpQn5z2LxOXo2AaxX/EUB/l8cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZKOGJKpy; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-57a604fecb4so7687876e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 01:34:36 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=f3bhqZNbhycCfW/hinVeiy3DhVldjM4JiklWEWwhMF/sEJRT+Y70dNqsZ2tkt8LgaIa5uTlPAj4AQWH0iWz0wexi3TpdQrUcnAU8+hslbvlzJQK5IQA902FxeUko25IRblBa9TPDuoqv5meVOK7hOCmvbrxDkkf4oEZYSjyzDCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=vRD1lfta; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-330469eb750so7094261a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 01:34:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759826075; x=1760430875; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cYqOhwjmD7QzSDhAXWMY9rlGZsX+SISq8DSEREyGLpc=;
-        b=ZKOGJKpy7XckcOzY2xg2mgVcVwsBC2+oKfQoV+z8cWw5PrF9Ontn7f10p9tZskYtf2
-         o/sGLylZmrGvsGgW8AC3ToldZsfny8+6rkh/56cidkM24UvOeyYCJlAn7TfxYBeKgWwc
-         1bIlfgFoIeYtKOeRTijasgRvdoAWI6rgFFWEsTVrdpTX9DJpWC3lWb80Y6tEwZ3ssiCr
-         eGa+sPG1M91kZekK8r0KloA8g5Uf5/hC8F8AQ53rrMk8E5LvYlf9IHIpMpwZQD6JDpq8
-         WpdbRhnqde30BVooqFIwFIDVCQvWkbAkcILmUZyLBH8OwWxzEYOwZ72kNCNL7PKB9Uag
-         N2UQ==
+        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1759826076; x=1760430876; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KgqhrnFFLcx9NWAAafw0DUJGNd8Ld5Si5GTZSSnF9u4=;
+        b=vRD1lftanMtJGUpysw3W7joTCgKUMh1bEIEgkK+a6ixT4LTBpNNwyzXPzq927t0xdh
+         8qXdXLL5xrx7my5pmV8mjxYfhjr1PbA0gQvNEUT5RYWbuigFVNJE5JebL6NSKj5AgfLg
+         CVzNEnnBrUEZ43JGPZgho6NmS3y7DVKU+CJoS+wgnh3KpN3WvKd2c3ylRpUAmEcGMoK3
+         Pid9zKVH12znNom4Rh9KuTtjYbPD3Zg+2D0PSNcODquRsEtktZYv3+cFIrGyCKXObMfb
+         oV6L4BPBVnv5HIgHWu9dq4bnQfAb9kYblc9hyLLb6l9crsD0gl5ZZvdZciaQ0fQuC7k6
+         LzFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759826075; x=1760430875;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cYqOhwjmD7QzSDhAXWMY9rlGZsX+SISq8DSEREyGLpc=;
-        b=noWUByDKPAgg5Zh+nkFOiGrow+TlnibUt1FFR6qHfbjhCeU7Gxb+Tr3CGO9K4cnfjw
-         Kh6SSoDhfys1ofgNDgOEhPBW73TsATk19MhFFsxHwniwYCVY9qMh3cKs+QzwkT1HH65s
-         lADfz4iw8UmzKE2aVRlVdiblXA71nwlG6rmp4Has9sCUHAWV7x4J2HK09oElnCC7d3dh
-         2sRJD+sOLjxsKbvnHdIrh43knrB3udbJ9abctno3KYVqQnUeXrDgjIOKyH3n2DaJmZUh
-         9Kr1qf2vQuhdSnfjzTyJIeiFpx503TEYkCLULVal/rnK17NdlPahvnXUYXao62rsyzEg
-         MN3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVaxWD14XBOveT2AvWw0jVBNVm4gJjCnRjn+AvfAh0E9sAYqSKv0nkRcofP4JoPRqEx/orjVJkU1TZu378=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNL58ETR71WDJpgbPwyjsm5dWLk35HWUPnUeddEusGsfmAO4Rh
-	RV5g6zyQ3lCAZWhubKK3+n3ayStRXfmC4/3FA4f5n3jThNHNW1TbWdnB
-X-Gm-Gg: ASbGnctijgiYeR52AWt1p3wHX9FYJRqTwXxYYTOqmPUAr9dfXq/HUgC1n9qrwdpZozT
-	//o6ZRIxh5gFRgilJUVpPqwl5TjeTlsvHO2+X2ATrfYyc8h1QSyjmWubhYUt+NaaB/Me6vBkbH4
-	W6rVF4Sp5PJlo2a+QMT0UKEJb5MDLBUWAhSQKX30LiNo1AxqaUGY5mTKsffZsXGJtXJBzbA1UQ7
-	BWWFWcb074E5RwvogJy1G4ADR9rBQ1RlrKK32J6XDvhaaDCKG8IagvRA8TiwDi4g21s6IGayt6o
-	VVCMQNAbrLxF2daNpe6d7CQ2hUXpAx2EUgtUBlvPDCXa/Tjgt9oc2K7dMoRGDk/r7ldNheikY9z
-	icDrpgMHmoRozsnOMuBEeV56Ax7k7g2rKy+/OytI4pH39yVoMRLPJWA==
-X-Google-Smtp-Source: AGHT+IHsASn0unx/AEqza4jAFGTdIMbVTcQ/sQcaQeucT8a7hY37xmWlyEPjz5QPdJAWskjmEMEQJA==
-X-Received: by 2002:a05:6512:b09:b0:560:8b86:75ba with SMTP id 2adb3069b0e04-58cbc680d7dmr4384427e87.52.1759826074944;
-        Tue, 07 Oct 2025 01:34:34 -0700 (PDT)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b0119ed6csm5819943e87.105.2025.10.07.01.34.33
+        d=1e100.net; s=20230601; t=1759826076; x=1760430876;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KgqhrnFFLcx9NWAAafw0DUJGNd8Ld5Si5GTZSSnF9u4=;
+        b=FQIFe7K/++lW+DhVURFk/zgoE6iiUUX/McfRzod10qOo5EccNYGQSpTF/17kAs18jP
+         tZntd5L9SIn6RdMPAvhziV1n49zxUu869W+ank/3vu1FPBQheWFa0HuYVWMg9IqpMnwk
+         BrFBHVLtAE/OtKhV9Kfc1CTld7wlJSWDijdcJIGi05t1g84GLHfksqLYAvQguyZnDFLu
+         POmdfjghVbGzjnZvkuIdpQs05RPmBOSYZ2pY8BwOftjBDs0FMzRyKViE8KI2SuYKA7Ve
+         23UsOwuK5DsF0bgIWz+uSzPifKHPsdbse8XqT+1qMBUSeWTBDcw5EqBJ/mQm3bo0r5RT
+         5PZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcszxXkRTjQRCWfcoY5SNtkykr9adxVMWn+sPhURrIsHgfPqV0RKLyTXvzi/+Bn3KEDsCWQJ+PjduZbaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXE0IC8LmEMYadkxYcbbD2XTSd2tuJoixiSMPtAexGL2kr80OI
+	udtJjvxr126w3LvnBPWqAIbkMawMIeLxo9hn5DfHVr92xvS3k36N8t3NhbBjqzdIaTg=
+X-Gm-Gg: ASbGnctas2FirzzGI34iYh68ptD/ixMhYemLLbICLI28DeTb+f6nJ4lo6XTUrFMt7Zg
+	nn/9k/kXgHPSG/T0iIZ3piQRXSdN8/uUFR+a1I2necMstf4DWHNCJ20dRJbDqP1SFIhhSx0O9RU
+	Tws+F2fyT6FXQb3M+jvKIDP9Se+GseNhCQpElg83PkcUxeR3o7y6pQGKRL3yeorlfdbddUI+Dkw
+	+asZ9/juVINPYFFtjtw3cuEkjntPLQtVNPKgzyyeK0h/A4gvs3YeTibpOUG93CEAUodg6Bx2NTo
+	2AqO+vv2yEL0S3MYNKmpnOJManfcE6zeQzBvO5nlOPvZb5pEN2SQgRHbpbjJ+xik1Y3nreJt/07
+	zvbyf5MCagqrDYYpHLebIkEUbITF0QaPZyp92hFMTkFkiqgiGIJOsLbDjSw+UWE9NYgYVh3RYR/
+	9Tlks=
+X-Google-Smtp-Source: AGHT+IG4PiJ7Ahe7MRzt+nwIi/+/a1f2W0pJRvgQ363IH2MoiBd+l107hDp6w8HAEeTEgfYg+b91IA==
+X-Received: by 2002:a17:90b:1b01:b0:335:2a00:6842 with SMTP id 98e67ed59e1d1-339c279e4b8mr20038971a91.26.1759826076585;
+        Tue, 07 Oct 2025 01:34:36 -0700 (PDT)
+Received: from wu-Pro-E500-G6-WS720T ([2001:288:7001:2703:5196:9a8f:bb54:f0db])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339c4a19fe4sm13597424a91.8.2025.10.07.01.34.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 01:34:33 -0700 (PDT)
-Date: Tue, 7 Oct 2025 11:34:30 +0300
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Andreas Kemnade <andreas@kemnade.info>, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [RFC PATCH 09/13] gpio: Support ROHM BD72720 gpios
-Message-ID: <ed65074dbedaf2b503d789b38bd9710926d08a55.1759824376.git.mazziesaccount@gmail.com>
-References: <cover.1759824376.git.mazziesaccount@gmail.com>
+        Tue, 07 Oct 2025 01:34:36 -0700 (PDT)
+Date: Tue, 7 Oct 2025 16:34:31 +0800
+From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	akpm@linux-foundation.org, axboe@kernel.dk,
+	ceph-devel@vger.kernel.org, ebiggers@kernel.org, hch@lst.de,
+	home7438072@gmail.com, idryomov@gmail.com, jaegeuk@kernel.org,
+	kbusch@kernel.org, linux-fscrypt@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+	sagi@grimberg.me, tytso@mit.edu, visitorckw@gmail.com,
+	xiubli@redhat.com
+Subject: Re: [PATCH v3 3/6] lib/base64: rework encode/decode for speed and
+ stricter validation
+Message-ID: <aOTQl2SD5W8zBuNl@wu-Pro-E500-G6-WS720T>
+References: <20250926065235.13623-1-409411716@gms.tku.edu.tw>
+ <20250926065617.14361-1-409411716@gms.tku.edu.tw>
+ <CADUfDZpu=rK4WwSmhNgxHQd2zeNvn8a7TmKCYuTL5T7dZ0x_4A@mail.gmail.com>
+ <aNz21InCM4Pa93TL@wu-Pro-E500-G6-WS720T>
+ <20251006215212.2920d571@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bPmL0Nc6G4goy3sK"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cover.1759824376.git.mazziesaccount@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251006215212.2920d571@pumpkin>
 
+On Mon, Oct 06, 2025 at 09:52:12PM +0100, David Laight wrote:
+> On Wed, 1 Oct 2025 17:39:32 +0800
+> Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
+> 
+> > On Tue, Sep 30, 2025 at 05:11:12PM -0700, Caleb Sander Mateos wrote:
+> > > On Fri, Sep 26, 2025 at 12:01 AM Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:  
+> > > >
+> > > > The old base64 implementation relied on a bit-accumulator loop, which was
+> > > > slow for larger inputs and too permissive in validation. It would accept
+> > > > extra '=', missing '=', or even '=' appearing in the middle of the input,
+> > > > allowing malformed strings to pass. This patch reworks the internals to
+> > > > improve performance and enforce stricter validation.
+> > > >
+> > > > Changes:
+> > > >  - Encoder:
+> > > >    * Process input in 3-byte blocks, mapping 24 bits into four 6-bit
+> > > >      symbols, avoiding bit-by-bit shifting and reducing loop iterations.
+> > > >    * Handle the final 1-2 leftover bytes explicitly and emit '=' only when
+> > > >      requested.
+> > > >  - Decoder:
+> > > >    * Based on the reverse lookup tables from the previous patch, decode
+> > > >      input in 4-character groups.
+> > > >    * Each group is looked up directly, converted into numeric values, and
+> > > >      combined into 3 output bytes.
+> > > >    * Explicitly handle padded and unpadded forms:
+> > > >       - With padding: input length must be a multiple of 4, and '=' is
+> > > >         allowed only in the last two positions. Reject stray or early '='.
+> > > >       - Without padding: validate tail lengths (2 or 3 chars) and require
+> > > >         unused low bits to be zero.
+> > > >    * Removed the bit-accumulator style loop to reduce loop iterations.
+> > > >
+> > > > Performance (x86_64, Intel Core i7-10700 @ 2.90GHz, avg over 1000 runs,
+> > > > KUnit):
+> > > >
+> > > > Encode:
+> > > >   64B   ~90ns   -> ~32ns   (~2.8x)
+> > > >   1KB  ~1332ns  -> ~510ns  (~2.6x)
+> > > >
+> > > > Decode:
+> > > >   64B  ~1530ns  -> ~64ns   (~23.9x)
+> > > >   1KB ~27726ns  -> ~982ns  (~28.3x)
+> > > >
+> > > > Co-developed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> > > > Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> > > > Co-developed-by: Yu-Sheng Huang <home7438072@gmail.com>
+> > > > Signed-off-by: Yu-Sheng Huang <home7438072@gmail.com>
+> > > > Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+> > > > ---
+> > > >  lib/base64.c | 150 +++++++++++++++++++++++++++++++++++++--------------
+> > > >  1 file changed, 110 insertions(+), 40 deletions(-)
+> > > >
+> > > > diff --git a/lib/base64.c b/lib/base64.c
+> > > > index b20fdf168..fd1db4611 100644
+> > > > --- a/lib/base64.c
+> > > > +++ b/lib/base64.c
+> > > > @@ -93,26 +93,43 @@ static const s8 base64_rev_tables[][256] = {
+> > > >  int base64_encode(const u8 *src, int srclen, char *dst, bool padding, enum base64_variant variant)
+> > > >  {
+> > > >         u32 ac = 0;
+> > > > -       int bits = 0;
+> > > > -       int i;
+> > > >         char *cp = dst;
+> > > >         const char *base64_table = base64_tables[variant];
+> > > >
+> > > > -       for (i = 0; i < srclen; i++) {
+> > > > -               ac = (ac << 8) | src[i];
+> > > > -               bits += 8;
+> > > > -               do {
+> > > > -                       bits -= 6;
+> > > > -                       *cp++ = base64_table[(ac >> bits) & 0x3f];
+> > > > -               } while (bits >= 6);
+> > > > -       }
+> > > > -       if (bits) {
+> > > > -               *cp++ = base64_table[(ac << (6 - bits)) & 0x3f];
+> > > > -               bits -= 6;
+> > > > +       while (srclen >= 3) {
+> > > > +               ac = ((u32)src[0] << 16) |
+> > > > +                        ((u32)src[1] << 8) |
+> > > > +                        (u32)src[2];
+> > > > +
+> > > > +               *cp++ = base64_table[ac >> 18];
+> > > > +               *cp++ = base64_table[(ac >> 12) & 0x3f];
+> > > > +               *cp++ = base64_table[(ac >> 6) & 0x3f];
+> > > > +               *cp++ = base64_table[ac & 0x3f];
+> > > > +
+> > > > +               src += 3;
+> > > > +               srclen -= 3;
+> > > >         }
+> > > > -       while (bits < 0) {
+> > > > -               *cp++ = '=';
+> > > > -               bits += 2;
+> > > > +
+> > > > +       switch (srclen) {
+> > > > +       case 2:
+> > > > +               ac = ((u32)src[0] << 16) |
+> > > > +                    ((u32)src[1] << 8);
+> > > > +
+> > > > +               *cp++ = base64_table[ac >> 18];
+> > > > +               *cp++ = base64_table[(ac >> 12) & 0x3f];
+> > > > +               *cp++ = base64_table[(ac >> 6) & 0x3f];
+> > > > +               if (padding)
+> > > > +                       *cp++ = '=';
+> > > > +               break;
+> > > > +       case 1:
+> > > > +               ac = ((u32)src[0] << 16);
+> > > > +               *cp++ = base64_table[ac >> 18];
+> > > > +               *cp++ = base64_table[(ac >> 12) & 0x3f];
+> > > > +               if (padding) {
+> > > > +                       *cp++ = '=';
+> > > > +                       *cp++ = '=';
+> > > > +               }
+> > > > +               break;
+> > > >         }
+> > > >         return cp - dst;
+> > > >  }
+> > > > @@ -128,39 +145,92 @@ EXPORT_SYMBOL_GPL(base64_encode);
+> > > >   *
+> > > >   * Decodes a string using the selected Base64 variant.
+> > > >   *
+> > > > - * This implementation hasn't been optimized for performance.
+> > > > - *
+> > > >   * Return: the length of the resulting decoded binary data in bytes,
+> > > >   *        or -1 if the string isn't a valid Base64 string.
+> > > >   */
+> > > >  int base64_decode(const char *src, int srclen, u8 *dst, bool padding, enum base64_variant variant)
+> > > >  {
+> > > > -       u32 ac = 0;
+> > > > -       int bits = 0;
+> > > > -       int i;
+> > > >         u8 *bp = dst;
+> > > > -       s8 ch;
+> > > > -
+> > > > -       for (i = 0; i < srclen; i++) {
+> > > > -               if (src[i] == '=') {
+> > > > -                       ac = (ac << 6);
+> > > > -                       bits += 6;
+> > > > -                       if (bits >= 8)
+> > > > -                               bits -= 8;
+> > > > -                       continue;
+> > > > -               }
+> > > > -               ch = base64_rev_tables[variant][(u8)src[i]];
+> > > > -               if (ch == -1)
+> > > > +       s8 input1, input2, input3, input4;
+> > > > +       u32 val;
+> > > > +
+> > > > +       if (srclen == 0)
+> > > > +               return 0;  
+> > > 
+> > > Doesn't look like this special case is necessary; all the if and while
+> > > conditions below are false if srclen == 0, so the function will just
+> > > end up returning 0 in that case anyways. It would be nice to avoid
+> > > this branch, especially as it seems like an uncommon case.
+> > >  
+> > 
+> > You're right. I'll remove it. Thanks.
+> > 
+> > > > +
+> > > > +       /* Validate the input length for padding */
+> > > > +       if (unlikely(padding && (srclen & 0x03) != 0))
+> > > > +               return -1;
+> > > > +
+> > > > +       while (srclen >= 4) {
+> > > > +               /* Decode the next 4 characters */
+> > > > +               input1 = base64_rev_tables[variant][(u8)src[0]];
+> > > > +               input2 = base64_rev_tables[variant][(u8)src[1]];
+> > > > +               input3 = base64_rev_tables[variant][(u8)src[2]];
+> > > > +               input4 = base64_rev_tables[variant][(u8)src[3]];
+> > > > +
+> > > > +               /* Return error if any Base64 character is invalid */
+> > > > +               if (unlikely(input1 < 0 || input2 < 0 || (!padding && (input3 < 0 || input4 < 0))))
+> > > > +                       return -1;
+> > > > +
+> > > > +               /* Handle padding */
+> > > > +               if (unlikely(padding && ((input3 < 0 && input4 >= 0) ||
+> > > > +                                        (input3 < 0 && src[2] != '=') ||
+> > > > +                                        (input4 < 0 && src[3] != '=') ||
+> > > > +                                        (srclen > 4 && (input3 < 0 || input4 < 0)))))  
+> > > 
+> > > Would be preferable to check and strip the padding (i.e. decrease
+> > > srclen) before this main loop. That way we could avoid several
+> > > branches in this hot loop that are only necessary to handle the
+> > > padding chars.
+> > >   
+> > 
+> > You're right. As long as we check and strip the padding first, the
+> > behavior with or without padding can be the same, and it could also
+> > reduce some unnecessary branches. I'll make the change.
+> 
+> As I said earlier.
+> Calculate 'val' first using signed arithmetic.
+> If it is non-negative there are three bytes to write.
+> If negative then check for src[2] and src[3] being '=' (etc) before erroring out.
+> 
+> That way there is only one check in the normal path.
+> 
+> 	David
+>
 
---bPmL0Nc6G4goy3sK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for the feedback. We’ll update the implementation accordingly.
 
-The ROHM BD72720 has 6 pins which may be configured as GPIOs. The
-GPIO1 ... GPIO5 and EPDEN pins. The configuration is done to OTP at the
-manufacturing, and it can't be read at runtime. The device-tree is
-required to tell the software which of the pins are used as GPIOs.
+Best regards,
+Guan-Chun
 
-Keep the pin mapping static regardless the OTP. This way the user-space
-can always access the BASE+N for GPIO(N+1) (N =3D 0 to 4), and BASE + 5
-for the EPDEN pin. Do this by setting always the number of GPIOs to 6,
-and by using the valid-mask to invalidate the pins which aren't configured
-as GPIOs.
-
-First two pins can be set to be either input or output by OTP. Direction
-can't be changed by software. Rest of the pins can be set as outputs
-only. All of the pins support generating interrupts.
-
-Support the Input/Output state getting/setting and the output mode
-configuration (open-drain/push-pull).
-
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
----
- drivers/gpio/Kconfig        |   9 ++
- drivers/gpio/Makefile       |   1 +
- drivers/gpio/gpio-bd72720.c | 281 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 291 insertions(+)
- create mode 100644 drivers/gpio/gpio-bd72720.c
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index d8ac40d0eb6f..86498c2cb949 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1315,6 +1315,15 @@ config GPIO_BD71828
- 	  This driver can also be built as a module. If so, the module
- 	  will be called gpio-bd71828.
-=20
-+config GPIO_BD72720
-+	tristate "ROHM BD72720 and BD73900 PMIC GPIO support"
-+	depends on MFD_ROHM_BD71828
-+	help
-+	  Support for GPIO on ROHM BD72720 and BD73900 PMICs. There are two
-+	  pins which can be configured to GPI or GPO, and three pins which can
-+	  be configured to GPO on the ROHM PMIC. The pin configuration is done
-+	  on OTP at manufacturing.
-+
- config GPIO_BD9571MWV
- 	tristate "ROHM BD9571 GPIO support"
- 	depends on MFD_BD9571MWV
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 379f55e9ed1e..15bdaa680ca7 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -45,6 +45,7 @@ obj-$(CONFIG_GPIO_BCM_KONA)		+=3D gpio-bcm-kona.o
- obj-$(CONFIG_GPIO_BCM_XGS_IPROC)	+=3D gpio-xgs-iproc.o
- obj-$(CONFIG_GPIO_BD71815)		+=3D gpio-bd71815.o
- obj-$(CONFIG_GPIO_BD71828)		+=3D gpio-bd71828.o
-+obj-$(CONFIG_GPIO_BD72720)		+=3D gpio-bd72720.o
- obj-$(CONFIG_GPIO_BD9571MWV)		+=3D gpio-bd9571mwv.o
- obj-$(CONFIG_GPIO_BLZP1600)		+=3D gpio-blzp1600.o
- obj-$(CONFIG_GPIO_BRCMSTB)		+=3D gpio-brcmstb.o
-diff --git a/drivers/gpio/gpio-bd72720.c b/drivers/gpio/gpio-bd72720.c
-new file mode 100644
-index 000000000000..6549dbf4c7ad
---- /dev/null
-+++ b/drivers/gpio/gpio-bd72720.c
-@@ -0,0 +1,281 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Support to GPIOs on ROHM BD72720 and BD79300
-+ * Copyright 2025 ROHM Semiconductors.
-+ * Author: Matti Vaittinen <mazziesaccount@gmail.com>
-+ */
-+
-+#include <linux/gpio/driver.h>
-+#include <linux/init.h>
-+#include <linux/irq.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/mfd/rohm-bd72720.h>
-+
-+#define BD72720_GPIO_OPEN_DRAIN		0
-+#define BD72720_GPIO_CMOS		BIT(1)
-+#define BD72720_INT_GPIO1_IN_SRC	4
-+/*
-+ * The BD72720 has several "one time programmable" (OTP) configurations wh=
-ich
-+ * can be set at manufacturing phase. A set of these options allow using p=
-ins
-+ * as GPIO. The OTP configuration can't be read at run-time, so drivers re=
-ly on
-+ * device-tree to advertise the correct options.
-+ *
-+ * Both DVS[0,1] pins can be configured to be used for:
-+ *  - OTP0: regulator RUN state control
-+ *  - OTP1: GPI
-+ *  - OTP2: GPO
-+ *  - OTP3: Power sequencer output
-+ *  Data-sheet also states that these PINs can always be used for IRQ but =
-the
-+ *  driver limits this by allowing them to be used for IRQs with OTP1 only.
-+ *
-+ * Pins GPIO_EXTEN0 (GPIO3), GPIO_EXTEN1 (GPIO4), GPIO_FAULT_B (GPIO5) hav=
-e OTP
-+ * options for a specific (non GPIO) purposes, but also an option to confi=
-gure
-+ * them to be used as a GPO.
-+ *
-+ * OTP settings can be separately configured for each pin.
-+ *
-+ * DT properties:
-+ * "rohm,pin-dvs0" and "rohm,pin-dvs1" can be set to one of the values:
-+ * "dvs-input", "gpi", "gpo".
-+ *
-+ * "rohm,pin-exten0", "rohm,pin-exten1" and "rohm,pin-fault_b" can be set =
-to:
-+ * "gpo"
-+ */
-+
-+enum bd72720_gpio_state {
-+	BD72720_PIN_UNKNOWN,
-+	BD72720_PIN_GPI,
-+	BD72720_PIN_GPO,
-+};
-+
-+enum {
-+	BD72720_GPIO1,
-+	BD72720_GPIO2,
-+	BD72720_GPIO3,
-+	BD72720_GPIO4,
-+	BD72720_GPIO5,
-+	BD72720_GPIO_EPDEN,
-+	BD72720_NUM_GPIOS
-+};
-+
-+struct bd72720_gpio {
-+	/* chip.parent points the MFD which provides DT node and regmap */
-+	struct gpio_chip chip;
-+	/* dev points to the platform device for devm and prints */
-+	struct device *dev;
-+	struct regmap *regmap;
-+	int gpio_is_input;
-+};
-+
-+static int bd72720gpi_get(struct bd72720_gpio *bdgpio, unsigned int reg_of=
-fset)
-+{
-+	int ret, val, shift;
-+
-+	ret =3D regmap_read(bdgpio->regmap, BD72720_REG_INT_ETC1_SRC, &val);
-+	if (ret)
-+		return ret;
-+
-+	shift =3D BD72720_INT_GPIO1_IN_SRC + reg_offset;
-+
-+	return (val >> shift) & 1;
-+}
-+
-+static int bd72720gpo_get(struct bd72720_gpio *bdgpio,
-+			  unsigned int offset)
-+{
-+	const int regs[] =3D { BD72720_REG_GPIO1_CTRL, BD72720_REG_GPIO2_CTRL,
-+			     BD72720_REG_GPIO3_CTRL, BD72720_REG_GPIO4_CTRL,
-+			     BD72720_REG_GPIO5_CTRL, BD72720_REG_EPDEN_CTRL };
-+	int ret, val;
-+
-+	ret =3D regmap_read(bdgpio->regmap, regs[offset], &val);
-+	if (ret)
-+		return ret;
-+
-+	return val & BD72720_GPIO_HIGH;
-+}
-+
-+static int bd72720gpio_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct bd72720_gpio *bdgpio =3D gpiochip_get_data(chip);
-+
-+	if (BIT(offset) & bdgpio->gpio_is_input)
-+		return bd72720gpi_get(bdgpio, offset);
-+
-+	return bd72720gpo_get(bdgpio, offset);
-+}
-+
-+static int bd72720gpo_set(struct gpio_chip *chip, unsigned int offset,
-+			  int value)
-+{
-+	struct bd72720_gpio *bdgpio =3D gpiochip_get_data(chip);
-+	const int regs[] =3D { BD72720_REG_GPIO1_CTRL, BD72720_REG_GPIO2_CTRL,
-+			     BD72720_REG_GPIO3_CTRL, BD72720_REG_GPIO4_CTRL,
-+			     BD72720_REG_GPIO5_CTRL, BD72720_REG_EPDEN_CTRL };
-+
-+	if (BIT(offset) & bdgpio->gpio_is_input) {
-+		dev_dbg(bdgpio->dev, "pin %d not output.\n", offset);
-+		return -EINVAL;
-+	}
-+
-+	if (value)
-+		return regmap_set_bits(bdgpio->regmap, regs[offset],
-+				      BD72720_GPIO_HIGH);
-+
-+	return regmap_clear_bits(bdgpio->regmap, regs[offset],
-+					BD72720_GPIO_HIGH);
-+}
-+
-+static int bd72720_gpio_set_config(struct gpio_chip *chip, unsigned int of=
-fset,
-+				   unsigned long config)
-+{
-+	struct bd72720_gpio *bdgpio =3D gpiochip_get_data(chip);
-+	const int regs[] =3D { BD72720_REG_GPIO1_CTRL, BD72720_REG_GPIO2_CTRL,
-+			     BD72720_REG_GPIO3_CTRL, BD72720_REG_GPIO4_CTRL,
-+			     BD72720_REG_GPIO5_CTRL, BD72720_REG_EPDEN_CTRL };
-+
-+	/*
-+	 * We can only set the output mode, which makes sense only when output
-+	 * OTP configuration is used.
-+	 */
-+	if (BIT(offset) & bdgpio->gpio_is_input)
-+		return -ENOTSUPP;
-+
-+	switch (pinconf_to_config_param(config)) {
-+	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-+		return regmap_update_bits(bdgpio->regmap,
-+					  regs[offset],
-+					  BD72720_GPIO_DRIVE_MASK,
-+					  BD72720_GPIO_OPEN_DRAIN);
-+	case PIN_CONFIG_DRIVE_PUSH_PULL:
-+		return regmap_update_bits(bdgpio->regmap,
-+					  regs[offset],
-+					  BD72720_GPIO_DRIVE_MASK,
-+					  BD72720_GPIO_CMOS);
-+	default:
-+		break;
-+	}
-+
-+	return -ENOTSUPP;
-+}
-+
-+static int bd72720gpo_direction_get(struct gpio_chip *chip,
-+				    unsigned int offset)
-+{
-+	struct bd72720_gpio *bdgpio =3D gpiochip_get_data(chip);
-+
-+	if (BIT(offset) & bdgpio->gpio_is_input)
-+		return GPIO_LINE_DIRECTION_IN;
-+
-+	return GPIO_LINE_DIRECTION_OUT;
-+}
-+
-+static int bd72720_valid_mask(struct gpio_chip *gc,
-+			      unsigned long *valid_mask,
-+			      unsigned int ngpios)
-+{
-+	static const char * const properties[] =3D {
-+		"rohm,pin-dvs0", "rohm,pin-dvs1", "rohm,pin-exten0",
-+		"rohm,pin-exten1", "rohm,pin-fault_b"
-+	};
-+	struct bd72720_gpio *g =3D gpiochip_get_data(gc);
-+	const char *val;
-+	int i, ret;
-+
-+	*valid_mask =3D BIT(BD72720_GPIO_EPDEN);
-+
-+	if (!gc->parent)
-+		return 0;
-+
-+	for (i =3D 0; i < ARRAY_SIZE(properties); i++) {
-+		ret =3D fwnode_property_read_string(dev_fwnode(gc->parent),
-+						  properties[i], &val);
-+
-+		if (ret) {
-+			if (ret =3D=3D -EINVAL)
-+				continue;
-+
-+			dev_err(g->dev, "pin %d (%s), bad configuration\n", i,
-+				properties[i]);
-+
-+			return ret;
-+		}
-+
-+		if (strcmp(val, "gpi") =3D=3D 0) {
-+			if (i !=3D BD72720_GPIO1 && i !=3D BD72720_GPIO2) {
-+				dev_warn(g->dev,
-+					 "pin %d (%s) does not support INPUT mode",
-+					 i, properties[i]);
-+				continue;
-+			}
-+
-+			*valid_mask |=3D BIT(i);
-+			g->gpio_is_input |=3D BIT(i);
-+		} else if (strcmp(val, "gpo") =3D=3D 0) {
-+			*valid_mask |=3D BIT(i);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+/* Template for GPIO chip */
-+static const struct gpio_chip bd72720gpo_chip =3D {
-+	.label			=3D "bd72720",
-+	.owner			=3D THIS_MODULE,
-+	.get			=3D bd72720gpio_get,
-+	.get_direction		=3D bd72720gpo_direction_get,
-+	.set			=3D bd72720gpo_set,
-+	.set_config		=3D bd72720_gpio_set_config,
-+	.init_valid_mask	=3D bd72720_valid_mask,
-+	.can_sleep		=3D true,
-+	.ngpio			=3D BD72720_NUM_GPIOS,
-+	.base			=3D -1,
-+};
-+
-+static int gpo_bd72720_probe(struct platform_device *pdev)
-+{
-+	struct bd72720_gpio *g;
-+	struct device *parent, *dev;
-+
-+	/*
-+	 * Bind devm lifetime to this platform device =3D> use dev for devm.
-+	 * also the prints should originate from this device.
-+	 */
-+	dev =3D &pdev->dev;
-+	/* The device-tree and regmap come from MFD =3D> use parent for that */
-+	parent =3D dev->parent;
-+
-+	g =3D devm_kzalloc(dev, sizeof(*g), GFP_KERNEL);
-+	if (!g)
-+		return -ENOMEM;
-+
-+	g->chip =3D bd72720gpo_chip;
-+	g->dev =3D dev;
-+	g->chip.parent =3D parent;
-+	g->regmap =3D dev_get_regmap(parent, NULL);
-+
-+	return devm_gpiochip_add_data(dev, &g->chip, g);
-+}
-+
-+static const struct platform_device_id bd72720_gpio_id[] =3D {
-+	{ "bd72720-gpio" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(platform, bd72720_gpio_id);
-+
-+static struct platform_driver gpo_bd72720_driver =3D {
-+	.driver =3D {
-+		.name =3D "bd72720-gpio",
-+		.probe_type =3D PROBE_PREFER_ASYNCHRONOUS,
-+	},
-+	.probe =3D gpo_bd72720_probe,
-+	.id_table =3D bd72720_gpio_id,
-+};
-+module_platform_driver(gpo_bd72720_driver);
-+
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("GPIO interface for BD72720 and BD73900");
-+MODULE_LICENSE("GPL");
---=20
-2.51.0
-
-
---bPmL0Nc6G4goy3sK
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmjk0JYACgkQeFA3/03a
-ocVRSQgAsGU4yl/v9avbTHL13POxAGZTvz0dBHS8YmZ8iZ0q8NYZf+Rd4mFp6DWC
-GFQjV6ttE8VfpKQnD3YYTY/+ZqX2mKpMrJ2EuLHIFGse7VR1pVmpFhnLKgJE9zAw
-RsFeeU1ZtnZIy7pmt77VWw+TLGuwfzBt7mY0miRbnu5pQ4RvrX3vc2F7IjfDAjTw
-ZsHtEXcfl0TsrQ1IWVKQyP0zei6vt7b/oLLVwPuypd0mMOAzgh+pACtrIMDT4V89
-yOtVvjmBITgfgHKhNSF3Vh2AEFne6xWe+8LAJ/lWcRazdpX/J6BK+DWHijSVthjD
-nn2oeJ3ecs/2lreA4JD5b8ZqY2ZN0w==
-=vhGB
------END PGP SIGNATURE-----
-
---bPmL0Nc6G4goy3sK--
+> > 
+> > Best regards,
+> > Guan-Chun
+> > 
+> > > > +                       return -1;
+> > > > +               val = ((u32)input1 << 18) |
+> > > > +                     ((u32)input2 << 12) |
+> > > > +                     ((u32)((input3 < 0) ? 0 : input3) << 6) |
+> > > > +                     (u32)((input4 < 0) ? 0 : input4);
+> > > > +
+> > > > +               *bp++ = (u8)(val >> 16);
+> > > > +
+> > > > +               if (input3 >= 0)
+> > > > +                       *bp++ = (u8)(val >> 8);
+> > > > +               if (input4 >= 0)
+> > > > +                       *bp++ = (u8)val;
+> > > > +
+> > > > +               src += 4;
+> > > > +               srclen -= 4;
+> > > > +       }
+> > > > +
+> > > > +       /* Handle leftover characters when padding is not used */
+> > > > +       if (!padding && srclen > 0) {
+> > > > +               switch (srclen) {
+> > > > +               case 2:
+> > > > +                       input1 = base64_rev_tables[variant][(u8)src[0]];
+> > > > +                       input2 = base64_rev_tables[variant][(u8)src[1]];
+> > > > +                       if (unlikely(input1 < 0 || input2 < 0))
+> > > > +                               return -1;
+> > > > +
+> > > > +                       val = ((u32)input1 << 6) | (u32)input2; /* 12 bits */
+> > > > +                       if (unlikely(val & 0x0F))
+> > > > +                               return -1; /* low 4 bits must be zero */
+> > > > +
+> > > > +                       *bp++ = (u8)(val >> 4);
+> > > > +                       break;
+> > > > +               case 3:
+> > > > +                       input1 = base64_rev_tables[variant][(u8)src[0]];
+> > > > +                       input2 = base64_rev_tables[variant][(u8)src[1]];
+> > > > +                       input3 = base64_rev_tables[variant][(u8)src[2]];
+> > > > +                       if (unlikely(input1 < 0 || input2 < 0 || input3 < 0))
+> > > > +                               return -1;
+> > > > +
+> > > > +                       val = ((u32)input1 << 12) |
+> > > > +                             ((u32)input2 << 6) |
+> > > > +                             (u32)input3; /* 18 bits */
+> > > > +
+> > > > +                       if (unlikely(val & 0x03))
+> > > > +                               return -1; /* low 2 bits must be zero */
+> > > > +
+> > > > +                       *bp++ = (u8)(val >> 10);
+> > > > +                       *bp++ = (u8)((val >> 2) & 0xFF);  
+> > > 
+> > > "& 0xFF" is redundant with the cast to u8.
+> > > 
+> > > Best,
+> > > Caleb
+> > >   
+> > > > +                       break;
+> > > > +               default:
+> > > >                         return -1;
+> > > > -               ac = (ac << 6) | ch;
+> > > > -               bits += 6;
+> > > > -               if (bits >= 8) {
+> > > > -                       bits -= 8;
+> > > > -                       *bp++ = (u8)(ac >> bits);
+> > > >                 }
+> > > >         }
+> > > > -       if (ac & ((1 << bits) - 1))
+> > > > -               return -1;
+> > > > +
+> > > >         return bp - dst;
+> > > >  }
+> > > >  EXPORT_SYMBOL_GPL(base64_decode);
+> > > > --
+> > > > 2.34.1
+> > > >
+> > > >  
+> > 
+> 
 
