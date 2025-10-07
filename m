@@ -1,212 +1,196 @@
-Return-Path: <linux-kernel+bounces-844701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD0EBC28B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 21:43:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79E5CBC28B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 21:45:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DC1664F1814
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 19:43:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C12C4F0A19
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 19:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA222E8881;
-	Tue,  7 Oct 2025 19:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FB52264AA;
+	Tue,  7 Oct 2025 19:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pTsx9F7B"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="N2gXkEaU"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94BE2DC333
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 19:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33C71A267;
+	Tue,  7 Oct 2025 19:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759866227; cv=none; b=SlGoH4d9CKy2fmVeAxPP3M2fnNUtgwUwN+sA6vgSDnYqHoElzuOf8RLiCooYtOP34g2j+N/+5Loy81SEJRsVaY1YTjZl6uQXv4NvVpsWiuJ0vx0UXe8DWKGimKA29zkNneTL8D6wvv/m4xVsrvLtZsvnShrHICXOF5kPd+QlvsE=
+	t=1759866344; cv=none; b=AZlA3pj30kvfVtlih/l5ozdgfhYUOCuuCTwiPclaE1tI2mR9BFTDQeOMy29cKoqHlteVnf2cmlwtNnJ282t+h+yeqxBlp0CCmQu1/10bkxVQZrN8nZ5Lu4BL80pbUvlba/c7XnlVmeK/0ddH3Mf+9RHAmE44UYS1jyFvm+BH9G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759866227; c=relaxed/simple;
-	bh=xZMyj1txn9yNEkPj4jndX7PoAnwBnvLHxpXeVdkrCq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fkkF74nSNeRkRI4wi6vING/RtJzyOZC/9Zn4v8ZXvG5FNqLsMwv/ocPjiGYdt8mfV7WOpoaE+UdG7afEC28htfFxD+ZS4BLfWsgNTa8Ffuqsw8Y1Z3x1dXElg01e+X7raUY29Udqov/0VWWQDUuZ7bPy5VEChXRH+wj0o8LB8FQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pTsx9F7B; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2897522a1dfso66452915ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 12:43:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759866225; x=1760471025; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tPY6o7kS39nLiixzOv3LoRY6a9yECDfRcVUGAGn0FOs=;
-        b=pTsx9F7BsgZPRYh2KnIata8/xdXru1GTKciZdhrXz5+jIE5lZL8mctpMkE7kMX05V7
-         WNJU5PRBGrc0D28euwdq7O0ovI4NZuLiccuN1EbFDJD9wnc6g9+Cs1uOTj4vaVOsMlVD
-         tEFGShJJsqjrE6/7d+anIKixZJmvgkXNWK5td5J52yyAqhjZpdbVby3h8vfNWoJlMel/
-         TqR3N1PUFo6zT9C5gb/W7mDS+ugp283q5B6Y7GU89Q5xz4xvimX/nZVpa2f9yh7N9T5n
-         qZojBLl14YsZtzHu5kY0TCE1QPAIqqZYCQC26Yjx+djJcbMQatcEm974VMO4ZLgfVdpv
-         Y9jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759866225; x=1760471025;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tPY6o7kS39nLiixzOv3LoRY6a9yECDfRcVUGAGn0FOs=;
-        b=Tjj78ubp1qCJOoUHE8OpmSu+vNIwOJYOR3jqVMesZmIqF9c8VWp1yL7wdz0kTHO3Rp
-         V/JWRHYrwe0I89mWOdzfQuNqRIlONbxldoG/kBE2MkjRM9BUNwZhoKA8MFMIAdXJ7Mmh
-         u5fuZ9+z8IX5keVr1OYpY9FHXFuI6HemgtDNw/IMk8ncs/8VoBLZklK+VVzUwBpBRFs8
-         unnPcll5etixgJe3nPPJrWdwwe0hbzm9Ww6Cl8M6X4IHSNej+RsdjX5jxv7Kma6mCb7G
-         nEUiMCzQXIdS/jcfhOLDzwNBdxgOo1YazaW//7ujNKE0luAPKFks0ETRrDrjFz0Us1xJ
-         lTVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWh1ieNYNwJN12nJXp/afKYtLrFvXBe2ioTdh2E51+3umXP3jCpWr5PnN8yTPgx2Mu6d0Ri1C2K8PsAeHU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1zJ7epNMX1mJtBB5zuwQ+Z+efrq4HuJK9bnrsbahljdL84bcO
-	GMVz4f+tYsruPEAoPBWeZ1B5SlUEKJp8wuS1B7JHYit5vyR+YvQCZSOBvlazurW8GQ==
-X-Gm-Gg: ASbGncvSTORkukuggPTGqtgjYNAYxR1wO7Jl1UtRlj7Qk3HMiGyB6dKh875zm2nBYDQ
-	7C8JjZF5tFeBeAQHpS0dmPt54YDer8zflhy8ertHneWqlybhPPBxyLVz2LDC+UeC7H7kWWROxbx
-	nqzEdKT0gqCFX5mXI82vlrFP7ghBreJ8xIWq2E1dzRU24ga/Kiwzcps0FwDNDg2TtRHab23JzLn
-	wbYJEqy2XRF1NxiF0PYC5+VtCJXvfwyCQiRRNJNQNkCFL7POhUg2RmdQxj3Zsu6eVrWifavky7d
-	+3OlagR+7Qf5JyjnmpwZvjR6RrMhIXtkT2llE4ku8WpkabBBkZiwJdfDOIb9JdyF8zUvOidhntf
-	lhfQ+2coNQDTiuJZTyeIRT36sSN5SweYkWNP+WDzhaw5ZWaa2TVCP8qsNDA4TansU1dztfJJhhZ
-	oiX4kDZBrjOZO4V7IJg+G1
-X-Google-Smtp-Source: AGHT+IE5SIvyP4eUf3ipqqD5UvRzEUwKrkkptQOc7fcVjGhgP5yFTG0+Dw+sZtrUtx3Ml6RCP26bLg==
-X-Received: by 2002:a17:902:d60d:b0:269:8407:5ae3 with SMTP id d9443c01a7336-290272f8283mr11547605ad.54.1759866224509;
-        Tue, 07 Oct 2025 12:43:44 -0700 (PDT)
-Received: from google.com (232.92.83.34.bc.googleusercontent.com. [34.83.92.232])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1b93f1sm173669135ad.71.2025.10.07.12.43.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 12:43:43 -0700 (PDT)
-Date: Tue, 7 Oct 2025 19:43:40 +0000
-From: Benson Leung <bleung@google.com>
-To: Jameson Thies <jthies@google.com>
-Cc: akuchynski@chromium.org, abhishekpandit@chromium.org,
-	krzk+dt@kernel.org, robh@kernel.org, bleung@chromium.org,
-	heikki.krogerus@linux.intel.com, ukaszb@chromium.org,
-	tzungbi@kernel.org, devicetree@vger.kernel.org,
-	chrome-platform@lists.linux.dev, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] mfd: cros_ec: Don't add cros_ec_ucsi if it is
- defined in OF or ACPI
-Message-ID: <aOVtbDOl1w4RXEfi@google.com>
-References: <20251001193346.1724998-1-jthies@google.com>
- <20251001193346.1724998-4-jthies@google.com>
+	s=arc-20240116; t=1759866344; c=relaxed/simple;
+	bh=kq/+ai7eaI+xs+SQ3Kpvylx9911pdxsqYTHch4jeCzw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=g/8HY67PxHl8NPOCEK/wBVFl7PCUhbmUL3zrpupJQejVqJ4hTHYmptqSJu/yYwPChzpTw0TnbrfRgZCu+my5DYswfC9KshouZIqCGZ6Vy6iJmS3nOKOuu1NT6LflVKcDUtFL9X/eIQX9/FYgdnKe7sqmijbm2iARPm4TAaOMMc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=N2gXkEaU; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1759866335; x=1760471135; i=markus.elfring@web.de;
+	bh=nHxGcVyoMz80gSBeu065Qiu4WFZZoPGdHL0N5KXsfk8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=N2gXkEaUhryE+YiHJBDnxi0dZqCXeyUewDlj6iGW5Ph+SYRpLLfnAH9ZuTmqgjHl
+	 0d/4iPiNbdxdsUkGnWekfqqhzPOBo4KfOKxSGtzaNd9jL7LJqOPlK51apH+cbbpVz
+	 p/o17vvST2rAzjlrOGSc3PbTDsJjtPzfyLuzpTVug3YY8GwKdxJhU44hWlP4gfOiR
+	 4ti3QDr/qQa4LlL2MMWBEkXyXoo6LsRCuyW4dlsjV1mznHcQ85FvY0qFVQQ3lEsal
+	 xBXJ3Ehfb+KXLtRq88UMMtSeKMuZN9+ZDfZbnI/xPcDWcxa80G3O/DgN6mb3uS0kZ
+	 Mo9OrrVgQ40xu1cPbw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.202]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mx0N5-1uMNGO0WDr-00y5uI; Tue, 07
+ Oct 2025 21:45:35 +0200
+Message-ID: <6396d7d3-ef88-4b81-8d8e-f7f81a80ca0f@web.de>
+Date: Tue, 7 Oct 2025 21:45:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="AVuZMM5ghkB0dxRG"
-Content-Disposition: inline
-In-Reply-To: <20251001193346.1724998-4-jthies@google.com>
-
-
---AVuZMM5ghkB0dxRG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Content-Language: en-GB, de-DE
+To: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+ Bharath SM <bharathsm@microsoft.com>, Paulo Alcantara <pc@manguebit.org>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
+ Tom Talpey <tom@talpey.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] smb: client: Use common code in smb2_push_mandatory_locks()
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:O+PfjrkT0ZySx22WnxF5wIK3HQiRQZ5zbkCL1wbjyW764zaqJkM
+ YPb3546q/faBo6x/3qe7DbbuPc2DRHGfR9AWF3L6/uRxBgYxl2Zenyn0a2dONTJwyVlbnfR
+ G36Iy9fBtTu8O6+ENqnQegpSmUfQLfg1irdmNxK1GiNE4bl2elgC3DZJtrCDC8QCcYqdEQm
+ c8xkF+O9lRNaX2FoyUzKw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:mWzMGXDE9Xg=;2jSzE7ZhCPY74/0pVGPEXhiLdtI
+ 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
+ YZsBwtx7/jysvJRgw=
 
-On Wed, Oct 01, 2025 at 07:33:43PM +0000, Jameson Thies wrote:
-> On devices with a UCSI PPM in the EC, check for cros_ec_ucsi to be
-> defined in the OF device tree or an ACPI node. If it is defined by
-> either OF or ACPI, it does not need to be added as a subdevice of
-> cros_ec_dev.
->=20
-> Signed-off-by: Jameson Thies <jthies@google.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 7 Oct 2025 21:37:18 +0200
 
-Reviewed-by: Benson Leung <bleung@chromium.org>
+Use an additional label so that a bit of common code can be better reused
+at the end of this function implementation.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ fs/smb/client/smb2file.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-> ---
->  drivers/mfd/cros_ec_dev.c | 40 ++++++++++++++++++++++++++++++++++-----
->  1 file changed, 35 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> index dc80a272726b..b0523f6541d2 100644
-> --- a/drivers/mfd/cros_ec_dev.c
-> +++ b/drivers/mfd/cros_ec_dev.c
-> @@ -5,6 +5,7 @@
->   * Copyright (C) 2014 Google, Inc.
->   */
-> =20
-> +#include <linux/acpi.h>
->  #include <linux/dmi.h>
->  #include <linux/kconfig.h>
->  #include <linux/mfd/core.h>
-> @@ -131,11 +132,6 @@ static const struct cros_feature_to_cells cros_subde=
-vices[] =3D {
->  		.mfd_cells	=3D cros_ec_rtc_cells,
->  		.num_cells	=3D ARRAY_SIZE(cros_ec_rtc_cells),
->  	},
-> -	{
-> -		.id		=3D EC_FEATURE_UCSI_PPM,
-> -		.mfd_cells	=3D cros_ec_ucsi_cells,
-> -		.num_cells	=3D ARRAY_SIZE(cros_ec_ucsi_cells),
-> -	},
->  	{
->  		.id		=3D EC_FEATURE_HANG_DETECT,
->  		.mfd_cells	=3D cros_ec_wdt_cells,
-> @@ -177,6 +173,16 @@ static const struct mfd_cell cros_ec_vbc_cells[] =3D=
- {
->  	{ .name =3D "cros-ec-vbc", }
->  };
-> =20
-> +static int ucsi_acpi_match(struct device *dev, const void *data)
-> +{
-> +	struct acpi_device_id ucsi_acpi_device_ids[] =3D {
-> +		{ "GOOG0021", 0 },
-> +		{"", 0},
-> +	};
-> +	return !!acpi_match_device(ucsi_acpi_device_ids, dev);
-> +}
-> +
-> +
->  static void cros_ec_class_release(struct device *dev)
->  {
->  	kfree(to_cros_ec_dev(dev));
-> @@ -264,6 +270,30 @@ static int ec_device_probe(struct platform_device *p=
-dev)
->  		}
->  	}
-> =20
-> +	/*
-> +	 * FW nodes can load cros_ec_ucsi, but early PDC devices did not define
-> +	 * the required nodes. On PDC systems without FW nodes for cros_ec_ucsi,
-> +	 * the driver should be added as an mfd subdevice.
-> +	 */
-> +	if (cros_ec_check_features(ec, EC_FEATURE_USB_PD) &&
-> +	    cros_ec_check_features(ec, EC_FEATURE_UCSI_PPM)) {
-> +		struct device *acpi_dev =3D device_find_child(ec->ec_dev->dev,
-> +							    NULL,
-> +							    ucsi_acpi_match);
-> +
-> +		if (!!acpi_dev) {
-> +			put_device(acpi_dev);
-> +		} else if (!of_find_compatible_node(NULL, NULL,
-> +						    "google,cros-ec-ucsi")) {
-> +			retval =3D mfd_add_hotplug_devices(
-> +				ec->dev, cros_ec_ucsi_cells,
-> +				ARRAY_SIZE(cros_ec_ucsi_cells));
-> +			if (retval)
-> +				dev_warn(ec->dev,
-> +				    "failed to add cros_ec_ucsi: %d\n", retval);
-> +		}
-> +	}
-> +
->  	/*
->  	 * UCSI provides power supply information so we don't need to separately
->  	 * load the cros_usbpd_charger driver.
-> --=20
-> 2.51.0.618.g983fd99d29-goog
->=20
+diff --git a/fs/smb/client/smb2file.c b/fs/smb/client/smb2file.c
+index a7f629238830..42ac00f7e728 100644
+=2D-- a/fs/smb/client/smb2file.c
++++ b/fs/smb/client/smb2file.c
+@@ -413,8 +413,8 @@ smb2_push_mandatory_locks(struct cifsFileInfo *cfile)
+ 	 */
+ 	max_buf =3D tlink_tcon(cfile->tlink)->ses->server->maxBuf;
+ 	if (max_buf < sizeof(struct smb2_lock_element)) {
+-		free_xid(xid);
+-		return -EINVAL;
++		rc =3D -EINVAL;
++		goto free_xid;
+ 	}
+=20
+ 	BUILD_BUG_ON(sizeof(struct smb2_lock_element) > PAGE_SIZE);
+@@ -422,8 +422,8 @@ smb2_push_mandatory_locks(struct cifsFileInfo *cfile)
+ 	max_num =3D max_buf / sizeof(struct smb2_lock_element);
+ 	buf =3D kcalloc(max_num, sizeof(struct smb2_lock_element), GFP_KERNEL);
+ 	if (!buf) {
+-		free_xid(xid);
+-		return -ENOMEM;
++		rc =3D -ENOMEM;
++		goto free_xid;
+ 	}
+=20
+ 	list_for_each_entry(fdlocks, &cinode->llist, llist) {
+@@ -433,6 +433,7 @@ smb2_push_mandatory_locks(struct cifsFileInfo *cfile)
+ 	}
+=20
+ 	kfree(buf);
++free_xid:
+ 	free_xid(xid);
+ 	return rc;
+ }
+=2D-=20
+2.51.0
 
---AVuZMM5ghkB0dxRG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQQCtZK6p/AktxXfkOlzbaomhzOwwgUCaOVtawAKCRBzbaomhzOw
-wmRYAQC++OoC5q1mBE/1huCJjMRFkqmQs/g8WPoS9w/QsoyC0gD8DywFVX8m6bXV
-rSfJcTnDduy80Nfk8IhLCFhVH1L3cAY=
-=Cikw
------END PGP SIGNATURE-----
-
---AVuZMM5ghkB0dxRG--
 
