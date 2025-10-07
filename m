@@ -1,171 +1,154 @@
-Return-Path: <linux-kernel+bounces-844005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0855BC0D1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:09:55 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6020EBC0D1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFB313A9EDA
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:09:54 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DB5C434B94C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261102D6E7F;
-	Tue,  7 Oct 2025 09:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4CD2D6E51;
+	Tue,  7 Oct 2025 09:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HPetP9p3"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="yVbJ5/nL"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4542797BE
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 09:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567B12C3258
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 09:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759828185; cv=none; b=dhsH0WATy4ff66oMpTDRojzclMf67l5nPAqCIXQjRUUzfgH2h9QZlLk7yqvdAmSiLqjzhIwZD9Z0a3nmXetvsU9S9dQV5/a4uyElbCYaspK8/JPJnTyplNvI8O7oqJZfQzHf7CEDrFaBhW7wQX9onENehq4QugrAdLmy2uOjbJ8=
+	t=1759828202; cv=none; b=lmD1Nb1UKCEogqkKYNJxDbKBCiJJLtAtjdAv2uvbFqp34M29DN8aWBOUFJtZ8K+8rrJZ5gK3UgHrkB22RDrD4x4RbLFIBUF2qR3cmSacYkQbSBpd8r7vQdS6PTo65cIGNPJZPpTUP0AIy4kqAC+14aCG1URQGYaUfhUGFG02MK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759828185; c=relaxed/simple;
-	bh=1yfqm08lPzP84DqSlgtHVuQqNXB/UVXPe0ZvuASpvXY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pya7/7RNjVHmczZFChswyumHmjHunBSRzYSnvcaG35uY/brn1nHpeb60TJnGvyP4xD1fomN3UHuBETNcwhyhwMlowb6B+0wo6ZXl0dz3zPBdOZD6j5TxlACyKeRPt/AAvU6BxRyrCAuCsaoPvKN3bOr0WnQu0+Vj7VxSmy3O3IU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HPetP9p3; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7a9c15464f7so1874535a34.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 02:09:42 -0700 (PDT)
+	s=arc-20240116; t=1759828202; c=relaxed/simple;
+	bh=HUwN6R/4tVh/ExqTefIAfV1dIeuXHTwkllgb8kq8E9k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pYLaW9WJLXnPBwChsZ+b6eAyLz6+ifBVtnMS8Y/Agqpt/C351ehWyGvSh317j6LTu+QpmlI+e1BG4gAachD0hOZCnDWV46Ce/lLqesz2V7bPVFFgfb6uDHIeKYf3Tyzt0D8rnPeALXPb3oKIi98W5XMl43BgLmI8zmXFZr1O6y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=yVbJ5/nL; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3ee15505cdeso4723079f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 02:10:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759828182; x=1760432982; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=k5Gn50jfOxZiiSgXxR/gre/tjvhockNBFkRAG2DI30U=;
-        b=HPetP9p3Rcyr+4Rerd3eUcPywk0U+/cpJZQguNYVaEhi7UH/pho9dG27K39tRbutjz
-         a0msZ7YzoHLi9+3ghjpUAlBzlRx6+1sWCr2Z4KhFtLX4tG9M982U9qdv5bud/9NTZUGc
-         351joCL0Y7gZnCKbdSccb7ySAXAV8ceGTLNjziRVI0+G/nNVs8vYNsF24q0n2UgxGcOZ
-         nbfZD2kF4gB6fqOPhtOSkqLJOStWZQS6yLLezTzyhXtrNt9fEk7uQTEvnwX7yWUWGrAm
-         MGXAG3D/dEvSMMgJst7VT5SiBd9mDvh+2KcQ9W2vfZG3031A+yRAa6o6hOWlwfecydVF
-         OLpA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1759828199; x=1760432999; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aX/zzAIxKfdHs3b6O5o4Lrj7f6DfCZwLY5Z3Ozvbs3M=;
+        b=yVbJ5/nLDGDGB0gHUZX6JErE+oFibZ1DRbAU5cZ4Ge4DS+ZE6IabjnOre0qc7LCKU4
+         P8qHWW8lqpeu11cyaU5LztBA6SjQG9UfMXj50WIIZ53G2i9znIANs6zoqZJ3Rgaqgqs2
+         mckBF4Fejz1DLrLTnnImiPwTg6Z9wK5FSoXcRmXI7jf3Rj/XSgXcwizKGz3wpbht2rfE
+         s44JAjEND8FOOsfDWYsXwn0toD1u9PvO0FYS2gj25L09vWHS/G0Vlcs+F/LLLeUnRt19
+         xuPoRfMdrcJ9S+JP1VeQcepJnC2bCJenMKzQX6wAUqd5HENItOFQa8F9dX2ZttrJtLhi
+         no3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759828182; x=1760432982;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=k5Gn50jfOxZiiSgXxR/gre/tjvhockNBFkRAG2DI30U=;
-        b=SlYGkYaVch7gM3OfLNO+yUdQ1wJI06uBVP4mJFgrYJffMhEwYiaRLkxn90YlRY1RSt
-         n0oer7HhxFpWW9/Q8jPkfLxK22/K/vorHzTF6dCLc1IG159K6USj7v6wvib+uSQXUHRn
-         VCIozotTOPxt4VzMzkEFnDsPYIatVvJeiownjks6Tkz8z71f0lieuV13HBCbBxSrszme
-         jkVOM8knCr9EH6q+ephTPQSM/evW8e5VZeDaRxUijMuYWRzxSyPw0uRpDUDmhmN/NnWV
-         85V079ATn4G13XK9KmJWfzDqjkjny/36JrSXF6nZhtSzuw+16ULi0RiWu9uoVkC6roWH
-         iY+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXPdRDImbdRmq+aLpsu5KWVV8stSHWOPDKL8RKvqR+nTHqquhZskf54axvUeGpbKKm7gutZ/qWo9hvWZSs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9xQjNY7kcWzt0Ykg6Y6kIDsE7nzqfoJozv16P4N5x3NiMBk8m
-	XnNiOWX5CR//Ai8X3DPdyM2To7wrS0r69SgjlbJ1lAqGFjVMgqF9mSu9NU+KPMazSCuZ1mQMvrD
-	WoYA+/OtekYmBnGP+b/g/4hyiGBU+7pu5LpxK8ERYGw==
-X-Gm-Gg: ASbGncvPXrqFxk7cAD1cLv8rhAlfr12+cW4YGijqoegIcA9FaY5WHTZlfhJZG3kaylG
-	GQgSWXcdrA+0BiAEHrwHxxw/DmHe22I0yNFoxbwsH0afg3saK+zWPTW+GFDF2J51B3mpHcVva5D
-	uITy4YerhJaisEuatj5cmekCZ5yxB9q34lv8Vfb17jCBlMfBzIeXQQIKc38omkei4xt2nwjp0on
-	xszz0ML9MMhqR/dTAwW5R2TwhaoHMlvHr5GbA==
-X-Google-Smtp-Source: AGHT+IFtOrLlwJK0/TEgM+f2IS4t9o4gV7fAIVv15sfMLe5yqLK9nGKna5+x4B1VTMirLjZ+oFvqM3iKI6ns6JfL4hs=
-X-Received: by 2002:a05:6808:3096:b0:438:2907:2ead with SMTP id
- 5614622812f47-43fc18a2091mr6585032b6e.50.1759828182026; Tue, 07 Oct 2025
- 02:09:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759828199; x=1760432999;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aX/zzAIxKfdHs3b6O5o4Lrj7f6DfCZwLY5Z3Ozvbs3M=;
+        b=kpvVUMfMtjJ4ybf23kEhZM2fI8j/DCJJZ6Ts4rLRL989PFTX7KSGH5RAKpNq2upMMX
+         W8/9J8czyMFE0F6AWcebaf92Yrd5duD47gUzUkfYDgomXFGNkABgWjmpxhBVRxQCLZ1s
+         TQrxdvHr9g3yWYIaw9Nm+7+6/ZuPRECRJspK3Q4D+QOwhYpXPyyMb1u3MOIFwgYjKti7
+         ZyrMUqAGz+yCS71+wHLOUg+GYBX3yjFaXNWn8YccLJTm78U+lRbMflCmfRE/o14lUXvF
+         X9FdEhcuhAoUzJNhv7mfSxdxBvHzhuCPDC1DpJWHmkwTppUxsp6DVFWMJ38PEkPMEdIH
+         tn4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWtfRMwHJAS4yged8n7W2P7mrIwB8EBcndXptJEXpaYjaWLu9ayxFZDpCw0bka7mwV4B7lbaLM9kvaQdLA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoKZ4dTNCOMad0mJctSO06DVy7BrEm8qdcZHGHIdElWPGBvMjq
+	hgKEDKi6KIFfh73EMdr6nOaTpIA+se1TCYOg7MY/u0kVbH8eDTRAQNB3GrSQodafk58=
+X-Gm-Gg: ASbGnctkq9FNgQZD9nlwETnOEUnwjHR5Yln0sRY94oKM3NYogrSbgAT4aRBlUmcT6T9
+	WNzDVqIqtMeeHTRRvyjmBkcUBP+fx6gLE9DOiitfhZQ/VJymZ8TF6mpeXbLQacGMGfg5LPs0uhd
+	vIM/a3mYRFzQn2AOaJ0bJWVbrw17asnAHAeT9yamDmE3Q1ssI6jqgIj/I7yinJXiOb4vbs9MLqY
+	ood1dpmuTRWeL7Oi7h0saexD60FgBPs3F86jSr/YV4qRL9ejdBPV+1ZeqYxBuPM6PKfzBRzJEmI
+	+yi0D+7G+qTyRSe0DoLV86fvuOATZiLK5RKWWvDqPlvgYCRfv0DsGZbT08laI3r6EA6J/W31Xmq
+	QkXjLH09YkN3jI0VQAGAWOwMhWtyH3Eijy97VlheF97fzhA==
+X-Google-Smtp-Source: AGHT+IF130TGahKPPoII82+V1/81eeS1iNZCVCSTkdS9QhSxObU5gtpJPCiviLrBgBxmw1J7M2QzJw==
+X-Received: by 2002:a05:6000:26d1:b0:3ec:db87:ff53 with SMTP id ffacd0b85a97d-425829bf154mr1925989f8f.12.1759828198634;
+        Tue, 07 Oct 2025 02:09:58 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:513d:7ba9:7d81:1c37])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4255d8f01absm24412592f8f.44.2025.10.07.02.09.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 02:09:58 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Valerio Setti via B4 Relay <devnull+vsetti.baylibre.com@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,  Mark Brown <broonie@kernel.org>,
+  Jaroslav Kysela <perex@perex.cz>,  Takashi Iwai <tiwai@suse.com>,  Neil
+ Armstrong <neil.armstrong@linaro.org>,  Kevin Hilman
+ <khilman@baylibre.com>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>,  vsetti@baylibre.com,
+  linux-sound@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+  linux-amlogic@lists.infradead.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: meson: aiu-encoder-i2s: fix bit clock polarity
+In-Reply-To: <20251007-fix-i2s-polarity-v1-1-86704d9cda10@baylibre.com>
+	(Valerio Setti via's message of "Tue, 07 Oct 2025 00:12:19 +0200")
+References: <20251007-fix-i2s-polarity-v1-1-86704d9cda10@baylibre.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Tue, 07 Oct 2025 11:09:57 +0200
+Message-ID: <1jplaz3wnu.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251006232125.1833979-1-royluo@google.com> <20251006232125.1833979-3-royluo@google.com>
- <8ca61364-df47-41f2-b0d1-f2a8a74ec728@kernel.org>
-In-Reply-To: <8ca61364-df47-41f2-b0d1-f2a8a74ec728@kernel.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 7 Oct 2025 10:09:31 +0100
-X-Gm-Features: AS18NWD7ktu7qt-H0DxecJcoZK61ZH3ap7EbdS2ccz0Z-j7ffn7elGuijfKqbpQ
-Message-ID: <CADrjBPr7Jp_ZyGv2Krv6iLG0avgFWpcWJEO-Z=cEkhwEY-+z5Q@mail.gmail.com>
-Subject: Re: [PATCH v1 2/4] dt-bindings: usb: dwc3: Add Google SoC DWC3 USB
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Roy Luo <royluo@google.com>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
-	Naveen Kumar <mnkumar@google.com>, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-Hi Krzysztof & Roy,
+On Tue 07 Oct 2025 at 00:12, Valerio Setti via B4 Relay <devnull+vsetti.baylibre.com@kernel.org> wrote:
 
-Firstly thanks Roy for your patches, it's great to see more Tensor
-support being posted upstream!
-
-On Tue, 7 Oct 2025 at 01:44, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> From: Valerio Setti <vsetti@baylibre.com>
 >
-> On 07/10/2025 08:21, Roy Luo wrote:
-> > Document the DWC3 USB bindings for Google Tensor SoCs.
-> >
-> > Signed-off-by: Roy Luo <royluo@google.com>
-> > ---
-> >  .../bindings/usb/google,snps-dwc3.yaml        | 144 ++++++++++++++++++
-> >  1 file changed, 144 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/usb/google,snps-dwc3.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/usb/google,snps-dwc3.yaml b/Documentation/devicetree/bindings/usb/google,snps-dwc3.yaml
-> > new file mode 100644
-> > index 000000000000..3e8bcc0c2cef
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/usb/google,snps-dwc3.yaml
-> > @@ -0,0 +1,144 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +# Copyright (c) 2025, Google LLC
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/usb/google,snps-dwc3.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Google DWC3 USB SoC Controller
-> > +
-> > +maintainers:
-> > +  - Roy Luo <royluo@google.com>
-> > +
-> > +description:
-> > +  Describes the Google DWC3 USB block, based on Synopsys DWC3 IP.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    items:
-> > +      - enum:
-> > +          - google,lga-dwc3
-> > +      - const: google,snps-dwc3
+> According to I2S specs audio data is sampled on the rising edge of the
+> clock and it can change on the falling one. When operating in normal mode
+> this SoC behaves the opposite so a clock polarity inversion is required
+> in this case.
 >
+> This was tested on an OdroidC2 (Amlogic S905 SoC) board.
 >
-> There is no such soc as snps, so you grossly misuse other company name
-> as name of SoC. Neither lga. Otherwise please point me to the top-level
-> bindings describing that SoC.
+> Signed-off-by: Valerio Setti <vsetti@baylibre.com>
+
+Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
+
+Tested on the libretech cc s905x (GXL)
+
+Tested-by: Jerome Brunet <jbrunet@baylibre.com>
+
+> ---
+>  sound/soc/meson/aiu-encoder-i2s.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
 >
-> You need to better describe the hardware here - why this is something
-> completely different than GS which. Or switch to existing bindings and
-> existing drivers. Did you align this with Peter Griffin?
+> diff --git a/sound/soc/meson/aiu-encoder-i2s.c b/sound/soc/meson/aiu-encoder-i2s.c
+> index a0dd914c8ed13616fbcbc0828e36418cfd255391..3b4061508c18047fe8d6f3f98061720f8ce238f2 100644
+> --- a/sound/soc/meson/aiu-encoder-i2s.c
+> +++ b/sound/soc/meson/aiu-encoder-i2s.c
+> @@ -236,8 +236,12 @@ static int aiu_encoder_i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+>  	    inv == SND_SOC_DAIFMT_IB_IF)
+>  		val |= AIU_CLK_CTRL_LRCLK_INVERT;
+>  
+> -	if (inv == SND_SOC_DAIFMT_IB_NF ||
+> -	    inv == SND_SOC_DAIFMT_IB_IF)
+> +	/*
+> +	 * The SoC changes data on the rising edge of the bitclock
+> +	 * so an inversion of the bitclock is required in normal mode
+> +	 */
+> +	if (inv == SND_SOC_DAIFMT_NB_NF ||
+> +	    inv == SND_SOC_DAIFMT_NB_IF)
+>  		val |= AIU_CLK_CTRL_AOCLK_INVERT;
+>  
+>  	/* Signal skew */
+> @@ -328,4 +332,3 @@ const struct snd_soc_dai_ops aiu_encoder_i2s_dai_ops = {
+>  	.startup	= aiu_encoder_i2s_startup,
+>  	.shutdown	= aiu_encoder_i2s_shutdown,
+>  };
+> -
+>
+> ---
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> change-id: 20251006-fix-i2s-polarity-d744338fa223
+>
+> Best regards,
 
-I think (from what I've seen at least) this is the first submission
-for drivers in the Tensor G5 SoC used in Pixel 10 devices (which as I
-understand it isn't based on any Samsung IP). Hence the new drivers,
-bindings etc.
-
-However the issue is that none of the other base SoC drivers on which
-this driver depends currently exist upstream (like clocks, reset
-driver, power domains, pinctrl etc). So it's very hard to reason about
-the correctness or otherwise of this submission. It is also likely
-that when those drivers are upstreamed things could change in the
-review process, to how it looks today in the downstream kernel.
-
-So in summary I think to progress with this we need to get the base
-Tensor G5 SoC drivers merged first (e.g. boot to console with pinctrl,
-basic clock support, reset driver etc). Then we can start adding in
-some of the other peripherals like i2c/spi/usb etc and build up the
-mainline support from there.
-
-Thanks,
-
-Peter.
+-- 
+Jerome
 
