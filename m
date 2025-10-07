@@ -1,260 +1,618 @@
-Return-Path: <linux-kernel+bounces-844134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7144CBC117D
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:09:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A697BC11A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:15:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE1883C7C1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:09:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D033C4E4584
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B982D94B4;
-	Tue,  7 Oct 2025 11:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6AD226541;
+	Tue,  7 Oct 2025 11:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Lz3rYTGZ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=imp.ch header.i=@imp.ch header.b="dC3oAYGx"
+Received: from thor.imp.ch (thor.imp.ch [157.161.4.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D641165F16;
-	Tue,  7 Oct 2025 11:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E756F1DF27D
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.161.4.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759835349; cv=none; b=SCDVF84YVa0zaccc2rVg1SsN33qzSGSIfMn/pmXY9vIX3+7zbi0Ecfmbal247DnY0JZeMJ5qitQIdd/vxxmrMb/qrgaQGaX8f3syxkWDhaiUA8ztp2NcUcZOiU2kLjSEvic4+FN8S/5ks8/M42ZzSSIq5sf6BYo+QiKbAapzn9U=
+	t=1759835711; cv=none; b=CMHvjU9hs1pFaglbhPXOrm3+Fd4eEF0gs+50qkY/qeC+0ItHKyplJ8IBGUX+BmmUHAc8b5jabaFNqUk+48z0XL3CBK2G3S6cYBnsoJHrxvd6G9n7qgr/jJ78hmfkGhcojet/Pa991maFR/V+vJRMGW7okKuS1PDsQUoDGYHx/Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759835349; c=relaxed/simple;
-	bh=fhfzUMJL1SqNlzcr8LHjp5X1IhdG41Jx/unl4fKpMOU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fu+QwFQk1OOqukboB0bp5M8Kk/9/43Sueqq/shf/zG3fdc22zFv1z3KM1fxFd2mQILNGur2+866lZ7b/mn18GMLTGFARmvHN9X70K6HP7IsZAPhlNo1Tj93tcRhOSmfLgmOOBCHdBJCmz5oSvaAK80m4EePhKlTONLUImIIRBIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Lz3rYTGZ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5974V5hJ016331;
-	Tue, 7 Oct 2025 11:09:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	RNHvoTHoC6STGB5T7hO09OD+Iq9U/5MnfxHSDGuLxJE=; b=Lz3rYTGZFxNhLvtT
-	nwhT1v5/0482g2bpkGi5agV/S5QdTPy+/+2nPMl+jsZDuZWKn/6DoMH44hE2iBX4
-	vGigWiHiQNehFybgCnK1TxDc0tNgnczNGhHdRjMbEG5wnzrrkKGIRLuF/wY+nMhW
-	us9lNv+51MC06P5h9d1fW6XJs/GYU0TzXDD5/mk4ZHNRsCj1pt8Izz9Uyy4ZzCA2
-	kQe0G2OVBd7tUn75b4wwuwqf7MkS7aTgCx/3sTmllLK4cJaw72Y7tvdU/nqA8G1S
-	7c/iWTpoV4P5yOTF2fRIduU/oOt59ckMDErLFNb/8t7iRzmaM0mvHIgUiml2XAfK
-	bHleVQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jtk6y246-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 Oct 2025 11:08:59 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 597B8wtM003451
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 7 Oct 2025 11:08:58 GMT
-Received: from [10.217.216.18] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Tue, 7 Oct
- 2025 04:08:53 -0700
-Message-ID: <5fc715ac-1e24-ee59-db24-cc0a5797c43e@quicinc.com>
-Date: Tue, 7 Oct 2025 16:38:50 +0530
+	s=arc-20240116; t=1759835711; c=relaxed/simple;
+	bh=2W2yWEGbBMmupctI/z+HyX+1qJxWGAY6E3Fc30AVGgA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fhEfIDKDO6y+c6zYexXj+AJXBSt3hpmW1hYjuq379NVfD1QFORbPKCWFQcs1vgaDgBWPcdNL1QjdotbWWvfu32FvlShTLhhWal9PZGn2/3Pzli7abQHqq0hUgdLgNH6a3v0LtSxvkXCB7dhHDWb4focO9WZMXjeWdwEe2qgiHx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imp.ch; spf=pass smtp.mailfrom=imp.ch; dkim=pass (1024-bit key) header.d=imp.ch header.i=@imp.ch header.b=dC3oAYGx; arc=none smtp.client-ip=157.161.4.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imp.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imp.ch
+Received: from go.imp.ch (go.imp.ch [IPv6:2001:4060:1:4133:f8d3:e3ff:fee7:5808])
+	by thor.imp.ch (8.18.1/8.13.3) with ESMTPS id 597BAA3t073771
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+	Tue, 7 Oct 2025 13:10:11 +0200 (CEST)
+	(envelope-from benoit.panizzon@imp.ch)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=imp.ch; s=mail;
+	t=1759835411; bh=2W2yWEGbBMmupctI/z+HyX+1qJxWGAY6E3Fc30AVGgA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dC3oAYGxNSnwFHIFZRK2rYuonFudX6gULUhNokmSPVDtzv/BBX5YkHl0MX+tqt5Ob
+	 MdVnDx9NqyEab/c9/EZVNq3NvTD92nEM1ITvbWs4kaeYJ/CcU7Uek2Hkq3KtUSIExg
+	 jNWLoVUzAF5DQpcmA7B/JjwqUG8FIZW/ogTNDlvc=
+Date: Tue, 7 Oct 2025 13:10:10 +0200
+From: Benoit Panizzon <benoit.panizzon@imp.ch>
+To: Salvatore Bonaccorso <carnil@debian.org>
+Cc: 1111455-quiet@bugs.debian.org, 1111455@bugs.debian.org,
+        1111455-submitter@bugs.debian.org, Benoit Panizzon <bp@imp.ch>,
+        Max
+ Kellermann <max.kellermann@ionos.com>,
+        David Howells <dhowells@redhat.com>,
+        Paulo Alcantara <pc@manguebit.org>, netfs@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, regressions@lists.linux.dev
+Subject: Re: Bug#1111455: [bp@imp.ch: Bug#1111455:
+ linux-image-6.12.41+deb13-amd64: kernel BUG at fs/netfs/read_collect.c:316
+ netfs: Can't donate prior to front]
+Message-ID: <20251007131010.46873a4d@go.imp.ch>
+In-Reply-To: <aM-kMVtUhnqrcwrc@eldamar.lan>
+References: <175550547264.3745.5845128440223069497.reportbug@go.imp.ch>
+	<aKMdIgkSWw9koCPC@eldamar.lan>
+	<175550547264.3745.5845128440223069497.reportbug@go.imp.ch>
+	<aM-kMVtUhnqrcwrc@eldamar.lan>
+Organization: ImproWare AG
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v4 3/4] mmc: sdhci-msm: Add Device tree parsing logic for
- DLL settings
-Content-Language: en-US
-To: Rob Herring <robh@kernel.org>
-CC: Ulf Hansson <ulf.hansson@linaro.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Adrian Hunter
-	<adrian.hunter@intel.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>, <linux-mmc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dmitry.baryshkov@oss.qualcomm.com>,
-        <quic_pragalla@quicinc.com>, <quic_sayalil@quicinc.com>,
-        <quic_nitirawa@quicinc.com>, <quic_bhaskarv@quicinc.com>,
-        <kernel@oss.qualcomm.com>, Sachin Gupta <quic_sachgupt@quicinc.com>
-References: <20250929113515.26752-1-quic_rampraka@quicinc.com>
- <20250929113515.26752-4-quic_rampraka@quicinc.com>
- <20251006214432.GA625548-robh@kernel.org>
-From: Ram Prakash Gupta <quic_rampraka@quicinc.com>
-In-Reply-To: <20251006214432.GA625548-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAxNyBTYWx0ZWRfX+SLHdyeCR9lL
- TeLrh53DZj7gcM4urDYryl9TJOls2u2pz9CjOg7leQxE+nCXkEKxFBNdUMeeZxetS4Lqe7ccRE+
- afOQDUB3b8ncHeCXxu0yc15xftXwEoyEPCQAiGQs6H6/b7Ti6ZzKylReSxXNFT7R17jZmxBV7TN
- hRUhcVw9zKNg8ayO66rb1OzP8fxIvmMvC8U5QhKXJXmejw6g2JEmpD0QsX33eOCy7aeByLETg2L
- XB3ajtIm2zI1SVcq2VV+MHVHFk7ur6O7JAastHAWVKj+idxXQBjtV60f5E+6KQ5Gqp7FzrcR0Hb
- 0fEOfFflzqhekalzyUhW/191apfjiL4IToR8KOQAjQXY9njS3OumnriJFnHItHw5zDHRNIeQU4f
- I8kgkAWc68v10tM4KNTPKG02jBADXA==
-X-Authority-Analysis: v=2.4 cv=do3Wylg4 c=1 sm=1 tr=0 ts=68e4f4cc cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=COk6AnOGAAAA:8
- a=RsA-RdRemkjXYStCCQ0A:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: z8PmnhSOZPyxjv8C6nyjDL9CkS_mti8y
-X-Proofpoint-ORIG-GUID: z8PmnhSOZPyxjv8C6nyjDL9CkS_mti8y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-06_07,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 adultscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015
- malwarescore=0 spamscore=0 impostorscore=0 priorityscore=1501 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040017
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 10/7/2025 3:14 AM, Rob Herring wrote:
-> On Mon, Sep 29, 2025 at 05:05:14PM +0530, Ram Prakash Gupta wrote:
->> From: Sachin Gupta <quic_sachgupt@quicinc.com>
->>
->> This update introduces the capability to configure HS200
->> and HS400 DLL settings via the device tree and parsing it.
->>
->> Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
->> Signed-off-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
->> ---
->>  drivers/mmc/host/sdhci-msm.c | 91 ++++++++++++++++++++++++++++++++++++
->>  1 file changed, 91 insertions(+)
->>
->> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
->> index 36700735aa3e..d07f0105b733 100644
->> --- a/drivers/mmc/host/sdhci-msm.c
->> +++ b/drivers/mmc/host/sdhci-msm.c
->> @@ -265,6 +265,19 @@ struct sdhci_msm_variant_info {
->>  	const struct sdhci_msm_offset *offset;
->>  };
->>  
->> +/*
->> + * DLL registers which needs be programmed with HSR settings.
->> + * Add any new register only at the end and don't change the
->> + * sequence.
->> + */
->> +struct sdhci_msm_dll {
->> +	u32 dll_config[2];
->> +	u32 dll_config_2[2];
->> +	u32 dll_config_3[2];
->> +	u32 dll_usr_ctl[2];
->> +	u32 ddr_config[2];
->> +};
->> +
->>  struct sdhci_msm_host {
->>  	struct platform_device *pdev;
->>  	void __iomem *core_mem;	/* MSM SDCC mapped address */
->> @@ -273,6 +286,7 @@ struct sdhci_msm_host {
->>  	struct clk *xo_clk;	/* TCXO clk needed for FLL feature of cm_dll*/
->>  	/* core, iface, cal and sleep clocks */
->>  	struct clk_bulk_data bulk_clks[4];
->> +	struct sdhci_msm_dll dll;
->>  #ifdef CONFIG_MMC_CRYPTO
->>  	struct qcom_ice *ice;
->>  #endif
->> @@ -301,6 +315,7 @@ struct sdhci_msm_host {
->>  	u32 dll_config;
->>  	u32 ddr_config;
->>  	bool vqmmc_enabled;
->> +	bool artanis_dll;
->>  };
->>  
->>  static const struct sdhci_msm_offset *sdhci_priv_msm_offset(struct sdhci_host *host)
->> @@ -2516,6 +2531,73 @@ static int sdhci_msm_gcc_reset(struct device *dev, struct sdhci_host *host)
->>  	return ret;
->>  }
->>  
->> +static int sdhci_msm_dt_get_array(struct device *dev, const char *prop_name,
->> +				  u32 **dll_table, int *len)
->> +{
->> +	struct device_node *np = dev->of_node;
->> +	u32 *arr = NULL;
->> +	int ret = 0, sz = 0;
->> +
->> +	if (!np)
->> +		return -ENODEV;
->> +	if (!of_get_property(np, prop_name, &sz))
-> Don't add new users of of_get_property which adds untracked pointers to 
-> raw DT data.
+Hi Salvatore
 
-Adrian also checked and provided some suggestion, and with those I could
-get rid of this function, so it is no longer needed.
+> Can you still reproduce this with a more current 6.12.y version? Can
+> you test as well the newest version of the 6.16.y version (even there
+> was a major refactoring to see if it affects only the 6.12.y series)?
 
->
->> +		return -EINVAL;
->> +
->> +	sz = sz / sizeof(*arr);
->> +	if (sz <= 0)
->> +		return -EINVAL;
->> +
->> +	arr = kcalloc(sz,  sizeof(*arr), GFP_KERNEL);
-> Why do you need to count the length first when only 5 entries is valid?
+Sorry for the delay.
 
-This line also would not be needed in needed in next patchset.
+6.16 from experimental is working finde.
 
->> +	if (!arr)
->> +		return -ENOMEM;
->> +
->> +	ret = of_property_read_u32_array(np, prop_name, arr, sz);
->> +	if (ret) {
->> +		dev_err(dev, "%s failed reading array %d\n", prop_name, ret);
->> +		*len = 0;
->> +		return ret;
->> +	}
->> +
->> +	*dll_table = arr;
->> +	*len = sz;
->> +
->> +	return ret;
->> +}
->> +
->> +static int sdhci_msm_dt_parse_dll_info(struct device *dev, struct sdhci_msm_host *msm_host)
->> +{
->> +	int dll_table_len, dll_reg_count;
->> +	u32 *dll_table = NULL;
->> +	int i, j;
->> +
->> +	msm_host->artanis_dll = false;
->> +
->> +	if (sdhci_msm_dt_get_array(dev, "qcom,dll-hsr-list",
->> +				   &dll_table, &dll_table_len))
->> +		return -EINVAL;
->> +
->> +	dll_reg_count = sizeof(struct sdhci_msm_dll) / sizeof(u32);
->> +
->> +	if (dll_table_len != dll_reg_count) {
->> +		dev_err(dev, "Number of HSR entries are not matching\n");
->> +		return -EINVAL;
-> You just leaked memory. devm_* functions are your friend.
+Just booted into:
 
-These changes would also be removed in next patchset, after addressing
-Adrian comment.
+6.12.48+deb13-amd64
 
->
->> +	}
->> +
->> +	for (i = 0, j = 0; j < 2; i = i + 5, j++) {
->> +		msm_host->dll.dll_config[j] = dll_table[i];
->> +		msm_host->dll.dll_config_2[j] = dll_table[i + 1];
->> +		msm_host->dll.dll_config_3[j] = dll_table[i + 2];
->> +		msm_host->dll.dll_usr_ctl[j] = dll_table[i + 3];
->> +		msm_host->dll.ddr_config[j] = dll_table[i + 4];
->> +	}
->> +
->> +	msm_host->artanis_dll = true;
->> +
->> +	kfree(dll_table);
->> +
->> +	return 0;
->> +}
+/home on nfs - claws-mail / chromium so lots of small i/o
+
+NFS server is: FreeBSD 13.2-RELEASE-p1
+
+nfshome:/home on /home type nfs (rw,relatime,vers=3D3,rsize=3D8192,wsize=3D=
+8192,namlen=3D255,hard,proto=3Dtcp,timeo=3D600,retrans=3D2,sec=3Dsys,mounta=
+ddr=3Dx.x.x.x,mountvers=3D3,mountport=3D689,mountproto=3Dtcp,fsc,local_lock=
+=3Dnone,addr=3Dx.x.x.x)
+
+
+And after a couple of minutes I get:
+
+[Di Okt  7 13:03:30 2025] netfs: Can't donate prior to front
+[Di Okt  7 13:03:30 2025] R=3D000017d2[10] s=3Dda000-dbfff 0/2000/2000
+[Di Okt  7 13:03:30 2025] folio: d8000-dbfff
+[Di Okt  7 13:03:30 2025] donated: prev=3D0 next=3D0
+[Di Okt  7 13:03:30 2025] s=3Dda000 av=3D2000 part=3D2000
+[Di Okt  7 13:03:30 2025] ------------[ cut here ]------------
+[Di Okt  7 13:03:30 2025] kernel BUG at fs/netfs/read_collect.c:316!
+[Di Okt  7 13:03:30 2025] Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+[Di Okt  7 13:03:30 2025] CPU: 14 UID: 0 PID: 121 Comm: kworker/u64:7 Not t=
+ainted 6.12.48+deb13-amd64 #1  Debian 6.12.48-1
+[Di Okt  7 13:03:30 2025] Hardware name: LENOVO 11JN000JGE/32E4, BIOS M47KT=
+26A 11/23/2022
+[Di Okt  7 13:03:30 2025] Workqueue: nfsiod rpc_async_release [sunrpc]
+[Di Okt  7 13:03:30 2025] RIP: 0010:netfs_consume_read_data.isra.0+0xb79/0x=
+b80 [netfs]
+[Di Okt  7 13:03:30 2025] Code: 48 89 ea 31 f6 48 c7 c7 96 d5 61 c2 e8 30 8=
+e 7f d2 48 8b 4c 24 10 4c 89 fe 48 8b 54 24 20 48 c7 c7 b2 d5 61 c2 e8 17 8=
+e 7f d2 <0f> 0b 90 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+[Di Okt  7 13:03:30 2025] RSP: 0018:ffff97b3c05abd58 EFLAGS: 00010246
+[Di Okt  7 13:03:30 2025] RAX: 0000000000000019 RBX: ffff8c071b60cfc0 RCX: =
+0000000000000027
+[Di Okt  7 13:03:30 2025] RDX: 0000000000000000 RSI: 0000000000000001 RDI: =
+ffff8c098e921780
+[Di Okt  7 13:03:30 2025] RBP: 0000000000000000 R08: 0000000000000000 R09: =
+ffff97b3c05abbe8
+[Di Okt  7 13:03:30 2025] R10: ffffffff95eb43a8 R11: 0000000000000003 R12: =
+ffff8c06c6c23168
+[Di Okt  7 13:03:30 2025] R13: 0000000000004000 R14: ffff8c06c6c23168 R15: =
+00000000000da000
+[Di Okt  7 13:03:30 2025] FS:  0000000000000000(0000) GS:ffff8c098e900000(0=
+000) knlGS:0000000000000000
+[Di Okt  7 13:03:30 2025] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[Di Okt  7 13:03:30 2025] CR2: 00007efd8421a000 CR3: 000000019b756000 CR4: =
+0000000000f50ef0
+[Di Okt  7 13:03:30 2025] PKRU: 55555554
+[Di Okt  7 13:03:30 2025] Call Trace:
+[Di Okt  7 13:03:30 2025]  <TASK>
+[Di Okt  7 13:03:30 2025]  netfs_read_subreq_terminated+0x2ab/0x3e0 [netfs]
+[Di Okt  7 13:03:30 2025]  nfs_netfs_read_completion+0x9c/0xc0 [nfs]
+[Di Okt  7 13:03:30 2025]  nfs_read_completion+0xf6/0x130 [nfs]
+[Di Okt  7 13:03:30 2025]  rpc_free_task+0x39/0x60 [sunrpc]
+[Di Okt  7 13:03:30 2025]  rpc_async_release+0x2f/0x40 [sunrpc]
+[Di Okt  7 13:03:30 2025]  process_one_work+0x177/0x330
+[Di Okt  7 13:03:30 2025]  worker_thread+0x251/0x390
+[Di Okt  7 13:03:30 2025]  ? __pfx_worker_thread+0x10/0x10
+[Di Okt  7 13:03:30 2025]  kthread+0xd2/0x100
+[Di Okt  7 13:03:30 2025]  ? __pfx_kthread+0x10/0x10
+[Di Okt  7 13:03:30 2025]  ret_from_fork+0x34/0x50
+[Di Okt  7 13:03:30 2025]  ? __pfx_kthread+0x10/0x10
+[Di Okt  7 13:03:30 2025]  ret_from_fork_asm+0x1a/0x30
+[Di Okt  7 13:03:30 2025]  </TASK>
+[Di Okt  7 13:03:30 2025] Modules linked in: cachefiles nfsv3 rpcsec_gss_kr=
+b5 nfsv4 dns_resolver nfs netfs nft_chain_nat xt_MASQUERADE nf_nat nf_connt=
+rack nf_defrag_ipv6 nf_defrag_ipv4 nft_compat nf_tables libcrc32c wireguard=
+ libchacha20poly1305 chacha_x86_64 poly1305_x86_64 curve25519_x86_64 libcur=
+ve25519_generic libchacha vxlan ip6_udp_tunnel udp_tunnel bridge stp llc bt=
+usb btrtl btintel btbcm btmtk bluetooth joydev qrtr nfsd auth_rpcgss binfmt=
+_misc nfs_acl lockd grace nls_ascii nls_cp437 sunrpc vfat fat amd_atl intel=
+_rapl_msr intel_rapl_common rtw88_8822ce rtw88_8822c edac_mce_amd rtw88_pci=
+ snd_sof_amd_rembrandt rtw88_core kvm_amd snd_sof_amd_acp snd_sof_pci snd_s=
+of_xtensa_dsp mac80211 snd_hda_codec_realtek snd_sof kvm snd_hda_codec_gene=
+ric snd_sof_utils snd_hda_scodec_component snd_hda_codec_hdmi snd_soc_core =
+snd_hda_intel snd_intel_dspcfg libarc4 snd_compress irqbypass snd_intel_sdw=
+_acpi snd_pcm_dmaengine crct10dif_pclmul snd_hda_codec snd_pci_ps ghash_clm=
+ulni_intel snd_rpl_pci_acp6x cfg80211 sha512_ssse3 snd_hda_core
+[Di Okt  7 13:03:30 2025]  snd_acp_pci snd_acp_legacy_common sha256_ssse3 s=
+nd_hwdep snd_pci_acp6x sha1_ssse3 snd_pcm aesni_intel ee1004 gf128mul wmi_b=
+mof snd_pci_acp5x crypto_simd think_lmi snd_timer snd_rn_pci_acp3x cryptd f=
+irmware_attributes_class snd_acp_config rapl snd snd_soc_acpi k10temp ccp p=
+cspkr snd_pci_acp3x rfkill soundcore evdev parport_pc ppdev lp parport efi_=
+pstore configfs nfnetlink efivarfs ip_tables x_tables autofs4 ext4 mbcache =
+jbd2 crc32c_generic hid_plantronics hid_generic usbhid hid amdgpu dm_mod am=
+dxcp drm_exec gpu_sched drm_buddy i2c_algo_bit drm_suballoc_helper drm_disp=
+lay_helper cec rc_core drm_ttm_helper xhci_pci ttm xhci_hcd drm_kms_helper =
+drm r8169 nvme usbcore realtek nvme_core sp5100_tco mdio_devres watchdog vi=
+deo libphy crc32_pclmul i2c_piix4 crc16 usb_common nvme_auth crc32c_intel i=
+2c_smbus wmi button
+[Di Okt  7 13:03:30 2025] ---[ end trace 0000000000000000 ]---
+[Di Okt  7 13:03:30 2025] RIP: 0010:netfs_consume_read_data.isra.0+0xb79/0x=
+b80 [netfs]
+[Di Okt  7 13:03:30 2025] Code: 48 89 ea 31 f6 48 c7 c7 96 d5 61 c2 e8 30 8=
+e 7f d2 48 8b 4c 24 10 4c 89 fe 48 8b 54 24 20 48 c7 c7 b2 d5 61 c2 e8 17 8=
+e 7f d2 <0f> 0b 90 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+[Di Okt  7 13:03:30 2025] RSP: 0018:ffff97b3c05abd58 EFLAGS: 00010246
+[Di Okt  7 13:03:30 2025] RAX: 0000000000000019 RBX: ffff8c071b60cfc0 RCX: =
+0000000000000027
+[Di Okt  7 13:03:30 2025] RDX: 0000000000000000 RSI: 0000000000000001 RDI: =
+ffff8c098e921780
+[Di Okt  7 13:03:30 2025] RBP: 0000000000000000 R08: 0000000000000000 R09: =
+ffff97b3c05abbe8
+[Di Okt  7 13:03:30 2025] R10: ffffffff95eb43a8 R11: 0000000000000003 R12: =
+ffff8c06c6c23168
+[Di Okt  7 13:03:30 2025] R13: 0000000000004000 R14: ffff8c06c6c23168 R15: =
+00000000000da000
+[Di Okt  7 13:03:30 2025] FS:  0000000000000000(0000) GS:ffff8c098e900000(0=
+000) knlGS:0000000000000000
+[Di Okt  7 13:03:30 2025] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[Di Okt  7 13:03:30 2025] CR2: 00007efd8421a000 CR3: 000000019b756000 CR4: =
+0000000000f50ef0
+[Di Okt  7 13:03:30 2025] PKRU: 55555554
+[Di Okt  7 13:03:35 2025] netfs: Can't donate prior to front
+[Di Okt  7 13:03:35 2025] R=3D00001e80[4] s=3D6000-7fff 0/2000/2000
+[Di Okt  7 13:03:35 2025] folio: 4000-7fff
+[Di Okt  7 13:03:35 2025] donated: prev=3D0 next=3D0
+[Di Okt  7 13:03:35 2025] s=3D6000 av=3D2000 part=3D2000
+[Di Okt  7 13:03:35 2025] ------------[ cut here ]------------
+[Di Okt  7 13:03:35 2025] kernel BUG at fs/netfs/read_collect.c:316!
+[Di Okt  7 13:03:35 2025] Oops: invalid opcode: 0000 [#2] PREEMPT SMP NOPTI
+[Di Okt  7 13:03:35 2025] CPU: 6 UID: 0 PID: 3979 Comm: kworker/u64:17 Tain=
+ted: G      D            6.12.48+deb13-amd64 #1  Debian 6.12.48-1
+[Di Okt  7 13:03:35 2025] Tainted: [D]=3DDIE
+[Di Okt  7 13:03:35 2025] Hardware name: LENOVO 11JN000JGE/32E4, BIOS M47KT=
+26A 11/23/2022
+[Di Okt  7 13:03:35 2025] Workqueue: nfsiod rpc_async_release [sunrpc]
+[Di Okt  7 13:03:35 2025] RIP: 0010:netfs_consume_read_data.isra.0+0xb79/0x=
+b80 [netfs]
+[Di Okt  7 13:03:35 2025] Code: 48 89 ea 31 f6 48 c7 c7 96 d5 61 c2 e8 30 8=
+e 7f d2 48 8b 4c 24 10 4c 89 fe 48 8b 54 24 20 48 c7 c7 b2 d5 61 c2 e8 17 8=
+e 7f d2 <0f> 0b 90 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+[Di Okt  7 13:03:35 2025] RSP: 0018:ffff97b3c76e7d58 EFLAGS: 00010246
+[Di Okt  7 13:03:35 2025] RAX: 0000000000000018 RBX: ffff8c068b3dc3c0 RCX: =
+0000000000000027
+[Di Okt  7 13:03:35 2025] RDX: 0000000000000000 RSI: 0000000000000001 RDI: =
+ffff8c098e521780
+[Di Okt  7 13:03:35 2025] RBP: 0000000000000000 R08: 0000000000000000 R09: =
+ffff97b3c76e7be8
+[Di Okt  7 13:03:35 2025] R10: ffffffff95eb43a8 R11: 0000000000000003 R12: =
+ffff8c0686c24468
+[Di Okt  7 13:03:35 2025] R13: 0000000000004000 R14: ffff8c0686c24468 R15: =
+0000000000006000
+[Di Okt  7 13:03:35 2025] FS:  0000000000000000(0000) GS:ffff8c098e500000(0=
+000) knlGS:0000000000000000
+[Di Okt  7 13:03:35 2025] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[Di Okt  7 13:03:35 2025] CR2: 00003394003da080 CR3: 000000010c8d8000 CR4: =
+0000000000f50ef0
+[Di Okt  7 13:03:35 2025] PKRU: 55555554
+[Di Okt  7 13:03:35 2025] Call Trace:
+[Di Okt  7 13:03:35 2025]  <TASK>
+[Di Okt  7 13:03:35 2025]  netfs_read_subreq_terminated+0x2ab/0x3e0 [netfs]
+[Di Okt  7 13:03:35 2025]  nfs_netfs_read_completion+0x9c/0xc0 [nfs]
+[Di Okt  7 13:03:35 2025]  nfs_read_completion+0xf6/0x130 [nfs]
+[Di Okt  7 13:03:35 2025]  rpc_free_task+0x39/0x60 [sunrpc]
+[Di Okt  7 13:03:35 2025]  rpc_async_release+0x2f/0x40 [sunrpc]
+[Di Okt  7 13:03:35 2025]  process_one_work+0x177/0x330
+[Di Okt  7 13:03:35 2025]  worker_thread+0x251/0x390
+[Di Okt  7 13:03:35 2025]  ? __pfx_worker_thread+0x10/0x10
+[Di Okt  7 13:03:35 2025]  kthread+0xd2/0x100
+[Di Okt  7 13:03:35 2025]  ? __pfx_kthread+0x10/0x10
+[Di Okt  7 13:03:35 2025]  ret_from_fork+0x34/0x50
+[Di Okt  7 13:03:35 2025]  ? __pfx_kthread+0x10/0x10
+[Di Okt  7 13:03:35 2025]  ret_from_fork_asm+0x1a/0x30
+[Di Okt  7 13:03:35 2025]  </TASK>
+[Di Okt  7 13:03:35 2025] Modules linked in: cachefiles nfsv3 rpcsec_gss_kr=
+b5 nfsv4 dns_resolver nfs netfs nft_chain_nat xt_MASQUERADE nf_nat nf_connt=
+rack nf_defrag_ipv6 nf_defrag_ipv4 nft_compat nf_tables libcrc32c wireguard=
+ libchacha20poly1305 chacha_x86_64 poly1305_x86_64 curve25519_x86_64 libcur=
+ve25519_generic libchacha vxlan ip6_udp_tunnel udp_tunnel bridge stp llc bt=
+usb btrtl btintel btbcm btmtk bluetooth joydev qrtr nfsd auth_rpcgss binfmt=
+_misc nfs_acl lockd grace nls_ascii nls_cp437 sunrpc vfat fat amd_atl intel=
+_rapl_msr intel_rapl_common rtw88_8822ce rtw88_8822c edac_mce_amd rtw88_pci=
+ snd_sof_amd_rembrandt rtw88_core kvm_amd snd_sof_amd_acp snd_sof_pci snd_s=
+of_xtensa_dsp mac80211 snd_hda_codec_realtek snd_sof kvm snd_hda_codec_gene=
+ric snd_sof_utils snd_hda_scodec_component snd_hda_codec_hdmi snd_soc_core =
+snd_hda_intel snd_intel_dspcfg libarc4 snd_compress irqbypass snd_intel_sdw=
+_acpi snd_pcm_dmaengine crct10dif_pclmul snd_hda_codec snd_pci_ps ghash_clm=
+ulni_intel snd_rpl_pci_acp6x cfg80211 sha512_ssse3 snd_hda_core
+[Di Okt  7 13:03:35 2025]  snd_acp_pci snd_acp_legacy_common sha256_ssse3 s=
+nd_hwdep snd_pci_acp6x sha1_ssse3 snd_pcm aesni_intel ee1004 gf128mul wmi_b=
+mof snd_pci_acp5x crypto_simd think_lmi snd_timer snd_rn_pci_acp3x cryptd f=
+irmware_attributes_class snd_acp_config rapl snd snd_soc_acpi k10temp ccp p=
+cspkr snd_pci_acp3x rfkill soundcore evdev parport_pc ppdev lp parport efi_=
+pstore configfs nfnetlink efivarfs ip_tables x_tables autofs4 ext4 mbcache =
+jbd2 crc32c_generic hid_plantronics hid_generic usbhid hid amdgpu dm_mod am=
+dxcp drm_exec gpu_sched drm_buddy i2c_algo_bit drm_suballoc_helper drm_disp=
+lay_helper cec rc_core drm_ttm_helper xhci_pci ttm xhci_hcd drm_kms_helper =
+drm r8169 nvme usbcore realtek nvme_core sp5100_tco mdio_devres watchdog vi=
+deo libphy crc32_pclmul i2c_piix4 crc16 usb_common nvme_auth crc32c_intel i=
+2c_smbus wmi button
+[Di Okt  7 13:03:35 2025] ---[ end trace 0000000000000000 ]---
+[Di Okt  7 13:03:35 2025] RIP: 0010:netfs_consume_read_data.isra.0+0xb79/0x=
+b80 [netfs]
+[Di Okt  7 13:03:35 2025] Code: 48 89 ea 31 f6 48 c7 c7 96 d5 61 c2 e8 30 8=
+e 7f d2 48 8b 4c 24 10 4c 89 fe 48 8b 54 24 20 48 c7 c7 b2 d5 61 c2 e8 17 8=
+e 7f d2 <0f> 0b 90 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+[Di Okt  7 13:03:35 2025] RSP: 0018:ffff97b3c05abd58 EFLAGS: 00010246
+[Di Okt  7 13:03:35 2025] RAX: 0000000000000019 RBX: ffff8c071b60cfc0 RCX: =
+0000000000000027
+[Di Okt  7 13:03:35 2025] RDX: 0000000000000000 RSI: 0000000000000001 RDI: =
+ffff8c098e921780
+[Di Okt  7 13:03:35 2025] RBP: 0000000000000000 R08: 0000000000000000 R09: =
+ffff97b3c05abbe8
+[Di Okt  7 13:03:35 2025] R10: ffffffff95eb43a8 R11: 0000000000000003 R12: =
+ffff8c06c6c23168
+[Di Okt  7 13:03:35 2025] R13: 0000000000004000 R14: ffff8c06c6c23168 R15: =
+00000000000da000
+[Di Okt  7 13:03:35 2025] FS:  0000000000000000(0000) GS:ffff8c098e500000(0=
+000) knlGS:0000000000000000
+[Di Okt  7 13:03:35 2025] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[Di Okt  7 13:03:35 2025] CR2: 00003394003da080 CR3: 000000010c8d8000 CR4: =
+0000000000f50ef0
+[Di Okt  7 13:03:35 2025] PKRU: 55555554
+[Di Okt  7 13:03:47 2025] netfs: Can't donate prior to front
+[Di Okt  7 13:03:47 2025] R=3D00002f1f[4] s=3D6000-7fff 0/2000/2000
+[Di Okt  7 13:03:47 2025] folio: 4000-7fff
+[Di Okt  7 13:03:47 2025] donated: prev=3D0 next=3D0
+[Di Okt  7 13:03:47 2025] s=3D6000 av=3D2000 part=3D2000
+[Di Okt  7 13:03:47 2025] ------------[ cut here ]------------
+[Di Okt  7 13:03:47 2025] kernel BUG at fs/netfs/read_collect.c:316!
+[Di Okt  7 13:03:47 2025] Oops: invalid opcode: 0000 [#3] PREEMPT SMP NOPTI
+[Di Okt  7 13:03:47 2025] CPU: 4 UID: 0 PID: 127 Comm: kworker/u64:13 Taint=
+ed: G      D            6.12.48+deb13-amd64 #1  Debian 6.12.48-1
+[Di Okt  7 13:03:47 2025] Tainted: [D]=3DDIE
+[Di Okt  7 13:03:47 2025] Hardware name: LENOVO 11JN000JGE/32E4, BIOS M47KT=
+26A 11/23/2022
+[Di Okt  7 13:03:47 2025] Workqueue: nfsiod rpc_async_release [sunrpc]
+[Di Okt  7 13:03:47 2025] RIP: 0010:netfs_consume_read_data.isra.0+0xb79/0x=
+b80 [netfs]
+[Di Okt  7 13:03:47 2025] Code: 48 89 ea 31 f6 48 c7 c7 96 d5 61 c2 e8 30 8=
+e 7f d2 48 8b 4c 24 10 4c 89 fe 48 8b 54 24 20 48 c7 c7 b2 d5 61 c2 e8 17 8=
+e 7f d2 <0f> 0b 90 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+[Di Okt  7 13:03:47 2025] RSP: 0018:ffff97b3c05dbd58 EFLAGS: 00010246
+[Di Okt  7 13:03:47 2025] RAX: 0000000000000018 RBX: ffff8c0686b7b140 RCX: =
+0000000000000027
+[Di Okt  7 13:03:47 2025] RDX: 0000000000000000 RSI: 0000000000000001 RDI: =
+ffff8c098e421780
+[Di Okt  7 13:03:47 2025] RBP: 0000000000000000 R08: 0000000000000000 R09: =
+ffff97b3c05dbbe8
+[Di Okt  7 13:03:47 2025] R10: ffffffff95eb43a8 R11: 0000000000000003 R12: =
+ffff8c0686baeee8
+[Di Okt  7 13:03:47 2025] R13: 0000000000004000 R14: ffff8c0686baeee8 R15: =
+0000000000006000
+[Di Okt  7 13:03:47 2025] FS:  0000000000000000(0000) GS:ffff8c098e400000(0=
+000) knlGS:0000000000000000
+[Di Okt  7 13:03:47 2025] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[Di Okt  7 13:03:47 2025] CR2: 00000be400a7b020 CR3: 00000001cee22000 CR4: =
+0000000000f50ef0
+[Di Okt  7 13:03:47 2025] PKRU: 55555554
+[Di Okt  7 13:03:47 2025] Call Trace:
+[Di Okt  7 13:03:47 2025]  <TASK>
+[Di Okt  7 13:03:47 2025]  netfs_read_subreq_terminated+0x2ab/0x3e0 [netfs]
+[Di Okt  7 13:03:47 2025]  nfs_netfs_read_completion+0x9c/0xc0 [nfs]
+[Di Okt  7 13:03:47 2025]  nfs_read_completion+0xf6/0x130 [nfs]
+[Di Okt  7 13:03:47 2025]  rpc_free_task+0x39/0x60 [sunrpc]
+[Di Okt  7 13:03:47 2025]  rpc_async_release+0x2f/0x40 [sunrpc]
+[Di Okt  7 13:03:47 2025]  process_one_work+0x177/0x330
+[Di Okt  7 13:03:47 2025]  worker_thread+0x251/0x390
+[Di Okt  7 13:03:47 2025]  ? __pfx_worker_thread+0x10/0x10
+[Di Okt  7 13:03:47 2025]  kthread+0xd2/0x100
+[Di Okt  7 13:03:47 2025]  ? __pfx_kthread+0x10/0x10
+[Di Okt  7 13:03:47 2025]  ret_from_fork+0x34/0x50
+[Di Okt  7 13:03:47 2025]  ? __pfx_kthread+0x10/0x10
+[Di Okt  7 13:03:47 2025]  ret_from_fork_asm+0x1a/0x30
+[Di Okt  7 13:03:47 2025]  </TASK>
+[Di Okt  7 13:03:47 2025] Modules linked in: cachefiles nfsv3 rpcsec_gss_kr=
+b5 nfsv4 dns_resolver nfs netfs nft_chain_nat xt_MASQUERADE nf_nat nf_connt=
+rack nf_defrag_ipv6 nf_defrag_ipv4 nft_compat nf_tables libcrc32c wireguard=
+ libchacha20poly1305 chacha_x86_64 poly1305_x86_64 curve25519_x86_64 libcur=
+ve25519_generic libchacha vxlan ip6_udp_tunnel udp_tunnel bridge stp llc bt=
+usb btrtl btintel btbcm btmtk bluetooth joydev qrtr nfsd auth_rpcgss binfmt=
+_misc nfs_acl lockd grace nls_ascii nls_cp437 sunrpc vfat fat amd_atl intel=
+_rapl_msr intel_rapl_common rtw88_8822ce rtw88_8822c edac_mce_amd rtw88_pci=
+ snd_sof_amd_rembrandt rtw88_core kvm_amd snd_sof_amd_acp snd_sof_pci snd_s=
+of_xtensa_dsp mac80211 snd_hda_codec_realtek snd_sof kvm snd_hda_codec_gene=
+ric snd_sof_utils snd_hda_scodec_component snd_hda_codec_hdmi snd_soc_core =
+snd_hda_intel snd_intel_dspcfg libarc4 snd_compress irqbypass snd_intel_sdw=
+_acpi snd_pcm_dmaengine crct10dif_pclmul snd_hda_codec snd_pci_ps ghash_clm=
+ulni_intel snd_rpl_pci_acp6x cfg80211 sha512_ssse3 snd_hda_core
+[Di Okt  7 13:03:47 2025]  snd_acp_pci snd_acp_legacy_common sha256_ssse3 s=
+nd_hwdep snd_pci_acp6x sha1_ssse3 snd_pcm aesni_intel ee1004 gf128mul wmi_b=
+mof snd_pci_acp5x crypto_simd think_lmi snd_timer snd_rn_pci_acp3x cryptd f=
+irmware_attributes_class snd_acp_config rapl snd snd_soc_acpi k10temp ccp p=
+cspkr snd_pci_acp3x rfkill soundcore evdev parport_pc ppdev lp parport efi_=
+pstore configfs nfnetlink efivarfs ip_tables x_tables autofs4 ext4 mbcache =
+jbd2 crc32c_generic hid_plantronics hid_generic usbhid hid amdgpu dm_mod am=
+dxcp drm_exec gpu_sched drm_buddy i2c_algo_bit drm_suballoc_helper drm_disp=
+lay_helper cec rc_core drm_ttm_helper xhci_pci ttm xhci_hcd drm_kms_helper =
+drm r8169 nvme usbcore realtek nvme_core sp5100_tco mdio_devres watchdog vi=
+deo libphy crc32_pclmul i2c_piix4 crc16 usb_common nvme_auth crc32c_intel i=
+2c_smbus wmi button
+[Di Okt  7 13:03:47 2025] ---[ end trace 0000000000000000 ]---
+[Di Okt  7 13:03:49 2025] RIP: 0010:netfs_consume_read_data.isra.0+0xb79/0x=
+b80 [netfs]
+[Di Okt  7 13:03:49 2025] Code: 48 89 ea 31 f6 48 c7 c7 96 d5 61 c2 e8 30 8=
+e 7f d2 48 8b 4c 24 10 4c 89 fe 48 8b 54 24 20 48 c7 c7 b2 d5 61 c2 e8 17 8=
+e 7f d2 <0f> 0b 90 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+[Di Okt  7 13:03:49 2025] RSP: 0018:ffff97b3c05abd58 EFLAGS: 00010246
+[Di Okt  7 13:03:49 2025] RAX: 0000000000000019 RBX: ffff8c071b60cfc0 RCX: =
+0000000000000027
+[Di Okt  7 13:03:49 2025] RDX: 0000000000000000 RSI: 0000000000000001 RDI: =
+ffff8c098e921780
+[Di Okt  7 13:03:49 2025] RBP: 0000000000000000 R08: 0000000000000000 R09: =
+ffff97b3c05abbe8
+[Di Okt  7 13:03:49 2025] R10: ffffffff95eb43a8 R11: 0000000000000003 R12: =
+ffff8c06c6c23168
+[Di Okt  7 13:03:49 2025] R13: 0000000000004000 R14: ffff8c06c6c23168 R15: =
+00000000000da000
+[Di Okt  7 13:03:49 2025] FS:  0000000000000000(0000) GS:ffff8c098e400000(0=
+000) knlGS:0000000000000000
+[Di Okt  7 13:03:49 2025] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[Di Okt  7 13:03:49 2025] CR2: 00000be400a7b020 CR3: 0000000210e8c000 CR4: =
+0000000000f50ef0
+[Di Okt  7 13:03:49 2025] PKRU: 55555554
+[Di Okt  7 13:03:51 2025] netfs: Can't donate prior to front
+[Di Okt  7 13:03:51 2025] R=3D0000300a[e] s=3D72000-77fff 0/6000/6000
+[Di Okt  7 13:03:51 2025] folio: 70000-77fff
+[Di Okt  7 13:03:51 2025] donated: prev=3D0 next=3D0
+[Di Okt  7 13:03:51 2025] s=3D72000 av=3D6000 part=3D6000
+[Di Okt  7 13:03:51 2025] ------------[ cut here ]------------
+[Di Okt  7 13:03:51 2025] kernel BUG at fs/netfs/read_collect.c:316!
+[Di Okt  7 13:03:51 2025] Oops: invalid opcode: 0000 [#4] PREEMPT SMP NOPTI
+[Di Okt  7 13:03:51 2025] CPU: 5 UID: 0 PID: 118 Comm: kworker/u64:4 Tainte=
+d: G      D            6.12.48+deb13-amd64 #1  Debian 6.12.48-1
+[Di Okt  7 13:03:51 2025] Tainted: [D]=3DDIE
+[Di Okt  7 13:03:51 2025] Hardware name: LENOVO 11JN000JGE/32E4, BIOS M47KT=
+26A 11/23/2022
+[Di Okt  7 13:03:51 2025] Workqueue: nfsiod rpc_async_release [sunrpc]
+[Di Okt  7 13:03:51 2025] RIP: 0010:netfs_consume_read_data.isra.0+0xb79/0x=
+b80 [netfs]
+[Di Okt  7 13:03:51 2025] Code: 48 89 ea 31 f6 48 c7 c7 96 d5 61 c2 e8 30 8=
+e 7f d2 48 8b 4c 24 10 4c 89 fe 48 8b 54 24 20 48 c7 c7 b2 d5 61 c2 e8 17 8=
+e 7f d2 <0f> 0b 90 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+[Di Okt  7 13:03:51 2025] RSP: 0018:ffff97b3c0593d58 EFLAGS: 00010246
+[Di Okt  7 13:03:51 2025] RAX: 0000000000000019 RBX: ffff8c069193a480 RCX: =
+0000000000000027
+[Di Okt  7 13:03:51 2025] RDX: 0000000000000000 RSI: 0000000000000001 RDI: =
+ffff8c098e4a1780
+[Di Okt  7 13:03:51 2025] RBP: 0000000000000000 R08: 0000000000000000 R09: =
+ffff97b3c0593be8
+[Di Okt  7 13:03:51 2025] R10: ffffffff95eb43a8 R11: 0000000000000003 R12: =
+ffff8c068246a4e8
+[Di Okt  7 13:03:51 2025] R13: 0000000000008000 R14: ffff8c068246a4e8 R15: =
+0000000000072000
+[Di Okt  7 13:03:51 2025] FS:  0000000000000000(0000) GS:ffff8c098e480000(0=
+000) knlGS:0000000000000000
+[Di Okt  7 13:03:51 2025] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[Di Okt  7 13:03:51 2025] CR2: 00007f62f83d2000 CR3: 00000001ba55a000 CR4: =
+0000000000f50ef0
+[Di Okt  7 13:03:51 2025] PKRU: 55555554
+[Di Okt  7 13:03:51 2025] Call Trace:
+[Di Okt  7 13:03:51 2025]  <TASK>
+[Di Okt  7 13:03:51 2025]  netfs_read_subreq_terminated+0x2ab/0x3e0 [netfs]
+[Di Okt  7 13:03:51 2025]  nfs_netfs_read_completion+0x9c/0xc0 [nfs]
+[Di Okt  7 13:03:51 2025]  nfs_read_completion+0xf6/0x130 [nfs]
+[Di Okt  7 13:03:51 2025]  rpc_free_task+0x39/0x60 [sunrpc]
+[Di Okt  7 13:03:51 2025]  rpc_async_release+0x2f/0x40 [sunrpc]
+[Di Okt  7 13:03:51 2025]  process_one_work+0x177/0x330
+[Di Okt  7 13:03:51 2025]  worker_thread+0x251/0x390
+[Di Okt  7 13:03:51 2025]  ? __pfx_worker_thread+0x10/0x10
+[Di Okt  7 13:03:51 2025]  kthread+0xd2/0x100
+[Di Okt  7 13:03:51 2025]  ? __pfx_kthread+0x10/0x10
+[Di Okt  7 13:03:51 2025]  ret_from_fork+0x34/0x50
+[Di Okt  7 13:03:51 2025]  ? __pfx_kthread+0x10/0x10
+[Di Okt  7 13:03:51 2025]  ret_from_fork_asm+0x1a/0x30
+[Di Okt  7 13:03:51 2025]  </TASK>
+[Di Okt  7 13:03:51 2025] Modules linked in: cachefiles nfsv3 rpcsec_gss_kr=
+b5 nfsv4 dns_resolver nfs netfs nft_chain_nat xt_MASQUERADE nf_nat nf_connt=
+rack nf_defrag_ipv6 nf_defrag_ipv4 nft_compat nf_tables libcrc32c wireguard=
+ libchacha20poly1305 chacha_x86_64 poly1305_x86_64 curve25519_x86_64 libcur=
+ve25519_generic libchacha vxlan ip6_udp_tunnel udp_tunnel bridge stp llc bt=
+usb btrtl btintel btbcm btmtk bluetooth joydev qrtr nfsd auth_rpcgss binfmt=
+_misc nfs_acl lockd grace nls_ascii nls_cp437 sunrpc vfat fat amd_atl intel=
+_rapl_msr intel_rapl_common rtw88_8822ce rtw88_8822c edac_mce_amd rtw88_pci=
+ snd_sof_amd_rembrandt rtw88_core kvm_amd snd_sof_amd_acp snd_sof_pci snd_s=
+of_xtensa_dsp mac80211 snd_hda_codec_realtek snd_sof kvm snd_hda_codec_gene=
+ric snd_sof_utils snd_hda_scodec_component snd_hda_codec_hdmi snd_soc_core =
+snd_hda_intel snd_intel_dspcfg libarc4 snd_compress irqbypass snd_intel_sdw=
+_acpi snd_pcm_dmaengine crct10dif_pclmul snd_hda_codec snd_pci_ps ghash_clm=
+ulni_intel snd_rpl_pci_acp6x cfg80211 sha512_ssse3 snd_hda_core
+[Di Okt  7 13:03:51 2025]  snd_acp_pci snd_acp_legacy_common sha256_ssse3 s=
+nd_hwdep snd_pci_acp6x sha1_ssse3 snd_pcm aesni_intel ee1004 gf128mul wmi_b=
+mof snd_pci_acp5x crypto_simd think_lmi snd_timer snd_rn_pci_acp3x cryptd f=
+irmware_attributes_class snd_acp_config rapl snd snd_soc_acpi k10temp ccp p=
+cspkr snd_pci_acp3x rfkill soundcore evdev parport_pc ppdev lp parport efi_=
+pstore configfs nfnetlink efivarfs ip_tables x_tables autofs4 ext4 mbcache =
+jbd2 crc32c_generic hid_plantronics hid_generic usbhid hid amdgpu dm_mod am=
+dxcp drm_exec gpu_sched drm_buddy i2c_algo_bit drm_suballoc_helper drm_disp=
+lay_helper cec rc_core drm_ttm_helper xhci_pci ttm xhci_hcd drm_kms_helper =
+drm r8169 nvme usbcore realtek nvme_core sp5100_tco mdio_devres watchdog vi=
+deo libphy crc32_pclmul i2c_piix4 crc16 usb_common nvme_auth crc32c_intel i=
+2c_smbus wmi button
+[Di Okt  7 13:03:51 2025] ---[ end trace 0000000000000000 ]---
+[Di Okt  7 13:03:51 2025] netfs: Can't donate prior to front
+[Di Okt  7 13:03:51 2025] R=3D00003014[e] s=3D52000-57fff 0/6000/6000
+[Di Okt  7 13:03:51 2025] folio: 50000-57fff
+[Di Okt  7 13:03:51 2025] donated: prev=3D0 next=3D0
+[Di Okt  7 13:03:51 2025] s=3D52000 av=3D6000 part=3D6000
+[Di Okt  7 13:03:51 2025] ------------[ cut here ]------------
+[Di Okt  7 13:03:51 2025] kernel BUG at fs/netfs/read_collect.c:316!
+[Di Okt  7 13:03:51 2025] Oops: invalid opcode: 0000 [#5] PREEMPT SMP NOPTI
+[Di Okt  7 13:03:51 2025] CPU: 8 UID: 0 PID: 129 Comm: kworker/u64:15 Taint=
+ed: G      D            6.12.48+deb13-amd64 #1  Debian 6.12.48-1
+[Di Okt  7 13:03:51 2025] Tainted: [D]=3DDIE
+[Di Okt  7 13:03:51 2025] Hardware name: LENOVO 11JN000JGE/32E4, BIOS M47KT=
+26A 11/23/2022
+[Di Okt  7 13:03:51 2025] Workqueue: nfsiod rpc_async_release [sunrpc]
+[Di Okt  7 13:03:51 2025] RIP: 0010:netfs_consume_read_data.isra.0+0xb79/0x=
+b80 [netfs]
+[Di Okt  7 13:03:51 2025] Code: 48 89 ea 31 f6 48 c7 c7 96 d5 61 c2 e8 30 8=
+e 7f d2 48 8b 4c 24 10 4c 89 fe 48 8b 54 24 20 48 c7 c7 b2 d5 61 c2 e8 17 8=
+e 7f d2 <0f> 0b 90 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+[Di Okt  7 13:03:51 2025] RSP: 0018:ffff97b3c05ebd58 EFLAGS: 00010246
+[Di Okt  7 13:03:51 2025] RAX: 0000000000000019 RBX: ffff8c068a065140 RCX: =
+0000000000000027
+[Di Okt  7 13:03:51 2025] RDX: 0000000000000000 RSI: 0000000000000001 RDI: =
+ffff8c098e621780
+[Di Okt  7 13:03:51 2025] RBP: 0000000000000000 R08: 0000000000000000 R09: =
+ffff97b3c05ebbe8
+[Di Okt  7 13:03:51 2025] R10: ffffffff95eb43a8 R11: 0000000000000003 R12: =
+ffff8c0686c273e8
+[Di Okt  7 13:03:51 2025] R13: 0000000000008000 R14: ffff8c0686c273e8 R15: =
+0000000000052000
+[Di Okt  7 13:03:51 2025] FS:  0000000000000000(0000) GS:ffff8c098e600000(0=
+000) knlGS:0000000000000000
+[Di Okt  7 13:03:51 2025] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[Di Okt  7 13:03:51 2025] CR2: 00000be403e34fe0 CR3: 000000015a2c2000 CR4: =
+0000000000f50ef0
+[Di Okt  7 13:03:51 2025] PKRU: 55555554
+[Di Okt  7 13:03:51 2025] Call Trace:
+[Di Okt  7 13:03:51 2025]  <TASK>
+[Di Okt  7 13:03:51 2025]  netfs_read_subreq_terminated+0x2ab/0x3e0 [netfs]
+[Di Okt  7 13:03:51 2025]  nfs_netfs_read_completion+0x9c/0xc0 [nfs]
+[Di Okt  7 13:03:51 2025]  nfs_read_completion+0xf6/0x130 [nfs]
+[Di Okt  7 13:03:51 2025]  rpc_free_task+0x39/0x60 [sunrpc]
+[Di Okt  7 13:03:51 2025]  rpc_async_release+0x2f/0x40 [sunrpc]
+[Di Okt  7 13:03:51 2025]  process_one_work+0x177/0x330
+[Di Okt  7 13:03:51 2025]  worker_thread+0x251/0x390
+[Di Okt  7 13:03:51 2025]  ? __pfx_worker_thread+0x10/0x10
+[Di Okt  7 13:03:51 2025]  kthread+0xd2/0x100
+[Di Okt  7 13:03:51 2025]  ? __pfx_kthread+0x10/0x10
+[Di Okt  7 13:03:51 2025]  ret_from_fork+0x34/0x50
+[Di Okt  7 13:03:51 2025]  ? __pfx_kthread+0x10/0x10
+[Di Okt  7 13:03:51 2025]  ret_from_fork_asm+0x1a/0x30
+[Di Okt  7 13:03:51 2025]  </TASK>
+[Di Okt  7 13:03:51 2025] Modules linked in: cachefiles nfsv3 rpcsec_gss_kr=
+b5 nfsv4 dns_resolver nfs netfs nft_chain_nat xt_MASQUERADE nf_nat nf_connt=
+rack nf_defrag_ipv6 nf_defrag_ipv4 nft_compat nf_tables libcrc32c wireguard=
+ libchacha20poly1305 chacha_x86_64 poly1305_x86_64 curve25519_x86_64 libcur=
+ve25519_generic libchacha vxlan ip6_udp_tunnel udp_tunnel bridge stp llc bt=
+usb btrtl btintel btbcm btmtk bluetooth joydev qrtr nfsd auth_rpcgss binfmt=
+_misc nfs_acl lockd grace nls_ascii nls_cp437 sunrpc vfat fat amd_atl intel=
+_rapl_msr intel_rapl_common rtw88_8822ce rtw88_8822c edac_mce_amd rtw88_pci=
+ snd_sof_amd_rembrandt rtw88_core kvm_amd snd_sof_amd_acp snd_sof_pci snd_s=
+of_xtensa_dsp mac80211 snd_hda_codec_realtek snd_sof kvm snd_hda_codec_gene=
+ric snd_sof_utils snd_hda_scodec_component snd_hda_codec_hdmi snd_soc_core =
+snd_hda_intel snd_intel_dspcfg libarc4 snd_compress irqbypass snd_intel_sdw=
+_acpi snd_pcm_dmaengine crct10dif_pclmul snd_hda_codec snd_pci_ps ghash_clm=
+ulni_intel snd_rpl_pci_acp6x cfg80211 sha512_ssse3 snd_hda_core
+[Di Okt  7 13:03:51 2025]  snd_acp_pci snd_acp_legacy_common sha256_ssse3 s=
+nd_hwdep snd_pci_acp6x sha1_ssse3 snd_pcm aesni_intel ee1004 gf128mul wmi_b=
+mof snd_pci_acp5x crypto_simd think_lmi snd_timer snd_rn_pci_acp3x cryptd f=
+irmware_attributes_class snd_acp_config rapl snd snd_soc_acpi k10temp ccp p=
+cspkr snd_pci_acp3x rfkill soundcore evdev parport_pc ppdev lp parport efi_=
+pstore configfs nfnetlink efivarfs ip_tables x_tables autofs4 ext4 mbcache =
+jbd2 crc32c_generic hid_plantronics hid_generic usbhid hid amdgpu dm_mod am=
+dxcp drm_exec gpu_sched drm_buddy i2c_algo_bit drm_suballoc_helper drm_disp=
+lay_helper cec rc_core drm_ttm_helper xhci_pci ttm xhci_hcd drm_kms_helper =
+drm r8169 nvme usbcore realtek nvme_core sp5100_tco mdio_devres watchdog vi=
+deo libphy crc32_pclmul i2c_piix4 crc16 usb_common nvme_auth crc32c_intel i=
+2c_smbus wmi button
+[Di Okt  7 13:03:51 2025] ---[ end trace 0000000000000000 ]---
+[Di Okt  7 13:03:51 2025] RIP: 0010:netfs_consume_read_data.isra.0+0xb79/0x=
+b80 [netfs]
+[Di Okt  7 13:03:51 2025] Code: 48 89 ea 31 f6 48 c7 c7 96 d5 61 c2 e8 30 8=
+e 7f d2 48 8b 4c 24 10 4c 89 fe 48 8b 54 24 20 48 c7 c7 b2 d5 61 c2 e8 17 8=
+e 7f d2 <0f> 0b 90 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+[Di Okt  7 13:03:51 2025] RSP: 0018:ffff97b3c05abd58 EFLAGS: 00010246
+[Di Okt  7 13:03:51 2025] RAX: 0000000000000019 RBX: ffff8c071b60cfc0 RCX: =
+0000000000000027
+[Di Okt  7 13:03:51 2025] RDX: 0000000000000000 RSI: 0000000000000001 RDI: =
+ffff8c098e921780
+[Di Okt  7 13:03:51 2025] RBP: 0000000000000000 R08: 0000000000000000 R09: =
+ffff97b3c05abbe8
+[Di Okt  7 13:03:51 2025] R10: ffffffff95eb43a8 R11: 0000000000000003 R12: =
+ffff8c06c6c23168
+[Di Okt  7 13:03:51 2025] R13: 0000000000004000 R14: ffff8c06c6c23168 R15: =
+00000000000da000
+[Di Okt  7 13:03:51 2025] FS:  0000000000000000(0000) GS:ffff8c098e480000(0=
+000) knlGS:0000000000000000
+[Di Okt  7 13:03:51 2025] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[Di Okt  7 13:03:51 2025] CR2: 00007f62f83d2000 CR3: 00000001ba55a000 CR4: =
+0000000000f50ef0
+[Di Okt  7 13:03:51 2025] PKRU: 55555554
+[Di Okt  7 13:03:51 2025] RIP: 0010:netfs_consume_read_data.isra.0+0xb79/0x=
+b80 [netfs]
+[Di Okt  7 13:03:51 2025] Code: 48 89 ea 31 f6 48 c7 c7 96 d5 61 c2 e8 30 8=
+e 7f d2 48 8b 4c 24 10 4c 89 fe 48 8b 54 24 20 48 c7 c7 b2 d5 61 c2 e8 17 8=
+e 7f d2 <0f> 0b 90 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+[Di Okt  7 13:03:51 2025] RSP: 0018:ffff97b3c05abd58 EFLAGS: 00010246
+[Di Okt  7 13:03:51 2025] RAX: 0000000000000019 RBX: ffff8c071b60cfc0 RCX: =
+0000000000000027
+[Di Okt  7 13:03:51 2025] RDX: 0000000000000000 RSI: 0000000000000001 RDI: =
+ffff8c098e921780
+[Di Okt  7 13:03:51 2025] RBP: 0000000000000000 R08: 0000000000000000 R09: =
+ffff97b3c05abbe8
+[Di Okt  7 13:03:51 2025] R10: ffffffff95eb43a8 R11: 0000000000000003 R12: =
+ffff8c06c6c23168
+[Di Okt  7 13:03:51 2025] R13: 0000000000004000 R14: ffff8c06c6c23168 R15: =
+00000000000da000
+[Di Okt  7 13:03:51 2025] FS:  0000000000000000(0000) GS:ffff8c098e600000(0=
+000) knlGS:0000000000000000
+[Di Okt  7 13:03:51 2025] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[Di Okt  7 13:03:51 2025] CR2: 00000be403e34fe0 CR3: 000000015a2c2000 CR4: =
+0000000000f50ef0
+[Di Okt  7 13:03:51 2025] PKRU: 55555554
+
+
+Mit freundlichen Gr=C3=BCssen
+
+-Beno=C3=AEt Panizzon-
+--=20
+I m p r o W a r e   A G    -    Leiter Commerce Kunden
+______________________________________________________
+
+Zurlindenstrasse 29             Tel  +41 61 826 93 00
+CH-4133 Pratteln                Fax  +41 61 826 93 01
+Schweiz                         Web  http://www.imp.ch
+______________________________________________________
 
