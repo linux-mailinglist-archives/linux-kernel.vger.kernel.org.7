@@ -1,67 +1,47 @@
-Return-Path: <linux-kernel+bounces-843822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B156CBC0575
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:32:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CCF0BC057E
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:33:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B4B73C3539
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:32:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4E7C84F3187
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55EE61E5B7C;
-	Tue,  7 Oct 2025 06:32:34 +0000 (UTC)
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9B41F936;
+	Tue,  7 Oct 2025 06:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="odz106TM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813B23208
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 06:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CFE1D86DC;
+	Tue,  7 Oct 2025 06:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759818754; cv=none; b=GsGG5tapBLf03AXwY+Q8QDoMhwJYqJzpSxPzcyl+0C7eJR+p/9uT1KZ0i9MvaIyhFvOcidPMFZB3vTUAEYx6mWdFlC/fB8m4Eu9/S1wQel4l9mu6KOsKJT44MULWwBwlQRUBLuEfMjKHgaj+uIlfGvXBi5l0cxtovoPIq+hLFcE=
+	t=1759818776; cv=none; b=hBNxqYqhOzdHh0+aW49+UHrAZiO4HGXA22dbZ5gWXGf6tnfLgW3JUqBR1tgboOo/VQjKIQ/lwjExouk1fsTPmQV+WK3lt1mPG43Veqqousqr2DWDcxxk1Tw+Dce7CQdczqrNy8f9cV5dnS7xp5saBL0ABM/EZ6fSY5E67o2Ppk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759818754; c=relaxed/simple;
-	bh=hYyfYckrsx8MnB/o9ezaFvNJQCYjBKMqokG3tB5c0LU=;
+	s=arc-20240116; t=1759818776; c=relaxed/simple;
+	bh=yexCi0CSSbwuHHsbvKOWPYwornynNG9uwFDQFJBE5R0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U9y6Ri85TzyhF71UtzBn3885XJhjO1vMjA6+LllKNx5a9lgOXnkiMQjbaCYMLKKMqECz3ACAI1onAyxUQnTqGtDCK0ahdmGcaqFFRbpoqIuD46s7ryn2d4AyN0UH8T30QTxnUgmaYrhLUHV6lCPIEdae+2ratKVtQddHgHRmAZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-781254d146eso397346b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 23:32:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759818752; x=1760423552;
-        h=content-transfer-encoding:in-reply-to:organization:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KJGCKWDOB+HDW2IfjXMw+O6nf5o51khcjA2mbC8osTg=;
-        b=jvjEP4GRSnEYo01o+KA5ocBo+iYLmBiLZyD6Q5sRXgOEa0nTntHDr99ZW8zi0iPVT2
-         Ql43YwbcLoy/B2v4G7W+jPkMW2GkSPO93xWuGhCJYowtXmZkku5+t3DSfwJIg6efERcI
-         lyeqKd2qAoOLaHkcHKNcJcIVCH7IG01Vckzk06RuRS7/5/GX8RETT8O+HJMe+0z3CJ++
-         WR+g3+mSmDBHNCO3/RMkf0b839f7OXRQ3z6imaSjlySd/OBzYRT+xLQExs89CPaBfb3I
-         03BxBuFEjRpqPQa6FxZOn6K3hfIJ0Q/772mpNuQjKd0sw2ER9cH9wOCRIV0UcJzwMcoH
-         20Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCXP9m4bfHEU2iSiP5v3Y9a4JlNebjmDwtrqdH4a+EVSCHc20rzo1EFCMt9IoKD/VvvwfrlWEfzsKoYUXlE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMpAMGQNSYeEeEHkHNE3wKTmSAeyCxgt6QfHiJf6a6vdj2Qc6z
-	+TuAkyDsdDtBxUNoEvJgQHWq9avTzhuEu8o3thZOSSTI2KWsv6MjpOkF
-X-Gm-Gg: ASbGncsnjZweGKaQNkoZxflD86Eiv0MoTg51Dg8a6FPcmce9+FDfOFCkEJv/ZX0gZ6Q
-	VAsDh6ggBOl+uO1e4uEJjFh67PvK4CjWOsOni7kxYZb3/x8eB+mpSt5AxAUgGi/09YWhX07pk/i
-	77C7HfQbBNxpnNmtUbxRm774FrGCiweRxxuOJJfM/7naozd/cTYoyF81BRU8vxck0LuaGpNfT6l
-	sHJ9OuQ1nQeHr5nilzHKdbAsoGuQAGSH+R40SBVcgc8PvLRm2LTNyITe3DZpyclJAPqBxswn4ZW
-	ozTHUdKRH7Y8IoJ6dwZgj3zP5zuGr8hIwsz+OZDw5vykMHD1NdOEcJU2EpjcMco7+sZHOPEUe43
-	uildTQ2djywS7WgCOHkvZRgaUdLRJtsooJeSR3sMl1seX02DIT6bS2RQFwqvc9cb1wJioUnoneX
-	1RYJ0iQihH6vevsq9rJRmwmOKqp/VN/pTxlg7wAmTvmDsMw4YmVRSR
-X-Google-Smtp-Source: AGHT+IEhca/DKV1gkMLzYSeFHCblQernrwx8MiefUNdEs8Uem/33USeoThMFjQF25dXOu6Ao9GH78Q==
-X-Received: by 2002:a17:902:c403:b0:27e:f02a:b280 with SMTP id d9443c01a7336-28e9a65bd1cmr98147365ad.5.1759818751599;
-        Mon, 06 Oct 2025 23:32:31 -0700 (PDT)
-Received: from [192.168.50.136] ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d110cdfsm153463955ad.13.2025.10.06.23.32.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Oct 2025 23:32:31 -0700 (PDT)
-Message-ID: <3b66d603-543d-4616-92a5-9e6e32f116be@kzalloc.com>
-Date: Tue, 7 Oct 2025 15:32:27 +0900
+	 In-Reply-To:Content-Type; b=Ys5DpDUv58TlFd1bFVXbs/MFFFDwF6TXpXPq56mLfnrWRmXtILjy412czHH4E3zG8nXXeCHSMv+ZVpGSwOs4buXWWg9SF0vnwz/9BTQ43ugfBKcMnsrC/80zQzmtcJBG/x9zGrblIYm9O1/42pbuAHgnf3ENfPHCM+AWOP1BXPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=odz106TM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CC31C4CEF1;
+	Tue,  7 Oct 2025 06:32:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759818775;
+	bh=yexCi0CSSbwuHHsbvKOWPYwornynNG9uwFDQFJBE5R0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=odz106TM854yKNKoH36btKdFaOjbZQIb4dlLQFvGxMXlY2jgMrLgiMtVL72bOXBRS
+	 Z6DG4M4GAZZa24DaNemPF3b6DVS+QFKT8OehL3f8wLD5/TLe/kjZ50U1bARq8AosiK
+	 1aWcCrpqSP/pQsLB+oe4CgTCs+Bd30WC/GuOXm1w5fbYIlsDv7beuaQAtvbj2zk0vW
+	 50zq8i9cc8u9KG9yTBR4uaLCLzC4gzFQVVPxKaN3IUlDU30b3zlVpfsHg4QIvHxPM4
+	 pJxSCZvNQyjV+/aNfmt1jnvr1eWkXFtK3DY0d1LMNYGk5aS/lv1sb0FpqNMIQxaPrq
+	 mJ8GGHc06XpYw==
+Message-ID: <ea85d388-c0c1-4b4a-96d6-d3f27622ed54@kernel.org>
+Date: Tue, 7 Oct 2025 15:32:48 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,55 +49,115 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] mm/migrate: make sure folio_unlock() before
- folio_wait_writeback()
-To: Byungchul Park <byungchul@sk.com>, Hillf Danton <hdanton@sina.com>
-Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
- Yeoreum Yun <yeoreum.yun@arm.com>
-References: <20251002081612.53281-1-byungchul@sk.com>
- <20251002220211.8009-1-hdanton@sina.com>
- <20251003004828.GA75385@system.software.com>
- <20251003005230.GB75385@system.software.com>
+Subject: Re: [PATCH 3/4] arm64: dts: ExynosAutov920: add PCIe PHY DT nodes
+To: Sanghoon Bae <sh86.bae@samsung.com>, robh@kernel.org,
+ conor+dt@kernel.org, vkoul@kernel.org, alim.akhtar@samsung.com,
+ kishon@kernel.org, m.szyprowski@samsung.com, jh80.chung@samsung.com,
+ shradha.t@samsung.com
+Cc: krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+References: <20250926073921.1000866-1-sh86.bae@samsung.com>
+ <CGME20250926074021epcas2p36a8dc02c84c9ca11e2318a1a8931d68a@epcas2p3.samsung.com>
+ <20250926073921.1000866-4-sh86.bae@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Yunseong Kim <ysk@kzalloc.com>
-Organization: kzalloc
-In-Reply-To: <20251003005230.GB75385@system.software.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250926073921.1000866-4-sh86.bae@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Hillf,
-
-Here are the syzlang and kernel log, and you can also find the gist snippet
-in the body of the first RFC mail:
-
- https://gist.github.com/kzall0c/a6091bb2fd536865ca9aabfd017a1fc5
-
-I am reviewing this issue again on the v6.17, The issue is always reproducible,
-usually occurring within about 10k attempts with the 8 procs.
-
-On 10/3/25 9:52 AM, Byungchul Park wrote:
-> On Fri, Oct 03, 2025 at 09:48:28AM +0900, Byungchul Park wrote:
->> On Fri, Oct 03, 2025 at 06:02:10AM +0800, Hillf Danton wrote:
->>> On Thu, 2 Oct 2025 13:38:59 +0200 David Hildenbrand wrote:
->>>>
->>>> If it's a real issue, I wonder if a trylock on the writeback path could
->>>> be an option.
->>>>
->>> Given Thanks to Yunseong for reporting the issue, testing, and confirming if
->>> this patch can resolve the issue, could you share your reproducer with
->>> reviewers Byungchul?
->>
->> Sure.  Yunseong told me it's 100% reproducable.  Yunseong, can you help
->> him reproduce the issue, please?
+On 26/09/2025 16:39, Sanghoon Bae wrote:
+> Add pcie_4l_phy, pcie_2l_phy dt node for all PCIe PHY instances
+> in ExynosAutov920 SoC.
 > 
-> +to ysk@kzalloc.com
+> Add HSI sysreg to control PCIe sysreg registers.
 > 
->>
->> 	Byungchul
+> Signed-off-by: Sanghoon Bae <sh86.bae@samsung.com>
+> ---
+>  .../arm64/boot/dts/exynos/exynosautov920.dtsi | 28 +++++++++++++++++++
+>  1 file changed, 28 insertions(+)
 > 
+> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> index 2cb8041c8a9f..9e45bfcd7980 100644
+> --- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> @@ -1021,12 +1021,40 @@ cmu_hsi0: clock-controller@16000000 {
+>  				      "noc";
+>  		};
+>  
+> +		syscon_hsi0: syscon@16030000 {
+> +			compatible = "samsung,exynosautov920-hsi0-sysreg",
+> +				     "syscon";
+> +			reg = <0x16030000 0x1000>;
+> +		};
+> +
+>  		pinctrl_hsi0: pinctrl@16040000 {
+>  			compatible = "samsung,exynosautov920-pinctrl";
+>  			reg = <0x16040000 0x10000>;
+>  			interrupts = <GIC_SPI 442 IRQ_TYPE_LEVEL_HIGH>;
+>  		};
+>  
+> +		pcie_2l_phy: pcie-phy2l@161c6000{
 
-Thank you!
 
-Yunseong
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+If you cannot find a name matching your device, please check in kernel
+sources for similar cases or you can grow the spec (via pull request to
+DT spec repo).
+
+Plus style issues... missing space.
+
+I would like to see also PCIe nodes somewhere, because I wonder if
+num-lanes should not be moved to PCI node (phy consumer) instead.
+Current approach feels better, but maybe it just duplicates num-lanes
+from the PCI?
+
+Best regards,
+Krzysztof
 
