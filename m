@@ -1,227 +1,140 @@
-Return-Path: <linux-kernel+bounces-844797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id D83DDBC2CCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 23:52:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41CEDBC2CCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 23:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5DAD934DFB7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 21:52:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E3511350062
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 21:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2EBE257829;
-	Tue,  7 Oct 2025 21:52:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jSrD36xy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459F12561D9;
+	Tue,  7 Oct 2025 21:52:29 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17FF248886;
-	Tue,  7 Oct 2025 21:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402BA246BB7
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 21:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759873935; cv=none; b=M1pnCwccT53ZmT6iqVqv5Ruig0bWF5A9pmRh4ZEvMNPeE4NRS36wvrAAxnEKuB3M8iFphG79oGpH0xPdHfv8t6QkW1VgYV1C8z7uQpW9bgIKNq6K79fn8TgI9qt701+md5PJt8eRYTPQKRp33CDqgrYn+Nrr3lrdPNrGgEF2Eiw=
+	t=1759873948; cv=none; b=qyNA7s4TFJdt0ZUfwyradOVy3lxozcsr1yYeKM494humi7hRDoHYJLljTVJKUQuMhqhRExz+T9sEDDvLNoLNS+QASa9FpnBqOlWM9SzTIr4rRJV64qarr1WRsmSyXjDb3KYsLxuiuUEjKQkrg8Pfr6D4dReiTz3/vEwqULA4UJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759873935; c=relaxed/simple;
-	bh=TMwIds0fuxfKRBQzxd/ixcrte7vyYIAz+jX147CkLDA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SlN7FV9Q6+/2ug0wYKVTCeX5Vbd+SBz3niyQ8SO9wPBNTlXhS4C+4mzWN5lWD6mEX3Jh6IMUUnSbqbnXcIQ3LkeuIjtr4UoJk0jNFW4e5T1QD6stzZBmpFoznamHKplGrJOGrGQckN3Kl1Jc7j+Dut18YZDDdNm+iS5ER2b52ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jSrD36xy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF006C4CEF1;
-	Tue,  7 Oct 2025 21:52:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759873934;
-	bh=TMwIds0fuxfKRBQzxd/ixcrte7vyYIAz+jX147CkLDA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jSrD36xywBi7OfvFdz3w8RLfn5c4KIRcDrjkhhR9kT04IvayhOYLGrShtGwuLWAxp
-	 MI+/n4IBMV/qIS5/+icQSKEcixKWy71grk631y0bi8+/AmcI2TLlz+KhzRva8Ewp2+
-	 K452qQySI7NhoBDJ9TzH3tOvwP8uu2X31Ss2EkXDh8zUNFDKr5g7XImpxcMNgsz0Wk
-	 X1A7N2JA040KMLQ1b2g0VfVAmRdb1RhqyXsMcfcEoDhMWc6jue35/MmU8O4pJNrETB
-	 llYSOksomLxzc/4QmzRXHuiHGUZkiYaS/r2EzwKWFM7wmYG/g2QRZ06VRzx15Ci6R8
-	 GUX6kZhK7YqAg==
-Date: Tue, 7 Oct 2025 14:52:13 -0700
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 11/12] remoteproc: qcom: pas: Enable Secure PAS
- support with IOMMU managed by Linux
-Message-ID: <fo6q3gl3dmcso5gcfp2taaao3qwazxw5uutkcwi6qg4aojt2av@tprjv3xhcs57>
-References: <20251007-kvm_rprocv4_next-20251007-v4-0-de841623af3c@oss.qualcomm.com>
- <20251007-kvm_rprocv4_next-20251007-v4-11-de841623af3c@oss.qualcomm.com>
+	s=arc-20240116; t=1759873948; c=relaxed/simple;
+	bh=Rf/Q1Iv6JMPmtv6eqR6d3PLk/+uH64F/ZMLm0Ku/lfI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=bXOJPly7aG9WFFuhZG/9D5bk6jmVSmblLTXJkCz2vemupSyIBxyK2utXxV+0ZIoq2/2XLCRMD3/jqspEul735Ncp37YpL60h+bBQfNI69IiTtTgmexZOO/iaKt1jw8c23OgZuO480aOUrf01Q0t99JWVljWkRThQr0EFCgi/sSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-91b3cc5aa6aso1602729339f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 14:52:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759873946; x=1760478746;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rr525ggriPbti9RSgts0y1f0Wmcz7fRKptJXoPmGDnk=;
+        b=iG1c7rLMoTaMCpIb0YAJZIArww8XYi4ZKKWc1QQwmSdSdMvEA4LbSfUiH5vY9d9519
+         TLzohAArOje7l59QrefujZKDB9XUzvy20no89zah/Ga4aZJw7lj+C8Y8qRZHDZSsqvjT
+         q+pfVAlVZKIvV+dmb7FjEwgd0kp4pJWwk3fm6bXY2RQmiqcVnAefOqJ7xOHwtRNgblu5
+         JkZxx04qB4Yro5INJJuJXtgar7WUZjjQmfhn2S21a8hQxtvIt0R1F8rQ9Ov4ISfyvzgm
+         4G+0BgUN3BsZ3g6lAScBXJYglxcTiX/4NQ/67UkIQaQ9XbUTWD1SfgyCEg11oB8SMPKs
+         /7vA==
+X-Gm-Message-State: AOJu0YxmIG6cHQz3cflwURYkt9N9uoNX31dYYV+fy6Ias2f75cyK7M3c
+	1aYGfKfO65HfUDJWQmtVKR+1dDrvPWRWmqCDbSBtRXULoucgju8CxqpB3XLRhNZXC3Omwl7oDTZ
+	U7qZU6ygU+dnSUVGi87qmT1+bGJtBe0sUKiRSaI+/WLemRH7UkvZryzrf5ig=
+X-Google-Smtp-Source: AGHT+IHFVNodcufQDyW7chzPvwMkn+Qyshs/Unn2TkYUYRDlU2YicbMB35nWylSfks2hDv7F6i0EgAk10zmvDxmjq6ky4pI1U+2j
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251007-kvm_rprocv4_next-20251007-v4-11-de841623af3c@oss.qualcomm.com>
+X-Received: by 2002:a05:6602:48c:b0:929:11b1:9bd9 with SMTP id
+ ca18e2360f4ac-93bd1970ea3mr94500339f.10.1759873946385; Tue, 07 Oct 2025
+ 14:52:26 -0700 (PDT)
+Date: Tue, 07 Oct 2025 14:52:26 -0700
+In-Reply-To: <68e2ff91.050a0220.2c17c1.003a.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e58b9a.050a0220.256323.0027.GAE@google.com>
+Subject: Forwarded: 
+From: syzbot <syzbot+3a1878433bc1cb97b42a@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 07, 2025 at 10:18:56PM +0530, Mukesh Ojha wrote:
-> Most Qualcomm platforms feature Gunyah hypervisor, which typically
-> handles IOMMU configuration. This includes mapping memory regions and
-> device memory resources for remote processors by intercepting
-> qcom_scm_pas_auth_and_reset() calls. These mappings are later removed
-> during teardown. Additionally, SHM bridge setup is required to enable
-> memory protection for both remoteproc metadata and its memory regions.
-> When the aforementioned hypervisor is absent, the operating system must
-> perform these configurations instead.
-> 
-> When Linux runs as the hypervisor (@ EL2) on a SoC, it will have its
-> own device tree overlay file that specifies the firmware stream ID now
-> managed by Linux for a particular remote processor. If the iommus
-> property is specified in the remoteproc device tree node, it indicates
-> that IOMMU configuration must be handled by Linux. In this case, the
-> has_iommu flag is set for the remote processor, which ensures that the
-> resource table, carveouts, and SHM bridge are properly configured before
-> memory is passed to TrustZone for authentication. Otherwise, the
-> has_iommu flag remains unset, which indicates default behavior.
-> 
-> Enables Secure PAS support for remote processors when IOMMU configuration
-> is managed by Linux.
-> 
-> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> ---
->  drivers/remoteproc/qcom_q6v5_pas.c | 61 ++++++++++++++++++++++++++++++++++----
->  1 file changed, 56 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index ed7bd931dfd5..940fd89d4fc4 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -11,6 +11,7 @@
->  #include <linux/delay.h>
->  #include <linux/firmware.h>
->  #include <linux/interrupt.h>
-> +#include <linux/iommu.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> @@ -255,6 +256,22 @@ static int qcom_pas_load(struct rproc *rproc, const struct firmware *fw)
->  	return ret;
->  }
->  
-> +static void qcom_pas_unmap_carveout(struct rproc *rproc, phys_addr_t mem_phys, size_t size)
-> +{
-> +	if (rproc->has_iommu)
-> +		iommu_unmap(rproc->domain, mem_phys, size);
-> +}
-> +
-> +static int qcom_pas_map_carveout(struct rproc *rproc, phys_addr_t mem_phys, size_t size)
-> +{
-> +	int ret = 0;
-> +
-> +	if (rproc->has_iommu)
-> +		ret = iommu_map(rproc->domain, mem_phys, mem_phys, size,
-> +				IOMMU_READ | IOMMU_WRITE, GFP_KERNEL);
-> +	return ret;
-> +}
-> +
->  static int qcom_pas_start(struct rproc *rproc)
->  {
->  	struct qcom_pas *pas = rproc->priv;
-> @@ -289,11 +306,15 @@ static int qcom_pas_start(struct rproc *rproc)
->  	}
->  
->  	if (pas->dtb_pas_id) {
-> -		ret = qcom_scm_pas_auth_and_reset(pas->dtb_pas_id);
-> +		ret = qcom_pas_map_carveout(rproc, pas->dtb_mem_phys, pas->dtb_mem_size);
-> +		if (ret)
-> +			goto disable_px_supply;
-> +
-> +		ret = qcom_scm_pas_prepare_and_auth_reset(pas->dtb_pas_ctx);
->  		if (ret) {
->  			dev_err(pas->dev,
->  				"failed to authenticate dtb image and release reset\n");
-> -			goto disable_px_supply;
-> +			goto unmap_dtb_carveout;
->  		}
->  	}
->  
-> @@ -304,18 +325,22 @@ static int qcom_pas_start(struct rproc *rproc)
->  
->  	qcom_pil_info_store(pas->info_name, pas->mem_phys, pas->mem_size);
->  
-> -	ret = qcom_scm_pas_auth_and_reset(pas->pas_id);
-> +	ret = qcom_pas_map_carveout(rproc, pas->mem_phys, pas->mem_size);
-> +	if (ret)
-> +		goto release_pas_metadata;
-> +
-> +	ret = qcom_scm_pas_prepare_and_auth_reset(pas->pas_ctx);
->  	if (ret) {
->  		dev_err(pas->dev,
->  			"failed to authenticate image and release reset\n");
-> -		goto release_pas_metadata;
-> +		goto unmap_carveout;
->  	}
->  
->  	ret = qcom_q6v5_wait_for_start(&pas->q6v5, msecs_to_jiffies(5000));
->  	if (ret == -ETIMEDOUT) {
->  		dev_err(pas->dev, "start timed out\n");
->  		qcom_scm_pas_shutdown(pas->pas_id);
-> -		goto release_pas_metadata;
-> +		goto unmap_carveout;
->  	}
->  
->  	qcom_scm_pas_metadata_release(pas->pas_ctx);
-> @@ -327,10 +352,16 @@ static int qcom_pas_start(struct rproc *rproc)
->  
->  	return 0;
->  
-> +unmap_carveout:
-> +	qcom_pas_unmap_carveout(rproc, pas->mem_phys, pas->mem_size);
->  release_pas_metadata:
->  	qcom_scm_pas_metadata_release(pas->pas_ctx);
->  	if (pas->dtb_pas_id)
->  		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
-> +
-> +unmap_dtb_carveout:
-> +	if (pas->dtb_pas_id)
-> +		qcom_pas_unmap_carveout(rproc, pas->dtb_mem_phys, pas->dtb_mem_size);
->  disable_px_supply:
->  	if (pas->px_supply)
->  		regulator_disable(pas->px_supply);
-> @@ -386,8 +417,12 @@ static int qcom_pas_stop(struct rproc *rproc)
->  		ret = qcom_scm_pas_shutdown(pas->dtb_pas_id);
->  		if (ret)
->  			dev_err(pas->dev, "failed to shutdown dtb: %d\n", ret);
-> +
-> +		qcom_pas_unmap_carveout(rproc, pas->dtb_mem_phys, pas->dtb_mem_size);
->  	}
->  
-> +	qcom_pas_unmap_carveout(rproc, pas->mem_phys, pas->mem_size);
-> +
->  	handover = qcom_q6v5_unprepare(&pas->q6v5);
->  	if (handover)
->  		qcom_pas_handover(&pas->q6v5);
-> @@ -757,6 +792,20 @@ static int qcom_pas_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  	}
->  
-> +	if (of_property_present(pdev->dev.of_node, "iommus")) {
-> +		struct of_phandle_args args;
-> +
-> +		ret = of_parse_phandle_with_args(pdev->dev.of_node, "iommus",
-> +						 "#iommu-cells", 0, &args);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		rproc->has_iommu = true;
-> +		of_node_put(args.np);
-> +	} else {
-> +		rproc->has_iommu = false;
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Default value is false, is't it?
+***
 
-- Mani
+Subject: 
+Author: jkoolstra@xs4all.nl
 
+#syz test
+
+
+ fs/ntfs3/index.c | 10 +++++-----
+ fs/ntfs3/ntfs.h  |  5 ++++-
+ 2 files changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/fs/ntfs3/index.c b/fs/ntfs3/index.c
+index 6d1bf890929d..2e512abc7000 100644
+--- a/fs/ntfs3/index.c
++++ b/fs/ntfs3/index.c
+@@ -1808,7 +1808,7 @@ indx_insert_into_buffer(struct ntfs_index *indx, struct ntfs_inode *ni,
+ 	CLST new_vbn;
+ 	__le64 t_vbn, *sub_vbn;
+ 	u16 sp_size;
+-	void *hdr1_saved = NULL;
++	void *blk1_saved = NULL;
+ 
+ 	/* Try the most easy case. */
+ 	e = fnd->level - 1 == level ? fnd->de[level] : NULL;
+@@ -1842,8 +1842,8 @@ indx_insert_into_buffer(struct ntfs_index *indx, struct ntfs_inode *ni,
+ 	memcpy(up_e, sp, sp_size);
+ 
+ 	used1 = le32_to_cpu(hdr1->used);
+-	hdr1_saved = kmemdup(hdr1, used1, GFP_NOFS);
+-	if (!hdr1_saved) {
++	blk1_saved = kmemdup(&n1->index->blk, used1, GFP_NOFS);
++	if (!blk1_saved) {
+ 		err = -ENOMEM;
+ 		goto out;
+ 	}
+@@ -1924,13 +1924,13 @@ indx_insert_into_buffer(struct ntfs_index *indx, struct ntfs_inode *ni,
+ 		 * Undo critical operations.
+ 		 */
+ 		indx_mark_free(indx, ni, new_vbn >> indx->idx2vbn_bits);
+-		memcpy(hdr1, hdr1_saved, used1);
++		memcpy(&n1->index->blk, blk1_saved, used1);
+ 		indx_write(indx, ni, n1, 0);
+ 	}
+ 
+ out:
+ 	kfree(up_e);
+-	kfree(hdr1_saved);
++	kfree(blk1_saved);
+ 
+ 	return err;
+ }
+diff --git a/fs/ntfs3/ntfs.h b/fs/ntfs3/ntfs.h
+index 552b97905813..d5e2b22eacd7 100644
+--- a/fs/ntfs3/ntfs.h
++++ b/fs/ntfs3/ntfs.h
+@@ -754,7 +754,10 @@ static inline bool hdr_has_subnode(const struct INDEX_HDR *hdr)
+ struct INDEX_BUFFER {
+ 	struct NTFS_RECORD_HEADER rhdr; // 'INDX'
+ 	__le64 vbn; // 0x10: vcn if index >= cluster or vsn id index < cluster
+-	struct INDEX_HDR ihdr; // 0x18:
++	struct_group(blk,
++		struct INDEX_HDR ihdr; // 0x18:
++	        u8 data[]; // NTFS_DE entries
++	);
+ };
+ 
+ static_assert(sizeof(struct INDEX_BUFFER) == 0x28);
 -- 
-மணிவண்ணன் சதாசிவம்
+2.51.0
 
