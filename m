@@ -1,153 +1,99 @@
-Return-Path: <linux-kernel+bounces-843937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77972BC0A27
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:32:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 902D9BC0A7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:35:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1CE7034D179
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:32:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9E6A74F45A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4302566DD;
-	Tue,  7 Oct 2025 08:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="poFK5QJq"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318582DC321;
+	Tue,  7 Oct 2025 08:33:05 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F9C13BC3F
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 08:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26012D9796
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 08:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759825945; cv=none; b=ZBtOG0xjVaM4/0vy/TJYR50MGOuabdFkv9jeQR0po9j0o0uqDfJBkeyzzRM2tLV8VVheYl4+/j9HA9DP0codkhQxL2nKivNlnMYwYDbDqcN4JA/LCxK8/oQTY5pbyBozmqIdnGNaCS5FNPpeRC//eW3H9QFT2J5pjtqWOLGJdIg=
+	t=1759825984; cv=none; b=JRpZH9FWvYe52RlSI+8V1gAMT2veCPwHcLx2VBBsZxBTB1+n6PpK4LsxDMDuCev+AshgisKGbmVo9WhdUZao9nR7fzk6/1do8mpopG/T8t21x36ckyss8yy3hRyhsWz4zW5UtqJVl7NleqoGss6QsdaTIYJwOFYM4Sz5Fheh3/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759825945; c=relaxed/simple;
-	bh=W5Jzxep2mhNyuaY2GBbgXVerVfRC2WubWc0dwOCBfo0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pnC01J1bat4kpjBeS05O2EGNCPvJRI5HxkbnVYgQHkFAROAxpo4SvVkR27MPu0VAAxwq9Onfu4Gl2nkceLzXnja38smhtJjUlXSlkO3YVblCBAwnutYc4I6kHviJ1+k+3NO414wzRL9tL3Ttw9zLsdTQp4DvYzqRxNcE3cXxKRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=poFK5QJq; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <c89256b8-bec3-4bc8-8399-cb44794f70f1@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759825934;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=708hk4v3K6U22ycgyF+Dfx1gxlMvrf8ku8x+RwSAqRg=;
-	b=poFK5QJqDXcZYwm/pfaHunbTVH62Gwx6FqZESEIDH0vgX6lQXYC8rbj8UPeUdHGaDODAak
-	viQKiHuOefku37kxtGPpa8PnhP8iE+Kns9Tw5w4yDfaA/0yX0DrIOMyBYXpPosVIo31OEn
-	ki2kZeCXxQKJMQWzEEYm4GgIgb8sFXo=
-Date: Tue, 7 Oct 2025 16:32:07 +0800
+	s=arc-20240116; t=1759825984; c=relaxed/simple;
+	bh=cGyFF4tPVGDvqStEHnWXHR1TbnkY/wuBQ12QbPLDcB8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Qigh9CvYnx6GlaOIjzd56xHXIGznBK4AcaQzZl02CC9U/VVMTS9dzPrLpbx0kr++lwHQFCsuTiYvfI5Yt2mXGsqyNyMPIG34Rb2bMOfl0cmZqCeOzgOVwlWKRZDDMDpL4AOQxnE2UXQkCMnMOaRND8xDxqS0vtklRNVmr8CwSLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=peter.mobile.pengutronix.de)
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <s.pueschel@pengutronix.de>)
+	id 1v637z-0002Hb-Vv; Tue, 07 Oct 2025 10:33:00 +0200
+From: =?utf-8?q?Sven_P=C3=BCschel?= <s.pueschel@pengutronix.de>
+Date: Tue, 07 Oct 2025 10:32:08 +0200
+Subject: [PATCH 15/16] arm64: dts: rockchip: increase rga3 clock speed
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH mm-new v2 3/3] mm/khugepaged: merge PTE scanning logic
- into a new helper
-Content-Language: en-US
-To: Dev Jain <dev.jain@arm.com>
-Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
- npache@redhat.com, ryan.roberts@arm.com, baohua@kernel.org,
- ioworker0@gmail.com, richard.weiyang@gmail.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, akpm@linux-foundation.org,
- lorenzo.stoakes@oracle.com, david@redhat.com
-References: <20251006144338.96519-1-lance.yang@linux.dev>
- <20251006144338.96519-4-lance.yang@linux.dev>
- <586f6282-ac7e-42d2-b132-0ba067623ddc@arm.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <586f6282-ac7e-42d2-b132-0ba067623ddc@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Message-Id: <20251007-spu-rga3-v1-15-36ad85570402@pengutronix.de>
+References: <20251007-spu-rga3-v1-0-36ad85570402@pengutronix.de>
+In-Reply-To: <20251007-spu-rga3-v1-0-36ad85570402@pengutronix.de>
+To: Jacob Chen <jacob-chen@iotwrt.com>, 
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, kernel@pengutronix.de, 
+ =?utf-8?q?Sven_P=C3=BCschel?= <s.pueschel@pengutronix.de>
+X-Mailer: b4 0.14.2
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: s.pueschel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+Increase the RGA3 clock speed to get the maximal possible frames
+per second. By default the core and axi clock is set to 375Mhz.
 
+Signed-off-by: Sven Püschel <s.pueschel@pengutronix.de>
+---
+ arch/arm64/boot/dts/rockchip/rk3588-base.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-On 2025/10/7 14:28, Dev Jain wrote:
-> 
-> On 06/10/25 8:13 pm, Lance Yang wrote:
->> +static inline int thp_collapse_check_pte(pte_t pte, struct 
->> vm_area_struct *vma,
->> +        unsigned long addr, struct collapse_control *cc,
->> +        struct folio **foliop, int *none_or_zero, int *unmapped,
->> +        int *shared, int *scan_result)
-> 
-> Nit: Will prefer the cc parameter to go at the last.
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
+index 08885d9c19e0c104ab0f723ec161b83998cfb9c7..57e320267bb629893bb884bf4e8d6bbc22f8d628 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
+@@ -1179,6 +1179,8 @@ rga3_core0: rga@fdb60000 {
+ 		interrupt-names = "rga3_core0_irq";
+ 		clocks = <&cru ACLK_RGA3_0>, <&cru HCLK_RGA3_0>, <&cru CLK_RGA3_0_CORE>;
+ 		clock-names = "aclk", "hclk", "sclk";
++		assigned-clocks = <&cru CLK_RGA3_0_CORE>, <&cru ACLK_RGA3_0>;
++		assigned-clock-rates = <800000000>, <800000000>;
+ 		resets = <&cru SRST_RGA3_0_CORE>, <&cru SRST_A_RGA3_0>, <&cru SRST_H_RGA3_0>;
+ 		reset-names = "core", "axi", "ahb";
+ 		power-domains = <&power RK3588_PD_RGA30>;
+@@ -1202,6 +1204,8 @@ rga3_core1: rga@fdb70000 {
+ 		interrupt-names = "rga3_core1_irq";
+ 		clocks = <&cru ACLK_RGA3_1>, <&cru HCLK_RGA3_1>, <&cru CLK_RGA3_1_CORE>;
+ 		clock-names = "aclk", "hclk", "sclk";
++		assigned-clocks = <&cru CLK_RGA3_1_CORE>, <&cru ACLK_RGA3_1>;
++		assigned-clock-rates = <800000000>, <800000000>;
+ 		resets = <&cru SRST_RGA3_1_CORE>, <&cru SRST_A_RGA3_1>, <&cru SRST_H_RGA3_1>;
+ 		reset-names = "core", "axi", "ahb";
+ 		power-domains = <&power RK3588_PD_RGA31>;
 
-Yep, got it.
+-- 
+2.51.0
 
-> 
->> +{
->> +    struct folio *folio = NULL;
->> +    struct page *page = NULL;
->> +
->> +    if (pte_none(pte) || is_zero_pfn(pte_pfn(pte))) {
->> +        (*none_or_zero)++;
->> +        if (!userfaultfd_armed(vma) &&
->> +            (!cc->is_khugepaged ||
->> +             *none_or_zero <= khugepaged_max_ptes_none)) {
->> +            return PTE_CHECK_CONTINUE;
->> +        } else {
->> +            *scan_result = SCAN_EXCEED_NONE_PTE;
->> +            count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
->> +            return PTE_CHECK_FAIL;
->> +        }
->> +    } else if (!pte_present(pte)) {
->> +        if (!unmapped) {
->> +            *scan_result = SCAN_PTE_NON_PRESENT;
->> +            return PTE_CHECK_FAIL;
->> +        }
->> +
->> +        if (non_swap_entry(pte_to_swp_entry(pte))) {
->> +            *scan_result = SCAN_PTE_NON_PRESENT;
->> +            return PTE_CHECK_FAIL;
->> +        }
->> +
->> +        (*unmapped)++;
->> +        if (!cc->is_khugepaged ||
->> +            *unmapped <= khugepaged_max_ptes_swap) {
->> +            /*
->> +             * Always be strict with uffd-wp enabled swap
->> +             * entries. Please see comment below for
->> +             * pte_uffd_wp().
->> +             */
->> +            if (pte_swp_uffd_wp(pte)) {
->> +                *scan_result = SCAN_PTE_UFFD_WP;
->> +                return PTE_CHECK_FAIL;
->> +            }
->> +            return PTE_CHECK_CONTINUE;
->> +        } else {
->> +            *scan_result = SCAN_EXCEED_SWAP_PTE;
->> +            count_vm_event(THP_SCAN_EXCEED_SWAP_PTE);
->> +            return PTE_CHECK_FAIL;
->> +        }
->> +    } else if (pte_uffd_wp(pte)) {
->> +        /*
->> +         * Don't collapse the page if any of the small PTEs are
->> +         * armed with uffd write protection. Here we can also mark
->> +         * the new huge pmd as write protected if any of the small
->> +         * ones is marked but that could bring unknown userfault
->> +         * messages that falls outside of the registered range.
->> +         * So, just be simple.
->> +         */
->> +        *scan_result = SCAN_PTE_UFFD_WP;
->> +        return PTE_CHECK_FAIL;
->> +    }
->> +
->> +    page = vm_normal_page(vma, addr, pte);
-> 
-> You should use vm_normal_folio here and drop struct page altogether - 
-> this was also
-> noted during the review of the mTHP collapse patchset.
-
-Right, I missed that vm_normal_folio() was the way to go here :)
-
-Thanks for the pointer!
-Lance
 
