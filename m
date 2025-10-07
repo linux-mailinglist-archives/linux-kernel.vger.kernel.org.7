@@ -1,222 +1,180 @@
-Return-Path: <linux-kernel+bounces-843827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7552BC05A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:40:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 798F5BC05AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:40:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D3FE189263F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:40:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA6F018919C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1342253F2;
-	Tue,  7 Oct 2025 06:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lJN4QDrn"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141A32264A8;
+	Tue,  7 Oct 2025 06:40:28 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44DA81DFE12
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 06:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B82224B09
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 06:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759819200; cv=none; b=i8jtk4vK7uGXd1ishedM3xHaXPEhfQ5a+bOewmaVpa5Zghr8mPeSQAu/0GRlOfSN2nZ4OCQgUBBC+5GrROG8FCFhquSFD0wnhcqIj5JlKaMau4NvCkNJGqUs8fIaTVxnF8bAdhlkUq7JYJKjgz+JxKapSz7sk4NJSVelAeT6qRs=
+	t=1759819227; cv=none; b=OPCdpUwr1XZ4l0Dhp0OQMTEEtWV2Sw1cbTf+czSkoDQV+toUGbPxo0g/dm5JfVXo0D1h/IATW+WQOQCyVV1JwcciGEOszz5WwpBNDxX7aaUR7P2lLF+/njOU3UkRU/uQkKU/2of+JFajouQ5fI1K9ugo/5gSqCyU2VxBt4GODjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759819200; c=relaxed/simple;
-	bh=MlmgKlgZw6bNBNDPZ4yL2xiVLmJkWvwQdwG0hDFUJWk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uag7GOEGfLmpLz5N4dTdUpKyUIlIK/DnFKMgGLZRQW5obUJ9krFMuUi6E9/lNQIpKCgqzzmf2mCd3TtKvl3FYLN8SQz0TCaiX/FS1ZGj/8AI75XNTw5ulxyT6m/Q2cRA6KC0+Xb1chNU3Ed+vaqXe4qUBkaIfS7aw1856zUjXgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lJN4QDrn; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-362acd22c78so55395421fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 23:39:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759819196; x=1760423996; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S0C4GwIKNXewQdfdWCoaJErCN+2dpt6b5L9PgeLMaFU=;
-        b=lJN4QDrnvR9CwZ7SpJSDivoNXJZQUN9cG1CmFmEaU/kaSAdEXivt6IvUybTKXfnBB+
-         MFvN+2YwOKtgVEERT8iosuGKEFtJijBoeDuaDJ7ZQEduyg7wiRvBkVFLl6EBRhyeRjkM
-         P31GyNILH65/WrKqdSXpUaOw9Ye6ofn4Z/zTwyKntT+bDFJ6BR8aSQsPkVMGz4qM5iGo
-         Yhi/Ipb1+LMb0DSZo0XMFvWCSbh4sHEogm6OhUVexUmo2CWPhvOlc4csmrMbqWw7jagp
-         MyfXk1JryYezHS/nA397lIi2BaPMxBry+8KwmoaEkS6PuF4tj3QvtsMgVl0Jrdu6QuFy
-         zWzg==
+	s=arc-20240116; t=1759819227; c=relaxed/simple;
+	bh=XlOTIbzyJ9ae2wkRAdNrqwCpKp7faZ2gxc/qDolAbPI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=B3uafK8ZnwaX4dfu74K2yWAWFz17sJqrq/WWGI9brGIBEg1+E2V0SaSvAvv6jjreL8Rk9r8zu3hat5MMHUtbL5cT6qmP9CUrjqK1X3wtx+r6hlA69WjOTD02X8LGEoascMiq7xuRCLYVkNFlPIDJqx29FKqjEy2cyIKGgVCsHNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-42f6639fb22so39645355ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 23:40:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759819196; x=1760423996;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S0C4GwIKNXewQdfdWCoaJErCN+2dpt6b5L9PgeLMaFU=;
-        b=dVqKB19mMX2T06YvkZTwG4+mIuZlRzDr6gNz1nYk43p+Q+nVFnZSOaEGkIHxofOVla
-         /ec86ceXr6yb9L5mKvoQB50KrAF1r5v7vFAaxWxSWKZmJaoMqXtQ3m0ajq7GinwBOpjr
-         d1PSr1hLDPw192DCGY+8lRw+SeQ8TYxHo45TxuCXtRtqKufJVHt3W344XQ3XGNfaNJtv
-         fuHQ1+BZWOumMM2Yx4yIQLC9vCoN7zHOpwrdD8+WsTzkPi6SO/xYK9Q5lpa+DxILbd3v
-         SMRTOmcudFTdQKH3YtkfMizGJJiQQeAllSZlvxw6Gr22vWCCBJO3bjznnLL6sGFYD1DS
-         nLqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUG45fO9gyJe8oTnBEImUrzGWwyqrGBEKj8LrJJJvDWS5cxglrvNbQlq33bdrajSA39BQWUdPdUta5L+Zs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQDVaMxg8cCuPAt1e3dgHN9f6TLjYKrwUW5xAFtVR+kVXLrgSD
-	S36p3A23p5XTe3JgP9RdMw67LzEOpddJqSRlW5Fqp/UPzUlKIqUEJ3Tzy8Cy1VQ/xx9KOatQU5r
-	umNXyjSxLZ9sWyiKhdfvmqthbdh+Knsg=
-X-Gm-Gg: ASbGncuwjvope5mNFyaL6ssV4uigqHmvhniZHx/UJVeYLVogWk2WS93ycBN/+h3APGB
-	9gii++L2TrlEzTiR4Esn0auBaFrU9YuGnz7RWhUku8xz4fOLWqx8qf4DkrUgjezATs66jYgR5BT
-	dfpR77jTxMNy5p4LU5QeW3LXX+ha9BYHCumyZVRdkLDK6JEI/D4UjaLeLeIZHq2VmO2v5ov3aMk
-	WGdVL2epiR431ZdfcVkGutmLw5wASs=
-X-Google-Smtp-Source: AGHT+IGw2e5PJUM70ofjlrSrlE/TrJc1sbv/DAC3CPfjTqSP9CziUjjExiazULBlK6HV0Ait4DXZWb1MD8cvC0xI19E=
-X-Received: by 2002:a05:651c:1c9:b0:365:253e:535a with SMTP id
- 38308e7fff4ca-374c3828d08mr40434751fa.41.1759819195890; Mon, 06 Oct 2025
- 23:39:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759819225; x=1760424025;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZmWH0sFJ81ae4IdRbfRzpAwRmesL9eDv1LLY5X2e6JQ=;
+        b=dYnnWWkTs3AUwVJDxU7PVB+6xLnLugTqJ+peyJqfCixNr+glMoC/nZLAgejbJFXZAJ
+         NGQfcy4av3cWMa4YWnYgtQPm1Qz6n3uHRta7Xps3lqs+vRQ1t3a8Aj5nA1a5hMm4bz8d
+         Rs9qxumFghbkTUkN9KpwMeenjvNF8HmZyySEkm7ZZRPj8EErgcQJLfG8We1JMvF0Wco3
+         E4Mv/cFj2ra4s5Y++eU5i5WwaXHfhvNvL6EBC69E4Vc/jykK8LoTAjFgB6JwDoG9Xn/S
+         7KZdY19+r9bU8cFoSc6K7jKy67ytVJkp65PwfEsPnYx4IPrN58CBHYNNk2nm5T0LfL/U
+         Q/VA==
+X-Forwarded-Encrypted: i=1; AJvYcCUya1vAH6Qc3q+GUhGBEaHIjhmC4A58S2mLTwQNTroVXWDEgSrZd4uGppbqvwpVIeCAc+ngefGTaRCfOSQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTOUgE0gEIBMa7mYf6aImTNfBBt9qeMRb9uiwFptItmSEN1PVt
+	waxJvB04aqMdii5/Tej/S0Y0q86XYMZLfiQP5uHAV5iW+2WmNmSzqUix0u83RQdYliRndQ80YGB
+	zFmzn0YBLqOx8XGkpOrBV6Yc+A3y9kjMGkz8iLQrhIkHkTBShkWRcVlNlczA=
+X-Google-Smtp-Source: AGHT+IHEceDnSvP7Mgd+2PyErdUwcXrmuHiI9Iqr/mzTkggx/G8u97rfYlYQ8kAvua5X+UpFjIbQHAKncBBlCrwFSJ1JNEKAVESF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251002184120.495193-1-akshayaj.lkd@gmail.com>
- <20251002184120.495193-2-akshayaj.lkd@gmail.com> <20251004135312.41858380@jic23-huawei>
-In-Reply-To: <20251004135312.41858380@jic23-huawei>
-From: Akshay Jindal <akshayaj.lkd@gmail.com>
-Date: Tue, 7 Oct 2025 12:09:43 +0530
-X-Gm-Features: AS18NWC4DBQPzOO43N_0Yc0srozIYyViGAOB23dtOFSiGEp-TJrRgHMm7rZ1qYM
-Message-ID: <CAE3SzaST=w7f0yM1C2iGfD9fw7smzMDven5kOoSQ0jMMZHMkWw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] iio: accel: bma400: Reorganize and rename register
- and field macros
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: dan@dlrobertson.com, dlechner@baylibre.com, nuno.sa@analog.com, 
-	andy@kernel.org, shuah@kernel.org, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6e02:19c5:b0:42e:7481:8973 with SMTP id
+ e9e14a558f8ab-42e7ad84488mr189261375ab.20.1759819224982; Mon, 06 Oct 2025
+ 23:40:24 -0700 (PDT)
+Date: Mon, 06 Oct 2025 23:40:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e4b5d8.050a0220.256323.0018.GAE@google.com>
+Subject: [syzbot] [net?] KMSAN: uninit-value in netif_skb_features (4)
+From: syzbot <syzbot+1543a7d954d9c6d00407@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 4, 2025 at 6:23=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
-wrote:
->This is much easier to review. Thanks for breaking it all up.
+Hello,
 
-Hi Jonathan,
-Thank you for the review.
-Keeping v3 feedback in mind, I have floated a v4 patch series.
-Have some follow-ups in some comments. Please read below
-for those.
+syzbot found the following issue on:
 
-Thanks,
-Akshay.
+HEAD commit:    e406d57be7bd Merge tag 'mm-nonmm-stable-2025-10-02-15-29' ..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=144ad942580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=50fb29d81ff5a3df
+dashboard link: https://syzkaller.appspot.com/bug?extid=1543a7d954d9c6d00407
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-> >  #define BMA400_INT_STAT0_REG        0x0e
-> >  #define BMA400_INT_STAT1_REG        0x0f
-> >  #define BMA400_INT_STAT2_REG        0x10
-> > -#define BMA400_INT12_MAP_REG        0x23
-> > -#define BMA400_INT_ENG_OVRUN_MSK    BIT(4)
-> > +#define BMA400_ENG_OVRUN_INT_STAT_MASK               BIT(4)
->
-> This is an odd field as it applies to all the INT_STATX registers
-> However  I would still try to make that connection with a name
-> such as BMA500_INT_STAT_OVRUN_MASK
-The connection is still there Jonathan.
-The name in the spec is Interrupt Engine Overrun.
-BMA400_ENG_OVRUN_INT_STAT_MASK can be read as
-Engine Overrun Interrupt Status Mask.
-Here for Interrupt Status fields, I have intentionally taken a little
-deviation from the naming convention established.
-Original convention:BMA400_<reg_name>_<field_name>_<suffix>
-Convention here: BMA400_<INT NAME>_<INT_STAT>_<suffix>
-so that it can be read as <INT_NAME> Interrupt Status mask.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-I would understand, if you want to adhere to original convention.
-Will make the change in next version.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/7aa074b1bf56/disk-e406d57b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4c8a46bed2ec/vmlinux-e406d57b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9ed66e725466/bzImage-e406d57b.xz
 
->
-> > +#define BMA400_STEP_INT_STAT_MASK            GENMASK(9, 8)
->
-> This bit is a little odd.  We are treating INT_STAT0 and INT_STAT1
-> (but not 2) as a single 16 bit register. That makes it hard to
-> associate the field with the register name. I wonder if we shouldn't
-> break that and just handle it as a pair of u8 instead.
-The spec talks about doing a burst read for such multipart registers
-to avoid reading one, while the other one is being updated.
-Hence did not touch it.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1543a7d954d9c6d00407@syzkaller.appspotmail.com
 
-> >  /*
-> >   * Read-write configuration registers
-> >   */
-> > -#define BMA400_ACC_CONFIG0_REG      0x19
-> > -#define BMA400_ACC_CONFIG1_REG      0x1a
-> > +#define BMA400_ACC_CONFIG0_REG               0x19
-> > +#define BMA400_ACC_CONFIG0_LP_OSR_MASK               GENMASK(6, 5)
-> > +#define BMA400_LP_OSR_SHIFT          5
-> #
-> Should never need a explicit shift. Use FIELD_PREP() and FIELD_GET() to
-> allow the MASK to be used in all cases.
->
-done
+=====================================================
+BUG: KMSAN: uninit-value in netif_skb_features+0x115b/0x2160 net/core/dev.c:3825
+ netif_skb_features+0x115b/0x2160 net/core/dev.c:3825
+ validate_xmit_skb+0xb6/0x1d50 net/core/dev.c:3985
+ __dev_queue_xmit+0x23f8/0x5e60 net/core/dev.c:4755
+ dev_queue_xmit include/linux/netdevice.h:3365 [inline]
+ hsr_xmit net/hsr/hsr_forward.c:430 [inline]
+ hsr_forward_do net/hsr/hsr_forward.c:571 [inline]
+ hsr_forward_skb+0x2162/0x3c40 net/hsr/hsr_forward.c:733
+ hsr_handle_frame+0xd6d/0x11a0 net/hsr/hsr_slave.c:81
+ __netif_receive_skb_core+0x2040/0x7150 net/core/dev.c:5966
+ __netif_receive_skb_list_core+0x2f1/0x16b0 net/core/dev.c:6154
+ __netif_receive_skb_list net/core/dev.c:6221 [inline]
+ netif_receive_skb_list_internal+0xee7/0x1530 net/core/dev.c:6312
+ gro_normal_list include/net/gro.h:524 [inline]
+ gro_flush_normal include/net/gro.h:532 [inline]
+ napi_complete_done+0x3fb/0x7d0 net/core/dev.c:6681
+ gro_cell_poll+0x2c9/0x310 net/core/gro_cells.c:66
+ __napi_poll+0xda/0x8a0 net/core/dev.c:7594
+ napi_poll net/core/dev.c:7657 [inline]
+ net_rx_action+0xbc8/0x1c30 net/core/dev.c:7784
+ handle_softirqs+0x169/0x6e0 kernel/softirq.c:622
+ __do_softirq+0x14/0x1b kernel/softirq.c:656
+ do_softirq+0x99/0x100 kernel/softirq.c:523
+ __local_bh_enable_ip+0xa1/0xb0 kernel/softirq.c:450
+ local_bh_enable include/linux/bottom_half.h:33 [inline]
+ tun_rx_batched+0x889/0x980 drivers/net/tun.c:-1
+ tun_get_user+0x5d60/0x6d70 drivers/net/tun.c:1953
+ tun_chr_write_iter+0x3e9/0x5c0 drivers/net/tun.c:1999
+ new_sync_write fs/read_write.c:593 [inline]
+ vfs_write+0xbdf/0x15d0 fs/read_write.c:686
+ ksys_write fs/read_write.c:738 [inline]
+ __do_sys_write fs/read_write.c:749 [inline]
+ __se_sys_write fs/read_write.c:746 [inline]
+ __x64_sys_write+0x1fb/0x4d0 fs/read_write.c:746
+ x64_sys_call+0x3014/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:2
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-> > +#define BMA400_NP_OSR_SHIFT          4
-> Similarly on this shift.
-done
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4953 [inline]
+ slab_alloc_node mm/slub.c:5245 [inline]
+ kmem_cache_alloc_node_noprof+0x989/0x16b0 mm/slub.c:5297
+ kmalloc_reserve+0x13c/0x4b0 net/core/skbuff.c:579
+ __alloc_skb+0x347/0x7d0 net/core/skbuff.c:670
+ __pskb_copy_fclone+0xcc/0x14d0 net/core/skbuff.c:2164
+ __pskb_copy include/linux/skbuff.h:1447 [inline]
+ hsr_create_tagged_frame+0x32c/0x11b0 net/hsr/hsr_forward.c:340
+ hsr_forward_do net/hsr/hsr_forward.c:-1 [inline]
+ hsr_forward_skb+0x16a4/0x3c40 net/hsr/hsr_forward.c:733
+ hsr_handle_frame+0xd6d/0x11a0 net/hsr/hsr_slave.c:81
+ __netif_receive_skb_core+0x2040/0x7150 net/core/dev.c:5966
+ __netif_receive_skb_list_core+0x2f1/0x16b0 net/core/dev.c:6154
+ __netif_receive_skb_list net/core/dev.c:6221 [inline]
+ netif_receive_skb_list_internal+0xee7/0x1530 net/core/dev.c:6312
+ gro_normal_list include/net/gro.h:524 [inline]
+ gro_flush_normal include/net/gro.h:532 [inline]
+ napi_complete_done+0x3fb/0x7d0 net/core/dev.c:6681
+ gro_cell_poll+0x2c9/0x310 net/core/gro_cells.c:66
+ __napi_poll+0xda/0x8a0 net/core/dev.c:7594
+ napi_poll net/core/dev.c:7657 [inline]
+ net_rx_action+0xbc8/0x1c30 net/core/dev.c:7784
+ handle_softirqs+0x169/0x6e0 kernel/softirq.c:622
+ __do_softirq+0x14/0x1b kernel/softirq.c:656
 
-> > +#define BMA400_ACC_CONFIG1_ACC_RANGE_MASK    GENMASK(7, 6)
-> > +#define BMA400_ACC_RANGE_SHIFT               6
->
-> and this one.  Might be a good idea to switch away from using the shifts
-> as a precursor patch as it's really a different sort of change from
-> the rest of this.
-Added a separate patch for this.
-
->
-> > -             osr =3D (val & BMA400_LP_OSR_MASK) >> BMA400_LP_OSR_SHIFT=
-;
-> > +             osr =3D (val & BMA400_ACC_CONFIG0_LP_OSR_MASK) >> BMA400_=
-LP_OSR_SHIFT;
->
-> Here is one of those cases with the shift that could just be
-yes, fixed as stated above.
-
-
-> > -             osr =3D (val & BMA400_NP_OSR_MASK) >> BMA400_NP_OSR_SHIFT=
-;
-> > +             osr =3D (val & BMA400_ACC_CONFIG1_NP_OSR_MASK) >> BMA400_=
-NP_OSR_SHIFT;
-> her as well.
-yes, fixed.
-
-> >               ret =3D regmap_write(data->regmap, BMA400_ACC_CONFIG0_REG=
-,
-> > -                                (acc_config & ~BMA400_LP_OSR_MASK) |
-> > +                                (acc_config & ~BMA400_ACC_CONFIG0_LP_O=
-SR_MASK) |
-> >                                  (val << BMA400_LP_OSR_SHIFT));
-> FIELD_PREP for this one.
-fixed.
-
-> >               ret =3D regmap_write(data->regmap, BMA400_ACC_CONFIG1_REG=
-,
-> > -                                (acc_config & ~BMA400_NP_OSR_MASK) |
-> > +                                (acc_config & ~BMA400_ACC_CONFIG1_NP_O=
-SR_MASK) |
-> >                                  (val << BMA400_NP_OSR_SHIFT));
-> here as well.  Anyhow, from a quick look it appears that getting rid of t=
-he _SHIFT defines
-> should be easy.
-yes, fixed.
+CPU: 1 UID: 0 PID: 11876 Comm: syz.2.2011 Not tainted syzkaller #0 PREEMPT(none) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+=====================================================
 
 
-> >       ret =3D regmap_update_bits(data->regmap, BMA400_INT_CONFIG1_REG,
-> > -                              BMA400_STEP_INT_MSK,
-> > -                              FIELD_PREP(BMA400_STEP_INT_MSK, val ? 1 =
-: 0));
-> > +                              BMA400_INT_CONFIG1_STEP_INT_MASK,
-> > +                              FIELD_PREP(BMA400_INT_CONFIG1_STEP_INT_M=
-ASK, val ? 1 : 0));
->
-> Could use regmap_assign_bits() to simplify this a bit - but separate chan=
-ge
-> so different patch.
-regmap_assign_bits calls regmap_set_bits which itself uses
-regmap_update_bits_base similar to regmap_update_bits.
-Moreover adoption of regmap_assign_bits is not much in drivers.
-Hence would request to keep it as it is.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Thanks,
-Akshay
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
