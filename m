@@ -1,123 +1,210 @@
-Return-Path: <linux-kernel+bounces-844678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E81DBC27A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 21:12:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12F5DBC27BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 21:16:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7555C19A0881
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 19:13:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D37E619A232C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 19:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11729223DF6;
-	Tue,  7 Oct 2025 19:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE7B229B0F;
+	Tue,  7 Oct 2025 19:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xd3cM1sU"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="B34SGDLA"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD24B221F24
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 19:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1012035959;
+	Tue,  7 Oct 2025 19:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759864359; cv=none; b=tmakBpazicJljIwGGI2kq8GXkmVAlQGcbMdpqyXqresUnmdmKrmP6inxftc/Z+gJM75G3rpPephS5J9zp0f3yVTRyx8CUqlM+uGRR7cNpbFK4QzwPpGUfrI/WTCseNjjMA7N2+AkBVIH04a9ZEuOFZwWb2Z00Jah1/kAbuAuN+w=
+	t=1759864588; cv=none; b=ECtB+Ff9uCESRDLjcOeypWxNnl4HX4qcGAwqxNisCez+0Y0ilVfi5Q1IDL8WPy/qE7s6UHEs/lpp3Xb3fw1G5ZYVb2S7BR0Ap1iTARCE7FI89Ny1HeoLwPigT/vPs8MrDpJvGywkEGSZx0/RlESZigAosL/NrhTN8Fk7p9GUriM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759864359; c=relaxed/simple;
-	bh=1zq+wnX1vqfhxHgRG9451gSG2RiJStNjkn4b+44kVWs=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=AH+w0IHJpWricy1HVHRD/ULlC3iy0n/NOucDLgcS4RKEv6Zp8VPRgVHN0WlfrbPacDM5oq6IEjwrZdJx6BkNjs41JbM0tELHdCcQ0l1KoH7obfynkZKqJhmYxIVoFISOfcS32Ggh5ZrQtbPB2qnUBW3N/zMYvBGHHPtDkrmJuIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Xd3cM1sU; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-46e25f5ed85so41988215e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 12:12:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759864356; x=1760469156; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xvaIFYn8xxn1Zh95yE3a4kb+EhT+TJRLQn+JPUMtZMI=;
-        b=Xd3cM1sUDRdMe/hcpWwKJOjdwiam0WZf53hvhu1twpYFP2Es7JPhNB6CJ/gbrymL1O
-         X4I+WecHOmNz37dKHwYlyzi52nXJpUviymGuzkhUQ12WPrv6hczXnEbjFeHzaG7jTJbT
-         5tPLd41WJC4rYdxgMiPet/lhVXDClNj2fezr8GzuUx1HKyH7z1XjQ0LDOV59z6TpyFW2
-         xcQKbGFmAk2yoG4c20eEYORNXxWpZ1E1xGDxNyUbOyANGP/HA98JnN/39lMtR7ZvD7+C
-         RkxI8Jl2yAW4RBm3NCO5QiVxwPN/I334RD7nQFlCOEg7ASlbg75ffJRPfLnMPFuzt5G0
-         MXcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759864356; x=1760469156;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xvaIFYn8xxn1Zh95yE3a4kb+EhT+TJRLQn+JPUMtZMI=;
-        b=k0pXcSTjevuugJSLAOko+vVRLgw5/ZPm33iuvo6Cd6tl0lZbWIHE8VroBfsn4YiFYU
-         RGfHgKzROXSFlKjfTl0BQBi6MSubUoh7DooffBhUhSKsYqlrYb8Hutx1yqNeZZ/1ELzR
-         7zJ9FZtRcXXOt/e+s1ZhAo5OghOckIMLf1TjHQJs4zj2dIQKNXrLPxysdEJhQNlDxobB
-         3lObrJGle+5vGCSkrR75/gm9DlSapO3/CDIBDUD4VmM4zOww9cYvqv7MYC8MRSe+nCmO
-         F3AvyhzJ62MZRy7HuvN+/uHQfs7iMmkFruVOOlslE1WOZ6RUrkbQP5dsy2X9mvruNZZV
-         XXcw==
-X-Forwarded-Encrypted: i=1; AJvYcCXt58NDrq6W3GQwRB81xkeqf1sgBpL5Ev427fsNOfdO+p43/FHhWDoNM6Bz5/Nqnf9oPY+KGKVCauTN8Ic=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFiuXtvRtvxsrjCnlFNpzu8Wo/a35fJAbSQZ+4JoVsSbbzyvWI
-	g3PZfBYRgbYm+jdUsF/VgvkhravvuKtu5ry+OV3hGwcOjtq3nYQpRZ872WvF7b+lJFRQIFPC9iF
-	FGZrs95L/nr6jhg==
-X-Google-Smtp-Source: AGHT+IF8cPzfTUCADjWMgjnDGXv9bUSJvQjzkSR8TvbNkHcOTb21Htn49hpM3qx+nFkCimdVq0HJmb49CeMBYA==
-X-Received: from wmcm4.prod.google.com ([2002:a7b:ce04:0:b0:45d:cfa4:ce19])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3e8d:b0:46e:6d5f:f68 with SMTP id 5b1f17b1804b1-46fa9aa1d13mr5841565e9.12.1759864356219;
- Tue, 07 Oct 2025 12:12:36 -0700 (PDT)
-Date: Tue, 07 Oct 2025 19:12:31 +0000
+	s=arc-20240116; t=1759864588; c=relaxed/simple;
+	bh=rWuv4J233SVf8IPzlie6eAfYs5hmfamNLtZ8uMQp60A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GX6XnQ2j3+NRVzOVzCRer/z15WRfkEz7rkrmkZxIqgQ+ax74UCnieOjb8a5i36s3iZxZoZSvwyQroogjK/3fbNYWygK00BBxwFNjlgn6nbI54fXBNbUSyXEGUlCvTLzJFvWI0kYgWQZqocxZGOVZGtTZ3qcwe8s8CzkCEoPsLDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=B34SGDLA; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 597J9eaR008401;
+	Tue, 7 Oct 2025 19:16:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=GYfG1kgg9/yntJdgCTTMR+5QkuELjws7U3So4Irew
+	Fc=; b=B34SGDLArXziyNyNXD0o4R3pENHl94haUo30igjnPv8FBoGKbS4iNlbo5
+	YBBZJuLVDQZWUo66Bn81bLLPe7+CToeUM28/2u8q2z4l3jdBLD31tkaAiKTaBCdd
+	rQMXjxE/2RcGlgsgHOdkuaoCcBF1JTpCxKjhCoqo4k6wsEA6uPjo/5WP4bpK8ccE
+	EkR8xQI9nueWQhhR3O8G0hABtX4R3mEGaNZdLDWRnUN/XK2uJ+18SU7ISyDJcZM8
+	OSwqPZQ2xK0pRQGZUqr9tkKKcF6sjnbsiVNixxhnZAgpa37Qm/8/a2OviJyhRTSR
+	kUG+408FkCtOZH/9itrwKpeLCWzxg==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49jua993pb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 Oct 2025 19:16:21 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 597I1A2B021221;
+	Tue, 7 Oct 2025 19:16:20 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49kgm1cpau-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 Oct 2025 19:16:20 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 597JGKuf34144646
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 7 Oct 2025 19:16:20 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1E43958043;
+	Tue,  7 Oct 2025 19:16:20 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 874445805F;
+	Tue,  7 Oct 2025 19:16:19 +0000 (GMT)
+Received: from slate16 (unknown [9.61.136.99])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  7 Oct 2025 19:16:19 +0000 (GMT)
+From: Eddie James <eajames@linux.ibm.com>
+To: linux-iio@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        conor+dt@kernel.org, krzk+dt@kernel.org, robh@kernel.org,
+        andy@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com,
+        jic23@kernel.org, eajames@linux.ibm.com
+Subject: [PATCH v9] dt-bindings: iio: Add Infineon DPS310 sensor documentation
+Date: Tue,  7 Oct 2025 14:16:12 -0500
+Message-ID: <20251007191612.80164-1-eajames@linux.ibm.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAB5m5WgC/x3MwQqDMAwA0F+RnA00Ou3Yr8gO2mUapCpJJ4L47
- 5Yd3+WdYKzCBq/iBOVdTNYlg8oCwtQvI6N8sqFyVUPOeRweOO8RY/yhJWWzxJaQNl0DckuND1T 7p+8hD5vyV47/3r2v6wbvcihFbQAAAA==
-X-Change-Id: 20251007-b4-kvm-mmu-stresstest-1proc-e6157c13787a
-X-Mailer: b4 0.14.2
-Message-ID: <20251007-b4-kvm-mmu-stresstest-1proc-v1-1-8c95aa0e30b6@google.com>
-Subject: [PATCH] KVM: selftests: Don't fall over when only one CPU
-From: Brendan Jackman <jackmanb@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
-	Shuah Khan <shuah@kernel.org>
-Cc: kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 7aw2Q09BQDCoqyxr08tjlazizFjVWU3-
+X-Proofpoint-ORIG-GUID: 7aw2Q09BQDCoqyxr08tjlazizFjVWU3-
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAyMiBTYWx0ZWRfXwQ/CJcZ5vy8r
+ fX54ioGgTmtUWvLTBqCxtp67Q6whtoi5SKkAUtOLQi7lIoE1dAKAARl17mmW2ko0MNluxKyoqAe
+ f1AMQ4e/nEj8qCTGq+tIwtHCMJrS+fv0sY2D2HGAx+F++8dTh8JxwCLVF5fRgjP2tQ7H7loqVLH
+ qcJqn2dlkyZub8QcRb0W8p6YeShnn8NNdRvbGBW9mtEfMj/KcMKLc+MFXiawRpp8iO3AHMgs4dp
+ xdDFV9OvozqVNwOoJre8CfESOSCVz6NLegY3Cy2O3n85ab1phZ5Jy7e3DL+Xoac7dOM1rylsvmQ
+ PYq76bJly7vGpUKivdKJUv44lw0Tcvg5yiaebwOZ4I4hK6QPPhNcOup9bm2REOpfkP5MdiO47P3
+ zPulauTXrc+pfUhDWjQp18C7qprWUA==
+X-Authority-Analysis: v=2.4 cv=QdBrf8bv c=1 sm=1 tr=0 ts=68e56706 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=x6icFKpwvdMA:10 a=gEfo2CItAAAA:8 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8
+ a=lG3Z5ILtqDq3c0xvBIoA:9 a=sptkURWiP4Gy88Gu7hUp:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-07_02,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 clxscore=1015 suspectscore=0 adultscore=0
+ malwarescore=0 bulkscore=0 spamscore=0 lowpriorityscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040022
 
-Running this test on a system with only one CPU is not a recipe for
-success. However, there's no clear-cut reason why it absolutely
-shouldn't work, so the test shouldn't completely reject such a platform.
+The DPS310 is a barometric pressure and temperature sensor with
+an I2C interface. Remove it from trivial-devices.yaml and add its
+own documentation to allow for consumers of this device such as
+the iio/hwmon bridge.
 
-At present, the *3/4 calculation will return zero on these platforms and
-the test fails. So, instead just skip that calculation.
-
-Suggested-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Brendan Jackman <jackmanb@google.com>
+Signed-off-by: Eddie James <eajames@linux.ibm.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- tools/testing/selftests/kvm/mmu_stress_test.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ .../iio/pressure/infineon,dps310.yaml         | 54 +++++++++++++++++++
+ .../devicetree/bindings/trivial-devices.yaml  |  2 -
+ MAINTAINERS                                   |  1 +
+ 3 files changed, 55 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml
 
-diff --git a/tools/testing/selftests/kvm/mmu_stress_test.c b/tools/testing/selftests/kvm/mmu_stress_test.c
-index 6a437d2be9fa444b34c2a73308a9d1c7ff3cc4f5..b5bd6fbad32a9ad5247a52ecf811b29293763e2e 100644
---- a/tools/testing/selftests/kvm/mmu_stress_test.c
-+++ b/tools/testing/selftests/kvm/mmu_stress_test.c
-@@ -263,8 +263,10 @@ static void calc_default_nr_vcpus(void)
- 	TEST_ASSERT(!r, "sched_getaffinity failed, errno = %d (%s)",
- 		    errno, strerror(errno));
+diff --git a/Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml b/Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml
+new file mode 100644
+index 0000000000000..e5d1e6c489393
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml
+@@ -0,0 +1,54 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/pressure/infineon,dps310.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Infineon DPS310 barometric pressure and temperature sensor
++
++maintainers:
++  - Eddie James <eajames@linux.ibm.com>
++
++description:
++  The DPS310 is a barometric pressure and temperature sensor with an I2C
++  interface.
++
++properties:
++  compatible:
++    enum:
++      - infineon,dps310
++
++  reg:
++    maxItems: 1
++
++  "#io-channel-cells":
++    const: 0
++
++  vdd-supply:
++    description:
++      Voltage supply for the chip's analog blocks.
++
++  vddio-supply:
++    description:
++      Digital voltage supply for the chip's digital blocks and I/O interface.
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        dps: pressure-sensor@76 {
++          compatible = "infineon,dps310";
++          reg = <0x76>;
++          #io-channel-cells = <0>;
++          vdd-supply = <&vref1>;
++          vddio-supply = <&vref2>;
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+index 58ff948d93c96..a76c58f3b1de4 100644
+--- a/Documentation/devicetree/bindings/trivial-devices.yaml
++++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+@@ -127,8 +127,6 @@ properties:
+           - ibm,cffps2
+             # IBM On-Chip Controller hwmon device
+           - ibm,p8-occ-hwmon
+-            # Infineon barometric pressure and temperature sensor
+-          - infineon,dps310
+             # Infineon IR36021 digital POL buck controller
+           - infineon,ir36021
+             # Infineon IRPS5401 Voltage Regulator (PMIC)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3773c74b31d6d..bde80ddb99e9d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12217,6 +12217,7 @@ INFINEON DPS310 Driver
+ M:	Eddie James <eajames@linux.ibm.com>
+ L:	linux-iio@vger.kernel.org
+ S:	Maintained
++F:	Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml
+ F:	drivers/iio/pressure/dps310.c
  
--	nr_vcpus = CPU_COUNT(&possible_mask) * 3/4;
-+	nr_vcpus = CPU_COUNT(&possible_mask);
- 	TEST_ASSERT(nr_vcpus > 0, "Uh, no CPUs?");
-+	if (nr_vcpus >= 2)
-+		nr_vcpus = nr_vcpus * 3/4;
- }
- 
- int main(int argc, char *argv[])
-
----
-base-commit: 6b36119b94d0b2bb8cea9d512017efafd461d6ac
-change-id: 20251007-b4-kvm-mmu-stresstest-1proc-e6157c13787a
-
-Best regards,
+ INFINEON PEB2466 ASoC CODEC
 -- 
-Brendan Jackman <jackmanb@google.com>
+2.51.0
 
 
