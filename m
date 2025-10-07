@@ -1,107 +1,144 @@
-Return-Path: <linux-kernel+bounces-843784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C17FBC043E
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 07:55:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C93A2BC0435
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 07:55:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85B563AB9AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 05:55:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D0F54E7766
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 05:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5BA2221FDC;
-	Tue,  7 Oct 2025 05:55:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D0821CFEF;
+	Tue,  7 Oct 2025 05:55:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b="xQcunmoE"
-Received: from mout-y-111.mailbox.org (mout-y-111.mailbox.org [91.198.250.236])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nElzAMXN"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A0813B58B;
-	Tue,  7 Oct 2025 05:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4FDA93D
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 05:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759816525; cv=none; b=Szq3hFikeYfmz9CI7veqQwWlTuUvOFvkv4q3EbrkhbIewgmKg6jW47e/bTTt14bDnVyNNWbzC4b1knp96jEg23Sy9hM68DlaDpUY1x1f75COFWhXF+a9k5nORMujXJnVQKDQJyvtJirg3nLL62KAail42kiv/Bdv2DOJMdjyqMM=
+	t=1759816522; cv=none; b=g9sg49yvokp2elKmxx/kyK1rX78rD+qehsveGM0nM5It7hGWnMlJxPmW6iYNdQk2LFer/wFOSiue7cdLoGLoFD67QCYQRQ8Kg51mLipZGlPdnK4omF0lgXz5RvAb83GBrRll8dLpYyQiFDKH/aFNb0lcQswPfsgjDXS61wwkrXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759816525; c=relaxed/simple;
-	bh=VyI1knQQT4PYdAhMssT7LrkIhDkGF85VdrmFBYteHLA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UdODVEkl2F1/sE5qNsnq0NENHlrlR8pPPr2ViaFWvbQl0IDsA7pPr8uzwthq9OnREZUt+0ttqy2dH4AeDIwM1tOLq9qnXmFykHs11G3UYT+fumQZwnd8yGopfM9thITAWt2Z2WyZv+DeySMUDl7BpX8PxLztHw9Tt7Zp+vxwRdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com; spf=fail smtp.mailfrom=mssola.com; dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b=xQcunmoE; arc=none smtp.client-ip=91.198.250.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mssola.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-y-111.mailbox.org (Postfix) with ESMTPS id 4cgljD1mhdz9xxF;
-	Tue,  7 Oct 2025 07:55:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mssola.com; s=MBO0001;
-	t=1759816512;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=JfRY/ZlFx5gH/42pV4Wn1ZJtQvHdS7TgX5Ggai6C4VY=;
-	b=xQcunmoES0myy0i+iUUyJU9tNGusIIc/8rSQWnjtsUStUJLR23BDkd18go9AI0KkOKjq9Z
-	momhwDKUw4ps+KDA7c2S0ebfo2vKOVVWa/b1lRTBnmlafWETBFZTv2U/A+/oweYaMY8mk8
-	Nrwnc8EjiSxncal+o7hF5YK5/WzJMXunCp+D2i6LRq0vqzKYqYgNkR0D58omFXeK3m4yQU
-	M130Mds+wY2NgyRHQ21IxuSIcdxhINVWX4GqjL0kY9/f1z8eJROnxTuy5ySEcRMDT4Vspm
-	ubOz2ZfI0ICD6f0x7Sw/bkp2/Kx+lFMq2USYUWdUwa1wQFGT8+HbtSug5Lf2DA==
-From: =?UTF-8?q?Miquel=20Sabat=C3=A9=20Sol=C3=A0?= <mssola@mssola.com>
-To: linux-btrfs@vger.kernel.org
-Cc: clm@fb.com,
-	dsterba@suse.com,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Miquel=20Sabat=C3=A9=20Sol=C3=A0?= <mssola@mssola.com>
-Subject: [PATCH] btrfs: fix memory leak when rejecting a non SINGLE data profile without an RST
-Date: Tue,  7 Oct 2025 07:54:53 +0200
-Message-ID: <20251007055453.343450-1-mssola@mssola.com>
+	s=arc-20240116; t=1759816522; c=relaxed/simple;
+	bh=168NfD/ecb5wgu5xNFlCaKmte6hBtMqFpQKOiKMR9bg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l7RBP/5ow5dPPUKvpvm276Eh+lbWIUy5SvGt2QMGHUJNNJ5lVIJN1RIgdXz0BfzIAh8gnyP9ddhU5wbnrIyhMZMW9MaechAQSn8wm9kfTfoEKyQdHW+LPUmpjtNcvsE7YVau3i1WWHWFNw79OK/T4BLuaZ3h5aaw19zSDjdo0lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nElzAMXN; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-32eb45ab7a0so6378997a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 22:55:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759816520; x=1760421320; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LZghIXdaSi6t4gvdCfT5o16EuMxkJyf71bvQeFQdK0A=;
+        b=nElzAMXNwLAIuqsktVYxSH7O0Rd5U5lEOggjTm7nc4IF9ofS+G/FPiLYjn4MLocpIX
+         qe+h/ZpcI5r524rkMVo1mzsuqxYc/yQ6rG34o1M+5XNBlaNiMIJy2S4SohUw99UUYllK
+         C9RDfH5wtf3zVUfHV9sYRO2HhEFnRD2hKb/tuLKms46qaCM3XMB0ec4CLYmw79S2llYo
+         9AEzaoKspOPmC73ScvVQiARYaQDkMLwCPKkvfznPS0wLUXhLTQ6YUXORc7mPmjGMdr2t
+         bT7OfVl1OG6hXhVCV15VwkP6szjDym4xFn/DyKpwbJmTJL0U1sZNccMeMyHlyEvT83FR
+         nsLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759816520; x=1760421320;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LZghIXdaSi6t4gvdCfT5o16EuMxkJyf71bvQeFQdK0A=;
+        b=GakP8GuvLKny/S7cOXjeJhH9wyyFj8axMDCZFtxNXT/iL718SG63jHMGNF0b5DdVv+
+         P3Fh8LHK4RVh8VGnTItLX2LcVDy9HR7zZofpfINAuP+zQGnlyF84IfYXm57KXQibx1vt
+         Vx0sfGgkDLap8Y9mwipSP2roWTcWGm7IQye4u9qKJ6CPxm0SEBodUmVm0Xjj6nXL0A5l
+         wKFIrwrSSx2JiZGbDznohdDNR4R5oy0w3V9xFTMUchA7abFs1U0eX2I7+Gd5LdBJwXt+
+         KQsEOF6chAZgsQpiZSwd+opZ9mQlyouKWjqgptAA4Dpbo4ltFhFPax2pr3vUxNXMhoOi
+         7v1g==
+X-Forwarded-Encrypted: i=1; AJvYcCWrvGRaxYu3/c4mXJ8HJsCflt/4hQNzXxIcM/4iXOz0E4y+/a/HPR+Bjy1s1N+4jhvn0wVBxMjBLE3vppw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIF2tgMg9spSLh+NLEZuOisQW9hdpBX2tnD0Hs1yjPW167v2z+
+	fTKhv3n1lv9fzQ8AqVPqAzlZ+MeKjkDlQC6J/NTWNDLbnEjWBP17FzRL
+X-Gm-Gg: ASbGncttXaXO9666GAh205jzQJE/68l6qAvtOlOPEiTKKnhAEMxfpjkOOz62/WqNrMK
+	R4Q6arw5MLlHk/mHMf79N0prPIPC0vSZi2wd476NBihzj7IL1AmYJiTAy/Fm9bsiXcCcUhrCgnh
+	6icVO9TUukQxD07iDR2yZXHQgObBcbJZiZ1oKOOtd/Tj5ApDUTtBP7l8YJexb7rcw06Fhh+B1PH
+	pUQMlD3TqJOx6L98VGDoa17LIlZcWniU/hKwJQs0A+6UC8pD6+xf3nHOgOyypT/dV2xaghgKvMv
+	z2zeOdPi5dGQUgQ78nkcoGE6p/PL9WUDpoRWF65KIEoPh8VnBg4KuLcbI4nmhM0ZXX+B0hUTFxt
+	uE9LPnaXFDXouGQyJzmqF5xSCa9QqtiHQkdenJlceU5JO+FnYOxEnCllO
+X-Google-Smtp-Source: AGHT+IH3yHUpHO8MPfqkfmLVrGO6eAOQw4CzhIMeoYO6hXLvDJrn7+BIDzWj0TidI6q1e0vocpVVwA==
+X-Received: by 2002:a17:90b:17cc:b0:32e:5cba:ae11 with SMTP id 98e67ed59e1d1-339c27859aamr18418727a91.28.1759816519760;
+        Mon, 06 Oct 2025 22:55:19 -0700 (PDT)
+Received: from akshayaj-lenovo.. ([223.233.78.22])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339c4a1a9e8sm12983829a91.11.2025.10.06.22.55.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 22:55:19 -0700 (PDT)
+From: Akshay Jindal <akshayaj.lkd@gmail.com>
+To: dan@dlrobertson.com,
+	jic23@kernel.org,
+	dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org
+Cc: Akshay Jindal <akshayaj.lkd@gmail.com>,
+	shuah@kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/6] iio: accel: bma400: Refactor GENINTR config and register macros
+Date: Tue,  7 Oct 2025 11:25:00 +0530
+Message-ID: <20251007055511.108984-1-akshayaj.lkd@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-At the end of btrfs_load_block_group_zone_info() the first thing we do
-is to ensure that if the mapping type is not a SINGLE one and there is
-no RAID stripe tree, then we return early with an error.
+This series refactors the BMA400 driver with a focus on generic interrupt
+configuration and related register usage. The main changes reduce
+usage of hard-coded values by introducing macros and formula-based
+register addressing, and add a centralized lookup indexed on iio event
+direction.
 
-Doing that, though, prevents the code from running the last calls from
-this function which are about freeing memory allocated during its
-run. Hence, in this case, instead of returning early go to the freeing
-section of this function and leave then.
+Alongside these updates, the series also reorganizes and renames register
+and field macros for consistency with the datasheet, and extends comments
+for additional clarity.
 
-Signed-off-by: Miquel Sabaté Solà <mssola@mssola.com>
----
- fs/btrfs/zoned.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+All patches are pure refactoring. No functional changes are intended.
 
-diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-index e3341a84f4ab..b0f5d61dbfd2 100644
---- a/fs/btrfs/zoned.c
-+++ b/fs/btrfs/zoned.c
-@@ -1753,7 +1753,8 @@ int btrfs_load_block_group_zone_info(struct btrfs_block_group *cache, bool new)
- 	    !fs_info->stripe_root) {
- 		btrfs_err(fs_info, "zoned: data %s needs raid-stripe-tree",
- 			  btrfs_bg_type_to_raid_name(map->type));
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto out_free;
- 	}
- 
- 	if (unlikely(cache->alloc_offset > cache->zone_capacity)) {
-@@ -1785,6 +1786,8 @@ int btrfs_load_block_group_zone_info(struct btrfs_block_group *cache, bool new)
- 		btrfs_free_chunk_map(cache->physical_map);
- 		cache->physical_map = NULL;
- 	}
-+
-+out_free:
- 	bitmap_free(active);
- 	kfree(zone_info);
- 
+Akshay Jindal (6):
+  iio: accel: bma400: Reorganize and rename register and field macros
+  iio: accel: bma400: Use macros for generic event configuration values
+  iio: accel: bma400: Use index-based register addressing and lookup
+  iio: accel: bma400: Replace bit shifts with FIELD_PREP and FIELD_GET
+  iio: accel: bma400: Rename activity_event_en() to generic_event_en()
+  iio: accel: bma400: Add detail to comments in GEN INTR configuration
+
+Changes since v3:
+- Insert a new patch into the patch series for replacing explicit bit
+  shifts with FIELD_GET and FIELD_PREP macros
+- Assigned explicit values to reg field enums introduced.
+
+Changes since v2:
+- Split single patch into five smaller patches as suggested
+- Addressed review comments related to trailing comma [Patch 2/5]
+- Extended renaming of macros to TAP_CONFIG registers [Patch 1/5]
+- Addressed review comment received regarding write then replace in
+  activity_event_en() [Patch 3/5]
+
+Testing Summary:
+- Tested on raspberrypi 4b and 7-semi bma400 sensor breakout board.
+- Since no functional impact is there, so before functionality is
+  expected to be equal to after change functionality.
+- Tested mapping of GEN1 and GEN2 both on INT1 pin as before.
+- Tested both activity and inactivity detection by setting attributes
+  events/in_accel_mag_falling_en as well as events/in_accel_mag_rising_en.
+- Did read and writes on various attributes such that write_event_config(),
+  write_event_value() and read_event_value() callbacks are triggered.
+
+ drivers/iio/accel/bma400.h      | 148 +++++++++-----
+ drivers/iio/accel/bma400_core.c | 349 ++++++++++++++++++--------------
+ 2 files changed, 285 insertions(+), 212 deletions(-)
+
 -- 
-2.51.0
+2.43.0
 
 
