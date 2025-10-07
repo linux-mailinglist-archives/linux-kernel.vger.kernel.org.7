@@ -1,169 +1,137 @@
-Return-Path: <linux-kernel+bounces-843661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E01CABBFF1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 03:24:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E23FBBFEEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 03:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE6B1189DB99
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 01:24:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 482D1189D7D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 01:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94AAE20CCE4;
-	Tue,  7 Oct 2025 01:23:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06BF51DF273;
+	Tue,  7 Oct 2025 01:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AM4kwegh"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G91qIAHv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13117207A32
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 01:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48AD534BA44;
+	Tue,  7 Oct 2025 01:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759800216; cv=none; b=YKGjiz+xNv1oC74STCCsm9UIRpSgqSik5kZ/lyGmBZXqKrc2txt6tSWIQIaB9I+BCrlB5ZOgw+cC2DMxqLrxNRxniX7BrTqnxugseBRJjEILlavZBip7NKiKZ0oFkWuBsVOeTApqYuAZbRsyJ6WcWLBR/Eh46p7824rIfXccV6E=
+	t=1759800169; cv=none; b=DeOss0UEZB9AFTTn41PjLjyMm51B4B2uLYT+wk6oBUw0VImi6rnPG8K1s4UzsIN/JbboxUngooSDN6GtSpy7sJFrOFJarbzVccTr1rEL9y3OyKMmw3ud7utP6otVSV3kYXz0F/HhW3fFGR/SRACc1VY7Ojs0L9Rye3nFr6DEOZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759800216; c=relaxed/simple;
-	bh=XLodWl1Mnqi6n+xmZaM4r4KxwmmAoji2W6kZJLMVLA8=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XnDbNuKDAgu6mwoaEeC3sCUisbMsu4DZaSeiBR6yuGYJPZcCpAQEFDIirtOxjhRuamJ41b3A7fIo+ikaBUPiSV3pd6IuJrMxU14bYWRs0FvbJmYDnxGe4GRqYyrkFb2mHU1MHDCaCv7zpaAsmJU5G45+AVDvUkILhJINFUHKW18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AM4kwegh; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759800211;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CZM6bExjDs8jz6TVsKvY1N151Suvl2rvzQSjV8ALYIE=;
-	b=AM4kweghQ+CWc94h5E0GCs/nQhadm3vmfcHXwEyENIaxZe6+SP/0Q+1Jj9ZYC5iy1dGrDL
-	u6q+VYtfl3PHiNUfoAewqIXbhFbgdJfpycBynsli9Cu5QV1dPwW3xxGDDtSJHX0hxXXl/c
-	XBz11y8VxEbTwkhERAMKnyqMItJdKHk=
-From: KaFai Wan <kafai.wan@linux.dev>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	shuah@kernel.org,
-	kafai.wan@linux.dev,
-	toke@redhat.com,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH bpf v2 2/2] selftests/bpf: Add test for unpinning htab with internal timer struct
-Date: Tue,  7 Oct 2025 09:22:34 +0800
-Message-ID: <20251007012235.755853-3-kafai.wan@linux.dev>
-In-Reply-To: <20251007012235.755853-1-kafai.wan@linux.dev>
-References: <20251007012235.755853-1-kafai.wan@linux.dev>
+	s=arc-20240116; t=1759800169; c=relaxed/simple;
+	bh=Vs8T4yiVpaN+s1o4euNltw93FIm1uUMKtorrOmqCpZE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b8F4BBmF1ZAumdaJqhHfk02vP1EbUkP+islt61U1YPbTvZlNskqfD6GOcsGvASYtFC9weou9e3cByLemJYi124QWuZ9Nf4ed05/lb0jfJMxvA+cPcJT19xYeObCvgExKZqIxPuC3mJ+59pfkTNbB3UCr2vSMW6NlegIh2pKmka4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G91qIAHv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1993CC4CEF5;
+	Tue,  7 Oct 2025 01:22:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759800168;
+	bh=Vs8T4yiVpaN+s1o4euNltw93FIm1uUMKtorrOmqCpZE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=G91qIAHvSrbBLW9CFc2StFQrPHsgaPm1ItS5zI91h+XFjLpUm26XUzUochvsolsXE
+	 fiSItSvAz5o2L+5/Anuz0B3Bi8KVyCS7SQRFphbysO89dGn4rG4kSIzd1lcRdakMTU
+	 ZJ8Tbf+k1O77qZ+uMEJFzfT0jl7135FUOC1zOyVurHI+IsknUPShFiYPBiH7W4t8b6
+	 5aKPHZm1fKpEFU3VlwH9sYiZJY0NFqE2GFJB9CjAnCpf4eesm2lA6riXLrsaFSEev6
+	 Gi4Ucbl5f74lhWm6jAxuWu3hToTBmquEFgAES2huW67Vb6TuoxIkRPjWvG7f0rssIG
+	 REGAMl8ti96Yw==
+Message-ID: <8a3b5248-ff46-4aaf-9797-202f85ef9b23@kernel.org>
+Date: Tue, 7 Oct 2025 10:22:41 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/7] arm64: dts: exynos7870: relocate ${x}-names property
+ after ${x}
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250928-exynos7870-dt-fixes-v1-0-a40e77a73f16@disroot.org>
+ <20250928-exynos7870-dt-fixes-v1-1-a40e77a73f16@disroot.org>
+ <CAJKOXPf+fASV2WP+ix_6qb+L-0WqsqLAG7K7FxeQgscsbOUsOA@mail.gmail.com>
+ <6dff1e8256f3d0932d1f5ad941e129db@disroot.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <6dff1e8256f3d0932d1f5ad941e129db@disroot.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add test to verify that unpinning hash tables containing internal timer
-structures does not trigger context warnings.
+On 29/09/2025 19:01, Kaustabh Chakraborty wrote:
+> On 2025-09-28 21:56, Krzysztof Kozlowski wrote:
+>> On Mon, 29 Sept 2025 at 01:44, Kaustabh Chakraborty
+>> <kauschluss@disroot.org> wrote:
+>>>
+>>> All ${x}-names properties are conventionally placed after their
+>>> corresponding ${x} properties. For instance, 'clock-names' must follow
+>>> 'clocks', 'interrupt-names' must follow 'interrupts'. Make necessary
+>>> changes to follow said convention. No functional changes made.
+>>>
+>>
+>> I don't intend to take such cosmetic changes, because they interfere
+>> with stable back porting, unless we have a tool for such cleanup. Did
+>> you use my prototype tool for that or some other tool?
+> 
+> No, I did it manually. This is due to your first remark in [1] and
+> my corresponding reply in [2]. What do I do here then?
 
-Each subtest (timer_prealloc and timer_no_prealloc) can trigger the
-context warning when unpinning, but the warning cannot be triggered
-twice within a short time interval (a HZ), which is expected behavior.
 
-Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
----
- .../selftests/bpf/prog_tests/pinning_htab.c   | 37 +++++++++++++++++++
- .../selftests/bpf/progs/test_pinning_htab.c   | 25 +++++++++++++
- 2 files changed, 62 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/pinning_htab.c
- create mode 100644 tools/testing/selftests/bpf/progs/test_pinning_htab.c
+I asked for the new code to follow this style, but I don't want to fix
+yet existing code - before we come with a tool doing it.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/pinning_htab.c b/tools/testing/selftests/bpf/prog_tests/pinning_htab.c
-new file mode 100644
-index 000000000000..fc804bb87b26
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/pinning_htab.c
-@@ -0,0 +1,37 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <test_progs.h>
-+#include "test_pinning_htab.skel.h"
-+
-+static void unpin_map(const char *map_name, const char *pin_path)
-+{
-+	struct test_pinning_htab *skel;
-+	struct bpf_map *map;
-+	int err;
-+
-+	skel = test_pinning_htab__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "skel open_and_load"))
-+		return;
-+
-+	map = bpf_object__find_map_by_name(skel->obj, map_name);
-+	if (!ASSERT_OK_PTR(map, "bpf_object__find_map_by_name"))
-+		goto out;
-+
-+	err = bpf_map__pin(map, pin_path);
-+	if (!ASSERT_OK(err, "bpf_map__pin"))
-+		goto out;
-+
-+	err = bpf_map__unpin(map, pin_path);
-+	if (!ASSERT_OK(err, "bpf_map__unpin"))
-+		goto out;
-+out:
-+	test_pinning_htab__destroy(skel);
-+}
-+
-+void test_pinning_htab(void)
-+{
-+	if (test__start_subtest("timer_prealloc"))
-+		unpin_map("timer_prealloc", "/sys/fs/bpf/timer_prealloc");
-+	if (test__start_subtest("timer_no_prealloc"))
-+		unpin_map("timer_no_prealloc", "/sys/fs/bpf/timer_no_prealloc");
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_pinning_htab.c b/tools/testing/selftests/bpf/progs/test_pinning_htab.c
-new file mode 100644
-index 000000000000..ae227930c73c
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_pinning_htab.c
-@@ -0,0 +1,25 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+
-+char _license[] SEC("license") = "GPL";
-+
-+struct timer_val {
-+	struct bpf_timer timer;
-+};
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_HASH);
-+	__type(key, __u32);
-+	__type(value, struct timer_val);
-+	__uint(max_entries, 1);
-+} timer_prealloc SEC(".maps");
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_HASH);
-+	__type(key, __u32);
-+	__type(value, struct timer_val);
-+	__uint(max_entries, 1);
-+	__uint(map_flags, BPF_F_NO_PREALLOC);
-+} timer_no_prealloc SEC(".maps");
--- 
-2.43.0
 
+Best regards,
+Krzysztof
 
