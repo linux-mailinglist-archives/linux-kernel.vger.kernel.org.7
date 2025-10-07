@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-844051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76A1DBC0E70
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:47:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14EDDBC0E79
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:47:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD6A2189FDFC
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:46:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B479A19A0581
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524642DC782;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674322DC78F;
 	Tue,  7 Oct 2025 09:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lz4A46Ts"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hGobKLQ8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C422D7DC5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B962D8799;
 	Tue,  7 Oct 2025 09:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759830295; cv=none; b=CgtULWbEy0kNejyenkqH2E02EQ3R+mBuqdsMW3NBrZtr8eyLyJDOYkHXahTIcHt+50W+v17HxyCGEfflYlbs1jkLvnqXnGhHC4/o1WDVavai8u8FsCq8SWP2iH6eiJzU0H3AHYFrbzDFeI9W0JmhQ/teVKxh0lAyY9ZxhUbcIR0=
+	t=1759830296; cv=none; b=YP5X3NZWrg5GL2xNweUg/r4PZ/Bk+adyK4YH0Fq2e+RB3hHkUk5uw2XqtVn9Uhfl2ulRENRjQ59mhl+x0+qcc0pz8P6BoCfK8n9swX/2OTe5ArNiXS6gcZDJ+/imRt3/JrYUHUYJM76d61V8ReRYE1uhn+qOco9dOvzIRj0tyqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759830295; c=relaxed/simple;
-	bh=3YsUGHE8p+SGmBLxNad+cDIngJ/4w2kWdXR7zcSNBhM=;
+	s=arc-20240116; t=1759830296; c=relaxed/simple;
+	bh=sHAs1h2nj+F5QylxrrHzaX1LNy9B3/05QnbSzhIUHoE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bLdJ438efBJzzseewKbwSZtqTpa7VZw9LfCRywlBd9VEAd2smCfksRvnDtV6wTV+9Uwlx7oIA2O4Pd5TdS4FHG7wKZvCAecLY2Hgm8o2tUUUb7srEw7RLC+ZD9WZeRSAU2fubLASjj6RT48vO/SkD3z72AFA7fUZ2+CGI8pVznM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lz4A46Ts; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ACC1C4AF0F;
+	 MIME-Version; b=i5wTz6M8/bW0+THUfx8jsqdNwzc1X8o2+Wu4wX5I/tIy94xZVnOvx8bBx0xWv1Gw0xtcOzcbauupQC6OTxaQ3pJX4TvmqZRr2eHqE1W6OCC71hQQ+RrDjUQiyKnLMSewi4MYyrB7Q6bKxtf0OmFTANZaznIaIDhuFd6I1ChlhsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hGobKLQ8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F881C4CEF9;
 	Tue,  7 Oct 2025 09:44:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1759830295;
-	bh=3YsUGHE8p+SGmBLxNad+cDIngJ/4w2kWdXR7zcSNBhM=;
+	bh=sHAs1h2nj+F5QylxrrHzaX1LNy9B3/05QnbSzhIUHoE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Lz4A46TspwgvM2rCHwq6tFgYs9Kq1WQFGtkhQIccVj1T+5xFX6bdYyvNboSJqbcZa
-	 oPJVSKo8CpPlt8wMbluFLWh+QlxnIHtqedpiYDQ9YqAnjr8Vn1Cb196pi0e/Scv93n
-	 okPytWwUkzlUNXd56vT1OS8K5uG2zLeVCh+cMEEl0e3FlXNWPt7oE1fcFnQTUVzGpH
-	 91oYJbN4jR+KZG5Su2wLscKOEIAQOVz6H5qTrIuNNoe3iTDX7xnQXX81ypnvhZA8h3
-	 X0wIQAGoeHlvzWnRMIiB75ZMbKyofcPEYwPz8DH7Wb4vXp3KOaJKCvL/zs7h35Agkx
-	 8/5wnTtWQLPgw==
+	b=hGobKLQ8yajJbGwbnsBI/ukgknoOyJO6eaw4Acko2LP+OFrp9uk67LgL64U+qa0lF
+	 gc4URbPn+TYv3ocJqp8Vpha6Zds1a9LPKy0zO4Sv5FM4AUflQt9HM4YeDsMDWD+Q/Q
+	 OgPsCr8iEzd6ObFySWekM0kuy6D8LQTyS5Z6iYEgFD43UHVcPjlt/dYZbjW6NyANTM
+	 MUTfs64tBKg2vq7V/TG9Z+RAZNS8j32jJ3YCKYRGwbuOBZZ5+0a/j1WZJ/vbGu7iJq
+	 s5ADMtrOLJz+nCbu/A/5Kse6nncaVY3ciRbDhgbqQ1d5n41IXlmT9CTkT5yRWjHlBG
+	 1zDyZzEX8aW/g==
 Received: from johan by xi.lan with local (Exim 4.98.2)
 	(envelope-from <johan@kernel.org>)
-	id 1v64FZ-0000000035q-1aMt;
+	id 1v64FZ-0000000035t-212c;
 	Tue, 07 Oct 2025 11:44:53 +0200
 From: Johan Hovold <johan@kernel.org>
 To: Joerg Roedel <joro@8bytes.org>,
@@ -60,10 +60,12 @@ Cc: Robin Murphy <robin.murphy@arm.com>,
 	Krishna Reddy <vdumpa@nvidia.com>,
 	iommu@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>
-Subject: [PATCH v2 07/14] iommu/mediatek: simplify dt parsing error handling
-Date: Tue,  7 Oct 2025 11:43:20 +0200
-Message-ID: <20251007094327.11734-8-johan@kernel.org>
+	Johan Hovold <johan@kernel.org>,
+	stable@vger.kernel.org,
+	Honghui Zhang <honghui.zhang@mediatek.com>
+Subject: [PATCH v2 08/14] iommu/mediatek-v1: fix device leak on probe_device()
+Date: Tue,  7 Oct 2025 11:43:21 +0200
+Message-ID: <20251007094327.11734-9-johan@kernel.org>
 X-Mailer: git-send-email 2.49.1
 In-Reply-To: <20251007094327.11734-1-johan@kernel.org>
 References: <20251007094327.11734-1-johan@kernel.org>
@@ -75,44 +77,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-As previously documented by commit 26593928564c ("iommu/mediatek: Add
-error path for loop of mm_dts_parse"), the id mapping may not be linear
-so the whole larb array needs to be iterated on devicetree parsing
-errors.
+Make sure to drop the reference taken to the iommu platform device when
+looking up its driver data during probe_device().
 
-Simplify the loop by iterating from index zero while dropping the
-redundant NULL check for consistency with later cleanups.
-
-Also add back the comment which was removed by commit 462e768b55a2
-("iommu/mediatek: Fix forever loop in error handling") to prevent anyone
-from trying to optimise the loop by iterating backwards from 'i'.
-
-Cc: Yong Wu <yong.wu@mediatek.com>
+Fixes: b17336c55d89 ("iommu/mediatek: add support for mtk iommu generation one HW")
+Cc: stable@vger.kernel.org	# 4.8
+Cc: Honghui Zhang <honghui.zhang@mediatek.com>
 Acked-by: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/iommu/mtk_iommu.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/iommu/mtk_iommu_v1.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-index 20a5ba80f983..24bb8b646edc 100644
---- a/drivers/iommu/mtk_iommu.c
-+++ b/drivers/iommu/mtk_iommu.c
-@@ -1240,11 +1240,10 @@ static int mtk_iommu_mm_dts_parse(struct device *dev, struct component_match **m
- 	return 0;
+diff --git a/drivers/iommu/mtk_iommu_v1.c b/drivers/iommu/mtk_iommu_v1.c
+index 10cc0b1197e8..de9153c0a82f 100644
+--- a/drivers/iommu/mtk_iommu_v1.c
++++ b/drivers/iommu/mtk_iommu_v1.c
+@@ -435,6 +435,8 @@ static int mtk_iommu_v1_create_mapping(struct device *dev,
+ 			return -EINVAL;
  
- err_larbdev_put:
--	for (i = MTK_LARB_NR_MAX - 1; i >= 0; i--) {
--		if (!data->larb_imu[i].dev)
--			continue;
-+	/* id mapping may not be linear, loop the whole array */
-+	for (i = 0; i < MTK_LARB_NR_MAX; i++)
- 		put_device(data->larb_imu[i].dev);
--	}
+ 		dev_iommu_priv_set(dev, platform_get_drvdata(m4updev));
 +
- 	return ret;
- }
++		put_device(&m4updev->dev);
+ 	}
  
+ 	ret = iommu_fwspec_add_ids(dev, args->args, 1);
 -- 
 2.49.1
 
