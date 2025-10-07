@@ -1,85 +1,98 @@
-Return-Path: <linux-kernel+bounces-844757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0AFCBC2B07
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 22:46:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB272BC2B10
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 22:47:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6F67C4E48D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 20:46:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 927034E3FFB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 20:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E7C23D7F0;
-	Tue,  7 Oct 2025 20:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4920723C516;
+	Tue,  7 Oct 2025 20:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BaYbf/sC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X5ZgX2/d"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5512264AA;
-	Tue,  7 Oct 2025 20:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D13C5227;
+	Tue,  7 Oct 2025 20:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759869987; cv=none; b=mXXm87p9hwwcrjmX9IsUNv3kS9omBpwWeS+ytsvKUZ+PK+bAryMkdwPvzG5si8GzG0WEsfvGVlA16DhAqhztZCf8H88H/+Woz4gTAiDg1klh+k/ZABIzeM2ePvir82Hp4sL3U22AIL0jy2cfkTr6i5b2lyOegmxk90HNROz2RpM=
+	t=1759870053; cv=none; b=s6Jr7U7Od7yEIYEV/KCEfShXeZEjzmS8eZtFqomeHvEqnVfohHFoeNPDrE3X3LQ2hCTIRzTLyRJDLPNDFPwtQ9vnGdnkLee1P+vJ034YBjvOvfudG9j49DiynwXq1bpXi0p6iwhkHI9ASoO4sbOFbgqVMILsOeSofZ96X5OOSeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759869987; c=relaxed/simple;
-	bh=vFia84u1wYBVt9Kn/TScJ/+9AA7lGsqtODeAh6QZQj0=;
+	s=arc-20240116; t=1759870053; c=relaxed/simple;
+	bh=23u1ryQA4pkVgghEK/FjlCql33thr7bf7nrPRRN5i6Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sg3xaRC3U1/r42Bh97r+NzGKenlTRTlbc2Kbqr4FhRZZh0gg0A6AbOOEm+KdnvdFCPsKYj8aKsPpb0729z5hGJlj/72mWp9I2ko21SAcZqvUi+bXdF0oWaQew6ugNjuLjLuDQAg2m6GAyN0gfiaoOsKJlwtIQM31oBLUMJ4uVPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BaYbf/sC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E12DC19423;
-	Tue,  7 Oct 2025 20:46:26 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=FEyo7R555rppxh/tjJmmjJxslWLYEStt+ligfkcdTYucitejIkHfYP++GV89AyPxAcDCEOU7oqHkP2B/HHp7+O/tSPjOTNPsAqH662XZH213UjR9QpbPM+RoRO0Wh+bBoBdzDuDKJWTYb9CuMdTt25LfD+a7pk2ZMPB95n8OwyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X5ZgX2/d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DF94C4CEF1;
+	Tue,  7 Oct 2025 20:47:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759869986;
-	bh=vFia84u1wYBVt9Kn/TScJ/+9AA7lGsqtODeAh6QZQj0=;
+	s=k20201202; t=1759870053;
+	bh=23u1ryQA4pkVgghEK/FjlCql33thr7bf7nrPRRN5i6Q=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BaYbf/sCHbYh7h00lEe9jQaT8XqBL965jNAtOJ8T4Q5w1K8+A0WkbBufoJ9ufDc19
-	 Av+3HhpfFEhpXlOcMf3qprwJbS6YRTRsIK/ti5lpx14OP8xRpkyDyEI3cD/PiqFk+C
-	 s7VGfQbiIAKk83gqRjPklGt4yF3Nn0IWVEOViud5fxZuyTRhHWhD5PFrl5bVaRUYzK
-	 odCHI+rpUaJGQCL8+3MGOEXuQX1JvtaCI+RyuLAv2ETGhQMykG3EUDOBd1C3mxjMcE
-	 IRSmvVYmUYlTC2SEGva9y6ec0af5wJEGcOJE/5VoXUJafZiwg/aVmcn0nLrEK6slPC
-	 U9+Dq7DwdYgQg==
-Date: Tue, 7 Oct 2025 10:46:25 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
-	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
-	changwoo@igalia.com, cgroups@vger.kernel.org,
-	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
-Subject: Re: [PATCH 00/12] sched: Cleanup the change-pattern and related
- locking
-Message-ID: <aOV8IQ2mHlso53Fh@slm.duckdns.org>
-References: <20251006104402.946760805@infradead.org>
+	b=X5ZgX2/dvBtfhlELBUQDRuuHSWQhZPXCt6SRVfbp2P4M5bQR+lMd43FoZVFzJb0ED
+	 qL7SDYslX//Bm6ftvZ61qgcYGpFa1Kfj4n1a+kPIobVo0kkp7/JWzVbY/oHDlWShPK
+	 pqAnUp1ZEFNIiovXrwDyOWG6VAHCvGnRMW4YFO5JKiDh73VWAPfVgUfpcJ6Enmo8bE
+	 DYjRE8YXyDNOTp/B/V28xIS/gEAfxMJpluVfumzHvxl22d+IjyLWz+hh28T4ssJr9k
+	 CSF+nphmiEdbZhD1Jmu5DTh0jeklgy4Tui9gHb5jOsDNJJ+GIHDr3usndmFpfrnRq9
+	 ZCqa94/JT2O1g==
+Date: Tue, 7 Oct 2025 21:47:29 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>
+Cc: jacopo.mondi@ideasonboard.com, hverkuil@xs4all.nl, mchehab@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/2] dt-bindings: Pinefeat cef168 lens control board
+Message-ID: <20251007-obscure-thrower-1afcdb23c4b8@spud>
+References: <20251007195732.16436-1-asmirnou@pinefeat.co.uk>
+ <20251007195732.16436-2-asmirnou@pinefeat.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="mr8WqQAh4oYIhLeV"
+Content-Disposition: inline
+In-Reply-To: <20251007195732.16436-2-asmirnou@pinefeat.co.uk>
+
+
+--mr8WqQAh4oYIhLeV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251006104402.946760805@infradead.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 06, 2025 at 12:44:02PM +0200, Peter Zijlstra wrote:
-> 
-> Hi,
-> 
-> There here patches clean up the scheduler 'change' pattern and related locking
-> some. They are the less controversial bit of some proposed sched_ext changes
-> and stand on their own.
-> 
-> I would like to queue them into sched/core after the merge window.
+On Tue, Oct 07, 2025 at 08:57:31PM +0100, Aliaksandr Smirnou wrote:
+> Add the Device Tree schema and examples for the Pinefeat cef168 lens
+> control board. This board interfaces Canon EF & EF-S lenses with
+> non-Canon camera bodies, enabling electronic control of focus and
+> aperture via V4L2.
+>=20
+> Power supply is derived from fixed supplies via connector or GPIO
+> header. Therefore, the driver does not manage any regulator, so
+> representing any supply in the binding is redundant.
+>=20
+> Signed-off-by: Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>
 
-FWIW, all look good to me.
+I acked v5, any reason for not applying it?
+https://lore.kernel.org/all/20251007-geologic-epidemic-2f667f232cf6@spud/#t
 
-Acked-by: Tejun Heo <tj@kernel.org>
+--mr8WqQAh4oYIhLeV
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks.
+-----BEGIN PGP SIGNATURE-----
 
--- 
-tejun
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOV8YQAKCRB4tDGHoIJi
+0hqiAP90PFWFzZJiPBzdjssP55kYAixNabTHplEl1fb+BgNQvAEAlJbTXs4JOoAY
+uYvdtLm2YM6oKb/Z/9nYZNmvTD/uIgc=
+=cPvn
+-----END PGP SIGNATURE-----
+
+--mr8WqQAh4oYIhLeV--
 
