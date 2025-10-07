@@ -1,127 +1,132 @@
-Return-Path: <linux-kernel+bounces-844860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73BCBBC2F3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 01:29:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A95A0BC2F69
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 01:38:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2472D4E0136
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 23:29:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FAFE3C6C0E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 23:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29883257825;
-	Tue,  7 Oct 2025 23:29:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED5F25DB0A;
+	Tue,  7 Oct 2025 23:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="apz0RRnJ"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4372E235C01
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 23:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F9824679A
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 23:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759879744; cv=none; b=UZNEqrTFOVBsmS8R3N7nPm3elni5oMmPODLQ43q1dtRu/OUiW683chlBDuZ1rNfX8spq9lFMHEhiZJqNVozgTA3qDcX+U2/ctRNEJAdTii7AtTLfHAkHp8q6AsAkqA4qPBRnJo/0CeYr3Y6Cz9EiNE0mQ1Z0JtT77i5dUvML88U=
+	t=1759880282; cv=none; b=d7mUK4ptP2HXvwtjA0XaAPX+Znnj4K3OO8sT+jJtQy6XKzN4itpVKnK+oCEwFI27bUpZidoFkrgwVQS6YwoZjjBzwxiQw8/gnM9dz19JnC3sQDZNm7BcYEmzc4axBGqfeYn1ntKapwRRfeJpD5jyywA8/VNxJchz8+4qCziWjoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759879744; c=relaxed/simple;
-	bh=1et4TFmA+MtE2pexyfRs2I+FKHX1eE77LRLzY7yt+hM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Of25hflPecmWEXzx1rZJ53aq6yobQXeuqH53WcMzHLAZjtQnDz9KdDdULZpK2asucC8XrM9r6BpFrNLL74MolOIjLTb+HcAt4Cjm9qn/e4xVkP+3Uqx+DnI02M0UUOMcON+QhGLkLeUD/OQhEc1l9Kz/raSbB6S0PHH2x0G3Q88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-42f6639fb22so55151625ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 16:29:03 -0700 (PDT)
+	s=arc-20240116; t=1759880282; c=relaxed/simple;
+	bh=h26x29s20hjBJODDc+mltJ1rrKTeU+LcB6figctfTWU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gJdcLCOlAHJPoJetxGdbYoLijKFT+/cseaX8d+dQPENryPKhr4ugVy/RWioBpjmfOW0IahZSYyLhlDyNRJprKsnIk+7Oj0UOfzsv0MSJC0NzsZr2DGRVfrDj2VSs3kATBK5OwVPh9GJN/5zVkKmwOlNqx4yIO40LgYTjSPcvMjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=apz0RRnJ; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-859b2ec0556so699960285a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 16:38:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759880279; x=1760485079; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PLxpd9kbi54qSwlv5nU44o57YQdg6U4+ha5MoJ07Q4g=;
+        b=apz0RRnJSR8eH+105kHOth9iqPn054UtK/j/Kz0qb1C+A1IxNURZiWDiBQq9WPJU2c
+         z2aoWLdMkfiavHyiFwyfK4raSKoKq/pS2D2xThFJ+lbBfQgGIaoBvw6gccYiaj2dqrS4
+         caRFZKQ0tghyj+ksfiBJl5C4a7TBGhx14Ap+dBcb7aOnz98s03JTftf3oJhw/qceVp6s
+         MuAOPe1yTpqSK2Ct7QEWZJdYJME33nqlGO8DLlC6txODjXlp5qJONCYLJXAAovReXBd9
+         lhO7YraHnFwcZERsVzn4myBG8HIPDWzGPTu9OPA7kN8OQj6aIbk829dzIeUzCcIYfp6O
+         xnEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759879742; x=1760484542;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m/rvXYCZEg14WYsInwyVNAQ5lJvCUE2wFXbJBFTowus=;
-        b=Z2PYHlou6rd9f4EPxwjZzo22E28kmorwsbKlg7oyIlxgEhRXOXK+pZDMfYMsqveOZ+
-         B159EDRtxXHQM1nhgyvBkU+UMEeKLWonFTL3/T9WOnUR4zV8+wlB10HohU+TOcvDbmRE
-         Ek+Iv98TE99otmMi6XpcaTR57xBn4aUMSbDoR4t+bw+DWFEi9Z0EDO3KsdugewOg4anG
-         UTyiEl5LmJo6ZmjX4gElKv54Wxx4VpMez/vE3CPi0W7oPjZ7A9OWab49HDF+OBW2aKfn
-         Zl/X3Eq7FiPBrlw7sZG0uyIDEJq4Q8Oz4xZLowJLiI++/JFX/TPO90ZwEaqhOA5h/kxp
-         FN2g==
-X-Forwarded-Encrypted: i=1; AJvYcCW4YPkrPsQWNfNDRorku9tFP5L2z4x5cc5MvRqu5LfnhOlR0PBpgUacowOkxyJZLBAPrAffNHYncnD6SRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwS+WoGol5FCHumngid3XaUduprAw4nFR/jaERVz1swK/jEJckt
-	doWIU+6Xoy2Fwvn3qd2Yg3IoGF4lSLPKu3KCwOUHqE/iqd16urr8OVlJXI/apEnAshUNzehH/vU
-	Jy9oeeysLTdoGg6OQekaQf8pSgDu0jr2rV9uMIqMPWVMua6Si8kuAA/cGQVI=
-X-Google-Smtp-Source: AGHT+IHCwJWbOVllrxEkarX0fulWih7JNfI+rNZ+MjiKezFvhvotiyDwmsfysWChUmXkhd6HRcHk52B0D7Lu3FusShlYn3JiFJh6
+        d=1e100.net; s=20230601; t=1759880279; x=1760485079;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PLxpd9kbi54qSwlv5nU44o57YQdg6U4+ha5MoJ07Q4g=;
+        b=djvkwBXNRLIsAQquGuNNfJLX7WAIXy+A0zTqrk00KuNQhtdWYbZAiLK6M3RfYsg149
+         dfoUsfMyxA80qFOLR3SUjwBleaY1/4ZSmnfqeugipjqNk7q7xXBdQFMwVgcgPTMC2uSb
+         eAZsTpbvVriMzp00ezwvz/gJv+2TRGNo3U9X2PZZfJ346+AmLaMk3cGiKUW3A4v4uC6n
+         GVURE7jqR0G9nhSaSmEbjvJIIrg3jKXYchlSF/g1XlurwdsSh+I45l50ooxhv4yR39jC
+         zT+mfd1s0TzUDxS3PFWL1hXvJOpC15CsufGuOUBLlKAQgwwrfGGu6dJlHoQwB0O3Rv4S
+         xA4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVI19eTQc42/e29RECO+x8Nm0Tq6kq5unrHH1AlZnUSCrOJYaYX20XNOgpmEEs/pXNVoZmtqykQfr/LgSI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQW/pfPn7+27zB998g7n9mchDNkmIjMGu/S4hA1nEx7akjmOkL
+	/VTPx05I2hL6QnAy0W+NjCoHRz1FrRcYQHVcAkY0CzqmVRtvp7VLHvu2mHOpr1ek+Oo=
+X-Gm-Gg: ASbGncu5/TtAd4HXf+TNZYQjmLsI8P3B0ybB39zDPEm44fTCf0Om8TEdvkKPbMtDfC0
+	VbKcFDUmXB2d+H0q3Hp/m/Rxu7ydKmpAtWRjiB2JUIcuMvj/kOZ/P1nT2WUYuUznQEK67XQJ/k0
+	vMQqc7eA7e3XBHwlKOZ4mxl4kgCpE6mQAWoYaPkiRve9TE4bjdPLRgJz7ttht6H7VsXeF+kRtaQ
+	Rjq1KrTl4K6F0gnOgJMhzHVcoexj+dxXdnrE431eakLaFnyNPB5OCJfUYVIm/Irr3LSMxvtLktF
+	3VuXmOHUF/7vjjGOQY6ORcaprLxIqRFQ5h2aGv7xvE44cRcfywNbtKi5u34Q4Lt7xzEXTI6xZtg
+	P9SrbyEms35TBiwp5lBtc6/t0OIkKhXwqpiyp6OftsLcPbtW6NC5eveqyyWzvPul6n4Uc092GqP
+	uoJxVOjmNCBNmkQDExKbi30OX65agq3so=
+X-Google-Smtp-Source: AGHT+IGWuoyjLBHTvXhdCeOdSV6cJByJ0Y01xALhTW3Q5DEdDg5DMyRj8M0bafbfIIx4igMJsj0h+Q==
+X-Received: by 2002:a05:620a:29d0:b0:826:a2b5:d531 with SMTP id af79cd13be357-88350a7881bmr266619585a.32.1759880279064;
+        Tue, 07 Oct 2025 16:37:59 -0700 (PDT)
+Received: from mango-teamkim.. ([129.170.197.108])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87a0e9bd554sm14351366d6.32.2025.10.07.16.37.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 16:37:58 -0700 (PDT)
+From: pip-izony <eeodqql09@gmail.com>
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: Seungjin Bae <eeodqql09@gmail.com>,
+	Kyungtae Kim <Kyungtae.Kim@dartmouth.edu>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-bluetooth@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] Bluetooth: bfusb: Fix buffer over-read in rx processing loop
+Date: Tue,  7 Oct 2025 19:29:42 -0400
+Message-ID: <20251007232941.3742133-2-eeodqql09@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a87:b0:42d:844d:277e with SMTP id
- e9e14a558f8ab-42f8742ebe9mr11144805ab.32.1759879742415; Tue, 07 Oct 2025
- 16:29:02 -0700 (PDT)
-Date: Tue, 07 Oct 2025 16:29:02 -0700
-In-Reply-To: <1296925405.322110.1759873945068@kpc.webmail.kpnmail.nl>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e5a23e.050a0220.256323.002d.GAE@google.com>
-Subject: Re: [syzbot] [ntfs3?] WARNING in indx_insert_into_buffer (3)
-From: syzbot <syzbot+3a1878433bc1cb97b42a@syzkaller.appspotmail.com>
-To: jkoolstra@xs4all.nl, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: Seungjin Bae <eeodqql09@gmail.com>
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in indx_insert_into_buffer
+The bfusb_rx_complete() function parses incoming URB data in while loop.
+The logic does not sufficiently validate the remaining buffer size(count)
+accross loop iterations, which can lead to a buffer over-read.
 
-loop0: detected capacity change from 0 to 4096
-------------[ cut here ]------------
-memcpy: detected field-spanning write (size 3656) of single field "&n1->index->blk" at fs/ntfs3/index.c:1927 (size 16)
-WARNING: CPU: 1 PID: 6418 at fs/ntfs3/index.c:1927 indx_insert_into_buffer.isra.0+0x109a/0x1320 fs/ntfs3/index.c:1927
-Modules linked in:
-CPU: 1 UID: 0 PID: 6418 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-RIP: 0010:indx_insert_into_buffer.isra.0+0x109a/0x1320 fs/ntfs3/index.c:1927
-Code: 0c d5 a3 fe c6 05 3a ad 30 0d 01 90 48 8b 74 24 68 b9 10 00 00 00 48 c7 c2 60 68 a7 8b 48 c7 c7 c0 68 a7 8b e8 87 5b 62 fe 90 <0f> 0b 90 90 e9 b0 fd ff ff e8 38 56 0b ff e9 f4 f3 ff ff e8 2e 56
-RSP: 0018:ffffc90003a0f748 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: 00000000ffffffe4 RCX: ffffffff817a4b08
-RDX: ffff888025980000 RSI: ffffffff817a4b15 RDI: 0000000000000001
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: ffff88807927e800
-R13: ffff88805862a800 R14: dffffc0000000000 R15: 0000000000000e48
-FS:  00007f94fb6426c0(0000) GS:ffff888124f62000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f3ee058dd30 CR3: 00000000616dd000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- indx_insert_entry+0x1a0/0x460 fs/ntfs3/index.c:1996
- ni_add_name+0x4dd/0x820 fs/ntfs3/frecord.c:2995
- ni_rename+0x98/0x170 fs/ntfs3/frecord.c:3026
- ntfs_rename+0xab9/0xf00 fs/ntfs3/namei.c:332
- vfs_rename+0xfa3/0x2290 fs/namei.c:5216
- do_renameat2+0x7d8/0xc20 fs/namei.c:5364
- __do_sys_rename fs/namei.c:5411 [inline]
- __se_sys_rename fs/namei.c:5409 [inline]
- __x64_sys_rename+0x7d/0xa0 fs/namei.c:5409
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f94fa78eec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f94fb642038 EFLAGS: 00000246 ORIG_RAX: 0000000000000052
-RAX: ffffffffffffffda RBX: 00007f94fa9e5fa0 RCX: 00007f94fa78eec9
-RDX: 0000000000000000 RSI: 0000200000000f40 RDI: 00002000000003c0
-RBP: 00007f94fa811f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f94fa9e6038 R14: 00007f94fa9e5fa0 R15: 00007ffce10dde88
- </TASK>
+For example, with 4-bytes remaining buffer, if the first iteration takes
+the `hdr & 0x4000` branch, 2-bytes are consumed. On the next iteration,
+only 2-bytes remain, but the else branch is trying to access the third
+byte(buf[2]). This causes an out-of-bounds read and a potential kernel panic.
 
+This patch fixes the vulnerability by adding checks to ensure enough
+data remains in the buffer before it is accessed.
 
-Tested on:
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Seungjin Bae <eeodqql09@gmail.com>
+---
+ drivers/bluetooth/bfusb.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-commit:         a8cdf51c Merge tag 'hardening-fix1-v6.18-rc1' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16277334580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7e89ecd5e8107dd4
-dashboard link: https://syzkaller.appspot.com/bug?extid=3a1878433bc1cb97b42a
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14a8e892580000
+diff --git a/drivers/bluetooth/bfusb.c b/drivers/bluetooth/bfusb.c
+index 8df310983bf6..f17eae6dbd7d 100644
+--- a/drivers/bluetooth/bfusb.c
++++ b/drivers/bluetooth/bfusb.c
+@@ -360,6 +360,10 @@ static void bfusb_rx_complete(struct urb *urb)
+ 			count -= 2;
+ 			buf   += 2;
+ 		} else {
++            if (count < 3) {
++                bf_dev_err(data->hdev, "block header is too short");
++                break;
++            }
+ 			len = (buf[2] == 0) ? 256 : buf[2];
+ 			count -= 3;
+ 			buf   += 3;
+-- 
+2.43.0
 
 
