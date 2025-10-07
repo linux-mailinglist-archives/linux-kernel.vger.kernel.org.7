@@ -1,170 +1,165 @@
-Return-Path: <linux-kernel+bounces-844849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52418BC2E7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 00:58:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0594BC2E84
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 00:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3E1DF4E3B20
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 22:57:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A0B13E1F3B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 22:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D669213C914;
-	Tue,  7 Oct 2025 22:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CC325A2BF;
+	Tue,  7 Oct 2025 22:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="cF90nOlO"
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hHZvo2Fn"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B300125743D
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 22:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3682586C5
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 22:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759877872; cv=none; b=HLE8/g8vRs/F5FuA5UBB6SJCdpOaN/I3PvP4rb9GaHB+qe9NXPD4woCbwmlmonJdUwrOH33grgenvJxt2fnWZJaw5jH88gMBx8dlGd/Qc5CJ18K0myPrvz55OO/a/kG+ZGDMZQWwwgXlZ7aTKKcrGHZWOjF3k3zVcYhJa7xzZEQ=
+	t=1759877901; cv=none; b=XigKocWP2C+RM81+T4822V8unDRnGH95bxrFcjimhaNKVJ+dW9yvqTSyWCrcTi8wrMlT60GT3uP8zZrmcQpkmIbQaa1qwQr/BAIQgnpDGfMSLCyVmtu6r4R6xbAtsz4nFhsQ6vKgLcquG6fxJWnViw1kcBQOkxXAPJpBtEXPLfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759877872; c=relaxed/simple;
-	bh=SR8qr+wxtjyRLMX7Em39GgI/MO+IBcVlx0Qiq/NyLpw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FWTm4lYxCcGDga4U0qbVZ7FZMG1Ovk8eAzMLRnT3yez+bvpWM966m+2bbM7Odf7lMK+GV/C5POa55mE1VZfdIvDI6U8PUCUoERGXvCNxyrp0APOxOp6Z/mxu2v/zzC9J5t4U7hlDZIbiSroc9i/76ykoUA0PjU/raw3CCC6XkMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=cF90nOlO; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 597Kcwdp671039
-	for <linux-kernel@vger.kernel.org>; Tue, 7 Oct 2025 15:57:50 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=s2048-2025-q2; bh=7RHtWEkPU0TOzxngsLf0
-	fxonGEHdvNwEyI5ReCzGuU4=; b=cF90nOlO5cP6sX262yHUp8YWI8/ufRg1FHGO
-	6iMhnnonRb9nJCCzmtaOh+vbdJ7NdFKzWMOorrgYMJ54q1lvaNfp207oOg55KnPs
-	+5CXbPe1E9CyDyRUBXZcETH67da2BZMUBHoFbPwEye2J0qvzqE3e77NqBXrFPiQs
-	v/h2KRu3hIs0NrfnpxxDaMm2C1AuP5T8DV4yYbGuizfFmq9L2VtUg4AX8V1BGh+E
-	Sis4DYX/gIddKLpMwtVlooR0rpUeGchxuf3/y1hKgQexlRJqqe7Burmq7dVdpKcR
-	r4+5VIXLxTyNhtQLUCSrbgkLTltpBv6EVlEYr28xDnES7DUpOg==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 49n51dbvtg-5
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 15:57:49 -0700 (PDT)
-Received: from twshared23637.05.prn5.facebook.com (2620:10d:c085:108::150d) by
- mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.20; Tue, 7 Oct 2025 22:57:48 +0000
-Received: by devgpu015.cco6.facebook.com (Postfix, from userid 199522)
-	id E1AC5D057B9; Tue,  7 Oct 2025 15:57:47 -0700 (PDT)
-Date: Tue, 7 Oct 2025 15:57:47 -0700
-From: Alex Mastro <amastro@fb.com>
-To: Alex Williamson <alex.williamson@redhat.com>
-CC: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>,
-        Jason Gunthorpe
-	<jgg@ziepe.ca>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] vfio: fix VFIO_IOMMU_UNMAP_DMA when end of range would
- overflow u64
-Message-ID: <aOWa6yD0oyQSgFTW@devgpu015.cco6.facebook.com>
-References: <20251005-fix-unmap-v1-1-6687732ed44e@fb.com>
- <20251006121618.GA3365647@ziepe.ca>
- <aOPuU0O6PlOjd/Xs@devgpu015.cco6.facebook.com>
- <20251006225039.GA3441843@ziepe.ca>
- <aORhMMOU5p3j69ld@devgpu015.cco6.facebook.com>
- <68e18f2c-79ad-45ec-99b9-99ff68ba5438@oracle.com>
- <aOSWA46X1XsH7pwP@devgpu015.cco6.facebook.com>
- <20251007144328.186fc0d2.alex.williamson@redhat.com>
+	s=arc-20240116; t=1759877901; c=relaxed/simple;
+	bh=5+KQiXKaE6mhudMxCJikU0TpZUEaf78Hz+t9g+4OaC4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qrAC6WRDIv0eqITQWLdA7VrwI7hYjTZeYNJgFYGVQHbG69sdOHCqjh1NPf6PItQmbcOsb+HHcw2fHgFCzRJYzVpMEL1AOxSdjXrXTNK3a2Qzc55tqPibhe7y2vVCRPKjSJqOU8zOsskIv2oKgOaeq1Nt02zl4LsH8Beu7BK7z6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hHZvo2Fn; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-77f605f22easo5806118b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 15:58:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1759877899; x=1760482699; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5+KQiXKaE6mhudMxCJikU0TpZUEaf78Hz+t9g+4OaC4=;
+        b=hHZvo2FnIpNzBtb0yH7xfpc+ZYkANXLRSlsZY4+A9eHHaRoTXD5ur087sW0U3kakzz
+         udN7qgZNVtPKhJmY7UMosAuonCbj8TLn+J5ahzBL74XaWMzmgvci/g8VklbtShn5VPSa
+         KIbm4i20efZbuDvtpJiGrUFrxRoyN3+clrM4M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759877899; x=1760482699;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5+KQiXKaE6mhudMxCJikU0TpZUEaf78Hz+t9g+4OaC4=;
+        b=dwc+34LQ+G1J1Six5V2Ujkl6DJ68YuIh1y9AMCodVxt7njLyFfjt/fVIDC1jwMjbRm
+         J9U8gdeRSKuAdFTcgVWkpezXI4bFOSwliHxi5Uhgv8SjQwfH/oA7lOiyXeT3aMtuwgHL
+         wAV/SnxTpgh78WrdW6b1HnjilmpgKFjin+/LqgVnro80ecp8qJMZEVW+dgNq9xlqru3g
+         Y3c9u03LTnq3lm/LPwOfpj4EDeFY8lC0MklLfvbnscwE1kKiV3JxJ2uhkHmS2w+HYBLZ
+         3ggDrDC/a0WXMa0It/lJjP1m2Icg9/fQMGnBdVqANywb+MEVTKHMaLhT1ySAVqoJtSUG
+         ccEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWIemoYkhq0BZG716Bpr98Rf85gVp4IPtu0ZJqG2dV3CsEz+aQvBMv0ipgb/9i3Cd5Dzzg9N3pFnA8i8ZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrAeCh0zJAfObflgdJaQkB6QdEFzh3lrI1kQsCCI1jVh1w0X7e
+	4NfIxV1lJgsNzLzniJoME9TzsUaeNfzD1hGO7ImTEc6LRCMw5oPk3zjv9Kmk4N5rb1MK4s9U/zW
+	mKvU=
+X-Gm-Gg: ASbGncuz+U30atDMRqvdAQ5oC3+a5/SDc0RatK2EBaJSaFVuH4OpoYdVDnpH10htYAt
+	zbd+QN2LEP7HCv2cuZeNVdtW6zTyzeN6dT5NFBo8Xs7ZeLfQjFWGnk1U0LdTc8EHFQQjnepKZL+
+	+DwN7j0mfi9/pQ66PORwoCT8H/g3OlMN7jCXxSSiiRHivO/VG8pjO9ga9clQYqjwJp+VmnQftK7
+	6emZ4G0n1sR1Sjlwm/q88TNHdjkAVt91oCz3QQUwvy9fySSev9lqj0cAs7Sor3foLonHVKO6IhQ
+	jFBA/VxcxNm78BKzKifYZcXOTfzwvjiwT4zkMBdz6IBM2wYvgSI9olz/oUYXvFffJW9Ru6siejA
+	BJR1HkMijMbXaRnrnX4pWvVVsNJeagNhG8DxcPl5bXdxNzwKEfx62IH5/Uk8cbNbmn0XYK41KRS
+	gJSi7GjwvzZ484eQ==
+X-Google-Smtp-Source: AGHT+IF7m2pUMs00Tm6uDwJ/ulAtilwV4ndViRDuHi5cci8bu80YkvZ6243GWA8HsazHjeQyoa4/bg==
+X-Received: by 2002:a05:6a00:17a5:b0:781:1562:1f9e with SMTP id d2e1a72fcca58-793880f0678mr1442680b3a.32.1759877899258;
+        Tue, 07 Oct 2025 15:58:19 -0700 (PDT)
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com. [209.85.215.180])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b01f9dcb3sm16805540b3a.11.2025.10.07.15.58.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Oct 2025 15:58:19 -0700 (PDT)
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b6093f8f71dso4497666a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 15:58:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUz27gwE/AsHn7euWB5EA5tcfgXObBs+4ukHsOsAjM6/VTnUHzm1Nv+Bw3ZVyUeETX7oAVkOkAnY/ldDI4=@vger.kernel.org
+X-Received: by 2002:a17:902:fc4b:b0:28e:7dd9:5c29 with SMTP id
+ d9443c01a7336-290274024e3mr13055185ad.51.1759877898085; Tue, 07 Oct 2025
+ 15:58:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251007144328.186fc0d2.alex.williamson@redhat.com>
-X-FB-Internal: Safe
-X-Authority-Analysis: v=2.4 cv=T+aBjvKQ c=1 sm=1 tr=0 ts=68e59aed cx=c_pps
- a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=-tBlBomLHWHVkNyEUrkA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: zrXrftXUHmooyZmr0oglIHuDFQRgg6xH
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA3MDE3NiBTYWx0ZWRfX42wYwv8r76cS
- PnBKS7gucId8DrKbJYxkCIzNhfeZwynO6JpMbzLskxDTiMzFLTE9PU6NwhAV6jmJDx4q9AhC3pW
- LlwR3G6cDIfluULiVD3G+Ne04fv+9qmiHDqo9DVbDl9TbU2wn1RqJ1TLJWjIB+YVsAZWHEHyBWA
- Pi5m0KL66iWUbtmYK7zk7Y9IFS0MLv/idRLRemfwpU7enxka9Ka07GDaQTrSCepL/Lw4ZP/74c/
- qHE/rnTxo+3hvPQ/gtZRiY+KNOF4rvkx6zwGntqGGvqSRzhWRnMOekBiKTD2y442ioiv/taKunb
- PRPeEpvOMYzW7DMqmspPZvDPBlwnRkc8LGgrzZnGoOpXM9ZH++xsbDWMSZ3Kvb7mBMqh307xEKm
- eAQWTMty+un/2JGe253h6JFN1jIzIw==
-X-Proofpoint-ORIG-GUID: zrXrftXUHmooyZmr0oglIHuDFQRgg6xH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-07_02,2025-10-06_01,2025-03-28_01
+References: <20250916145122.416128-1-wangjinchao600@gmail.com>
+ <CAP-5=fWWOQ-6SWiNVBvb5mCofe0kZUURG_bm0PDsVFWqwDwrXg@mail.gmail.com>
+ <aMoTOXIKBYVTj7PV@mdev> <CAP-5=fX7NJmBjd1v5y4xCa0Ce5rNZ8Dqg0LXd12gPrdEQCERVA@mail.gmail.com>
+ <aMpIsqcgpOH1AObN@z2> <aMpRqlDXXOR5qYFd@mdev> <CAP-5=fV05++2Qvcxs=+tqhTdpGK8L9e5HzVu=y+xHxy9AqLMmg@mail.gmail.com>
+ <CAD=FV=VNmjTVxcxgTQqjE7CTkK2NVGbRxFJSwv=yOHU8gj-urQ@mail.gmail.com>
+ <CAP-5=fW64xHEW+4dKU_voNv7E67nUOFm27FFBuhtFii52NiQUQ@mail.gmail.com>
+ <CAD=FV=U3ic707dLuUc+NfxtWF6-ZyRdE0OY2VA6TgvgWKCHUzg@mail.gmail.com>
+ <CAP-5=fVkw6TLjVuR3UCNs+X1cwVmYk7UFABio4oDOwfshqoP_g@mail.gmail.com>
+ <CAD=FV=UWkZx8xQD=jBkOO6h2f5tw_KCoqhHciw5hkEOYU=GM8A@mail.gmail.com> <CAP-5=fXTFHcCE8pf5qgEf1AVODs2+r+_nDUOiWgdQeEgUBHzfA@mail.gmail.com>
+In-Reply-To: <CAP-5=fXTFHcCE8pf5qgEf1AVODs2+r+_nDUOiWgdQeEgUBHzfA@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 7 Oct 2025 15:58:06 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VuDYiu5nL5ZeZcY2b+YXOzZtSu2E4qBBHz9fWTW8gPhg@mail.gmail.com>
+X-Gm-Features: AS18NWCSxLhXMa6LWJavaPtuRN6XlQd4XglBJvkd9z7Rf77zdxFhI-J_rEr9-v8
+Message-ID: <CAD=FV=VuDYiu5nL5ZeZcY2b+YXOzZtSu2E4qBBHz9fWTW8gPhg@mail.gmail.com>
+Subject: Re: [RFC PATCH V1] watchdog: Add boot-time selection for hard lockup detector
+To: Ian Rogers <irogers@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jinchao Wang <wangjinchao600@gmail.com>, 
+	Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Will Deacon <will@kernel.org>, Yunhui Cui <cuiyunhui@bytedance.com>, akpm@linux-foundation.org, 
+	catalin.marinas@arm.com, maddy@linux.ibm.com, mpe@ellerman.id.au, 
+	npiggin@gmail.com, christophe.leroy@csgroup.eu, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	acme@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
+	kees@kernel.org, masahiroy@kernel.org, aliceryhl@google.com, ojeda@kernel.org, 
+	thomas.weissschuh@linutronix.de, xur@google.com, ruanjinjie@huawei.com, 
+	gshan@redhat.com, maz@kernel.org, suzuki.poulose@arm.com, 
+	zhanjie9@hisilicon.com, yangyicong@hisilicon.com, gautam@linux.ibm.com, 
+	arnd@arndb.de, zhao.xichao@vivo.com, rppt@kernel.org, lihuafei1@huawei.com, 
+	coxu@redhat.com, jpoimboe@kernel.org, yaozhenguo1@gmail.com, 
+	luogengkun@huaweicloud.com, max.kellermann@ionos.com, tj@kernel.org, 
+	yury.norov@gmail.com, thorsten.blum@linux.dev, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 07, 2025 at 02:43:28PM -0600, Alex Williamson wrote:
-> I prefer this approach, thanks for tackling it.  Consider splitting
-> into a few patches for easier review, ex. discrete input sanitizing with
-> proper overflow checking, refactoring the fast/slow handlers to
-> increment iova in the caller, remainder to tie it all together.  A few
-> comments inline below. 
+Hi,
 
-Alright -- I'll try to stage incrementally. The proposed sequencing sgtm.
+On Tue, Oct 7, 2025 at 3:45=E2=80=AFPM Ian Rogers <irogers@google.com> wrot=
+e:
+>
+> On Tue, Oct 7, 2025 at 2:43=E2=80=AFPM Doug Anderson <dianders@chromium.o=
+rg> wrote:
+> ...
+> > The buddy watchdog was pretty much following the conventions that were
+> > already in the code: that the hardlockup detector (whether backed by
+> > perf or not) was essentially called the "nmi watchdog". There were a
+> > number of people that were involved in reviews and I don't believe
+> > suggesting creating a whole different mechanism for enabling /
+> > disabling the buddy watchdog was never suggested.
+>
+> I suspect they lacked the context that 1 in the nmi_watchdog is taken
+> to mean there's a perf event in use by the kernel with implications on
+> how group events behave. This behavior has been user
+> visible/advertised for 9 years. I don't doubt that there were good
+> intentions by PowerPC's watchdog and in the buddy watchdog patches in
+> using the file, that use will lead to spurious warnings and behaviors
+> by perf.
+>
+> My points remain:
+> 1) using multiple files regresses perf's performance;
+> 2) the file name by its meaning is wrong;
+> 3) old perf tools on new kernels won't behave as expected wrt warnings
+> and metrics because the meaning of the file has changed.
+> Using a separate file for each watchdog resolves this. It seems that
+> there wasn't enough critical mass for getting this right to have
+> mattered before, but that doesn't mean we shouldn't get it right now.
 
-> > +	u64 end, to_pin;
-> 
-> end looks like a dma_addr_t and to_pin ought to be a size_t, right?
-> Maybe iova_end and iova_size?
+Presumably your next steps then are to find someone to submit a patch
+and try to convince others on the list that this is a good idea. The
+issue with perf has been known for a while now and I haven't seen any
+patches. As I've said, I won't stand in the way if everyone else
+agrees, but given that I'm still not convinced I'm not going to author
+any patches for this myself.
 
-Yes, I think I've been sloppy with the types. Am too 64-bit oriented.
-
-> > -	if (!iommu || !pages)
-> > +	if (!iommu || !pages || npage < 0)
-> >  		return -EINVAL;
-> >  
-> >  	/* Supported for v2 version only */
-> >  	if (!iommu->v2)
-> >  		return -EACCES;
-> >  
-> > +	if (npage == 0)
-> > +		return 0;
-> > +
-> > +	if (check_mul_overflow(npage, PAGE_SIZE, &to_pin))
-> > +		return -EINVAL;
-> > +
-> > +	if (check_add_overflow(user_iova, to_pin - 1, &end))
-> > +		return -EINVAL;
-> > +
-> 
-> Why not the same checks on vfio_iommu_type1_unpin_pages()?
-
-Will see if there's opportunity to stay more consistent.
-
-> >  				if (WARN_ON(!phys)) {
-> > -					iova += PAGE_SIZE;
-> > +					pos += PAGE_SIZE;
-> >  					continue;
-> >  				}
-> >  
-> > +
-> 
-> Extra white space
-
-Ack.
-
-> >  				size = PAGE_SIZE;
-> >  				p = phys + size;
-> >  				i = iova + size;
-> > -				while (i < dma->iova + dma->size &&
-> > +				while (size + pos < dma->size &&
-> >  				       p == iommu_iova_to_phys(d->domain, i)) {
-> >  					size += PAGE_SIZE;
-> >  					p += PAGE_SIZE;
-> 
-> I think the else branch after this has some use cases too, (iova -
-> dma->iova) just becomes 'pos' in calculating vaddr, 'n' should be
-> calculated as (dma->size - pos).
-
-Missed this simplification - thanks.
-
-> > +		u64 end;
-> 
-> Seems like a dma_addr_t.  range_end?  Thanks,
-
-Ack
+-Doug
 
