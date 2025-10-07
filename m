@@ -1,531 +1,185 @@
-Return-Path: <linux-kernel+bounces-844744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 855A0BC2A54
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 22:30:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 315C7BC2A76
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 22:36:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5432719A1F7B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 20:30:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CED374E384C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 20:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D882C23E334;
-	Tue,  7 Oct 2025 20:30:02 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBE8227E82;
+	Tue,  7 Oct 2025 20:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GLvQ+COn"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D094F23C512;
-	Tue,  7 Oct 2025 20:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3244218AB4
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 20:36:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759869002; cv=none; b=bT3SHaWS3yMIaZswCENZMhqlU2Caef4WKD60T/W7FJj3dg2i5QyBrFvNpuV78lrza2XjRDzWiwbt5ErrgFiu5pSbFbjdyZwkSlI4hpMwWcv3mdfyNJXe5z/NmPfwlyPCvrUDLM0B7bH+/KS5xEfozNRCtC4Go/SJnK9we41CtZE=
+	t=1759869373; cv=none; b=KIC3lLN3P9Jq21TV9NBv69qdZsjUb2BZSSDIiRczd+DP16iVw72R07b8oJ1EiAiV5llB7aSMzD3c1/FfGzErGRpA+SyQoZ7zcDq01zd3UltXVobHeviBkUgnzXZXgx/benlTHAjGeQE2GXA5xwsw/yKPKGlhvGuToXOZ23hjzeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759869002; c=relaxed/simple;
-	bh=+/TcoE3NXm2WwSnw1g/yFWPlPIxTPwrZY+EQgUP1Ido=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=druNy5H6CtZArTyzH5Ox7iXsGF7o7vgS/ZfeDOhNzvjqrcU+/ma5vibUf8B17bb+k3mapOp+rCPn8sZb/rJkvOwRK5iOOuwnVWZaBuCDWrl4VzbfJ9F0rULVa6yNTnrezW6LitCsnfREA+pSEhnfaN9fqwKCHyAWxtxdep4OzvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay02.hostedemail.com (Postfix) with ESMTP id 53D6813A7C0;
-	Tue,  7 Oct 2025 20:29:51 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 468CA2000F;
-	Tue,  7 Oct 2025 20:29:49 +0000 (UTC)
-Date: Tue, 7 Oct 2025 16:31:41 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Runping Lai <runpinglai@google.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Wattson CI <wattson-external@google.com>,
- kernel-team@android.com, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, Luo Gengkun
- <luogengkun@huaweicloud.com>, Linus Torvalds
- <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v1] Revert "tracing: Fix tracing_marker may trigger page
- fault during preempt_disable"
-Message-ID: <20251007163141.1034b120@gandalf.local.home>
-In-Reply-To: <20251007154308.5b158d04@gandalf.local.home>
-References: <20251007003417.3470979-2-runpinglai@google.com>
-	<20251006221043.07cdb0fd@gandalf.local.home>
-	<CABgk4RQwGsn4CdP0K+_7A0j7RVOiHNfoF1ESk17wEuzCea16pA@mail.gmail.com>
-	<20251007154308.5b158d04@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759869373; c=relaxed/simple;
+	bh=X30O3tuyaGnUdYn4ZevXlMz7qK4brBb8HMxNaffjlTU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rMVLt7+f0FLmQUH6H1hoEH9A5pqrf07JOq4pA6fVb9XvG+PA4eneDqO99mB69aE0iQTkcltMObsinf7X9gH7ZatDKn1tx287EhQuNfvsYSS1d9w14MYhwbDIVcH3582PUMOTYmEH5xaRqFPqiRof4AdvJHoA8Pr4FEcxwWoUlq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GLvQ+COn; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-421851bcb25so3582399f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 13:36:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759869370; x=1760474170; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mwcpw0zy4R46b7XzPVyh5saCrP79aFOpHXUMlFp84UE=;
+        b=GLvQ+COnWwysbYu9qXh2CDzHK2PLnluNwyQUiURSDjMv9aiMdFVCktxx+Pu6g6Sgc2
+         JaaLdj32OI091+GkjdnFzXjeaOei6OHZzSkFilzBC1lr90gOpWsiu4btmV58G22P8Djc
+         mb89+4LcAcC9NxKVGGT/C0SfNxGD0BiZYq8LgFpAzsfFgkq9QEb5aXnWO5sqvzcWIpUv
+         jZlDBvQz/s00izscGRthts2eUv8ZfSfVAjFG+peEcaHTadrzNImKx2ZZ5bV77ZHxyOX1
+         LDZC8OuyelwohZ3Gp5wXEZRjs1grYx73uTAQ6q56YScgXmMwUHtktVWVp1YYf9mg4gGz
+         30Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759869370; x=1760474170;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Mwcpw0zy4R46b7XzPVyh5saCrP79aFOpHXUMlFp84UE=;
+        b=aPh2BfDiEK70WL62xUqhofcriOhp/9muZ/VslJlmmuxTXSDmmK36ekFCTIvh+IVjLm
+         ozk1l6/efPEzvdye3rxdGjyw3V6Ap9Vv4IZwlawDNdZJxaLvZdBiMj/mQ6sbywxRVC9v
+         fB4FFR+6QZjSoC21mXz1VuSG3wUwYTv/wG7kABe3YerTHhb1LQckfwN/BY4mMs/q6OjW
+         T1ppcA3DMiWjlTglpMwsT62H0j8xFnp5J7eU/8s0+xP465IZqdZrUQ/E/zt+Sp9jndLz
+         3QMc7axCX0+ZKnGl8wRfQ2Ew++M1Rv27K/dPP3E/ReDhiH5CQb6dJ5eDs/EqnVMB/TUR
+         /nWA==
+X-Gm-Message-State: AOJu0YwLAIGDDviBbvXnJGS6tKld4sEbNHMMlt7hqM+SBkHjaUcfaO7c
+	8tsnql8S6YjuhIFlYKu16LOn1x6QdpVaWNrMCSjshvW4U1X19hWtuBx0VP43Tvw=
+X-Gm-Gg: ASbGncttgpgKU12Q11cLovyDj3K+SEwuXgL3mxRmlcWvvtpf7wUJCKLA0j2N/5QD/Up
+	zhHzVqJ7xOsKbdgGe5lGBVCwoU9Gs0gRIZl3L+q7I1NMVBpFCpMt6ioolhfePMWeW+KDqhjuGCt
+	OApdeMwLyr+41OW7zANB4K84s5LAcu1q1qtAQ+piY+CnexMgPmo+kqIM27xGkzesxRTVPt3DfBE
+	/L221+qfpx0dhrXJiLQna3ehmEygX6+eLaFdNnpTVgOl5NZ8ncjhiG5VqwUmJbVnJACheiSsFuF
+	GHGRFB7EEG9UtG+uzIh0FR7fJXDyQ2OZguOF96Lptf+i8O5nWwTnzjzy5l6DdgOg0Y4KsEqU2We
+	bzNE9pmTJOWLWpmuYzHWbIlA6yNFKxhh7q1agIXW4UKkzjwb7fABAbUPimady+rEy9hgRe4cJ7V
+	1dyxWIHU2dWgwQuIyw
+X-Google-Smtp-Source: AGHT+IGPLtE8dj0u0tUPLyujq1JtdE0ZsW+bW3gJIuAcpvuOgESONWNsIxWyKFgjZ67CUoGoms/o1w==
+X-Received: by 2002:a05:6000:240d:b0:421:a112:4010 with SMTP id ffacd0b85a97d-4266e8e8f53mr421505f8f.55.1759869369892;
+        Tue, 07 Oct 2025 13:36:09 -0700 (PDT)
+Received: from DESKTOP.home (188-23-144-33.adsl.highway.telekom.at. [188.23.144.33])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fa9bf94ddsm8016005e9.2.2025.10.07.13.36.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 13:36:09 -0700 (PDT)
+From: Benedek Kupper <kupper.benedek@gmail.com>
+To: linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	bentiss@kernel.org,
+	jikos@kernel.org,
+	Benedek Kupper <kupper.benedek@gmail.com>
+Subject: [PATCH] drivers: hid: renegotiate resolution multipliers with device after reset
+Date: Tue,  7 Oct 2025 22:35:44 +0200
+Message-ID: <20251007203544.9963-1-kupper.benedek@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: t9sxqw9k7ywpmd85f4ai3o3sh5zkhoso
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: 468CA2000F
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/eoAvrB6PJy2KODm1vnR0WOVXexAyVxd8=
-X-HE-Tag: 1759868989-455320
-X-HE-Meta: U2FsdGVkX1/THK0GXDneu8Zzv8ANWZnphBOSAfkOA4U7VrIFfQ/+MSUSWwYwqHP/j0L1ettm20B61/y29b+qAXOygk3UVGOKPsUS/ZtHPkrt2b7pzJSwbO/V3yEalJQnroieGTuZEPp7U3u4l3Kv+EJgsA197n7iR1hEDuITT6311TIDIYtXiPtrwG5TIpBGskukByeGjWgzo7qKEB6f+GRNHD+WmtEXC12CYpdTUqgvjGwjGhinzXserzypl1znbx8oUS7DbjeHqd/7G4L4bXzoGZ6GxtMH/stWxPhtuKja2YRHRYp/VRr/zEYiojegaASo/YnsSC06Bc/hSaCtOGArQcB9zKF1BIM8uxwEklv1Cd4rBColnW/HD3sPGYqu
+Content-Transfer-Encoding: 8bit
 
-On Tue, 7 Oct 2025 15:43:08 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+The scroll resolution multipliers are set in the context of
+hidinput_connect(), which is only called at probe time: when the host
+changes the value on the device with a SET_REPORT(FEATURE), and the device
+accepts it, these multipliers are stored on the host side, and used to
+calculate the final scroll event values sent to userspace.
 
-> I do have a working solution, but it isn't trivial.
+After a USB suspend, the resume operation on many hubs and chipsets
+involve a USB reset signal as well. A reset on the device side clears all
+previous state information, including the value of the multiplier report.
+This reset is not handled by the multiplier handling logic, so what ends up
+happening is the host is still expecting high-resolution scroll events,
+but the device is reset to default resolution, making the effective,
+user-perceived scroll speed incredibly slow.
 
-Here is the solution that works. I based it off of a method I'm using to
-read user space memory from the faultable system call tracepoints. Where it
-can't do allocation in the tracepoint itself (for both speed as well as
-adding noise to the trace). It follows the same idea as seq_counters do.
-I've been playing with this for a couple of weeks now and it appears to be
-quite reliable.
+The solution is to renegotiate the multiplier selection after each reset.
 
-Writes to trace_marker has similar requirements. It is highly optimized for
-user space debugging that has small race windows, and a the write doesn't
-take any locks, let alone do any allocation.
+This is not the only bug related to the high-resolution scrolling
+implementation in the kernel (the other one is
+https://bugzilla.kernel.org/show_bug.cgi?id=220144), but for this one,
+there is no device side workaround for,
+leading to poor user experience with our product:
+https://github.com/UltimateHackingKeyboard/firmware/issues/1155
+https://github.com/UltimateHackingKeyboard/firmware/issues/1261
+https://github.com/UltimateHackingKeyboard/firmware/pull/1355
+This patch was tested by an affected user and has been reported to
+fix the issue (see discussion in 1355).
 
-The method here is when the trace_marker file is first opened, a per CPU
-buffer is allocated. Then during the writes, the following is performed:
+Signed-off-by: Benedek Kupper <kupper.benedek@gmail.com>
+---
+ drivers/hid/hid-generic.c | 9 +++++++++
+ drivers/hid/hid-input.c   | 7 +++++++
+ include/linux/hid.h       | 1 +
+ 3 files changed, 17 insertions(+)
 
-	preempt_disable();
-
-	cpu = smp_processor_id();
-	buffer = per_cpu_ptr(cpu_buffers, cpu);
-
-	do {
-		cnt = nr_context_switches_cpu(cpu);
-		migrate_disable();
-		preempt_enable();
-
-		ret = copy_from_user(buffer, ptr, size);
-
-		preempt_enable();
-		migrate_enable();
-
-	} while (cnt != nr_context_switches_cpu(cpu));
-
-	ring_buffer_write(buffer);
-
-	preempt_enable();
-
-
-There's a little more to it than that (like checking for faults), but this
-is the basic idea. Since the buffer can only be written in "task context"
-(as supposed to interrupt context), if the copy succeeds without any
-context switch, the buffer is considered to be valid. If there was a
-context switch, the buffer has to be considered corrupted, and the read
-must be performed again.
-
-When I stress tested this with the faultable system call tracepoints, where
-I had it read memory mapped memory (to always fault), and kicked off a
-thousand programs doing the same thing, the looped triggered only 10% of
-the time (I added counters to when it looped and when it did not loop).
-
-Here's the code for doing this with trace_marker writes.
-
-But, it's not a simply fix :-/
-
--- Steve
-
- kernel/trace/trace.c | 267 +++++++++++++++++++++++++++++++++++--------
- 1 file changed, 219 insertions(+), 48 deletions(-)
-
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index b3c94fbaf002..cde9881065bd 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -4791,12 +4791,6 @@ int tracing_single_release_file_tr(struct inode *inode, struct file *filp)
- 	return single_release(inode, filp);
+diff --git a/drivers/hid/hid-generic.c b/drivers/hid/hid-generic.c
+index 9e04c6d0fcc8..c2de916747de 100644
+--- a/drivers/hid/hid-generic.c
++++ b/drivers/hid/hid-generic.c
+@@ -70,6 +70,14 @@ static int hid_generic_probe(struct hid_device *hdev,
+ 	return hid_hw_start(hdev, HID_CONNECT_DEFAULT);
  }
  
--static int tracing_mark_open(struct inode *inode, struct file *filp)
--{
--	stream_open(inode, filp);
--	return tracing_open_generic_tr(inode, filp);
--}
--
- static int tracing_release(struct inode *inode, struct file *file)
- {
- 	struct trace_array *tr = inode->i_private;
-@@ -7163,7 +7157,7 @@ tracing_free_buffer_release(struct inode *inode, struct file *filp)
- 
- #define TRACE_MARKER_MAX_SIZE		4096
- 
--static ssize_t write_marker_to_buffer(struct trace_array *tr, const char __user *ubuf,
-+static ssize_t write_marker_to_buffer(struct trace_array *tr, const char *buf,
- 				      size_t cnt, unsigned long ip)
- {
- 	struct ring_buffer_event *event;
-@@ -7173,20 +7167,11 @@ static ssize_t write_marker_to_buffer(struct trace_array *tr, const char __user
- 	int meta_size;
- 	ssize_t written;
- 	size_t size;
--	int len;
--
--/* Used in tracing_mark_raw_write() as well */
--#define FAULTED_STR "<faulted>"
--#define FAULTED_SIZE (sizeof(FAULTED_STR) - 1) /* '\0' is already accounted for */
- 
- 	meta_size = sizeof(*entry) + 2;  /* add '\0' and possible '\n' */
-  again:
- 	size = cnt + meta_size;
- 
--	/* If less than "<faulted>", then make sure we can still add that */
--	if (cnt < FAULTED_SIZE)
--		size += FAULTED_SIZE - cnt;
--
- 	buffer = tr->array_buffer.buffer;
- 	event = __trace_buffer_lock_reserve(buffer, TRACE_PRINT, size,
- 					    tracing_gen_ctx());
-@@ -7196,9 +7181,6 @@ static ssize_t write_marker_to_buffer(struct trace_array *tr, const char __user
- 		 * make it smaller and try again.
- 		 */
- 		if (size > ring_buffer_max_event_size(buffer)) {
--			/* cnt < FAULTED size should never be bigger than max */
--			if (WARN_ON_ONCE(cnt < FAULTED_SIZE))
--				return -EBADF;
- 			cnt = ring_buffer_max_event_size(buffer) - meta_size;
- 			/* The above should only happen once */
- 			if (WARN_ON_ONCE(cnt + meta_size == size))
-@@ -7212,14 +7194,8 @@ static ssize_t write_marker_to_buffer(struct trace_array *tr, const char __user
- 
- 	entry = ring_buffer_event_data(event);
- 	entry->ip = ip;
--
--	len = copy_from_user_nofault(&entry->buf, ubuf, cnt);
--	if (len) {
--		memcpy(&entry->buf, FAULTED_STR, FAULTED_SIZE);
--		cnt = FAULTED_SIZE;
--		written = -EFAULT;
--	} else
--		written = cnt;
-+	memcpy(&entry->buf, buf, cnt);
-+	written = cnt;
- 
- 	if (tr->trace_marker_file && !list_empty(&tr->trace_marker_file->triggers)) {
- 		/* do not add \n before testing triggers, but add \0 */
-@@ -7243,6 +7219,168 @@ static ssize_t write_marker_to_buffer(struct trace_array *tr, const char __user
- 	return written;
- }
- 
-+struct trace_user_buf {
-+	char		*buf;
-+};
-+
-+struct trace_user_buf_info {
-+	struct trace_user_buf __percpu	*tbuf;
-+	int				ref;
-+};
-+
-+
-+static DEFINE_MUTEX(trace_user_buffer_mutex);
-+static struct trace_user_buf_info *trace_user_buffer;
-+
-+static void trace_user_fault_buffer_free(struct trace_user_buf_info *tinfo)
++static int hid_generic_reset_resume(struct hid_device *hdev)
 +{
-+	char *buf;
-+	int cpu;
-+
-+	for_each_possible_cpu(cpu) {
-+		buf = per_cpu_ptr(tinfo->tbuf, cpu)->buf;
-+		kfree(buf);
-+	}
-+	kfree(tinfo);
-+}
-+
-+static int trace_user_fault_buffer_enable(void)
-+{
-+	struct trace_user_buf_info *tinfo;
-+	char *buf;
-+	int cpu;
-+
-+	guard(mutex)(&trace_user_buffer_mutex);
-+
-+	if (trace_user_buffer) {
-+		trace_user_buffer->ref++;
-+		return 0;
-+	}
-+
-+	tinfo = kmalloc(sizeof(*tinfo), GFP_KERNEL);
-+	if (!tinfo)
-+		return -ENOMEM;
-+
-+	tinfo->tbuf = alloc_percpu(struct trace_user_buf);
-+	if (!tinfo->tbuf) {
-+		kfree(tinfo);
-+		return -ENOMEM;
-+	}
-+
-+	tinfo->ref = 1;
-+
-+	/* Clear each buffer in case of error */
-+	for_each_possible_cpu(cpu) {
-+		per_cpu_ptr(tinfo->tbuf, cpu)->buf = NULL;
-+	}
-+
-+	for_each_possible_cpu(cpu) {
-+		buf = kmalloc_node(TRACE_MARKER_MAX_SIZE, GFP_KERNEL,
-+				   cpu_to_node(cpu));
-+		if (!buf) {
-+			trace_user_fault_buffer_free(tinfo);
-+			return -ENOMEM;
-+		}
-+		per_cpu_ptr(tinfo->tbuf, cpu)->buf = buf;
-+	}
-+
-+	trace_user_buffer = tinfo;
++	if (hdev->claimed & HID_CLAIMED_INPUT)
++		hidinput_reset_resume(hdev);
 +
 +	return 0;
 +}
 +
-+static void trace_user_fault_buffer_disable(void)
-+{
-+	struct trace_user_buf_info *tinfo;
-+
-+	guard(mutex)(&trace_user_buffer_mutex);
-+
-+	tinfo = trace_user_buffer;
-+
-+	if (WARN_ON_ONCE(!tinfo))
-+		return;
-+
-+	if (--tinfo->ref)
-+		return;
-+
-+	trace_user_fault_buffer_free(tinfo);
-+	trace_user_buffer = NULL;
-+}
-+
-+/* Must be called with preemption disabled */
-+static char *trace_user_fault_read(struct trace_user_buf_info *tinfo,
-+				   const char __user *ptr, size_t size,
-+				   size_t *read_size)
-+{
-+	int cpu = smp_processor_id();
-+	char *buffer = per_cpu_ptr(tinfo->tbuf, cpu)->buf;
-+	unsigned int cnt;
-+	int trys = 0;
-+	int ret;
-+
-+	if (size > TRACE_MARKER_MAX_SIZE)
-+		size = TRACE_MARKER_MAX_SIZE;
-+	*read_size = 0;
-+
-+	/*
-+	 * This acts similar to a seqcount. The per CPU context switches are
-+	 * recorded, migration is disabled and preemption is enabled. The
-+	 * read of the user space memory is copied into the per CPU buffer.
-+	 * Preemption is disabled again, and if the per CPU context switches count
-+	 * is still the same, it means the buffer has not been corrupted.
-+	 * If the count is different, it is assumed the buffer is corrupted
-+	 * and reading must be tried again.
-+	 */
-+
-+	do {
-+		/*
-+		 * If for some reason, copy_from_user() always causes a context
-+		 * switch, this would then cause an infinite loop.
-+		 * If this task is preempted by another user space task, it
-+		 * will cause this task to try again. But just in case something
-+		 * changes where the copying from user space causes another task
-+		 * to run, prevent this from going into an infinite loop.
-+		 * 100 tries should be plenty.
-+		 */
-+		if (WARN_ONCE(trys++ > 100, "Error: Too many tries to read user space"))
-+			return NULL;
-+
-+		/* Read the current CPU context switch counter */
-+		cnt = nr_context_switches_cpu(cpu);
-+
-+		/*
-+		 * Preemption is going to be enabled, but this task must
-+		 * remain on this CPU.
-+		 */
-+		migrate_disable();
-+
-+		/*
-+		 * Now preemption is being enabed and another task can come in
-+		 * and use the same buffer and corrupt our data.
-+		 */
-+		preempt_enable_notrace();
-+
-+		ret = __copy_from_user(buffer, ptr, size);
-+
-+		preempt_disable_notrace();
-+		migrate_enable();
-+
-+		/* if it faulted, no need to test if the buffer was corrupted */
-+		if (ret)
-+			return NULL;
-+
-+		/*
-+		 * Preemption is disabled again, now check the per CPU context
-+		 * switch counter. If it doesn't match, then another user space
-+		 * process may have schedule in and corrupted our buffer. In that
-+		 * case the copying must be retried.
-+		 */
-+	} while (nr_context_switches_cpu(cpu) != cnt);
-+
-+	*read_size = size;
-+	return buffer;
-+}
-+
- static ssize_t
- tracing_mark_write(struct file *filp, const char __user *ubuf,
- 					size_t cnt, loff_t *fpos)
-@@ -7250,6 +7388,8 @@ tracing_mark_write(struct file *filp, const char __user *ubuf,
- 	struct trace_array *tr = filp->private_data;
- 	ssize_t written = -ENODEV;
- 	unsigned long ip;
-+	size_t size;
-+	char *buf;
- 
- 	if (tracing_disabled)
- 		return -EINVAL;
-@@ -7263,6 +7403,16 @@ tracing_mark_write(struct file *filp, const char __user *ubuf,
- 	if (cnt > TRACE_MARKER_MAX_SIZE)
- 		cnt = TRACE_MARKER_MAX_SIZE;
- 
-+	/* Must have preemption disabled while having access to the buffer */
-+	guard(preempt_notrace)();
-+
-+	buf = trace_user_fault_read(trace_user_buffer, ubuf, cnt, &size);
-+	if (!buf)
-+		return -EFAULT;
-+
-+	if (cnt > size)
-+		cnt = size;
-+
- 	/* The selftests expect this function to be the IP address */
- 	ip = _THIS_IP_;
- 
-@@ -7270,32 +7420,27 @@ tracing_mark_write(struct file *filp, const char __user *ubuf,
- 	if (tr == &global_trace) {
- 		guard(rcu)();
- 		list_for_each_entry_rcu(tr, &marker_copies, marker_list) {
--			written = write_marker_to_buffer(tr, ubuf, cnt, ip);
-+			written = write_marker_to_buffer(tr, buf, cnt, ip);
- 			if (written < 0)
- 				break;
- 		}
- 	} else {
--		written = write_marker_to_buffer(tr, ubuf, cnt, ip);
-+		written = write_marker_to_buffer(tr, buf, cnt, ip);
- 	}
- 
- 	return written;
- }
- 
- static ssize_t write_raw_marker_to_buffer(struct trace_array *tr,
--					  const char __user *ubuf, size_t cnt)
-+					  const char *buf, size_t cnt)
- {
- 	struct ring_buffer_event *event;
- 	struct trace_buffer *buffer;
- 	struct raw_data_entry *entry;
- 	ssize_t written;
--	int size;
--	int len;
--
--#define FAULT_SIZE_ID (FAULTED_SIZE + sizeof(int))
-+	size_t size;
- 
- 	size = sizeof(*entry) + cnt;
--	if (cnt < FAULT_SIZE_ID)
--		size += FAULT_SIZE_ID - cnt;
- 
- 	buffer = tr->array_buffer.buffer;
- 
-@@ -7309,14 +7454,8 @@ static ssize_t write_raw_marker_to_buffer(struct trace_array *tr,
- 		return -EBADF;
- 
- 	entry = ring_buffer_event_data(event);
--
--	len = copy_from_user_nofault(&entry->id, ubuf, cnt);
--	if (len) {
--		entry->id = -1;
--		memcpy(&entry->buf, FAULTED_STR, FAULTED_SIZE);
--		written = -EFAULT;
--	} else
--		written = cnt;
-+	memcpy(&entry->id, buf, cnt);
-+	written = cnt;
- 
- 	__buffer_unlock_commit(buffer, event);
- 
-@@ -7329,8 +7468,8 @@ tracing_mark_raw_write(struct file *filp, const char __user *ubuf,
- {
- 	struct trace_array *tr = filp->private_data;
- 	ssize_t written = -ENODEV;
--
--#define FAULT_SIZE_ID (FAULTED_SIZE + sizeof(int))
-+	size_t size;
-+	char *buf;
- 
- 	if (tracing_disabled)
- 		return -EINVAL;
-@@ -7342,6 +7481,17 @@ tracing_mark_raw_write(struct file *filp, const char __user *ubuf,
- 	if (cnt < sizeof(unsigned int))
- 		return -EINVAL;
- 
-+	/* Must have preemption disabled while having access to the buffer */
-+	guard(preempt_notrace)();
-+
-+	buf = trace_user_fault_read(trace_user_buffer, ubuf, cnt, &size);
-+	if (!buf)
-+		return -EFAULT;
-+
-+	/* raw write is all or nothing */
-+	if (cnt > size)
-+		return -EINVAL;
-+
- 	/* The global trace_marker_raw can go to multiple instances */
- 	if (tr == &global_trace) {
- 		guard(rcu)();
-@@ -7357,6 +7507,27 @@ tracing_mark_raw_write(struct file *filp, const char __user *ubuf,
- 	return written;
- }
- 
-+static int tracing_mark_open(struct inode *inode, struct file *filp)
-+{
-+	int ret;
-+
-+	ret = trace_user_fault_buffer_enable();
-+	if (ret < 0)
-+		return ret;
-+
-+	stream_open(inode, filp);
-+	ret = tracing_open_generic_tr(inode, filp);
-+	if (ret < 0)
-+		trace_user_fault_buffer_disable();
-+	return ret;
-+}
-+
-+static int tracing_mark_release(struct inode *inode, struct file *file)
-+{
-+	trace_user_fault_buffer_disable();
-+	return tracing_release_generic_tr(inode, file);
-+}
-+
- static int tracing_clock_show(struct seq_file *m, void *v)
- {
- 	struct trace_array *tr = m->private;
-@@ -7764,13 +7935,13 @@ static const struct file_operations tracing_free_buffer_fops = {
- static const struct file_operations tracing_mark_fops = {
- 	.open		= tracing_mark_open,
- 	.write		= tracing_mark_write,
--	.release	= tracing_release_generic_tr,
-+	.release	= tracing_mark_release,
+ static const struct hid_device_id hid_table[] = {
+ 	{ HID_DEVICE(HID_BUS_ANY, HID_GROUP_ANY, HID_ANY_ID, HID_ANY_ID) },
+ 	{ }
+@@ -81,6 +89,7 @@ static struct hid_driver hid_generic = {
+ 	.id_table = hid_table,
+ 	.match = hid_generic_match,
+ 	.probe = hid_generic_probe,
++	.reset_resume = hid_generic_reset_resume,
  };
+ module_hid_driver(hid_generic);
  
- static const struct file_operations tracing_mark_raw_fops = {
- 	.open		= tracing_mark_open,
- 	.write		= tracing_mark_raw_write,
--	.release	= tracing_release_generic_tr,
-+	.release	= tracing_mark_release,
- };
+diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
+index f45f856a127f..3dd3822cc549 100644
+--- a/drivers/hid/hid-input.c
++++ b/drivers/hid/hid-input.c
+@@ -2382,6 +2382,13 @@ void hidinput_disconnect(struct hid_device *hid)
+ }
+ EXPORT_SYMBOL_GPL(hidinput_disconnect);
  
- static const struct file_operations trace_clock_fops = {
++void hidinput_reset_resume(struct hid_device *hid)
++{
++	/* renegotiate host-device shared state after reset */
++	hidinput_change_resolution_multipliers(hid);
++}
++EXPORT_SYMBOL_GPL(hidinput_reset_resume);
++
+ #ifdef CONFIG_HID_KUNIT_TEST
+ #include "hid-input-test.c"
+ #endif
+diff --git a/include/linux/hid.h b/include/linux/hid.h
+index 2cc4f1e4ea96..b78fb55ea85e 100644
+--- a/include/linux/hid.h
++++ b/include/linux/hid.h
+@@ -953,6 +953,7 @@ extern void hidinput_hid_event(struct hid_device *, struct hid_field *, struct h
+ extern void hidinput_report_event(struct hid_device *hid, struct hid_report *report);
+ extern int hidinput_connect(struct hid_device *hid, unsigned int force);
+ extern void hidinput_disconnect(struct hid_device *);
++void hidinput_reset_resume(struct hid_device *hid);
+ 
+ struct hid_field *hid_find_field(struct hid_device *hdev, unsigned int report_type,
+ 				 unsigned int application, unsigned int usage);
 -- 
-2.51.0
+2.43.0
 
 
