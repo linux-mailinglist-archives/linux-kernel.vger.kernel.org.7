@@ -1,215 +1,173 @@
-Return-Path: <linux-kernel+bounces-844357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A6EBBC1AA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:13:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D25E1BC1AD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:16:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2518834F7B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:13:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BDF2189219A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D0A2E1F0E;
-	Tue,  7 Oct 2025 14:13:47 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D8D1F4E34;
+	Tue,  7 Oct 2025 14:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZcGRW7A/"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685922D5A0C
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 14:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875758488
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 14:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759846426; cv=none; b=m3/3tW00y6a1MMbd3GDxQUf8ryMEsfgL/LtN8YUGi9J29M8FGXJl5tkXIZoVRnPnXxz3qeKL+Ar3GE+hpP6jDxcS5rpsVqH8YhkIktzPM6+vVRI8HiJjF2vi+qKmjxd7nnouFGp+/RCnSe3UlXI/+XVz1nS9tRIbv89cLj+OrSE=
+	t=1759846608; cv=none; b=uekd/vJUbUmbgDT+hOBvGQEMfwC9VxfXs5F8udxioCCcfm+tu/fInssPlsTeCd/BkjnKIpuxLsn6C9G4JJFlLCFbY7qv0kvUehpQhV+JpG/fIQ0TaRCOc1lHEpTdVuqbgefoTdFRYHFkq/MSaYDDFQ9ILzttoR/mqGcYfPS5e+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759846426; c=relaxed/simple;
-	bh=Uqtt/4tM4AV0md7Ic2QU6kx7zP0JgCxghbEpzs/Y9BQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ha7uIkeQiB15MGxIHNsKwFwn+M2BsRU1fg5UuCldl9NMIJ0fyIXMfXawE0/7cK73Q/9Jf3WC/ZlgJ19vU09NiYjSujvDaYCMw27xsLfesrKstFmaVZlgGFsvVtIhpuUI4pgtKdUvvlgECejNrF0/tSblzZk/x+hcsGw7vuPwfQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v68R6-0000Tf-32; Tue, 07 Oct 2025 16:13:04 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v68R4-002Phx-33;
-	Tue, 07 Oct 2025 16:13:02 +0200
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v68R4-000000004MN-3brl;
-	Tue, 07 Oct 2025 16:13:02 +0200
-Message-ID: <988658d3485232a0bb6c433b6533ebf0ae41226a.camel@pengutronix.de>
-Subject: Re: [PATCH 04/18] reset: rzv2h-usb2phy: Set VBENCTL register for
- OTG mode
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Biju Das <biju.das.jz@bp.renesas.com>, Tommaso Merciai	
- <tommaso.merciai.xr@bp.renesas.com>, Tommaso Merciai
- <tomm.merciai@gmail.com>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-  Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Vinod Koul
- <vkoul@kernel.org>, Kishon Vijay Abraham I	 <kishon@kernel.org>, Geert
- Uytterhoeven <geert+renesas@glider.be>,  "magnus.damm"
- <magnus.damm@gmail.com>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- "linux-phy@lists.infradead.org"	 <linux-phy@lists.infradead.org>,
- "linux-kernel@vger.kernel.org"	 <linux-kernel@vger.kernel.org>
-Date: Tue, 07 Oct 2025 16:13:02 +0200
-In-Reply-To: <TY3PR01MB1134623A14F4F313986F631ED86E0A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20251001212709.579080-1-tommaso.merciai.xr@bp.renesas.com>
-			 <20251001212709.579080-5-tommaso.merciai.xr@bp.renesas.com>
-		 <593eb851ae6ce0ec03ddeacf436180b6538fdd1e.camel@pengutronix.de>
-		 <TY3PR01MB1134635745721CC005B35702286E0A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-	 <01fc3101ab2e3898932afeaaaf060a6676cdf323.camel@pengutronix.de>
-	 <TY3PR01MB1134623A14F4F313986F631ED86E0A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1759846608; c=relaxed/simple;
+	bh=aaMvmWCsiURlT61ttb49Aw69W7JtRP1PMfNbx+wtqns=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aslMHVWj6fIyjAtnJs+c1og7S0zBAqEyVH/Yjensv7YbBOyw00mNa2nZb5xYKnG6zmCuu3/xJVr268f4Q8kiC1SZIarukFhgWcI8XGl+j+0LVzn27UXCa30NZ4to5TDG/LrmvhitfQE14wbCa4c+IMfEEq9cOhWi/NSzUF/lrDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZcGRW7A/; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b472842981fso833030966b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 07:16:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759846605; x=1760451405; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WlNrYksHLMfAVeQP3yUtYa9PE9Wf6Qdn7i1hS35K1lA=;
+        b=ZcGRW7A/MNCWgrkcfz/mIrCGcZ7pRUU8+Q+m82XnCfdggI3XWwvrPI0kiVdBezXLAU
+         s1KH72Pt9EIntk4qgOZHh/RtfnIzwRD2kcRKauaSCLFe5bgCpxZiIbkuCwA8h/rhf1T6
+         7yy7Uyf0vDh/HRmhPyNM7PWyTydfUkot6Z2WT7F5DbbABQhbo11O07fMwwvpxR8MnHir
+         tS0tnjA70Sox93s/NtVwpkqFIne5K1dky0Oik+B97KdaPY8QLbag3Ap41M0K78yi2zws
+         yHM19keDuw18vKveLygk6sXJzJIEFl2riofrjD2m4mc1uWV3uaXyltVNO23ImXkUMClh
+         w2yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759846605; x=1760451405;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WlNrYksHLMfAVeQP3yUtYa9PE9Wf6Qdn7i1hS35K1lA=;
+        b=QGrySCxMb39psZ1rDktci3agt06ULETwyp2orraaJRVYvlfEls22dLk8LA6Gz4mTKA
+         AwhAyo1+oqKGywHEpY6fJzq0vZhzExRQqm1cOY6CVo09gDGWv7PykyFnE4UDuYrKbpdW
+         g6uKgi+/tGvegDKCXdklsPWURdjqNaHhPh82uZ2c2dwYVdHwTcew68B6jtUuiliAfQLZ
+         urVNR1MCxZRzmQFBxlKDysWjHxkBcBJmJ2fKoU12g6WXAsXUhdkidd9lFGdJP0aAHv/O
+         5NtdLNJkIIf9QmjNDB1c/oxBAVi6gNxuacI6D3G1yZatoU7MlCbWLrbxlckCB30BaMUo
+         5bbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5c4IZBK4IhfnekN7M7eHO5Vo7llf4DONAomss/UenIAqpE9PQISw3dwyLf27yXwhLxR6lNlv0WjHcW5o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZXeeXxEYVzx0bdHxrS+9XhEGN+32HfDe/nHgKONsVjErkRTXu
+	pp+I/Ny8SeBs8GAhshayOO1D1+r+OpfgM8hFIO0rtnSyATuH4EqFD7D3TjLYj+A7p4wE/ZfkCvL
+	RDlKeG0E6LWwpP+mAUlodc9g9NWsXDrHTEbljQns=
+X-Gm-Gg: ASbGncsVR9oOEH17q5Mf+qCjgNwN+0CaKWICbGkm635Ybt18C8RyvHjrABoiR7N2PaM
+	foVsi9NjoAxrwjIVy4BII4MnTaRfYkUvh2m5ZzzmhwKmxLiW0XEnHNjjXIXmumLtnOXfMBqU0pr
+	nhdZPC7002Efirp4CR1Qqsn3hsMUF7YpzlrKUvBi5Cvkefmrdp9ahvLLplk7Nfe8uBREH97LTZX
+	R62MOBY04uF8yGvMnhGcQJ+bSlknlyG
+X-Google-Smtp-Source: AGHT+IHHcmxe7xACPAEy8QV/B2eyRrCFpBlq18//7M+WWVut43Uk241D1fmqAzqfxbqBEfa0YeS5Ndpszg4TAJ9iGyA=
+X-Received: by 2002:a17:907:7293:b0:b04:61aa:6adc with SMTP id
+ a640c23a62f3a-b49c12806cbmr1771245066b.7.1759846604448; Tue, 07 Oct 2025
+ 07:16:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20251003205837.10748-1-pascal.giard@etsmtl.ca> <CABBYNZJVUoVnJPdOXARvk7T_9EsvomJ_oe_ZZ_QZMTQBVjNDHw@mail.gmail.com>
+In-Reply-To: <CABBYNZJVUoVnJPdOXARvk7T_9EsvomJ_oe_ZZ_QZMTQBVjNDHw@mail.gmail.com>
+From: Pascal Giard <evilynux@gmail.com>
+Date: Tue, 7 Oct 2025 10:16:33 -0400
+X-Gm-Features: AS18NWDMEhKXRd_AXB1cgsGhtd6LO1y4YZjcNM87YeMK5w4MccS9LFkhHrMIC10
+Message-ID: <CAJNNDmm-sBv4Qz9J+bFGWmmQ8jdOKQtRr9xDcwAsDYQQMm0Uxw@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: Add filter for Qualcomm debug packets
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: marcel@holtmann.org, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Pascal Giard <pascal.giard@etsmtl.ca>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Biju,
+Dear Luiz,
 
-On Di, 2025-10-07 at 11:04 +0000, Biju Das wrote:
-> Hi Philipp,
->=20
-> > -----Original Message-----
-> > From: Philipp Zabel <p.zabel@pengutronix.de>
-> > Sent: 07 October 2025 10:44
-> > Subject: Re: [PATCH 04/18] reset: rzv2h-usb2phy: Set VBENCTL register f=
-or OTG mode
-> >=20
-> > Hi Biju,
-> >=20
-> > On Di, 2025-10-07 at 04:02 +0000, Biju Das wrote:
-> > > Hi Philipp,
-> > >=20
-> > > Thanks for the feedback.
-> > >=20
-> > > > -----Original Message-----
-> > > > From: Philipp Zabel <p.zabel@pengutronix.de>
-> > > > Sent: 06 October 2025 17:32
-> > > > Subject: Re: [PATCH 04/18] reset: rzv2h-usb2phy: Set VBENCTL
-> > > > register for OTG mode
-> > > >=20
-> > > > On Mi, 2025-10-01 at 23:26 +0200, Tommaso Merciai wrote:
-> > > > > Add logic to set the VBENCTL register when the USB controller
-> > > > > operates in OTG mode. This is required to ensure proper USB
-> > > > > transceiver behavior when the device is configured as OTG.
-> > > > >=20
-> > > > > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com=
+Le lun. 6 oct. 2025, =C3=A0 13 h 21, Luiz Augusto von Dentz
+<luiz.dentz@gmail.com> a =C3=A9crit :
 >
-> > > >=20
-> > > > I had reservations about this driver before, because of the opaque
-> > > > register initialization sequence, and I was told that no, this is a=
- reset driver alright [1].
-> > >=20
-> > > The latest hardware manual document about VBENCTRL register which set=
-s source for VBUS selection.
-> > > s
-> >=20
-> > I still can't look at this, right? The USB2PHY control register space a=
-ppears to be documented in
-> > the "RZ/V2H Group User's Manual: Hardware (Additional document)" (under=
- NDA).=09
->=20
-> It is documented here[1], Page 2177, USB2PHY Control Register (USB2m_PHY_=
-VBENCTL)
->=20
-> [1]
-> https://www.renesas.com/en/document/mah/rzg3e-group-users-manual-hardware=
-?r=3D25574493
-
-For me, that link points to a document without the USB2m_PHY_* register
-definitions. Page 2177 is unrelated (documenting PCI_EP_HLOG2_Fn,
-somewhere in the PCIe interface chapter).
-
-> > > > Can you please try to find a proper abstraction for this, because
-> > > > drivers/reset is not the correct place for USB OTG mode handling.
-> > >=20
-> > > Sorry for the confusion. This driver is not handling USB OTG mode. It
-> > > just configures VBENCTRL(one time setting) that selects the source fo=
-r
-> > > VBUS_SEL. Actual USB OTG mode handling is done USB PHY driver which s=
-ets host/device mode based on
-> > ID detection.
-> >=20
-> > So this is a mux for the VBUS_SEL signal?
->=20
-> Yes, Please find the bit definition.
->=20
-> 0 VBUS_SEL 0h RW Select VBUSEN control
-> 0b: Output PP controlled by PORTSC1 register of the Host Controller as VB=
-USEN.
-> 1b: Output VBOUT controlled by VBCTRL register of the Host Controller as =
-VBUSEN.
->=20
-> We have USB PHY control driver(This driver)-> USB PHY driver->| USB HOST(=
-Generic ehci/ohci)
->                                                        	  | USB function =
-(renesas usbhs)
->=20
-> We plan to set 1b for this IP in this driver for OTG channel during probe=
-.
-> After that using VBOUT register the PHY driver can switch between Host an=
-d device.
-
-Thank you for the explanation.
-
-> > Why don't the USB host controller drivers parse their "dr_mode"
-> > property themselves and control USB2PHY VBENCTRL via the mux API, for e=
-xample?
->=20
-> Currently for OTG channel, based ID detection IRQ, the USB PHY driver swi=
-tches between host
-> and device. We use method2 below for the host operation.
->=20
-> For Host operation:
-> Method1: USB2m_PHY_VBENCTL.VBUS_SEL=3D0
-> or
-> method2: USB2m_PHY_VBENCTL.VBUS_SEL=3D1 and USB_HOST_VBCTRL.VBOUT =3D 1
->=20
-> For device operation:
-> USB2m_PHY_VBENCTL.VBUS_SEL=3D1 and USB_HOST_VBCTRL.VBOUT =3D 0
->=20
-> Are you suggesting to use method1(mux) for host operation?
-
-No, not necessarily. I was thinking of letting the PHY driver, before
-registering the VBOUT controlled VBUS regulator in its probe function,
-call into the mux API to set VBENCTL.VBUS_SEL=3D1 and thus make the VBOUT
-bit functional.
-
-> Currently this is one time configuration. If we plan to
-> use mux, then it becomes dynamic.
+> Hi Pascal,
 >
-> How we can we make use of PHY driver using mux API to select the mux regi=
-ster(VBUS_SEL)
-> in USB PHY control Driver?
+> On Fri, Oct 3, 2025 at 4:59=E2=80=AFPM Pascal Giard <evilynux@gmail.com> =
+wrote:
+> >
+> > Some Qualcomm Bluetooth controllers, e.g., QCNFA765 send debug packets
+> > as ACL frames with header 0x2EDC. The kernel misinterprets these as
+> > malformed ACL packets, causing repeated errors:
+> >
+> >   Bluetooth: hci0: ACL packet for unknown connection handle 3804
+> >
+> > This can occur hundreds of times per minute, greatly cluttering logs.
+> > On my computer, I am observing approximately 7 messages per second
+> > when streaming audio to a speaker.
+> >
+> > For Qualcomm controllers exchanging over UART, hci_qca.c already
+> > filters out these debug packets. This patch is for controllers
+> > not going through UART, but USB.
+> >
+> > This patch filters these packets in btusb_recv_acl() before they reach
+> > the HCI layer, redirecting them to hci_recv_diag().
+> >
+> > Tested on: Thinkpad T14 gen2 (AMD) with QCNFA765, kernel 6.16.9
+> >
+> > Signed-off-by: Pascal Giard <pascal.giard@etsmtl.ca>
+> > ---
+> >  drivers/bluetooth/btusb.c | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> >
+> > diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> > index 5e9ebf0c5312..900400646315 100644
+> > --- a/drivers/bluetooth/btusb.c
+> > +++ b/drivers/bluetooth/btusb.c
+> > @@ -68,6 +68,9 @@ static struct usb_driver btusb_driver;
+> >  #define BTUSB_ACTIONS_SEMI             BIT(27)
+> >  #define BTUSB_BARROT                   BIT(28)
+> >
+> > +/* Qualcomm firmware debug packets header */
+> > +#define QCA_DEBUG_HEADER       0x2EDC
+> > +
+> >  static const struct usb_device_id btusb_table[] =3D {
+> >         /* Generic Bluetooth USB device */
+> >         { USB_DEVICE_INFO(0xe0, 0x01, 0x01) },
+> > @@ -1229,6 +1232,12 @@ static int btusb_recv_intr(struct btusb_data *da=
+ta, void *buffer, int count)
+> >
+> >  static int btusb_recv_acl(struct btusb_data *data, struct sk_buff *skb=
+)
+> >  {
+> > +       /* Drop QCA firmware debug packets sent as ACL frames */
+> > +       if (skb->len >=3D 2) {
+> > +               if (get_unaligned_le16(skb->data) =3D=3D QCA_DEBUG_HEAD=
+ER)
+> > +                       return hci_recv_diag(data->hdev, skb);
+> > +       }
+>
+> Well it turns out that handle 0x2EDC is actually a valid handle, so we
+> can't just reclassify these packets just because Qualcomm thinks that
+> it could reserve it for its own, so this needs to be using
+> classify_pkt_type to reclassify the packets to the handle 0x2EDC to
+> HCI_DIAG_PKT for the models affected.
 
-For example, this driver could spawn an auxiliary mux device with a
-driver in drivers/mux that registers a mux for VBENCTL.VBUS_SEL on the
-&usb20phyrst node.
+Thank you for considering my patch. Based on your comment, I had a
+look at how btintel.c uses classify_pkt_type, and I think I understand
+what you are expecting of me.
 
-The phy could then get a "mux-states =3D <&usb20phyrst 1>;" property in
-its device tree node and call the equivalent of:
+Before I submit a new version, should I go very narrow (just the
+VID:PID=3D0x0489:0xe0d0 I know for certain has the issue) or should I
+lump in all modules with the WCN6855 chip? The latter seems somewhat
+reasonable to me given how hci_qca.c does it (even broader).
+Therefore, I'm thinking of reusing BTUSB_QCA_WCN6855.
 
-  mux_state =3D devm_mux_state_get_optional(dev, NULL);
-  mux_state_select(mux_state);
+Thanks,
 
-to switch to VBOUT controlled VBUSEN.
-
-regards
-Philipp
+-Pascal
+--
+Homepage (http://pascal.giard.info)
+=C3=89cole de technologie sup=C3=A9rieure (http://etsmtl.ca)
 
