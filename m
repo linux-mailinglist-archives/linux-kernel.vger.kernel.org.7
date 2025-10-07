@@ -1,145 +1,260 @@
-Return-Path: <linux-kernel+bounces-844880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77875BC2FC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 01:45:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69821BC2FB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 01:43:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D6FF19A35D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 23:45:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E8C13AA729
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 23:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67351255E26;
-	Tue,  7 Oct 2025 23:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB3D25F998;
+	Tue,  7 Oct 2025 23:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EZ8c0jXd"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rewBxdUV"
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012006.outbound.protection.outlook.com [52.101.53.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE7119005E
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 23:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759880716; cv=none; b=AyxaiQqBf66XDTbndzwHbrsLIJoIk3heEg+lX9s6x7C10MQMuslDnyQs2apLTdhUcY3CcfavLyxscCg2gjnhXy1IMdkG0BaWA08e3rTci6aTp6x+/sdIXEHs2GAsIGioIeoOuu91k6+NzG9IQYJAygoZWQloKWIDU3TWO7pP40A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759880716; c=relaxed/simple;
-	bh=t4jCJVkxoZJxN5/EmPGG5tBlDrNWCM4Ia/uSSq0TPUg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fCfzySr/Nro+i3/JTPuXWOy87QzW8oRz8uTBEwOzLbedbt+SU6Uwc23erxdaeUU2LkmIu1udGhR39UJBtXBal0ElioGcCzsnFefyjCF2REmZi6kpXHbJNIntUapP24sBJfAPHXoGQ5xf2pg9E74iteAaZriOACmVV8pgtaCcWMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EZ8c0jXd; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-4060b4b1200so5846420f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 16:45:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759880712; x=1760485512; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aDfdN6rIqKoqG6qeZ1NEX3pLR4+cLj1rml/VExyclBs=;
-        b=EZ8c0jXddk/1wDxnojFYF0rVadjGeFjZN/iH3AH0kfqlV/sM+tpYFxxqKGDkOCrz/H
-         g3RCLhfGdP6ERGS4LmDRF2I//ESpCYXSzwWqhb5BsrbOedlmFLKrv82eOLRNKIuIkkGs
-         yaJ16bwXZgI/jhpGn+zd6F+D5zpYPuAWsNk1AqUK6lTjKcim3J97v+GyreRYK2qxl3g5
-         RJDlMqk9kNStpBnloXAFfiuDVKNTtgcPhNr0ymiRYBBJxqGOq0pg6uaCA8D9wXM2F3Vm
-         BQB+Jm55eVyv4clwy1Axe84re1+93yxyv7diLZsQ9WTp+FbqnGCVxCwfLcq6eqvjBqFA
-         LAiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759880712; x=1760485512;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aDfdN6rIqKoqG6qeZ1NEX3pLR4+cLj1rml/VExyclBs=;
-        b=h7h48m58X05nyGsV+P46HIa0uI5O1UbXQDvX8Bb47lW6oHaDlRZ4aHCghZGiZipLSU
-         BUcZ0GOvxBQ4LGoB9K2dyk9Cjw3SwCKgpMnmErlKD2ogG8YBqjUgZg5305xspjIRUCd6
-         3QllhO0jxF7pScNJMyVKp4Tc3I6o71UPkREWmXuWS6w+geMyZdqg/zu18CVFSGlr3JEk
-         Xf4XoiS64zhCygTNFOA1HdKaNvj9hHFrQyXMLNYBMv25WEgPKL4et83sQjsxYrtYEpwb
-         Tm7K0FAIxbPf2QmmiI4UJX5Q8ByQ/BfNEUP3YCHt0AZcSVuX+r5pvd1JysN8HKDqOXKP
-         3R4A==
-X-Forwarded-Encrypted: i=1; AJvYcCV2CZc5Wln0cUowXUM5zW+TwqPhzvjq9d08d1/Y1Jc09M8nolnxg/zXQZt2mgCWe76xhOyN1O72s2tFgFU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2Tv0iGrmv2QY24Ol9a8XEQcik14F56CDjuRqfOEZFBOTj/SwU
-	9OkYuR2Vi8mAw+3MIuMUK/v6Ir12kd9GH08rQh8qzdOkLcQ4ZNFG5tUH
-X-Gm-Gg: ASbGncvwesck7tmRK1C27BoDb9wd1PgaombJ7eD8XZ9Ubb1fqdZSN3mgZ9Po2qUtJBR
-	3QGUlD4zQyqb1+5FyEAMqT8JZLDbWRNPnSuzehtzsmWm2uxKZl+C2j3jSum6h5Y0w1hRHZKFnjb
-	zHHNavvWm49OH/baeT02rTXfDJOGIFTRlRClTlAFKKRU7yBOswfpkfr3QyOJ/iuJa/ZmA8W+Zfj
-	E1F7yMhZkEynrKs8IFVgTtBv9FirQWCXmbdnZ7YQr4TCk2HpFMFkw+Sifw4vbwv/xA+0MwgFdG+
-	KDv6NBM7Y4GU5q0LckPIIcCOXOcV3yj1nx70N6nnwLTR+W9GystNNOHeYKh03r3NXtjI9I0uMb4
-	GD5RI/V4TgszYo+6Zr9mE6R9/5x455P5r3dCCIOBQktPKcqd6
-X-Google-Smtp-Source: AGHT+IEt32j5aTlsj5mt5Vj8nJDWXlTmSLYYgW3aLAsDb+6G6ToKNZ2kXLfLfkP0BbJLDMQBydQ4Tg==
-X-Received: by 2002:a5d:5f82:0:b0:424:2280:5079 with SMTP id ffacd0b85a97d-4266e7d6d67mr603421f8f.25.1759880712163;
-        Tue, 07 Oct 2025 16:45:12 -0700 (PDT)
-Received: from eray-kasa.. ([2a02:4e0:2d14:1539:70f9:c50a:91c9:9e0d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8ab909sm26693197f8f.19.2025.10.07.16.45.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 16:45:11 -0700 (PDT)
-From: Ahmet Eray Karadag <eraykrdg1@gmail.com>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	david.hunter.linux@gmail.com,
-	skhan@linuxfoundation.org,
-	Ahmet Eray Karadag <eraykrdg1@gmail.com>,
-	syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com,
-	Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-Subject: [PATCH] Fix: ext4: add sanity check for inode inline write range
-Date: Wed,  8 Oct 2025 02:42:22 +0300
-Message-ID: <20251007234221.28643-2-eraykrdg1@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4619822579E
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 23:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.6
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759880602; cv=fail; b=C9Y0F9U9yxYkUKL+BM4b9U8B9hdD7y+obvgnX/v2vHR2sKsCs33GUVg3FpIXBxgAcnTGKf39nEQcBU5QBLopcwJOUbffLDVNuSA/d1neocVv5HR+I45kFoQIyTEM/1SIh4pgFaiCZ7ee6fIJahfMHqWbH4HikbuEkq6iJSWsT64=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759880602; c=relaxed/simple;
+	bh=/NBWhiSys3ZrsbRlRPUjzUyiRMvTWRgalPP94u4YE3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=GTNyAKNHJLUBO+bGvhXmQD71u6B//n5udKFyB7WBV1XCzTWuppZtnmpePZhHrDslQRz3OkblLz65jNNZnX/BeOomGJfmtnQmPzrIuMN5Kws/R1CbLGq6Xzl2kvZV0M+Ms1XDSkixx1Mluaz8SBQi9uvOIfpjIy3gvCq42ZosMvY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rewBxdUV; arc=fail smtp.client-ip=52.101.53.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CFY6FccO10znzt4lsXcTA+H3AqfSsJik/lu0waiKxS6NKo8nFClJLStFqvrgZULrgUL3bNGKFUt5EawgEr9rd0EJ7xSHavTcSpuyjQSt/pKqIYj8WZGcdcod/3tpqGp0wsQ03wf0WBTJeREd7FaSlAuKQeVqXsyW+dSIFiW3daR/30sB4Frvra0lxDFpvLcsCE2IquVFCfSSAE8rncEkfuuZXHCARe7vs834ws3mNQDpobxgUYUwJG93Fy6suS+gucAlP9B3FHgUNX0cMqr9ORNQitacoTyQT/RHi/29w6kEg6o7zLVDmTwXOPXf3kkYIkRsoFL3Og+Ug0h8n/ODNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0juayFierWTYuObT69thMAuZqh4TvKOFhveqvce/4kg=;
+ b=HwDGL+TGhRW7KEQuVVyJxE+VAGo8bSmnpv4kK4jvg7prBNCoBHjlbRrL4p6pXXjjtXd+cTUY+QHnBnEd+4TNaPSWEy3C0B8crUzc/lwANLD+rUx49mlIDlhtL4fCDmimq9wiUoJj5rp2Z3hvjjCzcZEuWoMQjFM8r3zmgZqRkGsddj0cTLNfb6+wRo+KWetws1lqVkd0TkQu+GqhA7qqaj5flXGxnVJW96K657sLUJOH5Q0qrAFtU2CZTyfuxQEIXxCinZVaFa8MXSqVmITFR/ysBr3yB+OqTz3JmV3NfQkSzyBSX2xjcCjwLqU5+rPqGwBg4wguuWwaQGjuRg59MA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0juayFierWTYuObT69thMAuZqh4TvKOFhveqvce/4kg=;
+ b=rewBxdUVKHOsbfCQNhfP9KgnaRINMuWT+EfGjLgPoQFiYhLpclEg1gOgCax041li70v6PXgxaU6vwTATiO/XyEGL0A28NT9AdzgFWpbym9D8tEaS7ovVxHdpYj61dLmOfHLmuJQ/XWAGPkppsRLZOeMbX+QqbJHUPUk6xkiRlO7PTk7O8v+fsghqfDjosExPMazu4nLaYACxvkZJ5bcYxBIU9M45Ox6DlFoJWyn3PMx2z/mjMYX4vHN8CLTEUld9kJsNmUnT1CnCXghpRNAIvrkqkhIBTSv2YRYFvUieHGwN+GytmPoA4GL2wl+FTs6VUtSbN/j1Bq44WTIY8rJpAA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
+ by BY5PR12MB4146.namprd12.prod.outlook.com (2603:10b6:a03:20d::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Tue, 7 Oct
+ 2025 23:43:16 +0000
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9182.017; Tue, 7 Oct 2025
+ 23:43:16 +0000
+Date: Tue, 7 Oct 2025 20:43:13 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: "Suthikulpanit, Suravee" <suravee.suthikulpanit@amd.com>
+Cc: nicolinc@nvidia.com, linux-kernel@vger.kernel.org, robin.murphy@arm.com,
+	will@kernel.org, joro@8bytes.org, kevin.tian@intel.com,
+	jsnitsel@redhat.com, vasant.hegde@amd.com, iommu@lists.linux.dev,
+	santosh.shukla@amd.com, sairaj.arunkodilkar@amd.com,
+	jon.grimm@amd.com, prashanthpra@google.com, wvw@google.com,
+	wnliu@google.com, gptran@google.com, kpsingh@google.com,
+	joao.m.martins@oracle.com, alejandro.j.jimenez@oracle.com
+Subject: Re: [PATCH v2 11/12] iommu/amd: Add support for nested domain
+ attach/detach
+Message-ID: <20251007234313.GE3474167@nvidia.com>
+References: <20251001060954.5030-1-suravee.suthikulpanit@amd.com>
+ <20251001060954.5030-12-suravee.suthikulpanit@amd.com>
+ <20251006145900.GT3360665@nvidia.com>
+ <3e27de73-61a1-4977-b0a1-629ffaa81032@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3e27de73-61a1-4977-b0a1-629ffaa81032@amd.com>
+X-ClientProxiedBy: SJ0PR03CA0331.namprd03.prod.outlook.com
+ (2603:10b6:a03:39c::6) To MN2PR12MB3613.namprd12.prod.outlook.com
+ (2603:10b6:208:c1::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|BY5PR12MB4146:EE_
+X-MS-Office365-Filtering-Correlation-Id: 56cfc1a4-4192-4c6b-7a38-08de05fb494f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?pcKJVnSjpyhqnkIp1b9EL78XAkHibYwKbOvgbdwz9bJlRVZi+Pwdt/Hfpsu7?=
+ =?us-ascii?Q?gkwZiLv6+gNzKwtUbEh+OGIo3CjoJirnU66fq2bUPW45LWIUGwhg6tblSTm8?=
+ =?us-ascii?Q?4QpJ52KbnkAOAEK6StUirLbcxlMm23QLCrmNNhudX7m370tY4pQRCMuUKw9O?=
+ =?us-ascii?Q?6WJGcNiyYBLYijJ6XM15VM+L0o9PsA0ALo3Xaw1K/KCbidFsgvbYrBzh+Sde?=
+ =?us-ascii?Q?gyTzp8ipy3lVTbWvtj8y0tCSbiHpsGVg5mYJParumd5zLnU8nzBRHwvBxcV0?=
+ =?us-ascii?Q?S2x4/rh63QUKKiHIpWRzPkzXdmz+a9v5lOvrnM9KjZfR+IqIXWVfV+jhsDCm?=
+ =?us-ascii?Q?Y2mmHVUnxLjJMYJB4/O8z5/wnWSe6Tf1hduvAqF/gDy7dHQEMAgMflpQA+IV?=
+ =?us-ascii?Q?07UpmSW3sztMBrowApNX5SYcxHf5A5MldB+epHIjEfEaJoTp2UvtD3dqwkPt?=
+ =?us-ascii?Q?CETrLERXM0+19eT7g2I2N3Qj/y0eUhS7a/pgqgotxuIiur+8nnQEbrRl4kIO?=
+ =?us-ascii?Q?Bb2mdim2EnVHusBH+KKciVhU3Pv9r5RPP8dJnaEyZWaJWREN2FzFhBwn+2w3?=
+ =?us-ascii?Q?XkKy7KIEJ7ubOGoKOJCEO6riVdZMtCemthb5li6E/SDcB/kIWz+mBxkxNCKV?=
+ =?us-ascii?Q?saWiY1gBi972zLgXGiEWJa1miEmJpcDTNNf+3r18W0tIXma8mHAXXhXhwQJV?=
+ =?us-ascii?Q?ETqHX9QJiru6T4tJyOd3/cAd/nRWUb/rXhaXRfTJeiyAzDncRN0CFxILPG93?=
+ =?us-ascii?Q?TbS9R2GPw4J4cTpGo72wp732YqH9g1SYH3goYNQqohdEvEnqL0v2Lo7EeipN?=
+ =?us-ascii?Q?hYb7YRg2wHCLp7Fu/gkx/9Ucz0qQKew3GTKCTIKaCyx5BHongEud1ArYxoSc?=
+ =?us-ascii?Q?cUwKuVcy+47olAhNoFRn+0wGuuyl76lOTKaFZvb65qUcOHydwOAVmfdzZvJE?=
+ =?us-ascii?Q?BGIG2aXnpCu3GFG/x9Wdv3GBQqF974P8GfbHmKxVKaljUdivq25bVK4eb/6H?=
+ =?us-ascii?Q?gxs/9GQY8xBC5QahmqqQ7V3Tikv9Tr4sUOcaERgk/pvsACPgSGVMdvUhwbez?=
+ =?us-ascii?Q?ew6NzFfRjZYOVgPsvq/WrNecygH41JJxHlRhkg3aBW5Axdw43fsb5DQbsy6y?=
+ =?us-ascii?Q?eUWN5MzwTlV+hbA1P18nzKg05Nq9EDD1Tdver5nMxE2qeNR3o86T51xVkI9D?=
+ =?us-ascii?Q?+s3/mvtUXbYFAEhq1w+7ldbxfpK3mTXO+gpo1dmaGsQMAsKu+TRcSRN997XE?=
+ =?us-ascii?Q?uOQdBU4ibolIwtQB9fMXnZQb0u1W/1nsUU7AxqUeoffrT/J/1H8pTvUXlHCk?=
+ =?us-ascii?Q?ZpX2EhBAIVw/Gdbgc8qvZ8pFwIn4HQ1ADvCB0au6pFCQAeP8EMo6GgAW+UB1?=
+ =?us-ascii?Q?N+hSBqof98CcJHAurn4Fd0as4foPYSRyfqg2+DAkgnfr+UtUBNsZ4s5B085i?=
+ =?us-ascii?Q?Fpp55jo+EmdkmIy37ZedNHcIaRvkT8SC?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?KXWmSTEGR/fcTTGV9Ay8Lh3QkDCBrcSS362YuzjP/c2c0Mf7hw+4XtxXgSEo?=
+ =?us-ascii?Q?6VUFfU8k7L6LX8ogxjDtbIh2kM9sxXAE2i2ZUdvd21zBy331P67Hrq4PlBGJ?=
+ =?us-ascii?Q?s3+xaoSlpo6zAZNhMYT98XOuSWfnY4CoB702sqJMFSFllyGvK8mf9DB+tHmY?=
+ =?us-ascii?Q?HonEhq+9vMfy1lPYuSHMmFwXrwZiVwudyohFTR8TyqHY+X/3H+BrxD9c8vkT?=
+ =?us-ascii?Q?bTEMJG2jsHiJ35gy0pilVnzmCwYvZEXLaR8+vAE0jnKw9JXiQfdgMo/kLePy?=
+ =?us-ascii?Q?5R/BxxWux36RUK0Ctv2BnMFBibp3TryK8hR5XRxBR6qVOOrMD8KLkWjVJjrE?=
+ =?us-ascii?Q?FuoTPIKDS6XheDkUDbZDJLA3DT9SNP+ImbrUe7ebaZM2Ze1WiBzW7MifP2dV?=
+ =?us-ascii?Q?1qlmHkE+YLy4pEwepyvzXZBjeATjmiZZJ7Hder/7muhcXhDevG1brX7JUGHG?=
+ =?us-ascii?Q?1DwlFBFc+M/gIjZ20uz+6w6Ti5q+b4uKQbPQsurhMsM06U77ucyaGodIMqpK?=
+ =?us-ascii?Q?Gy2WvtfK98UWOQNKkp+o/ElAT7X70SMnwNT6UObJifDi+/9lInoTRQU3PkjK?=
+ =?us-ascii?Q?3EFwSPA9VC6O1zFVuiDduxrnnk2OoDiEtZzDCVhdKFSsoUSGFqjYb2Jaqblp?=
+ =?us-ascii?Q?TemfMB0+AZz1IBaEGgTHHbT4h2yfZYDtt7gC4/+zu6a0deIYQX8eLxCvztUH?=
+ =?us-ascii?Q?czojPXnJUb9OqU1dlsAHIqjgkSSSZir0FN/jHbylEgjjHb2Kn2BZg4t9vSGJ?=
+ =?us-ascii?Q?j41Ciq8ERvBIUBPiQSWf21m8jRq8ploeOnf52y+QNrDdoZx76pntCwUDDcyt?=
+ =?us-ascii?Q?4zTivY+k/wzmyzMIZp595/HfUhuc17FZjjom8gQnspjtbM2s/UwyZNvbhPGB?=
+ =?us-ascii?Q?jkgwIFQXJ9kw2teCFmxbBqCYWUZhW01icq5l9GqifMgKfqtr0myyNaIIkM22?=
+ =?us-ascii?Q?iZ+rfXQdlTYx1Rd3Z6gk9F36IoStKI+A+z4tt67ltvmegjlb9wFybHnxwmUM?=
+ =?us-ascii?Q?M99Y5qrgj0Q5gp7+EoSiii7fR2xRwlfbr8UqhFXtO4/Tr7J+KLbJv28kwScX?=
+ =?us-ascii?Q?ovTyVvBke51c+KDN2dIT4hm+UYNRknZkVC2I+nD/1nde8mzFHW7oNHndzLcR?=
+ =?us-ascii?Q?lNXCDEuqvpX+LktKBSmqQf0ghsOD4fxgisMEZsDLmTGSzGJk9SBW80edcmp9?=
+ =?us-ascii?Q?R/BBZBsxmZuTR1ZiZWDarh/D+iJ/yUpIqVLtmu+VcxUYHy5fhKcjqY7OCe4+?=
+ =?us-ascii?Q?MgzQU88KJl9CKWGKQMGSPBkcfU31rvTy1Y8WLtMuO+QRuipskd3vzN3EdX//?=
+ =?us-ascii?Q?Dr+A7BTEz4iEEX1AmGOIJ2Eatp7JhGcBnSQkdfOdRWSKmqSHvzKdYNvbxJaJ?=
+ =?us-ascii?Q?smKDc43XHRXMcI1JU59u8/DThXsi9m4Xyg4jT9DL/q8CijtiWRdeItUfR4jG?=
+ =?us-ascii?Q?Y7xe1Lu98k6DuJF8IFMTv4a1Gk7UtyJS3chRLh78dGKMA1wCjRsQal87GAaz?=
+ =?us-ascii?Q?CZuzK7V+79ZUjEymMrDs8UKrGPtnwdgVzkiYpYiAKuizkl9Cs+P7iGzQEbb6?=
+ =?us-ascii?Q?kaPcPj99+C6XIbVM+UIlvKKRYUA8qZsncuL6lZvX?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 56cfc1a4-4192-4c6b-7a38-08de05fb494f
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2025 23:43:16.1164
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vz78tbFBivuqyN35aBS8pHN+cb+XBKbA6suYYQtYeJ0/4XpeD26tYfllQXoguuT/
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4146
 
-Add a simple check in ext4_try_to_write_inline_data() to prevent
-writes that extend past the inode's inline data area. The function
-now returns -EINVAL if pos + len exceeds i_inline_size.
+On Tue, Oct 07, 2025 at 02:22:30PM -0500, Suthikulpanit, Suravee wrote:
+> 
+> 
+> On 10/6/2025 9:59 AM, Jason Gunthorpe wrote:
+> > On Wed, Oct 01, 2025 at 06:09:53AM +0000, Suravee Suthikulpanit wrote:
+> > > ....
+> > > +	if (WARN_ON(!ndom || !pdom || (pdom->iop.mode == PAGE_MODE_NONE)))
+> > > +		return;
+> > > +
+> > > +	amd_iommu_make_clear_dte(dev_data, &new);
+> > > +
+> > > +	new.data[0] |= iommu_virt_to_phys(pdom->iop.root);
+> > > +	new.data[0] |= FIELD_PREP(DTE_MODE_MASK, pdom->iop.mode);
+> > > +	new.data[0] |= DTE_FLAG_IR | DTE_FLAG_IW | DTE_FLAG_TV;
+> > > +	new.data[0] |= (DTE_FLAG_PPR & gdte->data[0]);
+> > 
+> > > +	if (pdom->dirty_tracking)
+> > > +		new.data[0] |= DTE_FLAG_HAD;
+> > > +
+> > > +	if (dev_data->ats_enabled)
+> > > +		new.data[1] |= DTE_FLAG_IOTLB;
+> > 
+> > This sequence should be in some set_dte_gcr3() ??
+> 
+> Not sure what you mean. This logic was in set_dte_entry(), and duplicated
+> here in the set_dte_nested() since we no longer calling set_dte_entry() from
+> the nested path. Also, it's not really related to GCR3 table.
 
-This avoids invalid inline write attempts and keeps the write path
-consistent with the inode limits.
+Sorry some make_ste_v1()
 
-Reported-by: syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com
-Link: https://syzkaller.appspot.com/bug?extid=f3185be57d7e8dda32b8
-Co-developed-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com> 
-Signed-off-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-Signed-off-by: Ahmet Eray Karadag <eraykrdg1@gmail.com>
----
- fs/ext4/inline.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+This logic should be the same for any v1 page table.
+> > > +	/*
+> > > +	 * Restore cached persistent DTE bits, which can be set by information
+> > > +	 * in IVRS table. See set_dev_entry_from_acpi().
+> > > +	 */
+> > > +	initial_dte = amd_iommu_get_ivhd_dte_flags(iommu->pci_seg->id, dev_data->devid);
+> > > +	if (initial_dte) {
+> > > +		new.data128[0] |= initial_dte->data128[0];
+> > > +		new.data128[1] |= initial_dte->data128[1];
+> > > +	}
+> > 
+> > This should go into amd_iommu_make_clear_dte() I think, and refactor
+> > it out of iommu_update_dte256() ?
+> > Every created DTE needs these bits set, right?
+> 
+> Currently, the amd_iommu_make_clear_dte() clears all the DTE bits and set
+> the DTE[V] (valid) bit. This is used when preparing the DTE for programming,
+> detaching domain, and when setting the blocking domain. Putting this logic
+> in the function would change the behavior.
 
-diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
-index 1b094a4f3866..13ba56e8e334 100644
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -782,6 +782,16 @@ int ext4_write_inline_data_end(struct inode *inode, loff_t pos, unsigned len,
- 	struct ext4_iloc iloc;
- 	int ret = 0, ret2;
- 
-+	if ((pos + len) > EXT4_I(inode)->i_inline_size) {
-+			ext4_warning_inode(inode,
-+				"inline write beyond capacity (pos=%lld, len=%u, inline_size=%d)",
-+				pos, len, EXT4_I(inode)->i_inline_size);
-+		folio_unlock(folio);
-+		folio_put(folio);
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
- 	if (unlikely(copied < len) && !folio_test_uptodate(folio))
- 		copied = 0;
- 
-@@ -838,8 +848,8 @@ int ext4_write_inline_data_end(struct inode *inode, loff_t pos, unsigned len,
- 	 */
- 	if (pos + len > inode->i_size && ext4_can_truncate(inode))
- 		ext4_orphan_add(handle, inode);
--
--	ret2 = ext4_journal_stop(handle);
-+	if (handle)
-+		ret2 = ext4_journal_stop(handle);
- 	if (!ret)
- 		ret = ret2;
- 	if (pos + len > inode->i_size) {
--- 
-2.43.0
+Yes, but it seems like that is the right behavior?
 
+> These bits affect Interrupt remapping (Lint0/Lint1/NMI/INIT/ExtInt interrupt
+> pass-through) and System management message behavior. 
+
+Because these bits shouldn't be cleared on a blocking domain!
+Interrupts are still expected to work.
+
+
+> > > +
+> > > +	/* Guest translation stuff */
+> > > +	new.data[0] |= (gdte->data[0] &
+> > > +		       (DTE_GLX | DTE_FLAG_GV | DTE_FLAG_GIOV));
+> > > +
+> > > +	/* GCR3 table */
+> > > +	new.data[0] |= (gdte->data[0] & DTE_GCR3_14_12);
+> > > +	new.data[1] |= (gdte->data[1] & (DTE_GCR3_30_15 | DTE_GCR3_51_31));
+> > > +
+> > > +	/* Guest paging mode */
+> > > +	new.data[2] |= (gdte->data[2] & DTE_GPT_LEVEL_MASK);
+> > 
+> > I didn't see anything validating gdte has only permitted set bits in
+> > the prior patch?
+> 
+> Not sure which on are you referring to.
+
+You have to validate gdte has only valid bits.
+
+> > If this is goint to decode array item by item then why not use struct
+> > iommu_hwpt_amd_guest in the nested_domain ?
+> 
+> The struct dev_table_entry *gdte is basically the same information as in the
+> struct iommu_hwpt_amd_guest.dte that we copied from the userspace into the
+> more appropriate in-kernel data structure type, which is used within the
+> driver.
+
+The appropriate type is the userspace type if you don't actually ever
+use anything unique to the kernel type. You can avoid the special
+assert/etc since this way of accessing it is not sensitive to layout.
+
+> Here, we just select only what we needed for configuring guest page table
+> specifically to be programmed onto the host DTE.
+
+Everything you don't pick up should be checked to be 0. VMM needs to
+filter out unsuopported things or generate a bad DTE error.
+
+Jason
 
