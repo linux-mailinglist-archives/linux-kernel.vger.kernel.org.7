@@ -1,161 +1,182 @@
-Return-Path: <linux-kernel+bounces-844381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF159BC1C5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:39:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16C00BC1C73
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:42:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8F9194EE7E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:39:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C33B43AB8FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0AC2E11AB;
-	Tue,  7 Oct 2025 14:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5FA2E11AB;
+	Tue,  7 Oct 2025 14:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USQSwcBd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Li0TudPE"
+Received: from mx-relay189-hz1.antispameurope.com (mx-relay189-hz1.antispameurope.com [94.100.133.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D89A2D73A4;
-	Tue,  7 Oct 2025 14:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759847934; cv=none; b=V16ds2AVkaW+0ry5tpzHM2OBO534WqzsG5oZjLYP6bL4Ma5E9WC0bbDrWe4HC+DK/Urn6XfE9Hj1SkGefBveCGsd8nVLesBalsMw86BbsfNYrZuBan5jCqdBQsE1CTW0TOgNSIE3/r5BnXxHnGcu1Ior4q9DyUrkq6E8YgYBNUA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759847934; c=relaxed/simple;
-	bh=40+xkhjc2Wm5Ld3hrRFSd44nAhq1g6XgDf94PZ4Cw6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fqVRHVH3NMOe/iuMxZVLf4g114RzMAH8cGGuM7+xZS0YheEnY6urZl7wYf4iU0eEVTzqp7ePdfrcaxzoAlNWdJ4m+xf1c9cc63fMxe+kCkq4NnEsJGlvp5ZXFFpgZZRPi2lwzXYZJ1XX2aO87Y4iwgmbhqe1WuzvJ/dkUvLBK+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=USQSwcBd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDAE9C4CEF1;
-	Tue,  7 Oct 2025 14:38:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759847934;
-	bh=40+xkhjc2Wm5Ld3hrRFSd44nAhq1g6XgDf94PZ4Cw6s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=USQSwcBdmZW6GjWjGuipqp6KDuuLpVyqYBETKZ+omYpRNYoaQ7QbbGc27lrkOgCvo
-	 iJJzTYHk344B7migg7+yhG1UvHqWgsK2/26nYMc2QmcEeD9WcML/tUmSJ5nROmiPOj
-	 q4up48+SpiEyHumv788A0evsIKK5qks+7ohKe5K3QusNQDAoBJOvH66kYXfvLNSqOw
-	 TOWFcPxmBb5I7Zn285Peio8hr+LLLMg3MtlV1LE2RG+FoOsPk1tt3ywO6ECZpZXdEA
-	 PsUn4dNaqOvQTo2B3A3YwDylIpQAlhdK5/2dVh/e/ClQjeslvYNIcEkmRT8s3CNfrn
-	 PQPdFOwrE6y/Q==
-Date: Tue, 7 Oct 2025 17:38:50 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-v6.18
-Message-ID: <aOUl-mZkRwJJwtJ7@kernel.org>
-References: <aOKTFv1vh1cvvcLk@kernel.org>
- <CAHk-=wiCWiDcLEE3YqQo78piVHpwY2iXFW--6FbmFAURtor2+w@mail.gmail.com>
- <aOOu1f1QWQNtkl6c@kernel.org>
- <aOPOZwp_inGui9Bx@kernel.org>
- <125ba81bb222cdffef05ef9868c68002efd61235.camel@HansenPartnership.com>
- <aOPzovsBYlH3ojTR@kernel.org>
- <aOP04Yy3m23E4kjf@kernel.org>
- <aOUkcytS21zQs71I@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616C5165F16
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 14:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.133.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759848127; cv=pass; b=IXakSfsnq3Ik9aV/WeYP22JUSaKknuD5vvnp3k+oztZyw8W98BsEwpr+d6aj0WimxYa3LqK9EPEmD0owJGGK/OVwH8X72uSEK5qeaNLR8G/ExB490rKETwAivcgqBFCTLoB5a66D7gi7Ka3MbA67R5by1gwLcapo5j7fuIYMwLc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759848127; c=relaxed/simple;
+	bh=yDQQOQqjnQwEhncWQQ4K452iNL8DnnYaIXU4NIP3450=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QvzLSw3LnSNV3gjQGDaWeHjAPR+FID5D9iaNmwHD0cCKw2H6T2ovSPBx54B9o/a5YpJfK0P/P3v/cuqtmK0s7lIkk0EDxK5/9iuLwmSSJqhUkDcv+zx7+LGhpSoxVzFctHS1iTDu9aOPKZ/3k7DCvCcpZiJiAQsVWphW+yjsemI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Li0TudPE; arc=pass smtp.client-ip=94.100.133.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+ARC-Authentication-Results: i=1; mx-gate189-hz1.hornetsecurity.com 1;
+ spf=pass reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
+ smtp.mailfrom=ew.tq-group.com smtp.helo=smtp-out02-hz1.hornetsecurity.com;
+ dmarc=pass header.from=ew.tq-group.com orig.disposition=pass
+ARC-Message-Signature: a=rsa-sha256;
+ bh=80WbERQURXGFSJ2g95JfoLgUOBrfN3fEfhi353jq0sM=; c=relaxed/relaxed;
+ d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
+ t=1759848072;
+ b=qC6rzNUNpY82VbOOj/fD7RszyaeQ8FiG2B2mBy+U4kNJvOABMLECANBv4N39i5gYt4lWAC/K
+ Wjgs7h77XkoSukbUWPolewLmDtFV9R0XDfN21gb8jr3YA5UFi5Vd8u30Ruwdd390J0av1N9upCe
+ KvtRLDWaIzfG1ckDuboGJiznWtQIrDI5oZUm5YjPC7+n8BGZpZue5En03EAHsJcLYt26yLW+4Gr
+ pHEsw/qpk8SghGEy0UHEF27ZGWL6FYtSW8WH3jHKMok0NmEp1La5dqU4y7aW52WxwQQhcxMYA+f
+ NwA//b9GNuMswH+k/CAfbAh6IOOFm+J/SQaj10cPWH1Tg==
+ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
+ t=1759848072;
+ b=I1xDUKSxrG2L86TWO7Ut8dOjL3JNxtiMH2XignV7BZqvWd5wRs9dPJPPfSEBwm8AV009sAdx
+ hUIoHIrsCeA4m2+dVmdgjI6z8WxKbiV6DNTJPH3MBc7N2rEBrJq2WD24FertfwpqHwoHWyK6N2U
+ sFzatipRguovE5wtB+JSxwO3vlt86lzRwtLccFvxsqr046m8OSCvUfluY2ERvesM7XTd6t5sm3u
+ fkmKSJ5OmQeL07xVdTGMQ2CHMLTITrdqnHIXM/R64d3BmuL8tb/gRjbxVhXIKTwN62qJzK31wqZ
+ //dtSfdvkIO2p4scMolaovY+4N9lY5WRnE09BGLPaTtMw==
+Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay189-hz1.antispameurope.com;
+ Tue, 07 Oct 2025 16:41:11 +0200
+Received: from [192.168.153.128] (host-82-135-125-110.customer.m-online.net [82.135.125.110])
+	(Authenticated sender: matthias.schiffer@ew.tq-group.com)
+	by smtp-out02-hz1.hornetsecurity.com (Postfix) with ESMTPSA id C36B25A0D7B;
+	Tue,  7 Oct 2025 16:41:00 +0200 (CEST)
+Message-ID: <0007bc39777fc1e09f953be943fd8ce474b054da.camel@ew.tq-group.com>
+Subject: Re: [PATCH 1/2] i2c: ocores: replace 1ms poll iteration timeout
+ with total transfer timeout
+From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Peter Korsgaard <peter@korsgaard.com>, Andi Shyti
+ <andi.shyti@kernel.org>,  linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux@ew.tq-group.com
+Date: Tue, 07 Oct 2025 16:41:00 +0200
+In-Reply-To: <7470fb97-1991-4347-a084-11f24006b67f@lunn.ch>
+References: 
+	<1eb320b6b7d3a12e62785893ea68c4d16aa2560d.1759838476.git.matthias.schiffer@ew.tq-group.com>
+	 <7dbefacc-3ce0-47ea-b521-102320f49420@lunn.ch>
+	 <09aa8945c41cdc0c518bddedf8d3489c1e521661.camel@ew.tq-group.com>
+	 <7470fb97-1991-4347-a084-11f24006b67f@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aOUkcytS21zQs71I@kernel.org>
+X-cloud-security-sender:matthias.schiffer@ew.tq-group.com
+X-cloud-security-recipient:linux-kernel@vger.kernel.org
+X-cloud-security-crypt: load encryption module
+X-cloud-security-Mailarchiv: E-Mail archived for: matthias.schiffer@ew.tq-group.com
+X-cloud-security-Mailarchivtype:outbound
+X-cloud-security-Virusscan:CLEAN
+X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay189-hz1.antispameurope.com with 4cgzMx2cS1z3gkyQ
+X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
+X-cloud-security-Digest:b72eaf01ab3e237b213f268682a1d073
+X-cloud-security:scantime:2.137
+DKIM-Signature: a=rsa-sha256;
+ bh=80WbERQURXGFSJ2g95JfoLgUOBrfN3fEfhi353jq0sM=; c=relaxed/relaxed;
+ d=ew.tq-group.com;
+ h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
+ t=1759848071; v=1;
+ b=Li0TudPErF0MfoAnDmweSqUlkKxPvKXIMJ/y/lu3quMee+pKCirdoqGhZ9rhFFUmKbRmWqAl
+ sjWHFC9Lmg/7cH7hJry5chou6mDZGYWLdjlqn61l/TK7bE6UWX+dOuNHLc1sB+2iOThuNpVszym
+ brzNndM5k9wdqsAPL31YmmJNojyR+DAYGCe8um4lEYI7YllYapnr61oATV7U6/proIPAZrdt1co
+ moUrVf1xbflST8rnrEmTEY/N+VtsfYZA5lWGzqaY/EWuw5rtSyYqoahQNF0WUCK6Dk39BfXzKZs
+ 65RLdoHIlAAkaqz7jMvHYZxRb7tssKXAXihDpkE1t2ZIw==
 
-On Tue, Oct 07, 2025 at 05:32:24PM +0300, Jarkko Sakkinen wrote:
-> On Mon, Oct 06, 2025 at 07:57:10PM +0300, Jarkko Sakkinen wrote:
-> > On Mon, Oct 06, 2025 at 07:51:51PM +0300, Jarkko Sakkinen wrote:
-> > > On Mon, Oct 06, 2025 at 10:33:40AM -0400, James Bottomley wrote:
-> > > > On Mon, 2025-10-06 at 17:12 +0300, Jarkko Sakkinen wrote:
-> > > > > 2. Null seed was extremely bad idea. The way I'm planning to actually
-> > > > >    fix this is to parametrize the primary key to a persistent key
-> > > > > handle
-> > > > >    stored into nvram of the chip instead of genration. This will
-> > > > > address
-> > > > >    also ambiguity and can be linked directly to vendor ceritifcate
-> > > > >    for e.g. to perfom remote attesttion.
-> > > > 
-> > > > Just a minute, there's been no discussion or debate about this on the
-> > > > list.  The rationale for using the NULL seed is clearly laid out here:
-> > > > 
-> > > > https://docs.kernel.org/security/tpm/tpm-security.html
-> > > > 
-> > > > But in brief it is the only way to detect reset attacks against the TPM
-> > > > and a reset attack is the single simplest attack an interposer can do.
-> > > > 
-> > > > If you think there's a problem with the approach, by all means let's
-> > > > have a debate, since TPM security is always a trade off, but you can't
-> > > > simply come to your own opinion and try to impose it by fiat without at
-> > > > least raising whatever issue you think you've found with the parties
-> > > > who contributed the code in the first place.
-> > > 
-> > > Ok fair enough, it's quite context dependent what is not secure and
-> > > what is secure.
-> > > 
-> > > What I've thought, or have planned to implement, is not to discard null
-> > > seed but instead parmetrize the primary key as a kernel command-line
-> > > parameter.
-> > > 
-> > > E.g. "tpm.integrity_key={off,null,handle}" and
-> > > "tpm.integrity_key_handle" to specify an NV index. The default value is
-> > > off and I think also that with this change and possibly with some
-> > > additional polishing it can reappear in default config,
-> > > 
-> > > This out of context for the PR but I will take your comment into account
-> > > in the pull request.
-> > > 
-> > > My main issue preventing sending a new pull request is that weird list
-> > > of core TPM2 features that is claimed "not to be required" with zero
-> > > references. Especially it is contraditory claim that TPM2_CreatePrimary
-> > > would be optional feature as the whole chip standard is based on three
-> > > random seeds from which primary keys are templated and used as root
-> > > keys for other keys.
-> > > 
-> > > So I guess I cherry-pick the claims from Chris' patch that I can cope
-> > > with, look what I wrote to my commit and adjust that accordingly and
-> > > finally write a tag message with summarization of all this. I exactly
-> > > drop the arguments with no quantitative evidence, which is probably
-> > > a sane way to move forward.
-> > 
-> > Personally I think that once there's correctly implemented command-line
-> > option, the feature flag is somewhat redundant (and we've never had one
-> > for /dev/tpmrm0). And it will help a lot with kernel QA as you can run
-> > tests with same kernel image without recompilation.
-> 
-> I don't really see any possible security issues either with null seed.
-> 
-> It's no different as per remote attestation when compared storage keys.
-> In a power cycle it's like same as per TPM2_Certify is considered. It's
-> pretty much exactly performance issues but depending on deployment.
-> Sometimes storage key root would be probably a better choice.
-> 
-> I really tried to dig something else than exactly perf stuff but was
-> unsuccessful to find anything, and I've actually done a lot of work
-> at work on remote attestation so everything is also somewhat fresh
-> on my mind.
-> 
-> Still rooting to perf, immediate action being default option disable,
-> and long term action being replacing the compilation option with
-> kernel command-line options. I.e., I'll stay on track what I'e
-> been already doing for some time :-)
-> 
-> That said, my PR cover letter (or the tag message) did suck and
-> I'll just address next during exactly why something is or isn't
-> an issue. I think this is really good outcome for everyone in
-> the long run (because everyone will get the outcome they were
-> looking for).
+On Tue, 2025-10-07 at 16:20 +0200, Andrew Lunn wrote:
+> On Tue, Oct 07, 2025 at 04:06:36PM +0200, Matthias Schiffer wrote:
+> > On Tue, 2025-10-07 at 14:34 +0200, Andrew Lunn wrote:
+> > > On Tue, Oct 07, 2025 at 02:09:24PM +0200, Matthias Schiffer wrote:
+> > > > When a target makes use of clock stretching, a timeout of 1ms may n=
+ot be
+> > > > enough. One extreme example is the NXP PTN3460 eDP to LVDS bridge, =
+which
+> > > > takes ~320ms to send its ACK after a flash command has been
+> > > > submitted.
+> > > >=20
+> > > > Replace the per-iteration timeout of 1ms with limiting the total
+> > > > transfer time to the timeout set in struct i2c_adapter (defaulting =
+to
+> > > > 1s, configurable through the I2C_TIMEOUT ioctl). While we're at it,=
+ also
+> > > > add a cpu_relax() to the busy poll loop.
+> > >=20
+> > > 1s is a long time to spin. Maybe it would be better to keep with the
+> > > current spin for 1ms, and then use one of the helpers from iopoll.h t=
+o
+> > > do a sleeping wait? Say with 10ms sleeps, up to the 1s maximum?
+> > >=20
+> > > 	Andrew
+> >=20
+> > Makes sense. I don't think I can use something from iopoll.h directly, =
+as i2c-
+> > ocores has its own ioreadX abstraction to deal with different register =
+widths
+> > and endianesses, but a combination of spin + sleep is probably the way =
+to go.
+>=20
+> I think iopoll.h should work.
+>=20
+>=20
+> 		u8 status =3D oc_getreg(i2c, reg);
+>=20
+> 		if ((status & mask) =3D=3D val)
+> 			break;
+>=20
+> This maps to
+>=20
+> u8 status;
+>     =20
+> ret =3D read_poll_timeout(oc_getreg, status, (status & mask) =3D=3D val,
+>                        10000, 1000000, false, i2c, reg);
+>=20
+> Andrew
 
-And in the business I'm ATM i.e., covering like with 20-30% market share
-Finnish high school IT deplyoment going extremes is feasible, as some
-kids are smart and capable of hacking the systems so to speak ;-) I'd
-likely enable this feature e.g., in that type of deployment together
-with remote attesation just to max out defence in depth.
+Ah, you are right, that should work.
 
-BR, Jarkko
+If we want to keep the spin case for short waits, not duplicating the read =
+and
+mask check seems preferable to me though - maybe something like the followi=
+ng
+(which could also be extended to exponentially increasing sleeps or similar=
+ if
+we want to start with something smaller than 10ms):
+
+	unsigned long spin_timeout =3D jiffies + msecs_to_jiffies(1);
+	...
+
+		if (time_before(jiffies, spin_timeout))
+			cpu_relax();
+		else
+			msleep(10);
+
+Best,
+Matthias
+
+
+--=20
+TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
+any
+Amtsgericht M=C3=BCnchen, HRB 105018
+Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
+neider
+https://www.tq-group.com/
 
