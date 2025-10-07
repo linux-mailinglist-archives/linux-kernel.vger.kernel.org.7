@@ -1,260 +1,251 @@
-Return-Path: <linux-kernel+bounces-844517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB9A9BC21E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:31:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5F1FBC21E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:32:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDE8F189B29B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:31:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CAF719A487B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5025E21ABDC;
-	Tue,  7 Oct 2025 16:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6992B21638D;
+	Tue,  7 Oct 2025 16:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TxZCZtrZ"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="POqvVnku"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011015.outbound.protection.outlook.com [52.101.70.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A991DF759
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759854688; cv=none; b=l1XjmFaOKsSlvTb3SHj/uAl34T166wjRme7Aljyi49KvUOpyS+CoZpwYDa2mKIF+cvGUNXo+LZhPHAwXHQ8Vtg2h0SCcH9OD5X9dxc39EDlVW5kcYuzObIDxTLjFB7CorOUpuA6L5KPl8fp7vYn4gmzIWm/WxzjQKOGhhJN8a0c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759854688; c=relaxed/simple;
-	bh=zRn9l5M3+J57K4Nf/MSyE1kact60dzbaTi+YViUvQEI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=EiOBt4apFlDCV3sR3kspSaF6IahqCVb7MSlQL8fuYwkuwxhGH6GUn+zLAFPvaSebCWhq2K8BaARG1hbiCZc8YUb5WDK844bx+FSfqgrKmb+0ExijJiZ6Gd1/Obg6azZtf4arQ8nl7JMMhGg8jnrVWLBHXB0qA3dB8kzqiNfrqGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TxZCZtrZ; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-339d5dbf58aso7406293a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 09:31:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759854686; x=1760459486; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DUfQZGdB8vnQ3BrO/9eKlA0A4GR0IweUUWX2EFRalJA=;
-        b=TxZCZtrZmPIMiH2jB1H2EB6QFXa1nnepz0E0xDH7weZTfOjxJqcmIRvdsgegYZsEZi
-         Q+IOutPCqcY0HOvYEZCCeJBqGNA6kpxWsZ95rR8ifrH2vzKAdTahg746pQB4PrDFY6tC
-         C0bfLvPoHKtf+de7jieD7GwalecwdeyX6Ni5JULfy0CgiMvpj5LDDGYfB5xQeIjGTgkP
-         7tZEb0f+qjF5+Lo4odTen5N9rxGw8hvtERqcfoZojDEHvdEou3zHolqsb4U2iyy0wYkU
-         Kszs+CB4liWrZZ/ONXeDaaYvowHlxc6+0XYLGtcJIHJX0g0Qf/ns314SU7GMff1WmsFr
-         D80A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759854686; x=1760459486;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DUfQZGdB8vnQ3BrO/9eKlA0A4GR0IweUUWX2EFRalJA=;
-        b=FlTnfjtYOSGFGP+IKJXP4+OBH9+6jVgjh//aMoJ/eRRGD0p0YX5mAFZLqBVMTmLttN
-         V4qVrl/7Y9y8mdbhJFo2wI/B3xZ0a4va5FQNUueEPLXWof7Avmv0seKDl3bXL1pdHiaw
-         ts7tK0LHRySIJtjUzxQNDTcBd5hHz/E+eindnzjUuugupHwdyZB/s+3ZupDvjbTEuvyy
-         ET3t37Yox2d6iziJCyBQ0rP7kz2nwvZNM0uci3IHC7evUVg4twRfk6saxBqF4yhoapir
-         pA7QHeibZMY03leqg0pPpOpDwQHnF/2K5W9/Cmil0Nw9Wu8qwxpHQFqpBYTFMds7GNCM
-         osNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWj5IxbrPgSpq5fpQcoJvn66kRXpesg7f5VZmwVhdK09gcJi0VCktuMzhwyZGz0shkdar0s4S1ZmsDithI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdOU0G+xymZJRUcaVkyKpLkAIgaJAiOoEvSEQQHM1mcJhxmjKq
-	NRHTUgMIA3unF8y8F+/T1UyXn5fvxRn/w/DsjZaHtLWD0iJfaUE5wZuZAUvVcWuCkqyVGNQWXpa
-	O8PAnr0Iao2eB1x5ypde/E8Q89g==
-X-Google-Smtp-Source: AGHT+IFhqcZFcRMhW8qlWIS/kR93SNJpodMaSdwu3z7otH1Ts8WLKOWU6DlQ64PJlD/ZZmNPqHVeCV0AVk821S0veA==
-X-Received: from pjbdj15.prod.google.com ([2002:a17:90a:d2cf:b0:330:793a:2e77])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:4a52:b0:332:84c1:31de with SMTP id 98e67ed59e1d1-33b513ced6emr119418a91.25.1759854686135;
- Tue, 07 Oct 2025 09:31:26 -0700 (PDT)
-Date: Tue, 07 Oct 2025 09:31:24 -0700
-In-Reply-To: <20251003232606.4070510-4-seanjc@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1B220330;
+	Tue,  7 Oct 2025 16:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759854747; cv=fail; b=VdDdBjTNglSpYCbfDYjg8ujTSWblYePg9jixE4pBok8e3cmyHs/+vTWS6fcFUt87xlwAfhYlpXoROcuOa0AjbU0LmOstV9OZ2Qrfb4RAE/lAiWqnRy455yd2b2zELhkp2T+HJSCf/a5tBoVrjBV62YEg/isaNKeyky8Sev+JBj0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759854747; c=relaxed/simple;
+	bh=0ZyoYR3CVF4T4w6yG/noioLW4tSSx+KHr/Gge6Owauw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FkSevBB08K8Y6f4YCmYMV5E1aPVNcTcuwVWl2sX6yfuhdJI7sZgmPNZ+DoXKHsFSy64HFVeOWDua+ao9CNXo2z796iRhHgZpVTiPci7nA011eWtxpT5dmY6bnJAEtRQyOlgInp8iy01nAm4L3asJAvLBOJwZZokPB+8xWn0BaGk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=POqvVnku; arc=fail smtp.client-ip=52.101.70.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Mvz9JB2JL+yPegPrnzVG9iNTFFnICpM3hP+PFf7+wgZNt+7ErBXgBAVhMqyCTG3iKyOfUWL+YWTXKM53vW/OPOy85HVyFFSXZ58HptZ+bC078guP5ytRN+T/yLoZU9d33kDBAf7UcnWNWfWUKARODct/gHcdyx9G6eitvndu3vMUKgJLbXJkmgzI4bAihBhQBl13vYEPcmZpzg6eaM5NSm0Q5rp3WkqC8T4aAjuIRfJ9AKjMfv2yyUtF2SLJlStKRNQl+gkaENZuU61fwnqbReVtEurdLiZl3IY3yz69DZTh0dyxT4zzKmgjfpleNZ9z0CdhHTl0eIzWUv5+elw5XQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MoMycbd1GHC9ZF3SPhH94/NJvBoKw7yzV4t8HZNYkM8=;
+ b=ajCQKV2Nklv9KQfkP9JYaVigqtem5r70zV1Qw//HsujvvtnWt3SlN5XyVOXK2w6mAtOelOMu7X9ib86zRWJA+FqmPy59TLXLAdIEu0UtJElHPigLihFsbJxP/DLhEroMtg4y2AOnaok7btv0q1C4raUliItGmD5s3hRAI7BYaW2qD38JIBL8KxCTWtCPoswvBEvlJ6YORs65S9eJniEnjKpwjHbQhnt712Y3x+Y9wPJJVkCL8pBYbzF3/unj5q4Zqmjt/SqLD8QUuZqxUVSPZUvKiJwFy5GKoihieOHKUgmw2EkP6rdVx8lfJ5n12tYtHmqi6LIakdmnqM7UqXHElg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
+ dkim=pass header.d=cherry.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MoMycbd1GHC9ZF3SPhH94/NJvBoKw7yzV4t8HZNYkM8=;
+ b=POqvVnkuH4N2kjcN25UMJpXopomofq5J9fHN7r3W4s8mkBF9tUgf3K3Vn+KhjzbsF+g/laPHCHu9erefI8h9bCWWBhIYwU/mZt3ydlzVYYMrhp5G+NyOPd1IbmMpyeel12h2Sdd80mIQsYaTpWknnabauK/W67qUyMQJ6kK4XlA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cherry.de;
+Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
+ by PAXPR04MB9075.eurprd04.prod.outlook.com (2603:10a6:102:229::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Tue, 7 Oct
+ 2025 16:32:16 +0000
+Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
+ ([fe80::5ee:7297:93b4:a8d1]) by AS8PR04MB8897.eurprd04.prod.outlook.com
+ ([fe80::5ee:7297:93b4:a8d1%6]) with mapi id 15.20.9182.017; Tue, 7 Oct 2025
+ 16:32:16 +0000
+Message-ID: <88c6c40e-8c19-429d-a7d8-c8f2755f515c@cherry.de>
+Date: Tue, 7 Oct 2025 18:32:15 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] arm64: dts: rockchip: add LinkEase EasePi R1
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+ Andrew Lunn <andrew@lunn.ch>
+Cc: jjm2473 <jjm2473@gmail.com>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, heiko@sntech.de, kever.yang@rock-chips.com,
+ naoki@radxa.com, honyuenkwun@gmail.com, inindev@gmail.com,
+ ivan8215145640@gmail.com, neil.armstrong@linaro.org, mani@kernel.org,
+ dsimic@manjaro.org, pbrobinson@gmail.com, alchark@gmail.com,
+ didi.debian@cknow.org, jbx6244@gmail.com, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250929065714.27741-1-jjm2473@gmail.com>
+ <20250929065714.27741-4-jjm2473@gmail.com>
+ <d8ad476c-d0c7-4e97-9e76-540a539ffb52@lunn.ch>
+ <CAP_9mL4ofig-X-w9wx1A5D_eVXROo6AVFBSwp4mh=kj7webpPA@mail.gmail.com>
+ <7e219aef-88a0-4184-9553-30dcbc8dbd79@lunn.ch>
+ <aOU-_tPOmkyuw_kx@shell.armlinux.org.uk>
+Content-Language: en-US
+From: Quentin Schulz <quentin.schulz@cherry.de>
+In-Reply-To: <aOU-_tPOmkyuw_kx@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR0P281CA0058.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:49::19) To AS8PR04MB8897.eurprd04.prod.outlook.com
+ (2603:10a6:20b:42c::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251003232606.4070510-1-seanjc@google.com> <20251003232606.4070510-4-seanjc@google.com>
-Message-ID: <diqzbjmiekrn.fsf@google.com>
-Subject: Re: [PATCH v2 03/13] KVM: guest_memfd: Invalidate SHARED GPAs if gmem
- supports INIT_SHARED
-From: Ackerley Tng <ackerleytng@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|PAXPR04MB9075:EE_
+X-MS-Office365-Filtering-Correlation-Id: be8f1ebc-eb53-4835-196a-08de05bf13e4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RDVZY2NBVE5vNFoyQktoTU9MSFU0UVNMa09CckFhci9LR3l0N1hNWUZNdDNp?=
+ =?utf-8?B?b1A4bWJUaFZpaHdHVFdLSml4Nk85a3Q0ZmpJWEw3WHdvYzgvWDlmQkRFeGNB?=
+ =?utf-8?B?dHhidy9TZi8ybWRYNmZTQUFyZmVpaysydlNXdlNSM2F4SlUwN2hpakdyVzJV?=
+ =?utf-8?B?bjczYjNIeEVTVFR5Kzd3Vk5VSytkU3BPUEl5REc0WTdDaWVrSGhIblNOSWVP?=
+ =?utf-8?B?L0ZIbjF3SnBkanFhdStUNFF5YlllRW1xaW5QUnRQRmNHSW1xcEZXdHhubmhP?=
+ =?utf-8?B?Sis0WnFEWE0xSHdua2Zja1ZwQy9acHJ4MVVyMnZFUFJIeDJDelhvdzBwYWpT?=
+ =?utf-8?B?Y3pUbzN3M2RsZmg4KzVmRTNDQ3BaWjN0SDRZdWgvSVl4K0xNZzgwa24rN0Rj?=
+ =?utf-8?B?KzVNWmpvQVZmbnE4QzNhcXc4TjBKdisveklQcXA3S2tLbkQ2V3BQQWdiRlFo?=
+ =?utf-8?B?b1ZkcitzTTFCWXFhcEZhN2tqMm5SN2RiT1lBaDh1enJZbkRwZkFtQ1M1YzhG?=
+ =?utf-8?B?NWpRWnQ0TExmdFZaUlR6RVhtZVVTT2JXUVlVOWtwdW42S25sUjkwdURMS25N?=
+ =?utf-8?B?ejg5NTZsSGhlbitnejhRbnJKWnlQQTFpMkRkNDBJbDJHKzdIU3dmbFZzcVMx?=
+ =?utf-8?B?VlZ2djZhaDhDRDNSVEdEQ3ErWmN6MloyVzhrOWQ0T1QwTDE4aG5zaG9qUjVk?=
+ =?utf-8?B?TmxxVit0VTBncG1mUnJWZjNSQklXa1JEZlZpR2hOWEQ3Q0Y1aWhzcHNkemxX?=
+ =?utf-8?B?U2VGZmJUYlNCQmxYSjhnMFlCOUJoRjJzbkhYdHZUYmhIR3FqNE9lVnZPWkxK?=
+ =?utf-8?B?M0dQUDRVQjZJV2NkRG9aTHZ5YzhzUEJrWmhrVWQ0cE4xMUg4cXRDNkMwYVNZ?=
+ =?utf-8?B?NTVlaXJkWWZ0L0pxRlBaM0hNTlcvYnVsOC9nWGZhM1B1ZDdTNWhZVThsZnFt?=
+ =?utf-8?B?ZzB2d0xTYTZJcTZ0ejN5RTlPWDFEdU9JRzVJeEt0QmJFUEhna09LalNta0Z5?=
+ =?utf-8?B?VlRoWGswZHJhTE1qcjVnbXdJNXlacWRLbnJRaFJxeVBKcStvV1N2TnFVRzZH?=
+ =?utf-8?B?Vk9FVnk0ZStUcGR5VFhTSkFEM2JPN2kySEVsc0krZysySVdrSnE0SWJHYzNI?=
+ =?utf-8?B?dWxNSGw2L2ZGMWV3SHpnMEVyQkdxMGxSd2hqNG54VE1MZCtCb2lkZFFTL21E?=
+ =?utf-8?B?ODh2aUhmTWRJTE9scGZpSXFTY2h2SFJZN2xVVld3c2dveURzY2JRZ29QV00y?=
+ =?utf-8?B?cWdCNHJvd1dwZC9MbEhkdXJXVHA5YXlCVlpvNm12UlExWExUQ2pyVEpZditr?=
+ =?utf-8?B?R01WaGsyTVZoT0MrMkEwUVorUStvb2JvZG9wQmMwOTk2NzlER1MwNkNqSzEv?=
+ =?utf-8?B?MzF3TUVxSS9rSXkxTGlaQ0FITGNtRTA4WHJ4SEpMYjVxMi9PcldCSmF3TXlI?=
+ =?utf-8?B?N2xtVXluLzJRY1czZytySFBCdGlTNC90YW4zZFVVeDdaNnU0bldqd0g4QnF3?=
+ =?utf-8?B?K3RaOFVGenV5a3RySkdqZU84K0RqQTl3UzQyZGJHM0hwb2dVRTJNRERFaEk2?=
+ =?utf-8?B?dzNKVW8xUExkUjlpV3RiNkExdkdQaENuRWNEdkxSeWhGZ2ZleXFhdUcvK1lR?=
+ =?utf-8?B?K24yK0F0VHlocTJ4TEsrd2pKKzE4NHdUZndvbHl1c3BjVEM0VXR5dUd3TXdJ?=
+ =?utf-8?B?NG1XaWhrdkg2dUlXSVgwdFMxNGxoaUg2US94YXRWWkZZV0k4N1VqNHh5Rnc1?=
+ =?utf-8?B?NzB1TXR4bFNveFhscllkeDh6YkllZW1DOC9uS1JZZ040bDdkcjd3RlgyRWdD?=
+ =?utf-8?B?NW9GdFRZZHpJNjBoRGJWRUZ4SmhoM3VwZllyd3V5UnU3QWRYdXE0eHFLanRT?=
+ =?utf-8?B?OFNLc0F4VDFsU0l2OVZ1aERSb2laTncxWUdsdVlYNDNUMHc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dWFocU94V3RyeU9EdStFRWtvL1VjTHFwcHNIeXVnaGp1NVNsWFpWcUxrTXRx?=
+ =?utf-8?B?NWtodjdVV04yK1Y1VDlwQUlZckZZZFVtVGNPQXVpWm1tNjlkYWRLWEZKc0RD?=
+ =?utf-8?B?WVNDK2NkNmlhV3pOSFEycC9SRGVNVlFXMmQ3N1gyWE5kVDIyaU5MdU5UZm8r?=
+ =?utf-8?B?NXZvQkRkc2JTeXJKOTgwU0JxdEFxYTJWaG5GTEhrSU1SZ1EvSEVaNmlpQWhM?=
+ =?utf-8?B?YTI4aDFQWnNsN2ZBTGg0b0xmaWhTT2ZFY2I4ZHkyZHZraE94MHVmaW5ZQVg4?=
+ =?utf-8?B?WXJpZWtQOGlxdngwTGEzK1JKcUk1ZzVjc3RUREp4N25ZV0tERVBMbEU2b2Nr?=
+ =?utf-8?B?NHBqK3E5UVZRRkxhN3hvaVBPNW5abGt6KzlISzFNWUdoNG1YcFNSUjhOeTR6?=
+ =?utf-8?B?UlNiVU5QQU1xS2djaVNNMnoyckcxNjlBYTE2SGNiWXJmM28yL3FodCtMVk1R?=
+ =?utf-8?B?YzNuWk0ySmVMM3FDMXQwQk9jL2thcjVyNi9CaFc2Zkt5UytsWmpZM3FVbVFI?=
+ =?utf-8?B?WWgveXUyTTBQYkdnZGtXRjVlanBEOFI4ZElKcWYrU3BaSlFLUnUxNVNhcVpZ?=
+ =?utf-8?B?OVhQZE5KbXpsd0YwVU94WXhuWlZJS00xL0lLUkJodU5WMTN3QnhjSTNuY1VR?=
+ =?utf-8?B?RXpvYjFYU0N6bHhSRVRFNU9ERk5nOFpvbzA3YjZRdStxTHd4QmUrcjRNZGV4?=
+ =?utf-8?B?dFFJWWp4U1FManJDU2hPQWxha1Mva2pDMC9vNmFoNnlVYlFJcWF6alNKbjVY?=
+ =?utf-8?B?QVBGOGMxcnM4N3ZZQzFmbWxCOURyRTlQdUlpVFhUTzErUHpRVDhFTDlPcjQ0?=
+ =?utf-8?B?K1NDcEtCVnEvRCtTNm90T2h5Z2JQaFFPYm5JS0NUR1daWW9VMDYwaEhBQkxa?=
+ =?utf-8?B?OUorV2xFd09rdmxMVVdWM1FESmRxZGpLclp3em9OSndWdnFJOWhmaytGQnV3?=
+ =?utf-8?B?em5pV2RSdVZDcFF0VEgzdnB3akwwLzYveUtNanQ3UDM5VDl6R1hvbERrQTJ5?=
+ =?utf-8?B?RWVvMkYxcW1LS2c3UDF5cjdSVDRqT3I4QjJWREFneE1IS2xvVFJxU3JjeW9P?=
+ =?utf-8?B?b05PMmdaSElodnFRMXlpMWpMK2t0d1VkaHc2TkcxTW9wYlpoY0NkRjJ5VVdK?=
+ =?utf-8?B?d2dlM1JGSXdvSjRnRmhhZXMzMkxyTDhKQmpkeS95R0tENWpTRmo4TDVIZmdS?=
+ =?utf-8?B?WDJCc0E5R1V2d2tyeUc0K1V3QlpYVVg5a2d6blhLcXJ6WnRSS2ZlRVJkaXJQ?=
+ =?utf-8?B?cEtTS3JuWE1QOUlQOGdzdmExMk83cFpwSUppczZwb1NUUXQxKzNGbDhrTXEx?=
+ =?utf-8?B?Vkt1UmFsSTRoYkRXb2JPU0RCQ0doZTkwUFdYVEpjQWxKaGExSEYrWEZTeVNR?=
+ =?utf-8?B?T2VobHB0NVhsRy9CcHNFaG1GU3R3eDJjZVNMSThkcVcrNjAxRXZ4S3NlL0ph?=
+ =?utf-8?B?cFJPNmw0OWlteW9qMXIrZ3BITHMzaHBQRjhoRytUak03OEFkbWJlcW9pNkN2?=
+ =?utf-8?B?NGQxKzhuTlJ0d0JEUTh3REY1a2ZzU0Vpb2ZlZGtoanlYUVFRK2tlNzBNZWRk?=
+ =?utf-8?B?eEpkOGZPWlpXaHY2K2ZaTHRBSEZxSnJLREYvbXJyV1drQkVsR3ZqTUZnZ3JI?=
+ =?utf-8?B?VDVWQTlTbWVDaENEOU9TUzBiT1czOCtIQzN2OVo4SXVQbHhOeEQ2d0Y2bXNQ?=
+ =?utf-8?B?MjhxKzJ6ODhaeVRpTVk3R0hOZzdNTlNzRW1EOS9DR0lvTVFnYVFWMmN3YWpq?=
+ =?utf-8?B?Z3p1NmFzNlNZWDFpNEg0VFZ6MXVIdEpGcnhsT1hxZC9kQ0RYU1E0eTlJbTcw?=
+ =?utf-8?B?Qklia1UzMHRveEowQUtaYmhxQWJ2U3UrbDVnTzNqVGJzNVB4SWVULy9tdFNU?=
+ =?utf-8?B?ZTM1SUdoQjdJT1ZDMUZSZnlBMWZBRFlra2NwTEtGajAreXh4UTdXNmJuTVds?=
+ =?utf-8?B?dGFHOXVCRWhGUGlSaysyZTFtU1hrMG1XRmNsNWhQOWhSZEZ2RmRYdUJBMm1h?=
+ =?utf-8?B?SDc0OStEanFJN0lhMis5eWVWeUtsMGowaDJ1MFRhRjR2bGlTZjNQcG1JWE5F?=
+ =?utf-8?B?RFhBcGZuNHhXTzFkeWNJTjU1ZGl3NXVNN3BIQ05uUEZaZDRDREdsQVJZdlNR?=
+ =?utf-8?B?cWREVGJ4N0dtVnNmNVpFVEtYTWVNOWtGdUtSSFlJTWJ5K0swaU1nd25oTVVo?=
+ =?utf-8?B?N2c9PQ==?=
+X-OriginatorOrg: cherry.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: be8f1ebc-eb53-4835-196a-08de05bf13e4
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2025 16:32:16.5549
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qMsQOGqRXgIU4zvd8VEsJjfgSSAVEb7n0FNk79bwwmVKOl3tsyxKNm85djsUbP84LZQWCsiNokPhrsy+3Xbn6lpa1pv9nQUUe4a6LUCAGe0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9075
 
-Sean Christopherson <seanjc@google.com> writes:
+Hi Russel,
 
-> When invalidating gmem ranges, e.g. in response to PUNCH_HOLE, process all
-> possible range types (PRIVATE vs. SHARED) for the gmem instance.  Since
-> since guest_memfd doesn't yet support in-place conversions, simply pivot
-> on INIT_SHARED as a gmem instance can currently only have private or shared
-> memory, not both.
->
-> Failure to mark shared GPAs for invalidation is benign in the current code
-> base, as only x86's TDX consumes KVM_FILTER_{PRIVATE,SHARED}, and TDX
-> doesn't yet support INIT_SHARED with guest_memfd.
+On 10/7/25 6:25 PM, Russell King (Oracle) wrote:
+> On Tue, Oct 07, 2025 at 04:57:32PM +0200, Andrew Lunn wrote:
+>> On Tue, Oct 07, 2025 at 10:32:26PM +0800, jjm2473 wrote:
+>>> Andrew Lunn <andrew@lunn.ch> 于2025年10月6日周一 23:51写道：
+>>>> Please change it to rgmii-id, and smaller tx/rx_delay values. Or show
+>>>> us the schematics which clearly show extra long clock lines.
+>>>
+>>> In fact, the RTL8211F's RXDLY and TXDLY signals are both pulled low,
+>>> just like the Banana Pi BPI-R2 Pro, so the configuration is also referenced:
+>>> https://elixir.bootlin.com/linux/v6.15/source/arch/arm64/boot/dts/rockchip/rk3568-bpi-r2-pro.dts#L237
+>>
+>> Pull low makes no difference to the 2ns RGMII delays.
+> 
+> To be clear, while the RXDLY and TXDLY are hardware strapping controls
+> the hardware configuration of the 2ns RGMII clock delays, the realtek
+> driver can (and does) override this according to the phy-mode property.
+> Thus hardware strapping makes no difference to Linux.
+> 
+> So, what we get at the RTL8211F PHY is:
+> 
+> 	phy-mode	receive clock delay	transmit clock delay
+> 	"rgmii"		0ns			0ns
+> 	"rgmii-rxid"	2ns			0ns
+> 	"rgmii-txid"	0ns			2ns
+> 	"rgmii-id"	2ns			2ns
+> 
+> irrespective of RXDLY / TXDLY hardware strapping.
+> 
+>>> The tx_delay and rx_delay values were obtained using Rockchip's
+>>> automatic scanning tool:
+>>> https://github.com/istoreos/istoreos/blob/54746dfdb5bd34d1f281cf41d1d1620d0c3ee686/target/linux/rockchip/files/drivers/net/ethernet/stmicro/stmmac/dwmac-rk-tool.c
+>>> https://gitlab.com/firefly-linux/docs/-/blob/rk356x/firefly/Common/GMAC/Rockchip_Developer_Guide_Linux_GMAC_RGMII_Delayline_EN.pdf
+>>> https://github.com/axlrose/rkdocs/blob/main/Common/GMAC/Rockchip_Developer_Guide_Linux_GMAC_RGMII_Delayline_EN.pdf
+>>
+>> Vendors get things wrong, including this. 'rgmii' means the PCB adds
+>> the 2ns delay. Nearly every Rockchip board follows Rockchip broken
+>> vendor recommendations, and then i come along, point out how it is
+>> wrong, and ask for it to be fixed, before being merged to Mainline.
+> 
+> Can we at least get the "tx_delay" and "rx_delay" DT properties (which
+> are register values) properly documented in the DT binding document?
+> I know from the driver code that a value of 0 means "no delay". Other
+> values add an unspecified delay - it is not obvious what any non-zero
+> value means, or what the default means.
+> 
+> This would help us understand what values such as:
+> 
+> 	tx_delay = 0x3c or 0x4f
+> 
+> and
+> 
+> 	rx_delay = 0x2f or 0x26
+> 
+> actually mean in terms of the resulting delay at the MAC.
+> 
 
-This is the correct fix, and I agree it is not a problem in current code
-since before this patch series and the introduction of INIT_SHARED,
-mmap() was only supported by non-CoCo, which doesn't interpret
-KVM_FILTER_{PRIVATE,SHARED} anyway.
+I couldn't figure out what they actually mean empirically, see 
+https://lore.kernel.org/linux-rockchip/96d32ce8-394b-4454-8910-a66be2813588@cherry.de/
 
-Had something similar/related here [1]
+Without Rockchip's explanation on what this actually does, I'm not sure 
+there's something we can do on this side.
 
-[1] https://lore.kernel.org/all/d3832fd95a03aad562705872cbda5b3d248ca321.1747264138.git.ackerleytng@google.com/
-
-Reviewed-by: Ackerley Tng <ackerleytng@google.com>
-
-> However, invalidating
-> only private GPAs is conceptually wrong and a lurking bug, e.g. could
-> result in missed invalidations if ARM starts filtering invalidations based
-> on attributes.
->
-> Fixes: 3d3a04fad25a ("KVM: Allow and advertise support for host mmap() on guest_memfd files")
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  virt/kvm/guest_memfd.c | 64 +++++++++++++++++++++++++++++-------------
->  1 file changed, 44 insertions(+), 20 deletions(-)
->
-> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> index cf3afba23a6b..e10d2c71e78c 100644
-> --- a/virt/kvm/guest_memfd.c
-> +++ b/virt/kvm/guest_memfd.c
-> @@ -102,8 +102,17 @@ static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index)
->  	return filemap_grab_folio(inode->i_mapping, index);
->  }
->  
-> -static void kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
-> -				      pgoff_t end)
-> +static enum kvm_gfn_range_filter kvm_gmem_get_invalidate_filter(struct inode *inode)
-> +{
-> +	if ((u64)inode->i_private & GUEST_MEMFD_FLAG_INIT_SHARED)
-> +		return KVM_FILTER_SHARED;
-> +
-> +	return KVM_FILTER_PRIVATE;
-> +}
-> +
-> +static void __kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
-> +					pgoff_t end,
-> +					enum kvm_gfn_range_filter attr_filter)
->  {
->  	bool flush = false, found_memslot = false;
->  	struct kvm_memory_slot *slot;
-> @@ -118,8 +127,7 @@ static void kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
->  			.end = slot->base_gfn + min(pgoff + slot->npages, end) - pgoff,
->  			.slot = slot,
->  			.may_block = true,
-> -			/* guest memfd is relevant to only private mappings. */
-> -			.attr_filter = KVM_FILTER_PRIVATE,
-> +			.attr_filter = attr_filter,
->  		};
->  
->  		if (!found_memslot) {
-> @@ -139,8 +147,21 @@ static void kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
->  		KVM_MMU_UNLOCK(kvm);
->  }
->  
-> -static void kvm_gmem_invalidate_end(struct kvm_gmem *gmem, pgoff_t start,
-> -				    pgoff_t end)
-> +static void kvm_gmem_invalidate_begin(struct inode *inode, pgoff_t start,
-> +				      pgoff_t end)
-> +{
-> +	struct list_head *gmem_list = &inode->i_mapping->i_private_list;
-> +	enum kvm_gfn_range_filter attr_filter;
-> +	struct kvm_gmem *gmem;
-> +
-> +	attr_filter = kvm_gmem_get_invalidate_filter(inode);
-> +
-> +	list_for_each_entry(gmem, gmem_list, entry)
-> +		__kvm_gmem_invalidate_begin(gmem, start, end, attr_filter);
-> +}
-> +
-> +static void __kvm_gmem_invalidate_end(struct kvm_gmem *gmem, pgoff_t start,
-> +				      pgoff_t end)
->  {
->  	struct kvm *kvm = gmem->kvm;
->  
-> @@ -151,12 +172,20 @@ static void kvm_gmem_invalidate_end(struct kvm_gmem *gmem, pgoff_t start,
->  	}
->  }
->  
-> +static void kvm_gmem_invalidate_end(struct inode *inode, pgoff_t start,
-> +				    pgoff_t end)
-> +{
-> +	struct list_head *gmem_list = &inode->i_mapping->i_private_list;
-> +	struct kvm_gmem *gmem;
-> +
-> +	list_for_each_entry(gmem, gmem_list, entry)
-> +		__kvm_gmem_invalidate_end(gmem, start, end);
-> +}
-> +
->  static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_t len)
->  {
-> -	struct list_head *gmem_list = &inode->i_mapping->i_private_list;
->  	pgoff_t start = offset >> PAGE_SHIFT;
->  	pgoff_t end = (offset + len) >> PAGE_SHIFT;
-> -	struct kvm_gmem *gmem;
->  
->  	/*
->  	 * Bindings must be stable across invalidation to ensure the start+end
-> @@ -164,13 +193,11 @@ static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_t len)
->  	 */
->  	filemap_invalidate_lock(inode->i_mapping);
->  
-> -	list_for_each_entry(gmem, gmem_list, entry)
-> -		kvm_gmem_invalidate_begin(gmem, start, end);
-> +	kvm_gmem_invalidate_begin(inode, start, end);
->  
->  	truncate_inode_pages_range(inode->i_mapping, offset, offset + len - 1);
->  
-> -	list_for_each_entry(gmem, gmem_list, entry)
-> -		kvm_gmem_invalidate_end(gmem, start, end);
-> +	kvm_gmem_invalidate_end(inode, start, end);
->  
->  	filemap_invalidate_unlock(inode->i_mapping);
->  
-> @@ -280,8 +307,9 @@ static int kvm_gmem_release(struct inode *inode, struct file *file)
->  	 * Zap all SPTEs pointed at by this file.  Do not free the backing
->  	 * memory, as its lifetime is associated with the inode, not the file.
->  	 */
-> -	kvm_gmem_invalidate_begin(gmem, 0, -1ul);
-> -	kvm_gmem_invalidate_end(gmem, 0, -1ul);
-> +	__kvm_gmem_invalidate_begin(gmem, 0, -1ul,
-> +				    kvm_gmem_get_invalidate_filter(inode));
-> +	__kvm_gmem_invalidate_end(gmem, 0, -1ul);
->  
->  	list_del(&gmem->entry);
->  
-> @@ -403,8 +431,6 @@ static int kvm_gmem_migrate_folio(struct address_space *mapping,
->  
->  static int kvm_gmem_error_folio(struct address_space *mapping, struct folio *folio)
->  {
-> -	struct list_head *gmem_list = &mapping->i_private_list;
-> -	struct kvm_gmem *gmem;
->  	pgoff_t start, end;
->  
->  	filemap_invalidate_lock_shared(mapping);
-> @@ -412,8 +438,7 @@ static int kvm_gmem_error_folio(struct address_space *mapping, struct folio *fol
->  	start = folio->index;
->  	end = start + folio_nr_pages(folio);
->  
-> -	list_for_each_entry(gmem, gmem_list, entry)
-> -		kvm_gmem_invalidate_begin(gmem, start, end);
-> +	kvm_gmem_invalidate_begin(mapping->host, start, end);
->  
->  	/*
->  	 * Do not truncate the range, what action is taken in response to the
-> @@ -424,8 +449,7 @@ static int kvm_gmem_error_folio(struct address_space *mapping, struct folio *fol
->  	 * error to userspace.
->  	 */
->  
-> -	list_for_each_entry(gmem, gmem_list, entry)
-> -		kvm_gmem_invalidate_end(gmem, start, end);
-> +	kvm_gmem_invalidate_end(mapping->host, start, end);
->  
->  	filemap_invalidate_unlock_shared(mapping);
->  
-> -- 
-> 2.51.0.618.g983fd99d29-goog
+Cheers,
+Quentin
 
